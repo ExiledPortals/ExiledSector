@@ -45,15 +45,6 @@ public enum StarChartCurrency implements ItemCurrency {
         }
     }
 
-    public static void unregisterAll() {
-        for (StarChartCurrency currency : values()) {
-            ItemCurrencies.unregister(currency);
-        }
-        for (CraftingCurrency kernel : KERNELS_ON_CHARTS) {
-            ItemCurrencies.retract(kernel, ItemType.STAR_CHART);
-        }
-    }
-
     public static StarChartCurrency byItemId(String itemId) {
         for (StarChartCurrency currency : values()) {
             if (currency.itemId.equals(itemId)) {

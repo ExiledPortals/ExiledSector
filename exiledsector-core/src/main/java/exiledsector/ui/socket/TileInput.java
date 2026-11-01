@@ -4,6 +4,8 @@ import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 
 import java.util.List;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 
 final class TileInput {
 
@@ -18,6 +20,30 @@ final class TileInput {
         default boolean rightClicked() {
             return false;
         }
+
+        static Handler of(Consumer<PositionAPI> entered, Runnable left, BooleanSupplier clicked, BooleanSupplier rightClicked) {
+            return new Handler() {
+                @Override
+                public void entered(PositionAPI tilePosition) {
+                    entered.accept(tilePosition);
+                }
+
+                @Override
+                public void left() {
+                    left.run();
+                }
+
+                @Override
+                public boolean clicked() {
+                    return clicked.getAsBoolean();
+                }
+
+                @Override
+                public boolean rightClicked() {
+                    return rightClicked.getAsBoolean();
+                }
+            };
+        }
     }
 
     private final Handler tileHandler;
@@ -30,25 +56,12 @@ final class TileInput {
     }
 
     static TileInput forHooks(IconTileCell.Hooks hooks, boolean blocked) {
-        return new TileInput(new Handler() {
-            @Override
-            public void entered(PositionAPI tilePosition) {
-                hooks.onHover().accept(tilePosition);
+        return new TileInput(Handler.of(hooks.onHover(), hooks.onLeave(), () -> {
+            if (!blocked) {
+                hooks.onClick().run();
             }
-
-            @Override
-            public void left() {
-                hooks.onLeave().run();
-            }
-
-            @Override
-            public boolean clicked() {
-                if (!blocked) {
-                    hooks.onClick().run();
-                }
-                return true;
-            }
-        }, true);
+            return true;
+        }, () -> false), true);
     }
 
     boolean isHovered() {

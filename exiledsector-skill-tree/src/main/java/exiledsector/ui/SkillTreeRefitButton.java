@@ -27,8 +27,9 @@ import java.util.Collections;
 
 public class SkillTreeRefitButton extends FullScreenRefitButton {
 
+    static final String BUTTON_KEY = "ui.refitButton";
     public static final RefitButtonColumn.ButtonSpec COLUMN_BUTTON = new RefitButtonColumn.ButtonSpec("exiledSector_skillTreeButton",
-            "ui.refitButton", () -> Keyboard.KEY_K, RefitButtonConfig::buttonUnderHullMods, () -> openPanel(null));
+            BUTTON_KEY, () -> Keyboard.KEY_K, RefitButtonConfig::buttonUnderHullMods, () -> openPanel(null));
     static final float SHIP_CARD_ICON_SIZE = 128f;
     private static final String LOCKED_SOUND = "ui_button_disabled_pressed";
 
@@ -53,7 +54,7 @@ public class SkillTreeRefitButton extends FullScreenRefitButton {
 
     @Override
     protected String buttonKey() {
-        return "ui.refitButton";
+        return BUTTON_KEY;
     }
 
     @Override

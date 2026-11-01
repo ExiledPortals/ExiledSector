@@ -56,6 +56,7 @@ public final class ChartRun {
     private String atlasNode;
     private String originEntityId;
     private String anomalyStates;
+    private transient Map<String, String> parsedAnomalyStates;
 
     public ChartRun(String runId, String originLocationId, float originX, float originY, int entriesAllowed) {
         this.runId = runId;
@@ -335,17 +336,16 @@ public final class ChartRun {
     }
 
     private Map<String, String> anomalyStatesMap() {
-        Map<String, String> states = new LinkedHashMap<>();
-        if (anomalyStates == null || anomalyStates.isEmpty()) {
-            return states;
-        }
-        for (String entry : anomalyStates.split(STATE_SEPARATOR)) {
-            int separator = entry.indexOf(STATE_VALUE_SEPARATOR);
-            if (separator > 0) {
-                states.put(entry.substring(0, separator), entry.substring(separator + 1));
+        if (parsedAnomalyStates == null) {
+            parsedAnomalyStates = new LinkedHashMap<>();
+            for (String entry : anomalyStates == null || anomalyStates.isEmpty() ? new String[0] : anomalyStates.split(STATE_SEPARATOR)) {
+                int separator = entry.indexOf(STATE_VALUE_SEPARATOR);
+                if (separator > 0) {
+                    parsedAnomalyStates.put(entry.substring(0, separator), entry.substring(separator + 1));
+                }
             }
         }
-        return states;
+        return parsedAnomalyStates;
     }
 
     public boolean isRewardClaimed() {

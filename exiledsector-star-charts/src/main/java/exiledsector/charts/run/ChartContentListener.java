@@ -5,8 +5,8 @@ import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignEventListener.FleetDespawnReason;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.listeners.FleetEventListener;
+import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.objective.ChartObjectives;
 import org.apache.log4j.Logger;
 
@@ -22,8 +22,9 @@ public class ChartContentListener implements FleetEventListener {
         }
         try {
             ChartObjectives.fleetGone(Global.getSector(), fleet, reason);
-            for (ChartAnomaly anomaly : ChartAnomalies.all()) {
-                anomaly.fleetGone(Global.getSector(), fleet);
+            AnomalyRun run = AnomalyRun.live(Global.getSector());
+            if (run != null) {
+                ChartAnomalies.fleetGone(run, fleet);
             }
         } catch (RuntimeException | LinkageError e) {
             reportFailure(e);

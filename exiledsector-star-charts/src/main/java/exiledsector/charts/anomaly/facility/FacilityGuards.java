@@ -2,11 +2,11 @@ package exiledsector.charts.anomaly.facility;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.FleetTypes;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import exiledsector.i18n.Translation;
+import exiledsector.charts.anomaly.HeldGuards;
 import exiledsector.charts.content.ChartAnomalyFleets;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
@@ -25,22 +25,11 @@ public final class FacilityGuards {
     }
 
     public static CampaignFleetAPI fleetFor(SectorEntityToken planet, ChartRun run) {
-        MemoryAPI memory = planet.getMemoryWithoutUpdate();
-        CampaignFleetAPI guards = memory.get(GUARDS_KEY) instanceof CampaignFleetAPI stored && !stored.isEmpty() ? stored : null;
-        if (guards == null) {
-            guards = create(run, PreCollapseFacility.seed(run, planet.getId(), GUARD_SALT));
-            if (guards == null) {
-                return null;
-            }
-            memory.set(GUARDS_KEY, guards);
-        }
-        guards.setContainingLocation(planet.getContainingLocation());
-        guards.setLocation(planet.getLocation().x, planet.getLocation().y);
-        return guards;
+        return HeldGuards.held(planet, GUARDS_KEY, () -> create(run, PreCollapseFacility.seed(run, planet.getId(), GUARD_SALT)));
     }
 
     public static void forget(SectorEntityToken planet) {
-        planet.getMemoryWithoutUpdate().unset(GUARDS_KEY);
+        HeldGuards.forget(planet, GUARDS_KEY);
     }
 
     static CampaignFleetAPI create(ChartRun run, long seed) {

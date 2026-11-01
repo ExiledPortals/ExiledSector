@@ -13,6 +13,7 @@ import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.Translation;
 import exiledsector.items.JanusDevice;
+import exiledsector.items.MaterialItems;
 import exiledsector.items.WormholeTechItems;
 import exiledsector.ui.CampaignMessages;
 import org.apache.log4j.Logger;
@@ -51,7 +52,7 @@ public final class LimboBlueprintCache {
         SectorEntityToken cache = findCache(sector);
         if (cache != null) {
             CargoAPI blueprint = Global.getFactory().createCargo(true);
-            WormholeTechItems.addTo(blueprint, WormholeTechItems.BLUEPRINT);
+            MaterialItems.add(blueprint, WormholeTechItems.BLUEPRINT, 1);
             BaseSalvageSpecial.addExtraSalvage(cache, blueprint);
             sectorMemory.set(PLACED_FLAG, true);
             return Outcome.PLACED;
@@ -60,7 +61,7 @@ public final class LimboBlueprintCache {
         if (playerFleet == null || !calibrationDataTaken(sector) && !JanusDevice.obtained(sector)) {
             return Outcome.WAITING;
         }
-        WormholeTechItems.addTo(playerFleet.getCargo(), WormholeTechItems.BLUEPRINT);
+        MaterialItems.add(playerFleet.getCargo(), WormholeTechItems.BLUEPRINT, 1);
         sectorMemory.set(PLACED_FLAG, true);
         CampaignMessages.plain(Translation.gameText("gatewayItem.blueprint.granted"), Misc.getPositiveHighlightColor());
         return Outcome.GRANTED;

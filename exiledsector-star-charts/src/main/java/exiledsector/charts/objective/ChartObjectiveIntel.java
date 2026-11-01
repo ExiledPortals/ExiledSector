@@ -1,22 +1,20 @@
 package exiledsector.charts.objective;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.ui.SectorMapAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
+import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunBound;
-import exiledsector.charts.run.ChartRunState;
 import exiledsector.charts.run.ChartRuns;
-import exiledsector.charts.anomaly.ChartAnomaly;
 
 import java.awt.Color;
 import java.util.Set;
@@ -54,19 +52,17 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
         return runId;
     }
 
-    private ChartRun liveRun() {
-        ChartRun run = ChartRuns.currentOrNull();
-        return run != null && run.runId().equals(runId) && run.runState() != ChartRunState.CLOSED ? run : null;
-    }
-
     static String objectiveName(ChartObjective objective) {
         return objective == null ? "" : Translation.gameText("chart.objective." + objective.key() + ".name");
     }
 
     public static String descriptionKey(ChartRun run) {
-        String objectiveKey = run.objective().key();
-        String bossKey = run.objective() == ChartObjective.BOSS ? "." + run.bossType().key() : "";
-        return "chart.objective." + objectiveKey + bossKey + ".description";
+        ChartObjective objective = run.objective();
+        if (objective == null) {
+            return "chart.dialog.stale";
+        }
+        String bossKey = objective == ChartObjective.BOSS ? "." + run.bossType().key() : "";
+        return "chart.objective." + objective.key() + bossKey + ".description";
     }
 
     static String progressText(ChartRun run) {
@@ -81,25 +77,13 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
         return I18n.forGameText(() -> Translation.msg("chart.intel.progress").arg("done", done).arg("total", total).text());
     }
 
-    static String factionName(String factionId) {
-        if (factionId == null) {
-            return "";
-        }
-        try {
-            FactionAPI faction = Global.getSector().getFaction(factionId);
-            return faction == null ? factionId : faction.getDisplayName();
-        } catch (RuntimeException e) {
-            return factionId;
-        }
-    }
-
     static String safe(String text) {
         return text == null ? "" : text.replace("%", "%%");
     }
 
     @Override
     protected String getName() {
-        ChartRun run = liveRun();
+        ChartRun run = ChartRuns.unclosed(runId);
         String objective = run == null ? "" : objectiveName(run.objective());
         return I18n.forGameText(() -> Translation.msg("chart.intel.title").arg("objective", objective).text());
     }
@@ -107,7 +91,7 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
     @Override
     public void createIntelInfo(TooltipMakerAPI info, ListInfoMode mode) {
         info.addPara(safe(getName()), getTitleColor(mode), 0f);
-        ChartRun run = liveRun();
+        ChartRun run = ChartRuns.unclosed(runId);
         if (run != null) {
             info.addPara(safe(progressText(run)), PROGRESS_COLOUR, BULLET_PAD);
         }
@@ -115,29 +99,20 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
 
     @Override
     public void createSmallDescription(TooltipMakerAPI info, float width, float height) {
-        ChartRun run = liveRun();
+        ChartRun run = ChartRuns.unclosed(runId);
         if (run == null || run.objective() == null) {
             info.addPara(safe(Translation.gameText("chart.dialog.stale")), 0f);
             return;
         }
         int tier = run.tier();
-        String faction = factionName(run.contentFaction());
+        String faction = ChartFactions.displayName(run.contentFaction());
         info.addPara(safe(Translation.gameText(descriptionKey(run))), 0f);
         info.addPara(safe(I18n.forGameText(() -> Translation.msg("chart.intel.tier").arg("tier", tier).arg("faction", faction).text())),
                 PARAGRAPH_PAD);
         info.addPara(safe(progressText(run)), PARAGRAPH_PAD);
-        StarSystemAPI system = Global.getSector().getStarSystem(run.systemId());
-        for (String anomalyId : run.anomalyIds()) {
-            ChartAnomaly anomaly = ChartAnomalies.byId(anomalyId);
-            String key = "chart.anomaly." + anomalyId + ".intel";
-            if (anomaly == null || !anomaly.isActiveIn(system)) {
-                continue;
-            }
-            String line = anomaly.intelText(run, system);
-            if (line == null && Translation.has(key)) {
-                line = Translation.gameText(key);
-            }
-            if (line != null) {
+        AnomalyRun anomalyRun = AnomalyRun.live(Global.getSector());
+        if (anomalyRun != null && anomalyRun.run() == run) {
+            for (String line : ChartAnomalies.intelLines(anomalyRun)) {
                 info.addPara(safe(line), PARAGRAPH_PAD);
             }
         }
@@ -165,6 +140,6 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
 
     @Override
     public boolean shouldRemoveIntel() {
-        return liveRun() == null;
+        return ChartRuns.unclosed(runId) == null;
     }
 }

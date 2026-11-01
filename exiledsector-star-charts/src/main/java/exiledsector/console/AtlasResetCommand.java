@@ -36,7 +36,7 @@ public class AtlasResetCommand extends CampaignCommand {
             return CommandResult.BAD_SYNTAX;
         }
         if (ChartRuns.hasRun()) {
-            Console.showMessage("A Star Chart run is open. Finish or collapse it before resetting the atlas (see ExiledSectorChartStatus).");
+            Console.showMessage(ChartConsoleText.RUN_ALREADY_OPEN);
             return CommandResult.ERROR;
         }
         Long seed = arguments.sameSeed() ? Long.valueOf(AtlasState.get(Global.getSector()).seed()) : arguments.seed();

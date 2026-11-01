@@ -1,11 +1,12 @@
 package exiledsector.charts.anomaly.facility;
 
+import exiledsector.charts.anomaly.AnomalyState;
 import exiledsector.charts.run.ChartRun;
 
 public final class FacilityStates {
 
-    static final String PLANET_KEY = PreCollapseFacility.ID + ".planet";
-    static final String STAGE_KEY = PreCollapseFacility.ID + ".stage";
+    static final String PLANET_FIELD = "planet";
+    static final String STAGE_FIELD = "stage";
 
     public enum Stage {
         GUARDED,
@@ -16,13 +17,17 @@ public final class FacilityStates {
     private FacilityStates() {
     }
 
-    static void record(ChartRun run, String planetId) {
-        run.recordAnomalyState(PLANET_KEY, planetId);
-        run.recordAnomalyState(STAGE_KEY, Stage.GUARDED.name());
+    static AnomalyState of(ChartRun run) {
+        return AnomalyState.of(run, PreCollapseFacility.ANOMALY_ID);
+    }
+
+    static void record(AnomalyState state, String planetId) {
+        state.put(PLANET_FIELD, planetId);
+        state.put(STAGE_FIELD, Stage.GUARDED);
     }
 
     public static String planetId(ChartRun run) {
-        return run == null ? null : run.anomalyState(PLANET_KEY);
+        return of(run).text(PLANET_FIELD);
     }
 
     public static boolean holds(ChartRun run, String planetId) {
@@ -30,15 +35,8 @@ public final class FacilityStates {
     }
 
     public static Stage stage(ChartRun run) {
-        String stored = planetId(run) == null ? null : run.anomalyState(STAGE_KEY);
-        if (stored == null) {
-            return null;
-        }
-        try {
-            return Stage.valueOf(stored);
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
+        AnomalyState state = of(run);
+        return state.has(PLANET_FIELD) ? state.enumValue(STAGE_FIELD, Stage.class) : null;
     }
 
     public static boolean standing(ChartRun run) {
@@ -47,10 +45,10 @@ public final class FacilityStates {
     }
 
     static boolean advance(ChartRun run, Stage from, Stage to) {
-        if (stage(run) != from) {
+        if (run == null || stage(run) != from) {
             return false;
         }
-        run.recordAnomalyState(STAGE_KEY, to.name());
+        of(run).put(STAGE_FIELD, to);
         return true;
     }
 }

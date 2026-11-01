@@ -46,9 +46,9 @@ class HeistRulesTest {
 
     @Test
     void theVaultGrowsWithTierAndQuantity() {
-        assertEquals(HeistRules.LOOT_STEPS, HeistRules.lootSteps(1, 1f), EPSILON);
-        assertTrue(HeistRules.lootSteps(10, 1f) > HeistRules.lootSteps(1, 1f));
-        assertEquals(HeistRules.lootSteps(5, 1f) * 2f, HeistRules.lootSteps(5, 2f), EPSILON);
-        assertEquals(0f, HeistRules.itemMult(-1f));
+        assertEquals(HeistRules.LOOT_STEPS, VaultLoot.LOOT.steps(1, 1f), EPSILON);
+        assertTrue(VaultLoot.LOOT.steps(10, 1f) > VaultLoot.LOOT.steps(1, 1f));
+        assertEquals(VaultLoot.LOOT.steps(5, 1f) * 2f, VaultLoot.LOOT.steps(5, 2f), EPSILON);
+        assertEquals(0f, VaultLoot.LOOT.items(-1f));
     }
 }

@@ -28,6 +28,7 @@ public final class StarChart extends Item {
     static final String HIGH_TIER_ICON = "graphics/icons/star_charts/star_chart_red.png";
     private static final int LAST_LOW_TIER = 5;
     private static final int FIRST_HIGH_TIER = 11;
+    static final AffixLayout.Limits AFFIX_LIMITS = new AffixLayout.Limits(2, 6, 3, List.of(0.2f, 0.25f, 0.2f, 0.15f, 0.1f));
 
     public static final ItemTypeSupport SUPPORT = new BasicItemTypeSupport(ItemType.STAR_CHART, StarChart.class, "exiledSector.StarChart",
             StarChart::new, StarChart::new) {
@@ -61,6 +62,21 @@ public final class StarChart extends Item {
         @Override
         public Item corrupt(CorruptionOutcome outcome, Item item, Random random) {
             return StarChartCorruption.corrupt(outcome, item, random);
+        }
+
+        @Override
+        public List<CorruptionOutcome> corruptionOutcomes(Item item) {
+            return CorruptionOutcome.STAR_CHART_OUTCOMES;
+        }
+
+        @Override
+        public boolean tiered() {
+            return true;
+        }
+
+        @Override
+        public AffixLayout.Limits affixLimits() {
+            return AFFIX_LIMITS;
         }
     };
 
@@ -137,9 +153,6 @@ public final class StarChart extends Item {
         super.applyTraits(traits);
         tier = StarChartDefinitions.tierAtLeastMinimum(definitionId(), traits.tier());
         quality = clampQuality(traits.quality());
-        if (traits.implicits() != null) {
-            replaceImplicits(traits.implicits());
-        }
     }
 
     @Override
@@ -175,10 +188,9 @@ public final class StarChart extends Item {
 
     @Override
     public Modifier implicitModifier(String modifierId) {
-        for (Modifier implicit : StarChartImplicits.forSystemType(systemType())) {
-            if (implicit.id().equals(modifierId)) {
-                return implicit;
-            }
+        Modifier systemImplicit = Modifier.byId(StarChartImplicits.forSystemType(systemType()), modifierId);
+        if (systemImplicit != null) {
+            return systemImplicit;
         }
         Modifier corruptionImplicit = StarChartImplicits.anyById(modifierId);
         return corruptionImplicit != null ? corruptionImplicit : catalogueModifier(modifierId);

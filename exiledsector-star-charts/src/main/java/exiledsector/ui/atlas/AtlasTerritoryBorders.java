@@ -3,6 +3,7 @@ package exiledsector.ui.atlas;
 import exiledsector.i18n.I18n;
 import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.AtlasNoise;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.TextLabel;
@@ -12,11 +13,13 @@ import org.lwjgl.opengl.GL11;
 import java.awt.Color;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -49,6 +52,24 @@ final class AtlasTerritoryBorders {
     private static final int[][] SIDES = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
 
     record Loop(float[] outline, float[] inner, float minX, float minY, float maxX, float maxY) {
+
+        @Override
+        public boolean equals(Object other) {
+            return other instanceof Loop loop && Arrays.equals(outline, loop.outline) && Arrays.equals(inner, loop.inner)
+                    && Float.compare(minX, loop.minX) == 0 && Float.compare(minY, loop.minY) == 0
+                    && Float.compare(maxX, loop.maxX) == 0 && Float.compare(maxY, loop.maxY) == 0;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(Arrays.hashCode(outline), Arrays.hashCode(inner), minX, minY, maxX, maxY);
+        }
+
+        @Override
+        public String toString() {
+            return "Loop[outline=" + Arrays.toString(outline) + ", inner=" + Arrays.toString(inner) + ", minX=" + minX + ", minY=" + minY
+                    + ", maxX=" + maxX + ", maxY=" + maxY + "]";
+        }
     }
 
     record Region(String groupId, List<Loop> loops, float labelX, float labelY, int cells, float minX, float minY, float maxX, float maxY) {
@@ -62,6 +83,8 @@ final class AtlasTerritoryBorders {
     private final Function<String, String> names;
     private final List<TextLabel> labels = new ArrayList<>();
     private List<Region> regions = List.of();
+    private List<Color> tints = List.of();
+    private List<Color> outlines = List.of();
     private boolean shown;
     private float level;
 
@@ -79,6 +102,8 @@ final class AtlasTerritoryBorders {
         }
         labels.clear();
         regions = build(seed, known, groupAt, hasSystem);
+        tints = regions.stream().map(this::colour).toList();
+        outlines = tints.stream().map(tint -> towardWhite(tint, OUTLINE_WHITENESS)).toList();
         for (int index = 0; index < regions.size(); index++) {
             labels.add(null);
         }
@@ -108,37 +133,35 @@ final class AtlasTerritoryBorders {
         if (alpha <= 0f || regions.isEmpty()) {
             return;
         }
-        List<Region> onScreen = new ArrayList<>();
         List<Integer> onScreenIndexes = new ArrayList<>();
         for (int index = 0; index < regions.size(); index++) {
             Region region = regions.get(index);
             if (visible(view, region.minX(), region.minY(), region.maxX(), region.maxY())) {
-                onScreen.add(region);
                 onScreenIndexes.add(index);
             }
         }
-        if (onScreen.isEmpty()) {
+        if (onScreenIndexes.isEmpty()) {
             return;
         }
         try (GlScope scope = GlScope.flat()) {
-            for (Region region : onScreen) {
-                Color tint = colour(region);
-                for (Loop loop : region.loops()) {
+            for (int index : onScreenIndexes) {
+                for (Loop loop : regions.get(index).loops()) {
                     if (visible(view, loop.minX(), loop.minY(), loop.maxX(), loop.maxY())) {
-                        drawBand(view, loop, tint, BAND_ALPHA * alpha);
+                        drawBand(view, loop, tints.get(index), BAND_ALPHA * alpha);
                     }
                 }
             }
             GL11.glEnable(GL11.GL_LINE_SMOOTH);
             GL11.glLineWidth(OUTLINE_WIDTH);
-            for (Region region : onScreen) {
-                Color outline = towardWhite(colour(region), OUTLINE_WHITENESS);
+            for (int index : onScreenIndexes) {
+                Region region = regions.get(index);
+                Color outline = outlines.get(index);
                 GL11.glColor4f(outline.getRed() / 255f, outline.getGreen() / 255f, outline.getBlue() / 255f, OUTLINE_ALPHA * alpha);
                 for (Loop loop : region.loops()) {
                     if (visible(view, loop.minX(), loop.minY(), loop.maxX(), loop.maxY())) {
                         GL11.glBegin(GL11.GL_LINE_LOOP);
-                        for (int index = 0; index < loop.outline().length; index += 2) {
-                            GL11.glVertex2f(view.screenX(loop.outline()[index]), view.screenY(loop.outline()[index + 1]));
+                        for (int point = 0; point < loop.outline().length; point += 2) {
+                            GL11.glVertex2f(view.screenX(loop.outline()[point]), view.screenY(loop.outline()[point + 1]));
                         }
                         GL11.glEnd();
                     }
@@ -174,7 +197,7 @@ final class AtlasTerritoryBorders {
         }
         TextLabel label = labels.get(index);
         if (label == null) {
-            TextLabel created = new TextLabel(LABEL_FONT_SIZE, towardWhite(colour(region), OUTLINE_WHITENESS), LazyFont.TextAnchor.CENTER);
+            TextLabel created = new TextLabel(LABEL_FONT_SIZE, outlines.get(index), LazyFont.TextAnchor.CENTER);
             I18n.forGameText(() -> created.set(names.apply(region.groupId())));
             labels.set(index, created);
             label = created;
@@ -347,37 +370,7 @@ final class AtlasTerritoryBorders {
     }
 
     private static float roughness(long seed, long salt, float x, float y) {
-        float noise = (valueNoise(seed, salt, x, y) + ROUGH_OCTAVE_SHARE * valueNoise(seed, salt ^ ROUGH_OCTAVE_SALT, x * 2f, y * 2f)) / (1f + ROUGH_OCTAVE_SHARE);
-        return noise * 2f - 1f;
-    }
-
-    private static float valueNoise(long seed, long salt, float x, float y) {
-        int cornerX = (int) Math.floor(x);
-        int cornerY = (int) Math.floor(y);
-        float fractionX = fade(x - cornerX);
-        float fractionY = fade(y - cornerY);
-        float bottom = lerp(lattice(seed, salt, cornerX, cornerY), lattice(seed, salt, cornerX + 1, cornerY), fractionX);
-        float top = lerp(lattice(seed, salt, cornerX, cornerY + 1), lattice(seed, salt, cornerX + 1, cornerY + 1), fractionX);
-        return lerp(bottom, top, fractionY);
-    }
-
-    private static float lattice(long seed, long salt, int x, int y) {
-        return (mix(mix(mix(seed ^ salt) ^ x) ^ ((long) y << 32)) >>> 40) / (float) (1 << 24);
-    }
-
-    private static long mix(long value) {
-        long mixed = value;
-        mixed = (mixed ^ (mixed >>> 30)) * 0xbf58476d1ce4e5b9L;
-        mixed = (mixed ^ (mixed >>> 27)) * 0x94d049bb133111ebL;
-        return mixed ^ (mixed >>> 31);
-    }
-
-    private static float fade(float fraction) {
-        return fraction * fraction * fraction * (fraction * (fraction * 6f - 15f) + 10f);
-    }
-
-    private static float lerp(float from, float to, float fraction) {
-        return from + (to - from) * fraction;
+        return AtlasNoise.twoOctave(seed, salt, ROUGH_OCTAVE_SALT, ROUGH_OCTAVE_SHARE, x, y) * 2f - 1f;
     }
 
     private static Loop loop(List<float[]> points) {

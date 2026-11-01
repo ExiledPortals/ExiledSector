@@ -17,6 +17,7 @@ import org.mockito.ArgumentCaptor;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -62,6 +63,7 @@ class DisintegrationListenerTest {
         when(armorTaken.getModifiedValue()).thenReturn(1f);
         when(stats.getArmorDamageTakenMult()).thenReturn(armorTaken);
         when(target.getMutableStats()).thenReturn(stats);
+        when(target.getOwner()).thenReturn(1);
         when(target.getArmorGrid()).thenReturn(grid);
         when(grid.getGrid()).thenReturn(new float[5][5]);
         when(grid.getCellAtLocation(point)).thenReturn(new int[]{2, 2});
@@ -109,6 +111,21 @@ class DisintegrationListenerTest {
         listener.modifyDamageDealt(projectileFrom(WeaponAPI.WeaponType.BALLISTIC), target, damage, point, false);
 
         verify(grid, never()).setArmorValue(anyInt(), anyInt(), anyFloat());
+    }
+
+    @Test
+    void disintegrationLeavesAlliedArmorAlone() {
+        ShipAPI ship = shipWithDynamicValue(DisintegrationListener.ARMOR_DAMAGE_PERCENT_KEY, 50f);
+        Vector2f point = new Vector2f();
+        ArmorGridAPI grid = mock(ArmorGridAPI.class);
+        ShipAPI ally = armoredTarget(grid, point);
+        when(ally.getOwner()).thenReturn(0);
+        DamageAPI damage = mock(DamageAPI.class);
+        when(damage.getDamage()).thenReturn(300f);
+
+        new DisintegrationListener(ship).modifyDamageDealt(projectileFrom(WeaponAPI.WeaponType.ENERGY), ally, damage, point, false);
+
+        verify(ally, never()).addListener(any());
     }
 
     @Test

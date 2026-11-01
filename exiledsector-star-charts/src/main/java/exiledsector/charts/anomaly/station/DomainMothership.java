@@ -6,7 +6,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Factions;
 
 public final class DomainMothership extends LaunchingStation {
 
-    public static final String ID = "domain_mothership";
+    public static final String ANOMALY_ID = "domain_mothership";
     public static final DomainMothership INSTANCE = new DomainMothership();
 
     private DomainMothership() {
@@ -14,7 +14,7 @@ public final class DomainMothership extends LaunchingStation {
 
     @Override
     public String id() {
-        return ID;
+        return ANOMALY_ID;
     }
 
     @Override

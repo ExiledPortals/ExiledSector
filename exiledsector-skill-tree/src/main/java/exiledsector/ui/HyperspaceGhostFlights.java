@@ -4,6 +4,7 @@ import exiledsector.ui.decoration.GhostFlight;
 import exiledsector.ui.decoration.GhostFlightPool;
 import exiledsector.ui.hyperspace.HyperspaceRoute;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -17,7 +18,7 @@ final class HyperspaceGhostFlights {
     private final Random random;
     private final GhostFlightPool flights = new GhostFlightPool();
     private List<HyperspaceRoute> routes = List.of();
-    private float[] secondsUntilNextFlight = new float[0];
+    private List<GhostFlightPool.LaunchTimer> launchTimers = List.of();
 
     HyperspaceGhostFlights(Random random) {
         this.random = random;
@@ -29,20 +30,18 @@ final class HyperspaceGhostFlights {
         }
         routes = newRoutes;
         flights.clear();
-        secondsUntilNextFlight = new float[routes.size()];
-        for (int i = 0; i < secondsUntilNextFlight.length; i++) {
-            secondsUntilNextFlight[i] = random.nextFloat() * MAX_SECONDS_BETWEEN_FLIGHTS;
+        List<GhostFlightPool.LaunchTimer> timers = new ArrayList<>(routes.size());
+        for (int i = 0; i < routes.size(); i++) {
+            timers.add(new GhostFlightPool.LaunchTimer(MIN_SECONDS_BETWEEN_FLIGHTS, MAX_SECONDS_BETWEEN_FLIGHTS, random));
         }
+        launchTimers = timers;
     }
 
     void advance(float amount) {
         flights.advance(amount);
-        for (int i = 0; i < secondsUntilNextFlight.length; i++) {
-            secondsUntilNextFlight[i] -= amount;
-            if (secondsUntilNextFlight[i] <= 0f) {
+        for (int i = 0; i < launchTimers.size(); i++) {
+            if (launchTimers.get(i).launchesAfter(amount)) {
                 flights.add(launch(routes.get(i)));
-                secondsUntilNextFlight[i] = MIN_SECONDS_BETWEEN_FLIGHTS
-                        + random.nextFloat() * (MAX_SECONDS_BETWEEN_FLIGHTS - MIN_SECONDS_BETWEEN_FLIGHTS);
             }
         }
     }

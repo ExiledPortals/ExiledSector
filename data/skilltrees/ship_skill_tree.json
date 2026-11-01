@@ -7629,8 +7629,8 @@
 				"hungering_rift_healing_1",
 				"hungering_rift_healing_3"
 			],
-			"x": -34613,
-			"y": 27837,
+			"x": -34584,
+			"y": 27834,
 			"orbitAnchorId": "anchor_82",
 			"orbitAngle": 0,
 			"tags": [
@@ -7645,8 +7645,8 @@
 				"hungering_rift_healing_2",
 				"shrouded_mantle_1"
 			],
-			"x": -34763,
-			"y": 27687,
+			"x": -34734,
+			"y": 27684,
 			"orbitAnchorId": "anchor_82",
 			"orbitAngle": 270,
 			"tags": [
@@ -7662,8 +7662,8 @@
 				"shrouded_lens_damage_3",
 				"small_flux_optional_103"
 			],
-			"x": -33852,
-			"y": 27854,
+			"x": -33911,
+			"y": 27834,
 			"orbitAnchorId": "anchor_87",
 			"orbitAngle": 0,
 			"tags": [
@@ -7678,8 +7678,8 @@
 				"shrouded_lens_damage_1",
 				"shrouded_lens_1"
 			],
-			"x": -34002,
-			"y": 27704,
+			"x": -34061,
+			"y": 27684,
 			"orbitAnchorId": "anchor_87",
 			"orbitAngle": 270,
 			"tags": [
@@ -7694,8 +7694,8 @@
 				"shrouded_lens_damage_2",
 				"shrouded_lens_damage_3"
 			],
-			"x": -34152,
-			"y": 27854,
+			"x": -34211,
+			"y": 27834,
 			"orbitAnchorId": "anchor_87",
 			"orbitAngle": 180,
 			"tags": [
@@ -7711,8 +7711,8 @@
 				"small_flux_optional_81",
 				"hungering_rift_healing_3"
 			],
-			"x": -34913,
-			"y": 27837,
+			"x": -34884,
+			"y": 27834,
 			"orbitAnchorId": "anchor_82",
 			"orbitAngle": 180,
 			"tags": [
@@ -7728,8 +7728,8 @@
 				"small_flux_optional_104",
 				"rift_lightning_damage_3"
 			],
-			"x": -34383,
-			"y": 28337,
+			"x": -34384,
+			"y": 28288,
 			"orbitAnchorId": "anchor_86",
 			"orbitAngle": 90,
 			"tags": [
@@ -7744,8 +7744,8 @@
 				"rift_lightning_damage_1",
 				"shrouded_thunderhead_1"
 			],
-			"x": -34533,
-			"y": 28187,
+			"x": -34534,
+			"y": 28138,
 			"orbitAnchorId": "anchor_86",
 			"orbitAngle": 180,
 			"tags": [
@@ -7760,8 +7760,8 @@
 				"rift_lightning_damage_2",
 				"rift_lightning_damage_3"
 			],
-			"x": -34383,
-			"y": 28037,
+			"x": -34384,
+			"y": 27988,
 			"orbitAnchorId": "anchor_86",
 			"orbitAngle": 270,
 			"tags": [
@@ -7844,8 +7844,8 @@
 				"rift_lightning_damage_1",
 				"shrouded_thunderhead_1"
 			],
-			"x": -34233,
-			"y": 28187,
+			"x": -34234,
+			"y": 28138,
 			"orbitAnchorId": "anchor_86",
 			"orbitAngle": 0,
 			"tags": [
@@ -7860,8 +7860,8 @@
 				"hungering_rift_healing_2",
 				"shrouded_mantle_1"
 			],
-			"x": -34763,
-			"y": 27987,
+			"x": -34734,
+			"y": 27984,
 			"orbitAnchorId": "anchor_82",
 			"orbitAngle": 90,
 			"tags": [
@@ -7876,8 +7876,8 @@
 				"shrouded_lens_damage_1",
 				"shrouded_lens_1"
 			],
-			"x": -34002,
-			"y": 28004,
+			"x": -34061,
+			"y": 27984,
 			"orbitAnchorId": "anchor_87",
 			"orbitAngle": 90,
 			"tags": [
@@ -10188,26 +10188,26 @@
 		{
 			"a": "shrouded_lens_damage_1",
 			"b": "shrouded_lens_damage_2",
-			"controlX": -33896,
-			"controlY": 27748
+			"controlX": -33955,
+			"controlY": 27728
 		},
 		{
 			"a": "shrouded_lens_1",
 			"b": "shrouded_lens_damage_2",
-			"controlX": -34108,
-			"controlY": 27748
+			"controlX": -34167,
+			"controlY": 27728
 		},
 		{
 			"a": "rift_lightning_damage_1",
 			"b": "rift_lightning_damage_2",
-			"controlX": -34489,
-			"controlY": 28293
+			"controlX": -34490,
+			"controlY": 28244
 		},
 		{
 			"a": "rift_lightning_damage_2",
 			"b": "shrouded_thunderhead_1",
-			"controlX": -34489,
-			"controlY": 28081
+			"controlX": -34490,
+			"controlY": 28032
 		},
 		{
 			"a": "small_flux_optional_80",
@@ -10236,50 +10236,50 @@
 		{
 			"a": "hungering_rift_healing_1",
 			"b": "hungering_rift_healing_2",
-			"controlX": -34869,
-			"controlY": 27731
+			"controlX": -34840,
+			"controlY": 27728
 		},
 		{
 			"a": "hungering_rift_healing_1",
 			"b": "shrouded_mantle_1",
-			"controlX": -34657,
-			"controlY": 27731
+			"controlX": -34628,
+			"controlY": 27728
 		},
 		{
 			"a": "rift_lightning_damage_1",
 			"b": "rift_lightning_damage_3",
-			"controlX": -34277,
-			"controlY": 28293
+			"controlX": -34278,
+			"controlY": 28244
 		},
 		{
 			"a": "rift_lightning_damage_3",
 			"b": "shrouded_thunderhead_1",
-			"controlX": -34277,
-			"controlY": 28081
+			"controlX": -34278,
+			"controlY": 28032
 		},
 		{
 			"a": "hungering_rift_healing_2",
 			"b": "hungering_rift_healing_3",
-			"controlX": -34869,
-			"controlY": 27943
+			"controlX": -34840,
+			"controlY": 27940
 		},
 		{
 			"a": "hungering_rift_healing_3",
 			"b": "shrouded_mantle_1",
-			"controlX": -34657,
-			"controlY": 27943
+			"controlX": -34628,
+			"controlY": 27940
 		},
 		{
 			"a": "shrouded_lens_damage_1",
 			"b": "shrouded_lens_damage_3",
-			"controlX": -33896,
-			"controlY": 27960
+			"controlX": -33955,
+			"controlY": 27940
 		},
 		{
 			"a": "shrouded_lens_1",
 			"b": "shrouded_lens_damage_3",
-			"controlX": -34108,
-			"controlY": 27960
+			"controlX": -34167,
+			"controlY": 27940
 		}
 	],
 	"hiddenConnectors": [
@@ -10979,20 +10979,20 @@
 		},
 		{
 			"id": "anchor_82",
-			"x": -34763,
-			"y": 27837,
+			"x": -34734,
+			"y": 27834,
 			"radius": 150
 		},
 		{
 			"id": "anchor_86",
-			"x": -34383,
-			"y": 28187,
+			"x": -34384,
+			"y": 28138,
 			"radius": 150
 		},
 		{
 			"id": "anchor_87",
-			"x": -34002,
-			"y": 27854,
+			"x": -34061,
+			"y": 27834,
 			"radius": 150
 		}
 	],

@@ -1,14 +1,13 @@
 package exiledsector.ui;
 
-import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
-import com.fs.starfarer.api.ui.CustomPanelAPI;
 import lunalib.lunaRefit.LunaRefitManager;
 
 public class ModificationBenchRefitButton extends FullScreenRefitButton {
 
+    public static final String BUTTON_KEY = "ui.benchRefitButton";
     static final String ICON_PATH = "graphics/icons/cargo/nanoswarm_augmentation.png";
 
     public static void addButton() {
@@ -16,15 +15,12 @@ public class ModificationBenchRefitButton extends FullScreenRefitButton {
     }
 
     public static boolean openPanel(InputEventAPI event) {
-        return RefitPanelLauncher.open(ModificationBenchRefitButton.class, event, context -> {
-            ModificationBenchScreen screen = new ModificationBenchScreen(new ModificationBenchScreen.RefitHost(context.button()));
-            return new RefitPanelLauncher.Background(screen, screen::attach);
-        });
+        return openScreen(ModificationBenchRefitButton.class, event);
     }
 
     @Override
     protected String buttonKey() {
-        return "ui.benchRefitButton";
+        return BUTTON_KEY;
     }
 
     @Override
@@ -33,11 +29,13 @@ public class ModificationBenchRefitButton extends FullScreenRefitButton {
     }
 
     @Override
-    public void initPanel(CustomPanelAPI backgroundPanel, FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
-        if (backgroundPanel.getPlugin() instanceof ModificationBenchScreen) {
-            return;
-        }
+    protected Class<ModificationBenchScreen> screenClass() {
+        return ModificationBenchScreen.class;
+    }
+
+    @Override
+    protected RefitPanelLauncher.Background createScreen(FleetMemberAPI member, ShipVariantAPI variant) {
         ModificationBenchScreen screen = new ModificationBenchScreen(new ModificationBenchScreen.RefitHost(this));
-        fillWithScreen(backgroundPanel, screen, screen::attach);
+        return new RefitPanelLauncher.Background(screen, screen::attach);
     }
 }

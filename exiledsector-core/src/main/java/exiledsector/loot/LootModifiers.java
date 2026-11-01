@@ -5,4 +5,8 @@ import exiledsector.items.ItemChances;
 public record LootModifiers(ItemChances itemChances, float feedstockMult, float currencyMult) {
 
     public static final LootModifiers NONE = new LootModifiers(ItemChances.BASE, 1f, 1f);
+
+    public static LootModifiers of(float mult) {
+        return new LootModifiers(ItemChances.of(mult), mult, mult);
+    }
 }

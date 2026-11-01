@@ -21,7 +21,6 @@ import exiledsector.skills.SkillType;
 import exiledsector.skills.radius.RadiusSize;
 import exiledsector.ui.decoration.AbyssDarknessRenderer;
 import exiledsector.ui.decoration.DecorationScene;
-import exiledsector.ui.decoration.FactionFleetRenderer;
 import exiledsector.ui.decoration.SkillTreeFleetRenderer;
 import exiledsector.ui.decoration.StarfieldRenderer;
 import exiledsector.ui.decoration.TreeDecorations;
@@ -47,10 +46,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private final StarfieldRenderer starfieldRenderer;
     private final AbyssDarknessRenderer abyssDarkness = AbyssDarknessRenderer.forActiveTree();
-    private final TreeDecorations decorations = TreeDecorations.forActiveTree();
+    private final TreeDecorations decorations;
     private final ExoshipView exoshipView = new ExoshipView();
     private final SkillTreeFleetRenderer fleetRenderer;
-    private final FactionFleetRenderer factionFleets;
     private final NodeRadiusRingRenderer radiusRingRenderer = new NodeRadiusRingRenderer();
     private final TreeAllocationSession treeSession;
     private final SkillTreeNodeDrawer nodeDrawer;
@@ -77,21 +75,19 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     public SkillTreeCanvasPlugin(FleetMemberAPI member, ShipVariantAPI variant, float shipCardHeight, BaseRefitButton refitButton,
                                  CustomPanelAPI hostPanel, Consumer<FleetMemberAPI> shipSwitcher) {
         OpReserveParity.warnIfOutOfSync(member, variant, "before the skill tree re-synced it");
-        if (member != null) {
-            PhantomConflictWatch.applyPendingReverts(member.getId());
-        }
+        PhantomConflictWatch.applyPendingReverts(member.getId());
         if (ShipTreeSync.memberChanged(member, variant) && refitButton != null) {
             refitButton.refreshVariant();
         }
         SocketCustody.reconcile();
         SkillTreePanelStyle panelStyle = new SkillTreePanelStyle();
         this.starfieldRenderer = new StarfieldRenderer(panelStyle);
-        this.fleetRenderer = SkillTreeFleetRenderer.forPlayerFleet(member == null ? null : member.getId());
+        this.fleetRenderer = SkillTreeFleetRenderer.forPlayerFleet(member.getId());
         exoshipView.setPlayerShip(member);
-        this.nodeSearch = new NodeSearch(member == null ? null : member.getHullSpec().getHullSize());
+        this.nodeSearch = new NodeSearch(member.getHullSpec().getHullSize());
         this.searchBar = new SkillTreeSearchBar(nodeSearch, this::jumpToNextSearchMatch);
         this.treeSession = new TreeAllocationSession(member, variant, refitButton, nodeSearch);
-        this.factionFleets = FactionFleetRenderer.forActiveTree(treeSession::isLocked);
+        this.decorations = TreeDecorations.forActiveTree(treeSession::isLocked);
         this.nodeDrawer = SkillTreeNodeDrawer.attachedTo(treeSession, member, panelStyle, nodeSearch);
         this.templateUi = new SkillTreeTemplateController(member, treeSession, panelStyle);
         this.statPanel = new SkillTreeStatPanel(member, variant, panelStyle);
@@ -100,7 +96,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.chrome = new SkillTreeChrome(member, panelStyle, statPanel, searchBar, templateUi, socketPlacement, shipCardHeight);
         this.shipList = new FleetShipList(hostPanel, shipCardHeight, shipSwitcher);
 
-        this.cameraMemory = TreeCameraMemory.forShip(member == null ? null : member.getId());
+        this.cameraMemory = TreeCameraMemory.forShip(member.getId());
         SkillNode startingRoot = treeSession.getStartingRoot();
         if (startingRoot != null && cameraMemory.isSaved()) {
             camera.jumpTo(cameraMemory.camera());
@@ -173,7 +169,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         searchBar.advance(amount);
         starfieldRenderer.advance(amount);
         decorations.advance(amount);
-        factionFleets.advance(amount);
         if (camera.isFollowing() && hyperspaceMode.isActive()) {
             stopFollowing();
         }
@@ -529,7 +524,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         DecorationScene decorationScene = new DecorationScene(viewport, sceneryAlpha, treeAlpha, hyperspaceMode.anchorIds(),
                 new DecorationScene.StarMap(hyperspaceMode.starRadius(), hyperspaceMode.mapAmount(), hyperspaceMode.hiddenStarIds()));
         decorations.renderBehindTree(decorationScene);
-        factionFleets.render(viewport, sceneryAlpha * treeAlpha);
         boolean pointerOverTree = mouseKnown && !chrome.contains(canvasPosition, mode, mouseX, mouseY) && !shipList.contains(mouseX, mouseY);
         boolean shipHovered = pointerOverTree && mode.hoversTree() && exoshipView.shipContains(viewport, mouseX, mouseY);
         boolean treeHovered = pointerOverTree && mode.hoversTree() && !shipHovered;

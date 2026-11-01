@@ -16,7 +16,9 @@ import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.content.ChartContent;
+import exiledsector.charts.content.ChartFleetVisibility;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.objective.ChartObjective;
@@ -70,7 +72,7 @@ class ChartRelaysTest {
 
     static ChartRun liveRelayRun() {
         ChartRun run = run();
-        run.recordContent(new ChartContent(4, "pirates", ChartObjective.BOSS, List.of("boss"), "boss", 3, 2, List.of(RelayNetwork.ID)));
+        run.recordContent(new ChartContent(4, "pirates", ChartObjective.BOSS, List.of("boss"), "boss", 3, 2, List.of(RelayNetwork.ANOMALY_ID)));
         run.recordArrival();
         return run;
     }
@@ -104,10 +106,10 @@ class ChartRelaysTest {
 
         assertTrue(ChartRelays.wake(run, system, relay, RelayKind.COMM_RELAY));
 
-        assertEquals(RelayRules.REVEAL_RANGE_MULT, enemy.getStats().getDynamic().getStat(Stats.DETECTED_BY_PLAYER_RANGE_MULT).getModifiedValue(), 0.001f);
-        verify(enemy).setExtendedDetectedAtRange(RelayRules.REVEAL_EXTENDED_RANGE);
+        assertEquals(ChartFleetVisibility.REVEAL_RANGE_MULT, enemy.getStats().getDynamic().getStat(Stats.DETECTED_BY_PLAYER_RANGE_MULT).getModifiedValue(), 0.001f);
+        verify(enemy).setExtendedDetectedAtRange(ChartFleetVisibility.REVEAL_EXTENDED_RANGE);
         assertEquals(1f, player.getStats().getDynamic().getStat(Stats.DETECTED_BY_PLAYER_RANGE_MULT).getModifiedValue(), 0.001f);
-        verify(player, never()).setExtendedDetectedAtRange(RelayRules.REVEAL_EXTENDED_RANGE);
+        verify(player, never()).setExtendedDetectedAtRange(ChartFleetVisibility.REVEAL_EXTENDED_RANGE);
         assertTrue(relay.getMemoryWithoutUpdate().getBoolean(MemFlags.OBJECTIVE_NON_FUNCTIONAL));
     }
 
@@ -224,13 +226,13 @@ class ChartRelaysTest {
         when(system.getEntitiesWithTag(RelayNetwork.RELAY_TAG)).thenReturn(List.of(array, buoy));
         RelayStates.add(run, RelayKind.SENSOR_ARRAY, RelayStates.PAID);
 
-        assertTrue(ChartRelays.check(mockSector.sector));
+        assertTrue(ChartRelays.check(mockSector.sector, new AnomalyRun(run, system)));
 
         assertTrue(RelayStates.isWoken(run, RelayKind.SENSOR_ARRAY));
         assertFalse(RelayStates.has(run, RelayKind.NAV_BUOY, RelayStates.SYNCED));
-        assertFalse(ChartRelays.check(mockSector.sector));
+        assertFalse(ChartRelays.check(mockSector.sector, new AnomalyRun(run, system)));
         when(player.getContainingLocation()).thenReturn(mock(StarSystemAPI.class));
-        assertFalse(ChartRelays.check(mockSector.sector));
+        assertFalse(ChartRelays.check(mockSector.sector, new AnomalyRun(run, system)));
     }
 
     @Test
@@ -260,9 +262,9 @@ class ChartRelaysTest {
         CampaignFleetAPI defenders = RelayFixtures.fleet(false, new Vector2f(7000f, 0f));
         when(system.getFleets()).thenReturn(List.of(player, defenders));
 
-        ChartRelays.check(mockSector.sector);
+        ChartRelays.check(mockSector.sector, new AnomalyRun(run, system));
 
-        verify(defenders).setExtendedDetectedAtRange(RelayRules.REVEAL_EXTENDED_RANGE);
+        verify(defenders).setExtendedDetectedAtRange(ChartFleetVisibility.REVEAL_EXTENDED_RANGE);
     }
 
     @Test

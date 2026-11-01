@@ -1,7 +1,7 @@
 package exiledsector.skills.template;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.skills.AffinityOptions;
+import exiledsector.skills.NodeEntry;
 import exiledsector.skills.NodeReplacements;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,7 +13,6 @@ import java.util.List;
 public final class TemplateCodec {
 
     static final int VERSION = 1;
-    private static final String OPTION_SEPARATOR = "=";
 
     private TemplateCodec() {
     }
@@ -21,7 +20,7 @@ public final class TemplateCodec {
     public static String encode(SkillTreeTemplate template) {
         JSONArray encodedSteps = new JSONArray();
         for (TemplateStep step : template.steps()) {
-            encodedSteps.put(step.optionTypeId() == null ? step.nodeId() : step.nodeId() + OPTION_SEPARATOR + step.optionTypeId());
+            encodedSteps.put(new NodeEntry(step.nodeId(), step.optionTypeId()).format());
         }
         try {
             JSONObject templateJson = new JSONObject();
@@ -79,12 +78,9 @@ public final class TemplateCodec {
             if (entry.isEmpty()) {
                 continue;
             }
-            int separator = entry.indexOf(OPTION_SEPARATOR);
-            if (separator < 0) {
-                steps.add(new TemplateStep(NodeReplacements.current(entry), null));
-            } else if (separator > 0) {
-                String optionTypeId = entry.substring(separator + 1);
-                steps.add(new TemplateStep(NodeReplacements.current(entry.substring(0, separator)), optionTypeId.isEmpty() ? null : AffinityOptions.currentOptionId(optionTypeId)));
+            NodeEntry nodeEntry = NodeEntry.parse(entry);
+            if (nodeEntry != null) {
+                steps.add(new TemplateStep(nodeEntry.nodeId(), nodeEntry.optionId()));
             }
         }
         return steps;

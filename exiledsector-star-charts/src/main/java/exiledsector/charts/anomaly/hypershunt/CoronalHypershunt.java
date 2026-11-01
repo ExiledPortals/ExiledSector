@@ -14,7 +14,12 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
-import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.AnomalyRun;
+import exiledsector.charts.anomaly.AtlasRule;
+import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.anomaly.RunParticipant;
+import exiledsector.charts.anomaly.StarRule;
+import exiledsector.charts.anomaly.VanillaDefenders;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasState;
@@ -27,16 +32,15 @@ import exiledsector.items.UseVerdict;
 import java.util.List;
 import java.util.Random;
 
-public final class CoronalHypershunt implements ChartAnomaly {
+public final class CoronalHypershunt implements StarRule, AtlasRule, ContentPlacer, RunParticipant {
 
-    public static final String ID = "coronal_hypershunt";
+    public static final String ANOMALY_ID = "coronal_hypershunt";
     public static final String HYPERSHUNT_TAG = ChartIds.PREFIX + "coronal_hypershunt";
     public static final CoronalHypershunt INSTANCE = new CoronalHypershunt();
     public static final float MIN_DISTANCE = 15f;
     public static final String TOO_CLOSE_KEY = "catalyst.refused.hypershunt.too_close";
     static final String ENTITY_TYPE = Entities.CORONAL_TAP;
     static final float ORBIT_GAP = 250f;
-    static final float ORBIT_DAYS_PER_UNIT = 1f / 20f;
     static final long PLACEMENT_SALT = 0x48595053484e54L;
 
     private CoronalHypershunt() {
@@ -44,7 +48,7 @@ public final class CoronalHypershunt implements ChartAnomaly {
 
     @Override
     public String id() {
-        return ID;
+        return ANOMALY_ID;
     }
 
     @Override
@@ -64,7 +68,7 @@ public final class CoronalHypershunt implements ChartAnomaly {
 
     @Override
     public UseVerdict insertVerdict(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        return fitsAt(generator.traits(cell)) ? UseVerdict.ALLOWED : UseVerdict.refused(TOO_CLOSE_KEY);
+        return fitsAt(generator.traits(cell)) ? UseVerdict.ALLOW : UseVerdict.refused(TOO_CLOSE_KEY);
     }
 
     @Override
@@ -83,11 +87,11 @@ public final class CoronalHypershunt implements ChartAnomaly {
         float radius = star.getRadius() + ORBIT_GAP;
         ChartSites.Orbit orbit = site.clearOrbit(star, radius, radius, random);
         if (orbit == null) {
-            orbit = new ChartSites.Orbit(star, random.nextFloat() * 360f, radius, radius * ORBIT_DAYS_PER_UNIT);
+            orbit = AnomalyContentSite.orbit(star, random.nextFloat() * 360f, radius);
         }
         SectorEntityToken hypershunt = site.addEntity(hypershuntId(site.runId()), null, ENTITY_TYPE, Factions.NEUTRAL, orbit);
         hypershunt.addTag(HYPERSHUNT_TAG);
-        HypershuntGuards.arm(hypershunt, site.random(HypershuntGuards.GUARD_SALT).nextLong());
+        VanillaDefenders.arm(hypershunt, site.random(HypershuntGuards.GUARD_SALT).nextLong());
         return hypershunt;
     }
 
@@ -100,11 +104,8 @@ public final class CoronalHypershunt implements ChartAnomaly {
     }
 
     static ChartRun liveRunFor(SectorEntityToken hypershunt) {
-        if (!isHypershunt(hypershunt)) {
-            return null;
-        }
-        ChartRun run = ChartRuns.currentOrNull();
-        return run != null && run.runState().isLive() && ChartIds.belongsToRun(hypershunt, run.runId()) && run.anomalyIds().contains(ID) ? run : null;
+        ChartRun run = isHypershunt(hypershunt) ? ChartRuns.liveOwning(hypershunt) : null;
+        return run != null && run.anomalyIds().contains(ANOMALY_ID) ? run : null;
     }
 
     static SectorEntityToken hypershuntIn(LocationAPI location) {
@@ -113,20 +114,14 @@ public final class CoronalHypershunt implements ChartAnomaly {
     }
 
     @Override
-    public boolean isActiveIn(LocationAPI location) {
-        SectorEntityToken hypershunt = hypershuntIn(location);
-        return liveRunFor(hypershunt) != null && HypershuntGuards.guarded(hypershunt);
+    public InteractionDialogPlugin dialogFor(AnomalyRun run, SectorEntityToken target) {
+        return isHypershunt(target) && run.holds(target) ? new HypershuntDialog() : null;
     }
 
     @Override
-    public InteractionDialogPlugin dialogFor(SectorEntityToken target) {
-        return liveRunFor(target) != null ? new HypershuntDialog() : null;
-    }
-
-    @Override
-    public String intelText(ChartRun run, LocationAPI location) {
-        SectorEntityToken hypershunt = hypershuntIn(location);
-        PlanetAPI star = hypershunt == null || !HypershuntGuards.guarded(hypershunt) || !(hypershunt.getOrbitFocus() instanceof PlanetAPI focus)
+    public String intelText(AnomalyRun run) {
+        SectorEntityToken hypershunt = hypershuntIn(run.system());
+        PlanetAPI star = hypershunt == null || !VanillaDefenders.guarded(hypershunt) || !(hypershunt.getOrbitFocus() instanceof PlanetAPI focus)
                 ? null : focus;
         if (star == null) {
             return null;

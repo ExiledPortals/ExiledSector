@@ -1,5 +1,6 @@
 package exiledsector.charts.anomaly.excavation;
 
+import exiledsector.charts.anomaly.AnomalyState;
 import exiledsector.charts.run.ChartRun;
 
 import java.util.ArrayList;
@@ -7,31 +8,30 @@ import java.util.List;
 
 public final class ExcavationStates {
 
-    static final String KEY_PREFIX = ExcavationSites.ID + ".";
-
     private ExcavationStates() {
     }
 
-    static String key(int index) {
-        return KEY_PREFIX + index;
+    static AnomalyState of(ChartRun run) {
+        return AnomalyState.of(run, ExcavationSites.ANOMALY_ID);
     }
 
-    public static void record(ChartRun run, ExcavationSite site) {
-        run.recordAnomalyState(key(site.index()), site.encode());
+    static void record(AnomalyState state, ExcavationSite site) {
+        state.put(Integer.toString(site.index()), site.encode());
     }
 
     public static List<ExcavationSite> all(ChartRun run) {
+        AnomalyState state = of(run);
         List<ExcavationSite> sites = new ArrayList<>();
-        if (run == null) {
-            return sites;
-        }
-        for (int index = 0; run.anomalyState(key(index)) != null; index++) {
-            ExcavationSite site = ExcavationSite.decode(index, run.anomalyState(key(index)));
+        for (int index = 0; ; index++) {
+            String stored = state.text(Integer.toString(index));
+            if (stored == null) {
+                return sites;
+            }
+            ExcavationSite site = ExcavationSite.decode(index, stored);
             if (site != null) {
                 sites.add(site);
             }
         }
-        return sites;
     }
 
     public static List<ExcavationSite> standing(ChartRun run) {
@@ -60,7 +60,7 @@ public final class ExcavationStates {
         if (current == null || current.cleared()) {
             return false;
         }
-        record(run, current.asCleared());
+        record(of(run), current.asCleared());
         return true;
     }
 }

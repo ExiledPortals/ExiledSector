@@ -1,6 +1,5 @@
 package exiledsector.charts.anomaly.convoy;
 
-import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD.RaidDangerLevel;
 import exiledsector.charts.generation.ChartTiers;
 
 public final class ConvoyRules {
@@ -31,10 +30,6 @@ public final class ConvoyRules {
     static final float SCREEN_TERRAIN_BURN = 0.5f;
     static final float ESCORT_TERRAIN_BURN = 0.65f;
     static final float PULSE_REPEAT_DAYS = 0.15f;
-    static final float RAID_DIFFICULTY = 60f;
-    static final float RAID_DIFFICULTY_PER_TIER = 30f;
-    static final int LOW_DANGER_MAX_TIER = 5;
-    static final int MEDIUM_DANGER_MAX_TIER = 10;
 
     private ConvoyRules() {
     }
@@ -61,17 +56,5 @@ public final class ConvoyRules {
             case SCREEN -> SCREEN_TERRAIN_BURN;
             case ESCORT -> ESCORT_TERRAIN_BURN;
         };
-    }
-
-    public static float raidDifficulty(int tier) {
-        return RAID_DIFFICULTY + RAID_DIFFICULTY_PER_TIER * (ChartTiers.clamp(tier) - 1);
-    }
-
-    public static RaidDangerLevel cacheDanger(int tier) {
-        int clamped = ChartTiers.clamp(tier);
-        if (clamped <= LOW_DANGER_MAX_TIER) {
-            return RaidDangerLevel.LOW;
-        }
-        return clamped <= MEDIUM_DANGER_MAX_TIER ? RaidDangerLevel.MEDIUM : RaidDangerLevel.HIGH;
     }
 }

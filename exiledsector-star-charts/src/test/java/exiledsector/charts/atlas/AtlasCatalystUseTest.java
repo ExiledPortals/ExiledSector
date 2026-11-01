@@ -28,9 +28,9 @@ class AtlasCatalystUseTest {
 
     private static final long SEED = 0x51A7E5L;
     private static final List<AtlasRegion> REGIONS = List.of(new AtlasRegion(AtlasRegion.NORMAL, 1f, 0, "", "", Map.of(), Map.of(), Map.of()));
-    private static final AtlasCatalysts.Catalyst BREACH_TERMINUS = new AtlasCatalysts.Catalyst("test_breach_terminus", SpatialBreach.ID,
+    private static final AtlasCatalysts.Catalyst BREACH_TERMINUS = new AtlasCatalysts.Catalyst("test_breach_terminus", SpatialBreach.ANOMALY_ID,
             AtlasCatalysts.Family.TERMINUS, 1f, 1);
-    private static final AtlasCatalysts.Catalyst HYPERSHUNT_SURVEY = new AtlasCatalysts.Catalyst("test_hypershunt_survey", CoronalHypershunt.ID,
+    private static final AtlasCatalysts.Catalyst HYPERSHUNT_SURVEY = new AtlasCatalysts.Catalyst("test_hypershunt_survey", CoronalHypershunt.ANOMALY_ID,
             AtlasCatalysts.Family.SURVEY, 0f, 1, AtlasCatalysts.Effect.STAR, "");
 
     private static AtlasGenerator generator(AtlasState state) {
@@ -87,8 +87,8 @@ class AtlasCatalystUseTest {
         AtlasCatalystUse.Outcome outcome = Consumables.use(use, cell, materials);
 
         assertNotNull(outcome);
-        assertEquals(Map.of("anomaly", AtlasCatalystUse.anomalyName(SpatialBreach.ID)), outcome.args());
-        assertEquals(List.of(new AtlasAnomalyRecord(state.anomalyRecords(cell).get(0).recordId(), cell, SpatialBreach.ID,
+        assertEquals(Map.of("anomaly", AtlasNames.anomaly(SpatialBreach.ANOMALY_ID)), outcome.args());
+        assertEquals(List.of(new AtlasAnomalyRecord(state.anomalyRecords(cell).get(0).recordId(), cell, SpatialBreach.ANOMALY_ID,
                 AtlasAnomalyRecord.Source.PLAYER)), state.anomalyRecords(cell));
         assertEquals(1, materials.count(BREACH_TERMINUS.itemId()));
         assertEquals("catalyst.refused.already_present", use.check(cell).refusalKey());
@@ -115,17 +115,17 @@ class AtlasCatalystUseTest {
 
     @Test
     void aConflictNamesTheAnomalyAlreadyThere() {
-        ChartTables.useAnomalies(List.of(definition(SpatialBreach.ID, Set.of(AsteroidStorm.ID)), definition(AsteroidStorm.ID, Set.of())));
+        ChartTables.useAnomalies(List.of(definition(SpatialBreach.ANOMALY_ID, Set.of(AsteroidStorm.ANOMALY_ID)), definition(AsteroidStorm.ANOMALY_ID, Set.of())));
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = generator(state);
         AtlasCell cell = system(generator, 0);
-        AtlasAnomalies.insert(generator, state, cell, AsteroidStorm.ID, AtlasAnomalyRecord.Source.WORLD, null);
+        AtlasAnomalies.insert(generator, state, cell, AsteroidStorm.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null);
 
         UseVerdict verdict = new AnomalyCatalystUse(BREACH_TERMINUS, generator, state, null, Set.of(cell)).check(cell);
 
         assertEquals("catalyst.refused.conflict", verdict.refusalKey());
-        assertEquals(AtlasCatalystUse.anomalyName(AsteroidStorm.ID), verdict.args().get("other"));
-        assertEquals(AtlasCatalystUse.anomalyName(SpatialBreach.ID), verdict.args().get("anomaly"));
+        assertEquals(AtlasNames.anomaly(AsteroidStorm.ANOMALY_ID), verdict.args().get("other"));
+        assertEquals(AtlasNames.anomaly(SpatialBreach.ANOMALY_ID), verdict.args().get("anomaly"));
     }
 
     @Test
@@ -135,13 +135,13 @@ class AtlasCatalystUseTest {
         AtlasCell far = farSystem(generator);
         AtlasCell near = system(generator, 0);
         AtlasCatalystUse use = new AnomalyCatalystUse(HYPERSHUNT_SURVEY, generator, state, null, Set.of(far, near));
-        AtlasCatalysts.Catalyst plain = new AtlasCatalysts.Catalyst("test_plain", CoronalHypershunt.ID, AtlasCatalysts.Family.SURVEY, 0f, 1);
+        AtlasCatalysts.Catalyst plain = new AtlasCatalysts.Catalyst("test_plain", CoronalHypershunt.ANOMALY_ID, AtlasCatalysts.Family.SURVEY, 0f, 1);
 
         assertEquals("catalyst.refused.not_insertable", new AnomalyCatalystUse(plain, generator, state, null, Set.of(far)).check(far).refusalKey());
         assertEquals(CoronalHypershunt.TOO_CLOSE_KEY, use.check(near).refusalKey());
         assertTrue(use.check(far).allowed());
         assertNotNull(use.apply(far));
-        assertEquals(List.of(CoronalHypershunt.ID), AtlasAnomalies.effective(generator, state, far));
+        assertEquals(List.of(CoronalHypershunt.ANOMALY_ID), AtlasAnomalies.effective(generator, state, far));
         assertSame(CoronalHypershunt.INSTANCE, ChartAnomalies.starOf(AtlasAnomalies.effective(generator, state, far)));
         assertEquals("catalyst.refused.already_present", use.check(far).refusalKey());
     }
@@ -151,12 +151,12 @@ class AtlasCatalystUseTest {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = generator(state);
         AtlasCell far = farSystem(generator);
-        assertTrue(AtlasAnomalies.insertStar(generator, state, far, StarAnomalies.BLACK_HOLE.id(), AtlasAnomalyRecord.Source.WORLD, null).check().allows());
+        assertTrue(AtlasAnomalies.insert(generator, state, far, StarAnomalies.BLACK_HOLE.id(), AtlasAnomalyRecord.Source.WORLD, null, null, true).check().allows());
 
         UseVerdict verdict = new AnomalyCatalystUse(HYPERSHUNT_SURVEY, generator, state, null, Set.of(far)).check(far);
 
         assertEquals("catalyst.refused.conflict", verdict.refusalKey());
-        assertEquals(AtlasCatalystUse.anomalyName(StarAnomalies.BLACK_HOLE.id()), verdict.args().get("other"));
+        assertEquals(AtlasNames.anomaly(StarAnomalies.BLACK_HOLE.id()), verdict.args().get("other"));
         assertEquals(List.of(StarAnomalies.BLACK_HOLE.id()), AtlasAnomalies.effective(generator, state, far));
     }
 }

@@ -5,42 +5,16 @@ import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ChartAbyssTest {
 
     private static final AbyssPalette RED = new AbyssPalette("red", new Color(255, 0, 50), new Color(77, 0, 15), 1f);
     private static final AbyssPalette AMBER = new AbyssPalette("amber", new Color(255, 123, 0), new Color(77, 37, 0), 0.5f);
-
-    @Test
-    void anEmptyOrZeroWeightPaletteListPicksNothing() {
-        assertNull(ChartAbyss.pick(Map.of(), new Random(1)));
-        assertNull(ChartAbyss.pick(Map.of(RED, 0f), new Random(1)));
-    }
-
-    @Test
-    void palettesArePickedByWeightAndRepeatForTheSameSeed() {
-        Map<AbyssPalette, Float> weights = new LinkedHashMap<>();
-        weights.put(RED, 1f);
-        weights.put(AMBER, 0f);
-        Set<String> picked = new HashSet<>();
-        for (long seed = 0; seed < 50; seed++) {
-            picked.add(ChartAbyss.pick(weights, new Random(seed)).id());
-        }
-        weights.put(AMBER, 3f);
-
-        assertEquals(Set.of("red"), picked);
-        assertEquals(ChartAbyss.pick(weights, new Random(7)), ChartAbyss.pick(weights, new Random(7)));
-    }
 
     @Test
     void theLightLeansFromDeepSpaceAmbientTowardThePaletteColour() {

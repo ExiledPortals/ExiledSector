@@ -72,6 +72,27 @@ class NodeReplacementsTest {
     }
 
     @Test
+    void aNodeReplacedByAnOptionalNodeTakesItsFirstOptionUnlessItAlreadyHadOneOnOffer() {
+        SkillType hull = node("hull_option", SkillTier.SMALL).getType();
+        SkillType armor = node("armor_option", SkillTier.SMALL).getType();
+        SkillType optionalType = new SkillType.Builder("optional_type", "optional", "", SkillTier.SMALL)
+                .optionalOptionIds(List.of(hull.getId(), armor.getId())).build();
+        SkillTree.registerType(optionalType);
+        SkillTree.register(new SkillNode("optional", optionalType, List.of(), 0f, 0f));
+        ShipSkillData plain = new ShipSkillData();
+        ShipTrees.allocate(plain, new SkillNode("plain", kept.getType(), List.of(), 0f, 0f), 3);
+        ShipSkillData chosen = new ShipSkillData();
+        ShipTrees.selectOption(chosen, new SkillNode("chosen", optionalType, List.of(), 0f, 0f), armor, 3);
+
+        assertTrue(ShipTrees.replaceNode(plain, "plain", "optional"));
+        assertTrue(ShipTrees.replaceNode(chosen, "chosen", "optional"));
+
+        assertEquals(hull.getId(), plain.getOptionalSelection("optional"));
+        assertEquals(armor.getId(), chosen.getOptionalSelection("optional"));
+        assertNull(chosen.getOptionalSelection("chosen"));
+    }
+
+    @Test
     void nothingIsSwappedWhenTheReplacementIsAlreadyAllocated() {
         ShipSkillData data = new ShipSkillData();
         ShipTrees.allocate(data, new SkillNode("removed", kept.getType(), List.of(), 0f, 0f), 3);

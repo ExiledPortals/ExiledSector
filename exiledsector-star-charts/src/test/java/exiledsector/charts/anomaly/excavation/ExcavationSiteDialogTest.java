@@ -16,6 +16,8 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl.OptionId;
 import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.content.ChartContent;
+import exiledsector.charts.objective.ChartObjective;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.ChartCampaignPlugin;
 import exiledsector.charts.run.ChartRun;
@@ -53,6 +55,7 @@ class ExcavationSiteDialogTest {
         when(system.getId()).thenReturn("charted space");
         when(system.getOptionalUniqueId()).thenReturn(ChartIds.systemId(RUN_ID));
         run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+        run.recordContent(new ChartContent(4, "pirates", ChartObjective.CLEAR, List.of(), null, 3, 2, List.of(ExcavationSites.ANOMALY_ID)));
         ChartRuns.store(run);
     }
 
@@ -71,7 +74,7 @@ class ExcavationSiteDialogTest {
     @Test
     void theCampaignPluginOpensTheSiteOnlyWhileItStands() {
         ExcavationSite site = new ExcavationSite(0, "rock", ExcavationSite.Access.OPEN, DropType.WEAPON, 1L, false);
-        ExcavationStates.record(run, site);
+        ExcavationStates.record(ExcavationStates.of(run), site);
         PlanetAPI rock = planet("rock", system);
         PlanetAPI bare = planet("bare", system);
         PlanetAPI elsewhere = planet("rock", mock(StarSystemAPI.class));
@@ -79,12 +82,12 @@ class ExcavationSiteDialogTest {
         PluginPick<InteractionDialogPlugin> pick = new ChartCampaignPlugin().pickInteractionDialogPlugin(rock);
         assertInstanceOf(ExcavationSiteDialog.class, pick.plugin);
         assertEquals(CampaignPlugin.PickPriority.MOD_SPECIFIC, pick.priority);
-        assertFalse(ExcavationSiteDialog.wantsToHandle(bare));
-        assertFalse(ExcavationSiteDialog.wantsToHandle(elsewhere));
-        assertFalse(ExcavationSiteDialog.wantsToHandle(mock(CampaignFleetAPI.class)));
+        assertFalse(ExcavationSiteDialog.wantsToHandle(run, bare));
+        assertNull(new ChartCampaignPlugin().pickInteractionDialogPlugin(elsewhere));
+        assertFalse(ExcavationSiteDialog.wantsToHandle(run, mock(CampaignFleetAPI.class)));
 
         ExcavationStates.clear(run, site);
-        assertFalse(ExcavationSiteDialog.wantsToHandle(rock));
+        assertFalse(ExcavationSiteDialog.wantsToHandle(run, rock));
         assertNull(new ChartCampaignPlugin().pickInteractionDialogPlugin(rock));
     }
 

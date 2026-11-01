@@ -2,6 +2,7 @@ package exiledsector.charts.anomaly.forge;
 
 import exiledsector.ModCsv;
 import exiledsector.charts.generation.ChartTiers;
+import exiledsector.charts.table.BuiltInTable;
 import exiledsector.data.CsvRows;
 import exiledsector.items.ForgeOperation;
 import exiledsector.items.ItemType;
@@ -9,12 +10,12 @@ import exiledsector.items.WeightedPick;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -48,35 +49,31 @@ public final class ForgePrograms {
 
     public static List<String> register(JSONArray rows) throws JSONException {
         CsvRows csv = new CsvRows(PATH);
-        Map<String, Program> loaded = new LinkedHashMap<>();
-        CsvRows.forEachIdRow(rows, ID_COLUMN, (id, row) -> {
-            ForgeOperation operation = ForgeOperation.byIdOrNull(id);
-            if (operation == null) {
-                csv.skipRow(id, "'" + id + "' is not a forge program");
-                return;
-            }
-            Set<ItemType> itemTypes = EnumSet.noneOf(ItemType.class);
-            for (String typeId : CsvRows.entries(ModCsv.text(row, "item_types"))) {
-                ItemType type = ItemType.byIdOrNull(typeId);
-                if (type == null || type == ItemType.WORMHOLE_ANCHOR) {
-                    csv.problem(id, "item_types", typeId);
-                } else {
-                    itemTypes.add(type);
-                }
-            }
-            if (itemTypes.isEmpty()) {
-                csv.skipRow(id, "no item type it can forge");
-                return;
-            }
-            int minTier = ChartTiers.clamp(csv.integer(row, "min_tier", ChartTiers.LOWEST_TIER, id));
-            loaded.put(id, new Program(id, operation, Math.max(0f, csv.number(row, "weight", 1f, id)), minTier, itemTypes,
-                    Math.max(0, csv.integer(row, "metals", 0, id)), Math.max(0, csv.integer(row, "rare_metals", 0, id)),
-                    Math.max(0, csv.integer(row, "feedstock", 0, id))));
-        });
+        Map<String, Program> loaded = BuiltInTable.rows(rows, csv, "forge program", id -> ForgeOperation.byIdOrNull(id) != null, ForgePrograms::parse);
         csv.report(LOG);
         programs = Collections.unmodifiableMap(loaded);
         LOG.info("[ExiledSector] The Derelict Forge knows " + loaded.size() + " program(s)");
         return csv.problems();
+    }
+
+    private static Program parse(CsvRows csv, JSONObject row, String id) {
+        Set<ItemType> itemTypes = EnumSet.noneOf(ItemType.class);
+        for (String typeId : CsvRows.entries(ModCsv.text(row, "item_types"))) {
+            ItemType type = ItemType.byIdOrNull(typeId);
+            if (type == null || type == ItemType.WORMHOLE_ANCHOR) {
+                csv.problem(id, "item_types", typeId);
+            } else {
+                itemTypes.add(type);
+            }
+        }
+        if (itemTypes.isEmpty()) {
+            csv.skipRow(id, "no item type it can forge");
+            return null;
+        }
+        int minTier = ChartTiers.clamp(csv.integer(row, "min_tier", ChartTiers.LOWEST_TIER, id));
+        return new Program(id, ForgeOperation.byIdOrNull(id), Math.max(0f, csv.number(row, "weight", 1f, id)), minTier, itemTypes,
+                Math.max(0, csv.integer(row, "metals", 0, id)), Math.max(0, csv.integer(row, "rare_metals", 0, id)),
+                Math.max(0, csv.integer(row, "feedstock", 0, id)));
     }
 
     public static Collection<Program> all() {

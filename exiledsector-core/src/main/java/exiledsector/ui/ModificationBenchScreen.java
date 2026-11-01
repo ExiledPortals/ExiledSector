@@ -5,7 +5,6 @@ import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
-import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.items.SocketCustody;
 import exiledsector.ui.socket.BenchMode;
 import exiledsector.ui.socket.BenchModeSupport;
@@ -45,10 +44,8 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin implements C
     private CustomPanelAPI hostPanel;
     private ModificationBay bay;
     private Map<String, FleetMemberAPI> ownedShips = Map.of();
-    private float openLevel;
+    private final OverlayFade fade = new OverlayFade(OPEN_SECONDS);
     private boolean bayOpened;
-    private boolean closing;
-    private boolean closeRequested;
 
     ModificationBenchScreen(CampaignOverlay.Host host) {
         this(host, null, null, null);
@@ -76,15 +73,15 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin implements C
         if (hostPanel == null) {
             return;
         }
-        openLevel = Fade.step(openLevel, !closing, amount / OPEN_SECONDS);
-        if (!closing && !bayOpened && openLevel >= 1f) {
+        boolean finishedClosing = fade.advance(amount);
+        if (fade.fullyOpen() && !bayOpened) {
             bayOpened = true;
             SkillTreeSounds.panelOpened();
             SocketPanelPlacement area = benchArea(Global.getSettings().getScreenWidth(), Global.getSettings().getScreenHeight(), false);
             ModificationBay.Listener bayListener = new ModificationBay.Listener() {
                 @Override
                 public void closed() {
-                    closing = true;
+                    fade.close();
                 }
 
                 @Override
@@ -101,8 +98,7 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin implements C
             bay = benchMode == null ? ModificationBay.open(hostPanel, area, SocketCustody.shipNames(ownedShips), bayListener)
                     : ModificationBay.openMode(hostPanel, area, benchMode, SocketCustody.shipNames(ownedShips), openTarget, bayListener);
         }
-        if (closing && openLevel <= 0f && !closeRequested) {
-            closeRequested = true;
+        if (finishedClosing) {
             host.close();
         }
     }
@@ -111,7 +107,7 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin implements C
         if (bay != null && bay.isOpen()) {
             bay.close();
         }
-        closing = true;
+        fade.close();
     }
 
     @Override
@@ -121,10 +117,10 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin implements C
                 continue;
             }
             if (event.isKeyUpEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
-                if (!closing && (bay == null || !bay.escape())) {
+                if (!fade.closing() && (bay == null || !bay.escape())) {
                     close();
                 }
-            } else if (event.isLMBDownEvent() && !closing && (bay == null || !bay.contains(event.getX(), event.getY()))) {
+            } else if (event.isLMBDownEvent() && !fade.closing() && (bay == null || !bay.contains(event.getX(), event.getY()))) {
                 close();
             }
             event.consume();
@@ -137,6 +133,6 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin implements C
             return;
         }
         GLDraw.fillQuad(0f, 0f, Global.getSettings().getScreenWidth(), Global.getSettings().getScreenHeight(), Color.BLACK,
-                BACKDROP_ALPHA * Fade.smooth(openLevel) * alphaMult);
+                BACKDROP_ALPHA * fade.smoothLevel() * alphaMult);
     }
 }

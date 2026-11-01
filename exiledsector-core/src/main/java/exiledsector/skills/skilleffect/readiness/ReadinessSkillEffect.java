@@ -5,10 +5,9 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
-import exiledsector.skills.skilleffect.SimpleStatEffect;
 import exiledsector.skills.skilleffect.StatMode;
-import exiledsector.skills.skilleffect.StatTarget;
 
+import static exiledsector.skills.skilleffect.Backings.statEffect;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
 import static exiledsector.skills.skilleffect.StatTarget.liveBonus;
@@ -27,24 +26,24 @@ public enum ReadinessSkillEffect implements BackedSkillEffect {
             return StatMode.PERCENT.describeStat(magnitude, "stat.maximumCombatReadiness");
         }
     },
-    CR_RECOVERY_RATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getBaseCRRecoveryRatePercentPerDay),
-            "stat.combatReadinessRecoveryRate", false),
-    REPAIR_RATE_PER_DAY_PERCENT(PERCENT, stat(MutableShipStatsAPI::getRepairRatePercentPerDay), "stat.repairRatePerDay", false),
-    CR_LOSS_PER_SECOND_PERCENT(PERCENT, liveBonus(MutableShipStatsAPI::getCRLossPerSecondPercent),
-            "stat.rateOfCombatReadinessLossFromExtendedDeployment", true),
-    CR_LOSS_PER_SECOND_MULT(MULT, liveBonus(MutableShipStatsAPI::getCRLossPerSecondPercent),
-            "stat.rateOfCombatReadinessLossFromExtendedDeployment", true),
-    PEAK_CR_DURATION_PERCENT(PERCENT, liveBonus(MutableShipStatsAPI::getPeakCRDuration), "stat.peakCombatReadinessDuration", false),
-    PEAK_CR_DURATION_MULT(MULT, liveBonus(MutableShipStatsAPI::getPeakCRDuration), "stat.peakCombatReadinessDuration", false);
+    CR_RECOVERY_RATE_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getBaseCRRecoveryRatePercentPerDay),
+            "stat.combatReadinessRecoveryRate", false)),
+    REPAIR_RATE_PER_DAY_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getRepairRatePercentPerDay), "stat.repairRatePerDay", false)),
+    CR_LOSS_PER_SECOND_PERCENT(statEffect(PERCENT, liveBonus(MutableShipStatsAPI::getCRLossPerSecondPercent),
+            "stat.rateOfCombatReadinessLossFromExtendedDeployment", true)),
+    CR_LOSS_PER_SECOND_MULT(statEffect(MULT, liveBonus(MutableShipStatsAPI::getCRLossPerSecondPercent),
+            "stat.rateOfCombatReadinessLossFromExtendedDeployment", true)),
+    PEAK_CR_DURATION_PERCENT(statEffect(PERCENT, liveBonus(MutableShipStatsAPI::getPeakCRDuration), "stat.peakCombatReadinessDuration", false)),
+    PEAK_CR_DURATION_MULT(statEffect(MULT, liveBonus(MutableShipStatsAPI::getPeakCRDuration), "stat.peakCombatReadinessDuration", false));
 
     private final EffectBacking backing;
 
     ReadinessSkillEffect() {
-        this.backing = null;
+        this(null);
     }
 
-    ReadinessSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
-        this.backing = new SimpleStatEffect(mode, target, statKey, lowerIsBetter);
+    ReadinessSkillEffect(EffectBacking backing) {
+        this.backing = backing;
     }
 
     @Override

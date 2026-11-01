@@ -208,6 +208,26 @@ class ShipSkillDataManagerTest {
     }
 
     @Test
+    void nodesStrandedBehindARemovedNodeAreReleasedAndRefunded() {
+        SkillNode root = typedNode("root", SkillTier.ROOT, null);
+        SkillNode bridge = new SkillNode("bridge", typedNode("bridge", SkillTier.SMALL, null).getType(), List.of("root"), 0f, 0f);
+        SkillType lobsterType = typedNode("lobster", SkillTier.SMALL, new SkillItemCost("lobster", 50f)).getType();
+        SkillNode behind = new SkillNode("behind", lobsterType, List.of("bridge"), 0f, 0f);
+        ShipSkillData ship = ShipSkillDataManager.get("ship");
+        ShipTrees.chooseStartingRoot(ship, root);
+        ShipTrees.allocate(ship, bridge, 3);
+        ShipTrees.allocate(ship, behind, 3);
+        ItemChargeLedger.recordItemCharge(ship, "behind", lobsterType.getItemCost());
+        List<SkillItemCost> refunds = new ArrayList<>();
+        Map<String, SkillNode> tree = Map.of("root", root, "behind", behind);
+
+        ShipTreeRepairs.forgetUnknownNodes(tree, tree, Map.of(), shipId -> true, refunds::add);
+
+        assertEquals(List.of("root"), List.copyOf(ship.getAllocatedNodeIds()));
+        assertEquals(List.of(new SkillItemCost("lobster", 50f)), refunds);
+    }
+
+    @Test
     void anItemCostNodeThatWasNeverChargedRefundsNothingWhenItIsRemoved() {
         SkillNode root = typedNode("root", SkillTier.ROOT, null);
         SkillNode lobster = typedNode("lobster", SkillTier.SMALL, new SkillItemCost("lobster", 50f));

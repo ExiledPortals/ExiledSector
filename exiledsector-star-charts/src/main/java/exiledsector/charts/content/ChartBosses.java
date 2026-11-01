@@ -160,14 +160,14 @@ public final class ChartBosses {
         return picked == null ? null : picked.variantId();
     }
 
-    static void useForTests(List<Definition> testDefinitions, List<Station> testStations) {
+    public static void useForTests(List<Definition> testDefinitions, List<Station> testStations) {
         Map<ChartBossType, Definition> byType = new EnumMap<>(ChartBossType.class);
         testDefinitions.forEach(definition -> byType.put(definition.type(), definition));
         definitions = Collections.unmodifiableMap(byType);
         stations = List.copyOf(testStations);
     }
 
-    static void resetForTests() {
+    public static void resetForTests() {
         definitions = Map.of(ChartBossType.FLEET, BUILT_IN_FLEET);
         stations = List.of();
     }

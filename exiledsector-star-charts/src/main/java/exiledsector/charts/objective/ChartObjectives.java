@@ -24,8 +24,8 @@ public final class ChartObjectives {
     }
 
     static ChartRun trackedRun() {
-        ChartRun run = ChartRuns.currentOrNull();
-        if (run == null || !run.runState().isLive() || run.isObjectiveComplete() || run.isObjectiveLost() || run.objective() == null) {
+        ChartRun run = ChartRuns.live();
+        if (run == null || run.isObjectiveComplete() || run.isObjectiveLost() || run.objective() == null) {
             return null;
         }
         return run;

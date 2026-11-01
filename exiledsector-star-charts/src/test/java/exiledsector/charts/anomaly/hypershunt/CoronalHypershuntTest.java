@@ -14,8 +14,10 @@ import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.AnomalyContentSite;
+import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.StarAnomalies;
+import exiledsector.charts.anomaly.VanillaDefenders;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasTraits;
 import exiledsector.charts.content.ChartContent;
@@ -111,7 +113,7 @@ class CoronalHypershuntTest {
 
     private static ChartRun run() {
         ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(4, "pirates", ChartObjective.CLEAR, List.of(), null, 3, 2, List.of(CoronalHypershunt.ID)));
+        run.recordContent(new ChartContent(4, "pirates", ChartObjective.CLEAR, List.of(), null, 3, 2, List.of(CoronalHypershunt.ANOMALY_ID)));
         return run;
     }
 
@@ -123,12 +125,12 @@ class CoronalHypershuntTest {
     void theShippedRowIsARareStarAnomalyThatNoOrdinaryCatalystInserts() throws Exception {
         ChartTables.loadAnomalies();
 
-        assertSame(CoronalHypershunt.INSTANCE, ChartAnomalies.byId(CoronalHypershunt.ID));
-        ChartAnomalies.Definition definition = ChartAnomalies.definition(CoronalHypershunt.ID);
+        assertSame(CoronalHypershunt.INSTANCE, ChartAnomalies.byId(CoronalHypershunt.ANOMALY_ID));
+        ChartAnomalies.Definition definition = ChartAnomalies.definition(CoronalHypershunt.ANOMALY_ID);
         assertTrue(definition.replacesStar());
         assertFalse(definition.insertable());
         assertTrue(definition.weight() < ChartAnomalies.definition(StarAnomalies.BLACK_HOLE.id()).weight());
-        assertTrue(ChartAnomalies.conflicts(CoronalHypershunt.ID, StarAnomalies.BLACK_HOLE.id()));
+        assertTrue(ChartAnomalies.conflicts(CoronalHypershunt.ANOMALY_ID, StarAnomalies.BLACK_HOLE.id()));
         assertFalse(definition.icon().isEmpty());
     }
 
@@ -157,10 +159,8 @@ class CoronalHypershuntTest {
         assertTrue(CoronalHypershunt.isHypershunt(hypershunt));
         assertTrue(hypershunt.hasTag(ChartIds.runTag(RUN_ID)));
         verify(hypershunt).setCircularOrbitPointingDown(eq(star), anyFloat(), eq(STAR_RADIUS + CoronalHypershunt.ORBIT_GAP), anyFloat());
-        assertTrue(HypershuntGuards.guarded(hypershunt));
-        MemoryAPI memory = hypershunt.getMemoryWithoutUpdate();
-        assertTrue(memory.getBoolean(HypershuntGuards.HAS_DEFENDERS_KEY));
-        assertTrue(memory.get(MemFlags.SALVAGE_SEED) instanceof Long);
+        assertTrue(VanillaDefenders.guarded(hypershunt));
+        assertTrue(hypershunt.getMemoryWithoutUpdate().get(MemFlags.SALVAGE_SEED) instanceof Long);
     }
 
     @Test
@@ -183,18 +183,17 @@ class CoronalHypershuntTest {
         SectorEntityToken hypershunt = added.get(0);
         when(system.getEntitiesWithTag(CoronalHypershunt.HYPERSHUNT_TAG)).thenReturn(List.of(hypershunt));
 
-        assertNull(CoronalHypershunt.INSTANCE.dialogFor(hypershunt));
+        assertNull(ChartAnomalies.dialogFor(hypershunt));
         ChartRuns.store(run());
+        AnomalyRun anomalyRun = new AnomalyRun(ChartRuns.currentOrNull(), system);
 
-        assertInstanceOf(HypershuntDialog.class, CoronalHypershunt.INSTANCE.dialogFor(hypershunt));
-        assertNull(CoronalHypershunt.INSTANCE.dialogFor(star));
-        assertTrue(CoronalHypershunt.INSTANCE.isActiveIn(system));
-        String intel = CoronalHypershunt.INSTANCE.intelText(ChartRuns.currentOrNull(), system);
+        assertInstanceOf(HypershuntDialog.class, ChartAnomalies.dialogFor(hypershunt));
+        assertNull(CoronalHypershunt.INSTANCE.dialogFor(anomalyRun, star));
+        String intel = CoronalHypershunt.INSTANCE.intelText(anomalyRun);
         assertTrue(intel.contains("Blue Star"), intel);
 
-        hypershunt.getMemoryWithoutUpdate().set(HypershuntGuards.DEFEATED_KEY, true);
-        assertFalse(CoronalHypershunt.INSTANCE.isActiveIn(system));
-        assertNull(CoronalHypershunt.INSTANCE.intelText(ChartRuns.currentOrNull(), system));
-        assertInstanceOf(HypershuntDialog.class, CoronalHypershunt.INSTANCE.dialogFor(hypershunt));
+        hypershunt.getMemoryWithoutUpdate().set(VanillaDefenders.DEFEATED_KEY, true);
+        assertNull(CoronalHypershunt.INSTANCE.intelText(anomalyRun));
+        assertInstanceOf(HypershuntDialog.class, ChartAnomalies.dialogFor(hypershunt));
     }
 }

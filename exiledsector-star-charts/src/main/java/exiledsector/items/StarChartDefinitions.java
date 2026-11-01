@@ -33,6 +33,15 @@ public final class StarChartDefinitions {
         ModCsv.load("id", DATA_PATH, LOG, StarChartDefinitions::register);
     }
 
+    static String systemTypeProblem(String ownerId, String systemTypeText) {
+        return ownerId + " has system type \"" + systemTypeText + "\"; expected one of " + SYSTEM_TYPES + " or " + ANY_SYSTEM_TYPE;
+    }
+
+    static String minTierProblem(String ownerId, String minTierText) {
+        return ownerId + " has minimum tier \"" + minTierText + "\"; expected a whole number from " + StarChart.LOWEST_TIER + " to "
+                + StarChart.HIGHEST_TIER + " or blank";
+    }
+
     public static void register(JSONArray rows) throws JSONException {
         List<ItemDefinition> definitions = new ArrayList<>();
         Map<String, String> systemTypes = new LinkedHashMap<>();
@@ -41,13 +50,11 @@ public final class StarChartDefinitions {
             ItemDefinition definition = ItemDefinition.parseStarChart(row);
             String systemType = normalisedSystemType(ModCsv.text(row, SYSTEM_TYPE_COLUMN));
             if (systemType == null) {
-                throw new IllegalArgumentException(definition.id() + " has system type \"" + ModCsv.text(row, SYSTEM_TYPE_COLUMN)
-                        + "\"; expected " + SYSTEM_TYPES + " or " + ANY_SYSTEM_TYPE);
+                throw new IllegalArgumentException(systemTypeProblem(definition.id(), ModCsv.text(row, SYSTEM_TYPE_COLUMN)));
             }
             Integer minTier = parsedMinTier(ModCsv.text(row, MIN_TIER_COLUMN));
             if (minTier == null) {
-                throw new IllegalArgumentException(definition.id() + " has minimum tier \"" + ModCsv.text(row, MIN_TIER_COLUMN)
-                        + "\"; expected a whole number from " + StarChart.LOWEST_TIER + " to " + StarChart.HIGHEST_TIER + " or blank");
+                throw new IllegalArgumentException(minTierProblem(definition.id(), ModCsv.text(row, MIN_TIER_COLUMN)));
             }
             ItemDefinition shipItem = ItemDefinitions.get(definition.id());
             if ((shipItem != null && shipItem.type() != ItemType.STAR_CHART) || systemTypes.containsKey(definition.id())) {

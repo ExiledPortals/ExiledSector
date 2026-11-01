@@ -97,7 +97,7 @@ class AtlasCatalystsTest {
             assertEquals(List.of(), AtlasCatalysts.register(ChartTables.csvRows(AtlasCatalysts.PATH)));
             AtlasCatalysts.Catalyst survey = AtlasCatalysts.byItemId(FACILITY_SURVEY);
             assertNotNull(survey);
-            assertEquals(PreCollapseFacility.ID, survey.anomalyId());
+            assertEquals(PreCollapseFacility.ANOMALY_ID, survey.anomalyId());
             assertEquals(0f, survey.weight());
             Random random = new Random(5L);
             for (int roll = 0; roll < 2000; roll++) {
@@ -115,8 +115,8 @@ class AtlasCatalystsTest {
         assertNotNull(survey);
         assertEquals(AtlasCatalysts.Effect.STAR, survey.effect());
         assertEquals(AtlasCatalysts.Family.SURVEY, survey.family());
-        assertEquals(CoronalHypershunt.ID, survey.anomalyId());
-        assertEquals(ChartAnomalies.definition(CoronalHypershunt.ID).icon(), survey.iconPath());
+        assertEquals(CoronalHypershunt.ANOMALY_ID, survey.anomalyId());
+        assertEquals(ChartAnomalies.definition(CoronalHypershunt.ANOMALY_ID).icon(), survey.iconPath());
         assertEquals(0f, survey.weight());
         Random random = new Random(7L);
         for (int roll = 0; roll < 2000; roll++) {
@@ -129,7 +129,7 @@ class AtlasCatalystsTest {
     void aStarCatalystNeedsAStarAnomalyAndNeverDrops() throws Exception {
         JSONArray rows = new JSONArray()
                 .put(new JSONObject().put("id", "test_not_star").put("anomaly", "spatial_breach").put("family", "terminus").put("effect", "star"))
-                .put(new JSONObject().put("id", "test_star").put("anomaly", CoronalHypershunt.ID).put("family", "survey").put("effect", "star")
+                .put(new JSONObject().put("id", "test_star").put("anomaly", CoronalHypershunt.ANOMALY_ID).put("family", "survey").put("effect", "star")
                         .put("weight", 1));
 
         List<String> problems = AtlasCatalysts.register(rows);

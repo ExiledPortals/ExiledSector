@@ -18,7 +18,8 @@ import exiledsector.charts.atlas.AtlasRules;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasTraits;
 import exiledsector.charts.atlas.AtlasUnlocks;
-import exiledsector.charts.atlas.RedeploymentCatalystUse;
+import exiledsector.charts.content.ChartFactions;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.items.UseVerdict;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -102,12 +103,12 @@ class FactionSkirmishTest {
     @Test
     void theSkirmishDropsFromASystemOnceNoNeighbourCanAttack() {
         ChartTables.useAnomalies(List.of(FactionSkirmish.INSTANCE),
-                List.of(new ChartAnomalies.Definition(FactionSkirmish.ID, 1f, 1, 15, "", "", true, Set.of(), false)));
+                List.of(new ChartAnomalies.Definition(FactionSkirmish.ANOMALY_ID, 1f, 1, 15, "", "", true, Set.of(), false)));
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = new AtlasGenerator(SEED, RULES, AtlasUnlocks.NONE, state);
         AtlasCell cell = borderSystem(generator, state);
-        AtlasAnomalies.insert(generator, state, cell, FactionSkirmish.ID, AtlasAnomalyRecord.Source.WORLD, null);
-        assertEquals(List.of(FactionSkirmish.ID), AtlasAnomalies.effective(generator, state, cell));
+        AtlasAnomalies.insert(generator, state, cell, FactionSkirmish.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null);
+        assertEquals(List.of(FactionSkirmish.ANOMALY_ID), AtlasAnomalies.effective(generator, state, cell));
 
         Set<String> neutral = new HashSet<>(laneOwners(generator, state, cell));
         neutral.remove(FactionSkirmish.defender(generator, state, cell));
@@ -119,11 +120,11 @@ class FactionSkirmishTest {
     @Test
     void assaultOrdersInsertOnlyWhereTheCurrentOwnerCanBeAttackedAndSayWhyNot() {
         ChartTables.useAnomalies(List.of(FactionSkirmish.INSTANCE),
-                List.of(new ChartAnomalies.Definition(FactionSkirmish.ID, 1f, 1, 15, "", "", true, Set.of(), false)));
+                List.of(new ChartAnomalies.Definition(FactionSkirmish.ANOMALY_ID, 1f, 1, 15, "", "", true, Set.of(), false)));
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = new AtlasGenerator(SEED, RULES, AtlasUnlocks.NONE, state);
         AtlasCell cell = borderSystem(generator, state);
-        AtlasCatalysts.Catalyst assaultOrders = new AtlasCatalysts.Catalyst("test_assault_orders", FactionSkirmish.ID, AtlasCatalysts.Family.ORDERS,
+        AtlasCatalysts.Catalyst assaultOrders = new AtlasCatalysts.Catalyst("test_assault_orders", FactionSkirmish.ANOMALY_ID, AtlasCatalysts.Family.ORDERS,
                 1f, 1);
         AtlasCatalystUse use = AtlasCatalystUse.of(assaultOrders, generator, state, null, Set.of(cell));
         assertTrue(use.check(cell).allowed());
@@ -132,7 +133,7 @@ class FactionSkirmishTest {
         state.capture(generator, cell, NEUTRAL);
         UseVerdict neutralOwner = use.check(cell);
         assertEquals(FactionSkirmish.NO_SIDE_KEY, neutralOwner.refusalKey());
-        assertEquals(RedeploymentCatalystUse.factionName(NEUTRAL), neutralOwner.args().get("faction"));
+        assertEquals(ChartFactions.displayName(NEUTRAL), neutralOwner.args().get("faction"));
 
         state.capture(generator, cell, owner);
         Set<String> neutral = new HashSet<>(laneOwners(generator, state, cell));
@@ -140,7 +141,7 @@ class FactionSkirmishTest {
         SkirmishFactions.useForTests(neutral);
 
         assertEquals(FactionSkirmish.NO_ATTACKER_KEY, use.check(cell).refusalKey());
-        assertEquals(AtlasAnomalies.InsertCheck.DOES_NOT_FIT, AtlasAnomalies.canInsert(generator, state, cell, FactionSkirmish.ID, null));
+        assertEquals(AtlasAnomalies.InsertCheck.DOES_NOT_FIT, AtlasAnomalies.canInsert(generator, state, cell, FactionSkirmish.ANOMALY_ID, null));
     }
 
     @Test
@@ -148,15 +149,44 @@ class FactionSkirmishTest {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = new AtlasGenerator(SEED, RULES, AtlasUnlocks.NONE, state);
         AtlasCell cell = borderSystem(generator, state);
-        AtlasRunNode skirmish = new AtlasRunNode(cell.pack(), "hegemony", List.of(), List.of(FactionSkirmish.ID), false);
+        AtlasRunNode skirmish = new AtlasRunNode(cell.pack(), "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID), false);
         AtlasRunNode plain = new AtlasRunNode(cell.pack(), "hegemony", List.of(), List.of(), false);
 
-        AtlasRunNode joined = FactionSkirmish.join(skirmish, generator, state, cell, SkirmishSide.DEFENDER);
+        SkirmishJoin joined = SkirmishJoin.of(ChartAnomalies.joinRunNode(skirmish, generator, state, cell, SkirmishSide.DEFENDER));
 
-        assertEquals(FactionSkirmish.attacker(generator, state, cell), joined.skirmishAttackerId());
-        assertEquals(SkirmishSide.DEFENDER, joined.skirmishSide());
-        assertEquals(SkirmishSide.NEITHER, FactionSkirmish.join(skirmish, generator, state, cell, null).skirmishSide());
-        assertEquals(plain, FactionSkirmish.join(plain, generator, state, cell, SkirmishSide.ATTACKER));
+        assertEquals(FactionSkirmish.attacker(generator, state, cell), joined.attackerId());
+        assertEquals(SkirmishSide.DEFENDER, joined.side());
+        assertEquals(SkirmishSide.NEITHER, SkirmishJoin.of(ChartAnomalies.joinRunNode(skirmish, generator, state, cell, null)).side());
+        assertEquals(plain, ChartAnomalies.joinRunNode(plain, generator, state, cell, SkirmishSide.ATTACKER));
+    }
+
+    @Test
+    void onlyWinningOnTheAttackersSideCapturesTheSystem() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = new AtlasGenerator(SEED, RULES, AtlasUnlocks.NONE, state);
+        AtlasCell cell = new AtlasCell(3, 2);
+
+        FactionSkirmish.captureForWinner(generator, state, cell, new SkirmishJoin(SkirmishSide.DEFENDER, "hegemony"));
+        FactionSkirmish.captureForWinner(generator, state, cell, new SkirmishJoin(SkirmishSide.NEITHER, "hegemony"));
+        FactionSkirmish.captureForWinner(generator, state, cell, new SkirmishJoin(SkirmishSide.ATTACKER, null));
+        assertEquals(Map.of(), state.captures());
+
+        FactionSkirmish.captureForWinner(generator, state, cell, new SkirmishJoin(SkirmishSide.ATTACKER, "hegemony"));
+        assertEquals(Map.of(cell, "hegemony"), state.captures());
+    }
+
+    @Test
+    void theJoinSurvivesTheRunNodeEncodingAndReachesTheChartContext() {
+        AtlasRunNode node = new AtlasRunNode(9L, "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID), true)
+                .withAnomalyData(FactionSkirmish.ANOMALY_ID, new SkirmishJoin(SkirmishSide.ATTACKER, "tritachyon").encode());
+        AtlasRunNode decoded = AtlasRunNode.decode(node.encode());
+
+        assertEquals(node, decoded);
+        assertEquals(new SkirmishJoin(SkirmishSide.ATTACKER, "tritachyon"), SkirmishJoin.of(decoded));
+        assertEquals(new SkirmishJoin(SkirmishSide.ATTACKER, "tritachyon"),
+                SkirmishJoin.of(ChartGenContext.none().withAtlasNode(decoded).withAnomalies(List.of("black_hole"))));
+        assertEquals(new SkirmishJoin(SkirmishSide.NEITHER, null), SkirmishJoin.decode(new SkirmishJoin(null, "").encode()));
+        assertEquals(null, SkirmishJoin.decode("attacker"));
     }
 
     @Test
@@ -175,7 +205,7 @@ class FactionSkirmishTest {
     void theAtlasRollSkipsSystemsTheSkirmishDoesNotFit() throws Exception {
         ChartTables.loadAnomalies();
         AtlasAnomalyCandidate candidate = AtlasData.rules().anomalies().stream()
-                .filter(anomaly -> anomaly.id().equals(FactionSkirmish.ID)).findFirst().orElseThrow();
+                .filter(anomaly -> anomaly.id().equals(FactionSkirmish.ANOMALY_ID)).findFirst().orElseThrow();
 
         assertTrue(candidate.weighting().weightFor(traits("hegemony", List.of("tritachyon"), null, null), 1f) > 0f);
         assertEquals(0f, candidate.weighting().weightFor(traits("hegemony", List.of("hegemony"), null, null), 1f));

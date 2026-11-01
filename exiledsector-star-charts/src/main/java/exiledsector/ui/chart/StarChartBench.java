@@ -5,13 +5,15 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import exiledsector.charts.run.ChartRunActions;
 import exiledsector.charts.StarChartSettings;
-import exiledsector.charts.anomaly.skirmish.SkirmishEntry;
-import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasDevTools;
+import exiledsector.charts.atlas.AtlasEntry;
 import exiledsector.charts.atlas.AtlasOpening;
+import exiledsector.charts.atlas.AtlasRunChoice;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.wormhole.StarChartOpening;
+import exiledsector.charts.wormhole.WormholeOpenCheck;
 import exiledsector.i18n.StyledText;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.CraftingWard;
@@ -21,6 +23,7 @@ import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemStore;
 import exiledsector.items.ItemType;
 import exiledsector.items.StarChart;
+import exiledsector.items.StarChartCrafting;
 import exiledsector.items.UseVerdict;
 import exiledsector.ui.socket.BenchMode;
 import exiledsector.ui.socket.BenchModeSupport;
@@ -52,11 +55,6 @@ public final class StarChartBench implements BenchModeSupport {
     @Override
     public ItemType itemType() {
         return ItemType.STAR_CHART;
-    }
-
-    @Override
-    public boolean enabled() {
-        return StarChartSettings.enabled();
     }
 
     @Override
@@ -154,10 +152,10 @@ public final class StarChartBench implements BenchModeSupport {
         if (cell == null) {
             return open(sector, store, loaded, entries, random);
         }
-        SkirmishSide side = target instanceof SkirmishEntry entry ? entry.side() : null;
+        AtlasRunChoice choice = target instanceof AtlasEntry entry ? entry.choice() : null;
         StarChartOpening.Outcome outcome = StarChartOpening.openReplacingRun(
                 (openSector, allowed, openRandom, openStore, chart) -> ChartRunActions.openFromAtlas(openSector, allowed, openRandom, openStore, chart, cell,
-                        side),
+                        choice),
                 sector, store, loaded, entries, random);
         return new OpenOutcome(outcome.opened(), outcome.messageKey());
     }
@@ -181,7 +179,7 @@ public final class StarChartBench implements BenchModeSupport {
     }
 
     private static AtlasCell atlasCell(Object target) {
-        if (target instanceof SkirmishEntry entry) {
+        if (target instanceof AtlasEntry entry) {
             return entry.cell();
         }
         return target instanceof AtlasCell cell ? cell : null;
@@ -239,8 +237,7 @@ public final class StarChartBench implements BenchModeSupport {
         @Override
         public void changed(Item loaded) {
             if (storagePanel != null) {
-                ItemStore chartStore = ItemStore.starChartsIfCreated();
-                browser.reload(chartStore == null ? List.of() : chartStore.owned());
+                browser.reload(ItemStore.ownedStarCharts());
                 browser.select(loaded);
                 storagePanel.refresh();
             }

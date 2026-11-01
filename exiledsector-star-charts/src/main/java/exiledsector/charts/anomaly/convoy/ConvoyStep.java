@@ -19,10 +19,6 @@ public final class ConvoyStep implements Script {
         this.kind = kind;
     }
 
-    public Kind kind() {
-        return kind;
-    }
-
     @Override
     public void run() {
         if (script == null || script.isDone()) {

@@ -9,18 +9,18 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRuns;
-import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
+import exiledsector.loot.LootModifiers;
 import exiledsector.loot.LootSources;
 
 import java.util.List;
@@ -74,7 +74,7 @@ public final class ChartFleetLoot {
         if (fleet == null || isChartFleet(fleet)) {
             return fleet != null;
         }
-        ChartRun run = ChartDrops.liveSystemRun(battleLocation);
+        ChartRun run = ChartRuns.liveIn(battleLocation);
         SectorEntityToken site = run == null ? null : defendedSite(fleet, (StarSystemAPI) battleLocation, run.runId());
         float defenderDeploymentPoints = site == null ? 0f : deploymentPoints(fleet);
         if (!(defenderDeploymentPoints > 0f)) {
@@ -131,11 +131,8 @@ public final class ChartFleetLoot {
     }
 
     static ChartRun liveRunOf(CampaignFleetAPI fleet) {
-        ChartRun run = ChartRuns.currentOrNull();
-        if (run == null || !run.runState().isLive()) {
-            return null;
-        }
-        MemoryAPI fleetMemory = fleet.getMemoryWithoutUpdate();
+        ChartRun run = ChartRuns.live();
+        MemoryAPI fleetMemory = run == null ? null : fleet.getMemoryWithoutUpdate();
         return fleetMemory != null && fleetMemory.getBoolean(ChartIds.fleetRunKey(run.runId())) ? run : null;
     }
 
@@ -144,7 +141,7 @@ public final class ChartFleetLoot {
     }
 
     public static ItemDrops.SiteLoot roll(SectorAPI sector, CampaignFleetAPI fleet, float defeatedDeploymentPoints, Random random,
-                                          List<ChartAnomaly> battleAnomalies) {
+                                          List<LootShaper> battleAnomalies) {
         if (!isChartFleet(fleet)) {
             return ItemDrops.SiteLoot.NONE;
         }
@@ -154,11 +151,11 @@ public final class ChartFleetLoot {
         }
         ChartGenContext context = ChartRunEffects.contextOf(run);
         float quantityMult = 1f;
-        for (ChartAnomaly anomaly : battleAnomalies) {
+        for (LootShaper anomaly : battleAnomalies) {
             quantityMult *= anomaly.battleLootMult(context);
         }
         ItemDrops.SiteLoot loot = roll(sector, fleet, run, context, defeatedDeploymentPoints, quantityMult, random);
-        for (ChartAnomaly anomaly : battleAnomalies) {
+        for (LootShaper anomaly : battleAnomalies) {
             loot = anomaly.touchBattleLoot(loot, random);
         }
         return loot;
@@ -178,7 +175,7 @@ public final class ChartFleetLoot {
         ItemDrops.SiteLoot siteItems = anomalyFleetItems(sector, fleet, run, context, share, random);
         ItemDrops.SiteLoot fleetLoot = siteItems != null ? siteItems
                 : roll(sector, run, context, ChartIds.FLEET_LOOT_SITE, ChartDrops.Source.CHART_FLEET, share, random);
-        for (ChartAnomaly anomaly : ChartAnomalies.all()) {
+        for (LootShaper anomaly : ChartAnomalies.inRun(run, LootShaper.class)) {
             fleetLoot = fleetLoot.plus(anomaly.extraFleetLoot(fleet, run, context, random));
         }
         if (fleet.getId() != null && fleet.getId().equals(run.bossFleetId())) {
@@ -199,7 +196,7 @@ public final class ChartFleetLoot {
 
     private static ItemDrops.SiteLoot anomalyFleetItems(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, float share,
                                                         Random random) {
-        for (ChartAnomaly anomaly : ChartAnomalies.all()) {
+        for (LootShaper anomaly : ChartAnomalies.inRun(run, LootShaper.class)) {
             ItemDrops.SiteLoot items = anomaly.fleetItems(sector, fleet, run, context, share, random);
             if (items != null) {
                 return items;
@@ -210,7 +207,7 @@ public final class ChartFleetLoot {
 
     static ItemData guaranteedUnique(SectorAPI sector, ChartRun run, ChartGenContext context, Random random) {
         if (!context.guaranteedBossUnique() || run.isBossUniqueGranted()
-                || ChartAnomalies.all().stream().anyMatch(anomaly -> anomaly.holdsBackBossUnique(run))) {
+                || ChartAnomalies.inRun(run, LootShaper.class).stream().anyMatch(anomaly -> anomaly.holdsBackBossUnique(run))) {
             return null;
         }
         ItemDefinition unique = ItemDrops.pickUniqueFromAnySource(random, definition -> GUARANTEED_UNIQUE_TYPES.contains(definition.type())
@@ -224,12 +221,10 @@ public final class ChartFleetLoot {
 
     private static ItemDrops.SiteLoot roll(SectorAPI sector, ChartRun run, ChartGenContext context, String siteId, ChartDrops.Source source,
                                            float chanceMult, Random random) {
-        ItemChances chances = context.itemChances().scaled(chanceMult);
-        float feedstockMult = context.dropMult(DropType.FEEDSTOCK) * chanceMult;
-        float currencyMult = context.dropMult(DropType.CURRENCY) * chanceMult;
+        LootModifiers modifiers = context.lootModifiers(chanceMult);
         ItemDrops.SiteLoot siteLoot = source == ChartDrops.Source.CHART_FLEET
-                ? ItemDrops.rollFleetSalvage(siteId, random, chances, feedstockMult, currencyMult)
-                : ItemDrops.rollSite(siteId, random, chances, feedstockMult, currencyMult, ItemUnlock.available(ItemType.HULL_ITEM, sector));
+                ? ItemDrops.rollFleetSalvage(siteId, random, modifiers.itemChances(), modifiers.feedstockMult(), modifiers.currencyMult())
+                : LootSources.rollSite(sector, siteId, random, modifiers);
         boolean offerTierUp = source == ChartDrops.Source.CHART_BOSS && context.guaranteedBossTierUp() && !run.isBossTierUpGranted();
         ChartDrops.Loot chartLoot = ChartDrops.roll(source, run.tier(), ChartDrops.Mults.of(context, chanceMult), random, offerTierUp);
         if (offerTierUp && !chartLoot.charts().isEmpty()) {

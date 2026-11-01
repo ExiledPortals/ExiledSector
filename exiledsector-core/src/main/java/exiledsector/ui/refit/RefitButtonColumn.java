@@ -28,7 +28,7 @@ public final class RefitButtonColumn {
     public record ButtonSpec(String id, String labelKey, IntSupplier hotkey, BooleanSupplier wanted, Runnable press) {
     }
 
-    static final ButtonSpec BENCH_BUTTON = new ButtonSpec("exiledSector_modificationBenchButton", "ui.benchRefitButton",
+    static final ButtonSpec BENCH_BUTTON = new ButtonSpec("exiledSector_modificationBenchButton", ModificationBenchRefitButton.BUTTON_KEY,
             RefitButtonConfig::benchKey, RefitButtonConfig::buttonUnderHullMods, () -> ModificationBenchRefitButton.openPanel(null));
     static final float GAP_BELOW_BUILD_IN = 3f;
     static final float GAP_BETWEEN_BUTTONS = 3f;

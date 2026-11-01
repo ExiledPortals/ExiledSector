@@ -9,9 +9,9 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class MagneticStorm implements ChartAnomaly {
+public final class MagneticStorm implements LayoutShaper {
 
-    public static final String ID = "magnetic_storm";
+    public static final String ANOMALY_ID = "magnetic_storm";
     public static final MagneticStorm INSTANCE = new MagneticStorm();
     static final float STAR_WIDTH = 400f;
     static final float PLANET_WIDTH = 200f;
@@ -25,7 +25,7 @@ public final class MagneticStorm implements ChartAnomaly {
 
     @Override
     public String id() {
-        return ID;
+        return ANOMALY_ID;
     }
 
     @Override

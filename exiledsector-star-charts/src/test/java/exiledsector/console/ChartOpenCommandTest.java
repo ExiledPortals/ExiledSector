@@ -2,7 +2,9 @@ package exiledsector.console;
 
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.layout.ChartLayout;
+import exiledsector.charts.layout.ChartLayoutRequest;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
@@ -71,9 +73,9 @@ class ChartOpenCommandTest {
         assertEquals(4, breach.tier());
         assertFalse(OpenArguments.parse("77 tier=4").breach());
         assertNotNull(OpenArguments.parse("breach breach").problem());
-        assertEquals(List.of(SpatialBreach.ID), breach.forcedAnomalyIds());
+        assertEquals(List.of(SpatialBreach.ANOMALY_ID), breach.forcedAnomalyIds());
         assertEquals(List.of(), OpenArguments.parse("77 tier=4").forcedAnomalyIds());
-        assertEquals(List.of(SpatialBreach.ID), new OpenArguments(null, null, null, null, true, null, null, List.of(SpatialBreach.ID)).forcedAnomalyIds());
+        assertEquals(List.of(SpatialBreach.ANOMALY_ID), new OpenArguments(null, null, null, null, true, null, null, List.of(SpatialBreach.ANOMALY_ID)).forcedAnomalyIds());
     }
 
     @Test
@@ -82,7 +84,11 @@ class ChartOpenCommandTest {
 
         assertEquals(SkirmishSide.ATTACKER, attacker.side());
         assertEquals(77L, attacker.seed());
-        assertEquals(List.of(SpatialBreach.ID, FactionSkirmish.ID), attacker.forcedAnomalyIds());
+        assertEquals(List.of(SpatialBreach.ANOMALY_ID), attacker.forcedAnomalyIds());
+        ChartGenContext joined = FactionSkirmish.joinedOn(new ChartLayoutRequest(77L, null).withAnomalies(attacker.forcedAnomalyIds()), attacker.side())
+                .chartContext();
+        assertEquals(List.of(SpatialBreach.ANOMALY_ID, FactionSkirmish.ANOMALY_ID), joined.forcedAnomalies());
+        assertEquals("attacker,", joined.anomalyData(FactionSkirmish.ANOMALY_ID));
         assertNull(OpenArguments.parse("77").side());
         assertNotNull(OpenArguments.parse("side=both").problem());
         assertNotNull(OpenArguments.parse("side=defender side=neither").problem());

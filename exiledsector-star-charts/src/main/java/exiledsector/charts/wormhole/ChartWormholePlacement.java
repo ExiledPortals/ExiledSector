@@ -8,11 +8,13 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.terrain.BaseRingTerrain;
 import com.fs.starfarer.api.impl.campaign.terrain.FlareManager.FlareManagerDelegate;
 import com.fs.starfarer.api.impl.campaign.terrain.PulsarBeamTerrainPlugin;
+import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.generation.ChartSystemFactory;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -40,17 +42,8 @@ public final class ChartWormholePlacement {
 
     public static float outermost(StarSystemAPI system, Collection<? extends SectorEntityToken> ignored) {
         float outermost = 0f;
-        for (PlanetAPI body : system.getPlanets()) {
-            if (!ignored.contains(body)) {
-                float clearance = body.getRadius() + (body.isStar() ? STAR_CLEARANCE : PLANET_CLEARANCE);
-                outermost = Math.max(outermost, centreBand(body, 0).widenedBy(clearance).outer());
-            }
-        }
-        for (CampaignTerrainAPI terrain : system.getTerrainCopy()) {
-            Band band = ringTerrainBand(terrain);
-            if (band != null && !ignored.contains(terrain.getOrbitFocus())) {
-                outermost = Math.max(outermost, band.outer());
-            }
+        for (Band band : bands(system, ignored)) {
+            outermost = Math.max(outermost, band.outer());
         }
         return outermost;
     }
@@ -77,7 +70,7 @@ public final class ChartWormholePlacement {
     }
 
     private static Vector2f polar(double angle, float radius) {
-        return new Vector2f((float) (Math.cos(angle) * radius), (float) (Math.sin(angle) * radius));
+        return ChartSites.pointAround(new Vector2f(), angle, radius);
     }
 
     static boolean isClear(List<Band> blocked, float distance) {
@@ -105,18 +98,24 @@ public final class ChartWormholePlacement {
     }
 
     public static List<Band> blockedBands(StarSystemAPI system) {
-        List<Band> blocked = new ArrayList<>();
+        return bands(system, Collections.emptyList());
+    }
+
+    private static List<Band> bands(StarSystemAPI system, Collection<? extends SectorEntityToken> ignored) {
+        List<Band> bands = new ArrayList<>();
         for (PlanetAPI body : system.getPlanets()) {
-            float clearance = body.getRadius() + (body.isStar() ? STAR_CLEARANCE : PLANET_CLEARANCE);
-            blocked.add(centreBand(body, 0).widenedBy(clearance));
+            if (!ignored.contains(body)) {
+                float clearance = body.getRadius() + (body.isStar() ? STAR_CLEARANCE : PLANET_CLEARANCE);
+                bands.add(centreBand(body, 0).widenedBy(clearance));
+            }
         }
         for (CampaignTerrainAPI terrain : system.getTerrainCopy()) {
             Band band = ringTerrainBand(terrain);
-            if (band != null) {
-                blocked.add(band);
+            if (band != null && !ignored.contains(terrain.getOrbitFocus())) {
+                bands.add(band);
             }
         }
-        return blocked;
+        return bands;
     }
 
     private static Band ringTerrainBand(CampaignTerrainAPI terrain) {
@@ -124,10 +123,13 @@ public final class ChartWormholePlacement {
         if (!(plugin instanceof BaseRingTerrain ring) || ring.params == null || plugin instanceof PulsarBeamTerrainPlugin) {
             return null;
         }
-        float outerEdge = ring.params.middleRadius + ring.params.bandWidthInEngine * 0.5f;
         float innerEdge = Math.max(0f, ring.params.middleRadius - ring.params.bandWidthInEngine * 0.5f);
-        float flareReach = plugin instanceof FlareManagerDelegate flares ? flareReach(flares, outerEdge) : 0f;
-        return centreBand(terrain, 0).sweptAt(innerEdge, outerEdge + flareReach).widenedBy(TERRAIN_CLEARANCE);
+        return centreBand(terrain, 0).sweptAt(innerEdge, reachWithFlares(ring)).widenedBy(TERRAIN_CLEARANCE);
+    }
+
+    public static float reachWithFlares(BaseRingTerrain ring) {
+        float outerEdge = ring.params.middleRadius + ring.params.bandWidthInEngine * 0.5f;
+        return outerEdge + (ring instanceof FlareManagerDelegate flares ? flareReach(flares, outerEdge) : 0f);
     }
 
     public static float flareReach(FlareManagerDelegate flares, float outerEdge) {

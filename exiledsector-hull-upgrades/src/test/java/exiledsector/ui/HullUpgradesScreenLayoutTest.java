@@ -28,7 +28,6 @@ class HullUpgradesScreenLayoutTest {
         assertEquals(900f, bounds.clampX(1200f), 0.001f);
         assertEquals(500f, bounds.clampX(500f), 0.001f);
         assertEquals(700f, bounds.clampY(900f), 0.001f);
-        assertEquals(-5000f, SectionsDisplay.SectionBounds.UNBOUNDED.clampX(-5000f), 0.001f);
     }
 
     @Test

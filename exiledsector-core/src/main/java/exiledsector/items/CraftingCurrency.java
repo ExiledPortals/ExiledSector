@@ -7,15 +7,166 @@ import java.util.Random;
 
 public enum CraftingCurrency implements ItemCurrency {
 
-    AUGMENTATION("exiledSector_augmentation_kernel", 10, 6, MaterialTier.MINOR, new Color(90, 170, 255)),
-    ATTUNEMENT("exiledSector_attunement_kernel", 15, 4, MaterialTier.MINOR, new Color(185, 125, 255)),
-    SUBSTITUTION("exiledSector_substitution_kernel", 20, 3, MaterialTier.MAJOR, new Color(255, 195, 80)),
-    CORRUPTION("exiledSector_corruption_kernel", 50, 1.5f, MaterialTier.EXOTIC, Item.CORRUPTED_FRAME_COLOR),
-    TRANSPOSITION("exiledSector_transposition_kernel", 0, 0.4f, MaterialTier.MYTHIC, new Color(255, 140, 50)),
-    ANNULMENT("exiledSector_annulment_kernel", 0, 0.3f, MaterialTier.MYTHIC, new Color(80, 230, 200)),
-    RECALIBRATION("exiledSector_recalibration_kernel", 0, 0.3f, MaterialTier.MYTHIC, new Color(110, 235, 140)),
-    FIXATION("exiledSector_fixation_kernel", 0, 0.2f, MaterialTier.MYTHIC, new Color(230, 80, 175)),
-    REPLICATION("exiledSector_replication_kernel", 0, 0.035f, MaterialTier.MYTHIC, new Color(225, 240, 255));
+    AUGMENTATION("exiledSector_augmentation_kernel", 10, 6, MaterialTier.MINOR, new Color(90, 170, 255)) {
+        @Override
+        public boolean canUse(Item item, CraftingContext context) {
+            return ItemCrafting.canAugment(item);
+        }
+
+        @Override
+        public Item use(Item item, CraftingContext context, Random random) {
+            return ItemCrafting.augment(item, random) == null ? null : item;
+        }
+    },
+    ATTUNEMENT("exiledSector_attunement_kernel", 15, 4, MaterialTier.MINOR, new Color(185, 125, 255)) {
+        @Override
+        public boolean canUse(Item item, CraftingContext context) {
+            return ItemCrafting.canAttune(item);
+        }
+
+        @Override
+        public Item use(Item item, CraftingContext context, Random random) {
+            return ItemCrafting.attune(item, random);
+        }
+    },
+    SUBSTITUTION("exiledSector_substitution_kernel", 20, 3, MaterialTier.MAJOR, new Color(255, 195, 80)) {
+        @Override
+        public boolean canUse(Item item, CraftingContext context) {
+            return ItemCrafting.canSubstitute(item, item.definition(), context.guardedSlots());
+        }
+
+        @Override
+        public Item use(Item item, CraftingContext context, Random random) {
+            return ItemCrafting.substitute(item, random, context.guardedSlots());
+        }
+
+        @Override
+        public boolean respectsWards() {
+            return true;
+        }
+
+        @Override
+        public boolean wouldChange(Item item, RolledModifier rolled) {
+            return ItemCrafting.canSubstituteAway(item, item.definition(), rolled);
+        }
+    },
+    CORRUPTION("exiledSector_corruption_kernel", 50, 1.5f, MaterialTier.EXOTIC, Item.CORRUPTED_FRAME_COLOR) {
+        @Override
+        public boolean canUse(Item item, CraftingContext context) {
+            return true;
+        }
+
+        @Override
+        public Item use(Item item, CraftingContext context, Random random) {
+            return ItemCrafting.corrupt(context.store(), item, random, context.allowedUniques());
+        }
+
+        @Override
+        public boolean mayChangeDefinition() {
+            return true;
+        }
+    },
+    TRANSPOSITION("exiledSector_transposition_kernel", 0, 0.4f, MaterialTier.MYTHIC, new Color(255, 140, 50)) {
+        @Override
+        public boolean canUse(Item item, CraftingContext context) {
+            return !ItemCrafting.wardBlocksTransposition(item, context.guardedSlots())
+                    && ItemCrafting.canTranspose(item.definition(), item.tier(), context.allowedUniques());
+        }
+
+        @Override
+        public Item use(Item item, CraftingContext context, Random random) {
+            return ItemCrafting.transpose(context.store(), item, random, context.allowedUniques());
+        }
+
+        @Override
+        public boolean mayChangeDefinition() {
+            return true;
+        }
+    },
+    ANNULMENT("exiledSector_annulment_kernel", 0, 0.3f, MaterialTier.MYTHIC, new Color(80, 230, 200)) {
+        @Override
+        public boolean appliesTo(ItemType type) {
+            return type == ItemType.HULL_ITEM;
+        }
+
+        @Override
+        public boolean canUse(Item item, CraftingContext context) {
+            return ItemCrafting.canAnnul(item, context.guardedSlots());
+        }
+
+        @Override
+        public Item use(Item item, CraftingContext context, Random random) {
+            return ItemCrafting.annul(item, random, context.guardedSlots());
+        }
+
+        @Override
+        public boolean respectsWards() {
+            return true;
+        }
+
+        @Override
+        public boolean wouldChange(Item item, RolledModifier rolled) {
+            return true;
+        }
+    },
+    RECALIBRATION("exiledSector_recalibration_kernel", 0, 0.3f, MaterialTier.MYTHIC, new Color(110, 235, 140)) {
+        @Override
+        public boolean canUse(Item item, CraftingContext context) {
+            return ItemCrafting.canRecalibrate(item, item.definition(), context.guardedSlots());
+        }
+
+        @Override
+        public Item use(Item item, CraftingContext context, Random random) {
+            return ItemCrafting.recalibrate(item, random, context.guardedSlots());
+        }
+
+        @Override
+        public boolean respectsWards() {
+            return true;
+        }
+
+        @Override
+        public boolean wouldChange(Item item, RolledModifier rolled) {
+            return ItemCrafting.canVary(rolled, item.definition());
+        }
+    },
+    FIXATION("exiledSector_fixation_kernel", 0, 0.2f, MaterialTier.MYTHIC, new Color(230, 80, 175)) {
+        @Override
+        public boolean canUse(Item item, CraftingContext context) {
+            return ItemCrafting.canFixate(item, context.guardedSlots());
+        }
+
+        @Override
+        public Item use(Item item, CraftingContext context, Random random) {
+            return ItemCrafting.fixate(item, random, context.guardedSlots());
+        }
+
+        @Override
+        public boolean respectsWards() {
+            return true;
+        }
+
+        @Override
+        public boolean wouldChange(Item item, RolledModifier rolled) {
+            return true;
+        }
+    },
+    REPLICATION("exiledSector_replication_kernel", 0, 0.035f, MaterialTier.MYTHIC, new Color(225, 240, 255)) {
+        @Override
+        public boolean canUse(Item item, CraftingContext context) {
+            return true;
+        }
+
+        @Override
+        public Item use(Item item, CraftingContext context, Random random) {
+            return context.store().addMirrorOf(item);
+        }
+
+        @Override
+        public boolean createsCopy() {
+            return true;
+        }
+    };
 
     private final String itemId;
     private final int defaultPartsCost;
@@ -77,61 +228,6 @@ public enum CraftingCurrency implements ItemCurrency {
 
     @Override
     public boolean appliesTo(ItemType type) {
-        return type == ItemType.HULL_ITEM || type == ItemType.SUBROUTINE && this != ANNULMENT;
-    }
-
-    @Override
-    public boolean canUse(Item item, CraftingContext context) {
-        return switch (this) {
-            case AUGMENTATION -> ItemCrafting.canAugment(item);
-            case ATTUNEMENT -> ItemCrafting.canAttune(item);
-            case RECALIBRATION -> ItemCrafting.canRecalibrate(item, item.definition(), context.guardedSlots());
-            case SUBSTITUTION -> ItemCrafting.canSubstitute(item, item.definition(), context.guardedSlots());
-            case TRANSPOSITION -> !ItemCrafting.wardBlocksTransposition(item, context.guardedSlots())
-                    && ItemCrafting.canTranspose(item.definition(), item.tier(), context.allowedUniques());
-            case ANNULMENT -> ItemCrafting.canAnnul(item, context.guardedSlots());
-            case FIXATION -> ItemCrafting.canFixate(item, context.guardedSlots());
-            case CORRUPTION, REPLICATION -> true;
-        };
-    }
-
-    @Override
-    public Item use(Item item, CraftingContext context, Random random) {
-        return switch (this) {
-            case AUGMENTATION -> ItemCrafting.augment(item, random) == null ? null : item;
-            case ATTUNEMENT -> ItemCrafting.attune(item, random);
-            case RECALIBRATION -> ItemCrafting.recalibrate(item, random, context.guardedSlots());
-            case SUBSTITUTION -> ItemCrafting.substitute(item, random, context.guardedSlots());
-            case TRANSPOSITION -> ItemCrafting.transpose(context.store(), item, random, context.allowedUniques());
-            case ANNULMENT -> ItemCrafting.annul(item, random, context.guardedSlots());
-            case FIXATION -> ItemCrafting.fixate(item, random, context.guardedSlots());
-            case CORRUPTION -> ItemCrafting.corrupt(context.store(), item, random, context.allowedUniques());
-            case REPLICATION -> context.store().addMirrorOf(item);
-        };
-    }
-
-    @Override
-    public boolean respectsWards() {
-        return this == RECALIBRATION || this == SUBSTITUTION || this == ANNULMENT || this == FIXATION;
-    }
-
-    @Override
-    public boolean wouldChange(Item item, RolledModifier rolled) {
-        return switch (this) {
-            case RECALIBRATION -> ItemCrafting.canVary(rolled, item.definition());
-            case SUBSTITUTION -> ItemCrafting.canSubstituteAway(item, item.definition(), rolled);
-            case ANNULMENT, FIXATION -> true;
-            default -> false;
-        };
-    }
-
-    @Override
-    public boolean createsCopy() {
-        return this == REPLICATION;
-    }
-
-    @Override
-    public boolean mayChangeDefinition() {
-        return this == TRANSPOSITION || this == CORRUPTION;
+        return type == ItemType.HULL_ITEM || type == ItemType.SUBROUTINE;
     }
 }

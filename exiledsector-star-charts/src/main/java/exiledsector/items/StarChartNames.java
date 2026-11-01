@@ -32,11 +32,11 @@ public final class StarChartNames {
 
     public static void register(JSONObject wordsJson) throws JSONException {
         if (wordsJson == null) {
-            ItemNames.useStarChartWords(null);
+            ItemNames.useTypeWords(ItemType.STAR_CHART, null);
             return;
         }
-        ItemNames.useStarChartWords(new ItemNames.NameWords(style(wordsJson.optString("style", "codename")), words(wordsJson.optJSONArray("first")),
-                words(wordsJson.optJSONArray("second")), words(wordsJson.optJSONArray("models"))));
+        ItemNames.useTypeWords(ItemType.STAR_CHART, new ItemNames.NameWords(style(wordsJson.optString("style", "codename")),
+                words(wordsJson.optJSONArray("first")), words(wordsJson.optJSONArray("second")), words(wordsJson.optJSONArray("models"))));
     }
 
     private static ItemNames.Style style(String styleName) {
@@ -60,6 +60,6 @@ public final class StarChartNames {
     }
 
     public static void clear() {
-        ItemNames.useStarChartWords(null);
+        ItemNames.useTypeWords(ItemType.STAR_CHART, null);
     }
 }

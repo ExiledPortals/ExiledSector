@@ -2,29 +2,29 @@ package exiledsector.charts.anomaly.storm;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.CampaignTerrainAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
-import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.anomaly.AnomalyContentSite;
-import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.AnomalyRun;
+import exiledsector.charts.anomaly.AnomalyTerrains;
+import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.anomaly.LootShaper;
+import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.run.ChartRun;
 import exiledsector.items.ItemDrops;
-import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public final class StormFront implements ChartAnomaly {
+public final class StormFront implements ContentPlacer, RunParticipant, LootShaper {
 
-    public static final String ID = "storm_front";
-    public static final String LOOT_KEY = ID + ".loot";
-    public static final String STRIKE_KEY = ID + ".strikes";
-    public static final String SIZE_KEY = ID + ".size";
+    public static final String ANOMALY_ID = "storm_front";
+    public static final String LOOT_KEY = ChartEffect.CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT.anomalyTuningKey();
+    public static final String STRIKE_KEY = ChartEffect.CHART_STORM_STRIKE_FREQUENCY_PERCENT.anomalyTuningKey();
+    public static final String SIZE_KEY = ChartEffect.CHART_STORM_FRONT_SIZE_PERCENT.anomalyTuningKey();
     public static final String TERRAIN_ID = "exiledSector_chart_storm_front";
     public static final String FRONT_TAG = ChartIds.PREFIX + "storm_front";
     public static final StormFront INSTANCE = new StormFront();
@@ -35,35 +35,23 @@ public final class StormFront implements ChartAnomaly {
 
     @Override
     public String id() {
-        return ID;
+        return ANOMALY_ID;
     }
 
     @Override
     public void generate(AnomalyContentSite site) {
-        StarSystemAPI system = site.system();
-        List<SectorEntityToken> marks = marks(system, site.pois());
+        List<SectorEntityToken> marks = marks(site);
         Random random = site.random(PATH_SALT);
         StormPath path = new StormPath(random.nextFloat() * 360f, edgeRadius(marks),
                 StormRules.bandWidth(site.context().anomalyMult(SIZE_KEY)), StormRules.CROSSING_DAYS);
         List<String> markIds = marks.stream().map(SectorEntityToken::getId).toList();
-        SectorEntityToken terrain = system.addTerrain(TERRAIN_ID, new StormFrontTerrainPlugin.Params(site.runId(), path, markIds,
-                Global.getSector().getClock().getTimestamp(), random.nextLong()));
-        site.track(terrain);
-        Vector2f start = path.centre(0f);
-        terrain.setFixedLocation(start.x, start.y);
-        terrain.addTag(ChartIds.ENTITY_TAG);
-        terrain.addTag(ChartIds.runTag(site.runId()));
-        terrain.addTag(FRONT_TAG);
+        site.addTerrain(TERRAIN_ID, new StormFrontTerrainPlugin.Params(site.runId(), path, markIds, Global.getSector().getClock().getTimestamp(),
+                random.nextLong()), path.centre(0f), FRONT_TAG);
     }
 
-    static List<SectorEntityToken> marks(StarSystemAPI system, List<SectorEntityToken> pois) {
-        List<SectorEntityToken> marks = new ArrayList<>();
-        for (PlanetAPI planet : system.getPlanets()) {
-            if (!planet.isStar()) {
-                marks.add(planet);
-            }
-        }
-        for (SectorEntityToken poi : pois) {
+    static List<SectorEntityToken> marks(AnomalyContentSite site) {
+        List<SectorEntityToken> marks = new ArrayList<>(site.worlds());
+        for (SectorEntityToken poi : site.pois()) {
             if (!marks.contains(poi)) {
                 marks.add(poi);
             }
@@ -82,13 +70,8 @@ public final class StormFront implements ChartAnomaly {
     }
 
     @Override
-    public boolean isActiveIn(LocationAPI location) {
-        for (StormFrontTerrainPlugin front : frontsIn(location)) {
-            if (!front.isDone()) {
-                return true;
-            }
-        }
-        return false;
+    public void clearFrom(CampaignFleetAPI fleet) {
+        StormFrontTerrainPlugin.liftFrom(fleet);
     }
 
     @Override
@@ -117,8 +100,8 @@ public final class StormFront implements ChartAnomaly {
     }
 
     @Override
-    public String intelText(ChartRun run, LocationAPI location) {
-        for (StormFrontTerrainPlugin front : frontsIn(location)) {
+    public String intelText(AnomalyRun run) {
+        for (StormFrontTerrainPlugin front : frontsIn(run.system())) {
             if (!front.isDone()) {
                 return front.intelText();
             }
@@ -127,16 +110,7 @@ public final class StormFront implements ChartAnomaly {
     }
 
     public static List<StormFrontTerrainPlugin> frontsIn(LocationAPI location) {
-        List<StormFrontTerrainPlugin> fronts = new ArrayList<>();
-        if (location == null) {
-            return fronts;
-        }
-        for (CampaignTerrainAPI terrain : location.getTerrainCopy()) {
-            if (terrain.getPlugin() instanceof StormFrontTerrainPlugin front) {
-                fronts.add(front);
-            }
-        }
-        return fronts;
+        return AnomalyTerrains.in(location, StormFrontTerrainPlugin.class);
     }
 
     public static StormFrontTerrainPlugin frontHolding(CampaignFleetAPI fleet) {

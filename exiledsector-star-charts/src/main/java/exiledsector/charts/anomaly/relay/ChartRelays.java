@@ -13,15 +13,15 @@ import com.fs.starfarer.api.impl.campaign.ids.Abilities;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
-import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.content.ChartFleetVisibility;
+import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRunState;
-import exiledsector.charts.run.ChartRuns;
 import exiledsector.ui.CampaignMessages;
 
 import java.awt.Color;
@@ -36,22 +36,14 @@ public final class ChartRelays {
     private ChartRelays() {
     }
 
-    public static ChartRun liveRunFor(SectorEntityToken relay) {
-        ChartRun run = ChartRuns.currentOrNull();
-        if (run == null || relay == null || !run.runState().isLive() || !ChartIds.belongsToRun(relay, run.runId())) {
-            return null;
-        }
-        return run;
-    }
-
-    public static boolean check(SectorAPI sector) {
-        ChartRun run = ChartRuns.currentOrNull();
-        if (run == null || run.runState() != ChartRunState.INSIDE || !run.anomalyIds().contains(RelayNetwork.ID)) {
+    public static boolean check(SectorAPI sector, AnomalyRun anomalyRun) {
+        ChartRun run = anomalyRun.run();
+        if (run.runState() != ChartRunState.INSIDE) {
             return false;
         }
         CampaignFleetAPI playerFleet = sector.getPlayerFleet();
-        StarSystemAPI system = sector.getStarSystem(run.systemId());
-        if (playerFleet == null || system == null || playerFleet.getContainingLocation() != system || playerFleet.isInHyperspaceTransition()) {
+        StarSystemAPI system = anomalyRun.system();
+        if (playerFleet == null || playerFleet.getContainingLocation() != system || playerFleet.isInHyperspaceTransition()) {
             return false;
         }
         if (RelayStates.isWoken(run, RelayKind.COMM_RELAY)) {
@@ -172,7 +164,7 @@ public final class ChartRelays {
         }
         int revealed = 0;
         for (CampaignFleetAPI fleet : system.getFleets()) {
-            if (!fleet.isPlayerFleet() && fleet.getExtendedDetectedAtRange() < RelayRules.REVEAL_EXTENDED_RANGE) {
+            if (!fleet.isPlayerFleet() && !ChartFleetVisibility.isRevealed(fleet)) {
                 reveal(fleet);
                 revealed++;
             }
@@ -181,7 +173,6 @@ public final class ChartRelays {
     }
 
     static void reveal(CampaignFleetAPI fleet) {
-        fleet.getStats().getDynamic().getStat(Stats.DETECTED_BY_PLAYER_RANGE_MULT).modifyMult(REVEAL_MOD_ID, RelayRules.REVEAL_RANGE_MULT);
-        fleet.setExtendedDetectedAtRange(RelayRules.REVEAL_EXTENDED_RANGE);
+        ChartFleetVisibility.reveal(fleet, REVEAL_MOD_ID);
     }
 }

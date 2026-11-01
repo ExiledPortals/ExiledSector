@@ -1,5 +1,6 @@
 package exiledsector.ui.hyperspace;
 
+import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeTopology;
 
 import java.util.ArrayList;
@@ -24,8 +25,7 @@ public record HyperspaceRoute(HyperspaceAnchor from, HyperspaceAnchor to) {
             if (from == null || to == null || from.equals(to)) {
                 continue;
             }
-            String routeKey = from.id().compareTo(to.id()) < 0 ? from.id() + "|" + to.id() : to.id() + "|" + from.id();
-            if (seenRouteKeys.add(routeKey)) {
+            if (seenRouteKeys.add(SkillTree.curveKey(from.id(), to.id()))) {
                 routes.add(new HyperspaceRoute(from, to));
             }
         }

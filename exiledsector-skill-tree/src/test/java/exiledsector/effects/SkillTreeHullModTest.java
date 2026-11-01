@@ -60,7 +60,6 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.startsWith;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
@@ -1023,6 +1022,35 @@ class SkillTreeHullModTest {
         new SkillTreeHullMod().applyEffectsToFighterSpawnedByShip(fighter, ship, "exiledSector_core");
 
         verify(fighterEffect).applyToFighterSpawnedByShip(fighter, ship, "exiledSector_skill_fighter_weapon_damage_1_TEST_EFFECT", 15f);
+    }
+
+    @Test
+    void laterFighterLaunchesReuseTheTreeResolvedForTheCarriersCombatPlan() {
+        exiledsector.skills.skilleffect.SkillEffect fighterEffect = mock(exiledsector.skills.skilleffect.SkillEffect.class);
+        when(fighterEffect.name()).thenReturn("TEST_EFFECT");
+        SkillType fighterType = new SkillType.Builder("fighter_weapon_damage", "Fighter Weapon Damage", "graphics/hullmods/fighter_uplink2.png", SkillTier.SMALL)
+                .effects(List.of(new SkillTypeEffect(fighterEffect, 15f)))
+                .vanillaHullModId(null)
+                .todo(null)
+                .build();
+        SkillNode fighterNode = new SkillNode("fighter_weapon_damage_1", fighterType, List.of(), 0f, 0f);
+        SkillTree.register(fighterNode);
+
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), fighterNode, 1);
+
+        ShipAPI ship = withRealCustomData(mockShip(member, mock(MutableShipStatsAPI.class)));
+        ShipAPI firstFighter = mock(ShipAPI.class);
+        ShipAPI secondFighter = mock(ShipAPI.class);
+
+        new SkillTreeHullMod().applyEffectsToFighterSpawnedByShip(firstFighter, ship, "exiledSector_core");
+        ShipCombatPlan plan = (ShipCombatPlan) ship.getCustomData().values().stream().filter(ShipCombatPlan.class::isInstance).findFirst().orElseThrow();
+        new SkillTreeHullMod().applyEffectsToFighterSpawnedByShip(secondFighter, ship, "exiledSector_core");
+
+        assertTrue(plan.resolvedTree() != null);
+        assertTrue(ship.getCustomData().containsValue(plan));
+        verify(fighterEffect).applyToFighterSpawnedByShip(secondFighter, ship, "exiledSector_skill_fighter_weapon_damage_1_TEST_EFFECT", 15f);
     }
 
     @Test

@@ -9,6 +9,7 @@ import com.fs.starfarer.api.impl.campaign.ids.FleetTypes;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.anomaly.HeldGuards;
 import exiledsector.charts.content.ChartAnomalyFleets;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
@@ -30,21 +31,11 @@ public final class ShaftFleets {
     }
 
     public static CampaignFleetAPI fleetFor(SectorEntityToken planet, ChartRun run, ExcavationSite site) {
-        MemoryAPI memory = planet.getMemoryWithoutUpdate();
-        CampaignFleetAPI fleet = memory.get(SITE_FLEET_KEY) instanceof CampaignFleetAPI stored && !stored.isEmpty() ? stored : null;
-        if (fleet == null) {
-            fleet = create(run, site);
-            if (fleet == null) {
-                return null;
-            }
-            memory.set(SITE_FLEET_KEY, fleet);
-        }
-        fleet.setLocation(planet.getLocation().x, planet.getLocation().y);
-        return fleet;
+        return HeldGuards.held(planet, SITE_FLEET_KEY, () -> create(run, site));
     }
 
     public static void forget(SectorEntityToken planet) {
-        planet.getMemoryWithoutUpdate().unset(SITE_FLEET_KEY);
+        HeldGuards.forget(planet, SITE_FLEET_KEY);
     }
 
     static CampaignFleetAPI create(ChartRun run, ExcavationSite site) {

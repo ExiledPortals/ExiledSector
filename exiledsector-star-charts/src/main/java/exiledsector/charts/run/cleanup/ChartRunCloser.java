@@ -1,7 +1,5 @@
 package exiledsector.charts.run.cleanup;
 
-import com.fs.starfarer.api.EveryFrameScript;
-import com.fs.starfarer.api.campaign.CampaignEventListener;
 import com.fs.starfarer.api.campaign.CampaignEventListener.FleetDespawnReason;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
@@ -15,6 +13,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
+import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import com.fs.starfarer.api.characters.OfficerDataAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.impl.campaign.enc.StrandedGiveTJScript;
@@ -40,7 +39,7 @@ public final class ChartRunCloser {
 
     static final List<CloseStep> STEPS = List.of(
             new CloseStep("clear the player's interaction target and course", ChartRunCloser::clearPlayerTargetAndCourse),
-            new CloseStep("lift the chart's effects from the player fleet", target -> ChartRunEffects.removeFrom(target.sector().getPlayerFleet())),
+            new CloseStep("lift the chart's effects from the player fleet", target -> ChartRunEffects.lift(target.sector().getPlayerFleet())),
             new CloseStep("reset the campaign map location", ChartRunCloser::resetCampaignMapLocation),
             new CloseStep("move the respawn location out of the system", ChartRunCloser::moveRespawnLocationOut),
             new CloseStep("refresh the stranded-in-deep-space script", ChartRunCloser::refreshStrandedScript),
@@ -49,7 +48,8 @@ public final class ChartRunCloser {
             new CloseStep("end intel pointing into the system", ChartRunCloser::endIntel),
             new CloseStep("drop a pending Salvor's Tally for the system",
                     target -> ChartSalvorsTally.removePendingFor(target.sector(), target.system())),
-            new CloseStep("remove the run's scripts, listeners and memory keys", ChartRunCloser::removeRunScriptsAndMemory),
+            new CloseStep("remove the run's scripts and listeners",
+                    target -> removeBound(target.sector(), target.system(), bound -> bound.belongsToRun(target.runId()))),
             new CloseStep("remove the system's entities", ChartRunCloser::removeSystemEntities),
             new CloseStep("remove the wormholes and tagged entities", ChartRunCloser::removeWormholesAndTaggedEntities),
             new CloseStep("remove the star system", ChartRunCloser::removeSystem),
@@ -230,35 +230,27 @@ public final class ChartRunCloser {
         }
     }
 
-    static void removeRunScriptsAndMemory(CloseTarget target) {
-        SectorAPI sector = target.sector();
-        for (EveryFrameScript script : new ArrayList<>(sector.getScripts())) {
-            if (script instanceof ChartRunBound bound && bound.belongsToRun(target.runId())) {
-                sector.removeScript(script);
-            }
+    public static void removeBound(SectorAPI sector, StarSystemAPI system, Predicate<ChartRunBound> doomed) {
+        removeWhere(sector.getScripts(), doomed, sector::removeScript);
+        removeWhere(sector.getTransientScripts(), doomed, sector::removeTransientScript);
+        if (system != null) {
+            removeWhere(system.getScripts(), doomed, system::removeScript);
         }
-        for (EveryFrameScript script : new ArrayList<>(sector.getTransientScripts())) {
-            if (script instanceof ChartRunBound bound && bound.belongsToRun(target.runId())) {
-                sector.removeTransientScript(script);
-            }
+        removeWhere(sector.getAllListeners(), doomed, sector::removeListener);
+        ListenerManagerAPI listenerManager = sector.getListenerManager();
+        if (listenerManager != null) {
+            removeWhere(listenerManager.getListeners(ChartRunBound.class), doomed, listenerManager::removeListener);
         }
-        if (target.system() != null) {
-            for (EveryFrameScript script : new ArrayList<>(target.system().getScripts())) {
-                if (script instanceof ChartRunBound bound && bound.belongsToRun(target.runId())) {
-                    target.system().removeScript(script);
-                }
-            }
-        }
-        for (CampaignEventListener listener : new ArrayList<>(sector.getAllListeners())) {
-            if (listener instanceof ChartRunBound bound && bound.belongsToRun(target.runId())) {
-                sector.removeListener(listener);
-            }
-        }
-        if (sector.getListenerManager() != null) {
-            for (ChartRunBound listener : new ArrayList<>(sector.getListenerManager().getListeners(ChartRunBound.class))) {
-                if (listener.belongsToRun(target.runId())) {
-                    sector.getListenerManager().removeListener(listener);
-                }
+    }
+
+    public static void endBoundIntel(SectorAPI sector, Predicate<ChartRunBound> doomed) {
+        endIntelWhere(sector, IntelManagerAPI::getIntel, intel -> intel instanceof ChartRunBound bound && doomed.test(bound));
+    }
+
+    private static <T> void removeWhere(List<T> candidates, Predicate<ChartRunBound> doomed, Consumer<T> remove) {
+        for (T candidate : new ArrayList<>(candidates)) {
+            if (candidate instanceof ChartRunBound bound && doomed.test(bound)) {
+                remove.accept(candidate);
             }
         }
     }

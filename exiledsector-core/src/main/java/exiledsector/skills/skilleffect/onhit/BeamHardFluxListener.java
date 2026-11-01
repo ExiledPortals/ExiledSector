@@ -8,16 +8,22 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
+import exiledsector.skills.skilleffect.CombatQueries;
+import exiledsector.skills.skilleffect.ShipCombatListener;
 import exiledsector.skills.skilleffect.SkillEffectSupport;
 import org.lwjgl.util.vector.Vector2f;
 
-final class BeamHardFluxListener implements DamageDealtModifier {
+final class BeamHardFluxListener extends ShipCombatListener implements DamageDealtModifier {
 
     static final String HARD_FLUX_PERCENT_KEY = "exiledLib_beamDamageHardFluxPercent";
 
+    BeamHardFluxListener(ShipAPI ownerShip) {
+        super(ownerShip);
+    }
+
     @Override
     public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        if (shieldHit && param instanceof BeamAPI && target instanceof ShipAPI targetShip) {
+        if (shieldHit && param instanceof BeamAPI && target instanceof ShipAPI targetShip && CombatQueries.isHostile(ownerShip, targetShip)) {
             SkillEffectSupport.ensureListener(targetShip, BeamHardFluxConverter.class, BeamHardFluxConverter::new);
         }
         return null;
@@ -42,7 +48,7 @@ final class BeamHardFluxListener implements DamageDealtModifier {
             float shieldFlux = result.getDamageToShields();
             if (shieldFlux <= 0f || BeamSplitListener.isApplyingSimulatedHit()
                     || !(shieldedShip.getParamAboutToApplyDamage() instanceof BeamAPI beam) || beam.getSource() == null
-                    || beam.getDamage().isForceHardFlux()) return;
+                    || beam.getDamage().isForceHardFlux() || !CombatQueries.isHostile(beam.getSource(), shieldedShip)) return;
 
             convertToHardFlux(shieldedShip.getFluxTracker(), shieldFlux,
                     beam.getSource().getMutableStats().getDynamic().getValue(HARD_FLUX_PERCENT_KEY, 0f));

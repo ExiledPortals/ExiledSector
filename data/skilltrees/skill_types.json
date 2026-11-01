@@ -1375,7 +1375,8 @@
 			],
 			"tags": [
 				"armour",
-				"req_shields"
+				"req_shields",
+				"req_unscripted_hull"
 			]
 		},
 		{
@@ -1407,7 +1408,8 @@
 			],
 			"tags": [
 				"shield",
-				"req_no_shields"
+				"req_no_shields",
+				"req_unscripted_hull"
 			]
 		},
 		{

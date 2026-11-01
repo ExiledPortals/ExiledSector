@@ -24,7 +24,7 @@ public final class ChartDefenderTallies implements SalvageDefenderModificationPl
     static final float NO_EXPIRY = -1f;
 
     public static void register(SectorAPI sector) {
-        GenericPluginManagerAPI plugins = sector == null ? null : sector.getGenericPlugins();
+        GenericPluginManagerAPI plugins = sector.getGenericPlugins();
         if (plugins != null && !plugins.hasPlugin(ChartDefenderTallies.class)) {
             plugins.addPlugin(new ChartDefenderTallies(), true);
         }

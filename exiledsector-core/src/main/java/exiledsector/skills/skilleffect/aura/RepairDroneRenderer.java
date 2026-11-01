@@ -33,6 +33,7 @@ final class RepairDroneRenderer extends BaseCombatLayeredRenderingPlugin {
     static final float ORPHAN_FADE_SECONDS = 0.6f;
 
     private final RepairCoordinatorField field;
+    private final EnumSet<CombatEngineLayers> activeLayers = EnumSet.of(CombatEngineLayers.FIGHTERS_LAYER);
     private final Map<RepairCoordinatorListener, Swarm> swarms = new IdentityHashMap<>();
     private final SpriteCache spriteCache = new SpriteCache(RepairDroneRenderer.class);
 
@@ -60,7 +61,7 @@ final class RepairDroneRenderer extends BaseCombatLayeredRenderingPlugin {
 
     @Override
     public EnumSet<CombatEngineLayers> getActiveLayers() {
-        return EnumSet.of(CombatEngineLayers.FIGHTERS_LAYER);
+        return activeLayers;
     }
 
     @Override

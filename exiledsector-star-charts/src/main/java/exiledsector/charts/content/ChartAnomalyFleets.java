@@ -2,14 +2,18 @@ package exiledsector.charts.content;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.fleets.FleetParamsV3;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.anomaly.RunFactionDress;
 import exiledsector.charts.content.ChartContentPlan.FleetRole;
+import exiledsector.charts.content.ChartContentPlan.PlannedFleet;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartTiers;
-import exiledsector.charts.loot.ChartVanillaLoot;
+import org.lwjgl.util.vector.Vector2f;
 
+import java.util.List;
 import java.util.Random;
 
 public final class ChartAnomalyFleets {
@@ -28,8 +32,7 @@ public final class ChartAnomalyFleets {
     }
 
     public static ChartTier tier(int tier, ChartGenContext context) {
-        ChartTier base = ChartTiers.forTier(ChartTiers.clamp(tier));
-        return context == null ? base : context.adjust(base);
+        return context.adjust(ChartTiers.forTier(ChartTiers.clamp(tier)));
     }
 
     public static Spec combat(String factionId, String fleetType, ChartTier tier, float sizePercent) {
@@ -91,13 +94,40 @@ public final class ChartAnomalyFleets {
             fleet.getMemoryWithoutUpdate().unset(ChartIds.START_DP_MEMORY_KEY);
             return;
         }
-        ChartGenContext liveContext = context == null ? ChartGenContext.none() : context;
-        ChartContentGenerator.applyEnemySensorRange(fleet, liveContext.enemySensorRangeBonus());
-        ChartVanillaLoot.addToFleet(fleet, false, liveContext, ChartTiers.clamp(tier));
+        arm(fleet, false, context, tier);
     }
 
-    public static String dressConvoy(String factionId) {
-        return ChartContentGenerator.engine().dressConvoy(factionId);
+    public static CampaignFleetAPI planned(String factionId, PlannedFleet planned, Random random, String runId, int tier, long fleetSeed) {
+        CampaignFleetAPI fleet = create(ChartContentGenerator.fleetParams(factionId, planned, random));
+        if (fleet != null) {
+            ChartContentGenerator.prepareFleet(fleet, runId, tier, planned.role(), planned.strengthBonus(), fleetSeed);
+        }
+        return fleet;
+    }
+
+    public static void arm(CampaignFleetAPI fleet, boolean boss, ChartGenContext context, int tier) {
+        ChartContentGenerator.armAgainstPlayer(fleet, boss, context == null ? ChartGenContext.none() : context, ChartTiers.clamp(tier));
+    }
+
+    public static void joinPlayer(CampaignFleetAPI fleet, String allyFactionId) {
+        ChartContentGenerator.joinPlayer(fleet, allyFactionId);
+    }
+
+    public static void revealBoss(CampaignFleetAPI boss) {
+        ChartContentGenerator.revealBoss(boss);
+    }
+
+    public static String dress(String runFactionId, RunFactionDress dress) {
+        return ChartContentGenerator.engine().dress(runFactionId, dress);
+    }
+
+    public static List<ChartSpot> openSpots(StarSystemAPI system, Vector2f entry, Random random) {
+        return ChartContentGenerator.clearSpots(ChartContentGenerator.engine().spots(system, random, null, ChartContentGenerator.POI_GAP),
+                ChartContentGenerator.hazards(system), entry, ChartContentGenerator.FLEET_WORMHOLE_CLEARANCE);
+    }
+
+    public static Vector2f farSideOf(Vector2f entry) {
+        return ChartContentGenerator.farSideOf(entry);
     }
 
     public static void tag(SectorEntityToken entity, String runId) {

@@ -45,6 +45,25 @@ public final class SpriteDraw {
         draw(cache.sprite(path), cx, cy, width, height, tint, alphaMult, angleDeg, true);
     }
 
+    public static void drawCellAtCenter(SpriteAPI sheet, int columns, int rows, int cell, float cx, float cy, float width, float height,
+                                        float angleDeg, Color tint, float alphaMult, boolean additive) {
+        if (sheet == null) return;
+        selectCell(sheet, columns, rows, cell);
+        draw(sheet, cx, cy, width, height, tint, alphaMult, angleDeg, additive);
+    }
+
+    private static void selectCell(SpriteAPI sheet, int columns, int rows, int cell) {
+        int safeColumns = Math.max(1, columns);
+        int safeRows = Math.max(1, rows);
+        int wrapped = Math.floorMod(cell, safeColumns * safeRows);
+        float cellWidth = sheet.getTextureWidth() / safeColumns;
+        float cellHeight = sheet.getTextureHeight() / safeRows;
+        sheet.setTexX(wrapped % safeColumns * cellWidth);
+        sheet.setTexY(wrapped / safeColumns * cellHeight);
+        sheet.setTexWidth(cellWidth);
+        sheet.setTexHeight(cellHeight);
+    }
+
     private static void draw(SpriteAPI sprite, float cx, float cy, float width, float height,
                              Color tint, float alphaMult, float angleDeg, boolean additive) {
         if (sprite == null) return;

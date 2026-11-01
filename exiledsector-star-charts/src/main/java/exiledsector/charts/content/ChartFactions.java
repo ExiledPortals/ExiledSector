@@ -1,5 +1,7 @@
 package exiledsector.charts.content;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.FactionAPI;
 import exiledsector.charts.effect.ChartFactionEffect;
 import exiledsector.data.CsvRows;
 import exiledsector.ModCsv;
@@ -74,6 +76,18 @@ public final class ChartFactions {
 
     public static List<ChartFaction> all() {
         return factions;
+    }
+
+    public static String displayName(String factionId) {
+        if (factionId == null) {
+            return "";
+        }
+        try {
+            FactionAPI faction = Global.getSector() == null ? null : Global.getSector().getFaction(factionId);
+            return faction == null ? factionId : faction.getDisplayName();
+        } catch (RuntimeException e) {
+            return factionId;
+        }
     }
 
     public static ChartFactionEffect effectByName(String effectName) {

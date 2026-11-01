@@ -14,7 +14,6 @@ import exiledsector.skills.ShipFacts;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
-import exiledsector.skills.skilleffect.ListenerEffect;
 import exiledsector.skills.skilleffect.SimpleStatEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.SkillEffectSupport;
@@ -26,8 +25,8 @@ import exiledsector.skills.skilleffect.logistics.LogisticsSkillEffect;
 import exiledsector.skills.skilleffect.weapon.WeaponScope;
 import exiledsector.skills.skilleffect.weapon.WeaponStatFamily;
 
-import java.util.function.Function;
-
+import static exiledsector.skills.skilleffect.Backings.listener;
+import static exiledsector.skills.skilleffect.Backings.statEffect;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
@@ -41,22 +40,22 @@ public enum FighterSkillEffect implements BackedSkillEffect {
 
     FIGHTER_WEAPON_DAMAGE_PERCENT(RoleStat.WEAPON_DAMAGE),
     FIGHTER_TOP_SPEED_PERCENT(RoleStat.TOP_SPEED),
-    FIGHTER_CREW_LOSS_PERCENT(PERCENT, dynamicStat("fighter_crew_loss_mult"),
-            "stat.casualtiesSufferedByFighterPilotsLaunchedFromThisShip", true) {
+    FIGHTER_CREW_LOSS_PERCENT(statEffect(PERCENT, dynamicStat("fighter_crew_loss_mult"),
+            "stat.casualtiesSufferedByFighterPilotsLaunchedFromThisShip", true)) {
         @Override
         public StyledText description(float magnitude) {
             return describeLaunched(PERCENT, null, magnitude, "stat.casualtiesSufferedByFighterPilotsLaunchedFromThisShip");
         }
     },
-    FIGHTER_CREW_LOSS_MULT(MULT, dynamicStat("fighter_crew_loss_mult"),
-            "stat.casualtiesSufferedByFighterPilotsLaunchedFromThisShip", true) {
+    FIGHTER_CREW_LOSS_MULT(statEffect(MULT, dynamicStat("fighter_crew_loss_mult"),
+            "stat.casualtiesSufferedByFighterPilotsLaunchedFromThisShip", true)) {
         @Override
         public StyledText description(float magnitude) {
             return describeLaunched(MULT, null, magnitude, "stat.casualtiesSufferedByFighterPilotsLaunchedFromThisShip");
         }
     },
-    FIGHTER_REFIT_TIME_MULT(MULT, liveStat(MutableShipStatsAPI::getFighterRefitTimeMult), "stat.fighterRefitTime", true),
-    FIGHTER_REFIT_TIME_PERCENT(PERCENT, liveStat(MutableShipStatsAPI::getFighterRefitTimeMult), "stat.fighterRefitTime", true),
+    FIGHTER_REFIT_TIME_MULT(statEffect(MULT, liveStat(MutableShipStatsAPI::getFighterRefitTimeMult), "stat.fighterRefitTime", true)),
+    FIGHTER_REFIT_TIME_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getFighterRefitTimeMult), "stat.fighterRefitTime", true)),
     FIGHTER_REPLACEMENT_RATE_MULT {
         @Override
         public StatMode statMode() {
@@ -75,10 +74,10 @@ public enum FighterSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this, magnitude >= 0 ? "slower" : "faster").arg("value", Math.abs(magnitude)).styled();
         }
     },
-    FIGHTER_REPLACEMENT_DECAY_PERCENT(PERCENT, dynamicStat("replacement_rate_decrease_mult"),
-            "stat.rateAtWhichFighterReplacementCapabilityDecaysFromLosses", true),
-    FIGHTER_REPLACEMENT_RECOVERY_PERCENT(PERCENT, dynamicStat("replacement_rate_increase_mult"),
-            "stat.rateAtWhichFighterReplacementCapabilityRecovers", false),
+    FIGHTER_REPLACEMENT_DECAY_PERCENT(statEffect(PERCENT, dynamicStat("replacement_rate_decrease_mult"),
+            "stat.rateAtWhichFighterReplacementCapabilityDecaysFromLosses", true)),
+    FIGHTER_REPLACEMENT_RECOVERY_PERCENT(statEffect(PERCENT, dynamicStat("replacement_rate_increase_mult"),
+            "stat.rateAtWhichFighterReplacementCapabilityRecovers", false)),
     FIGHTER_PD_DAMAGE_BONUS_PERCENT {
         @Override
         public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
@@ -123,8 +122,8 @@ public enum FighterSkillEffect implements BackedSkillEffect {
         }
     },
     FIGHTER_RATE_OF_FIRE_PERCENT(RoleStat.RATE_OF_FIRE),
-    FIGHTER_ENGAGEMENT_RANGE_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getFighterWingRange), "stat.fighterEngagementRange", false),
-    FIGHTER_ENGAGEMENT_RANGE_MULT(MULT, bonus(MutableShipStatsAPI::getFighterWingRange), "stat.fighterEngagementRange", false),
+    FIGHTER_ENGAGEMENT_RANGE_PERCENT(statEffect(PERCENT, bonus(MutableShipStatsAPI::getFighterWingRange), "stat.fighterEngagementRange", false)),
+    FIGHTER_ENGAGEMENT_RANGE_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getFighterWingRange), "stat.fighterEngagementRange", false)),
     FIGHTER_WEAPON_RANGE_FLAT(RoleStat.WEAPON_RANGE),
     FIGHTER_ROLE_DAMAGE_PERCENT(WingRole.FIGHTER, RoleStat.WEAPON_DAMAGE),
     FIGHTER_ROLE_TOP_SPEED_PERCENT(WingRole.FIGHTER, RoleStat.TOP_SPEED),
@@ -199,7 +198,7 @@ public enum FighterSkillEffect implements BackedSkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).styled();
+            return EffectText.templated(this, magnitude);
         }
 
         @Override
@@ -211,7 +210,7 @@ public enum FighterSkillEffect implements BackedSkillEffect {
     CONVERTED_HANGAR_REPLACEMENT_RATE_MULT(new WaivedPenalty(FIGHTER_REPLACEMENT_RATE_MULT, Stats.CONVERTED_HANGAR_NO_REFIT_PENALTY)),
     CONVERTED_HANGAR_RELAUNCH_TIME_FLAT(new WaivedPenalty(FIGHTER_RELAUNCH_TIME_FLAT, Stats.CONVERTED_HANGAR_NO_REARM_INCREASE)),
     CONVERTED_HANGAR_MIN_CREW_FLAT(new WaivedPenalty(LogisticsSkillEffect.MIN_CREW_FLAT, Stats.CONVERTED_HANGAR_NO_CREW_INCREASE)),
-    WING_SCRAMBLE_COPIES(WingScrambleListener.COPIES_KEY, WingScrambleListener.class, WingScrambleListener::new) {
+    WING_SCRAMBLE_COPIES(listener(WingScrambleListener.COPIES_KEY, WingScrambleListener.class, WingScrambleListener::new)) {
         @Override
         public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
             for (WingScrambleListener listener : parentShip.getListeners(WingScrambleListener.class)) {
@@ -285,14 +284,6 @@ public enum FighterSkillEffect implements BackedSkillEffect {
 
     FighterSkillEffect(WingRole role, RoleStat roleStat) {
         this(new RoleBacking(role, roleStat));
-    }
-
-    FighterSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
-        this(new SimpleStatEffect(mode, target, statKey, lowerIsBetter));
-    }
-
-    <T> FighterSkillEffect(String magnitudeKey, Class<T> listenerType, Function<ShipAPI, ? extends T> listenerFactory) {
-        this(new ListenerEffect<>(magnitudeKey, listenerType, listenerFactory));
     }
 
     FighterSkillEffect(EffectBacking backing) {

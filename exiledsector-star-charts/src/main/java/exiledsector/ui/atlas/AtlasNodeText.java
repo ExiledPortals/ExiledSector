@@ -1,21 +1,17 @@
 package exiledsector.ui.atlas;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.FactionAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.charts.anomaly.AtlasRule;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.anomaly.relay.RelayChain;
-import exiledsector.charts.anomaly.relay.RelayNetwork;
+import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
-import exiledsector.charts.anomaly.skirmish.SkirmishEntry;
-import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.atlas.AtlasAnomalies;
-import exiledsector.charts.atlas.AtlasAnomalyRecord;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
+import exiledsector.charts.atlas.AtlasLine;
+import exiledsector.charts.atlas.AtlasLine.Tone;
+import exiledsector.charts.atlas.AtlasNames;
 import exiledsector.charts.atlas.AtlasNode;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasReach;
@@ -26,125 +22,62 @@ import exiledsector.ui.socket.BenchModeSupport;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public final class AtlasNodeText {
-
-    public record Line(String text, Tone tone) {
-    }
-
-    public enum Tone { TITLE, PLAIN, MARKER, GOOD, BAD, HINT, STYLED }
 
     private AtlasNodeText() {
     }
 
-    public static String name(String category, String id) {
-        if (id == null || id.isEmpty()) {
-            return "";
-        }
-        String key = "chart.atlas." + category + "." + id;
-        return Translation.has(key) ? Translation.text(key) : tidy(id);
-    }
-
-    static String tidy(String id) {
-        String[] words = id.replace('-', '_').split("_");
-        StringBuilder tidied = new StringBuilder();
-        for (String word : words) {
-            if (word.isEmpty()) {
-                continue;
-            }
-            if (tidied.length() > 0) {
-                tidied.append(' ');
-            }
-            tidied.append(word.substring(0, 1).toUpperCase(Locale.ROOT)).append(word.substring(1));
-        }
-        return tidied.toString();
-    }
-
     public static String regionName(String regionId) {
-        return AtlasRegion.NORMAL.equals(regionId) ? Translation.text("chart.atlas.normalSpace") : name("region", regionId);
+        return AtlasRegion.NORMAL.equals(regionId) ? Translation.text("chart.atlas.normalSpace") : AtlasNames.name("region", regionId);
     }
 
-    public static String factionName(String factionId) {
-        SectorAPI sector = Global.getSector();
-        FactionAPI faction = sector == null || factionId == null ? null : sector.getFaction(factionId);
-        return faction == null ? tidy(factionId == null ? "" : factionId) : faction.getDisplayName();
-    }
-
-    public static List<Line> describe(AtlasGenerator generator, AtlasState state, AtlasCell cell, boolean reachable) {
+    public static List<AtlasLine> describe(AtlasGenerator generator, AtlasState state, AtlasCell cell, boolean reachable) {
         AtlasNode node = generator.node(cell);
-        List<Line> lines = new ArrayList<>();
+        List<AtlasLine> lines = new ArrayList<>();
         if (node.isOrigin()) {
-            lines.add(new Line(Translation.text("chart.atlas.node.gateway"), Tone.TITLE));
+            lines.add(new AtlasLine(Translation.text("chart.atlas.node.gateway"), Tone.TITLE));
             return lines;
         }
-        lines.add(new Line(regionName(node.regionId()), Tone.TITLE));
-        lines.add(new Line(Translation.msg("chart.atlas.node.faction").arg("faction", factionName(AtlasOpening.factionFor(generator, state, cell, node))).text(),
-                Tone.PLAIN));
-        lines.add(new Line(Translation.msg("chart.atlas.node.layout").arg("layout", name("layout", node.layoutId())).text(), Tone.PLAIN));
+        lines.add(new AtlasLine(regionName(node.regionId()), Tone.TITLE));
+        lines.add(new AtlasLine(Translation.msg("chart.atlas.node.faction")
+                .arg("faction", ChartFactions.displayName(AtlasOpening.factionFor(generator, state, cell, node))).text(), Tone.PLAIN));
+        lines.add(new AtlasLine(Translation.msg("chart.atlas.node.layout").arg("layout", AtlasNames.name("layout", node.layoutId())).text(), Tone.PLAIN));
         lines.addAll(markers(generator, state, cell, node));
         lines.addAll(stateLines(generator, state, cell, reachable));
         return lines;
     }
 
-    static List<Line> markers(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasNode node) {
-        List<Line> lines = new ArrayList<>();
+    static List<AtlasLine> markers(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasNode node) {
+        List<AtlasLine> lines = new ArrayList<>();
         boolean spent = state.has(cell, AtlasState.MARKERS_SPENT);
         AtlasSpecial special = generator.specialAt(cell);
         if (special != null) {
-            lines.add(new Line(name("special", special.id()), Tone.MARKER));
+            lines.add(new AtlasLine(AtlasNames.name("special", special.id()), Tone.MARKER));
         }
         for (String anomalyId : AtlasAnomalies.effective(generator, state, cell)) {
-            lines.add(new Line(Translation.msg("chart.atlas.node.anomaly").arg("anomaly", name("anomaly", anomalyId)).text(), Tone.MARKER));
-            if (FactionSkirmish.ID.equals(anomalyId)) {
-                lines.add(new Line(Translation.msg("chart.atlas.node.skirmish")
-                        .arg("attacker", factionName(FactionSkirmish.attacker(generator, state, cell)))
-                        .arg("defender", factionName(FactionSkirmish.defender(generator, state, cell))).text(), Tone.PLAIN));
-            }
-            if (RelayNetwork.ID.equals(anomalyId)) {
-                lines.addAll(relayLines(generator, state, cell));
-            }
+            lines.add(new AtlasLine(Translation.msg("chart.atlas.node.anomaly").arg("anomaly", AtlasNames.name("anomaly", anomalyId)).text(), Tone.MARKER));
+            lines.addAll(anomalyLines(generator, state, cell, anomalyId));
         }
         if (node.infestationId() != null) {
             lines.add(state.has(cell, AtlasState.CLEANSED)
-                    ? new Line(Translation.text("chart.atlas.node.cleansed"), Tone.GOOD)
-                    : new Line(Translation.msg("chart.atlas.node.infested").arg("infestation", name("special", node.infestationId())).text(), Tone.BAD));
+                    ? new AtlasLine(Translation.text("chart.atlas.node.cleansed"), Tone.GOOD)
+                    : new AtlasLine(Translation.msg("chart.atlas.node.infested").arg("infestation", AtlasNames.name("special", node.infestationId())).text(), Tone.BAD));
         }
         if (spent) {
-            lines.add(new Line(Translation.text("chart.atlas.node.spent"), Tone.BAD));
+            lines.add(new AtlasLine(Translation.text("chart.atlas.node.spent"), Tone.BAD));
         }
         return lines;
     }
 
-    static List<Line> relayLines(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        AtlasAnomalyRecord.Chain stage = RelayChain.stageAt(generator, state, cell);
-        if (stage == null) {
-            return List.of();
-        }
-        List<Line> lines = new ArrayList<>();
-        lines.add(new Line(Translation.msg("chart.atlas.node.relayStage").arg("stage", stage.stage()).arg("stages", stage.stages()).text(), Tone.PLAIN));
-        for (ChartGenContext.AppliedEffect applied : RelayChain.stageEffects(stage.stage())) {
-            lines.add(new Line(applied.effect().description(applied.value()).toMarkup(), Tone.STYLED));
-        }
-        if (stage.isLast()) {
-            lines.add(new Line(Translation.text("chart.atlas.node.relayLast"), Tone.GOOD));
-        }
-        return lines;
-    }
-
-    public static String plainText(Line line) {
-        return line.tone() == Tone.STYLED ? StyledText.parse(line.text()).plain() : line.text();
+    private static List<AtlasLine> anomalyLines(AtlasGenerator generator, AtlasState state, AtlasCell cell, String anomalyId) {
+        AtlasRule rule = ChartAnomalies.role(anomalyId, AtlasRule.class);
+        return rule == null ? List.of() : rule.atlasLines(generator, state, cell);
     }
 
     public static StyledText anomalyBody(AtlasGenerator generator, AtlasState state, AtlasCell cell, String anomalyId) {
-        StyledText body = anomalyBody(anomalyId);
-        if (!RelayNetwork.ID.equals(anomalyId)) {
-            return body;
-        }
-        List<StyledText> lines = new ArrayList<>(List.of(body));
-        for (Line line : relayLines(generator, state, cell)) {
-            lines.add(line.tone() == Tone.STYLED ? StyledText.parse(line.text()) : StyledText.of(line.text()));
-        }
+        List<StyledText> lines = new ArrayList<>(List.of(anomalyBody(anomalyId)));
+        anomalyLines(generator, state, cell, anomalyId).forEach(line -> lines.add(line.styled()));
         return StyledText.join(StyledText.of("\n"), lines);
     }
 
@@ -163,48 +96,44 @@ public final class AtlasNodeText {
         return StyledText.join(StyledText.of("\n"), lines);
     }
 
-    static List<Line> stateLines(AtlasGenerator generator, AtlasState state, AtlasCell cell, boolean reachable) {
+    static List<AtlasLine> stateLines(AtlasGenerator generator, AtlasState state, AtlasCell cell, boolean reachable) {
         if (state.isCompleted(cell)) {
-            return List.of(new Line(Translation.text("chart.atlas.node.completed"), Tone.GOOD));
+            return List.of(new AtlasLine(Translation.text("chart.atlas.node.completed"), Tone.GOOD));
         }
         if (AtlasReach.isSpentBastion(generator, state, cell)) {
-            return List.of(new Line(Translation.text("chart.atlas.node.attempted"), Tone.BAD));
+            return List.of(new AtlasLine(Translation.text("chart.atlas.node.attempted"), Tone.BAD));
         }
         if (!reachable) {
-            return List.of(new Line(Translation.text("chart.atlas.blocked.not_reachable"), Tone.HINT));
+            return List.of(new AtlasLine(Translation.text("chart.atlas.blocked.not_reachable"), Tone.HINT));
         }
         AtlasOpening.Blocker requirement = AtlasOpening.check(generator, state, cell, null);
-        Line open = new Line(Translation.text("chart.atlas.node.open"), Tone.GOOD);
-        return requirement.allowsOpening() ? List.of(open) : List.of(new Line(Translation.text(requirement.reasonKey()), Tone.MARKER), open);
+        AtlasLine open = new AtlasLine(Translation.text("chart.atlas.node.open"), Tone.GOOD);
+        return requirement.allowsOpening() ? List.of(open) : List.of(new AtlasLine(Translation.text(requirement.reasonKey()), Tone.MARKER), open);
     }
 
     public static List<String> confirmLines(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
         AtlasNode node = generator.node(cell);
         List<String> lines = new ArrayList<>();
         lines.add(Translation.msg("chart.atlas.confirm.system").arg("region", regionName(node.regionId()))
-                .arg("faction", factionName(AtlasOpening.factionFor(generator, state, cell, node))).text());
-        for (Line marker : markers(generator, state, cell, node)) {
-            lines.add(plainText(marker));
+                .arg("faction", ChartFactions.displayName(AtlasOpening.factionFor(generator, state, cell, node))).text());
+        for (AtlasLine marker : markers(generator, state, cell, node)) {
+            lines.add(marker.plain());
         }
-        if (FactionSkirmish.isIn(generator, state, cell)) {
-            lines.add(Translation.text("chart.atlas.skirmish.final"));
+        for (AtlasRule rule : atlasRulesAt(generator, state, cell)) {
+            lines.addAll(rule.confirmLines(generator, state, cell));
         }
         return lines;
     }
 
-    public static List<BenchModeSupport.OpenChoice> sideChoices(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        if (!FactionSkirmish.isIn(generator, state, cell)) {
-            return List.of();
+    public static List<BenchModeSupport.OpenChoice> entryChoices(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        List<BenchModeSupport.OpenChoice> choices = new ArrayList<>();
+        for (AtlasRule rule : atlasRulesAt(generator, state, cell)) {
+            choices.addAll(rule.entryChoices(generator, state, cell));
         }
-        String defender = factionName(FactionSkirmish.defender(generator, state, cell));
-        String attacker = factionName(FactionSkirmish.attacker(generator, state, cell));
-        return List.of(
-                new BenchModeSupport.OpenChoice(Translation.msg("chart.atlas.skirmish.join").arg("faction", defender).text(),
-                        Translation.msg("chart.atlas.skirmish.defender").arg("defender", defender).text(), new SkirmishEntry(cell, SkirmishSide.DEFENDER)),
-                new BenchModeSupport.OpenChoice(Translation.msg("chart.atlas.skirmish.join").arg("faction", attacker).text(),
-                        Translation.msg("chart.atlas.skirmish.attacker").arg("attacker", attacker).arg("defender", defender).text(),
-                        new SkirmishEntry(cell, SkirmishSide.ATTACKER)),
-                new BenchModeSupport.OpenChoice(Translation.text("chart.atlas.skirmish.stayOut"),
-                        Translation.msg("chart.atlas.skirmish.neither").arg("defender", defender).text(), new SkirmishEntry(cell, SkirmishSide.NEITHER)));
+        return choices;
+    }
+
+    private static List<AtlasRule> atlasRulesAt(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        return ChartAnomalies.among(AtlasAnomalies.effective(generator, state, cell), AtlasRule.class);
     }
 }

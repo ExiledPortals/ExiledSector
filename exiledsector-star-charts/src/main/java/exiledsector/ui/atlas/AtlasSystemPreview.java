@@ -5,6 +5,8 @@ import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.PlanetSpecAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.ui.decoration.PlanetSphere;
+import exiledsector.PlanetSpecs;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.charts.layout.sketch.ChartSystemSketch;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Belt;
@@ -92,12 +94,10 @@ final class AtlasSystemPreview {
     private final UnitSphere detailedSphere = new UnitSphere(DETAILED_SPHERE_DETAIL);
     private final AtlasSystemArt art = new AtlasSystemArt();
     private final AtlasSystemArt.Frame frame = new AtlasSystemArt.Frame();
-    private final Map<String, PlanetSpecAPI> specs = new HashMap<>();
     private final Map<String, StarAurora> auroras = new HashMap<>();
     private final Vector2f bandCentre = new Vector2f();
     private SpriteAPI auroraTexture;
     private SpriteAPI atmosphereTexture;
-    private boolean specsLoaded;
     private boolean sharedTexturesLoaded;
     private float bodyX;
     private float bodyY;
@@ -317,27 +317,8 @@ final class AtlasSystemPreview {
             return;
         }
         float rotation = startAngle + spec.getRotation() * elapsedSeconds;
-        try (GlScope scope = GlScope.save(GlScope.DRAW_ATTRIBS | GL11.GL_POLYGON_BIT).enable(GL11.GL_TEXTURE_2D).normalBlend()
-                .enable(GL11.GL_CULL_FACE)) {
-            GL11.glFrontFace(GL11.GL_CW);
-            GL11.glCullFace(GL11.GL_BACK);
-            GL11.glPushMatrix();
-            GL11.glTranslatef(x, y, 0f);
-            GL11.glRotatef(spec.getTilt(), 0f, 0f, 1f);
-            GL11.glRotatef(spec.getPitch(), 1f, 0f, 0f);
-            GL11.glRotatef(rotation, 0f, 1f, 0f);
-            GL11.glRotatef(-90f, 1f, 0f, 0f);
-            texture.bindTexture();
-            Misc.setColor(colour, alpha);
-            UnitSphere sphere = pixels >= DETAILED_SPHERE_PIXELS ? detailedSphere : unitSphere;
-            sphere.draw(pixels);
-            if (rim) {
-                Misc.setColor(colour, alpha * RIM_ALPHA_MULT);
-                sphere.draw(pixels * 1.03f);
-                sphere.draw(pixels * 1.06f);
-            }
-            GL11.glPopMatrix();
-        }
+        UnitSphere sphere = pixels >= DETAILED_SPHERE_PIXELS ? detailedSphere : unitSphere;
+        PlanetSphere.draw(sphere, texture, spec, x, y, pixels, rotation, colour, alpha, rim ? alpha * RIM_ALPHA_MULT : 0f, pixels * 0.03f);
     }
 
     private static void drawDisc(float x, float y, float radius, Color colour, float alpha) {
@@ -391,16 +372,7 @@ final class AtlasSystemPreview {
         }
     }
 
-    private PlanetSpecAPI spec(String typeId) {
-        if (!specsLoaded) {
-            specsLoaded = true;
-            SettingsAPI settings = Global.getSettings();
-            if (settings != null) {
-                for (PlanetSpecAPI spec : settings.getAllPlanetSpecs()) {
-                    specs.put(spec.getPlanetType(), spec);
-                }
-            }
-        }
-        return specs.get(typeId);
+    private static PlanetSpecAPI spec(String typeId) {
+        return PlanetSpecs.byType(typeId);
     }
 }

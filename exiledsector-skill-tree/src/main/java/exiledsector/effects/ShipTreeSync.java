@@ -21,7 +21,6 @@ import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipLevelSystem;
-import exiledsector.items.EmptyShells;
 import exiledsector.items.NpcItems;
 import exiledsector.items.MasterSchematic;
 import org.apache.log4j.Logger;
@@ -115,10 +114,8 @@ public final class ShipTreeSync {
         ShipSkillData shipData = variant == null ? null : SkillDataResolver.resolve(member, variant);
         if (shipData == null) return false;
 
-        List<AllocatedNode> allocatedNodes = AllocatedNode.of(shipData);
-        Set<String> hollowNodeIds = EmptyShells.hollowNodeIds(shipData);
-        List<AllocatedNode> placingNodes = allocatedNodes.stream().filter(node -> !hollowNodeIds.contains(node.node().getId())).toList();
-        return syncVariant(member, variant, allocatedNodes, SkillTreeEffectSource.phantomHullModIdsOf(placingNodes));
+        List<AllocatedNode> placingNodes = SkillTreeEffectSource.placingNodes(shipData);
+        return syncVariant(member, variant, placingNodes, SkillTreeEffectSource.phantomHullModIdsOf(placingNodes));
     }
 
     static boolean syncVariant(FleetMemberAPI member, ShipVariantAPI variant, List<AllocatedNode> allocatedNodes,

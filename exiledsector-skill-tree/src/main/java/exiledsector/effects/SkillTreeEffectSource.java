@@ -81,7 +81,7 @@ public final class SkillTreeEffectSource implements ShipEffectSource {
             boolean scaled = scalesNode(node);
             String modIdPrefix = MOD_ID_PREFIX + node.node().getId() + "_";
             AllocatedSkillEffects.NodeParts parts = AllocatedSkillEffects.nodeParts(shipData, node, hullSize);
-            GatedSubroutines.Gating gating = type.getTemporaryAfterDeploymentSeconds() == null ? gatedNodeIds.get(node.node().getId()) : null;
+            GatedSubroutines.Gating gating = gating(node, gatedNodeIds);
             if (gating != null) {
                 if (!vanillaPassthrough) {
                     contributions.add(new EffectContribution(new RadiusLineOrigin(node, gating.socketNodeId()), modIdPrefix,
@@ -103,6 +103,17 @@ public final class SkillTreeEffectSource implements ShipEffectSource {
             }
         }
         return contributions;
+    }
+
+    static List<AllocatedNode> placingNodes(ShipSkillData shipData) {
+        Map<String, GatedSubroutines.Gating> gatedNodeIds = GatedSubroutines.gatedNodeIds(shipData);
+        Set<String> hollowNodeIds = EmptyShells.hollowNodeIds(shipData);
+        return AllocatedNode.of(shipData).stream()
+                .filter(node -> !hollowNodeIds.contains(node.node().getId()) && gating(node, gatedNodeIds) == null).toList();
+    }
+
+    private static GatedSubroutines.Gating gating(AllocatedNode node, Map<String, GatedSubroutines.Gating> gatedNodeIds) {
+        return node.effectiveType().getTemporaryAfterDeploymentSeconds() == null ? gatedNodeIds.get(node.node().getId()) : null;
     }
 
     static List<SkillTypeEffect> gatedEffects(List<SkillTypeEffect> effects, float strength) {

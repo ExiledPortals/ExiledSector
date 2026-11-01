@@ -69,7 +69,7 @@ public final class HyperspaceTransition {
     }
 
     public float treeAlpha() {
-        return 1f - smoothstep(0f, TREE_FADE_END, transitionProgress);
+        return 1f - Fade.window(0f, TREE_FADE_END, transitionProgress);
     }
 
     public boolean isLeaving() {
@@ -77,14 +77,10 @@ public final class HyperspaceTransition {
     }
 
     public float chromeAlpha() {
-        return 1f - smoothstep(CHROME_FADE_START, CHROME_FADE_END, transitionProgress);
+        return 1f - Fade.window(CHROME_FADE_START, CHROME_FADE_END, transitionProgress);
     }
 
     public float labelAlpha() {
-        return smoothstep(LABEL_FADE_START, 1f, transitionProgress);
-    }
-
-    private static float smoothstep(float edge0, float edge1, float value) {
-        return Fade.smooth(Math.max(0f, Math.min(1f, (value - edge0) / (edge1 - edge0))));
+        return Fade.window(LABEL_FADE_START, 1f, transitionProgress);
     }
 }

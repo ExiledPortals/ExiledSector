@@ -1,7 +1,5 @@
 package exiledsector.skills.skilleffect.weapon;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipSystemAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
@@ -92,12 +90,6 @@ final class SolarisOverdriveListener extends ShipCombatListener implements Advan
     }
 
     private void showStatus() {
-        CombatEngineAPI engine = Global.getCombatEngine();
-        if (engine != null && engine.getPlayerShip() == ownerShip) {
-            if (status.needsText()) {
-                status.setText(() -> Translation.text("combat.solarisOverdrive.status"));
-            }
-            status.show(engine, false);
-        }
+        status.showIfPlayer(ownerShip, false, () -> Translation.text("combat.solarisOverdrive.status"));
     }
 }

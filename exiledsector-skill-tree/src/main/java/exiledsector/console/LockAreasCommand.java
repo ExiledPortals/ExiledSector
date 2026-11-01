@@ -1,6 +1,7 @@
 package exiledsector.console;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.PlayerFleet;
 import exiledsector.items.NodeGrantStatus;
@@ -8,9 +9,7 @@ import exiledsector.items.SocketCustody;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ItemChargeLedger;
 import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;
-import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeTopology;
@@ -20,11 +19,11 @@ import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.skills.unlock.UnlockConditionType;
 import org.lazywizard.console.Console;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class LockAreasCommand extends CampaignCommand {
@@ -80,24 +79,15 @@ public class LockAreasCommand extends CampaignCommand {
     private static int release(ShipSkillData shipData, Set<String> lockedNodeIds) {
         int allocatedBefore = shipData.getAllocatedNodeIds().size();
         Set<String> socketedItemIdsBefore = new HashSet<>(shipData.getSocketedItems().values());
-        List<SkillItemCost> charges = new ArrayList<>();
+        CargoAPI cargo = PlayerFleet.cargoOrNull();
         String startingRootId = ShipTrees.resolveStartingRootId(shipData);
         if (startingRootId == null || lockedNodeIds.contains(startingRootId)) {
-            charges.addAll(ItemChargeLedger.takeItemCharges(shipData, ShipTrees.resetAllocations(shipData)));
+            ItemChargeLedger.takeItemCharges(shipData, ShipTrees.resetAllocations(shipData)).forEach(charge -> charge.refundTo(cargo));
         } else {
             SkillTreeTopology topology = SkillTree.topology();
-            Set<String> reachableBefore = ShipTrees.reachableAllocatedNodeIds(shipData, topology, startingRootId);
-            for (String nodeId : lockedNodeIds) {
-                SkillNode node = topology.node(nodeId);
-                if (node == null || !shipData.isAllocated(nodeId)) {
-                    continue;
-                }
-                charges.addAll(ShipTreeLinks.anchorSocket(shipData, nodeId) != null ? ShipTrees.releaseAnchorExit(shipData, nodeId)
-                        : ShipTrees.deallocateReleasingCharges(shipData, node));
-            }
-            charges.addAll(ShipTrees.releaseNewlyStranded(shipData, topology, startingRootId, reachableBefore).charges());
+            List<SkillNode> lockedNodes = lockedNodeIds.stream().map(topology::node).filter(Objects::nonNull).toList();
+            ShipTrees.release(shipData, topology, startingRootId, lockedNodes).refundTo(cargo);
         }
-        charges.forEach(charged -> charged.refundTo(PlayerFleet.cargoOrNull()));
         socketedItemIdsBefore.removeAll(shipData.getSocketedItems().values());
         socketedItemIdsBefore.forEach(NodeGrantStatus::forget);
         return allocatedBefore - shipData.getAllocatedNodeIds().size();

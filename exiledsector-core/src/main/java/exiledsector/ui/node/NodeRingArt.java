@@ -2,11 +2,11 @@ package exiledsector.ui.node;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledsector.skills.skilleffect.render.SpriteCache;
+import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;
 import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.TexturedQuadBatch;
 import exiledsector.ui.util.UnitCircle;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -126,13 +126,12 @@ public final class NodeRingArt {
     }
 
     public void drawPortalRings(float cx, float cy, float innerRadius, String nodeId, NotableLook look, float alphaMult) {
-        GL11.glEnable(GL11.GL_BLEND);
         float stateAlpha = look.lit() ? 1f : UNALLOCATED_ALPHA_MULT;
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-        HoloShapes.radialGlow(cx, cy, innerRadius, innerRadius * PORTAL_GLOW_REACH, look.glowTint(), PORTAL_GLOW_ALPHA * stateAlpha * alphaMult);
-        drawNotableRings(cx, cy, portalRingSize(innerRadius), nodeId, stateAlpha * alphaMult, look.ringTint());
-        GL11.glDisable(GL11.GL_BLEND);
+        try (GlScope scope = GlScope.flat().additive()) {
+            HoloShapes.radialGlow(cx, cy, innerRadius, innerRadius * PORTAL_GLOW_REACH, look.glowTint(),
+                    PORTAL_GLOW_ALPHA * stateAlpha * alphaMult);
+            drawNotableRings(cx, cy, portalRingSize(innerRadius), nodeId, stateAlpha * alphaMult, look.ringTint());
+        }
     }
 
     public static float portalRingSize(float innerRadius) {

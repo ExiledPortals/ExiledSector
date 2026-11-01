@@ -39,7 +39,10 @@ final class ChartEnemyDamageListener implements DamageDealtModifier {
     @Override
     public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
         ChartFleetStat stat = damage == null ? null : statFor(damage.getType());
-        float mult = stat == null ? 1f : ChartFleetConditions.mult(stat);
+        if (stat == null) {
+            return null;
+        }
+        float mult = ChartFleetConditions.mult(stat);
         if (mult == 1f) {
             return null;
         }

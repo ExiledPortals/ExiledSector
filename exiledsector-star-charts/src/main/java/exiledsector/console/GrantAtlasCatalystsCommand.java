@@ -18,8 +18,8 @@ public class GrantAtlasCatalystsCommand extends PlayerFleetCommand {
     record GrantArguments(int copies, AtlasCatalysts.Catalyst only, String problem) {
 
         static GrantArguments parse(String args) {
-            String[] tokens = args == null || args.isBlank() ? new String[0] : args.trim().split("\\s+");
-            if (tokens.length > 2) {
+            List<String> tokens = ConsoleArgs.tokens(args);
+            if (tokens.size() > 2) {
                 return problem("Give at most a number of copies and one catalyst id.");
             }
             Integer copies = null;

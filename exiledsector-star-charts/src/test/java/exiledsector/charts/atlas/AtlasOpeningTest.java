@@ -6,7 +6,6 @@ import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.PowerfulBoss;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
-import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.wormhole.GatewayTierLimit;
 import exiledsector.items.StarChart;
 import org.json.JSONArray;
@@ -22,6 +21,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -37,7 +37,7 @@ class AtlasOpeningTest {
                 new AtlasSpecial("bastion", AtlasSpecial.Kind.BASTION, AtlasSpecial.Placement.FIXED, 0f, 1f, 0f, 3, 25f, "", "", ""));
         return new AtlasRules(regions, Map.of("compact", 1f), Map.of("pirates", 1f), new AtlasMarkerRule(0.3f, 0f, 0.3f),
                 new AtlasMarkerRule(1f, 0f, 1f), specials,
-                List.of(new AtlasAnomalyCandidate(SpatialBreach.ID, 1f, ""), new AtlasAnomalyCandidate(PowerfulBoss.ID, 1f, "")));
+                List.of(new AtlasAnomalyCandidate(SpatialBreach.ANOMALY_ID, 1f, ""), new AtlasAnomalyCandidate(PowerfulBoss.ANOMALY_ID, 1f, "")));
     }
 
     @BeforeEach
@@ -76,11 +76,11 @@ class AtlasOpeningTest {
         AtlasRunNode node = AtlasOpening.runNode(generator, state, cell);
 
         assertEquals("remnant", node.factionId());
-        assertEquals(Set.of(SpatialBreach.ID, PowerfulBoss.ID), Set.copyOf(node.anomalyIds()));
+        assertEquals(Set.of(SpatialBreach.ANOMALY_ID, PowerfulBoss.ANOMALY_ID), Set.copyOf(node.anomalyIds()));
         assertTrue(node.guaranteedBossTierUp());
         assertEquals(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_FLEET_SIZE_PERCENT, 25f)), node.effects());
         ChartGenContext context = ChartGenContext.none().withAtlasNode(node).withAnomalyEffects(node.anomalyIds());
-        assertEquals(ChartAnomalies.definition(PowerfulBoss.ID).effects().get(0).value(), context.bossSizePercent());
+        assertEquals(ChartAnomalies.definition(PowerfulBoss.ANOMALY_ID).effects().get(0).value(), context.bossSizePercent());
         assertTrue(context.bossSpoilsMult() > 1f);
 
         state.add(cell, AtlasState.MARKERS_SPENT | AtlasState.CLEANSED);
@@ -231,36 +231,20 @@ class AtlasOpeningTest {
     }
 
     @Test
-    void onlyWinningOnTheAttackersSideCapturesTheSystem() {
-        AtlasState state = new AtlasState(SEED);
-        AtlasGenerator generator = new AtlasGenerator(SEED, rules(), AtlasUnlocks.NONE, state);
-        AtlasCell cell = new AtlasCell(3, 2);
-        AtlasRunNode node = new AtlasRunNode(cell.pack(), "pirates", List.of(), List.of("faction_skirmish"), false);
-
-        AtlasProgress.captureForWinner(generator, state, cell, node.withSkirmish("hegemony", SkirmishSide.DEFENDER));
-        AtlasProgress.captureForWinner(generator, state, cell, node.withSkirmish("hegemony", SkirmishSide.NEITHER));
-        AtlasProgress.captureForWinner(generator, state, cell, node);
-        assertEquals(Map.of(), state.captures());
-
-        AtlasProgress.captureForWinner(generator, state, cell, node.withSkirmish("hegemony", SkirmishSide.ATTACKER));
-        assertEquals(Map.of(cell, "hegemony"), state.captures());
-    }
-
-    @Test
-    void aRunNodeKeepsItsSkirmishSidesAndOlderNodesReadWithout() {
-        AtlasRunNode node = new AtlasRunNode(9L, "hegemony", List.of(), List.of("faction_skirmish", "spatial_breach"), true, "tritachyon",
-                SkirmishSide.ATTACKER);
+    void aRunNodeKeepsItsAnomalyDataAndOlderNodesReadWithout() {
+        AtlasRunNode node = new AtlasRunNode(9L, "hegemony", List.of(), List.of("faction_skirmish", "spatial_breach"), true)
+                .withAnomalyData("faction_skirmish", "attacker,tritachyon").withAnomalyData("spatial_breach", "x");
         AtlasRunNode decoded = AtlasRunNode.decode(node.encode());
 
         assertEquals(node, decoded);
         assertEquals(List.of("faction_skirmish", "spatial_breach"), decoded.anomalyIds());
         assertTrue(decoded.guaranteedBossTierUp());
+        assertEquals("attacker,tritachyon", decoded.anomalyData("faction_skirmish"));
+        assertEquals("attacker,tritachyon", ChartGenContext.none().withAtlasNode(decoded).withAnomalies(List.of("black_hole")).anomalyData("faction_skirmish"));
         AtlasRunNode older = AtlasRunNode.decode("9|hegemony||spatial_breach|true");
         assertEquals(new AtlasRunNode(9L, "hegemony", List.of(), List.of("spatial_breach"), true), older);
-        assertEquals(null, older.skirmishSide());
-        assertEquals(null, new AtlasRunNode(9L, "", List.of(), List.of(), false, "tritachyon", null).skirmishAttackerId());
-        assertEquals(SkirmishSide.ATTACKER, ChartGenContext.none().withAtlasNode(node).skirmishSide());
-        assertEquals("tritachyon", ChartGenContext.none().withAtlasNode(node).withAnomalies(List.of("black_hole")).skirmishAttackerId());
+        assertEquals(null, older.anomalyData("faction_skirmish"));
+        assertEquals(null, node.withAnomalyData("spatial_breach", null).anomalyData("spatial_breach"));
     }
 
     @Test
@@ -272,22 +256,15 @@ class AtlasOpeningTest {
         assertEquals(node, decoded);
         assertTrue(decoded.guaranteedBossUnique());
         assertEquals(50f, decoded.effects().get(0).value());
-        assertTrue(ChartGenContext.none().withAtlasNode(decoded).withAnomalyEffects(List.of("relay_network")).withSkirmishSide(SkirmishSide.NEITHER)
+        assertTrue(ChartGenContext.none().withAtlasNode(decoded).withAnomalyEffects(List.of("relay_network")).withAnomalyData("faction_skirmish", "neither,")
                 .guaranteedBossUnique());
-        AtlasRunNode skirmishEra = AtlasRunNode.decode("9|hegemony||faction_skirmish|true|tritachyon|attacker");
-        assertEquals(SkirmishSide.ATTACKER, skirmishEra.skirmishSide());
-        assertFalse(skirmishEra.guaranteedBossUnique());
-        assertTrue(skirmishEra.withSkirmish("tritachyon", SkirmishSide.DEFENDER).withExtraEffects(List.of(), true)
-                .withSkirmish("tritachyon", SkirmishSide.ATTACKER).guaranteedBossUnique());
-    }
-
-    @Test
-    void aRunNodeSavedWithSeparateExpansionAndPhenomenonFieldsReadsBothAsAnomalies() {
-        AtlasRunNode old = AtlasRunNode.decode("9|pirates|CHART_BOSS_SIZE_PERCENT:50.0|spatial_breach|black_hole|true");
-
-        assertNotNull(old);
-        assertEquals(List.of("spatial_breach", "black_hole"), old.anomalyIds());
-        assertTrue(old.guaranteedBossTierUp());
-        assertEquals(List.of(), AtlasRunNode.decode("9|pirates||||false").anomalyIds());
+        AtlasRunNode skirmishEra = AtlasRunNode.decode("9|hegemony||faction_skirmish|true|tritachyon|attacker|true");
+        assertNotNull(skirmishEra);
+        assertEquals(List.of("faction_skirmish"), skirmishEra.anomalyIds());
+        assertTrue(skirmishEra.guaranteedBossUnique());
+        assertNull(skirmishEra.anomalyData("faction_skirmish"));
+        assertTrue(skirmishEra.withAnomalyData("faction_skirmish", "defender,tritachyon").withExtraEffects(List.of(), true)
+                .withAnomalyData("faction_skirmish", "attacker,tritachyon").guaranteedBossUnique());
+        assertFalse(AtlasRunNode.decode("9|hegemony||faction_skirmish|true|tritachyon|attacker").guaranteedBossUnique());
     }
 }

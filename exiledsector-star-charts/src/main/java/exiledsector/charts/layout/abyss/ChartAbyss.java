@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.procgen.NebulaEditor;
 import com.fs.starfarer.api.impl.campaign.terrain.BaseTiledTerrain.TileParams;
+import exiledsector.charts.content.ChartSites;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.layout.ChartDeepSpace;
 import org.lwjgl.util.vector.Vector2f;
@@ -14,7 +15,6 @@ import org.lwjgl.util.vector.Vector2f;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public final class ChartAbyss {
@@ -38,29 +38,6 @@ public final class ChartAbyss {
     static final float LIGHT_TINT = 0.35f;
 
     private ChartAbyss() {
-    }
-
-    public static AbyssPalette pick(Map<AbyssPalette, Float> weights, Random random) {
-        float total = 0f;
-        for (float weight : weights.values()) {
-            total += Math.max(0f, weight);
-        }
-        if (total <= 0f) {
-            return null;
-        }
-        float roll = random.nextFloat() * total;
-        AbyssPalette last = null;
-        for (Map.Entry<AbyssPalette, Float> entry : weights.entrySet()) {
-            if (entry.getValue() <= 0f) {
-                continue;
-            }
-            last = entry.getKey();
-            roll -= entry.getValue();
-            if (roll < 0f) {
-                return last;
-            }
-        }
-        return last;
     }
 
     public static Color light(AbyssPalette palette) {
@@ -101,7 +78,7 @@ public final class ChartAbyss {
         for (int attempt = 0; attempt < count * PLACEMENT_ATTEMPTS && spots.size() < count; attempt++) {
             double angle = random.nextDouble() * Math.PI * 2d;
             float distance = inner + (reach - inner) * random.nextFloat();
-            Vector2f spot = new Vector2f((float) Math.cos(angle) * distance, (float) Math.sin(angle) * distance);
+            Vector2f spot = ChartSites.pointAround(new Vector2f(), angle, distance);
             if (spots.stream().allMatch(taken -> Vector2f.sub(taken, spot, null).length() >= SATELLITE_SPACING)) {
                 spots.add(spot);
             }

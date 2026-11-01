@@ -11,60 +11,26 @@ import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import exiledsector.compat.LostSectorCompat;
 import exiledsector.i18n.StyledText;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
+import exiledsector.skills.skilleffect.DerivedStatEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
-import exiledsector.skills.skilleffect.ListenerEffect;
 import exiledsector.skills.skilleffect.PerDModMultEffect;
-import exiledsector.skills.skilleffect.SimpleStatEffect;
 import exiledsector.skills.skilleffect.StatMode;
 import exiledsector.skills.skilleffect.StatTarget;
 
 import java.util.List;
-import java.util.function.Function;
 
+import static exiledsector.skills.skilleffect.Backings.flag;
+import static exiledsector.skills.skilleffect.Backings.listener;
+import static exiledsector.skills.skilleffect.Backings.statEffect;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 public enum WeaponSkillEffect implements BackedSkillEffect {
 
     WEAPON_DAMAGE_MULT_PER_DMOD(new PerDModMultEffect(WeaponStatFamily.DAMAGE.target(WeaponScope.ALL), "stat.weaponDamagePerDMod", false)),
-    BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            applyBurnDamage(stats, modId, magnitude);
-        }
-
-        @Override
-        public boolean appliesAfterOtherEffects() {
-            return true;
-        }
-
-        @Override
-        public StatMode statMode() {
-            return StatMode.MULT;
-        }
-
-        @Override
-        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-            applyBurnDamage(ship.getMutableStats(), modId, magnitude);
-        }
-    },
-    ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            applySensorRange(stats, modId, magnitude);
-        }
-
-        @Override
-        public boolean appliesAfterOtherEffects() {
-            return true;
-        }
-
-        @Override
-        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-            applySensorRange(ship.getMutableStats(), modId, magnitude);
-        }
-    },
+    BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT(new DerivedStatEffect(WeaponSkillEffect::applyBurnDamage, StatMode.MULT, true)),
+    ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT(new DerivedStatEffect(WeaponSkillEffect::applySensorRange, null, true)),
     MISSILE_RELOAD_PERCENT_PER_MINUTE {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -114,54 +80,24 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
             return StatMode.FLAT.describeStat(magnitude, "stat.ordnancePointCostOfSmallWeapons");
         }
     },
-    NON_MISSILE_WEAPON_RANGE_CAP_FLAT {
-        @Override
-        public boolean appliesAfterOtherEffects() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            capRange(stats, modId, magnitude);
-        }
-
-        @Override
-        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-            capRange(ship.getMutableStats(), modId, magnitude);
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.templated(this, magnitude);
-        }
-    },
-    DAMAGE_TO_FRIGATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getDamageToFrigates), "stat.damageToFrigates", false),
-    DAMAGE_TO_DESTROYER_PERCENT(PERCENT, stat(MutableShipStatsAPI::getDamageToDestroyers), "stat.damageToDestroyers", false),
-    DAMAGE_TO_CRUISER_PERCENT(PERCENT, stat(MutableShipStatsAPI::getDamageToCruisers), "stat.damageToCruisers", false),
-    DAMAGE_TO_CAPITAL_PERCENT(PERCENT, stat(MutableShipStatsAPI::getDamageToCapital), "stat.damageToCapitalShips", false),
-    DAMAGE_TO_AUTOMATED_SHIP_PERCENT(AutomatedShipDamageListener.DAMAGE_PERCENT_KEY, AutomatedShipDamageListener.class,
-            AutomatedShipDamageListener::new) {
+    NON_MISSILE_WEAPON_RANGE_CAP_FLAT(new DerivedStatEffect(WeaponSkillEffect::capRange, null, true)),
+    DAMAGE_TO_FRIGATE_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToFrigates), "stat.damageToFrigates", false)),
+    DAMAGE_TO_DESTROYER_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToDestroyers), "stat.damageToDestroyers", false)),
+    DAMAGE_TO_CRUISER_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToCruisers), "stat.damageToCruisers", false)),
+    DAMAGE_TO_CAPITAL_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToCapital), "stat.damageToCapitalShips", false)),
+    DAMAGE_TO_AUTOMATED_SHIP_PERCENT(listener(AutomatedShipDamageListener.DAMAGE_PERCENT_KEY, AutomatedShipDamageListener.class,
+            AutomatedShipDamageListener::new)) {
         @Override
         public StyledText description(float magnitude) {
             return PERCENT.describeStat(magnitude, "stat.damageToAutomatedShips");
         }
     },
-    WEAPON_MALFUNCTION_PERCENT(PERCENT, new StatTarget.PercentagePoints(MutableShipStatsAPI::getWeaponMalfunctionChance),
-            "stat.weaponMalfunctionChance", true),
-    PD_IGNORES_DECOY_FLARES {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(Stats.PD_IGNORES_FLARES).modifyFlat(modId, 1f);
-        }
-    },
-    PD_BEST_TARGET_LEADING {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(Stats.PD_BEST_TARGET_LEADING).modifyFlat(modId, 1f);
-        }
-    },
-    PD_DAMAGE_TO_MISSILES_PERCENT(PERCENT, stat(MutableShipStatsAPI::getDamageToMissiles),
-            "stat.damageDealtToMissilesByPointDefenceWeapons", false),
+    WEAPON_MALFUNCTION_PERCENT(statEffect(PERCENT, new StatTarget.PercentagePoints(MutableShipStatsAPI::getWeaponMalfunctionChance),
+            "stat.weaponMalfunctionChance", true)),
+    PD_IGNORES_DECOY_FLARES(flag(Stats.PD_IGNORES_FLARES)),
+    PD_BEST_TARGET_LEADING(flag(Stats.PD_BEST_TARGET_LEADING)),
+    PD_DAMAGE_TO_MISSILES_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToMissiles),
+            "stat.damageDealtToMissilesByPointDefenceWeapons", false)),
     PD_RECLASSIFY_SMALL_WEAPONS {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -177,50 +113,50 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
             }
         }
     },
-    BALLISTIC_COUNTS_AS_ENERGY {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(BallisticAsEnergy.KEY).modifyFlat(modId, 1f);
-        }
-    },
+    BALLISTIC_COUNTS_AS_ENERGY(flag(BallisticAsEnergy.KEY)),
     BALLISTIC_SLOTS_HYBRID(new SlotConversionBacking(WeaponType.BALLISTIC, null, WeaponType.HYBRID)),
     ENERGY_SLOTS_BALLISTIC(new SlotConversionBacking(WeaponType.ENERGY, null, WeaponType.BALLISTIC)),
     BALLISTIC_SLOTS_ENERGY(new SlotConversionBacking(WeaponType.BALLISTIC, null, WeaponType.ENERGY)),
     MISSILE_SLOTS_ENERGY(new SlotConversionBacking(WeaponType.MISSILE, null, WeaponType.ENERGY)),
     SMALL_SLOTS_UNIVERSAL(new SlotConversionBacking(null, WeaponSize.SMALL, WeaponType.UNIVERSAL)),
-    MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT(MediumEnergySlotRangeListener.RANGE_FLAT_KEY,
-            MediumEnergySlotRangeListener.class, ship -> new MediumEnergySlotRangeListener()),
-    NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT(InertialSuperchargerListener.DAMAGE_PERCENT_PER_SPEED_KEY,
-            InertialSuperchargerListener.class, InertialSuperchargerListener::new),
-    AUGMENTED_INERTIAL_PROJECTILE_SPEED_PERCENT(InertialSuperchargerListener.AUGMENTED_PROJECTILE_SPEED_KEY,
-            InertialSuperchargerListener.class, InertialSuperchargerListener::new) {
+    MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT(listener(MediumEnergySlotRangeListener.RANGE_FLAT_KEY,
+            MediumEnergySlotRangeListener.class, ship -> new MediumEnergySlotRangeListener())),
+    NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT(listener(InertialSuperchargerListener.DAMAGE_PERCENT_PER_SPEED_KEY,
+            InertialSuperchargerListener.class, InertialSuperchargerListener::new)),
+    AUGMENTED_INERTIAL_PROJECTILE_SPEED_PERCENT(listener(InertialSuperchargerListener.AUGMENTED_PROJECTILE_SPEED_KEY,
+            InertialSuperchargerListener.class, InertialSuperchargerListener::new)) {
         @Override
         public StyledText description(float magnitude) {
             return LostSectorCompat.isModEnabled() ? super.description(magnitude) : null;
         }
     },
-    FUROR_RATE_OF_FIRE_PERCENT(FurorListener.RATE_OF_FIRE_PERCENT_KEY, FurorListener.class, FurorListener::new) {
+    FUROR_RATE_OF_FIRE_PERCENT(listener(FurorListener.RATE_OF_FIRE_PERCENT_KEY, FurorListener.class, FurorListener::new)) {
         @Override
         public StyledText description(float magnitude) {
             return FurorListener.DAMAGE_FOR_FULL_FUROR.withShipSizeArgs(EffectText.msg(this).arg("value", magnitude))
                     .arg("decay", FurorListener.DECAY_PERCENT_PER_SECOND).styled();
         }
     },
-    THERMO_ACCELERATOR_FLUX_COST_REDUCTION_PERCENT(ThermoAcceleratorListener.FLUX_COST_REDUCTION_PERCENT_KEY, ThermoAcceleratorListener.class,
-            ThermoAcceleratorListener::new),
-    SOLARIS_OVERDRIVE_SECONDS_FLAT(SolarisOverdriveListener.SECONDS_KEY, SolarisOverdriveListener.class, SolarisOverdriveListener::new) {
+    THERMO_ACCELERATOR_FLUX_COST_REDUCTION_PERCENT(listener(ThermoAcceleratorListener.class, ThermoAcceleratorListener::new)) {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            WeaponStatFamily.FLUX_COST.target(WeaponScope.ALL).apply(stats, modId, PERCENT, -magnitude);
+        }
+    },
+    SOLARIS_OVERDRIVE_SECONDS_FLAT(listener(SolarisOverdriveListener.SECONDS_KEY, SolarisOverdriveListener.class, SolarisOverdriveListener::new)) {
         @Override
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", magnitude).arg("cooldown", SolarisOverdriveListener.COOLDOWN_SECONDS).styled();
         }
     },
-    SOLARIS_OVERDRIVE_PROJECTILE_SPEED_PERCENT(SolarisOverdriveListener.PROJECTILE_SPEED_PERCENT_KEY, SolarisOverdriveListener.class,
-            SolarisOverdriveListener::new),
-    SOLARIS_OVERDRIVE_RATE_OF_FIRE_PERCENT(SolarisOverdriveListener.RATE_OF_FIRE_PERCENT_KEY, SolarisOverdriveListener.class,
-            SolarisOverdriveListener::new),
-    SHROUDED_LENS_DAMAGE_PERCENT(ShroudedDamageListener.LENS_DAMAGE_PERCENT_KEY, ShroudedDamageListener.class, ShroudedDamageListener::new),
-    RIFT_LIGHTNING_DAMAGE_PERCENT(ShroudedDamageListener.RIFT_LIGHTNING_DAMAGE_PERCENT_KEY, ShroudedDamageListener.class,
-            ShroudedDamageListener::new);
+    SOLARIS_OVERDRIVE_PROJECTILE_SPEED_PERCENT(listener(SolarisOverdriveListener.PROJECTILE_SPEED_PERCENT_KEY, SolarisOverdriveListener.class,
+            SolarisOverdriveListener::new)),
+    SOLARIS_OVERDRIVE_RATE_OF_FIRE_PERCENT(listener(SolarisOverdriveListener.RATE_OF_FIRE_PERCENT_KEY, SolarisOverdriveListener.class,
+            SolarisOverdriveListener::new)),
+    SHROUDED_LENS_DAMAGE_PERCENT(listener(ShroudedDamageListener.LENS_DAMAGE_PERCENT_KEY, ShroudedDamageListener.class,
+            ShroudedDamageListener::new)),
+    RIFT_LIGHTNING_DAMAGE_PERCENT(listener(ShroudedDamageListener.RIFT_LIGHTNING_DAMAGE_PERCENT_KEY, ShroudedDamageListener.class,
+            ShroudedDamageListener::new));
 
     private static final String LARGE_BALLISTIC_OP_COST_KEY = "large_ballistic_mod";
     private static final List<String> SMALL_WEAPON_OP_COST_KEYS = List.of(Stats.SMALL_BALLISTIC_MOD, Stats.SMALL_ENERGY_MOD, Stats.SMALL_MISSILE_MOD);
@@ -228,15 +164,7 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     private final EffectBacking backing;
 
     WeaponSkillEffect() {
-        this((EffectBacking) null);
-    }
-
-    WeaponSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
-        this(new SimpleStatEffect(mode, target, statKey, lowerIsBetter));
-    }
-
-    <T> WeaponSkillEffect(String magnitudeKey, Class<T> listenerType, Function<ShipAPI, ? extends T> listenerFactory) {
-        this(new ListenerEffect<>(magnitudeKey, listenerType, listenerFactory));
+        this(null);
     }
 
     WeaponSkillEffect(EffectBacking backing) {

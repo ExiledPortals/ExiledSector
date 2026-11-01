@@ -81,15 +81,11 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
     @Override
     public boolean canUse(Item item, CraftingContext context) {
         ItemDefinition definition = item == null ? null : item.definition();
+        if (definition == null || !appliesTo(definition.type()) || !GrantedModifiers.canGrant(definition, modifierId)) {
+            return false;
+        }
         Modifier granted = modifier();
-        if (definition == null || granted == null || definition.unique() || definition.keepsOneModifier() || !appliesTo(definition.type())
-                || !ItemModifiers.itemTypes(modifierId).contains(definition.type()) || granted.slot() == ModifierSlot.IMPLICIT) {
-            return false;
-        }
-        if (lockedClash(item, granted) || keptClash(item, granted, context.guardedSlots())) {
-            return false;
-        }
-        return AffixLayout.rollableAt(definition.type(), List.of(new PoolEntry(granted, 1f)), TierRange.NO_TIER).size() == 1;
+        return !lockedClash(item, granted) && !keptClash(item, granted, context.guardedSlots());
     }
 
     @Override
@@ -118,7 +114,8 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
     static boolean keptClash(Item item, Modifier granted, Set<ModifierSlot> guarded) {
         List<RolledModifier> others = keptModifiers(item, guarded).stream().filter(rolled -> !rolled.modifierId().equals(granted.id())).toList();
         Set<String> grantedEffects = effectsOf(granted);
-        AffixLayout.Limits limits = AffixLayout.limits(item.definition().type());
+        ItemDefinition definition = item.definition();
+        AffixLayout.Limits limits = AffixLayout.limits(definition == null ? null : definition.type());
         long grantedSide = others.stream().filter(rolled -> rolled.slot() == granted.slot()).count();
         return grantedSide >= limits.maxPerSide() || others.size() >= limits.maxEffects()
                 || others.stream().anyMatch(rolled -> rolled.lines().stream().anyMatch(line -> grantedEffects.contains(line.effectName())));

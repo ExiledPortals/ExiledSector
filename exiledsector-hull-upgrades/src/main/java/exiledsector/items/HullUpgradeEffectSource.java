@@ -33,10 +33,6 @@ public final class HullUpgradeEffectSource implements ShipEffectSource {
         return contributions(ShipSections.forVariant(context.shipData(), context.variant()), context.hullSize(), sModCount);
     }
 
-    public static List<EffectContribution> contributions(List<ShipSections.UnlockedSection> sections, HullSize hullSize) {
-        return contributions(sections, hullSize, 0);
-    }
-
     public static List<EffectContribution> contributions(List<ShipSections.UnlockedSection> sections, HullSize hullSize, int sModCount) {
         List<EffectContribution> contributions = new ArrayList<>();
         for (ShipSections.UnlockedSection unlocked : sections) {

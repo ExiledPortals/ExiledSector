@@ -1,5 +1,7 @@
 package exiledsector.charts.atlas;
 
+import exiledsector.charts.content.ChartThreatFleets;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -15,7 +17,7 @@ public final class AtlasGenerator {
     public static final float DISPLAY_JITTER_SHARE = AtlasPositions.DISPLAY_JITTER_SHARE;
     static final float LONGEST_LANE = (float) (3.0 * Math.sqrt(2.0));
     static final int LANE_WINDOW = 5;
-    static final Set<String> THREAT_ONLY = Set.of("threat");
+    static final Set<String> THREAT_ONLY = Set.of(ChartThreatFleets.FACTION_ID);
     private static final int CACHE_LIMIT_CELLS = 65536;
     private static final long VOID_SALT = 0x564f4944L;
     private static final long LAYOUT_SALT = 0x4c41594fL;

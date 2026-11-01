@@ -7,22 +7,24 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.combat.ViewportAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
-import com.fs.starfarer.api.impl.campaign.terrain.BaseTerrain;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.PlayerFleet;
+import exiledsector.charts.anomaly.ChartAnomalyTerrain;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.skilleffect.render.SpriteCache;
+import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.VanillaText;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 
-public class AnomalousDebrisTerrainPlugin extends BaseTerrain {
+public class AnomalousDebrisTerrainPlugin extends ChartAnomalyTerrain {
 
     public static final String SPRITE_CATEGORY = "terrain";
     public static final String SHEET_KEY = "debrisFieldSheet";
@@ -30,7 +32,6 @@ public class AnomalousDebrisTerrainPlugin extends BaseTerrain {
     public static final String MAP_ICON_KEY = "debrisFieldMapIcon";
     static final float CHECK_SECONDS = 0.25f;
     static final float RENDER_MARGIN = 200f;
-    static final float TOOLTIP_PAD = 10f;
     static final float CELL_SIZE = 32f;
     static final float RADIUS_PER_PIECE = 6f;
     static final float MIN_PIECE_SIZE = 8f;
@@ -44,6 +45,8 @@ public class AnomalousDebrisTerrainPlugin extends BaseTerrain {
     static final float FULL_PULSE = (float) Math.PI * 2f;
     static final Color GLOW_COLOUR = new Color(110, 230, 255);
     private static final Logger LOG = Logger.getLogger(AnomalousDebrisTerrainPlugin.class);
+    private static final SpriteCache SPRITES = new SpriteCache(AnomalousDebrisTerrainPlugin.class);
+    private static final EnumSet<CampaignEngineLayers> LAYERS = EnumSet.of(CampaignEngineLayers.TERRAIN_7A);
 
     public record Params(String runId, String fleetId, float radius, long seed) {
     }
@@ -62,9 +65,10 @@ public class AnomalousDebrisTerrainPlugin extends BaseTerrain {
     private transient float[] facings;
     private transient float[] pulses;
     private transient List<Piece> pieces;
-    private transient List<SpriteAPI> sprites;
-    private transient List<SpriteAPI> glows;
-    private transient boolean spritesFailed;
+    private transient SpriteAPI sheet;
+    private transient SpriteAPI glowSheet;
+    private transient int sheetColumns;
+    private transient int sheetRows;
 
     @Override
     public void init(String terrainId, SectorEntityToken entity, Object param) {
@@ -78,13 +82,12 @@ public class AnomalousDebrisTerrainPlugin extends BaseTerrain {
     }
 
     public static void preloadTextures() {
-        for (String key : List.of(SHEET_KEY, GLOW_SHEET_KEY)) {
-            try {
-                Global.getSettings().loadTexture(Global.getSettings().getSpriteName(SPRITE_CATEGORY, key));
-            } catch (IOException | RuntimeException e) {
-                LOG.warn("[ExiledSector] Could not preload vanilla's " + key + " for Anomalous Debris", e);
-            }
-        }
+        SPRITES.ensureLoaded(sheetPath(SHEET_KEY));
+        SPRITES.ensureLoaded(sheetPath(GLOW_SHEET_KEY));
+    }
+
+    static String sheetPath(String key) {
+        return Global.getSettings().getSpriteName(SPRITE_CATEGORY, key);
     }
 
     public String runId() {
@@ -104,21 +107,12 @@ public class AnomalousDebrisTerrainPlugin extends BaseTerrain {
     }
 
     @Override
-    protected boolean shouldCheckFleetsToApplyEffect() {
-        return false;
+    protected String nameKey() {
+        return "chart.debris.name";
     }
 
     @Override
-    public String getEffectCategory() {
-        return AnomalousDebris.TERRAIN_ID;
-    }
-
-    @Override
-    public void advance(float amount) {
-        if (amount <= 0f || entity == null || entity.getContainingLocation() == null) {
-            return;
-        }
-        super.advance(amount);
+    protected void advanceLive(float amount) {
         if (entity.isInCurrentLocation() && ensurePhases()) {
             advancePhases(pieces, angles, facings, pulses, amount);
         }
@@ -131,8 +125,8 @@ public class AnomalousDebrisTerrainPlugin extends BaseTerrain {
         }
         secondsSinceCheck = 0f;
         try {
-            CampaignFleetAPI player = Global.getSector().getPlayerFleet();
-            if (player != null && player.getContainingLocation() == entity.getContainingLocation() && player.getLocation() != null
+            CampaignFleetAPI player = PlayerFleet.orNull();
+            if (PlayerFleet.isIn(entity.getContainingLocation()) && player.getLocation() != null
                     && DebrisRules.reveals(Misc.getDistance(entity.getLocation(), player.getLocation()), player.getRadius(), radius)) {
                 reveal();
             }
@@ -171,7 +165,7 @@ public class AnomalousDebrisTerrainPlugin extends BaseTerrain {
 
     @Override
     public EnumSet<CampaignEngineLayers> getActiveLayers() {
-        return EnumSet.of(CampaignEngineLayers.TERRAIN_7A);
+        return LAYERS;
     }
 
     static List<Piece> pieces(float radius, long seed) {
@@ -224,39 +218,24 @@ public class AnomalousDebrisTerrainPlugin extends BaseTerrain {
     }
 
     private boolean ensureSprites() {
-        if (sprites != null) {
+        if (sheet != null) {
             return true;
         }
-        if (spritesFailed || !ensurePhases()) {
+        String sheetPath = sheetPath(SHEET_KEY);
+        if (!ensurePhases() || !SPRITES.ensureLoaded(sheetPath)) {
             return false;
         }
-        try {
-            sprites = new ArrayList<>(pieces.size());
-            glows = new ArrayList<>(pieces.size());
-            for (Piece piece : pieces) {
-                sprites.add(cell(Global.getSettings().getSprite(SPRITE_CATEGORY, SHEET_KEY), piece));
-                glows.add(piece.glows() ? cell(Global.getSettings().getSprite(SPRITE_CATEGORY, GLOW_SHEET_KEY), piece) : null);
-            }
-            return true;
-        } catch (RuntimeException e) {
-            spritesFailed = true;
-            sprites = null;
-            LOG.error("[ExiledSector] Anomalous Debris could not load vanilla's debris sprites", e);
-            return false;
-        }
+        SpriteAPI loaded = Global.getSettings().getSprite(sheetPath);
+        sheetColumns = Math.max(1, (int) (loaded.getWidth() / CELL_SIZE));
+        sheetRows = Math.max(1, (int) (loaded.getHeight() / CELL_SIZE));
+        String glowPath = sheetPath(GLOW_SHEET_KEY);
+        glowSheet = SPRITES.ensureLoaded(glowPath) ? Global.getSettings().getSprite(glowPath) : null;
+        sheet = loaded;
+        return true;
     }
 
-    private static SpriteAPI cell(SpriteAPI sheet, Piece piece) {
-        int columns = Math.max(1, (int) (sheet.getWidth() / CELL_SIZE));
-        int rows = Math.max(1, (int) (sheet.getHeight() / CELL_SIZE));
-        float cellWidth = sheet.getTextureWidth() / columns;
-        float cellHeight = sheet.getTextureHeight() / rows;
-        sheet.setTexX(piece.cellX() % columns * cellWidth);
-        sheet.setTexY(piece.cellY() % rows * cellHeight);
-        sheet.setTexWidth(cellWidth);
-        sheet.setTexHeight(cellHeight);
-        sheet.setSize(piece.size(), piece.size());
-        return sheet;
+    int cellOf(Piece piece) {
+        return piece.cellY() % sheetRows * sheetColumns + piece.cellX() % sheetColumns;
     }
 
     @Override
@@ -273,20 +252,12 @@ public class AnomalousDebrisTerrainPlugin extends BaseTerrain {
             float x = centre.x + (float) Math.cos(angle) * piece.orbitRadius();
             float y = centre.y + (float) Math.sin(angle) * piece.orbitRadius();
             float facing = facings[index];
-            SpriteAPI sprite = sprites.get(index);
-            sprite.setAngle(facing);
-            sprite.setColor(light);
-            sprite.setNormalBlend();
-            sprite.setAlphaMult(alpha);
-            sprite.renderAtCenter(x, y);
-            SpriteAPI glow = glows.get(index);
-            if (glow != null) {
+            int cell = cellOf(piece);
+            SpriteDraw.drawCellAtCenter(sheet, sheetColumns, sheetRows, cell, x, y, piece.size(), piece.size(), facing, light, alpha, false);
+            if (piece.glows() && glowSheet != null) {
                 float pulse = 0.5f + 0.5f * (float) Math.sin(pulses[index]);
-                glow.setAngle(facing);
-                glow.setColor(GLOW_COLOUR);
-                glow.setAdditiveBlend();
-                glow.setAlphaMult(alpha * GLOW_ALPHA * pulse);
-                glow.renderAtCenter(x, y);
+                SpriteDraw.drawCellAtCenter(glowSheet, sheetColumns, sheetRows, cell, x, y, piece.size(), piece.size(), facing, GLOW_COLOUR,
+                        alpha * GLOW_ALPHA * pulse, true);
             }
         }
     }
@@ -297,28 +268,7 @@ public class AnomalousDebrisTerrainPlugin extends BaseTerrain {
     }
 
     @Override
-    public boolean hasTooltip() {
-        return true;
-    }
-
-    @Override
-    public boolean isTooltipExpandable() {
-        return false;
-    }
-
-    @Override
-    public String getTerrainName() {
-        return Translation.gameText("chart.debris.name");
-    }
-
-    @Override
-    public String getNameForTooltip() {
-        return getTerrainName();
-    }
-
-    @Override
-    public void createTooltip(TooltipMakerAPI tooltip, boolean expanded) {
-        tooltip.addTitle(getTerrainName());
+    protected void tooltipLines(TooltipMakerAPI tooltip) {
         VanillaText.plainPara(tooltip, Translation.gameText("chart.debris.description"), TOOLTIP_PAD, Misc.getTextColor());
     }
 }

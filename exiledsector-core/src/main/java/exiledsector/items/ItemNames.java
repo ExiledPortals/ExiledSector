@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 public final class ItemNames {
@@ -31,7 +32,7 @@ public final class ItemNames {
     private static final long NAME_SALT = 0x6E616D6573L;
     private static final Logger LOG = Logger.getLogger(ItemNames.class);
     private static final AtomicReference<Map<String, NameWords>> WORDS = new AtomicReference<>(Map.of());
-    private static final AtomicReference<NameWords> STAR_CHART_WORDS = new AtomicReference<>();
+    private static final Map<ItemType, NameWords> TYPE_WORDS = new ConcurrentHashMap<>();
 
     public enum Style {CODENAME, PRODUCT}
 
@@ -53,8 +54,12 @@ public final class ItemNames {
         }
     }
 
-    public static void useStarChartWords(NameWords starChartWords) {
-        STAR_CHART_WORDS.set(starChartWords);
+    public static void useTypeWords(ItemType type, NameWords typeWords) {
+        if (typeWords == null) {
+            TYPE_WORDS.remove(type);
+        } else {
+            TYPE_WORDS.put(type, typeWords);
+        }
     }
 
     public static void registerWords(JSONObject namesJson) throws JSONException {
@@ -71,7 +76,7 @@ public final class ItemNames {
 
     public static void clear() {
         WORDS.set(Map.of());
-        STAR_CHART_WORDS.set(null);
+        TYPE_WORDS.clear();
     }
 
     public static boolean hasName(ItemDefinition definition, String modifierId, ModifierSlot slot) {
@@ -95,7 +100,7 @@ public final class ItemNames {
 
     private static NameWords wordsFor(ItemDefinition definition) {
         NameWords definitionWords = WORDS.get().get(definition.id());
-        return definitionWords == null && definition.type() == ItemType.STAR_CHART ? STAR_CHART_WORDS.get() : definitionWords;
+        return definitionWords == null && definition.type() != null ? TYPE_WORDS.get(definition.type()) : definitionWords;
     }
 
     static ItemName render(ItemDefinition definition, ItemKind kind, List<RolledModifier> modifiers, FrozenName frozen) {
@@ -108,8 +113,8 @@ public final class ItemNames {
             case UNIQUE -> new ItemName(definition.displayName(), null, rarity);
             case COMMON -> {
                 String commonText = commonName(definition, kind, modifiers, frozen);
-                boolean plainSubroutine = definition.type() == ItemType.SUBROUTINE && commonText.equals(definition.displayName());
-                yield new ItemName(commonText, plainSubroutine ? null : definition.displayName(), rarity);
+                boolean plainName = commonText.equals(definition.displayName());
+                yield new ItemName(commonText, plainName ? null : definition.displayName(), rarity);
             }
             case RARE -> {
                 String rareText = rareName(nameParts);

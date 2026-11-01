@@ -1,5 +1,6 @@
 package exiledsector.ui.cargo;
 
+import exiledsector.skills.skilleffect.render.Fade;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -18,13 +19,13 @@ class CacheIconFxTest {
         assertEquals(1f, CacheIconFx.openness(CacheIconFx.CRACK_KEY + CacheIconFx.OPEN_SPAN), 1e-5f);
         assertEquals(0f, CacheIconFx.openness(CacheIconFx.CLOSE_END), 1e-5f);
         assertEquals(0f, CacheIconFx.openness(0.95f), 1e-5f);
-        assertEquals(CacheIconFx.cycleOf(1f), CacheIconFx.cycleOf(1f + CacheIconFx.CYCLE_SECONDS), 1e-4f);
+        assertEquals(Fade.cycle(1f, CacheIconFx.CYCLE_SECONDS), Fade.cycle(1f + CacheIconFx.CYCLE_SECONDS, CacheIconFx.CYCLE_SECONDS), 1e-4f);
     }
 
     @Test
     void theCrackIsTheKeyMomentForTheFrameLightsAndTheFlash() {
-        assertEquals(2f, DoctrineIconFx.wave(CacheIconFx.CRACK_KEY, CacheIconFx.CRACK_KEY), 1e-4f);
-        assertEquals(1f, DoctrineIconFx.flash(CacheIconFx.CRACK_KEY, CacheIconFx.CRACK_KEY), 1e-5f);
+        assertEquals(2f, IconFxKit.wave(CacheIconFx.CRACK_KEY, CacheIconFx.CRACK_KEY), 1e-4f);
+        assertEquals(1f, IconFxKit.flash(CacheIconFx.CRACK_KEY, CacheIconFx.CRACK_KEY), 1e-5f);
         assertTrue(CacheIconFx.crackleAlpha(CacheIconFx.CRACK_KEY) > 0.5f);
         assertEquals(0f, CacheIconFx.crackleAlpha(CacheIconFx.CRACKLE_END));
         assertEquals(0f, CacheIconFx.crackleAlpha(CacheIconFx.HEAT_START));

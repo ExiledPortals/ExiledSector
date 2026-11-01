@@ -51,6 +51,10 @@ class NodeRequirementsTest {
         return new ShipProfile(HullSize.DESTROYER, ShieldType.FRONT, 0, Set.of(), false, 0f, false, false, false, false, true);
     }
 
+    private static ShipProfile scripted() {
+        return new ShipProfile(HullSize.CRUISER, ShieldType.OMNI, 0, Set.of(), false, 0f, false, false, false, false, false, true);
+    }
+
     private static ShipProfile everything() {
         return profile(HullSize.CAPITAL_SHIP, ShieldType.OMNI, 4, EnumSet.allOf(WeaponKind.class), true);
     }
@@ -147,6 +151,12 @@ class NodeRequirementsTest {
     }
 
     @Test
+    void reqUnscriptedHullFailsOnHullsRunningAnotherModsCode() {
+        assertTrue(met("req_unscripted_hull", hull(HullSize.CRUISER)));
+        assertFalse(met("req_unscripted_hull", scripted()));
+    }
+
+    @Test
     void campaignOnlyAndPlayerOnlyAreNeverMetForNpcGeneration() {
         assertFalse(met("campaign_only", everything()));
         assertFalse(met("player_only", everything()));
@@ -193,6 +203,7 @@ class NodeRequirementsTest {
         profiles.add(everything());
         profiles.add(profile(HullSize.FRIGATE, ShieldType.NONE, 0, Set.of(), false));
         profiles.add(automated());
+        profiles.add(scripted());
 
         for (String requirement : SkillTags.REQUIREMENT) {
             if (SkillTags.isHullRequirement(requirement)) {

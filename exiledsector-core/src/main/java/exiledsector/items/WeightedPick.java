@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.function.ToDoubleFunction;
 
@@ -26,5 +27,11 @@ public final class WeightedPick {
 
     public static <T> T pick(List<T> candidates, ToDoubleFunction<T> weightOf, Random random) {
         return candidates.isEmpty() ? null : candidates.get(index(candidates, weightOf, random.nextFloat()));
+    }
+
+    public static <K> K pick(Map<K, Float> weights, Random random) {
+        List<Map.Entry<K, Float>> positive = weights.entrySet().stream().filter(entry -> entry.getValue() > 0f).toList();
+        Map.Entry<K, Float> picked = pick(positive, Map.Entry::getValue, random);
+        return picked == null ? null : picked.getKey();
     }
 }

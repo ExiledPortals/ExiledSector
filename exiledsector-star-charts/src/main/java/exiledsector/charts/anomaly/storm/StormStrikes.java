@@ -1,6 +1,8 @@
 package exiledsector.charts.anomaly.storm;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import exiledsector.charts.content.ChartSites;
+import exiledsector.items.WeightedPick;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
@@ -20,33 +22,12 @@ final class StormStrikes {
     }
 
     static ShipAPI pickTarget(List<ShipAPI> ships, Random random) {
-        float totalWeight = 0f;
-        for (ShipAPI ship : ships) {
-            if (canBeStruck(ship)) {
-                totalWeight += StormRules.hullWeight(ship.getHullSize());
-            }
-        }
-        if (!(totalWeight > 0f)) {
-            return null;
-        }
-        float pick = random.nextFloat() * totalWeight;
-        ShipAPI last = null;
-        for (ShipAPI ship : ships) {
-            if (!canBeStruck(ship)) {
-                continue;
-            }
-            last = ship;
-            pick -= StormRules.hullWeight(ship.getHullSize());
-            if (pick < 0f) {
-                return ship;
-            }
-        }
-        return last;
+        return WeightedPick.pick(ships.stream().filter(StormStrikes::canBeStruck).toList(), ship -> StormRules.hullWeight(ship.getHullSize()), random);
     }
 
     static Vector2f origin(Vector2f target, Random random) {
         double angle = random.nextDouble() * Math.PI * 2d;
         float distance = MIN_ORIGIN_DISTANCE + random.nextFloat() * (MAX_ORIGIN_DISTANCE - MIN_ORIGIN_DISTANCE);
-        return new Vector2f(target.x + (float) Math.cos(angle) * distance, target.y + (float) Math.sin(angle) * distance);
+        return ChartSites.pointAround(target, angle, distance);
     }
 }

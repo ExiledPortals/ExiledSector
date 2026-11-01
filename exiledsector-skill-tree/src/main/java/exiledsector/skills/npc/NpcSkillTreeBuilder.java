@@ -54,11 +54,11 @@ public final class NpcSkillTreeBuilder {
         ShipSkillData shipData = rootedTree(rootNode, targetNodeCount);
         if (shipData == null) {
             String rootId = rootNode == null ? "none" : rootNode.getId();
-            return new NpcTreeBuild(emptyTree(), List.of(new NpcBuildStep(rootId, NpcBuildStep.INVALID_ROOT + rootId)), List.of());
+            return new NpcTreeBuild(emptyTree(), List.of(new NpcBuildStep(rootId, NpcBuildStep.INVALID_ROOT + rootId)));
         }
         Generation generation = new Generation(request, shipData, targetNodeCount, random);
         generation.run();
-        return new NpcTreeBuild(shipData, generation.steps, generation.strippedHullModIds);
+        return new NpcTreeBuild(shipData, generation.steps);
     }
 
     public static boolean hasRootFor(String designType) {
@@ -453,7 +453,7 @@ public final class NpcSkillTreeBuilder {
             }
             ShipProfile fittedProfile = new ShipProfile(profile.hullSize(), shieldType, Math.max(0, fighterBays), profile.weaponKinds(),
                     profile.flagship(), profile.baseArmor(), profile.phaseHull(), profile.limitedSystemCharges(), profile.onlyBuiltInWings(),
-                    profile.station());
+                    profile.station(), profile.automated(), profile.scriptedHull());
             boolean shieldInvested = false;
             for (AllocatedNode node : allocatedNodes) {
                 List<String> tags = node.effectiveType().getTags();

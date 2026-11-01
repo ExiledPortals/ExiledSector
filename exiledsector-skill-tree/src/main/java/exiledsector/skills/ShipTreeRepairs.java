@@ -27,17 +27,25 @@ public final class ShipTreeRepairs {
                                           Map<String, SkillType> typesById, Predicate<String> isOwnedShip,
                                           Consumer<SkillItemCost> refund) {
         Logger logger = Logger.getLogger(ShipTreeRepairs.class);
+        SkillTreeTopology topology = null;
         for (Map.Entry<String, ShipSkillData> entry : ShipSkillDataManager.all().entrySet()) {
             ShipSkillData shipData = entry.getValue();
+            BooleanSupplier ownedShip = () -> isOwnedShip.test(entry.getKey());
             List<String> forgottenNodeIds = ShipTrees.forgetUnknownNodes(shipData, nodesById, declaredNodesById, typesById);
-            refundCharges(shipData, forgottenNodeIds, () -> isOwnedShip.test(entry.getKey()), refund);
+            refundCharges(shipData, forgottenNodeIds, ownedShip, refund);
             if (ShipTrees.hasLostStartingRoot(shipData, nodesById)) {
                 List<String> releasedNodeIds = ShipTrees.resetAllocations(shipData);
-                refundCharges(shipData, releasedNodeIds, () -> isOwnedShip.test(entry.getKey()), refund);
+                refundCharges(shipData, releasedNodeIds, ownedShip, refund);
                 logger.info("[ExiledSector] Reset the skill tree of ship " + entry.getKey()
                         + " because its starting root is no longer in the tree; released " + releasedNodeIds + ", removed " + forgottenNodeIds);
             } else if (!forgottenNodeIds.isEmpty()) {
-                logger.info("[ExiledSector] Removed nodes that are no longer in the skill tree or whose chosen option is gone from ship " + entry.getKey() + ": " + forgottenNodeIds);
+                topology = topology == null ? SkillTreeTopology.of(nodesById.values()) : topology;
+                ReleasedNodes stranded = ShipTrees.releaseUnreachable(shipData, topology, ShipTrees.resolveStartingRootId(shipData, nodesById.values()));
+                if (ownedShip.getAsBoolean()) {
+                    stranded.charges().forEach(refund);
+                }
+                logger.info("[ExiledSector] Removed nodes that are no longer in the skill tree or whose chosen option is gone from ship " + entry.getKey()
+                        + ": " + forgottenNodeIds + (stranded.isEmpty() ? "" : ", and released the nodes they stranded: " + stranded.nodeIds()));
             }
         }
     }

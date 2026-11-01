@@ -1,6 +1,11 @@
 package exiledsector.console;
 
 import org.junit.jupiter.api.Test;
+import org.lazywizard.console.Console;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -25,6 +30,22 @@ class ConsoleArgsTest {
         assertNull(ConsoleArgs.wholeNumber("", 1, Integer.MAX_VALUE));
         assertNull(ConsoleArgs.wholeNumber(null, 1, Integer.MAX_VALUE));
         assertNull(ConsoleArgs.wholeNumber("first", 1, Integer.MAX_VALUE));
+    }
+
+    @Test
+    void tokensSplitOnAnyWhitespaceAndAreEmptyForBlankArguments() {
+        assertEquals(List.of("3", "12"), ConsoleArgs.tokens(" 3 \t 12 "));
+        assertEquals(List.of(), ConsoleArgs.tokens("  "));
+        assertEquals(List.of(), ConsoleArgs.tokens(null));
+    }
+
+    @Test
+    void copiesOutOfRangeAreReported() {
+        try (MockedStatic<Console> console = Mockito.mockStatic(Console.class)) {
+            assertEquals(3, ConsoleArgs.copiesOrComplain("", 3, 50));
+            assertNull(ConsoleArgs.copiesOrComplain("51", 3, 50));
+            console.verify(() -> Console.showMessage("Give a number of copies from 1 to 50."));
+        }
     }
 
     @Test

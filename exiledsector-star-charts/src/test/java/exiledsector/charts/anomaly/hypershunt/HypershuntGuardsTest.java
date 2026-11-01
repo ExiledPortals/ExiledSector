@@ -10,6 +10,7 @@ import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec.DropData;
 import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.anomaly.VanillaDefenders;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.FakeChartContentEngine;
@@ -57,7 +58,7 @@ class HypershuntGuardsTest {
         when(hypershunt.getMemoryWithoutUpdate()).thenReturn(hypershuntMemory);
         when(hypershunt.getContainingLocation()).thenReturn(system);
         when(hypershunt.getLocation()).thenReturn(new Vector2f(300f, 400f));
-        HypershuntGuards.arm(hypershunt, SEED);
+        VanillaDefenders.arm(hypershunt, SEED);
     }
 
     @AfterEach
@@ -68,7 +69,7 @@ class HypershuntGuardsTest {
 
     private static ChartRun run(int tier) {
         ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(tier, "pirates", ChartObjective.CLEAR, List.of(), null, 3, 2, List.of(CoronalHypershunt.ID)));
+        run.recordContent(new ChartContent(tier, "pirates", ChartObjective.CLEAR, List.of(), null, 3, 2, List.of(CoronalHypershunt.ANOMALY_ID)));
         ChartRuns.store(run);
         return run;
     }
@@ -87,14 +88,14 @@ class HypershuntGuardsTest {
     @Test
     void theGuardsGrowWithTheTier() {
         HypershuntGuards.muster(hypershunt, run(1));
-        hypershuntMemory.unset(HypershuntGuards.DEFENDER_FLEET_KEY);
+        hypershuntMemory.unset(VanillaDefenders.DEFENDER_FLEET_KEY);
         HypershuntGuards.muster(hypershunt, run(15));
 
         assertTrue(engine.fleetParams.get(1).combatPts > engine.fleetParams.get(0).combatPts);
     }
 
     @Test
-    void theGuardsDropOmegaWeaponsAndChartLoot() {
+    void theGuardsDropOmegaWeaponsAndCarryTheRun() {
         CampaignFleetAPI guards = HypershuntGuards.muster(hypershunt, run(6));
 
         ArgumentCaptor<DropData> drops = ArgumentCaptor.forClass(DropData.class);
@@ -110,7 +111,7 @@ class HypershuntGuardsTest {
         CampaignFleetAPI guards = HypershuntGuards.muster(hypershunt, run(4));
 
         assertSame(guards, hypershuntMemory.get(ChartIds.VANILLA_DEFENDER_FLEET_MEMORY_KEY));
-        assertTrue(hypershuntMemory.getBoolean(HypershuntGuards.HAS_DEFENDERS_KEY));
+        assertTrue(hypershuntMemory.getBoolean(VanillaDefenders.HAS_DEFENDERS_KEY));
         assertEquals(SEED, hypershuntMemory.get(MemFlags.SALVAGE_SEED));
         verify(guards).setContainingLocation(system);
         assertEquals(new Vector2f(300f, 400f), guards.getLocation());
@@ -126,10 +127,25 @@ class HypershuntGuardsTest {
     }
 
     @Test
-    void aBeatenHypershuntHasNoGuards() {
-        hypershuntMemory.set(HypershuntGuards.DEFEATED_KEY, true);
+    void keptGuardsArePreparedAgainAndLeaveTheirLootLedgerToTheHypershunt() {
+        ChartRun run = run(4);
+        CampaignFleetAPI guards = HypershuntGuards.muster(hypershunt, run);
+        assertFalse(guards.getMemoryWithoutUpdate().contains(ChartIds.START_DP_MEMORY_KEY));
+        MemoryAPI guardMemory = guards.getMemoryWithoutUpdate();
+        guardMemory.getKeys().forEach(guardMemory::unset);
 
-        assertFalse(HypershuntGuards.guarded(hypershunt));
+        assertSame(guards, HypershuntGuards.muster(hypershunt, run));
+
+        assertTrue(guardMemory.getBoolean(ChartIds.fleetRunKey(RUN_ID)));
+        assertEquals(4, guardMemory.get(ChartIds.TIER_MEMORY_KEY));
+        assertFalse(guardMemory.contains(ChartIds.START_DP_MEMORY_KEY));
+    }
+
+    @Test
+    void aBeatenHypershuntHasNoGuards() {
+        hypershuntMemory.set(VanillaDefenders.DEFEATED_KEY, true);
+
+        assertFalse(VanillaDefenders.guarded(hypershunt));
         assertNull(HypershuntGuards.muster(hypershunt, run(4)));
         assertNull(HypershuntGuards.muster(hypershunt, null));
         assertTrue(engine.fleetParams.isEmpty());

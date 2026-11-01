@@ -1,26 +1,29 @@
 package exiledsector.charts.anomaly.heist;
 
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
-import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.anomaly.AnomalyContentSite;
-import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.AnomalyRun;
+import exiledsector.charts.anomaly.AtlasRule;
+import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.anomaly.LootShaper;
+import exiledsector.charts.anomaly.OrbitSearch;
+import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.atlas.AtlasTraits;
 import exiledsector.charts.content.ChartSites;
-import exiledsector.charts.run.ChartRun;
-import exiledsector.charts.run.ChartRuns;
 
+import java.util.List;
 import java.util.Random;
 
-public final class ListeningPost implements ChartAnomaly {
+public final class ListeningPost implements AtlasRule, ContentPlacer, RunParticipant, LootShaper {
 
-    public static final String ID = "listening_post";
-    public static final String PICKETS_KEY = ID + ".pickets";
-    public static final String LOOT_KEY = ID + ".loot";
-    public static final String PURGE_KEY = ID + ".purge";
+    public static final String ANOMALY_ID = "listening_post";
+    public static final String PICKETS_KEY = ChartEffect.CHART_LISTENING_POST_PICKETS.anomalyTuningKey();
+    public static final String LOOT_KEY = ChartEffect.CHART_LISTENING_POST_LOOT_QUANTITY_PERCENT.anomalyTuningKey();
+    public static final String PURGE_KEY = ChartEffect.CHART_LISTENING_POST_PURGE_PERCENT.anomalyTuningKey();
     public static final String ENTITY_TYPE = ChartIds.PREFIX + "listening_post";
     public static final String POST_TAG = ChartIds.PREFIX + "listening_post";
     public static final ListeningPost INSTANCE = new ListeningPost();
@@ -32,7 +35,12 @@ public final class ListeningPost implements ChartAnomaly {
 
     @Override
     public String id() {
-        return ID;
+        return ANOMALY_ID;
+    }
+
+    @Override
+    public List<String> lootScopes() {
+        return List.of(HeistRules.LOOT_SCOPE);
     }
 
     @Override
@@ -42,15 +50,10 @@ public final class ListeningPost implements ChartAnomaly {
 
     @Override
     public void generate(AnomalyContentSite site) {
-        ChartRun run = ChartRuns.currentOrNull();
-        if (run == null || !run.runId().equals(site.runId())) {
-            throw new IllegalStateException("no run to record the listening post in");
-        }
-        place(site, run);
+        place(site);
     }
 
-    static PostScript place(AnomalyContentSite site, ChartRun run) {
-        StarSystemAPI system = site.system();
+    static PostScript place(AnomalyContentSite site) {
         Random random = site.random(PLACEMENT_SALT);
         ChartSites.Orbit orbit = postOrbit(site, random);
         if (orbit == null) {
@@ -58,7 +61,7 @@ public final class ListeningPost implements ChartAnomaly {
         }
         SectorEntityToken post = site.addEntity(postId(site.runId()), Translation.gameText("chart.post.name"), ENTITY_TYPE, site.factionId(), orbit);
         post.addTag(POST_TAG);
-        PostScript script = new PostScript(site.runId(), site.tier(), system, post.getId());
+        PostScript script = new PostScript(site.runId(), site.tier(), site.system(), post.getId());
         Random picketRandom = site.random(PICKET_SALT);
         int count = HeistRules.picketCount(picketRandom, Math.round(site.context().anomalyPercent(PICKETS_KEY)));
         float firstAngle = picketRandom.nextFloat() * 360f;
@@ -73,31 +76,13 @@ public final class ListeningPost implements ChartAnomaly {
         if (script.stations().isEmpty()) {
             throw new IllegalStateException("no picket could be formed");
         }
-        PostState.record(run, PostState.fresh(random.nextLong()));
-        system.addScript(script);
-        return script;
+        PostState.record(site.state(ANOMALY_ID), PostState.fresh(random.nextLong()));
+        return site.addScript(script);
     }
 
     static ChartSites.Orbit postOrbit(AnomalyContentSite site, Random random) {
-        SectorEntityToken centre = site.system().getCenter() != null ? site.system().getCenter() : site.system().getStar();
-        if (centre == null) {
-            return null;
-        }
-        ChartSites.Orbit farthest = null;
-        for (int attempt = 0; attempt < HeistRules.POST_ATTEMPTS; attempt++) {
-            ChartSites.Orbit orbit = site.clearOrbit(centre, HeistRules.POST_MIN_RADIUS, HeistRules.POST_MAX_RADIUS, random);
-            if (orbit == null) {
-                continue;
-            }
-            float gap = site.distanceToEntry(orbit.position());
-            if (gap >= HeistRules.POST_MIN_ENTRY_GAP) {
-                return orbit;
-            }
-            if (farthest == null || gap > site.distanceToEntry(farthest.position())) {
-                farthest = orbit;
-            }
-        }
-        return farthest;
+        return site.clearOrbit(OrbitSearch.repeated(site.centre(), HeistRules.POST_MIN_RADIUS, HeistRules.POST_MAX_RADIUS, HeistRules.POST_ATTEMPTS)
+                .awayFromEntry(HeistRules.POST_MIN_ENTRY_GAP), random);
     }
 
     public static String postId(String runId) {
@@ -108,26 +93,14 @@ public final class ListeningPost implements ChartAnomaly {
         return entity != null && entity.hasTag(POST_TAG);
     }
 
-    static boolean inRunSystem(ChartRun run, LocationAPI location) {
-        return run != null && run.runState().isLive() && location != null && run.systemId().equals(ChartIds.locationIdOf(location));
+    @Override
+    public InteractionDialogPlugin dialogFor(AnomalyRun run, SectorEntityToken target) {
+        return isPost(target) ? new PostDialog() : null;
     }
 
     @Override
-    public boolean isActiveIn(LocationAPI location) {
-        ChartRun run = ChartRuns.currentOrNull();
-        PostState state = inRunSystem(run, location) ? PostState.of(run) : null;
-        return state != null && state.standing();
-    }
-
-    @Override
-    public InteractionDialogPlugin dialogFor(SectorEntityToken target) {
-        return PostDialog.wantsToHandle(target) ? new PostDialog() : null;
-    }
-
-    @Override
-    public String intelText(ChartRun run, LocationAPI location) {
-        PostState state = PostState.of(run);
-        PostScript script = PostScript.in(location);
-        return state == null ? null : PostText.status(state, script);
+    public String intelText(AnomalyRun run) {
+        PostState state = PostState.of(run.run());
+        return state != null && state.standing() ? PostText.status(state, PostScript.in(run.system())) : null;
     }
 }

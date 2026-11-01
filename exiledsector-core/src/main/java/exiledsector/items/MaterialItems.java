@@ -13,6 +13,7 @@ import java.util.List;
 
 public final class MaterialItems {
 
+    private static final String MATERIAL_KEY_PREFIX = "material.";
     private static final SpriteCache SPRITES = new SpriteCache(MaterialItems.class);
     private static final Color PARTS_COLOR = new Color(200, 170, 130);
 
@@ -82,15 +83,19 @@ public final class MaterialItems {
     }
 
     public static void localise(String itemId) {
-        SpecialItemSpecAPI materialSpec = spec(itemId);
-        if (materialSpec != null) {
-            materialSpec.setName(Translation.data("material." + itemId + ".name", materialSpec.getName()));
-            materialSpec.setDesc(Translation.data(descriptionKey(itemId), materialSpec.getDesc()));
+        localise(itemId, MATERIAL_KEY_PREFIX);
+    }
+
+    public static void localise(String itemId, String keyPrefix) {
+        SpecialItemSpecAPI itemSpec = spec(itemId);
+        if (itemSpec != null) {
+            itemSpec.setName(Translation.data(keyPrefix + itemId + ".name", itemSpec.getName()));
+            itemSpec.setDesc(Translation.data(keyPrefix + itemId + ".description", itemSpec.getDesc()));
         }
     }
 
     public static String descriptionKey(String itemId) {
-        return "material." + itemId + ".description";
+        return MATERIAL_KEY_PREFIX + itemId + ".description";
     }
 
     public static String displayName(String itemId) {

@@ -6,7 +6,7 @@ import com.fs.starfarer.api.campaign.FactionSpecAPI;
 import exiledsector.ProjectFiles;
 import exiledsector.charts.anomaly.convoy.ConvoyRules;
 import exiledsector.charts.anomaly.debris.DormantFleets;
-import exiledsector.charts.anomaly.skirmish.SkirmishFactions;
+import exiledsector.charts.anomaly.RunFactionDress;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -65,8 +65,8 @@ class ModdedChartFactionsTest {
     @Test
     void ourOwnRunOnlyFactionsAreNeverFoundEvenIfTheirConfigSaysPlayable() throws Exception {
         when(settings.getMergedSpreadsheetData(ModdedChartFactions.FACTION_COLUMN, ModdedChartFactions.MOD_FACTIONS_PATH)).thenReturn(new JSONArray()
-                .put(row(DormantFleets.FACTION_ID)).put(row(SkirmishFactions.ALLY_FACTION_ID)));
-        for (String factionId : List.of(DormantFleets.FACTION_ID, SkirmishFactions.ALLY_FACTION_ID)) {
+                .put(row(DormantFleets.FACTION_ID)).put(row(RunFactionDress.ALLY_FACTION_ID)));
+        for (String factionId : List.of(DormantFleets.FACTION_ID, RunFactionDress.ALLY_FACTION_ID)) {
             when(settings.getFactionSpec(factionId)).thenReturn(mock(FactionSpecAPI.class));
             config(factionId, new JSONObject().put(ModdedChartFactions.PLAYABLE_KEY, true));
         }
@@ -78,7 +78,7 @@ class ModdedChartFactionsTest {
     void nexerelinReadsOurRunOnlyFactionsAsUnplayableAndOutOfDiplomacy() throws Exception {
         java.nio.file.Path folder = exiledsector.ProjectFiles.projectRoot().resolve(ModdedChartFactions.CONFIG_FOLDER);
         String listed = java.nio.file.Files.readString(folder.resolve("mod_factions.csv"));
-        for (String factionId : List.of(DormantFleets.FACTION_ID, SkirmishFactions.ALLY_FACTION_ID)) {
+        for (String factionId : List.of(DormantFleets.FACTION_ID, RunFactionDress.ALLY_FACTION_ID)) {
             org.junit.jupiter.api.Assertions.assertTrue(listed.lines().anyMatch(factionId::equals), factionId);
             String config = java.nio.file.Files.readString(folder.resolve(factionId + ".json")).replaceAll("\\s", "");
             for (String flag : List.of("\"playableFaction\":false", "\"noRandomizeRelations\":true", "\"noSyncRelations\":true",
@@ -99,7 +99,7 @@ class ModdedChartFactionsTest {
     void ourRunOnlyFactionsAreListedForNexerelinButNeverTakenAsChartFactions() throws Exception {
         List<String> listed = new ArrayList<>(Files.readAllLines(ProjectFiles.projectRoot().resolve(ModdedChartFactions.MOD_FACTIONS_PATH)));
         assertEquals(ModdedChartFactions.FACTION_COLUMN, listed.remove(0).trim());
-        assertEquals(List.of(ConvoyRules.FACTION_ID, DormantFleets.FACTION_ID, SkirmishFactions.ALLY_FACTION_ID), listed.stream().map(String::trim).toList());
+        assertEquals(List.of(ConvoyRules.FACTION_ID, DormantFleets.FACTION_ID, RunFactionDress.ALLY_FACTION_ID), listed.stream().map(String::trim).toList());
         JSONArray rows = new JSONArray();
         for (String factionId : listed) {
             rows.put(row(factionId.trim()));

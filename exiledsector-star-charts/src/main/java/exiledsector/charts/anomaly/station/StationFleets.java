@@ -20,7 +20,6 @@ import java.util.function.BiConsumer;
 final class StationFleets {
 
     static final String SOURCE_ID_KEY = "$sourceId";
-    static final long SPAWN_SALT = 0x4c41554e4348L;
 
     private StationFleets() {
     }
@@ -28,17 +27,8 @@ final class StationFleets {
     record Launch(String factionId, int maxShipSize, BiConsumer<Random, CampaignFleetAPI> dress) {
     }
 
-    static long spawnSeed(long managerSeed, int spawned) {
-        return managerSeed ^ (SPAWN_SALT * (spawned + 1L));
-    }
-
-    static ChartRun liveRun(String runId) {
-        ChartRun run = ChartRuns.currentOrNull();
-        return run != null && run.runId().equals(runId) && run.runState().isLive() ? run : null;
-    }
-
     static CampaignFleetAPI spawn(SectorEntityToken source, Launch launch, String runId, int runTier, int fleetsLost, long fleetSeed) {
-        ChartRun run = liveRun(runId);
+        ChartRun run = ChartRuns.live(runId);
         LocationAPI location = source == null ? null : source.getContainingLocation();
         if (run == null || location == null || !source.isAlive()) {
             return null;

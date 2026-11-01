@@ -3,20 +3,15 @@ package exiledsector.skills.skilleffect.flux;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import exiledsector.compat.LostSectorCompat;
 import exiledsector.i18n.StyledText;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.ConditionalStatEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
-import exiledsector.skills.skilleffect.ListenerEffect;
-import exiledsector.skills.skilleffect.SimpleStatEffect;
-import exiledsector.skills.skilleffect.StatMode;
-import exiledsector.skills.skilleffect.StatTarget;
 
-import java.util.function.Function;
-
+import static exiledsector.skills.skilleffect.Backings.listener;
+import static exiledsector.skills.skilleffect.Backings.statEffect;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
@@ -25,15 +20,15 @@ import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 public enum FluxSkillEffect implements BackedSkillEffect {
 
-    FLUX_CAPACITY_PERCENT(PERCENT, liveStat(MutableShipStatsAPI::getFluxCapacity), StatNames.FLUX_CAPACITY, false),
-    FLUX_CAPACITY_FLAT(FLAT, liveStat(MutableShipStatsAPI::getFluxCapacity), StatNames.FLUX_CAPACITY, false),
-    FLUX_CAPACITY_MULT(MULT, liveStat(MutableShipStatsAPI::getFluxCapacity), StatNames.FLUX_CAPACITY, false),
-    FLUX_DISSIPATION_PERCENT(PERCENT, liveStat(MutableShipStatsAPI::getFluxDissipation), StatNames.FLUX_DISSIPATION, false),
-    FLUX_DISSIPATION_FLAT(FLAT, liveStat(MutableShipStatsAPI::getFluxDissipation), StatNames.FLUX_DISSIPATION, false),
-    FLUX_DISSIPATION_MULT(MULT, liveStat(MutableShipStatsAPI::getFluxDissipation), StatNames.FLUX_DISSIPATION, false),
-    VENT_RATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getVentRateMult), "stat.ventingSpeed", false),
-    VENT_RATE_MULT(MULT, stat(MutableShipStatsAPI::getVentRateMult), "stat.ventingSpeed", false),
-    ZERO_FLUX_SPEED_FLAT(FLAT, liveStat(MutableShipStatsAPI::getZeroFluxSpeedBoost), "stat.zeroFluxSpeedBoost", false),
+    FLUX_CAPACITY_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getFluxCapacity), StatNames.FLUX_CAPACITY, false)),
+    FLUX_CAPACITY_FLAT(statEffect(FLAT, liveStat(MutableShipStatsAPI::getFluxCapacity), StatNames.FLUX_CAPACITY, false)),
+    FLUX_CAPACITY_MULT(statEffect(MULT, liveStat(MutableShipStatsAPI::getFluxCapacity), StatNames.FLUX_CAPACITY, false)),
+    FLUX_DISSIPATION_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getFluxDissipation), StatNames.FLUX_DISSIPATION, false)),
+    FLUX_DISSIPATION_FLAT(statEffect(FLAT, liveStat(MutableShipStatsAPI::getFluxDissipation), StatNames.FLUX_DISSIPATION, false)),
+    FLUX_DISSIPATION_MULT(statEffect(MULT, liveStat(MutableShipStatsAPI::getFluxDissipation), StatNames.FLUX_DISSIPATION, false)),
+    VENT_RATE_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getVentRateMult), "stat.ventingSpeed", false)),
+    VENT_RATE_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getVentRateMult), "stat.ventingSpeed", false)),
+    ZERO_FLUX_SPEED_FLAT(statEffect(FLAT, liveStat(MutableShipStatsAPI::getZeroFluxSpeedBoost), "stat.zeroFluxSpeedBoost", false)),
     ZERO_FLUX_ALWAYS_ON {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -69,12 +64,12 @@ public enum FluxSkillEffect implements BackedSkillEffect {
             stats.getFluxCapacity().modifyFlat(modId + CAPACITOR_MOD_SUFFIX, capacitors * fluxPerCapacitor() * magnitude / 100f);
         }
     },
-    FLUX_SCALED_TOP_SPEED_FLAT(FluxScaledVolatilityListener.TOP_SPEED_KEY,
-            FluxScaledVolatilityListener.class, FluxScaledVolatilityListener::new),
-    FLUX_SCALED_RATE_OF_FIRE_PERCENT(FluxScaledVolatilityListener.RATE_OF_FIRE_KEY,
-            FluxScaledVolatilityListener.class, FluxScaledVolatilityListener::new),
-    AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT(FluxScaledVolatilityListener.AUGMENTED_PENALTY_REDUCTION_KEY,
-            FluxScaledVolatilityListener.class, FluxScaledVolatilityListener::new) {
+    FLUX_SCALED_TOP_SPEED_FLAT(listener(FluxScaledVolatilityListener.TOP_SPEED_KEY,
+            FluxScaledVolatilityListener.class, FluxScaledVolatilityListener::new)),
+    FLUX_SCALED_RATE_OF_FIRE_PERCENT(listener(FluxScaledVolatilityListener.RATE_OF_FIRE_KEY,
+            FluxScaledVolatilityListener.class, FluxScaledVolatilityListener::new)),
+    AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT(listener(FluxScaledVolatilityListener.AUGMENTED_PENALTY_REDUCTION_KEY,
+            FluxScaledVolatilityListener.class, FluxScaledVolatilityListener::new)) {
         @Override
         public StyledText description(float magnitude) {
             return LostSectorCompat.isModEnabled() ? super.description(magnitude) : null;
@@ -94,15 +89,7 @@ public enum FluxSkillEffect implements BackedSkillEffect {
     private final EffectBacking backing;
 
     FluxSkillEffect() {
-        this((EffectBacking) null);
-    }
-
-    FluxSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
-        this(new SimpleStatEffect(mode, target, statKey, lowerIsBetter));
-    }
-
-    <T> FluxSkillEffect(String magnitudeKey, Class<T> listenerType, Function<ShipAPI, ? extends T> listenerFactory) {
-        this(new ListenerEffect<>(magnitudeKey, listenerType, listenerFactory));
+        this(null);
     }
 
     FluxSkillEffect(EffectBacking backing) {

@@ -72,6 +72,21 @@ class ItemCorruptionTest {
     }
 
     @Test
+    void aCorruptedHullItemKeepsItsStateThroughItemData() {
+        Item plate = plate(5L);
+        List<RolledModifier> rolledImplicits = plate.implicits();
+        assertNotNull(ItemCrafting.attune(plate, new Random(5L)));
+        assertNotEquals(rolledImplicits, plate.implicits());
+        plate.corrupt(CorruptionOutcome.IMPLICIT_REPLACED);
+
+        Item decoded = ItemData.parse(ItemData.of(plate).encode()).create("copy");
+
+        assertEquals(CorruptionOutcome.IMPLICIT_REPLACED, decoded.corruption());
+        assertEquals(plate.implicits(), decoded.implicits());
+        assertEquals(plate.explicits(), decoded.explicits());
+    }
+
+    @Test
     void aCorruptedUniqueHullItemCanBecomeARareOfItsSectionBase() {
         Set<Integer> modifierCounts = new HashSet<>();
         for (long seed = 0; seed < 40; seed++) {

@@ -6,7 +6,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Factions;
 
 public final class RemnantNexusStation extends LaunchingStation {
 
-    public static final String ID = "remnant_nexus_station";
+    public static final String ANOMALY_ID = "remnant_nexus_station";
     public static final RemnantNexusStation INSTANCE = new RemnantNexusStation();
 
     private RemnantNexusStation() {
@@ -14,7 +14,7 @@ public final class RemnantNexusStation extends LaunchingStation {
 
     @Override
     public String id() {
-        return ID;
+        return ANOMALY_ID;
     }
 
     @Override

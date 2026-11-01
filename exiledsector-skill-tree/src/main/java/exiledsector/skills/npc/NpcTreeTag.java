@@ -1,8 +1,8 @@
 package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import exiledsector.skills.AffinityOptions;
 import exiledsector.skills.NodeEligibility;
+import exiledsector.skills.NodeEntry;
 import exiledsector.skills.NodeReplacements;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeLinks;
@@ -39,8 +39,7 @@ public final class NpcTreeTag {
     public static String encode(ShipSkillData shipData) {
         List<String> nodeEntries = new ArrayList<>();
         for (String nodeId : shipData.getAllocatedNodeIds()) {
-            String optionId = shipData.getOptionalSelection(nodeId);
-            nodeEntries.add(optionId == null ? nodeId : nodeId + OPTION_SEPARATOR + optionId);
+            nodeEntries.add(new NodeEntry(nodeId, shipData.getOptionalSelection(nodeId)).format());
         }
         String tag = PREFIX + GENERATED + FIELD_SEPARATOR + shipData.getLevel() + FIELD_SEPARATOR + String.join(NODE_SEPARATOR, nodeEntries);
         List<String> socketEntries = new ArrayList<>();
@@ -90,7 +89,8 @@ public final class NpcTreeTag {
             return null;
         }
         String[] nodeEntries = tagFields[2].isEmpty() ? new String[0] : tagFields[2].split(NODE_SEPARATOR, -1);
-        SkillNode rootNode = nodeEntries.length == 0 ? null : SkillTree.get(nodeEntries[0]);
+        NodeEntry rootEntry = nodeEntries.length == 0 ? null : NodeEntry.parse(nodeEntries[0]);
+        SkillNode rootNode = rootEntry == null ? null : SkillTree.get(rootEntry.nodeId());
         ShipSkillData shipData = NpcSkillTreeBuilder.rootedTree(rootNode, shipLevel);
         if (shipData == null) {
             return NpcSkillTreeBuilder.emptyTree();
@@ -104,8 +104,12 @@ public final class NpcTreeTag {
             }
         }
         for (int i = 1; i < nodeEntries.length; i++) {
-            restore(shipData, nodeEntries[i], anchorsBySocketId);
+            NodeEntry entry = NodeEntry.parse(nodeEntries[i]);
+            if (entry != null) {
+                restore(shipData, entry, anchorsBySocketId);
+            }
         }
+        ShipTrees.releaseUnreachable(shipData, SkillTree.topology(), rootNode.getId());
         return shipData;
     }
 
@@ -130,9 +134,8 @@ public final class NpcTreeTag {
         }
     }
 
-    private static void restore(ShipSkillData shipData, String entry, Map<String, String> anchorsBySocketId) {
-        int optionAt = entry.indexOf(OPTION_SEPARATOR);
-        String nodeId = NodeReplacements.current(optionAt < 0 ? entry : entry.substring(0, optionAt));
+    private static void restore(ShipSkillData shipData, NodeEntry entry, Map<String, String> anchorsBySocketId) {
+        String nodeId = entry.nodeId();
         SkillNode node = SkillTree.get(nodeId);
         if (node == null || shipData.isAllocated(nodeId)) {
             return;
@@ -143,14 +146,12 @@ public final class NpcTreeTag {
                 return;
             }
         }
-        if (optionAt < 0 || !node.getType().isOptional()) {
-            if (!node.getType().isOptional()) {
-                ShipTrees.allocate(shipData, node, CHARGED_NODE_COST);
-                socketAnchor(shipData, node, anchorsBySocketId.get(nodeId));
-            }
+        if (!node.getType().isOptional()) {
+            ShipTrees.allocate(shipData, node, CHARGED_NODE_COST);
+            socketAnchor(shipData, node, anchorsBySocketId.get(nodeId));
             return;
         }
-        SkillType optionType = NodeEligibility.validOption(node.getType(), AffinityOptions.currentOptionId(entry.substring(optionAt + 1)));
+        SkillType optionType = entry.optionId() == null ? null : NodeEligibility.validOption(node.getType(), entry.optionId());
         if (optionType != null) {
             ShipTrees.selectOption(shipData, node, optionType, CHARGED_NODE_COST);
         }

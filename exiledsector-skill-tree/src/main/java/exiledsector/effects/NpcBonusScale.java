@@ -5,7 +5,6 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.ModSettings;
-import exiledsector.ModSettingsListener;
 import exiledsector.skills.npc.NpcLevelCaps;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -36,13 +35,9 @@ public final class NpcBonusScale {
         }
     }
 
-    public static final class SettingsListener extends ModSettingsListener {
-
-        @Override
-        protected void reload() {
-            invalidate();
-            PlayerTreePower.logNpcScaling();
-        }
+    public static void reloadSettings() {
+        invalidate();
+        PlayerTreePower.logNpcScaling();
     }
 
     private NpcBonusScale() {

@@ -14,13 +14,4 @@ public enum ConvoyRole {
     public String key() {
         return key;
     }
-
-    public static ConvoyRole parse(String key) {
-        for (ConvoyRole role : values()) {
-            if (role.key.equals(key)) {
-                return role;
-            }
-        }
-        return null;
-    }
 }

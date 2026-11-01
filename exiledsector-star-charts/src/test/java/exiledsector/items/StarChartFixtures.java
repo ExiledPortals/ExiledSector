@@ -26,8 +26,10 @@ public final class StarChartFixtures {
     public static void registerShipped() throws Exception {
         ChartEffects.register();
         ChartFactions.register(HullItemRows.shippedRows(CHART_FACTIONS_PATH));
-        StarChartItems.register(withTestModifiers(HullItemRows.shippedRows(StarChartItems.MODIFIERS_PATH)),
-                HullItemRows.shippedRows(StarChartImplicits.DATA_PATH), withTestCharts(HullItemRows.shippedRows(StarChartDefinitions.DATA_PATH)));
+        ItemModifiers.registerPart(ModifierScope.STAR_CHART, withTestModifiers(HullItemRows.shippedRows(StarChartItems.MODIFIERS_PATH)),
+                StarChartItems.MODIFIERS_PATH);
+        StarChartImplicits.register(HullItemRows.shippedRows(StarChartImplicits.DATA_PATH));
+        StarChartDefinitions.register(withTestCharts(HullItemRows.shippedRows(StarChartDefinitions.DATA_PATH)));
     }
 
     private static JSONArray withTestModifiers(JSONArray rows) throws JSONException {
@@ -75,7 +77,18 @@ public final class StarChartFixtures {
     }
 
     public static void clear() {
-        StarChartImplicits.registerSharedChoice(List.of());
-        StarChartItems.clear();
+        StarChartNames.clear();
+        StarChartDefinitions.clear();
+        StarChartImplicits.clear();
+        ItemModifiers.clearPart(ModifierScope.STAR_CHART);
+    }
+
+    public static void unregisterCurrencies() {
+        for (StarChartCurrency currency : StarChartCurrency.values()) {
+            ItemCurrencies.unregister(currency);
+        }
+        for (CraftingCurrency kernel : StarChartCurrency.KERNELS_ON_CHARTS) {
+            ItemCurrencies.retract(kernel, ItemType.STAR_CHART);
+        }
     }
 }

@@ -18,8 +18,27 @@ public final class ItemTypes {
         SUPPORT_BY_TYPE.put(support.type(), support);
     }
 
+    static void unregister(ItemType type) {
+        SUPPORT_BY_TYPE.remove(type);
+    }
+
     public static ItemTypeSupport of(ItemType type) {
         return type == null ? null : SUPPORT_BY_TYPE.get(type);
+    }
+
+    public static boolean takesCurrency(ItemType type) {
+        ItemTypeSupport support = of(type);
+        return type != null && (support == null || support.takesCurrency());
+    }
+
+    public static boolean tiered(ItemType type) {
+        ItemTypeSupport support = of(type);
+        return support != null && support.tiered();
+    }
+
+    public static ItemKind listedKind(Item item) {
+        ItemTypeSupport support = of(item.type());
+        return support == null ? item.kind() : support.listedKind(item);
     }
 
     public static List<ItemTypeSupport> all() {

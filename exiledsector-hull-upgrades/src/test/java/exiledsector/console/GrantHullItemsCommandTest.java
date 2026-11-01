@@ -30,8 +30,10 @@ class GrantHullItemsCommandTest {
     void setUp() throws Exception {
         fixture = new ConsoleFixture();
         ItemDefinitions.register(new JSONArray()
-                .put(definition("first_hull_item"))
-                .put(definition("second_hull_item")));
+                .put(definition("first_bridge_item", "bridge", false))
+                .put(definition("second_bridge_item", "bridge", false))
+                .put(definition("reactor_item", "reactor", false))
+                .put(definition("unique_bridge_item", "bridge", true)));
     }
 
     @AfterEach
@@ -40,28 +42,40 @@ class GrantHullItemsCommandTest {
         fixture.close();
     }
 
-    private static JSONObject definition(String id) throws Exception {
-        return new JSONObject().put("id", id).put("section", "bridge").put("prefixes", "HULL_MULT:4:6").put("suffixes", "ARMOR_PERCENT:6:9");
+    private static JSONObject definition(String id, String socketType, boolean unique) throws Exception {
+        return new JSONObject().put("id", id).put("section", socketType).put("prefixes", "HULL_MULT:4:6").put("suffixes", "ARMOR_PERCENT:6:9")
+                .put("unique", Boolean.toString(unique));
+    }
+
+    private static Set<String> grantedIds(List<ItemData> items) {
+        return items.stream().map(ItemData::definitionId).collect(Collectors.toSet());
     }
 
     @Test
-    void withNoNumberItAddsFiveCopiesOfEveryTypeEachWithItsOwnRoll() {
+    void withNoArgumentsItAddsOneOfEveryNonUniqueHullItem() {
         CommandResult result = new GrantHullItemsCommand(new Random(3L)).runCommand("", CommandContext.CAMPAIGN_MAP);
 
         assertEquals(CommandResult.SUCCESS, result);
-        List<ItemData> items = fixture.granted(10);
-        Map<String, Long> perType = items.stream().collect(Collectors.groupingBy(ItemData::definitionId, Collectors.counting()));
-        assertEquals(Map.of("first_hull_item", 5L, "second_hull_item", 5L), perType);
-        Set<Long> seeds = new HashSet<>();
-        items.forEach(item -> seeds.add(item.seed()));
-        assertEquals(10, seeds.size());
+        assertEquals(Set.of("first_bridge_item", "second_bridge_item", "reactor_item"), grantedIds(fixture.granted(3)));
     }
 
     @Test
-    void aNumberSetsHowManyCopiesOfEachType() {
-        assertEquals(CommandResult.SUCCESS, new GrantHullItemsCommand(new Random(3L)).runCommand(" 2 ", CommandContext.CAMPAIGN_MAP));
+    void aSocketTypeAddsOneOfEachNonUniqueHullItemForThatSocket() {
+        assertEquals(CommandResult.SUCCESS, new GrantHullItemsCommand(new Random(3L)).runCommand(" BRIDGE ", CommandContext.CAMPAIGN_MAP));
 
-        assertEquals(4, fixture.granted(4).size());
+        assertEquals(Set.of("first_bridge_item", "second_bridge_item"), grantedIds(fixture.granted(2)));
+    }
+
+    @Test
+    void anAmountSetsHowManyOfEachAreAddedEachWithItsOwnRoll() {
+        assertEquals(CommandResult.SUCCESS, new GrantHullItemsCommand(new Random(3L)).runCommand("bridge 3", CommandContext.CAMPAIGN_MAP));
+
+        List<ItemData> items = fixture.granted(6);
+        Map<String, Long> perType = items.stream().collect(Collectors.groupingBy(ItemData::definitionId, Collectors.counting()));
+        assertEquals(Map.of("first_bridge_item", 3L, "second_bridge_item", 3L), perType);
+        Set<Long> seeds = new HashSet<>();
+        items.forEach(item -> seeds.add(item.seed()));
+        assertEquals(6, seeds.size());
     }
 
     @Test
@@ -71,28 +85,38 @@ class GrantHullItemsCommandTest {
                 List.of(), List.of(), ""));
         ItemDefinitions.register(definitions);
 
-        assertEquals(CommandResult.SUCCESS, new GrantHullItemsCommand(new Random(3L)).runCommand("1", CommandContext.CAMPAIGN_MAP));
+        assertEquals(CommandResult.SUCCESS, new GrantHullItemsCommand(new Random(3L)).runCommand("", CommandContext.CAMPAIGN_MAP));
 
-        assertEquals(Set.of("first_hull_item", "second_hull_item"), fixture.granted(2).stream().map(ItemData::definitionId).collect(Collectors.toSet()));
+        assertEquals(Set.of("first_bridge_item", "second_bridge_item", "reactor_item"), grantedIds(fixture.granted(3)));
     }
 
     @Test
-    void aBadOrNonPositiveNumberIsRejectedWithoutAddingAnything() {
+    void anUnknownOrNonHullSocketTypeIsRejectedWithoutAddingAnything() {
         GrantHullItemsCommand command = new GrantHullItemsCommand(new Random(3L));
 
-        assertEquals(CommandResult.BAD_SYNTAX, command.runCommand("lots", CommandContext.CAMPAIGN_MAP));
-        assertEquals(CommandResult.BAD_SYNTAX, command.runCommand("0", CommandContext.CAMPAIGN_MAP));
+        assertEquals(CommandResult.BAD_SYNTAX, command.runCommand("hangar", CommandContext.CAMPAIGN_MAP));
+        assertEquals(CommandResult.BAD_SYNTAX, command.runCommand("subroutine", CommandContext.CAMPAIGN_MAP));
+        assertEquals(CommandResult.BAD_SYNTAX, command.runCommand("5", CommandContext.CAMPAIGN_MAP));
         fixture.verifyNothingGranted();
     }
 
     @Test
-    void moreThanTwoHundredCopiesIsRejectedWithoutAddingAnything() {
+    void aSocketTypeWithNoNonUniqueHullItemsReportsAnError() {
+        assertEquals(CommandResult.ERROR, new GrantHullItemsCommand(new Random(3L)).runCommand("flight_deck", CommandContext.CAMPAIGN_MAP));
+
+        fixture.verifyNothingGranted();
+    }
+
+    @Test
+    void aBadAmountOrExtraArgumentsAreRejectedWithoutAddingAnything() {
         GrantHullItemsCommand command = new GrantHullItemsCommand(new Random(3L));
 
-        assertEquals(CommandResult.BAD_SYNTAX, command.runCommand("201", CommandContext.CAMPAIGN_MAP));
-        assertEquals(CommandResult.BAD_SYNTAX, command.runCommand("1000000", CommandContext.CAMPAIGN_MAP));
+        assertEquals(CommandResult.BAD_SYNTAX, command.runCommand("bridge lots", CommandContext.CAMPAIGN_MAP));
+        assertEquals(CommandResult.BAD_SYNTAX, command.runCommand("bridge 0", CommandContext.CAMPAIGN_MAP));
+        assertEquals(CommandResult.BAD_SYNTAX, command.runCommand("bridge 201", CommandContext.CAMPAIGN_MAP));
+        assertEquals(CommandResult.BAD_SYNTAX, command.runCommand("bridge 2 3", CommandContext.CAMPAIGN_MAP));
         fixture.verifyNothingGranted();
-        assertEquals(CommandResult.SUCCESS, command.runCommand("200", CommandContext.CAMPAIGN_MAP));
+        assertEquals(CommandResult.SUCCESS, command.runCommand("bridge 200", CommandContext.CAMPAIGN_MAP));
         assertEquals(400, fixture.granted(400).size());
     }
 

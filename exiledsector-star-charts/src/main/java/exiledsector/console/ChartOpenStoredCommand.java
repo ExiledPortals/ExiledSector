@@ -34,8 +34,7 @@ public class ChartOpenStoredCommand extends CampaignCommand {
             return CommandResult.BAD_SYNTAX;
         }
         StarCharts.absorbCharts(Global.getSector());
-        ItemStore store = ItemStore.starChartsIfCreated();
-        List<Item> charts = store == null ? List.of() : store.owned();
+        List<Item> charts = ItemStore.ownedStarCharts();
         if (index > charts.size()) {
             Console.showMessage("There is no stored Star Chart " + index + "; Star Chart storage holds " + charts.size() + ".");
             return CommandResult.ERROR;
@@ -43,7 +42,7 @@ public class ChartOpenStoredCommand extends CampaignCommand {
         Item chart = charts.get(index - 1);
         String chartText = ChartListCommand.describe(chart);
         int entries = StarChartSettings.wormholeEntries();
-        OpenResult result = ChartRunActions.openFromStore(Global.getSector(), entries, random, store, chart);
+        OpenResult result = ChartRunActions.openFromStore(Global.getSector(), entries, random, ItemStore.starChartsIfCreated(), chart);
         switch (result) {
             case OPENED -> {
                 ChartRun run = ChartRuns.currentOrNull();
@@ -51,12 +50,8 @@ public class ChartOpenStoredCommand extends CampaignCommand {
                         + ChartOpenCommand.describeLayout(run) + "\n" + ChartOpenCommand.describeContent(run));
                 return CommandResult.SUCCESS;
             }
-            case RUN_EXISTS -> Console.showMessage("A Star Chart run is already open. Collapse it or finish it first (see ExiledSectorChartStatus).");
-            case NO_PLAYER_FLEET -> Console.showMessage(PlayerFleetCommand.NO_PLAYER_FLEET);
-            case PLAYER_IN_TRANSITION -> Console.showMessage("Your fleet is jumping. Try again once it arrives.");
-            case PLAYER_IN_SYSTEM -> Console.showMessage("Your fleet is inside a Star Chart system.");
             case NO_CHART -> Console.showMessage("Stored chart " + index + " can't be opened: its definition is not loaded.");
-            default -> Console.showMessage("Opening the wormhole failed, so the chart was kept; see starsector.log.");
+            default -> Console.showMessage(ChartConsoleText.openFailure(result, "Opening the wormhole failed, so the chart was kept; see starsector.log."));
         }
         return CommandResult.ERROR;
     }

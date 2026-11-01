@@ -4,7 +4,6 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.PlayerFleet;
 import exiledsector.i18n.StyledText;
-import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.anomaly.forge.ChartForge;
 import exiledsector.charts.anomaly.forge.ForgeTexts;
 import exiledsector.charts.run.ChartRun;
@@ -55,11 +54,6 @@ public final class ForgeBench implements BenchModeSupport {
     @Override
     public boolean usesInhibitors() {
         return false;
-    }
-
-    @Override
-    public boolean enabled() {
-        return StarChartSettings.enabled();
     }
 
     @Override

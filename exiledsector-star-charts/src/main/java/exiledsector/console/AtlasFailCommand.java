@@ -19,8 +19,7 @@ public class AtlasFailCommand extends AtlasTargetCommand {
     @Override
     protected CommandResult runAt(SectorAPI sector, AtlasGenerator generator, AtlasState state, AtlasCell cell, List<String> rest) {
         if (!rest.isEmpty()) {
-            Console.showMessage("Can't use \"" + String.join(" ", rest) + "\".\nUsage: " + usage());
-            return CommandResult.BAD_SYNTAX;
+            return badSyntax(rest);
         }
         if (state.isCompleted(cell)) {
             Console.showMessage(AtlasCommandText.cell(cell) + " is already completed.");

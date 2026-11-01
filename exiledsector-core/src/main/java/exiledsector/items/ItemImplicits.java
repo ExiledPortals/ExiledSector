@@ -194,22 +194,11 @@ public final class ItemImplicits {
     }
 
     public static Modifier anyById(String modifierId) {
-        for (Modifier implicit : corruptionPool()) {
-            if (implicit.id().equals(modifierId)) {
-                return implicit;
-            }
-        }
-        return null;
+        return Modifier.byId(corruptionPool(), modifierId);
     }
 
     public static ModifierLine line(ItemKind kind, String effectName) {
-        for (Modifier implicit : forType(kind)) {
-            ModifierLine line = implicit.line(effectName);
-            if (line != null) {
-                return line;
-            }
-        }
-        return null;
+        return Modifier.lineIn(forType(kind), effectName);
     }
 
     public static List<RolledModifier> roll(ItemKind kind, long seed) {

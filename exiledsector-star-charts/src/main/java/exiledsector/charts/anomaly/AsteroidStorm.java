@@ -12,9 +12,9 @@ import exiledsector.charts.content.ChartSites;
 import java.awt.Color;
 import java.util.Random;
 
-public final class AsteroidStorm implements ChartAnomaly {
+public final class AsteroidStorm implements LayoutShaper, ContentPlacer {
 
-    public static final String ID = "asteroid_storm";
+    public static final String ANOMALY_ID = "asteroid_storm";
     public static final AsteroidStorm INSTANCE = new AsteroidStorm();
     static final float BELT_WIDTH = 500f;
     static final int BELTS = 2;
@@ -31,7 +31,7 @@ public final class AsteroidStorm implements ChartAnomaly {
 
     @Override
     public String id() {
-        return ID;
+        return ANOMALY_ID;
     }
 
     @Override

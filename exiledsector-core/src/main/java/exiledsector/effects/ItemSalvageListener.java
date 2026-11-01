@@ -10,7 +10,6 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.items.ItemDrops;
-import exiledsector.items.ItemType;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.ItemUnlock;
 import exiledsector.loot.LootModifiers;
@@ -42,8 +41,7 @@ public class ItemSalvageListener implements ShowLootListener {
         entityMemory.set(ROLLED_KEY, true);
         Random random = new Random(Misc.getSalvageSeed(salvageEntity) ^ SEED_SALT);
         LootModifiers modifiers = LootSources.modifiersFor(salvageEntity);
-        ItemDrops.SiteLoot siteLoot = ItemDrops.rollSite(siteId, random, modifiers.itemChances(), modifiers.feedstockMult(), modifiers.currencyMult(),
-                ItemUnlock.available(ItemType.HULL_ITEM, Global.getSector()));
+        ItemDrops.SiteLoot siteLoot = LootSources.rollSite(Global.getSector(), siteId, random, modifiers);
         ItemLootListener.addSiteLoot(loot, siteLoot);
         MaterialDropAnnouncer.announceOnLootScreen(siteLoot.materials());
         LootSources.all().forEach(source -> source.addSalvageLoot(Global.getSector(), salvageEntity, loot));

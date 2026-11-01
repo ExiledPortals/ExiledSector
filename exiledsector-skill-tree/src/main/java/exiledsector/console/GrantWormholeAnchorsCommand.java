@@ -12,16 +12,13 @@ import org.lazywizard.console.Console;
 import java.util.List;
 import java.util.Random;
 
-public class GrantWormholeAnchorsCommand extends PlayerFleetCommand {
-
-    private final Random random;
+public class GrantWormholeAnchorsCommand extends RandomPlayerFleetCommand {
 
     public GrantWormholeAnchorsCommand() {
-        this(new Random());
     }
 
     GrantWormholeAnchorsCommand(Random random) {
-        this.random = random;
+        super(random);
     }
 
     @Override

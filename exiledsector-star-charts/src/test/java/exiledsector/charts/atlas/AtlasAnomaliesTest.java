@@ -3,6 +3,7 @@ package exiledsector.charts.atlas;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.AsteroidStorm;
+import exiledsector.charts.anomaly.AtlasRule;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.StarAnomalies;
@@ -75,13 +76,13 @@ class AtlasAnomaliesTest {
         AtlasGenerator generator = generator(state);
         AtlasCell cell = system(generator, 0);
 
-        AtlasAnomalies.Insertion insertion = AtlasAnomalies.insert(generator, state, cell, SpatialBreach.ID, AtlasAnomalyRecord.Source.WORLD, null);
+        AtlasAnomalies.Insertion insertion = AtlasAnomalies.insert(generator, state, cell, SpatialBreach.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null);
 
         assertEquals(AtlasAnomalies.InsertCheck.ALLOWED, insertion.check());
-        assertEquals(List.of(SpatialBreach.ID), AtlasAnomalies.effective(generator, state, cell));
-        assertEquals(List.of(new AtlasAnomalyRecord(insertion.recordId(), cell, SpatialBreach.ID, AtlasAnomalyRecord.Source.WORLD)),
+        assertEquals(List.of(SpatialBreach.ANOMALY_ID), AtlasAnomalies.effective(generator, state, cell));
+        assertEquals(List.of(new AtlasAnomalyRecord(insertion.recordId(), cell, SpatialBreach.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD)),
                 state.anomalyRecords(cell));
-        assertEquals(AtlasAnomalies.InsertCheck.ALREADY_PRESENT, AtlasAnomalies.insert(generator, state, cell, SpatialBreach.ID,
+        assertEquals(AtlasAnomalies.InsertCheck.ALREADY_PRESENT, AtlasAnomalies.insert(generator, state, cell, SpatialBreach.ANOMALY_ID,
                 AtlasAnomalyRecord.Source.PLAYER, null).check());
         assertEquals(List.of(), AtlasAnomalies.effective(generator, state, system(generator, 1)));
     }
@@ -114,29 +115,29 @@ class AtlasAnomaliesTest {
 
         assertEquals(AtlasAnomalies.InsertCheck.UNKNOWN, AtlasAnomalies.canInsert(generator, state, cell, "ion_storm", null));
         assertEquals(AtlasAnomalies.InsertCheck.NOT_INSERTABLE, AtlasAnomalies.canInsert(generator, state, cell, "black_hole", null));
-        assertEquals(AtlasAnomalies.InsertCheck.NO_SYSTEM, AtlasAnomalies.canInsert(generator, state, AtlasCell.ORIGIN, SpatialBreach.ID, null));
-        assertEquals(AtlasAnomalies.InsertCheck.NO_SYSTEM, AtlasAnomalies.canInsert(generator, state, emptySpace(generator), SpatialBreach.ID, null));
-        assertEquals(AtlasAnomalies.InsertCheck.COMPLETED, AtlasAnomalies.canInsert(generator, state, completed, SpatialBreach.ID, null));
-        assertEquals(AtlasAnomalies.InsertCheck.OPEN_RUN, AtlasAnomalies.canInsert(generator, state, cell, SpatialBreach.ID, cell));
+        assertEquals(AtlasAnomalies.InsertCheck.NO_SYSTEM, AtlasAnomalies.canInsert(generator, state, AtlasCell.ORIGIN, SpatialBreach.ANOMALY_ID, null));
+        assertEquals(AtlasAnomalies.InsertCheck.NO_SYSTEM, AtlasAnomalies.canInsert(generator, state, emptySpace(generator), SpatialBreach.ANOMALY_ID, null));
+        assertEquals(AtlasAnomalies.InsertCheck.COMPLETED, AtlasAnomalies.canInsert(generator, state, completed, SpatialBreach.ANOMALY_ID, null));
+        assertEquals(AtlasAnomalies.InsertCheck.OPEN_RUN, AtlasAnomalies.canInsert(generator, state, cell, SpatialBreach.ANOMALY_ID, cell));
         assertEquals(List.of(), state.anomalyRecords());
     }
 
     @Test
     void insertingRefusesMissingModsConflictsAndSystemsTheAnomalyDoesNotFit() {
-        ChartTables.useAnomalies(List.of(definition(SpatialBreach.ID, true, Set.of(AsteroidStorm.ID), ""), definition(AsteroidStorm.ID, true, Set.of(), ""),
+        ChartTables.useAnomalies(List.of(definition(SpatialBreach.ANOMALY_ID, true, Set.of(AsteroidStorm.ANOMALY_ID), ""), definition(AsteroidStorm.ANOMALY_ID, true, Set.of(), ""),
                 definition("black_hole", true, Set.of(), "a_mod_that_is_not_here")));
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = generator(state);
         AtlasCell cell = system(generator, 0);
 
         assertEquals(AtlasAnomalies.InsertCheck.NOT_INSERTABLE, AtlasAnomalies.canInsert(generator, state, cell, "black_hole", null));
-        assertEquals(AtlasAnomalies.InsertCheck.ALLOWED, AtlasAnomalies.insert(generator, state, cell, AsteroidStorm.ID, AtlasAnomalyRecord.Source.PLAYER, null).check());
-        assertEquals(AtlasAnomalies.InsertCheck.CONFLICT, AtlasAnomalies.canInsert(generator, state, cell, SpatialBreach.ID, null));
+        assertEquals(AtlasAnomalies.InsertCheck.ALLOWED, AtlasAnomalies.insert(generator, state, cell, AsteroidStorm.ANOMALY_ID, AtlasAnomalyRecord.Source.PLAYER, null).check());
+        assertEquals(AtlasAnomalies.InsertCheck.CONFLICT, AtlasAnomalies.canInsert(generator, state, cell, SpatialBreach.ANOMALY_ID, null));
 
-        ChartAnomaly nowhere = new ChartAnomaly() {
+        ChartAnomaly nowhere = new AtlasRule() {
             @Override
             public String id() {
-                return SpatialBreach.ID;
+                return SpatialBreach.ANOMALY_ID;
             }
 
             @Override
@@ -144,10 +145,10 @@ class AtlasAnomaliesTest {
                 return false;
             }
         };
-        ChartTables.useAnomalies(List.of(nowhere), List.of(definition(SpatialBreach.ID, true, Set.of(), "")));
-        assertEquals(AtlasAnomalies.InsertCheck.DOES_NOT_FIT, AtlasAnomalies.canInsert(generator, state, system(generator, 1), SpatialBreach.ID, null));
-        ChartTables.useAnomalies(List.of(SpatialBreach.INSTANCE), List.of(definition(SpatialBreach.ID, true, Set.of(), "a_mod_that_is_not_here")));
-        assertEquals(AtlasAnomalies.InsertCheck.MOD_MISSING, AtlasAnomalies.canInsert(generator, state, system(generator, 1), SpatialBreach.ID, null));
+        ChartTables.useAnomalies(List.of(nowhere), List.of(definition(SpatialBreach.ANOMALY_ID, true, Set.of(), "")));
+        assertEquals(AtlasAnomalies.InsertCheck.DOES_NOT_FIT, AtlasAnomalies.canInsert(generator, state, system(generator, 1), SpatialBreach.ANOMALY_ID, null));
+        ChartTables.useAnomalies(List.of(SpatialBreach.INSTANCE), List.of(definition(SpatialBreach.ANOMALY_ID, true, Set.of(), "a_mod_that_is_not_here")));
+        assertEquals(AtlasAnomalies.InsertCheck.MOD_MISSING, AtlasAnomalies.canInsert(generator, state, system(generator, 1), SpatialBreach.ANOMALY_ID, null));
     }
 
     @Test
@@ -156,7 +157,7 @@ class AtlasAnomaliesTest {
         AtlasGenerator generator = generator(state);
         AtlasCell from = system(generator, 0);
         AtlasCell to = system(generator, 1);
-        int recordId = AtlasAnomalies.insert(generator, state, from, SpatialBreach.ID, AtlasAnomalyRecord.Source.WORLD, null).recordId();
+        int recordId = AtlasAnomalies.insert(generator, state, from, SpatialBreach.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null).recordId();
 
         assertEquals(AtlasAnomalies.InsertCheck.OPEN_RUN, AtlasAnomalies.move(generator, state, recordId, to, from));
         assertEquals(AtlasAnomalies.InsertCheck.ALREADY_PRESENT, AtlasAnomalies.move(generator, state, recordId, from, null));
@@ -164,7 +165,7 @@ class AtlasAnomaliesTest {
         assertEquals(AtlasAnomalies.InsertCheck.ALLOWED, AtlasAnomalies.move(generator, state, recordId, to, null));
 
         assertEquals(List.of(), AtlasAnomalies.effective(generator, state, from));
-        assertEquals(List.of(SpatialBreach.ID), AtlasAnomalies.effective(generator, state, to));
+        assertEquals(List.of(SpatialBreach.ANOMALY_ID), AtlasAnomalies.effective(generator, state, to));
         assertEquals(to, state.anomalyRecord(recordId).cell());
         assertEquals(1, state.anomalyRecords().size());
     }
@@ -173,15 +174,15 @@ class AtlasAnomaliesTest {
     void closingARunSpendsInsertedAnomaliesAndFailingAlsoSpendsAllRolledOnesButTheStar() {
         AtlasState state = new AtlasState(SEED);
         AtlasRules rolled = rules(new AtlasMarkerRule(1f, 0f, 1f), List.of(new AtlasAnomalyCandidate("black_hole", 1f, "", true, Set.of(), null),
-                new AtlasAnomalyCandidate(AsteroidStorm.ID, 1f, "")));
+                new AtlasAnomalyCandidate(AsteroidStorm.ANOMALY_ID, 1f, "")));
         AtlasGenerator generator = new AtlasGenerator(SEED, rolled, AtlasUnlocks.NONE, state);
         AtlasCell failed = system(generator, 0);
         AtlasCell completed = system(generator, 1);
-        AtlasAnomalies.insert(generator, state, failed, SpatialBreach.ID, AtlasAnomalyRecord.Source.PLAYER, null);
-        AtlasAnomalies.insert(generator, state, completed, SpatialBreach.ID, AtlasAnomalyRecord.Source.PLAYER, null);
+        AtlasAnomalies.insert(generator, state, failed, SpatialBreach.ANOMALY_ID, AtlasAnomalyRecord.Source.PLAYER, null);
+        AtlasAnomalies.insert(generator, state, completed, SpatialBreach.ANOMALY_ID, AtlasAnomalyRecord.Source.PLAYER, null);
         List<String> before = AtlasAnomalies.effective(generator, state, failed);
-        assertEquals(Set.of("black_hole", AsteroidStorm.ID), Set.copyOf(before.subList(0, 2)));
-        assertEquals(SpatialBreach.ID, before.get(2));
+        assertEquals(Set.of("black_hole", AsteroidStorm.ANOMALY_ID), Set.copyOf(before.subList(0, 2)));
+        assertEquals(SpatialBreach.ANOMALY_ID, before.get(2));
 
         AtlasProgress.fail(state, failed);
         AtlasProgress.complete(generator, state, completed, 3);
@@ -189,12 +190,12 @@ class AtlasAnomaliesTest {
         assertEquals(List.of("black_hole"), AtlasAnomalies.effective(generator, state, failed));
         assertEquals(StarAnomalies.BLACK_HOLE, ChartAnomalies.starOf(AtlasAnomalies.effective(generator, state, failed)));
         assertEquals(List.of(), state.anomalyRecords());
-        assertEquals(AtlasAnomalies.InsertCheck.ALLOWED, AtlasAnomalies.canInsert(generator, state, failed, SpatialBreach.ID, null));
+        assertEquals(AtlasAnomalies.InsertCheck.ALLOWED, AtlasAnomalies.canInsert(generator, state, failed, SpatialBreach.ANOMALY_ID, null));
     }
 
     @Test
     void recordsSurviveEncodingAndUnreadableOnesAreIgnored() {
-        AtlasAnomalyRecord record = new AtlasAnomalyRecord(3, new AtlasCell(-4, 9), SpatialBreach.ID, AtlasAnomalyRecord.Source.PLAYER);
+        AtlasAnomalyRecord record = new AtlasAnomalyRecord(3, new AtlasCell(-4, 9), SpatialBreach.ANOMALY_ID, AtlasAnomalyRecord.Source.PLAYER);
 
         assertEquals(record, AtlasAnomalyRecord.decode(record.recordId(), record.encode()));
         assertNull(AtlasAnomalyRecord.decode(1, "garbage"));
@@ -217,14 +218,14 @@ class AtlasAnomaliesTest {
     }
 
     @Test
-    void completingASystemKeepsItsChainedRecordsForTheirAnomalyToSettleButFailingSpendsThem() {
+    void completingASystemKeepsItsChainedRecordsForTheirAnomalyToSettleEvenFromTheConsoleButFailingSpendsThem() {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = generator(state);
         AtlasCell completed = system(generator, 0);
         AtlasCell failed = system(generator, 1);
         AtlasAnomalyRecord.Chain chain = new AtlasAnomalyRecord.Chain(2, 3, AtlasCell.ORIGIN);
-        AtlasAnomalies.insert(generator, state, completed, SpatialBreach.ID, AtlasAnomalyRecord.Source.WORLD, null, chain);
-        AtlasAnomalies.insert(generator, state, failed, SpatialBreach.ID, AtlasAnomalyRecord.Source.WORLD, null, chain);
+        AtlasAnomalies.insert(generator, state, completed, SpatialBreach.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null, chain);
+        AtlasAnomalies.insert(generator, state, failed, SpatialBreach.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null, chain);
 
         AtlasProgress.complete(generator, state, completed, 3);
         AtlasProgress.fail(state, failed);
@@ -233,7 +234,7 @@ class AtlasAnomaliesTest {
         assertEquals(chain, state.anomalyRecords(completed).get(0).chain());
         assertEquals(List.of(), state.anomalyRecords(failed));
         AtlasDevTools.complete(generator, state, completed, 3);
-        assertEquals(List.of(), state.anomalyRecords());
+        assertEquals(1, state.anomalyRecords().size());
     }
 
     @Test
@@ -242,12 +243,12 @@ class AtlasAnomaliesTest {
         AtlasGenerator generator = generator(state);
         AtlasCell from = system(generator, 0);
         AtlasCell to = system(generator, 1);
-        int recordId = AtlasAnomalies.insert(generator, state, from, SpatialBreach.ID, AtlasAnomalyRecord.Source.WORLD, null,
+        int recordId = AtlasAnomalies.insert(generator, state, from, SpatialBreach.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null,
                 new AtlasAnomalyRecord.Chain(2, 3, null)).recordId();
 
         assertEquals(AtlasAnomalies.InsertCheck.ALLOWED, AtlasAnomalies.move(generator, state, recordId, to, null, new AtlasAnomalyRecord.Chain(3, 3, from)));
 
-        assertEquals(new AtlasAnomalyRecord(recordId, to, SpatialBreach.ID, AtlasAnomalyRecord.Source.WORLD, new AtlasAnomalyRecord.Chain(3, 3, from)),
+        assertEquals(new AtlasAnomalyRecord(recordId, to, SpatialBreach.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, new AtlasAnomalyRecord.Chain(3, 3, from)),
                 state.anomalyRecord(recordId));
         assertEquals(AtlasAnomalies.InsertCheck.ALLOWED, AtlasAnomalies.move(generator, state, recordId, from, null));
         assertEquals(new AtlasAnomalyRecord.Chain(3, 3, from), state.anomalyRecord(recordId).chain());
@@ -260,22 +261,22 @@ class AtlasAnomaliesTest {
         AtlasCell from = generator.lanes(AtlasCell.ORIGIN).get(0);
         state.add(from, AtlasState.COMPLETED);
 
-        AtlasCell target = AtlasAnomalies.onward(generator, state, from, SpatialBreach.ID, 2, 3);
+        AtlasCell target = AtlasAnomalies.onward(generator, state, from, SpatialBreach.ANOMALY_ID, 2, 3);
 
         assertNotNull(target);
         int lanes = lanesThroughUncompleted(generator, state, from, target);
         assertTrue(lanes >= 2 && lanes <= 3, "lanes " + lanes);
         assertTrue(target.centreDistance() > from.centreDistance());
-        assertEquals(target, AtlasAnomalies.onward(generator, state, from, SpatialBreach.ID, 2, 3));
-        AtlasAnomalies.insert(generator, state, target, SpatialBreach.ID, AtlasAnomalyRecord.Source.WORLD, null);
-        assertNotEquals(target, AtlasAnomalies.onward(generator, state, from, SpatialBreach.ID, 2, 3));
+        assertEquals(target, AtlasAnomalies.onward(generator, state, from, SpatialBreach.ANOMALY_ID, 2, 3));
+        AtlasAnomalies.insert(generator, state, target, SpatialBreach.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null);
+        assertNotEquals(target, AtlasAnomalies.onward(generator, state, from, SpatialBreach.ANOMALY_ID, 2, 3));
 
         for (AtlasCell cell : from.around(8)) {
             if (!generator.isVoid(cell)) {
                 state.add(cell, AtlasState.COMPLETED);
             }
         }
-        assertNull(AtlasAnomalies.onward(generator, state, from, SpatialBreach.ID, 2, 3));
+        assertNull(AtlasAnomalies.onward(generator, state, from, SpatialBreach.ANOMALY_ID, 2, 3));
     }
 
     private static int lanesThroughUncompleted(AtlasGenerator generator, AtlasState state, AtlasCell from, AtlasCell target) {

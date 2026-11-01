@@ -37,7 +37,7 @@ public interface BackedSkillEffect extends SkillEffect {
     @Override
     default void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
         if (backing() != null) {
-            backing().applyAfterShipCreation(ship);
+            backing().applyAfterShipCreation(ship, modId, magnitude);
         }
     }
 
@@ -63,6 +63,11 @@ public interface BackedSkillEffect extends SkillEffect {
     @Override
     default boolean advancesInCombat() {
         return backing() != null && backing().advancesInCombat();
+    }
+
+    @Override
+    default boolean appliesAfterOtherEffects() {
+        return backing() != null && backing().appliesAfterOtherEffects();
     }
 
     @Override

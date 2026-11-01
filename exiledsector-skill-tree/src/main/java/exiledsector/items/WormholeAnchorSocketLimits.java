@@ -16,11 +16,11 @@ public final class WormholeAnchorSocketLimits {
 
     public static UseVerdict refusal(WormholeAnchor anchor, String socketNodeId, Map<String, String> socketedItemIds) {
         if (anchor == null) {
-            return UseVerdict.ALLOWED;
+            return UseVerdict.ALLOW;
         }
         String volume = anchor.volume();
         if (!volumeTaken(volume, anchor.id(), socketNodeId, socketedItemIds, WormholeAnchorSocketLimits::volumeOf)) {
-            return UseVerdict.ALLOWED;
+            return UseVerdict.ALLOW;
         }
         return UseVerdict.refused("socketable.anchor.volumeLimit").with("volume", WormholeAnchor.volumeName(volume));
     }

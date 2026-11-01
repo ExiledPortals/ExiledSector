@@ -5,12 +5,9 @@ import com.fs.starfarer.api.campaign.CampaignEngineLayers;
 import com.fs.starfarer.api.combat.ViewportAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.impl.campaign.BaseCustomEntityPlugin;
-import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;
-import exiledsector.ui.util.UnitCircle;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
@@ -77,16 +74,8 @@ public class BreachCorePlugin extends BaseCustomEntityPlugin {
     }
 
     private static void drawHole(Vector2f at, float holeRadius, float alpha) {
-        UnitCircle circle = UnitCircle.of(HOLE_SEGMENTS);
         try (GlScope ignored = GlScope.flat()) {
-            Misc.setColor(Color.BLACK, alpha);
-            GL11.glBegin(GL11.GL_TRIANGLE_FAN);
-            GL11.glVertex2f(at.x, at.y);
-            for (int i = 0; i <= HOLE_SEGMENTS; i++) {
-                int segment = i % HOLE_SEGMENTS;
-                GL11.glVertex2f(at.x + circle.cos(segment) * holeRadius, at.y + circle.sin(segment) * holeRadius);
-            }
-            GL11.glEnd();
+            HoloShapes.disc(at.x, at.y, holeRadius, HOLE_SEGMENTS, Color.BLACK, alpha);
             HoloShapes.radialGlow(at.x, at.y, holeRadius, holeRadius * HOLE_FADE_SHARE, Color.BLACK, alpha);
         }
     }

@@ -1,5 +1,6 @@
 package exiledsector.ui.cargo;
 
+import exiledsector.skills.skilleffect.render.Fade;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,18 +24,18 @@ class DoctrineIconFxTest {
 
     @Test
     void theFlashPeaksOnTheKeyMomentAndWrapsAcrossTheCycleEnd() {
-        assertEquals(1f, DoctrineIconFx.flash(DoctrineIconFx.SEAL_KEY, DoctrineIconFx.SEAL_KEY), 1e-5f);
-        assertTrue(DoctrineIconFx.flash(0.2f, DoctrineIconFx.SEAL_KEY) < 0.01f);
-        assertEquals(DoctrineIconFx.flash(0.99f, 0.01f), DoctrineIconFx.flash(0.03f, 0.01f), 1e-4f);
-        assertEquals(DoctrineIconFx.cycleOf(1f), DoctrineIconFx.cycleOf(1f + DoctrineIconFx.CYCLE_SECONDS), 1e-4f);
+        assertEquals(1f, IconFxKit.flash(DoctrineIconFx.SEAL_KEY, DoctrineIconFx.SEAL_KEY), 1e-5f);
+        assertTrue(IconFxKit.flash(0.2f, DoctrineIconFx.SEAL_KEY) < 0.01f);
+        assertEquals(IconFxKit.flash(0.99f, 0.01f), IconFxKit.flash(0.03f, 0.01f), 1e-4f);
+        assertEquals(Fade.cycle(1f, DoctrineIconFx.CYCLE_SECONDS), Fade.cycle(1f + DoctrineIconFx.CYCLE_SECONDS, DoctrineIconFx.CYCLE_SECONDS), 1e-4f);
     }
 
     @Test
     void theFrameLightsReachTheFarCornerOnTheKeyMoment() {
         for (DoctrineScreen screen : DoctrineScreen.values()) {
             float key = DoctrineIconFx.keyMoment(screen);
-            assertEquals(2f, DoctrineIconFx.wave(key, key), 1e-4f, screen.name());
-            assertTrue(DoctrineIconFx.wave(key - 0.05f, key) < 2f);
+            assertEquals(2f, IconFxKit.wave(key, key), 1e-4f, screen.name());
+            assertTrue(IconFxKit.wave(key - 0.05f, key) < 2f);
         }
     }
 

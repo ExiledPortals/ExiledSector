@@ -77,7 +77,7 @@ class ShipSectionsTest {
     @Test
     void everySocketedSectionItemCountsOnceWhenItsSocketIsActive() {
         List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
-        EffectTotals totals = EffectTotals.of(HullUpgradeEffectSource.contributions(slots,HullSize.CRUISER), 1f);
+        EffectTotals totals = EffectTotals.of(HullUpgradeEffectSource.contributions(slots, HullSize.CRUISER, 0), 1f);
 
         assertEquals(2, slots.size());
         assertTrue(slots.stream().allMatch(ShipSections.UnlockedSection::active));
@@ -92,7 +92,7 @@ class ShipSectionsTest {
         assertTrue(slots.get(0).active());
         assertFalse(slots.get(1).active());
         assertEquals("req_shields", slots.get(1).unmetRequirement());
-        assertEquals(5f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(slots,HullSize.CRUISER), 1f)), 1e-4f);
+        assertEquals(5f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(slots, HullSize.CRUISER, 0), 1f)), 1e-4f);
     }
 
     @Test
@@ -103,12 +103,12 @@ class ShipSectionsTest {
         List<ShipSections.UnlockedSection> automated = ShipSections.of(shipData, ShipSectionsTest::automatedFit);
 
         assertTrue(crewed.get(0).appliesItem());
-        assertEquals(17f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(crewed, HullSize.CRUISER), 1f)), 1e-4f);
+        assertEquals(17f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(crewed, HullSize.CRUISER, 0), 1f)), 1e-4f);
         assertFalse(automated.get(0).active());
         assertFalse(automated.get(0).appliesItem());
         assertEquals("req_crewed", automated.get(0).unmetRequirement());
         assertTrue(automated.get(1).active());
-        assertEquals(10f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(automated, HullSize.CRUISER), 1f)), 1e-4f);
+        assertEquals(10f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(automated, HullSize.CRUISER, 0), 1f)), 1e-4f);
     }
 
     @Test
@@ -121,7 +121,7 @@ class ShipSectionsTest {
 
         assertFalse(quarters.active());
         assertEquals("req_crewed", quarters.unmetRequirement());
-        assertEquals(15f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(automated, HullSize.CRUISER), 1f)), 1e-4f);
+        assertEquals(15f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(automated, HullSize.CRUISER, 0), 1f)), 1e-4f);
     }
 
     @Test
@@ -148,20 +148,20 @@ class ShipSectionsTest {
         List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
 
         assertFalse(slots.get(0).appliesItem());
-        assertEquals(10f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(slots,HullSize.CRUISER), 1f)), 1e-4f);
+        assertEquals(10f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(slots, HullSize.CRUISER, 0), 1f)), 1e-4f);
     }
 
     @Test
     void theBonusMultiplierScalesSectionItems() {
         List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
 
-        assertEquals(30f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(slots,HullSize.CRUISER), 2f)), 1e-4f);
+        assertEquals(30f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(slots, HullSize.CRUISER, 0), 2f)), 1e-4f);
     }
 
     @Test
     void aSectionEffectFromANodeScalesOnlyThatSectionsItem() {
         List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
-        List<EffectContribution> contributions = new ArrayList<>(HullUpgradeEffectSource.contributions(slots, HullSize.CRUISER));
+        List<EffectContribution> contributions = new ArrayList<>(HullUpgradeEffectSource.contributions(slots, HullSize.CRUISER, 0));
         contributions.add(EffectContribution.scaledPermanent("node", "node_",
                 List.of(new SkillTypeEffect(SkillEffect.byName("SHIELD_GENERATOR_ITEM_EFFECT_PERCENT"), 100f))));
 
@@ -183,12 +183,12 @@ class ShipSectionsTest {
         shipData.installInSection("bridge", warrantyTargeting(ShipSection.SHIELD_GENERATOR));
         List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
 
-        assertEquals(21f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(slots, HullSize.CRUISER), 1f)), 1e-4f);
+        assertEquals(21f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(slots, HullSize.CRUISER, 0), 1f)), 1e-4f);
 
         shipData.installInSection("bridge", warrantyTargeting(ShipSection.REACTOR));
         List<ShipSections.UnlockedSection> emptyTarget = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
 
-        assertEquals(11f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(emptyTarget, HullSize.CRUISER), 1f)), 1e-4f);
+        assertEquals(11f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(emptyTarget, HullSize.CRUISER, 0), 1f)), 1e-4f);
     }
 
     @Test

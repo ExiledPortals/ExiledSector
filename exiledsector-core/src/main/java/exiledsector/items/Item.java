@@ -82,13 +82,17 @@ public abstract class Item {
         if (traits.mirrored()) {
             mirrored = true;
         }
+        if (traits.implicits() != null) {
+            replaceImplicits(traits.implicits());
+        }
     }
 
     public void copyTraitsFrom(Item source) {
     }
 
     public ItemTraits traits() {
-        return null;
+        List<RolledModifier> currentImplicits = implicits();
+        return new ItemTraits(tier(), 0, corruption, currentImplicits.isEmpty() ? null : currentImplicits, mirrored);
     }
 
     public static Item withEffects(String id, String definitionId, long seed, List<RolledEffect> effects) {
@@ -236,6 +240,31 @@ public abstract class Item {
         effects = null;
     }
 
+    public void addExplicit(RolledModifier added) {
+        ItemRarity rarityBefore = rarity();
+        List<RolledModifier> modifiers = new ArrayList<>(explicits());
+        AffixLayout.insert(modifiers, added);
+        replaceExplicits(modifiers);
+        if (rarity() != rarityBefore) {
+            refreezeName();
+        }
+    }
+
+    public void removeExplicit(RolledModifier removed) {
+        List<RolledModifier> remaining = new ArrayList<>(explicits());
+        remaining.remove(removed);
+        replaceExplicits(remaining);
+        refreezeName();
+    }
+
+    public void swapExplicit(RolledModifier removed, RolledModifier added) {
+        List<RolledModifier> modifiers = new ArrayList<>(explicits());
+        modifiers.remove(removed);
+        AffixLayout.insert(modifiers, added);
+        replaceExplicits(modifiers);
+        refreezeName();
+    }
+
     public void replaceImplicits(List<RolledModifier> replacementImplicits) {
         implicitModifiers = new ArrayList<>(replacementImplicits);
         implicits = null;
@@ -317,6 +346,12 @@ public abstract class Item {
                 lines.add(description);
             }
         }
+        lines.addAll(conditionLines());
+        return lines;
+    }
+
+    public List<StyledText> conditionLines() {
+        List<StyledText> lines = new ArrayList<>();
         if (mirrored) {
             lines.add(Translation.styled("socketable.tooltip.mirrored"));
         }
@@ -366,8 +401,8 @@ public abstract class Item {
         if (type == null) {
             return null;
         }
-        return type.implicits().stream().filter(modifier -> modifier.id().equals(modifierId)).findFirst()
-                .orElseGet(() -> ItemImplicits.anyById(modifierId));
+        Modifier ownImplicit = Modifier.byId(type.implicits(), modifierId);
+        return ownImplicit != null ? ownImplicit : ItemImplicits.anyById(modifierId);
     }
 
     public ModifierLine implicitLine(String effectName) {
@@ -389,12 +424,7 @@ public abstract class Item {
     }
 
     public RolledModifier rerolledImplicit(RolledModifier implicit, Random random) {
-        List<RolledEffect> rerolledLines = new ArrayList<>(implicit.lines().size());
-        for (RolledEffect line : implicit.lines()) {
-            ModifierLine lineDefinition = implicitLine(line.effectName());
-            rerolledLines.add(lineDefinition == null ? line : new RolledEffect(line.effectName(), lineDefinition.roll(random)));
-        }
-        return implicit.withLines(rerolledLines);
+        return implicit.rerolled(this::implicitLine, random);
     }
 
     public Modifier explicitModifier(String modifierId) {

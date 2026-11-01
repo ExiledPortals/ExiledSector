@@ -46,8 +46,12 @@ public interface ItemCurrency {
         return false;
     }
 
-    default boolean dropsFromShipLoot() {
+    default boolean appliesToShipItems() {
         return appliesTo(ItemType.SUBROUTINE) || appliesTo(ItemType.HULL_ITEM);
+    }
+
+    default boolean dropsFromShipLoot() {
+        return appliesToShipItems();
     }
 
     default String refusalNoticeKey(Item item) {

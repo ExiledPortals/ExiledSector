@@ -1,6 +1,7 @@
 package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import exiledsector.skills.NodeReplacements;
 import exiledsector.skills.AnchorLinks;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeLinks;
@@ -275,9 +276,10 @@ class NpcTreeTagTest {
     void tagsSavedWithAPerNodeCostStillDecodeToTheSameTree() {
         ShipSkillData built = NpcSkillTreeBuilder.rootedTree(SkillTree.get("root"), 1);
         ShipTrees.allocate(built, SkillTree.get("a"), 3);
+        ShipTrees.selectOption(built, SkillTree.get("optional_1"), SkillTree.getType("hull_option"), 3);
         ShipTrees.allocate(built, SkillTree.get("b"), 3);
 
-        ShipSkillData restored = NpcTreeTag.decode("exiledSector_npcTree|bulwark|1|root,a,b|3");
+        ShipSkillData restored = NpcTreeTag.decode("exiledSector_npcTree|bulwark|1|root,a,optional_1=hull_option,b|3");
 
         assertEquals(List.copyOf(built.getAllocatedNodeIds()), List.copyOf(restored.getAllocatedNodeIds()));
         assertEquals(ShipTrees.getSpentOp(built, 3), ShipTrees.getSpentOp(restored, 3));
@@ -329,9 +331,21 @@ class NpcTreeTagTest {
     }
 
     @Test
-    void unknownNodesAndInvalidOptionsAreSkipped() {
+    void unknownNodesAndInvalidOptionsAreSkippedAndTheNodesBehindThemReleased() {
         ShipSkillData restored = NpcTreeTag.decode("exiledSector_npcTree|bulwark|3|root,a,gone_node,optional_1=bogus,b");
 
-        assertEquals(List.of("root", "a", "b"), List.copyOf(restored.getAllocatedNodeIds()));
+        assertEquals(List.of("root", "a"), List.copyOf(restored.getAllocatedNodeIds()));
+    }
+
+    @Test
+    void aRenamedRootStillDecodesItsTree() throws Exception {
+        NodeReplacements.register(new JSONArray().put(new JSONObject().put("old", "old_root").put("new", "root")));
+        try {
+            ShipSkillData restored = NpcTreeTag.decode("exiledSector_npcTree|bulwark|3|old_root,a");
+
+            assertEquals(List.of("root", "a"), List.copyOf(restored.getAllocatedNodeIds()));
+        } finally {
+            NodeReplacements.clear();
+        }
     }
 }

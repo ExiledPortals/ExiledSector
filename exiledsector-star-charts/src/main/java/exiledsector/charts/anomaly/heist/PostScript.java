@@ -1,7 +1,5 @@
 package exiledsector.charts.anomaly.heist;
 
-import com.fs.starfarer.api.EveryFrameScript;
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignEventListener.FleetDespawnReason;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
@@ -13,47 +11,26 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.listeners.FleetEventListener;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.Translation;
+import exiledsector.charts.anomaly.AnomalyRunScript;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.charts.run.ChartRunBound;
 import exiledsector.charts.run.ChartRunEffects;
-import exiledsector.charts.run.ChartRuns;
-import exiledsector.ui.CampaignMessages;
-import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class PostScript implements EveryFrameScript, FleetEventListener, ChartRunBound {
+public final class PostScript extends AnomalyRunScript implements FleetEventListener {
 
-    private static final Logger LOG = Logger.getLogger(PostScript.class);
-
-    private final String runId;
-    private final int tier;
-    private final StarSystemAPI system;
     private final String postId;
     private final List<PicketStation> stations = new ArrayList<>();
     private String guardId;
-    private float daysSinceCheck;
-    private boolean done;
-    private transient boolean failureReported;
 
     public PostScript(String runId, int tier, StarSystemAPI system, String postId) {
-        this.runId = runId;
-        this.tier = tier;
-        this.system = system;
+        super(runId, tier, system, false);
         this.postId = postId;
     }
 
     public static PostScript in(LocationAPI location) {
-        if (location == null) {
-            return null;
-        }
-        for (EveryFrameScript script : location.getScripts()) {
-            if (script instanceof PostScript postScript && !postScript.isDone()) {
-                return postScript;
-            }
-        }
-        return null;
+        return in(location, PostScript.class);
     }
 
     void add(PicketStation station) {
@@ -64,66 +41,22 @@ public final class PostScript implements EveryFrameScript, FleetEventListener, C
         return List.copyOf(stations);
     }
 
-    public String runId() {
-        return runId;
-    }
-
-    public int tier() {
-        return tier;
-    }
-
     public SectorEntityToken post() {
-        return postId == null ? null : system.getEntityById(postId);
+        return entity(postId);
     }
 
     @Override
-    public boolean belongsToRun(String wantedRunId) {
-        return runId != null && runId.equals(wantedRunId);
+    protected String anomalyId() {
+        return ListeningPost.ANOMALY_ID;
     }
 
     @Override
-    public boolean isDone() {
-        return done;
+    protected float checkDays() {
+        return HeistRules.CHECK_DAYS;
     }
 
     @Override
-    public boolean runWhilePaused() {
-        return false;
-    }
-
-    ChartRun run() {
-        ChartRun run = ChartRuns.currentOrNull();
-        return run != null && run.runId().equals(runId) ? run : null;
-    }
-
-    @Override
-    public void advance(float amount) {
-        SectorAPI sector = Global.getSector();
-        if (sector == null) {
-            return;
-        }
-        ChartRun run = run();
-        if (run == null) {
-            done = true;
-            return;
-        }
-        daysSinceCheck += sector.getClock().convertToDays(amount);
-        if (daysSinceCheck < HeistRules.CHECK_DAYS) {
-            return;
-        }
-        float days = daysSinceCheck;
-        daysSinceCheck = 0f;
-        try {
-            check(sector, run, days);
-        } catch (RuntimeException | LinkageError e) {
-            if (!failureReported) {
-                failureReported = true;
-                LOG.error("[ExiledSector] Running the listening post failed; it is tried again next check", e);
-            }
-        }
-    }
-
-    void check(SectorAPI sector, ChartRun run, float days) {
+    protected void check(SectorAPI sector, ChartRun run, float days) {
         PostState state = PostState.of(run);
         if (state == null || state.taken()) {
             return;
@@ -137,8 +70,7 @@ public final class PostScript implements EveryFrameScript, FleetEventListener, C
         if (post != null) {
             stations.forEach(station -> station.follow(post.getLocation()));
         }
-        CampaignFleetAPI playerFleet = sector.getPlayerFleet();
-        if (playerFleet == null || playerFleet.getContainingLocation() != system) {
+        if (!playerInSystem()) {
             PostState.record(run, state.withSuspicion(HeistRules.suspicionAfter(state.suspicion(), false, days)));
             return;
         }
@@ -231,15 +163,15 @@ public final class PostScript implements EveryFrameScript, FleetEventListener, C
     }
 
     public CampaignFleetAPI guard() {
-        SectorEntityToken entity = guardId == null ? null : system.getEntityById(guardId);
-        return entity instanceof CampaignFleetAPI fleet && fleet.isAlive() && !fleet.isEmpty() ? fleet : null;
+        CampaignFleetAPI fleet = livingFleet(guardId);
+        return fleet != null && !fleet.isEmpty() ? fleet : null;
     }
 
     public List<CampaignFleetAPI> livingPickets() {
         List<CampaignFleetAPI> pickets = new ArrayList<>();
         for (PicketStation station : stations) {
-            SectorEntityToken entity = station.fleetId() == null ? null : system.getEntityById(station.fleetId());
-            if (entity instanceof CampaignFleetAPI fleet && fleet.isAlive() && !fleet.isEmpty() && Pickets.isPicket(fleet)) {
+            CampaignFleetAPI fleet = livingFleet(station.fleetId());
+            if (fleet != null && !fleet.isEmpty() && Pickets.isPicket(fleet)) {
                 pickets.add(fleet);
             }
         }
@@ -259,7 +191,7 @@ public final class PostScript implements EveryFrameScript, FleetEventListener, C
         if (fleet == null || battle == null || !battle.isPlayerInvolved() || !Pickets.isPicket(fleet) || fleet.isEmpty()) {
             return;
         }
-        ChartRun run = run();
+        ChartRun run = liveRun();
         if (run != null) {
             raiseAlarm(run);
         }
@@ -270,9 +202,6 @@ public final class PostScript implements EveryFrameScript, FleetEventListener, C
     }
 
     private void message(String key) {
-        CampaignFleetAPI playerFleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
-        if (CampaignMessages.available() && playerFleet != null && playerFleet.getContainingLocation() == system) {
-            CampaignMessages.plain(Translation.gameText(key), Misc.getNegativeHighlightColor());
-        }
+        tellPlayer(() -> Translation.gameText(key), Misc::getNegativeHighlightColor);
     }
 }

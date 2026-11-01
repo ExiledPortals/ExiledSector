@@ -54,11 +54,9 @@ public final class CargoIconLooks {
         if (item == null) {
             return null;
         }
-        for (ItemIconLooks itemLooks : ITEM_LOOKS.all()) {
-            CargoIconLook ownLook = itemLooks.ownLook(item);
-            if (ownLook != null) {
-                return ownLook;
-            }
+        CargoIconLook ownLook = ITEM_LOOKS.first(itemLooks -> itemLooks.ownLook(item));
+        if (ownLook != null) {
+            return ownLook;
         }
         ItemRarity rarity = item.rarity();
         CargoIconLook look = switch (rarity) {
@@ -78,13 +76,7 @@ public final class CargoIconLooks {
     }
 
     public static Color kindColor(ItemKind kind) {
-        for (ItemIconLooks itemLooks : ITEM_LOOKS.all()) {
-            Color color = itemLooks.kindColor(kind);
-            if (color != null) {
-                return color;
-            }
-        }
-        return null;
+        return ITEM_LOOKS.first(itemLooks -> itemLooks.kindColor(kind));
     }
 
     public static boolean celebratesDrop(CargoIconLook look) {

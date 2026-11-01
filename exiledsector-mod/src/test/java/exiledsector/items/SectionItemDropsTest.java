@@ -54,7 +54,7 @@ class SectionItemDropsTest {
         int[] itemCounts = new int[3];
         int sectionItemCount = 0;
         for (int i = 0; i < TRIALS; i++) {
-            ItemDrops.SectionItemLoot loot = ItemDrops.rollSectionItemLoot("station", random, 1f);
+            HullItemDrops.SectionItemLoot loot = HullItemDrops.rollSectionItemLoot("station", random, 1f);
             itemCounts[loot.items().size()]++;
             sectionItemCount += loot.upgrades().size();
             for (ItemData item : loot.items()) {
@@ -72,9 +72,9 @@ class SectionItemDropsTest {
     void frameworkRollsLeaveTheSubroutineRollUntouched() {
         Random first = new Random(9L);
         Random second = new Random(9L);
-        List<ItemData> withoutSectionItems = ItemDrops.roll("station", first, 1f, definition -> true);
-        List<ItemData> withSectionItems = ItemDrops.roll("station", second, 1f, definition -> true);
-        ItemDrops.rollSectionItemLoot("station", second, 1f);
+        List<ItemData> withoutSectionItems = ItemDrops.roll("station", first, ItemChances.BASE, definition -> true);
+        List<ItemData> withSectionItems = ItemDrops.roll("station", second, ItemChances.BASE, definition -> true);
+        HullItemDrops.rollSectionItemLoot("station", second, 1f);
 
         assertEquals(withoutSectionItems, withSectionItems);
     }
@@ -84,7 +84,7 @@ class SectionItemDropsTest {
         Random random = new Random(1L);
         Map<ItemKind, Integer> counts = new HashMap<>();
         for (int i = 0; i < TRIALS; i++) {
-            counts.merge(ItemDrops.pickSectionItemBasic(random).kind(), 1, Integer::sum);
+            counts.merge(HullItemDrops.pickSectionItemBasic(random).kind(), 1, Integer::sum);
         }
 
         assertEquals(Set.of(ItemKind.BRIDGE, ItemKind.SHIELD_GENERATOR), counts.keySet());
@@ -98,7 +98,7 @@ class SectionItemDropsTest {
         ItemChances bridgeBonus = new ItemChances(1f, Map.of(ItemKind.BRIDGE, 0.4f));
         Map<ItemKind, Integer> counts = new HashMap<>();
         for (int i = 0; i < TRIALS; i++) {
-            for (ItemData item : ItemDrops.rollSectionItemLoot("station", random, bridgeBonus).items()) {
+            for (ItemData item : HullItemDrops.rollSectionItemLoot("station", random, bridgeBonus).items()) {
                 counts.merge(item.definition().kind(), 1, Integer::sum);
             }
         }
@@ -111,8 +111,8 @@ class SectionItemDropsTest {
     void aBonusForATypeThatCannotDropChangesNothing() {
         ItemChances phaseCoilBonus = new ItemChances(1f, Map.of(ItemKind.PHASE_COIL, 2f));
 
-        assertEquals(ItemDrops.rollSectionItemLoot("station", new Random(4L), 1f).items(),
-                ItemDrops.rollSectionItemLoot("station", new Random(4L), phaseCoilBonus).items());
+        assertEquals(HullItemDrops.rollSectionItemLoot("station", new Random(4L), 1f).items(),
+                HullItemDrops.rollSectionItemLoot("station", new Random(4L), phaseCoilBonus).items());
         assertFalse(ItemDrops.hasDroppableBasic(ItemKind.PHASE_COIL));
         assertFalse(ItemDrops.hasDroppableBasic(ItemKind.SUBROUTINE));
     }
@@ -133,9 +133,9 @@ class SectionItemDropsTest {
 
     @Test
     void sitesWithoutChancesOrRulesDropNoSectionLoot() {
-        assertTrue(ItemDrops.rollSectionItemLoot("empty", new Random(1L), 1f).isEmpty());
-        assertTrue(ItemDrops.rollSectionItemLoot("unknown", new Random(1L), 1f).isEmpty());
-        assertTrue(ItemDrops.rollSectionItemLoot(null, new Random(1L), 1f).isEmpty());
+        assertTrue(HullItemDrops.rollSectionItemLoot("empty", new Random(1L), 1f).isEmpty());
+        assertTrue(HullItemDrops.rollSectionItemLoot("unknown", new Random(1L), 1f).isEmpty());
+        assertTrue(HullItemDrops.rollSectionItemLoot(null, new Random(1L), 1f).isEmpty());
     }
 
 }

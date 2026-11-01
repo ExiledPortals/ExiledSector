@@ -1,32 +1,15 @@
 package exiledsector.charts.anomaly.excavation;
 
+import exiledsector.charts.anomaly.StateFields;
 import exiledsector.charts.loot.DropType;
-
-import java.util.Locale;
 
 public record ExcavationSite(int index, String planetId, Access access, DropType lean, long seed, boolean cleared) {
 
-    static final String SEPARATOR = ",";
-    static final int SEED_RADIX = Character.MAX_RADIX;
-    static final String CLEARED = "cleared";
-    static final String STANDING = "standing";
+    static final int FIELDS = 5;
 
     public enum Access {
         OPEN,
-        COLLAPSED;
-
-        String key() {
-            return name().toLowerCase(Locale.ROOT);
-        }
-
-        static Access parse(String text) {
-            for (Access access : values()) {
-                if (access.key().equals(text)) {
-                    return access;
-                }
-            }
-            return null;
-        }
+        COLLAPSED
     }
 
     public ExcavationSite asCleared() {
@@ -34,35 +17,12 @@ public record ExcavationSite(int index, String planetId, Access access, DropType
     }
 
     String encode() {
-        return String.join(SEPARATOR, planetId, access.key(), lean.name(), Long.toString(seed, SEED_RADIX), cleared ? CLEARED : STANDING);
-    }
-
-    static boolean encodable(String planetId) {
-        return planetId != null && !planetId.isEmpty() && !planetId.contains(SEPARATOR) && !planetId.contains(";") && !planetId.contains("=");
+        return StateFields.join(planetId, access.name(), lean.name(), StateFields.seed(seed), StateFields.flag(cleared));
     }
 
     static ExcavationSite decode(int index, String encoded) {
-        String[] parts = encoded == null ? new String[0] : encoded.split(SEPARATOR, -1);
-        if (parts.length != 5) {
-            return null;
-        }
-        Access access = Access.parse(parts[1]);
-        DropType lean = parseLean(parts[2]);
-        if (parts[0].isEmpty() || access == null || lean == null) {
-            return null;
-        }
-        try {
-            return new ExcavationSite(index, parts[0], access, lean, Long.parseLong(parts[3], SEED_RADIX), CLEARED.equals(parts[4]));
-        } catch (NumberFormatException e) {
-            return null;
-        }
-    }
-
-    private static DropType parseLean(String text) {
-        try {
-            return DropType.valueOf(text);
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
+        return StateFields.decode(encoded, FIELDS, fields -> fields.text(0).isEmpty() ? null
+                : new ExcavationSite(index, fields.text(0), fields.enumValue(1, Access.class), fields.enumValue(2, DropType.class), fields.seed(3),
+                fields.flag(4)));
     }
 }

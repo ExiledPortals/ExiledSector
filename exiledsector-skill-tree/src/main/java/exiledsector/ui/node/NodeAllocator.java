@@ -3,7 +3,6 @@ package exiledsector.ui.node;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.characters.SkillSpecAPI;
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.PlayerFleet;
@@ -235,11 +234,8 @@ final class NodeAllocator {
         OpReserveParity.warnIfOutOfSync(fleetMember, shipVariant, ShipTrees.getSpentOp(skillData, opCostPerNode), reservedOp, "while allocating nodes");
         int totalOpBudget = OpReserveParity.availableOp(opBudget, reservedOp);
         AllocationGate.Budget budget = new AllocationGate.Budget(totalOpBudget, opCostPerNode, ShipLevelConfig.maxAllocatedNodes());
-        ShipFacts shipFacts = PlayerShipFacts.of(fleetMember, shipVariant);
-        DoctrineOverrides.bindShipFacts(skillData, () -> shipFacts);
-        NodeEligibility.Context eligibility = NodeEligibility.Context.of(skillData, shipFacts,
-                SkillTypeUnlockStatus.lockedFor(skillData), NodeAllocator::heldInCargo);
-        AllocationGate gate = new AllocationGate(skillData, SkillTree.topology(), satisfiedRootId(), budget, eligibility);
+        AllocationGate gate = AllocationGate.forShip(skillData, PlayerShipFacts.of(fleetMember, shipVariant), satisfiedRootId(), budget,
+                NodeAllocator::heldInCargo);
         return new Snapshot(skillData, opBudget, shipEdit.revision(), hiddenNodeIds(skillData), gate, this::describe);
     }
 
@@ -248,8 +244,7 @@ final class NodeAllocator {
         AllocationGate.Budget budget = new AllocationGate.Budget(Integer.MAX_VALUE, 0, ShipLevelConfig.maxAllocatedNodes());
         ShipFacts shipFacts = PlayerShipFacts.of(fleetMember, shipVariant);
         DoctrineOverrides.forget(planData);
-        DoctrineOverrides.bindShipFacts(planData, () -> shipFacts);
-        NodeEligibility.Context eligibility = NodeEligibility.Context.of(planData, shipFacts,
+        NodeEligibility.Context eligibility = NodeEligibility.Context.forShip(planData, shipFacts,
                 SkillTypeUnlockStatus.lockedFor(liveData), itemId -> Double.MAX_VALUE);
         AllocationGate gate = new AllocationGate(planData, SkillTree.topology(), satisfiedRootId(), budget, eligibility);
         return new Snapshot(planData, liveSnapshot.opBudget(), liveSnapshot.statsRevision(), liveSnapshot.hiddenNodeIds, gate, this::describe);
@@ -301,11 +296,7 @@ final class NodeAllocator {
         if (!snapshot.gate().deallocation(node).allowed()) {
             return false;
         }
-        CargoAPI cargo = PlayerFleet.cargoOrNull();
-        ShipSkillData skillData = snapshot.skillData();
-        Set<String> reachableBefore = reachable(skillData);
-        ShipTrees.deallocateReleasingCharges(skillData, node).forEach(charged -> charged.refundTo(cargo));
-        releaseStranded(skillData, reachableBefore);
+        ShipTrees.release(snapshot.skillData(), SkillTree.topology(), satisfiedRootId(), List.of(node)).refundTo(PlayerFleet.cargoOrNull());
         return changed(true);
     }
 
@@ -338,7 +329,7 @@ final class NodeAllocator {
         ShipSkillData skillData = data();
         ReleasedNodes ungranted = ShipTrees.releaseUngrantedFreeNodes(skillData, SkillTree.topology(), satisfiedRootId());
         CargoAPI cargo = PlayerFleet.cargoOrNull();
-        ungranted.charges().forEach(refund -> refund.refundTo(cargo));
+        ungranted.refundTo(cargo);
         boolean changedAny = !ungranted.nodeIds().isEmpty();
         Map<String, List<String>> grantedNodesBySocket = ShipTreeLinks.grantedNodesBySocket(skillData);
         if (grantedNodesBySocket.isEmpty()) {
@@ -407,9 +398,7 @@ final class NodeAllocator {
     }
 
     private void releaseStranded(ShipSkillData skillData, Set<String> reachableBefore) {
-        CargoAPI cargo = PlayerFleet.cargoOrNull();
-        ShipTrees.releaseNewlyStranded(skillData, SkillTree.topology(), satisfiedRootId(), reachableBefore).charges()
-                .forEach(charged -> charged.refundTo(cargo));
+        ShipTrees.releaseNewlyStranded(skillData, SkillTree.topology(), satisfiedRootId(), reachableBefore).refundTo(PlayerFleet.cargoOrNull());
     }
 
     boolean chooseStartingRoot(SkillNode root) {

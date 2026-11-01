@@ -12,10 +12,10 @@ import java.util.function.Consumer;
 public final class StarAnomalies {
 
     static final int NEUTRON_STAR_MIN_PLANETS = 7;
-    public static final ChartAnomaly BLACK_HOLE = new Forced("black_hole", "black_hole", StarSystemType.SINGLE, 0, StarAnomalies::scatterDerelicts);
-    public static final ChartAnomaly NEUTRON_STAR = new Forced("neutron_star", "star_neutron", StarSystemType.SINGLE, NEUTRON_STAR_MIN_PLANETS,
+    public static final ForcedStar BLACK_HOLE = new ForcedStar("black_hole", "black_hole", StarSystemType.SINGLE, 0, StarAnomalies::scatterDerelicts);
+    public static final ForcedStar NEUTRON_STAR = new ForcedStar("neutron_star", "star_neutron", StarSystemType.SINGLE, NEUTRON_STAR_MIN_PLANETS,
             StarAnomalies::placeResearchStation);
-    public static final ChartAnomaly DENSE_NEBULA = new Forced("dense_nebula", null, StarSystemType.NEBULA, 0, site -> {
+    public static final ForcedStar DENSE_NEBULA = new ForcedStar("dense_nebula", null, StarSystemType.NEBULA, 0, site -> {
     });
     public static final String RESEARCH_STATION = "research_station";
     static final long DERELICT_SALT = 0x424c4b44524c43L;
@@ -31,8 +31,8 @@ public final class StarAnomalies {
     private StarAnomalies() {
     }
 
-    private record Forced(String id, String primaryStar, StarSystemType systemType, int minPlanets,
-                          Consumer<AnomalyContentSite> content) implements ChartAnomaly {
+    public record ForcedStar(String id, String primaryStar, StarSystemType systemType, int minPlanets,
+                             Consumer<AnomalyContentSite> content) implements StarRule, LayoutShaper, ContentPlacer {
 
         @Override
         public void generate(AnomalyContentSite site) {
@@ -63,12 +63,9 @@ public final class StarAnomalies {
             return;
         }
         Random random = site.random(STATION_SALT);
-        for (float radius = star.getRadius() + STATION_GAP; radius <= STATION_REACH; radius += STATION_STEP) {
-            ChartSites.Orbit orbit = site.clearOrbit(star, radius, radius, random);
-            if (orbit != null) {
-                site.addSite(station, orbit, random);
-                return;
-            }
+        ChartSites.Orbit orbit = site.clearOrbit(OrbitSearch.stepping(star, star.getRadius() + STATION_GAP, STATION_REACH, STATION_STEP), random);
+        if (orbit != null) {
+            site.addSite(station, orbit, random);
         }
     }
 }

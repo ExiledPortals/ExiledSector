@@ -20,6 +20,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public final class AnomalousDebrisCurrencies {
 
@@ -68,12 +69,11 @@ public final class AnomalousDebrisCurrencies {
             return null;
         }
         Set<ItemType> itemTypes = EnumSet.noneOf(ItemType.class);
-        for (String entry : CsvRows.entries(ModCsv.text(row, "item_types"))) {
-            ModifierScope scope = ModifierScope.byIdOrNull(entry.trim());
-            if (scope == null || !TAKEN_SCOPES.contains(scope) || !ItemModifiers.scopes(modifierId).contains(scope)) {
-                csv.problem(id, "item_types", entry.trim());
-            } else {
+        for (ModifierScope scope : takenScopes(row, entry -> csv.problem(id, "item_types", entry))) {
+            if (ItemModifiers.scopes(modifierId).contains(scope)) {
                 itemTypes.add(scope.itemType());
+            } else {
+                csv.problem(id, "item_types", scope.id());
             }
         }
         if (itemTypes.isEmpty()) {
@@ -125,20 +125,26 @@ public final class AnomalousDebrisCurrencies {
                 integrity.error(file, line, "the row has no id");
                 return;
             }
-            Set<ModifierScope> scopes = EnumSet.noneOf(ModifierScope.class);
-            for (String entry : CsvRows.entries(ModCsv.text(row, "item_types"))) {
-                ModifierScope scope = ModifierScope.byIdOrNull(entry.trim());
-                if (scope == null || !TAKEN_SCOPES.contains(scope)) {
-                    integrity.error(file, line, currencyId + " lists item type \"" + entry.trim() + "\"; expected hull_item or subroutine");
-                } else {
-                    scopes.add(scope);
-                }
-            }
+            Set<ModifierScope> scopes = takenScopes(row,
+                    entry -> integrity.error(file, line, currencyId + " lists item type \"" + entry + "\"; expected hull_item or subroutine"));
             if (scopes.isEmpty()) {
                 integrity.error(file, line, currencyId + " needs at least one item type in item_types");
             }
             integrity.checkReservedModifier(file, line, currencyId, ModCsv.text(row, "modifier"), scopes);
         });
+    }
+
+    private static Set<ModifierScope> takenScopes(JSONObject row, Consumer<String> unexpectedEntry) {
+        Set<ModifierScope> scopes = EnumSet.noneOf(ModifierScope.class);
+        for (String entry : CsvRows.entries(ModCsv.text(row, "item_types"))) {
+            ModifierScope scope = ModifierScope.byIdOrNull(entry.trim());
+            if (scope == null || !TAKEN_SCOPES.contains(scope)) {
+                unexpectedEntry.accept(entry.trim());
+            } else {
+                scopes.add(scope);
+            }
+        }
+        return scopes;
     }
 
     static void resetForTests() {
