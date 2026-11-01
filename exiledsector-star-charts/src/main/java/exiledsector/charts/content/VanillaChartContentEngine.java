@@ -42,6 +42,7 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import exiledsector.charts.anomaly.RunFactionDress;
 import exiledsector.charts.loot.ChartVanillaLoot;
+import exiledsector.i18n.Translation;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -57,6 +58,7 @@ final class VanillaChartContentEngine implements ChartContentEngine {
     static final float HIDDEN_WEIGHT = 5f;
     static final String DETECTION_MOD_ID = "gen";
     static final float STATION_DETECTION_BONUS = 1000f;
+    static final String PATROL_TYPE_PREFIX = "patrol";
 
     static LinkedHashMap<LocationType, Float> locationWeights() {
         LinkedHashMap<LocationType, Float> weights = new LinkedHashMap<>();
@@ -141,7 +143,25 @@ final class VanillaChartContentEngine implements ChartContentEngine {
 
     @Override
     public CampaignFleetAPI createFleet(FleetParamsV3 params) {
-        return ChartThreatFleets.builds(params.factionId) ? ChartThreatFleets.create(params) : FleetFactoryV3.createFleet(params);
+        CampaignFleetAPI fleet = ChartThreatFleets.builds(params.factionId) ? ChartThreatFleets.create(params) : FleetFactoryV3.createFleet(params);
+        nameIfUnnamed(fleet, params.fleetType);
+        return fleet;
+    }
+
+    static void nameIfUnnamed(CampaignFleetAPI fleet, String fleetType) {
+        if (fleet != null && fleet.getName() == null) {
+            fleet.setName(Translation.gameText(fallbackNameKey(fleetType)));
+        }
+    }
+
+    static String fallbackNameKey(String fleetType) {
+        if (FleetTypes.TASK_FORCE.equals(fleetType)) {
+            return "chart.fleet.unnamed.taskForce";
+        }
+        if (FleetTypes.BATTLESTATION.equals(fleetType)) {
+            return "chart.fleet.unnamed.station";
+        }
+        return fleetType != null && fleetType.startsWith(PATROL_TYPE_PREFIX) ? "chart.fleet.unnamed.patrol" : "chart.fleet.unnamed.fleet";
     }
 
     @Override
@@ -151,6 +171,7 @@ final class VanillaChartContentEngine implements ChartContentEngine {
             return null;
         }
         CampaignFleetAPI station = FleetFactoryV3.createEmptyFleet(factionId, FleetTypes.BATTLESTATION, null);
+        nameIfUnnamed(station, FleetTypes.BATTLESTATION);
         FleetMemberAPI member = Global.getFactory().createFleetMember(FleetMemberType.SHIP, variant);
         station.getFleetData().addFleetMember(member);
         station.setStationMode(true);
@@ -168,7 +189,9 @@ final class VanillaChartContentEngine implements ChartContentEngine {
 
     @Override
     public CampaignFleetAPI createEmptyFleet(String factionId, String fleetType) {
-        return FleetFactoryV3.createEmptyFleet(factionId, fleetType, null);
+        CampaignFleetAPI fleet = FleetFactoryV3.createEmptyFleet(factionId, fleetType, null);
+        nameIfUnnamed(fleet, fleetType);
+        return fleet;
     }
 
     @Override
