@@ -114,7 +114,7 @@ class DisintegrationListenerTest {
     }
 
     @Test
-    void disintegrationLeavesAlliedArmorAlone() {
+    void disintegrationAlsoStripsAlliedArmor() {
         ShipAPI ship = shipWithDynamicValue(DisintegrationListener.ARMOR_DAMAGE_PERCENT_KEY, 50f);
         Vector2f point = new Vector2f();
         ArmorGridAPI grid = mock(ArmorGridAPI.class);
@@ -125,7 +125,7 @@ class DisintegrationListenerTest {
 
         new DisintegrationListener(ship).modifyDamageDealt(projectileFrom(WeaponAPI.WeaponType.ENERGY), ally, damage, point, false);
 
-        verify(ally, never()).addListener(any());
+        verify(ally).addListener(any());
     }
 
     @Test

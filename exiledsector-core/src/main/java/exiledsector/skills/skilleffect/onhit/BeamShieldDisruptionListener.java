@@ -6,7 +6,6 @@ import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
-import exiledsector.skills.skilleffect.CombatQueries;
 import org.lwjgl.util.vector.Vector2f;
 
 final class BeamShieldDisruptionListener implements DamageDealtModifier {
@@ -25,7 +24,7 @@ final class BeamShieldDisruptionListener implements DamageDealtModifier {
 
     @Override
     public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        if (shieldHit && param instanceof BeamAPI && target instanceof ShipAPI targetShip && CombatQueries.isHostile(ship, targetShip)) {
+        if (shieldHit && param instanceof BeamAPI && target instanceof ShipAPI targetShip) {
             float percent = ship.getMutableStats().getDynamic().getValue(SHIELD_DAMAGE_PERCENT_KEY, 0f);
             if (percent > 0f) {
                 TimedTargetDebuff.refresh(targetShip, DISRUPTION, percent);
