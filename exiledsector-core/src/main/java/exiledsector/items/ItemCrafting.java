@@ -104,9 +104,9 @@ public final class ItemCrafting {
         return spent;
     }
 
-    static boolean canVary(RolledModifier rolled, ItemDefinition definition) {
-        PoolEntry poolEntry = definition == null ? null : definition.poolEntryFor(rolled.modifierId());
-        return poolEntry != null && rolled.lines().stream().map(line -> poolEntry.modifier().line(line.effectName()))
+    static boolean canVary(Item item, RolledModifier rolled) {
+        Modifier modifier = item.explicitModifier(rolled.modifierId());
+        return modifier != null && rolled.lines().stream().map(line -> modifier.line(line.effectName()))
                 .anyMatch(line -> line != null && line.canVary());
     }
 
@@ -170,7 +170,7 @@ public final class ItemCrafting {
     }
 
     static boolean canRecalibrate(Item item, ItemDefinition definition, Set<ModifierSlot> guarded) {
-        return item.hasTunableTrait() || item.explicits().stream().anyMatch(rolled -> !guards(rolled, guarded) && canVary(rolled, definition));
+        return definition != null && (item.hasTunableTrait() || item.explicits().stream().anyMatch(rolled -> !guards(rolled, guarded) && canVary(item, rolled)));
     }
 
     static Item recalibrate(Item item, Random random) {
@@ -184,7 +184,7 @@ public final class ItemCrafting {
         }
         boolean traitRetuned = item.retuneTrait(random);
         for (int attempt = 0; attempt < MAX_RECALIBRATION_ATTEMPTS; attempt++) {
-            List<RolledModifier> rerolled = reroll(item.explicits(), definition, random, guarded);
+            List<RolledModifier> rerolled = reroll(item, random, guarded);
             if (!rerolled.equals(item.explicits())) {
                 item.replaceExplicits(rerolled);
                 return item;
@@ -193,12 +193,11 @@ public final class ItemCrafting {
         return traitRetuned ? item : null;
     }
 
-    private static List<RolledModifier> reroll(List<RolledModifier> modifiers, ItemDefinition definition, Random random,
-                                               Set<ModifierSlot> guarded) {
-        List<RolledModifier> rerolled = new ArrayList<>(modifiers.size());
-        for (RolledModifier rolled : modifiers) {
-            PoolEntry poolEntry = guards(rolled, guarded) ? null : definition.poolEntryFor(rolled.modifierId());
-            rerolled.add(poolEntry == null ? rolled : rolled.rerolled(poolEntry.modifier()::line, random));
+    private static List<RolledModifier> reroll(Item item, Random random, Set<ModifierSlot> guarded) {
+        List<RolledModifier> rerolled = new ArrayList<>(item.explicits().size());
+        for (RolledModifier rolled : item.explicits()) {
+            Modifier modifier = guards(rolled, guarded) ? null : item.explicitModifier(rolled.modifierId());
+            rerolled.add(modifier == null ? rolled : rolled.rerolled(modifier::line, random));
         }
         return rerolled;
     }
@@ -418,11 +417,9 @@ public final class ItemCrafting {
         if (item.explicits().isEmpty() && item.implicits().isEmpty()) {
             return null;
         }
-        ItemDefinition definition = item.definition();
         List<RolledModifier> explicits = new ArrayList<>(item.explicits().size());
         for (RolledModifier rolled : item.explicits()) {
-            PoolEntry poolEntry = rolled.locked() || definition == null ? null : definition.poolEntryFor(rolled.modifierId());
-            explicits.add(stretchedReroll(rolled, poolEntry == null ? null : poolEntry.modifier(), random));
+            explicits.add(stretchedReroll(rolled, rolled.locked() ? null : item.explicitModifier(rolled.modifierId()), random));
         }
         List<RolledModifier> implicits = new ArrayList<>(item.implicits().size());
         for (RolledModifier rolled : item.implicits()) {

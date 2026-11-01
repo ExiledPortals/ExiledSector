@@ -34,7 +34,7 @@ class AnomalousDebrisCurrencyTest {
     void setUp() throws Exception {
         ItemModifiers.register(new JSONArray()
                 .put(HullItemRows.modifierRow(GRANTED_PREFIX, "prefix", "HULL_PERCENT:15:15", "Revenant"))
-                .put(HullItemRows.modifierRow(GRANTED_SUFFIX, "suffix", "BEAM_WEAPON_RANGE_PERCENT:25:25", "Vigil")));
+                .put(HullItemRows.modifierRow(GRANTED_SUFFIX, "suffix", "BEAM_WEAPON_RANGE_PERCENT:20:30", "Vigil")));
         ItemDefinitions.register(List.of(
                 definition(BASE, false, List.of(prefix("HULL_PERCENT"), prefix("FLUX_CAPACITY_MULT"), prefix("FLUX_DISSIPATION_MULT")),
                         List.of(suffix("BEAM_WEAPON_RANGE_PERCENT"), suffix("ARMOR_PERCENT"), suffix("HULL_MULT"))),
@@ -111,6 +111,30 @@ class AnomalousDebrisCurrencyTest {
         assertEquals(GRANTED_PREFIX, granted.modifierId());
         assertEquals(15f, granted.lines().get(0).magnitude());
         assertNotNull(reloaded.explicitModifier(GRANTED_PREFIX));
+    }
+
+    @Test
+    void theTuningNanoswarmRerollsTheGrantedModifiersValue() {
+        Item item = withModifiers(new RolledModifier(GRANTED_SUFFIX, ModifierSlot.SUFFIX, List.of(new RolledEffect("BEAM_WEAPON_RANGE_PERCENT", 20f))));
+        Set<Float> rolledValues = new HashSet<>();
+
+        assertTrue(ItemCrafting.canUse(CraftingCurrency.RECALIBRATION, item, definition -> true));
+        for (long seed = 0; seed < 20; seed++) {
+            assertSame(item, ItemCrafting.recalibrate(item, new Random(seed)));
+            RolledModifier granted = item.explicits().get(0);
+            assertEquals(GRANTED_SUFFIX, granted.modifierId());
+            float magnitude = granted.lines().get(0).magnitude();
+            assertTrue(magnitude >= 20f && magnitude <= 30f, "magnitude " + magnitude);
+            rolledValues.add(magnitude);
+        }
+        assertTrue(rolledValues.size() > 1);
+    }
+
+    @Test
+    void theTuningNanoswarmRefusesAFixedGrantedModifier() {
+        Item item = withModifiers(new RolledModifier(GRANTED_PREFIX, ModifierSlot.PREFIX, List.of(new RolledEffect("HULL_PERCENT", 15f))));
+
+        assertFalse(ItemCrafting.canUse(CraftingCurrency.RECALIBRATION, item, definition -> true));
     }
 
     private Item lockedWith(String effectName, ModifierSlot slot, float magnitude) {

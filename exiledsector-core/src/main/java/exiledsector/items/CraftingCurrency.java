@@ -127,7 +127,7 @@ public enum CraftingCurrency implements ItemCurrency {
 
         @Override
         public boolean wouldChange(Item item, RolledModifier rolled) {
-            return ItemCrafting.canVary(rolled, item.definition());
+            return ItemCrafting.canVary(item, rolled);
         }
     },
     FIXATION("exiledSector_fixation_kernel", 0, 0.2f, MaterialTier.MYTHIC, new Color(230, 80, 175)) {
