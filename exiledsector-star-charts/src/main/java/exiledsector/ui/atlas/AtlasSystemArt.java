@@ -105,6 +105,7 @@ final class AtlasSystemArt {
     static final float RADAR_DEGREES_PER_SECOND = 90f;
     static final float RADAR_WIDTH_DEGREES = 35f;
     static final float PULSAR_WIDTH_DEGREES = 4f;
+    static final float RELAY_DASH_LENGTH = 8f;
     static final Color ACCRETION_COLOUR = new Color(255, 150, 60);
     static final Color AURORA_COLOUR = new Color(110, 255, 200);
     static final Color AURORA_SHIFT_COLOUR = new Color(180, 120, 255);
@@ -456,15 +457,30 @@ final class AtlasSystemArt {
         }
         float pulse = (float) Math.sin(frame.elapsedSeconds * 2.5f) * 0.15f + 0.3f;
         try (GlScope links = GlScope.flat().additive().lineWidth(1f)) {
-            GL11.glEnable(GL11.GL_LINE_STIPPLE);
-            GL11.glLineStipple(2, (short) 0x0F0F);
-            GL11.glBegin(GL11.GL_LINE_LOOP);
+            GL11.glBegin(GL11.GL_LINES);
             Misc.setColor(RELAY_LINK_COLOUR, pulse * frame.alpha);
-            for (int index = 0; index < relayCount; index++) {
-                GL11.glVertex2f(relayX[index], relayY[index]);
+            int edges = relayCount == 2 ? 1 : relayCount;
+            for (int index = 0; index < edges; index++) {
+                int next = (index + 1) % relayCount;
+                drawDashes(relayX[index], relayY[index], relayX[next], relayY[next]);
             }
             GL11.glEnd();
-            GL11.glDisable(GL11.GL_LINE_STIPPLE);
+        }
+    }
+
+    private static void drawDashes(float fromX, float fromY, float toX, float toY) {
+        float deltaX = toX - fromX;
+        float deltaY = toY - fromY;
+        float length = (float) Math.hypot(deltaX, deltaY);
+        if (length <= 0f) {
+            return;
+        }
+        float stepX = deltaX / length;
+        float stepY = deltaY / length;
+        for (float start = 0f; start < length; start += RELAY_DASH_LENGTH * 2f) {
+            float end = Math.min(start + RELAY_DASH_LENGTH, length);
+            GL11.glVertex2f(fromX + stepX * start, fromY + stepY * start);
+            GL11.glVertex2f(fromX + stepX * end, fromY + stepY * end);
         }
     }
 
