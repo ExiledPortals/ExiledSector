@@ -198,6 +198,17 @@ class ItemCraftingTest {
     }
 
     @Test
+    void anInhibitorGrowsFromItsPartsCost() {
+        owns(PARTS, 100f);
+
+        assertTrue(CraftingWard.PREFIX.synthesisable());
+        assertTrue(ItemCrafting.synthesise(CraftingWard.PREFIX, CraftingMaterials.cargoOnly(cargo)));
+
+        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(PARTS), 100);
+        verify(cargo).addSpecial(MaterialItems.data(CraftingWard.PREFIX.itemId()), 1);
+    }
+
+    @Test
     void usingACurrencySpendsOneOnlyWhenItWorks() {
         Item item = common();
         String recalibration = CraftingCurrency.RECALIBRATION.itemId();

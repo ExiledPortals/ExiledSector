@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -418,42 +419,26 @@ class StarChartCurrencyTest {
     }
 
     @Test
-    void shipKernelDropsPickExactlyAsTheOldFixedListDidWithChartCurrenciesRegistered() {
-        record Drop(String itemId, float weight) {
-        }
-        List<Drop> legacyDrops = new ArrayList<>();
+    void shipKernelDropsLeaveOutChartCurrencies() {
+        List<ItemDrops.CurrencyDrop> builtInDrops = new ArrayList<>();
         for (CraftingCurrency currency : CraftingCurrency.values()) {
-            legacyDrops.add(new Drop(currency.itemId(), currency.dropWeight()));
+            builtInDrops.add(new ItemDrops.CurrencyDrop(currency.itemId(), currency.dropWeight()));
         }
         for (CraftingWard ward : CraftingWard.values()) {
-            legacyDrops.add(new Drop(ward.itemId(), ward.dropWeight()));
+            builtInDrops.add(new ItemDrops.CurrencyDrop(ward.itemId(), ward.dropWeight()));
         }
-        Random legacyRandom = new Random(17L);
-        Random registryRandom = new Random(17L);
-        for (int pick = 0; pick < 5000; pick++) {
-            assertEquals(WeightedPick.pick(legacyDrops, Drop::weight, legacyRandom).itemId(), ItemDrops.pickKernel(registryRandom), "pick " + pick);
-        }
+        assertEquals(builtInDrops, ItemDrops.kernelDrops());
     }
 
     @Test
-    void chartCurrencyDropsOnlyPickTheChartOnlyCurrenciesByWeight() {
-        Map<String, Integer> picks = new HashMap<>();
-        Random random = new Random(3L);
-        int trials = 12000;
-        for (int pick = 0; pick < trials; pick++) {
-            picks.merge(ChartDrops.pickChartCurrency(random), 1, Integer::sum);
-        }
-        float totalWeight = 0f;
+    void chartCurrencyDropsListOnlyTheChartOnlyCurrenciesByWeight() {
+        Set<ItemDrops.CurrencyDrop> expected = new HashSet<>();
         for (StarChartCurrency currency : StarChartCurrency.values()) {
-            totalWeight += currency.dropWeight();
+            expected.add(new ItemDrops.CurrencyDrop(currency.itemId(), currency.dropWeight()));
         }
-        assertEquals(Set.of(StarChartCurrency.REFORGE.itemId(), StarChartCurrency.ANNULMENT.itemId(), StarChartCurrency.CARTOGRAPHY.itemId()),
-                picks.keySet());
-        for (StarChartCurrency currency : StarChartCurrency.values()) {
-            assertEquals(currency.dropWeight() / totalWeight, picks.get(currency.itemId()) / (double) trials, 0.02, currency.name());
-        }
+        assertEquals(expected, Set.copyOf(ChartDrops.chartCurrencyDrops()));
 
         StarChartFixtures.unregisterCurrencies();
-        assertNull(ChartDrops.pickChartCurrency(new Random(1L)));
+        assertTrue(ChartDrops.chartCurrencyDrops().isEmpty());
     }
 }

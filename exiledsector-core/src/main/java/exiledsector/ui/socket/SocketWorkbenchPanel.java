@@ -15,6 +15,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.CraftingWard;
+import exiledsector.items.GrowableMaterial;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.Item;
 import exiledsector.items.ItemCrafting;
@@ -109,6 +110,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     private UIComponentAPI headerElement;
     private BenchMode benchMode = BenchMode.HULL_ITEMS;
     private ItemCurrency pendingCurrency;
+    private GrowableMaterial pendingGrowth;
     private boolean detailsShowRollRanges;
     private UIComponentAPI recipesElement;
     private UIComponentAPI detailsElement;
@@ -403,16 +405,17 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         } else if (id instanceof OpenChoiceButton choice) {
             pendingOpenTarget = choice.target();
             confirmOpen();
-        } else if (id == Control.CONFIRM_USE || id == Control.CONFIRM_GROW) {
+        } else if (id == Control.CONFIRM_USE) {
             ItemCurrency currency = pendingCurrency;
             cancelConfirm();
-            if (currency == null) {
-                return;
-            }
-            if (id == Control.CONFIRM_USE && usable(currency)) {
+            if (currency != null && usable(currency)) {
                 applyUse(currency);
-            } else if (id == Control.CONFIRM_GROW && growable(currency)) {
-                applyGrowth(currency);
+            }
+        } else if (id == Control.CONFIRM_GROW) {
+            GrowableMaterial material = pendingGrowth;
+            cancelConfirm();
+            if (material != null && growable(material)) {
+                applyGrowth(material);
             }
         } else if (id == Control.CANCEL_CONFIRM) {
             cancelConfirm();
@@ -439,6 +442,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private void cancelConfirm() {
         pendingCurrency = null;
+        pendingGrowth = null;
         pendingOpenItem = null;
         closeConfirm();
     }
@@ -456,39 +460,43 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         if (skipConfirm) {
             applyUse(currency);
         } else {
-            openCraftConfirm(currency, Control.CONFIRM_USE);
+            openUseConfirm(currency);
         }
     }
 
-    private void tileRightClicked(ItemCurrency currency, boolean skipConfirm) {
+    private void tileRightClicked(GrowableMaterial material, boolean skipConfirm) {
         hoverTooltip.hide();
-        if (wormholeOpened || isConfirmOpen() || !growable(currency)) {
+        if (wormholeOpened || isConfirmOpen() || !growable(material)) {
             return;
         }
         if (skipConfirm) {
-            applyGrowth(currency);
+            applyGrowth(material);
         } else {
-            openCraftConfirm(currency, Control.CONFIRM_GROW);
+            openGrowConfirm(material);
         }
     }
 
-    private void openCraftConfirm(ItemCurrency currency, Control confirmId) {
+    private void openUseConfirm(ItemCurrency currency) {
         pendingCurrency = currency;
-        boolean growing = confirmId == Control.CONFIRM_GROW;
-        Set<CraftingWard> spentWards = growing ? Set.of() : ItemCrafting.wardsSpentBy(currency, loadedItem, activeWards);
-        float confirmHeight = growing ? GROW_CONFIRM_HEIGHT : USE_CONFIRM_HEIGHT + spentWards.size() * WARD_LINE_HEIGHT;
-        openConfirm(confirmHeight, element -> writeCraftConfirm(element, currency, growing, spentWards),
-                growing ? "ui.workbench.confirm.grow" : "ui.workbench.confirm.use", confirmId, "ui.workbench.confirm.cancel", Control.CANCEL_CONFIRM);
+        Set<CraftingWard> spentWards = ItemCrafting.wardsSpentBy(currency, loadedItem, activeWards);
+        String name = recipeName(currency);
+        openConfirm(USE_CONFIRM_HEIGHT + spentWards.size() * WARD_LINE_HEIGHT,
+                element -> writeCraftConfirm(element, Translation.msg("ui.workbench.confirm.useTitle").arg("name", name).arg("target", loadedItem.name()).text(),
+                        support().currencyDescription(currency), spentWards),
+                "ui.workbench.confirm.use", Control.CONFIRM_USE, "ui.workbench.confirm.cancel", Control.CANCEL_CONFIRM);
     }
 
-    private void writeCraftConfirm(TooltipMakerAPI element, ItemCurrency currency, boolean growing, Set<CraftingWard> spentWards) {
-        String name = MaterialItems.displayName(currency.itemId());
-        String title = growing ? Translation.msg("ui.workbench.confirm.growTitle").arg("name", name).text()
-                : Translation.msg("ui.workbench.confirm.useTitle").arg("name", name).arg("target", loadedItem.name()).text();
+    private void openGrowConfirm(GrowableMaterial material) {
+        pendingGrowth = material;
+        openConfirm(GROW_CONFIRM_HEIGHT,
+                element -> writeCraftConfirm(element, Translation.msg("ui.workbench.confirm.growTitle").arg("name", recipeName(material)).text(),
+                        Translation.msg("ui.workbench.confirm.growBody").arg("cost", material.partsCost()).arg("parts", ItemCrafting.parts(playerMaterials())).text(),
+                        Set.of()),
+                "ui.workbench.confirm.grow", Control.CONFIRM_GROW, "ui.workbench.confirm.cancel", Control.CANCEL_CONFIRM);
+    }
+
+    private void writeCraftConfirm(TooltipMakerAPI element, String title, String body, Set<CraftingWard> spentWards) {
         VanillaText.plainPara(element, title, 0f, Misc.getBasePlayerColor());
-        String body = growing
-                ? Translation.msg("ui.workbench.confirm.growBody").arg("cost", currency.partsCost()).arg("parts", ItemCrafting.parts(playerMaterials())).text()
-                : support().currencyDescription(currency);
         VanillaText.plainPara(element, body, LINE_PAD * 2f, Misc.getTextColor());
         for (CraftingWard ward : spentWards) {
             VanillaText.plainPara(element, Translation.msg("ui.workbench.confirm.wardSpent").arg("name", MaterialItems.displayName(ward.itemId())).text(),
@@ -497,26 +505,26 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         VanillaText.plainPara(element, Translation.text("ui.workbench.confirm.skipHint"), LINE_PAD * 2f, Misc.getGrayColor());
     }
 
-    private boolean growable(ItemCurrency currency) {
-        if (!currency.synthesisable()) {
-            showNotice(Translation.msg("ui.workbench.notice.notSynthesisable").arg("name", recipeName(currency)).text());
+    private boolean growable(GrowableMaterial material) {
+        if (!material.synthesisable()) {
+            showNotice(Translation.msg("ui.workbench.notice.notSynthesisable").arg("name", recipeName(material)).text());
             return false;
         }
         CraftingMaterials materials = playerMaterials();
         int ownedParts = ItemCrafting.parts(materials);
-        if (ownedParts < currency.partsCost()) {
-            showNotice(Translation.msg("ui.workbench.notice.notEnoughParts").arg("cost", currency.partsCost()).arg("parts", ownedParts)
-                    .arg("name", recipeName(currency)).text());
+        if (ownedParts < material.partsCost()) {
+            showNotice(Translation.msg("ui.workbench.notice.notEnoughParts").arg("cost", material.partsCost()).arg("parts", ownedParts)
+                    .arg("name", recipeName(material)).text());
             return false;
         }
         return true;
     }
 
-    private void applyGrowth(ItemCurrency currency) {
-        if (!ItemCrafting.synthesise(currency, playerMaterials())) {
+    private void applyGrowth(GrowableMaterial material) {
+        if (!ItemCrafting.synthesise(material, playerMaterials())) {
             return;
         }
-        noticeText = Translation.msg("ui.workbench.notice.synthesisedCurrency").arg("name", recipeName(currency)).text();
+        noticeText = Translation.msg("ui.workbench.notice.synthesisedCurrency").arg("name", recipeName(material)).text();
         SkillTreeSounds.crafted();
         socketFlair.flash(SkillTreePanelStyle.GLOW_COLOR);
         afterChange();
@@ -888,8 +896,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private TileInput.Handler wardHandler(CraftingWard ward) {
         return tileHandler(ward, anchor -> showWardTooltip(ward, anchor), skipConfirm -> toggleWard(ward),
-                skipConfirm -> showNotice(Translation.msg("ui.workbench.notice.notSynthesisable").arg("name", MaterialItems.displayName(ward.itemId()))
-                        .text()));
+                skipConfirm -> tileRightClicked(ward, skipConfirm));
     }
 
     private TileInput.Handler currencyHandler(ItemCurrency currency) {
@@ -924,7 +931,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             return;
         }
         if (playerMaterials().count(ward.itemId()) < 1) {
-            showNotice(Translation.msg("ui.workbench.notice.noneFound").arg("name", wardName).text());
+            showNotice(Translation.msg(ward.synthesisable() ? "ui.workbench.notice.noneOwned" : "ui.workbench.notice.noneFound").arg("name", wardName).text());
             return;
         }
         activeWards.add(ward);
@@ -952,7 +959,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         } else if (ownedCount > 0) {
             VanillaText.plainPara(element, Translation.text("ui.workbench.ward.off"), GAP, Misc.getGrayColor());
         }
-        VanillaText.plainPara(element, Translation.text("ui.workbench.tile.notSynthesisable"), GAP, Misc.getGrayColor());
+        VanillaText.plainPara(element, growHint(ward), GAP, Misc.getGrayColor());
     }
 
     static String wardDescriptionKey(CraftingWard ward) {
@@ -1020,9 +1027,6 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     }
 
     private List<String> tooltipHints(ItemCurrency currency) {
-        String synthesiseHint = currency.synthesisable()
-                ? Translation.msg("ui.workbench.tile.synthesise").arg("cost", currency.partsCost()).text()
-                : Translation.text("ui.workbench.tile.notSynthesisable");
         List<String> hints = new ArrayList<>();
         int ownedCount = playerMaterials().count(currency.itemId());
         hints.add(Translation.msg("ui.workbench.tile.inStorage").arg("count", ownedCount).text());
@@ -1036,8 +1040,14 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             hints.add(refusal.allowed()
                     ? Translation.msg(support().useHintKey()).arg("target", loadedItem.name()).text() : refusalText(currency, refusal.verdict()));
         }
-        hints.add(synthesiseHint);
+        hints.add(growHint(currency));
         return hints;
+    }
+
+    private static String growHint(GrowableMaterial material) {
+        return material.synthesisable()
+                ? Translation.msg("ui.workbench.tile.synthesise").arg("cost", material.partsCost()).text()
+                : Translation.text("ui.workbench.tile.notSynthesisable");
     }
 
     private static List<String> recipeIcons(ItemCurrency currency) {
@@ -1049,8 +1059,8 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         return CargoIconLooks.forMaterial(currency.itemId());
     }
 
-    private static String recipeName(ItemCurrency currency) {
-        return MaterialItems.displayName(currency.itemId());
+    private static String recipeName(GrowableMaterial material) {
+        return MaterialItems.displayName(material.itemId());
     }
 
     private void rebuildDetails() {

@@ -227,12 +227,11 @@ class ChartDropsTest {
 
     @Test
     void onlySystemsourcesDropChartCurrencies() throws Exception {
-        ChartDrops.register(new JSONArray().put(rule("system_salvage", 0f, 0f, 0f, 1f)).put(rule("salvage", 1f, 0f, 0f, 0f)));
+        ChartDrops.register(new JSONArray().put(rule("system_salvage", 0f, 0f, 0f, 10f)).put(rule("salvage", 1f, 0f, 0f, 0f)));
 
         ChartDrops.Loot systemLoot = ChartDrops.roll(ChartDrops.Source.SYSTEM_SALVAGE, 4, 1f, new Random(2L));
         assertTrue(systemLoot.charts().isEmpty());
-        assertEquals(1, systemLoot.currencies().size());
-        assertTrue(CHART_CURRENCY_IDS.containsAll(systemLoot.currencies().keySet()));
+        assertEquals(CHART_CURRENCY_IDS, systemLoot.currencies().keySet());
         assertTrue(ChartDrops.roll(ChartDrops.Source.SALVAGE, 4, 1f, new Random(2L)).currencies().isEmpty());
     }
 
@@ -361,7 +360,7 @@ class ChartDropsTest {
 
     @Test
     void systemSalvageDropsAtTheRunTierOnlyWhileTheRunIsLiveAndBattlesInsideLeaveItToTheFleetRolls() throws Exception {
-        ChartDrops.register(new JSONArray().put(rule("system_salvage", 1f, 0f, 0f, 1f)).put(rule("chart_fleet", 1f, 0f, 0f, 0f))
+        ChartDrops.register(new JSONArray().put(rule("system_salvage", 1f, 0f, 0f, 10f)).put(rule("chart_fleet", 1f, 0f, 0f, 0f))
                 .put(rule("salvage", 1f, 0f, 0f, 0f)).put(rule("battle", 1f, 0f, 0f, 0f)));
         StarSystemAPI system = system(RUN_ID);
 
@@ -370,7 +369,7 @@ class ChartDropsTest {
         storeRun(9);
         ChartDrops.Loot salvage = ChartDrops.forSalvage(sector, system, new Random(1L));
         assertEquals(9, tierOf(salvage.charts().get(0)));
-        assertEquals(1, salvage.currencies().size());
+        assertEquals(CHART_CURRENCY_IDS, salvage.currencies().keySet());
         assertTrue(ChartDrops.forBattle(system, 400f, 30, new Random(1L)).isEmpty());
         assertTrue(ChartDrops.forSalvage(sector, system("otherRun"), new Random(1L)).isEmpty());
 
@@ -389,7 +388,7 @@ class ChartDropsTest {
 
     @Test
     void completingAnObjectiveRecordsTheClearedTierAndDropsChartsIntoCargo() throws Exception {
-        ChartDrops.register(new JSONArray().put(rule("run_reward", 1f, 0f, 0f, 1f)));
+        ChartDrops.register(new JSONArray().put(rule("run_reward", 1f, 0f, 0f, 2f)));
         CargoAPI cargo = mockSector.cargo();
         when(cargo.getCredits()).thenReturn(mock(MutableValue.class));
         ChartRun run = storeRun(4);

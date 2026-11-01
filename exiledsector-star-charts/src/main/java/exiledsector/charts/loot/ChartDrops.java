@@ -16,13 +16,11 @@ import exiledsector.charts.StarChartSettings;
 import exiledsector.data.CsvRows;
 import exiledsector.ModCsv;
 import exiledsector.items.ItemCurrencies;
-import exiledsector.items.ItemCurrency;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemTypes;
-import exiledsector.items.WeightedPick;
 import exiledsector.loot.LootSources;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -218,12 +216,8 @@ public final class ChartDrops {
             }
         }
         Map<String, Integer> currencies = new LinkedHashMap<>();
-        int currencyCount = source.insideSystem() ? ItemDrops.wholeParts(rule.currencyChance() * Math.max(0f, mults.currency()), random) : 0;
-        for (int drop = 0; drop < currencyCount; drop++) {
-            String currencyId = pickChartCurrency(random);
-            if (currencyId != null) {
-                currencies.merge(currencyId, 1, Integer::sum);
-            }
+        if (source.insideSystem()) {
+            ItemDrops.rollEachCurrency(chartCurrencyDrops(), rule.currencyChance() * Math.max(0f, mults.currency()), random, currencies);
         }
         Map<String, Integer> catalysts = new LinkedHashMap<>();
         if (source.insideSystem() && rule.catalystChance() > 0f && !AtlasCatalysts.all().isEmpty()
@@ -240,12 +234,11 @@ public final class ChartDrops {
         return ItemDrops.pickOfType(random, ItemType.STAR_CHART, definition -> ItemTypes.rollsAtTier(definition, tier));
     }
 
-    public static String pickChartCurrency(Random random) {
-        List<ItemCurrency> currencies = ItemCurrencies.forType(ItemType.STAR_CHART).stream()
+    public static List<ItemDrops.CurrencyDrop> chartCurrencyDrops() {
+        return ItemCurrencies.forType(ItemType.STAR_CHART).stream()
                 .filter(currency -> !currency.dropsFromShipLoot() && currency.dropWeight() > 0f)
+                .map(currency -> new ItemDrops.CurrencyDrop(currency.itemId(), currency.dropWeight()))
                 .toList();
-        ItemCurrency picked = WeightedPick.pick(currencies, ItemCurrency::dropWeight, random);
-        return picked == null ? null : picked.itemId();
     }
 
     static int chartCount(Rule rule, float chanceMult, Random random) {

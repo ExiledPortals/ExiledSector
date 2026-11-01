@@ -28,11 +28,11 @@ public final class ItemCrafting {
         return materials.count(ItemDisassembly.PARTS_ITEM_ID);
     }
 
-    public static boolean synthesise(ItemCurrency currency, CraftingMaterials materials) {
-        if (!currency.synthesisable() || !materials.take(ItemDisassembly.PARTS_ITEM_ID, currency.partsCost())) {
+    public static boolean synthesise(GrowableMaterial material, CraftingMaterials materials) {
+        if (!material.synthesisable() || !materials.take(ItemDisassembly.PARTS_ITEM_ID, material.partsCost())) {
             return false;
         }
-        materials.add(currency.itemId(), 1);
+        materials.add(material.itemId(), 1);
         return true;
     }
 

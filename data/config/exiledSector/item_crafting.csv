@@ -3,6 +3,12 @@ exiledSector_augmentation_kernel,10
 exiledSector_attunement_kernel,15
 exiledSector_substitution_kernel,20
 exiledSector_corruption_kernel,50
+exiledSector_prefix_ward,100
+exiledSector_suffix_ward,100
+exiledSector_transposition_kernel,150
+exiledSector_annulment_kernel,200
+exiledSector_recalibration_kernel,200
+exiledSector_fixation_kernel,300
 exiledSector_reforge_cipher,30
 exiledSector_annul_cipher,40
 exiledSector_cartographer_cipher,120

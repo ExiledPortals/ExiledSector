@@ -39,7 +39,7 @@ public final class ItemDrops {
     private static final Logger LOG = Logger.getLogger(ItemDrops.class);
     private static final AtomicReference<Map<String, Rule>> RULES = new AtomicReference<>(Map.of());
 
-    record Rule(List<Float> chances, float uniqueChance, boolean otherMod) {
+    record Rule(List<Float> chances, float uniqueChance, int feedstockMin, int feedstockMax, boolean otherMod) {
     }
 
     private ItemDrops() {
@@ -81,7 +81,12 @@ public final class ItemDrops {
                     }
                 }
                 String uniqueChanceText = ModCsv.text(row, "uniqueChance");
-                loaded.put(siteId, new Rule(List.copyOf(chances), uniqueChanceText.isEmpty() ? 0f : Float.parseFloat(uniqueChanceText), otherMod));
+                String feedstockMinText = ModCsv.text(row, "feedstockMin");
+                String feedstockMaxText = ModCsv.text(row, "feedstockMax");
+                int feedstockMin = feedstockMinText.isEmpty() ? 0 : Math.max(0, Integer.parseInt(feedstockMinText));
+                int feedstockMax = feedstockMaxText.isEmpty() ? feedstockMin : Math.max(feedstockMin, Integer.parseInt(feedstockMaxText));
+                loaded.put(siteId, new Rule(List.copyOf(chances), uniqueChanceText.isEmpty() ? 0f : Float.parseFloat(uniqueChanceText),
+                        feedstockMin, feedstockMax, otherMod));
             } catch (NumberFormatException e) {
                 LOG.error("Skipping the salvage drop row for site " + siteId + ": " + e.getMessage());
             }
@@ -137,19 +142,27 @@ public final class ItemDrops {
         if (rule == null || rule.chances().isEmpty()) {
             return droppedMaterials;
         }
+        int partsFound = rule.feedstockMax() > 0 ? rollFeedstock(rule, random, feedstockMult) : rollParts(rule, random, feedstockMult);
+        if (partsFound > 0) {
+            droppedMaterials.put(ItemDisassembly.PARTS_ITEM_ID, partsFound);
+        }
+        rollEachCurrency(kernelDrops(), rule.chances().get(0) * KERNEL_CHANCE_SHARE * currencyMult, random, droppedMaterials);
+        return droppedMaterials;
+    }
+
+    private static int rollFeedstock(Rule rule, Random random, float feedstockMult) {
+        int rolled = rule.feedstockMin() + random.nextInt(rule.feedstockMax() - rule.feedstockMin() + 1);
+        return wholeParts(rolled * feedstockMult, random);
+    }
+
+    private static int rollParts(Rule rule, Random random, float feedstockMult) {
         int partsFound = 0;
         for (float chance : rule.chances()) {
             if (random.nextFloat() < chance * feedstockMult) {
                 partsFound += MIN_PARTS_PER_FIND + random.nextInt(MAX_PARTS_PER_FIND - MIN_PARTS_PER_FIND + 1);
             }
         }
-        if (partsFound > 0) {
-            droppedMaterials.put(ItemDisassembly.PARTS_ITEM_ID, partsFound);
-        }
-        for (int kernels = wholeParts(rule.chances().get(0) * KERNEL_CHANCE_SHARE * currencyMult, random); kernels > 0; kernels--) {
-            droppedMaterials.merge(pickKernel(random), 1, Integer::sum);
-        }
-        return droppedMaterials;
+        return partsFound;
     }
 
     public static float battlePartsPerDeploymentPoint() {
@@ -164,20 +177,33 @@ public final class ItemDrops {
         return wholePartCount + (random.nextFloat() < exactParts - wholePartCount ? 1 : 0);
     }
 
-    static String pickKernel(Random random) {
-        List<KernelDrop> kernelDrops = new ArrayList<>();
+    static List<CurrencyDrop> kernelDrops() {
+        List<CurrencyDrop> kernelDrops = new ArrayList<>();
         for (ItemCurrency currency : ItemCurrencies.all()) {
             if (currency.dropsFromShipLoot()) {
-                kernelDrops.add(new KernelDrop(currency.itemId(), currency.dropWeight()));
+                kernelDrops.add(new CurrencyDrop(currency.itemId(), currency.dropWeight()));
             }
         }
         for (CraftingWard ward : CraftingWard.values()) {
-            kernelDrops.add(new KernelDrop(ward.itemId(), ward.dropWeight()));
+            kernelDrops.add(new CurrencyDrop(ward.itemId(), ward.dropWeight()));
         }
-        return WeightedPick.pick(kernelDrops, KernelDrop::weight, random).itemId();
+        return kernelDrops;
     }
 
-    private record KernelDrop(String itemId, float weight) {
+    public record CurrencyDrop(String itemId, float weight) {
+    }
+
+    public static void rollEachCurrency(List<CurrencyDrop> drops, float expectedDrops, Random random, Map<String, Integer> droppedMaterials) {
+        double totalWeight = drops.stream().mapToDouble(drop -> Math.max(0f, drop.weight())).sum();
+        if (!(expectedDrops > 0f) || !(totalWeight > 0d)) {
+            return;
+        }
+        for (CurrencyDrop drop : drops) {
+            int count = wholeParts((float) (expectedDrops * Math.max(0f, drop.weight()) / totalWeight), random);
+            if (count > 0) {
+                droppedMaterials.merge(drop.itemId(), count, Integer::sum);
+            }
+        }
     }
 
     public static ItemDefinition pickBasic(Random random) {

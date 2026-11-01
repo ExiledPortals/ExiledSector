@@ -41,6 +41,7 @@ class ItemDropsTest {
         ItemDrops.register(new JSONArray()
                 .put(new JSONObject().put("site", "probe").put("chances", "0.5").put("uniqueChance", "0"))
                 .put(new JSONObject().put("site", "station").put("chances", "1;0.6;0.3").put("uniqueChance", "0.19"))
+                .put(new JSONObject().put("site", "research").put("chances", "1;0.6;0.3").put("uniqueChance", "0").put("feedstockMin", "20").put("feedstockMax", "30"))
                 .put(new JSONObject().put("site", "broken").put("chances", "lots").put("uniqueChance", "0")));
     }
 
@@ -229,11 +230,6 @@ class ItemDropsTest {
         return rolls.stream().filter(test).count() / (double) rolls.size();
     }
 
-    private static boolean hasKernel(Map<String, Integer> roll) {
-        return java.util.Arrays.stream(CraftingCurrency.values()).anyMatch(currency -> roll.containsKey(currency.itemId()))
-                || java.util.Arrays.stream(CraftingWard.values()).anyMatch(ward -> roll.containsKey(ward.itemId()));
-    }
-
     @Test
     void partsDropAlongsideHullItemsWithEachSlotAddingOneToThree() {
         List<Map<String, Integer>> station = materials("station", 1f);
@@ -247,16 +243,62 @@ class ItemDropsTest {
     }
 
     @Test
-    void kernelsDropAtAShareOfTheFirstChanceWeightedTowardsTheCheapOnes() {
-        List<Map<String, Integer>> station = materials("station", 1f);
-        List<Map<String, Integer>> kernels = station.stream().filter(ItemDropsTest::hasKernel).toList();
+    void aSiteWithAFeedstockRangeRollsWithinItScaledByTheFeedstockBonus() {
+        List<Map<String, Integer>> research = materials("research", 1f);
+        assertTrue(research.stream().allMatch(roll -> roll.get(ItemDisassembly.PARTS_ITEM_ID) >= 20 && roll.get(ItemDisassembly.PARTS_ITEM_ID) <= 30));
+        assertEquals(java.util.Set.of(20, 30), java.util.Set.of(
+                research.stream().mapToInt(roll -> roll.get(ItemDisassembly.PARTS_ITEM_ID)).min().orElse(0),
+                research.stream().mapToInt(roll -> roll.get(ItemDisassembly.PARTS_ITEM_ID)).max().orElse(0)));
+        assertEquals(25.0, research.stream().mapToInt(roll -> roll.get(ItemDisassembly.PARTS_ITEM_ID)).average().orElse(0), 0.1);
+        double halved = materials("research", 0.5f).stream().mapToInt(roll -> roll.get(ItemDisassembly.PARTS_ITEM_ID)).average().orElse(0);
+        assertEquals(12.5, halved, 0.1);
+    }
 
-        assertEquals(ItemDrops.KERNEL_CHANCE_SHARE, kernels.size() / (double) TRIALS, 0.02);
-        assertEquals(0.5 * ItemDrops.KERNEL_CHANCE_SHARE, materialShare(materials("probe", 1f), ItemDropsTest::hasKernel), 0.02);
-        assertEquals(dropShare(CraftingCurrency.AUGMENTATION), materialShare(kernels, roll -> roll.containsKey(CraftingCurrency.AUGMENTATION.itemId())), 0.03);
-        assertEquals(dropShare(CraftingCurrency.TRANSPOSITION), materialShare(kernels, roll -> roll.containsKey(CraftingCurrency.TRANSPOSITION.itemId())), 0.02);
+    @Test
+    void eachKernelRollsItsOwnChanceSoSeveralCanDropAtOnce() {
+        List<Map<String, Integer>> station = materials("station", 1f);
+        double share = ItemDrops.KERNEL_CHANCE_SHARE;
+
+        assertEquals(share, averageKernels(station), 0.02);
+        assertEquals(0.5 * share, averageKernels(materials("probe", 1f)), 0.02);
+        assertEquals(share * dropShare(CraftingCurrency.AUGMENTATION), materialShare(station, roll -> roll.containsKey(CraftingCurrency.AUGMENTATION.itemId())), 0.02);
+        assertEquals(share * dropShare(CraftingCurrency.TRANSPOSITION), materialShare(station, roll -> roll.containsKey(CraftingCurrency.TRANSPOSITION.itemId())), 0.01);
         assertTrue(dropShare(CraftingCurrency.REPLICATION) < 0.005);
-        assertEquals(CraftingWard.PREFIX.dropWeight() / totalKernelWeight(), materialShare(kernels, roll -> roll.containsKey(CraftingWard.PREFIX.itemId())), 0.01);
+        assertEquals(share * CraftingWard.PREFIX.dropWeight() / totalKernelWeight(), materialShare(station, roll -> roll.containsKey(CraftingWard.PREFIX.itemId())), 0.01);
+        assertTrue(station.stream().anyMatch(roll -> kernelKinds(roll) > 1));
+    }
+
+    @Test
+    void aCurrencyChanceAboveOneDropsThatManyWithAChanceOfOneMore() {
+        Random random = new Random(9L);
+        List<ItemDrops.CurrencyDrop> drops = List.of(new ItemDrops.CurrencyDrop("a", 3f), new ItemDrops.CurrencyDrop("b", 1f));
+        double totalA = 0;
+        for (int i = 0; i < TRIALS; i++) {
+            Map<String, Integer> dropped = new java.util.HashMap<>();
+            ItemDrops.rollEachCurrency(drops, 2f, random, dropped);
+            int countA = dropped.getOrDefault("a", 0);
+            assertTrue(countA == 1 || countA == 2);
+            assertTrue(dropped.getOrDefault("b", 0) <= 1);
+            totalA += countA;
+        }
+        assertEquals(1.5, totalA / TRIALS, 0.02);
+    }
+
+    private static double averageKernels(List<Map<String, Integer>> rolls) {
+        return rolls.stream().mapToInt(ItemDropsTest::kernelCount).average().orElse(0);
+    }
+
+    private static int kernelCount(Map<String, Integer> roll) {
+        return roll.entrySet().stream().filter(entry -> isKernel(entry.getKey())).mapToInt(Map.Entry::getValue).sum();
+    }
+
+    private static long kernelKinds(Map<String, Integer> roll) {
+        return roll.keySet().stream().filter(ItemDropsTest::isKernel).count();
+    }
+
+    private static boolean isKernel(String itemId) {
+        return java.util.Arrays.stream(CraftingCurrency.values()).anyMatch(currency -> currency.itemId().equals(itemId))
+                || java.util.Arrays.stream(CraftingWard.values()).anyMatch(ward -> ward.itemId().equals(itemId));
     }
 
     private static double dropShare(CraftingCurrency currency) {
@@ -277,7 +319,7 @@ class ItemDropsTest {
         }
 
         assertEquals(0.0, materialShare(currencyOnly, roll -> roll.containsKey(ItemDisassembly.PARTS_ITEM_ID)), 0.0);
-        assertEquals(2 * 0.5 * ItemDrops.KERNEL_CHANCE_SHARE, materialShare(currencyOnly, ItemDropsTest::hasKernel), 0.02);
+        assertEquals(2 * 0.5 * ItemDrops.KERNEL_CHANCE_SHARE, averageKernels(currencyOnly), 0.02);
     }
 
     @Test

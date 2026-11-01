@@ -10,9 +10,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -122,12 +120,13 @@ class ItemCurrenciesTest {
         int previousCost = 0;
         for (String itemId : commonestFirst) {
             CraftingCurrency currency = CraftingCurrency.byItemId(itemId);
+            GrowableMaterial material = currency != null ? currency : CraftingWard.byItemId(itemId);
             float weight = currency != null ? currency.dropWeight() : CraftingWard.byItemId(itemId).dropWeight();
             assertTrue(weight <= previousWeight, itemId + " drops more often than the material before it");
             previousWeight = weight;
-            if (currency != null && currency.synthesisable()) {
-                assertTrue(currency.partsCost() > previousCost, itemId + " is not dearer to grow than a commoner material");
-                previousCost = currency.partsCost();
+            if (material.synthesisable()) {
+                assertTrue(material.partsCost() >= previousCost, itemId + " is cheaper to grow than a commoner material");
+                previousCost = material.partsCost();
             }
         }
         assertTrue(CraftingWard.PREFIX.dropWeight() < CraftingCurrency.CORRUPTION.dropWeight());
@@ -141,10 +140,10 @@ class ItemCurrenciesTest {
                 new Expected("exiledSector_attunement_kernel", "attunement", 15, 4f, MaterialTier.MINOR, true),
                 new Expected("exiledSector_substitution_kernel", "substitution", 20, 3f, MaterialTier.MAJOR, true),
                 new Expected("exiledSector_corruption_kernel", "corruption", 50, 1.5f, MaterialTier.EXOTIC, true),
-                new Expected("exiledSector_transposition_kernel", "transposition", 0, 0.4f, MaterialTier.MYTHIC, false),
-                new Expected("exiledSector_annulment_kernel", "annulment", 0, 0.3f, MaterialTier.MYTHIC, false),
-                new Expected("exiledSector_recalibration_kernel", "recalibration", 0, 0.3f, MaterialTier.MYTHIC, false),
-                new Expected("exiledSector_fixation_kernel", "fixation", 0, 0.2f, MaterialTier.MYTHIC, false),
+                new Expected("exiledSector_transposition_kernel", "transposition", 150, 0.4f, MaterialTier.MYTHIC, true),
+                new Expected("exiledSector_annulment_kernel", "annulment", 200, 0.3f, MaterialTier.MYTHIC, true),
+                new Expected("exiledSector_recalibration_kernel", "recalibration", 200, 0.3f, MaterialTier.MYTHIC, true),
+                new Expected("exiledSector_fixation_kernel", "fixation", 300, 0.2f, MaterialTier.MYTHIC, true),
                 new Expected("exiledSector_replication_kernel", "replication", 0, 0.035f, MaterialTier.MYTHIC, false));
 
         assertEquals(Arrays.asList(CraftingCurrency.values()), ItemCurrencies.all());
@@ -186,21 +185,15 @@ class ItemCurrenciesTest {
     }
 
     @Test
-    void kernelDropsPickExactlyAsTheOldFixedListDid() {
-        record Drop(String itemId, float weight) {
-        }
-        List<Drop> legacyDrops = new ArrayList<>();
+    void kernelDropsListEveryCurrencyAndInhibitorByWeight() {
+        List<ItemDrops.CurrencyDrop> builtInDrops = new ArrayList<>();
         for (CraftingCurrency currency : CraftingCurrency.values()) {
-            legacyDrops.add(new Drop(currency.itemId(), currency.dropWeight()));
+            builtInDrops.add(new ItemDrops.CurrencyDrop(currency.itemId(), currency.dropWeight()));
         }
         for (CraftingWard ward : CraftingWard.values()) {
-            legacyDrops.add(new Drop(ward.itemId(), ward.dropWeight()));
+            builtInDrops.add(new ItemDrops.CurrencyDrop(ward.itemId(), ward.dropWeight()));
         }
-        Random legacyRandom = new Random(17L);
-        Random registryRandom = new Random(17L);
-        for (int pick = 0; pick < 5000; pick++) {
-            assertEquals(WeightedPick.pick(legacyDrops, Drop::weight, legacyRandom).itemId(), ItemDrops.pickKernel(registryRandom), "pick " + pick);
-        }
+        assertEquals(builtInDrops, ItemDrops.kernelDrops());
     }
 
     @Test
@@ -224,12 +217,7 @@ class ItemCurrenciesTest {
         assertEquals(explicitsBefore - 1, hullItem.explicits().size());
         verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(PURGE_ID), 1);
         assertTrue(ItemCrafting.wardsSpentBy(purge, hullItem, List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)).isEmpty());
-        Map<String, Integer> drops = new LinkedHashMap<>();
-        Random random = new Random(5L);
-        for (int pick = 0; pick < 4000; pick++) {
-            drops.merge(ItemDrops.pickKernel(random), 1, Integer::sum);
-        }
-        assertTrue(drops.getOrDefault(PURGE_ID, 0) > 0);
+        assertTrue(ItemDrops.kernelDrops().stream().anyMatch(drop -> drop.itemId().equals(PURGE_ID)));
     }
 
     @Test

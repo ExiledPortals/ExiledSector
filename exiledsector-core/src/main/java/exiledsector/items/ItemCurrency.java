@@ -8,9 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-public interface ItemCurrency {
-
-    String itemId();
+public interface ItemCurrency extends GrowableMaterial {
 
     String key();
 
@@ -19,10 +17,6 @@ public interface ItemCurrency {
     MaterialTier tier();
 
     Color color();
-
-    boolean synthesisable();
-
-    int partsCost();
 
     boolean appliesTo(ItemType type);
 

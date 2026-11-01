@@ -66,7 +66,7 @@ public enum CraftingCurrency implements ItemCurrency {
             return true;
         }
     },
-    TRANSPOSITION("exiledSector_transposition_kernel", 0, 0.4f, MaterialTier.MYTHIC, new Color(255, 140, 50)) {
+    TRANSPOSITION("exiledSector_transposition_kernel", 150, 0.4f, MaterialTier.MYTHIC, new Color(255, 140, 50)) {
         @Override
         public boolean canUse(Item item, CraftingContext context) {
             return !ItemCrafting.wardBlocksTransposition(item, context.guardedSlots())
@@ -83,7 +83,7 @@ public enum CraftingCurrency implements ItemCurrency {
             return true;
         }
     },
-    ANNULMENT("exiledSector_annulment_kernel", 0, 0.3f, MaterialTier.MYTHIC, new Color(80, 230, 200)) {
+    ANNULMENT("exiledSector_annulment_kernel", 200, 0.3f, MaterialTier.MYTHIC, new Color(80, 230, 200)) {
         @Override
         public boolean appliesTo(ItemType type) {
             return type == ItemType.HULL_ITEM;
@@ -109,7 +109,7 @@ public enum CraftingCurrency implements ItemCurrency {
             return true;
         }
     },
-    RECALIBRATION("exiledSector_recalibration_kernel", 0, 0.3f, MaterialTier.MYTHIC, new Color(110, 235, 140)) {
+    RECALIBRATION("exiledSector_recalibration_kernel", 200, 0.3f, MaterialTier.MYTHIC, new Color(110, 235, 140)) {
         @Override
         public boolean canUse(Item item, CraftingContext context) {
             return ItemCrafting.canRecalibrate(item, item.definition(), context.guardedSlots());
@@ -130,7 +130,7 @@ public enum CraftingCurrency implements ItemCurrency {
             return ItemCrafting.canVary(item, rolled);
         }
     },
-    FIXATION("exiledSector_fixation_kernel", 0, 0.2f, MaterialTier.MYTHIC, new Color(230, 80, 175)) {
+    FIXATION("exiledSector_fixation_kernel", 300, 0.2f, MaterialTier.MYTHIC, new Color(230, 80, 175)) {
         @Override
         public boolean canUse(Item item, CraftingContext context) {
             return ItemCrafting.canFixate(item, context.guardedSlots());

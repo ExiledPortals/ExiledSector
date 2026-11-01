@@ -7,19 +7,21 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 
-public enum CraftingWard {
+public enum CraftingWard implements GrowableMaterial {
 
-    PREFIX("exiledSector_prefix_ward", ModifierSlot.PREFIX, 0.5f, new Color(80, 225, 205)),
-    SUFFIX("exiledSector_suffix_ward", ModifierSlot.SUFFIX, 0.5f, new Color(235, 110, 225));
+    PREFIX("exiledSector_prefix_ward", ModifierSlot.PREFIX, 100, 0.5f, new Color(80, 225, 205)),
+    SUFFIX("exiledSector_suffix_ward", ModifierSlot.SUFFIX, 100, 0.5f, new Color(235, 110, 225));
 
     private final String itemId;
     private final ModifierSlot guardedSlot;
+    private final int defaultPartsCost;
     private final float dropWeight;
     private final Color color;
 
-    CraftingWard(String itemId, ModifierSlot guardedSlot, float dropWeight, Color color) {
+    CraftingWard(String itemId, ModifierSlot guardedSlot, int defaultPartsCost, float dropWeight, Color color) {
         this.itemId = itemId;
         this.guardedSlot = guardedSlot;
+        this.defaultPartsCost = defaultPartsCost;
         this.dropWeight = dropWeight;
         this.color = color;
     }
@@ -39,8 +41,19 @@ public enum CraftingWard {
         return slots;
     }
 
+    @Override
     public String itemId() {
         return itemId;
+    }
+
+    @Override
+    public boolean synthesisable() {
+        return defaultPartsCost > 0;
+    }
+
+    @Override
+    public int partsCost() {
+        return ItemCraftingCosts.cost(itemId, defaultPartsCost);
     }
 
     public ModifierSlot guardedSlot() {
