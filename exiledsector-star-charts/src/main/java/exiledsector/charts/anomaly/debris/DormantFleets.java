@@ -57,6 +57,7 @@ public final class DormantFleets {
     static final List<String> REMOVED_ABILITIES = List.of(Abilities.GO_DARK, Abilities.TRANSVERSE_JUMP, Abilities.EMERGENCY_BURN,
             Abilities.SENSOR_BURST);
     static final int MOST_SHIPS = 30;
+    static final int MOST_PICKS = 150;
     static final int MOST_FAILED_PICKS = 6;
     static final int SEED_RADIX = Character.MAX_RADIX;
 
@@ -76,6 +77,7 @@ public final class DormantFleets {
             return null;
         }
         prepare(fleet, runId, tier, seed, new Random(seed));
+        setStrengthBonus(fleet, tier, context, false);
         ChartVanillaLoot.addToFleet(fleet, false, context == null ? ChartGenContext.none() : context, tier);
         return fleet;
     }
@@ -102,9 +104,22 @@ public final class DormantFleets {
         return factions;
     }
 
+    static ChartTier adjustedTier(int tier, ChartGenContext context) {
+        return (context == null ? ChartGenContext.none() : context).adjust(ChartTiers.forTier(tier));
+    }
+
+    static void setStrengthBonus(CampaignFleetAPI fleet, int tier, ChartGenContext context, boolean corrupted) {
+        int strengthBonus = DebrisRules.strengthBonus(adjustedTier(tier, context), corrupted);
+        if (strengthBonus > 0) {
+            fleet.getMemoryWithoutUpdate().set(ChartIds.STRENGTH_BONUS_MEMORY_KEY, strengthBonus);
+        } else {
+            fleet.getMemoryWithoutUpdate().unset(ChartIds.STRENGTH_BONUS_MEMORY_KEY);
+        }
+    }
+
     static void populate(CampaignFleetAPI fleet, List<HullFaction> factions, int tier, ChartGenContext context, long seed, boolean corrupted) {
         Random random = new Random(seed);
-        ChartTier adjusted = (context == null ? ChartGenContext.none() : context).adjust(ChartTiers.forTier(tier));
+        ChartTier adjusted = adjustedTier(tier, context);
         float points = DebrisRules.fleetPoints(adjusted, corrupted);
         float averageDMods = DefaultFleetInflater.getAverageDmodsForQuality(DebrisRules.quality(adjusted, corrupted));
         ShipPickParams pickParams = new ShipPickParams(ShipPickMode.ALL);
@@ -112,7 +127,7 @@ public final class DormantFleets {
         pickParams.maxFP = Integer.MAX_VALUE;
         float spent = 0f;
         int failedPicks = 0;
-        for (int picks = 0; picks < MOST_SHIPS && spent < points && failedPicks < MOST_FAILED_PICKS; picks++) {
+        for (int picks = 0; picks < MOST_PICKS && spent < points && failedPicks < MOST_FAILED_PICKS; picks++) {
             FactionAPI faction = WeightedPick.pick(factions, HullFaction::weight, random).faction();
             String role = WeightedPick.pick(ROLES, Map.Entry::getValue, random).getKey();
             FleetMemberAPI member = addShip(fleet, faction, role, pickParams, random);
@@ -121,6 +136,11 @@ public final class DormantFleets {
                 continue;
             }
             spent += member.getFleetPointCost();
+            if (fleet.getFleetData().getNumMembers() > MOST_SHIPS) {
+                spent -= removeSmallest(fleet);
+            }
+        }
+        for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
             crew(member, tier, corrupted, averageDMods, random);
         }
         fleet.getFleetData().sort();
@@ -141,6 +161,20 @@ public final class DormantFleets {
             }
         }
         return null;
+    }
+
+    private static int removeSmallest(CampaignFleetAPI fleet) {
+        FleetMemberAPI smallest = null;
+        for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
+            if (smallest == null || member.getFleetPointCost() < smallest.getFleetPointCost()) {
+                smallest = member;
+            }
+        }
+        if (smallest == null) {
+            return 0;
+        }
+        fleet.getFleetData().removeFleetMember(smallest);
+        return smallest.getFleetPointCost();
     }
 
     private static void crew(FleetMemberAPI member, int tier, boolean corrupted, float averageDMods, Random random) {
@@ -217,7 +251,7 @@ public final class DormantFleets {
         }
         populate(fleet, hullFactions(Global.getSector()), tier, context, seed, true);
         memory.set(CORRUPTED_KEY, true);
-        memory.set(ChartIds.STRENGTH_BONUS_MEMORY_KEY, DebrisRules.CORRUPTED_STRENGTH_BONUS_PERCENT);
+        setStrengthBonus(fleet, tier, context, true);
         ChartFleetLoot.recordStart(fleet);
         fleet.setName(Translation.gameText("chart.debris.fleet.corrupted.name"));
         return true;

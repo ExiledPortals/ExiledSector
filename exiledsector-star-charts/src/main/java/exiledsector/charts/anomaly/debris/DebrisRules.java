@@ -1,6 +1,7 @@
 package exiledsector.charts.anomaly.debris;
 
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
+import exiledsector.charts.content.ChartContentPlanner;
 import exiledsector.charts.generation.ChartTier;
 import exiledsector.items.WeightedPick;
 
@@ -14,8 +15,7 @@ public final class DebrisRules {
     static final float MIN_FIELD_RADIUS = 300f;
     static final float MAX_FIELD_RADIUS = 450f;
     static final float REVEAL_MARGIN = 600f;
-    static final float FLEET_SIZE_SHARE = 0.6f;
-    static final float MIN_FLEET_POINTS = 20f;
+    static final float BOSS_SHARE = 1.1f;
     static final float CORRUPTED_SIZE_MULT = 1.5f;
     static final float CORRUPTED_QUALITY_PERCENT = 30f;
     static final int CORRUPTED_CORE_STEPS = 1;
@@ -50,13 +50,21 @@ public final class DebrisRules {
         return distance - Math.max(0f, fleetRadius) <= revealRange(fieldRadius);
     }
 
+    static float fleetSize(ChartTier adjustedTier, boolean corrupted) {
+        return Math.max(adjustedTier.bossSize(), adjustedTier.fleetSize()) * BOSS_SHARE * (corrupted ? CORRUPTED_SIZE_MULT : 1f);
+    }
+
     public static float fleetPoints(ChartTier adjustedTier, boolean corrupted) {
-        float points = ChartTier.fleetPoints(adjustedTier.fleetSize()) * FLEET_SIZE_SHARE * (corrupted ? CORRUPTED_SIZE_MULT : 1f);
-        return Math.max(MIN_FLEET_POINTS, points);
+        return ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, fleetSize(adjustedTier, corrupted)));
+    }
+
+    public static int strengthBonus(ChartTier adjustedTier, boolean corrupted) {
+        return ChartContentPlanner.overflowStrength(fleetSize(adjustedTier, corrupted), ChartContentPlanner.BOSS_SIZE_CAP)
+                + (corrupted ? CORRUPTED_STRENGTH_BONUS_PERCENT : 0);
     }
 
     public static float quality(ChartTier adjustedTier, boolean corrupted) {
-        float percent = adjustedTier.fleetQuality() + (corrupted ? CORRUPTED_QUALITY_PERCENT : 0f);
+        float percent = ChartContentPlanner.bossQuality(ChartContentPlanner.fleetQuality(adjustedTier)) + (corrupted ? CORRUPTED_QUALITY_PERCENT : 0f);
         return Math.max(0f, Math.min(MAX_QUALITY, percent / ChartTier.PERCENT));
     }
 

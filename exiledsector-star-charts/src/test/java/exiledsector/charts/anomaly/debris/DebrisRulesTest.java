@@ -1,7 +1,11 @@
 package exiledsector.charts.anomaly.debris;
 
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
+import exiledsector.charts.content.ChartContentPlan.PlannedFleet;
+import exiledsector.charts.content.ChartContentPlanner;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
+import exiledsector.charts.generation.ChartTiers;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -35,12 +39,24 @@ class DebrisRulesTest {
     }
 
     @Test
-    void aDormantFleetIsSmallerThanAChartFleetAndCorruptionMakesItStrongerAndBetterKept() {
+    void aDormantFleetOutgunsTheBossOnEveryTier() {
+        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.CORRUPTED_TIER; tier++) {
+            ChartTier chartTier = ChartGenContext.none().adjust(ChartTiers.forTier(tier));
+            PlannedFleet boss = ChartContentPlanner.plannedBoss(chartTier, ChartContentPlanner.fleetQuality(chartTier), ChartContentPlanner.NO_POI);
+
+            float points = DebrisRules.fleetPoints(chartTier, false);
+            assertTrue(points >= boss.combatPoints(), "tier " + tier);
+            assertTrue(points > boss.combatPoints() || DebrisRules.strengthBonus(chartTier, false) > boss.strengthBonus(), "tier " + tier);
+            assertTrue(DebrisRules.quality(chartTier, false) >= Math.min(1f, boss.quality()), "tier " + tier);
+        }
+    }
+
+    @Test
+    void corruptionMakesADormantFleetLargerStrongerAndBetterKept() {
         ChartTier tier = ChartTier.fallback(5);
-        float points = DebrisRules.fleetPoints(tier, false);
-        assertTrue(points < ChartTier.fleetPoints(tier.fleetSize()));
-        assertEquals(points * DebrisRules.CORRUPTED_SIZE_MULT, DebrisRules.fleetPoints(tier, true), 0.01f);
-        assertTrue(DebrisRules.quality(tier, true) > DebrisRules.quality(tier, false));
+        assertEquals(DebrisRules.fleetPoints(tier, false) * DebrisRules.CORRUPTED_SIZE_MULT, DebrisRules.fleetPoints(tier, true), 0.01f);
+        assertTrue(DebrisRules.strengthBonus(tier, true) >= DebrisRules.strengthBonus(tier, false) + DebrisRules.CORRUPTED_STRENGTH_BONUS_PERCENT);
+        assertTrue(DebrisRules.quality(tier, true) >= DebrisRules.quality(tier, false));
         assertTrue(DebrisRules.quality(ChartTier.fallback(15), true) <= 1f);
     }
 

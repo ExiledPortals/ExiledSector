@@ -220,12 +220,16 @@ public final class ChartContentPlanner {
         ChartBosses.Definition definition = ChartBosses.definition(bossType);
         float fleetShare = definition == null ? 1f : definition.fleetShare();
         float bossSize = Math.max(MIN_FLEET_SIZE, tier.bossSize() * fleetShare);
-        float bossQuality = Math.max(0f, Math.min(MAX_QUALITY, fleetQuality + BOSS_QUALITY_BONUS));
+        float bossQuality = bossQuality(fleetQuality);
         FleetRole role = bossType == ChartBossType.STATION ? FleetRole.DEFENDER : FleetRole.BOSS;
         return new PlannedFleet(role, targetPoi, ChartTier.fleetPoints(Math.min(BOSS_SIZE_CAP, bossSize)),
                 bossQuality / ChartTier.PERCENT,
                 tier.officerLevelBonus() + BOSS_OFFICER_LEVEL_BONUS, tier.officerCountBonus() + BOSS_OFFICER_COUNT_BONUS,
                 overflowStrength(bossSize, BOSS_SIZE_CAP), averageSMods(bossQuality));
+    }
+
+    public static float bossQuality(float fleetQuality) {
+        return Math.max(0f, Math.min(MAX_QUALITY, fleetQuality + BOSS_QUALITY_BONUS));
     }
 
     static int averageSMods(float qualityPercent) {
