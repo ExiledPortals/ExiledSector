@@ -1,5 +1,6 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import { findLabelled, getLabelled } from '../../test/labelledQueries.ts';
 import { renderWithProviders } from '../../test/renderWithProviders.tsx';
 import { STRING_CATALOGUES } from '../../../server/stringCatalogues.ts';
 import { readRepositoryFile, startTestServer, type TestServer } from '../../test/testServer.ts';
@@ -19,15 +20,15 @@ afterAll(async () => {
 });
 
 async function openString(key: string) {
-  fireEvent.change(screen.getByLabelText('Search strings'), { target: { value: key } });
+  fireEvent.change(getLabelled('Search strings'), { target: { value: key } });
   fireEvent.click(await screen.findByRole('button', { name: key }));
-  return screen.getByLabelText('English text');
+  return getLabelled('English text');
 }
 
 describe('text page', () => {
   it('edits one English string, refuses a broken edit and saves only the changed line', async () => {
     renderWithProviders(<TextPage />);
-    await screen.findByLabelText('Search strings', undefined, { timeout: 15000 });
+    await findLabelled('Search strings');
     const original = readRepositoryFile(STRINGS_FILE);
 
     const textArea = await openString('stat.fluxCapacity');
@@ -42,7 +43,7 @@ describe('text page', () => {
     fireEvent.keyDown(refusal, { key: 'Escape' });
     expect(server.readProjectFile(STRINGS_FILE)).toBe(original);
 
-    fireEvent.change(screen.getByLabelText('English text'), { target: { value: 'flux <hl>reservoir</hl>' } });
+    fireEvent.change(getLabelled('English text'), { target: { value: 'flux <hl>reservoir</hl>' } });
     expect(screen.getByTestId('template-preview').textContent).toBe('flux reservoir');
     fireEvent.click(screen.getByRole('button', { name: 'Save to project' }));
     await waitFor(() => expect(screen.getByText('Saved')).toBeTruthy());
@@ -51,7 +52,7 @@ describe('text page', () => {
 
   it('keeps edits made while a save is in flight unsaved and writes them on the next save', async () => {
     renderWithProviders(<TextPage />);
-    await screen.findByLabelText('Search strings', undefined, { timeout: 15000 });
+    await findLabelled('Search strings');
     const original = readRepositoryFile(STRINGS_FILE);
     const serverFetch = globalThis.fetch;
     const saveGate: { release?: () => void } = {};
