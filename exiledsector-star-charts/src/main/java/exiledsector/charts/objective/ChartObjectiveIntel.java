@@ -52,7 +52,7 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
         return runId;
     }
 
-    static String objectiveName(ChartRun run) {
+    public static String objectiveName(ChartRun run) {
         return run.hasBoss() ? Translation.gameText("chart.objective.boss.name") : "";
     }
 
@@ -60,7 +60,7 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
         return run.hasBoss() ? "chart.objective.boss." + run.bossType().key() + ".description" : "chart.dialog.stale";
     }
 
-    static String progressText(ChartRun run) {
+    public static String progressText(ChartRun run) {
         if (run.isObjectiveComplete()) {
             return Translation.gameText("chart.intel.complete");
         }
@@ -118,9 +118,13 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
         }
     }
 
+    public static String iconPath() {
+        return Global.getSettings().getSpriteName(ICON_CATEGORY, ICON_ID);
+    }
+
     @Override
     public String getIcon() {
-        return Global.getSettings().getSpriteName(ICON_CATEGORY, ICON_ID);
+        return iconPath();
     }
 
     @Override

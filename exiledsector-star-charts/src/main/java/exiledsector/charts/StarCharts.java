@@ -24,6 +24,7 @@ import exiledsector.charts.run.cleanup.ChartDefenderTallies;
 import exiledsector.charts.run.cleanup.ChartLoadSweep;
 import exiledsector.charts.run.diagnostics.ChartSoakScript;
 import exiledsector.items.ItemStore;
+import exiledsector.ui.chart.ChartInfoTab;
 import org.apache.log4j.Logger;
 
 public final class StarCharts {
@@ -44,6 +45,8 @@ public final class StarCharts {
         if (sector.getListenerManager() != null) {
             sector.getListenerManager().removeListenerOfClass(ChartContentListener.class);
             sector.getListenerManager().addListener(new ChartContentListener(), true);
+            sector.getListenerManager().removeListenerOfClass(ChartInfoTab.class);
+            sector.getListenerManager().addListener(new ChartInfoTab(), true);
         }
         absorbCharts(sector);
     }

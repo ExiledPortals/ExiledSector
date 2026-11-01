@@ -24,6 +24,20 @@ public final class GLDraw {
         }
     }
 
+    public static void chevron(float centerX, float centerY, float halfWidth, float halfHeight, boolean pointsLeft, Color color, float lineWidth,
+                               float alphaMult) {
+        float tipX = pointsLeft ? centerX - halfWidth : centerX + halfWidth;
+        float tailX = pointsLeft ? centerX + halfWidth : centerX - halfWidth;
+        try (GlScope scope = GlScope.flat().lineWidth(lineWidth)) {
+            Misc.setColor(color, alphaMult);
+            GL11.glBegin(GL11.GL_LINE_STRIP);
+            GL11.glVertex2f(tailX, centerY + halfHeight);
+            GL11.glVertex2f(tipX, centerY);
+            GL11.glVertex2f(tailX, centerY - halfHeight);
+            GL11.glEnd();
+        }
+    }
+
     public static void horizontalLines(float x, float y, float width, float height, float spacing, Color color, float alphaMult) {
         try (GlScope scope = GlScope.flat().lineWidth(1f)) {
             Misc.setColor(color, alphaMult);
