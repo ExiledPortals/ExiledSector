@@ -82,11 +82,11 @@ class ItemDropsTest {
     }
 
     @Test
-    void theFirstChanceIsTheChanceOfAtLeastOneAndEachExtraNeedsThePreviousToLand() {
-        assertEquals(0.5, basicShare("probe", 1f, items -> basics(items) >= 1), 0.02);
-        assertEquals(1.0, basicShare("station", 1f, items -> basics(items) >= 1), 0.0);
-        assertEquals(0.6, basicShare("station", 1f, items -> basics(items) >= 2), 0.02);
-        assertEquals(0.18, basicShare("station", 1f, items -> basics(items) >= 3), 0.02);
+    void eachExtraNeedsThePreviousToLandAndHullItemsKeepTheirSalvageShareOfEachItem() {
+        assertEquals(0.25, basicShare("probe", 1f, items -> basics(items) >= 1), 0.02);
+        assertEquals(0.6725, basicShare("station", 1f, items -> basics(items) >= 1), 0.02);
+        assertEquals(0.195, basicShare("station", 1f, items -> basics(items) >= 2), 0.02);
+        assertEquals(0.0225, basicShare("station", 1f, items -> basics(items) >= 3), 0.01);
         assertEquals(0.0, basicShare("station", 1f, items -> basics(items) >= 4), 0.0);
     }
 
@@ -94,6 +94,14 @@ class ItemDropsTest {
     void uniquesRollSeparatelyAndOnlyWhereTheSiteAllowsThem() {
         assertEquals(0.19, share("station", 1f, items -> items.stream().anyMatch(item -> "relic".equals(item.definitionId()))), 0.02);
         assertEquals(0.0, share("probe", 1f, items -> items.stream().anyMatch(item -> "relic".equals(item.definitionId()))), 0.0);
+    }
+
+    @Test
+    void aUniqueHullItemKeepsItsSalvageShareOfTheSiteUniqueRoll() throws Exception {
+        ItemDefinitions.register(new JSONArray().put(row("bridge_relic", "bridge", "HULL_PERCENT:4:6").put("unique", "true")));
+
+        assertEquals(0.19 * HullItemDrops.SALVAGE_SHARE,
+                share("station", 1f, items -> items.stream().anyMatch(item -> "bridge_relic".equals(item.definitionId()))), 0.02);
     }
 
     @Test
@@ -107,7 +115,7 @@ class ItemDropsTest {
 
     @Test
     void aChanceMultiplierScalesEveryRoll() {
-        assertEquals(0.25, basicShare("probe", 0.5f, items -> !items.isEmpty()), 0.02);
+        assertEquals(0.125, basicShare("probe", 0.5f, items -> !items.isEmpty()), 0.02);
     }
 
     @Test
@@ -161,7 +169,7 @@ class ItemDropsTest {
             luna.when(() -> LunaSettings.getBoolean("exiledSector", SalvageSiteCompat.DROPS_FIELD_ID)).thenReturn(true);
             assertTrue(ItemDrops.hasRule("rat_abyss_research"));
             assertEquals(1, HullItemDrops.rollSectionItemLoot("rat_abyss_research", new Random(1L), 1f).items().size());
-            assertEquals(0.5, basicShare("probe", 1f, items -> !items.isEmpty()), 0.02);
+            assertEquals(0.25, basicShare("probe", 1f, items -> !items.isEmpty()), 0.02);
 
             luna.when(() -> LunaSettings.getBoolean("exiledSector", SalvageSiteCompat.DROPS_FIELD_ID)).thenReturn(false);
             assertFalse(ItemDrops.hasRule("rat_abyss_research"));

@@ -49,7 +49,7 @@ class SectionItemDropsTest {
     }
 
     @Test
-    void frameworkHullItemRollsMatchTheSubroutineChancesAndOnlyDrawSectionBasics() {
+    void hullItemRollsKeepTheirSalvageShareOfTheSiteCascadeAndOnlyDrawSectionBasics() {
         Random random = new Random(5L);
         int[] itemCounts = new int[3];
         int sectionItemCount = 0;
@@ -62,9 +62,9 @@ class SectionItemDropsTest {
             }
         }
 
-        assertEquals(0, itemCounts[0]);
+        assertEquals(0.375, itemCounts[0] / (double) TRIALS, 0.02);
         assertEquals(0.5, itemCounts[1] / (double) TRIALS, 0.02);
-        assertEquals(0.5, itemCounts[2] / (double) TRIALS, 0.02);
+        assertEquals(0.125, itemCounts[2] / (double) TRIALS, 0.02);
         assertEquals(TRIALS, sectionItemCount);
     }
 
@@ -103,8 +103,8 @@ class SectionItemDropsTest {
             }
         }
 
-        assertEquals(0.75, counts.get(ItemKind.SHIELD_GENERATOR) / (double) TRIALS, 0.03);
-        assertEquals(0.75 * 1.4, counts.get(ItemKind.BRIDGE) / (double) TRIALS, 0.03);
+        assertEquals(0.375, counts.get(ItemKind.SHIELD_GENERATOR) / (double) TRIALS, 0.03);
+        assertEquals(0.375 * 1.4, counts.get(ItemKind.BRIDGE) / (double) TRIALS, 0.03);
     }
 
     @Test

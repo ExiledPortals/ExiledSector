@@ -84,6 +84,12 @@ public final class ItemTypes {
         return rolled;
     }
 
+    static boolean keptFromSalvage(ItemDefinition definition, Random random) {
+        ItemTypeSupport support = of(definition.type());
+        float share = support == null ? 1f : support.salvageShare();
+        return share >= 1f || random.nextFloat() < share;
+    }
+
     static boolean uniqueRarity(ItemDefinition definition) {
         ItemTypeSupport support = of(definition.type());
         return support != null && support.uniqueRarity(definition);

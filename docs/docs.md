@@ -340,6 +340,13 @@ A locked ship counts as 0 tree power in `PlayerTreePower`, and an open-world NPC
 the share of NPC ships with trees follows the share of unlocked player ships. Chart ships are levelled only at their tier's
 `tree_share` in `star_chart_tiers.csv` (bosses always). A captured NPC ship keeps its tree but arrives locked.
 
+### Hull item drops
+
+Hull items share `item_salvage.csv` with subroutines but keep only half its rolls: each item of the site cascade, the
+targeted extras and a unique hull item from the site's unique roll survive at `HullItemDrops.SALVAGE_SHARE`
+(`ItemTypeSupport.salvageShare`). Battle drops (`battle_item_drops.csv`) and market stock (`market_hull_items.csv`)
+are hull-only tables and carry their own rates.
+
 ### Hull item mechanics
 
 A hull item with a targeting effect rolls one other section as its target (`HullItem.targetSection`, from its seed,

@@ -120,7 +120,7 @@ public final class ItemDrops {
         List<ItemData> droppedItems = rollCascade(rule, random, chances.general(), chances.rarity(), ItemDrops::pickBasic);
         if (withUnique && random.nextFloat() < rule.uniqueChance() * chances.general() * chances.rarity()) {
             ItemDefinition uniqueDefinition = pickUniqueAtSite(siteId, random, uniqueAllowed);
-            if (uniqueDefinition != null) {
+            if (uniqueDefinition != null && ItemTypes.keptFromSalvage(uniqueDefinition, random)) {
                 droppedItems.add(ItemData.rolled(uniqueDefinition, random.nextLong()));
             }
         }

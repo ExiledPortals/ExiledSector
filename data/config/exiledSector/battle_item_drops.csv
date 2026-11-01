@@ -1,8 +1,8 @@
 drop,per_100_power
-mods_1,0.40
-mods_2,0.25
-mods_3,0.15
-mods_4,0.04
-unique,0.015
+mods_1,0.20
+mods_2,0.125
+mods_3,0.075
+mods_4,0.02
+unique,0.0075
 refit_schematic,0.10
 master_schematic,0.05

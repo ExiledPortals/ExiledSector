@@ -1,4 +1,4 @@
 submarket,min_count,max_count
-open_market,1,3
-generic_military,2,4
-black_market,2,5
+open_market,0,2
+generic_military,1,2
+black_market,1,3

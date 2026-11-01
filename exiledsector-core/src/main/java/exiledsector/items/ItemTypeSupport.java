@@ -54,6 +54,10 @@ public interface ItemTypeSupport {
         return List.of();
     }
 
+    default float salvageShare() {
+        return 1f;
+    }
+
     default boolean uniqueRarity(ItemDefinition definition) {
         return false;
     }
