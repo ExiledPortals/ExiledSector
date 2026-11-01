@@ -1,6 +1,7 @@
 package exiledsector.tools;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.ProjectFiles;
 import exiledsector.i18n.Catalogue;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.LocaleChain;
@@ -14,15 +15,20 @@ import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.TierGroup;
 import exiledsector.skills.DescriptionLine;
+import exiledsector.skills.HullModConflicts;
 import exiledsector.skills.NodeDescription;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.loader.SkillTypeLoader;
+import org.json.CDL;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -144,14 +150,24 @@ public final class EditorDescriber {
     }
 
     private void registerTypes(JSONObject typesJson) throws JSONException {
-        String typesText = typesJson.toString();
+        String conflictsCsv = conflictsCsv();
+        String typesText = typesJson + conflictsCsv;
         if (typesText.equals(registeredTypesText)) {
             return;
         }
-        Map<String, SkillType> types = SkillTypeLoader.parseSkillTypes(typesJson);
+        Map<String, SkillType> types = SkillTypeLoader.parseSkillTypes(typesJson,
+                HullModConflicts.fromRows(CDL.toJSONArray(conflictsCsv.replace("\r\n", "\n"))));
         SkillTree.clearTypes();
         types.values().forEach(SkillTree::registerType);
         registeredTypesText = typesText;
+    }
+
+    private static String conflictsCsv() {
+        try {
+            return Files.readString(ProjectFiles.projectRoot().resolve(HullModConflicts.DATA_PATH), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            return "";
+        }
     }
 
     private static JSONArray markup(List<DescriptionLine> lines) {

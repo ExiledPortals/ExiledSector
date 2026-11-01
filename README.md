@@ -188,6 +188,13 @@ Some weapons from other mods misbehave (often hilariously) when their beams are 
 
 All three files are merged across mods, so other mods can opt their own weapons out (or you can opt them back in, at your own risk).
 
+Many nodes put a vanilla hull mod on the ship, such as Shield Conversion - Omni or Integrated Targeting Unit. If one of your hull mods removes or refuses vanilla hull mods, list it in `data/config/exiledSector/hullmod_conflicts.csv` in your own mod, with your hull mod id in the `hullmod` column, the vanilla ids it conflicts with in `conflicts` separated by `;`, and anything you like in `notes`. Ships with your hull mod then never get those nodes, NPC fleets included, and the node tooltips show the conflict. The file is merged across mods by the `hullmod` column, so your row replaces any row Exiled Sector ships for the same hull mod.
+
+```
+hullmod,conflicts,notes
+my_frontal_emitter,frontemitter; adaptiveshields; extendedshieldemitter,My Mod
+```
+
 ## FAQ
 
 <details>

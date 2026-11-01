@@ -1,5 +1,7 @@
 package exiledsector.skills;
 
+import exiledsector.ProjectFiles;
+import exiledsector.data.CsvRows;
 import exiledsector.skills.npc.RealSkillData;
 import exiledsector.skills.tags.SkillTags;
 import org.json.JSONArray;
@@ -11,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +44,17 @@ class SkillTypesDataConsistencyTest {
         return values;
     }
 
+    private static HullModConflicts loadConflicts() throws Exception {
+        return HullModConflicts.fromRows(RealSkillData.conflictRows(ProjectFiles.projectRoot()));
+    }
+
+    private static Set<String> excludedHullMods(JSONObject type, HullModConflicts conflicts) throws Exception {
+        Set<String> excluded = new LinkedHashSet<>(strings(type, "exclusiveHullMods"));
+        Set<String> standIns = standInHullMods(type);
+        excluded.addAll(conflicts.conflictsOfAny(standIns.isEmpty() ? excluded : standIns));
+        return excluded;
+    }
+
     private static Set<String> ownHullMods(JSONObject type) throws Exception {
         Set<String> own = new LinkedHashSet<>(strings(type, "phantomHullMods"));
         if (type.has("vanillaHullMod")) {
@@ -62,9 +76,10 @@ class SkillTypesDataConsistencyTest {
     @Test
     void aNodeExclusiveWithAnotherNodeIsAlsoExclusiveWithThatNodesOwnHullMod() throws Exception {
         Map<String, JSONObject> types = loadTypes();
+        HullModConflicts conflicts = loadConflicts();
         List<String> gaps = new ArrayList<>();
         for (JSONObject type : types.values()) {
-            Set<String> exclusiveHullMods = strings(type, "exclusiveHullMods");
+            Set<String> exclusiveHullMods = excludedHullMods(type, conflicts);
             for (String otherId : strings(type, "exclusiveSkillTypes")) {
                 JSONObject other = types.get(otherId);
                 if (other == null) {
@@ -97,11 +112,12 @@ class SkillTypesDataConsistencyTest {
     @Test
     void noExplicitNodeExclusionIsAlreadyImpliedByTheHullModLists() throws Exception {
         Map<String, JSONObject> types = loadTypes();
+        HullModConflicts conflicts = loadConflicts();
         List<String> redundant = new ArrayList<>();
         for (JSONObject type : types.values()) {
             for (String otherId : strings(type, "exclusiveSkillTypes")) {
                 JSONObject other = types.get(otherId);
-                if (other != null && (excludesAny(type, standInHullMods(other)) || excludesAny(other, standInHullMods(type)))) {
+                if (other != null && (excludesAny(type, standInHullMods(other), conflicts) || excludesAny(other, standInHullMods(type), conflicts))) {
                     redundant.add(type.getString("id") + " lists node " + otherId + ", which its hull mod lists already exclude");
                 }
             }
@@ -109,8 +125,8 @@ class SkillTypesDataConsistencyTest {
         assertTrue(redundant.isEmpty(), String.join("\n", redundant));
     }
 
-    private static boolean excludesAny(JSONObject type, Set<String> hullMods) throws Exception {
-        Set<String> exclusive = strings(type, "exclusiveHullMods");
+    private static boolean excludesAny(JSONObject type, Set<String> hullMods, HullModConflicts conflicts) throws Exception {
+        Set<String> exclusive = excludedHullMods(type, conflicts);
         return hullMods.stream().anyMatch(exclusive::contains);
     }
 
@@ -120,6 +136,64 @@ class SkillTypesDataConsistencyTest {
             standIns.add(type.getString("vanillaHullMod"));
         }
         return standIns;
+    }
+
+    @Test
+    void aNodeThatPlacesAHullModKeepsItsHullModConflictsInTheConflictTable() throws Exception {
+        List<String> misplaced = new ArrayList<>();
+        for (JSONObject type : loadTypes().values()) {
+            if (!standInHullMods(type).isEmpty() && !strings(type, "exclusiveHullMods").isEmpty()) {
+                misplaced.add(type.getString("id") + " lists " + strings(type, "exclusiveHullMods") + "; move them to " + HullModConflicts.DATA_PATH);
+            }
+        }
+        assertTrue(misplaced.isEmpty(), String.join("\n", misplaced));
+    }
+
+    @Test
+    void everyConflictRowNamesAHullModANodePlacesOrStandsInFor() throws Exception {
+        Set<String> nodeHullMods = new HashSet<>();
+        for (JSONObject type : loadTypes().values()) {
+            Set<String> standIns = standInHullMods(type);
+            nodeHullMods.addAll(standIns.isEmpty() ? strings(type, "exclusiveHullMods") : standIns);
+        }
+        List<String> dead = new ArrayList<>();
+        JSONArray rows = RealSkillData.conflictRows(ProjectFiles.projectRoot());
+        for (int i = 0; i < rows.length(); i++) {
+            JSONObject row = rows.getJSONObject(i);
+            String hullMod = row.getString(HullModConflicts.HULL_MOD_COLUMN);
+            for (String conflict : CsvRows.entries(row.getString(HullModConflicts.CONFLICTS_COLUMN))) {
+                if (!nodeHullMods.contains(hullMod) && !nodeHullMods.contains(conflict)) {
+                    dead.add(hullMod + " / " + conflict);
+                }
+            }
+        }
+        assertTrue(dead.isEmpty(), "No node places either hull mod of: " + dead);
+    }
+
+    @Test
+    void everyConflictIsListedOnceAndEveryRowSaysWhichModItIsFor() throws Exception {
+        Set<String> seen = new HashSet<>();
+        Set<String> keys = new HashSet<>();
+        List<String> problems = new ArrayList<>();
+        JSONArray rows = RealSkillData.conflictRows(ProjectFiles.projectRoot());
+        for (int i = 0; i < rows.length(); i++) {
+            JSONObject row = rows.getJSONObject(i);
+            String hullMod = row.getString(HullModConflicts.HULL_MOD_COLUMN);
+            if (!keys.add(hullMod)) {
+                problems.add(hullMod + " has several rows; the game keeps only one");
+            }
+            List<String> conflicts = CsvRows.entries(row.getString(HullModConflicts.CONFLICTS_COLUMN));
+            if (conflicts.isEmpty() || row.optString("notes").isBlank()) {
+                problems.add(hullMod + " needs conflicts and notes");
+            }
+            for (String conflict : conflicts) {
+                String pair = hullMod.compareTo(conflict) < 0 ? hullMod + " / " + conflict : conflict + " / " + hullMod;
+                if (hullMod.equals(conflict) || !seen.add(pair)) {
+                    problems.add("listed twice or with itself: " + pair);
+                }
+            }
+        }
+        assertTrue(problems.isEmpty(), String.join("\n", problems));
     }
 
     @Test

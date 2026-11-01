@@ -13,6 +13,8 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.ProjectFiles;
+import exiledsector.data.CsvRows;
+import exiledsector.skills.HullModConflicts;
 import exiledsector.skills.npc.RealSkillData;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -241,16 +243,21 @@ class CompatChecksTest {
     @Test
     void nightcrossNodesExcludeExactlyTheHullModsTheSelfCheckWatches() throws Exception {
         JSONArray types = ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(RealSkillData.TYPES_FILE)).getJSONArray("skillTypes");
-        List<String> excludedNightcrossHullMods = new ArrayList<>();
+        List<String> excludedHullMods = new ArrayList<>();
         for (int i = 0; i < types.length(); i++) {
             JSONArray exclusive = types.getJSONObject(i).optJSONArray("exclusiveHullMods");
             for (int j = 0; exclusive != null && j < exclusive.length(); j++) {
-                String hullModId = exclusive.getString(j);
-                if (NightcrossCompat.REQUIRED_HULL_MOD_IDS.contains(hullModId) || hullModId.startsWith("na_")) {
-                    excludedNightcrossHullMods.add(hullModId);
-                }
+                excludedHullMods.add(exclusive.getString(j));
             }
         }
+        JSONArray conflictRows = RealSkillData.conflictRows(ProjectFiles.projectRoot());
+        for (int i = 0; i < conflictRows.length(); i++) {
+            JSONObject row = conflictRows.getJSONObject(i);
+            excludedHullMods.add(row.getString(HullModConflicts.HULL_MOD_COLUMN));
+            excludedHullMods.addAll(CsvRows.entries(row.getString(HullModConflicts.CONFLICTS_COLUMN)));
+        }
+        List<String> excludedNightcrossHullMods = excludedHullMods.stream()
+                .filter(hullModId -> NightcrossCompat.REQUIRED_HULL_MOD_IDS.contains(hullModId) || hullModId.startsWith("na_")).toList();
 
         assertEquals(NightcrossCompat.REQUIRED_HULL_MOD_IDS.stream().sorted().toList(), excludedNightcrossHullMods.stream().distinct().sorted().toList());
     }

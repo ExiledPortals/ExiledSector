@@ -73,9 +73,12 @@ copies, where it does nothing, can't be removed and is hidden from refit and Cod
 
 ### Phantom hull mod conflicts
 
-Known conflicts go in a node's `exclusiveHullMods`, and `HullModConflictResolver` removes one that turns up
-later. A hull mod that tries to remove a phantom through MagicLib has its cause removed instead. When the
-conflict is built-in, permanent or an S-mod, `PhantomConflictWatch` refunds the node instead, as below.
+Known conflicts are hull mod pairs in `data/config/exiledSector/hullmod_conflicts.csv`, merged across mods
+and read by `HullModConflicts`. A pair counts both ways, and a node excludes every hull mod paired with the hull
+mods it places, or with those it stands in for when it places none; only those nodes keep `exclusiveHullMods`.
+`HullModConflictResolver` removes a conflict that turns up later. A hull mod that tries to remove a phantom
+through MagicLib has its cause removed instead. When the conflict is built-in, permanent or an S-mod,
+`PhantomConflictWatch` refunds the node instead, as below.
 
 Unremovable conflicts (mostly hidden built-in hull mods) are learned at runtime by `PhantomConflictWatch`,
 from a MagicLib removal record or a phantom vanishing while its tag stays. `LearnedPhantomConflicts` keeps

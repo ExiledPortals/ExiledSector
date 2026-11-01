@@ -1,0 +1,110 @@
+hullmod,conflicts,notes
+adaptive_coils,phase_anchor,Vanilla
+advancedoptics,high_scatter_amp,Vanilla
+converted_hangar,converted_fighterbay,Vanilla
+dedicated_targeting_core,targetingunit; advancedcore; distributed_fire_control,Vanilla
+fragment_swarm,shrouded_lens; shrouded_mantle; shrouded_thunderhead,Vanilla
+frontemitter,adaptiveshields,Vanilla
+ground_support,advanced_ground_support,Vanilla
+shield_shunt,frontemitter; adaptiveshields; frontshield,Vanilla
+targetingunit,advancedcore; distributed_fire_control,Vanilla
+A_S-F_integratedRangefinders,ballistic_rangefinder,Amazigh's Ship Foundry
+A_S-F_MaliceCoils,adaptive_coils; phase_anchor,Amazigh's Ship Foundry
+A_S-F_PhantasmagoriaHullmod,safetyoverrides,Amazigh's Ship Foundry
+ashesofohm_domainmachinerymod,safetyoverrides,AoTD - Ashes of Ohm
+armaa_SeraphTargetingSoftware,safetyoverrides; converted_hangar; pointdefenseai; operations_center; recovery_shuttles; additional_berthing; auxiliary_fuel_tanks; expanded_cargo_holds; surveying_equipment,Arma Armatura
+armaa_SilverSwordHM,safetyoverrides; pointdefenseai,Arma Armatura
+beamCoatType2,heavyarmor,Arma Armatura
+cataphract,converted_hangar; expanded_deck_crew; operations_center; recovery_shuttles; additional_berthing; auxiliary_fuel_tanks; expanded_cargo_holds; surveying_equipment,Arma Armatura
+cataphract2,converted_hangar; expanded_deck_crew; operations_center; recovery_shuttles; additional_berthing; auxiliary_fuel_tanks; expanded_cargo_holds; surveying_equipment,Arma Armatura
+strikeCraft,converted_fighterbay,Arma Armatura
+csp_cetanframe,safetyoverrides,Caymon's Ship pack
+asm_amorphous_alloy,armoredweapons; frontshield; heavyarmor,Emergent Threats
+asm_munitions_regulator,magazines,Emergent Threats
+orr_damper_field,frontshield,Emergent Threats
+vice_adaptive_entropy_arrester,autorepair,Emergent Threats
+vice_aquilon_microforge,missleracks; missile_autoloader,Emergent Threats
+vice_intrepid_hull,ecm,Emergent Threats
+vice_missile_microforge,missleracks; missile_autoloader,Emergent Threats
+vice_onslaught_hull,hbi,Emergent Threats
+vice_unified_targeting_core,dedicated_targeting_core; targetingunit,Emergent Threats
+ix_aquilon_microforge,missleracks; missile_autoloader,Emergent Threats: IX Revival
+ix_carrier_gunships,dedicated_targeting_core,Emergent Threats: IX Revival
+ix_cramped_missile_bays,missleracks,Emergent Threats: IX Revival
+ix_entropy_arrester,autorepair,Emergent Threats: IX Revival
+ix_missile_autoforge,missleracks; missile_autoloader,Emergent Threats: IX Revival
+ix_missile_nanoforge,missleracks; missile_autoloader,Emergent Threats: IX Revival
+ix_odyssey_retrofit,converted_hangar; pointdefenseai,Emergent Threats: IX Revival
+ix_point_defense_medium,pointdefenseai,Emergent Threats: IX Revival
+ix_point_defense_small,pointdefenseai,Emergent Threats: IX Revival
+ix_reactive_combat_shields,hardenedshieldemitter,Emergent Threats: IX Revival
+tw_ewar_suite,ecm,Emergent Threats: IX Revival
+tw_intrepid_hull,ecm,Emergent Threats: IX Revival
+tw_optimized_targeting_core,dedicated_targeting_core; targetingunit,Emergent Threats: IX Revival
+tw_point_defense_small,pointdefenseai,Emergent Threats: IX Revival
+tw_superior_pd,pointdefenseai,Emergent Threats: IX Revival
+tw_trinity_retrofit,converted_hangar; unstable_injector,Emergent Threats: IX Revival
+gr_DarkDesign,advancedshieldemitter; stabilizedshieldemitter,Galactic Constellate
+gr_GhostDesign,safetyoverrides,Galactic Constellate
+gr_NunkiCR,safetyoverrides,Galactic Constellate
+gr_WhiteDesign,unstable_injector,Galactic Constellate
+drg_pdspec,safetyoverrides,High Tech Expansion
+eis_aquila,safetyoverrides,Iron Shell
+eis_aquila_1time,safetyoverrides,Iron Shell
+eis_avaritia,safetyoverrides,Iron Shell
+eis_damperhull,heavyarmor,Iron Shell
+eis_perfect_vengeance,shield_shunt,Iron Shell
+kol_refit,advancedshieldemitter; extendedshieldemitter; frontemitter; adaptiveshields,Knights of Ludd
+kol_shields,advancedshieldemitter; extendedshieldemitter; frontemitter; adaptiveshields,Knights of Ludd
+logi_oracle,ecm; nav_relay; operations_center; surveying_equipment; hiressensors,Knights of Ludd
+zea_dawn_builtin,solar_shielding,Knights of Ludd
+zea_dusk_builtin,adaptive_coils,Knights of Ludd
+zea_edf_iff_override,shield_shunt,Knights of Ludd
+nskr_criticalArmor,heavyarmor,LOST_SECTOR
+nskr_volatile,safetyoverrides,LOST_SECTOR
+tania_ancient_weapon_sys,safetyoverrides,Navarchy of Tania
+tania_ballistic_overclock,targetingunit,Navarchy of Tania
+tania_battlecruiser_package,missile_autoloader,Navarchy of Tania
+tania_combat_forge,missile_autoloader,Navarchy of Tania
+tania_fixed_frontal_shield,advancedshieldemitter; extendedshieldemitter; hardenedshieldemitter; frontemitter; adaptiveshields; stabilizedshieldemitter,Navarchy of Tania
+tania_improved_pd_core,pointdefenseai,Navarchy of Tania
+tania_navarchy_armor_plate,frontshield; fragment_swarm; shrouded_lens; shrouded_mantle; shrouded_thunderhead,Navarchy of Tania
+nsp_sandevistan,safetyoverrides; dedicated_targeting_core; shield_shunt; heavyarmor; targetingunit,NEON's ship pack
+na_energizedarmor,shield_shunt,Nightcross Armory
+na_hardlightmatrix,extendedshieldemitter; adaptiveshields,Nightcross Armory
+na_hardlightmatrix2,extendedshieldemitter; adaptiveshields,Nightcross Armory
+na_stargazerstars,fragment_swarm,Nightcross Armory
+na_tidalgrid,adaptive_coils,Nightcross Armory
+rat_abyssal_threat,fragment_swarm; secondary_fabricator; fragment_coordinator; shrouded_lens; shrouded_mantle; shrouded_thunderhead,Random Assortment of Things
+rat_apheidas_hullmod,fragment_swarm; secondary_fabricator; fragment_coordinator; shrouded_lens; shrouded_mantle; shrouded_thunderhead,Random Assortment of Things
+rat_exogrid_overload,safetyoverrides,Random Assortment of Things
+roider_argosHangar,expanded_deck_crew,Roider Union
+roider_fighterClamps,converted_hangar,Roider Union
+roider_firestormmod,ballistic_rangefinder,Roider Union
+attackmode7s,safetyoverrides,Rumours of Neoteric Designs
+ballistic_support7s,ballistic_rangefinder,Rumours of Neoteric Designs
+chasemode7s,safetyoverrides,Rumours of Neoteric Designs
+Cheat_Maya7s,safetyoverrides,Rumours of Neoteric Designs
+cheat_tempestas7s,safetyoverrides,Rumours of Neoteric Designs
+defensemode7s,safetyoverrides,Rumours of Neoteric Designs
+force_field7s,safetyoverrides,Rumours of Neoteric Designs
+guerrilla_overhaul7s,safetyoverrides,Rumours of Neoteric Designs
+necro_scavenger7s,safetyoverrides,Rumours of Neoteric Designs
+ordnance_amendment7s,converted_fighterbay; expanded_cargo_holds,Rumours of Neoteric Designs
+quantum_damper7s,safetyoverrides,Rumours of Neoteric Designs
+resonance7s,safetyoverrides,Rumours of Neoteric Designs
+safety_protocols7s,safetyoverrides,Rumours of Neoteric Designs
+singularity_hullmod7s,safetyoverrides,Rumours of Neoteric Designs
+stardust_EnhancedEngines,augmentedengines,Stardust Ventures
+stardust_StardustCore,solar_shielding,Stardust Ventures
+sw_titanium_armor,heavyarmor,Superweapons Arsenal [KS]
+tahlan_daemonarmor,nskr_criticalArmor,Tahlan Shipworks
+tahlan_daemonplating,nskr_criticalArmor,Tahlan Shipworks
+tahlan_heavyconduits,advancedshieldemitter; extendedshieldemitter; shield_shunt; frontshield; hardenedshieldemitter; frontemitter; adaptiveshields; fluxbreakers; stabilizedshieldemitter,Tahlan Shipworks
+tahlan_lirefit,unstable_injector,Tahlan Shipworks
+tahlan_paralleltargeting,ballistic_rangefinder,Tahlan Shipworks
+tahlan_phaseharmonics,phase_anchor,Tahlan Shipworks
+tahlan_silberherz,safetyoverrides,Tahlan Shipworks
+tahlan_silberherz_minor,safetyoverrides,Tahlan Shipworks
+uaf_special_edge_capacitor_retrofit,safetyoverrides,United Aurora Federation
+ugh_antiterminalbreakers,safetyoverrides,Unusually Gullible Hullmods

@@ -38,6 +38,7 @@ public class SkillType {
     private final List<String> exclusiveHullModIds;
     private final List<String> phantomHullModIds;
     private final List<String> ownHullModIds;
+    private final List<String> excludedHullModIds;
     private final List<String> exclusiveAndOwnHullModIds;
     private final List<String> exclusiveSkillTypeIds;
     private final List<UnlockCondition> unlockConditions;
@@ -65,7 +66,9 @@ public class SkillType {
         this.exclusiveHullModIds = builder.exclusiveHullModIds == null ? Collections.emptyList() : builder.exclusiveHullModIds;
         this.phantomHullModIds = builder.phantomHullModIds == null ? Collections.emptyList() : builder.phantomHullModIds;
         this.ownHullModIds = ownHullModIds(vanillaHullModId, phantomHullModIds);
-        this.exclusiveAndOwnHullModIds = exclusiveAndOwnHullModIds(exclusiveHullModIds, ownHullModIds);
+        this.excludedHullModIds = combined(exclusiveHullModIds,
+                builder.hullModConflicts.conflictsOfAny(ownHullModIds.isEmpty() ? exclusiveHullModIds : ownHullModIds));
+        this.exclusiveAndOwnHullModIds = combined(excludedHullModIds, ownHullModIds);
         this.exclusiveSkillTypeIds = builder.exclusiveSkillTypeIds == null ? Collections.emptyList() : builder.exclusiveSkillTypeIds;
         this.unlockConditions = builder.unlockConditions == null ? Collections.emptyList() : builder.unlockConditions;
         this.tags = builder.tags == null ? Collections.emptyList() : builder.tags;
@@ -91,6 +94,7 @@ public class SkillType {
         private List<String> exclusiveHullModIds = Collections.emptyList();
         private List<String> phantomHullModIds = Collections.emptyList();
         private List<String> exclusiveSkillTypeIds = Collections.emptyList();
+        private HullModConflicts hullModConflicts = HullModConflicts.NONE;
         private List<UnlockCondition> unlockConditions = Collections.emptyList();
         private List<String> tags = Collections.emptyList();
         private ModuleShareOverride moduleShareOverride = ModuleShareOverride.AUTO;
@@ -169,6 +173,11 @@ public class SkillType {
 
         public Builder exclusiveSkillTypeIds(List<String> exclusiveSkillTypeIds) {
             this.exclusiveSkillTypeIds = exclusiveSkillTypeIds;
+            return this;
+        }
+
+        public Builder hullModConflicts(HullModConflicts hullModConflicts) {
+            this.hullModConflicts = hullModConflicts == null ? HullModConflicts.NONE : hullModConflicts;
             return this;
         }
 
@@ -281,11 +290,11 @@ public class SkillType {
         return exclusiveAndOwnHullModIds;
     }
 
-    private static List<String> exclusiveAndOwnHullModIds(List<String> exclusiveHullModIds, List<String> ownHullModIds) {
-        List<String> combined = new ArrayList<>(exclusiveHullModIds);
-        for (String ownHullModId : ownHullModIds) {
-            if (!combined.contains(ownHullModId)) {
-                combined.add(ownHullModId);
+    private static List<String> combined(List<String> firstHullModIds, List<String> laterHullModIds) {
+        List<String> combined = new ArrayList<>(firstHullModIds);
+        for (String hullModId : laterHullModIds) {
+            if (!combined.contains(hullModId)) {
+                combined.add(hullModId);
             }
         }
         return Collections.unmodifiableList(combined);
@@ -337,7 +346,7 @@ public class SkillType {
         if (otherOwn.isEmpty()) {
             return false;
         }
-        for (String hullModId : exclusiveHullModIds) {
+        for (String hullModId : excludedHullModIds) {
             if (otherOwn.contains(hullModId)) {
                 return true;
             }

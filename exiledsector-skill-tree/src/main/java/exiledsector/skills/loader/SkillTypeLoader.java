@@ -2,6 +2,7 @@ package exiledsector.skills.loader;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.skills.HullModConflicts;
 import exiledsector.skills.HullSizeSkillEffect;
 import exiledsector.skills.ShipHullSizes;
 import exiledsector.skills.SkillTypeEffect;
@@ -41,7 +42,7 @@ public final class SkillTypeLoader {
         try {
             JSONObject typesJson = Global.getSettings().loadJSON(DATA_PATH);
             JSONArray declaredTypes = typesJson.optJSONArray("skillTypes");
-            return new LoadedTypes(parseSkillTypes(typesJson), declaredTypes == null ? 0 : declaredTypes.length());
+            return new LoadedTypes(parseSkillTypes(typesJson, HullModConflicts.load()), declaredTypes == null ? 0 : declaredTypes.length());
         } catch (IOException | JSONException e) {
             Logger.getLogger(SkillTypeLoader.class).error("Failed to load " + DATA_PATH, e);
             return new LoadedTypes(new LinkedHashMap<>(), 0);
@@ -49,12 +50,16 @@ public final class SkillTypeLoader {
     }
 
     public static Map<String, SkillType> parseSkillTypes(JSONObject typesJson) throws JSONException {
+        return parseSkillTypes(typesJson, HullModConflicts.NONE);
+    }
+
+    public static Map<String, SkillType> parseSkillTypes(JSONObject typesJson, HullModConflicts hullModConflicts) throws JSONException {
         Map<String, SkillType> typesById = new LinkedHashMap<>();
         JSONArray typeArray = typesJson.getJSONArray("skillTypes");
         for (int i = 0; i < typeArray.length(); i++) {
             SkillType skillType;
             try {
-                skillType = parseSkillType(typeArray.getJSONObject(i));
+                skillType = parseSkillType(typeArray.getJSONObject(i), hullModConflicts);
             } catch (JSONException | IllegalArgumentException e) {
                 Logger.getLogger(SkillTypeLoader.class).error("Skipping skill type " + entryLabel(typeArray, i)
                         + " in " + DATA_PATH + ": " + e.getMessage());
@@ -69,7 +74,7 @@ public final class SkillTypeLoader {
         return typesById;
     }
 
-    private static SkillType parseSkillType(JSONObject typeJson) throws JSONException {
+    private static SkillType parseSkillType(JSONObject typeJson, HullModConflicts hullModConflicts) throws JSONException {
         SkillTier tier = SkillTier.valueOf(typeJson.optString("tier", "SMALL"));
         List<SkillTypeEffect> effects = parseEffects(typeJson.optJSONArray("effects"));
         List<HullSizeSkillEffect> hullSizeEffects = parseHullSizeEffects(typeJson.optJSONArray("hullSizeEffects"));
@@ -101,6 +106,7 @@ public final class SkillTypeLoader {
                 .exclusiveHullModIds(exclusiveHullModIds)
                 .phantomHullModIds(phantomHullModIds)
                 .exclusiveSkillTypeIds(exclusiveSkillTypeIds)
+                .hullModConflicts(hullModConflicts)
                 .unlockConditions(unlockConditions)
                 .tags(tags)
                 .moduleShareOverride(parseModuleShareOverride(typeId, typeJson.optString("moduleShare", null)))
