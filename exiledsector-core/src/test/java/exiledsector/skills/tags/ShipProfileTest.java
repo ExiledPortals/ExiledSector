@@ -1,17 +1,24 @@
 package exiledsector.skills.tags;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.ModSpecAPI;
+import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipSystemSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.WeaponAPI.AIHints;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
+import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -216,6 +223,36 @@ class ShipProfileTest {
     @Test
     void aMissingVariantMeansNoWeaponKinds() {
         assertTrue(kindsOf(null).isEmpty());
+    }
+
+    @Test
+    void aHullIsScriptedWhenABuiltInHullModOrItsSystemComesFromAMod() {
+        SettingsAPI settings = mock(SettingsAPI.class);
+        HullModSpecAPI vanillaMod = mock(HullModSpecAPI.class);
+        HullModSpecAPI moddedMod = mock(HullModSpecAPI.class);
+        when(moddedMod.getSourceMod()).thenReturn(mock(ModSpecAPI.class));
+        ShipSystemSpecAPI moddedSystem = mock(ShipSystemSpecAPI.class);
+        when(moddedSystem.getSourceMod()).thenReturn(mock(ModSpecAPI.class));
+        when(settings.getHullModSpec("vanilla_mod")).thenReturn(vanillaMod);
+        when(settings.getHullModSpec("modded_mod")).thenReturn(moddedMod);
+        when(settings.getShipSystemSpec("vanilla_system")).thenReturn(mock(ShipSystemSpecAPI.class));
+        when(settings.getShipSystemSpec("modded_system")).thenReturn(moddedSystem);
+
+        try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            global.when(Global::getSettings).thenReturn(settings);
+
+            assertFalse(ShipProfile.scriptedHull(hull(List.of("vanilla_mod"), "vanilla_system")));
+            assertTrue(ShipProfile.scriptedHull(hull(List.of("vanilla_mod", "modded_mod"), "vanilla_system")));
+            assertTrue(ShipProfile.scriptedHull(hull(List.of(), "modded_system")));
+            assertFalse(ShipProfile.scriptedHull(hull(null, null)));
+        }
+    }
+
+    private static ShipHullSpecAPI hull(List<String> builtInMods, String systemId) {
+        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
+        when(hullSpec.getBuiltInMods()).thenReturn(builtInMods);
+        when(hullSpec.getShipSystemId()).thenReturn(systemId);
+        return hullSpec;
     }
 
     @Test

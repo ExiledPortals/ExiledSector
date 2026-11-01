@@ -12,13 +12,14 @@ public final class NodeRequirements {
 
     public static final String CREWED = "req_crewed";
     public static final String AUTOMATED = "req_automated";
+    public static final String UNSCRIPTED_HULL = "req_unscripted_hull";
 
     public static final List<String> HULL_TAGS = List.of("req_civilian_hull", "req_non_phase_hull", "req_system_charges", "req_modules");
 
     public static final List<String> TAGS = Stream.of(List.of(
             "req_shields", "req_no_shields", "req_phase", "req_fighter_bays", "req_no_fighter_bays", "req_ballistic",
             "req_missile", "req_energy", "req_beam", "req_offensive_beam", "req_non_beam_energy", "req_flagship",
-            CREWED, AUTOMATED, "campaign_only", "player_only"), HULL_TAGS).flatMap(List::stream).toList();
+            CREWED, AUTOMATED, UNSCRIPTED_HULL, "campaign_only", "player_only"), HULL_TAGS).flatMap(List::stream).toList();
 
     private NodeRequirements() {
     }
@@ -80,6 +81,7 @@ public final class NodeRequirements {
             case "req_flagship" -> profile.flagship();
             case CREWED -> !profile.automated();
             case AUTOMATED -> profile.automated();
+            case UNSCRIPTED_HULL -> !profile.scriptedHull();
             default -> false;
         };
     }

@@ -273,7 +273,8 @@ The rest of the budget goes to notables and keystones drawn by seeded weight (`N
 small nodes. `NpcRelevance` multiplies theme tag weights by `npc_faction_focus.csv` and
 `npc_ship_system_focus.csv` (by ship system or defense id, `NpcFocus`), which also steers optional nodes'
 option picks. Every step is a breadth-first search through nodes `NodeEligibility` allows, never crossing
-wormholes.
+wormholes. Shield Shunt and Makeshift Shield Generator need `req_unscripted_hull`, so NPCs never take them on a
+hull whose built-in hull mods or ship system come from another mod (`ShipProfile.scriptedHull`).
 
 Station fleets (market stations and the Remnant Nexus) are levelled like any other fleet while
 `NpcTreeConfig.levelsStations` is on, and the station is always chosen. A station's `ShipProfile` counts its

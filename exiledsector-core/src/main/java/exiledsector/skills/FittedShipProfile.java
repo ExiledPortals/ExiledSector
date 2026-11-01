@@ -28,7 +28,7 @@ public final class FittedShipProfile {
         ShieldType shieldType = ShieldSkillEffect.resolveDisplayShieldType(fittedShieldType(hullSpec.getShieldType(), variant), fitEffectsInOrder);
         return new ShipProfile(hullSize, shieldType, fighterBays(hullSpec.getFighterBays(), variant, fitEffects), Set.of(), false,
                 hullSpec.getArmorRating(), hullSpec.isPhase(), ShipSystemCharges.limited(hullSpec), ShipFacts.onlyBuiltInWings(hullSpec), false,
-                ShipProfile.automated(variant));
+                ShipProfile.automated(variant), ShipProfile.scriptedHull(hullSpec));
     }
 
     private static List<SkillTypeEffect> fitEffects(ShipSkillData shipData, HullSize hullSize) {
