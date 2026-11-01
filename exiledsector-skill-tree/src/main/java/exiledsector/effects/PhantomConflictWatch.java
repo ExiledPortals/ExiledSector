@@ -36,10 +36,62 @@ public final class PhantomConflictWatch {
     private static final Map<String, Revert> PENDING_REVERTS = new LinkedHashMap<>();
     private static volatile boolean revertsPending;
 
-    record Revert(String memberId, String phantomHullModId) {
+    sealed interface Revert permits LearnedRevert, DeclaredRevert {
 
-        String key() {
+        String memberId();
+
+        String key();
+
+        LearnedPhantomConflicts.Conflict conflictOn(ShipVariantAPI variant, ShipSkillData data);
+
+        List<SkillNode> providers(ShipSkillData data);
+    }
+
+    record LearnedRevert(String memberId, String phantomHullModId) implements Revert {
+
+        public String key() {
             return memberId + "|" + phantomHullModId;
+        }
+
+        public LearnedPhantomConflicts.Conflict conflictOn(ShipVariantAPI variant, ShipSkillData data) {
+            return PhantomConflictWatch.conflictOn(variant, phantomHullModId);
+        }
+
+        public List<SkillNode> providers(ShipSkillData data) {
+            List<SkillNode> providers = new ArrayList<>();
+            for (AllocatedNode allocated : AllocatedNode.of(data)) {
+                if (allocated.effectiveType().getPhantomHullModIds().contains(phantomHullModId)) {
+                    providers.add(allocated.node());
+                }
+            }
+            return providers;
+        }
+    }
+
+    record DeclaredRevert(String memberId, String nodeId) implements Revert {
+
+        public String key() {
+            return memberId + "|node:" + nodeId;
+        }
+
+        public LearnedPhantomConflicts.Conflict conflictOn(ShipVariantAPI variant, ShipSkillData data) {
+            AllocatedNode allocated = allocatedNode(data);
+            String hullModId = allocated == null ? null : fixedConflict(allocated, variant);
+            return hullModId == null ? null : new LearnedPhantomConflicts.Conflict(hullModId);
+        }
+
+        public List<SkillNode> providers(ShipSkillData data) {
+            AllocatedNode allocated = allocatedNode(data);
+            return allocated == null ? List.of() : List.of(allocated.node());
+        }
+
+        private AllocatedNode allocatedNode(ShipSkillData data) {
+            for (AllocatedNode allocated : AllocatedNode.of(data)) {
+                if (allocated.node().getId().equals(nodeId)) {
+                    return allocated;
+                }
+            }
+            return null;
         }
     }
 
@@ -72,9 +124,30 @@ public final class PhantomConflictWatch {
         }
         for (String phantomHullModId : wantedPhantomHullModIds) {
             if (!placeable.contains(phantomHullModId)) {
-                queueRevert(new Revert(member.getId(), phantomHullModId));
+                queueRevert(new LearnedRevert(member.getId(), phantomHullModId));
             }
         }
+    }
+
+    static void queueRevertsForFixedConflicts(FleetMemberAPI member, ShipVariantAPI variant, List<AllocatedNode> allocatedNodes,
+                                              boolean playerTree) {
+        if (!playerTree || member == null || variant == null) {
+            return;
+        }
+        for (AllocatedNode allocated : allocatedNodes) {
+            if (fixedConflict(allocated, variant) != null) {
+                queueRevert(new DeclaredRevert(member.getId(), allocated.node().getId()));
+            }
+        }
+    }
+
+    private static String fixedConflict(AllocatedNode allocated, ShipVariantAPI variant) {
+        for (String hullModId : allocated.exclusiveHullModIds()) {
+            if (PlayerShipFacts.hasFixedHullMod(variant, hullModId)) {
+                return hullModId;
+            }
+        }
+        return null;
     }
 
     static void inspect(FleetMemberAPI member, ShipVariantAPI variant, Set<String> wantedPhantomHullModIds, boolean playerTree) {
@@ -113,7 +186,7 @@ public final class PhantomConflictWatch {
 
     private static void queueIfPlayer(FleetMemberAPI member, String phantomHullModId, boolean playerTree) {
         if (playerTree && member != null) {
-            queueRevert(new Revert(member.getId(), phantomHullModId));
+            queueRevert(new LearnedRevert(member.getId(), phantomHullModId));
         }
     }
 
@@ -152,16 +225,11 @@ public final class PhantomConflictWatch {
         if (member == null || data == null || member.getVariant() == null) {
             return false;
         }
-        LearnedPhantomConflicts.Conflict conflict = conflictOn(member.getVariant(), revert.phantomHullModId());
+        LearnedPhantomConflicts.Conflict conflict = revert.conflictOn(member.getVariant(), data);
         if (conflict == null) {
             return false;
         }
-        List<SkillNode> providers = new ArrayList<>();
-        for (AllocatedNode allocated : AllocatedNode.of(data)) {
-            if (allocated.effectiveType().getPhantomHullModIds().contains(revert.phantomHullModId())) {
-                providers.add(allocated.node());
-            }
-        }
+        List<SkillNode> providers = revert.providers(data);
         if (providers.isEmpty()) {
             return false;
         }
