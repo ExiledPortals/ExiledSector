@@ -38,7 +38,8 @@ public abstract class FullScreenRefitButton extends BaseRefitButton {
 
     @Override
     public void initPanel(CustomPanelAPI backgroundPanel, FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
-        if (screenClass().isInstance(backgroundPanel.getPlugin())) {
+        Class<? extends CustomUIPanelPlugin> openScreenClass = screenClass();
+        if (openScreenClass == null || openScreenClass.isInstance(backgroundPanel.getPlugin())) {
             return;
         }
         RefitPanelLauncher.Background screen = createScreen(member, variant);

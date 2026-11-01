@@ -103,7 +103,7 @@ public final class RelayChain {
 
     public static void closed(SectorAPI sector, ChartRun run) {
         AtlasRunNode node = run.atlasNode();
-        if (!RelayStates.markSettled(run)) {
+        if (node == null || !RelayStates.markSettled(run)) {
             return;
         }
         settle(AtlasRuntime.generator(sector), AtlasState.get(sector), AtlasCell.unpack(node.cell()), run.isObjectiveComplete(),

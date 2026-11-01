@@ -16,8 +16,8 @@ final class WorkbenchTile extends BaseCustomUIPanelPlugin {
     record Style(float onGlowAlpha, float onBorderWidth, boolean scrollClearsHover) {
     }
 
-    static final Style TOGGLE = new Style(0.6f, 1.5f, false);
-    static final Style SELECTION = new Style(0.7f, 2.5f, true);
+    static final Style TOGGLE_STYLE = new Style(0.6f, 1.5f, false);
+    static final Style SELECTION_STYLE = new Style(0.7f, 2.5f, true);
     private static final BooleanSupplier ALWAYS = () -> true;
     private static final BooleanSupplier NEVER = () -> false;
     private static final float BORDER_WIDTH = 1.5f;
@@ -47,11 +47,11 @@ final class WorkbenchTile extends BaseCustomUIPanelPlugin {
     }
 
     static WorkbenchTile usable(List<String> iconPaths, CargoIconLook iconLook, BooleanSupplier available, TileInput.Handler tileHandler) {
-        return new WorkbenchTile(iconPaths, unframed(iconLook), available, NEVER, TOGGLE, tileHandler);
+        return new WorkbenchTile(iconPaths, unframed(iconLook), available, NEVER, TOGGLE_STYLE, tileHandler);
     }
 
     static WorkbenchTile toggle(List<String> iconPaths, CargoIconLook iconLook, BooleanSupplier toggledOn, TileInput.Handler tileHandler) {
-        return new WorkbenchTile(iconPaths, unframed(iconLook), toggledOn, toggledOn, TOGGLE, tileHandler);
+        return new WorkbenchTile(iconPaths, unframed(iconLook), toggledOn, toggledOn, TOGGLE_STYLE, tileHandler);
     }
 
     private static CargoIconLook unframed(CargoIconLook iconLook) {
@@ -59,7 +59,7 @@ final class WorkbenchTile extends BaseCustomUIPanelPlugin {
     }
 
     static WorkbenchTile selectable(String iconPath, CargoIconLook iconLook, BooleanSupplier selected, TileInput.Handler tileHandler) {
-        return new WorkbenchTile(List.of(iconPath), iconLook, ALWAYS, selected, SELECTION, tileHandler);
+        return new WorkbenchTile(List.of(iconPath), iconLook, ALWAYS, selected, SELECTION_STYLE, tileHandler);
     }
 
     @Override

@@ -135,11 +135,6 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
     }
 
     @Override
-    protected String terrainId() {
-        return SpatialBreach.TERRAIN_ID;
-    }
-
-    @Override
     protected String nameKey() {
         return "chart.breach.name";
     }

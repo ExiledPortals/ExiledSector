@@ -12,6 +12,7 @@ import exiledsector.ui.util.GLDraw;
 
 import java.awt.Color;
 import java.util.List;
+import java.util.Objects;
 
 public final class ItemCell extends BaseCustomUIPanelPlugin {
 
@@ -65,7 +66,7 @@ public final class ItemCell extends BaseCustomUIPanelPlugin {
     private PositionAPI cellPosition;
 
     public ItemCell(Item item, Look look, Listener cellListener) {
-        this.item = item;
+        this.item = Objects.requireNonNull(item, "item");
         this.look = look;
         this.cellListener = cellListener;
         CargoIconLook cargoLook = CargoIconLooks.forItem(item);

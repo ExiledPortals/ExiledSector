@@ -121,11 +121,6 @@ public class StormFrontTerrainPlugin extends ChartAnomalyTerrain implements Slow
     }
 
     @Override
-    protected String terrainId() {
-        return StormFront.TERRAIN_ID;
-    }
-
-    @Override
     protected String nameKey() {
         return "chart.storm.name";
     }

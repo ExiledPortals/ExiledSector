@@ -246,15 +246,20 @@ public final class ChartAnomalies {
     }
 
     public static void runCompleted(SectorAPI sector, ChartRun run) {
-        for (AtlasRule anomaly : among(run.atlasNode().anomalyIds(), AtlasRule.class)) {
+        for (AtlasRule anomaly : atlasRulesOf(run)) {
             runSafely(anomaly, "run completion", () -> anomaly.runCompleted(sector, run));
         }
     }
 
     public static void runClosed(SectorAPI sector, ChartRun run) {
-        for (AtlasRule anomaly : among(run.atlasNode().anomalyIds(), AtlasRule.class)) {
+        for (AtlasRule anomaly : atlasRulesOf(run)) {
             runSafely(anomaly, "run close", () -> anomaly.runClosed(sector, run));
         }
+    }
+
+    private static List<AtlasRule> atlasRulesOf(ChartRun run) {
+        AtlasRunNode node = run.atlasNode();
+        return node == null ? List.of() : among(node.anomalyIds(), AtlasRule.class);
     }
 
     public static void clearFrom(CampaignFleetAPI fleet) {

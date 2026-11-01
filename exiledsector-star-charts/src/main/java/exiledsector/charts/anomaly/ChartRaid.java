@@ -88,7 +88,7 @@ public class ChartRaid {
     static final float LOSS_VARIANCE_SHARE = 0.25f;
     static final double NORMAL_SPREAD = 0.2d;
     static final float PERCENT = 100f;
-    static final float DIFFICULTY = 60f;
+    static final float BASE_DIFFICULTY = 60f;
     static final float DIFFICULTY_PER_TIER = 30f;
     static final int LOW_DANGER_MAX_TIER = 5;
     static final int MEDIUM_DANGER_MAX_TIER = 10;
@@ -123,7 +123,7 @@ public class ChartRaid {
     }
 
     public static float difficulty(int tier) {
-        return DIFFICULTY + DIFFICULTY_PER_TIER * (ChartTiers.clamp(tier) - 1);
+        return BASE_DIFFICULTY + DIFFICULTY_PER_TIER * (ChartTiers.clamp(tier) - 1);
     }
 
     public static RaidDangerLevel danger(int tier) {

@@ -9,8 +9,6 @@ public abstract class ChartAnomalyTerrain extends BaseTerrain {
 
     protected static final float TOOLTIP_PAD = 10f;
 
-    protected abstract String terrainId();
-
     protected abstract String nameKey();
 
     protected abstract void tooltipLines(TooltipMakerAPI tooltip);
@@ -37,7 +35,7 @@ public abstract class ChartAnomalyTerrain extends BaseTerrain {
 
     @Override
     public String getEffectCategory() {
-        return terrainId();
+        return getTerrainId();
     }
 
     @Override

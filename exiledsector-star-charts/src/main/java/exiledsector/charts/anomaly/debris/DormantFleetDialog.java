@@ -80,6 +80,10 @@ public class DormantFleetDialog extends AnomalyDialog {
     @Override
     public void optionSelected(String optionText, Object optionData) {
         CampaignFleetAPI playerFleet = PlayerFleet.orNull();
+        if (playerFleet == null) {
+            dialog().dismiss();
+            return;
+        }
         Options choices = options(hasReadyShips(playerFleet), kernelsHeld(playerFleet));
         if (ENGAGE_OPTION.equals(optionData) && choices.canEngage()) {
             engage(false, playerFleet);

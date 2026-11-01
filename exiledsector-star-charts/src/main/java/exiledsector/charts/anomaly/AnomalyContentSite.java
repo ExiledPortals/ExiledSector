@@ -272,17 +272,16 @@ public final class AnomalyContentSite {
     }
 
     public SectorEntityToken addEntity(String entityId, String name, String entityType, String entityFactionId, ChartSites.Orbit orbit) {
-        if (orbit == null) {
-            return null;
-        }
-        SectorEntityToken entity = track(system.addCustomEntity(entityId, name, entityType, entityFactionId));
+        SectorEntityToken entity = system.addCustomEntity(entityId, name, entityType, entityFactionId);
+        placed.add(entity);
         entity.setCircularOrbitPointingDown(orbit.focus(), orbit.angle(), orbit.radius(), orbit.days());
         ChartContentGenerator.tagContent(entity, runId);
         return entity;
     }
 
     public SectorEntityToken addTerrain(String terrainId, Object params, Vector2f at, String... tags) {
-        SectorEntityToken terrain = track(system.addTerrain(terrainId, params));
+        SectorEntityToken terrain = system.addTerrain(terrainId, params);
+        placed.add(terrain);
         terrain.setFixedLocation(at.x, at.y);
         for (String tag : tags) {
             terrain.addTag(tag);
@@ -292,7 +291,7 @@ public final class AnomalyContentSite {
 
     public CampaignFleetAPI addFleet(CampaignFleetAPI fleet, Vector2f at) {
         system.addEntity(fleet);
-        track(fleet);
+        placed.add(fleet);
         fleet.setLocation(at.x, at.y);
         return fleet;
     }

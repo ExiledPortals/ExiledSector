@@ -107,11 +107,6 @@ public class AnomalousDebrisTerrainPlugin extends ChartAnomalyTerrain {
     }
 
     @Override
-    protected String terrainId() {
-        return AnomalousDebris.TERRAIN_ID;
-    }
-
-    @Override
     protected String nameKey() {
         return "chart.debris.name";
     }
