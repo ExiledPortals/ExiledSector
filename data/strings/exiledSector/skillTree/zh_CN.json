@@ -669,6 +669,7 @@
     "skillType.shield_raise_rate.name": "护盾展开速度",
     "skillType.shield_turn_rate.name": "护盾转向速度",
     "skillType.shield_turn_raise_rate_optional.name": "护盾展开速度或护盾转向速度",
+    "skillType.ballistic_or_energy_damage_optional.name": "实弹或能量武器伤害",
     "skillType.ballistic_and_energy_weapon_range.name": "弹道与能量武器射程",
     "skillType.ballistic_and_energy_weapon_range_while_escorting.name": "护航时弹道与能量武器射程",
     "skillType.top_speed_while_escorting.name": "护航时最高速度",

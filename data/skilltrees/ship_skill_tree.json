@@ -7423,7 +7423,7 @@
 				"tania_small_flux_optional_1",
 				"tania_weapon_fire_rate_2",
 				"ballistic_projectile_speed_7",
-				"ballistic_damage_9"
+				"tania_weapon_damage_optional_2"
 			],
 			"x": -650,
 			"y": 18800,
@@ -7437,7 +7437,7 @@
 			"connectedTo": [
 				"tania_weapon_fire_rate_1",
 				"tania_fafnir_breeches_1",
-				"ballistic_damage_8"
+				"tania_weapon_damage_optional_1"
 			],
 			"x": -650,
 			"y": 19150,
@@ -7453,6 +7453,7 @@
 			],
 			"x": -650,
 			"y": 19500,
+			"ringBeltColor": "#d27835",
 			"tags": [
 				"tania",
 				"gate_last_strive_completed"
@@ -7536,8 +7537,8 @@
 			]
 		},
 		{
-			"id": "ballistic_damage_8",
-			"type": "ballistic_damage",
+			"id": "tania_weapon_damage_optional_1",
+			"type": "ballistic_or_energy_damage_optional",
 			"connectedTo": [
 				"tania_weapon_fire_rate_2"
 			],
@@ -7561,8 +7562,8 @@
 			]
 		},
 		{
-			"id": "ballistic_damage_9",
-			"type": "ballistic_damage",
+			"id": "tania_weapon_damage_optional_2",
+			"type": "ballistic_or_energy_damage_optional",
 			"connectedTo": [
 				"tania_weapon_fire_rate_1"
 			],

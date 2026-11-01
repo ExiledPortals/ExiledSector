@@ -3110,6 +3110,19 @@
 			]
 		},
 		{
+			"id": "ballistic_or_energy_damage_optional",
+			"name": "Ballistic or Energy Weapon Damage",
+			"icon": "graphics/icons/ballistic_damage.png",
+			"optionalOptions": [
+				"ballistic_damage",
+				"non_beam_energy_damage"
+			],
+			"tags": [
+				"ballistic",
+				"energy"
+			]
+		},
+		{
 			"id": "ballistic_and_energy_weapon_range",
 			"name": "Ballistic and Energy Weapon Range",
 			"icon": "graphics/icons/ballistic_and_energy_weapon_range.png",
@@ -4873,7 +4886,7 @@
 			"id": "tania_fafnir_breeches",
 			"name": "Dual-Feed Mounts",
 			"icon": "graphics/icons/tania_fafnir_breeches.png",
-			"tier": "NOTABLE",
+			"tier": "KEYSTONE",
 			"effects": [
 				{
 					"effect": "BALLISTIC_SLOTS_HYBRID"
