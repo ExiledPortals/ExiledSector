@@ -1,5 +1,7 @@
 package exiledsector.ui.hyperspace;
 
+import exiledsector.skills.decoration.Decorations;
+import exiledsector.skills.decoration.ShroudedMaw;
 import exiledsector.skills.decoration.Star;
 import exiledsector.skills.decoration.StaticImage;
 import exiledsector.skills.decoration.ThreatUnit;
@@ -17,30 +19,37 @@ public record HyperspaceAnchor(String id, String region, float x, float y, float
 
     private static final float NEBULA_CORE_FRACTION = 0.25f;
 
-    public static List<HyperspaceAnchor> collect(List<Star> stars, List<ThreatUnit> threatUnits, List<StaticImage> images) {
+    public static List<HyperspaceAnchor> collect(Decorations decorations) {
         List<HyperspaceAnchor> anchors = new ArrayList<>();
         Set<String> regionsWithStars = new HashSet<>();
-        for (Star star : stars) {
+        for (Star star : decorations.stars()) {
             String region = star.getRegion();
             if (region != null) {
                 anchors.add(of(star, region, star.getRadius(), true));
                 regionsWithStars.add(region);
             }
         }
-        for (ThreatUnit unit : threatUnits) {
-            String region = unit.getRegion();
-            if (region != null && regionsWithStars.add(region)) {
-                anchors.add(of(unit, region, unit.getLength() / 2f, false));
-            }
+        for (ThreatUnit unit : decorations.threatUnits()) {
+            addUnit(anchors, regionsWithStars, unit, unit.getLength() / 2f);
+        }
+        for (ShroudedMaw maw : decorations.shroudedMaws()) {
+            addUnit(anchors, regionsWithStars, maw, maw.getLength() / 2f);
         }
         Set<String> regionsWithNebulae = new HashSet<>();
-        for (StaticImage image : images) {
+        for (StaticImage image : decorations.images()) {
             String region = image.getRegion();
             if (region != null && !regionsWithStars.contains(region) && regionsWithNebulae.add(region)) {
                 anchors.add(of(image, region, Math.min(image.getWidth(), image.getHeight()) * NEBULA_CORE_FRACTION, false));
             }
         }
         return anchors;
+    }
+
+    private static void addUnit(List<HyperspaceAnchor> anchors, Set<String> regionsWithStars, SkillTreeObject unit, float radius) {
+        String region = unit.getRegion();
+        if (region != null && regionsWithStars.add(region)) {
+            anchors.add(of(unit, region, radius, false));
+        }
     }
 
     public static <N> Set<String> lockedRegions(Collection<N> nodes, Function<N, String> regionOf, Predicate<N> hidden) {

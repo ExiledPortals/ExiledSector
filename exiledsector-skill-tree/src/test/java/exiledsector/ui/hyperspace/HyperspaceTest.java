@@ -4,6 +4,9 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTreeTopology;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.decoration.Decoration;
+import exiledsector.skills.decoration.Decorations;
+import exiledsector.skills.decoration.ShroudedMaw;
 import exiledsector.skills.decoration.Star;
 import exiledsector.skills.decoration.StaticImage;
 import exiledsector.skills.decoration.ThreatUnit;
@@ -28,11 +31,13 @@ class HyperspaceTest {
         return new StaticImage(id, 3000f, 7000f, new StaticImage.Shape(3400f, 2000f, "a.png", new Rotation(0f, 0f)), List.of(region));
     }
 
+    private static List<HyperspaceAnchor> anchorsOf(Decoration... decorations) {
+        return HyperspaceAnchor.collect(new Decorations(List.of(decorations)));
+    }
+
     @Test
     void everyRegionStarIsAnAnchorAndUntaggedStarsAreNot() {
-        List<HyperspaceAnchor> anchors = HyperspaceAnchor.collect(
-                List.of(star("sun", 0f, 0f, "core"), star("stray", 5f, 5f, null), star("dictat", -6000f, -4000f, "sindrian_dictat")),
-                List.of(), List.of());
+        List<HyperspaceAnchor> anchors = anchorsOf(star("sun", 0f, 0f, "core"), star("stray", 5f, 5f, null), star("dictat", -6000f, -4000f, "sindrian_dictat"));
 
         assertEquals(List.of("sun", "dictat"), anchors.stream().map(HyperspaceAnchor::id).toList());
         assertEquals("sindrian_dictat", anchors.get(1).region());
@@ -40,9 +45,8 @@ class HyperspaceTest {
 
     @Test
     void aRegionWithoutAStarIsAnchoredOnItsFirstImage() {
-        List<HyperspaceAnchor> anchors = HyperspaceAnchor.collect(
-                List.of(star("sun", 0f, 0f, "core")), List.of(),
-                List.of(image("cloud", "core"), image("luddic_nebula", "luddic"), image("luddic_wisp", "luddic")));
+        List<HyperspaceAnchor> anchors = anchorsOf(star("sun", 0f, 0f, "core"), image("cloud", "core"), image("luddic_nebula", "luddic"),
+                image("luddic_wisp", "luddic"));
 
         assertEquals(List.of("sun", "luddic_nebula"), anchors.stream().map(HyperspaceAnchor::id).toList());
         assertEquals(500f, anchors.get(1).radius());
@@ -50,14 +54,21 @@ class HyperspaceTest {
 
     @Test
     void aStarlessRegionIsAnchoredOnItsThreatUnitBeforeAnyImage() {
-        List<HyperspaceAnchor> anchors = HyperspaceAnchor.collect(
-                List.of(star("sun", 0f, 0f, "core")),
-                List.of(new ThreatUnit("fabricator", 100f, 200f, ThreatUnit.FABRICATOR, 600f, 0f, List.of("threat"))),
-                List.of(image("threat_cloud", "threat")));
+        List<HyperspaceAnchor> anchors = anchorsOf(star("sun", 0f, 0f, "core"),
+                new ThreatUnit("fabricator", 100f, 200f, ThreatUnit.FABRICATOR, 600f, 0f, List.of("threat")), image("threat_cloud", "threat"));
 
         assertEquals(List.of("sun", "fabricator"), anchors.stream().map(HyperspaceAnchor::id).toList());
         assertEquals(300f, anchors.get(1).radius());
         assertFalse(anchors.get(1).isStar());
+    }
+
+    @Test
+    void aStarlessRegionIsAnchoredOnItsShroudedMawBeforeAnyImage() {
+        List<HyperspaceAnchor> anchors = anchorsOf(image("shroud_cloud", "shrouded"), new ShroudedMaw("maw", 100f, 200f, 620f, 0f, List.of("shrouded")));
+
+        assertEquals(List.of("maw"), anchors.stream().map(HyperspaceAnchor::id).toList());
+        assertEquals(310f, anchors.get(0).radius());
+        assertFalse(anchors.get(0).isStar());
     }
 
     @Test

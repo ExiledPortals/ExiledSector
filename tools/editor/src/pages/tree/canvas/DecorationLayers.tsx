@@ -5,6 +5,8 @@ import {
   decorationHandles,
   DEFAULT_STAR_COLOR,
   serpentPathPoint,
+  SHROUDED_MAW_HEIGHT_PER_LENGTH,
+  SHROUDED_MAW_SPRITE_PATH,
   threatUnitSprite,
   type Decoration,
   type DecorationKind,
@@ -72,6 +74,20 @@ function ThreatUnitShape({ decoration: unit, selected }: ShapeProps<'threatUnit'
   );
 }
 
+function ShroudedMawShape({ decoration: maw, selected }: ShapeProps<'shroudedMaw'>) {
+  const height = maw.length * SHROUDED_MAW_HEIGHT_PER_LENGTH;
+  const transform = maw.rotation ? `rotate(${maw.rotation} ${maw.x} ${maw.y})` : undefined;
+  return (
+    <g transform={transform}>
+      <image href={fileUrl(SHROUDED_MAW_SPRITE_PATH)} x={maw.x - maw.length / 2} y={maw.y - height / 2} width={maw.length} height={height} preserveAspectRatio="none" />
+      <ellipse cx={maw.x} cy={maw.y} rx={maw.length / 2} ry={height / 2} className={outlineClass(selected)} />
+      <text x={maw.x} y={maw.y + height / 2 + LABEL_GAP} textAnchor="middle" className={classes.decorationLabel}>
+        {DECORATION_KINDS.shroudedMaw.label}
+      </text>
+    </g>
+  );
+}
+
 function SerpentShape({ decoration: serpent, selected }: ShapeProps<'serpent'>) {
   const points = useMemo(
     () =>
@@ -104,6 +120,7 @@ const SHAPES: { [TKind in DecorationKind]: (props: ShapeProps<TKind>) => ReactNo
   ringBelt: RingBeltShape,
   threatUnit: ThreatUnitShape,
   serpent: SerpentShape,
+  shroudedMaw: ShroudedMawShape,
 };
 
 function depthRank(decoration: Decoration): number {
@@ -117,6 +134,7 @@ function depthRank(decoration: Decoration): number {
     case 'serpent':
       return 3;
     case 'threatUnit':
+    case 'shroudedMaw':
       return 5;
   }
 }

@@ -176,6 +176,15 @@ function ThreatUnitFields({ decoration: unit, edit }: FieldsProps<'threatUnit'>)
   );
 }
 
+function ShroudedMawFields({ decoration: maw, edit }: FieldsProps<'shroudedMaw'>) {
+  return (
+    <Group grow gap={6}>
+      <CommitNumberInput size="xs" label="Length" value={maw.length} onCommit={(value) => edit((target) => void (target.length = sizeOrMinimum(value)))} />
+      <CommitNumberInput size="xs" label="Rotation (deg)" value={maw.rotation || 0} onCommit={(value) => edit((target) => void (target.rotation = degreesOrZero(value)))} />
+    </Group>
+  );
+}
+
 function SerpentFields({ decoration: serpent, edit }: FieldsProps<'serpent'>) {
   return (
     <>
@@ -220,6 +229,7 @@ const FIELDS: { [TKind in DecorationKind]: (props: FieldsProps<TKind>) => ReactN
   ringBelt: RingBeltFields,
   threatUnit: ThreatUnitFields,
   serpent: SerpentFields,
+  shroudedMaw: ShroudedMawFields,
 };
 
 function editDecoration(decorationId: string, change: (decoration: Decoration) => void): void {

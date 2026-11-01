@@ -1,6 +1,6 @@
 import { angleDegrees, normalizeDegrees, rotateAroundOrigin, type Point } from './geometry.ts';
 
-export type DecorationKind = 'star' | 'image' | 'ringBelt' | 'threatUnit' | 'serpent';
+export type DecorationKind = 'star' | 'image' | 'ringBelt' | 'threatUnit' | 'serpent' | 'shroudedMaw';
 
 interface DecorationBase {
   id: string;
@@ -57,7 +57,13 @@ export interface SerpentDecoration extends DecorationBase {
   wobblePhase: number;
 }
 
-export type Decoration = StarDecoration | ImageDecoration | RingBeltDecoration | ThreatUnitDecoration | SerpentDecoration;
+export interface ShroudedMawDecoration extends DecorationBase {
+  kind: 'shroudedMaw';
+  length: number;
+  rotation: number;
+}
+
+export type Decoration = StarDecoration | ImageDecoration | RingBeltDecoration | ThreatUnitDecoration | SerpentDecoration | ShroudedMawDecoration;
 
 export type DecorationOfKind<TKind extends DecorationKind> = Extract<Decoration, { kind: TKind }>;
 
@@ -88,6 +94,9 @@ export interface DecorationKindSpec<TKind extends DecorationKind> {
 
 export const DEFAULT_STAR_COLOR = '#fff2c0';
 export const DEFAULT_THREAT_UNIT_LENGTH = 600;
+export const DEFAULT_SHROUDED_MAW_LENGTH = 620;
+export const SHROUDED_MAW_SPRITE_PATH = 'graphics/ships/shroud/maw_base.png';
+export const SHROUDED_MAW_HEIGHT_PER_LENGTH = 256 / 384;
 export const MIN_DECORATION_SIZE = 20;
 const ROTATE_HANDLE_GAP = 24;
 
@@ -385,15 +394,48 @@ const SERPENT: DecorationKindSpec<'serpent'> = {
   },
 };
 
+const SHROUDED_MAW: DecorationKindSpec<'shroudedMaw'> = {
+  kind: 'shroudedMaw',
+  label: 'Shrouded Maw',
+  idPrefix: 'shrouded_maw',
+  create: (id, at, context) => ({
+    kind: 'shroudedMaw',
+    id,
+    x: at.x,
+    y: at.y,
+    length: DEFAULT_SHROUDED_MAW_LENGTH,
+    rotation: 0,
+    tags: context.region ? [context.region] : undefined,
+  }),
+  parse: (json) => ({
+    length: numberOr(json.length, DEFAULT_SHROUDED_MAW_LENGTH),
+    rotation: numberOr(json.rotation, 0),
+  }),
+  serialize: (maw) => {
+    const out: JsonRecord = { length: maw.length };
+    putIf(out, 'rotation', maw.rotation, Boolean(maw.rotation));
+    return out;
+  },
+  handles: (maw) => rotatedHandles(maw, (maw.length * SHROUDED_MAW_HEIGHT_PER_LENGTH) / 2, maw.rotation || 0, rotateAroundOrigin(maw.length / 2, 0, maw.rotation || 0)),
+  dragHandle: (maw, handle, world) => {
+    if (handle === 'rotate') {
+      maw.rotation = rotationTowards(maw, world);
+    } else {
+      maw.length = Math.max(MIN_DECORATION_SIZE, Math.round(distance(maw, world) * 2));
+    }
+  },
+};
+
 export const DECORATION_KINDS: { [TKind in DecorationKind]: DecorationKindSpec<TKind> } = {
   star: STAR,
   image: IMAGE,
   ringBelt: RING_BELT,
   threatUnit: THREAT_UNIT,
   serpent: SERPENT,
+  shroudedMaw: SHROUDED_MAW,
 };
 
-export const DECORATION_KIND_ORDER: DecorationKind[] = ['star', 'image', 'ringBelt', 'threatUnit', 'serpent'];
+export const DECORATION_KIND_ORDER: DecorationKind[] = ['star', 'image', 'ringBelt', 'threatUnit', 'serpent', 'shroudedMaw'];
 
 export function decorationSpec<TKind extends DecorationKind>(kind: TKind): DecorationKindSpec<TKind> {
   return DECORATION_KINDS[kind];

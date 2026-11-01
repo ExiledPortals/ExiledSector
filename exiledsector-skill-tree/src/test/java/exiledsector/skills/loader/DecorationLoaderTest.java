@@ -5,6 +5,7 @@ import exiledsector.skills.decoration.Decoration;
 import exiledsector.skills.decoration.DecorationKind;
 import exiledsector.skills.decoration.Decorations;
 import exiledsector.skills.decoration.RingBelt;
+import exiledsector.skills.decoration.ShroudedMaw;
 import exiledsector.skills.decoration.Star;
 import exiledsector.skills.decoration.StaticImage;
 import exiledsector.skills.decoration.ThreatUnit;
@@ -38,16 +39,32 @@ class DecorationLoaderTest {
                 + "{ \"id\": \"cloud\", " + IMAGE + " },"
                 + "{ \"kind\": \"ringBelt\", \"id\": \"belt\", \"x\": 0, \"y\": 0, \"innerRadius\": 10, \"outerRadius\": 20, \"ringArtPath\": \"a.png\" },"
                 + "{ \"kind\": \"threatUnit\", \"id\": \"hive\", \"x\": 0, \"y\": 0, \"unitType\": \"hive\", \"length\": 300 },"
-                + "{ \"kind\": \"serpent\", \"id\": \"worm\", \"x\": 0, \"y\": 0, \"orbitRadius\": 900, \"orbitSeconds\": 120 }");
+                + "{ \"kind\": \"serpent\", \"id\": \"worm\", \"x\": 0, \"y\": 0, \"orbitRadius\": 900, \"orbitSeconds\": 120 },"
+                + "{ \"kind\": \"shroudedMaw\", \"id\": \"maw\", \"x\": 0, \"y\": 0, \"length\": 620 }");
 
-        assertEquals(List.of("sun", "cloud", "belt", "hive", "worm"), decorations.all().stream().map(Decoration::getId).toList());
-        assertEquals(List.of(DecorationKind.STAR, DecorationKind.IMAGE, DecorationKind.RING_BELT, DecorationKind.THREAT_UNIT, DecorationKind.SERPENT),
+        assertEquals(List.of("sun", "cloud", "belt", "hive", "worm", "maw"), decorations.all().stream().map(Decoration::getId).toList());
+        assertEquals(List.of(DecorationKind.STAR, DecorationKind.IMAGE, DecorationKind.RING_BELT, DecorationKind.THREAT_UNIT, DecorationKind.SERPENT,
+                        DecorationKind.SHROUDED_MAW),
                 decorations.all().stream().map(Decoration::kind).toList());
         assertEquals(1, decorations.stars().size());
         assertEquals(1, decorations.images().size());
         assertEquals(1, decorations.ringBelts().size());
         assertEquals(1, decorations.threatUnits().size());
         assertEquals(1, decorations.serpents().size());
+        assertEquals(1, decorations.shroudedMaws().size());
+    }
+
+    @Test
+    void parsesAllFieldsOfAShroudedMaw() throws Exception {
+        ShroudedMaw maw = parse("{ \"kind\": \"shroudedMaw\", \"id\": \"maw\", \"x\": -300, \"y\": 200, \"length\": 620, \"rotation\": 30,"
+                + "\"tags\": [\"shrouded\"] }").shroudedMaws().get(0);
+
+        assertEquals("maw", maw.getId());
+        assertEquals(-300f, maw.getX());
+        assertEquals(200f, maw.getY());
+        assertEquals(620f, maw.getLength());
+        assertEquals(30f, maw.getRotation());
+        assertEquals("shrouded", maw.getRegion());
     }
 
     @Test

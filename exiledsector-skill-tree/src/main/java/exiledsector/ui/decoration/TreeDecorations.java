@@ -32,7 +32,8 @@ public final class TreeDecorations {
                 new SkillTreeStarRenderer(decorations.stars()),
                 new SkillTreeRingBeltRenderer(decorations.ringBelts()),
                 new AbyssSerpentRenderer(decorations.serpents()),
-                new ThreatUnitRenderer(decorations.threatUnits()));
+                new ThreatUnitRenderer(decorations.threatUnits()),
+                new ShroudedMawRenderer(decorations.shroudedMaws()));
     }
 
     public void advance(float amount) {

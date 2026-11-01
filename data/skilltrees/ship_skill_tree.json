@@ -11584,18 +11584,6 @@
 			]
 		},
 		{
-			"kind": "image",
-			"id": "shrouded_maw",
-			"x": -34386,
-			"y": 27832,
-			"width": 620,
-			"height": 458,
-			"imagePath": "graphics/ships/shroud/maw_flat.png",
-			"tags": [
-				"shrouded"
-			]
-		},
-		{
 			"kind": "ringBelt",
 			"id": "middle_ringbelt",
 			"x": 0,
@@ -11673,6 +11661,16 @@
 			"wobblePhase": 74.5,
 			"tags": [
 				"abyss"
+			]
+		},
+		{
+			"kind": "shroudedMaw",
+			"id": "shrouded_maw",
+			"x": -34386,
+			"y": 27832,
+			"length": 620,
+			"tags": [
+				"shrouded"
 			]
 		}
 	]

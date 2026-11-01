@@ -33,7 +33,7 @@ class HyperspaceDataTest {
                 ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(RealSkillData.TYPES_FILE)));
         nodes = SkillTreeLoader.parseNodes(root, types);
         Decorations decorations = DecorationLoader.parse(root, RealSkillData.TREE_FILE.toString());
-        anchors = HyperspaceAnchor.collect(decorations.stars(), decorations.threatUnits(), decorations.images());
+        anchors = HyperspaceAnchor.collect(decorations);
     }
 
     @Test

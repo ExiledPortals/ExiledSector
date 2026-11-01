@@ -96,6 +96,28 @@ class TexturedQuadBatchTest {
     }
 
     @Test
+    void aSheetCellDrawsOnlyThatCellOfTheTexture() {
+        try (TexturedQuadBatch quads = new TexturedQuadBatch().beginNormal(texture)) {
+            quads.cellAtCenter(2, 2, 3, 0f, 0f, 2f, 2f, 0f, Color.WHITE, 1f);
+        }
+
+        assertEquals("tex 0.25 0.125", calls.get(7));
+        assertEquals("tex 0.25 0.25", calls.get(9));
+        assertEquals("tex 0.5 0.25", calls.get(11));
+        assertEquals("tex 0.5 0.125", calls.get(13));
+    }
+
+    @Test
+    void aMeshVertexMapsSpriteFractionsOntoTheTexture() {
+        try (TexturedQuadBatch quads = new TexturedQuadBatch().beginNormal(texture)) {
+            quads.color(Color.WHITE, 0.5f);
+            quads.meshVertex(0.5f, 1f, 7f, 9f);
+        }
+
+        assertEquals(List.of("color 255 255 255 127", "tex 0.25 0.25", "vertex 7.0 9.0"), calls.subList(6, 9));
+    }
+
+    @Test
     void closingTwiceRestoresStateOnlyOnce() {
         TexturedQuadBatch quads = new TexturedQuadBatch().beginNormal(texture);
         quads.close();

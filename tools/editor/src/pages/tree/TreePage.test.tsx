@@ -202,7 +202,7 @@ describe('tree page', () => {
   it('draws every decoration from the tree file with a selectable centre handle', async () => {
     const { container } = await renderLoadedTree();
     const decorations = useTreeStore.getState().document.decorations;
-    expect(new Set(decorations.map((decoration) => decoration.kind))).toEqual(new Set(['star', 'image', 'ringBelt', 'threatUnit', 'serpent']));
+    expect(new Set(decorations.map((decoration) => decoration.kind))).toEqual(new Set(['star', 'image', 'ringBelt', 'threatUnit', 'serpent', 'shroudedMaw']));
     expect(container.querySelectorAll('[data-decoration-id]').length).toBe(decorations.length);
   });
 

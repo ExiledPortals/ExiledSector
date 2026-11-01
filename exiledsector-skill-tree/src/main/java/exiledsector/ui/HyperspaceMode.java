@@ -93,7 +93,7 @@ final class HyperspaceMode {
         Set<String> lockedRegions = HyperspaceAnchor.lockedRegions(SkillTree.getAllNodes().values(), SkillNode::getRegion, nodeHidden);
         hiddenStarIds = SkillTree.getDecorations().stars().stream().filter(star -> lockedRegions.contains(star.getRegion())).map(Star::getId)
                 .collect(Collectors.toUnmodifiableSet());
-        anchors = HyperspaceAnchor.collect(SkillTree.getDecorations().stars(), SkillTree.getDecorations().threatUnits(), SkillTree.getDecorations().images()).stream()
+        anchors = HyperspaceAnchor.collect(SkillTree.getDecorations()).stream()
                 .filter(anchor -> !lockedRegions.contains(anchor.region())).toList();
         if (anchors.isEmpty()) {
             return false;

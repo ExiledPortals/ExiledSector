@@ -76,9 +76,11 @@ describe('decoration serialisation', () => {
       { kind: 'threatUnit', tags: ['threat'], rotation: 90, length: 700, unitType: 'hive', y: 2, x: 1, id: 'threat_unit_1' },
       { kind: 'serpent', id: 'worm', x: 0, y: 0, orbitRadius: 1663, orbitSeconds: 190, clockwise: false, startAngle: 180, wobble: 0.15, wobbleWaves: 7, wobblePhase: 74.5, tags: ['abyss'] },
       { kind: 'ringBelt', id: 'belt', x: 0, y: 0, innerRadius: 2900, outerRadius: 3250, ringArtPath: 'graphics/planets/ring_band_dust.png', rotationSpeed: 0.6 },
+      { kind: 'shroudedMaw', tags: ['shrouded'], rotation: 15, length: 620, y: 6, x: 5, id: 'shrouded_maw' },
       { kind: 'star', id: 'star_1', x: 0, y: 0, radius: 400, starType: 'star_yellow' },
     ]);
-    expect(out.map((decoration) => decoration.kind)).toEqual(['star', 'ringBelt', 'threatUnit', 'serpent']);
+    expect(out.map((decoration) => decoration.kind)).toEqual(['star', 'ringBelt', 'threatUnit', 'serpent', 'shroudedMaw']);
+    expect(Object.keys(out[4])).toEqual(['kind', 'id', 'x', 'y', 'length', 'rotation', 'tags']);
     expect(Object.keys(out[2])).toEqual(['kind', 'id', 'x', 'y', 'unitType', 'length', 'rotation', 'tags']);
     expect(Object.keys(out[1])).toEqual(['kind', 'id', 'x', 'y', 'innerRadius', 'outerRadius', 'ringArtPath', 'rotationSpeed']);
     expect(Object.keys(out[3])).toEqual(['kind', 'id', 'x', 'y', 'orbitRadius', 'orbitSeconds', 'clockwise', 'startAngle', 'wobble', 'wobbleWaves', 'wobblePhase', 'tags']);

@@ -5,6 +5,7 @@ import exiledsector.skills.decoration.Decoration;
 import exiledsector.skills.decoration.DecorationKind;
 import exiledsector.skills.decoration.Decorations;
 import exiledsector.skills.decoration.RingBelt;
+import exiledsector.skills.decoration.ShroudedMaw;
 import exiledsector.skills.decoration.Star;
 import exiledsector.skills.decoration.StaticImage;
 import exiledsector.skills.decoration.ThreatUnit;
@@ -62,6 +63,7 @@ public final class DecorationLoader {
             case RING_BELT -> parseRingBelt(decorationJson);
             case THREAT_UNIT -> parseThreatUnit(decorationJson);
             case SERPENT -> parseSerpent(decorationJson);
+            case SHROUDED_MAW -> parseShroudedMaw(decorationJson);
         };
     }
 
@@ -128,5 +130,15 @@ public final class DecorationLoader {
                 new AbyssSerpent.Wobble((float) serpentJson.optDouble("wobble", 0.0), serpentJson.optInt("wobbleWaves", 0),
                         (float) serpentJson.optDouble("wobblePhase", 0.0)),
                 tags(serpentJson));
+    }
+
+    static ShroudedMaw parseShroudedMaw(JSONObject mawJson) throws JSONException {
+        return new ShroudedMaw(
+                mawJson.getString("id"),
+                (float) mawJson.getDouble("x"),
+                (float) mawJson.getDouble("y"),
+                (float) mawJson.getDouble("length"),
+                (float) mawJson.optDouble("rotation", 0.0),
+                tags(mawJson));
     }
 }
