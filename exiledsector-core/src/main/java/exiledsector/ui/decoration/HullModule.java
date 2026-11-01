@@ -1,17 +1,18 @@
 package exiledsector.ui.decoration;
 
 record HullModule(String spritePath, float spriteWidth, float spriteHeight, float centerX, float centerY, float forwardOffset, float leftOffset,
-                  float angleDeg, float sizeNum, boolean underParent) {
+                  float angleDeg, float sizeNum, boolean underParent, HullEngines engines) {
 
     static HullModule attached(String spritePath, float spriteWidth, float spriteHeight, float centerX, float centerY, float slotForward,
-                               float slotLeft, float slotAngleDeg, float anchorForward, float anchorLeft, float sizeNum, boolean underParent) {
+                               float slotLeft, float slotAngleDeg, float anchorForward, float anchorLeft, float sizeNum, boolean underParent,
+                               HullEngines engines) {
         double slotAngleRad = Math.toRadians(slotAngleDeg);
         float slotCos = (float) Math.cos(slotAngleRad);
         float slotSin = (float) Math.sin(slotAngleRad);
         float forwardOffset = slotForward - HullFrame.rotatedX(anchorForward, anchorLeft, slotCos, slotSin);
         float leftOffset = slotLeft - HullFrame.rotatedY(anchorForward, anchorLeft, slotCos, slotSin);
         return new HullModule(spritePath, spriteWidth, spriteHeight, centerX, centerY, forwardOffset, leftOffset, slotAngleDeg, sizeNum,
-                underParent);
+                underParent, engines);
     }
 
     float screenX(float parentScreenX, float facingCos, float facingSin, float screenScale) {

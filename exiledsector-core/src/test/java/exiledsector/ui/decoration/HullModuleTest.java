@@ -10,7 +10,8 @@ class HullModuleTest {
 
     @Test
     void aModuleWithoutAnAnchorSitsOnItsSlotAndTurnsByTheSlotAngle() {
-        HullModule module = HullModule.attached("graphics/ships/module.png", 64f, 32f, 32f, 16f, 50f, 20f, 90f, 0f, 0f, 2f, false);
+        HullModule module = HullModule.attached("graphics/ships/module.png", 64f, 32f, 32f, 16f, 50f, 20f, 90f, 0f, 0f,
+                2f, false, HullEngines.NONE);
 
         assertEquals(50f, module.forwardOffset(), TOLERANCE);
         assertEquals(20f, module.leftOffset(), TOLERANCE);
@@ -21,7 +22,8 @@ class HullModuleTest {
 
     @Test
     void theModuleAnchorIsTurnedByTheSlotAngleAndPulledBackFromTheSlot() {
-        HullModule module = HullModule.attached("graphics/ships/module.png", 64f, 32f, Float.NaN, Float.NaN, 50f, 0f, 90f, 10f, 0f, 2f, false);
+        HullModule module = HullModule.attached("graphics/ships/module.png", 64f, 32f, Float.NaN, Float.NaN, 50f, 0f, 90f, 10f, 0f,
+                2f, false, HullEngines.NONE);
 
         assertEquals(50f, module.forwardOffset(), TOLERANCE);
         assertEquals(-10f, module.leftOffset(), TOLERANCE);
@@ -29,7 +31,8 @@ class HullModuleTest {
 
     @Test
     void theModuleTurnsWithItsParentAroundTheParentCentre() {
-        HullModule module = HullModule.attached("graphics/ships/module.png", 64f, 32f, 32f, 16f, 50f, 0f, 90f, 10f, 0f, 2f, false);
+        HullModule module = HullModule.attached("graphics/ships/module.png", 64f, 32f, 32f, 16f, 50f, 0f, 90f, 10f, 0f,
+                2f, false, HullEngines.NONE);
         float facingCos = (float) Math.cos(Math.toRadians(90.0));
         float facingSin = (float) Math.sin(Math.toRadians(90.0));
 
@@ -47,7 +50,7 @@ class HullModuleTest {
         float anchorLeft = 5f;
         float parentFacingDeg = 135f;
         HullModule module = HullModule.attached("graphics/ships/module.png", 64f, 32f, 32f, 16f, slotForward, slotLeft, slotAngleDeg,
-                anchorForward, anchorLeft, 2f, false);
+                anchorForward, anchorLeft, 2f, false, HullEngines.NONE);
 
         double slotRad = Math.toRadians(slotAngleDeg);
         double anchorX = anchorForward * Math.cos(slotRad) - anchorLeft * Math.sin(slotRad);

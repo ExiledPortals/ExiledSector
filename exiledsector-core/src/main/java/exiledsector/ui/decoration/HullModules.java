@@ -9,6 +9,7 @@ import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.skilleffect.render.SpriteCache;
+import exiledsector.ui.util.TexturedQuadBatch;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -21,17 +22,19 @@ import java.util.Set;
 
 final class HullModules {
 
-    static final HullModules NONE = new HullModules(List.of(), List.of());
+    static final HullModules NONE = new HullModules(List.of(), List.of(), List.of());
     private static final Comparator<HullModule> LARGEST_FIRST = Comparator.comparingDouble(module -> -module.sizeNum());
     private static final Logger LOG = Logger.getLogger(HullModules.class);
     private static final Map<String, HullModules> MODULES_BY_HULL = new HashMap<>();
 
     private final List<HullModule> underParent;
     private final List<HullModule> overParent;
+    private final List<HullModule> withEngines;
 
-    private HullModules(List<HullModule> underParent, List<HullModule> overParent) {
+    private HullModules(List<HullModule> underParent, List<HullModule> overParent, List<HullModule> withEngines) {
         this.underParent = underParent;
         this.overParent = overParent;
+        this.withEngines = withEngines;
     }
 
     static HullModules of(List<HullModule> modules) {
@@ -45,7 +48,8 @@ final class HullModules {
         }
         under.sort(LARGEST_FIRST);
         over.sort(LARGEST_FIRST);
-        return new HullModules(List.copyOf(under), List.copyOf(over));
+        List<HullModule> withEngines = modules.stream().filter(module -> module.engines().hasEngines()).toList();
+        return new HullModules(List.copyOf(under), List.copyOf(over), withEngines);
     }
 
     static HullModules of(ShipHullSpecAPI hullSpec, SpriteCache spriteCache) {
@@ -87,7 +91,8 @@ final class HullModules {
         Set<ShipTypeHints> hints = moduleHull.getHints();
         boolean underParent = (hints != null && hints.contains(ShipTypeHints.UNDER_PARENT)) || sizeNum > parentSizeNum;
         return HullModule.attached(spritePath, texture.getWidth(), texture.getHeight(), visuals.centerX(), visuals.centerY(), slotLocation.x,
-                slotLocation.y, slot.getAngle(), anchor == null ? 0f : anchor.x, anchor == null ? 0f : anchor.y, sizeNum, underParent);
+                slotLocation.y, slot.getAngle(), anchor == null ? 0f : anchor.x, anchor == null ? 0f : anchor.y, sizeNum, underParent,
+                HullEngines.of(visuals));
     }
 
     private static ShipVariantAPI moduleVariant(ShipVariantAPI variant, String slotId, String variantId) {
@@ -143,6 +148,31 @@ final class HullModules {
             HullEngines.drawSprite(spriteCache, module.spritePath(), module.screenX(screenX, facingCos, facingSin, screenScale),
                     module.screenY(screenY, facingCos, facingSin, screenScale), module.spriteWidth() * screenScale,
                     module.spriteHeight() * screenScale, module.centerX(), module.centerY(), screenScale, module.facingDeg(facingDeg), alpha);
+        }
+    }
+
+    void addFlames(FlameBatch flames, float screenX, float screenY, float facingDeg, float screenScale, float detailScale, float lengthFactor,
+                   float alpha) {
+        if (withEngines.isEmpty()) return;
+        double facingRad = Math.toRadians(facingDeg);
+        float facingCos = (float) Math.cos(facingRad);
+        float facingSin = (float) Math.sin(facingRad);
+        for (HullModule module : withEngines) {
+            module.engines().addFlames(flames, module.screenX(screenX, facingCos, facingSin, screenScale),
+                    module.screenY(screenY, facingCos, facingSin, screenScale), Math.toRadians(module.facingDeg(facingDeg)), screenScale, detailScale,
+                    lengthFactor, alpha);
+        }
+    }
+
+    void addGlows(TexturedQuadBatch quads, float screenX, float screenY, float facingDeg, float screenScale, float glowFactor, float alpha) {
+        if (withEngines.isEmpty()) return;
+        double facingRad = Math.toRadians(facingDeg);
+        float facingCos = (float) Math.cos(facingRad);
+        float facingSin = (float) Math.sin(facingRad);
+        for (HullModule module : withEngines) {
+            module.engines().addGlows(quads, module.screenX(screenX, facingCos, facingSin, screenScale),
+                    module.screenY(screenY, facingCos, facingSin, screenScale), Math.toRadians(module.facingDeg(facingDeg)), screenScale, glowFactor,
+                    alpha);
         }
     }
 }
