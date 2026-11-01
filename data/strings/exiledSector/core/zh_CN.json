@@ -749,8 +749,8 @@
     "stat.accelerationWhilePhased": "相位状态下的加速度",
     "stat.phaseTimeFlowBonus": "相位斗篷时间流速加成",
     "stat.rangeFromWhichCombatObjectivesCanBeCaptured": "可占领战场目标的范围",
-    "stat.rateAtWhichFighterReplacementCapabilityDecaysFromLosses": "战机损失导致的补充能力衰减速度",
-    "stat.rateAtWhichFighterReplacementCapabilityRecovers": "战机补充能力的恢复速度",
+    "stat.rateAtWhichFighterReplacementRateDecreasesDueToFighterLosses": "战机补充率因战机损失而下降的速度",
+    "stat.rateAtWhichFighterReplacementRateRecovers": "战机补充率的恢复速度",
     "stat.rateOfCombatReadinessLossFromExtendedDeployment": "长时间部署导致的战备值损失速度",
     "stat.repairRatePerDay": "每日维修速度",
     "stat.sensorProfile": "传感器特征",
@@ -981,8 +981,6 @@
     "stat.ordnancePointCostOfLargeBallisticWeapons": "大型实弹武器的装配点消耗",
     "stat.ordnancePointCostOfSmallWeapons": "小型武器的装配点消耗",
 
-    "compat.waived": "Second-in-Command 技能“{skill}”可免除此惩罚。",
-    "compat.skill.reconfiguration": "Reconfiguration",
 
     "weapon.qualified": "{scope}{stat}",
     "weapon.scope.BALLISTIC": "实弹",

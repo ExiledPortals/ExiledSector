@@ -3,7 +3,6 @@ package exiledsector.skills.skilleffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import exiledsector.compat.SecondInCommandCompat;
 import exiledsector.i18n.StyledText;
-import exiledsector.i18n.Translation;
 
 public record WaivedPenalty(SkillEffect penalty, String waiverStatId) implements EffectBacking {
 
@@ -29,12 +28,7 @@ public record WaivedPenalty(SkillEffect penalty, String waiverStatId) implements
 
     @Override
     public StyledText description(SkillEffect effect, float magnitude) {
-        StyledText text = penalty.description(magnitude);
-        if (!SecondInCommandCompat.isModEnabled()) {
-            return text;
-        }
-        StyledText waived = Translation.msg("compat.waived").arg("skill", Translation.text("compat.skill.reconfiguration")).styled();
-        return Translation.msg("format.sentences").arg("a", text).arg("b", waived).styled();
+        return penalty.description(magnitude);
     }
 
     private boolean isWaived(MutableShipStatsAPI stats) {

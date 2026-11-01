@@ -368,8 +368,8 @@
     "stat.accelerationWhilePhased": "acceleration while phased",
     "stat.phaseTimeFlowBonus": "phase cloak time flow bonus",
     "stat.rangeFromWhichCombatObjectivesCanBeCaptured": "range from which combat objectives can be captured",
-    "stat.rateAtWhichFighterReplacementCapabilityDecaysFromLosses": "rate at which strikecraft replacement capability decays from losses",
-    "stat.rateAtWhichFighterReplacementCapabilityRecovers": "rate at which strikecraft replacement capability recovers",
+    "stat.rateAtWhichFighterReplacementRateDecreasesDueToFighterLosses": "rate at which the strikecraft replacement rate decreases due to strikecraft losses",
+    "stat.rateAtWhichFighterReplacementRateRecovers": "rate at which the strikecraft replacement rate recovers",
     "stat.rateOfCombatReadinessLossFromExtendedDeployment": "rate of combat readiness loss from extended deployment",
     "stat.repairRatePerDay": "repair rate per day",
     "stat.sensorProfile": "sensor profile",
@@ -537,8 +537,8 @@
 
     "effect.FIGHTER_BAYS_FLAT.warning": "Unallocating it returns any strikecraft wing in the bay it adds to your cargo.",
     "effect.CONVERTED_HANGAR_FIGHTER_BAYS_FLAT": "<good>+{value}</good> to number of strikecraft bays, plus any extra bays from Vast Hangar.",
-    "effect.FIGHTER_REPLACEMENT_RATE_MULT.slower": "<bad>{value}%</bad> slower strikecraft replacement rate decay and recovery.",
-    "effect.FIGHTER_REPLACEMENT_RATE_MULT.faster": "<good>{value}%</good> faster strikecraft replacement rate decay and recovery.",
+    "effect.FIGHTER_REPLACEMENT_RATE_MULT.slower": "The strikecraft replacement rate both decays and recovers <bad>{value}%</bad> more slowly.",
+    "effect.FIGHTER_REPLACEMENT_RATE_MULT.faster": "The strikecraft replacement rate both decays and recovers <good>{value}%</good> more quickly.",
     "fighter.launched": "{role} launched from this ship have",
     "fighter.role.ALL": "Strikecraft",
     "fighter.role.FIGHTER": "Fighters",
@@ -601,8 +601,6 @@
     "stat.ordnancePointCostOfLargeBallisticWeapons": "ordnance point cost of large ballistic weapons",
     "stat.ordnancePointCostOfSmallWeapons": "ordnance point cost of small weapons",
 
-    "compat.waived": "Waived by the Second-in-Command skill {skill}.",
-    "compat.skill.reconfiguration": "Reconfiguration",
 
     "weapon.qualified": "{scope} {stat}",
     "weapon.scope.BALLISTIC": "ballistic",

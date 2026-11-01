@@ -478,30 +478,30 @@ effect|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|-10.0	0	<good>+-10</good> to number of
 warning|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|-10.0	0	Unallocating it returns any strikecraft wing in the bay it adds to your cargo.
 effect|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|-12.5	0	<good>+-12.5</good> to number of strikecraft bays, plus any extra bays from Vast Hangar.
 warning|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|-12.5	0	Unallocating it returns any strikecraft wing in the bay it adds to your cargo.
-effect|CONVERTED_HANGAR_MIN_CREW_FLAT|1.0	1	<good>+1</good> to minimum crew required. Waived by the Second-in-Command skill Reconfiguration.
-effect|CONVERTED_HANGAR_MIN_CREW_FLAT|10.0	1	<good>+10</good> to minimum crew required. Waived by the Second-in-Command skill Reconfiguration.
-effect|CONVERTED_HANGAR_MIN_CREW_FLAT|12.5	1	<good>+12.5</good> to minimum crew required. Waived by the Second-in-Command skill Reconfiguration.
-effect|CONVERTED_HANGAR_MIN_CREW_FLAT|100.0	1	<good>+100</good> to minimum crew required. Waived by the Second-in-Command skill Reconfiguration.
-effect|CONVERTED_HANGAR_MIN_CREW_FLAT|-10.0	1	<bad>-10</bad> to minimum crew required. Waived by the Second-in-Command skill Reconfiguration.
-effect|CONVERTED_HANGAR_MIN_CREW_FLAT|-12.5	1	<bad>-12.5</bad> to minimum crew required. Waived by the Second-in-Command skill Reconfiguration.
-effect|CONVERTED_HANGAR_REFIT_TIME_MULT|1.0	1	<good>1%</good> more strikecraft refit time. Waived by the Second-in-Command skill Reconfiguration.
-effect|CONVERTED_HANGAR_REFIT_TIME_MULT|10.0	1	<good>10%</good> more strikecraft refit time. Waived by the Second-in-Command skill Reconfiguration.
-effect|CONVERTED_HANGAR_REFIT_TIME_MULT|12.5	1	<good>12.5%</good> more strikecraft refit time. Waived by the Second-in-Command skill Reconfiguration.
-effect|CONVERTED_HANGAR_REFIT_TIME_MULT|100.0	1	<good>100%</good> more strikecraft refit time. Waived by the Second-in-Command skill Reconfiguration.
-effect|CONVERTED_HANGAR_REFIT_TIME_MULT|-10.0	1	<bad>10%</bad> less strikecraft refit time. Waived by the Second-in-Command skill Reconfiguration.
-effect|CONVERTED_HANGAR_REFIT_TIME_MULT|-12.5	1	<bad>12.5%</bad> less strikecraft refit time. Waived by the Second-in-Command skill Reconfiguration.
-effect|CONVERTED_HANGAR_RELAUNCH_TIME_FLAT|1.0	1	<good>+1%</good> of base refit time to strikecraft relaunch time. Waived by the Second-in-Command skill Reconfiguration.
-effect|CONVERTED_HANGAR_RELAUNCH_TIME_FLAT|10.0	1	<good>+10%</good> of base refit time to strikecraft relaunch time. Waived by the Second-in-Command skill Reconfiguration.
-effect|CONVERTED_HANGAR_RELAUNCH_TIME_FLAT|12.5	1	<good>+12.5%</good> of base refit time to strikecraft relaunch time. Waived by the Second-in-Command skill Reconfiguration.
-effect|CONVERTED_HANGAR_RELAUNCH_TIME_FLAT|100.0	1	<good>+100%</good> of base refit time to strikecraft relaunch time. Waived by the Second-in-Command skill Reconfiguration.
-effect|CONVERTED_HANGAR_RELAUNCH_TIME_FLAT|-10.0	1	<bad>-10%</bad> of base refit time to strikecraft relaunch time. Waived by the Second-in-Command skill Reconfiguration.
-effect|CONVERTED_HANGAR_RELAUNCH_TIME_FLAT|-12.5	1	<bad>-12.5%</bad> of base refit time to strikecraft relaunch time. Waived by the Second-in-Command skill Reconfiguration.
-effect|CONVERTED_HANGAR_REPLACEMENT_RATE_MULT|1.0	0	<bad>1%</bad> slower strikecraft replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
-effect|CONVERTED_HANGAR_REPLACEMENT_RATE_MULT|10.0	0	<bad>10%</bad> slower strikecraft replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
-effect|CONVERTED_HANGAR_REPLACEMENT_RATE_MULT|12.5	0	<bad>12.5%</bad> slower strikecraft replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
-effect|CONVERTED_HANGAR_REPLACEMENT_RATE_MULT|100.0	0	<bad>100%</bad> slower strikecraft replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
-effect|CONVERTED_HANGAR_REPLACEMENT_RATE_MULT|-10.0	0	<good>10%</good> faster strikecraft replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
-effect|CONVERTED_HANGAR_REPLACEMENT_RATE_MULT|-12.5	0	<good>12.5%</good> faster strikecraft replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
+effect|CONVERTED_HANGAR_MIN_CREW_FLAT|1.0	1	<good>+1</good> to minimum crew required.
+effect|CONVERTED_HANGAR_MIN_CREW_FLAT|10.0	1	<good>+10</good> to minimum crew required.
+effect|CONVERTED_HANGAR_MIN_CREW_FLAT|12.5	1	<good>+12.5</good> to minimum crew required.
+effect|CONVERTED_HANGAR_MIN_CREW_FLAT|100.0	1	<good>+100</good> to minimum crew required.
+effect|CONVERTED_HANGAR_MIN_CREW_FLAT|-10.0	1	<bad>-10</bad> to minimum crew required.
+effect|CONVERTED_HANGAR_MIN_CREW_FLAT|-12.5	1	<bad>-12.5</bad> to minimum crew required.
+effect|CONVERTED_HANGAR_REFIT_TIME_MULT|1.0	1	<good>1%</good> more strikecraft refit time.
+effect|CONVERTED_HANGAR_REFIT_TIME_MULT|10.0	1	<good>10%</good> more strikecraft refit time.
+effect|CONVERTED_HANGAR_REFIT_TIME_MULT|12.5	1	<good>12.5%</good> more strikecraft refit time.
+effect|CONVERTED_HANGAR_REFIT_TIME_MULT|100.0	1	<good>100%</good> more strikecraft refit time.
+effect|CONVERTED_HANGAR_REFIT_TIME_MULT|-10.0	1	<bad>10%</bad> less strikecraft refit time.
+effect|CONVERTED_HANGAR_REFIT_TIME_MULT|-12.5	1	<bad>12.5%</bad> less strikecraft refit time.
+effect|CONVERTED_HANGAR_RELAUNCH_TIME_FLAT|1.0	1	<good>+1%</good> of base refit time to strikecraft relaunch time.
+effect|CONVERTED_HANGAR_RELAUNCH_TIME_FLAT|10.0	1	<good>+10%</good> of base refit time to strikecraft relaunch time.
+effect|CONVERTED_HANGAR_RELAUNCH_TIME_FLAT|12.5	1	<good>+12.5%</good> of base refit time to strikecraft relaunch time.
+effect|CONVERTED_HANGAR_RELAUNCH_TIME_FLAT|100.0	1	<good>+100%</good> of base refit time to strikecraft relaunch time.
+effect|CONVERTED_HANGAR_RELAUNCH_TIME_FLAT|-10.0	1	<bad>-10%</bad> of base refit time to strikecraft relaunch time.
+effect|CONVERTED_HANGAR_RELAUNCH_TIME_FLAT|-12.5	1	<bad>-12.5%</bad> of base refit time to strikecraft relaunch time.
+effect|CONVERTED_HANGAR_REPLACEMENT_RATE_MULT|1.0	0	The strikecraft replacement rate both decays and recovers <bad>1%</bad> more slowly.
+effect|CONVERTED_HANGAR_REPLACEMENT_RATE_MULT|10.0	0	The strikecraft replacement rate both decays and recovers <bad>10%</bad> more slowly.
+effect|CONVERTED_HANGAR_REPLACEMENT_RATE_MULT|12.5	0	The strikecraft replacement rate both decays and recovers <bad>12.5%</bad> more slowly.
+effect|CONVERTED_HANGAR_REPLACEMENT_RATE_MULT|100.0	0	The strikecraft replacement rate both decays and recovers <bad>100%</bad> more slowly.
+effect|CONVERTED_HANGAR_REPLACEMENT_RATE_MULT|-10.0	0	The strikecraft replacement rate both decays and recovers <good>10%</good> more quickly.
+effect|CONVERTED_HANGAR_REPLACEMENT_RATE_MULT|-12.5	0	The strikecraft replacement rate both decays and recovers <good>12.5%</good> more quickly.
 effect|CONVERT_SHIELD_TO_FRONT|1.0	0	Converts this ship's shield to front-facing.
 effect|CONVERT_SHIELD_TO_FRONT|10.0	0	Converts this ship's shield to front-facing.
 effect|CONVERT_SHIELD_TO_FRONT|12.5	0	Converts this ship's shield to front-facing.
@@ -952,24 +952,24 @@ effect|FIGHTER_RELAUNCH_TIME_FLAT|12.5	1	<good>+12.5%</good> of base refit time 
 effect|FIGHTER_RELAUNCH_TIME_FLAT|100.0	1	<good>+100%</good> of base refit time to strikecraft relaunch time.
 effect|FIGHTER_RELAUNCH_TIME_FLAT|-10.0	1	<bad>-10%</bad> of base refit time to strikecraft relaunch time.
 effect|FIGHTER_RELAUNCH_TIME_FLAT|-12.5	1	<bad>-12.5%</bad> of base refit time to strikecraft relaunch time.
-effect|FIGHTER_REPLACEMENT_DECAY_PERCENT|1.0	1	<good>1%</good> increased rate at which strikecraft replacement capability decays from losses.
-effect|FIGHTER_REPLACEMENT_DECAY_PERCENT|10.0	1	<good>10%</good> increased rate at which strikecraft replacement capability decays from losses.
-effect|FIGHTER_REPLACEMENT_DECAY_PERCENT|12.5	1	<good>12.5%</good> increased rate at which strikecraft replacement capability decays from losses.
-effect|FIGHTER_REPLACEMENT_DECAY_PERCENT|100.0	1	<good>100%</good> increased rate at which strikecraft replacement capability decays from losses.
-effect|FIGHTER_REPLACEMENT_DECAY_PERCENT|-10.0	1	<bad>10%</bad> reduced rate at which strikecraft replacement capability decays from losses.
-effect|FIGHTER_REPLACEMENT_DECAY_PERCENT|-12.5	1	<bad>12.5%</bad> reduced rate at which strikecraft replacement capability decays from losses.
-effect|FIGHTER_REPLACEMENT_RATE_MULT|1.0	0	<bad>1%</bad> slower strikecraft replacement rate decay and recovery.
-effect|FIGHTER_REPLACEMENT_RATE_MULT|10.0	0	<bad>10%</bad> slower strikecraft replacement rate decay and recovery.
-effect|FIGHTER_REPLACEMENT_RATE_MULT|12.5	0	<bad>12.5%</bad> slower strikecraft replacement rate decay and recovery.
-effect|FIGHTER_REPLACEMENT_RATE_MULT|100.0	0	<bad>100%</bad> slower strikecraft replacement rate decay and recovery.
-effect|FIGHTER_REPLACEMENT_RATE_MULT|-10.0	0	<good>10%</good> faster strikecraft replacement rate decay and recovery.
-effect|FIGHTER_REPLACEMENT_RATE_MULT|-12.5	0	<good>12.5%</good> faster strikecraft replacement rate decay and recovery.
-effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|1.0	0	<good>1%</good> increased rate at which strikecraft replacement capability recovers.
-effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|10.0	0	<good>10%</good> increased rate at which strikecraft replacement capability recovers.
-effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|12.5	0	<good>12.5%</good> increased rate at which strikecraft replacement capability recovers.
-effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|100.0	0	<good>100%</good> increased rate at which strikecraft replacement capability recovers.
-effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|-10.0	0	<bad>10%</bad> reduced rate at which strikecraft replacement capability recovers.
-effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|-12.5	0	<bad>12.5%</bad> reduced rate at which strikecraft replacement capability recovers.
+effect|FIGHTER_REPLACEMENT_DECAY_PERCENT|1.0	1	<good>1%</good> increased rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+effect|FIGHTER_REPLACEMENT_DECAY_PERCENT|10.0	1	<good>10%</good> increased rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+effect|FIGHTER_REPLACEMENT_DECAY_PERCENT|12.5	1	<good>12.5%</good> increased rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+effect|FIGHTER_REPLACEMENT_DECAY_PERCENT|100.0	1	<good>100%</good> increased rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+effect|FIGHTER_REPLACEMENT_DECAY_PERCENT|-10.0	1	<bad>10%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+effect|FIGHTER_REPLACEMENT_DECAY_PERCENT|-12.5	1	<bad>12.5%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+effect|FIGHTER_REPLACEMENT_RATE_MULT|1.0	0	The strikecraft replacement rate both decays and recovers <bad>1%</bad> more slowly.
+effect|FIGHTER_REPLACEMENT_RATE_MULT|10.0	0	The strikecraft replacement rate both decays and recovers <bad>10%</bad> more slowly.
+effect|FIGHTER_REPLACEMENT_RATE_MULT|12.5	0	The strikecraft replacement rate both decays and recovers <bad>12.5%</bad> more slowly.
+effect|FIGHTER_REPLACEMENT_RATE_MULT|100.0	0	The strikecraft replacement rate both decays and recovers <bad>100%</bad> more slowly.
+effect|FIGHTER_REPLACEMENT_RATE_MULT|-10.0	0	The strikecraft replacement rate both decays and recovers <good>10%</good> more quickly.
+effect|FIGHTER_REPLACEMENT_RATE_MULT|-12.5	0	The strikecraft replacement rate both decays and recovers <good>12.5%</good> more quickly.
+effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|1.0	0	<good>1%</good> increased rate at which the strikecraft replacement rate recovers.
+effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|10.0	0	<good>10%</good> increased rate at which the strikecraft replacement rate recovers.
+effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|12.5	0	<good>12.5%</good> increased rate at which the strikecraft replacement rate recovers.
+effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|100.0	0	<good>100%</good> increased rate at which the strikecraft replacement rate recovers.
+effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|-10.0	0	<bad>10%</bad> reduced rate at which the strikecraft replacement rate recovers.
+effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|-12.5	0	<bad>12.5%</bad> reduced rate at which the strikecraft replacement rate recovers.
 effect|FIGHTER_ROLE_ARMOR_PERCENT|1.0	0	Fighters launched from this ship have <good>1%</good> increased armor.
 effect|FIGHTER_ROLE_ARMOR_PERCENT|10.0	0	Fighters launched from this ship have <good>10%</good> increased armor.
 effect|FIGHTER_ROLE_ARMOR_PERCENT|12.5	0	Fighters launched from this ship have <good>12.5%</good> increased armor.
@@ -2560,30 +2560,6 @@ effect|ZERO_FLUX_SPEED_FLAT|12.5	0	<good>+12.5</good> to zero-flux speed bonus.
 effect|ZERO_FLUX_SPEED_FLAT|100.0	0	<good>+100</good> to zero-flux speed bonus.
 effect|ZERO_FLUX_SPEED_FLAT|-10.0	0	<bad>-10</bad> to zero-flux speed bonus.
 effect|ZERO_FLUX_SPEED_FLAT|-12.5	0	<bad>-12.5</bad> to zero-flux speed bonus.
-effect-noSiC|CONVERTED_HANGAR_REFIT_TIME_MULT|1.0	1	<good>1%</good> more strikecraft refit time.
-effect-noSiC|CONVERTED_HANGAR_REFIT_TIME_MULT|10.0	1	<good>10%</good> more strikecraft refit time.
-effect-noSiC|CONVERTED_HANGAR_REFIT_TIME_MULT|12.5	1	<good>12.5%</good> more strikecraft refit time.
-effect-noSiC|CONVERTED_HANGAR_REFIT_TIME_MULT|100.0	1	<good>100%</good> more strikecraft refit time.
-effect-noSiC|CONVERTED_HANGAR_REFIT_TIME_MULT|-10.0	1	<bad>10%</bad> less strikecraft refit time.
-effect-noSiC|CONVERTED_HANGAR_REFIT_TIME_MULT|-12.5	1	<bad>12.5%</bad> less strikecraft refit time.
-effect-noSiC|CONVERTED_HANGAR_REPLACEMENT_RATE_MULT|1.0	0	<bad>1%</bad> slower strikecraft replacement rate decay and recovery.
-effect-noSiC|CONVERTED_HANGAR_REPLACEMENT_RATE_MULT|10.0	0	<bad>10%</bad> slower strikecraft replacement rate decay and recovery.
-effect-noSiC|CONVERTED_HANGAR_REPLACEMENT_RATE_MULT|12.5	0	<bad>12.5%</bad> slower strikecraft replacement rate decay and recovery.
-effect-noSiC|CONVERTED_HANGAR_REPLACEMENT_RATE_MULT|100.0	0	<bad>100%</bad> slower strikecraft replacement rate decay and recovery.
-effect-noSiC|CONVERTED_HANGAR_REPLACEMENT_RATE_MULT|-10.0	0	<good>10%</good> faster strikecraft replacement rate decay and recovery.
-effect-noSiC|CONVERTED_HANGAR_REPLACEMENT_RATE_MULT|-12.5	0	<good>12.5%</good> faster strikecraft replacement rate decay and recovery.
-effect-noSiC|CONVERTED_HANGAR_RELAUNCH_TIME_FLAT|1.0	1	<good>+1%</good> of base refit time to strikecraft relaunch time.
-effect-noSiC|CONVERTED_HANGAR_RELAUNCH_TIME_FLAT|10.0	1	<good>+10%</good> of base refit time to strikecraft relaunch time.
-effect-noSiC|CONVERTED_HANGAR_RELAUNCH_TIME_FLAT|12.5	1	<good>+12.5%</good> of base refit time to strikecraft relaunch time.
-effect-noSiC|CONVERTED_HANGAR_RELAUNCH_TIME_FLAT|100.0	1	<good>+100%</good> of base refit time to strikecraft relaunch time.
-effect-noSiC|CONVERTED_HANGAR_RELAUNCH_TIME_FLAT|-10.0	1	<bad>-10%</bad> of base refit time to strikecraft relaunch time.
-effect-noSiC|CONVERTED_HANGAR_RELAUNCH_TIME_FLAT|-12.5	1	<bad>-12.5%</bad> of base refit time to strikecraft relaunch time.
-effect-noSiC|CONVERTED_HANGAR_MIN_CREW_FLAT|1.0	1	<good>+1</good> to minimum crew required.
-effect-noSiC|CONVERTED_HANGAR_MIN_CREW_FLAT|10.0	1	<good>+10</good> to minimum crew required.
-effect-noSiC|CONVERTED_HANGAR_MIN_CREW_FLAT|12.5	1	<good>+12.5</good> to minimum crew required.
-effect-noSiC|CONVERTED_HANGAR_MIN_CREW_FLAT|100.0	1	<good>+100</good> to minimum crew required.
-effect-noSiC|CONVERTED_HANGAR_MIN_CREW_FLAT|-10.0	1	<bad>-10</bad> to minimum crew required.
-effect-noSiC|CONVERTED_HANGAR_MIN_CREW_FLAT|-12.5	1	<bad>-12.5</bad> to minimum crew required.
 flavour|abyssal_grid	0	Picking apart the power grids of abyssal drone wrecks, the crew works out how their couplings survive the storms of abyssal hyperspace and rebuilds the ship's energy mounts to match.
 flavourAutomated|abyssal_grid	0	Picking apart the power grids of abyssal drone wrecks, the refit crew works out how their couplings survive the storms of abyssal hyperspace and rebuilds the ship's energy mounts to match.
 itemCost|abyssal_grid	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
@@ -2964,42 +2940,42 @@ type|converted_fighterbay|CAPITAL_SHIP|1	1	<bad>20%</bad> reduced minimum crew r
 type|converted_fighterbay|CAPITAL_SHIP|2	0	<good>+50</good> to cargo capacity per strikecraft bay.
 type-detail|converted_fighterbay|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Converted Hangar</hullmod>\n• <hullmod>Strikecraft</hullmod>\n• <hullmod>Converted Missile Holds</hullmod>\n• <hullmod>Converted Fighter Bay</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Converted Hangar</node>
 type|converted_hangar|null|0	0	<good>+1</good> to number of strikecraft bays, plus any extra bays from Vast Hangar.
-type|converted_hangar|null|1	1	<good>50%</good> more strikecraft refit time. Waived by the Second-in-Command skill Reconfiguration.
-type|converted_hangar|null|2	0	<bad>50%</bad> slower strikecraft replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
-type|converted_hangar|null|3	1	<good>+40%</good> of base refit time to strikecraft relaunch time. Waived by the Second-in-Command skill Reconfiguration.
-type|converted_hangar|null|4	1	<good>+20</good> to minimum crew required. Waived by the Second-in-Command skill Reconfiguration.
+type|converted_hangar|null|1	1	<good>50%</good> more strikecraft refit time.
+type|converted_hangar|null|2	0	The strikecraft replacement rate both decays and recovers <bad>50%</bad> more slowly.
+type|converted_hangar|null|3	1	<good>+40%</good> of base refit time to strikecraft relaunch time.
+type|converted_hangar|null|4	1	<good>+20</good> to minimum crew required.
 type-detail|converted_hangar|null|0	0	Unallocating it returns any strikecraft wing in the bay it adds to your cargo.
 type-detail|converted_hangar|null|1	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
 type-detail|converted_hangar|null|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Converted Fighter Bay</hullmod>\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Sentinel Retrofit</hullmod>\n• <hullmod>Trinity Worlds Retrofit</hullmod>\n• <hullmod>Fighter Clamps</hullmod>\n• <hullmod>Converted Hangar</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Converted Fighter Bay</node>
 type|converted_hangar|FRIGATE|0	0	<good>+1</good> to number of strikecraft bays, plus any extra bays from Vast Hangar.
-type|converted_hangar|FRIGATE|1	1	<good>50%</good> more strikecraft refit time. Waived by the Second-in-Command skill Reconfiguration.
-type|converted_hangar|FRIGATE|2	0	<bad>50%</bad> slower strikecraft replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
-type|converted_hangar|FRIGATE|3	1	<good>+40%</good> of base refit time to strikecraft relaunch time. Waived by the Second-in-Command skill Reconfiguration.
-type|converted_hangar|FRIGATE|4	1	<good>+20</good> to minimum crew required. Waived by the Second-in-Command skill Reconfiguration.
+type|converted_hangar|FRIGATE|1	1	<good>50%</good> more strikecraft refit time.
+type|converted_hangar|FRIGATE|2	0	The strikecraft replacement rate both decays and recovers <bad>50%</bad> more slowly.
+type|converted_hangar|FRIGATE|3	1	<good>+40%</good> of base refit time to strikecraft relaunch time.
+type|converted_hangar|FRIGATE|4	1	<good>+20</good> to minimum crew required.
 type-detail|converted_hangar|FRIGATE|0	0	Unallocating it returns any strikecraft wing in the bay it adds to your cargo.
 type-detail|converted_hangar|FRIGATE|1	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
 type-detail|converted_hangar|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Converted Fighter Bay</hullmod>\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Sentinel Retrofit</hullmod>\n• <hullmod>Trinity Worlds Retrofit</hullmod>\n• <hullmod>Fighter Clamps</hullmod>\n• <hullmod>Converted Hangar</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Converted Fighter Bay</node>
 type|converted_hangar|DESTROYER|0	0	<good>+1</good> to number of strikecraft bays, plus any extra bays from Vast Hangar.
-type|converted_hangar|DESTROYER|1	1	<good>50%</good> more strikecraft refit time. Waived by the Second-in-Command skill Reconfiguration.
-type|converted_hangar|DESTROYER|2	0	<bad>50%</bad> slower strikecraft replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
-type|converted_hangar|DESTROYER|3	1	<good>+40%</good> of base refit time to strikecraft relaunch time. Waived by the Second-in-Command skill Reconfiguration.
-type|converted_hangar|DESTROYER|4	1	<good>+20</good> to minimum crew required. Waived by the Second-in-Command skill Reconfiguration.
+type|converted_hangar|DESTROYER|1	1	<good>50%</good> more strikecraft refit time.
+type|converted_hangar|DESTROYER|2	0	The strikecraft replacement rate both decays and recovers <bad>50%</bad> more slowly.
+type|converted_hangar|DESTROYER|3	1	<good>+40%</good> of base refit time to strikecraft relaunch time.
+type|converted_hangar|DESTROYER|4	1	<good>+20</good> to minimum crew required.
 type-detail|converted_hangar|DESTROYER|0	0	Unallocating it returns any strikecraft wing in the bay it adds to your cargo.
 type-detail|converted_hangar|DESTROYER|1	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
 type-detail|converted_hangar|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Converted Fighter Bay</hullmod>\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Sentinel Retrofit</hullmod>\n• <hullmod>Trinity Worlds Retrofit</hullmod>\n• <hullmod>Fighter Clamps</hullmod>\n• <hullmod>Converted Hangar</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Converted Fighter Bay</node>
 type|converted_hangar|CRUISER|0	0	<good>+1</good> to number of strikecraft bays, plus any extra bays from Vast Hangar.
-type|converted_hangar|CRUISER|1	1	<good>50%</good> more strikecraft refit time. Waived by the Second-in-Command skill Reconfiguration.
-type|converted_hangar|CRUISER|2	0	<bad>50%</bad> slower strikecraft replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
-type|converted_hangar|CRUISER|3	1	<good>+40%</good> of base refit time to strikecraft relaunch time. Waived by the Second-in-Command skill Reconfiguration.
-type|converted_hangar|CRUISER|4	1	<good>+20</good> to minimum crew required. Waived by the Second-in-Command skill Reconfiguration.
+type|converted_hangar|CRUISER|1	1	<good>50%</good> more strikecraft refit time.
+type|converted_hangar|CRUISER|2	0	The strikecraft replacement rate both decays and recovers <bad>50%</bad> more slowly.
+type|converted_hangar|CRUISER|3	1	<good>+40%</good> of base refit time to strikecraft relaunch time.
+type|converted_hangar|CRUISER|4	1	<good>+20</good> to minimum crew required.
 type-detail|converted_hangar|CRUISER|0	0	Unallocating it returns any strikecraft wing in the bay it adds to your cargo.
 type-detail|converted_hangar|CRUISER|1	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
 type-detail|converted_hangar|CRUISER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Converted Fighter Bay</hullmod>\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Sentinel Retrofit</hullmod>\n• <hullmod>Trinity Worlds Retrofit</hullmod>\n• <hullmod>Fighter Clamps</hullmod>\n• <hullmod>Converted Hangar</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Converted Fighter Bay</node>
 type|converted_hangar|CAPITAL_SHIP|0	0	<good>+1</good> to number of strikecraft bays, plus any extra bays from Vast Hangar.
-type|converted_hangar|CAPITAL_SHIP|1	1	<good>50%</good> more strikecraft refit time. Waived by the Second-in-Command skill Reconfiguration.
-type|converted_hangar|CAPITAL_SHIP|2	0	<bad>50%</bad> slower strikecraft replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
-type|converted_hangar|CAPITAL_SHIP|3	1	<good>+40%</good> of base refit time to strikecraft relaunch time. Waived by the Second-in-Command skill Reconfiguration.
-type|converted_hangar|CAPITAL_SHIP|4	1	<good>+20</good> to minimum crew required. Waived by the Second-in-Command skill Reconfiguration.
+type|converted_hangar|CAPITAL_SHIP|1	1	<good>50%</good> more strikecraft refit time.
+type|converted_hangar|CAPITAL_SHIP|2	0	The strikecraft replacement rate both decays and recovers <bad>50%</bad> more slowly.
+type|converted_hangar|CAPITAL_SHIP|3	1	<good>+40%</good> of base refit time to strikecraft relaunch time.
+type|converted_hangar|CAPITAL_SHIP|4	1	<good>+20</good> to minimum crew required.
 type-detail|converted_hangar|CAPITAL_SHIP|0	0	Unallocating it returns any strikecraft wing in the bay it adds to your cargo.
 type-detail|converted_hangar|CAPITAL_SHIP|1	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
 type-detail|converted_hangar|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Converted Fighter Bay</hullmod>\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Sentinel Retrofit</hullmod>\n• <hullmod>Trinity Worlds Retrofit</hullmod>\n• <hullmod>Fighter Clamps</hullmod>\n• <hullmod>Converted Hangar</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Converted Fighter Bay</node>
@@ -3202,15 +3178,15 @@ type|doctrine_remnant_ordo_signal_mesh|CRUISER|1	0	<good>+20</good> to this ship
 type|doctrine_remnant_ordo_signal_mesh|CAPITAL_SHIP|0	0	<good>+1</good> to ECM rating.
 type|doctrine_remnant_ordo_signal_mesh|CAPITAL_SHIP|1	0	<good>+30</good> to this ship's sensor strength.
 flavour|doctrine_remnant_swarm_logic	0	Remnant carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.
-type|doctrine_remnant_swarm_logic|null|0	0	<good>25%</good> increased rate at which strikecraft replacement capability recovers.
+type|doctrine_remnant_swarm_logic|null|0	0	<good>25%</good> increased rate at which the strikecraft replacement rate recovers.
 type|doctrine_remnant_swarm_logic|null|1	0	Strikecraft launched from this ship have <good>15%</good> increased weapon damage.
-type|doctrine_remnant_swarm_logic|FRIGATE|0	0	<good>25%</good> increased rate at which strikecraft replacement capability recovers.
+type|doctrine_remnant_swarm_logic|FRIGATE|0	0	<good>25%</good> increased rate at which the strikecraft replacement rate recovers.
 type|doctrine_remnant_swarm_logic|FRIGATE|1	0	Strikecraft launched from this ship have <good>15%</good> increased weapon damage.
-type|doctrine_remnant_swarm_logic|DESTROYER|0	0	<good>25%</good> increased rate at which strikecraft replacement capability recovers.
+type|doctrine_remnant_swarm_logic|DESTROYER|0	0	<good>25%</good> increased rate at which the strikecraft replacement rate recovers.
 type|doctrine_remnant_swarm_logic|DESTROYER|1	0	Strikecraft launched from this ship have <good>15%</good> increased weapon damage.
-type|doctrine_remnant_swarm_logic|CRUISER|0	0	<good>25%</good> increased rate at which strikecraft replacement capability recovers.
+type|doctrine_remnant_swarm_logic|CRUISER|0	0	<good>25%</good> increased rate at which the strikecraft replacement rate recovers.
 type|doctrine_remnant_swarm_logic|CRUISER|1	0	Strikecraft launched from this ship have <good>15%</good> increased weapon damage.
-type|doctrine_remnant_swarm_logic|CAPITAL_SHIP|0	0	<good>25%</good> increased rate at which strikecraft replacement capability recovers.
+type|doctrine_remnant_swarm_logic|CAPITAL_SHIP|0	0	<good>25%</good> increased rate at which the strikecraft replacement rate recovers.
 type|doctrine_remnant_swarm_logic|CAPITAL_SHIP|1	0	Strikecraft launched from this ship have <good>15%</good> increased weapon damage.
 flavour|doctrine_remnant_unblinking_watch	0	Remnant point defense never tires and never flinches. Its tracking routines, recovered from a gutted drone, carry none of the hesitation a human gunner would add.
 flavourAutomated|doctrine_remnant_unblinking_watch	0	Remnant point defense never tires and never flinches. Its tracking routines, recovered from a gutted drone, carry none of the hesitation a human gunner would add, and this ship has no gunner to add any.
@@ -3560,24 +3536,24 @@ type-detail|expanded_cargo_holds|CRUISER|0	0	Mutually exclusive with <hullmod>hu
 type|expanded_cargo_holds|CAPITAL_SHIP|0	0	<good>20%</good> increased cargo capacity.
 type|expanded_cargo_holds|CAPITAL_SHIP|1	0	<good>+125</good> to cargo capacity.
 type-detail|expanded_cargo_holds|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Converted Missile Holds</hullmod>\n• <hullmod>Expanded Cargo Holds</hullmod>
-type|expanded_deck_crew|null|0	1	<bad>15%</bad> reduced rate at which strikecraft replacement capability decays from losses.
-type|expanded_deck_crew|null|1	0	<good>25%</good> increased rate at which strikecraft replacement capability recovers.
+type|expanded_deck_crew|null|0	1	<bad>15%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+type|expanded_deck_crew|null|1	0	<good>25%</good> increased rate at which the strikecraft replacement rate recovers.
 type|expanded_deck_crew|null|2	1	<good>+20</good> to minimum crew required per strikecraft bay.
 type-detail|expanded_deck_crew|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Drone Reserves</hullmod>\n• <hullmod>Expanded Deck Crew</hullmod>
-type|expanded_deck_crew|FRIGATE|0	1	<bad>15%</bad> reduced rate at which strikecraft replacement capability decays from losses.
-type|expanded_deck_crew|FRIGATE|1	0	<good>25%</good> increased rate at which strikecraft replacement capability recovers.
+type|expanded_deck_crew|FRIGATE|0	1	<bad>15%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+type|expanded_deck_crew|FRIGATE|1	0	<good>25%</good> increased rate at which the strikecraft replacement rate recovers.
 type|expanded_deck_crew|FRIGATE|2	1	<good>+20</good> to minimum crew required per strikecraft bay.
 type-detail|expanded_deck_crew|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Drone Reserves</hullmod>\n• <hullmod>Expanded Deck Crew</hullmod>
-type|expanded_deck_crew|DESTROYER|0	1	<bad>15%</bad> reduced rate at which strikecraft replacement capability decays from losses.
-type|expanded_deck_crew|DESTROYER|1	0	<good>25%</good> increased rate at which strikecraft replacement capability recovers.
+type|expanded_deck_crew|DESTROYER|0	1	<bad>15%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+type|expanded_deck_crew|DESTROYER|1	0	<good>25%</good> increased rate at which the strikecraft replacement rate recovers.
 type|expanded_deck_crew|DESTROYER|2	1	<good>+20</good> to minimum crew required per strikecraft bay.
 type-detail|expanded_deck_crew|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Drone Reserves</hullmod>\n• <hullmod>Expanded Deck Crew</hullmod>
-type|expanded_deck_crew|CRUISER|0	1	<bad>15%</bad> reduced rate at which strikecraft replacement capability decays from losses.
-type|expanded_deck_crew|CRUISER|1	0	<good>25%</good> increased rate at which strikecraft replacement capability recovers.
+type|expanded_deck_crew|CRUISER|0	1	<bad>15%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+type|expanded_deck_crew|CRUISER|1	0	<good>25%</good> increased rate at which the strikecraft replacement rate recovers.
 type|expanded_deck_crew|CRUISER|2	1	<good>+20</good> to minimum crew required per strikecraft bay.
 type-detail|expanded_deck_crew|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Drone Reserves</hullmod>\n• <hullmod>Expanded Deck Crew</hullmod>
-type|expanded_deck_crew|CAPITAL_SHIP|0	1	<bad>15%</bad> reduced rate at which strikecraft replacement capability decays from losses.
-type|expanded_deck_crew|CAPITAL_SHIP|1	0	<good>25%</good> increased rate at which strikecraft replacement capability recovers.
+type|expanded_deck_crew|CAPITAL_SHIP|0	1	<bad>15%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+type|expanded_deck_crew|CAPITAL_SHIP|1	0	<good>25%</good> increased rate at which the strikecraft replacement rate recovers.
 type|expanded_deck_crew|CAPITAL_SHIP|2	1	<good>+20</good> to minimum crew required per strikecraft bay.
 type-detail|expanded_deck_crew|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Drone Reserves</hullmod>\n• <hullmod>Expanded Deck Crew</hullmod>
 type|exposed_fuel_lines|null|0	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
@@ -3600,16 +3576,16 @@ type|extendedshieldemitter|CRUISER|0	0	<good>+40</good> to shield arc.
 type-detail|extendedshieldemitter|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Knight Refit</hullmod>\n• <hullmod>Primitive Shields</hullmod>\n• <hullmod>Low Arc Shield Emitter</hullmod>\n• <hullmod>Hardlight Matrix</hullmod>\n• <hullmod>Aegis Deflectors</hullmod>\n• <hullmod>Lostech Engineering</hullmod>\n• <hullmod>Extended Shields</hullmod>
 type|extendedshieldemitter|CAPITAL_SHIP|0	0	<good>+40</good> to shield arc.
 type-detail|extendedshieldemitter|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Knight Refit</hullmod>\n• <hullmod>Primitive Shields</hullmod>\n• <hullmod>Low Arc Shield Emitter</hullmod>\n• <hullmod>Hardlight Matrix</hullmod>\n• <hullmod>Aegis Deflectors</hullmod>\n• <hullmod>Lostech Engineering</hullmod>\n• <hullmod>Extended Shields</hullmod>
-type|fighter_replacement|null|0	0	<good>5%</good> increased rate at which strikecraft replacement capability recovers.
-type|fighter_replacement|null|1	1	<bad>5%</bad> reduced rate at which strikecraft replacement capability decays from losses.
-type|fighter_replacement|FRIGATE|0	0	<good>5%</good> increased rate at which strikecraft replacement capability recovers.
-type|fighter_replacement|FRIGATE|1	1	<bad>5%</bad> reduced rate at which strikecraft replacement capability decays from losses.
-type|fighter_replacement|DESTROYER|0	0	<good>5%</good> increased rate at which strikecraft replacement capability recovers.
-type|fighter_replacement|DESTROYER|1	1	<bad>5%</bad> reduced rate at which strikecraft replacement capability decays from losses.
-type|fighter_replacement|CRUISER|0	0	<good>5%</good> increased rate at which strikecraft replacement capability recovers.
-type|fighter_replacement|CRUISER|1	1	<bad>5%</bad> reduced rate at which strikecraft replacement capability decays from losses.
-type|fighter_replacement|CAPITAL_SHIP|0	0	<good>5%</good> increased rate at which strikecraft replacement capability recovers.
-type|fighter_replacement|CAPITAL_SHIP|1	1	<bad>5%</bad> reduced rate at which strikecraft replacement capability decays from losses.
+type|fighter_replacement|null|0	0	<good>5%</good> increased rate at which the strikecraft replacement rate recovers.
+type|fighter_replacement|null|1	1	<bad>5%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+type|fighter_replacement|FRIGATE|0	0	<good>5%</good> increased rate at which the strikecraft replacement rate recovers.
+type|fighter_replacement|FRIGATE|1	1	<bad>5%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+type|fighter_replacement|DESTROYER|0	0	<good>5%</good> increased rate at which the strikecraft replacement rate recovers.
+type|fighter_replacement|DESTROYER|1	1	<bad>5%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+type|fighter_replacement|CRUISER|0	0	<good>5%</good> increased rate at which the strikecraft replacement rate recovers.
+type|fighter_replacement|CRUISER|1	1	<bad>5%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+type|fighter_replacement|CAPITAL_SHIP|0	0	<good>5%</good> increased rate at which the strikecraft replacement rate recovers.
+type|fighter_replacement|CAPITAL_SHIP|1	1	<bad>5%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
 type|fighter_speed|null|0	0	Strikecraft launched from this ship have <good>5%</good> increased top speed.
 type|fighter_speed|FRIGATE|0	0	Strikecraft launched from this ship have <good>5%</good> increased top speed.
 type|fighter_speed|DESTROYER|0	0	Strikecraft launched from this ship have <good>5%</good> increased top speed.
@@ -5180,10 +5156,10 @@ summary|option0|FRIGATE|46	0	Removes all of this ship's strikecraft bays.
 summary|option0|FRIGATE|47	1	<bad>20%</bad> reduced minimum crew required per strikecraft bay, up to 80% in total.
 summary|option0|FRIGATE|48	0	<good>+50</good> to cargo capacity per strikecraft bay.
 summary|option0|FRIGATE|49	0	<good>+1</good> to number of strikecraft bays, plus any extra bays from Vast Hangar.
-summary|option0|FRIGATE|50	1	<good>50%</good> more strikecraft refit time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option0|FRIGATE|51	0	<bad>50%</bad> slower strikecraft replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
-summary|option0|FRIGATE|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option0|FRIGATE|53	1	<good>+20</good> to minimum crew required. Waived by the Second-in-Command skill Reconfiguration.
+summary|option0|FRIGATE|50	1	<good>50%</good> more strikecraft refit time.
+summary|option0|FRIGATE|51	0	The strikecraft replacement rate both decays and recovers <bad>50%</bad> more slowly.
+summary|option0|FRIGATE|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time.
+summary|option0|FRIGATE|53	1	<good>+20</good> to minimum crew required.
 summary|option0|FRIGATE|54	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
 summary|option0|FRIGATE|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option0|FRIGATE|56	0	<good>0%</good> increased top speed.
@@ -5217,8 +5193,8 @@ summary|option0|FRIGATE|83	0	<good>16%</good> increased timeflow.
 summary|option0|FRIGATE|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
 summary|option0|FRIGATE|85	0	<bad>-5</bad> to flux dissipation per flux vent.
 summary|option0|FRIGATE|86	0	<good>20%</good> increased cargo capacity.
-summary|option0|FRIGATE|87	1	<bad>35%</bad> reduced rate at which strikecraft replacement capability decays from losses.
-summary|option0|FRIGATE|88	0	<good>45%</good> increased rate at which strikecraft replacement capability recovers.
+summary|option0|FRIGATE|87	1	<bad>35%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+summary|option0|FRIGATE|88	0	<good>45%</good> increased rate at which the strikecraft replacement rate recovers.
 summary|option0|FRIGATE|89	1	<good>+20</good> to minimum crew required per strikecraft bay.
 summary|option0|FRIGATE|90	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
 summary|option0|FRIGATE|91	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
@@ -5413,10 +5389,10 @@ summary|option0|DESTROYER|46	0	Removes all of this ship's strikecraft bays.
 summary|option0|DESTROYER|47	1	<bad>20%</bad> reduced minimum crew required per strikecraft bay, up to 80% in total.
 summary|option0|DESTROYER|48	0	<good>+50</good> to cargo capacity per strikecraft bay.
 summary|option0|DESTROYER|49	0	<good>+1</good> to number of strikecraft bays, plus any extra bays from Vast Hangar.
-summary|option0|DESTROYER|50	1	<good>50%</good> more strikecraft refit time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option0|DESTROYER|51	0	<bad>50%</bad> slower strikecraft replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
-summary|option0|DESTROYER|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option0|DESTROYER|53	1	<good>+20</good> to minimum crew required. Waived by the Second-in-Command skill Reconfiguration.
+summary|option0|DESTROYER|50	1	<good>50%</good> more strikecraft refit time.
+summary|option0|DESTROYER|51	0	The strikecraft replacement rate both decays and recovers <bad>50%</bad> more slowly.
+summary|option0|DESTROYER|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time.
+summary|option0|DESTROYER|53	1	<good>+20</good> to minimum crew required.
 summary|option0|DESTROYER|54	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
 summary|option0|DESTROYER|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option0|DESTROYER|56	0	<good>0%</good> increased top speed.
@@ -5450,8 +5426,8 @@ summary|option0|DESTROYER|83	0	<good>16%</good> increased timeflow.
 summary|option0|DESTROYER|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
 summary|option0|DESTROYER|85	0	<bad>-5</bad> to flux dissipation per flux vent.
 summary|option0|DESTROYER|86	0	<good>20%</good> increased cargo capacity.
-summary|option0|DESTROYER|87	1	<bad>35%</bad> reduced rate at which strikecraft replacement capability decays from losses.
-summary|option0|DESTROYER|88	0	<good>45%</good> increased rate at which strikecraft replacement capability recovers.
+summary|option0|DESTROYER|87	1	<bad>35%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+summary|option0|DESTROYER|88	0	<good>45%</good> increased rate at which the strikecraft replacement rate recovers.
 summary|option0|DESTROYER|89	1	<good>+20</good> to minimum crew required per strikecraft bay.
 summary|option0|DESTROYER|90	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
 summary|option0|DESTROYER|91	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
@@ -5646,10 +5622,10 @@ summary|option0|CRUISER|46	0	Removes all of this ship's strikecraft bays.
 summary|option0|CRUISER|47	1	<bad>20%</bad> reduced minimum crew required per strikecraft bay, up to 80% in total.
 summary|option0|CRUISER|48	0	<good>+50</good> to cargo capacity per strikecraft bay.
 summary|option0|CRUISER|49	0	<good>+1</good> to number of strikecraft bays, plus any extra bays from Vast Hangar.
-summary|option0|CRUISER|50	1	<good>50%</good> more strikecraft refit time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option0|CRUISER|51	0	<bad>50%</bad> slower strikecraft replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
-summary|option0|CRUISER|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option0|CRUISER|53	1	<good>+20</good> to minimum crew required. Waived by the Second-in-Command skill Reconfiguration.
+summary|option0|CRUISER|50	1	<good>50%</good> more strikecraft refit time.
+summary|option0|CRUISER|51	0	The strikecraft replacement rate both decays and recovers <bad>50%</bad> more slowly.
+summary|option0|CRUISER|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time.
+summary|option0|CRUISER|53	1	<good>+20</good> to minimum crew required.
 summary|option0|CRUISER|54	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
 summary|option0|CRUISER|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option0|CRUISER|56	0	<good>0%</good> increased top speed.
@@ -5683,8 +5659,8 @@ summary|option0|CRUISER|83	0	<good>16%</good> increased timeflow.
 summary|option0|CRUISER|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
 summary|option0|CRUISER|85	0	<bad>-5</bad> to flux dissipation per flux vent.
 summary|option0|CRUISER|86	0	<good>20%</good> increased cargo capacity.
-summary|option0|CRUISER|87	1	<bad>35%</bad> reduced rate at which strikecraft replacement capability decays from losses.
-summary|option0|CRUISER|88	0	<good>45%</good> increased rate at which strikecraft replacement capability recovers.
+summary|option0|CRUISER|87	1	<bad>35%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+summary|option0|CRUISER|88	0	<good>45%</good> increased rate at which the strikecraft replacement rate recovers.
 summary|option0|CRUISER|89	1	<good>+20</good> to minimum crew required per strikecraft bay.
 summary|option0|CRUISER|90	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
 summary|option0|CRUISER|91	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
@@ -5879,10 +5855,10 @@ summary|option0|CAPITAL_SHIP|46	0	Removes all of this ship's strikecraft bays.
 summary|option0|CAPITAL_SHIP|47	1	<bad>20%</bad> reduced minimum crew required per strikecraft bay, up to 80% in total.
 summary|option0|CAPITAL_SHIP|48	0	<good>+50</good> to cargo capacity per strikecraft bay.
 summary|option0|CAPITAL_SHIP|49	0	<good>+1</good> to number of strikecraft bays, plus any extra bays from Vast Hangar.
-summary|option0|CAPITAL_SHIP|50	1	<good>50%</good> more strikecraft refit time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option0|CAPITAL_SHIP|51	0	<bad>50%</bad> slower strikecraft replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
-summary|option0|CAPITAL_SHIP|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option0|CAPITAL_SHIP|53	1	<good>+20</good> to minimum crew required. Waived by the Second-in-Command skill Reconfiguration.
+summary|option0|CAPITAL_SHIP|50	1	<good>50%</good> more strikecraft refit time.
+summary|option0|CAPITAL_SHIP|51	0	The strikecraft replacement rate both decays and recovers <bad>50%</bad> more slowly.
+summary|option0|CAPITAL_SHIP|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time.
+summary|option0|CAPITAL_SHIP|53	1	<good>+20</good> to minimum crew required.
 summary|option0|CAPITAL_SHIP|54	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
 summary|option0|CAPITAL_SHIP|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option0|CAPITAL_SHIP|56	0	<good>0%</good> increased top speed.
@@ -5916,8 +5892,8 @@ summary|option0|CAPITAL_SHIP|83	0	<good>16%</good> increased timeflow.
 summary|option0|CAPITAL_SHIP|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
 summary|option0|CAPITAL_SHIP|85	0	<bad>-5</bad> to flux dissipation per flux vent.
 summary|option0|CAPITAL_SHIP|86	0	<good>20%</good> increased cargo capacity.
-summary|option0|CAPITAL_SHIP|87	1	<bad>35%</bad> reduced rate at which strikecraft replacement capability decays from losses.
-summary|option0|CAPITAL_SHIP|88	0	<good>45%</good> increased rate at which strikecraft replacement capability recovers.
+summary|option0|CAPITAL_SHIP|87	1	<bad>35%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+summary|option0|CAPITAL_SHIP|88	0	<good>45%</good> increased rate at which the strikecraft replacement rate recovers.
 summary|option0|CAPITAL_SHIP|89	1	<good>+20</good> to minimum crew required per strikecraft bay.
 summary|option0|CAPITAL_SHIP|90	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
 summary|option0|CAPITAL_SHIP|91	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
@@ -6112,10 +6088,10 @@ summary|option1|FRIGATE|46	0	Removes all of this ship's strikecraft bays.
 summary|option1|FRIGATE|47	1	<bad>20%</bad> reduced minimum crew required per strikecraft bay, up to 80% in total.
 summary|option1|FRIGATE|48	0	<good>+50</good> to cargo capacity per strikecraft bay.
 summary|option1|FRIGATE|49	0	<good>+1</good> to number of strikecraft bays, plus any extra bays from Vast Hangar.
-summary|option1|FRIGATE|50	1	<good>50%</good> more strikecraft refit time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option1|FRIGATE|51	0	<bad>50%</bad> slower strikecraft replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
-summary|option1|FRIGATE|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option1|FRIGATE|53	1	<good>+20</good> to minimum crew required. Waived by the Second-in-Command skill Reconfiguration.
+summary|option1|FRIGATE|50	1	<good>50%</good> more strikecraft refit time.
+summary|option1|FRIGATE|51	0	The strikecraft replacement rate both decays and recovers <bad>50%</bad> more slowly.
+summary|option1|FRIGATE|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time.
+summary|option1|FRIGATE|53	1	<good>+20</good> to minimum crew required.
 summary|option1|FRIGATE|54	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
 summary|option1|FRIGATE|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option1|FRIGATE|56	0	<good>0%</good> increased top speed.
@@ -6149,8 +6125,8 @@ summary|option1|FRIGATE|83	0	<good>16%</good> increased timeflow.
 summary|option1|FRIGATE|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
 summary|option1|FRIGATE|85	0	<bad>-5</bad> to flux dissipation per flux vent.
 summary|option1|FRIGATE|86	0	<good>20%</good> increased cargo capacity.
-summary|option1|FRIGATE|87	1	<bad>35%</bad> reduced rate at which strikecraft replacement capability decays from losses.
-summary|option1|FRIGATE|88	0	<good>45%</good> increased rate at which strikecraft replacement capability recovers.
+summary|option1|FRIGATE|87	1	<bad>35%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+summary|option1|FRIGATE|88	0	<good>45%</good> increased rate at which the strikecraft replacement rate recovers.
 summary|option1|FRIGATE|89	1	<good>+20</good> to minimum crew required per strikecraft bay.
 summary|option1|FRIGATE|90	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
 summary|option1|FRIGATE|91	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
@@ -6343,10 +6319,10 @@ summary|option1|DESTROYER|46	0	Removes all of this ship's strikecraft bays.
 summary|option1|DESTROYER|47	1	<bad>20%</bad> reduced minimum crew required per strikecraft bay, up to 80% in total.
 summary|option1|DESTROYER|48	0	<good>+50</good> to cargo capacity per strikecraft bay.
 summary|option1|DESTROYER|49	0	<good>+1</good> to number of strikecraft bays, plus any extra bays from Vast Hangar.
-summary|option1|DESTROYER|50	1	<good>50%</good> more strikecraft refit time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option1|DESTROYER|51	0	<bad>50%</bad> slower strikecraft replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
-summary|option1|DESTROYER|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option1|DESTROYER|53	1	<good>+20</good> to minimum crew required. Waived by the Second-in-Command skill Reconfiguration.
+summary|option1|DESTROYER|50	1	<good>50%</good> more strikecraft refit time.
+summary|option1|DESTROYER|51	0	The strikecraft replacement rate both decays and recovers <bad>50%</bad> more slowly.
+summary|option1|DESTROYER|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time.
+summary|option1|DESTROYER|53	1	<good>+20</good> to minimum crew required.
 summary|option1|DESTROYER|54	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
 summary|option1|DESTROYER|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option1|DESTROYER|56	0	<good>0%</good> increased top speed.
@@ -6380,8 +6356,8 @@ summary|option1|DESTROYER|83	0	<good>16%</good> increased timeflow.
 summary|option1|DESTROYER|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
 summary|option1|DESTROYER|85	0	<bad>-5</bad> to flux dissipation per flux vent.
 summary|option1|DESTROYER|86	0	<good>20%</good> increased cargo capacity.
-summary|option1|DESTROYER|87	1	<bad>35%</bad> reduced rate at which strikecraft replacement capability decays from losses.
-summary|option1|DESTROYER|88	0	<good>45%</good> increased rate at which strikecraft replacement capability recovers.
+summary|option1|DESTROYER|87	1	<bad>35%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+summary|option1|DESTROYER|88	0	<good>45%</good> increased rate at which the strikecraft replacement rate recovers.
 summary|option1|DESTROYER|89	1	<good>+20</good> to minimum crew required per strikecraft bay.
 summary|option1|DESTROYER|90	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
 summary|option1|DESTROYER|91	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
@@ -6574,10 +6550,10 @@ summary|option1|CRUISER|46	0	Removes all of this ship's strikecraft bays.
 summary|option1|CRUISER|47	1	<bad>20%</bad> reduced minimum crew required per strikecraft bay, up to 80% in total.
 summary|option1|CRUISER|48	0	<good>+50</good> to cargo capacity per strikecraft bay.
 summary|option1|CRUISER|49	0	<good>+1</good> to number of strikecraft bays, plus any extra bays from Vast Hangar.
-summary|option1|CRUISER|50	1	<good>50%</good> more strikecraft refit time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option1|CRUISER|51	0	<bad>50%</bad> slower strikecraft replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
-summary|option1|CRUISER|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option1|CRUISER|53	1	<good>+20</good> to minimum crew required. Waived by the Second-in-Command skill Reconfiguration.
+summary|option1|CRUISER|50	1	<good>50%</good> more strikecraft refit time.
+summary|option1|CRUISER|51	0	The strikecraft replacement rate both decays and recovers <bad>50%</bad> more slowly.
+summary|option1|CRUISER|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time.
+summary|option1|CRUISER|53	1	<good>+20</good> to minimum crew required.
 summary|option1|CRUISER|54	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
 summary|option1|CRUISER|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option1|CRUISER|56	0	<good>0%</good> increased top speed.
@@ -6611,8 +6587,8 @@ summary|option1|CRUISER|83	0	<good>16%</good> increased timeflow.
 summary|option1|CRUISER|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
 summary|option1|CRUISER|85	0	<bad>-5</bad> to flux dissipation per flux vent.
 summary|option1|CRUISER|86	0	<good>20%</good> increased cargo capacity.
-summary|option1|CRUISER|87	1	<bad>35%</bad> reduced rate at which strikecraft replacement capability decays from losses.
-summary|option1|CRUISER|88	0	<good>45%</good> increased rate at which strikecraft replacement capability recovers.
+summary|option1|CRUISER|87	1	<bad>35%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+summary|option1|CRUISER|88	0	<good>45%</good> increased rate at which the strikecraft replacement rate recovers.
 summary|option1|CRUISER|89	1	<good>+20</good> to minimum crew required per strikecraft bay.
 summary|option1|CRUISER|90	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
 summary|option1|CRUISER|91	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
@@ -6805,10 +6781,10 @@ summary|option1|CAPITAL_SHIP|46	0	Removes all of this ship's strikecraft bays.
 summary|option1|CAPITAL_SHIP|47	1	<bad>20%</bad> reduced minimum crew required per strikecraft bay, up to 80% in total.
 summary|option1|CAPITAL_SHIP|48	0	<good>+50</good> to cargo capacity per strikecraft bay.
 summary|option1|CAPITAL_SHIP|49	0	<good>+1</good> to number of strikecraft bays, plus any extra bays from Vast Hangar.
-summary|option1|CAPITAL_SHIP|50	1	<good>50%</good> more strikecraft refit time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option1|CAPITAL_SHIP|51	0	<bad>50%</bad> slower strikecraft replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
-summary|option1|CAPITAL_SHIP|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option1|CAPITAL_SHIP|53	1	<good>+20</good> to minimum crew required. Waived by the Second-in-Command skill Reconfiguration.
+summary|option1|CAPITAL_SHIP|50	1	<good>50%</good> more strikecraft refit time.
+summary|option1|CAPITAL_SHIP|51	0	The strikecraft replacement rate both decays and recovers <bad>50%</bad> more slowly.
+summary|option1|CAPITAL_SHIP|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time.
+summary|option1|CAPITAL_SHIP|53	1	<good>+20</good> to minimum crew required.
 summary|option1|CAPITAL_SHIP|54	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
 summary|option1|CAPITAL_SHIP|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option1|CAPITAL_SHIP|56	0	<good>0%</good> increased top speed.
@@ -6842,8 +6818,8 @@ summary|option1|CAPITAL_SHIP|83	0	<good>16%</good> increased timeflow.
 summary|option1|CAPITAL_SHIP|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
 summary|option1|CAPITAL_SHIP|85	0	<bad>-5</bad> to flux dissipation per flux vent.
 summary|option1|CAPITAL_SHIP|86	0	<good>20%</good> increased cargo capacity.
-summary|option1|CAPITAL_SHIP|87	1	<bad>35%</bad> reduced rate at which strikecraft replacement capability decays from losses.
-summary|option1|CAPITAL_SHIP|88	0	<good>45%</good> increased rate at which strikecraft replacement capability recovers.
+summary|option1|CAPITAL_SHIP|87	1	<bad>35%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+summary|option1|CAPITAL_SHIP|88	0	<good>45%</good> increased rate at which the strikecraft replacement rate recovers.
 summary|option1|CAPITAL_SHIP|89	1	<good>+20</good> to minimum crew required per strikecraft bay.
 summary|option1|CAPITAL_SHIP|90	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
 summary|option1|CAPITAL_SHIP|91	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
@@ -7036,10 +7012,10 @@ summary|option2|FRIGATE|46	0	Removes all of this ship's strikecraft bays.
 summary|option2|FRIGATE|47	1	<bad>20%</bad> reduced minimum crew required per strikecraft bay, up to 80% in total.
 summary|option2|FRIGATE|48	0	<good>+50</good> to cargo capacity per strikecraft bay.
 summary|option2|FRIGATE|49	0	<good>+1</good> to number of strikecraft bays, plus any extra bays from Vast Hangar.
-summary|option2|FRIGATE|50	1	<good>50%</good> more strikecraft refit time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option2|FRIGATE|51	0	<bad>50%</bad> slower strikecraft replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
-summary|option2|FRIGATE|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option2|FRIGATE|53	1	<good>+20</good> to minimum crew required. Waived by the Second-in-Command skill Reconfiguration.
+summary|option2|FRIGATE|50	1	<good>50%</good> more strikecraft refit time.
+summary|option2|FRIGATE|51	0	The strikecraft replacement rate both decays and recovers <bad>50%</bad> more slowly.
+summary|option2|FRIGATE|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time.
+summary|option2|FRIGATE|53	1	<good>+20</good> to minimum crew required.
 summary|option2|FRIGATE|54	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
 summary|option2|FRIGATE|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option2|FRIGATE|56	0	<good>0%</good> increased top speed.
@@ -7073,8 +7049,8 @@ summary|option2|FRIGATE|83	0	<good>16%</good> increased timeflow.
 summary|option2|FRIGATE|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
 summary|option2|FRIGATE|85	0	<bad>-5</bad> to flux dissipation per flux vent.
 summary|option2|FRIGATE|86	0	<good>20%</good> increased cargo capacity.
-summary|option2|FRIGATE|87	1	<bad>35%</bad> reduced rate at which strikecraft replacement capability decays from losses.
-summary|option2|FRIGATE|88	0	<good>45%</good> increased rate at which strikecraft replacement capability recovers.
+summary|option2|FRIGATE|87	1	<bad>35%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+summary|option2|FRIGATE|88	0	<good>45%</good> increased rate at which the strikecraft replacement rate recovers.
 summary|option2|FRIGATE|89	1	<good>+20</good> to minimum crew required per strikecraft bay.
 summary|option2|FRIGATE|90	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
 summary|option2|FRIGATE|91	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
@@ -7270,10 +7246,10 @@ summary|option2|DESTROYER|46	0	Removes all of this ship's strikecraft bays.
 summary|option2|DESTROYER|47	1	<bad>20%</bad> reduced minimum crew required per strikecraft bay, up to 80% in total.
 summary|option2|DESTROYER|48	0	<good>+50</good> to cargo capacity per strikecraft bay.
 summary|option2|DESTROYER|49	0	<good>+1</good> to number of strikecraft bays, plus any extra bays from Vast Hangar.
-summary|option2|DESTROYER|50	1	<good>50%</good> more strikecraft refit time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option2|DESTROYER|51	0	<bad>50%</bad> slower strikecraft replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
-summary|option2|DESTROYER|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option2|DESTROYER|53	1	<good>+20</good> to minimum crew required. Waived by the Second-in-Command skill Reconfiguration.
+summary|option2|DESTROYER|50	1	<good>50%</good> more strikecraft refit time.
+summary|option2|DESTROYER|51	0	The strikecraft replacement rate both decays and recovers <bad>50%</bad> more slowly.
+summary|option2|DESTROYER|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time.
+summary|option2|DESTROYER|53	1	<good>+20</good> to minimum crew required.
 summary|option2|DESTROYER|54	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
 summary|option2|DESTROYER|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option2|DESTROYER|56	0	<good>0%</good> increased top speed.
@@ -7307,8 +7283,8 @@ summary|option2|DESTROYER|83	0	<good>16%</good> increased timeflow.
 summary|option2|DESTROYER|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
 summary|option2|DESTROYER|85	0	<bad>-5</bad> to flux dissipation per flux vent.
 summary|option2|DESTROYER|86	0	<good>20%</good> increased cargo capacity.
-summary|option2|DESTROYER|87	1	<bad>35%</bad> reduced rate at which strikecraft replacement capability decays from losses.
-summary|option2|DESTROYER|88	0	<good>45%</good> increased rate at which strikecraft replacement capability recovers.
+summary|option2|DESTROYER|87	1	<bad>35%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+summary|option2|DESTROYER|88	0	<good>45%</good> increased rate at which the strikecraft replacement rate recovers.
 summary|option2|DESTROYER|89	1	<good>+20</good> to minimum crew required per strikecraft bay.
 summary|option2|DESTROYER|90	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
 summary|option2|DESTROYER|91	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
@@ -7504,10 +7480,10 @@ summary|option2|CRUISER|46	0	Removes all of this ship's strikecraft bays.
 summary|option2|CRUISER|47	1	<bad>20%</bad> reduced minimum crew required per strikecraft bay, up to 80% in total.
 summary|option2|CRUISER|48	0	<good>+50</good> to cargo capacity per strikecraft bay.
 summary|option2|CRUISER|49	0	<good>+1</good> to number of strikecraft bays, plus any extra bays from Vast Hangar.
-summary|option2|CRUISER|50	1	<good>50%</good> more strikecraft refit time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option2|CRUISER|51	0	<bad>50%</bad> slower strikecraft replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
-summary|option2|CRUISER|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option2|CRUISER|53	1	<good>+20</good> to minimum crew required. Waived by the Second-in-Command skill Reconfiguration.
+summary|option2|CRUISER|50	1	<good>50%</good> more strikecraft refit time.
+summary|option2|CRUISER|51	0	The strikecraft replacement rate both decays and recovers <bad>50%</bad> more slowly.
+summary|option2|CRUISER|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time.
+summary|option2|CRUISER|53	1	<good>+20</good> to minimum crew required.
 summary|option2|CRUISER|54	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
 summary|option2|CRUISER|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option2|CRUISER|56	0	<good>0%</good> increased top speed.
@@ -7541,8 +7517,8 @@ summary|option2|CRUISER|83	0	<good>16%</good> increased timeflow.
 summary|option2|CRUISER|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
 summary|option2|CRUISER|85	0	<bad>-5</bad> to flux dissipation per flux vent.
 summary|option2|CRUISER|86	0	<good>20%</good> increased cargo capacity.
-summary|option2|CRUISER|87	1	<bad>35%</bad> reduced rate at which strikecraft replacement capability decays from losses.
-summary|option2|CRUISER|88	0	<good>45%</good> increased rate at which strikecraft replacement capability recovers.
+summary|option2|CRUISER|87	1	<bad>35%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+summary|option2|CRUISER|88	0	<good>45%</good> increased rate at which the strikecraft replacement rate recovers.
 summary|option2|CRUISER|89	1	<good>+20</good> to minimum crew required per strikecraft bay.
 summary|option2|CRUISER|90	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
 summary|option2|CRUISER|91	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
@@ -7738,10 +7714,10 @@ summary|option2|CAPITAL_SHIP|46	0	Removes all of this ship's strikecraft bays.
 summary|option2|CAPITAL_SHIP|47	1	<bad>20%</bad> reduced minimum crew required per strikecraft bay, up to 80% in total.
 summary|option2|CAPITAL_SHIP|48	0	<good>+50</good> to cargo capacity per strikecraft bay.
 summary|option2|CAPITAL_SHIP|49	0	<good>+1</good> to number of strikecraft bays, plus any extra bays from Vast Hangar.
-summary|option2|CAPITAL_SHIP|50	1	<good>50%</good> more strikecraft refit time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option2|CAPITAL_SHIP|51	0	<bad>50%</bad> slower strikecraft replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
-summary|option2|CAPITAL_SHIP|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time. Waived by the Second-in-Command skill Reconfiguration.
-summary|option2|CAPITAL_SHIP|53	1	<good>+20</good> to minimum crew required. Waived by the Second-in-Command skill Reconfiguration.
+summary|option2|CAPITAL_SHIP|50	1	<good>50%</good> more strikecraft refit time.
+summary|option2|CAPITAL_SHIP|51	0	The strikecraft replacement rate both decays and recovers <bad>50%</bad> more slowly.
+summary|option2|CAPITAL_SHIP|52	1	<good>+40%</good> of base refit time to strikecraft relaunch time.
+summary|option2|CAPITAL_SHIP|53	1	<good>+20</good> to minimum crew required.
 summary|option2|CAPITAL_SHIP|54	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
 summary|option2|CAPITAL_SHIP|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option2|CAPITAL_SHIP|56	0	<good>0%</good> increased top speed.
@@ -7775,8 +7751,8 @@ summary|option2|CAPITAL_SHIP|83	0	<good>16%</good> increased timeflow.
 summary|option2|CAPITAL_SHIP|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
 summary|option2|CAPITAL_SHIP|85	0	<bad>-5</bad> to flux dissipation per flux vent.
 summary|option2|CAPITAL_SHIP|86	0	<good>20%</good> increased cargo capacity.
-summary|option2|CAPITAL_SHIP|87	1	<bad>35%</bad> reduced rate at which strikecraft replacement capability decays from losses.
-summary|option2|CAPITAL_SHIP|88	0	<good>45%</good> increased rate at which strikecraft replacement capability recovers.
+summary|option2|CAPITAL_SHIP|87	1	<bad>35%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
+summary|option2|CAPITAL_SHIP|88	0	<good>45%</good> increased rate at which the strikecraft replacement rate recovers.
 summary|option2|CAPITAL_SHIP|89	1	<good>+20</good> to minimum crew required per strikecraft bay.
 summary|option2|CAPITAL_SHIP|90	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
 summary|option2|CAPITAL_SHIP|91	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.

@@ -5,7 +5,6 @@ import exiledsector.ProjectFiles;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.SkillEffectNames;
-import exiledsector.skills.skilleffect.fighter.FighterSkillEffect;
 import exiledsector.skills.skilleffect.shipsystem.ShipSystemSkillEffect;
 import exiledsector.skills.NodeDescription;
 import exiledsector.skills.ShipSkillData;
@@ -87,12 +86,9 @@ class DescriptionGoldenTest {
             }
         }
         secondInCommandEnabled = false;
-        for (SkillEffect effect : List.of(ShipSystemSkillEffect.AUGMENTED_SYSTEM_REGEN_PERCENT, FighterSkillEffect.CONVERTED_HANGAR_REFIT_TIME_MULT,
-                FighterSkillEffect.CONVERTED_HANGAR_REPLACEMENT_RATE_MULT, FighterSkillEffect.CONVERTED_HANGAR_RELAUNCH_TIME_FLAT,
-                FighterSkillEffect.CONVERTED_HANGAR_MIN_CREW_FLAT)) {
-            for (float magnitude : SAMPLE_MAGNITUDES) {
-                addLine(lines, "effect-noSiC|" + effect.name() + "|" + magnitude, effect.description(magnitude), effect.invertsDescriptionColours());
-            }
+        SkillEffect sicDependent = ShipSystemSkillEffect.AUGMENTED_SYSTEM_REGEN_PERCENT;
+        for (float magnitude : SAMPLE_MAGNITUDES) {
+            addLine(lines, "effect-noSiC|" + sicDependent.name() + "|" + magnitude, sicDependent.description(magnitude), sicDependent.invertsDescriptionColours());
         }
         secondInCommandEnabled = true;
         for (SkillType type : sortedTypes()) {

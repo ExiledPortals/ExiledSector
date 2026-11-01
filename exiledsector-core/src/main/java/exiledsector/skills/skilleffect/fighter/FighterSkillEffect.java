@@ -75,9 +75,9 @@ public enum FighterSkillEffect implements BackedSkillEffect {
         }
     },
     FIGHTER_REPLACEMENT_DECAY_PERCENT(statEffect(PERCENT, dynamicStat("replacement_rate_decrease_mult"),
-            "stat.rateAtWhichFighterReplacementCapabilityDecaysFromLosses", true)),
+            "stat.rateAtWhichFighterReplacementRateDecreasesDueToFighterLosses", true)),
     FIGHTER_REPLACEMENT_RECOVERY_PERCENT(statEffect(PERCENT, dynamicStat("replacement_rate_increase_mult"),
-            "stat.rateAtWhichFighterReplacementCapabilityRecovers", false)),
+            "stat.rateAtWhichFighterReplacementRateRecovers", false)),
     FIGHTER_PD_DAMAGE_BONUS_PERCENT {
         @Override
         public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
