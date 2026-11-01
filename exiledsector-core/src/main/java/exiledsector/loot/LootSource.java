@@ -48,6 +48,9 @@ public interface LootSource {
     default void addShowcaseLoot(CargoAPI loot, Random random) {
     }
 
+    default void addSiteFinds(SiteFind find) {
+    }
+
     default void addTechMiningFinds(TechMiningItemListener.Find find) {
     }
 

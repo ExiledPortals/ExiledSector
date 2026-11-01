@@ -1,6 +1,7 @@
 package exiledsector.loot;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -9,9 +10,11 @@ import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
+import exiledsector.items.ItemDrops;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.function.Predicate;
 
@@ -33,6 +36,13 @@ public final class LootSources {
 
     public static LootModifiers modifiersFor(SectorEntityToken site) {
         return SOURCES.firstOr(source -> source.modifiersFor(site), LootModifiers.NONE);
+    }
+
+    public static ItemDrops.SiteLoot rollSite(SectorAPI sector, String siteId, Random random, LootModifiers modifiers) {
+        ItemDrops.SiteLoot baseLoot = ItemDrops.rollSite(siteId, random, modifiers.itemChances(), modifiers.feedstockMult(), modifiers.currencyMult());
+        SiteFind find = new SiteFind(sector, siteId, random, modifiers.itemChances(), new ArrayList<>(), new ArrayList<>());
+        SOURCES.all().forEach(source -> source.addSiteFinds(find));
+        return baseLoot.plus(find.items(), find.upgrades(), Map.of());
     }
 
     public static List<ItemData> bossDrops(int chartTier, String bossFactionId, float chanceMult, Random random,

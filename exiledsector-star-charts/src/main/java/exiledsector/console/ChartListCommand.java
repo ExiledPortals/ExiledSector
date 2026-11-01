@@ -16,8 +16,7 @@ public class ChartListCommand extends CampaignCommand {
     @Override
     protected CommandResult runInCampaign(String args) {
         int absorbed = StarCharts.absorbCharts(Global.getSector());
-        ItemStore store = ItemStore.starChartsIfCreated();
-        List<Item> charts = store == null ? List.of() : store.owned();
+        List<Item> charts = ItemStore.ownedStarCharts();
         StringBuilder listing = new StringBuilder();
         if (absorbed > 0) {
             listing.append("Moved ").append(absorbed).append(" Star Chart(s) from your cargo into Star Chart storage.\n");

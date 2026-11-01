@@ -139,15 +139,12 @@ public class ChartOpenCommand extends CampaignCommand {
         }
 
         static OpenArguments parse(String args) {
-            if (args == null || args.isBlank()) {
-                return new OpenArguments(null, null, null, null);
-            }
             String regionId = null;
             String layoutId = null;
             List<String> anomalyIds = new ArrayList<>();
             SkirmishSide side = null;
             List<String> rest = new ArrayList<>();
-            for (String token : args.trim().split("\\s+")) {
+            for (String token : ConsoleArgs.tokens(args)) {
                 Matcher atlas = ATLAS_SETTING.matcher(token);
                 if (!atlas.matches()) {
                     rest.add(token);
@@ -173,20 +170,17 @@ public class ChartOpenCommand extends CampaignCommand {
                     anomalyIds.add(atlas.group(2));
                 }
             }
-            OpenArguments parsed = parseSettings(String.join(" ", rest));
+            OpenArguments parsed = parseSettings(rest);
             return parsed.problem() != null ? parsed
                     : new OpenArguments(parsed.seed(), parsed.systemType(), parsed.tier(), null, parsed.breach(), regionId, layoutId, anomalyIds, side);
         }
 
-        private static OpenArguments parseSettings(String args) {
-            if (args.isBlank()) {
-                return new OpenArguments(null, null, null, null);
-            }
+        private static OpenArguments parseSettings(List<String> tokens) {
             StarSystemType systemType = null;
             Integer explicitTier = null;
             boolean breach = false;
             List<Long> numbers = new ArrayList<>();
-            for (String token : args.trim().split("\\s+")) {
+            for (String token : tokens) {
                 Matcher tierMatch = EXPLICIT_TIER.matcher(token);
                 StarSystemType type = ChartLayoutGenerator.parseType(token);
                 Long number = parseNumber(token);

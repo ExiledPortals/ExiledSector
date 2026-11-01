@@ -11,6 +11,7 @@ import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasLine;
 import exiledsector.charts.atlas.AtlasLine.Tone;
+import exiledsector.charts.atlas.AtlasNames;
 import exiledsector.charts.atlas.AtlasNode;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasReach;
@@ -21,38 +22,14 @@ import exiledsector.ui.socket.BenchModeSupport;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public final class AtlasNodeText {
 
     private AtlasNodeText() {
     }
 
-    public static String name(String category, String id) {
-        if (id == null || id.isEmpty()) {
-            return "";
-        }
-        String key = "chart.atlas." + category + "." + id;
-        return Translation.has(key) ? Translation.text(key) : tidy(id);
-    }
-
-    static String tidy(String id) {
-        String[] words = id.replace('-', '_').split("_");
-        StringBuilder tidied = new StringBuilder();
-        for (String word : words) {
-            if (word.isEmpty()) {
-                continue;
-            }
-            if (tidied.length() > 0) {
-                tidied.append(' ');
-            }
-            tidied.append(word.substring(0, 1).toUpperCase(Locale.ROOT)).append(word.substring(1));
-        }
-        return tidied.toString();
-    }
-
     public static String regionName(String regionId) {
-        return AtlasRegion.NORMAL.equals(regionId) ? Translation.text("chart.atlas.normalSpace") : name("region", regionId);
+        return AtlasRegion.NORMAL.equals(regionId) ? Translation.text("chart.atlas.normalSpace") : AtlasNames.name("region", regionId);
     }
 
     public static List<AtlasLine> describe(AtlasGenerator generator, AtlasState state, AtlasCell cell, boolean reachable) {
@@ -65,7 +42,7 @@ public final class AtlasNodeText {
         lines.add(new AtlasLine(regionName(node.regionId()), Tone.TITLE));
         lines.add(new AtlasLine(Translation.msg("chart.atlas.node.faction")
                 .arg("faction", ChartFactions.displayName(AtlasOpening.factionFor(generator, state, cell, node))).text(), Tone.PLAIN));
-        lines.add(new AtlasLine(Translation.msg("chart.atlas.node.layout").arg("layout", name("layout", node.layoutId())).text(), Tone.PLAIN));
+        lines.add(new AtlasLine(Translation.msg("chart.atlas.node.layout").arg("layout", AtlasNames.name("layout", node.layoutId())).text(), Tone.PLAIN));
         lines.addAll(markers(generator, state, cell, node));
         lines.addAll(stateLines(generator, state, cell, reachable));
         return lines;
@@ -76,16 +53,16 @@ public final class AtlasNodeText {
         boolean spent = state.has(cell, AtlasState.MARKERS_SPENT);
         AtlasSpecial special = generator.specialAt(cell);
         if (special != null) {
-            lines.add(new AtlasLine(name("special", special.id()), Tone.MARKER));
+            lines.add(new AtlasLine(AtlasNames.name("special", special.id()), Tone.MARKER));
         }
         for (String anomalyId : AtlasAnomalies.effective(generator, state, cell)) {
-            lines.add(new AtlasLine(Translation.msg("chart.atlas.node.anomaly").arg("anomaly", name("anomaly", anomalyId)).text(), Tone.MARKER));
+            lines.add(new AtlasLine(Translation.msg("chart.atlas.node.anomaly").arg("anomaly", AtlasNames.name("anomaly", anomalyId)).text(), Tone.MARKER));
             lines.addAll(anomalyLines(generator, state, cell, anomalyId));
         }
         if (node.infestationId() != null) {
             lines.add(state.has(cell, AtlasState.CLEANSED)
                     ? new AtlasLine(Translation.text("chart.atlas.node.cleansed"), Tone.GOOD)
-                    : new AtlasLine(Translation.msg("chart.atlas.node.infested").arg("infestation", name("special", node.infestationId())).text(), Tone.BAD));
+                    : new AtlasLine(Translation.msg("chart.atlas.node.infested").arg("infestation", AtlasNames.name("special", node.infestationId())).text(), Tone.BAD));
         }
         if (spent) {
             lines.add(new AtlasLine(Translation.text("chart.atlas.node.spent"), Tone.BAD));

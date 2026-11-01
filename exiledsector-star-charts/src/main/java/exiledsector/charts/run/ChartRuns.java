@@ -36,11 +36,6 @@ public final class ChartRuns {
         return run != null && entity != null && ChartIds.belongsToRun(entity, run.runId()) ? run : null;
     }
 
-    public static ChartRun liveWith(String anomalyId) {
-        ChartRun run = live();
-        return run != null && run.anomalyIds().contains(anomalyId) ? run : null;
-    }
-
     public static ChartRun unclosed(String runId) {
         ChartRun run = currentOrNull();
         return run != null && run.runState() != ChartRunState.CLOSED && run.runId().equals(runId) ? run : null;

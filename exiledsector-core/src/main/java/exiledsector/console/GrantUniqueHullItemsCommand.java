@@ -8,16 +8,13 @@ import org.lazywizard.console.Console;
 import java.util.List;
 import java.util.Random;
 
-public class GrantUniqueHullItemsCommand extends PlayerFleetCommand {
-
-    private final Random random;
+public class GrantUniqueHullItemsCommand extends RandomPlayerFleetCommand {
 
     public GrantUniqueHullItemsCommand() {
-        this(new Random());
     }
 
     GrantUniqueHullItemsCommand(Random random) {
-        this.random = random;
+        super(random);
     }
 
     @Override

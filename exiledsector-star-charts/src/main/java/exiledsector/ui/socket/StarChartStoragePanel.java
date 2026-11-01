@@ -79,7 +79,7 @@ public final class StarChartStoragePanel extends HoloPanel {
 
     public void refresh() {
         queue(() -> {
-            List<Item> owned = ownedCharts();
+            List<Item> owned = ItemStore.ownedStarCharts();
             if (disassembly.pending().stream().anyMatch(chart -> !owned.contains(chart))) {
                 closeDisassemblyConfirm();
             }
@@ -238,11 +238,6 @@ public final class StarChartStoragePanel extends HoloPanel {
         rebuildControls();
     }
 
-    private static List<Item> ownedCharts() {
-        ItemStore store = ItemStore.starChartsIfCreated();
-        return store == null ? List.of() : store.owned();
-    }
-
     private void disassemblyModePressed() {
         if (!disassembly.active()) {
             disassembly.enter();
@@ -297,7 +292,7 @@ public final class StarChartStoragePanel extends HoloPanel {
 
     private void disassembleNow(List<Item> requested, boolean leaveMode) {
         ItemStore store = ItemStore.starChartsIfCreated();
-        List<Item> owned = ownedCharts();
+        List<Item> owned = ItemStore.ownedStarCharts();
         List<Item> targets = requested.stream().filter(owned::contains).toList();
         if (store == null || targets.isEmpty()) {
             return;

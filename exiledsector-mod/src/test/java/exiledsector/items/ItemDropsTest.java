@@ -59,7 +59,7 @@ class ItemDropsTest {
         Random random = new Random(11L);
         int hits = 0;
         for (int i = 0; i < TRIALS; i++) {
-            if (test.test(ItemDrops.roll(site, random, mult, uniqueAllowed))) {
+            if (test.test(ItemDrops.roll(site, random, ItemChances.of(mult), uniqueAllowed))) {
                 hits++;
             }
         }
@@ -70,7 +70,7 @@ class ItemDropsTest {
         Random random = new Random(11L);
         int hits = 0;
         for (int i = 0; i < TRIALS; i++) {
-            if (test.test(ItemDrops.rollSectionItemLoot(site, random, mult).items())) {
+            if (test.test(HullItemDrops.rollSectionItemLoot(site, random, mult).items())) {
                 hits++;
             }
         }
@@ -101,7 +101,7 @@ class ItemDropsTest {
         assertEquals(0.0, share("station", 1f, definition -> false, items -> items.stream().anyMatch(item -> "relic".equals(item.definitionId()))), 0.0);
         Random random = new Random(2L);
         for (int i = 0; i < 200; i++) {
-            assertTrue(ItemDrops.roll("station", random).stream().noneMatch(item -> "relic".equals(item.definitionId())));
+            assertTrue(ItemDrops.roll("station", random, ItemChances.BASE).stream().noneMatch(item -> "relic".equals(item.definitionId())));
         }
     }
 
@@ -113,8 +113,8 @@ class ItemDropsTest {
     @Test
     void unknownOrMalformedSitesDropNothing() {
         assertFalse(ItemDrops.hasRule("broken"));
-        assertTrue(ItemDrops.roll("nowhere", new Random(1L)).isEmpty());
-        assertTrue(ItemDrops.roll(null, new Random(1L)).isEmpty());
+        assertTrue(ItemDrops.roll("nowhere", new Random(1L), ItemChances.BASE).isEmpty());
+        assertTrue(ItemDrops.roll(null, new Random(1L), ItemChances.BASE).isEmpty());
     }
 
     @Test
@@ -160,12 +160,12 @@ class ItemDropsTest {
         try (MockedStatic<LunaSettings> luna = Mockito.mockStatic(LunaSettings.class)) {
             luna.when(() -> LunaSettings.getBoolean("exiledSector", SalvageSiteCompat.DROPS_FIELD_ID)).thenReturn(true);
             assertTrue(ItemDrops.hasRule("rat_abyss_research"));
-            assertEquals(1, ItemDrops.rollSectionItemLoot("rat_abyss_research", new Random(1L), 1f).items().size());
+            assertEquals(1, HullItemDrops.rollSectionItemLoot("rat_abyss_research", new Random(1L), 1f).items().size());
             assertEquals(0.5, basicShare("probe", 1f, items -> !items.isEmpty()), 0.02);
 
             luna.when(() -> LunaSettings.getBoolean("exiledSector", SalvageSiteCompat.DROPS_FIELD_ID)).thenReturn(false);
             assertFalse(ItemDrops.hasRule("rat_abyss_research"));
-            assertTrue(ItemDrops.rollSectionItemLoot("rat_abyss_research", new Random(1L), 1f).items().isEmpty());
+            assertTrue(HullItemDrops.rollSectionItemLoot("rat_abyss_research", new Random(1L), 1f).items().isEmpty());
             assertTrue(ItemDrops.hasRule("probe"));
         }
     }
@@ -212,7 +212,7 @@ class ItemDropsTest {
         Random random = new Random(13L);
         List<Map<String, Integer>> rolls = new java.util.ArrayList<>();
         for (int i = 0; i < TRIALS; i++) {
-            rolls.add(ItemDrops.rollMaterials(site, random, mult));
+            rolls.add(ItemDrops.rollMaterials(site, random, mult, mult));
         }
         return rolls;
     }
@@ -274,8 +274,8 @@ class ItemDropsTest {
 
     @Test
     void sitesWithoutARuleDropNoMaterials() {
-        assertTrue(ItemDrops.rollMaterials("nowhere", new Random(1L)).isEmpty());
-        assertTrue(ItemDrops.rollMaterials(null, new Random(1L)).isEmpty());
+        assertTrue(ItemDrops.rollMaterials("nowhere", new Random(1L), 1f, 1f).isEmpty());
+        assertTrue(ItemDrops.rollMaterials(null, new Random(1L), 1f, 1f).isEmpty());
     }
 
     @Test

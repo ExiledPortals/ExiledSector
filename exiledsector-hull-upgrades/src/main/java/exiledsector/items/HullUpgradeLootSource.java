@@ -7,12 +7,12 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.effects.ItemLootListener;
-import exiledsector.effects.TechMiningItemListener;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
 import exiledsector.loot.LootSource;
 import exiledsector.loot.LootSources;
 import exiledsector.loot.MarketStock;
+import exiledsector.loot.SiteFind;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -71,12 +71,12 @@ public final class HullUpgradeLootSource implements LootSource, MarketStock {
 
     @Override
     public void addEncounterLoot(BattleLoot battle, CargoAPI loot) {
-        ItemLootListener.addSectionLoot(loot, battleItemDrops(battle));
+        battleItemDrops(battle).addTo(loot);
     }
 
     @Override
     public void deliverBattleLoot(BattleLoot battle, CargoAPI playerCargo) {
-        ItemDrops.SectionItemLoot battleItems = battleItemDrops(battle);
+        HullItemDrops.SectionItemLoot battleItems = battleItemDrops(battle);
         battleItems.items().forEach(item -> playerCargo.addSpecial(item.toSpecialItem(), 1f));
         ItemLootListener.announceBattleItems(battleItems.items());
         for (ShipCurrency upgrade : battleItems.upgrades()) {
@@ -85,31 +85,32 @@ public final class HullUpgradeLootSource implements LootSource, MarketStock {
         }
     }
 
-    private ItemDrops.SectionItemLoot battleItemDrops(BattleLoot battle) {
+    private HullItemDrops.SectionItemLoot battleItemDrops(BattleLoot battle) {
         SectorAPI sector = Global.getSector();
         if (!battle.playerWon() || sector == null) {
-            return ItemDrops.SectionItemLoot.NONE;
+            return HullItemDrops.SectionItemLoot.NONE;
         }
         boolean sectionsOpen = HullUpgradesSetting.sectionsOpen(sector);
         if (!sectionsOpen && !MasterSchematic.required()) {
-            return ItemDrops.SectionItemLoot.NONE;
+            return HullItemDrops.SectionItemLoot.NONE;
         }
         try {
             return BattleItemDrops.roll(losses(battle).battleItems(), BattleItemDrops.settingMultiplier(), battle.random(),
                     definition -> ItemUnlock.canDrop(definition, sector), sectionsOpen);
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Rolling battle hull item drops failed", e);
-            return ItemDrops.SectionItemLoot.NONE;
+            return HullItemDrops.SectionItemLoot.NONE;
         }
     }
 
     @Override
-    public void addTechMiningFinds(TechMiningItemListener.Find find) {
-        ItemDrops.SectionItemLoot sectionItemLoot = HullUpgradesSetting.sectionsOpen(find.sector())
-                ? ItemDrops.rollSectionItemLoot(find.dropSite(), find.random(), find.chanceMult()) : ItemDrops.SectionItemLoot.NONE;
-        find.items().addAll(sectionItemLoot.items());
-        find.upgrades().addAll(sectionItemLoot.upgrades());
-        find.upgrades().addAll(ItemDrops.rollMasterSchematic(find.dropSite(), find.random(), find.chanceMult()));
+    public void addSiteFinds(SiteFind find) {
+        if (HullUpgradesSetting.sectionsOpen(find.sector())) {
+            HullItemDrops.SectionItemLoot sectionItemLoot = HullItemDrops.rollSectionItemLoot(find.dropSite(), find.random(), find.chances());
+            find.items().addAll(sectionItemLoot.items());
+            find.upgrades().addAll(sectionItemLoot.upgrades());
+        }
+        find.upgrades().addAll(HullItemDrops.rollMasterSchematic(find.dropSite(), find.random(), find.chances().general()));
     }
 
     @Override

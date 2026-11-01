@@ -99,6 +99,11 @@ public final class ItemStore {
         return SaveData.findOrNull(starChartDataKey(), ItemStore.class);
     }
 
+    public static List<Item> ownedStarCharts() {
+        ItemStore store = starChartsIfCreated();
+        return store == null ? List.of() : store.owned();
+    }
+
     public static boolean carriesStarCharts(CargoAPI cargo) {
         if (cargo == null) {
             return false;

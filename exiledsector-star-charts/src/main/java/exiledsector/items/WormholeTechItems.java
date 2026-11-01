@@ -1,8 +1,5 @@
 package exiledsector.items;
 
-import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.campaign.SpecialItemData;
-
 import java.util.List;
 
 public final class WormholeTechItems {
@@ -17,17 +14,5 @@ public final class WormholeTechItems {
 
     public static void localise() {
         ALL.forEach(itemId -> MaterialItems.localise(itemId, "gatewayItem."));
-    }
-
-    public static String displayName(String itemId) {
-        return MaterialItems.displayName(itemId);
-    }
-
-    public static SpecialItemData data(String itemId) {
-        return MaterialItems.data(itemId);
-    }
-
-    public static void addTo(CargoAPI cargo, String itemId) {
-        MaterialItems.add(cargo, itemId, 1);
     }
 }

@@ -134,14 +134,14 @@ public final class BattleItemDrops {
         return Math.max(0f, deploymentPoints) * (1f + Math.max(0, allocatedNodeCount) / NODES_PER_DOUBLING);
     }
 
-    public static ItemDrops.SectionItemLoot roll(Battle battle, float dropMultiplier, Random random, Predicate<ItemDefinition> uniqueAllowed,
+    public static HullItemDrops.SectionItemLoot roll(Battle battle, float dropMultiplier, Random random, Predicate<ItemDefinition> uniqueAllowed,
                                                  boolean sectionsOpen) {
         if (battle == null || battle.isEmpty() || !(dropMultiplier > 0f)) {
-            return ItemDrops.SectionItemLoot.NONE;
+            return HullItemDrops.SectionItemLoot.NONE;
         }
         List<ItemData> items = new ArrayList<>();
         List<ShipCurrency> upgrades = new ArrayList<>();
-        List<ItemKind> kindsWithBasics = sectionsOpen ? ItemDrops.sectionKindsWithBasics() : List.of();
+        List<ItemKind> kindsWithBasics = sectionsOpen ? HullItemDrops.sectionKindsWithBasics() : List.of();
         for (Planned planned : plan(battle.sources(), dropMultiplier, kindsWithBasics, random, sectionsOpen)) {
             if (planned.drop() == Drop.REFIT_SCHEMATIC) {
                 upgrades.add(RefitSchematic.roll(random));
@@ -156,14 +156,14 @@ public final class BattleItemDrops {
             } else {
                 int effectCount = planned.drop().effectCount();
                 Predicate<ItemDefinition> holdsCount = candidate -> ItemRoller.canRollEffectCount(candidate, effectCount);
-                ItemDefinition definition = planned.kind() == null ? ItemDrops.pickSectionItemBasic(random, holdsCount)
+                ItemDefinition definition = planned.kind() == null ? HullItemDrops.pickSectionItemBasic(random, holdsCount)
                         : ItemDrops.pickSectionItemBasic(planned.kind(), random, holdsCount);
                 if (definition != null) {
                     items.add(ItemData.rolledWithEffectCount(definition, random.nextLong(), effectCount));
                 }
             }
         }
-        return new ItemDrops.SectionItemLoot(items, upgrades);
+        return new HullItemDrops.SectionItemLoot(items, upgrades);
     }
 
     static List<Planned> plan(List<SourcePower> sources, float dropMultiplier, List<ItemKind> kindsWithBasics, Random random,

@@ -77,16 +77,6 @@ public final class CombatQueries {
         return damage.isDps() ? damage.getDamage() * damage.getDpsDuration() : damage.getDamage();
     }
 
-    public static List<ShipAPI> shipsMatching(Predicate<ShipAPI> filter) {
-        List<ShipAPI> result = new ArrayList<>();
-        for (ShipAPI ship : Global.getCombatEngine().getShips()) {
-            if (filter.test(ship)) {
-                result.add(ship);
-            }
-        }
-        return result;
-    }
-
     public static List<ShipAPI> shipsNear(Vector2f loc, float radius, Predicate<ShipAPI> filter) {
         List<ShipAPI> result = new ArrayList<>();
         Set<ShipAPI> seen = Collections.newSetFromMap(new IdentityHashMap<>(8));

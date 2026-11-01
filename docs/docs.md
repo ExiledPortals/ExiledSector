@@ -327,8 +327,9 @@ With the LunaLib setting "Require Master Schematics" on (and Hull Upgrades on), 
 Master Schematic is used on it on the Hull Upgrades panel (`HullUpgradeRules.applyMasterSchematic`, flag
 `ShipSkillData.skillTreeUnlocked`). `MasterSchematic.treeOpen` gates the tree's effects, phantom hull mods and the OP
 reserve. A locked ship keeps earning XP. Switching the setting on unlocks every ship with a node besides its root, and a
-save with no unlocked ship gets one Master Schematic once (`MasterSchematicActivation`). They drop from battles, salvage,
-Tech Mining and chart clears.
+save with no unlocked ship gets one Master Schematic once (`MasterSchematicActivation`). They drop from battles and from every
+site roll (salvage, Tech Mining, chart sites and chart clears), which reaches hull loot through
+`HullUpgradeLootSource.addSiteFinds`.
 
 A locked ship counts as 0 tree power in `PlayerTreePower`, and an open-world NPC ship that rolls 0 nodes gets no tree, so
 the share of NPC ships with trees follows the share of unlocked player ships. Chart ships are levelled only at their tier's
@@ -554,10 +555,9 @@ A run's anomalies are its atlas system's own, decided once before layout (`Chart
 ranges); Star Charts roll no anomaly lines. Each id needs a `chart_anomalies.csv` row with its `requires_mod` loaded,
 and one that conflicts with an anomaly already taken (both replace the star, or `excludes`) is dropped. A star anomaly
 picks the star or system type, a `shape` adds terrain after layout and a `generate` places entities after the sites and
-fleets (role interfaces in package `charts.anomaly`); one that fails at either step is left out with what it added, and
-the run record keeps the ids that placed. A layout that fails and falls back to a single star keeps only the anomalies that
-need no layout (`ChartLayoutGenerator`). Each anomaly shapes with its own seeded random, and the run state a
-`generate` records reaches the run only once the whole content is built (`AnomalyContentSite.commitStates`). Run hooks reach only the live run's anomalies (`ChartAnomalies`, `AnomalyRun`). An
+fleets (role interfaces in package `charts.anomaly`), and the run record keeps the ids that placed. Each anomaly shapes
+with its own seeded random, and the run state a `generate` records reaches the run only once the whole content is built
+(`AnomalyContentSite.commitStates`). Run hooks reach only the live run's anomalies (`ChartAnomalies`, `AnomalyRun`). An
 anomaly's `effects` lines join the run's context for generation and loot (`ChartGenContext.withAnomalyEffects`).
 
 `AnomalyContentSite.addSite` places chart POIs on clear orbits through the same `ChartSites.spawn` as the system's own sites,
@@ -629,8 +629,8 @@ The cargo is the `convoy` scope of `chart_loot.csv` plus the `exiledSector_chart
 freighters' fleet points. Each share of freighter fleet points lost drops as cargo pods, and the rest is cached on the
 destination (`ConvoyState`, `ConvoyCargo`). That planet then offers a raid (`ConvoyCacheDialog`, `anomaly.ChartRaid`, vanilla's
 non-market raid without reputation, response, cooldowns or rules) at a difficulty and danger level set by tier
-(`ChartRaid.difficulty`, `danger`); the cache objective yields exactly the delivered share and stays until taken, and
-Continue moves on to the planet's next anomaly dialog (`AnomalyDialog.continueAfter`). Once the freighters are lost, every convoy fleet left leaves through the exit.
+(`ChartRaid.difficulty`, `danger`); the cache objective yields exactly the delivered share and stays until taken. Once the
+freighters are lost, every convoy fleet left leaves through the exit.
 
 ### Anomalous Debris
 

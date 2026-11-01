@@ -6,11 +6,11 @@ import exiledsector.charts.anomaly.relay.RelayChain;
 import exiledsector.charts.anomaly.relay.RelayNetwork;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
-import exiledsector.charts.anomaly.skirmish.SkirmishEntry;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasAnomalyRecord;
 import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.AtlasEntry;
 import exiledsector.charts.atlas.AtlasLine;
 import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.atlas.AtlasData;
@@ -89,8 +89,8 @@ class AtlasNodeTextTest {
             List<BenchModeSupport.OpenChoice> choices = AtlasNodeText.entryChoices(generator, state, cell);
             assertEquals(List.of("Side with " + defender, "Side with " + attacker, "Stay out"),
                     choices.stream().map(BenchModeSupport.OpenChoice::label).toList());
-            assertEquals(List.of(new SkirmishEntry(cell, SkirmishSide.DEFENDER), new SkirmishEntry(cell, SkirmishSide.ATTACKER),
-                    new SkirmishEntry(cell, SkirmishSide.NEITHER)), choices.stream().map(BenchModeSupport.OpenChoice::target).toList());
+            assertEquals(List.of(new AtlasEntry(cell, SkirmishSide.DEFENDER), new AtlasEntry(cell, SkirmishSide.ATTACKER),
+                    new AtlasEntry(cell, SkirmishSide.NEITHER)), choices.stream().map(BenchModeSupport.OpenChoice::target).toList());
             assertEquals(List.of(), AtlasNodeText.entryChoices(generator, state, AtlasCell.ORIGIN));
         } finally {
             ChartTables.resetAnomalies();

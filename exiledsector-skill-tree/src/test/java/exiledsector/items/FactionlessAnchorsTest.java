@@ -203,7 +203,7 @@ class FactionlessAnchorsTest {
     @Test
     void techMiningAddsAFactionlessAnchorToItsFinds() throws Exception {
         TechMiningItemListener.Find find = new TechMiningItemListener.Find(sector, null, 0, "techmining_first_find", 1f, new Random(3L),
-                new ArrayList<>(), new ArrayList<>());
+                new ArrayList<>());
         FactionlessAnchors.register(new JSONArray().put(new JSONObject().put("site", "techmining_first_find").put("chance", "1")));
 
         SkillTreeLootSource.INSTANCE.addTechMiningFinds(find);

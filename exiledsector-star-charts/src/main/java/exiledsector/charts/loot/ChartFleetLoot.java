@@ -224,8 +224,7 @@ public final class ChartFleetLoot {
         LootModifiers modifiers = context.lootModifiers(chanceMult);
         ItemDrops.SiteLoot siteLoot = source == ChartDrops.Source.CHART_FLEET
                 ? ItemDrops.rollFleetSalvage(siteId, random, modifiers.itemChances(), modifiers.feedstockMult(), modifiers.currencyMult())
-                : ItemDrops.rollSite(siteId, random, modifiers.itemChances(), modifiers.feedstockMult(), modifiers.currencyMult(),
-                ItemUnlock.available(ItemType.HULL_ITEM, sector));
+                : LootSources.rollSite(sector, siteId, random, modifiers);
         boolean offerTierUp = source == ChartDrops.Source.CHART_BOSS && context.guaranteedBossTierUp() && !run.isBossTierUpGranted();
         ChartDrops.Loot chartLoot = ChartDrops.roll(source, run.tier(), ChartDrops.Mults.of(context, chanceMult), random, offerTierUp);
         if (offerTierUp && !chartLoot.charts().isEmpty()) {

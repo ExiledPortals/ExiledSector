@@ -8,9 +8,8 @@ import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.effects.ItemLootListener;
 import exiledsector.items.ItemDrops;
-import exiledsector.items.ItemType;
-import exiledsector.items.ItemUnlock;
 import exiledsector.loot.LootModifiers;
+import exiledsector.loot.LootSources;
 
 import java.util.List;
 import java.util.Random;
@@ -25,8 +24,7 @@ public final class ChartCargoLoot {
             return ItemDrops.SiteLoot.NONE;
         }
         LootModifiers modifiers = context.lootModifiers(itemMult);
-        ItemDrops.SiteLoot items = ItemDrops.rollSite(siteId, random, modifiers.itemChances(), modifiers.feedstockMult(), modifiers.currencyMult(),
-                ItemUnlock.available(ItemType.HULL_ITEM, sector));
+        ItemDrops.SiteLoot items = LootSources.rollSite(sector, siteId, random, modifiers);
         ChartDrops.Loot charts = ChartDrops.roll(ChartDrops.Source.SYSTEM_SALVAGE, run.tier(), ChartDrops.Mults.of(context, itemMult), random);
         return items.plus(charts.charts(), List.of(), charts.materials());
     }

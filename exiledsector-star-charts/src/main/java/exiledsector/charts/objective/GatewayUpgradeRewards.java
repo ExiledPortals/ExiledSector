@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.wormhole.WormholeGateway;
+import exiledsector.items.MaterialItems;
 import exiledsector.items.WormholeTechItems;
 import org.apache.log4j.Logger;
 
@@ -72,7 +73,7 @@ public final class GatewayUpgradeRewards {
         if (!reached || sectorMemory.getBoolean(flag)) {
             return;
         }
-        WormholeTechItems.addTo(playerFleet.getCargo(), itemId);
+        MaterialItems.add(playerFleet.getCargo(), itemId, 1);
         sectorMemory.set(flag, true);
         granted.add(itemId);
     }

@@ -57,10 +57,6 @@ public final class MarketHullItems {
         }
     }
 
-    public static boolean stocks(String submarketId) {
-        return submarketId != null && RANGES_BY_SUBMARKET.get().containsKey(submarketId);
-    }
-
     public static List<ItemData> roll(String submarketId, Random random) {
         CountRange range = submarketId == null ? null : RANGES_BY_SUBMARKET.get().get(submarketId);
         List<ItemData> stocked = new ArrayList<>();
@@ -69,7 +65,7 @@ public final class MarketHullItems {
         }
         int count = range.min() + random.nextInt(range.max() - range.min() + 1);
         for (int i = 0; i < count; i++) {
-            ItemDefinition definition = ItemDrops.pickSectionItemBasic(random, candidate -> ItemRoller.canRollEffectCount(candidate, EFFECT_COUNT));
+            ItemDefinition definition = HullItemDrops.pickSectionItemBasic(random, candidate -> ItemRoller.canRollEffectCount(candidate, EFFECT_COUNT));
             if (definition != null) {
                 stocked.add(ItemData.rolledWithEffectCount(definition, random.nextLong(), EFFECT_COUNT));
             }

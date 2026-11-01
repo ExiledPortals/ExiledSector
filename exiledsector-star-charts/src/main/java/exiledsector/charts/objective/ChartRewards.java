@@ -9,11 +9,12 @@ import exiledsector.charts.loot.ChartDrops;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.generation.ChartTiers;
-import exiledsector.items.ItemData;
+import exiledsector.effects.ItemLootListener;
 import exiledsector.items.ItemDrops;
-import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.MaterialItems;
+import exiledsector.loot.LootModifiers;
+import exiledsector.loot.LootSources;
 import exiledsector.ui.CampaignMessages;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
 import exiledsector.Seeds;
@@ -22,7 +23,6 @@ import org.apache.log4j.Logger;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public final class ChartRewards {
@@ -75,24 +75,11 @@ public final class ChartRewards {
         int credits = creditsFor(run.tier(), rewardMult);
         cargo.getCredits().add(credits);
         float chanceMult = itemChanceMultFor(run.tier()) * rewardMult;
-        int hullItems = 0;
-        for (ItemData item : ItemDrops.roll(REWARD_SITE, random, chanceMult)) {
-            cargo.addSpecial(item.toSpecialItem(), 1f);
-            hullItems++;
-        }
-        Map<String, Integer> materials = ItemDrops.rollMaterials(REWARD_SITE, random, chanceMult);
-        materials.forEach((itemId, quantity) -> MaterialItems.add(cargo, itemId, quantity));
-        if (ItemUnlock.available(ItemType.HULL_ITEM, sector)) {
-            ItemDrops.SectionItemLoot sectionLoot = ItemDrops.rollSectionItemLoot(REWARD_SITE, random, chanceMult);
-            for (ItemData item : sectionLoot.items()) {
-                cargo.addSpecial(item.toSpecialItem(), 1f);
-                hullItems++;
-            }
-            sectionLoot.upgrades().forEach(upgrade -> cargo.addSpecial(upgrade.toSpecialItem(), 1f));
-        }
-        ItemDrops.rollMasterSchematic(REWARD_SITE, random, chanceMult).forEach(schematic -> cargo.addSpecial(schematic.toSpecialItem(), 1f));
+        ItemDrops.SiteLoot siteLoot = LootSources.rollSite(sector, REWARD_SITE, random, LootModifiers.of(chanceMult));
+        ItemLootListener.addSiteLoot(cargo, siteLoot);
+        int hullItems = siteLoot.items().size();
         ChartDrops.Loot chartLoot = grantChartDrops(run, cargo, random);
-        int materialCount = materials.values().stream().mapToInt(Integer::intValue).sum();
+        int materialCount = siteLoot.materials().values().stream().mapToInt(Integer::intValue).sum();
         int chartMaterialCount = chartLoot.materials().values().stream().mapToInt(Integer::intValue).sum();
         announce(run, credits, hullItems, chartLoot.charts().size());
         MaterialDropAnnouncer.announce(chartLoot.currencies());

@@ -14,6 +14,7 @@ import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasLine;
 import exiledsector.charts.atlas.AtlasOpening;
+import exiledsector.charts.atlas.AtlasEntry;
 import exiledsector.charts.atlas.AtlasRunChoice;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.atlas.AtlasRuntime;
@@ -128,12 +129,12 @@ public final class FactionSkirmish implements AtlasRule, RunParticipant, Content
         String attacker = ChartFactions.displayName(attacker(generator, state, cell));
         return List.of(
                 new BenchModeSupport.OpenChoice(Translation.msg("chart.atlas.skirmish.join").arg("faction", defender).text(),
-                        Translation.msg("chart.atlas.skirmish.defender").arg("defender", defender).text(), new SkirmishEntry(cell, SkirmishSide.DEFENDER)),
+                        Translation.msg("chart.atlas.skirmish.defender").arg("defender", defender).text(), new AtlasEntry(cell, SkirmishSide.DEFENDER)),
                 new BenchModeSupport.OpenChoice(Translation.msg("chart.atlas.skirmish.join").arg("faction", attacker).text(),
                         Translation.msg("chart.atlas.skirmish.attacker").arg("attacker", attacker).arg("defender", defender).text(),
-                        new SkirmishEntry(cell, SkirmishSide.ATTACKER)),
+                        new AtlasEntry(cell, SkirmishSide.ATTACKER)),
                 new BenchModeSupport.OpenChoice(Translation.text("chart.atlas.skirmish.stayOut"),
-                        Translation.msg("chart.atlas.skirmish.neither").arg("defender", defender).text(), new SkirmishEntry(cell, SkirmishSide.NEITHER)));
+                        Translation.msg("chart.atlas.skirmish.neither").arg("defender", defender).text(), new AtlasEntry(cell, SkirmishSide.NEITHER)));
     }
 
     @Override

@@ -27,11 +27,11 @@ public record AnomalyCatalystUse(AtlasCatalysts.Catalyst catalyst, AtlasGenerato
         }
         UseVerdict refused = (check == AtlasAnomalies.InsertCheck.DOES_NOT_FIT
                 ? AtlasRule.of(ChartAnomalies.byId(anomalyId)).insertVerdict(generator, state, cell)
-                : UseVerdict.refused(AtlasCatalystUse.refusalKey(check))).with("anomaly", AtlasCatalystUse.anomalyName(anomalyId));
+                : UseVerdict.refused(AtlasCatalystUse.refusalKey(check))).with("anomaly", AtlasNames.anomaly(anomalyId));
         if (check == AtlasAnomalies.InsertCheck.CONFLICT) {
             String other = AtlasAnomalies.effective(generator, state, cell).stream()
                     .filter(existing -> ChartAnomalies.conflicts(existing, anomalyId)).findFirst().orElse("");
-            refused = refused.with("other", AtlasCatalystUse.anomalyName(other));
+            refused = refused.with("other", AtlasNames.anomaly(other));
         }
         return refused;
     }
@@ -58,6 +58,6 @@ public record AnomalyCatalystUse(AtlasCatalysts.Catalyst catalyst, AtlasGenerato
     }
 
     private String anomalyName() {
-        return AtlasCatalystUse.anomalyName(catalyst.anomalyId());
+        return AtlasNames.anomaly(catalyst.anomalyId());
     }
 }

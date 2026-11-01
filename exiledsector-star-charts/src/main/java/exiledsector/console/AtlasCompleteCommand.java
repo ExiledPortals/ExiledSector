@@ -36,8 +36,7 @@ public class AtlasCompleteCommand extends AtlasTargetCommand {
     protected CommandResult runAt(SectorAPI sector, AtlasGenerator generator, AtlasState state, AtlasCell cell, List<String> rest) {
         Integer tier = tier(rest);
         if (tier == null) {
-            Console.showMessage("Can't use \"" + String.join(" ", rest) + "\".\nUsage: " + usage());
-            return CommandResult.BAD_SYNTAX;
+            return badSyntax(rest);
         }
         if (state.isCompleted(cell)) {
             Console.showMessage(AtlasCommandText.cell(cell) + " is already completed.");

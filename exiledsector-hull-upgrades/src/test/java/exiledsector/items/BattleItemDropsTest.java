@@ -160,7 +160,7 @@ class BattleItemDropsTest {
         int relics = 0;
         int lockedRelics = 0;
         for (int trial = 0; trial < 100; trial++) {
-            ItemDrops.SectionItemLoot loot = BattleItemDrops.roll(bigBattle, 1f, random, definition -> true, true);
+            HullItemDrops.SectionItemLoot loot = BattleItemDrops.roll(bigBattle, 1f, random, definition -> true, true);
             for (ItemData item : loot.items()) {
                 relics += HULL_RELIC.equals(item.definitionId()) ? 1 : 0;
                 assertFalse(THIN_BRIDGE.equals(item.definitionId()) && item.explicits().size() > 1, item.toString());
@@ -213,8 +213,8 @@ class BattleItemDropsTest {
     void aBattleWithNoPowerOrADropMultiplierOfZeroDropsNothing() {
         BattleItemDrops.Battle battle = new BattleItemDrops.Battle(List.of(new BattleItemDrops.SourcePower(4000f, ItemChances.BASE)), null);
 
-        assertEquals(ItemDrops.SectionItemLoot.NONE, BattleItemDrops.roll(battle, 0f, new Random(1L), definition -> true, true));
-        assertEquals(ItemDrops.SectionItemLoot.NONE, BattleItemDrops.roll(new BattleItemDrops.Battle(List.of(), null), 1f,
+        assertEquals(HullItemDrops.SectionItemLoot.NONE, BattleItemDrops.roll(battle, 0f, new Random(1L), definition -> true, true));
+        assertEquals(HullItemDrops.SectionItemLoot.NONE, BattleItemDrops.roll(new BattleItemDrops.Battle(List.of(), null), 1f,
                 new Random(1L), definition -> true, true));
     }
 
@@ -260,7 +260,7 @@ class BattleItemDropsTest {
         Map<BattleItemDrops.Drop, Integer> closed = counts(BattleItemDrops.plan(battle, 1f, List.of(), neverLucky(), false));
 
         assertEquals(Map.of(BattleItemDrops.Drop.MASTER_SCHEMATIC, 1), closed);
-        ItemDrops.SectionItemLoot loot = BattleItemDrops.roll(new BattleItemDrops.Battle(battle, null), 1f, neverLucky(),
+        HullItemDrops.SectionItemLoot loot = BattleItemDrops.roll(new BattleItemDrops.Battle(battle, null), 1f, neverLucky(),
                 definition -> true, false);
         assertEquals(List.of(MasterSchematic.INSTANCE), loot.upgrades());
         assertTrue(loot.items().isEmpty());

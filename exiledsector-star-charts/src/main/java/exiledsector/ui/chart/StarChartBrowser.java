@@ -30,8 +30,7 @@ public final class StarChartBrowser {
 
     public static int prepare(SectorAPI sector, StarChartBrowser browser) {
         int moved = sector == null ? 0 : StarCharts.absorbCharts(sector);
-        ItemStore store = ItemStore.starChartsIfCreated();
-        browser.reload(store == null ? List.of() : store.owned());
+        browser.reload(ItemStore.ownedStarCharts());
         return moved;
     }
 

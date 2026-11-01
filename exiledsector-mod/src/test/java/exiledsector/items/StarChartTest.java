@@ -13,7 +13,6 @@ import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
-import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;

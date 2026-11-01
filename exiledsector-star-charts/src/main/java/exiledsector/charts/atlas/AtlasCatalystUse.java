@@ -36,10 +36,6 @@ public sealed interface AtlasCatalystUse extends Consumable<AtlasCell, AtlasCata
         return "catalyst.refused." + check.name().toLowerCase(Locale.ROOT);
     }
 
-    static String anomalyName(String anomalyId) {
-        return Translation.text("chart.atlas.anomaly." + anomalyId);
-    }
-
     AtlasCatalysts.Catalyst catalyst();
 
     String usableText();

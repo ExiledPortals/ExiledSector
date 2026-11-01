@@ -124,10 +124,6 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         }
     }
 
-    public static void addSectionLoot(CargoAPI loot, ItemDrops.SectionItemLoot sectionLoot) {
-        addSpecials(loot, sectionLoot.items(), sectionLoot.upgrades());
-    }
-
     public static void addSiteLoot(CargoAPI loot, ItemDrops.SiteLoot siteLoot) {
         addSpecials(loot, siteLoot.items(), siteLoot.upgrades());
         siteLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));

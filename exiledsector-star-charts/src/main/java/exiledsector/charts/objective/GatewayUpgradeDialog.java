@@ -6,7 +6,6 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.AddRemoveCommodity;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.items.MaterialItems;
-import exiledsector.items.WormholeTechItems;
 import exiledsector.ui.BaseDialogPlugin;
 import exiledsector.ui.VanillaText;
 
@@ -34,9 +33,9 @@ final class GatewayUpgradeDialog extends BaseDialogPlugin {
             if (spec != null && spec.getIconName() != null) {
                 text.addImage(spec.getIconName());
             }
-            String itemName = WormholeTechItems.displayName(itemId);
+            String itemName = MaterialItems.displayName(itemId);
             VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("gatewayItem.upgrade.popup").arg("item", itemName).text()));
-            AddRemoveCommodity.addItemGainText(WormholeTechItems.data(itemId), 1, text);
+            AddRemoveCommodity.addItemGainText(MaterialItems.data(itemId), 1, text);
         }
         options().clearOptions();
         addLeaveOption(Translation.gameText("gatewayItem.upgrade.popup.continue"), CONTINUE);

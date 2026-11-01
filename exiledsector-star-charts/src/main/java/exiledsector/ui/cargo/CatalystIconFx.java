@@ -200,32 +200,8 @@ public final class CatalystIconFx {
         float scar = scarAlpha(cycle) * alphaMult;
         if (scar > 0f) {
             int cell = (int) (CargoIconFx.hash(phaseSeed, round, 7) * SCAR_CELLS * SCAR_CELLS);
-            drawCell(FX_SPRITES.texture(SCAR_TEXTURE), cell % SCAR_CELLS, cell / SCAR_CELLS, cx, cy, SCAR_SIZE * unit, SCAR_COLOR, scar);
-        }
-    }
-
-    private static void drawCell(SpriteAPI texture, int column, int row, float cx, float cy, float cellSize, Color tint, float alpha) {
-        if (texture == null) {
-            return;
-        }
-        float cellWidth = texture.getTexWidth() / SCAR_CELLS;
-        float cellHeight = texture.getTexHeight() / SCAR_CELLS;
-        float left = texture.getTexX() + column * cellWidth;
-        float bottom = texture.getTexY() + row * cellHeight;
-        float half = cellSize / 2f;
-        try (GlScope scope = GlScope.textured(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)) {
-            texture.bindTexture();
-            Misc.setColor(tint, alpha);
-            GL11.glBegin(GL11.GL_QUADS);
-            GL11.glTexCoord2f(left, bottom);
-            GL11.glVertex2f(cx - half, cy - half);
-            GL11.glTexCoord2f(left + cellWidth, bottom);
-            GL11.glVertex2f(cx + half, cy - half);
-            GL11.glTexCoord2f(left + cellWidth, bottom + cellHeight);
-            GL11.glVertex2f(cx + half, cy + half);
-            GL11.glTexCoord2f(left, bottom + cellHeight);
-            GL11.glVertex2f(cx - half, cy + half);
-            GL11.glEnd();
+            SpriteDraw.drawCellAtCenter(FX_SPRITES.sprite(SCAR_TEXTURE), SCAR_CELLS, SCAR_CELLS, cell, cx, cy, SCAR_SIZE * unit, SCAR_SIZE * unit, 0f,
+                    SCAR_COLOR, scar, false);
         }
     }
 

@@ -34,8 +34,7 @@ public class ChartOpenStoredCommand extends CampaignCommand {
             return CommandResult.BAD_SYNTAX;
         }
         StarCharts.absorbCharts(Global.getSector());
-        ItemStore store = ItemStore.starChartsIfCreated();
-        List<Item> charts = store == null ? List.of() : store.owned();
+        List<Item> charts = ItemStore.ownedStarCharts();
         if (index > charts.size()) {
             Console.showMessage("There is no stored Star Chart " + index + "; Star Chart storage holds " + charts.size() + ".");
             return CommandResult.ERROR;
@@ -43,7 +42,7 @@ public class ChartOpenStoredCommand extends CampaignCommand {
         Item chart = charts.get(index - 1);
         String chartText = ChartListCommand.describe(chart);
         int entries = StarChartSettings.wormholeEntries();
-        OpenResult result = ChartRunActions.openFromStore(Global.getSector(), entries, random, store, chart);
+        OpenResult result = ChartRunActions.openFromStore(Global.getSector(), entries, random, ItemStore.starChartsIfCreated(), chart);
         switch (result) {
             case OPENED -> {
                 ChartRun run = ChartRuns.currentOrNull();

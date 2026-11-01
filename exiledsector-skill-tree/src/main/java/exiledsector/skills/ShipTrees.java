@@ -419,13 +419,6 @@ public final class ShipTrees {
         }
     }
 
-    public static List<SkillItemCost> releaseAnchorExit(ShipSkillData data, String exitNodeId) {
-        if (ShipTreeLinks.anchorSocket(data, exitNodeId) == null || !deallocateAnchorExit(data, exitNodeId)) {
-            return List.of();
-        }
-        return ItemChargeLedger.takeItemCharges(data, List.of(exitNodeId));
-    }
-
     private static boolean deallocateAnchorExit(ShipSkillData data, String exitNodeId) {
         if (!data.allocatedNodeIds.contains(exitNodeId)) {
             return false;
@@ -442,13 +435,6 @@ public final class ShipTrees {
         ItemChargeLedger.ensure(data);
         data.grantFreeNodeIds().add(nodeId);
         return ItemChargeLedger.takeItemCharges(data, List.of(nodeId));
-    }
-
-    public static List<SkillItemCost> deallocateReleasingCharges(ShipSkillData data, SkillNode node) {
-        Set<String> allocatedBefore = new LinkedHashSet<>(data.allocatedNodeIds);
-        deallocate(data, node);
-        allocatedBefore.removeAll(data.allocatedNodeIds);
-        return ItemChargeLedger.takeItemCharges(data, allocatedBefore);
     }
 
     public static boolean replaceNode(ShipSkillData data, String oldId, String newId) {
