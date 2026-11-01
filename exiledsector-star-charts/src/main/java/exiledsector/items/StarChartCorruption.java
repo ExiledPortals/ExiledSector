@@ -28,7 +28,7 @@ public final class StarChartCorruption {
 
     static StarChart expandModifiers(StarChart chart, Random random) {
         ItemDefinition definition = chart.definition();
-        if (definition == null || definition.unique()) {
+        if (definition == null) {
             return null;
         }
         List<RolledModifier> rerolled = ItemRoller.rollAtTierWithEffectCount(definition, random.nextLong(), chart.tier(), EXPANDED_MODIFIERS,

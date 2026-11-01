@@ -12,6 +12,7 @@ import exiledsector.items.ItemType;
 import exiledsector.items.RolledEffect;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
+import exiledsector.modifiers.TierGroup;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.NodeDescription;
 import exiledsector.skills.SkillNode;
@@ -105,19 +106,23 @@ public final class EditorDescriber {
     private static StyledText describeModifierLine(JSONObject lineJson) throws JSONException {
         String effectName = lineJson.getString("effect");
         JSONArray hullValuesJson = lineJson.optJSONArray("hullValues");
-        JSONArray tierBandsJson = lineJson.optJSONArray("tierBands");
+        JSONArray tierGroupsJson = lineJson.optJSONArray("tierGroups");
         ModifierLine line;
-        if (tierBandsJson != null) {
-            List<Integer> bandStartTiers = new ArrayList<>();
-            List<Float> bandLowValues = new ArrayList<>();
-            List<Float> bandHighValues = new ArrayList<>();
-            for (int index = 0; index < tierBandsJson.length(); index++) {
-                JSONObject band = tierBandsJson.getJSONObject(index);
-                bandStartTiers.add(band.getInt("tier"));
-                bandLowValues.add((float) band.getDouble("min"));
-                bandHighValues.add((float) band.getDouble("max"));
+        if (tierGroupsJson != null) {
+            List<TierGroup> groups = new ArrayList<>();
+            List<Float> groupLowValues = new ArrayList<>();
+            List<Float> groupHighValues = new ArrayList<>();
+            for (int index = 0; index < tierGroupsJson.length(); index++) {
+                JSONObject groupJson = tierGroupsJson.getJSONObject(index);
+                TierGroup group = TierGroup.byIdOrNull(groupJson.getString("group"));
+                if (group == null) {
+                    return null;
+                }
+                groups.add(group);
+                groupLowValues.add((float) groupJson.getDouble("min"));
+                groupHighValues.add((float) groupJson.getDouble("max"));
             }
-            line = ModifierLine.perTierBandRanges(effectName, bandStartTiers, bandLowValues, bandHighValues);
+            line = ModifierLine.perTierGroupRanges(effectName, groups, groupLowValues, groupHighValues);
         } else if (hullValuesJson != null) {
             List<Float> hullValues = new ArrayList<>();
             for (int index = 0; index < hullValuesJson.length(); index++) {

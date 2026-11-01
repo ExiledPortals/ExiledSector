@@ -24,6 +24,7 @@ import exiledsector.charts.run.cleanup.ChartDefenderTallies;
 import exiledsector.charts.run.cleanup.ChartLoadSweep;
 import exiledsector.charts.run.diagnostics.ChartSoakScript;
 import exiledsector.items.ItemStore;
+import exiledsector.items.RetiredUniqueCharts;
 import exiledsector.ui.chart.ChartInfoTab;
 import org.apache.log4j.Logger;
 
@@ -48,6 +49,7 @@ public final class StarCharts {
             sector.getListenerManager().removeListenerOfClass(ChartInfoTab.class);
             sector.getListenerManager().addListener(new ChartInfoTab(), true);
         }
+        RetiredUniqueCharts.removeFrom(sector);
         absorbCharts(sector);
     }
 

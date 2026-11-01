@@ -17,12 +17,12 @@ export const SUBROUTINE_TYPE = 'subroutine';
 export const UNIQUE_SUBROUTINE_TYPE = 'unique_subroutine';
 const SHIP_ITEM_TYPE = 'hull_item';
 const MODIFIER_ID_PATTERN = /^[A-Za-z0-9_]+$/;
-const TIER_BAND_TEXT = /^t([^=]*)=(-?[^-]*)(?:-(.*))?$/;
-const TIER_BAND_NUMBER = /^-?\d+(?:\.\d+)?$/;
-const TIER_NUMBER = /^\d+$/;
+const TIER_GROUP_TEXT = /^([^=]*)=(-?[^-]*)(?:-(.*))?$/;
+const TIER_GROUP_NUMBER = /^-?\d+(?:\.\d+)?$/;
+const TIER_GROUP_VALUE_SEPARATOR = '=';
 
-export interface TierBand {
-  tier: string;
+export interface TierGroupValue {
+  group: string;
   min: string;
   max: string;
   unparsedText?: string;
@@ -33,9 +33,10 @@ export interface RolledValues {
   max: string;
   hullValues?: string[];
   rangeBeforeHullValues?: { min: string; max: string };
-  tierBands?: TierBand[];
-  rangeBeforeTierBands?: { min: string; max: string };
-  tierBandsBeforeRange?: TierBand[];
+  tierGroups?: TierGroupValue[];
+  rangeBeforeTierGroups?: { min: string; max: string };
+  tierGroupsBeforeRange?: TierGroupValue[];
+  switchedOffTierGroups?: TierGroupValue[];
 }
 
 export interface ModifierLine extends RolledValues {
@@ -67,33 +68,40 @@ export interface ModifierUsage {
   corruptionPools?: string[];
 }
 
-export function isTierBandText(text: string | undefined): boolean {
-  const trimmed = String(text ?? '').trim();
-  return trimmed.startsWith('t') && trimmed.includes('=');
+export function isTierGroupText(text: string | undefined): boolean {
+  return String(text ?? '').includes(TIER_GROUP_VALUE_SEPARATOR);
 }
 
-export function parseTierBands(text: string): TierBand[] {
+export function parseTierGroups(text: string): TierGroupValue[] {
   return text
     .trim()
     .split('/')
-    .map((bandText): TierBand => {
-      const match = TIER_BAND_TEXT.exec(bandText.trim());
-      return match && match[3] !== '' ? { tier: match[1], min: match[2], max: match[3] ?? '' } : { tier: '', min: '', max: '', unparsedText: bandText };
+    .map((groupText): TierGroupValue => {
+      const match = TIER_GROUP_TEXT.exec(groupText.trim());
+      return match && match[3] !== '' ? { group: match[1], min: match[2], max: match[3] ?? '' } : { group: '', min: '', max: '', unparsedText: groupText };
     });
 }
 
-export function formatTierBand(band: TierBand): string {
-  return band.unparsedText ?? `t${band.tier}=${band.min}${band.max === '' ? '' : `-${band.max}`}`;
+export function formatTierGroup(groupValue: TierGroupValue): string {
+  return groupValue.unparsedText ?? `${groupValue.group}${TIER_GROUP_VALUE_SEPARATOR}${groupValue.min}${groupValue.max === '' ? '' : `-${groupValue.max}`}`;
 }
 
-export function formatTierBands(bands: TierBand[]): string {
-  return bands.map(formatTierBand).join('/');
+export function formatTierGroups(groupValues: TierGroupValue[]): string {
+  return groupValues.map(formatTierGroup).join('/');
+}
+
+export function tierGroupIds(vocabulary: Vocabulary): string[] {
+  return vocabulary.chartTierGroups.map((group) => group.id);
+}
+
+export function isReadableTierGroup(groupValue: TierGroupValue, groupIds: readonly string[]): boolean {
+  return groupValue.unparsedText === undefined && groupIds.includes(groupValue.group);
 }
 
 export function parseModifierLine(text: string): ModifierLine {
   const parts = text.split(':').map((part) => part.trim());
-  if (isTierBandText(parts[1])) {
-    const line: ModifierLine = { effect: parts[0] ?? '', min: '', max: '', tierBands: parseTierBands(parts[1]) };
+  if (isTierGroupText(parts[1])) {
+    const line: ModifierLine = { effect: parts[0] ?? '', min: '', max: '', tierGroups: parseTierGroups(parts[1]) };
     if (parts.length > 2) {
       line.extraField = parts.slice(2).join(':');
     }
@@ -122,8 +130,8 @@ export function parseModifierLines(text: string): ModifierLine[] {
 }
 
 function lineValuesText(line: ModifierLine): string {
-  if (line.tierBands) {
-    return formatTierBands(line.tierBands);
+  if (line.tierGroups) {
+    return formatTierGroups(line.tierGroups);
   }
   return line.hullValues ? line.hullValues.join('/') : `${line.min}:${line.max}`;
 }
@@ -181,8 +189,8 @@ function rangeSummary(min: string, max: string): string {
 }
 
 export function lineSummary(line: ModifierLine): string {
-  if (line.tierBands) {
-    return `${line.effect} ${line.tierBands.map((band) => band.unparsedText ?? `t${band.tier}+ ${rangeSummary(band.min, band.max)}`).join(', ')}`;
+  if (line.tierGroups) {
+    return `${line.effect} ${line.tierGroups.map((groupValue) => groupValue.unparsedText ?? `${groupValue.group} ${rangeSummary(groupValue.min, groupValue.max)}`).join(', ')}`;
   }
   const values = line.hullValues ? line.hullValues.join(' / ') : line.min === line.max ? line.min : `${line.min} to ${line.max}`;
   return `${line.effect} ${values}`;
@@ -217,7 +225,7 @@ export function familyItemTypes(family: ItemFamily, vocabulary: Vocabulary): str
 export function newModifierLine(family: ItemFamily, vocabulary: Vocabulary, slot: string): ModifierLine {
   const effect = familyEffectNames(family, vocabulary)[0] ?? '';
   if (family === 'chart' && slot !== 'implicit') {
-    return { effect, min: '', max: '', tierBands: [{ tier: '1', min: '1', max: '2' }] };
+    return { effect, min: '', max: '', tierGroups: tierGroupIds(vocabulary).map((group) => ({ group, min: '1', max: '2' })) };
   }
   return { effect, min: '1', max: '2' };
 }
@@ -242,44 +250,60 @@ export function idConventionIssue(modifier: Pick<ItemModifier, 'id' | 'lines'>):
   return modifier.lines.length > 1 && !modifier.id.startsWith(HYBRID_ID_PREFIX) ? `has several effects, so its id must start with ${HYBRID_ID_PREFIX}` : null;
 }
 
-function tierBandIssues(label: string, bands: TierBand[], vocabulary: Vocabulary): string[] {
+function tierGroupListText(groups: readonly string[]): string {
+  return `[${groups.join(', ')}]`;
+}
+
+function validTierGroupListsText(groupIds: readonly string[]): string {
+  const lists = groupIds.map((_, index) => tierGroupListText(groupIds.slice(index)));
+  return lists.length > 1 ? `${lists.slice(0, -1).join(', ')} or ${lists[lists.length - 1]}` : (lists[0] ?? '');
+}
+
+function tierGroupIssues(label: string, groupValues: TierGroupValue[], vocabulary: Vocabulary): string[] {
   const issues: string[] = [];
-  let previousTier = 0;
-  bands.forEach((band, index) => {
-    if (band.unparsedText !== undefined) {
-      issues.push(`${label} has the tier band "${band.unparsedText.trim()}"; write each band as tN=value or tN=min-max`);
-      return;
+  const groupIds = tierGroupIds(vocabulary);
+  for (const groupValue of groupValues) {
+    if (!isReadableTierGroup(groupValue, groupIds)) {
+      issues.push(`${label} has the tier group "${formatTierGroup(groupValue).trim()}"; write each group as ${groupIds.join(', ')} followed by =value or =min-max`);
+    } else if (!TIER_GROUP_NUMBER.test(groupValue.min) || (groupValue.max !== '' && !TIER_GROUP_NUMBER.test(groupValue.max))) {
+      issues.push(`${label} has a ${groupValue.group} value that is not a plain number`);
+    } else if (groupValue.max !== '' && Number.parseFloat(groupValue.min) > Number.parseFloat(groupValue.max)) {
+      issues.push(`${label} has a ${groupValue.group} min above its max`);
     }
-    if (!TIER_NUMBER.test(band.tier)) {
-      issues.push(`${label} has a tier band without a whole tier number`);
-      return;
+  }
+  if (groupValues.length === 0) {
+    issues.push(`${label} needs at least one tier group`);
+  } else if (groupValues.every((groupValue) => isReadableTierGroup(groupValue, groupIds))) {
+    const listed = groupValues.map((groupValue) => groupValue.group);
+    if (tierGroupListText(listed) !== tierGroupListText(groupIds.slice(groupIds.indexOf(listed[0])))) {
+      issues.push(`${label} has the tier groups ${tierGroupListText(listed)}; list them in order without gaps up to ${groupIds[groupIds.length - 1]}, as ${validTierGroupListsText(groupIds)}`);
     }
-    const tier = Number.parseInt(band.tier, 10);
-    if (index === 0 && tier !== vocabulary.lowestChartTier) {
-      issues.push(`${label} must start its first tier band at t${vocabulary.lowestChartTier}`);
-    }
-    if (tier <= previousTier) {
-      issues.push(`${label} has tier bands that do not rise`);
-    }
-    if (tier > vocabulary.highestChartTier) {
-      issues.push(`${label} has a band at t${tier}, above the highest tier ${vocabulary.highestChartTier}`);
-    }
-    previousTier = Math.max(previousTier, tier);
-    if (!TIER_BAND_NUMBER.test(band.min) || (band.max !== '' && !TIER_BAND_NUMBER.test(band.max))) {
-      issues.push(`${label} has a t${band.tier} value that is not a plain number`);
-    } else if (band.max !== '' && Number.parseFloat(band.min) > Number.parseFloat(band.max)) {
-      issues.push(`${label} has a t${band.tier} min above its max`);
-    }
-  });
-  if (bands.length === 0) {
-    issues.push(`${label} needs at least one tier band`);
   }
   return issues;
 }
 
+function readableTierGroupList(line: ModifierLine, groupIds: readonly string[]): string | null {
+  return line.tierGroups && line.tierGroups.every((groupValue) => isReadableTierGroup(groupValue, groupIds))
+    ? tierGroupListText(line.tierGroups.map((groupValue) => groupValue.group))
+    : null;
+}
+
+function mismatchedTierGroupIssues(label: string, lines: ModifierLine[], vocabulary: Vocabulary): string[] {
+  const groupIds = tierGroupIds(vocabulary);
+  const grouped = lines.flatMap((line) => {
+    const groups = readableTierGroupList(line, groupIds);
+    return groups === null ? [] : [{ effect: line.effect, groups }];
+  });
+  const firstGroups = grouped[0]?.groups;
+  return grouped
+    .slice(1)
+    .filter((line) => line.groups !== firstGroups)
+    .map((line) => `${label}: it gives ${line.effect} the tier groups ${line.groups}, but its other lines use ${firstGroups}; every line of a modifier needs the same groups`);
+}
+
 export function rolledValuesIssues(label: string, values: RolledValues, vocabulary?: Vocabulary): string[] {
-  if (values.tierBands) {
-    return vocabulary ? tierBandIssues(label, values.tierBands, vocabulary) : [];
+  if (values.tierGroups) {
+    return vocabulary ? tierGroupIssues(label, values.tierGroups, vocabulary) : [];
   }
   if (values.hullValues) {
     const issues: string[] = [];
@@ -368,13 +392,14 @@ export function validateModifiers(
         issues.push(`${label}: ${line.effect} is on an implicit, so it must roll a min-max range`);
       }
       if (family === 'chart' && line.hullValues) {
-        issues.push(`${label}: ${line.effect} has hull size values, but star charts have no hull size; use tier bands or a min-max range`);
+        issues.push(`${label}: ${line.effect} has hull size values, but star charts have no hull size; use tier groups or a min-max range`);
       }
-      if (family === 'ship' && line.tierBands) {
-        issues.push(`${label}: ${line.effect} has tier bands, but only star charts have a tier`);
+      if (family === 'ship' && line.tierGroups) {
+        issues.push(`${label}: ${line.effect} has tier groups, but only star charts have a tier`);
       }
       issues.push(...rolledValuesIssues(`${label}: ${line.effect}`, line, vocabulary));
     }
+    issues.push(...mismatchedTierGroupIssues(label, modifier.lines, vocabulary));
     const conventionIssue = idConventionIssue(modifier);
     if (conventionIssue) {
       issues.push(`${label}: ${conventionIssue}`);
@@ -399,7 +424,7 @@ export function validateModifiers(
 
 export function togglePerHullSize(values: RolledValues, perHullSize: boolean): void {
   if (perHullSize) {
-    delete values.tierBands;
+    delete values.tierGroups;
     values.rangeBeforeHullValues = { min: values.min, max: values.max };
     values.hullValues = HULL_SIZE_LABELS.map(() => values.min || '0');
   } else {
@@ -411,33 +436,57 @@ export function togglePerHullSize(values: RolledValues, perHullSize: boolean): v
   }
 }
 
-export function togglePerTierBand(values: RolledValues, perTierBand: boolean): void {
-  if (perTierBand) {
+export function togglePerTierGroup(values: RolledValues, perTierGroup: boolean, groupIds: readonly string[]): void {
+  if (perTierGroup) {
     const firstHullValue = values.hullValues?.[0];
     delete values.hullValues;
     delete values.rangeBeforeHullValues;
     const min = values.min || firstHullValue || '0';
-    values.rangeBeforeTierBands = { min: values.min, max: values.max };
-    values.tierBands = values.tierBandsBeforeRange ?? [{ tier: '1', min, max: values.max === values.min ? '' : values.max }];
-    delete values.tierBandsBeforeRange;
+    const max = values.max === values.min ? '' : values.max;
+    values.rangeBeforeTierGroups = { min: values.min, max: values.max };
+    values.tierGroups = values.tierGroupsBeforeRange ?? groupIds.map((group) => ({ group, min, max }));
+    delete values.tierGroupsBeforeRange;
   } else {
-    values.tierBandsBeforeRange = values.tierBands;
-    const firstBand = values.tierBands?.[0];
-    const range = values.rangeBeforeTierBands ?? { min: firstBand?.min ?? '', max: firstBand?.max || firstBand?.min || '' };
+    values.tierGroupsBeforeRange = values.tierGroups;
+    const firstGroup = values.tierGroups?.[0];
+    const range = values.rangeBeforeTierGroups ?? { min: firstGroup?.min ?? '', max: firstGroup?.max || firstGroup?.min || '' };
     values.min = range.min;
     values.max = range.max;
-    delete values.tierBands;
-    delete values.rangeBeforeTierBands;
+    delete values.tierGroups;
+    delete values.rangeBeforeTierGroups;
   }
 }
 
-export function addTierBand(values: RolledValues, highestTier: number): void {
-  if (!values.tierBands) {
+export function tierGroupValue(values: RolledValues, group: string): TierGroupValue | undefined {
+  return values.tierGroups?.find((groupValue) => groupValue.unparsedText === undefined && groupValue.group === group);
+}
+
+export function setTierGroupEnabled(values: RolledValues, groupIds: readonly string[], group: string, enabled: boolean): void {
+  const groupIndex = groupIds.indexOf(group);
+  if (!values.tierGroups || groupIndex < 0) {
     return;
   }
-  const last = values.tierBands[values.tierBands.length - 1];
-  const lastTier = last ? Number.parseInt(last.tier, 10) || 0 : 0;
-  values.tierBands.push({ tier: String(Math.min(highestTier, lastTier + 1)), min: last?.min ?? '1', max: last?.max ?? '' });
+  const listed = values.tierGroups.filter((groupValue) => isReadableTierGroup(groupValue, groupIds));
+  const unreadable = values.tierGroups.filter((groupValue) => !isReadableTierGroup(groupValue, groupIds));
+  const listedIndexes = listed.map((groupValue) => groupIds.indexOf(groupValue.group));
+  const lowestIndex = listedIndexes.length > 0 ? Math.min(...listedIndexes) : groupIds.length - 1;
+  const newLowestIndex = enabled ? Math.min(lowestIndex, groupIndex) : Math.min(Math.max(lowestIndex, groupIndex + 1), groupIds.length - 1);
+  const switchedOff = values.switchedOffTierGroups ?? [];
+  const nearest = listed.find((groupValue) => groupValue.group === groupIds[lowestIndex]) ?? listed[0];
+  const enabledGroups = groupIds.slice(newLowestIndex).map(
+    (id): TierGroupValue =>
+      listed.find((groupValue) => groupValue.group === id) ??
+      switchedOff.find((groupValue) => groupValue.group === id) ?? { group: id, min: nearest?.min ?? '1', max: nearest?.max ?? '' },
+  );
+  const isEnabled = (groupValue: TierGroupValue) => enabledGroups.some((enabledGroup) => enabledGroup.group === groupValue.group);
+  const turnedOff = listed.filter((groupValue) => !isEnabled(groupValue));
+  const remembered = [...turnedOff, ...switchedOff.filter((groupValue) => !isEnabled(groupValue) && !turnedOff.some((off) => off.group === groupValue.group))];
+  values.tierGroups = [...enabledGroups, ...unreadable];
+  if (remembered.length > 0) {
+    values.switchedOffTierGroups = remembered;
+  } else {
+    delete values.switchedOffTierGroups;
+  }
 }
 
 export function setHullValue(values: RolledValues, hullIndex: number, value: string): void {

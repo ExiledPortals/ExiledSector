@@ -420,7 +420,7 @@ describe('unique subroutines', () => {
       'misplaced: source "colony:jangala" is not faction:ID or site:ID',
       'misplaced: source "faction:pirates" is listed more than once',
       'weighted: line HULL_MULT_RELIC has a weight or tier range, but every unique subroutine line always rolls',
-      'weighted: line "HULL_MULT:1:2:3" has a weight or tier bands, but every unique subroutine line always rolls',
+      'weighted: line "HULL_MULT:1:2:3" has a weight or tier groups, but every unique subroutine line always rolls',
       'weighted: HULL_MULT is listed twice, as HULL_MULT_RELIC and HULL_MULT',
       'wrong_scope: HULL_MULT only rolls on hull_item, not unique_subroutine',
       'wrong_scope: ARMOR_FLAT_RELIC is a suffix, but unique subroutine lines are prefixes',

@@ -751,7 +751,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private void showChoiceConfirm(List<String> confirmLines, List<BenchModeSupport.OpenChoice> choices) {
         Item confirmedItem = pendingOpenItem;
-        int entries = support().openEntries();
+        int entries = support().openEntries(confirmedItem);
         BenchModeSupport.OpenTexts openTexts = support().openTexts();
         List<String> lines = new ArrayList<>(confirmLines);
         List<String> labels = new ArrayList<>();
@@ -769,7 +769,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private void showOpenConfirm(List<String> confirmLines) {
         Item confirmedItem = pendingOpenItem;
-        int entries = support().openEntries();
+        int entries = support().openEntries(confirmedItem);
         BenchModeSupport.OpenTexts openTexts = support().openTexts();
         openConfirm(OPEN_CONFIRM_HEIGHT + confirmLines.size() * WARD_LINE_HEIGHT,
                 element -> writeOpenConfirm(element, openTexts, confirmedItem, entries, confirmLines), openTexts.confirmYesKey(),
@@ -798,7 +798,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         if (openedItem == null || openedItem != loadedItem) {
             return;
         }
-        BenchModeSupport.OpenOutcome outcome = support().openAt(Global.getSector(), support().store(), openedItem, support().openEntries(),
+        BenchModeSupport.OpenOutcome outcome = support().openAt(Global.getSector(), support().store(), openedItem, support().openEntries(openedItem),
                 craftingRandom, openedTarget);
         String message = Translation.msg(outcome.messageKey()).arg("name", openedItem.name()).text();
         if (!outcome.opened()) {

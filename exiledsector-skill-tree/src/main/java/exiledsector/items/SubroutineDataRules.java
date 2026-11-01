@@ -167,7 +167,7 @@ public final class SubroutineDataRules implements ItemDataRules {
             integrity.error(file, line, definitionId + " line \"" + entryText + "\" has a weight, but every unique subroutine line always rolls");
         }
         if (parsed.line().scalesWithTier()) {
-            integrity.error(file, line, definitionId + " gives " + parsed.line().effectName() + " tier bands, but only star charts have tiers");
+            integrity.error(file, line, definitionId + " gives " + parsed.line().effectName() + " tier groups, but only star charts have tiers");
         }
         String effectName = parsed.line().effectName();
         integrity.checkEffectName(file, line, definitionId, ItemEffects.forType(ItemType.SUBROUTINE), effectName);

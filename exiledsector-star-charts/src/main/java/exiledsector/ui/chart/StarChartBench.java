@@ -142,8 +142,8 @@ public final class StarChartBench implements BenchModeSupport {
     }
 
     @Override
-    public int openEntries() {
-        return StarChartSettings.wormholeEntries();
+    public int openEntries(Item loaded) {
+        return StarChartSettings.wormholeEntries(loaded == null ? StarChart.LOWEST_TIER : loaded.tier());
     }
 
     @Override

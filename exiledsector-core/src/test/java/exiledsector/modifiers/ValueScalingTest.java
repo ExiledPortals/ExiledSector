@@ -60,50 +60,52 @@ class ValueScalingTest {
     }
 
     @Test
-    void aTierBandLinePicksTheValueOfTheBandTheTierFallsIn() {
-        ModifierLine banded = ModifierLine.perTierBand("ARMOR_FLAT", List.of(1, 6, 11), List.of(5f, 10f, 15f));
+    void aTierGroupLinePicksTheValueOfTheGroupTheTierFallsIn() {
+        ModifierLine grouped = ModifierLine.perTierGroup("ARMOR_FLAT", List.of(TierGroup.LOW, TierGroup.MID, TierGroup.HIGH), List.of(5f, 10f, 15f));
 
-        assertTrue(banded.scalesWithTier());
-        assertTrue(banded.isScaled());
-        assertFalse(banded.scalesWithHullSize());
-        assertEquals(List.of(), banded.hullValues());
-        assertEquals(List.of(5f, 10f, 15f), banded.scaledValues());
-        assertEquals(5f, banded.valueFor(0f, ScaleContext.ofTier(1)));
-        assertEquals(5f, banded.valueFor(0f, ScaleContext.ofTier(5)));
-        assertEquals(10f, banded.valueFor(0f, ScaleContext.ofTier(6)));
-        assertEquals(15f, banded.valueFor(0f, ScaleContext.ofTier(15)));
-        assertEquals(15f, banded.valueFor(0f, ScaleContext.of(HullSize.FRIGATE, 40)));
-        assertEquals(7f, banded.valueFor(7f, ScaleContext.NONE));
-        assertEquals(7f, banded.valueFor(7f, HullSize.FRIGATE));
-        assertTrue(banded.listsEveryHullValueFor(HullSize.FRIGATE));
-        assertFalse(banded.listsEveryValueFor(ScaleContext.ofTier(3)));
+        assertTrue(grouped.scalesWithTier());
+        assertTrue(grouped.isScaled());
+        assertFalse(grouped.scalesWithHullSize());
+        assertEquals(List.of(), grouped.hullValues());
+        assertEquals(List.of(5f, 10f, 15f), grouped.scaledValues());
+        assertEquals(5f, grouped.valueFor(0f, ScaleContext.ofTier(1)));
+        assertEquals(5f, grouped.valueFor(0f, ScaleContext.ofTier(5)));
+        assertEquals(10f, grouped.valueFor(0f, ScaleContext.ofTier(6)));
+        assertEquals(15f, grouped.valueFor(0f, ScaleContext.ofTier(15)));
+        assertEquals(15f, grouped.valueFor(0f, ScaleContext.of(HullSize.FRIGATE, 40)));
+        assertEquals(7f, grouped.valueFor(7f, ScaleContext.NONE));
+        assertEquals(7f, grouped.valueFor(7f, HullSize.FRIGATE));
+        assertTrue(grouped.listsEveryHullValueFor(HullSize.FRIGATE));
+        assertFalse(grouped.listsEveryValueFor(ScaleContext.ofTier(3)));
     }
 
     @Test
-    void aTierBelowTheFirstBandHasNoBandValue() {
-        ModifierLine banded = ModifierLine.perTierBand("ARMOR_FLAT", List.of(4, 8), List.of(5f, 10f));
+    void aTierBelowTheFirstGroupHasNoGroupValue() {
+        ModifierLine grouped = ModifierLine.perTierGroup("ARMOR_FLAT", List.of(TierGroup.MID, TierGroup.HIGH), List.of(5f, 10f));
 
-        assertEquals(2f, banded.valueFor(2f, ScaleContext.ofTier(3)));
-        assertTrue(banded.listsEveryValueFor(ScaleContext.ofTier(3)));
-        assertEquals(5f, banded.valueFor(2f, ScaleContext.ofTier(4)));
+        assertEquals(2f, grouped.valueFor(2f, ScaleContext.ofTier(5)));
+        assertTrue(grouped.listsEveryValueFor(ScaleContext.ofTier(5)));
+        assertFalse(grouped.rollsAtTier(5));
+        assertEquals(5f, grouped.valueFor(2f, ScaleContext.ofTier(6)));
     }
 
     @Test
-    void tierBandsNeedOneRisingStartPerValue() {
-        assertThrows(IllegalArgumentException.class, () -> ValueScaling.perTierBand(List.of(1, 5), List.of(1f)));
-        assertThrows(IllegalArgumentException.class, () -> ValueScaling.perTierBand(List.of(), List.of()));
-        assertThrows(IllegalArgumentException.class, () -> ValueScaling.perTierBand(List.of(5, 5), List.of(1f, 2f)));
-        assertThrows(IllegalArgumentException.class, () -> ValueScaling.perTierBand(List.of(0, 5), List.of(1f, 2f)));
+    void tierGroupsNeedOneValueEachAndRunUnbrokenUpToHigh() {
+        assertThrows(IllegalArgumentException.class, () -> ValueScaling.perTierGroup(List.of(TierGroup.MID, TierGroup.HIGH), List.of(1f)));
+        assertThrows(IllegalArgumentException.class, () -> ValueScaling.perTierGroup(List.of(), List.of()));
+        assertThrows(IllegalArgumentException.class, () -> ValueScaling.perTierGroup(List.of(TierGroup.HIGH, TierGroup.HIGH), List.of(1f, 2f)));
+        assertThrows(IllegalArgumentException.class, () -> ValueScaling.perTierGroup(List.of(TierGroup.LOW, TierGroup.HIGH), List.of(1f, 2f)));
+        assertThrows(IllegalArgumentException.class, () -> ValueScaling.perTierGroup(List.of(TierGroup.LOW, TierGroup.MID), List.of(1f, 2f)));
     }
 
     @Test
     void renamingAndWideningKeepTheScaling() {
         ModifierLine scaled = ModifierLine.perHullSize("ARMOR_FLAT", HULL_VALUES);
-        ModifierLine banded = ModifierLine.perTierBand("ARMOR_FLAT", List.of(1, 6), List.of(5f, 10f));
+        ModifierLine grouped = ModifierLine.perTierGroup("ARMOR_FLAT", List.of(TierGroup.MID, TierGroup.HIGH), List.of(5f, 10f));
 
         assertEquals(scaled.scaling(), scaled.named("ARMOR_FLAT_NEW").scaling());
         assertEquals(HULL_VALUES, scaled.widened(0.35f).hullValues());
-        assertEquals(banded.scaling(), banded.widened(0.35f).scaling());
+        assertEquals(grouped.scaling(), grouped.widened(0.35f).scaling());
     }
 
     @Test

@@ -208,7 +208,7 @@ function SubroutineForm({ document, model, vocabulary, definition, index, kinds,
       />
       <UniqueFields
         unique={isTrueText(definition.unique)}
-        unlock={definition.unlock}
+        unlock={definition.unlock ?? ''}
         vocabulary={vocabulary}
         uniqueLabel="Unique - shown with the name above in orange"
         unlockLabel="Drop condition (uniques never drop before player level 15)"

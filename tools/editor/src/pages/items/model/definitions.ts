@@ -54,7 +54,9 @@ const UNIQUE_SOURCE_ID = /^[A-Za-z0-9_.-]+$/;
 const SOCKET_LIMIT_TEXT = /^\d{1,9}$/;
 export const HULL_ITEM_COLUMNS = ['id', 'section', 'name', 'icon', 'rarity', 'unique', 'description', 'prefixes', 'suffixes', 'unlock', 'source', 'mechanic', 'area', 'crew'] as const;
 const OPTIONAL_HULL_ITEM_FIELDS: readonly string[] = ['source', 'mechanic', 'area', 'crew'];
-export const STAR_CHART_COLUMNS = ['id', 'system_type', 'name', 'icon', 'rarity', 'unique', 'min_tier', 'description', 'prefixes', 'suffixes', 'unlock'] as const;
+export const STAR_CHART_COLUMNS = ['id', 'system_type', 'name', 'icon', 'rarity', 'min_tier', 'description', 'prefixes', 'suffixes'] as const;
+const DROPPED_STAR_CHART_COLUMNS = ['unique', 'unlock'];
+const DEFINITION_TEXT_COLUMNS = ['id', 'name', 'icon', 'rarity', 'description'] as const;
 export const UNLOCK_LABELS: Record<string, string> = {
   found_onslaught_mk1: 'Found the Onslaught Mk.I in the Abyss',
   found_gate_hauler: 'Found the Gate Hauler',
@@ -93,11 +95,11 @@ export interface ItemDefinition {
   name: string;
   icon: string;
   rarity: string;
-  unique: string;
+  unique?: string;
   description: string;
   prefixes: PoolEntry[];
   suffixes: PoolEntry[];
-  unlock: string;
+  unlock?: string;
   subroutineKind?: string;
   lines?: PoolEntry[];
   source?: string;
@@ -230,15 +232,15 @@ export function poolShares(pool: PoolEntry[]): number[] {
   return weights.map((weight) => (total > 0 ? weight / total : 0));
 }
 
-export function isTrueText(text: string): boolean {
+export function isTrueText(text: string | undefined): boolean {
   return String(text ?? '').trim().toLowerCase() === 'true';
 }
 
-function parseDefinitionRows(table: CsvTable, kindOf: (cells: string[]) => string): ItemDefinition[] {
+function parseDefinitionRows(table: CsvTable, kindOf: (cells: string[]) => string, readsUniqueColumns = true): ItemDefinition[] {
   return table.rows.map((cells): ItemDefinition => {
     const value = (column: string) => csvCell(table, cells, column);
-    const textColumns = trimmedCsvCells(table, cells, ['id', 'name', 'icon', 'rarity', 'unique', 'description', 'unlock']);
-    return {
+    const textColumns = trimmedCsvCells(table, cells, DEFINITION_TEXT_COLUMNS);
+    const definition: ItemDefinition = {
       cells,
       ...textColumns,
       kind: kindOf(cells),
@@ -246,6 +248,11 @@ function parseDefinitionRows(table: CsvTable, kindOf: (cells: string[]) => strin
       suffixes: parsePool(value('suffixes')),
       loadedId: textColumns.id,
     };
+    if (readsUniqueColumns) {
+      definition.unique = value('unique').trim();
+      definition.unlock = value('unlock').trim();
+    }
+    return definition;
   });
 }
 
@@ -282,7 +289,7 @@ export function parseItemDefinitions(subroutinesText: string, hullItemsText: str
 
 export function parseStarChartDefinitions(starChartsText: string): StarChartDefinitionsModel {
   const starChartTable = parseCsvTable(starChartsText);
-  const definitions = parseDefinitionRows(starChartTable, () => STAR_CHART_KIND).map((definition) => ({
+  const definitions = parseDefinitionRows(starChartTable, () => STAR_CHART_KIND, false).map((definition) => ({
     ...definition,
     systemType: csvCell(starChartTable, definition.cells, 'system_type').trim(),
     minTier: csvCell(starChartTable, definition.cells, 'min_tier').trim(),
@@ -331,9 +338,11 @@ function definitionColumnValue(definition: ItemDefinition, column: string): unkn
   }
 }
 
-function serializeDefinitions(table: CsvTable, definitions: ItemDefinition[], columns: readonly string[]): string {
+function serializeDefinitions(table: CsvTable, definitions: ItemDefinition[], columns: readonly string[], droppedColumns: readonly string[] = []): string {
   const out = csvTableFromRows(table, definitions, (definition) => Object.fromEntries(columns.map((column) => [column, definitionColumnValue(definition, column)])));
-  dropCsvColumn(out, 'pool');
+  for (const column of ['pool', ...droppedColumns]) {
+    dropCsvColumn(out, column);
+  }
   return serializeCsvTable(out);
 }
 
@@ -362,7 +371,7 @@ export function serializeHullItemsCsv(model: Pick<ItemDefinitionsModel, 'hullIte
 
 export function serializeStarChartsCsv(model: StarChartDefinitionsModel): string {
   const starCharts = model.definitions.filter((definition) => itemTypeOfKind(definition.kind) === STAR_CHART_TYPE);
-  return serializeDefinitions(model.starChartTable, starCharts, STAR_CHART_COLUMNS);
+  return serializeDefinitions(model.starChartTable, starCharts, STAR_CHART_COLUMNS, DROPPED_STAR_CHART_COLUMNS);
 }
 
 export function parseFamilyDefinitions(family: ItemFamily, texts: Record<string, string>): FamilyDefinitions {
@@ -474,9 +483,7 @@ export function newItemDefinition(
     name: naming.name,
     icon: '',
     rarity: '10',
-    unique: '',
     description: '',
-    unlock: '',
     prefixes: firstReference(catalogue, 'prefix', itemType),
     suffixes: firstReference(catalogue, 'suffix', itemType),
   };
@@ -484,6 +491,8 @@ export function newItemDefinition(
     definition.systemType = 'SINGLE';
     definition.minTier = '';
   } else {
+    definition.unique = '';
+    definition.unlock = '';
     definition.source = '';
     definition.mechanic = '';
     definition.area = '';
@@ -565,15 +574,6 @@ export function normalisedSystemType(text: string | undefined, vocabulary: Vocab
   return vocabulary.chartSystemTypes.includes(upper) ? upper : null;
 }
 
-export function clearedChartTier(unlock: string, vocabulary: Vocabulary): number | null {
-  if (!unlock.startsWith(vocabulary.clearedChartTierPrefix)) {
-    return null;
-  }
-  const tierText = unlock.slice(vocabulary.clearedChartTierPrefix.length);
-  const tier = /^[+-]?\d+$/.test(tierText) ? Number.parseInt(tierText, 10) : Number.NaN;
-  return tier >= vocabulary.lowestChartTier && tier <= vocabulary.highestChartTier ? tier : null;
-}
-
 function starChartIssues(label: string, definition: ItemDefinition, vocabulary: Vocabulary): string[] {
   const issues: string[] = [];
   if (normalisedSystemType(definition.systemType, vocabulary) === null) {
@@ -583,11 +583,6 @@ function starChartIssues(label: string, definition: ItemDefinition, vocabulary: 
   const minTierNumber = /^[+-]?\d+$/.test(minTier) ? Number.parseInt(minTier, 10) : Number.NaN;
   if (minTier !== '' && !(minTierNumber >= vocabulary.lowestChartTier && minTierNumber <= vocabulary.highestChartTier)) {
     issues.push(`${label}: minimum tier must be blank or a whole number from ${vocabulary.lowestChartTier} to ${vocabulary.highestChartTier}`);
-  }
-  if (definition.unlock && !vocabulary.itemUnlocks.includes(definition.unlock) && clearedChartTier(definition.unlock, vocabulary) === null) {
-    issues.push(
-      `${label}: unknown drop condition ${definition.unlock}; use an unlock id or ${vocabulary.clearedChartTierPrefix}N with N from ${vocabulary.lowestChartTier} to ${vocabulary.highestChartTier}`,
-    );
   }
   return issues;
 }
@@ -626,8 +621,8 @@ function inlineLineIssues(label: string, inlineText: string, vocabulary: Vocabul
   if (!isFamilyEffect('ship', vocabulary, line.effect)) {
     issues.push(`${label}: line "${inlineText}" uses unknown effect ${line.effect || '(none)'}`);
   }
-  if (line.extraField !== undefined || line.tierBands) {
-    issues.push(`${label}: line "${inlineText}" has a weight or tier bands, but every unique subroutine line always rolls`);
+  if (line.extraField !== undefined || line.tierGroups) {
+    issues.push(`${label}: line "${inlineText}" has a weight or tier groups, but every unique subroutine line always rolls`);
   }
   issues.push(...rolledValuesIssues(`${label}: line ${line.effect}`, line, vocabulary));
   return { issues, listed: { id: line.effect, effect: line.effect } };
@@ -826,7 +821,7 @@ export function definitionWarnings(definitions: ItemDefinition[], family: ItemFa
   for (const definition of definitions) {
     const label = definition.id || '(no id)';
     const unique = isTrueText(definition.unique);
-    if (!unique && definition.unlock) {
+    if (family === 'ship' && !unique && definition.unlock) {
       warnings.push(`${label}: the drop condition ${definition.unlock} only applies to uniques, so it is ignored`);
     }
     if (definition.mechanic && itemTypeOfKind(definition.kind) === HULL_ITEM_TYPE && !unique) {
@@ -836,12 +831,6 @@ export function definitionWarnings(definitions: ItemDefinition[], family: ItemFa
       warnings.push(`${label}: the source ${definition.source} only applies to unique hull items, so it is ignored`);
     } else if (definition.source && itemTypeOfKind(definition.kind) === SUBROUTINE_TYPE && !isUniqueSubroutine(definition)) {
       warnings.push(`${label}: the source ${definition.source} only applies to ${UNIQUE_SUBROUTINE_KIND} subroutines, so it is ignored`);
-    }
-    if (family === 'chart' && unique) {
-      const gated = AFFIX_GROUPS.flatMap((group) => definition[group.key]).filter((entry) => entry.tiers !== undefined);
-      if (gated.length > 0) {
-        warnings.push(`${label}: a unique chart rolls every entry at every tier, so the tier ranges on ${gated.map((entry) => entry.modifierId).join(', ')} are ignored`);
-      }
     }
   }
   return warnings;

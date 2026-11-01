@@ -4,7 +4,7 @@ import exiledsector.skills.ShipHullSizes;
 
 import java.util.List;
 
-public sealed interface ValueScaling permits ValueScaling.Unscaled, ValueScaling.PerHullSize, ValueScaling.PerTierBand {
+public sealed interface ValueScaling permits ValueScaling.Unscaled, ValueScaling.PerHullSize, ValueScaling.PerTierGroup {
 
     ValueScaling NONE = new Unscaled();
     int NO_POINT = -1;
@@ -22,12 +22,12 @@ public sealed interface ValueScaling permits ValueScaling.Unscaled, ValueScaling
         return new PerHullSize(hullValues);
     }
 
-    static ValueScaling perTierBand(List<Integer> bandStartTiers, List<Float> bandValues) {
-        return new PerTierBand(bandStartTiers, bandValues);
+    static ValueScaling perTierGroup(List<TierGroup> groups, List<Float> groupValues) {
+        return new PerTierGroup(groups, groupValues);
     }
 
-    static ValueScaling perTierBand(List<Integer> bandStartTiers, List<Float> bandLowValues, List<Float> bandHighValues) {
-        return new PerTierBand(bandStartTiers, bandLowValues, bandHighValues);
+    static ValueScaling perTierGroup(List<TierGroup> groups, List<Float> groupLowValues, List<Float> groupHighValues) {
+        return new PerTierGroup(groups, groupLowValues, groupHighValues);
     }
 
     default float valueAt(int point, float rollFraction) {
@@ -63,31 +63,27 @@ public sealed interface ValueScaling permits ValueScaling.Unscaled, ValueScaling
         }
     }
 
-    record PerTierBand(List<Integer> bandStartTiers, List<Float> values, List<Float> highValues) implements ValueScaling {
+    record PerTierGroup(List<TierGroup> groups, List<Float> values, List<Float> highValues) implements ValueScaling {
 
-        public PerTierBand {
-            bandStartTiers = List.copyOf(bandStartTiers);
+        public PerTierGroup {
+            groups = List.copyOf(groups);
             values = List.copyOf(values);
             highValues = highValues == null ? values : List.copyOf(highValues);
-            if (bandStartTiers.isEmpty() || bandStartTiers.size() != values.size()) {
-                throw new IllegalArgumentException("tier bands need one value per band, but there are " + bandStartTiers.size()
-                        + " bands and " + values.size() + " values");
+            if (groups.isEmpty() || groups.size() != values.size()) {
+                throw new IllegalArgumentException("tier groups need one value per group, but there are " + groups.size()
+                        + " groups and " + values.size() + " values");
             }
             if (highValues.size() != values.size()) {
-                throw new IllegalArgumentException("tier bands need a high value for each of their " + values.size() + " low values");
+                throw new IllegalArgumentException("tier groups need a high value for each of their " + values.size() + " low values");
             }
-            int previousStart = TierRange.NO_TIER;
-            for (int bandStart : bandStartTiers) {
-                if (bandStart <= previousStart) {
-                    throw new IllegalArgumentException("tier bands must start at tier " + TierRange.LOWEST_TIER
-                            + " or above and rise, but " + bandStartTiers + " does not");
-                }
-                previousStart = bandStart;
+            if (!groups.equals(TierGroup.fromUpwards(groups.get(0)))) {
+                throw new IllegalArgumentException("tier groups must run in order from their lowest group up to " + TierGroup.HIGH.id()
+                        + " without gaps, but " + groups.stream().map(TierGroup::id).toList() + " does not");
             }
         }
 
-        public PerTierBand(List<Integer> bandStartTiers, List<Float> values) {
-            this(bandStartTiers, values, values);
+        public PerTierGroup(List<TierGroup> groups, List<Float> values) {
+            this(groups, values, values);
         }
 
         @Override
@@ -105,10 +101,10 @@ public sealed interface ValueScaling permits ValueScaling.Unscaled, ValueScaling
                 return stretchedPast(high, 1f, rollFraction - 1f, stepsPerUnit);
             }
             int lowStep = Math.round(low * stepsPerUnit);
-            int bandSteps = Math.round(high * stepsPerUnit) - lowStep + 1;
+            int groupSteps = Math.round(high * stepsPerUnit) - lowStep + 1;
             int rollPositions = Math.round(ModifierLine.TIER_ROLL_POSITIONS) + 1;
             int position = Math.round(Math.max(0f, Math.min(1f, rollFraction)) * ModifierLine.TIER_ROLL_POSITIONS);
-            int step = Math.min(bandSteps - 1, position * bandSteps / rollPositions);
+            int step = Math.min(groupSteps - 1, position * groupSteps / rollPositions);
             return (lowStep + step) / stepsPerUnit + 0f;
         }
 
@@ -142,11 +138,12 @@ public sealed interface ValueScaling permits ValueScaling.Unscaled, ValueScaling
             if (context == null || context.tier() == TierRange.NO_TIER) {
                 return NO_POINT;
             }
-            int band = NO_POINT;
-            for (int index = 0; index < bandStartTiers.size() && bandStartTiers.get(index) <= context.tier(); index++) {
-                band = index;
+            for (int index = 0; index < groups.size(); index++) {
+                if (groups.get(index).contains(context.tier())) {
+                    return index;
+                }
             }
-            return band;
+            return NO_POINT;
         }
     }
 }

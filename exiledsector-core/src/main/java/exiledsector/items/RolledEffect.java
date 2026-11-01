@@ -97,33 +97,33 @@ public final class RolledEffect {
     }
 
     public StyledText scaledValuesDescription(ModifierEffects effects, ModifierLine scaledLine) {
-        if (scaledLine.scaling() instanceof ValueScaling.PerTierBand tierBands && tierBands.variesWithinAPoint()) {
-            return tierBandRangesDescription(effects, tierBands);
+        if (scaledLine.scaling() instanceof ValueScaling.PerTierGroup tierGroups && tierGroups.variesWithinAPoint()) {
+            return tierGroupRangesDescription(effects, tierGroups);
         }
         return scaledValuesDescription(effects, scaledLine.scaledValues());
     }
 
-    private StyledText tierBandRangesDescription(ModifierEffects effects, ValueScaling.PerTierBand tierBands) {
+    private StyledText tierGroupRangesDescription(ModifierEffects effects, ValueScaling.PerTierGroup tierGroups) {
         ModifierEffect effect = effect(effects);
         if (effect == null) {
             return null;
         }
-        StyledText firstBandText = display(effect, tierBands.lowAt(0));
-        List<String> bandTexts = new ArrayList<>(tierBands.values().size());
-        for (int band = 0; band < tierBands.values().size(); band++) {
-            String bandText = bandRangeText(effect, tierBands.lowAt(band), tierBands.highAt(band));
-            if (bandText == null || firstBandText.spans().isEmpty()) {
-                return firstBandText;
+        StyledText firstGroupText = display(effect, tierGroups.lowAt(0));
+        List<String> groupTexts = new ArrayList<>(tierGroups.values().size());
+        for (int group = 0; group < tierGroups.values().size(); group++) {
+            String groupText = groupRangeText(effect, tierGroups.lowAt(group), tierGroups.highAt(group));
+            if (groupText == null || firstGroupText.spans().isEmpty()) {
+                return firstGroupText;
             }
-            bandTexts.add(bandText);
+            groupTexts.add(groupText);
         }
-        return replaceValue(firstBandText, joinSharingAffixes(bandTexts));
+        return replaceValue(firstGroupText, joinSharingAffixes(groupTexts));
     }
 
-    private static String bandRangeText(ModifierEffect effect, float bandLow, float bandHigh) {
-        boolean lowNearestZero = Math.abs(bandLow) <= Math.abs(bandHigh);
-        String weakestText = valueText(effect, lowNearestZero ? bandLow : bandHigh);
-        String strongestText = valueText(effect, lowNearestZero ? bandHigh : bandLow);
+    private static String groupRangeText(ModifierEffect effect, float groupLow, float groupHigh) {
+        boolean lowNearestZero = Math.abs(groupLow) <= Math.abs(groupHigh);
+        String weakestText = valueText(effect, lowNearestZero ? groupLow : groupHigh);
+        String strongestText = valueText(effect, lowNearestZero ? groupHigh : groupLow);
         if (weakestText == null || strongestText == null || weakestText.equals(strongestText)) {
             return weakestText;
         }

@@ -1,10 +1,21 @@
-import { ActionIcon, Button, Group, Stack, Switch, Text, Tooltip } from '@mantine/core';
-import { IconPlus, IconX } from '@tabler/icons-react';
-import type { Vocabulary } from '../../../api/vocabulary.ts';
+import { ActionIcon, Checkbox, Group, Stack, Switch, Text, Tooltip } from '@mantine/core';
+import { IconX } from '@tabler/icons-react';
+import type { ChartTierGroup, Vocabulary } from '../../../api/vocabulary.ts';
 import { DecimalInput } from '../../../shared/DecimalInput.tsx';
 import { EffectSelect } from '../../../shared/EffectSelect.tsx';
 import type { ItemFamily } from '../model/itemFamily.ts';
-import { addTierBand, HULL_SIZE_LABELS, setHullValue, togglePerHullSize, togglePerTierBand, type ModifierLine } from '../model/modifiers.ts';
+import {
+  formatTierGroup,
+  HULL_SIZE_LABELS,
+  isReadableTierGroup,
+  setHullValue,
+  setTierGroupEnabled,
+  tierGroupIds,
+  tierGroupValue,
+  togglePerHullSize,
+  togglePerTierGroup,
+  type ModifierLine,
+} from '../model/modifiers.ts';
 
 interface ModifierLineRowProps {
   line: ModifierLine;
@@ -18,64 +29,88 @@ interface ModifierLineRowProps {
   onRemove: () => void;
 }
 
-function TierBandInputs({ line, vocabulary, onEdit }: Pick<ModifierLineRowProps, 'line' | 'vocabulary' | 'onEdit'>) {
-  const bands = line.tierBands ?? [];
-  const setBand = (bandIndex: number, field: 'tier' | 'min' | 'max', text: string) =>
+function tierGroupLabel(tierGroup: ChartTierGroup): string {
+  return `Tiers ${tierGroup.minTier}-${tierGroup.maxTier} (${tierGroup.id})`;
+}
+
+function tierGroupTooltip(vocabulary: Vocabulary): string {
+  const ranges = vocabulary.chartTierGroups.map((tierGroup) => `${tierGroup.minTier}-${tierGroup.maxTier}`);
+  const rangesText = ranges.length > 1 ? `${ranges.slice(0, -1).join(', ')} and ${ranges[ranges.length - 1]}` : (ranges[0] ?? '');
+  return `Separate values for each tier group: tiers ${rangesText}, instead of one range for every tier; leave lower groups off for a modifier that only rolls at higher tiers`;
+}
+
+function lowestTierText(line: ModifierLine, vocabulary: Vocabulary): string {
+  const lowest = vocabulary.chartTierGroups.find((tierGroup) => tierGroupValue(line, tierGroup.id));
+  return lowest ? `Rolls from tier ${lowest.minTier}` : 'No readable tier groups';
+}
+
+function TierGroupInputs({ line, vocabulary, onEdit }: Pick<ModifierLineRowProps, 'line' | 'vocabulary' | 'onEdit'>) {
+  const groupIds = tierGroupIds(vocabulary);
+  const highestGroup = groupIds[groupIds.length - 1];
+  const firstShownGroup = groupIds.find((group) => tierGroupValue(line, group));
+  const unreadable = (line.tierGroups ?? []).flatMap((groupValue, groupIndex) => (isReadableTierGroup(groupValue, groupIds) ? [] : [{ groupValue, groupIndex }]));
+  const setValue = (group: string, field: 'min' | 'max', text: string) =>
     onEdit((draft) => {
-      const band = draft.tierBands?.[bandIndex];
-      if (band) {
-        band[field] = text;
+      const groupValue = tierGroupValue(draft, group);
+      if (groupValue) {
+        groupValue[field] = text;
       }
     });
   return (
     <Stack gap={4} pl="md">
-      {bands.map((band, bandIndex) => (
-        <Group key={bandIndex} gap="xs" align="flex-end" wrap="nowrap">
-          {band.unparsedText !== undefined ? (
-            <Text size="sm" c="red">
-              Unreadable band &quot;{band.unparsedText}&quot; - remove it and add a new one
-            </Text>
-          ) : (
-            <>
-              <DecimalInput
-                w={90}
-                label={bandIndex === 0 ? 'From tier' : undefined}
-                aria-label={`${line.effect} band ${bandIndex + 1} tier`}
-                value={band.tier}
-                onChange={(text) => setBand(bandIndex, 'tier', text)}
-              />
-              <DecimalInput
-                w={110}
-                label={bandIndex === 0 ? 'Min' : undefined}
-                aria-label={`${line.effect} band ${bandIndex + 1} min`}
-                value={band.min}
-                onChange={(text) => setBand(bandIndex, 'min', text)}
-              />
-              <DecimalInput
-                w={110}
-                label={bandIndex === 0 ? 'Max (blank = fixed)' : undefined}
-                aria-label={`${line.effect} band ${bandIndex + 1} max`}
-                value={band.max}
-                onChange={(text) => setBand(bandIndex, 'max', text)}
-              />
-            </>
-          )}
-          {bandIndex > 0 && (
-            <ActionIcon variant="subtle" color="red" mb={6} onClick={() => onEdit((draft) => void draft.tierBands?.splice(bandIndex, 1))} aria-label={`Remove band ${bandIndex + 1}`}>
-              <IconX size={16} />
-            </ActionIcon>
-          )}
+      {vocabulary.chartTierGroups.map((tierGroup) => {
+        const groupValue = tierGroupValue(line, tierGroup.id);
+        const labelled = tierGroup.id === firstShownGroup;
+        return (
+          <Group key={tierGroup.id} gap="xs" align="flex-end" wrap="nowrap">
+            <Checkbox
+              w={170}
+              mb={8}
+              label={tierGroupLabel(tierGroup)}
+              aria-label={`${line.effect} ${tierGroup.id} group`}
+              checked={Boolean(groupValue)}
+              disabled={tierGroup.id === highestGroup && Boolean(groupValue)}
+              onChange={(event) => {
+                const enabled = event.currentTarget.checked;
+                onEdit((draft) => setTierGroupEnabled(draft, groupIds, tierGroup.id, enabled));
+              }}
+            />
+            {groupValue && (
+              <>
+                <DecimalInput
+                  w={110}
+                  label={labelled ? 'Min' : undefined}
+                  aria-label={`${line.effect} ${tierGroup.id} min`}
+                  value={groupValue.min}
+                  onChange={(text) => setValue(tierGroup.id, 'min', text)}
+                />
+                <DecimalInput
+                  w={110}
+                  label={labelled ? 'Max (blank = fixed)' : undefined}
+                  aria-label={`${line.effect} ${tierGroup.id} max`}
+                  value={groupValue.max}
+                  onChange={(text) => setValue(tierGroup.id, 'max', text)}
+                />
+              </>
+            )}
+          </Group>
+        );
+      })}
+      {unreadable.map(({ groupValue, groupIndex }) => (
+        <Group key={`unreadable-${groupIndex}`} gap="xs" align="center" wrap="nowrap">
+          <Text size="sm" c="red">
+            Unreadable tier group &quot;{formatTierGroup(groupValue)}&quot; - remove it and switch on the group you meant
+          </Text>
+          <ActionIcon
+            variant="subtle"
+            color="red"
+            onClick={() => onEdit((draft) => void draft.tierGroups?.splice(groupIndex, 1))}
+            aria-label={`Remove tier group ${groupIndex + 1}`}
+          >
+            <IconX size={16} />
+          </ActionIcon>
         </Group>
       ))}
-      <Button
-        size="compact-xs"
-        variant="subtle"
-        w="fit-content"
-        leftSection={<IconPlus size={12} />}
-        onClick={() => onEdit((draft) => addTierBand(draft, vocabulary.highestChartTier))}
-      >
-        Add tier band
-      </Button>
     </Stack>
   );
 }
@@ -104,14 +139,14 @@ export function ModifierLineRow({ line, index, perHullSizeAllowed, effectEditabl
             {line.effect}
           </Text>
         )}
-        {(isChart || line.tierBands) && (
-          <Tooltip label="Separate values from each tier band upwards (t1, then the next band's tier, and so on) instead of one range for every tier">
+        {(isChart || line.tierGroups) && (
+          <Tooltip label={tierGroupTooltip(vocabulary)}>
             <Switch
-              label="Per tier band"
-              checked={Boolean(line.tierBands)}
+              label="Per tier group"
+              checked={Boolean(line.tierGroups)}
               onChange={(event) => {
-                const perTierBand = event.currentTarget.checked;
-                onEdit((draft) => togglePerTierBand(draft, perTierBand));
+                const perTierGroup = event.currentTarget.checked;
+                onEdit((draft) => togglePerTierGroup(draft, perTierGroup, tierGroupIds(vocabulary)));
               }}
               mb={8}
             />
@@ -131,9 +166,9 @@ export function ModifierLineRow({ line, index, perHullSizeAllowed, effectEditabl
             />
           </Tooltip>
         )}
-        {line.tierBands ? (
+        {line.tierGroups ? (
           <Text size="xs" c="dimmed" style={{ flex: 4 }} mb={8}>
-            {line.tierBands.length} tier band{line.tierBands.length === 1 ? '' : 's'}
+            {lowestTierText(line, vocabulary)}
           </Text>
         ) : line.hullValues ? (
           hullInputs.map((value, hullIndex) => (
@@ -170,7 +205,7 @@ export function ModifierLineRow({ line, index, perHullSizeAllowed, effectEditabl
           </ActionIcon>
         )}
       </Group>
-      {line.tierBands && <TierBandInputs line={line} vocabulary={vocabulary} onEdit={onEdit} />}
+      {line.tierGroups && <TierGroupInputs line={line} vocabulary={vocabulary} onEdit={onEdit} />}
     </Stack>
   );
 }

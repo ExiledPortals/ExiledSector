@@ -68,7 +68,7 @@ public class ChartOpenCommand extends CampaignCommand {
         if (arguments.side() != null) {
             layoutRequest = FactionSkirmish.joinedOn(layoutRequest, arguments.side());
         }
-        int entries = StarChartSettings.wormholeEntries();
+        int entries = StarChartSettings.wormholeEntries(arguments.tierOrDefault());
         OpenResult result = ChartRunActions.openBesidePlayer(Global.getSector(), entries, random, layoutRequest);
         switch (result) {
             case OPENED -> {

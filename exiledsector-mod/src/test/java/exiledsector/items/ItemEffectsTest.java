@@ -8,6 +8,7 @@ import exiledsector.items.ItemDataIntegrity.Severity;
 import exiledsector.items.ItemDataIntegrity.Violation;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
+import exiledsector.modifiers.TierGroup;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.jupiter.api.AfterEach;
@@ -100,7 +101,7 @@ class ItemEffectsTest {
         assertTrue(item.effectLines(true).get(0).plain().startsWith("Plunder +15%"));
         assertTrue(item.skillEffects().isEmpty(), "an effect that is not a ship skill effect never reaches a ship");
         assertEquals("Plunder +10/20%", new RolledEffect(PLUNDER, 10f)
-                .rangeDescription(plunderEffects, ModifierLine.perTierBand(PLUNDER, List.of(1, 6), List.of(10f, 20f))).plain());
+                .rangeDescription(plunderEffects, ModifierLine.perTierGroup(PLUNDER, List.of(TierGroup.MID, TierGroup.HIGH), List.of(10f, 20f))).plain());
     }
 
     @Test

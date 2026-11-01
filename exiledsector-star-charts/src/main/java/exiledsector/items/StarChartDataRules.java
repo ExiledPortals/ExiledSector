@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import exiledsector.ModCsv;
 import exiledsector.modifiers.ModifierLine;
+import exiledsector.modifiers.TierGroup;
 import exiledsector.modifiers.TierRange;
 import exiledsector.modifiers.ValueScaling;
 import org.json.JSONArray;
@@ -61,24 +62,33 @@ public final class StarChartDataRules implements ItemDataRules {
             }
         }
         for (ModifierLine modifierLine : lines) {
-            checkTierBands(integrity, file, line, modifierId, modifierLine, chartFile);
+            if (modifierLine.scalesWithTier() && !chartFile) {
+                integrity.error(file, line, modifierId + " gives " + modifierLine.effectName() + " tier groups, but only star chart modifiers in "
+                        + StarChartItems.MODIFIERS_PATH + " have tiers");
+            }
+        }
+        if (chartFile) {
+            checkSharedTierGroups(integrity, file, line, modifierId, lines);
         }
     }
 
-    private static void checkTierBands(ItemDataIntegrity integrity, String file, int line, String modifierId, ModifierLine modifierLine,
-                                       boolean chartFile) {
-        if (!modifierLine.scalesWithTier()) {
-            return;
+    private static void checkSharedTierGroups(ItemDataIntegrity integrity, String file, int line, String modifierId, List<ModifierLine> lines) {
+        List<TierGroup> firstGroups = null;
+        for (ModifierLine modifierLine : lines) {
+            if (!(modifierLine.scaling() instanceof ValueScaling.PerTierGroup tierGroups)) {
+                continue;
+            }
+            if (firstGroups == null) {
+                firstGroups = tierGroups.groups();
+            } else if (!firstGroups.equals(tierGroups.groups())) {
+                integrity.error(file, line, modifierId + " gives " + modifierLine.effectName() + " the tier groups " + groupIds(tierGroups.groups())
+                        + ", but its other lines use " + groupIds(firstGroups) + "; every line of a modifier needs the same groups");
+            }
         }
-        if (!chartFile) {
-            integrity.error(file, line, modifierId + " gives " + modifierLine.effectName() + " tier bands, but only star chart modifiers in "
-                    + StarChartItems.MODIFIERS_PATH + " have tiers");
-            return;
-        }
-        if (modifierLine.scaling() instanceof ValueScaling.PerTierBand tierBands
-                && tierBands.bandStartTiers().get(tierBands.bandStartTiers().size() - 1) > StarChart.HIGHEST_TIER) {
-            integrity.error(file, line, modifierId + " starts a tier band above tier " + StarChart.HIGHEST_TIER);
-        }
+    }
+
+    private static List<String> groupIds(List<TierGroup> groups) {
+        return groups.stream().map(TierGroup::id).toList();
     }
 
     @Override

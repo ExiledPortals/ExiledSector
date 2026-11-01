@@ -44,6 +44,10 @@ public record Modifier(String id, ModifierSlot slot, List<ModifierLine> lines) {
         return lines.get(0);
     }
 
+    public boolean rollsAtTier(int tier) {
+        return lines.stream().allMatch(line -> line.rollsAtTier(tier));
+    }
+
     public boolean isHybrid() {
         return lines.size() > 1;
     }

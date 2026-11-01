@@ -14,6 +14,7 @@ import exiledsector.items.ModifierScope;
 import exiledsector.items.StarChartDefinitions;
 import exiledsector.items.SubroutineKind;
 import exiledsector.items.UniqueSource;
+import exiledsector.modifiers.TierGroup;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.radius.RadiusSize;
 import exiledsector.skills.tags.AreaToggles;
@@ -79,6 +80,10 @@ final class EditorVocabulary {
                 .append(list(Arrays.stream(ItemUnlock.values()).map(ItemUnlock::id).toList())).append(",\n");
         json.append("  \"clearedChartTierPrefix\": ").append(quote(ItemUnlock.CLEARED_CHART_TIER_PREFIX)).append(",\n");
         json.append("  \"chartTierRange\": [").append(ChartTiers.LOWEST_TIER).append(", ").append(ChartTiers.HIGHEST_TIER).append("],\n");
+        json.append("  \"chartTierGroups\": [")
+                .append(Arrays.stream(TierGroup.values()).map(group -> "{\"id\": " + quote(group.id()) + ", \"minTier\": " + group.tiers().minTier()
+                        + ", \"maxTier\": " + Math.min(ChartTiers.CORRUPTED_TIER, group.tiers().maxTier()) + "}").collect(Collectors.joining(", ")))
+                .append("],\n");
         json.append("  \"chartEffects\": ").append(list(Arrays.stream(ChartEffect.values()).map(Enum::name).toList())).append(",\n");
         json.append("  \"chartSystemTypes\": ").append(list(StarChartDefinitions.SYSTEM_TYPES)).append("\n");
         return json.append("}\n").toString();

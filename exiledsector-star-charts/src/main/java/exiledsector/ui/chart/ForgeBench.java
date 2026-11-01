@@ -171,7 +171,7 @@ public final class ForgeBench implements BenchModeSupport {
     }
 
     @Override
-    public int openEntries() {
+    public int openEntries(Item loaded) {
         return 0;
     }
 

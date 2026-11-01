@@ -41,7 +41,7 @@ public class ChartOpenStoredCommand extends CampaignCommand {
         }
         Item chart = charts.get(index - 1);
         String chartText = ChartListCommand.describe(chart);
-        int entries = StarChartSettings.wormholeEntries();
+        int entries = StarChartSettings.wormholeEntries(chart.tier());
         OpenResult result = ChartRunActions.openFromStore(Global.getSector(), entries, random, ItemStore.starChartsIfCreated(), chart);
         switch (result) {
             case OPENED -> {

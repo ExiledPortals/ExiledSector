@@ -233,18 +233,25 @@ class DoctrineArchiveDataTest {
     }
 
     @Test
-    void onlyBossesOfTierFourteenAndFifteenChartsDropADoctrineArchive() throws Exception {
+    void bossesDropADoctrineArchiveAtEveryTierButLessOftenBelowTierFourteen() throws Exception {
         loadShippedDoctrines();
         try {
             Random random = new Random(2L);
-            int drops = 0;
+            int tierFourteenDrops = 0;
+            int tierTenDrops = 0;
             for (int trial = 0; trial < 2000; trial++) {
-                assertNull(DoctrineArchives.rollForBoss(13, "hegemony", 10f, random, definition -> true));
-                drops += DoctrineArchives.rollForBoss(14, "hegemony", 1f, random, definition -> true) == null ? 0 : 1;
+                tierFourteenDrops += DoctrineArchives.rollForBoss(14, "hegemony", 1f, random, definition -> true) == null ? 0 : 1;
+                tierTenDrops += DoctrineArchives.rollForBoss(10, "hegemony", 1f, random, definition -> true) == null ? 0 : 1;
                 assertNotNull(DoctrineArchives.rollForBoss(15, "hegemony", 2f, random, definition -> true));
             }
 
-            assertEquals(DoctrineArchives.BOSS_CHANCE, drops / 2000f, 0.04f);
+            assertEquals(DoctrineArchives.BOSS_CHANCE, tierFourteenDrops / 2000f, 0.04f);
+            assertEquals(DoctrineArchives.bossChance(10), tierTenDrops / 2000f, 0.03f);
+            assertEquals(DoctrineArchives.BOSS_CHANCE, DoctrineArchives.bossChance(15));
+            for (int tier = 1; tier < 14; tier++) {
+                assertTrue(DoctrineArchives.bossChance(tier) > 0f);
+                assertTrue(DoctrineArchives.bossChance(tier) < DoctrineArchives.bossChance(tier + 1));
+            }
             assertNull(DoctrineArchives.rollForBoss(15, "hegemony", 2f, random, definition -> false));
         } finally {
             NpcFactionVolumes.clear();

@@ -8,12 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class StretchedTierBandTest {
+class StretchedTierGroupTest {
 
-    private static final ModifierLine FLEET_POWER = ModifierLine.parse("FLEET_POWER:t1=10-15/t6=20-30/t11=-45--35").line();
+    private static final ModifierLine FLEET_POWER = ModifierLine.parse("FLEET_POWER:low=10-15/mid=20-30/high=-45--35").line();
 
     @Test
-    void positionsInsideTheRollRangeKeepTheirBandValues() {
+    void positionsInsideTheRollRangeKeepTheirGroupValues() {
         for (int tier = 1; tier <= 15; tier++) {
             ScaleContext context = ScaleContext.ofTier(tier);
             float low = FLEET_POWER.valueFor(0f, context);
@@ -28,7 +28,7 @@ class StretchedTierBandTest {
     }
 
     @Test
-    void positionsPastTheRollRangeStretchTheBandOutwardsByTheirMagnitude() {
+    void positionsPastTheRollRangeStretchTheGroupOutwardsByTheirMagnitude() {
         assertEquals(7f, FLEET_POWER.valueFor(-35f, ScaleContext.ofTier(1)));
         assertEquals(20f, FLEET_POWER.valueFor(135f, ScaleContext.ofTier(1)));
         assertEquals(13f, FLEET_POWER.valueFor(-35f, ScaleContext.ofTier(6)));
@@ -44,11 +44,11 @@ class StretchedTierBandTest {
     }
 
     @Test
-    void fixedBandsAndHullSizeValuesIgnoreStretchedPositions() {
-        ModifierLine fixed = ModifierLine.parse("EXTRA_FLEETS:t1=1/t8=2").line();
+    void fixedGroupsAndHullSizeValuesIgnoreStretchedPositions() {
+        ModifierLine fixed = ModifierLine.parse("EXTRA_FLEETS:low=1/mid=1/high=2").line();
         assertFalse(fixed.canVary());
         assertEquals(1f, fixed.valueFor(-35f, ScaleContext.ofTier(3)));
-        assertEquals(2f, fixed.valueFor(135f, ScaleContext.ofTier(9)));
+        assertEquals(2f, fixed.valueFor(135f, ScaleContext.ofTier(11)));
         ValueScaling hullValues = ValueScaling.perHullSize(List.of(5f, 10f, 15f, 20f));
         assertEquals(15f, hullValues.valueAt(2, -0.35f));
         assertEquals(15f, hullValues.valueAt(2, 1.35f));

@@ -8,6 +8,18 @@ export interface EffectInfo {
   lowerIsBetter: boolean;
 }
 
+export interface ChartTierGroup {
+  id: string;
+  minTier: number;
+  maxTier: number;
+}
+
+const DEFAULT_CHART_TIER_GROUPS: ChartTierGroup[] = [
+  { id: 'low', minTier: 1, maxTier: 5 },
+  { id: 'mid', minTier: 6, maxTier: 10 },
+  { id: 'high', minTier: 11, maxTier: 16 },
+];
+
 interface VocabularyFile {
   effects: EffectInfo[];
   tags: { theme: string[]; region: string[]; requirement: string[]; gate?: string[] };
@@ -28,6 +40,7 @@ interface VocabularyFile {
   itemUnlocks: string[];
   clearedChartTierPrefix?: string;
   chartTierRange?: [number, number];
+  chartTierGroups?: ChartTierGroup[];
   chartEffects?: string[];
   chartSystemTypes?: string[];
 }
@@ -59,6 +72,7 @@ export interface Vocabulary {
   clearedChartTierPrefix: string;
   lowestChartTier: number;
   highestChartTier: number;
+  chartTierGroups: ChartTierGroup[];
   chartEffectNames: string[];
   chartSystemTypes: string[];
 }
@@ -91,6 +105,7 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     clearedChartTierPrefix: file.clearedChartTierPrefix ?? 'cleared_chart_tier_',
     lowestChartTier: file.chartTierRange?.[0] ?? 1,
     highestChartTier: file.chartTierRange?.[1] ?? 15,
+    chartTierGroups: (file.chartTierGroups ?? DEFAULT_CHART_TIER_GROUPS).map((group) => ({ ...group })),
     chartEffectNames: (file.chartEffects ?? []).slice(),
     chartSystemTypes: (file.chartSystemTypes ?? []).slice(),
   };

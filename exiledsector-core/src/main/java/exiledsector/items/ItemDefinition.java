@@ -91,7 +91,7 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
     }
 
     public static ItemDefinition parseStarChart(JSONObject row) {
-        return parse(row, null, ItemType.STAR_CHART);
+        return parseBasics(row, null, ItemType.STAR_CHART, parsePools(row, ItemType.STAR_CHART), null, false, "", List.of());
     }
 
     public static ItemDefinition parse(JSONObject row, ItemKind kind, List<UniqueSource> uniqueSources) {
@@ -103,6 +103,10 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
     }
 
     private static ItemDefinition parse(JSONObject row, ItemKind kind, ItemType itemType, List<UniqueSource> uniqueSources) {
+        return parseShared(row, kind, itemType, parsePools(row, itemType), null, uniqueSources);
+    }
+
+    private static Pools parsePools(JSONObject row, ItemType itemType) {
         String definitionId = definitionId(row);
         List<PoolEntry> prefixes = parsePool(definitionId, row.optString("prefixes", ""), ModifierSlot.PREFIX, itemType);
         List<PoolEntry> suffixes = parsePool(definitionId, row.optString("suffixes", ""), ModifierSlot.SUFFIX, itemType);
@@ -110,7 +114,7 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
             throw new IllegalArgumentException("it has no prefixes or suffixes");
         }
         rejectRepeats(prefixes, suffixes);
-        return parseShared(row, kind, itemType, new Pools(prefixes, suffixes), null, uniqueSources);
+        return new Pools(prefixes, suffixes);
     }
 
     public record Pools(List<PoolEntry> prefixes, List<PoolEntry> suffixes) {
@@ -132,6 +136,11 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
 
     public static ItemDefinition parseCommon(JSONObject row, ItemKind kind, ItemType itemType, Pools pools, Enum<?> subtype,
                                               boolean unique, List<UniqueSource> uniqueSources) {
+        return parseBasics(row, kind, itemType, pools, subtype, unique, row.optString("unlock", "").trim(), uniqueSources);
+    }
+
+    private static ItemDefinition parseBasics(JSONObject row, ItemKind kind, ItemType itemType, Pools pools, Enum<?> subtype,
+                                              boolean unique, String unlock, List<UniqueSource> uniqueSources) {
         String definitionId = definitionId(row);
         String icon = row.optString("icon", "").trim();
         float rarity = (float) row.optDouble("rarity", 1.0);
@@ -141,7 +150,7 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
         return new ItemDefinition(definitionId, kind,
                 nameOrId(row.optString("name", "").trim(), definitionId), icon.isEmpty() ? FALLBACK_ICON : icon, rarity, unique,
                 row.optString("description", "").trim(), pools.prefixes(), pools.suffixes(),
-                row.optString("unlock", "").trim(), itemType, subtype, uniqueSources, NO_SOCKET_LIMIT);
+                unlock, itemType, subtype, uniqueSources, NO_SOCKET_LIMIT);
     }
 
     public boolean hasUniqueRarity() {

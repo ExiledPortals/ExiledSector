@@ -520,6 +520,15 @@ biome borders: no system sits under one and lanes route around them, and a grid 
 Gateway and every Bastion joined to the rest of the map (`AtlasTerrain`). A biome or Threat infestation behind
 an unlock is decided when first seen, and that is saved.
 
+### Chart tier groups
+
+Chart tiers fall into three groups: low (1-5), mid (6-10) and high (11-16) (`TierGroup`). A chart modifier line gives
+each group its own range (`low=15-20/mid=50-70/high=150-200`), and the chart's tier picks which one applies; the roll
+is kept as a position in the range, so a chart raised into the next group keeps its relative roll. A modifier rolls only
+on tiers its groups cover, so one written as `mid=/high=` never appears below tier 6 (`ModifierLine.rollsAtTier`).
+
+Wormhole entries are set per group, 6, 3 and 1 by default (`StarChartSettings.wormholeEntries`).
+
 ### Atlas Catalysts
 
 Atlas Catalysts are special items listed in `atlas_catalysts.csv` (`AtlasCatalysts`) and used on a revealed atlas system.

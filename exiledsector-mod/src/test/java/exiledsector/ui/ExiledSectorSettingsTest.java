@@ -176,9 +176,13 @@ class ExiledSectorSettingsTest {
     }
 
     @Test
-    void registersTheStarChartEntriesDefaultingToOne() {
-        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"),
-                eq(StarChartSettings.ENTRIES_FIELD_ID), anyString(), anyString(), eq(1), eq(1), eq(StarChartSettings.MAX_ENTRIES), eq(StarChartSettings.settingsTab())));
+    void registersTheStarChartEntriesOfEachTierGroupWithTheirDefaults() {
+        List<Integer> defaults = StarChartSettings.ENTRIES.stream().map(StarChartSettings.WormholeEntries::defaultEntries).toList();
+        assertEquals(List.of(6, 3, 1), defaults);
+        for (StarChartSettings.WormholeEntries entries : StarChartSettings.ENTRIES) {
+            settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"), eq(entries.fieldId()), anyString(), anyString(),
+                    eq(entries.defaultEntries()), eq(StarChartSettings.MIN_ENTRIES), eq(StarChartSettings.MAX_ENTRIES), eq(StarChartSettings.settingsTab())));
+        }
     }
 
     @Test

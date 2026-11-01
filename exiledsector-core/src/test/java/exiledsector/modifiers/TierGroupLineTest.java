@@ -21,11 +21,11 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class TierBandLineTest {
+class TierGroupLineTest {
 
     @Test
-    void rangedTierBandsRollAPositionThatEachBandScales() {
-        ModifierLine.Parsed parsed = ModifierLine.parse("FLEET_POWER:t1=10-15/t6=20-30/t11=35-45");
+    void rangedTierGroupsRollAPositionThatEachGroupScales() {
+        ModifierLine.Parsed parsed = ModifierLine.parse("FLEET_POWER:low=10-15/mid=20-30/high=35-45");
         ModifierLine line = parsed.line();
 
         assertNull(parsed.trailingField());
@@ -37,15 +37,41 @@ class TierBandLineTest {
         assertEquals(10f, line.valueFor(0f, ScaleContext.ofTier(1)));
         assertEquals(15f, line.valueFor(100f, ScaleContext.ofTier(5)));
         assertEquals(25f, line.valueFor(50f, ScaleContext.ofTier(6)));
-        assertEquals(45f, line.valueFor(100f, ScaleContext.ofTier(15)));
+        assertEquals(30f, line.valueFor(100f, ScaleContext.ofTier(10)));
+        assertEquals(35f, line.valueFor(0f, ScaleContext.ofTier(11)));
+        assertEquals(45f, line.valueFor(100f, ScaleContext.ofTier(16)));
         assertEquals(50f, line.valueFor(50f, ScaleContext.NONE), "without a tier the roll is not scaled");
         assertTrue(line.listsEveryValueFor(ScaleContext.NONE));
         assertEquals(List.of(10f, 20f, 35f), line.scaledValues());
     }
 
     @Test
+    void aLineLeavingOutTheLowGroupOnlyRollsFromTheMidGroup() {
+        ModifierLine line = ModifierLine.parse("COLONY_ITEMS:mid=40-60/high=90-120").line();
+        Modifier modifier = Modifier.single(ModifierSlot.SUFFIX, line);
+
+        assertFalse(line.rollsAtTier(5));
+        assertFalse(modifier.rollsAtTier(1));
+        assertTrue(modifier.rollsAtTier(6));
+        assertTrue(modifier.rollsAtTier(16));
+        assertTrue(modifier.rollsAtTier(TierRange.NO_TIER));
+        assertTrue(line.listsEveryValueFor(ScaleContext.ofTier(3)));
+        assertEquals(40f, line.valueFor(0f, ScaleContext.ofTier(6)));
+        assertEquals(120f, line.valueFor(100f, ScaleContext.ofTier(11)));
+    }
+
+    @Test
+    void aModifierRollsOnlyWhereEveryTierGroupedLineHasAValue() {
+        Modifier hybrid = new Modifier("HYBRID", ModifierSlot.PREFIX, List.of(ModifierLine.parse("A:low=1-2/mid=3-4/high=5-6").line(),
+                ModifierLine.parse("B:high=7-8").line(), ModifierLine.range("C", 1f, 2f)));
+
+        assertFalse(hybrid.rollsAtTier(10));
+        assertTrue(hybrid.rollsAtTier(11));
+    }
+
+    @Test
     void rollsStayInsideTheirPositionRange() {
-        ModifierLine line = ModifierLine.parse("FLEET_POWER:t1=10-15/t6=20-30").line();
+        ModifierLine line = ModifierLine.parse("FLEET_POWER:mid=20-30/high=35-45").line();
         Random random = new Random(4);
         for (int roll = 0; roll < 200; roll++) {
             float position = line.roll(random);
@@ -65,8 +91,8 @@ class TierBandLineTest {
     }
 
     @Test
-    void everyStepOfABandIsAsLikelyAsAnyOtherWithinOnePosition() {
-        ModifierLine line = ModifierLine.parse("QUANTITY:t1=4-6/t6=10-15/t11=-25--15").line();
+    void everyStepOfAGroupIsAsLikelyAsAnyOtherWithinOnePosition() {
+        ModifierLine line = ModifierLine.parse("QUANTITY:low=4-6/mid=10-15/high=-25--15").line();
 
         assertEquals(Map.of(4f, 34, 5f, 34, 6f, 33), valueCounts(line, 1));
         assertEquals(Map.of(10f, 17, 11f, 17, 12f, 17, 13f, 17, 14f, 17, 15f, 16), valueCounts(line, 6));
@@ -78,44 +104,44 @@ class TierBandLineTest {
     }
 
     @Test
-    void everyShippedChartBandRollsEachOfItsValuesEvenly() throws Exception {
+    void everyShippedChartGroupRollsEachOfItsValuesEvenly() throws Exception {
         String csv = Files.readString(Path.of("data/config/exiledSector/star_chart_modifiers.csv"), StandardCharsets.UTF_8);
         JSONArray rows = CDL.toJSONArray(csv.replace("\r\n", "\n"));
-        int checkedBands = 0;
+        int checkedGroups = 0;
         for (int row = 0; row < rows.length(); row++) {
             for (String entry : rows.getJSONObject(row).getString("lines").split(";")) {
                 ModifierLine line = ModifierLine.parse(entry.trim()).line();
-                if (!(line.scaling() instanceof ValueScaling.PerTierBand tierBands) || !tierBands.variesWithinAPoint()) {
+                if (!(line.scaling() instanceof ValueScaling.PerTierGroup tierGroups) || !tierGroups.variesWithinAPoint()) {
                     continue;
                 }
-                for (int band = 0; band < tierBands.bandStartTiers().size(); band++) {
-                    Map<Float, Integer> counts = valueCounts(line, tierBands.bandStartTiers().get(band));
-                    int stepCount = Math.round(tierBands.highAt(band) - tierBands.lowAt(band)) + 1;
+                for (int group = 0; group < tierGroups.groups().size(); group++) {
+                    Map<Float, Integer> counts = valueCounts(line, tierGroups.groups().get(group).tiers().minTier());
+                    int stepCount = Math.round(tierGroups.highAt(group) - tierGroups.lowAt(group)) + 1;
                     assertEquals(stepCount, counts.size(), entry);
                     int fewest = counts.values().stream().mapToInt(Integer::intValue).min().orElseThrow();
                     int most = counts.values().stream().mapToInt(Integer::intValue).max().orElseThrow();
-                    assertTrue(most - fewest <= 1, entry + " band " + band + ": " + counts);
-                    checkedBands++;
+                    assertTrue(most - fewest <= 1, entry + " group " + group + ": " + counts);
+                    checkedGroups++;
                 }
             }
         }
-        assertTrue(checkedBands > 20, "checked " + checkedBands);
+        assertTrue(checkedGroups > 20, "checked " + checkedGroups);
     }
 
     @Test
-    void fixedTierBandsGiveOneValuePerBand() {
-        ModifierLine line = ModifierLine.parse("EXTRA_FLEETS:t1=1/t8=2/t13=3:5").line();
+    void fixedTierGroupsGiveOneValuePerGroup() {
+        ModifierLine line = ModifierLine.parse("EXTRA_FLEETS:low=1/mid=2/high=3:5").line();
 
         assertFalse(line.canVary());
-        assertEquals(1f, line.valueFor(1f, ScaleContext.ofTier(7)));
-        assertEquals(2f, line.valueFor(1f, ScaleContext.ofTier(8)));
+        assertEquals(1f, line.valueFor(1f, ScaleContext.ofTier(5)));
+        assertEquals(2f, line.valueFor(1f, ScaleContext.ofTier(6)));
         assertEquals(3f, line.valueFor(1f, ScaleContext.ofTier(15)));
-        assertEquals("5", ModifierLine.parse("EXTRA_FLEETS:t1=1/t8=2/t13=3:5").trailingField());
+        assertEquals("5", ModifierLine.parse("EXTRA_FLEETS:low=1/mid=2/high=3:5").trailingField());
     }
 
     @Test
-    void negativeRangesAndTheirBandRangeForShowingRolls() {
-        ModifierLine line = ModifierLine.parse("SENSOR:t1=-25--15/t6=-35--25").line();
+    void negativeRangesAndTheirGroupRangeForShowingRolls() {
+        ModifierLine line = ModifierLine.parse("SENSOR:low=-25--15/mid=-35--25/high=-45--35").line();
 
         assertEquals(-25f, line.valueFor(0f, ScaleContext.ofTier(2)));
         assertEquals(-15f, line.valueFor(100f, ScaleContext.ofTier(2)));
@@ -126,12 +152,15 @@ class TierBandLineTest {
     }
 
     @Test
-    void malformedTierBandsAreRejected() {
-        assertThrows(IllegalArgumentException.class, () -> ModifierLine.parse("X:t3=1-2"), "the first band must start at t1");
-        assertThrows(IllegalArgumentException.class, () -> ModifierLine.parse("X:t1=1-2/t1=3-4"), "bands must rise");
-        assertThrows(IllegalArgumentException.class, () -> ModifierLine.parse("X:t1=one"));
-        assertThrows(IllegalArgumentException.class, () -> ModifierLine.parse("X:t1=1-2:5:6"));
-        assertThrows(IllegalArgumentException.class, () -> ModifierLine.parse("X:t1=1-2/6=3"));
+    void malformedTierGroupsAreRejected() {
+        assertThrows(IllegalArgumentException.class, () -> ModifierLine.parse("X:low=1-2/mid=3-4"), "groups must reach high");
+        assertThrows(IllegalArgumentException.class, () -> ModifierLine.parse("X:low=1-2/high=3-4"), "groups must not skip one");
+        assertThrows(IllegalArgumentException.class, () -> ModifierLine.parse("X:mid=1-2/low=3-4/high=5-6"), "groups must rise");
+        assertThrows(IllegalArgumentException.class, () -> ModifierLine.parse("X:high=1-2/high=3-4"), "groups must not repeat");
+        assertThrows(IllegalArgumentException.class, () -> ModifierLine.parse("X:t1=1-2"), "tier numbers are not groups");
+        assertThrows(IllegalArgumentException.class, () -> ModifierLine.parse("X:high=one"));
+        assertThrows(IllegalArgumentException.class, () -> ModifierLine.parse("X:high=1-2:5:6"));
+        assertThrows(IllegalArgumentException.class, () -> ModifierLine.parse("X:mid=1-2/3"));
     }
 
     @Test
@@ -141,8 +170,8 @@ class TierBandLineTest {
         ModifierLine hullValues = ModifierLine.parse("ARMOR_FLAT:10/15/20/30").line();
         assertTrue(hullValues.scalesWithHullSize());
         assertEquals(20f, hullValues.valueFor(0f, HullSize.CRUISER));
-        assertFalse(ModifierLine.isTierBandText("10/15/20/30"));
-        assertTrue(ModifierLine.isTierBandText("t1=10"));
+        assertFalse(ModifierLine.isTierGroupText("10/15/20/30"));
+        assertTrue(ModifierLine.isTierGroupText("low=10"));
     }
 
     @Test

@@ -494,10 +494,10 @@ class StarChartTest {
     }
 
     @Test
-    void aTierlessViewListsEveryBandsWholeRange() {
-        ModifierLine fleetSize = ModifierLine.parse("CHART_FLEET_SIZE_PERCENT:t1=15-20/t6=50-70/t11=150-200").line();
-        ModifierLine sensorRange = ModifierLine.parse("CHART_SENSOR_RANGE_PERCENT:t1=-25--15/t6=-35--25").line();
-        ModifierLine extraFleets = ModifierLine.parse("CHART_EXTRA_FLEETS:t1=1/t8=2/t13=3").line();
+    void aTierlessViewListsEveryGroupsWholeRange() {
+        ModifierLine fleetSize = ModifierLine.parse("CHART_FLEET_SIZE_PERCENT:low=15-20/mid=50-70/high=150-200").line();
+        ModifierLine sensorRange = ModifierLine.parse("CHART_SENSOR_RANGE_PERCENT:mid=-25--15/high=-35--25").line();
+        ModifierLine extraFleets = ModifierLine.parse("CHART_EXTRA_FLEETS:low=1/mid=2/high=3").line();
         ModifierEffects chartEffects = ItemEffects.forType(ItemType.STAR_CHART);
 
         assertTrue(fleetSize.listsEveryValueFor(ScaleContext.NONE));

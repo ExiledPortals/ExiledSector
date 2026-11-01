@@ -160,7 +160,7 @@ public interface BenchModeSupport {
         SkillTreeSounds.wormholeJumped();
     }
 
-    int openEntries();
+    int openEntries(Item loaded);
 
     OpenOutcome open(SectorAPI sector, ItemStore store, Item loaded, int entries, Random random);
 

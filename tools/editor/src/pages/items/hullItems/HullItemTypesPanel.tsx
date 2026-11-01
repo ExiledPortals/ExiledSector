@@ -218,7 +218,7 @@ function HullItemForm({ document, model, vocabulary, definition, index, descript
       />
       <UniqueFields
         unique={unique}
-        unlock={definition.unlock}
+        unlock={definition.unlock ?? ''}
         vocabulary={vocabulary}
         uniqueLabel="Unique - shown with the name above in orange, and rolls every prefix and suffix"
         unlockLabel="Drop condition (uniques never drop before player level 15)"

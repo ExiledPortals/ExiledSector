@@ -3,6 +3,7 @@ package exiledsector.charts.content;
 import exiledsector.ProjectFiles;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.generation.ChartTiers;
+import exiledsector.modifiers.ModifierLine;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ChartColonyItemsTest {
@@ -76,15 +78,20 @@ class ChartColonyItemsTest {
         assertTrue(firstTier > 1);
         assertEquals(0f, ChartTiers.colonyItemChance(firstTier - 1));
         assertTrue(ChartTiers.colonyItemChance(ChartTiers.HIGHEST_TIER) > ChartTiers.colonyItemChance(firstTier));
-        String chartPools = Files.readString(exiledsector.ProjectFiles.projectRoot().resolve("data/config/exiledSector/star_charts.csv"),
+        String chartModifiers = Files.readString(exiledsector.ProjectFiles.projectRoot().resolve("data/config/exiledSector/star_chart_modifiers.csv"),
                 StandardCharsets.UTF_8);
-        int pooled = 0;
-        for (String line : chartPools.split("\n")) {
-            if (line.contains("@CHART_COLONY_ITEM_PERCENT")) {
-                assertTrue(line.contains("@CHART_COLONY_ITEM_PERCENT:3:t" + firstTier + "+"), line);
-                pooled++;
+        int listed = 0;
+        for (String row : chartModifiers.split("\n")) {
+            if (row.startsWith("CHART_COLONY_ITEM_PERCENT,")) {
+                ModifierLine line = ModifierLine.parse(row.split(",")[3]).line();
+                assertFalse(line.rollsAtTier(firstTier - 1), row);
+                assertTrue(line.rollsAtTier(firstTier), row);
+                listed++;
             }
         }
-        assertTrue(pooled > 0);
+        assertEquals(1, listed);
+        String chartPools = Files.readString(exiledsector.ProjectFiles.projectRoot().resolve("data/config/exiledSector/star_charts.csv"),
+                StandardCharsets.UTF_8);
+        assertTrue(chartPools.contains("@CHART_COLONY_ITEM_PERCENT:3;"), "the colony item suffix rolls from its tier groups, with no tier gate");
     }
 }

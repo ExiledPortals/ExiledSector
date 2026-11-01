@@ -33,10 +33,10 @@ public final class StarChartFixtures {
     }
 
     private static JSONArray withTestModifiers(JSONArray rows) throws JSONException {
-        return rows.put(HullItemRows.modifierRow("TEST_SENSOR_RANGE", "prefix", "star_chart", "CHART_SENSOR_RANGE_PERCENT:t1=-50", ""))
-                .put(HullItemRows.modifierRow("TEST_EXTRA_POIS", "suffix", "star_chart", "CHART_EXTRA_POIS:t1=4/t8=6", ""))
-                .put(HullItemRows.modifierRow("TEST_GATED_BOSS_SIZE", "prefix", "star_chart", "CHART_BOSS_SIZE_PERCENT:t1=200/t10=700", ""))
-                .put(HullItemRows.modifierRow("TEST_GATED_BOSS_SPOILS", "suffix", "star_chart", "CHART_BOSS_SPOILS_PERCENT:t1=100/t10=150", ""));
+        return rows.put(HullItemRows.modifierRow("TEST_SENSOR_RANGE", "prefix", "star_chart", "CHART_SENSOR_RANGE_PERCENT:low=-50/mid=-50/high=-50", ""))
+                .put(HullItemRows.modifierRow("TEST_EXTRA_POIS", "suffix", "star_chart", "CHART_EXTRA_POIS:low=4/mid=6/high=6", ""))
+                .put(HullItemRows.modifierRow("TEST_GATED_BOSS_SIZE", "prefix", "star_chart", "CHART_BOSS_SIZE_PERCENT:low=200/mid=700/high=700", ""))
+                .put(HullItemRows.modifierRow("TEST_GATED_BOSS_SPOILS", "suffix", "star_chart", "CHART_BOSS_SPOILS_PERCENT:low=100/mid=150/high=150", ""));
     }
 
     private static JSONArray withTestCharts(JSONArray rows) throws JSONException {
@@ -49,8 +49,8 @@ public final class StarChartFixtures {
     private static JSONObject chartRow(String id, String systemType, String name, int minTier, String prefixes, String suffixes)
             throws JSONException {
         return new JSONObject().put("id", id).put("system_type", systemType).put("name", name).put("icon", "graphics/icons/colony_management.png")
-                .put("rarity", "1").put("unique", "").put("min_tier", String.valueOf(minTier)).put("description", "")
-                .put("prefixes", prefixes).put("suffixes", suffixes).put("unlock", "");
+                .put("rarity", "1").put("min_tier", String.valueOf(minTier)).put("description", "")
+                .put("prefixes", prefixes).put("suffixes", suffixes);
     }
 
     public static ItemDefinition definition(String definitionId) {

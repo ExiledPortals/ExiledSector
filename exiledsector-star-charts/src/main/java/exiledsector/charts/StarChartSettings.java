@@ -3,13 +3,19 @@ package exiledsector.charts;
 import exiledsector.ModSettings;
 import exiledsector.i18n.Translation;
 import exiledsector.domain.DomainSwitch;
+import exiledsector.items.StarChart;
+import exiledsector.modifiers.TierGroup;
+
+import java.util.List;
 
 public final class StarChartSettings {
 
     public static final String ENABLED_FIELD_ID = "exiledSector_starChartsEnabled";
     public static final boolean DEFAULT_ENABLED = true;
-    public static final String ENTRIES_FIELD_ID = "exiledSector_starChartEntries";
-    public static final int DEFAULT_ENTRIES = 1;
+    public static final List<WormholeEntries> ENTRIES = List.of(
+            new WormholeEntries(TierGroup.LOW, "exiledSector_starChartEntriesLow", 6),
+            new WormholeEntries(TierGroup.MID, "exiledSector_starChartEntriesMid", 3),
+            new WormholeEntries(TierGroup.HIGH, "exiledSector_starChartEntriesHigh", 1));
     public static final int MIN_ENTRIES = 1;
     public static final int MAX_ENTRIES = 10;
     public static final String FLEET_LIMIT_FIELD_ID = "exiledSector_starChartFleetLimit";
@@ -48,8 +54,25 @@ public final class StarChartSettings {
         SWITCH.setForTests(enabled);
     }
 
-    public static int wormholeEntries() {
-        int configured = ModSettings.intOr(ENTRIES_FIELD_ID, DEFAULT_ENTRIES);
+    public record WormholeEntries(TierGroup group, String fieldId, int defaultEntries) {
+
+        public String nameKey() {
+            return "settings.starCharts.entries." + group.id() + ".name";
+        }
+
+        public String tooltipKey() {
+            return "settings.starCharts.entries." + group.id() + ".tooltip";
+        }
+    }
+
+    public static WormholeEntries entriesFor(int tier) {
+        TierGroup group = TierGroup.forTier(StarChart.clampTier(tier));
+        return ENTRIES.stream().filter(entries -> entries.group() == group).findFirst().orElse(ENTRIES.get(0));
+    }
+
+    public static int wormholeEntries(int tier) {
+        WormholeEntries entries = entriesFor(tier);
+        int configured = ModSettings.intOr(entries.fieldId(), entries.defaultEntries());
         return Math.max(MIN_ENTRIES, Math.min(MAX_ENTRIES, configured));
     }
 

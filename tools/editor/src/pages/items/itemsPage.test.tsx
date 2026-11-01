@@ -24,8 +24,8 @@ let describeCalls = 0;
 let describeFails = false;
 
 function describedText(line: ModifierLineRequest): string {
-  const values = line.tierBands
-    ? line.tierBands.map((band) => `t${band.tier} ${band.min} to ${band.max}`).join(', ')
+  const values = line.tierGroups
+    ? line.tierGroups.map((groupValue) => `${groupValue.group} ${groupValue.min} to ${groupValue.max}`).join(', ')
     : line.hullValues
       ? line.hullValues.join('/')
       : `${line.min} to ${line.max}`;
@@ -243,13 +243,46 @@ describe('star charts', () => {
     const charts = await openItems('Star Charts');
 
     fireEvent.click(await within(charts).findByLabelText('Select HYBRID_CHART_FLEET_SIZE', undefined, LOAD_TIMEOUT));
-    expect(within(charts).getAllByText('t1 15 to 20, t6 50 to 70, t11 150 to 200').length).toBeGreaterThan(0);
-    fireEvent.change(await findLabelled('CHART_FLEET_SIZE_PERCENT band 1 max', charts), { target: { value: '25' } });
+    expect(within(charts).getAllByText('low 15 to 20, mid 50 to 70, high 150 to 200').length).toBeGreaterThan(0);
+    fireEvent.change(await findLabelled('CHART_FLEET_SIZE_PERCENT low max', charts), { target: { value: '25' } });
     fireEvent.change(await findLabelled('star_chart weight', charts), { target: { value: '12' } });
     await save('Saved star_charts.csv and star_chart_modifiers.csv');
 
-    expect(server.readProjectFile(CHART_MODIFIERS_FILE)).toBe(before[CHART_MODIFIERS_FILE].replace('CHART_FLEET_SIZE_PERCENT:t1=15-20/', 'CHART_FLEET_SIZE_PERCENT:t1=15-25/'));
+    expect(server.readProjectFile(CHART_MODIFIERS_FILE)).toBe(before[CHART_MODIFIERS_FILE].replace('CHART_FLEET_SIZE_PERCENT:low=15-20/', 'CHART_FLEET_SIZE_PERCENT:low=15-25/'));
     expect(server.readProjectFile(STAR_CHARTS_FILE)).toBe(before[STAR_CHARTS_FILE].replace('@HYBRID_CHART_FLEET_SIZE:10;', '@HYBRID_CHART_FLEET_SIZE:12;'));
+  }, 90000);
+
+  it('switches tier groups on and off as a run ending at high and refuses lines of one modifier with different groups', async () => {
+    const before = server.readProjectFile(CHART_MODIFIERS_FILE);
+    const charts = await openItems('Star Charts');
+
+    fireEvent.click(await within(charts).findByLabelText('Select HYBRID_CHART_FLEET_SIZE', undefined, LOAD_TIMEOUT));
+    expect(within(charts).getAllByText('Tiers 1-5 (low)').length).toBe(2);
+    expect(within(charts).getAllByText('Tiers 11-16 (high)').length).toBe(2);
+    const highCheckbox = (await findLabelled('CHART_FLEET_SIZE_PERCENT high group', charts)) as HTMLInputElement;
+    expect(highCheckbox.checked).toBe(true);
+    expect(highCheckbox.disabled).toBe(true);
+    const lowMax = (within(charts).getByLabelText('CHART_FLEET_SIZE_PERCENT low max') as HTMLInputElement).value;
+    const midMin = (within(charts).getByLabelText('CHART_FLEET_SIZE_PERCENT mid min') as HTMLInputElement).value;
+
+    fireEvent.click(await findLabelled('CHART_FLEET_SIZE_PERCENT mid group', charts));
+    await waitFor(() => expect(within(charts).queryByLabelText('CHART_FLEET_SIZE_PERCENT low max')).toBeNull());
+    expect(within(charts).queryByLabelText('CHART_FLEET_SIZE_PERCENT mid max')).toBeNull();
+    expect((within(charts).getByLabelText('CHART_FLEET_SIZE_PERCENT low group') as HTMLInputElement).checked).toBe(false);
+    expect(within(charts).getAllByText(/Rolls from tier 11/).length).toBeGreaterThan(0);
+    fireEvent.click(saveButton());
+    const refusal = await screen.findByRole('dialog', undefined, LOAD_TIMEOUT);
+    expect(
+      within(refusal).getByText(
+        'HYBRID_CHART_FLEET_SIZE: it gives CHART_QUANTITY_PERCENT the tier groups [low, mid, high], but its other lines use [high]; every line of a modifier needs the same groups',
+      ),
+    ).toBeTruthy();
+    fireEvent.keyDown(refusal, { key: 'Escape' });
+
+    fireEvent.click(await findLabelled('CHART_FLEET_SIZE_PERCENT low group', charts));
+    await waitFor(() => expect(within(charts).getByLabelText('CHART_FLEET_SIZE_PERCENT low max')).toHaveProperty('value', lowMax));
+    expect(within(charts).getByLabelText('CHART_FLEET_SIZE_PERCENT mid min')).toHaveProperty('value', midMin);
+    expect(server.readProjectFile(CHART_MODIFIERS_FILE)).toBe(before);
   }, 90000);
 });
 

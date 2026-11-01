@@ -63,7 +63,7 @@ class StarChartDataTest {
 
     @Test
     void poolEntriesCanBeGatedToATierRange() throws Exception {
-        ItemModifiers.registerPart(ModifierScope.STAR_CHART, new JSONArray().put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:t1=1/t6=2", "Discovery")),
+        ItemModifiers.registerPart(ModifierScope.STAR_CHART, new JSONArray().put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:low=1/mid=2/high=2", "Discovery")),
                 StarChartItems.MODIFIERS_PATH);
 
         assertEquals(TierRange.between(3, 15), PoolEntry.parse("@CHART_EXTRA_POIS:4:t3-15", ModifierSlot.SUFFIX, ItemType.STAR_CHART).tiers());
@@ -82,7 +82,7 @@ class StarChartDataTest {
     void chartModifiersLoadIntoTheSharedCatalogueWithoutDisturbingShipModifiers() throws Exception {
         ItemModifiers.register(new JSONArray().put(HullItemRows.modifierRow("HULL_MULT", "prefix", "HULL_MULT:4:6", "Reinforced")));
         ItemModifiers.registerPart(ModifierScope.STAR_CHART, new JSONArray()
-                .put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:t1=1/t6=2", "Discovery"))
+                .put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:low=1/mid=2/high=2", "Discovery"))
                 .put(chartModifier("HULL_MULT", "suffix", "CHART_EXTRA_POIS:1:2", "Copy"))
                 .put(HullItemRows.modifierRow("CHART_REWARD_PERCENT", "suffix", "subroutine;star_chart", "CHART_REWARD_PERCENT:1:2", "Mixed")),
                 StarChartItems.MODIFIERS_PATH);
@@ -102,10 +102,10 @@ class StarChartDataTest {
     @Test
     void theDataCheckKeepsTierSyntaxInTheChartFiles() throws Exception {
         JSONArray itemModifiers = new JSONArray()
-                .put(HullItemRows.modifierRow("HULL_MULT", "prefix", "HULL_MULT:t1=4-6", "Reinforced"))
+                .put(HullItemRows.modifierRow("HULL_MULT", "prefix", "HULL_MULT:low=4-6/mid=4-6/high=4-6", "Reinforced"))
                 .put(HullItemRows.modifierRow("ARMOR_PERCENT", "prefix", "star_chart", "ARMOR_PERCENT:4:6", "Plated"));
         JSONArray chartModifiers = new JSONArray()
-                .put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:t1=1/t20=2", "Discovery"))
+                .put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:low=1/mid=1/high=2; CHART_ITEM_PERCENT:mid=1/high=2", "Discovery"))
                 .put(HullItemRows.modifierRow("CHART_REWARD_PERCENT", "suffix", "hull_item", "CHART_REWARD_PERCENT:1:2", "Bounty"));
         JSONArray charts = new JSONArray()
                 .put(chart("chart_a", "QUATERNARY", "", "@CHART_EXTRA_POIS:2:t3-40"))
@@ -117,10 +117,11 @@ class StarChartDataTest {
         List<String> shipErrors = ItemDataChecks.checkWithStarCharts(itemModifiers, new JSONArray(), hullItems, new JSONArray(),
                 new JSONArray(), new JSONArray(), new JSONArray()).stream().map(Violation::message).toList();
 
-        assertTrue(errors.contains("HULL_MULT gives HULL_MULT tier bands, but only star chart modifiers in " + StarChartItems.MODIFIERS_PATH
+        assertTrue(errors.contains("HULL_MULT gives HULL_MULT tier groups, but only star chart modifiers in " + StarChartItems.MODIFIERS_PATH
                 + " have tiers"), errors.toString());
         assertTrue(errors.contains("ARMOR_PERCENT rolls on star_chart; star chart modifiers belong in " + StarChartItems.MODIFIERS_PATH), errors.toString());
-        assertTrue(errors.contains("CHART_EXTRA_POIS starts a tier band above tier 15"), errors.toString());
+        assertTrue(errors.contains("CHART_EXTRA_POIS gives CHART_ITEM_PERCENT the tier groups [mid, high], but its other lines use [low, mid, high]; "
+                + "every line of a modifier needs the same groups"), errors.toString());
         assertTrue(errors.contains("CHART_REWARD_PERCENT is in " + StarChartItems.MODIFIERS_PATH + ", so its item_types must be star_chart only"),
                 errors.toString());
         assertTrue(errors.contains("chart_a has system type \"QUATERNARY\"; expected one of " + StarChartDefinitions.SYSTEM_TYPES + " or any"),
@@ -133,7 +134,7 @@ class StarChartDataTest {
 
     @Test
     void chartsCanStartAtAMinimumTierAndTheDataCheckRejectsBadOnes() throws Exception {
-        ItemModifiers.registerPart(ModifierScope.STAR_CHART, new JSONArray().put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:t1=1", "Discovery")),
+        ItemModifiers.registerPart(ModifierScope.STAR_CHART, new JSONArray().put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:low=1/mid=1/high=1", "Discovery")),
                 StarChartItems.MODIFIERS_PATH);
         StarChartDefinitions.register(new JSONArray()
                 .put(chart("chart_low", "SINGLE", "", "@CHART_EXTRA_POIS"))
@@ -155,7 +156,7 @@ class StarChartDataTest {
                 .put(chart("chart_zero", "SINGLE", "", "@CHART_EXTRA_POIS").put("min_tier", "0"))
                 .put(chart("chart_word", "SINGLE", "", "@CHART_EXTRA_POIS").put("min_tier", "six"))
                 .put(chart("chart_fine", "SINGLE", "", "@CHART_EXTRA_POIS").put("min_tier", "15"));
-        JSONArray chartModifiers = new JSONArray().put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:t1=1", "Discovery"));
+        JSONArray chartModifiers = new JSONArray().put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:low=1/mid=1/high=1", "Discovery"));
         List<String> errors = chartErrors(new JSONArray(), chartModifiers, charts, new JSONArray());
 
         assertTrue(errors.contains("chart_zero has minimum tier \"0\"; expected a whole number from 1 to 15 or blank"), errors.toString());
@@ -166,7 +167,7 @@ class StarChartDataTest {
     @Test
     void chartDefinitionsNeedAKnownSystemTypeAndCannotShadowAShipItem() throws Exception {
         HullItemRows.registerMilitary();
-        ItemModifiers.registerPart(ModifierScope.STAR_CHART, new JSONArray().put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:t1=1", "Discovery")),
+        ItemModifiers.registerPart(ModifierScope.STAR_CHART, new JSONArray().put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:low=1/mid=1/high=1", "Discovery")),
                 StarChartItems.MODIFIERS_PATH);
         StarChartDefinitions.register(new JSONArray()
                 .put(chart("chart_ok", "binary_far", "", "@CHART_EXTRA_POIS"))

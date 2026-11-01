@@ -54,12 +54,12 @@ class EditorDescriberTest {
     }
 
     @Test
-    void starChartLinesAreDescribedWithTheirInGameWordingAndTierBands() throws Exception {
-        JSONArray bands = new JSONArray()
-                .put(new JSONObject().put("tier", 1).put("min", 15).put("max", 20))
-                .put(new JSONObject().put("tier", 6).put("min", 50).put("max", 70));
+    void starChartLinesAreDescribedWithTheirInGameWordingAndTierGroups() throws Exception {
+        JSONArray groups = new JSONArray()
+                .put(new JSONObject().put("group", "mid").put("min", 15).put("max", 20))
+                .put(new JSONObject().put("group", "high").put("min", 50).put("max", 70));
         JSONArray lines = new JSONArray()
-                .put(new JSONObject().put("effect", "CHART_FLEET_SIZE_PERCENT").put("itemType", "star_chart").put("tierBands", bands))
+                .put(new JSONObject().put("effect", "CHART_FLEET_SIZE_PERCENT").put("itemType", "star_chart").put("tierGroups", groups))
                 .put(new JSONObject().put("effect", "CHART_POI_BUDGET_PERCENT").put("itemType", "star_chart").put("min", 10).put("max", 20))
                 .put(new JSONObject().put("effect", "CHART_FLEET_SIZE_PERCENT").put("min", 10).put("max", 20));
 
@@ -76,7 +76,7 @@ class EditorDescriberTest {
     void aLineThatCannotBeDescribedLeavesTheRestOfTheBatchDescribed() throws Exception {
         JSONArray lines = new JSONArray()
                 .put(new JSONObject().put("effect", "MAX_COMBAT_READINESS_PERCENT"))
-                .put(new JSONObject().put("effect", "CHART_FLEET_SIZE_PERCENT").put("itemType", "star_chart").put("tierBands", new JSONArray()))
+                .put(new JSONObject().put("effect", "CHART_FLEET_SIZE_PERCENT").put("itemType", "star_chart").put("tierGroups", new JSONArray()))
                 .put("not a line")
                 .put(new JSONObject().put("effect", "MAX_COMBAT_READINESS_PERCENT").put("min", 3).put("max", 5));
 

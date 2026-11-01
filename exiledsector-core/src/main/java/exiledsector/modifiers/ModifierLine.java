@@ -15,10 +15,9 @@ public record ModifierLine(String effectName, float min, float max, ValueScaling
     private static final float STEP_TOLERANCE = 0.001f;
     private static final String FIELD_SEPARATOR = ":";
     private static final String HULL_VALUE_SEPARATOR = "/";
-    private static final String TIER_BAND_MARK = "t";
-    private static final String TIER_BAND_VALUE_SEPARATOR = "=";
+    private static final String TIER_GROUP_VALUE_SEPARATOR = "=";
     private static final String NUMBER = "-?\\d+(?:\\.\\d+)?";
-    private static final Pattern TIER_BAND = Pattern.compile("t(\\d+)=(" + NUMBER + ")(?:-(" + NUMBER + "))?");
+    private static final Pattern TIER_GROUP = Pattern.compile("([a-z]+)=(" + NUMBER + ")(?:-(" + NUMBER + "))?");
     public static final float TIER_ROLL_POSITIONS = 100f;
 
     public ModifierLine {
@@ -33,43 +32,42 @@ public record ModifierLine(String effectName, float min, float max, ValueScaling
         return new ModifierLine(effectName, hullValues.get(0), hullValues.get(0), ValueScaling.perHullSize(hullValues));
     }
 
-    public static ModifierLine perTierBand(String effectName, List<Integer> bandStartTiers, List<Float> bandValues) {
-        ValueScaling tierBands = ValueScaling.perTierBand(bandStartTiers, bandValues);
-        return new ModifierLine(effectName, bandValues.get(0), bandValues.get(0), tierBands);
+    public static ModifierLine perTierGroup(String effectName, List<TierGroup> groups, List<Float> groupValues) {
+        ValueScaling tierGroups = ValueScaling.perTierGroup(groups, groupValues);
+        return new ModifierLine(effectName, groupValues.get(0), groupValues.get(0), tierGroups);
     }
 
-    public static ModifierLine perTierBandRanges(String effectName, List<Integer> bandStartTiers, List<Float> bandLowValues,
-                                                 List<Float> bandHighValues) {
-        ValueScaling tierBands = ValueScaling.perTierBand(bandStartTiers, bandLowValues, bandHighValues);
-        if (!tierBands.variesWithinAPoint()) {
-            return new ModifierLine(effectName, bandLowValues.get(0), bandLowValues.get(0), tierBands);
+    public static ModifierLine perTierGroupRanges(String effectName, List<TierGroup> groups, List<Float> groupLowValues,
+                                                  List<Float> groupHighValues) {
+        ValueScaling tierGroups = ValueScaling.perTierGroup(groups, groupLowValues, groupHighValues);
+        if (!tierGroups.variesWithinAPoint()) {
+            return new ModifierLine(effectName, groupLowValues.get(0), groupLowValues.get(0), tierGroups);
         }
-        return new ModifierLine(effectName, 0f, TIER_ROLL_POSITIONS, tierBands);
+        return new ModifierLine(effectName, 0f, TIER_ROLL_POSITIONS, tierGroups);
     }
 
     public record Parsed(ModifierLine line, String trailingField) {
     }
 
-    public static boolean isTierBandText(String valuesText) {
-        String trimmed = valuesText == null ? "" : valuesText.trim();
-        return trimmed.startsWith(TIER_BAND_MARK) && trimmed.contains(TIER_BAND_VALUE_SEPARATOR);
+    public static boolean isTierGroupText(String valuesText) {
+        return valuesText != null && valuesText.contains(TIER_GROUP_VALUE_SEPARATOR);
     }
 
     public static Parsed parse(String entryText) {
         String[] entryFields = entryText.split(FIELD_SEPARATOR);
-        boolean perTier = entryFields.length >= 2 && isTierBandText(entryFields[1]);
+        boolean perTier = entryFields.length >= 2 && isTierGroupText(entryFields[1]);
         boolean perHullSize = !perTier && entryFields.length >= 2 && entryFields[1].contains(HULL_VALUE_SEPARATOR);
         boolean scaled = perTier || perHullSize;
         if (scaled ? entryFields.length > 3 : entryFields.length < 3 || entryFields.length > 4) {
             throw new IllegalArgumentException("entry \"" + entryText + "\" is not EFFECT:min:max, EFFECT:min:max:weight, "
                     + "EFFECT:frigate/destroyer/cruiser/capital, EFFECT:frigate/destroyer/cruiser/capital:weight "
-                    + "or EFFECT:t1=min-max/t5=min-max with an optional :weight");
+                    + "or EFFECT:low=min-max/mid=min-max/high=min-max with an optional :weight");
         }
         String effectName = entryFields[0].trim();
         int trailingIndex = scaled ? 2 : 3;
         String trailingField = entryFields.length > trailingIndex ? entryFields[trailingIndex] : null;
         if (perTier) {
-            return new Parsed(parseTierBands(effectName, entryFields[1], entryText), trailingField);
+            return new Parsed(parseTierGroups(effectName, entryFields[1], entryText), trailingField);
         }
         if (perHullSize) {
             return new Parsed(perHullSize(effectName, parseHullValues(entryFields[1], entryText)), trailingField);
@@ -77,34 +75,36 @@ public record ModifierLine(String effectName, float min, float max, ValueScaling
         return new Parsed(range(effectName, parseNumber(entryFields[1], entryText), parseNumber(entryFields[2], entryText)), trailingField);
     }
 
-    private static ModifierLine parseTierBands(String effectName, String bandsText, String entryText) {
-        List<Integer> bandStarts = new ArrayList<>();
+    private static ModifierLine parseTierGroups(String effectName, String groupsText, String entryText) {
+        List<TierGroup> groups = new ArrayList<>();
         List<Float> lowValues = new ArrayList<>();
         List<Float> highValues = new ArrayList<>();
-        for (String bandText : bandsText.trim().split(HULL_VALUE_SEPARATOR, -1)) {
-            Matcher band = TIER_BAND.matcher(bandText.trim());
-            if (!band.matches()) {
-                throw new IllegalArgumentException("entry \"" + entryText + "\" has the tier band \"" + bandText.trim()
-                        + "\"; write each band as tN=value or tN=min-max");
+        for (String groupText : groupsText.trim().split(HULL_VALUE_SEPARATOR, -1)) {
+            Matcher groupMatch = TIER_GROUP.matcher(groupText.trim());
+            TierGroup group = groupMatch.matches() ? TierGroup.byIdOrNull(groupMatch.group(1)) : null;
+            if (group == null) {
+                throw new IllegalArgumentException("entry \"" + entryText + "\" has the tier group \"" + groupText.trim()
+                        + "\"; write each group as " + String.join(", ", TierGroup.ids()) + " followed by =value or =min-max");
             }
-            float firstValue = parseNumber(band.group(2), entryText);
-            float secondValue = band.group(3) == null ? firstValue : parseNumber(band.group(3), entryText);
-            bandStarts.add(Integer.parseInt(band.group(1)));
+            float firstValue = parseNumber(groupMatch.group(2), entryText);
+            float secondValue = groupMatch.group(3) == null ? firstValue : parseNumber(groupMatch.group(3), entryText);
+            groups.add(group);
             lowValues.add(Math.min(firstValue, secondValue));
             highValues.add(Math.max(firstValue, secondValue));
         }
-        if (bandStarts.get(0) != TierRange.LOWEST_TIER) {
-            throw new IllegalArgumentException("entry \"" + entryText + "\" must start its first tier band at t" + TierRange.LOWEST_TIER);
+        try {
+            return perTierGroupRanges(effectName, groups, lowValues, highValues);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("entry \"" + entryText + "\": " + e.getMessage());
         }
-        return perTierBandRanges(effectName, bandStarts, lowValues, highValues);
     }
 
     public ModifierLine rangeFor(ScaleContext context) {
-        if (!(scaling instanceof ValueScaling.PerTierBand tierBands)) {
+        if (!(scaling instanceof ValueScaling.PerTierGroup tierGroups)) {
             return this;
         }
-        int point = tierBands.pointFor(context);
-        return point == ValueScaling.NO_POINT ? this : range(effectName, tierBands.lowAt(point), tierBands.highAt(point));
+        int point = tierGroups.pointFor(context);
+        return point == ValueScaling.NO_POINT ? this : range(effectName, tierGroups.lowAt(point), tierGroups.highAt(point));
     }
 
     public ModifierLine named(String currentEffectName) {
@@ -181,7 +181,11 @@ public record ModifierLine(String effectName, float min, float max, ValueScaling
     }
 
     public boolean scalesWithTier() {
-        return scaling instanceof ValueScaling.PerTierBand;
+        return scaling instanceof ValueScaling.PerTierGroup;
+    }
+
+    public boolean rollsAtTier(int tier) {
+        return !scalesWithTier() || tier == TierRange.NO_TIER || hasValueFor(ScaleContext.ofTier(tier));
     }
 
     public List<Float> hullValues() {

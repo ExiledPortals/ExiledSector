@@ -93,7 +93,7 @@ public record PoolEntry(Modifier modifier, float weight, TierRange tiers) {
     }
 
     public boolean rollsAtTier(int tier) {
-        return tiers.allows(tier);
+        return tiers.allows(tier) && modifier.rollsAtTier(tier);
     }
 
     boolean isSingle() {

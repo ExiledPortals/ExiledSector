@@ -24,9 +24,20 @@ export interface LineDescriptions {
 
 function lineRequest(line: ModifierLine, itemType: string): ModifierLineRequest | null {
   const typed: ModifierLineRequest = { effect: line.effect, itemType };
-  if (line.tierBands) {
-    const readable = line.tierBands.length > 0 && line.tierBands.every((band) => band.unparsedText === undefined && isNumberText(band.tier) && isNumberText(band.min) && (band.max === '' || isNumberText(band.max)));
-    return readable ? { ...typed, tierBands: line.tierBands.map((band) => ({ tier: Number(band.tier), min: Number(band.min), max: Number(band.max === '' ? band.min : band.max) })) } : null;
+  if (line.tierGroups) {
+    const readable =
+      line.tierGroups.length > 0 &&
+      line.tierGroups.every((groupValue) => groupValue.unparsedText === undefined && isNumberText(groupValue.min) && (groupValue.max === '' || isNumberText(groupValue.max)));
+    return readable
+      ? {
+          ...typed,
+          tierGroups: line.tierGroups.map((groupValue) => ({
+            group: groupValue.group,
+            min: Number(groupValue.min),
+            max: Number(groupValue.max === '' ? groupValue.min : groupValue.max),
+          })),
+        }
+      : null;
   }
   if (line.hullValues) {
     return line.hullValues.every(isNumberText) ? { ...typed, hullValues: line.hullValues.map(Number) } : null;
@@ -35,8 +46,8 @@ function lineRequest(line: ModifierLine, itemType: string): ModifierLineRequest 
 }
 
 function lineKey(line: ModifierLine, itemType: string): string {
-  const bands = (line.tierBands ?? []).map((band) => band.unparsedText ?? `t${band.tier}=${band.min}-${band.max}`).join('/');
-  return `${stringsRevision()}|${itemType}|${line.effect}|${line.min}|${line.max}|${(line.hullValues ?? []).join('/')}|${bands}`;
+  const groups = (line.tierGroups ?? []).map((groupValue) => groupValue.unparsedText ?? `${groupValue.group}=${groupValue.min}-${groupValue.max}`).join('/');
+  return `${stringsRevision()}|${itemType}|${line.effect}|${line.min}|${line.max}|${(line.hullValues ?? []).join('/')}|${groups}`;
 }
 
 function descriptionNote(described: DescribedModifierLines | undefined): string | null {

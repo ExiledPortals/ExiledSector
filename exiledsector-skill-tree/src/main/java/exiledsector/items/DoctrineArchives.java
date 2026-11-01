@@ -36,8 +36,9 @@ public final class DoctrineArchives {
     static final String MIN_LINES_COLUMN = "min_lines";
     static final String MAX_LINES_COLUMN = "max_lines";
     static final int DEFAULT_LINES = 1;
-    public static final int BOSS_MIN_TIER = 14;
+    static final int BOSS_FULL_CHANCE_TIER = 14;
     static final float BOSS_CHANCE = 0.5f;
+    static final float BOSS_CHANCE_PER_TIER_BELOW = 0.7f;
     private static final String ENTRY_SEPARATOR = ";";
     private static final Pattern WHOLE_NUMBER = Pattern.compile("\\d{1,4}");
     private static final Logger LOG = Logger.getLogger(DoctrineArchives.class);
@@ -181,12 +182,17 @@ public final class DoctrineArchives {
 
     public static ItemData rollForBoss(int chartTier, String bossFactionId, float chanceMult, Random random,
                                          Predicate<ItemDefinition> allowed) {
-        float chance = Math.min(1f, BOSS_CHANCE * Math.max(0f, chanceMult));
-        if (chartTier < BOSS_MIN_TIER || !(random.nextFloat() < chance)) {
+        float chance = Math.min(1f, bossChance(chartTier) * Math.max(0f, chanceMult));
+        if (!(random.nextFloat() < chance)) {
             return null;
         }
         ItemDefinition definition = pickFor(bossFactionId, random, allowed);
         return definition == null ? null : ItemData.rolled(definition, random.nextLong());
+    }
+
+    static float bossChance(int chartTier) {
+        int tiersBelow = Math.max(0, BOSS_FULL_CHANCE_TIER - chartTier);
+        return BOSS_CHANCE * (float) Math.pow(BOSS_CHANCE_PER_TIER_BELOW, tiersBelow);
     }
 
     static ItemDefinition pickFor(String factionId, Random random, Predicate<ItemDefinition> allowed) {

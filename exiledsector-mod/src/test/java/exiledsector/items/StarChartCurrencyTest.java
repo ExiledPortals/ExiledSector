@@ -218,8 +218,8 @@ class StarChartCurrencyTest {
     }
 
     @Test
-    void corruptedValuesStretchUpToThirtyFivePercentPastTheTierBand() {
-        boolean beyondBand = false;
+    void corruptedValuesStretchUpToThirtyFivePercentPastTheTierGroup() {
+        boolean beyondGroup = false;
         for (long seed = 0; seed < 300; seed++) {
             StarChart chart = StarChartFixtures.chart(SINGLE, seed, 6);
             if (!has(chart, FLEET_SIZE)) {
@@ -234,15 +234,15 @@ class StarChartCurrencyTest {
                 }
                 float position = roll.roll().magnitude();
                 assertTrue(position >= -35f && position <= 135f, "position " + position);
-                ModifierLine band = line.rangeFor(context);
+                ModifierLine group = line.rangeFor(context);
                 float value = line.valueFor(position, context);
-                float lowest = Math.round(band.min() - Math.abs(band.min()) * 0.35f) - 1f;
-                float highest = Math.round(band.max() + Math.abs(band.max()) * 0.35f) + 1f;
-                assertTrue(value >= lowest && value <= highest, line.effectName() + " " + value + " outside " + band);
-                beyondBand |= value < band.min() || value > band.max();
+                float lowest = Math.round(group.min() - Math.abs(group.min()) * 0.35f) - 1f;
+                float highest = Math.round(group.max() + Math.abs(group.max()) * 0.35f) + 1f;
+                assertTrue(value >= lowest && value <= highest, line.effectName() + " " + value + " outside " + group);
+                beyondGroup |= value < group.min() || value > group.max();
             }
         }
-        assertTrue(beyondBand);
+        assertTrue(beyondGroup);
     }
 
     @Test
@@ -255,9 +255,9 @@ class StarChartCurrencyTest {
         assertNull(ItemCrafting.stretchedForCorruption(perHullSize));
         assertNull(ItemCrafting.stretchedForCorruption(fixed));
         assertNull(ItemCrafting.stretchedForCorruption(null));
-        ModifierLine tierBand = ModifierLine.parse("FLEET_POWER:t1=10-15").line();
-        assertEquals(-35f, ItemCrafting.stretchedForCorruption(tierBand).min());
-        assertEquals(135f, ItemCrafting.stretchedForCorruption(tierBand).max());
+        ModifierLine tierGroup = ModifierLine.parse("FLEET_POWER:low=10-15/mid=10-15/high=10-15").line();
+        assertEquals(-35f, ItemCrafting.stretchedForCorruption(tierGroup).min());
+        assertEquals(135f, ItemCrafting.stretchedForCorruption(tierGroup).max());
     }
 
     @Test
