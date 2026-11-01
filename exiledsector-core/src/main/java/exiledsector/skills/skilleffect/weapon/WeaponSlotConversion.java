@@ -64,7 +64,9 @@ public final class WeaponSlotConversion {
         Map<String, WeaponType> originalTypes = originalTypes(hullSpec);
         Map<String, WeaponType> targetTypes = currentTypes(hullSpec, originalTypes);
         for (WeaponSlotAPI slot : hullSpec.getAllWeaponSlotsCopy()) {
-            if (slot.isWeaponSlot() && !originalTypes.containsKey(slot.getId()) && rule.matches(slot.getWeaponType(), slot.getSlotSize())) {
+            WeaponType originalType = originalTypes.getOrDefault(slot.getId(), slot.getWeaponType());
+            if (slot.isWeaponSlot() && rule.matches(originalType, slot.getSlotSize())
+                    && (!originalTypes.containsKey(slot.getId()) || morePermissive(rule.toType(), slot.getWeaponType()))) {
                 targetTypes.put(slot.getId(), rule.toType());
             }
         }
@@ -82,15 +84,15 @@ public final class WeaponSlotConversion {
         }
         Map<String, WeaponType> originalTypes = originalTypes(hullSpec);
         for (WeaponSlotAPI slot : hullSpec.getAllWeaponSlotsCopy()) {
-            WeaponType originalType = originalTypes.getOrDefault(slot.getId(), slot.getWeaponType());
-            Set<WeaponType> targets = EnumSet.noneOf(WeaponType.class);
-            for (Rule rule : rules) {
-                if (slot.isWeaponSlot() && rule.matches(originalType, slot.getSlotSize())) {
-                    targets.add(rule.toType());
-                }
+            if (!slot.isWeaponSlot()) {
+                continue;
             }
-            if (targets.size() > 1) {
-                conflicting.add(originalType);
+            WeaponType originalType = originalTypes.getOrDefault(slot.getId(), slot.getWeaponType());
+            WeaponType winner = winningTarget(originalType, slot.getSlotSize(), rules);
+            for (Rule rule : rules) {
+                if (rule.matches(originalType, slot.getSlotSize()) && !mountableTypes(winner).containsAll(mountableTypes(rule.toType()))) {
+                    conflicting.add(originalType);
+                }
             }
         }
         return conflicting;
@@ -102,15 +104,36 @@ public final class WeaponSlotConversion {
             if (!slot.isWeaponSlot()) {
                 continue;
             }
-            WeaponType originalType = originalTypes.getOrDefault(slot.getId(), slot.getWeaponType());
-            for (Rule rule : rules) {
-                if (rule.matches(originalType, slot.getSlotSize())) {
-                    targetTypes.put(slot.getId(), rule.toType());
-                    break;
-                }
+            WeaponType winner = winningTarget(originalTypes.getOrDefault(slot.getId(), slot.getWeaponType()), slot.getSlotSize(), rules);
+            if (winner != null) {
+                targetTypes.put(slot.getId(), winner);
             }
         }
         return targetTypes;
+    }
+
+    private static WeaponType winningTarget(WeaponType originalType, WeaponSize slotSize, List<Rule> rules) {
+        WeaponType winner = null;
+        for (Rule rule : rules) {
+            if (rule.matches(originalType, slotSize) && (winner == null || morePermissive(rule.toType(), winner))) {
+                winner = rule.toType();
+            }
+        }
+        return winner;
+    }
+
+    private static boolean morePermissive(WeaponType candidate, WeaponType current) {
+        return mountableTypes(candidate).size() > mountableTypes(current).size();
+    }
+
+    private static Set<WeaponType> mountableTypes(WeaponType slotType) {
+        return switch (slotType) {
+            case UNIVERSAL -> EnumSet.of(WeaponType.BALLISTIC, WeaponType.ENERGY, WeaponType.MISSILE);
+            case HYBRID -> EnumSet.of(WeaponType.BALLISTIC, WeaponType.ENERGY);
+            case SYNERGY -> EnumSet.of(WeaponType.ENERGY, WeaponType.MISSILE);
+            case COMPOSITE -> EnumSet.of(WeaponType.BALLISTIC, WeaponType.MISSILE);
+            default -> EnumSet.of(slotType);
+        };
     }
 
     static Map<String, WeaponType> originalTypes(ShipHullSpecAPI hullSpec) {

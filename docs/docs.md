@@ -112,11 +112,13 @@ threshold becomes the lower of the cap and any threshold the ship already has.
 
 Slot effects such as `BALLISTIC_SLOTS_HYBRID` (Dual-Feed Mounts) are rules: a slot type, an optional size and a new
 type (`SlotConversionBacking`). `SkillTreeHullMod` collects the rules of every tree node and hull item in order and
-`WeaponSlotConversion` gives the variant its own copy of the hull spec with each weapon mount retyped by the first
-rule matching its original type, so conversions never chain. Saves keep only the hull id, so the copy is rebuilt each
-time hull mods apply; slots swap back once their rule is gone, and `UnfitWeapons` returns weapons that no longer fit
-to cargo. After a tree edit, `ShipEditSession` swaps the refit screen's own variant at once and `RefitShipDisplay`
-rebuilds its slot buttons. The ship summary names mount types that more than one rule wants to change.
+`WeaponSlotConversion` gives the variant its own copy of the hull spec with each weapon mount retyped by the matching
+rule whose type takes the most weapon types (universal, then hybrid, synergy or composite, then single types; the
+earliest rule among equals). Rules read the original type, so conversions never chain. Saves keep only the hull id,
+so the copy is rebuilt each time hull mods apply; slots swap back once their rule is gone, and `UnfitWeapons` returns
+weapons that no longer fit to cargo. After a tree edit, `ShipEditSession` swaps the refit screen's own variant at once and `RefitShipDisplay`
+rebuilds its slot buttons. The ship summary names mount types where a losing rule's type takes a weapon type the
+winner's doesn't.
 
 ### Ballistic counts as energy
 

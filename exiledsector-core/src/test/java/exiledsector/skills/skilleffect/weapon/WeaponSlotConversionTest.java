@@ -31,7 +31,8 @@ class WeaponSlotConversionTest {
 
     private static final WeaponSlotConversion.Rule BALLISTIC_TO_HYBRID = new WeaponSlotConversion.Rule(WeaponType.BALLISTIC, null, WeaponType.HYBRID);
     private static final WeaponSlotConversion.Rule BALLISTIC_TO_ENERGY = new WeaponSlotConversion.Rule(WeaponType.BALLISTIC, null, WeaponType.ENERGY);
-    private static final WeaponSlotConversion.Rule ENERGY_TO_BALLISTIC = new WeaponSlotConversion.Rule(WeaponType.ENERGY, null, WeaponType.BALLISTIC);
+    private static final WeaponSlotConversion.Rule BALLISTIC_TO_MISSILE = new WeaponSlotConversion.Rule(WeaponType.BALLISTIC, null, WeaponType.MISSILE);
+    private static final WeaponSlotConversion.Rule ENERGY_TO_BALLISTIC =new WeaponSlotConversion.Rule(WeaponType.ENERGY, null, WeaponType.BALLISTIC);
     private static final WeaponSlotConversion.Rule SMALL_TO_UNIVERSAL = new WeaponSlotConversion.Rule(null, WeaponSize.SMALL, WeaponType.UNIVERSAL);
 
     private static CloneableTestHullSpec spec(Set<String> tags, RetypableTestSlot... slots) {
@@ -89,12 +90,13 @@ class WeaponSlotConversionTest {
     }
 
     @Test
-    void theFirstMatchingRuleWinsAndRulesReadTheOriginalTypeSoConversionsNeverChain() {
+    void theMostPermissiveMatchingRuleWinsAndRulesReadTheOriginalTypeSoConversionsNeverChain() {
         CloneableTestHullSpec shared = spec(new LinkedHashSet<>(), new RetypableTestSlot("WS0001", WeaponType.BALLISTIC, false),
                 new RetypableTestSlot("WS0002", WeaponType.ENERGY, false),
                 new RetypableTestSlot("WS0003", WeaponType.MISSILE, false, WeaponSize.SMALL),
                 new RetypableTestSlot("WS0004", WeaponType.SYSTEM, false, WeaponSize.SMALL),
-                new RetypableTestSlot("WS0005", WeaponType.STATION_MODULE, false, WeaponSize.SMALL));
+                new RetypableTestSlot("WS0005", WeaponType.STATION_MODULE, false, WeaponSize.SMALL),
+                new RetypableTestSlot("WS0006", WeaponType.BALLISTIC, false, WeaponSize.SMALL));
         ShipVariantAPI variant = variant(shared, VariantSource.REFIT);
         List<WeaponSlotConversion.Rule> rules = List.of(BALLISTIC_TO_ENERGY, ENERGY_TO_BALLISTIC, BALLISTIC_TO_HYBRID, SMALL_TO_UNIVERSAL);
 
@@ -103,13 +105,28 @@ class WeaponSlotConversionTest {
         WeaponSlotConversion.sync(variant, rules);
 
         assertSame(converted, variant.getHullSpec());
-        assertEquals(WeaponType.ENERGY, slotType(variant, "WS0001"));
+        assertEquals(WeaponType.HYBRID, slotType(variant, "WS0001"));
         assertEquals(WeaponType.BALLISTIC, slotType(variant, "WS0002"));
         assertEquals(WeaponType.UNIVERSAL, slotType(variant, "WS0003"));
         assertEquals(WeaponType.SYSTEM, slotType(variant, "WS0004"));
         assertEquals(WeaponType.STATION_MODULE, slotType(variant, "WS0005"));
-        assertEquals(Set.of(WeaponType.BALLISTIC), WeaponSlotConversion.conflicts(converted, rules));
-        assertEquals(Set.of(), WeaponSlotConversion.conflicts(converted, List.of(BALLISTIC_TO_ENERGY, ENERGY_TO_BALLISTIC)));
+        assertEquals(WeaponType.UNIVERSAL, slotType(variant, "WS0006"));
+        assertEquals(Set.of(), WeaponSlotConversion.conflicts(converted, rules));
+    }
+
+    @Test
+    void equallyPermissiveRulesGoToTheFirstAndAConflictIsAMountTypeTheWinnerCannotTake() {
+        CloneableTestHullSpec shared = spec(new LinkedHashSet<>(), new RetypableTestSlot("WS0001", WeaponType.BALLISTIC, false));
+        ShipVariantAPI variant = variant(shared, VariantSource.REFIT);
+        List<WeaponSlotConversion.Rule> tied = List.of(BALLISTIC_TO_ENERGY, BALLISTIC_TO_MISSILE);
+        List<WeaponSlotConversion.Rule> uncovered = List.of(BALLISTIC_TO_MISSILE, BALLISTIC_TO_HYBRID);
+
+        WeaponSlotConversion.sync(variant, tied);
+
+        assertEquals(WeaponType.ENERGY, slotType(variant, "WS0001"));
+        assertEquals(Set.of(WeaponType.BALLISTIC), WeaponSlotConversion.conflicts(shared, tied));
+        assertEquals(Set.of(WeaponType.BALLISTIC), WeaponSlotConversion.conflicts(shared, uncovered));
+        assertEquals(Set.of(), WeaponSlotConversion.conflicts(shared, List.of(BALLISTIC_TO_ENERGY, ENERGY_TO_BALLISTIC)));
     }
 
     @Test
@@ -171,9 +188,10 @@ class WeaponSlotConversionTest {
     }
 
     @Test
-    void addKeepsEarlierConversionsAndOnlyClaimsSlotsNoRuleHasChanged() {
+    void addKeepsEarlierConversionsUnlessItsTargetIsMorePermissive() {
         CloneableTestHullSpec shared = spec(new LinkedHashSet<>(), new RetypableTestSlot("WS0001", WeaponType.BALLISTIC, false),
-                new RetypableTestSlot("WS0002", WeaponType.ENERGY, false));
+                new RetypableTestSlot("WS0002", WeaponType.ENERGY, false),
+                new RetypableTestSlot("WS0003", WeaponType.BALLISTIC, false, WeaponSize.SMALL));
         ShipVariantAPI variant = variant(shared, VariantSource.REFIT);
 
         WeaponSlotConversion.add(variant, BALLISTIC_TO_HYBRID);
@@ -181,11 +199,13 @@ class WeaponSlotConversionTest {
         WeaponSlotConversion.add(variant, BALLISTIC_TO_ENERGY);
         assertSame(hybridHull, variant.getHullSpec());
         WeaponSlotConversion.add(variant, ENERGY_TO_BALLISTIC);
+        WeaponSlotConversion.add(variant, SMALL_TO_UNIVERSAL);
 
         assertEquals(WeaponType.HYBRID, slotType(variant, "WS0001"));
         assertEquals(WeaponType.BALLISTIC, slotType(variant, "WS0002"));
-        assertEquals(Set.of(slotTag("WS0001", WeaponType.BALLISTIC), slotTag("WS0002", WeaponType.ENERGY), WeaponSlotConversion.HULL_TAG),
-                variant.getHullSpec().getTags());
+        assertEquals(WeaponType.UNIVERSAL, slotType(variant, "WS0003"));
+        assertEquals(Set.of(slotTag("WS0001", WeaponType.BALLISTIC), slotTag("WS0002", WeaponType.ENERGY), slotTag("WS0003", WeaponType.BALLISTIC),
+                WeaponSlotConversion.HULL_TAG), variant.getHullSpec().getTags());
     }
 
     @Test

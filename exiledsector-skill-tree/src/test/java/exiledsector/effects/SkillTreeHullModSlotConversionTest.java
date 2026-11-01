@@ -143,7 +143,7 @@ class SkillTreeHullModSlotConversionTest {
     }
 
     @Test
-    void twoNodesChangingTheSameMountsConvertThemOnceAndReportTheConflict() {
+    void twoNodesChangingTheSameMountsGiveThemTheMorePermissiveTypeWithNoConflict() {
         ShipHullSpecAPI stockHull = hullSpec(new LinkedHashSet<>(), new RetypableTestSlot(SLOT_ID, WeaponType.BALLISTIC, false));
         ShipVariantAPI variant = refitVariant(stockHull);
         ShipTrees.allocate(ShipSkillDataManager.get(SHIP_ID), fafnirNode(), 1);
@@ -155,8 +155,8 @@ class SkillTreeHullModSlotConversionTest {
 
         SkillTreeHullMod.syncSlotConversions(member(), variant);
 
-        assertTrue(Set.of(WeaponType.HYBRID, WeaponType.ENERGY).contains(slotType(variant)));
-        assertEquals(Set.of(WeaponType.BALLISTIC), SkillTreeHullMod.slotConversionConflicts(ShipSkillDataManager.get(SHIP_ID), variant));
+        assertEquals(WeaponType.HYBRID, slotType(variant));
+        assertEquals(Set.of(), SkillTreeHullMod.slotConversionConflicts(ShipSkillDataManager.get(SHIP_ID), variant));
         assertEquals(Set.of(), SkillTreeHullMod.slotConversionConflicts(ShipSkillDataManager.get("no-tree"), variant));
     }
 
