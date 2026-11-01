@@ -4,7 +4,7 @@ Starsector mod (Java 17, Maven) that gives every ship its own skill tree. Mod id
 
 ## Build and deploy (Windows, PowerShell)
 - Build and test from the repo root: `mvn -q clean package` (also rewrites the jar list in `mod_info.json`). Without `mvn` on PATH, use IntelliJ's bundled Maven with `JAVA_HOME=C:\Program Files\Java\jdk-17`, as `build-common.ps1` does. `jars/` and `libs/` are generated and gitignored; don't edit them.
-- Deploy: `.\deploy.ps1`. It only runs from `E:\Dev\ExiledSector-parallel-work` (normal), `E:\Dev\ExiledSector-new-faction-areas` (volume testing) or `E:\Dev\ExiledSector` (hotfix testing), which write the same `ExiledSector` mod folder. Don't work around that check.
+- Deploy: `.\deploy.ps1`. It only runs from `E:\Dev\ExiledSector-parallel-work` (normal) or `E:\Dev\ExiledSector` (hotfix testing), which both write the same `ExiledSector` mod folder. Don't work around that check.
 - Don't run `release.ps1` unless asked. Python isn't installed (`python` opens the Microsoft Store); use PowerShell, Git Bash tools or Edit.
 - A JVM crash during a build or test run comes from the user's CPU, not the code; ignore it and run it again.
 - Tests: JUnit 5 + Mockito in each module's `src/test/java`. A test sits in the lowest module that sees every class it uses; each module installs only the domains it can see (`exiledsector.test.domains` in its pom). Keep the surefire `--add-opens` args in the parent `pom.xml`.
@@ -19,9 +19,6 @@ Starsector mod (Java 17, Maven) that gives every ship its own skill tree. Mod id
 
 ## Git
 - Worktrees share this repo; check `git worktree list` and the branch before committing. `parallel-work` is the dev branch and merges into `main` when ready; `main` takes only hotfixes, which also merge into `parallel-work`. Feature worktrees branch from `parallel-work`.
-- Each faction volume (e.g. `tania-redesign`, `iron_shell_volume`) lives on its own branch until its mod author approves it, worked on by one session in its own worktree. Volume branches are cut from and updated only from `parallel-work`.
-- `new-faction-areas` (`E:\Dev\ExiledSector-new-faction-areas`) deploys and tests one volume at a time on top of regular `parallel-work` merges. Only merges and conflict fixes happen there; volume changes go on the volume's branch. It merges into `parallel-work` once the author approves and the user says so.
-- A volume session may commit finished work (builds, tests pass) on its own branch without asking; the `new-faction-areas` session may commit its merges. Neither pushes or merges into `parallel-work` or `main` without the user.
 - Don't open `hs_err_pid*.log` or `replay_pid*.log` in the repo root (JVM crash dumps); for a crash, read only the first ~40 lines.
 
 ## Conventions
