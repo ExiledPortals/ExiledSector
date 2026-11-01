@@ -11,16 +11,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-public class GrantDoctrineArchivesCommand extends PlayerFleetCommand {
-
-    private final Random random;
+public class GrantDoctrineArchivesCommand extends RandomPlayerFleetCommand {
 
     public GrantDoctrineArchivesCommand() {
-        this(new Random());
     }
 
     GrantDoctrineArchivesCommand(Random random) {
-        this.random = random;
+        super(random);
     }
 
     @Override

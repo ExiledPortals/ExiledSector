@@ -1,6 +1,5 @@
 package exiledsector.charts.anomaly.convoy;
 
-import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignClockAPI;
@@ -19,12 +18,10 @@ import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
+import exiledsector.charts.anomaly.AnomalyRunScript;
 import exiledsector.charts.content.ChartContentGenerator;
+import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.charts.run.ChartRunBound;
-import exiledsector.charts.run.ChartRuns;
-import exiledsector.ui.CampaignMessages;
-import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -34,38 +31,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public final class ConvoyScript implements EveryFrameScript, FleetEventListener, ChartRunBound {
+public final class ConvoyScript extends AnomalyRunScript implements FleetEventListener {
 
-    private static final Logger LOG = Logger.getLogger(ConvoyScript.class);
-
-    private final String runId;
-    private final int tier;
-    private final StarSystemAPI system;
     private final List<ConvoyState> convoys = new ArrayList<>();
     private final Map<String, Float> holds = new HashMap<>();
     private long arrivalTimestamp = Long.MIN_VALUE;
     private long lastPulseTimestamp = Long.MIN_VALUE;
     private boolean intelAdded;
-    private float daysSinceCheck = Float.MAX_VALUE;
-    private boolean done;
-    private transient boolean failureReported;
 
     public ConvoyScript(String runId, int tier, StarSystemAPI system) {
-        this.runId = runId;
-        this.tier = tier;
-        this.system = system;
+        super(runId, tier, system, true);
     }
 
     public static ConvoyScript in(LocationAPI location) {
-        if (location == null) {
-            return null;
-        }
-        for (EveryFrameScript script : location.getScripts()) {
-            if (script instanceof ConvoyScript convoyScript && !convoyScript.isDone()) {
-                return convoyScript;
-            }
-        }
-        return null;
+        return in(location, ConvoyScript.class);
     }
 
     public static ConvoyState convoyOf(CampaignFleetAPI fleet) {
@@ -93,18 +72,6 @@ public final class ConvoyScript implements EveryFrameScript, FleetEventListener,
         return null;
     }
 
-    public int tier() {
-        return tier;
-    }
-
-    public StarSystemAPI system() {
-        return system;
-    }
-
-    public String runId() {
-        return runId;
-    }
-
     public boolean isActive() {
         for (ConvoyState convoy : convoys) {
             if (convoy.phase() != ConvoyState.Phase.LOST && !convoy.isCacheTaken()) {
@@ -115,62 +82,40 @@ public final class ConvoyScript implements EveryFrameScript, FleetEventListener,
     }
 
     @Override
-    public boolean belongsToRun(String wantedRunId) {
-        return runId != null && runId.equals(wantedRunId);
+    protected String anomalyId() {
+        return SupplyConvoy.ANOMALY_ID;
     }
 
     @Override
-    public boolean isDone() {
-        return done;
+    protected float checkDays() {
+        return ConvoyRules.CHECK_DAYS;
     }
 
     @Override
-    public boolean runWhilePaused() {
-        return false;
+    protected void everyFrame(SectorAPI sector, float amount) {
+        if (!intelAdded) {
+            intelAdded = true;
+            convoys.forEach(convoy -> ConvoyIntel.addFor(sector, this, convoy));
+        }
+        holdFleets(amount);
     }
 
     @Override
-    public void advance(float amount) {
-        SectorAPI sector = Global.getSector();
-        ChartRun run = ChartRuns.currentOrNull();
-        if (sector == null) {
-            return;
-        }
-        if (run == null || !run.runId().equals(runId)) {
-            done = true;
-            return;
-        }
-        try {
-            if (!intelAdded) {
-                intelAdded = true;
-                convoys.forEach(convoy -> ConvoyIntel.addFor(sector, this, convoy));
-            }
-            holdFleets(amount);
-            daysSinceCheck += sector.getClock().convertToDays(amount);
-            if (daysSinceCheck < ConvoyRules.CHECK_DAYS) {
-                return;
-            }
-            daysSinceCheck = 0f;
-            check(sector);
-        } catch (RuntimeException | LinkageError e) {
-            if (!failureReported) {
-                failureReported = true;
-                LOG.error("[ExiledSector] Running the supply convoy failed; it is tried again next check", e);
-            }
-        }
+    protected void check(SectorAPI sector, ChartRun run, float days) {
+        check(sector);
     }
 
     void check(SectorAPI sector) {
         CampaignFleetAPI playerFleet = sector.getPlayerFleet();
         CampaignClockAPI clock = sector.getClock();
-        boolean playerInside = playerFleet != null && playerFleet.getContainingLocation() == system;
+        boolean playerInside = playerInSystem();
         if (arrivalTimestamp == Long.MIN_VALUE && playerInside) {
             arrivalTimestamp = clock.getTimestamp();
         }
         if (playerInside) {
             checkPulse(playerFleet, clock);
         }
-        List<CampaignTerrainPlugin> slowing = ConvoyTerrain.slowingTerrain(system);
+        List<CampaignTerrainPlugin> slowing = ConvoyTerrain.slowingTerrain(system());
         for (ConvoyState convoy : convoys) {
             if (convoy.phase() == ConvoyState.Phase.WAITING && arrivalTimestamp != Long.MIN_VALUE
                     && clock.getElapsedDaysSince(arrivalTimestamp) >= ConvoyRules.DEPARTURE_DAYS) {
@@ -232,7 +177,7 @@ public final class ConvoyScript implements EveryFrameScript, FleetEventListener,
         Iterator<Map.Entry<String, Float>> held = holds.entrySet().iterator();
         while (held.hasNext()) {
             Map.Entry<String, Float> hold = held.next();
-            SectorEntityToken entity = system.getEntityById(hold.getKey());
+            SectorEntityToken entity = entity(hold.getKey());
             float left = hold.getValue() - amount;
             if (!(entity instanceof CampaignFleetAPI fleet) || left <= 0f) {
                 held.remove();
@@ -258,15 +203,12 @@ public final class ConvoyScript implements EveryFrameScript, FleetEventListener,
                 guard(fleet, freighters);
             }
         }
-        if (convoy.phase() == ConvoyState.Phase.LOST) {
+        if (freighters == null || convoy.phase() == ConvoyState.Phase.LOST || convoy.phase() == ConvoyState.Phase.DELIVERED) {
             leave(convoy);
-        } else if (freighters != null) {
+        } else {
             flee(convoy, freighters);
         }
-        if (CampaignMessages.available() && Global.getSector().getPlayerFleet() != null
-                && Global.getSector().getPlayerFleet().getContainingLocation() == system) {
-            CampaignMessages.plain(Translation.gameText("chart.convoy.alarm"), Misc.getNegativeHighlightColor());
-        }
+        tellPlayer(() -> Translation.gameText("chart.convoy.alarm"), Misc::getNegativeHighlightColor);
         return true;
     }
 
@@ -338,12 +280,12 @@ public final class ConvoyScript implements EveryFrameScript, FleetEventListener,
             leave(convoy);
         }
         SectorAPI sector = Global.getSector();
-        ChartRun run = sector == null ? null : ChartRuns.currentOrNull();
-        if (!(lostShare > 0f) || at == null || run == null || !run.runId().equals(runId)) {
+        ChartRun run = sector == null ? null : liveRun();
+        if (!(lostShare > 0f) || at == null || run == null) {
             return;
         }
         Random dropRandom = new Random(convoy.nextDropSeed());
-        ConvoyCargo.dropPods(system, runId, ConvoyCargo.roll(sector, run, convoy, lostShare * ConvoyRules.POD_SHARE, dropRandom), at);
+        ConvoyCargo.dropPods(system(), runId(), ConvoyCargo.roll(sector, run, convoy, lostShare * ConvoyRules.POD_SHARE, dropRandom), at);
     }
 
     void guard(CampaignFleetAPI escort, CampaignFleetAPI freighters) {
@@ -351,7 +293,7 @@ public final class ConvoyScript implements EveryFrameScript, FleetEventListener,
         if (freighters != null) {
             escort.addAssignment(FleetAssignment.ORBIT_AGGRESSIVE, freighters, ChartContentGenerator.ASSIGNMENT_DAYS);
         }
-        SectorEntityToken centre = system.getCenter() != null ? system.getCenter() : system.getStar();
+        SectorEntityToken centre = ChartSites.centreOf(system());
         if (centre != null) {
             escort.addAssignment(FleetAssignment.PATROL_SYSTEM, centre, ChartContentGenerator.ASSIGNMENT_DAYS);
         }
@@ -369,13 +311,7 @@ public final class ConvoyScript implements EveryFrameScript, FleetEventListener,
     }
 
     CampaignFleetAPI fleet(ConvoyState convoy, ConvoyRole role) {
-        String fleetId = convoy.fleetId(role);
-        SectorEntityToken entity = fleetId == null ? null : system.getEntityById(fleetId);
-        return entity instanceof CampaignFleetAPI fleet && fleet.isAlive() ? fleet : null;
-    }
-
-    SectorEntityToken entity(String entityId) {
-        return entityId == null ? null : system.getEntityById(entityId);
+        return livingFleet(convoy.fleetId(role));
     }
 
     void depart(ConvoyState convoy) {
@@ -424,11 +360,9 @@ public final class ConvoyScript implements EveryFrameScript, FleetEventListener,
             freighters.addAssignment(FleetAssignment.GO_TO_LOCATION_AND_DESPAWN, convoy.exitToken(), ChartContentGenerator.ASSIGNMENT_DAYS);
         }
         SectorEntityToken destination = entity(convoy.destinationId());
-        CampaignFleetAPI playerFleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
-        if (destination != null && convoy.hasCache() && playerFleet != null && playerFleet.getContainingLocation() == system && CampaignMessages.available()) {
+        if (destination != null && convoy.hasCache()) {
             String planet = destination.getName();
-            CampaignMessages.plain(I18n.forGameText(() -> Translation.msg("chart.convoy.delivered").arg("planet", planet).text()),
-                    Misc.getHighlightColor());
+            tellPlayer(() -> I18n.forGameText(() -> Translation.msg("chart.convoy.delivered").arg("planet", planet).text()), Misc::getHighlightColor);
         }
     }
 

@@ -4,13 +4,13 @@ import com.fs.starfarer.api.campaign.CampaignClockAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignTerrainAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
-import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import exiledsector.MockSector;
-import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
+import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.generation.ChartGenContext;
 import org.junit.jupiter.api.AfterEach;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -114,7 +114,6 @@ class StormFrontTest {
         assertEquals(StormRules.BAND_WIDTH, front.path().bandWidth());
         assertEquals(StormRules.CROSSING_DAYS, front.path().crossingDays());
         assertEquals(100L, front.startTimestamp());
-        verify(added).addTag(ChartIds.runTag("run1"));
         verify(added).addTag(StormFront.FRONT_TAG);
         assertTrue(site.placed().contains(added));
     }
@@ -130,13 +129,13 @@ class StormFrontTest {
         front.advance(0.1f);
         assertEquals(0f, front.getEntity().getLocation().x, 0.01f);
         assertSame(front, StormFront.frontHolding(fleet));
-        assertTrue(StormFront.INSTANCE.isActiveIn(system));
+        AnomalyRun anomalyRun = new AnomalyRun(null, system);
+        assertNotNull(StormFront.INSTANCE.intelText(anomalyRun));
 
         elapsedDays = 30f;
         assertTrue(front.isDone());
         assertNull(StormFront.frontHolding(fleet));
-        assertFalse(StormFront.INSTANCE.isActiveIn(system));
-        assertNull(StormFront.INSTANCE.intelText(null, system));
+        assertNull(StormFront.INSTANCE.intelText(anomalyRun));
     }
 
     @Test
@@ -150,8 +149,27 @@ class StormFrontTest {
 
         front.applyEffect(fleet, 0.1f);
 
-        verify(stats).addTemporaryModMult(eq(StormFrontTerrainPlugin.SENSOR_MOD_DAYS), eq(front.getModId()), any(),
+        verify(stats).addTemporaryModMult(eq(StormFrontTerrainPlugin.SENSOR_MOD_DAYS), eq(StormFrontTerrainPlugin.SENSOR_MOD_ID), any(),
                 eq(StormRules.SENSOR_RANGE_MULT), eq(sensorRange));
+    }
+
+    @Test
+    void leavingTheChartLiftsTheSensorPenaltyAndTheTerrainKey() {
+        CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
+        MutableFleetStatsAPI stats = mock(MutableFleetStatsAPI.class);
+        StatBonus sensorRange = new StatBonus();
+        sensorRange.modifyMult(StormFrontTerrainPlugin.SENSOR_MOD_ID, StormRules.SENSOR_RANGE_MULT);
+        when(stats.getSensorRangeMod()).thenReturn(sensorRange);
+        when(fleet.getStats()).thenReturn(stats);
+        MemoryAPI fleetMemory = mock(MemoryAPI.class);
+        when(fleet.getMemoryWithoutUpdate()).thenReturn(fleetMemory);
+
+        StormFront.INSTANCE.clearFrom(fleet);
+        StormFront.INSTANCE.clearFrom(null);
+
+        verify(stats).removeTemporaryMod(StormFrontTerrainPlugin.SENSOR_MOD_ID);
+        assertNull(sensorRange.getMultBonus(StormFrontTerrainPlugin.SENSOR_MOD_ID));
+        verify(fleetMemory).unset("$terrain_" + StormFront.TERRAIN_ID);
     }
 
     @Test

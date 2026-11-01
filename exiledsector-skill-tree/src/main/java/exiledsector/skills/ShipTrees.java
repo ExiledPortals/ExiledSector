@@ -234,6 +234,29 @@ public final class ShipTrees {
         return reachableAllocatedNodeIds(data, topology, satisfiedRootId, Set.of());
     }
 
+    public static ReleasedNodes release(ShipSkillData data, SkillTreeTopology topology, String satisfiedRootId, Collection<SkillNode> nodes) {
+        return releaseWithStranded(data, topology, satisfiedRootId, () -> nodes.forEach(node -> releaseNode(data, node)));
+    }
+
+    public static ReleasedNodes releaseWithStranded(ShipSkillData data, SkillTreeTopology topology, String satisfiedRootId, Runnable deallocation) {
+        Set<String> allocatedBefore = new LinkedHashSet<>(data.allocatedNodeIds);
+        Set<String> reachableBefore = reachableAllocatedNodeIds(data, topology, satisfiedRootId);
+        deallocation.run();
+        if (data.allocatedNodeIds.containsAll(allocatedBefore)) {
+            return ReleasedNodes.NONE;
+        }
+        deallocateUnreachable(data, topology, satisfiedRootId, node -> reachableBefore.contains(node.getId()));
+        return takeReleased(data, allocatedBefore);
+    }
+
+    private static void releaseNode(ShipSkillData data, SkillNode node) {
+        if (ShipTreeLinks.anchorSocket(data, node.getId()) != null) {
+            deallocateAnchorExit(data, node.getId());
+        } else if (data.isAllocated(node.getId())) {
+            deallocate(data, node);
+        }
+    }
+
     public static ReleasedNodes releaseNewlyStranded(ShipSkillData data, SkillTreeTopology topology, String satisfiedRootId, Set<String> reachableBefore) {
         return releaseUnreachable(data, topology, satisfiedRootId, node -> reachableBefore.contains(node.getId()));
     }
@@ -243,10 +266,23 @@ public final class ShipTrees {
     }
 
     public static ReleasedNodes releaseUnreachable(ShipSkillData data, SkillTreeTopology topology, String satisfiedRootId, Predicate<SkillNode> releasable) {
-        if (satisfiedRootId == null || !data.isAllocated(satisfiedRootId)) {
+        Set<String> allocatedBefore = new LinkedHashSet<>(data.allocatedNodeIds);
+        deallocateUnreachable(data, topology, satisfiedRootId, releasable);
+        return takeReleased(data, allocatedBefore);
+    }
+
+    private static ReleasedNodes takeReleased(ShipSkillData data, Set<String> allocatedBefore) {
+        allocatedBefore.removeAll(data.allocatedNodeIds);
+        if (allocatedBefore.isEmpty()) {
             return ReleasedNodes.NONE;
         }
-        Set<String> allocatedBefore = new LinkedHashSet<>(data.allocatedNodeIds);
+        return new ReleasedNodes(List.copyOf(allocatedBefore), ItemChargeLedger.takeItemCharges(data, allocatedBefore));
+    }
+
+    private static void deallocateUnreachable(ShipSkillData data, SkillTreeTopology topology, String satisfiedRootId, Predicate<SkillNode> releasable) {
+        if (satisfiedRootId == null || !data.isAllocated(satisfiedRootId)) {
+            return;
+        }
         for (String nodeId : ungrantedFreeNodeIds(data)) {
             SkillNode node = topology.node(nodeId);
             if (node != null && releasable.test(node)) {
@@ -260,11 +296,6 @@ public final class ShipTrees {
                 deallocate(data, node);
             }
         }
-        allocatedBefore.removeAll(data.allocatedNodeIds);
-        if (allocatedBefore.isEmpty()) {
-            return ReleasedNodes.NONE;
-        }
-        return new ReleasedNodes(List.copyOf(allocatedBefore), ItemChargeLedger.takeItemCharges(data, allocatedBefore));
     }
 
     public static List<String> trimPaidNodes(ShipSkillData data, Map<String, SkillNode> tree, SkillTreeTopology topology) {
@@ -388,15 +419,15 @@ public final class ShipTrees {
         }
     }
 
-    public static List<SkillItemCost> releaseAnchorExit(ShipSkillData data, String exitNodeId) {
-        if (ShipTreeLinks.anchorSocket(data, exitNodeId) == null || !data.allocatedNodeIds.contains(exitNodeId)) {
-            return List.of();
+    private static boolean deallocateAnchorExit(ShipSkillData data, String exitNodeId) {
+        if (!data.allocatedNodeIds.contains(exitNodeId)) {
+            return false;
         }
         data.revision++;
         ItemChargeLedger.ensure(data);
         data.allocatedNodeIds.remove(exitNodeId);
         data.release(exitNodeId);
-        return ItemChargeLedger.takeItemCharges(data, List.of(exitNodeId));
+        return true;
     }
 
     public static List<SkillItemCost> takeOverAsGranted(ShipSkillData data, String nodeId) {
@@ -404,13 +435,6 @@ public final class ShipTrees {
         ItemChargeLedger.ensure(data);
         data.grantFreeNodeIds().add(nodeId);
         return ItemChargeLedger.takeItemCharges(data, List.of(nodeId));
-    }
-
-    public static List<SkillItemCost> deallocateReleasingCharges(ShipSkillData data, SkillNode node) {
-        Set<String> allocatedBefore = new LinkedHashSet<>(data.allocatedNodeIds);
-        deallocate(data, node);
-        allocatedBefore.removeAll(data.allocatedNodeIds);
-        return ItemChargeLedger.takeItemCharges(data, allocatedBefore);
     }
 
     public static boolean replaceNode(ShipSkillData data, String oldId, String newId) {
@@ -443,11 +467,23 @@ public final class ShipTrees {
         if (movedCharge != null) {
             ItemChargeLedger.recordItemCharge(data, newId, movedCharge);
         }
-        if (data.optionalSelections != null) {
-            data.optionalSelections.remove(oldId);
-        }
+        carryOptionOver(data, oldId, newId);
         data.unsocketItem(oldId);
         return true;
+    }
+
+    private static void carryOptionOver(ShipSkillData data, String oldId, String newId) {
+        String oldOptionId = data.optionalSelections == null ? null : data.optionalSelections.remove(oldId);
+        SkillNode replacement = SkillTree.getDeclared(newId);
+        if (replacement == null || !replacement.getType().isOptional()) {
+            return;
+        }
+        SkillType option = oldOptionId != null && replacement.getType().getOptionalOptionIds().contains(oldOptionId) ? SkillTree.getType(oldOptionId)
+                : firstOption(replacement.getType());
+        if (option != null) {
+            if (data.optionalSelections == null) data.optionalSelections = new LinkedHashMap<>();
+            data.optionalSelections.put(newId, option.getId());
+        }
     }
 
     public static List<String> forgetUnknownNodes(ShipSkillData data, Map<String, SkillNode> tree, Map<String, SkillType> types) {

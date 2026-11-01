@@ -105,4 +105,22 @@ class SpriteDrawTest {
         assertNotSame(first, second);
         assertSame(texture, cache.texture(PATH));
     }
+
+    @Test
+    void aSheetCellSelectsItsShareOfTheTextureBeforeDrawing() {
+        SpriteAPI sheet = mock(SpriteAPI.class);
+        when(sheet.getTextureWidth()).thenReturn(1f);
+        when(sheet.getTextureHeight()).thenReturn(0.5f);
+
+        SpriteDraw.drawCellAtCenter(sheet, 4, 2, 6, 10f, 20f, 30f, 30f, 45f, Color.RED, 0.5f, true);
+
+        InOrder order = inOrder(sheet);
+        order.verify(sheet).setTexX(0.5f);
+        order.verify(sheet).setTexY(0.25f);
+        order.verify(sheet).setTexWidth(0.25f);
+        order.verify(sheet).setTexHeight(0.25f);
+        order.verify(sheet).setSize(30f, 30f);
+        order.verify(sheet).setAdditiveBlend();
+        order.verify(sheet).renderAtCenter(10f, 20f);
+    }
 }

@@ -1,8 +1,6 @@
 package exiledsector.charts.atlas;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.FactionAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledsector.charts.content.ChartFactions;
 import exiledsector.i18n.Translation;
 import exiledsector.items.UseVerdict;
 
@@ -28,21 +26,19 @@ public record RedeploymentCatalystUse(AtlasCatalysts.Catalyst catalyst, AtlasGen
         if (!revealed.contains(cell)) {
             return UseVerdict.refused(FOGGED_KEY);
         }
-        if (cell.equals(AtlasCell.ORIGIN) || generator.isVoid(cell)) {
-            return UseVerdict.refused(AtlasCatalystUse.refusalKey(AtlasAnomalies.InsertCheck.NO_SYSTEM));
-        }
-        if (state.isCompleted(cell)) {
-            return UseVerdict.refused(AtlasCatalystUse.refusalKey(AtlasAnomalies.InsertCheck.COMPLETED));
-        }
-        if (cell.equals(openRunCell)) {
+        AtlasAnomalies.InsertCheck system = AtlasAnomalies.systemCheck(generator, state, cell, openRunCell);
+        if (system == AtlasAnomalies.InsertCheck.OPEN_RUN) {
             return UseVerdict.refused(OPEN_RUN_KEY);
+        }
+        if (!system.allows()) {
+            return UseVerdict.refused(AtlasCatalystUse.refusalKey(system));
         }
         if (generator.node(cell).specialId() != null) {
             return UseVerdict.refused(SPECIAL_KEY);
         }
         String holder = AtlasOpening.ownerOf(generator, state, cell);
         if (holder != null && !holder.equals(AtlasOpening.territoryOwnerOf(generator, state, cell))) {
-            return UseVerdict.refused(INFESTED_KEY).with("faction", factionName(holder));
+            return UseVerdict.refused(INFESTED_KEY).with("faction", ChartFactions.displayName(holder));
         }
         return newOwner(cell) == null ? UseVerdict.refused(NO_FACTION_KEY) : UseVerdict.ALLOW;
     }
@@ -54,7 +50,7 @@ public record RedeploymentCatalystUse(AtlasCatalysts.Catalyst catalyst, AtlasGen
             return null;
         }
         state.capture(generator, cell, newOwner);
-        return new Outcome("catalyst.window.redeployed", Map.of("faction", factionName(newOwner)));
+        return new Outcome("catalyst.window.redeployed", Map.of("faction", ChartFactions.displayName(newOwner)));
     }
 
     String newOwner(AtlasCell cell) {
@@ -73,11 +69,5 @@ public record RedeploymentCatalystUse(AtlasCatalysts.Catalyst catalyst, AtlasGen
     @Override
     public String confirmBody(String systemName) {
         return Translation.msg("catalyst.confirm.redeploy").arg("system", systemName).text();
-    }
-
-    public static String factionName(String factionId) {
-        SectorAPI sector = Global.getSector();
-        FactionAPI faction = sector == null ? null : sector.getFaction(factionId);
-        return faction == null ? factionId : faction.getDisplayName();
     }
 }

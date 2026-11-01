@@ -4,13 +4,13 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
-import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import exiledsector.PlayerFleet;
+import exiledsector.SectorMarkets;
 import exiledsector.domain.DomainContributions;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.persistence.SaveData;
@@ -188,20 +188,14 @@ public final class SocketCustody {
         if (playerFleet != null) {
             playerFleet.getFleetData().getMembersListCopy().forEach(member -> ownedShipsById.put(member.getId(), member));
         }
-        Set<MarketAPI> visitedMarkets = new HashSet<>();
         for (LocationAPI location : Global.getSector().getAllLocations()) {
             for (CampaignFleetAPI locationFleet : location.getFleets()) {
                 if (locationFleet.getFaction() != null && locationFleet.getFaction().isPlayerFaction()) {
                     locationFleet.getFleetData().getMembersListCopy().forEach(member -> ownedShipsById.put(member.getId(), member));
                 }
             }
-            for (SectorEntityToken entity : location.getAllEntities()) {
-                MarketAPI market = entity.getMarket();
-                if (market != null && visitedMarkets.add(market)) {
-                    addStoredShips(market, ownedShipsById);
-                }
-            }
         }
+        SectorMarkets.forEach(Global.getSector(), market -> addStoredShips(market, ownedShipsById));
         addDockedShips(ownedShipsById);
         return ownedShipsById;
     }

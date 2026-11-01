@@ -15,6 +15,6 @@ public record RadiusGate(CombatGate gate) implements EffectBacking {
 
     @Override
     public StyledText description(SkillEffect effect, float magnitude) {
-        return EffectText.msg(effect).arg("value", magnitude).styled();
+        return EffectText.templated(effect, magnitude);
     }
 }

@@ -5,7 +5,6 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import exiledsector.effects.TechMiningItemListener;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
@@ -49,10 +48,10 @@ public interface LootSource {
     default void addShowcaseLoot(CargoAPI loot, Random random) {
     }
 
-    default void addTechMiningFinds(TechMiningItemListener.Find find) {
+    default void addSiteFinds(SiteFind find) {
     }
 
-    default void stockSubmarket(SubmarketAPI submarket, CargoAPI cargo, Random random) {
+    default void addTechMiningFinds(TechMiningItemListener.Find find) {
     }
 
     default void itemsBought(List<ItemData> boughtItems) {

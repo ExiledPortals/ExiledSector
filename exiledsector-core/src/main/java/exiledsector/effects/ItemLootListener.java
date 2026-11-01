@@ -4,7 +4,6 @@ import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
 import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.campaign.EngagementResultForFleetAPI;
 import com.fs.starfarer.api.campaign.FleetEncounterContextPlugin;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.listeners.ShipRecoveryListener;
@@ -78,24 +77,13 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
             return;
         }
         float difficultyMultiplier = LootSources.difficultyMultiplier(engagement.difficulty());
-        List<FleetMemberAPI> lostEnemies = new ArrayList<>();
-        for (EngagementResultForFleetAPI fleetResult : new EngagementResultForFleetAPI[]{engagementResult.getWinnerResult(), engagementResult.getLoserResult()}) {
-            if (fleetResult != null && !fleetResult.isPlayer()) {
-                lostEnemies.addAll(nullToEmpty(fleetResult.getDestroyed()));
-                lostEnemies.addAll(nullToEmpty(fleetResult.getDisabled()));
-            }
-        }
         float defeatedDp = engagement.enemyDeploymentPointsDefeated();
         BattleEngagement battleEngagement = new BattleEngagement(engagementResult.getBattle(), difficultyMultiplier, defeatedDp,
-                List.copyOf(lostEnemies));
+                engagement.enemyLosses());
         LootSources.all().forEach(source -> source.recordEngagement(pendingLoot.battleLoot, battleEngagement));
         if (defeatedDp > 0f) {
             pendingLoot.partsEarned += defeatedDp * ItemDrops.battlePartsPerDeploymentPoint() * difficultyMultiplier;
         }
-    }
-
-    private static List<FleetMemberAPI> nullToEmpty(List<FleetMemberAPI> members) {
-        return members == null ? List.of() : members;
     }
 
     @Override
@@ -134,10 +122,6 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
                 CampaignMessages.plain(salvageMessage, Misc.getPositiveHighlightColor());
             }
         }
-    }
-
-    public static void addSectionLoot(CargoAPI loot, ItemDrops.SectionItemLoot sectionLoot) {
-        addSpecials(loot, sectionLoot.items(), sectionLoot.upgrades());
     }
 
     public static void addSiteLoot(CargoAPI loot, ItemDrops.SiteLoot siteLoot) {

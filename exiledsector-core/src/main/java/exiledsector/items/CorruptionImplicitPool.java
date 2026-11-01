@@ -48,22 +48,11 @@ public final class CorruptionImplicitPool {
     }
 
     public Modifier byId(String modifierId) {
-        for (Modifier implicit : implicits()) {
-            if (implicit.id().equals(modifierId)) {
-                return implicit;
-            }
-        }
-        return null;
+        return Modifier.byId(implicits(), modifierId);
     }
 
     public ModifierLine line(String effectName) {
-        for (Modifier implicit : implicits()) {
-            ModifierLine line = implicit.line(effectName);
-            if (line != null) {
-                return line;
-            }
-        }
-        return null;
+        return Modifier.lineIn(implicits(), effectName);
     }
 
     public void clear() {

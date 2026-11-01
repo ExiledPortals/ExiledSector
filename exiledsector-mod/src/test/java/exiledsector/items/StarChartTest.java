@@ -13,7 +13,6 @@ import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
-import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
@@ -381,7 +380,7 @@ class StarChartTest {
         store.add(ItemData.rolledAtTier(ItemDefinitions.get(BINARY), 77L, 8));
         String xml = xstream().toXML(store);
 
-        StarChartItems.clear();
+        StarChartFixtures.clear();
         Item unresolved = ((ItemStore) xstream().fromXML(xml)).owned().get(0);
         assertInstanceOf(UnresolvedItem.class, unresolved);
         String resaved = xstream().toXML(unresolved);

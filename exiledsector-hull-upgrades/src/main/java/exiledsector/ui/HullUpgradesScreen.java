@@ -58,11 +58,9 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     private HullUpgradePanel upgradesPanel;
     private ModificationBay bay;
     private float bayDim;
-    private float openLevel;
+    private final OverlayFade fade = new OverlayFade(OPEN_SECONDS);
     private float contentLevel;
     private boolean panelOpened;
-    private boolean closing;
-    private boolean closeRequested;
     private boolean pointerOverPanel;
     private float mouseX;
     private float mouseY;
@@ -83,7 +81,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         hostPanel = panel;
         storage.reconcileOwnedShips();
         sectionEditor = new SectionEditor(member, variant, refitButton);
-        sectionsDisplay = new SectionsDisplay(panel, sectionEditor, SectionLayout.Arrangement.LEFT_ABOVE_BELOW);
+        sectionsDisplay = new SectionsDisplay(panel, sectionEditor);
         sectionsDisplay.refreshIfChanged();
     }
 
@@ -92,9 +90,9 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         if (hostPanel == null) {
             return;
         }
-        boolean contentWanted = !closing && openLevel >= 1f;
+        boolean contentWanted = fade.fullyOpen();
         contentLevel = Fade.step(contentLevel, contentWanted, amount / CONTENT_SECONDS);
-        openLevel = Fade.step(openLevel, !closing || contentLevel > 0f, amount / OPEN_SECONDS);
+        boolean finishedClosing = fade.advance(amount, contentLevel > 0f);
         if (contentWanted && !panelOpened) {
             panelOpened = true;
             sectionsDisplay.absorbUpgradesFromCargo();
@@ -108,8 +106,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         }
         bayDim = Fade.step(bayDim, bay != null, amount / OPEN_SECONDS);
         sectionsDisplay.advance(amount, mouseX, mouseY, contentLevel >= 0.5f && !pointerOverPanel && bay == null);
-        if (closing && openLevel <= 0f && !closeRequested) {
-            closeRequested = true;
+        if (finishedClosing) {
             sectionsDisplay.hideTooltip();
             if (portrait != null) {
                 portrait.cleanup();
@@ -138,7 +135,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         upgradesPanel = HullUpgradePanel.open(hostPanel, placement(instantly), sectionsDisplay.panelView(), sectionsDisplay.panelListener(() -> {
             upgradesPanel = null;
             close();
-        }), tabListener, SHOWN_TABS, HullUpgradePanel.Sizing.SCROLL);
+        }), tabListener, SHOWN_TABS);
         if (!instantly) {
             SkillTreeSounds.panelOpened();
         }
@@ -167,7 +164,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     }
 
     private void openBay() {
-        if (!storage.isOpen() || bay != null || closing) {
+        if (!storage.isOpen() || bay != null || fade.closing()) {
             return;
         }
         swapOutStorage();
@@ -177,7 +174,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
             @Override
             public void closed() {
                 bay = null;
-                if (!closing) {
+                if (!fade.closing()) {
                     showStorage(null);
                 }
             }
@@ -190,7 +187,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     }
 
     private void switchTab(SocketPanelTab tab) {
-        if (closing || bay != null) {
+        if (fade.closing() || bay != null) {
             return;
         }
         if (tab == SocketPanelTab.HULL_ITEMS && !storage.isOpen()) {
@@ -227,7 +224,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     }
 
     private float shipCentreX() {
-        return layout.shipCentreX() + (screenLayout.settledShipX() - layout.shipCentreX()) * Fade.smooth(openLevel);
+        return layout.shipCentreX() + (screenLayout.settledShipX() - layout.shipCentreX()) * fade.smoothLevel();
     }
 
     private void chooseFromStorage(Item item) {
@@ -259,10 +256,10 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     }
 
     private void close() {
-        if (closing) {
+        if (fade.closing()) {
             return;
         }
-        closing = true;
+        fade.close();
         sectionsDisplay.hideTooltip();
         if (bay != null) {
             bay.close();
@@ -368,12 +365,12 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
                 continue;
             }
             if (event.isKeyUpEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
-                if (!closing) {
+                if (!fade.closing()) {
                     escape();
                 }
-            } else if (event.isLMBDownEvent() && !closing) {
+            } else if (event.isLMBDownEvent() && !fade.closing()) {
                 pressLeft(event.getX(), event.getY());
-            } else if (event.isRMBDownEvent() && !closing) {
+            } else if (event.isRMBDownEvent() && !fade.closing()) {
                 pressRight(event.getX(), event.getY());
             }
             event.consume();
@@ -385,7 +382,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         if (hostPanel == null) {
             return;
         }
-        float frameAlpha = alphaMult * Fade.smooth(openLevel);
+        float frameAlpha = alphaMult * fade.smoothLevel();
         backdrop.drawFrame(layout, frameAlpha);
         backdrop.drawShipArea(layout, frameAlpha);
         if (portrait == null) {

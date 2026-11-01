@@ -26,6 +26,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -226,7 +227,7 @@ class WormholeAnchorTest {
         }
         verify(cargo, never()).removeItems(Mockito.any(), Mockito.any(), anyFloat());
         assertTrue(ItemCurrencies.forType(ItemType.WORMHOLE_ANCHOR).isEmpty());
-        assertFalse(ItemCrafting.takesCurrency(ItemType.WORMHOLE_ANCHOR));
+        assertFalse(ItemTypes.takesCurrency(ItemType.WORMHOLE_ANCHOR));
     }
 
     @Test
@@ -289,10 +290,12 @@ class WormholeAnchorTest {
         for (int trial = 0; trial < 200; trial++) {
             assertNotAnchor(ItemDrops.pickBasic(random), anchorIds);
             assertNotAnchor(ItemDrops.pickUnique(random, definition -> true), anchorIds);
-            assertNotAnchor(ItemDrops.pickSectionItemBasic(random), anchorIds);
+            assertNotAnchor(HullItemDrops.pickSectionItemBasic(random), anchorIds);
             assertNotAnchor(ItemDrops.pickOfType(random, ItemType.STAR_CHART, definition -> true), anchorIds);
-            for (ItemData dropped : ItemDrops.rollSite("station", random, ItemChances.of(1f), 1f, 1f, true).items()) {
-                assertFalse(anchorIds.contains(dropped.definitionId()), dropped.definitionId());
+            List<ItemData> dropped = new ArrayList<>(ItemDrops.rollSite("station", random, ItemChances.of(1f), 1f, 1f).items());
+            dropped.addAll(HullItemDrops.rollSectionItemLoot("station", random, ItemChances.of(1f)).items());
+            for (ItemData item : dropped) {
+                assertFalse(anchorIds.contains(item.definitionId()), item.definitionId());
             }
         }
         assertFalse(ItemDrops.canBeSynthesised(ItemDefinitions.get(HEGEMONY_ANCHOR)));

@@ -11,19 +11,14 @@ public final class NexusFleetManager extends RemnantStationFleetManager implemen
     static final StationFleets.Launch LAUNCH = new StationFleets.Launch(Factions.REMNANTS, StationRules.NO_SHIP_SIZE_CAP,
             (random, fleet) -> RemnantSeededFleetManager.initRemnantFleetProperties(random, fleet, false));
 
-    private final String runId;
-    private final int tier;
-    private final long seed;
-    private int spawned;
+    private final StationLaunches launches;
 
     NexusFleetManager(CampaignFleetAPI nexus, String runId, int tier, long seed) {
         super(nexus, StationRules.THRESHOLD_LY, StationRules.MIN_FLEETS,
                 StationRules.damagedNexus(tier) ? StationRules.DAMAGED_NEXUS_MAX_FLEETS : StationRules.NEXUS_MAX_FLEETS,
                 StationRules.damagedNexus(tier) ? StationRules.DAMAGED_NEXUS_RESPAWN_DAYS : StationRules.NEXUS_RESPAWN_DAYS,
                 StationRules.VANILLA_MIN_POINTS, StationRules.VANILLA_MAX_POINTS);
-        this.runId = runId;
-        this.tier = tier;
-        this.seed = seed;
+        this.launches = new StationLaunches(runId, tier, seed);
     }
 
     @Override
@@ -34,16 +29,12 @@ public final class NexusFleetManager extends RemnantStationFleetManager implemen
 
     @Override
     protected CampaignFleetAPI spawnFleet() {
-        CampaignFleetAPI fleet = StationFleets.spawn(source, LAUNCH, runId, tier, getTotalLost(), StationFleets.spawnSeed(seed, spawned));
-        if (fleet != null) {
-            spawned++;
-        }
-        return fleet;
+        return launches.next(source, LAUNCH, getTotalLost());
     }
 
     @Override
     public boolean belongsToRun(String wantedRunId) {
-        return runId.equals(wantedRunId);
+        return launches.belongsToRun(wantedRunId);
     }
 
     int maxFleets() {

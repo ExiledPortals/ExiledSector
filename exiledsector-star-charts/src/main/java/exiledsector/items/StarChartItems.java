@@ -2,8 +2,6 @@ package exiledsector.items;
 
 import exiledsector.ModCsv;
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
 
 public final class StarChartItems {
 
@@ -18,18 +16,5 @@ public final class StarChartItems {
         StarChartImplicits.load();
         StarChartDefinitions.load();
         StarChartNames.load();
-    }
-
-    public static void register(JSONArray modifierRows, JSONArray implicitRows, JSONArray definitionRows) throws JSONException {
-        ItemModifiers.registerPart(ModifierScope.STAR_CHART, modifierRows, MODIFIERS_PATH);
-        StarChartImplicits.register(implicitRows);
-        StarChartDefinitions.register(definitionRows);
-    }
-
-    public static void clear() {
-        StarChartNames.clear();
-        StarChartDefinitions.clear();
-        StarChartImplicits.clear();
-        ItemModifiers.clearPart(ModifierScope.STAR_CHART);
     }
 }

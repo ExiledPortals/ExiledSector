@@ -12,7 +12,6 @@ import exiledsector.charts.atlas.AtlasState;
 import org.lazywizard.console.Console;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 abstract class AtlasTargetCommand extends CampaignCommand {
@@ -20,7 +19,7 @@ abstract class AtlasTargetCommand extends CampaignCommand {
     record Target(AtlasCell cell, String siteId, List<String> rest, String problem) {
 
         static Target parse(String args) {
-            List<String> tokens = args == null || args.isBlank() ? List.of() : Arrays.asList(args.trim().split("\\s+"));
+            List<String> tokens = ConsoleArgs.tokens(args);
             if (tokens.isEmpty()) {
                 return problem("Give a system as two whole numbers (x y) or a special site id.");
             }
@@ -47,8 +46,7 @@ abstract class AtlasTargetCommand extends CampaignCommand {
     protected final CommandResult runInCampaign(String args) {
         Target target = Target.parse(args);
         if (target.problem() != null) {
-            Console.showMessage(target.problem() + "\nUsage: " + usage());
-            return CommandResult.BAD_SYNTAX;
+            return badSyntax(target.problem());
         }
         SectorAPI sector = Global.getSector();
         AtlasState state = AtlasState.get(sector);
@@ -70,6 +68,15 @@ abstract class AtlasTargetCommand extends CampaignCommand {
     }
 
     protected abstract String usage();
+
+    protected final CommandResult badSyntax(List<String> rest) {
+        return badSyntax("Can't use \"" + String.join(" ", rest) + "\".");
+    }
+
+    protected final CommandResult badSyntax(String problem) {
+        Console.showMessage(problem + "\nUsage: " + usage());
+        return CommandResult.BAD_SYNTAX;
+    }
 
     protected abstract CommandResult runAt(SectorAPI sector, AtlasGenerator generator, AtlasState state, AtlasCell cell, List<String> rest);
 

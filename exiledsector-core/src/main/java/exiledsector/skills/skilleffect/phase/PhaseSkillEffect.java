@@ -11,13 +11,11 @@ import exiledsector.skills.ShipFacts;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.ConditionalStatEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
-import exiledsector.skills.skilleffect.SimpleStatEffect;
 import exiledsector.skills.skilleffect.SkillEffectSupport;
-import exiledsector.skills.skilleffect.StatMode;
-import exiledsector.skills.skilleffect.StatTarget;
 import exiledsector.skills.skilleffect.weapon.WeaponScope;
 import exiledsector.skills.skilleffect.weapon.WeaponStatFamily;
 
+import static exiledsector.skills.skilleffect.Backings.statEffect;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
@@ -29,21 +27,21 @@ import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 public enum PhaseSkillEffect implements BackedSkillEffect {
 
-    PHASE_CLOAK_ACTIVATION_COST_MULT(MULT, bonus(MutableShipStatsAPI::getPhaseCloakActivationCostBonus),
-            "stat.phaseCloakActivationCost", true),
-    PHASE_CLOAK_UPKEEP_COST_MULT(MULT, bonus(MutableShipStatsAPI::getPhaseCloakUpkeepCostBonus),
-            "stat.phaseCloakUpkeepCost", true),
-    PHASE_CLOAK_COOLDOWN_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getPhaseCloakCooldownBonus),
-            "stat.phaseCloakCooldown", true),
-    PHASE_CLOAK_ACCELERATION_PERCENT(FLAT, dynamicMod(Stats.PHASE_CLOAK_ACCEL_MOD), "stat.accelerationWhilePhased", false) {
+    PHASE_CLOAK_ACTIVATION_COST_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getPhaseCloakActivationCostBonus),
+            "stat.phaseCloakActivationCost", true)),
+    PHASE_CLOAK_UPKEEP_COST_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getPhaseCloakUpkeepCostBonus),
+            "stat.phaseCloakUpkeepCost", true)),
+    PHASE_CLOAK_COOLDOWN_PERCENT(statEffect(PERCENT, bonus(MutableShipStatsAPI::getPhaseCloakCooldownBonus),
+            "stat.phaseCloakCooldown", true)),
+    PHASE_CLOAK_ACCELERATION_PERCENT(statEffect(FLAT, dynamicMod(Stats.PHASE_CLOAK_ACCEL_MOD), "stat.accelerationWhilePhased", false)) {
         @Override
         public StyledText description(float magnitude) {
             return PERCENT.describeStat(magnitude, "stat.accelerationWhilePhased");
         }
     },
-    PHASE_TIMEFLOW_PERCENT(PERCENT, dynamicStat(Stats.PHASE_TIME_BONUS_MULT), "stat.phaseTimeFlowBonus", false),
-    PHASE_CLOAK_FLUX_THRESHOLD_PERCENT(PERCENT, dynamicMod("phase_cloak_flux_level_for_min_speed_mod"),
-            "stat.hardFluxLevelForMinimumPhaseSpeed", false),
+    PHASE_TIMEFLOW_PERCENT(statEffect(PERCENT, dynamicStat(Stats.PHASE_TIME_BONUS_MULT), "stat.phaseTimeFlowBonus", false)),
+    PHASE_CLOAK_FLUX_THRESHOLD_PERCENT(statEffect(PERCENT, dynamicMod("phase_cloak_flux_level_for_min_speed_mod"),
+            "stat.hardFluxLevelForMinimumPhaseSpeed", false)),
     COMBAT_BOOST_WHILE_PHASED(new ConditionalStatEffect(MULT, all(stat(MutableShipStatsAPI::getFluxDissipation),
             WeaponStatFamily.FIRE_RATE.target(WeaponScope.ALL), WeaponStatFamily.AMMO_REGEN.target(WeaponScope.ALL)),
             "stat.fluxRateOfFireAndAmmoRegenWhilePhased", PhaseSkillEffect::isBoostedByPhase)),
@@ -78,11 +76,7 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
     private final EffectBacking backing;
 
     PhaseSkillEffect() {
-        this((EffectBacking) null);
-    }
-
-    PhaseSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
-        this(new SimpleStatEffect(mode, target, statKey, lowerIsBetter));
+        this(null);
     }
 
     PhaseSkillEffect(EffectBacking backing) {

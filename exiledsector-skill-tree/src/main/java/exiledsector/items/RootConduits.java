@@ -44,7 +44,7 @@ public final class RootConduits {
         public Set<String> connectorKeys() {
             Set<String> keys = new HashSet<>();
             for (int index = 1; index < path.size(); index++) {
-                keys.add(connectorKey(path.get(index - 1), path.get(index)));
+                keys.add(SkillTree.curveKey(path.get(index - 1), path.get(index)));
             }
             return keys;
         }
@@ -64,10 +64,6 @@ public final class RootConduits {
             sources.put(definition.id(), FactionFleetDrops.Source.anyFaction(DROP_CHANCE_PER_100_DEPLOYMENT_POINTS));
         }
         FactionFleetDrops.register(DROP_SOURCE_GROUP, sources);
-    }
-
-    public static String connectorKey(String firstId, String secondId) {
-        return firstId.compareTo(secondId) <= 0 ? firstId + "|" + secondId : secondId + "|" + firstId;
     }
 
     public static Conduit of(ShipSkillData data) {

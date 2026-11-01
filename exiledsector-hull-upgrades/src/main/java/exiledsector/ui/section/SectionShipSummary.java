@@ -25,7 +25,7 @@ public final class SectionShipSummary implements ShipSummaryPart {
 
     @Override
     public List<EffectContribution> contributions(ShipSkillData shipData, ShipVariantAPI variant, HullSize hullSize) {
-        return HullUpgradeEffectSource.contributions(sections(shipData, variant), hullSize);
+        return HullUpgradeEffectSource.contributions(sections(shipData, variant), hullSize, variant == null ? 0 : variant.getSMods().size());
     }
 
     @Override

@@ -4,7 +4,10 @@ import com.fs.starfarer.api.PluginPick;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignPlugin;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
+import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import exiledsector.MockSector;
+import exiledsector.charts.anomaly.LiveAnomalyRuns;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartCampaignPlugin;
 import exiledsector.items.AnomalousDebrisCurrencies;
@@ -87,11 +90,16 @@ class DormantFleetDialogTest {
 
     @Test
     void theCampaignPluginPicksTheDormantDialogForEveryDebrisFleet() {
-        PluginPick<InteractionDialogPlugin> pick = new ChartCampaignPlugin().pickInteractionDialogPlugin(debrisFleet(false));
+        try (MockSector ignored = new MockSector()) {
+            StarSystemAPI system = LiveAnomalyRuns.systemWith(AnomalousDebris.ANOMALY_ID);
+            CampaignFleetAPI debris = LiveAnomalyRuns.placedIn(debrisFleet(false), system);
 
-        assertInstanceOf(DormantFleetDialog.class, pick.plugin);
-        assertEquals(CampaignPlugin.PickPriority.MOD_SPECIFIC, pick.priority);
-        assertNull(new ChartCampaignPlugin().pickInteractionDialogPlugin(mock(CampaignFleetAPI.class)));
+            PluginPick<InteractionDialogPlugin> pick = new ChartCampaignPlugin().pickInteractionDialogPlugin(debris);
+
+            assertInstanceOf(DormantFleetDialog.class, pick.plugin);
+            assertEquals(CampaignPlugin.PickPriority.MOD_SPECIFIC, pick.priority);
+            assertNull(new ChartCampaignPlugin().pickInteractionDialogPlugin(LiveAnomalyRuns.placedIn(mock(CampaignFleetAPI.class), system)));
+        }
     }
 
     @Test

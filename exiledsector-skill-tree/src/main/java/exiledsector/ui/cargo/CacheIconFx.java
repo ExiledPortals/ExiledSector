@@ -2,6 +2,7 @@ package exiledsector.ui.cargo;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;
@@ -118,44 +119,31 @@ public final class CacheIconFx {
         Color color = look.color();
         SpriteAPI rock = animated ? sprites.texture(ROCK_TEXTURE) : null;
         if (rock == null) {
-            SpriteAPI still = iconPath == null ? null : sprites.sprite(iconPath);
-            if (still != null) {
-                SpriteDraw.drawAtCenter(still, cx, cy, DESIGN_SIZE * scale, DESIGN_SIZE * scale, null, alphaMult, 0f);
-            }
-            if (framed) {
-                AnchorIconFx.drawFrame(color, cx, cy, unit, alphaMult);
-                AnchorIconFx.drawLights(sprites, color, cx, cy, unit, AnchorIconFx.IDLE_WAVE, alphaMult);
-            }
+            IconFxKit.drawStill(sprites, iconPath, color, cx, cy, scale, unit, framed, alphaMult);
             return;
         }
         float t = CargoIconFx.seconds() + CargoIconFx.hash(phaseSeed, 1, 1) * CYCLE_SECONDS;
-        float cycle = cycleOf(t);
+        float cycle = Fade.cycle(t, CYCLE_SECONDS);
         float open = openness(cycle);
-        float flash = DoctrineIconFx.flash(cycle, CRACK_KEY);
+        float flash = IconFxKit.flash(cycle, CRACK_KEY);
         pose(cx, cy, scale, t, open);
 
         drawCavity(sprites, color, open, alphaMult);
         drawRock(rock, color, open, cycle, alphaMult);
-        drawSeam(color, seamHeat(cycle, t) * (1f - AnchorIconFx.smooth(0f, 0.15f, open)), scale, alphaMult);
-        drawBeacon(sprites, color, beaconLevel(cycle, t) * (1f - AnchorIconFx.smooth(0f, 0.2f, open)), scale, alphaMult);
+        drawSeam(color, seamHeat(cycle, t) * (1f - Fade.window(0f, 0.15f, open)), scale, alphaMult);
+        drawBeacon(sprites, color, beaconLevel(cycle, t) * (1f - Fade.window(0f, 0.2f, open)), scale, alphaMult);
         drawCrackle(sprites, color, crackleAlpha(cycle), phaseSeed, t, scale, alphaMult);
         drawBurst(sprites, color, flash, t, scale, alphaMult);
         drawDust(sprites, cycle, scale, alphaMult);
         drawChips(sprites, cache.chipIconPaths(), color, cx, cy, scale, unit, cycle, t, phaseSeed, alphaMult);
         if (framed) {
-            AnchorIconFx.drawFrame(flash > 0.01f ? AnchorIconFx.lighten(color, 0.6f * flash) : color, cx, cy, unit, alphaMult);
-            AnchorIconFx.drawLights(sprites, color, cx, cy, unit, DoctrineIconFx.wave(cycle, CRACK_KEY), alphaMult);
+            IconFxKit.drawBorder(sprites, color, cx, cy, unit, IconFxKit.wave(cycle, CRACK_KEY), flash, alphaMult);
         }
-    }
-
-    static float cycleOf(float seconds) {
-        float cycle = seconds % CYCLE_SECONDS / CYCLE_SECONDS;
-        return cycle < 0f ? cycle + 1f : cycle;
     }
 
     static float openness(float cycle) {
         float progress = Math.max(0f, Math.min(1f, (cycle - CRACK_KEY) / OPEN_SPAN));
-        return backOut(progress) * (1f - AnchorIconFx.smooth(CLOSE_START, CLOSE_END, cycle));
+        return backOut(progress) * (1f - Fade.window(CLOSE_START, CLOSE_END, cycle));
     }
 
     static float backOut(float progress) {
@@ -180,7 +168,7 @@ public final class CacheIconFx {
 
     static float seamHeat(float cycle, float seconds) {
         float idle = SEAM_IDLE * (0.7f + 0.3f * (float) Math.sin(seconds * 1.6f));
-        float heat = cycle < CRACK_KEY ? AnchorIconFx.smooth(HEAT_START, CRACK_KEY, cycle) : 0f;
+        float heat = cycle < CRACK_KEY ? Fade.window(HEAT_START, CRACK_KEY, cycle) : 0f;
         return Math.max(idle, heat);
     }
 
@@ -218,7 +206,7 @@ public final class CacheIconFx {
     }
 
     private static float seamFade(float v) {
-        return AnchorIconFx.smooth(0f, 0.15f, v) * (1f - AnchorIconFx.smooth(0.85f, 1f, v));
+        return Fade.window(0f, 0.15f, v) * (1f - Fade.window(0.85f, 1f, v));
     }
 
     private static void pose(float cx, float cy, float scale, float t, float open) {
@@ -266,7 +254,7 @@ public final class CacheIconFx {
         place(0f, ROCK_CENTRE_Y, WHOLE);
         SpriteDraw.drawAdditiveAtCenter(sprites, GLOW_TEXTURE, PLACED[0], PLACED[1], 22f * scale * open, ROCK_HEIGHT * scale, color,
                 Math.min(1f, open) * alphaMult);
-        Color hot = AnchorIconFx.lighten(color, 0.65f);
+        Color hot = CargoIconFx.lighten(color, 0.65f);
         try (GlScope scope = GlScope.flat().additive()) {
             for (int side = 0; side < 2; side++) {
                 GL11.glBegin(GL11.GL_QUAD_STRIP);
@@ -333,7 +321,7 @@ public final class CacheIconFx {
     }
 
     private static float scanEnvelope(float scan) {
-        return AnchorIconFx.smooth(0f, 0.1f, scan) * (1f - AnchorIconFx.smooth(0.9f, 1f, scan));
+        return Fade.window(0f, 0.1f, scan) * (1f - Fade.window(0.9f, 1f, scan));
     }
 
     private static void drawScanHighlight(SpriteAPI rock, float scan, float alphaMult) {
@@ -373,7 +361,7 @@ public final class CacheIconFx {
         if (heat <= 0.01f) {
             return;
         }
-        Color hot = AnchorIconFx.lighten(color, 0.3f + 0.4f * heat);
+        Color hot = CargoIconFx.lighten(color, 0.3f + 0.4f * heat);
         try (GlScope scope = GlScope.flat().additive().lineWidth(Math.max(1f, 1.4f * scale))) {
             GL11.glBegin(GL11.GL_LINE_STRIP);
             for (float[] seamPoint : SEAM) {
@@ -390,7 +378,7 @@ public final class CacheIconFx {
         }
         place(rockX(BEACON_U), rockY(BEACON_V), RIGHT);
         float beaconSize = BEACON_SIZE * scale;
-        SpriteDraw.drawAdditiveAtCenter(sprites, GLOW_TEXTURE, PLACED[0], PLACED[1], beaconSize, beaconSize, AnchorIconFx.lighten(color, 0.3f),
+        SpriteDraw.drawAdditiveAtCenter(sprites, GLOW_TEXTURE, PLACED[0], PLACED[1], beaconSize, beaconSize, CargoIconFx.lighten(color, 0.3f),
                 level * alphaMult);
         SpriteDraw.drawAdditiveAtCenter(sprites, GLOW_TEXTURE, PLACED[0], PLACED[1], beaconSize * 0.4f, beaconSize * 0.4f, Color.WHITE,
                 level * alphaMult);
@@ -404,7 +392,7 @@ public final class CacheIconFx {
         int step = (int) (t / CRACKLE_STEP_SECONDS);
         place(0f, ROCK_CENTRE_Y + 4f, WHOLE);
         float half = CRACKLE_SIZE * scale / 2f;
-        Color tint = AnchorIconFx.lighten(color, 0.45f);
+        Color tint = CargoIconFx.lighten(color, 0.45f);
         try (GlScope scope = GlScope.textured(GL11.GL_SRC_ALPHA, GL11.GL_ONE)) {
             arcs.bindTexture();
             for (int layer = 0; layer < 2; layer++) {
@@ -443,7 +431,7 @@ public final class CacheIconFx {
         }
         place(0f, rockY(MOUTH_V), WHOLE);
         float burstSize = STARBURST_SIZE * scale * (0.6f + 0.4f * flash);
-        SpriteDraw.drawAdditiveAtCenter(sprites, STARBURST_TEXTURE, PLACED[0], PLACED[1], burstSize, burstSize, AnchorIconFx.lighten(color, 0.5f),
+        SpriteDraw.drawAdditiveAtCenter(sprites, STARBURST_TEXTURE, PLACED[0], PLACED[1], burstSize, burstSize, CargoIconFx.lighten(color, 0.5f),
                 flash * alphaMult, t * 20f % 360f);
         SpriteDraw.drawAdditiveAtCenter(sprites, GLOW_TEXTURE, PLACED[0], PLACED[1], burstSize * 0.7f, burstSize * 0.7f, color, flash * alphaMult);
     }
@@ -503,7 +491,7 @@ public final class CacheIconFx {
         if (!anyShown) {
             return;
         }
-        Color light = AnchorIconFx.lighten(color, 0.45f);
+        Color light = CargoIconFx.lighten(color, 0.45f);
         try (GlScope scope = GlScope.flat().additive()) {
             GL11.glBegin(GL11.GL_TRIANGLES);
             for (int index = 0; index < count; index++) {
@@ -518,7 +506,7 @@ public final class CacheIconFx {
             }
             GL11.glEnd();
         }
-        Color iconTint = DoctrineIconFx.mix(Color.WHITE, light, CHIP_TINT);
+        Color iconTint = CargoIconFx.mix(Color.WHITE, light, CHIP_TINT);
         for (int index = 0; index < count; index++) {
             if (CHIP_ALPHA[index] <= 0.01f * alphaMult) {
                 continue;

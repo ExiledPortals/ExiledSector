@@ -1,7 +1,7 @@
 package exiledsector.ui.decoration;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.PlanetSpecAPI;
+import exiledsector.PlanetSpecs;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.decoration.Star;
 import exiledsector.ui.util.ColorUtil;
@@ -18,14 +18,13 @@ public final class TreeFactionColours {
     }
 
     public static void publish() {
-        Map<String, Color> coronaByType = new HashMap<>();
-        List<PlanetSpecAPI> specs = Global.getSettings() == null ? null : Global.getSettings().getAllPlanetSpecs();
-        for (PlanetSpecAPI spec : specs == null ? List.<PlanetSpecAPI>of() : specs) {
-            if (spec.isStar()) {
-                coronaByType.put(spec.getPlanetType(), spec.getCoronaColor());
-            }
-        }
-        FactionStarColours.register(colours(SkillTree.getDecorations().stars(), TreeFleetFactions.regions(), TreeFleetFactions::factionsIn, coronaByType::get));
+        FactionStarColours.register(colours(SkillTree.getDecorations().stars(), TreeFleetFactions.regions(), TreeFleetFactions::factionsIn,
+                TreeFactionColours::coronaColour));
+    }
+
+    private static Color coronaColour(String starType) {
+        PlanetSpecAPI spec = PlanetSpecs.byType(starType);
+        return spec != null && spec.isStar() ? spec.getCoronaColor() : null;
     }
 
     static Map<String, Color> colours(List<Star> stars, List<String> regions, Function<String, List<String>> factionsIn,

@@ -12,7 +12,7 @@ import exiledsector.charts.content.ChartSites;
 import java.awt.Color;
 import java.util.Random;
 
-public final class AsteroidStorm implements ChartAnomaly {
+public final class AsteroidStorm implements LayoutShaper, ContentPlacer {
 
     public static final String ANOMALY_ID = "asteroid_storm";
     public static final AsteroidStorm INSTANCE = new AsteroidStorm();

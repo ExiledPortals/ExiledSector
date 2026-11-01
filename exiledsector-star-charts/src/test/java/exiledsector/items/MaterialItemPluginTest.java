@@ -18,7 +18,7 @@ class MaterialItemPluginTest {
 
     @AfterEach
     void tearDown() {
-        StarChartCurrency.unregisterAll();
+        StarChartFixtures.unregisterCurrencies();
         StarChartSettings.setEnabledForTests(StarChartSettings.DEFAULT_ENABLED);
     }
 

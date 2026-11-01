@@ -10,18 +10,15 @@ import org.lazywizard.console.Console;
 import java.util.List;
 import java.util.Random;
 
-public class GrantModspecCacheCommand extends PlayerFleetCommand {
+public class GrantModspecCacheCommand extends RandomPlayerFleetCommand {
 
     static final int SEED_SEARCH_ATTEMPTS = 100_000;
 
-    private final Random random;
-
     public GrantModspecCacheCommand() {
-        this(new Random());
     }
 
     GrantModspecCacheCommand(Random random) {
-        this.random = random;
+        super(random);
     }
 
     @Override

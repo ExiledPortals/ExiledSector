@@ -9,12 +9,12 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.FleetTypes;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
-import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.content.ChartAnomalyFleets;
 import exiledsector.charts.content.ChartContentGenerator;
+import exiledsector.charts.content.ChartFleetVisibility;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.loot.ChartFleetLoot;
@@ -66,9 +66,8 @@ final class Pickets {
         memory.set(MemFlags.MEMORY_KEY_FLEET_DO_NOT_GET_SIDETRACKED, true);
         if (fleet.getStats() != null) {
             fleet.getStats().getSensorRangeMod().modifyMult(SENSOR_MOD_ID, HeistRules.PICKET_SENSOR_MULT);
-            fleet.getStats().getDynamic().getStat(Stats.DETECTED_BY_PLAYER_RANGE_MULT).modifyMult(REVEAL_MOD_ID, HeistRules.REVEAL_RANGE_MULT);
         }
-        fleet.setExtendedDetectedAtRange(HeistRules.REVEAL_EXTENDED_RANGE);
+        ChartFleetVisibility.reveal(fleet, REVEAL_MOD_ID);
     }
 
     static boolean isPicket(SectorEntityToken entity) {

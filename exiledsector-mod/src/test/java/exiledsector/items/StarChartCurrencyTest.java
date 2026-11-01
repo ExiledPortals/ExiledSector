@@ -60,7 +60,7 @@ class StarChartCurrencyTest {
 
     @AfterEach
     void tearDown() {
-        StarChartCurrency.unregisterAll();
+        StarChartFixtures.unregisterCurrencies();
         ItemCraftingCosts.clear();
         StarChartFixtures.clear();
         ItemDefinitions.clear();
@@ -114,7 +114,7 @@ class StarChartCurrencyTest {
 
         StarChartCurrency.registerAll();
         assertEquals(7, ItemCurrencies.forType(ItemType.STAR_CHART).size());
-        StarChartCurrency.unregisterAll();
+        StarChartFixtures.unregisterCurrencies();
         assertEquals(List.of(), ItemCurrencies.forType(ItemType.STAR_CHART));
         assertEquals(Arrays.asList(CraftingCurrency.values()), ItemCurrencies.all());
         assertThrows(IllegalArgumentException.class, () -> ItemCurrencies.extend(StarChartCurrency.REFORGE, ItemType.HULL_ITEM));
@@ -141,7 +141,7 @@ class StarChartCurrencyTest {
         assertTrue(ItemCrafting.canUse(CraftingCurrency.AUGMENTATION, chart, ANY_UNIQUE));
         assertFalse(ItemCrafting.canUse(CraftingCurrency.TRANSPOSITION, chart, ANY_UNIQUE));
 
-        StarChartCurrency.unregisterAll();
+        StarChartFixtures.unregisterCurrencies();
 
         for (CraftingCurrency kernel : StarChartCurrency.KERNELS_ON_CHARTS) {
             assertFalse(ItemCrafting.canUse(kernel, chart, ANY_UNIQUE), kernel.name());
@@ -453,7 +453,7 @@ class StarChartCurrencyTest {
             assertEquals(currency.dropWeight() / totalWeight, picks.get(currency.itemId()) / (double) trials, 0.02, currency.name());
         }
 
-        StarChartCurrency.unregisterAll();
+        StarChartFixtures.unregisterCurrencies();
         assertNull(ChartDrops.pickChartCurrency(new Random(1L)));
     }
 }

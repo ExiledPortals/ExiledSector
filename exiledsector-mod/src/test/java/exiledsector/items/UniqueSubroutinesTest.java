@@ -254,8 +254,8 @@ class UniqueSubroutinesTest {
     void onlyTheSourceSiteDropsASiteUniqueWhileAFactionUniqueDropsAtAnySite() {
         Random random = new Random(6L);
         for (int trial = 0; trial < 200; trial++) {
-            List<String> fromStation = ItemDrops.roll("station", random, 1f, SubroutineKind::isUnique).stream().map(ItemData::definitionId).toList();
-            List<String> fromElsewhere = ItemDrops.roll("elsewhere", random, 1f, SubroutineKind::isUnique).stream().map(ItemData::definitionId).toList();
+            List<String> fromStation = ItemDrops.roll("station", random, ItemChances.BASE, SubroutineKind::isUnique).stream().map(ItemData::definitionId).toList();
+            List<String> fromElsewhere = ItemDrops.roll("elsewhere", random, ItemChances.BASE, SubroutineKind::isUnique).stream().map(ItemData::definitionId).toList();
 
             assertEquals(1, fromStation.size(), fromStation.toString());
             assertTrue(Set.of(SITE_RELIC, FLEET_RELIC).contains(fromStation.get(0)), fromStation.toString());
@@ -263,7 +263,7 @@ class UniqueSubroutinesTest {
         }
         Set<String> hullSiteDrops = new HashSet<>();
         for (int trial = 0; trial < 200; trial++) {
-            ItemDrops.roll("elsewhere", random, 1f, definition -> true).forEach(drop -> hullSiteDrops.add(drop.definitionId()));
+            ItemDrops.roll("elsewhere", random, ItemChances.BASE, definition -> true).forEach(drop -> hullSiteDrops.add(drop.definitionId()));
         }
         assertEquals(Set.of(FLEET_RELIC, HULL_RELIC_A, HULL_RELIC_B), hullSiteDrops);
     }

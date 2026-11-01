@@ -24,8 +24,7 @@ public class AtlasCaptureCommand extends AtlasTargetCommand {
             return CommandResult.SUCCESS;
         }
         if (rest.size() > 1) {
-            Console.showMessage("Can't use \"" + String.join(" ", rest) + "\".\nUsage: " + usage());
-            return CommandResult.BAD_SYNTAX;
+            return badSyntax(rest);
         }
         if (cell.equals(AtlasCell.ORIGIN)) {
             Console.showMessage("The Wormhole Gateway can't be captured.");

@@ -1,5 +1,6 @@
 package exiledsector.charts.anomaly.relay;
 
+import exiledsector.charts.anomaly.AnomalyState;
 import exiledsector.charts.run.ChartRun;
 
 public final class RelayStates {
@@ -7,25 +8,17 @@ public final class RelayStates {
     public static final int PAID = 1;
     public static final int SYNCED = 2;
     public static final int WOKEN = 4;
-    static final String KEY_PREFIX = RelayNetwork.ANOMALY_ID + ".";
+    static final String SETTLED_FIELD = "settled";
 
     private RelayStates() {
     }
 
-    public static String key(RelayKind kind) {
-        return KEY_PREFIX + kind.key();
+    static AnomalyState of(ChartRun run) {
+        return AnomalyState.of(run, RelayNetwork.ANOMALY_ID);
     }
 
     public static int flags(ChartRun run, RelayKind kind) {
-        String stored = run == null ? null : run.anomalyState(key(kind));
-        if (stored == null) {
-            return 0;
-        }
-        try {
-            return Integer.parseInt(stored);
-        } catch (NumberFormatException e) {
-            return 0;
-        }
+        return of(run).integer(kind.key());
     }
 
     public static boolean has(ChartRun run, RelayKind kind, int flag) {
@@ -41,13 +34,22 @@ public final class RelayStates {
         if (run == null || (current & flag) == flag) {
             return false;
         }
-        run.recordAnomalyState(key(kind), Integer.toString(current | flag));
+        of(run).put(kind.key(), current | flag);
         return true;
     }
 
     static boolean readyToWake(ChartRun run, RelayKind kind) {
         int current = flags(run, kind);
         return (current & WOKEN) == 0 && (current & PAID) != 0 && (current & SYNCED) != 0;
+    }
+
+    static boolean markSettled(ChartRun run) {
+        AnomalyState state = of(run);
+        if (state.has(SETTLED_FIELD)) {
+            return false;
+        }
+        state.put(SETTLED_FIELD, Boolean.TRUE.toString());
+        return true;
     }
 
     public static boolean allWoken(ChartRun run) {

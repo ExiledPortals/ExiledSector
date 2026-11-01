@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SectionLayoutTest {
@@ -14,69 +13,35 @@ class SectionLayoutTest {
     private static final SectionLayout.ShipExtent EXTENT = SectionLayout.ShipExtent.square(300f);
 
     @Test
-    void socketsGoOnTheSideOfTheirAnchorAndStayBalanced() {
-        List<SectionLayout.Placement> placements = SectionLayout.place(List.of(
-                new HullPoint(10f, 20f), new HullPoint(-30f, 15f), new HullPoint(40f, 5f), new HullPoint(0f, -25f)),
-                SectionLayout.Arrangement.BOTH_SIDES);
-
-        long leftCount = placements.stream().filter(SectionLayout.Placement::leftSide).count();
-        assertEquals(2, leftCount);
-        assertFalse(placements.get(3).leftSide());
-        assertTrue(placements.get(0).leftSide());
-        assertTrue(placements.get(1).leftSide());
-        assertFalse(placements.get(2).leftSide());
-    }
-
-    @Test
-    void centrelineAnchorsAlternateAndRowsRunFrontToBack() {
-        List<SectionLayout.Placement> placements = SectionLayout.place(List.of(
-                new HullPoint(-20f, 0f), new HullPoint(30f, 0f), new HullPoint(50f, 0f)),
-                SectionLayout.Arrangement.BOTH_SIDES);
-
-        assertEquals(2, placements.stream().filter(SectionLayout.Placement::leftSide).count());
-        SectionLayout.Placement rear = placements.get(0);
-        SectionLayout.Placement bow = placements.get(2);
-        assertTrue(rear.leftSide() == bow.leftSide() ? bow.row() < rear.row() : bow.row() == 0);
-        for (SectionLayout.Placement placement : placements) {
-            assertTrue(placement.row() < placement.rowsOnSide());
-        }
-    }
-
-    @Test
     void socketsSitClearOfTheShipWithTheElbowBetweenSocketAndHull() {
-        SectionLayout.Placement left = new SectionLayout.Placement(SectionLayout.Side.LEFT, 0, 2);
-        SectionLayout.Placement right = new SectionLayout.Placement(SectionLayout.Side.RIGHT, 1, 2);
-        float socketLeftX = SectionLayout.sectionX(left, 500f, EXTENT);
-        float socketRightX = SectionLayout.sectionX(right, 500f, EXTENT);
+        SectionLayout.Placement top = new SectionLayout.Placement(SectionLayout.Side.LEFT, 0, 2);
+        SectionLayout.Placement bottom = new SectionLayout.Placement(SectionLayout.Side.LEFT, 1, 2);
+        float socketX = SectionLayout.sectionX(top, 500f, EXTENT);
 
-        assertTrue(socketLeftX + SectionLayout.SECTION_RADIUS < 350f);
-        assertTrue(socketRightX - SectionLayout.SECTION_RADIUS > 650f);
-        assertTrue(SectionLayout.elbowX(left, socketLeftX) > SectionLayout.edgeX(left, socketLeftX));
-        assertTrue(SectionLayout.elbowX(right, socketRightX) < SectionLayout.edgeX(right, socketRightX));
-        assertTrue(SectionLayout.sectionY(left, 400f, EXTENT) > SectionLayout.sectionY(right, 400f, EXTENT));
-        assertEquals(400f, (SectionLayout.sectionY(left, 400f, EXTENT) + SectionLayout.sectionY(right, 400f, EXTENT)) / 2f, 1e-3f);
+        assertTrue(socketX + SectionLayout.SECTION_RADIUS < 350f);
+        assertTrue(SectionLayout.elbowX(top, socketX) > SectionLayout.edgeX(top, socketX));
+        assertTrue(SectionLayout.sectionY(top, 400f, EXTENT) > SectionLayout.sectionY(bottom, 400f, EXTENT));
+        assertEquals(400f, (SectionLayout.sectionY(top, 400f, EXTENT) + SectionLayout.sectionY(bottom, 400f, EXTENT)) / 2f, 1e-3f);
     }
 
     @Test
     void theRefitArrangementPutsTheBowSocketAboveTheSternSocketBelowAndTheRestOnTheLeft() {
         List<SectionLayout.Placement> placements = SectionLayout.place(List.of(
-                new HullPoint(-40f, 10f), new HullPoint(60f, 0f), new HullPoint(10f, -15f), new HullPoint(20f, 30f)),
-                SectionLayout.Arrangement.LEFT_ABOVE_BELOW);
+                new HullPoint(-40f, 10f), new HullPoint(60f, 0f), new HullPoint(10f, -15f), new HullPoint(20f, 30f)));
 
         assertEquals(SectionLayout.Side.ABOVE, placements.get(1).side());
         assertEquals(SectionLayout.Side.BELOW, placements.get(0).side());
         assertEquals(SectionLayout.Side.LEFT, placements.get(3).side());
         assertEquals(SectionLayout.Side.LEFT, placements.get(2).side());
         assertTrue(placements.get(3).row() < placements.get(2).row());
-        assertTrue(placements.stream().noneMatch(placement -> placement.side() == SectionLayout.Side.RIGHT));
     }
 
     @Test
     void twoSocketsInTheRefitArrangementBothGoOnTheLeft() {
         List<SectionLayout.Placement> placements = SectionLayout.place(List.of(
-                new HullPoint(-40f, 10f), new HullPoint(60f, 0f)), SectionLayout.Arrangement.LEFT_ABOVE_BELOW);
+                new HullPoint(-40f, 10f), new HullPoint(60f, 0f)));
 
-        assertTrue(placements.stream().allMatch(SectionLayout.Placement::leftSide));
+        assertTrue(placements.stream().allMatch(placement -> placement.side() == SectionLayout.Side.LEFT));
     }
 
     @Test

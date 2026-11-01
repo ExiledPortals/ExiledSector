@@ -8,11 +8,11 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.characters.AbilityPlugin;
 import com.fs.starfarer.api.impl.campaign.ids.Abilities;
 import exiledsector.i18n.Translation;
+import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.effect.ChartFleetConditions;
-import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.objective.ChartObjectives;
+import exiledsector.charts.run.cleanup.ChartLoadSweep;
 import exiledsector.charts.run.cleanup.ChartRunCloser;
 import org.apache.log4j.Logger;
 
@@ -26,7 +26,7 @@ public class ChartRunScript implements EveryFrameScript {
     private boolean closeArmed;
     private boolean failureReported;
     private float secondsSinceObjectiveCheck;
-    private boolean sensorRangeApplied;
+    private boolean effectsApplied;
     private String sensorSourceText;
     private boolean transverseJumpSwapped;
 
@@ -42,9 +42,10 @@ public class ChartRunScript implements EveryFrameScript {
 
     @Override
     public void advance(float amount) {
+        ChartLoadSweep.closeLeftForNowSystemOnceLeft(Global.getSector());
         ChartRun run = ChartRuns.currentOrNull();
         if (run == null) {
-            if (sensorRangeApplied || ChartFleetConditions.isActive()) {
+            if (hasEffectsToLift()) {
                 liftRunEffects(Global.getSector().getPlayerFleet());
             }
             if (transverseJumpSwapped) {
@@ -56,7 +57,7 @@ public class ChartRunScript implements EveryFrameScript {
         try {
             SectorAPI sector = Global.getSector();
             watch(sector, run);
-            checkObjective(sector, run, amount);
+            checkObjective(sector, run, systemFor(sector, run), amount);
         } catch (RuntimeException | LinkageError e) {
             if (!failureReported) {
                 failureReported = true;
@@ -65,7 +66,7 @@ public class ChartRunScript implements EveryFrameScript {
         }
     }
 
-    void checkObjective(SectorAPI sector, ChartRun run, float amount) {
+    void checkObjective(SectorAPI sector, ChartRun run, StarSystemAPI system, float amount) {
         secondsSinceObjectiveCheck += amount;
         if (secondsSinceObjectiveCheck < OBJECTIVE_CHECK_SECONDS) {
             return;
@@ -74,8 +75,8 @@ public class ChartRunScript implements EveryFrameScript {
         if (run.runState() == ChartRunState.INSIDE && !run.isObjectiveComplete() && run.objective() != null) {
             ChartObjectives.reconcile(sector);
         }
-        for (ChartAnomaly anomaly : ChartAnomalies.all()) {
-            anomaly.checkRun(sector);
+        if (run.runState().isLive() && system != null) {
+            ChartAnomalies.checkRun(sector, new AnomalyRun(run, system));
         }
     }
 
@@ -152,28 +153,21 @@ public class ChartRunScript implements EveryFrameScript {
     }
 
     void applyRunEffects(CampaignFleetAPI playerFleet, ChartRun run, boolean inside) {
-        if (!inside) {
-            if (sensorRangeApplied || ChartFleetConditions.isActive()) {
-                liftRunEffects(playerFleet);
-            }
-            return;
+        if (inside) {
+            ChartRunEffects.apply(playerFleet, run, sensorSource());
+            effectsApplied = true;
+        } else if (hasEffectsToLift()) {
+            liftRunEffects(playerFleet);
         }
-        ChartGenContext context = ChartRunEffects.contextOf(run);
-        float sensorRangeMult = context.sensorRangeMult();
-        if (sensorRangeMult != 1f) {
-            ChartRunEffects.applySensorRange(playerFleet, sensorRangeMult, sensorSource());
-            sensorRangeApplied = true;
-        }
-        ChartFleetConditions.set(context.fleetStatMults(), playerFleet);
-        ChartFleetConditions.setBattleSizeBonus(context.battleSizeBonus());
+    }
+
+    private boolean hasEffectsToLift() {
+        return effectsApplied || ChartFleetConditions.isActive();
     }
 
     private void liftRunEffects(CampaignFleetAPI playerFleet) {
-        if (sensorRangeApplied) {
-            ChartRunEffects.removeFrom(playerFleet);
-            sensorRangeApplied = false;
-        }
-        ChartFleetConditions.clear(playerFleet);
+        ChartRunEffects.lift(playerFleet);
+        effectsApplied = false;
     }
 
     private String sensorSource() {

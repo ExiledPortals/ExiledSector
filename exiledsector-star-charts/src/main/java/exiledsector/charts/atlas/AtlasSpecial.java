@@ -1,6 +1,8 @@
 package exiledsector.charts.atlas;
 
-import java.util.Locale;
+import exiledsector.charts.generation.ChartTiers;
+import exiledsector.data.EnumKeys;
+import exiledsector.items.StarChart;
 
 public record AtlasSpecial(String id, Kind kind, Placement placement, float chance, float minSteps, float radius, int count, float steps,
                            String requiredMod, String unlock, String factionId) {
@@ -13,19 +15,43 @@ public record AtlasSpecial(String id, Kind kind, Placement placement, float chan
         INFESTATION, SENSOR_ARRAY, BASTION, UNIQUE;
 
         public String key() {
-            return name().toLowerCase(Locale.ROOT);
+            return EnumKeys.key(this);
+        }
+
+        public boolean revealsLanes() {
+            return this == SENSOR_ARRAY;
+        }
+
+        public boolean oneAttempt() {
+            return this == BASTION;
+        }
+
+        public String nodeEffectsId() {
+            return this == INFESTATION ? AtlasOpening.NEXUS : key();
+        }
+
+        AtlasOpening.Blocker openBlocker(StarChart chart) {
+            return switch (this) {
+                case BASTION -> chart == null || chart.tier() < ChartTiers.HIGHEST_TIER ? AtlasOpening.Blocker.BASTION_NEEDS_TOP_TIER : null;
+                case INFESTATION -> AtlasOpening.explicitModifiers(chart) < AtlasOpening.NEXUS_MODIFIERS ? AtlasOpening.Blocker.NEXUS_NEEDS_MODIFIERS : null;
+                default -> null;
+            };
+        }
+
+        void onCompleted(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasSpecial special) {
+            switch (this) {
+                case INFESTATION -> AtlasProgress.cleanse(generator, state, cell, special);
+                case BASTION -> state.addKeyFragment();
+                default -> {
+                }
+            }
+            if (this != UNIQUE) {
+                state.addAtlasPoints(1);
+            }
         }
 
         public static Kind parse(String text) {
-            if (text == null || text.isBlank()) {
-                return UNIQUE;
-            }
-            for (Kind kind : values()) {
-                if (kind.key().equalsIgnoreCase(text.trim())) {
-                    return kind;
-                }
-            }
-            return null;
+            return text == null || text.isBlank() ? UNIQUE : EnumKeys.parse(Kind.class, text);
         }
     }
 
@@ -39,10 +65,6 @@ public record AtlasSpecial(String id, Kind kind, Placement placement, float chan
         requiredMod = requiredMod == null ? "" : requiredMod;
         unlock = unlock == null ? "" : unlock;
         factionId = factionId == null ? "" : factionId;
-    }
-
-    public static boolean ofKind(AtlasSpecial special, Kind kind) {
-        return special != null && special.kind == kind;
     }
 
     public boolean infests() {

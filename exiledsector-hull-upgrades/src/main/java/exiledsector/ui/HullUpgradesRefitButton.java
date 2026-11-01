@@ -4,7 +4,6 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
-import com.fs.starfarer.api.ui.CustomPanelAPI;
 import exiledsector.items.HullUpgradesSetting;
 import exiledsector.ui.refit.RefitButtonColumn;
 import exiledsector.ui.refit.RefitButtonConfig;
@@ -14,8 +13,9 @@ import org.lwjgl.input.Keyboard;
 
 public class HullUpgradesRefitButton extends FullScreenRefitButton {
 
+    static final String BUTTON_KEY = "ui.hullUpgradesRefitButton";
     public static final RefitButtonColumn.ButtonSpec COLUMN_BUTTON = new RefitButtonColumn.ButtonSpec("exiledSector_hullUpgradesButton",
-            "ui.hullUpgradesRefitButton", () -> Keyboard.KEY_L, RefitButtonConfig::buttonUnderHullMods, () -> openPanel(null));
+            BUTTON_KEY, () -> Keyboard.KEY_L, RefitButtonConfig::buttonUnderHullMods, () -> openPanel(null));
     static final String ICON_PATH = "graphics/icons/hull_upgrades/hull_upgrade_cruiser_unique.png";
 
     public static void addButton() {
@@ -23,18 +23,12 @@ public class HullUpgradesRefitButton extends FullScreenRefitButton {
     }
 
     public static boolean openPanel(InputEventAPI event) {
-        if (!HullUpgradesSetting.enabled()) {
-            return false;
-        }
-        return RefitPanelLauncher.open(HullUpgradesRefitButton.class, event, context -> {
-            HullUpgradesScreen screen = new HullUpgradesScreen(context.member(), context.variant(), context.button(), RefitScreenLayout.measure());
-            return new RefitPanelLauncher.Background(screen, screen::attach);
-        });
+        return HullUpgradesSetting.enabled() && openScreen(HullUpgradesRefitButton.class, event);
     }
 
     @Override
     protected String buttonKey() {
-        return "ui.hullUpgradesRefitButton";
+        return BUTTON_KEY;
     }
 
     @Override
@@ -53,11 +47,13 @@ public class HullUpgradesRefitButton extends FullScreenRefitButton {
     }
 
     @Override
-    public void initPanel(CustomPanelAPI backgroundPanel, FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
-        if (backgroundPanel.getPlugin() instanceof HullUpgradesScreen) {
-            return;
-        }
+    protected Class<HullUpgradesScreen> screenClass() {
+        return HullUpgradesScreen.class;
+    }
+
+    @Override
+    protected RefitPanelLauncher.Background createScreen(FleetMemberAPI member, ShipVariantAPI variant) {
         HullUpgradesScreen screen = new HullUpgradesScreen(member, variant, this, RefitScreenLayout.measure());
-        fillWithScreen(backgroundPanel, screen, screen::attach);
+        return new RefitPanelLauncher.Background(screen, screen::attach);
     }
 }

@@ -1,7 +1,5 @@
 package exiledsector.items;
 
-import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipHullSizes;
@@ -21,6 +19,7 @@ public enum RefitSchematic implements ShipCurrency {
     DOMAIN(5, 2f, ItemRarity.UNIQUE.color());
 
     public static final String ITEM_ID = "exiledSector_hull_upgrade";
+    public static final ItemStore.StackAbsorber STACK_ABSORBER = ItemStore.StackAbsorber.counting(RefitSchematic::of, ItemStore::addSchematics);
     private static final String ICON_FOLDER = "graphics/icons/hull_upgrades/refit_schematic_";
     private static final List<RefitSchematic> TIERS = List.of(values());
     private static final AtomicReference<BooleanSupplier> DROPS_ALLOWED = new AtomicReference<>(() -> true);
@@ -56,19 +55,6 @@ public enum RefitSchematic implements ShipCurrency {
         return special != null && ITEM_ID.equals(special.getId()) ? parse(special.getData()) : null;
     }
 
-    public static Integer absorbInto(ItemStore store, CargoAPI cargo, CargoStackAPI stack) {
-        RefitSchematic schematic = of(stack.getSpecialDataIfSpecial());
-        if (schematic == null) {
-            return null;
-        }
-        int stackCount = Math.round(stack.getSize());
-        if (stackCount < 1) {
-            return 0;
-        }
-        store.addSchematics(schematic, stackCount);
-        cargo.removeStack(stack);
-        return stackCount;
-    }
 
     public static RefitSchematic roll(Random random) {
         return WeightedPick.pick(TIERS, RefitSchematic::dropWeight, random);

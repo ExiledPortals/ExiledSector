@@ -11,9 +11,8 @@ public class GrantMasterSchematicsCommand extends PlayerFleetCommand {
 
     @Override
     protected CommandResult runForFleet(String args, CampaignFleetAPI playerFleet) {
-        Integer copies = ConsoleArgs.count(args, DEFAULT_COPIES, 1, MAX_COPIES);
+        Integer copies = ConsoleArgs.copiesOrComplain(args, DEFAULT_COPIES, MAX_COPIES);
         if (copies == null) {
-            Console.showMessage("Give a number of copies from 1 to " + MAX_COPIES + ".");
             return CommandResult.BAD_SYNTAX;
         }
         playerFleet.getCargo().addSpecial(MasterSchematic.INSTANCE.toSpecialItem(), copies);

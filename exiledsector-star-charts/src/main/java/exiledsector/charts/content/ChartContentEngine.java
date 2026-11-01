@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.fleets.FleetParamsV3;
+import exiledsector.charts.anomaly.RunFactionDress;
 import exiledsector.charts.loot.ChartVanillaLoot;
 
 import java.util.List;
@@ -35,7 +36,5 @@ interface ChartContentEngine {
 
     String planetCategory(PlanetAPI planet);
 
-    String dressAllies(String factionId);
-
-    String dressConvoy(String factionId);
+    String dress(String runFactionId, RunFactionDress dress);
 }

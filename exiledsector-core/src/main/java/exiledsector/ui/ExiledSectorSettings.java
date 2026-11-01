@@ -1,5 +1,6 @@
 package exiledsector.ui;
 
+import exiledsector.ExiledSector;
 import exiledsector.ModSettingsListener;
 import exiledsector.compat.CombatGlow;
 import exiledsector.i18n.I18n;
@@ -9,7 +10,6 @@ import exiledsector.skills.DiminishedStat;
 import exiledsector.skills.DiminishingReturns;
 import exiledsector.skills.skilleffect.onhit.MaxChainCountConfig;
 import exiledsector.compat.SalvageSiteCompat;
-import exiledsector.domain.DomainSettingsListener;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.ItemDrops;
@@ -54,12 +54,12 @@ public final class ExiledSectorSettings {
             registerCombat();
         });
         SettingsCreator.refresh(MOD_ID);
-        ModSettingsListener.ensureRegistered(DiminishingReturns.SettingsListener.class, DiminishingReturns.SettingsListener::new);
-        ModSettingsListener.ensureRegistered(ItemRoller.SettingsListener.class, ItemRoller.SettingsListener::new);
+        ModSettingsListener.onReload(DiminishingReturns.class, DiminishingReturns::reloadSettings);
+        ModSettingsListener.onReload(ItemRoller.class, ItemRoller::reloadSettings);
         ItemRoller.reloadSettings();
-        ModSettingsListener.ensureRegistered(ItemAnimationSetting.SettingsListener.class, ItemAnimationSetting.SettingsListener::new);
+        ModSettingsListener.onReload(ItemAnimationSetting.class, ItemAnimationSetting::reloadSettings);
         ItemAnimationSetting.reloadSettings();
-        ModSettingsListener.ensureRegistered(DomainSettingsListener.class, DomainSettingsListener::new);
+        ModSettingsListener.onReload(ExiledSectorDomain.class, () -> ExiledSector.domains().forEach(ExiledSectorDomain::reloadSettings));
         domains.forEach(ExiledSectorDomain::reloadSettings);
     }
 

@@ -71,7 +71,7 @@ class ChartFleetLootTest {
     void tearDown() {
         mockSector.close();
         ChartDrops.clear();
-        StarChartCurrency.unregisterAll();
+        StarChartFixtures.unregisterCurrencies();
         StarChartFixtures.clear();
     }
 
@@ -165,6 +165,7 @@ class ChartFleetLootTest {
         StarSystemAPI system = mock(StarSystemAPI.class);
         when(system.hasTag(ChartIds.SYSTEM_TAG)).thenReturn(true);
         when(system.getTags()).thenReturn(List.of(ChartIds.SYSTEM_TAG, ChartIds.runTag(RUN_ID)));
+        when(system.getOptionalUniqueId()).thenReturn(ChartIds.systemId(RUN_ID));
         when(system.getEntitiesWithTag(ChartIds.CONTENT_TAG)).thenReturn(List.of(runEntities));
         return system;
     }

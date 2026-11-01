@@ -10,10 +10,19 @@ import java.util.List;
 
 final class ShipCombatPlan {
 
+    private final ResolvedTree resolvedTree;
     private final List<HullModEffect> vanillaEffects = new ArrayList<>();
     private final List<ResolvedTree.EffectEntry> combatUpdates = new ArrayList<>();
     private final List<TemporaryNode> temporaryNodes = new ArrayList<>();
     private final List<GatedNode> gatedNodes = new ArrayList<>();
+
+    ShipCombatPlan(ResolvedTree resolvedTree) {
+        this.resolvedTree = resolvedTree;
+    }
+
+    ResolvedTree resolvedTree() {
+        return resolvedTree;
+    }
 
     void addVanillaEffect(HullModEffect effect) {
         vanillaEffects.add(effect);

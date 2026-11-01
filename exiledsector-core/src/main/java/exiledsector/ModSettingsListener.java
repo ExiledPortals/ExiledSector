@@ -3,22 +3,42 @@ package exiledsector;
 import lunalib.lunaSettings.LunaSettings;
 import lunalib.lunaSettings.LunaSettingsListener;
 
-import java.util.function.Supplier;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-public abstract class ModSettingsListener implements LunaSettingsListener {
+public final class ModSettingsListener implements LunaSettingsListener {
+
+    private static final Map<Class<?>, Runnable> RELOADS_BY_OWNER = new LinkedHashMap<>();
+
+    ModSettingsListener() {
+    }
 
     @Override
-    public final void settingsChanged(String modId) {
+    public void settingsChanged(String modId) {
         if (ExiledSector.MOD_ID.equals(modId)) {
-            reload();
+            reloads().forEach(Runnable::run);
         }
     }
 
-    protected abstract void reload();
+    public static void onReload(Class<?> owner, Runnable reload) {
+        synchronized (RELOADS_BY_OWNER) {
+            RELOADS_BY_OWNER.put(owner, reload);
+        }
+        if (!LunaSettings.hasSettingsListenerOfClass(ModSettingsListener.class)) {
+            LunaSettings.addSettingsListener(new ModSettingsListener());
+        }
+    }
 
-    public static <T extends ModSettingsListener> void ensureRegistered(Class<T> listenerType, Supplier<T> listenerFactory) {
-        if (!LunaSettings.hasSettingsListenerOfClass(listenerType)) {
-            LunaSettings.addSettingsListener(listenerFactory.get());
+    private static List<Runnable> reloads() {
+        synchronized (RELOADS_BY_OWNER) {
+            return List.copyOf(RELOADS_BY_OWNER.values());
+        }
+    }
+
+    static void forgetForTests(Class<?> owner) {
+        synchronized (RELOADS_BY_OWNER) {
+            RELOADS_BY_OWNER.remove(owner);
         }
     }
 }

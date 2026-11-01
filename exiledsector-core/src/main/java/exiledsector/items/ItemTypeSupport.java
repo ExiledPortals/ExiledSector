@@ -62,6 +62,26 @@ public interface ItemTypeSupport {
         return false;
     }
 
+    default boolean takesCurrency() {
+        return true;
+    }
+
+    default List<CorruptionOutcome> corruptionOutcomes(Item item) {
+        return CorruptionOutcome.NANOSWARM_OUTCOMES;
+    }
+
+    default boolean tiered() {
+        return false;
+    }
+
+    default AffixLayout.Limits affixLimits() {
+        return AffixLayout.DEFAULT_LIMITS;
+    }
+
+    default ItemKind listedKind(Item item) {
+        return item.kind();
+    }
+
     default int lowestTier(String definitionId) {
         return ItemTraits.LOWEST_TIER;
     }

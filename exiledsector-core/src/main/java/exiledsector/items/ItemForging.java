@@ -88,15 +88,8 @@ public final class ItemForging {
         if (sides.isEmpty()) {
             return null;
         }
-        PoolEntry poolEntry = WeightedPick.pick(sides.get(random.nextInt(sides.size())), PoolEntry::weight, random);
-        RolledModifier added = RolledModifier.roll(poolEntry.modifier(), random, false);
-        ItemRarity rarityBefore = item.rarity();
-        List<RolledModifier> modifiers = new ArrayList<>(item.explicits());
-        modifiers.add(AffixLayout.insertIndex(modifiers, added.slot()), added);
-        item.replaceExplicits(modifiers);
-        if (item.rarity() != rarityBefore) {
-            item.refreezeName();
-        }
+        RolledModifier added = AffixLayout.rollFrom(sides, random);
+        item.addExplicit(added);
         return added;
     }
 
@@ -112,10 +105,7 @@ public final class ItemForging {
         if (!excisable(item).contains(removed)) {
             return false;
         }
-        List<RolledModifier> remaining = new ArrayList<>(item.explicits());
-        remaining.remove(removed);
-        item.replaceExplicits(remaining);
-        item.refreezeName();
+        item.removeExplicit(removed);
         return true;
     }
 
@@ -144,21 +134,15 @@ public final class ItemForging {
         if (modifier == null) {
             return rolled;
         }
-        List<RolledEffect> lines = new ArrayList<>(rolled.lines().size());
-        for (RolledEffect line : rolled.lines()) {
+        return rolled.mapLines(line -> {
             ModifierLine lineDefinition = modifier.line(line.effectName());
-            boolean improved = improves(item, lineDefinition, line, context);
-            lines.add(improved ? new RolledEffect(line.effectName(), bestRoll(item, lineDefinition, line, context)) : line);
-        }
-        return rolled.withLines(lines);
+            return improves(item, lineDefinition, line, context) ? new RolledEffect(line.effectName(), bestRoll(item, lineDefinition, line, context)) : line;
+        });
     }
 
     public static List<RolledModifier> anchors(Item item) {
-        ItemDefinition definition = item.definition();
-        if (definition == null || definition.unique() || item.explicits().stream().filter(rolled -> !rolled.locked()).count() < 2) {
-            return List.of();
-        }
-        return item.explicits().stream().filter(rolled -> !rolled.locked()).toList();
+        List<RolledModifier> excisable = excisable(item);
+        return excisable.size() < 2 ? List.of() : excisable;
     }
 
     public static boolean anchorReroll(Item item, RolledModifier anchor, Random random) {
@@ -173,9 +157,7 @@ public final class ItemForging {
             if (openSides.isEmpty()) {
                 break;
             }
-            PoolEntry poolEntry = WeightedPick.pick(openSides.get(random.nextInt(openSides.size())), PoolEntry::weight, random);
-            RolledModifier added = RolledModifier.roll(poolEntry.modifier(), random, false);
-            modifiers.add(AffixLayout.insertIndex(modifiers, added.slot()), added);
+            AffixLayout.insert(modifiers, AffixLayout.rollFrom(openSides, random));
         }
         item.replaceExplicits(modifiers);
         item.refreezeName();

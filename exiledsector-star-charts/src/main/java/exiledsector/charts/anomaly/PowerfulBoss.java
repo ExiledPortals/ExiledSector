@@ -1,6 +1,6 @@
 package exiledsector.charts.anomaly;
 
-public final class PowerfulBoss implements ChartAnomaly {
+public final class PowerfulBoss implements LootShaper {
 
     public static final String ANOMALY_ID = "powerful_boss";
     public static final PowerfulBoss INSTANCE = new PowerfulBoss();

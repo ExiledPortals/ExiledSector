@@ -7,19 +7,17 @@ import exiledsector.PlayerFleet;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.AllocationGate;
-import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
-import exiledsector.skills.SkillType;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.SkillNodeOpCost;
+import exiledsector.skills.template.AutoAllocateRun;
 import exiledsector.skills.template.SkillTreeTemplate;
-import exiledsector.skills.template.TemplateStep;
+import exiledsector.skills.template.StepVerdict;
 import exiledsector.skills.template.TemplateStepRules;
-import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 
 final class TemplateLevelUp {
 
@@ -59,21 +57,15 @@ final class TemplateLevelUp {
         }
         ShipFacts shipFacts = PlayerShipFacts.of(member, variant);
         AllocationGate.Budget budget = new AllocationGate.Budget(0, opCostPerNode, ShipLevelConfig.maxAllocatedNodes());
-        int allocatedCount = 0;
-        while (shipData.getBankedFreeAllocations() > 0) {
-            NodeEligibility.Context eligibility = NodeEligibility.Context.of(shipData, shipFacts,
-                    SkillTypeUnlockStatus.lockedFor(shipData), itemId -> 0d);
-            AllocationGate gate = new AllocationGate(shipData, SkillTree.topology(), rootId, budget, eligibility);
-            TemplateStep nextStep = TemplateStepRules.firstAllocatable(template.steps(), shipData, rootId, gate);
-            if (nextStep == null) {
-                break;
+        return AutoAllocateRun.run(template.steps(), step -> {
+            AllocationGate gate = AllocationGate.forShip(shipData, shipFacts, rootId, budget, itemId -> 0d);
+            StepVerdict verdict = TemplateStepRules.verdict(step, shipData, rootId, gate::allocation);
+            if (verdict == StepVerdict.ALLOCATE) {
+                SkillNode node = SkillTree.get(step.nodeId());
+                ShipTrees.allocate(shipData, node, TemplateStepRules.optionFor(step, node, shipData), opCostPerNode);
             }
-            SkillNode node = SkillTree.get(nextStep.nodeId());
-            SkillType option = TemplateStepRules.optionFor(nextStep, node, shipData);
-            ShipTrees.allocate(shipData, node, option, opCostPerNode);
-            allocatedCount++;
-        }
-        return allocatedCount;
+            return verdict;
+        }, () -> shipData.getBankedFreeAllocations() > 0).allocated();
     }
 
     private static void returnUnhousedWings(FleetMemberAPI member, ShipVariantAPI variant) {

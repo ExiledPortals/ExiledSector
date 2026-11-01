@@ -1,16 +1,21 @@
 package exiledsector.charts.anomaly;
 
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
+import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.StarSystemAPI;
+import exiledsector.MockSector;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.convoy.SupplyConvoy;
 import exiledsector.charts.anomaly.excavation.ExcavationSites;
+import exiledsector.charts.anomaly.facility.PreCollapseFacility;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.DropType;
+import exiledsector.charts.run.ChartRuns;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -31,7 +36,7 @@ import static org.mockito.Mockito.mock;
 
 public class ChartAnomaliesTest {
 
-    public static final class PlacesNothing implements ChartAnomaly {
+    public static final class PlacesNothing implements ContentPlacer {
 
         public final List<AnomalyContentSite> sites = new ArrayList<>();
 
@@ -46,12 +51,48 @@ public class ChartAnomaliesTest {
         }
     }
 
-    private record OpensDialog(String id, InteractionDialogPlugin dialog) implements ChartAnomaly {
+    private record OpensDialog(String id, InteractionDialogPlugin dialog) implements RunParticipant {
 
         @Override
-        public InteractionDialogPlugin dialogFor(SectorEntityToken target) {
+        public InteractionDialogPlugin dialogFor(AnomalyRun run, SectorEntityToken target) {
+            if (dialog == null) {
+                throw new IllegalStateException("test failure");
+            }
             return dialog;
         }
+    }
+
+    private static final class CountsChecks implements RunParticipant {
+
+        private final String id;
+        private final boolean fails;
+        private int checks;
+
+        CountsChecks(String id, boolean fails) {
+            this.id = id;
+            this.fails = fails;
+        }
+
+        @Override
+        public String id() {
+            return id;
+        }
+
+        @Override
+        public void checkRun(SectorAPI sector, AnomalyRun run) {
+            checks++;
+            if (fails) {
+                throw new IllegalStateException("test failure");
+            }
+        }
+    }
+
+    private static StarSystemAPI liveRunWith(String... anomalyIds) {
+        return LiveAnomalyRuns.systemWith(anomalyIds);
+    }
+
+    private static SectorEntityToken entityIn(StarSystemAPI system) {
+        return LiveAnomalyRuns.placedIn(mock(SectorEntityToken.class), system);
     }
 
     @AfterEach
@@ -61,7 +102,7 @@ public class ChartAnomaliesTest {
 
     private static ChartAnomalies.Definition definition(String id, int minTier, int maxTier, String requiredMod, Set<String> excludes) {
         ChartAnomaly anomaly = ChartAnomalies.byId(id);
-        return new ChartAnomalies.Definition(id, 1f, minTier, maxTier, requiredMod, "", true, excludes, anomaly != null && anomaly.replacesStar());
+        return new ChartAnomalies.Definition(id, 1f, minTier, maxTier, requiredMod, "", true, excludes, anomaly instanceof StarRule);
     }
 
     public static ChartAnomalies.Definition definition(String id) {
@@ -79,7 +120,7 @@ public class ChartAnomaliesTest {
         for (ChartAnomaly anomaly : ChartAnomalies.BUILT_IN) {
             ChartAnomalies.Definition definition = ChartAnomalies.definition(anomaly.id());
             assertNotNull(definition, anomaly.id());
-            assertEquals(anomaly.replacesStar(), definition.replacesStar(), anomaly.id());
+            assertEquals(anomaly instanceof StarRule, definition.replacesStar(), anomaly.id());
         }
         ChartAnomalies.Definition breach = ChartAnomalies.definition(SpatialBreach.ANOMALY_ID);
         assertTrue(breach.insertable());
@@ -208,19 +249,60 @@ public class ChartAnomaliesTest {
     }
 
     @Test
-    void theFirstAnomalyWithADialogOpensIt() {
+    void theFirstAnomalyOfTheLiveRunWithADialogOpensItAndContinueOnlyMovesForward() {
         InteractionDialogPlugin first = mock(InteractionDialogPlugin.class);
         InteractionDialogPlugin second = mock(InteractionDialogPlugin.class);
         OpensDialog opensFirst = new OpensDialog("first", first);
-        ChartAnomalies.useForTests(List.of(new PlacesNothing(), opensFirst, new OpensDialog("second", second)), List.of());
-        SectorEntityToken target = mock(SectorEntityToken.class);
+        OpensDialog opensSecond = new OpensDialog("second", second);
+        ChartAnomalies.useForTests(List.of(new PlacesNothing(), opensFirst, opensSecond), List.of());
+        try (MockSector ignored = new MockSector()) {
+            SectorEntityToken outside = entityIn(mock(StarSystemAPI.class));
+            assertNull(ChartAnomalies.dialogFor(outside));
+            SectorEntityToken target = entityIn(liveRunWith("first", "second"));
 
-        assertSame(first, ChartAnomalies.dialogFor(target));
-        assertSame(second, ChartAnomalies.dialogFor(target, opensFirst));
+            assertSame(first, ChartAnomalies.dialogFor(target));
+            assertSame(second, ChartAnomalies.dialogAfter(opensFirst, target));
+            assertNull(ChartAnomalies.dialogAfter(opensSecond, target));
+            assertNull(ChartAnomalies.dialogFor(outside));
+
+            SectorEntityToken withoutFirst = entityIn(liveRunWith("second"));
+            assertSame(second, ChartAnomalies.dialogFor(withoutFirst));
+            assertNull(ChartAnomalies.dialogAfter(opensFirst, withoutFirst));
+        }
     }
 
     @Test
-    void excavationSitesOpenTheirDialogBeforeTheSupplyConvoyCacheTheyHandOnTo() {
-        assertTrue(ChartAnomalies.all().indexOf(ExcavationSites.INSTANCE) < ChartAnomalies.all().indexOf(SupplyConvoy.INSTANCE));
+    void anAnomalyWhoseDialogHookThrowsIsSkipped() {
+        InteractionDialogPlugin second = mock(InteractionDialogPlugin.class);
+        ChartAnomalies.useForTests(List.of(new OpensDialog("first", null), new OpensDialog("second", second)), List.of());
+        try (MockSector ignored = new MockSector()) {
+            assertSame(second, ChartAnomalies.dialogFor(entityIn(liveRunWith("first", "second"))));
+        }
+    }
+
+    @Test
+    void runChecksReachOnlyTheRunsAnomaliesAndOneFailingNeverStopsTheRest() {
+        CountsChecks failing = new CountsChecks("failing", true);
+        CountsChecks working = new CountsChecks("working", false);
+        CountsChecks elsewhere = new CountsChecks("elsewhere", false);
+        ChartAnomalies.useForTests(List.of(failing, working, elsewhere), List.of());
+        try (MockSector mockSector = new MockSector()) {
+            StarSystemAPI system = liveRunWith("failing", "working");
+            AnomalyRun run = new AnomalyRun(ChartRuns.currentOrNull(), system);
+
+            ChartAnomalies.checkRun(mockSector.sector, run);
+            ChartAnomalies.checkRun(mockSector.sector, run);
+
+            assertEquals(2, failing.checks);
+            assertEquals(2, working.checks);
+            assertEquals(0, elsewhere.checks);
+        }
+    }
+
+    @Test
+    void sharedPlanetsHandOnInRegistryOrderFromExcavationToConvoyToFacility() {
+        List<ChartAnomaly> order = ChartAnomalies.all();
+        assertTrue(order.indexOf(ExcavationSites.INSTANCE) < order.indexOf(SupplyConvoy.INSTANCE));
+        assertTrue(order.indexOf(SupplyConvoy.INSTANCE) < order.indexOf(PreCollapseFacility.INSTANCE));
     }
 }

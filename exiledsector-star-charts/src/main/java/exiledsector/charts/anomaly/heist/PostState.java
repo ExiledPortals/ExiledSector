@@ -1,14 +1,13 @@
 package exiledsector.charts.anomaly.heist;
 
+import exiledsector.charts.anomaly.AnomalyState;
+import exiledsector.charts.anomaly.StateFields;
 import exiledsector.charts.run.ChartRun;
-
-import java.util.Locale;
 
 public record PostState(float suspicion, boolean alarm, float vaultShare, boolean taken, long seed) {
 
-    static final String KEY = ListeningPost.ANOMALY_ID;
-    static final String SEPARATOR = ",";
-    static final int SEED_RADIX = Character.MAX_RADIX;
+    static final String FIELD = "state";
+    static final int FIELDS = 5;
 
     public PostState {
         suspicion = Math.max(0f, Math.min(1f, suspicion));
@@ -48,33 +47,28 @@ public record PostState(float suspicion, boolean alarm, float vaultShare, boolea
     }
 
     String encode() {
-        return String.join(SEPARATOR, format(suspicion), alarm ? "1" : "0", format(vaultShare), taken ? "1" : "0", Long.toString(seed, SEED_RADIX));
-    }
-
-    private static String format(float value) {
-        return String.format(Locale.ROOT, "%.4f", value);
+        return StateFields.join(StateFields.decimal(suspicion), StateFields.flag(alarm), StateFields.decimal(vaultShare), StateFields.flag(taken),
+                StateFields.seed(seed));
     }
 
     static PostState decode(String encoded) {
-        String[] parts = encoded == null ? new String[0] : encoded.split(SEPARATOR, -1);
-        if (parts.length != 5) {
-            return null;
-        }
-        try {
-            return new PostState(Float.parseFloat(parts[0]), "1".equals(parts[1]), Float.parseFloat(parts[2]), "1".equals(parts[3]),
-                    Long.parseLong(parts[4], SEED_RADIX));
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        return StateFields.decode(encoded, FIELDS, fields -> new PostState(fields.decimal(0), fields.flag(1), fields.decimal(2), fields.flag(3),
+                fields.seed(4)));
     }
 
     public static PostState of(ChartRun run) {
-        return run == null ? null : decode(run.anomalyState(KEY));
+        return decode(AnomalyState.of(run, ListeningPost.ANOMALY_ID).text(FIELD));
     }
 
     static void record(ChartRun run, PostState state) {
-        if (run != null && state != null) {
-            run.recordAnomalyState(KEY, state.encode());
+        if (run != null) {
+            record(AnomalyState.of(run, ListeningPost.ANOMALY_ID), state);
+        }
+    }
+
+    static void record(AnomalyState anomalyState, PostState state) {
+        if (state != null) {
+            anomalyState.put(FIELD, state.encode());
         }
     }
 }

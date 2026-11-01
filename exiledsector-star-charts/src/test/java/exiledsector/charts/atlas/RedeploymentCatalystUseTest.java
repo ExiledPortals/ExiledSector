@@ -1,5 +1,6 @@
 package exiledsector.charts.atlas;
 
+import exiledsector.charts.content.ChartFactions;
 import exiledsector.items.Consumables;
 import exiledsector.items.CraftingMaterials;
 import org.junit.jupiter.api.Test;
@@ -66,7 +67,7 @@ class RedeploymentCatalystUseTest {
         assertTrue(THREE_FACTIONS.containsKey(expected), expected);
         assertEquals(expected, AtlasOpening.territoryOwnerOf(generator, state, cell));
         assertEquals(expected, AtlasOpening.ownerOf(generator, state, cell));
-        assertEquals(Map.of("faction", RedeploymentCatalystUse.factionName(expected)), outcome.args());
+        assertEquals(Map.of("faction", ChartFactions.displayName(expected)), outcome.args());
         assertEquals(1, materials.count(REDEPLOYMENT.itemId()));
         assertNotNull(Consumables.use(use, cell, materials));
         assertNotEquals(expected, AtlasOpening.territoryOwnerOf(generator, state, cell), "a second order moves the system on");

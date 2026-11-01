@@ -87,7 +87,7 @@ class AtlasCatalystUseTest {
         AtlasCatalystUse.Outcome outcome = Consumables.use(use, cell, materials);
 
         assertNotNull(outcome);
-        assertEquals(Map.of("anomaly", AtlasCatalystUse.anomalyName(SpatialBreach.ANOMALY_ID)), outcome.args());
+        assertEquals(Map.of("anomaly", AtlasNames.anomaly(SpatialBreach.ANOMALY_ID)), outcome.args());
         assertEquals(List.of(new AtlasAnomalyRecord(state.anomalyRecords(cell).get(0).recordId(), cell, SpatialBreach.ANOMALY_ID,
                 AtlasAnomalyRecord.Source.PLAYER)), state.anomalyRecords(cell));
         assertEquals(1, materials.count(BREACH_TERMINUS.itemId()));
@@ -124,8 +124,8 @@ class AtlasCatalystUseTest {
         UseVerdict verdict = new AnomalyCatalystUse(BREACH_TERMINUS, generator, state, null, Set.of(cell)).check(cell);
 
         assertEquals("catalyst.refused.conflict", verdict.refusalKey());
-        assertEquals(AtlasCatalystUse.anomalyName(AsteroidStorm.ANOMALY_ID), verdict.args().get("other"));
-        assertEquals(AtlasCatalystUse.anomalyName(SpatialBreach.ANOMALY_ID), verdict.args().get("anomaly"));
+        assertEquals(AtlasNames.anomaly(AsteroidStorm.ANOMALY_ID), verdict.args().get("other"));
+        assertEquals(AtlasNames.anomaly(SpatialBreach.ANOMALY_ID), verdict.args().get("anomaly"));
     }
 
     @Test
@@ -151,12 +151,12 @@ class AtlasCatalystUseTest {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = generator(state);
         AtlasCell far = farSystem(generator);
-        assertTrue(AtlasAnomalies.insertStar(generator, state, far, StarAnomalies.BLACK_HOLE.id(), AtlasAnomalyRecord.Source.WORLD, null).check().allows());
+        assertTrue(AtlasAnomalies.insert(generator, state, far, StarAnomalies.BLACK_HOLE.id(), AtlasAnomalyRecord.Source.WORLD, null, null, true).check().allows());
 
         UseVerdict verdict = new AnomalyCatalystUse(HYPERSHUNT_SURVEY, generator, state, null, Set.of(far)).check(far);
 
         assertEquals("catalyst.refused.conflict", verdict.refusalKey());
-        assertEquals(AtlasCatalystUse.anomalyName(StarAnomalies.BLACK_HOLE.id()), verdict.args().get("other"));
+        assertEquals(AtlasNames.anomaly(StarAnomalies.BLACK_HOLE.id()), verdict.args().get("other"));
         assertEquals(List.of(StarAnomalies.BLACK_HOLE.id()), AtlasAnomalies.effective(generator, state, far));
     }
 }

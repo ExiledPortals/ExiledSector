@@ -20,6 +20,7 @@ class HullBenchCurrenciesTest {
         ItemCurrency currency = mock(ItemCurrency.class);
         when(currency.itemId()).thenReturn(itemId);
         when(currency.appliesTo(type)).thenReturn(true);
+        when(currency.appliesToShipItems()).thenCallRealMethod();
         when(currency.usedNoticeKey(ItemNature.HARDWARE)).thenReturn("notice." + itemId);
         return currency;
     }
@@ -30,8 +31,8 @@ class HullBenchCurrenciesTest {
         ItemCurrency chartOnly = extra("cipher", ItemType.STAR_CHART);
         List<ItemCurrency> registered = List.of(CraftingCurrency.AUGMENTATION, engram, chartOnly);
 
-        List<ItemCurrency> owned = SocketWorkbenchPanel.hullBenchCurrencies(registered, itemId -> 1);
-        List<ItemCurrency> none = SocketWorkbenchPanel.hullBenchCurrencies(registered, itemId -> 0);
+        List<ItemCurrency> owned = HullBench.hullBenchCurrencies(registered, itemId -> 1);
+        List<ItemCurrency> none = HullBench.hullBenchCurrencies(registered, itemId -> 0);
 
         assertEquals(CraftingCurrency.values().length + 1, owned.size());
         assertTrue(owned.contains(engram));
@@ -42,9 +43,9 @@ class HullBenchCurrenciesTest {
     @Test
     void extraCurrenciesLeaveTheOrbitForACentredColumn() {
         ItemCurrency engram = extra("engram", ItemType.HULL_ITEM);
-        List<ItemCurrency> shown = SocketWorkbenchPanel.hullBenchCurrencies(List.of(engram), itemId -> 1);
+        List<ItemCurrency> shown = HullBench.hullBenchCurrencies(List.of(engram), itemId -> 1);
 
-        assertEquals(List.of(CraftingCurrency.values()), SocketWorkbenchPanel.orbitCurrencies(shown));
+        assertEquals(List.of(CraftingCurrency.values()), shown.stream().filter(HullBench.INSTANCE::inOrbit).toList());
         assertEquals(80f, SocketWorkbenchPanel.columnTileTop(0, 1, 100f, 40f, 10f, 300f));
         assertEquals(55f, SocketWorkbenchPanel.columnTileTop(0, 2, 100f, 40f, 10f, 300f));
         assertEquals(105f, SocketWorkbenchPanel.columnTileTop(1, 2, 100f, 40f, 10f, 300f));
@@ -52,9 +53,16 @@ class HullBenchCurrenciesTest {
     }
 
     @Test
+    void aBenchModeNoDomainServesFallsBackToTheHullBench() {
+        assertEquals(HullBench.INSTANCE, BenchModes.of(BenchMode.HULL_ITEMS));
+        assertEquals(HullBench.INSTANCE, BenchModes.of(BenchMode.FORGE));
+        assertEquals(BenchMode.HULL_ITEMS, BenchModes.modeFor(ItemType.STAR_CHART));
+    }
+
+    @Test
     void theUsedNoticeComesFromTheCurrencyUnlessACorruptionOutcomeNamesIt() {
         assertEquals("ui.workbench.notice.used.augmentation.hardware",
-                SocketWorkbenchPanel.usedNoticeKey(CraftingCurrency.AUGMENTATION, null, ItemNature.HARDWARE));
-        assertEquals("notice.engram", SocketWorkbenchPanel.usedNoticeKey(extra("engram", ItemType.HULL_ITEM), null, ItemNature.HARDWARE));
+                HullBench.usedNoticeKey(CraftingCurrency.AUGMENTATION, null, ItemNature.HARDWARE));
+        assertEquals("notice.engram", HullBench.usedNoticeKey(extra("engram", ItemType.HULL_ITEM), null, ItemNature.HARDWARE));
     }
 }

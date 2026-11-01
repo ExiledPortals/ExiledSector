@@ -105,7 +105,7 @@ public final class CatalystIconFx {
         AtlasCatalysts.Family family = catalyst.family() == null ? AtlasCatalysts.Family.TERMINUS : catalyst.family();
         float seconds = cycleSeconds(family) * (full ? 1f : CALM_SLOWDOWN);
         float t = CargoIconFx.seconds() + CargoIconFx.hash(phaseSeed, 1, 1) * seconds;
-        float cycle = cycleOf(t, seconds);
+        float cycle = Fade.cycle(t, seconds);
         int round = (int) Math.floor(t / seconds);
         Color color = look.color();
         float coronaAlpha = CORONA_ALPHA + (full ? CORONA_BREATHE * (float) Math.sin(t * 1.3f) : 0f);
@@ -132,31 +132,26 @@ public final class CatalystIconFx {
         };
     }
 
-    static float cycleOf(float seconds, float cycleSeconds) {
-        float cycle = seconds % cycleSeconds / cycleSeconds;
-        return cycle < 0f ? cycle + 1f : cycle;
-    }
-
     static float bracketDistance(float cycle) {
-        return BRACKET_OPEN - (BRACKET_OPEN - BRACKET_HELD) * smooth(0f, BRACKET_CLOSE_END, cycle);
+        return BRACKET_OPEN - (BRACKET_OPEN - BRACKET_HELD) * Fade.window(0f, BRACKET_CLOSE_END, cycle);
     }
 
     static float bracketAlpha(float cycle) {
-        return smooth(0f, BRACKET_CLOSE_END / 2f, cycle) * (1f - smooth(BRACKET_FADE_START, 1f, cycle));
+        return Fade.window(0f, BRACKET_CLOSE_END / 2f, cycle) * (1f - Fade.window(BRACKET_FADE_START, 1f, cycle));
     }
 
     static float strainRadius(float cycle) {
         if (cycle <= STRAIN_PEAK) {
-            return STRAIN_MIN_RADIUS + (STRAIN_MAX_RADIUS - STRAIN_MIN_RADIUS) * smooth(STRAIN_START, STRAIN_PEAK, cycle);
+            return STRAIN_MIN_RADIUS + (STRAIN_MAX_RADIUS - STRAIN_MIN_RADIUS) * Fade.window(STRAIN_START, STRAIN_PEAK, cycle);
         }
-        return STRAIN_MAX_RADIUS - (STRAIN_MAX_RADIUS - STRAIN_SNAP_RADIUS) * smooth(STRAIN_PEAK, SNAP_END, cycle);
+        return STRAIN_MAX_RADIUS - (STRAIN_MAX_RADIUS - STRAIN_SNAP_RADIUS) * Fade.window(STRAIN_PEAK, SNAP_END, cycle);
     }
 
     static float strainAlpha(float cycle, boolean full) {
         if (!full) {
-            return CALM_STRAIN_ALPHA * smooth(STRAIN_START, STRAIN_PEAK, cycle) * (1f - smooth(STRAIN_PEAK, 0.7f, cycle));
+            return CALM_STRAIN_ALPHA * Fade.window(STRAIN_START, STRAIN_PEAK, cycle) * (1f - Fade.window(STRAIN_PEAK, 0.7f, cycle));
         }
-        return 0.8f * smooth(STRAIN_START, STRAIN_PEAK, cycle) * (1f - smooth(SNAP_END - 0.02f, SNAP_END, cycle));
+        return 0.8f * Fade.window(STRAIN_START, STRAIN_PEAK, cycle) * (1f - Fade.window(SNAP_END - 0.02f, SNAP_END, cycle));
     }
 
     static float collapseProgress(float cycle) {
@@ -167,7 +162,7 @@ public final class CatalystIconFx {
         if (cycle < SCAR_START || cycle > SCAR_END) {
             return 0f;
         }
-        return SCAR_ALPHA * (1f - smooth(SCAR_START, SCAR_END, cycle));
+        return SCAR_ALPHA * (1f - Fade.window(SCAR_START, SCAR_END, cycle));
     }
 
     static float sweepPosition(float cycle) {
@@ -175,8 +170,8 @@ public final class CatalystIconFx {
     }
 
     static float revealLevel(float fromTop, float cycle) {
-        float passed = smooth(fromTop - REVEAL_SOFTNESS, fromTop, sweepPosition(cycle));
-        return passed * (1f - smooth(REVEAL_FADE_START, REVEAL_FADE_END, cycle));
+        float passed = Fade.window(fromTop - REVEAL_SOFTNESS, fromTop, sweepPosition(cycle));
+        return passed * (1f - Fade.window(REVEAL_FADE_START, REVEAL_FADE_END, cycle));
     }
 
     static float streakProgress(float cycle, int streak) {
@@ -187,11 +182,11 @@ public final class CatalystIconFx {
                                      float alphaMult) {
         float ringAlpha = strainAlpha(cycle, full) * alphaMult;
         if (ringAlpha > 0f) {
-            float strain = smooth(STRAIN_START, STRAIN_PEAK, cycle);
+            float strain = Fade.window(STRAIN_START, STRAIN_PEAK, cycle);
             float wobble = full ? STRAIN_WOBBLE * strain * (float) Math.sin(t * STRAIN_WOBBLE_HZ * Math.PI * 2.0) : 0f;
             float diameter = strainRadius(full ? cycle : Math.min(cycle, STRAIN_PEAK)) * 2f * unit;
             SpriteDraw.drawAdditiveAtCenter(FX_SPRITES, STRAIN_TEXTURE, cx, cy, diameter * (1f + wobble), diameter * (1f - wobble),
-                    lighten(color, 0.3f), ringAlpha, t * 20f % 360f);
+                    CargoIconFx.lighten(color, 0.3f), ringAlpha, t * 20f % 360f);
         }
         if (!full) {
             return;
@@ -199,38 +194,14 @@ public final class CatalystIconFx {
         float collapse = collapseProgress(cycle);
         if (collapse > 0f && collapse < 1f) {
             float collapseSize = (COLLAPSE_FROM - (COLLAPSE_FROM - COLLAPSE_TO) * collapse) * unit;
-            SpriteDraw.drawAdditiveAtCenter(FX_SPRITES, COLLAPSE_TEXTURE, cx, cy, collapseSize, collapseSize, lighten(color, 0.5f),
+            SpriteDraw.drawAdditiveAtCenter(FX_SPRITES, COLLAPSE_TEXTURE, cx, cy, collapseSize, collapseSize, CargoIconFx.lighten(color, 0.5f),
                     0.9f * (1f - collapse) * alphaMult);
         }
         float scar = scarAlpha(cycle) * alphaMult;
         if (scar > 0f) {
             int cell = (int) (CargoIconFx.hash(phaseSeed, round, 7) * SCAR_CELLS * SCAR_CELLS);
-            drawCell(FX_SPRITES.texture(SCAR_TEXTURE), cell % SCAR_CELLS, cell / SCAR_CELLS, cx, cy, SCAR_SIZE * unit, SCAR_COLOR, scar);
-        }
-    }
-
-    private static void drawCell(SpriteAPI texture, int column, int row, float cx, float cy, float cellSize, Color tint, float alpha) {
-        if (texture == null) {
-            return;
-        }
-        float cellWidth = texture.getTexWidth() / SCAR_CELLS;
-        float cellHeight = texture.getTexHeight() / SCAR_CELLS;
-        float left = texture.getTexX() + column * cellWidth;
-        float bottom = texture.getTexY() + row * cellHeight;
-        float half = cellSize / 2f;
-        try (GlScope scope = GlScope.textured(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)) {
-            texture.bindTexture();
-            Misc.setColor(tint, alpha);
-            GL11.glBegin(GL11.GL_QUADS);
-            GL11.glTexCoord2f(left, bottom);
-            GL11.glVertex2f(cx - half, cy - half);
-            GL11.glTexCoord2f(left + cellWidth, bottom);
-            GL11.glVertex2f(cx + half, cy - half);
-            GL11.glTexCoord2f(left + cellWidth, bottom + cellHeight);
-            GL11.glVertex2f(cx + half, cy + half);
-            GL11.glTexCoord2f(left, bottom + cellHeight);
-            GL11.glVertex2f(cx - half, cy + half);
-            GL11.glEnd();
+            SpriteDraw.drawCellAtCenter(FX_SPRITES.sprite(SCAR_TEXTURE), SCAR_CELLS, SCAR_CELLS, cell, cx, cy, SCAR_SIZE * unit, SCAR_SIZE * unit, 0f,
+                    SCAR_COLOR, scar, false);
         }
     }
 
@@ -248,7 +219,7 @@ public final class CatalystIconFx {
         if (sweep > 0f && sweep < 1f) {
             float sweepY = cy + iconSize / 2f - sweep * iconSize;
             float sweepAlpha = (full ? 0.9f : CALM_SWEEP_ALPHA) * (float) Math.sin(sweep * Math.PI);
-            SpriteDraw.drawAdditiveAtCenter(FX_SPRITES, SWEEP_TEXTURE, cx, sweepY, iconSize, SWEEP_HEIGHT * unit, lighten(color, 0.4f),
+            SpriteDraw.drawAdditiveAtCenter(FX_SPRITES, SWEEP_TEXTURE, cx, sweepY, iconSize, SWEEP_HEIGHT * unit, CargoIconFx.lighten(color, 0.4f),
                     sweepAlpha * alphaMult);
         }
     }
@@ -282,7 +253,7 @@ public final class CatalystIconFx {
         double angle = Math.toRadians(STREAK_ANGLE);
         float alongX = (float) Math.cos(angle);
         float alongY = (float) Math.sin(angle);
-        Color tint = lighten(color, 0.3f);
+        Color tint = CargoIconFx.lighten(color, 0.3f);
         int streaks = full ? STREAK_STARTS.length : 1;
         for (int streak = 0; streak < streaks; streak++) {
             float progress = streakProgress(cycle, streak);
@@ -312,7 +283,7 @@ public final class CatalystIconFx {
         float reach = Math.min(distance, HALF - 1f) * unit;
         float arm = BRACKET_ARM * unit;
         try (GlScope scope = GlScope.flat().additive().lineWidth(Math.max(1f, 1.4f * unit))) {
-            Misc.setColor(lighten(color, 0.35f), alpha);
+            Misc.setColor(CargoIconFx.lighten(color, 0.35f), alpha);
             GL11.glBegin(GL11.GL_LINES);
             for (int corner = 0; corner < 4; corner++) {
                 float signX = corner % 2 == 0 ? -1f : 1f;
@@ -326,13 +297,5 @@ public final class CatalystIconFx {
             }
             GL11.glEnd();
         }
-    }
-
-    private static Color lighten(Color color, float amount) {
-        return Misc.interpolateColor(color, Color.WHITE, amount);
-    }
-
-    static float smooth(float from, float to, float value) {
-        return Fade.smooth(Math.max(0f, Math.min(1f, (value - from) / (to - from))));
     }
 }

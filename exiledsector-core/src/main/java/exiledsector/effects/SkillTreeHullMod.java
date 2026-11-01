@@ -195,7 +195,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     }
 
     private static void applyTreeToFighter(ShipAPI fighter, ShipAPI ship) {
-        ResolvedTree resolvedTree = treeFor(ship);
+        ResolvedTree resolvedTree = combatPlanFor(ship).resolvedTree();
         if (resolvedTree == null) return;
 
         for (ResolvedTree.Entry entry : resolvedTree.entries()) {
@@ -238,7 +238,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         combatPlanFor(ship).advance(ship, amount);
     }
 
-    private ShipCombatPlan combatPlanFor(ShipAPI ship) {
+    private static ShipCombatPlan combatPlanFor(ShipAPI ship) {
         Map<String, Object> customData = ship.getCustomData();
         if (customData != null && customData.get(COMBAT_PLAN_KEY) instanceof ShipCombatPlan combatPlan) {
             return combatPlan;
@@ -249,7 +249,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     }
 
     private static ShipCombatPlan buildCombatPlan(ResolvedTree resolvedTree) {
-        ShipCombatPlan combatPlan = new ShipCombatPlan();
+        ShipCombatPlan combatPlan = new ShipCombatPlan(resolvedTree);
         if (resolvedTree == null) return combatPlan;
 
         for (ResolvedTree.Entry entry : resolvedTree.entries()) {

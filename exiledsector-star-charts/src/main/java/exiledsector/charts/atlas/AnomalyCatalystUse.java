@@ -1,6 +1,7 @@
 package exiledsector.charts.atlas;
 
 import exiledsector.i18n.Translation;
+import exiledsector.charts.anomaly.AtlasRule;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.items.UseVerdict;
 
@@ -20,27 +21,25 @@ public record AnomalyCatalystUse(AtlasCatalysts.Catalyst catalyst, AtlasGenerato
         if (!revealed.contains(cell)) {
             return UseVerdict.refused(FOGGED_KEY);
         }
-        AtlasAnomalies.InsertCheck check = forcesStar() ? AtlasAnomalies.canInsertStar(generator, state, cell, anomalyId, openRunCell)
-                : AtlasAnomalies.canInsert(generator, state, cell, anomalyId, openRunCell);
+        AtlasAnomalies.InsertCheck check = AtlasAnomalies.canInsert(generator, state, cell, anomalyId, openRunCell, forcesStar());
         if (check.allows()) {
             return UseVerdict.ALLOW;
         }
         UseVerdict refused = (check == AtlasAnomalies.InsertCheck.DOES_NOT_FIT
-                ? ChartAnomalies.byId(anomalyId).insertVerdict(generator, state, cell)
-                : UseVerdict.refused(AtlasCatalystUse.refusalKey(check))).with("anomaly", AtlasCatalystUse.anomalyName(anomalyId));
+                ? AtlasRule.of(ChartAnomalies.byId(anomalyId)).insertVerdict(generator, state, cell)
+                : UseVerdict.refused(AtlasCatalystUse.refusalKey(check))).with("anomaly", AtlasNames.anomaly(anomalyId));
         if (check == AtlasAnomalies.InsertCheck.CONFLICT) {
             String other = AtlasAnomalies.effective(generator, state, cell).stream()
                     .filter(existing -> ChartAnomalies.conflicts(existing, anomalyId)).findFirst().orElse("");
-            refused = refused.with("other", AtlasCatalystUse.anomalyName(other));
+            refused = refused.with("other", AtlasNames.anomaly(other));
         }
         return refused;
     }
 
     @Override
     public Outcome apply(AtlasCell cell) {
-        AtlasAnomalies.Insertion insertion = forcesStar()
-                ? AtlasAnomalies.insertStar(generator, state, cell, catalyst.anomalyId(), AtlasAnomalyRecord.Source.PLAYER, openRunCell)
-                : AtlasAnomalies.insert(generator, state, cell, catalyst.anomalyId(), AtlasAnomalyRecord.Source.PLAYER, openRunCell);
+        AtlasAnomalies.Insertion insertion = AtlasAnomalies.insert(generator, state, cell, catalyst.anomalyId(), AtlasAnomalyRecord.Source.PLAYER,
+                openRunCell, null, forcesStar());
         return insertion.check().allows() ? new Outcome("catalyst.window.used", Map.of("anomaly", anomalyName())) : null;
     }
 
@@ -59,6 +58,6 @@ public record AnomalyCatalystUse(AtlasCatalysts.Catalyst catalyst, AtlasGenerato
     }
 
     private String anomalyName() {
-        return AtlasCatalystUse.anomalyName(catalyst.anomalyId());
+        return AtlasNames.anomaly(catalyst.anomalyId());
     }
 }

@@ -23,6 +23,7 @@ public class AbyssalDarknessTerrainPlugin extends BaseTerrain {
     static final float BACKGROUND_FADE_OUT_SECONDS = 1f;
     static final float MAP_INNER_HALO_ALPHA = 0.6f;
     static final float MAP_OUTER_HALO_ALPHA = 0.8f;
+    private static final EnumSet<CampaignEngineLayers> LAYERS = EnumSet.of(CampaignEngineLayers.ABOVE);
 
     public record Params(AbyssPalette palette) {
     }
@@ -60,7 +61,7 @@ public class AbyssalDarknessTerrainPlugin extends BaseTerrain {
 
     @Override
     public EnumSet<CampaignEngineLayers> getActiveLayers() {
-        return EnumSet.of(CampaignEngineLayers.ABOVE);
+        return LAYERS;
     }
 
     @Override

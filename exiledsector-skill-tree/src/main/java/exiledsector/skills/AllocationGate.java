@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.ToDoubleFunction;
 
 public final class AllocationGate {
 
@@ -66,6 +67,10 @@ public final class AllocationGate {
         this.budget = budget;
         this.eligibility = eligibility;
         this.spentOp = ShipTrees.getSpentOp(data, budget.opCostPerNode());
+    }
+
+    public static AllocationGate forShip(ShipSkillData data, ShipFacts shipFacts, String rootId, Budget budget, ToDoubleFunction<String> heldItems) {
+        return new AllocationGate(data, SkillTree.topology(), rootId, budget, NodeEligibility.Context.forShip(data, shipFacts, heldItems));
     }
 
     public ShipSkillData data() {

@@ -2,18 +2,13 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
-import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
+import exiledsector.SectorMarkets;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Set;
 
 public final class MaterialMigration {
 
@@ -57,31 +52,14 @@ public final class MaterialMigration {
         if (playerFleet != null) {
             cargoes.add(playerFleet.getCargo());
         }
-        Set<MarketAPI> visitedMarkets = Collections.newSetFromMap(new IdentityHashMap<>());
-        if (sector.getEconomy() != null) {
-            sector.getEconomy().getMarketsCopy().forEach(market -> addSubmarkets(market, visitedMarkets, cargoes));
-        }
-        List<LocationAPI> locations = new ArrayList<>(sector.getStarSystems());
-        locations.add(sector.getHyperspace());
-        for (LocationAPI location : locations) {
-            if (location == null) {
-                continue;
+        SectorMarkets.forEach(sector, market -> {
+            for (SubmarketAPI submarket : market.getSubmarketsCopy()) {
+                CargoAPI submarketCargo = submarket.getCargoNullOk();
+                if (submarketCargo != null) {
+                    cargoes.add(submarketCargo);
+                }
             }
-            for (SectorEntityToken entity : location.getAllEntities()) {
-                addSubmarkets(entity.getMarket(), visitedMarkets, cargoes);
-            }
-        }
+        });
         return cargoes;
-    }
-
-    private static void addSubmarkets(MarketAPI market, Set<MarketAPI> visitedMarkets, List<CargoAPI> cargoes) {
-        if (market == null || !visitedMarkets.add(market)) {
-            return;
-        }
-        for (SubmarketAPI submarket : market.getSubmarketsCopy()) {
-            if (submarket.getCargo() != null) {
-                cargoes.add(submarket.getCargo());
-            }
-        }
     }
 }

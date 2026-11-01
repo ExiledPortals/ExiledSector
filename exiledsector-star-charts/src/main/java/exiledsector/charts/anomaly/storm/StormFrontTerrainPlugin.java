@@ -5,28 +5,31 @@ import com.fs.starfarer.api.campaign.CampaignEngineLayers;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ViewportAPI;
+import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
-import com.fs.starfarer.api.impl.campaign.terrain.BaseTerrain;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.charts.anomaly.ChartAnomalyTerrain;
+import exiledsector.charts.anomaly.SlowsFleets;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.VanillaText;
-import org.apache.log4j.Logger;
+import exiledsector.ui.util.SpriteDraw;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 
-public class StormFrontTerrainPlugin extends BaseTerrain {
+public class StormFrontTerrainPlugin extends ChartAnomalyTerrain implements SlowsFleets {
 
     public static final String CLOUD_TEXTURE = "graphics/fx/cleaner_clouds00.png";
     public static final String FLASH_TEXTURE = "graphics/fx/starburst_glow1.png";
@@ -48,11 +51,13 @@ public class StormFrontTerrainPlugin extends BaseTerrain {
     static final float FLASH_SIZE_MULT = 1.3f;
     static final float RENDER_MARGIN = 1500f;
     static final float SENSOR_MOD_DAYS = 0.1f;
-    static final float TOOLTIP_PAD = 10f;
+    static final String SENSOR_MOD_ID = StormFront.TERRAIN_ID + "_stat_mod";
+    static final String IN_FRONT_MEMORY_KEY = "$terrain_" + StormFront.TERRAIN_ID;
     static final int INTEL_MARKS = 3;
     static final Color CLOUD_COLOUR = new Color(90, 110, 255);
     static final Color FLASH_COLOUR = new Color(170, 200, 255);
-    private static final Logger LOG = Logger.getLogger(StormFrontTerrainPlugin.class);
+    private static final SpriteCache SPRITES = new SpriteCache(StormFrontTerrainPlugin.class);
+    private static final EnumSet<CampaignEngineLayers> LAYERS = EnumSet.of(CampaignEngineLayers.TERRAIN_6);
 
     public record Params(String runId, StormPath path, List<String> markIds, long startTimestamp, long seed) {
     }
@@ -73,9 +78,8 @@ public class StormFrontTerrainPlugin extends BaseTerrain {
     private transient float[] flashes;
     private transient float animationSeconds;
     private transient Random flashRandom;
-    private transient SpriteAPI[] cloudCells;
+    private transient SpriteAPI cloudSheet;
     private transient SpriteAPI flashSprite;
-    private transient boolean spritesFailed;
     private transient Vector2f scratchPosition;
 
     @Override
@@ -94,13 +98,7 @@ public class StormFrontTerrainPlugin extends BaseTerrain {
     }
 
     public static void preloadTextures() {
-        for (String texture : List.of(CLOUD_TEXTURE, FLASH_TEXTURE, StormOverlay.HIT_GLOW_TEXTURE)) {
-            try {
-                Global.getSettings().loadTexture(texture);
-            } catch (IOException | RuntimeException e) {
-                LOG.warn("[ExiledSector] Could not preload " + texture + " for the Storm Front", e);
-            }
-        }
+        List.of(CLOUD_TEXTURE, FLASH_TEXTURE, StormOverlay.HIT_GLOW_TEXTURE).forEach(SPRITES::ensureLoaded);
     }
 
     public String runId() {
@@ -123,22 +121,24 @@ public class StormFrontTerrainPlugin extends BaseTerrain {
     }
 
     @Override
-    public String getEffectCategory() {
-        return StormFront.TERRAIN_ID;
+    protected String nameKey() {
+        return "chart.storm.name";
     }
 
     @Override
-    public void advance(float amount) {
-        if (amount <= 0f || entity == null || entity.getContainingLocation() == null) {
-            return;
-        }
-        float elapsedDays = elapsedDays();
-        if (path().isDone(elapsedDays)) {
-            return;
-        }
-        Vector2f centre = path().centre(elapsedDays);
+    protected boolean shouldCheckFleetsToApplyEffect() {
+        return true;
+    }
+
+    @Override
+    protected boolean isGone() {
+        return isDone();
+    }
+
+    @Override
+    protected void advanceLive(float amount) {
+        Vector2f centre = path().centre(elapsedDays());
         entity.setFixedLocation(centre.x, centre.y);
-        super.advance(amount);
         if (entity.isInCurrentLocation()) {
             animate(amount);
         }
@@ -147,8 +147,25 @@ public class StormFrontTerrainPlugin extends BaseTerrain {
     @Override
     public void applyEffect(SectorEntityToken target, float days) {
         if (target instanceof CampaignFleetAPI fleet && fleet.getStats() != null) {
-            fleet.getStats().addTemporaryModMult(SENSOR_MOD_DAYS, getModId(), getTerrainName(), StormRules.SENSOR_RANGE_MULT,
+            fleet.getStats().addTemporaryModMult(SENSOR_MOD_DAYS, SENSOR_MOD_ID, getTerrainName(), StormRules.SENSOR_RANGE_MULT,
                     fleet.getStats().getSensorRangeMod());
+        }
+    }
+
+    static void liftFrom(CampaignFleetAPI fleet) {
+        if (fleet == null) {
+            return;
+        }
+        MutableFleetStatsAPI stats = fleet.getStats();
+        if (stats != null) {
+            stats.removeTemporaryMod(SENSOR_MOD_ID);
+            if (stats.getSensorRangeMod() != null) {
+                stats.getSensorRangeMod().unmodify(SENSOR_MOD_ID);
+            }
+        }
+        MemoryAPI fleetMemory = fleet.getMemoryWithoutUpdate();
+        if (fleetMemory != null) {
+            fleetMemory.unset(IN_FRONT_MEMORY_KEY);
         }
     }
 
@@ -164,7 +181,7 @@ public class StormFrontTerrainPlugin extends BaseTerrain {
 
     @Override
     public EnumSet<CampaignEngineLayers> getActiveLayers() {
-        return EnumSet.of(CampaignEngineLayers.TERRAIN_6);
+        return LAYERS;
     }
 
     static List<Puff> puffs(StormPath path, long seed) {
@@ -218,32 +235,15 @@ public class StormFrontTerrainPlugin extends BaseTerrain {
     }
 
     private boolean ensureSprites() {
-        if (cloudCells != null) {
+        if (cloudSheet != null) {
             return true;
         }
-        if (spritesFailed || !ensurePuffs()) {
+        if (!ensurePuffs()) {
             return false;
         }
-        try {
-            SpriteAPI[] cells = new SpriteAPI[SHEET_COLUMNS * SHEET_ROWS];
-            for (int cell = 0; cell < cells.length; cell++) {
-                SpriteAPI sheet = Global.getSettings().getSprite(CLOUD_TEXTURE);
-                float cellWidth = sheet.getTextureWidth() / SHEET_COLUMNS;
-                float cellHeight = sheet.getTextureHeight() / SHEET_ROWS;
-                sheet.setTexX(cell % SHEET_COLUMNS * cellWidth);
-                sheet.setTexY(cell / SHEET_COLUMNS * cellHeight);
-                sheet.setTexWidth(cellWidth);
-                sheet.setTexHeight(cellHeight);
-                cells[cell] = sheet;
-            }
-            flashSprite = Global.getSettings().getSprite(FLASH_TEXTURE);
-            cloudCells = cells;
-            return true;
-        } catch (RuntimeException e) {
-            spritesFailed = true;
-            LOG.error("[ExiledSector] The Storm Front could not load its cloud sprites", e);
-            return false;
-        }
+        flashSprite = SPRITES.sprite(FLASH_TEXTURE);
+        cloudSheet = flashSprite == null ? null : SPRITES.sprite(CLOUD_TEXTURE);
+        return cloudSheet != null;
     }
 
     private Vector2f puffPosition(Puff puff, Vector2f centre) {
@@ -273,13 +273,8 @@ public class StormFrontTerrainPlugin extends BaseTerrain {
                 continue;
             }
             float fade = endFade(puff.across(), bandLength);
-            SpriteAPI cloud = cloudCells[puff.cell()];
-            cloud.setSize(puff.size(), puff.size());
-            cloud.setAngle(puff.startFacing() + puff.spinDegreesPerSecond() * animationSeconds);
-            cloud.setColor(CLOUD_COLOUR);
-            cloud.setAdditiveBlend();
-            cloud.setAlphaMult(alpha * CLOUD_ALPHA * fade);
-            cloud.renderAtCenter(position.x, position.y);
+            SpriteDraw.drawCellAtCenter(cloudSheet, SHEET_COLUMNS, SHEET_ROWS, puff.cell(), position.x, position.y, puff.size(), puff.size(),
+                    puff.startFacing() + puff.spinDegreesPerSecond() * animationSeconds, CLOUD_COLOUR, alpha * CLOUD_ALPHA * fade, true);
             float flash = flashes[index];
             if (flash > 0f) {
                 float flashSize = puff.size() * FLASH_SIZE_MULT;
@@ -301,13 +296,9 @@ public class StormFrontTerrainPlugin extends BaseTerrain {
         float bandLength = path().bandLength();
         for (Puff puff : puffs) {
             Vector2f position = puffPosition(puff, centre);
-            SpriteAPI cloud = cloudCells[puff.cell()];
-            cloud.setSize(puff.size() * factor, puff.size() * factor);
-            cloud.setAngle(puff.startFacing());
-            cloud.setColor(CLOUD_COLOUR);
-            cloud.setAdditiveBlend();
-            cloud.setAlphaMult(alphaMult * MAP_ALPHA * endFade(puff.across(), bandLength));
-            cloud.renderAtCenter(position.x * factor, position.y * factor);
+            SpriteDraw.drawCellAtCenter(cloudSheet, SHEET_COLUMNS, SHEET_ROWS, puff.cell(), position.x * factor, position.y * factor,
+                    puff.size() * factor, puff.size() * factor, puff.startFacing(), CLOUD_COLOUR, alphaMult * MAP_ALPHA * endFade(puff.across(), bandLength),
+                    true);
         }
     }
 
@@ -351,23 +342,8 @@ public class StormFrontTerrainPlugin extends BaseTerrain {
     }
 
     @Override
-    public boolean hasTooltip() {
-        return true;
-    }
-
-    @Override
-    public boolean isTooltipExpandable() {
-        return false;
-    }
-
-    @Override
-    public void createTooltip(TooltipMakerAPI tooltip, boolean expanded) {
-        I18n.forGameText(() -> addTooltipLines(tooltip));
-    }
-
-    private void addTooltipLines(TooltipMakerAPI tooltip) {
+    protected void tooltipLines(TooltipMakerAPI tooltip) {
         Color text = Misc.getTextColor();
-        tooltip.addTitle(getTerrainName());
         VanillaText.plainPara(tooltip, Translation.gameText("chart.storm.description"), TOOLTIP_PAD, text);
         int sensorLess = Math.round((1f - StormRules.SENSOR_RANGE_MULT) * 100f);
         VanillaText.addPara(tooltip, Translation.msg("chart.storm.effect.sensors").arg("value", sensorLess).styled(), TOOLTIP_PAD, text);
@@ -375,15 +351,5 @@ public class StormFrontTerrainPlugin extends BaseTerrain {
         float lootMult = StormRules.lootQuantityMult(StormBattles.contextOf(StormBattles.runOf(this)));
         int itemIncrease = Math.round((lootMult - 1f) * 100f);
         VanillaText.addPara(tooltip, Translation.msg("chart.storm.effect.items").arg("value", itemIncrease).styled(), TOOLTIP_PAD, text);
-    }
-
-    @Override
-    public String getTerrainName() {
-        return Translation.gameText("chart.storm.name");
-    }
-
-    @Override
-    public String getNameForTooltip() {
-        return getTerrainName();
     }
 }

@@ -4,8 +4,7 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec.DropData;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageEntity;
-import exiledsector.charts.loot.ChartCargoLoot;
-import exiledsector.charts.loot.ChartLoot;
+import exiledsector.charts.anomaly.AnomalyLoot;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
 
@@ -15,12 +14,14 @@ import java.util.Random;
 
 public final class FacilityLoot {
 
+    static final AnomalyLoot LOOT = new AnomalyLoot(FacilityRules.LOOT_SCOPE, FacilityRules.LOOT_SITE, FacilityRules.LOOT_STEPS,
+            FacilityRules.LOOT_STEPS_PER_TIER, FacilityRules.ITEM_MULT, null, 0f);
+
     private FacilityLoot() {
     }
 
     public static CargoAPI roll(SectorAPI sector, ChartRun run, Random random) {
-        CargoAPI cargo = ChartCargoLoot.roll(sector, run, ChartLoot.PRE_COLLAPSE_FACILITY_SCOPE, FacilityRules.LOOT_SITE,
-                FacilityRules.lootSteps(run.tier()), FacilityRules.ITEM_MULT, random);
+        CargoAPI cargo = LOOT.roll(sector, run, List.of(), 1f, random);
         if (VaultsOfKnowledgeCompat.isModEnabled()) {
             cargo.addAll(SalvageEntity.generateSalvage(random, 1f, 1f, 1f, 1f, new ArrayList<>(), databankDrops(run.tier())));
             cargo.sort();

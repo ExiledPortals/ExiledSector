@@ -8,6 +8,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.skills.SocketedItem;
 import exiledsector.skills.skilleffect.special.SlotItemEffect;
 import exiledsector.loot.LootSource;
+import exiledsector.loot.MarketStock;
 import exiledsector.skills.ShipSections;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.HullUpgradesRefitButton;
@@ -26,6 +27,8 @@ public final class HullUpgradesDomain implements ExiledSectorDomain {
 
     public HullUpgradesDomain() {
         ShipSection.all().forEach(section -> SlotItemEffect.register(SocketedItem.HULL_ITEM, section.id(), section::displayName));
+        ItemStore.absorbStacksWith(RefitSchematic.STACK_ABSORBER);
+        ItemStore.absorbStacksWith(MasterSchematic.STACK_ABSORBER);
     }
 
     @Override
@@ -70,6 +73,11 @@ public final class HullUpgradesDomain implements ExiledSectorDomain {
 
     @Override
     public List<LootSource> lootSources() {
+        return List.of(HullUpgradeLootSource.INSTANCE);
+    }
+
+    @Override
+    public List<MarketStock> marketStocks() {
         return List.of(HullUpgradeLootSource.INSTANCE);
     }
 

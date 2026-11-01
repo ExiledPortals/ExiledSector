@@ -72,6 +72,7 @@ import exiledsector.items.WormholeAnchorLinks;
 import exiledsector.items.WormholeAnchorMigration;
 import exiledsector.loot.FleetDifficulty;
 import exiledsector.loot.LootSource;
+import exiledsector.loot.MarketStock;
 import exiledsector.persistence.RetiredReserveIds;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
@@ -128,6 +129,11 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
 
     @Override
     public List<FleetDifficulty> fleetDifficulties() {
+        return List.of(SkillTreeLootSource.INSTANCE);
+    }
+
+    @Override
+    public List<MarketStock> marketStocks() {
         return List.of(SkillTreeLootSource.INSTANCE);
     }
 

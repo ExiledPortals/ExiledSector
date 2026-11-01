@@ -1,17 +1,10 @@
 package exiledsector.charts.effect;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledsector.data.EnumKeys;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartGenerated;
 import exiledsector.charts.content.ChartPoi;
-import exiledsector.charts.anomaly.breach.SpatialBreach;
-import exiledsector.charts.anomaly.convoy.SupplyConvoy;
-import exiledsector.charts.anomaly.debris.AnomalousDebris;
-import exiledsector.charts.anomaly.excavation.ExcavationSites;
-import exiledsector.charts.anomaly.forge.DerelictForge;
-import exiledsector.charts.anomaly.heist.ListeningPost;
-import exiledsector.charts.anomaly.relay.RelayNetwork;
-import exiledsector.charts.anomaly.storm.StormFront;
 import exiledsector.i18n.Message;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
@@ -90,77 +83,80 @@ public enum ChartEffect implements ModifierEffect {
     CHART_COLONY_ITEM_PERCENT(DropType.COLONY_ITEM),
     CHART_BOSS_SPOILS_PERCENT(false, ChartGenContext::addBossSpoilsPercent),
     CHART_REWARD_PERCENT(false, ChartGenContext::addRewardPercent),
-    CHART_BREACH_GROWTH_PERCENT(false, (context, value) -> context.addAnomalyPercent(SpatialBreach.GROWTH_KEY, value)),
-    CHART_BREACH_CACHE_PERCENT(false, (context, value) -> context.addAnomalyPercent(SpatialBreach.CACHE_KEY, value)),
-    CHART_BREACH_CACHE_ITEM_PERCENT(false, (context, value) -> context.addAnomalyPercent(SpatialBreach.CACHE_ITEM_KEY, value)),
-    CHART_RELAY_COST_PERCENT(false, (context, value) -> context.addAnomalyPercent(RelayNetwork.COST_KEY, value)) {
-        @Override
-        public StyledText description(float magnitude) {
-            return Translation.msg(magnitude < 0f ? key() + REDUCED_SUFFIX : key()).arg("value", Math.abs(magnitude)).styled();
-        }
-    },
-    CHART_RELAY_CHAIN_STAGES(true, (context, value) -> context.addAnomalyPercent(RelayNetwork.STAGES_KEY, value)),
-    CHART_CONVOY_CARGO_PERCENT(false, (context, value) -> context.addAnomalyPercent(SupplyConvoy.CARGO_KEY, value)),
-    CHART_CONVOY_ESCORT_PERCENT(false, (context, value) -> context.addAnomalyPercent(SupplyConvoy.ESCORT_KEY, value)) {
-        @Override
-        public StyledText description(float magnitude) {
-            return Translation.msg(magnitude < 0f ? key() + REDUCED_SUFFIX : key()).arg("value", Math.abs(magnitude)).styled();
-        }
-    },
-    CHART_EXTRA_CONVOYS(true, (context, value) -> context.addAnomalyPercent(SupplyConvoy.EXTRA_KEY, value)),
-    CHART_EXTRA_ANOMALOUS_DEBRIS(true, (context, value) -> context.addAnomalyPercent(AnomalousDebris.EXTRA_KEY, Math.round(value))),
-    CHART_ANOMALOUS_DEBRIS_CURRENCY_QUANTITY_PERCENT(false, (context, value) -> context.addAnomalyPercent(AnomalousDebris.CURRENCY_KEY, value)),
-    CHART_EXTRA_EXCAVATION_SITES(true, (context, value) -> context.addAnomalyPercent(ExcavationSites.EXTRA_KEY, Math.round(value))),
-    CHART_EXCAVATION_LOOT_QUANTITY_PERCENT(false, (context, value) -> context.addAnomalyPercent(ExcavationSites.LOOT_KEY, value)),
-    CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT(false, (context, value) -> context.addAnomalyPercent(StormFront.LOOT_KEY, value)),
-    CHART_STORM_STRIKE_FREQUENCY_PERCENT(false, (context, value) -> context.addAnomalyPercent(StormFront.STRIKE_KEY, value)),
-    CHART_STORM_FRONT_SIZE_PERCENT(false, (context, value) -> context.addAnomalyPercent(StormFront.SIZE_KEY, value)),
-    CHART_FORGE_PROGRAMS(true, (context, value) -> context.addAnomalyPercent(DerelictForge.EXTRA_PROGRAMS_KEY, Math.round(value))),
-    CHART_FORGE_RUNS(true, (context, value) -> context.addAnomalyPercent(DerelictForge.EXTRA_RUNS_KEY, Math.round(value))),
-    CHART_FORGE_COST_PERCENT(false, (context, value) -> context.addAnomalyPercent(DerelictForge.COST_KEY, value)) {
-        @Override
-        public StyledText description(float magnitude) {
-            return Translation.msg(magnitude < 0f ? key() + REDUCED_SUFFIX : key()).arg("value", Math.abs(magnitude)).styled();
-        }
-    },
-    CHART_LISTENING_POST_PICKETS(true, (context, value) -> context.addAnomalyPercent(ListeningPost.PICKETS_KEY, Math.round(value))),
-    CHART_LISTENING_POST_LOOT_QUANTITY_PERCENT(false, (context, value) -> context.addAnomalyPercent(ListeningPost.LOOT_KEY, value)),
-    CHART_LISTENING_POST_PURGE_PERCENT(false, (context, value) -> context.addAnomalyPercent(ListeningPost.PURGE_KEY, value)) {
-        @Override
-        public StyledText description(float magnitude) {
-            return Translation.msg(magnitude < 0f ? key() + INCREASED_SUFFIX : key()).arg("value", Math.abs(magnitude)).styled();
-        }
-    };
+    CHART_BREACH_GROWTH_PERCENT("spatial_breach.growth", AnomalyLine.PERCENT),
+    CHART_BREACH_CACHE_PERCENT("spatial_breach.caches", AnomalyLine.PERCENT),
+    CHART_BREACH_CACHE_ITEM_PERCENT("spatial_breach.cacheItems", AnomalyLine.PERCENT),
+    CHART_RELAY_COST_PERCENT("relay_network.cost", AnomalyLine.PERCENT_REDUCED_WHEN_NEGATIVE),
+    CHART_RELAY_CHAIN_STAGES("relay_network.stages", AnomalyLine.COUNT),
+    CHART_CONVOY_CARGO_PERCENT("supply_convoy.cargo", AnomalyLine.PERCENT),
+    CHART_CONVOY_ESCORT_PERCENT("supply_convoy.escort", AnomalyLine.PERCENT_REDUCED_WHEN_NEGATIVE),
+    CHART_EXTRA_CONVOYS("supply_convoy.extra", AnomalyLine.COUNT),
+    CHART_EXTRA_ANOMALOUS_DEBRIS("anomalous_debris.extra", AnomalyLine.COUNT),
+    CHART_ANOMALOUS_DEBRIS_CURRENCY_QUANTITY_PERCENT("anomalous_debris.currency", AnomalyLine.PERCENT),
+    CHART_EXTRA_EXCAVATION_SITES("excavation_sites.extra", AnomalyLine.COUNT),
+    CHART_EXCAVATION_LOOT_QUANTITY_PERCENT("excavation_sites.loot", AnomalyLine.PERCENT),
+    CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT("storm_front.loot", AnomalyLine.PERCENT),
+    CHART_STORM_STRIKE_FREQUENCY_PERCENT("storm_front.strikes", AnomalyLine.PERCENT),
+    CHART_STORM_FRONT_SIZE_PERCENT("storm_front.size", AnomalyLine.PERCENT),
+    CHART_FORGE_PROGRAMS("derelict_forge.extraPrograms", AnomalyLine.COUNT),
+    CHART_FORGE_RUNS("derelict_forge.extraRuns", AnomalyLine.COUNT),
+    CHART_FORGE_COST_PERCENT("derelict_forge.cost", AnomalyLine.PERCENT_REDUCED_WHEN_NEGATIVE),
+    CHART_LISTENING_POST_PICKETS("listening_post.pickets", AnomalyLine.COUNT),
+    CHART_LISTENING_POST_LOOT_QUANTITY_PERCENT("listening_post.loot", AnomalyLine.PERCENT),
+    CHART_LISTENING_POST_PURGE_PERCENT("listening_post.purge", AnomalyLine.PERCENT_INCREASED_WHEN_NEGATIVE);
 
     static final String KEY_PREFIX = "chart.effect.";
-    static final String REDUCED_SUFFIX = ".reduced";
-    static final String INCREASED_SUFFIX = ".increased";
 
     private interface Contribution {
         void addTo(ChartGenContext context, float value);
     }
 
+    private enum AnomalyLine {
+        PERCENT(false, null),
+        PERCENT_REDUCED_WHEN_NEGATIVE(false, ".reduced"),
+        PERCENT_INCREASED_WHEN_NEGATIVE(false, ".increased"),
+        COUNT(true, null);
+
+        private final boolean counted;
+        private final String negativeKeySuffix;
+
+        AnomalyLine(boolean counted, String negativeKeySuffix) {
+            this.counted = counted;
+            this.negativeKeySuffix = negativeKeySuffix;
+        }
+    }
+
     private final boolean counted;
     private final DropType dropType;
     private final ChartFleetStat fleetStat;
+    private final String anomalyTuningKey;
+    private final String negativeKeySuffix;
     private final Contribution contribution;
 
     ChartEffect(boolean counted, Contribution contribution) {
-        this(counted, null, null, contribution);
+        this(counted, null, null, null, null, contribution);
     }
 
     ChartEffect(DropType dropType) {
-        this(false, dropType, null, (context, value) -> context.addDropPercent(dropType, value));
+        this(false, dropType, null, null, null, (context, value) -> context.addDropPercent(dropType, value));
     }
 
     ChartEffect(ChartFleetStat fleetStat) {
-        this(false, null, fleetStat, (context, value) -> context.addFleetStatPercent(fleetStat, value));
+        this(false, null, fleetStat, null, null, (context, value) -> context.addFleetStatPercent(fleetStat, value));
     }
 
-    ChartEffect(boolean counted, DropType dropType, ChartFleetStat fleetStat, Contribution contribution) {
+    ChartEffect(String anomalyTuningKey, AnomalyLine line) {
+        this(line.counted, null, null, anomalyTuningKey, line.negativeKeySuffix,
+                (context, value) -> context.addAnomalyPercent(anomalyTuningKey, line.counted ? Math.round(value) : value));
+    }
+
+    ChartEffect(boolean counted, DropType dropType, ChartFleetStat fleetStat, String anomalyTuningKey, String negativeKeySuffix,
+                Contribution contribution) {
         this.counted = counted;
         this.dropType = dropType;
         this.fleetStat = fleetStat;
+        this.anomalyTuningKey = anomalyTuningKey;
+        this.negativeKeySuffix = negativeKeySuffix;
         this.contribution = contribution;
     }
 
@@ -170,6 +166,10 @@ public enum ChartEffect implements ModifierEffect {
 
     public DropType dropType() {
         return dropType;
+    }
+
+    public String anomalyTuningKey() {
+        return anomalyTuningKey;
     }
 
     public boolean canRoll(SectorAPI sector) {
@@ -182,6 +182,9 @@ public enum ChartEffect implements ModifierEffect {
 
     @Override
     public StyledText description(float magnitude) {
+        if (negativeKeySuffix != null) {
+            return Translation.msg(magnitude < 0f ? key() + negativeKeySuffix : key()).arg("value", Math.abs(magnitude)).styled();
+        }
         Message message = Translation.msg(key());
         if (counted) {
             int count = Math.round(magnitude);
@@ -198,11 +201,12 @@ public enum ChartEffect implements ModifierEffect {
     }
 
     public static ChartEffect byNameOrNull(String effectName) {
-        if (effectName == null) {
-            return null;
-        }
+        return EnumKeys.parse(ChartEffect.class, effectName);
+    }
+
+    public static ChartEffect forDropType(DropType type) {
         for (ChartEffect effect : values()) {
-            if (effect.name().equalsIgnoreCase(effectName.trim())) {
+            if (type != null && effect.dropType == type) {
                 return effect;
             }
         }

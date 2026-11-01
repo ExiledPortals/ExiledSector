@@ -9,6 +9,7 @@ public enum DecorationDepth {
     CREATURES(false),
     FOREGROUND_IMAGES(false),
     UNITS(false),
+    FLEETS(false),
     STAR_GLOW(true);
 
     private final boolean overTree;

@@ -2,19 +2,19 @@ package exiledsector.charts.atlas;
 
 import exiledsector.ModCsv;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.data.CsvRows;
 import exiledsector.items.WeightedPick;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
+import exiledsector.data.EnumKeys;
+import exiledsector.compat.ChartModGates;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
@@ -31,16 +31,11 @@ public final class AtlasCatalysts {
         ORDERS;
 
         public String key() {
-            return name().toLowerCase(Locale.ROOT);
+            return EnumKeys.key(this);
         }
 
         static Family byKey(String key) {
-            for (Family family : values()) {
-                if (family.key().equals(key)) {
-                    return family;
-                }
-            }
-            return null;
+            return EnumKeys.parse(Family.class, key);
         }
     }
 
@@ -50,19 +45,11 @@ public final class AtlasCatalysts {
         REDEPLOY;
 
         public String key() {
-            return name().toLowerCase(Locale.ROOT);
+            return EnumKeys.key(this);
         }
 
         static Effect byKey(String key) {
-            if (key.isEmpty()) {
-                return ANOMALY;
-            }
-            for (Effect effect : values()) {
-                if (effect.key().equals(key)) {
-                    return effect;
-                }
-            }
-            return null;
+            return key.isEmpty() ? ANOMALY : EnumKeys.parse(Effect.class, key);
         }
     }
 
@@ -124,7 +111,7 @@ public final class AtlasCatalysts {
 
     static boolean needsMissingMod(String anomalyId) {
         ChartAnomalies.Definition definition = ChartAnomalies.definition(anomalyId);
-        return definition != null && !ChartPois.modRequirementMet(definition.requiredMod());
+        return definition != null && !ChartModGates.met(definition.requiredMod());
     }
 
     private static String skipReason(Effect effect, String anomalyId, String icon) {

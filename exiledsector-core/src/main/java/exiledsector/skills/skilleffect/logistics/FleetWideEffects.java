@@ -51,25 +51,39 @@ public final class FleetWideEffects {
             return;
         }
         List<FleetMemberAPI> members = fleet.getFleetData().getMembersListCopy();
-        float[] strengths = new float[members.size()];
-        boolean[] alwaysCounts = new boolean[members.size()];
-        boolean any = false;
-        for (int i = 0; i < members.size(); i++) {
-            FleetMemberAPI member = members.get(i);
-            if (member.isMothballed()) {
-                continue;
-            }
-            strengths[i] = Math.round(member.getStats().getSensorStrength().getModifiedValue());
-            alwaysCounts[i] = member.getStats().getDynamic().getValue(SENSOR_STRENGTH_ALWAYS_COUNTS_KEY, 0f) > 0f;
-            any |= alwaysCounts[i];
-        }
-        float extra = any ? strengthLeftOutOfTheTop(strengths, alwaysCounts, maxSensorShips()) : 0f;
+        float extra = anyAlwaysCounts(members) ? alwaysCountingStrength(members) : 0f;
         if (extra > 0f) {
             fleet.getStats().getSensorStrengthMod().modifyFlat(ExiledSector.key(SENSOR_STRENGTH_ALWAYS_COUNTS_FLEET_MOD), extra,
                     Translation.gameText("fleet.sensorStrengthAlwaysCounts"));
         } else {
             fleet.getStats().getSensorStrengthMod().unmodifyFlat(ExiledSector.key(SENSOR_STRENGTH_ALWAYS_COUNTS_FLEET_MOD));
         }
+    }
+
+    private static boolean alwaysCounts(FleetMemberAPI member) {
+        return !member.isMothballed() && member.getStats().getDynamic().getValue(SENSOR_STRENGTH_ALWAYS_COUNTS_KEY, 0f) > 0f;
+    }
+
+    private static boolean anyAlwaysCounts(List<FleetMemberAPI> members) {
+        for (FleetMemberAPI member : members) {
+            if (alwaysCounts(member)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static float alwaysCountingStrength(List<FleetMemberAPI> members) {
+        float[] strengths = new float[members.size()];
+        boolean[] alwaysCounts = new boolean[members.size()];
+        for (int i = 0; i < members.size(); i++) {
+            FleetMemberAPI member = members.get(i);
+            if (!member.isMothballed()) {
+                strengths[i] = Math.round(member.getStats().getSensorStrength().getModifiedValue());
+                alwaysCounts[i] = alwaysCounts(member);
+            }
+        }
+        return strengthLeftOutOfTheTop(strengths, alwaysCounts, maxSensorShips());
     }
 
     static float strengthLeftOutOfTheTop(float[] strengths, boolean[] alwaysCounts, int counted) {

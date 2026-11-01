@@ -34,14 +34,12 @@ public class AtlasAnomalyCommand extends AtlasTargetCommand {
         if (action.equals(MOVE) || action.equals(REMOVE)) {
             Integer recordId = rest.size() == 2 ? ConsoleArgs.wholeNumber(rest.get(1), 1, Integer.MAX_VALUE) : null;
             if (recordId == null) {
-                Console.showMessage("Give one record number after " + action + ".\nUsage: " + usage());
-                return CommandResult.BAD_SYNTAX;
+                return badSyntax("Give one record number after " + action + ".");
             }
             return action.equals(MOVE) ? move(generator, state, cell, recordId) : remove(state, cell, recordId);
         }
         if (rest.size() > 2 || rest.size() == 2 && !rest.get(1).equalsIgnoreCase(WORLD)) {
-            Console.showMessage("Can't use \"" + String.join(" ", rest) + "\".\nUsage: " + usage());
-            return CommandResult.BAD_SYNTAX;
+            return badSyntax(rest);
         }
         AtlasAnomalyRecord.Source source = rest.size() == 2 ? AtlasAnomalyRecord.Source.WORLD : AtlasAnomalyRecord.Source.PLAYER;
         AtlasAnomalies.Insertion insertion = AtlasAnomalies.insert(generator, state, cell, rest.get(0), source, AtlasAnomalies.openRunCell());

@@ -47,8 +47,7 @@ final class DeathExplosionListener extends ShipCombatListener implements LethalH
         float damage = fuelDamage();
 
         // Intended: the blast hits every nearby ship, friendlies included.
-        List<ShipAPI> nearby = CombatQueries.shipsMatching(other -> other != ownerShip && !other.isHulk() && !other.isShuttlePod()
-                && CombatQueries.withinRadius(other.getLocation(), loc, radius));
+        List<ShipAPI> nearby = CombatQueries.shipsWithin(loc, radius, other -> other != ownerShip && !other.isHulk() && !other.isShuttlePod());
         for (ShipAPI other : nearby) {
             float distance = Vector2f.sub(other.getLocation(), loc, null).length();
             float dealt = damage * (radius - distance) / radius;

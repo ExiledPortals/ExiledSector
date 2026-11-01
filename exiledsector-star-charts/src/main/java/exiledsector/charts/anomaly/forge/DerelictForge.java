@@ -1,30 +1,31 @@
 package exiledsector.charts.anomaly.forge;
 
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
-import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.anomaly.AnomalyContentSite;
-import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.AnomalyRun;
+import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.anomaly.OrbitSearch;
+import exiledsector.charts.anomaly.RunParticipant;
+import exiledsector.charts.anomaly.VanillaDefenders;
 import exiledsector.charts.content.ChartSites;
-import exiledsector.charts.run.ChartRun;
-import exiledsector.charts.run.ChartRuns;
 
 import java.util.List;
 import java.util.Random;
 
-public final class DerelictForge implements ChartAnomaly {
+public final class DerelictForge implements ContentPlacer, RunParticipant {
 
     public static final String ANOMALY_ID = "derelict_forge";
-    public static final String EXTRA_PROGRAMS_KEY = ANOMALY_ID + ".extraPrograms";
-    public static final String EXTRA_RUNS_KEY = ANOMALY_ID + ".extraRuns";
-    public static final String COST_KEY = ANOMALY_ID + ".cost";
+    public static final String EXTRA_PROGRAMS_KEY = ChartEffect.CHART_FORGE_PROGRAMS.anomalyTuningKey();
+    public static final String EXTRA_RUNS_KEY = ChartEffect.CHART_FORGE_RUNS.anomalyTuningKey();
+    public static final String COST_KEY = ChartEffect.CHART_FORGE_COST_PERCENT.anomalyTuningKey();
     public static final String FORGE_TAG = ChartIds.PREFIX + "derelict_forge";
     public static final DerelictForge INSTANCE = new DerelictForge();
     static final String ENTITY_TYPE = ChartIds.PREFIX + "derelict_forge_station";
@@ -40,22 +41,13 @@ public final class DerelictForge implements ChartAnomaly {
 
     @Override
     public void generate(AnomalyContentSite site) {
-        ChartRun run = ChartRuns.currentOrNull();
-        if (run == null || !run.runId().equals(site.runId())) {
-            throw new IllegalStateException("no run to record the derelict forge in");
-        }
-        place(site, run);
+        place(site);
     }
 
-    static SectorEntityToken place(AnomalyContentSite site, ChartRun run) {
-        StarSystemAPI system = site.system();
-        SectorEntityToken centre = system.getCenter() != null ? system.getCenter() : system.getStar();
+    static SectorEntityToken place(AnomalyContentSite site) {
         Random random = site.random(PLACEMENT_SALT);
-        ChartSites.Orbit orbit = null;
-        for (int band = 0; orbit == null && centre != null && band < ForgeRules.ORBIT_BANDS; band++) {
-            float bandMin = ForgeRules.ORBIT_MIN + band * ForgeRules.ORBIT_BAND_WIDTH;
-            orbit = site.clearOrbit(centre, bandMin, bandMin + ForgeRules.ORBIT_BAND_WIDTH, random);
-        }
+        ChartSites.Orbit orbit = site.clearOrbit(OrbitSearch.bands(site.centre(), ForgeRules.ORBIT_MIN, ForgeRules.ORBIT_BAND_WIDTH, ForgeRules.ORBIT_BANDS),
+                random);
         if (orbit == null) {
             throw new IllegalStateException("no clear orbit for the derelict forge");
         }
@@ -63,8 +55,8 @@ public final class DerelictForge implements ChartAnomaly {
                 ForgeRules.programCount(site.context().anomalyPercent(EXTRA_PROGRAMS_KEY)), random);
         SectorEntityToken forge = site.addEntity(forgeId(site.runId()), Translation.gameText("chart.forge.name"), ENTITY_TYPE, Factions.NEUTRAL, orbit);
         forge.addTag(FORGE_TAG);
-        ForgeGuards.arm(forge, site.random(ForgeGuards.GUARD_SALT).nextLong());
-        ForgeStates.record(run, programs, ForgeRules.runCount(site.context().anomalyPercent(EXTRA_RUNS_KEY)));
+        VanillaDefenders.arm(forge, site.random(ForgeGuards.GUARD_SALT).nextLong());
+        ForgeStates.record(site.state(ANOMALY_ID), programs, ForgeRules.runCount(site.context().anomalyPercent(EXTRA_RUNS_KEY)));
         return forge;
     }
 
@@ -76,30 +68,20 @@ public final class DerelictForge implements ChartAnomaly {
         return entity != null && entity.hasTag(FORGE_TAG);
     }
 
-    static boolean inRunSystem(ChartRun run, LocationAPI location) {
-        return run != null && run.runState().isLive() && location != null && run.systemId().equals(ChartIds.locationIdOf(location));
-    }
-
-    @Override
-    public boolean isActiveIn(LocationAPI location) {
-        ChartRun run = ChartRuns.currentOrNull();
-        return inRunSystem(run, location) && ForgeStates.runsLeft(run) > 0;
-    }
-
     @Override
     public void loadData() {
         ForgePrograms.load();
     }
 
     @Override
-    public InteractionDialogPlugin dialogFor(SectorEntityToken target) {
+    public InteractionDialogPlugin dialogFor(AnomalyRun run, SectorEntityToken target) {
         return isForge(target) ? new ForgeDialog() : null;
     }
 
     @Override
-    public String intelText(ChartRun run, LocationAPI location) {
-        int runsLeft = ForgeStates.runsLeft(run);
-        List<ForgePrograms.Program> programs = ForgeStates.programs(run);
+    public String intelText(AnomalyRun run) {
+        int runsLeft = ForgeStates.runsLeft(run.run());
+        List<ForgePrograms.Program> programs = ForgeStates.programs(run.run());
         if (runsLeft <= 0 || programs.isEmpty()) {
             return null;
         }

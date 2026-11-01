@@ -13,31 +13,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class GrantStarChartsCommand extends PlayerFleetCommand {
+public class GrantStarChartsCommand extends RandomPlayerFleetCommand {
 
     static final int DEFAULT_COUNT = 5;
     static final int MAX_COUNT = 50;
     static final int DEFAULT_TIER = StarChart.LOWEST_TIER;
 
-    private final Random random;
-
     public GrantStarChartsCommand() {
-        this(new Random());
     }
 
     GrantStarChartsCommand(Random random) {
-        this.random = random;
+        super(random);
     }
 
     record GrantArguments(int count, int tier, String problem) {
 
         static GrantArguments parse(String args) {
-            String[] tokens = args == null || args.isBlank() ? new String[0] : args.trim().split("\\s+");
-            if (tokens.length > 2) {
+            List<String> tokens = ConsoleArgs.tokens(args);
+            if (tokens.size() > 2) {
                 return problem("Give at most a count and a tier.");
             }
-            Integer count = tokens.length > 0 ? ConsoleArgs.wholeNumber(tokens[0], 1, MAX_COUNT) : Integer.valueOf(DEFAULT_COUNT);
-            Integer tier = tokens.length > 1 ? ConsoleArgs.wholeNumber(tokens[1], StarChart.LOWEST_TIER, StarChart.CORRUPTED_TIER)
+            Integer count = !tokens.isEmpty() ? ConsoleArgs.wholeNumber(tokens.get(0), 1, MAX_COUNT) : Integer.valueOf(DEFAULT_COUNT);
+            Integer tier = tokens.size() > 1 ? ConsoleArgs.wholeNumber(tokens.get(1), StarChart.LOWEST_TIER, StarChart.CORRUPTED_TIER)
                     : Integer.valueOf(DEFAULT_TIER);
             if (count == null) {
                 return problem("The count must be a whole number from 1 to " + MAX_COUNT + ".");

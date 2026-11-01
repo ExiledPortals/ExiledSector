@@ -14,9 +14,11 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.submarkets.BaseSubmarketPlugin;
 import exiledsector.PlayerFleet;
 import exiledsector.compat.RandomAssortmentCompat;
+import exiledsector.domain.DomainContributions;
+import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.items.ItemData;
-import exiledsector.loot.LootSource;
 import exiledsector.loot.LootSources;
+import exiledsector.loot.MarketStock;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -27,6 +29,8 @@ public class MarketItemStock implements SubmarketUpdateListener, ColonyInteracti
 
     static final String ROLLED_RESTOCK_KEY_PREFIX = "$exiledSector_itemStockRolledAt_";
     private static final Logger LOG = Logger.getLogger(MarketItemStock.class);
+    private static final DomainContributions<MarketStock> EVERY_STOCK = DomainContributions.fromEveryDomain(ExiledSectorDomain::marketStocks);
+    private static final DomainContributions<MarketStock> ENABLED_STOCK = new DomainContributions<>(ExiledSectorDomain::marketStocks);
     private final Random random;
 
     public MarketItemStock() {
@@ -47,11 +51,23 @@ public class MarketItemStock implements SubmarketUpdateListener, ColonyInteracti
                 return;
             }
             CargoAPI cargo = submarket.getCargo();
-            for (LootSource source : LootSources.all()) {
-                source.stockSubmarket(submarket, cargo, random);
+            EVERY_STOCK.all().forEach(stock -> removeListings(cargo, stock));
+            for (MarketStock stock : ENABLED_STOCK.all()) {
+                for (ItemData item : stock.restock(submarket, random)) {
+                    cargo.addSpecial(item.toMarketListing(), 1f);
+                }
             }
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Stocking market items failed", e);
+        }
+    }
+
+    private static void removeListings(CargoAPI cargo, MarketStock stock) {
+        for (CargoStackAPI stack : cargo.getStacksCopy()) {
+            SpecialItemData special = stack.isSpecialStack() ? stack.getSpecialDataIfSpecial() : null;
+            if (ItemData.isMarketListing(special) && stock.isOwnListing(ItemData.of(special))) {
+                cargo.removeStack(stack);
+            }
         }
     }
 

@@ -3,8 +3,7 @@ package exiledsector.items;
 import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.atlas.AtlasCatalysts;
-import exiledsector.ui.cargo.CargoIconLook;
-import exiledsector.ui.cargo.CatalystLook;
+import exiledsector.charts.atlas.AtlasNames;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -33,10 +32,6 @@ public final class AtlasCatalystItems {
         };
     }
 
-    public static CargoIconLook look(AtlasCatalysts.Family family) {
-        return CargoIconLook.withArt(color(family), new CatalystLook(family));
-    }
-
     public static List<Carried> carried(CraftingMaterials materials) {
         List<Carried> carried = new ArrayList<>();
         for (AtlasCatalysts.Family family : AtlasCatalysts.Family.values()) {
@@ -62,7 +57,7 @@ public final class AtlasCatalystItems {
         if (catalyst.effect() == AtlasCatalysts.Effect.REDEPLOY) {
             return Translation.text("catalyst.redeploys");
         }
-        return Translation.msg("catalyst.adds").arg("anomaly", Translation.text("chart.atlas.anomaly." + catalyst.anomalyId())).text();
+        return Translation.msg("catalyst.adds").arg("anomaly", AtlasNames.anomaly(catalyst.anomalyId())).text();
     }
 
     public static String flavourKey(AtlasCatalysts.Family family) {

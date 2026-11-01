@@ -9,7 +9,6 @@ import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;
 import exiledsector.ui.util.SpriteDraw;
-import exiledsector.ui.util.TexturedQuadBatch;
 import exiledsector.ui.util.UnitCircle;
 import org.apache.log4j.Logger;
 import org.lwjgl.opengl.GL11;
@@ -25,9 +24,7 @@ public final class AnchorIconFx {
     static final String TUNNEL_TEXTURE = "graphics/fx/radial_fx.png";
     static final String HALO_TEXTURE = "graphics/fx/star_halo.png";
     static final String RING_TEXTURE = "graphics/fx/shields256ringd.png";
-    static final String LIGHT_TEXTURE = "graphics/fx/glow64.png";
     static final String BUNDLED_CREST_DIRECTORY = "graphics/icons/crests/";
-    static final float IDLE_WAVE = -10f;
     private static final float DESIGN_SIZE = 80f;
     private static final float DESIGN_CENTRE = 40f;
     private static final float GEM_X = 36.5f;
@@ -76,15 +73,6 @@ public final class AnchorIconFx {
     private static final Color PLATE_FILL = new Color(88, 116, 124);
     private static final Color PLATE_TRIM = new Color(176, 104, 58);
     private static final Color THERMAL_CORE = new Color(255, 70, 40);
-    private static final float FRAME_OUTER = 39f;
-    private static final float FRAME_LINE_INNER = 37.5f;
-    private static final float FRAME_GLOW_INNER = 35f;
-    private static final float FRAME_HALF = 38.25f;
-    private static final int LIGHTS_PER_SIDE = 10;
-    private static final float LIGHT_SPACING = 0.2f;
-    private static final float LIGHT_WIDTH = 0.13f;
-    private static final float LIGHT_IDLE_SIZE = 3f;
-    private static final float LIGHT_LIT_SIZE = 6f;
     private static final float WAVE_OFFSET = 0.79f;
     private static final float WAVE_SPAN = 2.8f;
     private static final float WAVE_START = -0.2f;
@@ -99,7 +87,6 @@ public final class AnchorIconFx {
     private static final Color BADGE_RIM = new Color(20, 22, 28);
     private static final Logger LOG = Logger.getLogger(AnchorIconFx.class);
     private static final Map<String, String> CREST_PATHS = new HashMap<>();
-    private static final TexturedQuadBatch LIGHT_BATCH = new TexturedQuadBatch();
 
     private AnchorIconFx() {
     }
@@ -120,8 +107,8 @@ public final class AnchorIconFx {
         float reach = tunnelReach(inset);
         Color color = look.color();
         float t = CargoIconFx.seconds() + CargoIconFx.hash(phaseSeed, 1, 1) * CYCLE_SECONDS;
-        float cycle = cycleOf(t);
-        float wave = animated ? wave(cycle) : IDLE_WAVE;
+        float cycle = Fade.cycle(t, CYCLE_SECONDS);
+        float wave = animated ? wave(cycle) : IconFxKit.IDLE_WAVE;
 
         if (animated) {
             drawTunnel(sprites, color, gemX, gemY, reach * unit, t, (TUNNEL_IDLE_ALPHA + TUNNEL_OPEN_ALPHA * openness(cycle)) * alphaMult);
@@ -129,7 +116,7 @@ public final class AnchorIconFx {
         CargoIconFx.drawIcon(sprites, iconPath, cx, cy, size * inset, alphaMult);
         boolean plateShutters = anchor != null && anchor.style() == AnchorLook.Style.PLATE_SHUTTERS;
         if (animated) {
-            Color haloTint = plateShutters ? THERMAL_CORE : lighten(color, 0.35f);
+            Color haloTint = plateShutters ? THERMAL_CORE : CargoIconFx.lighten(color, 0.35f);
             drawAperture(sprites, haloTint, gemX, gemY, unit, openness(cycle), alphaMult);
             drawInfallRings(sprites, color, gemX, gemY, unit, reach, cycle, t, alphaMult);
             if (plateShutters) {
@@ -139,29 +126,23 @@ public final class AnchorIconFx {
             }
         }
         if (framed) {
-            drawFrame(color, cx, cy, unit, alphaMult);
-            drawLights(sprites, color, cx, cy, unit, wave, alphaMult);
+            IconFxKit.drawBorder(sprites, color, cx, cy, unit, wave, 0f, alphaMult);
         }
         float flash = animated && framed ? badgeFlash(wave) : 0f;
         drawBadge(sprites, crestPath(anchor == null ? null : anchor.crestFactionId()), color, left + BADGE_CENTRE_X * unit,
                 bottom + BADGE_CENTRE_Y * unit, unit, framed, flash, alphaMult);
     }
 
-    static float cycleOf(float seconds) {
-        float cycle = seconds % CYCLE_SECONDS / CYCLE_SECONDS;
-        return cycle < 0f ? cycle + 1f : cycle;
-    }
-
     static float openness(float cycle) {
-        return smooth(OPEN_START, OPEN_FULL, cycle) * (1f - smooth(CLOSE_START, CLOSE_END, cycle));
+        return Fade.window(OPEN_START, OPEN_FULL, cycle) * (1f - Fade.window(CLOSE_START, CLOSE_END, cycle));
     }
 
     static float lockTravel(float cycle) {
-        return smooth(0f, LOCK_TRAVEL_END, cycle);
+        return Fade.window(0f, LOCK_TRAVEL_END, cycle);
     }
 
     static float lockAlpha(float cycle) {
-        float alpha = smooth(0f, LOCK_FADE_IN, cycle) * (1f - smooth(LOCK_BLINK_END, LOCK_FADE_END, cycle));
+        float alpha = Fade.window(0f, LOCK_FADE_IN, cycle) * (1f - Fade.window(LOCK_BLINK_END, LOCK_FADE_END, cycle));
         if (cycle > LOCK_TRAVEL_END && cycle < LOCK_BLINK_END && (int) ((cycle - LOCK_TRAVEL_END) / LOCK_BLINK_STEP) % 2 == 1) {
             alpha *= LOCK_BLINK_DIM;
         }
@@ -176,11 +157,6 @@ public final class AnchorIconFx {
         return (cycle + WAVE_OFFSET) % 1f * WAVE_SPAN + WAVE_START;
     }
 
-    static float lightLevel(float distance, float wave) {
-        float offset = (distance - wave) / LIGHT_WIDTH;
-        return (float) Math.exp(-offset * offset);
-    }
-
     static float badgeFlash(float wave) {
         float offset = (wave - WAVE_ARRIVAL) / FLASH_WIDTH;
         return (float) Math.exp(-offset * offset);
@@ -193,28 +169,7 @@ public final class AnchorIconFx {
     }
 
     static float tunnelFade(float ring) {
-        return smooth(TUNNEL_RINGS[0], 0.3f, ring) * (1f - smooth(0.62f, 1f, ring));
-    }
-
-    static float[] framePoint(int path, float distance) {
-        float along = distance < 1f ? distance : distance - 1f;
-        float edge = -FRAME_HALF + along * 2f * FRAME_HALF;
-        if (path == 0) {
-            return distance < 1f ? new float[]{edge, -FRAME_HALF} : new float[]{FRAME_HALF, edge};
-        }
-        return distance < 1f ? new float[]{-FRAME_HALF, edge} : new float[]{edge, FRAME_HALF};
-    }
-
-    static float smooth(float from, float to, float value) {
-        return Fade.smooth(Math.max(0f, Math.min(1f, (value - from) / (to - from))));
-    }
-
-    static Color lighten(Color color, float amount) {
-        return new Color(lightenChannel(color.getRed(), amount), lightenChannel(color.getGreen(), amount), lightenChannel(color.getBlue(), amount));
-    }
-
-    private static int lightenChannel(int channel, float amount) {
-        return Math.round(channel + (255 - channel) * amount);
+        return Fade.window(TUNNEL_RINGS[0], 0.3f, ring) * (1f - Fade.window(0.62f, 1f, ring));
     }
 
     private static void drawTunnel(SpriteCache sprites, Color color, float gemX, float gemY, float radius, float t, float alpha) {
@@ -280,7 +235,7 @@ public final class AnchorIconFx {
                 continue;
             }
             if (tint == null) {
-                tint = lighten(color, 0.4f);
+                tint = CargoIconFx.lighten(color, 0.4f);
             }
             float radius = ((reach - RING_MIN_RADIUS) * (float) Math.pow(1f - progress, 1.4) + RING_MIN_RADIUS) * unit;
             float alpha = (float) Math.sin(progress * Math.PI) * 0.85f * alphaMult;
@@ -302,7 +257,7 @@ public final class AnchorIconFx {
         float distance = startDistance - (startDistance - LOCK_END_DISTANCE) * travel;
         float arm = LOCK_ARM - travel;
         try (GlScope scope = GlScope.flat().additive().lineWidth(Math.max(1f, 1.4f * unit))) {
-            Misc.setColor(lighten(color, 0.5f), alpha);
+            Misc.setColor(CargoIconFx.lighten(color, 0.5f), alpha);
             GL11.glBegin(GL11.GL_LINES);
             for (int quarter = 0; quarter < 4; quarter++) {
                 double angle = Math.PI / 4.0 + quarter * Math.PI / 2.0 + (1f - travel) * LOCK_SWING;
@@ -319,12 +274,12 @@ public final class AnchorIconFx {
 
     static float plateGap(float cycle, float startDistance) {
         float closing = 1f - lockTravel(cycle);
-        float parting = smooth(OPEN_START, LOCK_FADE_END, cycle);
+        float parting = Fade.window(OPEN_START, LOCK_FADE_END, cycle);
         return PLATE_CLOSED_GAP + (startDistance - PLATE_CLOSED_GAP) * Math.min(1f, closing + parting);
     }
 
     static float plateAlpha(float cycle) {
-        return smooth(0f, LOCK_FADE_IN, cycle) * (1f - smooth(LOCK_BLINK_END, LOCK_FADE_END, cycle));
+        return Fade.window(0f, LOCK_FADE_IN, cycle) * (1f - Fade.window(LOCK_BLINK_END, LOCK_FADE_END, cycle));
     }
 
     static float seamGlow(float cycle) {
@@ -347,7 +302,7 @@ public final class AnchorIconFx {
             }
             scope.additive().lineWidth(Math.max(1f, 1.2f * unit));
             for (int side = -1; side <= 1; side += 2) {
-                Misc.setColor(lighten(color, 0.5f), alpha);
+                Misc.setColor(CargoIconFx.lighten(color, 0.5f), alpha);
                 plateOutline(gemX, gemY, unit, side, gap, GL11.GL_LINE_LOOP);
                 Misc.setColor(PLATE_TRIM, alpha);
                 GL11.glBegin(GL11.GL_LINES);
@@ -387,55 +342,6 @@ public final class AnchorIconFx {
         GL11.glVertex2f(gemX + endX * unit, gemY - endY * unit);
     }
 
-    static void drawFrame(Color color, float cx, float cy, float unit, float alphaMult) {
-        try (GlScope scope = GlScope.flat().additive()) {
-            Misc.setColor(color, 0.16f * alphaMult);
-            frameBand(cx, cy, FRAME_GLOW_INNER * unit, FRAME_OUTER * unit);
-            scope.normalBlend();
-            Misc.setColor(color, 0.85f * alphaMult);
-            frameBand(cx, cy, FRAME_LINE_INNER * unit, FRAME_OUTER * unit);
-        }
-    }
-
-    private static void frameBand(float cx, float cy, float inner, float outer) {
-        GL11.glBegin(GL11.GL_QUADS);
-        quad(cx - outer, cy + inner, cx + outer, cy + outer);
-        quad(cx - outer, cy - outer, cx + outer, cy - inner);
-        quad(cx - outer, cy - inner, cx - inner, cy + inner);
-        quad(cx + inner, cy - inner, cx + outer, cy + inner);
-        GL11.glEnd();
-    }
-
-    private static void quad(float fromX, float fromY, float toX, float toY) {
-        GL11.glVertex2f(fromX, fromY);
-        GL11.glVertex2f(toX, fromY);
-        GL11.glVertex2f(toX, toY);
-        GL11.glVertex2f(fromX, toY);
-    }
-
-    static void drawLights(SpriteCache sprites, Color color, float cx, float cy, float unit, float wave, float alphaMult) {
-        SpriteAPI texture = sprites.texture(LIGHT_TEXTURE);
-        if (texture == null) {
-            return;
-        }
-        Color tint = lighten(color, 0.55f);
-        try (TexturedQuadBatch batch = LIGHT_BATCH.beginAdditive(texture)) {
-            for (int path = 0; path < 2; path++) {
-                for (int light = 0; light < LIGHTS_PER_SIDE; light++) {
-                    float distance = LIGHT_SPACING / 2f + light * LIGHT_SPACING;
-                    float level = lightLevel(distance, wave);
-                    float[] point = framePoint(path, distance);
-                    float lightSize = LIGHT_IDLE_SIZE + LIGHT_LIT_SIZE * level;
-                    float limit = DESIGN_CENTRE - lightSize / 2f;
-                    float lightX = Math.max(-limit, Math.min(limit, point[0]));
-                    float lightY = Math.max(-limit, Math.min(limit, point[1]));
-                    batch.quadAtCenter(cx + lightX * unit, cy - lightY * unit, lightSize * unit, lightSize * unit, 0f, tint,
-                            (0.25f + 0.75f * level) * alphaMult);
-                }
-            }
-        }
-    }
-
     private static void drawBadge(SpriteCache sprites, String crestPath, Color color, float badgeX, float badgeY, float unit, boolean framed,
                                   float flash, float alphaMult) {
         SpriteAPI crest = crestPath == null ? null : sprites.texture(crestPath);
@@ -470,7 +376,7 @@ public final class AnchorIconFx {
         }
         if (flash > 0.01f) {
             float flashSize = FLASH_SIZE * unit;
-            SpriteDraw.drawAdditiveAtCenter(sprites, LIGHT_TEXTURE, badgeX, badgeY, flashSize, flashSize, lighten(color, 0.55f), flash * alphaMult);
+            SpriteDraw.drawAdditiveAtCenter(sprites, IconFxKit.LIGHT_TEXTURE, badgeX, badgeY, flashSize, flashSize, CargoIconFx.lighten(color, 0.55f), flash * alphaMult);
         }
     }
 

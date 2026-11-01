@@ -24,7 +24,7 @@ public record ItemData(String definitionId, long seed, List<RolledModifier> expl
     }
 
     public static ItemData rolled(ItemDefinition definition, long seed) {
-        if (definition.type() == ItemType.STAR_CHART) {
+        if (ItemTypes.tiered(definition.type())) {
             return rolledAtTier(definition, seed, ItemTraits.LOWEST_TIER);
         }
         List<RolledModifier> modifiers = ItemRoller.roll(definition, seed);
@@ -32,7 +32,7 @@ public record ItemData(String definitionId, long seed, List<RolledModifier> expl
     }
 
     public static ItemData rolledWithRarity(ItemDefinition definition, long seed, float rarity) {
-        if (rarity == 1f || definition.type() == ItemType.STAR_CHART) {
+        if (rarity == 1f || ItemTypes.tiered(definition.type())) {
             return rolled(definition, seed);
         }
         List<RolledModifier> modifiers = ItemRoller.rollWithRarity(definition, seed, rarity);
@@ -127,7 +127,7 @@ public record ItemData(String definitionId, long seed, List<RolledModifier> expl
         if (traits != null) {
             return ItemRoller.rollAtTier(itemDefinition, seed, traits.tier());
         }
-        if (itemDefinition.type() == ItemType.STAR_CHART) {
+        if (ItemTypes.tiered(itemDefinition.type())) {
             return ItemRoller.rollAtTier(itemDefinition, seed, ItemTraits.LOWEST_TIER);
         }
         return ItemRoller.roll(itemDefinition, seed);

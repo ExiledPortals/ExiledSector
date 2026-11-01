@@ -40,7 +40,7 @@ public class MaterialItemPlugin extends AnimatedCargoItemPlugin {
         ItemCurrency currency = ItemCurrencies.byItemId(itemId);
         return currency != null && ItemCurrencies.appliesTo(currency, ItemType.STAR_CHART)
                 && ItemUnlock.available(ItemType.STAR_CHART, Global.getSector())
-                && (ItemCurrencies.appliesTo(currency, ItemType.HULL_ITEM) || ItemCurrencies.appliesTo(currency, ItemType.SUBROUTINE));
+                && currency.appliesToShipItems();
     }
 
     @Override

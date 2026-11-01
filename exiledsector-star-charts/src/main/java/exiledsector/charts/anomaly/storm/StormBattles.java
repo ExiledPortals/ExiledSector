@@ -22,8 +22,7 @@ public final class StormBattles {
     }
 
     static ChartRun runOf(StormFrontTerrainPlugin front) {
-        ChartRun run = ChartRuns.currentOrNull();
-        return run != null && front != null && run.runId().equals(front.runId()) ? run : null;
+        return front == null ? null : ChartRuns.live(front.runId());
     }
 
     static ChartGenContext contextOf(ChartRun run) {

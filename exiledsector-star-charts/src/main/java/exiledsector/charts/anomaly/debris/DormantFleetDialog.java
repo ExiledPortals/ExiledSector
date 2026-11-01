@@ -1,16 +1,14 @@
 package exiledsector.charts.anomaly.debris;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.campaign.InteractionDialogAPI;
-import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
-import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl;
+import exiledsector.PlayerFleet;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
+import exiledsector.charts.anomaly.AnomalyDialog;
+import exiledsector.charts.anomaly.AnomalyEncounters;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
@@ -18,21 +16,14 @@ import exiledsector.charts.run.ChartRuns;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.ui.VanillaText;
-import org.lwjgl.input.Keyboard;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class DormantFleetDialog implements InteractionDialogPlugin {
+public class DormantFleetDialog extends AnomalyDialog {
 
     static final String ENGAGE_OPTION = "exiledSector_debrisEngage";
     static final String CORRUPT = "exiledSector_debrisCorrupt";
-    static final String LEAVE = "exiledSector_debrisLeave";
     static final String KERNEL_ID = CraftingCurrency.CORRUPTION.itemId();
     static final int KERNEL_COST = 1;
 
-    private final Map<String, MemoryAPI> memoryMap = new HashMap<>();
-    private InteractionDialogAPI interactionDialog;
     private CampaignFleetAPI dormantFleet;
 
     public record Options(boolean canEngage, boolean canCorrupt, String corruptBlockedKey) {
@@ -47,21 +38,20 @@ public class DormantFleetDialog implements InteractionDialogPlugin {
     }
 
     @Override
-    public void init(InteractionDialogAPI interactionDialog) {
-        this.interactionDialog = interactionDialog;
-        this.dormantFleet = interactionDialog.getInteractionTarget() instanceof CampaignFleetAPI fleet ? fleet : null;
+    protected void open() {
+        dormantFleet = dialog().getInteractionTarget() instanceof CampaignFleetAPI fleet ? fleet : null;
         if (!DormantFleets.isDormant(dormantFleet)) {
-            handOff(false);
+            fight(false);
             return;
         }
-        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
-        interactionDialog.getVisualPanel().showFleetInfo(null, playerFleet, null, dormantFleet);
-        VanillaText.plainPara(interactionDialog.getTextPanel(), Translation.gameText("chart.debris.dialog.intro"));
+        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
+        dialog().getVisualPanel().showFleetInfo(null, playerFleet, null, dormantFleet);
+        VanillaText.plainPara(text(), Translation.gameText("chart.debris.dialog.intro"));
         showOptions(options(hasReadyShips(playerFleet), kernelsHeld(playerFleet)));
     }
 
     private void showOptions(Options choices) {
-        OptionPanelAPI options = interactionDialog.getOptionPanel();
+        OptionPanelAPI options = options();
         options.clearOptions();
         options.addOption(Translation.gameText("chart.debris.dialog.engage"), ENGAGE_OPTION);
         options.setEnabled(ENGAGE_OPTION, choices.canEngage());
@@ -75,8 +65,7 @@ public class DormantFleetDialog implements InteractionDialogPlugin {
         if (!choices.canEngage()) {
             options.setTooltip(ENGAGE_OPTION, Translation.gameText("chart.debris.dialog.noReadyShips"));
         }
-        options.addOption(Translation.gameText("chart.debris.dialog.leave"), LEAVE);
-        options.setShortcut(LEAVE, Keyboard.KEY_ESCAPE, false, false, false, true);
+        addLeaveOption(Translation.gameText("chart.debris.dialog.leave"), LEAVE);
     }
 
     static boolean hasReadyShips(CampaignFleetAPI playerFleet) {
@@ -90,59 +79,39 @@ public class DormantFleetDialog implements InteractionDialogPlugin {
 
     @Override
     public void optionSelected(String optionText, Object optionData) {
-        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
+        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
+        if (playerFleet == null) {
+            dialog().dismiss();
+            return;
+        }
         Options choices = options(hasReadyShips(playerFleet), kernelsHeld(playerFleet));
         if (ENGAGE_OPTION.equals(optionData) && choices.canEngage()) {
             engage(false, playerFleet);
         } else if (CORRUPT.equals(optionData) && choices.canCorrupt()) {
             engage(true, playerFleet);
         } else {
-            interactionDialog.dismiss();
+            dialog().dismiss();
         }
     }
 
     void engage(boolean corrupt, CampaignFleetAPI playerFleet) {
         if (corrupt) {
             if (!CraftingMaterials.forPlayer(playerFleet.getCargo()).take(KERNEL_ID, KERNEL_COST)) {
-                interactionDialog.dismiss();
+                dialog().dismiss();
                 return;
             }
             DormantFleets.corrupt(dormantFleet, runContext());
         }
         DormantFleets.wake(dormantFleet);
-        handOff(true);
+        fight(true);
     }
 
-    private static ChartGenContext runContext() {
-        ChartRun run = ChartRuns.currentOrNull();
+    private ChartGenContext runContext() {
+        ChartRun run = ChartRuns.liveIn(dormantFleet.getContainingLocation());
         return run == null ? ChartGenContext.none() : ChartRunEffects.contextOf(run);
     }
 
-    private void handOff(boolean straightToEngage) {
-        FleetInteractionDialogPluginImpl encounter = new FleetInteractionDialogPluginImpl(DormantEncounters.config(straightToEngage));
-        interactionDialog.setPlugin(encounter);
-        encounter.init(interactionDialog);
-    }
-
-    @Override
-    public void optionMousedOver(String optionText, Object optionData) {
-    }
-
-    @Override
-    public void advance(float amount) {
-    }
-
-    @Override
-    public void backFromEngagement(EngagementResultAPI battleResult) {
-    }
-
-    @Override
-    public Object getContext() {
-        return null;
-    }
-
-    @Override
-    public Map<String, MemoryAPI> getMemoryMap() {
-        return memoryMap;
+    private void fight(boolean straightToEngage) {
+        handOff(new FleetInteractionDialogPluginImpl(AnomalyEncounters.isolated(straightToEngage, null, null)));
     }
 }

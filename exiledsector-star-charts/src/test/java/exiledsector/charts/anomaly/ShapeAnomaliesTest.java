@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
@@ -82,12 +84,18 @@ class ShapeAnomaliesTest {
     }
 
     @Test
+    void stellarFlaresRefuseASystemWithNoVisibleStar() {
+        assertThrows(IllegalStateException.class,
+                () -> StellarFlares.INSTANCE.shape(new AnomalyLayoutSite(system, star, List.of(), 9000f, new Random(4))));
+    }
+
+    @Test
     void starAnomaliesForceTheirStarOrSystemTypeAndShapeAnomaliesDoNot() {
         assertEquals("black_hole", StarAnomalies.BLACK_HOLE.primaryStar());
         assertEquals("star_neutron", StarAnomalies.NEUTRON_STAR.primaryStar());
         assertEquals(com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType.NEBULA, StarAnomalies.DENSE_NEBULA.systemType());
-        assertTrue(StarAnomalies.BLACK_HOLE.replacesStar());
-        assertFalse(StellarFlares.INSTANCE.replacesStar());
-        assertEquals(null, AsteroidStorm.INSTANCE.primaryStar());
+        assertNull(ChartAnomalies.role(StellarFlares.ANOMALY_ID, StarRule.class));
+        assertNull(ChartAnomalies.role(AsteroidStorm.ANOMALY_ID, StarRule.class));
+        assertSame(StarAnomalies.BLACK_HOLE, ChartAnomalies.role(StarAnomalies.BLACK_HOLE.id(), StarRule.class));
     }
 }

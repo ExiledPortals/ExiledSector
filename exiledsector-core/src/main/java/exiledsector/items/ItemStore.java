@@ -16,12 +16,34 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
 
 public final class ItemStore {
 
     @FunctionalInterface
     public interface StackAbsorber {
         Integer absorb(ItemStore store, CargoAPI cargo, CargoStackAPI stack);
+
+        static <T> StackAbsorber counting(Function<SpecialItemData, T> recognise, CountedAdder<T> adder) {
+            return (store, cargo, stack) -> {
+                T recognised = recognise.apply(stack.getSpecialDataIfSpecial());
+                if (recognised == null) {
+                    return null;
+                }
+                int stackCount = Math.round(stack.getSize());
+                if (stackCount < 1) {
+                    return 0;
+                }
+                adder.add(store, recognised, stackCount);
+                cargo.removeStack(stack);
+                return stackCount;
+            };
+        }
+    }
+
+    @FunctionalInterface
+    public interface CountedAdder<T> {
+        void add(ItemStore store, T recognised, int count);
     }
 
     static final String DATA_KEY_NAME = "socketables";
@@ -75,6 +97,11 @@ public final class ItemStore {
 
     public static ItemStore starChartsIfCreated() {
         return SaveData.findOrNull(starChartDataKey(), ItemStore.class);
+    }
+
+    public static List<Item> ownedStarCharts() {
+        ItemStore store = starChartsIfCreated();
+        return store == null ? List.of() : store.owned();
     }
 
     public static boolean carriesStarCharts(CargoAPI cargo) {

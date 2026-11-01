@@ -6,6 +6,7 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -59,7 +60,12 @@ public final class NpcBuildSimulator {
             String number = step.isCharged() ? String.format("%2d", ++count) : "  ";
             out.println(String.format("  %s %-40s %s", number, step.nodeId(), step.outcome()));
         }
-        out.println("Stripped hullmods: " + build.strippedHullModIds());
+        out.println("Stripped hullmods: " + convertedHullModIds(build));
+    }
+
+    static List<String> convertedHullModIds(NpcTreeBuild build) {
+        return build.steps().stream().map(NpcBuildStep::outcome).filter(outcome -> outcome.startsWith(NpcBuildStep.CONVERTED_HULLMOD))
+                .map(outcome -> outcome.substring(NpcBuildStep.CONVERTED_HULLMOD.length()).replace(NpcBuildStep.FREED_OP_SUFFIX, "")).toList();
     }
 
     private static Set<String> csv(String value) {

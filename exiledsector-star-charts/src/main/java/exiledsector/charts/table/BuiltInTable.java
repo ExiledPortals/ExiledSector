@@ -1,8 +1,8 @@
 package exiledsector.charts.table;
 
 import exiledsector.charts.generation.ChartTiers;
-import exiledsector.charts.layout.ChartLayoutGenerator;
 import exiledsector.data.CsvRows;
+import exiledsector.Seeds;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,12 +53,15 @@ public final class BuiltInTable {
                 csv.skipRow(id, "no " + noun + " has this id");
                 return;
             }
-            loaded.put(id, parser.parse(csv, row, id));
+            D parsed = parser.parse(csv, row, id);
+            if (parsed != null) {
+                loaded.put(id, parsed);
+            }
         });
         return loaded;
     }
 
     public static Random rollFor(long seed, String id, long salt) {
-        return ChartLayoutGenerator.derivedRandom(seed ^ ((long) id.hashCode() << 32), salt);
+        return Seeds.derived(seed ^ ((long) id.hashCode() << 32), salt);
     }
 }

@@ -28,16 +28,16 @@ class WorkbenchStringKeysTest {
             require(catalogue, "material." + itemId + ".description", missing);
         }
         for (CraftingCurrency currency : CraftingCurrency.values()) {
-            require(catalogue, SocketWorkbenchPanel.descriptionKey(currency), missing);
+            require(catalogue, HullBench.INSTANCE.currencyDescriptionKey(currency), missing);
             if (currency == CraftingCurrency.CORRUPTION) {
                 for (ItemNature nature : ItemNature.values()) {
                     for (CorruptionOutcome outcome : shownOutcomes(nature)) {
-                        require(catalogue, SocketWorkbenchPanel.usedNoticeKey(currency, outcome, nature), missing);
+                        require(catalogue, HullBench.usedNoticeKey(currency, outcome, nature), missing);
                     }
                 }
             } else {
                 for (ItemNature nature : ItemNature.values()) {
-                    require(catalogue, SocketWorkbenchPanel.usedNoticeKey(currency, null, nature), missing);
+                    require(catalogue, HullBench.usedNoticeKey(currency, null, nature), missing);
                 }
             }
         }

@@ -5,9 +5,7 @@ import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.SkillTreePanelStyle;
-import exiledsector.ui.cargo.CargoIconFx;
 import exiledsector.ui.cargo.CargoIconLook;
-import exiledsector.ui.util.GLDraw;
 
 import java.awt.Color;
 import java.util.List;
@@ -15,12 +13,17 @@ import java.util.function.BooleanSupplier;
 
 final class WorkbenchTile extends BaseCustomUIPanelPlugin {
 
-    private static final Color BACKGROUND = new Color(0, 0, 0, 200);
+    record Style(float onGlowAlpha, float onBorderWidth, boolean scrollClearsHover) {
+    }
+
+    static final Style TOGGLE_STYLE = new Style(0.6f, 1.5f, false);
+    static final Style SELECTION_STYLE = new Style(0.7f, 2.5f, true);
+    private static final BooleanSupplier ALWAYS = () -> true;
+    private static final BooleanSupplier NEVER = () -> false;
     private static final float BORDER_WIDTH = 1.5f;
     private static final float GLOW_WIDTH = 12f;
     private static final float IDLE_BORDER_ALPHA = 0.35f;
     private static final float HOVER_GLOW_ALPHA = 0.45f;
-    private static final float LIT_GLOW_ALPHA = 0.6f;
     private static final float DULL_ICON_ALPHA = 0.3f;
     private static final float DULL_BORDER_ALPHA = 0.18f;
     private static final SpriteCache ICONS = new SpriteCache(WorkbenchTile.class);
@@ -28,20 +31,35 @@ final class WorkbenchTile extends BaseCustomUIPanelPlugin {
     private final CyclingIcon cyclingIcon;
     private final TileInput tileInput;
     private final CargoIconLook iconLook;
-    private final BooleanSupplier lit;
-    private final boolean toggle;
+    private final BooleanSupplier available;
+    private final BooleanSupplier toggledOn;
+    private final Style style;
     private PositionAPI tilePosition;
 
-    WorkbenchTile(List<String> iconPaths, CargoIconLook iconLook, TileInput.Handler tileHandler) {
-        this(iconPaths, iconLook, null, false, tileHandler);
+    private WorkbenchTile(List<String> iconPaths, CargoIconLook iconLook, BooleanSupplier available, BooleanSupplier toggledOn, Style style,
+                          TileInput.Handler tileHandler) {
+        this.cyclingIcon = new CyclingIcon(iconPaths);
+        this.iconLook = iconLook;
+        this.available = available;
+        this.toggledOn = toggledOn;
+        this.style = style;
+        this.tileInput = new TileInput(tileHandler, style.scrollClearsHover());
     }
 
-    WorkbenchTile(List<String> iconPaths, CargoIconLook iconLook, BooleanSupplier lit, boolean toggle, TileInput.Handler tileHandler) {
-        this.cyclingIcon = new CyclingIcon(iconPaths);
-        this.iconLook = iconLook == null ? null : iconLook.unframed();
-        this.lit = lit;
-        this.toggle = toggle;
-        this.tileInput = new TileInput(tileHandler, false);
+    static WorkbenchTile usable(List<String> iconPaths, CargoIconLook iconLook, BooleanSupplier available, TileInput.Handler tileHandler) {
+        return new WorkbenchTile(iconPaths, unframed(iconLook), available, NEVER, TOGGLE_STYLE, tileHandler);
+    }
+
+    static WorkbenchTile toggle(List<String> iconPaths, CargoIconLook iconLook, BooleanSupplier toggledOn, TileInput.Handler tileHandler) {
+        return new WorkbenchTile(iconPaths, unframed(iconLook), toggledOn, toggledOn, TOGGLE_STYLE, tileHandler);
+    }
+
+    private static CargoIconLook unframed(CargoIconLook iconLook) {
+        return iconLook == null ? null : iconLook.unframed();
+    }
+
+    static WorkbenchTile selectable(String iconPath, CargoIconLook iconLook, BooleanSupplier selected, TileInput.Handler tileHandler) {
+        return new WorkbenchTile(List.of(iconPath), iconLook, ALWAYS, selected, SELECTION_STYLE, tileHandler);
     }
 
     @Override
@@ -55,35 +73,23 @@ final class WorkbenchTile extends BaseCustomUIPanelPlugin {
         cyclingIcon.advance(amount);
     }
 
-    private boolean isLit() {
-        return lit == null || lit.getAsBoolean();
-    }
-
     @Override
     public void renderBelow(float alphaMult) {
         if (tilePosition == null) {
             return;
         }
-        float x = tilePosition.getX();
-        float y = tilePosition.getY();
-        float width = tilePosition.getWidth();
-        float height = tilePosition.getHeight();
-        boolean toggledOn = toggle && isLit();
-        Color accent = toggledOn && iconLook != null ? iconLook.color() : SkillTreePanelStyle.GLOW_COLOR;
+        boolean on = toggledOn.getAsBoolean();
         boolean hovered = tileInput.isHovered();
-        GLDraw.fillQuad(x, y, width, height, BACKGROUND, alphaMult);
-        if (toggledOn) {
-            GLDraw.innerGlow(x, y, width, height, GLOW_WIDTH, accent, LIT_GLOW_ALPHA * alphaMult);
-        } else if (hovered) {
-            GLDraw.innerGlow(x, y, width, height, GLOW_WIDTH, accent, HOVER_GLOW_ALPHA * alphaMult);
-        }
-        float idleAlpha = isLit() ? IDLE_BORDER_ALPHA : DULL_BORDER_ALPHA;
-        GLDraw.strokeQuad(x, y, width, height, accent, BORDER_WIDTH, (hovered || toggledOn ? 1f : idleAlpha) * alphaMult);
+        Color accent = on && iconLook != null ? iconLook.color() : SkillTreePanelStyle.GLOW_COLOR;
+        float glowAlpha = on ? style.onGlowAlpha() : hovered ? HOVER_GLOW_ALPHA : 0f;
+        float idleAlpha = available.getAsBoolean() ? IDLE_BORDER_ALPHA : DULL_BORDER_ALPHA;
+        TileChrome.draw(tilePosition, new TileChrome.Frame(accent, GLOW_WIDTH, glowAlpha, on ? style.onBorderWidth() : BORDER_WIDTH,
+                hovered || on ? 1f : idleAlpha), alphaMult);
     }
 
     @Override
     public void render(float alphaMult) {
-        if (!isLit()) {
+        if (!available.getAsBoolean()) {
             cyclingIcon.render(alphaMult * DULL_ICON_ALPHA);
             return;
         }
@@ -91,8 +97,8 @@ final class WorkbenchTile extends BaseCustomUIPanelPlugin {
             cyclingIcon.render(alphaMult);
             return;
         }
-        CargoIconFx.render(ICONS, cyclingIcon.firstIconPath(), iconLook, tilePosition.getX(), tilePosition.getY(), tilePosition.getWidth(),
-                tilePosition.getHeight(), alphaMult, tileInput.isHovered() ? 1f : 0f, System.identityHashCode(this), -1f);
+        TileChrome.drawIcon(ICONS, cyclingIcon.firstIconPath(), iconLook, tilePosition, tilePosition.getWidth(), alphaMult,
+                tileInput.isHovered() ? 1f : 0f, System.identityHashCode(this));
     }
 
     @Override

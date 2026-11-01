@@ -6,7 +6,6 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.ExiledSector;
-import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.ui.CampaignMessages;
 
@@ -81,14 +80,7 @@ public final class HullUpgradePoints {
     }
 
     public static boolean chartsEnabled() {
-        for (ExiledSectorDomain domain : ExiledSector.domains()) {
-            for (ItemTypeSupport support : domain.itemTypes()) {
-                if (support.type() == ItemType.STAR_CHART) {
-                    return domain.enabled();
-                }
-            }
-        }
-        return false;
+        return ExiledSector.domainEnabledFor(ItemType.STAR_CHART);
     }
 
     public static int revision() {

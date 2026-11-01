@@ -86,15 +86,13 @@ public final class StarChartDataRules implements ItemDataRules {
         checkSystemType(integrity, file, line, definitionId, ModCsv.text(row, StarChartDefinitions.SYSTEM_TYPE_COLUMN));
         String minTierText = ModCsv.text(row, StarChartDefinitions.MIN_TIER_COLUMN);
         if (StarChartDefinitions.parsedMinTier(minTierText) == null) {
-            integrity.error(file, line, definitionId + " has minimum tier \"" + minTierText + "\"; expected a whole number from " + StarChart.LOWEST_TIER
-                    + " to " + StarChart.HIGHEST_TIER + " or blank");
+            integrity.error(file, line, StarChartDefinitions.minTierProblem(definitionId, minTierText));
         }
     }
 
     private static void checkSystemType(ItemDataIntegrity integrity, String file, int line, String ownerId, String systemTypeText) {
         if (StarChartDefinitions.normalisedSystemType(systemTypeText) == null) {
-            integrity.error(file, line, ownerId + " has system type \"" + systemTypeText + "\"; expected one of " + StarChartDefinitions.SYSTEM_TYPES
-                    + " or " + StarChartDefinitions.ANY_SYSTEM_TYPE);
+            integrity.error(file, line, StarChartDefinitions.systemTypeProblem(ownerId, systemTypeText));
         }
     }
 

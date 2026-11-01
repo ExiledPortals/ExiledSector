@@ -49,7 +49,7 @@ class PostScriptTest {
         postSystem = new PostSystem();
         run = new ChartRun(PostSystem.RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
         ChartRuns.store(run);
-        script = ListeningPost.place(postSystem.site(ChartGenContext.none(), new Vector2f(9000f, 0f), 4L), run);
+        script = PostSystem.placeIn(postSystem.site(ChartGenContext.none(), new Vector2f(9000f, 0f), 4L), run);
         when(mockSector.playerFleet().getContainingLocation()).thenReturn(postSystem.system);
     }
 

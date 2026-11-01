@@ -12,36 +12,33 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class GrantHullItemsCommand extends PlayerFleetCommand {
+public class GrantHullItemsCommand extends RandomPlayerFleetCommand {
 
     static final int DEFAULT_AMOUNT = 1;
     static final int MAX_AMOUNT = 200;
 
-    private final Random random;
-
     public GrantHullItemsCommand() {
-        this(new Random());
     }
 
     GrantHullItemsCommand(Random random) {
-        this.random = random;
+        super(random);
     }
 
     @Override
     protected CommandResult runForFleet(String args, CampaignFleetAPI playerFleet) {
-        String[] tokens = args.isEmpty() ? new String[0] : args.split("\\s+");
-        if (tokens.length > 2) {
+        List<String> tokens = ConsoleArgs.tokens(args);
+        if (tokens.size() > 2) {
             return CommandResult.BAD_SYNTAX;
         }
         ItemKind socketType = null;
-        if (tokens.length > 0) {
-            socketType = ItemKind.byIdOrNull(tokens[0].toLowerCase(Locale.ROOT));
+        if (!tokens.isEmpty()) {
+            socketType = ItemKind.byIdOrNull(tokens.get(0).toLowerCase(Locale.ROOT));
             if (socketType == null || !socketType.fitsSection()) {
-                Console.showMessage("Unknown socket type \"" + tokens[0] + "\"; give one of " + socketTypeIds() + ".");
+                Console.showMessage("Unknown socket type \"" + tokens.get(0) + "\"; give one of " + socketTypeIds() + ".");
                 return CommandResult.BAD_SYNTAX;
             }
         }
-        Integer amount = tokens.length == 2 ? ConsoleArgs.wholeNumber(tokens[1], 1, MAX_AMOUNT) : Integer.valueOf(DEFAULT_AMOUNT);
+        Integer amount = tokens.size() == 2 ? ConsoleArgs.wholeNumber(tokens.get(1), 1, MAX_AMOUNT) : Integer.valueOf(DEFAULT_AMOUNT);
         if (amount == null) {
             Console.showMessage("Give an amount from 1 to " + MAX_AMOUNT + ".");
             return CommandResult.BAD_SYNTAX;

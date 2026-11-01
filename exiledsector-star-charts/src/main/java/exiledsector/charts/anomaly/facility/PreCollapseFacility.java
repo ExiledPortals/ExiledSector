@@ -1,26 +1,24 @@
 package exiledsector.charts.anomaly.facility;
 
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
-import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
-import exiledsector.charts.anomaly.ChartAnomaly;
-import exiledsector.charts.anomaly.excavation.ExcavationStates;
+import exiledsector.charts.anomaly.AnomalyRun;
+import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.anomaly.LayoutShaper;
+import exiledsector.charts.anomaly.LootShaper;
+import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.charts.run.ChartRuns;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public final class PreCollapseFacility implements ChartAnomaly {
+public final class PreCollapseFacility implements LayoutShaper, ContentPlacer, RunParticipant, LootShaper {
 
     public static final String ANOMALY_ID = "pre_collapse_facility";
     public static final PreCollapseFacility INSTANCE = new PreCollapseFacility();
@@ -35,69 +33,47 @@ public final class PreCollapseFacility implements ChartAnomaly {
     }
 
     @Override
+    public List<String> lootScopes() {
+        return List.of(FacilityRules.LOOT_SCOPE);
+    }
+
+    @Override
     public int minPlanets() {
         return 1;
     }
 
     @Override
     public void generate(AnomalyContentSite site) {
-        ChartRun run = ChartRuns.currentOrNull();
-        if (run == null || !run.runId().equals(site.runId())) {
-            throw new IllegalStateException("no run to record the pre-collapse facility in");
-        }
-        if (place(site, run) == null) {
+        if (place(site) == null) {
             throw new IllegalStateException("no planet for a pre-collapse facility");
         }
     }
 
-    static PlanetAPI place(AnomalyContentSite site, ChartRun run) {
-        List<PlanetAPI> planets = candidates(site.system(), run);
+    static PlanetAPI place(AnomalyContentSite site) {
+        List<PlanetAPI> planets = site.freePlanets(true);
         if (planets.isEmpty()) {
             return null;
         }
         Random random = site.random(PLACEMENT_SALT);
         PlanetAPI planet = planets.get(random.nextInt(planets.size()));
-        FacilityStates.record(run, planet.getId());
+        FacilityStates.record(site.state(ANOMALY_ID), planet.getId());
+        site.claim(planet);
         return planet;
-    }
-
-    static List<PlanetAPI> candidates(StarSystemAPI system, ChartRun run) {
-        List<PlanetAPI> solid = new ArrayList<>();
-        List<PlanetAPI> any = new ArrayList<>();
-        for (PlanetAPI planet : system.getPlanets()) {
-            if (planet.isStar() || ExcavationStates.at(run, planet.getId()) != null) {
-                continue;
-            }
-            any.add(planet);
-            if (!planet.isGasGiant()) {
-                solid.add(planet);
-            }
-        }
-        return solid.isEmpty() ? any : solid;
     }
 
     static long seed(ChartRun run, String planetId, long salt) {
         return ((long) run.runId().hashCode() << 32) ^ (planetId == null ? 0 : planetId.hashCode()) ^ salt;
     }
 
-    static boolean inRunSystem(ChartRun run, LocationAPI location) {
-        return run != null && run.runState().isLive() && location != null && run.systemId().equals(ChartIds.locationIdOf(location));
+    @Override
+    public InteractionDialogPlugin dialogFor(AnomalyRun run, SectorEntityToken target) {
+        return FacilityDialog.wantsToHandle(run.run(), target) ? new FacilityDialog() : null;
     }
 
     @Override
-    public boolean isActiveIn(LocationAPI location) {
-        ChartRun run = ChartRuns.currentOrNull();
-        return inRunSystem(run, location) && FacilityStates.standing(run);
-    }
-
-    @Override
-    public InteractionDialogPlugin dialogFor(SectorEntityToken target) {
-        return FacilityDialog.wantsToHandle(target) ? new FacilityDialog() : null;
-    }
-
-    @Override
-    public String intelText(ChartRun run, LocationAPI location) {
-        SectorEntityToken planet = location == null || !FacilityStates.standing(run) ? null : location.getEntityById(FacilityStates.planetId(run));
+    public String intelText(AnomalyRun run) {
+        String planetId = FacilityStates.standing(run.run()) ? FacilityStates.planetId(run.run()) : null;
+        SectorEntityToken planet = planetId == null ? null : run.system().getEntityById(planetId);
         if (planet == null) {
             return null;
         }

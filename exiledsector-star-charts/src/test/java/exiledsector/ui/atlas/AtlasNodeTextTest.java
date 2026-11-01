@@ -1,17 +1,18 @@
 package exiledsector.ui.atlas;
 
-import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.relay.RelayChain;
 import exiledsector.charts.anomaly.relay.RelayNetwork;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
-import exiledsector.charts.anomaly.skirmish.SkirmishEntry;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasAnomalyRecord;
 import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.AtlasEntry;
+import exiledsector.charts.atlas.AtlasLine;
+import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.atlas.AtlasData;
 import exiledsector.charts.atlas.AtlasDevTools;
 import exiledsector.charts.atlas.AtlasGenerator;
@@ -52,18 +53,18 @@ class AtlasNodeTextTest {
         AtlasGenerator generator = generator(state);
         AtlasCell bastion = AtlasDevTools.nearestOpenSite(generator, state, "bastion");
 
-        assertEquals(List.of(new AtlasNodeText.Line("Out of reach. Complete a system joined to it by a lane first.", AtlasNodeText.Tone.HINT)),
+        assertEquals(List.of(new AtlasLine("Out of reach. Complete a system joined to it by a lane first.", AtlasLine.Tone.HINT)),
                 AtlasNodeText.stateLines(generator, state, bastion, false));
 
         AtlasDevTools.reach(generator, state, bastion);
 
-        assertEquals(List.of(new AtlasNodeText.Line("A Bastion needs a tier 15 chart.", AtlasNodeText.Tone.MARKER),
-                        new AtlasNodeText.Line("Click to pick a Star Chart for this system", AtlasNodeText.Tone.GOOD)),
+        assertEquals(List.of(new AtlasLine("A Bastion needs a tier 15 chart.", AtlasLine.Tone.MARKER),
+                        new AtlasLine("Click to pick a Star Chart for this system", AtlasLine.Tone.GOOD)),
                 AtlasNodeText.stateLines(generator, state, bastion, true));
 
         state.add(bastion, AtlasState.COMPLETED);
 
-        assertEquals(List.of(new AtlasNodeText.Line("Completed", AtlasNodeText.Tone.GOOD)), AtlasNodeText.stateLines(generator, state, bastion, false));
+        assertEquals(List.of(new AtlasLine("Completed", AtlasLine.Tone.GOOD)), AtlasNodeText.stateLines(generator, state, bastion, false));
     }
 
     @Test
@@ -79,30 +80,21 @@ class AtlasNodeTextTest {
                     .filter(candidate -> AtlasAnomalies.insert(generator, state, candidate, FactionSkirmish.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null)
                             .check().allows())
                     .findFirst().orElseThrow();
-            String defender = AtlasNodeText.tidy(FactionSkirmish.defender(generator, state, cell));
-            String attacker = AtlasNodeText.tidy(FactionSkirmish.attacker(generator, state, cell));
+            String defender = ChartFactions.displayName(FactionSkirmish.defender(generator, state, cell));
+            String attacker = ChartFactions.displayName(FactionSkirmish.attacker(generator, state, cell));
 
             assertTrue(AtlasNodeText.markers(generator, state, cell, generator.node(cell))
-                    .contains(new AtlasNodeText.Line(attacker + " attacks " + defender, AtlasNodeText.Tone.PLAIN)));
+                    .contains(new AtlasLine(attacker + " attacks " + defender, AtlasLine.Tone.PLAIN)));
             assertTrue(AtlasNodeText.confirmLines(generator, state, cell).contains("Completing the system ends the fight for good."));
-            List<BenchModeSupport.OpenChoice> choices = AtlasNodeText.sideChoices(generator, state, cell);
+            List<BenchModeSupport.OpenChoice> choices = AtlasNodeText.entryChoices(generator, state, cell);
             assertEquals(List.of("Side with " + defender, "Side with " + attacker, "Stay out"),
                     choices.stream().map(BenchModeSupport.OpenChoice::label).toList());
-            assertEquals(List.of(new SkirmishEntry(cell, SkirmishSide.DEFENDER), new SkirmishEntry(cell, SkirmishSide.ATTACKER),
-                    new SkirmishEntry(cell, SkirmishSide.NEITHER)), choices.stream().map(BenchModeSupport.OpenChoice::target).toList());
-            assertEquals(List.of(), AtlasNodeText.sideChoices(generator, state, AtlasCell.ORIGIN));
+            assertEquals(List.of(new AtlasEntry(cell, SkirmishSide.DEFENDER), new AtlasEntry(cell, SkirmishSide.ATTACKER),
+                    new AtlasEntry(cell, SkirmishSide.NEITHER)), choices.stream().map(BenchModeSupport.OpenChoice::target).toList());
+            assertEquals(List.of(), AtlasNodeText.entryChoices(generator, state, AtlasCell.ORIGIN));
         } finally {
             ChartTables.resetAnomalies();
         }
-    }
-
-    @Test
-    void tooltipTonesBecomeTheSkillTreeHighlightStyles() {
-        assertEquals(StyledText.styled("x", Style.HIGHLIGHT), AtlasScreen.styled(new AtlasNodeText.Line("x", AtlasNodeText.Tone.MARKER)));
-        assertEquals(StyledText.styled("x", Style.GOOD), AtlasScreen.styled(new AtlasNodeText.Line("x", AtlasNodeText.Tone.GOOD)));
-        assertEquals(StyledText.styled("x", Style.BAD), AtlasScreen.styled(new AtlasNodeText.Line("x", AtlasNodeText.Tone.BAD)));
-        assertEquals(StyledText.styled("x", Style.MUTED), AtlasScreen.styled(new AtlasNodeText.Line("x", AtlasNodeText.Tone.HINT)));
-        assertEquals(StyledText.of("x"), AtlasScreen.styled(new AtlasNodeText.Line("x", AtlasNodeText.Tone.PLAIN)));
     }
 
     @Test
@@ -117,17 +109,17 @@ class AtlasNodeTextTest {
             AtlasAnomalies.insert(generator, state, cell, RelayNetwork.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null,
                     new AtlasAnomalyRecord.Chain(3, 3, AtlasCell.ORIGIN));
 
-            List<AtlasNodeText.Line> markers = AtlasNodeText.markers(generator, state, cell, generator.node(cell));
+            List<AtlasLine> markers = AtlasNodeText.markers(generator, state, cell, generator.node(cell));
 
-            assertTrue(markers.contains(new AtlasNodeText.Line("Stage 3 of 3", AtlasNodeText.Tone.PLAIN)), markers.toString());
-            assertTrue(markers.contains(new AtlasNodeText.Line("With all three relays awake, the Star Chart Boss drops a unique hull item or subroutine",
-                    AtlasNodeText.Tone.GOOD)), markers.toString());
-            List<String> styledLines = markers.stream().filter(line -> line.tone() == AtlasNodeText.Tone.STYLED).map(AtlasNodeText::plainText).toList();
+            assertTrue(markers.contains(new AtlasLine("Stage 3 of 3", AtlasLine.Tone.PLAIN)), markers.toString());
+            assertTrue(markers.contains(new AtlasLine("With all three relays awake, the Star Chart Boss drops a unique hull item or subroutine",
+                    AtlasLine.Tone.GOOD)), markers.toString());
+            List<String> styledLines = markers.stream().filter(line -> line.tone() == AtlasLine.Tone.STYLED).map(AtlasLine::plain).toList();
             assertEquals(List.of("40% increased enemy fleet size",
                     "50% increased quantity of items found in the system, and 50% increased completion reward"), styledLines);
             assertTrue(AtlasNodeText.confirmLines(generator, state, cell).stream().noneMatch(line -> line.contains("<")));
             assertTrue(AtlasNodeText.anomalyBody(generator, state, cell, RelayNetwork.ANOMALY_ID).plain().contains("Stage 3 of 3"));
-            assertEquals(StyledText.parse("<bad>40%</bad> x"), AtlasScreen.styled(new AtlasNodeText.Line("<bad>40%</bad> x", AtlasNodeText.Tone.STYLED)));
+            assertEquals(StyledText.parse("<bad>40%</bad> x"), new AtlasLine("<bad>40%</bad> x", AtlasLine.Tone.STYLED).styled());
         } finally {
             AtlasData.registerNodeEffects(new JSONArray());
             ChartTables.resetAnomalies();

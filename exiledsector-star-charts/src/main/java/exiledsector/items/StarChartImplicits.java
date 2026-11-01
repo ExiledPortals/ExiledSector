@@ -22,7 +22,6 @@ public final class StarChartImplicits {
 
     static final String DATA_PATH = "data/config/exiledSector/star_chart_implicits.csv";
     static final String SYSTEM_TYPE_COLUMN = "system_type";
-    private static final String ENTRY_SEPARATOR = ";";
     private static final long IMPLICIT_SEED_SALT = 0x43484152544D50L;
     private static final Logger LOG = Logger.getLogger(StarChartImplicits.class);
     private static final AtomicReference<Loaded> LOADED = new AtomicReference<>();
@@ -47,8 +46,7 @@ public final class StarChartImplicits {
         CsvRows.forEachRow(rows, DATA_PATH, LOG, (index, row) -> {
             String systemType = StarChartDefinitions.normalisedSystemType(ModCsv.text(row, SYSTEM_TYPE_COLUMN));
             if (systemType == null) {
-                throw new IllegalArgumentException("\"" + ModCsv.text(row, SYSTEM_TYPE_COLUMN) + "\" is not a star chart system type; expected "
-                        + StarChartDefinitions.SYSTEM_TYPES + " or " + StarChartDefinitions.ANY_SYSTEM_TYPE);
+                throw new IllegalArgumentException(StarChartDefinitions.systemTypeProblem("the row", ModCsv.text(row, SYSTEM_TYPE_COLUMN)));
             }
             List<Modifier> implicits = parseImplicits(ModCsv.text(row, "implicits"));
             if (bySystemType.putIfAbsent(systemType, implicits) != null) {
@@ -62,7 +60,7 @@ public final class StarChartImplicits {
 
     private static List<Modifier> parseImplicits(String implicitsText) {
         List<Modifier> implicits = new ArrayList<>();
-        for (String entryText : implicitsText.split(ENTRY_SEPARATOR)) {
+        for (String entryText : implicitsText.split(ItemDataIntegrity.ENTRY_SEPARATOR)) {
             String trimmed = entryText.trim();
             if (trimmed.isEmpty()) {
                 continue;
@@ -98,10 +96,9 @@ public final class StarChartImplicits {
     }
 
     static Modifier sharedChoice(String modifierId) {
-        for (Modifier choice : sharedChoices()) {
-            if (choice.id().equals(modifierId)) {
-                return choice;
-            }
+        Modifier listed = Modifier.byId(sharedChoices(), modifierId);
+        if (listed != null) {
+            return listed;
         }
         return modifierId == null ? null : UNLISTED_CHOICE.get().apply(modifierId);
     }
@@ -135,12 +132,8 @@ public final class StarChartImplicits {
     }
 
     static Modifier anyById(String modifierId) {
-        for (Modifier implicit : corruptionPool()) {
-            if (implicit.id().equals(modifierId)) {
-                return implicit;
-            }
-        }
-        return sharedChoice(modifierId);
+        Modifier pooled = Modifier.byId(corruptionPool(), modifierId);
+        return pooled != null ? pooled : sharedChoice(modifierId);
     }
 
     static ModifierLine line(String systemType, String effectName) {
@@ -148,13 +141,7 @@ public final class StarChartImplicits {
         if (sharedChoice != null && sharedChoice.line(effectName) != null) {
             return sharedChoice.line(effectName);
         }
-        for (Modifier implicit : forSystemType(systemType)) {
-            ModifierLine line = implicit.line(effectName);
-            if (line != null) {
-                return line;
-            }
-        }
-        return null;
+        return Modifier.lineIn(forSystemType(systemType), effectName);
     }
 
     static List<RolledModifier> roll(String systemType, long seed) {
@@ -177,5 +164,6 @@ public final class StarChartImplicits {
 
     public static void clear() {
         LOADED.set(null);
+        registerSharedChoice(List.of());
     }
 }

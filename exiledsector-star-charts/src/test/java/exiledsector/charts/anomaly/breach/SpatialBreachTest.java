@@ -102,7 +102,10 @@ class SpatialBreachTest {
     void aCoreThatCannotBePlacedTakesTheFieldWithIt() {
         when(system.addCustomEntity(anyString(), any(), eq(SpatialBreach.CORE_TYPE), anyString())).thenThrow(new IllegalStateException("no core"));
 
-        assertThrows(IllegalStateException.class, () -> SpatialBreach.INSTANCE.generate(site(ChartGenContext.none(), point -> true)));
+        AnomalyContentSite site = site(ChartGenContext.none(), point -> true);
+
+        assertThrows(IllegalStateException.class, () -> SpatialBreach.INSTANCE.generate(site));
+        site.rollBack();
         verify(system).removeEntity(terrain);
     }
 

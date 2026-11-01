@@ -65,7 +65,9 @@ public class ChartOpenCommand extends CampaignCommand {
         if (!anomalyIds.isEmpty()) {
             layoutRequest = layoutRequest.withAnomalies(anomalyIds);
         }
-        layoutRequest = layoutRequest.withSkirmishSide(arguments.side());
+        if (arguments.side() != null) {
+            layoutRequest = FactionSkirmish.joinedOn(layoutRequest, arguments.side());
+        }
         int entries = StarChartSettings.wormholeEntries();
         OpenResult result = ChartRunActions.openBesidePlayer(Global.getSector(), entries, random, layoutRequest);
         switch (result) {
@@ -76,11 +78,7 @@ public class ChartOpenCommand extends CampaignCommand {
                 Console.showMessage(describeContent(run));
                 return CommandResult.SUCCESS;
             }
-            case RUN_EXISTS -> Console.showMessage("A Star Chart run is already open. Collapse it or finish it first (see ExiledSectorChartStatus).");
-            case NO_PLAYER_FLEET -> Console.showMessage(PlayerFleetCommand.NO_PLAYER_FLEET);
-            case PLAYER_IN_TRANSITION -> Console.showMessage("Your fleet is jumping. Try again once it arrives.");
-            case PLAYER_IN_SYSTEM -> Console.showMessage("Your fleet is inside a Star Chart system.");
-            default -> Console.showMessage("Opening the wormhole failed; see starsector.log.");
+            default -> Console.showMessage(ChartConsoleText.openFailure(result, "Opening the wormhole failed; see starsector.log."));
         }
         return CommandResult.ERROR;
     }
@@ -141,15 +139,12 @@ public class ChartOpenCommand extends CampaignCommand {
         }
 
         static OpenArguments parse(String args) {
-            if (args == null || args.isBlank()) {
-                return new OpenArguments(null, null, null, null);
-            }
             String regionId = null;
             String layoutId = null;
             List<String> anomalyIds = new ArrayList<>();
             SkirmishSide side = null;
             List<String> rest = new ArrayList<>();
-            for (String token : args.trim().split("\\s+")) {
+            for (String token : ConsoleArgs.tokens(args)) {
                 Matcher atlas = ATLAS_SETTING.matcher(token);
                 if (!atlas.matches()) {
                     rest.add(token);
@@ -175,20 +170,17 @@ public class ChartOpenCommand extends CampaignCommand {
                     anomalyIds.add(atlas.group(2));
                 }
             }
-            OpenArguments parsed = parseSettings(String.join(" ", rest));
+            OpenArguments parsed = parseSettings(rest);
             return parsed.problem() != null ? parsed
                     : new OpenArguments(parsed.seed(), parsed.systemType(), parsed.tier(), null, parsed.breach(), regionId, layoutId, anomalyIds, side);
         }
 
-        private static OpenArguments parseSettings(String args) {
-            if (args.isBlank()) {
-                return new OpenArguments(null, null, null, null);
-            }
+        private static OpenArguments parseSettings(List<String> tokens) {
             StarSystemType systemType = null;
             Integer explicitTier = null;
             boolean breach = false;
             List<Long> numbers = new ArrayList<>();
-            for (String token : args.trim().split("\\s+")) {
+            for (String token : tokens) {
                 Matcher tierMatch = EXPLICIT_TIER.matcher(token);
                 StarSystemType type = ChartLayoutGenerator.parseType(token);
                 Long number = parseNumber(token);
@@ -250,9 +242,6 @@ public class ChartOpenCommand extends CampaignCommand {
             List<String> ids = new ArrayList<>(anomalyIds);
             if (breach && !ids.contains(SpatialBreach.ANOMALY_ID)) {
                 ids.add(SpatialBreach.ANOMALY_ID);
-            }
-            if (side != null && !ids.contains(FactionSkirmish.ANOMALY_ID)) {
-                ids.add(FactionSkirmish.ANOMALY_ID);
             }
             return List.copyOf(ids);
         }

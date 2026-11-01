@@ -9,6 +9,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.items.ItemKind;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
+import exiledsector.items.ItemTypes;
 import exiledsector.items.SubroutineRadius;
 import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.TreeAllocationSession;
@@ -208,7 +209,7 @@ final class SocketPlacement {
 
     private void refreshButtonLabel() {
         List<Item> owned = Global.getSector() == null ? List.of() : ItemStore.get().owned();
-        int subroutineCount = (int) owned.stream().filter(item -> ItemStoragePanel.listedKind(item) == ItemKind.SUBROUTINE).count();
+        int subroutineCount = (int) owned.stream().filter(item -> ItemTypes.listedKind(item) == ItemKind.SUBROUTINE).count();
         storageButton.setLabel(Translation.msg("ui.subroutines.button").arg("count", subroutineCount).text());
     }
 

@@ -19,6 +19,15 @@ class ChartRaidTest {
     }
 
     @Test
+    void raidsNeedMoreMarinesAtHigherTiersAndGetHarder() {
+        assertEquals(RaidDangerLevel.LOW, ChartRaid.danger(1));
+        assertEquals(RaidDangerLevel.MEDIUM, ChartRaid.danger(8));
+        assertEquals(RaidDangerLevel.HIGH, ChartRaid.danger(15));
+        assertTrue(ChartRaid.difficulty(15) > ChartRaid.difficulty(1));
+        assertEquals(ChartRaid.difficulty(1), ChartRaid.difficulty(0));
+    }
+
+    @Test
     void raidEffectivenessIsVanillasStrengthShareRoundedToAPercent() {
         assertEquals(0.75f, ChartRaid.raidEffectiveness(300f, 100f), 0.0001f);
         assertEquals(0.33f, ChartRaid.raidEffectiveness(100f, 200f), 0.0001f);

@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetAssignment;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext;
@@ -27,6 +28,19 @@ class SupplyConvoyTest {
     @AfterEach
     void tearDown() {
         ChartContentGenerator.resetForTests();
+    }
+
+    @Test
+    void theConvoyDeliversToPlanetsNoOtherAnomalyHoldsAndClaimsThem() {
+        ConvoySystem convoySystem = new ConvoySystem(3);
+        AnomalyContentSite site = convoySystem.site(ChartGenContext.none());
+        site.claim(convoySystem.entities.get("planet0"));
+        site.claim(convoySystem.entities.get("planet1"));
+
+        SupplyConvoy.INSTANCE.generate(site);
+
+        assertEquals("planet2", convoySystem.script().convoys().get(0).destinationId());
+        assertTrue(site.isClaimed(convoySystem.entities.get("planet2")));
     }
 
     @Test
@@ -68,7 +82,6 @@ class SupplyConvoyTest {
             assertFalse(fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_MAKE_HOSTILE), role.key());
             assertFalse(fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE), role.key());
             assertTrue(fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_NO_REP_IMPACT), role.key());
-            assertEquals(role.key(), fleet.getMemoryWithoutUpdate().getString(SupplyConvoy.ROLE_MEMORY_KEY));
         }
         assertTrue(convoySystem.fleet(convoy, ConvoyRole.FREIGHTERS).getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_TRADE_FLEET));
         assertFalse(convoySystem.fleet(convoy, ConvoyRole.FREIGHTERS).getMemoryWithoutUpdate().contains(ChartIds.START_DP_MEMORY_KEY),

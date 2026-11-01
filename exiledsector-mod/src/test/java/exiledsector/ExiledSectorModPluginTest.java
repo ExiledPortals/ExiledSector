@@ -18,6 +18,7 @@ import exiledsector.items.ItemKind;
 import exiledsector.items.ItemNames;
 import exiledsector.items.SocketLossListener;
 import exiledsector.items.StarChartCurrency;
+import exiledsector.items.StarChartFixtures;
 import exiledsector.items.SubroutineKind;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
@@ -149,7 +150,7 @@ class ExiledSectorModPluginTest {
         NpcLevelCaps.clear();
         ItemDefinitions.clear();
         ItemNames.clear();
-        StarChartCurrency.unregisterAll();
+        StarChartFixtures.unregisterCurrencies();
         settingsCreatorMock.close();
         mockSector.close();
         lunaSettingsMock.close();

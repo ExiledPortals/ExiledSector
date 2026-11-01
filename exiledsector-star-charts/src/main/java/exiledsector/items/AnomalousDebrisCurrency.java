@@ -81,15 +81,11 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
     @Override
     public boolean canUse(Item item, CraftingContext context) {
         ItemDefinition definition = item == null ? null : item.definition();
+        if (definition == null || !appliesTo(definition.type()) || !GrantedModifiers.canGrant(definition, modifierId)) {
+            return false;
+        }
         Modifier granted = modifier();
-        if (definition == null || granted == null || definition.unique() || definition.keepsOneModifier() || !appliesTo(definition.type())
-                || !ItemModifiers.itemTypes(modifierId).contains(definition.type()) || granted.slot() == ModifierSlot.IMPLICIT) {
-            return false;
-        }
-        if (lockedClash(item, granted) || keptClash(item, granted, context.guardedSlots())) {
-            return false;
-        }
-        return AffixLayout.rollableAt(definition.type(), List.of(new PoolEntry(granted, 1f)), TierRange.NO_TIER).size() == 1;
+        return !lockedClash(item, granted) && !keptClash(item, granted, context.guardedSlots());
     }
 
     @Override

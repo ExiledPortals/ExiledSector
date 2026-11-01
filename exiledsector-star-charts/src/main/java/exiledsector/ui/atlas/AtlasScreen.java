@@ -18,12 +18,15 @@ import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.skilleffect.render.Fade;
+import exiledsector.ui.OverlayFade;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasCatalystUse;
 import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.atlas.AtlasGenerator;
+import exiledsector.charts.atlas.AtlasLine;
+import exiledsector.charts.atlas.AtlasNames;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.layout.sketch.SectorSystemSketcher;
 import exiledsector.charts.wormhole.WormholeGateway;
@@ -142,9 +145,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private String wormholeMessage;
     private float mouseX;
     private float mouseY;
-    private float openLevel;
-    private boolean closing;
-    private boolean closeRequested;
+    private final OverlayFade fade = new OverlayFade(OPEN_SECONDS);
 
     private AtlasScreen(CampaignOverlay.Host host) {
         this.host = host;
@@ -346,7 +347,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         if (chartMode) {
             closeChartParts();
             chartMode = false;
-            if (!closing) {
+            if (!fade.closing()) {
                 I18n.forGameText(this::addCatalystToggle);
                 restoreUserCatalysts();
             }
@@ -426,7 +427,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private void openChartParts(AtlasCell cell) {
         BenchLayout layout = chartLayout();
         BenchModeSupport.OpenTarget target = new BenchModeSupport.OpenTarget(cell,
-                () -> AtlasNodeText.confirmLines(map.generator(), map.state(), cell), () -> AtlasNodeText.sideChoices(map.generator(), map.state(), cell));
+                () -> AtlasNodeText.confirmLines(map.generator(), map.state(), cell), () -> AtlasNodeText.entryChoices(map.generator(), map.state(), cell));
         chartBench = SocketWorkbenchPanel.openEmbedded(panelRoot, BenchMode.STAR_CHARTS, layout, new SocketWorkbenchPanel.Listener() {
             @Override
             public void changed(Item loaded) {
@@ -574,7 +575,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         }
         for (String anomalyId : AtlasAnomalies.effective(map.generator(), map.state(), focusedCell)) {
             ChartAnomalies.Definition definition = ChartAnomalies.definition(anomalyId);
-            entries.add(new AtlasAnomalyPanel.Entry(AtlasNodeText.name("anomaly", anomalyId), definition == null ? "" : definition.icon(),
+            entries.add(new AtlasAnomalyPanel.Entry(AtlasNames.anomaly(anomalyId), definition == null ? "" : definition.icon(),
                     AtlasNodeText.anomalyBody(map.generator(), map.state(), focusedCell, anomalyId)));
         }
         return entries;
@@ -617,7 +618,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     }
 
     private String systemName(AtlasCell cell) {
-        List<AtlasNodeText.Line> lines = AtlasNodeText.describe(map.generator(), map.state(), cell, map.isReachable(cell));
+        List<AtlasLine> lines = AtlasNodeText.describe(map.generator(), map.state(), cell, map.isReachable(cell));
         return lines.isEmpty() ? "" : lines.get(0).text();
     }
 
@@ -699,7 +700,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     }
 
     private void close() {
-        closing = true;
+        fade.close();
         leaveFocus();
         if (catalystPanel != null) {
             catalystPanel.close();
@@ -715,7 +716,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             if (event.isConsumed()) {
                 continue;
             }
-            if (closing) {
+            if (fade.closing()) {
                 event.consume();
             } else if (focusedCell != null) {
                 focusInput(event);
@@ -814,7 +815,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         if (panelRoot == null || map == null) {
             return;
         }
-        openLevel = Fade.step(openLevel, !closing, amount / OPEN_SECONDS);
+        boolean finishedClosing = fade.advance(amount);
         focusLevel = Fade.step(focusLevel, focusing, amount / FOCUS_SECONDS);
         chartLevel = Fade.step(chartLevel, chartMode, amount / FOCUS_SECONDS);
         if (!focusing && focusLevel <= 0f) {
@@ -824,8 +825,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         if (chooseElement != null) {
             chooseElement.setOpacity(Fade.smooth(focusLevel));
         }
-        if (closing && openLevel <= 0f && !closeRequested) {
-            closeRequested = true;
+        if (finishedClosing) {
             if (wormholeMessage != null) {
                 host.leave(wormholeMessage);
             } else {
@@ -853,7 +853,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         if (panelPosition == null || map == null) {
             return;
         }
-        float alpha = Fade.smooth(openLevel) * alphaMult;
+        float alpha = fade.smoothLevel() * alphaMult;
         if (alpha <= 0f) {
             return;
         }
@@ -896,7 +896,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     }
 
     private void writeAnomalyTooltip() {
-        writeTooltipText(AtlasNodeText.name("anomaly", hoveredAnomaly.anomalyId()),
+        writeTooltipText(AtlasNames.anomaly(hoveredAnomaly.anomalyId()),
                 AtlasNodeText.anomalyBody(map.generator(), map.state(), hoveredAnomaly.cell(), hoveredAnomaly.anomalyId()));
     }
 
@@ -907,11 +907,11 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     }
 
     private void writeTooltip() {
-        List<AtlasNodeText.Line> lines = AtlasNodeText.describe(map.generator(), map.state(), hoveredCell, map.isReachable(hoveredCell));
+        List<AtlasLine> lines = AtlasNodeText.describe(map.generator(), map.state(), hoveredCell, map.isReachable(hoveredCell));
         String title = lines.isEmpty() ? "" : lines.get(0).text();
         List<StyledText> body = new ArrayList<>();
-        for (AtlasNodeText.Line line : lines.subList(Math.min(1, lines.size()), lines.size())) {
-            body.add(styled(line));
+        for (AtlasLine line : lines.subList(Math.min(1, lines.size()), lines.size())) {
+            body.add(line.styled());
         }
         UseVerdict verdict = map.targetVerdict(hoveredCell);
         AtlasCatalystUse use = catalystUse();
@@ -920,16 +920,5 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
                     : StyledText.styled(verdict.text(MaterialItems.displayName(use.itemId()), title), Style.BAD));
         }
         writeTooltipText(title, StyledText.join(StyledText.of("\n"), body));
-    }
-
-    static StyledText styled(AtlasNodeText.Line line) {
-        return switch (line.tone()) {
-            case MARKER -> StyledText.styled(line.text(), Style.HIGHLIGHT);
-            case GOOD -> StyledText.styled(line.text(), Style.GOOD);
-            case BAD -> StyledText.styled(line.text(), Style.BAD);
-            case HINT -> StyledText.styled(line.text(), Style.MUTED);
-            case STYLED -> StyledText.parse(line.text());
-            default -> StyledText.of(line.text());
-        };
     }
 }

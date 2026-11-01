@@ -54,11 +54,11 @@ public final class NpcSkillTreeBuilder {
         ShipSkillData shipData = rootedTree(rootNode, targetNodeCount);
         if (shipData == null) {
             String rootId = rootNode == null ? "none" : rootNode.getId();
-            return new NpcTreeBuild(emptyTree(), List.of(new NpcBuildStep(rootId, NpcBuildStep.INVALID_ROOT + rootId)), List.of());
+            return new NpcTreeBuild(emptyTree(), List.of(new NpcBuildStep(rootId, NpcBuildStep.INVALID_ROOT + rootId)));
         }
         Generation generation = new Generation(request, shipData, targetNodeCount, random);
         generation.run();
-        return new NpcTreeBuild(shipData, generation.steps, generation.strippedHullModIds);
+        return new NpcTreeBuild(shipData, generation.steps);
     }
 
     public static boolean hasRootFor(String designType) {

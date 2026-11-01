@@ -87,10 +87,10 @@ class MasterSchematicTest {
         CargoAPI cargo = mock(CargoAPI.class);
         CargoStackAPI schematics = stack(MasterSchematic.INSTANCE.toSpecialItem(), 3f);
 
-        assertEquals(3, MasterSchematic.absorbInto(store, cargo, schematics));
+        assertEquals(3, MasterSchematic.STACK_ABSORBER.absorb(store, cargo, schematics));
         assertEquals(3, store.masterSchematicCount());
         verify(cargo).removeStack(schematics);
-        assertNull(MasterSchematic.absorbInto(store, cargo, stack(RefitSchematic.STANDARD.toSpecialItem(), 1f)));
+        assertNull(MasterSchematic.STACK_ABSORBER.absorb(store, cargo, stack(RefitSchematic.STANDARD.toSpecialItem(), 1f)));
     }
 
     @Test

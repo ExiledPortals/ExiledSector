@@ -19,6 +19,10 @@ public record FeatureSite(StarSystemAPI system, SectorEntityToken centre, float 
         return min + random.nextFloat() * (max - min);
     }
 
+    public float orbitBeyond(float gap, float spread) {
+        return outerRadius + gap + between(0f, spread);
+    }
+
     public float angle() {
         return random.nextFloat() * 360f;
     }
