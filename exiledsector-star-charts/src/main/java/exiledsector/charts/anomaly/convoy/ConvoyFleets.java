@@ -8,6 +8,8 @@ import com.fs.starfarer.api.campaign.listeners.FleetEventListener;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.FleetTypes;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
+import exiledsector.charts.ChartIds;
+import exiledsector.charts.content.ChartContentPlanner;
 import exiledsector.charts.content.ChartSites;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyContentSite;
@@ -31,9 +33,13 @@ final class ConvoyFleets {
                 yield ChartAnomalyFleets.freighters(factionId, FleetTypes.TRADE, tier, freighterPoints * (1f - ConvoyRules.TANKER_SHARE),
                         freighterPoints * ConvoyRules.TANKER_SHARE, ConvoyRules.FREIGHTER_GUARD_POINTS);
             }
-            case SCREEN -> ChartAnomalyFleets.combat(factionId, FleetTypes.PATROL_SMALL, tier, tier.fleetSize() * ConvoyRules.SCREEN_SIZE_SHARE * escortMult);
-            case ESCORT -> ChartAnomalyFleets.combat(factionId, FleetTypes.PATROL_MEDIUM, tier, tier.fleetSize() * ConvoyRules.ESCORT_SIZE_SHARE * escortMult);
+            case SCREEN -> ChartAnomalyFleets.bossCombat(factionId, FleetTypes.PATROL_MEDIUM, tier, ConvoyRules.escortSize(role, tier, escortMult));
+            case ESCORT -> ChartAnomalyFleets.bossCombat(factionId, FleetTypes.PATROL_LARGE, tier, ConvoyRules.escortSize(role, tier, escortMult));
         };
+    }
+
+    static int strengthBonus(ConvoyRole role, ChartTier tier, float escortMult) {
+        return ChartContentPlanner.overflowStrength(ConvoyRules.escortSize(role, tier, escortMult), ChartContentPlanner.BOSS_SIZE_CAP);
     }
 
     static boolean spawn(AnomalyContentSite site, ConvoyState convoy, String convoyFactionId, FleetEventListener freighterListener, Random random) {
@@ -59,6 +65,10 @@ final class ConvoyFleets {
                 continue;
             }
             ChartAnomalyFleets.prepare(fleet, site.runId(), site.tier(), fleetSeed, role != ConvoyRole.FREIGHTERS, context);
+            int strengthBonus = strengthBonus(role, tier, escortMult);
+            if (strengthBonus > 0) {
+                fleet.getMemoryWithoutUpdate().set(ChartIds.STRENGTH_BONUS_MEMORY_KEY, strengthBonus);
+            }
             dress(fleet, role, convoy, convoyFactionId);
             double angle = random.nextDouble() * Math.PI * 2d;
             site.addFleet(fleet, ChartSites.pointAround(new Vector2f(convoy.entryX(), convoy.entryY()), angle, ConvoyRules.SPAWN_SPREAD));

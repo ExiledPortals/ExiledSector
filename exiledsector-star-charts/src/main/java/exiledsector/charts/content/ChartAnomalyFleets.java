@@ -41,6 +41,13 @@ public final class ChartAnomalyFleets {
                 quality / ChartTier.PERCENT, tier.officerLevelBonus(), tier.officerCountBonus(), ChartContentPlanner.averageSMods(quality));
     }
 
+    public static Spec bossCombat(String factionId, String fleetType, ChartTier tier, float sizePercent) {
+        float quality = Math.min(ChartContentPlanner.MAX_QUALITY, ChartContentPlanner.fleetQuality(tier) + ChartContentPlanner.BOSS_QUALITY_BONUS);
+        return new Spec(factionId, fleetType, ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, sizePercent)), 0f, 0f,
+                quality / ChartTier.PERCENT, tier.officerLevelBonus() + ChartContentPlanner.BOSS_OFFICER_LEVEL_BONUS,
+                tier.officerCountBonus() + ChartContentPlanner.BOSS_OFFICER_COUNT_BONUS, ChartContentPlanner.averageSMods(quality));
+    }
+
     public static Spec freighters(String factionId, String fleetType, ChartTier tier, float freighterPoints, float tankerPoints, float combatPoints) {
         float quality = ChartContentPlanner.fleetQuality(tier);
         return new Spec(factionId, fleetType, combatPoints, freighterPoints, tankerPoints, quality / ChartTier.PERCENT, 0, 0, 0);

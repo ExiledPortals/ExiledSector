@@ -633,7 +633,8 @@ relays woken, drops one unique hull item or subroutine whatever its source (`Cha
 ### Supply Convoy
 
 The anomaly spawns freighters, a screen and a close escort at the system edge, flying the run-only faction
-`exiledSector_convoy` under its own name with the chart faction's crest (`SupplyConvoy`, `ConvoyFleets`). Five days after the player first
+`exiledSector_convoy` under its own name with the chart faction's crest (`SupplyConvoy`, `ConvoyFleets`). The escorts
+are built like the map's boss, with the close escort above the boss's size and the screen at 60% of it (`ConvoyRules`). Five days after the player first
 arrives, the system script `ConvoyScript` sends them past two to four planets or stations to unload at an existing planet,
 avoiding planets another anomaly holds where it can, with intel in `ConvoyIntel`. The convoy is non-hostile until the player attacks it through `ConvoyEncounterDialog` or hits
 one of its fleets with Interdiction Pulse (which also holds that fleet); then all three turn hostile for the run and the

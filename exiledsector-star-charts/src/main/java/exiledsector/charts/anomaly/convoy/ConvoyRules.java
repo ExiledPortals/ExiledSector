@@ -1,5 +1,6 @@
 package exiledsector.charts.anomaly.convoy;
 
+import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartTiers;
 
 public final class ConvoyRules {
@@ -17,8 +18,8 @@ public final class ConvoyRules {
     static final float CHECK_DAYS = 0.05f;
     static final float SCREEN_LEAD = 1200f;
     static final float SPAWN_SPREAD = 300f;
-    static final float SCREEN_SIZE_SHARE = 0.6f;
-    static final float ESCORT_SIZE_SHARE = 0.9f;
+    static final float SCREEN_BOSS_SHARE = 0.6f;
+    static final float ESCORT_BOSS_SHARE = 1.1f;
     static final float FREIGHTER_POINTS = 40f;
     static final float FREIGHTER_POINTS_PER_TIER = 10f;
     static final float TANKER_SHARE = 0.25f;
@@ -36,6 +37,15 @@ public final class ConvoyRules {
 
     static float freighterPoints(int tier) {
         return FREIGHTER_POINTS + FREIGHTER_POINTS_PER_TIER * (ChartTiers.clamp(tier) - 1);
+    }
+
+    static float escortSize(ConvoyRole role, ChartTier tier, float escortMult) {
+        float bossShare = switch (role) {
+            case FREIGHTERS -> 0f;
+            case SCREEN -> SCREEN_BOSS_SHARE;
+            case ESCORT -> ESCORT_BOSS_SHARE;
+        };
+        return Math.max(tier.bossSize(), tier.fleetSize()) * bossShare * Math.max(0f, escortMult);
     }
 
     static int convoyCount(float extraConvoys) {
