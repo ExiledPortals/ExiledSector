@@ -412,7 +412,7 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private void cellClicked(ItemStorageRow row) {
-        if (isConfirmOpen() || row.installed()) {
+        if (isConfirmOpen() || !clickable(row.installed(), loadsIntoBench(), disassembly.active())) {
             return;
         }
         if (disassembly.active() && ctrlHeld()) {
@@ -431,6 +431,14 @@ public final class ItemStoragePanel extends HoloPanel {
             return;
         }
         queue(() -> storageListener.selected(row.item() == selectedItem ? null : row.item()));
+    }
+
+    private boolean loadsIntoBench() {
+        return pickerMode || workbenchPanel != null;
+    }
+
+    static boolean clickable(boolean installed, boolean loadsIntoBench, boolean disassembling) {
+        return !installed || (loadsIntoBench && !disassembling);
     }
 
     public boolean workbenchContains(float x, float y) {
@@ -769,7 +777,7 @@ public final class ItemStoragePanel extends HoloPanel {
 
             @Override
             public boolean dimmed() {
-                return row.installed();
+                return !clickable(row.installed(), loadsIntoBench(), disassembly.active());
             }
         });
     }
