@@ -1,5 +1,7 @@
 id,name
+A_S-F_MaliceCoils,Novel Coil Geometry
 A_S-F_PhantasmagoriaHullmod,Probability Space Hypervessel
+A_S-F_integratedRangefinders,Integrated Rangefinders
 Cheat_Maya7s,Pristine Condition
 adaptive_coils,Adaptive Phase Coils
 adaptiveshields,Shield Conversion - Omni
@@ -8,15 +10,23 @@ advanced_ground_support,Advanced Ground Support
 advancedcore,Advanced Targeting Core
 advancedoptics,Advanced Optics
 advancedshieldemitter,Accelerated Shields
+armaa_SeraphTargetingSoftware,SILVERSWORD
+armaa_SilverSwordHM,SILVERSWORD [Type A]
 armoredweapons,Armored Weapon Mounts
 ashesofohm_domainmachinerymod,Domain Machinery
+asm_amorphous_alloy,Amorphous Alloy Armor
+asm_munitions_regulator,Munitions Regulator
 attackmode7s,Extra Propulsion Systems
 augmentedengines,Augmented Drive Field
 autorepair,Automated Repair Unit
 auxiliary_fuel_tanks,Auxiliary Fuel Tanks
 auxiliarythrusters,Auxiliary Thrusters
 ballistic_rangefinder,Ballistic Rangefinder
+ballistic_support7s,Ballistic Adapters
+beamCoatType2,Anti-Beam Plating
 blast_doors,Blast Doors
+cataphract,Cataphract LSM
+cataphract2,Cataphract S-II
 chasemode7s,Prototype Core
 cheat_tempestas7s,Pristine Condition
 converted_fighterbay,Converted Fighter Bay
@@ -30,6 +40,11 @@ drg_pdspec,PD Specialization
 eccm,ECCM Package
 ecm,ECM Package
 efficiency_overhaul,Efficiency Overhaul
+eis_aquila,Aquila Reactor Protocol
+eis_aquila_1time,(Consumable) Aquila Reactor Protocol
+eis_avaritia,Avaritia Capacity Overhaul
+eis_damperhull,Vanagloria Ionized Armor
+eis_perfect_vengeance,Perfect Vengeance Core
 escort_package,Escort Package
 expanded_cargo_holds,Expanded Cargo Holds
 expanded_deck_crew,Expanded Deck Crew
@@ -40,8 +55,10 @@ fragment_coordinator,Fragment Coordinator
 fragment_swarm,Fragment Swarm
 frontemitter,Shield Conversion - Front
 frontshield,Makeshift Shield Generator
+gr_DarkDesign,Constellate Design- Jet Black
 gr_GhostDesign,Ultimate Design
 gr_NunkiCR,Invasive Timefield
+gr_WhiteDesign,Constellate Design - White Jade
 ground_support,Ground Support Package
 guerrilla_overhaul7s,Guerrilla Overhaul
 hardened_subsystems,Hardened Subsystems
@@ -51,11 +68,29 @@ heavyarmor,Heavy Armor
 high_scatter_amp,High Scatter Amplifier
 hiressensors,High Resolution Sensors
 insulatedengine,Insulated Engine Assembly
+ix_aquilon_microforge,Aquilon Nanoforge
+ix_carrier_gunships,Carrier Gunships
+ix_cramped_missile_bays,Cramped Missile Bays
+ix_entropy_arrester,Immanence Engine
+ix_missile_autoforge,Advanced Missile Autoforge
+ix_missile_nanoforge,Missile Nanoforge
+ix_odyssey_retrofit,Sentinel Retrofit
+ix_point_defense_medium,Sentinel PD Array - Medium
+ix_point_defense_small,Sentinel PD Array - Small
+ix_reactive_combat_shields,Reactive Combat Shields
+kol_refit,Knight Refit
+kol_shields,Primitive Shields
+logi_oracle,Oracle Sensor Suite
 magazines,Expanded Magazines
 militarized_subsystems,Militarized Subsystems
 missile_autoloader,Missile Autoloader
 missleracks,Expanded Missile Racks
+na_energizedarmor,Armor Energizer Matrix
 na_gravitydrag,Gravitational Drag
+na_hardlightmatrix,Hardlight Matrix
+na_hardlightmatrix2,Aegis Deflectors
+na_stargazerstars,Stardust Nebula
+na_tidalgrid,Tidal Grid
 nav_relay,Nav Relay
 necro_scavenger7s,Necro Scavenger
 neural_interface,Neural Interface
@@ -68,12 +103,16 @@ nskr_inertial,Inertial Supercharger
 nskr_volatile,Volatile Flux Injector
 nsp_sandevistan,Enraged Systems
 operations_center,Operations Center
+ordnance_amendment7s,Converted Missile Holds
+orr_damper_field,Blessed Halo
 phase_anchor,Phase Anchor
 phasefield,Phase Field
 pointdefenseai,Integrated Point Defense AI
 quantum_damper7s,Quantum Damper
 rat_abyssal_core,Abyssal Adaptability
 rat_abyssal_grid,Abyssal Grid
+rat_abyssal_threat,Symbiosis
+rat_apheidas_hullmod,Phase Platform
 rat_exogrid,Exogrid
 rat_exogrid_overload,Exogrid Overload
 rat_hypatia_hullmod,Warpfield
@@ -82,6 +121,9 @@ rat_seraphs_grace,Seraphs Grace
 recovery_shuttles,Recovery Shuttles
 reinforcedhull,Reinforced Bulkheads
 resonance7s,Illusia Resonance
+roider_argosHangar,Drone Reserves
+roider_fighterClamps,Fighter Clamps
+roider_firestormmod,Firestorm Integration
 safety_protocols7s,Safety Protocols
 safetyoverrides,Safety Overrides
 secondary_fabricator,Secondary Fabricator
@@ -92,14 +134,43 @@ shrouded_thunderhead,Shrouded Thunderhead
 singularity_hullmod7s,Singularity Hullmod
 solar_shielding,Solar Shielding
 stabilizedshieldemitter,Stabilized Shields
+stardust_EnhancedEngines,Stardust Engine Enhancements
+stardust_StardustCore,Stardust Core Field
+strikeCraft,Strikecraft
 surveying_equipment,Surveying Equipment
+sw_titanium_armor,Powered Titanium Plates
 tahlan_daemonarmor,Hel Carapace
 tahlan_daemonplating,Hel Plating
+tahlan_heavyconduits,Lostech Engineering
+tahlan_lirefit,Infernalis Drives
+tahlan_paralleltargeting,Parallel Targeting Core
+tahlan_phaseharmonics,Phase Harmonics
 tahlan_silberherz,Silberherz Core
 tahlan_silberherz_minor,Silberherz Subcore
+tania_ancient_weapon_sys,Ancient Frame
+tania_ballistic_overclock,Thermal Calibration
+tania_battlecruiser_package,Battlecruiser Package
+tania_combat_forge,Combat Autoforge
+tania_fixed_frontal_shield,Low Arc Shield Emitter
+tania_improved_pd_core,Improved Point Defense Core
+tania_navarchy_armor_plate,Navarchy Armor Plate
 targetingunit,Integrated Targeting Unit
 turretgyros,Advanced Turret Gyros
+tw_ewar_suite,Compact EWAR Suite
+tw_intrepid_hull,Advanced ECM Suite
+tw_optimized_targeting_core,Optimized Targeting Core
+tw_point_defense_small,Sentinel PD Array
+tw_superior_pd,Superior Point Defense
+tw_trinity_retrofit,Trinity Worlds Retrofit
 uaf_special_edge_capacitor_retrofit,Edge Capacitors Retrofit
 ugh_antiterminalbreakers,Anti-Terminal Reactive Breakers
 unstable_injector,Unstable Injector
+vice_adaptive_entropy_arrester,Adaptive Entropy Arrester
+vice_aquilon_microforge,Aquilon Nanoforge
+vice_intrepid_hull,Advanced ECM Suite
+vice_missile_microforge,Missile Nanoforge
+vice_onslaught_hull,Supreme Modifications
+vice_unified_targeting_core,Unified Targeting Core
+zea_dawn_builtin,Dawntide
+zea_dusk_builtin,Duskfall
 zea_edf_iff_override,IFF Override

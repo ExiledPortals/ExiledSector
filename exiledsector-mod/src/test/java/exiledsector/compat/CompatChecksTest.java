@@ -252,7 +252,7 @@ class CompatChecksTest {
             }
         }
 
-        assertEquals(NightcrossCompat.REQUIRED_HULL_MOD_IDS.stream().sorted().toList(), excludedNightcrossHullMods.stream().sorted().toList());
+        assertEquals(NightcrossCompat.REQUIRED_HULL_MOD_IDS.stream().sorted().toList(), excludedNightcrossHullMods.stream().distinct().sorted().toList());
     }
 
     @Test

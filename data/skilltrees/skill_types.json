@@ -137,6 +137,9 @@
 					"magnitude": -5
 				}
 			],
+			"exclusiveHullMods": [
+				"vice_onslaught_hull"
+			],
 			"phantomHullMods": [
 				"hbi"
 			],
@@ -547,7 +550,13 @@
 				"necro_scavenger7s",
 				"ashesofohm_domainmachinerymod",
 				"rat_exogrid_overload",
-				"ugh_antiterminalbreakers"
+				"ugh_antiterminalbreakers",
+				"tania_ancient_weapon_sys",
+				"eis_aquila",
+				"eis_aquila_1time",
+				"eis_avaritia",
+				"armaa_SeraphTargetingSoftware",
+				"armaa_SilverSwordHM"
 			],
 			"phantomHullMods": [
 				"safetyoverrides"
@@ -685,6 +694,13 @@
 					"id": "advancedshieldemitter"
 				}
 			],
+			"exclusiveHullMods": [
+				"tania_fixed_frontal_shield",
+				"kol_refit",
+				"gr_DarkDesign",
+				"kol_shields",
+				"tahlan_heavyconduits"
+			],
 			"phantomHullMods": [
 				"advancedshieldemitter"
 			],
@@ -712,7 +728,10 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"phase_anchor"
+				"phase_anchor",
+				"A_S-F_MaliceCoils",
+				"na_tidalgrid",
+				"zea_dusk_builtin"
 			],
 			"phantomHullMods": [
 				"adaptive_coils"
@@ -807,6 +826,9 @@
 					"magnitude": -25
 				}
 			],
+			"exclusiveHullMods": [
+				"asm_amorphous_alloy"
+			],
 			"phantomHullMods": [
 				"armoredweapons"
 			],
@@ -833,6 +855,10 @@
 					"category": "hullmod",
 					"id": "autorepair"
 				}
+			],
+			"exclusiveHullMods": [
+				"vice_adaptive_entropy_arrester",
+				"ix_entropy_arrester"
 			],
 			"phantomHullMods": [
 				"autorepair"
@@ -871,6 +897,12 @@
 					"category": "hullmod",
 					"id": "ballistic_rangefinder"
 				}
+			],
+			"exclusiveHullMods": [
+				"A_S-F_integratedRangefinders",
+				"ballistic_support7s",
+				"tahlan_paralleltargeting",
+				"roider_firestormmod"
 			],
 			"phantomHullMods": [
 				"ballistic_rangefinder"
@@ -949,7 +981,13 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"converted_fighterbay"
+				"converted_fighterbay",
+				"ix_odyssey_retrofit",
+				"tw_trinity_retrofit",
+				"roider_fighterClamps",
+				"armaa_SeraphTargetingSoftware",
+				"cataphract",
+				"cataphract2"
 			],
 			"phantomHullMods": [
 				"converted_hangar"
@@ -984,6 +1022,10 @@
 					"category": "hullmod",
 					"id": "converted_fighterbay"
 				}
+			],
+			"exclusiveHullMods": [
+				"ordnance_amendment7s",
+				"strikeCraft"
 			],
 			"phantomHullMods": [
 				"converted_fighterbay"
@@ -1023,7 +1065,11 @@
 			"exclusiveHullMods": [
 				"targetingunit",
 				"advancedcore",
-				"distributed_fire_control"
+				"distributed_fire_control",
+				"nsp_sandevistan",
+				"vice_unified_targeting_core",
+				"tw_optimized_targeting_core",
+				"ix_carrier_gunships"
 			],
 			"phantomHullMods": [
 				"dedicated_targeting_core"
@@ -1128,6 +1174,12 @@
 					"id": "ecm"
 				}
 			],
+			"exclusiveHullMods": [
+				"vice_intrepid_hull",
+				"tw_intrepid_hull",
+				"tw_ewar_suite",
+				"logi_oracle"
+			],
 			"phantomHullMods": [
 				"ecm"
 			],
@@ -1199,6 +1251,11 @@
 					"category": "hullmod",
 					"id": "expanded_deck_crew"
 				}
+			],
+			"exclusiveHullMods": [
+				"roider_argosHangar",
+				"cataphract",
+				"cataphract2"
 			],
 			"phantomHullMods": [
 				"expanded_deck_crew"
@@ -1279,6 +1336,9 @@
 					"id": "magazines"
 				}
 			],
+			"exclusiveHullMods": [
+				"asm_munitions_regulator"
+			],
 			"phantomHullMods": [
 				"magazines"
 			],
@@ -1310,6 +1370,14 @@
 					"id": "missleracks"
 				}
 			],
+			"exclusiveHullMods": [
+				"vice_missile_microforge",
+				"vice_aquilon_microforge",
+				"ix_missile_nanoforge",
+				"ix_missile_autoforge",
+				"ix_aquilon_microforge",
+				"ix_cramped_missile_bays"
+			],
 			"phantomHullMods": [
 				"missleracks"
 			],
@@ -1335,6 +1403,14 @@
 					"category": "hullmod",
 					"id": "extendedshieldemitter"
 				}
+			],
+			"exclusiveHullMods": [
+				"tania_fixed_frontal_shield",
+				"kol_refit",
+				"na_hardlightmatrix",
+				"na_hardlightmatrix2",
+				"kol_shields",
+				"tahlan_heavyconduits"
 			],
 			"phantomHullMods": [
 				"extendedshieldemitter"
@@ -1369,7 +1445,11 @@
 				"frontemitter",
 				"adaptiveshields",
 				"frontshield",
-				"zea_edf_iff_override"
+				"zea_edf_iff_override",
+				"na_energizedarmor",
+				"nsp_sandevistan",
+				"tahlan_heavyconduits",
+				"eis_perfect_vengeance"
 			],
 			"phantomHullMods": [
 				"shield_shunt"
@@ -1402,7 +1482,11 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"shield_shunt"
+				"shield_shunt",
+				"tania_navarchy_armor_plate",
+				"asm_amorphous_alloy",
+				"orr_damper_field",
+				"tahlan_heavyconduits"
 			],
 			"phantomHullMods": [
 				"frontshield"
@@ -1425,6 +1509,15 @@
 					"category": "hullmod",
 					"id": "missile_autoloader"
 				}
+			],
+			"exclusiveHullMods": [
+				"tania_battlecruiser_package",
+				"tania_combat_forge",
+				"vice_missile_microforge",
+				"vice_aquilon_microforge",
+				"ix_missile_nanoforge",
+				"ix_missile_autoforge",
+				"ix_aquilon_microforge"
 			],
 			"phantomHullMods": [
 				"missile_autoloader"
@@ -1490,6 +1583,11 @@
 					"id": "hardenedshieldemitter"
 				}
 			],
+			"exclusiveHullMods": [
+				"tania_fixed_frontal_shield",
+				"ix_reactive_combat_shields",
+				"tahlan_heavyconduits"
+			],
 			"phantomHullMods": [
 				"hardenedshieldemitter"
 			],
@@ -1546,6 +1644,13 @@
 					"category": "hullmod",
 					"id": "heavyarmor"
 				}
+			],
+			"exclusiveHullMods": [
+				"nsp_sandevistan",
+				"asm_amorphous_alloy",
+				"sw_titanium_armor",
+				"eis_damperhull",
+				"beamCoatType2"
 			],
 			"phantomHullMods": [
 				"heavyarmor"
@@ -1923,6 +2028,16 @@
 					"id": "pointdefenseai"
 				}
 			],
+			"exclusiveHullMods": [
+				"tania_improved_pd_core",
+				"ix_point_defense_small",
+				"tw_point_defense_small",
+				"ix_point_defense_medium",
+				"ix_odyssey_retrofit",
+				"tw_superior_pd",
+				"armaa_SeraphTargetingSoftware",
+				"armaa_SilverSwordHM"
+			],
 			"phantomHullMods": [
 				"pointdefenseai"
 			],
@@ -1961,7 +2076,11 @@
 			"exclusiveHullMods": [
 				"dedicated_targeting_core",
 				"advancedcore",
-				"distributed_fire_control"
+				"distributed_fire_control",
+				"tania_ballistic_overclock",
+				"nsp_sandevistan",
+				"vice_unified_targeting_core",
+				"tw_optimized_targeting_core"
 			],
 			"phantomHullMods": [
 				"targetingunit"
@@ -1990,6 +2109,9 @@
 					"category": "hullmod",
 					"id": "nav_relay"
 				}
+			],
+			"exclusiveHullMods": [
+				"logi_oracle"
 			],
 			"phantomHullMods": [
 				"nav_relay"
@@ -2023,7 +2145,11 @@
 			],
 			"exclusiveHullMods": [
 				"adaptiveshields",
-				"shield_shunt"
+				"shield_shunt",
+				"tania_fixed_frontal_shield",
+				"kol_refit",
+				"kol_shields",
+				"tahlan_heavyconduits"
 			],
 			"phantomHullMods": [
 				"frontemitter"
@@ -2058,7 +2184,13 @@
 			],
 			"exclusiveHullMods": [
 				"frontemitter",
-				"shield_shunt"
+				"shield_shunt",
+				"tania_fixed_frontal_shield",
+				"kol_refit",
+				"na_hardlightmatrix",
+				"na_hardlightmatrix2",
+				"kol_shields",
+				"tahlan_heavyconduits"
 			],
 			"phantomHullMods": [
 				"adaptiveshields"
@@ -2086,6 +2218,12 @@
 					"category": "hullmod",
 					"id": "operations_center"
 				}
+			],
+			"exclusiveHullMods": [
+				"logi_oracle",
+				"armaa_SeraphTargetingSoftware",
+				"cataphract",
+				"cataphract2"
 			],
 			"phantomHullMods": [
 				"operations_center"
@@ -2122,7 +2260,9 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"adaptive_coils"
+				"adaptive_coils",
+				"A_S-F_MaliceCoils",
+				"tahlan_phaseharmonics"
 			],
 			"phantomHullMods": [
 				"phase_anchor"
@@ -2151,6 +2291,11 @@
 					"category": "hullmod",
 					"id": "recovery_shuttles"
 				}
+			],
+			"exclusiveHullMods": [
+				"armaa_SeraphTargetingSoftware",
+				"cataphract",
+				"cataphract2"
 			],
 			"phantomHullMods": [
 				"recovery_shuttles"
@@ -2209,6 +2354,9 @@
 					"id": "fluxbreakers"
 				}
 			],
+			"exclusiveHullMods": [
+				"tahlan_heavyconduits"
+			],
 			"phantomHullMods": [
 				"fluxbreakers"
 			],
@@ -2234,6 +2382,11 @@
 					"category": "hullmod",
 					"id": "stabilizedshieldemitter"
 				}
+			],
+			"exclusiveHullMods": [
+				"tania_fixed_frontal_shield",
+				"gr_DarkDesign",
+				"tahlan_heavyconduits"
 			],
 			"phantomHullMods": [
 				"stabilizedshieldemitter"
@@ -2271,6 +2424,11 @@
 					"capitalShip": 15
 				}
 			],
+			"exclusiveHullMods": [
+				"gr_WhiteDesign",
+				"tahlan_lirefit",
+				"tw_trinity_retrofit"
+			],
 			"phantomHullMods": [
 				"unstable_injector"
 			],
@@ -2293,6 +2451,11 @@
 					"cruiser": 60,
 					"capitalShip": 125
 				}
+			],
+			"exclusiveHullMods": [
+				"armaa_SeraphTargetingSoftware",
+				"cataphract",
+				"cataphract2"
 			],
 			"phantomHullMods": [
 				"additional_berthing"
@@ -2320,6 +2483,9 @@
 					"id": "augmentedengines"
 				}
 			],
+			"exclusiveHullMods": [
+				"stardust_EnhancedEngines"
+			],
 			"phantomHullMods": [
 				"augmentedengines"
 			],
@@ -2346,6 +2512,11 @@
 					"cruiser": 60,
 					"capitalShip": 125
 				}
+			],
+			"exclusiveHullMods": [
+				"armaa_SeraphTargetingSoftware",
+				"cataphract",
+				"cataphract2"
 			],
 			"phantomHullMods": [
 				"auxiliary_fuel_tanks"
@@ -2415,6 +2586,12 @@
 					"cruiser": 60,
 					"capitalShip": 125
 				}
+			],
+			"exclusiveHullMods": [
+				"ordnance_amendment7s",
+				"armaa_SeraphTargetingSoftware",
+				"cataphract",
+				"cataphract2"
 			],
 			"phantomHullMods": [
 				"expanded_cargo_holds"
@@ -2536,6 +2713,10 @@
 					"id": "solar_shielding"
 				}
 			],
+			"exclusiveHullMods": [
+				"stardust_StardustCore",
+				"zea_dawn_builtin"
+			],
 			"phantomHullMods": [
 				"solar_shielding"
 			],
@@ -2571,6 +2752,12 @@
 					"category": "hullmod",
 					"id": "surveying_equipment"
 				}
+			],
+			"exclusiveHullMods": [
+				"logi_oracle",
+				"armaa_SeraphTargetingSoftware",
+				"cataphract",
+				"cataphract2"
 			],
 			"phantomHullMods": [
 				"surveying_equipment"
@@ -4170,7 +4357,11 @@
 			"exclusiveHullMods": [
 				"shrouded_lens",
 				"shrouded_mantle",
-				"shrouded_thunderhead"
+				"shrouded_thunderhead",
+				"tania_navarchy_armor_plate",
+				"na_stargazerstars",
+				"rat_abyssal_threat",
+				"rat_apheidas_hullmod"
 			],
 			"phantomHullMods": [
 				"fragment_swarm"
@@ -4203,6 +4394,10 @@
 					"id": "secondary_fabricator"
 				}
 			],
+			"exclusiveHullMods": [
+				"rat_abyssal_threat",
+				"rat_apheidas_hullmod"
+			],
 			"phantomHullMods": [
 				"secondary_fabricator"
 			],
@@ -4232,6 +4427,10 @@
 					"category": "hullmod",
 					"id": "fragment_coordinator"
 				}
+			],
+			"exclusiveHullMods": [
+				"rat_abyssal_threat",
+				"rat_apheidas_hullmod"
 			],
 			"phantomHullMods": [
 				"fragment_coordinator"
@@ -4280,7 +4479,10 @@
 				"quantity": 1
 			},
 			"exclusiveHullMods": [
-				"fragment_swarm"
+				"fragment_swarm",
+				"tania_navarchy_armor_plate",
+				"rat_abyssal_threat",
+				"rat_apheidas_hullmod"
 			],
 			"phantomHullMods": [
 				"shrouded_lens"
@@ -4306,7 +4508,10 @@
 				"quantity": 1
 			},
 			"exclusiveHullMods": [
-				"fragment_swarm"
+				"fragment_swarm",
+				"tania_navarchy_armor_plate",
+				"rat_abyssal_threat",
+				"rat_apheidas_hullmod"
 			],
 			"phantomHullMods": [
 				"shrouded_mantle"
@@ -4327,7 +4532,10 @@
 				"quantity": 1
 			},
 			"exclusiveHullMods": [
-				"fragment_swarm"
+				"fragment_swarm",
+				"tania_navarchy_armor_plate",
+				"rat_abyssal_threat",
+				"rat_apheidas_hullmod"
 			],
 			"phantomHullMods": [
 				"shrouded_thunderhead"
