@@ -20,7 +20,7 @@
     "framework.confirm.cancel": "取消",
     "framework.panel.hint": "改装图纸将舰船直接提升至图纸的点数，从报废到人类领域，最多{max}点。花费点数解锁舱段，重新锁定舱段会返还其点数。",
     "framework.panel.hintCharts": "通关星图会提升所有舰船的点数，最多{max}点。花费点数解锁舱段，重新锁定舱段会返还其点数。",
-    "framework.panel.upgrades": "船体升级点数",
+    "framework.panel.upgrades": "船体升级",
     "framework.panel.sockets": "舱段",
     "framework.panel.inStorage": "仓库中有{count}个",
     "framework.panel.upgradeReady": "点击使用。使用后会被消耗，并将这艘舰船提升至{points}点。",

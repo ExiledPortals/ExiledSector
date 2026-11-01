@@ -20,7 +20,7 @@
     "framework.confirm.cancel": "Cancel",
     "framework.panel.hint": "Refit Schematics raise a ship straight to their tier, from Scrapped to Domain, up to {max}. Spend points to unlock sections. Locking a section again returns its point.",
     "framework.panel.hintCharts": "Clearing Star Charts raises every ship's points, up to {max}. Spend points to unlock sections. Locking a section again returns its point.",
-    "framework.panel.upgrades": "Hull Upgrade Points",
+    "framework.panel.upgrades": "Hull Upgrades",
     "framework.panel.sockets": "Sections",
     "framework.panel.inStorage": "{count} in storage",
     "framework.panel.upgradeReady": "Click to apply. It is used up and raises this ship to {points} points.",
