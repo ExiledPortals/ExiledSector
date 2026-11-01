@@ -9,6 +9,7 @@ import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.fleets.FleetParamsV3;
 import exiledsector.charts.loot.ChartVanillaLoot;
 import org.lwjgl.util.vector.Vector2f;
@@ -64,6 +65,7 @@ public final class FakeChartContentEngine implements ChartContentEngine {
     boolean failFleets;
     boolean emptyFleets;
     boolean missingFlagships;
+    boolean fleetsHaveFlagships;
     int spotCalls;
 
     public static FakeChartContentEngine install(FakeChartContentEngine engine) {
@@ -239,6 +241,11 @@ public final class FakeChartContentEngine implements ChartContentEngine {
         when(fleet.getId()).thenReturn(id);
         when(fleet.isEmpty()).thenReturn(emptyFleets);
         when(fleet.hasAbility(anyString())).thenReturn(true);
+        if (fleetsHaveFlagships) {
+            FleetMemberAPI flagship = mock(FleetMemberAPI.class);
+            when(flagship.getId()).thenReturn(id + "-flagship");
+            when(fleet.getFlagship()).thenReturn(flagship);
+        }
         MemoryAPI memory = memory();
         when(fleet.getMemoryWithoutUpdate()).thenReturn(memory);
         Vector2f location = new Vector2f();

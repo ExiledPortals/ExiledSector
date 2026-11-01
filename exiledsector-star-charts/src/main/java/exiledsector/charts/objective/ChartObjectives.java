@@ -5,13 +5,13 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.atlas.AtlasProgress;
 import org.apache.log4j.Logger;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -25,7 +25,7 @@ public final class ChartObjectives {
 
     static ChartRun trackedRun() {
         ChartRun run = ChartRuns.live();
-        if (run == null || run.isObjectiveComplete() || run.isObjectiveLost() || run.objective() == null) {
+        if (run == null || run.isObjectiveComplete() || run.isObjectiveLost() || !run.hasBoss()) {
             return null;
         }
         return run;
@@ -40,10 +40,10 @@ public final class ChartObjectives {
             lost(sector, run);
             return true;
         }
-        if (!run.recordTargetGone(fleet.getId())) {
+        if (!isBossFleet(run, fleet)) {
             return false;
         }
-        progressed(sector, run);
+        completed(sector, run);
         return true;
     }
 
@@ -69,30 +69,57 @@ public final class ChartObjectives {
         if (system == null) {
             return false;
         }
-        boolean changed = false;
-        Set<String> remainingFleetIds = new HashSet<>();
+        boolean bossStanding = false;
+        boolean protectedStanding = false;
         for (CampaignFleetAPI fleet : system.getFleets()) {
-            if (!fleet.isDespawning() && !fleet.isEmpty()) {
-                remainingFleetIds.add(fleet.getId());
+            if (fleet.isDespawning() || fleet.isEmpty()) {
+                continue;
+            }
+            if (run.protectedFleetId() != null && run.protectedFleetId().equals(fleet.getId())) {
+                protectedStanding = true;
+            }
+            if (isBossFleet(run, fleet)) {
+                run.recordBossFlagship(flagshipIdOf(fleet));
+                bossStanding = holdsMember(fleet, run.bossFlagshipId());
             }
         }
-        if (run.protectedFleetId() != null && !remainingFleetIds.contains(run.protectedFleetId())) {
+        if (run.protectedFleetId() != null && !protectedStanding) {
             lost(sector, run);
             return true;
         }
-        List<String> defeated = run.defeatedTargetIds();
-        for (String targetId : run.objectiveTargetIds()) {
-            if (defeated.contains(targetId)) {
-                continue;
-            }
-            if (!remainingFleetIds.contains(targetId) && run.recordTargetGone(targetId)) {
-                changed = true;
+        if (bossStanding) {
+            return false;
+        }
+        completed(sector, run);
+        return true;
+    }
+
+    public static String flagshipIdOf(CampaignFleetAPI fleet) {
+        if (fleet == null) {
+            return null;
+        }
+        FleetMemberAPI flagship = fleet.getFlagship();
+        if (flagship == null && fleet.getFleetData() != null) {
+            List<FleetMemberAPI> members = fleet.getFleetData().getMembersListCopy();
+            flagship = members == null || members.isEmpty() ? null : members.get(0);
+        }
+        return flagship == null ? null : flagship.getId();
+    }
+
+    private static boolean isBossFleet(ChartRun run, CampaignFleetAPI fleet) {
+        return run.bossFleetId().equals(fleet.getId());
+    }
+
+    private static boolean holdsMember(CampaignFleetAPI fleet, String memberId) {
+        if (memberId == null || fleet.getFleetData() == null) {
+            return true;
+        }
+        for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
+            if (memberId.equals(member.getId())) {
+                return true;
             }
         }
-        if (changed) {
-            progressed(sector, run);
-        }
-        return changed;
+        return false;
     }
 
     private static void lost(SectorAPI sector, ChartRun run) {
@@ -101,8 +128,7 @@ public final class ChartObjectives {
         }
     }
 
-    private static void progressed(SectorAPI sector, ChartRun run) {
-        updateIntel(sector, run);
+    private static void completed(SectorAPI sector, ChartRun run) {
         if (!run.markObjectiveComplete()) {
             return;
         }

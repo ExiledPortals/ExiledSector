@@ -24,7 +24,6 @@ import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
-import exiledsector.charts.objective.ChartObjective;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunBound;
 import exiledsector.charts.run.ChartRuns;
@@ -95,7 +94,7 @@ class LaunchingStationTest {
 
     private static ChartRun run(int tier) {
         ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(tier, "remnant", ChartObjective.CLEAR, List.of(), null, 3, 2));
+        run.recordContent(new ChartContent(tier, "remnant", null, 3, 2));
         ChartRuns.store(run);
         return run;
     }

@@ -15,7 +15,6 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
-import exiledsector.charts.objective.ChartObjective;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.StarChartCurrency;
@@ -104,7 +103,7 @@ class ChartFleetHullItemsTest {
                 .put(new JSONObject().put("site", ChartIds.BOSS_LOOT_SITE).put("chances", "0").put("uniqueChance", "0")));
         try {
             ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-            run.recordContent(new ChartContent(6, "hegemony", ChartObjective.BOSS, List.of(BOSS_ID), BOSS_ID, 4, 6, List.of("relay_network")));
+            run.recordContent(new ChartContent(6, "hegemony", BOSS_ID, 4, 6, List.of("relay_network")));
             run.recordArrival();
             ChartRuns.store(run);
             ChartGenContext lastStage = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of("relay_network"), false)
@@ -150,7 +149,7 @@ class ChartFleetHullItemsTest {
                 .put(new JSONObject().put("site", ChartIds.BOSS_LOOT_SITE).put("chances", "0").put("uniqueChance", "0")));
         try {
             ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-            run.recordContent(new ChartContent(6, "hegemony", ChartObjective.BOSS, List.of(BOSS_ID), BOSS_ID, 4, 6, List.of()));
+            run.recordContent(new ChartContent(6, "hegemony", BOSS_ID, 4, 6, List.of()));
             run.recordArrival();
             ChartRuns.store(run);
             ChartGenContext guaranteed = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(), false)
@@ -168,7 +167,7 @@ class ChartFleetHullItemsTest {
 
     private ChartRun storeLiveRun(int tier) {
         ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(tier, "hegemony", ChartObjective.BOSS, List.of(BOSS_ID), BOSS_ID, 4, 6));
+        run.recordContent(new ChartContent(tier, "hegemony", BOSS_ID, 4, 6));
         run.recordArrival();
         ChartRuns.store(run);
         return run;

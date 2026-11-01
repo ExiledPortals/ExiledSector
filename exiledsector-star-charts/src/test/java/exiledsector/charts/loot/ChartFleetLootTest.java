@@ -22,7 +22,6 @@ import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.effect.ChartEffect;
-import exiledsector.charts.objective.ChartObjective;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.StarChartCurrency;
@@ -81,7 +80,7 @@ class ChartFleetLootTest {
 
     private ChartRun storeLiveRun(int tier) {
         ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(tier, "hegemony", ChartObjective.BOSS, List.of(BOSS_ID), BOSS_ID, 4, 6));
+        run.recordContent(new ChartContent(tier, "hegemony", BOSS_ID, 4, 6));
         run.recordArrival();
         ChartRuns.store(run);
         return run;

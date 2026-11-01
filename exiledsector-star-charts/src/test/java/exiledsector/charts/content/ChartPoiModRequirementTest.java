@@ -69,7 +69,7 @@ class ChartPoiModRequirementTest {
     }
 
     private static boolean plannedInAnyOf(int seeds) {
-        ChartTier stationsOnly = new ChartTier(HIGHEST_TIER, 100f, 2, 2, 0, 0, 50f, 100, 100, 0f, 0f, 70f, 0f, false, 0f, 1f, 0f);
+        ChartTier stationsOnly = new ChartTier(HIGHEST_TIER, 100f, 2, 2, 0, 0, 50f, 100, 100, 0f, 0f, 70f, 0f, false, 0f);
         for (long seed = 0; seed < seeds; seed++) {
             List<PlannedPoi> planned = ChartContentPlanner.spendLoot(stationsOnly, ChartPois.all(), new Random(seed));
             if (planned.stream().anyMatch(poi -> poi.poi().id().equals(ARSENAL_ID))) {

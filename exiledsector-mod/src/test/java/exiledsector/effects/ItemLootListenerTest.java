@@ -10,7 +10,6 @@ import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.loot.ChartDrops;
 import exiledsector.charts.loot.ChartFleetFixtures;
 import exiledsector.charts.ChartIds;
-import exiledsector.charts.objective.ChartObjective;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.items.StarChartFixtures;
@@ -313,7 +312,7 @@ class ItemLootListenerTest {
                         .put("max_tier", "6")));
         try {
             ChartRun run = new ChartRun("lootRun", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-            run.recordContent(new ChartContent(8, "hegemony", ChartObjective.CLEAR, List.of("g1"), "boss", 4, 6));
+            run.recordContent(new ChartContent(8, "hegemony", "boss", 4, 6));
             run.recordArrival();
             ChartRuns.store(run);
             StarSystemAPI system = mock(StarSystemAPI.class);

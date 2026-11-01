@@ -21,7 +21,6 @@ import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
-import exiledsector.charts.objective.ChartObjective;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.run.cleanup.ChartDefenderTallies;
@@ -78,7 +77,7 @@ class ForgeGuardsTest {
 
     private static ChartRun run(int tier) {
         ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(tier, "pirates", ChartObjective.CLEAR, List.of(), null, 3, 2));
+        run.recordContent(new ChartContent(tier, "pirates", null, 3, 2));
         ChartRuns.store(run);
         return run;
     }

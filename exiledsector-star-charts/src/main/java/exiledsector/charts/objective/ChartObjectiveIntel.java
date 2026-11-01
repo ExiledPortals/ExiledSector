@@ -34,7 +34,7 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
     }
 
     public static ChartObjectiveIntel addFor(SectorAPI sector, ChartRun run) {
-        if (run.objective() == null || sector.getIntelManager() == null) {
+        if (!run.hasBoss() || sector.getIntelManager() == null) {
             return null;
         }
         ChartObjectiveIntel intel = new ChartObjectiveIntel(run.runId());
@@ -52,17 +52,12 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
         return runId;
     }
 
-    static String objectiveName(ChartObjective objective) {
-        return objective == null ? "" : Translation.gameText("chart.objective." + objective.key() + ".name");
+    static String objectiveName(ChartRun run) {
+        return run.hasBoss() ? Translation.gameText("chart.objective.boss.name") : "";
     }
 
     public static String descriptionKey(ChartRun run) {
-        ChartObjective objective = run.objective();
-        if (objective == null) {
-            return "chart.dialog.stale";
-        }
-        String bossKey = objective == ChartObjective.BOSS ? "." + run.bossType().key() : "";
-        return "chart.objective." + objective.key() + bossKey + ".description";
+        return run.hasBoss() ? "chart.objective.boss." + run.bossType().key() + ".description" : "chart.dialog.stale";
     }
 
     static String progressText(ChartRun run) {
@@ -72,9 +67,7 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
         if (run.isObjectiveLost()) {
             return Translation.gameText("chart.intel.lost");
         }
-        int done = run.objectiveTargetsDefeated();
-        int total = run.objectiveTargetIds().size();
-        return I18n.forGameText(() -> Translation.msg("chart.intel.progress").arg("done", done).arg("total", total).text());
+        return null;
     }
 
     static String safe(String text) {
@@ -84,7 +77,7 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
     @Override
     protected String getName() {
         ChartRun run = ChartRuns.unclosed(runId);
-        String objective = run == null ? "" : objectiveName(run.objective());
+        String objective = run == null ? "" : objectiveName(run);
         return I18n.forGameText(() -> Translation.msg("chart.intel.title").arg("objective", objective).text());
     }
 
@@ -92,15 +85,16 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
     public void createIntelInfo(TooltipMakerAPI info, ListInfoMode mode) {
         info.addPara(safe(getName()), getTitleColor(mode), 0f);
         ChartRun run = ChartRuns.unclosed(runId);
-        if (run != null) {
-            info.addPara(safe(progressText(run)), PROGRESS_COLOUR, BULLET_PAD);
+        String progress = run == null ? null : progressText(run);
+        if (progress != null) {
+            info.addPara(safe(progress), PROGRESS_COLOUR, BULLET_PAD);
         }
     }
 
     @Override
     public void createSmallDescription(TooltipMakerAPI info, float width, float height) {
         ChartRun run = ChartRuns.unclosed(runId);
-        if (run == null || run.objective() == null) {
+        if (run == null || !run.hasBoss()) {
             info.addPara(safe(Translation.gameText("chart.dialog.stale")), 0f);
             return;
         }
@@ -109,7 +103,10 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
         info.addPara(safe(Translation.gameText(descriptionKey(run))), 0f);
         info.addPara(safe(I18n.forGameText(() -> Translation.msg("chart.intel.tier").arg("tier", tier).arg("faction", faction).text())),
                 PARAGRAPH_PAD);
-        info.addPara(safe(progressText(run)), PARAGRAPH_PAD);
+        String progress = progressText(run);
+        if (progress != null) {
+            info.addPara(safe(progress), PARAGRAPH_PAD);
+        }
         AnomalyRun anomalyRun = AnomalyRun.live(Global.getSector());
         if (anomalyRun != null && anomalyRun.run() == run) {
             for (String line : ChartAnomalies.intelLines(anomalyRun)) {

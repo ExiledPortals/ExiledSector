@@ -1,11 +1,10 @@
 package exiledsector.charts.generation;
 
 import exiledsector.charts.content.ChartPoi;
-import exiledsector.charts.objective.ChartObjective;
 
 public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax, int officerLevelBonus, int officerCountBonus,
                         float fleetQuality, int levelMin, int levelMax, float cacheBudget, float domainBudget,
-                        float stationBudget, float derelictBudget, boolean boss, float bossSize, float clearWeight, float bossWeight) {
+                        float stationBudget, float derelictBudget, boolean boss, float bossSize) {
 
     public static final float FLEET_SIZE_BASE_POINTS = 50f;
     public static final float PERCENT = 100f;
@@ -42,8 +41,6 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
         derelictBudget = Math.max(0f, derelictBudget);
         bossSize = Math.max(0f, bossSize);
         boss = boss && bossSize > 0f;
-        clearWeight = Math.max(0f, clearWeight);
-        bossWeight = Math.max(0f, bossWeight);
     }
 
     public static float fleetPoints(float sizePercent) {
@@ -63,13 +60,6 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
         return cacheBudget + domainBudget + stationBudget + derelictBudget;
     }
 
-    public float weightFor(ChartObjective objective) {
-        return switch (objective) {
-            case CLEAR -> clearWeight;
-            case BOSS -> boss ? bossWeight : 0f;
-        };
-    }
-
     public static ChartTier fallback(int tier) {
         int steps = Math.max(0, tier - 1);
         int levelMin = FALLBACK_FIRST_TIER_LEVEL + Math.round(FALLBACK_LEVELS_PER_TIER * steps);
@@ -79,6 +69,6 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
                 steps / 3, steps / 3, Math.min(100f, 30f + 5f * steps), levelMin, levelMin + FALLBACK_LEVEL_SPREAD,
                 poiBudget * FALLBACK_CACHE_SHARE, tier >= FALLBACK_FIRST_DOMAIN_TIER ? poiBudget * FALLBACK_DOMAIN_SHARE : 0f,
                 tier >= FALLBACK_FIRST_STATION_TIER ? poiBudget * FALLBACK_STATION_SHARE : 0f, poiBudget * FALLBACK_DERELICT_SHARE, true,
-                FALLBACK_FIRST_TIER_BOSS_SIZE + FALLBACK_BOSS_SIZE_PER_TIER * steps, 1f, 1f);
+                FALLBACK_FIRST_TIER_BOSS_SIZE + FALLBACK_BOSS_SIZE_PER_TIER * steps);
     }
 }

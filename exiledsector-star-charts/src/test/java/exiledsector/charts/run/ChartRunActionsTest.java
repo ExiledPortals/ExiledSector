@@ -155,7 +155,7 @@ class ChartRunActionsTest {
 
             ChartRun run = ChartRuns.currentOrNull();
             assertEquals(9, run.tier());
-            assertNotNull(run.objective());
+            assertTrue(run.hasBoss());
             assertEquals(content.fleets.size(), run.contentFleets());
             ArgumentCaptor<IntelInfoPlugin> posted =
                     ArgumentCaptor.forClass(IntelInfoPlugin.class);

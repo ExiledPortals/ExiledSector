@@ -359,8 +359,7 @@ public final class ChartGenContext {
                 base.officerCountBonus() + extraOfficers, base.fleetQuality() + fleetQualityPercent, base.levelMin(), base.levelMax(),
                 base.cacheBudget() * siteBudgetMult(ChartPoi.Kind.CACHE), base.domainBudget() * siteBudgetMult(ChartPoi.Kind.DOMAIN),
                 base.stationBudget() * siteBudgetMult(ChartPoi.Kind.STATION), base.derelictBudget() * siteBudgetMult(ChartPoi.Kind.DERELICT),
-                base.boss(), base.boss() ? Math.max(0f, base.bossSize() + bossSizePercent) : base.bossSize(),
-                base.clearWeight(), base.bossWeight());
+                base.boss(), base.boss() ? Math.max(0f, base.bossSize() + bossSizePercent) : base.bossSize());
     }
 
     private static float multiplier(float percent) {

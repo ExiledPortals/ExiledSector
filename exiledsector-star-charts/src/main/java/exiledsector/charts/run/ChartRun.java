@@ -6,7 +6,6 @@ import exiledsector.charts.content.ChartBossType;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.layout.ChartLayout;
-import exiledsector.charts.objective.ChartObjective;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -17,7 +16,6 @@ import java.util.regex.Pattern;
 public final class ChartRun {
 
     static final String ID_SEPARATOR = "|";
-    static final String LEGACY_VAULT_OBJECTIVE = "VAULT";
     static final String STATE_SEPARATOR = ";";
     static final String STATE_VALUE_SEPARATOR = "=";
 
@@ -38,10 +36,8 @@ public final class ChartRun {
     private boolean layoutGenerated;
     private int tier;
     private String contentFaction;
-    private String objective;
-    private String objectiveTargets;
-    private String objectiveDefeated;
     private String bossFleetId;
+    private String bossFlagshipId;
     private String bossType;
     private int contentFleets;
     private int contentPois;
@@ -151,22 +147,11 @@ public final class ChartRun {
         return layoutGenerated;
     }
 
-    private Object readResolve() {
-        if (LEGACY_VAULT_OBJECTIVE.equals(objective)) {
-            objective = ChartObjective.CLEAR.name();
-            objectiveTargets = null;
-            objectiveDefeated = null;
-        }
-        return this;
-    }
-
     public void recordContent(ChartContent content) {
         tier = ChartTiers.clamp(content.tier());
         contentFaction = content.factionId();
-        objective = content.objective() == null ? null : content.objective().name();
-        objectiveTargets = join(content.targetIds());
-        objectiveDefeated = null;
         bossFleetId = content.bossFleetId();
+        bossFlagshipId = content.bossFleetId() == null ? null : content.bossFlagshipId();
         bossType = content.bossFleetId() == null ? null : content.bossType().name();
         contentFleets = content.fleets();
         contentPois = content.pois();
@@ -209,12 +194,22 @@ public final class ChartRun {
         return contentFaction;
     }
 
-    public ChartObjective objective() {
-        return ChartObjective.parse(objective);
+    public boolean hasBoss() {
+        return bossFleetId != null;
     }
 
     public String bossFleetId() {
         return bossFleetId;
+    }
+
+    public String bossFlagshipId() {
+        return bossFlagshipId;
+    }
+
+    public void recordBossFlagship(String memberId) {
+        if (bossFlagshipId == null && bossFleetId != null && memberId != null && !memberId.isEmpty()) {
+            bossFlagshipId = memberId;
+        }
     }
 
     public ChartBossType bossType() {
@@ -231,37 +226,6 @@ public final class ChartRun {
 
     public List<String> anomalyIds() {
         return split(anomalies);
-    }
-
-    public List<String> objectiveTargetIds() {
-        return split(objectiveTargets);
-    }
-
-    public List<String> defeatedTargetIds() {
-        return split(objectiveDefeated);
-    }
-
-    public int objectiveTargetsDefeated() {
-        return defeatedTargetIds().size();
-    }
-
-    public boolean recordTargetGone(String targetId) {
-        if (targetId == null || objectiveComplete || objective() == null) {
-            return false;
-        }
-        List<String> targets = objectiveTargetIds();
-        List<String> defeated = new ArrayList<>(defeatedTargetIds());
-        if (!targets.contains(targetId) || defeated.contains(targetId)) {
-            return false;
-        }
-        defeated.add(targetId);
-        objectiveDefeated = join(defeated);
-        return true;
-    }
-
-    public boolean isObjectiveMet() {
-        List<String> targets = objectiveTargetIds();
-        return objective() != null && !targets.isEmpty() && defeatedTargetIds().containsAll(targets);
     }
 
     public boolean isObjectiveComplete() {
@@ -285,7 +249,7 @@ public final class ChartRun {
     }
 
     public boolean markObjectiveComplete() {
-        if (objectiveComplete || objectiveLost || !isObjectiveMet()) {
+        if (objectiveComplete || objectiveLost || !hasBoss()) {
             return false;
         }
         objectiveComplete = true;

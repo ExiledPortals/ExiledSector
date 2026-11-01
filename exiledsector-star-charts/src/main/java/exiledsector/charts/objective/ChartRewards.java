@@ -94,7 +94,7 @@ public final class ChartRewards {
     }
 
     private static void announce(ChartRun run, int credits, int hullItems, int charts) {
-        String objective = ChartObjectiveIntel.objectiveName(run.objective());
+        String objective = ChartObjectiveIntel.objectiveName(run);
         List<String> lines = new ArrayList<>();
         lines.add(I18n.forGameText(() -> Translation.msg("chart.reward.message").arg("objective", objective).arg("credits", credits).text()));
         if (hullItems > 0) {

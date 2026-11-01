@@ -5,7 +5,6 @@ import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartContent;
-import exiledsector.charts.objective.ChartObjective;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.items.CraftingMaterials;
@@ -72,7 +71,7 @@ class ChartForgeTest {
 
     private static ChartRun liveForgeRun(List<ForgePrograms.Program> programs, int runs) {
         ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(1, "pirates", ChartObjective.BOSS, List.of("boss"), "boss", 3, 2, List.of(DerelictForge.ANOMALY_ID)));
+        run.recordContent(new ChartContent(1, "pirates", "boss", 3, 2, List.of(DerelictForge.ANOMALY_ID)));
         run.recordArrival();
         ForgeStates.record(ForgeStates.of(run), programs, runs);
         ChartRuns.store(run);

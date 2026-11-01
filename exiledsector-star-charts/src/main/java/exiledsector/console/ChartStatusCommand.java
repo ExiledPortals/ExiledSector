@@ -43,11 +43,10 @@ public class ChartStatusCommand extends CampaignCommand {
     }
 
     static String describeObjective(ChartRun run) {
-        if (run.objective() == null) {
+        if (!run.hasBoss()) {
             return "Objective: none.";
         }
-        return "Objective " + run.objective().name() + ": " + run.objectiveTargetsDefeated() + " of " + run.objectiveTargetIds().size()
-                + " target(s) done" + (run.isObjectiveComplete() ? ", complete" : "")
+        return "Objective: destroy the boss " + run.bossType().key() + " " + run.bossFleetId() + (run.isObjectiveComplete() ? ", complete" : "")
                 + (run.isRewardClaimed() ? ", reward delivered" : run.isObjectiveComplete() ? ", reward NOT delivered" : "") + ".";
     }
 

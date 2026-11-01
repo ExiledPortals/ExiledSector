@@ -109,8 +109,7 @@ public class ChartOpenCommand extends CampaignCommand {
         if (run == null) {
             return "The system's content was not recorded.";
         }
-        String objective = run.objective() == null ? "none (no target could be placed; see starsector.log)"
-                : run.objective().name() + " (" + run.objectiveTargetIds().size() + " target(s))";
+        String objective = run.hasBoss() ? "destroy the boss" : "none (no boss could be placed; see starsector.log)";
         return "Tier " + run.tier() + ", held by " + (run.contentFaction() == null ? "nobody" : run.contentFaction()) + ": "
                 + run.contentFleets() + " fleet(s), " + run.contentPois() + " point(s) of interest"
                 + (run.bossFleetId() != null ? ", a boss " + run.bossType().key() : "")

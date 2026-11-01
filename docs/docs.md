@@ -499,10 +499,10 @@ shared one. Powerful Boss (`PowerfulBoss`) does, and its run's boss always drops
 (`LootShaper.guaranteesBossTierUp`); anomaly effects reach the content plan, so its line sizes the boss. Chart drops
 inside a run never fall below its tier.
 
-Killing the objective completes the system and grants an atlas point for the first clear of each tier (`AtlasProgress`).
+Killing the boss is the only way to complete a system, and it grants an atlas point for the first clear of each tier (`AtlasProgress`).
 A Sensor Array also reveals 6 lanes, a Nexus cleanses the systems it infested, and a Bastion gives a key fragment and
 allows one attempt. A system's anomalies are its rolled ones plus records inserted into `AtlasState`, which
-`AtlasAnomalies.canInsert` gates and any run there spends, at most 9 in all (`MAX_PER_SYSTEM`), unless a Relay Network chain moves on. A run that closes without its objective spends the system's
+`AtlasAnomalies.canInsert` gates and any run there spends, at most 9 in all (`MAX_PER_SYSTEM`), unless a Relay Network chain moves on. A run that closes without killing its boss spends the system's
 rolled anomalies, all but star ones. Biomes tile the map from sites about five cells apart, and each sets how many of its cells hold a
 system (`AtlasBiomes`). Normal space wins most sites and chains into the volumes factions hold, while a special biome
 never sits beside another site of its own type, so it stays a small pocket. Each biome lists the only factions it holds
@@ -541,11 +541,12 @@ A chart's boss is a fleet or a station, picked by weight from the `chart_bosses.
 (`ChartBosses`). A station is only picked when `chart_boss_stations.csv` has one for the run's faction at that tier,
 and rows without factions serve every faction without its own. A faction in a row's `excluded_factions` never gets
 that type, so the Remnant and derelicts always get a fleet boss. Each row's `fleet_share` scales the boss size for
-the boss's fleet: the whole boss, or the station's guard.
+the boss's fleet: the whole boss, or the station's guard. The boss counts as killed once its fleet no longer holds
+the flagship or station it spawned with, whatever removed it (`ChartRun.bossFlagshipId`, `ChartObjectives.reconcile`).
 
 A station boss is a vanilla station-mode fleet with no market (`VanillaChartContentEngine.createStation`) orbiting
 the boss's spot, and its guard holds a passive orbit beside it, so engaging either pulls in the other. The station
-is the objective target and carries the boss loot. Station rows whose variant the game has not loaded are dropped
+is the boss and carries the boss loot. Station rows whose variant the game has not loaded are dropped
 at load, and a station that still fails to spawn is replaced by a full-size fleet boss (`ChartContentGenerator`).
 Either kind is detected by the player from anywhere in the system, so it always shows on the radar
 (`ChartContentGenerator.revealBoss`).

@@ -20,7 +20,6 @@ import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.StarChartSettings;
-import exiledsector.charts.objective.ChartObjective;
 import exiledsector.charts.objective.ChartRewards;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemUnlock;
@@ -354,7 +353,7 @@ class ChartDropsTest {
 
     private ChartRun storeRun(int tier) {
         ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(tier, "hegemony", ChartObjective.CLEAR, List.of("g1"), "boss", 4, 6));
+        run.recordContent(new ChartContent(tier, "hegemony", "boss", 4, 6));
         run.recordArrival();
         ChartRuns.store(run);
         return run;
@@ -394,7 +393,6 @@ class ChartDropsTest {
         CargoAPI cargo = mockSector.cargo();
         when(cargo.getCredits()).thenReturn(mock(MutableValue.class));
         ChartRun run = storeRun(4);
-        run.recordTargetGone("g1");
         assertTrue(run.markObjectiveComplete());
 
         ChartRewards.Reward reward = ChartRewards.grant(sector, run);

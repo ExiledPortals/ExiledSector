@@ -26,7 +26,6 @@ import exiledsector.items.StarChartFixtures;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.loot.ChartDrops;
 import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.objective.ChartObjective;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import com.fs.starfarer.api.campaign.SpecialItemData;
@@ -149,7 +148,7 @@ class ItemSalvageListenerTest {
         ChartDrops.register(new JSONArray().put(new JSONObject().put("source", "system_salvage").put("chance", "1").put("currency_chance", "1")));
         try (MockSector mockSector = new MockSector()) {
             ChartRun run = new ChartRun("salvageRun", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-            run.recordContent(new ChartContent(6, "hegemony", ChartObjective.CLEAR, List.of("g1"), "boss", 4, 6));
+            run.recordContent(new ChartContent(6, "hegemony", "boss", 4, 6));
             run.recordArrival();
             ChartRuns.store(run);
             StarSystemAPI system = mock(StarSystemAPI.class);

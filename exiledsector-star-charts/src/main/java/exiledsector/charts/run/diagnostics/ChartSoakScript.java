@@ -43,7 +43,7 @@ public class ChartSoakScript implements EveryFrameScript {
     private int fallbackLayouts;
     private final Set<String> typesSeen = new TreeSet<>();
     private final Set<Integer> tiersSeen = new TreeSet<>();
-    private final Set<String> objectivesSeen = new TreeSet<>();
+    private final Set<String> bossesSeen = new TreeSet<>();
     private int fleetsGenerated;
     private int poisGenerated;
     private int chartsOpened;
@@ -140,7 +140,7 @@ public class ChartSoakScript implements EveryFrameScript {
             typesSeen.add(run.layoutType());
         }
         tiersSeen.add(run.tier());
-        objectivesSeen.add(run.objective() == null ? "none" : run.objective().name());
+        bossesSeen.add(run.hasBoss() ? run.bossType().key() : "none");
         fleetsGenerated += run.contentFleets();
         poisGenerated += run.contentPois();
         pendingRunId = run.runId();
@@ -178,7 +178,7 @@ public class ChartSoakScript implements EveryFrameScript {
         String report = "Star Chart soak " + outcome + ", " + systemsDone + " of " + systemsToSoak + " system(s) opened and closed.\n"
                 + "Layouts: " + generatedLayouts + " generated, " + fallbackLayouts + " fell back to a single star; types " + typesSeen + ".\n"
                 + "Content: " + fleetsGenerated + " fleet(s) and " + poisGenerated + " point(s) of interest across tiers " + tiersSeen
-                + ", objectives " + objectivesSeen + "; " + chartsOpened + " system(s) opened from rolled Star Charts with modifiers.\n"
+                + ", bosses " + bossesSeen + "; " + chartsOpened + " system(s) opened from rolled Star Charts with modifiers.\n"
                 + (changes.isEmpty() ? "Unchanged before vs after: " + String.join(", ", COMPARED_COUNTS) + "."
                 : "CHANGED before vs after: " + String.join("; ", changes)
                 + " (fleets and intel can also change if the game ran unpaused during the soak).")

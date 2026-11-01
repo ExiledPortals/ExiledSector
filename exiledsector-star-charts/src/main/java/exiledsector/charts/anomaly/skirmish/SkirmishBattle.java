@@ -16,12 +16,9 @@ import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.content.ChartSpot;
 import exiledsector.charts.content.ContentForces;
 import exiledsector.charts.content.SettledObjective;
-import exiledsector.charts.objective.ChartObjective;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 final class SkirmishBattle {
@@ -34,7 +31,6 @@ final class SkirmishBattle {
     private final AnomalyContentSite site;
     private final SkirmishPlan plan;
     private final CampaignFleetAPI station;
-    private final List<String> attackerIds = new ArrayList<>();
     private String allyFactionId;
     private CampaignFleetAPI commander;
     private Vector2f stagingPoint;
@@ -118,7 +114,6 @@ final class SkirmishBattle {
             }
             patrolSystem(fleet);
         }
-        attackerIds.add(fleet.getId());
         if (leads) {
             commander = fleet;
         }
@@ -155,8 +150,6 @@ final class SkirmishBattle {
             ChartAnomalyFleets.revealBoss(commander);
         }
         CampaignFleetAPI defended = station != null ? station : defenders.boss();
-        ChartObjective objective = commander != null ? ChartObjective.BOSS : attackerIds.isEmpty() ? null : ChartObjective.CLEAR;
-        List<String> targets = commander != null ? List.of(commander.getId()) : attackerIds;
-        site.settle(new SettledObjective(objective, targets, commander, ChartBossType.FLEET, defended == null ? null : defended.getId()));
+        site.settle(new SettledObjective(commander, ChartBossType.FLEET, defended == null ? null : defended.getId()));
     }
 }

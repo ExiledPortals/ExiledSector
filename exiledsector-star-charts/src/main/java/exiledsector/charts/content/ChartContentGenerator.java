@@ -35,7 +35,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.charts.loot.ChartFleetLoot;
 import exiledsector.charts.loot.ChartVanillaLoot;
 import exiledsector.charts.loot.DropType;
-import exiledsector.charts.objective.ChartObjective;
+import exiledsector.charts.objective.ChartObjectives;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.table.BuiltInTable;
 import exiledsector.charts.run.ChartRuns;
@@ -145,24 +145,6 @@ public final class ChartContentGenerator {
         } catch (RuntimeException e) {
             return false;
         }
-    }
-
-    static ChartObjective settleObjective(ChartObjective planned, boolean hasGuards, boolean hasBoss) {
-        List<ChartObjective> order = new ArrayList<>();
-        if (planned != null) {
-            order.add(planned);
-        }
-        order.addAll(List.of(ChartObjective.CLEAR, ChartObjective.BOSS));
-        for (ChartObjective candidate : order) {
-            boolean achievable = switch (candidate) {
-                case CLEAR -> hasGuards;
-                case BOSS -> hasBoss;
-            };
-            if (achievable) {
-                return candidate;
-            }
-        }
-        return null;
     }
 
     static List<Hazard> hazards(StarSystemAPI system) {
@@ -371,7 +353,6 @@ public final class ChartContentGenerator {
         private final Random lootRandom;
         private final List<SectorEntityToken> poiEntities = new ArrayList<>();
         private final Map<CampaignFleetAPI, FleetRole> fleets = new LinkedHashMap<>();
-        private final List<String> guardFleetIds = new ArrayList<>();
         private final List<SectorEntityToken> guardedPois = new ArrayList<>();
         private final Set<SectorEntityToken> usedFoci = new LinkedHashSet<>();
         private final List<String> anomalies = new ArrayList<>();
@@ -525,7 +506,6 @@ public final class ChartContentGenerator {
                 assign(fleet, role, holdPoint);
             });
             if (role == FleetRole.GUARD) {
-                guardFleetIds.add(fleet.getId());
                 if (guarded != null && !guardedPois.contains(guarded)) {
                     guardedPois.add(guarded);
                 }
@@ -693,16 +673,10 @@ public final class ChartContentGenerator {
 
         ChartContent settle(ChartContentPlan plan) {
             String bossFleetId = bossFleet == null ? null : bossFleet.getId();
-            if (settledObjective != null) {
-                return new ChartContent(tier, plan.faction().factionId(), settledObjective.objective(), settledObjective.targetIds(), bossFleetId,
-                        bossType, fleetCount(), placedPois(), anomalies, settledObjective.protectedFleetId());
-            }
-            ChartObjective objective = settleObjective(plan.objective(), !guardFleetIds.isEmpty(), bossFleet != null);
-            List<String> targets = objective == null ? List.of() : switch (objective) {
-                case CLEAR -> guardFleetIds;
-                case BOSS -> List.of(bossFleetId);
-            };
-            return new ChartContent(tier, plan.faction().factionId(), objective, targets, bossFleetId, bossType, fleetCount(), placedPois(), anomalies);
+            String bossFlagshipId = ChartObjectives.flagshipIdOf(bossFleet);
+            String protectedFleetId = settledObjective == null ? null : settledObjective.protectedFleetId();
+            return new ChartContent(tier, plan.faction().factionId(), bossFleetId, bossType, fleetCount(), placedPois(), anomalies, protectedFleetId,
+                    bossFlagshipId);
         }
 
         private int fleetCount() {

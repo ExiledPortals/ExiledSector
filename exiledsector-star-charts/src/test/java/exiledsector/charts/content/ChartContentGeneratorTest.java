@@ -36,7 +36,6 @@ import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.loot.ChartLoot;
 import exiledsector.charts.loot.ChartVanillaLoot;
-import exiledsector.charts.objective.ChartObjective;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -126,13 +125,9 @@ class ChartContentGeneratorTest {
         assertEquals(plan.pois().size(), content.pois());
         assertEquals(plan.fleets().size(), content.fleets());
         assertEquals(plan.faction().factionId(), content.factionId());
-        assertEquals(plan.objective(), content.objective());
-        assertFalse(content.targetIds().isEmpty());
         assertEquals(engine.fleets.size(), inSystem.size());
         assertNotNull(content.bossFleetId());
-        for (String targetId : content.targetIds()) {
-            assertTrue(targetId.startsWith("fleet-"), targetId);
-        }
+        assertTrue(content.bossFleetId().startsWith("fleet-"), content.bossFleetId());
     }
 
     @Test
@@ -285,6 +280,7 @@ class ChartContentGeneratorTest {
     @Test
     void aStationBossIsTheBossAndItsGuardOrbitsItWithoutChasing() {
         useStationBosses();
+        engine.fleetsHaveFlagships = true;
         try {
             ChartContent content = generate(11L, 8);
 
@@ -292,6 +288,7 @@ class ChartContentGeneratorTest {
             assertEquals(List.of("station2_Standard"), engine.stationVariants);
             CampaignFleetAPI station = engine.stations.get(0);
             assertEquals(station.getId(), content.bossFleetId());
+            assertEquals(station.getId() + "-flagship", content.bossFlagshipId());
             assertTrue(inSystem.contains(station));
             verify(station).setAI(null);
             verify(station).setExtendedDetectedAtRange(ChartFleetVisibility.REVEAL_EXTENDED_RANGE);
@@ -299,9 +296,6 @@ class ChartContentGeneratorTest {
             assertTrue(station.getMemoryWithoutUpdate().getBoolean(MemFlags.FLEET_FIGHT_TO_THE_LAST));
             assertTrue(station.getMemoryWithoutUpdate().getBoolean(ChartIds.fleetRunKey(RUN_ID)));
             assertTrue(station.hasTag(ChartIds.runTag(RUN_ID)));
-            if (content.objective() == ChartObjective.BOSS) {
-                assertEquals(List.of(station.getId()), content.targetIds());
-            }
             CampaignFleetAPI guard = engine.fleets.stream()
                     .filter(fleet -> engine.assignments.get(fleet).get(0).assignment() == FleetAssignment.ORBIT_PASSIVE).findFirst().orElseThrow();
             assertSame(station, engine.assignments.get(guard).get(0).target());
@@ -370,8 +364,6 @@ class ChartContentGeneratorTest {
             for (SkirmishSide side : List.of(SkirmishSide.ATTACKER, SkirmishSide.NEITHER)) {
                 ChartContent content = skirmish(side);
                 String stationId = engine.stations.get(engine.stations.size() - 1).getId();
-                assertEquals(ChartObjective.BOSS, content.objective());
-                assertEquals(List.of(stationId), content.targetIds());
                 assertEquals(stationId, content.bossFleetId());
                 assertNull(content.protectedFleetId());
             }
@@ -381,8 +373,6 @@ class ChartContentGeneratorTest {
             CampaignFleetAPI commander = engine.fleets.stream()
                     .filter(fleet -> fleet.getMemoryWithoutUpdate().getBoolean(ChartIds.SKIRMISH_COMMANDER_MEMORY_KEY)).reduce((first, last) -> last)
                     .orElseThrow();
-            assertEquals(ChartObjective.BOSS, defending.objective());
-            assertEquals(List.of(commander.getId()), defending.targetIds());
             assertEquals(commander.getId(), defending.bossFleetId());
             assertEquals(ChartBossType.FLEET, defending.bossType());
             assertEquals(station.getId(), defending.protectedFleetId());
@@ -489,14 +479,14 @@ class ChartContentGeneratorTest {
     }
 
     @Test
-    void withNoClearSpotsNothingIsPlacedAndTheObjectiveFallsBackToFleets() {
+    void withNoClearSpotsNothingIsPlacedButTheBossStillSpawns() {
         engine = FakeChartContentEngine.install(FakeChartContentEngine.offeringNothing().offering(6000f, 100f, 0f, 0f));
 
         ChartContent content = generate(42L, 10);
 
         assertEquals(0, content.pois());
         assertTrue(engine.salvageEntities.isEmpty());
-        assertTrue(content.objective() == ChartObjective.CLEAR || content.objective() == ChartObjective.BOSS);
+        assertNotNull(content.bossFleetId());
         for (CampaignFleetAPI fleet : engine.fleets) {
             Vector2f at = fleet.getLocation();
             assertTrue(Vector2f.sub(at, WORMHOLE, new Vector2f()).length() >= ChartContentGenerator.FLEET_WORMHOLE_CLEARANCE, at.toString());
@@ -504,14 +494,14 @@ class ChartContentGeneratorTest {
     }
 
     @Test
-    void aFailingFleetFactoryLeavesLootButNoFleetsAndNoFleetObjective() {
+    void aFailingFleetFactoryLeavesLootButNoFleetsAndNoBoss() {
         engine.failFleets = true;
 
         ChartContent content = generate(42L, 10);
 
         assertEquals(0, content.fleets());
         assertTrue(inSystem.isEmpty());
-        assertNull(content.objective());
+        assertNull(content.bossFleetId());
         verify(system, never()).addEntity(any(CampaignFleetAPI.class));
     }
 
@@ -523,15 +513,6 @@ class ChartContentGeneratorTest {
 
         assertEquals(0, content.fleets());
         assertTrue(inSystem.isEmpty());
-    }
-
-    @Test
-    void anObjectiveThatCouldNotBePlacedFallsBackToOneThatCan() {
-        assertEquals(ChartObjective.BOSS, ChartContentGenerator.settleObjective(ChartObjective.BOSS, true, true));
-        assertEquals(ChartObjective.CLEAR, ChartContentGenerator.settleObjective(ChartObjective.BOSS, true, false));
-        assertEquals(ChartObjective.BOSS, ChartContentGenerator.settleObjective(ChartObjective.CLEAR, false, true));
-        assertNull(ChartContentGenerator.settleObjective(ChartObjective.BOSS, false, false));
-        assertNull(ChartContentGenerator.settleObjective(null, false, false));
     }
 
     @Test

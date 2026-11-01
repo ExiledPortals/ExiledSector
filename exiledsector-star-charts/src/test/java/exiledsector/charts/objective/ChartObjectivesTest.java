@@ -3,10 +3,12 @@ package exiledsector.charts.objective;
 import com.fs.starfarer.api.campaign.CampaignEventListener.FleetDespawnReason;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetAssignment;
+import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.MutableValue;
 import exiledsector.MockSector;
 import exiledsector.charts.content.ChartBossType;
@@ -67,9 +69,9 @@ class ChartObjectivesTest {
         mockSector.close();
     }
 
-    private ChartRun openRun(ChartObjective objective, List<String> targets) {
+    private ChartRun openRun() {
         ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(7, "hegemony", objective, targets, "boss", 4, 6));
+        run.recordContent(new ChartContent(7, "hegemony", "boss", 4, 6));
         run.recordArrival();
         ChartRuns.store(run);
         return run;
@@ -85,37 +87,36 @@ class ChartObjectivesTest {
     }
 
     @Test
-    void destroyingEveryGuardianCompletesClearAndGrantsTheRewardOnce() {
-        ChartRun run = openRun(ChartObjective.CLEAR, List.of("g1", "g2"));
+    void onlyDestroyingTheBossCompletesTheChartAndTheRewardComesOnce() {
+        ChartRun run = openRun();
 
-        assertTrue(ChartObjectives.fleetGone(sector, fleet("g1", true), FleetDespawnReason.DESTROYED_BY_BATTLE));
-        assertEquals(1, run.objectiveTargetsDefeated());
+        assertFalse(ChartObjectives.fleetGone(sector, fleet("guard", true), FleetDespawnReason.DESTROYED_BY_BATTLE));
         assertFalse(run.isObjectiveComplete());
         verify(credits, never()).add(anyFloat());
 
-        assertTrue(ChartObjectives.fleetGone(sector, fleet("g2", true), FleetDespawnReason.NO_MEMBERS));
+        assertTrue(ChartObjectives.fleetGone(sector, fleet("boss", true), FleetDespawnReason.NO_MEMBERS));
         assertTrue(run.isObjectiveComplete());
         assertTrue(run.isRewardClaimed());
         verify(credits, times(1)).add((float) ChartRewards.creditsFor(7));
 
-        assertFalse(ChartObjectives.fleetGone(sector, fleet("g2", true), FleetDespawnReason.DESTROYED_BY_BATTLE));
+        assertFalse(ChartObjectives.fleetGone(sector, fleet("boss", true), FleetDespawnReason.DESTROYED_BY_BATTLE));
         assertNull(ChartRewards.grant(sector, run));
         verify(credits, times(1)).add(anyFloat());
     }
 
     @Test
     void despawnsThatAreNotDefeatsOrBelongToOtherRunsAreIgnored() {
-        ChartRun run = openRun(ChartObjective.CLEAR, List.of("g1"));
+        ChartRun run = openRun();
 
-        assertFalse(ChartObjectives.fleetGone(sector, fleet("g1", true), FleetDespawnReason.PLAYER_FAR_AWAY));
-        assertFalse(ChartObjectives.fleetGone(sector, fleet("g1", false), FleetDespawnReason.DESTROYED_BY_BATTLE));
+        assertFalse(ChartObjectives.fleetGone(sector, fleet("boss", true), FleetDespawnReason.PLAYER_FAR_AWAY));
+        assertFalse(ChartObjectives.fleetGone(sector, fleet("boss", false), FleetDespawnReason.DESTROYED_BY_BATTLE));
         assertFalse(ChartObjectives.fleetGone(sector, fleet("patrol", true), FleetDespawnReason.DESTROYED_BY_BATTLE));
-        assertEquals(0, run.objectiveTargetsDefeated());
+        assertFalse(run.isObjectiveComplete());
     }
 
     @Test
     void nothingCountsOnceTheRunIsClosing() {
-        ChartRun run = openRun(ChartObjective.BOSS, List.of("boss"));
+        ChartRun run = openRun();
         run.beginClosing();
 
         assertFalse(ChartObjectives.fleetGone(sector, fleet("boss", true), FleetDespawnReason.DESTROYED_BY_BATTLE));
@@ -125,7 +126,7 @@ class ChartObjectivesTest {
 
     @Test
     void killingTheBossCompletesTheBossObjectiveEvenWhenAnotherFleetDidIt() {
-        ChartRun run = openRun(ChartObjective.BOSS, List.of("boss"));
+        ChartRun run = openRun();
 
         assertTrue(ChartObjectives.fleetGone(sector, fleet("boss", true), FleetDespawnReason.DESTROYED_BY_BATTLE));
 
@@ -134,7 +135,7 @@ class ChartObjectivesTest {
 
     private ChartRun openProtectedRun() {
         ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(7, "hegemony", ChartObjective.BOSS, List.of("commander"), "commander", ChartBossType.FLEET, 4, 6,
+        run.recordContent(new ChartContent(7, "hegemony", "commander", ChartBossType.FLEET, 4, 6,
                 List.of(), "station"));
         run.recordArrival();
         ChartRuns.store(run);
@@ -220,7 +221,7 @@ class ChartObjectivesTest {
 
     @Test
     void theFleetListenerForwardsDefeatsAndSurvivesErrors() {
-        ChartRun run = openRun(ChartObjective.BOSS, List.of("boss"));
+        ChartRun run = openRun();
         ChartContentListener listener = new ChartContentListener();
         CampaignFleetAPI broken = mock(CampaignFleetAPI.class);
         when(broken.hasTag(Mockito.anyString())).thenThrow(new IllegalStateException("odd fleet"));
@@ -232,22 +233,80 @@ class ChartObjectivesTest {
     }
 
     @Test
-    void reconcilingCatchesTargetsThatVanishedWithoutAnEvent() {
-        ChartRun run = openRun(ChartObjective.CLEAR, List.of("g1", "g2"));
-        CampaignFleetAPI survivor = fleet("g1", true);
-        CampaignFleetAPI despawning = fleet("g2", true);
-        when(despawning.isDespawning()).thenReturn(true);
-        systemFleets.add(survivor);
-        systemFleets.add(despawning);
+    void reconcilingCatchesABossThatVanishedWithoutAnEvent() {
+        ChartRun run = openRun();
+        CampaignFleetAPI boss = fleet("boss", true);
+        systemFleets.add(boss);
+        systemFleets.add(fleet("guard", true));
 
-        assertTrue(ChartObjectives.reconcile(sector));
-        assertEquals(List.of("g2"), run.defeatedTargetIds());
+        assertFalse(ChartObjectives.reconcile(sector));
         assertFalse(run.isObjectiveComplete());
 
-        systemFleets.clear();
+        when(boss.isDespawning()).thenReturn(true);
         assertTrue(ChartObjectives.reconcile(sector));
         assertTrue(run.isObjectiveComplete());
         assertFalse(ChartObjectives.reconcile(sector));
+    }
+
+    private CampaignFleetAPI bossFleet(String... memberIds) {
+        CampaignFleetAPI boss = fleet("boss", true);
+        FleetDataAPI fleetData = mock(FleetDataAPI.class);
+        List<FleetMemberAPI> members = new ArrayList<>();
+        for (String memberId : memberIds) {
+            FleetMemberAPI member = mock(FleetMemberAPI.class);
+            when(member.getId()).thenReturn(memberId);
+            members.add(member);
+        }
+        when(fleetData.getMembersListCopy()).thenAnswer(invocation -> new ArrayList<>(members));
+        when(boss.getFleetData()).thenReturn(fleetData);
+        when(boss.getFlagship()).thenAnswer(invocation -> members.isEmpty() ? null : members.get(0));
+        return boss;
+    }
+
+    private ChartRun openBossRun(String flagshipId) {
+        ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+        run.recordContent(new ChartContent(7, "hegemony", "boss", ChartBossType.FLEET, 4, 6,
+                List.of(), null, flagshipId));
+        run.recordArrival();
+        ChartRuns.store(run);
+        return run;
+    }
+
+    @Test
+    void losingTheFlagshipCompletesTheBossObjectiveWhileTheRestOfItsFleetLivesOn() {
+        ChartRun run = openBossRun("flagship");
+        systemFleets.add(bossFleet("flagship", "escort"));
+
+        assertFalse(ChartObjectives.reconcile(sector));
+        assertFalse(run.isObjectiveComplete());
+
+        systemFleets.set(0, bossFleet("escort"));
+        assertTrue(ChartObjectives.reconcile(sector));
+        assertTrue(run.isObjectiveComplete());
+    }
+
+    @Test
+    void aRunWithoutARecordedFlagshipAdoptsTheBossFleetsCurrentOne() {
+        ChartRun run = openBossRun(null);
+        systemFleets.add(bossFleet("flagship", "escort"));
+
+        assertFalse(ChartObjectives.reconcile(sector));
+        assertEquals("flagship", run.bossFlagshipId());
+
+        systemFleets.set(0, bossFleet("escort"));
+        assertTrue(ChartObjectives.reconcile(sector));
+        assertTrue(run.isObjectiveComplete());
+    }
+
+    @Test
+    void theFlagshipOnlyCountsForTheBossFleet() {
+        ChartRun run = openBossRun("flagship");
+        CampaignFleetAPI boss = bossFleet("flagship");
+        CampaignFleetAPI guard = fleet("guard", true);
+        systemFleets.addAll(List.of(boss, guard));
+
+        assertFalse(ChartObjectives.reconcile(sector));
+        assertFalse(run.isObjectiveComplete());
     }
 
     @Test
@@ -264,7 +323,7 @@ class ChartObjectivesTest {
 
     @Test
     void theIntelFollowsItsRunAndAsksToBeRemovedOnceTheRunIsGone() {
-        ChartRun run = openRun(ChartObjective.CLEAR, List.of("g1", "g2"));
+        ChartRun run = openRun();
         ChartObjectiveIntel intel = new ChartObjectiveIntel(RUN_ID);
 
         assertTrue(intel.belongsToRun(RUN_ID));
@@ -272,7 +331,7 @@ class ChartObjectivesTest {
         assertFalse(intel.belongsToRun(null));
         assertFalse(intel.shouldRemoveIntel());
         assertNull(intel.getMapLocation(null));
-        assertTrue(ChartObjectiveIntel.progressText(run).contains("0"));
+        assertNull(ChartObjectiveIntel.progressText(run));
 
         ChartRuns.delete(RUN_ID);
         assertTrue(intel.shouldRemoveIntel());

@@ -112,7 +112,7 @@ class ChartGenContextTest {
         assertEquals(BASE.bossSize() + 40f, with(ChartEffect.CHART_BOSS_SIZE_PERCENT, 40f).adjust(BASE).bossSize(), TOLERANCE);
         ChartTier noBoss = new ChartTier(BASE.tier(), BASE.fleetSize(), BASE.fleetsMin(), BASE.fleetsMax(), BASE.officerLevelBonus(),
                 BASE.officerCountBonus(), BASE.fleetQuality(), BASE.levelMin(), BASE.levelMax(), BASE.cacheBudget(), BASE.domainBudget(),
-                BASE.stationBudget(), BASE.derelictBudget(), false, 0f, BASE.clearWeight(), BASE.bossWeight());
+                BASE.stationBudget(), BASE.derelictBudget(), false, 0f);
         assertEquals(0f, with(ChartEffect.CHART_BOSS_SIZE_PERCENT, 40f).adjust(noBoss).bossSize(), TOLERANCE,
                 "a tier switched off from having a boss stays without one");
         assertEquals(BASE.fleetQuality() + 20f, with(ChartEffect.CHART_FLEET_QUALITY_PERCENT, 20f).adjust(BASE).fleetQuality(), TOLERANCE);
@@ -330,7 +330,7 @@ class ChartGenContextTest {
         assertEquals(ChartContentPlanner.FLEET_SIZE_CAP, squeezed.cappedFleetSize(), TOLERANCE);
         assertEquals(ChartContentPlanner.MAX_OVERFLOW_STRENGTH, squeezed.totalStrengthBonus(), "size past the cap adds strength too");
 
-        ChartTier overRolled = new ChartTier(15, 200f, limit * 2, limit * 2, 0, 0, 50f, 100, 100, 0f, 0f, 0f, 0f, false, 0f, 1f, 0f);
+        ChartTier overRolled = new ChartTier(15, 200f, limit * 2, limit * 2, 0, 0, 50f, 100, 100, 0f, 0f, 0f, 0f, false, 0f);
         for (long seed = 0; seed < 20; seed++) {
             ChartContentPlan plain = ChartContentPlanner.plan(seed, overRolled, List.of(), List.of(), faction -> true);
             assertEquals(limit, plain.count(FleetRole.GUARD) + plain.count(FleetRole.PATROL), "seed " + seed);

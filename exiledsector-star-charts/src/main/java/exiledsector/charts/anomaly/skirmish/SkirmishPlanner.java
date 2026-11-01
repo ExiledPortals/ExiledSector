@@ -9,7 +9,6 @@ import exiledsector.charts.content.ChartContentPlan.PlannedStation;
 import exiledsector.charts.content.ChartContentPlanner;
 import exiledsector.charts.content.ChartFaction;
 import exiledsector.charts.generation.ChartTier;
-import exiledsector.charts.objective.ChartObjective;
 import exiledsector.items.WeightedPick;
 
 import java.util.ArrayList;
@@ -45,9 +44,8 @@ final class SkirmishPlanner {
         } else if (side == SkirmishSide.ATTACKER) {
             attackerFleets = asAllies(attackerFleets);
         }
-        ChartContentPlan joined = plan.withDefenders(defenderFleets, station, side == SkirmishSide.DEFENDER)
+        return plan.withDefenders(defenderFleets, station, side == SkirmishSide.DEFENDER)
                 .withAnomalyPlan(FactionSkirmish.ANOMALY_ID, new SkirmishPlan(attackerId, side, attackerFleets));
-        return side == SkirmishSide.DEFENDER ? joined : joined.withObjective(ChartObjective.BOSS);
     }
 
     static String attacker(String chosenId, String defenderId, List<ChartFaction> factions, Predicate<String> factionLoaded, Random random) {

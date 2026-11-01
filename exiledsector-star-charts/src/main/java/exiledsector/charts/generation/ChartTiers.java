@@ -67,9 +67,7 @@ public final class ChartTiers {
                         csv.number(row, "station_budget", fallback.stationBudget(), label),
                         csv.number(row, "derelict_budget", fallback.derelictBudget(), label),
                         csv.flag(row, "boss", fallback.boss(), label),
-                        csv.number(row, "boss_size", fallback.bossSize(), label),
-                        csv.number(row, "weight_clear", fallback.clearWeight(), label),
-                        csv.number(row, "weight_boss", fallback.bossWeight(), label)));
+                        csv.number(row, "boss_size", fallback.bossSize(), label)));
                 float colonyItemChance = csv.number(row, "colony_item_chance", 0f, label);
                 if (colonyItemChance < 0f || colonyItemChance > MAX_COLONY_ITEM_CHANCE) {
                     csv.problem(label, "colony_item_chance", colonyItemChance + " is outside 0 to 1 (a fraction, so 0.04 is 4%)");

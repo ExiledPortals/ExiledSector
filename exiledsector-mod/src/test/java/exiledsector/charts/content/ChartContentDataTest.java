@@ -5,7 +5,6 @@ import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.effect.ChartEffects;
 import exiledsector.charts.effect.ChartFactionEffect;
-import exiledsector.charts.objective.ChartObjective;
 import exiledsector.charts.objective.ChartRewards;
 import exiledsector.items.StarChartImplicits;
 import exiledsector.modifiers.Modifier;
@@ -72,10 +71,7 @@ class ChartContentDataTest {
                 assertTrue(current.bossSize() > previous.bossSize(), "boss size rises at tier " + tier);
             }
             assertTrue(current.boss(), "tier " + tier + " has a boss");
-            assertTrue(current.weightFor(ChartObjective.BOSS) > 0f, "tier " + tier + " can roll the boss objective");
-            assertTrue(current.weightFor(ChartObjective.CLEAR) > 0f, "tier " + tier + " can roll the clear objective");
             assertTrue(ChartTier.fallback(tier).boss(), "built-in tier " + tier + " has a boss");
-            assertTrue(ChartTier.fallback(tier).weightFor(ChartObjective.BOSS) > 0f, "built-in tier " + tier + " can roll the boss objective");
             assertTrue(current.levelMax() <= ShipLevelConfig.DEFAULT_MAX_LEVEL, "tier " + tier + " fits under the default max level");
             assertTrue(current.fleetSize() <= ChartContentPlanner.FLEET_SIZE_CAP, "tier " + tier + " fleets fit under the size cap");
             assertTrue(current.bossSize() <= ChartContentPlanner.BOSS_SIZE_CAP, "tier " + tier + " boss fits under the size cap");

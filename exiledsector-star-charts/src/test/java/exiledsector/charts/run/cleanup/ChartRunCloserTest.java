@@ -32,7 +32,6 @@ import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunBound;
 import exiledsector.charts.run.ChartRuns;
-import exiledsector.charts.objective.ChartObjective;
 import exiledsector.charts.objective.ChartObjectiveIntel;
 import exiledsector.charts.objective.ChartObjectives;
 import org.junit.jupiter.api.AfterEach;
@@ -438,8 +437,8 @@ class ChartRunCloserTest {
 
     @Test
     void contentFleetsAreDespawnedWhileTheRunIsClosingSoTheirDefeatNeverCounts() {
-        run.recordContent(new ChartContent(3, "pirates", ChartObjective.CLEAR, List.of("guard"), null, 1, 0));
-        when(systemFleet.getId()).thenReturn("guard");
+        run.recordContent(new ChartContent(3, "pirates", "boss", 1, 0));
+        when(systemFleet.getId()).thenReturn("boss");
         when(systemFleet.hasTag(ChartIds.runTag(RUN_ID))).thenReturn(true);
         Mockito.doAnswer(invocation -> {
             ChartObjectives.fleetGone(sector, systemFleet, FleetDespawnReason.DESTROYED_BY_BATTLE);
@@ -449,7 +448,7 @@ class ChartRunCloserTest {
 
         ChartRunCloser.close(sector, run);
 
-        assertEquals(0, run.objectiveTargetsDefeated());
+        assertFalse(run.isObjectiveComplete());
         assertFalse(run.isRewardClaimed());
     }
 

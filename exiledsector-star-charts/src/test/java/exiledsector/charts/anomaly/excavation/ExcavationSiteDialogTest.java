@@ -17,7 +17,6 @@ import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl.Optio
 import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartContent;
-import exiledsector.charts.objective.ChartObjective;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.ChartCampaignPlugin;
 import exiledsector.charts.run.ChartRun;
@@ -55,7 +54,7 @@ class ExcavationSiteDialogTest {
         when(system.getId()).thenReturn("charted space");
         when(system.getOptionalUniqueId()).thenReturn(ChartIds.systemId(RUN_ID));
         run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(4, "pirates", ChartObjective.CLEAR, List.of(), null, 3, 2, List.of(ExcavationSites.ANOMALY_ID)));
+        run.recordContent(new ChartContent(4, "pirates", null, 3, 2, List.of(ExcavationSites.ANOMALY_ID)));
         ChartRuns.store(run);
     }
 

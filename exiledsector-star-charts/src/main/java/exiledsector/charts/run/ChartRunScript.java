@@ -72,7 +72,7 @@ public class ChartRunScript implements EveryFrameScript {
             return;
         }
         secondsSinceObjectiveCheck = 0f;
-        if (run.runState() == ChartRunState.INSIDE && !run.isObjectiveComplete() && run.objective() != null) {
+        if (run.runState() == ChartRunState.INSIDE && !run.isObjectiveComplete() && run.hasBoss()) {
             ChartObjectives.reconcile(sector);
         }
         if (run.runState().isLive() && system != null) {

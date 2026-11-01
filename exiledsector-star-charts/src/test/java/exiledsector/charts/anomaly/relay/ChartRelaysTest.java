@@ -21,7 +21,6 @@ import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.content.ChartFleetVisibility;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.objective.ChartObjective;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import org.junit.jupiter.api.AfterEach;
@@ -72,7 +71,7 @@ class ChartRelaysTest {
 
     static ChartRun liveRelayRun() {
         ChartRun run = run();
-        run.recordContent(new ChartContent(4, "pirates", ChartObjective.BOSS, List.of("boss"), "boss", 3, 2, List.of(RelayNetwork.ANOMALY_ID)));
+        run.recordContent(new ChartContent(4, "pirates", "boss", 3, 2, List.of(RelayNetwork.ANOMALY_ID)));
         run.recordArrival();
         return run;
     }

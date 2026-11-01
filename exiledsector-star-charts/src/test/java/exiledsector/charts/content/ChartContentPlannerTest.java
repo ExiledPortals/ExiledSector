@@ -10,13 +10,11 @@ import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.content.ChartContentPlan.FleetRole;
 import exiledsector.charts.content.ChartContentPlan.PlannedFleet;
 import exiledsector.charts.content.ChartContentPlan.PlannedPoi;
-import exiledsector.charts.objective.ChartObjective;
 import exiledsector.Seeds;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -117,7 +115,7 @@ class ChartContentPlannerTest {
     }
 
     private static ChartTier withSiteBudgets(int tier, float cacheBudget, float domainBudget, float stationBudget, float derelictBudget) {
-        return new ChartTier(tier, 100f, 2, 2, 0, 0, 50f, 100, 100, cacheBudget, domainBudget, stationBudget, derelictBudget, false, 0f, 1f, 0f);
+        return new ChartTier(tier, 100f, 2, 2, 0, 0, 50f, 100, 100, cacheBudget, domainBudget, stationBudget, derelictBudget, false, 0f);
     }
 
     private static ChartPoi site(String id, ChartPoi.Kind kind, float cost) {
@@ -244,7 +242,7 @@ class ChartContentPlannerTest {
 
     @Test
     void fleetsOverTheSizeCapAreCappedAndTurnTheRestIntoFleetStrength() {
-        ChartTier huge = new ChartTier(15, 4800f, 2, 2, 1, 1, 50f, 100, 100, 0f, 0f, 0f, 0f, true, 4000f, 1f, 0f);
+        ChartTier huge = new ChartTier(15, 4800f, 2, 2, 1, 1, 50f, 100, 100, 0f, 0f, 0f, 0f, true, 4000f);
 
         ChartContentPlan plan = ChartContentPlanner.plan(5L, huge, List.of(), List.of(), EVERY_FACTION);
 
@@ -272,7 +270,7 @@ class ChartContentPlannerTest {
 
     @Test
     void theChartsFactionInhabitsTheSystemWhenItIsLoaded() {
-        ChartTier tier = new ChartTier(8, 200f, 3, 3, 0, 0, 60f, 100, 100, 0f, 0f, 0f, 0f, true, 400f, 1f, 0f);
+        ChartTier tier = new ChartTier(8, 200f, 3, 3, 0, 0, 60f, 100, 100, 0f, 0f, 0f, 0f, true, 400f);
         List<ChartFaction> factions = List.of(new ChartFaction("pirates", 10f), new ChartFaction("remnant", 1f));
         ChartGenContext remnantChart = ChartGenContext.of(List.of(), 0, "remnant");
 
@@ -285,41 +283,21 @@ class ChartContentPlannerTest {
     }
 
     @Test
-    void theClearObjectiveAlwaysHasAGuardEvenWithoutGuardedLoot() {
-        ChartTier clearOnly = new ChartTier(2, 100f, 2, 3, 0, 0, 40f, 60, 90, 0f, 0f, 0f, 0f, false, 0f, 1f, 0f);
+    void guardFleetsOnlyHoldGuardedLootAndNoLootMeansNoGuards() {
+        ChartTier bossless = new ChartTier(2, 100f, 2, 3, 0, 0, 40f, 60, 90, 0f, 0f, 0f, 0f, false, 0f);
 
-        ChartContentPlan noLoot = ChartContentPlanner.plan(9L, clearOnly, List.of(), List.of(), EVERY_FACTION);
+        ChartContentPlan noLoot = ChartContentPlanner.plan(9L, bossless, List.of(), List.of(), EVERY_FACTION);
 
-        assertEquals(ChartObjective.CLEAR, noLoot.objective());
-        assertEquals(1, noLoot.count(FleetRole.GUARD));
-        assertFalse(noLoot.fleets().get(0).guardsPoi());
-        int clearPlans = 0;
+        assertEquals(0, noLoot.count(FleetRole.GUARD));
         for (long seed = 0; seed < 40; seed++) {
             ChartContentPlan plan = plan(seed, 1);
-            if (plan.objective() == ChartObjective.CLEAR) {
-                clearPlans++;
-                assertTrue(plan.count(FleetRole.GUARD) >= 1);
-                for (PlannedFleet fleet : plan.fleets()) {
-                    if (fleet.guardsPoi()) {
-                        assertTrue(plan.pois().get(fleet.poiIndex()).guarded());
-                    }
+            for (PlannedFleet fleet : plan.fleets()) {
+                if (fleet.role() == FleetRole.GUARD) {
+                    assertTrue(fleet.guardsPoi());
+                    assertTrue(plan.pois().get(fleet.poiIndex()).guarded());
                 }
             }
         }
-        assertTrue(clearPlans > 0);
-    }
-
-    @Test
-    void objectivesFollowTheTierWeightsAndEveryTierCanRollEither() {
-        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
-            Set<ChartObjective> seen = EnumSet.noneOf(ChartObjective.class);
-            for (long seed = 0; seed < 200; seed++) {
-                seen.add(plan(seed, tier).objective());
-            }
-            assertEquals(EnumSet.allOf(ChartObjective.class), seen, "tier " + tier);
-        }
-        ChartTier noWeights = new ChartTier(6, 200f, 3, 3, 0, 0, 50f, 100, 100, 20f, 0f, 0f, 0f, false, 0f, 0f, 5f);
-        assertEquals(ChartObjective.CLEAR, ChartContentPlanner.pickObjective(noWeights, new Random(3)));
     }
 
     @Test

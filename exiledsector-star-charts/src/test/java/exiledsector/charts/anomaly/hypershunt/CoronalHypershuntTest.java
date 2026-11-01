@@ -24,7 +24,6 @@ import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.content.ChartSpot;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.objective.ChartObjective;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import org.junit.jupiter.api.AfterEach;
@@ -113,7 +112,7 @@ class CoronalHypershuntTest {
 
     private static ChartRun run() {
         ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(4, "pirates", ChartObjective.CLEAR, List.of(), null, 3, 2, List.of(CoronalHypershunt.ANOMALY_ID)));
+        run.recordContent(new ChartContent(4, "pirates", null, 3, 2, List.of(CoronalHypershunt.ANOMALY_ID)));
         return run;
     }
 

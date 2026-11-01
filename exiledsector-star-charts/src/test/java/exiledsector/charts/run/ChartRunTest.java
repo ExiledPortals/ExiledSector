@@ -10,7 +10,6 @@ import exiledsector.charts.content.ChartBossType;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.layout.ChartLayout;
-import exiledsector.charts.objective.ChartObjective;
 import exiledsector.charts.objective.ChartObjectiveIntel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -207,78 +206,69 @@ class ChartRunTest {
     @Test
     void theRunKeepsItsBossTypeForTheObjectiveDescription() {
         ChartRun fleetRun = new ChartRun("abc", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        fleetRun.recordContent(new ChartContent(4, "pirates", ChartObjective.BOSS, List.of("b"), "b", 3, 2));
+        fleetRun.recordContent(new ChartContent(4, "pirates", "b", 3, 2));
         ChartRun stationRun = new ChartRun("def", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        stationRun.recordContent(new ChartContent(4, "pirates", ChartObjective.BOSS, List.of("s"), "s", ChartBossType.STATION, 3, 2, List.of()));
-        ChartRun clearRun = new ChartRun("ghi", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        clearRun.recordContent(new ChartContent(4, "pirates", ChartObjective.CLEAR, List.of("g"), "s", ChartBossType.STATION, 3, 2, List.of()));
+        stationRun.recordContent(new ChartContent(4, "pirates", "s", ChartBossType.STATION, 3, 2, List.of()));
+        ChartRun bosslessRun = new ChartRun("ghi", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+        bosslessRun.recordContent(new ChartContent(4, "pirates", null, 3, 2));
 
         assertEquals(ChartBossType.FLEET, fleetRun.bossType());
         assertEquals(ChartBossType.STATION, stationRun.bossType());
         assertEquals("chart.objective.boss.fleet.description", ChartObjectiveIntel.descriptionKey(fleetRun));
         assertEquals("chart.objective.boss.station.description", ChartObjectiveIntel.descriptionKey(stationRun));
-        assertEquals("chart.objective.clear.description", ChartObjectiveIntel.descriptionKey(clearRun));
+        assertEquals("chart.dialog.stale", ChartObjectiveIntel.descriptionKey(bosslessRun));
     }
 
     @Test
     void theContentRecordKeepsOnlyIdsAndTracksTheObjectiveOnce() {
         ChartRun run = new ChartRun("abc", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
         assertEquals(ChartTiers.LOWEST_TIER, run.tier());
-        assertNull(run.objective());
+        assertFalse(run.hasBoss());
+        assertFalse(run.markObjectiveComplete());
 
-        run.recordContent(new ChartContent(12, "remnant", ChartObjective.CLEAR, List.of("g1", "g2"), "b", 5, 9));
+        run.recordContent(new ChartContent(12, "remnant", "b", 5, 9));
 
         assertEquals(12, run.tier());
         assertEquals("remnant", run.contentFaction());
-        assertEquals(ChartObjective.CLEAR, run.objective());
-        assertEquals(List.of("g1", "g2"), run.objectiveTargetIds());
+        assertTrue(run.hasBoss());
+        assertEquals("b", run.bossFleetId());
         assertEquals(5, run.contentFleets());
         assertEquals(9, run.contentPois());
-        assertFalse(run.markObjectiveComplete());
         assertFalse(run.claimReward());
-        assertTrue(run.recordTargetGone("g1"));
-        assertFalse(run.recordTargetGone("g1"));
-        assertFalse(run.recordTargetGone("someone else"));
-        assertFalse(run.isObjectiveMet());
-        assertTrue(run.recordTargetGone("g2"));
-        assertTrue(run.isObjectiveMet());
         assertTrue(run.markObjectiveComplete());
         assertFalse(run.markObjectiveComplete());
-        assertFalse(run.recordTargetGone("g2"));
         assertTrue(run.claimReward());
         assertFalse(run.claimReward());
     }
 
     @Test
-    void idsThatCannotBeJoinedSafelyAreDroppedAndAnEmptyObjectiveIsNeverMet() {
+    void idsThatCannotBeJoinedSafelyAreDroppedAndABosslessRunNeverCompletes() {
         assertEquals("a|b", ChartRun.join(List.of("a", "", "x|y", "b")));
         assertNull(ChartRun.join(List.of()));
         assertEquals(List.of(), ChartRun.split(null));
         ChartRun run = new ChartRun("abc", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(40, null, ChartObjective.BOSS, List.of(), null, 0, 0));
+        run.recordContent(new ChartContent(40, null, null, 0, 0));
         assertEquals(ChartTiers.CORRUPTED_TIER, run.tier());
-        assertFalse(run.isObjectiveMet());
-        assertFalse(run.recordTargetGone(null));
+        assertFalse(run.hasBoss());
+        assertFalse(run.markObjectiveComplete());
     }
 
     @Test
-    void aSavedVaultRunLoadsAsClearWithoutItsVaultTarget() {
+    void aRunSavedWithAnOldObjectiveLoadsAsABossRun() {
         XStream xstream = new XStream(new DomDriver());
         XStream.setupDefaultSecurity(xstream);
         xstream.addPermission(AnyTypePermission.ANY);
         xstream.ignoreUnknownElements();
         ChartRun run = new ChartRun("abc", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(5, "pirates", ChartObjective.CLEAR, List.of("vault1"), null, 2, 4));
-        String vaultXml = xstream.toXML(run)
-                .replace("<objective>CLEAR</objective>", "<objective>" + ChartRun.LEGACY_VAULT_OBJECTIVE + "</objective><vaultEntityId>vault1</vaultEntityId>");
+        run.recordContent(new ChartContent(5, "pirates", "b", 2, 4));
+        String oldXml = xstream.toXML(run)
+                .replace("<bossFleetId>", "<objective>CLEAR</objective><objectiveTargets>g1</objectiveTargets><bossFleetId>");
 
-        ChartRun loaded = (ChartRun) xstream.fromXML(vaultXml);
+        ChartRun loaded = (ChartRun) xstream.fromXML(oldXml);
 
-        assertEquals(ChartObjective.CLEAR, loaded.objective());
-        assertEquals(List.of(), loaded.objectiveTargetIds());
-        assertEquals(List.of(), loaded.defeatedTargetIds());
         assertEquals(5, loaded.tier());
-        assertFalse(loaded.isObjectiveMet());
+        assertEquals("b", loaded.bossFleetId());
+        assertTrue(loaded.markObjectiveComplete());
     }
 
     @Test
