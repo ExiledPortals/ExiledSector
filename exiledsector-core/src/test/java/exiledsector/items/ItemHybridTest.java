@@ -47,7 +47,7 @@ class ItemHybridTest {
 
     private static RolledModifier platedFrame(float armor, float hull) {
         return new RolledModifier("plated_frame", ModifierSlot.PREFIX,
-                List.of(new RolledEffect("ARMOR_PERCENT", armor), new RolledEffect("HULL_PERCENT", hull)));
+                List.of(new RolledLine("ARMOR_PERCENT", armor), new RolledLine("HULL_PERCENT", hull)));
     }
 
     @Test
@@ -64,7 +64,7 @@ class ItemHybridTest {
 
     @Test
     void aHybridCountsAsOneModifierForRarityButAppliesEveryLine() {
-        Item item = item(List.of(platedFrame(7f, 4f), RolledModifier.single(ModifierSlot.SUFFIX, new RolledEffect("HULL_MULT", 5f))));
+        Item item = item(List.of(platedFrame(7f, 4f), RolledModifier.single(ModifierSlot.SUFFIX, new RolledLine("HULL_MULT", 5f))));
         List<SkillTypeEffect> applied = item.skillEffects();
 
         assertEquals(ItemRarity.COMMON, item.rarity());
@@ -76,7 +76,7 @@ class ItemHybridTest {
 
     @Test
     void expandedLinesGroupAHybridUnderOneTaggedHeader() {
-        Item item = item(List.of(platedFrame(7f, 4f), RolledModifier.single(ModifierSlot.SUFFIX, new RolledEffect("HULL_MULT", 5f))));
+        Item item = item(List.of(platedFrame(7f, 4f), RolledModifier.single(ModifierSlot.SUFFIX, new RolledLine("HULL_MULT", 5f))));
 
         List<SlottedLine> expanded = item.slottedEffectLines(true, null);
         List<StyledText> collapsed = item.effectLines(false);
@@ -107,7 +107,7 @@ class ItemHybridTest {
 
     @Test
     void augmentingAddsAWholeModifierAndAPrefixLandsAfterTheOtherPrefixes() {
-        Item item = item(List.of(RolledModifier.single(ModifierSlot.SUFFIX, new RolledEffect("HULL_MULT", 5f))));
+        Item item = item(List.of(RolledModifier.single(ModifierSlot.SUFFIX, new RolledLine("HULL_MULT", 5f))));
 
         for (long seed = 0; seed < 50 && item.explicits().size() < 3; seed++) {
             ItemCrafting.augment(item, new Random(seed));

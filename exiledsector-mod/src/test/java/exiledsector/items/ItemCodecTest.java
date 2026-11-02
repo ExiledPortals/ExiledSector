@@ -24,7 +24,7 @@ class ItemCodecTest {
     private static final List<RolledModifier> RARE = List.of(prefix("FIGHTER_ARMOR_PERCENT", 12f), prefix("FLUX_DISSIPATION_MULT", 5.5f),
             suffix("ARMOR_PERCENT", -0.25f), suffix("HULL_MULT", 0.0001f));
     private static final List<RolledModifier> HYBRID = List.of(new RolledModifier("plated_frame", ModifierSlot.PREFIX,
-            List.of(new RolledEffect("ARMOR_PERCENT", 5f), new RolledEffect("HULL_MULT", 3f))), suffix("HULL_MULT", 5f));
+            List.of(new RolledLine("ARMOR_PERCENT", 5f), new RolledLine("HULL_MULT", 3f))), suffix("HULL_MULT", 5f));
 
     private static final String COMMON_TEXT = "P=FIGHTER_ARMOR_PERCENT:12;S=HULL_MULT:5";
     private static final String RARE_TEXT = "P=FIGHTER_ARMOR_PERCENT:12;P=FLUX_DISSIPATION_MULT:5.5;S=ARMOR_PERCENT:-0.25;S=HULL_MULT:1.0E-4";
@@ -66,11 +66,11 @@ class ItemCodecTest {
     }
 
     private static RolledModifier prefix(String effectName, float magnitude) {
-        return RolledModifier.single(ModifierSlot.PREFIX, new RolledEffect(effectName, magnitude));
+        return RolledModifier.single(ModifierSlot.PREFIX, new RolledLine(effectName, magnitude));
     }
 
     private static RolledModifier suffix(String effectName, float magnitude) {
-        return RolledModifier.single(ModifierSlot.SUFFIX, new RolledEffect(effectName, magnitude));
+        return RolledModifier.single(ModifierSlot.SUFFIX, new RolledLine(effectName, magnitude));
     }
 
     private static ItemData npcItem(ItemData item) {
@@ -160,8 +160,8 @@ class ItemCodecTest {
         assertEquals(new ItemData("sub", 8L, List.of(), null), NpcItems.item("npc:sub/8/"));
         assertEquals(new ItemData("sub", 7L), NpcItems.item("npc:sub/7"));
         assertEquals(new ItemData("a/b", 7L), NpcItems.item("npc:a/b/7"));
-        assertEquals(HullItemRows.data("sub", 42L, List.of(new RolledEffect("B", 2f)), null), NpcItems.item("npc:sub/42/A:1/B:2"));
-        assertEquals(HullItemRows.data("sub", 42L, List.of(new RolledEffect("A", 1f), new RolledEffect("B", 2f)), null),
+        assertEquals(HullItemRows.data("sub", 42L, List.of(new RolledLine("B", 2f)), null), NpcItems.item("npc:sub/42/A:1/B:2"));
+        assertEquals(HullItemRows.data("sub", 42L, List.of(new RolledLine("A", 1f), new RolledLine("B", 2f)), null),
                 NpcItems.item("npc:sub/42/A:1;;B:2;"));
     }
 

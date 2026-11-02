@@ -33,7 +33,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class CorrosionMoteListenerTest {
+class StardustMoteListenerTest {
 
     private static ShipAPI ship(String id, int owner, Map<String, Float> magnitudes) {
         ShipAPI ship = mock(ShipAPI.class);
@@ -49,9 +49,9 @@ class CorrosionMoteListenerTest {
 
     @Test
     void corrosionBeamLaunchesAMoteForEveryTwoSecondsOfArmorOrHullContact() {
-        ShipAPI ship = ship("corrosion", 0, Map.of(CorrosionMoteListener.MOTE_DAMAGE_KEY, 200f));
+        ShipAPI ship = ship("corrosion", 0, Map.of(StardustMoteListener.MOTE_DAMAGE_KEY, 200f));
         ShipAPI enemy = ship("enemy", 1, Map.of());
-        CorrosionMoteListener corrosion = new CorrosionMoteListener(ship, new Random(1));
+        StardustMoteListener corrosion = new StardustMoteListener(ship, new Random(1));
         BeamAPI beam = mock(BeamAPI.class);
         WeaponAPI weapon = mock(WeaponAPI.class);
         when(weapon.getLocation()).thenReturn(new Vector2f());
@@ -85,14 +85,14 @@ class CorrosionMoteListenerTest {
             corrosion.modifyDamageDealt(beam, enemy, tick, new Vector2f(), true);
             assertEquals(contactBefore, corrosion.contactSeconds(weapon, 0), 0.0001f);
         }
-        assertTrue(corrosion.contactSeconds(weapon, 0) < CorrosionMoteListener.CONTACT_SECONDS_PER_MOTE);
+        assertTrue(corrosion.contactSeconds(weapon, 0) < StardustMoteListener.CONTACT_SECONDS_PER_MOTE);
     }
 
     @Test
     void corrosionCountsEachBeamOfAMultiBeamWeaponSeparately() {
-        ShipAPI ship = ship("corrosion", 0, Map.of(CorrosionMoteListener.MOTE_DAMAGE_KEY, 200f));
+        ShipAPI ship = ship("corrosion", 0, Map.of(StardustMoteListener.MOTE_DAMAGE_KEY, 200f));
         ShipAPI enemy = ship("enemy", 1, Map.of());
-        CorrosionMoteListener corrosion = new CorrosionMoteListener(ship, new Random(1));
+        StardustMoteListener corrosion = new StardustMoteListener(ship, new Random(1));
         WeaponAPI weapon = mock(WeaponAPI.class);
         BeamAPI left = mock(BeamAPI.class);
         BeamAPI right = mock(BeamAPI.class);

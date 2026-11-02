@@ -42,11 +42,11 @@ Each of these picks the canonical word; the work items below follow from it.
 | Explicit / Implicit tooltip headers | `socketable.tooltip.primaryData` vs `hullItem.tooltip.implicit` | `item.tooltip.explicit` / `.implicit` | keys. [x] Built. |
 
 Smaller ones:
-- `AffixLayout.Limits` and `ItemRoller …WithEffectCount` count modifiers but say "effects". The player text has the same drift ("rolled effects will be lost").
-- `ModifierLine` (template) vs `RolledEffect` (rolled line): rename the latter `RolledLine`.
+- [x] `AffixLayout.Limits` and `ItemRoller …WithEffectCount` count modifiers but say "effects". The player text has the same drift ("rolled effects will be lost"). Built: `commonMaxModifiers`, `maxModifiers`, `modifierCountChances`, `rollWithModifierCount` and the rest; the disassembly confirmations say "rolled modifiers".
+- [x] `ModifierLine` (template) vs `RolledEffect` (rolled line): rename the latter `RolledLine`. Built; it keeps its `exiledSector.RolledEffect` save alias.
 - `item_modifiers.csv` `item_types` holds `ModifierScope` ids: rename it to `scopes`. Its `slot` column means affix position, so rename that to `affix`.
-- `LootModifiers` are multipliers, not item modifiers.
-- Stardust mote vs `CORROSION_MOTE_*` / `CorrosionMoteListener`.
+- [x] `LootModifiers` are multipliers, not item modifiers. Built: `LootMultipliers` (core `loot`).
+- [x] Stardust mote vs `CORROSION_MOTE_*` / `CorrosionMoteListener`. Built: `STARDUST_MOTE_DAMAGE_FLAT` (old name in `effect_aliases.csv`) and `StardustMoteListener`.
 
 The Socketable leftovers (`socketable.*` keys, `ItemStore` `socketables`, special item `exiledSector_socketable`, icon folder `socketables/`, memory keys) and the framework leftovers (`framework.*` keys, `exiledSector_framework_`, `frameworkPoints`) belong to the same cleanup. Do them as one saved-data pass with aliases.
 

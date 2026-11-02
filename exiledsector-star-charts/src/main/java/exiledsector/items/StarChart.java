@@ -207,7 +207,7 @@ public final class StarChart extends Item {
     }
 
     @Override
-    public StyledText unresolvedLine(ModifierEffects effects, RolledEffect effect) {
+    public StyledText unresolvedLine(ModifierEffects effects, RolledLine effect) {
         return effect.effect(effects) == null ? null : Translation.styled("chart.item.unresolvedModifier");
     }
 

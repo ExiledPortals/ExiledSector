@@ -29,8 +29,8 @@ public abstract class Item {
     private final String id;
     private String definitionId;
     private long seed;
-    private List<RolledEffect> effects;
-    private List<RolledEffect> implicits;
+    private List<RolledLine> effects;
+    private List<RolledLine> implicits;
     private List<RolledModifier> explicitModifiers;
     private List<RolledModifier> implicitModifiers;
     private FrozenName frozenName;
@@ -95,7 +95,7 @@ public abstract class Item {
         return new ItemTraits(tier(), 0, corruption, currentImplicits.isEmpty() ? null : currentImplicits, mirrored);
     }
 
-    public static Item withEffects(String id, String definitionId, long seed, List<RolledEffect> effects) {
+    public static Item withEffects(String id, String definitionId, long seed, List<RolledLine> effects) {
         return create(id, definitionId, seed, RolledModifier.fromLegacyEffects(ItemDefinitions.get(definitionId), effects));
     }
 
@@ -171,7 +171,7 @@ public abstract class Item {
         return Collections.unmodifiableList(converted);
     }
 
-    public List<RolledEffect> effects() {
+    public List<RolledLine> effects() {
         return RolledModifier.lines(explicits());
     }
 
@@ -198,7 +198,7 @@ public abstract class Item {
         return implicitModifiers;
     }
 
-    private static List<RolledModifier> implicitsFromLegacy(List<RolledEffect> legacyImplicits) {
+    private static List<RolledModifier> implicitsFromLegacy(List<RolledLine> legacyImplicits) {
         return legacyImplicits.stream().map(implicit -> RolledModifier.single(ModifierSlot.IMPLICIT, implicit)).toList();
     }
 
@@ -391,7 +391,7 @@ public abstract class Item {
     }
 
     private static void addRolls(List<SlottedRoll> rolls, RolledModifier rolledModifier, Modifier modifier) {
-        for (RolledEffect line : rolledModifier.lines()) {
+        for (RolledLine line : rolledModifier.lines()) {
             rolls.add(new SlottedRoll(rolledModifier.slot(), line, modifier == null ? null : modifier.line(line.effectName())));
         }
     }
@@ -414,7 +414,7 @@ public abstract class Item {
     }
 
     public boolean implicitCanVary(RolledModifier implicit) {
-        for (RolledEffect line : implicit.lines()) {
+        for (RolledLine line : implicit.lines()) {
             ModifierLine lineDefinition = implicitLine(line.effectName());
             if (lineDefinition != null && lineDefinition.canVary()) {
                 return true;
@@ -498,7 +498,7 @@ public abstract class Item {
     private void addModifierLines(List<SlottedLine> lines, RolledModifier rolledModifier, Modifier modifier, ModifierEffects effects,
                                   boolean withRollRanges, ScaleContext context) {
         List<SlottedLine> described = new ArrayList<>();
-        for (RolledEffect effect : rolledModifier.lines()) {
+        for (RolledLine effect : rolledModifier.lines()) {
             StyledText description = explicitLine(effects, effect, modifier == null ? null : modifier.line(effect.effectName()),
                     withRollRanges, context);
             if (description != null) {
@@ -530,11 +530,11 @@ public abstract class Item {
         return texts;
     }
 
-    public StyledText unresolvedLine(ModifierEffects effects, RolledEffect effect) {
+    public StyledText unresolvedLine(ModifierEffects effects, RolledLine effect) {
         return effect.description(effects, null);
     }
 
-    private StyledText explicitLine(ModifierEffects effects, RolledEffect effect, ModifierLine line, boolean withRollRanges,
+    private StyledText explicitLine(ModifierEffects effects, RolledLine effect, ModifierLine line, boolean withRollRanges,
                                     ScaleContext context) {
         if (line == null) {
             return unresolvedLine(effects, effect);
@@ -542,7 +542,7 @@ public abstract class Item {
         if (line.listsEveryValueFor(context)) {
             return effect.scaledValuesDescription(effects, line);
         }
-        RolledEffect shownEffect = new RolledEffect(effect.effectName(), line.valueFor(effect.magnitude(), context));
+        RolledLine shownEffect = new RolledLine(effect.effectName(), line.valueFor(effect.magnitude(), context));
         return shownEffect.description(effects, withRollRanges ? line.rangeFor(context) : null);
     }
 }

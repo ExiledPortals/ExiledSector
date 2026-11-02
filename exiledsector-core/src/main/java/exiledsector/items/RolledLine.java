@@ -12,14 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public final class RolledEffect {
+public final class RolledLine {
 
     private static final String HULL_VALUE_SEPARATOR = "/";
 
     private final String effectName;
     private final float magnitude;
 
-    public RolledEffect(String effectName, float magnitude) {
+    public RolledLine(String effectName, float magnitude) {
         this.effectName = currentName(effectName);
         this.magnitude = magnitude;
     }
@@ -31,7 +31,7 @@ public final class RolledEffect {
 
     private Object readResolve() {
         String current = currentName(effectName);
-        return Objects.equals(current, effectName) ? this : new RolledEffect(current, magnitude);
+        return Objects.equals(current, effectName) ? this : new RolledLine(current, magnitude);
     }
 
     public String effectName() {
@@ -275,7 +275,7 @@ public final class RolledEffect {
 
     @Override
     public boolean equals(Object other) {
-        return other instanceof RolledEffect otherEffect && otherEffect.magnitude == magnitude && otherEffect.effectName.equals(effectName);
+        return other instanceof RolledLine otherEffect && otherEffect.magnitude == magnitude && otherEffect.effectName.equals(effectName);
     }
 
     @Override

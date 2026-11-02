@@ -27,7 +27,7 @@ import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
 import exiledsector.loot.FleetDifficulty;
 import exiledsector.loot.FleetLevelRange;
-import exiledsector.loot.LootModifiers;
+import exiledsector.loot.LootMultipliers;
 import exiledsector.loot.LootSource;
 import exiledsector.loot.LootSources;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
@@ -151,7 +151,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
     }
 
     @Override
-    public LootModifiers modifiersAt(LocationAPI location) {
+    public LootMultipliers modifiersAt(LocationAPI location) {
         ChartGenContext context;
         try {
             context = ChartDrops.liveContextAt(location);
@@ -159,12 +159,12 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
             LOG.error("[ExiledSector] Reading the Star Chart loot bonuses failed", e);
             context = ChartGenContext.none();
         }
-        return context.lootModifiers(1f);
+        return context.lootMultipliers(1f);
     }
 
     @Override
-    public LootModifiers modifiersFor(SectorEntityToken site) {
-        LootModifiers modifiers = site == null ? null : modifiersAt(site.getContainingLocation());
+    public LootMultipliers modifiersFor(SectorEntityToken site) {
+        LootMultipliers modifiers = site == null ? null : modifiersAt(site.getContainingLocation());
         MemoryAPI memory = site == null ? null : site.getMemoryWithoutUpdate();
         if (modifiers == null || memory == null) {
             return modifiers;
@@ -173,7 +173,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
         for (LootShaper anomaly : ChartAnomalies.with(LootShaper.class)) {
             chances = anomaly.siteChances(memory, chances);
         }
-        return chances == modifiers.itemChances() ? modifiers : new LootModifiers(chances, modifiers.feedstockMult(), modifiers.currencyMult());
+        return chances == modifiers.itemChances() ? modifiers : new LootMultipliers(chances, modifiers.feedstockMult(), modifiers.currencyMult());
     }
 
     @Override

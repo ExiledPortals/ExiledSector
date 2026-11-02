@@ -55,7 +55,7 @@ class ItemCraftingTest {
     }
 
     private Item common() {
-        List<RolledEffect> effects = List.of(new RolledEffect("FLUX_CAPACITY_MULT", 5f), new RolledEffect("ARMOR_PERCENT", 7f));
+        List<RolledLine> effects = List.of(new RolledLine("FLUX_CAPACITY_MULT", 5f), new RolledLine("ARMOR_PERCENT", 7f));
         return store.add(HullItemRows.data(HullItemRows.MILITARY, 1L, effects, null));
     }
 
@@ -79,7 +79,7 @@ class ItemCraftingTest {
         assertEquals(2, names.stream().filter(definition::isSuffix).count());
         assertTrue(definition.isPrefix(item.effects().get(1).effectName()), "prefixes stay ahead of suffixes");
         assertTrue(definition.isSuffix(item.effects().get(2).effectName()), "suffixes follow the prefixes");
-        for (RolledEffect effect : item.effects()) {
+        for (RolledLine effect : item.effects()) {
             PoolEntry range = definition.poolEntry(effect.effectName());
             assertTrue(effect.magnitude() >= range.min() && effect.magnitude() <= range.max(), effect.effectName());
         }
@@ -111,12 +111,12 @@ class ItemCraftingTest {
     @Test
     void tuningKeepsEachModifierAndRerollsItWithinItsRange() {
         Item item = common();
-        List<String> before = item.effects().stream().map(RolledEffect::effectName).toList();
+        List<String> before = item.effects().stream().map(RolledLine::effectName).toList();
 
         for (long seed = 0; seed < 20; seed++) {
             ItemCrafting.tune(item, new Random(seed));
-            assertEquals(before, item.effects().stream().map(RolledEffect::effectName).toList());
-            for (RolledEffect effect : item.effects()) {
+            assertEquals(before, item.effects().stream().map(RolledLine::effectName).toList());
+            for (RolledLine effect : item.effects()) {
                 PoolEntry range = item.definition().poolEntry(effect.effectName());
                 assertTrue(effect.magnitude() >= range.min() && effect.magnitude() <= range.max());
             }
@@ -127,10 +127,10 @@ class ItemCraftingTest {
     void everyTuningChangesAValueSoTheNanoswarmIsNeverWasted() throws Exception {
         ItemDefinitions.register(new JSONArray().put(HullItemRows.row("narrow", "bridge", "HULL_MULT:4:5", "ARMOR_PERCENT:1:1")));
         Item item = store.add(HullItemRows.data("narrow", 1L,
-                List.of(new RolledEffect("HULL_MULT", 4f), new RolledEffect("ARMOR_PERCENT", 1f)), null));
+                List.of(new RolledLine("HULL_MULT", 4f), new RolledLine("ARMOR_PERCENT", 1f)), null));
 
         for (long seed = 0; seed < 50; seed++) {
-            List<RolledEffect> before = List.copyOf(item.effects());
+            List<RolledLine> before = List.copyOf(item.effects());
             assertSame(item, ItemCrafting.tune(item, new Random(seed)));
             assertNotEquals(before, item.effects());
             assertEquals(1f, item.effects().get(1).magnitude());
@@ -143,9 +143,9 @@ class ItemCraftingTest {
                 .put(HullItemRows.row("decimal", "bridge", "HULL_MULT:0.15:0.25", "ARMOR_PERCENT:0.01:0.03"))
                 .put(HullItemRows.row("fixed", "bridge", "HULL_MULT:1:1", "ARMOR_PERCENT:2.5:2.5")));
         Item decimal = store.add(HullItemRows.data("decimal", 1L,
-                List.of(new RolledEffect("HULL_MULT", 0.2f), new RolledEffect("ARMOR_PERCENT", 0.02f)), null));
+                List.of(new RolledLine("HULL_MULT", 0.2f), new RolledLine("ARMOR_PERCENT", 0.02f)), null));
         Item fixed = store.add(HullItemRows.data("fixed", 1L,
-                List.of(new RolledEffect("HULL_MULT", 1f), new RolledEffect("ARMOR_PERCENT", 2.5f)), null));
+                List.of(new RolledLine("HULL_MULT", 1f), new RolledLine("ARMOR_PERCENT", 2.5f)), null));
 
         assertTrue(ItemCrafting.canUse(Nanoswarm.TUNING, decimal, definition -> true));
         assertFalse(ItemCrafting.canUse(Nanoswarm.TUNING, fixed, definition -> true));
@@ -272,7 +272,7 @@ class ItemCraftingTest {
     @Test
     void fixingNeedsAtLeastTwoEffects() throws Exception {
         ItemDefinitions.register(new JSONArray().put(HullItemRows.row("single", "bridge", "HULL_MULT:4:6", "")));
-        Item single = store.add(HullItemRows.data("single", 1L, List.of(new RolledEffect("HULL_MULT", 5f)), null));
+        Item single = store.add(HullItemRows.data("single", 1L, List.of(new RolledLine("HULL_MULT", 5f)), null));
 
         assertFalse(ItemCrafting.canUse(Nanoswarm.IMMUTABLE, single, definition -> true));
     }
@@ -335,7 +335,7 @@ class ItemCraftingTest {
         ItemImplicits.register(new JSONArray().put(new JSONObject().put("section", "armor_plating").put("implicits", "ARMOR_PERCENT:10:20")));
         try {
             Item plate = store.add(ItemDefinitions.get("plate"), 3L);
-            List<RolledEffect> explicitsBefore = RolledModifier.lines(plate.explicits());
+            List<RolledLine> explicitsBefore = RolledModifier.lines(plate.explicits());
 
             assertTrue(ItemCrafting.canUse(Nanoswarm.FUNDAMENTAL, plate, definition -> true));
             for (long seed = 0; seed < 20; seed++) {

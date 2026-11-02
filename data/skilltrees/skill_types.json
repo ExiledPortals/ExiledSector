@@ -3799,7 +3799,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "CORROSION_MOTE_DAMAGE_FLAT",
+					"effect": "STARDUST_MOTE_DAMAGE_FLAT",
 					"magnitude": 200
 				}
 			],

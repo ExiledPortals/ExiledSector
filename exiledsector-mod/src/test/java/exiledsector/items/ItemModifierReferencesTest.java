@@ -123,14 +123,14 @@ class ItemModifierReferencesTest {
     @Test
     void anItemSavedBeforeModifierIdsKeepsItsRollUnderThePoolsCurrentId() throws Exception {
         Item saved = Item.create("item_1", DRIVE, 4L, List.of(
-                RolledModifier.single(ModifierSlot.PREFIX, new RolledEffect("TOP_SPEED_PERCENT", 12f)),
-                RolledModifier.single(ModifierSlot.SUFFIX, new RolledEffect("FUEL_USE_MULT", -11f))));
+                RolledModifier.single(ModifierSlot.PREFIX, new RolledLine("TOP_SPEED_PERCENT", 12f)),
+                RolledModifier.single(ModifierSlot.SUFFIX, new RolledLine("FUEL_USE_MULT", -11f))));
         String xml = xstream().toXML(saved);
 
         Item restored = (Item) xstream().fromXML(xml);
 
-        assertEquals(List.of(new RolledModifier("TOP_SPEED_PERCENT_ENGINE_ROOM", ModifierSlot.PREFIX, List.of(new RolledEffect("TOP_SPEED_PERCENT", 12f))),
-                new RolledModifier("FUEL_USE_MULT_ENGINE_ROOM", ModifierSlot.SUFFIX, List.of(new RolledEffect("FUEL_USE_MULT", -11f)))),
+        assertEquals(List.of(new RolledModifier("TOP_SPEED_PERCENT_ENGINE_ROOM", ModifierSlot.PREFIX, List.of(new RolledLine("TOP_SPEED_PERCENT", 12f))),
+                new RolledModifier("FUEL_USE_MULT_ENGINE_ROOM", ModifierSlot.SUFFIX, List.of(new RolledLine("FUEL_USE_MULT", -11f)))),
                 restored.explicits());
         assertEquals(15f, restored.rolls().stream().filter(roll -> roll.slot() == ModifierSlot.PREFIX).findFirst().orElseThrow().line().max());
     }
@@ -138,7 +138,7 @@ class ItemModifierReferencesTest {
     @Test
     void aFrozenNameSavedWithEffectNamesStillFindsItsWords() {
         Item saved = Item.create("item_1", DRIVE, 4L, List.of(
-                RolledModifier.single(ModifierSlot.PREFIX, new RolledEffect("TOP_SPEED_PERCENT", 12f))));
+                RolledModifier.single(ModifierSlot.PREFIX, new RolledLine("TOP_SPEED_PERCENT", 12f))));
         saved.freezeName(new FrozenName("TOP_SPEED_PERCENT", "FUEL_USE_MULT", null, null));
 
         assertTrue(saved.name().startsWith("Swift ") && saved.name().endsWith(" Economy"), saved.name());
@@ -147,7 +147,7 @@ class ItemModifierReferencesTest {
     @Test
     void anEffectThatLeftThePoolStillNamesFrozenItemsThroughANamedModifierOfItsSlot() {
         Item saved = Item.create("item_1", "emitter", 4L, List.of(
-                new RolledModifier("TOP_SPEED_PERCENT_ENGINE_ROOM", ModifierSlot.PREFIX, List.of(new RolledEffect("TOP_SPEED_PERCENT", 12f)))));
+                new RolledModifier("TOP_SPEED_PERCENT_ENGINE_ROOM", ModifierSlot.PREFIX, List.of(new RolledLine("TOP_SPEED_PERCENT", 12f)))));
         saved.freezeName(new FrozenName(null, "FUEL_USE_MULT", null, null));
 
         assertTrue(saved.name().endsWith(" Economy"), saved.name());
@@ -156,8 +156,8 @@ class ItemModifierReferencesTest {
     @Test
     void aFrozenNameWhoseModifierIdWasRenamedTakesTheWordOfTheCurrentFirstPrefix() {
         Item saved = Item.create("item_1", DRIVE, 4L, List.of(
-                new RolledModifier("TOP_SPEED_PERCENT_ENGINE_ROOM", ModifierSlot.PREFIX, List.of(new RolledEffect("TOP_SPEED_PERCENT", 12f))),
-                new RolledModifier("FUEL_USE_MULT_ENGINE_ROOM", ModifierSlot.SUFFIX, List.of(new RolledEffect("FUEL_USE_MULT", -11f)))));
+                new RolledModifier("TOP_SPEED_PERCENT_ENGINE_ROOM", ModifierSlot.PREFIX, List.of(new RolledLine("TOP_SPEED_PERCENT", 12f))),
+                new RolledModifier("FUEL_USE_MULT_ENGINE_ROOM", ModifierSlot.SUFFIX, List.of(new RolledLine("FUEL_USE_MULT", -11f)))));
         saved.freezeName(new FrozenName("OLD_SPEED_ID", "FUEL_USE_MULT_ENGINE_ROOM", null, null));
 
         assertTrue(saved.name().startsWith("Swift ") && saved.name().endsWith(" Economy"), saved.name());
@@ -198,13 +198,13 @@ class ItemModifierReferencesTest {
 
         assertTrue(xml.contains("<implicitModifiers>"), xml);
         assertEquals(List.of(new RolledModifier("HYBRID_FLUX_CAPACITY_FLUX_DISSIPATION", ModifierSlot.IMPLICIT,
-                List.of(new RolledEffect("FLUX_CAPACITY_PERCENT", 7f), new RolledEffect("FLUX_DISSIPATION_PERCENT", 9f)))), restored.implicits());
+                List.of(new RolledLine("FLUX_CAPACITY_PERCENT", 7f), new RolledLine("FLUX_DISSIPATION_PERCENT", 9f)))), restored.implicits());
     }
 
     @Test
     void anImplicitThatNoLongerMatchesItsTypeIsRerolledFromTheSeed() {
         Item saved = Item.create("item_1", DRIVE, 9L, List.of());
-        List<RolledModifier> stale = List.of(RolledModifier.single(ModifierSlot.IMPLICIT, new RolledEffect("ARMOR_PERCENT", 7f)));
+        List<RolledModifier> stale = List.of(RolledModifier.single(ModifierSlot.IMPLICIT, new RolledLine("ARMOR_PERCENT", 7f)));
 
         List<RolledModifier> resolved = ItemImplicits.withCurrentIds(saved.kind(), stale, 9L);
 

@@ -12,7 +12,7 @@ public final class ItemSaveAliases {
     static final String UNRESOLVED_ITEM_ALIAS = "exiledSector.Socketable";
     static final Map<String, Class<?>> ALIASES = Map.of(
             "exiledSector.SocketableStore", ItemStore.class,
-            "exiledSector.RolledEffect", RolledEffect.class,
+            "exiledSector.RolledEffect", RolledLine.class,
             "exiledSector.FrozenName", FrozenName.class,
             "exiledSector.RolledModifier", RolledModifier.class,
             "exiledSector.ModifierSlot", ModifierSlot.class);

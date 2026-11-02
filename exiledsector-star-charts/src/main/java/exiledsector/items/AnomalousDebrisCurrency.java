@@ -117,7 +117,7 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
         ItemDefinition definition = item.definition();
         AffixLayout.Limits limits = AffixLayout.limits(definition == null ? null : definition.type());
         long grantedSide = others.stream().filter(rolled -> rolled.slot() == granted.slot()).count();
-        return grantedSide >= limits.maxPerSide() || others.size() >= limits.maxEffects()
+        return grantedSide >= limits.maxPerSide() || others.size() >= limits.maxModifiers()
                 || others.stream().anyMatch(rolled -> rolled.lines().stream().anyMatch(line -> grantedEffects.contains(line.effectName())))
                 || ModifierExclusivity.clashes(granted.id(), others.stream().map(RolledModifier::modifierId).toList());
     }
@@ -168,7 +168,7 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
             takenIds.add(keptModifier.modifierId());
             keptModifier.lines().forEach(line -> takenEffects.add(line.effectName()));
         }
-        int othersLeft = limits.maxEffects() - prefixes.size() - suffixes.size();
+        int othersLeft = limits.maxModifiers() - prefixes.size() - suffixes.size();
         othersLeft -= draw(candidates(definition, definition.prefixes(), takenIds, takenEffects),
                 Math.min(limits.maxPerSide() - prefixes.size(), othersLeft), random, takenIds, prefixes);
         draw(candidates(definition, definition.suffixes(), takenIds, takenEffects), Math.min(limits.maxPerSide() - suffixes.size(), othersLeft),
@@ -227,7 +227,7 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
         ModifierEffects effects = ItemEffects.forType(itemTypes.stream().sorted().findFirst().orElse(null));
         List<StyledText> lines = new ArrayList<>();
         for (ModifierLine line : granted.lines()) {
-            StyledText lineText = new RolledEffect(line.effectName(), line.boundFarthestFromZero()).rangeDescription(effects, line);
+            StyledText lineText = new RolledLine(line.effectName(), line.boundFarthestFromZero()).rangeDescription(effects, line);
             if (lineText != null) {
                 lines.add(lineText);
             }

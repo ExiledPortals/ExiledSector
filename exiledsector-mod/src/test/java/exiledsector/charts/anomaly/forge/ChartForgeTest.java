@@ -12,7 +12,7 @@ import exiledsector.items.ForgeChoice;
 import exiledsector.items.ForgeOperation;
 import exiledsector.items.Item;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.RolledEffect;
+import exiledsector.items.RolledLine;
 import exiledsector.items.RolledModifier;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -85,7 +85,7 @@ class ChartForgeTest {
     }
 
     private static Item plate() {
-        return Item.withEffects("plate", PLATE, 1L, List.of(new RolledEffect("FLUX_CAPACITY_MULT", 5f), new RolledEffect("ARMOR_PERCENT", 7f)));
+        return Item.withEffects("plate", PLATE, 1L, List.of(new RolledLine("FLUX_CAPACITY_MULT", 5f), new RolledLine("ARMOR_PERCENT", 7f)));
     }
 
     @Test

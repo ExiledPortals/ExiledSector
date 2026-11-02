@@ -120,7 +120,7 @@ class HullUpgradeTest {
     @Test
     void aWarrantySavedBeforeItsTargetingModifierExistedGainsItOnLoad() {
         HullItem saved = new HullItem("old_warranty", "warranty", 7L,
-                List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledEffect("HULL_PERCENT", 1f))));
+                List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledLine("HULL_PERCENT", 1f))));
 
         assertEquals(2, saved.explicits().size());
         assertTrue(saved.targetsAnotherItem());

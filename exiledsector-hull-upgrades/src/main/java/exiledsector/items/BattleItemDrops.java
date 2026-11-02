@@ -38,12 +38,12 @@ public final class BattleItemDrops {
         UNIQUE("unique", 0, true);
 
         private final String id;
-        private final int effectCount;
+        private final int modifierCount;
         private final boolean rare;
 
-        Drop(String id, int effectCount, boolean rare) {
+        Drop(String id, int modifierCount, boolean rare) {
             this.id = id;
-            this.effectCount = effectCount;
+            this.modifierCount = modifierCount;
             this.rare = rare;
         }
 
@@ -55,8 +55,8 @@ public final class BattleItemDrops {
             return id;
         }
 
-        public int effectCount() {
-            return effectCount;
+        public int modifierCount() {
+            return modifierCount;
         }
 
         static Drop byIdOrNull(String id) {
@@ -152,12 +152,12 @@ public final class BattleItemDrops {
                     items.add(ItemData.rolled(definition, random.nextLong()));
                 }
             } else {
-                int effectCount = planned.drop().effectCount();
-                Predicate<ItemDefinition> holdsCount = candidate -> ItemRoller.canRollEffectCount(candidate, effectCount);
+                int modifierCount = planned.drop().modifierCount();
+                Predicate<ItemDefinition> holdsCount = candidate -> ItemRoller.canRollModifierCount(candidate, modifierCount);
                 ItemDefinition definition = planned.kind() == null ? HullItemDrops.pickSectionItemBasic(random, holdsCount)
                         : ItemDrops.pickSectionItemBasic(planned.kind(), random, holdsCount);
                 if (definition != null) {
-                    items.add(ItemData.rolledWithEffectCount(definition, random.nextLong(), effectCount));
+                    items.add(ItemData.rolledWithModifierCount(definition, random.nextLong(), modifierCount));
                 }
             }
         }
@@ -179,7 +179,7 @@ public final class BattleItemDrops {
         }
         for (ItemKind kind : kindsWithBasics) {
             for (Drop drop : Drop.values()) {
-                if (drop.effectCount() == 0) {
+                if (drop.modifierCount() == 0) {
                     continue;
                 }
                 float expected = 0f;

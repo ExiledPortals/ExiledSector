@@ -396,7 +396,7 @@ public final class ItemCrafting {
         }
         long seed = random.nextLong();
         int modifierCount = modifierCounts.get(random.nextInt(modifierCounts.size()));
-        Item replacement = Item.create(item.id(), base.id(), seed, ItemRoller.rollWithEffectCount(base, seed, modifierCount));
+        Item replacement = Item.create(item.id(), base.id(), seed, ItemRoller.rollWithModifierCount(base, seed, modifierCount));
         replacement.replaceImplicits(item.implicits());
         replacement.copyTraitsFrom(item);
         replacement.freezeName();
@@ -406,7 +406,7 @@ public final class ItemCrafting {
     private static List<Integer> rareBaseModifierCounts(ItemDefinition base) {
         List<Integer> counts = new ArrayList<>();
         for (int count = RARE_BASE_MIN_MODIFIERS; count <= RARE_BASE_MAX_MODIFIERS; count++) {
-            if (ItemRoller.canRollEffectCount(base, count)) {
+            if (ItemRoller.canRollModifierCount(base, count)) {
                 counts.add(count);
             }
         }

@@ -124,15 +124,15 @@ public final class ItemImplicits {
         if (implicits.isEmpty() || matchesIds(implicits, savedImplicits)) {
             return savedImplicits;
         }
-        Map<String, RolledEffect> savedLines = new HashMap<>();
+        Map<String, RolledLine> savedLines = new HashMap<>();
         RolledModifier.lines(savedImplicits).forEach(line -> savedLines.putIfAbsent(line.effectName(), line));
         List<RolledModifier> freshRolls = roll(kind, seed);
         List<RolledModifier> resolved = new ArrayList<>(implicits.size());
         for (int index = 0; index < implicits.size(); index++) {
             Modifier implicit = implicits.get(index);
-            List<RolledEffect> keptLines = new ArrayList<>(implicit.lines().size());
+            List<RolledLine> keptLines = new ArrayList<>(implicit.lines().size());
             for (ModifierLine line : implicit.lines()) {
-                RolledEffect savedLine = savedLines.get(line.effectName());
+                RolledLine savedLine = savedLines.get(line.effectName());
                 if (savedLine != null) {
                     keptLines.add(savedLine);
                 }

@@ -46,7 +46,7 @@ class StormDropLimitsTest {
     @Test
     void aStormTouchedHullItemDropStaysWithinTwoModifiers() {
         for (long seed = 0; seed < 100; seed++) {
-            ItemData dropped = ItemData.rolledWithEffectCount(ItemDefinitions.get(BASE), seed, 1);
+            ItemData dropped = ItemData.rolledWithModifierCount(ItemDefinitions.get(BASE), seed, 1);
 
             ItemData touched = GrantedModifiers.grant(dropped, STORMPROOF, new Random(seed));
 

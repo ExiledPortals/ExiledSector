@@ -33,7 +33,7 @@ class ItemSaveTest {
 
     @Test
     void anImmutableModifierKeepsItsSavedLockedFieldName() {
-        RolledModifier immutable = RolledModifier.single(ModifierSlot.PREFIX, new RolledEffect("HULL_MULT", 6f)).asImmutable();
+        RolledModifier immutable = RolledModifier.single(ModifierSlot.PREFIX, new RolledLine("HULL_MULT", 6f)).asImmutable();
 
         String xml = xstream().toXML(immutable);
         RolledModifier loaded = (RolledModifier) xstream().fromXML(xml);
@@ -54,8 +54,8 @@ class ItemSaveTest {
         ItemStore loaded = (ItemStore) xstream().fromXML(legacyXml);
         Item restored = loaded.owned().get(0);
 
-        assertEquals(List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledEffect("FLUX_CAPACITY_MULT", 5f)),
-                RolledModifier.single(ModifierSlot.SUFFIX, new RolledEffect("HULL_MULT", 6f))), restored.explicits());
+        assertEquals(List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledLine("FLUX_CAPACITY_MULT", 5f)),
+                RolledModifier.single(ModifierSlot.SUFFIX, new RolledLine("HULL_MULT", 6f))), restored.explicits());
         String resaved = xstream().toXML(loaded);
         assertTrue(resaved.contains("<explicitModifiers>") && resaved.contains("<exiledSector.RolledModifier>"), resaved);
         assertFalse(resaved.contains("<effects>"), resaved);
@@ -153,15 +153,15 @@ class ItemSaveTest {
 
     @Test
     void savedEffectNamesFollowARenameThroughTheAliasList() throws Exception {
-        String rolledXml = xstream().toXML(new RolledEffect("HULL_MULT", 5f)).replace("HULL_MULT", "OLD_HULL_MULT");
+        String rolledXml = xstream().toXML(new RolledLine("HULL_MULT", 5f)).replace("HULL_MULT", "OLD_HULL_MULT");
         String nameXml = xstream().toXML(new FrozenName("HULL_MULT", "HULL_MULT", null, null)).replace("HULL_MULT", "OLD_HULL_MULT");
         EffectAliases.register(new JSONArray().put(new JSONObject().put("alias", "OLD_HULL_MULT").put("effect", "HULL_MULT")));
         try {
-            RolledEffect loadedEffect = (RolledEffect) xstream().fromXML(rolledXml);
+            RolledLine loadedEffect = (RolledLine) xstream().fromXML(rolledXml);
             FrozenName loadedName = (FrozenName) xstream().fromXML(nameXml);
 
             assertTrue(rolledXml.contains("OLD_HULL_MULT"), rolledXml);
-            assertEquals(new RolledEffect("HULL_MULT", 5f), loadedEffect);
+            assertEquals(new RolledLine("HULL_MULT", 5f), loadedEffect);
             assertEquals("HULL_MULT", loadedName.prefixModifierId());
             assertEquals("HULL_MULT", loadedName.suffixModifierId());
         } finally {

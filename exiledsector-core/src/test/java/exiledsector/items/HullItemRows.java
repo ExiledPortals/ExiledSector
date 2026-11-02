@@ -21,7 +21,7 @@ final class HullItemRows {
     private HullItemRows() {
     }
 
-    static ItemData data(String definitionId, long seed, List<RolledEffect> effects, FrozenName frozenName) {
+    static ItemData data(String definitionId, long seed, List<RolledLine> effects, FrozenName frozenName) {
         return new ItemData(definitionId, seed, RolledModifier.fromLegacyEffects(ItemDefinitions.get(definitionId), effects), frozenName);
     }
 

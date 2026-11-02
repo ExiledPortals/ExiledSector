@@ -198,7 +198,7 @@ class DeletedSubroutinesTest {
     void deletedSubroutinesLeaveCargoWhileHullItemsAndOtherStacksStay() {
         CargoStackAPI deletedStack = stack(new ItemData(DELETED, 5L).toSpecialItem(), 2f);
         CargoStackAPI rolledDeletedStack = stack(new ItemData("domain_subroutine_management", 6L,
-                List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledEffect("HULL_MULT", 5f))), null).toSpecialItem(), 1f);
+                List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledLine("HULL_MULT", 5f))), null).toSpecialItem(), 1f);
         CargoStackAPI missingHullItemStack = stack(new ItemData(MISSING_HULL_ITEM, 5L).toSpecialItem(), 1f);
         CargoStackAPI subroutineStack = stack(new ItemData(ItemFixtures.SUBROUTINE, 5L).toSpecialItem(), 1f);
         CargoStackAPI hullItemStack = stack(new ItemData(HullItemRows.MILITARY, 5L).toSpecialItem(), 1f);

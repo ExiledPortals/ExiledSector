@@ -13,7 +13,7 @@ import exiledsector.items.ItemChances;
 import exiledsector.items.ItemKind;
 import exiledsector.items.SlottedRoll;
 import exiledsector.items.StarChart;
-import exiledsector.loot.LootModifiers;
+import exiledsector.loot.LootMultipliers;
 import exiledsector.modifiers.ModifierEffect;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierSlot;
@@ -123,10 +123,10 @@ public final class ChartGenContext {
         List<AppliedEffect> applied = new ArrayList<>();
         String factionId = null;
         for (SlottedRoll roll : chart.rolls()) {
-            ModifierEffect rolledEffect = roll.roll().effect(effects);
-            if (rolledEffect instanceof ChartFactionEffect faction) {
+            ModifierEffect rolledLine = roll.roll().effect(effects);
+            if (rolledLine instanceof ChartFactionEffect faction) {
                 factionId = factionId == null ? faction.factionId() : factionId;
-            } else if (rolledEffect instanceof ChartEffect effect) {
+            } else if (rolledLine instanceof ChartEffect effect) {
                 if (roll.line() == null) {
                     reportUnresolved(chart, effect);
                 } else {
@@ -544,8 +544,8 @@ public final class ChartGenContext {
         return percent;
     }
 
-    public LootModifiers lootModifiers(float scale) {
-        return new LootModifiers(itemChances().scaled(scale), dropMult(DropType.FEEDSTOCK) * scale, dropMult(DropType.CURRENCY) * scale);
+    public LootMultipliers lootMultipliers(float scale) {
+        return new LootMultipliers(itemChances().scaled(scale), dropMult(DropType.FEEDSTOCK) * scale, dropMult(DropType.CURRENCY) * scale);
     }
 
     public float bossSpoilsPercent() {

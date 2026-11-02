@@ -23,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ItemNamesTest {
 
     private static final Path NAMES = Path.of(ItemNames.namesPath());
-    private static final RolledEffect DISSIPATION = new RolledEffect("FLUX_DISSIPATION_MULT", 5f);
-    private static final RolledEffect SHIELDING = new RolledEffect("SHIELD_DAMAGE_TAKEN_MULT", -12f);
-    private static final RolledEffect HULL = new RolledEffect("HULL_MULT", 5f);
-    private static final RolledEffect ARMOR = new RolledEffect("ARMOR_PERCENT", 7f);
+    private static final RolledLine DISSIPATION = new RolledLine("FLUX_DISSIPATION_MULT", 5f);
+    private static final RolledLine SHIELDING = new RolledLine("SHIELD_DAMAGE_TAKEN_MULT", -12f);
+    private static final RolledLine HULL = new RolledLine("HULL_MULT", 5f);
+    private static final RolledLine ARMOR = new RolledLine("ARMOR_PERCENT", 7f);
 
     @BeforeEach
     void setUp() throws Exception {
@@ -69,7 +69,7 @@ class ItemNamesTest {
         ItemDefinitions.clear();
     }
 
-    private static ItemName name(String definitionId, long seed, List<RolledEffect> effects) {
+    private static ItemName name(String definitionId, long seed, List<RolledLine> effects) {
         ItemDefinition definition = ItemDefinitions.get(definitionId);
         return ItemNames.nameFor(definition, definition.kind(), seed, RolledModifier.fromLegacyEffects(definition, effects));
     }
@@ -95,7 +95,7 @@ class ItemNamesTest {
 
         assertEquals("Dissipation command suite", name("military_bridge", 1L, List.of(DISSIPATION, ARMOR)).title());
         assertEquals("Command suite of Fortitude",
-                name("military_bridge", 1L, List.of(new RolledEffect("REMOVED_EFFECT", 1f), HULL)).title());
+                name("military_bridge", 1L, List.of(new RolledLine("REMOVED_EFFECT", 1f), HULL)).title());
     }
 
     @Test
@@ -155,7 +155,7 @@ class ItemNamesTest {
         ItemDefinition relic = ItemDefinitions.get("relic");
         List<RolledModifier> modifiers = ItemRoller.roll(relic, 3L);
 
-        assertEquals(List.of("HULL_MULT", "ARMOR_PERCENT", "FLUX_CAPACITY_MULT"), RolledModifier.lines(modifiers).stream().map(RolledEffect::effectName).toList());
+        assertEquals(List.of("HULL_MULT", "ARMOR_PERCENT", "FLUX_CAPACITY_MULT"), RolledModifier.lines(modifiers).stream().map(RolledLine::effectName).toList());
         ItemName name = ItemNames.nameFor(relic, relic.kind(), 3L, modifiers);
         assertEquals(new ItemName("Omega Shard", null, ItemRarity.UNIQUE), name);
     }
@@ -172,8 +172,8 @@ class ItemNamesTest {
             assertTrue(words.has(definition.id()), definition.id() + " has no rare name words");
             for (PoolEntry entry : definition.pool()) {
                 assertTrue(ItemNames.hasName(definition, entry.modifier().id(), entry.slot()), entry.modifier().id() + " has no name");
-                assertFalse(name(definition.id(), 1L, List.of(new RolledEffect(entry.effectName(), 1f),
-                        new RolledEffect(entry.effectName(), 1f))).title().contains("  "));
+                assertFalse(name(definition.id(), 1L, List.of(new RolledLine(entry.effectName(), 1f),
+                        new RolledLine(entry.effectName(), 1f))).title().contains("  "));
             }
         }
     }

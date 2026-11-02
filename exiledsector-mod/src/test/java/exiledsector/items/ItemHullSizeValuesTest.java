@@ -54,7 +54,7 @@ class ItemHullSizeValuesTest {
     void eachHullSizeGetsItsOwnValueWhateverWasStored() throws Exception {
         ItemDefinitions.register(new JSONArray().put(row("scaled", "bridge", SCALED_POOL)));
         Item item = Item.withEffects("socketable_1", "scaled", 1L,
-                List.of(new RolledEffect("ARMOR_FLAT", 3f), new RolledEffect("HULL_MULT", 5f)));
+                List.of(new RolledLine("ARMOR_FLAT", 3f), new RolledLine("HULL_MULT", 5f)));
 
         assertEquals(List.of(5f, 5f), magnitudes(item.skillEffects(HullSize.FRIGATE)));
         assertEquals(List.of(10f, 5f), magnitudes(item.skillEffects(HullSize.DESTROYER)));
@@ -67,14 +67,14 @@ class ItemHullSizeValuesTest {
     void aNewRollStoresTheFrigateValue() throws Exception {
         ItemDefinitions.register(new JSONArray().put(row("scaled", "bridge", "ARMOR_FLAT:5/10/15/20")));
 
-        assertEquals(List.of(new RolledEffect("ARMOR_FLAT", 5f)), RolledModifier.lines(ItemRoller.roll(ItemDefinitions.get("scaled"), 7L)));
+        assertEquals(List.of(new RolledLine("ARMOR_FLAT", 5f)), RolledModifier.lines(ItemRoller.roll(ItemDefinitions.get("scaled"), 7L)));
     }
 
     @Test
     void theGenericTooltipListsEveryHullSizeValueLikeVanilla() throws Exception {
         ItemDefinitions.register(new JSONArray().put(row("scaled", "bridge", SCALED_POOL)));
         Item item = Item.withEffects("socketable_2", "scaled", 1L,
-                List.of(new RolledEffect("ARMOR_FLAT", 5f), new RolledEffect("HULL_MULT", 5f)));
+                List.of(new RolledLine("ARMOR_FLAT", 5f), new RolledLine("HULL_MULT", 5f)));
 
         List<StyledText> lines = item.effectLines(true);
 
@@ -87,7 +87,7 @@ class ItemHullSizeValuesTest {
     @Test
     void onAShipTheTooltipShowsOnlyThatHullSizesValueWithNoRange() throws Exception {
         ItemDefinitions.register(new JSONArray().put(row("scaled", "bridge", SCALED_POOL)));
-        Item item = Item.withEffects("socketable_3", "scaled", 1L, List.of(new RolledEffect("ARMOR_FLAT", 5f)));
+        Item item = Item.withEffects("socketable_3", "scaled", 1L, List.of(new RolledLine("ARMOR_FLAT", 5f)));
 
         String expanded = item.effectLines(true, HullSize.CAPITAL_SHIP).get(0).plain();
 
@@ -97,10 +97,10 @@ class ItemHullSizeValuesTest {
 
     @Test
     void sharedUnitsAreWrittenOnceAroundTheJoinedValues() {
-        assertEquals("5/10/15/20%", RolledEffect.joinSharingAffixes(List.of("5%", "10%", "15%", "20%")));
-        assertEquals("+5/10/15/20", RolledEffect.joinSharingAffixes(List.of("+5", "+10", "+15", "+20")));
-        assertEquals("0.5x/1x/2/3", RolledEffect.joinSharingAffixes(List.of("0.5x", "1x", "2", "3")));
-        assertEquals("max/max", RolledEffect.joinSharingAffixes(List.of("max", "max")));
+        assertEquals("5/10/15/20%", RolledLine.joinSharingAffixes(List.of("5%", "10%", "15%", "20%")));
+        assertEquals("+5/10/15/20", RolledLine.joinSharingAffixes(List.of("+5", "+10", "+15", "+20")));
+        assertEquals("0.5x/1x/2/3", RolledLine.joinSharingAffixes(List.of("0.5x", "1x", "2", "3")));
+        assertEquals("max/max", RolledLine.joinSharingAffixes(List.of("max", "max")));
     }
 
     private static List<Float> magnitudes(List<SkillTypeEffect> effects) {

@@ -12,7 +12,7 @@ import exiledsector.items.ItemImplicits;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.items.PoolEntry;
-import exiledsector.items.RolledEffect;
+import exiledsector.items.RolledLine;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemEffects;
 import exiledsector.items.ItemRarity;
@@ -220,7 +220,7 @@ public class ItemCodexEntry extends BoxedCodexEntry {
     }
 
     private StyledText effectText(ModifierLine line) {
-        return new RolledEffect(line.effectName(), line.boundFarthestFromZero()).rangeDescription(ItemEffects.forType(definition.type()), line);
+        return new RolledLine(line.effectName(), line.boundFarthestFromZero()).rangeDescription(ItemEffects.forType(definition.type()), line);
     }
 
     static String percentText(double chance) {

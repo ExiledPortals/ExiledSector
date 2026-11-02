@@ -42,9 +42,9 @@ class ItemRollerTest {
         Map<String, PoolEntry> pool = military.pool().stream()
                 .collect(Collectors.toMap(PoolEntry::effectName, Function.identity()));
         for (long seed = 0; seed < SAMPLES; seed++) {
-            List<RolledEffect> rolled = RolledModifier.lines(ItemRoller.roll(military, seed));
+            List<RolledLine> rolled = RolledModifier.lines(ItemRoller.roll(military, seed));
             Set<String> names = new HashSet<>();
-            for (RolledEffect effect : rolled) {
+            for (RolledLine effect : rolled) {
                 PoolEntry entry = pool.get(effect.effectName());
                 assertTrue(names.add(effect.effectName()), "repeated " + effect);
                 assertTrue(effect.magnitude() >= entry.min() && effect.magnitude() <= entry.max(), effect.toString());
@@ -70,7 +70,7 @@ class ItemRollerTest {
         boolean twoPrefixes = false;
         boolean twoSuffixes = false;
         for (long seed = 0; seed < SAMPLES; seed++) {
-            List<RolledEffect> rolled = RolledModifier.lines(ItemRoller.roll(military, seed));
+            List<RolledLine> rolled = RolledModifier.lines(ItemRoller.roll(military, seed));
             long prefixes = rolled.stream().filter(effect -> military.isPrefix(effect.effectName())).count();
             long suffixes = rolled.size() - prefixes;
             assertTrue(prefixes <= 2 && suffixes <= 2, rolled.toString());
@@ -92,7 +92,7 @@ class ItemRollerTest {
 
         Set<String> kept = new HashSet<>();
         for (long seed = 0; seed < 60; seed++) {
-            List<RolledEffect> rolled = RolledModifier.lines(ItemRoller.roll(exchange, seed));
+            List<RolledLine> rolled = RolledModifier.lines(ItemRoller.roll(exchange, seed));
             assertEquals(1, rolled.size());
             assertEquals(rolled, RolledModifier.lines(ItemRoller.roll(exchange, seed)));
             kept.add(rolled.get(0).effectName());

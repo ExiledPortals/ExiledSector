@@ -12,7 +12,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.MockSector;
 import exiledsector.charts.loot.StarChartLootSource;
 import exiledsector.charts.loot.DropType;
-import exiledsector.loot.LootModifiers;
+import exiledsector.loot.LootMultipliers;
 import exiledsector.charts.ChartIds;
 import exiledsector.items.AnchorJanusGate;
 import exiledsector.items.ItemDefinitions;
@@ -124,7 +124,7 @@ class ItemSalvageListenerTest {
         when(outside.getContainingLocation()).thenReturn(mock(LocationAPI.class));
         SectorEntityToken nowhere = mock(SectorEntityToken.class);
 
-        LootModifiers none = new LootModifiers(ChartGenContext.none().itemChances(), ChartGenContext.none().dropMult(DropType.FEEDSTOCK),
+        LootMultipliers none = new LootMultipliers(ChartGenContext.none().itemChances(), ChartGenContext.none().dropMult(DropType.FEEDSTOCK),
                 ChartGenContext.none().dropMult(DropType.CURRENCY));
         assertEquals(none, StarChartLootSource.INSTANCE.modifiersAt(outside.getContainingLocation()));
         assertEquals(none, StarChartLootSource.INSTANCE.modifiersAt(nowhere.getContainingLocation()));

@@ -27,31 +27,31 @@ public final class ItemRoller {
         }
         Random random = Seeds.random(seed);
         AffixLayout.Limits limits = AffixLayout.dropLimits(definition.type());
-        return rollAffixes(definition, limits.maxPerSide(), AffixLayout.rolledEffectCount(limits, random.nextFloat(), rarity), random,
+        return rollAffixes(definition, limits.maxPerSide(), AffixLayout.rolledModifierCount(limits, random.nextFloat(), rarity), random,
                 TierRange.NO_TIER);
     }
 
-    public static List<RolledModifier> rollWithEffectCount(ItemDefinition definition, long seed, int effectCount) {
+    public static List<RolledModifier> rollWithModifierCount(ItemDefinition definition, long seed, int modifierCount) {
         if (definition.unique() || ItemTypes.tiered(definition.type())) {
             return roll(definition, seed);
         }
         Random random = Seeds.random(seed);
         random.nextFloat();
-        return rollAffixes(definition, AffixLayout.limits(definition.type()).maxPerSide(), effectCount, random, TierRange.NO_TIER);
+        return rollAffixes(definition, AffixLayout.limits(definition.type()).maxPerSide(), modifierCount, random, TierRange.NO_TIER);
     }
 
-    public static List<RolledModifier> rollAtTierWithEffectCount(ItemDefinition definition, long seed, int tier, int effectCount, int maxPerSide) {
-        return rollAffixes(definition, maxPerSide, effectCount, Seeds.random(seed), ItemTypes.rolledTier(definition, tier));
+    public static List<RolledModifier> rollAtTierWithModifierCount(ItemDefinition definition, long seed, int tier, int modifierCount, int maxPerSide) {
+        return rollAffixes(definition, maxPerSide, modifierCount, Seeds.random(seed), ItemTypes.rolledTier(definition, tier));
     }
 
-    public static boolean canRollEffectCount(ItemDefinition definition, int effectCount) {
+    public static boolean canRollModifierCount(ItemDefinition definition, int modifierCount) {
         if (definition.unique() || ItemTypes.tiered(definition.type())) {
             return false;
         }
         AffixLayout.Limits limits = AffixLayout.limits(definition.type());
         int prefixRoom = Math.min(limits.maxPerSide(), AffixLayout.rollableAt(definition.type(), definition.prefixes(), TierRange.NO_TIER).size());
         int suffixRoom = Math.min(limits.maxPerSide(), AffixLayout.rollableAt(definition.type(), definition.suffixes(), TierRange.NO_TIER).size());
-        return effectCount >= 1 && effectCount <= limits.maxEffects() && effectCount <= prefixRoom + suffixRoom;
+        return modifierCount >= 1 && modifierCount <= limits.maxModifiers() && modifierCount <= prefixRoom + suffixRoom;
     }
 
     public static List<RolledModifier> roll(ItemDefinition definition, long seed, int tier) {
@@ -68,7 +68,7 @@ public final class ItemRoller {
             return rolledModifiers;
         }
         AffixLayout.Limits limits = AffixLayout.limits(definition.type());
-        return rollAffixes(definition, limits.maxPerSide(), AffixLayout.rolledEffectCount(limits, random.nextFloat()), random, tier);
+        return rollAffixes(definition, limits.maxPerSide(), AffixLayout.rolledModifierCount(limits, random.nextFloat()), random, tier);
     }
 
     private static List<RolledModifier> rollAffixes(ItemDefinition definition, int maxPerSide, int modifierCount, Random random, int tier) {

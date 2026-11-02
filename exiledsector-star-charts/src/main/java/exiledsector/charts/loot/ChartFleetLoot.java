@@ -20,7 +20,7 @@ import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
-import exiledsector.loot.LootModifiers;
+import exiledsector.loot.LootMultipliers;
 import exiledsector.loot.LootSources;
 
 import java.util.List;
@@ -221,7 +221,7 @@ public final class ChartFleetLoot {
 
     private static ItemDrops.SiteLoot roll(SectorAPI sector, ChartRun run, ChartGenContext context, String siteId, ChartDrops.Source source,
                                            float chanceMult, Random random) {
-        LootModifiers modifiers = context.lootModifiers(chanceMult);
+        LootMultipliers modifiers = context.lootMultipliers(chanceMult);
         ItemDrops.SiteLoot siteLoot = source == ChartDrops.Source.CHART_FLEET
                 ? ItemDrops.rollFleetSalvage(siteId, random, modifiers.itemChances(), modifiers.feedstockMult(), modifiers.currencyMult())
                 : LootSources.rollSite(sector, siteId, random, modifiers);

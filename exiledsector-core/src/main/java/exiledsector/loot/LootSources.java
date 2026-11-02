@@ -31,14 +31,14 @@ public final class LootSources {
     }
 
     public static ItemChances itemChancesFor(CampaignFleetAPI fleet) {
-        return SOURCES.firstOr(source -> source.itemChancesFor(fleet), LootModifiers.NONE.itemChances());
+        return SOURCES.firstOr(source -> source.itemChancesFor(fleet), LootMultipliers.NONE.itemChances());
     }
 
-    public static LootModifiers modifiersFor(SectorEntityToken site) {
-        return SOURCES.firstOr(source -> source.modifiersFor(site), LootModifiers.NONE);
+    public static LootMultipliers modifiersFor(SectorEntityToken site) {
+        return SOURCES.firstOr(source -> source.modifiersFor(site), LootMultipliers.NONE);
     }
 
-    public static ItemDrops.SiteLoot rollSite(SectorAPI sector, String siteId, Random random, LootModifiers modifiers) {
+    public static ItemDrops.SiteLoot rollSite(SectorAPI sector, String siteId, Random random, LootMultipliers modifiers) {
         ItemDrops.SiteLoot baseLoot = ItemDrops.rollSite(siteId, random, modifiers.itemChances(), modifiers.feedstockMult(), modifiers.currencyMult());
         SiteFind find = new SiteFind(sector, siteId, random, modifiers.itemChances(), new ArrayList<>(), new ArrayList<>());
         SOURCES.all().forEach(source -> source.addSiteFinds(find));

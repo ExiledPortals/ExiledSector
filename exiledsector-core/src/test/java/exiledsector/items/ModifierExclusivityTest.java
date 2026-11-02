@@ -70,7 +70,7 @@ class ModifierExclusivityTest {
     void aRollNeverDrawsTwoModifiersOfOneGroupOnEitherSide() {
         boolean rolledOne = false;
         for (long seed = 0; seed < 200; seed++) {
-            List<RolledModifier> rolled = ItemRoller.rollWithEffectCount(definition, seed, 4);
+            List<RolledModifier> rolled = ItemRoller.rollWithModifierCount(definition, seed, 4);
 
             assertTrue(groupedCount(rolled) <= 1, "seed " + seed + " rolled " + rolled);
             rolledOne |= groupedCount(rolled) == 1;

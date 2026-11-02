@@ -31,7 +31,7 @@ public final class StarChartCorruption {
         if (definition == null) {
             return null;
         }
-        List<RolledModifier> rerolled = ItemRoller.rollAtTierWithEffectCount(definition, random.nextLong(), chart.tier(), EXPANDED_MODIFIERS,
+        List<RolledModifier> rerolled = ItemRoller.rollAtTierWithModifierCount(definition, random.nextLong(), chart.tier(), EXPANDED_MODIFIERS,
                 EXPANDED_PER_SIDE);
         if (rerolled.isEmpty()) {
             return null;

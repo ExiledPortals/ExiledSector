@@ -10,7 +10,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.charts.effect.ChartEffects;
 import exiledsector.items.ItemEffects;
 import exiledsector.items.ItemType;
-import exiledsector.items.RolledEffect;
+import exiledsector.items.RolledLine;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.TierGroup;
@@ -138,7 +138,7 @@ public final class EditorDescriber {
         } else {
             line = ModifierLine.range(effectName, (float) lineJson.getDouble("min"), (float) lineJson.getDouble("max"));
         }
-        return new RolledEffect(effectName, line.boundFarthestFromZero()).rangeDescription(effectsFor(lineJson.optString("itemType", null)), line);
+        return new RolledLine(effectName, line.boundFarthestFromZero()).rangeDescription(effectsFor(lineJson.optString("itemType", null)), line);
     }
 
     private static ModifierEffects effectsFor(String itemTypeId) {

@@ -70,7 +70,7 @@ class AnomalousDebrisCurrencyTest {
     }
 
     private Item common() {
-        return store.add(new ItemData(BASE, 7L, List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledEffect("FLUX_CAPACITY_MULT", 5f))),
+        return store.add(new ItemData(BASE, 7L, List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledLine("FLUX_CAPACITY_MULT", 5f))),
                 null));
     }
 
@@ -115,7 +115,7 @@ class AnomalousDebrisCurrencyTest {
 
     @Test
     void theTuningNanoswarmRerollsTheGrantedModifiersValue() {
-        Item item = withModifiers(new RolledModifier(GRANTED_SUFFIX, ModifierSlot.SUFFIX, List.of(new RolledEffect("BEAM_WEAPON_RANGE_PERCENT", 20f))));
+        Item item = withModifiers(new RolledModifier(GRANTED_SUFFIX, ModifierSlot.SUFFIX, List.of(new RolledLine("BEAM_WEAPON_RANGE_PERCENT", 20f))));
         Set<Float> rolledValues = new HashSet<>();
 
         assertTrue(ItemCrafting.canUse(Nanoswarm.TUNING, item, definition -> true));
@@ -132,13 +132,13 @@ class AnomalousDebrisCurrencyTest {
 
     @Test
     void theTuningNanoswarmRefusesAFixedGrantedModifier() {
-        Item item = withModifiers(new RolledModifier(GRANTED_PREFIX, ModifierSlot.PREFIX, List.of(new RolledEffect("HULL_PERCENT", 15f))));
+        Item item = withModifiers(new RolledModifier(GRANTED_PREFIX, ModifierSlot.PREFIX, List.of(new RolledLine("HULL_PERCENT", 15f))));
 
         assertFalse(ItemCrafting.canUse(Nanoswarm.TUNING, item, definition -> true));
     }
 
     private Item lockedWith(String effectName, ModifierSlot slot, float magnitude) {
-        return store.add(new ItemData(BASE, 9L, List.of(RolledModifier.single(slot, new RolledEffect(effectName, magnitude)).asImmutable()), null));
+        return store.add(new ItemData(BASE, 9L, List.of(RolledModifier.single(slot, new RolledLine(effectName, magnitude)).asImmutable()), null));
     }
 
     @Test
@@ -226,7 +226,7 @@ class AnomalousDebrisCurrencyTest {
     }
 
     private static RolledModifier rolled(ModifierSlot slot, String effectName, float magnitude) {
-        return RolledModifier.single(slot, new RolledEffect(effectName, magnitude));
+        return RolledModifier.single(slot, new RolledLine(effectName, magnitude));
     }
 
     private static List<RolledModifier> onSide(Item item, ModifierSlot slot) {

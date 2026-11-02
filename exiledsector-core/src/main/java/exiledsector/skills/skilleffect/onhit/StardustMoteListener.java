@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-final class CorrosionMoteListener extends ShipCombatListener implements DamageDealtModifier {
+final class StardustMoteListener extends ShipCombatListener implements DamageDealtModifier {
 
     static final String MOTE_DAMAGE_KEY = "exiledLib_corrosionMoteDamage";
     static final float CONTACT_SECONDS_PER_MOTE = 2f;
@@ -29,11 +29,11 @@ final class CorrosionMoteListener extends ShipCombatListener implements DamageDe
     private final Map<WeaponAPI, BarrelContact> contactByWeapon = new IdentityHashMap<>();
     private final Random random;
 
-    CorrosionMoteListener(ShipAPI ownerShip) {
+    StardustMoteListener(ShipAPI ownerShip) {
         this(ownerShip, new Random());
     }
 
-    CorrosionMoteListener(ShipAPI ownerShip, Random random) {
+    StardustMoteListener(ShipAPI ownerShip, Random random) {
         super(ownerShip);
         this.random = random;
     }

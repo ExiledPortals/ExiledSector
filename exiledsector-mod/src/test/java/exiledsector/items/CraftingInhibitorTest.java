@@ -45,8 +45,8 @@ class CraftingInhibitorTest {
     }
 
     private Item rare() {
-        List<RolledEffect> effects = List.of(new RolledEffect("FLUX_CAPACITY_MULT", 5f), new RolledEffect("FLUX_DISSIPATION_MULT", 5f),
-                new RolledEffect("ARMOR_PERCENT", 7f), new RolledEffect("HULL_MULT", 5f));
+        List<RolledLine> effects = List.of(new RolledLine("FLUX_CAPACITY_MULT", 5f), new RolledLine("FLUX_DISSIPATION_MULT", 5f),
+                new RolledLine("ARMOR_PERCENT", 7f), new RolledLine("HULL_MULT", 5f));
         return store.add(HullItemRows.data(HullItemRows.MILITARY, 1L, effects, null));
     }
 
@@ -121,7 +121,7 @@ class CraftingInhibitorTest {
     @Test
     void aWardGuardingOnlyAFixedEffectIsNotSpent() throws Exception {
         ItemDefinitions.register(new JSONArray().put(HullItemRows.row("lean", "bridge", "HULL_MULT:4:6", "ARMOR_PERCENT:6:9")));
-        Item item = store.add(HullItemRows.data("lean", 1L, List.of(new RolledEffect("HULL_MULT", 5f), new RolledEffect("ARMOR_PERCENT", 7f)), null));
+        Item item = store.add(HullItemRows.data("lean", 1L, List.of(new RolledLine("HULL_MULT", 5f), new RolledLine("ARMOR_PERCENT", 7f)), null));
         ItemCrafting.makeImmutable(item, new Random(1L), Set.of(ModifierSlot.SUFFIX));
 
         assertTrue(side(item, ModifierSlot.PREFIX).get(0).immutable());

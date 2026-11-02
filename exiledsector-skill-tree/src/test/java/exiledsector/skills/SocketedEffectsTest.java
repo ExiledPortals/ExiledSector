@@ -5,7 +5,7 @@ import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemStore;
-import exiledsector.items.RolledEffect;
+import exiledsector.items.RolledLine;
 import exiledsector.items.RolledModifier;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONArray;
@@ -42,7 +42,7 @@ class SocketedEffectsTest {
 
     @Test
     void anInstalledItemsEffectsFlowThroughItsSocketNode() {
-        Item item = ItemStore.get().add(new ItemData("chip", 4L, List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledEffect("HULL_MULT", 5f))), null));
+        Item item = ItemStore.get().add(new ItemData("chip", 4L, List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledLine("HULL_MULT", 5f))), null));
         ShipSkillData data = new ShipSkillData();
         ShipTrees.allocate(data, socket, 3);
         AllocatedNode allocated = AllocatedNode.of(data).get(0);
@@ -77,7 +77,7 @@ class SocketedEffectsTest {
 
     @Test
     void aDestroyedItemNoLongerContributesAnything() {
-        Item item = ItemStore.get().add(new ItemData("chip", 4L, List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledEffect("HULL_MULT", 5f))), null));
+        Item item = ItemStore.get().add(new ItemData("chip", 4L, List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledLine("HULL_MULT", 5f))), null));
         ShipSkillData data = new ShipSkillData();
         ShipTrees.allocate(data, socket, 3);
         data.socketItem("socket", item.id());

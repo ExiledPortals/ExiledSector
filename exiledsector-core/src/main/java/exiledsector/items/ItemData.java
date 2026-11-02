@@ -39,8 +39,8 @@ public record ItemData(String definitionId, long seed, List<RolledModifier> expl
         return new ItemData(definition.id(), seed, modifiers, ItemNames.freeze(definition, seed, modifiers));
     }
 
-    public static ItemData rolledWithEffectCount(ItemDefinition definition, long seed, int effectCount) {
-        List<RolledModifier> modifiers = ItemRoller.rollWithEffectCount(definition, seed, effectCount);
+    public static ItemData rolledWithModifierCount(ItemDefinition definition, long seed, int modifierCount) {
+        List<RolledModifier> modifiers = ItemRoller.rollWithModifierCount(definition, seed, modifierCount);
         return new ItemData(definition.id(), seed, modifiers, ItemNames.freeze(definition, seed, modifiers));
     }
 

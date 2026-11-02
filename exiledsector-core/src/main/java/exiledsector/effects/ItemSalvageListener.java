@@ -12,7 +12,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.ItemUnlock;
-import exiledsector.loot.LootModifiers;
+import exiledsector.loot.LootMultipliers;
 import exiledsector.loot.LootSources;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
 
@@ -40,7 +40,7 @@ public class ItemSalvageListener implements ShowLootListener {
         }
         entityMemory.set(ROLLED_KEY, true);
         Random random = new Random(Misc.getSalvageSeed(salvageEntity) ^ SEED_SALT);
-        LootModifiers modifiers = LootSources.modifiersFor(salvageEntity);
+        LootMultipliers modifiers = LootSources.modifiersFor(salvageEntity);
         ItemDrops.SiteLoot siteLoot = LootSources.rollSite(Global.getSector(), siteId, random, modifiers);
         ItemLootListener.addSiteLoot(loot, siteLoot);
         MaterialDropAnnouncer.announceOnLootScreen(siteLoot.materials());

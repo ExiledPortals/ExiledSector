@@ -520,12 +520,6 @@ effect|CORONA_RESISTANCE_MULT|12.5	1	<good>12.5%</good> more combat readiness lo
 effect|CORONA_RESISTANCE_MULT|100.0	1	<good>100%</good> more combat readiness loss from being in a solar corona or a deep hyperspace storm.
 effect|CORONA_RESISTANCE_MULT|-10.0	1	<bad>10%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 effect|CORONA_RESISTANCE_MULT|-12.5	1	<bad>12.5%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-effect|CORROSION_MOTE_DAMAGE_FLAT|1.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>1</good> energy damage and <good>1</good> EMP. At most 20 of this ship's motes fly at once.
-effect|CORROSION_MOTE_DAMAGE_FLAT|10.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>10</good> energy damage and <good>10</good> EMP. At most 20 of this ship's motes fly at once.
-effect|CORROSION_MOTE_DAMAGE_FLAT|12.5	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>12.5</good> energy damage and <good>12.5</good> EMP. At most 20 of this ship's motes fly at once.
-effect|CORROSION_MOTE_DAMAGE_FLAT|100.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>100</good> energy damage and <good>100</good> EMP. At most 20 of this ship's motes fly at once.
-effect|CORROSION_MOTE_DAMAGE_FLAT|-10.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>-10</good> energy damage and <good>-10</good> EMP. At most 20 of this ship's motes fly at once.
-effect|CORROSION_MOTE_DAMAGE_FLAT|-12.5	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>-12.5</good> energy damage and <good>-12.5</good> EMP. At most 20 of this ship's motes fly at once.
 effect|CREATE_FRONT_SHIELD_IF_NONE|1.0	0	Installs a makeshift, front-facing shield if this ship has none.
 effect|CREATE_FRONT_SHIELD_IF_NONE|10.0	0	Installs a makeshift, front-facing shield if this ship has none.
 effect|CREATE_FRONT_SHIELD_IF_NONE|12.5	0	Installs a makeshift, front-facing shield if this ship has none.
@@ -2194,6 +2188,12 @@ effect|SOLARIS_OVERDRIVE_SECONDS_FLAT|12.5	0	Weapons cost no flux to fire for <g
 effect|SOLARIS_OVERDRIVE_SECONDS_FLAT|100.0	0	Weapons cost no flux to fire for <good>100</good> seconds after this ship's system activates, at most once every 60 seconds.
 effect|SOLARIS_OVERDRIVE_SECONDS_FLAT|-10.0	0	Weapons cost no flux to fire for <good>-10</good> seconds after this ship's system activates, at most once every 60 seconds.
 effect|SOLARIS_OVERDRIVE_SECONDS_FLAT|-12.5	0	Weapons cost no flux to fire for <good>-12.5</good> seconds after this ship's system activates, at most once every 60 seconds.
+effect|STARDUST_MOTE_DAMAGE_FLAT|1.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>1</good> energy damage and <good>1</good> EMP. At most 20 of this ship's motes fly at once.
+effect|STARDUST_MOTE_DAMAGE_FLAT|10.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>10</good> energy damage and <good>10</good> EMP. At most 20 of this ship's motes fly at once.
+effect|STARDUST_MOTE_DAMAGE_FLAT|12.5	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>12.5</good> energy damage and <good>12.5</good> EMP. At most 20 of this ship's motes fly at once.
+effect|STARDUST_MOTE_DAMAGE_FLAT|100.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>100</good> energy damage and <good>100</good> EMP. At most 20 of this ship's motes fly at once.
+effect|STARDUST_MOTE_DAMAGE_FLAT|-10.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>-10</good> energy damage and <good>-10</good> EMP. At most 20 of this ship's motes fly at once.
+effect|STARDUST_MOTE_DAMAGE_FLAT|-12.5	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>-12.5</good> energy damage and <good>-12.5</good> EMP. At most 20 of this ship's motes fly at once.
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|1.0	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|10.0	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|12.5	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
