@@ -127,6 +127,6 @@ public final class CoronalHypershunt implements StarRule, AtlasRule, ContentPlac
             return null;
         }
         StyledText name = StyledText.styled(star.getName(), Style.HIGHLIGHT);
-        return I18n.forGameText(() -> Translation.msg("chart.hypershunt.intel").arg("star", name).text());
+        return I18n.forGameText(() -> Translation.msg("chart.anomaly.coronal_hypershunt.intel").arg("star", name).text());
     }
 }

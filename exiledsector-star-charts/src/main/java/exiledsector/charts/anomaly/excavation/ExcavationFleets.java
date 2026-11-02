@@ -51,7 +51,7 @@ public final class ExcavationFleets {
         if (fleet == null) {
             return null;
         }
-        fleet.setName(Translation.gameText(derelict ? "chart.excavation.fleet.derelict" : "chart.excavation.fleet.garrison"));
+        fleet.setName(Translation.gameText(derelict ? "chart.anomaly.excavation_sites.fleet.derelict" : "chart.anomaly.excavation_sites.fleet.garrison"));
         ChartAnomalyFleets.prepare(fleet, run.runId(), run.tier(), random.nextLong(), false, context);
         ChartFleetLoot.recordStart(fleet);
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();

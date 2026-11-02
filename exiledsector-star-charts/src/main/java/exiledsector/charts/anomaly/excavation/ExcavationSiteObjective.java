@@ -31,12 +31,12 @@ public class ExcavationSiteObjective extends ChartRaidObjective {
 
     @Override
     public String getName() {
-        return Translation.gameText("chart.excavation.objective.name");
+        return Translation.gameText("chart.anomaly.excavation_sites.objective.name");
     }
 
     @Override
     protected void describe(TooltipMakerAPI tooltip) {
-        VanillaText.plainPara(tooltip, Translation.gameText("chart.excavation.objective.tooltip"), 0f, Misc.getTextColor());
+        VanillaText.plainPara(tooltip, Translation.gameText("chart.anomaly.excavation_sites.objective.tooltip"), 0f, Misc.getTextColor());
         VanillaText.addPara(tooltip, ExcavationSiteDialog.leanLine(site.lean()), PARAGRAPH_PAD, Misc.getTextColor());
     }
 

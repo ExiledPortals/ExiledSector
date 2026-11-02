@@ -153,6 +153,6 @@ class ConvoyCargoTest {
         assertEquals(1, drops.random().size());
         assertEquals(6f, drops.random().get(0).valueMult, 0.001f);
         assertEquals(ChartVanillaLoot.SiteDrops.NONE, ChartVanillaLoot.drops(ConvoyRules.LOOT_SCOPE, 4, 0f, ChartGenContext.none()));
-        assertEquals(List.of("chart.convoy.cargo.resource", "chart.convoy.cargo.weapon"), ConvoyCargo.manifestKeys(4).subList(0, 2));
+        assertEquals(List.of("chart.anomaly.supply_convoy.cargo.resource", "chart.anomaly.supply_convoy.cargo.weapon"), ConvoyCargo.manifestKeys(4).subList(0, 2));
     }
 }

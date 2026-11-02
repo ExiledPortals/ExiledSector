@@ -108,7 +108,7 @@ public class AnomalousDebrisTerrainPlugin extends ChartAnomalyTerrain {
 
     @Override
     protected String nameKey() {
-        return "chart.debris.name";
+        return "chart.anomaly.anomalous_debris.name";
     }
 
     @Override
@@ -269,6 +269,6 @@ public class AnomalousDebrisTerrainPlugin extends ChartAnomalyTerrain {
 
     @Override
     protected void tooltipLines(TooltipMakerAPI tooltip) {
-        VanillaText.plainPara(tooltip, Translation.gameText("chart.debris.description"), TOOLTIP_PAD, Misc.getTextColor());
+        VanillaText.plainPara(tooltip, Translation.gameText("chart.anomaly.anomalous_debris.description"), TOOLTIP_PAD, Misc.getTextColor());
     }
 }

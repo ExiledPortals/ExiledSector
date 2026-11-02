@@ -47,38 +47,38 @@ public class ChartWormholeDialog extends BaseDialogPlugin {
         options.clearOptions();
         ChartRun run = ChartRuns.unclosedOwning(wormhole);
         if (run == null) {
-            VanillaText.plainPara(text(), Translation.gameText("chart.dialog.stale"));
+            VanillaText.plainPara(text(), Translation.gameText("chart.wormhole.dialog.stale"));
         } else if (isInner(wormhole)) {
             showInnerOptions(run, options);
         } else {
             showOuterOptions(run, options);
         }
-        addLeaveOption(Translation.gameText("chart.dialog.option.leave"), LEAVE);
+        addLeaveOption(Translation.gameText("chart.wormhole.dialog.option.leave"), LEAVE);
     }
 
     private void showOuterOptions(ChartRun run, OptionPanelAPI options) {
-        VanillaText.plainPara(text(), Translation.gameText("chart.dialog.outer.description"));
+        VanillaText.plainPara(text(), Translation.gameText("chart.wormhole.dialog.outer.description"));
         int entriesLeft = run.entriesLeft();
         VanillaText.plainPara(text(), entriesLeft > 0
-                ? I18n.forGameText(() -> Translation.msg("chart.dialog.outer.entriesLeft").count(entriesLeft).text())
-                : Translation.gameText("chart.dialog.outer.noEntries"));
+                ? I18n.forGameText(() -> Translation.msg("chart.wormhole.dialog.outer.entriesLeft").count(entriesLeft).text())
+                : Translation.gameText("chart.wormhole.dialog.outer.noEntries"));
         Set<HullSize> barred = ChartEntryBans.breached(run, Global.getSector().getPlayerFleet());
         for (HullSize hullSize : barred) {
-            VanillaText.plainPara(text(), Translation.gameText("chart.dialog.outer.barred." + hullSize.name()));
+            VanillaText.plainPara(text(), Translation.gameText("chart.wormhole.dialog.outer.barred." + hullSize.name()));
         }
-        options.addOption(I18n.forGameText(() -> Translation.msg("chart.dialog.option.enter").count(entriesLeft).text()), ENTER);
+        options.addOption(I18n.forGameText(() -> Translation.msg("chart.wormhole.dialog.option.enter").count(entriesLeft).text()), ENTER);
         options.setEnabled(ENTER, run.canEnter() && barred.isEmpty());
-        options.addOption(Translation.gameText("chart.dialog.option.collapse"), COLLAPSE);
-        options.addOptionConfirmation(COLLAPSE, Translation.gameText("chart.dialog.collapse.confirm"),
-                Translation.gameText("chart.dialog.collapse.yes"), Translation.gameText("chart.dialog.collapse.no"));
+        options.addOption(Translation.gameText("chart.wormhole.dialog.option.collapse"), COLLAPSE);
+        options.addOptionConfirmation(COLLAPSE, Translation.gameText("chart.wormhole.dialog.collapse.confirm"),
+                Translation.gameText("chart.wormhole.dialog.collapse.yes"), Translation.gameText("chart.wormhole.dialog.collapse.no"));
         options.setEnabled(COLLAPSE, run.runState() == ChartRunState.OPEN);
     }
 
     private void showInnerOptions(ChartRun run, OptionPanelAPI options) {
-        VanillaText.plainPara(text(), Translation.gameText("chart.dialog.inner.description"));
+        VanillaText.plainPara(text(), Translation.gameText("chart.wormhole.dialog.inner.description"));
         boolean wayBackStaysOpen = !run.isOuterCollapsed() && run.entriesLeft() > 0;
-        VanillaText.plainPara(text(), Translation.gameText(wayBackStaysOpen ? "chart.dialog.inner.canComeBack" : "chart.dialog.inner.lastExit"));
-        options.addOption(Translation.gameText("chart.dialog.option.return"), RETURN);
+        VanillaText.plainPara(text(), Translation.gameText(wayBackStaysOpen ? "chart.wormhole.dialog.inner.canComeBack" : "chart.wormhole.dialog.inner.lastExit"));
+        options.addOption(Translation.gameText("chart.wormhole.dialog.option.return"), RETURN);
     }
 
     @Override

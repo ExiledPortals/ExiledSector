@@ -29,7 +29,7 @@ public final class RemnantNexusStation extends LaunchingStation {
 
     @Override
     String nameKey(int tier) {
-        return StationRules.damagedNexus(tier) ? "chart.nexus.damagedName" : "chart.nexus.name";
+        return StationRules.damagedNexus(tier) ? "chart.anomaly.remnant_nexus_station.damagedName" : "chart.anomaly.remnant_nexus_station.name";
     }
 
     @Override

@@ -29,7 +29,7 @@ public final class DomainMothership extends LaunchingStation {
 
     @Override
     String nameKey(int tier) {
-        return "chart.mothership.name";
+        return "chart.anomaly.domain_mothership.name";
     }
 
     @Override

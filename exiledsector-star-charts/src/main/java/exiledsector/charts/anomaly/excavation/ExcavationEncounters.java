@@ -19,8 +19,8 @@ public final class ExcavationEncounters {
     }
 
     public static FIDConfig config(Consumer<InteractionDialogAPI> onLeave) {
-        FIDConfig config = AnomalyEncounters.siteFight("chart.excavation.encounter.leave", true, ExcavationEncounters::fightUnderground, onLeave);
-        config.afterFirstTimeEngageOptionText = Translation.gameText("chart.excavation.encounter.reengage");
+        FIDConfig config = AnomalyEncounters.siteFight("chart.anomaly.excavation_sites.encounter.leave", true, ExcavationEncounters::fightUnderground, onLeave);
+        config.afterFirstTimeEngageOptionText = Translation.gameText("chart.anomaly.excavation_sites.encounter.reengage");
         return config;
     }
 

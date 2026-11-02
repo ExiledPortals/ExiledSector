@@ -34,7 +34,7 @@ public class PostDialog extends AnomalyDialog {
     protected void open() {
         post = dialog().getInteractionTarget();
         showEntityVisual(post);
-        VanillaText.plainPara(text(), Translation.gameText("chart.post.dialog.description"));
+        VanillaText.plainPara(text(), Translation.gameText("chart.anomaly.listening_post.dialog.description"));
         showMain();
     }
 
@@ -53,21 +53,21 @@ public class PostDialog extends AnomalyDialog {
         PostState state = PostState.of(run());
         PostScript script = script();
         if (state == null) {
-            VanillaText.plainPara(text, Translation.gameText("chart.post.dialog.stale"));
+            VanillaText.plainPara(text, Translation.gameText("chart.anomaly.listening_post.dialog.stale"));
         } else if (state.taken()) {
-            VanillaText.plainPara(text, Translation.gameText("chart.post.dialog.taken"));
+            VanillaText.plainPara(text, Translation.gameText("chart.anomaly.listening_post.dialog.taken"));
         } else if (!state.alarm()) {
-            VanillaText.plainPara(text, Translation.gameText("chart.post.dialog.quiet"));
-            options.addOption(Translation.gameText("chart.post.dialog.option.open"), OPEN);
+            VanillaText.plainPara(text, Translation.gameText("chart.anomaly.listening_post.dialog.quiet"));
+            options.addOption(Translation.gameText("chart.anomaly.listening_post.dialog.option.open"), OPEN);
         } else {
             int vault = PostText.percent(state.vaultShare());
             boolean defended = script != null && script.defended();
-            String key = defended ? "chart.post.dialog.guarded" : "chart.post.dialog.purged";
+            String key = defended ? "chart.anomaly.listening_post.dialog.guarded" : "chart.anomaly.listening_post.dialog.purged";
             VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg(key).arg("value", vault).text()));
             if (defended) {
-                options.addOption(Translation.gameText("chart.post.dialog.option.engage"), ENGAGE_OPTION);
+                options.addOption(Translation.gameText("chart.anomaly.listening_post.dialog.option.engage"), ENGAGE_OPTION);
             } else {
-                options.addOption(Translation.gameText("chart.post.dialog.option.openPurged"), OPEN);
+                options.addOption(Translation.gameText("chart.anomaly.listening_post.dialog.option.openPurged"), OPEN);
             }
         }
         addLeaveOption();
@@ -93,15 +93,15 @@ public class PostDialog extends AnomalyDialog {
         PostState.record(run, taken);
         TextPanelAPI text = text();
         if (taken.clean() && AtlasProgress.revealLanesAround(Global.getSector(), run)) {
-            VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.post.dialog.lanes").count(AtlasReach.LISTENING_POST_LANES).text()));
+            VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.anomaly.listening_post.dialog.lanes").count(AtlasReach.LISTENING_POST_LANES).text()));
         }
         CargoAPI vault = VaultLoot.roll(Global.getSector(), run, state.vaultShare(), new Random(state.seed()));
         if (vault == null || vault.isEmpty()) {
-            VanillaText.plainPara(text, Translation.gameText("chart.post.dialog.empty"));
+            VanillaText.plainPara(text, Translation.gameText("chart.anomaly.listening_post.dialog.empty"));
             showMain();
             return;
         }
-        dialog().getVisualPanel().showLoot(Translation.gameText("chart.post.dialog.vaultTitle"), vault, false, true, true, new CoreInteractionListener() {
+        dialog().getVisualPanel().showLoot(Translation.gameText("chart.anomaly.listening_post.dialog.vaultTitle"), vault, false, true, true, new CoreInteractionListener() {
             @Override
             public void coreUIDismissed() {
                 showMain();

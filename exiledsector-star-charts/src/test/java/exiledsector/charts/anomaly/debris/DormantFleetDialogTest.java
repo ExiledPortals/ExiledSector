@@ -83,7 +83,7 @@ class DormantFleetDialogTest {
         assertNull(withKernel.corruptBlockedKey());
         assertTrue(withoutKernel.canEngage());
         assertFalse(withoutKernel.canCorrupt());
-        assertEquals("chart.debris.dialog.noKernel", withoutKernel.corruptBlockedKey());
+        assertEquals("chart.anomaly.anomalous_debris.dialog.noKernel", withoutKernel.corruptBlockedKey());
         assertFalse(noShips.canEngage());
         assertFalse(noShips.canCorrupt());
     }

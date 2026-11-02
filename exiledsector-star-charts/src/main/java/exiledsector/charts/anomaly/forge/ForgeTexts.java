@@ -7,7 +7,7 @@ import exiledsector.items.Item;
 
 public final class ForgeTexts {
 
-    static final String KEY_PREFIX = "chart.forge.";
+    static final String KEY_PREFIX = "chart.anomaly.derelict_forge.";
 
     private ForgeTexts() {
     }

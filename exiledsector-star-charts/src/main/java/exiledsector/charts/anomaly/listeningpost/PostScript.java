@@ -88,7 +88,7 @@ public final class PostScript extends AnomalyRunScript implements FleetEventList
                 contact = true;
                 if (Pickets.reportDays(picket) < 0f) {
                     Pickets.setReportDays(picket, ListeningPostRules.REPORT_DAYS);
-                    message("chart.post.identified");
+                    message("chart.anomaly.listening_post.identified");
                 }
             }
             float reportDays = Pickets.reportDays(picket);
@@ -126,7 +126,7 @@ public final class PostScript extends AnomalyRunScript implements FleetEventList
         if (post != null) {
             livingPickets().forEach(picket -> Pickets.gather(picket, post));
         }
-        message("chart.post.alarm");
+        message("chart.anomaly.listening_post.alarm");
         return true;
     }
 

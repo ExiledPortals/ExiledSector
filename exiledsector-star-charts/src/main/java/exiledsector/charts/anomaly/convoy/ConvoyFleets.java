@@ -93,7 +93,7 @@ final class ConvoyFleets {
         if (convoyFactionId != null) {
             fleet.setFaction(convoyFactionId, true);
         }
-        fleet.setName(Translation.gameText("chart.convoy.fleet." + role.key() + ".name"));
+        fleet.setName(Translation.gameText("chart.anomaly.supply_convoy.fleet." + role.key() + ".name"));
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
         memory.set(SupplyConvoy.CONVOY_MEMORY_KEY, convoy.index());
         if (role == ConvoyRole.FREIGHTERS) {

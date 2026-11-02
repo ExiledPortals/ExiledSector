@@ -43,8 +43,8 @@ public final class SupplyConvoy implements LayoutShaper, ContentPlacer, RunParti
     }
 
     static RunFactionDress factionDress(String lookalikeFactionId) {
-        return new RunFactionDress(lookalikeFactionId, Translation.gameText("chart.convoy.faction.name"),
-                Translation.gameText("chart.convoy.faction.nameWithArticle"), Translation.gameText("chart.convoy.faction.isOrAre"), RepLevel.NEUTRAL, true);
+        return new RunFactionDress(lookalikeFactionId, Translation.gameText("chart.anomaly.supply_convoy.faction.name"),
+                Translation.gameText("chart.anomaly.supply_convoy.faction.nameWithArticle"), Translation.gameText("chart.anomaly.supply_convoy.faction.isOrAre"), RepLevel.NEUTRAL, true);
     }
 
     @Override

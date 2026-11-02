@@ -110,6 +110,6 @@ public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunPa
         if (planets.isEmpty()) {
             return null;
         }
-        return I18n.forGameText(() -> Translation.msg("chart.excavation.intel").count(planets.size()).arg("planets", Translation.list(planets)).text());
+        return I18n.forGameText(() -> Translation.msg("chart.anomaly.excavation_sites.intel").count(planets.size()).arg("planets", Translation.list(planets)).text());
     }
 }

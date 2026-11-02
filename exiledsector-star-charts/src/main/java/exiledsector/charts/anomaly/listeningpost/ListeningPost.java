@@ -59,7 +59,7 @@ public final class ListeningPost implements AtlasRule, ContentPlacer, RunPartici
         if (orbit == null) {
             throw new IllegalStateException("no clear orbit for the listening post");
         }
-        SectorEntityToken post = site.addEntity(postId(site.runId()), Translation.gameText("chart.post.name"), ENTITY_TYPE, site.factionId(), orbit);
+        SectorEntityToken post = site.addEntity(postId(site.runId()), Translation.gameText("chart.anomaly.listening_post.name"), ENTITY_TYPE, site.factionId(), orbit);
         post.addTag(POST_TAG);
         PostScript script = new PostScript(site.runId(), site.tier(), site.system(), post.getId());
         Random picketRandom = site.random(PICKET_SALT);

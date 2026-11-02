@@ -57,7 +57,7 @@ final class Pickets {
     }
 
     static void dress(CampaignFleetAPI fleet, int index) {
-        fleet.setName(Translation.gameText("chart.post.fleet.picket.name"));
+        fleet.setName(Translation.gameText("chart.anomaly.listening_post.fleet.picket.name"));
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
         memory.set(PICKET_MEMORY_KEY, index);
         memory.unset(MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE);
@@ -104,7 +104,7 @@ final class Pickets {
         memory.unset(MemFlags.MEMORY_KEY_FLEET_DO_NOT_GET_SIDETRACKED);
         memory.set(MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE, true);
         memory.set(GUARD_MEMORY_KEY, true);
-        guard.setName(Translation.gameText("chart.post.fleet.guard.name"));
+        guard.setName(Translation.gameText("chart.anomaly.listening_post.fleet.guard.name"));
         guard.clearAssignments();
         guard.addAssignment(FleetAssignment.ORBIT_AGGRESSIVE, post, ChartContentGenerator.ASSIGNMENT_DAYS);
     }

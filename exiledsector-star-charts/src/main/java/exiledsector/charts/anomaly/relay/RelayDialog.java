@@ -30,7 +30,7 @@ public class RelayDialog extends AnomalyDialog {
         kind = RelayKind.of(relay);
         showEntityVisual(relay);
         if (kind != null) {
-            VanillaText.plainPara(text(), Translation.gameText("chart.relay." + kind.key() + ".description"));
+            VanillaText.plainPara(text(), Translation.gameText("chart.anomaly.relay_network." + kind.key() + ".description"));
         }
         showState();
     }
@@ -41,9 +41,9 @@ public class RelayDialog extends AnomalyDialog {
         options.clearOptions();
         ChartRun run = ChartRuns.liveOwning(relay);
         if (run == null || kind == null) {
-            VanillaText.plainPara(text, Translation.gameText("chart.relay.stale"));
+            VanillaText.plainPara(text, Translation.gameText("chart.anomaly.relay_network.stale"));
         } else if (RelayStates.isWoken(run, kind)) {
-            VanillaText.plainPara(text, Translation.gameText("chart.relay.awake"));
+            VanillaText.plainPara(text, Translation.gameText("chart.anomaly.relay_network.awake"));
             VanillaText.addPara(text, wokenEffect(kind), Misc.getTextColor());
         } else {
             showDormant(run, text, options);
@@ -53,23 +53,23 @@ public class RelayDialog extends AnomalyDialog {
 
     private void showDormant(ChartRun run, TextPanelAPI text, OptionPanelAPI options) {
         boolean synced = RelayStates.has(run, kind, RelayStates.SYNCED);
-        VanillaText.plainPara(text, Translation.gameText(synced ? "chart.relay.synced" : "chart.relay.wake." + kind.key()));
+        VanillaText.plainPara(text, Translation.gameText(synced ? "chart.anomaly.relay_network.synced" : "chart.anomaly.relay_network.wake." + kind.key()));
         if (RelayStates.has(run, kind, RelayStates.PAID)) {
-            VanillaText.plainPara(text, Translation.gameText("chart.relay.powered"));
+            VanillaText.plainPara(text, Translation.gameText("chart.anomaly.relay_network.powered"));
             return;
         }
         RelayRules.Cost cost = ChartRelays.costFor(run);
-        Misc.showCost(text, Translation.gameText("chart.relay.cost.title"), true, null, null,
+        Misc.showCost(text, Translation.gameText("chart.anomaly.relay_network.cost.title"), true, null, null,
                 new String[] {Commodities.SUPPLIES, Commodities.HEAVY_MACHINERY}, new int[] {cost.supplies(), cost.machinery()});
-        options.addOption(Translation.gameText("chart.relay.option.restore"), RESTORE);
+        options.addOption(Translation.gameText("chart.anomaly.relay_network.option.restore"), RESTORE);
         options.setEnabled(RESTORE, ChartRelays.canAfford(PlayerFleet.cargoOrNull(), cost));
     }
 
     static StyledText wokenEffect(RelayKind kind) {
         return I18n.forGameText(() -> switch (kind) {
-            case NAV_BUOY -> Translation.msg("chart.relay.effect.nav_buoy").arg("value", Math.round(NavBuoyEntityPlugin.NAV_BONUS)).styled();
-            case SENSOR_ARRAY -> Translation.msg("chart.relay.effect.sensor_array").arg("value", Math.round(SensorArrayEntityPlugin.SENSOR_BONUS)).styled();
-            case COMM_RELAY -> Translation.msg("chart.relay.effect.comm_relay").styled();
+            case NAV_BUOY -> Translation.msg("chart.anomaly.relay_network.effect.nav_buoy").arg("value", Math.round(NavBuoyEntityPlugin.NAV_BONUS)).styled();
+            case SENSOR_ARRAY -> Translation.msg("chart.anomaly.relay_network.effect.sensor_array").arg("value", Math.round(SensorArrayEntityPlugin.SENSOR_BONUS)).styled();
+            case COMM_RELAY -> Translation.msg("chart.anomaly.relay_network.effect.comm_relay").styled();
         });
     }
 

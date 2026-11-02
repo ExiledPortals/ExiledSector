@@ -136,7 +136,7 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
 
     @Override
     protected String nameKey() {
-        return "chart.breach.name";
+        return "chart.anomaly.spatial_breach.name";
     }
 
     @Override
@@ -407,11 +407,11 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
     @Override
     protected void tooltipLines(TooltipMakerAPI tooltip) {
         Color text = Misc.getTextColor();
-        VanillaText.plainPara(tooltip, Translation.gameText("chart.breach.description"), TOOLTIP_PAD, text);
+        VanillaText.plainPara(tooltip, Translation.gameText("chart.anomaly.spatial_breach.description"), TOOLTIP_PAD, text);
         int supplyIncrease = Math.round(BreachRules.SUPPLY_USE_PERCENT);
-        VanillaText.addPara(tooltip, Translation.msg("chart.breach.effect.supplies").arg("value", supplyIncrease).styled(), TOOLTIP_PAD, text);
-        VanillaText.addPara(tooltip, Translation.msg("chart.breach.effect.fuel").styled(), TOOLTIP_PAD, text);
-        VanillaText.plainPara(tooltip, Translation.gameText("chart.breach.effect.depth"), TOOLTIP_PAD, Misc.getGrayColor());
+        VanillaText.addPara(tooltip, Translation.msg("chart.anomaly.spatial_breach.effect.supplies").arg("value", supplyIncrease).styled(), TOOLTIP_PAD, text);
+        VanillaText.addPara(tooltip, Translation.msg("chart.anomaly.spatial_breach.effect.fuel").styled(), TOOLTIP_PAD, text);
+        VanillaText.plainPara(tooltip, Translation.gameText("chart.anomaly.spatial_breach.effect.depth"), TOOLTIP_PAD, Misc.getGrayColor());
     }
 
     @Override

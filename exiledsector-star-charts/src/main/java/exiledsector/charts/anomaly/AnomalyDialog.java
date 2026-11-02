@@ -11,7 +11,7 @@ public abstract class AnomalyDialog extends BaseDialogPlugin {
     public static final String LEAVE = "exiledSector_anomalyLeave";
 
     protected final void addLeaveOption() {
-        addLeaveOption(Translation.gameText("chart.dialog.option.leave"), LEAVE);
+        addLeaveOption(Translation.gameText("chart.wormhole.dialog.option.leave"), LEAVE);
     }
 
     protected final void continueAfter(ChartAnomaly self, SectorEntityToken site) {

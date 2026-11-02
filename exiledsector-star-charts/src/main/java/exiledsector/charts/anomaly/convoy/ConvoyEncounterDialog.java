@@ -23,18 +23,18 @@ public class ConvoyEncounterDialog extends AnomalyDialog {
         dialog().getVisualPanel().showFleetInfo(null, playerFleet, null, fleet);
         ConvoyScript script = ConvoyScript.in(fleet.getContainingLocation());
         String fleetName = fleet.getName();
-        VanillaText.plainPara(text(), I18n.forGameText(() -> Translation.msg("chart.convoy.encounter.description")
+        VanillaText.plainPara(text(), I18n.forGameText(() -> Translation.msg("chart.anomaly.supply_convoy.encounter.description")
                 .arg("fleet", fleetName).text()));
         if (script != null) {
             int tier = script.tier();
-            VanillaText.addPara(text(), I18n.forGameText(() -> Translation.msg("chart.convoy.intel.manifest")
+            VanillaText.addPara(text(), I18n.forGameText(() -> Translation.msg("chart.anomaly.supply_convoy.intel.manifest")
                     .arg("cargo", ConvoyCargo.manifest(tier)).styled()), Misc.getTextColor());
         }
         OptionPanelAPI options = options();
         options.clearOptions();
-        options.addOption(Translation.gameText("chart.convoy.encounter.option.attack"), ATTACK);
-        options.addOptionConfirmation(ATTACK, Translation.gameText("chart.convoy.encounter.confirm"),
-                Translation.gameText("chart.convoy.encounter.yes"), Translation.gameText("chart.convoy.encounter.no"));
+        options.addOption(Translation.gameText("chart.anomaly.supply_convoy.encounter.option.attack"), ATTACK);
+        options.addOptionConfirmation(ATTACK, Translation.gameText("chart.anomaly.supply_convoy.encounter.confirm"),
+                Translation.gameText("chart.anomaly.supply_convoy.encounter.yes"), Translation.gameText("chart.anomaly.supply_convoy.encounter.no"));
         addLeaveOption();
     }
 

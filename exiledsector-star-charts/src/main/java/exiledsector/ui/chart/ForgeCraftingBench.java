@@ -29,9 +29,9 @@ import java.util.function.Predicate;
 public final class ForgeCraftingBench implements BenchModeSupport {
 
     public static final ForgeCraftingBench INSTANCE = new ForgeCraftingBench();
-    static final String RAN_PREFIX = "chart.forge.ran.";
-    private static final OpenTexts OPEN_TEXTS = new OpenTexts("chart.forge.bench.run", "chart.forge.bench.run.tooltip", "chart.forge.bench.confirm.title",
-            "chart.forge.bench.confirm.body", null, "chart.forge.bench.confirm.yes", "chart.forge.bench.confirm.no");
+    static final String RAN_PREFIX = "chart.anomaly.derelict_forge.ran.";
+    private static final OpenTexts OPEN_TEXTS = new OpenTexts("chart.anomaly.derelict_forge.bench.run", "chart.anomaly.derelict_forge.bench.run.tooltip", "chart.anomaly.derelict_forge.bench.confirm.title",
+            "chart.anomaly.derelict_forge.bench.confirm.body", null, "chart.anomaly.derelict_forge.bench.confirm.yes", "chart.anomaly.derelict_forge.bench.confirm.no");
 
     private ForgeCraftingBench() {
     }
@@ -63,17 +63,17 @@ public final class ForgeCraftingBench implements BenchModeSupport {
 
     @Override
     public String titleKey() {
-        return "chart.forge.bench.title";
+        return "chart.anomaly.derelict_forge.bench.title";
     }
 
     @Override
     public String emptyKey() {
-        return "chart.forge.bench.empty";
+        return "chart.anomaly.derelict_forge.bench.empty";
     }
 
     @Override
     public String useHintKey() {
-        return "chart.forge.bench.empty";
+        return "chart.anomaly.derelict_forge.bench.empty";
     }
 
     @Override
@@ -88,7 +88,7 @@ public final class ForgeCraftingBench implements BenchModeSupport {
 
     @Override
     public String currencyDescriptionKey(ItemCurrency currency) {
-        return "chart.forge.bench.empty";
+        return "chart.anomaly.derelict_forge.bench.empty";
     }
 
     @Override

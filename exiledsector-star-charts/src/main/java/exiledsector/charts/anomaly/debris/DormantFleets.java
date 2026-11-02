@@ -71,7 +71,7 @@ public final class DormantFleets {
     public static CampaignFleetAPI create(String runId, int tier, ChartGenContext context, long seed) {
         SectorAPI sector = Global.getSector();
         dressFaction(sector.getFaction(FACTION_ID), sector.getAllFactions());
-        CampaignFleetAPI fleet = Global.getFactory().createEmptyFleet(FACTION_ID, Translation.gameText("chart.debris.fleet.name"), true);
+        CampaignFleetAPI fleet = Global.getFactory().createEmptyFleet(FACTION_ID, Translation.gameText("chart.anomaly.anomalous_debris.fleet.name"), true);
         fleet.setInflater(null);
         populate(fleet, hullFactions(sector), tier, context, seed, false);
         if (fleet.isEmpty()) {
@@ -88,8 +88,8 @@ public final class DormantFleets {
         if (faction == null) {
             throw new IllegalStateException("the " + FACTION_ID + " faction is not loaded");
         }
-        new RunFactionDress(null, Translation.gameText("chart.debris.faction.name"), Translation.gameText("chart.debris.faction.article"),
-                Translation.gameText("chart.debris.faction.isOrAre"), RepLevel.NEUTRAL, true).apply(faction, null, others);
+        new RunFactionDress(null, Translation.gameText("chart.anomaly.anomalous_debris.faction.name"), Translation.gameText("chart.anomaly.anomalous_debris.faction.article"),
+                Translation.gameText("chart.anomaly.anomalous_debris.faction.isOrAre"), RepLevel.NEUTRAL, true).apply(faction, null, others);
     }
 
     static List<HullFaction> hullFactions(SectorAPI sector) {
@@ -210,7 +210,7 @@ public final class DormantFleets {
                 fleet.removeAbility(abilityId);
             }
         }
-        fleet.setNullAIActionText(Translation.gameText("chart.debris.fleet.dormant"));
+        fleet.setNullAIActionText(Translation.gameText("chart.anomaly.anomalous_debris.fleet.dormant"));
         fleet.addTag(FLEET_TAG);
         hide(fleet);
     }
@@ -256,7 +256,7 @@ public final class DormantFleets {
         setStrengthBonus(fleet, tier, context, true);
         ChartFleetLoot.recordStart(fleet);
         ChartEnemyShipEffects.grant(fleet, context);
-        fleet.setName(Translation.gameText("chart.debris.fleet.corrupted.name"));
+        fleet.setName(Translation.gameText("chart.anomaly.anomalous_debris.fleet.corrupted.name"));
         return true;
     }
 

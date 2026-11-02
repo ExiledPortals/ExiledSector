@@ -64,7 +64,7 @@ public final class SpatialBreach implements ContentPlacer, RunParticipant, LootS
         BreachTerrainPlugin.Params params = new BreachTerrainPlugin.Params(site.runId(), site.tier(), growth, caches,
                 context.anomalyMult(CACHE_ITEM_KEY), site.random(SPAWN_SALT).nextLong());
         site.addTerrain(TERRAIN_ID, params, centre);
-        SectorEntityToken core = site.track(system.addCustomEntity(coreId(site.runId()), Translation.gameText("chart.breach.core.name"), CORE_TYPE,
+        SectorEntityToken core = site.track(system.addCustomEntity(coreId(site.runId()), Translation.gameText("chart.anomaly.spatial_breach.core.name"), CORE_TYPE,
                 Factions.NEUTRAL));
         core.setFixedLocation(centre.x, centre.y);
         core.addTag(CORE_TAG);

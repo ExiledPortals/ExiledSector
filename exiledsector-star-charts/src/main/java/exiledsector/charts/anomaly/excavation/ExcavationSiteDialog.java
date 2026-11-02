@@ -57,7 +57,7 @@ public class ExcavationSiteDialog extends AnomalyDialog {
 
     static StyledText leanLine(DropType lean) {
         StyledText items = StyledText.styled(Translation.gameText(DROP_TYPE_KEY_PREFIX + lean.name()), Style.HIGHLIGHT);
-        return I18n.forGameText(() -> Translation.msg("chart.excavation.dialog.lean").arg("items", items).styled());
+        return I18n.forGameText(() -> Translation.msg("chart.anomaly.excavation_sites.dialog.lean").arg("items", items).styled());
     }
 
     @Override
@@ -82,23 +82,23 @@ public class ExcavationSiteDialog extends AnomalyDialog {
         ExcavationSite site = site();
         String planetName = planet.getName();
         if (site == null || site.cleared()) {
-            VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.excavation.dialog.cleared").arg("planet", planetName).text()));
+            VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.anomaly.excavation_sites.dialog.cleared").arg("planet", planetName).text()));
         } else {
-            String descriptionKey = site.access() == ExcavationSite.Access.OPEN ? "chart.excavation.dialog.open" : "chart.excavation.dialog.collapsed";
+            String descriptionKey = site.access() == ExcavationSite.Access.OPEN ? "chart.anomaly.excavation_sites.dialog.open" : "chart.anomaly.excavation_sites.dialog.collapsed";
             VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg(descriptionKey).arg("planet", planetName).text()));
             VanillaText.addPara(text, leanLine(site.lean()), Misc.getTextColor());
             if (site.access() == ExcavationSite.Access.OPEN) {
-                options.addOption(Translation.gameText("chart.excavation.dialog.option.descend"), DESCEND,
-                        Translation.gameText("chart.excavation.dialog.descendTooltip"));
+                options.addOption(Translation.gameText("chart.anomaly.excavation_sites.dialog.option.descend"), DESCEND,
+                        Translation.gameText("chart.anomaly.excavation_sites.dialog.descendTooltip"));
                 if (!hasExcavationShips(PlayerFleet.orNull())) {
                     options.setEnabled(DESCEND, false);
-                    options.setTooltip(DESCEND, Translation.gameText("chart.excavation.dialog.noShaftShips"));
+                    options.setTooltip(DESCEND, Translation.gameText("chart.anomaly.excavation_sites.dialog.noShaftShips"));
                 }
             } else {
-                options.addOption(Translation.gameText("chart.excavation.dialog.option.raid"), RAID_OPTION);
+                options.addOption(Translation.gameText("chart.anomaly.excavation_sites.dialog.option.raid"), RAID_OPTION);
             }
         }
-        options.addOption(Translation.gameText("chart.excavation.dialog.option.continue"), CONTINUE);
+        options.addOption(Translation.gameText("chart.anomaly.excavation_sites.dialog.option.continue"), CONTINUE);
         addLeaveOption();
     }
 
@@ -124,7 +124,7 @@ public class ExcavationSiteDialog extends AnomalyDialog {
         ChartRun run = run();
         CampaignFleetAPI fleet = ExcavationFleets.fleetFor(planet, run, site);
         if (fleet == null) {
-            VanillaText.plainPara(text(), Translation.gameText("chart.excavation.dialog.silent"));
+            VanillaText.plainPara(text(), Translation.gameText("chart.anomaly.excavation_sites.dialog.silent"));
             ExcavationStates.clear(run, site);
             showMain();
             return;

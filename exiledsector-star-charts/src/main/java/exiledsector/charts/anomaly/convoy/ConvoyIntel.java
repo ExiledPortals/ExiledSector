@@ -72,7 +72,7 @@ public class ConvoyIntel extends BaseIntelPlugin implements ChartRunBound {
     protected String getName() {
         ConvoyState convoy = convoy();
         String destination = convoy == null ? "" : destinationName(convoy);
-        return I18n.forGameText(() -> Translation.msg("chart.convoy.intel.title").arg("destination", destination).text());
+        return I18n.forGameText(() -> Translation.msg("chart.anomaly.supply_convoy.intel.title").arg("destination", destination).text());
     }
 
     @Override
@@ -88,24 +88,24 @@ public class ConvoyIntel extends BaseIntelPlugin implements ChartRunBound {
     public void createSmallDescription(TooltipMakerAPI info, float width, float height) {
         ConvoyState convoy = convoy();
         if (convoy == null) {
-            VanillaText.plainPara(info, Translation.gameText("chart.dialog.stale"), 0f, Misc.getTextColor());
+            VanillaText.plainPara(info, Translation.gameText("chart.wormhole.dialog.stale"), 0f, Misc.getTextColor());
             return;
         }
         String destination = destinationName(convoy);
         Color text = Misc.getTextColor();
-        VanillaText.plainPara(info, I18n.forGameText(() -> Translation.msg("chart.convoy.intel.description").arg("destination", destination).text()),
+        VanillaText.plainPara(info, I18n.forGameText(() -> Translation.msg("chart.anomaly.supply_convoy.intel.description").arg("destination", destination).text()),
                 0f, text);
         List<StyledText> stops = stopNames(convoy);
         VanillaText.plainPara(info, I18n.forGameText(() -> stops.isEmpty()
-                ? Translation.msg("chart.convoy.intel.routeDirect").arg("destination", destination).text()
-                : Translation.msg("chart.convoy.intel.route").arg("stops", Translation.list(stops)).arg("destination", destination).text()),
+                ? Translation.msg("chart.anomaly.supply_convoy.intel.routeDirect").arg("destination", destination).text()
+                : Translation.msg("chart.anomaly.supply_convoy.intel.route").arg("stops", Translation.list(stops)).arg("destination", destination).text()),
                 PARAGRAPH_PAD, text);
         VanillaText.plainPara(info, statusText(convoy), PARAGRAPH_PAD, text);
         if (convoy.isHostile()) {
-            VanillaText.addPara(info, I18n.forGameText(() -> Translation.styled("chart.convoy.intel.hostile")), PARAGRAPH_PAD, text);
+            VanillaText.addPara(info, I18n.forGameText(() -> Translation.styled("chart.anomaly.supply_convoy.intel.hostile")), PARAGRAPH_PAD, text);
         }
         int tier = script.tier();
-        VanillaText.addPara(info, I18n.forGameText(() -> Translation.msg("chart.convoy.intel.manifest").arg("cargo", ConvoyCargo.manifest(tier))
+        VanillaText.addPara(info, I18n.forGameText(() -> Translation.msg("chart.anomaly.supply_convoy.intel.manifest").arg("cargo", ConvoyCargo.manifest(tier))
                 .styled()), PARAGRAPH_PAD, text);
     }
 
@@ -125,14 +125,14 @@ public class ConvoyIntel extends BaseIntelPlugin implements ChartRunBound {
         CampaignClockAPI clock = Global.getSector().getClock();
         return I18n.forGameText(() -> switch (convoy.phase()) {
             case WAITING -> script.playerHasArrived()
-                    ? Translation.msg("chart.convoy.intel.status.departs").count(days(script.daysUntilDeparture(clock))).text()
-                    : Translation.msg("chart.convoy.intel.status.departsAfterArrival").count(days(ConvoyRules.DEPARTURE_DAYS)).text();
-            case EN_ROUTE -> Translation.msg("chart.convoy.intel.status.enRoute").arg("destination", destination)
+                    ? Translation.msg("chart.anomaly.supply_convoy.intel.status.departs").count(days(script.daysUntilDeparture(clock))).text()
+                    : Translation.msg("chart.anomaly.supply_convoy.intel.status.departsAfterArrival").count(days(ConvoyRules.DEPARTURE_DAYS)).text();
+            case EN_ROUTE -> Translation.msg("chart.anomaly.supply_convoy.intel.status.enRoute").arg("destination", destination)
                     .count(days(daysToDestination(convoy, clock))).text();
-            case UNLOADING -> Translation.msg("chart.convoy.intel.status.unloading").arg("destination", destination).text();
-            case DELIVERED -> convoy.hasCache() ? Translation.msg("chart.convoy.intel.status.delivered").arg("destination", destination).text()
-                    : Translation.gameText(convoy.isCacheTaken() ? "chart.convoy.intel.status.raided" : "chart.convoy.intel.status.empty");
-            case LOST -> Translation.text("chart.convoy.intel.status.lost");
+            case UNLOADING -> Translation.msg("chart.anomaly.supply_convoy.intel.status.unloading").arg("destination", destination).text();
+            case DELIVERED -> convoy.hasCache() ? Translation.msg("chart.anomaly.supply_convoy.intel.status.delivered").arg("destination", destination).text()
+                    : Translation.gameText(convoy.isCacheTaken() ? "chart.anomaly.supply_convoy.intel.status.raided" : "chart.anomaly.supply_convoy.intel.status.empty");
+            case LOST -> Translation.text("chart.anomaly.supply_convoy.intel.status.lost");
         });
     }
 

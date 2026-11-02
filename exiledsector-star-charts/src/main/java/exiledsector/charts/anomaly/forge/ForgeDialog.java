@@ -31,12 +31,12 @@ public class ForgeDialog extends GuardedSiteDialog {
 
     @Override
     protected String descriptionKey() {
-        return "chart.forge.description";
+        return "chart.anomaly.derelict_forge.description";
     }
 
     @Override
     protected String guardedKey() {
-        return "chart.forge.guarded";
+        return "chart.anomaly.derelict_forge.guarded";
     }
 
     @Override
@@ -59,9 +59,9 @@ public class ForgeDialog extends GuardedSiteDialog {
         options.clearOptions();
         ChartRun run = liveRun();
         if (run == null) {
-            VanillaText.plainPara(text, Translation.gameText("chart.forge.stale"));
+            VanillaText.plainPara(text, Translation.gameText("chart.anomaly.derelict_forge.stale"));
         } else if (ForgeStates.runsLeft(run) <= 0) {
-            VanillaText.plainPara(text, Translation.gameText("chart.forge.dark"));
+            VanillaText.plainPara(text, Translation.gameText("chart.anomaly.derelict_forge.dark"));
         } else {
             if (describe) {
                 describePrograms(run, text);
@@ -73,17 +73,17 @@ public class ForgeDialog extends GuardedSiteDialog {
 
     private void describePrograms(ChartRun run, TextPanelAPI text) {
         int runsLeft = ForgeStates.runsLeft(run);
-        VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.forge.runsLeft").count(runsLeft).arg("count", runsLeft).text()));
+        VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.anomaly.derelict_forge.runsLeft").count(runsLeft).arg("count", runsLeft).text()));
         for (ForgePrograms.Program program : ForgeStates.programs(run)) {
             ForgeRules.Cost cost = ChartForge.costFor(run, program);
-            VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.forge.programLine").arg("program", ForgeTexts.programName(program))
+            VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.anomaly.derelict_forge.programLine").arg("program", ForgeTexts.programName(program))
                     .arg("description", ForgeTexts.programDescription(program)).arg("cost", ForgeTexts.costText(cost)).text()));
         }
         CargoAPI cargo = PlayerFleet.cargoOrNull();
         int metals = cargo == null ? 0 : Math.round(cargo.getCommodityQuantity(Commodities.METALS));
         int rareMetals = cargo == null ? 0 : Math.round(cargo.getCommodityQuantity(Commodities.RARE_METALS));
         int feedstock = cargo == null ? 0 : CraftingMaterials.forPlayer(cargo).count(ChartForge.FEEDSTOCK_ITEM_ID);
-        VanillaText.addPara(text, I18n.forGameText(() -> Translation.msg("chart.forge.stock").arg("metals", metals).arg("rareMetals", rareMetals)
+        VanillaText.addPara(text, I18n.forGameText(() -> Translation.msg("chart.anomaly.derelict_forge.stock").arg("metals", metals).arg("rareMetals", rareMetals)
                 .arg("feedstock", feedstock).styled()), Misc.getGrayColor());
     }
 
@@ -92,7 +92,7 @@ public class ForgeDialog extends GuardedSiteDialog {
         CraftingMaterials materials = cargo == null ? null : CraftingMaterials.forPlayer(cargo);
         for (ForgePrograms.Program program : ForgeStates.programs(run)) {
             RunOption option = new RunOption(program);
-            options.addOption(I18n.forGameText(() -> Translation.msg("chart.forge.option.run").arg("program", ForgeTexts.programName(program)).text()),
+            options.addOption(I18n.forGameText(() -> Translation.msg("chart.anomaly.derelict_forge.option.run").arg("program", ForgeTexts.programName(program)).text()),
                     option);
             options.setEnabled(option, ChartForge.canAfford(cargo, materials, ChartForge.costFor(run, program)));
         }

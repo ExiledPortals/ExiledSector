@@ -21,7 +21,7 @@ final class ExcavationEncounterDialog extends FleetInteractionDialogPluginImpl {
     static void disableEngageWithoutExcavationShips(OptionPanelAPI options, CampaignFleetAPI playerFleet) {
         if (options != null && options.hasOption(OptionId.ENGAGE) && !ExcavationSiteDialog.hasExcavationShips(playerFleet)) {
             options.setEnabled(OptionId.ENGAGE, false);
-            options.setTooltip(OptionId.ENGAGE, Translation.gameText("chart.excavation.dialog.noShaftShips"));
+            options.setTooltip(OptionId.ENGAGE, Translation.gameText("chart.anomaly.excavation_sites.dialog.noShaftShips"));
         }
     }
 }

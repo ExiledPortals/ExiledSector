@@ -150,7 +150,7 @@ public final class RelayNetwork implements ContentPlacer, RunParticipant, LootSh
     }
 
     static SectorEntityToken addRelay(AnomalyContentSite site, RelayKind kind, ChartSites.Orbit orbit) {
-        SectorEntityToken relay = site.addEntity(relayId(site.runId(), kind), Translation.gameText("chart.relay." + kind.key() + ".name"),
+        SectorEntityToken relay = site.addEntity(relayId(site.runId(), kind), Translation.gameText("chart.anomaly.relay_network." + kind.key() + ".name"),
                 kind.entityType(), Factions.NEUTRAL, orbit);
         relay.addTag(RELAY_TAG);
         MemoryAPI memory = relay.getMemoryWithoutUpdate();

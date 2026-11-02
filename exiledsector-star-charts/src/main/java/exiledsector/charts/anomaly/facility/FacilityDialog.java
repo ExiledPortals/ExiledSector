@@ -37,7 +37,7 @@ public class FacilityDialog extends AnomalyDialog {
     }
 
     static FIDConfig config(Consumer<InteractionDialogAPI> onLeave) {
-        return AnomalyEncounters.siteFight("chart.facility.encounter.leave", false, null, onLeave);
+        return AnomalyEncounters.siteFight("chart.anomaly.pre_collapse_facility.encounter.leave", false, null, onLeave);
     }
 
     @Override
@@ -58,15 +58,15 @@ public class FacilityDialog extends AnomalyDialog {
         FacilityStates.Stage stage = FacilityStates.stage(run());
         String planetName = planet.getName();
         if (stage == FacilityStates.Stage.GUARDED) {
-            VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.facility.dialog.guarded").arg("planet", planetName).text()));
-            options.addOption(Translation.gameText("chart.facility.dialog.option.engage"), ENGAGE);
+            VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.anomaly.pre_collapse_facility.dialog.guarded").arg("planet", planetName).text()));
+            options.addOption(Translation.gameText("chart.anomaly.pre_collapse_facility.dialog.option.engage"), ENGAGE);
         } else if (stage == FacilityStates.Stage.OPEN) {
-            VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.facility.dialog.open").arg("planet", planetName).text()));
-            options.addOption(Translation.gameText("chart.facility.dialog.option.salvage"), SALVAGE);
+            VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.anomaly.pre_collapse_facility.dialog.open").arg("planet", planetName).text()));
+            options.addOption(Translation.gameText("chart.anomaly.pre_collapse_facility.dialog.option.salvage"), SALVAGE);
         } else {
-            VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.facility.dialog.salvaged").arg("planet", planetName).text()));
+            VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.anomaly.pre_collapse_facility.dialog.salvaged").arg("planet", planetName).text()));
         }
-        options.addOption(Translation.gameText("chart.facility.dialog.option.continue"), CONTINUE);
+        options.addOption(Translation.gameText("chart.anomaly.pre_collapse_facility.dialog.option.continue"), CONTINUE);
         addLeaveOption();
     }
 
@@ -92,7 +92,7 @@ public class FacilityDialog extends AnomalyDialog {
             showMain();
             return;
         }
-        VanillaText.plainPara(text(), Translation.gameText("chart.facility.dialog.intercepted"));
+        VanillaText.plainPara(text(), Translation.gameText("chart.anomaly.pre_collapse_facility.dialog.intercepted"));
         encounter = new FleetInteractionDialogPluginImpl(config(leaving -> returnFromBattle(leaving, guards)));
         AnomalyEncounters.engage(dialog(), guards, encounter);
     }
@@ -114,8 +114,8 @@ public class FacilityDialog extends AnomalyDialog {
             return;
         }
         CargoAPI loot = FacilityLoot.roll(Global.getSector(), run, new Random(PreCollapseFacility.seed(run, planet.getId(), LOOT_SALT)));
-        VanillaText.plainPara(text(), Translation.gameText("chart.facility.dialog.salvaging"));
-        dialog().getVisualPanel().showLoot(Translation.gameText("chart.facility.dialog.lootTitle"), loot, false, true, true, new CoreInteractionListener() {
+        VanillaText.plainPara(text(), Translation.gameText("chart.anomaly.pre_collapse_facility.dialog.salvaging"));
+        dialog().getVisualPanel().showLoot(Translation.gameText("chart.anomaly.pre_collapse_facility.dialog.lootTitle"), loot, false, true, true, new CoreInteractionListener() {
             @Override
             public void coreUIDismissed() {
                 showMain();

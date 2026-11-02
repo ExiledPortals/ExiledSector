@@ -52,16 +52,16 @@ public class ConvoyCacheDialog extends AnomalyDialog {
         List<ConvoyState> caches = script == null ? List.of() : script.cachesAt(planet);
         String planetName = planet.getName();
         if (caches.isEmpty()) {
-            VanillaText.plainPara(text(), I18n.forGameText(() -> Translation.msg("chart.convoy.cache.empty").arg("planet", planetName).text()));
+            VanillaText.plainPara(text(), I18n.forGameText(() -> Translation.msg("chart.anomaly.supply_convoy.cache.empty").arg("planet", planetName).text()));
         } else {
             int tier = script.tier();
-            VanillaText.plainPara(text(), I18n.forGameText(() -> Translation.msg("chart.convoy.cache.description")
+            VanillaText.plainPara(text(), I18n.forGameText(() -> Translation.msg("chart.anomaly.supply_convoy.cache.description")
                     .arg("planet", planetName).text()));
-            VanillaText.addPara(text(), I18n.forGameText(() -> Translation.msg("chart.convoy.intel.manifest")
+            VanillaText.addPara(text(), I18n.forGameText(() -> Translation.msg("chart.anomaly.supply_convoy.intel.manifest")
                     .arg("cargo", ConvoyCargo.manifest(tier)).styled()), Misc.getTextColor());
-            options.addOption(Translation.gameText("chart.convoy.cache.option.raid"), RAID_OPTION);
+            options.addOption(Translation.gameText("chart.anomaly.supply_convoy.cache.option.raid"), RAID_OPTION);
         }
-        options.addOption(Translation.gameText("chart.convoy.cache.option.continue"), CONTINUE);
+        options.addOption(Translation.gameText("chart.anomaly.supply_convoy.cache.option.continue"), CONTINUE);
         addLeaveOption();
     }
 

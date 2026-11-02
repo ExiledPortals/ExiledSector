@@ -53,7 +53,7 @@ public final class DerelictForge implements ContentPlacer, RunParticipant {
         }
         List<ForgePrograms.Program> programs = ForgePrograms.roll(site.tier(),
                 ForgeRules.programCount(site.context().anomalyPercent(EXTRA_PROGRAMS_KEY)), random);
-        SectorEntityToken forge = site.addEntity(forgeId(site.runId()), Translation.gameText("chart.forge.name"), ENTITY_TYPE, Factions.NEUTRAL, orbit);
+        SectorEntityToken forge = site.addEntity(forgeId(site.runId()), Translation.gameText("chart.anomaly.derelict_forge.name"), ENTITY_TYPE, Factions.NEUTRAL, orbit);
         forge.addTag(FORGE_TAG);
         VanillaDefenders.arm(forge, site.random(ForgeGuards.GUARD_SALT).nextLong());
         ForgeStates.record(site.state(ANOMALY_ID), programs, ForgeRules.runCount(site.context().anomalyPercent(EXTRA_RUNS_KEY)));

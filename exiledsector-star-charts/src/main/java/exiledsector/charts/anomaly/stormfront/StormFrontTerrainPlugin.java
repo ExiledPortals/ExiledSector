@@ -122,7 +122,7 @@ public class StormFrontTerrainPlugin extends ChartAnomalyTerrain implements Slow
 
     @Override
     protected String nameKey() {
-        return "chart.storm.name";
+        return "chart.anomaly.storm_front.name";
     }
 
     @Override
@@ -308,11 +308,11 @@ public class StormFrontTerrainPlugin extends ChartAnomalyTerrain implements Slow
         int daysLeft = days(path().daysLeft(elapsedDays));
         List<StyledText> ahead = marksAhead(location, elapsedDays);
         return I18n.forGameText(() -> {
-            String crossing = Translation.msg("chart.storm.intel.crossing").count(daysLeft).text();
+            String crossing = Translation.msg("chart.anomaly.storm_front.intel.crossing").count(daysLeft).text();
             if (ahead.isEmpty()) {
                 return crossing;
             }
-            return crossing + " " + Translation.msg("chart.storm.intel.reaches").arg("places", Translation.list(ahead)).text();
+            return crossing + " " + Translation.msg("chart.anomaly.storm_front.intel.reaches").arg("places", Translation.list(ahead)).text();
         });
     }
 
@@ -331,7 +331,7 @@ public class StormFrontTerrainPlugin extends ChartAnomalyTerrain implements Slow
         List<StyledText> places = new ArrayList<>();
         for (Ahead mark : ahead.subList(0, Math.min(INTEL_MARKS, ahead.size()))) {
             int days = days(mark.days());
-            places.add(I18n.forGameText(() -> Translation.msg("chart.storm.intel.place")
+            places.add(I18n.forGameText(() -> Translation.msg("chart.anomaly.storm_front.intel.place")
                     .arg("name", StyledText.styled(mark.name(), Style.HIGHLIGHT)).count(days).styled()));
         }
         return places;
@@ -344,12 +344,12 @@ public class StormFrontTerrainPlugin extends ChartAnomalyTerrain implements Slow
     @Override
     protected void tooltipLines(TooltipMakerAPI tooltip) {
         Color text = Misc.getTextColor();
-        VanillaText.plainPara(tooltip, Translation.gameText("chart.storm.description"), TOOLTIP_PAD, text);
+        VanillaText.plainPara(tooltip, Translation.gameText("chart.anomaly.storm_front.description"), TOOLTIP_PAD, text);
         int sensorLess = Math.round((1f - StormRules.SENSOR_RANGE_MULT) * 100f);
-        VanillaText.addPara(tooltip, Translation.msg("chart.storm.effect.sensors").arg("value", sensorLess).styled(), TOOLTIP_PAD, text);
-        VanillaText.plainPara(tooltip, Translation.gameText("chart.storm.effect.strikes"), TOOLTIP_PAD, text);
+        VanillaText.addPara(tooltip, Translation.msg("chart.anomaly.storm_front.effect.sensors").arg("value", sensorLess).styled(), TOOLTIP_PAD, text);
+        VanillaText.plainPara(tooltip, Translation.gameText("chart.anomaly.storm_front.effect.strikes"), TOOLTIP_PAD, text);
         float lootMult = StormRules.lootQuantityMult(StormBattles.contextOf(StormBattles.runOf(this)));
         int itemIncrease = Math.round((lootMult - 1f) * 100f);
-        VanillaText.addPara(tooltip, Translation.msg("chart.storm.effect.items").arg("value", itemIncrease).styled(), TOOLTIP_PAD, text);
+        VanillaText.addPara(tooltip, Translation.msg("chart.anomaly.storm_front.effect.items").arg("value", itemIncrease).styled(), TOOLTIP_PAD, text);
     }
 }
