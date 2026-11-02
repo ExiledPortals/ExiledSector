@@ -250,7 +250,7 @@ class ChartFleetLootTest {
         assertEquals(3, chartCount(hoardBossLoot));
     }
     @Test
-    void theBossDropsAtLeastOneCraftingItemOncePerRun() throws Exception {
+    void theBossDropsAtLeastOneCraftingItemAndTwoChartCurrenciesOncePerRun() throws Exception {
         ItemDrops.register(new JSONArray()
                 .put(new JSONObject().put("site", ChartIds.FLEET_LOOT_SITE).put("chances", "0").put("uniqueChance", "0"))
                 .put(new JSONObject().put("site", ChartIds.BOSS_LOOT_SITE).put("chances", "0").put("uniqueChance", "0")));
@@ -267,10 +267,17 @@ class ChartFleetLootTest {
             assertEquals(0, craftingItemCount(guardLoot));
             assertEquals(1, craftingItemCount(firstBattle));
             assertEquals(0, craftingItemCount(secondBattle));
+            assertEquals(0, chartCurrencyCount(guardLoot));
+            assertEquals(2, chartCurrencyCount(firstBattle));
+            assertEquals(0, chartCurrencyCount(secondBattle));
             assertTrue(run.isBossLootGuaranteed());
         } finally {
             ItemDrops.clear();
         }
+    }
+
+    private static int chartCurrencyCount(ItemDrops.SiteLoot loot) {
+        return ChartDrops.chartCurrencyDrops().stream().mapToInt(currency -> loot.materials().getOrDefault(currency.itemId(), 0)).sum();
     }
 
     private static int craftingItemCount(ItemDrops.SiteLoot loot) {

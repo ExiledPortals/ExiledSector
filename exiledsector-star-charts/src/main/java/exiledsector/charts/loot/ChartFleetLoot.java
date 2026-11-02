@@ -21,9 +21,11 @@ import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
+import exiledsector.items.WeightedPick;
 import exiledsector.loot.LootMultipliers;
 import exiledsector.loot.LootSources;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -34,6 +36,7 @@ public final class ChartFleetLoot {
     public static final String LOOT_FLEETS_MEMORY_KEY = "$exiledSector_chartLootFleets";
     static final Set<ItemType> GUARANTEED_UNIQUE_TYPES = Set.of(ItemType.HULL_ITEM, ItemType.SUBROUTINE);
     static final float BATTLE_CRAFTING_MULT = 2f;
+    static final int GUARANTEED_BOSS_CHART_CURRENCIES = 2;
 
     private ChartFleetLoot() {
     }
@@ -218,12 +221,30 @@ public final class ChartFleetLoot {
             ItemDefinition definition = ItemDrops.pickHullItemBasic(random);
             hullItem = definition == null ? List.of() : List.of(ItemData.rolled(definition, random.nextLong()));
         }
-        Map<String, Integer> craftingItem = Map.of();
+        Map<String, Integer> guaranteedMaterials = new LinkedHashMap<>();
         if (bossLoot.materials().keySet().stream().noneMatch(ItemDrops::isCraftingCurrency)) {
             String currencyId = ItemDrops.pickCraftingCurrency(random);
-            craftingItem = currencyId == null ? Map.of() : Map.of(currencyId, 1);
+            if (currencyId != null) {
+                guaranteedMaterials.put(currencyId, 1);
+            }
         }
-        return bossLoot.plus(hullItem, List.of(), craftingItem);
+        List<ItemDrops.MaterialDrop> chartCurrencies = ChartDrops.chartCurrencyDrops();
+        for (int dropped = chartCurrencyCount(bossLoot, chartCurrencies); dropped < GUARANTEED_BOSS_CHART_CURRENCIES; dropped++) {
+            ItemDrops.MaterialDrop currency = WeightedPick.pick(chartCurrencies, ItemDrops.MaterialDrop::weight, random);
+            if (currency == null) {
+                break;
+            }
+            guaranteedMaterials.merge(currency.itemId(), 1, Integer::sum);
+        }
+        return bossLoot.plus(hullItem, List.of(), guaranteedMaterials);
+    }
+
+    private static int chartCurrencyCount(ItemDrops.SiteLoot loot, List<ItemDrops.MaterialDrop> chartCurrencies) {
+        int count = 0;
+        for (ItemDrops.MaterialDrop currency : chartCurrencies) {
+            count += loot.materials().getOrDefault(currency.itemId(), 0);
+        }
+        return count;
     }
 
     private static boolean isHullItem(ItemData item) {

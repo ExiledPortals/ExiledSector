@@ -580,8 +580,8 @@ and rows without factions serve every faction without its own. A faction in a ro
 that type, so the Remnant and derelicts always get a fleet boss. Each row's `fleet_share` scales the boss size for
 the boss's fleet: the whole boss, or the station's guard. The boss counts as killed once its fleet no longer holds
 the flagship or station it spawned with, whatever removed it (`ChartRun.bossFlagshipId`, `ChartObjectives.reconcile`).
-The first battle that damages the boss tops its loot up to at least one basic hull item and one item crafting currency,
-once per run (`ChartFleetLoot.withBossGuarantees`). Chart fleets and the boss drop twice the site rate of item crafting
+The first battle that damages the boss tops its loot up to at least one basic hull item, one item crafting currency and
+two chart currencies, once per run (`ChartFleetLoot.withBossGuarantees`). Chart fleets and the boss drop twice the site rate of item crafting
 currencies (`ChartFleetLoot.BATTLE_CRAFTING_MULT`).
 
 A station boss is a vanilla station-mode fleet with no market (`VanillaChartContentEngine.createStation`) orbiting
