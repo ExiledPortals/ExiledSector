@@ -1,7 +1,7 @@
 package exiledsector.ui.socket;
 
 import exiledsector.items.CraftingCurrency;
-import exiledsector.items.StarChartCurrency;
+import exiledsector.items.StarChartCipher;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,7 +36,7 @@ class BenchSceneTest {
     @Test
     void tilesStayClearOfTheConsolesTheNoticeAndTheDetailsPlateInEveryMode() {
         assertTilesClear(BenchMode.HULL_ITEMS, CraftingCurrency.values().length);
-        assertTilesClear(BenchMode.STAR_CHARTS, StarChartCurrency.KERNELS_ON_CHARTS.size() + StarChartCurrency.values().length);
+        assertTilesClear(BenchMode.STAR_CHARTS, StarChartCipher.KERNELS_ON_CHARTS.size() + StarChartCipher.values().length);
     }
 
     private static void assertTilesClear(BenchMode mode, int tileCount) {

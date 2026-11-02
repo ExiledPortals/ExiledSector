@@ -11,7 +11,7 @@ import exiledsector.charts.wormhole.StarChartOpening;
 import exiledsector.charts.wormhole.WormholeOpenCheck;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.StarChartCrafting;
-import exiledsector.items.StarChartCurrency;
+import exiledsector.items.StarChartCipher;
 import exiledsector.items.UseVerdict;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -66,12 +66,12 @@ class StarChartUiStringKeysTest {
     void everyChartCurrencyHasItsNameDescriptionAndRecipeText(String language) {
         Map<String, String> catalogue = RealCatalogue.entries(language);
         List<String> missing = new ArrayList<>();
-        for (StarChartCurrency currency : StarChartCurrency.values()) {
+        for (StarChartCipher currency : StarChartCipher.values()) {
             require(catalogue, "material." + currency.itemId() + ".name", missing);
             require(catalogue, "material." + currency.itemId() + ".description", missing);
             require(catalogue, "chart.currency." + currency.key() + ".description", missing);
         }
-        for (CraftingCurrency kernel : StarChartCurrency.KERNELS_ON_CHARTS) {
+        for (CraftingCurrency kernel : StarChartCipher.KERNELS_ON_CHARTS) {
             require(catalogue, "chart.currency." + kernel.key() + ".description", missing);
         }
         require(catalogue, "chart.drop.reward", missing);

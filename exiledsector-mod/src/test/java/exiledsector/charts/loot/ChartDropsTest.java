@@ -23,7 +23,7 @@ import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.objective.ChartRewards;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemUnlock;
-import exiledsector.items.StarChartCurrency;
+import exiledsector.items.StarChartCipher;
 import exiledsector.items.StarChartFixtures;
 import exiledsector.skills.SkillTreeSetting;
 import org.json.JSONArray;
@@ -59,8 +59,8 @@ class ChartDropsTest {
     private static final String RUN_ID = "dropRun";
     private static final String GATED = StarChartFixtures.TEST_GATED;
     private static final String UNGATED = StarChartFixtures.TEST_FIXED;
-    private static final Set<String> CHART_CURRENCY_IDS = Set.of(StarChartCurrency.REFORGE.itemId(), StarChartCurrency.ANNULMENT.itemId(),
-            StarChartCurrency.CARTOGRAPHY.itemId());
+    private static final Set<String> CHART_CURRENCY_IDS = Set.of(StarChartCipher.REFORGE.itemId(), StarChartCipher.ERASURE.itemId(),
+            StarChartCipher.CARTOGRAPHY.itemId());
 
     private MockSector mockSector;
     private SectorAPI sector;
@@ -70,7 +70,7 @@ class ChartDropsTest {
     @BeforeEach
     void setUp() throws Exception {
         StarChartFixtures.registerShipped();
-        StarChartCurrency.registerAll();
+        StarChartCipher.registerAll();
         mockSector = new MockSector();
         sector = mockSector.sector;
         MemoryAPI sectorMemory = mock(MemoryAPI.class);

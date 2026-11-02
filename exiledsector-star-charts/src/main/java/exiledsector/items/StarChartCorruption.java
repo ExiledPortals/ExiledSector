@@ -23,7 +23,7 @@ public final class StarChartCorruption {
     }
 
     static StarChart raiseTier(StarChart chart) {
-        return chart.tier() < StarChart.CORRUPTED_TIER ? StarChartCurrency.raiseTier(chart) : null;
+        return chart.tier() < StarChart.CORRUPTED_TIER ? StarChartCipher.raiseTier(chart) : null;
     }
 
     static StarChart expandModifiers(StarChart chart, Random random) {

@@ -31,7 +31,7 @@ import exiledsector.items.ItemDataRules;
 import exiledsector.items.ItemTypeSupport;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.StarChart;
-import exiledsector.items.StarChartCurrency;
+import exiledsector.items.StarChartCipher;
 import exiledsector.items.StarChartDataRules;
 import exiledsector.items.StarChartItems;
 import exiledsector.items.WormholeTechItems;
@@ -72,12 +72,12 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public void onApplicationLoad() {
-        StarChartCurrency.registerAll();
+        StarChartCipher.registerAll();
         ChartAnomalies.all().forEach(ChartAnomaly::preloadTextures);
         AbyssArt.preload();
         CatalystIconFx.preload();
         I18n.forGameText(() -> {
-            for (StarChartCurrency currency : StarChartCurrency.values()) {
+            for (StarChartCipher currency : StarChartCipher.values()) {
                 MaterialItems.localise(currency.itemId());
             }
             WormholeGateway.INDUSTRY_IDS.forEach(SpecLocalisation::industry);

@@ -38,7 +38,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class StarChartCurrencyTest {
+class StarChartCipherTest {
 
     private static final String SINGLE = "star_chart";
     private static final String GATED = StarChartFixtures.TEST_GATED;
@@ -54,7 +54,7 @@ class StarChartCurrencyTest {
         ItemFixtures.registerShippedItems();
         ItemImplicits.register(HullItemRows.shippedRows(ItemImplicits.dataPath()));
         StarChartFixtures.registerShipped();
-        StarChartCurrency.registerAll();
+        StarChartCipher.registerAll();
         when(cargo.getQuantity(eq(CargoAPI.CargoItemType.SPECIAL), any())).thenReturn(1000f);
         materials = CraftingMaterials.cargoOnly(cargo);
     }
@@ -98,12 +98,12 @@ class StarChartCurrencyTest {
     @Test
     void theChartRowListsTheExtendedKernelsThenTheChartCurrenciesAndShipTypesStayAsTheyWere() {
         assertEquals(List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.CORRUPTION, CraftingCurrency.ANNULMENT, CraftingCurrency.RECALIBRATION,
-                        StarChartCurrency.REFORGE, StarChartCurrency.ANNULMENT, StarChartCurrency.CARTOGRAPHY),
+                        StarChartCipher.REFORGE, StarChartCipher.ERASURE, StarChartCipher.CARTOGRAPHY),
                 ItemCurrencies.forType(ItemType.STAR_CHART));
         assertEquals(Arrays.stream(CraftingCurrency.values()).filter(kernel -> kernel != CraftingCurrency.ANNULMENT).toList(),
                 ItemCurrencies.forType(ItemType.SUBROUTINE));
         assertEquals(Arrays.asList(CraftingCurrency.values()), ItemCurrencies.forType(ItemType.HULL_ITEM));
-        for (StarChartCurrency currency : StarChartCurrency.values()) {
+        for (StarChartCipher currency : StarChartCipher.values()) {
             assertFalse(currency.dropsFromShipLoot(), currency.name());
             assertSame(currency, ItemCurrencies.byItemId(currency.itemId()));
             assertTrue(MaterialItems.isMaterial(currency.itemId()));
@@ -113,12 +113,12 @@ class StarChartCurrencyTest {
             assertFalse(kernel.appliesTo(ItemType.STAR_CHART), kernel.name());
         }
 
-        StarChartCurrency.registerAll();
+        StarChartCipher.registerAll();
         assertEquals(7, ItemCurrencies.forType(ItemType.STAR_CHART).size());
         StarChartFixtures.unregisterCurrencies();
         assertEquals(List.of(), ItemCurrencies.forType(ItemType.STAR_CHART));
         assertEquals(Arrays.asList(CraftingCurrency.values()), ItemCurrencies.all());
-        assertThrows(IllegalArgumentException.class, () -> ItemCurrencies.extend(StarChartCurrency.REFORGE, ItemType.HULL_ITEM));
+        assertThrows(IllegalArgumentException.class, () -> ItemCurrencies.extend(StarChartCipher.REFORGE, ItemType.HULL_ITEM));
         assertFalse(ItemCurrencies.extend(CraftingCurrency.AUGMENTATION, ItemType.HULL_ITEM));
         assertFalse(ItemCurrencies.appliesTo(null, ItemType.STAR_CHART));
         assertFalse(ItemCurrencies.appliesTo(CraftingCurrency.AUGMENTATION, null));
@@ -128,7 +128,7 @@ class StarChartCurrencyTest {
     void chartCurrenciesNeverTouchShipItems() {
         ItemStore shipStore = new ItemStore();
         Item hullItem = shipStore.add(ItemDefinitions.all().stream().filter(definition -> !definition.unique()).findFirst().orElseThrow(), 4L);
-        for (StarChartCurrency currency : StarChartCurrency.values()) {
+        for (StarChartCipher currency : StarChartCipher.values()) {
             assertFalse(ItemCrafting.canUse(currency, hullItem, ANY_UNIQUE), currency.name());
             assertNull(ItemCrafting.use(currency, hullItem, materials, shipStore, new Random(1L), ANY_UNIQUE), currency.name());
         }
@@ -144,7 +144,7 @@ class StarChartCurrencyTest {
 
         StarChartFixtures.unregisterCurrencies();
 
-        for (CraftingCurrency kernel : StarChartCurrency.KERNELS_ON_CHARTS) {
+        for (CraftingCurrency kernel : StarChartCipher.KERNELS_ON_CHARTS) {
             assertFalse(ItemCrafting.canUse(kernel, chart, ANY_UNIQUE), kernel.name());
         }
     }
@@ -267,7 +267,7 @@ class StarChartCurrencyTest {
         Map<Integer, Integer> counts = new HashMap<>();
         for (long seed = 0; seed < 120; seed++) {
             List<RolledModifier> before = List.copyOf(chart.explicits());
-            assertSame(chart, use(StarChartCurrency.REFORGE, chart, seed));
+            assertSame(chart, use(StarChartCipher.REFORGE, chart, seed));
             assertNotEquals(before, chart.explicits());
             assertFalse(has(chart, "CHART_COLONY_ITEM_PERCENT"));
             assertEquals(chart.explicits().size() <= 2 ? ItemRarity.COMMON : ItemRarity.RARE, chart.rarity());
@@ -278,33 +278,33 @@ class StarChartCurrencyTest {
     }
 
     @Test
-    void reforgeAndAnnulmentRefuseCorruptedAndMirroredCharts() {
+    void reforgeAndErasureRefuseCorruptedAndMirroredCharts() {
         StarChart chart = storedWith(SINGLE, 4, candidate -> candidate.explicits().size() >= 2);
         Item mirror = store.addMirrorOf(chart);
         StarChart corrupted = stored(SINGLE, 5L, 4);
         corrupted.corrupt(CorruptionOutcome.NOTHING);
-        for (StarChartCurrency currency : List.of(StarChartCurrency.REFORGE, StarChartCurrency.ANNULMENT)) {
+        for (StarChartCipher currency : List.of(StarChartCipher.REFORGE, StarChartCipher.ERASURE)) {
             assertFalse(ItemCrafting.canUse(currency, mirror, ANY_UNIQUE), currency.name());
             assertFalse(ItemCrafting.canUse(currency, corrupted, ANY_UNIQUE), currency.name());
             assertTrue(ItemCrafting.canUse(currency, chart, ANY_UNIQUE), currency.name());
         }
-        assertFalse(ItemCrafting.canUse(StarChartCurrency.CARTOGRAPHY, mirror, ANY_UNIQUE));
-        assertFalse(ItemCrafting.canUse(StarChartCurrency.CARTOGRAPHY, corrupted, ANY_UNIQUE));
+        assertFalse(ItemCrafting.canUse(StarChartCipher.CARTOGRAPHY, mirror, ANY_UNIQUE));
+        assertFalse(ItemCrafting.canUse(StarChartCipher.CARTOGRAPHY, corrupted, ANY_UNIQUE));
     }
 
     @Test
-    void annulmentRemovesEveryModifierAndTheChartTurnsCommon() {
+    void erasureRemovesEveryModifierAndTheChartTurnsCommon() {
         StarChart chart = storedWith(SINGLE, 9, candidate -> candidate.explicits().size() >= 3);
         assertEquals(ItemRarity.RARE, chart.rarity());
         List<RolledModifier> implicitsBefore = List.copyOf(chart.implicits());
 
-        assertSame(chart, use(StarChartCurrency.ANNULMENT, chart, 2L));
+        assertSame(chart, use(StarChartCipher.ERASURE, chart, 2L));
 
         assertTrue(chart.explicits().isEmpty());
         assertEquals(implicitsBefore, chart.implicits());
         assertEquals(ItemRarity.COMMON, chart.rarity());
-        assertFalse(ItemCrafting.canUse(StarChartCurrency.ANNULMENT, chart, ANY_UNIQUE));
-        assertNull(use(StarChartCurrency.ANNULMENT, chart, 5L));
+        assertFalse(ItemCrafting.canUse(StarChartCipher.ERASURE, chart, ANY_UNIQUE));
+        assertNull(use(StarChartCipher.ERASURE, chart, 5L));
         assertEquals(9, chart.tier());
     }
 
@@ -321,19 +321,19 @@ class StarChartCurrencyTest {
     }
 
     @Test
-    void anInhibitorKeepsItsSideThroughAnnulmentAndIsUsedUp() {
+    void anInhibitorKeepsItsSideThroughErasureAndIsUsedUp() {
         StarChart chart = storedWith(SINGLE, 9, candidate -> side(candidate, ModifierSlot.PREFIX) >= 1 && side(candidate, ModifierSlot.SUFFIX) >= 1);
         List<RolledModifier> prefixes = chart.explicits().stream().filter(rolled -> rolled.slot() == ModifierSlot.PREFIX).toList();
         List<CraftingWard> prefixWard = List.of(CraftingWard.PREFIX);
 
-        assertEquals(Set.of(CraftingWard.PREFIX), ItemCrafting.wardsSpentBy(StarChartCurrency.ANNULMENT, chart, prefixWard));
-        assertSame(chart, ItemCrafting.use(StarChartCurrency.ANNULMENT, chart, materials, store, new Random(2L), ANY_UNIQUE, prefixWard));
+        assertEquals(Set.of(CraftingWard.PREFIX), ItemCrafting.wardsSpentBy(StarChartCipher.ERASURE, chart, prefixWard));
+        assertSame(chart, ItemCrafting.use(StarChartCipher.ERASURE, chart, materials, store, new Random(2L), ANY_UNIQUE, prefixWard));
 
         assertEquals(prefixes, chart.explicits());
         verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(CraftingWard.PREFIX.itemId()), 1);
-        assertFalse(ItemCrafting.canUse(StarChartCurrency.ANNULMENT, chart, ANY_UNIQUE, prefixWard));
-        assertFalse(ItemCrafting.canUse(StarChartCurrency.ANNULMENT, chart, ANY_UNIQUE, List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)));
-        assertTrue(ItemCrafting.canUse(StarChartCurrency.ANNULMENT, chart, ANY_UNIQUE));
+        assertFalse(ItemCrafting.canUse(StarChartCipher.ERASURE, chart, ANY_UNIQUE, prefixWard));
+        assertFalse(ItemCrafting.canUse(StarChartCipher.ERASURE, chart, ANY_UNIQUE, List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)));
+        assertTrue(ItemCrafting.canUse(StarChartCipher.ERASURE, chart, ANY_UNIQUE));
     }
 
     @Test
@@ -345,7 +345,7 @@ class StarChartCurrencyTest {
             List<RolledModifier> suffixes = chart.explicits().stream().filter(rolled -> rolled.slot() == ModifierSlot.SUFFIX).toList();
             List<RolledModifier> prefixes = chart.explicits().stream().filter(rolled -> rolled.slot() == ModifierSlot.PREFIX).toList();
 
-            assertSame(chart, ItemCrafting.use(StarChartCurrency.REFORGE, chart, materials, store, new Random(seed), ANY_UNIQUE, suffixWard));
+            assertSame(chart, ItemCrafting.use(StarChartCipher.REFORGE, chart, materials, store, new Random(seed), ANY_UNIQUE, suffixWard));
 
             assertEquals(suffixes, chart.explicits().stream().filter(rolled -> rolled.slot() == ModifierSlot.SUFFIX).toList());
             prefixesChanged |= !prefixes.equals(chart.explicits().stream().filter(rolled -> rolled.slot() == ModifierSlot.PREFIX).toList());
@@ -353,15 +353,15 @@ class StarChartCurrencyTest {
             assertEquals(chart.explicits().size() <= 2 ? ItemRarity.COMMON : ItemRarity.RARE, chart.rarity());
         }
         assertTrue(prefixesChanged);
-        assertFalse(ItemCrafting.canUse(StarChartCurrency.REFORGE, chart, ANY_UNIQUE, List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)));
+        assertFalse(ItemCrafting.canUse(StarChartCipher.REFORGE, chart, ANY_UNIQUE, List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)));
     }
 
     @Test
     void cartographyIgnoresInhibitors() {
         StarChart chart = storedWith(SINGLE, 4, candidate -> !candidate.explicits().isEmpty());
 
-        assertTrue(ItemCrafting.wardsSpentBy(StarChartCurrency.CARTOGRAPHY, chart, List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)).isEmpty());
-        assertTrue(ItemCrafting.canUse(StarChartCurrency.CARTOGRAPHY, chart, ANY_UNIQUE, List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)));
+        assertTrue(ItemCrafting.wardsSpentBy(StarChartCipher.CARTOGRAPHY, chart, List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)).isEmpty());
+        assertTrue(ItemCrafting.canUse(StarChartCipher.CARTOGRAPHY, chart, ANY_UNIQUE, List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)));
     }
 
     @Test
@@ -373,7 +373,7 @@ class StarChartCurrencyTest {
         float tierFiveValue = line.valueFor(position, chart.scaleContext(null));
         assertTrue(tierFiveValue >= 15f && tierFiveValue <= 20f);
 
-        assertSame(chart, use(StarChartCurrency.CARTOGRAPHY, chart, 1L));
+        assertSame(chart, use(StarChartCipher.CARTOGRAPHY, chart, 1L));
 
         assertEquals(6, chart.tier());
         RolledModifier after = chart.explicits().stream().filter(rolled -> rolled.modifierId().equals(FLEET_SIZE)).findFirst().orElseThrow();
@@ -387,14 +387,14 @@ class StarChartCurrencyTest {
     @Test
     void cartographyStopsAtTheHighestTierAndStartsAGatedChartFromItsMinimumTier() {
         StarChart top = stored(SINGLE, 1L, 14);
-        assertSame(top, use(StarChartCurrency.CARTOGRAPHY, top, 1L));
+        assertSame(top, use(StarChartCipher.CARTOGRAPHY, top, 1L));
         assertEquals(StarChart.HIGHEST_TIER, top.tier());
-        assertFalse(ItemCrafting.canUse(StarChartCurrency.CARTOGRAPHY, top, ANY_UNIQUE));
-        assertNull(use(StarChartCurrency.CARTOGRAPHY, top, 2L));
+        assertFalse(ItemCrafting.canUse(StarChartCipher.CARTOGRAPHY, top, ANY_UNIQUE));
+        assertNull(use(StarChartCipher.CARTOGRAPHY, top, 2L));
 
         StarChart gated = stored(GATED, 3L, 1);
         assertEquals(4, gated.tier());
-        use(StarChartCurrency.CARTOGRAPHY, gated, 1L);
+        use(StarChartCipher.CARTOGRAPHY, gated, 1L);
         assertEquals(5, gated.tier());
     }
 
@@ -402,18 +402,18 @@ class StarChartCurrencyTest {
     void usingAChartCurrencyTakesOneFromTheMaterials() {
         StarChart chart = stored(SINGLE, 2L, 2);
 
-        assertSame(chart, use(StarChartCurrency.CARTOGRAPHY, chart, 1L));
+        assertSame(chart, use(StarChartCipher.CARTOGRAPHY, chart, 1L));
 
-        verify(cargo, times(1)).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(StarChartCurrency.CARTOGRAPHY.itemId()), 1);
-        verify(cargo, never()).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(StarChartCurrency.REFORGE.itemId()), 1);
+        verify(cargo, times(1)).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(StarChartCipher.CARTOGRAPHY.itemId()), 1);
+        verify(cargo, never()).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(StarChartCipher.REFORGE.itemId()), 1);
     }
 
     @Test
     void theShippedCostsMatchTheDefaultsAndTheCurrenciesCanBeGrown() throws Exception {
-        assertEquals(List.of(30, 40, 120), Arrays.stream(StarChartCurrency.values()).map(StarChartCurrency::partsCost).toList());
+        assertEquals(List.of(30, 40, 120), Arrays.stream(StarChartCipher.values()).map(StarChartCipher::partsCost).toList());
         ItemCraftingCosts.register(HullItemRows.shippedRows(ItemCraftingCosts.dataPath()));
-        assertEquals(List.of(30, 40, 120), Arrays.stream(StarChartCurrency.values()).map(StarChartCurrency::partsCost).toList());
-        for (StarChartCurrency currency : StarChartCurrency.values()) {
+        assertEquals(List.of(30, 40, 120), Arrays.stream(StarChartCipher.values()).map(StarChartCipher::partsCost).toList());
+        for (StarChartCipher currency : StarChartCipher.values()) {
             assertTrue(currency.synthesisable());
         }
     }
@@ -433,7 +433,7 @@ class StarChartCurrencyTest {
     @Test
     void chartCurrencyDropsListOnlyTheChartOnlyCurrenciesByWeight() {
         Set<ItemDrops.CurrencyDrop> expected = new HashSet<>();
-        for (StarChartCurrency currency : StarChartCurrency.values()) {
+        for (StarChartCipher currency : StarChartCipher.values()) {
             expected.add(new ItemDrops.CurrencyDrop(currency.itemId(), currency.dropWeight()));
         }
         assertEquals(expected, Set.copyOf(ChartDrops.chartCurrencyDrops()));

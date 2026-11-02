@@ -13,7 +13,7 @@ class MaterialItemPluginTest {
 
     @BeforeEach
     void setUp() {
-        StarChartCurrency.registerAll();
+        StarChartCipher.registerAll();
     }
 
     @AfterEach
@@ -25,10 +25,10 @@ class MaterialItemPluginTest {
     @Test
     void onlyKernelsThatAlsoWorkOnChartsSayTheyDo() {
         for (CraftingCurrency kernel : CraftingCurrency.values()) {
-            assertEquals(StarChartCurrency.KERNELS_ON_CHARTS.contains(kernel), MaterialItemPlugin.alsoWorksOnStarCharts(kernel.itemId()),
+            assertEquals(StarChartCipher.KERNELS_ON_CHARTS.contains(kernel), MaterialItemPlugin.alsoWorksOnStarCharts(kernel.itemId()),
                     kernel.name());
         }
-        for (StarChartCurrency cipher : StarChartCurrency.values()) {
+        for (StarChartCipher cipher : StarChartCipher.values()) {
             assertFalse(MaterialItemPlugin.alsoWorksOnStarCharts(cipher.itemId()), cipher.name());
         }
         assertFalse(MaterialItemPlugin.alsoWorksOnStarCharts("exiledSector_socketable_parts"));
@@ -45,13 +45,13 @@ class MaterialItemPluginTest {
 
     @Test
     void ciphersAreUsableOnlyWhileStarChartsAreOn() {
-        for (StarChartCurrency cipher : StarChartCurrency.values()) {
+        for (StarChartCipher cipher : StarChartCipher.values()) {
             assertTrue(ItemUnlock.currencyUsable(cipher.itemId(), null), cipher.name());
         }
 
         StarChartSettings.setEnabledForTests(false);
 
-        for (StarChartCurrency cipher : StarChartCurrency.values()) {
+        for (StarChartCipher cipher : StarChartCipher.values()) {
             assertFalse(ItemUnlock.currencyUsable(cipher.itemId(), null), cipher.name());
         }
     }

@@ -17,7 +17,7 @@ import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemNames;
 import exiledsector.items.SocketLossListener;
-import exiledsector.items.StarChartCurrency;
+import exiledsector.items.StarChartCipher;
 import exiledsector.items.StarChartFixtures;
 import exiledsector.items.SubroutineKind;
 import exiledsector.persistence.ShipSkillDataManager;
@@ -332,7 +332,7 @@ class ExiledSectorModPluginTest {
     @Test
     void onApplicationLoadLocalisesTheStarChartCiphersOnceTheyAreRegistered() throws Exception {
         SpecialItemSpecAPI cipherSpec = mock(SpecialItemSpecAPI.class);
-        when(settings.getSpecialItemSpec(StarChartCurrency.values()[0].itemId())).thenReturn(cipherSpec);
+        when(settings.getSpecialItemSpec(StarChartCipher.values()[0].itemId())).thenReturn(cipherSpec);
 
         new ExiledSectorModPlugin().onApplicationLoad();
 

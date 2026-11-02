@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public final class MaterialMigration {
 
@@ -22,8 +23,9 @@ public final class MaterialMigration {
         for (CargoAPI cargo : savedCargoes) {
             convertedCount += convert(cargo);
         }
+        convertedCount += CraftingMaterials.renameStoredIds(MaterialIdAliases.currentIdsByAlias());
         if (convertedCount > 0) {
-            LOG.info("Converted " + convertedCount + " hull item materials from commodities to special items");
+            LOG.info("Converted " + convertedCount + " hull item materials from commodities or old ids to current special items");
         }
     }
 
@@ -33,14 +35,27 @@ public final class MaterialMigration {
         }
         int convertedCount = 0;
         for (String itemId : MaterialItems.ids()) {
-            int legacyQuantity = Math.round(cargo.getCommodityQuantity(itemId));
-            if (legacyQuantity > 0) {
-                cargo.removeCommodity(itemId, legacyQuantity);
-                MaterialItems.add(cargo, itemId, legacyQuantity);
-                convertedCount += legacyQuantity;
+            convertedCount += convertCommodity(cargo, itemId, itemId);
+        }
+        for (Map.Entry<String, String> alias : MaterialIdAliases.currentIdsByAlias().entrySet()) {
+            convertedCount += convertCommodity(cargo, alias.getKey(), alias.getValue());
+            int oldStackQuantity = MaterialItems.count(cargo, alias.getKey());
+            if (oldStackQuantity > 0) {
+                MaterialItems.remove(cargo, alias.getKey(), oldStackQuantity);
+                MaterialItems.add(cargo, alias.getValue(), oldStackQuantity);
+                convertedCount += oldStackQuantity;
             }
         }
         return convertedCount;
+    }
+
+    private static int convertCommodity(CargoAPI cargo, String commodityId, String itemId) {
+        int legacyQuantity = Math.round(cargo.getCommodityQuantity(commodityId));
+        if (legacyQuantity > 0) {
+            cargo.removeCommodity(commodityId, legacyQuantity);
+            MaterialItems.add(cargo, itemId, legacyQuantity);
+        }
+        return Math.max(0, legacyQuantity);
     }
 
     public static List<CargoAPI> savedCargoes(SectorAPI sector) {

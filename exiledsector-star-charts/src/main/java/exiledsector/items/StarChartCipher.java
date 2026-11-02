@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-public enum StarChartCurrency implements ItemCurrency {
+public enum StarChartCipher implements ItemCurrency {
 
     REFORGE("exiledSector_reforge_cipher", "reforge", 30, 5f, MaterialTier.MAJOR, new Color(80, 205, 225)),
-    ANNULMENT("exiledSector_annul_cipher", "annul", 40, 3f, MaterialTier.MAJOR, new Color(175, 180, 200)),
+    ERASURE("exiledSector_erasure_cipher", "erasure", 40, 3f, MaterialTier.MAJOR, new Color(175, 180, 200)),
     CARTOGRAPHY("exiledSector_cartographer_cipher", "cartographer", 120, 2f, MaterialTier.EXOTIC, new Color(245, 215, 110));
 
     public static final List<CraftingCurrency> KERNELS_ON_CHARTS = List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.CORRUPTION,
@@ -25,7 +25,7 @@ public enum StarChartCurrency implements ItemCurrency {
     private final MaterialTier tier;
     private final Color color;
 
-    StarChartCurrency(String itemId, String key, int defaultPartsCost, float dropWeight, MaterialTier tier, Color color) {
+    StarChartCipher(String itemId, String key, int defaultPartsCost, float dropWeight, MaterialTier tier, Color color) {
         this.itemId = itemId;
         this.key = key;
         this.defaultPartsCost = defaultPartsCost;
@@ -35,7 +35,7 @@ public enum StarChartCurrency implements ItemCurrency {
     }
 
     public static void registerAll() {
-        for (StarChartCurrency currency : values()) {
+        for (StarChartCipher currency : values()) {
             if (!ItemCurrencies.isRegistered(currency)) {
                 ItemCurrencies.register(currency);
             }
@@ -45,8 +45,8 @@ public enum StarChartCurrency implements ItemCurrency {
         }
     }
 
-    public static StarChartCurrency byItemId(String itemId) {
-        for (StarChartCurrency currency : values()) {
+    public static StarChartCipher byItemId(String itemId) {
+        for (StarChartCipher currency : values()) {
             if (currency.itemId.equals(itemId)) {
                 return currency;
             }
@@ -101,7 +101,7 @@ public enum StarChartCurrency implements ItemCurrency {
         }
         return switch (this) {
             case REFORGE -> canReforge(chart, context.guardedSlots());
-            case ANNULMENT -> !annullable(chart, context.guardedSlots()).isEmpty();
+            case ERASURE -> !erasable(chart, context.guardedSlots()).isEmpty();
             case CARTOGRAPHY -> chart.tier() < StarChart.HIGHEST_TIER;
         };
     }
@@ -114,14 +114,14 @@ public enum StarChartCurrency implements ItemCurrency {
         StarChart chart = (StarChart) item;
         return switch (this) {
             case REFORGE -> reforge(chart, random, context.guardedSlots());
-            case ANNULMENT -> annul(chart, context.guardedSlots());
+            case ERASURE -> erase(chart, context.guardedSlots());
             case CARTOGRAPHY -> raiseTier(chart);
         };
     }
 
     @Override
     public boolean respectsWards() {
-        return this == REFORGE || this == ANNULMENT;
+        return this == REFORGE || this == ERASURE;
     }
 
     @Override
@@ -176,11 +176,11 @@ public enum StarChartCurrency implements ItemCurrency {
         return merged;
     }
 
-    static List<Integer> annullable(StarChart chart) {
-        return annullable(chart, Set.of());
+    static List<Integer> erasable(StarChart chart) {
+        return erasable(chart, Set.of());
     }
 
-    static List<Integer> annullable(StarChart chart, Set<ModifierSlot> guarded) {
+    static List<Integer> erasable(StarChart chart, Set<ModifierSlot> guarded) {
         List<Integer> removable = new ArrayList<>();
         ItemDefinition definition = chart.definition();
         if (definition == null) {
@@ -196,8 +196,8 @@ public enum StarChartCurrency implements ItemCurrency {
         return removable;
     }
 
-    static StarChart annul(StarChart chart, Set<ModifierSlot> guarded) {
-        List<Integer> removable = annullable(chart, guarded);
+    static StarChart erase(StarChart chart, Set<ModifierSlot> guarded) {
+        List<Integer> removable = erasable(chart, guarded);
         List<RolledModifier> remaining = new ArrayList<>();
         List<RolledModifier> explicits = chart.explicits();
         for (int index = 0; index < explicits.size(); index++) {

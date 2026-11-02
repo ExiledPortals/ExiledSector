@@ -495,7 +495,7 @@
     "settings.starCharts.entries.high.name": "Wormhole Entries, Tiers 11-16",
     "settings.starCharts.entries.high.tooltip": "Times your fleet can pass through the wormhole of a tier 11 to 16 chart before it collapses.",
     "chart.currency.reforge.description": "Rerolls every modifier on a Star Chart at its tier.",
-    "chart.currency.annul.description": "Removes every modifier from a Star Chart.",
+    "chart.currency.erasure.description": "Removes every modifier from a Star Chart.",
     "chart.currency.cartographer.description": "Raises a Star Chart's tier by one, up to tier 15.",
     "chart.currency.augmentation.description": "Adds a modifier to a Star Chart, up to three prefixes and three suffixes. A common chart that gains its third modifier becomes rare.",
     "chart.currency.recalibration.description": "Rerolls the value of every modifier on a Star Chart within its tier's range.",

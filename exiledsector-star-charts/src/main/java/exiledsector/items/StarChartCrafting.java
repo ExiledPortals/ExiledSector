@@ -83,10 +83,10 @@ public final class StarChartCrafting {
         if (!ItemCurrencies.appliesTo(currency, chart.type())) {
             return CANNOT_USE;
         }
-        if (currency == StarChartCurrency.CARTOGRAPHY && chart.tier() >= StarChart.HIGHEST_TIER) {
+        if (currency == StarChartCipher.CARTOGRAPHY && chart.tier() >= StarChart.HIGHEST_TIER) {
             return MAX_TIER;
         }
-        if ((currency == StarChartCurrency.ANNULMENT || currency == CraftingCurrency.ANNULMENT) && chart.explicits().isEmpty()) {
+        if ((currency == StarChartCipher.ERASURE || currency == CraftingCurrency.ANNULMENT) && chart.explicits().isEmpty()) {
             return NO_MODIFIERS;
         }
         return currency == CraftingCurrency.AUGMENTATION ? FULL : CANNOT_USE;

@@ -107,12 +107,12 @@ class StarChartCraftingTest {
             assertEquals(StarChartCrafting.CANNOT_USE, refusalWithOne(currency));
         }
 
-        StarChartCurrency.registerAll();
+        StarChartCipher.registerAll();
 
         assertEquals(List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.CORRUPTION, CraftingCurrency.ANNULMENT, CraftingCurrency.RECALIBRATION,
-                StarChartCurrency.REFORGE, StarChartCurrency.ANNULMENT, StarChartCurrency.CARTOGRAPHY), StarChartCrafting.currencies());
+                StarChartCipher.REFORGE, StarChartCipher.ERASURE, StarChartCipher.CARTOGRAPHY), StarChartCrafting.currencies());
         for (ItemCurrency currency : List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.RECALIBRATION, CraftingCurrency.CORRUPTION, CraftingCurrency.ANNULMENT,
-                StarChartCurrency.REFORGE, StarChartCurrency.ANNULMENT, StarChartCurrency.CARTOGRAPHY)) {
+                StarChartCipher.REFORGE, StarChartCipher.ERASURE, StarChartCipher.CARTOGRAPHY)) {
             assertEquals(UseVerdict.ALLOW, refusalWithOne(currency), currency.key());
         }
         for (CraftingCurrency currency : List.of(CraftingCurrency.ATTUNEMENT, CraftingCurrency.SUBSTITUTION, CraftingCurrency.FIXATION,
@@ -123,20 +123,20 @@ class StarChartCraftingTest {
 
     @Test
     void eachChartCurrencyExplainsWhyItCannotBeUsed() {
-        StarChartCurrency.registerAll();
+        StarChartCipher.registerAll();
         CraftingMaterials materials = CraftingMaterials.cargoOnly(cargo);
         when(cargo.getQuantity(eq(CargoAPI.CargoItemType.SPECIAL), any())).thenReturn(100f);
         Item topTier = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 3L, 15));
 
-        assertEquals(StarChartCrafting.MAX_TIER, StarChartCrafting.refusal(StarChartCurrency.CARTOGRAPHY, topTier, store, materials, definition -> true));
+        assertEquals(StarChartCrafting.MAX_TIER, StarChartCrafting.refusal(StarChartCipher.CARTOGRAPHY, topTier, store, materials, definition -> true));
         assertEquals(StarChartCrafting.CANNOT_USE, StarChartCrafting.refusal(CraftingCurrency.TRANSPOSITION, chart, store, materials, definition -> true));
-        assertEquals(StarChartCrafting.WARD_BLOCKS, StarChartCrafting.refusal(StarChartCurrency.ANNULMENT, chart, store, materials, definition -> true,
+        assertEquals(StarChartCrafting.WARD_BLOCKS, StarChartCrafting.refusal(StarChartCipher.ERASURE, chart, store, materials, definition -> true,
                 List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)));
         Random random = new Random(4L);
-        while (StarChartCrafting.use(StarChartCurrency.ANNULMENT, chart, store, materials, random, definition -> true) != null) {
+        while (StarChartCrafting.use(StarChartCipher.ERASURE, chart, store, materials, random, definition -> true) != null) {
             assertTrue(chart.explicits().size() < 6);
         }
-        assertEquals(StarChartCrafting.NO_MODIFIERS, StarChartCrafting.refusal(StarChartCurrency.ANNULMENT, chart, store, materials, definition -> true));
+        assertEquals(StarChartCrafting.NO_MODIFIERS, StarChartCrafting.refusal(StarChartCipher.ERASURE, chart, store, materials, definition -> true));
         while (StarChartCrafting.use(CraftingCurrency.AUGMENTATION, chart, store, materials, random, definition -> true) != null) {
             assertTrue(chart.explicits().size() <= 6);
         }
@@ -146,11 +146,11 @@ class StarChartCraftingTest {
 
     @Test
     void aChartCurrencyKeepsTheChartSelected() {
-        StarChartCurrency.registerAll();
+        StarChartCipher.registerAll();
         CraftingMaterials materials = CraftingMaterials.cargoOnly(cargo);
-        owns(StarChartCurrency.CARTOGRAPHY.itemId(), 1f);
+        owns(StarChartCipher.CARTOGRAPHY.itemId(), 1f);
 
-        StarChartCrafting.Used raised = StarChartCrafting.use(StarChartCurrency.CARTOGRAPHY, chart, store, materials, new Random(1L),
+        StarChartCrafting.Used raised = StarChartCrafting.use(StarChartCipher.CARTOGRAPHY, chart, store, materials, new Random(1L),
                 definition -> true);
 
         assertSame(chart, raised.selectedAfter());

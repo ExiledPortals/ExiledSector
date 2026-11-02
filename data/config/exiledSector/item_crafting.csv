@@ -10,5 +10,5 @@ exiledSector_annulment_kernel,200
 exiledSector_recalibration_kernel,200
 exiledSector_fixation_kernel,300
 exiledSector_reforge_cipher,30
-exiledSector_annul_cipher,40
+exiledSector_erasure_cipher,40
 exiledSector_cartographer_cipher,120

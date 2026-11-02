@@ -36,6 +36,7 @@ import exiledsector.items.ItemModifiers;
 import exiledsector.items.ItemNames;
 import exiledsector.items.ItemSaveAliases;
 import exiledsector.items.ItemStore;
+import exiledsector.items.MaterialIdAliases;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.MaterialMigration;
 import exiledsector.items.SocketCustody;
@@ -81,6 +82,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         CsvIdList.loadAll();
         DOMAINS.forEach(ExiledSectorDomain::loadData);
         ItemIdAliases.load();
+        MaterialIdAliases.load();
         ItemModifiers.load();
         ItemDefinitions.load();
         ItemImplicits.load();
