@@ -223,7 +223,7 @@
     "socketable.techMining.storage": "{market}的仓库",
     "socketable.techMining.cargo": "你的舰队货舱",
     "ui.socketStorage.title": "船体物品",
-    "ui.subroutines.title": "插槽物品",
+    "ui.socketItems.title": "插槽物品",
     "ui.socketStorage.close": "关闭",
     "ui.socketStorage.search": "搜索",
     "ui.socketStorage.status.all": "全部",

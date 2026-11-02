@@ -18,7 +18,7 @@
     "socketable.techMining.storage": "storage at {market}",
     "socketable.techMining.cargo": "your fleet's cargo",
     "ui.socketStorage.title": "Hull Items",
-    "ui.subroutines.title": "Socket Items",
+    "ui.socketItems.title": "Socket Items",
     "ui.socketStorage.close": "Close",
     "ui.socketStorage.search": "Search",
     "ui.socketStorage.status.all": "All",

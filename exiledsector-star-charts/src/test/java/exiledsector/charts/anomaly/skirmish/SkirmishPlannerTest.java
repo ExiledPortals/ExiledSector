@@ -93,13 +93,13 @@ class SkirmishPlannerTest {
         ChartContentPlan withDefender = plan(joined(SkirmishSide.DEFENDER));
         ChartContentPlan withAttacker = plan(joined(SkirmishSide.ATTACKER));
 
-        assertEquals(points(neither.fleets()) / SkirmishPlanner.ALLY_STRENGTH_DIVISOR, points(withDefender.fleets()), 0.01f);
+        assertEquals(points(neither.fleets()) / SkirmishPlanner.ALLY_COMBAT_POINTS_DIVISOR, points(withDefender.fleets()), 0.01f);
         assertEquals(points(skirmishOf(neither).attackerFleets()), points(skirmishOf(withDefender).attackerFleets()), 0.01f);
         assertEquals(points(neither.fleets()), points(withAttacker.fleets()), 0.01f);
-        assertEquals(points(skirmishOf(neither).attackerFleets()) / SkirmishPlanner.ALLY_STRENGTH_DIVISOR,
+        assertEquals(points(skirmishOf(neither).attackerFleets()) / SkirmishPlanner.ALLY_COMBAT_POINTS_DIVISOR,
                 points(skirmishOf(withAttacker).attackerFleets()), 0.01f);
         assertEquals(neither.bossStation().variantId(), withDefender.bossStation().variantId());
-        assertEquals(neither.bossStation().fallbackBoss().combatPoints() / SkirmishPlanner.ALLY_STRENGTH_DIVISOR,
+        assertEquals(neither.bossStation().fallbackBoss().combatPoints() / SkirmishPlanner.ALLY_COMBAT_POINTS_DIVISOR,
                 withDefender.bossStation().fallbackBoss().combatPoints(), 0.01f);
         assertEquals(neither.bossStation(), withAttacker.bossStation());
     }

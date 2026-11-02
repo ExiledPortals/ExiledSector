@@ -308,7 +308,7 @@ class ItemLootListenerTest {
         StarChartFixtures.registerShipped();
         ChartDrops.register(new JSONArray()
                 .put(new JSONObject().put("source", "chart_fleet").put("chance", "1"))
-                .put(new JSONObject().put("source", "battle").put("chance", "0.25").put("min_strength", "150").put("strength_per_tier", "100")
+                .put(new JSONObject().put("source", "battle").put("chance", "0.25").put("min_defeated_dp", "150").put("defeated_dp_per_tier", "100")
                         .put("max_tier", "6")));
         try {
             ChartRun run = new ChartRun("lootRun", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);

@@ -59,8 +59,8 @@ class TechMiningItemListenerTest {
     void aTechMiningFindCanTurnUpALowTierStarChartFromTheFirstFindOrLaterMonths() throws Exception {
         StarChartFixtures.registerShipped();
         ChartDrops.register(new JSONArray()
-                .put(new JSONObject().put("source", "techmining_first_find").put("chance", "1").put("min_strength", "1")
-                        .put("strength_per_tier", "3").put("max_tier", "5"))
+                .put(new JSONObject().put("source", "techmining_first_find").put("chance", "1").put("min_defeated_dp", "1")
+                        .put("defeated_dp_per_tier", "3").put("max_tier", "5"))
                 .put(new JSONObject().put("source", "techmining_monthly").put("chance", "0")));
         try {
             SectorAPI sector = mock(SectorAPI.class);

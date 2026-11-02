@@ -210,7 +210,7 @@ final class SocketPlacement {
     private void refreshButtonLabel() {
         List<Item> owned = Global.getSector() == null ? List.of() : ItemStore.get().owned();
         int subroutineCount = (int) owned.stream().filter(item -> ItemTypes.listedKind(item) == ItemKind.SUBROUTINE).count();
-        storageButton.setLabel(Translation.msg("ui.subroutines.button").arg("count", subroutineCount).text());
+        storageButton.setLabel(Translation.msg("ui.socketItems.button").arg("count", subroutineCount).text());
     }
 
     private void open(PositionAPI canvasPosition, ScreenRect shipCard) {
@@ -223,7 +223,7 @@ final class SocketPlacement {
         storage.reconcileOwnedShips();
         SocketPanelPlacement placement = new SocketPanelPlacement(ChromeMetrics.EDGE_MARGIN, PANEL_TOP, ItemStoragePanel.WIDTH,
                 sidePanelHeight(canvasPosition, shipCard), false);
-        ItemStoragePanel storagePanel = ItemStoragePanel.openSubroutines(hostPanel, placement, storage.shipNames(), new ItemStoragePanel.Listener() {
+        ItemStoragePanel storagePanel = ItemStoragePanel.openSocketItems(hostPanel, placement, storage.shipNames(), new ItemStoragePanel.Listener() {
             @Override
             public void selected(Item item) {
                 if (item == null) {

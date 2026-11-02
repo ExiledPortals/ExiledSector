@@ -54,13 +54,14 @@ class StarChartOpeningTest {
         sector = mockSector.sector;
         when(mockSector.playerFleet().getContainingLocation()).thenReturn(mock(LocationAPI.class));
         lunaMock = Mockito.mockStatic(LunaSettings.class);
-        lunaMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID)).thenReturn(true);
+        StarChartSettings.setNoColonyForTests(true);
         store = ItemStore.starCharts();
         chart = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 12L, 4));
     }
 
     @AfterEach
     void tearDown() {
+        StarChartSettings.setNoColonyForTests(StarChartSettings.DEFAULT_NO_COLONY);
         lunaMock.close();
         mockSector.close();
         StarChartFixtures.clear();
@@ -109,9 +110,8 @@ class StarChartOpeningTest {
     }
 
     @Test
-    void withoutTheDevSwitchOpeningNeedsAWorkingGatewayWhereTheFleetIsDocked() {
-        lunaMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID))
-                .thenReturn(null);
+    void withoutNoColonyRequirementOpeningNeedsAWorkingGatewayWhereTheFleetIsDocked() {
+        StarChartSettings.setNoColonyForTests(false);
 
         StarChartOpening.Outcome outcome = StarChartOpening.openReplacingRun(answering(OpenResult.OPENED), sector, store, chart, 1, new Random(1L));
 

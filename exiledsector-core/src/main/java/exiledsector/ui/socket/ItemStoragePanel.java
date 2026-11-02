@@ -129,10 +129,10 @@ public final class ItemStoragePanel extends HoloPanel {
         return storagePanel;
     }
 
-    public static ItemStoragePanel openSubroutines(CustomPanelAPI hostPanel, SocketPanelPlacement placement,
+    public static ItemStoragePanel openSocketItems(CustomPanelAPI hostPanel, SocketPanelPlacement placement,
                                                    Function<Item, String> installedShipLookup, Listener storageListener) {
         ItemStoragePanel storagePanel = new ItemStoragePanel(hostPanel, installedShipLookup, storageListener, ItemKind.SUBROUTINE);
-        storagePanel.titleKey = "ui.subroutines.title";
+        storagePanel.titleKey = "ui.socketItems.title";
         storagePanel.attachFresh(placement);
         return storagePanel;
     }

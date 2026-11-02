@@ -94,15 +94,6 @@ class StarChartSettingsTest {
     }
 
     @Test
-    void opensWormholesAnywhereOnlyWhenTheDevSwitchIsOn() {
-        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID)).thenReturn(null);
-        assertFalse(StarChartSettings.openAnywhere());
-
-        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID)).thenReturn(true);
-        assertTrue(StarChartSettings.openAnywhere());
-    }
-
-    @Test
     void showsTheDebugToolsOnlyWhenTheirSwitchIsOn() {
         lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.DEBUG_TOOLS_FIELD_ID)).thenReturn(null);
         assertFalse(StarChartSettings.debugTools());

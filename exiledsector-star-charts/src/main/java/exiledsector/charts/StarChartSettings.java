@@ -22,8 +22,6 @@ public final class StarChartSettings {
     public static final int DEFAULT_FLEET_LIMIT = 7;
     public static final int MIN_FLEET_LIMIT = 1;
     public static final int MAX_FLEET_LIMIT = 12;
-    public static final String OPEN_ANYWHERE_FIELD_ID = "exiledSector_starChartOpenAnywhereDev";
-    public static final boolean DEFAULT_OPEN_ANYWHERE = false;
     public static final String NO_COLONY_FIELD_ID = "exiledSector_starChartNoColony";
     public static final boolean DEFAULT_NO_COLONY = false;
     public static final String DEBUG_TOOLS_FIELD_ID = "exiledSector_starChartDebugTools";
@@ -84,10 +82,6 @@ public final class StarChartSettings {
             configured = DEFAULT_FLEET_LIMIT;
         }
         return Math.max(MIN_FLEET_LIMIT, Math.min(MAX_FLEET_LIMIT, configured));
-    }
-
-    public static boolean openAnywhere() {
-        return ModSettings.booleanOr(OPEN_ANYWHERE_FIELD_ID, DEFAULT_OPEN_ANYWHERE) || noColony();
     }
 
     public static boolean noColony() {

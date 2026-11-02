@@ -39,7 +39,7 @@ Each of these picks the canonical word; the work items below follow from it.
 | Metamorph Nanoswarm text says "reshapes" | while "Reshaping" is a different swarm | reword the Metamorph text | text. [x] Built: "transforms" in `en.json`, 变形 in `zh_CN.json`. |
 | Hull item section ("{type} section") | `ItemKind` held in variables named `socketType`; keys `socket.type.*`; `SocketTypeMigration`; editor label "Kind (socket type)"; console `[socket type]` | `section` throughout, keys `section.type.*` | code, keys. [x] Built: keys `section.type.*`; `ItemKind` variables `sectionKind` / `sectionKindId` (plain `section` already names `ShipSection`); `ShipSkillData.unlockedSections` and `hullItemsBySection`, saved under their old names through `ShipSkillData.SAVED_FIELD_NAMES`; `isSectionUnlocked`, `unlockSection` and the rest; `SectionFitMigration`; editor label "Section"; console `[section]`. Test: `ShipSkillDataSaveAliasTest.renamedFieldsKeepTheirSavedNames`. |
 | Command Suite, Launch Assembly, Specialist Crew, Armor Plate | ids `bridge_officer`, `flight_deck_crew`, `crew_quarters_specialists`, `armor_plating_plate` | ids from the names, through `ItemIdAliases` | saved, data. [x] Built: `command_suite`, `launch_assembly`, `specialist_crew`, `armor_plate` in `hull_items.csv`, `item_names.json` and the `socketable.<id>.*` keys, with old-id rows (and the `framework_*` rows retargeted) in `item_id_aliases.csv`; `released_items.csv` keeps the released ids, which the aliases resolve. Icons keep their file names. |
-| "Socket Items" panel (subroutines and anchors) | `ui.subroutines.*`, `openSubroutines`, also "Subroutines" and "Hull Item Storage" in other strings | one name; the panel holds tree items | keys. Open: no name is chosen yet ("Socket Items", "Subroutines" or "Hull Item Storage"). |
+| "Socket Items" panel (subroutines and anchors) | `ui.subroutines.*`, `openSubroutines`, also "Subroutines" and "Hull Item Storage" in other strings | one name; the panel holds tree items | keys. [x] Built (decided 2026-11-02: keep "Socket Items"): keys `ui.socketItems.*`, `ItemStoragePanel.openSocketItems`, and the readout says "open Socket Items" (插槽物品面板). |
 | Explicit / Implicit tooltip headers | `socketable.tooltip.primaryData` vs `hullItem.tooltip.implicit` | `item.tooltip.explicit` / `.implicit` | keys. [x] Built. |
 
 Smaller ones:
@@ -118,11 +118,11 @@ Also:
 | Faction (the chart implicit) | `StarChartImplicits` still keyed by system type; `star_chart_implicits.csv` is header-only; `CHART_BASE_FLEETS` is dead | treat the faction as the implicit in code; retire the old path | code, data. Deferred: this removes `StarChartImplicits`, the header-only CSV and `CHART_BASE_FLEETS`, a behaviour change rather than a rename, so it needs its own change and tests. |
 
 Also:
-- [ ] Open, no target names yet. "Strength" has three meanings: the level-scaling % (`STRENGTH_BONUS_MEMORY_KEY`, saved), DP defeated (`chart_drops.csv` `min_strength`, `strength_per_tier`), and combat points (`ALLY_STRENGTH_DIVISOR`).
-- [ ] Open: merging the two settings is a behaviour choice. Settings keys `settings.starCharts.*` vs `chart.ui.settings.*` in one tab. "No Colony Requirement" and "Open Wormholes Anywhere" do the same visible thing.
+- [x] Decided 2026-11-02 and built: "strength" stays for the level-scaling percentage; the drop thresholds are defeated DP (`chart_drops.csv` columns `min_defeated_dp` / `defeated_dp_per_tier`, `ChartDrops.tierForDefeatedDp`); the skirmish value is combat points (`ALLY_COMBAT_POINTS_DIVISOR`). "Strength" has three meanings: the level-scaling % (`STRENGTH_BONUS_MEMORY_KEY`, saved), DP defeated (`chart_drops.csv` `min_strength`, `strength_per_tier`), and combat points (`ALLY_STRENGTH_DIVISOR`).
+- [x] Decided 2026-11-02 and built: "Open Wormholes Anywhere" is removed, because No Colony Requirement already opens wormholes anywhere (`WormholeOpenCheck` reads `StarChartSettings.noColony`), and the debug tools keys moved to `settings.starCharts.debugTools.*`. Settings keys `settings.starCharts.*` vs `chart.ui.settings.*` in one tab. "No Colony Requirement" and "Open Wormholes Anywhere" do the same visible thing.
 - [ ] Open, no target word yet. POI vocabulary: `*_BUDGET_PERCENT`, `ChartPoi.Kind`, `chart.siteCategory.*`.
-- [ ] Open: which of the two is canonical. "Outer Reach Atlas" (15) vs "Outer Reaches" (14).
-- [ ] Open, each needs a new word. Player words reused for something else: "Warded" (boss size), "Anchoring" (phase cost), "Anchor Reroll", "burnt-out wormhole anchor", "Explorarium anchor cache" (docs call it the Mothballed Equipment Cache), "Aegis" (suffix and Engram), and the two "Sensor Array"s.
+- [x] No change (decided 2026-11-02): the Outer Reach Atlas is the screen that shows the Outer Reaches, so both names are right. "Outer Reach Atlas" (15) vs "Outer Reaches" (14).
+- [x] No change (decided 2026-11-02): prefix and suffix words may overlap with other names. Player words reused for something else: "Warded" (boss size), "Anchoring" (phase cost), "Anchor Reroll", "burnt-out wormhole anchor", "Explorarium anchor cache" (docs call it the Mothballed Equipment Cache), "Aegis" (suffix and Engram), and the two "Sensor Array"s.
 
 ## Star Charts: atlas and anomalies
 
@@ -143,9 +143,9 @@ Per-anomaly translation key prefixes don't match ids or packages: `chart.debris`
 
 - [x] The editor labels `SkillTier` as "Size", stores the hull item section as `kind`, still says "Modular Hull Socket" (`types.ts:122`), and names new nodes from the type id. The node rename plan covers the last one. Built: "Tier" and "Subroutine Socket". `kind` stays, because it mirrors core's `ItemKind`, which holds both subroutine kinds and sections.
 - [ ] Deferred: `orbitAnchors` / `orbitAnchorId` are fields in `ship_skill_tree.json` and the editor, and `HyperspaceAnchor` needs its own new word first. "Anchor" has four meanings: wormhole anchors, tree orbit anchors (`orbitAnchors`, `orbitAnchorId`), `ShipAnchors` (section tile points) and `HyperspaceAnchor`. Keep it for wormhole anchors; the others become orbit centres and section points.
-- [ ] Open, no target words yet. "Part" has four meanings: skill-effect part packages, the i18n catalogue part, feedstock, and forge graft parts. "Slot", "site" and "rule" are overloaded the same way.
-- [ ] Open, no target word yet. `domain` (feature switch) vs the lore "Domain" (`RefitSchematic.DOMAIN`, `ChartPoi.Kind.DOMAIN`).
-- [ ] Open: a policy choice for new code. British vs US spelling mixes in code (`Colour`/`Color`, `Centre`/`Center`, `Behaviour`/`Behavior`). Pick one for new code.
+- [x] Dropped (decided 2026-11-02). "Part" has four meanings: skill-effect part packages, the i18n catalogue part, feedstock, and forge graft parts. "Slot", "site" and "rule" are overloaded the same way.
+- [x] No change (decided 2026-11-02): the overlap is fine. `domain` (feature switch) vs the lore "Domain" (`RefitSchematic.DOMAIN`, `ChartPoi.Kind.DOMAIN`).
+- [x] No change (decided 2026-11-02). British vs US spelling mixes in code (`Colour`/`Color`, `Centre`/`Center`, `Behaviour`/`Behavior`). Pick one for new code.
 
 ## Docs and text that are simply stale
 

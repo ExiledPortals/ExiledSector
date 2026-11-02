@@ -40,7 +40,7 @@ public final class WormholeOpenCheck {
     }
 
     public static Blocker replacingRun(SectorAPI sector, ItemStore store, Item chart) {
-        return evaluate(chart, store, StarChartSettings.openAnywhere(), sector == null ? null : sector.getPlayerFleet(), dialogTarget(sector));
+        return evaluate(chart, store, StarChartSettings.noColony(), sector == null ? null : sector.getPlayerFleet(), dialogTarget(sector));
     }
 
     static SectorEntityToken dialogTarget(SectorAPI sector) {

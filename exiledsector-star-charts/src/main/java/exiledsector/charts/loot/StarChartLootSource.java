@@ -48,7 +48,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
     private static final class Losses {
         private final Map<CampaignFleetAPI, Float> chartFleetDeploymentPoints = new LinkedHashMap<>();
         private float deploymentPointsDefeated;
-        private float chartStrengthDefeated;
+        private float chartDpDefeated;
         private int highestDefeatedLevel;
         private List<LootShaper> battleAnomalies;
     }
@@ -76,7 +76,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
         });
         if (engagement.defeatedDeploymentPoints() > 0f) {
             losses.deploymentPointsDefeated += engagement.defeatedDeploymentPoints();
-            losses.chartStrengthDefeated += engagement.defeatedDeploymentPoints() * engagement.difficultyMultiplier();
+            losses.chartDpDefeated += engagement.defeatedDeploymentPoints() * engagement.difficultyMultiplier();
         }
     }
 
@@ -122,7 +122,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
         ItemDrops.SiteLoot chartLoot = ItemDrops.SiteLoot.NONE;
         if (battle.playerWon()) {
             try {
-                ChartDrops.Loot battleLoot = ChartDrops.forBattle(playerFleet.getContainingLocation(), losses.chartStrengthDefeated,
+                ChartDrops.Loot battleLoot = ChartDrops.forBattle(playerFleet.getContainingLocation(), losses.chartDpDefeated,
                         losses.highestDefeatedLevel, battle.independentRandom());
                 chartLoot = chartLoot.plus(battleLoot.charts(), List.of(), battleLoot.materials());
             } catch (RuntimeException e) {

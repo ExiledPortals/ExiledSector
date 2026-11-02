@@ -101,8 +101,7 @@ class StarChartUiStringKeysTest {
     @ValueSource(strings = {"en", "zh_CN"})
     void theSettingTextHasNoPercentSignForLunaLib(String language) {
         Map<String, String> catalogue = RealCatalogue.entries(language);
-        for (String key : List.of("chart.ui.settings.openAnywhere.name", "chart.ui.settings.openAnywhere.tooltip",
-                "chart.ui.settings.debugTools.name", "chart.ui.settings.debugTools.tooltip")) {
+        for (String key : List.of("settings.starCharts.debugTools.name", "settings.starCharts.debugTools.tooltip")) {
             assertFalse(catalogue.get(key).contains("%"), key);
         }
     }

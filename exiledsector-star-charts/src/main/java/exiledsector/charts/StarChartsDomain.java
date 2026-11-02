@@ -99,11 +99,8 @@ public final class StarChartsDomain implements ExiledSectorDomain {
         SettingsCreator.addBoolean(MOD_ID, StarChartSettings.NO_COLONY_FIELD_ID,
                 Translation.text("settings.starCharts.noColony.name"), Translation.text("settings.starCharts.noColony.tooltip"),
                 StarChartSettings.DEFAULT_NO_COLONY, chartsTab);
-        SettingsCreator.addBoolean(MOD_ID, StarChartSettings.OPEN_ANYWHERE_FIELD_ID,
-                Translation.text("chart.ui.settings.openAnywhere.name"), Translation.text("chart.ui.settings.openAnywhere.tooltip"),
-                StarChartSettings.DEFAULT_OPEN_ANYWHERE, chartsTab);
         SettingsCreator.addBoolean(MOD_ID, StarChartSettings.DEBUG_TOOLS_FIELD_ID,
-                Translation.text("chart.ui.settings.debugTools.name"), Translation.text("chart.ui.settings.debugTools.tooltip"),
+                Translation.text("settings.starCharts.debugTools.name"), Translation.text("settings.starCharts.debugTools.tooltip"),
                 StarChartSettings.DEFAULT_DEBUG_TOOLS, chartsTab);
     }
 

@@ -275,13 +275,13 @@ class ChartDropsTest {
     void outsideSystemsTheStrengthOnlyGatesTheDropAndSalvageAndTechMiningStayAtTierOne() throws Exception {
         ChartDrops.register(ChartTables.csvRows(ChartDrops.PATH));
 
-        assertEquals(ChartDrops.NO_TIER, ChartDrops.tierForStrength(ChartDrops.Source.BATTLE, 0f));
-        assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.BATTLE, 1f));
-        assertEquals(ChartDrops.NO_TIER, ChartDrops.tierForStrength(ChartDrops.Source.SALVAGE, 4f));
-        assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.SALVAGE, 5f));
-        assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.SALVAGE, 60f));
-        assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.TECHMINING_FIRST_FIND, 60f));
-        assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.TECHMINING_MONTHLY, 60f));
+        assertEquals(ChartDrops.NO_TIER, ChartDrops.tierForDefeatedDp(ChartDrops.Source.BATTLE, 0f));
+        assertEquals(1, ChartDrops.tierForDefeatedDp(ChartDrops.Source.BATTLE, 1f));
+        assertEquals(ChartDrops.NO_TIER, ChartDrops.tierForDefeatedDp(ChartDrops.Source.SALVAGE, 4f));
+        assertEquals(1, ChartDrops.tierForDefeatedDp(ChartDrops.Source.SALVAGE, 5f));
+        assertEquals(1, ChartDrops.tierForDefeatedDp(ChartDrops.Source.SALVAGE, 60f));
+        assertEquals(1, ChartDrops.tierForDefeatedDp(ChartDrops.Source.TECHMINING_FIRST_FIND, 60f));
+        assertEquals(1, ChartDrops.tierForDefeatedDp(ChartDrops.Source.TECHMINING_MONTHLY, 60f));
         assertTrue(ChartDrops.roll(ChartDrops.Source.BATTLE, ChartDrops.NO_TIER, 1f, new Random(1L)).isEmpty());
     }
 
