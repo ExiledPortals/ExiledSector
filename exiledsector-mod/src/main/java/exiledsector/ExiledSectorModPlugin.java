@@ -41,7 +41,7 @@ import exiledsector.items.MaterialItems;
 import exiledsector.items.MaterialMigration;
 import exiledsector.items.SocketCustody;
 import exiledsector.items.SocketLossListener;
-import exiledsector.items.SocketTypeMigration;
+import exiledsector.items.SectionFitMigration;
 import exiledsector.items.UniqueSourceCheck;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
@@ -133,6 +133,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         ItemSaveAliases.register(xStream);
         DOMAINS.forEach(domain -> domain.configureXStream(xStream));
         xStream.alias(SHIP_SKILL_DATA_ALIAS, ShipSkillData.class);
+        ShipSkillData.SAVED_FIELD_NAMES.forEach((fieldName, savedName) -> xStream.aliasField(savedName, ShipSkillData.class, fieldName));
     }
 
     @Override
@@ -159,7 +160,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         sector.getListenerManager().addListener(new LootAlertListener(), true);
         sector.getListenerManager().addListener(new MarketItemStock(), true);
         DOMAINS.forEach(ExiledSectorDomain::afterLootListeners);
-        SocketTypeMigration.run();
+        SectionFitMigration.run();
         SocketCustody.reconcile();
         DOMAINS.forEach(ExiledSectorDomain::afterSocketCustody);
     }

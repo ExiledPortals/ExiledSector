@@ -1090,12 +1090,12 @@ public final class CraftingBenchPanel extends HoloPanel {
             }
             List<SlottedLine> implicitLines = new ArrayList<>();
             loadedItem.implicitLines(detailsShowRollRanges).forEach(line -> implicitLines.add(new SlottedLine(null, line)));
-            addDetailSection(element, "hullItem.tooltip.implicit", implicitLines, paraPad);
+            addDetailSection(element, "item.tooltip.implicit", implicitLines, paraPad);
             if (detailsShowRollRanges) {
-                addSlottedDetailSection(element, "socketable.tooltip.primaryData", loadedItem.slottedEffectLines(true, null), paraPad,
+                addSlottedDetailSection(element, "item.tooltip.explicit", loadedItem.slottedEffectLines(true, null), paraPad,
                         detailsWidth);
             } else {
-                addDetailSection(element, "socketable.tooltip.primaryData", loadedItem.slottedEffectLines(false, null), paraPad);
+                addDetailSection(element, "item.tooltip.explicit", loadedItem.slottedEffectLines(false, null), paraPad);
             }
         }
         float detailsLeft = embeddedLayout != null ? embeddedLayout.details().left() : artX(BenchScene.detailsLeft(benchMode));

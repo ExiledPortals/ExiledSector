@@ -10,6 +10,8 @@ import java.util.Set;
 
 public class ShipSkillData {
 
+    public static final Map<String, String> SAVED_FIELD_NAMES = Map.of("unlockedSections", "unlockedSocketTypes", "hullItemsBySection", "frameworkItemsBySocketType");
+
     final Set<String> allocatedNodeIds = new LinkedHashSet<>();
     Map<String, String> optionalSelections = new LinkedHashMap<>();
     int level = 0;
@@ -29,8 +31,8 @@ public class ShipSkillData {
     Set<String> dormantNodeIds;
     int frameworkPoints;
     boolean skillTreeUnlocked;
-    List<String> unlockedSocketTypes;
-    Map<String, String> frameworkItemsBySocketType;
+    List<String> unlockedSections;
+    Map<String, String> hullItemsBySection;
     boolean autoAllocateTemplate;
     transient int pendingTemplateCredits;
     transient LinkCache<AnchorLinkMaps> anchorLinks;
@@ -124,53 +126,53 @@ public class ShipSkillData {
         return true;
     }
 
-    public List<String> getUnlockedSocketTypeIds() {
-        return unlockedSocketTypes == null ? List.of() : Collections.unmodifiableList(unlockedSocketTypes);
+    public List<String> getUnlockedSectionIds() {
+        return unlockedSections == null ? List.of() : Collections.unmodifiableList(unlockedSections);
     }
 
-    public boolean isSocketTypeUnlocked(String socketTypeId) {
-        return unlockedSocketTypes != null && unlockedSocketTypes.contains(socketTypeId);
+    public boolean isSectionUnlocked(String sectionKindId) {
+        return unlockedSections != null && unlockedSections.contains(sectionKindId);
     }
 
-    public boolean unlockSocketType(String socketTypeId) {
+    public boolean unlockSection(String sectionKindId) {
         revision++;
-        if (socketTypeId == null || isSocketTypeUnlocked(socketTypeId)) {
+        if (sectionKindId == null || isSectionUnlocked(sectionKindId)) {
             return false;
         }
-        if (unlockedSocketTypes == null) unlockedSocketTypes = new ArrayList<>();
-        unlockedSocketTypes.add(socketTypeId);
+        if (unlockedSections == null) unlockedSections = new ArrayList<>();
+        unlockedSections.add(sectionKindId);
         return true;
     }
 
-    public void grantUnlockedSocketType(String socketTypeId) {
+    public void grantUnlockedSection(String sectionKindId) {
         revision++;
-        if (socketTypeId == null || isSocketTypeUnlocked(socketTypeId)) {
+        if (sectionKindId == null || isSectionUnlocked(sectionKindId)) {
             return;
         }
         frameworkPoints++;
-        if (unlockedSocketTypes == null) unlockedSocketTypes = new ArrayList<>();
-        unlockedSocketTypes.add(socketTypeId);
+        if (unlockedSections == null) unlockedSections = new ArrayList<>();
+        unlockedSections.add(sectionKindId);
     }
 
     public List<String> clearHullUpgrades() {
         revision++;
         List<String> removedItemIds = new ArrayList<>(getSectionItems().values());
-        unlockedSocketTypes = null;
-        frameworkItemsBySocketType = null;
+        unlockedSections = null;
+        hullItemsBySection = null;
         frameworkPoints = 0;
         return removedItemIds;
     }
 
-    public String lockSocketType(String socketTypeId) {
+    public String lockSection(String sectionKindId) {
         revision++;
-        if (unlockedSocketTypes == null || !unlockedSocketTypes.remove(socketTypeId)) {
+        if (unlockedSections == null || !unlockedSections.remove(sectionKindId)) {
             return null;
         }
-        return frameworkItemsBySocketType == null ? null : frameworkItemsBySocketType.remove(socketTypeId);
+        return hullItemsBySection == null ? null : hullItemsBySection.remove(sectionKindId);
     }
 
     public Map<String, String> getSectionItems() {
-        return frameworkItemsBySocketType == null ? Map.of() : Collections.unmodifiableMap(frameworkItemsBySocketType);
+        return hullItemsBySection == null ? Map.of() : Collections.unmodifiableMap(hullItemsBySection);
     }
 
     public List<String> getInstalledItemIds() {
@@ -183,23 +185,23 @@ public class ShipSkillData {
         return getSocketedItems().containsValue(itemId) || getSectionItems().containsValue(itemId);
     }
 
-    public String getSectionItem(String socketTypeId) {
-        return frameworkItemsBySocketType == null ? null : frameworkItemsBySocketType.get(socketTypeId);
+    public String getSectionItem(String sectionKindId) {
+        return hullItemsBySection == null ? null : hullItemsBySection.get(sectionKindId);
     }
 
-    public boolean installInSection(String socketTypeId, String itemId) {
+    public boolean installInSection(String sectionKindId, String itemId) {
         revision++;
-        if (!isSocketTypeUnlocked(socketTypeId)) {
+        if (!isSectionUnlocked(sectionKindId)) {
             return false;
         }
-        if (frameworkItemsBySocketType == null) frameworkItemsBySocketType = new LinkedHashMap<>();
-        frameworkItemsBySocketType.put(socketTypeId, itemId);
+        if (hullItemsBySection == null) hullItemsBySection = new LinkedHashMap<>();
+        hullItemsBySection.put(sectionKindId, itemId);
         return true;
     }
 
-    public String removeFromSection(String socketTypeId) {
+    public String removeFromSection(String sectionKindId) {
         revision++;
-        return frameworkItemsBySocketType == null ? null : frameworkItemsBySocketType.remove(socketTypeId);
+        return hullItemsBySection == null ? null : hullItemsBySection.remove(sectionKindId);
     }
 
     public void markChanged() {
@@ -312,8 +314,8 @@ public class ShipSkillData {
 
     public boolean isBlank() {
         return allocatedNodeIds.isEmpty() && getDormantNodeIds().isEmpty() && level == 0 && xp == 0f && bankedFreeAllocations == 0 && frameworkPoints == 0
-                && !skillTreeUnlocked && (unlockedSocketTypes == null || unlockedSocketTypes.isEmpty())
-                && (frameworkItemsBySocketType == null || frameworkItemsBySocketType.isEmpty());
+                && !skillTreeUnlocked && (unlockedSections == null || unlockedSections.isEmpty())
+                && (hullItemsBySection == null || hullItemsBySection.isEmpty());
     }
 
     public Set<String> getDormantNodeIds() {

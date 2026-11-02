@@ -62,9 +62,9 @@ class WormholeAnchorTest {
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
         lunaSettingsMock.when(() -> LunaSettings.getBoolean(anyString(), eq(AnchorJanusGate.ALLOW_BEFORE_JANUS_FIELD_ID))).thenReturn(true);
         SkillTree.clearNodes();
-        SkillType socketType = new SkillType.Builder("socket_type", "Socket", "", SkillTier.SOCKET).build();
+        SkillType sectionKind = new SkillType.Builder("socket_type", "Socket", "", SkillTier.SOCKET).build();
         SkillType wormholeType = new SkillType.Builder("wormhole_exit_type", "Wormhole Exit", "", SkillTier.WORMHOLE_EXIT).build();
-        socket = new SkillNode("socket", socketType, List.of(), 0f, 0f);
+        socket = new SkillNode("socket", sectionKind, List.of(), 0f, 0f);
         SkillTree.register(socket);
         SkillTree.register(new SkillNode("hegemony_2", wormholeType, List.of(), 100f, 0f, SkillNodeDecoration.NONE, List.of("hegemony")));
         SkillTree.register(new SkillNode("exoship", wormholeType, List.of(), 200f, 0f, SkillNodeDecoration.NONE, List.of("exotech")));

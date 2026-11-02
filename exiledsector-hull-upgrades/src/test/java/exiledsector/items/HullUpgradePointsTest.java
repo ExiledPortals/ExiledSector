@@ -196,7 +196,7 @@ class HullUpgradePointsTest {
 
         HullUpgradesSetting.setPointsModeForTests(HullUpgradesSetting.PointsMode.STAR_CHART_PROGRESS);
 
-        assertEquals(List.of("bridge", "reactor", "engine_room"), shipData.getUnlockedSocketTypeIds());
+        assertEquals(List.of("bridge", "reactor", "engine_room"), shipData.getUnlockedSectionIds());
         assertEquals(0, HullUpgradePoints.unspent(shipData));
         assertEquals(HullUpgradeRules.UnlockBlock.NO_POINTS, HullUpgradeRules.unlockBlock(shipData, ShipSection.ARMOR_PLATING, fit()));
         assertFalse(HullUpgradeRules.unlock(shipData, ShipSection.ARMOR_PLATING, fit()));

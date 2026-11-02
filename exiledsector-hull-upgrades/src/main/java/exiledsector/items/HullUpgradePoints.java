@@ -37,7 +37,7 @@ public final class HullUpgradePoints {
     }
 
     public static int unspent(ShipSkillData shipData) {
-        return shipData == null ? 0 : Math.max(0, of(shipData) - shipData.getUnlockedSocketTypeIds().size());
+        return shipData == null ? 0 : Math.max(0, of(shipData) - shipData.getUnlockedSectionIds().size());
     }
 
     public static boolean schematicsInUse() {

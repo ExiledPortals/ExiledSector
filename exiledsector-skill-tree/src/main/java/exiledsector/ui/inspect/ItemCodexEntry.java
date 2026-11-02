@@ -102,7 +102,7 @@ public class ItemCodexEntry extends BoxedCodexEntry {
         if (implicits.isEmpty()) {
             return;
         }
-        info.addSectionHeading(Translation.text("hullItem.tooltip.implicit"), Alignment.MID, PAD);
+        info.addSectionHeading(Translation.text("item.tooltip.implicit"), Alignment.MID, PAD);
         float linePad = PAD;
         for (Modifier implicit : implicits) {
             for (StyledText effectText : effectTexts(implicit)) {

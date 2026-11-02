@@ -18,7 +18,7 @@ import { findLabelled, getLabelled, queryLabelled } from '../../test/labelledQue
 setUpItemsProject();
 
 describe('hull item types', () => {
-  it('lists hull items by socket type and rarity and shows every modifier that can roll as its in-game text', async () => {
+  it('lists hull items by section and rarity and shows every modifier that can roll as its in-game text', async () => {
     const itemTypes = await openItems('Item types');
 
     fireEvent.click(await within(itemTypes).findByText('Specialist Crew', undefined, LOAD_TIMEOUT));
@@ -28,7 +28,7 @@ describe('hull item types', () => {
     expect(getLabelled('CREW_LOSS_PERCENT weight', itemTypes)).toHaveProperty('value', '1000');
     expect(queryLabelled('CREW_LOSS_PERCENT max', itemTypes)).toBeNull();
 
-    fireEvent.click(await findLabelled('Socket type filter', itemTypes));
+    fireEvent.click(await findLabelled('Section filter', itemTypes));
     fireEvent.click(await screen.findByRole('option', { name: /^bridge/ }));
     await waitFor(() => expect(within(itemTypes).queryByText('Launch Assembly')).toBeNull());
     expect(within(itemTypes).getByText('Back-Alley Cyber-Surgeon')).toBeTruthy();

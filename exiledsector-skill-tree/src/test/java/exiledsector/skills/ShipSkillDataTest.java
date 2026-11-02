@@ -1118,7 +1118,7 @@ class ShipSkillDataTest {
         ShipSkillData credited = new ShipSkillData();
         credited.addFreeAllocationCredit();
         ShipSkillData sectioned = new ShipSkillData();
-        sectioned.unlockSocketType("bridge");
+        sectioned.unlockSection("bridge");
 
         assertFalse(allocated.isBlank());
         assertFalse(levelled.isBlank());

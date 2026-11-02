@@ -176,7 +176,7 @@ class NpcTreeTagTest {
                 + "|frameworkSockets:0=npc:x/1");
 
         for (ShipSkillData decoded : List.of(sections, legacy)) {
-            assertEquals(List.of(), decoded.getUnlockedSocketTypeIds());
+            assertEquals(List.of(), decoded.getUnlockedSectionIds());
             assertEquals(Map.of(), decoded.getSectionItems());
         }
         assertEquals("exiledSector_npcTree|generated|2|root,a,socket_1", NpcTreeTag.encode(sections));
@@ -244,7 +244,7 @@ class NpcTreeTagTest {
 
         for (ShipSkillData npcShip : List.of(built, restored)) {
             assertEquals(0, npcShip.getStoredHullUpgradePoints());
-            assertEquals(List.of(), npcShip.getUnlockedSocketTypeIds());
+            assertEquals(List.of(), npcShip.getUnlockedSectionIds());
             assertEquals(Map.of(), npcShip.getSectionItems());
             assertEquals(0, HullUpgradePoints.of(npcShip));
         }

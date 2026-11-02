@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class SocketTypeMigrationTest {
+class SectionFitMigrationTest {
 
     private final ItemStore store = new ItemStore();
     private final Map<String, ShipSkillData> ships = new LinkedHashMap<>();
@@ -30,9 +30,9 @@ class SocketTypeMigrationTest {
     @BeforeEach
     void setUp() throws Exception {
         SkillTree.clearNodes();
-        SkillType socketType = new SkillType.Builder("socket_type", "Socket", "", SkillTier.SOCKET).build();
-        firstSocket = new SkillNode("socket_a", socketType, List.of(), 0f, 0f);
-        secondSocket = new SkillNode("socket_b", socketType, List.of(), 0f, 0f);
+        SkillType sectionKind = new SkillType.Builder("socket_type", "Socket", "", SkillTier.SOCKET).build();
+        firstSocket = new SkillNode("socket_a", sectionKind, List.of(), 0f, 0f);
+        secondSocket = new SkillNode("socket_b", sectionKind, List.of(), 0f, 0f);
         SkillTree.register(firstSocket);
         SkillTree.register(secondSocket);
         ItemDefinitions.register(new JSONArray()
@@ -74,11 +74,11 @@ class SocketTypeMigrationTest {
         Item gunners = store.add(ItemDefinitions.get("gunners"), 2L);
         ShipSkillData shipData = shipWith(chip, gunners);
 
-        assertEquals(List.of(gunners), SocketTypeMigration.returnMisfits(ships, store));
+        assertEquals(List.of(gunners), SectionFitMigration.returnMisfits(ships, store));
         assertEquals(chip.id(), shipData.getSocketedItem(firstSocket.getId()));
         assertNull(shipData.getSocketedItem(secondSocket.getId()));
         assertEquals(List.of(chip, gunners), store.owned());
-        assertEquals(List.of(), SocketTypeMigration.returnMisfits(ships, store));
+        assertEquals(List.of(), SectionFitMigration.returnMisfits(ships, store));
     }
 
     @Test
@@ -88,7 +88,7 @@ class SocketTypeMigrationTest {
         ShipSkillData shipData = shipWith(chip, gunners);
         ItemDefinitions.clear();
 
-        assertEquals(List.of(), SocketTypeMigration.returnMisfits(ships, store));
+        assertEquals(List.of(), SectionFitMigration.returnMisfits(ships, store));
         assertEquals(gunners.id(), shipData.getSocketedItem(secondSocket.getId()));
     }
 

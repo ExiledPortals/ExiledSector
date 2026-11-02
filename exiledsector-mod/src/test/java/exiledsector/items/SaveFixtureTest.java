@@ -90,7 +90,7 @@ class SaveFixtureTest {
         assertEquals(1, ship.getLevel());
         assertEquals(250f, ship.getXp());
         assertEquals(Set.of("fixture_root", "fixture_small"), ship.getAllocatedNodeIds());
-        assertTrue(ship.isSocketTypeUnlocked("bridge"));
+        assertTrue(ship.isSectionUnlocked("bridge"));
         assertEquals("socketable_1", ship.getSectionItem("bridge"));
 
         List<Item> items = ((ItemStore) saved.get("exiledSector_socketables")).owned();

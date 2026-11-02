@@ -45,9 +45,9 @@ class DeletedSubroutinesTest {
     @BeforeEach
     void setUp() throws Exception {
         SkillTree.clearNodes();
-        SkillType socketType = new SkillType.Builder("socket_type", "Socket", "", SkillTier.SOCKET).build();
-        socket = new SkillNode("socket", socketType, List.of(), 0f, 0f);
-        secondSocket = new SkillNode("second_socket", socketType, List.of(), 0f, 0f);
+        SkillType sectionKind = new SkillType.Builder("socket_type", "Socket", "", SkillTier.SOCKET).build();
+        socket = new SkillNode("socket", sectionKind, List.of(), 0f, 0f);
+        secondSocket = new SkillNode("second_socket", sectionKind, List.of(), 0f, 0f);
         SkillTree.register(socket);
         SkillTree.register(secondSocket);
         ItemFixtures.registerMilitaryAndSubroutine();

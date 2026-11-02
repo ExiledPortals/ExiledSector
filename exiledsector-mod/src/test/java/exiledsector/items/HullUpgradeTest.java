@@ -97,7 +97,7 @@ class HullUpgradeTest {
     }
 
     @Test
-    void pointsUnlockSocketTypesWithinTheShipsRestrictionsAndLockingRefundsThem() {
+    void pointsUnlockSectionsWithinTheShipsRestrictionsAndLockingRefundsThem() {
         ShipSkillData shipData = shipWithPoints("ship", 2);
 
         assertEquals(HullUpgradeRules.UnlockBlock.UNMET_REQUIREMENT, HullUpgradeRules.unlockBlock(shipData, ShipSection.SHIELD_GENERATOR, fit(ShieldType.NONE)));
@@ -112,7 +112,7 @@ class HullUpgradeTest {
         assertTrue(HullUpgradeRules.lock(shipData, ShipSection.BRIDGE));
 
         assertEquals(1, HullUpgradePoints.unspent(shipData));
-        assertEquals(List.of("shield_generator"), shipData.getUnlockedSocketTypeIds());
+        assertEquals(List.of("shield_generator"), shipData.getUnlockedSectionIds());
         assertFalse(SocketCustody.isInstalled(ships, officer));
         assertEquals(List.of(officer), store.owned());
     }
@@ -220,7 +220,7 @@ class HullUpgradeTest {
         HullUpgradeRules.socket(shipData, ShipSection.BRIDGE, officer, fit(ShieldType.FRONT), ships);
 
         ShipTrees.resetAllocations(shipData);
-        assertEquals(List.of("bridge"), shipData.getUnlockedSocketTypeIds());
+        assertEquals(List.of("bridge"), shipData.getUnlockedSectionIds());
         Item metamorphosed = Item.withEffects(officer.id(), "chip", 3L, List.of());
         store.replace(officer, metamorphosed);
 

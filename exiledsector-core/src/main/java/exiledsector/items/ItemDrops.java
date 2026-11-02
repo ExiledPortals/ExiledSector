@@ -303,16 +303,16 @@ public final class ItemDrops {
         return droppedItems;
     }
 
-    public static ItemDefinition pickSectionItemBasic(ItemKind socketType, Random random) {
-        return pickSectionItemBasic(socketType, random, definition -> true);
+    public static ItemDefinition pickSectionItemBasic(ItemKind sectionKind, Random random) {
+        return pickSectionItemBasic(sectionKind, random, definition -> true);
     }
 
-    public static ItemDefinition pickSectionItemBasic(ItemKind socketType, Random random, Predicate<ItemDefinition> filter) {
-        return pick(random, definition -> definition.kind() == socketType && !definition.unique() && filter.test(definition));
+    public static ItemDefinition pickSectionItemBasic(ItemKind sectionKind, Random random, Predicate<ItemDefinition> filter) {
+        return pick(random, definition -> definition.kind() == sectionKind && !definition.unique() && filter.test(definition));
     }
 
-    private static boolean isDroppableBasic(ItemDefinition definition, ItemKind socketType) {
-        return definition.kind() == socketType && !definition.unique() && isDroppable(definition);
+    private static boolean isDroppableBasic(ItemDefinition definition, ItemKind sectionKind) {
+        return definition.kind() == sectionKind && !definition.unique() && isDroppable(definition);
     }
 
     private static boolean isDroppable(ItemDefinition definition) {

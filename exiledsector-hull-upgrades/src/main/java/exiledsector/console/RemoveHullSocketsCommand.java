@@ -22,7 +22,7 @@ public class RemoveHullSocketsCommand extends PlayerFleetCommand {
         }
 
         ShipSkillData shipData = ShipSkillDataManager.get(member.getId());
-        int socketCount = shipData.getUnlockedSocketTypeIds().size();
+        int socketCount = shipData.getUnlockedSectionIds().size();
         int pointsBefore = HullUpgradePoints.of(shipData);
         List<String> returnedItemIds = shipData.clearHullUpgrades();
         ConsoleShips.treeChanged(member);

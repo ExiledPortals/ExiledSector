@@ -74,7 +74,7 @@ final class SectionEditor {
     }
 
     boolean isSectionUnlocked(ShipSection section) {
-        return section != null && data().isSocketTypeUnlocked(section.id());
+        return section != null && data().isSectionUnlocked(section.id());
     }
 
     Map<SkillEffect, Float> affinityTotals() {

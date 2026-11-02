@@ -44,8 +44,8 @@ class ShipSectionsTest {
                 .put(definition("veteran", "bridge", "HULL_PERCENT:7:7").put("crew", "crewed"))
                 .put(definition("specialists", "crew_quarters", "HULL_PERCENT:3:3")));
         shipData = new ShipSkillData();
-        shipData.grantUnlockedSocketType("bridge");
-        shipData.grantUnlockedSocketType("shield_generator");
+        shipData.grantUnlockedSection("bridge");
+        shipData.grantUnlockedSection("shield_generator");
         shipData.installInSection("bridge", NpcItems.id("bridge_item", 1L));
         shipData.installInSection("shield_generator", NpcItems.id("emitter", 2L));
     }
@@ -113,7 +113,7 @@ class ShipSectionsTest {
 
     @Test
     void crewQuartersUnlockedBeforeTheShipBecameAutomatedGoesInactive() {
-        shipData.grantUnlockedSocketType("crew_quarters");
+        shipData.grantUnlockedSection("crew_quarters");
         shipData.installInSection("crew_quarters", NpcItems.id("specialists", 6L));
 
         List<ShipSections.UnlockedSection> automated = ShipSections.of(shipData, ShipSectionsTest::automatedFit);
@@ -131,8 +131,8 @@ class ShipSectionsTest {
             fitRequests.incrementAndGet();
             return fit(ShieldType.FRONT);
         });
-        shipData.lockSocketType("shield_generator");
-        shipData.grantUnlockedSocketType("reactor");
+        shipData.lockSection("shield_generator");
+        shipData.grantUnlockedSection("reactor");
         ShipSections.of(shipData, () -> {
             fitRequests.incrementAndGet();
             return fit(ShieldType.FRONT);

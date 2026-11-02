@@ -74,7 +74,7 @@ public final class ItemStoragePanel extends HoloPanel {
     private record RarityChip(ItemRarity rarity) {
     }
 
-    private record TypeChip(ItemKind socketType) {
+    private record TypeChip(ItemKind sectionKind) {
     }
 
     private final Listener storageListener;
@@ -212,11 +212,11 @@ public final class ItemStoragePanel extends HoloPanel {
         return new UIComponentAPI[]{controlsElement, placedComponent(gridElement), noticeElement, summaryElement};
     }
 
-    public void restrictTo(ItemKind socketType) {
-        if (socketType == kindFilter) {
+    public void restrictTo(ItemKind sectionKind) {
+        if (sectionKind == kindFilter) {
             return;
         }
-        kindFilter = socketType;
+        kindFilter = sectionKind;
         queue(() -> {
             closeDisassemblyConfirm();
             reloadRows();
@@ -390,7 +390,7 @@ public final class ItemStoragePanel extends HoloPanel {
             storageFilter.toggleRarity(chip.rarity());
             rebuildControls();
         } else if (id instanceof TypeChip chip) {
-            storageFilter.toggleSocketType(chip.socketType());
+            storageFilter.toggleSection(chip.sectionKind());
             reloadRows();
             rebuildControls();
         }
@@ -572,10 +572,10 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private boolean showsItem(Item item) {
-        return showsItem(item, kindFilter, sectionItemsOnly, storageFilter.socketTypes);
+        return showsItem(item, kindFilter, sectionItemsOnly, storageFilter.sectionKinds);
     }
 
-    static boolean showsItem(Item item, ItemKind kindFilter, boolean sectionItemsOnly, Set<ItemKind> chosenSocketTypes) {
+    static boolean showsItem(Item item, ItemKind kindFilter, boolean sectionItemsOnly, Set<ItemKind> chosenSections) {
         ItemKind kind = ItemTypes.listedKind(item);
         if (kindFilter != null) {
             return kind == kindFilter;
@@ -584,7 +584,7 @@ public final class ItemStoragePanel extends HoloPanel {
             return false;
         }
         List<ItemKind> chipTypes = sectionItemsOnly ? ItemKind.sectionItemTypes() : List.of(ItemKind.values());
-        return chipTypes.stream().noneMatch(chosenSocketTypes::contains) || chosenSocketTypes.contains(kind);
+        return chipTypes.stream().noneMatch(chosenSections::contains) || chosenSections.contains(kind);
     }
 
     private List<ItemKind> chipTypes() {
@@ -610,9 +610,9 @@ public final class ItemStoragePanel extends HoloPanel {
             chips.placeInRow(label, new RarityChip(rarity), ChipFlow.Colors.of(rarity.color()), storageFilter.rarities.contains(rarity));
         }
         chips.startRow(FIXED_CONTROL_ROWS);
-        for (ItemKind socketType : chipTypes) {
-            chips.place(socketType.displayName(), new TypeChip(socketType), ChipFlow.Colors.of(typeColor(socketType)),
-                    storageFilter.socketTypes.contains(socketType));
+        for (ItemKind sectionKind : chipTypes) {
+            chips.place(sectionKind.displayName(), new TypeChip(sectionKind), ChipFlow.Colors.of(typeColor(sectionKind)),
+                    storageFilter.sectionKinds.contains(sectionKind));
         }
         float controlsTop = PAD + HEADER_HEIGHT + GAP + FIELD_HEIGHT + GAP;
         controlsElement = replaceElement(controlsElement, element, PAD, controlsTop);
@@ -620,8 +620,8 @@ public final class ItemStoragePanel extends HoloPanel {
         rebuildGrid();
     }
 
-    private static Color typeColor(ItemKind socketType) {
-        Color kindColor = CargoIconLooks.kindColor(socketType);
+    private static Color typeColor(ItemKind sectionKind) {
+        Color kindColor = CargoIconLooks.kindColor(sectionKind);
         return kindColor != null ? kindColor : Misc.getBasePlayerColor();
     }
 
@@ -656,7 +656,7 @@ public final class ItemStoragePanel extends HoloPanel {
         if (storageRows.isEmpty() && kindFilter != null) {
             return Translation.msg("ui.socketStorage.emptyType").arg("type", kindFilter.displayName()).text();
         }
-        return Translation.text(storageRows.isEmpty() && chipTypes().stream().noneMatch(storageFilter.socketTypes::contains) ? "ui.socketStorage.empty"
+        return Translation.text(storageRows.isEmpty() && chipTypes().stream().noneMatch(storageFilter.sectionKinds::contains) ? "ui.socketStorage.empty"
                 : "ui.socketStorage.noMatches");
     }
 

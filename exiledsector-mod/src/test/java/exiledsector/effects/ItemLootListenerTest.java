@@ -75,11 +75,11 @@ class ItemLootListenerTest {
         when(fleetData.getMembersListCopy()).thenReturn(List.of());
         when(mockSector.playerFleet().getFleetData()).thenReturn(fleetData);
         SkillType rootType = new SkillType.Builder("root_type", "root", "a.png", SkillTier.ROOT).build();
-        SkillType socketType = new SkillType.Builder("socket", "socket", "a.png", SkillTier.SOCKET).build();
+        SkillType sectionKind = new SkillType.Builder("socket", "socket", "a.png", SkillTier.SOCKET).build();
         SkillTree.registerType(rootType);
-        SkillTree.registerType(socketType);
+        SkillTree.registerType(sectionKind);
         SkillTree.register(new SkillNode("root", rootType, List.of(), 0f, 0f));
-        SkillTree.register(new SkillNode("socket_1", socketType, List.of("root"), 0f, 0f));
+        SkillTree.register(new SkillNode("socket_1", sectionKind, List.of("root"), 0f, 0f));
         ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "volume_subroutine").put("kind", "MODSPEC_CACHE").put("rarity", "10")));
         FactionFleetDrops.register(TEST_DROPS, Map.of("volume_subroutine", FactionFleetDrops.Source.anyFaction(1f)));
     }

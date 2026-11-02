@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public final class SocketTypeMigration {
+public final class SectionFitMigration {
 
-    private SocketTypeMigration() {
+    private SectionFitMigration() {
     }
 
     public static void run() {

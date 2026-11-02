@@ -72,9 +72,9 @@ class AnchorJanusGateTest {
 
         SkillTree.clearNodes();
         SkillType exitType = new SkillType.Builder("wormhole_exit", "Wormhole Exit", "", SkillTier.WORMHOLE_EXIT).build();
-        SkillType socketType = new SkillType.Builder("socket", "Socket", "", SkillTier.SOCKET).build();
+        SkillType sectionKind = new SkillType.Builder("socket", "Socket", "", SkillTier.SOCKET).build();
         root = new SkillNode("root", new SkillType.Builder("root_type", "Root", "", SkillTier.ROOT).build(), List.of(), 0f, 0f);
-        socket = new SkillNode("socket", socketType, List.of("root"), 0f, 0f, SkillNodeDecoration.NONE, List.of("core"));
+        socket = new SkillNode("socket", sectionKind, List.of("root"), 0f, 0f, SkillNodeDecoration.NONE, List.of("core"));
         for (SkillNode node : List.of(root, socket,
                 new SkillNode("hegemony_2", exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of("hegemony")),
                 new SkillNode("exoship", exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of(SkillTags.EXOTECH_VOLUME)))) {

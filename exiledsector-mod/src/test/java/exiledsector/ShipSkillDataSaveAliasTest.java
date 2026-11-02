@@ -44,6 +44,18 @@ class ShipSkillDataSaveAliasTest {
     }
 
     @Test
+    void renamedFieldsKeepTheirSavedNames() {
+        ShipSkillData data = new ShipSkillData();
+        data.grantUnlockedSection("bridge");
+
+        String xml = xstream(true).toXML(data);
+        ShipSkillData loaded = (ShipSkillData) xstream(true).fromXML(xml);
+
+        assertTrue(xml.contains("<unlockedSocketTypes>"), xml);
+        assertTrue(loaded.isSectionUnlocked("bridge"));
+    }
+
+    @Test
     void savesWrittenBeforeTheAliasStillLoad() {
         String olderXml = xstream(false).toXML(records());
 

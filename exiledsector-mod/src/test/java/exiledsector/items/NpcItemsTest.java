@@ -105,12 +105,12 @@ class NpcItemsTest {
     @Test
     void unsocketingEverythingLeavesOnlyThePlayersOwnItems() {
         SkillType rootType = new SkillType.Builder("root_type", "root", "a.png", SkillTier.ROOT).build();
-        SkillType socketType = new SkillType.Builder("socket", "socket", "a.png", SkillTier.SOCKET).build();
+        SkillType sectionKind = new SkillType.Builder("socket", "socket", "a.png", SkillTier.SOCKET).build();
         SkillTree.registerType(rootType);
-        SkillTree.registerType(socketType);
+        SkillTree.registerType(sectionKind);
         SkillTree.register(new SkillNode("root", rootType, List.of(), 0f, 0f));
-        SkillTree.register(new SkillNode("socket_a", socketType, List.of("root"), 0f, 0f));
-        SkillTree.register(new SkillNode("socket_b", socketType, List.of("root"), 0f, 0f));
+        SkillTree.register(new SkillNode("socket_a", sectionKind, List.of("root"), 0f, 0f));
+        SkillTree.register(new SkillNode("socket_b", sectionKind, List.of("root"), 0f, 0f));
         ShipSkillData data = NpcSkillTreeBuilder.rootedTree(SkillTree.get("root"), 2);
         ShipTrees.allocate(data, SkillTree.get("socket_a"), 1);
         ShipTrees.allocate(data, SkillTree.get("socket_b"), 1);
