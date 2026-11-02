@@ -3,6 +3,7 @@
 		"exiledSector_chartBattlePlugin":"exiledsector.charts.effect.ChartBattlePlugin",
 		"exiledSector_chartAutopilotPlugin":"exiledsector.charts.effect.ChartAutopilotPlugin",
 		"exiledSector_chartArcStrikePlugin":"exiledsector.charts.effect.ChartArcStrikePlugin",
+		"exiledSector_chartMisfirePlugin":"exiledsector.charts.effect.ChartMisfirePlugin",
 		"exiledSector_stormFrontBattlePlugin":"exiledsector.charts.anomaly.storm.StormBattlePlugin",
 		"exiledSector_shaftBattlePlugin":"exiledsector.charts.anomaly.excavation.ShaftBattlePlugin",
 	},

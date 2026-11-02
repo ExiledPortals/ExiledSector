@@ -598,7 +598,9 @@ damage listeners at ship creation (`ChartEnemyShipEffects`). Only battle size an
 (`ChartBattlePlugin`). Inert switches off the ship system of each player fleet ship once, as it is created; the engine
 keeps it off for that battle. Overridden swallows the autopilot key, stops manual control from turning autopilot off and
 turns it back on whenever the player ship has no AI (`ChartAutopilotPlugin`). Ionized strikes a random player-side ship
-every 8 seconds with a shield-piercing, EMP-only arc (`ChartArcStrikePlugin`). Tarnished gives player fleet ships with
+every 8 seconds with a shield-piercing, EMP-only arc (`ChartArcStrikePlugin`). Erratic, from 60 seconds into a battle, forces
+random player-side ballistic and energy weapons to fire: a hardpoint fires where it points, a turret first swings to a random
+angle in its arc (`ChartMisfirePlugin`). Tarnished gives player fleet ships with
 S-mods, and their fighters, a listener cutting damage dealt by 5% for each S-mod (`ChartSModDamageListener`).
 
 Twinned spawns a second fleet the size of the boss's fleet, or of a station's guard, from its own seed at its own spot,

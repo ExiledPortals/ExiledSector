@@ -77,6 +77,12 @@ public enum ChartEffect implements ModifierEffect {
             return Translation.msg(key()).arg("value", magnitude).arg("seconds", ChartArcStrikePlugin.INTERVAL_SECONDS).styled();
         }
     },
+    CHART_WEAPON_MISFIRE_SECONDS(false, ChartGenContext::addWeaponMisfireSeconds) {
+        @Override
+        public StyledText description(float magnitude) {
+            return Translation.msg(key()).arg("value", magnitude).arg("delay", ChartMisfirePlugin.GRACE_SECONDS).styled();
+        }
+    },
     CHART_DAMAGE_PER_SMOD_PERCENT(false, ChartGenContext::addDamagePercentPerSMod) {
         @Override
         public StyledText description(float magnitude) {

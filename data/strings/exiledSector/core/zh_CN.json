@@ -401,6 +401,7 @@
     "socketable.modifier.CHART_SEVERED_COMMAND_POINT_RATE_PERCENT": "断联",
     "socketable.modifier.CHART_FORCED_AUTOPILOT": "接管",
     "socketable.modifier.CHART_ARC_STRIKE_EMP_FLAT": "电离",
+    "socketable.modifier.CHART_WEAPON_MISFIRE_SECONDS": "失常",
     "socketable.modifier.CHART_DAMAGE_PER_SMOD_PERCENT": "蒙尘",
     "socketable.modifier.CHART_ARMOR_PERCENT": "脆甲",
     "socketable.modifier.CHART_LARGE_SHIP_TOP_SPEED_PERCENT": "泥沼",

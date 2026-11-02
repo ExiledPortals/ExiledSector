@@ -23,6 +23,7 @@ public final class ChartFleetConditions {
     private static boolean shipSystemsDisabled;
     private static boolean autopilotForced;
     private static float arcStrikeEmp;
+    private static float weaponMisfireRate;
     private static float damagePercentPerSMod;
 
     private ChartFleetConditions() {
@@ -33,7 +34,7 @@ public final class ChartFleetConditions {
     }
 
     public static boolean isActive() {
-        return !activeMults.isEmpty() || battleSizeBonus != 0 || shipSystemsDisabled || autopilotForced || arcStrikeEmp > 0f
+        return !activeMults.isEmpty() || battleSizeBonus != 0 || shipSystemsDisabled || autopilotForced || arcStrikeEmp > 0f || weaponMisfireRate > 0f
                 || damagePercentPerSMod != 0f;
     }
 
@@ -43,6 +44,14 @@ public final class ChartFleetConditions {
 
     public static void setArcStrikeEmp(float emp) {
         arcStrikeEmp = emp;
+    }
+
+    public static float weaponMisfireRate() {
+        return weaponMisfireRate;
+    }
+
+    public static void setWeaponMisfireRate(float misfiresPerSecond) {
+        weaponMisfireRate = misfiresPerSecond;
     }
 
     public static float damagePercentPerSMod() {
@@ -100,6 +109,7 @@ public final class ChartFleetConditions {
         shipSystemsDisabled = false;
         autopilotForced = false;
         arcStrikeEmp = 0f;
+        weaponMisfireRate = 0f;
         damagePercentPerSMod = 0f;
         return set(Map.of(), playerFleet);
     }

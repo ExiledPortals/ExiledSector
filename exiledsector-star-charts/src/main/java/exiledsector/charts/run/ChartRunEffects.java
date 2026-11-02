@@ -64,6 +64,7 @@ public final class ChartRunEffects {
         ChartFleetConditions.setShipSystemsDisabled(runContext.shipSystemsDisabled());
         ChartFleetConditions.setAutopilotForced(runContext.autopilotForced());
         ChartFleetConditions.setArcStrikeEmp(runContext.arcStrikeEmp());
+        ChartFleetConditions.setWeaponMisfireRate(runContext.weaponMisfireRate());
         ChartFleetConditions.setDamagePercentPerSMod(runContext.damagePercentPerSMod());
     }
 

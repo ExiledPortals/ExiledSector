@@ -150,6 +150,7 @@
     "chart.effect.CHART_SEVERED_COMMAND_POINT_RATE_PERCENT": "Your fleet has <bad>{value}%</bad> less command point recovery rate in the system",
     "chart.effect.CHART_FORCED_AUTOPILOT": "Your ship is <bad>locked on autopilot</bad> in the system",
     "chart.effect.CHART_ARC_STRIKE_EMP_FLAT": "Every {seconds} seconds in the system, a shield-piercing EMP arc strikes a random ship on your side for <bad>{value}</bad> EMP damage",
+    "chart.effect.CHART_WEAPON_MISFIRE_SECONDS": "After {delay} seconds of combat in the system, each non-missile weapon on your side misfires every <bad>{value}</bad> seconds on average",
     "chart.effect.CHART_DAMAGE_PER_SMOD_PERCENT": "Ships in your fleet deal <bad>{value}%</bad> less damage for each S-mod they have in the system",
     "chart.effect.CHART_LARGE_SHIP_TOP_SPEED_PERCENT": "Cruisers and capital ships in your fleet have <bad>{value}%</bad> less top speed in the system",
     "chart.combat.autopilotLocked": "Autopilot is locked on in this system.",

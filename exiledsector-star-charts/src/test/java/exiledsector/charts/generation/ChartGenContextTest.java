@@ -445,7 +445,8 @@ class ChartGenContextTest {
                 new AppliedEffect(ChartEffect.CHART_ARMOR_PERCENT, -90f), new AppliedEffect(ChartEffect.CHART_NO_SHIP_SYSTEMS, 1f),
                 new AppliedEffect(ChartEffect.CHART_COMMAND_POINT_RATE_PERCENT, -40f),
                 new AppliedEffect(ChartEffect.CHART_SEVERED_COMMAND_POINT_RATE_PERCENT, -90f), new AppliedEffect(ChartEffect.CHART_FORCED_AUTOPILOT, 1f),
-                new AppliedEffect(ChartEffect.CHART_ARC_STRIKE_EMP_FLAT, 800f), new AppliedEffect(ChartEffect.CHART_WEAPON_AND_ENGINE_REPAIR_SPEED_PERCENT, -40f),
+                new AppliedEffect(ChartEffect.CHART_ARC_STRIKE_EMP_FLAT, 800f), new AppliedEffect(ChartEffect.CHART_WEAPON_MISFIRE_SECONDS, 30f),
+                new AppliedEffect(ChartEffect.CHART_WEAPON_AND_ENGINE_REPAIR_SPEED_PERCENT, -40f),
                 new AppliedEffect(ChartEffect.CHART_ENEMY_REFRACTING_PROJECTILES, 1f),
                 new AppliedEffect(ChartEffect.CHART_ENEMY_REFRACTING_PROJECTILES, 1f)));
 
@@ -454,6 +455,7 @@ class ChartGenContextTest {
         assertTrue(context.shipSystemsDisabled());
         assertTrue(context.autopilotForced());
         assertEquals(800f, context.arcStrikeEmp(), TOLERANCE);
+        assertEquals(1f / 30f, context.weaponMisfireRate(), TOLERANCE);
         assertEquals(0.6f, context.fleetStatMults().get(ChartFleetStat.WEAPON_AND_ENGINE_REPAIR_SPEED), TOLERANCE);
         assertEquals(2.2f, context.fleetStatMults().get(ChartFleetStat.SHIELD_DAMAGE_TAKEN), TOLERANCE);
         assertEquals(0.1f, context.fleetStatMults().get(ChartFleetStat.ARMOR), TOLERANCE);
@@ -464,5 +466,6 @@ class ChartGenContextTest {
         assertFalse(ChartGenContext.none().shipSystemsDisabled());
         assertFalse(ChartGenContext.none().autopilotForced());
         assertEquals(0f, ChartGenContext.none().arcStrikeEmp(), TOLERANCE);
+        assertEquals(0f, ChartGenContext.none().weaponMisfireRate(), TOLERANCE);
     }
 }

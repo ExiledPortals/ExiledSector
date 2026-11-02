@@ -65,6 +65,7 @@ public final class ChartGenContext {
     private boolean shipSystemsDisabled;
     private boolean autopilotForced;
     private float arcStrikeEmp;
+    private float weaponMisfireRate;
     private float damagePercentPerSMod;
     private final Set<String> enemyGrantedNodeIds = new LinkedHashSet<>();
     private float battleSizeBonus;
@@ -247,6 +248,16 @@ public final class ChartGenContext {
 
     public float arcStrikeEmp() {
         return Math.max(0f, arcStrikeEmp);
+    }
+
+    public void addWeaponMisfireSeconds(float seconds) {
+        if (seconds > 0f) {
+            weaponMisfireRate += 1f / seconds;
+        }
+    }
+
+    public float weaponMisfireRate() {
+        return weaponMisfireRate;
     }
 
     public void addDamagePercentPerSMod(float percent) {
@@ -575,11 +586,11 @@ public final class ChartGenContext {
         return factionText + String.format(Locale.ROOT, "fleet size %+.0f%%, %+d rolled fleet(s), %+d added fleet(s), %+d officer level(s), %+d officer(s), boss size %+.0f%%, "
                         + "fleet quality %+.0f%%, site budgets %s, %+d point(s) of interest, item drops %+.0f%%, item rarity %+.0f%%, drop types %s, "
                         + "boss spoils x%.2f, reward x%.2f, sensor range x%.2f, chart quality %d, anomalies %s, twinned boss %b, "
-                        + "barred combat hulls %s, ship systems disabled %b, autopilot forced %b, arc strike EMP %.0f, damage per S-mod %+.0f%%, enemy node grants %s",
+                        + "barred combat hulls %s, ship systems disabled %b, autopilot forced %b, arc strike EMP %.0f, weapon misfires %.3f/s, damage per S-mod %+.0f%%, enemy node grants %s",
                 fleetSizePercent, baseFleets, extraFleets, officerLevelBonus, extraOfficers, bossSizePercent,
                 fleetQualityPercent, siteBudgetText(), extraPois(), itemPercent, itemRarityPercent, describeDropPercents(), bossSpoilsMult(), rewardMult(),
                 sensorRangeMult(), quality, forcedAnomalies.isEmpty() ? "none" : forcedAnomalies.toString(), twinnedBoss,
-                bannedCombatHullSizes.isEmpty() ? "none" : bannedCombatHullSizes.toString(), shipSystemsDisabled, autopilotForced, arcStrikeEmp(),
+                bannedCombatHullSizes.isEmpty() ? "none" : bannedCombatHullSizes.toString(), shipSystemsDisabled, autopilotForced, arcStrikeEmp(), weaponMisfireRate,
                 damagePercentPerSMod, enemyGrantedNodeIds.isEmpty() ? "none" : enemyGrantedNodeIds.toString());
     }
 

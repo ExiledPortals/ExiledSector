@@ -143,6 +143,7 @@
     "chart.effect.CHART_SEVERED_COMMAND_POINT_RATE_PERCENT": "在星域内，你的舰队指挥点恢复速度降低<bad>{value}%</bad>（乘算）",
     "chart.effect.CHART_FORCED_AUTOPILOT": "在星域内，你的座舰<bad>锁定为自动驾驶</bad>",
     "chart.effect.CHART_ARC_STRIKE_EMP_FLAT": "在星域内，每{seconds}秒会有一道穿透护盾的EMP电弧随机击中一艘己方舰船，造成<bad>{value}</bad>点EMP伤害",
+    "chart.effect.CHART_WEAPON_MISFIRE_SECONDS": "在星域内，战斗进行{delay}秒后，己方每门非导弹武器平均每<bad>{value}</bad>秒走火一次",
     "chart.effect.CHART_DAMAGE_PER_SMOD_PERCENT": "在星域内，你的舰队舰船每有一个S插，造成的伤害降低<bad>{value}%</bad>（乘算）",
     "chart.effect.CHART_LARGE_SHIP_TOP_SPEED_PERCENT": "在星域内，你的舰队巡洋舰和主力舰最高速度降低<bad>{value}%</bad>（乘算）",
     "chart.combat.autopilotLocked": "在此星域内自动驾驶已锁定。",
