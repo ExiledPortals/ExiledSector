@@ -10,7 +10,7 @@ import exiledsector.effects.DoctrineRevertConflicts;
 import exiledsector.effects.DoctrineRevertRelease;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocatedSkillEffects;
-import exiledsector.skills.AllocationGate;
+import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
@@ -265,10 +265,10 @@ class DoctrineOverridesTest {
         assertEquals(Set.of(), DoctrineRevertConflicts.hullModsLostOnRemoval(data, socket.getId(), hullModId -> true));
     }
 
-    private AllocationGate frigateGate(ShipSkillData data) {
+    private AllocationCheck frigateGate(ShipSkillData data) {
         ShipFacts frigate = new ShipFacts(HullSize.FRIGATE, ShieldType.FRONT, false, 100f, hullModId -> false);
         DoctrineOverrides.bindShipFacts(data, () -> frigate);
-        return new AllocationGate(data, SkillTree.topology(), socket.getId(), new AllocationGate.Budget(100, 1, 100),
+        return new AllocationCheck(data, SkillTree.topology(), socket.getId(), new AllocationCheck.Budget(100, 1, 100),
                 NodeEligibility.Context.of(data, frigate, null));
     }
 
@@ -277,7 +277,7 @@ class DoctrineOverridesTest {
         registerType(type("capital_only", SkillTier.NOTABLE, "HULL_MULT", 5f).requiredHullSizes(EnumSet.of(HullSize.CAPITAL_SHIP)).build());
         SkillNode capitalOnly = node("capital_only_node", "capital_only", 100f, 100f);
         ShipSkillData data = shipWith(REWRITE, 14L);
-        AllocationGate gate = frigateGate(data);
+        AllocationCheck gate = frigateGate(data);
 
         assertNotEquals("capital_only", capitalOnly.resolveEffectiveType(data).getId());
         assertTrue(gate.allocation(capitalOnly).allowed());
@@ -293,7 +293,7 @@ class DoctrineOverridesTest {
         registerType(new SkillType.Builder("choice", "Choice", "a.png", SkillTier.NOTABLE).choiceOptionIds(List.of("opt_a", "opt_b")).build());
         SkillNode choice = node("choice_node", "choice", -100f, 100f);
         ShipSkillData data = shipWith(REWRITE, 14L);
-        AllocationGate gate = frigateGate(data);
+        AllocationCheck gate = frigateGate(data);
 
         assertFalse(choice.offersOptions(data));
         assertTrue(gate.options(choice).isEmpty());

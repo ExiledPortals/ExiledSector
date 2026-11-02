@@ -35,11 +35,11 @@ class ShipSkillDataTest {
         SkillTree.clearNodes();
     }
 
-    private static AllocationGate gate(ShipSkillData data, Collection<SkillNode> allNodes, String rootId, int totalOp, int opCost,
+    private static AllocationCheck gate(ShipSkillData data, Collection<SkillNode> allNodes, String rootId, int totalOp, int opCost,
                                        int maxAllocatedNodes) {
         NodeEligibility.Context eligibility = NodeEligibility.Context.of(data,
                 new ShipFacts(HullSize.CRUISER, ShieldType.FRONT, false, 0f, hullModId -> false), null);
-        return new AllocationGate(data, SkillTreeTopology.of(allNodes), rootId, new AllocationGate.Budget(totalOp, opCost, maxAllocatedNodes),
+        return new AllocationCheck(data, SkillTreeTopology.of(allNodes), rootId, new AllocationCheck.Budget(totalOp, opCost, maxAllocatedNodes),
                 eligibility);
     }
 
@@ -49,7 +49,7 @@ class ShipSkillDataTest {
 
     private static void toggle(ShipSkillData data, SkillNode node, Collection<SkillNode> allNodes, String rootId, int totalOp, int opCost,
                                int maxAllocatedNodes) {
-        AllocationGate gate = gate(data, allNodes, rootId, totalOp, opCost, maxAllocatedNodes);
+        AllocationCheck gate = gate(data, allNodes, rootId, totalOp, opCost, maxAllocatedNodes);
         if (data.isAllocated(node.getId())) {
             if (gate.deallocation(node).allowed()) {
                 ShipTrees.deallocate(data, node);

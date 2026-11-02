@@ -7,7 +7,7 @@ import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.shield.ShieldSkillEffect;
 import exiledsector.skills.AllocatedNode;
-import exiledsector.skills.AllocationGate;
+import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.AnchorLinks;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipSkillData;
@@ -132,7 +132,7 @@ public final class NpcSkillTreeBuilder {
         return items.get(items.size() - 1);
     }
 
-    private record State(AllocationGate gate, boolean shieldInvested) {
+    private record State(AllocationCheck gate, boolean shieldInvested) {
     }
 
     private record PathStep(SkillNode node, SkillType option, boolean wormholeExit) {
@@ -489,8 +489,8 @@ public final class NpcSkillTreeBuilder {
                     hullModId -> fitInstalled.contains(hullModId) && hullMods.permanent().contains(hullModId));
             NodeEligibility.Context eligibility = new NodeEligibility.Context(allocatedNodes, shieldType, fittedFacts,
                     lockedWormhole, fittedProfile);
-            AllocationGate.Budget budget = new AllocationGate.Budget(Integer.MAX_VALUE, freedOp.opCostPerNode(), maxNodes + 1);
-            return new State(new AllocationGate(shipData, topology, ShipTrees.resolveStartingRootId(shipData), budget, eligibility), shieldInvested);
+            AllocationCheck.Budget budget = new AllocationCheck.Budget(Integer.MAX_VALUE, freedOp.opCostPerNode(), maxNodes + 1);
+            return new State(new AllocationCheck(shipData, topology, ShipTrees.resolveStartingRootId(shipData), budget, eligibility), shieldInvested);
         }
 
         private boolean traversable(SkillNode node, State fitState, Map<String, SkillType> searchOptions) {

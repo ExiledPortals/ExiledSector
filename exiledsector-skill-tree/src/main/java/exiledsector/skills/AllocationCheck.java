@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.ToDoubleFunction;
 
-public final class AllocationGate {
+public final class AllocationCheck {
 
     public enum Refusal {
         ALREADY_ALLOCATED, NOT_ALLOCATED, NOT_CONNECTED, NODE_CAP, OUT_OF_OP, INELIGIBLE, STARTING_ROOT, STRANDS_NODES, SAME_OPTION,
@@ -60,7 +60,7 @@ public final class AllocationGate {
     private final Map<List<SkillType>, Optional<AllocatedNode>> conflictsByCandidateTypes = new HashMap<>();
     private Set<String> grantOnlyNodeIds;
 
-    public AllocationGate(ShipSkillData data, SkillTreeTopology topology, String rootId, Budget budget, NodeEligibility.Context eligibility) {
+    public AllocationCheck(ShipSkillData data, SkillTreeTopology topology, String rootId, Budget budget, NodeEligibility.Context eligibility) {
         this.data = data;
         this.topology = topology;
         this.rootId = rootId;
@@ -69,8 +69,8 @@ public final class AllocationGate {
         this.spentOp = ShipTrees.getSpentOp(data, budget.opCostPerNode());
     }
 
-    public static AllocationGate forShip(ShipSkillData data, ShipFacts shipFacts, String rootId, Budget budget, ToDoubleFunction<String> heldItems) {
-        return new AllocationGate(data, SkillTree.topology(), rootId, budget, NodeEligibility.Context.forShip(data, shipFacts, heldItems));
+    public static AllocationCheck forShip(ShipSkillData data, ShipFacts shipFacts, String rootId, Budget budget, ToDoubleFunction<String> heldItems) {
+        return new AllocationCheck(data, SkillTree.topology(), rootId, budget, NodeEligibility.Context.forShip(data, shipFacts, heldItems));
     }
 
     public ShipSkillData data() {

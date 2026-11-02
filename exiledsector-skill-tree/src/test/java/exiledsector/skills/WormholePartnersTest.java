@@ -68,10 +68,10 @@ class WormholePartnersTest {
         return data;
     }
 
-    private static AllocationGate gate(ShipSkillData data, SkillTreeTopology topology, int maxAllocatedNodes) {
+    private static AllocationCheck gate(ShipSkillData data, SkillTreeTopology topology, int maxAllocatedNodes) {
         NodeEligibility.Context eligibility = NodeEligibility.Context.of(data,
                 new ShipFacts(HullSize.CRUISER, ShieldType.FRONT, false, 0f, hullModId -> false), null);
-        return new AllocationGate(data, topology, "root", new AllocationGate.Budget(100, 1, maxAllocatedNodes), eligibility);
+        return new AllocationCheck(data, topology, "root", new AllocationCheck.Budget(100, 1, maxAllocatedNodes), eligibility);
     }
 
     @Test
@@ -129,7 +129,7 @@ class WormholePartnersTest {
     void theGateCountsTheShipsPartnerAgainstTheNodeCap() {
         ShipSkillData data = linkedSocketToExit();
 
-        assertEquals(AllocationGate.Refusal.NODE_CAP, gate(data, topology, 2).allocation(socket).refusal());
+        assertEquals(AllocationCheck.Refusal.NODE_CAP, gate(data, topology, 2).allocation(socket).refusal());
     }
 
     @Test

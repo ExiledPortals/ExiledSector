@@ -17,7 +17,7 @@ import java.util.function.ToDoubleFunction;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class AllocationGateTest {
+class AllocationCheckTest {
 
     private static final int AMPLE_OP = 100;
     private static final int OP_PER_NODE = 2;
@@ -60,16 +60,16 @@ class AllocationGateTest {
                 .build()), "root");
     }
 
-    private AllocationGate gate(int totalOp, int maxNodes, ToDoubleFunction<String> heldItems, Predicate<SkillType> locked) {
+    private AllocationCheck gate(int totalOp, int maxNodes, ToDoubleFunction<String> heldItems, Predicate<SkillType> locked) {
         NodeEligibility.Context eligibility = NodeEligibility.Context.of(data, FRIGATE, locked, heldItems);
-        return new AllocationGate(data, SkillTree.topology(), "root", new AllocationGate.Budget(totalOp, OP_PER_NODE, maxNodes), eligibility);
+        return new AllocationCheck(data, SkillTree.topology(), "root", new AllocationCheck.Budget(totalOp, OP_PER_NODE, maxNodes), eligibility);
     }
 
-    private AllocationGate gate() {
+    private AllocationCheck gate() {
         return gate(AMPLE_OP, AMPLE_NODE_CAP, itemId -> 0, null);
     }
 
-    private static AllocationGate.Refusal refusal(AllocationGate.Verdict verdict) {
+    private static AllocationCheck.Refusal refusal(AllocationCheck.Verdict verdict) {
         return verdict.refusal();
     }
 
@@ -86,7 +86,7 @@ class AllocationGateTest {
     void anUnconnectedNodeIsRefusedBeforeItsBudgetOrEligibilityIsConsidered() {
         SkillNode far = node("far", type("far_type", SkillTier.SMALL).requiredHullSizes(List.of(HullSize.CAPITAL_SHIP)).build(), "elsewhere");
 
-        assertEquals(AllocationGate.Refusal.NOT_CONNECTED, refusal(gate(0, 0, itemId -> 0, null).allocation(far)));
+        assertEquals(AllocationCheck.Refusal.NOT_CONNECTED, refusal(gate(0, 0, itemId -> 0, null).allocation(far)));
     }
 
     @Test
@@ -94,10 +94,10 @@ class AllocationGateTest {
         SkillNode capital = node("capital", type("capital_type", SkillTier.SMALL).requiredHullSizes(List.of(HullSize.CAPITAL_SHIP)).build(),
                 "root");
 
-        assertEquals(AllocationGate.Refusal.NODE_CAP, refusal(gate(AMPLE_OP, 1, itemId -> 0, null).allocation(capital)));
-        assertEquals(AllocationGate.Refusal.OUT_OF_OP, refusal(gate(OP_PER_NODE - 1, AMPLE_NODE_CAP, itemId -> 0, null).allocation(capital)));
-        AllocationGate.Verdict ineligible = gate().allocation(capital);
-        assertEquals(AllocationGate.Refusal.INELIGIBLE, refusal(ineligible));
+        assertEquals(AllocationCheck.Refusal.NODE_CAP, refusal(gate(AMPLE_OP, 1, itemId -> 0, null).allocation(capital)));
+        assertEquals(AllocationCheck.Refusal.OUT_OF_OP, refusal(gate(OP_PER_NODE - 1, AMPLE_NODE_CAP, itemId -> 0, null).allocation(capital)));
+        AllocationCheck.Verdict ineligible = gate().allocation(capital);
+        assertEquals(AllocationCheck.Refusal.INELIGIBLE, refusal(ineligible));
         assertEquals(NodeEligibility.Kind.WRONG_HULL_SIZE, ineligible.block().kind());
     }
 
@@ -115,9 +115,9 @@ class AllocationGateTest {
         SkillType anyOption = registered(type("any_option", SkillTier.SMALL).build());
         SkillNode choice = choice("choice", capitalOption, anyOption);
 
-        AllocationGate gate = gate();
+        AllocationCheck gate = gate();
         assertTrue(gate.allocation(choice).allowed());
-        assertEquals(AllocationGate.Refusal.INELIGIBLE, refusal(gate.allocation(choice, capitalOption)));
+        assertEquals(AllocationCheck.Refusal.INELIGIBLE, refusal(gate.allocation(choice, capitalOption)));
         assertTrue(gate.allocation(choice, anyOption).allowed());
         assertEquals(NodeEligibility.Kind.INVALID_OPTION, gate.allocation(choice, null).block().kind());
     }
@@ -146,7 +146,7 @@ class AllocationGateTest {
         SkillNode choice = choice("choice", option);
         SkillType container = choice.getType();
 
-        AllocationGate.Verdict verdict = gate(AMPLE_OP, AMPLE_NODE_CAP, itemId -> 0, type -> type == container).allocation(choice, option);
+        AllocationCheck.Verdict verdict = gate(AMPLE_OP, AMPLE_NODE_CAP, itemId -> 0, type -> type == container).allocation(choice, option);
 
         assertEquals(NodeEligibility.Kind.LOCKED, verdict.block().kind());
     }
@@ -159,12 +159,12 @@ class AllocationGateTest {
         ShipTrees.allocate(data, bridge, OP_PER_NODE);
         ShipTrees.allocate(data, leaf, OP_PER_NODE);
 
-        AllocationGate gate = gate();
-        assertEquals(AllocationGate.Refusal.STARTING_ROOT, refusal(gate.deallocation(root)));
-        assertEquals(AllocationGate.Refusal.STRANDS_NODES, refusal(gate.deallocation(bridge)));
+        AllocationCheck gate = gate();
+        assertEquals(AllocationCheck.Refusal.STARTING_ROOT, refusal(gate.deallocation(root)));
+        assertEquals(AllocationCheck.Refusal.STRANDS_NODES, refusal(gate.deallocation(bridge)));
         assertTrue(gate.deallocation(leaf).allowed());
-        assertEquals(AllocationGate.Refusal.NOT_ALLOCATED, refusal(gate.deallocation(loose)));
-        assertEquals(AllocationGate.Refusal.ALREADY_ALLOCATED, refusal(gate.allocation(leaf)));
+        assertEquals(AllocationCheck.Refusal.NOT_ALLOCATED, refusal(gate.deallocation(loose)));
+        assertEquals(AllocationCheck.Refusal.ALREADY_ALLOCATED, refusal(gate.allocation(leaf)));
     }
 
     @Test
@@ -175,10 +175,10 @@ class AllocationGateTest {
         SkillNode other = choice("other", first, second);
         ShipTrees.selectOption(data, choice, first, OP_PER_NODE);
 
-        AllocationGate gate = gate();
-        assertEquals(AllocationGate.Refusal.SAME_OPTION, refusal(gate.optionSwitch(choice, first)));
+        AllocationCheck gate = gate();
+        assertEquals(AllocationCheck.Refusal.SAME_OPTION, refusal(gate.optionSwitch(choice, first)));
         assertTrue(gate.optionSwitch(choice, second).allowed());
-        assertEquals(AllocationGate.Refusal.NOT_ALLOCATED, refusal(gate.optionSwitch(other, second)));
+        assertEquals(AllocationCheck.Refusal.NOT_ALLOCATED, refusal(gate.optionSwitch(other, second)));
     }
 
     @Test
@@ -191,7 +191,7 @@ class AllocationGateTest {
         ShipTrees.selectOption(data, choice, frontConversion, OP_PER_NODE);
         NodeEligibility.Context eligibility = NodeEligibility.Context.of(data,
                 new ShipFacts(HullSize.FRIGATE, ShieldType.OMNI, false, 100f, hullModId -> false), null, itemId -> 0);
-        AllocationGate gate = new AllocationGate(data, SkillTree.topology(), "root", new AllocationGate.Budget(AMPLE_OP, OP_PER_NODE,
+        AllocationCheck gate = new AllocationCheck(data, SkillTree.topology(), "root", new AllocationCheck.Budget(AMPLE_OP, OP_PER_NODE,
                 AMPLE_NODE_CAP), eligibility);
 
         assertEquals(ShieldType.FRONT, eligibility.shieldType());

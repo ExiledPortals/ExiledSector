@@ -6,7 +6,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.PlayerFleet;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
-import exiledsector.skills.AllocationGate;
+import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
@@ -56,9 +56,9 @@ final class TemplateLevelUp {
             return 0;
         }
         ShipFacts shipFacts = PlayerShipFacts.of(member, variant);
-        AllocationGate.Budget budget = new AllocationGate.Budget(0, opCostPerNode, ShipLevelConfig.maxAllocatedNodes());
+        AllocationCheck.Budget budget = new AllocationCheck.Budget(0, opCostPerNode, ShipLevelConfig.maxAllocatedNodes());
         return AutoAllocateRun.run(template.steps(), step -> {
-            AllocationGate gate = AllocationGate.forShip(shipData, shipFacts, rootId, budget, itemId -> 0d);
+            AllocationCheck gate = AllocationCheck.forShip(shipData, shipFacts, rootId, budget, itemId -> 0d);
             StepVerdict verdict = TemplateStepRules.verdict(step, shipData, rootId, gate::allocation);
             if (verdict == StepVerdict.ALLOCATE) {
                 SkillNode node = SkillTree.get(step.nodeId());

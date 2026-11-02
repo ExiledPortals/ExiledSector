@@ -6,7 +6,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.effects.PhantomConflictWatch;
 import exiledsector.persistence.ShipSkillDataManager;
-import exiledsector.skills.AllocationGate;
+import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;
@@ -402,15 +402,15 @@ public final class TreeAllocationSession {
         if (choicePickerNode == null) {
             return false;
         }
-        AllocationGate.Verdict verdict = optionVerdict(choicePickerNode, option, viewSnapshot());
-        return verdict.allowed() || verdict.refusal() == AllocationGate.Refusal.SAME_OPTION;
+        AllocationCheck.Verdict verdict = optionVerdict(choicePickerNode, option, viewSnapshot());
+        return verdict.allowed() || verdict.refusal() == AllocationCheck.Refusal.SAME_OPTION;
     }
 
     String choicePickerOptionRefusalReason(SkillType option) {
         return choicePickerNode == null ? null : viewSnapshot().optionRefusalReason(choicePickerNode, option);
     }
 
-    static AllocationGate.Verdict optionVerdict(SkillNode node, SkillType option, NodeAllocator.Snapshot allocation) {
+    static AllocationCheck.Verdict optionVerdict(SkillNode node, SkillType option, NodeAllocator.Snapshot allocation) {
         return allocation.skillData().isAllocated(node.getId())
                 ? allocation.gate().optionSwitch(node, option) : allocation.gate().allocation(node, option);
     }
@@ -423,7 +423,7 @@ public final class TreeAllocationSession {
         NodeAllocator.Snapshot allocation = snapshot();
         Set<String> allocatedBefore = allocatedNodeIds();
         boolean wasAllocated = allocation.skillData().isAllocated(node.getId());
-        if (optionVerdict(node, chosenOption, allocation).refusal() == AllocationGate.Refusal.SAME_OPTION) {
+        if (optionVerdict(node, chosenOption, allocation).refusal() == AllocationCheck.Refusal.SAME_OPTION) {
             return;
         }
         boolean changed = wasAllocated ? allocator.switchOption(node, chosenOption, allocation) : allocator.allocate(node, chosenOption, allocation);

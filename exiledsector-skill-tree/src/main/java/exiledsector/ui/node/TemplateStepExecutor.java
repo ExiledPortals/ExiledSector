@@ -1,6 +1,6 @@
 package exiledsector.ui.node;
 
-import exiledsector.skills.AllocationGate;
+import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
@@ -29,7 +29,7 @@ final class TemplateStepExecutor {
 
     StepVerdict attempt(TemplateStep step) {
         NodeAllocator.Snapshot currentSnapshot = snapshotSupplier.get();
-        AllocationGate gate = currentSnapshot.gate();
+        AllocationCheck gate = currentSnapshot.gate();
         StepVerdict verdict = TemplateStepRules.verdict(step, currentSnapshot.skillData(), currentSnapshot.satisfiedRootId(), gate::allocation);
         if (verdict != StepVerdict.ALLOCATE) {
             logSkip(step, verdict);

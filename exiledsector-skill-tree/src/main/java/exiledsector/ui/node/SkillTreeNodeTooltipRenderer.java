@@ -11,7 +11,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.ShipFacts;
 import exiledsector.effects.ModuleShareSetting;
-import exiledsector.skills.AllocationGate;
+import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.CostItems;
 import exiledsector.skills.ItemCostLedger;
 import exiledsector.skills.ModuleShareExtent;
@@ -262,7 +262,7 @@ final class SkillTreeNodeTooltipRenderer {
         return new ItemCostLine(cost, available >= cost.quantity() ? Style.GOOD : Style.HIGHLIGHT);
     }
 
-    static String withoutItemCostRefusal(String refusalReason, ItemCostLine costLine, Supplier<AllocationGate.Verdict> verdict) {
+    static String withoutItemCostRefusal(String refusalReason, ItemCostLine costLine, Supplier<AllocationCheck.Verdict> verdict) {
         if (refusalReason == null || costLine == null) {
             return refusalReason;
         }

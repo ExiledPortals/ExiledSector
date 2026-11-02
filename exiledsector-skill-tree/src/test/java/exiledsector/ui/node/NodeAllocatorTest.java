@@ -16,7 +16,7 @@ import exiledsector.MockSector;
 import exiledsector.effects.OpReserveParity;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.persistence.ShipSkillDataManager;
-import exiledsector.skills.AllocationGate;
+import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.ItemCostLedger;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipSkillData;
@@ -204,7 +204,7 @@ class NodeAllocatorTest {
     void theStartingRootCanNeverBeDeallocated() {
         ShipTrees.chooseStartingRoot(data(), root);
 
-        assertEquals(AllocationGate.Refusal.STARTING_ROOT, allocatorStartingAt(root).snapshot().gate().deallocation(root).refusal());
+        assertEquals(AllocationCheck.Refusal.STARTING_ROOT, allocatorStartingAt(root).snapshot().gate().deallocation(root).refusal());
     }
 
     @Test
@@ -376,9 +376,9 @@ class NodeAllocatorTest {
         ShipTrees.selectOption(data(), mode, SkillTree.getType("front_mode"), 0);
         NodeAllocator allocator = allocatorStartingAt(root);
 
-        AllocationGate gate = allocator.snapshot().gate();
+        AllocationCheck gate = allocator.snapshot().gate();
         assertTrue(gate.optionSwitch(mode, SkillTree.getType("omni_mode")).allowed());
-        assertEquals(AllocationGate.Refusal.SAME_OPTION, gate.optionSwitch(mode, SkillTree.getType("front_mode")).refusal());
+        assertEquals(AllocationCheck.Refusal.SAME_OPTION, gate.optionSwitch(mode, SkillTree.getType("front_mode")).refusal());
     }
 
     @Test
@@ -388,7 +388,7 @@ class NodeAllocatorTest {
                 .unlockConditions(List.of(UnlockCondition.minShipLevel(5))).build(), "root_1");
         ShipTrees.chooseStartingRoot(data(), root);
 
-        AllocationGate.Verdict verdict = allocatorStartingAt(root).snapshot().gate().allocation(sealed, SkillTree.getType("open_option"));
+        AllocationCheck.Verdict verdict = allocatorStartingAt(root).snapshot().gate().allocation(sealed, SkillTree.getType("open_option"));
 
         assertEquals(NodeEligibility.Kind.LOCKED, verdict.block().kind());
     }
@@ -419,7 +419,7 @@ class NodeAllocatorTest {
     @Test
     void theSnapshotHandsOutOneMemoisedVerdictPerNode() {
         ShipTrees.chooseStartingRoot(data(), root);
-        AllocationGate gate = allocatorStartingAt(root).snapshot().gate();
+        AllocationCheck gate = allocatorStartingAt(root).snapshot().gate();
 
         assertSame(gate.allocation(frontShield), gate.allocation(frontShield));
         assertSame(gate.deallocation(root), gate.deallocation(root));

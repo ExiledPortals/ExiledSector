@@ -98,10 +98,10 @@ class WormholeAnchorLinksTest {
         return data;
     }
 
-    private AllocationGate gate(ShipSkillData data, int maxAllocatedNodes) {
+    private AllocationCheck gate(ShipSkillData data, int maxAllocatedNodes) {
         NodeEligibility.Context eligibility = NodeEligibility.Context.of(data,
                 new ShipFacts(HullSize.CRUISER, ShieldType.FRONT, false, 0f, hullModId -> false), null);
-        return new AllocationGate(data, topology, "root", new AllocationGate.Budget(100, 1, maxAllocatedNodes), eligibility);
+        return new AllocationCheck(data, topology, "root", new AllocationCheck.Budget(100, 1, maxAllocatedNodes), eligibility);
     }
 
     @Test
@@ -151,7 +151,7 @@ class WormholeAnchorLinksTest {
         ShipSkillData data = shipWithSocket();
         ShipTrees.allocate(data, volumeSmall, 1);
 
-        assertEquals(AllocationGate.Refusal.NOT_CONNECTED, gate(data, 100).allocation(exit).refusal());
+        assertEquals(AllocationCheck.Refusal.NOT_CONNECTED, gate(data, 100).allocation(exit).refusal());
         assertFalse(ShipTrees.reachableAllocatedNodeIds(data, topology, "root", Set.of()).contains("vol_a"));
     }
 

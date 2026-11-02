@@ -70,8 +70,8 @@ Type and node ids are covered by [node_id_renames.md](node_id_renames.md). The r
 | Player sees | Code says | Rename to | Kind |
 |---|---|---|---|
 | Choose an option | "optional": `_optional` type suffix, `optionalOptions`, `isOptional`, `optionalSelections` (saved), "dropdown" renderer | "choice" node with "options" | code, data field, saved field. [x] Built: every optional and dropdown identifier says choice (`isChoice`, `getChoiceOptionIds`, `SkillTreeNodeChoicePickerRenderer` and the rest), the `skill_types.json` field `options` (loader and editor serialiser), key `ui.node.choiceHint`, `ShipSkillData.choiceSelections` saved as `optionalSelections`. The `_optional` type suffix belongs to the type id renames. |
-| Remove / unallocate | `respec`, `release*` / `ReleasedNodes` (~76), `deallocate` (~22). `released_skill_nodes.json` means "shipped in a game release" | `deallocate` in code; ledger becomes `shipped_node_ids.json` | code |
-| Unidentified / hidden / locked | `NodeGates`, `gate_*` tags, `HiddenNodeDisplayConfig`, `lockedFor`, ghost renderer. "Gate" also means `AllocationGate`, `AnchorJanusGate` and `summary.gated.*` | "gate" only for unlock conditions; `AllocationGate` becomes `AllocationCheck` | code |
+| Remove / unallocate | `respec`, `release*` / `ReleasedNodes` (~76), `deallocate` (~22). `released_skill_nodes.json` means "shipped in a game release" | `deallocate` in code; ledger becomes `shipped_node_ids.json` | code. Deferred: `ShipTrees` already uses `deallocate` for the one-node step and `release*` for the cascade that also drops stranded nodes, with matching signatures (`releaseUnreachable` beside a private `deallocateUnreachable`), so one of the two levels needs its own verb first. The ledger rename touches `build-common.ps1` and the editor's `reservedNodeIds.ts`, and step 5 of [node_id_renames.md](node_id_renames.md) rewrites the same file, so it goes with that plan. |
+| Unidentified / hidden / locked | `NodeGates`, `gate_*` tags, `HiddenNodeDisplayConfig`, `lockedFor`, ghost renderer. "Gate" also means `AllocationGate`, `AnchorJanusGate` and `summary.gated.*` | "gate" only for unlock conditions; `AllocationGate` becomes `AllocationCheck` | code. [x] Built: `AllocationCheck` (test `AllocationCheckTest`). `AnchorJanusGate` is an unlock condition, so it keeps "gate". |
 | Starting location / starting point / start / root | `startingRootId`, `StartingRootChoice`, item "Root Conduit" | one player word ("root", since the item already shows it) | text. [x] Built: the template, picker and readout texts say root; zh keeps 起点, now glossed as root. |
 | Item cost | `itemCost` vs `ItemChargeLedger`, `chargedItemIds` (saved); "charges" also means ship-system charges | "item cost" in code | code, saved fields. [x] Built: `ItemCostLedger`, `paidItemCost`, `recordPaidItemCost`, `takePaidItemCost(s)`; `ShipSkillData.paidItemCostIds` / `paidItemCostQuantities` saved under their old names through `SAVED_FIELD_NAMES` (plain `itemCost` already names the type's cost). |
 | Free allocation | also "credit" (`addFreeAllocationCredit`, `pendingTemplateCredits`); three kinds of "free" node set | "free allocation" for the level token, "granted" for subroutine and pair nodes | code. [x] Built: `addFreeAllocation`, `pendingTemplateFreeAllocations`, `refundBankedFreeAllocationAsOp`; `ShipSkillData.pairGrantedNodeIds` and `subroutineGrantedNodeIds`, saved under their old names. |
@@ -80,9 +80,9 @@ Type and node ids are covered by [node_id_renames.md](node_id_renames.md). The r
 | Mutually exclusive / can't be combined | `phantomConflict.*` keys show an internal term | `node.conflict.*` | keys. [x] Built. |
 
 Also:
-- `gate_pascal_visited` now opens on the Nightcross anchor (`node_gates.json`), and `commands.csv` still describes a "Pascal" area.
+- [~] `gate_pascal_visited` now opens on the Nightcross anchor (`node_gates.json`), and `commands.csv` still describes a "Pascal" area. Built: `commands.csv` names Nightcross. Deferred: the gate id is a tree tag and a saved relock entry, so it waits for a chosen new id.
 - `sindrian_dictat` (region) vs the vanilla faction id `sindrian_diktat`.
-- "ExoTech" vs "Exo-Tech" in player text.
+- [x] "ExoTech" vs "Exo-Tech" in player text. Built: "Exo-Tech", as Random Assortment of Things writes it, in both catalogues, the README and the forum post. The `exotech` ids stay.
 - The tag `armour` vs "Armor".
 - `fighter_*` type ids for strikecraft nodes, while `docs/tooltip_wording.md` keeps "fighter" for the wing role.
 
@@ -140,7 +140,7 @@ Per-anomaly translation key prefixes don't match ids or packages: `chart.debris`
 
 ## Editor and shared words
 
-- The editor labels `SkillTier` as "Size", stores the hull item section as `kind`, still says "Modular Hull Socket" (`types.ts:122`), and names new nodes from the type id. The node rename plan covers the last one.
+- [x] The editor labels `SkillTier` as "Size", stores the hull item section as `kind`, still says "Modular Hull Socket" (`types.ts:122`), and names new nodes from the type id. The node rename plan covers the last one. Built: "Tier" and "Subroutine Socket". `kind` stays, because it mirrors core's `ItemKind`, which holds both subroutine kinds and sections.
 - "Anchor" has four meanings: wormhole anchors, tree orbit anchors (`orbitAnchors`, `orbitAnchorId`), `ShipAnchors` (section tile points) and `HyperspaceAnchor`. Keep it for wormhole anchors; the others become orbit centres and section points.
 - "Part" has four meanings: skill-effect part packages, the i18n catalogue part, feedstock, and forge graft parts. "Slot", "site" and "rule" are overloaded the same way.
 - `domain` (feature switch) vs the lore "Domain" (`RefitSchematic.DOMAIN`, `ChartPoi.Kind.DOMAIN`).
