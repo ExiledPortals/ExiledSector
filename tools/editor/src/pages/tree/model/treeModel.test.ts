@@ -28,7 +28,7 @@ import {
 } from './geometry.ts';
 import { serializeUnlockConditions } from './serialization.ts';
 import { replaceGroupTags } from './tags.ts';
-import { nodeById, type SkillType, type TreeDocument, type TreeNode } from './types.ts';
+import { nameSlug, nodeById, nodeIdStem, type SkillType, type TreeDocument, type TreeNode } from './types.ts';
 import { validateTree } from './validation.ts';
 
 const vocabularyFile = {
@@ -271,5 +271,32 @@ describe('socket radius counts', () => {
     const counts = countNodesWithinRadius(nodes, typesById, socket, 500);
 
     expect(Object.fromEntries(counts)).toEqual({ SMALL: 1, NOTABLE: 1 });
+  });
+});
+
+describe('new node ids', () => {
+  it('turns a display name into an id the way the type ids are written', () => {
+    expect(nameSlug("Lion's Gaze")).toBe('lions_gaze');
+    expect(nameSlug('Shield Conversion - Omni')).toBe('shield_conversion_omni');
+    expect(nameSlug('Shield Flux/Damage Reduction')).toBe('shield_flux_damage_reduction');
+  });
+
+  it('names a new node after its type unless that type keeps its own id', () => {
+    const document = makeDocument([], {
+      types: [
+        { id: 'heavyarmor', name: 'Heavy Armor', icon: '' },
+        { id: 'hull', name: 'Hull', icon: '' },
+        { id: 'hull_multi', name: 'Hull', icon: '' },
+        { id: 'root_low_tech', name: 'Low Tech', icon: '', tier: 'ROOT' },
+        { id: 'nskr_volatile', name: 'Volatile Flux Tuning', icon: '' },
+      ],
+    });
+
+    expect(nodeIdStem(document, 'heavyarmor')).toBe('heavy_armor');
+    expect(nodeIdStem(document, 'hull')).toBe('hull');
+    expect(nodeIdStem(document, 'hull_multi')).toBe('hull_multi');
+    expect(nodeIdStem(document, 'root_low_tech')).toBe('root_low_tech');
+    expect(nodeIdStem(document, 'nskr_volatile')).toBe('nskr_volatile');
+    expect(nodeIdStem(document, 'unknown')).toBe('unknown');
   });
 });
