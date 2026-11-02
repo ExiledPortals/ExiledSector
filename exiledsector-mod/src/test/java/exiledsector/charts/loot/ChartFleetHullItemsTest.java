@@ -15,6 +15,7 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
+import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.StarChartCurrency;
@@ -86,6 +87,30 @@ class ChartFleetHullItemsTest {
             assertFalse(guardLoot.materials().isEmpty());
             assertFalse(bossLoot.upgrades().isEmpty());
             assertTrue(bossLoot.items().stream().anyMatch(item -> "bridge_basic".equals(item.definitionId())));
+        } finally {
+            ItemDrops.clear();
+            ItemDefinitions.clear();
+        }
+    }
+
+    @Test
+    void theBossDropsAtLeastOneHullItemOncePerRun() throws Exception {
+        when(sector.getPlayerStats().getLevel()).thenReturn(15);
+        ItemDefinitions.register(new JSONArray()
+                .put(new JSONObject().put("id", "bridge_basic").put("section", "bridge").put("rarity", "10").put("prefixes", "HULL_PERCENT:4:6")));
+        ItemDrops.register(new JSONArray()
+                .put(new JSONObject().put("site", ChartIds.FLEET_LOOT_SITE).put("chances", "0").put("uniqueChance", "0"))
+                .put(new JSONObject().put("site", ChartIds.BOSS_LOOT_SITE).put("chances", "0").put("uniqueChance", "0")));
+        try {
+            ChartRun run = storeLiveRun(6);
+
+            ItemDrops.SiteLoot firstBattle = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
+                    ChartGenContext.none(), 100f, new Random(1L));
+            ItemDrops.SiteLoot secondBattle = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
+                    ChartGenContext.none(), 100f, new Random(1L));
+
+            assertEquals(List.of("bridge_basic"), firstBattle.items().stream().map(ItemData::definitionId).toList());
+            assertTrue(secondBattle.items().isEmpty(), secondBattle.toString());
         } finally {
             ItemDrops.clear();
             ItemDefinitions.clear();

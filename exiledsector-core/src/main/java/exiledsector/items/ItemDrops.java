@@ -190,6 +190,15 @@ public final class ItemDrops {
         return kernelDrops;
     }
 
+    public static boolean isCraftingCurrency(String itemId) {
+        return kernelDrops().stream().anyMatch(drop -> drop.itemId().equals(itemId));
+    }
+
+    public static String pickCraftingCurrency(Random random) {
+        CurrencyDrop drop = WeightedPick.pick(kernelDrops(), currency -> Math.max(0f, currency.weight()), random);
+        return drop == null ? null : drop.itemId();
+    }
+
     public record CurrencyDrop(String itemId, float weight) {
     }
 
@@ -309,6 +318,11 @@ public final class ItemDrops {
 
     public static ItemDefinition pickSectionItemBasic(ItemKind socketType, Random random, Predicate<ItemDefinition> filter) {
         return pick(random, definition -> definition.kind() == socketType && !definition.unique() && filter.test(definition));
+    }
+
+    public static ItemDefinition pickHullItemBasic(Random random) {
+        List<ItemKind> kindsWithBasics = ItemKind.sectionItemTypes().stream().filter(ItemDrops::hasDroppableBasic).toList();
+        return kindsWithBasics.isEmpty() ? null : pickSectionItemBasic(kindsWithBasics.get(random.nextInt(kindsWithBasics.size())), random);
     }
 
     private static boolean isDroppableBasic(ItemDefinition definition, ItemKind socketType) {

@@ -47,6 +47,7 @@ public final class ChartRun {
     private boolean rewardClaimed;
     private boolean bossTierUpGranted;
     private boolean bossUniqueGranted;
+    private boolean bossLootGuaranteed;
     private String chartData;
     private String anomalies;
     private String atlasNode;
@@ -278,6 +279,14 @@ public final class ChartRun {
 
     public void grantBossUnique() {
         bossUniqueGranted = true;
+    }
+
+    public boolean isBossLootGuaranteed() {
+        return bossLootGuaranteed;
+    }
+
+    public void guaranteeBossLoot() {
+        bossLootGuaranteed = true;
     }
 
     public String anomalyState(String key) {

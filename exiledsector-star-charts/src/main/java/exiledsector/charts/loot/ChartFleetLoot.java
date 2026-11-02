@@ -17,6 +17,7 @@ import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
+import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
@@ -32,6 +33,7 @@ public final class ChartFleetLoot {
 
     public static final String LOOT_FLEETS_MEMORY_KEY = "$exiledSector_chartLootFleets";
     static final Set<ItemType> GUARANTEED_UNIQUE_TYPES = Set.of(ItemType.HULL_ITEM, ItemType.SUBROUTINE);
+    static final float BATTLE_CRAFTING_MULT = 2f;
 
     private ChartFleetLoot() {
     }
@@ -190,6 +192,7 @@ public final class ChartFleetLoot {
             if (guaranteedUnique != null) {
                 fleetLoot = fleetLoot.plus(List.of(guaranteedUnique), List.of(), Map.of());
             }
+            fleetLoot = withBossGuarantees(sector, run, fleetLoot, random);
         }
         return fleetLoot;
     }
@@ -203,6 +206,29 @@ public final class ChartFleetLoot {
             }
         }
         return null;
+    }
+
+    static ItemDrops.SiteLoot withBossGuarantees(SectorAPI sector, ChartRun run, ItemDrops.SiteLoot bossLoot, Random random) {
+        if (run.isBossLootGuaranteed()) {
+            return bossLoot;
+        }
+        run.guaranteeBossLoot();
+        List<ItemData> hullItem = List.of();
+        if (ItemUnlock.available(ItemType.HULL_ITEM, sector) && bossLoot.items().stream().noneMatch(ChartFleetLoot::isHullItem)) {
+            ItemDefinition definition = ItemDrops.pickHullItemBasic(random);
+            hullItem = definition == null ? List.of() : List.of(ItemData.rolled(definition, random.nextLong()));
+        }
+        Map<String, Integer> craftingItem = Map.of();
+        if (bossLoot.materials().keySet().stream().noneMatch(ItemDrops::isCraftingCurrency)) {
+            String currencyId = ItemDrops.pickCraftingCurrency(random);
+            craftingItem = currencyId == null ? Map.of() : Map.of(currencyId, 1);
+        }
+        return bossLoot.plus(hullItem, List.of(), craftingItem);
+    }
+
+    private static boolean isHullItem(ItemData item) {
+        ItemDefinition definition = ItemDefinitions.get(item.definitionId());
+        return definition != null && definition.type() == ItemType.HULL_ITEM;
     }
 
     static ItemData guaranteedUnique(SectorAPI sector, ChartRun run, ChartGenContext context, Random random) {
@@ -221,7 +247,9 @@ public final class ChartFleetLoot {
 
     private static ItemDrops.SiteLoot roll(SectorAPI sector, ChartRun run, ChartGenContext context, String siteId, ChartDrops.Source source,
                                            float chanceMult, Random random) {
-        LootModifiers modifiers = context.lootModifiers(chanceMult);
+        LootModifiers chartModifiers = context.lootModifiers(chanceMult);
+        LootModifiers modifiers = new LootModifiers(chartModifiers.itemChances(), chartModifiers.feedstockMult(),
+                chartModifiers.currencyMult() * BATTLE_CRAFTING_MULT);
         ItemDrops.SiteLoot siteLoot = source == ChartDrops.Source.CHART_FLEET
                 ? ItemDrops.rollFleetSalvage(siteId, random, modifiers.itemChances(), modifiers.feedstockMult(), modifiers.currencyMult())
                 : LootSources.rollSite(sector, siteId, random, modifiers);

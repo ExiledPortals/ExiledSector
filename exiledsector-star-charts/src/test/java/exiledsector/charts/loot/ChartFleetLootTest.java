@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -248,6 +249,35 @@ class ChartFleetLootTest {
         assertEquals(2, chartCount(plainBossLoot));
         assertEquals(3, chartCount(hoardBossLoot));
     }
+    @Test
+    void theBossDropsAtLeastOneCraftingItemOncePerRun() throws Exception {
+        ItemDrops.register(new JSONArray()
+                .put(new JSONObject().put("site", ChartIds.FLEET_LOOT_SITE).put("chances", "0").put("uniqueChance", "0"))
+                .put(new JSONObject().put("site", ChartIds.BOSS_LOOT_SITE).put("chances", "0").put("uniqueChance", "0")));
+        try {
+            ChartRun run = storeLiveRun(6);
+
+            ItemDrops.SiteLoot guardLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 80f), run,
+                    ChartGenContext.none(), 80f, new Random(1L));
+            ItemDrops.SiteLoot firstBattle = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
+                    ChartGenContext.none(), 100f, new Random(1L));
+            ItemDrops.SiteLoot secondBattle = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
+                    ChartGenContext.none(), 100f, new Random(1L));
+
+            assertEquals(0, craftingItemCount(guardLoot));
+            assertEquals(1, craftingItemCount(firstBattle));
+            assertEquals(0, craftingItemCount(secondBattle));
+            assertTrue(run.isBossLootGuaranteed());
+        } finally {
+            ItemDrops.clear();
+        }
+    }
+
+    private static int craftingItemCount(ItemDrops.SiteLoot loot) {
+        return loot.materials().entrySet().stream().filter(material -> ItemDrops.isCraftingCurrency(material.getKey()))
+                .mapToInt(Map.Entry::getValue).sum();
+    }
+
     @Test
     void aChartFleetGetsItsRunsItemChancesAndAnyOtherFleetTheGlobalOnes() throws Exception {
         ChartRun run = storeLiveRun(6);
