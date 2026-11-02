@@ -44,7 +44,7 @@ class NpcTreeTagTest {
         registerType(type("hull_option", SkillTier.SMALL));
         registerType(type("flux_option", SkillTier.SMALL));
         register("optional_1", new SkillType.Builder("optional", "optional", "a.png", SkillTier.SMALL)
-                .optionalOptionIds(List.of("flux_option", "hull_option")).build(), "a");
+                .choiceOptionIds(List.of("flux_option", "hull_option")).build(), "a");
         register("b", type("b_type", SkillTier.NOTABLE), "optional_1");
         registerVolumeSubroutine();
         registerHegemonyAnchor();
@@ -93,7 +93,7 @@ class NpcTreeTagTest {
         List<String> order = List.of("a", "optional_1", "b");
         for (int i = 0; i < Math.min(nodeCount, order.size()); i++) {
             SkillNode node = SkillTree.get(order.get(i));
-            if (node.getType().isOptional()) {
+            if (node.getType().isChoice()) {
                 ShipTrees.selectOption(data, node, SkillTree.getType("hull_option"), 1);
             } else {
                 ShipTrees.allocate(data, node, 1);
@@ -226,7 +226,7 @@ class NpcTreeTagTest {
         ShipSkillData restored = NpcTreeTag.decode(NpcTreeTag.encode(built));
 
         assertEquals(List.copyOf(built.getAllocatedNodeIds()), List.copyOf(restored.getAllocatedNodeIds()));
-        assertEquals("hull_option", restored.getOptionalSelection("optional_1"));
+        assertEquals("hull_option", restored.getChoiceSelection("optional_1"));
         assertEquals(built.getLevel(), restored.getLevel());
         assertEquals(built.getBankedFreeAllocations(), restored.getBankedFreeAllocations());
         assertEquals(2, restored.getBankedFreeAllocations());
@@ -269,7 +269,7 @@ class NpcTreeTagTest {
         assertTrue(restored.isFreeNode("a"));
         assertFalse(restored.isFreeNode("b"));
         assertEquals(List.copyOf(built.getAllocatedNodeIds()), List.copyOf(restored.getAllocatedNodeIds()));
-        assertEquals("hull_option", restored.getOptionalSelection("optional_1"));
+        assertEquals("hull_option", restored.getChoiceSelection("optional_1"));
     }
 
     @Test

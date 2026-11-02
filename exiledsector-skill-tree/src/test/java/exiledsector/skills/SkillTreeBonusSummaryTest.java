@@ -161,12 +161,12 @@ class SkillTreeBonusSummaryTest {
     }
 
     @Test
-    void anOptionalNodeContributesItsChosenOption() {
+    void aChoiceNodeContributesItsChosenOption() {
         SkillType hullOption = small("hull_option", new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 2f));
         SkillTree.registerType(hullOption);
-        SkillNode optional = register("optional_1", new SkillType.Builder("optional", "Optional", "a.png", SkillTier.SMALL)
-                .optionalOptionIds(List.of("hull_option")).build());
-        ShipTrees.selectOption(data, optional, hullOption, 0);
+        SkillNode choice = register("optional_1", new SkillType.Builder("optional", "Optional", "a.png", SkillTier.SMALL)
+                .choiceOptionIds(List.of("hull_option")).build());
+        ShipTrees.selectOption(data, choice, hullOption, 0);
 
         Summary summary = SkillTreeBonusSummary.of(data, HullSize.CRUISER);
 

@@ -114,7 +114,7 @@ public final class NodeSearch {
         if (typeMatches(node.resolveEffectiveType(skillData)) || doctrineEffectsMatch(node, skillData)) {
             return true;
         }
-        for (String optionId : node.getType().getOptionalOptionIds()) {
+        for (String optionId : node.getType().getChoiceOptionIds()) {
             if (typeMatches(SkillTree.getType(optionId))) {
                 return true;
             }

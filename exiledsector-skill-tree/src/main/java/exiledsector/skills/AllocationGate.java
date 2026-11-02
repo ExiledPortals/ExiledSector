@@ -180,7 +180,7 @@ public final class AllocationGate {
         if (!offersOptions(node)) {
             return options;
         }
-        for (String optionId : node.getType().getOptionalOptionIds()) {
+        for (String optionId : node.getType().getChoiceOptionIds()) {
             SkillType option = SkillTree.getType(optionId);
             if (option != null) {
                 options.add(option);
@@ -258,7 +258,7 @@ public final class AllocationGate {
         if (!data.isAllocated(node.getId())) {
             return Verdict.refused(Refusal.NOT_ALLOCATED);
         }
-        if (option != null && option.getId().equals(data.getOptionalSelection(node.getId()))) {
+        if (option != null && option.getId().equals(data.getChoiceSelection(node.getId()))) {
             return Verdict.refused(Refusal.SAME_OPTION);
         }
         return Verdict.fromBlock(NodeEligibility.check(checkedNode(node), option, eligibility.excluding(node.getId(), data)));

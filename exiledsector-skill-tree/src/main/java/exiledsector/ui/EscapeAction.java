@@ -1,9 +1,9 @@
 package exiledsector.ui;
 
 enum EscapeAction {
-    NONE, SOCKET_PLACEMENT, CLOSE_DROPDOWN, STOP_FOLLOWING, EXIT_TEMPLATE_MODE;
+    NONE, SOCKET_PLACEMENT, CLOSE_CHOICE_PICKER, STOP_FOLLOWING, EXIT_TEMPLATE_MODE;
 
-    static EscapeAction resolve(CanvasMode mode, boolean socketEngaged, boolean dropdownOpen, boolean planning) {
+    static EscapeAction resolve(CanvasMode mode, boolean socketEngaged, boolean choicePickerOpen, boolean planning) {
         return switch (mode) {
             case MODAL, HYPERSPACE, ROOT_CHOICE -> NONE;
             case CRAFTING_BENCH -> SOCKET_PLACEMENT;
@@ -11,8 +11,8 @@ enum EscapeAction {
                 if (socketEngaged) {
                     yield SOCKET_PLACEMENT;
                 }
-                if (dropdownOpen) {
-                    yield CLOSE_DROPDOWN;
+                if (choicePickerOpen) {
+                    yield CLOSE_CHOICE_PICKER;
                 }
                 if (mode == CanvasMode.EXOSHIP_VIEW) {
                     yield STOP_FOLLOWING;

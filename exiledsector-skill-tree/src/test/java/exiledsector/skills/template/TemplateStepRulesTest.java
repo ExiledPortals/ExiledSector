@@ -33,7 +33,7 @@ class TemplateStepRulesTest {
         node("lobster", type("lobster_type", SkillTier.SMALL).itemCost(new SkillItemCost("lobster", 1000f)).build());
         SkillTree.registerType(type("hull", SkillTier.SMALL).build());
         SkillTree.registerType(type("pricey", SkillTier.SMALL).itemCost(new SkillItemCost("alpha_core", 1f)).build());
-        node("slot", type("slot_type", SkillTier.SMALL).optionalOptionIds(List.of("hull", "pricey")).build());
+        node("slot", type("slot_type", SkillTier.SMALL).choiceOptionIds(List.of("hull", "pricey")).build());
         data = new ShipSkillData();
         ShipTrees.chooseStartingRoot(data, root);
     }
@@ -79,7 +79,7 @@ class TemplateStepRulesTest {
     }
 
     @Test
-    void anOptionalNodeNeedsOneOfItsOwnOptions() {
+    void aChoiceNodeNeedsOneOfItsOwnOptions() {
         assertEquals(StepVerdict.NO_OPTION, verdict("slot", null));
         assertEquals(StepVerdict.NO_OPTION, verdict("slot", "armor_type"));
     }

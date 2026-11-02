@@ -24,8 +24,8 @@ final class SkillTreeNodeIconRenderer {
         SpriteDraw.drawAtCenter(spriteCache, spritePath, cx, cy, iconSize, iconSize, tint, alphaMult);
     }
 
-    void drawSplitIcon(SkillType optionalType, float cx, float cy, float iconSize, float alphaMult, Color tint) {
-        List<SkillType> options = optionTypesOf(optionalType);
+    void drawSplitIcon(SkillType choiceType, float cx, float cy, float iconSize, float alphaMult, Color tint) {
+        List<SkillType> options = optionTypesOf(choiceType);
         if (options.isEmpty()) return;
         if (options.size() == 1) {
             drawIcon(options.get(0).getIconPath(), cx, cy, iconSize, alphaMult, tint);
@@ -49,17 +49,17 @@ final class SkillTreeNodeIconRenderer {
         GL11.glDisable(GL11.GL_STENCIL_TEST);
     }
 
-    private List<SkillType> optionTypesOf(SkillType optionalType) {
-        List<SkillType> cached = optionTypesByTypeId.get(optionalType.getId());
+    private List<SkillType> optionTypesOf(SkillType choiceType) {
+        List<SkillType> cached = optionTypesByTypeId.get(choiceType.getId());
         if (cached != null) {
             return cached;
         }
         List<SkillType> options = new ArrayList<>();
-        for (String optionId : optionalType.getOptionalOptionIds()) {
+        for (String optionId : choiceType.getChoiceOptionIds()) {
             SkillType option = SkillTree.getType(optionId);
             if (option != null) options.add(option);
         }
-        optionTypesByTypeId.put(optionalType.getId(), options);
+        optionTypesByTypeId.put(choiceType.getId(), options);
         return options;
     }
 

@@ -205,8 +205,8 @@ class ExiledSectorModPluginTest {
     }
 
     @Test
-    void onGameLoadKeepsAnOptionalNodeWhoseChosenOptionIsStillOffered() throws Exception {
-        loadTree(TYPES.replace(" ] }", ", { \"id\": \"slot\", \"name\": \"Slot\", \"icon\": \"a.png\", \"optionalOptions\": [\"armor\"] } ] }"),
+    void onGameLoadKeepsAChoiceNodeWhoseChosenOptionIsStillOffered() throws Exception {
+        loadTree(TYPES.replace(" ] }", ", { \"id\": \"slot\", \"name\": \"Slot\", \"icon\": \"a.png\", \"options\": [\"armor\"] } ] }"),
                 NODES + ", { \"id\": \"slot_1\", \"type\": \"slot\", \"connectedTo\": [\"root\"] }");
         ShipSkillData data = ShipSkillDataManager.get("ship");
         ShipTrees.chooseStartingRoot(data, SkillTree.get("root"));
@@ -215,7 +215,7 @@ class ExiledSectorModPluginTest {
         new ExiledSectorModPlugin().onGameLoad(false);
 
         assertTrue(data.isAllocated("slot_1"));
-        assertEquals("armor", data.getOptionalSelection("slot_1"));
+        assertEquals("armor", data.getChoiceSelection("slot_1"));
     }
 
     @Test

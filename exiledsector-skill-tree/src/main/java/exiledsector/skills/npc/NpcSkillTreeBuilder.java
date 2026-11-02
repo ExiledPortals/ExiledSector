@@ -501,7 +501,7 @@ public final class NpcSkillTreeBuilder {
                 return false;
             }
             SkillType chosenOption = option(node, fitState, searchOptions);
-            if (node.getType().isOptional() && chosenOption == null) {
+            if (node.getType().isChoice() && chosenOption == null) {
                 return false;
             }
             return stillLegal(node, chosenOption, fitState);
@@ -536,7 +536,7 @@ public final class NpcSkillTreeBuilder {
         }
 
         private SkillType option(SkillNode node, State fitState, Map<String, SkillType> searchOptions) {
-            if (!node.getType().isOptional()) {
+            if (!node.getType().isChoice()) {
                 return null;
             }
             SkillType searchOption = searchOptions.get(node.getId());
@@ -549,7 +549,7 @@ public final class NpcSkillTreeBuilder {
                 return preferredOption;
             }
             List<SkillType> options = new ArrayList<>();
-            for (String optionId : node.getType().getOptionalOptionIds()) {
+            for (String optionId : node.getType().getChoiceOptionIds()) {
                 SkillType optionType = SkillTree.getType(optionId);
                 if (optionType != null && optionSkipReason(node.getType(), optionId) == null
                         && optionType.allowsHullSize(profile.hullSize()) && usable(node, optionType, fitState)) {

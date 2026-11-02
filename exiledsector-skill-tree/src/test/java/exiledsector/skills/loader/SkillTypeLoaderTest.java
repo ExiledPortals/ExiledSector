@@ -151,7 +151,7 @@ class SkillTypeLoaderTest {
     }
 
     @Test
-    void missingOptionalOptionsFieldMeansNotOptional() throws Exception {
+    void missingChoiceOptionsFieldMeansNotChoice() throws Exception {
         JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
                 + "\"id\": \"hull\","
                 + "\"name\": \"Hull\","
@@ -160,25 +160,25 @@ class SkillTypeLoaderTest {
 
         SkillType hull = SkillTypeLoader.parseSkillTypes(root).get("hull");
 
-        assertTrue(hull.getOptionalOptionIds().isEmpty());
-        assertFalse(hull.isOptional());
+        assertTrue(hull.getChoiceOptionIds().isEmpty());
+        assertFalse(hull.isChoice());
     }
 
     @Test
-    void parsesOptionalOptionsIntoAnOrderedList() throws Exception {
+    void parsesChoiceOptionsIntoAnOrderedList() throws Exception {
         JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
                 + "\"id\": \"slot\","
                 + "\"name\": \"Optional Skill\","
                 + "\"icon\": \"a.png\","
-                + "\"optionalOptions\": [\"hull\", \"armor\"]"
+                + "\"options\": [\"hull\", \"armor\"]"
                 + "} ] }");
 
         SkillType slot = SkillTypeLoader.parseSkillTypes(root).get("slot");
 
-        assertTrue(slot.isOptional());
-        assertEquals(2, slot.getOptionalOptionIds().size());
-        assertEquals("hull", slot.getOptionalOptionIds().get(0));
-        assertEquals("armor", slot.getOptionalOptionIds().get(1));
+        assertTrue(slot.isChoice());
+        assertEquals(2, slot.getChoiceOptionIds().size());
+        assertEquals("hull", slot.getChoiceOptionIds().get(0));
+        assertEquals("armor", slot.getChoiceOptionIds().get(1));
     }
 
     @Test

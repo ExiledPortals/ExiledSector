@@ -137,7 +137,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             return;
         }
         socketPlacement.dismiss();
-        treeSession.closeDropdown();
+        treeSession.closeChoicePicker();
         searchBar.unfocus();
         ScreenRect cardFrame = chrome.shipCardFrame(canvasPosition);
         float listLeft = cardFrame.left() - canvasPosition.getX();
@@ -262,7 +262,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private boolean openHoveredItemCodex(CanvasMode mode) {
-        if (!mouseKnown || !mode.hoversTree() || treeSession.isDropdownOpen() || socketPlacement.isEngaged()
+        if (!mouseKnown || !mode.hoversTree() || treeSession.isChoicePickerOpen() || socketPlacement.isEngaged()
                 || chrome.contains(canvasPosition, mode, mouseX, mouseY)) {
             return false;
         }
@@ -271,14 +271,14 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private boolean escape(CanvasMode mode) {
-        EscapeAction action = EscapeAction.resolve(mode, socketPlacement.isEngaged(), treeSession.isDropdownOpen(),
+        EscapeAction action = EscapeAction.resolve(mode, socketPlacement.isEngaged(), treeSession.isChoicePickerOpen(),
                 templateUi.isPlanning() && !searchBar.isFocused());
         switch (action) {
             case NONE -> {
                 return false;
             }
             case SOCKET_PLACEMENT -> socketPlacement.escape();
-            case CLOSE_DROPDOWN -> treeSession.closeDropdown();
+            case CLOSE_CHOICE_PICKER -> treeSession.closeChoicePicker();
             case STOP_FOLLOWING -> stopFollowing();
             case EXIT_TEMPLATE_MODE -> templateUi.exitTemplateMode();
         }
@@ -346,7 +346,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         stopFollowing();
         gesture.clear();
         camera.stopDrag();
-        treeSession.closeDropdown();
+        treeSession.closeChoicePicker();
         exoshipView.enter();
         camera.startFollowing(exoshipView.fitZoom(canvasPosition));
         searchBar.unfocus();
@@ -354,7 +354,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private void stopFollowing() {
         if (exoshipView.isActive()) {
-            treeSession.closeDropdown();
+            treeSession.closeChoicePicker();
         }
         camera.stopFollowing();
         exoshipView.leave();
@@ -395,12 +395,12 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             return;
         }
         camera.stopDrag();
-        if (treeSession.isDropdownOpen()) {
-            SkillType option = nodeDrawer.findDropdownOptionAt(layers(), x, y);
+        if (treeSession.isChoicePickerOpen()) {
+            SkillType option = nodeDrawer.findChoicePickerOptionAt(layers(), x, y);
             if (option != null) {
                 gesture.pressTarget(mode, option, x, y, false, false, true);
             } else {
-                treeSession.closeDropdown();
+                treeSession.closeChoicePicker();
             }
         } else if (!pressTarget(mode, treeTargetAt(x, y), event, true)) {
             gesture.pressPan(mode, x, y);
@@ -434,10 +434,10 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         }
         if (panning) {
             camera.stopDrag();
-        } else if (treeSession.isDropdownOpen()) {
-            SkillType releasedOption = nodeDrawer.findDropdownOptionAt(layers(), event.getX(), event.getY());
+        } else if (treeSession.isChoicePickerOpen()) {
+            SkillType releasedOption = nodeDrawer.findChoicePickerOptionAt(layers(), event.getX(), event.getY());
             if (gesture.releasedOn(releasedOption)) {
-                treeSession.commitDropdownSelection(releasedOption);
+                treeSession.commitChoicePickerSelection(releasedOption);
             }
         } else {
             Object released = treeTargetAt(event.getX(), event.getY());
@@ -504,7 +504,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             return;
         }
         gesture.clear();
-        treeSession.closeDropdown();
+        treeSession.closeChoicePicker();
         searchBar.unfocus();
     }
 

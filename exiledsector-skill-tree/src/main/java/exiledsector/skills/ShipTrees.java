@@ -25,8 +25,8 @@ public final class ShipTrees {
             data.charge(node.getId(), opCost);
         }
         data.allocatedNodeIds.add(node.getId());
-        if (data.optionalSelections == null) data.optionalSelections = new LinkedHashMap<>();
-        data.optionalSelections.put(node.getId(), chosenOption.getId());
+        if (data.choiceSelections == null) data.choiceSelections = new LinkedHashMap<>();
+        data.choiceSelections.put(node.getId(), chosenOption.getId());
     }
 
     public static String resolveStartingRootId(ShipSkillData data) {
@@ -210,8 +210,8 @@ public final class ShipTrees {
         ShipSkillData copy = new ShipSkillData();
         copy.startingRootId = resolveStartingRootId(data);
         copy.allocatedNodeIds.addAll(data.allocatedNodeIds);
-        if (data.optionalSelections != null) {
-            copy.optionalSelections.putAll(data.optionalSelections);
+        if (data.choiceSelections != null) {
+            copy.choiceSelections.putAll(data.choiceSelections);
         }
         copy.subroutineGrantedNodeIds = data.subroutineGrantedNodeIds == null ? null : new LinkedHashSet<>(data.subroutineGrantedNodeIds);
         copy.fleetGrantNodeIds = data.fleetGrantNodeIds == null ? null : new LinkedHashSet<>(data.fleetGrantNodeIds);
@@ -406,7 +406,7 @@ public final class ShipTrees {
     }
 
     private static SkillType firstOption(SkillType type) {
-        for (String optionId : type.getOptionalOptionIds()) {
+        for (String optionId : type.getChoiceOptionIds()) {
             SkillType option = SkillTree.getType(optionId);
             if (option != null) {
                 return option;
@@ -495,16 +495,16 @@ public final class ShipTrees {
     }
 
     private static void carryOptionOver(ShipSkillData data, String oldId, String newId) {
-        String oldOptionId = data.optionalSelections == null ? null : data.optionalSelections.remove(oldId);
+        String oldOptionId = data.choiceSelections == null ? null : data.choiceSelections.remove(oldId);
         SkillNode replacement = SkillTree.getDeclared(newId);
-        if (replacement == null || !replacement.getType().isOptional()) {
+        if (replacement == null || !replacement.getType().isChoice()) {
             return;
         }
-        SkillType option = oldOptionId != null && replacement.getType().getOptionalOptionIds().contains(oldOptionId) ? SkillTree.getType(oldOptionId)
+        SkillType option = oldOptionId != null && replacement.getType().getChoiceOptionIds().contains(oldOptionId) ? SkillTree.getType(oldOptionId)
                 : firstOption(replacement.getType());
         if (option != null) {
-            if (data.optionalSelections == null) data.optionalSelections = new LinkedHashMap<>();
-            data.optionalSelections.put(newId, option.getId());
+            if (data.choiceSelections == null) data.choiceSelections = new LinkedHashMap<>();
+            data.choiceSelections.put(newId, option.getId());
         }
     }
 
@@ -535,8 +535,8 @@ public final class ShipTrees {
                 data.release(nodeId);
                 forgotten.add(nodeId);
             } else {
-                if (!node.getType().isOptional() && data.optionalSelections != null) {
-                    data.optionalSelections.remove(nodeId);
+                if (!node.getType().isChoice() && data.choiceSelections != null) {
+                    data.choiceSelections.remove(nodeId);
                 }
                 if (node.getType().getTier() != SkillTier.SOCKET) {
                     data.unsocketItem(nodeId);
@@ -547,7 +547,7 @@ public final class ShipTrees {
     }
 
     private static boolean hasInvalidOption(ShipSkillData data, SkillNode node, Map<String, SkillType> types) {
-        return node.getType().isOptional() && NodeEligibility.optionProblem(node.getType(), data.getOptionalSelection(node.getId()), types::get) != null;
+        return node.getType().isChoice() && NodeEligibility.optionProblem(node.getType(), data.getChoiceSelection(node.getId()), types::get) != null;
     }
 
     public static boolean hasLostStartingRoot(ShipSkillData data, Map<String, SkillNode> tree) {
@@ -576,8 +576,8 @@ public final class ShipTrees {
         if (data.fleetGrantNodeIds != null) {
             data.fleetGrantNodeIds.clear();
         }
-        if (data.optionalSelections != null) {
-            data.optionalSelections.clear();
+        if (data.choiceSelections != null) {
+            data.choiceSelections.clear();
         }
         data.startingRootId = null;
         return released;

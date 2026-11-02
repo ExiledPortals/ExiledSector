@@ -294,7 +294,7 @@ function UnlockConditionRows({ type, onEdit, vocabulary }: Pick<TypeFormProps, '
 }
 
 function OptionalOptions({ type, onEdit, allTypes, onEditOptionType }: Pick<TypeFormProps, 'type' | 'onEdit' | 'allTypes' | 'onEditOptionType'>) {
-  const selected = type.optionalOptions ?? [];
+  const selected = type.options ?? [];
   const candidates = allTypes.filter((candidate) => candidate.id !== type.id).map((candidate) => ({ value: candidate.id, label: candidate.name || candidate.id }));
   const known = new Set(allTypes.map((candidate) => candidate.id));
   return (
@@ -306,7 +306,7 @@ function OptionalOptions({ type, onEdit, allTypes, onEditOptionType }: Pick<Type
         value={selected}
         onChange={(chosen) =>
           onEdit((draft) => {
-            draft.optionalOptions = chosen;
+            draft.options = chosen;
           })
         }
         searchable
@@ -501,7 +501,7 @@ export function TypeForm(props: TypeFormProps) {
             })}
           />
         );
-      case 'optionalOptions':
+      case 'options':
         return <OptionalOptions key={section} type={type} onEdit={onEdit} allTypes={props.allTypes} onEditOptionType={props.onEditOptionType} />;
       case 'texts':
         return (

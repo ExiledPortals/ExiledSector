@@ -43,7 +43,7 @@ export interface SkillType {
   exclusiveHullMods?: string[];
   phantomHullMods?: string[];
   exclusiveSkillTypes?: string[];
-  optionalOptions?: string[];
+  options?: string[];
   flavour?: string;
   flavourAutomated?: string;
   effectText?: string[];

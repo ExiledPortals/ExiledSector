@@ -158,7 +158,7 @@ public final class NodeEligibility {
     }
 
     public static OptionProblem optionProblem(SkillType type, String optionTypeId, Function<String, SkillType> typeLookup) {
-        if (!type.isOptional()) {
+        if (!type.isChoice()) {
             return optionTypeId == null ? null : OptionProblem.UNEXPECTED;
         }
         if (optionTypeId == null) {
@@ -172,7 +172,7 @@ public final class NodeEligibility {
     }
 
     public static SkillType validOption(SkillType type, String optionTypeId, Function<String, SkillType> typeLookup) {
-        if (optionTypeId == null || !type.isOptional() || !type.offersOption(optionTypeId)) {
+        if (optionTypeId == null || !type.isChoice() || !type.offersOption(optionTypeId)) {
             return null;
         }
         return typeLookup.apply(optionTypeId);

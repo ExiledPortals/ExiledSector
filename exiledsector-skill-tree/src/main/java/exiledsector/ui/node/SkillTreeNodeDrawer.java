@@ -61,7 +61,7 @@ public final class SkillTreeNodeDrawer {
     private final SkillTreeWormholeGhostFlights wormholeGhostFlights = new SkillTreeWormholeGhostFlights(new Random());
     private final SkillTreeNodeConnectorRenderer connectorRenderer;
     private final SkillTreeNodeTooltipRenderer tooltipRenderer;
-    private final SkillTreeNodeDropdownRenderer dropdownRenderer;
+    private final SkillTreeNodeChoicePickerRenderer choicePickerRenderer;
     private final WormholeOpenness wormholeOpenness = new WormholeOpenness();
     private final SocketWormholes socketWormholes = new SocketWormholes();
     private final AllocationAnimation allocationAnimation;
@@ -80,7 +80,7 @@ public final class SkillTreeNodeDrawer {
         this.connectorRenderer = new SkillTreeNodeConnectorRenderer(panelStyle, nodeSearch, wormholeOpenness, socketWormholes, beams);
         this.tooltipRenderer = new SkillTreeNodeTooltipRenderer(member, panelStyle);
         this.rootAffinityNumber = new RootAffinityNumber(member.getHullSpec().getHullSize());
-        this.dropdownRenderer = new SkillTreeNodeDropdownRenderer(panelStyle);
+        this.choicePickerRenderer = new SkillTreeNodeChoicePickerRenderer(panelStyle);
     }
 
     public static SkillTreeNodeDrawer attachedTo(TreeAllocationSession session, FleetMemberAPI member, SkillTreePanelStyle panelStyle,
@@ -148,10 +148,10 @@ public final class SkillTreeNodeDrawer {
             startingRootPrompt.setAlpha(alphaMult).draw(viewport.centerX(), viewport.screenY(rootChoice.promptOffsetY()));
         }
 
-        SkillNode dropdownNode = session.dropdownNode();
-        if (dropdownNode != null) {
-            dropdownRenderer.render(dropdownNode, layers.viewportFor(dropdownNode), mouseX, mouseY, hovered, layers.alphaFor(dropdownNode),
-                    session.dropdownOptionUsable());
+        SkillNode choicePickerNode = session.choicePickerNode();
+        if (choicePickerNode != null) {
+            choicePickerRenderer.render(choicePickerNode, layers.viewportFor(choicePickerNode), mouseX, mouseY, hovered, layers.alphaFor(choicePickerNode),
+                    session.choicePickerOptionUsable());
         }
     }
 
@@ -209,7 +209,7 @@ public final class SkillTreeNodeDrawer {
             }
         } else if (!tier.isWormhole()) {
             Color tint = doctrineTint(rewrite, iconTint(node, allocation, allocated));
-            if (effectiveType.isOptional()) {
+            if (effectiveType.isChoice()) {
                 iconRenderer.drawSplitIcon(effectiveType, nodeX, nodeY, iconSize, nodeAlpha, tint);
             } else {
                 iconRenderer.drawIcon(effectiveType.getIconPath(), nodeX, nodeY, iconSize, nodeAlpha, tint);
@@ -264,12 +264,12 @@ public final class SkillTreeNodeDrawer {
     }
 
     public void renderHoverTooltip(TreeLayers layers, float mouseX, float mouseY, float alphaMult) {
-        SkillNode openDropdownNode = session.dropdownNode();
-        if (openDropdownNode != null) {
-            SkillType hoveredOption = dropdownRenderer.findOptionAt(openDropdownNode, layers.viewportFor(openDropdownNode), mouseX, mouseY);
+        SkillNode openChoicePickerNode = session.choicePickerNode();
+        if (openChoicePickerNode != null) {
+            SkillType hoveredOption = choicePickerRenderer.findOptionAt(openChoicePickerNode, layers.viewportFor(openChoicePickerNode), mouseX, mouseY);
             if (hoveredOption != null) {
-                tooltipRenderer.renderTooltipForType(openDropdownNode, hoveredOption, session.viewSnapshot(),
-                        session.dropdownOptionRefusalReason(hoveredOption), mouseX, mouseY, alphaMult);
+                tooltipRenderer.renderTooltipForType(openChoicePickerNode, hoveredOption, session.viewSnapshot(),
+                        session.choicePickerOptionRefusalReason(hoveredOption), mouseX, mouseY, alphaMult);
             } else {
                 tooltipRenderer.endHover();
             }
@@ -303,7 +303,7 @@ public final class SkillTreeNodeDrawer {
     }
 
     private String hoveredGrantSocketId(TreeLayers layers, StartingRootChoice rootChoice, float screenX, float screenY) {
-        if (grantMarkers.isEmpty() || rootChoice.isMoving() || session.dropdownNode() != null) {
+        if (grantMarkers.isEmpty() || rootChoice.isMoving() || session.choicePickerNode() != null) {
             return null;
         }
         List<String> grantingSocketIds = grantMarkers.grantingSocketIds();
@@ -361,10 +361,10 @@ public final class SkillTreeNodeDrawer {
         return socketNodesCache;
     }
 
-    public SkillType findDropdownOptionAt(TreeLayers layers, float screenX, float screenY) {
-        SkillNode openDropdownNode = session.dropdownNode();
-        return openDropdownNode == null ? null
-                : dropdownRenderer.findOptionAt(openDropdownNode, layers.viewportFor(openDropdownNode), screenX, screenY);
+    public SkillType findChoicePickerOptionAt(TreeLayers layers, float screenX, float screenY) {
+        SkillNode openChoicePickerNode = session.choicePickerNode();
+        return openChoicePickerNode == null ? null
+                : choicePickerRenderer.findOptionAt(openChoicePickerNode, layers.viewportFor(openChoicePickerNode), screenX, screenY);
     }
 
     private final class DrawerFeedback implements TreeFeedback {

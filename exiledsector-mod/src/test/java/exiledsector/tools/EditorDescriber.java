@@ -70,9 +70,9 @@ public final class EditorDescriber {
             return new JSONObject().put("error", "Unknown or invalid type \"" + request.getString("typeId") + "\"");
         }
         HullSize hullSize = request.isNull("hullSize") ? null : HullSize.valueOf(request.getString("hullSize"));
-        boolean optionalHint = type.isOptional() && type.getFlavourText() == null;
-        NodeDescription description = optionalHint
-                ? new NodeDescription(List.of(new DescriptionLine(Translation.styled("ui.node.optionalHint"), false)), List.of())
+        boolean choiceHint = type.isChoice() && type.getFlavourText() == null;
+        NodeDescription description = choiceHint
+                ? new NodeDescription(List.of(new DescriptionLine(Translation.styled("ui.node.choiceHint"), false)), List.of())
                 : SkillNode.describeMechanics(type, hullSize);
         StyledText itemCostLine = SkillNode.describeItemCost(type.getItemCost(), null);
         if (itemCostLine != null) {

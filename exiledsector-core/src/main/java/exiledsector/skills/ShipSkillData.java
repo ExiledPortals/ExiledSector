@@ -12,10 +12,11 @@ public class ShipSkillData {
 
     public static final Map<String, String> SAVED_FIELD_NAMES = Map.of("unlockedSections", "unlockedSocketTypes",
             "hullItemsBySection", "frameworkItemsBySocketType", "paidItemCostIds", "chargedItemIds", "paidItemCostQuantities", "chargedItemQuantities",
-            "pairGrantedNodeIds", "pairedFreeNodeIds", "subroutineGrantedNodeIds", "grantFreeNodeIds");
+            "pairGrantedNodeIds", "pairedFreeNodeIds", "subroutineGrantedNodeIds", "grantFreeNodeIds",
+            "choiceSelections", "optionalSelections");
 
     final Set<String> allocatedNodeIds = new LinkedHashSet<>();
-    Map<String, String> optionalSelections = new LinkedHashMap<>();
+    Map<String, String> choiceSelections = new LinkedHashMap<>();
     int level = 0;
     float xp = 0f;
     int bankedFreeAllocations = 0;
@@ -214,9 +215,9 @@ public class ShipSkillData {
         return allocatedNodeIds.contains(nodeId);
     }
 
-    public String getOptionalSelection(String nodeId) {
-        if (optionalSelections == null) return null;
-        return optionalSelections.get(nodeId);
+    public String getChoiceSelection(String nodeId) {
+        if (choiceSelections == null) return null;
+        return choiceSelections.get(nodeId);
     }
 
     public boolean canUnchooseStartingRoot() {
@@ -366,8 +367,8 @@ public class ShipSkillData {
 
     void release(String nodeId) {
         unsocketItem(nodeId);
-        if (optionalSelections != null) {
-            optionalSelections.remove(nodeId);
+        if (choiceSelections != null) {
+            choiceSelections.remove(nodeId);
         }
         if (freeNodeIds().remove(nodeId)) {
             bankedFreeAllocations++;

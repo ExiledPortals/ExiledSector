@@ -44,7 +44,7 @@ public final class NpcTreeTag {
             if (shipData.isFleetGranted(nodeId)) {
                 continue;
             }
-            nodeEntries.add(new NodeEntry(nodeId, shipData.getOptionalSelection(nodeId)).format());
+            nodeEntries.add(new NodeEntry(nodeId, shipData.getChoiceSelection(nodeId)).format());
         }
         String tag = PREFIX + GENERATED + FIELD_SEPARATOR + shipData.getLevel() + FIELD_SEPARATOR + String.join(NODE_SEPARATOR, nodeEntries);
         List<String> socketEntries = new ArrayList<>();
@@ -166,7 +166,7 @@ public final class NpcTreeTag {
                 return;
             }
         }
-        if (!node.getType().isOptional()) {
+        if (!node.getType().isChoice()) {
             ShipTrees.allocate(shipData, node, CHARGED_NODE_COST);
             socketAnchor(shipData, node, anchorsBySocketId.get(nodeId));
             return;

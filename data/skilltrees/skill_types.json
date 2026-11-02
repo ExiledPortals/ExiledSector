@@ -2572,7 +2572,7 @@
 			"id": "small_flux_optional",
 			"name": "Affinity",
 			"icon": "graphics/icons/small_flux_optional.png",
-			"optionalOptions": [
+			"options": [
 				"affinity_low_tech",
 				"affinity_high_tech",
 				"affinity_midline"
@@ -3020,7 +3020,7 @@
 			"id": "shield_turn_raise_rate_optional",
 			"name": "Shield Raise rate or Shield Turn rate",
 			"icon": "graphics/icons/shield_turn_raise_rate_optional.png",
-			"optionalOptions": [
+			"options": [
 				"shield_raise_rate",
 				"shield_turn_rate"
 			],
@@ -3033,7 +3033,7 @@
 			"id": "ballistic_or_energy_damage_optional",
 			"name": "Ballistic or Energy Weapon Damage",
 			"icon": "graphics/icons/ballistic_damage.png",
-			"optionalOptions": [
+			"options": [
 				"ballistic_damage",
 				"non_beam_energy_damage"
 			],

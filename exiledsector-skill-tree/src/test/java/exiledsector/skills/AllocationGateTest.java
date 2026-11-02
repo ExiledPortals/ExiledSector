@@ -55,8 +55,8 @@ class AllocationGateTest {
         return node;
     }
 
-    private static SkillNode optional(String id, SkillType... options) {
-        return node(id, registered(type(id + "_type", SkillTier.SMALL).optionalOptionIds(Arrays.stream(options).map(SkillType::getId).toList())
+    private static SkillNode choice(String id, SkillType... options) {
+        return node(id, registered(type(id + "_type", SkillTier.SMALL).choiceOptionIds(Arrays.stream(options).map(SkillType::getId).toList())
                 .build()), "root");
     }
 
@@ -110,10 +110,10 @@ class AllocationGateTest {
     }
 
     @Test
-    void anOptionalNodeIsAllocatableWhenAnyOfItsOptionsIs() {
+    void aChoiceNodeIsAllocatableWhenAnyOfItsOptionsIs() {
         SkillType capitalOption = registered(type("capital_option", SkillTier.SMALL).requiredHullSizes(List.of(HullSize.CAPITAL_SHIP)).build());
         SkillType anyOption = registered(type("any_option", SkillTier.SMALL).build());
-        SkillNode choice = optional("choice", capitalOption, anyOption);
+        SkillNode choice = choice("choice", capitalOption, anyOption);
 
         AllocationGate gate = gate();
         assertTrue(gate.allocation(choice).allowed());
@@ -123,10 +123,10 @@ class AllocationGateTest {
     }
 
     @Test
-    void anOptionalNodeWhoseOptionsAreAllRefusedReportsTheFirstOptionsReason() {
+    void aChoiceNodeWhoseOptionsAreAllRefusedReportsTheFirstOptionsReason() {
         SkillType capitalOption = registered(type("capital_option", SkillTier.SMALL).requiredHullSizes(List.of(HullSize.CAPITAL_SHIP)).build());
         SkillType pricedOption = registered(type("priced_option", SkillTier.SMALL).itemCost(new SkillItemCost("alpha_core", 1f)).build());
-        SkillNode choice = optional("choice", capitalOption, pricedOption);
+        SkillNode choice = choice("choice", capitalOption, pricedOption);
 
         assertEquals(NodeEligibility.Kind.WRONG_HULL_SIZE, gate().allocation(choice).block().kind());
     }
@@ -143,7 +143,7 @@ class AllocationGateTest {
     @Test
     void theContainersOwnLockAppliesToEveryOption() {
         SkillType option = registered(type("plain_option", SkillTier.SMALL).build());
-        SkillNode choice = optional("choice", option);
+        SkillNode choice = choice("choice", option);
         SkillType container = choice.getType();
 
         AllocationGate.Verdict verdict = gate(AMPLE_OP, AMPLE_NODE_CAP, itemId -> 0, type -> type == container).allocation(choice, option);
@@ -171,8 +171,8 @@ class AllocationGateTest {
     void switchingToTheSameOptionIsRefusedAndAnUnallocatedNodeCannotSwitch() {
         SkillType first = registered(type("first_option", SkillTier.SMALL).build());
         SkillType second = registered(type("second_option", SkillTier.SMALL).build());
-        SkillNode choice = optional("choice", first, second);
-        SkillNode other = optional("other", first, second);
+        SkillNode choice = choice("choice", first, second);
+        SkillNode other = choice("other", first, second);
         ShipTrees.selectOption(data, choice, first, OP_PER_NODE);
 
         AllocationGate gate = gate();
@@ -187,7 +187,7 @@ class AllocationGateTest {
                 .effects(List.of(new SkillTypeEffect(ShieldSkillEffect.CONVERT_SHIELD_TO_FRONT, 1f))).build());
         SkillType otherFrontConversion = registered(type("other_front_conversion", SkillTier.SMALL)
                 .effects(List.of(new SkillTypeEffect(ShieldSkillEffect.CONVERT_SHIELD_TO_FRONT, 1f))).build());
-        SkillNode choice = optional("choice", frontConversion, otherFrontConversion);
+        SkillNode choice = choice("choice", frontConversion, otherFrontConversion);
         ShipTrees.selectOption(data, choice, frontConversion, OP_PER_NODE);
         NodeEligibility.Context eligibility = NodeEligibility.Context.of(data,
                 new ShipFacts(HullSize.FRIGATE, ShieldType.OMNI, false, 100f, hullModId -> false), null, itemId -> 0);
@@ -202,7 +202,7 @@ class AllocationGateTest {
     void anOptionSwitchCountsTheRefundOfTheReplacedOptionsItem() {
         SkillType first = registered(type("first_option", SkillTier.SMALL).itemCost(new SkillItemCost("alpha_core", 1f)).build());
         SkillType second = registered(type("second_option", SkillTier.SMALL).itemCost(new SkillItemCost("alpha_core", 1f)).build());
-        SkillNode choice = optional("choice", first, second);
+        SkillNode choice = choice("choice", first, second);
         ShipTrees.selectOption(data, choice, first, OP_PER_NODE);
         ItemCostLedger.recordPaidItemCost(data, "choice", first.getItemCost());
         Map<String, Double> cargo = Map.of("alpha_core", 0d);

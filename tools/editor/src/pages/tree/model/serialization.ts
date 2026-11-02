@@ -115,8 +115,8 @@ export function serializeType(type: SkillType): Record<string, unknown> {
   if (type.exclusiveSkillTypes?.length) {
     out.exclusiveSkillTypes = type.exclusiveSkillTypes;
   }
-  if (type.optionalOptions?.length) {
-    out.optionalOptions = type.optionalOptions;
+  if (type.options?.length) {
+    out.options = type.options;
   }
   if (type.flavour) {
     out.flavour = type.flavour;

@@ -69,12 +69,12 @@ class ModspecCachesTest {
     }
 
     private static SkillNode node(String id, SkillTier tier, String volume, List<String> optionIds) {
-        SkillType type = new SkillType.Builder(id + "_type", id, "a.png", tier).effects(List.of()).optionalOptionIds(optionIds).build();
+        SkillType type = new SkillType.Builder(id + "_type", id, "a.png", tier).effects(List.of()).choiceOptionIds(optionIds).build();
         return new SkillNode(id, type, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of(volume));
     }
 
     @Test
-    void aCacheRollsFromTheNotablesOfEveryVolumeLeavingOutExcludedAndOptionalOnes() {
+    void aCacheRollsFromTheNotablesOfEveryVolumeLeavingOutExcludedAndChoiceOnes() {
         assertEquals(List.of("abyss_notable", "core_notable_a", "hegemony_notable"), SubroutineNodePools.candidates(ItemDefinitions.get(CACHE)));
 
         Subroutine rolled = assertInstanceOf(Subroutine.class, new ItemStore().add(ItemDefinitions.get(CACHE), 42L));

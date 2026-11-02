@@ -72,24 +72,24 @@ class NodeReplacementsTest {
     }
 
     @Test
-    void aNodeReplacedByAnOptionalNodeTakesItsFirstOptionUnlessItAlreadyHadOneOnOffer() {
+    void aNodeReplacedByAChoiceNodeTakesItsFirstOptionUnlessItAlreadyHadOneOnOffer() {
         SkillType hull = node("hull_option", SkillTier.SMALL).getType();
         SkillType armor = node("armor_option", SkillTier.SMALL).getType();
-        SkillType optionalType = new SkillType.Builder("optional_type", "optional", "", SkillTier.SMALL)
-                .optionalOptionIds(List.of(hull.getId(), armor.getId())).build();
-        SkillTree.registerType(optionalType);
-        SkillTree.register(new SkillNode("optional", optionalType, List.of(), 0f, 0f));
+        SkillType choiceType = new SkillType.Builder("optional_type", "optional", "", SkillTier.SMALL)
+                .choiceOptionIds(List.of(hull.getId(), armor.getId())).build();
+        SkillTree.registerType(choiceType);
+        SkillTree.register(new SkillNode("optional", choiceType, List.of(), 0f, 0f));
         ShipSkillData plain = new ShipSkillData();
         ShipTrees.allocate(plain, new SkillNode("plain", kept.getType(), List.of(), 0f, 0f), 3);
         ShipSkillData chosen = new ShipSkillData();
-        ShipTrees.selectOption(chosen, new SkillNode("chosen", optionalType, List.of(), 0f, 0f), armor, 3);
+        ShipTrees.selectOption(chosen, new SkillNode("chosen", choiceType, List.of(), 0f, 0f), armor, 3);
 
         assertTrue(ShipTrees.replaceNode(plain, "plain", "optional"));
         assertTrue(ShipTrees.replaceNode(chosen, "chosen", "optional"));
 
-        assertEquals(hull.getId(), plain.getOptionalSelection("optional"));
-        assertEquals(armor.getId(), chosen.getOptionalSelection("optional"));
-        assertNull(chosen.getOptionalSelection("chosen"));
+        assertEquals(hull.getId(), plain.getChoiceSelection("optional"));
+        assertEquals(armor.getId(), chosen.getChoiceSelection("optional"));
+        assertNull(chosen.getChoiceSelection("chosen"));
     }
 
     @Test
@@ -139,13 +139,13 @@ class NodeReplacementsTest {
     }
 
     @Test
-    void anNpcTreeThatHadTheRemovedOptionalNodeNowHasTheSocket() {
+    void anNpcTreeThatHadTheRemovedChoiceNodeNowHasTheSocket() {
         ShipSkillData data = NpcTreeTag.decode(NpcTreeTag.PREFIX + "generated|5|root,removed=flux_capacity,kept");
 
         assertNotNull(data);
         assertTrue(data.isAllocated("socket"));
         assertTrue(data.isAllocated("kept"));
-        assertNull(data.getOptionalSelection("socket"));
+        assertNull(data.getChoiceSelection("socket"));
     }
 
     @Test

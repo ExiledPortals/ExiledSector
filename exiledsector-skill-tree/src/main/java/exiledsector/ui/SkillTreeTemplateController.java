@@ -237,7 +237,7 @@ final class SkillTreeTemplateController {
         if (startingRoot == null || !barState.saveEnabled()) {
             return;
         }
-        treeSession.closeDropdown();
+        treeSession.closeChoicePicker();
         SkillTreeSounds.panelOpened();
         SkillTreeTemplate template = treeSession.template();
         if (treeSession.isPlanning() && template != null) {
@@ -251,7 +251,7 @@ final class SkillTreeTemplateController {
         if (startingRoot == null || !barState.loadEnabled()) {
             return;
         }
-        treeSession.closeDropdown();
+        treeSession.closeChoicePicker();
         SkillTreeSounds.panelOpened();
         listOverlay.open(startingRoot.getId(), startingRoot.getType().getDisplayName(), hullSize(), SkillTreeTemplateStore.all(), assignedTemplateId());
     }

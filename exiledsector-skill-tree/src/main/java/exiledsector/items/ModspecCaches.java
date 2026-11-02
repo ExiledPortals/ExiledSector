@@ -175,7 +175,7 @@ public final class ModspecCaches {
     }
 
     static boolean isGrantable(SkillNode node) {
-        return node.getType().getTier() == SkillTier.NOTABLE && !node.getType().isOptional();
+        return node.getType().getTier() == SkillTier.NOTABLE && !node.getType().isChoice();
     }
 
     public static List<ItemData> rollSalvage(Random random, float chanceMult) {

@@ -58,8 +58,8 @@ class NodeEligibilityTest {
         return registered(type(id, SkillTier.NOTABLE).effects(List.of(new SkillTypeEffect(effect, 1f))).build());
     }
 
-    private static SkillNode optionalNode(String id, SkillType.Builder container, SkillType... options) {
-        return node(id, registered(container.optionalOptionIds(List.of(options).stream().map(SkillType::getId).toList()).build()));
+    private static SkillNode choiceNode(String id, SkillType.Builder container, SkillType... options) {
+        return node(id, registered(container.choiceOptionIds(List.of(options).stream().map(SkillType::getId).toList()).build()));
     }
 
     private NodeEligibility.Block check(SkillNode node, SkillType option, ShipFacts ship) {
@@ -67,9 +67,9 @@ class NodeEligibilityTest {
     }
 
     @Test
-    void anOptionalNodeWithoutAChosenOptionIsBlockedForEveryCallerBeforeLocks() {
+    void aChoiceNodeWithoutAChosenOptionIsBlockedForEveryCallerBeforeLocks() {
         SkillType hull = registered(type("hull", SkillTier.SMALL).build());
-        SkillNode slot = optionalNode("slot", type("slot_type", SkillTier.SMALL), hull);
+        SkillNode slot = choiceNode("slot", type("slot_type", SkillTier.SMALL), hull);
 
         NodeEligibility.Block unlocked = check(slot, null, FRONT_SHIELDED_FRIGATE);
         NodeEligibility.Block locked = NodeEligibility.check(slot, null, NodeEligibility.Context.of(data, FRONT_SHIELDED_FRIGATE, type -> true));
@@ -85,7 +85,7 @@ class NodeEligibilityTest {
     void anOptionIsValidOnlyWhenListedByTheContainerAndKnownToTheTypeLookup() {
         SkillType hull = registered(type("hull", SkillTier.SMALL).build());
         SkillType unlisted = registered(type("unlisted", SkillTier.SMALL).build());
-        SkillType container = optionalNode("slot", type("slot_type", SkillTier.SMALL), hull).getType();
+        SkillType container = choiceNode("slot", type("slot_type", SkillTier.SMALL), hull).getType();
 
         assertEquals(hull, NodeEligibility.validOption(container, "hull"));
         assertNull(NodeEligibility.validOption(container, "unlisted"));
@@ -98,7 +98,7 @@ class NodeEligibilityTest {
     @Test
     void aContainersExclusiveHullModBlocksEveryOptionAndIsStrippedForThem() {
         SkillType hull = registered(type("hull", SkillTier.SMALL).build());
-        SkillNode slot = optionalNode("slot", type("slot_type", SkillTier.SMALL).exclusiveHullModIds(List.of("heavyarmor")), hull);
+        SkillNode slot = choiceNode("slot", type("slot_type", SkillTier.SMALL).exclusiveHullModIds(List.of("heavyarmor")), hull);
 
         NodeEligibility.Block block = check(slot, hull, facts(ShieldType.FRONT, Set.of("heavyarmor")));
 
@@ -110,7 +110,7 @@ class NodeEligibilityTest {
     @Test
     void aContainerRestrictedToOtherHullSizesBlocksEveryOption() {
         SkillType hull = registered(type("hull", SkillTier.SMALL).build());
-        SkillNode slot = optionalNode("slot", type("slot_type", SkillTier.SMALL).requiredHullSizes(List.of(HullSize.CAPITAL_SHIP)), hull);
+        SkillNode slot = choiceNode("slot", type("slot_type", SkillTier.SMALL).requiredHullSizes(List.of(HullSize.CAPITAL_SHIP)), hull);
 
         assertEquals(NodeEligibility.Kind.WRONG_HULL_SIZE, check(slot, hull, FRONT_SHIELDED_FRIGATE).kind());
     }
@@ -120,7 +120,7 @@ class NodeEligibilityTest {
         SkillNode militarized = node("militarized", registered(type("militarized_type", SkillTier.NOTABLE)
                 .tags(List.of("logistics", "req_civilian_hull")).build()));
         SkillType civilianOption = registered(type("civilian_option", SkillTier.SMALL).tags(List.of("req_civilian_hull")).build());
-        SkillNode slot = optionalNode("slot", type("slot_type", SkillTier.SMALL), civilianOption);
+        SkillNode slot = choiceNode("slot", type("slot_type", SkillTier.SMALL), civilianOption);
         ShipFacts civilian = facts(ShieldType.FRONT, Set.of("civgrade"));
 
         NodeEligibility.Block block = check(militarized, null, FRONT_SHIELDED_FRIGATE);
@@ -137,7 +137,7 @@ class NodeEligibilityTest {
         SkillNode guard = node("guard", registered(type("guard_type", SkillTier.SMALL)
                 .exclusiveSkillTypeIds(List.of("slot_type")).build()));
         SkillType hull = registered(type("hull", SkillTier.SMALL).build());
-        SkillNode slot = optionalNode("slot", type("slot_type", SkillTier.SMALL), hull);
+        SkillNode slot = choiceNode("slot", type("slot_type", SkillTier.SMALL), hull);
         ShipTrees.allocate(data, guard, 0);
 
         NodeEligibility.Block block = check(slot, hull, FRONT_SHIELDED_FRIGATE);
@@ -149,7 +149,7 @@ class NodeEligibilityTest {
     @Test
     void anExclusivityOnAnAllocatedContainerBlocksTheTypeItNames() {
         SkillType hull = registered(type("hull", SkillTier.SMALL).build());
-        SkillNode slot = optionalNode("slot", type("slot_type", SkillTier.SMALL).exclusiveSkillTypeIds(List.of("later_type")), hull);
+        SkillNode slot = choiceNode("slot", type("slot_type", SkillTier.SMALL).exclusiveSkillTypeIds(List.of("later_type")), hull);
         SkillNode later = node("later", registered(type("later_type", SkillTier.SMALL).build()));
         ShipTrees.selectOption(data, slot, hull, 0);
 

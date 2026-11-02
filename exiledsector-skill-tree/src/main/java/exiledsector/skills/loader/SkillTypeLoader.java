@@ -78,7 +78,7 @@ public final class SkillTypeLoader {
         SkillTier tier = SkillTier.valueOf(typeJson.optString("tier", "SMALL"));
         List<SkillTypeEffect> effects = parseEffects(typeJson.optJSONArray("effects"));
         List<HullSizeSkillEffect> hullSizeEffects = parseHullSizeEffects(typeJson.optJSONArray("hullSizeEffects"));
-        List<String> optionalOptionIds = parseStringArray(typeJson.optJSONArray("optionalOptions"));
+        List<String> choiceOptionIds = parseStringArray(typeJson.optJSONArray("options"));
         List<String> exclusiveHullModIds = parseStringArray(typeJson.optJSONArray("exclusiveHullMods"));
         List<String> phantomHullModIds = parseStringArray(typeJson.optJSONArray("phantomHullMods"));
         List<String> exclusiveSkillTypeIds = parseStringArray(typeJson.optJSONArray("exclusiveSkillTypes"));
@@ -102,7 +102,7 @@ public final class SkillTypeLoader {
                 .flavourAutomated(typeJson.optString("flavourAutomated", null))
                 .effectText(parseStringArray(typeJson.optJSONArray("effectText")))
                 .todo(typeJson.optString("todo", null))
-                .optionalOptionIds(optionalOptionIds)
+                .choiceOptionIds(choiceOptionIds)
                 .exclusiveHullModIds(exclusiveHullModIds)
                 .phantomHullModIds(phantomHullModIds)
                 .exclusiveSkillTypeIds(exclusiveSkillTypeIds)

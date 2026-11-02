@@ -95,12 +95,12 @@ export function joinEntries(entries: readonly string[]): string {
 }
 
 export function doctrineTypeFacts(typesText: string): Record<string, DoctrineTypeFacts> {
-  const types = (JSON.parse(typesText) as { skillTypes?: { id?: string; tier?: string; optionalOptions?: unknown[]; itemCost?: unknown }[] }).skillTypes ?? [];
+  const types = (JSON.parse(typesText) as { skillTypes?: { id?: string; tier?: string; options?: unknown[]; itemCost?: unknown }[] }).skillTypes ?? [];
   const facts: Record<string, DoctrineTypeFacts> = {};
   for (const type of types) {
     facts[String(type.id ?? '')] = {
       tier: String(type.tier ?? 'SMALL'),
-      optional: Array.isArray(type.optionalOptions) && type.optionalOptions.length > 0,
+      optional: Array.isArray(type.options) && type.options.length > 0,
       itemCost: type.itemCost !== undefined && type.itemCost !== null,
     };
   }

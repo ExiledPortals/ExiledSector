@@ -36,7 +36,7 @@ public final class OptionalApi {
         this.runtimeFailure = runtimeFailure;
     }
 
-    // java:S1181: MethodHandle.invoke declares Throwable, and nothing an optional mod throws may reach the game
+    // java:S1181: MethodHandle.invoke declares Throwable, and nothing an choice mod throws may reach the game
     @SuppressWarnings("java:S1181")
     public <T> T call(Call<T> call, T fallback) {
         if (unavailable) {

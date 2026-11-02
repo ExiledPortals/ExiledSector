@@ -59,15 +59,15 @@ public final class TreeAllocationSession {
     private final TemplateStepExecutor stepExecutor;
     private final Function<TemplateStep, StepVerdict> attemptStep;
     private final BooleanSupplier pointsLeftCheck;
-    private final Predicate<SkillType> dropdownOptionUsable = this::isDropdownOptionUsable;
+    private final Predicate<SkillType> choicePickerOptionUsable = this::isChoicePickerOptionUsable;
     private final TemplatePlanner planner;
     private final ReleaseConfirmation releaseConfirmation = new ReleaseConfirmation();
 
     private TreeFeedback feedback = TreeFeedback.NONE;
     private StartingRootChoice rootChoice;
     private NodeAllocator.Snapshot allocationSnapshot;
-    private SkillType lastChosenOptionalOption;
-    private SkillNode dropdownNode;
+    private SkillType lastChosenOption;
+    private SkillNode choicePickerNode;
     private String targetedSocketId;
     private SkillTreeTemplate template;
     private Set<String> templateNodeIds = Set.of();
@@ -138,12 +138,12 @@ public final class TreeAllocationSession {
         return planner.isPlannedOnly(node);
     }
 
-    SkillNode dropdownNode() {
-        return dropdownNode;
+    SkillNode choicePickerNode() {
+        return choicePickerNode;
     }
 
-    Predicate<SkillType> dropdownOptionUsable() {
-        return dropdownOptionUsable;
+    Predicate<SkillType> choicePickerOptionUsable() {
+        return choicePickerOptionUsable;
     }
 
     String targetedSocketId() {
@@ -212,7 +212,7 @@ public final class TreeAllocationSession {
         if (!allocator.unchooseStartingRoot(root)) {
             return false;
         }
-        dropdownNode = null;
+        choicePickerNode = null;
         stopPlanning();
         setTemplate(null);
         nodeSearch.setQuery("");
@@ -344,7 +344,7 @@ public final class TreeAllocationSession {
         if (allocator.deallocate(node, allocation)) {
             afterAllocationChange(allocatedBefore, node);
         } else if (allocation.gate().offersOptions(node)) {
-            dropdownNode = node;
+            choicePickerNode = node;
         } else {
             SkillTreeSounds.refused();
         }
@@ -366,48 +366,48 @@ public final class TreeAllocationSession {
         return allocation.isHidden(node) || allocation.isHidden(paired) ? null : paired;
     }
 
-    public boolean isDropdownOpen() {
-        return dropdownNode != null;
+    public boolean isChoicePickerOpen() {
+        return choicePickerNode != null;
     }
 
-    public void closeDropdown() {
-        dropdownNode = null;
+    public void closeChoicePicker() {
+        choicePickerNode = null;
     }
 
-    public void commitDropdownSelection(SkillType chosenOption) {
-        SkillNode node = dropdownNode;
-        dropdownNode = null;
+    public void commitChoicePickerSelection(SkillType chosenOption) {
+        SkillNode node = choicePickerNode;
+        choicePickerNode = null;
         if (node != null) {
-            allocateOptionalNode(node, chosenOption);
+            allocateChoiceNode(node, chosenOption);
         }
     }
 
     private void chooseOption(SkillNode node, boolean ctrlDown) {
         SkillType repeatedOption = ctrlDown ? repeatableOptionFor(node) : null;
         if (repeatedOption != null) {
-            allocateOptionalNode(node, repeatedOption);
+            allocateChoiceNode(node, repeatedOption);
         } else {
-            dropdownNode = node;
+            choicePickerNode = node;
         }
     }
 
     private SkillType repeatableOptionFor(SkillNode node) {
-        if (lastChosenOptionalOption == null || !node.getType().getOptionalOptionIds().contains(lastChosenOptionalOption.getId())) {
+        if (lastChosenOption == null || !node.getType().getChoiceOptionIds().contains(lastChosenOption.getId())) {
             return null;
         }
-        return viewSnapshot().gate().allocation(node, lastChosenOptionalOption).allowed() ? lastChosenOptionalOption : null;
+        return viewSnapshot().gate().allocation(node, lastChosenOption).allowed() ? lastChosenOption : null;
     }
 
-    private boolean isDropdownOptionUsable(SkillType option) {
-        if (dropdownNode == null) {
+    private boolean isChoicePickerOptionUsable(SkillType option) {
+        if (choicePickerNode == null) {
             return false;
         }
-        AllocationGate.Verdict verdict = optionVerdict(dropdownNode, option, viewSnapshot());
+        AllocationGate.Verdict verdict = optionVerdict(choicePickerNode, option, viewSnapshot());
         return verdict.allowed() || verdict.refusal() == AllocationGate.Refusal.SAME_OPTION;
     }
 
-    String dropdownOptionRefusalReason(SkillType option) {
-        return dropdownNode == null ? null : viewSnapshot().optionRefusalReason(dropdownNode, option);
+    String choicePickerOptionRefusalReason(SkillType option) {
+        return choicePickerNode == null ? null : viewSnapshot().optionRefusalReason(choicePickerNode, option);
     }
 
     static AllocationGate.Verdict optionVerdict(SkillNode node, SkillType option, NodeAllocator.Snapshot allocation) {
@@ -415,9 +415,9 @@ public final class TreeAllocationSession {
                 ? allocation.gate().optionSwitch(node, option) : allocation.gate().allocation(node, option);
     }
 
-    private void allocateOptionalNode(SkillNode node, SkillType chosenOption) {
+    private void allocateChoiceNode(SkillNode node, SkillType chosenOption) {
         if (planner.isActive()) {
-            planOptionalNode(node, chosenOption);
+            plaChoiceNode(node, chosenOption);
             return;
         }
         NodeAllocator.Snapshot allocation = snapshot();
@@ -431,7 +431,7 @@ public final class TreeAllocationSession {
             SkillTreeSounds.refused();
             return;
         }
-        lastChosenOptionalOption = chosenOption;
+        lastChosenOption = chosenOption;
         if (wasAllocated) {
             refreshAfterAllocation();
             SkillTreeSounds.allocated(allocationSound(node.getType().getTier()));
@@ -449,7 +449,7 @@ public final class TreeAllocationSession {
         if (respecPlan.isEmpty()) {
             return false;
         }
-        dropdownNode = null;
+        choicePickerNode = null;
         Set<String> allocatedBefore = allocatedNodeIds();
         for (SkillNode step : respecPlan) {
             if (!removeForRespec(step)) {
@@ -478,7 +478,7 @@ public final class TreeAllocationSession {
         this.template = newTemplate;
         this.templateNodeIds = newTemplate == null ? Set.of() : newTemplate.nodeIds();
         if (planner.isActive()) {
-            dropdownNode = null;
+            choicePickerNode = null;
             planner.start(newTemplate);
         }
     }
@@ -491,14 +491,14 @@ public final class TreeAllocationSession {
         if (planner.isActive() || isBusy() || getStartingRoot() == null) {
             return false;
         }
-        dropdownNode = null;
+        choicePickerNode = null;
         planner.start(template);
         return true;
     }
 
     public void stopPlanning() {
         if (planner.isActive()) {
-            dropdownNode = null;
+            choicePickerNode = null;
             planner.stop();
         }
     }
@@ -532,7 +532,7 @@ public final class TreeAllocationSession {
             if (planner.remove(node)) {
                 planChanged(node, false);
             } else if (plan.gate().offersOptions(node)) {
-                dropdownNode = node;
+                choicePickerNode = node;
             } else {
                 SkillTreeSounds.refused();
             }
@@ -547,16 +547,16 @@ public final class TreeAllocationSession {
         }
     }
 
-    private void planOptionalNode(SkillNode node, SkillType chosenOption) {
+    private void plaChoiceNode(SkillNode node, SkillType chosenOption) {
         boolean wasPlanned = planner.isPlannedOnly(node);
-        if (wasPlanned && chosenOption.getId().equals(planner.snapshot().skillData().getOptionalSelection(node.getId()))) {
+        if (wasPlanned && chosenOption.getId().equals(planner.snapshot().skillData().getChoiceSelection(node.getId()))) {
             return;
         }
         if (!(wasPlanned ? planner.switchOption(node, chosenOption) : planner.add(node, chosenOption))) {
             SkillTreeSounds.refused();
             return;
         }
-        lastChosenOptionalOption = chosenOption;
+        lastChosenOption = chosenOption;
         planChanged(node, true);
     }
 
@@ -578,7 +578,7 @@ public final class TreeAllocationSession {
         if (template == null || isBusy() || planner.isActive()) {
             return false;
         }
-        dropdownNode = null;
+        choicePickerNode = null;
         Set<String> allocatedBefore = allocatedNodeIds();
         lastRunSummary = AutoAllocateRun.run(template.steps(), attemptStep, pointsLeftCheck);
         afterAllocationChange(allocatedBefore, null);

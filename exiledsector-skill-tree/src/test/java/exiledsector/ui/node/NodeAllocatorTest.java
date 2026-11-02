@@ -257,7 +257,7 @@ class NodeAllocatorTest {
     }
 
     @Test
-    void anOptionalNodesContainerRulesApplyToTheOptionChosen() {
+    void aChoiceNodesContainerRulesApplyToTheOptionChosen() {
         HullModSpecAPI spec = mock(HullModSpecAPI.class);
         when(spec.getDisplayName()).thenReturn("Heavy Armor");
         when(settings.getHullModSpec("heavyarmor")).thenReturn(spec);
@@ -265,7 +265,7 @@ class NodeAllocatorTest {
         SkillType plain = type("plain", "Plain", SkillTier.SMALL).build();
         SkillTree.registerType(plain);
         SkillNode slot = register("slot_1", type("slot", "Slot", SkillTier.SMALL).exclusiveHullModIds(List.of("heavyarmor"))
-                .optionalOptionIds(List.of("plain")).build(), "root_1");
+                .choiceOptionIds(List.of("plain")).build(), "root_1");
 
         assertEquals("Ship already has Heavy Armor installed.", allocatorStartingAt(root).snapshot().allocationRefusalReason(slot, plain));
     }
@@ -311,15 +311,15 @@ class NodeAllocatorTest {
         verify(cargo, never()).addCommodity(anyString(), anyFloat());
     }
 
-    private SkillNode optionalNodeWithPricedOptions() {
+    private SkillNode choiceNodeWithPricedOptions() {
         SkillTree.registerType(type("scanner", "Scanner", SkillTier.SMALL).itemCost(new SkillItemCost("alpha_core", 1f)).build());
         SkillTree.registerType(type("sensor", "Sensor", SkillTier.SMALL).itemCost(new SkillItemCost("beta_core", 2f)).build());
-        return register("picker_1", type("picker", "Picker", SkillTier.SMALL).optionalOptionIds(List.of("scanner", "sensor")).build(), "root_1");
+        return register("picker_1", type("picker", "Picker", SkillTier.SMALL).choiceOptionIds(List.of("scanner", "sensor")).build(), "root_1");
     }
 
     @Test
     void anOptionsItemCostIsChargedWhenChosenAndRefundedWhenTheNodeIsRemoved() {
-        SkillNode picker = optionalNodeWithPricedOptions();
+        SkillNode picker = choiceNodeWithPricedOptions();
         ShipTrees.chooseStartingRoot(data(), root);
         when(cargo.getCommodityQuantity("alpha_core")).thenReturn(1f);
         NodeAllocator allocator = allocatorStartingAt(root);
@@ -334,7 +334,7 @@ class NodeAllocatorTest {
 
     @Test
     void anOptionWhoseItemIsNotInCargoCannotBeChosen() {
-        SkillNode picker = optionalNodeWithPricedOptions();
+        SkillNode picker = choiceNodeWithPricedOptions();
         ShipTrees.chooseStartingRoot(data(), root);
         when(cargo.getCommodityQuantity("alpha_core")).thenReturn(1f);
         CommoditySpecAPI spec = mock(CommoditySpecAPI.class);
@@ -351,7 +351,7 @@ class NodeAllocatorTest {
 
     @Test
     void switchingOptionsRefundsTheOldOptionsItemAndChargesTheNewOne() {
-        SkillNode picker = optionalNodeWithPricedOptions();
+        SkillNode picker = choiceNodeWithPricedOptions();
         ShipTrees.chooseStartingRoot(data(), root);
         when(cargo.getCommodityQuantity("alpha_core")).thenReturn(1f);
         when(cargo.getCommodityQuantity("beta_core")).thenReturn(2f);
@@ -370,7 +370,7 @@ class NodeAllocatorTest {
     void switchingBetweenTwoMutuallyExclusiveOptionsDoesNotConflictWithTheOptionBeingReplaced() {
         SkillTree.registerType(type("front_mode", "Front Mode", SkillTier.SMALL).exclusiveSkillTypeIds(List.of("omni_mode")).build());
         SkillTree.registerType(type("omni_mode", "Omni Mode", SkillTier.SMALL).exclusiveSkillTypeIds(List.of("front_mode")).build());
-        SkillNode mode = register("mode_1", type("mode", "Mode", SkillTier.SMALL).optionalOptionIds(List.of("front_mode", "omni_mode")).build(),
+        SkillNode mode = register("mode_1", type("mode", "Mode", SkillTier.SMALL).choiceOptionIds(List.of("front_mode", "omni_mode")).build(),
                 "root_1");
         ShipTrees.chooseStartingRoot(data(), root);
         ShipTrees.selectOption(data(), mode, SkillTree.getType("front_mode"), 0);
@@ -382,9 +382,9 @@ class NodeAllocatorTest {
     }
 
     @Test
-    void anOptionalContainerBehindAnUnmetUnlockConditionIsLockedWhicheverOptionIsChosen() {
+    void aChoiceContainerBehindAnUnmetUnlockConditionIsLockedWhicheverOptionIsChosen() {
         SkillTree.registerType(type("open_option", "Open Option", SkillTier.SMALL).build());
-        SkillNode sealed = register("sealed_1", type("sealed", "Sealed", SkillTier.SMALL).optionalOptionIds(List.of("open_option"))
+        SkillNode sealed = register("sealed_1", type("sealed", "Sealed", SkillTier.SMALL).choiceOptionIds(List.of("open_option"))
                 .unlockConditions(List.of(UnlockCondition.minShipLevel(5))).build(), "root_1");
         ShipTrees.chooseStartingRoot(data(), root);
 
@@ -501,7 +501,7 @@ class NodeAllocatorTest {
         SkillType hangarOption = type("hangar_option", "Hangar Option", SkillTier.NOTABLE).build();
         SkillTree.registerType(hangarOption);
         SkillNode choice = register("choice_1", type("choice", "Choice", SkillTier.NOTABLE)
-                .optionalOptionIds(List.of("hangar_option")).build(), "root_1");
+                .choiceOptionIds(List.of("hangar_option")).build(), "root_1");
         ShipTrees.chooseStartingRoot(data(), root);
         NodeAllocator allocator = allocatorStartingAt(root);
         allocator.snapshot();
@@ -516,9 +516,9 @@ class NodeAllocatorTest {
     }
 
     @Test
-    void anOptionalNodeCannotBeAllocatedWithoutAnOption() {
+    void aChoiceNodeCannotBeAllocatedWithoutAnOption() {
         SkillTree.registerType(type("only_option", "Only Option", SkillTier.SMALL).build());
-        SkillNode choice = register("choice_1", type("choice", "Choice", SkillTier.SMALL).optionalOptionIds(List.of("only_option")).build(),
+        SkillNode choice = register("choice_1", type("choice", "Choice", SkillTier.SMALL).choiceOptionIds(List.of("only_option")).build(),
                 "root_1");
         ShipTrees.chooseStartingRoot(data(), root);
         NodeAllocator allocator = allocatorStartingAt(root);
@@ -609,10 +609,10 @@ class NodeAllocatorTest {
     }
 
     @Test
-    void aTemplateStepOnAnOptionalNodeAllocatesTheTemplatesOption() {
+    void aTemplateStepOnAChoiceNodeAllocatesTheTemplatesOption() {
         SkillType option = type("hull_option", "Hull Option", SkillTier.SMALL).build();
         SkillTree.registerType(option);
-        SkillNode slot = register("slot_1", type("slot", "Slot", SkillTier.SMALL).optionalOptionIds(List.of("hull_option")).build(), "root_1");
+        SkillNode slot = register("slot_1", type("slot", "Slot", SkillTier.SMALL).choiceOptionIds(List.of("hull_option")).build(), "root_1");
 
         assertEquals(StepVerdict.ALLOCATE, executor(new ArrayList<>()).attempt(new TemplateStep("slot_1", "hull_option")));
         assertEquals(option, slot.resolveEffectiveType(data()));

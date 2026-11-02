@@ -218,7 +218,7 @@ final class SocketPlacement {
             return;
         }
         SkillTreeSounds.panelOpened();
-        treeSession.closeDropdown();
+        treeSession.closeChoicePicker();
         searchBar.unfocus();
         storage.reconcileOwnedShips();
         SocketPanelPlacement placement = new SocketPanelPlacement(ChromeMetrics.EDGE_MARGIN, PANEL_TOP, ItemStoragePanel.WIDTH,

@@ -92,9 +92,9 @@ class NpcGenerationDataTest {
                 for (String nodeId : data.getAllocatedNodeIds()) {
                     SkillNode node = SkillTree.get(nodeId);
                     if (node != null && "small_flux_optional".equals(node.getType().getId())) {
-                        SkillType option = SkillTree.getType(data.getOptionalSelection(nodeId));
+                        SkillType option = SkillTree.getType(data.getChoiceSelection(nodeId));
                         if (option == null || option.getEffects().stream().noneMatch(effect -> rootEffects.contains(effect.effect().name()))) {
-                            problems.add(label + ": " + nodeId + " took " + data.getOptionalSelection(nodeId) + " on " + root.getId());
+                            problems.add(label + ": " + nodeId + " took " + data.getChoiceSelection(nodeId) + " on " + root.getId());
                         }
                     }
                 }
@@ -163,7 +163,7 @@ class NpcGenerationDataTest {
             if (node.getConnectedNodeIds().stream().noneMatch(data::isAllocated)) {
                 problems.add(label + ": " + nodeId + " is not connected");
             }
-            String optionId = data.getOptionalSelection(nodeId);
+            String optionId = data.getChoiceSelection(nodeId);
             SkillType option = optionId == null ? null : SkillTree.getType(optionId);
             String unmet = NodeRequirements.firstUnmet(node.effectiveTags(option), archetype.profile());
             if (unmet != null) {

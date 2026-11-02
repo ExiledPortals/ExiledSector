@@ -34,7 +34,7 @@ const TYPES = JSON.stringify({
   skillTypes: [
     { id: 'notable_a', tier: 'NOTABLE' },
     { id: 'notable_b', tier: 'NOTABLE' },
-    { id: 'optional_notable', tier: 'NOTABLE', optionalOptions: ['notable_a'] },
+    { id: 'optional_notable', tier: 'NOTABLE', options: ['notable_a'] },
     { id: 'keystone_a', tier: 'KEYSTONE' },
     { id: 'small_a' },
   ],

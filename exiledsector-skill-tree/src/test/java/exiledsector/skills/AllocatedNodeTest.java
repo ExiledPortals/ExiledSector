@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class AllocatedNodeTest {
 
     private SkillNode root;
-    private SkillNode optional;
+    private SkillNode choice;
     private SkillType hullOption;
 
     @BeforeEach
@@ -22,10 +22,10 @@ class AllocatedNodeTest {
         hullOption = new SkillType.Builder("hull_option", "Hull", "a.png", SkillTier.SMALL).build();
         SkillTree.registerType(hullOption);
         root = new SkillNode("root_1", new SkillType.Builder("root", "Root", "a.png", SkillTier.ROOT).build(), List.of(), 0f, 0f);
-        optional = new SkillNode("optional_1", new SkillType.Builder("optional", "Optional", "a.png", SkillTier.SMALL)
-                .optionalOptionIds(List.of("hull_option")).build(), List.of("root_1"), 0f, 0f);
+        choice = new SkillNode("optional_1", new SkillType.Builder("optional", "Optional", "a.png", SkillTier.SMALL)
+                .choiceOptionIds(List.of("hull_option")).build(), List.of("root_1"), 0f, 0f);
         SkillTree.register(root);
-        SkillTree.register(optional);
+        SkillTree.register(choice);
     }
 
     @AfterEach
@@ -38,11 +38,11 @@ class AllocatedNodeTest {
     void walksAllocatedNodesInAllocationOrderWithTheirChosenOptionResolved() {
         ShipSkillData data = new ShipSkillData();
         ShipTrees.chooseStartingRoot(data, root);
-        ShipTrees.selectOption(data, optional, hullOption, 0);
+        ShipTrees.selectOption(data, choice, hullOption, 0);
 
         List<AllocatedNode> allocated = AllocatedNode.of(data);
 
-        assertEquals(List.of(new AllocatedNode(root, root.getType()), new AllocatedNode(optional, hullOption)), allocated);
+        assertEquals(List.of(new AllocatedNode(root, root.getType()), new AllocatedNode(choice, hullOption)), allocated);
     }
 
     @Test

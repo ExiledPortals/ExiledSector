@@ -69,7 +69,7 @@ Type and node ids are covered by [node_id_renames.md](node_id_renames.md). The r
 
 | Player sees | Code says | Rename to | Kind |
 |---|---|---|---|
-| Choose an option | "optional": `_optional` type suffix, `optionalOptions`, `isOptional`, `optionalSelections` (saved), "dropdown" renderer | "choice" node with "options" | code, data field, saved field |
+| Choose an option | "optional": `_optional` type suffix, `optionalOptions`, `isOptional`, `optionalSelections` (saved), "dropdown" renderer | "choice" node with "options" | code, data field, saved field. [x] Built: every optional and dropdown identifier says choice (`isChoice`, `getChoiceOptionIds`, `SkillTreeNodeChoicePickerRenderer` and the rest), the `skill_types.json` field `options` (loader and editor serialiser), key `ui.node.choiceHint`, `ShipSkillData.choiceSelections` saved as `optionalSelections`. The `_optional` type suffix belongs to the type id renames. |
 | Remove / unallocate | `respec`, `release*` / `ReleasedNodes` (~76), `deallocate` (~22). `released_skill_nodes.json` means "shipped in a game release" | `deallocate` in code; ledger becomes `shipped_node_ids.json` | code |
 | Unidentified / hidden / locked | `NodeGates`, `gate_*` tags, `HiddenNodeDisplayConfig`, `lockedFor`, ghost renderer. "Gate" also means `AllocationGate`, `AnchorJanusGate` and `summary.gated.*` | "gate" only for unlock conditions; `AllocationGate` becomes `AllocationCheck` | code |
 | Starting location / starting point / start / root | `startingRootId`, `StartingRootChoice`, item "Root Conduit" | one player word ("root", since the item already shows it) | text. [x] Built: the template, picker and readout texts say root; zh keeps 起点, now glossed as root. |

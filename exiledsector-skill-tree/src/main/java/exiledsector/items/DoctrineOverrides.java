@@ -249,7 +249,7 @@ public final class DoctrineOverrides {
     }
 
     private static boolean eligible(SkillNode node, SkillType candidate, List<AllocatedNode> context, ShipFacts facts, ShieldType shieldType) {
-        if (candidate.isOptional() || candidate.getItemCost() != null) {
+        if (candidate.isChoice() || candidate.getItemCost() != null) {
             return false;
         }
         if (facts == null) {

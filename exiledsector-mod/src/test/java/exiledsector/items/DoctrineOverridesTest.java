@@ -290,7 +290,7 @@ class DoctrineOverridesTest {
     void aRewrittenNodeWhoseOriginalOffersOptionsAllocatesWithoutAskingAndRevertsToTheFirstOption() {
         registerType(type("opt_a", SkillTier.NOTABLE, "HULL_MULT", 1f).build());
         registerType(type("opt_b", SkillTier.NOTABLE, "HULL_MULT", 2f).build());
-        registerType(new SkillType.Builder("choice", "Choice", "a.png", SkillTier.NOTABLE).optionalOptionIds(List.of("opt_a", "opt_b")).build());
+        registerType(new SkillType.Builder("choice", "Choice", "a.png", SkillTier.NOTABLE).choiceOptionIds(List.of("opt_a", "opt_b")).build());
         SkillNode choice = node("choice_node", "choice", -100f, 100f);
         ShipSkillData data = shipWith(REWRITE, 14L);
         AllocationGate gate = frigateGate(data);

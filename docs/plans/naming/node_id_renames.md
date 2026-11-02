@@ -35,19 +35,19 @@ If display names change before this lands, regenerate both files rather than han
 
 ## What saves hold
 
-Node ids sit in `ShipSkillData`: `allocatedNodeIds`, `dormantNodeIds`, `freeNodeIds`, `pairedFreeNodeIds`, `grantFreeNodeIds`, `replacementAllocatedNodeIds`, `startingRootId`, and the keys of `optionalSelections`, `socketedItems`, `chargedItemIds` and `chargedItemQuantities`. They also sit in saved templates, subroutine rolls and NPC anchor tags. `NodeReplacements` (`data/config/exiledSector/node_replacements.csv`, `old,new`) already translates all of those on load. `ShipTreeRepairs.replaceRemovedNodes` runs before unknown nodes are forgotten.
+Node ids sit in `ShipSkillData` (renamed fields keep their old saved names through `ShipSkillData.SAVED_FIELD_NAMES`): `allocatedNodeIds`, `dormantNodeIds`, `freeNodeIds`, `pairGrantedNodeIds`, `subroutineGrantedNodeIds`, `replacementAllocatedNodeIds`, `startingRootId`, and the keys of `choiceSelections`, `socketedItems`, `paidItemCostIds` and `paidItemCostQuantities`. They also sit in saved templates, subroutine rolls and NPC anchor tags. `NodeReplacements` (`data/config/exiledSector/node_replacements.csv`, `old,new`) already translates all of those on load. `ShipTreeRepairs.replaceRemovedNodes` runs before unknown nodes are forgotten.
 
-Type ids are saved only as chosen options: the values of `optionalSelections`, and the option part of template steps (`NodeEntry`). Five option ids change: `affinity_low_tech`, `affinity_high_tech`, `affinity_midline`, `ballistic_damage` and `non_beam_energy_damage`. `shield_raise_rate` and `shield_turn_rate` already match their names. No translation key contains a node id; `zh_CN.json` holds `skillType.<id>.*` keys for every renamed type.
+Type ids are saved only as chosen options: the values of `choiceSelections`, and the option part of template steps (`NodeEntry`). Five option ids change: `affinity_low_tech`, `affinity_high_tech`, `affinity_midline`, `ballistic_damage` and `non_beam_energy_damage`. `shield_raise_rate` and `shield_turn_rate` already match their names. No translation key contains a node id; `zh_CN.json` holds `skillType.<id>.*` keys for every renamed type.
 
 The gap: `ShipTrees.replaceNode` was built for removed nodes. It drops whatever is socketed in the old node (`unsocketItem` just removes the map entry), and it skips nodes that aren't allocated. A rename has to keep the 6 Subroutine Sockets' subroutines.
 
 ## Steps
 
-1. Add `data/config/exiledSector/node_id_renames.csv` and `type_id_renames.csv` (`old,new`; only released rows for nodes). Keep them separate from `node_replacements.csv` so they can be deleted on their own later. `NodeReplacements.load` merges the node rows into its lookup and remembers which are renames. A small type-alias lookup maps old option ids in `optionalSelections`, `NodeEntry` and `ShipTrees.carryOptionOver` / `hasInvalidOption`.
+1. Add `data/config/exiledSector/node_id_renames.csv` and `type_id_renames.csv` (`old,new`; only released rows for nodes). Keep them separate from `node_replacements.csv` so they can be deleted on their own later. `NodeReplacements.load` merges the node rows into its lookup and remembers which are renames. A small type-alias lookup maps old option ids in `choiceSelections`, `NodeEntry` and `ShipTrees.carryOptionOver` / `hasInvalidOption`.
 2. Add a rename path in `ShipTrees` that moves every node-keyed field listed above without dropping sockets, charges or options. `ShipTreeRepairs` uses it for rename rows and keeps `replaceNode` for replacement rows.
 3. Point the existing `node_replacements.csv` targets straight at the new ids (`small_flux_optional_15` becomes `affinity_15`, `non_beam_energy_damage_6` becomes `non_beam_energy_weapon_damage_6`).
 4. Rewrite the data:
-   - `skill_types.json`: `id`, `optionalOptions` and any type references.
+   - `skill_types.json`: `id`, `options` and any type references.
    - `ship_skill_tree.json`: node `id`, `type`, `connectedTo` and `pairedWith`.
    - `doctrine_archives.csv`: the 12 type ids in the notable/keystone/small columns.
    - `zh_CN.json`: the `skillType.<id>.*` keys.

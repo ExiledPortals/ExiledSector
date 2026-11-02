@@ -338,17 +338,17 @@ class NpcSkillTreeBuilderTest {
     }
 
     @Test
-    void optionalNodesOnlyPickOptionsTheShipCanUse() {
+    void choiceNodesOnlyPickOptionsTheShipCanUse() {
         root();
         registerType(builder("missile_option", SkillTier.SMALL).tags(List.of("req_missile")).build());
         registerType(builder("hull_option", SkillTier.SMALL).build());
         node("optional", registerType(builder("optional_type", SkillTier.SMALL)
-                .optionalOptionIds(List.of("missile_option", "hull_option")).build()), ROOT);
+                .choiceOptionIds(List.of("missile_option", "hull_option")).build()), ROOT);
 
         for (long seed = 1; seed <= 10; seed++) {
             ShipSkillData data = generate(1, null, NpcHullMods.NONE, NpcFreedOp.NONE, seed).shipData();
 
-            assertEquals("hull_option", data.getOptionalSelection("optional"));
+            assertEquals("hull_option", data.getChoiceSelection("optional"));
         }
     }
 
@@ -360,7 +360,7 @@ class NpcSkillTreeBuilderTest {
     private static int countSelections(String nodeId, String optionId, Map<String, Float> focus) {
         int selections = 0;
         for (long seed = 1; seed <= 60; seed++) {
-            if (optionId.equals(generateFocused(1, focus, seed).shipData().getOptionalSelection(nodeId))) {
+            if (optionId.equals(generateFocused(1, focus, seed).shipData().getChoiceSelection(nodeId))) {
                 selections++;
             }
         }
@@ -368,12 +368,12 @@ class NpcSkillTreeBuilderTest {
     }
 
     @Test
-    void factionFocusSteersWhichOptionAnOptionalNodeTakes() {
+    void factionFocusSteersWhichOptionAChoiceNodeTakes() {
         root();
         registerType(builder("armour_option", SkillTier.SMALL).tags(List.of("armour")).build());
         registerType(builder("flux_option", SkillTier.SMALL).tags(List.of("flux")).build());
         node("optional", registerType(builder("optional_type", SkillTier.SMALL)
-                .optionalOptionIds(List.of("armour_option", "flux_option")).build()), ROOT);
+                .choiceOptionIds(List.of("armour_option", "flux_option")).build()), ROOT);
 
         int unfocused = countSelections("optional", "armour_option", Map.of());
         int focused = countSelections("optional", "armour_option", Map.of("armour", 30f));
@@ -383,12 +383,12 @@ class NpcSkillTreeBuilderTest {
     }
 
     @Test
-    void factionFocusWeighsAnOptionalNotableByTheOptionItWouldTake() {
+    void factionFocusWeighsAChoiceNotableByTheOptionItWouldTake() {
         root();
         registerType(builder("armour_notable_option", SkillTier.NOTABLE).tags(List.of("armour")).build());
         registerType(builder("missile_notable_option", SkillTier.NOTABLE).tags(List.of("armour", "missile", "req_missile")).build());
         node("optional_notable", registerType(builder("optional_notable_type", SkillTier.NOTABLE)
-                .optionalOptionIds(List.of("armour_notable_option", "missile_notable_option")).build()), ROOT);
+                .choiceOptionIds(List.of("armour_notable_option", "missile_notable_option")).build()), ROOT);
         node("flux_notable", registerType(builder("flux_notable_type", SkillTier.NOTABLE).tags(List.of("flux")).build()), ROOT);
 
         int unfocused = 0;
@@ -398,7 +398,7 @@ class NpcSkillTreeBuilderTest {
             ShipSkillData focusedData = generateFocused(1, Map.of("armour", 30f), seed).shipData();
             if (focusedData.isAllocated("optional_notable")) {
                 focused++;
-                assertEquals("armour_notable_option", focusedData.getOptionalSelection("optional_notable"));
+                assertEquals("armour_notable_option", focusedData.getChoiceSelection("optional_notable"));
             }
         }
 
@@ -547,17 +547,17 @@ class NpcSkillTreeBuilderTest {
     }
 
     @Test
-    void aStationsOptionalNodeTakesTheOptionItCanUse() {
+    void aStationsChoiceNodeTakesTheOptionItCanUse() {
         root();
         effectType("speed_option", SkillTier.SMALL, "TOP_SPEED_PERCENT");
         effectType("flux_option", SkillTier.SMALL, "FLUX_CAPACITY_PERCENT");
         node("optional", registerType(builder("optional_type", SkillTier.SMALL)
-                .optionalOptionIds(List.of("speed_option", "flux_option")).build()), ROOT);
+                .choiceOptionIds(List.of("speed_option", "flux_option")).build()), ROOT);
 
         for (long seed = 1; seed <= 10; seed++) {
             ShipSkillData data = generate(STATION, null, 1, null, NpcHullMods.NONE, NpcFreedOp.NONE, seed).shipData();
 
-            assertEquals("flux_option", data.getOptionalSelection("optional"), "seed " + seed);
+            assertEquals("flux_option", data.getChoiceSelection("optional"), "seed " + seed);
         }
     }
 }
