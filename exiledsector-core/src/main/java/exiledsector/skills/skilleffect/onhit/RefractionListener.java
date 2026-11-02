@@ -15,18 +15,18 @@ import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
 
-final class EnergyChainListener extends ShipCombatListener implements DamageDealtModifier, DroneSpawner {
+final class RefractionListener extends ShipCombatListener implements DamageDealtModifier, DroneSpawner {
 
     static final String CHANCE_KEY = "exiledLib_energyChainChance";
     static final String FALLOFF_KEY = "exiledLib_energyChainFalloff";
 
     private final RefractionDrones drones;
 
-    EnergyChainListener(ShipAPI ownerShip) {
+    RefractionListener(ShipAPI ownerShip) {
         this(ownerShip, new RefractionDrones(ownerShip));
     }
 
-    EnergyChainListener(ShipAPI ownerShip, RefractionDrones drones) {
+    RefractionListener(ShipAPI ownerShip, RefractionDrones drones) {
         super(ownerShip);
         this.drones = drones;
     }
@@ -43,7 +43,7 @@ final class EnergyChainListener extends ShipCombatListener implements DamageDeal
         if (!(target instanceof ShipAPI hitShip) || !canChainFrom(projectile.getWeapon())) {
             return;
         }
-        ChainLink link = ChainLink.of(projectile, ownerShip);
+        RefractionLink link = RefractionLink.of(projectile, ownerShip);
         if (link.dealtMult() < 1f) {
             HitDamageRestorer.reduceForThisHit(damage, link.dealtMult(), hitShip);
         }
@@ -54,17 +54,17 @@ final class EnergyChainListener extends ShipCombatListener implements DamageDeal
 
     private static boolean canChainFrom(WeaponAPI weapon) {
         return weapon != null && !weapon.isBeam() && BallisticAsEnergy.countsAsEnergy(weapon)
-                && !CsvIdList.ENERGY_CHAIN_WEAPONS.contains(weapon.getId());
+                && !CsvIdList.REFRACTION_WEAPON_BLOCKLIST.contains(weapon.getId());
     }
 
-    private void tryChain(WeaponAPI weapon, ShipAPI hitShip, Vector2f point, ChainLink link) {
+    private void tryChain(WeaponAPI weapon, ShipAPI hitShip, Vector2f point, RefractionLink link) {
         float chancePercent = magnitude(CHANCE_KEY);
-        boolean chains = ownerShip.isAlive() && link.chainCount() < MaxChainCountConfig.get() && chancePercent > 0f
+        boolean chains = ownerShip.isAlive() && link.chainCount() < MaxRefractionCountConfig.get() && chancePercent > 0f
                 && Math.random() < chancePercent / 100.0;
         if (!chains) {
             return;
         }
-        ChainLink next = link.next(hitShip, magnitude(FALLOFF_KEY));
+        RefractionLink next = link.next(hitShip, magnitude(FALLOFF_KEY));
         if (next.dealtMult() <= 0f || !WeaponDroneFactory.supportsProjectile(weapon)) {
             return;
         }

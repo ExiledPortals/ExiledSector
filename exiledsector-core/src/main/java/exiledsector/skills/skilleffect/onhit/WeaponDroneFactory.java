@@ -24,7 +24,7 @@ import com.fs.starfarer.api.loading.WeaponGroupType;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import exiledsector.ExiledSector;
 import exiledsector.skills.skilleffect.CsvIdList;
-import exiledsector.skills.skilleffect.special.SeraphimListener;
+import exiledsector.skills.skilleffect.special.SeraphHuntingListener;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -81,7 +81,7 @@ final class WeaponDroneFactory {
     }
 
     private static boolean isBlocklistedBeam(BeamWeaponSpecAPI spec) {
-        return spec.getBeamEffect() != null && CsvIdList.SPLIT_BEAM_EFFECTS.contains(spec.getBeamEffect().getClass().getName());
+        return spec.getBeamEffect() != null && CsvIdList.LIONS_GAZE_EFFECT_BLOCKLIST.contains(spec.getBeamEffect().getClass().getName());
     }
 
     private static boolean canMountOnDrone(WeaponAPI weapon) {
@@ -206,7 +206,7 @@ final class WeaponDroneFactory {
     }
 
     static void shareDamageListeners(ShipAPI firingShip, ShipAPI drone) {
-        SeraphimListener.DealtDamageRouter.routeDroneDamage(firingShip, drone);
+        SeraphHuntingListener.DealtDamageRouter.routeDroneDamage(firingShip, drone);
         for (DamageDealtModifier listener : firingShip.getListeners(DamageDealtModifier.class)) {
             if (listener instanceof DroneSpawner) {
                 continue;

@@ -562,11 +562,11 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT",
+					"effect": "NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT",
 					"magnitude": 20
 				},
 				{
-					"effect": "NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT",
+					"effect": "NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT",
 					"magnitude": 20
 				}
 			],
@@ -1255,7 +1255,7 @@
 					"magnitude": 100
 				},
 				{
-					"effect": "MISSILE_WEAPON_FIRE_RATE_PERCENT",
+					"effect": "MISSILE_WEAPON_RATE_OF_FIRE_PERCENT",
 					"magnitude": -15
 				}
 			],
@@ -1593,7 +1593,7 @@
 			"icon": "graphics/icons/evasive_maneuvering_shifted_blue.png",
 			"effects": [
 				{
-					"effect": "ENERGY_WEAPON_FIRE_RATE_PERCENT",
+					"effect": "ENERGY_WEAPON_RATE_OF_FIRE_PERCENT",
 					"magnitude": 3
 				}
 			],
@@ -1698,7 +1698,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "FLUX_SCALED_RATE_OF_FIRE_PERCENT",
+					"effect": "VOLATILE_FLUX_RATE_OF_FIRE_PERCENT",
 					"magnitude": 40
 				},
 				{
@@ -1728,7 +1728,7 @@
 			],
 			"hullSizeEffects": [
 				{
-					"effect": "FLUX_SCALED_TOP_SPEED_FLAT",
+					"effect": "VOLATILE_FLUX_TOP_SPEED_FLAT",
 					"frigate": 50,
 					"destroyer": 40,
 					"cruiser": 30,
@@ -3628,11 +3628,11 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "FIGHTER_FOCUS_FIRE_DAMAGE_PERCENT_PER_HIT",
+					"effect": "HARDLIGHT_MARKING_DAMAGE_PERCENT_PER_HIT",
 					"magnitude": 2
 				},
 				{
-					"effect": "FIGHTER_FOCUS_FIRE_MAX_DAMAGE_PERCENT",
+					"effect": "HARDLIGHT_MARKING_MAX_DAMAGE_PERCENT",
 					"magnitude": 30
 				}
 			],
@@ -3906,7 +3906,7 @@
 					"magnitude": 15
 				},
 				{
-					"effect": "ENERGY_WEAPON_FIRE_RATE_PERCENT",
+					"effect": "ENERGY_WEAPON_RATE_OF_FIRE_PERCENT",
 					"magnitude": 20
 				},
 				{
@@ -3959,11 +3959,11 @@
 			"tier": "KEYSTONE",
 			"effects": [
 				{
-					"effect": "SERAPHS_GRACE_MAX_STACKS_FLAT",
+					"effect": "BORROWED_GRACE_MAX_STACKS_FLAT",
 					"magnitude": 20
 				},
 				{
-					"effect": "SERAPHS_GRACE_PERCENT_PER_STACK",
+					"effect": "BORROWED_GRACE_PERCENT_PER_STACK",
 					"magnitude": 1
 				},
 				{
@@ -4039,21 +4039,21 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "SERAPHIM_HEAL_PERCENT",
+					"effect": "SERAPH_HUNTING_HEAL_PERCENT",
 					"magnitude": 10
 				},
 				{
-					"effect": "SERAPHIM_HEAL_CAP_PERCENT",
+					"effect": "SERAPH_HUNTING_HEAL_CAP_PERCENT",
 					"magnitude": 20
 				},
 				{
-					"effect": "SERAPHIM_DAMAGE_BONUS_PERCENT",
+					"effect": "SERAPH_HUNTING_DAMAGE_BONUS_PERCENT",
 					"magnitude": 30
 				}
 			],
 			"hullSizeEffects": [
 				{
-					"effect": "SERAPHIM_FULL_BONUS_DAMAGE_FLAT",
+					"effect": "SERAPH_HUNTING_FULL_BONUS_DAMAGE_FLAT",
 					"frigate": 75000,
 					"destroyer": 125000,
 					"cruiser": 175000,
@@ -4718,7 +4718,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "ENERGY_WEAPON_FIRE_RATE_PERCENT",
+					"effect": "ENERGY_WEAPON_RATE_OF_FIRE_PERCENT",
 					"magnitude": 10
 				},
 				{
@@ -4790,7 +4790,7 @@
 			"icon": "graphics/icons/tania_weapon_fire_rate.png",
 			"effects": [
 				{
-					"effect": "WEAPON_FIRE_RATE_PERCENT",
+					"effect": "WEAPON_RATE_OF_FIRE_PERCENT",
 					"magnitude": 3
 				}
 			],
@@ -4828,7 +4828,7 @@
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
-					"effect": "FLUX_SCALED_TOP_SPEED_FLAT",
+					"effect": "VOLATILE_FLUX_TOP_SPEED_FLAT",
 					"frigate": 50,
 					"destroyer": 40,
 					"cruiser": 30,

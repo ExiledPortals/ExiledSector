@@ -20,7 +20,7 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
     BEAM_WEAPON_HARD_FLUX_PERCENT(listener(BeamHardFluxListener.HARD_FLUX_PERCENT_KEY, BeamHardFluxListener.class, ship -> new BeamHardFluxListener())),
     BEAM_WEAPON_SHIELD_DISRUPTION_PERCENT(listener(BeamShieldDisruptionListener.SHIELD_DAMAGE_PERCENT_KEY, BeamShieldDisruptionListener.class,
             BeamShieldDisruptionListener::new)),
-    BEAM_WEAPON_SPLIT_TARGETS_FLAT(listener(BeamSplitListener.TARGETS_KEY, BeamSplitListener.class, BeamSplitListener::new)) {
+    BEAM_WEAPON_SPLIT_TARGETS_FLAT(listener(LionsGazeListener.TARGETS_KEY, LionsGazeListener.class, LionsGazeListener::new)) {
         @Override
         public boolean reshapesDealtDamage() {
             return true;
@@ -31,13 +31,13 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).count(Math.round(magnitude)).arg("value", magnitude).styled();
         }
     },
-    NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT(listener(EnergyChainListener.CHANCE_KEY, EnergyChainListener.class, EnergyChainListener::new)) {
+    NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT(listener(RefractionListener.CHANCE_KEY, RefractionListener.class, RefractionListener::new)) {
         @Override
         public boolean reshapesDealtDamage() {
             return true;
         }
     },
-    NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT(listener(EnergyChainListener.FALLOFF_KEY, EnergyChainListener.class, EnergyChainListener::new)) {
+    NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT(listener(RefractionListener.FALLOFF_KEY, RefractionListener.class, RefractionListener::new)) {
         @Override
         public boolean reshapesDealtDamage() {
             return true;

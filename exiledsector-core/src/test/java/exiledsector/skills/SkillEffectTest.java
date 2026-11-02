@@ -1430,7 +1430,7 @@ class SkillEffectTest {
     }
 
     @Test
-    void beamSplitTargetsFlatModifiesTheDynamicStat() {
+    void lionsGazeTargetsFlatModifiesTheDynamicStat() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
         when(stats.getDynamic()).thenReturn(dynamic);
@@ -1443,7 +1443,7 @@ class SkillEffectTest {
     }
 
     @Test
-    void beamSplitTargetsFlatDescribesTheSplitCount() {
+    void lionsGazeTargetsFlatDescribesTheSplitCount() {
         assertEquals("Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Strikecraft are never chosen. "
                         + "The target acquisition range is half the beam weapon's range.",
                 OnHitSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.description(1f).plain());
@@ -1453,7 +1453,7 @@ class SkillEffectTest {
     }
 
     @Test
-    void beamSplitTargetsFlatAddsAListenerOnce() {
+    void lionsGazeTargetsFlatAddsAListenerOnce() {
         ShipAPI ship = mock(ShipAPI.class);
         when(ship.getListeners(any())).thenReturn(List.of());
 
@@ -1463,7 +1463,7 @@ class SkillEffectTest {
     }
 
     @Test
-    void beamSplitTargetsFlatDoesNotDuplicateTheListener() {
+    void lionsGazeTargetsFlatDoesNotDuplicateTheListener() {
         ShipAPI ship = mock(ShipAPI.class);
         when(ship.getListeners(any())).thenReturn(List.of(new Object()));
 
@@ -1472,7 +1472,7 @@ class SkillEffectTest {
         verify(ship, never()).addListener(any());
     }
 
-    private DamageDealtModifier captureBeamSplitListener(ShipAPI ship) {
+    private DamageDealtModifier captureLionsGazeListener(ShipAPI ship) {
         when(ship.getListeners(any())).thenReturn(List.of());
         OnHitSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.applyAfterShipCreation(ship, "mod_id", 1f);
         ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
@@ -1480,7 +1480,7 @@ class SkillEffectTest {
         return (DamageDealtModifier) captor.getValue();
     }
 
-    private ShipAPI mockBeamSplitEnemy(int owner, Vector2f location) {
+    private ShipAPI mockLionsGazeEnemy(int owner, Vector2f location) {
         ShipAPI enemy = mock(ShipAPI.class);
         when(enemy.getOwner()).thenReturn(owner);
         when(enemy.isAlive()).thenReturn(true);
@@ -1491,9 +1491,9 @@ class SkillEffectTest {
     }
 
     @Test
-    void beamSplitListenerIgnoresNonBeamDamageSources() {
+    void lionsGazeListenerIgnoresNonBeamDamageSources() {
         ShipAPI ship = mock(ShipAPI.class);
-        DamageDealtModifier listener = captureBeamSplitListener(ship);
+        DamageDealtModifier listener = captureLionsGazeListener(ship);
 
         ShipAPI target = mock(ShipAPI.class);
         DamageAPI damage = mock(DamageAPI.class, Answers.RETURNS_DEEP_STUBS);
@@ -1504,9 +1504,9 @@ class SkillEffectTest {
     }
 
     @Test
-    void beamSplitListenerIgnoresNonShipTargets() {
+    void lionsGazeListenerIgnoresNonShipTargets() {
         ShipAPI ship = mock(ShipAPI.class);
-        DamageDealtModifier listener = captureBeamSplitListener(ship);
+        DamageDealtModifier listener = captureLionsGazeListener(ship);
 
         BeamAPI beam = mock(BeamAPI.class);
         CombatEntityAPI target = mock(CombatEntityAPI.class);
@@ -1518,7 +1518,7 @@ class SkillEffectTest {
     }
 
     @Test
-    void beamSplitListenerDoesNothingWhenNoSplitTargetsGranted() {
+    void lionsGazeListenerDoesNothingWhenNoSplitTargetsGranted() {
         ShipAPI ship = mock(ShipAPI.class);
         MutableShipStatsAPI shipStats = mock(MutableShipStatsAPI.class);
         com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
@@ -1526,7 +1526,7 @@ class SkillEffectTest {
         when(shipStats.getDynamic()).thenReturn(dynamic);
         when(dynamic.getValue("exiledLib_beamSplitTargets", 0f)).thenReturn(0f);
 
-        DamageDealtModifier listener = captureBeamSplitListener(ship);
+        DamageDealtModifier listener = captureLionsGazeListener(ship);
 
         BeamAPI beam = mock(BeamAPI.class);
         ShipAPI target = mock(ShipAPI.class);
@@ -1537,15 +1537,15 @@ class SkillEffectTest {
         verify(damage.getModifier(), never()).modifyMult(anyString(), anyFloat());
     }
 
-    private WeaponAPI mockBeamSplitWeapon(BeamAPI beam, float range) {
+    private WeaponAPI mockLionsGazeWeapon(BeamAPI beam, float range) {
         WeaponAPI weapon = mock(WeaponAPI.class);
         when(weapon.getRange()).thenReturn(range);
         when(beam.getWeapon()).thenReturn(weapon);
-        mockBeamSplitDerivedStats(weapon, 100f, 0f);
+        mockLionsGazeDerivedStats(weapon, 100f, 0f);
         return weapon;
     }
 
-    private void mockBeamSplitDerivedStats(WeaponAPI weapon, float dps, float empPerSecond) {
+    private void mockLionsGazeDerivedStats(WeaponAPI weapon, float dps, float empPerSecond) {
         WeaponAPI.DerivedWeaponStatsAPI derivedStats = mock(WeaponAPI.DerivedWeaponStatsAPI.class);
         when(derivedStats.getDps()).thenReturn(dps);
         when(derivedStats.getEmpPerSecond()).thenReturn(empPerSecond);
@@ -1553,7 +1553,7 @@ class SkillEffectTest {
     }
 
     @Test
-    void beamSplitListenerSplitsDamageAcrossNearbyEnemies() {
+    void lionsGazeListenerSplitsDamageAcrossNearbyEnemies() {
         ShipAPI ship = mock(ShipAPI.class);
         when(ship.getOwner()).thenReturn(0);
         MutableShipStatsAPI shipStats = mock(MutableShipStatsAPI.class);
@@ -1562,20 +1562,20 @@ class SkillEffectTest {
         when(shipStats.getDynamic()).thenReturn(dynamic);
         when(dynamic.getValue("exiledLib_beamSplitTargets", 0f)).thenReturn(2f);
 
-        DamageDealtModifier listener = captureBeamSplitListener(ship);
+        DamageDealtModifier listener = captureLionsGazeListener(ship);
 
         BeamAPI beam = mock(BeamAPI.class);
         when(beam.getWidth()).thenReturn(10f);
         when(beam.getCoreColor()).thenReturn(java.awt.Color.WHITE);
         when(beam.getFringeColor()).thenReturn(java.awt.Color.RED);
-        mockBeamSplitWeapon(beam, 2000f);
+        mockLionsGazeWeapon(beam, 2000f);
 
         ShipAPI primaryTarget = mock(ShipAPI.class);
         when(primaryTarget.getOwner()).thenReturn(1);
 
         Vector2f point = new Vector2f(0f, 0f);
-        ShipAPI enemy1 = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
-        ShipAPI enemy2 = mockBeamSplitEnemy(1, new Vector2f(0f, 100f));
+        ShipAPI enemy1 = mockLionsGazeEnemy(1, new Vector2f(100f, 0f));
+        ShipAPI enemy2 = mockLionsGazeEnemy(1, new Vector2f(0f, 100f));
 
         DamageAPI damage = mock(DamageAPI.class, Answers.RETURNS_DEEP_STUBS);
         when(damage.getDamage()).thenReturn(90f);
@@ -1601,7 +1601,7 @@ class SkillEffectTest {
     }
 
     @Test
-    void beamSplitListenerKeepsHardFluxOnSplitHitsFromBeamsThatForceIt() {
+    void lionsGazeListenerKeepsHardFluxOnSplitHitsFromBeamsThatForceIt() {
         ShipAPI ship = mock(ShipAPI.class);
         when(ship.getOwner()).thenReturn(0);
         MutableShipStatsAPI shipStats = mock(MutableShipStatsAPI.class);
@@ -1610,16 +1610,16 @@ class SkillEffectTest {
         when(shipStats.getDynamic()).thenReturn(dynamic);
         when(dynamic.getValue("exiledLib_beamSplitTargets", 0f)).thenReturn(1f);
 
-        DamageDealtModifier listener = captureBeamSplitListener(ship);
+        DamageDealtModifier listener = captureLionsGazeListener(ship);
 
         BeamAPI beam = mock(BeamAPI.class);
         when(beam.getCoreColor()).thenReturn(java.awt.Color.WHITE);
         when(beam.getFringeColor()).thenReturn(java.awt.Color.RED);
-        mockBeamSplitWeapon(beam, 2000f);
+        mockLionsGazeWeapon(beam, 2000f);
 
         ShipAPI primaryTarget = mock(ShipAPI.class);
         when(primaryTarget.getOwner()).thenReturn(1);
-        ShipAPI enemy = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
+        ShipAPI enemy = mockLionsGazeEnemy(1, new Vector2f(100f, 0f));
         DamageAPI damage = mock(DamageAPI.class, Answers.RETURNS_DEEP_STUBS);
         when(damage.getDamage()).thenReturn(90f);
         when(damage.getType()).thenReturn(DamageType.ENERGY);
@@ -1648,7 +1648,7 @@ class SkillEffectTest {
     }
 
     @Test
-    void beamSplitAppliesOnlyThisTicksShareOfPerSecondBeamDamageToSplitTargets() {
+    void lionsGazeAppliesOnlyThisTicksShareOfPerSecondBeamDamageToSplitTargets() {
         ShipAPI ship = mock(ShipAPI.class);
         when(ship.getOwner()).thenReturn(0);
         MutableShipStatsAPI shipStats = mock(MutableShipStatsAPI.class);
@@ -1657,17 +1657,17 @@ class SkillEffectTest {
         when(shipStats.getDynamic()).thenReturn(dynamic);
         when(dynamic.getValue("exiledLib_beamSplitTargets", 0f)).thenReturn(2f);
 
-        DamageDealtModifier listener = captureBeamSplitListener(ship);
+        DamageDealtModifier listener = captureLionsGazeListener(ship);
 
         BeamAPI beam = mock(BeamAPI.class);
         when(beam.getCoreColor()).thenReturn(java.awt.Color.WHITE);
         when(beam.getFringeColor()).thenReturn(java.awt.Color.RED);
-        mockBeamSplitWeapon(beam, 2000f);
+        mockLionsGazeWeapon(beam, 2000f);
 
         ShipAPI primaryTarget = mock(ShipAPI.class);
         when(primaryTarget.getOwner()).thenReturn(1);
-        ShipAPI enemy1 = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
-        ShipAPI enemy2 = mockBeamSplitEnemy(1, new Vector2f(0f, 100f));
+        ShipAPI enemy1 = mockLionsGazeEnemy(1, new Vector2f(100f, 0f));
+        ShipAPI enemy2 = mockLionsGazeEnemy(1, new Vector2f(0f, 100f));
         DamageAPI damage = mock(DamageAPI.class, Answers.RETURNS_DEEP_STUBS);
         when(damage.isDps()).thenReturn(true);
         when(damage.getDamage()).thenReturn(90f);
@@ -1694,7 +1694,7 @@ class SkillEffectTest {
     }
 
     @Test
-    void beamSplitListenerFiresARealBeamFromADroneAtEachSplitTargetAndRemovesItWhenTheSplitEnds() {
+    void lionsGazeListenerFiresARealBeamFromADroneAtEachSplitTargetAndRemovesItWhenTheSplitEnds() {
         ShipAPI ship = mock(ShipAPI.class);
         when(ship.getOwner()).thenReturn(0);
         when(ship.isAlive()).thenReturn(true);
@@ -1704,10 +1704,10 @@ class SkillEffectTest {
         when(shipStats.getDynamic()).thenReturn(dynamic);
         when(dynamic.getValue("exiledLib_beamSplitTargets", 0f)).thenReturn(1f);
 
-        DamageDealtModifier listener = captureBeamSplitListener(ship);
+        DamageDealtModifier listener = captureLionsGazeListener(ship);
 
         BeamAPI beam = mock(BeamAPI.class);
-        WeaponAPI weapon = mockBeamSplitWeapon(beam, 2000f);
+        WeaponAPI weapon = mockLionsGazeWeapon(beam, 2000f);
         BeamWeaponSpecAPI spec = mock(BeamWeaponSpecAPI.class);
         when(weapon.getSpec()).thenReturn(spec);
         when(weapon.getSize()).thenReturn(WeaponAPI.WeaponSize.MEDIUM);
@@ -1716,7 +1716,7 @@ class SkillEffectTest {
         ShipAPI primaryTarget = mock(ShipAPI.class);
         when(primaryTarget.getOwner()).thenReturn(1);
         when(primaryTarget.getShieldCenterEvenIfNoShield()).thenReturn(new Vector2f(0f, 0f));
-        ShipAPI enemy = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
+        ShipAPI enemy = mockLionsGazeEnemy(1, new Vector2f(100f, 0f));
         DamageAPI damage = mock(DamageAPI.class, Answers.RETURNS_DEEP_STUBS);
         when(damage.getDamage()).thenReturn(90f);
 
@@ -1765,7 +1765,7 @@ class SkillEffectTest {
     }
 
     @Test
-    void beamSplitListenerDoesNotReSplitItsOwnSyntheticHits() {
+    void lionsGazeListenerDoesNotReSplitItsOwnSyntheticHits() {
         ShipAPI ship = mock(ShipAPI.class);
         when(ship.getOwner()).thenReturn(0);
         MutableShipStatsAPI shipStats = mock(MutableShipStatsAPI.class);
@@ -1774,20 +1774,20 @@ class SkillEffectTest {
         when(shipStats.getDynamic()).thenReturn(dynamic);
         when(dynamic.getValue("exiledLib_beamSplitTargets", 0f)).thenReturn(2f);
 
-        DamageDealtModifier listener = captureBeamSplitListener(ship);
+        DamageDealtModifier listener = captureLionsGazeListener(ship);
 
         BeamAPI beam = mock(BeamAPI.class);
         when(beam.getWidth()).thenReturn(10f);
         when(beam.getCoreColor()).thenReturn(java.awt.Color.WHITE);
         when(beam.getFringeColor()).thenReturn(java.awt.Color.RED);
-        mockBeamSplitWeapon(beam, 2000f);
+        mockLionsGazeWeapon(beam, 2000f);
 
         ShipAPI primaryTarget = mock(ShipAPI.class);
         when(primaryTarget.getOwner()).thenReturn(1);
 
         Vector2f point = new Vector2f(0f, 0f);
-        ShipAPI enemy1 = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
-        ShipAPI enemy2 = mockBeamSplitEnemy(1, new Vector2f(0f, 100f));
+        ShipAPI enemy1 = mockLionsGazeEnemy(1, new Vector2f(100f, 0f));
+        ShipAPI enemy2 = mockLionsGazeEnemy(1, new Vector2f(0f, 100f));
 
         DamageAPI damage = mock(DamageAPI.class, Answers.RETURNS_DEEP_STUBS);
         when(damage.getDamage()).thenReturn(90f);
@@ -1820,7 +1820,7 @@ class SkillEffectTest {
     }
 
     @Test
-    void beamSplitListenerOnlySplitsAcrossEnemiesActuallyInRange() {
+    void lionsGazeListenerOnlySplitsAcrossEnemiesActuallyInRange() {
         ShipAPI ship = mock(ShipAPI.class);
         when(ship.getOwner()).thenReturn(0);
         MutableShipStatsAPI shipStats = mock(MutableShipStatsAPI.class);
@@ -1829,20 +1829,20 @@ class SkillEffectTest {
         when(shipStats.getDynamic()).thenReturn(dynamic);
         when(dynamic.getValue("exiledLib_beamSplitTargets", 0f)).thenReturn(2f);
 
-        DamageDealtModifier listener = captureBeamSplitListener(ship);
+        DamageDealtModifier listener = captureLionsGazeListener(ship);
 
         BeamAPI beam = mock(BeamAPI.class);
         when(beam.getWidth()).thenReturn(10f);
         when(beam.getCoreColor()).thenReturn(java.awt.Color.WHITE);
         when(beam.getFringeColor()).thenReturn(java.awt.Color.RED);
-        mockBeamSplitWeapon(beam, 2000f);
+        mockLionsGazeWeapon(beam, 2000f);
 
         ShipAPI primaryTarget = mock(ShipAPI.class);
         when(primaryTarget.getOwner()).thenReturn(1);
 
         Vector2f point = new Vector2f(0f, 0f);
-        ShipAPI enemyInRange = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
-        ShipAPI enemyOutOfRange = mockBeamSplitEnemy(1, new Vector2f(5000f, 0f));
+        ShipAPI enemyInRange = mockLionsGazeEnemy(1, new Vector2f(100f, 0f));
+        ShipAPI enemyOutOfRange = mockLionsGazeEnemy(1, new Vector2f(5000f, 0f));
 
         DamageAPI damage = mock(DamageAPI.class, Answers.RETURNS_DEEP_STUBS);
         when(damage.getDamage()).thenReturn(90f);
@@ -1868,7 +1868,7 @@ class SkillEffectTest {
     }
 
     @Test
-    void beamSplitRadiusIsHalfTheBeamsModifiedRange() {
+    void lionsGazeRadiusIsHalfTheBeamsModifiedRange() {
         ShipAPI ship = mock(ShipAPI.class);
         when(ship.getOwner()).thenReturn(0);
         MutableShipStatsAPI shipStats = mock(MutableShipStatsAPI.class);
@@ -1877,20 +1877,20 @@ class SkillEffectTest {
         when(shipStats.getDynamic()).thenReturn(dynamic);
         when(dynamic.getValue("exiledLib_beamSplitTargets", 0f)).thenReturn(1f);
 
-        DamageDealtModifier listener = captureBeamSplitListener(ship);
+        DamageDealtModifier listener = captureLionsGazeListener(ship);
 
         BeamAPI beam = mock(BeamAPI.class);
         when(beam.getWidth()).thenReturn(10f);
         when(beam.getCoreColor()).thenReturn(java.awt.Color.WHITE);
         when(beam.getFringeColor()).thenReturn(java.awt.Color.RED);
         // Range 1000 -> split radius 500: an enemy at 600 should be excluded, but included once range doubles.
-        mockBeamSplitWeapon(beam, 1000f);
+        mockLionsGazeWeapon(beam, 1000f);
 
         ShipAPI primaryTarget = mock(ShipAPI.class);
         when(primaryTarget.getOwner()).thenReturn(1);
 
         Vector2f point = new Vector2f(0f, 0f);
-        ShipAPI enemyJustOutOfHalfRange = mockBeamSplitEnemy(1, new Vector2f(600f, 0f));
+        ShipAPI enemyJustOutOfHalfRange = mockLionsGazeEnemy(1, new Vector2f(600f, 0f));
 
         DamageAPI damage = mock(DamageAPI.class, Answers.RETURNS_DEEP_STUBS);
         when(damage.getDamage()).thenReturn(90f);
@@ -1916,7 +1916,7 @@ class SkillEffectTest {
     }
 
     @Test
-    void beamSplitListenerSplitsEmpProportionallyAcrossTargets() {
+    void lionsGazeListenerSplitsEmpProportionallyAcrossTargets() {
         ShipAPI ship = mock(ShipAPI.class);
         when(ship.getOwner()).thenReturn(0);
         MutableShipStatsAPI shipStats = mock(MutableShipStatsAPI.class);
@@ -1925,21 +1925,21 @@ class SkillEffectTest {
         when(shipStats.getDynamic()).thenReturn(dynamic);
         when(dynamic.getValue("exiledLib_beamSplitTargets", 0f)).thenReturn(1f);
 
-        DamageDealtModifier listener = captureBeamSplitListener(ship);
+        DamageDealtModifier listener = captureLionsGazeListener(ship);
 
         BeamAPI beam = mock(BeamAPI.class);
         when(beam.getWidth()).thenReturn(10f);
         when(beam.getCoreColor()).thenReturn(java.awt.Color.WHITE);
         when(beam.getFringeColor()).thenReturn(java.awt.Color.RED);
-        WeaponAPI weapon = mockBeamSplitWeapon(beam, 2000f);
+        WeaponAPI weapon = mockLionsGazeWeapon(beam, 2000f);
         // dps=100, emp/sec=20 -> a hit dealing 40 damage should carry 8 emp (40 * 20/100).
-        mockBeamSplitDerivedStats(weapon, 100f, 20f);
+        mockLionsGazeDerivedStats(weapon, 100f, 20f);
 
         ShipAPI primaryTarget = mock(ShipAPI.class);
         when(primaryTarget.getOwner()).thenReturn(1);
 
         Vector2f point = new Vector2f(0f, 0f);
-        ShipAPI enemy = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
+        ShipAPI enemy = mockLionsGazeEnemy(1, new Vector2f(100f, 0f));
 
         DamageAPI damage = mock(DamageAPI.class, Answers.RETURNS_DEEP_STUBS);
         when(damage.getDamage()).thenReturn(80f);
@@ -1972,13 +1972,13 @@ class SkillEffectTest {
         when(shipStats.getDynamic()).thenReturn(dynamic);
         when(dynamic.getValue("exiledLib_beamSplitTargets", 0f)).thenReturn(1f);
 
-        DamageDealtModifier listener = captureBeamSplitListener(ship);
+        DamageDealtModifier listener = captureLionsGazeListener(ship);
 
         BeamAPI beam = mock(BeamAPI.class);
         when(beam.getWidth()).thenReturn(10f);
         when(beam.getCoreColor()).thenReturn(java.awt.Color.WHITE);
         when(beam.getFringeColor()).thenReturn(java.awt.Color.RED);
-        mockBeamSplitWeapon(beam, 2000f);
+        mockLionsGazeWeapon(beam, 2000f);
 
         ShipAPI primaryTarget = mock(ShipAPI.class);
         when(primaryTarget.getOwner()).thenReturn(1);
@@ -1986,7 +1986,7 @@ class SkillEffectTest {
         Vector2f point = new Vector2f(0f, 0f);
         // Owner 100 (Misc.OWNER_NEUTRAL) differs from source's owner but is not hostile:
         // a bystander in a 3+ side battle should never be dragged into a split.
-        ShipAPI neutralBystander = mockBeamSplitEnemy(100, new Vector2f(100f, 0f));
+        ShipAPI neutralBystander = mockLionsGazeEnemy(100, new Vector2f(100f, 0f));
 
         DamageAPI damage = mock(DamageAPI.class, Answers.RETURNS_DEEP_STUBS);
         when(damage.getDamage()).thenReturn(90f);

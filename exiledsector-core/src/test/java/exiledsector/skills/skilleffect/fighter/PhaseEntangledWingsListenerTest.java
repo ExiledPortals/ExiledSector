@@ -44,7 +44,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class WingSharedFateListenerTest {
+class PhaseEntangledWingsListenerTest {
 
     private static final float FLUX_CAPACITY = 200f;
 
@@ -102,8 +102,8 @@ class WingSharedFateListenerTest {
         return fighter;
     }
 
-    private record Hit(WingSharedFateListener listener, ShipAPI hitFighter, Object projectile, DamageAPI damage) {
-        Hit(WingSharedFateListener listener, ShipAPI hitFighter, Object projectile) {
+    private record Hit(PhaseEntangledWingsListener listener, ShipAPI hitFighter, Object projectile, DamageAPI damage) {
+        Hit(PhaseEntangledWingsListener listener, ShipAPI hitFighter, Object projectile) {
             this(listener, hitFighter, projectile, freshDamage());
         }
 
@@ -131,7 +131,7 @@ class WingSharedFateListenerTest {
         }
 
         void keeps(float keptFraction) {
-            verify(damage.getModifier()).modifyMult(eq(WingSharedFateListener.SHARE_MOD_ID), about(keptFraction, 0.0001f));
+            verify(damage.getModifier()).modifyMult(eq(PhaseEntangledWingsListener.SHARE_MOD_ID), about(keptFraction, 0.0001f));
         }
     }
 
@@ -182,12 +182,12 @@ class WingSharedFateListenerTest {
         return wingMembers;
     }
 
-    private static WingSharedFateListener attachedTo(ShipAPI fighter, float sharedPercent) {
+    private static PhaseEntangledWingsListener attachedTo(ShipAPI fighter, float sharedPercent) {
         ArgumentCaptor<Object> listener = ArgumentCaptor.forClass(Object.class);
         FighterSkillEffect.FIGHTER_WING_SHARED_DAMAGE_PERCENT.applyToFighterSpawnedByShip(fighter,
-                FighterCarriers.with(WingSharedFateListener.SHARED_PERCENT_KEY, sharedPercent), "mod_id", sharedPercent);
+                FighterCarriers.with(PhaseEntangledWingsListener.SHARED_PERCENT_KEY, sharedPercent), "mod_id", sharedPercent);
         verify(fighter).addListener(listener.capture());
-        return (WingSharedFateListener) listener.getValue();
+        return (PhaseEntangledWingsListener) listener.getValue();
     }
 
     private static CombatEngineAPI engineWithEverythingInPlay(MockedStatic<Global> global) {
@@ -199,7 +199,7 @@ class WingSharedFateListenerTest {
 
     @Test
     void sharingEverythingSplitsEachHitEvenlyAcrossTheWing() {
-        WingSharedFateListener.Split split = WingSharedFateListener.split(100f, 2);
+        PhaseEntangledWingsListener.Split split = PhaseEntangledWingsListener.split(100f, 2);
 
         assertEquals(1f / 3f, split.keptFraction(), 0.0001f);
         assertEquals(1f, split.perWingmateRatio(), 0.0001f, "each wingmate takes exactly what the hit fighter takes");
@@ -207,7 +207,7 @@ class WingSharedFateListenerTest {
 
     @Test
     void sharingHalfLeavesTheHitFighterWithMostOfTheDamage() {
-        WingSharedFateListener.Split split = WingSharedFateListener.split(50f, 1);
+        PhaseEntangledWingsListener.Split split = PhaseEntangledWingsListener.split(50f, 1);
 
         assertEquals(0.75f, split.keptFraction(), 0.0001f);
         assertEquals(1f / 3f, split.perWingmateRatio(), 0.0001f);
@@ -215,7 +215,7 @@ class WingSharedFateListenerTest {
 
     @Test
     void aLoneFighterKeepsTheWholeHit() {
-        assertEquals(new WingSharedFateListener.Split(1f, 0f), WingSharedFateListener.split(100f, 0));
+        assertEquals(new PhaseEntangledWingsListener.Split(1f, 0f), PhaseEntangledWingsListener.split(100f, 0));
     }
 
     @Test
@@ -226,7 +226,7 @@ class WingSharedFateListenerTest {
         wingOf(hit, near, far);
         Hit shieldHit = new Hit(attachedTo(hit, 100f), hit, new Object());
 
-        assertEquals(WingSharedFateListener.SHARE_MOD_ID, shieldHit.strikes(true));
+        assertEquals(PhaseEntangledWingsListener.SHARE_MOD_ID, shieldHit.strikes(true));
         shieldHit.applies(40f, 0f);
         new Hit(shieldHit.listener(), hit, new Object()).lands(0f, 30f);
 
@@ -270,19 +270,19 @@ class WingSharedFateListenerTest {
             CombatEngineAPI engine = engineWithEverythingInPlay(global);
             doAnswer(invocation -> {
                 DamageAPI blow = mock(DamageAPI.class);
-                wingNumbersStoodAside.set(WingSharedFateListener.isApplyingSharedDamage()
+                wingNumbersStoodAside.set(PhaseEntangledWingsListener.isApplyingSharedDamage()
                         && ((WingNumbersDamageListener) wingNumbers.getValue()).modifyDamageTaken(null, wingmate, blow, new Vector2f(), false) == null);
                 return null;
             }).when(engine).applyDamage(any(CombatEntityAPI.class), any(Vector2f.class), anyFloat(), any(DamageType.class), anyFloat(), anyBoolean(), anyBoolean(), any());
 
             new Hit(attachedTo(hit, 100f), hit, projectile).lands(0f, 30f);
 
-            verify(wingmate).setHitpoints(WingSharedFateListener.KILLING_BLOW_HULL_LEFT);
-            verify(engine).applyDamage(eq(wingmate), any(Vector2f.class), about(3f * (WingSharedFateListener.KILLING_BLOW_HULL_LEFT + 50f), 0.01f),
+            verify(wingmate).setHitpoints(PhaseEntangledWingsListener.KILLING_BLOW_HULL_LEFT);
+            verify(engine).applyDamage(eq(wingmate), any(Vector2f.class), about(3f * (PhaseEntangledWingsListener.KILLING_BLOW_HULL_LEFT + 50f), 0.01f),
                     eq(DamageType.ENERGY), eq(0f), eq(true), eq(false), eq(attacker));
         }
         assertTrue(wingNumbersStoodAside.get(), "the wing's damage reduction was already applied to the shared hit");
-        assertFalse(WingSharedFateListener.isApplyingSharedDamage());
+        assertFalse(PhaseEntangledWingsListener.isApplyingSharedDamage());
     }
 
     @Test
@@ -292,7 +292,7 @@ class WingSharedFateListenerTest {
         when(wingmate.getMutableStats().getHullDamageTakenMult()).thenReturn(halved);
         when(wingmate.getMutableStats().getEnergyDamageTakenMult()).thenReturn(halved);
 
-        assertEquals(3f * 40f / 0.25f, WingSharedFateListener.killingBlowDamage(wingmate), 0.01f);
+        assertEquals(3f * 40f / 0.25f, PhaseEntangledWingsListener.killingBlowDamage(wingmate), 0.01f);
     }
 
     @Test
@@ -304,7 +304,7 @@ class WingSharedFateListenerTest {
         MutableStat halved = stat(0.5f);
         when(wingmate.getMutableStats().getArmorDamageTakenMult()).thenReturn(halved);
 
-        assertEquals(3f * (10f + 100f / 0.5f), WingSharedFateListener.killingBlowDamage(wingmate), 0.01f);
+        assertEquals(3f * (10f + 100f / 0.5f), PhaseEntangledWingsListener.killingBlowDamage(wingmate), 0.01f);
     }
 
     @Test
@@ -313,7 +313,7 @@ class WingSharedFateListenerTest {
         MutableStat immune = stat(0f);
         when(wingmate.getMutableStats().getEnergyDamageTakenMult()).thenReturn(immune);
 
-        assertEquals(30f, WingSharedFateListener.killingBlowDamage(wingmate), 0.01f);
+        assertEquals(30f, PhaseEntangledWingsListener.killingBlowDamage(wingmate), 0.01f);
     }
 
     @Test
@@ -416,7 +416,7 @@ class WingSharedFateListenerTest {
 
         new Hit(attachedTo(hit, 100f), hit, new Object()).lands(40f, 0f);
 
-        float spare = FLUX_CAPACITY - 190f - WingSharedFateListener.OVERLOAD_MARGIN;
+        float spare = FLUX_CAPACITY - 190f - PhaseEntangledWingsListener.OVERLOAD_MARGIN;
         verify(nearlyFull.getFluxTracker()).increaseFlux(about(spare, 0.001f), eq(true));
         verify(hit.getFluxTracker()).increaseFlux(about(40f - spare, 0.001f), eq(true));
     }

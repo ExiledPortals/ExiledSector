@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-record ChainLink(List<ShipAPI> hitSoFar, int chainCount, float dealtMult) {
+record RefractionLink(List<ShipAPI> hitSoFar, int chainCount, float dealtMult) {
 
     static final String HIT_LIST_KEY = "exiledLib_energyChainHitList";
     static final String COUNT_KEY = "exiledLib_energyChainCount";
@@ -15,12 +15,12 @@ record ChainLink(List<ShipAPI> hitSoFar, int chainCount, float dealtMult) {
 
     // unchecked: the hit list is only ever written by tag() as List<ShipAPI>
     @SuppressWarnings("unchecked")
-    static ChainLink of(DamagingProjectileAPI projectile, ShipAPI firingShip) {
+    static RefractionLink of(DamagingProjectileAPI projectile, ShipAPI firingShip) {
         Map<String, Object> data = projectile.getCustomData();
         int chainCount = data.get(COUNT_KEY) instanceof Integer stored ? stored : 0;
         float dealtMult = data.get(DEALT_MULT_KEY) instanceof Float stored ? stored : 1f;
         List<ShipAPI> hitSoFar = data.get(HIT_LIST_KEY) instanceof List<?> stored ? (List<ShipAPI>) stored : List.of(firingShip);
-        return new ChainLink(hitSoFar, chainCount, dealtMult);
+        return new RefractionLink(hitSoFar, chainCount, dealtMult);
     }
 
     static boolean isTagged(DamagingProjectileAPI projectile) {
@@ -33,9 +33,9 @@ record ChainLink(List<ShipAPI> hitSoFar, int chainCount, float dealtMult) {
         projectile.setCustomData(DEALT_MULT_KEY, dealtMult);
     }
 
-    ChainLink next(ShipAPI hitShip, float falloffPercent) {
+    RefractionLink next(ShipAPI hitShip, float falloffPercent) {
         List<ShipAPI> hits = new ArrayList<>(hitSoFar);
         hits.add(hitShip);
-        return new ChainLink(hits, chainCount + 1, dealtMult * (1f - falloffPercent / 100f));
+        return new RefractionLink(hits, chainCount + 1, dealtMult * (1f - falloffPercent / 100f));
     }
 }

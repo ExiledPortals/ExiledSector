@@ -28,17 +28,17 @@ class RefractionDronesTest {
     private MockedStatic<WeaponDroneFactory> factory;
     private final Deque<RefractionDrone> created = new ArrayDeque<>();
     private RefractionDrones pool;
-    private EnergyChainListener chain;
+    private RefractionListener chain;
     private final ShipAPI hitShip = mock(ShipAPI.class);
     private final ShipAPI target = mock(ShipAPI.class);
-    private final ChainLink link = new ChainLink(List.of(), 1, 0.8f);
+    private final RefractionLink link = new RefractionLink(List.of(), 1, 0.8f);
 
     @BeforeEach
     void setUp() {
         factory = Mockito.mockStatic(WeaponDroneFactory.class);
         factory.when(() -> WeaponDroneFactory.createSingleShot(any(), any(), any())).thenAnswer(invocation -> created.poll());
         pool = new RefractionDrones(mock(ShipAPI.class));
-        chain = mock(EnergyChainListener.class);
+        chain = mock(RefractionListener.class);
     }
 
     @AfterEach

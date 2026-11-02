@@ -16,7 +16,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class FighterFocusFireMarksTest {
+class HardlightMarkingTest {
 
     private static ShipAPI ship(String id, int owner, Map<String, Float> magnitudes) {
         ShipAPI ship = mock(ShipAPI.class);
@@ -32,11 +32,11 @@ class FighterFocusFireMarksTest {
 
     @Test
     void hardlightMarksAreSharedByEveryFighterOfOneCarrierAndCapped() {
-        ShipAPI carrier = ship("carrier", 0, Map.of(FighterFocusFireMarks.PERCENT_PER_HIT_KEY, 2f, FighterFocusFireMarks.MAX_PERCENT_KEY, 30f));
+        ShipAPI carrier = ship("carrier", 0, Map.of(HardlightMarking.PERCENT_PER_HIT_KEY, 2f, HardlightMarking.MAX_PERCENT_KEY, 30f));
         ShipAPI enemy = ship("enemy", 1, Map.of());
-        FighterFocusFireMarks marks = new FighterFocusFireMarks(carrier);
-        FighterFocusFireMarks.FighterHits firstFighter = new FighterFocusFireMarks.FighterHits(marks);
-        FighterFocusFireMarks.FighterHits secondFighter = new FighterFocusFireMarks.FighterHits(marks);
+        HardlightMarking marks = new HardlightMarking(carrier);
+        HardlightMarking.FighterHits firstFighter = new HardlightMarking.FighterHits(marks);
+        HardlightMarking.FighterHits secondFighter = new HardlightMarking.FighterHits(marks);
         DamageAPI damage = mock(DamageAPI.class);
         MutableStat modifier = mock(MutableStat.class);
         when(damage.getModifier()).thenReturn(modifier);
@@ -54,10 +54,10 @@ class FighterFocusFireMarksTest {
 
     @Test
     void hardlightCountsASecondOfBeamContactAsOneHit() {
-        ShipAPI carrier = ship("carrier", 0, Map.of(FighterFocusFireMarks.PERCENT_PER_HIT_KEY, 2f, FighterFocusFireMarks.MAX_PERCENT_KEY, 30f));
+        ShipAPI carrier = ship("carrier", 0, Map.of(HardlightMarking.PERCENT_PER_HIT_KEY, 2f, HardlightMarking.MAX_PERCENT_KEY, 30f));
         ShipAPI enemy = ship("enemy", 1, Map.of());
-        FighterFocusFireMarks marks = new FighterFocusFireMarks(carrier);
-        FighterFocusFireMarks.FighterHits beamFighter = new FighterFocusFireMarks.FighterHits(marks);
+        HardlightMarking marks = new HardlightMarking(carrier);
+        HardlightMarking.FighterHits beamFighter = new HardlightMarking.FighterHits(marks);
         DamageAPI beamTick = mock(DamageAPI.class);
         when(beamTick.isDps()).thenReturn(true);
         when(beamTick.getDpsDuration()).thenReturn(0.1f);
@@ -72,11 +72,11 @@ class FighterFocusFireMarksTest {
 
     @Test
     void hardlightMarksIgnoreFriendlyShips() {
-        ShipAPI carrier = ship("carrier", 0, Map.of(FighterFocusFireMarks.PERCENT_PER_HIT_KEY, 2f, FighterFocusFireMarks.MAX_PERCENT_KEY, 30f));
-        FighterFocusFireMarks marks = new FighterFocusFireMarks(carrier);
+        ShipAPI carrier = ship("carrier", 0, Map.of(HardlightMarking.PERCENT_PER_HIT_KEY, 2f, HardlightMarking.MAX_PERCENT_KEY, 30f));
+        HardlightMarking marks = new HardlightMarking(carrier);
         ShipAPI ally = ship("ally", 0, Map.of());
 
-        new FighterFocusFireMarks.FighterHits(marks).modifyDamageDealt(null, ally, mock(DamageAPI.class), new Vector2f(), false);
+        new HardlightMarking.FighterHits(marks).modifyDamageDealt(null, ally, mock(DamageAPI.class), new Vector2f(), false);
 
         assertEquals(0f, marks.markPercent(ally), 0.0001f);
     }

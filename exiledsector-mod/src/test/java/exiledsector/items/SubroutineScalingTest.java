@@ -62,7 +62,7 @@ class SubroutineScalingTest {
         ItemDefinitions.register(new JSONArray()
                 .put(unique(RELIC, "HULL_PERCENT:10:10"))
                 .put(unique(PHOENIX, "GATES_RADIUS_BELOW_HALF_HULL:3:3"))
-                .put(unique(AXION, "EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE:1:1"))
+                .put(unique(AXION, "EVERY_AFFINITY_FLAT_PER_EMPTY_SHELL_NODE:1:1"))
                 .put(ItemFixtures.subroutineRow(AUGMENT, SubroutineKind.DOCTRINE)));
         UniqueSubroutineRadii.register(new JSONArray()
                 .put(new JSONObject().put("id", PHOENIX).put(UniqueSubroutineRadii.RADIUS_COLUMN, "medium"))

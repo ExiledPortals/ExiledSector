@@ -14,7 +14,7 @@ import org.lwjgl.util.vector.Vector2f;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
-final class FighterFocusFireMarks extends ShipCombatListener {
+final class HardlightMarking extends ShipCombatListener {
 
     static final String PERCENT_PER_HIT_KEY = "exiledLib_fighterFocusFirePercentPerHit";
     static final String MAX_PERCENT_KEY = "exiledLib_fighterFocusFireMaxPercent";
@@ -24,12 +24,12 @@ final class FighterFocusFireMarks extends ShipCombatListener {
 
     private final Map<ShipAPI, Mark> marksByTarget = new IdentityHashMap<>();
 
-    FighterFocusFireMarks(ShipAPI carrier) {
+    HardlightMarking(ShipAPI carrier) {
         super(carrier, MOD_ID_PREFIX);
     }
 
-    static FighterFocusFireMarks of(ShipAPI carrier) {
-        return SkillEffectSupport.ensureListener(carrier, FighterFocusFireMarks.class, FighterFocusFireMarks::new);
+    static HardlightMarking of(ShipAPI carrier) {
+        return SkillEffectSupport.ensureListener(carrier, HardlightMarking.class, HardlightMarking::new);
     }
 
     static FighterListenerEffect<FighterHits> backing(String magnitudeKey) {
@@ -68,9 +68,9 @@ final class FighterFocusFireMarks extends ShipCombatListener {
 
     static final class FighterHits implements DamageDealtModifier {
 
-        private final FighterFocusFireMarks marks;
+        private final HardlightMarking marks;
 
-        FighterHits(FighterFocusFireMarks marks) {
+        FighterHits(HardlightMarking marks) {
             this.marks = marks;
         }
 

@@ -13,7 +13,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class SeraphsGraceListenerTest {
+class BorrowedGraceListenerTest {
 
     private static final String GRACE_MOD_ID = "exiledLib_seraphsGrace_grace";
 
@@ -36,13 +36,13 @@ class SeraphsGraceListenerTest {
     }
 
     private static ShipAPI graceShip(float maxStacks) {
-        return ship("grace", 0, Map.of(SeraphsGraceListener.MAX_STACKS_KEY, maxStacks, SeraphsGraceListener.PERCENT_PER_STACK_KEY, 1f));
+        return ship("grace", 0, Map.of(BorrowedGraceListener.MAX_STACKS_KEY, maxStacks, BorrowedGraceListener.PERCENT_PER_STACK_KEY, 1f));
     }
 
     @Test
     void graceStacksBuildFromArmorAndHullDamageTakenAndKeepTheRemainder() {
         ShipAPI ship = graceShip(20f);
-        SeraphsGraceListener grace = new SeraphsGraceListener(ship);
+        BorrowedGraceListener grace = new BorrowedGraceListener(ship);
         MutableShipStatsAPI stats = ship.getMutableStats();
 
         grace.reportDamageApplied(null, mock(ShipAPI.class), hit(500f, 500f));
@@ -62,15 +62,15 @@ class SeraphsGraceListenerTest {
     @Test
     void graceStacksExpireAfterTheirDurationButNotWhilePhased() {
         ShipAPI ship = graceShip(20f);
-        SeraphsGraceListener grace = new SeraphsGraceListener(ship);
+        BorrowedGraceListener grace = new BorrowedGraceListener(ship);
 
         grace.reportDamageApplied(null, ship, hit(0f, 100f));
         when(ship.isPhased()).thenReturn(true);
-        grace.advance(SeraphsGraceListener.STACK_DURATION_SECONDS * 2f);
+        grace.advance(BorrowedGraceListener.STACK_DURATION_SECONDS * 2f);
         assertEquals(1, grace.stacks());
 
         when(ship.isPhased()).thenReturn(false);
-        grace.advance(SeraphsGraceListener.STACK_DURATION_SECONDS);
+        grace.advance(BorrowedGraceListener.STACK_DURATION_SECONDS);
         assertEquals(0, grace.stacks());
         verify(ship.getMutableStats().getMaxSpeed()).unmodify(GRACE_MOD_ID);
     }
@@ -78,14 +78,14 @@ class SeraphsGraceListenerTest {
     @Test
     void graceReplacesTheOldestStackAtTheCap() {
         ShipAPI ship = graceShip(2f);
-        SeraphsGraceListener grace = new SeraphsGraceListener(ship);
+        BorrowedGraceListener grace = new BorrowedGraceListener(ship);
 
         grace.reportDamageApplied(null, ship, hit(0f, 100f));
         grace.advance(10f);
         grace.reportDamageApplied(null, ship, hit(0f, 200f));
         assertEquals(2, grace.stacks());
 
-        grace.advance(SeraphsGraceListener.STACK_DURATION_SECONDS - 1f);
+        grace.advance(BorrowedGraceListener.STACK_DURATION_SECONDS - 1f);
         assertEquals(2, grace.stacks());
         grace.advance(1f);
         assertEquals(0, grace.stacks());

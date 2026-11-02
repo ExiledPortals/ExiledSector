@@ -21,7 +21,7 @@ final class FurorListener extends ShipCombatListener implements DamageDealtModif
     static final float SHIELD_HIT_WEIGHT = 0.5f;
     static final float EMP_WEIGHT = 0.25f;
     private static final String MOD_ID_PREFIX = "exiledLib_furor_";
-    private static final ScaledBonus RATE_OF_FIRE = new ScaledBonus(percent(WeaponStatFamily.FIRE_RATE.target(WeaponScope.ALL)));
+    private static final ScaledBonus RATE_OF_FIRE = new ScaledBonus(percent(WeaponStatFamily.RATE_OF_FIRE.target(WeaponScope.ALL)));
 
     private final ScaledBonus.Tracker rateOfFire = RATE_OF_FIRE.tracker();
     private float furorPercent;

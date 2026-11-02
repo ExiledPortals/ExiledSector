@@ -27,7 +27,7 @@ final class SolarisOverdriveListener extends ShipCombatListener implements Advan
     private static final ScaledBonus OVERDRIVE_BONUS = new ScaledBonus(
             ScaledBonus.fixed(WeaponStatFamily.FLUX_COST.target(WeaponScope.ALL), StatMode.MULT, -100f),
             ScaledBonus.percent(WeaponStatFamily.PROJECTILE_SPEED.target(WeaponScope.ALL), PROJECTILE_SPEED_PERCENT_KEY),
-            ScaledBonus.percent(WeaponStatFamily.FIRE_RATE.target(WeaponScope.ALL), RATE_OF_FIRE_PERCENT_KEY));
+            ScaledBonus.percent(WeaponStatFamily.RATE_OF_FIRE.target(WeaponScope.ALL), RATE_OF_FIRE_PERCENT_KEY));
 
     private final PlayerStatus status;
     private boolean systemWasActive;

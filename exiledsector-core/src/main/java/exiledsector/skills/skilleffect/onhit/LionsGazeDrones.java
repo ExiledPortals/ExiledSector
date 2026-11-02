@@ -20,9 +20,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-final class SplitBeamDrones {
+final class LionsGazeDrones {
 
-    private static final Logger LOG = Logger.getLogger(SplitBeamDrones.class);
+    private static final Logger LOG = Logger.getLogger(LionsGazeDrones.class);
     private static final float SPLIT_TIMEOUT_SECONDS = 0.3f;
     private static final float MIN_FIRING_SECONDS = 1f;
     private static final float CONNECTOR_OVERLAP = 20f;
@@ -33,7 +33,7 @@ final class SplitBeamDrones {
     private final Map<SplitKey, SplitDrone> drones = new HashMap<>();
     private final Map<BeamAPI, BeamClaim> claimsByBeam = new HashMap<>();
 
-    SplitBeamDrones(ShipAPI firingShip) {
+    LionsGazeDrones(ShipAPI firingShip) {
         this.firingShip = firingShip;
     }
 

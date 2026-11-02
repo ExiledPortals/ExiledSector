@@ -43,7 +43,7 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
     PHASE_CLOAK_FLUX_THRESHOLD_PERCENT(statEffect(PERCENT, dynamicMod("phase_cloak_flux_level_for_min_speed_mod"),
             "stat.hardFluxLevelForMinimumPhaseSpeed", false)),
     COMBAT_BOOST_WHILE_PHASED(new ConditionalStatEffect(MULT, all(stat(MutableShipStatsAPI::getFluxDissipation),
-            WeaponStatFamily.FIRE_RATE.target(WeaponScope.ALL), WeaponStatFamily.AMMO_REGEN.target(WeaponScope.ALL)),
+            WeaponStatFamily.RATE_OF_FIRE.target(WeaponScope.ALL), WeaponStatFamily.AMMO_REGEN.target(WeaponScope.ALL)),
             "stat.fluxRateOfFireAndAmmoRegenWhilePhased", PhaseSkillEffect::isBoostedByPhase)),
     PHASE_TOP_SPEED_PERCENT(new ConditionalStatEffect(PERCENT, stat(MutableShipStatsAPI::getMaxSpeed), "stat.topSpeedWhilePhased",
             PhaseSkillEffect::isBoostedByPhase)),

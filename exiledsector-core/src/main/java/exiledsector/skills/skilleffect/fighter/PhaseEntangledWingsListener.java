@@ -22,7 +22,7 @@ import org.lwjgl.util.vector.Vector2f;
 import java.util.ArrayList;
 import java.util.List;
 
-final class WingSharedFateListener implements DamageTakenModifier, DamageListener {
+final class PhaseEntangledWingsListener implements DamageTakenModifier, DamageListener {
 
     static final String SHARED_PERCENT_KEY = "exiledLib_wingSharedFatePercent";
     static final String SHARE_MOD_ID = "exiledLib_wingSharedFate";
@@ -44,7 +44,7 @@ final class WingSharedFateListener implements DamageTakenModifier, DamageListene
     private float pendingKeptFraction;
     private boolean sharePending;
 
-    WingSharedFateListener(ShipAPI fighter, ShipAPI carrier) {
+    PhaseEntangledWingsListener(ShipAPI fighter, ShipAPI carrier) {
         this.fighter = fighter;
         this.carrier = carrier;
     }

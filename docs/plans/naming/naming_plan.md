@@ -90,15 +90,15 @@ Also:
 
 | Player sees | Code says | Rename to | Kind |
 |---|---|---|---|
-| Refracting Projectiles, "Max Projectile Refractions" | `NON_BEAM_ENERGY_WEAPON_CHAIN_*`, `EnergyChainListener`, `ChainLink`, `MaxChainCountConfig`, setting `exiledSector_maxChainCount`, `energy_chain_blocklist.csv`; the same package also has `Refraction*` | refraction | code, effect names (via `effect_aliases.csv`), saved setting |
-| Borrowed Grace / Seraph Hunting Routines | `SERAPHS_GRACE_*` / `SeraphsGraceListener` vs `SERAPHIM_*` / `SeraphimListener` | `BORROWED_GRACE_*`, `SERAPH_HUNTING_*` | effect names, keys |
-| Phase-Entangled Wings | `WingSharedFateListener`, docs "Wing Shared Fate"; "Shared Fate" is the shield skill | `PhaseEntangledWings*` | code |
-| Empty Shell | `EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE`, `hollow*` | empty shell | effect name, code |
-| Volatile flux | `FLUX_SCALED_*`, `FluxScaledVolatilityListener`, key `combat.fluxScaled.title` | volatile flux | effect names, keys |
-| Hardlight Marking | `FIGHTER_FOCUS_FIRE_*`, `FighterFocusFireMarks` | hardlight marking | effect names, code |
-| Lion's Gaze | `BeamSplitListener` vs `SplitBeamDrones`, `split_beam_effect_blocklist.csv` | lions gaze, or at least one word order | code, data file |
-| rate of fire | `*_FIRE_RATE_*` (10 names) vs `*_RATE_OF_FIRE_*` (14), node names "Weapon Fire Rate" | `RATE_OF_FIRE` | effect names |
-| combat D-mods | `NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD` | `COMBAT_DMOD_*` | effect name |
+| Refracting Projectiles, "Max Projectile Refractions" | `NON_BEAM_ENERGY_WEAPON_CHAIN_*`, `EnergyChainListener`, `ChainLink`, `MaxChainCountConfig`, setting `exiledSector_maxChainCount`, `energy_chain_blocklist.csv`; the same package also has `Refraction*` | refraction | code, effect names (via `effect_aliases.csv`), saved setting. [x] Built: `NON_BEAM_ENERGY_WEAPON_REFRACTION_*`, `RefractionListener`, `RefractionLink`, `MaxRefractionCountConfig`, `CsvIdList.REFRACTION_WEAPON_BLOCKLIST`. The setting id `exiledSector_maxChainCount` and the file `energy_chain_blocklist.csv` stay: the setting would reset, and other mods add rows to the merged blocklist under that name. |
+| Borrowed Grace / Seraph Hunting Routines | `SERAPHS_GRACE_*` / `SeraphsGraceListener` vs `SERAPHIM_*` / `SeraphimListener` | `BORROWED_GRACE_*`, `SERAPH_HUNTING_*` | effect names, keys. [x] Built, with `BorrowedGraceListener` and `SeraphHuntingListener`. |
+| Phase-Entangled Wings | `WingSharedFateListener`, docs "Wing Shared Fate"; "Shared Fate" is the shield skill | `PhaseEntangledWings*` | code. [x] Built: `PhaseEntangledWingsListener`. |
+| Empty Shell | `EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE`, `hollow*` | empty shell | effect name, code. [x] Built: `EVERY_AFFINITY_FLAT_PER_EMPTY_SHELL_NODE`, `emptyShellNodeIds` and the rest. |
+| Volatile flux | `FLUX_SCALED_*`, `FluxScaledVolatilityListener`, key `combat.fluxScaled.title` | volatile flux | effect names, keys. [x] Built: `VOLATILE_FLUX_*`, `VolatileFluxListener`, key `combat.volatileFlux.title`. |
+| Hardlight Marking | `FIGHTER_FOCUS_FIRE_*`, `FighterFocusFireMarks` | hardlight marking | effect names, code. [x] Built: `HARDLIGHT_MARKING_*`, `HardlightMarking`. |
+| Lion's Gaze | `BeamSplitListener` vs `SplitBeamDrones`, `split_beam_effect_blocklist.csv` | lions gaze, or at least one word order | code, data file. [x] Built: `LionsGazeListener`, `LionsGazeDrones`, `CsvIdList.LIONS_GAZE_EFFECT_BLOCKLIST`. `split_beam_effect_blocklist.csv` keeps its name because other mods merge rows into it. |
+| rate of fire | `*_FIRE_RATE_*` (10 names) vs `*_RATE_OF_FIRE_*` (14), node names "Weapon Fire Rate" | `RATE_OF_FIRE` | effect names. [x] Built: `WeaponStatFamily.RATE_OF_FIRE`, so all ten generated names say `RATE_OF_FIRE`. Modifier ids that only contain the words (`..._WEAPON_MOUNT`, Doctrine and Engram ids) are saved and stay. |
+| combat D-mods | `NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD` | `COMBAT_DMOD_*` | effect name. [x] Built: `COMBAT_DMOD_EFFECT_MULT_PER_DMOD`. Every old effect name is a row in `effect_aliases.csv`, which also covers modifier ids of the same name. |
 
 Also:
 - About 15 `stat.*` keys are camel-cased from old sentences (`stat.minimumCrewRequiredPerFighterBayCappedAt80Total`). Shorten them to the stat name.

@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-final class BeamSplitListener extends ShipCombatListener implements DamageDealtModifier, DroneSpawner {
+final class LionsGazeListener extends ShipCombatListener implements DamageDealtModifier, DroneSpawner {
 
     static final String TARGETS_KEY = "exiledLib_beamSplitTargets";
 
@@ -35,7 +35,7 @@ final class BeamSplitListener extends ShipCombatListener implements DamageDealtM
 
     private static boolean applyingSimulatedHit;
 
-    private final SplitBeamDrones drones;
+    private final LionsGazeDrones drones;
     private final Map<BeamAPI, SplitTargets> targetsByBeam = new HashMap<>();
     private boolean processingSplit;
 
@@ -58,9 +58,9 @@ final class BeamSplitListener extends ShipCombatListener implements DamageDealtM
         applyingSimulatedHit = false;
     }
 
-    BeamSplitListener(ShipAPI ownerShip) {
+    LionsGazeListener(ShipAPI ownerShip) {
         super(ownerShip);
-        this.drones = new SplitBeamDrones(ownerShip);
+        this.drones = new LionsGazeDrones(ownerShip);
     }
 
     @Override

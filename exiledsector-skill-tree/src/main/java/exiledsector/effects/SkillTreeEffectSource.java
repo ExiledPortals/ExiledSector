@@ -70,10 +70,10 @@ public final class SkillTreeEffectSource implements ShipEffectSource {
     public static List<EffectContribution> contributions(ShipSkillData shipData, HullSize hullSize) {
         List<EffectContribution> contributions = new ArrayList<>();
         Map<String, GatedSubroutines.Gating> gatedNodeIds = GatedSubroutines.gatedNodeIds(shipData);
-        Set<String> hollowNodeIds = EmptyShells.hollowNodeIds(shipData);
+        Set<String> emptyShellNodeIds = EmptyShells.emptyShellNodeIds(shipData);
         String doctrineSocketId = DoctrineOverrides.layer(shipData).socketNodeId();
         for (AllocatedNode node : AllocatedNode.of(shipData)) {
-            if (hollowNodeIds.contains(node.node().getId())) {
+            if (emptyShellNodeIds.contains(node.node().getId())) {
                 continue;
             }
             SkillType type = node.effectiveType();
@@ -107,9 +107,9 @@ public final class SkillTreeEffectSource implements ShipEffectSource {
 
     static List<AllocatedNode> placingNodes(ShipSkillData shipData) {
         Map<String, GatedSubroutines.Gating> gatedNodeIds = GatedSubroutines.gatedNodeIds(shipData);
-        Set<String> hollowNodeIds = EmptyShells.hollowNodeIds(shipData);
+        Set<String> emptyShellNodeIds = EmptyShells.emptyShellNodeIds(shipData);
         return AllocatedNode.of(shipData).stream()
-                .filter(node -> !hollowNodeIds.contains(node.node().getId()) && gating(node, gatedNodeIds) == null).toList();
+                .filter(node -> !emptyShellNodeIds.contains(node.node().getId()) && gating(node, gatedNodeIds) == null).toList();
     }
 
     private static GatedSubroutines.Gating gating(AllocatedNode node, Map<String, GatedSubroutines.Gating> gatedNodeIds) {

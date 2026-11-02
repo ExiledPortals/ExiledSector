@@ -41,7 +41,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class BeamSplitListenerTest {
+class LionsGazeListenerTest {
 
     private final List<ShipAPI> ships = new ArrayList<>();
     private MockedStatic<Global> globalMock;
@@ -108,7 +108,7 @@ class BeamSplitListenerTest {
         when(flux.getCurrFlux()).thenAnswer(invocation -> current[0]);
         when(flux.getHardFlux()).thenReturn(20f);
         doAnswer(invocation -> {
-            flagDuringHit[0] = BeamSplitListener.isApplyingSimulatedHit();
+            flagDuringHit[0] = LionsGazeListener.isApplyingSimulatedHit();
             current[0] = after;
             return null;
         }).when(engine).applyDamage(any(), any(), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
@@ -118,7 +118,7 @@ class BeamSplitListenerTest {
     @Test
     void aSimulatedSplitHitTurnsTheStatedShareOfTheShieldFluxItAddedIntoHardFluxAfterTheEngineFinishes() {
         ShipAPI firing = shipAt(0f, 0);
-        when(firing.getMutableStats().getDynamic().getValue(BeamSplitListener.TARGETS_KEY, 0f)).thenReturn(1f);
+        when(firing.getMutableStats().getDynamic().getValue(LionsGazeListener.TARGETS_KEY, 0f)).thenReturn(1f);
         when(firing.getMutableStats().getDynamic().getValue(BeamHardFluxListener.HARD_FLUX_PERCENT_KEY, 0f)).thenReturn(50f);
         ShipAPI primary = shipAt(100f, 1);
         ShipAPI splitTarget = shipAt(200f, 1);
@@ -126,23 +126,23 @@ class BeamSplitListenerTest {
         boolean[] flagDuringHit = {false};
         FluxTrackerAPI flux = splitTargetFlux(splitTarget, 100f, 150f, flagDuringHit);
 
-        new BeamSplitListener(firing).modifyDamageDealt(beamFrom(simulatedWeapon()), primary, tick(false), new Vector2f(100f, 0f), true);
+        new LionsGazeListener(firing).modifyDamageDealt(beamFrom(simulatedWeapon()), primary, tick(false), new Vector2f(100f, 0f), true);
 
         assertTrue(flagDuringHit[0]);
-        assertFalse(BeamSplitListener.isApplyingSimulatedHit());
+        assertFalse(LionsGazeListener.isApplyingSimulatedHit());
         verify(flux).setHardFlux(45f);
     }
 
     @Test
     void aBeamReusesItsSplitTargetsBrieflyAndSearchesAgainWhenOneDies() {
         ShipAPI firing = shipAt(0f, 0);
-        when(firing.getMutableStats().getDynamic().getValue(BeamSplitListener.TARGETS_KEY, 0f)).thenReturn(1f);
+        when(firing.getMutableStats().getDynamic().getValue(LionsGazeListener.TARGETS_KEY, 0f)).thenReturn(1f);
         ShipAPI primary = shipAt(100f, 1);
         ShipAPI splitTarget = shipAt(200f, 1);
         ships.addAll(List.of(firing, primary, splitTarget));
         splitTargetFlux(splitTarget, 100f, 100f, new boolean[1]);
         CollisionGridAPI shipGrid = engine.getShipGrid();
-        BeamSplitListener listener = new BeamSplitListener(firing);
+        LionsGazeListener listener = new LionsGazeListener(firing);
         BeamAPI beam = beamFrom(simulatedWeapon());
 
         when(engine.getTotalElapsedTime(false)).thenReturn(1f, 1.1f);
@@ -158,14 +158,14 @@ class BeamSplitListenerTest {
     @Test
     void aSimulatedSplitHitThatIsAlreadyHardFluxIsNotConvertedAgain() {
         ShipAPI firing = shipAt(0f, 0);
-        when(firing.getMutableStats().getDynamic().getValue(BeamSplitListener.TARGETS_KEY, 0f)).thenReturn(1f);
+        when(firing.getMutableStats().getDynamic().getValue(LionsGazeListener.TARGETS_KEY, 0f)).thenReturn(1f);
         when(firing.getMutableStats().getDynamic().getValue(BeamHardFluxListener.HARD_FLUX_PERCENT_KEY, 0f)).thenReturn(50f);
         ShipAPI primary = shipAt(100f, 1);
         ShipAPI splitTarget = shipAt(200f, 1);
         ships.addAll(List.of(firing, primary, splitTarget));
         FluxTrackerAPI flux = splitTargetFlux(splitTarget, 100f, 150f, new boolean[1]);
 
-        new BeamSplitListener(firing).modifyDamageDealt(beamFrom(simulatedWeapon()), primary, tick(true), new Vector2f(100f, 0f), true);
+        new LionsGazeListener(firing).modifyDamageDealt(beamFrom(simulatedWeapon()), primary, tick(true), new Vector2f(100f, 0f), true);
 
         verify(flux, never()).setHardFlux(anyFloat());
     }
@@ -173,7 +173,7 @@ class BeamSplitListenerTest {
     @Test
     void fightersAreNeverChosenAsSplitTargets() {
         ShipAPI firing = shipAt(0f, 0);
-        when(firing.getMutableStats().getDynamic().getValue(BeamSplitListener.TARGETS_KEY, 0f)).thenReturn(1f);
+        when(firing.getMutableStats().getDynamic().getValue(LionsGazeListener.TARGETS_KEY, 0f)).thenReturn(1f);
         ShipAPI primary = shipAt(100f, 1);
         ShipAPI fighter = shipAt(120f, 1);
         when(fighter.isFighter()).thenReturn(true);
@@ -181,7 +181,7 @@ class BeamSplitListenerTest {
         ships.addAll(List.of(firing, primary, fighter, splitTarget));
         splitTargetFlux(splitTarget, 100f, 150f, new boolean[1]);
 
-        new BeamSplitListener(firing).modifyDamageDealt(beamFrom(simulatedWeapon()), primary, tick(false), new Vector2f(100f, 0f), true);
+        new LionsGazeListener(firing).modifyDamageDealt(beamFrom(simulatedWeapon()), primary, tick(false), new Vector2f(100f, 0f), true);
 
         verify(engine).applyDamage(any(), eq(splitTarget), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
         verify(engine, never()).applyDamage(any(), eq(fighter), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
@@ -190,14 +190,14 @@ class BeamSplitListenerTest {
     @Test
     void aBeamWithOnlyFightersNearbyDoesNotSplit() {
         ShipAPI firing = shipAt(0f, 0);
-        when(firing.getMutableStats().getDynamic().getValue(BeamSplitListener.TARGETS_KEY, 0f)).thenReturn(1f);
+        when(firing.getMutableStats().getDynamic().getValue(LionsGazeListener.TARGETS_KEY, 0f)).thenReturn(1f);
         ShipAPI primary = shipAt(100f, 1);
         ShipAPI fighter = shipAt(120f, 1);
         when(fighter.isFighter()).thenReturn(true);
         ships.addAll(List.of(firing, primary, fighter));
         DamageAPI damage = tick(false);
 
-        assertNull(new BeamSplitListener(firing).modifyDamageDealt(beamFrom(simulatedWeapon()), primary, damage, new Vector2f(100f, 0f), true));
+        assertNull(new LionsGazeListener(firing).modifyDamageDealt(beamFrom(simulatedWeapon()), primary, damage, new Vector2f(100f, 0f), true));
 
         assertEquals(1f, damage.getModifier().getModifiedValue());
         verify(engine, never()).applyDamage(any(), any(), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
@@ -206,7 +206,7 @@ class BeamSplitListenerTest {
     @Test
     void theNearestEnemyIsSplitToOnceEvenWhenTheGridListsItInSeveralCells() {
         ShipAPI firing = shipAt(0f, 0);
-        when(firing.getMutableStats().getDynamic().getValue(BeamSplitListener.TARGETS_KEY, 0f)).thenReturn(1f);
+        when(firing.getMutableStats().getDynamic().getValue(LionsGazeListener.TARGETS_KEY, 0f)).thenReturn(1f);
         ShipAPI primary = shipAt(100f, 1);
         ShipAPI farTarget = shipAt(450f, 1);
         ShipAPI nearTarget = shipAt(200f, 1);
@@ -214,7 +214,7 @@ class BeamSplitListenerTest {
         splitTargetFlux(nearTarget, 100f, 150f, new boolean[1]);
         DamageAPI damage = tick(false);
 
-        new BeamSplitListener(firing).modifyDamageDealt(beamFrom(simulatedWeapon()), primary, damage, new Vector2f(100f, 0f), true);
+        new LionsGazeListener(firing).modifyDamageDealt(beamFrom(simulatedWeapon()), primary, damage, new Vector2f(100f, 0f), true);
 
         verify(engine).applyDamage(any(), eq(nearTarget), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
         verify(engine, never()).applyDamage(any(), eq(farTarget), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
@@ -224,14 +224,14 @@ class BeamSplitListenerTest {
     @Test
     void aBeamHitThatNoLongerSplitsStopsThatWeaponsDronesFromAddingDamageOnTopOfTheFullPrimaryHit() {
         ShipAPI firing = shipAt(0f, 0);
-        when(firing.getMutableStats().getDynamic().getValue(BeamSplitListener.TARGETS_KEY, 0f)).thenReturn(1f);
+        when(firing.getMutableStats().getDynamic().getValue(LionsGazeListener.TARGETS_KEY, 0f)).thenReturn(1f);
         ShipAPI primary = shipAt(100f, 1);
         ships.addAll(List.of(firing, primary));
         WeaponAPI weapon = simulatedWeapon();
         DamageAPI damage = tick(false);
 
-        try (MockedConstruction<SplitBeamDrones> constructed = Mockito.mockConstruction(SplitBeamDrones.class)) {
-            BeamSplitListener listener = new BeamSplitListener(firing);
+        try (MockedConstruction<LionsGazeDrones> constructed = Mockito.mockConstruction(LionsGazeDrones.class)) {
+            LionsGazeListener listener = new LionsGazeListener(firing);
             assertNull(listener.modifyDamageDealt(beamFrom(weapon), primary, damage, new Vector2f(100f, 0f), true));
             assertNull(listener.modifyDamageDealt(beamFrom(weapon), mock(CombatEntityAPI.class), damage, new Vector2f(100f, 0f), true));
 

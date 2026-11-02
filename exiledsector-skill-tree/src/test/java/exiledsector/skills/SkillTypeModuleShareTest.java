@@ -64,7 +64,7 @@ class SkillTypeModuleShareTest {
 
     @Test
     void penaltiesOnSharedEffectsTravelWithTheNode() {
-        assertEquals(List.of("MISSILE_WEAPON_AMMO_PERCENT", "MISSILE_WEAPON_FIRE_RATE_PERCENT"), sharedNames("missleracks", HullSize.CRUISER));
+        assertEquals(List.of("MISSILE_WEAPON_AMMO_PERCENT", "MISSILE_WEAPON_RATE_OF_FIRE_PERCENT"), sharedNames("missleracks", HullSize.CRUISER));
         assertEquals(List.of("REPAIR_TIME_PERCENT", "SHIELD_DAMAGE_TAKEN_MULT"), sharedNames("seraphs_grace", HullSize.CRUISER));
         assertTrue(sharedNames("reckless_assault", HullSize.CRUISER).containsAll(List.of("WEAPON_DAMAGE_PERCENT", "ARMOR_PERCENT")));
     }

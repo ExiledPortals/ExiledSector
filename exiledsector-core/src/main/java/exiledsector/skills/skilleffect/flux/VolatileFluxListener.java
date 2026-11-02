@@ -19,7 +19,7 @@ import exiledsector.skills.skilleffect.weapon.WeaponStatFamily;
 import java.awt.Color;
 import java.util.Locale;
 
-final class FluxScaledVolatilityListener extends ShipCombatListener implements AdvanceableListener {
+final class VolatileFluxListener extends ShipCombatListener implements AdvanceableListener {
 
     static final String TOP_SPEED_KEY = "exiledLib_fluxScaledTopSpeed";
     static final String RATE_OF_FIRE_KEY = "exiledLib_fluxScaledRateOfFire";
@@ -28,7 +28,7 @@ final class FluxScaledVolatilityListener extends ShipCombatListener implements A
     private static final String STATUS_KEY = "exiledLib_fluxScaledStatus";
     private static final String STATUS_ICON = "graphics/icons/hullsys/high_energy_focus.png";
     private static final float RATIO_STEP = 0.02f;
-    private static final StatTarget RATE_OF_FIRE = WeaponStatFamily.FIRE_RATE.target(WeaponScope.ALL);
+    private static final StatTarget RATE_OF_FIRE = WeaponStatFamily.RATE_OF_FIRE.target(WeaponScope.ALL);
     static final float AFTERIMAGE_INTERVAL = 0.05f;
     private static final float AFTERIMAGE_DRIFT = -0.8f;
     private static final float AFTERIMAGE_DURATION = 0.35f;
@@ -40,9 +40,9 @@ final class FluxScaledVolatilityListener extends ShipCombatListener implements A
     private float appliedRatio = Float.NaN;
     private Float penaltyScale;
     private Color afterimageColor = AFTERIMAGE_COLOR;
-    private final PlayerStatus status = new PlayerStatus(STATUS_KEY, STATUS_ICON, "combat.fluxScaled.title");
+    private final PlayerStatus status = new PlayerStatus(STATUS_KEY, STATUS_ICON, "combat.volatileFlux.title");
 
-    FluxScaledVolatilityListener(ShipAPI ownerShip) {
+    VolatileFluxListener(ShipAPI ownerShip) {
         super(ownerShip, MOD_ID_PREFIX);
     }
 
@@ -90,7 +90,7 @@ final class FluxScaledVolatilityListener extends ShipCombatListener implements A
     }
 
     private void showStatus(float ratio, float topSpeed, float rateOfFire) {
-        status.showIfPlayer(ownerShip, ratio < 0f, () -> Translation.msg("combat.fluxScaled.status")
+        status.showIfPlayer(ownerShip, ratio < 0f, () -> Translation.msg("combat.volatileFlux.status")
                 .arg("speed", signed(topSpeed * ratio)).arg("rateOfFire", signed(rateOfFire * ratio)).text());
     }
 

@@ -14,7 +14,7 @@ import java.util.Random;
 public final class StormLoot {
 
     public static final List<String> MODIFIER_IDS = List.of("EMP_DAMAGE_TAKEN_PERCENT_STORM_FRONT",
-            "NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT_STORM_FRONT");
+            "NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT_STORM_FRONT");
 
     private StormLoot() {
     }

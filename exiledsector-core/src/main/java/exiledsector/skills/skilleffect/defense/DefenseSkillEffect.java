@@ -109,7 +109,7 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
         }
     },
     DMOD_EFFECT_MULT_PER_DMOD(new PerDModMultEffect(SkillEffectSupport::applyDModEffectMult, "stat.negativeEffectsFromDModsPerDMod", true, false)),
-    NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD(new PerDModMultEffect(SkillEffectSupport::applyNonLogisticsDModEffectMult,
+    COMBAT_DMOD_EFFECT_MULT_PER_DMOD(new PerDModMultEffect(SkillEffectSupport::applyNonLogisticsDModEffectMult,
             "stat.negativeEffectsFromNonLogisticsDModsPerDMod", true, false)),
     LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD(new PerDModMultEffect(SkillEffectSupport::applyLogisticsDModEffectMult,
             "stat.negativeEffectsFromLogisticsDModsPerDMod", true, false)),

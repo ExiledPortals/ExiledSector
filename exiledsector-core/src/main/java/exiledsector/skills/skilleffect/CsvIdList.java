@@ -14,9 +14,9 @@ public final class CsvIdList {
 
     private static final List<CsvIdList> ALL = new ArrayList<>();
 
-    public static final CsvIdList SPLIT_BEAM_EFFECTS =
+    public static final CsvIdList LIONS_GAZE_EFFECT_BLOCKLIST =
             register("split_beam_effect_blocklist.csv", "plugin");
-    public static final CsvIdList ENERGY_CHAIN_WEAPONS =
+    public static final CsvIdList REFRACTION_WEAPON_BLOCKLIST =
             register("energy_chain_blocklist.csv", "weapon");
     public static final CsvIdList BALLISTIC_PIERCE_WEAPONS =
             register("ballistic_pierce_blocklist.csv", "weapon");

@@ -218,12 +218,12 @@ public enum FighterSkillEffect implements BackedSkillEffect {
             }
         }
     },
-    FIGHTER_WING_SHARED_DAMAGE_PERCENT(new FighterListenerEffect<>(WingSharedFateListener.SHARED_PERCENT_KEY, WingSharedFateListener.class,
-            WingSharedFateListener::new)) {
+    FIGHTER_WING_SHARED_DAMAGE_PERCENT(new FighterListenerEffect<>(PhaseEntangledWingsListener.SHARED_PERCENT_KEY, PhaseEntangledWingsListener.class,
+            PhaseEntangledWingsListener::new)) {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", Math.min(magnitude, WingSharedFateListener.MAX_SHARED_PERCENT)).styled();
+            return EffectText.msg(this).arg("value", Math.min(magnitude, PhaseEntangledWingsListener.MAX_SHARED_PERCENT)).styled();
         }
     },
     FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER(new FighterListenerEffect<>(WingNumbersDamageListener.REDUCTION_PERCENT_PER_FIGHTER_KEY,
@@ -234,14 +234,14 @@ public enum FighterSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("max", WingNumbersDamageListener.MAX_REDUCTION_PERCENT).styled();
         }
     },
-    FIGHTER_FOCUS_FIRE_DAMAGE_PERCENT_PER_HIT(FighterFocusFireMarks.backing(FighterFocusFireMarks.PERCENT_PER_HIT_KEY)) {
+    HARDLIGHT_MARKING_DAMAGE_PERCENT_PER_HIT(HardlightMarking.backing(HardlightMarking.PERCENT_PER_HIT_KEY)) {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).arg("reset", FighterFocusFireMarks.RESET_AFTER_SECONDS).styled();
+            return EffectText.msg(this).arg("value", magnitude).arg("reset", HardlightMarking.RESET_AFTER_SECONDS).styled();
         }
     },
-    FIGHTER_FOCUS_FIRE_MAX_DAMAGE_PERCENT(FighterFocusFireMarks.backing(FighterFocusFireMarks.MAX_PERCENT_KEY));
+    HARDLIGHT_MARKING_MAX_DAMAGE_PERCENT(HardlightMarking.backing(HardlightMarking.MAX_PERCENT_KEY));
 
     private static float convertedHangarBonusBays(MutableShipStatsAPI stats) {
         return stats.getDynamic().getMod(Stats.CONVERTED_HANGAR_MOD).computeEffective(0f);
@@ -344,7 +344,7 @@ public enum FighterSkillEffect implements BackedSkillEffect {
         SHIELD_DAMAGE_TAKEN(new SimpleStatEffect(PERCENT, stat(MutableShipStatsAPI::getShieldDamageTakenMult), "stat.damageTakenByShields", true)),
         DAMAGE_TAKEN(new SimpleStatEffect(MULT, all(stat(MutableShipStatsAPI::getHullDamageTakenMult), stat(MutableShipStatsAPI::getArmorDamageTakenMult),
                 stat(MutableShipStatsAPI::getShieldDamageTakenMult)), "stat.damageTaken", true)),
-        RATE_OF_FIRE(PERCENT, WeaponStatFamily.FIRE_RATE.target(WeaponScope.ALL), "weapon.stat.FIRE_RATE"),
+        RATE_OF_FIRE(PERCENT, WeaponStatFamily.RATE_OF_FIRE.target(WeaponScope.ALL), "weapon.stat.RATE_OF_FIRE"),
         WEAPON_RANGE(FLAT, all(bonus(MutableShipStatsAPI::getBallisticWeaponRangeBonus), bonus(MutableShipStatsAPI::getEnergyWeaponRangeBonus)),
                 "weapon.stat.RANGE");
 

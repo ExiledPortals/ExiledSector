@@ -8,7 +8,7 @@ import exiledsector.i18n.LanguageSetting;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.DiminishedStat;
 import exiledsector.skills.DiminishingReturns;
-import exiledsector.skills.skilleffect.onhit.MaxChainCountConfig;
+import exiledsector.skills.skilleffect.onhit.MaxRefractionCountConfig;
 import exiledsector.compat.SalvageSiteCompat;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.items.CraftingMaterials;
@@ -97,9 +97,9 @@ public final class ExiledSectorSettings {
         SettingsCreator.addBoolean(MOD_ID, CombatGlow.enabledFieldId(),
                 Translation.text("settings.combatEffects.graphicsLib.name"), Translation.text("settings.combatEffects.graphicsLib.tooltip"),
                 CombatGlow.DEFAULT_ENABLED, combatTab);
-        SettingsCreator.addInt(MOD_ID, MaxChainCountConfig.fieldId(),
+        SettingsCreator.addInt(MOD_ID, MaxRefractionCountConfig.fieldId(),
                 Translation.text("settings.energyChain.maxChainCount.name"), Translation.text("settings.energyChain.maxChainCount.tooltip"),
-                MaxChainCountConfig.DEFAULT, 1, 20, combatTab);
+                MaxRefractionCountConfig.DEFAULT, 1, 20, combatTab);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_diminishingHeader", Translation.text("settings.diminishing.header"), combatTab);
         SettingsCreator.addText(MOD_ID, "exiledSector_diminishingAbout", Translation.text("settings.diminishing.about"), combatTab);

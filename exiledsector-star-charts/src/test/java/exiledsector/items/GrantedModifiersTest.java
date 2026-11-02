@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class GrantedModifiersTest {
 
     private static final String STORMPROOF = "EMP_DAMAGE_TAKEN_PERCENT_STORM_FRONT";
-    private static final String THUNDERHEAD = "NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT_STORM_FRONT";
+    private static final String THUNDERHEAD = "NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT_STORM_FRONT";
     private static final String BASE = "test_bridge";
     private static final String RELIC = "test_relic";
 
@@ -28,7 +28,7 @@ class GrantedModifiersTest {
     void setUp() throws Exception {
         ItemModifiers.register(new JSONArray()
                 .put(HullItemRows.modifierRow(STORMPROOF, "prefix", "EMP_DAMAGE_TAKEN_PERCENT:-25:-25", "Stormproof"))
-                .put(HullItemRows.modifierRow(THUNDERHEAD, "suffix", "NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT:8:8", "Thunderhead")));
+                .put(HullItemRows.modifierRow(THUNDERHEAD, "suffix", "NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT:8:8", "Thunderhead")));
         ItemDefinitions.register(List.of(
                 definition(BASE, false, List.of(prefix("HULL_PERCENT"), prefix("FLUX_CAPACITY_MULT"), prefix("FLUX_DISSIPATION_MULT")),
                         List.of(suffix("BEAM_WEAPON_RANGE_PERCENT"), suffix("ARMOR_PERCENT"), suffix("HULL_MULT"))),

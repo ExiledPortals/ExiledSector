@@ -46,18 +46,18 @@ public enum SpecialSkillEffect implements BackedSkillEffect {
             LiveMunitionsListener.class, LiveMunitionsListener::new)),
     HEARTLESS_MISSILE_SPEED_PERCENT_PER_STACK(listener(LiveMunitionsListener.MISSILE_SPEED_PERCENT_PER_STACK_KEY,
             LiveMunitionsListener.class, LiveMunitionsListener::new)),
-    SERAPHS_GRACE_MAX_STACKS_FLAT(listener(SeraphsGraceListener.MAX_STACKS_KEY, SeraphsGraceListener.class, SeraphsGraceListener::new)) {
+    BORROWED_GRACE_MAX_STACKS_FLAT(listener(BorrowedGraceListener.MAX_STACKS_KEY, BorrowedGraceListener.class, BorrowedGraceListener::new)) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).arg("damage", SeraphsGraceListener.DAMAGE_PER_STACK)
-                    .arg("duration", SeraphsGraceListener.STACK_DURATION_SECONDS).styled();
+            return EffectText.msg(this).arg("value", magnitude).arg("damage", BorrowedGraceListener.DAMAGE_PER_STACK)
+                    .arg("duration", BorrowedGraceListener.STACK_DURATION_SECONDS).styled();
         }
     },
-    SERAPHS_GRACE_PERCENT_PER_STACK(listener(SeraphsGraceListener.PERCENT_PER_STACK_KEY, SeraphsGraceListener.class, SeraphsGraceListener::new)),
-    SERAPHIM_HEAL_PERCENT(listener(SeraphimListener.HEAL_PERCENT_KEY, SeraphimListener.class, SeraphimListener::new)),
-    SERAPHIM_HEAL_CAP_PERCENT(listener(SeraphimListener.HEAL_CAP_PERCENT_KEY, SeraphimListener.class, SeraphimListener::new)),
-    SERAPHIM_DAMAGE_BONUS_PERCENT(listener(SeraphimListener.DAMAGE_BONUS_PERCENT_KEY, SeraphimListener.class, SeraphimListener::new)),
-    SERAPHIM_FULL_BONUS_DAMAGE_FLAT(listener(SeraphimListener.FULL_BONUS_DAMAGE_KEY, SeraphimListener.class, SeraphimListener::new)),
+    BORROWED_GRACE_PERCENT_PER_STACK(listener(BorrowedGraceListener.PERCENT_PER_STACK_KEY, BorrowedGraceListener.class, BorrowedGraceListener::new)),
+    SERAPH_HUNTING_HEAL_PERCENT(listener(SeraphHuntingListener.HEAL_PERCENT_KEY, SeraphHuntingListener.class, SeraphHuntingListener::new)),
+    SERAPH_HUNTING_HEAL_CAP_PERCENT(listener(SeraphHuntingListener.HEAL_CAP_PERCENT_KEY, SeraphHuntingListener.class, SeraphHuntingListener::new)),
+    SERAPH_HUNTING_DAMAGE_BONUS_PERCENT(listener(SeraphHuntingListener.DAMAGE_BONUS_PERCENT_KEY, SeraphHuntingListener.class, SeraphHuntingListener::new)),
+    SERAPH_HUNTING_FULL_BONUS_DAMAGE_FLAT(listener(SeraphHuntingListener.FULL_BONUS_DAMAGE_KEY, SeraphHuntingListener.class, SeraphHuntingListener::new)),
     LOW_TECH_AFFINITY_FLAT(new AffinityTally()),
     HIGH_TECH_AFFINITY_FLAT(new AffinityTally()),
     MIDLINE_AFFINITY_FLAT(new AffinityTally()),
@@ -81,7 +81,7 @@ public enum SpecialSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).styled();
         }
     },
-    EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE(new AffinityTally()),
+    EVERY_AFFINITY_FLAT_PER_EMPTY_SHELL_NODE(new AffinityTally()),
     AFFINITY_EXCHANGE_TO_LOW_TECH_PERCENT(new AffinityTally()) {
         @Override
         public StyledText description(float magnitude) {

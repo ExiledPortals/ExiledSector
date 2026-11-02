@@ -34,7 +34,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class FluxScaledVolatilityListenerTest {
+class VolatileFluxListenerTest {
 
     private static final String MOD_ID = "exiledLib_fluxScaled_ship";
 
@@ -62,8 +62,8 @@ class FluxScaledVolatilityListenerTest {
         when(ship.getMutableStats()).thenReturn(stats);
         DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
         when(stats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue(FluxScaledVolatilityListener.TOP_SPEED_KEY, 0f)).thenReturn(50f);
-        when(dynamic.getValue(FluxScaledVolatilityListener.RATE_OF_FIRE_KEY, 0f)).thenReturn(40f);
+        when(dynamic.getValue(VolatileFluxListener.TOP_SPEED_KEY, 0f)).thenReturn(50f);
+        when(dynamic.getValue(VolatileFluxListener.RATE_OF_FIRE_KEY, 0f)).thenReturn(40f);
     }
 
     @AfterEach
@@ -81,22 +81,22 @@ class FluxScaledVolatilityListenerTest {
 
     @Test
     void theRatioRunsFromFullBonusAtNoFluxToFullPenaltyAtFullFlux() {
-        assertEquals(1f, FluxScaledVolatilityListener.ratio(trackerAt(0f, false, false)), 1e-6f);
-        assertEquals(0.5f, FluxScaledVolatilityListener.ratio(trackerAt(0.25f, false, false)), 1e-6f);
-        assertEquals(0f, FluxScaledVolatilityListener.ratio(trackerAt(0.5f, false, false)), 1e-6f);
-        assertEquals(-1f, FluxScaledVolatilityListener.ratio(trackerAt(1f, false, false)), 1e-6f);
+        assertEquals(1f, VolatileFluxListener.ratio(trackerAt(0f, false, false)), 1e-6f);
+        assertEquals(0.5f, VolatileFluxListener.ratio(trackerAt(0.25f, false, false)), 1e-6f);
+        assertEquals(0f, VolatileFluxListener.ratio(trackerAt(0.5f, false, false)), 1e-6f);
+        assertEquals(-1f, VolatileFluxListener.ratio(trackerAt(1f, false, false)), 1e-6f);
     }
 
     @Test
     void ventingOrBeingOverloadedCountsAsFullFlux() {
-        assertEquals(-1f, FluxScaledVolatilityListener.ratio(trackerAt(0.1f, true, false)), 1e-6f);
-        assertEquals(-1f, FluxScaledVolatilityListener.ratio(trackerAt(0.1f, false, true)), 1e-6f);
+        assertEquals(-1f, VolatileFluxListener.ratio(trackerAt(0.1f, true, false)), 1e-6f);
+        assertEquals(-1f, VolatileFluxListener.ratio(trackerAt(0.1f, false, true)), 1e-6f);
     }
 
     @Test
     void atNoFluxTheShipGetsTheFullBonusAndTheLowFluxVisuals() {
         when(flux.getFluxLevel()).thenReturn(0f);
-        FluxScaledVolatilityListener listener = new FluxScaledVolatilityListener(ship);
+        VolatileFluxListener listener = new VolatileFluxListener(ship);
 
         for (int frame = 0; frame < 4; frame++) {
             listener.advance(0.016f);
@@ -116,9 +116,9 @@ class FluxScaledVolatilityListenerTest {
     @Test
     void afterimagesAreSpacedOutInsteadOfAddedEveryFrame() {
         when(flux.getFluxLevel()).thenReturn(0f);
-        FluxScaledVolatilityListener listener = new FluxScaledVolatilityListener(ship);
+        VolatileFluxListener listener = new VolatileFluxListener(ship);
         int frames = 60;
-        int framesPerAfterimage = (int) Math.ceil(FluxScaledVolatilityListener.AFTERIMAGE_INTERVAL / 0.016f);
+        int framesPerAfterimage = (int) Math.ceil(VolatileFluxListener.AFTERIMAGE_INTERVAL / 0.016f);
 
         for (int frame = 0; frame < frames; frame++) {
             listener.advance(0.016f);
@@ -131,7 +131,7 @@ class FluxScaledVolatilityListenerTest {
     @Test
     void atFullFluxTheShipIsSlowedAndFiresSlowerButKeepsItsAgilityWithoutVisuals() {
         when(flux.getFluxLevel()).thenReturn(1f);
-        FluxScaledVolatilityListener listener = new FluxScaledVolatilityListener(ship);
+        VolatileFluxListener listener = new VolatileFluxListener(ship);
 
         listener.advance(0.016f);
 
@@ -146,7 +146,7 @@ class FluxScaledVolatilityListenerTest {
     @Test
     void statsAreOnlyReappliedWhenTheFluxStepChanges() {
         when(flux.getFluxLevel()).thenReturn(0.5f);
-        FluxScaledVolatilityListener listener = new FluxScaledVolatilityListener(ship);
+        VolatileFluxListener listener = new VolatileFluxListener(ship);
         MutableStat maxSpeed = stats.getMaxSpeed();
 
         listener.advance(0.016f);
@@ -168,14 +168,14 @@ class FluxScaledVolatilityListenerTest {
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.hasHullMod(LostSectorCompat.AUGMENTED_SYSTEMS_HULLMOD_ID)).thenReturn(true);
         when(ship.getVariant()).thenReturn(variant);
-        when(stats.getDynamic().getValue(FluxScaledVolatilityListener.AUGMENTED_PENALTY_REDUCTION_KEY, 0f)).thenReturn(50f);
+        when(stats.getDynamic().getValue(VolatileFluxListener.AUGMENTED_PENALTY_REDUCTION_KEY, 0f)).thenReturn(50f);
     }
 
     @Test
     void withLostSectorAugmentedHullsTakeAReducedPenaltyButTheFullBonus() {
         augmentWithLostSectorEnabled(true);
         when(flux.getFluxLevel()).thenReturn(1f);
-        FluxScaledVolatilityListener listener = new FluxScaledVolatilityListener(ship);
+        VolatileFluxListener listener = new VolatileFluxListener(ship);
 
         listener.advance(0.016f);
         when(flux.getFluxLevel()).thenReturn(0f);
@@ -192,7 +192,7 @@ class FluxScaledVolatilityListenerTest {
         augmentWithLostSectorEnabled(false);
         when(flux.getFluxLevel()).thenReturn(1f);
 
-        new FluxScaledVolatilityListener(ship).advance(0.016f);
+        new VolatileFluxListener(ship).advance(0.016f);
 
         verify(stats.getMaxSpeed()).modifyFlat(MOD_ID, -50f);
     }
@@ -202,7 +202,7 @@ class FluxScaledVolatilityListenerTest {
         when(engine.getPlayerShip()).thenReturn(ship);
         when(flux.getFluxLevel()).thenReturn(0.75f);
 
-        new FluxScaledVolatilityListener(ship).advance(0.016f);
+        new VolatileFluxListener(ship).advance(0.016f);
 
         verify(engine).maintainStatusForPlayerShip(anyString(), anyString(), any(), any(), eq(true));
     }

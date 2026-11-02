@@ -74,8 +74,8 @@ class ItemRollOddsTest {
         assertTrue(fixed.contains("5%") && !fixed.contains(" to "), fixed);
         assertTrue(scaled.contains("5/10/15/20"), scaled);
 
-        String twoValues = new RolledLine("FLUX_SCALED_RATE_OF_FIRE_PERCENT", 13f)
-                .rangeDescription(PoolEntry.of(ModifierSlot.PREFIX, "FLUX_SCALED_RATE_OF_FIRE_PERCENT", 5f, 13f, 1f).line()).plain();
+        String twoValues = new RolledLine("VOLATILE_FLUX_RATE_OF_FIRE_PERCENT", 13f)
+                .rangeDescription(PoolEntry.of(ModifierSlot.PREFIX, "VOLATILE_FLUX_RATE_OF_FIRE_PERCENT", 5f, 13f, 1f).line()).plain();
         assertEquals(2, twoValues.chars().filter(character -> character == '(').count(), twoValues);
         String untaggedBefore = new RolledLine("BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT", 9f)
                 .rangeDescription(PoolEntry.of(ModifierSlot.PREFIX, "BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT", 5f, 9f, 1f).line()).plain();

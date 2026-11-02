@@ -38,7 +38,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class EnergyChainListenerTest {
+class RefractionListenerTest {
 
     private MockedStatic<Global> global;
     private MockedStatic<WeaponDroneFactory> factory;
@@ -46,12 +46,12 @@ class EnergyChainListenerTest {
     private CombatEngineAPI engine;
     private RefractionDrones drones;
     private ShipAPI ship;
-    private EnergyChainListener listener;
+    private RefractionListener listener;
 
     @BeforeEach
     void setUp() {
         luna = Mockito.mockStatic(LunaSettings.class);
-        luna.when(() -> LunaSettings.getInt(anyString(), anyString())).thenReturn(MaxChainCountConfig.DEFAULT);
+        luna.when(() -> LunaSettings.getInt(anyString(), anyString())).thenReturn(MaxRefractionCountConfig.DEFAULT);
         engine = mock(CombatEngineAPI.class);
         when(engine.getListenerManager()).thenReturn(mock(CombatListenerManagerAPI.class));
         global = Mockito.mockStatic(Global.class);
@@ -60,7 +60,7 @@ class EnergyChainListenerTest {
         factory.when(() -> WeaponDroneFactory.supportsProjectile(any())).thenReturn(true);
         ship = firingShip(20f);
         drones = mock(RefractionDrones.class);
-        listener = new EnergyChainListener(ship, drones);
+        listener = new RefractionListener(ship, drones);
     }
 
     @AfterEach
@@ -78,8 +78,8 @@ class EnergyChainListenerTest {
         DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
         when(ship.getMutableStats()).thenReturn(stats);
         when(stats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue(EnergyChainListener.CHANCE_KEY, 0f)).thenReturn(100f);
-        when(dynamic.getValue(EnergyChainListener.FALLOFF_KEY, 0f)).thenReturn(falloffPercent);
+        when(dynamic.getValue(RefractionListener.CHANCE_KEY, 0f)).thenReturn(100f);
+        when(dynamic.getValue(RefractionListener.FALLOFF_KEY, 0f)).thenReturn(falloffPercent);
         return ship;
     }
 
@@ -105,15 +105,15 @@ class EnergyChainListenerTest {
         return weapon("energy_gun", false, WeaponAPI.WeaponType.ENERGY);
     }
 
-    private static DamagingProjectileAPI shot(WeaponAPI weapon, ChainLink tag) {
+    private static DamagingProjectileAPI shot(WeaponAPI weapon, RefractionLink tag) {
         DamagingProjectileAPI projectile = mock(DamagingProjectileAPI.class);
         Map<String, Object> data = new HashMap<>();
         when(projectile.getWeapon()).thenReturn(weapon);
         when(projectile.getCustomData()).thenReturn(data);
         if (tag != null) {
-            data.put(ChainLink.HIT_LIST_KEY, tag.hitSoFar());
-            data.put(ChainLink.COUNT_KEY, tag.chainCount());
-            data.put(ChainLink.DEALT_MULT_KEY, tag.dealtMult());
+            data.put(RefractionLink.HIT_LIST_KEY, tag.hitSoFar());
+            data.put(RefractionLink.COUNT_KEY, tag.chainCount());
+            data.put(RefractionLink.DEALT_MULT_KEY, tag.dealtMult());
         }
         return projectile;
     }
@@ -131,8 +131,8 @@ class EnergyChainListenerTest {
         return damage;
     }
 
-    private ChainLink launchedLink(WeaponAPI weapon, ShipAPI hitShip, ShipAPI expectedTarget) {
-        ArgumentCaptor<ChainLink> link = ArgumentCaptor.forClass(ChainLink.class);
+    private RefractionLink launchedLink(WeaponAPI weapon, ShipAPI hitShip, ShipAPI expectedTarget) {
+        ArgumentCaptor<RefractionLink> link = ArgumentCaptor.forClass(RefractionLink.class);
         verify(drones).launch(eq(listener), eq(weapon), eq(hitShip), any(Vector2f.class), eq(expectedTarget), link.capture());
         return link.getValue();
     }
@@ -147,7 +147,7 @@ class EnergyChainListenerTest {
 
         listener.modifyDamageDealt(shot(weapon, null), hit, damage(100f), new Vector2f(), true);
 
-        ChainLink link = launchedLink(weapon, hit, near);
+        RefractionLink link = launchedLink(weapon, hit, near);
         assertEquals(1, link.chainCount());
         assertEquals(0.8f, link.dealtMult(), 0.0001f);
         assertEquals(List.of(ship, hit), link.hitSoFar());
@@ -162,11 +162,11 @@ class EnergyChainListenerTest {
         stubShips(ship, firstTarget, current, farther);
         DamageAPI damage = damage(100f);
 
-        listener.modifyDamageDealt(shot(weapon, new ChainLink(List.of(ship, firstTarget), 1, 0.8f)), current, damage,
+        listener.modifyDamageDealt(shot(weapon, new RefractionLink(List.of(ship, firstTarget), 1, 0.8f)), current, damage,
                 new Vector2f(100f, 0f), true);
 
         verify(damage).setDamage(80f);
-        ChainLink link = launchedLink(weapon, current, farther);
+        RefractionLink link = launchedLink(weapon, current, farther);
         assertEquals(2, link.chainCount());
         assertEquals(0.64f, link.dealtMult(), 0.0001f);
         assertEquals(List.of(ship, firstTarget, current), link.hitSoFar());
@@ -178,18 +178,18 @@ class EnergyChainListenerTest {
         stubShips(ship, current, enemy(new Vector2f(200f, 0f)));
         DamageAPI damage = damage(100f);
 
-        listener.modifyDamageDealt(shot(energyGun(), new ChainLink(List.of(ship), 1, 0.5f)), current, damage, new Vector2f(), false);
+        listener.modifyDamageDealt(shot(energyGun(), new RefractionLink(List.of(ship), 1, 0.5f)), current, damage, new Vector2f(), false);
 
         verify(damage).setDamage(50f);
         verify(drones, never()).launch(any(), any(), any(), any(), any(), any());
     }
 
     @Test
-    void aShotAtTheMaxChainCountNeverRefractsAgain() {
+    void aShotAtTheMaxRefractionCountNeverRefractsAgain() {
         ShipAPI current = enemy(new Vector2f(100f, 0f));
         stubShips(ship, current, enemy(new Vector2f(200f, 0f)));
 
-        listener.modifyDamageDealt(shot(energyGun(), new ChainLink(List.of(ship), MaxChainCountConfig.DEFAULT, 1f)), current,
+        listener.modifyDamageDealt(shot(energyGun(), new RefractionLink(List.of(ship), MaxRefractionCountConfig.DEFAULT, 1f)), current,
                 damage(100f), new Vector2f(), true);
 
         verify(drones, never()).launch(any(), any(), any(), any(), any(), any());
@@ -202,10 +202,10 @@ class EnergyChainListenerTest {
         ShipAPI next = enemy(new Vector2f(200f, 0f));
         stubShips(ship, current, next);
 
-        listener.modifyDamageDealt(shot(weapon, new ChainLink(List.of(ship), MaxChainCountConfig.DEFAULT - 1, 1f)), current,
+        listener.modifyDamageDealt(shot(weapon, new RefractionLink(List.of(ship), MaxRefractionCountConfig.DEFAULT - 1, 1f)), current,
                 damage(100f), new Vector2f(100f, 0f), true);
 
-        assertEquals(MaxChainCountConfig.DEFAULT, launchedLink(weapon, current, next).chainCount());
+        assertEquals(MaxRefractionCountConfig.DEFAULT, launchedLink(weapon, current, next).chainCount());
     }
 
     @Test
@@ -215,7 +215,7 @@ class EnergyChainListenerTest {
         stubShips(ship, friendly, enemy(new Vector2f(100f, 0f)));
         DamageAPI damage = damage(100f);
 
-        listener.modifyDamageDealt(shot(energyGun(), new ChainLink(List.of(ship), 1, 0.8f)), friendly, damage, new Vector2f(), true);
+        listener.modifyDamageDealt(shot(energyGun(), new RefractionLink(List.of(ship), 1, 0.8f)), friendly, damage, new Vector2f(), true);
 
         verify(damage).setDamage(80f);
         verify(drones, never()).launch(any(), any(), any(), any(), any(), any());
@@ -226,7 +226,7 @@ class EnergyChainListenerTest {
         ShipAPI hit = enemy(new Vector2f(0f, 0f));
         stubShips(ship, hit, enemy(new Vector2f(100f, 0f)));
         DamageAPI damage = damage(100f);
-        ChainLink tag = new ChainLink(List.of(ship), 1, 0.5f);
+        RefractionLink tag = new RefractionLink(List.of(ship), 1, 0.5f);
 
         listener.modifyDamageDealt(shot(weapon("beam", true, WeaponAPI.WeaponType.ENERGY), tag), hit, damage, new Vector2f(), true);
         listener.modifyDamageDealt(shot(weapon("gun", false, WeaponAPI.WeaponType.BALLISTIC), tag), hit, damage, new Vector2f(), true);
@@ -301,7 +301,7 @@ class EnergyChainListenerTest {
         stubShips(ship, hit, enemy(new Vector2f(100f, 0f)));
         DamageAPI damage = damage(100f);
 
-        listener.modifyDamageDealt(shot(energyGun(), new ChainLink(List.of(ship), 1, 0.8f)), hit, damage, new Vector2f(), true);
+        listener.modifyDamageDealt(shot(energyGun(), new RefractionLink(List.of(ship), 1, 0.8f)), hit, damage, new Vector2f(), true);
 
         verify(damage).setDamage(80f);
         verify(drones, never()).launch(any(), any(), any(), any(), any(), any());

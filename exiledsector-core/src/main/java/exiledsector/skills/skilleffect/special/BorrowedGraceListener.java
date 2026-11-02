@@ -19,7 +19,7 @@ import static exiledsector.skills.skilleffect.StatTarget.all;
 import static exiledsector.skills.skilleffect.StatTarget.scaled;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
 
-final class SeraphsGraceListener extends ShipCombatListener implements DamageListener, AdvanceableListener {
+final class BorrowedGraceListener extends ShipCombatListener implements DamageListener, AdvanceableListener {
 
     static final String MAX_STACKS_KEY = "exiledLib_seraphsGraceMaxStacks";
     static final String PERCENT_PER_STACK_KEY = "exiledLib_seraphsGracePercentPerStack";
@@ -28,7 +28,7 @@ final class SeraphsGraceListener extends ShipCombatListener implements DamageLis
     private static final String MOD_ID_PREFIX = "exiledLib_seraphsGrace_";
     private static final ScaledBonus GRACE_BONUS = new ScaledBonus(
             percent(all(stat(MutableShipStatsAPI::getMaxSpeed), stat(MutableShipStatsAPI::getFluxDissipation),
-                    WeaponStatFamily.FIRE_RATE.target(WeaponScope.ALL)), PERCENT_PER_STACK_KEY),
+                    WeaponStatFamily.RATE_OF_FIRE.target(WeaponScope.ALL)), PERCENT_PER_STACK_KEY),
             percent(scaled(all(WeaponStatFamily.FLUX_COST.target(WeaponScope.ALL), stat(MutableShipStatsAPI::getArmorDamageTakenMult),
                     stat(MutableShipStatsAPI::getHullDamageTakenMult), stat(MutableShipStatsAPI::getShieldDamageTakenMult),
                     stat(MutableShipStatsAPI::getEmpDamageTakenMult)), -1f), PERCENT_PER_STACK_KEY));
@@ -38,7 +38,7 @@ final class SeraphsGraceListener extends ShipCombatListener implements DamageLis
     private float graceClockSeconds;
     private float damageTowardNextStack;
 
-    SeraphsGraceListener(ShipAPI ownerShip) {
+    BorrowedGraceListener(ShipAPI ownerShip) {
         super(ownerShip, MOD_ID_PREFIX);
     }
 

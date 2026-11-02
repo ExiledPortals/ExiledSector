@@ -19,7 +19,7 @@ import static exiledsector.skills.skilleffect.ScaledBonus.percent;
 import static exiledsector.skills.skilleffect.StatTarget.all;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
 
-public final class SeraphimListener extends ShipCombatListener {
+public final class SeraphHuntingListener extends ShipCombatListener {
 
     static final String HEAL_PERCENT_KEY = "exiledLib_seraphimHealPercent";
     static final String HEAL_CAP_PERCENT_KEY = "exiledLib_seraphimHealCapPercent";
@@ -35,7 +35,7 @@ public final class SeraphimListener extends ShipCombatListener {
     private float hullRepaired;
     private boolean zeroFluxUnlocked;
 
-    SeraphimListener(ShipAPI ownerShip) {
+    SeraphHuntingListener(ShipAPI ownerShip) {
         super(ownerShip, MOD_ID_PREFIX);
         DealtDamageRouter.register(this);
     }
@@ -85,9 +85,9 @@ public final class SeraphimListener extends ShipCombatListener {
 
     public static final class DealtDamageRouter implements DamageListener {
 
-        private final Map<ShipAPI, SeraphimListener> listenersByDealer = new IdentityHashMap<>();
+        private final Map<ShipAPI, SeraphHuntingListener> listenersByDealer = new IdentityHashMap<>();
 
-        static void register(SeraphimListener listener) {
+        static void register(SeraphHuntingListener listener) {
             DealtDamageRouter router = inCombat() ? SkillEffectSupport.ensureEngineListener(DealtDamageRouter.class, DealtDamageRouter::new) : null;
             if (router != null) {
                 router.listenersByDealer.put(listener.ownerShip, listener);
@@ -96,7 +96,7 @@ public final class SeraphimListener extends ShipCombatListener {
 
         public static void routeDroneDamage(ShipAPI firingShip, ShipAPI drone) {
             DealtDamageRouter router = inCombat() ? SkillEffectSupport.existingEngineListener(DealtDamageRouter.class) : null;
-            SeraphimListener listener = router == null ? null : router.listenersByDealer.get(firingShip);
+            SeraphHuntingListener listener = router == null ? null : router.listenersByDealer.get(firingShip);
             if (listener != null) {
                 router.listenersByDealer.put(drone, listener);
             }
@@ -109,7 +109,7 @@ public final class SeraphimListener extends ShipCombatListener {
         @Override
         public void reportDamageApplied(Object source, CombatEntityAPI target, ApplyDamageResultAPI result) {
             if (source instanceof ShipAPI dealer) {
-                SeraphimListener listener = listenersByDealer.get(dealer);
+                SeraphHuntingListener listener = listenersByDealer.get(dealer);
                 if (listener != null) {
                     listener.onDamageDealt(target, result);
                 }

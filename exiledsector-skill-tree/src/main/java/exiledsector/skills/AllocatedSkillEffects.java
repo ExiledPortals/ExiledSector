@@ -58,9 +58,9 @@ public final class AllocatedSkillEffects {
 
     public static List<SkillTypeEffect> treeEffects(ShipSkillData data, List<AllocatedNode> allocatedNodes, HullSize hullSize) {
         List<SkillTypeEffect> effects = new ArrayList<>();
-        Set<String> hollowNodeIds = EmptyShells.hollowNodeIds(data);
+        Set<String> emptyShellNodeIds = EmptyShells.emptyShellNodeIds(data);
         for (AllocatedNode allocated : allocatedNodes) {
-            if (!hollowNodeIds.contains(allocated.node().getId())) {
+            if (!emptyShellNodeIds.contains(allocated.node().getId())) {
                 effects.addAll(nodeParts(data, allocated, hullSize).all());
             }
         }
@@ -68,7 +68,7 @@ public final class AllocatedSkillEffects {
     }
 
     public static List<SkillTypeEffect> treeEffects(ShipSkillData data, AllocatedNode allocated, HullSize hullSize) {
-        return EmptyShells.hollowNodeIds(data).contains(allocated.node().getId()) ? List.of() : nodeParts(data, allocated, hullSize).all();
+        return EmptyShells.emptyShellNodeIds(data).contains(allocated.node().getId()) ? List.of() : nodeParts(data, allocated, hullSize).all();
     }
 
     public static NodeParts nodeParts(ShipSkillData data, AllocatedNode allocated, HullSize hullSize) {
@@ -109,8 +109,8 @@ public final class AllocatedSkillEffects {
         }
         if (socketed != null && NodeSocketable.fits(socketed, allocated.node())) {
             for (SkillTypeEffect effect : socketed.skillEffects(hullSize)) {
-                if (effect.effect() == SpecialSkillEffect.EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE) {
-                    float affinity = effect.magnitude() * EmptyShells.hollowCount(data, allocated.node().getId());
+                if (effect.effect() == SpecialSkillEffect.EVERY_AFFINITY_FLAT_PER_EMPTY_SHELL_NODE) {
+                    float affinity = effect.magnitude() * EmptyShells.emptyShellCount(data, allocated.node().getId());
                     AffinitySteps.affinities().forEach(type -> applied.add(new SkillTypeEffect(type, affinity)));
                 } else if (appliesTo(data, effect.effect())) {
                     applied.add(effect);

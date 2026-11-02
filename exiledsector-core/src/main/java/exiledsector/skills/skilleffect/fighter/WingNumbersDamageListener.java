@@ -34,7 +34,7 @@ final class WingNumbersDamageListener implements DamageTakenModifier {
     @Override
     public String modifyDamageTaken(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
         float reductionPercentPerFighter = FighterListenerEffect.carrierValue(carrier, REDUCTION_PERCENT_PER_FIGHTER_KEY);
-        if (WingSharedFateListener.isApplyingSharedDamage() || reductionPercentPerFighter <= 0f) {
+        if (PhaseEntangledWingsListener.isApplyingSharedDamage() || reductionPercentPerFighter <= 0f) {
             return null;
         }
         CombatEngineAPI engine = Global.getCombatEngine();
@@ -50,7 +50,7 @@ final class WingNumbersDamageListener implements DamageTakenModifier {
         int count = CombatQueries.isAliveNotHulk(fighter) ? 1 : 0;
         for (int i = 0; i < members.size(); i++) {
             ShipAPI member = members.get(i);
-            if (member != fighter && WingSharedFateListener.isOutWithWing(member, engine)) {
+            if (member != fighter && PhaseEntangledWingsListener.isOutWithWing(member, engine)) {
                 count++;
             }
         }

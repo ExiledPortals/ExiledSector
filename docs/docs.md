@@ -139,7 +139,7 @@ winner's doesn't.
 
 `BALLISTIC_COUNTS_AS_ENERGY` makes `BallisticEnergyMirror` copy every energy and non-beam energy
 weapon effect from the ship's sources into a ballistic one before diminishing returns. Energy checks in Dynamic Grid,
-energy range per sensor strength, Disintegration, Ion Arc and energy chains also accept ballistic weapons
+energy range per sensor strength, Disintegration, Ion Arc and refractions also accept ballistic weapons
 (`BallisticAsEnergy`). Vanilla and other mods' energy bonuses don't reach ballistics.
 
 ### Damage conversion
@@ -151,18 +151,18 @@ matching a mount applies. Shots from weapon drones use the mount of the weapon t
 type from the weapon each tick, since their damage object lasts the whole firing.
 
 A conversion to EMP moves the hit's whole damage into EMP. `HitDamageRestorer` makes the change and restores the hit
-once it lands; energy chains and Wing Shared Fate use the same restorer, so their changes stack on one hit, and Beam
-Split cuts its simulated hits from the original damage.
+once it lands; refractions and Phase-Entangled Wings use the same restorer, so their changes stack on one hit, and Lion's
+Gaze cuts its simulated hits from the original damage.
 
 ### Refracting Projectiles
 
-`NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT` gives a non-beam energy shot that hits a shield a chance to
+`NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT` gives a non-beam energy shot that hits a shield a chance to
 refract to the nearest unhit enemy within weapon range, up to Max Refractions (default 5). Missiles and
 weapons in `energy_chain_blocklist.csv` never refract. As with Lion's Gaze, a pooled drone fires the real
 weapon as an instant single shot, then hands the projectile to the firing ship so its on-hit effects and
 kill credit apply.
 
-`NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT` lowers each refraction's base damage and restores it after the
+`NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT` lowers each refraction's base damage and restores it after the
 hit, rather than using a modifier, so EMP and on-hit effects stay at full strength.
 
 ### Projectile echoes
@@ -454,7 +454,7 @@ themselves. Per-section effects such as `SHIELD_GENERATOR_ITEM_EFFECT_PERCENT` a
 `HullUpgradesDomain` registers for every `ShipSection`.
 
 Hull items carry a `HullItemOrigin`. `SkillTreeEffectSource` splits a subroutine's lines, the Root Conduit's affinity
-and the hollow affinity into a `SubroutineOrigin` contribution, and gives augmenting Doctrine lines and gated nodes a
+and the Empty Shell affinity into a `SubroutineOrigin` contribution, and gives augmenting Doctrine lines and gated nodes a
 `RadiusLineOrigin`, so a gating line's strength scales too. Nodes a subroutine grants or transforms keep their own
 values. `nodeEffects` folds both origins back into their node for module sharing.
 
@@ -467,11 +467,11 @@ socket one.
 
 ### Empty shells
 
-A subroutine whose lines hold `EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE` (Empty Shell Axion) is born corrupted and grants
+A subroutine whose lines hold `EVERY_AFFINITY_FLAT_PER_EMPTY_SHELL_NODE` (Empty Shell Axion) is born corrupted and grants
 every small, notable and keystone node in its radius through the socket grant links (`EmptyShells.radiusNodeIds`,
 via `NodeGrantLinks`). `NodeAllocator.grantSocketedNodes` turns paid nodes it covers into free ones, refunding
-their OP and items, and `AllocatedSkillEffects` drops a hollow node's own effects and gives the socket +1 (the line's
-value) to every affinity per hollow node. Unsocketing releases the granted nodes like a Modspec Cache's.
+their OP and items, and `AllocatedSkillEffects` drops an Empty Shell node's own effects and gives the socket +1 (the line's
+value) to every affinity per Empty Shell node. Unsocketing releases the granted nodes like a Modspec Cache's.
 
 ### Root Conduit
 
