@@ -53,7 +53,7 @@ class ItemHybridTest {
     @Test
     void aHybridRollsEveryLineWithinItsOwnRange() {
         for (long seed = 0; seed < 50; seed++) {
-            RolledModifier rolled = RolledModifier.roll(PLATED_FRAME, new Random(seed), false);
+            RolledModifier rolled = RolledModifier.roll(PLATED_FRAME, new Random(seed));
 
             assertEquals("plated_frame", rolled.modifierId());
             assertTrue(rolled.isHybrid());
@@ -124,7 +124,7 @@ class ItemHybridTest {
     void theRollerDrawsHybridsFromTheirSideOfThePool() {
         boolean sawHybrid = false;
         for (long seed = 0; seed < 200; seed++) {
-            for (RolledModifier rolled : ItemRoller.roll(FRAME, seed, false)) {
+            for (RolledModifier rolled : ItemRoller.roll(FRAME, seed)) {
                 sawHybrid |= rolled.isHybrid();
                 assertEquals(rolled.modifierId().equals("plated_frame") || rolled.modifierId().equals("FLUX_CAPACITY_MULT"),
                         rolled.slot() == ModifierSlot.PREFIX);

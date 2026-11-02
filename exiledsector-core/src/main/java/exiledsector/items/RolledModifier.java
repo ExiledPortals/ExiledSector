@@ -35,11 +35,10 @@ public final class RolledModifier {
         return new RolledModifier(line.effectName(), slot, List.of(line));
     }
 
-    public static RolledModifier roll(Modifier modifier, Random random, boolean averageRolls) {
+    public static RolledModifier roll(Modifier modifier, Random random) {
         List<RolledEffect> rolledLines = new ArrayList<>(modifier.lines().size());
         for (ModifierLine line : modifier.lines()) {
-            float rolledMagnitude = line.roll(random);
-            rolledLines.add(new RolledEffect(line.effectName(), averageRolls ? line.average() : rolledMagnitude));
+            rolledLines.add(new RolledEffect(line.effectName(), line.roll(random)));
         }
         return new RolledModifier(modifier.id(), modifier.slot(), rolledLines);
     }

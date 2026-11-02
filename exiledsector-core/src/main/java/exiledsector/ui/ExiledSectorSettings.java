@@ -13,7 +13,6 @@ import exiledsector.compat.SalvageSiteCompat;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.ItemDrops;
-import exiledsector.items.ItemRoller;
 import exiledsector.ui.cargo.ItemAnimationSetting;
 import exiledsector.ui.refit.RefitButtonConfig;
 import lunalib.lunaSettings.LunaSettings.SettingsCreator;
@@ -55,8 +54,6 @@ public final class ExiledSectorSettings {
         });
         SettingsCreator.refresh(MOD_ID);
         ModSettingsListener.onReload(DiminishingReturns.class, DiminishingReturns::reloadSettings);
-        ModSettingsListener.onReload(ItemRoller.class, ItemRoller::reloadSettings);
-        ItemRoller.reloadSettings();
         ModSettingsListener.onReload(ItemAnimationSetting.class, ItemAnimationSetting::reloadSettings);
         ItemAnimationSetting.reloadSettings();
         ModSettingsListener.onReload(ExiledSectorDomain.class, () -> ExiledSector.domains().forEach(ExiledSectorDomain::reloadSettings));
@@ -84,9 +81,6 @@ public final class ExiledSectorSettings {
         SettingsCreator.addBoolean(MOD_ID, SalvageSiteCompat.DROPS_FIELD_ID,
                 Translation.text("settings.socketStorage.otherModDrops.name"), Translation.text("settings.socketStorage.otherModDrops.tooltip"),
                 SalvageSiteCompat.DEFAULT_DROPS, itemsTab);
-        SettingsCreator.addBoolean(MOD_ID, ItemRoller.averageRollsFieldId(),
-                Translation.text("settings.socketStorage.averageRolls.name"), Translation.text("settings.socketStorage.averageRolls.tooltip"),
-                ItemRoller.DEFAULT_AVERAGE_ROLLS, itemsTab);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_craftingHeader", Translation.text("settings.crafting.header"), itemsTab);
         SettingsCreator.addInt(MOD_ID, ItemDrops.BATTLE_PARTS_FIELD_ID,

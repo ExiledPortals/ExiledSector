@@ -257,7 +257,7 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
     private static RolledModifier rollMissing(PoolEntry entry, long seed) {
         boolean fixed = isFixed(entry);
         Random random = fixed ? new Random(0L) : Seeds.random(seed ^ entry.modifier().id().hashCode());
-        return RolledModifier.roll(entry.modifier(), random, fixed || ItemRoller.averageRolls());
+        return RolledModifier.roll(entry.modifier(), random);
     }
 
     private boolean hasUnknownEffect(RolledModifier modifier) {

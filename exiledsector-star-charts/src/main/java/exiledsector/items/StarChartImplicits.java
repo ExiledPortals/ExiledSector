@@ -92,7 +92,7 @@ public final class StarChartImplicits {
     static RolledModifier rollSharedChoice(Random random) {
         List<Choice> choices = SHARED_CHOICE.get();
         Choice picked = choices.isEmpty() ? null : WeightedPick.pick(choices, Choice::weight, random);
-        return picked == null ? null : RolledModifier.roll(picked.modifier(), random, false);
+        return picked == null ? null : RolledModifier.roll(picked.modifier(), random);
     }
 
     static Modifier sharedChoice(String modifierId) {
@@ -154,10 +154,10 @@ public final class StarChartImplicits {
         List<RolledModifier> rolled = new ArrayList<>(implicits.size() + 1);
         Choice shared = choices.isEmpty() ? null : WeightedPick.pick(choices, Choice::weight, random);
         if (shared != null) {
-            rolled.add(RolledModifier.roll(shared.modifier(), random, false));
+            rolled.add(RolledModifier.roll(shared.modifier(), random));
         }
         for (Modifier implicit : implicits) {
-            rolled.add(RolledModifier.roll(implicit, random, false));
+            rolled.add(RolledModifier.roll(implicit, random));
         }
         return List.copyOf(rolled);
     }

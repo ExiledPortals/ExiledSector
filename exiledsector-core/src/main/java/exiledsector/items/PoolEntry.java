@@ -132,10 +132,6 @@ public record PoolEntry(Modifier modifier, float weight, TierRange tiers) {
         return line().roll(random);
     }
 
-    public float average() {
-        return line().average();
-    }
-
     public int stepCount() {
         return line().stepCount();
     }

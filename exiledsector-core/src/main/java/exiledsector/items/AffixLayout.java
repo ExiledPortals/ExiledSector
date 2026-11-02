@@ -165,7 +165,7 @@ public final class AffixLayout {
     static RolledModifier rollFrom(List<List<PoolEntry>> sides, Random random) {
         List<PoolEntry> side = sides.get(random.nextInt(sides.size()));
         PoolEntry poolEntry = side.get(WeightedPick.index(side, PoolEntry::weight, random.nextFloat()));
-        return RolledModifier.roll(poolEntry.modifier(), random, false);
+        return RolledModifier.roll(poolEntry.modifier(), random);
     }
 
     public static int insertIndex(List<RolledModifier> modifiers, ModifierSlot addedSlot) {

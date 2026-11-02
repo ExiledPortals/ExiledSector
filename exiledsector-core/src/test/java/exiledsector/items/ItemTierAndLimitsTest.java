@@ -57,8 +57,8 @@ class ItemTierAndLimitsTest {
     @Test
     void rollingWithoutATierIgnoresTheTierGates() {
         for (long seed = 0; seed < 300; seed++) {
-            assertEquals(ItemRoller.roll(UNGATED, seed, false), ItemRoller.roll(GATED, seed, false), "seed " + seed);
-            assertEquals(ItemRoller.roll(UNGATED, seed, false), ItemRoller.roll(UNGATED, seed, false, 9), "seed " + seed);
+            assertEquals(ItemRoller.roll(UNGATED, seed), ItemRoller.roll(GATED, seed), "seed " + seed);
+            assertEquals(ItemRoller.roll(UNGATED, seed), ItemRoller.roll(UNGATED, seed, 9), "seed " + seed);
         }
     }
 
@@ -66,8 +66,8 @@ class ItemTierAndLimitsTest {
     void rollingAtATierLeavesOutEntriesGatedAboveIt() {
         boolean gatedRolledAtFive = false;
         for (long seed = 0; seed < 300; seed++) {
-            assertFalse(rollsGatedEffect(ItemRoller.roll(GATED, seed, false, 4)), "seed " + seed);
-            gatedRolledAtFive |= rollsGatedEffect(ItemRoller.roll(GATED, seed, false, 5));
+            assertFalse(rollsGatedEffect(ItemRoller.roll(GATED, seed, 4)), "seed " + seed);
+            gatedRolledAtFive |= rollsGatedEffect(ItemRoller.roll(GATED, seed, 5));
         }
         assertTrue(gatedRolledAtFive);
     }
@@ -127,12 +127,12 @@ class ItemTierAndLimitsTest {
         assertEquals(ItemRarity.RARE, AffixLayout.rarityFor(UNGATED, 4));
         Set<Integer> counts = new HashSet<>();
         for (long seed = 0; seed < 50; seed++) {
-            List<RolledModifier> rolled = ItemRoller.roll(UNGATED, seed, false);
+            List<RolledModifier> rolled = ItemRoller.roll(UNGATED, seed);
             counts.add(rolled.size());
             assertEquals(3, rolled.stream().filter(modifier -> modifier.slot() == ModifierSlot.PREFIX).count());
         }
         assertEquals(Set.of(6), counts);
-        assertEquals(2, AffixLayout.openSides(UNGATED, ItemRoller.roll(UNGATED, 1L, false).subList(0, 2)).size());
+        assertEquals(2, AffixLayout.openSides(UNGATED, ItemRoller.roll(UNGATED, 1L).subList(0, 2)).size());
         assertSame(wide, AffixLayout.limits(ItemType.SUBROUTINE));
     }
 

@@ -563,8 +563,6 @@
     "settings.socketStorage.battleParts.tooltip": "战斗胜利后加入打捞，受战斗难度加成影响。0则关闭。",
     "settings.socketStorage.storeMaterials.name": "将原料和纳米群存入船体物品仓库",
     "settings.socketStorage.storeMaterials.tooltip": "将其从货舱移入船体物品仓库，不再占用货舱空间。",
-    "settings.socketStorage.averageRolls.name": "效果取平均值",
-    "settings.socketStorage.averageRolls.tooltip": "新船体物品的每条效果都取其范围的中间值。增幅和重校仍随机取值。",
     "settings.diminishing.header": "收益递减",
     "settings.diminishing.about": "技能树和船体物品对这些属性的加成超过阈值后只部分生效，阈值以船体基础值的百分比计。",
     "settings.diminishing.efficiency.name": "超出阈值后的效率",

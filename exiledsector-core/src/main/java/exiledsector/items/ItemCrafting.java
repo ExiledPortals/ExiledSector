@@ -379,7 +379,7 @@ public final class ItemCrafting {
             return null;
         }
         Modifier chosen = candidates.get(random.nextInt(candidates.size()));
-        return new RolledModifier(chosen.id(), ModifierSlot.IMPLICIT, RolledModifier.roll(chosen, random, false).lines());
+        return new RolledModifier(chosen.id(), ModifierSlot.IMPLICIT, RolledModifier.roll(chosen, random).lines());
     }
 
     static Item reforgeAsRareBase(ItemStore store, Item item, Random random) {

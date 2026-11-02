@@ -209,7 +209,7 @@ public final class ItemImplicits {
         Random random = new Random(seed ^ IMPLICIT_SEED_SALT);
         List<RolledModifier> rolled = new ArrayList<>(implicits.size());
         for (Modifier implicit : implicits) {
-            rolled.add(RolledModifier.roll(implicit, random, false));
+            rolled.add(RolledModifier.roll(implicit, random));
         }
         return List.copyOf(rolled);
     }

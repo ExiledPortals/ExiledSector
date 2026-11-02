@@ -182,8 +182,6 @@
     "settings.socketStorage.battleParts.tooltip": "Added to salvage after a won battle, scaled by battle difficulty. 0 turns it off.",
     "settings.socketStorage.storeMaterials.name": "Keep Feedstock and Nanoswarms in Hull Item Storage",
     "settings.socketStorage.storeMaterials.tooltip": "Moves them from your cargo into Hull Item Storage, where they take no space.",
-    "settings.socketStorage.averageRolls.name": "Average Modifier Rolls",
-    "settings.socketStorage.averageRolls.tooltip": "New hull items roll each modifier at the middle of its range. Augmentation and Recalibration still roll randomly.",
     "settings.diminishing.header": "Diminishing Returns",
     "settings.diminishing.about": "Tree and hull item bonuses to these stats only partly count past a threshold, set as a percent of the hull's base value.",
     "settings.diminishing.efficiency.name": "Efficiency Beyond Threshold",

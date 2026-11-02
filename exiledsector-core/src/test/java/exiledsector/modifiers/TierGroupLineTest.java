@@ -79,7 +79,6 @@ class TierGroupLineTest {
             float value = line.valueFor(position, ScaleContext.ofTier(7));
             assertTrue(value >= 20f && value <= 30f, "value " + value);
         }
-        assertEquals(50f, line.average());
     }
 
     private static Map<Float, Integer> valueCounts(ModifierLine line, int tier) {

@@ -80,7 +80,7 @@ class ModifierExclusivityTest {
 
     @Test
     void addingAModifierSkipsEveryModifierThatSharesAGroupWithOneAlreadyThere() {
-        RolledModifier armor = RolledModifier.roll(ItemModifiers.get("GROUPED_ARMOR"), new Random(1L), false);
+        RolledModifier armor = RolledModifier.roll(ItemModifiers.get("GROUPED_ARMOR"), new Random(1L));
 
         List<String> open = AffixLayout.openSides(definition, List.of(armor)).stream().flatMap(List::stream)
                 .map(entry -> entry.modifier().id()).toList();

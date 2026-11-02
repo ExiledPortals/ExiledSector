@@ -32,20 +32,6 @@ class ItemRollerTest {
     }
 
     @Test
-    void averageRollsKeepTheSameModifiersButSetEachToTheMiddleOfItsRange() {
-        Map<String, PoolEntry> pool = military.pool().stream()
-                .collect(Collectors.toMap(PoolEntry::effectName, Function.identity()));
-        for (long seed = 0; seed < 200; seed++) {
-            List<RolledEffect> random = RolledModifier.lines(ItemRoller.roll(military, seed, false));
-            List<RolledEffect> averaged = RolledModifier.lines(ItemRoller.roll(military, seed, true));
-            assertEquals(random.stream().map(RolledEffect::effectName).toList(), averaged.stream().map(RolledEffect::effectName).toList());
-            for (RolledEffect effect : averaged) {
-                assertEquals(pool.get(effect.effectName()).average(), effect.magnitude());
-            }
-        }
-    }
-
-    @Test
     void theSameSeedAlwaysRollsTheSameEffects() {
         assertEquals(ItemRoller.roll(military, 42L), ItemRoller.roll(military, 42L));
         assertNotEquals(ItemRoller.roll(military, 42L), ItemRoller.roll(military, 43L));

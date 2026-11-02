@@ -67,7 +67,7 @@ public final class StarChartFixtures {
         Random random = Seeds.random(seed);
         List<RolledModifier> explicits = new ArrayList<>(definition.pool().size());
         for (PoolEntry entry : definition.pool()) {
-            explicits.add(RolledModifier.roll(entry.modifier(), random, ItemRoller.averageRolls()));
+            explicits.add(RolledModifier.roll(entry.modifier(), random));
         }
         return new ItemData(definition.id(), seed, explicits, ItemNames.freeze(definition, seed, explicits), rolled.traits());
     }

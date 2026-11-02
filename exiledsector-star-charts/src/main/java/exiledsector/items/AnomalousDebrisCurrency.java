@@ -156,7 +156,7 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
         List<RolledModifier> prefixes = new ArrayList<>();
         List<RolledModifier> suffixes = new ArrayList<>();
         RolledModifier grantedRoll = kept.stream().filter(rolled -> rolled.modifierId().equals(granted.id())).findFirst()
-                .orElseGet(() -> RolledModifier.roll(granted, random, false));
+                .orElseGet(() -> RolledModifier.roll(granted, random));
         (granted.slot() == ModifierSlot.PREFIX ? prefixes : suffixes).add(grantedRoll);
         Set<String> takenIds = new HashSet<>(List.of(granted.id()));
         Set<String> takenEffects = new HashSet<>(effectsOf(granted));
@@ -191,7 +191,7 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
         int drawCount = 0;
         for (int left = Math.max(0, count); left > 0 && !remaining.isEmpty(); left--) {
             PoolEntry entry = remaining.remove(WeightedPick.index(remaining, PoolEntry::weight, random.nextFloat()));
-            drawn.add(RolledModifier.roll(entry.modifier(), random, false));
+            drawn.add(RolledModifier.roll(entry.modifier(), random));
             takenIds.add(entry.modifier().id());
             remaining.removeIf(candidate -> ModifierExclusivity.clashes(candidate.modifier().id(), takenIds));
             drawCount++;
