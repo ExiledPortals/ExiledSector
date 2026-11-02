@@ -494,6 +494,57 @@ public final class ShipTrees {
         return true;
     }
 
+    public static boolean renameNode(ShipSkillData data, String oldId, String newId) {
+        if (!holdsNode(data, oldId) || data.allocatedNodeIds.contains(newId) || data.getDormantNodeIds().contains(newId)) {
+            return false;
+        }
+        data.revision++;
+        ItemChargeLedger.ensure(data);
+        renameIn(data.allocatedNodeIds, oldId, newId);
+        renameIn(data.dormantNodeIds, oldId, newId);
+        renameIn(data.freeNodeIds, oldId, newId);
+        renameIn(data.pairedFreeNodeIds, oldId, newId);
+        renameIn(data.grantFreeNodeIds, oldId, newId);
+        renameIn(data.fleetGrantNodeIds, oldId, newId);
+        renameIn(data.replacementAllocatedNodeIds, oldId, newId);
+        if (oldId.equals(data.startingRootId)) {
+            data.startingRootId = newId;
+        }
+        renameKey(data.optionalSelections, oldId, newId);
+        if (data.optionalSelections != null) {
+            data.optionalSelections.computeIfPresent(newId, (nodeId, optionId) -> NodeReplacements.currentTypeId(optionId));
+        }
+        renameKey(data.socketedItems, oldId, newId);
+        renameKey(data.chargedItemIds, oldId, newId);
+        renameKey(data.chargedItemQuantities, oldId, newId);
+        return true;
+    }
+
+    private static boolean holdsNode(ShipSkillData data, String nodeId) {
+        return data.allocatedNodeIds.contains(nodeId) || data.getDormantNodeIds().contains(nodeId) || data.isFreeNode(nodeId)
+                || data.isFleetGranted(nodeId) || nodeId.equals(data.startingRootId) || data.getOptionalSelection(nodeId) != null
+                || data.getSocketedItem(nodeId) != null || (data.chargedItemIds != null && data.chargedItemIds.containsKey(nodeId))
+                || (data.replacementAllocatedNodeIds != null && data.replacementAllocatedNodeIds.contains(nodeId));
+    }
+
+    private static void renameIn(Set<String> nodeIds, String oldId, String newId) {
+        if (nodeIds == null || !nodeIds.contains(oldId)) {
+            return;
+        }
+        List<String> order = new ArrayList<>(nodeIds);
+        nodeIds.clear();
+        order.forEach(id -> nodeIds.add(id.equals(oldId) ? newId : id));
+    }
+
+    private static <V> void renameKey(Map<String, V> byNodeId, String oldId, String newId) {
+        if (byNodeId == null || !byNodeId.containsKey(oldId)) {
+            return;
+        }
+        Map<String, V> order = new LinkedHashMap<>(byNodeId);
+        byNodeId.clear();
+        order.forEach((id, value) -> byNodeId.put(id.equals(oldId) ? newId : id, value));
+    }
+
     private static void carryOptionOver(ShipSkillData data, String oldId, String newId) {
         String oldOptionId = data.optionalSelections == null ? null : NodeReplacements.currentTypeId(data.optionalSelections.remove(oldId));
         SkillNode replacement = SkillTree.getDeclared(newId);

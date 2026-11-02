@@ -17,10 +17,29 @@ public final class ShipTreeRepairs {
     public static void replaceRemovedNodes(Map<String, SkillNode> nodesById, Map<String, String> replacements) {
         replacements.keySet().forEach(oldId -> {
             String newId = NodeReplacements.current(oldId, replacements, nodesById::containsKey);
-            if (!newId.equals(oldId)) {
-                ShipSkillDataManager.all().values().forEach(shipData -> ShipTrees.replaceNode(shipData, oldId, newId));
+            if (newId.equals(oldId)) {
+                return;
             }
+            boolean renamed = renamedAllTheWay(oldId, newId, replacements);
+            ShipSkillDataManager.all().values().forEach(shipData -> {
+                if (renamed) {
+                    ShipTrees.renameNode(shipData, oldId, newId);
+                } else {
+                    ShipTrees.replaceNode(shipData, oldId, newId);
+                }
+            });
         });
+    }
+
+    private static boolean renamedAllTheWay(String oldId, String newId, Map<String, String> replacements) {
+        String id = oldId;
+        for (int hop = 0; hop < replacements.size() && !id.equals(newId); hop++) {
+            if (!NodeReplacements.isRename(id)) {
+                return false;
+            }
+            id = replacements.get(id);
+        }
+        return id.equals(newId);
     }
 
     public static void forgetUnknownNodes(Map<String, SkillNode> nodesById, Map<String, SkillNode> declaredNodesById,
