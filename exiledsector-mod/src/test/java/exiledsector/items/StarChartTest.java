@@ -267,7 +267,7 @@ class StarChartTest {
             assertEquals(collapsed.get(0).plain(), expanded.get(0).plain());
             assertTrue(expanded.size() > 2, expanded.toString());
             assertTrue(expanded.get(1).spans().stream().anyMatch(span -> span.style() == Style.BAD), expanded.get(1).toMarkup());
-            assertTrue(expanded.get(expanded.size() - 1).plain().endsWith(SkillTree.get("hull_breacher_1").getType().getFlavourText()));
+            assertTrue(expanded.get(expanded.size() - 1).plain().endsWith(SkillTree.get("hullbreacher_rounds_1").getType().getFlavourText()));
         } finally {
             RealSkillData.clear();
         }
@@ -306,7 +306,7 @@ class StarChartTest {
             List<SlottedLine> lines = chart.slottedEffectLines(false, null);
 
             assertEquals(chart.effectLines(false), lines.stream().map(SlottedLine::text).toList());
-            assertEquals(SkillTree.get("hull_breacher_1").getDisplayName(), lines.get(0).detailTitle());
+            assertEquals(SkillTree.get("hullbreacher_rounds_1").getDisplayName(), lines.get(0).detailTitle());
             assertEquals(chart.effectLines(true).size() - 1, lines.get(0).details().size());
             assertEquals(1, chart.slottedEffectLines(true, null).size());
         } finally {

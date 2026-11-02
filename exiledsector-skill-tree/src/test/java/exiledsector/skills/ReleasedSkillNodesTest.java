@@ -49,6 +49,17 @@ class ReleasedSkillNodesTest {
     }
 
     @Test
+    void noRetiredNodeIdIsBackInTheTreeOrTheLedger() throws Exception {
+        List<String> retired = released("retired");
+        List<String> released = released("nodes");
+        List<String> reused = retired.stream().filter(id -> SkillTree.get(id) != null || released.contains(id)).toList();
+
+        assertFalse(retired.isEmpty());
+        assertEquals(List.of(), reused, "These node ids are retired in " + LEDGER + " but are in the tree again."
+                + " An old save holding the retired node would then look already current, so pick another id.");
+    }
+
+    @Test
     void everyStartingRootThatShippedInAReleaseIsStillARoot() throws Exception {
         List<String> lost = released("roots").stream()
                 .filter(id -> SkillTree.get(id) == null || SkillTree.get(id).getType().getTier() != SkillTier.ROOT)

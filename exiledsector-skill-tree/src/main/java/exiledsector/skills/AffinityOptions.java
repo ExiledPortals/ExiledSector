@@ -6,16 +6,16 @@ import java.util.Map;
 public final class AffinityOptions {
 
     static final Map<String, String> RETIRED_OPTIONS = Map.of(
-            "hull", "affinity_low_tech",
-            "flux_capacity", "affinity_high_tech",
-            "flux_dissipation", "affinity_high_tech",
-            "fuel_crew_cargo", "affinity_midline");
+            "hull", "low_tech_affinity",
+            "flux_capacity", "high_tech_affinity",
+            "flux_dissipation", "high_tech_affinity",
+            "fuel_crew_cargo", "midline_affinity");
 
     private AffinityOptions() {
     }
 
     public static String currentOptionId(String optionTypeId) {
-        return optionTypeId == null ? null : RETIRED_OPTIONS.getOrDefault(optionTypeId, optionTypeId);
+        return optionTypeId == null ? null : NodeReplacements.currentTypeId(RETIRED_OPTIONS.getOrDefault(optionTypeId, optionTypeId));
     }
 
     public static boolean migrate(ShipSkillData data) {

@@ -149,6 +149,51 @@ class NodeReplacementsTest {
     }
 
     @Test
+    void renamedNodesJoinTheReplacementsAndAreRememberedAsRenames() throws Exception {
+        NodeReplacements.registerRenames(new JSONArray().put(new JSONObject().put("old", "old_kept").put("new", "kept")));
+
+        assertEquals(Map.of("removed", "socket", "old_kept", "kept"), NodeReplacements.all());
+        assertEquals("kept", NodeReplacements.current("old_kept"));
+        assertTrue(NodeReplacements.isRename("old_kept"));
+        assertFalse(NodeReplacements.isRename("removed"));
+    }
+
+    @Test
+    void aReplacementCanPointAtANodeThatWasRenamedSince() throws Exception {
+        NodeReplacements.register(new JSONArray().put(new JSONObject().put("old", "removed").put("new", "old_kept")));
+        NodeReplacements.registerRenames(new JSONArray().put(new JSONObject().put("old", "old_kept").put("new", "kept")));
+
+        assertEquals("kept", NodeReplacements.current("removed"));
+    }
+
+    @Test
+    void aRenamedTypeIdResolvesOnlyOnceTheOldTypeIsGoneAndTheNewOneExists() throws Exception {
+        NodeReplacements.registerTypeRenames(new JSONArray()
+                .put(new JSONObject().put("old", "old_type").put("new", "kept_type"))
+                .put(new JSONObject().put("old", "lost_type").put("new", "missing_type"))
+                .put(new JSONObject().put("old", "socket_type").put("new", "kept_type")));
+
+        assertEquals("kept_type", NodeReplacements.currentTypeId("old_type"));
+        assertEquals("lost_type", NodeReplacements.currentTypeId("lost_type"));
+        assertEquals("socket_type", NodeReplacements.currentTypeId("socket_type"));
+        assertNull(NodeReplacements.currentTypeId(null));
+    }
+
+    @Test
+    void anOptionSavedUnderARenamedTypeIdReadsBackWithTheNewIdInTemplatesAndOptionChecks() throws Exception {
+        SkillType armor = node("armor_option", SkillTier.SMALL).getType();
+        NodeReplacements.registerTypeRenames(new JSONArray().put(new JSONObject().put("old", "old_armor_option").put("new", armor.getId())));
+
+        SkillTreeTemplate decoded = TemplateCodec.decode(TemplateCodec.encode(new SkillTreeTemplate("template", "Build", "root", null,
+                List.of(new TemplateStep("kept", "old_armor_option")))));
+
+        assertNotNull(decoded);
+        assertEquals(armor.getId(), decoded.steps().get(0).optionTypeId());
+        assertEquals(armor.getId(), AffinityOptions.currentOptionId("old_armor_option"));
+        assertEquals(new NodeEntry("kept", armor.getId()), NodeEntry.parse("kept=old_armor_option"));
+    }
+
+    @Test
     void everyShippedReplacementPointsFromAGoneNodeToOneThatExists() throws Exception {
         SkillTree.clearTypes();
         SkillTree.clearNodes();

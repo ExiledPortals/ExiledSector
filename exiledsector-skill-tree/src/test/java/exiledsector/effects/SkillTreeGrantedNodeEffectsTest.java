@@ -31,7 +31,7 @@ import static org.mockito.Mockito.when;
 
 class SkillTreeGrantedNodeEffectsTest {
 
-    private static final String FREEBOOTERS_CHARGE = "reckless_assault_1";
+    private static final String FREEBOOTERS_CHARGE = "freebooters_charge_1";
     private static final String MOD_ID_PREFIX = "test_grant_";
 
     @BeforeEach

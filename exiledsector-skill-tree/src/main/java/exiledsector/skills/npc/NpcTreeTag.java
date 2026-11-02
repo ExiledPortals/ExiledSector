@@ -125,7 +125,8 @@ public final class NpcTreeTag {
     }
 
     private static void restoreGrants(ShipSkillData shipData, String grantedEntries) {
-        for (String nodeId : grantedEntries.split(NODE_SEPARATOR)) {
+        for (String grantedEntry : grantedEntries.split(NODE_SEPARATOR)) {
+            String nodeId = NodeReplacements.current(grantedEntry);
             SkillNode node = SkillTree.get(nodeId);
             if (node != null && !shipData.isAllocated(nodeId)) {
                 ShipTrees.allocateFleetGrant(shipData, node);

@@ -125,6 +125,10 @@ class ExiledSectorModPluginTest {
                 .thenReturn(new JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("old", "data/config/exiledSector/node_replacements.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
+        when(settings.getMergedSpreadsheetDataForMod("old", "data/config/exiledSector/node_id_renames.csv", "exiledSector"))
+                .thenReturn(new JSONArray());
+        when(settings.getMergedSpreadsheetDataForMod("old", "data/config/exiledSector/type_id_renames.csv", "exiledSector"))
+                .thenReturn(new JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("site", "data/config/exiledSector/item_salvage.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("site", "data/config/exiledSector/anchor_salvage.csv", "exiledSector"))

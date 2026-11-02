@@ -205,6 +205,23 @@ export function anchorById(document: Pick<TreeDocument, 'anchors'>, anchorId: st
   return document.anchors.find((anchor) => anchor.id === anchorId);
 }
 
+const KEPT_TYPE_ID_PREFIXES = ['nskr_', 'rat_', 'tania_'];
+
+export function nameSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/['’]/g, '')
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+}
+
+export function nodeIdStem(document: Pick<TreeDocument, 'types'>, typeId: string): string {
+  const type = typeById(document, typeId);
+  const slug = type ? nameSlug(type.name) : '';
+  const kept = !slug || type?.tier === 'ROOT' || KEPT_TYPE_ID_PREFIXES.some((prefix) => typeId.startsWith(prefix));
+  return kept || (slug !== typeId && typeById(document, slug)) ? typeId : slug;
+}
+
 export function uniqueId(prefix: string, taken: (id: string) => boolean): string {
   let counter = 1;
   let id = `${prefix}_${counter}`;

@@ -37,18 +37,18 @@ cargo_capacity_flat_2,cargo_capacity_2,Cargo Capacity,yes
 chronos_adaptability_1,chronos_rhythms_1,Chronos Rhythms,yes
 coil_efficiency_1,exo_tech_coil_tuning_1,Exo-Tech Coil Tuning,yes
 converted_fighterbay_1,converted_fighter_bay_1,Converted Fighter Bay,yes
-crew_capacity_flat_1,crew_capacity_1,Crew capacity,yes
-crew_capacity_flat_2,crew_capacity_2,Crew capacity,yes
-crew_capacity_flat_3,crew_capacity_3,Crew capacity,yes
-crew_capacity_flat_4,crew_capacity_4,Crew capacity,yes
-crew_capacity_flat_5,crew_capacity_5,Crew capacity,yes
-crew_capacity_flat_6,crew_capacity_6,Crew capacity,yes
-crew_capacity_flat_7,crew_capacity_7,Crew capacity,yes
-crew_capacity_flat_8,crew_capacity_8,Crew capacity,yes
-crew_capacity_flat_9,crew_capacity_9,Crew capacity,yes
+crew_capacity_flat_1,crew_capacity_1,Crew Capacity,yes
+crew_capacity_flat_2,crew_capacity_2,Crew Capacity,yes
+crew_capacity_flat_3,crew_capacity_3,Crew Capacity,yes
+crew_capacity_flat_4,crew_capacity_4,Crew Capacity,yes
+crew_capacity_flat_5,crew_capacity_5,Crew Capacity,yes
+crew_capacity_flat_6,crew_capacity_6,Crew Capacity,yes
+crew_capacity_flat_7,crew_capacity_7,Crew Capacity,yes
+crew_capacity_flat_8,crew_capacity_8,Crew Capacity,yes
+crew_capacity_flat_9,crew_capacity_9,Crew Capacity,yes
 eccm_1,eccm_package_1,ECCM Package,yes
 ecm_1,ecm_package_1,ECM Package,yes
-emp_damage_taken_multi_1,less_emp_damage_taken_1,Less EMP damage taken,yes
+emp_damage_taken_multi_1,less_emp_damage_taken_1,Less EMP Damage Taken,yes
 energy_chain_1,refracting_projectiles_1,Refracting Projectiles,yes
 energy_flux_cost_1,energy_weapon_flux_cost_1,Energy Weapon Flux Cost,yes
 energy_flux_cost_2,energy_weapon_flux_cost_2,Energy Weapon Flux Cost,yes
@@ -90,6 +90,13 @@ high_scatter_amp_1,high_scatter_amplifier_1,High Scatter Amplifier,yes
 hiressensors_1,high_resolution_sensors_1,High Resolution Sensors,yes
 hoarded_arms_1,league_reload_drill_1,League Reload Drill,yes
 hull_breacher_1,hullbreacher_rounds_1,Hullbreacher Rounds,yes
+hull_multi_1,more_hull_1,More Hull,yes
+hull_multi_2,more_hull_2,More Hull,yes
+hull_multi_3,more_hull_3,More Hull,yes
+hull_multi_4,more_hull_4,More Hull,yes
+hull_multi_5,more_hull_5,More Hull,yes
+hull_multi_6,more_hull_6,More Hull,yes
+hull_multi_7,more_hull_7,More Hull,yes
 increased_sensor_strength_1,sensor_strength_1,Sensor Strength,yes
 increased_sensor_strength_2,sensor_strength_2,Sensor Strength,yes
 increased_sensor_strength_3,sensor_strength_3,Sensor Strength,yes
@@ -149,11 +156,11 @@ seraphim_1,seraph_hunting_routines_1,Seraph Hunting Routines,yes
 seraphs_grace_1,borrowed_grace_1,Borrowed Grace,yes
 shield_arc_mult_1,shield_arc_multiplier_1,Shield Arc Multiplier,yes
 shield_arc_mult_2,shield_arc_multiplier_2,Shield Arc Multiplier,yes
-shield_damage_taken_multi_1,shield_flux_damage_reduction_1,Shield flux/damage reduction,yes
-shield_damage_taken_multi_2,shield_flux_damage_reduction_2,Shield flux/damage reduction,yes
-shield_damage_taken_multi_3,shield_flux_damage_reduction_3,Shield flux/damage reduction,yes
-shield_damage_taken_multi_4,shield_flux_damage_reduction_4,Shield flux/damage reduction,yes
-shield_turn_raise_rate_optional_1,shield_raise_rate_or_shield_turn_rate_1,Shield Raise rate or Shield Turn rate,yes
+shield_damage_taken_multi_1,shield_flux_damage_reduction_1,Shield Flux/Damage Reduction,yes
+shield_damage_taken_multi_2,shield_flux_damage_reduction_2,Shield Flux/Damage Reduction,yes
+shield_damage_taken_multi_3,shield_flux_damage_reduction_3,Shield Flux/Damage Reduction,yes
+shield_damage_taken_multi_4,shield_flux_damage_reduction_4,Shield Flux/Damage Reduction,yes
+shield_turn_raise_rate_optional_1,shield_raise_rate_or_shield_turn_rate_1,Shield Raise Rate or Shield Turn Rate,yes
 shield_upkeep_multi_1,shield_upkeep_reduction_1,Shield Upkeep Reduction,yes
 shield_upkeep_multi_2,shield_upkeep_reduction_2,Shield Upkeep Reduction,yes
 small_flux_optional_1,affinity_1,Affinity,yes
@@ -266,8 +273,8 @@ small_flux_optional_107,affinity_107,Affinity,yes
 small_flux_optional_108,affinity_108,Affinity,yes
 small_flux_optional_109,affinity_109,Affinity,yes
 stabilizedshieldemitter_1,stabilized_shields_1,Stabilized Shields,yes
-survey_generic_cost_reduction_1,survey_cost_reduction_1,Survey cost reduction,yes
-survey_generic_cost_reduction_2,survey_cost_reduction_2,Survey cost reduction,yes
+survey_generic_cost_reduction_1,survey_cost_reduction_1,Survey Cost Reduction,yes
+survey_generic_cost_reduction_2,survey_cost_reduction_2,Survey Cost Reduction,yes
 system_cooldown_1,ship_system_cooldown_1,Ship System Cooldown,yes
 system_cooldown_2,ship_system_cooldown_2,Ship System Cooldown,yes
 system_cooldown_3,ship_system_cooldown_3,Ship System Cooldown,yes

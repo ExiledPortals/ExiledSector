@@ -53,9 +53,9 @@ class AffinityDataTest {
 
     @Test
     void theAffinityNodeOffersExactlyTheThreeAffinitiesAtFiveEach() {
-        SkillType affinityNode = SkillTree.getType("small_flux_optional");
+        SkillType affinityNode = SkillTree.getType("affinity");
 
-        assertEquals(List.of("affinity_low_tech", "affinity_high_tech", "affinity_midline"), affinityNode.getOptionalOptionIds());
+        assertEquals(List.of("low_tech_affinity", "high_tech_affinity", "midline_affinity"), affinityNode.getOptionalOptionIds());
         for (String optionId : affinityNode.getOptionalOptionIds()) {
             List<SkillTypeEffect> effects = SkillTree.getType(optionId).getEffects();
             assertEquals(1, effects.size(), optionId);
@@ -78,11 +78,11 @@ class AffinityDataTest {
 
     @Test
     void oldSelectionsAreMappedOnceAndNewOnesLeftAlone() {
-        assertEquals("affinity_low_tech", AffinityOptions.currentOptionId("hull"));
-        assertEquals("affinity_high_tech", AffinityOptions.currentOptionId("flux_capacity"));
-        assertEquals("affinity_high_tech", AffinityOptions.currentOptionId("flux_dissipation"));
-        assertEquals("affinity_midline", AffinityOptions.currentOptionId("fuel_crew_cargo"));
-        assertEquals("affinity_midline", AffinityOptions.currentOptionId("affinity_midline"));
+        assertEquals("low_tech_affinity", AffinityOptions.currentOptionId("hull"));
+        assertEquals("high_tech_affinity", AffinityOptions.currentOptionId("flux_capacity"));
+        assertEquals("high_tech_affinity", AffinityOptions.currentOptionId("flux_dissipation"));
+        assertEquals("midline_affinity", AffinityOptions.currentOptionId("fuel_crew_cargo"));
+        assertEquals("midline_affinity", AffinityOptions.currentOptionId("midline_affinity"));
         assertEquals("shield_arc", AffinityOptions.currentOptionId("shield_arc"));
     }
 
@@ -90,7 +90,7 @@ class AffinityDataTest {
     void aSavedShipsOldSelectionsAreMigratedAndSurviveTheRepairPass() {
         NpcTreeBuild build = NpcSkillTreeBuilder.generate(new NpcBuildRequest(NpcArchetypes.ALL.get(0).profile(), "Low Tech", null,
                 NpcHullMods.NONE, NpcFreedOp.NONE, 30, null), new Random(5L));
-        String oldTag = NpcTreeTag.encode(build.shipData()).replace("=affinity_low_tech", "=hull");
+        String oldTag = NpcTreeTag.encode(build.shipData()).replace("=low_tech_affinity", "=hull");
         assertTrue(oldTag.contains("=hull"));
 
         ShipSkillData decoded = NpcTreeTag.decode(oldTag);
@@ -105,11 +105,11 @@ class AffinityDataTest {
     @Test
     void aTemplateNamingAnOldOptionReadsBackAsItsAffinity() {
         SkillTreeTemplate old = new SkillTreeTemplate("t", "Old", "root_low_tech_1", HullSize.CRUISER,
-                List.of(new TemplateStep("small_flux_optional_1", "flux_dissipation")));
+                List.of(new TemplateStep("affinity_1", "flux_dissipation")));
 
         SkillTreeTemplate decoded = TemplateCodec.decode(TemplateCodec.encode(old));
 
-        assertEquals("affinity_high_tech", decoded.steps().get(0).optionTypeId());
+        assertEquals("high_tech_affinity", decoded.steps().get(0).optionTypeId());
         assertFalse(AffinityOptions.migrate(null));
     }
 }

@@ -86,12 +86,14 @@ function Save-ReleasedSkillNodes {
     [string[]]$roots = @($tree.nodes | Where-Object { $rootTypes -ccontains $_.type } | ForEach-Object { $_.id })
     [Array]::Sort($nodes, [StringComparer]::Ordinal)
     [Array]::Sort($roots, [StringComparer]::Ordinal)
-    $nodeLines = ($nodes | ForEach-Object { "    `"$_`"" }) -join ",`n"
-    $rootLines = ($roots | ForEach-Object { "    `"$_`"" }) -join ",`n"
-    $text = "{`n  `"nodes`": [`n$nodeLines`n  ],`n  `"roots`": [`n$rootLines`n  ]`n}`n"
-
     $ledgerFile = Join-Path $ProjectRoot "exiledsector-skill-tree\src\test\resources\released_skill_nodes.json"
     $before = if (Test-Path $ledgerFile) { [System.IO.File]::ReadAllText($ledgerFile).Replace("`r`n", "`n") } else { "" }
+    [string[]]$retired = if ($before) { @(($before | ConvertFrom-Json).retired | Where-Object { $_ }) } else { @() }
+
+    $nodeLines = ($nodes | ForEach-Object { "    `"$_`"" }) -join ",`n"
+    $rootLines = ($roots | ForEach-Object { "    `"$_`"" }) -join ",`n"
+    $retiredBlock = if ($retired.Count -gt 0) { ",`n  `"retired`": [`n" + (($retired | ForEach-Object { "    `"$_`"" }) -join ",`n") + "`n  ]" } else { "" }
+    $text = "{`n  `"nodes`": [`n$nodeLines`n  ],`n  `"roots`": [`n$rootLines`n  ]$retiredBlock`n}`n"
     if ($before -ne $text) {
         [System.IO.File]::WriteAllText($ledgerFile, $text, (New-Object System.Text.UTF8Encoding($false)))
         Write-Host "Recorded $($nodes.Count) released skill node ids in $ledgerFile; commit it with the release."

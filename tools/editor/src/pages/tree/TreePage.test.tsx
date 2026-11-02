@@ -69,13 +69,13 @@ describe('tree page', () => {
     expect(state.replacedNodeIds.has('modular_hull_socket_2')).toBe(true);
     expect(state.releasedNodeIds.size).toBeGreaterThan(100);
 
-    act(() => addNodeOfType('small_flux_optional', 0, 0, vocabulary));
+    act(() => addNodeOfType('affinity', 0, 0, vocabulary));
     const addedId = useTreeStore.getState().selection.nodes[0];
     act(() => duplicateNode(addedId));
     const duplicatedId = useTreeStore.getState().selection.nodes[0];
 
     for (const newId of [addedId, duplicatedId]) {
-      expect(newId.startsWith('small_flux_optional_')).toBe(true);
+      expect(newId.startsWith('affinity_')).toBe(true);
       expect(isReservedNodeId(useTreeStore.getState(), newId)).toBe(false);
     }
   });

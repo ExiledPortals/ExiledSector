@@ -66,7 +66,7 @@ class AffinityTooltipLinesTest {
         ShipSkillData data = new ShipSkillData();
         ShipTrees.chooseStartingRoot(data, root("root_midline"));
         SkillNode affinityNode = affinityNode();
-        SkillType midline = SkillTree.getType("affinity_midline");
+        SkillType midline = SkillTree.getType("midline_affinity");
         ShipTrees.allocate(data, affinityNode, midline, 0);
 
         NodeDescription description = AffinityTooltipLines.forNode(affinityNode, midline, data, HullSize.CRUISER);
@@ -83,14 +83,14 @@ class AffinityTooltipLinesTest {
         ShipSkillData data = new ShipSkillData();
         ShipTrees.chooseStartingRoot(data, root("root_low_tech"));
 
-        NodeDescription description = AffinityTooltipLines.forNode(affinityNode(), SkillTree.getType("affinity_low_tech"), data, HullSize.CRUISER);
+        NodeDescription description = AffinityTooltipLines.forNode(affinityNode(), SkillTree.getType("low_tech_affinity"), data, HullSize.CRUISER);
 
         assertEquals(List.of(), description.effects());
         assertTrue(plain(description.details()).contains("1% more fuel capacity for every 5 Low Tech Affinity"));
     }
 
     private static SkillNode affinityNode() {
-        return SkillTree.getAllNodes().values().stream().filter(node -> "small_flux_optional".equals(node.getType().getId())).findFirst().orElseThrow();
+        return SkillTree.getAllNodes().values().stream().filter(node -> "affinity".equals(node.getType().getId())).findFirst().orElseThrow();
     }
 
     private static SkillNode root(String typeId) {

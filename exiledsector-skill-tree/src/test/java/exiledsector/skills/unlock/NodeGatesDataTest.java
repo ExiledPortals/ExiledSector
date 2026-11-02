@@ -43,7 +43,7 @@ class NodeGatesDataTest {
     private static final String DWELLER_GATE = "gate_dweller_fought";
     private static final String FROZEN_HEART_GATE = "gate_frozen_heart_visited";
     private static final String PROTOTYPE_GATE = "gate_ancient_prototype_found";
-    private static final String CANDLES_GRACE_NODE_ID = "gravitational_drag_1";
+    private static final String CANDLES_GRACE_NODE_ID = "candles_grace_replica_1";
 
     @BeforeAll
     static void loadRealData() throws Exception {
@@ -209,7 +209,7 @@ class NodeGatesDataTest {
         SkillTree.getAllNodes().values().stream()
                 .filter(node -> SkillTags.ABYSS_REGION.equals(node.getRegion()))
                 .filter(node -> node.getType().getTier() == SkillTier.NOTABLE || node.getType().getTier() == SkillTier.KEYSTONE)
-                .filter(node -> !node.getType().getId().equals("chronos_adaptability"))
+                .filter(node -> !node.getType().getId().equals("chronos_rhythms"))
                 .forEach(node -> {
                     assertEquals("rat_abyssal_matter", node.getType().getItemCost().itemId(), node.getId());
                     assertEquals(25f, node.getType().getItemCost().quantity(), node.getId());
@@ -218,7 +218,7 @@ class NodeGatesDataTest {
 
     @Test
     void chronosRhythmsCostsAChronosCore() {
-        SkillItemCost itemCost = SkillTree.getAllNodes().get("chronos_adaptability_1").getType().getItemCost();
+        SkillItemCost itemCost = SkillTree.getAllNodes().get("chronos_rhythms_1").getType().getItemCost();
         assertEquals("rat_chronos_core", itemCost.itemId());
         assertEquals(1f, itemCost.quantity());
     }

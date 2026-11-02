@@ -4,7 +4,7 @@ import { connectNodes, deleteNodes, isLinkedPair, unlinkNodes } from '../model/c
 import { deleteAnchor, detachNodeFromAnchor, syncRingArcCurves } from '../model/geometry.ts';
 import { isRegionTag } from '../model/tags.ts';
 import { decorationById, decorationSpec, type DecorationKind } from '../model/decorations.ts';
-import { ANCHOR_RECTANGLE_ASPECT, anchorById, nodeById, uniqueId, type OrbitAnchor, type TreeDocument, type TreeNode } from '../model/types.ts';
+import { ANCHOR_RECTANGLE_ASPECT, anchorById, nodeById, nodeIdStem, uniqueId, type OrbitAnchor, type TreeDocument, type TreeNode } from '../model/types.ts';
 import {
   editDocument,
   EMPTY_SELECTION,
@@ -40,7 +40,7 @@ export function toggleSelected(kind: SelectionKind, id: string): void {
 }
 
 export function uniqueNodeId(document: TreeDocument, typeId: string, isReserved: (id: string) => boolean = () => false): string {
-  return uniqueId(typeId, (id) => Boolean(nodeById(document, id)) || isReserved(id));
+  return uniqueId(nodeIdStem(document, typeId), (id) => Boolean(nodeById(document, id)) || isReserved(id));
 }
 
 function reservedInStore(id: string): boolean {

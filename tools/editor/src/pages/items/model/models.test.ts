@@ -438,13 +438,13 @@ describe('modspec cache subroutines', () => {
   it('reads and writes the cache columns, adding them to an older file only once they are set', () => {
     const withCache =
       'id,name,icon,rarity,unique,kind,description,lines,source,socket_limit,unlock,excluded_nodes,node_count_chances,drop_chance,salvage_chance,notes\n' +
-      'cache,Cache,,10,true,MODSPEC_CACHE,,,,,,hull_breacher_1; torpedo_specialisation_1,0.9;0.09;0.01,0.02,,keep\n';
+      'cache,Cache,,10,true,MODSPEC_CACHE,,,,,,hullbreacher_rounds_1; xiv_torpedo_doctrine_1,0.9;0.09;0.01,0.02,,keep\n';
     const model = parseItemDefinitions(withCache, 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\n');
     const olderText = 'id,name,icon,rarity,unique,kind,description,unlock\ncache,Cache,,10,true,MODSPEC_CACHE,,\n';
     const older = parseItemDefinitions(olderText, 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\n');
 
     expect(model.definitions[0]).toMatchObject({
-      excludedNodes: 'hull_breacher_1; torpedo_specialisation_1',
+      excludedNodes: 'hullbreacher_rounds_1; xiv_torpedo_doctrine_1',
       nodeCountChances: '0.9;0.09;0.01',
       dropChance: '0.02',
       salvageChance: '',
@@ -479,9 +479,9 @@ describe('modspec cache subroutines', () => {
   it('checks the exclusions, node count chances and chances, allows several caches, and keeps the fields off other kinds', () => {
     const issues = validateItemDefinitions(
       [
-        cache({ id: 'good', excludedNodes: 'hull_breacher_1; exoship_core', dropChance: '0.02' }),
+        cache({ id: 'good', excludedNodes: 'hullbreacher_rounds_1; exoship_core', dropChance: '0.02' }),
         cache({ id: 'second_good', nodeCountChances: '0;1' }),
-        cache({ id: 'messy', excludedNodes: 'a b; hull_breacher_1; hull_breacher_1', dropChance: '-1', salvageChance: 'often' }),
+        cache({ id: 'messy', excludedNodes: 'a b; hullbreacher_rounds_1; hullbreacher_rounds_1', dropChance: '-1', salvageChance: 'often' }),
         cache({ id: 'no_counts', nodeCountChances: '' }),
         cache({ id: 'bad_counts', nodeCountChances: '0.9;;-1;lots' }),
         cache({ id: 'zero_counts', nodeCountChances: '0;0' }),
@@ -493,7 +493,7 @@ describe('modspec cache subroutines', () => {
 
     expect(issues).toEqual([
       'messy: excluded node "a b" is not a node id',
-      'messy: excluded node hull_breacher_1 is listed more than once',
+      'messy: excluded node hullbreacher_rounds_1 is listed more than once',
       'messy: drop chance must be blank or a number of 0 or more',
       'messy: salvage chance must be blank or a number of 0 or more',
       'no_counts: a MODSPEC_CACHE subroutine needs node count chances, such as 0.9;0.09;0.01',

@@ -87,12 +87,12 @@ class NodeAllocatorTest {
         SkillTree.clearNodes();
         SkillTree.clearTypes();
         root = register("root_1", type("root", "Low Tech", SkillTier.ROOT).build());
-        frontShield = register("frontshield_1", type("frontshield", "Front Shield", SkillTier.NOTABLE).build(), "root_1");
+        frontShield = register("makeshift_shield_generator_1", type("frontshield", "Front Shield", SkillTier.NOTABLE).build(), "root_1");
         omniShieldType = type("omnishield", "Omni Shield", SkillTier.NOTABLE).exclusiveSkillTypeIds(List.of("frontshield")).build();
         armorType = type("heavyarmor", "Heavy Armor", SkillTier.NOTABLE).exclusiveHullModIds(List.of("heavyarmor")).build();
         coreSlot = register("core_1", type("core", "Core Slot", SkillTier.NOTABLE)
                 .itemCost(new SkillItemCost("alpha_core", 1f)).build(), "root_1");
-        SkillNode gate = register("gate_1", type("gate", "Gate", SkillTier.SMALL).build(), "frontshield_1");
+        SkillNode gate = register("gate_1", type("gate", "Gate", SkillTier.SMALL).build(), "makeshift_shield_generator_1");
         unreachable = register("beyond_1", type("beyond", "Beyond", SkillTier.SMALL).build(), gate.getId());
 
         member = mock(FleetMemberAPI.class);
@@ -581,10 +581,10 @@ class NodeAllocatorTest {
     void aTemplateStepAllocatesItsNodeTheWayAClickWould() {
         List<SkillNode> allocated = new ArrayList<>();
 
-        StepVerdict verdict = executor(allocated).attempt(new TemplateStep("frontshield_1", null));
+        StepVerdict verdict = executor(allocated).attempt(new TemplateStep("makeshift_shield_generator_1", null));
 
         assertEquals(StepVerdict.ALLOCATE, verdict);
-        assertTrue(data().isAllocated("frontshield_1"));
+        assertTrue(data().isAllocated("makeshift_shield_generator_1"));
         assertEquals(List.of(frontShield), allocated);
     }
 

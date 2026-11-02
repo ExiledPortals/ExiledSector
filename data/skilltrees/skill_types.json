@@ -29,7 +29,7 @@
 			]
 		},
 		{
-			"id": "hybrid_flux",
+			"id": "flux_capacity_and_dissipation",
 			"name": "Flux Capacity and Dissipation",
 			"icon": "graphics/icons/hybrid_flux.png",
 			"tags": [
@@ -37,8 +37,8 @@
 			]
 		},
 		{
-			"id": "hull",
-			"name": "Hull",
+			"id": "increased_hull",
+			"name": "Increased Hull",
 			"icon": "graphics/icons/hull.png",
 			"effects": [
 				{
@@ -68,7 +68,7 @@
 			]
 		},
 		{
-			"id": "ballistic_damage",
+			"id": "ballistic_weapon_damage",
 			"name": "Ballistic Weapon Damage",
 			"icon": "graphics/icons/ballistic_damage.png",
 			"effects": [
@@ -113,7 +113,7 @@
 			]
 		},
 		{
-			"id": "reduced_D_mod_effect",
+			"id": "reduced_d_mod_effect",
 			"name": "Reduced D-Mod Effect",
 			"icon": "graphics/icons/reduced_D_mod_effect.png",
 			"effects": [
@@ -169,7 +169,7 @@
 			]
 		},
 		{
-			"id": "tactical_superiority",
+			"id": "tripad_backdoor",
 			"name": "TriPad Backdoor",
 			"icon": "graphics/icons/tactical_superiority.png",
 			"tier": "NOTABLE",
@@ -297,7 +297,7 @@
 			]
 		},
 		{
-			"id": "torpedo_specialisation",
+			"id": "xiv_torpedo_doctrine",
 			"name": "XIV Torpedo Doctrine",
 			"icon": "graphics/icons/torpedo_specialisation.png",
 			"tier": "NOTABLE",
@@ -319,7 +319,7 @@
 			]
 		},
 		{
-			"id": "missile_damage",
+			"id": "missile_weapon_damage",
 			"name": "Missile Weapon Damage",
 			"icon": "graphics/icons/missile_damage.png",
 			"effects": [
@@ -334,7 +334,7 @@
 			]
 		},
 		{
-			"id": "non_beam_energy_damage",
+			"id": "non_beam_energy_weapon_damage",
 			"name": "Non-Beam Energy Weapon Damage",
 			"icon": "graphics/icons/non_beam_energy_damage.png",
 			"effects": [
@@ -349,7 +349,7 @@
 			]
 		},
 		{
-			"id": "beam_damage",
+			"id": "beam_weapon_damage",
 			"name": "Beam Weapon Damage",
 			"icon": "graphics/icons/beam_damage.png",
 			"effects": [
@@ -365,7 +365,7 @@
 			]
 		},
 		{
-			"id": "energy_damage",
+			"id": "energy_weapon_damage",
 			"name": "Energy Weapon Damage",
 			"icon": "graphics/icons/energy_damage.png",
 			"tags": [
@@ -373,7 +373,7 @@
 			]
 		},
 		{
-			"id": "weapon_damage",
+			"id": "all_weapon_damage",
 			"name": "All Weapon Damage",
 			"icon": "graphics/icons/weapon_damage.png",
 			"tags": [
@@ -409,8 +409,8 @@
 			]
 		},
 		{
-			"id": "hull_multi",
-			"name": "Hull",
+			"id": "more_hull",
+			"name": "More Hull",
 			"icon": "graphics/icons/hull_multi.png",
 			"effects": [
 				{
@@ -423,7 +423,7 @@
 			]
 		},
 		{
-			"id": "beam_split",
+			"id": "lions_gaze",
 			"name": "Lion's Gaze",
 			"icon": "graphics/icons/beam_split.png",
 			"tier": "KEYSTONE",
@@ -528,7 +528,7 @@
 			]
 		},
 		{
-			"id": "fuel_core_overload",
+			"id": "ludds_light",
 			"name": "Ludd's Light",
 			"icon": "graphics/icons/fuel_core_overload.png",
 			"tier": "KEYSTONE",
@@ -540,7 +540,7 @@
 			]
 		},
 		{
-			"id": "exposed_fuel_lines",
+			"id": "at_any_cost",
 			"name": "At Any Cost",
 			"icon": "graphics/icons/exposed_fuel_lines.png",
 			"tier": "KEYSTONE",
@@ -556,7 +556,7 @@
 			]
 		},
 		{
-			"id": "energy_chain",
+			"id": "refracting_projectiles",
 			"name": "Refracting Projectiles",
 			"icon": "graphics/icons/energy_chain.png",
 			"tier": "NOTABLE",
@@ -578,7 +578,7 @@
 			]
 		},
 		{
-			"id": "hull_breacher",
+			"id": "hullbreacher_rounds",
 			"name": "Hullbreacher Rounds",
 			"icon": "graphics/icons/explosion3_shifted.png",
 			"tier": "NOTABLE",
@@ -596,7 +596,7 @@
 			]
 		},
 		{
-			"id": "ballistic_momentum",
+			"id": "navy_heartbeat",
 			"name": "Navy Heartbeat",
 			"icon": "graphics/icons/ballistic_momentum.png",
 			"tier": "NOTABLE",
@@ -615,7 +615,7 @@
 			]
 		},
 		{
-			"id": "attuned_sensors",
+			"id": "league_picket_targeting",
 			"name": "League Picket Targeting",
 			"icon": "graphics/icons/attuned_sensors.png",
 			"tier": "NOTABLE",
@@ -634,7 +634,7 @@
 			]
 		},
 		{
-			"id": "advancedshieldemitter",
+			"id": "accelerated_shields",
 			"name": "Accelerated Shields",
 			"icon": "graphics/icons/advancedshieldemitter.png",
 			"tier": "NOTABLE",
@@ -664,7 +664,7 @@
 			]
 		},
 		{
-			"id": "adaptive_coils",
+			"id": "adaptive_phase_coils",
 			"name": "Adaptive Phase Coils",
 			"icon": "graphics/icons/adaptive_coils.png",
 			"tier": "NOTABLE",
@@ -693,7 +693,7 @@
 			]
 		},
 		{
-			"id": "advancedoptics",
+			"id": "advanced_optics",
 			"name": "Advanced Optics",
 			"icon": "graphics/icons/advancedoptics.png",
 			"tier": "NOTABLE",
@@ -724,7 +724,7 @@
 			]
 		},
 		{
-			"id": "turretgyros",
+			"id": "advanced_turret_gyros",
 			"name": "Advanced Turret Gyros",
 			"icon": "graphics/icons/turretgyros.png",
 			"tier": "NOTABLE",
@@ -749,7 +749,7 @@
 			]
 		},
 		{
-			"id": "armoredweapons",
+			"id": "armored_weapon_mounts",
 			"name": "Armored Weapon Mounts",
 			"icon": "graphics/icons/armoredweapons.png",
 			"tier": "NOTABLE",
@@ -781,7 +781,7 @@
 			"moduleShare": "all"
 		},
 		{
-			"id": "autorepair",
+			"id": "automated_repair_unit",
 			"name": "Automated Repair Unit",
 			"icon": "graphics/icons/autorepair.png",
 			"tier": "NOTABLE",
@@ -806,7 +806,7 @@
 			]
 		},
 		{
-			"id": "auxiliarythrusters",
+			"id": "auxiliary_thrusters",
 			"name": "Auxiliary Thrusters",
 			"icon": "graphics/icons/auxiliarythrusters.png",
 			"tier": "NOTABLE",
@@ -922,7 +922,7 @@
 			]
 		},
 		{
-			"id": "converted_fighterbay",
+			"id": "converted_fighter_bay",
 			"name": "Converted Fighter Bay",
 			"icon": "graphics/icons/converted_fighterbay.png",
 			"tier": "KEYSTONE",
@@ -1014,7 +1014,7 @@
 			]
 		},
 		{
-			"id": "eccm",
+			"id": "eccm_package",
 			"name": "ECCM Package",
 			"icon": "graphics/icons/eccm.png",
 			"tier": "NOTABLE",
@@ -1064,7 +1064,7 @@
 			"moduleShare": "all"
 		},
 		{
-			"id": "ecm",
+			"id": "ecm_package",
 			"name": "ECM Package",
 			"icon": "graphics/icons/ecm.png",
 			"tier": "NOTABLE",
@@ -1165,7 +1165,7 @@
 			]
 		},
 		{
-			"id": "phase_hull_upgrades",
+			"id": "hybrid_p_space_shrouding",
 			"name": "Hybrid P-space Shrouding",
 			"icon": "graphics/icons/phase_sensor_upgrades.png",
 			"tier": "NOTABLE",
@@ -1191,7 +1191,7 @@
 			]
 		},
 		{
-			"id": "hoarded_arms",
+			"id": "league_reload_drill",
 			"name": "League Reload Drill",
 			"icon": "graphics/icons/hoarded_arms.png",
 			"tier": "NOTABLE",
@@ -1214,7 +1214,7 @@
 			]
 		},
 		{
-			"id": "magazines",
+			"id": "expanded_magazines",
 			"name": "Expanded Magazines",
 			"icon": "graphics/icons/magazines.png",
 			"tier": "NOTABLE",
@@ -1245,7 +1245,7 @@
 			]
 		},
 		{
-			"id": "missleracks",
+			"id": "expanded_missile_racks",
 			"name": "Expanded Missile Racks",
 			"icon": "graphics/icons/missleracks.png",
 			"tier": "NOTABLE",
@@ -1275,7 +1275,7 @@
 			]
 		},
 		{
-			"id": "extendedshieldemitter",
+			"id": "extended_shields",
 			"name": "Extended Shields",
 			"icon": "graphics/icons/extendedshieldemitter.png",
 			"tier": "NOTABLE",
@@ -1331,7 +1331,7 @@
 			]
 		},
 		{
-			"id": "frontshield",
+			"id": "makeshift_shield_generator",
 			"name": "Makeshift Shield Generator",
 			"icon": "graphics/icons/frontshield.png",
 			"tier": "KEYSTONE",
@@ -1416,7 +1416,7 @@
 			]
 		},
 		{
-			"id": "hardenedshieldemitter",
+			"id": "hardened_shields",
 			"name": "Hardened Shields",
 			"icon": "graphics/icons/hardenedshieldemitter.png",
 			"tier": "NOTABLE",
@@ -1464,7 +1464,7 @@
 			]
 		},
 		{
-			"id": "heavyarmor",
+			"id": "heavy_armor",
 			"name": "Heavy Armor",
 			"icon": "graphics/icons/heavyarmor.png",
 			"tier": "NOTABLE",
@@ -1572,7 +1572,7 @@
 			"moduleShare": "all"
 		},
 		{
-			"id": "energy_flux_cost",
+			"id": "energy_weapon_flux_cost",
 			"name": "Energy Weapon Flux Cost",
 			"icon": "graphics/icons/power_grid_manipulation_shifted_shifted_shifted.png",
 			"effects": [
@@ -1805,7 +1805,7 @@
 			]
 		},
 		{
-			"id": "high_scatter_amp",
+			"id": "high_scatter_amplifier",
 			"name": "High Scatter Amplifier",
 			"icon": "graphics/icons/high_scatter_amp.png",
 			"tier": "NOTABLE",
@@ -1837,7 +1837,7 @@
 			]
 		},
 		{
-			"id": "pointdefenseai",
+			"id": "integrated_point_defense_ai",
 			"name": "Integrated Point Defense AI",
 			"icon": "graphics/icons/pointdefenseai.png",
 			"tier": "NOTABLE",
@@ -1867,7 +1867,7 @@
 			]
 		},
 		{
-			"id": "targetingunit",
+			"id": "integrated_targeting_unit",
 			"name": "Integrated Targeting Unit",
 			"icon": "graphics/icons/targetingunit.png",
 			"tier": "NOTABLE",
@@ -1931,7 +1931,7 @@
 			]
 		},
 		{
-			"id": "frontemitter",
+			"id": "shield_conversion_front",
 			"name": "Shield Conversion - Front",
 			"icon": "graphics/icons/frontemitter.png",
 			"tier": "NOTABLE",
@@ -1962,7 +1962,7 @@
 			]
 		},
 		{
-			"id": "adaptiveshields",
+			"id": "shield_conversion_omni",
 			"name": "Shield Conversion - Omni",
 			"icon": "graphics/icons/adaptiveshields.png",
 			"tier": "KEYSTONE",
@@ -2082,7 +2082,7 @@
 			]
 		},
 		{
-			"id": "reinforcedhull",
+			"id": "reinforced_bulkheads",
 			"name": "Reinforced Bulkheads",
 			"icon": "graphics/icons/reinforcedhull.png",
 			"tier": "NOTABLE",
@@ -2108,7 +2108,7 @@
 			]
 		},
 		{
-			"id": "fluxbreakers",
+			"id": "resistant_flux_conduits",
 			"name": "Resistant Flux Conduits",
 			"icon": "graphics/icons/fluxbreakers.png",
 			"tier": "NOTABLE",
@@ -2138,7 +2138,7 @@
 			"moduleShare": "all"
 		},
 		{
-			"id": "stabilizedshieldemitter",
+			"id": "stabilized_shields",
 			"name": "Stabilized Shields",
 			"icon": "graphics/icons/stabilizedshieldemitter.png",
 			"tier": "NOTABLE",
@@ -2223,7 +2223,7 @@
 			]
 		},
 		{
-			"id": "augmentedengines",
+			"id": "augmented_drive_field",
 			"name": "Augmented Drive Field",
 			"icon": "graphics/icons/augmentedengines.png",
 			"tier": "NOTABLE",
@@ -2345,7 +2345,7 @@
 			]
 		},
 		{
-			"id": "hiressensors",
+			"id": "high_resolution_sensors",
 			"name": "High Resolution Sensors",
 			"icon": "graphics/icons/hiressensors.png",
 			"tier": "NOTABLE",
@@ -2379,7 +2379,7 @@
 			]
 		},
 		{
-			"id": "insulatedengine",
+			"id": "insulated_engine_assembly",
 			"name": "Insulated Engine Assembly",
 			"icon": "graphics/icons/insulatedengine.png",
 			"tier": "NOTABLE",
@@ -2537,7 +2537,7 @@
 			]
 		},
 		{
-			"id": "fighter_weapon_damage",
+			"id": "strikecraft_weapon_damage",
 			"name": "Strikecraft Weapon Damage",
 			"icon": "graphics/icons/fighter_weapon_damage_shifted.png",
 			"effects": [
@@ -2553,7 +2553,7 @@
 			]
 		},
 		{
-			"id": "fighter_speed",
+			"id": "strikecraft_speed",
 			"name": "Strikecraft Speed",
 			"icon": "graphics/icons/fighter_speed.png",
 			"effects": [
@@ -2569,13 +2569,13 @@
 			]
 		},
 		{
-			"id": "small_flux_optional",
+			"id": "affinity",
 			"name": "Affinity",
 			"icon": "graphics/icons/small_flux_optional.png",
 			"optionalOptions": [
-				"affinity_low_tech",
-				"affinity_high_tech",
-				"affinity_midline"
+				"low_tech_affinity",
+				"high_tech_affinity",
+				"midline_affinity"
 			],
 			"tags": [
 				"flux",
@@ -2583,7 +2583,7 @@
 			]
 		},
 		{
-			"id": "affinity_low_tech",
+			"id": "low_tech_affinity",
 			"name": "Low Tech Affinity",
 			"icon": "graphics/icons/root_low_tech.png",
 			"effects": [
@@ -2598,7 +2598,7 @@
 			]
 		},
 		{
-			"id": "affinity_high_tech",
+			"id": "high_tech_affinity",
 			"name": "High Tech Affinity",
 			"icon": "graphics/icons/root_high_tech.png",
 			"effects": [
@@ -2612,7 +2612,7 @@
 			]
 		},
 		{
-			"id": "affinity_midline",
+			"id": "midline_affinity",
 			"name": "Midline Affinity",
 			"icon": "graphics/icons/root_midline.png",
 			"effects": [
@@ -2682,7 +2682,7 @@
 			]
 		},
 		{
-			"id": "survey_mach_cost",
+			"id": "survey_heavy_machinery_cost_reduction",
 			"name": "Survey Heavy Machinery Cost Reduction",
 			"icon": "graphics/icons/survey_mach_cost.png",
 			"hullSizeEffects": [
@@ -2701,7 +2701,7 @@
 		},
 		{
 			"id": "survey_supplies_cost_reduction",
-			"name": "Survey supplies cost reduction",
+			"name": "Survey Supplies Cost Reduction",
 			"icon": "graphics/icons/survey_supplies_cost_reduction.png",
 			"hullSizeEffects": [
 				{
@@ -2718,8 +2718,8 @@
 			]
 		},
 		{
-			"id": "survey_generic_cost_reduction",
-			"name": "Survey cost reduction",
+			"id": "survey_cost_reduction",
+			"name": "Survey Cost Reduction",
 			"icon": "graphics/icons/survey_generic_cost_reduction.png",
 			"hullSizeEffects": [
 				{
@@ -2743,7 +2743,7 @@
 			]
 		},
 		{
-			"id": "increased_sensor_strength",
+			"id": "sensor_strength",
 			"name": "Sensor Strength",
 			"icon": "graphics/icons/increased_sensor_strength.png",
 			"hullSizeEffects": [
@@ -2760,7 +2760,7 @@
 			]
 		},
 		{
-			"id": "violence_of_action",
+			"id": "knights_charge",
 			"name": "Knight's Charge",
 			"icon": "graphics/icons/violence_of_action.png",
 			"tier": "NOTABLE",
@@ -2826,7 +2826,7 @@
 			]
 		},
 		{
-			"id": "perseverence_through_faith",
+			"id": "perseverance_through_faith",
 			"name": "Perseverance Through Faith",
 			"icon": "graphics/icons/perseverence_through_faith.png",
 			"tier": "NOTABLE",
@@ -2901,8 +2901,8 @@
 			]
 		},
 		{
-			"id": "crew_capacity_flat",
-			"name": "Crew capacity",
+			"id": "crew_capacity",
+			"name": "Crew Capacity",
 			"icon": "graphics/icons/crew_capacity_flat.png",
 			"hullSizeEffects": [
 				{
@@ -2919,7 +2919,7 @@
 			]
 		},
 		{
-			"id": "engine_durability",
+			"id": "engine_durability_and_sensor_profile",
 			"name": "Engine Durability and Sensor Profile",
 			"icon": "graphics/icons/engine_durability.png",
 			"effects": [
@@ -2937,7 +2937,7 @@
 			]
 		},
 		{
-			"id": "cargo_capacity_flat",
+			"id": "cargo_capacity",
 			"name": "Cargo Capacity",
 			"icon": "graphics/icons/cargo_capacity_flat.png",
 			"hullSizeEffects": [
@@ -2955,7 +2955,7 @@
 			]
 		},
 		{
-			"id": "fuel_flat",
+			"id": "fuel",
 			"name": "Fuel",
 			"icon": "graphics/icons/fuel_flat.png",
 			"hullSizeEffects": [
@@ -3017,8 +3017,8 @@
 			]
 		},
 		{
-			"id": "shield_turn_raise_rate_optional",
-			"name": "Shield Raise rate or Shield Turn rate",
+			"id": "shield_raise_rate_or_shield_turn_rate",
+			"name": "Shield Raise Rate or Shield Turn Rate",
 			"icon": "graphics/icons/shield_turn_raise_rate_optional.png",
 			"optionalOptions": [
 				"shield_raise_rate",
@@ -3030,12 +3030,12 @@
 			]
 		},
 		{
-			"id": "ballistic_or_energy_damage_optional",
+			"id": "ballistic_or_energy_weapon_damage",
 			"name": "Ballistic or Energy Weapon Damage",
 			"icon": "graphics/icons/ballistic_damage.png",
 			"optionalOptions": [
-				"ballistic_damage",
-				"non_beam_energy_damage"
+				"ballistic_weapon_damage",
+				"non_beam_energy_weapon_damage"
 			],
 			"tags": [
 				"ballistic",
@@ -3067,7 +3067,7 @@
 			]
 		},
 		{
-			"id": "shield_arc_mult",
+			"id": "shield_arc_multiplier",
 			"name": "Shield Arc Multiplier",
 			"icon": "graphics/icons/shield_arc_mult.png",
 			"tier": "NOTABLE",
@@ -3090,8 +3090,8 @@
 			]
 		},
 		{
-			"id": "shield_damage_taken_multi",
-			"name": "Shield flux/damage reduction",
+			"id": "shield_flux_damage_reduction",
+			"name": "Shield Flux/Damage Reduction",
 			"icon": "graphics/icons/shield_damage_taken_multi.png",
 			"effects": [
 				{
@@ -3105,7 +3105,7 @@
 			]
 		},
 		{
-			"id": "shield_upkeep_multi",
+			"id": "shield_upkeep_reduction",
 			"name": "Shield Upkeep Reduction",
 			"icon": "graphics/icons/shield_upkeep_multi.png",
 			"effects": [
@@ -3152,8 +3152,8 @@
 			]
 		},
 		{
-			"id": "emp_damage_taken_multi",
-			"name": "Less EMP damage taken",
+			"id": "less_emp_damage_taken",
+			"name": "Less EMP Damage Taken",
 			"icon": "graphics/icons/emp_damage_taken_multi.png",
 			"effects": [
 				{
@@ -3167,7 +3167,7 @@
 		},
 		{
 			"id": "increased_vent_rate",
-			"name": "Increased vent rate",
+			"name": "Increased Vent Rate",
 			"icon": "graphics/icons/increased_vent_rate.png",
 			"effects": [
 				{
@@ -3181,7 +3181,7 @@
 		},
 		{
 			"id": "vent_rate_and_emp_damage",
-			"name": "Vent rate and EMP damage",
+			"name": "Vent Rate and EMP Damage",
 			"icon": "graphics/icons/vent_rate_and_emp_damage.png",
 			"effects": [
 				{
@@ -3254,7 +3254,7 @@
 			]
 		},
 		{
-			"id": "modular_hull_socket",
+			"id": "subroutine_socket",
 			"name": "Subroutine Socket",
 			"icon": "",
 			"tier": "SOCKET",
@@ -3264,7 +3264,7 @@
 			]
 		},
 		{
-			"id": "pd_damage_to_missiles",
+			"id": "point_defense_damage_to_missiles",
 			"name": "Point Defense Damage to Missiles",
 			"icon": "graphics/icons/pd_damage_to_missiles.png",
 			"effects": [
@@ -3278,7 +3278,7 @@
 			]
 		},
 		{
-			"id": "maneuverability_percent",
+			"id": "maneuverability",
 			"name": "Maneuverability",
 			"icon": "graphics/icons/maneuverability_percent.png",
 			"effects": [
@@ -3292,7 +3292,7 @@
 			]
 		},
 		{
-			"id": "fighter_replacement",
+			"id": "strikecraft_replacement",
 			"name": "Strikecraft Replacement",
 			"icon": "graphics/icons/fighter_replacement.png",
 			"effects": [
@@ -3390,7 +3390,7 @@
 			"moduleShare": "all"
 		},
 		{
-			"id": "beam_split_reduced_damage",
+			"id": "additional_beam_splits",
 			"name": "Additional Beam Splits",
 			"icon": "graphics/icons/beam_split_reduced_damage.png",
 			"effects": [
@@ -3428,7 +3428,7 @@
 			]
 		},
 		{
-			"id": "less_energy_damage_taken",
+			"id": "energy_damage_resistance",
 			"name": "Energy Damage Resistance",
 			"icon": "graphics/icons/less_energy_damage_taken.png",
 			"effects": [
@@ -3474,7 +3474,7 @@
 			]
 		},
 		{
-			"id": "temporary_acceleration",
+			"id": "temporary_maneuverability",
 			"name": "Temporary Maneuverability",
 			"icon": "graphics/icons/temporary_acceleration.png",
 			"effects": [
@@ -3489,7 +3489,7 @@
 			]
 		},
 		{
-			"id": "reckless_assault",
+			"id": "freebooters_charge",
 			"name": "Freebooter's Charge",
 			"icon": "graphics/icons/reckless_assault.png",
 			"tier": "NOTABLE",
@@ -3604,7 +3604,7 @@
 			]
 		},
 		{
-			"id": "ion_rounds",
+			"id": "ion_bolter_rounds",
 			"name": "Ion Bolter Rounds",
 			"icon": "graphics/icons/na_ion_rounds.png",
 			"tier": "NOTABLE",
@@ -3622,7 +3622,7 @@
 			]
 		},
 		{
-			"id": "hardlight_infusion",
+			"id": "hardlight_marking",
 			"name": "Hardlight Marking",
 			"icon": "graphics/icons/na_hardlight_infusion.png",
 			"tier": "NOTABLE",
@@ -3686,7 +3686,7 @@
 			]
 		},
 		{
-			"id": "wing_scramble",
+			"id": "coalition_flight_doctrine",
 			"name": "Coalition Flight Doctrine",
 			"icon": "graphics/icons/fighter_doctrine_shifted_shifted.png",
 			"tier": "KEYSTONE",
@@ -3705,7 +3705,7 @@
 			]
 		},
 		{
-			"id": "gravitational_drag",
+			"id": "candles_grace_replica",
 			"name": "Candle's Grace Replica",
 			"icon": "graphics/icons/na_gravitational_drag.png",
 			"tier": "NOTABLE",
@@ -3812,7 +3812,7 @@
 			]
 		},
 		{
-			"id": "exogrid",
+			"id": "exo_tech_grid_splice",
 			"name": "Exo-Tech Grid Splice",
 			"icon": "graphics/icons/rat_exogrid.png",
 			"tier": "KEYSTONE",
@@ -3854,7 +3854,7 @@
 			"moduleShare": "all"
 		},
 		{
-			"id": "coil_efficiency",
+			"id": "exo_tech_coil_tuning",
 			"name": "Exo-Tech Coil Tuning",
 			"icon": "graphics/icons/rat_coil_efficiency.png",
 			"tier": "NOTABLE",
@@ -3877,7 +3877,7 @@
 			]
 		},
 		{
-			"id": "phased_recharging",
+			"id": "phase_fed_magazines",
 			"name": "Phase-Fed Magazines",
 			"icon": "graphics/icons/magazines.png",
 			"tier": "NOTABLE",
@@ -3896,7 +3896,7 @@
 			]
 		},
 		{
-			"id": "warpfield",
+			"id": "hypatia_pattern_warpfield",
 			"name": "Hypatia-Pattern Warpfield",
 			"icon": "graphics/icons/rat_warpfield.png",
 			"tier": "NOTABLE",
@@ -3953,7 +3953,7 @@
 			]
 		},
 		{
-			"id": "seraphs_grace",
+			"id": "borrowed_grace",
 			"name": "Borrowed Grace",
 			"icon": "graphics/icons/rat_seraphs_grace.png",
 			"tier": "KEYSTONE",
@@ -3996,7 +3996,7 @@
 			"moduleShare": "all"
 		},
 		{
-			"id": "abyssal_grid",
+			"id": "salvaged_abyssal_grid",
 			"name": "Salvaged Abyssal Grid",
 			"icon": "graphics/icons/rat_abyssal_grid.png",
 			"tier": "NOTABLE",
@@ -4033,7 +4033,7 @@
 			]
 		},
 		{
-			"id": "seraphim",
+			"id": "seraph_hunting_routines",
 			"name": "Seraph Hunting Routines",
 			"icon": "graphics/icons/rat_skill_seraph.png",
 			"tier": "NOTABLE",
@@ -4291,7 +4291,7 @@
 			]
 		},
 		{
-			"id": "chronos_adaptability",
+			"id": "chronos_rhythms",
 			"name": "Chronos Rhythms",
 			"icon": "graphics/icons/rat_skill_time.png",
 			"tier": "NOTABLE",
@@ -4316,7 +4316,7 @@
 			"flavourAutomated": "Linked to a recovered Chronos core, the ship's core logs how it times its own systems and rewrites the ship system's control loop to match, cycling it faster than its makers ever intended."
 		},
 		{
-			"id": "system_cooldown",
+			"id": "ship_system_cooldown",
 			"name": "Ship System Cooldown",
 			"icon": "graphics/icons/rat_supercharged.png",
 			"effects": [
@@ -4327,7 +4327,7 @@
 			]
 		},
 		{
-			"id": "doctrine_tt_alpha_fire_control",
+			"id": "doctrine_alpha_grade_fire_control",
 			"name": "Alpha-Grade Fire Control",
 			"icon": "graphics/icons/doctrine_tt_alpha_fire_control.png",
 			"tier": "NOTABLE",
@@ -4349,7 +4349,7 @@
 			]
 		},
 		{
-			"id": "doctrine_tt_flux_arbitrage",
+			"id": "doctrine_flux_arbitrage",
 			"name": "Flux Arbitrage",
 			"icon": "graphics/icons/doctrine_tt_flux_arbitrage.png",
 			"tier": "NOTABLE",
@@ -4370,7 +4370,7 @@
 			"moduleShare": "all"
 		},
 		{
-			"id": "doctrine_tt_quarterly_targets",
+			"id": "doctrine_quarterly_targets",
 			"name": "Quarterly Targets",
 			"icon": "graphics/icons/doctrine_tt_quarterly_targets.png",
 			"tier": "NOTABLE",
@@ -4391,7 +4391,7 @@
 			]
 		},
 		{
-			"id": "doctrine_tt_tachyon_lance_licensing",
+			"id": "doctrine_tachyon_lance_licensing",
 			"name": "Tachyon Lance Licensing",
 			"icon": "graphics/icons/doctrine_tt_tachyon_lance_licensing.png",
 			"tier": "NOTABLE",
@@ -4415,7 +4415,7 @@
 			]
 		},
 		{
-			"id": "doctrine_tt_black_ledger_coils",
+			"id": "doctrine_black_ledger_coil_tuning",
 			"name": "Black Ledger Coil Tuning",
 			"icon": "graphics/icons/doctrine_tt_black_ledger_coils.png",
 			"tier": "NOTABLE",
@@ -4437,7 +4437,7 @@
 			]
 		},
 		{
-			"id": "doctrine_tt_escrowed_emitters",
+			"id": "doctrine_escrowed_emitters",
 			"name": "Escrowed Emitters",
 			"icon": "graphics/icons/doctrine_tt_escrowed_emitters.png",
 			"tier": "NOTABLE",
@@ -4459,7 +4459,7 @@
 			]
 		},
 		{
-			"id": "doctrine_tt_hostile_takeover",
+			"id": "doctrine_hostile_takeover",
 			"name": "Hostile Takeover",
 			"icon": "graphics/icons/tactical_superiority.png",
 			"tier": "KEYSTONE",
@@ -4484,7 +4484,7 @@
 			]
 		},
 		{
-			"id": "doctrine_luddic_blessed_plating",
+			"id": "doctrine_blessed_plating",
 			"name": "Blessed Plating",
 			"icon": "graphics/icons/doctrine_luddic_blessed_plating.png",
 			"tier": "NOTABLE",
@@ -4505,7 +4505,7 @@
 			]
 		},
 		{
-			"id": "doctrine_luddic_faithful_hands",
+			"id": "doctrine_faithful_hands",
 			"name": "Faithful Hands",
 			"icon": "graphics/icons/doctrine_luddic_faithful_hands.png",
 			"tier": "NOTABLE",
@@ -4527,7 +4527,7 @@
 			]
 		},
 		{
-			"id": "doctrine_luddic_pilgrims_burn",
+			"id": "doctrine_pilgrims_burn",
 			"name": "Pilgrim's Burn",
 			"icon": "graphics/icons/doctrine_luddic_pilgrims_burn.png",
 			"tier": "NOTABLE",
@@ -4549,7 +4549,7 @@
 			]
 		},
 		{
-			"id": "doctrine_luddic_righteous_fury",
+			"id": "doctrine_righteous_fury",
 			"name": "Righteous Fury",
 			"icon": "graphics/icons/doctrine_luddic_righteous_fury.png",
 			"tier": "NOTABLE",
@@ -4572,7 +4572,7 @@
 			]
 		},
 		{
-			"id": "doctrine_luddic_penitent_hulls",
+			"id": "doctrine_penitent_hulls",
 			"name": "Penitent Hulls",
 			"icon": "graphics/icons/doctrine_luddic_penitent_hulls.png",
 			"tier": "NOTABLE",
@@ -4593,7 +4593,7 @@
 			]
 		},
 		{
-			"id": "doctrine_luddic_pilgrim_volunteers",
+			"id": "doctrine_pilgrim_volunteers",
 			"name": "Pilgrim Volunteers",
 			"icon": "graphics/icons/Pilgrim_volunteers_shifted.png",
 			"tier": "NOTABLE",
@@ -4614,13 +4614,13 @@
 			]
 		},
 		{
-			"id": "doctrine_luddic_plain_rites",
+			"id": "doctrine_plain_rites",
 			"name": "Plain Rites",
 			"icon": "graphics/icons/plain_rites_shifted.png",
 			"flavour": "Luddic doctrine calls a ship system's refinements vanity. Stripped back to plain, honest machinery, it does what it was built to do and nothing more."
 		},
 		{
-			"id": "doctrine_remnant_swarm_logic",
+			"id": "doctrine_swarm_logic",
 			"name": "Swarm Logic",
 			"icon": "graphics/icons/doctrine_remnant_swarm_logic.png",
 			"tier": "NOTABLE",
@@ -4641,7 +4641,7 @@
 			]
 		},
 		{
-			"id": "doctrine_remnant_unblinking_watch",
+			"id": "doctrine_unblinking_watch",
 			"name": "Unblinking Watch",
 			"icon": "graphics/icons/doctrine_remnant_unblinking_watch.png",
 			"tier": "NOTABLE",
@@ -4664,7 +4664,7 @@
 			"moduleShare": "all"
 		},
 		{
-			"id": "doctrine_remnant_cold_logic",
+			"id": "doctrine_cold_logic",
 			"name": "Cold Logic",
 			"icon": "graphics/icons/doctrine_remnant_cold_logic.png",
 			"tier": "NOTABLE",
@@ -4685,7 +4685,7 @@
 			]
 		},
 		{
-			"id": "doctrine_remnant_fortress_lattice",
+			"id": "doctrine_fortress_lattice",
 			"name": "Fortress Lattice",
 			"icon": "graphics/icons/doctrine_remnant_fortress_lattice.png",
 			"tier": "NOTABLE",
@@ -4712,7 +4712,7 @@
 			"moduleShare": "all"
 		},
 		{
-			"id": "doctrine_remnant_lumen_harmonics",
+			"id": "doctrine_lumen_harmonics",
 			"name": "Lumen Harmonics",
 			"icon": "graphics/icons/doctrine_remnant_lumen_harmonics.png",
 			"tier": "NOTABLE",
@@ -4734,7 +4734,7 @@
 			]
 		},
 		{
-			"id": "doctrine_remnant_ordo_signal_mesh",
+			"id": "doctrine_ordo_signal_mesh",
 			"name": "Ordo Signal Mesh",
 			"icon": "graphics/icons/doctrine_remnant_ordo_signal_mesh.png",
 			"tier": "NOTABLE",
@@ -4760,7 +4760,7 @@
 			]
 		},
 		{
-			"id": "doctrine_remnant_automated_command",
+			"id": "doctrine_tireless_cadence",
 			"name": "Tireless Cadence",
 			"icon": "graphics/icons/doctrine_remnant_automated_command.png",
 			"tier": "KEYSTONE",
