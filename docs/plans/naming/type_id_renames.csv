@@ -22,7 +22,7 @@ cargo_capacity_flat,cargo_capacity,Cargo Capacity
 chronos_adaptability,chronos_rhythms,Chronos Rhythms
 coil_efficiency,exo_tech_coil_tuning,Exo-Tech Coil Tuning
 converted_fighterbay,converted_fighter_bay,Converted Fighter Bay
-crew_capacity_flat,crew_capacity,Crew capacity
+crew_capacity_flat,crew_capacity,Crew Capacity
 doctrine_luddic_blessed_plating,doctrine_blessed_plating,Blessed Plating
 doctrine_luddic_faithful_hands,doctrine_faithful_hands,Faithful Hands
 doctrine_luddic_penitent_hulls,doctrine_penitent_hulls,Penitent Hulls
@@ -46,7 +46,7 @@ doctrine_tt_quarterly_targets,doctrine_quarterly_targets,Quarterly Targets
 doctrine_tt_tachyon_lance_licensing,doctrine_tachyon_lance_licensing,Tachyon Lance Licensing
 eccm,eccm_package,ECCM Package
 ecm,ecm_package,ECM Package
-emp_damage_taken_multi,less_emp_damage_taken,Less EMP damage taken
+emp_damage_taken_multi,less_emp_damage_taken,Less EMP Damage Taken
 energy_chain,refracting_projectiles,Refracting Projectiles
 energy_damage,energy_weapon_damage,Energy Weapon Damage
 energy_flux_cost,energy_weapon_flux_cost,Energy Weapon Flux Cost
@@ -92,12 +92,12 @@ reinforcedhull,reinforced_bulkheads,Reinforced Bulkheads
 seraphim,seraph_hunting_routines,Seraph Hunting Routines
 seraphs_grace,borrowed_grace,Borrowed Grace
 shield_arc_mult,shield_arc_multiplier,Shield Arc Multiplier
-shield_damage_taken_multi,shield_flux_damage_reduction,Shield flux/damage reduction
-shield_turn_raise_rate_optional,shield_raise_rate_or_shield_turn_rate,Shield Raise rate or Shield Turn rate
+shield_damage_taken_multi,shield_flux_damage_reduction,Shield Flux/Damage Reduction
+shield_turn_raise_rate_optional,shield_raise_rate_or_shield_turn_rate,Shield Raise Rate or Shield Turn Rate
 shield_upkeep_multi,shield_upkeep_reduction,Shield Upkeep Reduction
 small_flux_optional,affinity,Affinity
 stabilizedshieldemitter,stabilized_shields,Stabilized Shields
-survey_generic_cost_reduction,survey_cost_reduction,Survey cost reduction
+survey_generic_cost_reduction,survey_cost_reduction,Survey Cost Reduction
 survey_mach_cost,survey_heavy_machinery_cost_reduction,Survey Heavy Machinery Cost Reduction
 system_cooldown,ship_system_cooldown,Ship System Cooldown
 tactical_superiority,tripad_backdoor,TriPad Backdoor

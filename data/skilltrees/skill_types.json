@@ -2701,7 +2701,7 @@
 		},
 		{
 			"id": "survey_supplies_cost_reduction",
-			"name": "Survey supplies cost reduction",
+			"name": "Survey Supplies Cost Reduction",
 			"icon": "graphics/icons/survey_supplies_cost_reduction.png",
 			"hullSizeEffects": [
 				{
@@ -2719,7 +2719,7 @@
 		},
 		{
 			"id": "survey_generic_cost_reduction",
-			"name": "Survey cost reduction",
+			"name": "Survey Cost Reduction",
 			"icon": "graphics/icons/survey_generic_cost_reduction.png",
 			"hullSizeEffects": [
 				{
@@ -2902,7 +2902,7 @@
 		},
 		{
 			"id": "crew_capacity_flat",
-			"name": "Crew capacity",
+			"name": "Crew Capacity",
 			"icon": "graphics/icons/crew_capacity_flat.png",
 			"hullSizeEffects": [
 				{
@@ -3018,7 +3018,7 @@
 		},
 		{
 			"id": "shield_turn_raise_rate_optional",
-			"name": "Shield Raise rate or Shield Turn rate",
+			"name": "Shield Raise Rate or Shield Turn Rate",
 			"icon": "graphics/icons/shield_turn_raise_rate_optional.png",
 			"optionalOptions": [
 				"shield_raise_rate",
@@ -3091,7 +3091,7 @@
 		},
 		{
 			"id": "shield_damage_taken_multi",
-			"name": "Shield flux/damage reduction",
+			"name": "Shield Flux/Damage Reduction",
 			"icon": "graphics/icons/shield_damage_taken_multi.png",
 			"effects": [
 				{
@@ -3153,7 +3153,7 @@
 		},
 		{
 			"id": "emp_damage_taken_multi",
-			"name": "Less EMP damage taken",
+			"name": "Less EMP Damage Taken",
 			"icon": "graphics/icons/emp_damage_taken_multi.png",
 			"effects": [
 				{
@@ -3167,7 +3167,7 @@
 		},
 		{
 			"id": "increased_vent_rate",
-			"name": "Increased vent rate",
+			"name": "Increased Vent Rate",
 			"icon": "graphics/icons/increased_vent_rate.png",
 			"effects": [
 				{
@@ -3181,7 +3181,7 @@
 		},
 		{
 			"id": "vent_rate_and_emp_damage",
-			"name": "Vent rate and EMP damage",
+			"name": "Vent Rate and EMP Damage",
 			"icon": "graphics/icons/vent_rate_and_emp_damage.png",
 			"effects": [
 				{

@@ -31,7 +31,7 @@ If display names change before this lands, regenerate both files rather than han
 
    Transform picks can't be frozen on the item, because they depend on the ship.
 2. `hull` and `hull_multi` are both called "Hull" but give different amounts (2% vs 5%). One of them needs another display name before `hull_multi` can be renamed.
-3. Display names that aren't title case become ids as they are, so fix them first: "Crew capacity", "Survey cost reduction", "Survey supplies cost reduction", "Shield Raise rate or Shield Turn rate", "Shield flux/damage reduction", "Less EMP damage taken", "Increased vent rate", "Vent rate and EMP damage".
+3. Display names that aren't title case become ids as they are, so fix them first: "Crew capacity", "Survey cost reduction", "Survey supplies cost reduction", "Shield Raise rate or Shield Turn rate", "Shield flux/damage reduction", "Less EMP damage taken", "Increased vent rate", "Vent rate and EMP damage". Done 2026-11-02: all eight are title case in `skill_types.json`, and the CSV rows were regenerated. The ids don't change.
 
 ## What saves hold
 
