@@ -4884,18 +4884,18 @@ type-detail|surveying_equipment|CRUISER|0	0	Mutually exclusive with <hullmod>hul
 type|surveying_equipment|CAPITAL_SHIP|0	1	Your fleet has <bad>-22</bad> to heavy machinery needed to perform surveys.
 type|surveying_equipment|CAPITAL_SHIP|1	1	Your fleet has <bad>-20</bad> to supplies needed to perform surveys.
 type-detail|surveying_equipment|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Oracle Sensor Suite</hullmod>\n• <hullmod>Surveying Equipment</hullmod>
-flavour|tania_carina_charge	0	Navarchy captains close on their targets at full burn, trusting old armor to take the blow while every gun fires into the point of contact. Crews who have fought beside Navarchy fleets drill this ship's gunners to fire the same way, so its shots land harder the faster it charges in.
+flavour|tania_carina_charge	0	War, war never changes. In order to survive the Luddic Path mayhem, Carina Forces had to act fast, or expire. Your crew learns from these hit and run tactics, and by executing them at high speeds, they exploit enemy weaknesses.
 type|tania_carina_charge|null|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 type|tania_carina_charge|FRIGATE|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 type|tania_carina_charge|DESTROYER|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 type|tania_carina_charge|CRUISER|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 type|tania_carina_charge|CAPITAL_SHIP|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
-flavour|tania_dysis_drive	0	The Black Hawk's Dysis Drive throws the ship forward hardest while its flux grid runs cold. Engineers lent by a Navarchy commission teach the crew to tune this ship's engines the same way, so it surges ahead at low flux and drags once the grid fills.
+flavour|tania_dysis_drive	0	The Black Hawk's Dysis Drive throws the ship forward hardest while its flux grid runs cold. Analysis over its ancient design allowed the crew to tune this ship's engines the same way, so it is able to fly bright at low flux and drags once the grid fills.
 type|tania_dysis_drive|FRIGATE|0	0	Top speed changes with flux, from <good>+50</good> su/s at no flux to <bad>-50</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>50%</good> increased acceleration and turn acceleration.
 type|tania_dysis_drive|DESTROYER|0	0	Top speed changes with flux, from <good>+40</good> su/s at no flux to <bad>-40</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>40%</good> increased acceleration and turn acceleration.
 type|tania_dysis_drive|CRUISER|0	0	Top speed changes with flux, from <good>+30</good> su/s at no flux to <bad>-30</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>30%</good> increased acceleration and turn acceleration.
 type|tania_dysis_drive|CAPITAL_SHIP|0	0	Top speed changes with flux, from <good>+20</good> su/s at no flux to <bad>-20</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>20%</good> increased acceleration and turn acceleration.
-flavour|tania_fafnir_breeches	0	Navarchy dockyards at Farige run a flux line beside the ammunition feed in every mount, so a captain can field whatever the last salvage turned up. Mount plans traded by Navarchy quartermasters let the crew rebuild this ship's ballistic mounts the same way, though the shared feed draws harder on the grid each time they fire shells.
+flavour|tania_fafnir_breeches	0	Desperation leads to innovation, and the pressure of an incoming war brought Farige engineers to the limit, with them bringing up unusual techniques to modernize recently found early epoch Domain designs. Mount plans traded by Navarchy quartermasters had a complete data basis of prototype adaptive weapon mounts, allowing ballistic weapon systems to draw harder from the ship's flux grid in order to field energy based weaponry.
 type|tania_fafnir_breeches|null|0	0	Ballistic weapon mounts become hybrid mounts.
 type|tania_fafnir_breeches|null|1	1	<good>25%</good> increased ballistic weapon flux cost.
 type|tania_fafnir_breeches|null|2	1	<good>25%</good> increased energy weapon flux cost.
@@ -4922,7 +4922,7 @@ type|tania_merite_lunge|CRUISER|0	0	<good>50%</good> increased mass.
 type|tania_merite_lunge|CRUISER|1	0	<bad>35%</bad> less maneuverability.
 type|tania_merite_lunge|CAPITAL_SHIP|0	0	<good>50%</good> increased mass.
 type|tania_merite_lunge|CAPITAL_SHIP|1	0	<bad>35%</bad> less maneuverability.
-flavour|tania_rise_from_the_ashes	0	Carina rose from the ashes of the Battle of Vela, and the Navarchy drills its Sandgrouse crews for the moment their ship should break. Freed Calypso prisoners who sign on aboard teach the crew those drills: rerouting what is left of the hull and throwing every spare plate over the breach, once, before it gives way.
+flavour|tania_rise_from_the_ashes	0	The last stand at the Battle of Vela allowed Navarchy of Tania to be born from the ashes of bloodshed, surviving the rampage provoked by Joseph Baumgart. By watching the sacrifice of NTS Agulha Negra, a Sandgrouse class frigate, your crew understood the value of fighting for a cause, and are inspired to fight for yours.
 type|tania_rise_from_the_ashes|null|0	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
 type|tania_rise_from_the_ashes|null|1	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
 type|tania_rise_from_the_ashes|null|2	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
@@ -4943,7 +4943,7 @@ type|tania_rise_from_the_ashes|CAPITAL_SHIP|0	0	Once per battle, the hit that wo
 type|tania_rise_from_the_ashes|CAPITAL_SHIP|1	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
 type|tania_rise_from_the_ashes|CAPITAL_SHIP|2	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
 type-detail|tania_rise_from_the_ashes|CAPITAL_SHIP|0	0	Can't be allocated on phase ships.
-flavour|tania_solaris_overdrive	0	The Aracari's Solaris Phalanx primes thermo-dynamic flux cores directly linked to weapons, allowing them to fire without drawing from the main grid. A deserter from an Aracari engine room walks the crew through a smaller version, keyed to this ship's own system.
+flavour|tania_solaris_overdrive	0	The Aracari is a prime example of antique thermo-dynamic engineering, with its Solaris Phalanx system allowing weapons to fire without directly drawing from the main flux grid. By analyzing old Farige databanks, your crew is now able to mimic its functionality in a small scale basis.
 type|tania_solaris_overdrive|null|0	0	Weapons cost no flux to fire for <good>4</good> seconds after this ship's system activates, at most once every 60 seconds.
 type|tania_solaris_overdrive|null|1	0	<good>50%</good> increased weapon projectile speed for those seconds.
 type|tania_solaris_overdrive|null|2	0	<good>25%</good> increased weapon rate of fire for those seconds.
@@ -4959,7 +4959,7 @@ type|tania_solaris_overdrive|CRUISER|2	0	<good>25%</good> increased weapon rate 
 type|tania_solaris_overdrive|CAPITAL_SHIP|0	0	Weapons cost no flux to fire for <good>4</good> seconds after this ship's system activates, at most once every 60 seconds.
 type|tania_solaris_overdrive|CAPITAL_SHIP|1	0	<good>50%</good> increased weapon projectile speed for those seconds.
 type|tania_solaris_overdrive|CAPITAL_SHIP|2	0	<good>25%</good> increased weapon rate of fire for those seconds.
-flavour|tania_thermo_accelerator	0	The Aetos that broke the Holy Armada's frigate screen at Vela ran its turrets on power stripped from its hardpoints. The restricted calibration pulled from Aetos wrecks lets the crew do the same on this ship, leaving the hardpoints dead so the turrets fire cooler.
+flavour|tania_thermo_accelerator	0	The legendary NTS Endurance, an Aetos Class Destroyer, managed to nail down multiple enemy frigates at once, protecting its fleet from terrific flankers, thanks to its Thermo-Accelerator system. By understanding the tactics employed by its captain and the ship's overengineered ammo feeders, your crew is now able to draw power from hardpoint weapon mounts so its turret weapons fire cooler in a similar fashion.
 type|tania_thermo_accelerator|null|0	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
 type|tania_thermo_accelerator|FRIGATE|0	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
 type|tania_thermo_accelerator|DESTROYER|0	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.

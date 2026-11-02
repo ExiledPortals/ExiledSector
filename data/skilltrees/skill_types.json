@@ -4816,7 +4816,7 @@
 					"magnitude": 25
 				}
 			],
-			"flavour": "Navarchy dockyards at Farige run a flux line beside the ammunition feed in every mount, so a captain can field whatever the last salvage turned up. Mount plans traded by Navarchy quartermasters let the crew rebuild this ship's ballistic mounts the same way, though the shared feed draws harder on the grid each time they fire shells.",
+			"flavour": "Desperation leads to innovation, and the pressure of an incoming war brought Farige engineers to the limit, with them bringing up unusual techniques to modernize recently found early epoch Domain designs. Mount plans traded by Navarchy quartermasters had a complete data basis of prototype adaptive weapon mounts, allowing ballistic weapon systems to draw harder from the ship's flux grid in order to field energy based weaponry.",
 			"tags": [
 				"weapons"
 			]
@@ -4835,7 +4835,7 @@
 					"capitalShip": 20
 				}
 			],
-			"flavour": "The Black Hawk's Dysis Drive throws the ship forward hardest while its flux grid runs cold. Engineers lent by a Navarchy commission teach the crew to tune this ship's engines the same way, so it surges ahead at low flux and drags once the grid fills.",
+			"flavour": "The Black Hawk's Dysis Drive throws the ship forward hardest while its flux grid runs cold. Analysis over its ancient design allowed the crew to tune this ship's engines the same way, so it is able to fly bright at low flux and drags once the grid fills.",
 			"tags": [
 				"speed",
 				"flux"
@@ -4852,7 +4852,7 @@
 					"magnitude": 0.08
 				}
 			],
-			"flavour": "Navarchy captains close on their targets at full burn, trusting old armor to take the blow while every gun fires into the point of contact. Crews who have fought beside Navarchy fleets drill this ship's gunners to fire the same way, so its shots land harder the faster it charges in.",
+			"flavour": "War, war never changes. In order to survive the Luddic Path mayhem, Carina Forces had to act fast, or expire. Your crew learns from these hit and run tactics, and by executing them at high speeds, they exploit enemy weaknesses.",
 			"tags": [
 				"weapons",
 				"speed"
@@ -4877,7 +4877,7 @@
 					"magnitude": 25
 				}
 			],
-			"flavour": "The Aracari's Solaris Phalanx primes thermo-dynamic flux cores directly linked to weapons, allowing them to fire without drawing from the main grid. A deserter from an Aracari engine room walks the crew through a smaller version, keyed to this ship's own system.",
+			"flavour": "The Aracari is a prime example of antique thermo-dynamic engineering, with its Solaris Phalanx system allowing weapons to fire without directly drawing from the main flux grid. By analyzing old Farige databanks, your crew is now able to mimic its functionality in a small scale basis.",
 			"tags": [
 				"weapons",
 				"flux"
@@ -4902,7 +4902,7 @@
 					"magnitude": -50
 				}
 			],
-			"flavour": "Carina rose from the ashes of the Battle of Vela, and the Navarchy drills its Sandgrouse crews for the moment their ship should break. Freed Calypso prisoners who sign on aboard teach the crew those drills: rerouting what is left of the hull and throwing every spare plate over the breach, once, before it gives way.",
+			"flavour": "The last stand at the Battle of Vela allowed Navarchy of Tania to be born from the ashes of bloodshed, surviving the rampage provoked by Joseph Baumgart. By watching the sacrifice of NTS Agulha Negra, a Sandgrouse class frigate, your crew understood the value of fighting for a cause, and are inspired to fight for yours.",
 			"tags": [
 				"hull",
 				"armour",
@@ -4920,7 +4920,7 @@
 					"magnitude": 50
 				}
 			],
-			"flavour": "The Aetos that broke the Holy Armada's frigate screen at Vela ran its turrets on power stripped from its hardpoints. The restricted calibration pulled from Aetos wrecks lets the crew do the same on this ship, leaving the hardpoints dead so the turrets fire cooler.",
+			"flavour": "The legendary NTS Endurance, an Aetos Class Destroyer, managed to nail down multiple enemy frigates at once, protecting its fleet from terrific flankers, thanks to its Thermo-Accelerator system. By understanding the tactics employed by its captain and the ship's overengineered ammo feeders, your crew is now able to draw power from hardpoint weapon mounts so its turret weapons fire cooler in a similar fashion.",
 			"tags": [
 				"weapons"
 			]
