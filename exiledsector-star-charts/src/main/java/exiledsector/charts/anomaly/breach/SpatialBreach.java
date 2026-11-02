@@ -9,7 +9,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
@@ -26,9 +26,9 @@ import java.util.Random;
 public final class SpatialBreach implements ContentPlacer, RunParticipant, LootShaper {
 
     public static final String ANOMALY_ID = "spatial_breach";
-    public static final String GROWTH_KEY = ChartEffect.CHART_BREACH_GROWTH_PERCENT.anomalyTuningKey();
-    public static final String CACHE_KEY = ChartEffect.CHART_BREACH_CACHE_PERCENT.anomalyTuningKey();
-    public static final String CACHE_ITEM_KEY = ChartEffect.CHART_BREACH_CACHE_ITEM_PERCENT.anomalyTuningKey();
+    public static final String GROWTH_KEY = ChartModifier.CHART_BREACH_GROWTH_PERCENT.anomalyTuningKey();
+    public static final String CACHE_KEY = ChartModifier.CHART_BREACH_CACHE_PERCENT.anomalyTuningKey();
+    public static final String CACHE_ITEM_KEY = ChartModifier.CHART_BREACH_CACHE_ITEM_PERCENT.anomalyTuningKey();
     public static final String TERRAIN_ID = "exiledSector_chart_breach";
     public static final String CORE_TYPE = "exiledSector_chart_breach_core";
     public static final String CORE_TAG = ChartIds.PREFIX + "breach_core";
@@ -64,7 +64,7 @@ public final class SpatialBreach implements ContentPlacer, RunParticipant, LootS
         BreachTerrainPlugin.Params params = new BreachTerrainPlugin.Params(site.runId(), site.tier(), growth, caches,
                 context.anomalyMult(CACHE_ITEM_KEY), site.random(SPAWN_SALT).nextLong());
         site.addTerrain(TERRAIN_ID, params, centre);
-        SectorEntityToken core = site.track(system.addCustomEntity(coreId(site.runId()), Translation.gameText("chart.breach.core.name"), CORE_TYPE,
+        SectorEntityToken core = site.track(system.addCustomEntity(coreId(site.runId()), Translation.gameText("chart.anomaly.spatial_breach.core.name"), CORE_TYPE,
                 Factions.NEUTRAL));
         core.setFixedLocation(centre.x, centre.y);
         core.addTag(CORE_TAG);

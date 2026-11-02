@@ -13,7 +13,7 @@ public class AtlasReachCommand extends AtlasTargetCommand {
 
     @Override
     protected String usage() {
-        return "ExiledSectorAtlasReach <x> <y> | <site id>, for example ExiledSectorAtlasReach 4 -7 or ExiledSectorAtlasReach remnant_nexus.";
+        return "ExiledSectorAtlasReach <x> <y> | <site id>, for example ExiledSectorAtlasReach 4 -7 or ExiledSectorAtlasReach remnant_infestation.";
     }
 
     @Override

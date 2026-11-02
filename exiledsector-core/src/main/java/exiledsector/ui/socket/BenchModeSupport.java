@@ -5,9 +5,9 @@ import com.fs.starfarer.api.ui.CustomPanelAPI;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.items.CraftingMaterials;
-import exiledsector.items.CraftingWard;
+import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.Item;
-import exiledsector.items.ItemCurrency;
+import exiledsector.items.CraftingMaterialFamily;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemStore;
 import exiledsector.items.ItemType;
@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 
 public interface BenchModeSupport {
 
-    record Refusal(UseVerdict verdict, boolean checksWards) {
+    record Refusal(UseVerdict verdict, boolean checksInhibitors) {
 
         public boolean allowed() {
             return verdict.allowed();
@@ -110,27 +110,27 @@ public interface BenchModeSupport {
 
     PickerSession pickerSession();
 
-    List<ItemCurrency> currencies();
+    List<CraftingMaterialFamily> currencies();
 
-    String currencyDescriptionKey(ItemCurrency currency);
+    String currencyDescriptionKey(CraftingMaterialFamily currency);
 
-    default String currencyDescription(ItemCurrency currency) {
+    default String currencyDescription(CraftingMaterialFamily currency) {
         return Translation.text(currencyDescriptionKey(currency));
     }
 
-    default List<StyledText> currencyLines(ItemCurrency currency) {
+    default List<StyledText> currencyLines(CraftingMaterialFamily currency) {
         return List.of();
     }
 
-    default boolean inOrbit(ItemCurrency currency) {
+    default boolean inOrbit(CraftingMaterialFamily currency) {
         return true;
     }
 
-    Refusal refusal(ItemCurrency currency, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
-                    Set<CraftingWard> wards);
+    Refusal refusal(CraftingMaterialFamily currency, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
+                    Set<CraftingInhibitor> inhibitors);
 
-    Use use(ItemCurrency currency, Item loaded, ItemStore store, CraftingMaterials materials, Random random,
-            Predicate<ItemDefinition> allowedUniques, Set<CraftingWard> wards, String nameBefore);
+    Use use(CraftingMaterialFamily currency, Item loaded, ItemStore store, CraftingMaterials materials, Random random,
+            Predicate<ItemDefinition> allowedUniques, Set<CraftingInhibitor> inhibitors, String nameBefore);
 
     UseVerdict cannotUse();
 

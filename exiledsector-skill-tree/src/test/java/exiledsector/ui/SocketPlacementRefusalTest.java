@@ -46,7 +46,7 @@ class SocketPlacementRefusalTest {
     void setUp() {
         mockSector = new MockSector();
         storagePanelMock = Mockito.mockStatic(ItemStoragePanel.class);
-        storagePanelMock.when(() -> ItemStoragePanel.openSubroutines(any(), any(), any(), any())).thenAnswer(invocation -> {
+        storagePanelMock.when(() -> ItemStoragePanel.openSocketItems(any(), any(), any(), any())).thenAnswer(invocation -> {
             storageListener.set(invocation.getArgument(3));
             return storagePanel;
         });

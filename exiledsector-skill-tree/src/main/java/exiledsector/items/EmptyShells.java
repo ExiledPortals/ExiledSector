@@ -21,16 +21,16 @@ public final class EmptyShells {
     }
 
     public static boolean isEmptyShell(Item item) {
-        return item instanceof Subroutine && hollows(item.definition());
+        return item instanceof Subroutine && emptyShells(item.definition());
     }
 
-    static boolean hollows(ItemDefinition definition) {
+    static boolean emptyShells(ItemDefinition definition) {
         if (definition == null) {
             return false;
         }
         for (PoolEntry entry : definition.prefixes()) {
             for (ModifierLine line : entry.modifier().lines()) {
-                if (SpecialSkillEffect.EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE.name().equals(line.effectName())) {
+                if (SpecialSkillEffect.EVERY_AFFINITY_FLAT_PER_EMPTY_SHELL_NODE.name().equals(line.effectName())) {
                     return true;
                 }
             }
@@ -46,14 +46,14 @@ public final class EmptyShells {
         List<String> nodeIds = new ArrayList<>();
         for (String nodeId : new TreeSet<>(SkillTree.radii().nodeIdsWithin(footprint.centreNodeId(), footprint.size()))) {
             SkillNode node = SkillTree.get(nodeId);
-            if (node != null && hollowable(node)) {
+            if (node != null && canBeEmptyShell(node)) {
                 nodeIds.add(nodeId);
             }
         }
         return nodeIds;
     }
 
-    private static boolean hollowable(SkillNode node) {
+    private static boolean canBeEmptyShell(SkillNode node) {
         SkillTier tier = node.getType().getTier();
         return tier == SkillTier.SMALL || tier == SkillTier.NOTABLE || tier == SkillTier.KEYSTONE;
     }
@@ -62,17 +62,17 @@ public final class EmptyShells {
         return isEmptyShell(ItemStore.lookup(data.getSocketedItem(socketId)));
     }
 
-    public static Set<String> hollowNodeIds(ShipSkillData data) {
-        Set<String> hollow = new HashSet<>();
+    public static Set<String> emptyShellNodeIds(ShipSkillData data) {
+        Set<String> emptyShell = new HashSet<>();
         for (Map.Entry<String, List<String>> grantLink : ShipTreeLinks.grantedNodesBySocket(data).entrySet()) {
             if (holdsEmptyShell(data, grantLink.getKey())) {
-                grantLink.getValue().stream().filter(data::isAllocated).forEach(hollow::add);
+                grantLink.getValue().stream().filter(data::isAllocated).forEach(emptyShell::add);
             }
         }
-        return hollow;
+        return emptyShell;
     }
 
-    public static int hollowCount(ShipSkillData data, String socketId) {
+    public static int emptyShellCount(ShipSkillData data, String socketId) {
         return (int) ShipTreeLinks.grantedNodesBySocket(data).getOrDefault(socketId, List.of()).stream().filter(data::isAllocated).count();
     }
 }

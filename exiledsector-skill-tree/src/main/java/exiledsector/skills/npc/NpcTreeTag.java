@@ -44,7 +44,7 @@ public final class NpcTreeTag {
             if (shipData.isFleetGranted(nodeId)) {
                 continue;
             }
-            nodeEntries.add(new NodeEntry(nodeId, shipData.getOptionalSelection(nodeId)).format());
+            nodeEntries.add(new NodeEntry(nodeId, shipData.getChoiceSelection(nodeId)).format());
         }
         String tag = PREFIX + GENERATED + FIELD_SEPARATOR + shipData.getLevel() + FIELD_SEPARATOR + String.join(NODE_SEPARATOR, nodeEntries);
         List<String> socketEntries = new ArrayList<>();
@@ -148,7 +148,7 @@ public final class NpcTreeTag {
         for (String entry : anchorEntries.split(NODE_SEPARATOR)) {
             int separator = entry.indexOf(OPTION_SEPARATOR);
             SkillNode exit = separator <= 0 ? null : SkillTree.get(entry.substring(separator + 1));
-            String anchorItemId = exit == null || exit.getType().getTier() != SkillTier.WORMHOLE_EXIT ? null : NpcItems.anchorFor(exit.getRegion());
+            String anchorItemId = exit == null || exit.getType().getTier() != SkillTier.WORMHOLE_EXIT ? null : NpcItems.anchorFor(exit.getVolume());
             if (anchorItemId != null) {
                 anchorsBySocketId.putIfAbsent(NodeReplacements.current(entry.substring(0, separator)), anchorItemId);
             }
@@ -167,7 +167,7 @@ public final class NpcTreeTag {
                 return;
             }
         }
-        if (!node.getType().isOptional()) {
+        if (!node.getType().isChoice()) {
             ShipTrees.allocate(shipData, node, CHARGED_NODE_COST);
             socketAnchor(shipData, node, anchorsBySocketId.get(nodeId));
             return;

@@ -5,7 +5,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
-import exiledsector.loot.LootModifiers;
+import exiledsector.loot.LootMultipliers;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,7 +24,7 @@ class StarChartSiteModifiersTest {
 
     @Test
     void anOrdinarySiteGetsTheLocationsModifiers() {
-        LootModifiers modifiers = StarChartLootSource.INSTANCE.modifiersFor(site(FakeChartContentEngine.memory()));
+        LootMultipliers modifiers = StarChartLootSource.INSTANCE.modifiersFor(site(FakeChartContentEngine.memory()));
 
         assertEquals(1f, modifiers.itemChances().general());
         assertEquals(1f, modifiers.itemChances().rarity());
@@ -36,7 +36,7 @@ class StarChartSiteModifiersTest {
         memory.set(SpatialBreach.RARITY_KEY, 50f);
         memory.set(SpatialBreach.ITEM_MULT_KEY, 2f);
 
-        LootModifiers modifiers = StarChartLootSource.INSTANCE.modifiersFor(site(memory));
+        LootMultipliers modifiers = StarChartLootSource.INSTANCE.modifiersFor(site(memory));
 
         assertEquals(2f, modifiers.itemChances().general(), 0.001f);
         assertEquals(1.5f, modifiers.itemChances().rarity(), 0.001f);

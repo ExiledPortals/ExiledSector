@@ -16,7 +16,7 @@ class AtlasFingerprintTest {
 
     private static final long SEED = 0x41544c4153L;
     private static final int RADIUS = 36;
-    private static final String FINGERPRINT = "7cd9986fa0a30c98dd93e9e6df0bb651b4d66a1da3be1131d1f5feb586c18f33";
+    private static final String FINGERPRINT = "84bd50f3f57490781b2128b9747bf63192daaae3400a8658a90f96ab38c29254";
 
     @AfterEach
     void tearDown() {
@@ -31,7 +31,7 @@ class AtlasFingerprintTest {
         ChartTables.loadAnomalies();
         AtlasData.registerLayouts(ChartTables.csvRows(AtlasData.LAYOUTS_PATH));
         AtlasData.registerRegions(ChartTables.csvRows(AtlasData.REGIONS_PATH), AtlasData.factionIds());
-        AtlasData.registerMarkers(ChartTables.csvRows(AtlasData.MARKERS_PATH));
+        AtlasData.registerAnomalyChances(ChartTables.csvRows(AtlasData.ANOMALY_CHANCES_PATH));
         AtlasData.registerSpecials(ChartTables.csvRows(AtlasData.SPECIALS_PATH));
         AtlasRules rules = AtlasData.rules();
         Set<String> flags = new HashSet<>();

@@ -22,9 +22,9 @@ class ItemFreezingTest {
 
     private static final String BEFORE_PREFIXES = "FIGHTER_ARMOR_PERCENT:10:15; FLUX_DISSIPATION_MULT:4:6";
     private static final String BEFORE_SUFFIXES = "HULL_MULT:4:6; ARMOR_PERCENT:6:9";
-    private static final List<RolledEffect> COMMON = List.of(new RolledEffect("FIGHTER_ARMOR_PERCENT", 12f), new RolledEffect("HULL_MULT", 5f));
-    private static final List<RolledEffect> RARE = List.of(new RolledEffect("FIGHTER_ARMOR_PERCENT", 12f),
-            new RolledEffect("FLUX_DISSIPATION_MULT", 5f), new RolledEffect("ARMOR_PERCENT", 7f));
+    private static final List<RolledLine> COMMON = List.of(new RolledLine("FIGHTER_ARMOR_PERCENT", 12f), new RolledLine("HULL_MULT", 5f));
+    private static final List<RolledLine> RARE = List.of(new RolledLine("FIGHTER_ARMOR_PERCENT", 12f),
+            new RolledLine("FLUX_DISSIPATION_MULT", 5f), new RolledLine("ARMOR_PERCENT", 7f));
 
     @BeforeEach
     void setUp() throws Exception {
@@ -52,7 +52,7 @@ class ItemFreezingTest {
                 .put("first", new JSONArray(List.of(first))).put("second", new JSONArray(List.of("Doctrine")))));
     }
 
-    private static ItemData frozen(List<RolledEffect> effects) {
+    private static ItemData frozen(List<RolledLine> effects) {
         ItemDefinition definition = ItemDefinitions.get("sub");
         List<RolledModifier> modifiers = RolledModifier.fromLegacyEffects(definition, effects);
         return new ItemData("sub", 42L, modifiers, ItemNames.freeze(definition, 42L, modifiers));

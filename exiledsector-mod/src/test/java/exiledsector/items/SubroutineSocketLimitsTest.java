@@ -47,9 +47,9 @@ class SubroutineSocketLimitsTest {
                 .put(subroutineRow(LIMITED_UNIQUE, SubroutineKind.UNIQUE).put("unique", "true").put(SubroutineDefinitions.SOCKET_LIMIT_COLUMN, "1"))
                 .put(subroutineRow(UNLIMITED_UNIQUE, SubroutineKind.UNIQUE).put("unique", "true").put(SubroutineDefinitions.SOCKET_LIMIT_COLUMN, "0"))
                 .put(HullItemRows.row(HULL_ITEM, "armor_plating", "HULL_MULT:4:6")));
-        SkillType socketType = new SkillType.Builder("socket_type", "Socket", "", SkillTier.SOCKET).build();
+        SkillType sectionKind = new SkillType.Builder("socket_type", "Socket", "", SkillTier.SOCKET).build();
         for (String socketId : List.of("socket_1", "socket_2", "socket_3")) {
-            SkillNode socket = new SkillNode(socketId, socketType, List.of(), 0f, 0f);
+            SkillNode socket = new SkillNode(socketId, sectionKind, List.of(), 0f, 0f);
             SkillTree.register(socket);
             ShipTrees.allocate(shipData, socket, 1);
         }
@@ -160,7 +160,7 @@ class SubroutineSocketLimitsTest {
         shipData.socketItem("socket_2", owned(BYPASS, 2L).id());
         ShipSkillDataManager.put("ship", shipData);
 
-        SocketTypeMigration.run();
+        SectionFitMigration.run();
 
         assertEquals(1, shipData.getSocketedItems().size());
     }
@@ -227,10 +227,10 @@ class SubroutineSocketLimitsTest {
         shipData.socketItem("socket_2", unique.id());
         Map<String, ShipSkillData> ships = Map.of("ship", shipData);
 
-        Item transposed = Item.create(unique.id(), LIMITED_UNIQUE, 9L, List.of());
-        ItemStore.get().replace(unique, transposed);
+        Item metamorphosed = Item.create(unique.id(), LIMITED_UNIQUE, 9L, List.of());
+        ItemStore.get().replace(unique, metamorphosed);
 
-        assertTrue(SocketCustody.unsocketIfMisfit(ships, transposed));
+        assertTrue(SocketCustody.unsocketIfMisfit(ships, metamorphosed));
         assertEquals(Map.of("socket_1", firstCopy.id()), shipData.getSocketedItems());
     }
 
@@ -243,10 +243,10 @@ class SubroutineSocketLimitsTest {
         Map<String, ShipSkillData> ships = Map.of("ship", shipData);
         assertFalse(SocketCustody.unsocketIfMisfit(ships, unique));
 
-        Item transposed = Item.create(unique.id(), BYPASS, 9L, List.of());
-        ItemStore.get().replace(unique, transposed);
+        Item metamorphosed = Item.create(unique.id(), BYPASS, 9L, List.of());
+        ItemStore.get().replace(unique, metamorphosed);
 
-        assertTrue(SocketCustody.unsocketIfMisfit(ships, transposed));
+        assertTrue(SocketCustody.unsocketIfMisfit(ships, metamorphosed));
         assertEquals(Map.of("socket_1", firstBypass.id()), shipData.getSocketedItems());
     }
 }

@@ -40,7 +40,7 @@ final class BeamHardFluxListener implements DamageDealtModifier {
         @Override
         public void reportDamageApplied(Object source, CombatEntityAPI target, ApplyDamageResultAPI result) {
             float shieldFlux = result.getDamageToShields();
-            if (shieldFlux <= 0f || BeamSplitListener.isApplyingSimulatedHit()
+            if (shieldFlux <= 0f || LionsGazeListener.isApplyingSimulatedHit()
                     || !(shieldedShip.getParamAboutToApplyDamage() instanceof BeamAPI beam) || beam.getSource() == null
                     || beam.getDamage().isForceHardFlux()) return;
 

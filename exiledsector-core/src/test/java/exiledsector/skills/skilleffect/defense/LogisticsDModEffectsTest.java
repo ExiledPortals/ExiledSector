@@ -177,7 +177,7 @@ class LogisticsDModEffectsTest {
 
     @Test
     void theNonLogisticsEffectWorsensOnlyCombatDMods() {
-        DefenseSkillEffect.NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD.apply(stats, "mod_id", 10f);
+        DefenseSkillEffect.COMBAT_DMOD_EFFECT_MULT_PER_DMOD.apply(stats, "mod_id", 10f);
 
         assertEquals(-10f, cargoPenaltyPercent(), EPSILON);
         assertEquals(-10f * 1.1f * 1.1f, speedPenaltyPercent(), EPSILON);
@@ -185,14 +185,14 @@ class LogisticsDModEffectsTest {
 
     @Test
     void bothEffectsGiveTheSameResultWhicheverAppliesFirst() {
-        DefenseSkillEffect.NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD.apply(stats, "combat", 10f);
+        DefenseSkillEffect.COMBAT_DMOD_EFFECT_MULT_PER_DMOD.apply(stats, "combat", 10f);
         DefenseSkillEffect.LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD.apply(stats, "logistics", 30f);
         float cargoCombatFirst = cargoPenaltyPercent();
         float speedCombatFirst = speedPenaltyPercent();
 
         buildShip();
         DefenseSkillEffect.LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD.apply(stats, "logistics", 30f);
-        DefenseSkillEffect.NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD.apply(stats, "combat", 10f);
+        DefenseSkillEffect.COMBAT_DMOD_EFFECT_MULT_PER_DMOD.apply(stats, "combat", 10f);
 
         assertEquals(-10f * 1.3f * 1.3f, cargoCombatFirst, EPSILON);
         assertEquals(-10f * 1.1f * 1.1f, speedCombatFirst, EPSILON);
@@ -203,7 +203,7 @@ class LogisticsDModEffectsTest {
     @Test
     void anEarlierCopyIsClearedOnceBothEffectsMatch() {
         DefenseSkillEffect.LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD.apply(stats, "logistics", 30f);
-        DefenseSkillEffect.NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD.apply(stats, "combat", 30f);
+        DefenseSkillEffect.COMBAT_DMOD_EFFECT_MULT_PER_DMOD.apply(stats, "combat", 30f);
 
         assertEquals(-10f * 1.3f * 1.3f, cargoPenaltyPercent(), EPSILON);
         assertEquals(-10f * 1.3f * 1.3f, speedPenaltyPercent(), EPSILON);

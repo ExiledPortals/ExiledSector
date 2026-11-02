@@ -1,15 +1,15 @@
 {
-	"armor_plating_plate": {
+	"armor_plate": {
 		"style": "codename",
 		"first": ["Carapace", "Ironclad", "Granite", "Bulwark", "Rampart", "Anvil"],
 		"second": ["Plate", "Belt", "Shell", "Hide", "Bulkhead", "Skin"]
 	},
-	"bridge_officer": {
+	"command_suite": {
 		"style": "codename",
 		"first": ["Plot", "Signal", "Beacon", "Helm", "Flag", "Bearing"],
 		"second": ["Watch", "Command", "Console", "Conn", "Station", "Relay"]
 	},
-	"crew_quarters_specialists": {
+	"specialist_crew": {
 		"style": "codename",
 		"first": ["Bunk", "Galley", "Mess", "Hammock", "Billet", "Muster"],
 		"second": ["Hands", "Gang", "Detail", "Company", "Shift", "Roster"]
@@ -20,7 +20,7 @@
 		"second": ["Drive", "Torch", "Nozzle", "Thruster", "Booster", "Engine"],
 		"models": ["Mk.II", "Mk.III", "Pro", "Max", "Sport"]
 	},
-	"flight_deck_crew": {
+	"launch_assembly": {
 		"style": "codename",
 		"first": ["Hawk", "Kestrel", "Harrier", "Falcon", "Swift", "Talon"],
 		"second": ["Deck", "Catapult", "Cradle", "Roost", "Hangar", "Launch"]

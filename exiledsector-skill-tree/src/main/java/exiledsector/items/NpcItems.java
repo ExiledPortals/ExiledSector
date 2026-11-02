@@ -42,7 +42,7 @@ public final class NpcItems {
 
     public static String anchorFor(String volume) {
         String definitionId = volume == null ? null : WormholeAnchorDefinitions.definitionIdFor(volume);
-        return definitionId == null || !WormholeAnchorDefinitions.areaActive(definitionId) ? null : id(definitionId, ANCHOR_SEED);
+        return definitionId == null || !WormholeAnchorDefinitions.volumeActive(definitionId) ? null : id(definitionId, ANCHOR_SEED);
     }
 
     public static boolean isAnchor(String itemId) {

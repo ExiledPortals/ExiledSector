@@ -19,7 +19,7 @@ import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.content.ChartFleetVisibility;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
@@ -242,10 +242,10 @@ class ChartRelaysTest {
         assertEquals(new RelayRules.Cost(RelayRules.SUPPLIES_BASE + 4 * RelayRules.SUPPLIES_PER_TIER,
                 RelayRules.MACHINERY_BASE + 4 * RelayRules.MACHINERY_PER_TIER), plain);
         assertEquals(new RelayRules.Cost(Math.round(plain.supplies() * 0.5f), Math.round(plain.machinery() * 0.5f)),
-                RelayRules.costFor(4, ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_RELAY_COST_PERCENT, -50f)))
+                RelayRules.costFor(4, ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_RELAY_COST_PERCENT, -50f)))
                         .anomalyMult(RelayNetwork.COST_KEY)));
-        assertEquals("50% reduced supply and heavy machinery cost to wake relays", ChartEffect.CHART_RELAY_COST_PERCENT.description(-50f).plain());
-        assertEquals("20% increased supply and heavy machinery cost to wake relays", ChartEffect.CHART_RELAY_COST_PERCENT.description(20f).plain());
+        assertEquals("50% reduced supply and heavy machinery cost to wake relays", ChartModifier.CHART_RELAY_COST_PERCENT.description(-50f).plain());
+        assertEquals("20% increased supply and heavy machinery cost to wake relays", ChartModifier.CHART_RELAY_COST_PERCENT.description(20f).plain());
     }
 
     @Test

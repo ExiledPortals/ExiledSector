@@ -84,11 +84,11 @@ public final class StarChartFixtures {
     }
 
     public static void unregisterCurrencies() {
-        for (StarChartCurrency currency : StarChartCurrency.values()) {
-            ItemCurrencies.unregister(currency);
+        for (StarChartCipher currency : StarChartCipher.values()) {
+            CraftingMaterialFamilies.unregister(currency);
         }
-        for (CraftingCurrency kernel : StarChartCurrency.KERNELS_ON_CHARTS) {
-            ItemCurrencies.retract(kernel, ItemType.STAR_CHART);
+        for (Nanoswarm kernel : StarChartCipher.KERNELS_ON_CHARTS) {
+            CraftingMaterialFamilies.retract(kernel, ItemType.STAR_CHART);
         }
     }
 }

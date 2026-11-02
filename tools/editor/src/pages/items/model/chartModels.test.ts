@@ -28,7 +28,7 @@ import {
 
 const vocabulary = buildVocabulary({
   effects: [{ name: 'HULL_MULT', statMode: 'MULT', lowerIsBetter: false }],
-  tags: { theme: [], region: [], requirement: [] },
+  tags: { theme: [], volume: [], requirement: [] },
   tiers: [],
   unlockConditionTypes: [],
   blueprintCategories: [],
@@ -45,7 +45,7 @@ const vocabulary = buildVocabulary({
 });
 
 const CHART_MODIFIERS_CSV =
-  'id,slot,item_types,lines,name\n' +
+  'id,affix,scopes,lines,name\n' +
   'HYBRID_CHART_EXTRA_FLEETS,prefix,star_chart,CHART_EXTRA_FLEETS:low=1/mid=2/high=3; CHART_QUANTITY_PERCENT:low=5-7/mid=8-10/high=11-13,Crowded\n' +
   'CHART_POI_BUDGET_PERCENT,suffix,star_chart,CHART_POI_BUDGET_PERCENT:mid=40-60/high=90-120,Plenty\n' +
   'CHART_POI_BUDGET_PERCENT_SINGLE,implicit,star_chart,CHART_POI_BUDGET_PERCENT:5:10,\n';
@@ -170,7 +170,7 @@ describe('star chart modifiers', () => {
 
   it('reports every rule the game would reject, plus the hull size mistakes', () => {
     const modifiers = parseModifiersCsv(
-      'id,slot,item_types,lines,name\n' +
+      'id,affix,scopes,lines,name\n' +
         'CHART_EXTRA_FLEETS,prefix,star_chart;hull_item,CHART_EXTRA_FLEETS:high=1/mid=2,\n' +
         'HULL_MULT,prefix,star_chart,HULL_MULT:1:2,\n' +
         'CHART_QUANTITY_PERCENT,suffix,star_chart,CHART_QUANTITY_PERCENT:1/2/3/4,\n',
@@ -185,7 +185,7 @@ describe('star chart modifiers', () => {
   });
 
   it('keeps tier groups out of ship modifiers', () => {
-    const modifiers = parseModifiersCsv('id,slot,item_types,lines,name\nHULL_MULT,prefix,hull_item,HULL_MULT:low=1-2/mid=2-3/high=3-4,Reinforced\n').modifiers;
+    const modifiers = parseModifiersCsv('id,affix,scopes,lines,name\nHULL_MULT,prefix,hull_item,HULL_MULT:low=1-2/mid=2-3/high=3-4,Reinforced\n').modifiers;
     expect(validateModifiers(modifiers, vocabulary, new Map(), 'ship', new Set(['HULL_MULT']))).toEqual([
       'HULL_MULT: star_chart_modifiers.csv already has this id, and ids must be unique across both modifier files',
       'HULL_MULT: HULL_MULT has tier groups, but only star charts have a tier',
@@ -266,7 +266,7 @@ describe('star chart definitions', () => {
   });
 
   it('flags tier ranges on ship items, which have no tier', () => {
-    const shipCatalogue = modifierById(parseModifiersCsv('id,slot,item_types,lines,name\nHULL_MULT,prefix,hull_item,HULL_MULT:1:2,Reinforced\n').modifiers);
+    const shipCatalogue = modifierById(parseModifiersCsv('id,affix,scopes,lines,name\nHULL_MULT,prefix,hull_item,HULL_MULT:1:2,Reinforced\n').modifiers);
     const definitions = [
       {
         cells: [],

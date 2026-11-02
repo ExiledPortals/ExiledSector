@@ -31,8 +31,8 @@ public record DoctrineArchive(String definitionId, DoctrineBehaviour behaviour, 
         };
     }
 
-    public boolean transforms() {
-        return behaviour == DoctrineBehaviour.TRANSFORM;
+    public boolean rewritesNodes() {
+        return behaviour == DoctrineBehaviour.REWRITE;
     }
 
     public boolean augments() {

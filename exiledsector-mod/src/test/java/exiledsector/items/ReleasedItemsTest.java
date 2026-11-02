@@ -36,7 +36,7 @@ class ReleasedItemsTest {
         }
 
         String currentEffectName() {
-            return new RolledEffect(effectName, 0f).effectName();
+            return new RolledLine(effectName, 0f).effectName();
         }
 
         @Override
@@ -122,7 +122,7 @@ class ReleasedItemsTest {
 
     @Test
     void everyPoolEffectThatShippedInAReleaseIsStillASkillEffect() throws Exception {
-        List<ReleasedPoolEffect> gone = ledger().stream().filter(entry -> new RolledEffect(entry.effectName(), 0f).effect() == null).toList();
+        List<ReleasedPoolEffect> gone = ledger().stream().filter(entry -> new RolledLine(entry.effectName(), 0f).effect() == null).toList();
 
         assertEquals(List.of(), gone, "These pool effects shipped in a release but are no longer skill effects. Items that rolled them"
                 + " silently lose the bonus. Keep the effect, or add a row to " + EffectAliases.dataPath() + " naming its replacement.");

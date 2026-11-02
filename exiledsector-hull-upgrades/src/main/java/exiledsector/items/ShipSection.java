@@ -52,6 +52,6 @@ public enum ShipSection {
     }
 
     public String displayName() {
-        return Translation.text("socket.type." + id);
+        return Translation.text("section.type." + id);
     }
 }

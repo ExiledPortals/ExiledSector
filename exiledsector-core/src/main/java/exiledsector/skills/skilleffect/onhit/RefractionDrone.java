@@ -27,18 +27,18 @@ final class RefractionDrone extends SingleShotDrone {
     private static final Color EXIT_FALLBACK_COLOR = new Color(150, 200, 255);
 
     private final Vector2f aimPoint = new Vector2f();
-    private EnergyChainListener chainListener;
-    private ChainLink chainLink;
+    private RefractionListener chainListener;
+    private RefractionLink refractionLink;
     private ShipAPI chainTarget;
 
     RefractionDrone(ShipAPI drone, RefractionDrones pool) {
         super(drone, pool, RANGE_MATCH_MOD_ID);
     }
 
-    void launch(EnergyChainListener newChain, ShipAPI hitShip, Vector2f impactPoint, ShipAPI newTarget, ChainLink newLink, float sourceRange) {
+    void launch(RefractionListener newChain, ShipAPI hitShip, Vector2f impactPoint, ShipAPI newTarget, RefractionLink newLink, float sourceRange) {
         prepare(sourceRange);
         chainListener = newChain;
-        chainLink = newLink;
+        refractionLink = newLink;
         chainTarget = newTarget;
         Vector2f exit = Refraction.origin(hitShip, impactPoint, newTarget.getLocation());
         Vector2f direction = VectorUtils.getDirectionalVector(exit, newTarget.getLocation());
@@ -55,17 +55,17 @@ final class RefractionDrone extends SingleShotDrone {
 
     @Override
     boolean isTagged(DamagingProjectileAPI projectile) {
-        return ChainLink.isTagged(projectile);
+        return RefractionLink.isTagged(projectile);
     }
 
     @Override
     void tag(DamagingProjectileAPI projectile) {
-        chainLink.tag(projectile);
+        refractionLink.tag(projectile);
     }
 
     @Override
     void shotHit(DamagingProjectileAPI projectile, CombatEntityAPI hitTarget, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        if (!isTagged(projectile) && chainLink != null) {
+        if (!isTagged(projectile) && refractionLink != null) {
             handBack(projectile);
         }
         chainListener.handleHit(projectile, hitTarget, damage, point, shieldHit);

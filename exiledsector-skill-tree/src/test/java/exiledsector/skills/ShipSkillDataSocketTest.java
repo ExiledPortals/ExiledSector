@@ -64,7 +64,7 @@ class ShipSkillDataSocketTest {
         assertEquals(List.of("socketable_1"), data.getInstalledItemIds());
 
         data.setStoredHullUpgradePoints(1);
-        assertTrue(data.unlockSocketType("bridge"));
+        assertTrue(data.unlockSection("bridge"));
         assertTrue(data.installInSection("bridge", "socketable_2"));
 
         assertEquals(List.of("socketable_1", "socketable_2"), data.getInstalledItemIds());
@@ -109,7 +109,7 @@ class ShipSkillDataSocketTest {
     }
 
     @Test
-    void anAreaToggleThatRemovesTheSocketEmptiesIt() {
+    void anVolumeToggleThatRemovesTheSocketEmptiesIt() {
         ShipSkillData data = socketed();
 
         ShipTrees.forgetUnknownNodes(data, Map.of("root", root), Map.of());

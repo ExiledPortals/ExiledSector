@@ -90,13 +90,13 @@ public final class GateRewardAnchors implements EconomyTickListener {
         }
         Set<String> rewardedGates = battle.state(BATTLE_STATE_KEY, LinkedHashSet::new);
         for (String gateTag : rewardedGates) {
-            List<ItemDefinition> areaAnchors = anchorsBehind(gateTag);
-            if (granted(sector, gateTag) || areaAnchors.isEmpty()) {
+            List<ItemDefinition> volumeAnchors = anchorsBehind(gateTag);
+            if (granted(sector, gateTag) || volumeAnchors.isEmpty()) {
                 continue;
             }
             markGranted(sector, gateTag);
-            if (drops.stream().noneMatch(drop -> areaAnchors.contains(drop.definition()))) {
-                rewards.add(ItemData.rolled(areaAnchors.get(battle.random().nextInt(areaAnchors.size())), battle.random().nextLong()));
+            if (drops.stream().noneMatch(drop -> volumeAnchors.contains(drop.definition()))) {
+                rewards.add(ItemData.rolled(volumeAnchors.get(battle.random().nextInt(volumeAnchors.size())), battle.random().nextLong()));
             }
         }
         return rewards;
@@ -108,12 +108,12 @@ public final class GateRewardAnchors implements EconomyTickListener {
             return;
         }
         for (String gateTag : rewardGateTags()) {
-            List<ItemDefinition> areaAnchors = anchorsBehind(gateTag);
-            if (granted(sector, gateTag) || areaAnchors.isEmpty() || !bossBeaten(gateTag, sector)) {
+            List<ItemDefinition> volumeAnchors = anchorsBehind(gateTag);
+            if (granted(sector, gateTag) || volumeAnchors.isEmpty() || !bossBeaten(gateTag, sector)) {
                 continue;
             }
             Random random = Seeds.random(sector.getSeedString() + "|" + GRANTED_PREFIX + gateTag);
-            ItemData reward = ItemData.rolled(areaAnchors.get(random.nextInt(areaAnchors.size())), random.nextLong());
+            ItemData reward = ItemData.rolled(volumeAnchors.get(random.nextInt(volumeAnchors.size())), random.nextLong());
             playerFleet.getCargo().addSpecial(reward.toSpecialItem(), 1f);
             markGranted(sector, gateTag);
             WormholeAnchorDefinitions.recordFound(List.of(reward), sector, "a boss reward");

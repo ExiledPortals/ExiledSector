@@ -17,8 +17,8 @@ import java.util.Random;
 
 public final class ChartForge {
 
-    static final String FEEDSTOCK_ITEM_ID = ItemDisassembly.PARTS_ITEM_ID;
-    static final String REFUSAL_PREFIX = "chart.forge.refused.";
+    static final String FEEDSTOCK_ITEM_ID = ItemDisassembly.FEEDSTOCK_ITEM_ID;
+    static final String REFUSAL_PREFIX = "chart.anomaly.derelict_forge.refused.";
     public static final UseVerdict DARK = UseVerdict.refused(REFUSAL_PREFIX + "dark");
     public static final UseVerdict ITEM_TYPE = UseVerdict.refused(REFUSAL_PREFIX + "itemType");
     public static final UseVerdict COST = UseVerdict.refused(REFUSAL_PREFIX + "cost");

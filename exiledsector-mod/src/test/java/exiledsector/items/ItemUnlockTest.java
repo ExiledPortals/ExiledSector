@@ -78,12 +78,12 @@ class ItemUnlockTest {
 
     @Test
     void hullSocketsOpenAtLevelFifteenUnlessHullUpgradesAreSwitchedOff() {
-        assertFalse(HullUpgradesSetting.sectionsOpen(14));
-        assertTrue(HullUpgradesSetting.sectionsOpen(15));
+        assertFalse(HullUpgradesSetting.hullItemDropsOpen(14));
+        assertTrue(HullUpgradesSetting.hullItemDropsOpen(15));
 
         HullUpgradesSetting.setEnabledForTests(false);
         try {
-            assertFalse(HullUpgradesSetting.sectionsOpen(50));
+            assertFalse(HullUpgradesSetting.hullItemDropsOpen(50));
         } finally {
             HullUpgradesSetting.setEnabledForTests(HullUpgradesSetting.DEFAULT_ENABLED);
         }
@@ -93,8 +93,8 @@ class ItemUnlockTest {
     void theHullUpgradesLevelSettingMovesTheSectionGate() {
         HullUpgradesSetting.setUnlockLevelForTests(5);
         try {
-            assertFalse(HullUpgradesSetting.sectionsOpen(4));
-            assertTrue(HullUpgradesSetting.sectionsOpen(5));
+            assertFalse(HullUpgradesSetting.hullItemDropsOpen(4));
+            assertTrue(HullUpgradesSetting.hullItemDropsOpen(5));
         } finally {
             HullUpgradesSetting.setUnlockLevelForTests(HullUpgradesSetting.DEFAULT_UNLOCK_LEVEL);
         }

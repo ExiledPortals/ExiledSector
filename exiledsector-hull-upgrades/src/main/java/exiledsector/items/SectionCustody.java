@@ -21,8 +21,8 @@ public final class SectionCustody implements ShipCustody {
 
     @Override
     public List<CargoRefund> release(ShipSkillData shipData, boolean destroyed, ItemStore store) {
-        for (String socketTypeId : Set.copyOf(shipData.getSectionItems().keySet())) {
-            Item item = store.find(shipData.removeFromSection(socketTypeId));
+        for (String sectionKindId : Set.copyOf(shipData.getSectionItems().keySet())) {
+            Item item = store.find(shipData.removeFromSection(sectionKindId));
             if (destroyed && item != null) {
                 store.remove(item);
             }
@@ -55,7 +55,7 @@ public final class SectionCustody implements ShipCustody {
         return returnedItems;
     }
 
-    static boolean fitsSection(Item item, String socketTypeId) {
-        return HullItem.fits(item, ShipSection.byIdOrNull(socketTypeId));
+    static boolean fitsSection(Item item, String sectionKindId) {
+        return HullItem.fits(item, ShipSection.byIdOrNull(sectionKindId));
     }
 }

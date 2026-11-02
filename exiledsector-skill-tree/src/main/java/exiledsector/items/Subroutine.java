@@ -115,7 +115,7 @@ public final class Subroutine extends Item implements NodeSocketable {
         if (kind == null) {
             return;
         }
-        if ((kind.bornCorrupted() || EmptyShells.hollows(definition())) && corruption() == null) {
+        if ((kind.bornCorrupted() || EmptyShells.emptyShells(definition())) && corruption() == null) {
             corrupt(CorruptionOutcome.INNATE);
         }
         if (kind.rollsNode() && rolledNodeIds == null) {
@@ -216,7 +216,7 @@ public final class Subroutine extends Item implements NodeSocketable {
             addAllocationLines(lines, nodeId, status != null ? status : idleStatus(nodeId));
             if (withNodeEffects) {
                 for (StyledText effectLine : nodeEffectLines(nodeId, hullSize)) {
-                    lines.add(Translation.msg("socketable.cache.effectLine").arg("line", effectLine).styled());
+                    lines.add(Translation.msg("subroutine.grant.effectLine").arg("line", effectLine).styled());
                 }
             }
         }
@@ -254,7 +254,7 @@ public final class Subroutine extends Item implements NodeSocketable {
         if (SkillTree.getDeclared(nodeId) == null) {
             return NodeGrantStatus.of(nodeId, NodeGrantStatus.State.UNKNOWN_NODE);
         }
-        return SkillTree.get(nodeId) == null ? NodeGrantStatus.of(nodeId, NodeGrantStatus.State.AREA_OFF) : null;
+        return SkillTree.get(nodeId) == null ? NodeGrantStatus.of(nodeId, NodeGrantStatus.State.VOLUME_OFF) : null;
     }
 
     private static void addAllocationLines(List<StyledText> lines, String nodeId, NodeGrantStatus status) {
@@ -262,17 +262,17 @@ public final class Subroutine extends Item implements NodeSocketable {
         String nodeName = node == null ? "" : node.getDisplayName();
         NodeGrantStatus.State state = status == null ? NodeGrantStatus.State.ACTIVE : status.state();
         switch (state) {
-            case ACTIVE, READY -> lines.add(Translation.msg("socketable.cache.allocates").arg("node", nodeName).styled());
-            case BY_PATH -> lines.add(Translation.msg("socketable.cache.byPath").arg("node", nodeName).styled());
-            case DUPLICATE -> lines.add(Translation.msg("socketable.cache.duplicate").arg("node", nodeName).styled());
+            case ACTIVE, READY -> lines.add(Translation.msg("subroutine.grant.allocates").arg("node", nodeName).styled());
+            case BY_PATH -> lines.add(Translation.msg("subroutine.grant.byPath").arg("node", nodeName).styled());
+            case DUPLICATE -> lines.add(Translation.msg("subroutine.grant.duplicate").arg("node", nodeName).styled());
             case INELIGIBLE -> {
-                lines.add(Translation.msg("socketable.cache.ineligible").arg("node", nodeName).styled());
+                lines.add(Translation.msg("subroutine.grant.ineligible").arg("node", nodeName).styled());
                 if (status.reason() != null && !status.reason().isEmpty()) {
                     lines.add(StyledText.styled(status.reason(), Style.BAD));
                 }
             }
-            case AREA_OFF -> lines.add(Translation.msg("socketable.cache.areaOff").arg("node", nodeName).styled());
-            case UNKNOWN_NODE -> lines.add(Translation.styled("socketable.cache.unknownNode"));
+            case VOLUME_OFF -> lines.add(Translation.msg("subroutine.grant.volumeOff").arg("node", nodeName).styled());
+            case UNKNOWN_NODE -> lines.add(Translation.styled("subroutine.grant.unknownNode"));
         }
     }
 
@@ -286,7 +286,7 @@ public final class Subroutine extends Item implements NodeSocketable {
     }
 
     @Override
-    public boolean retuneTrait(Random random) {
+    public boolean tuneTrait(Random random) {
         if (!hasTunableTrait()) {
             return false;
         }

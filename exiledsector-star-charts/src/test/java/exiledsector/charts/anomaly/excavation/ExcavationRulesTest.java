@@ -1,7 +1,7 @@
 package exiledsector.charts.anomaly.excavation;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.anomaly.RaidDangerLevels;
@@ -25,10 +25,10 @@ class ExcavationRulesTest {
 
     @Test
     void onlyFrigatesAndDestroyersFitTheShaft() {
-        assertTrue(ExcavationRules.fitsShaft(HullSize.FRIGATE));
-        assertTrue(ExcavationRules.fitsShaft(HullSize.DESTROYER));
-        assertFalse(ExcavationRules.fitsShaft(HullSize.CRUISER));
-        assertFalse(ExcavationRules.fitsShaft(HullSize.CAPITAL_SHIP));
+        assertTrue(ExcavationRules.fitsExcavation(HullSize.FRIGATE));
+        assertTrue(ExcavationRules.fitsExcavation(HullSize.DESTROYER));
+        assertFalse(ExcavationRules.fitsExcavation(HullSize.CRUISER));
+        assertFalse(ExcavationRules.fitsExcavation(HullSize.CAPITAL_SHIP));
         assertTrue(ExcavationRules.holdsAbove(HullSize.CRUISER));
         assertTrue(ExcavationRules.holdsAbove(HullSize.CAPITAL_SHIP));
         assertFalse(ExcavationRules.holdsAbove(HullSize.DESTROYER));
@@ -55,9 +55,9 @@ class ExcavationRulesTest {
 
     @Test
     void theTuningLinesAddSitesAndRaiseTheSiteQuantity() {
-        ChartGenContext context = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_EXTRA_EXCAVATION_SITES, 2f),
-                new ChartGenContext.AppliedEffect(ChartEffect.CHART_EXTRA_EXCAVATION_SITES, 1f),
-                new ChartGenContext.AppliedEffect(ChartEffect.CHART_EXCAVATION_LOOT_QUANTITY_PERCENT, 50f)));
+        ChartGenContext context = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_EXTRA_EXCAVATION_SITES, 2f),
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_EXTRA_EXCAVATION_SITES, 1f),
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_EXCAVATION_LOOT_QUANTITY_PERCENT, 50f)));
 
         assertEquals(3, Math.round(context.anomalyPercent(ExcavationSites.EXTRA_KEY)));
         assertEquals(1.5f, ExcavationLoot.LOOT.quantityMult(context), 0.0001f);
@@ -66,15 +66,15 @@ class ExcavationRulesTest {
 
     @Test
     void aSiteLeansTowardItsDropType() {
-        ChartGenContext context = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, 10f)));
+        ChartGenContext context = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, 10f)));
 
         ChartGenContext leaned = ExcavationLoot.LOOT.leaning(context, List.of(DropType.WEAPON));
 
         float expected = 1f + (10f + ExcavationRules.LEAN_PERCENT) / ChartGenContext.PERCENT;
         assertEquals(expected, leaned.dropMult(DropType.WEAPON), 0.0001f);
         assertEquals(context.dropMult(DropType.AI_CORE), leaned.dropMult(DropType.AI_CORE), 0.0001f);
-        assertSame(ChartEffect.CHART_WEAPON_PERCENT, ChartEffect.forDropType(DropType.WEAPON));
+        assertSame(ChartModifier.CHART_WEAPON_PERCENT, ChartModifier.forDropType(DropType.WEAPON));
         assertSame(context, ExcavationLoot.LOOT.leaning(context, ExcavationLoot.leaning(null)));
-        ExcavationRules.LEANS.forEach(lean -> assertNotNull(ChartEffect.forDropType(lean), lean.name()));
+        ExcavationRules.LEANS.forEach(lean -> assertNotNull(ChartModifier.forDropType(lean), lean.name()));
     }
 }

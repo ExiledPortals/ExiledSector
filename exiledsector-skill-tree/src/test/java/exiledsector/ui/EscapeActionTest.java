@@ -14,19 +14,19 @@ class EscapeActionTest {
     }
 
     @Test
-    void theWorkbenchAlwaysStepsBackThroughSocketPlacement() {
-        assertEquals(EscapeAction.SOCKET_PLACEMENT, EscapeAction.resolve(CanvasMode.WORKBENCH, true, true, false));
+    void theCraftingBenchAlwaysStepsBackThroughSocketPlacement() {
+        assertEquals(EscapeAction.SOCKET_PLACEMENT, EscapeAction.resolve(CanvasMode.CRAFTING_BENCH, true, true, false));
     }
 
     @Test
-    void socketPlacementOutranksAnOpenDropdown() {
+    void socketPlacementOutranksAnOpenChoicePicker() {
         assertEquals(EscapeAction.SOCKET_PLACEMENT, EscapeAction.resolve(CanvasMode.TREE, true, true, false));
         assertEquals(EscapeAction.SOCKET_PLACEMENT, EscapeAction.resolve(CanvasMode.EXOSHIP_VIEW, true, true, false));
     }
 
     @Test
-    void viewingTheExoshipClosesADropdownFirstAndThenLeavesTheShip() {
-        assertEquals(EscapeAction.CLOSE_DROPDOWN, EscapeAction.resolve(CanvasMode.EXOSHIP_VIEW, false, true, false));
+    void viewingTheExoshipClosesAChoicePickerFirstAndThenLeavesTheShip() {
+        assertEquals(EscapeAction.CLOSE_CHOICE_PICKER, EscapeAction.resolve(CanvasMode.EXOSHIP_VIEW, false, true, false));
         assertEquals(EscapeAction.STOP_FOLLOWING, EscapeAction.resolve(CanvasMode.EXOSHIP_VIEW, false, false, false));
         assertEquals(EscapeAction.STOP_FOLLOWING, EscapeAction.resolve(CanvasMode.EXOSHIP_VIEW, false, false, true));
     }
@@ -39,6 +39,6 @@ class EscapeActionTest {
     @Test
     void templateModeLeavesOnEscapeOnceNothingCloserIsOpen() {
         assertEquals(EscapeAction.EXIT_TEMPLATE_MODE, EscapeAction.resolve(CanvasMode.TREE, false, false, true));
-        assertEquals(EscapeAction.CLOSE_DROPDOWN, EscapeAction.resolve(CanvasMode.TREE, false, true, true));
+        assertEquals(EscapeAction.CLOSE_CHOICE_PICKER, EscapeAction.resolve(CanvasMode.TREE, false, true, true));
     }
 }

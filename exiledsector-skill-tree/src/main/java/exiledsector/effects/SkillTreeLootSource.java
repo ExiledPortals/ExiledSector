@@ -143,7 +143,7 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty, M
             }
         }
         List<ItemDefinition> anchors = List.copyOf(ItemDefinitions.ofType(ItemType.WORMHOLE_ANCHOR));
-        List<ItemDefinition> activeAnchors = anchors.stream().filter(anchor -> WormholeAnchorDefinitions.areaActive(anchor.id())).toList();
+        List<ItemDefinition> activeAnchors = anchors.stream().filter(anchor -> WormholeAnchorDefinitions.volumeActive(anchor.id())).toList();
         List<ItemDefinition> offeredAnchors = activeAnchors.isEmpty()
                 ? anchors.stream().filter(anchor -> !AnchorJanusGate.withholds(anchor.id(), Global.getSector())).toList()
                 : activeAnchors.stream().filter(anchor -> WormholeAnchorDefinitions.obtainable(anchor.id(), Global.getSector())).toList();

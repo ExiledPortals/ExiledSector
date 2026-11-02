@@ -15,7 +15,7 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
-import exiledsector.ui.ModificationBenchCargoLauncher;
+import exiledsector.ui.CraftingBenchCargoLauncher;
 import exiledsector.ui.refit.RefitButtonConfig;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
@@ -135,7 +135,7 @@ class CargoCraftingButtonTest {
 
     private MockedStatic<Global> globalMock;
     private MockedStatic<LunaSettings> lunaSettingsMock;
-    private MockedStatic<ModificationBenchCargoLauncher> launcherMock;
+    private MockedStatic<CraftingBenchCargoLauncher> launcherMock;
     private TradePanel tradePanel;
     private TransactionPanel transactionPanel;
     private PositionAPI placement;
@@ -150,7 +150,7 @@ class CargoCraftingButtonTest {
 
     @BeforeEach
     void setUp() {
-        CargoCraftingButton.resetForTests();
+        CargoCraftingBenchButton.resetForTests();
         tradePanel = mock(TradePanel.class, withSettings().useConstructor().defaultAnswer(CALLS_REAL_METHODS));
         transactionPanel = mock(TransactionPanel.class, CALLS_REAL_METHODS);
         tradePanel.children.add(transactionPanel);
@@ -182,7 +182,7 @@ class CargoCraftingButtonTest {
         globalMock.when(Global::getSettings).thenReturn(settings);
         globalMock.when(Global::getSector).thenReturn(sector);
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
-        launcherMock = Mockito.mockStatic(ModificationBenchCargoLauncher.class);
+        launcherMock = Mockito.mockStatic(CraftingBenchCargoLauncher.class);
     }
 
     @AfterEach
@@ -190,18 +190,18 @@ class CargoCraftingButtonTest {
         launcherMock.close();
         lunaSettingsMock.close();
         globalMock.close();
-        CargoCraftingButton.resetForTests();
+        CargoCraftingBenchButton.resetForTests();
     }
 
     @Test
     void theButtonSitsBelowTheTransactionPanelWithNoHotkeyByDefault() {
-        CargoCraftingButton.attachIfMissing(tradePanel);
+        CargoCraftingBenchButton.attachIfMissing(tradePanel);
 
-        verify(container).createUIElement(CargoCraftingButton.BUTTON_WIDTH, CargoCraftingButton.BUTTON_HEIGHT, false);
+        verify(container).createUIElement(CargoCraftingBenchButton.BUTTON_WIDTH, CargoCraftingBenchButton.BUTTON_HEIGHT, false);
         verify(element).setButtonFontOrbitron20Bold();
-        verify(element).addButton(any(), eq(CargoCraftingButton.BUTTON_ID), any(), any(), eq(Alignment.MID), eq(CutStyle.ALL),
-                eq(CargoCraftingButton.BUTTON_WIDTH), eq(CargoCraftingButton.BUTTON_HEIGHT), eq(0f));
-        verify(placement).belowLeft(transactionPanel, CargoCraftingButton.GAP_BELOW_TRANSACTION_PANEL);
+        verify(element).addButton(any(), eq(CargoCraftingBenchButton.BUTTON_ID), any(), any(), eq(Alignment.MID), eq(CutStyle.ALL),
+                eq(CargoCraftingBenchButton.BUTTON_WIDTH), eq(CargoCraftingBenchButton.BUTTON_HEIGHT), eq(0f));
+        verify(placement).belowLeft(transactionPanel, CargoCraftingBenchButton.GAP_BELOW_TRANSACTION_PANEL);
         verify(button, never()).setShortcut(anyInt(), anyBoolean());
         verify(button, never()).setEnabled(anyBoolean());
         verify(container, never()).setOpacity(anyFloat());
@@ -216,9 +216,9 @@ class CargoCraftingButtonTest {
         tradePanel.marketCargoGrid = marketCargoGrid;
         tradePanel.children.add(colonyInfoButton);
 
-        CargoCraftingButton.attachIfMissing(tradePanel);
+        CargoCraftingBenchButton.attachIfMissing(tradePanel);
 
-        verify(placement).inTL(1204f - CargoCraftingButton.BUTTON_WIDTH, 0f);
+        verify(placement).inTL(1204f - CargoCraftingBenchButton.BUTTON_WIDTH, 0f);
         verify(placement, never()).belowLeft(any(), anyFloat());
     }
 
@@ -226,30 +226,30 @@ class CargoCraftingButtonTest {
     void aColonyInfoButtonVanillaLeftOutOfTheLayoutKeepsTheButtonBelowTheTransactionPanel() {
         tradePanel.colonyInfoButton = new Object();
 
-        CargoCraftingButton.attachIfMissing(tradePanel);
+        CargoCraftingBenchButton.attachIfMissing(tradePanel);
 
-        verify(placement).belowLeft(transactionPanel, CargoCraftingButton.GAP_BELOW_TRANSACTION_PANEL);
+        verify(placement).belowLeft(transactionPanel, CargoCraftingBenchButton.GAP_BELOW_TRANSACTION_PANEL);
     }
 
     @Test
     void withoutATransactionPanelNothingIsAttachedAndTheButtonStaysOff() {
         tradePanel.children.remove(transactionPanel);
 
-        CargoCraftingButton.attachIfMissing(tradePanel);
+        CargoCraftingBenchButton.attachIfMissing(tradePanel);
 
         verify(settings, never()).createCustom(anyFloat(), anyFloat(), any());
-        assertTrue(CargoCraftingButton.failed());
+        assertTrue(CargoCraftingBenchButton.failed());
     }
 
     @Test
     void theColonyInfoViewHidesTheButtonAndBlocksPresses() {
         tradePanel.showingMarketInfo = true;
-        CargoCraftingButton.attachIfMissing(tradePanel);
+        CargoCraftingBenchButton.attachIfMissing(tradePanel);
 
         verify(container).setOpacity(0f);
         verify(button).setEnabled(false);
-        buttonPlugin.buttonPressed(CargoCraftingButton.BUTTON_ID);
-        launcherMock.verify(() -> ModificationBenchCargoLauncher.open(any(), any()), never());
+        buttonPlugin.buttonPressed(CargoCraftingBenchButton.BUTTON_ID);
+        launcherMock.verify(() -> CraftingBenchCargoLauncher.open(any(), any()), never());
 
         tradePanel.showingMarketInfo = false;
         buttonPlugin.advance(0f);
@@ -262,35 +262,35 @@ class CargoCraftingButtonTest {
     void aBoundCraftingKeyBecomesTheShortcut() {
         lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", RefitButtonConfig.BENCH_KEYBIND_FIELD_ID)).thenReturn(Keyboard.KEY_J);
 
-        CargoCraftingButton.attachIfMissing(tradePanel);
+        CargoCraftingBenchButton.attachIfMissing(tradePanel);
 
         verify(button).setShortcut(Keyboard.KEY_J, true);
     }
 
     @Test
     void anAttachedButtonIsNotAddedTwiceButComesBackAfterVanillaClearsThePanel() {
-        CargoCraftingButton.attachIfMissing(tradePanel);
-        CargoCraftingButton.attachIfMissing(tradePanel);
+        CargoCraftingBenchButton.attachIfMissing(tradePanel);
+        CargoCraftingBenchButton.attachIfMissing(tradePanel);
         verify(settings, times(1)).createCustom(anyFloat(), anyFloat(), any());
 
         tradePanel.children.remove(container);
-        CargoCraftingButton.attachIfMissing(tradePanel);
+        CargoCraftingBenchButton.attachIfMissing(tradePanel);
 
         verify(settings, times(2)).createCustom(anyFloat(), anyFloat(), any());
     }
 
     @Test
     void aPendingTransactionOrAHeldStackDisablesTheButton() {
-        CargoCraftingButton.attachIfMissing(tradePanel);
+        CargoCraftingBenchButton.attachIfMissing(tradePanel);
 
         buttonPlugin.advance(0f);
         verify(button, never()).setEnabled(anyBoolean());
 
         tradePanel.transfers.transaction = true;
         buttonPlugin.advance(0f);
-        buttonPlugin.buttonPressed(CargoCraftingButton.BUTTON_ID);
+        buttonPlugin.buttonPressed(CargoCraftingBenchButton.BUTTON_ID);
         verify(button).setEnabled(false);
-        launcherMock.verify(() -> ModificationBenchCargoLauncher.open(any(), any()), never());
+        launcherMock.verify(() -> CraftingBenchCargoLauncher.open(any(), any()), never());
 
         tradePanel.transfers.transaction = false;
         buttonPlugin.advance(0f);
@@ -303,24 +303,24 @@ class CargoCraftingButtonTest {
 
     @Test
     void pressingTheButtonOpensTheBenchAndClosingItRefreshesTheCargoGrids() {
-        CargoCraftingButton.attachIfMissing(tradePanel);
+        CargoCraftingBenchButton.attachIfMissing(tradePanel);
 
         buttonPlugin.buttonPressed("someOtherButton");
-        buttonPlugin.buttonPressed(CargoCraftingButton.BUTTON_ID);
+        buttonPlugin.buttonPressed(CargoCraftingBenchButton.BUTTON_ID);
 
         ArgumentCaptor<Runnable> afterClose = ArgumentCaptor.forClass(Runnable.class);
-        launcherMock.verify(() -> ModificationBenchCargoLauncher.open(eq(campaignUI), afterClose.capture()), times(1));
+        launcherMock.verify(() -> CraftingBenchCargoLauncher.open(eq(campaignUI), afterClose.capture()), times(1));
         afterClose.getValue().run();
         assertEquals(1, tradePanel.cargoViewRefreshes);
     }
 
     @Test
     void theTradePanelIsFoundThroughTheCurrentCoreTabButNotOnTheLootScreen() {
-        assertSame(tradePanel, CargoCraftingButton.tradePanel(campaignUI));
+        assertSame(tradePanel, CargoCraftingBenchButton.tradePanel(campaignUI));
 
         cargoTab.lootMode = true;
 
-        assertNull(CargoCraftingButton.tradePanel(campaignUI));
+        assertNull(CargoCraftingBenchButton.tradePanel(campaignUI));
     }
 
     @Test
@@ -347,7 +347,7 @@ class CargoCraftingButtonTest {
 
         watcher.advance(0f);
         watcher.advance(0f);
-        assertInstanceOf(CargoCraftingButton.class, buttonPlugin);
+        assertInstanceOf(CargoCraftingBenchButton.class, buttonPlugin);
         verify(settings, times(1)).createCustom(anyFloat(), anyFloat(), any());
         tradePanel.children.remove(container);
         watcher.advance(0f);

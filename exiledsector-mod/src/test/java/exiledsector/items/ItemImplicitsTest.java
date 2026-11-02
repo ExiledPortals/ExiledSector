@@ -62,7 +62,7 @@ class ItemImplicitsTest {
     @Test
     void anItemRollsTheSameImplicitsFromItsSeedAndKeepsThemFrozen() throws Exception {
         Item shieldItem = Item.withEffects("item", "shield_generator_emitter", 42L, List.of());
-        List<RolledEffect> firstRoll = RolledModifier.lines(shieldItem.implicits());
+        List<RolledLine> firstRoll = RolledModifier.lines(shieldItem.implicits());
         Item sameSeed = Item.withEffects("other", "shield_generator_emitter", 42L, List.of());
 
         assertEquals(2, firstRoll.size());
@@ -84,7 +84,7 @@ class ItemImplicitsTest {
 
     @Test
     void implicitsApplyAlongsideExplicitsWithoutChangingRarity() {
-        Item plate = Item.withEffects("plate", "armor_plating_plate", 9L, List.of(new RolledEffect("HULL_PERCENT", 5f)));
+        Item plate = Item.withEffects("plate", "armor_plate", 9L, List.of(new RolledLine("HULL_PERCENT", 5f)));
         List<SkillTypeEffect> applied = plate.skillEffects();
 
         assertEquals(2, applied.size());
@@ -94,16 +94,16 @@ class ItemImplicitsTest {
 
     @Test
     void anItemGroupsItsRollsIntoImplicitAndExplicitWithPrefixesAndSuffixesUnderExplicit() {
-        Item plate = Item.withEffects("plate", "armor_plating_plate", 9L,
-                List.of(new RolledEffect("HULL_PERCENT", 5f), new RolledEffect("KINETIC_DAMAGE_TAKEN_PERCENT", -5f)));
+        Item plate = Item.withEffects("plate", "armor_plate", 9L,
+                List.of(new RolledLine("HULL_PERCENT", 5f), new RolledLine("KINETIC_DAMAGE_TAKEN_PERCENT", -5f)));
 
         assertEquals(List.of(ModifierSlot.IMPLICIT), plate.rolls(ModifierCategory.IMPLICIT).stream().map(SlottedRoll::slot).toList());
         assertEquals(List.of(ModifierSlot.PREFIX, ModifierSlot.SUFFIX),
                 plate.rolls(ModifierCategory.EXPLICIT).stream().map(SlottedRoll::slot).toList());
     }
 
-    private static List<Float> magnitudes(List<RolledEffect> effects) {
-        return effects.stream().map(RolledEffect::magnitude).toList();
+    private static List<Float> magnitudes(List<RolledLine> effects) {
+        return effects.stream().map(RolledLine::magnitude).toList();
     }
 
     private static JSONArray csvRows(String dataPath) throws Exception {

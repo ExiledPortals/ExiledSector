@@ -158,12 +158,12 @@ class NodeSearchTest {
     }
 
     @Test
-    void optionalNodesMatchOnAnyOfTheirOptionNames() {
+    void choiceNodesMatchOnAnyOfTheirOptionNames() {
         SkillType shields = new SkillType.Builder("shields", "Shield Upgrade", "", SkillTier.NOTABLE).build();
-        SkillType optional = new SkillType.Builder("pick", "Pick One", "", SkillTier.NOTABLE)
-                .optionalOptionIds(List.of("shields"))
+        SkillType choice = new SkillType.Builder("pick", "Pick One", "", SkillTier.NOTABLE)
+                .choiceOptionIds(List.of("shields"))
                 .build();
-        SkillNode node = new SkillNode("pick_1", optional, List.of(), 0f, 0f);
+        SkillNode node = new SkillNode("pick_1", choice, List.of(), 0f, 0f);
         NodeSearch search = new NodeSearch();
         search.setQuery("shield");
 

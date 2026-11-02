@@ -14,7 +14,7 @@ import exiledsector.skills.skilleffect.shield.ShieldSkillEffect;
 import exiledsector.skills.skilleffect.shipsystem.ShipSystemSkillEffect;
 import exiledsector.skills.skilleffect.special.SlotItemEffect;
 import exiledsector.skills.skilleffect.special.SpecialSkillEffect;
-import exiledsector.skills.skilleffect.hullmodule.StationModuleSkillEffect;
+import exiledsector.skills.skilleffect.stationmodule.StationModuleSkillEffect;
 import exiledsector.skills.skilleffect.weapon.ScopedWeaponEffect;
 import exiledsector.skills.skilleffect.weapon.WeaponSkillEffect;
 

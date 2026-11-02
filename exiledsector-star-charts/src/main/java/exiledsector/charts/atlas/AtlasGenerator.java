@@ -318,7 +318,7 @@ public final class AtlasGenerator {
             if (chance <= 0f) {
                 continue;
             }
-            float weight = candidate.weighting().weightFor(traits, candidate.weight() * region.markerWeight(candidate.id()));
+            float weight = candidate.weighting().weightFor(traits, candidate.weight() * region.anomalyWeight(candidate.id()));
             double roll = AtlasHash.unit(AtlasHash.of(seed, ANOMALY_SALT, candidate.id(), cell.gridX(), cell.gridY()));
             if (roll < chance * weight) {
                 passed.add(candidate);

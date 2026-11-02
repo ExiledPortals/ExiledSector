@@ -92,17 +92,17 @@ class ItemTierAndLimitsTest {
     }
 
     @Test
-    void theDefaultLimitsRollTheSameEffectCountsAsBefore() {
+    void theDefaultLimitsRollTheSameModifierCountsAsBefore() {
         assertSame(AffixLayout.DEFAULT_LIMITS, AffixLayout.limits(ItemType.SUBROUTINE));
         assertSame(AffixLayout.DEFAULT_LIMITS, AffixLayout.limits(ItemType.HULL_ITEM));
         assertSame(AffixLayout.DEFAULT_LIMITS, AffixLayout.limits(null));
         for (int step = 0; step <= 10000; step++) {
             float roll = step / 10000f;
-            assertEquals(legacyEffectCount(roll), AffixLayout.rolledEffectCount(AffixLayout.DEFAULT_LIMITS, roll), "roll " + roll);
+            assertEquals(legacyModifierCount(roll), AffixLayout.rolledModifierCount(AffixLayout.DEFAULT_LIMITS, roll), "roll " + roll);
         }
     }
 
-    private static int legacyEffectCount(float roll) {
+    private static int legacyModifierCount(float roll) {
         if (roll < AffixLayout.ONE_EFFECT_CHANCE) {
             return 1;
         }

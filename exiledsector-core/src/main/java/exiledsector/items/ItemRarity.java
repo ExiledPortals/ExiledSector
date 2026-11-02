@@ -9,18 +9,18 @@ public enum ItemRarity {
     UNIQUE(new Color(255, 140, 40), 10);
 
     private final Color color;
-    private final int disassemblyParts;
+    private final int disassemblyFeedstock;
 
-    ItemRarity(Color color, int disassemblyParts) {
+    ItemRarity(Color color, int disassemblyFeedstock) {
         this.color = color;
-        this.disassemblyParts = disassemblyParts;
+        this.disassemblyFeedstock = disassemblyFeedstock;
     }
 
     public Color color() {
         return color;
     }
 
-    public int disassemblyParts() {
-        return disassemblyParts;
+    public int disassemblyFeedstock() {
+        return disassemblyFeedstock;
     }
 }

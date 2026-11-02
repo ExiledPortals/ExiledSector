@@ -92,7 +92,7 @@ class FactionlessAnchorsTest {
                 .put(anchorRow(HEGEMONY_ANCHOR, "hegemony", "hegemony_2"))
                 .put(anchorRow(KESTEVEN_ANCHOR, "kesteven", "kesteven_wormhole1").put("drop_factions", "kesteven"))
                 .put(anchorRow(ENIGMA_ANCHOR, "enigma", "enigma_wormhole1").put("drop_factions", "enigma;luddic_church")));
-        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}, {\"faction\": \"kesteven\", \"region\": \"kesteven\"}]"));
+        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"volume\": \"hegemony\"}, {\"faction\": \"kesteven\", \"volume\": \"kesteven\"}]"));
         FactionlessAnchors.register(new JSONArray().put(new JSONObject().put("site", SITE).put("chance", "1"))
                 .put(new JSONObject().put("site", "derelict_probe").put("chance", "0")));
     }
@@ -157,7 +157,7 @@ class FactionlessAnchorsTest {
     void anUnplayableAuxiliaryDoesNotKeepAnEliminatedFactionsAnchorAlive() throws Exception {
         when(modManager.isModEnabled(NexerelinCompat.MOD_ID)).thenReturn(true);
         existingFactionIds.add("lions_guard");
-        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}, {\"faction\": \"lions_guard\", \"region\": \"hegemony\"}]"));
+        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"volume\": \"hegemony\"}, {\"faction\": \"lions_guard\", \"volume\": \"hegemony\"}]"));
         NexFactionConfig auxiliary = new NexFactionConfig();
         auxiliary.playableFaction = false;
         NexConfig.CONFIGS_BY_FACTION.put("hegemony", new NexFactionConfig());

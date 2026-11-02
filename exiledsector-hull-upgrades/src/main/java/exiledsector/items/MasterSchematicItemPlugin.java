@@ -26,7 +26,7 @@ public class MasterSchematicItemPlugin extends BaseSpecialItemPlugin {
 
     @Override
     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, CargoTransferHandlerAPI transferHandler, Object stackSource) {
-        HullUpgradeTooltip.writeMasterSchematic(tooltip, () -> List.of(Translation.styled("upgrade.tooltip.storage")));
+        RefitSchematicTooltip.writeMasterSchematic(tooltip, () -> List.of(Translation.styled("schematic.tooltip.storage")));
         addCostLabel(tooltip, ItemTooltip.PAD, transferHandler, stackSource);
     }
 

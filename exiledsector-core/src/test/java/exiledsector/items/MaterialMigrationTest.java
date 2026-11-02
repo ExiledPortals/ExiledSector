@@ -17,15 +17,15 @@ class MaterialMigrationTest {
     @Test
     void legacyCommodityStacksBecomeSpecialItemStacks() {
         CargoAPI cargo = mock(CargoAPI.class);
-        String fixation = CraftingCurrency.FIXATION.itemId();
+        String fixation = Nanoswarm.IMMUTABLE.itemId();
         when(cargo.getCommodityQuantity(anyString())).thenReturn(0f);
-        when(cargo.getCommodityQuantity(ItemDisassembly.PARTS_ITEM_ID)).thenReturn(37f);
+        when(cargo.getCommodityQuantity(ItemDisassembly.FEEDSTOCK_ITEM_ID)).thenReturn(37f);
         when(cargo.getCommodityQuantity(fixation)).thenReturn(2f);
 
         assertEquals(39, MaterialMigration.convert(cargo));
 
-        verify(cargo).removeCommodity(ItemDisassembly.PARTS_ITEM_ID, 37);
-        verify(cargo).addSpecial(MaterialItems.data(ItemDisassembly.PARTS_ITEM_ID), 37);
+        verify(cargo).removeCommodity(ItemDisassembly.FEEDSTOCK_ITEM_ID, 37);
+        verify(cargo).addSpecial(MaterialItems.data(ItemDisassembly.FEEDSTOCK_ITEM_ID), 37);
         verify(cargo).removeCommodity(fixation, 2);
         verify(cargo).addSpecial(MaterialItems.data(fixation), 2);
     }

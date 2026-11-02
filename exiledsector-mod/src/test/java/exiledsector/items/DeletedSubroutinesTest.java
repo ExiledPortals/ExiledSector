@@ -45,9 +45,9 @@ class DeletedSubroutinesTest {
     @BeforeEach
     void setUp() throws Exception {
         SkillTree.clearNodes();
-        SkillType socketType = new SkillType.Builder("socket_type", "Socket", "", SkillTier.SOCKET).build();
-        socket = new SkillNode("socket", socketType, List.of(), 0f, 0f);
-        secondSocket = new SkillNode("second_socket", socketType, List.of(), 0f, 0f);
+        SkillType sectionKind = new SkillType.Builder("socket_type", "Socket", "", SkillTier.SOCKET).build();
+        socket = new SkillNode("socket", sectionKind, List.of(), 0f, 0f);
+        secondSocket = new SkillNode("second_socket", sectionKind, List.of(), 0f, 0f);
         SkillTree.register(socket);
         SkillTree.register(secondSocket);
         ItemFixtures.registerMilitaryAndSubroutine();
@@ -198,11 +198,11 @@ class DeletedSubroutinesTest {
     void deletedSubroutinesLeaveCargoWhileHullItemsAndOtherStacksStay() {
         CargoStackAPI deletedStack = stack(new ItemData(DELETED, 5L).toSpecialItem(), 2f);
         CargoStackAPI rolledDeletedStack = stack(new ItemData("domain_subroutine_management", 6L,
-                List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledEffect("HULL_MULT", 5f))), null).toSpecialItem(), 1f);
+                List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledLine("HULL_MULT", 5f))), null).toSpecialItem(), 1f);
         CargoStackAPI missingHullItemStack = stack(new ItemData(MISSING_HULL_ITEM, 5L).toSpecialItem(), 1f);
         CargoStackAPI subroutineStack = stack(new ItemData(ItemFixtures.SUBROUTINE, 5L).toSpecialItem(), 1f);
         CargoStackAPI hullItemStack = stack(new ItemData(HullItemRows.MILITARY, 5L).toSpecialItem(), 1f);
-        CargoStackAPI otherSpecialStack = stack(new SpecialItemData("exiledSector_socketable_parts", null), 30f);
+        CargoStackAPI otherSpecialStack = stack(new SpecialItemData("exiledSector_nanite_feedstock", null), 30f);
         CargoStackAPI commodityStack = stack(null, 100f);
         CargoAPI playerCargo = cargoHolding(deletedStack, missingHullItemStack, subroutineStack, commodityStack);
         CargoAPI storageCargo = cargoHolding(rolledDeletedStack, hullItemStack, otherSpecialStack);

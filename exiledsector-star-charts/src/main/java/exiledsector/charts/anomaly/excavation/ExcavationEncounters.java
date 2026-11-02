@@ -1,0 +1,39 @@
+package exiledsector.charts.anomaly.excavation;
+
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.combat.BattleCreationContext;
+import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl.FIDConfig;
+import exiledsector.i18n.Translation;
+import exiledsector.charts.anomaly.AnomalyEncounters;
+
+import java.util.function.Consumer;
+
+public final class ExcavationEncounters {
+
+    static final String OPPONENT_KEY = "$exiledSector_shaftOpponent";
+
+    private ExcavationEncounters() {
+    }
+
+    public static FIDConfig config(Consumer<InteractionDialogAPI> onLeave) {
+        FIDConfig config = AnomalyEncounters.siteFight("chart.anomaly.excavation_sites.encounter.leave", true, ExcavationEncounters::fightUnderground, onLeave);
+        config.afterFirstTimeEngageOptionText = Translation.gameText("chart.anomaly.excavation_sites.encounter.reengage");
+        return config;
+    }
+
+    static void fightUnderground(BattleCreationContext battleContext) {
+        battleContext.objectivesAllowed = false;
+        CampaignFleetAPI opponent = battleContext.getOtherFleet();
+        if (opponent != null && opponent.getMemoryWithoutUpdate() != null) {
+            opponent.getMemoryWithoutUpdate().set(OPPONENT_KEY, true);
+        }
+    }
+
+    public static boolean isExcavationBattle(SectorEntityToken opponent) {
+        MemoryAPI memory = opponent == null ? null : opponent.getMemoryWithoutUpdate();
+        return ExcavationFleets.isExcavationFleet(opponent) || memory != null && memory.getBoolean(OPPONENT_KEY);
+    }
+}

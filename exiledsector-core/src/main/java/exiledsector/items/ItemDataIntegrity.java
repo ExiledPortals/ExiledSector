@@ -116,9 +116,9 @@ public final class ItemDataIntegrity {
         return rows == null ? new JSONArray() : rows;
     }
 
-    void checkArea(String file, int line, String definitionId, String area) {
-        if (!area.isEmpty() && !ItemAreas.isKnown(area)) {
-            error(file, line, definitionId + " names the area \"" + area + "\"; expected one of " + ItemAreas.known().stream().sorted().toList());
+    void checkVolume(String file, int line, String definitionId, String volume) {
+        if (!volume.isEmpty() && !ItemVolumes.isKnown(volume)) {
+            error(file, line, definitionId + " names the volume \"" + volume + "\"; expected one of " + ItemVolumes.known().stream().sorted().toList());
         }
     }
 
@@ -147,12 +147,12 @@ public final class ItemDataIntegrity {
                         + (earlier.file().equals(file) ? "" : " of " + earlier.file()));
                 return;
             }
-            String slotText = ModCsv.text(row, "slot");
+            String slotText = ModCsv.text(row, "affix");
             ModifierSlot slot = ModifierSlot.byIdOrNull(slotText);
             if (slot == null) {
                 error(file, line, modifierId + " has slot \"" + slotText + "\"; expected implicit, prefix or suffix");
             }
-            Set<ModifierScope> scopes = checkScopes(file, line, modifierId, ModCsv.text(row, "item_types"));
+            Set<ModifierScope> scopes = checkScopes(file, line, modifierId, ModCsv.text(row, "scopes"));
             checkScopeSlots(file, line, modifierId, scopes, slot);
             if (scopes.contains(ModifierScope.UNIQUE_SUBROUTINE) && slot != null && slot != ModifierSlot.PREFIX) {
                 error(file, line, modifierId + " rolls on " + ModifierScope.UNIQUE_SUBROUTINE.id() + ", so its slot must be "

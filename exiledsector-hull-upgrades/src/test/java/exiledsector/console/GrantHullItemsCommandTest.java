@@ -42,8 +42,8 @@ class GrantHullItemsCommandTest {
         fixture.close();
     }
 
-    private static JSONObject definition(String id, String socketType, boolean unique) throws Exception {
-        return new JSONObject().put("id", id).put("section", socketType).put("prefixes", "HULL_MULT:4:6").put("suffixes", "ARMOR_PERCENT:6:9")
+    private static JSONObject definition(String id, String sectionKind, boolean unique) throws Exception {
+        return new JSONObject().put("id", id).put("section", sectionKind).put("prefixes", "HULL_MULT:4:6").put("suffixes", "ARMOR_PERCENT:6:9")
                 .put("unique", Boolean.toString(unique));
     }
 
@@ -60,7 +60,7 @@ class GrantHullItemsCommandTest {
     }
 
     @Test
-    void aSocketTypeAddsOneOfEachNonUniqueHullItemForThatSocket() {
+    void aSectionAddsOneOfEachNonUniqueHullItemForIt() {
         assertEquals(CommandResult.SUCCESS, new GrantHullItemsCommand(new Random(3L)).runCommand(" BRIDGE ", CommandContext.CAMPAIGN_MAP));
 
         assertEquals(Set.of("first_bridge_item", "second_bridge_item"), grantedIds(fixture.granted(2)));
@@ -91,7 +91,7 @@ class GrantHullItemsCommandTest {
     }
 
     @Test
-    void anUnknownOrNonHullSocketTypeIsRejectedWithoutAddingAnything() {
+    void anUnknownOrNonHullSectionIsRejectedWithoutAddingAnything() {
         GrantHullItemsCommand command = new GrantHullItemsCommand(new Random(3L));
 
         assertEquals(CommandResult.BAD_SYNTAX, command.runCommand("hangar", CommandContext.CAMPAIGN_MAP));
@@ -101,7 +101,7 @@ class GrantHullItemsCommandTest {
     }
 
     @Test
-    void aSocketTypeWithNoNonUniqueHullItemsReportsAnError() {
+    void aSectionWithNoNonUniqueHullItemsReportsAnError() {
         assertEquals(CommandResult.ERROR, new GrantHullItemsCommand(new Random(3L)).runCommand("flight_deck", CommandContext.CAMPAIGN_MAP));
 
         fixture.verifyNothingGranted();

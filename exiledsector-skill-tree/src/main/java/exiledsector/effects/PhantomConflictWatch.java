@@ -267,8 +267,8 @@ public final class PhantomConflictWatch {
             return;
         }
         String message = I18n.forGameText(() -> {
-            Message text = conflict.isWholeHull() ? Translation.msg("phantomConflict.removedByHull")
-                    : Translation.msg("phantomConflict.removed").arg("hullmod", HullModNames.displayName(conflict.hullModId()));
+            Message text = conflict.isWholeHull() ? Translation.msg("node.conflict.removedByHull")
+                    : Translation.msg("node.conflict.removed").arg("hullmod", HullModNames.displayName(conflict.hullModId()));
             return text.arg("ship", member.getShipName()).arg("node", removedNode.getType().getDisplayName()).text();
         });
         CampaignMessages.plain(message, Misc.getNegativeHighlightColor());

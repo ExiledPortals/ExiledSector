@@ -12,7 +12,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.MockSector;
 import exiledsector.charts.loot.StarChartLootSource;
 import exiledsector.charts.loot.DropType;
-import exiledsector.loot.LootModifiers;
+import exiledsector.loot.LootMultipliers;
 import exiledsector.charts.ChartIds;
 import exiledsector.items.AnchorJanusGate;
 import exiledsector.items.ItemDefinitions;
@@ -21,7 +21,7 @@ import exiledsector.items.ItemData;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.WormholeAnchorDefinitions;
-import exiledsector.items.StarChartCurrency;
+import exiledsector.items.StarChartCipher;
 import exiledsector.items.StarChartFixtures;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.loot.ChartDrops;
@@ -124,7 +124,7 @@ class ItemSalvageListenerTest {
         when(outside.getContainingLocation()).thenReturn(mock(LocationAPI.class));
         SectorEntityToken nowhere = mock(SectorEntityToken.class);
 
-        LootModifiers none = new LootModifiers(ChartGenContext.none().itemChances(), ChartGenContext.none().dropMult(DropType.FEEDSTOCK),
+        LootMultipliers none = new LootMultipliers(ChartGenContext.none().itemChances(), ChartGenContext.none().dropMult(DropType.FEEDSTOCK),
                 ChartGenContext.none().dropMult(DropType.CURRENCY));
         assertEquals(none, StarChartLootSource.INSTANCE.modifiersAt(outside.getContainingLocation()));
         assertEquals(none, StarChartLootSource.INSTANCE.modifiersAt(nowhere.getContainingLocation()));
@@ -144,7 +144,7 @@ class ItemSalvageListenerTest {
     @Test
     void aSalvagedSystemsiteCanAlsoHoldAStarChartAndAChartCurrency() throws Exception {
         StarChartFixtures.registerShipped();
-        StarChartCurrency.registerAll();
+        StarChartCipher.registerAll();
         ChartDrops.register(new JSONArray().put(new JSONObject().put("source", "system_salvage").put("chance", "1").put("currency_chance", "10")));
         try (MockSector mockSector = new MockSector()) {
             ChartRun run = new ChartRun("salvageRun", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
@@ -166,7 +166,7 @@ class ItemSalvageListenerTest {
             List<SpecialItemData> charts = specials.getAllValues().stream().filter(special -> ItemData.STAR_CHART_ITEM_ID.equals(special.getId())).toList();
             assertEquals(1, charts.size());
             assertEquals(6, ItemData.ofStarChart(charts.get(0)).preview().tier());
-            assertEquals(StarChartCurrency.values().length, specials.getAllValues().stream().filter(special -> StarChartCurrency.byItemId(special.getId()) != null).count());
+            assertEquals(StarChartCipher.values().length, specials.getAllValues().stream().filter(special -> StarChartCipher.byItemId(special.getId()) != null).count());
         } finally {
             ChartDrops.clear();
             StarChartFixtures.unregisterCurrencies();

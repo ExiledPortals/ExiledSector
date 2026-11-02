@@ -4,7 +4,7 @@ import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.ShipFacts;
 import exiledsector.items.NodeGrantStatus;
-import exiledsector.skills.AllocationGate;
+import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.NodeGrants;
 import exiledsector.skills.ShipSkillData;
@@ -113,7 +113,7 @@ class GrantMarkersTest {
     private NodeAllocator.Snapshot snapshotOf(ShipSkillData data) {
         NodeEligibility.Context eligibility = NodeEligibility.Context.of(data,
                 new ShipFacts(HullSize.CRUISER, ShieldType.FRONT, false, 0f, hullModId -> false), null);
-        AllocationGate gate = new AllocationGate(data, topology, "root", new AllocationGate.Budget(100, 1, 100), eligibility);
+        AllocationCheck gate = new AllocationCheck(data, topology, "root", new AllocationCheck.Budget(100, 1, 100), eligibility);
         return new NodeAllocator.Snapshot(data, null, 0, Set.of(), gate, null);
     }
 

@@ -78,9 +78,9 @@ class NodeGrantTest {
         SkillTree.clearNodes();
     }
 
-    private static SkillNode node(String id, SkillTier tier, String region, String... connectedTo) {
+    private static SkillNode node(String id, SkillTier tier, String volume, String... connectedTo) {
         SkillType type = new SkillType.Builder(id + "_type", id, "a.png", tier).effects(List.of()).build();
-        return new SkillNode(id, type, List.of(connectedTo), 0f, 0f, SkillNodeDecoration.NONE, List.of(region));
+        return new SkillNode(id, type, List.of(connectedTo), 0f, 0f, SkillNodeDecoration.NONE, List.of(volume));
     }
 
     private ShipSkillData shipWithSocketed(String itemId) {
@@ -98,10 +98,10 @@ class NodeGrantTest {
         return data;
     }
 
-    private AllocationGate gate(ShipSkillData data, int totalOp, int maxAllocatedNodes) {
+    private AllocationCheck gate(ShipSkillData data, int totalOp, int maxAllocatedNodes) {
         NodeEligibility.Context eligibility = NodeEligibility.Context.of(data,
                 new ShipFacts(HullSize.CRUISER, ShieldType.FRONT, false, 0f, hullModId -> false), null);
-        return new AllocationGate(data, topology, "root", new AllocationGate.Budget(totalOp, 1, maxAllocatedNodes), eligibility);
+        return new AllocationCheck(data, topology, "root", new AllocationCheck.Budget(totalOp, 1, maxAllocatedNodes), eligibility);
     }
 
     private Map<String, SkillType> types() {
@@ -118,15 +118,15 @@ class NodeGrantTest {
         assertTrue(ShipTrees.reachableAllocatedNodeIds(data, topology, "root").contains("notable"));
         assertFalse(ShipTrees.pathReachableAllocatedNodeIds(data, topology, "root").contains("notable"));
         assertEquals(Set.of("notable"), ShipTrees.grantOnlyNodeIds(data, topology, "root"));
-        AllocationGate gate = gate(data, 100, 100);
-        assertEquals(AllocationGate.Refusal.NOT_CONNECTED, gate.allocation(beyond).refusal());
+        AllocationCheck gate = gate(data, 100, 100);
+        assertEquals(AllocationCheck.Refusal.NOT_CONNECTED, gate.allocation(beyond).refusal());
         assertTrue(gate.allocation(pathNode).allowed());
     }
 
     @Test
     void aGrantedNodeCostsNoOpNoNodeSlotAndNoFreeAllocation() {
         ShipSkillData data = shipWithSocketed(CACHE);
-        data.addFreeAllocationCredit();
+        data.addFreeAllocation();
         int spentBefore = ShipTrees.getSpentOp(data, 1);
         int slotsBefore = data.usedNodeSlots();
 
@@ -138,7 +138,7 @@ class NodeGrantTest {
         assertEquals(spentBefore, ShipTrees.getSpentOp(data, 1));
         assertEquals(slotsBefore, data.usedNodeSlots());
         assertEquals(1, data.getBankedFreeAllocations());
-        assertEquals(AllocationGate.Refusal.NODE_CAP, gate(data, 100, slotsBefore).allocation(pathNode).refusal());
+        assertEquals(AllocationCheck.Refusal.NODE_CAP, gate(data, 100, slotsBefore).allocation(pathNode).refusal());
         assertTrue(gate(data, 100, slotsBefore + 1).allocation(pathNode).allowed());
     }
 
@@ -148,9 +148,9 @@ class NodeGrantTest {
         int slots = data.usedNodeSlots();
 
         assertTrue(gate(data, 0, slots).grant(notable).allowed());
-        assertEquals(AllocationGate.Refusal.NOT_CONNECTED, gate(data, 100, slots + 1).allocation(notable).refusal());
+        assertEquals(AllocationCheck.Refusal.NOT_CONNECTED, gate(data, 100, slots + 1).allocation(notable).refusal());
         ShipTrees.allocateGranted(data, notable);
-        assertEquals(AllocationGate.Refusal.ALREADY_ALLOCATED, gate(data, 100, 100).grant(notable).refusal());
+        assertEquals(AllocationCheck.Refusal.ALREADY_ALLOCATED, gate(data, 100, 100).grant(notable).refusal());
     }
 
     @Test
@@ -168,9 +168,9 @@ class NodeGrantTest {
     @Test
     void theGrantedNotableCannotBeUnallocatedOnItsOwnButItsSocketCan() {
         ShipSkillData data = shipWithGrantedNotable();
-        AllocationGate gate = gate(data, 100, 100);
+        AllocationCheck gate = gate(data, 100, 100);
 
-        assertEquals(AllocationGate.Refusal.HELD_BY_SUBROUTINE, gate.deallocation(notable).refusal());
+        assertEquals(AllocationCheck.Refusal.HELD_BY_SUBROUTINE, gate.deallocation(notable).refusal());
         assertTrue(gate.deallocation(socket).allowed());
         assertTrue(ShipTrees.canDeallocate(data, socket, topology, "root"));
     }
@@ -178,7 +178,7 @@ class NodeGrantTest {
     @Test
     void removingTheSubroutineReleasesTheGrantedNotableWithoutTouchingBankedAllocations() {
         ShipSkillData data = shipWithGrantedNotable();
-        data.addFreeAllocationCredit();
+        data.addFreeAllocation();
 
         assertEquals(Set.of("notable"), ShipTrees.previewRelease(data, topology, "root", planned -> planned.unsocketItem("socket")));
         Set<String> reachableBefore = ShipTrees.reachableAllocatedNodeIds(data, topology, "root");

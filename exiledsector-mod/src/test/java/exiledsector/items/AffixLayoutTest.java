@@ -15,11 +15,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AffixLayoutTest {
 
-    private static final RolledEffect PREFIX_CAPACITY = new RolledEffect("FLUX_CAPACITY_MULT", 5f);
-    private static final RolledEffect PREFIX_DISSIPATION = new RolledEffect("FLUX_DISSIPATION_MULT", 5f);
-    private static final RolledEffect SUFFIX_SHIELDS = new RolledEffect("SHIELD_DAMAGE_TAKEN_MULT", -12f);
-    private static final RolledEffect SUFFIX_HULL = new RolledEffect("HULL_MULT", 5f);
-    private static final RolledEffect RETIRED = new RolledEffect("CARGO_CAPACITY_PERCENT", 10f);
+    private static final RolledLine PREFIX_CAPACITY = new RolledLine("FLUX_CAPACITY_MULT", 5f);
+    private static final RolledLine PREFIX_DISSIPATION = new RolledLine("FLUX_DISSIPATION_MULT", 5f);
+    private static final RolledLine SUFFIX_SHIELDS = new RolledLine("SHIELD_DAMAGE_TAKEN_MULT", -12f);
+    private static final RolledLine SUFFIX_HULL = new RolledLine("HULL_MULT", 5f);
+    private static final RolledLine RETIRED = new RolledLine("CARGO_CAPACITY_PERCENT", 10f);
 
     private ItemDefinition military;
 
@@ -33,7 +33,7 @@ class AffixLayoutTest {
         ItemDefinitions.clear();
     }
 
-    private List<List<PoolEntry>> openSides(RolledEffect... effects) {
+    private List<List<PoolEntry>> openSides(RolledLine... effects) {
         return AffixLayout.openSides(military, RolledModifier.fromLegacyEffects(military, List.of(effects)));
     }
 
@@ -67,14 +67,14 @@ class AffixLayoutTest {
     }
 
     @Test
-    void theEffectCountThresholdsFollowTheProposedOdds() {
-        assertEquals(1, AffixLayout.rolledEffectCount(0f));
-        assertEquals(1, AffixLayout.rolledEffectCount(0.349f));
-        assertEquals(2, AffixLayout.rolledEffectCount(0.35f));
-        assertEquals(2, AffixLayout.rolledEffectCount(0.549f));
-        assertEquals(3, AffixLayout.rolledEffectCount(0.55f));
-        assertEquals(3, AffixLayout.rolledEffectCount(0.899f));
-        assertEquals(4, AffixLayout.rolledEffectCount(0.9f));
+    void theModifierCountThresholdsFollowTheProposedOdds() {
+        assertEquals(1, AffixLayout.rolledModifierCount(0f));
+        assertEquals(1, AffixLayout.rolledModifierCount(0.349f));
+        assertEquals(2, AffixLayout.rolledModifierCount(0.35f));
+        assertEquals(2, AffixLayout.rolledModifierCount(0.549f));
+        assertEquals(3, AffixLayout.rolledModifierCount(0.55f));
+        assertEquals(3, AffixLayout.rolledModifierCount(0.899f));
+        assertEquals(4, AffixLayout.rolledModifierCount(0.9f));
     }
 
     @Test

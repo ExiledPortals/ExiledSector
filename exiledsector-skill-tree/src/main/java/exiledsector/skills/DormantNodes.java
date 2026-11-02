@@ -29,7 +29,7 @@ public final class DormantNodes {
             return List.of();
         }
         data.revision++;
-        ItemChargeLedger.ensure(data);
+        ItemCostLedger.ensure(data);
         String satisfiedRootId = ShipTrees.resolveStartingRootId(data, tree.values());
         SkillTreeTopology wakeTopology = ShipTreeLinks.grantedNodesBySocket(data).isEmpty() ? null : SkillTreeTopology.of(tree.values());
         boolean wokeAny = true;
@@ -58,7 +58,7 @@ public final class DormantNodes {
                 continue;
             }
             String partnerId = ShipTreeLinks.wormholePartner(data, node);
-            boolean freePartnerOfAllocatedEnd = data.pairedFreeNodeIds().contains(nodeId) && data.allocatedNodeIds.contains(partnerId)
+            boolean freePartnerOfAllocatedEnd = data.pairGrantedNodeIds().contains(nodeId) && data.allocatedNodeIds.contains(partnerId)
                     && ShipTreeLinks.anchorPartner(data, nodeId) == null;
             data.dormantNodeIds.remove(nodeId);
             data.release(nodeId);

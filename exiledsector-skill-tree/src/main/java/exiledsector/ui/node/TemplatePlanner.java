@@ -167,7 +167,7 @@ final class TemplatePlanner {
         ShipSkillData liveData = liveSnapshotSupplier.get().skillData();
         List<TemplateStep> steps = new ArrayList<>(TemplateCapture.capture(orderedNodeIds, nodeId -> {
             String templateOption = templateOptionsByNodeId.get(nodeId);
-            return templateOption != null && liveData.isAllocated(nodeId) ? templateOption : planData.getOptionalSelection(nodeId);
+            return templateOption != null && liveData.isAllocated(nodeId) ? templateOption : planData.getChoiceSelection(nodeId);
         }, ShipTreeLinks.wormholePartners(planData), startingRootId, SkillTree.getAllNodes()));
         for (TemplateStep carriedStep : carriedSteps) {
             if (!planData.isAllocated(carriedStep.nodeId())) {

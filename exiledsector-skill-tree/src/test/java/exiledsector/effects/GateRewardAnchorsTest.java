@@ -191,7 +191,7 @@ class GateRewardAnchorsTest {
     }
 
     @Test
-    void aBossBeatenWhileItsAreaIsOffKeepsItsRewardForWhenTheAreaComesBack() {
+    void aBossBeatenWhileItsVolumeIsOffKeepsItsRewardForWhenTheVolumeComesBack() {
         SkillTree.clearNodes();
         FleetMemberAPI genesis = member("rat_genesis");
         BattleLoot battle = wonBattle();

@@ -27,12 +27,12 @@ public final class ItemDrops {
     static final String DATA_PATH = "data/config/exiledSector/item_salvage.csv";
     public static final String TECH_MINING_FIRST_FIND = "techmining_first_find";
     public static final String TECH_MINING_MONTHLY = "techmining_monthly";
-    static final int MIN_PARTS_PER_FIND = 1;
-    static final int MAX_PARTS_PER_FIND = 3;
+    static final int MIN_FEEDSTOCK_PER_FIND = 1;
+    static final int MAX_FEEDSTOCK_PER_FIND = 3;
     static final float KERNEL_CHANCE_SHARE = 0.7f;
     static final float FACTION_SOURCE_WEIGHT_MULT = 2f;
-    public static final String BATTLE_PARTS_FIELD_ID = "exiledSector_socketPartsPer100DeploymentPoints";
-    public static final int DEFAULT_BATTLE_PARTS_PER_100_DP = 5;
+    public static final String BATTLE_FEEDSTOCK_FIELD_ID = "exiledSector_socketPartsPer100DeploymentPoints";
+    public static final int DEFAULT_BATTLE_FEEDSTOCK_PER_100_DP = 5;
     public static final int MAX_BATTLE_PARTS_PER_100_DP = 200;
     private static final float DEPLOYMENT_POINTS_PER_SETTING_STEP = 100f;
     private static final Pattern SAFE_ID = Pattern.compile("[A-Za-z0-9_.-]+");
@@ -142,73 +142,73 @@ public final class ItemDrops {
         if (rule == null || rule.chances().isEmpty()) {
             return droppedMaterials;
         }
-        int partsFound = rule.feedstockMax() > 0 ? rollFeedstock(rule, random, feedstockMult) : rollParts(rule, random, feedstockMult);
-        if (partsFound > 0) {
-            droppedMaterials.put(ItemDisassembly.PARTS_ITEM_ID, partsFound);
+        int feedstockFound = rule.feedstockMax() > 0 ? rollFeedstock(rule, random, feedstockMult) : rollParts(rule, random, feedstockMult);
+        if (feedstockFound > 0) {
+            droppedMaterials.put(ItemDisassembly.FEEDSTOCK_ITEM_ID, feedstockFound);
         }
-        rollEachCurrency(kernelDrops(), rule.chances().get(0) * KERNEL_CHANCE_SHARE * currencyMult, random, droppedMaterials);
+        rollEachCurrency(materialDrops(), rule.chances().get(0) * KERNEL_CHANCE_SHARE * currencyMult, random, droppedMaterials);
         return droppedMaterials;
     }
 
     private static int rollFeedstock(Rule rule, Random random, float feedstockMult) {
         int rolled = rule.feedstockMin() + random.nextInt(rule.feedstockMax() - rule.feedstockMin() + 1);
-        return wholeParts(rolled * feedstockMult, random);
+        return wholeFeedstock(rolled * feedstockMult, random);
     }
 
     private static int rollParts(Rule rule, Random random, float feedstockMult) {
-        int partsFound = 0;
+        int feedstockFound = 0;
         for (float chance : rule.chances()) {
             if (random.nextFloat() < chance * feedstockMult) {
-                partsFound += MIN_PARTS_PER_FIND + random.nextInt(MAX_PARTS_PER_FIND - MIN_PARTS_PER_FIND + 1);
+                feedstockFound += MIN_FEEDSTOCK_PER_FIND + random.nextInt(MAX_FEEDSTOCK_PER_FIND - MIN_FEEDSTOCK_PER_FIND + 1);
             }
         }
-        return partsFound;
+        return feedstockFound;
     }
 
-    public static float battlePartsPerDeploymentPoint() {
-        return Math.max(0, ModSettings.intOr(BATTLE_PARTS_FIELD_ID, DEFAULT_BATTLE_PARTS_PER_100_DP)) / DEPLOYMENT_POINTS_PER_SETTING_STEP;
+    public static float battleFeedstockPerDeploymentPoint() {
+        return Math.max(0, ModSettings.intOr(BATTLE_FEEDSTOCK_FIELD_ID, DEFAULT_BATTLE_FEEDSTOCK_PER_100_DP)) / DEPLOYMENT_POINTS_PER_SETTING_STEP;
     }
 
-    public static int wholeParts(float exactParts, Random random) {
-        if (!(exactParts > 0f)) {
+    public static int wholeFeedstock(float exactFeedstock, Random random) {
+        if (!(exactFeedstock > 0f)) {
             return 0;
         }
-        int wholePartCount = (int) exactParts;
-        return wholePartCount + (random.nextFloat() < exactParts - wholePartCount ? 1 : 0);
+        int wholePartCount = (int) exactFeedstock;
+        return wholePartCount + (random.nextFloat() < exactFeedstock - wholePartCount ? 1 : 0);
     }
 
-    static List<CurrencyDrop> kernelDrops() {
-        List<CurrencyDrop> kernelDrops = new ArrayList<>();
-        for (ItemCurrency currency : ItemCurrencies.all()) {
+    static List<MaterialDrop> materialDrops() {
+        List<MaterialDrop> materialDrops = new ArrayList<>();
+        for (CraftingMaterialFamily currency : CraftingMaterialFamilies.all()) {
             if (currency.dropsFromShipLoot()) {
-                kernelDrops.add(new CurrencyDrop(currency.itemId(), currency.dropWeight()));
+                materialDrops.add(new MaterialDrop(currency.itemId(), currency.dropWeight()));
             }
         }
-        for (CraftingWard ward : CraftingWard.values()) {
-            kernelDrops.add(new CurrencyDrop(ward.itemId(), ward.dropWeight()));
+        for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
+            materialDrops.add(new MaterialDrop(inhibitor.itemId(), inhibitor.dropWeight()));
         }
-        return kernelDrops;
+        return materialDrops;
     }
 
     public static boolean isCraftingCurrency(String itemId) {
-        return kernelDrops().stream().anyMatch(drop -> drop.itemId().equals(itemId));
+        return materialDrops().stream().anyMatch(drop -> drop.itemId().equals(itemId));
     }
 
     public static String pickCraftingCurrency(Random random) {
-        CurrencyDrop drop = WeightedPick.pick(kernelDrops(), currency -> Math.max(0f, currency.weight()), random);
+        MaterialDrop drop = WeightedPick.pick(materialDrops(), currency -> Math.max(0f, currency.weight()), random);
         return drop == null ? null : drop.itemId();
     }
 
-    public record CurrencyDrop(String itemId, float weight) {
+    public record MaterialDrop(String itemId, float weight) {
     }
 
-    public static void rollEachCurrency(List<CurrencyDrop> drops, float expectedDrops, Random random, Map<String, Integer> droppedMaterials) {
+    public static void rollEachCurrency(List<MaterialDrop> drops, float expectedDrops, Random random, Map<String, Integer> droppedMaterials) {
         double totalWeight = drops.stream().mapToDouble(drop -> Math.max(0f, drop.weight())).sum();
         if (!(expectedDrops > 0f) || !(totalWeight > 0d)) {
             return;
         }
-        for (CurrencyDrop drop : drops) {
-            int count = wholeParts((float) (expectedDrops * Math.max(0f, drop.weight()) / totalWeight), random);
+        for (MaterialDrop drop : drops) {
+            int count = wholeFeedstock((float) (expectedDrops * Math.max(0f, drop.weight()) / totalWeight), random);
             if (count > 0) {
                 droppedMaterials.merge(drop.itemId(), count, Integer::sum);
             }
@@ -216,14 +216,14 @@ public final class ItemDrops {
     }
 
     public static ItemDefinition pickBasic(Random random) {
-        return pick(random, ItemDrops::canBeSynthesised);
+        return pick(random, ItemDrops::canBeGrown);
     }
 
-    public static boolean canBeSynthesised(ItemDefinition definition) {
+    public static boolean canBeGrown(ItemDefinition definition) {
         return definition.type() == ItemType.SUBROUTINE && !definition.unique() && isDroppable(definition);
     }
 
-    public record SiteLoot(List<ItemData> items, List<ShipCurrency> upgrades, Map<String, Integer> materials) {
+    public record SiteLoot(List<ItemData> items, List<ShipSchematic> upgrades, Map<String, Integer> materials) {
 
         public static final SiteLoot NONE = new SiteLoot(List.of(), List.of(), Map.of());
 
@@ -237,13 +237,13 @@ public final class ItemDrops {
             return items.isEmpty() && upgrades.isEmpty() && materials.isEmpty();
         }
 
-        public SiteLoot plus(List<ItemData> moreItems, List<ShipCurrency> moreUpgrades, Map<String, Integer> moreMaterials) {
+        public SiteLoot plus(List<ItemData> moreItems, List<ShipSchematic> moreUpgrades, Map<String, Integer> moreMaterials) {
             if (moreItems.isEmpty() && moreUpgrades.isEmpty() && moreMaterials.isEmpty()) {
                 return this;
             }
             List<ItemData> allItems = new ArrayList<>(items);
             allItems.addAll(moreItems);
-            List<ShipCurrency> allUpgrades = new ArrayList<>(upgrades);
+            List<ShipSchematic> allUpgrades = new ArrayList<>(upgrades);
             allUpgrades.addAll(moreUpgrades);
             Map<String, Integer> allMaterials = new LinkedHashMap<>(materials);
             moreMaterials.forEach((itemId, quantity) -> allMaterials.merge(itemId, quantity, Integer::sum));
@@ -270,7 +270,7 @@ public final class ItemDrops {
         if (!(extraShare > 0f) || !hasDroppableBasic(kind)) {
             return;
         }
-        int extraCount = wholeParts(expectedCascadeCount(rule.chances()) * extraShare / sharedKinds, random);
+        int extraCount = wholeFeedstock(expectedCascadeCount(rule.chances()) * extraShare / sharedKinds, random);
         for (int i = 0; i < extraCount; i++) {
             ItemDefinition definition = pickSectionItemBasic(kind, random);
             if (definition != null) {
@@ -312,12 +312,12 @@ public final class ItemDrops {
         return droppedItems;
     }
 
-    public static ItemDefinition pickSectionItemBasic(ItemKind socketType, Random random) {
-        return pickSectionItemBasic(socketType, random, definition -> true);
+    public static ItemDefinition pickSectionItemBasic(ItemKind sectionKind, Random random) {
+        return pickSectionItemBasic(sectionKind, random, definition -> true);
     }
 
-    public static ItemDefinition pickSectionItemBasic(ItemKind socketType, Random random, Predicate<ItemDefinition> filter) {
-        return pick(random, definition -> definition.kind() == socketType && !definition.unique() && filter.test(definition));
+    public static ItemDefinition pickSectionItemBasic(ItemKind sectionKind, Random random, Predicate<ItemDefinition> filter) {
+        return pick(random, definition -> definition.kind() == sectionKind && !definition.unique() && filter.test(definition));
     }
 
     public static ItemDefinition pickHullItemBasic(Random random) {
@@ -325,13 +325,13 @@ public final class ItemDrops {
         return kindsWithBasics.isEmpty() ? null : pickSectionItemBasic(kindsWithBasics.get(random.nextInt(kindsWithBasics.size())), random);
     }
 
-    private static boolean isDroppableBasic(ItemDefinition definition, ItemKind socketType) {
-        return definition.kind() == socketType && !definition.unique() && isDroppable(definition);
+    private static boolean isDroppableBasic(ItemDefinition definition, ItemKind sectionKind) {
+        return definition.kind() == sectionKind && !definition.unique() && isDroppable(definition);
     }
 
     private static boolean isDroppable(ItemDefinition definition) {
         return ItemTypes.inGenericPools(definition) && definition.rarity() > 0f
-                && SAFE_ID.matcher(definition.id()).matches() && ItemAreas.dropsNow(definition);
+                && SAFE_ID.matcher(definition.id()).matches() && ItemVolumes.dropsNow(definition);
     }
 
     public static ItemDefinition pickUnique(Random random, Predicate<ItemDefinition> allowedUniques) {

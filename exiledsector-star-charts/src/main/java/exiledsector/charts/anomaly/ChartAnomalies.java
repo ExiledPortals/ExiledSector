@@ -12,20 +12,20 @@ import exiledsector.charts.anomaly.debris.AnomalousDebris;
 import exiledsector.charts.anomaly.excavation.ExcavationSites;
 import exiledsector.charts.anomaly.facility.PreCollapseFacility;
 import exiledsector.charts.anomaly.forge.DerelictForge;
-import exiledsector.charts.anomaly.heist.ListeningPost;
+import exiledsector.charts.anomaly.listeningpost.ListeningPost;
 import exiledsector.charts.anomaly.hypershunt.CoronalHypershunt;
 import exiledsector.charts.anomaly.relay.RelayNetwork;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
-import exiledsector.charts.anomaly.station.DomainMothership;
-import exiledsector.charts.anomaly.station.RemnantNexusStation;
-import exiledsector.charts.anomaly.storm.StormFront;
+import exiledsector.charts.anomaly.landmark.DomainMothership;
+import exiledsector.charts.anomaly.landmark.RemnantNexusStation;
+import exiledsector.charts.anomaly.stormfront.StormFront;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasRunChoice;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.compat.ChartModGates;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.table.BuiltInTable;
@@ -141,7 +141,7 @@ public final class ChartAnomalies {
         }
         List<ChartGenContext.AppliedEffect> effects = new ArrayList<>();
         csv.weights(row, "effects", id, null, true).forEach((name, value) -> {
-            ChartEffect effect = ChartEffect.byNameOrNull(name);
+            ChartModifier effect = ChartModifier.byNameOrNull(name);
             if (effect == null) {
                 csv.problem(id, "effects", name + " (not a chart effect)");
             } else {

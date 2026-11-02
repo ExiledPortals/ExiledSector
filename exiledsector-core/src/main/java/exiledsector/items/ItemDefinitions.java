@@ -92,7 +92,7 @@ public final class ItemDefinitions {
         }
         CsvRows.forEachRow(rows, source, LOG, (index, row) -> {
             ItemDefinition definition = parser.apply(row);
-            if (!ItemAreas.loads(definition)) {
+            if (!ItemVolumes.loads(definition)) {
                 return;
             }
             if (loaded.putIfAbsent(definition.id(), definition) != null) {

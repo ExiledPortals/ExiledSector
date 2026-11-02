@@ -4,7 +4,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.i18n.Style;
-import exiledsector.skills.AllocationGate;
+import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.ModuleShareExtent;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.SkillItemCost;
@@ -77,9 +77,9 @@ class SkillTreeNodeTooltipRendererTest {
     @Test
     void theCostLineReplacesAnItemCostRefusalButNotOthers() {
         SkillTreeNodeTooltipRenderer.ItemCostLine costLine = SkillTreeNodeTooltipRenderer.unpaidCostLine(new SkillItemCost("alpha_core", 1f), 0f);
-        AllocationGate.Verdict itemCost = new AllocationGate.Verdict(AllocationGate.Refusal.INELIGIBLE,
+        AllocationCheck.Verdict itemCost = new AllocationCheck.Verdict(AllocationCheck.Refusal.INELIGIBLE,
                 new NodeEligibility.Block(NodeEligibility.Kind.ITEM_COST, "alpha_core", null, new SkillItemCost("alpha_core", 1f)));
-        AllocationGate.Verdict outOfOp = new AllocationGate.Verdict(AllocationGate.Refusal.OUT_OF_OP, null);
+        AllocationCheck.Verdict outOfOp = new AllocationCheck.Verdict(AllocationCheck.Refusal.OUT_OF_OP, null);
 
         assertNull(SkillTreeNodeTooltipRenderer.withoutItemCostRefusal("Requires 1 alpha_core (have 0).", costLine, () -> itemCost));
         assertEquals("Not enough OP.", SkillTreeNodeTooltipRenderer.withoutItemCostRefusal("Not enough OP.", costLine, () -> outOfOp));

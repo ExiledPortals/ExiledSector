@@ -30,7 +30,7 @@ public final class ItemCodec {
     private static final String RARE_MODEL_KEY = "rm";
     private static final String PRODUCT_KEY = "rp";
     private static final String TIER_KEY = "t";
-    private static final String QUALITY_KEY = "q";
+    private static final String QUANTITY_KEY = "q";
     private static final String CORRUPTED_KEY = "c";
     private static final String IMPLICITS_KEY = "i";
     private static final String MIRRORED_KEY = "m";
@@ -103,7 +103,7 @@ public final class ItemCodec {
                 encoded.append(modifier.modifierId()).append(MODIFIER_FIELD_SEPARATOR);
             }
             boolean firstLine = true;
-            for (RolledEffect line : modifier.lines()) {
+            for (RolledLine line : modifier.lines()) {
                 if (!firstLine) {
                     encoded.append(LINE_SEPARATOR);
                 }
@@ -118,7 +118,7 @@ public final class ItemCodec {
         return modifier.lines().size() == 1 && modifier.lines().get(0).effectName().equals(modifier.modifierId());
     }
 
-    private static String effect(RolledEffect effect) {
+    private static String effect(RolledLine effect) {
         String magnitude = Float.toString(effect.magnitude());
         return effect.effectName() + MAGNITUDE_SEPARATOR + (magnitude.endsWith(".0") ? magnitude.substring(0, magnitude.length() - 2) : magnitude);
     }
@@ -141,7 +141,7 @@ public final class ItemCodec {
             return null;
         }
         List<RolledModifier> modifiers = new ArrayList<>();
-        List<RolledEffect> legacyEffects = new ArrayList<>();
+        List<RolledLine> legacyEffects = new ArrayList<>();
         for (String entry : encoded.split(EFFECT_SEPARATOR)) {
             if (entry.isEmpty()) {
                 continue;
@@ -153,7 +153,7 @@ public final class ItemCodec {
                 }
                 modifiers.add(modifier);
             } else {
-                RolledEffect effect = decodeEffect(entry);
+                RolledLine effect = decodeEffect(entry);
                 if (effect == null) {
                     return null;
                 }
@@ -172,30 +172,30 @@ public final class ItemCodec {
             return null;
         }
         if (fields.length == 2) {
-            RolledEffect line = decodeEffect(fields[1]);
+            RolledLine line = decodeEffect(fields[1]);
             return line == null ? null : RolledModifier.single(slot, line);
         }
         if (!ItemModifiers.ID_PATTERN.matcher(fields[1]).matches()) {
             return null;
         }
-        List<RolledEffect> lines = new ArrayList<>();
+        List<RolledLine> lines = new ArrayList<>();
         for (String lineText : fields[2].split(Pattern.quote(LINE_SEPARATOR))) {
-            RolledEffect line = decodeEffect(lineText);
+            RolledLine line = decodeEffect(lineText);
             if (line == null) {
                 return null;
             }
             lines.add(line);
         }
-        return new RolledModifier(RolledEffect.currentName(fields[1]), slot, lines);
+        return new RolledModifier(RolledLine.currentName(fields[1]), slot, lines);
     }
 
-    private static RolledEffect decodeEffect(String entry) {
+    private static RolledLine decodeEffect(String entry) {
         int separator = entry.lastIndexOf(MAGNITUDE_SEPARATOR);
         if (separator <= 0) {
             return null;
         }
         try {
-            return new RolledEffect(entry.substring(0, separator), Float.parseFloat(entry.substring(separator + 1)));
+            return new RolledLine(entry.substring(0, separator), Float.parseFloat(entry.substring(separator + 1)));
         } catch (NumberFormatException e) {
             return null;
         }
@@ -253,8 +253,8 @@ public final class ItemCodec {
             return;
         }
         json.put(TIER_KEY, traits.tier());
-        if (traits.quality() != 0) {
-            json.put(QUALITY_KEY, traits.quality());
+        if (traits.quantity() != 0) {
+            json.put(QUANTITY_KEY, traits.quantity());
         }
         if (traits.corruption() != null) {
             json.put(CORRUPTED_KEY, traits.corruption().name());
@@ -268,11 +268,11 @@ public final class ItemCodec {
     }
 
     private static ItemTraits traits(JSONObject json, String definitionId) throws JSONException {
-        if (!json.has(TIER_KEY) && !json.has(QUALITY_KEY) && !json.has(CORRUPTED_KEY) && !json.has(IMPLICITS_KEY) && !json.has(MIRRORED_KEY)) {
+        if (!json.has(TIER_KEY) && !json.has(QUANTITY_KEY) && !json.has(CORRUPTED_KEY) && !json.has(IMPLICITS_KEY) && !json.has(MIRRORED_KEY)) {
             return null;
         }
         List<RolledModifier> implicits = json.has(IMPLICITS_KEY) ? decodeModifiers(json.getString(IMPLICITS_KEY), definitionId) : null;
-        return new ItemTraits(json.optInt(TIER_KEY, ItemTraits.LOWEST_TIER), json.optInt(QUALITY_KEY, 0), corruption(json), implicits,
+        return new ItemTraits(json.optInt(TIER_KEY, ItemTraits.LOWEST_TIER), json.optInt(QUANTITY_KEY, 0), corruption(json), implicits,
                 json.optBoolean(MIRRORED_KEY, false));
     }
 

@@ -29,11 +29,11 @@ public interface LootSource {
         return null;
     }
 
-    default LootModifiers modifiersAt(LocationAPI location) {
+    default LootMultipliers modifiersAt(LocationAPI location) {
         return null;
     }
 
-    default LootModifiers modifiersFor(SectorEntityToken site) {
+    default LootMultipliers modifiersFor(SectorEntityToken site) {
         return site == null ? null : modifiersAt(site.getContainingLocation());
     }
 

@@ -169,15 +169,16 @@ class WormholeOpenCheckTest {
         try (MockSector mockSector = new MockSector();
              MockedStatic<LunaSettings> lunaMock = Mockito.mockStatic(LunaSettings.class)) {
             when(mockSector.sector.getPlayerFleet()).thenReturn(playerFleet);
-            lunaMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID)).thenReturn(null);
-            assertEquals(Blocker.NO_GATEWAY, WormholeOpenCheck.replacingRun(mockSector.sector, store, chart), "the dev switch defaults to off");
+            StarChartSettings.setNoColonyForTests(false);
+            assertEquals(Blocker.NO_GATEWAY, WormholeOpenCheck.replacingRun(mockSector.sector, store, chart), "No Colony Requirement defaults to off");
 
             ChartRuns.store(new ChartRun("busy", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1));
             assertEquals(Blocker.NO_GATEWAY, WormholeOpenCheck.replacingRun(mockSector.sector, store, chart), "an open run is replaced");
             ChartRuns.delete("busy");
 
-            lunaMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID)).thenReturn(true);
+            StarChartSettings.setNoColonyForTests(true);
             assertEquals(Blocker.NONE, WormholeOpenCheck.replacingRun(mockSector.sector, store, chart));
+            StarChartSettings.setNoColonyForTests(StarChartSettings.DEFAULT_NO_COLONY);
         }
     }
 }

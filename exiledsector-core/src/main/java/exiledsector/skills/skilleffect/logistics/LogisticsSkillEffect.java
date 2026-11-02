@@ -104,7 +104,7 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return StatMode.PERCENT.describeStat(magnitude, "stat.minimumCrewRequiredPerFighterBayCappedAt80Total");
+            return StatMode.PERCENT.describeStat(magnitude, "stat.minimumCrewPerBay");
         }
     },
     SUPPLIES_PER_MONTH_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getSuppliesPerMonth), "stat.supplyUseForMaintenance", true)),
@@ -119,29 +119,29 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
     CREW_LOSS_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getCrewLossMult), "stat.crewCasualties", true)),
     CREW_LOSS_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getCrewLossMult), "stat.crewCasualties", true)),
     SURVEY_COST_REDUCTION_HEAVY_MACHINERY(statEffect(FLAT, dynamicMod("survey_cost_reduction_heavy_machinery"),
-            "stat.heavyMachineryRequiredToPerformSurveysFleetWide", true)) {
+            "stat.surveyHeavyMachinery", true)) {
         @Override
         public StyledText description(float magnitude) {
-            return FLAT.describeStat(-magnitude, YOUR_FLEET, "stat.heavyMachineryRequiredToPerformSurveysFleetWide");
+            return FLAT.describeStat(-magnitude, YOUR_FLEET, "stat.surveyHeavyMachinery");
         }
     },
     SURVEY_COST_REDUCTION_SUPPLIES(statEffect(FLAT, dynamicMod("survey_cost_reduction_supplies"),
-            "stat.suppliesRequiredToPerformSurveysFleetWide", true)) {
+            "stat.surveySupplies", true)) {
         @Override
         public StyledText description(float magnitude) {
-            return FLAT.describeStat(-magnitude, YOUR_FLEET, "stat.suppliesRequiredToPerformSurveysFleetWide");
+            return FLAT.describeStat(-magnitude, YOUR_FLEET, "stat.surveySupplies");
         }
     },
     GROUND_SUPPORT_FLAT(statEffect(FLAT, dynamicMod(Stats.FLEET_GROUND_SUPPORT),
-            "stat.effectiveStrengthOfPlanetaryRaidsUpToTheTotalNumberOfMarinesInTheFleet", false)) {
+            "stat.raidStrength", false)) {
         @Override
         public StyledText description(float magnitude) {
-            return FLAT.describeStat(magnitude, YOUR_FLEET, "stat.effectiveStrengthOfPlanetaryRaidsUpToTheTotalNumberOfMarinesInTheFleet");
+            return FLAT.describeStat(magnitude, YOUR_FLEET, "stat.raidStrength");
         }
     },
     GROUND_SUPPORT_PER_MAX_CREW_PERCENT(new DerivedStatEffect(LogisticsSkillEffect::applyCrewGroundSupport, null, false)),
     CORONA_RESISTANCE_MULT(statEffect(MULT, dynamicStat(Stats.CORONA_EFFECT_MULT),
-            "stat.combatReadinessLossFromBeingInASolarCoronaOrADeepHyperspaceStorm", true)),
+            "stat.coronaAndStormCrLoss", true)),
     POST_BATTLE_SALVAGE_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

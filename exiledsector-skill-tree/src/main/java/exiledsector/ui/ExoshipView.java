@@ -53,10 +53,10 @@ final class ExoshipView {
     static List<ExoshipVoyage.Anchor> orbitAnchors(Collection<SkillNode> nodes) {
         List<ExoshipVoyage.Anchor> anchors = new ArrayList<>();
         for (SkillNode node : nodes) {
-            String region = node.getRegion();
+            String volume = node.getVolume();
             if (node.getType().getTier() == SkillTier.NOTABLE && !ExoshipNodes.isCarried(node)
-                    && !(region != null && SkillTags.ABYSSAL_REGIONS.contains(region)) && !SkillTags.REDACTED_REGION.equals(region)) {
-                anchors.add(new ExoshipVoyage.Anchor(node.getX(), node.getY(), SkillTags.CORE_REGION.equals(region)));
+                    && !(volume != null && SkillTags.ABYSSAL_VOLUMES.contains(volume)) && !SkillTags.REDACTED_VOLUME.equals(volume)) {
+                anchors.add(new ExoshipVoyage.Anchor(node.getX(), node.getY(), SkillTags.CORE_VOLUME.equals(volume)));
             }
         }
         return anchors;

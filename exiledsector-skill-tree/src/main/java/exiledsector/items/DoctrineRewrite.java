@@ -18,7 +18,7 @@ public record DoctrineRewrite(String nodeId, String doctrineDefinitionId, int re
         augmentLines = List.copyOf(augmentLines);
     }
 
-    public boolean transformed() {
+    public boolean rewritten() {
         return replacementType != null;
     }
 

@@ -78,6 +78,6 @@ public final class PreCollapseFacility implements LayoutShaper, ContentPlacer, R
             return null;
         }
         StyledText name = StyledText.styled(planet.getName(), Style.HIGHLIGHT);
-        return I18n.forGameText(() -> Translation.msg("chart.facility.intel").arg("planet", name).text());
+        return I18n.forGameText(() -> Translation.msg("chart.anomaly.pre_collapse_facility.intel").arg("planet", name).text());
     }
 }

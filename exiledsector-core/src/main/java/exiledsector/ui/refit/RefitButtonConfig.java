@@ -8,7 +8,7 @@ public final class RefitButtonConfig {
 
     public static final boolean DEFAULT = true;
 
-    public static final String BENCH_KEYBIND_FIELD_ID = "exiledSector_modificationBenchButtonKey";
+    public static final String BENCH_KEYBIND_FIELD_ID = "exiledSector_craftingBenchButtonKey";
 
     public static final int DEFAULT_BENCH_KEY = 0;
 

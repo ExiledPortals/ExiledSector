@@ -29,8 +29,8 @@ class ConvoyDressTest {
 
         SupplyConvoy.factionDress("hegemony").apply(convoy, hegemony, List.of(convoy, hegemony, pirates));
 
-        verify(convoy).setDisplayNameOverride(Translation.gameText("chart.convoy.faction.name"));
-        verify(convoy).setDisplayNameWithArticleOverride(Translation.gameText("chart.convoy.faction.nameWithArticle"));
+        verify(convoy).setDisplayNameOverride(Translation.gameText("chart.anomaly.supply_convoy.faction.name"));
+        verify(convoy).setDisplayNameWithArticleOverride(Translation.gameText("chart.anomaly.supply_convoy.faction.nameWithArticle"));
         verify(convoy, never()).setDisplayNameOverride("Hegemony");
         verify(convoy).setShipNamePrefixOverride("HSS");
         verify(convoy).setFactionCrestOverride("crest");

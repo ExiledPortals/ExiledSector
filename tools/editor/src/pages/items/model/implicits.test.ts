@@ -22,7 +22,7 @@ const vocabulary = buildVocabulary({
     { name: 'ARMOR_PERCENT', statMode: 'PERCENT', lowerIsBetter: false },
     { name: 'FLUX_CAPACITY_PERCENT', statMode: 'PERCENT', lowerIsBetter: false },
   ],
-  tags: { theme: [], region: [], requirement: [] },
+  tags: { theme: [], volume: [], requirement: [] },
   tiers: [],
   unlockConditionTypes: [],
   blueprintCategories: [],
@@ -37,7 +37,7 @@ const vocabulary = buildVocabulary({
 
 const catalogue = modifierById(
   parseModifiersCsv(
-    'id,slot,item_types,lines,name\n' +
+    'id,affix,scopes,lines,name\n' +
       'ARMOR_PERCENT_IMPLICIT,implicit,hull_item,ARMOR_PERCENT:5:10,\n' +
       'HYBRID_ARMOR_FLUX_CAPACITY,implicit,hull_item,ARMOR_PERCENT:1:2; FLUX_CAPACITY_PERCENT:1:2,\n' +
       'FLUX_CAPACITY_PERCENT_IMPLICIT,implicit,subroutine,FLUX_CAPACITY_PERCENT:1:2,\n' +
@@ -80,7 +80,7 @@ describe('subroutine corruption pool', () => {
     expect(isUsed(usage.get('FLUX_CAPACITY_PERCENT_IMPLICIT'))).toBe(true);
     expect(usedByText(usage.get('FLUX_CAPACITY_PERCENT_IMPLICIT'))).toBe('Subroutine corruption pool');
     expect(usage.get('FLUX_CAPACITY_PERCENT_IMPLICIT')?.itemTypes).toEqual(['subroutine']);
-    const scopedToHullItems = parseModifiersCsv('id,slot,item_types,lines,name\nFLUX_CAPACITY_PERCENT_IMPLICIT,implicit,hull_item,FLUX_CAPACITY_PERCENT:1:2,\n');
+    const scopedToHullItems = parseModifiersCsv('id,affix,scopes,lines,name\nFLUX_CAPACITY_PERCENT_IMPLICIT,implicit,hull_item,FLUX_CAPACITY_PERCENT:1:2,\n');
     expect(validateModifiers(scopedToHullItems.modifiers, vocabulary, usage)).toEqual([
       'FLUX_CAPACITY_PERCENT_IMPLICIT: a subroutine rolls it, so item types must include subroutine',
     ]);

@@ -101,7 +101,7 @@ export function serializeWormholeAnchorsCsv(model: WormholeAnchorsModel): string
 }
 
 export function anchorVolumes(vocabulary: Vocabulary): string[] {
-  return vocabulary.regionTags.filter((region) => region !== CORE_REGION);
+  return vocabulary.volumeTags.filter((region) => region !== CORE_REGION);
 }
 
 export function treeNodeFacts(treeText: string, typesText: string, vocabulary: Vocabulary): Record<string, TreeNodeFacts> {
@@ -110,7 +110,7 @@ export function treeNodeFacts(treeText: string, typesText: string, vocabulary: V
   const nodes = (JSON.parse(treeText) as { nodes?: { id?: string; type?: string; tags?: string[] }[] }).nodes ?? [];
   const facts: Record<string, TreeNodeFacts> = {};
   for (const node of nodes) {
-    const region = (node.tags ?? []).find((tag) => vocabulary.regionTags.includes(tag)) ?? null;
+    const region = (node.tags ?? []).find((tag) => vocabulary.volumeTags.includes(tag)) ?? null;
     facts[String(node.id ?? '')] = { region, tier: tierByType.get(String(node.type ?? '')) ?? 'SMALL' };
   }
   return facts;

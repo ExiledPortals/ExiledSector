@@ -29,7 +29,7 @@ class ShipSkillDataSaveAliasTest {
     private static Map<String, ShipSkillData> records() {
         ShipSkillData data = new ShipSkillData();
         data.incrementLevel();
-        data.addFreeAllocationCredit();
+        data.addFreeAllocation();
         Map<String, ShipSkillData> records = new HashMap<>();
         records.put("ship-a", data);
         return records;
@@ -41,6 +41,18 @@ class ShipSkillDataSaveAliasTest {
 
         assertTrue(xml.contains(ExiledSectorModPlugin.SHIP_SKILL_DATA_ALIAS), xml);
         assertFalse(xml.contains(ShipSkillData.class.getName()), xml);
+    }
+
+    @Test
+    void renamedFieldsKeepTheirSavedNames() {
+        ShipSkillData data = new ShipSkillData();
+        data.grantUnlockedSection("bridge");
+
+        String xml = xstream(true).toXML(data);
+        ShipSkillData loaded = (ShipSkillData) xstream(true).fromXML(xml);
+
+        assertTrue(xml.contains("<unlockedSocketTypes>"), xml);
+        assertTrue(loaded.isSectionUnlocked("bridge"));
     }
 
     @Test

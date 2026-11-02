@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 public final class SkillEffectSupport {
 
     static final int MAX_COUNTED_DMODS = 5;
-    static final String NON_LOGISTICS_DMOD_EFFECT_MULT = "exiledLib_nonLogisticsDModEffectMult";
+    static final String COMBAT_DMOD_EFFECT_MULT = "exiledLib_nonLogisticsDModEffectMult";
     static final String LOGISTICS_DMOD_EFFECT_MULT = "exiledLib_logisticsDModEffectMult";
     static final String LOGISTICS_COPY_PREFIX = "exiledLib_logisticsDModCopy_";
     private static final String COPY_SCALE_ID = "exiledLib_logisticsDModCopyScale";
@@ -89,7 +89,7 @@ public final class SkillEffectSupport {
 
     public static void applyNonLogisticsDModEffectMult(MutableShipStatsAPI stats, String modId, float magnitude) {
         applyMult(stats.getDynamic().getStat(Stats.DMOD_EFFECT_MULT), modId, magnitude);
-        applyMult(stats.getDynamic().getStat(NON_LOGISTICS_DMOD_EFFECT_MULT), modId, magnitude);
+        applyMult(stats.getDynamic().getStat(COMBAT_DMOD_EFFECT_MULT), modId, magnitude);
         reapplyDMods(stats);
         refreshLogisticsDModCopies(stats);
     }
@@ -109,7 +109,7 @@ public final class SkillEffectSupport {
     }
 
     private static void refreshLogisticsDModCopies(MutableShipStatsAPI stats) {
-        float nonLogisticsMult = stats.getDynamic().getValue(NON_LOGISTICS_DMOD_EFFECT_MULT);
+        float nonLogisticsMult = stats.getDynamic().getValue(COMBAT_DMOD_EFFECT_MULT);
         float logisticsMult = stats.getDynamic().getValue(LOGISTICS_DMOD_EFFECT_MULT);
         MutableStat sharedEffect = stats.getDynamic().getStat(Stats.DMOD_EFFECT_MULT);
         float sharedValue = sharedEffect.getModifiedValue();

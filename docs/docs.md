@@ -139,7 +139,7 @@ winner's doesn't.
 
 `BALLISTIC_COUNTS_AS_ENERGY` makes `BallisticEnergyMirror` copy every energy and non-beam energy
 weapon effect from the ship's sources into a ballistic one before diminishing returns. Energy checks in Dynamic Grid,
-energy range per sensor strength, Disintegration, Ion Arc and energy chains also accept ballistic weapons
+energy range per sensor strength, Disintegration, Ion Arc and refractions also accept ballistic weapons
 (`BallisticAsEnergy`). Vanilla and other mods' energy bonuses don't reach ballistics.
 
 ### Damage conversion
@@ -151,18 +151,18 @@ matching a mount applies. Shots from weapon drones use the mount of the weapon t
 type from the weapon each tick, since their damage object lasts the whole firing.
 
 A conversion to EMP moves the hit's whole damage into EMP. `HitDamageRestorer` makes the change and restores the hit
-once it lands; energy chains and Wing Shared Fate use the same restorer, so their changes stack on one hit, and Beam
-Split cuts its simulated hits from the original damage.
+once it lands; refractions and Phase-Entangled Wings use the same restorer, so their changes stack on one hit, and Lion's
+Gaze cuts its simulated hits from the original damage.
 
 ### Refracting Projectiles
 
-`NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT` gives a non-beam energy shot that hits a shield a chance to
+`NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT` gives a non-beam energy shot that hits a shield a chance to
 refract to the nearest unhit enemy within weapon range, up to Max Refractions (default 5). Missiles and
 weapons in `energy_chain_blocklist.csv` never refract. As with Lion's Gaze, a pooled drone fires the real
 weapon as an instant single shot, then hands the projectile to the firing ship so its on-hit effects and
 kill credit apply.
 
-`NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT` lowers each refraction's base damage and restores it after the
+`NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT` lowers each refraction's base damage and restores it after the
 hit, rather than using a modifier, so EMP and on-hit effects stay at full strength.
 
 ### Projectile echoes
@@ -289,7 +289,7 @@ recovered ship loses it.
 
 The rest of the budget goes to notables and keystones drawn by seeded weight (`NpcRelevance` × tier), then
 small nodes. `NpcRelevance` multiplies theme tag weights by `npc_faction_focus.csv` and
-`npc_ship_system_focus.csv` (by ship system or defense id, `NpcFocus`), which also steers optional nodes'
+`npc_ship_system_focus.csv` (by ship system or defense id, `NpcFocus`), which also steers choice nodes'
 option picks. Every step is a breadth-first search through nodes `NodeEligibility` allows, never crossing
 wormholes. Shield Shunt and Makeshift Shield Generator need `req_unscripted_hull`, so NPCs never take them on a
 hull whose built-in hull mods or ship system come from another mod (`ShipProfile.scriptedHull`).
@@ -322,7 +322,7 @@ Chart ships roll a level in their tier's `level_min` to `level_max` from `star_c
 Fleet Strength %, and bosses roll one higher. Outside charts, a won battle's chart chance is `chart_drops.csv`'s
 battle chance per 100 enemy deployment points defeated, scaled by battle difficulty, at the highest tier whose
 `level_min` the strongest defeated NPC reached (`ChartDrops.forBattle`). With the skill tree switched off, the
-tier instead rises one per `strength_per_tier` deployment points defeated.
+tier instead rises one per `defeated_dp_per_tier` deployment points defeated.
 
 Node-granting lines such as Freebooting store node ids with the fleet's enemy rules. An enemy ship that gets an NPC tree
 has the node placed first as a free grant; the builder avoids nodes that conflict with it and only paths through it
@@ -373,7 +373,7 @@ crafting can still take it to four.
 
 A hull item with a targeting effect rolls one other section as its target (`HullItem.targetSection`, from its seed,
 stored once rolled); the Extended Warranty Contract's 100% doubles that item, drawbacks included. The Tuning
-Nanoswarm rerolls the target (`Item.retuneTrait`). On load a unique item follows its definition's current pool
+Nanoswarm rerolls the target (`Item.tuneTrait`). On load a unique item follows its definition's current pool
 (`ItemDefinition.withCurrentUniquePool`): it rolls modifiers added since it dropped, from its seed, and loses those
 taken out. A modifier whose effect no longer loads is kept.
 
@@ -404,12 +404,12 @@ drops only from those salvage sites' unique rolls and never from battles or tran
 restricts nothing: in a battle where that faction lost the most deployment points, the unique's drop weight is
 doubled (`ItemDrops.pickUniqueFromFaction`, `FACTION_SOURCE_WEIGHT_MULT`).
 
-### Item areas
+### Item volumes
 
-A hull item or subroutine can name an `area`, one of the toggled tree regions. `ItemAreas` asks the skill tree's
-`AreaToggles`, bound at application load: a definition whose area's mod isn't installed is never loaded, so its
-faction sources are never checked, and one whose area is switched off stays loaded but is left out of every drop
-pool (`ItemDrops`, `ItemUnlock.canDrop`) and of Transposition.
+A hull item or subroutine can name a `volume`, one of the toggled tree volumes. `ItemVolumes` asks the skill tree's
+`VolumeToggles`, bound at application load: a definition whose volume's mod isn't installed is never loaded, so its
+faction sources are never checked, and one whose volume is switched off stays loaded but is left out of every drop
+pool (`ItemDrops`, `ItemUnlock.canDrop`) and of the Metamorph Nanoswarm.
 
 ### Exclusive modifiers
 
@@ -426,7 +426,7 @@ Janus Device (`JanusDevice`, `AnchorJanusGate`, lifted by the "Allow Wormhole An
 setting, Hyper-Nav Beacon exempt), its own unlock is met, and no closed `withheld` gate holds its exit. Each gate
 in `node_gates.json` sets `anchors` (`withheld` by default, or `free`) and `rewardAnchor`. Nightcross is `free`
 and opens on `anchorFound` once any of its anchors reaches the player (`AnchorFinds`). The Singularity and Existential
-Threat battles add one area anchor to their loot once per save (`GateRewardAnchors`). NPC anchors ignore all of
+Threat battles add one volume anchor to their loot once per save (`GateRewardAnchors`). NPC anchors ignore all of
 this, and open wormholes stay open.
 
 An anchor with `guaranteed_drop` in `wormhole_anchors.csv` drops from every won battle that defeats one of its
@@ -454,7 +454,7 @@ themselves. Per-section effects such as `SHIELD_GENERATOR_ITEM_EFFECT_PERCENT` a
 `HullUpgradesDomain` registers for every `ShipSection`.
 
 Hull items carry a `HullItemOrigin`. `SkillTreeEffectSource` splits a subroutine's lines, the Root Conduit's affinity
-and the hollow affinity into a `SubroutineOrigin` contribution, and gives augmenting Doctrine lines and gated nodes a
+and the Empty Shell affinity into a `SubroutineOrigin` contribution, and gives augmenting Doctrine lines and gated nodes a
 `RadiusLineOrigin`, so a gating line's strength scales too. Nodes a subroutine grants or transforms keep their own
 values. `nodeEffects` folds both origins back into their node for module sharing.
 
@@ -467,11 +467,11 @@ socket one.
 
 ### Empty shells
 
-A subroutine whose lines hold `EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE` (Empty Shell Axion) is born corrupted and grants
+A subroutine whose lines hold `EVERY_AFFINITY_FLAT_PER_EMPTY_SHELL_NODE` (Empty Shell Axion) is born corrupted and grants
 every small, notable and keystone node in its radius through the socket grant links (`EmptyShells.radiusNodeIds`,
 via `NodeGrantLinks`). `NodeAllocator.grantSocketedNodes` turns paid nodes it covers into free ones, refunding
-their OP and items, and `AllocatedSkillEffects` drops a hollow node's own effects and gives the socket +1 (the line's
-value) to every affinity per hollow node. Unsocketing releases the granted nodes like a Modspec Cache's.
+their OP and items, and `AllocatedSkillEffects` drops an Empty Shell node's own effects and gives the socket +1 (the line's
+value) to every affinity per Empty Shell node. Unsocketing releases the granted nodes like a Modspec Cache's.
 
 ### Root Conduit
 
@@ -521,13 +521,13 @@ Each save has one atlas: `AtlasState` keeps the seed and per-system flags in per
 rebuilds everything else from the seed. A chart opens a system joined by a lane to a completed one (`AtlasReach`), and
 the system supplies the layout seed, faction, region recipe, anomalies and the lines from
 `atlas_node_effects.csv` for infested, cleansed and special-site systems, kept on the run as an
-`AtlasRunNode` (`AtlasOpening`). An anomaly with its own `atlas_markers.csv` row rolls on that chance instead of the
+`AtlasRunNode` (`AtlasOpening`). An anomaly with its own `atlas_anomaly_chances.csv` row rolls on that chance instead of the
 shared one. Powerful Boss (`PowerfulBoss`) does, and its run's boss always drops a chart one tier up
 (`LootShaper.guaranteesBossTierUp`); anomaly effects reach the content plan, so its line sizes the boss. Chart drops
 inside a run never fall below its tier.
 
 Killing the boss is the only way to complete a system, and it grants an atlas point for the first clear of each tier (`AtlasProgress`).
-A Sensor Array also reveals 6 lanes, a Nexus cleanses the systems it infested, and a Bastion gives a key fragment and
+A Sensor Array also reveals 6 lanes, an Infestation cleanses the systems it infested, and a Bastion gives a key fragment and
 allows one attempt. A system's anomalies are its rolled ones plus records inserted into `AtlasState`, which
 `AtlasAnomalies.canInsert` gates and any run there spends, at most 9 in all (`MAX_PER_SYSTEM`), unless a Relay Network chain moves on. A run that closes without killing its boss spends the system's
 rolled anomalies, all but star ones. Biomes tile the map from sites about five cells apart, and each sets how many of its cells hold a
@@ -594,7 +594,7 @@ Either kind is detected by the player from anywhere in the system, so it always 
 ### Chart system rules
 
 The chart's player-side lines are set once on entering the system (`ChartRunScript`) and reach the player's ships at
-ship creation (`ChartFleetConditions`). Each hostile chart fleet is granted the enemy-side lines when it is generated: they
+ship creation (`ChartPlayerModifiers`). Each hostile chart fleet is granted the enemy-side lines when it is generated: they
 are stored on the fleet and the hidden hull mod is added to its ships, again after each inflation
 (`ChartEnemyInflationListener`), which then apply them as granted nodes, stats and
 damage listeners at ship creation (`ChartEnemyShipEffects`). Only battle size and command point rate are battle rules
@@ -684,9 +684,9 @@ array turns player-owned, so vanilla's objective plugins give their bonus; a wok
 fleet's `detected_by_player_range_mult` and raises its extended detection range, so the player sees them at any range.
 
 The stage rides on an inserted record (`AtlasAnomalyRecord.Chain`); a rolled network is stage 1 of 3 or 4. A completed
-system keeps a chained record until the run closes, then `RelayChain.settle` moves it two or three lanes further out
+system keeps a chained record until the run closes, then `RelayStages.settle` moves it two or three lanes further out
 through uncompleted systems if all three relays woke, or at the same stage if the network could not be placed, and
-removes it otherwise. Each stage past the first adds the `relay_stage` lines of `atlas_node_effects.csv` once more (`RelayChain.join`), and the last stage's boss, if it dies with all three
+removes it otherwise. Each stage past the first adds the `relay_stage` lines of `atlas_node_effects.csv` once more (`RelayStages.join`), and the last stage's boss, if it dies with all three
 relays woken, drops one unique hull item or subroutine whatever its source (`ChartFleetLoot.guaranteedUnique`).
 
 ### Supply Convoy
@@ -720,7 +720,7 @@ detected-range multiplier hides each one until the player fleet comes within 600
 no reputation change and an AI that holds its field (`DormantFleets.wake`), then hands over to vanilla's encounter.
 Corrupting first spends a Corrupted Nanoswarm and rebuilds the fleet stronger, and the first engagement won against it
 drops an engram (`DormantFleetLoot`). An engram rerolls a non-unique hull item with four modifiers, one always its own
-from the reserved pool that no other roll draws from (`AnomalousDebrisCurrency`, core `ReservedModifiers`). An immutable
+from the reserved pool that no other roll draws from (`Engram`, core `ReservedModifiers`). An immutable
 modifier and an inhibited side's modifiers are kept, and the reroll fills up to two per side and four in total around them.
 Crafting that rerolls values (Tuning Nanoswarm, corruption) finds the reserved modifier through `Item.explicitModifier`.
 
@@ -734,9 +734,9 @@ plus the `exiledSector_chart_excavation` item row, sized by tier and the site qu
 
 An open shaft starts a fleet of the chart faction, or a derelict picket, built with `maxShipSize` 2 and kept in the
 planet's memory until beaten, repairing between fights like vanilla's salvage defenders (`HeldGuards`); it carries the site's vanilla drops and rolls its items in `ChartFleetLoot`. The
-encounter pulls in no other fleet and allows no AI retreat (`ShaftEncounters`), and `ChartCampaignPlugin` picks
-`ShaftBattleCreationPlugin` for it: a small dark map with rock fields along the edges, no objectives, and no cruiser or
-capital ship on either side. `ShaftBattlePlugin`, a global combat plugin, also removes them from the reserves in any
+encounter pulls in no other fleet and allows no AI retreat (`ExcavationEncounters`), and `ChartCampaignPlugin` picks
+`ExcavationBattleCreationPlugin` for it: a small dark map with rock fields along the edges, no objectives, and no cruiser or
+capital ship on either side. `ExcavationBattlePlugin`, a global combat plugin, also removes them from the reserves in any
 battle against a shaft fleet, so the rule holds even when another mod's battle plugin builds the map. A collapsed shaft is a
 `anomaly.ChartRaid` at a tier-based difficulty whose objective yields the site's items scaled by raid effectiveness.
 
@@ -745,7 +745,7 @@ battle against a shaft fleet, so the rule holds even when another mod's battle p
 The anomaly adds one moving `BaseTerrain` band, 3000 su wide and as long as the system is wide, that enters at a random
 edge when the run opens and leaves past the far edge 30 days later, then stops affecting anything
 (`StormFront`, `StormFrontTerrainPlugin`, geometry in `StormPath`, numbers in `StormRules`; package
-`charts.anomaly.storm`). Fleets inside it have 50% less sensor range, convoy fleets slow in it as in nebulae, and chart
+`charts.anomaly.stormfront`). Fleets inside it have 50% less sensor range, convoy fleets slow in it as in nebulae, and chart
 intel names the next worlds and POIs it reaches. The size and strike lines scale its width and strike rate.
 
 A battle is in the storm when the player fleet is inside the band as it starts. The global `StormBattlePlugin` then
@@ -764,7 +764,7 @@ the tier's fleet size, cruisers at most) under one alpha-core Guardian into the 
 `ForgeDialog` hands them to vanilla `SalvageDefenderInteraction`. As at every chart site with vanilla defenders, a win
 leaves the main sector's derelict tally untouched (`ChartDefenderTallies`). It then
 lists the programs and their costs, which grow 15% per tier and follow the cost line (`ForgeRules`), and opens the
-Modification Bench in Forge mode (`ForgeBench`), which takes hull items only.
+Crafting Bench in Forge mode (`ForgeCraftingBench`), which takes hull items only.
 
 The programs are `ForgeOperation`s in core (`ItemForging`), refusing mirrored, corrupted and locked items as nanoswarms
 do. Graft groups modifiers by the `skilleffect` subpackage of each line's effect, so a hybrid counts for every part it
@@ -777,7 +777,7 @@ program has changed the item.
 
 The anomaly places a post of the chart faction on a clear orbit away from the inner wormhole and three to five
 non-aggressive pickets with 50% more sensor range in a ring 1800 su around it, always shown on the map (package
-`charts.anomaly.heist`, numbers in `HeistRules`). Suspicion, the alarm and the vault's share live on the run record
+`charts.anomaly.listeningpost`, numbers in `ListeningPostRules`). Suspicion, the alarm and the vault's share live on the run record
 (`PostState`). Every 0.1 days `PostScript` asks each picket how well it sees the player: sensor contact (outer half of
 its range, transponder off) builds suspicion 25% a day, which drains 10% a day out of contact; identification starts
 that picket's half-day report. Full suspicion, a report going out, or a picket left with ships after a battle with the
@@ -828,7 +828,7 @@ systems that are not special sites or infested (`AtlasBiomeAnomalies`). It comes
 it always fits under the limit of 9, and a failed run doesn't spend it.
 
 Each places a station-mode fleet of its faction, marked with the run's tier and carrying a chart fleet's loot, on a
-clear orbit away from the inner wormhole (package `charts.anomaly.station`): a damaged Nexus up to tier 7 and a full
+clear orbit away from the inner wormhole (package `charts.anomaly.landmark`): a damaged Nexus up to tier 7 and a full
 one after, or the survey mothership. A system script launches up to two or three fleets of 35% of the tier's fleet
 size, 5% more per fleet lost (at most 60%), that patrol the system, drop no chart items and stop once the station
 dies. `NexusFleetManager` is vanilla's `RemnantStationFleetManager` without its hyperspace encounter point;

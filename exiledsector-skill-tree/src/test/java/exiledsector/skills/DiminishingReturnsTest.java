@@ -144,7 +144,7 @@ class DiminishingReturnsTest {
         EffectTotals totals = totals(HALF_PAST_FIFTY);
 
         assertEquals(DiminishingReturns.diminished(80f, 50f, 0.5f), totals.groups().get(0).totals().get(DefenseSkillEffect.ARMOR_PERCENT), 0.001f);
-        assertEquals(Set.of(DiminishedStat.ARMOUR), totals.diminishedStats());
+        assertEquals(Set.of(DiminishedStat.ARMOR), totals.diminishedStats());
     }
 
     @Test

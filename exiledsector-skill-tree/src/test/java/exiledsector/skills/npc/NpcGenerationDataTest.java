@@ -92,9 +92,9 @@ class NpcGenerationDataTest {
                 for (String nodeId : data.getAllocatedNodeIds()) {
                     SkillNode node = SkillTree.get(nodeId);
                     if (node != null && "affinity".equals(node.getType().getId())) {
-                        SkillType option = SkillTree.getType(data.getOptionalSelection(nodeId));
+                        SkillType option = SkillTree.getType(data.getChoiceSelection(nodeId));
                         if (option == null || option.getEffects().stream().noneMatch(effect -> rootEffects.contains(effect.effect().name()))) {
-                            problems.add(label + ": " + nodeId + " took " + data.getOptionalSelection(nodeId) + " on " + root.getId());
+                            problems.add(label + ": " + nodeId + " took " + data.getChoiceSelection(nodeId) + " on " + root.getId());
                         }
                     }
                 }
@@ -155,15 +155,15 @@ class NpcGenerationDataTest {
             if (tier == SkillTier.ROOT) {
                 continue;
             }
-            String region = node.getRegion();
-            if (region != null && !SkillTags.CORE_REGION.equals(region) && !region.equals(faction)) {
-                problems.add(label + ": " + nodeId + " is in " + region);
+            String volume = node.getVolume();
+            if (volume != null && !SkillTags.CORE_VOLUME.equals(volume) && !volume.equals(faction)) {
+                problems.add(label + ": " + nodeId + " is in " + volume);
             }
-            tasted |= faction != null && faction.equals(region) && (tier == SkillTier.NOTABLE || tier == SkillTier.KEYSTONE);
+            tasted |= faction != null && faction.equals(volume) && (tier == SkillTier.NOTABLE || tier == SkillTier.KEYSTONE);
             if (node.getConnectedNodeIds().stream().noneMatch(data::isAllocated)) {
                 problems.add(label + ": " + nodeId + " is not connected");
             }
-            String optionId = data.getOptionalSelection(nodeId);
+            String optionId = data.getChoiceSelection(nodeId);
             SkillType option = optionId == null ? null : SkillTree.getType(optionId);
             String unmet = NodeRequirements.firstUnmet(node.effectiveTags(option), archetype.profile());
             if (unmet != null) {
@@ -190,7 +190,7 @@ class NpcGenerationDataTest {
 
     private static boolean hasUsableNotable(String faction, Archetype archetype) {
         for (SkillNode node : SkillTree.topology().sortedById()) {
-            if (faction.equals(node.getRegion()) && (node.getType().getTier() == SkillTier.NOTABLE || node.getType().getTier() == SkillTier.KEYSTONE)
+            if (faction.equals(node.getVolume()) && (node.getType().getTier() == SkillTier.NOTABLE || node.getType().getTier() == SkillTier.KEYSTONE)
                     && NodeRequirements.firstUnmet(node.effectiveTags((SkillType) null), archetype.profile()) == null) {
                 return true;
             }

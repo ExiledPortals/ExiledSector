@@ -10,15 +10,15 @@ public enum BenchMode {
     private final float socketY;
     private final float orbitRadiusX;
     private final float orbitRadiusY;
-    private final float wardOffsetX;
+    private final float inhibitorOffsetX;
 
-    BenchMode(String artPath, float socketX, float socketY, float orbitRadiusX, float orbitRadiusY, float wardOffsetX) {
+    BenchMode(String artPath, float socketX, float socketY, float orbitRadiusX, float orbitRadiusY, float inhibitorOffsetX) {
         this.artPath = artPath;
         this.socketX = socketX;
         this.socketY = socketY;
         this.orbitRadiusX = orbitRadiusX;
         this.orbitRadiusY = orbitRadiusY;
-        this.wardOffsetX = wardOffsetX;
+        this.inhibitorOffsetX = inhibitorOffsetX;
     }
 
     String artPath() {
@@ -45,15 +45,15 @@ public enum BenchMode {
         return orbitRadiusY;
     }
 
-    float leftWardX() {
-        return socketX - wardOffsetX;
+    float leftInhibitorX() {
+        return socketX - inhibitorOffsetX;
     }
 
-    float rightWardX() {
-        return socketX + wardOffsetX;
+    float rightInhibitorX() {
+        return socketX + inhibitorOffsetX;
     }
 
-    float wardY() {
+    float inhibitorY() {
         return socketY;
     }
 }

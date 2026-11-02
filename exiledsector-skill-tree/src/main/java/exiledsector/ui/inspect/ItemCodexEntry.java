@@ -12,7 +12,7 @@ import exiledsector.items.ItemImplicits;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.items.PoolEntry;
-import exiledsector.items.RolledEffect;
+import exiledsector.items.RolledLine;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemEffects;
 import exiledsector.items.ItemRarity;
@@ -102,7 +102,7 @@ public class ItemCodexEntry extends BoxedCodexEntry {
         if (implicits.isEmpty()) {
             return;
         }
-        info.addSectionHeading(Translation.text("hullItem.tooltip.implicit"), Alignment.MID, PAD);
+        info.addSectionHeading(Translation.text("item.tooltip.implicit"), Alignment.MID, PAD);
         float linePad = PAD;
         for (Modifier implicit : implicits) {
             for (StyledText effectText : effectTexts(implicit)) {
@@ -135,7 +135,7 @@ public class ItemCodexEntry extends BoxedCodexEntry {
             writePool(info, "codex.doctrine.lines", doctrine.modifierPool(), doctrine.lineChances(), textWidth);
             return;
         }
-        VanillaText.addPara(info, Translation.msg("codex.doctrine.transforms").arg("radius", radiusName).styled(), PAD, Misc.getTextColor());
+        VanillaText.addPara(info, Translation.msg("codex.doctrine.rewrites").arg("radius", radiusName).styled(), PAD, Misc.getTextColor());
         writeReplacements(info, "codex.doctrine.notables", doctrine.notableTypeIds());
         writeReplacements(info, "codex.doctrine.keystones", doctrine.keystoneTypeIds());
         writeReplacements(info, "codex.doctrine.smallNodes", doctrine.smallTypeIds());
@@ -220,7 +220,7 @@ public class ItemCodexEntry extends BoxedCodexEntry {
     }
 
     private StyledText effectText(ModifierLine line) {
-        return new RolledEffect(line.effectName(), line.boundFarthestFromZero()).rangeDescription(ItemEffects.forType(definition.type()), line);
+        return new RolledLine(line.effectName(), line.boundFarthestFromZero()).rangeDescription(ItemEffects.forType(definition.type()), line);
     }
 
     static String percentText(double chance) {

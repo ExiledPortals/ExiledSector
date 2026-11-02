@@ -8,7 +8,7 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.generation.ChartTiers;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -64,7 +64,7 @@ class ChartLootTest {
         return drop;
     }
 
-    private static ChartGenContext context(ChartEffect effect, float value) {
+    private static ChartGenContext context(ChartModifier effect, float value) {
         return ChartGenContext.of(List.of(new AppliedEffect(effect, value)));
     }
 
@@ -129,7 +129,7 @@ class ChartLootTest {
         SectorEntityToken site = mock(SectorEntityToken.class);
 
         ChartVanillaLoot.addToSite(site, ChartPoi.Kind.CACHE, specDrops,
-                ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_WEAPON_PERCENT, 30f), new AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, 10f))), 5,
+                ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_WEAPON_PERCENT, 30f), new AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, 10f))), 5,
                 new Random(1L));
 
         List<DropData> randomCopies = randomDropsAddedTo(site);
@@ -166,7 +166,7 @@ class ChartLootTest {
         SectorEntityToken lowTierWreck = mock(SectorEntityToken.class);
         SectorEntityToken highTierWreck = mock(SectorEntityToken.class);
         SectorEntityToken cache = mock(SectorEntityToken.class);
-        ChartGenContext moreWeapons = context(ChartEffect.CHART_WEAPON_PERCENT, 50f);
+        ChartGenContext moreWeapons = context(ChartModifier.CHART_WEAPON_PERCENT, 50f);
 
         ChartVanillaLoot.addToSite(lowTierWreck, ChartPoi.Kind.DERELICT, ChartVanillaLoot.SiteDrops.NONE, moreWeapons, 3, new Random(1L));
         ChartVanillaLoot.addToSite(highTierWreck, ChartPoi.Kind.DERELICT, ChartVanillaLoot.SiteDrops.NONE, moreWeapons, 6, new Random(1L));
@@ -192,7 +192,7 @@ class ChartLootTest {
         when(guard.getFleetPoints()).thenReturn(250);
         CampaignFleetAPI boss = mock(CampaignFleetAPI.class);
         when(boss.getFleetPoints()).thenReturn(400);
-        ChartGenContext hoard = context(ChartEffect.CHART_BOSS_SPOILS_PERCENT, 50f);
+        ChartGenContext hoard = context(ChartModifier.CHART_BOSS_SPOILS_PERCENT, 50f);
 
         ChartVanillaLoot.addToFleet(guard, false, hoard, 8);
         ChartVanillaLoot.addToFleet(boss, true, hoard, 8);
@@ -214,7 +214,7 @@ class ChartLootTest {
         SectorEntityToken site = mock(SectorEntityToken.class);
 
         ChartVanillaLoot.addToSite(site, ChartPoi.Kind.DOMAIN, new ChartVanillaLoot.SiteDrops(List.of(drop("rare_tech", 1, -1)), List.of()),
-                context(ChartEffect.CHART_QUANTITY_PERCENT, 200f), 15, new Random(1L));
+                context(ChartModifier.CHART_QUANTITY_PERCENT, 200f), 15, new Random(1L));
 
         verify(site, never()).addDropRandom(any(DropData.class));
     }
@@ -225,7 +225,7 @@ class ChartLootTest {
         SectorEntityToken wreck = mock(SectorEntityToken.class);
         when(wreck.getDropValue()).thenReturn(List.of(drop("basic", -1, 4000)));
 
-        ChartVanillaLoot.addToSite(wreck, ChartPoi.Kind.DERELICT, ChartVanillaLoot.SiteDrops.NONE, context(ChartEffect.CHART_RESOURCE_PERCENT, 25f), 1,
+        ChartVanillaLoot.addToSite(wreck, ChartPoi.Kind.DERELICT, ChartVanillaLoot.SiteDrops.NONE, context(ChartModifier.CHART_RESOURCE_PERCENT, 25f), 1,
                 new Random(1L));
 
         List<DropData> valueCopies = valueDropsAddedTo(wreck);

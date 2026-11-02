@@ -11,7 +11,7 @@ import exiledsector.skills.npc.NpcTreeConfig;
 import exiledsector.skills.npc.NpcTreeSize;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.SkillNodeOpCost;
-import exiledsector.skills.tags.AreaToggles;
+import exiledsector.skills.tags.VolumeToggles;
 import exiledsector.skills.unlock.HiddenNodeDisplayConfig;
 import exiledsector.skills.unlock.UnlockConditionOverrides;
 import exiledsector.ui.inspect.NpcInspectConfig;
@@ -114,24 +114,24 @@ public final class SkillTreeSettings {
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_treeItemsHeader", Translation.text("settings.treeItems.header"), treeTab);
         SettingsCreator.addInt(MOD_ID, UniqueSubroutinesSetting.UNLOCK_LEVEL_FIELD_ID,
-                Translation.text("settings.socketStorage.uniqueSubroutinesLevel.name"),
-                Translation.text("settings.socketStorage.uniqueSubroutinesLevel.tooltip"),
+                Translation.text("settings.hullItems.uniqueSubroutinesLevel.name"),
+                Translation.text("settings.hullItems.uniqueSubroutinesLevel.tooltip"),
                 UniqueSubroutinesSetting.DEFAULT_UNLOCK_LEVEL, UniqueSubroutinesSetting.MIN_UNLOCK_LEVEL, UniqueSubroutinesSetting.MAX_UNLOCK_LEVEL,
                 treeTab);
         SettingsCreator.addBoolean(MOD_ID, AnchorJanusGate.ALLOW_BEFORE_JANUS_FIELD_ID,
                 Translation.text("settings.unlock.anchorsBeforeJanus"), Translation.text("settings.unlock.anchorsBeforeJanus.tooltip"),
                 AnchorJanusGate.DEFAULT_ALLOW_BEFORE_JANUS, treeTab);
 
-        SettingsCreator.addHeader(MOD_ID, "exiledSector_areasHeader", Translation.text("settings.areas.header"), treeTab);
-        SettingsCreator.addText(MOD_ID, "exiledSector_areasAbout", Translation.text("settings.areas.about"), treeTab);
-        SettingsCreator.addRadio(MOD_ID, AreaToggles.LOST_SECTOR_FIELD_ID, Translation.text("settings.areas.lostSector.name"),
-                Translation.text("settings.areas.lostSector.tooltip"), AreaToggles.AUTO, String.join(",", AreaToggles.OPTIONS), treeTab);
-        SettingsCreator.addRadio(MOD_ID, AreaToggles.RANDOM_ASSORTMENT_FIELD_ID, Translation.text("settings.areas.randomAssortment.name"),
-                Translation.text("settings.areas.randomAssortment.tooltip"), AreaToggles.AUTO, String.join(",", AreaToggles.REQUIRED_MOD_OPTIONS), treeTab);
-        SettingsCreator.addRadio(MOD_ID, AreaToggles.NIGHTCROSS_FIELD_ID, Translation.text("settings.areas.nightcross.name"),
-                Translation.text("settings.areas.nightcross.tooltip"), AreaToggles.AUTO, String.join(",", AreaToggles.OPTIONS), treeTab);
-        SettingsCreator.addRadio(MOD_ID, AreaToggles.TANIA_FIELD_ID, Translation.text("settings.areas.tania.name"),
-                Translation.text("settings.areas.tania.tooltip"), AreaToggles.AUTO, String.join(",", AreaToggles.REQUIRED_MOD_OPTIONS), treeTab);
+        SettingsCreator.addHeader(MOD_ID, "exiledSector_areasHeader", Translation.text("settings.volumes.header"), treeTab);
+        SettingsCreator.addText(MOD_ID, "exiledSector_areasAbout", Translation.text("settings.volumes.about"), treeTab);
+        SettingsCreator.addRadio(MOD_ID, VolumeToggles.LOST_SECTOR_FIELD_ID, Translation.text("settings.volumes.lostSector.name"),
+                Translation.text("settings.volumes.lostSector.tooltip"), VolumeToggles.AUTO, String.join(",", VolumeToggles.OPTIONS), treeTab);
+        SettingsCreator.addRadio(MOD_ID, VolumeToggles.RANDOM_ASSORTMENT_FIELD_ID, Translation.text("settings.volumes.randomAssortment.name"),
+                Translation.text("settings.volumes.randomAssortment.tooltip"), VolumeToggles.AUTO, String.join(",", VolumeToggles.REQUIRED_MOD_OPTIONS), treeTab);
+        SettingsCreator.addRadio(MOD_ID, VolumeToggles.NIGHTCROSS_FIELD_ID, Translation.text("settings.volumes.nightcross.name"),
+                Translation.text("settings.volumes.nightcross.tooltip"), VolumeToggles.AUTO, String.join(",", VolumeToggles.OPTIONS), treeTab);
+        SettingsCreator.addRadio(MOD_ID, VolumeToggles.TANIA_FIELD_ID, Translation.text("settings.volumes.tania.name"),
+                Translation.text("settings.volumes.tania.tooltip"), VolumeToggles.AUTO, String.join(",", VolumeToggles.REQUIRED_MOD_OPTIONS), treeTab);
     }
 
     private static void registerNpc() {

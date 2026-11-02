@@ -30,9 +30,9 @@ public enum ReadinessSkillEffect implements BackedSkillEffect {
             "stat.combatReadinessRecoveryRate", false)),
     REPAIR_RATE_PER_DAY_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getRepairRatePercentPerDay), "stat.repairRatePerDay", false)),
     CR_LOSS_PER_SECOND_PERCENT(statEffect(PERCENT, liveBonus(MutableShipStatsAPI::getCRLossPerSecondPercent),
-            "stat.rateOfCombatReadinessLossFromExtendedDeployment", true)),
+            "stat.crDegradation", true)),
     CR_LOSS_PER_SECOND_MULT(statEffect(MULT, liveBonus(MutableShipStatsAPI::getCRLossPerSecondPercent),
-            "stat.rateOfCombatReadinessLossFromExtendedDeployment", true)),
+            "stat.crDegradation", true)),
     PEAK_CR_DURATION_PERCENT(statEffect(PERCENT, liveBonus(MutableShipStatsAPI::getPeakCRDuration), "stat.peakCombatReadinessDuration", false)),
     PEAK_CR_DURATION_MULT(statEffect(MULT, liveBonus(MutableShipStatsAPI::getPeakCRDuration), "stat.peakCombatReadinessDuration", false));
 

@@ -1,7 +1,7 @@
 package exiledsector.skills.template;
 
 import exiledsector.items.DoctrineOverrides;
-import exiledsector.skills.AllocationGate;
+import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
@@ -16,7 +16,7 @@ public final class TemplateStepRules {
     }
 
     public static StepVerdict verdict(TemplateStep step, ShipSkillData shipData, String rootId,
-                                      BiFunction<SkillNode, SkillType, AllocationGate.Verdict> allocationVerdict) {
+                                      BiFunction<SkillNode, SkillType, AllocationCheck.Verdict> allocationVerdict) {
         SkillNode node = SkillTree.get(step.nodeId());
         if (node == null) {
             return StepVerdict.UNKNOWN_NODE;
@@ -31,14 +31,14 @@ public final class TemplateStepRules {
                 return StepVerdict.NO_OPTION;
             }
         }
-        if (NodeEligibility.itemCost(DoctrineOverrides.asTransformed(shipData, node), optionType) != null) {
+        if (NodeEligibility.itemCost(DoctrineOverrides.asRewritten(shipData, node), optionType) != null) {
             return StepVerdict.ITEM_COST;
         }
-        AllocationGate.Verdict verdict = allocationVerdict.apply(node, optionType);
+        AllocationCheck.Verdict verdict = allocationVerdict.apply(node, optionType);
         if (verdict.allowed()) {
             return StepVerdict.ALLOCATE;
         }
-        return verdict.refusal() == AllocationGate.Refusal.INELIGIBLE ? StepVerdict.BLOCKED : StepVerdict.NOT_ALLOCATABLE;
+        return verdict.refusal() == AllocationCheck.Refusal.INELIGIBLE ? StepVerdict.BLOCKED : StepVerdict.NOT_ALLOCATABLE;
     }
 
     public static SkillType optionFor(TemplateStep step, SkillNode node, ShipSkillData shipData) {

@@ -208,7 +208,7 @@ public final class ConvoyScript extends AnomalyRunScript implements FleetEventLi
         } else {
             flee(convoy, freighters);
         }
-        tellPlayer(() -> Translation.gameText("chart.convoy.alarm"), Misc::getNegativeHighlightColor);
+        tellPlayer(() -> Translation.gameText("chart.anomaly.supply_convoy.alarm"), Misc::getNegativeHighlightColor);
         return true;
     }
 
@@ -362,7 +362,7 @@ public final class ConvoyScript extends AnomalyRunScript implements FleetEventLi
         SectorEntityToken destination = entity(convoy.destinationId());
         if (destination != null && convoy.hasCache()) {
             String planet = destination.getName();
-            tellPlayer(() -> I18n.forGameText(() -> Translation.msg("chart.convoy.delivered").arg("planet", planet).text()), Misc::getHighlightColor);
+            tellPlayer(() -> I18n.forGameText(() -> Translation.msg("chart.anomaly.supply_convoy.delivered").arg("planet", planet).text()), Misc::getHighlightColor);
         }
     }
 

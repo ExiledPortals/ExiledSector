@@ -75,11 +75,11 @@ class ItemLootListenerTest {
         when(fleetData.getMembersListCopy()).thenReturn(List.of());
         when(mockSector.playerFleet().getFleetData()).thenReturn(fleetData);
         SkillType rootType = new SkillType.Builder("root_type", "root", "a.png", SkillTier.ROOT).build();
-        SkillType socketType = new SkillType.Builder("socket", "socket", "a.png", SkillTier.SOCKET).build();
+        SkillType sectionKind = new SkillType.Builder("socket", "socket", "a.png", SkillTier.SOCKET).build();
         SkillTree.registerType(rootType);
-        SkillTree.registerType(socketType);
+        SkillTree.registerType(sectionKind);
         SkillTree.register(new SkillNode("root", rootType, List.of(), 0f, 0f));
-        SkillTree.register(new SkillNode("socket_1", socketType, List.of("root"), 0f, 0f));
+        SkillTree.register(new SkillNode("socket_1", sectionKind, List.of("root"), 0f, 0f));
         ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "volume_subroutine").put("kind", "MODSPEC_CACHE").put("rarity", "10")));
         FactionFleetDrops.register(TEST_DROPS, Map.of("volume_subroutine", FactionFleetDrops.Source.anyFaction(1f)));
     }
@@ -281,7 +281,7 @@ class ItemLootListenerTest {
 
         listener.reportEncounterLootGenerated(context(battle), loot);
 
-        verify(loot).addSpecial(MaterialItems.data(ItemDisassembly.PARTS_ITEM_ID), 10);
+        verify(loot).addSpecial(MaterialItems.data(ItemDisassembly.FEEDSTOCK_ITEM_ID), 10);
     }
 
     @Test
@@ -308,7 +308,7 @@ class ItemLootListenerTest {
         StarChartFixtures.registerShipped();
         ChartDrops.register(new JSONArray()
                 .put(new JSONObject().put("source", "chart_fleet").put("chance", "1"))
-                .put(new JSONObject().put("source", "battle").put("chance", "0.25").put("min_strength", "150").put("strength_per_tier", "100")
+                .put(new JSONObject().put("source", "battle").put("chance", "0.25").put("min_defeated_dp", "150").put("defeated_dp_per_tier", "100")
                         .put("max_tier", "6")));
         try {
             ChartRun run = new ChartRun("lootRun", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);

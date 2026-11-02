@@ -33,7 +33,7 @@ public final class LostSectorUnlocks {
         }
         if (frost.isEnteredByPlayer()) {
             CompatTarget.raiseSectorFlag(sector, FROZEN_HEART_SYSTEM_VISITED_FLAG, LOG,
-                    "Unlocking the Enigma area: the player has entered " + frost.getBaseName() + ", the Frozen Heart's system");
+                    "Unlocking the Enigma volume: the player has entered " + frost.getBaseName() + ", the Frozen Heart's system");
             return true;
         }
         return false;
@@ -52,7 +52,7 @@ public final class LostSectorUnlocks {
         StarSystemAPI frost = location == null || sector == null ? null : frostSystem(sector);
         if (frost != null && location == frost) {
             GateTriggers.record(sector, UnlockConditionType.LOST_SECTOR_FROZEN_HEART_VISITED, sector.getMemoryWithoutUpdate(),
-                    FROZEN_HEART_SYSTEM_VISITED_FLAG, "Unlocking the Enigma area: the player has entered " + frost.getBaseName() + ", the Frozen Heart's system");
+                    FROZEN_HEART_SYSTEM_VISITED_FLAG, "Unlocking the Enigma volume: the player has entered " + frost.getBaseName() + ", the Frozen Heart's system");
         }
     }
 

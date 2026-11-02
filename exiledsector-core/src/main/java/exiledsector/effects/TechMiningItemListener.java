@@ -16,7 +16,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.ItemData;
-import exiledsector.loot.LootModifiers;
+import exiledsector.loot.LootMultipliers;
 import exiledsector.loot.LootSources;
 import exiledsector.ui.CampaignMessages;
 
@@ -55,7 +55,7 @@ public class TechMiningItemListener implements EconomyTickListener {
             Random random = Seeds.random(sector.getSeedString() + "|" + market.getId() + "|" + minedMonths);
             String dropSite = minedMonths == 0 ? ItemDrops.TECH_MINING_FIRST_FIND : ItemDrops.TECH_MINING_MONTHLY;
             float chanceMult = minedMonths == 0 ? 1f : (float) Math.pow(decay, minedMonths - 1);
-            ItemDrops.SiteLoot siteLoot = LootSources.rollSite(sector, dropSite, random, LootModifiers.of(chanceMult));
+            ItemDrops.SiteLoot siteLoot = LootSources.rollSite(sector, dropSite, random, LootMultipliers.of(chanceMult));
             Find find = new Find(sector, market, minedMonths, dropSite, chanceMult, random, new ArrayList<>());
             LootSources.all().forEach(source -> source.addTechMiningFinds(find));
             marketMemory.set(MONTHS_KEY, minedMonths + 1);

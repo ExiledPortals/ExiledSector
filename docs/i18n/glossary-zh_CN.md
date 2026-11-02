@@ -59,7 +59,7 @@ The zh_CN catalogue was drafted by Claude and still needs review by a native spe
 | Skill tree | 技能树 | |
 | Node | 节点 | |
 | Notable / keystone | 重要节点 / 基石节点 | |
-| Starting location (root) | 起点 | |
+| Root (where a ship's tree starts) | 起点 | |
 | Allocate / deallocate | 分配 / 取消分配 | |
 | Free allocation | 免费分配 | |
 | Level / XP | 等级 / 经验 | |
@@ -68,14 +68,16 @@ The zh_CN catalogue was drafted by Claude and still needs review by a native spe
 | Template / auto-allocate | 模板 / 自动分配 | A saved set of nodes a ship can follow |
 | Wormhole | 虫洞 | |
 | Star Chart / Star Chart Boss | 星图 / 星图首领 | 首领 alone where the chart is already clear, as in 首领舰队 |
-| Modular Hull Socket | 模块化船体插槽 | The skill tree socket node |
+| Subroutine Socket | 子程序插槽 | The skill tree node that holds a subroutine or wormhole anchor |
 | Domain (of Man) | 人类领域 | As in the community translation of vanilla |
-| Subroutine / officer / team / AI core | 子程序 / 军官 / 团队 / AI核心 | What a Modular Hull Socket holds |
-| Military-grade / Industrial-grade / Consumer-grade | 军用级 / 工业级 / 民用级 | Socketable grades |
-| Socketable Parts / disassemble | 插槽组件 / 拆解 | Cargo item from disassembling a socketable |
-| Socket Modification / workbench | 插槽改造 / 改造台 | The panel for synthesising and modifying socketables |
-| Augmentation / Recalibration / Transposition Kernel | 增幅内核 / 重校内核 / 转置内核 | Socketable currencies |
-| Synthesise | 合成 | Making socketables or currencies from Socketable Parts |
+| Hull item / Hull Item Storage | 船体物品 / 船体物品仓库 | Subroutines, anchors and other items that go into a ship's sockets |
+| Common / Rare / Unique | 普通 / 稀有 / 独特 | Hull item rarities |
+| Nanite Feedstock / disassemble | 纳米原料 / 拆解 | What disassembling a hull item gives |
+| Crafting Bench | 制作台 | The panel for growing materials and modifying hull items and Star Charts |
+| Augmentation / Tuning / Fundamental / Reshaping / Metamorph / Immutable / Annulment / Corrupted Nanoswarm | 增幅 / 调校 / 本源 / 重塑 / 变形 / 恒固 / 废除 / 腐化纳米群 | Crafting materials that change a hull item's modifiers |
+| Prefix / Suffix Inhibitor | 前缀 / 后缀抑制程序 | Crafting materials that protect one affix side |
+| Erasure Cipher | 抹除密码 | Removes every modifier from a Star Chart |
+| Grow | 培育 | Making a crafting material from Nanite Feedstock |
 | Escort | 护航 | |
 | Refraction / refract | 折射 | Refracting Projectiles' shots, matching its name 折射弹体 |
 | Volume (a region on the hyperspace view) | 星域 | "Sindrian volume" is 辛达强权星域 |

@@ -59,9 +59,9 @@ class ChartContentPlannerTest {
             assertEquals(ChartContentPlanner.STATION_OFFICER_LEVEL + tier.officerLevelBonus() + ChartContentPlanner.BOSS_OFFICER_LEVEL_BONUS,
                     plan.bossStation().officerLevel());
             assertEquals(0, plan.count(FleetRole.BOSS));
-            assertEquals(1, plan.count(FleetRole.DEFENDER));
+            assertEquals(1, plan.count(FleetRole.STATION_GUARD));
             assertEquals(ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, tier.bossSize() * 0.5f)),
-                    plan.fleetPoints(FleetRole.DEFENDER), 0.001f);
+                    plan.fleetPoints(FleetRole.STATION_GUARD), 0.001f);
             PlannedFleet fallback = plan.bossStation().fallbackBoss();
             assertEquals(FleetRole.BOSS, fallback.role());
             assertEquals(ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, tier.bossSize())), fallback.combatPoints(), 0.001f);
@@ -76,7 +76,7 @@ class ChartContentPlannerTest {
             ChartContentPlan plan = plan(seed, 6);
             assertEquals(ChartBossType.FLEET, plan.bossType());
             assertEquals(1, plan.count(FleetRole.BOSS));
-            assertEquals(0, plan.count(FleetRole.DEFENDER));
+            assertEquals(0, plan.count(FleetRole.STATION_GUARD));
         }
     }
 

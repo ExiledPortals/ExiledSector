@@ -44,12 +44,12 @@ class ItemForgingTest {
                 .put("prefixes", prefixes).put("suffixes", suffixes).put("section", "armor_plating");
     }
 
-    private static Item plate(RolledEffect... effects) {
+    private static Item plate(RolledLine... effects) {
         return Item.withEffects("plate", PLATE, 1L, List.of(effects));
     }
 
     private static List<String> effectNames(Item item) {
-        return item.effects().stream().map(RolledEffect::effectName).toList();
+        return item.effects().stream().map(RolledLine::effectName).toList();
     }
 
     @Test
@@ -62,11 +62,11 @@ class ItemForgingTest {
 
     @Test
     void graftOffersOnlyPartsWithAnOpenModifierAndAddsOneOfThatPart() {
-        Item item = plate(new RolledEffect("FLUX_CAPACITY_MULT", 5f));
+        Item item = plate(new RolledLine("FLUX_CAPACITY_MULT", 5f));
 
         assertEquals(List.of("defense", "flux", "shield"), ItemForging.graftParts(item));
         for (long seed = 0; seed < 10; seed++) {
-            Item fresh = plate(new RolledEffect("FLUX_CAPACITY_MULT", 5f));
+            Item fresh = plate(new RolledLine("FLUX_CAPACITY_MULT", 5f));
             RolledModifier added = ItemForging.graft(fresh, "shield", new Random(seed));
             assertNotNull(added);
             assertEquals(List.of("FLUX_CAPACITY_MULT", "SHIELD_DAMAGE_TAKEN_MULT"), effectNames(fresh));
@@ -78,8 +78,8 @@ class ItemForgingTest {
 
     @Test
     void graftRefusesAFullItem() {
-        Item item = plate(new RolledEffect("FLUX_CAPACITY_MULT", 5f), new RolledEffect("HULL_MULT", 5f),
-                new RolledEffect("SHIELD_DAMAGE_TAKEN_MULT", -12f), new RolledEffect("ARMOR_PERCENT", 7f));
+        Item item = plate(new RolledLine("FLUX_CAPACITY_MULT", 5f), new RolledLine("HULL_MULT", 5f),
+                new RolledLine("SHIELD_DAMAGE_TAKEN_MULT", -12f), new RolledLine("ARMOR_PERCENT", 7f));
 
         assertEquals(ForgeOperation.REFUSAL_PREFIX + "graft", ForgeOperation.GRAFT.verdict(item).refusalKey());
         assertFalse(ForgeOperation.GRAFT.apply(item, ForgeChoice.part("flux"), new Random(1L)));
@@ -87,9 +87,9 @@ class ItemForgingTest {
 
     @Test
     void exciseRemovesTheChosenModifierButNeverAnImmutableOne() {
-        Item item = plate(new RolledEffect("FLUX_CAPACITY_MULT", 5f), new RolledEffect("ARMOR_PERCENT", 7f));
+        Item item = plate(new RolledLine("FLUX_CAPACITY_MULT", 5f), new RolledLine("ARMOR_PERCENT", 7f));
         RolledModifier armor = item.explicits().get(1);
-        item.replaceExplicits(List.of(item.explicits().get(0).asLocked(), armor));
+        item.replaceExplicits(List.of(item.explicits().get(0).asImmutable(), armor));
 
         assertEquals(List.of(ForgeChoice.modifier(armor)), ForgeOperation.EXCISE.choices(item));
         assertTrue(ForgeOperation.EXCISE.apply(item, ForgeChoice.modifier(armor), new Random(1L)));
@@ -99,7 +99,7 @@ class ItemForgingTest {
 
     @Test
     void perfectSetsEveryLineToTheBestEndForThePlayer() {
-        Item item = plate(new RolledEffect("FLUX_CAPACITY_MULT", 5f), new RolledEffect("SHIELD_DAMAGE_TAKEN_MULT", -12f));
+        Item item = plate(new RolledLine("FLUX_CAPACITY_MULT", 5f), new RolledLine("SHIELD_DAMAGE_TAKEN_MULT", -12f));
 
         assertTrue(ForgeOperation.PERFECT.apply(item, ForgeChoice.modifier(item.explicits().get(1)), new Random(1L)));
         assertEquals(-15f, item.effects().get(1).magnitude(), "less shield damage taken is better");
@@ -110,7 +110,7 @@ class ItemForgingTest {
 
     @Test
     void perfectingAHarmfulModifierMakesItAsMildAsItsRangeAllows() {
-        Item item = Item.withEffects("drawback", DRAWBACK, 1L, List.of(new RolledEffect("WEAPON_DAMAGE_PERCENT", -8f)));
+        Item item = Item.withEffects("drawback", DRAWBACK, 1L, List.of(new RolledLine("WEAPON_DAMAGE_PERCENT", -8f)));
 
         assertTrue(ForgeOperation.PERFECT.apply(item, ForgeChoice.modifier(item.explicits().get(0)), new Random(1L)));
         assertEquals(-5f, item.effects().get(0).magnitude());
@@ -118,19 +118,19 @@ class ItemForgingTest {
 
     @Test
     void aRollAlreadyPastTodaysRangeIsNeverPerfectedDownward() {
-        Item item = plate(new RolledEffect("FLUX_CAPACITY_MULT", 7f));
+        Item item = plate(new RolledLine("FLUX_CAPACITY_MULT", 7f));
 
         assertEquals(ForgeOperation.REFUSAL_PREFIX + "perfect", ForgeOperation.PERFECT.verdict(item).refusalKey());
         Item retempered = plate();
-        retempered.replaceImplicits(List.of(retempered.implicits().get(0).withLines(List.of(new RolledEffect("ARMOR_PERCENT", 25f)))));
+        retempered.replaceImplicits(List.of(retempered.implicits().get(0).withLines(List.of(new RolledLine("ARMOR_PERCENT", 25f)))));
         assertFalse(ForgeOperation.RETEMPER.verdict(retempered).allowed());
     }
 
     @Test
     void anchorRerollKeepsTheAnchorAndTheModifierCount() {
         for (long seed = 0; seed < 20; seed++) {
-            Item item = plate(new RolledEffect("FLUX_CAPACITY_MULT", 5f), new RolledEffect("HULL_MULT", 5f),
-                    new RolledEffect("ARMOR_PERCENT", 7f));
+            Item item = plate(new RolledLine("FLUX_CAPACITY_MULT", 5f), new RolledLine("HULL_MULT", 5f),
+                    new RolledLine("ARMOR_PERCENT", 7f));
             RolledModifier anchor = item.explicits().get(1);
 
             assertTrue(ForgeOperation.ANCHOR_REROLL.apply(item, ForgeChoice.modifier(anchor), new Random(seed)));
@@ -142,7 +142,7 @@ class ItemForgingTest {
 
     @Test
     void anchorRerollNeedsAnotherModifierToReroll() {
-        Item item = plate(new RolledEffect("FLUX_CAPACITY_MULT", 5f));
+        Item item = plate(new RolledLine("FLUX_CAPACITY_MULT", 5f));
 
         assertEquals(ForgeOperation.REFUSAL_PREFIX + "anchor_reroll", ForgeOperation.ANCHOR_REROLL.verdict(item).refusalKey());
     }
@@ -151,19 +151,19 @@ class ItemForgingTest {
     void retemperKeepsTheStrongerOfTheOldAndNewImplicitRolls() {
         for (long seed = 0; seed < 20; seed++) {
             Item item = plate();
-            item.replaceImplicits(List.of(item.implicits().get(0).withLines(List.of(new RolledEffect("ARMOR_PERCENT", 14f)))));
+            item.replaceImplicits(List.of(item.implicits().get(0).withLines(List.of(new RolledLine("ARMOR_PERCENT", 14f)))));
 
             assertTrue(ForgeOperation.RETEMPER.apply(item, ForgeChoice.WHOLE_ITEM, new Random(seed)));
             assertTrue(item.implicits().get(0).lines().get(0).magnitude() >= 14f);
         }
         Item perfect = plate();
-        perfect.replaceImplicits(List.of(perfect.implicits().get(0).withLines(List.of(new RolledEffect("ARMOR_PERCENT", 20f)))));
+        perfect.replaceImplicits(List.of(perfect.implicits().get(0).withLines(List.of(new RolledLine("ARMOR_PERCENT", 20f)))));
         assertEquals(ForgeOperation.REFUSAL_PREFIX + "retemper", ForgeOperation.RETEMPER.verdict(perfect).refusalKey());
     }
 
     @Test
     void uniquesRefuseEveryProgramThatChangesWhichModifiersTheyHold() {
-        Item relic = Item.withEffects("relic", RELIC, 1L, List.of(new RolledEffect("HULL_MULT", 5f), new RolledEffect("ARMOR_PERCENT", 7f)));
+        Item relic = Item.withEffects("relic", RELIC, 1L, List.of(new RolledLine("HULL_MULT", 5f), new RolledLine("ARMOR_PERCENT", 7f)));
 
         assertFalse(ForgeOperation.GRAFT.verdict(relic).allowed());
         assertFalse(ForgeOperation.EXCISE.verdict(relic).allowed());
@@ -173,7 +173,7 @@ class ItemForgingTest {
 
     @Test
     void mirroredAndCorruptedItemsAreRefusedLikeNanoswarmsRefuseThem() {
-        Item corrupted = plate(new RolledEffect("FLUX_CAPACITY_MULT", 5f));
+        Item corrupted = plate(new RolledLine("FLUX_CAPACITY_MULT", 5f));
         corrupted.corrupt(CorruptionOutcome.NOTHING);
 
         assertEquals(ForgeOperation.REFUSAL_PREFIX + "corrupted", ForgeOperation.PERFECT.verdict(corrupted).refusalKey());

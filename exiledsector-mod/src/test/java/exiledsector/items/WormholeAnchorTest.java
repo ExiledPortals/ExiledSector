@@ -62,9 +62,9 @@ class WormholeAnchorTest {
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
         lunaSettingsMock.when(() -> LunaSettings.getBoolean(anyString(), eq(AnchorJanusGate.ALLOW_BEFORE_JANUS_FIELD_ID))).thenReturn(true);
         SkillTree.clearNodes();
-        SkillType socketType = new SkillType.Builder("socket_type", "Socket", "", SkillTier.SOCKET).build();
+        SkillType sectionKind = new SkillType.Builder("socket_type", "Socket", "", SkillTier.SOCKET).build();
         SkillType wormholeType = new SkillType.Builder("wormhole_exit_type", "Wormhole Exit", "", SkillTier.WORMHOLE_EXIT).build();
-        socket = new SkillNode("socket", socketType, List.of(), 0f, 0f);
+        socket = new SkillNode("socket", sectionKind, List.of(), 0f, 0f);
         SkillTree.register(socket);
         SkillTree.register(new SkillNode("hegemony_2", wormholeType, List.of(), 100f, 0f, SkillNodeDecoration.NONE, List.of("hegemony")));
         SkillTree.register(new SkillNode("exoship", wormholeType, List.of(), 200f, 0f, SkillNodeDecoration.NONE, List.of("exotech")));
@@ -213,20 +213,20 @@ class WormholeAnchorTest {
     void noCurrencyCanBeUsedOnAnAnchorEvenOneExtendedToAnchors() {
         Item anchor = anchor(HEGEMONY_ANCHOR);
         ItemStore store = new ItemStore();
-        for (ItemCurrency currency : ItemCurrencies.all()) {
+        for (CraftingMaterialFamily currency : CraftingMaterialFamilies.all()) {
             when(cargo.getQuantity(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(currency.itemId()))).thenReturn(5f);
             assertFalse(ItemCrafting.canUse(currency, anchor, definition -> true), currency.key());
             assertNull(ItemCrafting.use(currency, anchor, CraftingMaterials.cargoOnly(cargo), store, new Random(1L), definition -> true),
                     currency.key());
         }
-        assertTrue(ItemCurrencies.extend(CraftingCurrency.REPLICATION, ItemType.WORMHOLE_ANCHOR));
+        assertTrue(CraftingMaterialFamilies.extend(Nanoswarm.REPLICATION, ItemType.WORMHOLE_ANCHOR));
         try {
-            assertFalse(ItemCrafting.canUse(CraftingCurrency.REPLICATION, anchor, definition -> true));
+            assertFalse(ItemCrafting.canUse(Nanoswarm.REPLICATION, anchor, definition -> true));
         } finally {
-            ItemCurrencies.retract(CraftingCurrency.REPLICATION, ItemType.WORMHOLE_ANCHOR);
+            CraftingMaterialFamilies.retract(Nanoswarm.REPLICATION, ItemType.WORMHOLE_ANCHOR);
         }
         verify(cargo, never()).removeItems(Mockito.any(), Mockito.any(), anyFloat());
-        assertTrue(ItemCurrencies.forType(ItemType.WORMHOLE_ANCHOR).isEmpty());
+        assertTrue(CraftingMaterialFamilies.forType(ItemType.WORMHOLE_ANCHOR).isEmpty());
         assertFalse(ItemTypes.takesCurrency(ItemType.WORMHOLE_ANCHOR));
     }
 
@@ -238,7 +238,7 @@ class WormholeAnchorTest {
 
         int parts = ItemDisassembly.disassemble(stored, CraftingMaterials.cargoOnly(cargo), store, ships);
 
-        assertEquals(stored.rarity().disassemblyParts(), parts);
+        assertEquals(stored.rarity().disassemblyFeedstock(), parts);
         assertNull(store.find(stored.id()));
     }
 
@@ -252,13 +252,13 @@ class WormholeAnchorTest {
         assertFalse(NodeSocketable.fits(hegemony, exit));
         assertFalse(NodeSocketable.fits(hegemony, null));
         assertFalse(HullItem.fits(hegemony, ShipSection.BRIDGE));
-        assertFalse(NodeSocketable.fits(abyss, socket), "the abyss exit is not in the active tree, as when its area is off");
+        assertFalse(NodeSocketable.fits(abyss, socket), "the abyss exit is not in the active tree, as when its volume is off");
         assertTrue(TreeSocketCustody.fitsTreeSocket(hegemony));
         assertTrue(TreeSocketCustody.fitsTreeSocket(abyss));
     }
 
     @Test
-    void anAnchorWhoseAreaIsOffExplainsWhyItCannotBeInstalled() {
+    void anAnchorWhoseVolumeIsOffExplainsWhyItCannotBeInstalled() {
         WormholeAnchor hegemony = (WormholeAnchor) anchor(HEGEMONY_ANCHOR);
         WormholeAnchor abyss = (WormholeAnchor) anchor(ABYSS_ANCHOR);
 
@@ -298,7 +298,7 @@ class WormholeAnchorTest {
                 assertFalse(anchorIds.contains(item.definitionId()), item.definitionId());
             }
         }
-        assertFalse(ItemDrops.canBeSynthesised(ItemDefinitions.get(HEGEMONY_ANCHOR)));
+        assertFalse(ItemDrops.canBeGrown(ItemDefinitions.get(HEGEMONY_ANCHOR)));
     }
 
     private static void assertNotAnchor(ItemDefinition picked, Set<String> anchorIds) {

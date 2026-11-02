@@ -11,7 +11,7 @@ import exiledsector.charts.anomaly.convoy.SupplyConvoy;
 import exiledsector.charts.anomaly.excavation.ExcavationSites;
 import exiledsector.charts.anomaly.facility.PreCollapseFacility;
 import exiledsector.charts.atlas.AtlasRunNode;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.DropType;
@@ -142,7 +142,7 @@ public class ChartAnomaliesTest {
                 .put("effects", "CHART_CURRENCY_PERCENT:20; CHART_BREACH_CHANCE:100; NOT_AN_EFFECT:5")));
 
         assertEquals(2, problems.size());
-        assertEquals(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_CURRENCY_PERCENT, 20f)),
+        assertEquals(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_CURRENCY_PERCENT, 20f)),
                 ChartAnomalies.definition(MagneticStorm.ANOMALY_ID).effects());
     }
 
@@ -150,11 +150,11 @@ public class ChartAnomaliesTest {
     void theRunsAnomaliesAddTheirEffectsToTheContextOnTopOfTheChart() {
         ChartAnomalies.useForTests(List.of(
                 new ChartAnomalies.Definition(MagneticStorm.ANOMALY_ID, 1f, 1, 15, "", "", false, Set.of(), false,
-                        List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_CURRENCY_PERCENT, 50f))),
+                        List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_CURRENCY_PERCENT, 50f))),
                 new ChartAnomalies.Definition(StellarFlares.ANOMALY_ID, 1f, 1, 15, "", "", false, Set.of(), false,
-                        List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_FEEDSTOCK_PERCENT, 30f))),
+                        List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_FEEDSTOCK_PERCENT, 30f))),
                 definition(AsteroidStorm.ANOMALY_ID)));
-        ChartGenContext chart = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_CURRENCY_PERCENT, 20f)))
+        ChartGenContext chart = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_CURRENCY_PERCENT, 20f)))
                 .withAnomalies(List.of(AsteroidStorm.ANOMALY_ID));
 
         ChartGenContext context = chart.withAnomalyEffects(List.of(MagneticStorm.ANOMALY_ID, StellarFlares.ANOMALY_ID, AsteroidStorm.ANOMALY_ID));
@@ -197,8 +197,8 @@ public class ChartAnomaliesTest {
     @Test
     void withoutAtlasAnomaliesNothingIsPlannedWhateverTheChartCarries() {
         useTestAnomaly(1, 15, "");
-        ChartGenContext chart = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_GROWTH_PERCENT, 50f),
-                new ChartGenContext.AppliedEffect(ChartEffect.CHART_CURRENCY_PERCENT, 20f)));
+        ChartGenContext chart = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_BREACH_GROWTH_PERCENT, 50f),
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_CURRENCY_PERCENT, 20f)));
 
         assertEquals(List.of(), ChartAnomalies.planned(chart));
         assertEquals(List.of(), ChartAnomalies.planned(ChartGenContext.none()));
@@ -238,9 +238,9 @@ public class ChartAnomaliesTest {
     @Test
     void breachTuningLinesReachTheContext() {
         ChartGenContext context = ChartGenContext.of(List.of(
-                new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_GROWTH_PERCENT, 40f),
-                new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_CACHE_PERCENT, 50f),
-                new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_CACHE_ITEM_PERCENT, 25f)));
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_BREACH_GROWTH_PERCENT, 40f),
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_BREACH_CACHE_PERCENT, 50f),
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_BREACH_CACHE_ITEM_PERCENT, 25f)));
 
         assertEquals(1.4f, context.anomalyMult(SpatialBreach.GROWTH_KEY), 0.001f);
         assertEquals(1.5f, context.anomalyMult(SpatialBreach.CACHE_KEY), 0.001f);

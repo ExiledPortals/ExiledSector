@@ -17,17 +17,17 @@ import java.util.Locale;
 
 public final class AtlasOpening {
 
-    public static final int NEXUS_MODIFIERS = 4;
+    public static final int INFESTATION_MODIFIERS = 4;
     public static final String INFESTED = "infested";
     public static final String CLEANSED = "cleansed";
-    public static final String NEXUS = "nexus";
+    public static final String INFESTATION_EFFECTS_ID = "infestation";
     private static final long LAYOUT_SEED_SALT = 0x4c41594f5554L;
 
     public enum Blocker {
         NONE,
         NOT_REACHABLE,
         BASTION_NEEDS_TOP_TIER,
-        NEXUS_NEEDS_MODIFIERS,
+        INFESTATION_NEEDS_MODIFIERS,
         GATEWAY_TIER_LIMIT;
 
         public boolean allowsOpening() {
@@ -37,7 +37,7 @@ public final class AtlasOpening {
         public String reasonKey() {
             String key = "chart.atlas.blocked." + name().toLowerCase(Locale.ROOT);
             if (this == GATEWAY_TIER_LIMIT) {
-                return key + (GatewayTierLimit.maxTier(Global.getSector()) < GatewayTierLimit.ADVANCED_MAX_TIER ? ".advanced" : ".perfected");
+                return key + (GatewayTierLimit.maxTier(Global.getSector()) < GatewayTierLimit.ARRAY_MAX_TIER ? ".advanced" : ".perfected");
             }
             return key;
         }

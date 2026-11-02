@@ -3,8 +3,8 @@ package exiledsector.skills;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.skills.skilleffect.hullmodule.ModuleShare;
-import exiledsector.skills.skilleffect.hullmodule.StationModuleSkillEffect;
+import exiledsector.skills.skilleffect.stationmodule.ModuleShare;
+import exiledsector.skills.skilleffect.stationmodule.StationModuleSkillEffect;
 import exiledsector.skills.unlock.UnlockCondition;
 
 import java.util.ArrayList;
@@ -33,8 +33,8 @@ public class SkillType {
     private final String flavourAutomated;
     private final List<String> effectText;
     private final String todo;
-    private final List<String> optionalOptionIds;
-    private final Set<String> optionalOptionIdSet;
+    private final List<String> choiceOptionIds;
+    private final Set<String> choiceOptionIdSet;
     private final List<String> exclusiveHullModIds;
     private final List<String> phantomHullModIds;
     private final List<String> ownHullModIds;
@@ -61,8 +61,8 @@ public class SkillType {
         this.flavourAutomated = builder.flavourAutomated == null || builder.flavourAutomated.isBlank() ? null : builder.flavourAutomated;
         this.effectText = builder.effectText == null ? Collections.emptyList() : builder.effectText;
         this.todo = builder.todo;
-        this.optionalOptionIds = builder.optionalOptionIds == null ? Collections.emptyList() : builder.optionalOptionIds;
-        this.optionalOptionIdSet = Collections.unmodifiableSet(new HashSet<>(optionalOptionIds));
+        this.choiceOptionIds = builder.choiceOptionIds == null ? Collections.emptyList() : builder.choiceOptionIds;
+        this.choiceOptionIdSet = Collections.unmodifiableSet(new HashSet<>(choiceOptionIds));
         this.exclusiveHullModIds = builder.exclusiveHullModIds == null ? Collections.emptyList() : builder.exclusiveHullModIds;
         this.phantomHullModIds = builder.phantomHullModIds == null ? Collections.emptyList() : builder.phantomHullModIds;
         this.ownHullModIds = ownHullModIds(vanillaHullModId, phantomHullModIds);
@@ -90,7 +90,7 @@ public class SkillType {
         private String flavourAutomated;
         private List<String> effectText = Collections.emptyList();
         private String todo;
-        private List<String> optionalOptionIds = Collections.emptyList();
+        private List<String> choiceOptionIds = Collections.emptyList();
         private List<String> exclusiveHullModIds = Collections.emptyList();
         private List<String> phantomHullModIds = Collections.emptyList();
         private List<String> exclusiveSkillTypeIds = Collections.emptyList();
@@ -156,8 +156,8 @@ public class SkillType {
             return this;
         }
 
-        public Builder optionalOptionIds(List<String> optionalOptionIds) {
-            this.optionalOptionIds = optionalOptionIds;
+        public Builder choiceOptionIds(List<String> choiceOptionIds) {
+            this.choiceOptionIds = choiceOptionIds;
             return this;
         }
 
@@ -274,16 +274,16 @@ public class SkillType {
         return todo;
     }
 
-    public List<String> getOptionalOptionIds() {
-        return optionalOptionIds;
+    public List<String> getChoiceOptionIds() {
+        return choiceOptionIds;
     }
 
-    public boolean isOptional() {
-        return !optionalOptionIds.isEmpty();
+    public boolean isChoice() {
+        return !choiceOptionIds.isEmpty();
     }
 
     public boolean offersOption(String typeId) {
-        return optionalOptionIdSet.contains(typeId);
+        return choiceOptionIdSet.contains(typeId);
     }
 
     public List<String> getExclusiveAndOwnHullModIds() {

@@ -126,18 +126,18 @@ class SubroutineCreationRollsTest {
         assertFalse(doctrine.definition().unique());
         assertEquals("Limited to 1 doctrine archive", doctrine.limitLine().plain());
         assertNull(volume.limitLine());
-        assertTrue(ItemCrafting.canUse(CraftingCurrency.CORRUPTION, doctrine, definition -> true));
+        assertTrue(ItemCrafting.canUse(Nanoswarm.CORRUPTION, doctrine, definition -> true));
     }
 
     @Test
     void aBornCorruptedSubroutineRefusesEveryCurrencyThatAnUncorruptedOneTakes() {
         Item doctrine = stored(DOCTRINE, 3L);
-        assertTrue(ItemCrafting.canUse(CraftingCurrency.CORRUPTION, doctrine, definition -> true));
-        assertTrue(ItemCrafting.canUse(CraftingCurrency.REPLICATION, doctrine, definition -> true));
+        assertTrue(ItemCrafting.canUse(Nanoswarm.CORRUPTION, doctrine, definition -> true));
+        assertTrue(ItemCrafting.canUse(Nanoswarm.REPLICATION, doctrine, definition -> true));
 
         for (String definitionId : List.of(VOLUME, BYPASS)) {
             Item bornCorrupted = stored(definitionId, 3L);
-            for (CraftingCurrency currency : CraftingCurrency.values()) {
+            for (Nanoswarm currency : Nanoswarm.values()) {
                 assertFalse(ItemCrafting.canUse(currency, bornCorrupted, definition -> true), currency + " on " + definitionId);
             }
         }

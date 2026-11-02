@@ -11,9 +11,9 @@ import exiledsector.i18n.Translation;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.ShipFacts;
 import exiledsector.effects.ModuleShareSetting;
-import exiledsector.skills.AllocationGate;
+import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.CostItems;
-import exiledsector.skills.ItemChargeLedger;
+import exiledsector.skills.ItemCostLedger;
 import exiledsector.skills.ModuleShareExtent;
 import exiledsector.skills.NodeDescription;
 import exiledsector.skills.NodeEligibility;
@@ -90,7 +90,7 @@ final class SkillTreeNodeTooltipRenderer {
         ShipSkillData skillData = allocation.skillData();
         SkillType effectiveType = node.resolveEffectiveType(skillData);
         boolean hidden = allocation.isHidden(node);
-        boolean showOptionalHint = effectiveType == node.getType() && effectiveType.isOptional()
+        boolean showChoiceHint = effectiveType == node.getType() && effectiveType.isChoice()
                 && effectiveType.getFlavourText() == null;
         boolean expanded = TooltipExpansion.isExpanded();
         boolean allocatedSocket = node.getType().getTier() == SkillTier.SOCKET && skillData.isAllocated(node.getId());
@@ -104,7 +104,7 @@ final class SkillTreeNodeTooltipRenderer {
         int shipStateRevision = shipStateTooltip ? skillData.revision() : 0;
         Item grantingItem = hidden ? null : grantingItem(node, allocation);
         DoctrineRewrite rewrite = hidden ? null : DoctrineOverrides.rewrite(skillData, node.getId());
-        List<Object> signature = List.of(effectiveType.getId(), hidden, showOptionalHint, expanded, allocatedSocket,
+        List<Object> signature = List.of(effectiveType.getId(), hidden, showChoiceHint, expanded, allocatedSocket,
                 socketed == null ? "" : socketed.id(), refusalReason == null ? "" : refusalReason, shipState, shipStateRevision,
                 rewrite == null ? "" : rewrite, tooltipWarning == null ? "" : tooltipWarning,
                 socketGrantStatuses, grantingItem == null ? "" : grantingItem.id(), costLine == null ? "" : costLine);
@@ -117,24 +117,24 @@ final class SkillTreeNodeTooltipRenderer {
             }
         });
         TextLabel body = body(tooltipBodies, node.getId(), signature,
-                () -> withCostLine(withGrantLine(withDoctrineLines(describe(node, skillData, effectiveType, hidden, showOptionalHint, socketed,
+                () -> withCostLine(withGrantLine(withDoctrineLines(describe(node, skillData, effectiveType, hidden, showChoiceHint, socketed,
                         socketGrantStatuses, expanded), rewrite), grantingItem), costLine),
                 expanded, tooltipWarning != null ? tooltipWarning : refusalReason);
 
-        List<SkillTreeTooltipTable> tables = showOptionalHint || hidden ? List.of() : tablesFor(font, effectiveType);
+        List<SkillTreeTooltipTable> tables = showChoiceHint || hidden ? List.of() : tablesFor(font, effectiveType);
         ItalicTextLabel flavour = hidden || socketed != null ? null : flavourFor(effectiveType);
         panelStyle.drawTitleBodyTooltip(title, flavour, body, tables, footer(body, expanded), mouseX, mouseY, alphaMult);
     }
 
-    void renderTooltipForType(SkillNode dropdownNode, SkillType type, NodeAllocator.Snapshot allocation, String optionRefusalReason,
+    void renderTooltipForType(SkillNode choicePickerNode, SkillType type, NodeAllocator.Snapshot allocation, String optionRefusalReason,
                               float mouseX, float mouseY, float alphaMult) {
         LazyFont font = SkillTreePanelStyle.font();
         if (font == null) return;
 
         boolean expanded = TooltipExpansion.isExpanded();
-        ItemCostLine costLine = itemCostLine(dropdownNode, type, allocation);
+        ItemCostLine costLine = itemCostLine(choicePickerNode, type, allocation);
         String refusalReason = withoutItemCostRefusal(optionRefusalReason, costLine,
-                () -> TreeAllocationSession.optionVerdict(dropdownNode, type, allocation));
+                () -> TreeAllocationSession.optionVerdict(choicePickerNode, type, allocation));
         TextLabel title = typeTooltipTitles.computeIfAbsent(type.getId(), id -> titleLabel()).refresh(type.getId(),
                 label -> label.setWrapped(type.getDisplayName(), NODE_TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT));
         TextLabel body = body(typeTooltipBodies, type.getId(), List.of(type.getId(), expanded, refusalReason == null ? "" : refusalReason,
@@ -222,7 +222,7 @@ final class SkillTreeNodeTooltipRenderer {
             return description;
         }
         List<DescriptionLine> effects = new ArrayList<>(description.effects());
-        effects.add(new DescriptionLine(Translation.msg("socketable.cache.grantedBy").arg("item", grantingItem.name()).styled(), false));
+        effects.add(new DescriptionLine(Translation.msg("subroutine.grant.grantedBy").arg("item", grantingItem.name()).styled(), false));
         return new NodeDescription(effects, description.details());
     }
 
@@ -233,7 +233,7 @@ final class SkillTreeNodeTooltipRenderer {
     private ItemCostLine itemCostLine(SkillNode node, SkillType option, NodeAllocator.Snapshot allocation) {
         ShipSkillData skillData = allocation.skillData();
         boolean allocated = skillData.isAllocated(node.getId());
-        SkillItemCost charged = allocated ? ItemChargeLedger.itemCharge(skillData, node.getId()) : null;
+        SkillItemCost charged = allocated ? ItemCostLedger.paidItemCost(skillData, node.getId()) : null;
         if (allocated && option == null) {
             return paidCostLine(charged);
         }
@@ -262,7 +262,7 @@ final class SkillTreeNodeTooltipRenderer {
         return new ItemCostLine(cost, available >= cost.quantity() ? Style.GOOD : Style.HIGHLIGHT);
     }
 
-    static String withoutItemCostRefusal(String refusalReason, ItemCostLine costLine, Supplier<AllocationGate.Verdict> verdict) {
+    static String withoutItemCostRefusal(String refusalReason, ItemCostLine costLine, Supplier<AllocationCheck.Verdict> verdict) {
         if (refusalReason == null || costLine == null) {
             return refusalReason;
         }
@@ -309,7 +309,7 @@ final class SkillTreeNodeTooltipRenderer {
         };
     }
 
-    private NodeDescription describe(SkillNode node, ShipSkillData skillData, SkillType effectiveType, boolean hidden, boolean showOptionalHint,
+    private NodeDescription describe(SkillNode node, ShipSkillData skillData, SkillType effectiveType, boolean hidden, boolean showChoiceHint,
                                      Item socketed, List<NodeGrantStatus> socketGrantStatuses, boolean expanded) {
         boolean allocatedSocket = node.getType().getTier() == SkillTier.SOCKET && skillData.isAllocated(node.getId());
         if (hidden) {
@@ -338,8 +338,8 @@ final class SkillTreeNodeTooltipRenderer {
         }
         List<DescriptionLine> effects = new ArrayList<>();
         List<DescriptionLine> details = new ArrayList<>();
-        if (showOptionalHint) {
-            effects.add(plainLine("ui.node.optionalHint"));
+        if (showChoiceHint) {
+            effects.add(plainLine("ui.node.choiceHint"));
         } else {
             NodeDescription description = SkillNode.describeMechanics(effectiveType, fleetMember.getHullSpec().getHullSize());
             effects.addAll(description.effects());
@@ -373,7 +373,7 @@ final class SkillTreeNodeTooltipRenderer {
                 effects.add(new DescriptionLine(line, effect.effect().invertsDescriptionColours()));
             }
         }
-        if (rewrite.transformed()) {
+        if (rewrite.rewritten()) {
             effects.add(new DescriptionLine(Translation.msg("socketable.doctrine.originally").arg("node", rewrite.originalType().getDisplayName())
                     .styled(), false));
         }

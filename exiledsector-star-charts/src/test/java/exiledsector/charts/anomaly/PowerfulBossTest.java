@@ -6,14 +6,14 @@ import exiledsector.charts.atlas.AtlasCatalystUse;
 import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
-import exiledsector.charts.atlas.AtlasMarkerRule;
+import exiledsector.charts.atlas.AtlasAnomalyChance;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasRegion;
 import exiledsector.charts.atlas.AtlasRules;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasUnlocks;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +32,7 @@ class PowerfulBossTest {
 
     private static final long SEED = 0xB055L;
     private static final AtlasRules RULES = new AtlasRules(List.of(AtlasRegion.DEFAULT_NORMAL), Map.of("compact", 1f), Map.of("pirates", 1f),
-            AtlasMarkerRule.NEVER, AtlasMarkerRule.NEVER, List.of(), List.of());
+            AtlasAnomalyChance.NEVER, AtlasAnomalyChance.NEVER, List.of(), List.of());
 
     @BeforeEach
     void setUp() throws Exception {
@@ -50,7 +50,7 @@ class PowerfulBossTest {
         assertNotNull(definition);
         assertTrue(definition.insertable());
         assertFalse(definition.icon().isEmpty());
-        assertEquals(Set.of(ChartEffect.CHART_BOSS_SIZE_PERCENT, ChartEffect.CHART_BOSS_SPOILS_PERCENT),
+        assertEquals(Set.of(ChartModifier.CHART_BOSS_SIZE_PERCENT, ChartModifier.CHART_BOSS_SPOILS_PERCENT),
                 Set.copyOf(definition.effects().stream().map(ChartGenContext.AppliedEffect::effect).toList()));
 
         ChartGenContext powerful = ChartGenContext.none().withAnomalyEffects(List.of(SpatialBreach.ANOMALY_ID, PowerfulBoss.ANOMALY_ID));

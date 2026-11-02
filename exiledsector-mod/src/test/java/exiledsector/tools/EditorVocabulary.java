@@ -3,7 +3,7 @@ package exiledsector.tools;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.SkillEffectNames;
 import exiledsector.skills.skilleffect.StatMode;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.items.DoctrineBehaviour;
 import exiledsector.items.HullItem;
@@ -17,7 +17,7 @@ import exiledsector.items.UniqueSource;
 import exiledsector.modifiers.TierGroup;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.radius.RadiusSize;
-import exiledsector.skills.tags.AreaToggles;
+import exiledsector.skills.tags.VolumeToggles;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.skills.unlock.BlueprintCategory;
 import exiledsector.skills.unlock.UnlockConditionType;
@@ -50,7 +50,7 @@ final class EditorVocabulary {
         json.append(String.join(",\n", effectLines)).append("\n  ],\n");
         json.append("  \"tags\": {\n");
         json.append("    \"theme\": ").append(list(SkillTags.THEME)).append(",\n");
-        json.append("    \"region\": ").append(list(SkillTags.REGION)).append(",\n");
+        json.append("    \"volume\": ").append(list(SkillTags.VOLUME)).append(",\n");
         json.append("    \"requirement\": ").append(list(SkillTags.REQUIREMENT)).append(",\n");
         json.append("    \"gate\": ").append(list(SkillTags.GATE)).append("\n");
         json.append("  },\n");
@@ -75,7 +75,7 @@ final class EditorVocabulary {
                 .append(list(Arrays.stream(UniqueSource.Kind.values()).map(UniqueSource.Kind::prefix).toList())).append(",\n");
         json.append("  \"hullItemMechanics\": ").append(list(HullItem.MECHANICS)).append(",\n");
         json.append("  \"hullItemCrew\": ").append(list(HullItem.CREW_VALUES)).append(",\n");
-        json.append("  \"itemAreas\": ").append(list(AreaToggles.ITEM_AREAS.areas().stream().sorted().toList())).append(",\n");
+        json.append("  \"itemVolumes\": ").append(list(VolumeToggles.ITEM_VOLUMES.volumes().stream().sorted().toList())).append(",\n");
         json.append("  \"itemUnlocks\": ")
                 .append(list(Arrays.stream(ItemUnlock.values()).map(ItemUnlock::id).toList())).append(",\n");
         json.append("  \"clearedChartTierPrefix\": ").append(quote(ItemUnlock.CLEARED_CHART_TIER_PREFIX)).append(",\n");
@@ -84,7 +84,7 @@ final class EditorVocabulary {
                 .append(Arrays.stream(TierGroup.values()).map(group -> "{\"id\": " + quote(group.id()) + ", \"minTier\": " + group.tiers().minTier()
                         + ", \"maxTier\": " + Math.min(ChartTiers.CORRUPTED_TIER, group.tiers().maxTier()) + "}").collect(Collectors.joining(", ")))
                 .append("],\n");
-        json.append("  \"chartEffects\": ").append(list(Arrays.stream(ChartEffect.values()).map(Enum::name).toList())).append(",\n");
+        json.append("  \"chartEffects\": ").append(list(Arrays.stream(ChartModifier.values()).map(Enum::name).toList())).append(",\n");
         json.append("  \"chartSystemTypes\": ").append(list(StarChartDefinitions.SYSTEM_TYPES)).append("\n");
         return json.append("}\n").toString();
     }

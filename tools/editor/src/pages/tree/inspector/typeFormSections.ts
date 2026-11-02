@@ -10,7 +10,7 @@ export type TypeFormSection =
   | 'temporary'
   | 'requiredHullSizes'
   | 'moduleShare'
-  | 'optionalOptions'
+  | 'options'
   | 'texts'
   | 'todo';
 
@@ -27,7 +27,7 @@ export const DIALOG_TYPE_SECTIONS: TypeFormSection[] = [
   'temporary',
   'requiredHullSizes',
   'moduleShare',
-  'optionalOptions',
+  'options',
   'texts',
   'todo',
 ];

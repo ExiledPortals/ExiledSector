@@ -14,9 +14,9 @@ public final class VaultsOfKnowledgeCompat {
 
     public static final String MOD_ID = "aotd_vok";
     public static final String GATEWAY_RESEARCH_ID = "exiledSector_tech_wormhole_gateway";
-    public static final String GATEWAY_ADVANCED_RESEARCH_ID = "exiledSector_tech_wormhole_gateway_advanced";
-    public static final String GATEWAY_PERFECTED_RESEARCH_ID = "exiledSector_tech_wormhole_gateway_perfected";
-    public static final List<String> GATEWAY_RESEARCH_IDS = List.of(GATEWAY_RESEARCH_ID, GATEWAY_ADVANCED_RESEARCH_ID, GATEWAY_PERFECTED_RESEARCH_ID);
+    public static final String GATEWAY_ARRAY_RESEARCH_ID = "exiledSector_tech_wormhole_gateway_advanced";
+    public static final String GATEWAY_NEXUS_RESEARCH_ID = "exiledSector_tech_wormhole_gateway_perfected";
+    public static final List<String> GATEWAY_RESEARCH_IDS = List.of(GATEWAY_RESEARCH_ID, GATEWAY_ARRAY_RESEARCH_ID, GATEWAY_NEXUS_RESEARCH_ID);
     public static final String DATABANK_DROP_GROUP = "ashes_research";
     static final String DEFENCE_MIN_SETTING = "aotd_defence_min_val";
     static final String DEFENCE_MAX_SETTING = "aotd_defence_max_val";

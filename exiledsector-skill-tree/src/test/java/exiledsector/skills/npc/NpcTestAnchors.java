@@ -25,7 +25,7 @@ final class NpcTestAnchors {
                 }
                 String volume = socketedItemId.substring(PREFIX.length());
                 for (SkillNode node : SkillTree.topology().sortedById()) {
-                    if (node.getType().getTier() == SkillTier.WORMHOLE_EXIT && volume.equals(node.getRegion())) {
+                    if (node.getType().getTier() == SkillTier.WORMHOLE_EXIT && volume.equals(node.getVolume())) {
                         return node.getId();
                     }
                 }

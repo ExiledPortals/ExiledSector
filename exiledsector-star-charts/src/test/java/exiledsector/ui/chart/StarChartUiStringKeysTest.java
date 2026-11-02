@@ -9,9 +9,9 @@ import exiledsector.charts.atlas.AtlasCatalystUse;
 import exiledsector.charts.atlas.RedeploymentCatalystUse;
 import exiledsector.charts.wormhole.StarChartOpening;
 import exiledsector.charts.wormhole.WormholeOpenCheck;
-import exiledsector.items.CraftingCurrency;
+import exiledsector.items.Nanoswarm;
 import exiledsector.items.StarChartCrafting;
-import exiledsector.items.StarChartCurrency;
+import exiledsector.items.StarChartCipher;
 import exiledsector.items.UseVerdict;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -54,8 +54,8 @@ class StarChartUiStringKeysTest {
         for (OpenResult result : OpenResult.values()) {
             require(catalogue, new StarChartOpening.Outcome(result, null).messageKey(), missing);
         }
-        for (String key : List.of("chart.ui.currency.alsoStarCharts", "ui.workbench.confirm.useTitle", "ui.workbench.confirm.growTitle", "ui.workbench.confirm.growBody",
-                "ui.workbench.confirm.skipHint", "ui.workbench.confirm.use", "ui.workbench.confirm.grow", "ui.workbench.confirm.cancel")) {
+        for (String key : List.of("chart.ui.currency.alsoStarCharts", "ui.craftingBench.confirm.useTitle", "ui.craftingBench.confirm.growTitle", "ui.craftingBench.confirm.growBody",
+                "ui.craftingBench.confirm.skipHint", "ui.craftingBench.confirm.use", "ui.craftingBench.confirm.grow", "ui.craftingBench.confirm.cancel")) {
             require(catalogue, key, missing);
         }
         assertEquals(List.of(), missing);
@@ -66,12 +66,12 @@ class StarChartUiStringKeysTest {
     void everyChartCurrencyHasItsNameDescriptionAndRecipeText(String language) {
         Map<String, String> catalogue = RealCatalogue.entries(language);
         List<String> missing = new ArrayList<>();
-        for (StarChartCurrency currency : StarChartCurrency.values()) {
+        for (StarChartCipher currency : StarChartCipher.values()) {
             require(catalogue, "material." + currency.itemId() + ".name", missing);
             require(catalogue, "material." + currency.itemId() + ".description", missing);
             require(catalogue, "chart.currency." + currency.key() + ".description", missing);
         }
-        for (CraftingCurrency kernel : StarChartCurrency.KERNELS_ON_CHARTS) {
+        for (Nanoswarm kernel : StarChartCipher.KERNELS_ON_CHARTS) {
             require(catalogue, "chart.currency." + kernel.key() + ".description", missing);
         }
         require(catalogue, "chart.drop.reward", missing);
@@ -101,8 +101,7 @@ class StarChartUiStringKeysTest {
     @ValueSource(strings = {"en", "zh_CN"})
     void theSettingTextHasNoPercentSignForLunaLib(String language) {
         Map<String, String> catalogue = RealCatalogue.entries(language);
-        for (String key : List.of("chart.ui.settings.openAnywhere.name", "chart.ui.settings.openAnywhere.tooltip",
-                "chart.ui.settings.debugTools.name", "chart.ui.settings.debugTools.tooltip")) {
+        for (String key : List.of("settings.starCharts.debugTools.name", "settings.starCharts.debugTools.tooltip")) {
             assertFalse(catalogue.get(key).contains("%"), key);
         }
     }

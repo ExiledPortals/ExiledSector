@@ -29,7 +29,7 @@ public final class FactionFleetRenderer implements DecorationRenderer {
 
     private final LaneFleetTraffic.Factions factions = LaneFleetTraffic.sectorFactions();
     private final FleetTraffic traffic = new FleetTraffic(new Random(), MIN_RESPAWN_SECONDS, MAX_RESPAWN_SECONDS, this::spawn);
-    private final Map<String, RoamVolume> volumesByRegion = new LinkedHashMap<>();
+    private final Map<String, RoamVolume> roamVolumesByVolume = new LinkedHashMap<>();
 
     private FactionFleetRenderer() {
     }
@@ -40,18 +40,18 @@ public final class FactionFleetRenderer implements DecorationRenderer {
             return renderer;
         }
         Collection<SkillNode> nodes = SkillTree.getAllNodes().values();
-        Set<String> lockedRegions = HyperspaceAnchor.lockedRegions(nodes, SkillNode::getRegion, nodeHidden);
-        for (String region : TreeFleetFactions.regions()) {
-            RoamVolume volume = lockedRegions.contains(region) ? null : TreeRoamVolumes.region(region, SkillTree.getDecorations().stars(), nodes);
-            if (volume != null) {
-                renderer.volumesByRegion.put(region, volume);
+        Set<String> lockedVolumes = HyperspaceAnchor.lockedVolumes(nodes, SkillNode::getVolume, nodeHidden);
+        for (String volume : TreeFleetFactions.volumes()) {
+            RoamVolume roamVolume = lockedVolumes.contains(volume) ? null : TreeRoamVolumes.volume(volume, SkillTree.getDecorations().stars(), nodes);
+            if (roamVolume != null) {
+                renderer.roamVolumesByVolume.put(volume, roamVolume);
             }
         }
         Random random = renderer.traffic.random();
-        for (String region : renderer.volumesByRegion.keySet()) {
+        for (String volume : renderer.roamVolumesByVolume.keySet()) {
             int fleetCount = MIN_FLEETS_PER_VOLUME + random.nextInt(MAX_FLEETS_PER_VOLUME - MIN_FLEETS_PER_VOLUME + 1);
             for (int i = 0; i < fleetCount; i++) {
-                FactionFleet fleet = renderer.spawn(region);
+                FactionFleet fleet = renderer.spawn(volume);
                 if (fleet != null) {
                     fleet.showFullySpawned();
                 }
@@ -70,9 +70,9 @@ public final class FactionFleetRenderer implements DecorationRenderer {
         return destinations.get(random.nextInt(destinations.size()));
     }
 
-    private FactionFleet spawn(String region) {
-        RoamVolume home = volumesByRegion.get(region);
-        List<String> factionIds = TreeFleetFactions.factionsIn(region).stream().filter(factionId -> !factions.hulls(factionId).isEmpty()).toList();
+    private FactionFleet spawn(String volume) {
+        RoamVolume home = roamVolumesByVolume.get(volume);
+        List<String> factionIds = TreeFleetFactions.factionsIn(volume).stream().filter(factionId -> !factions.hulls(factionId).isEmpty()).toList();
         if (home == null || factionIds.isEmpty()) {
             return null;
         }
@@ -80,14 +80,14 @@ public final class FactionFleetRenderer implements DecorationRenderer {
         String factionId = factionIds.get(random.nextInt(factionIds.size()));
         Color factionColor = factions.colour(factionId);
         float travelSpeed = MIN_TRAVEL_SPEED + random.nextFloat() * (MAX_TRAVEL_SPEED - MIN_TRAVEL_SPEED);
-        FactionFleet fleet = new FactionFleet(factionId, factionColor == null ? Color.WHITE : factionColor, region, home,
-                alliedVolumes(factionId, region), travelSpeed, random, this::arrive);
+        FactionFleet fleet = new FactionFleet(factionId, factionColor == null ? Color.WHITE : factionColor, volume, home,
+                alliedVolumes(factionId, volume), travelSpeed, random, this::arrive);
         return traffic.addFleet(fleet, factions.hulls(factionId), FLEET_RADIUS);
     }
 
-    private List<RoamVolume> alliedVolumes(String factionId, String homeRegion) {
-        return volumesByRegion.entrySet().stream()
-                .filter(entry -> !entry.getKey().equals(homeRegion)
+    private List<RoamVolume> alliedVolumes(String factionId, String homeVolume) {
+        return roamVolumesByVolume.entrySet().stream()
+                .filter(entry -> !entry.getKey().equals(homeVolume)
                         && TreeFleetFactions.factionsIn(entry.getKey()).stream().anyMatch(other -> allied(factionId, other)))
                 .map(Map.Entry::getValue).toList();
     }

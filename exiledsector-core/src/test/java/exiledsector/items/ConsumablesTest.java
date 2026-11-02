@@ -15,8 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ConsumablesTest {
 
     private static final String CONSUMABLE_ID = "test_consumable";
-    private static final String WARD_ID = "test_ward";
-    private static final String UNUSED_WARD_ID = "test_unused_ward";
+    private static final String INHIBITOR_ID = "test_inhibitor";
+    private static final String UNUSED_INHIBITOR_ID = "test_unused_inhibitor";
 
     private record Doubling(UseVerdict verdict, boolean applies) implements Consumable<Integer, Integer> {
 
@@ -37,20 +37,20 @@ class ConsumablesTest {
 
         @Override
         public Collection<String> requiredItemIds() {
-            return List.of(WARD_ID, UNUSED_WARD_ID);
+            return List.of(INHIBITOR_ID, UNUSED_INHIBITOR_ID);
         }
 
         @Override
         public Collection<String> spentAlongside(Integer target) {
-            return List.of(WARD_ID);
+            return List.of(INHIBITOR_ID);
         }
     }
 
-    private static CraftingMaterials holding(int consumables, int wards, int unusedWards) {
+    private static CraftingMaterials holding(int consumables, int inhibitors, int unusedInhibitors) {
         Map<String, Integer> stored = new HashMap<>();
         stored.put(CONSUMABLE_ID, consumables);
-        stored.put(WARD_ID, wards);
-        stored.put(UNUSED_WARD_ID, unusedWards);
+        stored.put(INHIBITOR_ID, inhibitors);
+        stored.put(UNUSED_INHIBITOR_ID, unusedInhibitors);
         return new CraftingMaterials(null, stored, true);
     }
 
@@ -61,8 +61,8 @@ class ConsumablesTest {
         assertEquals(6, Consumables.use(new Doubling(UseVerdict.ALLOW, true), 3, materials));
 
         assertEquals(1, materials.count(CONSUMABLE_ID));
-        assertEquals(0, materials.count(WARD_ID));
-        assertEquals(1, materials.count(UNUSED_WARD_ID));
+        assertEquals(0, materials.count(INHIBITOR_ID));
+        assertEquals(1, materials.count(UNUSED_INHIBITOR_ID));
     }
 
     @Test
@@ -75,7 +75,7 @@ class ConsumablesTest {
         assertNull(Consumables.use(new Doubling(UseVerdict.ALLOW, true), 3, holding(1, 1, 0)));
 
         assertEquals(1, materials.count(CONSUMABLE_ID));
-        assertEquals(1, materials.count(WARD_ID));
+        assertEquals(1, materials.count(INHIBITOR_ID));
     }
 
     @Test

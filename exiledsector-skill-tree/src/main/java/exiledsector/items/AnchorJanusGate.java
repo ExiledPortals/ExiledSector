@@ -17,7 +17,7 @@ public final class AnchorJanusGate {
     }
 
     public static boolean applies(String definitionId) {
-        return definitionId != null && !SkillTags.EXOTECH_REGION.equals(WormholeAnchorDefinitions.volume(definitionId));
+        return definitionId != null && !SkillTags.EXOTECH_VOLUME.equals(WormholeAnchorDefinitions.volume(definitionId));
     }
 
     public static boolean withholds(String definitionId, SectorAPI sector) {

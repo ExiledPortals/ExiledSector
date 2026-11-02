@@ -19,11 +19,11 @@ public final class AffinityOptions {
     }
 
     public static boolean migrate(ShipSkillData data) {
-        if (data == null || data.optionalSelections == null) {
+        if (data == null || data.choiceSelections == null) {
             return false;
         }
         boolean changed = false;
-        for (Map.Entry<String, String> selection : data.optionalSelections.entrySet()) {
+        for (Map.Entry<String, String> selection : data.choiceSelections.entrySet()) {
             String currentId = currentOptionId(selection.getValue());
             if (currentId != null && !currentId.equals(selection.getValue())) {
                 selection.setValue(currentId);

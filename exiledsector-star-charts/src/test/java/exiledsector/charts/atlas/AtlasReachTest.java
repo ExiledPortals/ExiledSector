@@ -30,10 +30,10 @@ class AtlasReachTest {
                 new AtlasRegion("expanse", 10f, 0, "", THREAT, Map.of(), Map.of(), Map.of()));
         List<AtlasSpecial> specials = List.of(
                 new AtlasSpecial("sensor", AtlasSpecial.Kind.SENSOR_ARRAY, AtlasSpecial.Placement.CHUNK, 1f, 1f, 6f, 1, 1f, "", "", ""),
-                new AtlasSpecial("threat_nexus", AtlasSpecial.Kind.INFESTATION, AtlasSpecial.Placement.CHUNK, 1f, 1f, 2.5f, 1, 1f, "", THREAT, ""),
+                new AtlasSpecial("threat_infestation", AtlasSpecial.Kind.INFESTATION, AtlasSpecial.Placement.CHUNK, 1f, 1f, 2.5f, 1, 1f, "", THREAT, ""),
                 new AtlasSpecial("bastion", AtlasSpecial.Kind.BASTION, AtlasSpecial.Placement.FIXED, 0f, 1f, 0f, 3, 25f, "", "", ""));
-        return new AtlasRules(regions, Map.of("compact", 1f), Map.of("pirates", 1f), new AtlasMarkerRule(0.5f, 0f, 0.5f),
-                AtlasMarkerRule.NEVER, specials, List.of());
+        return new AtlasRules(regions, Map.of("compact", 1f), Map.of("pirates", 1f), new AtlasAnomalyChance(0.5f, 0f, 0.5f),
+                AtlasAnomalyChance.NEVER, specials, List.of());
     }
 
     private static AtlasGenerator generator(AtlasState state, Set<String> flags) {
@@ -137,13 +137,13 @@ class AtlasReachTest {
             assertEquals(locked.node(cell).regionId(), unlocked.node(cell).regionId(), cell.toString());
             assertNotEquals("expanse", unlocked.node(cell).regionId());
             AtlasSpecial early = unlocked.specialAt(cell);
-            assertTrue(early == null || !early.id().equals("threat_nexus"), cell.toString());
-            assertNotEquals("threat_nexus", unlocked.node(cell).infestationId(), cell.toString());
+            assertTrue(early == null || !early.id().equals("threat_infestation"), cell.toString());
+            assertNotEquals("threat_infestation", unlocked.node(cell).infestationId(), cell.toString());
         }
         boolean threatLater = false;
         for (AtlasCell cell : AtlasCell.ORIGIN.around(40)) {
             AtlasSpecial special = fresh.specialAt(cell);
-            threatLater |= special != null && special.id().equals("threat_nexus");
+            threatLater |= special != null && special.id().equals("threat_infestation");
         }
         assertTrue(threatLater);
         assertTrue(state.recordedSites() > 0);

@@ -40,8 +40,8 @@ public class ChartListCommand extends CampaignCommand {
         StringBuilder text = new StringBuilder(chart.name()).append(" [").append(chart.rarity().name().toLowerCase(Locale.ROOT));
         if (chart instanceof StarChart starChart) {
             text.append(", tier ").append(starChart.tier()).append(", ").append(starChart.systemType());
-            if (starChart.quality() > 0) {
-                text.append(", quality ").append(starChart.quality());
+            if (starChart.quantity() > 0) {
+                text.append(", quantity ").append(starChart.quantity());
             }
         }
         if (chart.corrupted()) {

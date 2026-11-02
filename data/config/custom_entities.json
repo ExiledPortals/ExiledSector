@@ -79,7 +79,7 @@
 		"scaleIconWithZoom":true,
 		"tags":["has_interaction_dialog", "neutrino"],
 		"layers":[STATIONS],
-		"pluginClass":"exiledsector.charts.anomaly.heist.ListeningPostPlugin",
+		"pluginClass":"exiledsector.charts.anomaly.listeningpost.ListeningPostPlugin",
 	},
 	"exiledSector_chart_derelict_forge_station":{
 		"defaultName":"Derelict Forge",

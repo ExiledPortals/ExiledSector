@@ -5,8 +5,8 @@ import exiledsector.ProjectFiles;
 import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.movement.MovementSkillEffect;
 import exiledsector.skills.skilleffect.shield.ShieldSkillEffect;
-import exiledsector.skills.skilleffect.hullmodule.ModuleShare;
-import exiledsector.skills.skilleffect.hullmodule.StationModuleSkillEffect;
+import exiledsector.skills.skilleffect.stationmodule.ModuleShare;
+import exiledsector.skills.skilleffect.stationmodule.StationModuleSkillEffect;
 import exiledsector.skills.skilleffect.special.SpecialSkillEffect;
 import exiledsector.skills.loader.SkillTypeLoader;
 import exiledsector.skills.npc.RealSkillData;
@@ -64,7 +64,7 @@ class SkillTypeModuleShareTest {
 
     @Test
     void penaltiesOnSharedEffectsTravelWithTheNode() {
-        assertEquals(List.of("MISSILE_WEAPON_AMMO_PERCENT", "MISSILE_WEAPON_FIRE_RATE_PERCENT"), sharedNames("expanded_missile_racks", HullSize.CRUISER));
+        assertEquals(List.of("MISSILE_WEAPON_AMMO_PERCENT", "MISSILE_WEAPON_RATE_OF_FIRE_PERCENT"), sharedNames("expanded_missile_racks", HullSize.CRUISER));
         assertEquals(List.of("REPAIR_TIME_PERCENT", "SHIELD_DAMAGE_TAKEN_MULT"), sharedNames("borrowed_grace", HullSize.CRUISER));
         assertTrue(sharedNames("freebooters_charge", HullSize.CRUISER).containsAll(List.of("WEAPON_DAMAGE_PERCENT", "ARMOR_PERCENT")));
     }

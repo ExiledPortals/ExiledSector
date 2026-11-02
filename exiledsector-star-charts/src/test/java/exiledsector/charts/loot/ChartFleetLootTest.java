@@ -12,7 +12,7 @@ import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
 import exiledsector.MockSector;
-import exiledsector.charts.anomaly.storm.StormFront;
+import exiledsector.charts.anomaly.stormfront.StormFront;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
 import exiledsector.charts.generation.ChartGenContext;
@@ -21,10 +21,10 @@ import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.content.FakeChartContentEngine;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDrops;
-import exiledsector.items.StarChartCurrency;
+import exiledsector.items.StarChartCipher;
 import exiledsector.items.StarChartFixtures;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -55,7 +55,7 @@ class ChartFleetLootTest {
     @BeforeEach
     void setUp() throws Exception {
         StarChartFixtures.registerShipped();
-        StarChartCurrency.registerAll();
+        StarChartCipher.registerAll();
         mockSector = new MockSector();
         sector = mockSector.sector;
         MemoryAPI sectorMemory = mock(MemoryAPI.class);
@@ -236,7 +236,7 @@ class ChartFleetLootTest {
     void onlyTheBossCarriesSpoilsAndTheHoardScalesOnlyThem() throws Exception {
         ChartDrops.register(new JSONArray().put(rule("chart_fleet", 1f)).put(rule("chart_boss", 1f)));
         ChartRun run = storeLiveRun(6);
-        ChartGenContext hoard = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_BOSS_SPOILS_PERCENT, 100f)));
+        ChartGenContext hoard = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_BOSS_SPOILS_PERCENT, 100f)));
 
         ItemDrops.SiteLoot guardLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 80f), run, hoard, 80f,
                 new Random(1L));

@@ -51,7 +51,7 @@ final class AtlasCommandText {
         if (state.has(cell, AtlasState.ATTEMPTED)) {
             return "attempted";
         }
-        if (state.has(cell, AtlasState.MARKERS_SPENT)) {
+        if (state.has(cell, AtlasState.ANOMALIES_SPENT)) {
             return "markers spent";
         }
         return "open";

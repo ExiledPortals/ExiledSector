@@ -67,7 +67,7 @@ public class ChartMisfirePlugin extends BaseEveryFrameCombatPlugin {
         refreshed = false;
         secondsSinceRefresh = 0f;
         boolean campaignBattle = engine != null && engine.isInCampaign() && !engine.isSimulation() && !engine.isInCampaignSim();
-        misfiresPerWeaponSecond = campaignBattle ? ChartFleetConditions.weaponMisfireRate() : 0f;
+        misfiresPerWeaponSecond = campaignBattle ? ChartPlayerModifiers.weaponMisfireRate() : 0f;
     }
 
     @Override

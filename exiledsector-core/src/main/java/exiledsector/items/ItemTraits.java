@@ -2,7 +2,7 @@ package exiledsector.items;
 
 import java.util.List;
 
-public record ItemTraits(int tier, int quality, CorruptionOutcome corruption, List<RolledModifier> implicits, boolean mirrored) {
+public record ItemTraits(int tier, int quantity, CorruptionOutcome corruption, List<RolledModifier> implicits, boolean mirrored) {
 
     public static final int LOWEST_TIER = 1;
     public static final int HIGHEST_TIER = 15;
@@ -11,8 +11,8 @@ public record ItemTraits(int tier, int quality, CorruptionOutcome corruption, Li
         implicits = implicits == null ? null : List.copyOf(implicits);
     }
 
-    public ItemTraits(int tier, int quality, CorruptionOutcome corruption, List<RolledModifier> implicits) {
-        this(tier, quality, corruption, implicits, false);
+    public ItemTraits(int tier, int quantity, CorruptionOutcome corruption, List<RolledModifier> implicits) {
+        this(tier, quantity, corruption, implicits, false);
     }
 
     public static ItemTraits ofTier(int tier) {

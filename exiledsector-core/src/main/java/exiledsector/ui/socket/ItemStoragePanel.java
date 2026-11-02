@@ -60,13 +60,13 @@ public final class ItemStoragePanel extends HoloPanel {
     private static final int TREE_COLUMNS = 6;
     public static final float COMPACT_WIDTH = widthFor(COMPACT_COLUMNS);
     public static final float WIDTH = widthFor(TREE_COLUMNS);
-    private static final float WORKBENCH_GAP = 12f;
-    private static final float WORKBENCH_EDGE_MARGIN = 16f;
+    private static final float CRAFTING_BENCH_GAP = 12f;
+    private static final float CRAFTING_BENCH_EDGE_MARGIN = 16f;
     private static final float BUTTON_TEXT_PADDING = 30f;
     private static final float SEARCH_DELAY_SECONDS = 0.25f;
     private static final ItemCell.Look CELL_LOOK = new ItemCell.Look(7f, true, 1f);
 
-    private enum Control {CLOSE, WORKBENCH, DISASSEMBLY_MODE, CONFIRM_DISASSEMBLE, CANCEL_DISASSEMBLE}
+    private enum Control {CLOSE, CRAFTING_BENCH, DISASSEMBLY_MODE, CONFIRM_DISASSEMBLE, CANCEL_DISASSEMBLE}
 
     private record StatusChip(ItemStorageFilter.Status status) {
     }
@@ -74,15 +74,15 @@ public final class ItemStoragePanel extends HoloPanel {
     private record RarityChip(ItemRarity rarity) {
     }
 
-    private record TypeChip(ItemKind socketType) {
+    private record TypeChip(ItemKind sectionKind) {
     }
 
     private final Listener storageListener;
     private final ItemStorageFilter storageFilter = ItemStorageFilter.SESSION;
 
     private Function<Item, String> installedShipLookup;
-    private SocketWorkbenchPanel workbenchPanel;
-    private SocketWorkbenchPanel fadingWorkbenchPanel;
+    private CraftingBenchPanel craftingBenchPanel;
+    private CraftingBenchPanel fadingCraftingBenchPanel;
     private float gridTop;
     private UIComponentAPI headerElement;
     private UIComponentAPI searchRowElement;
@@ -129,10 +129,10 @@ public final class ItemStoragePanel extends HoloPanel {
         return storagePanel;
     }
 
-    public static ItemStoragePanel openSubroutines(CustomPanelAPI hostPanel, SocketPanelPlacement placement,
+    public static ItemStoragePanel openSocketItems(CustomPanelAPI hostPanel, SocketPanelPlacement placement,
                                                    Function<Item, String> installedShipLookup, Listener storageListener) {
         ItemStoragePanel storagePanel = new ItemStoragePanel(hostPanel, installedShipLookup, storageListener, ItemKind.SUBROUTINE);
-        storagePanel.titleKey = "ui.subroutines.title";
+        storagePanel.titleKey = "ui.socketItems.title";
         storagePanel.attachFresh(placement);
         return storagePanel;
     }
@@ -184,16 +184,16 @@ public final class ItemStoragePanel extends HoloPanel {
     @Override
     protected void onClose() {
         hideHoverTooltip();
-        if (workbenchPanel != null) {
-            workbenchPanel.close();
+        if (craftingBenchPanel != null) {
+            craftingBenchPanel.close();
         }
         storageListener.closed();
     }
 
     @Override
     protected void onSwappedOut() {
-        if (workbenchPanel != null) {
-            workbenchPanel.close();
+        if (craftingBenchPanel != null) {
+            craftingBenchPanel.close();
         }
     }
 
@@ -212,11 +212,11 @@ public final class ItemStoragePanel extends HoloPanel {
         return new UIComponentAPI[]{controlsElement, placedComponent(gridElement), noticeElement, summaryElement};
     }
 
-    public void restrictTo(ItemKind socketType) {
-        if (socketType == kindFilter) {
+    public void restrictTo(ItemKind sectionKind) {
+        if (sectionKind == kindFilter) {
             return;
         }
-        kindFilter = socketType;
+        kindFilter = sectionKind;
         queue(() -> {
             closeDisassemblyConfirm();
             reloadRows();
@@ -274,8 +274,8 @@ public final class ItemStoragePanel extends HoloPanel {
             disassembly.forget(item -> SocketCustody.isInstalled(item) || !ItemStore.get().owned().contains(item));
             rebuildTools();
             rebuildGridKeepingScroll();
-            if (workbenchPanel != null) {
-                workbenchPanel.refresh();
+            if (craftingBenchPanel != null) {
+                craftingBenchPanel.refresh();
             }
         });
     }
@@ -292,11 +292,11 @@ public final class ItemStoragePanel extends HoloPanel {
             });
             return true;
         }
-        if (workbenchPanel != null && workbenchPanel.escape()) {
+        if (craftingBenchPanel != null && craftingBenchPanel.escape()) {
             return true;
         }
-        if (workbenchPanel != null) {
-            queue(workbenchPanel::close);
+        if (craftingBenchPanel != null) {
+            queue(craftingBenchPanel::close);
             return true;
         }
         return false;
@@ -316,8 +316,8 @@ public final class ItemStoragePanel extends HoloPanel {
         if (notice != null) {
             disassembledNotice = notice;
         }
-        if (workbenchPanel != null) {
-            workbenchPanel.refresh();
+        if (craftingBenchPanel != null) {
+            craftingBenchPanel.refresh();
         }
         storageListener.disassembled();
         if (leaveMode) {
@@ -379,8 +379,8 @@ public final class ItemStoragePanel extends HoloPanel {
         }
         if (id == Control.CLOSE) {
             close();
-        } else if (id == Control.WORKBENCH) {
-            toggleWorkbench();
+        } else if (id == Control.CRAFTING_BENCH) {
+            toggleCraftingBench();
         } else if (id == Control.DISASSEMBLY_MODE) {
             disassemblyModePressed();
         } else if (id instanceof StatusChip chip) {
@@ -390,7 +390,7 @@ public final class ItemStoragePanel extends HoloPanel {
             storageFilter.toggleRarity(chip.rarity());
             rebuildControls();
         } else if (id instanceof TypeChip chip) {
-            storageFilter.toggleSocketType(chip.socketType());
+            storageFilter.toggleSection(chip.sectionKind());
             reloadRows();
             rebuildControls();
         }
@@ -426,32 +426,32 @@ public final class ItemStoragePanel extends HoloPanel {
             });
             return;
         }
-        if (workbenchPanel != null) {
-            workbenchPanel.load(row.item() == workbenchPanel.loaded() ? null : row.item());
+        if (craftingBenchPanel != null) {
+            craftingBenchPanel.load(row.item() == craftingBenchPanel.loaded() ? null : row.item());
             return;
         }
         queue(() -> storageListener.selected(row.item() == selectedItem ? null : row.item()));
     }
 
     private boolean loadsIntoBench() {
-        return pickerMode || workbenchPanel != null;
+        return pickerMode || craftingBenchPanel != null;
     }
 
     static boolean clickable(boolean installed, boolean loadsIntoBench, boolean disassembling) {
         return !installed || (loadsIntoBench && !disassembling);
     }
 
-    public boolean workbenchContains(float x, float y) {
-        return workbenchPanel != null && workbenchPanel.contains(x, y);
+    public boolean craftingBenchContains(float x, float y) {
+        return craftingBenchPanel != null && craftingBenchPanel.contains(x, y);
     }
 
-    public boolean isWorkbenchOpen() {
-        return workbenchPanel != null || (fadingWorkbenchPanel != null && fadingWorkbenchPanel.isVisible());
+    public boolean isCraftingBenchOpen() {
+        return craftingBenchPanel != null || (fadingCraftingBenchPanel != null && fadingCraftingBenchPanel.isVisible());
     }
 
-    private void toggleWorkbench() {
-        if (workbenchPanel != null) {
-            workbenchPanel.close();
+    private void toggleCraftingBench() {
+        if (craftingBenchPanel != null) {
+            craftingBenchPanel.close();
             return;
         }
         if (modifyHandler != null) {
@@ -462,10 +462,10 @@ public final class ItemStoragePanel extends HoloPanel {
             storageListener.selected(null);
         }
         SkillTreeSounds.panelOpened();
-        float benchLeft = panelLeft + panelWidth + WORKBENCH_GAP;
-        float benchWidth = hostPanel.getPosition().getWidth() - benchLeft - WORKBENCH_EDGE_MARGIN;
-        workbenchPanel = SocketWorkbenchPanel.open(hostPanel, new SocketPanelPlacement(benchLeft, panelTop, benchWidth, panelHeight, false), false,
-                new SocketWorkbenchPanel.Listener() {
+        float benchLeft = panelLeft + panelWidth + CRAFTING_BENCH_GAP;
+        float benchWidth = hostPanel.getPosition().getWidth() - benchLeft - CRAFTING_BENCH_EDGE_MARGIN;
+        craftingBenchPanel = CraftingBenchPanel.open(hostPanel, new SocketPanelPlacement(benchLeft, panelTop, benchWidth, panelHeight, false), false,
+                new CraftingBenchPanel.Listener() {
                     @Override
                     public void changed(Item loaded) {
                         List<Item> owned = ItemStore.get().owned();
@@ -484,8 +484,8 @@ public final class ItemStoragePanel extends HoloPanel {
 
                     @Override
                     public void closed() {
-                        fadingWorkbenchPanel = workbenchPanel;
-                        workbenchPanel = null;
+                        fadingCraftingBenchPanel = craftingBenchPanel;
+                        craftingBenchPanel = null;
                     }
 
                     @Override
@@ -521,12 +521,12 @@ public final class ItemStoragePanel extends HoloPanel {
         refreshOpacity();
     }
 
-    private static float workbenchButtonWidth() {
-        return Global.getSettings().computeStringWidth(Translation.text("ui.socketStorage.workbench"), Fonts.ORBITRON_20AA) + BUTTON_TEXT_PADDING;
+    private static float craftingBenchButtonWidth() {
+        return Global.getSettings().computeStringWidth(Translation.text("ui.socketStorage.craftingBench"), Fonts.ORBITRON_20AA) + BUTTON_TEXT_PADDING;
     }
 
     private static float toolsWidth() {
-        return workbenchButtonWidth() + GAP + PARTS_ROOM;
+        return craftingBenchButtonWidth() + GAP + PARTS_ROOM;
     }
 
     private float searchRowTop() {
@@ -549,12 +549,12 @@ public final class ItemStoragePanel extends HoloPanel {
     private void rebuildTools() {
         TooltipMakerAPI element = panelRoot.createUIElement(toolsWidth(), FIELD_HEIGHT, false);
         if (pickerMode) {
-            addPartsCount(element, 0f);
+            addFeedstockCount(element, 0f);
         } else {
-            float workbenchWidth = workbenchButtonWidth();
-            element.addButton(Translation.text("ui.socketStorage.workbench"), Control.WORKBENCH, workbenchWidth, HEADER_BUTTON_HEIGHT, 0f)
+            float craftingBenchWidth = craftingBenchButtonWidth();
+            element.addButton(Translation.text("ui.socketStorage.craftingBench"), Control.CRAFTING_BENCH, craftingBenchWidth, HEADER_BUTTON_HEIGHT, 0f)
                     .getPosition().inTR(0f, (FIELD_HEIGHT - HEADER_BUTTON_HEIGHT) / 2f);
-            addPartsCount(element, workbenchWidth + GAP);
+            addFeedstockCount(element, craftingBenchWidth + GAP);
         }
         toolsElement = replaceElement(toolsElement, element, PAD + innerWidth() - toolsWidth(), searchRowTop());
         refreshOpacity();
@@ -572,10 +572,10 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private boolean showsItem(Item item) {
-        return showsItem(item, kindFilter, sectionItemsOnly, storageFilter.socketTypes);
+        return showsItem(item, kindFilter, sectionItemsOnly, storageFilter.sectionKinds);
     }
 
-    static boolean showsItem(Item item, ItemKind kindFilter, boolean sectionItemsOnly, Set<ItemKind> chosenSocketTypes) {
+    static boolean showsItem(Item item, ItemKind kindFilter, boolean sectionItemsOnly, Set<ItemKind> chosenSections) {
         ItemKind kind = ItemTypes.listedKind(item);
         if (kindFilter != null) {
             return kind == kindFilter;
@@ -584,7 +584,7 @@ public final class ItemStoragePanel extends HoloPanel {
             return false;
         }
         List<ItemKind> chipTypes = sectionItemsOnly ? ItemKind.sectionItemTypes() : List.of(ItemKind.values());
-        return chipTypes.stream().noneMatch(chosenSocketTypes::contains) || chosenSocketTypes.contains(kind);
+        return chipTypes.stream().noneMatch(chosenSections::contains) || chosenSections.contains(kind);
     }
 
     private List<ItemKind> chipTypes() {
@@ -610,9 +610,9 @@ public final class ItemStoragePanel extends HoloPanel {
             chips.placeInRow(label, new RarityChip(rarity), ChipFlow.Colors.of(rarity.color()), storageFilter.rarities.contains(rarity));
         }
         chips.startRow(FIXED_CONTROL_ROWS);
-        for (ItemKind socketType : chipTypes) {
-            chips.place(socketType.displayName(), new TypeChip(socketType), ChipFlow.Colors.of(typeColor(socketType)),
-                    storageFilter.socketTypes.contains(socketType));
+        for (ItemKind sectionKind : chipTypes) {
+            chips.place(sectionKind.displayName(), new TypeChip(sectionKind), ChipFlow.Colors.of(typeColor(sectionKind)),
+                    storageFilter.sectionKinds.contains(sectionKind));
         }
         float controlsTop = PAD + HEADER_HEIGHT + GAP + FIELD_HEIGHT + GAP;
         controlsElement = replaceElement(controlsElement, element, PAD, controlsTop);
@@ -620,8 +620,8 @@ public final class ItemStoragePanel extends HoloPanel {
         rebuildGrid();
     }
 
-    private static Color typeColor(ItemKind socketType) {
-        Color kindColor = CargoIconLooks.kindColor(socketType);
+    private static Color typeColor(ItemKind sectionKind) {
+        Color kindColor = CargoIconLooks.kindColor(sectionKind);
         return kindColor != null ? kindColor : Misc.getBasePlayerColor();
     }
 
@@ -656,7 +656,7 @@ public final class ItemStoragePanel extends HoloPanel {
         if (storageRows.isEmpty() && kindFilter != null) {
             return Translation.msg("ui.socketStorage.emptyType").arg("type", kindFilter.displayName()).text();
         }
-        return Translation.text(storageRows.isEmpty() && chipTypes().stream().noneMatch(storageFilter.socketTypes::contains) ? "ui.socketStorage.empty"
+        return Translation.text(storageRows.isEmpty() && chipTypes().stream().noneMatch(storageFilter.sectionKinds::contains) ? "ui.socketStorage.empty"
                 : "ui.socketStorage.noMatches");
     }
 
@@ -686,7 +686,7 @@ public final class ItemStoragePanel extends HoloPanel {
         int installedCount = (int) storageRows.stream().filter(ItemStorageRow::installed).count();
         VanillaText.plainPara(newSummary, Translation.msg("ui.socketStorage.summary")
                 .arg("shown", shownCount).arg("stored", storageRows.size()).arg("installed", installedCount).text(), 0f, Misc.getGrayColor())
-                .getPosition().inTL(0f, PARTS_TEXT_TOP);
+                .getPosition().inTL(0f, FEEDSTOCK_TEXT_TOP);
         disassembly.addModeButton(newSummary, Control.DISASSEMBLY_MODE, FOOTER_HEIGHT, storageRows.stream().anyMatch(row -> !row.installed()));
         summaryElement = replaceElement(summaryElement, newSummary, PAD, panelHeight - PAD - FOOTER_HEIGHT);
     }
@@ -717,7 +717,7 @@ public final class ItemStoragePanel extends HoloPanel {
             return List.of(disassembly.cellLine(row.item()));
         }
         List<StyledText> footerLines = new ArrayList<>();
-        if (workbenchPanel == null && !pickerMode) {
+        if (craftingBenchPanel == null && !pickerMode) {
             footerLines.add(installHint(row));
         }
         if (expanded) {
@@ -767,7 +767,7 @@ public final class ItemStoragePanel extends HoloPanel {
 
             @Override
             public boolean selected() {
-                return row.item() == selectedItem || (workbenchPanel != null && row.item() == workbenchPanel.loaded());
+                return row.item() == selectedItem || (craftingBenchPanel != null && row.item() == craftingBenchPanel.loaded());
             }
 
             @Override

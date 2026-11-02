@@ -57,7 +57,7 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
     }
 
     public static String descriptionKey(ChartRun run) {
-        return run.hasBoss() ? "chart.objective.boss." + run.bossType().key() + ".description" : "chart.dialog.stale";
+        return run.hasBoss() ? "chart.objective.boss." + run.bossType().key() + ".description" : "chart.wormhole.dialog.stale";
     }
 
     public static String progressText(ChartRun run) {
@@ -95,7 +95,7 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
     public void createSmallDescription(TooltipMakerAPI info, float width, float height) {
         ChartRun run = ChartRuns.unclosed(runId);
         if (run == null || !run.hasBoss()) {
-            info.addPara(safe(Translation.gameText("chart.dialog.stale")), 0f);
+            info.addPara(safe(Translation.gameText("chart.wormhole.dialog.stale")), 0f);
             return;
         }
         int tier = run.tier();

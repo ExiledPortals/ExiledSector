@@ -12,7 +12,7 @@ import com.fs.starfarer.api.util.MutableValue;
 import exiledsector.MockSector;
 import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.content.ChartContent;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
@@ -23,7 +23,7 @@ import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.objective.ChartRewards;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemUnlock;
-import exiledsector.items.StarChartCurrency;
+import exiledsector.items.StarChartCipher;
 import exiledsector.items.StarChartFixtures;
 import exiledsector.skills.SkillTreeSetting;
 import org.json.JSONArray;
@@ -59,8 +59,8 @@ class ChartDropsTest {
     private static final String RUN_ID = "dropRun";
     private static final String GATED = StarChartFixtures.TEST_GATED;
     private static final String UNGATED = StarChartFixtures.TEST_FIXED;
-    private static final Set<String> CHART_CURRENCY_IDS = Set.of(StarChartCurrency.REFORGE.itemId(), StarChartCurrency.ANNULMENT.itemId(),
-            StarChartCurrency.CARTOGRAPHY.itemId());
+    private static final Set<String> CHART_CURRENCY_IDS = Set.of(StarChartCipher.REFORGE.itemId(), StarChartCipher.ERASURE.itemId(),
+            StarChartCipher.CARTOGRAPHY.itemId());
 
     private MockSector mockSector;
     private SectorAPI sector;
@@ -70,7 +70,7 @@ class ChartDropsTest {
     @BeforeEach
     void setUp() throws Exception {
         StarChartFixtures.registerShipped();
-        StarChartCurrency.registerAll();
+        StarChartCipher.registerAll();
         mockSector = new MockSector();
         sector = mockSector.sector;
         MemoryAPI sectorMemory = mock(MemoryAPI.class);
@@ -264,8 +264,8 @@ class ChartDropsTest {
 
     @Test
     void theCatalystModifierScalesOnlyCatalystsAndTheQuantityLinesScaleThemToo() {
-        ChartGenContext catalysts = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_CATALYST_PERCENT, 50f)));
-        ChartGenContext quantity = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, 20f)));
+        ChartGenContext catalysts = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_CATALYST_PERCENT, 50f)));
+        ChartGenContext quantity = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, 20f)));
 
         assertEquals(new ChartDrops.Mults(1f, 1f, 1.5f), ChartDrops.Mults.of(catalysts, 1f));
         assertEquals(2.4f, ChartDrops.Mults.of(quantity, 2f).catalyst(), 0.0001f);
@@ -275,13 +275,13 @@ class ChartDropsTest {
     void outsideSystemsTheStrengthOnlyGatesTheDropAndSalvageAndTechMiningStayAtTierOne() throws Exception {
         ChartDrops.register(ChartTables.csvRows(ChartDrops.PATH));
 
-        assertEquals(ChartDrops.NO_TIER, ChartDrops.tierForStrength(ChartDrops.Source.BATTLE, 0f));
-        assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.BATTLE, 1f));
-        assertEquals(ChartDrops.NO_TIER, ChartDrops.tierForStrength(ChartDrops.Source.SALVAGE, 4f));
-        assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.SALVAGE, 5f));
-        assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.SALVAGE, 60f));
-        assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.TECHMINING_FIRST_FIND, 60f));
-        assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.TECHMINING_MONTHLY, 60f));
+        assertEquals(ChartDrops.NO_TIER, ChartDrops.tierForDefeatedDp(ChartDrops.Source.BATTLE, 0f));
+        assertEquals(1, ChartDrops.tierForDefeatedDp(ChartDrops.Source.BATTLE, 1f));
+        assertEquals(ChartDrops.NO_TIER, ChartDrops.tierForDefeatedDp(ChartDrops.Source.SALVAGE, 4f));
+        assertEquals(1, ChartDrops.tierForDefeatedDp(ChartDrops.Source.SALVAGE, 5f));
+        assertEquals(1, ChartDrops.tierForDefeatedDp(ChartDrops.Source.SALVAGE, 60f));
+        assertEquals(1, ChartDrops.tierForDefeatedDp(ChartDrops.Source.TECHMINING_FIRST_FIND, 60f));
+        assertEquals(1, ChartDrops.tierForDefeatedDp(ChartDrops.Source.TECHMINING_MONTHLY, 60f));
         assertTrue(ChartDrops.roll(ChartDrops.Source.BATTLE, ChartDrops.NO_TIER, 1f, new Random(1L)).isEmpty());
     }
 

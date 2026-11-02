@@ -30,7 +30,7 @@ public final class HullItem extends Item {
 
         @Override
         public boolean available(SectorAPI sector) {
-            return HullUpgradesSetting.sectionsOpen(sector);
+            return HullUpgradesSetting.hullItemDropsOpen(sector);
         }
 
         @Override
@@ -92,7 +92,7 @@ public final class HullItem extends Item {
             throw new IllegalArgumentException("crew \"" + crew + "\" is not one of " + String.join(", ", CREW_VALUES));
         }
         return ItemDefinition.parse(row, kind, UniqueSource.parseList(row.optString(UNIQUE_SOURCE_COLUMN, "")))
-                .withMechanic(row.optString(MECHANIC_COLUMN, "")).withArea(row.optString(ItemAreas.AREA_COLUMN, "")).withCrew(crew);
+                .withMechanic(row.optString(MECHANIC_COLUMN, "")).withVolume(row.optString(ItemVolumes.VOLUME_COLUMN, "")).withCrew(crew);
     }
 
     @Override
@@ -168,7 +168,7 @@ public final class HullItem extends Item {
     }
 
     @Override
-    public boolean retuneTrait(Random random) {
+    public boolean tuneTrait(Random random) {
         if (!hasTunableTrait()) {
             return false;
         }

@@ -18,7 +18,7 @@ import java.util.function.Predicate;
 
 final class SkirmishPlanner {
 
-    static final float ALLY_STRENGTH_DIVISOR = 1.3f;
+    static final float ALLY_COMBAT_POINTS_DIVISOR = 1.3f;
     static final long ATTACKER_SALT = 0x4348534b524d53L;
 
     private SkirmishPlanner() {
@@ -80,7 +80,7 @@ final class SkirmishPlanner {
     static List<PlannedFleet> asAllies(List<PlannedFleet> fleets) {
         List<PlannedFleet> allies = new ArrayList<>(fleets.size());
         for (PlannedFleet fleet : fleets) {
-            allies.add(new PlannedFleet(fleet.role(), fleet.poiIndex(), fleet.combatPoints() / ALLY_STRENGTH_DIVISOR, fleet.quality(),
+            allies.add(new PlannedFleet(fleet.role(), fleet.poiIndex(), fleet.combatPoints() / ALLY_COMBAT_POINTS_DIVISOR, fleet.quality(),
                     fleet.officerLevelBonus(), fleet.officerCountBonus(), fleet.strengthBonus(), fleet.averageSMods()));
         }
         return allies;

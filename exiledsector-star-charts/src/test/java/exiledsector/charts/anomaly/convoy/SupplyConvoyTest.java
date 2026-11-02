@@ -6,7 +6,7 @@ import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.content.ChartContentGenerator;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -104,7 +104,7 @@ class SupplyConvoyTest {
         }
     }
 
-    private static ChartGenContext with(ChartEffect effect, float value) {
+    private static ChartGenContext with(ChartModifier effect, float value) {
         return ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(effect, value)));
     }
 
@@ -112,7 +112,7 @@ class SupplyConvoyTest {
     void theExtraConvoyLineAddsConvoysWithTheirOwnDestinations() {
         ConvoySystem convoySystem = new ConvoySystem(6);
 
-        SupplyConvoy.INSTANCE.generate(convoySystem.site(with(ChartEffect.CHART_EXTRA_CONVOYS, 2f)));
+        SupplyConvoy.INSTANCE.generate(convoySystem.site(with(ChartModifier.CHART_EXTRA_CONVOYS, 2f)));
 
         List<ConvoyState> convoys = convoySystem.script().convoys();
         assertEquals(3, convoys.size());
@@ -125,9 +125,9 @@ class SupplyConvoyTest {
         ConvoySystem plain = new ConvoySystem(4);
         SupplyConvoy.INSTANCE.generate(plain.site(ChartGenContext.none()));
         ConvoySystem doubled = new ConvoySystem(4);
-        SupplyConvoy.INSTANCE.generate(doubled.site(with(ChartEffect.CHART_CONVOY_ESCORT_PERCENT, 100f)));
+        SupplyConvoy.INSTANCE.generate(doubled.site(with(ChartModifier.CHART_CONVOY_ESCORT_PERCENT, 100f)));
         ConvoySystem stripped = new ConvoySystem(4);
-        SupplyConvoy.INSTANCE.generate(stripped.site(with(ChartEffect.CHART_CONVOY_ESCORT_PERCENT, -100f)));
+        SupplyConvoy.INSTANCE.generate(stripped.site(with(ChartModifier.CHART_CONVOY_ESCORT_PERCENT, -100f)));
 
         assertEquals(2f * plain.engine.fleetParams.get(2).combatPts, doubled.engine.fleetParams.get(2).combatPts, 0.01f);
         assertEquals(plain.engine.fleetParams.get(0).freighterPts, doubled.engine.fleetParams.get(0).freighterPts, 0.01f);
@@ -144,7 +144,7 @@ class SupplyConvoyTest {
         SupplyConvoy.INSTANCE.generate(plain.site(ChartGenContext.none()));
         ConvoySystem richer = new ConvoySystem(4);
         richer.engine.fleetPoints = 100;
-        SupplyConvoy.INSTANCE.generate(richer.site(with(ChartEffect.CHART_CONVOY_CARGO_PERCENT, 50f)));
+        SupplyConvoy.INSTANCE.generate(richer.site(with(ChartModifier.CHART_CONVOY_CARGO_PERCENT, 50f)));
 
         ConvoyState plainConvoy = plain.script().convoys().get(0);
         ConvoyState richerConvoy = richer.script().convoys().get(0);
@@ -155,8 +155,8 @@ class SupplyConvoyTest {
 
     @Test
     void aReducedEscortLineReadsAsReduced() {
-        assertTrue(ChartEffect.CHART_CONVOY_ESCORT_PERCENT.description(-25f).plain().contains("25"));
-        assertFalse(ChartEffect.CHART_CONVOY_ESCORT_PERCENT.description(-25f).plain().contains("-25"));
+        assertTrue(ChartModifier.CHART_CONVOY_ESCORT_PERCENT.description(-25f).plain().contains("25"));
+        assertFalse(ChartModifier.CHART_CONVOY_ESCORT_PERCENT.description(-25f).plain().contains("-25"));
     }
 
     @Test

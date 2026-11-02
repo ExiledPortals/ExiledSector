@@ -22,7 +22,7 @@ const DEFAULT_CHART_TIER_GROUPS: ChartTierGroup[] = [
 
 interface VocabularyFile {
   effects: EffectInfo[];
-  tags: { theme: string[]; region: string[]; requirement: string[]; gate?: string[] };
+  tags: { theme: string[]; volume: string[]; requirement: string[]; gate?: string[] };
   tiers: string[];
   unlockConditionTypes: string[];
   parameterlessUnlockConditionTypes?: string[];
@@ -36,7 +36,7 @@ interface VocabularyFile {
   uniqueSourceKinds?: string[];
   hullItemMechanics?: string[];
   hullItemCrew?: string[];
-  itemAreas?: string[];
+  itemVolumes?: string[];
   itemUnlocks: string[];
   clearedChartTierPrefix?: string;
   chartTierRange?: [number, number];
@@ -49,7 +49,7 @@ export interface Vocabulary {
   effectNames: string[];
   effectInfo: Map<string, EffectInfo>;
   themeTags: string[];
-  regionTags: string[];
+  volumeTags: string[];
   requirementTags: string[];
   gateTags: string[];
   allTags: string[];
@@ -67,7 +67,7 @@ export interface Vocabulary {
   uniqueSourceKinds: string[];
   hullItemMechanics: string[];
   hullItemCrew: string[];
-  itemAreas: string[];
+  itemVolumes: string[];
   itemUnlocks: string[];
   clearedChartTierPrefix: string;
   lowestChartTier: number;
@@ -82,10 +82,10 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     effectNames: file.effects.map((effect) => effect.name).sort(compareText),
     effectInfo: new Map(file.effects.map((effect) => [effect.name, effect])),
     themeTags: file.tags.theme.slice(),
-    regionTags: file.tags.region.slice(),
+    volumeTags: file.tags.volume.slice(),
     requirementTags: file.tags.requirement.slice(),
     gateTags: (file.tags.gate ?? []).slice(),
-    allTags: [...file.tags.theme, ...file.tags.region, ...file.tags.requirement, ...(file.tags.gate ?? [])],
+    allTags: [...file.tags.theme, ...file.tags.volume, ...file.tags.requirement, ...(file.tags.gate ?? [])],
     tiers: file.tiers.slice(),
     unlockConditionTypes: file.unlockConditionTypes.slice(),
     parameterlessUnlockConditionTypes: (file.parameterlessUnlockConditionTypes ?? []).slice(),
@@ -95,12 +95,12 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     itemKindTypes: new Map(file.itemKinds.map((kind) => [kind.id, kind.type])),
     subroutineKinds: (file.subroutineKinds ?? []).slice(),
     modifierScopes: (file.modifierScopes ?? file.itemTypes).slice(),
-    doctrineBehaviours: (file.doctrineBehaviours ?? ['TRANSFORM', 'AUGMENT']).slice(),
+    doctrineBehaviours: (file.doctrineBehaviours ?? ['REWRITE', 'AUGMENT']).slice(),
     radiusSizes: (file.radiusSizes ?? ['small', 'medium', 'large']).slice(),
     uniqueSourceKinds: (file.uniqueSourceKinds ?? ['faction', 'site']).slice(),
     hullItemMechanics: (file.hullItemMechanics ?? ['one_of']).slice(),
     hullItemCrew: (file.hullItemCrew ?? ['crewed', 'automated']).slice(),
-    itemAreas: (file.itemAreas ?? []).slice(),
+    itemVolumes: (file.itemVolumes ?? []).slice(),
     itemUnlocks: file.itemUnlocks.slice(),
     clearedChartTierPrefix: file.clearedChartTierPrefix ?? 'cleared_chart_tier_',
     lowestChartTier: file.chartTierRange?.[0] ?? 1,

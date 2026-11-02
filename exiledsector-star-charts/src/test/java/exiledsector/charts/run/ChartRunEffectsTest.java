@@ -11,7 +11,7 @@ import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.MagneticStorm;
 import exiledsector.charts.content.ChartContent;
-import exiledsector.charts.effect.ChartFleetConditions;
+import exiledsector.charts.effect.ChartPlayerModifiers;
 import exiledsector.charts.effect.ChartFleetStat;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.cleanup.ChartLoadSweep;
@@ -71,7 +71,7 @@ class ChartRunEffectsTest {
     @AfterEach
     void tearDown() {
         mockSector.close();
-        ChartFleetConditions.clear(null);
+        ChartPlayerModifiers.clear(null);
         StarChartFixtures.clear();
     }
 
@@ -212,20 +212,20 @@ class ChartRunEffectsTest {
 
     @Test
     void fleetConditionsLeftOverFromAnotherRunOrSaveAreLifted() {
-        ChartFleetConditions.set(Map.of(ChartFleetStat.TOP_SPEED, 0.8f), playerFleet);
+        ChartPlayerModifiers.set(Map.of(ChartFleetStat.TOP_SPEED, 0.8f), playerFleet);
         storeRun(null).recordArrival();
         when(playerFleet.getContainingLocation()).thenReturn(system);
 
         new ChartRunScript().advance(0f);
-        assertFalse(ChartFleetConditions.isActive(), "a run without fleet drawbacks clears the snapshot");
+        assertFalse(ChartPlayerModifiers.isActive(), "a run without fleet drawbacks clears the snapshot");
 
-        ChartFleetConditions.set(Map.of(ChartFleetStat.TOP_SPEED, 0.8f), playerFleet);
+        ChartPlayerModifiers.set(Map.of(ChartFleetStat.TOP_SPEED, 0.8f), playerFleet);
         ChartLoadSweep.liftEffectsOutsideSystem(sector);
-        assertFalse(ChartFleetConditions.isActive(), "loading a save always starts from a clean snapshot");
+        assertFalse(ChartPlayerModifiers.isActive(), "loading a save always starts from a clean snapshot");
 
-        ChartFleetConditions.set(Map.of(ChartFleetStat.TOP_SPEED, 0.8f), playerFleet);
+        ChartPlayerModifiers.set(Map.of(ChartFleetStat.TOP_SPEED, 0.8f), playerFleet);
         ChartRunEffects.lift(playerFleet);
-        assertFalse(ChartFleetConditions.isActive(), "closing the run lifts the fleet drawbacks");
+        assertFalse(ChartPlayerModifiers.isActive(), "closing the run lifts the fleet drawbacks");
     }
 
     @Test

@@ -85,8 +85,8 @@ class WormholeTechItemPluginTest {
             assertTrue(WormholeGateway.isUnlocked(mockSector.sector));
             assertEquals("Right-click to unlock the Outer Reach Atlas ability.",
                     Translation.text(WormholeTechItemPlugin.usageKey(WormholeTechItems.BLUEPRINT, false, true)));
-            assertEquals(WormholeTechItemPlugin.usageKey(WormholeTechItems.UPGRADE_ADVANCED, false),
-                    WormholeTechItemPlugin.usageKey(WormholeTechItems.UPGRADE_ADVANCED, false, true));
+            assertEquals(WormholeTechItemPlugin.usageKey(WormholeTechItems.UPGRADE_ARRAY, false),
+                    WormholeTechItemPlugin.usageKey(WormholeTechItems.UPGRADE_ARRAY, false, true));
         } finally {
             StarChartSettings.setNoColonyForTests(StarChartSettings.DEFAULT_NO_COLONY);
         }
@@ -94,8 +94,8 @@ class WormholeTechItemPluginTest {
 
     @Test
     void theUpgradesNeverHaveARightClickAction() {
-        assertFalse(plugin(WormholeTechItems.UPGRADE_ADVANCED).hasRightClickAction());
-        assertFalse(plugin(WormholeTechItems.UPGRADE_PERFECTED).hasRightClickAction());
+        assertFalse(plugin(WormholeTechItems.UPGRADE_ARRAY).hasRightClickAction());
+        assertFalse(plugin(WormholeTechItems.UPGRADE_NEXUS).hasRightClickAction());
     }
 
     @Test
@@ -105,9 +105,9 @@ class WormholeTechItemPluginTest {
         assertEquals("Store in a Research Facility to research the Wormhole Gateway.",
                 Translation.text(WormholeTechItemPlugin.usageKey(WormholeTechItems.BLUEPRINT, true)));
         assertEquals("Store in a Research Facility to research the Gateway Array, then upgrade your gateway.",
-                Translation.text(WormholeTechItemPlugin.usageKey(WormholeTechItems.UPGRADE_ADVANCED, true)));
+                Translation.text(WormholeTechItemPlugin.usageKey(WormholeTechItems.UPGRADE_ARRAY, true)));
         assertEquals("Store in a Research Facility to research the Gateway Nexus, then upgrade your gateway.",
-                Translation.text(WormholeTechItemPlugin.usageKey(WormholeTechItems.UPGRADE_PERFECTED, true)));
-        assertTrue(Translation.has(WormholeTechItemPlugin.usageKey(WormholeTechItems.UPGRADE_PERFECTED, false)));
+                Translation.text(WormholeTechItemPlugin.usageKey(WormholeTechItems.UPGRADE_NEXUS, true)));
+        assertTrue(Translation.has(WormholeTechItemPlugin.usageKey(WormholeTechItems.UPGRADE_NEXUS, false)));
     }
 }

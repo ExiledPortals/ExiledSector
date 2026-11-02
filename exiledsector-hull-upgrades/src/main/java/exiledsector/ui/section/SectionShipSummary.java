@@ -31,7 +31,7 @@ public final class SectionShipSummary implements ShipSummaryPart {
     @Override
     public StyledText line(ShipSkillData shipData, ShipVariantAPI variant) {
         int hullUpgradePoints = HullUpgradePoints.of(shipData);
-        if (shipData.getUnlockedSocketTypeIds().isEmpty() && hullUpgradePoints <= HullUpgradePoints.STARTING_POINTS) {
+        if (shipData.getUnlockedSectionIds().isEmpty() && hullUpgradePoints <= HullUpgradePoints.STARTING_POINTS) {
             return null;
         }
         List<StyledText> socketTexts = new ArrayList<>();
@@ -39,7 +39,7 @@ public final class SectionShipSummary implements ShipSummaryPart {
             socketTexts.add(sectionText(slot));
         }
         StyledText sockets = socketTexts.isEmpty() ? Translation.styled("summary.frameworkNone") : Translation.list(socketTexts);
-        return Translation.msg("summary.framework").arg("used", shipData.getUnlockedSocketTypeIds().size())
+        return Translation.msg("summary.framework").arg("used", shipData.getUnlockedSectionIds().size())
                 .arg("points", hullUpgradePoints).arg("sockets", sockets).styled();
     }
 

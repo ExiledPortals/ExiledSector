@@ -97,7 +97,7 @@ class HullUpgradeTest {
     }
 
     @Test
-    void pointsUnlockSocketTypesWithinTheShipsRestrictionsAndLockingRefundsThem() {
+    void pointsUnlockSectionsWithinTheShipsRestrictionsAndLockingRefundsThem() {
         ShipSkillData shipData = shipWithPoints("ship", 2);
 
         assertEquals(HullUpgradeRules.UnlockBlock.UNMET_REQUIREMENT, HullUpgradeRules.unlockBlock(shipData, ShipSection.SHIELD_GENERATOR, fit(ShieldType.NONE)));
@@ -112,7 +112,7 @@ class HullUpgradeTest {
         assertTrue(HullUpgradeRules.lock(shipData, ShipSection.BRIDGE));
 
         assertEquals(1, HullUpgradePoints.unspent(shipData));
-        assertEquals(List.of("shield_generator"), shipData.getUnlockedSocketTypeIds());
+        assertEquals(List.of("shield_generator"), shipData.getUnlockedSectionIds());
         assertFalse(SocketCustody.isInstalled(ships, officer));
         assertEquals(List.of(officer), store.owned());
     }
@@ -120,7 +120,7 @@ class HullUpgradeTest {
     @Test
     void aWarrantySavedBeforeItsTargetingModifierExistedGainsItOnLoad() {
         HullItem saved = new HullItem("old_warranty", "warranty", 7L,
-                List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledEffect("HULL_PERCENT", 1f))));
+                List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledLine("HULL_PERCENT", 1f))));
 
         assertEquals(2, saved.explicits().size());
         assertTrue(saved.targetsAnotherItem());
@@ -132,8 +132,8 @@ class HullUpgradeTest {
         HullItem warranty = (HullItem) store.add(ItemDefinitions.get("warranty"), 7L);
         ShipSection firstTarget = warranty.targetSection();
 
-        assertTrue(ItemCrafting.canRecalibrate(warranty, warranty.definition(), Set.of()));
-        assertNotNull(ItemCrafting.recalibrate(warranty, new java.util.Random(3L)));
+        assertTrue(ItemCrafting.canTune(warranty, warranty.definition(), Set.of()));
+        assertNotNull(ItemCrafting.tune(warranty, new java.util.Random(3L)));
 
         assertNotEquals(firstTarget, warranty.targetSection());
         assertNotEquals(ShipSection.BRIDGE, warranty.targetSection());
@@ -213,36 +213,36 @@ class HullUpgradeTest {
     }
 
     @Test
-    void aRespecKeepsTheSectionAndATransposedMisfitLeavesItsSocket() {
+    void aRespecKeepsTheSectionAndAMetamorphosedMisfitLeavesItsSocket() {
         ShipSkillData shipData = shipWithPoints("ship", 1);
         HullUpgradeRules.unlock(shipData, ShipSection.BRIDGE, fit(ShieldType.FRONT));
         Item officer = store.add(ItemDefinitions.get("officer"), 1L);
         HullUpgradeRules.socket(shipData, ShipSection.BRIDGE, officer, fit(ShieldType.FRONT), ships);
 
         ShipTrees.resetAllocations(shipData);
-        assertEquals(List.of("bridge"), shipData.getUnlockedSocketTypeIds());
-        Item transposed = Item.withEffects(officer.id(), "chip", 3L, List.of());
-        store.replace(officer, transposed);
+        assertEquals(List.of("bridge"), shipData.getUnlockedSectionIds());
+        Item metamorphosed = Item.withEffects(officer.id(), "chip", 3L, List.of());
+        store.replace(officer, metamorphosed);
 
-        assertTrue(SocketCustody.unsocketIfMisfit(ships, transposed));
+        assertTrue(SocketCustody.unsocketIfMisfit(ships, metamorphosed));
         assertNull(shipData.getSectionItem("bridge"));
         assertNotNull(store.find(officer.id()));
     }
 
     @Test
     void theSchematicRevisionMovesOnlyWhenTheCountsChange() {
-        int startRevision = store.shipCurrencyRevision();
+        int startRevision = store.shipSchematicRevision();
 
         store.addSchematics(RefitSchematic.SCRAPPED, 0);
         assertFalse(store.takeSchematic(RefitSchematic.SCRAPPED));
-        assertEquals(startRevision, store.shipCurrencyRevision());
+        assertEquals(startRevision, store.shipSchematicRevision());
 
         store.addSchematics(RefitSchematic.SCRAPPED, 2);
-        int afterAdding = store.shipCurrencyRevision();
+        int afterAdding = store.shipSchematicRevision();
         assertNotEquals(startRevision, afterAdding);
 
         assertTrue(store.takeSchematic(RefitSchematic.SCRAPPED));
-        assertNotEquals(afterAdding, store.shipCurrencyRevision());
+        assertNotEquals(afterAdding, store.shipSchematicRevision());
     }
 
     @Test

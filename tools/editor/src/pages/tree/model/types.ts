@@ -43,7 +43,7 @@ export interface SkillType {
   exclusiveHullMods?: string[];
   phantomHullMods?: string[];
   exclusiveSkillTypes?: string[];
-  optionalOptions?: string[];
+  options?: string[];
   flavour?: string;
   flavourAutomated?: string;
   effectText?: string[];
@@ -119,7 +119,7 @@ export const TIER_LABELS: Record<string, string> = {
   KEYSTONE: 'Keystone',
   WORMHOLE: 'Wormhole',
   WORMHOLE_EXIT: 'Wormhole Exit',
-  SOCKET: 'Modular Hull Socket',
+  SOCKET: 'Subroutine Socket',
   ROOT: 'Root',
 };
 

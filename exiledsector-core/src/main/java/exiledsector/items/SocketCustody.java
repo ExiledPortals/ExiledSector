@@ -55,8 +55,8 @@ public final class SocketCustody {
         Map<String, Installation> installations = new HashMap<>();
         shipDataById.forEach((shipId, shipData) -> {
             shipData.getSocketedItems().forEach((nodeId, itemId) -> installations.put(itemId, new Installation(shipId, nodeId)));
-            shipData.getSectionItems().forEach((socketTypeId, itemId) ->
-                    installations.put(itemId, Installation.inSection(shipId, socketTypeId)));
+            shipData.getSectionItems().forEach((sectionKindId, itemId) ->
+                    installations.put(itemId, Installation.inSection(shipId, sectionKindId)));
         });
         return installations;
     }

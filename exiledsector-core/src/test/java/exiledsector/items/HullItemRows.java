@@ -21,7 +21,7 @@ final class HullItemRows {
     private HullItemRows() {
     }
 
-    static ItemData data(String definitionId, long seed, List<RolledEffect> effects, FrozenName frozenName) {
+    static ItemData data(String definitionId, long seed, List<RolledLine> effects, FrozenName frozenName) {
         return new ItemData(definitionId, seed, RolledModifier.fromLegacyEffects(ItemDefinitions.get(definitionId), effects), frozenName);
     }
 
@@ -45,7 +45,7 @@ final class HullItemRows {
     }
 
     static JSONObject modifierRow(String id, String slot, String itemTypes, String lines, String name) throws JSONException {
-        return new JSONObject().put("id", id).put("slot", slot).put("item_types", itemTypes).put("lines", lines).put("name", name);
+        return new JSONObject().put("id", id).put("affix", slot).put("scopes", itemTypes).put("lines", lines).put("name", name);
     }
 
     static JSONArray shippedRows(String dataPath) throws Exception {

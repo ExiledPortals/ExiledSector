@@ -39,10 +39,10 @@ class ItemTooltipTest {
     }
 
     @Test
-    void theTooltipListsEachRolledEffectWithoutAKindLine() throws Exception {
+    void theTooltipListsEachRolledLineWithoutAKindLine() throws Exception {
         HullItemRows.registerMilitary();
         Item item = Item.withEffects("socketable_1", HullItemRows.MILITARY, 1L,
-                List.of(new RolledEffect("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledEffect("REMOVED_EFFECT", 3f)));
+                List.of(new RolledLine("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledLine("REMOVED_EFFECT", 3f)));
 
         List<String> lines = item.tooltipLines().stream().map(StyledText::plain).toList();
 
@@ -54,8 +54,8 @@ class ItemTooltipTest {
     void expandedEffectLinesShowTheRollRangeInBracketsAfterTheValue() throws Exception {
         HullItemRows.registerMilitary();
         Item item = Item.withEffects("socketable_4", HullItemRows.MILITARY, 1L,
-                List.of(new RolledEffect("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledEffect("SHIELD_DAMAGE_TAKEN_MULT", -12f),
-                        new RolledEffect("REMOVED_EFFECT", 3f)));
+                List.of(new RolledLine("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledLine("SHIELD_DAMAGE_TAKEN_MULT", -12f),
+                        new RolledLine("REMOVED_EFFECT", 3f)));
 
         List<StyledText> expanded = item.effectLines(true);
 
@@ -70,7 +70,7 @@ class ItemTooltipTest {
     void slottedEffectLinesTagEachExplicitAsPrefixOrSuffix() throws Exception {
         HullItemRows.registerMilitary();
         Item item = Item.withEffects("socketable_6", HullItemRows.MILITARY, 1L,
-                List.of(new RolledEffect("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledEffect("SHIELD_DAMAGE_TAKEN_MULT", -12f)));
+                List.of(new RolledLine("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledLine("SHIELD_DAMAGE_TAKEN_MULT", -12f)));
 
         List<SlottedLine> lines = item.slottedEffectLines(true, null);
 
@@ -83,7 +83,7 @@ class ItemTooltipTest {
     void anEffectNoLongerInItsPoolOrWithAFixedValueShowsNoRange() throws Exception {
         ItemDefinitions.register(new org.json.JSONArray().put(HullItemRows.row("fixed", "bridge", "HULL_MULT:5:5")));
         Item item = Item.withEffects("socketable_5", "fixed", 1L,
-                List.of(new RolledEffect("HULL_MULT", 5f), new RolledEffect("ARMOR_PERCENT", 7f)));
+                List.of(new RolledLine("HULL_MULT", 5f), new RolledLine("ARMOR_PERCENT", 7f)));
 
         assertEquals(List.of("5% more hull points.", "7% increased armor."),
                 item.effectLines(true).stream().map(StyledText::plain).toList());
@@ -92,7 +92,7 @@ class ItemTooltipTest {
     @Test
     void onAKnownHullSizeTheTooltipShowsOnlyThatSizesValue() throws Exception {
         ItemDefinitions.register(new org.json.JSONArray().put(HullItemRows.row("plating", "bridge", "ARMOR_FLAT:5/10/15/20")));
-        Item item = Item.withEffects("socketable_6", "plating", 1L, List.of(new RolledEffect("ARMOR_FLAT", 5f)));
+        Item item = Item.withEffects("socketable_6", "plating", 1L, List.of(new RolledLine("ARMOR_FLAT", 5f)));
 
         List<String> onCapital = writtenParagraphs(item, HullSize.CAPITAL_SHIP, List::of);
         List<String> withoutShip = writtenParagraphs(item, null, List::of);
@@ -125,8 +125,8 @@ class ItemTooltipTest {
 
     @Test
     void effectsWhereLessIsBetterAreColouredLikeTheTreeColoursThem() {
-        RolledEffect upkeep = new RolledEffect("SHIELD_UPKEEP_MULT", -25f);
-        RolledEffect beam = new RolledEffect("BEAM_WEAPON_DAMAGE_PERCENT", 12f);
+        RolledLine upkeep = new RolledLine("SHIELD_UPKEEP_MULT", -25f);
+        RolledLine beam = new RolledLine("BEAM_WEAPON_DAMAGE_PERCENT", 12f);
 
         assertEquals(upkeep.effect().description(-25f).inverted(), upkeep.description());
         assertEquals(beam.effect().description(12f), beam.description());
@@ -146,7 +146,7 @@ class ItemTooltipTest {
     @Test
     void anItemWhoseDefinitionIsGoneKeepsItsEffectsButShowsAsUnrecognised() {
         Item item = Item.withEffects("socketable_2", "removed_mod_item", 1L,
-                List.of(new RolledEffect("BEAM_WEAPON_DAMAGE_PERCENT", 12f)));
+                List.of(new RolledLine("BEAM_WEAPON_DAMAGE_PERCENT", 12f)));
 
         assertEquals("Unrecognised hull item", item.name());
         assertEquals(ItemDefinition.FALLBACK_ICON, item.iconPath());

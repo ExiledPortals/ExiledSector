@@ -44,7 +44,7 @@ public final class AbyssSingularity {
             genesisHullKnown = known;
             if (!known) {
                 LOG.warn("[ExiledSector] Random Assortment of Things has no " + RandomAssortmentCompat.GENESIS_HULL_ID
-                        + " hull, so the Singularity win can't be detected; the Abyss unlocks so its area stays usable.");
+                        + " hull, so the Singularity win can't be detected; the Abyss unlocks so its volume stays usable.");
             }
         }
         return known;
@@ -80,7 +80,7 @@ public final class AbyssSingularity {
 
     private static void markDefeated(SectorAPI sector, String reason) {
         GateTriggers.record(sector, UnlockConditionType.RAT_SINGULARITY_DEFEATED, sector.getMemoryWithoutUpdate(), DEFEATED_FLAG,
-                "Unlocking the Abyss area: " + reason);
+                "Unlocking the Abyss volume: " + reason);
     }
 
     public static boolean containsGenesis(List<FleetMemberAPI> members) {

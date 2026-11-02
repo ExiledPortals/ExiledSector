@@ -115,7 +115,7 @@ class ItemDefinitionsTest {
     }
 
     @Test
-    void socketTypeIdsRoundTripAndLegacyKindsAreRejected() {
+    void sectionIdsRoundTripAndLegacyKindsAreRejected() {
         for (ItemKind type : ItemKind.values()) {
             assertEquals(type, ItemKind.byId(type.id()));
         }

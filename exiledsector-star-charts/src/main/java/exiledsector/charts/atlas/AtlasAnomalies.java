@@ -47,7 +47,7 @@ public final class AtlasAnomalies {
         if (cell.equals(AtlasCell.ORIGIN) || generator.isVoid(cell)) {
             return List.of();
         }
-        boolean spent = state.has(cell, AtlasState.MARKERS_SPENT);
+        boolean spent = state.has(cell, AtlasState.ANOMALIES_SPENT);
         List<String> accepted = new ArrayList<>();
         for (String anomalyId : generator.node(cell).anomalyIds()) {
             ChartAnomalies.Definition definition = ChartAnomalies.definition(anomalyId);

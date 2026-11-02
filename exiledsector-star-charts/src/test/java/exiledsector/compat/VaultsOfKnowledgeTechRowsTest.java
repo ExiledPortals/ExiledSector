@@ -52,8 +52,8 @@ class VaultsOfKnowledgeTechRowsTest {
         }
         List<List<Object>> expected = List.of(
                 List.of(VaultsOfKnowledgeCompat.GATEWAY_RESEARCH_ID, WormholeTechItems.BLUEPRINT, 5),
-                List.of(VaultsOfKnowledgeCompat.GATEWAY_ADVANCED_RESEARCH_ID, WormholeTechItems.UPGRADE_ADVANCED, 10),
-                List.of(VaultsOfKnowledgeCompat.GATEWAY_PERFECTED_RESEARCH_ID, WormholeTechItems.UPGRADE_PERFECTED, 15));
+                List.of(VaultsOfKnowledgeCompat.GATEWAY_ARRAY_RESEARCH_ID, WormholeTechItems.UPGRADE_ARRAY, 10),
+                List.of(VaultsOfKnowledgeCompat.GATEWAY_NEXUS_RESEARCH_ID, WormholeTechItems.UPGRADE_NEXUS, 15));
         for (List<Object> research : expected) {
             JSONObject row = techs.get((String) research.get(0));
             assertTrue(row != null, research.get(0) + " is missing");
@@ -63,9 +63,9 @@ class VaultsOfKnowledgeTechRowsTest {
             assertEquals(VaultsOfKnowledgeCompat.MOD_ID, row.getString("modId"));
         }
         assertEquals("none", techs.get(VaultsOfKnowledgeCompat.GATEWAY_RESEARCH_ID).getString("reqToResearchFirst"));
-        assertTrue(techs.get(VaultsOfKnowledgeCompat.GATEWAY_ADVANCED_RESEARCH_ID).getString("reqToResearchFirst")
+        assertTrue(techs.get(VaultsOfKnowledgeCompat.GATEWAY_ARRAY_RESEARCH_ID).getString("reqToResearchFirst")
                 .contains(VaultsOfKnowledgeCompat.GATEWAY_RESEARCH_ID));
-        assertTrue(techs.get(VaultsOfKnowledgeCompat.GATEWAY_PERFECTED_RESEARCH_ID).getString("reqToResearchFirst")
-                .contains(VaultsOfKnowledgeCompat.GATEWAY_ADVANCED_RESEARCH_ID));
+        assertTrue(techs.get(VaultsOfKnowledgeCompat.GATEWAY_NEXUS_RESEARCH_ID).getString("reqToResearchFirst")
+                .contains(VaultsOfKnowledgeCompat.GATEWAY_ARRAY_RESEARCH_ID));
     }
 }

@@ -55,7 +55,7 @@ class NodeRadiusCacheTest {
     @Test
     void theExoshipAndTheNodesItCarriesAreNeverCentresAndNeverInsideARadius() {
         SkillNode exoship = new SkillNode("exoship", EXOSHIP, List.of(), 0f, 0f);
-        SkillNode carried = new SkillNode("carried", HULL, List.of(), 5f, 0f, SkillNodeDecoration.NONE, List.of(SkillTags.EXOTECH_REGION));
+        SkillNode carried = new SkillNode("carried", HULL, List.of(), 5f, 0f, SkillNodeDecoration.NONE, List.of(SkillTags.EXOTECH_VOLUME));
         NodeRadiusCache cache = NodeRadiusCache.of(List.of(node("centre", 0f, 0f), exoship, carried), DISTANCES);
 
         for (RadiusSize size : RadiusSize.values()) {

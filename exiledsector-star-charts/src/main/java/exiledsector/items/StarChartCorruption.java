@@ -23,7 +23,7 @@ public final class StarChartCorruption {
     }
 
     static StarChart raiseTier(StarChart chart) {
-        return chart.tier() < StarChart.CORRUPTED_TIER ? StarChartCurrency.raiseTier(chart) : null;
+        return chart.tier() < StarChart.CORRUPTED_TIER ? StarChartCipher.raiseTier(chart) : null;
     }
 
     static StarChart expandModifiers(StarChart chart, Random random) {
@@ -31,7 +31,7 @@ public final class StarChartCorruption {
         if (definition == null) {
             return null;
         }
-        List<RolledModifier> rerolled = ItemRoller.rollAtTierWithEffectCount(definition, random.nextLong(), chart.tier(), EXPANDED_MODIFIERS,
+        List<RolledModifier> rerolled = ItemRoller.rollAtTierWithModifierCount(definition, random.nextLong(), chart.tier(), EXPANDED_MODIFIERS,
                 EXPANDED_PER_SIDE);
         if (rerolled.isEmpty()) {
             return null;

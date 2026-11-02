@@ -42,7 +42,7 @@ public final class ForgeGuards {
         if (!withGuardian && guards.isEmpty()) {
             return null;
         }
-        guards.setName(Translation.gameText("chart.forge.guards.name"));
+        guards.setName(Translation.gameText("chart.anomaly.derelict_forge.guards.name"));
         return guards;
     }
 }

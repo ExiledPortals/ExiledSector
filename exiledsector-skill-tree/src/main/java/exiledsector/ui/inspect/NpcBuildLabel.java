@@ -34,7 +34,7 @@ final class NpcBuildLabel {
         Map<String, Integer> themeCounts = new HashMap<>();
         for (String nodeId : skillData.getAllocatedNodeIds()) {
             SkillNode node = SkillTree.get(nodeId);
-            if (node == null || node.getType().isOptional() || node.getType().getTier() == SkillTier.ROOT) {
+            if (node == null || node.getType().isChoice() || node.getType().getTier() == SkillTier.ROOT) {
                 continue;
             }
             for (String tag : node.getType().getTags()) {

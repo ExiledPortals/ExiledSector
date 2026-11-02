@@ -4,7 +4,7 @@ import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,9 +69,9 @@ class SpatialBreachTest {
     @Test
     void theBreachTuningLinesShapeItsGrowthAndCaches() {
         ChartGenContext context = ChartGenContext.of(List.of(
-                new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_GROWTH_PERCENT, 100f),
-                new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_CACHE_PERCENT, 100f),
-                new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_CACHE_ITEM_PERCENT, 50f)));
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_BREACH_GROWTH_PERCENT, 100f),
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_BREACH_CACHE_PERCENT, 100f),
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_BREACH_CACHE_ITEM_PERCENT, 50f)));
 
         SpatialBreach.INSTANCE.generate(site(context, point -> true));
 

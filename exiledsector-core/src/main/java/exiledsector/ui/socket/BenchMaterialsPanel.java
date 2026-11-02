@@ -66,8 +66,8 @@ final class BenchMaterialsPanel extends HoloPanel {
 
     @Override
     protected void rebuildHeader() {
-        TooltipMakerAPI element = startHeader("ui.workbench.materials.title", null, null);
-        addPartsCount(element, 0f);
+        TooltipMakerAPI element = startHeader("ui.craftingBench.materials.title", null, null);
+        addFeedstockCount(element, 0f);
         headerElement = finishHeader(element, headerElement);
         refreshOpacity();
     }

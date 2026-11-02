@@ -13,7 +13,7 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRuns;
-import exiledsector.items.CraftingCurrency;
+import exiledsector.items.Nanoswarm;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.ui.VanillaText;
 
@@ -21,7 +21,7 @@ public class DormantFleetDialog extends AnomalyDialog {
 
     static final String ENGAGE_OPTION = "exiledSector_debrisEngage";
     static final String CORRUPT = "exiledSector_debrisCorrupt";
-    static final String KERNEL_ID = CraftingCurrency.CORRUPTION.itemId();
+    static final String KERNEL_ID = Nanoswarm.CORRUPTION.itemId();
     static final int KERNEL_COST = 1;
 
     private CampaignFleetAPI dormantFleet;
@@ -31,10 +31,10 @@ public class DormantFleetDialog extends AnomalyDialog {
 
     public static Options options(boolean hasReadyShips, int kernelsHeld) {
         if (!hasReadyShips) {
-            return new Options(false, false, "chart.debris.dialog.noReadyShips");
+            return new Options(false, false, "chart.anomaly.anomalous_debris.dialog.noReadyShips");
         }
         boolean affordable = kernelsHeld >= KERNEL_COST;
-        return new Options(true, affordable, affordable ? null : "chart.debris.dialog.noKernel");
+        return new Options(true, affordable, affordable ? null : "chart.anomaly.anomalous_debris.dialog.noKernel");
     }
 
     @Override
@@ -46,26 +46,26 @@ public class DormantFleetDialog extends AnomalyDialog {
         }
         CampaignFleetAPI playerFleet = PlayerFleet.orNull();
         dialog().getVisualPanel().showFleetInfo(null, playerFleet, null, dormantFleet);
-        VanillaText.plainPara(text(), Translation.gameText("chart.debris.dialog.intro"));
+        VanillaText.plainPara(text(), Translation.gameText("chart.anomaly.anomalous_debris.dialog.intro"));
         showOptions(options(hasReadyShips(playerFleet), kernelsHeld(playerFleet)));
     }
 
     private void showOptions(Options choices) {
         OptionPanelAPI options = options();
         options.clearOptions();
-        options.addOption(Translation.gameText("chart.debris.dialog.engage"), ENGAGE_OPTION);
+        options.addOption(Translation.gameText("chart.anomaly.anomalous_debris.dialog.engage"), ENGAGE_OPTION);
         options.setEnabled(ENGAGE_OPTION, choices.canEngage());
         String kernelName = Translation.gameText("material." + KERNEL_ID + ".name");
-        options.addOption(I18n.forGameText(() -> Translation.msg("chart.debris.dialog.corrupt").arg("count", KERNEL_COST).arg("currency", kernelName)
-                .text()), CORRUPT, Translation.gameText("chart.debris.dialog.corruptTooltip"));
+        options.addOption(I18n.forGameText(() -> Translation.msg("chart.anomaly.anomalous_debris.dialog.corrupt").arg("count", KERNEL_COST).arg("currency", kernelName)
+                .text()), CORRUPT, Translation.gameText("chart.anomaly.anomalous_debris.dialog.corruptTooltip"));
         options.setEnabled(CORRUPT, choices.canCorrupt());
         if (choices.corruptBlockedKey() != null) {
             options.setTooltip(CORRUPT, I18n.forGameText(() -> Translation.msg(choices.corruptBlockedKey()).arg("currency", kernelName).text()));
         }
         if (!choices.canEngage()) {
-            options.setTooltip(ENGAGE_OPTION, Translation.gameText("chart.debris.dialog.noReadyShips"));
+            options.setTooltip(ENGAGE_OPTION, Translation.gameText("chart.anomaly.anomalous_debris.dialog.noReadyShips"));
         }
-        addLeaveOption(Translation.gameText("chart.debris.dialog.leave"), LEAVE);
+        addLeaveOption(Translation.gameText("chart.anomaly.anomalous_debris.dialog.leave"), LEAVE);
     }
 
     static boolean hasReadyShips(CampaignFleetAPI playerFleet) {

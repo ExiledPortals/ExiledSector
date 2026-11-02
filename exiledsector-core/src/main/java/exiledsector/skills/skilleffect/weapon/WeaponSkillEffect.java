@@ -59,7 +59,7 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return StatMode.FLAT.describeStat(magnitude, "stat.ordnancePointCostOfLargeBallisticWeapons");
+            return StatMode.FLAT.describeStat(magnitude, "stat.largeBallisticOpCost");
         }
     },
     SMALL_WEAPON_OP_COST_FLAT {
@@ -97,7 +97,7 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     PD_IGNORES_DECOY_FLARES(flag(Stats.PD_IGNORES_FLARES)),
     PD_BEST_TARGET_LEADING(flag(Stats.PD_BEST_TARGET_LEADING)),
     PD_DAMAGE_TO_MISSILES_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToMissiles),
-            "stat.damageDealtToMissilesByPointDefenceWeapons", false)),
+            "stat.pointDefenseDamageToMissiles", false)),
     PD_RECLASSIFY_SMALL_WEAPONS {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

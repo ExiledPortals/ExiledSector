@@ -242,7 +242,7 @@ class SkillNodeTest {
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
                 .todo(null)
-                .optionalOptionIds(List.of())
+                .choiceOptionIds(List.of())
                 .exclusiveHullModIds(List.of("armoredcladding"))
                 .build();
         SkillNode node = new SkillNode("heavy_armor_1", type, List.of(), 0f, 0f);
@@ -264,7 +264,7 @@ class SkillNodeTest {
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
                 .todo(null)
-                .optionalOptionIds(List.of())
+                .choiceOptionIds(List.of())
                 .exclusiveHullModIds(List.of("unknown_hullmod", "escort_package"))
                 .build();
         SkillNode node = new SkillNode("hull_1", type, List.of(), 0f, 0f);
@@ -286,7 +286,7 @@ class SkillNodeTest {
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
                 .todo(null)
-                .optionalOptionIds(List.of())
+                .choiceOptionIds(List.of())
                 .exclusiveHullModIds(List.of())
                 .exclusiveSkillTypeIds(List.of("adaptiveshields"))
                 .build();
@@ -313,7 +313,7 @@ class SkillNodeTest {
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
                 .todo(null)
-                .optionalOptionIds(List.of())
+                .choiceOptionIds(List.of())
                 .exclusiveHullModIds(List.of())
                 .exclusiveSkillTypeIds(List.of("unknown_type"))
                 .build();
@@ -342,7 +342,7 @@ class SkillNodeTest {
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
                 .todo(null)
-                .optionalOptionIds(List.of())
+                .choiceOptionIds(List.of())
                 .exclusiveHullModIds(List.of("escort_package"))
                 .exclusiveSkillTypeIds(List.of("adaptiveshields"))
                 .build();
@@ -388,7 +388,7 @@ class SkillNodeTest {
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
                 .todo(null)
-                .optionalOptionIds(List.of())
+                .choiceOptionIds(List.of())
                 .exclusiveHullModIds(List.of("shield_shunt"))
                 .exclusiveSkillTypeIds(List.of("shield_shunt"))
                 .build();
@@ -398,7 +398,7 @@ class SkillNodeTest {
     }
 
     @Test
-    void resolveEffectiveTypeReturnsItsOwnTypeWhenNotOptional() {
+    void resolveEffectiveTypeReturnsItsOwnTypeWhenNotChoice() {
         SkillType type = new SkillType.Builder("hull", "Hull", "graphics/hullmods/reinforced_bulkheads.png", SkillTier.SMALL)
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
                 .vanillaHullModId(null)
@@ -410,13 +410,13 @@ class SkillNodeTest {
     }
 
     @Test
-    void resolveEffectiveTypeReturnsThePlaceholderWhenOptionalAndUnselected() {
+    void resolveEffectiveTypeReturnsThePlaceholderWhenChoiceAndUnselected() {
         SkillType placeholder = new SkillType.Builder("slot", "Optional Skill", "a.png", SkillTier.SMALL)
                 .effects(List.of())
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
                 .todo(null)
-                .optionalOptionIds(List.of("hull", "armor"))
+                .choiceOptionIds(List.of("hull", "armor"))
                 .build();
         SkillNode node = new SkillNode("slot_1", placeholder, List.of(), 0f, 0f);
 
@@ -430,7 +430,7 @@ class SkillNodeTest {
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
                 .todo(null)
-                .optionalOptionIds(List.of("hull"))
+                .choiceOptionIds(List.of("hull"))
                 .build();
         SkillType hullOption = new SkillType.Builder("hull", "Hull", "graphics/hullmods/reinforced_bulkheads.png", SkillTier.SMALL)
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
@@ -447,7 +447,7 @@ class SkillNodeTest {
 
     private static SkillType taggedType(String id, List<String> optionIds, List<String> tags) {
         return new SkillType.Builder(id, id, "a.png", SkillTier.SMALL)
-                .optionalOptionIds(optionIds)
+                .choiceOptionIds(optionIds)
                 .tags(tags)
                 .build();
     }
@@ -485,7 +485,7 @@ class SkillNodeTest {
     }
 
     @Test
-    void effectiveTagsOfAnUnselectedOptionalNodeAreJustTheNodeAndPlaceholderTags() {
+    void effectiveTagsOfAnUnselectedChoiceNodeAreJustTheNodeAndPlaceholderTags() {
         SkillType hullOption = taggedType("hull", List.of(), List.of("req_ballistic"));
         SkillTree.registerType(hullOption);
         SkillType placeholder = taggedType("slot", List.of("hull"), List.of("hull"));
@@ -514,12 +514,12 @@ class SkillNodeTest {
     }
 
     @Test
-    void anOptionalNodeOnlyResolvesToAChosenOptionItStillOffers() {
+    void aChoiceNodeOnlyResolvesToAChosenOptionItStillOffers() {
         SkillType hull = new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL).effects(List.of()).build();
         SkillType armor = new SkillType.Builder("armor", "Armor", "a.png", SkillTier.SMALL).effects(List.of()).build();
         SkillTree.registerType(hull);
         SkillTree.registerType(armor);
-        SkillType slot = new SkillType.Builder("slot", "Slot", "a.png", SkillTier.SMALL).effects(List.of()).optionalOptionIds(List.of("hull")).build();
+        SkillType slot = new SkillType.Builder("slot", "Slot", "a.png", SkillTier.SMALL).effects(List.of()).choiceOptionIds(List.of("hull")).build();
         SkillNode listed = new SkillNode("listed", slot, List.of(), 0f, 0f);
         SkillNode unlisted = new SkillNode("unlisted", slot, List.of(), 0f, 0f);
         ShipSkillData data = new ShipSkillData();

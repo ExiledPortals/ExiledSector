@@ -23,13 +23,13 @@ public final class ChartEffects implements ModifierEffects {
 
     @Override
     public ModifierEffect byName(String effectName) {
-        ChartEffect effect = ChartEffect.byNameOrNull(effectName);
+        ChartModifier effect = ChartModifier.byNameOrNull(effectName);
         return effect != null ? effect : ChartFactions.effectByName(effectName);
     }
 
     @Override
     public boolean canRoll(String effectName) {
-        ChartEffect effect = ChartEffect.byNameOrNull(effectName);
+        ChartModifier effect = ChartModifier.byNameOrNull(effectName);
         return effect == null || effect.canRoll(Global.getSector());
     }
 }

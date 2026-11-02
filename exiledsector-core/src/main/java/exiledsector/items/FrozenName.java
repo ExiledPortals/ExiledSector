@@ -20,8 +20,8 @@ public final class FrozenName {
 
     private FrozenName(String prefixEffect, String suffixEffect, String rareFirst, String rareSecond, String rareBrand, String rareModel,
                        boolean product) {
-        this.prefixEffect = RolledEffect.currentName(prefixEffect);
-        this.suffixEffect = RolledEffect.currentName(suffixEffect);
+        this.prefixEffect = RolledLine.currentName(prefixEffect);
+        this.suffixEffect = RolledLine.currentName(suffixEffect);
         this.rareFirst = rareFirst;
         this.rareSecond = rareSecond;
         this.rareBrand = rareBrand;
@@ -30,8 +30,8 @@ public final class FrozenName {
     }
 
     private Object readResolve() {
-        boolean renamed = !Objects.equals(RolledEffect.currentName(prefixEffect), prefixEffect)
-                || !Objects.equals(RolledEffect.currentName(suffixEffect), suffixEffect);
+        boolean renamed = !Objects.equals(RolledLine.currentName(prefixEffect), prefixEffect)
+                || !Objects.equals(RolledLine.currentName(suffixEffect), suffixEffect);
         return renamed ? new FrozenName(prefixEffect, suffixEffect, rareFirst, rareSecond, rareBrand, rareModel, product) : this;
     }
 

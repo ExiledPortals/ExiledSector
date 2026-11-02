@@ -134,20 +134,20 @@ class BattleItemDropsTest {
     }
 
     @Test
-    void aForcedEffectCountRollsExactlyThatManyModifiersAndSurvivesTheCargoRoundTrip() {
+    void aForcedModifierCountRollsExactlyThatManyModifiersAndSurvivesTheCargoRoundTrip() {
         ItemDefinition fullBridge = ItemDefinitions.get(FULL_BRIDGE);
-        for (int effectCount = 1; effectCount <= 4; effectCount++) {
+        for (int modifierCount = 1; modifierCount <= 4; modifierCount++) {
             for (long seed = 0; seed < 50; seed++) {
-                ItemData rolled = ItemData.rolledWithEffectCount(fullBridge, seed, effectCount);
+                ItemData rolled = ItemData.rolledWithModifierCount(fullBridge, seed, modifierCount);
 
-                assertEquals(effectCount, rolled.explicits().size());
+                assertEquals(modifierCount, rolled.explicits().size());
                 assertEquals(rolled.explicits(), ItemData.of(rolled.toSpecialItem()).explicits());
             }
         }
-        assertTrue(ItemRoller.canRollEffectCount(ItemDefinitions.get(THIN_BRIDGE), 1));
-        assertFalse(ItemRoller.canRollEffectCount(ItemDefinitions.get(THIN_BRIDGE), 2));
-        assertFalse(ItemRoller.canRollEffectCount(fullBridge, 5));
-        assertFalse(ItemRoller.canRollEffectCount(ItemDefinitions.get(HULL_RELIC), 1));
+        assertTrue(ItemRoller.canRollModifierCount(ItemDefinitions.get(THIN_BRIDGE), 1));
+        assertFalse(ItemRoller.canRollModifierCount(ItemDefinitions.get(THIN_BRIDGE), 2));
+        assertFalse(ItemRoller.canRollModifierCount(fullBridge, 5));
+        assertFalse(ItemRoller.canRollModifierCount(ItemDefinitions.get(HULL_RELIC), 1));
     }
 
     @Test
@@ -269,7 +269,7 @@ class BattleItemDropsTest {
         Random random = new Random(5L);
         Map<RefitSchematic, Integer> tierCounts = new EnumMap<>(RefitSchematic.class);
         for (int trial = 0; trial < battles; trial++) {
-            for (ShipCurrency upgrade : BattleItemDrops.roll(battle, 1f, random, definition -> true, true).upgrades()) {
+            for (ShipSchematic upgrade : BattleItemDrops.roll(battle, 1f, random, definition -> true, true).upgrades()) {
                 if (upgrade instanceof RefitSchematic schematic) {
                     tierCounts.merge(schematic, 1, Integer::sum);
                 }

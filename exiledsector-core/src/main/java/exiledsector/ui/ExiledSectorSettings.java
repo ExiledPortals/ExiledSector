@@ -8,7 +8,7 @@ import exiledsector.i18n.LanguageSetting;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.DiminishedStat;
 import exiledsector.skills.DiminishingReturns;
-import exiledsector.skills.skilleffect.onhit.MaxChainCountConfig;
+import exiledsector.skills.skilleffect.onhit.MaxRefractionCountConfig;
 import exiledsector.compat.SalvageSiteCompat;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.items.CraftingMaterials;
@@ -65,29 +65,29 @@ public final class ExiledSectorSettings {
                 Translation.text("settings.refit.buttonUnderHullMods.name"), Translation.text("settings.refit.buttonUnderHullMods.tooltip"),
                 RefitButtonConfig.DEFAULT, MAIN_TAB);
         SettingsCreator.addKeybind(MOD_ID, RefitButtonConfig.BENCH_KEYBIND_FIELD_ID,
-                Translation.text("settings.refit.benchKey.name"), Translation.text("settings.refit.benchKey.tooltip"),
+                Translation.text("settings.refit.craftingBenchKey.name"), Translation.text("settings.refit.craftingBenchKey.tooltip"),
                 RefitButtonConfig.DEFAULT_BENCH_KEY, MAIN_TAB);
         SettingsCreator.addBoolean(MOD_ID, SkillTreeSounds.ENABLED_FIELD_ID,
                 Translation.text("settings.sounds.enabled.name"), Translation.text("settings.sounds.enabled.tooltip"),
                 SkillTreeSounds.DEFAULT_ENABLED, MAIN_TAB);
-        SettingsCreator.addRadio(MOD_ID, ItemAnimationSetting.FIELD_ID, Translation.text("settings.socketStorage.itemAnimations.name"),
-                Translation.text("settings.socketStorage.itemAnimations.tooltip"), ItemAnimationSetting.FULL,
+        SettingsCreator.addRadio(MOD_ID, ItemAnimationSetting.FIELD_ID, Translation.text("settings.hullItems.itemAnimations.name"),
+                Translation.text("settings.hullItems.itemAnimations.tooltip"), ItemAnimationSetting.FULL,
                 String.join(",", ItemAnimationSetting.OPTIONS), MAIN_TAB);
     }
 
     private static void registerItems() {
         String itemsTab = itemsTab();
-        SettingsCreator.addHeader(MOD_ID, "exiledSector_socketStorageHeader", Translation.text("settings.socketStorage.header"), itemsTab);
+        SettingsCreator.addHeader(MOD_ID, "exiledSector_socketStorageHeader", Translation.text("settings.hullItems.header"), itemsTab);
         SettingsCreator.addBoolean(MOD_ID, SalvageSiteCompat.DROPS_FIELD_ID,
-                Translation.text("settings.socketStorage.otherModDrops.name"), Translation.text("settings.socketStorage.otherModDrops.tooltip"),
+                Translation.text("settings.hullItems.otherModDrops.name"), Translation.text("settings.hullItems.otherModDrops.tooltip"),
                 SalvageSiteCompat.DEFAULT_DROPS, itemsTab);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_craftingHeader", Translation.text("settings.crafting.header"), itemsTab);
-        SettingsCreator.addInt(MOD_ID, ItemDrops.BATTLE_PARTS_FIELD_ID,
-                Translation.text("settings.socketStorage.battleParts.name"), Translation.text("settings.socketStorage.battleParts.tooltip"),
-                ItemDrops.DEFAULT_BATTLE_PARTS_PER_100_DP, 0, ItemDrops.MAX_BATTLE_PARTS_PER_100_DP, itemsTab);
+        SettingsCreator.addInt(MOD_ID, ItemDrops.BATTLE_FEEDSTOCK_FIELD_ID,
+                Translation.text("settings.hullItems.battleFeedstock.name"), Translation.text("settings.hullItems.battleFeedstock.tooltip"),
+                ItemDrops.DEFAULT_BATTLE_FEEDSTOCK_PER_100_DP, 0, ItemDrops.MAX_BATTLE_PARTS_PER_100_DP, itemsTab);
         SettingsCreator.addBoolean(MOD_ID, CraftingMaterials.STORE_FIELD_ID,
-                Translation.text("settings.socketStorage.storeMaterials.name"), Translation.text("settings.socketStorage.storeMaterials.tooltip"),
+                Translation.text("settings.hullItems.storeMaterials.name"), Translation.text("settings.hullItems.storeMaterials.tooltip"),
                 CraftingMaterials.DEFAULT_STORE, itemsTab);
     }
 
@@ -97,9 +97,9 @@ public final class ExiledSectorSettings {
         SettingsCreator.addBoolean(MOD_ID, CombatGlow.enabledFieldId(),
                 Translation.text("settings.combatEffects.graphicsLib.name"), Translation.text("settings.combatEffects.graphicsLib.tooltip"),
                 CombatGlow.DEFAULT_ENABLED, combatTab);
-        SettingsCreator.addInt(MOD_ID, MaxChainCountConfig.fieldId(),
+        SettingsCreator.addInt(MOD_ID, MaxRefractionCountConfig.fieldId(),
                 Translation.text("settings.energyChain.maxChainCount.name"), Translation.text("settings.energyChain.maxChainCount.tooltip"),
-                MaxChainCountConfig.DEFAULT, 1, 20, combatTab);
+                MaxRefractionCountConfig.DEFAULT, 1, 20, combatTab);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_diminishingHeader", Translation.text("settings.diminishing.header"), combatTab);
         SettingsCreator.addText(MOD_ID, "exiledSector_diminishingAbout", Translation.text("settings.diminishing.about"), combatTab);

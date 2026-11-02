@@ -17,9 +17,9 @@ public final class TreeFleetFactions {
 
     static final String DATA_PATH = "data/config/exiledSector/tree_fleet_factions.csv";
     private static final String FACTION_COLUMN = "faction";
-    private static final String REGION_COLUMN = "region";
+    private static final String VOLUME_COLUMN = "volume";
     private static final Logger LOG = Logger.getLogger(TreeFleetFactions.class);
-    private static final AtomicReference<Map<String, String>> REGION_BY_FACTION = new AtomicReference<>(Map.of());
+    private static final AtomicReference<Map<String, String>> VOLUME_BY_FACTION = new AtomicReference<>(Map.of());
 
     private TreeFleetFactions() {
     }
@@ -32,31 +32,31 @@ public final class TreeFleetFactions {
         Map<String, String> loaded = new HashMap<>();
         ModCsv.forEach(rows, (index, row) -> {
             String faction = ModCsv.text(row, FACTION_COLUMN);
-            String region = ModCsv.text(row, REGION_COLUMN);
+            String volume = ModCsv.text(row, VOLUME_COLUMN);
             if (faction.isEmpty()) {
                 return;
             }
-            if (!SkillTags.isRegion(region) || SkillTags.CORE_REGION.equals(region)) {
-                LOG.warn("Ignoring faction " + faction + " in " + DATA_PATH + ": '" + region + "' is not a faction volume");
+            if (!SkillTags.isVolume(volume) || SkillTags.CORE_VOLUME.equals(volume)) {
+                LOG.warn("Ignoring faction " + faction + " in " + DATA_PATH + ": '" + volume + "' is not a faction volume");
                 return;
             }
-            loaded.put(faction, region);
+            loaded.put(faction, volume);
         });
-        REGION_BY_FACTION.set(Map.copyOf(loaded));
+        VOLUME_BY_FACTION.set(Map.copyOf(loaded));
     }
 
-    static List<String> regions() {
-        return SkillTags.REGION.stream()
-                .filter(region -> SkillTags.FACTION_VOLUMES.contains(region) || REGION_BY_FACTION.get().containsValue(region)).toList();
+    static List<String> volumes() {
+        return SkillTags.VOLUME.stream()
+                .filter(volume -> SkillTags.FACTION_VOLUMES.contains(volume) || VOLUME_BY_FACTION.get().containsValue(volume)).toList();
     }
 
-    static List<String> factionsIn(String region) {
-        Stream<String> fleetOnly = REGION_BY_FACTION.get().entrySet().stream().filter(entry -> entry.getValue().equals(region))
+    static List<String> factionsIn(String volume) {
+        Stream<String> fleetOnly = VOLUME_BY_FACTION.get().entrySet().stream().filter(entry -> entry.getValue().equals(volume))
                 .map(Map.Entry::getKey);
-        return Stream.concat(NpcFactionVolumes.factionsIn(region).stream(), fleetOnly).distinct().sorted().toList();
+        return Stream.concat(NpcFactionVolumes.factionsIn(volume).stream(), fleetOnly).distinct().sorted().toList();
     }
 
     public static void clear() {
-        REGION_BY_FACTION.set(Map.of());
+        VOLUME_BY_FACTION.set(Map.of());
     }
 }

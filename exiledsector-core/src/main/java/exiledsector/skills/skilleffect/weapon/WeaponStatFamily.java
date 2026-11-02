@@ -48,7 +48,7 @@ public enum WeaponStatFamily {
                     .with(BEAM, liveStat(MutableShipStatsAPI::getBeamWeaponFluxCostMult))
                     .with(NON_BEAM_ENERGY, new StatTarget.Compensated(liveBonus(MutableShipStatsAPI::getEnergyWeaponFluxCostMod),
                             liveStat(MutableShipStatsAPI::getBeamWeaponFluxCostMult), EnumSet.of(MULT)))),
-    FIRE_RATE(true, EnumSet.of(PERCENT, MULT),
+    RATE_OF_FIRE(true, EnumSet.of(PERCENT, MULT),
             Targets.typed(liveStat(MutableShipStatsAPI::getBallisticRoFMult),
                     liveStat(MutableShipStatsAPI::getMissileRoFMult),
                     liveStat(MutableShipStatsAPI::getEnergyRoFMult))) {

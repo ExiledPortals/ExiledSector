@@ -19,7 +19,7 @@ import java.util.List;
 public final class WormholeAnchor extends Item implements NodeSocketable {
 
     public enum Inertness {
-        AREA_OFF, JANUS, LOCKED, GATED, EXIT_LOCKED
+        VOLUME_OFF, JANUS, LOCKED, GATED, EXIT_LOCKED
     }
 
     public static final ItemTypeSupport SUPPORT = new BasicItemTypeSupport(ItemType.WORMHOLE_ANCHOR, WormholeAnchor.class, "exiledSector.WormholeAnchor",
@@ -79,8 +79,8 @@ public final class WormholeAnchor extends Item implements NodeSocketable {
         return WormholeAnchorDefinitions.exitNodeId(definitionId());
     }
 
-    public boolean areaActive() {
-        return WormholeAnchorDefinitions.areaActive(definitionId());
+    public boolean volumeActive() {
+        return WormholeAnchorDefinitions.volumeActive(definitionId());
     }
 
     public Color color() {
@@ -112,7 +112,7 @@ public final class WormholeAnchor extends Item implements NodeSocketable {
     static Inertness inertness(String definitionId, SectorAPI sector) {
         SkillNode exitNode = exitNode(definitionId);
         if (exitNode == null) {
-            return Inertness.AREA_OFF;
+            return Inertness.VOLUME_OFF;
         }
         if (AnchorJanusGate.withholds(definitionId, sector)) {
             return Inertness.JANUS;
@@ -188,15 +188,15 @@ public final class WormholeAnchor extends Item implements NodeSocketable {
 
     @Override
     public boolean canSocketInto(SkillNode socket) {
-        return socket != null && socket.getType().getTier() == SkillTier.SOCKET && areaActive();
+        return socket != null && socket.getType().getTier() == SkillTier.SOCKET && volumeActive();
     }
 
     public UseVerdict socketRefusal() {
         String volume = volume();
-        if (volume == null || areaActive()) {
+        if (volume == null || volumeActive()) {
             return UseVerdict.ALLOW;
         }
-        return UseVerdict.refused("socketable.anchor.areaOffRefusal").with("volume", volumeName(volume));
+        return UseVerdict.refused("socketable.anchor.volumeOffRefusal").with("volume", volumeName(volume));
     }
 
     @Override
@@ -255,7 +255,7 @@ public final class WormholeAnchor extends Item implements NodeSocketable {
     private StyledText inertLine(Inertness inertness, String volume) {
         String volumeName = volume == null ? "" : volumeName(volume);
         return switch (inertness) {
-            case AREA_OFF -> Translation.msg("socketable.anchor.areaOff").arg("volume", volumeName).styled();
+            case VOLUME_OFF -> Translation.msg("socketable.anchor.volumeOff").arg("volume", volumeName).styled();
             case JANUS -> Translation.styled("socketable.anchor.janus");
             case LOCKED -> {
                 ItemDefinition definition = definition();
@@ -278,6 +278,6 @@ public final class WormholeAnchor extends Item implements NodeSocketable {
     }
 
     static String volumeName(String volume) {
-        return Translation.text("hyperspace.region." + volume);
+        return Translation.text("hyperspace.volume." + volume);
     }
 }

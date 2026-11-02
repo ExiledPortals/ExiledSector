@@ -216,7 +216,7 @@ class ChartRunTest {
         assertEquals(ChartBossType.STATION, stationRun.bossType());
         assertEquals("chart.objective.boss.fleet.description", ChartObjectiveIntel.descriptionKey(fleetRun));
         assertEquals("chart.objective.boss.station.description", ChartObjectiveIntel.descriptionKey(stationRun));
-        assertEquals("chart.dialog.stale", ChartObjectiveIntel.descriptionKey(bosslessRun));
+        assertEquals("chart.wormhole.dialog.stale", ChartObjectiveIntel.descriptionKey(bosslessRun));
     }
 
     @Test

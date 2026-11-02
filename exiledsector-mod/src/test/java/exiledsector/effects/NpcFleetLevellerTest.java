@@ -483,7 +483,7 @@ class NpcFleetLevellerTest {
                 SkillNodeDecoration.NONE, List.of("hegemony")));
         SkillTree.register(new SkillNode("hegemony_notable", type("pride", SkillTier.NOTABLE).build(), List.of("gate_far"), 0f, 0f,
                 SkillNodeDecoration.NONE, List.of("hegemony")));
-        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
+        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"volume\": \"hegemony\"}]"));
         WormholeAnchorDefinitions.register(new JSONArray().put(new JSONObject().put("id", "wormhole_anchor_hegemony").put("volume", "hegemony")
                 .put("exit_node", "gate_far").put("name", "Hegemony Anchor").put("icon", "graphics/icons/nav_relay.png").put("rarity", "10")
                 .put("description", "Opens a wormhole.")));

@@ -168,18 +168,18 @@ class UniqueSubroutinesTest {
         Item item = fleetRelic(7L);
         List<RolledModifier> rolled = item.explicits();
         CargoAPI cargo = mock(CargoAPI.class);
-        for (ItemCurrency currency : ItemCurrencies.all()) {
+        for (CraftingMaterialFamily currency : CraftingMaterialFamilies.all()) {
             when(cargo.getQuantity(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(currency.itemId()))).thenReturn(5f);
         }
         CraftingMaterials materials = CraftingMaterials.cargoOnly(cargo);
 
-        for (ItemCurrency currency : ItemCurrencies.all()) {
+        for (CraftingMaterialFamily currency : CraftingMaterialFamilies.all()) {
             assertFalse(ItemCrafting.canUse(currency, item, definition -> true), currency.key());
             assertNull(ItemCrafting.use(currency, item, materials, store, new Random(1L), definition -> true), currency.key());
         }
 
         assertTrue(ItemCrafting.isLockedFromCurrency(item.definition()));
-        assertFalse(ItemCrafting.canTranspose(item.definition(), item.tier(), definition -> true));
+        assertFalse(ItemCrafting.canMetamorph(item.definition(), item.tier(), definition -> true));
         assertEquals(rolled, item.explicits());
         assertFalse(item.corrupted());
         assertEquals(List.of(item), store.owned());
@@ -191,7 +191,7 @@ class UniqueSubroutinesTest {
         for (int trial = 0; trial < 200; trial++) {
             Item hullUnique = store.add(ItemData.rolled(ItemDefinitions.get(HULL_RELIC_A), random.nextLong()));
 
-            Item replacement = ItemCrafting.transpose(store, hullUnique, random, definition -> true);
+            Item replacement = ItemCrafting.metamorph(store, hullUnique, random, definition -> true);
 
             assertNotNull(replacement);
             assertEquals(HULL_RELIC_B, replacement.definitionId());
@@ -310,7 +310,7 @@ class UniqueSubroutinesTest {
         assertTrue(uniques.size() >= 3 && uniques.size() <= 8, String.valueOf(uniques.size()));
         for (ItemDefinition unique : uniques) {
             assertTrue(unique.unique(), unique.id());
-            assertTrue(unique.pool().size() >= 2 || EmptyShells.hollows(unique) || GatedSubroutines.gates(unique), unique.id());
+            assertTrue(unique.pool().size() >= 2 || EmptyShells.emptyShells(unique) || GatedSubroutines.gates(unique), unique.id());
             assertFalse(unique.uniqueSources().isEmpty(), unique.id());
             assertEquals(1, unique.socketLimit(), unique.id() + " is limited to one per ship");
             assertFalse(unique.description().isEmpty(), unique.id());

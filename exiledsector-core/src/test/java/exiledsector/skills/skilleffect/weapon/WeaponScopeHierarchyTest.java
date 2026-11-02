@@ -65,7 +65,7 @@ class WeaponScopeHierarchyTest {
 
     @Test
     void combinationsTheEngineCannotSupportCleanlyAreNotGenerated() {
-        for (String name : List.of("NON_BEAM_ENERGY_WEAPON_FIRE_RATE_PERCENT", "BEAM_WEAPON_FIRE_RATE_PERCENT",
+        for (String name : List.of("NON_BEAM_ENERGY_WEAPON_RATE_OF_FIRE_PERCENT", "BEAM_WEAPON_RATE_OF_FIRE_PERCENT",
                 "BALLISTIC_WEAPON_TURN_RATE_PERCENT", "ENERGY_WEAPON_TURN_RATE_PERCENT",
                 "NON_BEAM_ENERGY_WEAPON_FLUX_COST_PERCENT", "WEAPON_AUTOFIRE_ACCURACY_FLAT",
                 "MISSILE_WEAPON_ECCM_CHANCE_MULT", "BEAM_WEAPON_AMMO_REGEN_FLAT")) {
@@ -157,8 +157,8 @@ class WeaponScopeHierarchyTest {
         assertEquals("+50 to weapon range.", SkillEffect.byName("WEAPON_RANGE_FLAT").description(50f).plain());
         assertEquals("Significantly improved missile guidance algorithm.",
                 SkillEffect.byName("MISSILE_WEAPON_GUIDANCE_FLAT").description(1f).plain());
-        assertTrue(SkillEffect.byName("ENERGY_WEAPON_FIRE_RATE_PERCENT").description(10f).plain().contains("Burst beams"));
-        assertFalse(SkillEffect.byName("BALLISTIC_WEAPON_FIRE_RATE_PERCENT").description(10f).plain().contains("Burst beams"));
+        assertTrue(SkillEffect.byName("ENERGY_WEAPON_RATE_OF_FIRE_PERCENT").description(10f).plain().contains("Burst beams"));
+        assertFalse(SkillEffect.byName("BALLISTIC_WEAPON_RATE_OF_FIRE_PERCENT").description(10f).plain().contains("Burst beams"));
     }
 
     @Test

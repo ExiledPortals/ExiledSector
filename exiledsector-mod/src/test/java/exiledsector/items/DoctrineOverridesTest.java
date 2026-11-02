@@ -10,7 +10,7 @@ import exiledsector.effects.DoctrineRevertConflicts;
 import exiledsector.effects.DoctrineRevertRelease;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocatedSkillEffects;
-import exiledsector.skills.AllocationGate;
+import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DoctrineOverridesTest {
 
-    private static final String TRANSFORM = "doctrine_transform";
+    private static final String REWRITE = "doctrine_transform";
     private static final String AUGMENT = "doctrine_augment";
     private static final String NARROW = "doctrine_narrow";
     private static final String UNIQUE_RELIC = "relic";
@@ -80,17 +80,17 @@ class DoctrineOverridesTest {
                 .put(HullItemRows.modifierRow("ARMOR_PERCENT_TEST_DOCTRINE", "prefix", "doctrine", "ARMOR_PERCENT:2:4", ""))
                 .put(HullItemRows.modifierRow("HULL_PERCENT_TEST_DOCTRINE", "prefix", "doctrine", "HULL_PERCENT:1:3", "")));
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.subroutineRow(TRANSFORM, SubroutineKind.DOCTRINE))
+                .put(ItemFixtures.subroutineRow(REWRITE, SubroutineKind.DOCTRINE))
                 .put(ItemFixtures.subroutineRow(AUGMENT, SubroutineKind.DOCTRINE))
                 .put(ItemFixtures.subroutineRow(NARROW, SubroutineKind.DOCTRINE))
                 .put(ItemFixtures.subroutineRow(UNIQUE_RELIC, SubroutineKind.UNIQUE).put("unique", "true").put("lines", "HULL_MULT:1:1")
                         .put("source", "faction:pirates")));
         DoctrineArchives.register(new JSONArray()
-                .put(archiveRow(TRANSFORM, "TRANSFORM", "medium").put("notables", String.join("; ", NOTABLE_POOL))
+                .put(archiveRow(REWRITE, "REWRITE", "medium").put("notables", String.join("; ", NOTABLE_POOL))
                         .put("keystones", "faction_keystone").put("small_nodes", "plain"))
                 .put(archiveRow(AUGMENT, "AUGMENT", "medium").put("modifiers", "@ARMOR_PERCENT_TEST_DOCTRINE; @HULL_PERCENT_TEST_DOCTRINE")
                         .put("min_lines", "1").put("max_lines", "2"))
-                .put(archiveRow(NARROW, "TRANSFORM", "medium").put("notables", "original_two")));
+                .put(archiveRow(NARROW, "REWRITE", "medium").put("notables", "original_two")));
     }
 
     @AfterEach
@@ -135,8 +135,8 @@ class DoctrineOverridesTest {
     }
 
     @Test
-    void aTransformDoctrineRewritesNotablesKeystonesAndSmallNodesInRangeOnly() {
-        ShipSkillData data = shipWith(TRANSFORM, 4471L, nearNotable);
+    void aRewriteDoctrineRewritesNotablesKeystonesAndSmallNodesInRangeOnly() {
+        ShipSkillData data = shipWith(REWRITE, 4471L, nearNotable);
 
         SkillType notable = nearNotable.resolveEffectiveType(data);
         assertTrue(NOTABLE_POOL.contains(notable.getId()), notable.getId());
@@ -151,8 +151,8 @@ class DoctrineOverridesTest {
 
     @Test
     void theRewriteIsAPureFunctionOfTheSeedAndTheNode() {
-        ShipSkillData first = shipWith(TRANSFORM, 77L, nearNotable);
-        ShipSkillData second = shipWith(TRANSFORM, 77L);
+        ShipSkillData first = shipWith(REWRITE, 77L, nearNotable);
+        ShipSkillData second = shipWith(REWRITE, 77L);
 
         assertEquals(nearNotable.resolveEffectiveType(first).getId(), nearNotable.resolveEffectiveType(second).getId());
         assertEquals(DoctrineRewriter.candidateOrder(77L, nearNotable.getId(), NOTABLE_POOL),
@@ -167,14 +167,14 @@ class DoctrineOverridesTest {
     @Test
     void twoNotablesInRangeNeverTakeTheSameReplacement() {
         for (long seed = 0; seed < 40; seed++) {
-            ShipSkillData data = shipWith(TRANSFORM, seed);
+            ShipSkillData data = shipWith(REWRITE, seed);
             assertNotEquals(nearNotable.resolveEffectiveType(data).getId(), otherNearNotable.resolveEffectiveType(data).getId());
         }
     }
 
     @Test
     void removingTheDoctrineRevertsTheNodesAndLeavesThemAllocated() {
-        ShipSkillData data = shipWith(TRANSFORM, 9L, nearNotable);
+        ShipSkillData data = shipWith(REWRITE, 9L, nearNotable);
         assertNotEquals("original", nearNotable.resolveEffectiveType(data).getId());
 
         data.unsocketItem(socket.getId());
@@ -185,7 +185,7 @@ class DoctrineOverridesTest {
 
     @Test
     void aDoctrineInAnUnallocatedSocketRewritesNothing() {
-        ShipSkillData data = shipWith(TRANSFORM, 9L, nearNotable);
+        ShipSkillData data = shipWith(REWRITE, 9L, nearNotable);
         ShipTrees.deallocate(data, socket);
 
         assertEquals("original", nearNotable.resolveEffectiveType(data).getId());
@@ -198,7 +198,7 @@ class DoctrineOverridesTest {
         String firstChoice = DoctrineRewriter.candidateOrder(seed, nearNotable.getId(), NOTABLE_POOL).get(0);
         SkillType capitalOnly = type(firstChoice, SkillTier.NOTABLE, "ARMOR_PERCENT", 10f).requiredHullSizes(EnumSet.of(HullSize.CAPITAL_SHIP)).build();
         SkillTree.registerType(capitalOnly);
-        ShipSkillData data = shipWith(TRANSFORM, seed, nearNotable);
+        ShipSkillData data = shipWith(REWRITE, seed, nearNotable);
         DoctrineOverrides.bindShipFacts(data, () -> new ShipFacts(HullSize.FRIGATE, ShieldType.FRONT, false, 100f, hullModId -> false));
 
         String replacement = nearNotable.resolveEffectiveType(data).getId();
@@ -215,7 +215,7 @@ class DoctrineOverridesTest {
         String firstChoice = DoctrineRewriter.candidateOrder(seed, nearNotable.getId(), NOTABLE_POOL).get(0);
         registerType(new SkillType.Builder("rival", "Rival", "a.png", SkillTier.NOTABLE).exclusiveSkillTypeIds(List.of(firstChoice)).build());
         SkillNode rival = node("rival_node", "rival", 9000f, 0f);
-        ShipSkillData data = shipWith(TRANSFORM, seed, nearNotable, rival);
+        ShipSkillData data = shipWith(REWRITE, seed, nearNotable, rival);
 
         assertNotEquals(firstChoice, nearNotable.resolveEffectiveType(data).getId());
     }
@@ -225,7 +225,7 @@ class DoctrineOverridesTest {
         long seed = 31L;
         String firstChoice = DoctrineRewriter.candidateOrder(seed, nearNotable.getId(), NOTABLE_POOL).get(0);
         SkillNode alreadyOwned = node("owned_faction_node", firstChoice, 9000f, 0f);
-        ShipSkillData data = shipWith(TRANSFORM, seed, nearNotable, alreadyOwned);
+        ShipSkillData data = shipWith(REWRITE, seed, nearNotable, alreadyOwned);
 
         assertNotEquals(firstChoice, nearNotable.resolveEffectiveType(data).getId());
     }
@@ -240,7 +240,7 @@ class DoctrineOverridesTest {
     }
 
     @Test
-    void aTransformedNodeNoLongerCarriesItsOriginalsExclusions() {
+    void aRewrittenNodeNoLongerCarriesItsOriginalsExclusions() {
         SkillType exclusiveOriginal = new SkillType.Builder("exclusive_original", "X", "a.png", SkillTier.NOTABLE)
                 .exclusiveSkillTypeIds(List.of("rival_type")).build();
         SkillType rival = new SkillType.Builder("rival_type", "R", "a.png", SkillTier.NOTABLE).build();
@@ -251,11 +251,11 @@ class DoctrineOverridesTest {
     }
 
     @Test
-    void removingATransformingDoctrineNamesTheInstalledHullModsItsOriginalsWouldStrip() {
+    void removingARewritingDoctrineNamesTheInstalledHullModsItsOriginalsWouldStrip() {
         registerType(new SkillType.Builder("hull_mod_notable", "Hull Mod Notable", "a.png", SkillTier.NOTABLE).exclusiveHullModIds(List.of("rival_mod"))
                 .build());
         SkillNode hullModNode = node("hull_mod_node", "hull_mod_notable", 100f, 100f);
-        ShipSkillData data = shipWith(TRANSFORM, 21L, hullModNode);
+        ShipSkillData data = shipWith(REWRITE, 21L, hullModNode);
         assertNotEquals("hull_mod_notable", hullModNode.resolveEffectiveType(data).getId());
 
         assertEquals(Set.of("rival_mod"), DoctrineRevertConflicts.hullModsLostOnRemoval(data, socket.getId(), hullModId -> true));
@@ -265,19 +265,19 @@ class DoctrineOverridesTest {
         assertEquals(Set.of(), DoctrineRevertConflicts.hullModsLostOnRemoval(data, socket.getId(), hullModId -> true));
     }
 
-    private AllocationGate frigateGate(ShipSkillData data) {
+    private AllocationCheck frigateGate(ShipSkillData data) {
         ShipFacts frigate = new ShipFacts(HullSize.FRIGATE, ShieldType.FRONT, false, 100f, hullModId -> false);
         DoctrineOverrides.bindShipFacts(data, () -> frigate);
-        return new AllocationGate(data, SkillTree.topology(), socket.getId(), new AllocationGate.Budget(100, 1, 100),
+        return new AllocationCheck(data, SkillTree.topology(), socket.getId(), new AllocationCheck.Budget(100, 1, 100),
                 NodeEligibility.Context.of(data, frigate, null));
     }
 
     @Test
-    void aTransformedNodeIsCheckedAsItsReplacementNotItsOriginal() {
+    void aRewrittenNodeIsCheckedAsItsReplacementNotItsOriginal() {
         registerType(type("capital_only", SkillTier.NOTABLE, "HULL_MULT", 5f).requiredHullSizes(EnumSet.of(HullSize.CAPITAL_SHIP)).build());
         SkillNode capitalOnly = node("capital_only_node", "capital_only", 100f, 100f);
-        ShipSkillData data = shipWith(TRANSFORM, 14L);
-        AllocationGate gate = frigateGate(data);
+        ShipSkillData data = shipWith(REWRITE, 14L);
+        AllocationCheck gate = frigateGate(data);
 
         assertNotEquals("capital_only", capitalOnly.resolveEffectiveType(data).getId());
         assertTrue(gate.allocation(capitalOnly).allowed());
@@ -287,13 +287,13 @@ class DoctrineOverridesTest {
     }
 
     @Test
-    void aTransformedNodeWhoseOriginalOffersOptionsAllocatesWithoutAskingAndRevertsToTheFirstOption() {
+    void aRewrittenNodeWhoseOriginalOffersOptionsAllocatesWithoutAskingAndRevertsToTheFirstOption() {
         registerType(type("opt_a", SkillTier.NOTABLE, "HULL_MULT", 1f).build());
         registerType(type("opt_b", SkillTier.NOTABLE, "HULL_MULT", 2f).build());
-        registerType(new SkillType.Builder("choice", "Choice", "a.png", SkillTier.NOTABLE).optionalOptionIds(List.of("opt_a", "opt_b")).build());
+        registerType(new SkillType.Builder("choice", "Choice", "a.png", SkillTier.NOTABLE).choiceOptionIds(List.of("opt_a", "opt_b")).build());
         SkillNode choice = node("choice_node", "choice", -100f, 100f);
-        ShipSkillData data = shipWith(TRANSFORM, 14L);
-        AllocationGate gate = frigateGate(data);
+        ShipSkillData data = shipWith(REWRITE, 14L);
+        AllocationCheck gate = frigateGate(data);
 
         assertFalse(choice.offersOptions(data));
         assertTrue(gate.options(choice).isEmpty());
@@ -314,7 +314,7 @@ class DoctrineOverridesTest {
     void aRevertedNodeWhoseOriginalIsNotAllowedIsReleased() {
         registerType(type("capital_only", SkillTier.NOTABLE, "HULL_MULT", 5f).requiredHullSizes(EnumSet.of(HullSize.CAPITAL_SHIP)).build());
         SkillNode capitalOnly = node("capital_only_node", "capital_only", 100f, 100f);
-        ShipSkillData data = shipWith(TRANSFORM, 14L);
+        ShipSkillData data = shipWith(REWRITE, 14L);
         frigateGate(data);
         ShipTrees.allocate(data, capitalOnly, null, 0);
         ShipFacts frigate = new ShipFacts(HullSize.FRIGATE, ShieldType.FRONT, false, 100f, hullModId -> false);
@@ -334,7 +334,7 @@ class DoctrineOverridesTest {
         registerType(new SkillType.Builder("rival_b", "B", "a.png", SkillTier.NOTABLE).exclusiveSkillTypeIds(List.of("rival_a")).build());
         SkillNode first = node("a_rival_node", "rival_a", 100f, 100f);
         SkillNode second = node("b_rival_node", "rival_b", -100f, 100f);
-        ShipSkillData data = shipWith(TRANSFORM, 14L);
+        ShipSkillData data = shipWith(REWRITE, 14L);
         frigateGate(data);
         ShipTrees.allocate(data, first, null, 0);
         ShipTrees.allocate(data, second, null, 0);
@@ -349,7 +349,7 @@ class DoctrineOverridesTest {
 
     @Test
     void aRevertedNodeWhoseOriginalIsAllowedStaysAndIsNoLongerTracked() {
-        ShipSkillData data = shipWith(TRANSFORM, 14L);
+        ShipSkillData data = shipWith(REWRITE, 14L);
         frigateGate(data);
         ShipTrees.allocate(data, nearNotable, null, 0);
         ShipFacts frigate = new ShipFacts(HullSize.FRIGATE, ShieldType.FRONT, false, 100f, hullModId -> false);
@@ -369,7 +369,7 @@ class DoctrineOverridesTest {
         for (SkillNode node : List.of(nearNotable, otherNearNotable, nearSmall, nearKeystone)) {
             DoctrineRewrite rewrite = DoctrineOverrides.rewrite(data, node.getId());
             assertNotNull(rewrite, node.getId());
-            assertFalse(rewrite.transformed());
+            assertFalse(rewrite.rewritten());
             int lineCount = rewrite.augmentLines().size();
             assertTrue(lineCount >= 1 && lineCount <= 2, node.getId() + " has " + lineCount);
         }
@@ -392,7 +392,7 @@ class DoctrineOverridesTest {
 
     @Test
     void theLayerIsCachedUntilTheShipChanges() {
-        ShipSkillData data = shipWith(TRANSFORM, 3L, nearNotable);
+        ShipSkillData data = shipWith(REWRITE, 3L, nearNotable);
         DoctrineLayer first = DoctrineOverrides.layer(data);
 
         assertSame(first, DoctrineOverrides.layer(data));
@@ -405,12 +405,12 @@ class DoctrineOverridesTest {
         ShipSkillData data = new ShipSkillData();
         ShipTrees.allocate(data, socket, 0);
         ShipTrees.allocate(data, nearNotable, 0);
-        Subroutine doctrine = (Subroutine) ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(TRANSFORM), 3L));
+        Subroutine doctrine = (Subroutine) ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(REWRITE), 3L));
         data.socketItem(socket.getId(), doctrine.id());
         int revisionBefore = doctrine.firmwareRevision();
 
-        assertTrue(ItemCrafting.canRecalibrate(doctrine, doctrine.definition(), Set.of()));
-        assertSame(doctrine, ItemCrafting.recalibrate(doctrine, new Random(5L)));
+        assertTrue(ItemCrafting.canTune(doctrine, doctrine.definition(), Set.of()));
+        assertSame(doctrine, ItemCrafting.tune(doctrine, new Random(5L)));
         data.markChanged();
 
         assertNotEquals(revisionBefore, doctrine.firmwareRevision());
@@ -432,7 +432,7 @@ class DoctrineOverridesTest {
 
     @Test
     void theRadiusRingCentresOnTheDoctrinesSocket() {
-        Item doctrine = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(TRANSFORM), 1L));
+        Item doctrine = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(REWRITE), 1L));
         Item relic = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(UNIQUE_RELIC), 1L));
 
         SubroutineRadius.Footprint footprint = SubroutineRadius.footprint(doctrine, socket.getId());
@@ -444,10 +444,10 @@ class DoctrineOverridesTest {
     @Test
     void aUniqueSubroutineWithARadiusCentresItOnItsSocketAndNamesItInTheTooltip() throws Exception {
         Item relic = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(UNIQUE_RELIC), 1L));
-        Item doctrine = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(TRANSFORM), 1L));
+        Item doctrine = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(REWRITE), 1L));
         UniqueSubroutineRadii.register(new JSONArray()
                 .put(new JSONObject().put("id", UNIQUE_RELIC).put(UniqueSubroutineRadii.RADIUS_COLUMN, "small"))
-                .put(new JSONObject().put("id", TRANSFORM).put(UniqueSubroutineRadii.RADIUS_COLUMN, "large")));
+                .put(new JSONObject().put("id", REWRITE).put(UniqueSubroutineRadii.RADIUS_COLUMN, "large")));
 
         SubroutineRadius.Footprint footprint = SubroutineRadius.footprint(relic, socket.getId());
         List<String> lines = new ArrayList<>();
@@ -471,7 +471,7 @@ class DoctrineOverridesTest {
 
     @Test
     void theItemTooltipShowsTheFirmwareRevision() {
-        Item doctrine = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(TRANSFORM), 4471L));
+        Item doctrine = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(REWRITE), 4471L));
         List<String> lines = new ArrayList<>();
         doctrine.headerLines().forEach(line -> lines.add(line.toMarkup()));
 

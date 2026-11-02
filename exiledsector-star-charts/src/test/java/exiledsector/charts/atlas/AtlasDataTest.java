@@ -38,7 +38,7 @@ class AtlasDataTest {
         assertEquals(List.of(), AtlasData.registerAbyssPalettes(ChartTables.csvRows(AtlasData.ABYSS_PALETTES_PATH)));
         assertEquals(List.of(), AtlasData.registerRegions(ChartTables.csvRows(AtlasData.REGIONS_PATH),
                 AtlasData.factionIds()));
-        assertEquals(List.of(), AtlasData.registerMarkers(ChartTables.csvRows(AtlasData.MARKERS_PATH)));
+        assertEquals(List.of(), AtlasData.registerAnomalyChances(ChartTables.csvRows(AtlasData.ANOMALY_CHANCES_PATH)));
         assertEquals(List.of(), AtlasData.registerSpecials(ChartTables.csvRows(AtlasData.SPECIALS_PATH)));
         AtlasRules rules = AtlasData.rules();
 
@@ -79,15 +79,15 @@ class AtlasDataTest {
     void weightListsReadIdsWithOptionalWeightsAndRejectUnknownOrBrokenEntries() throws Exception {
         AtlasData.registerLayouts(new JSONArray().put(new JSONObject().put("id", "compact")).put(new JSONObject().put("id", "sprawling")));
         JSONArray rows = new JSONArray().put(new JSONObject().put("id", AtlasRegion.NORMAL)).put(new JSONObject().put("id", "reach").put("layouts", "compact:2; sprawling; missing:1")
-                .put("factions", "pirates:x; remnant:3").put("markers", "black_hole:4"));
+                .put("factions", "pirates:x; remnant:3").put("anomaly_weights", "black_hole:4"));
 
         List<String> problems = AtlasData.registerRegions(rows, Set.of("pirates", "remnant"));
         AtlasRegion reach = AtlasData.rules().region("reach");
 
         assertEquals(Map.of("compact", 2f, "sprawling", 1f), reach.layoutWeights());
         assertEquals(Map.of("remnant", 3f), reach.factionWeights());
-        assertEquals(4f, reach.markerWeight("black_hole"));
-        assertEquals(1f, reach.markerWeight("flares"));
+        assertEquals(4f, reach.anomalyWeight("black_hole"));
+        assertEquals(1f, reach.anomalyWeight("flares"));
         assertEquals(2, problems.size());
     }
 
@@ -181,7 +181,7 @@ class AtlasDataTest {
 
     @Test
     void unknownMarkersAndBadSpecialsAreReported() throws Exception {
-        List<String> markerProblems = AtlasData.registerMarkers(new JSONArray().put(new JSONObject().put("id", "storm").put("chance", "0.1"))
+        List<String> anomalyChanceProblems = AtlasData.registerAnomalyChances(new JSONArray().put(new JSONObject().put("id", "storm").put("chance", "0.1"))
                 .put(new JSONObject().put("id", PowerfulBoss.ANOMALY_ID).put("chance", "0.2")));
         List<String> specialProblems = AtlasData.registerSpecials(new JSONArray()
                 .put(new JSONObject().put("id", "bastion").put("placement", "fixed").put("count", "4").put("steps", "25"))
@@ -189,7 +189,7 @@ class AtlasDataTest {
                 .put(new JSONObject().put("id", "odd").put("placement", "orbit")));
         AtlasRules rules = AtlasData.rules();
 
-        assertEquals(1, markerProblems.size());
+        assertEquals(1, anomalyChanceProblems.size());
         assertEquals(2, specialProblems.size());
         assertEquals(2, rules.specials().size());
         assertEquals(4, rules.specials().get(0).count());

@@ -27,7 +27,7 @@ export function AddNodeDialog({ vocabulary, onAdd, onDefineNewType, onCancel }: 
   return (
     <Stack gap="sm">
       <Select
-        label="Size"
+        label="Tier"
         data={[{ value: ALL_SIZES, label: 'All sizes' }, ...vocabulary.tiers.map((tier) => ({ value: tier, label: TIER_LABELS[tier] ?? tier }))]}
         value={sizeFilter}
         onChange={(value) => setSizeFilter(value ?? ALL_SIZES)}

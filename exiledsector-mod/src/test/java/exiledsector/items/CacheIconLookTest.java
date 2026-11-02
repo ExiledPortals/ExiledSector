@@ -73,7 +73,7 @@ class CacheIconLookTest {
         assertEquals(3, expected.size());
         assertEquals(expected, ((CacheLook) look.art()).chipIconPaths());
         assertEquals(cache.frameColor(), look.color());
-        assertEquals(CraftingCurrency.CORRUPTION.color(), look.color());
+        assertEquals(Nanoswarm.CORRUPTION.color(), look.color());
         assertTrue(look.framed());
         assertTrue(look.ownArt());
         assertFalse(look.art() instanceof DoctrineLook);

@@ -20,7 +20,7 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
     BEAM_WEAPON_HARD_FLUX_PERCENT(listener(BeamHardFluxListener.HARD_FLUX_PERCENT_KEY, BeamHardFluxListener.class, ship -> new BeamHardFluxListener())),
     BEAM_WEAPON_SHIELD_DISRUPTION_PERCENT(listener(BeamShieldDisruptionListener.SHIELD_DAMAGE_PERCENT_KEY, BeamShieldDisruptionListener.class,
             BeamShieldDisruptionListener::new)),
-    BEAM_WEAPON_SPLIT_TARGETS_FLAT(listener(BeamSplitListener.TARGETS_KEY, BeamSplitListener.class, BeamSplitListener::new)) {
+    BEAM_WEAPON_SPLIT_TARGETS_FLAT(listener(LionsGazeListener.TARGETS_KEY, LionsGazeListener.class, LionsGazeListener::new)) {
         @Override
         public boolean reshapesDealtDamage() {
             return true;
@@ -31,13 +31,13 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).count(Math.round(magnitude)).arg("value", magnitude).styled();
         }
     },
-    NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT(listener(EnergyChainListener.CHANCE_KEY, EnergyChainListener.class, EnergyChainListener::new)) {
+    NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT(listener(RefractionListener.CHANCE_KEY, RefractionListener.class, RefractionListener::new)) {
         @Override
         public boolean reshapesDealtDamage() {
             return true;
         }
     },
-    NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT(listener(EnergyChainListener.FALLOFF_KEY, EnergyChainListener.class, EnergyChainListener::new)) {
+    NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT(listener(RefractionListener.FALLOFF_KEY, RefractionListener.class, RefractionListener::new)) {
         @Override
         public boolean reshapesDealtDamage() {
             return true;
@@ -74,10 +74,10 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
         }
     },
     KILL_FLUX_VENT_PERCENT(listener(KillFluxVentListener.MAX_FLUX_PERCENT_KEY, KillFluxVentListener.class, KillFluxVentListener::new)),
-    CORROSION_MOTE_DAMAGE_FLAT(listener(CorrosionMoteListener.MOTE_DAMAGE_KEY, CorrosionMoteListener.class, CorrosionMoteListener::new)) {
+    STARDUST_MOTE_DAMAGE_FLAT(listener(StardustMoteListener.MOTE_DAMAGE_KEY, StardustMoteListener.class, StardustMoteListener::new)) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).arg("seconds", CorrosionMoteListener.CONTACT_SECONDS_PER_MOTE)
+            return EffectText.msg(this).arg("value", magnitude).arg("seconds", StardustMoteListener.CONTACT_SECONDS_PER_MOTE)
                     .arg("max", Motes.MAX_LIVE_MOTES_PER_SOURCE).styled();
         }
     },

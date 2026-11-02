@@ -4,7 +4,7 @@ import exiledsector.charts.atlas.AtlasAmbience;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasDecoration;
 import exiledsector.charts.atlas.AtlasGenerator;
-import exiledsector.charts.atlas.AtlasMarkerRule;
+import exiledsector.charts.atlas.AtlasAnomalyChance;
 import exiledsector.charts.atlas.AtlasRegion;
 import exiledsector.charts.atlas.AtlasRules;
 import exiledsector.charts.atlas.AtlasState;
@@ -40,7 +40,7 @@ class AtlasSceneryTest {
 
     private static AtlasMapCanvas canvas(AtlasState state) {
         AtlasRules rules = new AtlasRules(List.of(new AtlasRegion("graveyard", 1f, 0, "", "", Map.of(), Map.of(), Map.of())), Map.of("compact", 1f),
-                Map.of("pirates", 1f), new AtlasMarkerRule(0.5f, 0f, 0.5f), AtlasMarkerRule.NEVER,
+                Map.of("pirates", 1f), new AtlasAnomalyChance(0.5f, 0f, 0.5f), AtlasAnomalyChance.NEVER,
                 List.of(), List.of());
         AtlasGenerator generator = new AtlasGenerator(SEED, rules, AtlasUnlocks.NONE, state);
         AtlasScenery scenery = new AtlasScenery(SEED, id -> "graveyard".equals(id) ? GRAVEYARD : AtlasAmbience.BARE, DECORATIONS::get);

@@ -65,19 +65,19 @@ class ItemRollOddsTest {
 
     @Test
     void aRangeIsWrittenFromWeakestToStrongest() {
-        String range = new RolledEffect("HULL_MULT", 6f).rangeDescription(PoolEntry.of(ModifierSlot.PREFIX, "HULL_MULT", 4f, 6f, 1f).line()).plain();
-        String fixed = new RolledEffect("HULL_MULT", 5f).rangeDescription(PoolEntry.of(ModifierSlot.PREFIX, "HULL_MULT", 5f, 5f, 1f).line()).plain();
-        String scaled = new RolledEffect("ARMOR_FLAT", 5f).rangeDescription(PoolEntry.perHullSize(ModifierSlot.PREFIX, "ARMOR_FLAT", 1f, List.of(5f, 10f, 15f, 20f)).line())
+        String range = new RolledLine("HULL_MULT", 6f).rangeDescription(PoolEntry.of(ModifierSlot.PREFIX, "HULL_MULT", 4f, 6f, 1f).line()).plain();
+        String fixed = new RolledLine("HULL_MULT", 5f).rangeDescription(PoolEntry.of(ModifierSlot.PREFIX, "HULL_MULT", 5f, 5f, 1f).line()).plain();
+        String scaled = new RolledLine("ARMOR_FLAT", 5f).rangeDescription(PoolEntry.perHullSize(ModifierSlot.PREFIX, "ARMOR_FLAT", 1f, List.of(5f, 10f, 15f, 20f)).line())
                 .plain();
 
         assertTrue(range.contains("4 to 6%"), range);
         assertTrue(fixed.contains("5%") && !fixed.contains(" to "), fixed);
         assertTrue(scaled.contains("5/10/15/20"), scaled);
 
-        String twoValues = new RolledEffect("FLUX_SCALED_RATE_OF_FIRE_PERCENT", 13f)
-                .rangeDescription(PoolEntry.of(ModifierSlot.PREFIX, "FLUX_SCALED_RATE_OF_FIRE_PERCENT", 5f, 13f, 1f).line()).plain();
+        String twoValues = new RolledLine("VOLATILE_FLUX_RATE_OF_FIRE_PERCENT", 13f)
+                .rangeDescription(PoolEntry.of(ModifierSlot.PREFIX, "VOLATILE_FLUX_RATE_OF_FIRE_PERCENT", 5f, 13f, 1f).line()).plain();
         assertEquals(2, twoValues.chars().filter(character -> character == '(').count(), twoValues);
-        String untaggedBefore = new RolledEffect("BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT", 9f)
+        String untaggedBefore = new RolledLine("BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT", 9f)
                 .rangeDescription(PoolEntry.of(ModifierSlot.PREFIX, "BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT", 5f, 9f, 1f).line()).plain();
         assertTrue(untaggedBefore.contains("5 to 9%"), untaggedBefore);
     }

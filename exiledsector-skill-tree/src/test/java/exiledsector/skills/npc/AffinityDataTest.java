@@ -55,8 +55,8 @@ class AffinityDataTest {
     void theAffinityNodeOffersExactlyTheThreeAffinitiesAtFiveEach() {
         SkillType affinityNode = SkillTree.getType("affinity");
 
-        assertEquals(List.of("low_tech_affinity", "high_tech_affinity", "midline_affinity"), affinityNode.getOptionalOptionIds());
-        for (String optionId : affinityNode.getOptionalOptionIds()) {
+        assertEquals(List.of("low_tech_affinity", "high_tech_affinity", "midline_affinity"), affinityNode.getChoiceOptionIds());
+        for (String optionId : affinityNode.getChoiceOptionIds()) {
             List<SkillTypeEffect> effects = SkillTree.getType(optionId).getEffects();
             assertEquals(1, effects.size(), optionId);
             assertTrue(AffinitySteps.isAffinity(effects.get(0).effect()), optionId);
@@ -98,7 +98,7 @@ class AffinityDataTest {
         assertNotNull(decoded);
         assertEquals(build.shipData().getAllocatedNodeIds(), decoded.getAllocatedNodeIds());
         for (String nodeId : decoded.getAllocatedNodeIds()) {
-            assertEquals(build.shipData().getOptionalSelection(nodeId), decoded.getOptionalSelection(nodeId), nodeId);
+            assertEquals(build.shipData().getChoiceSelection(nodeId), decoded.getChoiceSelection(nodeId), nodeId);
         }
     }
 

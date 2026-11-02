@@ -42,10 +42,10 @@ public final class AtlasProgress {
         }
     }
 
-    static void cleanse(AtlasGenerator generator, AtlasState state, AtlasCell nexus, AtlasSpecial special) {
+    static void cleanse(AtlasGenerator generator, AtlasState state, AtlasCell infestationSourceCell, AtlasSpecial special) {
         int reach = (int) Math.ceil(special.radius()) + 1;
-        for (AtlasCell cell : nexus.around(reach)) {
-            if (!generator.isVoid(cell) && nexus.equals(generator.infestationSource(cell))) {
+        for (AtlasCell cell : infestationSourceCell.around(reach)) {
+            if (!generator.isVoid(cell) && infestationSourceCell.equals(generator.infestationSource(cell))) {
                 state.add(cell, AtlasState.CLEANSED);
             }
         }
@@ -87,7 +87,7 @@ public final class AtlasProgress {
     }
 
     static void fail(AtlasState state, AtlasCell cell) {
-        state.add(cell, AtlasState.FAILED | AtlasState.MARKERS_SPENT);
+        state.add(cell, AtlasState.FAILED | AtlasState.ANOMALIES_SPENT);
         state.spendInsertedAnomalies(cell);
     }
 

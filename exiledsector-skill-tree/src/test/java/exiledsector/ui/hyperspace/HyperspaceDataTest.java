@@ -37,20 +37,20 @@ class HyperspaceDataTest {
     }
 
     @Test
-    void everyRegionWithNodesHasAStarOrNebulaOnTheHyperspaceMap() {
+    void everyVolumeWithNodesHasAStarOrNebulaOnTheHyperspaceMap() {
         Set<String> missing = new TreeSet<>();
         for (SkillNode node : nodes) {
-            String region = node.getRegion();
-            if (region != null && !ExoshipNodes.isCarried(node) && anchors.stream().noneMatch(anchor -> anchor.region().equals(region))) {
-                missing.add(region);
+            String volume = node.getVolume();
+            if (volume != null && !ExoshipNodes.isCarried(node) && anchors.stream().noneMatch(anchor -> anchor.volume().equals(volume))) {
+                missing.add(volume);
             }
         }
 
-        assertTrue(missing.isEmpty(), "Regions with no hyperspace anchor: " + missing);
+        assertTrue(missing.isEmpty(), "Volumes with no hyperspace anchor: " + missing);
     }
 
     @Test
-    void everyWormholeEndIsTaggedWithTheRegionOfTheStarItSitsBeside() {
+    void everyWormholeEndIsTaggedWithTheVolumeOfTheStarItSitsBeside() {
         List<String> problems = new ArrayList<>();
         for (SkillNode node : nodes) {
             if (node.getPairedNodeId() == null || ExoshipNodes.isCarried(node)) {
@@ -66,9 +66,9 @@ class HyperspaceDataTest {
                     nearest = anchor;
                 }
             }
-            if (nearest != null && !nearest.region().equals(node.getRegion())) {
-                problems.add(node.getId() + " is tagged " + node.getRegion() + " but sits beside " + nearest.id()
-                        + " (" + nearest.region() + ")");
+            if (nearest != null && !nearest.volume().equals(node.getVolume())) {
+                problems.add(node.getId() + " is tagged " + node.getVolume() + " but sits beside " + nearest.id()
+                        + " (" + nearest.volume() + ")");
             }
         }
 

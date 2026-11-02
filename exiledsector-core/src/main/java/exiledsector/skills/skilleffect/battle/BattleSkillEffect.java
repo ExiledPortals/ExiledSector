@@ -25,9 +25,9 @@ public enum BattleSkillEffect implements BackedSkillEffect {
 
     ELECTRONIC_WARFARE(statEffect(FLAT, dynamicMod("electronic_warfare_flat"), "stat.ecmRating", false)),
     ELECTRONIC_WARFARE_PENALTY_PERCENT(statEffect(PERCENT, dynamicMod(Stats.ELECTRONIC_WARFARE_PENALTY_MOD),
-            "stat.electronicWarfarePenaltyAgainstThisShipSWeaponRange", true)),
+            "stat.ewarRangePenalty", true)),
     ELECTRONIC_WARFARE_PENALTY_MULT(statEffect(MULT, dynamicMod(Stats.ELECTRONIC_WARFARE_PENALTY_MOD),
-            "stat.electronicWarfarePenaltyAgainstThisShipSWeaponRange", true)),
+            "stat.ewarRangePenalty", true)),
     NAV_RATING(statEffect(FLAT, dynamicMod("coord_maneuvers_flat"), "stat.fleetNavRating", false)) {
         @Override
         public StyledText description(float magnitude) {
@@ -51,7 +51,7 @@ public enum BattleSkillEffect implements BackedSkillEffect {
         }
     },
     OBJECTIVE_CAPTURE_RANGE_FLAT(statEffect(FLAT, dynamicMod(Stats.SHIP_OBJECTIVE_CAP_RANGE_MOD),
-            "stat.rangeFromWhichCombatObjectivesCanBeCaptured", false)),
+            "stat.objectiveCaptureRange", false)),
     COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP(new ConditionalStatEffect(PERCENT,
             new StatTarget.BonusPercentagePoints(stats -> stats.getDynamic().getMod("command_point_rate_flat")),
             "stat.commandPointRecoveryWhileFlagship", BattleSkillEffect::isFlagship));

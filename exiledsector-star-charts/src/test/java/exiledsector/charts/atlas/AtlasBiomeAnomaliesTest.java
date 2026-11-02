@@ -2,8 +2,8 @@ package exiledsector.charts.atlas;
 
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.anomaly.station.DomainMothership;
-import exiledsector.charts.anomaly.station.RemnantNexusStation;
+import exiledsector.charts.anomaly.landmark.DomainMothership;
+import exiledsector.charts.anomaly.landmark.RemnantNexusStation;
 import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ class AtlasBiomeAnomaliesTest {
     private static final String GRAVEYARD = "derelict_graveyard";
     private static final String NEXUS = RemnantNexusStation.ANOMALY_ID;
     private static final String MOTHERSHIP = DomainMothership.ANOMALY_ID;
-    private static final AtlasMarkerRule ALWAYS = new AtlasMarkerRule(1f, 0f, 1f);
+    private static final AtlasAnomalyChance ALWAYS = new AtlasAnomalyChance(1f, 0f, 1f);
 
     private static final List<AtlasRegion> REGIONS = List.of(
             new AtlasRegion(AtlasRegion.NORMAL, 6f, 0, "", "", Map.of(), Map.of("pirates", 1f), Map.of()),
@@ -45,7 +45,7 @@ class AtlasBiomeAnomaliesTest {
 
     private static AtlasRules rules(List<AtlasAnomalyCandidate> anomalies) {
         return new AtlasRules(REGIONS, Map.of("compact", 1f), Map.of("pirates", 1f, "derelict", 1f, "remnant", 1f),
-                new AtlasMarkerRule(0.3f, 0f, 0.3f), ALWAYS, SPECIALS, anomalies);
+                new AtlasAnomalyChance(0.3f, 0f, 0.3f), ALWAYS, SPECIALS, anomalies);
     }
 
     private static List<AtlasAnomalyCandidate> stations() {
@@ -147,7 +147,7 @@ class AtlasBiomeAnomaliesTest {
 
     @Test
     void addingTheStationsMovesNoRolledAnomalyExceptOnesThatWouldConflict() {
-        AtlasAnomalyCandidate breach = new AtlasAnomalyCandidate("breach", 1f, "", false, Set.of(), null, new AtlasMarkerRule(0.4f, 0f, 0.4f));
+        AtlasAnomalyCandidate breach = new AtlasAnomalyCandidate("breach", 1f, "", false, Set.of(), null, new AtlasAnomalyChance(0.4f, 0f, 0.4f));
         AtlasAnomalyCandidate hunter = new AtlasAnomalyCandidate("hunter", 1f, "", false, Set.of(NEXUS), null, ALWAYS);
         AtlasGenerator without = generator(List.of(breach, hunter));
         List<AtlasAnomalyCandidate> withStations = new ArrayList<>(stations());
@@ -179,7 +179,7 @@ class AtlasBiomeAnomaliesTest {
         AtlasBiome pocket = pockets(generator, 20).stream().filter(biome -> EXPANSE.equals(biome.regionId())).findFirst().orElseThrow();
         AtlasCell holder = generator.biomeAnomalyCell(pocket, NEXUS);
         AtlasState state = new AtlasState(SEED);
-        state.add(holder, AtlasState.MARKERS_SPENT);
+        state.add(holder, AtlasState.ANOMALIES_SPENT);
 
         assertEquals(List.of(NEXUS), AtlasAnomalies.effective(generator, state, holder));
         for (AtlasCell cell : AtlasCell.ORIGIN.around(10)) {

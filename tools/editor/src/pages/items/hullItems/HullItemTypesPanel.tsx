@@ -9,7 +9,7 @@ import { modifierLinesOf, useLineDescriptions, type LineDescriptions } from '../
 import { hullItemKinds } from '../itemOptions.ts';
 import type { ItemsPanelProps } from '../itemsDocument.ts';
 import {
-  areaOptions,
+  volumeOptions,
   AFFIX_GROUPS,
   HULL_ITEM_TYPE,
   isTrueText,
@@ -83,7 +83,7 @@ export function HullItemTypesPanel({ document, model, vocabulary }: ItemsPanelPr
   };
 
   const socketOptions = [
-    { value: '', label: `All socket types (${hullItems.length})` },
+    { value: '', label: `All sections (${hullItems.length})` },
     ...kinds.map((kind) => ({ value: kind, label: `${kind} (${hullItems.filter((definition) => definition.kind === kind).length})` })),
   ];
 
@@ -94,7 +94,7 @@ export function HullItemTypesPanel({ document, model, vocabulary }: ItemsPanelPr
           <Button size="xs" variant="default" leftSection={<IconPlus size={14} />} onClick={addItem}>
             New hull item
           </Button>
-          <Select data={socketOptions} value={socketFilter} onChange={(value) => setSocketFilter(value ?? '')} allowDeselect={false} aria-label="Socket type filter" />
+          <Select data={socketOptions} value={socketFilter} onChange={(value) => setSocketFilter(value ?? '')} allowDeselect={false} aria-label="Section filter" />
           <Select data={rarityOptions(hullItems)} value={rarityFilter} onChange={(value) => setRarityFilter(value ?? '')} allowDeselect={false} aria-label="Rarity filter" />
           <TextInput
             placeholder="Name or id"
@@ -203,7 +203,7 @@ function HullItemForm({ document, model, vocabulary, definition, index, descript
           onRename={(newId) => edit((draft) => void (draft.id = newId))}
         />
         <Select
-          label="Kind (socket type)"
+          label="Section"
           data={kinds.includes(definition.kind) ? kinds : [definition.kind, ...kinds]}
           value={definition.kind}
           onChange={(value) => value && edit((draft) => setDefinitionKind(draft, value))}
@@ -244,12 +244,12 @@ function HullItemForm({ document, model, vocabulary, definition, index, descript
         />
       )}
       <Select
-        label="Area"
-        description="Loaded only while that area's mod is installed, and drops only while the area is switched on. Blank for always."
-        data={areaOptions(vocabulary.itemAreas, definition.area ?? '')}
-        value={definition.area ?? ''}
+        label="Volume"
+        description="Loaded only while that volume's mod is installed, and drops only while the volume is switched on. Blank for always."
+        data={volumeOptions(vocabulary.itemVolumes, definition.volume ?? '')}
+        value={definition.volume ?? ''}
         allowDeselect={false}
-        onChange={(area) => edit((draft) => void (draft.area = area ?? ''))}
+        onChange={(volume) => edit((draft) => void (draft.volume = volume ?? ''))}
       />
       <Select
         label="Crew"

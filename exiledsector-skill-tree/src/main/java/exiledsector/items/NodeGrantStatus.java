@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public record NodeGrantStatus(String nodeId, State state, String reason) {
 
     public enum State {
-        ACTIVE, READY, BY_PATH, DUPLICATE, INELIGIBLE, AREA_OFF, UNKNOWN_NODE
+        ACTIVE, READY, BY_PATH, DUPLICATE, INELIGIBLE, VOLUME_OFF, UNKNOWN_NODE
     }
 
     private record Remembered(String shipId, List<NodeGrantStatus> statuses) {

@@ -16,8 +16,8 @@ import exiledsector.MockSector;
 import exiledsector.effects.OpReserveParity;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.persistence.ShipSkillDataManager;
-import exiledsector.skills.AllocationGate;
-import exiledsector.skills.ItemChargeLedger;
+import exiledsector.skills.AllocationCheck;
+import exiledsector.skills.ItemCostLedger;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
@@ -204,7 +204,7 @@ class NodeAllocatorTest {
     void theStartingRootCanNeverBeDeallocated() {
         ShipTrees.chooseStartingRoot(data(), root);
 
-        assertEquals(AllocationGate.Refusal.STARTING_ROOT, allocatorStartingAt(root).snapshot().gate().deallocation(root).refusal());
+        assertEquals(AllocationCheck.Refusal.STARTING_ROOT, allocatorStartingAt(root).snapshot().gate().deallocation(root).refusal());
     }
 
     @Test
@@ -257,7 +257,7 @@ class NodeAllocatorTest {
     }
 
     @Test
-    void anOptionalNodesContainerRulesApplyToTheOptionChosen() {
+    void aChoiceNodesContainerRulesApplyToTheOptionChosen() {
         HullModSpecAPI spec = mock(HullModSpecAPI.class);
         when(spec.getDisplayName()).thenReturn("Heavy Armor");
         when(settings.getHullModSpec("heavyarmor")).thenReturn(spec);
@@ -265,7 +265,7 @@ class NodeAllocatorTest {
         SkillType plain = type("plain", "Plain", SkillTier.SMALL).build();
         SkillTree.registerType(plain);
         SkillNode slot = register("slot_1", type("slot", "Slot", SkillTier.SMALL).exclusiveHullModIds(List.of("heavyarmor"))
-                .optionalOptionIds(List.of("plain")).build(), "root_1");
+                .choiceOptionIds(List.of("plain")).build(), "root_1");
 
         assertEquals("Ship already has Heavy Armor installed.", allocatorStartingAt(root).snapshot().allocationRefusalReason(slot, plain));
     }
@@ -297,7 +297,7 @@ class NodeAllocatorTest {
         assertTrue(allocator.deallocate(coreSlot, allocator.snapshot()));
         verify(cargo).addCommodity("alpha_core", 1f);
         verify(member, times(2)).updateStats();
-        assertNull(ItemChargeLedger.itemCharge(data(), "core_1"));
+        assertNull(ItemCostLedger.paidItemCost(data(), "core_1"));
     }
 
     @Test
@@ -311,22 +311,22 @@ class NodeAllocatorTest {
         verify(cargo, never()).addCommodity(anyString(), anyFloat());
     }
 
-    private SkillNode optionalNodeWithPricedOptions() {
+    private SkillNode choiceNodeWithPricedOptions() {
         SkillTree.registerType(type("scanner", "Scanner", SkillTier.SMALL).itemCost(new SkillItemCost("alpha_core", 1f)).build());
         SkillTree.registerType(type("sensor", "Sensor", SkillTier.SMALL).itemCost(new SkillItemCost("beta_core", 2f)).build());
-        return register("picker_1", type("picker", "Picker", SkillTier.SMALL).optionalOptionIds(List.of("scanner", "sensor")).build(), "root_1");
+        return register("picker_1", type("picker", "Picker", SkillTier.SMALL).choiceOptionIds(List.of("scanner", "sensor")).build(), "root_1");
     }
 
     @Test
     void anOptionsItemCostIsChargedWhenChosenAndRefundedWhenTheNodeIsRemoved() {
-        SkillNode picker = optionalNodeWithPricedOptions();
+        SkillNode picker = choiceNodeWithPricedOptions();
         ShipTrees.chooseStartingRoot(data(), root);
         when(cargo.getCommodityQuantity("alpha_core")).thenReturn(1f);
         NodeAllocator allocator = allocatorStartingAt(root);
 
         assertTrue(allocator.allocate(picker, SkillTree.getType("scanner"), allocator.snapshot()));
         verify(cargo).removeCommodity("alpha_core", 1f);
-        assertEquals(new SkillItemCost("alpha_core", 1f), ItemChargeLedger.itemCharge(data(), "picker_1"));
+        assertEquals(new SkillItemCost("alpha_core", 1f), ItemCostLedger.paidItemCost(data(), "picker_1"));
 
         assertTrue(allocator.deallocate(picker, allocator.snapshot()));
         verify(cargo).addCommodity("alpha_core", 1f);
@@ -334,7 +334,7 @@ class NodeAllocatorTest {
 
     @Test
     void anOptionWhoseItemIsNotInCargoCannotBeChosen() {
-        SkillNode picker = optionalNodeWithPricedOptions();
+        SkillNode picker = choiceNodeWithPricedOptions();
         ShipTrees.chooseStartingRoot(data(), root);
         when(cargo.getCommodityQuantity("alpha_core")).thenReturn(1f);
         CommoditySpecAPI spec = mock(CommoditySpecAPI.class);
@@ -351,7 +351,7 @@ class NodeAllocatorTest {
 
     @Test
     void switchingOptionsRefundsTheOldOptionsItemAndChargesTheNewOne() {
-        SkillNode picker = optionalNodeWithPricedOptions();
+        SkillNode picker = choiceNodeWithPricedOptions();
         ShipTrees.chooseStartingRoot(data(), root);
         when(cargo.getCommodityQuantity("alpha_core")).thenReturn(1f);
         when(cargo.getCommodityQuantity("beta_core")).thenReturn(2f);
@@ -362,7 +362,7 @@ class NodeAllocatorTest {
 
         verify(cargo).addCommodity("alpha_core", 1f);
         verify(cargo).removeCommodity("beta_core", 2f);
-        assertEquals(new SkillItemCost("beta_core", 2f), ItemChargeLedger.itemCharge(data(), "picker_1"));
+        assertEquals(new SkillItemCost("beta_core", 2f), ItemCostLedger.paidItemCost(data(), "picker_1"));
         assertEquals(SkillTree.getType("sensor"), picker.resolveEffectiveType(data()));
     }
 
@@ -370,25 +370,25 @@ class NodeAllocatorTest {
     void switchingBetweenTwoMutuallyExclusiveOptionsDoesNotConflictWithTheOptionBeingReplaced() {
         SkillTree.registerType(type("front_mode", "Front Mode", SkillTier.SMALL).exclusiveSkillTypeIds(List.of("omni_mode")).build());
         SkillTree.registerType(type("omni_mode", "Omni Mode", SkillTier.SMALL).exclusiveSkillTypeIds(List.of("front_mode")).build());
-        SkillNode mode = register("mode_1", type("mode", "Mode", SkillTier.SMALL).optionalOptionIds(List.of("front_mode", "omni_mode")).build(),
+        SkillNode mode = register("mode_1", type("mode", "Mode", SkillTier.SMALL).choiceOptionIds(List.of("front_mode", "omni_mode")).build(),
                 "root_1");
         ShipTrees.chooseStartingRoot(data(), root);
         ShipTrees.selectOption(data(), mode, SkillTree.getType("front_mode"), 0);
         NodeAllocator allocator = allocatorStartingAt(root);
 
-        AllocationGate gate = allocator.snapshot().gate();
+        AllocationCheck gate = allocator.snapshot().gate();
         assertTrue(gate.optionSwitch(mode, SkillTree.getType("omni_mode")).allowed());
-        assertEquals(AllocationGate.Refusal.SAME_OPTION, gate.optionSwitch(mode, SkillTree.getType("front_mode")).refusal());
+        assertEquals(AllocationCheck.Refusal.SAME_OPTION, gate.optionSwitch(mode, SkillTree.getType("front_mode")).refusal());
     }
 
     @Test
-    void anOptionalContainerBehindAnUnmetUnlockConditionIsLockedWhicheverOptionIsChosen() {
+    void aChoiceContainerBehindAnUnmetUnlockConditionIsLockedWhicheverOptionIsChosen() {
         SkillTree.registerType(type("open_option", "Open Option", SkillTier.SMALL).build());
-        SkillNode sealed = register("sealed_1", type("sealed", "Sealed", SkillTier.SMALL).optionalOptionIds(List.of("open_option"))
+        SkillNode sealed = register("sealed_1", type("sealed", "Sealed", SkillTier.SMALL).choiceOptionIds(List.of("open_option"))
                 .unlockConditions(List.of(UnlockCondition.minShipLevel(5))).build(), "root_1");
         ShipTrees.chooseStartingRoot(data(), root);
 
-        AllocationGate.Verdict verdict = allocatorStartingAt(root).snapshot().gate().allocation(sealed, SkillTree.getType("open_option"));
+        AllocationCheck.Verdict verdict = allocatorStartingAt(root).snapshot().gate().allocation(sealed, SkillTree.getType("open_option"));
 
         assertEquals(NodeEligibility.Kind.LOCKED, verdict.block().kind());
     }
@@ -419,7 +419,7 @@ class NodeAllocatorTest {
     @Test
     void theSnapshotHandsOutOneMemoisedVerdictPerNode() {
         ShipTrees.chooseStartingRoot(data(), root);
-        AllocationGate gate = allocatorStartingAt(root).snapshot().gate();
+        AllocationCheck gate = allocatorStartingAt(root).snapshot().gate();
 
         assertSame(gate.allocation(frontShield), gate.allocation(frontShield));
         assertSame(gate.deallocation(root), gate.deallocation(root));
@@ -501,7 +501,7 @@ class NodeAllocatorTest {
         SkillType hangarOption = type("hangar_option", "Hangar Option", SkillTier.NOTABLE).build();
         SkillTree.registerType(hangarOption);
         SkillNode choice = register("choice_1", type("choice", "Choice", SkillTier.NOTABLE)
-                .optionalOptionIds(List.of("hangar_option")).build(), "root_1");
+                .choiceOptionIds(List.of("hangar_option")).build(), "root_1");
         ShipTrees.chooseStartingRoot(data(), root);
         NodeAllocator allocator = allocatorStartingAt(root);
         allocator.snapshot();
@@ -516,9 +516,9 @@ class NodeAllocatorTest {
     }
 
     @Test
-    void anOptionalNodeCannotBeAllocatedWithoutAnOption() {
+    void aChoiceNodeCannotBeAllocatedWithoutAnOption() {
         SkillTree.registerType(type("only_option", "Only Option", SkillTier.SMALL).build());
-        SkillNode choice = register("choice_1", type("choice", "Choice", SkillTier.SMALL).optionalOptionIds(List.of("only_option")).build(),
+        SkillNode choice = register("choice_1", type("choice", "Choice", SkillTier.SMALL).choiceOptionIds(List.of("only_option")).build(),
                 "root_1");
         ShipTrees.chooseStartingRoot(data(), root);
         NodeAllocator allocator = allocatorStartingAt(root);
@@ -609,10 +609,10 @@ class NodeAllocatorTest {
     }
 
     @Test
-    void aTemplateStepOnAnOptionalNodeAllocatesTheTemplatesOption() {
+    void aTemplateStepOnAChoiceNodeAllocatesTheTemplatesOption() {
         SkillType option = type("hull_option", "Hull Option", SkillTier.SMALL).build();
         SkillTree.registerType(option);
-        SkillNode slot = register("slot_1", type("slot", "Slot", SkillTier.SMALL).optionalOptionIds(List.of("hull_option")).build(), "root_1");
+        SkillNode slot = register("slot_1", type("slot", "Slot", SkillTier.SMALL).choiceOptionIds(List.of("hull_option")).build(), "root_1");
 
         assertEquals(StepVerdict.ALLOCATE, executor(new ArrayList<>()).attempt(new TemplateStep("slot_1", "hull_option")));
         assertEquals(option, slot.resolveEffectiveType(data()));

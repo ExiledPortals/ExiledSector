@@ -53,7 +53,7 @@ class EmptyShellsTest {
         nearSmall = node("near_small", "hull_small", -100f, 0f);
         farNotable = node("far_notable", "hull_notable", 5000f, 0f);
         ItemDefinitions.register(new JSONArray().put(ItemFixtures.subroutineRow(AXION, SubroutineKind.UNIQUE).put("unique", "true")
-                .put("lines", "EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE:1:1").put("source", "faction:stargazer")));
+                .put("lines", "EVERY_AFFINITY_FLAT_PER_EMPTY_SHELL_NODE:1:1").put("source", "faction:stargazer")));
         UniqueSubroutineRadii.register(new JSONArray().put(new JSONObject().put("id", AXION).put(UniqueSubroutineRadii.RADIUS_COLUMN, "medium")));
         NodeGrantLinks.install();
     }
@@ -102,7 +102,7 @@ class EmptyShellsTest {
 
         List<SkillTypeEffect> effects = AllocatedSkillEffects.treeEffects(data, AllocatedNode.of(data), HullSize.CRUISER);
 
-        assertEquals(Set.of(nearNotable.getId(), nearSmall.getId()), EmptyShells.hollowNodeIds(data));
+        assertEquals(Set.of(nearNotable.getId(), nearSmall.getId()), EmptyShells.emptyShellNodeIds(data));
         assertEquals(5f, effects.stream().filter(effect -> effect.effect() == SkillEffect.byName("HULL_MULT"))
                 .map(SkillTypeEffect::magnitude).reduce(0f, Float::sum), 1e-4f);
         for (SkillEffect affinity : List.of(SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT, SpecialSkillEffect.HIGH_TECH_AFFINITY_FLAT,

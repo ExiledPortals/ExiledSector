@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when;
 
 class ItemCraftingTest {
 
-    private static final String PARTS = ItemDisassembly.PARTS_ITEM_ID;
+    private static final String FEEDSTOCK = ItemDisassembly.FEEDSTOCK_ITEM_ID;
     private final ItemStore store = new ItemStore();
     private final CargoAPI cargo = mock(CargoAPI.class);
 
@@ -55,7 +55,7 @@ class ItemCraftingTest {
     }
 
     private Item common() {
-        List<RolledEffect> effects = List.of(new RolledEffect("FLUX_CAPACITY_MULT", 5f), new RolledEffect("ARMOR_PERCENT", 7f));
+        List<RolledLine> effects = List.of(new RolledLine("FLUX_CAPACITY_MULT", 5f), new RolledLine("ARMOR_PERCENT", 7f));
         return store.add(HullItemRows.data(HullItemRows.MILITARY, 1L, effects, null));
     }
 
@@ -79,11 +79,11 @@ class ItemCraftingTest {
         assertEquals(2, names.stream().filter(definition::isSuffix).count());
         assertTrue(definition.isPrefix(item.effects().get(1).effectName()), "prefixes stay ahead of suffixes");
         assertTrue(definition.isSuffix(item.effects().get(2).effectName()), "suffixes follow the prefixes");
-        for (RolledEffect effect : item.effects()) {
+        for (RolledLine effect : item.effects()) {
             PoolEntry range = definition.poolEntry(effect.effectName());
             assertTrue(effect.magnitude() >= range.min() && effect.magnitude() <= range.max(), effect.effectName());
         }
-        assertFalse(ItemCrafting.canUse(CraftingCurrency.AUGMENTATION, item, definitionAllowed -> true));
+        assertFalse(ItemCrafting.canUse(Nanoswarm.AUGMENTATION, item, definitionAllowed -> true));
         assertNull(ItemCrafting.augment(item, random));
     }
 
@@ -99,24 +99,24 @@ class ItemCraftingTest {
     }
 
     @Test
-    void uniquesCannotBeAugmentedButCanBeRecalibratedAndTransposed() {
+    void uniquesCannotBeAugmentedButCanBeTunedAndMetamorphosed() {
         Item unique = store.add(ItemDefinitions.get("relic_a"), 5L);
 
-        assertFalse(ItemCrafting.canUse(CraftingCurrency.AUGMENTATION, unique, definition -> true));
-        assertTrue(ItemCrafting.canUse(CraftingCurrency.RECALIBRATION, unique, definition -> true));
-        assertTrue(ItemCrafting.canUse(CraftingCurrency.TRANSPOSITION, unique, definition -> true));
-        assertFalse(ItemCrafting.canUse(CraftingCurrency.TRANSPOSITION, common(), definition -> true));
+        assertFalse(ItemCrafting.canUse(Nanoswarm.AUGMENTATION, unique, definition -> true));
+        assertTrue(ItemCrafting.canUse(Nanoswarm.TUNING, unique, definition -> true));
+        assertTrue(ItemCrafting.canUse(Nanoswarm.METAMORPH, unique, definition -> true));
+        assertFalse(ItemCrafting.canUse(Nanoswarm.METAMORPH, common(), definition -> true));
     }
 
     @Test
-    void recalibratingKeepsEachEffectAndRerollsItWithinItsRange() {
+    void tuningKeepsEachModifierAndRerollsItWithinItsRange() {
         Item item = common();
-        List<String> before = item.effects().stream().map(RolledEffect::effectName).toList();
+        List<String> before = item.effects().stream().map(RolledLine::effectName).toList();
 
         for (long seed = 0; seed < 20; seed++) {
-            ItemCrafting.recalibrate(item, new Random(seed));
-            assertEquals(before, item.effects().stream().map(RolledEffect::effectName).toList());
-            for (RolledEffect effect : item.effects()) {
+            ItemCrafting.tune(item, new Random(seed));
+            assertEquals(before, item.effects().stream().map(RolledLine::effectName).toList());
+            for (RolledLine effect : item.effects()) {
                 PoolEntry range = item.definition().poolEntry(effect.effectName());
                 assertTrue(effect.magnitude() >= range.min() && effect.magnitude() <= range.max());
             }
@@ -124,42 +124,42 @@ class ItemCraftingTest {
     }
 
     @Test
-    void everyRecalibrationChangesAValueSoTheKernelIsNeverWasted() throws Exception {
+    void everyTuningChangesAValueSoTheNanoswarmIsNeverWasted() throws Exception {
         ItemDefinitions.register(new JSONArray().put(HullItemRows.row("narrow", "bridge", "HULL_MULT:4:5", "ARMOR_PERCENT:1:1")));
         Item item = store.add(HullItemRows.data("narrow", 1L,
-                List.of(new RolledEffect("HULL_MULT", 4f), new RolledEffect("ARMOR_PERCENT", 1f)), null));
+                List.of(new RolledLine("HULL_MULT", 4f), new RolledLine("ARMOR_PERCENT", 1f)), null));
 
         for (long seed = 0; seed < 50; seed++) {
-            List<RolledEffect> before = List.copyOf(item.effects());
-            assertSame(item, ItemCrafting.recalibrate(item, new Random(seed)));
+            List<RolledLine> before = List.copyOf(item.effects());
+            assertSame(item, ItemCrafting.tune(item, new Random(seed)));
             assertNotEquals(before, item.effects());
             assertEquals(1f, item.effects().get(1).magnitude());
         }
     }
 
     @Test
-    void decimalRangesThatStayBelowOneCanBeRecalibrated() throws Exception {
+    void decimalRangesThatStayBelowOneCanBeTuned() throws Exception {
         ItemDefinitions.register(new JSONArray()
                 .put(HullItemRows.row("decimal", "bridge", "HULL_MULT:0.15:0.25", "ARMOR_PERCENT:0.01:0.03"))
                 .put(HullItemRows.row("fixed", "bridge", "HULL_MULT:1:1", "ARMOR_PERCENT:2.5:2.5")));
         Item decimal = store.add(HullItemRows.data("decimal", 1L,
-                List.of(new RolledEffect("HULL_MULT", 0.2f), new RolledEffect("ARMOR_PERCENT", 0.02f)), null));
+                List.of(new RolledLine("HULL_MULT", 0.2f), new RolledLine("ARMOR_PERCENT", 0.02f)), null));
         Item fixed = store.add(HullItemRows.data("fixed", 1L,
-                List.of(new RolledEffect("HULL_MULT", 1f), new RolledEffect("ARMOR_PERCENT", 2.5f)), null));
+                List.of(new RolledLine("HULL_MULT", 1f), new RolledLine("ARMOR_PERCENT", 2.5f)), null));
 
-        assertTrue(ItemCrafting.canUse(CraftingCurrency.RECALIBRATION, decimal, definition -> true));
-        assertFalse(ItemCrafting.canUse(CraftingCurrency.RECALIBRATION, fixed, definition -> true));
-        owns(CraftingCurrency.RECALIBRATION.itemId(), 1f);
-        assertNull(ItemCrafting.use(CraftingCurrency.RECALIBRATION, fixed, CraftingMaterials.cargoOnly(cargo), store, new Random(1L), definition -> true));
+        assertTrue(ItemCrafting.canUse(Nanoswarm.TUNING, decimal, definition -> true));
+        assertFalse(ItemCrafting.canUse(Nanoswarm.TUNING, fixed, definition -> true));
+        owns(Nanoswarm.TUNING.itemId(), 1f);
+        assertNull(ItemCrafting.use(Nanoswarm.TUNING, fixed, CraftingMaterials.cargoOnly(cargo), store, new Random(1L), definition -> true));
         verify(cargo, never()).removeItems(Mockito.any(), Mockito.any(), anyFloat());
     }
 
     @Test
-    void transposingSwapsAUniqueForADifferentOneInTheSameStorageSlot() {
+    void metamorphSwapsAUniqueForADifferentOneInTheSameStorageSlot() {
         Item first = common();
         Item unique = store.add(ItemDefinitions.get("relic_a"), 5L);
 
-        Item replacement = ItemCrafting.transpose(store, unique, new Random(2L), definition -> true);
+        Item replacement = ItemCrafting.metamorph(store, unique, new Random(2L), definition -> true);
 
         assertNotNull(replacement);
         assertEquals("relic_b", replacement.definitionId());
@@ -170,18 +170,18 @@ class ItemCraftingTest {
     }
 
     @Test
-    void transposingNeedsAnotherAllowedUnique() {
+    void metamorphNeedsAnotherAllowedUnique() {
         Item unique = store.add(ItemDefinitions.get("relic_a"), 5L);
 
-        assertFalse(ItemCrafting.canUse(CraftingCurrency.TRANSPOSITION, unique, definition -> !definition.id().equals("relic_b")));
-        assertNull(ItemCrafting.transpose(store, unique, new Random(2L), definition -> false));
+        assertFalse(ItemCrafting.canUse(Nanoswarm.METAMORPH, unique, definition -> !definition.id().equals("relic_b")));
+        assertNull(ItemCrafting.metamorph(store, unique, new Random(2L), definition -> false));
     }
 
     @Test
     void synthesisNeedsEnoughParts() {
-        owns(PARTS, 2f);
+        owns(FEEDSTOCK, 2f);
 
-        assertFalse(ItemCrafting.synthesise(CraftingCurrency.AUGMENTATION, CraftingMaterials.cargoOnly(cargo)));
+        assertFalse(ItemCrafting.grow(Nanoswarm.AUGMENTATION, CraftingMaterials.cargoOnly(cargo)));
         assertTrue(store.owned().isEmpty());
         verify(cargo, never()).removeItems(Mockito.any(), Mockito.any(), anyFloat());
         verify(cargo, never()).addSpecial(Mockito.any(), anyFloat());
@@ -189,67 +189,67 @@ class ItemCraftingTest {
 
     @Test
     void synthesisingACurrencyTradesItsPartsCostForOneCurrency() {
-        owns(PARTS, 10f);
+        owns(FEEDSTOCK, 10f);
 
-        assertTrue(ItemCrafting.synthesise(CraftingCurrency.AUGMENTATION, CraftingMaterials.cargoOnly(cargo)));
+        assertTrue(ItemCrafting.grow(Nanoswarm.AUGMENTATION, CraftingMaterials.cargoOnly(cargo)));
 
-        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(PARTS), CraftingCurrency.AUGMENTATION.partsCost());
-        verify(cargo).addSpecial(MaterialItems.data(CraftingCurrency.AUGMENTATION.itemId()), 1);
+        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(FEEDSTOCK), Nanoswarm.AUGMENTATION.feedstockCost());
+        verify(cargo).addSpecial(MaterialItems.data(Nanoswarm.AUGMENTATION.itemId()), 1);
     }
 
     @Test
     void anInhibitorGrowsFromItsPartsCost() {
-        owns(PARTS, 100f);
+        owns(FEEDSTOCK, 100f);
 
-        assertTrue(CraftingWard.PREFIX.synthesisable());
-        assertTrue(ItemCrafting.synthesise(CraftingWard.PREFIX, CraftingMaterials.cargoOnly(cargo)));
+        assertTrue(CraftingInhibitor.PREFIX.growable());
+        assertTrue(ItemCrafting.grow(CraftingInhibitor.PREFIX, CraftingMaterials.cargoOnly(cargo)));
 
-        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(PARTS), 100);
-        verify(cargo).addSpecial(MaterialItems.data(CraftingWard.PREFIX.itemId()), 1);
+        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(FEEDSTOCK), 100);
+        verify(cargo).addSpecial(MaterialItems.data(CraftingInhibitor.PREFIX.itemId()), 1);
     }
 
     @Test
     void usingACurrencySpendsOneOnlyWhenItWorks() {
         Item item = common();
-        String recalibration = CraftingCurrency.RECALIBRATION.itemId();
+        String recalibration = Nanoswarm.TUNING.itemId();
         owns(recalibration, 0f);
-        assertNull(ItemCrafting.use(CraftingCurrency.RECALIBRATION, item, CraftingMaterials.cargoOnly(cargo), store, new Random(1L), definition -> true));
+        assertNull(ItemCrafting.use(Nanoswarm.TUNING, item, CraftingMaterials.cargoOnly(cargo), store, new Random(1L), definition -> true));
         verify(cargo, never()).removeItems(Mockito.any(), Mockito.any(), anyFloat());
 
         owns(recalibration, 2f);
-        assertSame(item, ItemCrafting.use(CraftingCurrency.RECALIBRATION, item, CraftingMaterials.cargoOnly(cargo), store, new Random(1L),
+        assertSame(item, ItemCrafting.use(Nanoswarm.TUNING, item, CraftingMaterials.cargoOnly(cargo), store, new Random(1L),
                 definition -> true));
         verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(recalibration), 1);
 
-        owns(CraftingCurrency.TRANSPOSITION.itemId(), 1f);
-        assertNull(ItemCrafting.use(CraftingCurrency.TRANSPOSITION, item, CraftingMaterials.cargoOnly(cargo), store, new Random(1L), definition -> true));
+        owns(Nanoswarm.METAMORPH.itemId(), 1f);
+        assertNull(ItemCrafting.use(Nanoswarm.METAMORPH, item, CraftingMaterials.cargoOnly(cargo), store, new Random(1L), definition -> true));
         assertNotEquals(0, item.effects().size());
     }
 
     @Test
     void costsComeFromTheCraftingCsvAndFallBackToTheDefaults() throws Exception {
-        assertEquals(50, CraftingCurrency.CORRUPTION.partsCost());
+        assertEquals(50, Nanoswarm.CORRUPTION.feedstockCost());
 
         ItemCraftingCosts.register(new JSONArray()
-                .put(new JSONObject().put("item", CraftingCurrency.CORRUPTION.itemId()).put("partsCost", "55"))
-                .put(new JSONObject().put("item", CraftingCurrency.SUBSTITUTION.itemId()).put("partsCost", "lots")));
+                .put(new JSONObject().put("item", Nanoswarm.CORRUPTION.itemId()).put("partsCost", "55"))
+                .put(new JSONObject().put("item", Nanoswarm.RESHAPING.itemId()).put("partsCost", "lots")));
 
-        assertEquals(55, CraftingCurrency.CORRUPTION.partsCost());
-        assertEquals(20, CraftingCurrency.SUBSTITUTION.partsCost());
+        assertEquals(55, Nanoswarm.CORRUPTION.feedstockCost());
+        assertEquals(20, Nanoswarm.RESHAPING.feedstockCost());
     }
 
     @Test
-    void fixingLocksOneEffectOnceAndRecalibrationLeavesItAlone() {
+    void immutableFreezesOneModifierOnceAndTuningLeavesItAlone() {
         Item item = common();
 
-        assertTrue(ItemCrafting.canUse(CraftingCurrency.FIXATION, item, definition -> true));
-        assertSame(item, ItemCrafting.fixate(item, new Random(4L)));
-        RolledModifier locked = item.explicits().stream().filter(RolledModifier::locked).findFirst().orElseThrow();
-        assertEquals(1, item.explicits().stream().filter(RolledModifier::locked).count());
-        assertFalse(ItemCrafting.canUse(CraftingCurrency.FIXATION, item, definition -> true));
-        assertNull(ItemCrafting.fixate(item, new Random(5L)));
+        assertTrue(ItemCrafting.canUse(Nanoswarm.IMMUTABLE, item, definition -> true));
+        assertSame(item, ItemCrafting.makeImmutable(item, new Random(4L)));
+        RolledModifier locked = item.explicits().stream().filter(RolledModifier::immutable).findFirst().orElseThrow();
+        assertEquals(1, item.explicits().stream().filter(RolledModifier::immutable).count());
+        assertFalse(ItemCrafting.canUse(Nanoswarm.IMMUTABLE, item, definition -> true));
+        assertNull(ItemCrafting.makeImmutable(item, new Random(5L)));
         for (long seed = 0; seed < 20; seed++) {
-            ItemCrafting.recalibrate(item, new Random(seed));
+            ItemCrafting.tune(item, new Random(seed));
             assertTrue(item.explicits().contains(locked), "the fixed effect keeps its rolled value");
         }
         assertTrue(item.effectLines().stream().anyMatch(line -> line.spans().stream().anyMatch(span -> span.style() == Style.IMMUTABLE)));
@@ -259,34 +259,34 @@ class ItemCraftingTest {
     @Test
     void aFixedEffectStaysFixedWhenItsSavedIdIsRemapped() {
         Item item = common();
-        ItemCrafting.fixate(item, new Random(4L));
-        RolledModifier locked = item.explicits().stream().filter(RolledModifier::locked).findFirst().orElseThrow();
+        ItemCrafting.makeImmutable(item, new Random(4L));
+        RolledModifier locked = item.explicits().stream().filter(RolledModifier::immutable).findFirst().orElseThrow();
         RolledModifier legacy = new RolledModifier("RETIRED_" + locked.modifierId(), locked.slot(), locked.lines(), true);
 
         List<RolledModifier> resolved = item.definition().withCurrentIds(List.of(legacy));
 
         assertEquals(locked.modifierId(), resolved.get(0).modifierId());
-        assertTrue(resolved.get(0).locked());
+        assertTrue(resolved.get(0).immutable());
     }
 
     @Test
     void fixingNeedsAtLeastTwoEffects() throws Exception {
         ItemDefinitions.register(new JSONArray().put(HullItemRows.row("single", "bridge", "HULL_MULT:4:6", "")));
-        Item single = store.add(HullItemRows.data("single", 1L, List.of(new RolledEffect("HULL_MULT", 5f)), null));
+        Item single = store.add(HullItemRows.data("single", 1L, List.of(new RolledLine("HULL_MULT", 5f)), null));
 
-        assertFalse(ItemCrafting.canUse(CraftingCurrency.FIXATION, single, definition -> true));
+        assertFalse(ItemCrafting.canUse(Nanoswarm.IMMUTABLE, single, definition -> true));
     }
 
     @Test
-    void substitutingSwapsAnUnfixedEffectAndKeepsTheEffectCount() {
+    void reshapingSwapsAMutableModifierAndKeepsTheModifierCount() {
         Item item = common();
-        ItemCrafting.fixate(item, new Random(4L));
-        RolledModifier locked = item.explicits().stream().filter(RolledModifier::locked).findFirst().orElseThrow();
+        ItemCrafting.makeImmutable(item, new Random(4L));
+        RolledModifier locked = item.explicits().stream().filter(RolledModifier::immutable).findFirst().orElseThrow();
 
         for (long seed = 0; seed < 20; seed++) {
             List<String> before = item.explicits().stream().map(RolledModifier::modifierId).toList();
             List<ModifierSlot> slotsBefore = item.explicits().stream().map(RolledModifier::slot).toList();
-            assertSame(item, ItemCrafting.substitute(item, new Random(seed)));
+            assertSame(item, ItemCrafting.reshape(item, new Random(seed)));
             List<String> after = item.explicits().stream().map(RolledModifier::modifierId).toList();
             assertEquals(2, after.size());
             assertNotEquals(before, after);
@@ -296,22 +296,22 @@ class ItemCraftingTest {
     }
 
     @Test
-    void substitutionSkipsUniques() {
+    void reshapingSkipsUniques() {
         Item unique = store.add(ItemDefinitions.get("relic_a"), 5L);
 
-        assertFalse(ItemCrafting.canUse(CraftingCurrency.SUBSTITUTION, unique, definition -> true));
+        assertFalse(ItemCrafting.canUse(Nanoswarm.RESHAPING, unique, definition -> true));
     }
 
     @Test
     void annullingRemovesOneUnfixedEffectUntilOnlyTheFixedOneIsLeft() {
         Item item = common();
-        ItemCrafting.fixate(item, new Random(4L));
-        RolledModifier locked = item.explicits().stream().filter(RolledModifier::locked).findFirst().orElseThrow();
+        ItemCrafting.makeImmutable(item, new Random(4L));
+        RolledModifier locked = item.explicits().stream().filter(RolledModifier::immutable).findFirst().orElseThrow();
 
-        assertTrue(ItemCrafting.canUse(CraftingCurrency.ANNULMENT, item, definition -> true));
+        assertTrue(ItemCrafting.canUse(Nanoswarm.ANNULMENT, item, definition -> true));
         assertSame(item, ItemCrafting.annul(item, new Random(1L)));
         assertEquals(List.of(locked), item.explicits(), "fixed effects are never removed");
-        assertFalse(ItemCrafting.canUse(CraftingCurrency.ANNULMENT, item, definition -> true));
+        assertFalse(ItemCrafting.canUse(Nanoswarm.ANNULMENT, item, definition -> true));
         assertNull(ItemCrafting.annul(item, new Random(1L)));
     }
 
@@ -319,13 +319,13 @@ class ItemCraftingTest {
     void annulmentSkipsUniquesSubroutinesAndGuardedSlots() {
         Item unique = store.add(ItemDefinitions.get("relic_a"), 5L);
         Item item = common();
-        Set<ModifierSlot> bothGuarded = EnumSet.allOf(ModifierSlot.class);
+        Set<ModifierSlot> bothInhibited = EnumSet.allOf(ModifierSlot.class);
 
-        assertFalse(ItemCrafting.canUse(CraftingCurrency.ANNULMENT, unique, definition -> true));
-        assertFalse(CraftingCurrency.ANNULMENT.appliesTo(ItemType.SUBROUTINE));
-        assertTrue(CraftingCurrency.ANNULMENT.appliesTo(ItemType.HULL_ITEM));
-        assertFalse(ItemCrafting.canAnnul(item, bothGuarded));
-        assertNull(ItemCrafting.annul(item, new Random(1L), bothGuarded));
+        assertFalse(ItemCrafting.canUse(Nanoswarm.ANNULMENT, unique, definition -> true));
+        assertFalse(Nanoswarm.ANNULMENT.appliesTo(ItemType.SUBROUTINE));
+        assertTrue(Nanoswarm.ANNULMENT.appliesTo(ItemType.HULL_ITEM));
+        assertFalse(ItemCrafting.canAnnul(item, bothInhibited));
+        assertNull(ItemCrafting.annul(item, new Random(1L), bothInhibited));
         assertEquals(2, item.explicits().size());
     }
 
@@ -335,18 +335,18 @@ class ItemCraftingTest {
         ItemImplicits.register(new JSONArray().put(new JSONObject().put("section", "armor_plating").put("implicits", "ARMOR_PERCENT:10:20")));
         try {
             Item plate = store.add(ItemDefinitions.get("plate"), 3L);
-            List<RolledEffect> explicitsBefore = RolledModifier.lines(plate.explicits());
+            List<RolledLine> explicitsBefore = RolledModifier.lines(plate.explicits());
 
-            assertTrue(ItemCrafting.canUse(CraftingCurrency.ATTUNEMENT, plate, definition -> true));
+            assertTrue(ItemCrafting.canUse(Nanoswarm.FUNDAMENTAL, plate, definition -> true));
             for (long seed = 0; seed < 20; seed++) {
                 float before = plate.implicits().get(0).lines().get(0).magnitude();
-                assertSame(plate, ItemCrafting.attune(plate, new Random(seed)));
+                assertSame(plate, ItemCrafting.rerollFundamentals(plate, new Random(seed)));
                 float after = plate.implicits().get(0).lines().get(0).magnitude();
                 assertNotEquals(before, after);
                 assertTrue(after >= 10f && after <= 20f);
             }
             assertEquals(explicitsBefore, RolledModifier.lines(plate.explicits()));
-            assertFalse(ItemCrafting.canUse(CraftingCurrency.ATTUNEMENT, common(), definition -> true));
+            assertFalse(ItemCrafting.canUse(Nanoswarm.FUNDAMENTAL, common(), definition -> true));
         } finally {
             ItemImplicits.clear();
         }
@@ -355,9 +355,9 @@ class ItemCraftingTest {
     @Test
     void replicatingAddsAMirroredCopyThatNoCurrencyCanModify() {
         Item original = common();
-        owns(CraftingCurrency.REPLICATION.itemId(), 1f);
+        owns(Nanoswarm.REPLICATION.itemId(), 1f);
 
-        Item copy = ItemCrafting.use(CraftingCurrency.REPLICATION, original, CraftingMaterials.cargoOnly(cargo), store, new Random(1L),
+        Item copy = ItemCrafting.use(Nanoswarm.REPLICATION, original, CraftingMaterials.cargoOnly(cargo), store, new Random(1L),
                 definition -> true);
 
         assertNotNull(copy);
@@ -368,20 +368,20 @@ class ItemCraftingTest {
         assertEquals(original.explicits(), copy.explicits());
         assertEquals(original.implicits(), copy.implicits());
         assertEquals(original.name(), copy.name());
-        for (CraftingCurrency currency : CraftingCurrency.values()) {
+        for (Nanoswarm currency : Nanoswarm.values()) {
             assertFalse(ItemCrafting.canUse(currency, copy, definition -> true), currency + " must not modify a mirrored item");
         }
-        assertTrue(ItemCrafting.canUse(CraftingCurrency.REPLICATION, original, definition -> true));
+        assertTrue(ItemCrafting.canUse(Nanoswarm.REPLICATION, original, definition -> true));
         assertTrue(copy.headerLines().stream().anyMatch(line -> line.plain().equals("Mirrored")));
-        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(CraftingCurrency.REPLICATION.itemId()), 1);
+        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(Nanoswarm.REPLICATION.itemId()), 1);
     }
 
     @Test
-    void replicationKernelsCannotBeSynthesised() {
-        owns(PARTS, 10_000f);
+    void replicatorNanoseedsCannotBeGrown() {
+        owns(FEEDSTOCK, 10_000f);
 
-        assertFalse(CraftingCurrency.REPLICATION.synthesisable());
-        assertFalse(ItemCrafting.synthesise(CraftingCurrency.REPLICATION, CraftingMaterials.cargoOnly(cargo)));
+        assertFalse(Nanoswarm.REPLICATION.growable());
+        assertFalse(ItemCrafting.grow(Nanoswarm.REPLICATION, CraftingMaterials.cargoOnly(cargo)));
         verify(cargo, never()).removeItems(Mockito.any(), Mockito.any(), anyFloat());
     }
 }

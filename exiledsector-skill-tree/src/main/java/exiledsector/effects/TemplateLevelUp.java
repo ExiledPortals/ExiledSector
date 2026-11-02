@@ -6,7 +6,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.PlayerFleet;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
-import exiledsector.skills.AllocationGate;
+import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
@@ -33,11 +33,11 @@ final class TemplateLevelUp {
         if (shipData == null) {
             return 0;
         }
-        int pendingCredits = shipData.takePendingTemplateCredits();
+        int pendingCredits = shipData.takePendingTemplateFreeAllocations();
         int allocatedCount = shipData.isAutoAllocatingTemplate() ? allocateTemplateSteps(member, variant, shipData) : 0;
         int unspentCredits = Math.max(0, pendingCredits - allocatedCount);
         for (int i = 0; i < unspentCredits; i++) {
-            ShipTrees.refundBankedCreditAsOp(shipData, SkillTree.getAllNodes().values());
+            ShipTrees.refundBankedFreeAllocationAsOp(shipData, SkillTree.getAllNodes().values());
         }
         if (allocatedCount > 0 || unspentCredits > 0) {
             member.setStatUpdateNeeded(true);
@@ -56,9 +56,9 @@ final class TemplateLevelUp {
             return 0;
         }
         ShipFacts shipFacts = PlayerShipFacts.of(member, variant);
-        AllocationGate.Budget budget = new AllocationGate.Budget(0, opCostPerNode, ShipLevelConfig.maxAllocatedNodes());
+        AllocationCheck.Budget budget = new AllocationCheck.Budget(0, opCostPerNode, ShipLevelConfig.maxAllocatedNodes());
         return AutoAllocateRun.run(template.steps(), step -> {
-            AllocationGate gate = AllocationGate.forShip(shipData, shipFacts, rootId, budget, itemId -> 0d);
+            AllocationCheck gate = AllocationCheck.forShip(shipData, shipFacts, rootId, budget, itemId -> 0d);
             StepVerdict verdict = TemplateStepRules.verdict(step, shipData, rootId, gate::allocation);
             if (verdict == StepVerdict.ALLOCATE) {
                 SkillNode node = SkillTree.get(step.nodeId());

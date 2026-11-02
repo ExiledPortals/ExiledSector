@@ -67,10 +67,10 @@ class WormholeAnchorSocketingTest {
 
         SkillTree.clearNodes();
         SkillType exitType = new SkillType.Builder("wormhole_exit", "Wormhole Exit", "", SkillTier.WORMHOLE_EXIT).build();
-        SkillType socketType = new SkillType.Builder("socket", "Socket", "", SkillTier.SOCKET).build();
+        SkillType sectionKind = new SkillType.Builder("socket", "Socket", "", SkillTier.SOCKET).build();
         root = new SkillNode("root", new SkillType.Builder("root_type", "Root", "", SkillTier.ROOT).build(), List.of(), 0f, 0f);
-        socket = new SkillNode("socket", socketType, List.of("root"), 0f, 0f, SkillNodeDecoration.NONE, List.of("core"));
-        secondSocket = new SkillNode("socket_b", socketType, List.of("root"), 0f, 0f, SkillNodeDecoration.NONE, List.of("core"));
+        socket = new SkillNode("socket", sectionKind, List.of("root"), 0f, 0f, SkillNodeDecoration.NONE, List.of("core"));
+        secondSocket = new SkillNode("socket_b", sectionKind, List.of("root"), 0f, 0f, SkillNodeDecoration.NONE, List.of("core"));
         for (SkillNode node : List.of(root, socket, secondSocket,
                 new SkillNode("hegemony_2", exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of("hegemony")),
                 new SkillNode("rat_abyss_wormhole_1", exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of("abyss", GATE_TAG)))) {
@@ -82,7 +82,7 @@ class WormholeAnchorSocketingTest {
                         .put("drop_factions", "rat_abyssals;rat_abyssals_deep").put("drop_chance", "0.1"))
                 .put(AnchorRows.row(KESTEVEN_ANCHOR, "kesteven", "kesteven_wormhole1").put("drop_factions", "kesteven")
                         .put("drop_chance", "0.2")));
-        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
+        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"volume\": \"hegemony\"}]"));
         AnchorLinks.install(new AnchorLinks.ExitLookup() {
             @Override
             public String exitNodeId(String socketedItemId) {
@@ -130,7 +130,7 @@ class WormholeAnchorSocketingTest {
     }
 
     @Test
-    void anAnchorLinksWhileItsAreaIsOnButOnlyOpensOnceItsGateIsMet() {
+    void anAnchorLinksWhileItsVolumeIsOnButOnlyOpensOnceItsGateIsMet() {
         WormholeAnchor hegemony = anchor(HEGEMONY_ANCHOR, "socketable_1");
         WormholeAnchor abyss = anchor(ABYSS_ANCHOR, "socketable_2");
         WormholeAnchor kesteven = anchor(KESTEVEN_ANCHOR, "socketable_3");
@@ -140,7 +140,7 @@ class WormholeAnchorSocketingTest {
         assertEquals(WormholeAnchor.Inertness.GATED, abyss.inertness(Global.getSector()));
         assertFalse(abyss.canOpen(Global.getSector()));
         assertNull(kesteven.linkedExitNodeId());
-        assertEquals(WormholeAnchor.Inertness.AREA_OFF, kesteven.inertness(Global.getSector()));
+        assertEquals(WormholeAnchor.Inertness.VOLUME_OFF, kesteven.inertness(Global.getSector()));
 
         when(sectorMemory.getBoolean(GATE_FLAG)).thenReturn(true);
 
@@ -243,7 +243,7 @@ class WormholeAnchorSocketingTest {
     }
 
     @Test
-    void aRolledDropRespectsTheAllowedCheckSoAnAnchorWhoseAreaIsOffNeverDrops() {
+    void aRolledDropRespectsTheAllowedCheckSoAnAnchorWhoseVolumeIsOffNeverDrops() {
         Random random = new Random(7L);
         int kestevenDrops = 0;
         int hegemonyDrops = 0;

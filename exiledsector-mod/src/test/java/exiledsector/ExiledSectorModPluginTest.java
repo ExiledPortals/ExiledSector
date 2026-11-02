@@ -17,7 +17,7 @@ import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemNames;
 import exiledsector.items.SocketLossListener;
-import exiledsector.items.StarChartCurrency;
+import exiledsector.items.StarChartCipher;
 import exiledsector.items.StarChartFixtures;
 import exiledsector.items.SubroutineKind;
 import exiledsector.persistence.ShipSkillDataManager;
@@ -105,9 +105,9 @@ class ExiledSectorModPluginTest {
         when(settings.getMergedSpreadsheetDataForMod("ability_id", "data/config/exiledSector/chart_blocked_abilities.csv", "exiledSector"))
                 .thenReturn(new JSONArray("[{\"ability_id\": \"fracture_jump\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/npc_faction_volumes.csv", "exiledSector"))
-                .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
+                .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"volume\": \"hegemony\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/tree_fleet_factions.csv", "exiledSector"))
-                .thenReturn(new JSONArray("[{\"faction\": \"threat\", \"region\": \"threat\"}]"));
+                .thenReturn(new JSONArray("[{\"faction\": \"threat\", \"volume\": \"threat\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/npc_faction_focus.csv", "exiledSector"))
                 .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"focus\": \"armour:2\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("system", "data/config/exiledSector/npc_ship_system_focus.csv", "exiledSector"))
@@ -209,8 +209,8 @@ class ExiledSectorModPluginTest {
     }
 
     @Test
-    void onGameLoadKeepsAnOptionalNodeWhoseChosenOptionIsStillOffered() throws Exception {
-        loadTree(TYPES.replace(" ] }", ", { \"id\": \"slot\", \"name\": \"Slot\", \"icon\": \"a.png\", \"optionalOptions\": [\"armor\"] } ] }"),
+    void onGameLoadKeepsAChoiceNodeWhoseChosenOptionIsStillOffered() throws Exception {
+        loadTree(TYPES.replace(" ] }", ", { \"id\": \"slot\", \"name\": \"Slot\", \"icon\": \"a.png\", \"options\": [\"armor\"] } ] }"),
                 NODES + ", { \"id\": \"slot_1\", \"type\": \"slot\", \"connectedTo\": [\"root\"] }");
         ShipSkillData data = ShipSkillDataManager.get("ship");
         ShipTrees.chooseStartingRoot(data, SkillTree.get("root"));
@@ -219,7 +219,7 @@ class ExiledSectorModPluginTest {
         new ExiledSectorModPlugin().onGameLoad(false);
 
         assertTrue(data.isAllocated("slot_1"));
-        assertEquals("armor", data.getOptionalSelection("slot_1"));
+        assertEquals("armor", data.getChoiceSelection("slot_1"));
     }
 
     @Test
@@ -336,7 +336,7 @@ class ExiledSectorModPluginTest {
     @Test
     void onApplicationLoadLocalisesTheStarChartCiphersOnceTheyAreRegistered() throws Exception {
         SpecialItemSpecAPI cipherSpec = mock(SpecialItemSpecAPI.class);
-        when(settings.getSpecialItemSpec(StarChartCurrency.values()[0].itemId())).thenReturn(cipherSpec);
+        when(settings.getSpecialItemSpec(StarChartCipher.values()[0].itemId())).thenReturn(cipherSpec);
 
         new ExiledSectorModPlugin().onApplicationLoad();
 
@@ -377,7 +377,7 @@ class ExiledSectorModPluginTest {
     void onApplicationLoadLoadsTheNpcFactionVolumesMergedAcrossMods() throws Exception {
         new ExiledSectorModPlugin().onApplicationLoad();
 
-        assertEquals("hegemony", NpcFactionVolumes.regionFor("hegemony"));
+        assertEquals("hegemony", NpcFactionVolumes.volumeFor("hegemony"));
     }
 
     @Test

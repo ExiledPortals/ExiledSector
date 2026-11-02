@@ -83,7 +83,7 @@ class AnchorObtainabilityTest {
                 exit("rat_abyss_wormhole_1", exitType, "abyss", "gate_withheld"),
                 exit("nightcross_wormhole_1", exitType, "nightcross", "gate_free"),
                 exit("tritachyon_2", lockedExitType, "tritachyon"),
-                exit("exoship", exitType, SkillTags.EXOTECH_REGION))) {
+                exit("exoship", exitType, SkillTags.EXOTECH_VOLUME))) {
             SkillTree.register(node);
         }
         WormholeAnchorDefinitions.register(new JSONArray()
@@ -92,9 +92,9 @@ class AnchorObtainabilityTest {
                 .put(anchorRow(NIGHTCROSS_ANCHOR, "nightcross", "nightcross_wormhole_1").put("drop_factions", "hegemony"))
                 .put(anchorRow(KESTEVEN_ANCHOR, "kesteven", "kesteven_wormhole1").put("drop_factions", "hegemony"))
                 .put(anchorRow(TRITACHYON_ANCHOR, "tritachyon", "tritachyon_2").put("drop_factions", "hegemony"))
-                .put(anchorRow(BEACON, SkillTags.EXOTECH_REGION, "exoship").put("drop_factions", "hegemony")
+                .put(anchorRow(BEACON, SkillTags.EXOTECH_VOLUME, "exoship").put("drop_factions", "hegemony")
                         .put("unlock", ItemUnlock.RAT_PLAYER_EXOSHIP.id())));
-        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}, {\"faction\": \"rat_abyssals\", \"region\": \"abyss\"}]"));
+        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"volume\": \"hegemony\"}, {\"faction\": \"rat_abyssals\", \"volume\": \"abyss\"}]"));
     }
 
     @AfterEach
@@ -107,8 +107,8 @@ class AnchorObtainabilityTest {
         lunaSettingsMock.close();
     }
 
-    private static SkillNode exit(String id, SkillType type, String region, String... gateTags) {
-        List<String> tags = new java.util.ArrayList<>(List.of(region));
+    private static SkillNode exit(String id, SkillType type, String volume, String... gateTags) {
+        List<String> tags = new java.util.ArrayList<>(List.of(volume));
         tags.addAll(List.of(gateTags));
         return new SkillNode(id, type, List.of(), 0f, 0f, SkillNodeDecoration.NONE, tags);
     }
@@ -186,7 +186,7 @@ class AnchorObtainabilityTest {
     }
 
     @Test
-    void npcTreesStillTakeTheAnchorOfAGatedArea() {
+    void npcTreesStillTakeTheAnchorOfAGatedVolume() {
         assertNotNull(NpcItems.anchorFor("abyss"));
     }
 }

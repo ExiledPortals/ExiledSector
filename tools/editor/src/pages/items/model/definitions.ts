@@ -40,7 +40,7 @@ export const SUBROUTINE_COLUMNS = [
   'source',
   'socket_limit',
   'radius',
-  'area',
+  'volume',
   'unlock',
   'excluded_nodes',
   'node_count_chances',
@@ -48,12 +48,12 @@ export const SUBROUTINE_COLUMNS = [
   'salvage_chance',
 ] as const;
 export const MODSPEC_CACHE_SUBROUTINE_FIELDS: readonly string[] = ['excluded_nodes', 'node_count_chances', 'drop_chance', 'salvage_chance'];
-export const OPTIONAL_SUBROUTINE_FIELDS: readonly string[] = ['lines', 'source', 'socket_limit', 'radius', 'area', ...MODSPEC_CACHE_SUBROUTINE_FIELDS];
+export const OPTIONAL_SUBROUTINE_FIELDS: readonly string[] = ['lines', 'source', 'socket_limit', 'radius', 'volume', ...MODSPEC_CACHE_SUBROUTINE_FIELDS];
 const NODE_ID_TEXT = /^[A-Za-z0-9_.-]+$/;
 const UNIQUE_SOURCE_ID = /^[A-Za-z0-9_.-]+$/;
 const SOCKET_LIMIT_TEXT = /^\d{1,9}$/;
-export const HULL_ITEM_COLUMNS = ['id', 'section', 'name', 'icon', 'rarity', 'unique', 'description', 'prefixes', 'suffixes', 'unlock', 'source', 'mechanic', 'area', 'crew'] as const;
-const OPTIONAL_HULL_ITEM_FIELDS: readonly string[] = ['source', 'mechanic', 'area', 'crew'];
+export const HULL_ITEM_COLUMNS = ['id', 'section', 'name', 'icon', 'rarity', 'unique', 'description', 'prefixes', 'suffixes', 'unlock', 'source', 'mechanic', 'volume', 'crew'] as const;
+const OPTIONAL_HULL_ITEM_FIELDS: readonly string[] = ['source', 'mechanic', 'volume', 'crew'];
 export const STAR_CHART_COLUMNS = ['id', 'system_type', 'name', 'icon', 'rarity', 'min_tier', 'description', 'prefixes', 'suffixes'] as const;
 const DROPPED_STAR_CHART_COLUMNS = ['unique', 'unlock'];
 const DEFINITION_TEXT_COLUMNS = ['id', 'name', 'icon', 'rarity', 'description'] as const;
@@ -104,7 +104,7 @@ export interface ItemDefinition {
   lines?: PoolEntry[];
   source?: string;
   mechanic?: string;
-  area?: string;
+  volume?: string;
   crew?: string;
   socketLimit?: string;
   radius?: string;
@@ -269,7 +269,7 @@ export function parseItemDefinitions(subroutinesText: string, hullItemsText: str
         lines: parsePool(csvCell(subroutineTable, definition.cells, 'lines')),
         source: csvCell(subroutineTable, definition.cells, 'source').trim(),
         socketLimit: csvCell(subroutineTable, definition.cells, 'socket_limit').trim(),
-        area: csvCell(subroutineTable, definition.cells, 'area').trim(),
+        volume: csvCell(subroutineTable, definition.cells, 'volume').trim(),
         radius: csvCell(subroutineTable, definition.cells, 'radius').trim(),
         excludedNodes: csvCell(subroutineTable, definition.cells, 'excluded_nodes').trim(),
         nodeCountChances: csvCell(subroutineTable, definition.cells, 'node_count_chances').trim(),
@@ -280,7 +280,7 @@ export function parseItemDefinitions(subroutinesText: string, hullItemsText: str
         ...definition,
         source: csvCell(hullItemTable, definition.cells, 'source').trim(),
         mechanic: csvCell(hullItemTable, definition.cells, 'mechanic').trim(),
-        area: csvCell(hullItemTable, definition.cells, 'area').trim(),
+        volume: csvCell(hullItemTable, definition.cells, 'volume').trim(),
         crew: csvCell(hullItemTable, definition.cells, 'crew').trim(),
       })),
     ],
@@ -311,8 +311,8 @@ function definitionColumnValue(definition: ItemDefinition, column: string): unkn
       return definition.source ?? '';
     case 'mechanic':
       return definition.mechanic ?? '';
-    case 'area':
-      return definition.area ?? '';
+    case 'volume':
+      return definition.volume ?? '';
     case 'crew':
       return definition.crew ?? '';
     case 'socket_limit':
@@ -469,7 +469,7 @@ export function newItemDefinition(
       source: '',
       socketLimit: '',
       radius: '',
-      area: '',
+      volume: '',
       excludedNodes: '',
       nodeCountChances: '',
       dropChance: '',
@@ -495,7 +495,7 @@ export function newItemDefinition(
     definition.unlock = '';
     definition.source = '';
     definition.mechanic = '';
-    definition.area = '';
+    definition.volume = '';
     definition.crew = '';
   }
   return definition;
@@ -587,9 +587,9 @@ function starChartIssues(label: string, definition: ItemDefinition, vocabulary: 
   return issues;
 }
 
-export function areaOptions(areas: readonly string[], current: string): { value: string; label: string }[] {
-  const listed = current !== '' && !areas.includes(current) ? [...areas, current] : [...areas];
-  return [{ value: '', label: 'None' }, ...listed.map((area) => ({ value: area, label: area }))];
+export function volumeOptions(volumes: readonly string[], current: string): { value: string; label: string }[] {
+  const listed = current !== '' && !volumes.includes(current) ? [...volumes, current] : [...volumes];
+  return [{ value: '', label: 'None' }, ...listed.map((volume) => ({ value: volume, label: volume }))];
 }
 
 export function uniqueSourceIssues(sourceText: string, vocabulary: Vocabulary): string[] {
@@ -790,9 +790,9 @@ export function validateItemDefinitions(
     } else if (definition.prefixes.length === 0 && definition.suffixes.length === 0) {
       issues.push(`${label}: it has no prefixes or suffixes`);
     }
-    const area = (definition.area ?? '').trim();
-    if (area !== '' && !vocabulary.itemAreas.includes(area)) {
-      issues.push(`${label}: area must be blank or one of ${vocabulary.itemAreas.join(', ')}`);
+    const volume = (definition.volume ?? '').trim();
+    if (volume !== '' && !vocabulary.itemVolumes.includes(volume)) {
+      issues.push(`${label}: volume must be blank or one of ${vocabulary.itemVolumes.join(', ')}`);
     }
     if (itemTypeOfKind(definition.kind) === HULL_ITEM_TYPE) {
       issues.push(...uniqueSourceIssues(definition.source ?? '', vocabulary).map((issue) => `${label}: ${issue}`));

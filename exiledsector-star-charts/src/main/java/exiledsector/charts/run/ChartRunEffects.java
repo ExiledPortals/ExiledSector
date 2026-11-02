@@ -4,7 +4,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.effect.ChartFleetConditions;
+import exiledsector.charts.effect.ChartPlayerModifiers;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
@@ -59,17 +59,17 @@ public final class ChartRunEffects {
                 stats.getSensorRangeMod().unmodify(ChartIds.SENSOR_MOD_ID);
             }
         }
-        ChartFleetConditions.set(runContext.fleetStatMults(), fleet);
-        ChartFleetConditions.setBattleSizeBonus(runContext.battleSizeBonus());
-        ChartFleetConditions.setShipSystemsDisabled(runContext.shipSystemsDisabled());
-        ChartFleetConditions.setAutopilotForced(runContext.autopilotForced());
-        ChartFleetConditions.setArcStrikeEmp(runContext.arcStrikeEmp());
-        ChartFleetConditions.setWeaponMisfireRate(runContext.weaponMisfireRate());
-        ChartFleetConditions.setDamagePercentPerSMod(runContext.damagePercentPerSMod());
+        ChartPlayerModifiers.set(runContext.fleetStatMults(), fleet);
+        ChartPlayerModifiers.setBattleSizeBonus(runContext.battleSizeBonus());
+        ChartPlayerModifiers.setShipSystemsDisabled(runContext.shipSystemsDisabled());
+        ChartPlayerModifiers.setAutopilotForced(runContext.autopilotForced());
+        ChartPlayerModifiers.setArcStrikeEmp(runContext.arcStrikeEmp());
+        ChartPlayerModifiers.setWeaponMisfireRate(runContext.weaponMisfireRate());
+        ChartPlayerModifiers.setDamagePercentPerSMod(runContext.damagePercentPerSMod());
     }
 
     public static void lift(CampaignFleetAPI fleet) {
-        ChartFleetConditions.clear(fleet);
+        ChartPlayerModifiers.clear(fleet);
         ChartAnomalies.clearFrom(fleet);
         MutableFleetStatsAPI stats = fleet == null ? null : fleet.getStats();
         if (stats == null) {

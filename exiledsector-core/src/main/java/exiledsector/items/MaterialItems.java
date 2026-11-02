@@ -15,19 +15,19 @@ public final class MaterialItems {
 
     private static final String MATERIAL_KEY_PREFIX = "material.";
     private static final SpriteCache SPRITES = new SpriteCache(MaterialItems.class);
-    private static final Color PARTS_COLOR = new Color(200, 170, 130);
+    private static final Color FEEDSTOCK_COLOR = new Color(200, 170, 130);
 
     private MaterialItems() {
     }
 
     public static List<String> ids() {
         List<String> itemIds = new ArrayList<>();
-        itemIds.add(ItemDisassembly.PARTS_ITEM_ID);
-        for (ItemCurrency currency : ItemCurrencies.all()) {
+        itemIds.add(ItemDisassembly.FEEDSTOCK_ITEM_ID);
+        for (CraftingMaterialFamily currency : CraftingMaterialFamilies.all()) {
             itemIds.add(currency.itemId());
         }
-        for (CraftingWard ward : CraftingWard.values()) {
-            itemIds.add(ward.itemId());
+        for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
+            itemIds.add(inhibitor.itemId());
         }
         return itemIds;
     }
@@ -37,21 +37,21 @@ public final class MaterialItems {
     }
 
     public static MaterialTier tier(String itemId) {
-        ItemCurrency currency = ItemCurrencies.byItemId(itemId);
+        CraftingMaterialFamily currency = CraftingMaterialFamilies.byItemId(itemId);
         if (currency != null) {
             return currency.tier();
         }
-        CraftingWard ward = CraftingWard.byItemId(itemId);
-        return ward == null ? MaterialTier.BASIC : ward.tier();
+        CraftingInhibitor inhibitor = CraftingInhibitor.byItemId(itemId);
+        return inhibitor == null ? MaterialTier.BASIC : inhibitor.tier();
     }
 
     public static Color color(String itemId) {
-        ItemCurrency currency = ItemCurrencies.byItemId(itemId);
+        CraftingMaterialFamily currency = CraftingMaterialFamilies.byItemId(itemId);
         if (currency != null) {
             return currency.color();
         }
-        CraftingWard ward = CraftingWard.byItemId(itemId);
-        return ward == null ? PARTS_COLOR : ward.color();
+        CraftingInhibitor inhibitor = CraftingInhibitor.byItemId(itemId);
+        return inhibitor == null ? FEEDSTOCK_COLOR : inhibitor.color();
     }
 
     public static SpecialItemData data(String itemId) {

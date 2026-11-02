@@ -45,14 +45,14 @@ class ChartMisfirePluginTest {
 
     @AfterEach
     void tearDown() {
-        ChartFleetConditions.clear(null);
+        ChartPlayerModifiers.clear(null);
     }
 
     @Test
     void aHardpointFiresWhereItPointsOnceTheFirstMinuteIsOver() {
         WeaponAPI hardpoint = weapon(WeaponType.BALLISTIC, true, 10f);
         armShip(playerShip, hardpoint);
-        ChartFleetConditions.setWeaponMisfireRate(MISFIRES_PER_SECOND);
+        ChartPlayerModifiers.setWeaponMisfireRate(MISFIRES_PER_SECOND);
         ChartMisfirePlugin plugin = initialised();
 
         when(engine.getTotalElapsedTime(false)).thenReturn(ChartMisfirePlugin.GRACE_SECONDS - 1f);
@@ -75,7 +75,7 @@ class ChartMisfirePluginTest {
         when(turret.getSpec()).thenReturn(spec);
         when(turret.getCurrAngle()).thenReturn(SHIP_FACING);
         armShip(playerShip, turret);
-        ChartFleetConditions.setWeaponMisfireRate(MISFIRES_PER_SECOND);
+        ChartPlayerModifiers.setWeaponMisfireRate(MISFIRES_PER_SECOND);
         ChartMisfirePlugin plugin = initialised();
         when(engine.getTotalElapsedTime(false)).thenReturn((float) ChartMisfirePlugin.GRACE_SECONDS);
 
@@ -100,7 +100,7 @@ class ChartMisfirePluginTest {
         when(engine.getTotalElapsedTime(false)).thenReturn(ChartMisfirePlugin.GRACE_SECONDS * 2f);
         initialised().advance(FRAME, List.of());
 
-        ChartFleetConditions.setWeaponMisfireRate(MISFIRES_PER_SECOND);
+        ChartPlayerModifiers.setWeaponMisfireRate(MISFIRES_PER_SECOND);
         when(engine.isSimulation()).thenReturn(true);
         initialised().advance(FRAME, List.of());
 
@@ -137,7 +137,7 @@ class ChartMisfirePluginTest {
         when(hardpoint.isFiring()).thenReturn(true);
         when(hardpoint.getCooldownRemaining()).thenReturn(2f);
         armShip(playerShip, hardpoint);
-        ChartFleetConditions.setWeaponMisfireRate(MISFIRES_PER_SECOND);
+        ChartPlayerModifiers.setWeaponMisfireRate(MISFIRES_PER_SECOND);
         ChartMisfirePlugin plugin = initialised();
         when(engine.getTotalElapsedTime(false)).thenReturn((float) ChartMisfirePlugin.GRACE_SECONDS);
 

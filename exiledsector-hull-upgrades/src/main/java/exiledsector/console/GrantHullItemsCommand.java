@@ -30,11 +30,11 @@ public class GrantHullItemsCommand extends RandomPlayerFleetCommand {
         if (tokens.size() > 2) {
             return CommandResult.BAD_SYNTAX;
         }
-        ItemKind socketType = null;
+        ItemKind sectionKind = null;
         if (!tokens.isEmpty()) {
-            socketType = ItemKind.byIdOrNull(tokens.get(0).toLowerCase(Locale.ROOT));
-            if (socketType == null || !socketType.fitsSection()) {
-                Console.showMessage("Unknown socket type \"" + tokens.get(0) + "\"; give one of " + socketTypeIds() + ".");
+            sectionKind = ItemKind.byIdOrNull(tokens.get(0).toLowerCase(Locale.ROOT));
+            if (sectionKind == null || !sectionKind.fitsSection()) {
+                Console.showMessage("Unknown section \"" + tokens.get(0) + "\"; give one of " + sectionKindIds() + ".");
                 return CommandResult.BAD_SYNTAX;
             }
         }
@@ -43,14 +43,14 @@ public class GrantHullItemsCommand extends RandomPlayerFleetCommand {
             Console.showMessage("Give an amount from 1 to " + MAX_AMOUNT + ".");
             return CommandResult.BAD_SYNTAX;
         }
-        ItemKind wantedSocketType = socketType;
+        ItemKind wantedSection = sectionKind;
         List<ItemDefinition> hullItems = ItemDefinitions.ofType(ItemType.HULL_ITEM).stream()
                 .filter(definition -> !definition.unique())
-                .filter(definition -> wantedSocketType == null || definition.kind() == wantedSocketType)
+                .filter(definition -> wantedSection == null || definition.kind() == wantedSection)
                 .toList();
         if (hullItems.isEmpty()) {
-            Console.showMessage(socketType == null ? "No non-unique hull items are defined."
-                    : "No non-unique hull items are defined for the " + socketType.id() + " socket type.");
+            Console.showMessage(sectionKind == null ? "No non-unique hull items are defined."
+                    : "No non-unique hull items are defined for the " + sectionKind.id() + " section.");
             return CommandResult.ERROR;
         }
         ConsoleItems.grantRolled(playerFleet.getCargo(), hullItems, amount, random);
@@ -59,7 +59,7 @@ public class GrantHullItemsCommand extends RandomPlayerFleetCommand {
         return CommandResult.SUCCESS;
     }
 
-    private static String socketTypeIds() {
+    private static String sectionKindIds() {
         return ItemKind.sectionItemTypes().stream().map(ItemKind::id).collect(Collectors.joining(", "));
     }
 }

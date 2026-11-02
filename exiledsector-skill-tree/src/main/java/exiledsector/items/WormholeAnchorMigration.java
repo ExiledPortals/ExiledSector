@@ -57,7 +57,7 @@ public final class WormholeAnchorMigration {
         for (Map.Entry<String, ShipSkillData> shipEntry : shipDataById.entrySet()) {
             ShipSkillData shipData = shipEntry.getValue();
             ReleasedNodes released = ShipTrees.releaseUnreachable(shipData, topology, ShipTrees.resolveStartingRootId(shipData, topology.sortedById()),
-                    node -> !SkillTags.CORE_REGION.equals(node.getRegion()));
+                    node -> !SkillTags.CORE_VOLUME.equals(node.getVolume()));
             if (released.isEmpty()) {
                 continue;
             }

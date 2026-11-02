@@ -41,12 +41,12 @@ public final class ShipSections {
     }
 
     public static List<UnlockedSection> of(ShipSkillData shipData, Supplier<ShipProfile> currentFit) {
-        if (shipData == null || shipData.getUnlockedSocketTypeIds().isEmpty()) {
+        if (shipData == null || shipData.getUnlockedSectionIds().isEmpty()) {
             return List.of();
         }
         List<UnlockedSection> sections = new ArrayList<>();
         ShipProfile resolvedFit = null;
-        for (String sectionId : shipData.getUnlockedSocketTypeIds()) {
+        for (String sectionId : shipData.getUnlockedSectionIds()) {
             ShipSection section = ShipSection.byIdOrNull(sectionId);
             if (section == null) {
                 continue;
@@ -69,7 +69,7 @@ public final class ShipSections {
     }
 
     public static List<UnlockedSection> forVariant(ShipSkillData shipData, ShipVariantAPI variant) {
-        if (shipData == null || shipData.getUnlockedSocketTypeIds().isEmpty()) {
+        if (shipData == null || shipData.getUnlockedSectionIds().isEmpty()) {
             return List.of();
         }
         String hullId = variant == null || variant.getHullSpec() == null ? null : variant.getHullSpec().getHullId();

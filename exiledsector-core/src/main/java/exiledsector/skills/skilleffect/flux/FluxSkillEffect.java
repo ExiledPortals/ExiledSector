@@ -64,12 +64,12 @@ public enum FluxSkillEffect implements BackedSkillEffect {
             stats.getFluxCapacity().modifyFlat(modId + CAPACITOR_MOD_SUFFIX, capacitors * fluxPerCapacitor() * magnitude / 100f);
         }
     },
-    FLUX_SCALED_TOP_SPEED_FLAT(listener(FluxScaledVolatilityListener.TOP_SPEED_KEY,
-            FluxScaledVolatilityListener.class, FluxScaledVolatilityListener::new)),
-    FLUX_SCALED_RATE_OF_FIRE_PERCENT(listener(FluxScaledVolatilityListener.RATE_OF_FIRE_KEY,
-            FluxScaledVolatilityListener.class, FluxScaledVolatilityListener::new)),
-    AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT(listener(FluxScaledVolatilityListener.AUGMENTED_PENALTY_REDUCTION_KEY,
-            FluxScaledVolatilityListener.class, FluxScaledVolatilityListener::new)) {
+    VOLATILE_FLUX_TOP_SPEED_FLAT(listener(VolatileFluxListener.TOP_SPEED_KEY,
+            VolatileFluxListener.class, VolatileFluxListener::new)),
+    VOLATILE_FLUX_RATE_OF_FIRE_PERCENT(listener(VolatileFluxListener.RATE_OF_FIRE_KEY,
+            VolatileFluxListener.class, VolatileFluxListener::new)),
+    AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT(listener(VolatileFluxListener.AUGMENTED_PENALTY_REDUCTION_KEY,
+            VolatileFluxListener.class, VolatileFluxListener::new)) {
         @Override
         public StyledText description(float magnitude) {
             return LostSectorCompat.isModEnabled() ? super.description(magnitude) : null;

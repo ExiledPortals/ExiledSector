@@ -15,11 +15,11 @@ import java.util.List;
 
 public final class GatewayUpgradeRewards {
 
-    public static final String ADVANCED_GRANTED = "$exiledSector_gatewayAdvancedGranted";
-    public static final String PERFECTED_GRANTED = "$exiledSector_gatewayPerfectedGranted";
+    public static final String ARRAY_GRANTED = "$exiledSector_gatewayAdvancedGranted";
+    public static final String NEXUS_GRANTED = "$exiledSector_gatewayPerfectedGranted";
     static final String PENDING_KEY = "$exiledSector_gatewayUpgradesPending";
-    static final int ADVANCED_TIER = 5;
-    static final int PERFECTED_TIER = 10;
+    static final int ARRAY_EARNED_TIER = 5;
+    static final int NEXUS_EARNED_TIER = 10;
     private static final String SEPARATOR = ",";
     private static final Logger LOG = Logger.getLogger(GatewayUpgradeRewards.class);
 
@@ -55,8 +55,8 @@ public final class GatewayUpgradeRewards {
             return List.of();
         }
         List<String> granted = new ArrayList<>();
-        grantOnce(tier >= ADVANCED_TIER, ADVANCED_GRANTED, WormholeTechItems.UPGRADE_ADVANCED, playerFleet, sectorMemory, granted);
-        grantOnce(tier >= PERFECTED_TIER, PERFECTED_GRANTED, WormholeTechItems.UPGRADE_PERFECTED, playerFleet, sectorMemory, granted);
+        grantOnce(tier >= ARRAY_EARNED_TIER, ARRAY_GRANTED, WormholeTechItems.UPGRADE_ARRAY, playerFleet, sectorMemory, granted);
+        grantOnce(tier >= NEXUS_EARNED_TIER, NEXUS_GRANTED, WormholeTechItems.UPGRADE_NEXUS, playerFleet, sectorMemory, granted);
         if (!granted.isEmpty()) {
             List<String> queued = new ArrayList<>(pending(sector));
             queued.addAll(granted);

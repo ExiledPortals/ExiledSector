@@ -15,7 +15,7 @@ public final class ItemStorageFilter {
     Status status = Status.FREE;
     String query = "";
     final Set<ItemRarity> rarities = EnumSet.noneOf(ItemRarity.class);
-    final Set<ItemKind> socketTypes = EnumSet.noneOf(ItemKind.class);
+    final Set<ItemKind> sectionKinds = EnumSet.noneOf(ItemKind.class);
 
     void setStatus(Status value) {
         status = value;
@@ -27,9 +27,9 @@ public final class ItemStorageFilter {
         }
     }
 
-    void toggleSocketType(ItemKind socketType) {
-        if (!socketTypes.remove(socketType)) {
-            socketTypes.add(socketType);
+    void toggleSection(ItemKind sectionKind) {
+        if (!sectionKinds.remove(sectionKind)) {
+            sectionKinds.add(sectionKind);
         }
     }
 

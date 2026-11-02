@@ -752,7 +752,7 @@ class ShipTreeSyncTest {
         assertEquals(List.of("militarized_subsystems_1"), List.copyOf(ShipSkillDataManager.get("ship").getAllocatedNodeIds()));
     }
 
-    private static SkillNode hideNodeThenReturnItsArea(String shipId) {
+    private static SkillNode hideNodeThenReturnItsVolume(String shipId) {
         SkillNode root = new SkillNode("root_1", new SkillType.Builder("root", "Root", "a.png", SkillTier.ROOT).build(), List.of(), 0f, 0f);
         SkillNode hidden = new SkillNode("hidden_1", new SkillType.Builder("hidden", "Hidden", "a.png", SkillTier.SMALL).build(),
                 List.of("root_1"), 0f, 0f);
@@ -774,7 +774,7 @@ class ShipTreeSyncTest {
 
     @Test
     void withTheTreeSwitchedOffAReturningHiddenNodeStaysDormantOnAShipFilledWithTheFreedOp() {
-        SkillNode hidden = hideNodeThenReturnItsArea("ship");
+        SkillNode hidden = hideNodeThenReturnItsVolume("ship");
         FleetMemberAPI member = shipWithOp("ship", 100, 100);
         when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
         SkillTreeSetting.setEnabledForTests(false);
@@ -788,7 +788,7 @@ class ShipTreeSyncTest {
 
     @Test
     void aReturningHiddenNodeHeldWhileTheTreeWasOffWakesOnceItIsBackOn() {
-        SkillNode hidden = hideNodeThenReturnItsArea("ship");
+        SkillNode hidden = hideNodeThenReturnItsVolume("ship");
         FleetMemberAPI member = shipWithOp("ship", 100, 0);
         when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
         SkillTreeSetting.setEnabledForTests(false);

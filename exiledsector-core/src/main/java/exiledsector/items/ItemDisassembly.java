@@ -7,7 +7,7 @@ import java.util.Map;
 
 public final class ItemDisassembly {
 
-    public static final String PARTS_ITEM_ID = "exiledSector_socketable_parts";
+    public static final String FEEDSTOCK_ITEM_ID = "exiledSector_nanite_feedstock";
 
     private ItemDisassembly() {
     }
@@ -24,8 +24,8 @@ public final class ItemDisassembly {
         if (item == null ||SocketCustody.isInstalled(shipDataById, item) || !store.remove(item)) {
             return 0;
         }
-        int partsGained = item.rarity().disassemblyParts();
-        materials.add(PARTS_ITEM_ID, partsGained);
-        return partsGained;
+        int feedstockGained = item.rarity().disassemblyFeedstock();
+        materials.add(FEEDSTOCK_ITEM_ID, feedstockGained);
+        return feedstockGained;
     }
 }

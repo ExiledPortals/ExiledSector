@@ -102,6 +102,25 @@ public final class CraftingMaterials {
         return movedCount;
     }
 
+    public static int renameStoredIds(Map<String, String> currentIdsByAlias) {
+        return renameStoredIds(SaveData.findOrNull(STORED_KEY, Map.class), currentIdsByAlias);
+    }
+
+    static int renameStoredIds(Map<String, Integer> storedCounts, Map<String, String> currentIdsByAlias) {
+        if (storedCounts == null) {
+            return 0;
+        }
+        int renamedCount = 0;
+        for (Map.Entry<String, String> alias : currentIdsByAlias.entrySet()) {
+            Integer quantity = storedCounts.remove(alias.getKey());
+            if (quantity != null && quantity > 0) {
+                storedCounts.merge(alias.getValue(), quantity, Integer::sum);
+                renamedCount += quantity;
+            }
+        }
+        return renamedCount;
+    }
+
     private int inCargo(String itemId) {
         return MaterialItems.count(cargo, itemId);
     }

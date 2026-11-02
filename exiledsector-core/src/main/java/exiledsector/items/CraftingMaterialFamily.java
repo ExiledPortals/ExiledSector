@@ -1,0 +1,66 @@
+package exiledsector.items;
+
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
+
+import java.awt.Color;
+import java.util.List;
+import java.util.Locale;
+import java.util.Random;
+
+public interface CraftingMaterialFamily extends GrowableMaterial {
+
+    String key();
+
+    float dropWeight();
+
+    MaterialTier tier();
+
+    Color color();
+
+    boolean appliesTo(ItemType type);
+
+    boolean canUse(Item item, CraftingContext context);
+
+    Item use(Item item, CraftingContext context, Random random);
+
+    default boolean respectsInhibitors() {
+        return false;
+    }
+
+    default boolean wouldChange(Item item, RolledModifier rolled) {
+        return false;
+    }
+
+    default boolean createsCopy() {
+        return false;
+    }
+
+    default boolean mayChangeDefinition() {
+        return false;
+    }
+
+    default boolean appliesToShipItems() {
+        return appliesTo(ItemType.SUBROUTINE) || appliesTo(ItemType.HULL_ITEM);
+    }
+
+    default boolean dropsFromShipLoot() {
+        return appliesToShipItems();
+    }
+
+    default String refusalNoticeKey(Item item) {
+        return null;
+    }
+
+    default String description() {
+        return Translation.text(MaterialItems.descriptionKey(itemId()));
+    }
+
+    default List<StyledText> grantedLines() {
+        return List.of();
+    }
+
+    default String usedNoticeKey(ItemNature nature) {
+        return "ui.craftingBench.notice.used." + key() + "." + nature.name().toLowerCase(Locale.ROOT);
+    }
+}

@@ -77,7 +77,7 @@ class LostSectorUnlocksTest {
     }
 
     @Test
-    void theAreaStaysUsableWhenTheSystemCannotBeFound() {
+    void theVolumeStaysUsableWhenTheSystemCannotBeFound() {
         when(sector.getEntityById(LostSectorUnlocks.FROST_STAR_ID)).thenReturn(null);
         assertTrue(LostSectorUnlocks.isFrozenHeartSystemVisited(sector));
     }

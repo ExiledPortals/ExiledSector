@@ -13,17 +13,17 @@ class AffinityOptionsTest {
     @Test
     void eachOldSelectionIsMappedOnceAndTheRestAreLeftAlone() {
         ShipSkillData data = new ShipSkillData();
-        data.optionalSelections.put("affinity_1", "hull");
-        data.optionalSelections.put("affinity_2", "flux_capacity");
-        data.optionalSelections.put("affinity_3", "midline_affinity");
-        data.optionalSelections.put("shield_node", "shield_turn_rate");
+        data.choiceSelections.put("affinity_1", "hull");
+        data.choiceSelections.put("affinity_2", "flux_capacity");
+        data.choiceSelections.put("affinity_3", "midline_affinity");
+        data.choiceSelections.put("shield_node", "shield_turn_rate");
         int revisionBefore = data.revision();
 
         assertTrue(AffinityOptions.migrate(data));
-        assertEquals("low_tech_affinity", data.getOptionalSelection("affinity_1"));
-        assertEquals("high_tech_affinity", data.getOptionalSelection("affinity_2"));
-        assertEquals("midline_affinity", data.getOptionalSelection("affinity_3"));
-        assertEquals("shield_turn_rate", data.getOptionalSelection("shield_node"));
+        assertEquals("low_tech_affinity", data.getChoiceSelection("affinity_1"));
+        assertEquals("high_tech_affinity", data.getChoiceSelection("affinity_2"));
+        assertEquals("midline_affinity", data.getChoiceSelection("affinity_3"));
+        assertEquals("shield_turn_rate", data.getChoiceSelection("shield_node"));
         assertTrue(data.revision() > revisionBefore);
 
         assertFalse(AffinityOptions.migrate(data));
@@ -32,7 +32,7 @@ class AffinityOptionsTest {
 
     private static ShipSkillData oldShip() {
         ShipSkillData data = new ShipSkillData();
-        data.optionalSelections.put("affinity_1", "fuel_crew_cargo");
+        data.choiceSelections.put("affinity_1", "fuel_crew_cargo");
         return data;
     }
 }

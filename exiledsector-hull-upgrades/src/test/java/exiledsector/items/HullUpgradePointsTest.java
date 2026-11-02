@@ -196,7 +196,7 @@ class HullUpgradePointsTest {
 
         HullUpgradesSetting.setPointsModeForTests(HullUpgradesSetting.PointsMode.STAR_CHART_PROGRESS);
 
-        assertEquals(List.of("bridge", "reactor", "engine_room"), shipData.getUnlockedSocketTypeIds());
+        assertEquals(List.of("bridge", "reactor", "engine_room"), shipData.getUnlockedSectionIds());
         assertEquals(0, HullUpgradePoints.unspent(shipData));
         assertEquals(HullUpgradeRules.UnlockBlock.NO_POINTS, HullUpgradeRules.unlockBlock(shipData, ShipSection.ARMOR_PLATING, fit()));
         assertFalse(HullUpgradeRules.unlock(shipData, ShipSection.ARMOR_PLATING, fit()));
@@ -205,6 +205,18 @@ class HullUpgradePointsTest {
         assertEquals(HullUpgradeRules.UnlockBlock.NO_POINTS, HullUpgradeRules.unlockBlock(shipData, ShipSection.ARMOR_PLATING, fit()));
         assertTrue(HullUpgradeRules.lock(shipData, ShipSection.BRIDGE));
         assertTrue(HullUpgradeRules.unlock(shipData, ShipSection.ARMOR_PLATING, fit()));
+    }
+
+    @Test
+    void schematicsUnderTheOldItemIdBecomeTheSameSchematicUnderTheCurrentId() {
+        CargoStackAPI oldIdStack = stack(new SpecialItemData(RefitSchematic.LEGACY_ITEM_ID, RefitSchematic.MILITARY.toSpecialItem().getData()), 2f);
+        CargoAPI cargo = mock(CargoAPI.class);
+        when(cargo.getStacksCopy()).thenReturn(new ArrayList<>(List.of(oldIdStack)));
+
+        assertEquals(2, HullUpgradeMigration.convertCargo(cargo));
+
+        verify(cargo).removeStack(oldIdStack);
+        verify(cargo).addSpecial(RefitSchematic.MILITARY.toSpecialItem(), 2f);
     }
 
     @Test

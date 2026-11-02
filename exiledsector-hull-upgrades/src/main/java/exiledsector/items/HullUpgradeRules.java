@@ -62,7 +62,7 @@ public final class HullUpgradeRules {
     }
 
     public static UnlockBlock unlockBlock(ShipSkillData shipData, ShipSection section, ShipProfile currentFit) {
-        if (shipData.isSocketTypeUnlocked(section.id())) {
+        if (shipData.isSectionUnlocked(section.id())) {
             return UnlockBlock.ALREADY_UNLOCKED;
         }
         if (ShipSections.unmetRequirement(section, currentFit) != null) {
@@ -72,20 +72,20 @@ public final class HullUpgradeRules {
     }
 
     public static boolean unlock(ShipSkillData shipData, ShipSection section, ShipProfile currentFit) {
-        return unlockBlock(shipData, section, currentFit) == null && shipData.unlockSocketType(section.id());
+        return unlockBlock(shipData, section, currentFit) == null && shipData.unlockSection(section.id());
     }
 
     public static boolean lock(ShipSkillData shipData, ShipSection section) {
-        if (!shipData.isSocketTypeUnlocked(section.id())) {
+        if (!shipData.isSectionUnlocked(section.id())) {
             return false;
         }
-        shipData.lockSocketType(section.id());
+        shipData.lockSection(section.id());
         return true;
     }
 
     public static boolean canSocket(ShipSkillData shipData, ShipSection section, Item item, ShipProfile currentFit,
                                     Map<String, ShipSkillData> shipDataById) {
-        return shipData.isSocketTypeUnlocked(section.id()) && item instanceof HullItem hullItem && hullItem.canSocketInto(section, currentFit)
+        return shipData.isSectionUnlocked(section.id()) && item instanceof HullItem hullItem && hullItem.canSocketInto(section, currentFit)
                 && !SocketCustody.isInstalled(shipDataById, item);
     }
 

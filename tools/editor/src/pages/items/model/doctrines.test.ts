@@ -18,14 +18,14 @@ import { modifierById, validateModifiers, type ItemModifier } from './modifiers.
 
 const vocabulary = buildVocabulary({
   effects: [{ name: 'ARMOR_PERCENT', statMode: 'PERCENT', lowerIsBetter: false }],
-  tags: { theme: [], region: ['core'], requirement: [] },
+  tags: { theme: [], volume: ['core'], requirement: [] },
   tiers: [],
   unlockConditionTypes: [],
   blueprintCategories: [],
   itemTypes: ['subroutine', 'hull_item', 'star_chart', 'wormhole_anchor'],
   itemKinds: [{ id: 'bridge', type: 'hull_item' }],
   modifierScopes: ['subroutine', 'unique_subroutine', 'doctrine', 'hull_item', 'star_chart', 'wormhole_anchor'],
-  doctrineBehaviours: ['TRANSFORM', 'AUGMENT'],
+  doctrineBehaviours: ['REWRITE', 'AUGMENT'],
   radiusSizes: ['small', 'medium', 'large'],
   itemUnlocks: [],
 });
@@ -34,7 +34,7 @@ const TYPES = JSON.stringify({
   skillTypes: [
     { id: 'notable_a', tier: 'NOTABLE' },
     { id: 'notable_b', tier: 'NOTABLE' },
-    { id: 'optional_notable', tier: 'NOTABLE', optionalOptions: ['notable_a'] },
+    { id: 'optional_notable', tier: 'NOTABLE', options: ['notable_a'] },
     { id: 'keystone_a', tier: 'KEYSTONE' },
     { id: 'small_a' },
   ],
@@ -48,7 +48,7 @@ const MODIFIERS = [modifier('ARMOR_PERCENT_DOCTRINE', ['doctrine']), modifier('A
 const DOCTRINES = ['doc_transform', 'doc_augment', 'doc_missing'];
 const CSV = [
   'id,behaviour,radius,faction,notables,keystones,small_nodes,modifiers,min_lines,max_lines',
-  'doc_transform,TRANSFORM,large,tritachyon,notable_a; notable_b,keystone_a,small_a,,1,1',
+  'doc_transform,REWRITE,large,tritachyon,notable_a; notable_b,keystone_a,small_a,,1,1',
   'doc_augment,AUGMENT,medium,,,,,@ARMOR_PERCENT_DOCTRINE:2,1,2',
   '',
 ].join('\r\n');
@@ -101,7 +101,7 @@ describe('doctrine archives', () => {
     expect(issues).toContain('doc_augment: UNKNOWN is not in item_modifiers.csv');
     expect(issues).toContain('doc_augment: min lines must be 1 or more and max lines at least min lines');
     expect(issues).toContain('not_a_doctrine: id must be a DOCTRINE subroutine in subroutines.csv');
-    expect(issues).toContain('not_a_doctrine: behaviour must be one of TRANSFORM, AUGMENT');
+    expect(issues).toContain('not_a_doctrine: behaviour must be one of REWRITE, AUGMENT');
   });
 
   it('offers only plain replacements of the right tier', () => {
@@ -116,7 +116,7 @@ describe('doctrine archives', () => {
     const added = newDoctrineArchive(current, DOCTRINES, vocabulary);
 
     expect(added.id).toBe('doc_missing');
-    expect(added.behaviour).toBe('TRANSFORM');
+    expect(added.behaviour).toBe('REWRITE');
     expect(added.radius).toBe('medium');
     current.push(added);
     markDoctrinesSaved({ archives: current }, { archives: current.map((archive) => ({ ...archive })) });

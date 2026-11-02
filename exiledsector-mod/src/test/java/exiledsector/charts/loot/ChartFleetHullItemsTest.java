@@ -18,7 +18,7 @@ import exiledsector.charts.run.ChartRuns;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;
-import exiledsector.items.StarChartCurrency;
+import exiledsector.items.StarChartCipher;
 import exiledsector.items.StarChartFixtures;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -47,7 +47,7 @@ class ChartFleetHullItemsTest {
     @BeforeEach
     void setUp() throws Exception {
         StarChartFixtures.registerShipped();
-        StarChartCurrency.registerAll();
+        StarChartCipher.registerAll();
         mockSector = new MockSector();
         sector = mockSector.sector;
         MemoryAPI sectorMemory = mock(MemoryAPI.class);

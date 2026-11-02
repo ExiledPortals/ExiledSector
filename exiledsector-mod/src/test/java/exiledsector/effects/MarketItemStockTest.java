@@ -81,7 +81,7 @@ class MarketItemStockTest {
         SkillType exitType = new SkillType.Builder("wormhole_exit", "exit", "a.png", SkillTier.WORMHOLE_EXIT).build();
         SkillTree.registerType(exitType);
         SkillTree.register(new SkillNode("hegemony_2", exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of("hegemony")));
-        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
+        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"volume\": \"hegemony\"}]"));
         WormholeAnchorDefinitions.register(new JSONArray().put(new JSONObject().put("id", HEGEMONY_ANCHOR).put("volume", "hegemony")
                 .put("exit_node", "hegemony_2").put("name", "Hegemony Anchor").put("icon", "graphics/icons/nav_relay.png").put("rarity", "10")
                 .put("description", "Opens a wormhole.").put("market_chance", "0.3")));
@@ -209,8 +209,8 @@ class MarketItemStockTest {
     @Test
     void aMarketRestocksHullItemsWithOneModifierAndNoUniquesReplacingTheOldOnes() {
         CargoAPI cargo = mock(CargoAPI.class);
-        CargoStackAPI oldStock = specialStack(ItemData.rolledWithEffectCount(ItemDefinitions.get("bridge_basic"), 1L, 1).toMarketListing());
-        CargoStackAPI soldHullItem = specialStack(ItemData.rolledWithEffectCount(ItemDefinitions.get("bridge_basic"), 3L, 1).toSpecialItem());
+        CargoStackAPI oldStock = specialStack(ItemData.rolledWithModifierCount(ItemDefinitions.get("bridge_basic"), 1L, 1).toMarketListing());
+        CargoStackAPI soldHullItem = specialStack(ItemData.rolledWithModifierCount(ItemDefinitions.get("bridge_basic"), 3L, 1).toSpecialItem());
         CargoStackAPI oldAnchor = specialStack(ItemData.rolled(ItemDefinitions.get(HEGEMONY_ANCHOR), 2L).toMarketListing());
         when(cargo.getStacksCopy()).thenReturn(List.of(oldStock, soldHullItem, oldAnchor));
 
@@ -231,7 +231,7 @@ class MarketItemStockTest {
     @Test
     void aSwitchedOffDomainsListingsAreClearedOnRestockAndNotReplaced() {
         CargoAPI cargo = mock(CargoAPI.class);
-        CargoStackAPI oldStock = specialStack(ItemData.rolledWithEffectCount(ItemDefinitions.get("bridge_basic"), 1L, 1).toMarketListing());
+        CargoStackAPI oldStock = specialStack(ItemData.rolledWithModifierCount(ItemDefinitions.get("bridge_basic"), 1L, 1).toMarketListing());
         when(cargo.getStacksCopy()).thenReturn(List.of(oldStock));
         HullUpgradesSetting.setEnabledForTests(false);
         try {

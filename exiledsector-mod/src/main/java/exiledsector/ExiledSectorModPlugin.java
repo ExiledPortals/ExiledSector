@@ -36,17 +36,18 @@ import exiledsector.items.ItemModifiers;
 import exiledsector.items.ItemNames;
 import exiledsector.items.ItemSaveAliases;
 import exiledsector.items.ItemStore;
+import exiledsector.items.MaterialIdAliases;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.MaterialMigration;
 import exiledsector.items.SocketCustody;
 import exiledsector.items.SocketLossListener;
-import exiledsector.items.SocketTypeMigration;
+import exiledsector.items.SectionFitMigration;
 import exiledsector.items.UniqueSourceCheck;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillTreeDomain;
 import exiledsector.ui.ExiledSectorSettings;
-import exiledsector.ui.ModificationBenchRefitButton;
+import exiledsector.ui.CraftingBenchRefitButton;
 import exiledsector.ui.cargo.CargoCraftingTabListener;
 import exiledsector.ui.cargo.LootAlertListener;
 import exiledsector.ui.util.TexturePreloader;
@@ -75,12 +76,13 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         Global.getLogger(ExiledSectorModPlugin.class).info(ExiledSector.LOG_TAG + " loaded");
         localiseGameText();
         DOMAINS.forEach(ExiledSectorDomain::onApplicationLoad);
-        ModificationBenchRefitButton.addButton();
+        CraftingBenchRefitButton.addButton();
         ExiledSectorSettings.register(DOMAINS);
         EffectAliases.load();
         CsvIdList.loadAll();
         DOMAINS.forEach(ExiledSectorDomain::loadData);
         ItemIdAliases.load();
+        MaterialIdAliases.load();
         ItemModifiers.load();
         ItemDefinitions.load();
         ItemImplicits.load();
@@ -131,6 +133,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         ItemSaveAliases.register(xStream);
         DOMAINS.forEach(domain -> domain.configureXStream(xStream));
         xStream.alias(SHIP_SKILL_DATA_ALIAS, ShipSkillData.class);
+        ShipSkillData.SAVED_FIELD_NAMES.forEach((fieldName, savedName) -> xStream.aliasField(savedName, ShipSkillData.class, fieldName));
     }
 
     @Override
@@ -157,7 +160,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         sector.getListenerManager().addListener(new LootAlertListener(), true);
         sector.getListenerManager().addListener(new MarketItemStock(), true);
         DOMAINS.forEach(ExiledSectorDomain::afterLootListeners);
-        SocketTypeMigration.run();
+        SectionFitMigration.run();
         SocketCustody.reconcile();
         DOMAINS.forEach(ExiledSectorDomain::afterSocketCustody);
     }

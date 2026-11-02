@@ -9,12 +9,12 @@ public class HypershuntDialog extends GuardedSiteDialog {
 
     @Override
     protected String descriptionKey() {
-        return "chart.hypershunt.description";
+        return "chart.anomaly.coronal_hypershunt.description";
     }
 
     @Override
     protected String guardedKey() {
-        return "chart.hypershunt.guarded";
+        return "chart.anomaly.coronal_hypershunt.guarded";
     }
 
     @Override
@@ -25,7 +25,7 @@ public class HypershuntDialog extends GuardedSiteDialog {
     @Override
     protected void showSite() {
         options().clearOptions();
-        VanillaText.plainPara(text(), Translation.gameText("chart.hypershunt.beyondRepair"));
+        VanillaText.plainPara(text(), Translation.gameText("chart.anomaly.coronal_hypershunt.beyondRepair"));
         addLeaveOption();
     }
 }

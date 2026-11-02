@@ -33,7 +33,7 @@ import { validateTree } from './validation.ts';
 
 const vocabularyFile = {
   effects: [{ name: 'HULL_PERCENT', statMode: 'PERCENT', lowerIsBetter: false }],
-  tags: { theme: ['armor'], region: ['north', 'south'], requirement: ['req_civilian_hull'] },
+  tags: { theme: ['armor'], volume: ['north', 'south'], requirement: ['req_civilian_hull'] },
   tiers: ['SMALL', 'NOTABLE', 'KEYSTONE', 'WORMHOLE', 'WORMHOLE_EXIT', 'ROOT', 'SOCKET'],
   unlockConditionTypes: ['blueprint'],
   blueprintCategories: ['hullmod'],
@@ -194,10 +194,10 @@ describe('validation and tags', () => {
       'Wormhole node "w" has no paired wormhole set',
       'Type "small" icon graphics/unused/x.png is in a folder that is not deployed',
       'Type "small" uses unknown effect "NOPE"',
-      'Node "a" has no region tag',
-      'Node "w" has 2 region tags (north, south), needs exactly one',
+      'Node "a" has no volume tag',
+      'Node "w" has 2 volume tags (north, south), needs exactly one',
       'Node "w" has unknown tag "bogus"',
-      'Type "small" carries region tag "north", region tags belong on nodes',
+      'Type "small" carries volume tag "north", volume tags belong on nodes',
     ]);
     expect(validateTree(makeDocument([node('a', 0, 0)]), vocabulary)).toEqual([]);
   });
@@ -220,7 +220,7 @@ describe('validation and tags', () => {
   });
 
   it('replaces only the tags of one group and keeps the rest in order', () => {
-    expect(replaceGroupTags(vocabulary, ['armor', 'north', 'req_civilian_hull'], 'region', ['south'])).toEqual(['armor', 'req_civilian_hull', 'south']);
+    expect(replaceGroupTags(vocabulary, ['armor', 'north', 'req_civilian_hull'], 'volume', ['south'])).toEqual(['armor', 'req_civilian_hull', 'south']);
     expect(replaceGroupTags(vocabulary, ['bogus', 'armor'], 'unknown', [])).toEqual(['armor']);
   });
 

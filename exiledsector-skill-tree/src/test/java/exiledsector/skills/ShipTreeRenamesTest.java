@@ -41,7 +41,7 @@ class ShipTreeRenamesTest {
         type(new SkillType.Builder("new_option", "New Option", "", SkillTier.SMALL));
         type(new SkillType.Builder("other_option", "Other Option", "", SkillTier.SMALL));
         choiceType = type(new SkillType.Builder("choice_type", "Choice", "", SkillTier.SMALL)
-                .optionalOptionIds(List.of("other_option", "new_option")));
+                .choiceOptionIds(List.of("other_option", "new_option")));
         declare("root", rootType);
         declare("new_socket", socketType);
         declare("new_armor", plainType);
@@ -89,11 +89,11 @@ class ShipTreeRenamesTest {
         ShipTrees.allocate(data, saved("old_socket", socketType), 3);
         data.socketItem("old_socket", "subroutine-1");
         ShipTrees.allocate(data, saved("old_armor", plainType), 3);
-        ItemChargeLedger.recordItemCharge(data, "old_armor", LOBSTERS);
-        data.addFreeAllocationCredit();
+        ItemCostLedger.recordPaidItemCost(data, "old_armor", LOBSTERS);
+        data.addFreeAllocation();
         ShipTrees.allocate(data, saved("old_free", plainType), 3);
         ShipTrees.allocate(data, saved("old_paired", plainType), 3);
-        data.pairedFreeNodeIds().add("old_paired");
+        data.pairGrantedNodeIds().add("old_paired");
         ShipTrees.selectOption(data, saved("old_choice", choiceType), new SkillType.Builder("old_option", "Old", "", SkillTier.SMALL).build(), 3);
         data.dormantNodeIds().add("old_dormant");
         return data;
@@ -120,13 +120,13 @@ class ShipTreeRenamesTest {
         assertEquals(List.of("root", "new_socket", "new_armor", "new_free", "new_paired", "new_choice"), List.copyOf(data.getAllocatedNodeIds()));
         assertEquals(Set.of("new_dormant"), data.getDormantNodeIds());
         assertEquals(Map.of("new_socket", "subroutine-1"), data.getSocketedItems());
-        assertEquals(LOBSTERS, ItemChargeLedger.itemCharge(data, "new_armor"));
-        assertNull(ItemChargeLedger.itemCharge(data, "old_armor"));
+        assertEquals(LOBSTERS, ItemCostLedger.paidItemCost(data, "new_armor"));
+        assertNull(ItemCostLedger.paidItemCost(data, "old_armor"));
         assertTrue(data.isFreeNode("new_free"));
         assertTrue(data.isFreeNode("new_paired"));
         assertFalse(data.isFreeNode("old_free"));
-        assertEquals("new_option", data.getOptionalSelection("new_choice"));
-        assertNull(data.getOptionalSelection("old_choice"));
+        assertEquals("new_option", data.getChoiceSelection("new_choice"));
+        assertNull(data.getChoiceSelection("old_choice"));
         assertEquals(bankedBefore, data.getBankedFreeAllocations());
         assertEquals(3, ShipTrees.paidNodeCount(data));
     }
@@ -148,7 +148,7 @@ class ShipTreeRenamesTest {
     void aRenameMovesAStartingRootAndGrantedNodesEvenWhenTheyAreNotAllocated() {
         ShipSkillData data = new ShipSkillData();
         data.startingRootId = "old_root";
-        data.grantFreeNodeIds().add("old_granted");
+        data.subroutineGrantedNodeIds().add("old_granted");
         data.socketedItems = new LinkedHashMap<>(Map.of("old_granted", "anchor-1"));
 
         assertTrue(ShipTrees.renameNode(data, "old_root", "root"));

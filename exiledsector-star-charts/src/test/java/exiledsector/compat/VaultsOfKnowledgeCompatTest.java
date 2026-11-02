@@ -57,9 +57,9 @@ class VaultsOfKnowledgeCompatTest {
     void thePlayerResearchIsReadFromTheResearchManager() {
         AoTDMainResearchManager.instance = new AoTDMainResearchManager();
         try (MockedStatic<Global> ignored = vaultsInstalled(VaultsOfKnowledgeCompatTest.class.getClassLoader())) {
-            assertFalse(VaultsOfKnowledgeCompat.isResearchedForPlayer(VaultsOfKnowledgeCompat.GATEWAY_ADVANCED_RESEARCH_ID));
-            AoTDMainResearchManager.RESEARCHED.add(VaultsOfKnowledgeCompat.GATEWAY_ADVANCED_RESEARCH_ID);
-            assertTrue(VaultsOfKnowledgeCompat.isResearchedForPlayer(VaultsOfKnowledgeCompat.GATEWAY_ADVANCED_RESEARCH_ID));
+            assertFalse(VaultsOfKnowledgeCompat.isResearchedForPlayer(VaultsOfKnowledgeCompat.GATEWAY_ARRAY_RESEARCH_ID));
+            AoTDMainResearchManager.RESEARCHED.add(VaultsOfKnowledgeCompat.GATEWAY_ARRAY_RESEARCH_ID);
+            assertTrue(VaultsOfKnowledgeCompat.isResearchedForPlayer(VaultsOfKnowledgeCompat.GATEWAY_ARRAY_RESEARCH_ID));
         } finally {
             AoTDMainResearchManager.instance = null;
             AoTDMainResearchManager.RESEARCHED.clear();
@@ -71,7 +71,7 @@ class VaultsOfKnowledgeCompatTest {
     void aFailedPlayerResearchLookupCountsAsResearched() throws Exception {
         try (URLClassLoader empty = new URLClassLoader(new URL[0], null);
              MockedStatic<Global> ignored = vaultsInstalled(empty)) {
-            assertTrue(VaultsOfKnowledgeCompat.isResearchedForPlayer(VaultsOfKnowledgeCompat.GATEWAY_PERFECTED_RESEARCH_ID));
+            assertTrue(VaultsOfKnowledgeCompat.isResearchedForPlayer(VaultsOfKnowledgeCompat.GATEWAY_NEXUS_RESEARCH_ID));
         } finally {
             VaultsOfKnowledgeCompat.clearCachedLookups();
         }

@@ -17,27 +17,27 @@ class NpcFactionVolumesTest {
 
     @Test
     void factionsMapToTheirVanillaVolumes() throws Exception {
-        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"remnant\", \"region\": \"REDACTED\"},"
-                + "{\"faction\": \"lions_guard\", \"region\": \"sindrian_dictat\"}]"));
+        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"remnant\", \"volume\": \"REDACTED\"},"
+                + "{\"faction\": \"lions_guard\", \"volume\": \"sindrian_dictat\"}]"));
 
-        assertEquals("REDACTED", NpcFactionVolumes.regionFor("remnant"));
-        assertEquals("sindrian_dictat", NpcFactionVolumes.regionFor("lions_guard"));
-        assertNull(NpcFactionVolumes.regionFor("independent"));
-        assertNull(NpcFactionVolumes.regionFor(null));
+        assertEquals("REDACTED", NpcFactionVolumes.volumeFor("remnant"));
+        assertEquals("sindrian_dictat", NpcFactionVolumes.volumeFor("lions_guard"));
+        assertNull(NpcFactionVolumes.volumeFor("independent"));
+        assertNull(NpcFactionVolumes.volumeFor(null));
     }
 
     @Test
-    void rowsPointingAtTheCoreModVolumesOrUnknownRegionsAreIgnored() throws Exception {
-        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"kesteven_navy\", \"region\": \"kesteven\"},"
-                + "{\"faction\": \"enigma_navy\", \"region\": \"enigma\"},"
-                + "{\"faction\": \"everyone\", \"region\": \"core\"},"
-                + "{\"faction\": \"typo\", \"region\": \"hegmony\"},"
-                + "{\"faction\": \"\", \"region\": \"hegemony\"}]"));
+    void rowsPointingAtTheCoreModVolumesOrUnknownVolumesAreIgnored() throws Exception {
+        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"kesteven_navy\", \"volume\": \"kesteven\"},"
+                + "{\"faction\": \"enigma_navy\", \"volume\": \"enigma\"},"
+                + "{\"faction\": \"everyone\", \"volume\": \"core\"},"
+                + "{\"faction\": \"typo\", \"volume\": \"hegmony\"},"
+                + "{\"faction\": \"\", \"volume\": \"hegemony\"}]"));
 
-        assertNull(NpcFactionVolumes.regionFor("kesteven_navy"));
-        assertNull(NpcFactionVolumes.regionFor("enigma_navy"));
-        assertNull(NpcFactionVolumes.regionFor("everyone"));
-        assertNull(NpcFactionVolumes.regionFor("typo"));
+        assertNull(NpcFactionVolumes.volumeFor("kesteven_navy"));
+        assertNull(NpcFactionVolumes.volumeFor("enigma_navy"));
+        assertNull(NpcFactionVolumes.volumeFor("everyone"));
+        assertNull(NpcFactionVolumes.volumeFor("typo"));
     }
 
     @Test
@@ -45,8 +45,8 @@ class NpcFactionVolumesTest {
         String csv = java.nio.file.Files.readString(ProjectFiles.projectRoot().resolve(NpcFactionVolumes.DATA_PATH));
         NpcFactionVolumes.register(org.json.CDL.toJSONArray(csv.replace("\r\n", "\n")));
 
-        assertEquals("REDACTED", NpcFactionVolumes.regionFor("omega"));
-        assertEquals("luddic", NpcFactionVolumes.regionFor("luddic_path"));
-        assertEquals("persean_league", NpcFactionVolumes.regionFor("persean"));
+        assertEquals("REDACTED", NpcFactionVolumes.volumeFor("omega"));
+        assertEquals("luddic", NpcFactionVolumes.volumeFor("luddic_path"));
+        assertEquals("persean_league", NpcFactionVolumes.volumeFor("persean"));
     }
 }

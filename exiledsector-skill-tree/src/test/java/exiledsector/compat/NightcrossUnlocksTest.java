@@ -103,7 +103,7 @@ class NightcrossUnlocksTest {
     }
 
     @Test
-    void theNightcrossAreaOpensOnceANightcrossAnchorIsFoundNotOnEnteringPascal() {
+    void theNightcrossVolumeOpensOnceANightcrossAnchorIsFoundNotOnEnteringPascal() {
         when(pascal.isEnteredByPlayer()).thenReturn(true);
         assertTrue(SkillTypeUnlockStatus.isLocked(PASCAL_GATE, null));
 
@@ -132,7 +132,7 @@ class NightcrossUnlocksTest {
     }
 
     @Test
-    void theStargazerAreaOpensWhenEitherExistentialThreatFlagIsSet() {
+    void theStargazerVolumeOpensWhenEitherExistentialThreatFlagIsSet() {
         assertTrue(SkillTypeUnlockStatus.isLocked(EXISTENTIAL_THREAT_GATE, null));
 
         playerMemory.set(NightcrossUnlocks.EXISTENTIAL_THREAT_DEFEATED_PLAYER_FLAG, true);

@@ -57,12 +57,12 @@ public enum ItemUnlock {
     }
 
     public static boolean currencyUsable(String itemId, SectorAPI sector) {
-        ItemCurrency currency = ItemCurrencies.byItemId(itemId);
+        CraftingMaterialFamily currency = CraftingMaterialFamilies.byItemId(itemId);
         if (currency == null) {
             return true;
         }
         for (ItemType type : ItemType.values()) {
-            if (ItemCurrencies.appliesTo(currency, type) && available(type, sector)) {
+            if (CraftingMaterialFamilies.appliesTo(currency, type) && available(type, sector)) {
                 return true;
             }
         }
@@ -70,7 +70,7 @@ public enum ItemUnlock {
     }
 
     public static boolean canDrop(ItemDefinition definition, SectorAPI sector) {
-        if (!ItemAreas.dropsNow(definition)) {
+        if (!ItemVolumes.dropsNow(definition)) {
             return false;
         }
         if (!definition.unique()) {

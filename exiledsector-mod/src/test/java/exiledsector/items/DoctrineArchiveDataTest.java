@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DoctrineArchiveDataTest {
 
-    private static final Set<String> TRANSFORM_DOCTRINES = Set.of("doctrine_archive_tritachyon", "doctrine_archive_luddic", "doctrine_archive_remnant");
+    private static final Set<String> REWRITE_DOCTRINES = Set.of("doctrine_archive_tritachyon", "doctrine_archive_luddic", "doctrine_archive_remnant");
     private static final Set<String> AUGMENT_DOCTRINES = Set.of("doctrine_archive_hegemony", "doctrine_archive_sindrian_diktat",
             "doctrine_archive_pirate", "doctrine_archive_persean_league");
 
@@ -65,13 +65,13 @@ class DoctrineArchiveDataTest {
 
         Set<String> doctrineDefinitions = ItemDefinitions.ofType(ItemType.SUBROUTINE).stream()
                 .filter(definition -> SubroutineKind.of(definition) == SubroutineKind.DOCTRINE).map(ItemDefinition::id).collect(Collectors.toSet());
-        Set<String> expected = new HashSet<>(TRANSFORM_DOCTRINES);
+        Set<String> expected = new HashSet<>(REWRITE_DOCTRINES);
         expected.addAll(AUGMENT_DOCTRINES);
         assertEquals(expected, doctrineDefinitions);
-        for (String definitionId : TRANSFORM_DOCTRINES) {
+        for (String definitionId : REWRITE_DOCTRINES) {
             DoctrineArchive archive = DoctrineArchives.get(definitionId);
             assertNotNull(archive, definitionId);
-            assertTrue(archive.transforms(), definitionId);
+            assertTrue(archive.rewritesNodes(), definitionId);
             for (String typeId : archive.keystoneTypeIds()) {
                 assertEquals(SkillTier.KEYSTONE, SkillTree.getType(typeId).getTier(), typeId);
             }
@@ -110,7 +110,7 @@ class DoctrineArchiveDataTest {
                     DoctrineLayer layer = DoctrineOverrides.layer(data);
                     for (DoctrineRewrite rewrite : layer.rewrites().values()) {
                         assertTrue(SkillTree.radii().nodeIdsWithin(socket.getId(), archive.radiusSize()).contains(rewrite.nodeId()));
-                        if (archive.transforms()) {
+                        if (archive.rewritesNodes()) {
                             SkillTier tier = SkillTree.get(rewrite.nodeId()).getType().getTier();
                             assertTrue(archive.replacementPool(tier).contains(rewrite.replacementType().getId()), rewrite.toString());
                         } else {
@@ -173,14 +173,14 @@ class DoctrineArchiveDataTest {
     @Test
     void validDoctrineRowsPass() throws Exception {
         assertEquals(List.of(), errors(new JSONArray()
-                .put(row("doc_a", "TRANSFORM", "large").put("notables", "notable_a").put("keystones", "keystone_a").put("small_nodes", "small_a"))
+                .put(row("doc_a", "REWRITE", "large").put("notables", "notable_a").put("keystones", "keystone_a").put("small_nodes", "small_a"))
                 .put(row("doc_b", "AUGMENT", "medium").put("modifiers", "@ARMOR_PERCENT_TEST_DOCTRINE:2").put("min_lines", "1").put("max_lines", "2"))));
     }
 
     @Test
     void badDoctrineRowsAreReported() throws Exception {
         List<String> errors = errors(new JSONArray()
-                .put(row("doc_a", "TRANSFORM", "huge").put("notables", "keystone_a; missing_type").put("modifiers", "@ARMOR_PERCENT_TEST_DOCTRINE"))
+                .put(row("doc_a", "REWRITE", "huge").put("notables", "keystone_a; missing_type").put("modifiers", "@ARMOR_PERCENT_TEST_DOCTRINE"))
                 .put(row("doc_b", "AUGMENT", "medium").put("notables", "notable_a")
                         .put("modifiers", "@HULL_PERCENT_PLATE; @FLUX_CAPACITY_PERCENT_TEST_DOCTRINE; ARMOR_PERCENT:1:2").put("min_lines", "3")
                         .put("max_lines", "2"))
@@ -189,19 +189,19 @@ class DoctrineArchiveDataTest {
         assertTrue(errors.contains("doc_a has radius \"huge\"; expected one of small, medium, large"), errors.toString());
         assertTrue(errors.contains("doc_a lists keystone_a as a NOTABLE replacement, but it is a KEYSTONE node"), errors.toString());
         assertTrue(errors.contains("doc_a lists missing_type, which is not a skill type"), errors.toString());
-        assertTrue(errors.contains("doc_a transforms nodes, so it lists no modifiers"), errors.toString());
+        assertTrue(errors.contains("doc_a rewrites nodes, so it lists no modifiers"), errors.toString());
         assertTrue(errors.contains("doc_b augments nodes, so it lists no replacement nodes"), errors.toString());
         assertTrue(errors.contains("doc_b needs min_lines of 1 or more and max_lines of at least min_lines"), errors.toString());
         assertTrue(errors.contains("doc_b is a doctrine, but HULL_PERCENT_PLATE only rolls on hull_item"), errors.toString());
         assertTrue(errors.contains("doc_b lists FLUX_CAPACITY_PERCENT_TEST_DOCTRINE in its prefix slot, but it is a suffix"), errors.toString());
         assertTrue(errors.contains("doc_b lists \"ARMOR_PERCENT:1:2\" inline; reference a modifier as @ID or @ID:weight"), errors.toString());
         assertTrue(errors.contains("volume_chip is not a DOCTRINE subroutine in " + SubroutineDefinitions.dataPath()), errors.toString());
-        assertTrue(errors.contains("volume_chip has behaviour \"SHUFFLE\"; expected one of TRANSFORM, AUGMENT"), errors.toString());
+        assertTrue(errors.contains("volume_chip has behaviour \"SHUFFLE\"; expected one of REWRITE, AUGMENT"), errors.toString());
     }
 
     @Test
     void aDoctrineSubroutineWithoutARowAndASuffixDoctrineModifierAreReported() throws Exception {
-        List<String> errors = errors(new JSONArray().put(row("doc_a", "TRANSFORM", "large").put("notables", "notable_a")));
+        List<String> errors = errors(new JSONArray().put(row("doc_a", "REWRITE", "large").put("notables", "notable_a")));
 
         assertTrue(errors.contains("doc_b is a DOCTRINE subroutine with no row in " + DoctrineArchives.DATA_PATH), errors.toString());
         List<String> modifierErrors = ItemDataChecks.check(modifiers(), new JSONArray(), new JSONArray(), new JSONArray()).stream()
@@ -214,10 +214,10 @@ class DoctrineArchiveDataTest {
         ItemModifiers.register(modifiers());
         ItemDefinitions.register(subroutines());
         DoctrineArchives.register(new JSONArray()
-                .put(row("doc_a", "TRANSFORM", "large").put("notables", "notable_a"))
+                .put(row("doc_a", "REWRITE", "large").put("notables", "notable_a"))
                 .put(row("doc_b", "AUGMENT", "small").put("modifiers", "@ARMOR_PERCENT_TEST_DOCTRINE"))
-                .put(row("volume_chip", "TRANSFORM", "large").put("notables", "notable_a"))
-                .put(row("unknown", "TRANSFORM", "large").put("notables", "notable_a")));
+                .put(row("volume_chip", "REWRITE", "large").put("notables", "notable_a"))
+                .put(row("unknown", "REWRITE", "large").put("notables", "notable_a")));
 
         assertEquals(RadiusSize.LARGE, DoctrineArchives.get("doc_a").radiusSize());
         assertEquals(1, DoctrineArchives.get("doc_b").minLines());
@@ -271,7 +271,7 @@ class DoctrineArchiveDataTest {
                 independentDrops.add(DoctrineArchives.pickFor("independent", random, definition -> true).id());
             }
 
-            assertEquals(TRANSFORM_DOCTRINES.size() + AUGMENT_DOCTRINES.size(), independentDrops.size());
+            assertEquals(REWRITE_DOCTRINES.size() + AUGMENT_DOCTRINES.size(), independentDrops.size());
         } finally {
             NpcFactionVolumes.clear();
         }

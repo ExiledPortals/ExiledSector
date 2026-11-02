@@ -30,7 +30,7 @@ public enum StatGroup {
         }
         String packageName = effect.getClass().getPackageName();
         return switch (packageName.substring(packageName.lastIndexOf('.') + 1)) {
-            case "defense", "hullmodule" -> DURABILITY;
+            case "defense", "stationmodule" -> DURABILITY;
             case "shield" -> SHIELDS;
             case "phase" -> PHASE;
             case "flux" -> FLUX;

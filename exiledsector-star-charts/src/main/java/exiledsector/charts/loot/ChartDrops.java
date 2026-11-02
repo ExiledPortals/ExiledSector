@@ -15,7 +15,7 @@ import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.data.CsvRows;
 import exiledsector.ModCsv;
-import exiledsector.items.ItemCurrencies;
+import exiledsector.items.CraftingMaterialFamilies;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDrops;
@@ -72,8 +72,8 @@ public final class ChartDrops {
         }
     }
 
-    record Rule(float chance, float extraChance, float tierUpChance, float currencyChance, float catalystChance, float minStrength,
-                float strengthPerTier, int maxTier) {
+    record Rule(float chance, float extraChance, float tierUpChance, float currencyChance, float catalystChance, float minDefeatedDp,
+                float defeatedDpPerTier, int maxTier) {
 
         Rule {
             chance = Math.max(0f, chance);
@@ -81,8 +81,8 @@ public final class ChartDrops {
             tierUpChance = Math.max(0f, Math.min(1f, tierUpChance));
             currencyChance = Math.max(0f, currencyChance);
             catalystChance = Math.max(0f, catalystChance);
-            minStrength = Math.max(0f, minStrength);
-            strengthPerTier = Math.max(0f, strengthPerTier);
+            minDefeatedDp = Math.max(0f, minDefeatedDp);
+            defeatedDpPerTier = Math.max(0f, defeatedDpPerTier);
             maxTier = ChartTiers.clamp(maxTier);
         }
     }
@@ -166,7 +166,7 @@ public final class ChartDrops {
                 }
                 loaded.put(source, new Rule(csv.number(row, "chance", 0f, sourceText), csv.number(row, "extra_chance", 0f, sourceText),
                         csv.number(row, "tier_up_chance", 0f, sourceText), currencyChance, catalystChance,
-                        csv.number(row, "min_strength", 0f, sourceText), csv.number(row, "strength_per_tier", 0f, sourceText),
+                        csv.number(row, "min_defeated_dp", 0f, sourceText), csv.number(row, "defeated_dp_per_tier", 0f, sourceText),
                         csv.integer(row, "max_tier", ChartTiers.HIGHEST_TIER, sourceText)));
             });
         }
@@ -234,10 +234,10 @@ public final class ChartDrops {
         return ItemDrops.pickOfType(random, ItemType.STAR_CHART, definition -> ItemTypes.rollsAtTier(definition, tier));
     }
 
-    public static List<ItemDrops.CurrencyDrop> chartCurrencyDrops() {
-        return ItemCurrencies.forType(ItemType.STAR_CHART).stream()
+    public static List<ItemDrops.MaterialDrop> chartCurrencyDrops() {
+        return CraftingMaterialFamilies.forType(ItemType.STAR_CHART).stream()
                 .filter(currency -> !currency.dropsFromShipLoot() && currency.dropWeight() > 0f)
-                .map(currency -> new ItemDrops.CurrencyDrop(currency.itemId(), currency.dropWeight()))
+                .map(currency -> new ItemDrops.MaterialDrop(currency.itemId(), currency.dropWeight()))
                 .toList();
     }
 
@@ -253,12 +253,12 @@ public final class ChartDrops {
         return count;
     }
 
-    public static int tierForStrength(Source source, float strength) {
+    public static int tierForDefeatedDp(Source source, float defeatedDp) {
         Rule rule = rule(source);
-        if (rule == null || !(strength >= rule.minStrength()) || strength <= 0f) {
+        if (rule == null || !(defeatedDp >= rule.minDefeatedDp()) || defeatedDp <= 0f) {
             return NO_TIER;
         }
-        int steps = rule.strengthPerTier() > 0f ? (int) ((strength - rule.minStrength()) / rule.strengthPerTier()) : 0;
+        int steps = rule.defeatedDpPerTier() > 0f ? (int) ((defeatedDp - rule.minDefeatedDp()) / rule.defeatedDpPerTier()) : 0;
         return Math.min(rule.maxTier(), ChartTiers.clamp(ChartTiers.LOWEST_TIER + steps));
     }
 
@@ -279,23 +279,23 @@ public final class ChartDrops {
     }
 
     static int battleTier(float defeatedDeploymentPoints, int highestDefeatedLevel) {
-        int strengthTier = tierForStrength(Source.BATTLE, defeatedDeploymentPoints);
-        if (strengthTier == NO_TIER) {
+        int defeatedDpTier = tierForDefeatedDp(Source.BATTLE, defeatedDeploymentPoints);
+        if (defeatedDpTier == NO_TIER) {
             return NO_TIER;
         }
-        return LootSources.shipLevelsRated() ? ChartTiers.tierForLevel(highestDefeatedLevel) : strengthTier;
+        return LootSources.shipLevelsRated() ? ChartTiers.tierForLevel(highestDefeatedLevel) : defeatedDpTier;
     }
 
     public static Loot forSalvage(SectorAPI sector, LocationAPI salvageLocation, Random random) {
         if (isSystem(salvageLocation)) {
             return forSystem(Source.SYSTEM_SALVAGE, ChartRuns.liveIn(salvageLocation), random);
         }
-        return roll(Source.SALVAGE, tierForStrength(Source.SALVAGE, playerLevel(sector)), 1f, random);
+        return roll(Source.SALVAGE, tierForDefeatedDp(Source.SALVAGE, playerLevel(sector)), 1f, random);
     }
 
     public static Loot forTechMining(SectorAPI sector, boolean firstFind, float chanceMult, Random random) {
         Source source = firstFind ? Source.TECHMINING_FIRST_FIND : Source.TECHMINING_MONTHLY;
-        return roll(source, tierForStrength(source, playerLevel(sector)), chanceMult, random);
+        return roll(source, tierForDefeatedDp(source, playerLevel(sector)), chanceMult, random);
     }
 
     static int playerLevel(SectorAPI sector) {

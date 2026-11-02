@@ -7,7 +7,7 @@ import exiledsector.PlayerFleet;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.DormantNodes;
-import exiledsector.skills.ItemChargeLedger;
+import exiledsector.skills.ItemCostLedger;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
@@ -45,7 +45,7 @@ final class DormantNodeWake {
                 dormantNode -> fitsTheOpBudget(shipData, dormantNode, opCostPerNode, totalOp) && isEligible(shipData, dormantNode, shipFacts));
         refund(shipData, releasedNodeIds);
         if (!releasedNodeIds.isEmpty()) {
-            LOG.info("[ExiledSector] Released hidden-area nodes of ship " + member.getId()
+            LOG.info("[ExiledSector] Released hidden-volume nodes of ship " + member.getId()
                     + " that no longer connect to its tree, fit its OP or node cap, or are allowed on it: " + releasedNodeIds);
         }
         member.setStatUpdateNeeded(true);
@@ -58,13 +58,13 @@ final class DormantNodeWake {
     }
 
     private static boolean isEligible(ShipSkillData shipData, SkillNode dormantNode, ShipFacts shipFacts) {
-        SkillType option = dormantNode.offersOptions(shipData) ? SkillTree.getType(shipData.getOptionalSelection(dormantNode.getId())) : null;
+        SkillType option = dormantNode.offersOptions(shipData) ? SkillTree.getType(shipData.getChoiceSelection(dormantNode.getId())) : null;
         NodeEligibility.Context context = NodeEligibility.Context.forShip(shipData, shipFacts, itemId -> Double.MAX_VALUE);
-        return NodeEligibility.check(DoctrineOverrides.asTransformed(shipData, dormantNode), option, context) == null;
+        return NodeEligibility.check(DoctrineOverrides.asRewritten(shipData, dormantNode), option, context) == null;
     }
 
     private static void refund(ShipSkillData shipData, List<String> releasedNodeIds) {
         CargoAPI cargo = PlayerFleet.cargoOrNull();
-        ItemChargeLedger.takeItemCharges(shipData, releasedNodeIds).forEach(charged -> charged.refundTo(cargo));
+        ItemCostLedger.takePaidItemCosts(shipData, releasedNodeIds).forEach(charged -> charged.refundTo(cargo));
     }
 }

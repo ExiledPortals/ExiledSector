@@ -2,7 +2,7 @@ package exiledsector.ui.cargo;
 
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
-import exiledsector.items.CraftingCurrency;
+import exiledsector.items.Nanoswarm;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDisassembly;
@@ -17,11 +17,11 @@ public enum LootAlert {
 
     STANDARD("exiledSector_loot_alert"),
     VALUABLE("exiledSector_loot_alert_valuable"),
-    REFIT_SCHEMATIC("exiledSector_loot_alert_hull_upgrade"),
+    REFIT_SCHEMATIC("exiledSector_loot_alert_refit_schematic"),
     STAR_CHART("exiledSector_loot_alert_star_chart");
 
-    private static final Set<String> VALUABLE_CURRENCY_IDS = Set.of(CraftingCurrency.RECALIBRATION.itemId(),
-            CraftingCurrency.ANNULMENT.itemId(), CraftingCurrency.FIXATION.itemId(), CraftingCurrency.REPLICATION.itemId());
+    private static final Set<String> VALUABLE_CURRENCY_IDS = Set.of(Nanoswarm.TUNING.itemId(),
+            Nanoswarm.ANNULMENT.itemId(), Nanoswarm.IMMUTABLE.itemId(), Nanoswarm.REPLICATION.itemId());
 
     private final String soundId;
 
@@ -50,7 +50,7 @@ public enum LootAlert {
             return VALUABLE;
         }
         if (MaterialItems.isMaterial(itemId)) {
-            return ItemDisassembly.PARTS_ITEM_ID.equals(itemId) ? null : STANDARD;
+            return ItemDisassembly.FEEDSTOCK_ITEM_ID.equals(itemId) ? null : STANDARD;
         }
         ItemData itemData = ItemData.of(special);
         Item preview = itemData == null ? null : itemData.preview();

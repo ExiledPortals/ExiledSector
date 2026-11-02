@@ -17,11 +17,11 @@ class UniquePoolRepairTest {
     private static final Modifier PENANCE = new Modifier("penance", ModifierSlot.PREFIX, List.of(ModifierLine.range("PEAK_CR_DURATION_PERCENT", -40f, -30f)));
     private static final Modifier VOW = new Modifier("vow", ModifierSlot.SUFFIX, List.of(ModifierLine.range("HULL_PERCENT", 5f, 5f)));
     private static final RolledModifier OWNED_PENANCE = new RolledModifier("penance", ModifierSlot.PREFIX,
-            List.of(new RolledEffect("PEAK_CR_DURATION_PERCENT", -35f)));
+            List.of(new RolledLine("PEAK_CR_DURATION_PERCENT", -35f)));
     private static final RolledModifier RETIRED_SPEED = new RolledModifier("speed", ModifierSlot.PREFIX,
-            List.of(new RolledEffect("TOP_SPEED_PERCENT", 30f)));
+            List.of(new RolledLine("TOP_SPEED_PERCENT", 30f)));
     private static final RolledModifier UNLOADED = new RolledModifier("unloaded", ModifierSlot.PREFIX,
-            List.of(new RolledEffect("NOT_A_LOADED_EFFECT", 10f)));
+            List.of(new RolledLine("NOT_A_LOADED_EFFECT", 10f)));
 
     @AfterEach
     void clear() {

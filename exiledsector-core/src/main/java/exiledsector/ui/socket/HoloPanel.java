@@ -40,8 +40,8 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
     static final float HEADER_HEIGHT = 28f;
     static final float HEADER_BUTTON_HEIGHT = 24f;
     static final float CLOSE_BUTTON_WIDTH = 70f;
-    private static final float PARTS_ICON_SIZE = 24f;
-    static final float PARTS_TEXT_TOP = 5f;
+    private static final float FEEDSTOCK_ICON_SIZE = 24f;
+    static final float FEEDSTOCK_TEXT_TOP = 5f;
     private static final float PARTS_TOOLTIP_WIDTH = 300f;
     private static final float CONFIRM_BUTTON_HEIGHT = 26f;
     private static final float TAB_TEXT_PADDING = 24f;
@@ -457,20 +457,20 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         return CraftingMaterials.forPlayer(PlayerFleet.cargoOrNull());
     }
 
-    static void addPartsCount(TooltipMakerAPI element, float countRight) {
-        String partsIconPath = MaterialItems.loadedIconPath(ItemDisassembly.PARTS_ITEM_ID);
-        String partsName = MaterialItems.displayName(ItemDisassembly.PARTS_ITEM_ID);
-        String countText = String.valueOf(ItemCrafting.parts(playerMaterials()));
+    static void addFeedstockCount(TooltipMakerAPI element, float countRight) {
+        String feedstockIconPath = MaterialItems.loadedIconPath(ItemDisassembly.FEEDSTOCK_ITEM_ID);
+        String feedstockName = MaterialItems.displayName(ItemDisassembly.FEEDSTOCK_ITEM_ID);
+        String countText = String.valueOf(ItemCrafting.feedstock(playerMaterials()));
         float countWidth = Global.getSettings().computeStringWidth(countText, Fonts.ORBITRON_12) + LINE_PAD;
         element.setParaFont(Fonts.ORBITRON_12);
         LabelAPI countLabel = VanillaText.plainPara(element, countText, 0f, Misc.getTextColor());
-        countLabel.autoSizeToWidth(countWidth).inTR(countRight, PARTS_TEXT_TOP);
-        if (partsIconPath != null) {
-            element.addImage(partsIconPath, PARTS_ICON_SIZE, PARTS_ICON_SIZE, 0f);
+        countLabel.autoSizeToWidth(countWidth).inTR(countRight, FEEDSTOCK_TEXT_TOP);
+        if (feedstockIconPath != null) {
+            element.addImage(feedstockIconPath, FEEDSTOCK_ICON_SIZE, FEEDSTOCK_ICON_SIZE, 0f);
             element.getPrev().getPosition().inTR(countRight + countWidth + LINE_PAD, 0f);
         }
         element.addTooltipToPrevious(new GameTextTooltip(PARTS_TOOLTIP_WIDTH,
-                tooltip -> VanillaText.plainPara(tooltip, Translation.msg("ui.socketStorage.parts.tooltip").arg("name", partsName).text(),
+                tooltip -> VanillaText.plainPara(tooltip, Translation.msg("ui.socketStorage.feedstock.tooltip").arg("name", feedstockName).text(),
                         0f, Misc.getTextColor())),
                 TooltipMakerAPI.TooltipLocation.BELOW);
     }

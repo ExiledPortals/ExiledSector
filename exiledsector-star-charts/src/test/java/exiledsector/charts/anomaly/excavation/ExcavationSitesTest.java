@@ -8,7 +8,7 @@ import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.StateFields;
 import exiledsector.charts.anomaly.AnomalyRun;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.ChartRun;
@@ -140,7 +140,7 @@ class ExcavationSitesTest {
         for (int index = 0; index < 8; index++) {
             planet("rock" + index, false, false);
         }
-        ChartGenContext context = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_EXTRA_EXCAVATION_SITES, 2f)));
+        ChartGenContext context = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_EXTRA_EXCAVATION_SITES, 2f)));
         ChartRun run = run();
 
         List<ExcavationSite> placed = placeIn(run, site(context, 3L));

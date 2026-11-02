@@ -62,8 +62,8 @@ public final class WormholeAnchorDataRules implements ItemDataRules {
             }
             String volume = ModCsv.text(row, WormholeAnchorDefinitions.VOLUME_COLUMN);
             if (!WormholeAnchorDefinitions.isVolume(volume)) {
-                integrity.error(file, line, definitionId + " has volume \"" + volume + "\"; expected a tree region other than "
-                        + SkillTags.CORE_REGION);
+                integrity.error(file, line, definitionId + " has volume \"" + volume + "\"; expected a tree volume other than "
+                        + SkillTags.CORE_VOLUME);
             } else {
                 Integer volumeLine = linesByVolume.putIfAbsent(volume, line);
                 if (volumeLine != null) {
@@ -102,8 +102,8 @@ public final class WormholeAnchorDataRules implements ItemDataRules {
             integrity.error(file, line, definitionId + " exits at " + exitNodeId + ", which is not in the skill tree");
             return;
         }
-        if (!volume.equals(exitNode.getRegion())) {
-            integrity.error(file, line, definitionId + " exits at " + exitNodeId + ", which is in " + exitNode.getRegion() + " rather than " + volume);
+        if (!volume.equals(exitNode.getVolume())) {
+            integrity.error(file, line, definitionId + " exits at " + exitNodeId + ", which is in " + exitNode.getVolume() + " rather than " + volume);
         }
         SkillTier exitTier = exitNode.getType().getTier();
         if (exitTier != SkillTier.WORMHOLE_EXIT) {

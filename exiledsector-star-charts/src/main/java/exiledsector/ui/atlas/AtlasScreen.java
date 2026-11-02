@@ -44,7 +44,7 @@ import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.VanillaText;
-import exiledsector.ui.chart.StarChartBench;
+import exiledsector.ui.chart.StarChartCraftingBench;
 import exiledsector.ui.decoration.StarfieldRenderer;
 import exiledsector.ui.socket.AtlasAnomalyPanel;
 import exiledsector.ui.socket.AtlasCatalystPanel;
@@ -53,7 +53,7 @@ import exiledsector.ui.socket.BenchMode;
 import exiledsector.ui.socket.BenchModeSupport;
 import exiledsector.ui.socket.GameTextTooltip;
 import exiledsector.ui.socket.SocketPanelPlacement;
-import exiledsector.ui.socket.SocketWorkbenchPanel;
+import exiledsector.ui.socket.CraftingBenchPanel;
 import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.GlScope;
@@ -127,7 +127,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private AtlasAnomalyPanel anomalyPanel;
     private TooltipMakerAPI chooseElement;
     private ButtonAPI chooseButton;
-    private SocketWorkbenchPanel chartBench;
+    private CraftingBenchPanel chartBench;
     private BenchModeSupport.PickerSession chartPicker;
     private TooltipMakerAPI debugElement;
     private BenchLayout chartLayout;
@@ -428,7 +428,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         BenchLayout layout = chartLayout();
         BenchModeSupport.OpenTarget target = new BenchModeSupport.OpenTarget(cell,
                 () -> AtlasNodeText.confirmLines(map.generator(), map.state(), cell), () -> AtlasNodeText.entryChoices(map.generator(), map.state(), cell));
-        chartBench = SocketWorkbenchPanel.openEmbedded(panelRoot, BenchMode.STAR_CHARTS, layout, new SocketWorkbenchPanel.Listener() {
+        chartBench = CraftingBenchPanel.openEmbedded(panelRoot, BenchMode.STAR_CHARTS, layout, new CraftingBenchPanel.Listener() {
             @Override
             public void changed(Item loaded) {
                 if (chartPicker != null) {
@@ -461,7 +461,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
                 debugCompleted(cell);
             }
         });
-        chartPicker = StarChartBench.INSTANCE.pickerSession();
+        chartPicker = StarChartCraftingBench.INSTANCE.pickerSession();
         chartPicker.open(panelRoot, new SocketPanelPlacement(PANEL_MARGIN + CHROME_PAD, sidePanelTop(), SIDE_PANEL_WIDTH, sidePanelHeight(), false),
                 null, new BenchModeSupport.PickerListener() {
                     @Override
@@ -515,7 +515,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     }
 
     private void addDebugButton() {
-        BenchModeSupport.DebugAction debugAction = StarChartBench.INSTANCE.debugAction();
+        BenchModeSupport.DebugAction debugAction = StarChartCraftingBench.INSTANCE.debugAction();
         if (debugAction == null) {
             return;
         }

@@ -72,19 +72,19 @@ class AnchorJanusGateTest {
 
         SkillTree.clearNodes();
         SkillType exitType = new SkillType.Builder("wormhole_exit", "Wormhole Exit", "", SkillTier.WORMHOLE_EXIT).build();
-        SkillType socketType = new SkillType.Builder("socket", "Socket", "", SkillTier.SOCKET).build();
+        SkillType sectionKind = new SkillType.Builder("socket", "Socket", "", SkillTier.SOCKET).build();
         root = new SkillNode("root", new SkillType.Builder("root_type", "Root", "", SkillTier.ROOT).build(), List.of(), 0f, 0f);
-        socket = new SkillNode("socket", socketType, List.of("root"), 0f, 0f, SkillNodeDecoration.NONE, List.of("core"));
+        socket = new SkillNode("socket", sectionKind, List.of("root"), 0f, 0f, SkillNodeDecoration.NONE, List.of("core"));
         for (SkillNode node : List.of(root, socket,
                 new SkillNode("hegemony_2", exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of("hegemony")),
-                new SkillNode("exoship", exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of(SkillTags.EXOTECH_REGION)))) {
+                new SkillNode("exoship", exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of(SkillTags.EXOTECH_VOLUME)))) {
             SkillTree.register(node);
         }
         WormholeAnchorDefinitions.register(new JSONArray()
                 .put(AnchorRows.row(HEGEMONY_ANCHOR, "hegemony", "hegemony_2").put("drop_chance", "1").put("market_chance", "1"))
-                .put(AnchorRows.row(BEACON, SkillTags.EXOTECH_REGION, "exoship").put("drop_factions", "rat_exotech")
+                .put(AnchorRows.row(BEACON, SkillTags.EXOTECH_VOLUME, "exoship").put("drop_factions", "rat_exotech")
                         .put("drop_chance", "1").put("market_chance", "1")));
-        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
+        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"volume\": \"hegemony\"}]"));
         AnchorLinks.install(new AnchorLinks.ExitLookup() {
             @Override
             public String exitNodeId(String socketedItemId) {

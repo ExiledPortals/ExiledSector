@@ -11,19 +11,19 @@ public abstract class SkillTreeObject {
     private final float treeX;
     private final float treeY;
     private final List<String> tags;
-    private final String region;
+    private final String volume;
 
     protected SkillTreeObject(String id, float treeX, float treeY, List<String> tags) {
         this.id = id;
         this.treeX = treeX;
         this.treeY = treeY;
         this.tags = tags == null ? Collections.emptyList() : tags;
-        this.region = firstRegion(this.tags);
+        this.volume = firstVolume(this.tags);
     }
 
-    private static String firstRegion(List<String> tags) {
+    private static String firstVolume(List<String> tags) {
         for (String tag : tags) {
-            if (SkillTags.isRegion(tag)) {
+            if (SkillTags.isVolume(tag)) {
                 return tag;
             }
         }
@@ -46,7 +46,7 @@ public abstract class SkillTreeObject {
         return tags;
     }
 
-    public String getRegion() {
-        return region;
+    public String getVolume() {
+        return volume;
     }
 }

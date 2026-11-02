@@ -25,7 +25,7 @@ import { deleteSelection } from '../state/treeActions.ts';
 import { editDocument, setSelection, useTreeStore } from '../state/treeStore.ts';
 import { CommitColorInput } from './CommitColorInput.tsx';
 import { degreesOrZero, numberOrZero, setTags } from './inspectorEdits.ts';
-import { RegionField } from './RegionField.tsx';
+import { VolumeField } from './VolumeField.tsx';
 
 type Edit<TKind extends DecorationKind> = (change: (decoration: DecorationOfKind<TKind>) => void) => void;
 
@@ -269,7 +269,7 @@ export function DecorationInspector({ decorationId, vocabulary }: { decorationId
         <CommitNumberInput size="xs" label="Y" value={decoration.y} onCommit={(value) => edit((target) => void (target.y = value || 0))} />
       </Group>
       <Fields decoration={decoration as never} edit={edit as Edit<DecorationKind>} />
-      <RegionField vocabulary={vocabulary} tags={decoration.tags} onChange={(tags) => edit((target) => setTags(target, tags))} />
+      <VolumeField vocabulary={vocabulary} tags={decoration.tags} onChange={(tags) => edit((target) => setTags(target, tags))} />
       <Divider />
       <Button size="xs" color="red" variant="light" leftSection={<IconTrash size={14} />} onClick={deleteSelection}>
         Delete this {spec.label.toLowerCase()} (Q)

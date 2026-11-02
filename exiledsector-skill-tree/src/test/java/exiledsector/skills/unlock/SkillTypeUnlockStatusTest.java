@@ -71,7 +71,7 @@ class SkillTypeUnlockStatusTest {
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
                 .todo(null)
-                .optionalOptionIds(List.of())
+                .choiceOptionIds(List.of())
                 .exclusiveHullModIds(List.of())
                 .exclusiveSkillTypeIds(List.of())
                 .unlockConditions(List.of(conditions))

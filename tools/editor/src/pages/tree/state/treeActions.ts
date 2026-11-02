@@ -2,7 +2,7 @@ import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { notifyInfo } from '../../../shared/dialogs.tsx';
 import { connectNodes, deleteNodes, isLinkedPair, unlinkNodes } from '../model/connectors.ts';
 import { deleteAnchor, detachNodeFromAnchor, syncRingArcCurves } from '../model/geometry.ts';
-import { isRegionTag } from '../model/tags.ts';
+import { isVolumeTag } from '../model/tags.ts';
 import { decorationById, decorationSpec, type DecorationKind } from '../model/decorations.ts';
 import { ANCHOR_RECTANGLE_ASPECT, anchorById, nodeById, nodeIdStem, uniqueId, type OrbitAnchor, type TreeDocument, type TreeNode } from '../model/types.ts';
 import {
@@ -48,10 +48,10 @@ function reservedInStore(id: string): boolean {
 }
 
 function nearestRegionTag(document: TreeDocument, vocabulary: Vocabulary, x: number, y: number): string | undefined {
-  let best = vocabulary.regionTags[0];
+  let best = vocabulary.volumeTags[0];
   let bestDistance = Infinity;
   for (const node of document.nodes) {
-    const regions = (node.tags ?? []).filter((tag) => isRegionTag(vocabulary, tag));
+    const regions = (node.tags ?? []).filter((tag) => isVolumeTag(vocabulary, tag));
     if (regions.length !== 1) {
       continue;
     }

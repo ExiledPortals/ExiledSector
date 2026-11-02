@@ -2,10 +2,10 @@ package exiledsector.ui.cargo;
 
 import exiledsector.domain.DomainContributions;
 import exiledsector.domain.ExiledSectorDomain;
-import exiledsector.items.CraftingCurrency;
-import exiledsector.items.CraftingWard;
-import exiledsector.items.ItemCurrencies;
-import exiledsector.items.ItemCurrency;
+import exiledsector.items.Nanoswarm;
+import exiledsector.items.CraftingInhibitor;
+import exiledsector.items.CraftingMaterialFamilies;
+import exiledsector.items.CraftingMaterialFamily;
 import exiledsector.items.Item;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemRarity;
@@ -27,17 +27,17 @@ public final class CargoIconLooks {
     }
 
     static SwarmMotion swarmFor(String itemId) {
-        if (CraftingWard.byItemId(itemId) != null) {
+        if (CraftingInhibitor.byItemId(itemId) != null) {
             return SwarmMotion.CONTAINED;
         }
-        ItemCurrency currency = ItemCurrencies.byItemId(itemId);
+        CraftingMaterialFamily currency = CraftingMaterialFamilies.byItemId(itemId);
         if (currency == null) {
             return SwarmMotion.SLURRY;
         }
-        if (currency == CraftingCurrency.CORRUPTION) {
+        if (currency == Nanoswarm.CORRUPTION) {
             return SwarmMotion.FERAL;
         }
-        return currency == CraftingCurrency.REPLICATION ? SwarmMotion.REPLICATING : SwarmMotion.ORBIT;
+        return currency == Nanoswarm.REPLICATION ? SwarmMotion.REPLICATING : SwarmMotion.ORBIT;
     }
 
     static CargoIconLook forMaterial(MaterialTier tier, Color color) {
@@ -67,7 +67,7 @@ public final class CargoIconLooks {
         if (item.mirrored()) {
             look = CargoIconLook.refracting(rarity.color(), look.glow());
         } else if (item.corrupted()) {
-            look = CargoIconLook.charged(CraftingCurrency.CORRUPTION.color(), Math.max(CORRUPTED_GLOW, look.glow()));
+            look = CargoIconLook.charged(Nanoswarm.CORRUPTION.color(), Math.max(CORRUPTED_GLOW, look.glow()));
         }
         for (ItemIconLooks itemLooks : ITEM_LOOKS.all()) {
             look = itemLooks.decorated(item, look);

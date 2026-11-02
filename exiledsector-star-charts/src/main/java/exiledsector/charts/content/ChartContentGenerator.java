@@ -228,7 +228,7 @@ public final class ChartContentGenerator {
         return switch (role) {
             case GUARD -> FleetTypes.PATROL_MEDIUM;
             case PATROL -> FleetTypes.PATROL_LARGE;
-            case BOSS, DEFENDER -> FleetTypes.TASK_FORCE;
+            case BOSS, STATION_GUARD -> FleetTypes.TASK_FORCE;
         };
     }
 
@@ -258,7 +258,7 @@ public final class ChartContentGenerator {
 
     static void prepareFleet(CampaignFleetAPI fleet, String runId, int tier, FleetRole role, int strengthBonus, long fleetSeed) {
         markContent(fleet, runId, tier, strengthBonus, fleetSeed, role.bossFleet());
-        if (role == FleetRole.DEFENDER) {
+        if (role == FleetRole.STATION_GUARD) {
             fleet.getMemoryWithoutUpdate().unset(MemFlags.MEMORY_KEY_ALLOW_LONG_PURSUIT);
         }
         fleet.setTransponderOn(true);
@@ -268,7 +268,7 @@ public final class ChartContentGenerator {
             }
         }
         if (role.bossFleet()) {
-            fleet.setName(Translation.gameText(role == FleetRole.DEFENDER ? "chart.fleet.bossDefenders.name" : "chart.fleet.boss.name"));
+            fleet.setName(Translation.gameText(role == FleetRole.STATION_GUARD ? "chart.fleet.bossDefenders.name" : "chart.fleet.boss.name"));
             PersonAPI commander = fleet.getCommander();
             if (commander != null && commander.getPersonalityAPI() != null && MEEK_PERSONALITIES.contains(commander.getPersonalityAPI().getId())) {
                 commander.setPersonality(Personalities.AGGRESSIVE);
@@ -456,7 +456,7 @@ public final class ChartContentGenerator {
         }
 
         void spawnFleets(ChartContentPlan plan) {
-            if (plan.alliedDefenders()) {
+            if (plan.alliedStation()) {
                 allyFactionId = dressAllies(plan.faction().factionId());
             }
             for (PlannedFleet planned : plan.fleets()) {
@@ -485,7 +485,7 @@ public final class ChartContentGenerator {
                 guarded = featureAnchor;
             }
             PlannedFleet built = planned;
-            if (planned.role() == FleetRole.DEFENDER) {
+            if (planned.role() == FleetRole.STATION_GUARD) {
                 CampaignFleetAPI station = spawnStation(plan, guarded, fleetSeed);
                 if (station != null) {
                     guarded = station;
@@ -499,7 +499,7 @@ public final class ChartContentGenerator {
             if (fleet == null) {
                 return;
             }
-            if (role.bossFleet() && chartContext.twinnedBoss() && !plan.alliedDefenders()) {
+            if (role.bossFleet() && chartContext.twinnedBoss() && !plan.alliedStation()) {
                 launchTwin(plan, built, guarded, fleetSeed, fleet.getLocation());
             }
             if (role == FleetRole.GUARD) {
@@ -521,7 +521,7 @@ public final class ChartContentGenerator {
                 return null;
             }
             prepareFleet(fleet, runId, tier, role, built.strengthBonus(), fleetSeed);
-            if (plan.alliedDefenders()) {
+            if (plan.alliedStation()) {
                 joinPlayer(fleet, allyFactionId);
             } else {
                 arm(fleet, role);
@@ -589,13 +589,13 @@ public final class ChartContentGenerator {
                     return null;
                 }
                 prepareStation(station, runId, tier, stationSeed);
-                if (plan.alliedDefenders()) {
+                if (plan.alliedStation()) {
                     joinPlayer(station, allyFactionId);
                 } else {
                     ChartEnemyShipEffects.grant(station, chartContext);
                     addStationLoot(station);
                 }
-                launch(station, FleetRole.DEFENDER, () -> {
+                launch(station, FleetRole.STATION_GUARD, () -> {
                     station.setAI(null);
                     anchorStation(station, anchor, stationRandom);
                 });
@@ -652,7 +652,7 @@ public final class ChartContentGenerator {
                     Vector2f farSide = farSideOf(innerWormhole);
                     holdPoint = system.createToken(farSide.x, farSide.y);
                 }
-                FleetAssignment hold = role == FleetRole.DEFENDER ? FleetAssignment.ORBIT_PASSIVE : FleetAssignment.ORBIT_AGGRESSIVE;
+                FleetAssignment hold = role == FleetRole.STATION_GUARD ? FleetAssignment.ORBIT_PASSIVE : FleetAssignment.ORBIT_AGGRESSIVE;
                 fleet.addAssignment(hold, holdPoint, ASSIGNMENT_DAYS);
             }
             SectorEntityToken patrolCentre = ChartSites.centreOf(system);

@@ -76,9 +76,9 @@ class WormholeAnchorLinksTest {
         SkillTree.clearNodes();
     }
 
-    private static SkillNode node(String id, SkillTier tier, String region, String... connectedTo) {
+    private static SkillNode node(String id, SkillTier tier, String volume, String... connectedTo) {
         SkillType type = new SkillType.Builder(id + "_type", id, "a.png", tier).effects(List.of()).build();
-        return new SkillNode(id, type, List.of(connectedTo), 0f, 0f, SkillNodeDecoration.NONE, List.of(region));
+        return new SkillNode(id, type, List.of(connectedTo), 0f, 0f, SkillNodeDecoration.NONE, List.of(volume));
     }
 
     private ShipSkillData shipWithSocket() {
@@ -98,10 +98,10 @@ class WormholeAnchorLinksTest {
         return data;
     }
 
-    private AllocationGate gate(ShipSkillData data, int maxAllocatedNodes) {
+    private AllocationCheck gate(ShipSkillData data, int maxAllocatedNodes) {
         NodeEligibility.Context eligibility = NodeEligibility.Context.of(data,
                 new ShipFacts(HullSize.CRUISER, ShieldType.FRONT, false, 0f, hullModId -> false), null);
-        return new AllocationGate(data, topology, "root", new AllocationGate.Budget(100, 1, maxAllocatedNodes), eligibility);
+        return new AllocationCheck(data, topology, "root", new AllocationCheck.Budget(100, 1, maxAllocatedNodes), eligibility);
     }
 
     @Test
@@ -151,7 +151,7 @@ class WormholeAnchorLinksTest {
         ShipSkillData data = shipWithSocket();
         ShipTrees.allocate(data, volumeSmall, 1);
 
-        assertEquals(AllocationGate.Refusal.NOT_CONNECTED, gate(data, 100).allocation(exit).refusal());
+        assertEquals(AllocationCheck.Refusal.NOT_CONNECTED, gate(data, 100).allocation(exit).refusal());
         assertFalse(ShipTrees.reachableAllocatedNodeIds(data, topology, "root", Set.of()).contains("vol_a"));
     }
 
@@ -171,10 +171,10 @@ class WormholeAnchorLinksTest {
         ShipSkillData data = shipWithSocket();
         data.socketItem("socket", ANCHOR);
         ShipTrees.openAnchorWormholes(data, 100);
-        data.addFreeAllocationCredit();
+        data.addFreeAllocation();
         ShipTrees.allocate(data, volumeSmall, 1);
         ShipTrees.allocate(data, volumeNotable, 1);
-        ItemChargeLedger.recordItemCharge(data, "vol_b", new SkillItemCost("alpha_core", 1f));
+        ItemCostLedger.recordPaidItemCost(data, "vol_b", new SkillItemCost("alpha_core", 1f));
         int paidBefore = ShipTrees.paidNodeCount(data);
 
         data.unsocketItem("socket");

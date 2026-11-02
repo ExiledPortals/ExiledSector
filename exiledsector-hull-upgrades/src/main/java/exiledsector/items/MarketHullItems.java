@@ -65,9 +65,9 @@ public final class MarketHullItems {
         }
         int count = range.min() + random.nextInt(range.max() - range.min() + 1);
         for (int i = 0; i < count; i++) {
-            ItemDefinition definition = HullItemDrops.pickSectionItemBasic(random, candidate -> ItemRoller.canRollEffectCount(candidate, EFFECT_COUNT));
+            ItemDefinition definition = HullItemDrops.pickSectionItemBasic(random, candidate -> ItemRoller.canRollModifierCount(candidate, EFFECT_COUNT));
             if (definition != null) {
-                stocked.add(ItemData.rolledWithEffectCount(definition, random.nextLong(), EFFECT_COUNT));
+                stocked.add(ItemData.rolledWithModifierCount(definition, random.nextLong(), EFFECT_COUNT));
             }
         }
         return stocked;

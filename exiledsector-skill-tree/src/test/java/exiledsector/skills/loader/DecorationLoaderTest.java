@@ -64,7 +64,7 @@ class DecorationLoaderTest {
         assertEquals(200f, maw.getY());
         assertEquals(620f, maw.getLength());
         assertEquals(30f, maw.getRotation());
-        assertEquals("shrouded", maw.getRegion());
+        assertEquals("shrouded", maw.getVolume());
     }
 
     @Test
@@ -138,7 +138,7 @@ class DecorationLoaderTest {
         assertEquals(ThreatUnit.HIVE, units.get(0).getUnitType());
         assertEquals(450.5f, units.get(0).getLength());
         assertEquals(35f, units.get(0).getRotation());
-        assertEquals("threat", units.get(0).getRegion());
+        assertEquals("threat", units.get(0).getVolume());
         assertEquals(ThreatUnit.FABRICATOR, units.get(1).getUnitType());
         assertEquals(0f, units.get(1).getRotation());
     }
@@ -151,7 +151,7 @@ class DecorationLoaderTest {
 
         assertEquals(new AbyssSerpent.Orbit(1663f, 190f, false, 180f), serpents.get(0).getOrbit());
         assertEquals(new AbyssSerpent.Wobble(0.15f, 7, 74.5f), serpents.get(0).getWobble());
-        assertEquals("abyss", serpents.get(0).getRegion());
+        assertEquals("abyss", serpents.get(0).getVolume());
         assertEquals(new AbyssSerpent.Orbit(500f, 100f, true, 0f), serpents.get(1).getOrbit());
         assertEquals(AbyssSerpent.Wobble.NONE, serpents.get(1).getWobble());
     }

@@ -45,12 +45,12 @@ public final class ItemTooltip {
         item.writeTooltipSections(tooltip, hullSize, showRollRanges);
         List<StyledText> implicitLines = item.implicitLines(showRollRanges);
         if (!implicitLines.isEmpty()) {
-            tooltip.addSectionHeading(Translation.text("hullItem.tooltip.implicit"), Alignment.MID, PAD);
+            tooltip.addSectionHeading(Translation.text("item.tooltip.implicit"), Alignment.MID, PAD);
             addLines(tooltip, implicitLines, Misc.getTextColor());
         }
         List<StyledText> effectLines = item.effectLines(showRollRanges, hullSize);
         if (!effectLines.isEmpty()) {
-            tooltip.addSectionHeading(Translation.text("socketable.tooltip.primaryData"), Alignment.MID, PAD);
+            tooltip.addSectionHeading(Translation.text("item.tooltip.explicit"), Alignment.MID, PAD);
             addLines(tooltip, effectLines, Misc.getTextColor());
         }
     }

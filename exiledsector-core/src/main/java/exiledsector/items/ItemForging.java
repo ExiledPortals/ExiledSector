@@ -51,11 +51,11 @@ public final class ItemForging {
         return effect != null && effect.invertsDescriptionColours();
     }
 
-    private static float bestRoll(Item item, ModifierLine lineDefinition, RolledEffect line, ScaleContext context) {
+    private static float bestRoll(Item item, ModifierLine lineDefinition, RolledLine line, ScaleContext context) {
         return lineDefinition.bestRoll(context, lowerIsBetter(item, line.effectName()));
     }
 
-    private static boolean improves(Item item, ModifierLine lineDefinition, RolledEffect line, ScaleContext context) {
+    private static boolean improves(Item item, ModifierLine lineDefinition, RolledLine line, ScaleContext context) {
         return lineDefinition != null && lineDefinition.canVary()
                 && lineDefinition.isBetter(bestRoll(item, lineDefinition, line, context), line.magnitude(), context,
                         lowerIsBetter(item, line.effectName()));
@@ -98,7 +98,7 @@ public final class ItemForging {
         if (definition == null || definition.unique()) {
             return List.of();
         }
-        return item.explicits().stream().filter(rolled -> !rolled.locked()).toList();
+        return item.explicits().stream().filter(rolled -> !rolled.immutable()).toList();
     }
 
     public static boolean excise(Item item, RolledModifier removed) {
@@ -136,7 +136,7 @@ public final class ItemForging {
         }
         return rolled.mapLines(line -> {
             ModifierLine lineDefinition = modifier.line(line.effectName());
-            return improves(item, lineDefinition, line, context) ? new RolledEffect(line.effectName(), bestRoll(item, lineDefinition, line, context)) : line;
+            return improves(item, lineDefinition, line, context) ? new RolledLine(line.effectName(), bestRoll(item, lineDefinition, line, context)) : line;
         });
     }
 
@@ -151,7 +151,7 @@ public final class ItemForging {
             return false;
         }
         int modifierCount = item.explicits().size();
-        List<RolledModifier> modifiers = new ArrayList<>(item.explicits().stream().filter(rolled -> rolled.locked() || rolled.equals(anchor)).toList());
+        List<RolledModifier> modifiers = new ArrayList<>(item.explicits().stream().filter(rolled -> rolled.immutable() || rolled.equals(anchor)).toList());
         while (modifiers.size() < modifierCount) {
             List<List<PoolEntry>> openSides = AffixLayout.openSides(definition, modifiers, item.tier());
             if (openSides.isEmpty()) {
@@ -167,7 +167,7 @@ public final class ItemForging {
     public static boolean canRetemper(Item item) {
         ScaleContext context = item.scaleContext(null);
         for (RolledModifier implicit : item.implicits()) {
-            for (RolledEffect line : implicit.lines()) {
+            for (RolledLine line : implicit.lines()) {
                 ModifierLine lineDefinition = item.implicitLine(line.effectName());
                 if (improves(item, lineDefinition, line, context)) {
                     return true;
@@ -185,10 +185,10 @@ public final class ItemForging {
         List<RolledModifier> retempered = new ArrayList<>(item.implicits().size());
         for (RolledModifier implicit : item.implicits()) {
             RolledModifier rerolled = item.rerolledImplicit(implicit, random);
-            List<RolledEffect> kept = new ArrayList<>(implicit.lines().size());
+            List<RolledLine> kept = new ArrayList<>(implicit.lines().size());
             for (int index = 0; index < implicit.lines().size(); index++) {
-                RolledEffect current = implicit.lines().get(index);
-                RolledEffect candidate = rerolled.lines().get(index);
+                RolledLine current = implicit.lines().get(index);
+                RolledLine candidate = rerolled.lines().get(index);
                 ModifierLine lineDefinition = item.implicitLine(current.effectName());
                 boolean better = lineDefinition != null
                         && lineDefinition.isBetter(candidate.magnitude(), current.magnitude(), context, lowerIsBetter(item, current.effectName()));

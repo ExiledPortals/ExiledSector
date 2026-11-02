@@ -69,12 +69,12 @@ class MasterSchematicTest {
     @Test
     void storageCountsMasterSchematicsAndTakesThemOneAtATime() {
         ItemStore store = new ItemStore();
-        int revision = store.shipCurrencyRevision();
+        int revision = store.shipSchematicRevision();
 
         assertFalse(store.takeMasterSchematic());
         store.addMasterSchematics(2);
         assertEquals(2, store.masterSchematicCount());
-        assertTrue(store.shipCurrencyRevision() != revision);
+        assertTrue(store.shipSchematicRevision() != revision);
         assertTrue(store.takeMasterSchematic());
         assertTrue(store.takeMasterSchematic());
         assertFalse(store.takeMasterSchematic());

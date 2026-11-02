@@ -90,7 +90,7 @@ public final class DoctrineArchives {
         String modifiersText = ModCsv.text(row, MODIFIERS_COLUMN);
         int minLines = lineCount(ModCsv.text(row, MIN_LINES_COLUMN));
         int maxLines = lineCount(ModCsv.text(row, MAX_LINES_COLUMN));
-        if (behaviour == DoctrineBehaviour.TRANSFORM) {
+        if (behaviour == DoctrineBehaviour.REWRITE) {
             return new DoctrineArchive(definitionId, behaviour, radiusSize, typeIds(ModCsv.text(row, NOTABLES_COLUMN)),
                     typeIds(ModCsv.text(row, KEYSTONES_COLUMN)), typeIds(ModCsv.text(row, SMALL_NODES_COLUMN)), List.of(), minLines, maxLines,
                     factionId);
@@ -121,12 +121,12 @@ public final class DoctrineArchives {
         }
         boolean listsTypes = !typeIds(ModCsv.text(row, NOTABLES_COLUMN)).isEmpty() || !typeIds(ModCsv.text(row, KEYSTONES_COLUMN)).isEmpty()
                 || !typeIds(ModCsv.text(row, SMALL_NODES_COLUMN)).isEmpty();
-        if (behaviour == DoctrineBehaviour.TRANSFORM) {
+        if (behaviour == DoctrineBehaviour.REWRITE) {
             if (!listsTypes) {
-                problems.add(definitionId + " transforms nodes but lists no replacement notables, keystones or small nodes");
+                problems.add(definitionId + " rewrites nodes but lists no replacement notables, keystones or small nodes");
             }
             if (!ModCsv.text(row, MODIFIERS_COLUMN).isEmpty()) {
-                problems.add(definitionId + " transforms nodes, so it lists no modifiers");
+                problems.add(definitionId + " rewrites nodes, so it lists no modifiers");
             }
         } else if (behaviour == DoctrineBehaviour.AUGMENT && listsTypes) {
             problems.add(definitionId + " augments nodes, so it lists no replacement nodes");
@@ -215,8 +215,8 @@ public final class DoctrineArchives {
         if (archiveFactionId == null || factionId == null) {
             return false;
         }
-        String region = NpcFactionVolumes.regionFor(factionId);
-        return archiveFactionId.equals(factionId) || (region != null && region.equals(NpcFactionVolumes.regionFor(archiveFactionId)));
+        String volume = NpcFactionVolumes.volumeFor(factionId);
+        return archiveFactionId.equals(factionId) || (volume != null && volume.equals(NpcFactionVolumes.volumeFor(archiveFactionId)));
     }
 
     public static int generation() {

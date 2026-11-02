@@ -10,13 +10,13 @@ import exiledsector.charts.anomaly.convoy.ConvoyScript;
 import exiledsector.charts.anomaly.convoy.ConvoyState;
 import exiledsector.charts.anomaly.convoy.ConvoyStep;
 import exiledsector.charts.anomaly.debris.AnomalousDebrisTerrainPlugin;
-import exiledsector.charts.anomaly.heist.ListeningPostPlugin;
-import exiledsector.charts.anomaly.heist.PicketStation;
-import exiledsector.charts.anomaly.heist.PostScript;
-import exiledsector.charts.anomaly.station.MothershipFleetManager;
-import exiledsector.charts.anomaly.station.NexusFleetManager;
-import exiledsector.charts.anomaly.station.StationLaunches;
-import exiledsector.charts.anomaly.storm.StormFrontTerrainPlugin;
+import exiledsector.charts.anomaly.listeningpost.ListeningPostPlugin;
+import exiledsector.charts.anomaly.listeningpost.PicketStation;
+import exiledsector.charts.anomaly.listeningpost.PostScript;
+import exiledsector.charts.anomaly.landmark.MothershipFleetManager;
+import exiledsector.charts.anomaly.landmark.NexusFleetManager;
+import exiledsector.charts.anomaly.landmark.StationLaunches;
+import exiledsector.charts.anomaly.stormfront.StormFrontTerrainPlugin;
 import exiledsector.charts.layout.ChartCoronaTerrainPlugin;
 import exiledsector.charts.layout.ChartPulsarBeamTerrainPlugin;
 import exiledsector.charts.layout.abyss.AbyssalDarknessTerrainPlugin;
@@ -28,6 +28,7 @@ import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunState;
 import exiledsector.charts.wormhole.ChartWormholePlugin;
 import exiledsector.charts.wormhole.WormholeGateway;
+import exiledsector.items.StarChart;
 import exiledsector.ui.atlas.AtlasAbility;
 
 import java.util.Map;
@@ -76,5 +77,6 @@ public final class ChartSaveAliases {
     public static void register(XStream xstream) {
         MOVED.forEach(xstream::alias);
         ALIASES.forEach(xstream::alias);
+        xstream.aliasField("quality", StarChart.class, "quantity");
     }
 }

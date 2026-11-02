@@ -24,7 +24,7 @@ public class MaterialItemPlugin extends AnimatedCargoItemPlugin {
         if (description != null && !description.isEmpty()) {
             VanillaText.plainPara(tooltip, description, TOOLTIP_PAD, Misc.getGrayColor());
         }
-        ItemCurrency currency = ItemCurrencies.byItemId(itemId);
+        CraftingMaterialFamily currency = CraftingMaterialFamilies.byItemId(itemId);
         float linePad = TOOLTIP_PAD;
         for (StyledText line : currency == null ? List.<StyledText>of() : currency.grantedLines()) {
             VanillaText.addPara(tooltip, line, linePad, Misc.getTextColor());
@@ -37,8 +37,8 @@ public class MaterialItemPlugin extends AnimatedCargoItemPlugin {
     }
 
     static boolean alsoWorksOnStarCharts(String itemId) {
-        ItemCurrency currency = ItemCurrencies.byItemId(itemId);
-        return currency != null && ItemCurrencies.appliesTo(currency, ItemType.STAR_CHART)
+        CraftingMaterialFamily currency = CraftingMaterialFamilies.byItemId(itemId);
+        return currency != null && CraftingMaterialFamilies.appliesTo(currency, ItemType.STAR_CHART)
                 && ItemUnlock.available(ItemType.STAR_CHART, Global.getSector())
                 && currency.appliesToShipItems();
     }

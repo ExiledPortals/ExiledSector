@@ -17,28 +17,28 @@ class FactionFleetRendererTest {
     private static final float TOLERANCE = 0.001f;
 
     @Test
-    void aFactionVolumeCircleTheRegionStarOutToItsNodesIgnoringStrayNodes() {
+    void aFactionVolumeCirclesTheVolumeStarOutToItsNodesIgnoringStrayNodes() {
         List<Star> stars = List.of(new Star("pirate_star", 1000f, 0f, 200f, "star_red", null, List.of("pirate")));
         List<SkillNode> nodes = List.of(node("a", 1500f, 0f, "pirate"), node("b", 1000f, 800f, "pirate"), node("c", 1000f, -1000f, "pirate"),
                 node("stray", 9000f, 0f, "pirate"), node("core", 0f, 0f, "core"));
 
-        RoamVolume volume = TreeRoamVolumes.region("pirate", stars, nodes);
+        RoamVolume volume = TreeRoamVolumes.volume("pirate", stars, nodes);
 
-        assertEquals(new RoamVolume(1000f, 0f, 200f * TreeRoamVolumes.STAR_CLEARANCE_MULT, 1000f * TreeRoamVolumes.REGION_EDGE_MULT), volume);
+        assertEquals(new RoamVolume(1000f, 0f, 200f * TreeRoamVolumes.STAR_CLEARANCE_MULT, 1000f * TreeRoamVolumes.VOLUME_EDGE_MULT), volume);
     }
 
     @Test
     void aStarlessFactionVolumeCentresOnItsNodes() {
-        RoamVolume volume = TreeRoamVolumes.region("luddic", List.of(), List.of(node("a", 100f, 0f, "luddic"), node("b", -100f, 0f, "luddic")));
+        RoamVolume volume = TreeRoamVolumes.volume("luddic", List.of(), List.of(node("a", 100f, 0f, "luddic"), node("b", -100f, 0f, "luddic")));
 
         assertEquals(0f, volume.centerX(), TOLERANCE);
         assertEquals(0f, volume.innerRadius(), TOLERANCE);
-        assertEquals(100f * TreeRoamVolumes.REGION_EDGE_MULT, volume.outerRadius(), TOLERANCE);
+        assertEquals(100f * TreeRoamVolumes.VOLUME_EDGE_MULT, volume.outerRadius(), TOLERANCE);
     }
 
     @Test
-    void aRegionWithoutNodesHasNoVolume() {
-        assertNull(TreeRoamVolumes.region("hegemony", List.of(), List.of(node("a", 0f, 0f, "core"))));
+    void aVolumeWithoutNodesHasNoRoamVolume() {
+        assertNull(TreeRoamVolumes.volume("hegemony", List.of(), List.of(node("a", 0f, 0f, "core"))));
     }
 
     @Test
@@ -88,7 +88,7 @@ class FactionFleetRendererTest {
         assertTrue(Math.hypot(flight.positionX() - ally.centerX(), flight.positionY() - ally.centerY()) < ally.outerRadius() + 400f);
     }
 
-    private static SkillNode node(String id, float x, float y, String region) {
-        return new SkillNode(id, null, List.of(), x, y, SkillNodeDecoration.NONE, List.of(region));
+    private static SkillNode node(String id, float x, float y, String volume) {
+        return new SkillNode(id, null, List.of(), x, y, SkillNodeDecoration.NONE, List.of(volume));
     }
 }

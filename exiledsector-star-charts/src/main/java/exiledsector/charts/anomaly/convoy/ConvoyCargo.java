@@ -27,7 +27,7 @@ import java.util.Random;
 
 final class ConvoyCargo {
 
-    static final String CATEGORY_KEY_PREFIX = "chart.convoy.cargo.";
+    static final String CATEGORY_KEY_PREFIX = "chart.anomaly.supply_convoy.cargo.";
 
     private ConvoyCargo() {
     }

@@ -42,9 +42,9 @@ public class HyperNavBeaconGrant implements EconomyTickListener {
                 || !SkillTreeSetting.enabled()) {
             return false;
         }
-        String beaconId = WormholeAnchorDefinitions.definitionIdFor(SkillTags.EXOTECH_REGION);
+        String beaconId = WormholeAnchorDefinitions.definitionIdFor(SkillTags.EXOTECH_VOLUME);
         ItemDefinition beacon = beaconId == null ? null : ItemDefinitions.get(beaconId);
-        if (beacon == null || !WormholeAnchorDefinitions.areaActive(beacon.id()) || !ItemUnlock.unlockConditionMet(beacon, sector)) {
+        if (beacon == null || !WormholeAnchorDefinitions.volumeActive(beacon.id()) || !ItemUnlock.unlockConditionMet(beacon, sector)) {
             return false;
         }
         ItemData beaconData = ItemData.rolled(beacon, Seeds.random(sector.getSeedString() + "|" + GRANTED_KEY).nextLong());

@@ -57,7 +57,7 @@ public final class ChartRelays {
             }
             if (synced(sector.getClock(), playerFleet, relay, kind)) {
                 RelayStates.add(run, kind, RelayStates.SYNCED);
-                announce("chart.relay.message.synced", relay);
+                announce("chart.anomaly.relay_network.message.synced", relay);
                 wakeIfReady(run, system, relay, kind);
                 changed = true;
             }
@@ -126,9 +126,9 @@ public final class ChartRelays {
         if (!RelayStates.readyToWake(run, kind) || !wake(run, system, relay, kind)) {
             return false;
         }
-        announce("chart.relay.message.woken", relay);
+        announce("chart.anomaly.relay_network.message.woken", relay);
         if (RelayStates.allWoken(run)) {
-            CampaignMessages.plain(Translation.gameText("chart.relay.message.allWoken"), MESSAGE_COLOUR);
+            CampaignMessages.plain(Translation.gameText("chart.anomaly.relay_network.message.allWoken"), MESSAGE_COLOUR);
         }
         return true;
     }

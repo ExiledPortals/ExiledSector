@@ -116,7 +116,7 @@ public final class ItemModifiers {
         Map<String, Set<String>> exclusiveGroupsById = new LinkedHashMap<>();
         CsvRows.forEachRow(rows, sourcePath, LOG, (index, row) -> {
             Modifier modifier = parse(row);
-            Set<ModifierScope> scopes = parseScopes(modifier.id(), ModCsv.text(row, "item_types"));
+            Set<ModifierScope> scopes = parseScopes(modifier.id(), ModCsv.text(row, "scopes"));
             if (!allowedScopes.test(scopes)) {
                 throw new IllegalArgumentException(modifier.id() + " lists item types " + scopes.stream().map(ModifierScope::id).toList()
                         + ", which do not belong in this file");
@@ -158,12 +158,12 @@ public final class ItemModifiers {
         if (!ID_PATTERN.matcher(modifierId).matches()) {
             throw new IllegalArgumentException("id \"" + modifierId + "\" must be letters, digits and underscores");
         }
-        String slotText = ModCsv.text(row, "slot");
+        String slotText = ModCsv.text(row, "affix");
         ModifierSlot slot = ModifierSlot.byIdOrNull(slotText);
         if (slot == null) {
             throw new IllegalArgumentException(modifierId + " has slot \"" + slotText + "\"; expected implicit, prefix or suffix");
         }
-        ModifierEffects effects = effectsForListedTypes(ModCsv.text(row, "item_types"));
+        ModifierEffects effects = effectsForListedTypes(ModCsv.text(row, "scopes"));
         return new Modifier(modifierId, slot, parseLines(modifierId, slot, effects, ModCsv.text(row, "lines")));
     }
 

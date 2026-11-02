@@ -13,7 +13,7 @@ final class RefractionDrones extends SingleShotDrones<RefractionDrone> {
         super(firingShip, LOG, "Refracting Projectiles", "refract");
     }
 
-    void launch(EnergyChainListener chain, WeaponAPI weapon, ShipAPI hitShip, Vector2f impactPoint, ShipAPI target, ChainLink link) {
+    void launch(RefractionListener chain, WeaponAPI weapon, ShipAPI hitShip, Vector2f impactPoint, ShipAPI target, RefractionLink link) {
         RefractionDrone drone = acquire(weapon);
         if (drone != null) {
             drone.launch(chain, hitShip, impactPoint, target, link, weapon.getRange());

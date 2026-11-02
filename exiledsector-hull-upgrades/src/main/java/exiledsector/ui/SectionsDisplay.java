@@ -13,7 +13,7 @@ import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.items.HullItem;
 import exiledsector.items.HullUpgradePoints;
 import exiledsector.items.HullUpgradeRules;
-import exiledsector.items.HullUpgradeTooltip;
+import exiledsector.items.RefitSchematicTooltip;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
 import exiledsector.items.RefitSchematic;
@@ -93,7 +93,7 @@ final class SectionsDisplay {
         int revision = sectionEditor.revision();
         int pointsRevision = HullUpgradePoints.revision();
         ItemStore store = upgradeStore();
-        int schematicRevision = store == null ? 0 : store.shipCurrencyRevision();
+        int schematicRevision = store == null ? 0 : store.shipSchematicRevision();
         if (revision == shownRevision && pointsRevision == shownPointsRevision && schematicRevision == shownSchematicRevision) {
             return false;
         }
@@ -117,7 +117,7 @@ final class SectionsDisplay {
         ItemStore store = upgradeStore();
         if (playerFleet != null && store != null) {
             store.absorbFrom(playerFleet.getCargo());
-            shownSchematicRevision = store.shipCurrencyRevision();
+            shownSchematicRevision = store.shipSchematicRevision();
             shownSchematicCounts = store.schematicCounts();
             shownMasterSchematicCount = store.masterSchematicCount();
         }
@@ -156,11 +156,11 @@ final class SectionsDisplay {
             typeLabels[i].set(unlocked.section().displayName());
             typeLabels[i].setColor(SectionFlair.colorOf(unlocked.section()));
             if (!unlocked.active()) {
-                stateLabels[i].set(Translation.msg("framework.socket.inactive")
-                        .arg("requirement", HullUpgradeTooltip.requirementText(unlocked.unmetRequirement())).text());
+                stateLabels[i].set(Translation.msg("framework.section.inactive")
+                        .arg("requirement", RefitSchematicTooltip.requirementText(unlocked.unmetRequirement())).text());
                 stateLabels[i].setColor(SectionFlair.inactiveColor());
             } else if (unlocked.item() == null) {
-                stateLabels[i].set(Translation.text("framework.socket.empty"));
+                stateLabels[i].set(Translation.text("framework.section.empty"));
                 stateLabels[i].setColor(Misc.getGrayColor());
             } else {
                 stateLabels[i].set(unlocked.item().name());
@@ -192,10 +192,10 @@ final class SectionsDisplay {
     private static List<StyledText> tooltipFooter(ShipSections.UnlockedSection unlocked, SectionEditor editor) {
         List<StyledText> footer = new ArrayList<>(AffinityItemLines.current(unlocked.item(), editor.hullSize(), editor::affinityTotals));
         if (!unlocked.active()) {
-            footer.add(Translation.msg("framework.socket.inactive")
-                    .arg("requirement", HullUpgradeTooltip.requirementText(unlocked.unmetRequirement())).styled());
+            footer.add(Translation.msg("framework.section.inactive")
+                    .arg("requirement", RefitSchematicTooltip.requirementText(unlocked.unmetRequirement())).styled());
         }
-        footer.add(Translation.styled("framework.socket.removeHint"));
+        footer.add(Translation.styled("framework.section.removeHint"));
         return footer;
     }
 
@@ -275,7 +275,7 @@ final class SectionsDisplay {
         String unmetRequirement = sectionEditor.unmetRequirement(section);
         if (unmetRequirement != null) {
             return new HullUpgradePanel.SectionEntry(section, HullUpgradePanel.SectionState.RESTRICTED,
-                    HullUpgradeTooltip.requirementText(unmetRequirement), null);
+                    RefitSchematicTooltip.requirementText(unmetRequirement), null);
         }
         HullUpgradePanel.SectionState state = sectionEditor.unspentHullUpgradePoints() > 0 ? HullUpgradePanel.SectionState.AVAILABLE
                 : HullUpgradePanel.SectionState.NO_POINTS;

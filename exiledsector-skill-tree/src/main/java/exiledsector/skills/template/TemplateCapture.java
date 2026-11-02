@@ -21,7 +21,7 @@ public final class TemplateCapture {
     }
 
     public static List<TemplateStep> capture(ShipSkillData shipData, String startingRootId, Map<String, SkillNode> nodesById) {
-        return capture(pathAllocatedNodeIds(shipData, shipData.getAllocatedNodeIds(), startingRootId), shipData::getOptionalSelection, ShipTreeLinks.wormholePartners(shipData),
+        return capture(pathAllocatedNodeIds(shipData, shipData.getAllocatedNodeIds(), startingRootId), shipData::getChoiceSelection, ShipTreeLinks.wormholePartners(shipData),
                 startingRootId, nodesById);
     }
 
@@ -88,7 +88,7 @@ public final class TemplateCapture {
 
     private static void place(SkillNode node, UnaryOperator<String> optionOf, Set<String> placedNodeIds, List<TemplateStep> steps) {
         placedNodeIds.add(node.getId());
-        String optionTypeId = node.getType().isOptional() ? optionOf.apply(node.getId()) : null;
+        String optionTypeId = node.getType().isChoice() ? optionOf.apply(node.getId()) : null;
         steps.add(new TemplateStep(node.getId(), optionTypeId));
     }
 }

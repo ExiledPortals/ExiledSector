@@ -22,7 +22,7 @@ const vocabulary = buildVocabulary({
     { name: 'ARMOR_FLAT', statMode: 'FLAT', lowerIsBetter: false },
     { name: 'ARMOR_PERCENT', statMode: 'PERCENT', lowerIsBetter: false },
   ],
-  tags: { theme: [], region: [], requirement: [] },
+  tags: { theme: [], volume: [], requirement: [] },
   tiers: [],
   unlockConditionTypes: [],
   blueprintCategories: [],
@@ -59,7 +59,7 @@ describe('item modifiers', () => {
   });
 
   it('round-trips a file with its item types and keeps unknown columns', () => {
-    const text = 'id,slot,item_types,lines,name,notes\nHULL_MULT,prefix,subroutine;hull_item,HULL_MULT:4:6,Reinforced,keep me\n';
+    const text = 'id,affix,scopes,lines,name,notes\nHULL_MULT,prefix,subroutine;hull_item,HULL_MULT:4:6,Reinforced,keep me\n';
     const model = parseModifiersCsv(text);
 
     expect(model.modifiers[0].itemTypes).toEqual(['subroutine', 'hull_item']);
@@ -67,15 +67,15 @@ describe('item modifiers', () => {
   });
 
   it('reads and writes exclusive groups, adding the column only once a modifier has one', () => {
-    const text = 'id,slot,item_types,lines,name,exclusive_groups\nHULL_MULT,prefix,hull_item,HULL_MULT:4:6,Reinforced,crippled;other\nARMOR_PERCENT,prefix,hull_item,ARMOR_PERCENT:4:6,Plated,\n';
+    const text = 'id,affix,scopes,lines,name,exclusive_groups\nHULL_MULT,prefix,hull_item,HULL_MULT:4:6,Reinforced,crippled;other\nARMOR_PERCENT,prefix,hull_item,ARMOR_PERCENT:4:6,Plated,\n';
     const model = parseModifiersCsv(text);
-    const ungrouped = parseModifiersCsv('id,slot,item_types,lines,name\nHULL_MULT,prefix,hull_item,HULL_MULT:4:6,Reinforced\n');
+    const ungrouped = parseModifiersCsv('id,affix,scopes,lines,name\nHULL_MULT,prefix,hull_item,HULL_MULT:4:6,Reinforced\n');
 
     expect(model.modifiers.map((modifier) => modifier.exclusiveGroups)).toEqual([['crippled', 'other'], []]);
     expect(serializeModifiersCsv(model)).toBe(text);
-    expect(serializeModifiersCsv(ungrouped)).toBe('id,slot,item_types,lines,name\nHULL_MULT,prefix,hull_item,HULL_MULT:4:6,Reinforced\n');
+    expect(serializeModifiersCsv(ungrouped)).toBe('id,affix,scopes,lines,name\nHULL_MULT,prefix,hull_item,HULL_MULT:4:6,Reinforced\n');
     ungrouped.modifiers[0].exclusiveGroups = ['bad group'];
-    expect(serializeModifiersCsv(ungrouped)).toBe('id,slot,item_types,lines,name,exclusive_groups\nHULL_MULT,prefix,hull_item,HULL_MULT:4:6,Reinforced,bad group\n');
+    expect(serializeModifiersCsv(ungrouped)).toBe('id,affix,scopes,lines,name,exclusive_groups\nHULL_MULT,prefix,hull_item,HULL_MULT:4:6,Reinforced,bad group\n');
     expect(validateModifiers(ungrouped.modifiers, vocabulary, modifierUsage(definitions(), []))).toContain(
       'HULL_MULT: exclusive group "bad group" must be letters, digits and underscores',
     );
@@ -97,7 +97,7 @@ describe('item modifiers', () => {
 
   it('reports every rule the game would reject', () => {
     const modifiers = parseModifiersCsv(
-      'id,slot,item_types,lines,name\n' +
+      'id,affix,scopes,lines,name\n' +
         'HULL_MULT,prefix,subroutine,HULL_MULT:4:6,Reinforced\n' +
         'HULL_MULT,prefix,subroutine,HULL_MULT:1:2,Again\n' +
         'bad id,sideways,,,\n' +
@@ -132,7 +132,7 @@ describe('item modifiers', () => {
   });
 
   it('lets subroutines roll corrupted implicits', () => {
-    const modifiers = parseModifiersCsv('id,slot,item_types,lines,name\nHULL_MULT_SUBROUTINE_IMPLICIT,implicit,subroutine,HULL_MULT:4:6,\n').modifiers;
+    const modifiers = parseModifiersCsv('id,affix,scopes,lines,name\nHULL_MULT_SUBROUTINE_IMPLICIT,implicit,subroutine,HULL_MULT:4:6,\n').modifiers;
 
     expect(validateModifiers(modifiers, vocabulary, modifierUsage(definitions(), []))).toEqual([]);
   });
@@ -140,7 +140,7 @@ describe('item modifiers', () => {
   it('keeps star chart modifiers out of item_modifiers.csv', () => {
     const withCharts = buildVocabulary({
       effects: [{ name: 'HULL_MULT', statMode: 'MULT', lowerIsBetter: false }],
-      tags: { theme: [], region: [], requirement: [] },
+      tags: { theme: [], volume: [], requirement: [] },
       tiers: [],
       unlockConditionTypes: [],
       blueprintCategories: [],
@@ -150,7 +150,7 @@ describe('item modifiers', () => {
     });
     expect(shipItemTypes(withCharts)).toEqual(['hull_item']);
     expect(newModifier([], 'prefix', withCharts).itemTypes).toEqual(['hull_item']);
-    const modifiers = parseModifiersCsv('id,slot,item_types,lines,name\nHULL_MULT,prefix,hull_item;star_chart,HULL_MULT:4:6,Reinforced\n').modifiers;
+    const modifiers = parseModifiersCsv('id,affix,scopes,lines,name\nHULL_MULT,prefix,hull_item;star_chart,HULL_MULT:4:6,Reinforced\n').modifiers;
 
     expect(validateModifiers(modifiers, withCharts, new Map())).toEqual([
       'HULL_MULT: star chart modifiers belong in star_chart_modifiers.csv, not item_modifiers.csv',
@@ -180,7 +180,7 @@ describe('item modifiers', () => {
   it('counts unique subroutine lines as unique_subroutine uses, renames them and checks their scope', () => {
     const withUniques = buildVocabulary({
       effects: [{ name: 'HULL_MULT', statMode: 'MULT', lowerIsBetter: false }],
-      tags: { theme: [], region: [], requirement: [] },
+      tags: { theme: [], volume: [], requirement: [] },
       tiers: [],
       unlockConditionTypes: [],
       blueprintCategories: [],
@@ -195,7 +195,7 @@ describe('item modifiers', () => {
     ).definitions;
     const usage = modifierUsage(items, []);
     const modifiers = parseModifiersCsv(
-      'id,slot,item_types,lines,name\n' +
+      'id,affix,scopes,lines,name\n' +
         'HULL_MULT_RELIC,suffix,hull_item,HULL_MULT:4:6,\n' +
         'HULL_MULT_SUFFIX,suffix,unique_subroutine,HULL_MULT:4:6,\n',
     ).modifiers;
@@ -215,7 +215,7 @@ describe('item modifiers', () => {
     const implicitRows = parseImplicitsCsv(IMPLICITS_CSV, vocabulary).rows;
     const catalogue = modifierById(
       parseModifiersCsv(
-        'id,slot,item_types,lines,name\nHULL_MULT,suffix,hull_item,HULL_MULT:4:6,Reinforced\nARMOR_FLAT,suffix,hull_item,ARMOR_FLAT:1:2,Plating\n',
+        'id,affix,scopes,lines,name\nHULL_MULT,suffix,hull_item,HULL_MULT:4:6,Reinforced\nARMOR_FLAT,suffix,hull_item,ARMOR_FLAT:1:2,Plating\n',
       ).modifiers,
     );
 

@@ -259,7 +259,7 @@ public final class AtlasCatalystPanel extends HoloPanel {
         refreshOpacity();
     }
 
-    private WorkbenchTile catalystTile(AtlasCatalystItems.Carried entry) {
+    private CraftingBenchTile catalystTile(AtlasCatalystItems.Carried entry) {
         AtlasCatalysts.Catalyst catalyst = entry.catalyst();
         String itemId = catalyst.itemId();
         TileInput.Handler handler = TileInput.Handler.of(tilePosition -> queue(() -> showTooltip(entry, tilePosition)), () -> queue(() -> {
@@ -270,7 +270,7 @@ public final class AtlasCatalystPanel extends HoloPanel {
             queue(() -> select(itemId.equals(selectedItemId) ? null : catalyst));
             return true;
         }, () -> false);
-        return WorkbenchTile.selectable(catalyst.iconPath(), CatalystCargo.look(catalyst.family()), () -> itemId.equals(selectedItemId), handler);
+        return CraftingBenchTile.selectable(catalyst.iconPath(), CatalystCargo.look(catalyst.family()), () -> itemId.equals(selectedItemId), handler);
     }
 
     private void select(AtlasCatalysts.Catalyst catalyst) {

@@ -178,18 +178,6 @@ effect|BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT|12.5	0	<good>12.5%</good> mor
 effect|BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT|100.0	0	<good>100%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
 effect|BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT|-10.0	0	<good>-10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
 effect|BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT|-12.5	0	<good>-12.5%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
-effect|BALLISTIC_WEAPON_FIRE_RATE_MULT|1.0	0	<good>1%</good> more ballistic weapon rate of fire.
-effect|BALLISTIC_WEAPON_FIRE_RATE_MULT|10.0	0	<good>10%</good> more ballistic weapon rate of fire.
-effect|BALLISTIC_WEAPON_FIRE_RATE_MULT|12.5	0	<good>12.5%</good> more ballistic weapon rate of fire.
-effect|BALLISTIC_WEAPON_FIRE_RATE_MULT|100.0	0	<good>100%</good> more ballistic weapon rate of fire.
-effect|BALLISTIC_WEAPON_FIRE_RATE_MULT|-10.0	0	<bad>10%</bad> less ballistic weapon rate of fire.
-effect|BALLISTIC_WEAPON_FIRE_RATE_MULT|-12.5	0	<bad>12.5%</bad> less ballistic weapon rate of fire.
-effect|BALLISTIC_WEAPON_FIRE_RATE_PERCENT|1.0	0	<good>1%</good> increased ballistic weapon rate of fire.
-effect|BALLISTIC_WEAPON_FIRE_RATE_PERCENT|10.0	0	<good>10%</good> increased ballistic weapon rate of fire.
-effect|BALLISTIC_WEAPON_FIRE_RATE_PERCENT|12.5	0	<good>12.5%</good> increased ballistic weapon rate of fire.
-effect|BALLISTIC_WEAPON_FIRE_RATE_PERCENT|100.0	0	<good>100%</good> increased ballistic weapon rate of fire.
-effect|BALLISTIC_WEAPON_FIRE_RATE_PERCENT|-10.0	0	<bad>10%</bad> reduced ballistic weapon rate of fire.
-effect|BALLISTIC_WEAPON_FIRE_RATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced ballistic weapon rate of fire.
 effect|BALLISTIC_WEAPON_FLUX_COST_MULT|1.0	1	<good>1%</good> more ballistic weapon flux cost.
 effect|BALLISTIC_WEAPON_FLUX_COST_MULT|10.0	1	<good>10%</good> more ballistic weapon flux cost.
 effect|BALLISTIC_WEAPON_FLUX_COST_MULT|12.5	1	<good>12.5%</good> more ballistic weapon flux cost.
@@ -244,6 +232,18 @@ effect|BALLISTIC_WEAPON_RANGE_PERCENT|12.5	0	<good>12.5%</good> increased ballis
 effect|BALLISTIC_WEAPON_RANGE_PERCENT|100.0	0	<good>100%</good> increased ballistic weapon range.
 effect|BALLISTIC_WEAPON_RANGE_PERCENT|-10.0	0	<bad>10%</bad> reduced ballistic weapon range.
 effect|BALLISTIC_WEAPON_RANGE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced ballistic weapon range.
+effect|BALLISTIC_WEAPON_RATE_OF_FIRE_MULT|1.0	0	<good>1%</good> more ballistic weapon rate of fire.
+effect|BALLISTIC_WEAPON_RATE_OF_FIRE_MULT|10.0	0	<good>10%</good> more ballistic weapon rate of fire.
+effect|BALLISTIC_WEAPON_RATE_OF_FIRE_MULT|12.5	0	<good>12.5%</good> more ballistic weapon rate of fire.
+effect|BALLISTIC_WEAPON_RATE_OF_FIRE_MULT|100.0	0	<good>100%</good> more ballistic weapon rate of fire.
+effect|BALLISTIC_WEAPON_RATE_OF_FIRE_MULT|-10.0	0	<bad>10%</bad> less ballistic weapon rate of fire.
+effect|BALLISTIC_WEAPON_RATE_OF_FIRE_MULT|-12.5	0	<bad>12.5%</bad> less ballistic weapon rate of fire.
+effect|BALLISTIC_WEAPON_RATE_OF_FIRE_PERCENT|1.0	0	<good>1%</good> increased ballistic weapon rate of fire.
+effect|BALLISTIC_WEAPON_RATE_OF_FIRE_PERCENT|10.0	0	<good>10%</good> increased ballistic weapon rate of fire.
+effect|BALLISTIC_WEAPON_RATE_OF_FIRE_PERCENT|12.5	0	<good>12.5%</good> increased ballistic weapon rate of fire.
+effect|BALLISTIC_WEAPON_RATE_OF_FIRE_PERCENT|100.0	0	<good>100%</good> increased ballistic weapon rate of fire.
+effect|BALLISTIC_WEAPON_RATE_OF_FIRE_PERCENT|-10.0	0	<bad>10%</bad> reduced ballistic weapon rate of fire.
+effect|BALLISTIC_WEAPON_RATE_OF_FIRE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced ballistic weapon rate of fire.
 effect|BEAM_ENERGY_TO_HIGH_EXPLOSIVE|1.0	0	Energy damage from beam weapons is converted to high explosive damage.
 effect|BEAM_ENERGY_TO_HIGH_EXPLOSIVE|10.0	0	Energy damage from beam weapons is converted to high explosive damage.
 effect|BEAM_ENERGY_TO_HIGH_EXPLOSIVE|12.5	0	Energy damage from beam weapons is converted to high explosive damage.
@@ -412,6 +412,18 @@ effect|BOMBER_ROLE_TOP_SPEED_PERCENT|12.5	0	Bombers launched from this ship have
 effect|BOMBER_ROLE_TOP_SPEED_PERCENT|100.0	0	Bombers launched from this ship have <good>100%</good> increased top speed.
 effect|BOMBER_ROLE_TOP_SPEED_PERCENT|-10.0	0	Bombers launched from this ship have <bad>10%</bad> reduced top speed.
 effect|BOMBER_ROLE_TOP_SPEED_PERCENT|-12.5	0	Bombers launched from this ship have <bad>12.5%</bad> reduced top speed.
+effect|BORROWED_GRACE_MAX_STACKS_FLAT|1.0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>1</good> stacks. Stack timers pause while the ship is phased.
+effect|BORROWED_GRACE_MAX_STACKS_FLAT|10.0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>10</good> stacks. Stack timers pause while the ship is phased.
+effect|BORROWED_GRACE_MAX_STACKS_FLAT|12.5	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>12.5</good> stacks. Stack timers pause while the ship is phased.
+effect|BORROWED_GRACE_MAX_STACKS_FLAT|100.0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>100</good> stacks. Stack timers pause while the ship is phased.
+effect|BORROWED_GRACE_MAX_STACKS_FLAT|-10.0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>-10</good> stacks. Stack timers pause while the ship is phased.
+effect|BORROWED_GRACE_MAX_STACKS_FLAT|-12.5	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>-12.5</good> stacks. Stack timers pause while the ship is phased.
+effect|BORROWED_GRACE_PERCENT_PER_STACK|1.0	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
+effect|BORROWED_GRACE_PERCENT_PER_STACK|10.0	0	Each Borrowed Grace stack grants <good>10%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>10%</good> reduced weapon flux cost and damage taken.
+effect|BORROWED_GRACE_PERCENT_PER_STACK|12.5	0	Each Borrowed Grace stack grants <good>12.5%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>12.5%</good> reduced weapon flux cost and damage taken.
+effect|BORROWED_GRACE_PERCENT_PER_STACK|100.0	0	Each Borrowed Grace stack grants <good>100%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>100%</good> reduced weapon flux cost and damage taken.
+effect|BORROWED_GRACE_PERCENT_PER_STACK|-10.0	0	Each Borrowed Grace stack grants <good>-10%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>-10%</good> reduced weapon flux cost and damage taken.
+effect|BORROWED_GRACE_PERCENT_PER_STACK|-12.5	0	Each Borrowed Grace stack grants <good>-12.5%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>-12.5%</good> reduced weapon flux cost and damage taken.
 effect|BREAK_PROBABILITY_PERCENT|1.0	1	<good>1%</good> increased chance of this ship breaking apart when destroyed.
 effect|BREAK_PROBABILITY_PERCENT|10.0	1	<good>10%</good> increased chance of this ship breaking apart when destroyed.
 effect|BREAK_PROBABILITY_PERCENT|12.5	1	<good>12.5%</good> increased chance of this ship breaking apart when destroyed.
@@ -454,6 +466,12 @@ effect|COMBAT_BOOST_WHILE_PHASED|12.5	0	<good>12.5%</good> more flux dissipation
 effect|COMBAT_BOOST_WHILE_PHASED|100.0	0	<good>100%</good> more flux dissipation, weapon rate of fire and ammo regeneration while phased.
 effect|COMBAT_BOOST_WHILE_PHASED|-10.0	0	<bad>10%</bad> less flux dissipation, weapon rate of fire and ammo regeneration while phased.
 effect|COMBAT_BOOST_WHILE_PHASED|-12.5	0	<bad>12.5%</bad> less flux dissipation, weapon rate of fire and ammo regeneration while phased.
+effect|COMBAT_DMOD_EFFECT_MULT_PER_DMOD|1.0	1	<good>1%</good> more negative effects from combat D-mods per D-mod, up to 5 D-mods.
+effect|COMBAT_DMOD_EFFECT_MULT_PER_DMOD|10.0	1	<good>10%</good> more negative effects from combat D-mods per D-mod, up to 5 D-mods.
+effect|COMBAT_DMOD_EFFECT_MULT_PER_DMOD|12.5	1	<good>12.5%</good> more negative effects from combat D-mods per D-mod, up to 5 D-mods.
+effect|COMBAT_DMOD_EFFECT_MULT_PER_DMOD|100.0	1	<good>100%</good> more negative effects from combat D-mods per D-mod, up to 5 D-mods.
+effect|COMBAT_DMOD_EFFECT_MULT_PER_DMOD|-10.0	1	<bad>10%</bad> less negative effects from combat D-mods per D-mod, up to 5 D-mods.
+effect|COMBAT_DMOD_EFFECT_MULT_PER_DMOD|-12.5	1	<bad>12.5%</bad> less negative effects from combat D-mods per D-mod, up to 5 D-mods.
 effect|COMBAT_VISION|1.0	0	<good>+1</good> to in-combat sensor/vision range.
 effect|COMBAT_VISION|10.0	0	<good>+10</good> to in-combat sensor/vision range.
 effect|COMBAT_VISION|12.5	0	<good>+12.5</good> to in-combat sensor/vision range.
@@ -520,12 +538,6 @@ effect|CORONA_RESISTANCE_MULT|12.5	1	<good>12.5%</good> more combat readiness lo
 effect|CORONA_RESISTANCE_MULT|100.0	1	<good>100%</good> more combat readiness loss from being in a solar corona or a deep hyperspace storm.
 effect|CORONA_RESISTANCE_MULT|-10.0	1	<bad>10%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 effect|CORONA_RESISTANCE_MULT|-12.5	1	<bad>12.5%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-effect|CORROSION_MOTE_DAMAGE_FLAT|1.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>1</good> energy damage and <good>1</good> EMP. At most 20 of this ship's motes fly at once.
-effect|CORROSION_MOTE_DAMAGE_FLAT|10.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>10</good> energy damage and <good>10</good> EMP. At most 20 of this ship's motes fly at once.
-effect|CORROSION_MOTE_DAMAGE_FLAT|12.5	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>12.5</good> energy damage and <good>12.5</good> EMP. At most 20 of this ship's motes fly at once.
-effect|CORROSION_MOTE_DAMAGE_FLAT|100.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>100</good> energy damage and <good>100</good> EMP. At most 20 of this ship's motes fly at once.
-effect|CORROSION_MOTE_DAMAGE_FLAT|-10.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>-10</good> energy damage and <good>-10</good> EMP. At most 20 of this ship's motes fly at once.
-effect|CORROSION_MOTE_DAMAGE_FLAT|-12.5	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>-12.5</good> energy damage and <good>-12.5</good> EMP. At most 20 of this ship's motes fly at once.
 effect|CREATE_FRONT_SHIELD_IF_NONE|1.0	0	Installs a makeshift, front-facing shield if this ship has none.
 effect|CREATE_FRONT_SHIELD_IF_NONE|10.0	0	Installs a makeshift, front-facing shield if this ship has none.
 effect|CREATE_FRONT_SHIELD_IF_NONE|12.5	0	Installs a makeshift, front-facing shield if this ship has none.
@@ -760,18 +772,6 @@ effect|ENERGY_WEAPON_DAMAGE_PERCENT_PER_HIGH_TECH_AFFINITY|12.5	0	<good>12.5%</g
 effect|ENERGY_WEAPON_DAMAGE_PERCENT_PER_HIGH_TECH_AFFINITY|100.0	0	<good>100%</good> increased energy weapon damage for every 5 High Tech Affinity.
 effect|ENERGY_WEAPON_DAMAGE_PERCENT_PER_HIGH_TECH_AFFINITY|-10.0	0	<bad>10%</bad> reduced energy weapon damage for every 5 High Tech Affinity.
 effect|ENERGY_WEAPON_DAMAGE_PERCENT_PER_HIGH_TECH_AFFINITY|-12.5	0	<bad>12.5%</bad> reduced energy weapon damage for every 5 High Tech Affinity.
-effect|ENERGY_WEAPON_FIRE_RATE_MULT|1.0	0	<good>1%</good> more energy weapon rate of fire. Burst beams instead recharge faster between bursts.
-effect|ENERGY_WEAPON_FIRE_RATE_MULT|10.0	0	<good>10%</good> more energy weapon rate of fire. Burst beams instead recharge faster between bursts.
-effect|ENERGY_WEAPON_FIRE_RATE_MULT|12.5	0	<good>12.5%</good> more energy weapon rate of fire. Burst beams instead recharge faster between bursts.
-effect|ENERGY_WEAPON_FIRE_RATE_MULT|100.0	0	<good>100%</good> more energy weapon rate of fire. Burst beams instead recharge faster between bursts.
-effect|ENERGY_WEAPON_FIRE_RATE_MULT|-10.0	0	<bad>10%</bad> less energy weapon rate of fire. Burst beams instead recharge faster between bursts.
-effect|ENERGY_WEAPON_FIRE_RATE_MULT|-12.5	0	<bad>12.5%</bad> less energy weapon rate of fire. Burst beams instead recharge faster between bursts.
-effect|ENERGY_WEAPON_FIRE_RATE_PERCENT|1.0	0	<good>1%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
-effect|ENERGY_WEAPON_FIRE_RATE_PERCENT|10.0	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
-effect|ENERGY_WEAPON_FIRE_RATE_PERCENT|12.5	0	<good>12.5%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
-effect|ENERGY_WEAPON_FIRE_RATE_PERCENT|100.0	0	<good>100%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
-effect|ENERGY_WEAPON_FIRE_RATE_PERCENT|-10.0	0	<bad>10%</bad> reduced energy weapon rate of fire. Burst beams instead recharge faster between bursts.
-effect|ENERGY_WEAPON_FIRE_RATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 effect|ENERGY_WEAPON_FLUX_COST_MULT|1.0	1	<good>1%</good> more energy weapon flux cost.
 effect|ENERGY_WEAPON_FLUX_COST_MULT|10.0	1	<good>10%</good> more energy weapon flux cost.
 effect|ENERGY_WEAPON_FLUX_COST_MULT|12.5	1	<good>12.5%</good> more energy weapon flux cost.
@@ -820,6 +820,18 @@ effect|ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT|12.5	0	<good>+12.5</good> to
 effect|ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT|100.0	0	<good>+100</good> to energy weapon range for every point of this ship's sensor strength.
 effect|ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT|-10.0	0	<good>+-10</good> to energy weapon range for every point of this ship's sensor strength.
 effect|ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT|-12.5	0	<good>+-12.5</good> to energy weapon range for every point of this ship's sensor strength.
+effect|ENERGY_WEAPON_RATE_OF_FIRE_MULT|1.0	0	<good>1%</good> more energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|ENERGY_WEAPON_RATE_OF_FIRE_MULT|10.0	0	<good>10%</good> more energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|ENERGY_WEAPON_RATE_OF_FIRE_MULT|12.5	0	<good>12.5%</good> more energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|ENERGY_WEAPON_RATE_OF_FIRE_MULT|100.0	0	<good>100%</good> more energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|ENERGY_WEAPON_RATE_OF_FIRE_MULT|-10.0	0	<bad>10%</bad> less energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|ENERGY_WEAPON_RATE_OF_FIRE_MULT|-12.5	0	<bad>12.5%</bad> less energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|ENERGY_WEAPON_RATE_OF_FIRE_PERCENT|1.0	0	<good>1%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|ENERGY_WEAPON_RATE_OF_FIRE_PERCENT|10.0	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|ENERGY_WEAPON_RATE_OF_FIRE_PERCENT|12.5	0	<good>12.5%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|ENERGY_WEAPON_RATE_OF_FIRE_PERCENT|100.0	0	<good>100%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|ENERGY_WEAPON_RATE_OF_FIRE_PERCENT|-10.0	0	<bad>10%</bad> reduced energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|ENERGY_WEAPON_RATE_OF_FIRE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 effect|ENGINE_DURABILITY_PERCENT|1.0	0	<good>1%</good> increased engine durability.
 effect|ENGINE_DURABILITY_PERCENT|10.0	0	<good>10%</good> increased engine durability.
 effect|ENGINE_DURABILITY_PERCENT|12.5	0	<good>12.5%</good> increased engine durability.
@@ -844,12 +856,12 @@ effect|ESCORT_WEAPON_RANGE_BONUS_PERCENT|12.5	0	While within 700 su of a larger 
 effect|ESCORT_WEAPON_RANGE_BONUS_PERCENT|100.0	0	While within 700 su of a larger friendly ship, up to 100% increased ballistic and energy weapon range, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 effect|ESCORT_WEAPON_RANGE_BONUS_PERCENT|-10.0	0	While within 700 su of a larger friendly ship, up to -10% increased ballistic and energy weapon range, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 effect|ESCORT_WEAPON_RANGE_BONUS_PERCENT|-12.5	0	While within 700 su of a larger friendly ship, up to -12.5% increased ballistic and energy weapon range, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
-effect|EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE|1.0	0	Takes over every node in its radius for free. Each grants <good>+1</good> to every affinity instead of its own effects.
-effect|EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE|10.0	0	Takes over every node in its radius for free. Each grants <good>+10</good> to every affinity instead of its own effects.
-effect|EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE|12.5	0	Takes over every node in its radius for free. Each grants <good>+12.5</good> to every affinity instead of its own effects.
-effect|EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE|100.0	0	Takes over every node in its radius for free. Each grants <good>+100</good> to every affinity instead of its own effects.
-effect|EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE|-10.0	0	Takes over every node in its radius for free. Each grants <bad>-10</bad> to every affinity instead of its own effects.
-effect|EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE|-12.5	0	Takes over every node in its radius for free. Each grants <bad>-12.5</bad> to every affinity instead of its own effects.
+effect|EVERY_AFFINITY_FLAT_PER_EMPTY_SHELL_NODE|1.0	0	Takes over every node in its radius for free. Each grants <good>+1</good> to every affinity instead of its own effects.
+effect|EVERY_AFFINITY_FLAT_PER_EMPTY_SHELL_NODE|10.0	0	Takes over every node in its radius for free. Each grants <good>+10</good> to every affinity instead of its own effects.
+effect|EVERY_AFFINITY_FLAT_PER_EMPTY_SHELL_NODE|12.5	0	Takes over every node in its radius for free. Each grants <good>+12.5</good> to every affinity instead of its own effects.
+effect|EVERY_AFFINITY_FLAT_PER_EMPTY_SHELL_NODE|100.0	0	Takes over every node in its radius for free. Each grants <good>+100</good> to every affinity instead of its own effects.
+effect|EVERY_AFFINITY_FLAT_PER_EMPTY_SHELL_NODE|-10.0	0	Takes over every node in its radius for free. Each grants <bad>-10</bad> to every affinity instead of its own effects.
+effect|EVERY_AFFINITY_FLAT_PER_EMPTY_SHELL_NODE|-12.5	0	Takes over every node in its radius for free. Each grants <bad>-12.5</bad> to every affinity instead of its own effects.
 effect|EXPLODE_ON_DEATH|1.0	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 1% of its maximum fuel capacity to nearby ships, tapering off with distance.
 effect|EXPLODE_ON_DEATH|10.0	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 10% of its maximum fuel capacity to nearby ships, tapering off with distance.
 effect|EXPLODE_ON_DEATH|12.5	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 12.5% of its maximum fuel capacity to nearby ships, tapering off with distance.
@@ -910,18 +922,6 @@ effect|FIGHTER_ENGAGEMENT_RANGE_PERCENT|12.5	0	<good>12.5%</good> increased stri
 effect|FIGHTER_ENGAGEMENT_RANGE_PERCENT|100.0	0	<good>100%</good> increased strikecraft engagement range.
 effect|FIGHTER_ENGAGEMENT_RANGE_PERCENT|-10.0	0	<bad>10%</bad> reduced strikecraft engagement range.
 effect|FIGHTER_ENGAGEMENT_RANGE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced strikecraft engagement range.
-effect|FIGHTER_FOCUS_FIRE_DAMAGE_PERCENT_PER_HIT|1.0	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>1%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
-effect|FIGHTER_FOCUS_FIRE_DAMAGE_PERCENT_PER_HIT|10.0	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>10%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
-effect|FIGHTER_FOCUS_FIRE_DAMAGE_PERCENT_PER_HIT|12.5	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>12.5%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
-effect|FIGHTER_FOCUS_FIRE_DAMAGE_PERCENT_PER_HIT|100.0	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>100%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
-effect|FIGHTER_FOCUS_FIRE_DAMAGE_PERCENT_PER_HIT|-10.0	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>-10%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
-effect|FIGHTER_FOCUS_FIRE_DAMAGE_PERCENT_PER_HIT|-12.5	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>-12.5%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
-effect|FIGHTER_FOCUS_FIRE_MAX_DAMAGE_PERCENT|1.0	0	Strikecraft marks grant up to a maximum of <good>1%</good> increased damage taken.
-effect|FIGHTER_FOCUS_FIRE_MAX_DAMAGE_PERCENT|10.0	0	Strikecraft marks grant up to a maximum of <good>10%</good> increased damage taken.
-effect|FIGHTER_FOCUS_FIRE_MAX_DAMAGE_PERCENT|12.5	0	Strikecraft marks grant up to a maximum of <good>12.5%</good> increased damage taken.
-effect|FIGHTER_FOCUS_FIRE_MAX_DAMAGE_PERCENT|100.0	0	Strikecraft marks grant up to a maximum of <good>100%</good> increased damage taken.
-effect|FIGHTER_FOCUS_FIRE_MAX_DAMAGE_PERCENT|-10.0	0	Strikecraft marks grant up to a maximum of <good>-10%</good> increased damage taken.
-effect|FIGHTER_FOCUS_FIRE_MAX_DAMAGE_PERCENT|-12.5	0	Strikecraft marks grant up to a maximum of <good>-12.5%</good> increased damage taken.
 effect|FIGHTER_PD_DAMAGE_BONUS_PERCENT|1.0	0	Strikecraft launched from this ship have <good>1%</good> increased damage to other strikecraft and missiles.
 effect|FIGHTER_PD_DAMAGE_BONUS_PERCENT|10.0	0	Strikecraft launched from this ship have <good>10%</good> increased damage to other strikecraft and missiles.
 effect|FIGHTER_PD_DAMAGE_BONUS_PERCENT|12.5	0	Strikecraft launched from this ship have <good>12.5%</good> increased damage to other strikecraft and missiles.
@@ -1102,18 +1102,6 @@ effect|FLUX_DISSIPATION_WHILE_VENTING_PERCENT|12.5	0	<good>12.5%</good> increase
 effect|FLUX_DISSIPATION_WHILE_VENTING_PERCENT|100.0	0	<good>100%</good> increased flux dissipation rate while venting.
 effect|FLUX_DISSIPATION_WHILE_VENTING_PERCENT|-10.0	0	<bad>10%</bad> reduced flux dissipation rate while venting.
 effect|FLUX_DISSIPATION_WHILE_VENTING_PERCENT|-12.5	0	<bad>12.5%</bad> reduced flux dissipation rate while venting.
-effect|FLUX_SCALED_RATE_OF_FIRE_PERCENT|1.0	0	Weapon rate of fire changes with flux, from <good>1%</good> increased at no flux to <bad>1%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
-effect|FLUX_SCALED_RATE_OF_FIRE_PERCENT|10.0	0	Weapon rate of fire changes with flux, from <good>10%</good> increased at no flux to <bad>10%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
-effect|FLUX_SCALED_RATE_OF_FIRE_PERCENT|12.5	0	Weapon rate of fire changes with flux, from <good>12.5%</good> increased at no flux to <bad>12.5%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
-effect|FLUX_SCALED_RATE_OF_FIRE_PERCENT|100.0	0	Weapon rate of fire changes with flux, from <good>100%</good> increased at no flux to <bad>100%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
-effect|FLUX_SCALED_RATE_OF_FIRE_PERCENT|-10.0	0	Weapon rate of fire changes with flux, from <good>-10%</good> increased at no flux to <bad>-10%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
-effect|FLUX_SCALED_RATE_OF_FIRE_PERCENT|-12.5	0	Weapon rate of fire changes with flux, from <good>-12.5%</good> increased at no flux to <bad>-12.5%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
-effect|FLUX_SCALED_TOP_SPEED_FLAT|1.0	0	Top speed changes with flux, from <good>+1</good> su/s at no flux to <bad>-1</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>1%</good> increased acceleration and turn acceleration.
-effect|FLUX_SCALED_TOP_SPEED_FLAT|10.0	0	Top speed changes with flux, from <good>+10</good> su/s at no flux to <bad>-10</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>10%</good> increased acceleration and turn acceleration.
-effect|FLUX_SCALED_TOP_SPEED_FLAT|12.5	0	Top speed changes with flux, from <good>+12.5</good> su/s at no flux to <bad>-12.5</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>12.5%</good> increased acceleration and turn acceleration.
-effect|FLUX_SCALED_TOP_SPEED_FLAT|100.0	0	Top speed changes with flux, from <good>+100</good> su/s at no flux to <bad>-100</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>100%</good> increased acceleration and turn acceleration.
-effect|FLUX_SCALED_TOP_SPEED_FLAT|-10.0	0	Top speed changes with flux, from <good>+-10</good> su/s at no flux to <bad>--10</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>-10%</good> increased acceleration and turn acceleration.
-effect|FLUX_SCALED_TOP_SPEED_FLAT|-12.5	0	Top speed changes with flux, from <good>+-12.5</good> su/s at no flux to <bad>--12.5</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>-12.5%</good> increased acceleration and turn acceleration.
 effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased fragmentation damage taken.
 effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased fragmentation damage taken.
 effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased fragmentation damage taken.
@@ -1198,6 +1186,18 @@ effect|GROUND_SUPPORT_PER_MAX_CREW_PERCENT|12.5	0	Your fleet gains effective pla
 effect|GROUND_SUPPORT_PER_MAX_CREW_PERCENT|100.0	0	Your fleet gains effective planetary raid strength equal to <good>100%</good> of this ship's maximum crew capacity, up to the total number of marines in the fleet.
 effect|GROUND_SUPPORT_PER_MAX_CREW_PERCENT|-10.0	0	Your fleet gains effective planetary raid strength equal to <good>-10%</good> of this ship's maximum crew capacity, up to the total number of marines in the fleet.
 effect|GROUND_SUPPORT_PER_MAX_CREW_PERCENT|-12.5	0	Your fleet gains effective planetary raid strength equal to <good>-12.5%</good> of this ship's maximum crew capacity, up to the total number of marines in the fleet.
+effect|HARDLIGHT_MARKING_DAMAGE_PERCENT_PER_HIT|1.0	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>1%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
+effect|HARDLIGHT_MARKING_DAMAGE_PERCENT_PER_HIT|10.0	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>10%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
+effect|HARDLIGHT_MARKING_DAMAGE_PERCENT_PER_HIT|12.5	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>12.5%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
+effect|HARDLIGHT_MARKING_DAMAGE_PERCENT_PER_HIT|100.0	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>100%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
+effect|HARDLIGHT_MARKING_DAMAGE_PERCENT_PER_HIT|-10.0	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>-10%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
+effect|HARDLIGHT_MARKING_DAMAGE_PERCENT_PER_HIT|-12.5	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>-12.5%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
+effect|HARDLIGHT_MARKING_MAX_DAMAGE_PERCENT|1.0	0	Strikecraft marks grant up to a maximum of <good>1%</good> increased damage taken.
+effect|HARDLIGHT_MARKING_MAX_DAMAGE_PERCENT|10.0	0	Strikecraft marks grant up to a maximum of <good>10%</good> increased damage taken.
+effect|HARDLIGHT_MARKING_MAX_DAMAGE_PERCENT|12.5	0	Strikecraft marks grant up to a maximum of <good>12.5%</good> increased damage taken.
+effect|HARDLIGHT_MARKING_MAX_DAMAGE_PERCENT|100.0	0	Strikecraft marks grant up to a maximum of <good>100%</good> increased damage taken.
+effect|HARDLIGHT_MARKING_MAX_DAMAGE_PERCENT|-10.0	0	Strikecraft marks grant up to a maximum of <good>-10%</good> increased damage taken.
+effect|HARDLIGHT_MARKING_MAX_DAMAGE_PERCENT|-12.5	0	Strikecraft marks grant up to a maximum of <good>-12.5%</good> increased damage taken.
 effect|HEARTLESS_ARMOR_PERCENT_PER_STACK|1.0	0	Each Heartless stack grants <good>1%</good> more armor in every armor cell, above its normal maximum.
 effect|HEARTLESS_ARMOR_PERCENT_PER_STACK|10.0	0	Each Heartless stack grants <good>10%</good> more armor in every armor cell, above its normal maximum.
 effect|HEARTLESS_ARMOR_PERCENT_PER_STACK|12.5	0	Each Heartless stack grants <good>12.5%</good> more armor in every armor cell, above its normal maximum.
@@ -1504,18 +1504,6 @@ effect|MISSILE_WEAPON_ECCM_CHANCE_PERCENT|12.5	0	<good>12.5%</good> increased ch
 effect|MISSILE_WEAPON_ECCM_CHANCE_PERCENT|100.0	0	<good>100%</good> increased chance for missiles to resist enemy ECM and flares.
 effect|MISSILE_WEAPON_ECCM_CHANCE_PERCENT|-10.0	0	<bad>10%</bad> reduced chance for missiles to resist enemy ECM and flares.
 effect|MISSILE_WEAPON_ECCM_CHANCE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced chance for missiles to resist enemy ECM and flares.
-effect|MISSILE_WEAPON_FIRE_RATE_MULT|1.0	0	<good>1%</good> more missile weapon rate of fire.
-effect|MISSILE_WEAPON_FIRE_RATE_MULT|10.0	0	<good>10%</good> more missile weapon rate of fire.
-effect|MISSILE_WEAPON_FIRE_RATE_MULT|12.5	0	<good>12.5%</good> more missile weapon rate of fire.
-effect|MISSILE_WEAPON_FIRE_RATE_MULT|100.0	0	<good>100%</good> more missile weapon rate of fire.
-effect|MISSILE_WEAPON_FIRE_RATE_MULT|-10.0	0	<bad>10%</bad> less missile weapon rate of fire.
-effect|MISSILE_WEAPON_FIRE_RATE_MULT|-12.5	0	<bad>12.5%</bad> less missile weapon rate of fire.
-effect|MISSILE_WEAPON_FIRE_RATE_PERCENT|1.0	0	<good>1%</good> increased missile weapon rate of fire.
-effect|MISSILE_WEAPON_FIRE_RATE_PERCENT|10.0	0	<good>10%</good> increased missile weapon rate of fire.
-effect|MISSILE_WEAPON_FIRE_RATE_PERCENT|12.5	0	<good>12.5%</good> increased missile weapon rate of fire.
-effect|MISSILE_WEAPON_FIRE_RATE_PERCENT|100.0	0	<good>100%</good> increased missile weapon rate of fire.
-effect|MISSILE_WEAPON_FIRE_RATE_PERCENT|-10.0	0	<bad>10%</bad> reduced missile weapon rate of fire.
-effect|MISSILE_WEAPON_FIRE_RATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced missile weapon rate of fire.
 effect|MISSILE_WEAPON_FLIGHT_ACCELERATION_MULT|1.0	0	<good>1%</good> more missile acceleration.
 effect|MISSILE_WEAPON_FLIGHT_ACCELERATION_MULT|10.0	0	<good>10%</good> more missile acceleration.
 effect|MISSILE_WEAPON_FLIGHT_ACCELERATION_MULT|12.5	0	<good>12.5%</good> more missile acceleration.
@@ -1624,6 +1612,18 @@ effect|MISSILE_WEAPON_RANGE_PERCENT|12.5	0	<good>12.5%</good> increased missile 
 effect|MISSILE_WEAPON_RANGE_PERCENT|100.0	0	<good>100%</good> increased missile weapon range.
 effect|MISSILE_WEAPON_RANGE_PERCENT|-10.0	0	<bad>10%</bad> reduced missile weapon range.
 effect|MISSILE_WEAPON_RANGE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced missile weapon range.
+effect|MISSILE_WEAPON_RATE_OF_FIRE_MULT|1.0	0	<good>1%</good> more missile weapon rate of fire.
+effect|MISSILE_WEAPON_RATE_OF_FIRE_MULT|10.0	0	<good>10%</good> more missile weapon rate of fire.
+effect|MISSILE_WEAPON_RATE_OF_FIRE_MULT|12.5	0	<good>12.5%</good> more missile weapon rate of fire.
+effect|MISSILE_WEAPON_RATE_OF_FIRE_MULT|100.0	0	<good>100%</good> more missile weapon rate of fire.
+effect|MISSILE_WEAPON_RATE_OF_FIRE_MULT|-10.0	0	<bad>10%</bad> less missile weapon rate of fire.
+effect|MISSILE_WEAPON_RATE_OF_FIRE_MULT|-12.5	0	<bad>12.5%</bad> less missile weapon rate of fire.
+effect|MISSILE_WEAPON_RATE_OF_FIRE_PERCENT|1.0	0	<good>1%</good> increased missile weapon rate of fire.
+effect|MISSILE_WEAPON_RATE_OF_FIRE_PERCENT|10.0	0	<good>10%</good> increased missile weapon rate of fire.
+effect|MISSILE_WEAPON_RATE_OF_FIRE_PERCENT|12.5	0	<good>12.5%</good> increased missile weapon rate of fire.
+effect|MISSILE_WEAPON_RATE_OF_FIRE_PERCENT|100.0	0	<good>100%</good> increased missile weapon rate of fire.
+effect|MISSILE_WEAPON_RATE_OF_FIRE_PERCENT|-10.0	0	<bad>10%</bad> reduced missile weapon rate of fire.
+effect|MISSILE_WEAPON_RATE_OF_FIRE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced missile weapon rate of fire.
 effect|MODULE_ARMOR_PERCENT|1.0	0	This ship's modules have <good>1%</good> increased armor.
 effect|MODULE_ARMOR_PERCENT|10.0	0	This ship's modules have <good>10%</good> increased armor.
 effect|MODULE_ARMOR_PERCENT|12.5	0	This ship's modules have <good>12.5%</good> increased armor.
@@ -1678,18 +1678,6 @@ effect|NON_BEAM_ENERGY_WEAPON_AMMO_REGEN_PERCENT|12.5	0	<good>12.5%</good> incre
 effect|NON_BEAM_ENERGY_WEAPON_AMMO_REGEN_PERCENT|100.0	0	<good>100%</good> increased non-beam energy weapon ammo regeneration rate. The refit screen's weapon tooltips don't show this.
 effect|NON_BEAM_ENERGY_WEAPON_AMMO_REGEN_PERCENT|-10.0	0	<bad>10%</bad> reduced non-beam energy weapon ammo regeneration rate. The refit screen's weapon tooltips don't show this.
 effect|NON_BEAM_ENERGY_WEAPON_AMMO_REGEN_PERCENT|-12.5	0	<bad>12.5%</bad> reduced non-beam energy weapon ammo regeneration rate. The refit screen's weapon tooltips don't show this.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT|1.0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>1%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT|10.0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>10%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT|12.5	0	Non-beam energy weapon hits that land on an enemy shield have a <good>12.5%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT|100.0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>100%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT|-10.0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>-10%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT|-12.5	0	Non-beam energy weapon hits that land on an enemy shield have a <good>-12.5%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|1.0	0	Each refraction deals <bad>1%</bad> less damage than the shot before it.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|10.0	0	Each refraction deals <bad>10%</bad> less damage than the shot before it.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|12.5	0	Each refraction deals <bad>12.5%</bad> less damage than the shot before it.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|100.0	0	Each refraction deals <bad>100%</bad> less damage than the shot before it.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|-10.0	0	Each refraction deals <bad>-10%</bad> less damage than the shot before it.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|-12.5	0	Each refraction deals <bad>-12.5%</bad> less damage than the shot before it.
 effect|NON_BEAM_ENERGY_WEAPON_DAMAGE_FLAT|1.0	0	<good>+1</good> to non-beam energy weapon damage.
 effect|NON_BEAM_ENERGY_WEAPON_DAMAGE_FLAT|10.0	0	<good>+10</good> to non-beam energy weapon damage.
 effect|NON_BEAM_ENERGY_WEAPON_DAMAGE_FLAT|12.5	0	<good>+12.5</good> to non-beam energy weapon damage.
@@ -1744,18 +1732,24 @@ effect|NON_BEAM_ENERGY_WEAPON_RANGE_PERCENT|12.5	0	<good>12.5%</good> increased 
 effect|NON_BEAM_ENERGY_WEAPON_RANGE_PERCENT|100.0	0	<good>100%</good> increased non-beam energy weapon range.
 effect|NON_BEAM_ENERGY_WEAPON_RANGE_PERCENT|-10.0	0	<bad>10%</bad> reduced non-beam energy weapon range.
 effect|NON_BEAM_ENERGY_WEAPON_RANGE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced non-beam energy weapon range.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|1.0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>1%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|10.0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>10%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|12.5	0	Non-beam energy weapon hits that land on an enemy shield have a <good>12.5%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|100.0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>100%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|-10.0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>-10%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|-12.5	0	Non-beam energy weapon hits that land on an enemy shield have a <good>-12.5%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT|1.0	0	Each refraction deals <bad>1%</bad> less damage than the shot before it.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT|10.0	0	Each refraction deals <bad>10%</bad> less damage than the shot before it.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT|12.5	0	Each refraction deals <bad>12.5%</bad> less damage than the shot before it.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT|100.0	0	Each refraction deals <bad>100%</bad> less damage than the shot before it.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT|-10.0	0	Each refraction deals <bad>-10%</bad> less damage than the shot before it.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT|-12.5	0	Each refraction deals <bad>-12.5%</bad> less damage than the shot before it.
 effect|NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT|1.0	0	<good>1%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 effect|NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT|10.0	0	<good>10%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 effect|NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 effect|NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT|100.0	0	<good>100%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 effect|NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT|-10.0	0	<good>-10%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 effect|NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT|-12.5	0	<good>-12.5%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
-effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|1.0	1	<good>1%</good> more negative effects from combat D-mods per D-mod, up to 5 D-mods.
-effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|10.0	1	<good>10%</good> more negative effects from combat D-mods per D-mod, up to 5 D-mods.
-effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|12.5	1	<good>12.5%</good> more negative effects from combat D-mods per D-mod, up to 5 D-mods.
-effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|100.0	1	<good>100%</good> more negative effects from combat D-mods per D-mod, up to 5 D-mods.
-effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|-10.0	1	<bad>10%</bad> less negative effects from combat D-mods per D-mod, up to 5 D-mods.
-effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|-12.5	1	<bad>12.5%</bad> less negative effects from combat D-mods per D-mod, up to 5 D-mods.
 effect|NON_MISSILE_PROJECTILE_ECHO_CHANCE_PERCENT|1.0	0	Non-missile projectiles that hit an enemy ship have a <good>1%</good> chance to be fired again from the same weapon.
 effect|NON_MISSILE_PROJECTILE_ECHO_CHANCE_PERCENT|10.0	0	Non-missile projectiles that hit an enemy ship have a <good>10%</good> chance to be fired again from the same weapon.
 effect|NON_MISSILE_PROJECTILE_ECHO_CHANCE_PERCENT|12.5	0	Non-missile projectiles that hit an enemy ship have a <good>12.5%</good> chance to be fired again from the same weapon.
@@ -1984,42 +1978,30 @@ effect|SENSOR_STRENGTH_PERCENT|12.5	0	<good>12.5%</good> increased this ship's s
 effect|SENSOR_STRENGTH_PERCENT|100.0	0	<good>100%</good> increased this ship's sensor strength.
 effect|SENSOR_STRENGTH_PERCENT|-10.0	0	<bad>10%</bad> reduced this ship's sensor strength.
 effect|SENSOR_STRENGTH_PERCENT|-12.5	0	<bad>12.5%</bad> reduced this ship's sensor strength.
-effect|SERAPHIM_DAMAGE_BONUS_PERCENT|1.0	0	Up to <good>1%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-effect|SERAPHIM_DAMAGE_BONUS_PERCENT|10.0	0	Up to <good>10%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-effect|SERAPHIM_DAMAGE_BONUS_PERCENT|12.5	0	Up to <good>12.5%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-effect|SERAPHIM_DAMAGE_BONUS_PERCENT|100.0	0	Up to <good>100%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-effect|SERAPHIM_DAMAGE_BONUS_PERCENT|-10.0	0	Up to <good>-10%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-effect|SERAPHIM_DAMAGE_BONUS_PERCENT|-12.5	0	Up to <good>-12.5%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-effect|SERAPHIM_FULL_BONUS_DAMAGE_FLAT|1.0	0	The full Seraph Hunting Routines damage bonus is reached after dealing 1 armor and hull damage.
-effect|SERAPHIM_FULL_BONUS_DAMAGE_FLAT|10.0	0	The full Seraph Hunting Routines damage bonus is reached after dealing 10 armor and hull damage.
-effect|SERAPHIM_FULL_BONUS_DAMAGE_FLAT|12.5	0	The full Seraph Hunting Routines damage bonus is reached after dealing 12.5 armor and hull damage.
-effect|SERAPHIM_FULL_BONUS_DAMAGE_FLAT|100.0	0	The full Seraph Hunting Routines damage bonus is reached after dealing 100 armor and hull damage.
-effect|SERAPHIM_FULL_BONUS_DAMAGE_FLAT|-10.0	0	The full Seraph Hunting Routines damage bonus is reached after dealing -10 armor and hull damage.
-effect|SERAPHIM_FULL_BONUS_DAMAGE_FLAT|-12.5	0	The full Seraph Hunting Routines damage bonus is reached after dealing -12.5 armor and hull damage.
-effect|SERAPHIM_HEAL_CAP_PERCENT|1.0	0	Seraph Hunting Routines repair at most <good>1%</good> of this ship's maximum hull per battle.
-effect|SERAPHIM_HEAL_CAP_PERCENT|10.0	0	Seraph Hunting Routines repair at most <good>10%</good> of this ship's maximum hull per battle.
-effect|SERAPHIM_HEAL_CAP_PERCENT|12.5	0	Seraph Hunting Routines repair at most <good>12.5%</good> of this ship's maximum hull per battle.
-effect|SERAPHIM_HEAL_CAP_PERCENT|100.0	0	Seraph Hunting Routines repair at most <good>100%</good> of this ship's maximum hull per battle.
-effect|SERAPHIM_HEAL_CAP_PERCENT|-10.0	0	Seraph Hunting Routines repair at most <good>-10%</good> of this ship's maximum hull per battle.
-effect|SERAPHIM_HEAL_CAP_PERCENT|-12.5	0	Seraph Hunting Routines repair at most <good>-12.5%</good> of this ship's maximum hull per battle.
-effect|SERAPHIM_HEAL_PERCENT|1.0	0	Repairs hull equal to <good>1%</good> of the armor and hull damage this ship deals to enemy ships.
-effect|SERAPHIM_HEAL_PERCENT|10.0	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-effect|SERAPHIM_HEAL_PERCENT|12.5	0	Repairs hull equal to <good>12.5%</good> of the armor and hull damage this ship deals to enemy ships.
-effect|SERAPHIM_HEAL_PERCENT|100.0	0	Repairs hull equal to <good>100%</good> of the armor and hull damage this ship deals to enemy ships.
-effect|SERAPHIM_HEAL_PERCENT|-10.0	0	Repairs hull equal to <good>-10%</good> of the armor and hull damage this ship deals to enemy ships.
-effect|SERAPHIM_HEAL_PERCENT|-12.5	0	Repairs hull equal to <good>-12.5%</good> of the armor and hull damage this ship deals to enemy ships.
-effect|SERAPHS_GRACE_MAX_STACKS_FLAT|1.0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>1</good> stacks. Stack timers pause while the ship is phased.
-effect|SERAPHS_GRACE_MAX_STACKS_FLAT|10.0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>10</good> stacks. Stack timers pause while the ship is phased.
-effect|SERAPHS_GRACE_MAX_STACKS_FLAT|12.5	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>12.5</good> stacks. Stack timers pause while the ship is phased.
-effect|SERAPHS_GRACE_MAX_STACKS_FLAT|100.0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>100</good> stacks. Stack timers pause while the ship is phased.
-effect|SERAPHS_GRACE_MAX_STACKS_FLAT|-10.0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>-10</good> stacks. Stack timers pause while the ship is phased.
-effect|SERAPHS_GRACE_MAX_STACKS_FLAT|-12.5	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>-12.5</good> stacks. Stack timers pause while the ship is phased.
-effect|SERAPHS_GRACE_PERCENT_PER_STACK|1.0	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
-effect|SERAPHS_GRACE_PERCENT_PER_STACK|10.0	0	Each Borrowed Grace stack grants <good>10%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>10%</good> reduced weapon flux cost and damage taken.
-effect|SERAPHS_GRACE_PERCENT_PER_STACK|12.5	0	Each Borrowed Grace stack grants <good>12.5%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>12.5%</good> reduced weapon flux cost and damage taken.
-effect|SERAPHS_GRACE_PERCENT_PER_STACK|100.0	0	Each Borrowed Grace stack grants <good>100%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>100%</good> reduced weapon flux cost and damage taken.
-effect|SERAPHS_GRACE_PERCENT_PER_STACK|-10.0	0	Each Borrowed Grace stack grants <good>-10%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>-10%</good> reduced weapon flux cost and damage taken.
-effect|SERAPHS_GRACE_PERCENT_PER_STACK|-12.5	0	Each Borrowed Grace stack grants <good>-12.5%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>-12.5%</good> reduced weapon flux cost and damage taken.
+effect|SERAPH_HUNTING_DAMAGE_BONUS_PERCENT|1.0	0	Up to <good>1%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+effect|SERAPH_HUNTING_DAMAGE_BONUS_PERCENT|10.0	0	Up to <good>10%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+effect|SERAPH_HUNTING_DAMAGE_BONUS_PERCENT|12.5	0	Up to <good>12.5%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+effect|SERAPH_HUNTING_DAMAGE_BONUS_PERCENT|100.0	0	Up to <good>100%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+effect|SERAPH_HUNTING_DAMAGE_BONUS_PERCENT|-10.0	0	Up to <good>-10%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+effect|SERAPH_HUNTING_DAMAGE_BONUS_PERCENT|-12.5	0	Up to <good>-12.5%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+effect|SERAPH_HUNTING_FULL_BONUS_DAMAGE_FLAT|1.0	0	The full Seraph Hunting Routines damage bonus is reached after dealing 1 armor and hull damage.
+effect|SERAPH_HUNTING_FULL_BONUS_DAMAGE_FLAT|10.0	0	The full Seraph Hunting Routines damage bonus is reached after dealing 10 armor and hull damage.
+effect|SERAPH_HUNTING_FULL_BONUS_DAMAGE_FLAT|12.5	0	The full Seraph Hunting Routines damage bonus is reached after dealing 12.5 armor and hull damage.
+effect|SERAPH_HUNTING_FULL_BONUS_DAMAGE_FLAT|100.0	0	The full Seraph Hunting Routines damage bonus is reached after dealing 100 armor and hull damage.
+effect|SERAPH_HUNTING_FULL_BONUS_DAMAGE_FLAT|-10.0	0	The full Seraph Hunting Routines damage bonus is reached after dealing -10 armor and hull damage.
+effect|SERAPH_HUNTING_FULL_BONUS_DAMAGE_FLAT|-12.5	0	The full Seraph Hunting Routines damage bonus is reached after dealing -12.5 armor and hull damage.
+effect|SERAPH_HUNTING_HEAL_CAP_PERCENT|1.0	0	Seraph Hunting Routines repair at most <good>1%</good> of this ship's maximum hull per battle.
+effect|SERAPH_HUNTING_HEAL_CAP_PERCENT|10.0	0	Seraph Hunting Routines repair at most <good>10%</good> of this ship's maximum hull per battle.
+effect|SERAPH_HUNTING_HEAL_CAP_PERCENT|12.5	0	Seraph Hunting Routines repair at most <good>12.5%</good> of this ship's maximum hull per battle.
+effect|SERAPH_HUNTING_HEAL_CAP_PERCENT|100.0	0	Seraph Hunting Routines repair at most <good>100%</good> of this ship's maximum hull per battle.
+effect|SERAPH_HUNTING_HEAL_CAP_PERCENT|-10.0	0	Seraph Hunting Routines repair at most <good>-10%</good> of this ship's maximum hull per battle.
+effect|SERAPH_HUNTING_HEAL_CAP_PERCENT|-12.5	0	Seraph Hunting Routines repair at most <good>-12.5%</good> of this ship's maximum hull per battle.
+effect|SERAPH_HUNTING_HEAL_PERCENT|1.0	0	Repairs hull equal to <good>1%</good> of the armor and hull damage this ship deals to enemy ships.
+effect|SERAPH_HUNTING_HEAL_PERCENT|10.0	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
+effect|SERAPH_HUNTING_HEAL_PERCENT|12.5	0	Repairs hull equal to <good>12.5%</good> of the armor and hull damage this ship deals to enemy ships.
+effect|SERAPH_HUNTING_HEAL_PERCENT|100.0	0	Repairs hull equal to <good>100%</good> of the armor and hull damage this ship deals to enemy ships.
+effect|SERAPH_HUNTING_HEAL_PERCENT|-10.0	0	Repairs hull equal to <good>-10%</good> of the armor and hull damage this ship deals to enemy ships.
+effect|SERAPH_HUNTING_HEAL_PERCENT|-12.5	0	Repairs hull equal to <good>-12.5%</good> of the armor and hull damage this ship deals to enemy ships.
 effect|SHIELD_ABSORB_RATE_OF_FIRE_PERCENT|1.0	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>1%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
 effect|SHIELD_ABSORB_RATE_OF_FIRE_PERCENT|10.0	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>10%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
 effect|SHIELD_ABSORB_RATE_OF_FIRE_PERCENT|12.5	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>12.5%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
@@ -2194,6 +2176,12 @@ effect|SOLARIS_OVERDRIVE_SECONDS_FLAT|12.5	0	Weapons cost no flux to fire for <g
 effect|SOLARIS_OVERDRIVE_SECONDS_FLAT|100.0	0	Weapons cost no flux to fire for <good>100</good> seconds after this ship's system activates, at most once every 60 seconds.
 effect|SOLARIS_OVERDRIVE_SECONDS_FLAT|-10.0	0	Weapons cost no flux to fire for <good>-10</good> seconds after this ship's system activates, at most once every 60 seconds.
 effect|SOLARIS_OVERDRIVE_SECONDS_FLAT|-12.5	0	Weapons cost no flux to fire for <good>-12.5</good> seconds after this ship's system activates, at most once every 60 seconds.
+effect|STARDUST_MOTE_DAMAGE_FLAT|1.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>1</good> energy damage and <good>1</good> EMP. At most 20 of this ship's motes fly at once.
+effect|STARDUST_MOTE_DAMAGE_FLAT|10.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>10</good> energy damage and <good>10</good> EMP. At most 20 of this ship's motes fly at once.
+effect|STARDUST_MOTE_DAMAGE_FLAT|12.5	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>12.5</good> energy damage and <good>12.5</good> EMP. At most 20 of this ship's motes fly at once.
+effect|STARDUST_MOTE_DAMAGE_FLAT|100.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>100</good> energy damage and <good>100</good> EMP. At most 20 of this ship's motes fly at once.
+effect|STARDUST_MOTE_DAMAGE_FLAT|-10.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>-10</good> energy damage and <good>-10</good> EMP. At most 20 of this ship's motes fly at once.
+effect|STARDUST_MOTE_DAMAGE_FLAT|-12.5	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>-12.5</good> energy damage and <good>-12.5</good> EMP. At most 20 of this ship's motes fly at once.
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|1.0	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|10.0	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|12.5	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
@@ -2356,6 +2344,18 @@ effect|VENT_RATE_PERCENT|12.5	0	<good>12.5%</good> increased venting speed.
 effect|VENT_RATE_PERCENT|100.0	0	<good>100%</good> increased venting speed.
 effect|VENT_RATE_PERCENT|-10.0	0	<bad>10%</bad> reduced venting speed.
 effect|VENT_RATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced venting speed.
+effect|VOLATILE_FLUX_RATE_OF_FIRE_PERCENT|1.0	0	Weapon rate of fire changes with flux, from <good>1%</good> increased at no flux to <bad>1%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
+effect|VOLATILE_FLUX_RATE_OF_FIRE_PERCENT|10.0	0	Weapon rate of fire changes with flux, from <good>10%</good> increased at no flux to <bad>10%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
+effect|VOLATILE_FLUX_RATE_OF_FIRE_PERCENT|12.5	0	Weapon rate of fire changes with flux, from <good>12.5%</good> increased at no flux to <bad>12.5%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
+effect|VOLATILE_FLUX_RATE_OF_FIRE_PERCENT|100.0	0	Weapon rate of fire changes with flux, from <good>100%</good> increased at no flux to <bad>100%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
+effect|VOLATILE_FLUX_RATE_OF_FIRE_PERCENT|-10.0	0	Weapon rate of fire changes with flux, from <good>-10%</good> increased at no flux to <bad>-10%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
+effect|VOLATILE_FLUX_RATE_OF_FIRE_PERCENT|-12.5	0	Weapon rate of fire changes with flux, from <good>-12.5%</good> increased at no flux to <bad>-12.5%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
+effect|VOLATILE_FLUX_TOP_SPEED_FLAT|1.0	0	Top speed changes with flux, from <good>+1</good> su/s at no flux to <bad>-1</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>1%</good> increased acceleration and turn acceleration.
+effect|VOLATILE_FLUX_TOP_SPEED_FLAT|10.0	0	Top speed changes with flux, from <good>+10</good> su/s at no flux to <bad>-10</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>10%</good> increased acceleration and turn acceleration.
+effect|VOLATILE_FLUX_TOP_SPEED_FLAT|12.5	0	Top speed changes with flux, from <good>+12.5</good> su/s at no flux to <bad>-12.5</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>12.5%</good> increased acceleration and turn acceleration.
+effect|VOLATILE_FLUX_TOP_SPEED_FLAT|100.0	0	Top speed changes with flux, from <good>+100</good> su/s at no flux to <bad>-100</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>100%</good> increased acceleration and turn acceleration.
+effect|VOLATILE_FLUX_TOP_SPEED_FLAT|-10.0	0	Top speed changes with flux, from <good>+-10</good> su/s at no flux to <bad>--10</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>-10%</good> increased acceleration and turn acceleration.
+effect|VOLATILE_FLUX_TOP_SPEED_FLAT|-12.5	0	Top speed changes with flux, from <good>+-12.5</good> su/s at no flux to <bad>--12.5</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>-12.5%</good> increased acceleration and turn acceleration.
 effect|WEAPON_AMMO_FLAT|1.0	0	<good>+1</good> to weapon ammo capacity.
 effect|WEAPON_AMMO_FLAT|10.0	0	<good>+10</good> to weapon ammo capacity.
 effect|WEAPON_AMMO_FLAT|12.5	0	<good>+12.5</good> to weapon ammo capacity.
@@ -2428,18 +2428,6 @@ effect|WEAPON_DURABILITY_PERCENT|12.5	0	<good>12.5%</good> increased weapon dura
 effect|WEAPON_DURABILITY_PERCENT|100.0	0	<good>100%</good> increased weapon durability.
 effect|WEAPON_DURABILITY_PERCENT|-10.0	0	<bad>10%</bad> reduced weapon durability.
 effect|WEAPON_DURABILITY_PERCENT|-12.5	0	<bad>12.5%</bad> reduced weapon durability.
-effect|WEAPON_FIRE_RATE_MULT|1.0	0	<good>1%</good> more weapon rate of fire. Burst beams instead recharge faster between bursts.
-effect|WEAPON_FIRE_RATE_MULT|10.0	0	<good>10%</good> more weapon rate of fire. Burst beams instead recharge faster between bursts.
-effect|WEAPON_FIRE_RATE_MULT|12.5	0	<good>12.5%</good> more weapon rate of fire. Burst beams instead recharge faster between bursts.
-effect|WEAPON_FIRE_RATE_MULT|100.0	0	<good>100%</good> more weapon rate of fire. Burst beams instead recharge faster between bursts.
-effect|WEAPON_FIRE_RATE_MULT|-10.0	0	<bad>10%</bad> less weapon rate of fire. Burst beams instead recharge faster between bursts.
-effect|WEAPON_FIRE_RATE_MULT|-12.5	0	<bad>12.5%</bad> less weapon rate of fire. Burst beams instead recharge faster between bursts.
-effect|WEAPON_FIRE_RATE_PERCENT|1.0	0	<good>1%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
-effect|WEAPON_FIRE_RATE_PERCENT|10.0	0	<good>10%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
-effect|WEAPON_FIRE_RATE_PERCENT|12.5	0	<good>12.5%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
-effect|WEAPON_FIRE_RATE_PERCENT|100.0	0	<good>100%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
-effect|WEAPON_FIRE_RATE_PERCENT|-10.0	0	<bad>10%</bad> reduced weapon rate of fire. Burst beams instead recharge faster between bursts.
-effect|WEAPON_FIRE_RATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced weapon rate of fire. Burst beams instead recharge faster between bursts.
 effect|WEAPON_FLUX_COST_MULT|1.0	1	<good>1%</good> more weapon flux cost.
 effect|WEAPON_FLUX_COST_MULT|10.0	1	<good>10%</good> more weapon flux cost.
 effect|WEAPON_FLUX_COST_MULT|12.5	1	<good>12.5%</good> more weapon flux cost.
@@ -2512,6 +2500,18 @@ effect|WEAPON_RANGE_THRESHOLD_FLAT|12.5	0	<good>+12.5</good> to range before fal
 effect|WEAPON_RANGE_THRESHOLD_FLAT|100.0	0	<good>+100</good> to range before falloff effectiveness applies.
 effect|WEAPON_RANGE_THRESHOLD_FLAT|-10.0	0	<bad>-10</bad> to range before falloff effectiveness applies.
 effect|WEAPON_RANGE_THRESHOLD_FLAT|-12.5	0	<bad>-12.5</bad> to range before falloff effectiveness applies.
+effect|WEAPON_RATE_OF_FIRE_MULT|1.0	0	<good>1%</good> more weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|WEAPON_RATE_OF_FIRE_MULT|10.0	0	<good>10%</good> more weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|WEAPON_RATE_OF_FIRE_MULT|12.5	0	<good>12.5%</good> more weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|WEAPON_RATE_OF_FIRE_MULT|100.0	0	<good>100%</good> more weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|WEAPON_RATE_OF_FIRE_MULT|-10.0	0	<bad>10%</bad> less weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|WEAPON_RATE_OF_FIRE_MULT|-12.5	0	<bad>12.5%</bad> less weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|WEAPON_RATE_OF_FIRE_PERCENT|1.0	0	<good>1%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|WEAPON_RATE_OF_FIRE_PERCENT|10.0	0	<good>10%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|WEAPON_RATE_OF_FIRE_PERCENT|12.5	0	<good>12.5%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|WEAPON_RATE_OF_FIRE_PERCENT|100.0	0	<good>100%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|WEAPON_RATE_OF_FIRE_PERCENT|-10.0	0	<bad>10%</bad> reduced weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|WEAPON_RATE_OF_FIRE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced weapon rate of fire. Burst beams instead recharge faster between bursts.
 effect|WEAPON_RECOIL_MULT|1.0	1	<good>1%</good> more weapon recoil.
 effect|WEAPON_RECOIL_MULT|10.0	1	<good>10%</good> more weapon recoil.
 effect|WEAPON_RECOIL_MULT|12.5	1	<good>12.5%</good> more weapon recoil.

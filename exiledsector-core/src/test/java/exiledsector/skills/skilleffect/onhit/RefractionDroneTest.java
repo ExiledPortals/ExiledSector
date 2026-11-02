@@ -57,7 +57,7 @@ class RefractionDroneTest {
     private WeaponAPI weapon;
     private ProjectileSpecAPI projectileSpec;
     private RefractionDrones pool;
-    private EnergyChainListener chain;
+    private RefractionListener chain;
     private RefractionDrone drone;
 
     @BeforeEach
@@ -102,7 +102,7 @@ class RefractionDroneTest {
         when(firingShip.getVariant()).thenReturn(mock(ShipVariantAPI.class));
         pool = mock(RefractionDrones.class);
         when(pool.firingShip()).thenReturn(firingShip);
-        chain = mock(EnergyChainListener.class);
+        chain = mock(RefractionListener.class);
         drone = new RefractionDrone(droneShip, pool);
     }
 
@@ -140,8 +140,8 @@ class RefractionDroneTest {
         return projectile;
     }
 
-    private ChainLink link() {
-        return new ChainLink(List.of(mock(ShipAPI.class)), 1, 0.8f);
+    private RefractionLink link() {
+        return new RefractionLink(List.of(mock(ShipAPI.class)), 1, 0.8f);
     }
 
     private void launchBehindTheHitShip() {
@@ -220,7 +220,7 @@ class RefractionDroneTest {
         DamagingProjectileAPI own = projectileFrom(weapon);
         DamagingProjectileAPI other = projectileFrom(mock(WeaponAPI.class));
         DamagingProjectileAPI alreadyTagged = projectileFrom(weapon);
-        new ChainLink(List.of(), 3, 0.5f).tag(alreadyTagged);
+        new RefractionLink(List.of(), 3, 0.5f).tag(alreadyTagged);
         launchBehindTheHitShip();
         projectiles.addAll(List.of(own, other, alreadyTagged));
         when(weapon.usesAmmo()).thenReturn(true);
@@ -228,12 +228,12 @@ class RefractionDroneTest {
 
         drone.advance(FRAME);
 
-        assertEquals(1, own.getCustomData().get(ChainLink.COUNT_KEY));
-        assertEquals(0.8f, own.getCustomData().get(ChainLink.DEALT_MULT_KEY));
+        assertEquals(1, own.getCustomData().get(RefractionLink.COUNT_KEY));
+        assertEquals(0.8f, own.getCustomData().get(RefractionLink.DEALT_MULT_KEY));
         verify(own).setSource(firingShip);
-        assertFalse(ChainLink.isTagged(other));
+        assertFalse(RefractionLink.isTagged(other));
         verify(other, never()).setSource(any());
-        assertEquals(3, alreadyTagged.getCustomData().get(ChainLink.COUNT_KEY));
+        assertEquals(3, alreadyTagged.getCustomData().get(RefractionLink.COUNT_KEY));
         assertTrue(drone.isReady());
         verify(weapon).setRemainingCooldownTo(0f);
         verify(weapon).resetAmmo();
@@ -253,7 +253,7 @@ class RefractionDroneTest {
 
         drone.advance(FRAME);
 
-        assertTrue(ChainLink.isTagged(centre));
+        assertTrue(RefractionLink.isTagged(centre));
         verify(centre).setSource(firingShip);
         verify(engine, never()).removeEntity(centre);
         verify(engine).removeEntity(wide);
@@ -273,7 +273,7 @@ class RefractionDroneTest {
         drone.advance(FRAME);
 
         verify(engine).removeEntity(leftover);
-        assertFalse(ChainLink.isTagged(leftover));
+        assertFalse(RefractionLink.isTagged(leftover));
     }
 
     @Test
@@ -317,7 +317,7 @@ class RefractionDroneTest {
 
         drone.modifyDamageDealt(own, hit, damage, new Vector2f(), true);
 
-        assertEquals(0.8f, own.getCustomData().get(ChainLink.DEALT_MULT_KEY));
+        assertEquals(0.8f, own.getCustomData().get(RefractionLink.DEALT_MULT_KEY));
         verify(own).setSource(firingShip);
         verify(chain).handleHit(own, hit, damage, new Vector2f(), true);
         when(weapon.getChargeLevel()).thenReturn(1f);

@@ -75,7 +75,7 @@ class ItemCorruptionTest {
     void aCorruptedHullItemKeepsItsStateThroughItemData() {
         Item plate = plate(5L);
         List<RolledModifier> rolledImplicits = plate.implicits();
-        assertNotNull(ItemCrafting.attune(plate, new Random(5L)));
+        assertNotNull(ItemCrafting.rerollFundamentals(plate, new Random(5L)));
         assertNotEquals(rolledImplicits, plate.implicits());
         plate.corrupt(CorruptionOutcome.IMPLICIT_REPLACED);
 
@@ -116,7 +116,7 @@ class ItemCorruptionTest {
                 reforged = true;
                 assertEquals(PLATE, corrupted.definitionId());
                 assertTrue(corrupted.corrupted());
-                assertEquals(CraftingCurrency.CORRUPTION.color(), corrupted.frameColor());
+                assertEquals(Nanoswarm.CORRUPTION.color(), corrupted.frameColor());
             }
         }
         assertTrue(reforged);
@@ -158,7 +158,7 @@ class ItemCorruptionTest {
             Item corrupted = ItemCrafting.corrupt(store, item, random, definition -> true);
             assertTrue(corrupted.corrupted());
             seen.add(corrupted.corruption());
-            for (CraftingCurrency currency : CraftingCurrency.values()) {
+            for (Nanoswarm currency : Nanoswarm.values()) {
                 assertFalse(ItemCrafting.canUse(currency, corrupted, definition -> true), currency + " must not touch a corrupted item");
             }
         }
@@ -251,11 +251,11 @@ class ItemCorruptionTest {
     void randomisedModifiersAreDifferentButKeepAFixedOne() {
         for (long seed = 0; seed < 30; seed++) {
             Item item = plate(seed);
-            if (item.explicits().size() < ItemCrafting.MIN_FIXATION_MODIFIERS) {
+            if (item.explicits().size() < ItemCrafting.MIN_IMMUTABLE_MODIFIERS) {
                 continue;
             }
-            ItemCrafting.fixate(item, new Random(seed));
-            RolledModifier locked = item.explicits().stream().filter(RolledModifier::locked).findFirst().orElseThrow();
+            ItemCrafting.makeImmutable(item, new Random(seed));
+            RolledModifier locked = item.explicits().stream().filter(RolledModifier::immutable).findFirst().orElseThrow();
             Set<String> before = new HashSet<>(item.explicits().stream().map(RolledModifier::modifierId).toList());
 
             assertNotNull(ItemCrafting.randomiseModifiers(store, item, new Random(seed + 100), definition -> true));

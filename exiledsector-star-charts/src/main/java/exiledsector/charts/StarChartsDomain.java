@@ -8,7 +8,7 @@ import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.layout.abyss.AbyssArt;
 import exiledsector.charts.effect.ChartEnemyInflationListener;
 import exiledsector.charts.effect.ChartEnemyShipEffects;
-import exiledsector.charts.effect.ChartFleetConditionSource;
+import exiledsector.charts.effect.ChartPlayerModifierSource;
 import exiledsector.charts.loot.StarChartLootSource;
 import exiledsector.charts.objective.GatewayUpgradeRewards;
 import exiledsector.charts.run.ChartRuns;
@@ -24,22 +24,22 @@ import exiledsector.effects.ShipEffectSource;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.SpecLocalisation;
 import exiledsector.i18n.Translation;
-import exiledsector.items.AnomalousDebrisCurrencies;
+import exiledsector.items.Engrams;
 import exiledsector.items.AtlasCatalystItems;
-import exiledsector.items.ItemCurrency;
+import exiledsector.items.CraftingMaterialFamily;
 import exiledsector.items.ItemDataRules;
 import exiledsector.items.ItemTypeSupport;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.StarChart;
-import exiledsector.items.StarChartCurrency;
+import exiledsector.items.StarChartCipher;
 import exiledsector.items.StarChartDataRules;
 import exiledsector.items.StarChartItems;
 import exiledsector.items.WormholeTechItems;
 import exiledsector.loot.FleetDifficulty;
 import exiledsector.loot.LootSource;
 import exiledsector.ui.cargo.CatalystIconFx;
-import exiledsector.ui.chart.ForgeBench;
-import exiledsector.ui.chart.StarChartBench;
+import exiledsector.ui.chart.ForgeCraftingBench;
+import exiledsector.ui.chart.StarChartCraftingBench;
 import exiledsector.ui.chart.WormholeGatewayOption;
 import exiledsector.ui.socket.BenchModeSupport;
 import lunalib.lunaSettings.LunaSettings.SettingsCreator;
@@ -57,7 +57,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public List<ShipEffectSource> shipEffectSources() {
-        return List.of(ChartFleetConditionSource.INSTANCE, ChartEnemyShipEffects.INSTANCE);
+        return List.of(ChartPlayerModifierSource.INSTANCE, ChartEnemyShipEffects.INSTANCE);
     }
 
     @Override
@@ -72,12 +72,12 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public void onApplicationLoad() {
-        StarChartCurrency.registerAll();
+        StarChartCipher.registerAll();
         ChartAnomalies.all().forEach(ChartAnomaly::preloadTextures);
         AbyssArt.preload();
         CatalystIconFx.preload();
         I18n.forGameText(() -> {
-            for (StarChartCurrency currency : StarChartCurrency.values()) {
+            for (StarChartCipher currency : StarChartCipher.values()) {
                 MaterialItems.localise(currency.itemId());
             }
             WormholeGateway.INDUSTRY_IDS.forEach(SpecLocalisation::industry);
@@ -99,11 +99,8 @@ public final class StarChartsDomain implements ExiledSectorDomain {
         SettingsCreator.addBoolean(MOD_ID, StarChartSettings.NO_COLONY_FIELD_ID,
                 Translation.text("settings.starCharts.noColony.name"), Translation.text("settings.starCharts.noColony.tooltip"),
                 StarChartSettings.DEFAULT_NO_COLONY, chartsTab);
-        SettingsCreator.addBoolean(MOD_ID, StarChartSettings.OPEN_ANYWHERE_FIELD_ID,
-                Translation.text("chart.ui.settings.openAnywhere.name"), Translation.text("chart.ui.settings.openAnywhere.tooltip"),
-                StarChartSettings.DEFAULT_OPEN_ANYWHERE, chartsTab);
         SettingsCreator.addBoolean(MOD_ID, StarChartSettings.DEBUG_TOOLS_FIELD_ID,
-                Translation.text("chart.ui.settings.debugTools.name"), Translation.text("chart.ui.settings.debugTools.tooltip"),
+                Translation.text("settings.starCharts.debugTools.name"), Translation.text("settings.starCharts.debugTools.tooltip"),
                 StarChartSettings.DEFAULT_DEBUG_TOOLS, chartsTab);
     }
 
@@ -121,9 +118,9 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     @Override
     public void loadItems() {
         StarChartItems.load();
-        AnomalousDebrisCurrencies.load();
+        Engrams.load();
         ChartAnomalies.all().forEach(ChartAnomaly::loadItems);
-        I18n.forGameText(AnomalousDebrisCurrencies::localise);
+        I18n.forGameText(Engrams::localise);
         I18n.forGameText(AtlasCatalystItems::localise);
         I18n.forGameText(WormholeTechItems::localise);
     }
@@ -160,8 +157,8 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     }
 
     @Override
-    public List<ItemCurrency> hullBenchCurrencies() {
-        return List.copyOf(AnomalousDebrisCurrencies.all());
+    public List<CraftingMaterialFamily> hullCraftingBenchCurrencies() {
+        return List.copyOf(Engrams.all());
     }
 
     @Override
@@ -171,7 +168,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public List<BenchModeSupport> benchModes() {
-        return List.of(StarChartBench.INSTANCE, ForgeBench.INSTANCE);
+        return List.of(StarChartCraftingBench.INSTANCE, ForgeCraftingBench.INSTANCE);
     }
 
     @Override

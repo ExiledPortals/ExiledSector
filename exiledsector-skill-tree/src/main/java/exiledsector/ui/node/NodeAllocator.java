@@ -14,9 +14,9 @@ import exiledsector.effects.PlayerShipFacts;
 import exiledsector.effects.ShipTreeSync;
 import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
-import exiledsector.skills.AllocationGate;
+import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.HullModNames;
-import exiledsector.skills.ItemChargeLedger;
+import exiledsector.skills.ItemCostLedger;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ReleasedNodes;
 import exiledsector.skills.RespecPlan;
@@ -61,12 +61,12 @@ final class NodeAllocator {
         private final int statsRevision;
         private final int dataRevision;
         private final Set<String> hiddenNodeIds;
-        private final AllocationGate gate;
+        private final AllocationCheck gate;
         private final RefusalDescriber describer;
         private final Map<String, String> reasonsByKey = new HashMap<>();
         private final Map<String, List<NodeGrantStatus>> grantStatusesBySocketId = new HashMap<>();
 
-        Snapshot(ShipSkillData skillData, ShipOpBudget opBudget, int statsRevision, Set<String> hiddenNodeIds, AllocationGate gate,
+        Snapshot(ShipSkillData skillData, ShipOpBudget opBudget, int statsRevision, Set<String> hiddenNodeIds, AllocationCheck gate,
                  RefusalDescriber describer) {
             this.skillData = skillData;
             this.opBudget = opBudget;
@@ -105,7 +105,7 @@ final class NodeAllocator {
             return statsRevision;
         }
 
-        AllocationGate gate() {
+        AllocationCheck gate() {
             return gate;
         }
 
@@ -143,10 +143,10 @@ final class NodeAllocator {
             if (!skillData.isAllocated(node.getId())) {
                 return allocationRefusalReason(node, option);
             }
-            return reason(node.getId() + '/' + option.getId(), gate.optionSwitch(node, option), ItemChargeLedger.itemCharge(skillData, node.getId()));
+            return reason(node.getId() + '/' + option.getId(), gate.optionSwitch(node, option), ItemCostLedger.paidItemCost(skillData, node.getId()));
         }
 
-        private String reason(String key, AllocationGate.Verdict verdict, SkillItemCost refund) {
+        private String reason(String key, AllocationCheck.Verdict verdict, SkillItemCost refund) {
             if (!verdict.worthExplaining()) {
                 return null;
             }
@@ -176,7 +176,7 @@ final class NodeAllocator {
             }
             SkillNode grantedNode = SkillTree.get(grantedNodeId);
             if (grantedNode == null) {
-                return NodeGrantStatus.of(grantedNodeId, NodeGrantStatus.State.AREA_OFF);
+                return NodeGrantStatus.of(grantedNodeId, NodeGrantStatus.State.VOLUME_OFF);
             }
             if (skillData.isAllocated(grantedNodeId)) {
                 if (!skillData.isGrantFree(grantedNodeId)) {
@@ -186,7 +186,7 @@ final class NodeAllocator {
                 return grantingSocketId == null || grantingSocketId.equals(socketId) ? NodeGrantStatus.of(grantedNodeId, NodeGrantStatus.State.ACTIVE)
                         : NodeGrantStatus.of(grantedNodeId, NodeGrantStatus.State.DUPLICATE);
             }
-            AllocationGate.Verdict verdict = gate.grant(grantedNode);
+            AllocationCheck.Verdict verdict = gate.grant(grantedNode);
             if (verdict.allowed()) {
                 return NodeGrantStatus.of(grantedNodeId, NodeGrantStatus.State.READY);
             }
@@ -233,20 +233,20 @@ final class NodeAllocator {
         int reservedOp = OpReserveParity.reservedOp(shipVariant);
         OpReserveParity.warnIfOutOfSync(fleetMember, shipVariant, ShipTrees.getSpentOp(skillData, opCostPerNode), reservedOp, "while allocating nodes");
         int totalOpBudget = OpReserveParity.availableOp(opBudget, reservedOp);
-        AllocationGate.Budget budget = new AllocationGate.Budget(totalOpBudget, opCostPerNode, ShipLevelConfig.maxAllocatedNodes());
-        AllocationGate gate = AllocationGate.forShip(skillData, PlayerShipFacts.of(fleetMember, shipVariant), satisfiedRootId(), budget,
+        AllocationCheck.Budget budget = new AllocationCheck.Budget(totalOpBudget, opCostPerNode, ShipLevelConfig.maxAllocatedNodes());
+        AllocationCheck gate = AllocationCheck.forShip(skillData, PlayerShipFacts.of(fleetMember, shipVariant), satisfiedRootId(), budget,
                 NodeAllocator::heldInCargo);
         return new Snapshot(skillData, opBudget, shipEdit.revision(), hiddenNodeIds(skillData), gate, this::describe);
     }
 
     Snapshot planningSnapshot(ShipSkillData planData, Snapshot liveSnapshot) {
         ShipSkillData liveData = liveSnapshot.skillData();
-        AllocationGate.Budget budget = new AllocationGate.Budget(Integer.MAX_VALUE, 0, ShipLevelConfig.maxAllocatedNodes());
+        AllocationCheck.Budget budget = new AllocationCheck.Budget(Integer.MAX_VALUE, 0, ShipLevelConfig.maxAllocatedNodes());
         ShipFacts shipFacts = PlayerShipFacts.of(fleetMember, shipVariant);
         DoctrineOverrides.forget(planData);
         NodeEligibility.Context eligibility = NodeEligibility.Context.forShip(planData, shipFacts,
                 SkillTypeUnlockStatus.lockedFor(liveData), itemId -> Double.MAX_VALUE);
-        AllocationGate gate = new AllocationGate(planData, SkillTree.topology(), satisfiedRootId(), budget, eligibility);
+        AllocationCheck gate = new AllocationCheck(planData, SkillTree.topology(), satisfiedRootId(), budget, eligibility);
         return new Snapshot(planData, liveSnapshot.opBudget(), liveSnapshot.statsRevision(), liveSnapshot.hiddenNodeIds, gate, this::describe);
     }
 
@@ -261,7 +261,7 @@ final class NodeAllocator {
     }
 
     boolean allocate(SkillNode node, SkillType option, Snapshot snapshot) {
-        AllocationGate gate = snapshot.gate();
+        AllocationCheck gate = snapshot.gate();
         SkillItemCost itemCost = gate.itemCost(node, option);
         if (!gate.allocation(node, option).allowed() || itemCost != null && heldInCargo(itemCost.itemId()) < itemCost.quantity()) {
             return false;
@@ -273,18 +273,18 @@ final class NodeAllocator {
     }
 
     boolean switchOption(SkillNode node, SkillType option, Snapshot snapshot) {
-        AllocationGate gate = snapshot.gate();
+        AllocationCheck gate = snapshot.gate();
         if (!gate.optionSwitch(node, option).allowed()) {
             return false;
         }
         ShipSkillData skillData = snapshot.skillData();
-        SkillItemCost refund = ItemChargeLedger.itemCharge(skillData, node.getId());
+        SkillItemCost refund = ItemCostLedger.paidItemCost(skillData, node.getId());
         SkillItemCost itemCost = gate.itemCost(node, option);
         if (itemCost != null && heldInCargo(itemCost.itemId()) + refundOf(refund, itemCost.itemId()) < itemCost.quantity()) {
             return false;
         }
         if (refund != null) {
-            ItemChargeLedger.takeItemCharge(skillData, node.getId());
+            ItemCostLedger.takePaidItemCost(skillData, node.getId());
             refund.refundTo(PlayerFleet.cargoOrNull());
         }
         ShipTrees.selectOption(skillData, node, option, gate.opCostFor(node));
@@ -444,7 +444,7 @@ final class NodeAllocator {
             return;
         }
         CostItems.remove(cargo, itemCost.itemId(), itemCost.quantity());
-        ItemChargeLedger.recordItemCharge(skillData, nodeId, itemCost);
+        ItemCostLedger.recordPaidItemCost(skillData, nodeId, itemCost);
     }
 
     private void refreshVariantHullModsOnce() {
@@ -463,10 +463,10 @@ final class NodeAllocator {
     }
 
     interface RefusalDescriber {
-        String describe(AllocationGate.Verdict verdict, AllocationGate gate, SkillItemCost refund);
+        String describe(AllocationCheck.Verdict verdict, AllocationCheck gate, SkillItemCost refund);
     }
 
-    private String describe(AllocationGate.Verdict verdict, AllocationGate gate, SkillItemCost refund) {
+    private String describe(AllocationCheck.Verdict verdict, AllocationCheck gate, SkillItemCost refund) {
         return switch (verdict.refusal()) {
             case NODE_CAP -> Translation.msg("node.block.nodeCap").arg("maxNodes", gate.budget().maxAllocatedNodes()).text();
             case OUT_OF_OP -> Translation.msg("node.block.outOfOp").arg("cost", gate.budget().opCostPerNode()).arg("free", gate.freeOp()).text();

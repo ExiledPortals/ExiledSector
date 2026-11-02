@@ -10,29 +10,34 @@ import java.util.Set;
 
 public class ShipSkillData {
 
+    public static final Map<String, String> SAVED_FIELD_NAMES = Map.of("unlockedSections", "unlockedSocketTypes",
+            "hullItemsBySection", "frameworkItemsBySocketType", "paidItemCostIds", "chargedItemIds", "paidItemCostQuantities", "chargedItemQuantities",
+            "pairGrantedNodeIds", "pairedFreeNodeIds", "subroutineGrantedNodeIds", "grantFreeNodeIds",
+            "choiceSelections", "optionalSelections");
+
     final Set<String> allocatedNodeIds = new LinkedHashSet<>();
-    Map<String, String> optionalSelections = new LinkedHashMap<>();
+    Map<String, String> choiceSelections = new LinkedHashMap<>();
     int level = 0;
     float xp = 0f;
     int bankedFreeAllocations = 0;
     Set<String> freeNodeIds = new LinkedHashSet<>();
-    Set<String> pairedFreeNodeIds = new LinkedHashSet<>();
-    Set<String> grantFreeNodeIds;
+    Set<String> pairGrantedNodeIds = new LinkedHashSet<>();
+    Set<String> subroutineGrantedNodeIds;
     transient Set<String> fleetGrantNodeIds;
     Set<String> replacementAllocatedNodeIds;
     String startingRootId;
     boolean npcBuild;
     transient int revision;
     Map<String, String> socketedItems;
-    Map<String, String> chargedItemIds;
-    Map<String, Float> chargedItemQuantities;
+    Map<String, String> paidItemCostIds;
+    Map<String, Float> paidItemCostQuantities;
     Set<String> dormantNodeIds;
     int frameworkPoints;
     boolean skillTreeUnlocked;
-    List<String> unlockedSocketTypes;
-    Map<String, String> frameworkItemsBySocketType;
+    List<String> unlockedSections;
+    Map<String, String> hullItemsBySection;
     boolean autoAllocateTemplate;
-    transient int pendingTemplateCredits;
+    transient int pendingTemplateFreeAllocations;
     transient LinkCache<AnchorLinkMaps> anchorLinks;
     transient LinkCache<Map<String, List<String>>> grantLinks;
 
@@ -59,9 +64,9 @@ public class ShipSkillData {
         return dormantNodeIds;
     }
 
-    Set<String> pairedFreeNodeIds() {
-        if (pairedFreeNodeIds == null) pairedFreeNodeIds = new LinkedHashSet<>();
-        return pairedFreeNodeIds;
+    Set<String> pairGrantedNodeIds() {
+        if (pairGrantedNodeIds == null) pairGrantedNodeIds = new LinkedHashSet<>();
+        return pairGrantedNodeIds;
     }
 
     Set<String> replacementAllocatedNodeIds() {
@@ -69,9 +74,9 @@ public class ShipSkillData {
         return replacementAllocatedNodeIds;
     }
 
-    Set<String> grantFreeNodeIds() {
-        if (grantFreeNodeIds == null) grantFreeNodeIds = new LinkedHashSet<>();
-        return grantFreeNodeIds;
+    Set<String> subroutineGrantedNodeIds() {
+        if (subroutineGrantedNodeIds == null) subroutineGrantedNodeIds = new LinkedHashSet<>();
+        return subroutineGrantedNodeIds;
     }
 
     Set<String> fleetGrantNodeIds() {
@@ -124,53 +129,53 @@ public class ShipSkillData {
         return true;
     }
 
-    public List<String> getUnlockedSocketTypeIds() {
-        return unlockedSocketTypes == null ? List.of() : Collections.unmodifiableList(unlockedSocketTypes);
+    public List<String> getUnlockedSectionIds() {
+        return unlockedSections == null ? List.of() : Collections.unmodifiableList(unlockedSections);
     }
 
-    public boolean isSocketTypeUnlocked(String socketTypeId) {
-        return unlockedSocketTypes != null && unlockedSocketTypes.contains(socketTypeId);
+    public boolean isSectionUnlocked(String sectionKindId) {
+        return unlockedSections != null && unlockedSections.contains(sectionKindId);
     }
 
-    public boolean unlockSocketType(String socketTypeId) {
+    public boolean unlockSection(String sectionKindId) {
         revision++;
-        if (socketTypeId == null || isSocketTypeUnlocked(socketTypeId)) {
+        if (sectionKindId == null || isSectionUnlocked(sectionKindId)) {
             return false;
         }
-        if (unlockedSocketTypes == null) unlockedSocketTypes = new ArrayList<>();
-        unlockedSocketTypes.add(socketTypeId);
+        if (unlockedSections == null) unlockedSections = new ArrayList<>();
+        unlockedSections.add(sectionKindId);
         return true;
     }
 
-    public void grantUnlockedSocketType(String socketTypeId) {
+    public void grantUnlockedSection(String sectionKindId) {
         revision++;
-        if (socketTypeId == null || isSocketTypeUnlocked(socketTypeId)) {
+        if (sectionKindId == null || isSectionUnlocked(sectionKindId)) {
             return;
         }
         frameworkPoints++;
-        if (unlockedSocketTypes == null) unlockedSocketTypes = new ArrayList<>();
-        unlockedSocketTypes.add(socketTypeId);
+        if (unlockedSections == null) unlockedSections = new ArrayList<>();
+        unlockedSections.add(sectionKindId);
     }
 
     public List<String> clearHullUpgrades() {
         revision++;
         List<String> removedItemIds = new ArrayList<>(getSectionItems().values());
-        unlockedSocketTypes = null;
-        frameworkItemsBySocketType = null;
+        unlockedSections = null;
+        hullItemsBySection = null;
         frameworkPoints = 0;
         return removedItemIds;
     }
 
-    public String lockSocketType(String socketTypeId) {
+    public String lockSection(String sectionKindId) {
         revision++;
-        if (unlockedSocketTypes == null || !unlockedSocketTypes.remove(socketTypeId)) {
+        if (unlockedSections == null || !unlockedSections.remove(sectionKindId)) {
             return null;
         }
-        return frameworkItemsBySocketType == null ? null : frameworkItemsBySocketType.remove(socketTypeId);
+        return hullItemsBySection == null ? null : hullItemsBySection.remove(sectionKindId);
     }
 
     public Map<String, String> getSectionItems() {
-        return frameworkItemsBySocketType == null ? Map.of() : Collections.unmodifiableMap(frameworkItemsBySocketType);
+        return hullItemsBySection == null ? Map.of() : Collections.unmodifiableMap(hullItemsBySection);
     }
 
     public List<String> getInstalledItemIds() {
@@ -183,23 +188,23 @@ public class ShipSkillData {
         return getSocketedItems().containsValue(itemId) || getSectionItems().containsValue(itemId);
     }
 
-    public String getSectionItem(String socketTypeId) {
-        return frameworkItemsBySocketType == null ? null : frameworkItemsBySocketType.get(socketTypeId);
+    public String getSectionItem(String sectionKindId) {
+        return hullItemsBySection == null ? null : hullItemsBySection.get(sectionKindId);
     }
 
-    public boolean installInSection(String socketTypeId, String itemId) {
+    public boolean installInSection(String sectionKindId, String itemId) {
         revision++;
-        if (!isSocketTypeUnlocked(socketTypeId)) {
+        if (!isSectionUnlocked(sectionKindId)) {
             return false;
         }
-        if (frameworkItemsBySocketType == null) frameworkItemsBySocketType = new LinkedHashMap<>();
-        frameworkItemsBySocketType.put(socketTypeId, itemId);
+        if (hullItemsBySection == null) hullItemsBySection = new LinkedHashMap<>();
+        hullItemsBySection.put(sectionKindId, itemId);
         return true;
     }
 
-    public String removeFromSection(String socketTypeId) {
+    public String removeFromSection(String sectionKindId) {
         revision++;
-        return frameworkItemsBySocketType == null ? null : frameworkItemsBySocketType.remove(socketTypeId);
+        return hullItemsBySection == null ? null : hullItemsBySection.remove(sectionKindId);
     }
 
     public void markChanged() {
@@ -210,9 +215,9 @@ public class ShipSkillData {
         return allocatedNodeIds.contains(nodeId);
     }
 
-    public String getOptionalSelection(String nodeId) {
-        if (optionalSelections == null) return null;
-        return optionalSelections.get(nodeId);
+    public String getChoiceSelection(String nodeId) {
+        if (choiceSelections == null) return null;
+        return choiceSelections.get(nodeId);
     }
 
     public boolean canUnchooseStartingRoot() {
@@ -236,16 +241,16 @@ public class ShipSkillData {
     }
 
     public boolean isGrantFree(String nodeId) {
-        return grantFreeNodeIds != null && grantFreeNodeIds.contains(nodeId);
+        return subroutineGrantedNodeIds != null && subroutineGrantedNodeIds.contains(nodeId);
     }
 
     public int usedNodeSlots() {
-        if (grantFreeNodeIds == null || grantFreeNodeIds.isEmpty()) {
+        if (subroutineGrantedNodeIds == null || subroutineGrantedNodeIds.isEmpty()) {
             return allocatedNodeIds.size();
         }
         int used = 0;
         for (String nodeId : allocatedNodeIds) {
-            if (!grantFreeNodeIds.contains(nodeId)) {
+            if (!subroutineGrantedNodeIds.contains(nodeId)) {
                 used++;
             }
         }
@@ -269,7 +274,7 @@ public class ShipSkillData {
     }
 
     public boolean isFreeNode(String nodeId) {
-        return freeNodeIds().contains(nodeId) || pairedFreeNodeIds().contains(nodeId) || isGrantFree(nodeId);
+        return freeNodeIds().contains(nodeId) || pairGrantedNodeIds().contains(nodeId) || isGrantFree(nodeId);
     }
 
     public boolean isAutoAllocatingTemplate() {
@@ -282,12 +287,12 @@ public class ShipSkillData {
 
     public void bankLevelUpForTemplate() {
         bankedFreeAllocations++;
-        pendingTemplateCredits++;
+        pendingTemplateFreeAllocations++;
     }
 
-    public int takePendingTemplateCredits() {
-        int pending = pendingTemplateCredits;
-        pendingTemplateCredits = 0;
+    public int takePendingTemplateFreeAllocations() {
+        int pending = pendingTemplateFreeAllocations;
+        pendingTemplateFreeAllocations = 0;
         return pending;
     }
 
@@ -312,8 +317,8 @@ public class ShipSkillData {
 
     public boolean isBlank() {
         return allocatedNodeIds.isEmpty() && getDormantNodeIds().isEmpty() && level == 0 && xp == 0f && bankedFreeAllocations == 0 && frameworkPoints == 0
-                && !skillTreeUnlocked && (unlockedSocketTypes == null || unlockedSocketTypes.isEmpty())
-                && (frameworkItemsBySocketType == null || frameworkItemsBySocketType.isEmpty());
+                && !skillTreeUnlocked && (unlockedSections == null || unlockedSections.isEmpty())
+                && (hullItemsBySection == null || hullItemsBySection.isEmpty());
     }
 
     public Set<String> getDormantNodeIds() {
@@ -339,7 +344,7 @@ public class ShipSkillData {
         }
     }
 
-    public void addFreeAllocationCredit() {
+    public void addFreeAllocation() {
         bankedFreeAllocations++;
     }
 
@@ -362,16 +367,16 @@ public class ShipSkillData {
 
     void release(String nodeId) {
         unsocketItem(nodeId);
-        if (optionalSelections != null) {
-            optionalSelections.remove(nodeId);
+        if (choiceSelections != null) {
+            choiceSelections.remove(nodeId);
         }
         if (freeNodeIds().remove(nodeId)) {
             bankedFreeAllocations++;
         } else {
-            pairedFreeNodeIds().remove(nodeId);
+            pairGrantedNodeIds().remove(nodeId);
         }
-        if (grantFreeNodeIds != null) {
-            grantFreeNodeIds.remove(nodeId);
+        if (subroutineGrantedNodeIds != null) {
+            subroutineGrantedNodeIds.remove(nodeId);
         }
         if (fleetGrantNodeIds != null) {
             fleetGrantNodeIds.remove(nodeId);

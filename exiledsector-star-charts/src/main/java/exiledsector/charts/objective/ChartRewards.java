@@ -13,7 +13,7 @@ import exiledsector.effects.ItemLootListener;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.MaterialItems;
-import exiledsector.loot.LootModifiers;
+import exiledsector.loot.LootMultipliers;
 import exiledsector.loot.LootSources;
 import exiledsector.ui.CampaignMessages;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
@@ -75,7 +75,7 @@ public final class ChartRewards {
         int credits = creditsFor(run.tier(), rewardMult);
         cargo.getCredits().add(credits);
         float chanceMult = itemChanceMultFor(run.tier()) * rewardMult;
-        ItemDrops.SiteLoot siteLoot = LootSources.rollSite(sector, REWARD_SITE, random, LootModifiers.of(chanceMult));
+        ItemDrops.SiteLoot siteLoot = LootSources.rollSite(sector, REWARD_SITE, random, LootMultipliers.of(chanceMult));
         ItemLootListener.addSiteLoot(cargo, siteLoot);
         int hullItems = siteLoot.items().size();
         ChartDrops.Loot chartLoot = grantChartDrops(run, cargo, random);

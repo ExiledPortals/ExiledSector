@@ -11,18 +11,18 @@ public final class SkillTags {
             "phase", "beam", "range", "ammo", "dmgtypekinetic", "dmgtypehighexplosive", "dmgtypefragmentation",
             "dmgtypeenergy", "weapons", "point_defense", "combat_readiness", "repair", "fleet_support", "d_mods");
 
-    public static final String CORE_REGION = "core";
-    public static final String ABYSS_REGION = "abyss";
-    public static final String EXOTECH_REGION = "exotech";
-    public static final String REDACTED_REGION = "REDACTED";
-    public static final String THREAT_REGION = "threat";
-    public static final String SHROUDED_REGION = "shrouded";
-    public static final Set<String> ABYSSAL_REGIONS = Set.of(ABYSS_REGION, THREAT_REGION, SHROUDED_REGION);
+    public static final String CORE_VOLUME = "core";
+    public static final String ABYSS_VOLUME = "abyss";
+    public static final String EXOTECH_VOLUME = "exotech";
+    public static final String REDACTED_VOLUME = "REDACTED";
+    public static final String THREAT_VOLUME = "threat";
+    public static final String SHROUDED_VOLUME = "shrouded";
+    public static final Set<String> ABYSSAL_VOLUMES = Set.of(ABYSS_VOLUME, THREAT_VOLUME, SHROUDED_VOLUME);
 
     public static final List<String> FACTION_VOLUMES = List.of(
             "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", "REDACTED", "persean_league");
 
-    public static final List<String> REGION = List.of(
+    public static final List<String> VOLUME = List.of(
             "core", "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", "REDACTED", "persean_league", "enigma", "kesteven", "exotech", "abyss",
             "nightcross", "stargazer", "threat", "tania", "shrouded");
 
@@ -34,13 +34,13 @@ public final class SkillTags {
             "gate_ancient_prototype_found", "gate_frozen_heart_visited", "gate_threat_fought", "gate_remnant_fought", "gate_dweller_fought",
             "gate_blood_trail_defeated", "gate_frost_fire_defeated", "gate_last_strive_completed");
 
-    public static final List<String> ALL = Stream.of(THEME, REGION, REQUIREMENT, GATE).flatMap(List::stream).toList();
+    public static final List<String> ALL = Stream.of(THEME, VOLUME, REQUIREMENT, GATE).flatMap(List::stream).toList();
 
     private SkillTags() {
     }
 
-    public static boolean isRegion(String tag) {
-        return tag != null && REGION.contains(tag);
+    public static boolean isVolume(String tag) {
+        return tag != null && VOLUME.contains(tag);
     }
 
     public static boolean isRequirement(String tag) {

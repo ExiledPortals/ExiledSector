@@ -7,7 +7,7 @@ import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import com.fs.starfarer.api.impl.campaign.terrain.NebulaTerrainPlugin;
 import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin;
-import exiledsector.charts.anomaly.storm.StormFrontTerrainPlugin;
+import exiledsector.charts.anomaly.stormfront.StormFrontTerrainPlugin;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.generation.ChartGenContext;
 import org.junit.jupiter.api.AfterEach;

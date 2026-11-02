@@ -70,7 +70,7 @@ class ItemEffectsTest {
         assertEquals("ARMOR_PERCENT", ItemEffects.SKILL_EFFECTS.currentName("ARMOR_PERCENT"));
         assertNull(ItemEffects.SKILL_EFFECTS.byName("NOT_AN_EFFECT"));
         assertNull(ItemEffects.SKILL_EFFECTS.byName(null));
-        assertEquals("NOT_AN_EFFECT", new RolledEffect("NOT_AN_EFFECT", 1f).effectName());
+        assertEquals("NOT_AN_EFFECT", new RolledLine("NOT_AN_EFFECT", 1f).effectName());
     }
 
     @Test
@@ -93,14 +93,14 @@ class ItemEffectsTest {
     void anItemDescribesAndAppliesItsEffectsThroughItsTypesResolver() throws Exception {
         ItemEffects.register(ItemType.HULL_ITEM, plunderEffects);
         ItemDefinitions.register(new JSONArray().put(HullItemRows.row("map", "reactor", OLD_PLUNDER + ":10:20")));
-        Item item = store.add(HullItemRows.data("map", 1L, List.of(new RolledEffect(OLD_PLUNDER, 15f)), null));
+        Item item = store.add(HullItemRows.data("map", 1L, List.of(new RolledLine(OLD_PLUNDER, 15f)), null));
 
         assertSame(plunderEffects, item.modifierEffects());
         assertEquals(PLUNDER, item.effects().get(0).effectName());
         assertEquals(List.of("Plunder +15%"), item.effectLines().stream().map(StyledText::plain).toList());
         assertTrue(item.effectLines(true).get(0).plain().startsWith("Plunder +15%"));
         assertTrue(item.skillEffects().isEmpty(), "an effect that is not a ship skill effect never reaches a ship");
-        assertEquals("Plunder +10/20%", new RolledEffect(PLUNDER, 10f)
+        assertEquals("Plunder +10/20%", new RolledLine(PLUNDER, 10f)
                 .rangeDescription(plunderEffects, ModifierLine.perTierGroup(PLUNDER, List.of(TierGroup.MID, TierGroup.HIGH), List.of(10f, 20f))).plain());
     }
 

@@ -14,7 +14,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.items.HullUpgradePoints;
 import exiledsector.items.HullUpgradeRules;
-import exiledsector.items.HullUpgradeTooltip;
+import exiledsector.items.RefitSchematicTooltip;
 import exiledsector.items.HullUpgradesSetting;
 import exiledsector.items.MasterSchematic;
 import exiledsector.items.RefitSchematic;
@@ -308,7 +308,7 @@ public final class HullUpgradePanel extends HoloPanel {
         if (isConfirmOpen()) {
             return;
         }
-        hoverTooltip.show(entry, TOOLTIP_WIDTH, (tooltip, expanded) -> HullUpgradeTooltip.writeMasterSchematic(tooltip,
+        hoverTooltip.show(entry, TOOLTIP_WIDTH, (tooltip, expanded) -> RefitSchematicTooltip.writeMasterSchematic(tooltip,
                 () -> List.of(StyledText.of(masterSchematicStateText(entry)))), tilePosition);
     }
 
@@ -349,7 +349,7 @@ public final class HullUpgradePanel extends HoloPanel {
             return Translation.msg("framework.panel.upgradeReady").arg("points", schematic.points()).text();
         }
         return switch (block) {
-            case STAR_CHART_PROGRESS -> Translation.text("upgrade.tooltip.chartMode");
+            case STAR_CHART_PROGRESS -> Translation.text("schematic.tooltip.chartMode");
             case AT_MAX_POINTS -> Translation.msg("framework.panel.upgradeAtMax").arg("max", HullUpgradePoints.MOST_POINTS).text();
             case NOT_UPGRADABLE, AT_OR_ABOVE_TIER -> Translation.msg("framework.panel.upgradeAlready").arg("points", view.points()).text();
             case NONE_IN_STORAGE -> Translation.msg("framework.panel.upgradeNone").arg("level", HullUpgradesSetting.unlockLevel()).text();
@@ -376,8 +376,8 @@ public final class HullUpgradePanel extends HoloPanel {
 
     private static String stateText(SectionState state) {
         return switch (state) {
-            case UNLOCKED -> Translation.text("framework.socketState.unlocked");
-            case AVAILABLE -> Translation.text("framework.socketState.available");
+            case UNLOCKED -> Translation.text("framework.sectionState.unlocked");
+            case AVAILABLE -> Translation.text("framework.sectionState.available");
             case RESTRICTED, NO_POINTS -> null;
         };
     }
@@ -403,7 +403,7 @@ public final class HullUpgradePanel extends HoloPanel {
         if (isConfirmOpen()) {
             return;
         }
-        hoverTooltip.show(entry, TOOLTIP_WIDTH, (tooltip, expanded) -> HullUpgradeTooltip.write(tooltip, entry.schematic(),
+        hoverTooltip.show(entry, TOOLTIP_WIDTH, (tooltip, expanded) -> RefitSchematicTooltip.write(tooltip, entry.schematic(),
                 () -> List.of(StyledText.of(schematicStateText(entry)))), tilePosition);
     }
 
@@ -414,15 +414,15 @@ public final class HullUpgradePanel extends HoloPanel {
         hoverTooltip.show(entry, TOOLTIP_WIDTH, (tooltip, expanded) -> I18n.forGameText(() -> {
             tooltip.setTitleOrbitronVeryLarge();
             tooltip.addTitle(entry.section().displayName(), SectionFlair.colorOf(entry.section()));
-            VanillaText.addPara(tooltip, Translation.styled("framework.socketDescription." + entry.section().id()), PAD, Misc.getTextColor());
+            VanillaText.addPara(tooltip, Translation.styled("framework.sectionDescription." + entry.section().id()), PAD, Misc.getTextColor());
             if (entry.section().requirementTag() != null) {
-                VanillaText.addPara(tooltip, HullUpgradeTooltip.sectionLine(entry.section()), LINE_PAD, Misc.getGrayColor());
+                VanillaText.addPara(tooltip, RefitSchematicTooltip.sectionLine(entry.section()), LINE_PAD, Misc.getGrayColor());
             }
             String hintKey = switch (entry.state()) {
-                case UNLOCKED -> "framework.socketHint.unlocked";
-                case AVAILABLE -> "framework.socketHint.available";
-                case RESTRICTED -> "framework.socketHint.restricted";
-                case NO_POINTS -> view.chartProgress() == null ? "framework.socketHint.noPoints" : "framework.socketHint.noPointsCharts";
+                case UNLOCKED -> "framework.sectionHint.unlocked";
+                case AVAILABLE -> "framework.sectionHint.available";
+                case RESTRICTED -> "framework.sectionHint.restricted";
+                case NO_POINTS -> view.chartProgress() == null ? "framework.sectionHint.noPoints" : "framework.sectionHint.noPointsCharts";
             };
             VanillaText.addPara(tooltip, Translation.styled(hintKey), PAD, Misc.getGrayColor());
         }), tilePosition);

@@ -22,18 +22,18 @@ public final class RelockedGates {
         return relocked != null && relocked.contains(conditionType.name());
     }
 
-    public static List<UnlockConditionType> relockOpenAreas(SectorAPI sector) {
-        Set<UnlockConditionType> openAreaGates = new LinkedHashSet<>();
+    public static List<UnlockConditionType> relockOpenGates(SectorAPI sector) {
+        Set<UnlockConditionType> openVolumeGates = new LinkedHashSet<>();
         NodeGates.all().values().forEach(conditions -> conditions.forEach(condition -> {
             UnlockConditionType conditionType = condition.getType();
             if (conditionType.isModGate() && conditionType.modGate().modEnabled().test(condition.getKey())
                     && !UnlockConditionOverrides.isDisabled(conditionType) && !isRelocked(sector, conditionType)
                     && conditionType.modGate().passed().test(sector, condition.getKey())) {
-                openAreaGates.add(conditionType);
+                openVolumeGates.add(conditionType);
             }
         }));
-        relock(sector, openAreaGates);
-        return List.copyOf(openAreaGates);
+        relock(sector, openVolumeGates);
+        return List.copyOf(openVolumeGates);
     }
 
     public static void relock(SectorAPI sector, Collection<UnlockConditionType> conditionTypes) {

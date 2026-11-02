@@ -74,12 +74,12 @@ public final class HullUpgradesSetting {
         return unlockLevelSetting;
     }
 
-    public static boolean sectionsOpen(SectorAPI sector) {
+    public static boolean hullItemDropsOpen(SectorAPI sector) {
         MutableCharacterStatsAPI playerStats = sector == null ? null : sector.getPlayerStats();
-        return playerStats != null && sectionsOpen(playerStats.getLevel());
+        return playerStats != null && hullItemDropsOpen(playerStats.getLevel());
     }
 
-    public static boolean sectionsOpen(int playerLevel) {
+    public static boolean hullItemDropsOpen(int playerLevel) {
         return enabled() && playerLevel >= unlockLevel();
     }
 

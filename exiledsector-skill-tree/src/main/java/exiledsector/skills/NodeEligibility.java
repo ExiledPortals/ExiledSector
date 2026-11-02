@@ -64,7 +64,7 @@ public final class NodeEligibility {
             List<AllocatedNode> remaining = allocated.stream().filter(existing -> !existing.node().getId().equals(nodeId)).toList();
             ShieldType remainingShieldType = ShieldSkillEffect.resolveDisplayShieldType(shipFacts.hullShieldType(),
                     AllocatedSkillEffects.forNodes(data, remaining, shipFacts.hullSize()));
-            SkillItemCost refund = ItemChargeLedger.itemCharge(data, nodeId);
+            SkillItemCost refund = ItemCostLedger.paidItemCost(data, nodeId);
             ToDoubleFunction<String> heldAfterRefund = refund == null || heldItems == null ? heldItems
                     : itemId -> heldItems.applyAsDouble(itemId) + (itemId.equals(refund.itemId()) ? refund.quantity() : 0f);
             return new Context(remaining, remainingShieldType, shipFacts, locked, profile, heldAfterRefund, gated);
@@ -158,7 +158,7 @@ public final class NodeEligibility {
     }
 
     public static OptionProblem optionProblem(SkillType type, String optionTypeId, Function<String, SkillType> typeLookup) {
-        if (!type.isOptional()) {
+        if (!type.isChoice()) {
             return optionTypeId == null ? null : OptionProblem.UNEXPECTED;
         }
         if (optionTypeId == null) {
@@ -172,7 +172,7 @@ public final class NodeEligibility {
     }
 
     public static SkillType validOption(SkillType type, String optionTypeId, Function<String, SkillType> typeLookup) {
-        if (optionTypeId == null || !type.isOptional() || !type.offersOption(optionTypeId)) {
+        if (optionTypeId == null || !type.isChoice() || !type.offersOption(optionTypeId)) {
             return null;
         }
         return typeLookup.apply(optionTypeId);

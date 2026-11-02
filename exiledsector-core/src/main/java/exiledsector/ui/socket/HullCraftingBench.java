@@ -1,0 +1,188 @@
+package exiledsector.ui.socket;
+
+import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledsector.ExiledSector;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
+import exiledsector.items.CorruptionOutcome;
+import exiledsector.items.Nanoswarm;
+import exiledsector.items.CraftingMaterials;
+import exiledsector.items.CraftingInhibitor;
+import exiledsector.items.Item;
+import exiledsector.items.ItemCrafting;
+import exiledsector.items.CraftingMaterialFamily;
+import exiledsector.items.ItemDefinition;
+import exiledsector.items.ItemNature;
+import exiledsector.items.ItemStore;
+import exiledsector.items.ItemType;
+import exiledsector.items.MaterialItems;
+import exiledsector.items.SocketCustody;
+import exiledsector.items.UseVerdict;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Random;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.function.ToIntFunction;
+
+public final class HullCraftingBench implements BenchModeSupport {
+
+    public static final HullCraftingBench INSTANCE = new HullCraftingBench();
+    private static final UseVerdict LOAD_FIRST = UseVerdict.refused("ui.craftingBench.notice.loadFirst");
+    private static final UseVerdict CANNOT_USE = UseVerdict.refused("ui.craftingBench.notice.cannotUse");
+
+    private HullCraftingBench() {
+    }
+
+    @Override
+    public BenchMode mode() {
+        return BenchMode.HULL_ITEMS;
+    }
+
+    @Override
+    public ItemType itemType() {
+        return null;
+    }
+
+    @Override
+    public boolean accepts(Item item) {
+        return item != null && BenchModes.modeFor(item.type()) == BenchMode.HULL_ITEMS;
+    }
+
+    @Override
+    public ItemStore store() {
+        return ItemStore.get();
+    }
+
+    @Override
+    public String titleKey() {
+        return "ui.craftingBench.title";
+    }
+
+    @Override
+    public String emptyKey() {
+        return "ui.craftingBench.empty";
+    }
+
+    @Override
+    public String useHintKey() {
+        return "ui.craftingBench.tile.use";
+    }
+
+    @Override
+    public PickerSession pickerSession() {
+        return null;
+    }
+
+    @Override
+    public List<CraftingMaterialFamily> currencies() {
+        List<CraftingMaterialFamily> offered = new ArrayList<>();
+        ExiledSector.enabledDomains().forEach(domain -> offered.addAll(domain.hullCraftingBenchCurrencies()));
+        return hullCraftingBenchCurrencies(offered, HoloPanel.playerMaterials()::count);
+    }
+
+    static List<CraftingMaterialFamily> hullCraftingBenchCurrencies(List<CraftingMaterialFamily> registered, ToIntFunction<String> owned) {
+        List<CraftingMaterialFamily> shown = new ArrayList<>(List.of(Nanoswarm.values()));
+        for (CraftingMaterialFamily currency : registered) {
+            if (!(currency instanceof Nanoswarm) && currency.appliesToShipItems() && owned.applyAsInt(currency.itemId()) > 0) {
+                shown.add(currency);
+            }
+        }
+        return shown;
+    }
+
+    @Override
+    public boolean inOrbit(CraftingMaterialFamily currency) {
+        return currency instanceof Nanoswarm;
+    }
+
+    @Override
+    public String currencyDescriptionKey(CraftingMaterialFamily currency) {
+        return MaterialItems.descriptionKey(currency.itemId());
+    }
+
+    @Override
+    public String currencyDescription(CraftingMaterialFamily currency) {
+        return currency.description();
+    }
+
+    @Override
+    public List<StyledText> currencyLines(CraftingMaterialFamily currency) {
+        return currency.grantedLines();
+    }
+
+    @Override
+    public Refusal refusal(CraftingMaterialFamily currency, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
+                           Set<CraftingInhibitor> inhibitors) {
+        if (materials.count(currency.itemId()) < 1) {
+            return new Refusal(UseVerdict.refused(currency.growable() ? "ui.craftingBench.notice.noneOwned" : "ui.craftingBench.notice.noneFound"), false);
+        }
+        if (loaded == null) {
+            return new Refusal(LOAD_FIRST, false);
+        }
+        return new Refusal(ItemCrafting.verdict(currency, loaded, allowedUniques, inhibitors), true);
+    }
+
+    @Override
+    public Use use(CraftingMaterialFamily currency, Item loaded, ItemStore store, CraftingMaterials materials, Random random,
+                   Predicate<ItemDefinition> allowedUniques, Set<CraftingInhibitor> inhibitors, String nameBefore) {
+        Item result = ItemCrafting.use(currency, loaded, materials, store, random, allowedUniques, inhibitors);
+        if (result == null) {
+            return null;
+        }
+        String notice = Translation.msg(usedNoticeKey(currency, result.corruption(), ItemNature.of(result.kind())))
+                .arg("before", nameBefore).arg("name", result.name()).text();
+        SocketCustody.markHostsChanged(result);
+        if (currency.mayChangeDefinition() && SocketCustody.unsocketIfMisfit(result)) {
+            String movedNotice = Translation.msg("ui.craftingBench.notice.movedToStorage").arg("name", result.name()).arg("type", result.kindName()).text();
+            notice = Translation.msg("format.sentences").arg("a", notice).arg("b", movedNotice).text();
+        }
+        return new Use(result, currency.createsCopy() ? loaded : result, notice);
+    }
+
+    static String usedNoticeKey(CraftingMaterialFamily currency, CorruptionOutcome outcome, ItemNature nature) {
+        if (currency == Nanoswarm.CORRUPTION && outcome != null) {
+            return "ui.craftingBench.notice.corrupted." + outcome.name().toLowerCase(Locale.ROOT) + "." + nature.name().toLowerCase(Locale.ROOT);
+        }
+        return currency.usedNoticeKey(nature);
+    }
+
+    @Override
+    public UseVerdict cannotUse() {
+        return CANNOT_USE;
+    }
+
+    @Override
+    public List<StyledText> headerLines(Item item) {
+        List<StyledText> lines = new ArrayList<>(item.conditionLines());
+        lines.addAll(item.kindLines());
+        return lines;
+    }
+
+    @Override
+    public List<StyledText> detailLines(Item item) {
+        return List.of();
+    }
+
+    @Override
+    public OpenTexts openTexts() {
+        return null;
+    }
+
+    @Override
+    public OpenCheck openCheck(SectorAPI sector, ItemStore store, Item loaded) {
+        return new OpenCheck(false, null);
+    }
+
+    @Override
+    public int openEntries(Item loaded) {
+        return 0;
+    }
+
+    @Override
+    public OpenOutcome open(SectorAPI sector, ItemStore store, Item loaded, int entries, Random random) {
+        return new OpenOutcome(false, null);
+    }
+}

@@ -52,7 +52,7 @@ public final class HypershuntGuards {
         if (guards == null) {
             return null;
         }
-        guards.setName(Translation.gameText("chart.hypershunt.guards.name"));
+        guards.setName(Translation.gameText("chart.anomaly.coronal_hypershunt.guards.name"));
         guards.setNoFactionInName(true);
         hideDetails(guards);
         omegaDrops().forEach(guards::addDropRandom);

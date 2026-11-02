@@ -11,7 +11,7 @@ public final class NightcrossCompat {
     public static final List<String> TESTED_VERSIONS = List.of("2.1.5", "2.1.6");
     public static final List<String> REQUIRED_HULL_MOD_IDS = List.of("nightcrosstargeting", "na_gravitydrag", "na_tidalgrid",
             "na_hardlightmatrix", "na_hardlightmatrix2", "na_energizedarmor", "na_stargazerstars");
-    public static final CompatTarget TARGET = new CompatTarget("Nightcross Armory area", List.of(MOD_ID), TESTED_VERSIONS,
+    public static final CompatTarget TARGET = new CompatTarget("Nightcross Armory volumes", List.of(MOD_ID), TESTED_VERSIONS,
             NightcrossCompat::missingFeatures);
 
     private NightcrossCompat() {

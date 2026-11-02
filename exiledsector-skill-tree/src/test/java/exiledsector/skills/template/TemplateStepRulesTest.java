@@ -1,6 +1,6 @@
 package exiledsector.skills.template;
 
-import exiledsector.skills.AllocationGate;
+import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillItemCost;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TemplateStepRulesTest {
 
-    private static final BiFunction<SkillNode, SkillType, AllocationGate.Verdict> ALLOWED = (node, option) -> AllocationGate.Verdict.GRANTED;
+    private static final BiFunction<SkillNode, SkillType, AllocationCheck.Verdict> ALLOWED = (node, option) -> AllocationCheck.Verdict.GRANTED;
 
     private ShipSkillData data;
 
@@ -33,7 +33,7 @@ class TemplateStepRulesTest {
         node("lobster", type("lobster_type", SkillTier.SMALL).itemCost(new SkillItemCost("lobster", 1000f)).build());
         SkillTree.registerType(type("hull", SkillTier.SMALL).build());
         SkillTree.registerType(type("pricey", SkillTier.SMALL).itemCost(new SkillItemCost("alpha_core", 1f)).build());
-        node("slot", type("slot_type", SkillTier.SMALL).optionalOptionIds(List.of("hull", "pricey")).build());
+        node("slot", type("slot_type", SkillTier.SMALL).choiceOptionIds(List.of("hull", "pricey")).build());
         data = new ShipSkillData();
         ShipTrees.chooseStartingRoot(data, root);
     }
@@ -79,36 +79,36 @@ class TemplateStepRulesTest {
     }
 
     @Test
-    void anOptionalNodeNeedsOneOfItsOwnOptions() {
+    void aChoiceNodeNeedsOneOfItsOwnOptions() {
         assertEquals(StepVerdict.NO_OPTION, verdict("slot", null));
         assertEquals(StepVerdict.NO_OPTION, verdict("slot", "armor_type"));
     }
 
     @Test
     void aNodeTheGateCannotPlaceIsNotAllocatableWhileAnIneligibleOneIsBlocked() {
-        for (AllocationGate.Refusal refusal : List.of(AllocationGate.Refusal.NOT_CONNECTED, AllocationGate.Refusal.NODE_CAP,
-                AllocationGate.Refusal.OUT_OF_OP)) {
+        for (AllocationCheck.Refusal refusal : List.of(AllocationCheck.Refusal.NOT_CONNECTED, AllocationCheck.Refusal.NODE_CAP,
+                AllocationCheck.Refusal.OUT_OF_OP)) {
             assertEquals(StepVerdict.NOT_ALLOCATABLE, TemplateStepRules.verdict(new TemplateStep("armor", null), data, "root", refusing(refusal)));
         }
         assertEquals(StepVerdict.BLOCKED, TemplateStepRules.verdict(new TemplateStep("armor", null), data, "root",
-                refusing(AllocationGate.Refusal.INELIGIBLE)));
+                refusing(AllocationCheck.Refusal.INELIGIBLE)));
     }
 
     @Test
     void theGateIsAskedAboutTheTemplatesChosenOption() {
         List<String> askedOptions = new ArrayList<>();
-        BiFunction<SkillNode, SkillType, AllocationGate.Verdict> blockHull = (node, option) -> {
+        BiFunction<SkillNode, SkillType, AllocationCheck.Verdict> blockHull = (node, option) -> {
             askedOptions.add(option == null ? null : option.getId());
-            return option != null && option.getId().equals("hull") ? new AllocationGate.Verdict(AllocationGate.Refusal.INELIGIBLE, null)
-                    : AllocationGate.Verdict.GRANTED;
+            return option != null && option.getId().equals("hull") ? new AllocationCheck.Verdict(AllocationCheck.Refusal.INELIGIBLE, null)
+                    : AllocationCheck.Verdict.GRANTED;
         };
 
         assertEquals(StepVerdict.BLOCKED, TemplateStepRules.verdict(new TemplateStep("slot", "hull"), data, "root", blockHull));
         assertEquals(List.of("hull"), askedOptions);
     }
 
-    private static BiFunction<SkillNode, SkillType, AllocationGate.Verdict> refusing(AllocationGate.Refusal refusal) {
-        return (node, option) -> new AllocationGate.Verdict(refusal, null);
+    private static BiFunction<SkillNode, SkillType, AllocationCheck.Verdict> refusing(AllocationCheck.Refusal refusal) {
+        return (node, option) -> new AllocationCheck.Verdict(refusal, null);
     }
 
     @Test

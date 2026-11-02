@@ -18,9 +18,9 @@ Status: steps 1-8 and the docs part of step 9 built and merged into `parallel-wo
 All under `exiledsector.charts`. Class names stay as they are.
 
 ### Root (wiring and shared ids)
-`StarCharts`, `StarChartsDomain`, `StarChartSettings`, `ChartIds`, `ChartSaveAliases`, `BuiltInTable`
+`StarCharts`, `StarChartsDomain`, `StarChartSettings`, `ChartIds`, `ChartSaveAliases`
 
-`BuiltInTable` stays here because anomalies, bosses, features and POIs all use it. If that forces it public, it can instead go to a `charts.table` package.
+`BuiltInTable` is in the `charts.table` package, because anomalies, bosses, features and POIs all use it.
 
 ### `run`: a chart run from entering to closing
 `ChartRun`, `ChartRuns`, `ChartRunState`, `ChartRunBound`, `ChartRunActions`, `ChartRunScript`, `ChartRunEffects`, `ChartBlockedAbilities`, `ChartCampaignPlugin`, `ChartContentListener`
@@ -53,7 +53,7 @@ The current `charts.feature` package becomes `layout.feature`, with `ChartFeatur
 `ChartContent`, `ChartContentEngine`, `VanillaChartContentEngine`, `ChartContentGenerator`, `ChartContentPlan`, `ChartContentPlanner`, `ChartFleetSpread`, `ChartSpot`, `ChartSites`, `ChartPoi`, `ChartPois`, `ChartBosses`, `ChartBossType`, `ChartThreatFleets`, `ChartFactions`, `ChartFaction`, `ModdedChartFactions`, `ChartColonyItems`
 
 ### `objective`: what finishes a chart and what it rewards
-`ChartObjective`, `ChartObjectives`, `ChartObjectiveIntel`, `ChartRewards`
+`ChartObjectives`, `ChartObjectiveIntel`, `ChartRewards`
 
 ### `effect`: chart modifiers and how they reach fleets and combat
 `ChartEffect`, `ChartEffects`, `ChartFactionEffect`, `ChartFleetStat`, `ChartFleetConditions`, `ChartFleetConditionSource`, `ChartEnemyDamageListener`, `ChartBattlePlugin`

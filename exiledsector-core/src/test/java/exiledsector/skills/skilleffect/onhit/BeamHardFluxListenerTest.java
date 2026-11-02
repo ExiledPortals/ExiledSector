@@ -208,11 +208,11 @@ class BeamHardFluxListenerTest {
         ShipAPI attacker = ship(HARD_FLUX_PERCENT_KEY, 50f);
         BeamAPI beam = beamFrom(attacker, false);
         when(target.getParamAboutToApplyDamage()).thenReturn(beam);
-        BeamSplitListener.beginSimulatedHit();
+        LionsGazeListener.beginSimulatedHit();
         try {
             converter.reportDamageApplied(attacker, target, shieldFlux(40f));
         } finally {
-            BeamSplitListener.endSimulatedHit();
+            LionsGazeListener.endSimulatedHit();
         }
 
         verify(flux, never()).setHardFlux(anyFloat());

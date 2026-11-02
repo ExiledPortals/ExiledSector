@@ -12,7 +12,7 @@ import exiledsector.items.ForgeChoice;
 import exiledsector.items.ForgeOperation;
 import exiledsector.items.Item;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.RolledEffect;
+import exiledsector.items.RolledLine;
 import exiledsector.items.RolledModifier;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -85,7 +85,7 @@ class ChartForgeTest {
     }
 
     private static Item plate() {
-        return Item.withEffects("plate", PLATE, 1L, List.of(new RolledEffect("FLUX_CAPACITY_MULT", 5f), new RolledEffect("ARMOR_PERCENT", 7f)));
+        return Item.withEffects("plate", PLATE, 1L, List.of(new RolledLine("FLUX_CAPACITY_MULT", 5f), new RolledLine("ARMOR_PERCENT", 7f)));
     }
 
     @Test
@@ -111,7 +111,7 @@ class ChartForgeTest {
         ChartRun run = liveForgeRun(List.of(excise), 1);
         owns(100f, 100f, 50);
         Item item = plate();
-        RolledModifier notOnTheItem = plate().explicits().get(0).asLocked();
+        RolledModifier notOnTheItem = plate().explicits().get(0).asImmutable();
 
         assertFalse(ChartForge.run(run, excise, item, ForgeChoice.modifier(notOnTheItem), cargo, materials, new Random(1L)));
 

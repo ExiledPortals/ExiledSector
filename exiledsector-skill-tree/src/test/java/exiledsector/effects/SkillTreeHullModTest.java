@@ -161,13 +161,13 @@ class SkillTreeHullModTest {
     }
 
     @Test
-    void appliesTheSelectedOptionsEffectForAnOptionalNodeNotThePlaceholders() {
+    void appliesTheSelectedOptionsEffectForAChoiceNodeNotThePlaceholders() {
         SkillType placeholder = new SkillType.Builder("slot", "Optional Skill", "a.png", SkillTier.SMALL)
                 .effects(List.of())
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
                 .todo(null)
-                .optionalOptionIds(List.of("hull"))
+                .choiceOptionIds(List.of("hull"))
                 .build();
         SkillType hullOption = new SkillType.Builder("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", SkillTier.SMALL)
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
@@ -310,7 +310,7 @@ class SkillTreeHullModTest {
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
                 .todo(null)
-                .optionalOptionIds(List.of())
+                .choiceOptionIds(List.of())
                 .exclusiveHullModIds(List.of("adaptiveshields"))
                 .build();
         SkillNode frontNode = new SkillNode("shield_conversion_front_1", frontType, List.of(), 0f, 0f);
@@ -350,7 +350,7 @@ class SkillTreeHullModTest {
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
                 .todo(null)
-                .optionalOptionIds(List.of())
+                .choiceOptionIds(List.of())
                 .exclusiveHullModIds(List.of("armoredcladding"))
                 .build();
         SkillNode hullNode = new SkillNode("hull_1", hullType, List.of(), 0f, 0f);
@@ -386,7 +386,7 @@ class SkillTreeHullModTest {
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
                 .todo(null)
-                .optionalOptionIds(List.of())
+                .choiceOptionIds(List.of())
                 .exclusiveHullModIds(List.of("armoredcladding"))
                 .build();
         SkillNode hullNode = new SkillNode("hull_1", hullType, List.of(), 0f, 0f);
@@ -413,7 +413,7 @@ class SkillTreeHullModTest {
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
                 .todo(null)
-                .optionalOptionIds(List.of())
+                .choiceOptionIds(List.of())
                 .exclusiveHullModIds(List.of("adaptiveshields"))
                 .build();
         SkillNode frontNode = new SkillNode("shield_conversion_front_1", frontType, List.of(), 0f, 0f);
@@ -691,12 +691,12 @@ class SkillTreeHullModTest {
     }
 
     @Test
-    void removeHullModsConflictingWithAllocatedSkillsAlsoStripsWhatAnOptionalNodesContainerExcludes() {
+    void removeHullModsConflictingWithAllocatedSkillsAlsoStripsWhatAChoiceNodesContainerExcludes() {
         SkillType plain = new SkillType.Builder("plain", "Plain", "a.png", SkillTier.SMALL).build();
         SkillTree.registerType(plain);
         SkillType slotType = new SkillType.Builder("slot", "Slot", "a.png", SkillTier.SMALL)
                 .exclusiveHullModIds(List.of("heavyarmor"))
-                .optionalOptionIds(List.of("plain"))
+                .choiceOptionIds(List.of("plain"))
                 .build();
         SkillNode slotNode = new SkillNode("slot_1", slotType, List.of(), 0f, 0f);
         SkillTree.register(slotNode);
@@ -733,7 +733,7 @@ class SkillTreeHullModTest {
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
                 .todo(null)
-                .optionalOptionIds(List.of())
+                .choiceOptionIds(List.of())
                 .exclusiveHullModIds(List.of("adaptiveshields"))
                 .build();
         SkillNode frontNode = new SkillNode("shield_conversion_front_1", frontType, List.of(), 0f, 0f);

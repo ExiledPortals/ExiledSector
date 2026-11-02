@@ -1,0 +1,444 @@
+package exiledsector.items;
+
+import exiledsector.charts.loot.ChartDrops;
+import com.fs.starfarer.api.campaign.CargoAPI;
+import exiledsector.modifiers.Modifier;
+import exiledsector.modifiers.ModifierCategory;
+import exiledsector.modifiers.ModifierLine;
+import exiledsector.modifiers.ModifierSlot;
+import exiledsector.modifiers.ScaleContext;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.function.Predicate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+class StarChartCipherTest {
+
+    private static final String SINGLE = "star_chart";
+    private static final String GATED = StarChartFixtures.TEST_GATED;
+    private static final String FLEET_SIZE = "CHART_FLEET_SIZE_PERCENT";
+    private static final Predicate<ItemDefinition> ANY_UNIQUE = definition -> true;
+
+    private final ItemStore store = ItemStore.forStarCharts();
+    private final CargoAPI cargo = mock(CargoAPI.class);
+    private CraftingMaterials materials;
+
+    @BeforeEach
+    void setUp() throws Exception {
+        ItemFixtures.registerShippedItems();
+        ItemImplicits.register(HullItemRows.shippedRows(ItemImplicits.dataPath()));
+        StarChartFixtures.registerShipped();
+        StarChartCipher.registerAll();
+        when(cargo.getQuantity(eq(CargoAPI.CargoItemType.SPECIAL), any())).thenReturn(1000f);
+        materials = CraftingMaterials.cargoOnly(cargo);
+    }
+
+    @AfterEach
+    void tearDown() {
+        StarChartFixtures.unregisterCurrencies();
+        ItemCraftingCosts.clear();
+        StarChartFixtures.clear();
+        ItemDefinitions.clear();
+        ItemModifiers.clear();
+        ItemImplicits.clear();
+    }
+
+    private StarChart stored(String definitionId, long seed, int tier) {
+        return (StarChart) store.add(ItemData.rolledAtTier(ItemDefinitions.get(definitionId), seed, tier));
+    }
+
+    private StarChart storedWith(String definitionId, int tier, Predicate<StarChart> wanted) {
+        for (long seed = 0; seed < 2000; seed++) {
+            StarChart candidate = StarChartFixtures.chart(definitionId, seed, tier);
+            if (wanted.test(candidate)) {
+                return stored(definitionId, seed, tier);
+            }
+        }
+        throw new AssertionError("no seed rolls the wanted chart");
+    }
+
+    private static boolean has(StarChart chart, String modifierId) {
+        return chart.explicits().stream().anyMatch(rolled -> rolled.modifierId().equals(modifierId));
+    }
+
+    private Item use(CraftingMaterialFamily currency, Item chart, long seed) {
+        return ItemCrafting.use(currency, chart, materials, store, new Random(seed), ANY_UNIQUE);
+    }
+
+    private static long side(Item chart, ModifierSlot slot) {
+        return chart.explicits().stream().filter(rolled -> rolled.slot() == slot).count();
+    }
+
+    @Test
+    void theChartRowListsTheExtendedKernelsThenTheChartCurrenciesAndShipTypesStayAsTheyWere() {
+        assertEquals(List.of(Nanoswarm.AUGMENTATION, Nanoswarm.CORRUPTION, Nanoswarm.ANNULMENT, Nanoswarm.TUNING,
+                        StarChartCipher.REFORGE, StarChartCipher.ERASURE, StarChartCipher.CARTOGRAPHY),
+                CraftingMaterialFamilies.forType(ItemType.STAR_CHART));
+        assertEquals(Arrays.stream(Nanoswarm.values()).filter(kernel -> kernel != Nanoswarm.ANNULMENT).toList(),
+                CraftingMaterialFamilies.forType(ItemType.SUBROUTINE));
+        assertEquals(Arrays.asList(Nanoswarm.values()), CraftingMaterialFamilies.forType(ItemType.HULL_ITEM));
+        for (StarChartCipher currency : StarChartCipher.values()) {
+            assertFalse(currency.dropsFromShipLoot(), currency.name());
+            assertSame(currency, CraftingMaterialFamilies.byItemId(currency.itemId()));
+            assertTrue(MaterialItems.isMaterial(currency.itemId()));
+        }
+        for (Nanoswarm kernel : Nanoswarm.values()) {
+            assertTrue(kernel.dropsFromShipLoot(), kernel.name());
+            assertFalse(kernel.appliesTo(ItemType.STAR_CHART), kernel.name());
+        }
+
+        StarChartCipher.registerAll();
+        assertEquals(7, CraftingMaterialFamilies.forType(ItemType.STAR_CHART).size());
+        StarChartFixtures.unregisterCurrencies();
+        assertEquals(List.of(), CraftingMaterialFamilies.forType(ItemType.STAR_CHART));
+        assertEquals(Arrays.asList(Nanoswarm.values()), CraftingMaterialFamilies.all());
+        assertThrows(IllegalArgumentException.class, () -> CraftingMaterialFamilies.extend(StarChartCipher.REFORGE, ItemType.HULL_ITEM));
+        assertFalse(CraftingMaterialFamilies.extend(Nanoswarm.AUGMENTATION, ItemType.HULL_ITEM));
+        assertFalse(CraftingMaterialFamilies.appliesTo(null, ItemType.STAR_CHART));
+        assertFalse(CraftingMaterialFamilies.appliesTo(Nanoswarm.AUGMENTATION, null));
+    }
+
+    @Test
+    void chartCurrenciesNeverTouchShipItems() {
+        ItemStore shipStore = new ItemStore();
+        Item hullItem = shipStore.add(ItemDefinitions.all().stream().filter(definition -> !definition.unique()).findFirst().orElseThrow(), 4L);
+        for (StarChartCipher currency : StarChartCipher.values()) {
+            assertFalse(ItemCrafting.canUse(currency, hullItem, ANY_UNIQUE), currency.name());
+            assertNull(ItemCrafting.use(currency, hullItem, materials, shipStore, new Random(1L), ANY_UNIQUE), currency.name());
+        }
+        assertEquals(ItemCrafting.canAugment(hullItem), ItemCrafting.canUse(Nanoswarm.AUGMENTATION, hullItem, ANY_UNIQUE));
+        assertFalse(ItemCrafting.canUse(Nanoswarm.REPLICATION, stored(SINGLE, 3L, 4), ANY_UNIQUE));
+    }
+
+    @Test
+    void theKernelsOnlyReachChartsWhileExtended() {
+        StarChart chart = storedWith(SINGLE, 6, candidate -> candidate.explicits().size() == 1);
+        assertTrue(ItemCrafting.canUse(Nanoswarm.AUGMENTATION, chart, ANY_UNIQUE));
+        assertFalse(ItemCrafting.canUse(Nanoswarm.METAMORPH, chart, ANY_UNIQUE));
+
+        StarChartFixtures.unregisterCurrencies();
+
+        for (Nanoswarm kernel : StarChartCipher.KERNELS_ON_CHARTS) {
+            assertFalse(ItemCrafting.canUse(kernel, chart, ANY_UNIQUE), kernel.name());
+        }
+    }
+
+    @Test
+    void augmentationFillsAChartToSixModifiersWithThreeOnEachSide() {
+        StarChart chart = storedWith(SINGLE, 12, candidate -> candidate.explicits().size() == 1);
+        long seed = 0;
+        while (ItemCrafting.canUse(Nanoswarm.AUGMENTATION, chart, ANY_UNIQUE)) {
+            assertSame(chart, use(Nanoswarm.AUGMENTATION, chart, seed++));
+            assertTrue(side(chart, ModifierSlot.PREFIX) <= 3 && side(chart, ModifierSlot.SUFFIX) <= 3, chart.explicits().toString());
+            assertEquals(chart.explicits().size() <= 2 ? ItemRarity.COMMON : ItemRarity.RARE, chart.rarity());
+        }
+        assertEquals(6, chart.explicits().size());
+        assertEquals(3, side(chart, ModifierSlot.PREFIX));
+        assertEquals(12, chart.tier());
+    }
+
+    @Test
+    void augmentationOnALowTierChartOnlyAddsModifiersThatRollAtThatTier() {
+        for (long seed = 0; seed < 60; seed++) {
+            StarChart chart = stored(SINGLE, seed, 1);
+            while (ItemCrafting.canUse(Nanoswarm.AUGMENTATION, chart, ANY_UNIQUE)) {
+                use(Nanoswarm.AUGMENTATION, chart, seed);
+            }
+            assertFalse(has(chart, "CHART_COLONY_ITEM_PERCENT"), "seed " + seed);
+        }
+    }
+
+    @Test
+    void tuningRerollsTheRollPositionsAndKeepsTheModifiersAndTier() {
+        StarChart chart = storedWith(SINGLE, 7, candidate -> has(candidate, FLEET_SIZE));
+        List<String> idsBefore = chart.explicits().stream().map(RolledModifier::modifierId).toList();
+        List<RolledModifier> before = List.copyOf(chart.explicits());
+
+        assertSame(chart, use(Nanoswarm.TUNING, chart, 9L));
+
+        assertNotEquals(before, chart.explicits());
+        assertEquals(idsBefore, chart.explicits().stream().map(RolledModifier::modifierId).toList());
+        assertEquals(7, chart.tier());
+        for (SlottedRoll roll : chart.rolls(ModifierCategory.EXPLICIT)) {
+            if (roll.line() != null && roll.line().scalesWithTier() && roll.line().canVary()) {
+                float position = roll.roll().magnitude();
+                assertTrue(position >= 0f && position <= ModifierLine.TIER_ROLL_POSITIONS, "position " + position);
+            }
+        }
+    }
+
+    @Test
+    void corruptionOnAChartReachesEveryOutcomeButTheImplicitOne() {
+        Set<CorruptionOutcome> outcomes = EnumSet.noneOf(CorruptionOutcome.class);
+        Set<String> chartImplicitIds = new java.util.HashSet<>(StarChartImplicits.corruptionPool().stream().map(Modifier::id).toList());
+        for (long seed = 0; seed < 80; seed++) {
+            StarChart chart = stored(SINGLE, seed, 8);
+            List<RolledModifier> implicitsBefore = List.copyOf(chart.implicits());
+            Item corrupted = use(Nanoswarm.CORRUPTION, chart, seed * 0x9E3779B97F4A7C15L);
+            assertNotNull(corrupted);
+            assertTrue(corrupted.corrupted());
+            assertEquals(corrupted.corruption() == CorruptionOutcome.TIER_RAISED ? 9 : 8, corrupted.tier());
+            outcomes.add(corrupted.corruption());
+            if (corrupted.corruption() == CorruptionOutcome.IMPLICIT_REPLACED) {
+                assertNotEquals(implicitsBefore, corrupted.implicits());
+                corrupted.implicits().forEach(implicit -> assertTrue(chartImplicitIds.contains(implicit.modifierId()), implicit.modifierId()));
+            }
+            for (CraftingMaterialFamily currency : CraftingMaterialFamilies.forType(ItemType.STAR_CHART)) {
+                assertFalse(ItemCrafting.canUse(currency, corrupted, ANY_UNIQUE), currency.key());
+            }
+        }
+        Set<CorruptionOutcome> reachable = EnumSet.copyOf(CorruptionOutcome.STAR_CHART_OUTCOMES);
+        reachable.remove(CorruptionOutcome.IMPLICIT_REPLACED);
+        assertEquals(reachable, outcomes);
+    }
+
+    @Test
+    void corruptedValuesStretchUpToThirtyFivePercentPastTheTierGroup() {
+        boolean beyondGroup = false;
+        for (long seed = 0; seed < 300; seed++) {
+            StarChart chart = StarChartFixtures.chart(SINGLE, seed, 6);
+            if (!has(chart, FLEET_SIZE)) {
+                continue;
+            }
+            ItemCrafting.randomiseValues(chart, new Random(seed));
+            ScaleContext context = chart.scaleContext(null);
+            for (SlottedRoll roll : chart.rolls()) {
+                ModifierLine line = roll.line();
+                if (line == null || !line.scalesWithTier() || !line.canVary()) {
+                    continue;
+                }
+                float position = roll.roll().magnitude();
+                assertTrue(position >= -35f && position <= 135f, "position " + position);
+                ModifierLine group = line.rangeFor(context);
+                float value = line.valueFor(position, context);
+                float lowest = Math.round(group.min() - Math.abs(group.min()) * 0.35f) - 1f;
+                float highest = Math.round(group.max() + Math.abs(group.max()) * 0.35f) + 1f;
+                assertTrue(value >= lowest && value <= highest, line.effectName() + " " + value + " outside " + group);
+                beyondGroup |= value < group.min() || value > group.max();
+            }
+        }
+        assertTrue(beyondGroup);
+    }
+
+    @Test
+    void hullItemCorruptionStretchesExactlyAsBefore() {
+        ModifierLine range = ModifierLine.range("HULL_MULT", 4f, 6f);
+        ModifierLine perHullSize = ModifierLine.parse("ARMOR_FLAT:5/10/15/20").line();
+        ModifierLine fixed = ModifierLine.range("HULL_MULT", 4f, 4f);
+
+        assertEquals(range.widened(ItemCrafting.CORRUPTION_RANGE_STRETCH), ItemCrafting.stretchedForCorruption(range));
+        assertNull(ItemCrafting.stretchedForCorruption(perHullSize));
+        assertNull(ItemCrafting.stretchedForCorruption(fixed));
+        assertNull(ItemCrafting.stretchedForCorruption(null));
+        ModifierLine tierGroup = ModifierLine.parse("FLEET_POWER:low=10-15/mid=10-15/high=10-15").line();
+        assertEquals(-35f, ItemCrafting.stretchedForCorruption(tierGroup).min());
+        assertEquals(135f, ItemCrafting.stretchedForCorruption(tierGroup).max());
+    }
+
+    @Test
+    void reforgeRerollsEveryModifierAtTheChartsTier() {
+        StarChart chart = storedWith(SINGLE, 3, candidate -> candidate.explicits().size() >= 2);
+        Map<Integer, Integer> counts = new HashMap<>();
+        for (long seed = 0; seed < 120; seed++) {
+            List<RolledModifier> before = List.copyOf(chart.explicits());
+            assertSame(chart, use(StarChartCipher.REFORGE, chart, seed));
+            assertNotEquals(before, chart.explicits());
+            assertFalse(has(chart, "CHART_COLONY_ITEM_PERCENT"));
+            assertEquals(chart.explicits().size() <= 2 ? ItemRarity.COMMON : ItemRarity.RARE, chart.rarity());
+            assertEquals(3, chart.tier());
+            counts.merge(chart.explicits().size(), 1, Integer::sum);
+        }
+        assertTrue(counts.keySet().size() >= 4, counts.toString());
+    }
+
+    @Test
+    void reforgeAndErasureRefuseCorruptedAndMirroredCharts() {
+        StarChart chart = storedWith(SINGLE, 4, candidate -> candidate.explicits().size() >= 2);
+        Item mirror = store.addMirrorOf(chart);
+        StarChart corrupted = stored(SINGLE, 5L, 4);
+        corrupted.corrupt(CorruptionOutcome.NOTHING);
+        for (StarChartCipher currency : List.of(StarChartCipher.REFORGE, StarChartCipher.ERASURE)) {
+            assertFalse(ItemCrafting.canUse(currency, mirror, ANY_UNIQUE), currency.name());
+            assertFalse(ItemCrafting.canUse(currency, corrupted, ANY_UNIQUE), currency.name());
+            assertTrue(ItemCrafting.canUse(currency, chart, ANY_UNIQUE), currency.name());
+        }
+        assertFalse(ItemCrafting.canUse(StarChartCipher.CARTOGRAPHY, mirror, ANY_UNIQUE));
+        assertFalse(ItemCrafting.canUse(StarChartCipher.CARTOGRAPHY, corrupted, ANY_UNIQUE));
+    }
+
+    @Test
+    void erasureRemovesEveryModifierAndTheChartTurnsCommon() {
+        StarChart chart = storedWith(SINGLE, 9, candidate -> candidate.explicits().size() >= 3);
+        assertEquals(ItemRarity.RARE, chart.rarity());
+        List<RolledModifier> implicitsBefore = List.copyOf(chart.implicits());
+
+        assertSame(chart, use(StarChartCipher.ERASURE, chart, 2L));
+
+        assertTrue(chart.explicits().isEmpty());
+        assertEquals(implicitsBefore, chart.implicits());
+        assertEquals(ItemRarity.COMMON, chart.rarity());
+        assertFalse(ItemCrafting.canUse(StarChartCipher.ERASURE, chart, ANY_UNIQUE));
+        assertNull(use(StarChartCipher.ERASURE, chart, 5L));
+        assertEquals(9, chart.tier());
+    }
+
+    @Test
+    void theAnnulmentNanoswarmRemovesOneModifierAndKeepsTheRest() {
+        StarChart chart = storedWith(SINGLE, 9, candidate -> candidate.explicits().size() >= 3);
+        List<RolledModifier> before = List.copyOf(chart.explicits());
+
+        assertSame(chart, use(Nanoswarm.ANNULMENT, chart, 2L));
+
+        assertEquals(before.size() - 1, chart.explicits().size());
+        assertTrue(before.containsAll(chart.explicits()));
+        assertEquals(9, chart.tier());
+    }
+
+    @Test
+    void anInhibitorKeepsItsSideThroughErasureAndIsUsedUp() {
+        StarChart chart = storedWith(SINGLE, 9, candidate -> side(candidate, ModifierSlot.PREFIX) >= 1 && side(candidate, ModifierSlot.SUFFIX) >= 1);
+        List<RolledModifier> prefixes = chart.explicits().stream().filter(rolled -> rolled.slot() == ModifierSlot.PREFIX).toList();
+        List<CraftingInhibitor> prefixInhibitor = List.of(CraftingInhibitor.PREFIX);
+
+        assertEquals(Set.of(CraftingInhibitor.PREFIX), ItemCrafting.inhibitorsSpentBy(StarChartCipher.ERASURE, chart, prefixInhibitor));
+        assertSame(chart, ItemCrafting.use(StarChartCipher.ERASURE, chart, materials, store, new Random(2L), ANY_UNIQUE, prefixInhibitor));
+
+        assertEquals(prefixes, chart.explicits());
+        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(CraftingInhibitor.PREFIX.itemId()), 1);
+        assertFalse(ItemCrafting.canUse(StarChartCipher.ERASURE, chart, ANY_UNIQUE, prefixInhibitor));
+        assertFalse(ItemCrafting.canUse(StarChartCipher.ERASURE, chart, ANY_UNIQUE, List.of(CraftingInhibitor.PREFIX, CraftingInhibitor.SUFFIX)));
+        assertTrue(ItemCrafting.canUse(StarChartCipher.ERASURE, chart, ANY_UNIQUE));
+    }
+
+    @Test
+    void anInhibitorKeepsItsSideThroughAReforgeAndOnlyTheOtherSideIsRerolled() {
+        StarChart chart = storedWith(SINGLE, 6, candidate -> side(candidate, ModifierSlot.SUFFIX) >= 1);
+        List<CraftingInhibitor> suffixInhibitor = List.of(CraftingInhibitor.SUFFIX);
+        boolean prefixesChanged = false;
+        for (long seed = 0; seed < 40; seed++) {
+            List<RolledModifier> suffixes = chart.explicits().stream().filter(rolled -> rolled.slot() == ModifierSlot.SUFFIX).toList();
+            List<RolledModifier> prefixes = chart.explicits().stream().filter(rolled -> rolled.slot() == ModifierSlot.PREFIX).toList();
+
+            assertSame(chart, ItemCrafting.use(StarChartCipher.REFORGE, chart, materials, store, new Random(seed), ANY_UNIQUE, suffixInhibitor));
+
+            assertEquals(suffixes, chart.explicits().stream().filter(rolled -> rolled.slot() == ModifierSlot.SUFFIX).toList());
+            prefixesChanged |= !prefixes.equals(chart.explicits().stream().filter(rolled -> rolled.slot() == ModifierSlot.PREFIX).toList());
+            assertTrue(side(chart, ModifierSlot.PREFIX) <= AffixLayout.limits(ItemType.STAR_CHART).maxPerSide());
+            assertEquals(chart.explicits().size() <= 2 ? ItemRarity.COMMON : ItemRarity.RARE, chart.rarity());
+        }
+        assertTrue(prefixesChanged);
+        assertFalse(ItemCrafting.canUse(StarChartCipher.REFORGE, chart, ANY_UNIQUE, List.of(CraftingInhibitor.PREFIX, CraftingInhibitor.SUFFIX)));
+    }
+
+    @Test
+    void cartographyIgnoresInhibitors() {
+        StarChart chart = storedWith(SINGLE, 4, candidate -> !candidate.explicits().isEmpty());
+
+        assertTrue(ItemCrafting.inhibitorsSpentBy(StarChartCipher.CARTOGRAPHY, chart, List.of(CraftingInhibitor.PREFIX, CraftingInhibitor.SUFFIX)).isEmpty());
+        assertTrue(ItemCrafting.canUse(StarChartCipher.CARTOGRAPHY, chart, ANY_UNIQUE, List.of(CraftingInhibitor.PREFIX, CraftingInhibitor.SUFFIX)));
+    }
+
+    @Test
+    void cartographyRaisesTheTierAndTheRollPositionsTakeTheNewBand() {
+        StarChart chart = storedWith(SINGLE, 5, candidate -> has(candidate, FLEET_SIZE));
+        RolledModifier fleetSize = chart.explicits().stream().filter(rolled -> rolled.modifierId().equals(FLEET_SIZE)).findFirst().orElseThrow();
+        ModifierLine line = ItemDefinitions.get(SINGLE).poolEntryFor(FLEET_SIZE).modifier().line(fleetSize.lines().get(0).effectName());
+        float position = fleetSize.lines().get(0).magnitude();
+        float tierFiveValue = line.valueFor(position, chart.scaleContext(null));
+        assertTrue(tierFiveValue >= 15f && tierFiveValue <= 20f);
+
+        assertSame(chart, use(StarChartCipher.CARTOGRAPHY, chart, 1L));
+
+        assertEquals(6, chart.tier());
+        RolledModifier after = chart.explicits().stream().filter(rolled -> rolled.modifierId().equals(FLEET_SIZE)).findFirst().orElseThrow();
+        assertEquals(position, after.lines().get(0).magnitude());
+        float tierSixValue = line.valueFor(position, chart.scaleContext(null));
+        assertTrue(tierSixValue >= 50f && tierSixValue <= 70f, "value " + tierSixValue);
+        StarChart reloaded = (StarChart) ItemData.of(chart).preview();
+        assertEquals(6, reloaded.tier());
+    }
+
+    @Test
+    void cartographyStopsAtTheHighestTierAndStartsAGatedChartFromItsMinimumTier() {
+        StarChart top = stored(SINGLE, 1L, 14);
+        assertSame(top, use(StarChartCipher.CARTOGRAPHY, top, 1L));
+        assertEquals(StarChart.HIGHEST_TIER, top.tier());
+        assertFalse(ItemCrafting.canUse(StarChartCipher.CARTOGRAPHY, top, ANY_UNIQUE));
+        assertNull(use(StarChartCipher.CARTOGRAPHY, top, 2L));
+
+        StarChart gated = stored(GATED, 3L, 1);
+        assertEquals(4, gated.tier());
+        use(StarChartCipher.CARTOGRAPHY, gated, 1L);
+        assertEquals(5, gated.tier());
+    }
+
+    @Test
+    void usingAChartCurrencyTakesOneFromTheMaterials() {
+        StarChart chart = stored(SINGLE, 2L, 2);
+
+        assertSame(chart, use(StarChartCipher.CARTOGRAPHY, chart, 1L));
+
+        verify(cargo, times(1)).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(StarChartCipher.CARTOGRAPHY.itemId()), 1);
+        verify(cargo, never()).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(StarChartCipher.REFORGE.itemId()), 1);
+    }
+
+    @Test
+    void theShippedCostsMatchTheDefaultsAndTheCurrenciesCanBeGrown() throws Exception {
+        assertEquals(List.of(30, 40, 120), Arrays.stream(StarChartCipher.values()).map(StarChartCipher::feedstockCost).toList());
+        ItemCraftingCosts.register(HullItemRows.shippedRows(ItemCraftingCosts.dataPath()));
+        assertEquals(List.of(30, 40, 120), Arrays.stream(StarChartCipher.values()).map(StarChartCipher::feedstockCost).toList());
+        for (StarChartCipher currency : StarChartCipher.values()) {
+            assertTrue(currency.growable());
+        }
+    }
+
+    @Test
+    void shipKernelDropsLeaveOutChartCurrencies() {
+        List<ItemDrops.MaterialDrop> builtInDrops = new ArrayList<>();
+        for (Nanoswarm currency : Nanoswarm.values()) {
+            builtInDrops.add(new ItemDrops.MaterialDrop(currency.itemId(), currency.dropWeight()));
+        }
+        for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
+            builtInDrops.add(new ItemDrops.MaterialDrop(inhibitor.itemId(), inhibitor.dropWeight()));
+        }
+        assertEquals(builtInDrops, ItemDrops.materialDrops());
+    }
+
+    @Test
+    void chartCurrencyDropsListOnlyTheChartOnlyCurrenciesByWeight() {
+        Set<ItemDrops.MaterialDrop> expected = new HashSet<>();
+        for (StarChartCipher currency : StarChartCipher.values()) {
+            expected.add(new ItemDrops.MaterialDrop(currency.itemId(), currency.dropWeight()));
+        }
+        assertEquals(expected, Set.copyOf(ChartDrops.chartCurrencyDrops()));
+
+        StarChartFixtures.unregisterCurrencies();
+        assertTrue(ChartDrops.chartCurrencyDrops().isEmpty());
+    }
+}

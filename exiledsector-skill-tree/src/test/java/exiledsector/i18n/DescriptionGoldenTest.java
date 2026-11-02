@@ -142,7 +142,7 @@ class DescriptionGoldenTest {
                     .anyMatch(id -> SkillTree.get(id).getType().getTier() == SkillTier.ROOT)) {
                 continue;
             }
-            List<String> options = node.getType().getOptionalOptionIds();
+            List<String> options = node.getType().getChoiceOptionIds();
             if (options.isEmpty()) {
                 ShipTrees.allocate(data, node, 0);
             } else {

@@ -14,7 +14,7 @@ import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.VanillaDefenders;
 import exiledsector.charts.content.ChartSpot;
 import exiledsector.charts.content.FakeChartContentEngine;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
@@ -134,8 +134,8 @@ class DerelictForgeTest {
     @Test
     void chartLinesAddProgramsAndRuns() {
         ChartRun run = run();
-        ChartGenContext context = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_FORGE_PROGRAMS, 1f),
-                new ChartGenContext.AppliedEffect(ChartEffect.CHART_FORGE_RUNS, 2f)));
+        ChartGenContext context = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_FORGE_PROGRAMS, 1f),
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_FORGE_RUNS, 2f)));
 
         generateInto(run, site(context, spot -> true));
 

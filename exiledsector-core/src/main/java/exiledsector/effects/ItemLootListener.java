@@ -20,7 +20,7 @@ import exiledsector.items.MaterialItems;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemRarity;
-import exiledsector.items.ShipCurrency;
+import exiledsector.items.ShipSchematic;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
 import exiledsector.loot.LootSources;
@@ -40,7 +40,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
 
     private static final class Pending {
         private final BattleLoot battleLoot;
-        private float partsEarned;
+        private float feedstockEarned;
 
         Pending(BattleLoot battleLoot) {
             this.battleLoot = battleLoot;
@@ -82,7 +82,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
                 engagement.enemyLosses());
         LootSources.all().forEach(source -> source.recordEngagement(pendingLoot.battleLoot, battleEngagement));
         if (defeatedDp > 0f) {
-            pendingLoot.partsEarned += defeatedDp * ItemDrops.battlePartsPerDeploymentPoint() * difficultyMultiplier;
+            pendingLoot.feedstockEarned += defeatedDp * ItemDrops.battleFeedstockPerDeploymentPoint() * difficultyMultiplier;
         }
     }
 
@@ -96,9 +96,9 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         Pending pendingLoot = encounterPlugin == null ? null : pendingByBattle.remove(encounterPlugin.getBattle());
         if (pendingLoot != null && loot != null) {
             LootSources.all().forEach(source -> source.addEncounterLoot(pendingLoot.battleLoot, loot));
-            int wholeParts = ItemDrops.wholeParts(pendingLoot.partsEarned, lootRandom);
-            if (wholeParts > 0) {
-                MaterialItems.add(loot, ItemDisassembly.PARTS_ITEM_ID, wholeParts);
+            int wholeFeedstock = ItemDrops.wholeFeedstock(pendingLoot.feedstockEarned, lootRandom);
+            if (wholeFeedstock > 0) {
+                MaterialItems.add(loot, ItemDisassembly.FEEDSTOCK_ITEM_ID, wholeFeedstock);
             }
         }
         pendingByBattle.keySet().removeIf(BattleAPI::isDone);
@@ -112,13 +112,13 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
             return;
         }
         LootSources.all().forEach(source -> source.deliverBattleLoot(pendingLoot.battleLoot, playerFleet.getCargo()));
-        int wholeParts = ItemDrops.wholeParts(pendingLoot.partsEarned, lootRandom);
-        if (wholeParts > 0) {
-            MaterialItems.add(playerFleet.getCargo(), ItemDisassembly.PARTS_ITEM_ID, wholeParts);
-            String partsName = MaterialItems.displayName(ItemDisassembly.PARTS_ITEM_ID);
+        int wholeFeedstock = ItemDrops.wholeFeedstock(pendingLoot.feedstockEarned, lootRandom);
+        if (wholeFeedstock > 0) {
+            MaterialItems.add(playerFleet.getCargo(), ItemDisassembly.FEEDSTOCK_ITEM_ID, wholeFeedstock);
+            String feedstockName = MaterialItems.displayName(ItemDisassembly.FEEDSTOCK_ITEM_ID);
             if (CampaignMessages.available()) {
                 String salvageMessage = I18n.forGameText(() -> Translation.msg("socketable.salvaged").arg("name",
-                        Translation.msg("socketable.techMining.material").arg("count", wholeParts).arg("name", partsName).text()).text());
+                        Translation.msg("socketable.techMining.material").arg("count", wholeFeedstock).arg("name", feedstockName).text()).text());
                 CampaignMessages.plain(salvageMessage, Misc.getPositiveHighlightColor());
             }
         }
@@ -129,7 +129,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         siteLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
     }
 
-    private static void addSpecials(CargoAPI cargo, List<ItemData> items, List<ShipCurrency> upgrades) {
+    private static void addSpecials(CargoAPI cargo, List<ItemData> items, List<ShipSchematic> upgrades) {
         items.forEach(item -> cargo.addSpecial(item.toSpecialItem(), 1f));
         upgrades.forEach(upgrade -> cargo.addSpecial(upgrade.toSpecialItem(), 1f));
     }
@@ -141,7 +141,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
     public static void deliverSiteLoot(CargoAPI cargo, ItemDrops.SiteLoot siteLoot, Consumer<Supplier<String>> announceFind,
                                        Consumer<Map<String, Integer>> announceMaterials) {
         deliverItems(cargo, siteLoot.items(), announceFind);
-        for (ShipCurrency upgrade : siteLoot.upgrades()) {
+        for (ShipSchematic upgrade : siteLoot.upgrades()) {
             cargo.addSpecial(upgrade.toSpecialItem(), 1f);
             announceFind.accept(upgrade::displayName);
         }

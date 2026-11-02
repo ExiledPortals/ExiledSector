@@ -12,7 +12,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.RealSkillData;
 import exiledsector.skills.skilleffect.SkillEffect;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
@@ -139,7 +139,7 @@ class StarChartTest {
         assertTrue(mirror.mirrored());
         assertEquals(chart.implicits(), mirror.implicits());
 
-        assertSame(chart, ItemCrafting.recalibrate(chart, new Random(3)));
+        assertSame(chart, ItemCrafting.tune(chart, new Random(3)));
         assertEquals(9, chart.tier());
         assertSame(chart, ItemCrafting.randomiseModifiers(store, chart, new Random(4), definition -> true));
         assertEquals(9, chart.tier());
@@ -152,10 +152,10 @@ class StarChartTest {
                 .filter(definition -> definition.unique() && definition.type() == ItemType.HULL_ITEM).findFirst().orElseThrow();
         Item item = store.add(shipUnique, 1L);
         for (int attempt = 0; attempt < 40; attempt++) {
-            Item transposed = ItemCrafting.transpose(store, item, new Random(attempt), definition -> true);
-            assertNotNull(transposed);
-            assertTrue(transposed.type() != ItemType.STAR_CHART, transposed.definitionId());
-            item = transposed;
+            Item metamorphosed = ItemCrafting.metamorph(store, item, new Random(attempt), definition -> true);
+            assertNotNull(metamorphosed);
+            assertTrue(metamorphosed.type() != ItemType.STAR_CHART, metamorphosed.definitionId());
+            item = metamorphosed;
         }
     }
 
@@ -198,7 +198,7 @@ class StarChartTest {
         ItemDefinition single = ItemDefinitions.get(SINGLE);
         boolean rolledOne = false;
         for (long seed = 0; seed < 1000; seed++) {
-            List<RolledModifier> rolled = ItemRoller.rollAtTierWithEffectCount(single, seed, StarChart.HIGHEST_TIER,
+            List<RolledModifier> rolled = ItemRoller.rollAtTierWithModifierCount(single, seed, StarChart.HIGHEST_TIER,
                     StarChartCorruption.EXPANDED_MODIFIERS, StarChartCorruption.EXPANDED_PER_SIDE);
             long cripplingCount = rolled.stream().filter(modifier -> crippling.contains(modifier.modifierId())).count();
 
@@ -237,7 +237,7 @@ class StarChartTest {
     void aFactionImplicitStoredByAnOlderSaveIsDropped() {
         StarChart chart = StarChartFixtures.chart(SINGLE, 8L, 3);
         chart.replaceImplicits(List.of(new RolledModifier("CHART_FACTION_PIRATES", ModifierSlot.IMPLICIT,
-                List.of(new RolledEffect("CHART_FACTION_PIRATES", 1f)))));
+                List.of(new RolledLine("CHART_FACTION_PIRATES", 1f)))));
 
         assertTrue(chart.implicits().isEmpty(), chart.implicits().toString());
     }
@@ -247,7 +247,7 @@ class StarChartTest {
         StarChart chart = StarChartFixtures.chart(SINGLE, 8L, 3);
         List<RolledModifier> seeded = List.copyOf(chart.implicits());
         chart.replaceImplicits(List.of(new RolledModifier("CHART_BASE_FLEETS_BINARY", ModifierSlot.IMPLICIT,
-                List.of(new RolledEffect("CHART_BASE_FLEETS", 1f)))));
+                List.of(new RolledLine("CHART_BASE_FLEETS", 1f)))));
 
         assertEquals(seeded, chart.implicits());
     }
@@ -258,7 +258,7 @@ class StarChartTest {
         try {
             StarChart chart = StarChartFixtures.chart(SINGLE, 8L, 3);
             chart.replaceExplicits(List.of(new RolledModifier("CHART_ENEMY_HULLBREACHER_ROUNDS", ModifierSlot.PREFIX,
-                    List.of(new RolledEffect("CHART_ENEMY_HULLBREACHER_ROUNDS", 1f)))));
+                    List.of(new RolledLine("CHART_ENEMY_HULLBREACHER_ROUNDS", 1f)))));
 
             List<StyledText> collapsed = chart.effectLines(false);
             List<StyledText> expanded = chart.effectLines(true);
@@ -288,8 +288,8 @@ class StarChartTest {
         try {
             assertEquals(List.of("Lion's Gaze", "Refracting Projectiles", "Hullbreacher Rounds", "Freebooter's Charge", "Rise From the Ashes",
                     "XIV Torpedo Doctrine", "Shared Fate", "TriPad Backdoor", "Terrifying Presence", "Disintegration", "Knight's Charge",
-                    "Critical Point Refit", "Phase-Entangled Wings", "Corrosion Beam", "Ludd's Light", "At Any Cost"), List.of(ChartEffect.values()).stream()
-                    .map(ChartEffect::detailTitle).filter(title -> title != null).toList());
+                    "Critical Point Refit", "Phase-Entangled Wings", "Corrosion Beam", "Ludd's Light", "At Any Cost"), List.of(ChartModifier.values()).stream()
+                    .map(ChartModifier::detailTitle).filter(title -> title != null).toList());
         } finally {
             RealSkillData.clear();
         }
@@ -301,7 +301,7 @@ class StarChartTest {
         try {
             StarChart chart = StarChartFixtures.chart(SINGLE, 8L, 3);
             chart.replaceExplicits(List.of(new RolledModifier("CHART_ENEMY_HULLBREACHER_ROUNDS", ModifierSlot.PREFIX,
-                    List.of(new RolledEffect("CHART_ENEMY_HULLBREACHER_ROUNDS", 1f)))));
+                    List.of(new RolledLine("CHART_ENEMY_HULLBREACHER_ROUNDS", 1f)))));
 
             List<SlottedLine> lines = chart.slottedEffectLines(false, null);
 
@@ -332,7 +332,7 @@ class StarChartTest {
 
         assertTrue(encoded.contains("\"t\":6") && encoded.contains("\"q\":12") && encoded.contains("\"c\":\"VALUES_RANDOMISED\""), encoded);
         assertEquals(6, restored.tier());
-        assertEquals(12, restored.quality());
+        assertEquals(12, restored.quantity());
         assertEquals(CorruptionOutcome.VALUES_RANDOMISED, restored.corruption());
         assertEquals(chart.explicits(), restored.explicits());
         assertEquals(chart.implicits(), restored.implicits());
@@ -444,8 +444,8 @@ class StarChartTest {
 
         List<RolledModifier> oldExplicits = List.of(
                 new RolledModifier("HYBRID_CHART_BREACH_GROWTH", ModifierSlot.PREFIX,
-                        List.of(new RolledEffect("CHART_BREACH_CHANCE", 100f), new RolledEffect("CHART_BREACH_GROWTH_PERCENT", 30f))),
-                new RolledModifier("CHART_ASTEROID_STORM_CHANCE", ModifierSlot.SUFFIX, List.of(new RolledEffect("CHART_ASTEROID_STORM_CHANCE", 100f))));
+                        List.of(new RolledLine("CHART_BREACH_CHANCE", 100f), new RolledLine("CHART_BREACH_GROWTH_PERCENT", 30f))),
+                new RolledModifier("CHART_ASTEROID_STORM_CHANCE", ModifierSlot.SUFFIX, List.of(new RolledLine("CHART_ASTEROID_STORM_CHANCE", 100f))));
         Item oldChart = Item.create(null, SINGLE, 4L, oldExplicits, ItemTraits.ofTier(6));
         Item loaded = (Item) xstream().fromXML(xstream().toXML(oldChart));
         ChartGenContext context = ChartGenContext.from(loaded);
@@ -481,8 +481,8 @@ class StarChartTest {
     }
 
     @Test
-    void chartEffectNamesNeverOverlapSkillEffectNames() {
-        for (ChartEffect effect : ChartEffect.values()) {
+    void chartModifierNamesNeverOverlapSkillEffectNames() {
+        for (ChartModifier effect : ChartModifier.values()) {
             assertTrue(effect.name().startsWith("CHART_"), effect.name());
             assertThrows(IllegalArgumentException.class, () -> SkillEffect.byName(effect.name()), effect.name());
             assertSame(effect, ItemEffects.forType(ItemType.STAR_CHART).byName(effect.name()));
@@ -514,7 +514,7 @@ class StarChartTest {
                 StarChart chart = StarChartFixtures.chart(SINGLE, seed, tierAndPercent[0]);
                 long prefixes = chart.explicits().stream().filter(modifier -> modifier.slot() == ModifierSlot.PREFIX).count();
                 float quantity = ChartGenContext.from(chart).applied().stream()
-                        .filter(applied -> applied.effect() == ChartEffect.CHART_QUANTITY_PERCENT).map(AppliedEffect::value).reduce(0f, Float::sum);
+                        .filter(applied -> applied.effect() == ChartModifier.CHART_QUANTITY_PERCENT).map(AppliedEffect::value).reduce(0f, Float::sum);
 
                 assertEquals(prefixes * tierAndPercent[1], quantity, 1e-4f, "tier " + tierAndPercent[0] + " seed " + seed);
                 prefixCounts.add(prefixes);
@@ -526,30 +526,30 @@ class StarChartTest {
     @Test
     void aRollWhoseModifierLeftThePoolFallsBackToTheCatalogueOrIsDroppedAndFlagged() {
         List<RolledModifier> movedExplicits = List.of(new RolledModifier("CHART_BOSS_SIZE_PERCENT", ModifierSlot.PREFIX,
-                List.of(new RolledEffect("CHART_BOSS_SIZE_PERCENT", 100f))));
+                List.of(new RolledLine("CHART_BOSS_SIZE_PERCENT", 100f))));
         StarChart moved = (StarChart) Item.create(null, UNGATED, 4L, movedExplicits, ItemTraits.ofTier(12));
         ChartGenContext movedContext = ChartGenContext.from(moved);
 
         assertNull(moved.definition().poolEntryFor("CHART_BOSS_SIZE_PERCENT"));
-        assertTrue(movedContext.applied().contains(new AppliedEffect(ChartEffect.CHART_BOSS_SIZE_PERCENT, 540f)), movedContext.applied().toString());
-        assertTrue(movedContext.applied().contains(new AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, 25f)), movedContext.applied().toString());
+        assertTrue(movedContext.applied().contains(new AppliedEffect(ChartModifier.CHART_BOSS_SIZE_PERCENT, 540f)), movedContext.applied().toString());
+        assertTrue(movedContext.applied().contains(new AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, 25f)), movedContext.applied().toString());
         assertTrue(moved.effectLines().get(0).plain().contains("540%"), moved.effectLines().toString());
 
         List<RolledModifier> orphanExplicits = List.of(new RolledModifier("CHART_REMOVED_MODIFIER", ModifierSlot.SUFFIX,
-                List.of(new RolledEffect("CHART_EXTRA_FLEETS", 73f))));
+                List.of(new RolledLine("CHART_EXTRA_FLEETS", 73f))));
         StarChart orphaned = (StarChart) Item.create(null, SINGLE, 4L, orphanExplicits, ItemTraits.ofTier(6));
         ChartGenContext orphanContext = ChartGenContext.from(orphaned);
         List<String> orphanLines = orphaned.effectLines().stream().map(StyledText::plain).toList();
 
-        assertTrue(orphanContext.applied().stream().noneMatch(applied -> applied.effect() == ChartEffect.CHART_EXTRA_FLEETS),
+        assertTrue(orphanContext.applied().stream().noneMatch(applied -> applied.effect() == ChartModifier.CHART_EXTRA_FLEETS),
                 orphanContext.applied().toString());
         assertEquals(1, orphanLines.size(), orphanLines.toString());
         assertTrue(orphanLines.get(0).contains("Unreadable modifier"), orphanLines.toString());
         assertFalse(orphanLines.get(0).contains("73"), orphanLines.toString());
 
         ItemDefinition hullDefinition = ItemDefinitions.ofType(ItemType.HULL_ITEM).stream().filter(definition -> !definition.unique()).findFirst().orElseThrow();
-        RolledEffect hullLine = new RolledEffect("HULL_MULT", 73f);
-        RolledEffect armorLine = new RolledEffect("ARMOR_FLAT", 7f);
+        RolledLine hullLine = new RolledLine("HULL_MULT", 73f);
+        RolledLine armorLine = new RolledLine("ARMOR_FLAT", 7f);
         Item hullItem = Item.create(null, hullDefinition.id(), 4L, List.of(new RolledModifier("NOT_IN_ANY_POOL", ModifierSlot.PREFIX,
                 List.of(hullLine, armorLine))));
         assertEquals(List.of(hullLine.description().plain(), armorLine.description().plain()),
@@ -603,15 +603,15 @@ class StarChartTest {
 
         assertTrue(fleetSize.listsEveryValueFor(ScaleContext.NONE));
         assertEquals("15-20/50-70/150-200% increased enemy fleet size",
-                new RolledEffect("CHART_FLEET_SIZE_PERCENT", 50f).scaledValuesDescription(chartEffects, fleetSize).plain());
+                new RolledLine("CHART_FLEET_SIZE_PERCENT", 50f).scaledValuesDescription(chartEffects, fleetSize).plain());
         assertEquals("15-20/50-70/150-200% increased enemy fleet size",
-                new RolledEffect("CHART_FLEET_SIZE_PERCENT", 45f).rangeDescription(chartEffects, fleetSize).plain());
+                new RolledLine("CHART_FLEET_SIZE_PERCENT", 45f).rangeDescription(chartEffects, fleetSize).plain());
         assertEquals("Your fleet has 15-25/25-35% less sensor range while in the system",
-                new RolledEffect("CHART_SENSOR_RANGE_PERCENT", -35f).scaledValuesDescription(chartEffects, sensorRange).plain());
-        assertTrue(new RolledEffect("CHART_EXTRA_FLEETS", 3f).scaledValuesDescription(chartEffects, extraFleets).plain().startsWith("1/2/3 "));
+                new RolledLine("CHART_SENSOR_RANGE_PERCENT", -35f).scaledValuesDescription(chartEffects, sensorRange).plain());
+        assertTrue(new RolledLine("CHART_EXTRA_FLEETS", 3f).scaledValuesDescription(chartEffects, extraFleets).plain().startsWith("1/2/3 "));
         ModifierLine hullValues = ModifierLine.parse("ARMOR_FLAT:5/10/15/20").line();
-        assertEquals(new RolledEffect("ARMOR_FLAT", 5f).scaledValuesDescription(ItemEffects.SKILL_EFFECTS, hullValues.scaledValues()).plain(),
-                new RolledEffect("ARMOR_FLAT", 5f).scaledValuesDescription(ItemEffects.SKILL_EFFECTS, hullValues).plain());
+        assertEquals(new RolledLine("ARMOR_FLAT", 5f).scaledValuesDescription(ItemEffects.SKILL_EFFECTS, hullValues.scaledValues()).plain(),
+                new RolledLine("ARMOR_FLAT", 5f).scaledValuesDescription(ItemEffects.SKILL_EFFECTS, hullValues).plain());
     }
 
     @Test

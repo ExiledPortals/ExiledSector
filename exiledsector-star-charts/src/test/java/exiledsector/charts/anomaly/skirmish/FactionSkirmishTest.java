@@ -11,7 +11,7 @@ import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasData;
 import exiledsector.charts.atlas.AtlasGenerator;
-import exiledsector.charts.atlas.AtlasMarkerRule;
+import exiledsector.charts.atlas.AtlasAnomalyChance;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasRegion;
 import exiledsector.charts.atlas.AtlasRules;
@@ -40,7 +40,7 @@ class FactionSkirmishTest {
     private static final long SEED = 0x5C1A7L;
     private static final String NEUTRAL = "remnant";
     private static final AtlasRules RULES = new AtlasRules(List.of(AtlasRegion.DEFAULT_NORMAL), Map.of("compact", 1f),
-            Map.of("hegemony", 1f, "tritachyon", 1f, "pirates", 1f, NEUTRAL, 1f), AtlasMarkerRule.NEVER, AtlasMarkerRule.NEVER,
+            Map.of("hegemony", 1f, "tritachyon", 1f, "pirates", 1f, NEUTRAL, 1f), AtlasAnomalyChance.NEVER, AtlasAnomalyChance.NEVER,
             List.of(), List.of());
 
     private static AtlasTraits traits(String factionId, List<String> neighbourFactionIds, String specialId, String infestationId) {
@@ -82,7 +82,7 @@ class FactionSkirmishTest {
         assertFalse(FactionSkirmish.INSTANCE.fitsAt(traits("hegemony", List.of(NEUTRAL), null, null)));
         assertFalse(FactionSkirmish.INSTANCE.fitsAt(traits(NEUTRAL, List.of("hegemony"), null, null)));
         assertFalse(FactionSkirmish.INSTANCE.fitsAt(traits("hegemony", List.of("tritachyon"), "bastion", null)));
-        assertFalse(FactionSkirmish.INSTANCE.fitsAt(traits("hegemony", List.of("tritachyon"), null, "remnant_nexus")));
+        assertFalse(FactionSkirmish.INSTANCE.fitsAt(traits("hegemony", List.of("tritachyon"), null, "remnant_infestation")));
     }
 
     @Test

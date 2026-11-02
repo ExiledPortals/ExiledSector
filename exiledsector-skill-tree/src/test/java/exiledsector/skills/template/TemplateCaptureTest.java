@@ -98,10 +98,10 @@ class TemplateCaptureTest {
     }
 
     @Test
-    void theChosenOptionIsRecordedOnlyForOptionalNodes() {
+    void theChosenOptionIsRecordedOnlyForChoiceNodes() {
         SkillType option = type("hull", SkillTier.SMALL).build();
         SkillTree.registerType(option);
-        SkillNode slot = register(new SkillNode("slot", type("slot_type", SkillTier.SMALL).optionalOptionIds(List.of("hull")).build(),
+        SkillNode slot = register(new SkillNode("slot", type("slot_type", SkillTier.SMALL).choiceOptionIds(List.of("hull")).build(),
                 List.of("root"), 0f, 0f));
         SkillNode plain = node("plain", "root");
         ShipTrees.selectOption(data, slot, option, 1);

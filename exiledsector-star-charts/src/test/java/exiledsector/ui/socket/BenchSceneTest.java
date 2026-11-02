@@ -1,7 +1,7 @@
 package exiledsector.ui.socket;
 
-import exiledsector.items.CraftingCurrency;
-import exiledsector.items.StarChartCurrency;
+import exiledsector.items.Nanoswarm;
+import exiledsector.items.StarChartCipher;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,37 +21,37 @@ class BenchSceneTest {
 
     @Test
     void thePanelWrapsTheArtInItsFrame() {
-        float scale = SocketWorkbenchPanel.scaleFor(1300f + SocketWorkbenchPanel.FRAME_INSET * 2f, 740f + SocketWorkbenchPanel.FRAME_INSET * 2f);
+        float scale = CraftingBenchPanel.scaleFor(1300f + CraftingBenchPanel.FRAME_INSET * 2f, 740f + CraftingBenchPanel.FRAME_INSET * 2f);
         assertEquals(4f, scale);
-        assertEquals(1280f + SocketWorkbenchPanel.FRAME_INSET * 2f, SocketWorkbenchPanel.sizeFor(scale, BenchScene.ART_WIDTH));
-        assertEquals(720f + SocketWorkbenchPanel.FRAME_INSET * 2f, SocketWorkbenchPanel.sizeFor(scale, BenchScene.ART_HEIGHT));
+        assertEquals(1280f + CraftingBenchPanel.FRAME_INSET * 2f, CraftingBenchPanel.sizeFor(scale, BenchScene.ART_WIDTH));
+        assertEquals(720f + CraftingBenchPanel.FRAME_INSET * 2f, CraftingBenchPanel.sizeFor(scale, BenchScene.ART_HEIGHT));
     }
 
     @Test
     void storageSitsBesideTheBenchOnlyWhenTheBenchCanStillDrawAtTripleSize() {
-        assertTrue(ModificationBay.fitsSideBySide(1840f, 1000f), "1920x1080 with margins");
-        assertFalse(ModificationBay.fitsSideBySide(1286f, 688f), "1366x768 with margins uses the drawer");
+        assertTrue(CraftingBench.fitsSideBySide(1840f, 1000f), "1920x1080 with margins");
+        assertFalse(CraftingBench.fitsSideBySide(1286f, 688f), "1366x768 with margins uses the drawer");
     }
 
     @Test
     void tilesStayClearOfTheConsolesTheNoticeAndTheDetailsPlateInEveryMode() {
-        assertTilesClear(BenchMode.HULL_ITEMS, CraftingCurrency.values().length);
-        assertTilesClear(BenchMode.STAR_CHARTS, StarChartCurrency.KERNELS_ON_CHARTS.size() + StarChartCurrency.values().length);
+        assertTilesClear(BenchMode.HULL_ITEMS, Nanoswarm.values().length);
+        assertTilesClear(BenchMode.STAR_CHARTS, StarChartCipher.KERNELS_ON_CHARTS.size() + StarChartCipher.values().length);
     }
 
     private static void assertTilesClear(BenchMode mode, int tileCount) {
         float halfTile = BenchScene.TILE_SIZE / 2f;
         float[][] centres = new float[tileCount][];
         for (int index = 0; index < tileCount; index++) {
-            float angle = SocketWorkbenchPanel.tileAngle(index, tileCount);
+            float angle = CraftingBenchPanel.tileAngle(index, tileCount);
             float centreX = mode.socketX() + mode.orbitRadiusX() * (float) Math.cos(angle);
             float centreY = mode.socketY() - mode.orbitRadiusY() * (float) Math.sin(angle);
             centres[index] = new float[]{centreX, centreY};
             String tile = mode + " tile " + index;
             assertTrue(centreY + halfTile < BenchScene.detailsTop(mode), tile + " overlaps the details plate");
             assertTrue(centreY - halfTile > BenchScene.NOTICE_TOP + BenchScene.NOTICE_HEIGHT, tile + " overlaps the notice");
-            assertTrue(centreX - halfTile > mode.leftWardX() + halfTile, tile + " overlaps the left inhibitor");
-            assertTrue(centreX + halfTile < mode.rightWardX() - halfTile, tile + " overlaps the right inhibitor");
+            assertTrue(centreX - halfTile > mode.leftInhibitorX() + halfTile, tile + " overlaps the left inhibitor");
+            assertTrue(centreX + halfTile < mode.rightInhibitorX() - halfTile, tile + " overlaps the right inhibitor");
         }
         for (int index = 1; index < tileCount; index++) {
             float gapX = Math.abs(centres[index][0] - centres[index - 1][0]);
@@ -70,8 +70,8 @@ class BenchSceneTest {
         }
         assertTrue(BenchScene.DETAILS_BOTTOM <= BenchScene.ART_HEIGHT);
         for (BenchMode mode : BenchMode.values()) {
-            assertTrue(BenchScene.detailsLeft(mode) - BenchScene.TILE_SIZE / 2f > mode.leftWardX(), mode + " left inhibitor overlaps the plate");
-            assertTrue(BenchScene.detailsLeft(mode) + BenchScene.DETAILS_WIDTH + BenchScene.TILE_SIZE / 2f < mode.rightWardX(),
+            assertTrue(BenchScene.detailsLeft(mode) - BenchScene.TILE_SIZE / 2f > mode.leftInhibitorX(), mode + " left inhibitor overlaps the plate");
+            assertTrue(BenchScene.detailsLeft(mode) + BenchScene.DETAILS_WIDTH + BenchScene.TILE_SIZE / 2f < mode.rightInhibitorX(),
                     mode + " right inhibitor overlaps the plate");
         }
     }
@@ -80,12 +80,12 @@ class BenchSceneTest {
     void theStarfieldBenchesCentreTheSocketAndMirrorTheInhibitorsBesideIt() {
         for (BenchMode mode : new BenchMode[]{BenchMode.HULL_ITEMS, BenchMode.STAR_CHARTS}) {
             assertEquals(BenchScene.ART_WIDTH / 2f, mode.socketX(), 1e-6f, mode + " socket is off-centre");
-            assertEquals(mode.socketX() - mode.leftWardX(), mode.rightWardX() - mode.socketX(), 1e-6f, mode + " inhibitors are lopsided");
-            assertEquals(mode.socketY(), mode.wardY(), 1e-6f, mode + " inhibitors are not level with the socket");
+            assertEquals(mode.socketX() - mode.leftInhibitorX(), mode.rightInhibitorX() - mode.socketX(), 1e-6f, mode + " inhibitors are lopsided");
+            assertEquals(mode.socketY(), mode.inhibitorY(), 1e-6f, mode + " inhibitors are not level with the socket");
         }
         for (BenchMode mode : BenchMode.values()) {
             float halfTile = BenchScene.TILE_SIZE / 2f;
-            assertTrue(mode.leftWardX() - halfTile >= 0f && mode.rightWardX() + halfTile <= BenchScene.ART_WIDTH, mode + " inhibitor tile leaves the art");
+            assertTrue(mode.leftInhibitorX() - halfTile >= 0f && mode.rightInhibitorX() + halfTile <= BenchScene.ART_WIDTH, mode + " inhibitor tile leaves the art");
         }
     }
 

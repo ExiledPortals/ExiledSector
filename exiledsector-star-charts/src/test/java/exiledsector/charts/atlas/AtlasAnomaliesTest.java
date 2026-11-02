@@ -28,13 +28,13 @@ class AtlasAnomaliesTest {
     private static final long SEED = 0x51A7E5L;
     private static final List<AtlasRegion> REGIONS = List.of(new AtlasRegion(AtlasRegion.NORMAL, 1f, 0, "", "", Map.of(), Map.of(), Map.of()));
 
-    private static AtlasRules rules(AtlasMarkerRule anomalyRule, List<AtlasAnomalyCandidate> anomalies) {
-        return new AtlasRules(REGIONS, Map.of("compact", 1f), Map.of("pirates", 1f), new AtlasMarkerRule(0.3f, 0f, 0.3f),
+    private static AtlasRules rules(AtlasAnomalyChance anomalyRule, List<AtlasAnomalyCandidate> anomalies) {
+        return new AtlasRules(REGIONS, Map.of("compact", 1f), Map.of("pirates", 1f), new AtlasAnomalyChance(0.3f, 0f, 0.3f),
                 anomalyRule, List.of(), anomalies);
     }
 
     private static AtlasGenerator generator(AtlasState state) {
-        return new AtlasGenerator(SEED, rules(AtlasMarkerRule.NEVER, List.of()), AtlasUnlocks.NONE, state);
+        return new AtlasGenerator(SEED, rules(AtlasAnomalyChance.NEVER, List.of()), AtlasUnlocks.NONE, state);
     }
 
     private static ChartAnomalies.Definition definition(String id, boolean insertable, Set<String> excludes, String requiredMod) {
@@ -173,7 +173,7 @@ class AtlasAnomaliesTest {
     @Test
     void closingARunSpendsInsertedAnomaliesAndFailingAlsoSpendsAllRolledOnesButTheStar() {
         AtlasState state = new AtlasState(SEED);
-        AtlasRules rolled = rules(new AtlasMarkerRule(1f, 0f, 1f), List.of(new AtlasAnomalyCandidate("black_hole", 1f, "", true, Set.of(), null),
+        AtlasRules rolled = rules(new AtlasAnomalyChance(1f, 0f, 1f), List.of(new AtlasAnomalyCandidate("black_hole", 1f, "", true, Set.of(), null),
                 new AtlasAnomalyCandidate(AsteroidStorm.ANOMALY_ID, 1f, "")));
         AtlasGenerator generator = new AtlasGenerator(SEED, rolled, AtlasUnlocks.NONE, state);
         AtlasCell failed = system(generator, 0);

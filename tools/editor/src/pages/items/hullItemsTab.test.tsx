@@ -18,7 +18,7 @@ import { findLabelled, getLabelled, queryLabelled } from '../../test/labelledQue
 setUpItemsProject();
 
 describe('hull item types', () => {
-  it('lists hull items by socket type and rarity and shows every modifier that can roll as its in-game text', async () => {
+  it('lists hull items by section and rarity and shows every modifier that can roll as its in-game text', async () => {
     const itemTypes = await openItems('Item types');
 
     fireEvent.click(await within(itemTypes).findByText('Specialist Crew', undefined, LOAD_TIMEOUT));
@@ -28,7 +28,7 @@ describe('hull item types', () => {
     expect(getLabelled('CREW_LOSS_PERCENT weight', itemTypes)).toHaveProperty('value', '1000');
     expect(queryLabelled('CREW_LOSS_PERCENT max', itemTypes)).toBeNull();
 
-    fireEvent.click(await findLabelled('Socket type filter', itemTypes));
+    fireEvent.click(await findLabelled('Section filter', itemTypes));
     fireEvent.click(await screen.findByRole('option', { name: /^bridge/ }));
     await waitFor(() => expect(within(itemTypes).queryByText('Launch Assembly')).toBeNull());
     expect(within(itemTypes).getByText('Back-Alley Cyber-Surgeon')).toBeTruthy();
@@ -48,7 +48,7 @@ describe('hull item types', () => {
     fireEvent.click(getLabelled('Remove SHIP_RECOVERY_CHANCE_BONUS_CREW_QUARTERS', itemTypes));
     await save('Saved hull_items.csv');
 
-    const specialists = readProjectFile(HULL_ITEMS_FILE).split(/\r?\n/).find((line) => line.startsWith('crew_quarters_specialists,'));
+    const specialists = readProjectFile(HULL_ITEMS_FILE).split(/\r?\n/).find((line) => line.startsWith('specialist_crew,'));
     expect(specialists).toContain('@CREW_LOSS_PERCENT:900;');
     expect(specialists).toContain('@HYBRID_CREW_STEAL_RANGE_CREW_STEAL_SKELETON_CREW:250; @FIGHTER_CREW_LOSS_PERCENT,');
     expect(specialists).not.toContain('SHIP_RECOVERY_CHANCE_BONUS_CREW_QUARTERS');
@@ -78,7 +78,7 @@ describe('hull item validation', () => {
     fireEvent.click(saveButton());
 
     const refusal = await screen.findByRole('dialog', undefined, LOAD_TIMEOUT);
-    expect(within(refusal).getByText('MIN_CREW_PERCENT: flight_deck_crew can roll it, so it needs a name for their common names')).toBeTruthy();
+    expect(within(refusal).getByText('MIN_CREW_PERCENT: launch_assembly can roll it, so it needs a name for their common names')).toBeTruthy();
     expect(readProjectFile(HULL_ITEMS_FILE)).toBe(before);
   }, 90000);
 });
