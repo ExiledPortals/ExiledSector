@@ -24,12 +24,12 @@ public final class ItemCrafting {
     private ItemCrafting() {
     }
 
-    public static int parts(CraftingMaterials materials) {
-        return materials.count(ItemDisassembly.PARTS_ITEM_ID);
+    public static int feedstock(CraftingMaterials materials) {
+        return materials.count(ItemDisassembly.FEEDSTOCK_ITEM_ID);
     }
 
     public static boolean grow(GrowableMaterial material, CraftingMaterials materials) {
-        if (!material.growable() || !materials.take(ItemDisassembly.PARTS_ITEM_ID, material.partsCost())) {
+        if (!material.growable() || !materials.take(ItemDisassembly.FEEDSTOCK_ITEM_ID, material.feedstockCost())) {
             return false;
         }
         materials.add(material.itemId(), 1);

@@ -31,7 +31,7 @@ class MaterialItemPluginTest {
         for (StarChartCipher cipher : StarChartCipher.values()) {
             assertFalse(MaterialItemPlugin.alsoWorksOnStarCharts(cipher.itemId()), cipher.name());
         }
-        assertFalse(MaterialItemPlugin.alsoWorksOnStarCharts("exiledSector_socketable_parts"));
+        assertFalse(MaterialItemPlugin.alsoWorksOnStarCharts("exiledSector_nanite_feedstock"));
     }
 
     @Test

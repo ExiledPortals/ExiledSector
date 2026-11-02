@@ -27,12 +27,12 @@ public final class ItemDrops {
     static final String DATA_PATH = "data/config/exiledSector/item_salvage.csv";
     public static final String TECH_MINING_FIRST_FIND = "techmining_first_find";
     public static final String TECH_MINING_MONTHLY = "techmining_monthly";
-    static final int MIN_PARTS_PER_FIND = 1;
-    static final int MAX_PARTS_PER_FIND = 3;
+    static final int MIN_FEEDSTOCK_PER_FIND = 1;
+    static final int MAX_FEEDSTOCK_PER_FIND = 3;
     static final float KERNEL_CHANCE_SHARE = 0.7f;
     static final float FACTION_SOURCE_WEIGHT_MULT = 2f;
-    public static final String BATTLE_PARTS_FIELD_ID = "exiledSector_socketPartsPer100DeploymentPoints";
-    public static final int DEFAULT_BATTLE_PARTS_PER_100_DP = 5;
+    public static final String BATTLE_FEEDSTOCK_FIELD_ID = "exiledSector_socketPartsPer100DeploymentPoints";
+    public static final int DEFAULT_BATTLE_FEEDSTOCK_PER_100_DP = 5;
     public static final int MAX_BATTLE_PARTS_PER_100_DP = 200;
     private static final float DEPLOYMENT_POINTS_PER_SETTING_STEP = 100f;
     private static final Pattern SAFE_ID = Pattern.compile("[A-Za-z0-9_.-]+");
@@ -142,9 +142,9 @@ public final class ItemDrops {
         if (rule == null || rule.chances().isEmpty()) {
             return droppedMaterials;
         }
-        int partsFound = rule.feedstockMax() > 0 ? rollFeedstock(rule, random, feedstockMult) : rollParts(rule, random, feedstockMult);
-        if (partsFound > 0) {
-            droppedMaterials.put(ItemDisassembly.PARTS_ITEM_ID, partsFound);
+        int feedstockFound = rule.feedstockMax() > 0 ? rollFeedstock(rule, random, feedstockMult) : rollParts(rule, random, feedstockMult);
+        if (feedstockFound > 0) {
+            droppedMaterials.put(ItemDisassembly.FEEDSTOCK_ITEM_ID, feedstockFound);
         }
         rollEachCurrency(kernelDrops(), rule.chances().get(0) * KERNEL_CHANCE_SHARE * currencyMult, random, droppedMaterials);
         return droppedMaterials;
@@ -152,29 +152,29 @@ public final class ItemDrops {
 
     private static int rollFeedstock(Rule rule, Random random, float feedstockMult) {
         int rolled = rule.feedstockMin() + random.nextInt(rule.feedstockMax() - rule.feedstockMin() + 1);
-        return wholeParts(rolled * feedstockMult, random);
+        return wholeFeedstock(rolled * feedstockMult, random);
     }
 
     private static int rollParts(Rule rule, Random random, float feedstockMult) {
-        int partsFound = 0;
+        int feedstockFound = 0;
         for (float chance : rule.chances()) {
             if (random.nextFloat() < chance * feedstockMult) {
-                partsFound += MIN_PARTS_PER_FIND + random.nextInt(MAX_PARTS_PER_FIND - MIN_PARTS_PER_FIND + 1);
+                feedstockFound += MIN_FEEDSTOCK_PER_FIND + random.nextInt(MAX_FEEDSTOCK_PER_FIND - MIN_FEEDSTOCK_PER_FIND + 1);
             }
         }
-        return partsFound;
+        return feedstockFound;
     }
 
-    public static float battlePartsPerDeploymentPoint() {
-        return Math.max(0, ModSettings.intOr(BATTLE_PARTS_FIELD_ID, DEFAULT_BATTLE_PARTS_PER_100_DP)) / DEPLOYMENT_POINTS_PER_SETTING_STEP;
+    public static float battleFeedstockPerDeploymentPoint() {
+        return Math.max(0, ModSettings.intOr(BATTLE_FEEDSTOCK_FIELD_ID, DEFAULT_BATTLE_FEEDSTOCK_PER_100_DP)) / DEPLOYMENT_POINTS_PER_SETTING_STEP;
     }
 
-    public static int wholeParts(float exactParts, Random random) {
-        if (!(exactParts > 0f)) {
+    public static int wholeFeedstock(float exactFeedstock, Random random) {
+        if (!(exactFeedstock > 0f)) {
             return 0;
         }
-        int wholePartCount = (int) exactParts;
-        return wholePartCount + (random.nextFloat() < exactParts - wholePartCount ? 1 : 0);
+        int wholePartCount = (int) exactFeedstock;
+        return wholePartCount + (random.nextFloat() < exactFeedstock - wholePartCount ? 1 : 0);
     }
 
     static List<CurrencyDrop> kernelDrops() {
@@ -199,7 +199,7 @@ public final class ItemDrops {
             return;
         }
         for (CurrencyDrop drop : drops) {
-            int count = wholeParts((float) (expectedDrops * Math.max(0f, drop.weight()) / totalWeight), random);
+            int count = wholeFeedstock((float) (expectedDrops * Math.max(0f, drop.weight()) / totalWeight), random);
             if (count > 0) {
                 droppedMaterials.merge(drop.itemId(), count, Integer::sum);
             }
@@ -261,7 +261,7 @@ public final class ItemDrops {
         if (!(extraShare > 0f) || !hasDroppableBasic(kind)) {
             return;
         }
-        int extraCount = wholeParts(expectedCascadeCount(rule.chances()) * extraShare / sharedKinds, random);
+        int extraCount = wholeFeedstock(expectedCascadeCount(rule.chances()) * extraShare / sharedKinds, random);
         for (int i = 0; i < extraCount; i++) {
             ItemDefinition definition = pickSectionItemBasic(kind, random);
             if (definition != null) {

@@ -20,15 +20,15 @@ public enum StarChartCipher implements ItemCurrency {
 
     private final String itemId;
     private final String key;
-    private final int defaultPartsCost;
+    private final int defaultFeedstockCost;
     private final float dropWeight;
     private final MaterialTier tier;
     private final Color color;
 
-    StarChartCipher(String itemId, String key, int defaultPartsCost, float dropWeight, MaterialTier tier, Color color) {
+    StarChartCipher(String itemId, String key, int defaultFeedstockCost, float dropWeight, MaterialTier tier, Color color) {
         this.itemId = itemId;
         this.key = key;
-        this.defaultPartsCost = defaultPartsCost;
+        this.defaultFeedstockCost = defaultFeedstockCost;
         this.dropWeight = dropWeight;
         this.tier = tier;
         this.color = color;
@@ -81,12 +81,12 @@ public enum StarChartCipher implements ItemCurrency {
 
     @Override
     public boolean growable() {
-        return defaultPartsCost > 0;
+        return defaultFeedstockCost > 0;
     }
 
     @Override
-    public int partsCost() {
-        return ItemCraftingCosts.cost(itemId, defaultPartsCost);
+    public int feedstockCost() {
+        return ItemCraftingCosts.cost(itemId, defaultFeedstockCost);
     }
 
     @Override

@@ -56,7 +56,7 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
     }
 
     @Override
-    public int partsCost() {
+    public int feedstockCost() {
         return 0;
     }
 

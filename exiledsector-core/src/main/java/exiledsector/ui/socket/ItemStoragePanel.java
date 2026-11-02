@@ -549,12 +549,12 @@ public final class ItemStoragePanel extends HoloPanel {
     private void rebuildTools() {
         TooltipMakerAPI element = panelRoot.createUIElement(toolsWidth(), FIELD_HEIGHT, false);
         if (pickerMode) {
-            addPartsCount(element, 0f);
+            addFeedstockCount(element, 0f);
         } else {
             float craftingBenchWidth = craftingBenchButtonWidth();
             element.addButton(Translation.text("ui.socketStorage.craftingBench"), Control.CRAFTING_BENCH, craftingBenchWidth, HEADER_BUTTON_HEIGHT, 0f)
                     .getPosition().inTR(0f, (FIELD_HEIGHT - HEADER_BUTTON_HEIGHT) / 2f);
-            addPartsCount(element, craftingBenchWidth + GAP);
+            addFeedstockCount(element, craftingBenchWidth + GAP);
         }
         toolsElement = replaceElement(toolsElement, element, PAD + innerWidth() - toolsWidth(), searchRowTop());
         refreshOpacity();
@@ -686,7 +686,7 @@ public final class ItemStoragePanel extends HoloPanel {
         int installedCount = (int) storageRows.stream().filter(ItemStorageRow::installed).count();
         VanillaText.plainPara(newSummary, Translation.msg("ui.socketStorage.summary")
                 .arg("shown", shownCount).arg("stored", storageRows.size()).arg("installed", installedCount).text(), 0f, Misc.getGrayColor())
-                .getPosition().inTL(0f, PARTS_TEXT_TOP);
+                .getPosition().inTL(0f, FEEDSTOCK_TEXT_TOP);
         disassembly.addModeButton(newSummary, Control.DISASSEMBLY_MODE, FOOTER_HEIGHT, storageRows.stream().anyMatch(row -> !row.installed()));
         summaryElement = replaceElement(summaryElement, newSummary, PAD, panelHeight - PAD - FOOTER_HEIGHT);
     }

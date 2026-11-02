@@ -90,7 +90,7 @@ public final class ItemCurrencies {
         if (currency == null || currency.itemId() == null || currency.key() == null) {
             throw new IllegalArgumentException("a currency needs an item id and a key");
         }
-        if (CraftingInhibitor.byItemId(currency.itemId()) != null || ItemDisassembly.PARTS_ITEM_ID.equals(currency.itemId())) {
+        if (CraftingInhibitor.byItemId(currency.itemId()) != null || ItemDisassembly.FEEDSTOCK_ITEM_ID.equals(currency.itemId())) {
             throw new IllegalArgumentException(currency.itemId() + " is already a crafting material");
         }
         List<ItemCurrency> previous;

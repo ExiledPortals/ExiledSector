@@ -45,20 +45,20 @@ class ItemDisassemblyTest {
 
     @Test
     void partsScaleWithRarity() {
-        assertEquals(3, ItemRarity.COMMON.disassemblyParts());
-        assertEquals(5, ItemRarity.RARE.disassemblyParts());
-        assertEquals(10, ItemRarity.UNIQUE.disassemblyParts());
+        assertEquals(3, ItemRarity.COMMON.disassemblyFeedstock());
+        assertEquals(5, ItemRarity.RARE.disassemblyFeedstock());
+        assertEquals(10, ItemRarity.UNIQUE.disassemblyFeedstock());
     }
 
     @Test
     void disassemblingRemovesTheItemAndAddsItsPartsToCargo() {
         Item item = store.add(ItemDefinitions.get(HullItemRows.MILITARY), 7L);
-        int expected = item.rarity().disassemblyParts();
+        int expected = item.rarity().disassemblyFeedstock();
 
         assertEquals(expected, ItemDisassembly.disassemble(item, CraftingMaterials.cargoOnly(cargo), store, ships));
 
         assertNull(store.find(item.id()));
-        verify(cargo).addSpecial(MaterialItems.data(ItemDisassembly.PARTS_ITEM_ID), expected);
+        verify(cargo).addSpecial(MaterialItems.data(ItemDisassembly.FEEDSTOCK_ITEM_ID), expected);
     }
 
     @Test

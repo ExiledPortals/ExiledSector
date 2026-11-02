@@ -69,7 +69,7 @@ class CargoIconFxTest {
 
     @Test
     void eachMaterialGetsItsOwnSwarmMotion() {
-        assertEquals(SwarmMotion.SLURRY, CargoIconLooks.swarmFor(ItemDisassembly.PARTS_ITEM_ID));
+        assertEquals(SwarmMotion.SLURRY, CargoIconLooks.swarmFor(ItemDisassembly.FEEDSTOCK_ITEM_ID));
         assertEquals(SwarmMotion.ORBIT, CargoIconLooks.swarmFor(Nanoswarm.AUGMENTATION.itemId()));
         assertEquals(SwarmMotion.FERAL, CargoIconLooks.swarmFor(Nanoswarm.CORRUPTION.itemId()));
         assertEquals(SwarmMotion.REPLICATING, CargoIconLooks.swarmFor(Nanoswarm.REPLICATION.itemId()));
@@ -102,8 +102,8 @@ class CargoIconFxTest {
     @Test
     void dropAnnouncementsUseTheRarestMaterialFound() {
         assertNull(MaterialDropAnnouncer.bestTier(Map.of()));
-        assertEquals(MaterialTier.BASIC, MaterialDropAnnouncer.bestTier(Map.of(ItemDisassembly.PARTS_ITEM_ID, 4)));
-        assertEquals(MaterialTier.EXOTIC, MaterialDropAnnouncer.bestTier(Map.of(ItemDisassembly.PARTS_ITEM_ID, 4,
+        assertEquals(MaterialTier.BASIC, MaterialDropAnnouncer.bestTier(Map.of(ItemDisassembly.FEEDSTOCK_ITEM_ID, 4)));
+        assertEquals(MaterialTier.EXOTIC, MaterialDropAnnouncer.bestTier(Map.of(ItemDisassembly.FEEDSTOCK_ITEM_ID, 4,
                 Nanoswarm.CORRUPTION.itemId(), 1, Nanoswarm.AUGMENTATION.itemId(), 1)));
         assertTrue(MaterialTier.MYTHIC.announced());
         assertFalse(MaterialTier.MAJOR.announced());

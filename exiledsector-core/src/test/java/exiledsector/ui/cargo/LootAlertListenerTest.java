@@ -85,7 +85,7 @@ class LootAlertListenerTest {
     @Test
     void lootWithoutAlertsAddsNoScript() {
         LootAlertListener listener = new LootAlertListener();
-        listener.reportAboutToShowLootToPlayer(cargoWith(ItemDisassembly.PARTS_ITEM_ID), null);
+        listener.reportAboutToShowLootToPlayer(cargoWith(ItemDisassembly.FEEDSTOCK_ITEM_ID), null);
 
         verify(mockSector.sector, never()).addTransientScript(any(EveryFrameScript.class));
         assertNull(listener.activeWatcher());

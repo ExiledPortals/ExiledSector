@@ -97,18 +97,18 @@ public final class DisassemblySelection {
     }
 
     public void writeConfirm(TooltipMakerAPI element, List<Item> targets) {
-        int totalParts = partsOf(targets);
+        int totalFeedstock = feedstockOf(targets);
         if (targets.size() == 1) {
             Item item = targets.get(0);
             VanillaText.plainPara(element, Translation.msg("ui.socketStorage.confirm.title").arg("name", item.name()).text(), 0f,
                     item.rarity().color());
-            VanillaText.plainPara(element, Translation.msg("ui.socketStorage.confirm.body").count(totalParts).arg("count", totalParts).text(),
+            VanillaText.plainPara(element, Translation.msg("ui.socketStorage.confirm.body").count(totalFeedstock).arg("count", totalFeedstock).text(),
                     HoloPanel.LINE_PAD * 2f, Misc.getTextColor());
             return;
         }
         VanillaText.plainPara(element, Translation.msg(texts.batchTitleKey()).arg("count", targets.size()).text(), 0f, Misc.getBasePlayerColor());
         addRarityBreakdown(element, targets);
-        VanillaText.plainPara(element, Translation.msg("ui.socketStorage.confirm.batchBody").arg("count", totalParts).text(), HoloPanel.LINE_PAD * 2f,
+        VanillaText.plainPara(element, Translation.msg("ui.socketStorage.confirm.batchBody").arg("count", totalFeedstock).text(), HoloPanel.LINE_PAD * 2f,
                 Misc.getTextColor());
         if (texts.warnsAboutUniques() && targets.stream().anyMatch(item -> item.rarity() == ItemRarity.UNIQUE)) {
             VanillaText.plainPara(element, Translation.text("ui.socketStorage.confirm.includesUnique"), HoloPanel.LINE_PAD * 2f,
@@ -136,7 +136,7 @@ public final class DisassemblySelection {
         if (marked.isEmpty()) {
             return Translation.text(texts.hintKey());
         }
-        return Translation.msg("ui.socketStorage.disassemblyMarked").arg("count", marked.size()).arg("parts", partsOf(marked)).text();
+        return Translation.msg("ui.socketStorage.disassemblyMarked").arg("count", marked.size()).arg("feedstock", feedstockOf(marked)).text();
     }
 
     public float addModeButton(TooltipMakerAPI element, Object buttonId, float buttonHeight, boolean enabled) {
@@ -151,38 +151,38 @@ public final class DisassemblySelection {
     }
 
     public StyledText cellLine(Item item) {
-        int partCount = item.rarity().disassemblyParts();
+        int partCount = item.rarity().disassemblyFeedstock();
         String key = marked.contains(item) ? "ui.socketStorage.cell.unmark" : "ui.socketStorage.cell.mark";
         return Translation.msg(key).count(partCount).arg("count", partCount).styled();
     }
 
     public static StyledText disassembleHint(Item item) {
-        int partCount = item.rarity().disassemblyParts();
+        int partCount = item.rarity().disassemblyFeedstock();
         return Translation.msg("ui.socketStorage.cell.disassemble").count(partCount).arg("count", partCount).styled();
     }
 
     public String disassemble(List<Item> targets, ToIntFunction<Item> disassembler) {
-        int totalParts = 0;
+        int totalFeedstock = 0;
         int disassembledCount = 0;
         Item lastDisassembled = null;
         for (Item item : targets) {
-            int gainedParts = disassembler.applyAsInt(item);
-            if (gainedParts > 0) {
-                totalParts += gainedParts;
+            int gainedFeedstock = disassembler.applyAsInt(item);
+            if (gainedFeedstock > 0) {
+                totalFeedstock += gainedFeedstock;
                 disassembledCount++;
                 lastDisassembled = item;
             }
         }
         marked.removeAll(targets);
         if (disassembledCount == 1) {
-            return Translation.msg("ui.socketStorage.disassembled").count(totalParts).arg("name", lastDisassembled.name()).arg("count", totalParts)
+            return Translation.msg("ui.socketStorage.disassembled").count(totalFeedstock).arg("name", lastDisassembled.name()).arg("count", totalFeedstock)
                     .text();
         }
         return disassembledCount > 1
-                ? Translation.msg(texts.disassembledManyKey()).arg("count", disassembledCount).arg("parts", totalParts).text() : null;
+                ? Translation.msg(texts.disassembledManyKey()).arg("count", disassembledCount).arg("feedstock", totalFeedstock).text() : null;
     }
 
-    private static int partsOf(Collection<Item> items) {
-        return items.stream().mapToInt(item -> item.rarity().disassemblyParts()).sum();
+    private static int feedstockOf(Collection<Item> items) {
+        return items.stream().mapToInt(item -> item.rarity().disassemblyFeedstock()).sum();
     }
 }

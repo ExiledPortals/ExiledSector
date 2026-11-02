@@ -61,7 +61,7 @@ class ItemCurrenciesTest {
         }
 
         @Override
-        public int partsCost() {
+        public int feedstockCost() {
             return 30;
         }
 
@@ -106,7 +106,7 @@ class ItemCurrenciesTest {
         when(cargo.getQuantity(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(itemId))).thenReturn(quantity);
     }
 
-    private record Expected(String itemId, String key, int partsCost, float dropWeight, MaterialTier tier, boolean growable) {
+    private record Expected(String itemId, String key, int feedstockCost, float dropWeight, MaterialTier tier, boolean growable) {
     }
 
     @Test
@@ -125,8 +125,8 @@ class ItemCurrenciesTest {
             assertTrue(weight <= previousWeight, itemId + " drops more often than the material before it");
             previousWeight = weight;
             if (material.growable()) {
-                assertTrue(material.partsCost() >= previousCost, itemId + " is cheaper to grow than a commoner material");
-                previousCost = material.partsCost();
+                assertTrue(material.feedstockCost() >= previousCost, itemId + " is cheaper to grow than a commoner material");
+                previousCost = material.feedstockCost();
             }
         }
         assertTrue(CraftingInhibitor.PREFIX.dropWeight() < Nanoswarm.CORRUPTION.dropWeight());
@@ -148,7 +148,7 @@ class ItemCurrenciesTest {
 
         assertEquals(Arrays.asList(Nanoswarm.values()), ItemCurrencies.all());
         assertEquals(expected, ItemCurrencies.all().stream().map(currency -> new Expected(currency.itemId(), currency.key(),
-                currency.partsCost(), currency.dropWeight(), currency.tier(), currency.growable())).toList());
+                currency.feedstockCost(), currency.dropWeight(), currency.tier(), currency.growable())).toList());
         for (Nanoswarm currency : Nanoswarm.values()) {
             assertSame(currency, ItemCurrencies.byItemId(currency.itemId()));
             assertEquals(currency.name().toLowerCase(java.util.Locale.ROOT), currency.key());
@@ -157,7 +157,7 @@ class ItemCurrenciesTest {
                 ItemCurrencies.forType(ItemType.SUBROUTINE));
         assertEquals(ItemCurrencies.all(), ItemCurrencies.forType(ItemType.HULL_ITEM));
         assertEquals(List.of(), ItemCurrencies.forType(null));
-        assertNull(ItemCurrencies.byItemId(ItemDisassembly.PARTS_ITEM_ID));
+        assertNull(ItemCurrencies.byItemId(ItemDisassembly.FEEDSTOCK_ITEM_ID));
         assertNull(ItemCurrencies.byItemId(null));
     }
 

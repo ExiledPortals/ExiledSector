@@ -233,24 +233,24 @@ class ItemDropsTest {
     @Test
     void partsDropAlongsideHullItemsWithEachSlotAddingOneToThree() {
         List<Map<String, Integer>> station = materials("station", 1f);
-        double average = station.stream().mapToInt(roll -> roll.getOrDefault(ItemDisassembly.PARTS_ITEM_ID, 0)).average().orElse(0);
+        double average = station.stream().mapToInt(roll -> roll.getOrDefault(ItemDisassembly.FEEDSTOCK_ITEM_ID, 0)).average().orElse(0);
 
-        assertEquals(1.0, materialShare(station, roll -> roll.containsKey(ItemDisassembly.PARTS_ITEM_ID)), 0.0);
+        assertEquals(1.0, materialShare(station, roll -> roll.containsKey(ItemDisassembly.FEEDSTOCK_ITEM_ID)), 0.0);
         assertEquals((1 + 0.6 + 0.3) * 2, average, 0.1);
-        assertTrue(station.stream().allMatch(roll -> roll.getOrDefault(ItemDisassembly.PARTS_ITEM_ID, 0) <= 9));
-        assertEquals(0.5, materialShare(materials("probe", 1f), roll -> roll.containsKey(ItemDisassembly.PARTS_ITEM_ID)), 0.02);
-        assertEquals(0.25, materialShare(materials("probe", 0.5f), roll -> roll.containsKey(ItemDisassembly.PARTS_ITEM_ID)), 0.02);
+        assertTrue(station.stream().allMatch(roll -> roll.getOrDefault(ItemDisassembly.FEEDSTOCK_ITEM_ID, 0) <= 9));
+        assertEquals(0.5, materialShare(materials("probe", 1f), roll -> roll.containsKey(ItemDisassembly.FEEDSTOCK_ITEM_ID)), 0.02);
+        assertEquals(0.25, materialShare(materials("probe", 0.5f), roll -> roll.containsKey(ItemDisassembly.FEEDSTOCK_ITEM_ID)), 0.02);
     }
 
     @Test
     void aSiteWithAFeedstockRangeRollsWithinItScaledByTheFeedstockBonus() {
         List<Map<String, Integer>> research = materials("research", 1f);
-        assertTrue(research.stream().allMatch(roll -> roll.get(ItemDisassembly.PARTS_ITEM_ID) >= 20 && roll.get(ItemDisassembly.PARTS_ITEM_ID) <= 30));
+        assertTrue(research.stream().allMatch(roll -> roll.get(ItemDisassembly.FEEDSTOCK_ITEM_ID) >= 20 && roll.get(ItemDisassembly.FEEDSTOCK_ITEM_ID) <= 30));
         assertEquals(java.util.Set.of(20, 30), java.util.Set.of(
-                research.stream().mapToInt(roll -> roll.get(ItemDisassembly.PARTS_ITEM_ID)).min().orElse(0),
-                research.stream().mapToInt(roll -> roll.get(ItemDisassembly.PARTS_ITEM_ID)).max().orElse(0)));
-        assertEquals(25.0, research.stream().mapToInt(roll -> roll.get(ItemDisassembly.PARTS_ITEM_ID)).average().orElse(0), 0.1);
-        double halved = materials("research", 0.5f).stream().mapToInt(roll -> roll.get(ItemDisassembly.PARTS_ITEM_ID)).average().orElse(0);
+                research.stream().mapToInt(roll -> roll.get(ItemDisassembly.FEEDSTOCK_ITEM_ID)).min().orElse(0),
+                research.stream().mapToInt(roll -> roll.get(ItemDisassembly.FEEDSTOCK_ITEM_ID)).max().orElse(0)));
+        assertEquals(25.0, research.stream().mapToInt(roll -> roll.get(ItemDisassembly.FEEDSTOCK_ITEM_ID)).average().orElse(0), 0.1);
+        double halved = materials("research", 0.5f).stream().mapToInt(roll -> roll.get(ItemDisassembly.FEEDSTOCK_ITEM_ID)).average().orElse(0);
         assertEquals(12.5, halved, 0.1);
     }
 
@@ -318,7 +318,7 @@ class ItemDropsTest {
             currencyOnly.add(ItemDrops.rollMaterials("probe", random, 0f, 2f));
         }
 
-        assertEquals(0.0, materialShare(currencyOnly, roll -> roll.containsKey(ItemDisassembly.PARTS_ITEM_ID)), 0.0);
+        assertEquals(0.0, materialShare(currencyOnly, roll -> roll.containsKey(ItemDisassembly.FEEDSTOCK_ITEM_ID)), 0.0);
         assertEquals(2 * 0.5 * ItemDrops.KERNEL_CHANCE_SHARE, averageKernels(currencyOnly), 0.02);
     }
 
@@ -333,12 +333,12 @@ class ItemDropsTest {
         Random random = new Random(5L);
         double total = 0;
         for (int i = 0; i < TRIALS; i++) {
-            int parts = ItemDrops.wholeParts(2.25f, random);
-            assertTrue(parts == 2 || parts == 3);
-            total += parts;
+            int feedstock = ItemDrops.wholeFeedstock(2.25f, random);
+            assertTrue(feedstock == 2 || feedstock == 3);
+            total += feedstock;
         }
         assertEquals(2.25, total / TRIALS, 0.02);
-        assertEquals(0, ItemDrops.wholeParts(0f, random));
-        assertEquals(0, ItemDrops.wholeParts(Float.NaN, random));
+        assertEquals(0, ItemDrops.wholeFeedstock(0f, random));
+        assertEquals(0, ItemDrops.wholeFeedstock(Float.NaN, random));
     }
 }

@@ -6,5 +6,5 @@ public interface GrowableMaterial {
 
     boolean growable();
 
-    int partsCost();
+    int feedstockCost();
 }

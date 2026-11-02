@@ -15,14 +15,14 @@ public final class MaterialItems {
 
     private static final String MATERIAL_KEY_PREFIX = "material.";
     private static final SpriteCache SPRITES = new SpriteCache(MaterialItems.class);
-    private static final Color PARTS_COLOR = new Color(200, 170, 130);
+    private static final Color FEEDSTOCK_COLOR = new Color(200, 170, 130);
 
     private MaterialItems() {
     }
 
     public static List<String> ids() {
         List<String> itemIds = new ArrayList<>();
-        itemIds.add(ItemDisassembly.PARTS_ITEM_ID);
+        itemIds.add(ItemDisassembly.FEEDSTOCK_ITEM_ID);
         for (ItemCurrency currency : ItemCurrencies.all()) {
             itemIds.add(currency.itemId());
         }
@@ -51,7 +51,7 @@ public final class MaterialItems {
             return currency.color();
         }
         CraftingInhibitor inhibitor = CraftingInhibitor.byItemId(itemId);
-        return inhibitor == null ? PARTS_COLOR : inhibitor.color();
+        return inhibitor == null ? FEEDSTOCK_COLOR : inhibitor.color();
     }
 
     public static SpecialItemData data(String itemId) {

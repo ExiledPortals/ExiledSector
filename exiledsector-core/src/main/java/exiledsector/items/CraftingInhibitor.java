@@ -14,14 +14,14 @@ public enum CraftingInhibitor implements GrowableMaterial {
 
     private final String itemId;
     private final ModifierSlot inhibitedSlot;
-    private final int defaultPartsCost;
+    private final int defaultFeedstockCost;
     private final float dropWeight;
     private final Color color;
 
-    CraftingInhibitor(String itemId, ModifierSlot inhibitedSlot, int defaultPartsCost, float dropWeight, Color color) {
+    CraftingInhibitor(String itemId, ModifierSlot inhibitedSlot, int defaultFeedstockCost, float dropWeight, Color color) {
         this.itemId = itemId;
         this.inhibitedSlot = inhibitedSlot;
-        this.defaultPartsCost = defaultPartsCost;
+        this.defaultFeedstockCost = defaultFeedstockCost;
         this.dropWeight = dropWeight;
         this.color = color;
     }
@@ -48,12 +48,12 @@ public enum CraftingInhibitor implements GrowableMaterial {
 
     @Override
     public boolean growable() {
-        return defaultPartsCost > 0;
+        return defaultFeedstockCost > 0;
     }
 
     @Override
-    public int partsCost() {
-        return ItemCraftingCosts.cost(itemId, defaultPartsCost);
+    public int feedstockCost() {
+        return ItemCraftingCosts.cost(itemId, defaultFeedstockCost);
     }
 
     public ModifierSlot inhibitedSlot() {

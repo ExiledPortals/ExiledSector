@@ -410,9 +410,9 @@ class StarChartCipherTest {
 
     @Test
     void theShippedCostsMatchTheDefaultsAndTheCurrenciesCanBeGrown() throws Exception {
-        assertEquals(List.of(30, 40, 120), Arrays.stream(StarChartCipher.values()).map(StarChartCipher::partsCost).toList());
+        assertEquals(List.of(30, 40, 120), Arrays.stream(StarChartCipher.values()).map(StarChartCipher::feedstockCost).toList());
         ItemCraftingCosts.register(HullItemRows.shippedRows(ItemCraftingCosts.dataPath()));
-        assertEquals(List.of(30, 40, 120), Arrays.stream(StarChartCipher.values()).map(StarChartCipher::partsCost).toList());
+        assertEquals(List.of(30, 40, 120), Arrays.stream(StarChartCipher.values()).map(StarChartCipher::feedstockCost).toList());
         for (StarChartCipher currency : StarChartCipher.values()) {
             assertTrue(currency.growable());
         }

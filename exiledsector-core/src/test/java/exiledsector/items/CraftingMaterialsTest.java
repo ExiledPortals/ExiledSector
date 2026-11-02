@@ -19,7 +19,7 @@ import static org.mockito.Mockito.when;
 
 class CraftingMaterialsTest {
 
-    private static final String PARTS = ItemDisassembly.PARTS_ITEM_ID;
+    private static final String FEEDSTOCK = ItemDisassembly.FEEDSTOCK_ITEM_ID;
     private static final String AUGMENTATION = Nanoswarm.AUGMENTATION.itemId();
 
     private static CargoAPI cargoHolding(String commodityId, float quantity) {
@@ -30,18 +30,18 @@ class CraftingMaterialsTest {
 
     @Test
     void storedAndCarriedMaterialsCountTogetherAndAreSpentFromStorageFirst() {
-        CargoAPI cargo = cargoHolding(PARTS, 5f);
-        Map<String, Integer> stored = new HashMap<>(Map.of(PARTS, 3));
+        CargoAPI cargo = cargoHolding(FEEDSTOCK, 5f);
+        Map<String, Integer> stored = new HashMap<>(Map.of(FEEDSTOCK, 3));
         CraftingMaterials materials = new CraftingMaterials(cargo, stored, true);
 
-        assertEquals(8, materials.count(PARTS));
-        assertFalse(materials.take(PARTS, 9));
+        assertEquals(8, materials.count(FEEDSTOCK));
+        assertFalse(materials.take(FEEDSTOCK, 9));
         verify(cargo, never()).removeItems(Mockito.any(), Mockito.any(), anyFloat());
 
-        assertTrue(materials.take(PARTS, 4));
-        assertEquals(0, materials.stored(PARTS));
-        assertFalse(stored.containsKey(PARTS));
-        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(PARTS), 1f);
+        assertTrue(materials.take(FEEDSTOCK, 4));
+        assertEquals(0, materials.stored(FEEDSTOCK));
+        assertFalse(stored.containsKey(FEEDSTOCK));
+        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(FEEDSTOCK), 1f);
     }
 
     @Test
@@ -59,43 +59,43 @@ class CraftingMaterialsTest {
     }
 
     @Test
-    void settlingWhileStoringMovesEveryPartAndKernelOutOfCargo() {
-        CargoAPI cargo = cargoHolding(PARTS, 40f);
+    void settlingWhileStoringMovesAllFeedstockAndNanoswarmsOutOfCargo() {
+        CargoAPI cargo = cargoHolding(FEEDSTOCK, 40f);
         when(cargo.getQuantity(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(AUGMENTATION))).thenReturn(2f);
-        Map<String, Integer> stored = new HashMap<>(Map.of(PARTS, 5));
+        Map<String, Integer> stored = new HashMap<>(Map.of(FEEDSTOCK, 5));
 
         assertEquals(42, new CraftingMaterials(cargo, stored, true).settle());
 
-        assertEquals(Map.of(PARTS, 45, AUGMENTATION, 2), stored);
-        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(PARTS), 40f);
+        assertEquals(Map.of(FEEDSTOCK, 45, AUGMENTATION, 2), stored);
+        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(FEEDSTOCK), 40f);
         verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(AUGMENTATION), 2f);
     }
 
     @Test
     void settlingWithStoringOffReturnsEverythingToCargo() {
         CargoAPI cargo = mock(CargoAPI.class);
-        Map<String, Integer> stored = new HashMap<>(Map.of(PARTS, 12, AUGMENTATION, 1));
+        Map<String, Integer> stored = new HashMap<>(Map.of(FEEDSTOCK, 12, AUGMENTATION, 1));
 
         assertEquals(13, new CraftingMaterials(cargo, stored, false).settle());
 
         assertTrue(stored.isEmpty());
-        verify(cargo).addSpecial(MaterialItems.data(PARTS), 12f);
+        verify(cargo).addSpecial(MaterialItems.data(FEEDSTOCK), 12f);
         verify(cargo).addSpecial(MaterialItems.data(AUGMENTATION), 1f);
     }
 
     @Test
     void cargoOnlyMaterialsNeverTouchTheStore() {
-        CargoAPI cargo = cargoHolding(PARTS, 3f);
+        CargoAPI cargo = cargoHolding(FEEDSTOCK, 3f);
         CraftingMaterials materials = CraftingMaterials.cargoOnly(cargo);
 
         assertFalse(materials.isStoring());
         assertEquals(0, materials.settle());
-        assertEquals(3, materials.count(PARTS));
+        assertEquals(3, materials.count(FEEDSTOCK));
     }
 
     @Test
-    void thePartsEveryKernelAndEveryInhibitorAreManaged() {
+    void theFeedstockEveryNanoswarmAndEveryInhibitorAreManaged() {
         assertEquals(1 + Nanoswarm.values().length + CraftingInhibitor.values().length, MaterialItems.ids().size());
-        assertTrue(MaterialItems.ids().contains(PARTS));
+        assertTrue(MaterialItems.ids().contains(FEEDSTOCK));
     }
 }

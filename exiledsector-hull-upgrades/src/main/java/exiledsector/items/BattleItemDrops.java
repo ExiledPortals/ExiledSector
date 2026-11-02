@@ -175,7 +175,7 @@ public final class BattleItemDrops {
             for (SourcePower source : sources) {
                 expected += expected(source, drop, dropMultiplier) * source.chances().general();
             }
-            addPlanned(planned, drop, null, ItemDrops.wholeParts(expected, random));
+            addPlanned(planned, drop, null, ItemDrops.wholeFeedstock(expected, random));
         }
         for (ItemKind kind : kindsWithBasics) {
             for (Drop drop : Drop.values()) {
@@ -186,7 +186,7 @@ public final class BattleItemDrops {
                 for (SourcePower source : sources) {
                     expected += expected(source, drop, dropMultiplier) * source.chances().targeted(kind) / kindsWithBasics.size();
                 }
-                addPlanned(planned, drop, kind, ItemDrops.wholeParts(expected, random));
+                addPlanned(planned, drop, kind, ItemDrops.wholeFeedstock(expected, random));
             }
         }
         return planned;

@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when;
 
 class ItemCraftingTest {
 
-    private static final String PARTS = ItemDisassembly.PARTS_ITEM_ID;
+    private static final String FEEDSTOCK = ItemDisassembly.FEEDSTOCK_ITEM_ID;
     private final ItemStore store = new ItemStore();
     private final CargoAPI cargo = mock(CargoAPI.class);
 
@@ -179,7 +179,7 @@ class ItemCraftingTest {
 
     @Test
     void synthesisNeedsEnoughParts() {
-        owns(PARTS, 2f);
+        owns(FEEDSTOCK, 2f);
 
         assertFalse(ItemCrafting.grow(Nanoswarm.AUGMENTATION, CraftingMaterials.cargoOnly(cargo)));
         assertTrue(store.owned().isEmpty());
@@ -189,22 +189,22 @@ class ItemCraftingTest {
 
     @Test
     void synthesisingACurrencyTradesItsPartsCostForOneCurrency() {
-        owns(PARTS, 10f);
+        owns(FEEDSTOCK, 10f);
 
         assertTrue(ItemCrafting.grow(Nanoswarm.AUGMENTATION, CraftingMaterials.cargoOnly(cargo)));
 
-        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(PARTS), Nanoswarm.AUGMENTATION.partsCost());
+        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(FEEDSTOCK), Nanoswarm.AUGMENTATION.feedstockCost());
         verify(cargo).addSpecial(MaterialItems.data(Nanoswarm.AUGMENTATION.itemId()), 1);
     }
 
     @Test
     void anInhibitorGrowsFromItsPartsCost() {
-        owns(PARTS, 100f);
+        owns(FEEDSTOCK, 100f);
 
         assertTrue(CraftingInhibitor.PREFIX.growable());
         assertTrue(ItemCrafting.grow(CraftingInhibitor.PREFIX, CraftingMaterials.cargoOnly(cargo)));
 
-        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(PARTS), 100);
+        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(FEEDSTOCK), 100);
         verify(cargo).addSpecial(MaterialItems.data(CraftingInhibitor.PREFIX.itemId()), 1);
     }
 
@@ -228,14 +228,14 @@ class ItemCraftingTest {
 
     @Test
     void costsComeFromTheCraftingCsvAndFallBackToTheDefaults() throws Exception {
-        assertEquals(50, Nanoswarm.CORRUPTION.partsCost());
+        assertEquals(50, Nanoswarm.CORRUPTION.feedstockCost());
 
         ItemCraftingCosts.register(new JSONArray()
                 .put(new JSONObject().put("item", Nanoswarm.CORRUPTION.itemId()).put("partsCost", "55"))
                 .put(new JSONObject().put("item", Nanoswarm.RESHAPING.itemId()).put("partsCost", "lots")));
 
-        assertEquals(55, Nanoswarm.CORRUPTION.partsCost());
-        assertEquals(20, Nanoswarm.RESHAPING.partsCost());
+        assertEquals(55, Nanoswarm.CORRUPTION.feedstockCost());
+        assertEquals(20, Nanoswarm.RESHAPING.feedstockCost());
     }
 
     @Test
@@ -378,7 +378,7 @@ class ItemCraftingTest {
 
     @Test
     void replicatorNanoseedsCannotBeGrown() {
-        owns(PARTS, 10_000f);
+        owns(FEEDSTOCK, 10_000f);
 
         assertFalse(Nanoswarm.REPLICATION.growable());
         assertFalse(ItemCrafting.grow(Nanoswarm.REPLICATION, CraftingMaterials.cargoOnly(cargo)));

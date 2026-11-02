@@ -202,7 +202,7 @@ class DeletedSubroutinesTest {
         CargoStackAPI missingHullItemStack = stack(new ItemData(MISSING_HULL_ITEM, 5L).toSpecialItem(), 1f);
         CargoStackAPI subroutineStack = stack(new ItemData(ItemFixtures.SUBROUTINE, 5L).toSpecialItem(), 1f);
         CargoStackAPI hullItemStack = stack(new ItemData(HullItemRows.MILITARY, 5L).toSpecialItem(), 1f);
-        CargoStackAPI otherSpecialStack = stack(new SpecialItemData("exiledSector_socketable_parts", null), 30f);
+        CargoStackAPI otherSpecialStack = stack(new SpecialItemData("exiledSector_nanite_feedstock", null), 30f);
         CargoStackAPI commodityStack = stack(null, 100f);
         CargoAPI playerCargo = cargoHolding(deletedStack, missingHullItemStack, subroutineStack, commodityStack);
         CargoAPI storageCargo = cargoHolding(rolledDeletedStack, hullItemStack, otherSpecialStack);

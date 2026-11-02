@@ -50,7 +50,7 @@ public enum LootAlert {
             return VALUABLE;
         }
         if (MaterialItems.isMaterial(itemId)) {
-            return ItemDisassembly.PARTS_ITEM_ID.equals(itemId) ? null : STANDARD;
+            return ItemDisassembly.FEEDSTOCK_ITEM_ID.equals(itemId) ? null : STANDARD;
         }
         ItemData itemData = ItemData.of(special);
         Item preview = itemData == null ? null : itemData.preview();

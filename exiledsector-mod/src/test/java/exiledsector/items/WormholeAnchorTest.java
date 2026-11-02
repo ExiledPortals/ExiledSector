@@ -238,7 +238,7 @@ class WormholeAnchorTest {
 
         int parts = ItemDisassembly.disassemble(stored, CraftingMaterials.cargoOnly(cargo), store, ships);
 
-        assertEquals(stored.rarity().disassemblyParts(), parts);
+        assertEquals(stored.rarity().disassemblyFeedstock(), parts);
         assertNull(store.find(stored.id()));
     }
 

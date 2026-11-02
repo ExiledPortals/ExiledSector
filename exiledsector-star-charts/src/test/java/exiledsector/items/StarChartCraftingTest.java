@@ -51,7 +51,7 @@ class StarChartCraftingTest {
         }
 
         @Override
-        public int partsCost() {
+        public int feedstockCost() {
             return 0;
         }
 

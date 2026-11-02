@@ -281,7 +281,7 @@ class ItemLootListenerTest {
 
         listener.reportEncounterLootGenerated(context(battle), loot);
 
-        verify(loot).addSpecial(MaterialItems.data(ItemDisassembly.PARTS_ITEM_ID), 10);
+        verify(loot).addSpecial(MaterialItems.data(ItemDisassembly.FEEDSTOCK_ITEM_ID), 10);
     }
 
     @Test

@@ -83,9 +83,9 @@ public final class ExiledSectorSettings {
                 SalvageSiteCompat.DEFAULT_DROPS, itemsTab);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_craftingHeader", Translation.text("settings.crafting.header"), itemsTab);
-        SettingsCreator.addInt(MOD_ID, ItemDrops.BATTLE_PARTS_FIELD_ID,
-                Translation.text("settings.socketStorage.battleParts.name"), Translation.text("settings.socketStorage.battleParts.tooltip"),
-                ItemDrops.DEFAULT_BATTLE_PARTS_PER_100_DP, 0, ItemDrops.MAX_BATTLE_PARTS_PER_100_DP, itemsTab);
+        SettingsCreator.addInt(MOD_ID, ItemDrops.BATTLE_FEEDSTOCK_FIELD_ID,
+                Translation.text("settings.socketStorage.battleFeedstock.name"), Translation.text("settings.socketStorage.battleFeedstock.tooltip"),
+                ItemDrops.DEFAULT_BATTLE_FEEDSTOCK_PER_100_DP, 0, ItemDrops.MAX_BATTLE_PARTS_PER_100_DP, itemsTab);
         SettingsCreator.addBoolean(MOD_ID, CraftingMaterials.STORE_FIELD_ID,
                 Translation.text("settings.socketStorage.storeMaterials.name"), Translation.text("settings.socketStorage.storeMaterials.tooltip"),
                 CraftingMaterials.DEFAULT_STORE, itemsTab);

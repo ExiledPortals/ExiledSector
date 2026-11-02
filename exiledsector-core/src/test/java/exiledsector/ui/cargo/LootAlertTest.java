@@ -36,7 +36,7 @@ class LootAlertTest {
 
     @Test
     void feedstockAndForeignItemsStaySilent() {
-        assertNull(alertFor(ItemDisassembly.PARTS_ITEM_ID));
+        assertNull(alertFor(ItemDisassembly.FEEDSTOCK_ITEM_ID));
         assertNull(alertFor("pristine_nanoforge"));
     }
 

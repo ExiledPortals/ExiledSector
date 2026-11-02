@@ -490,7 +490,7 @@ public final class CraftingBenchPanel extends HoloPanel {
         pendingGrowth = material;
         openConfirm(GROW_CONFIRM_HEIGHT,
                 element -> writeCraftConfirm(element, Translation.msg("ui.craftingBench.confirm.growTitle").arg("name", recipeName(material)).text(),
-                        Translation.msg("ui.craftingBench.confirm.growBody").arg("cost", material.partsCost()).arg("parts", ItemCrafting.parts(playerMaterials())).text(),
+                        Translation.msg("ui.craftingBench.confirm.growBody").arg("cost", material.feedstockCost()).arg("feedstock", ItemCrafting.feedstock(playerMaterials())).text(),
                         Set.of()),
                 "ui.craftingBench.confirm.grow", Control.CONFIRM_GROW, "ui.craftingBench.confirm.cancel", Control.CANCEL_CONFIRM);
     }
@@ -511,9 +511,9 @@ public final class CraftingBenchPanel extends HoloPanel {
             return false;
         }
         CraftingMaterials materials = playerMaterials();
-        int ownedParts = ItemCrafting.parts(materials);
-        if (ownedParts < material.partsCost()) {
-            showNotice(Translation.msg("ui.craftingBench.notice.notEnoughParts").arg("cost", material.partsCost()).arg("parts", ownedParts)
+        int ownedFeedstock = ItemCrafting.feedstock(materials);
+        if (ownedFeedstock < material.feedstockCost()) {
+            showNotice(Translation.msg("ui.craftingBench.notice.notEnoughFeedstock").arg("cost", material.feedstockCost()).arg("feedstock", ownedFeedstock)
                     .arg("name", recipeName(material)).text());
             return false;
         }
@@ -623,13 +623,13 @@ public final class CraftingBenchPanel extends HoloPanel {
             return;
         }
         TooltipMakerAPI element = startHeader(support().titleKey(), "ui.craftingBench.close", Control.CLOSE);
-        float partsRight = CLOSE_BUTTON_WIDTH + GAP * 2f;
+        float feedstockRight = CLOSE_BUTTON_WIDTH + GAP * 2f;
         if (craftingBenchListener.offersItemPicker()) {
             element.addButton(Translation.text("ui.craftingBench.pickItem"), Control.PICK, PICK_BUTTON_WIDTH, HEADER_BUTTON_HEIGHT, 0f)
-                    .getPosition().inTR(partsRight, 0f);
-            partsRight += PICK_BUTTON_WIDTH + GAP * 2f;
+                    .getPosition().inTR(feedstockRight, 0f);
+            feedstockRight += PICK_BUTTON_WIDTH + GAP * 2f;
         }
-        addPartsCount(element, partsRight);
+        addFeedstockCount(element, feedstockRight);
         headerElement = finishHeader(element, headerElement);
     }
 
@@ -1046,7 +1046,7 @@ public final class CraftingBenchPanel extends HoloPanel {
 
     private static String growHint(GrowableMaterial material) {
         return material.growable()
-                ? Translation.msg("ui.craftingBench.tile.grow").arg("cost", material.partsCost()).text()
+                ? Translation.msg("ui.craftingBench.tile.grow").arg("cost", material.feedstockCost()).text()
                 : Translation.text("ui.craftingBench.tile.notGrowable");
     }
 
