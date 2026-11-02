@@ -1,6 +1,7 @@
 package exiledsector.charts.effect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.skills.skilleffect.SkillEffectSupport;
@@ -27,6 +28,11 @@ public enum ChartFleetStat {
     ARMOR_DAMAGE_TAKEN((stats, id, mult) -> stats.getArmorDamageTakenMult().modifyMult(id, mult)),
     ARMOR((stats, id, mult) -> stats.getArmorBonus().modifyMult(id, mult)),
     TOP_SPEED((stats, id, mult) -> stats.getMaxSpeed().modifyMult(id, mult)),
+    LARGE_SHIP_TOP_SPEED((stats, id, mult) -> {
+        if (isLargeShip(stats)) {
+            stats.getMaxSpeed().modifyMult(id + ChartFleetStat.LARGE_SHIP_MOD_SUFFIX, mult);
+        }
+    }),
     MANEUVERABILITY((stats, id, mult) -> {
         stats.getAcceleration().modifyMult(id, mult);
         stats.getDeceleration().modifyMult(id, mult);
@@ -58,6 +64,7 @@ public enum ChartFleetStat {
 
     static final float MIN_MULT = 0.1f;
     static final float MAX_MULT = 10f;
+    static final String LARGE_SHIP_MOD_SUFFIX = "_large_ship";
 
     enum Scope {
         PLAYER_SHIPS,
@@ -97,6 +104,11 @@ public enum ChartFleetStat {
         if (shipStatApplier != null) {
             shipStatApplier.apply(stats, id, mult);
         }
+    }
+
+    private static boolean isLargeShip(MutableShipStatsAPI stats) {
+        HullSize hullSize = stats.getVariant() == null ? null : stats.getVariant().getHullSize();
+        return hullSize == HullSize.CRUISER || hullSize == HullSize.CAPITAL_SHIP;
     }
 
     public static float multFor(float percent) {

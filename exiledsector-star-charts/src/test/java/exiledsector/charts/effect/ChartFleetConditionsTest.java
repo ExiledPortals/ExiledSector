@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -178,6 +179,25 @@ class ChartFleetConditionsTest {
 
         assertEquals(1f / 0.6f, weaponRepairTime.getModifiedValue(), 0.0001f);
         assertEquals(1f / 0.6f, engineRepairTime.getModifiedValue(), 0.0001f);
+    }
+
+    @Test
+    void miredSlowsOnlyCruisersAndCapitalsAndStacksWithFleetWideTopSpeed() {
+        ChartFleetConditions.set(Map.of(ChartFleetStat.TOP_SPEED, 0.9f, ChartFleetStat.LARGE_SHIP_TOP_SPEED, 0.8f), playerFleet);
+        for (HullSize hullSize : HullSize.values()) {
+            MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+            ShipVariantAPI variant = mock(ShipVariantAPI.class);
+            MutableStat maxSpeed = new MutableStat(100f);
+            when(stats.getFleetMember()).thenReturn(playerMember);
+            when(stats.getVariant()).thenReturn(variant);
+            when(variant.getHullSize()).thenReturn(hullSize);
+            when(stats.getMaxSpeed()).thenReturn(maxSpeed);
+
+            ChartFleetConditions.applyToShip(stats);
+
+            boolean large = hullSize == HullSize.CRUISER || hullSize == HullSize.CAPITAL_SHIP;
+            assertEquals(large ? 72f : 90f, maxSpeed.getModifiedValue(), 0.0001f, hullSize.name());
+        }
     }
 
     @Test

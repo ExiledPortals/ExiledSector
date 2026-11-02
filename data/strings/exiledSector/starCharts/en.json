@@ -151,6 +151,7 @@
     "chart.effect.CHART_FORCED_AUTOPILOT": "Your ship is <bad>locked on autopilot</bad> in the system",
     "chart.effect.CHART_ARC_STRIKE_EMP_FLAT": "Every {seconds} seconds in the system, a shield-piercing EMP arc strikes a random ship on your side for <bad>{value}</bad> EMP damage",
     "chart.effect.CHART_DAMAGE_PER_SMOD_PERCENT": "Ships in your fleet deal <bad>{value}%</bad> less damage for each S-mod they have in the system",
+    "chart.effect.CHART_LARGE_SHIP_TOP_SPEED_PERCENT": "Cruisers and capital ships in your fleet have <bad>{value}%</bad> less top speed in the system",
     "chart.combat.autopilotLocked": "Autopilot is locked on in this system.",
     "chart.effect.CHART_LARGER_BATTLES_FLAT": "<hl>+{value}</hl> to battle size in the system",
     "chart.effect.CHART_SMALLER_BATTLES_FLAT": "<hl>-{value}</hl> to battle size in the system",
