@@ -14,7 +14,7 @@ public final class ExoshipNodes {
     }
 
     public static boolean isCarried(SkillNode node) {
-        return node != null && SkillTags.EXOTECH_REGION.equals(node.getRegion());
+        return node != null && SkillTags.EXOTECH_VOLUME.equals(node.getVolume());
     }
 
     public static SkillNode exoship() {

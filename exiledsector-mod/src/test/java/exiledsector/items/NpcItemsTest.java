@@ -96,7 +96,7 @@ class NpcItemsTest {
     }
 
     @Test
-    void aVolumeWhoseAreaIsOffHasNoAnchor() throws Exception {
+    void aVolumeThatIsOffHasNoAnchor() throws Exception {
         registerHegemonyAnchor(false);
 
         assertNull(NpcItems.anchorFor("hegemony"));

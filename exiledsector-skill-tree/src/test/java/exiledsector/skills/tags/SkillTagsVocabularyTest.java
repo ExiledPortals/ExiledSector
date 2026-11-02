@@ -56,14 +56,14 @@ class SkillTagsVocabularyTest {
     }
 
     @Test
-    void everyNodeCarriesExactlyOneRegionTag() throws Exception {
+    void everyNodeCarriesExactlyOneVolumeTag() throws Exception {
         JSONArray nodes = nodes();
         List<String> problems = new ArrayList<>();
         for (int i = 0; i < nodes.length(); i++) {
             JSONObject node = nodes.getJSONObject(i);
-            List<String> regions = tags(node).stream().filter(SkillTags::isRegion).toList();
-            if (regions.size() != 1) {
-                problems.add("node " + node.optString("id") + " has region tags " + regions);
+            List<String> volumes = tags(node).stream().filter(SkillTags::isVolume).toList();
+            if (volumes.size() != 1) {
+                problems.add("node " + node.optString("id") + " has volume tags " + volumes);
             }
         }
 
@@ -71,14 +71,14 @@ class SkillTagsVocabularyTest {
     }
 
     @Test
-    void noTypeCarriesARegionTag() throws Exception {
+    void noTypeCarriesAVolumeTag() throws Exception {
         JSONArray types = types();
         List<String> problems = new ArrayList<>();
         for (int i = 0; i < types.length(); i++) {
             JSONObject type = types.getJSONObject(i);
-            List<String> regions = tags(type).stream().filter(SkillTags::isRegion).toList();
-            if (!regions.isEmpty()) {
-                problems.add("type " + type.optString("id") + " has region tags " + regions);
+            List<String> volumes = tags(type).stream().filter(SkillTags::isVolume).toList();
+            if (!volumes.isEmpty()) {
+                problems.add("type " + type.optString("id") + " has volume tags " + volumes);
             }
         }
 

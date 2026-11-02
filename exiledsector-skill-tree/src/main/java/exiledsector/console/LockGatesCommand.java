@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public class LockAreasCommand extends CampaignCommand {
+public class LockGatesCommand extends CampaignCommand {
 
     @Override
     protected CommandResult runInCampaign(String args) {
@@ -40,9 +40,9 @@ public class LockAreasCommand extends CampaignCommand {
             }
         });
 
-        List<UnlockConditionType> relockedGates = RelockedGates.relockOpenAreas(Global.getSector());
+        List<UnlockConditionType> relockedGates = RelockedGates.relockOpenGates(Global.getSector());
         if (relockedGates.isEmpty()) {
-            Console.showMessage("No unlocked area to lock.");
+            Console.showMessage("No open gate to lock.");
             return CommandResult.SUCCESS;
         }
 
@@ -60,7 +60,7 @@ public class LockAreasCommand extends CampaignCommand {
             ConsoleShips.treeChanged(ownedShipsById.get(lockedBefore.getKey()));
         }
         Console.showMessage("Locked " + relockedGates + " again. Released " + releasedNodeCount + " nodes from "
-                + changedShipCount + " ships and refunded their costs. Areas reopen when their trigger happens again, or with ExiledSectorUnlockAreas.");
+                + changedShipCount + " ships and refunded their costs. Gates reopen when their trigger happens again, or with ExiledSectorUnlockGates.");
         return CommandResult.SUCCESS;
     }
 

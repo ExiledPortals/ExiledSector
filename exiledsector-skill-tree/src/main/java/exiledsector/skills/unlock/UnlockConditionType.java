@@ -9,7 +9,7 @@ import exiledsector.compat.NightcrossUnlocks;
 import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.compat.TaniaCompat;
 import exiledsector.compat.TaniaUnlocks;
-import exiledsector.skills.tags.AreaToggles;
+import exiledsector.skills.tags.VolumeToggles;
 
 import java.util.function.BiPredicate;
 import java.util.function.BooleanSupplier;
@@ -22,7 +22,7 @@ public enum UnlockConditionType {
     MEMORY_FLAG(UnlockConditionOverrides.DISABLE_MEMORY_FLAG_FIELD_ID, null),
     RAT_PLAYER_EXOSHIP(ModGate.of(RandomAssortmentCompat::isModEnabled, sector -> RandomAssortmentCompat.exoshipConfirmedRecovered())),
     RAT_SINGULARITY_DEFEATED(ModGate.of(RandomAssortmentCompat::isModEnabled, AbyssSingularity::isGateOpen)),
-    ANCHOR_FOUND(new ModGate(AreaToggles::modInstalledFor, AnchorFinds::isFound), true),
+    ANCHOR_FOUND(new ModGate(VolumeToggles::modInstalledFor, AnchorFinds::isFound), true),
     NIGHTCROSS_EXISTENTIAL_THREAT_DEFEATED(ModGate.of(NightcrossCompat::isModEnabled, NightcrossUnlocks::isExistentialThreatDefeated)),
     NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND(ModGate.of(NightcrossCompat::isModEnabled, NightcrossUnlocks::isAncientPrototypeFound)),
     LOST_SECTOR_FROZEN_HEART_VISITED(ModGate.of(LostSectorCompat::isModEnabled, LostSectorUnlocks::isFrozenHeartSystemVisited)),

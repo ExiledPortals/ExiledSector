@@ -116,9 +116,9 @@ public final class ItemDataIntegrity {
         return rows == null ? new JSONArray() : rows;
     }
 
-    void checkArea(String file, int line, String definitionId, String area) {
-        if (!area.isEmpty() && !ItemAreas.isKnown(area)) {
-            error(file, line, definitionId + " names the area \"" + area + "\"; expected one of " + ItemAreas.known().stream().sorted().toList());
+    void checkVolume(String file, int line, String definitionId, String volume) {
+        if (!volume.isEmpty() && !ItemVolumes.isKnown(volume)) {
+            error(file, line, definitionId + " names the volume \"" + volume + "\"; expected one of " + ItemVolumes.known().stream().sorted().toList());
         }
     }
 

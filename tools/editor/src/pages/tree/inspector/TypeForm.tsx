@@ -366,7 +366,7 @@ export function TypeForm(props: TypeFormProps) {
         return (
           <TagGroupsField
             key={section}
-            label={`Type tags (region tags go on nodes)${note}`}
+            label={`Type tags (volume tags go on nodes)${note}`}
             vocabulary={vocabulary}
             tags={type.tags ?? []}
             groups={TYPE_TAG_GROUPS}

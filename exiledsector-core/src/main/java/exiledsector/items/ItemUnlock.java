@@ -70,7 +70,7 @@ public enum ItemUnlock {
     }
 
     public static boolean canDrop(ItemDefinition definition, SectorAPI sector) {
-        if (!ItemAreas.dropsNow(definition)) {
+        if (!ItemVolumes.dropsNow(definition)) {
             return false;
         }
         if (!definition.unique()) {

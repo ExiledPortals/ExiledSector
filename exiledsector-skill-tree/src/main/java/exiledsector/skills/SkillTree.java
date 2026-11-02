@@ -4,7 +4,7 @@ import exiledsector.skills.decoration.Decorations;
 import exiledsector.skills.layout.ConnectorCurve;
 import exiledsector.skills.loader.SkillTreeLoader;
 import exiledsector.skills.loader.SkillTypeLoader;
-import exiledsector.skills.loader.TreeRegionFilter;
+import exiledsector.skills.loader.TreeVolumeFilter;
 import exiledsector.skills.loader.WormholePairValidator;
 import exiledsector.skills.radius.NodeRadii;
 import exiledsector.skills.radius.NodeRadiusCache;
@@ -28,7 +28,7 @@ public class SkillTree {
     private static final Map<String, SkillNode> DECLARED_NODES = new LinkedHashMap<>();
     private static final Map<String, SkillNode> DECLARED_NODES_VIEW = Collections.unmodifiableMap(DECLARED_NODES);
     private static SkillTreeLoader.ParsedTree declaredTree;
-    private static Set<String> disabledRegions = Set.of();
+    private static Set<String> disabledVolumes = Set.of();
     private static boolean loadedCompletely;
     private static SkillTreeTopology topology;
     private static NodeRadiusCache radiusCache;
@@ -56,15 +56,15 @@ public class SkillTree {
         activate();
     }
 
-    public static void applyDisabledRegions(Set<String> regions) {
-        disabledRegions = Set.copyOf(regions);
+    public static void applyDisabledVolumes(Set<String> volumes) {
+        disabledVolumes = Set.copyOf(volumes);
         activate();
     }
 
     private static void activate() {
         if (declaredTree == null) return;
 
-        SkillTreeLoader.ParsedTree activeTree = TreeRegionFilter.apply(declaredTree, disabledRegions);
+        SkillTreeLoader.ParsedTree activeTree = TreeVolumeFilter.apply(declaredTree, disabledVolumes);
         clearLayout();
         NODES.clear();
         for (SkillNode node : activeTree.nodes) {

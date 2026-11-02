@@ -254,7 +254,7 @@ public final class Subroutine extends Item implements NodeSocketable {
         if (SkillTree.getDeclared(nodeId) == null) {
             return NodeGrantStatus.of(nodeId, NodeGrantStatus.State.UNKNOWN_NODE);
         }
-        return SkillTree.get(nodeId) == null ? NodeGrantStatus.of(nodeId, NodeGrantStatus.State.AREA_OFF) : null;
+        return SkillTree.get(nodeId) == null ? NodeGrantStatus.of(nodeId, NodeGrantStatus.State.VOLUME_OFF) : null;
     }
 
     private static void addAllocationLines(List<StyledText> lines, String nodeId, NodeGrantStatus status) {
@@ -271,7 +271,7 @@ public final class Subroutine extends Item implements NodeSocketable {
                     lines.add(StyledText.styled(status.reason(), Style.BAD));
                 }
             }
-            case AREA_OFF -> lines.add(Translation.msg("socketable.cache.areaOff").arg("node", nodeName).styled());
+            case VOLUME_OFF -> lines.add(Translation.msg("socketable.cache.volumeOff").arg("node", nodeName).styled());
             case UNKNOWN_NODE -> lines.add(Translation.styled("socketable.cache.unknownNode"));
         }
     }

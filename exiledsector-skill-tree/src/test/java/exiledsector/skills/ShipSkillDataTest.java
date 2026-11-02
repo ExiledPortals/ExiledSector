@@ -1148,7 +1148,7 @@ class ShipSkillDataTest {
     }
 
     @Test
-    void nodesInAHiddenAreaAreKeptDormantAndTakeNoOrdnancePointsOrSlots() {
+    void nodesInAHiddenVolumeAreKeptDormantAndTakeNoOrdnancePointsOrSlots() {
         SkillNode root = rootNode("root", List.of());
         SkillNode bridge = node("bridge", List.of("root"));
         SkillNode hidden = node("hidden", List.of("bridge"));

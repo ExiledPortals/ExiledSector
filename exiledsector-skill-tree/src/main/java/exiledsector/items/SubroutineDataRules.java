@@ -90,7 +90,7 @@ public final class SubroutineDataRules implements ItemDataRules {
         String linesText = ModCsv.text(row, SubroutineDefinitions.UNIQUE_LINES_COLUMN);
         String sourcesText = ModCsv.text(row, SubroutineDefinitions.UNIQUE_SOURCE_COLUMN);
         integrity.checkUniqueSources(file, line, definitionId, sourcesText);
-        integrity.checkArea(file, line, definitionId, ModCsv.text(row, ItemAreas.AREA_COLUMN));
+        integrity.checkVolume(file, line, definitionId, ModCsv.text(row, ItemVolumes.VOLUME_COLUMN));
         String socketLimitText = ModCsv.text(row, SubroutineDefinitions.SOCKET_LIMIT_COLUMN);
         if (SubroutineDefinitions.parsedSocketLimit(socketLimitText) == null) {
             integrity.error(file, line, definitionId + " has socket limit \"" + socketLimitText

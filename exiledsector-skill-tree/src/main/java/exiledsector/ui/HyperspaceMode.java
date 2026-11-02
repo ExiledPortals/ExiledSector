@@ -25,7 +25,7 @@ final class HyperspaceMode {
     private static final float MARGIN = 60f;
     private static final float RETURN_ZOOM = 0.35f;
     private static final float STAR_SCALE = 1.5f;
-    private static final Set<String> OFF_SCREEN_REGIONS = SkillTags.ABYSSAL_REGIONS;
+    private static final Set<String> OFF_SCREEN_VOLUMES = SkillTags.ABYSSAL_VOLUMES;
 
     private final TreeCamera treeCamera;
     private final SkillTreeStatPanel statPanel;
@@ -90,11 +90,11 @@ final class HyperspaceMode {
     }
 
     boolean enter(PositionAPI canvasPosition) {
-        Set<String> lockedRegions = HyperspaceAnchor.lockedRegions(SkillTree.getAllNodes().values(), SkillNode::getRegion, nodeHidden);
-        hiddenStarIds = SkillTree.getDecorations().stars().stream().filter(star -> lockedRegions.contains(star.getRegion())).map(Star::getId)
+        Set<String> lockedVolumes = HyperspaceAnchor.lockedVolumes(SkillTree.getAllNodes().values(), SkillNode::getVolume, nodeHidden);
+        hiddenStarIds = SkillTree.getDecorations().stars().stream().filter(star -> lockedVolumes.contains(star.getVolume())).map(Star::getId)
                 .collect(Collectors.toUnmodifiableSet());
         anchors = HyperspaceAnchor.collect(SkillTree.getDecorations()).stream()
-                .filter(anchor -> !lockedRegions.contains(anchor.region())).toList();
+                .filter(anchor -> !lockedVolumes.contains(anchor.volume())).toList();
         if (anchors.isEmpty()) {
             return false;
         }
@@ -115,8 +115,8 @@ final class HyperspaceMode {
     }
 
     private HyperspaceCamera framing(PositionAPI canvasPosition) {
-        List<HyperspaceAnchor> framed = anchors.stream().filter(anchor -> !OFF_SCREEN_REGIONS.contains(anchor.region())).toList();
-        HyperspaceAnchor core = framed.stream().filter(anchor -> SkillTags.CORE_REGION.equals(anchor.region())).findFirst().orElse(null);
+        List<HyperspaceAnchor> framed = anchors.stream().filter(anchor -> !OFF_SCREEN_VOLUMES.contains(anchor.volume())).toList();
+        HyperspaceAnchor core = framed.stream().filter(anchor -> SkillTags.CORE_VOLUME.equals(anchor.volume())).findFirst().orElse(null);
         if (core == null) {
             return HyperspaceCamera.fit(framed.isEmpty() ? anchors : framed, mapStarRadius, canvasPosition.getWidth(), canvasPosition.getHeight(),
                     MARGIN, HyperspaceLabels.LABEL_SPACE);

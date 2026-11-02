@@ -41,7 +41,7 @@ class SkillTreeRadiiTest {
     @AfterEach
     void tearDown() {
         SkillTree.clear();
-        SkillTree.applyDisabledRegions(Set.of());
+        SkillTree.applyDisabledVolumes(Set.of());
         NodeRadii.reset();
     }
 
@@ -77,22 +77,22 @@ class SkillTreeRadiiTest {
     }
 
     @Test
-    void reloadingTheTreeAndTogglingRegionsRebuildsTheRadii() throws Exception {
+    void reloadingTheTreeAndTogglingVolumesRebuildsTheRadii() throws Exception {
         SettingsAPI settings = mock(SettingsAPI.class);
         when(settings.loadJSON("data/skilltrees/skill_types.json")).thenReturn(new JSONObject(TYPES));
         when(settings.loadJSON("data/skilltrees/ship_skill_tree.json")).thenReturn(new JSONObject(NODES));
         try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
             global.when(Global::getSettings).thenReturn(settings);
             SkillTree.load();
-            SkillTree.applyDisabledRegions(Set.of());
+            SkillTree.applyDisabledVolumes(Set.of());
             NodeRadiusCache loaded = SkillTree.radii();
             assertEquals(Set.of("core_hull", "abyss_hull"), loaded.nodeIdsWithin("root", RadiusSize.SMALL));
 
-            SkillTree.applyDisabledRegions(Set.of(SkillTags.ABYSS_REGION));
+            SkillTree.applyDisabledVolumes(Set.of(SkillTags.ABYSS_VOLUME));
             assertEquals(Set.of("core_hull"), SkillTree.radii().nodeIdsWithin("root", RadiusSize.SMALL));
             assertEquals(Set.of(), SkillTree.radii().nodeIdsWithin("abyss_hull", RadiusSize.LARGE));
 
-            SkillTree.applyDisabledRegions(Set.of());
+            SkillTree.applyDisabledVolumes(Set.of());
             assertEquals(Set.of("core_hull", "abyss_hull"), SkillTree.radii().nodeIdsWithin("root", RadiusSize.SMALL));
 
             SkillTree.load();

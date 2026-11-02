@@ -78,8 +78,8 @@ public final class WormholeAnchorDefinitions {
             ItemDefinition definition = parseDefinition(row);
             String volume = ModCsv.text(row, VOLUME_COLUMN);
             if (!isVolume(volume)) {
-                throw new IllegalArgumentException(definition.id() + " has volume \"" + volume + "\"; expected a tree region other than "
-                        + SkillTags.CORE_REGION);
+                throw new IllegalArgumentException(definition.id() + " has volume \"" + volume + "\"; expected a tree volume other than "
+                        + SkillTags.CORE_VOLUME);
             }
             String exitNodeId = ModCsv.text(row, EXIT_NODE_COLUMN);
             if (exitNodeId.isEmpty()) {
@@ -209,8 +209,8 @@ public final class WormholeAnchorDefinitions {
         return ItemUnlock.isKnownUnlock(unlockId);
     }
 
-    static boolean isVolume(String region) {
-        return SkillTags.isRegion(region) && !SkillTags.CORE_REGION.equals(region);
+    static boolean isVolume(String volume) {
+        return SkillTags.isVolume(volume) && !SkillTags.CORE_VOLUME.equals(volume);
     }
 
     public static AnchorTarget target(String definitionId) {
@@ -227,7 +227,7 @@ public final class WormholeAnchorDefinitions {
         return target == null ? null : target.exitNodeId();
     }
 
-    public static boolean areaActive(String definitionId) {
+    public static boolean volumeActive(String definitionId) {
         String exitNodeId = exitNodeId(definitionId);
         return exitNodeId != null && SkillTree.get(exitNodeId) != null;
     }

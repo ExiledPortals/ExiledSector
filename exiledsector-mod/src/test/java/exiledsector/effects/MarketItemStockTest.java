@@ -81,7 +81,7 @@ class MarketItemStockTest {
         SkillType exitType = new SkillType.Builder("wormhole_exit", "exit", "a.png", SkillTier.WORMHOLE_EXIT).build();
         SkillTree.registerType(exitType);
         SkillTree.register(new SkillNode("hegemony_2", exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of("hegemony")));
-        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
+        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"volume\": \"hegemony\"}]"));
         WormholeAnchorDefinitions.register(new JSONArray().put(new JSONObject().put("id", HEGEMONY_ANCHOR).put("volume", "hegemony")
                 .put("exit_node", "hegemony_2").put("name", "Hegemony Anchor").put("icon", "graphics/icons/nav_relay.png").put("rarity", "10")
                 .put("description", "Opens a wormhole.").put("market_chance", "0.3")));

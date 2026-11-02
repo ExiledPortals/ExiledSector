@@ -82,7 +82,7 @@ class WormholeAnchorSocketingTest {
                         .put("drop_factions", "rat_abyssals;rat_abyssals_deep").put("drop_chance", "0.1"))
                 .put(AnchorRows.row(KESTEVEN_ANCHOR, "kesteven", "kesteven_wormhole1").put("drop_factions", "kesteven")
                         .put("drop_chance", "0.2")));
-        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
+        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"volume\": \"hegemony\"}]"));
         AnchorLinks.install(new AnchorLinks.ExitLookup() {
             @Override
             public String exitNodeId(String socketedItemId) {
@@ -130,7 +130,7 @@ class WormholeAnchorSocketingTest {
     }
 
     @Test
-    void anAnchorLinksWhileItsAreaIsOnButOnlyOpensOnceItsGateIsMet() {
+    void anAnchorLinksWhileItsVolumeIsOnButOnlyOpensOnceItsGateIsMet() {
         WormholeAnchor hegemony = anchor(HEGEMONY_ANCHOR, "socketable_1");
         WormholeAnchor abyss = anchor(ABYSS_ANCHOR, "socketable_2");
         WormholeAnchor kesteven = anchor(KESTEVEN_ANCHOR, "socketable_3");
@@ -140,7 +140,7 @@ class WormholeAnchorSocketingTest {
         assertEquals(WormholeAnchor.Inertness.GATED, abyss.inertness(Global.getSector()));
         assertFalse(abyss.canOpen(Global.getSector()));
         assertNull(kesteven.linkedExitNodeId());
-        assertEquals(WormholeAnchor.Inertness.AREA_OFF, kesteven.inertness(Global.getSector()));
+        assertEquals(WormholeAnchor.Inertness.VOLUME_OFF, kesteven.inertness(Global.getSector()));
 
         when(sectorMemory.getBoolean(GATE_FLAG)).thenReturn(true);
 
@@ -243,7 +243,7 @@ class WormholeAnchorSocketingTest {
     }
 
     @Test
-    void aRolledDropRespectsTheAllowedCheckSoAnAnchorWhoseAreaIsOffNeverDrops() {
+    void aRolledDropRespectsTheAllowedCheckSoAnAnchorWhoseVolumeIsOffNeverDrops() {
         Random random = new Random(7L);
         int kestevenDrops = 0;
         int hegemonyDrops = 0;

@@ -16,7 +16,7 @@ class AbyssSerpentRendererTest {
     private static final float ORBIT_RADIUS = 1550f;
 
     private static AbyssSerpent serpent(String id, boolean clockwise, float orbitRadius, float seconds, AbyssSerpent.Wobble wobble) {
-        return new AbyssSerpent(id, CENTER_X, CENTER_Y, new AbyssSerpent.Orbit(orbitRadius, seconds, clockwise, 0f), wobble, List.of(SkillTags.ABYSS_REGION));
+        return new AbyssSerpent(id, CENTER_X, CENTER_Y, new AbyssSerpent.Orbit(orbitRadius, seconds, clockwise, 0f), wobble, List.of(SkillTags.ABYSS_VOLUME));
     }
 
     private static AbyssSerpentRenderer serpents() {

@@ -165,9 +165,9 @@ class NodeRequirementsTest {
     }
 
     @Test
-    void themeAndRegionTagsImposeNoRequirement() {
+    void themeAndVolumeTagsImposeNoRequirement() {
         List<String> tags = new ArrayList<>(SkillTags.THEME);
-        tags.addAll(SkillTags.REGION);
+        tags.addAll(SkillTags.VOLUME);
         ShipProfile bare = profile(HullSize.FRIGATE, ShieldType.NONE, 0, Set.of(), false);
 
         assertNull(NodeRequirements.firstUnmet(tags, bare));

@@ -22,7 +22,7 @@ final class HyperspaceLabels {
     private static final Color TEXT_COLOR = SkillTreePanelStyle.TOOLTIP_TITLE_COLOR;
     private static final Color HOVER_COLOR = SkillTreePanelStyle.GLOW_COLOR;
 
-    private final Map<String, TextLabel> regionTexts = new HashMap<>();
+    private final Map<String, TextLabel> volumeTexts = new HashMap<>();
 
     void render(TreeViewport viewport, List<HyperspaceAnchor> anchors, float mapStarRadius, float mapAmount, HyperspaceAnchor hovered,
                 float alphaMult) {
@@ -55,8 +55,8 @@ final class HyperspaceLabels {
     }
 
     private TextLabel text(HyperspaceAnchor anchor) {
-        return regionTexts.computeIfAbsent(anchor.region(),
-                region -> new TextLabel(FONT_SIZE, TEXT_COLOR).set(Translation.text("hyperspace.region." + region)));
+        return volumeTexts.computeIfAbsent(anchor.volume(),
+                volume -> new TextLabel(FONT_SIZE, TEXT_COLOR).set(Translation.text("hyperspace.volume." + volume)));
     }
 
     private static ScreenRect box(TreeViewport viewport, HyperspaceAnchor anchor, float mapStarRadius, float mapAmount, float textWidth) {

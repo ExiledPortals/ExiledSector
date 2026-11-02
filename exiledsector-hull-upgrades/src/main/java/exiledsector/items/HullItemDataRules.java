@@ -25,7 +25,7 @@ public final class HullItemDataRules implements ItemDataRules {
         if (!sourcesText.isEmpty() && !"true".equalsIgnoreCase(ModCsv.text(row, "unique"))) {
             integrity.warning(file, line, definitionId + " names a source, but sources only apply to unique hull items");
         }
-        integrity.checkArea(file, line, definitionId, ModCsv.text(row, ItemAreas.AREA_COLUMN));
+        integrity.checkVolume(file, line, definitionId, ModCsv.text(row, ItemVolumes.VOLUME_COLUMN));
         String mechanic = ModCsv.text(row, HullItem.MECHANIC_COLUMN);
         if (!mechanic.isEmpty() && !HullItem.MECHANICS.contains(mechanic)) {
             integrity.error(file, line, definitionId + " has an unknown mechanic \"" + mechanic + "\"; the mechanics are " + String.join(", ", HullItem.MECHANICS));

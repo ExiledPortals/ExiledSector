@@ -45,7 +45,7 @@ import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.effects.SkillTreeLootSource;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.SpecLocalisation;
-import exiledsector.items.ItemAreas;
+import exiledsector.items.ItemVolumes;
 import exiledsector.items.AnchorFindMigration;
 import exiledsector.items.DeletedSubroutines;
 import exiledsector.items.DoctrineArchives;
@@ -82,7 +82,7 @@ import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.npc.NpcFocus;
 import exiledsector.skills.npc.NpcLevelCaps;
 import exiledsector.skills.radius.NodeRadii;
-import exiledsector.skills.tags.AreaToggles;
+import exiledsector.skills.tags.VolumeToggles;
 import exiledsector.skills.unlock.DwellerEncounter;
 import exiledsector.skills.unlock.NodeGates;
 import exiledsector.skills.unlock.RemnantEncounter;
@@ -146,7 +146,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
 
     @Override
     public void onApplicationLoad() {
-        ItemAreas.bind(AreaToggles.ITEM_AREAS);
+        ItemVolumes.bind(VolumeToggles.ITEM_VOLUMES);
         I18n.forGameText(() -> LOCALISED_HULLMODS.forEach(SpecLocalisation::hullMod));
         SkillTreeRefitButton.addButton();
         MasterSchematic.onChange(PlayerTreePower::invalidate);
@@ -167,7 +167,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
     public void loadData() {
         NodeRadii.load();
         SkillTree.load();
-        SkillTree.applyDisabledRegions(AreaToggles.disabledRegions());
+        SkillTree.applyDisabledVolumes(VolumeToggles.disabledVolumes());
         PhantomHullMods.install(phantomHullModIds());
         LearnedPhantomConflicts.load();
         NpcFactionVolumes.load();
@@ -205,7 +205,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
 
     @Override
     public void onGameLoad(boolean newGame, List<CargoAPI> savedCargoes) {
-        SkillTree.applyDisabledRegions(AreaToggles.disabledRegions());
+        SkillTree.applyDisabledVolumes(VolumeToggles.disabledVolumes());
         SkillDataResolver.clearCache();
         DoctrineOverrides.clearCache();
         NodeGrantLinks.refresh();

@@ -15,58 +15,58 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public record HyperspaceAnchor(String id, String region, float x, float y, float radius, boolean isStar) {
+public record HyperspaceAnchor(String id, String volume, float x, float y, float radius, boolean isStar) {
 
     private static final float NEBULA_CORE_FRACTION = 0.25f;
 
     public static List<HyperspaceAnchor> collect(Decorations decorations) {
         List<HyperspaceAnchor> anchors = new ArrayList<>();
-        Set<String> regionsWithStars = new HashSet<>();
+        Set<String> volumesWithStars = new HashSet<>();
         for (Star star : decorations.stars()) {
-            String region = star.getRegion();
-            if (region != null) {
-                anchors.add(of(star, region, star.getRadius(), true));
-                regionsWithStars.add(region);
+            String volume = star.getVolume();
+            if (volume != null) {
+                anchors.add(of(star, volume, star.getRadius(), true));
+                volumesWithStars.add(volume);
             }
         }
         for (ThreatUnit unit : decorations.threatUnits()) {
-            addUnit(anchors, regionsWithStars, unit, unit.getLength() / 2f);
+            addUnit(anchors, volumesWithStars, unit, unit.getLength() / 2f);
         }
         for (ShroudedMaw maw : decorations.shroudedMaws()) {
-            addUnit(anchors, regionsWithStars, maw, maw.getLength() / 2f);
+            addUnit(anchors, volumesWithStars, maw, maw.getLength() / 2f);
         }
-        Set<String> regionsWithNebulae = new HashSet<>();
+        Set<String> volumesWithNebulae = new HashSet<>();
         for (StaticImage image : decorations.images()) {
-            String region = image.getRegion();
-            if (region != null && !regionsWithStars.contains(region) && regionsWithNebulae.add(region)) {
-                anchors.add(of(image, region, Math.min(image.getWidth(), image.getHeight()) * NEBULA_CORE_FRACTION, false));
+            String volume = image.getVolume();
+            if (volume != null && !volumesWithStars.contains(volume) && volumesWithNebulae.add(volume)) {
+                anchors.add(of(image, volume, Math.min(image.getWidth(), image.getHeight()) * NEBULA_CORE_FRACTION, false));
             }
         }
         return anchors;
     }
 
-    private static void addUnit(List<HyperspaceAnchor> anchors, Set<String> regionsWithStars, SkillTreeObject unit, float radius) {
-        String region = unit.getRegion();
-        if (region != null && regionsWithStars.add(region)) {
-            anchors.add(of(unit, region, radius, false));
+    private static void addUnit(List<HyperspaceAnchor> anchors, Set<String> volumesWithStars, SkillTreeObject unit, float radius) {
+        String volume = unit.getVolume();
+        if (volume != null && volumesWithStars.add(volume)) {
+            anchors.add(of(unit, volume, radius, false));
         }
     }
 
-    public static <N> Set<String> lockedRegions(Collection<N> nodes, Function<N, String> regionOf, Predicate<N> hidden) {
-        Set<String> regionsWithNodes = new HashSet<>();
-        Set<String> regionsWithVisibleNodes = new HashSet<>();
+    public static <N> Set<String> lockedVolumes(Collection<N> nodes, Function<N, String> volumeOf, Predicate<N> hidden) {
+        Set<String> volumesWithNodes = new HashSet<>();
+        Set<String> volumesWithVisibleNodes = new HashSet<>();
         for (N node : nodes) {
-            String region = regionOf.apply(node);
-            if (region == null) {
+            String volume = volumeOf.apply(node);
+            if (volume == null) {
                 continue;
             }
-            regionsWithNodes.add(region);
+            volumesWithNodes.add(volume);
             if (!hidden.test(node)) {
-                regionsWithVisibleNodes.add(region);
+                volumesWithVisibleNodes.add(volume);
             }
         }
-        regionsWithNodes.removeAll(regionsWithVisibleNodes);
-        return regionsWithNodes;
+        volumesWithNodes.removeAll(volumesWithVisibleNodes);
+        return volumesWithNodes;
     }
 
     public static float mapStarRadius(List<HyperspaceAnchor> anchors, float scale) {
@@ -83,7 +83,7 @@ public record HyperspaceAnchor(String id, String region, float x, float y, float
         return isStar ? radius + (mapStarRadius - radius) * mapAmount : radius;
     }
 
-    private static HyperspaceAnchor of(SkillTreeObject object, String region, float radius, boolean isStar) {
-        return new HyperspaceAnchor(object.getId(), region, object.getX(), object.getY(), radius, isStar);
+    private static HyperspaceAnchor of(SkillTreeObject object, String volume, float radius, boolean isStar) {
+        return new HyperspaceAnchor(object.getId(), volume, object.getX(), object.getY(), radius, isStar);
     }
 }

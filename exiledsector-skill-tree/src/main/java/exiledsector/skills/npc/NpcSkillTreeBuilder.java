@@ -171,7 +171,7 @@ public final class NpcSkillTreeBuilder {
 
         private final ShipSkillData shipData;
         private final ShipProfile profile;
-        private final String factionRegion;
+        private final String factionVolume;
         private final NpcHullMods hullMods;
         private final NpcFreedOp freedOp;
         private final int freeNodeCount;
@@ -198,8 +198,8 @@ public final class NpcSkillTreeBuilder {
             this.hullId = request.hullId();
             this.grantedNodeIds = request.grantedNodeIds();
             this.profile = request.profile();
-            this.factionRegion = request.factionRegion() != null && SkillTags.FACTION_VOLUMES.contains(request.factionRegion())
-                    ? request.factionRegion() : null;
+            this.factionVolume = request.factionVolume() != null && SkillTags.FACTION_VOLUMES.contains(request.factionVolume())
+                    ? request.factionVolume() : null;
             this.hullMods = request.hullMods();
             this.freedOp = request.freedOp();
             this.freeNodeCount = targetNodeCount;
@@ -211,14 +211,14 @@ public final class NpcSkillTreeBuilder {
             Predicate<SkillType> lockedTypes = request.lockedTypes();
             this.lockedWormhole = type -> type.getTier().isWormhole() && lockedTypes.test(type);
             this.factionAnchorItemId = request.factionAnchorItemId();
-            this.factionExitId = openableExitOf(topology, factionRegion, factionAnchorItemId, lockedWormhole);
+            this.factionExitId = openableExitOf(topology, factionVolume, factionAnchorItemId, lockedWormhole);
         }
 
-        private static String openableExitOf(SkillTreeTopology topology, String region, String anchorItemId,
+        private static String openableExitOf(SkillTreeTopology topology, String volume, String anchorItemId,
                                              Predicate<SkillType> lockedWormhole) {
-            String exitId = region == null || anchorItemId == null ? null : AnchorLinks.lookup().exitNodeId(anchorItemId);
+            String exitId = volume == null || anchorItemId == null ? null : AnchorLinks.lookup().exitNodeId(anchorItemId);
             SkillNode exit = exitId == null ? null : topology.node(exitId);
-            boolean openable = exit != null && exit.getType().getTier() == SkillTier.WORMHOLE_EXIT && region.equals(exit.getRegion())
+            boolean openable = exit != null && exit.getType().getTier() == SkillTier.WORMHOLE_EXIT && volume.equals(exit.getVolume())
                     && !lockedWormhole.test(exit.getType());
             return openable ? exitId : null;
         }
@@ -339,7 +339,7 @@ public final class NpcSkillTreeBuilder {
         }
 
         private void tasteFactionVolume() {
-            if (factionRegion == null || remaining() <= 0) {
+            if (factionVolume == null || remaining() <= 0) {
                 return;
             }
             anchorAllocatedSocket();
@@ -348,7 +348,7 @@ public final class NpcSkillTreeBuilder {
             for (String nodeId : search.reached()) {
                 SkillNode node = topology.node(nodeId);
                 SkillTier tier = node.getType().getTier();
-                if ((tier == SkillTier.NOTABLE || tier == SkillTier.KEYSTONE) && factionRegion.equals(node.getRegion())
+                if ((tier == SkillTier.NOTABLE || tier == SkillTier.KEYSTONE) && factionVolume.equals(node.getVolume())
                         && !rejectedNodeIds.contains(nodeId) && !wastedOnStation(search, nodeId) && affordable(search, nodeId, remaining())) {
                     candidates.add(nodeId);
                 }
@@ -494,7 +494,7 @@ public final class NpcSkillTreeBuilder {
         }
 
         private boolean traversable(SkillNode node, State fitState, Map<String, SkillType> searchOptions) {
-            if (shipData.isAllocated(node.getId()) || !regionAllowed(node.getRegion())) {
+            if (shipData.isAllocated(node.getId()) || !volumeAllowed(node.getVolume())) {
                 return false;
             }
             if (node.getType().getTier().isWormhole()) {
@@ -531,8 +531,8 @@ public final class NpcSkillTreeBuilder {
             return false;
         }
 
-        private boolean regionAllowed(String region) {
-            return region == null || SkillTags.CORE_REGION.equals(region) || region.equals(factionRegion);
+        private boolean volumeAllowed(String volume) {
+            return volume == null || SkillTags.CORE_VOLUME.equals(volume) || volume.equals(factionVolume);
         }
 
         private SkillType option(SkillNode node, State fitState, Map<String, SkillType> searchOptions) {
@@ -637,7 +637,7 @@ public final class NpcSkillTreeBuilder {
         private boolean allocatesFactionVolumeNode() {
             for (String nodeId : shipData.getAllocatedNodeIds()) {
                 SkillNode node = topology.node(nodeId);
-                if (node != null && !shipData.isFleetGranted(nodeId) && factionRegion.equals(node.getRegion())
+                if (node != null && !shipData.isFleetGranted(nodeId) && factionVolume.equals(node.getVolume())
                         && node.getType().getTier() != SkillTier.WORMHOLE_EXIT) {
                     return true;
                 }

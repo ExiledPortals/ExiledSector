@@ -22,7 +22,7 @@ const vocabulary = buildVocabulary({
     { name: 'HULL_MULT', statMode: 'MULT', lowerIsBetter: false },
     { name: 'ARMOR_FLAT', statMode: 'FLAT', lowerIsBetter: false },
   ],
-  tags: { theme: [], region: [], requirement: [] },
+  tags: { theme: [], volume: [], requirement: [] },
   tiers: [],
   unlockConditionTypes: [],
   blueprintCategories: [],
@@ -276,24 +276,24 @@ describe('hull item crew', () => {
   });
 });
 
-describe('item areas', () => {
-  it('writes the area column of hull items and subroutines only once one is set', () => {
+describe('item volumes', () => {
+  it('writes the volume column of hull items and subroutines only once one is set', () => {
     const subroutinesText = 'id,name,icon,rarity,unique,kind,description,unlock\nchip,Chip,,10,,MODSPEC_CACHE,,\n';
     const hullItemsText = 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\nrelic,bridge,Relic,,10,true,,@HULL_MULT_BRIDGE,,\n';
     const model = parseItemDefinitions(subroutinesText, hullItemsText);
 
     expect(serializeHullItemsCsv(model)).toBe(hullItemsText);
     expect(serializeSubroutinesCsv(model)).toBe(subroutinesText);
-    model.definitions.find((definition) => definition.id === 'relic')!.area = 'tania';
-    model.definitions.find((definition) => definition.id === 'chip')!.area = 'nightcross';
-    expect(serializeHullItemsCsv(model)).toBe('id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock,area\nrelic,bridge,Relic,,10,true,,@HULL_MULT_BRIDGE,,,tania\n');
-    expect(serializeSubroutinesCsv(model)).toBe('id,name,icon,rarity,unique,kind,description,unlock,area\nchip,Chip,,10,,MODSPEC_CACHE,,,nightcross\n');
+    model.definitions.find((definition) => definition.id === 'relic')!.volume = 'tania';
+    model.definitions.find((definition) => definition.id === 'chip')!.volume = 'nightcross';
+    expect(serializeHullItemsCsv(model)).toBe('id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock,volume\nrelic,bridge,Relic,,10,true,,@HULL_MULT_BRIDGE,,,tania\n');
+    expect(serializeSubroutinesCsv(model)).toBe('id,name,icon,rarity,unique,kind,description,unlock,volume\nchip,Chip,,10,,MODSPEC_CACHE,,,nightcross\n');
   });
 
-  it('rejects an area the vocabulary does not list', () => {
-    const issues = validateItemDefinitions([definition({ id: 'lost', area: 'atlantis' })], { ...vocabulary, itemAreas: ['tania'] }, catalogue);
+  it('rejects an volume the vocabulary does not list', () => {
+    const issues = validateItemDefinitions([definition({ id: 'lost', volume: 'atlantis' })], { ...vocabulary, itemVolumes: ['tania'] }, catalogue);
 
-    expect(issues).toEqual(['lost: area must be blank or one of tania']);
+    expect(issues).toEqual(['lost: volume must be blank or one of tania']);
   });
 });
 

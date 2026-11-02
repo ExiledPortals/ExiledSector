@@ -215,8 +215,8 @@ public final class DoctrineArchives {
         if (archiveFactionId == null || factionId == null) {
             return false;
         }
-        String region = NpcFactionVolumes.regionFor(factionId);
-        return archiveFactionId.equals(factionId) || (region != null && region.equals(NpcFactionVolumes.regionFor(archiveFactionId)));
+        String volume = NpcFactionVolumes.volumeFor(factionId);
+        return archiveFactionId.equals(factionId) || (volume != null && volume.equals(NpcFactionVolumes.volumeFor(archiveFactionId)));
     }
 
     public static int generation() {

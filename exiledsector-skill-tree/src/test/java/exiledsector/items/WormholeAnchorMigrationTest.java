@@ -51,9 +51,9 @@ class WormholeAnchorMigrationTest {
         SkillTree.clearNodes();
     }
 
-    private static SkillNode node(String id, SkillTier tier, String region, String... connectedTo) {
+    private static SkillNode node(String id, SkillTier tier, String volume, String... connectedTo) {
         SkillType type = new SkillType.Builder(id + "_type", id, "", tier).build();
-        return new SkillNode(id, type, List.of(connectedTo), 0f, 0f, SkillNodeDecoration.NONE, List.of(region));
+        return new SkillNode(id, type, List.of(connectedTo), 0f, 0f, SkillNodeDecoration.NONE, List.of(volume));
     }
 
     private ShipSkillData oldSaveShip() {

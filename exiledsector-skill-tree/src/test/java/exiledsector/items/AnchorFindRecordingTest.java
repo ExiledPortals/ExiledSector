@@ -84,7 +84,7 @@ class AnchorFindRecordingTest {
         WormholeAnchorDefinitions.register(new JSONArray()
                 .put(anchorRow(NIGHTCROSS_ANCHOR, NIGHTCROSS, "nightcross_wormhole_1").put("drop_factions", "hegemony"))
                 .put(anchorRow(HEGEMONY_ANCHOR, "hegemony", "hegemony_2")));
-        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
+        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"volume\": \"hegemony\"}]"));
     }
 
     @AfterEach
@@ -160,13 +160,13 @@ class AnchorFindRecordingTest {
     @Test
     void aNewFindReopensARelockedGateButTheLoadMigrationDoesNot() {
         AnchorFinds.markFound(sector, NIGHTCROSS, "test");
-        RelockedGates.relockOpenAreas(sector);
+        RelockedGates.relockOpenGates(sector);
         assertTrue(RelockedGates.isRelocked(sector, UnlockConditionType.ANCHOR_FOUND));
 
         AnchorFinds.markFound(sector, NIGHTCROSS, "load migration");
         assertTrue(RelockedGates.isRelocked(sector, UnlockConditionType.ANCHOR_FOUND));
 
-        AnchorFinds.record(sector, "hegemony", "an anchor whose area has no anchorFound gate");
+        AnchorFinds.record(sector, "hegemony", "an anchor whose volume has no anchorFound gate");
         assertTrue(RelockedGates.isRelocked(sector, UnlockConditionType.ANCHOR_FOUND));
 
         AnchorFinds.record(sector, NIGHTCROSS, "found again");

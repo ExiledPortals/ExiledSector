@@ -23,7 +23,7 @@ import exiledsector.items.ItemCurrency;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemName;
 import exiledsector.items.ItemStore;
-import exiledsector.items.ItemAreas;
+import exiledsector.items.ItemVolumes;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.SlottedLine;
 import exiledsector.items.UseVerdict;
@@ -609,7 +609,7 @@ public final class CraftingBenchPanel extends HoloPanel {
     }
 
     private static Predicate<ItemDefinition> allowedUniques() {
-        return definition -> ItemAreas.dropsNow(definition) && ItemUnlock.unlockConditionMet(definition, Global.getSector());
+        return definition -> ItemVolumes.dropsNow(definition) && ItemUnlock.unlockConditionMet(definition, Global.getSector());
     }
 
     @Override

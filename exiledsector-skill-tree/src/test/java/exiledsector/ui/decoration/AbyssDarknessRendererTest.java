@@ -65,8 +65,8 @@ class AbyssDarknessRendererTest {
 
     @Test
     void theDarknessPointsFromTheTreeCentreTowardsTheAbyssAndStartsBeyondTheMainTree() {
-        AbyssalDepth abyssalDepth = AbyssalDepth.of(List.of(node("main", -1000f, 0f, SkillTags.CORE_REGION),
-                node("abyss_a", -10000f, 0f, SkillTags.ABYSS_REGION), node("abyss_b", -12000f, 0f, SkillTags.ABYSS_REGION)));
+        AbyssalDepth abyssalDepth = AbyssalDepth.of(List.of(node("main", -1000f, 0f, SkillTags.CORE_VOLUME),
+                node("abyss_a", -10000f, 0f, SkillTags.ABYSS_VOLUME), node("abyss_b", -12000f, 0f, SkillTags.ABYSS_VOLUME)));
 
         assertNotNull(abyssalDepth);
         assertEquals(-1f, abyssalDepth.directionX(), 1e-6f);
@@ -77,8 +77,8 @@ class AbyssDarknessRendererTest {
 
     @Test
     void theThreatVolumeSitsInAbyssalHyperspaceEvenWithoutTheAbyss() {
-        AbyssalDepth abyssalDepth = AbyssalDepth.of(List.of(node("main", -1000f, 0f, SkillTags.CORE_REGION),
-                node("fabricator", -10000f, 0f, SkillTags.THREAT_REGION)));
+        AbyssalDepth abyssalDepth = AbyssalDepth.of(List.of(node("main", -1000f, 0f, SkillTags.CORE_VOLUME),
+                node("fabricator", -10000f, 0f, SkillTags.THREAT_VOLUME)));
 
         assertNotNull(abyssalDepth);
         assertEquals(1f, AbyssDarknessRenderer.darkness(abyssalDepth.depthAt(-10000f, 0f)));
@@ -86,12 +86,12 @@ class AbyssDarknessRendererTest {
 
     @Test
     void aTreeWithoutAnAbyssHasNoDarkness() {
-        assertNull(AbyssalDepth.of(List.of(node("main", 500f, 500f, SkillTags.CORE_REGION))));
+        assertNull(AbyssalDepth.of(List.of(node("main", 500f, 500f, SkillTags.CORE_VOLUME))));
     }
 
     @Test
     void anAbyssOverlappingTheMainTreeHasNoDarkness() {
-        assertNull(AbyssalDepth.of(List.of(node("main", -5000f, 0f), node("abyss", -4000f, 0f, SkillTags.ABYSS_REGION))));
+        assertNull(AbyssalDepth.of(List.of(node("main", -5000f, 0f), node("abyss", -4000f, 0f, SkillTags.ABYSS_VOLUME))));
     }
 
     @Test
@@ -152,7 +152,7 @@ class AbyssDarknessRendererTest {
             }
         }
         List<StaticImage> images = DecorationLoader.parse(ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(RealSkillData.TREE_FILE)), RealSkillData.TREE_FILE.toString()).images();
-        images.stream().filter(image -> image.getTags().contains(SkillTags.ABYSS_REGION)).forEach(image -> {
+        images.stream().filter(image -> image.getTags().contains(SkillTags.ABYSS_VOLUME)).forEach(image -> {
             float cloudReach = (float) Math.hypot(image.getWidth(), image.getHeight()) / 2f;
             float nearestX = image.getX() - abyssalDepth.directionX() * cloudReach;
             float nearestY = image.getY() - abyssalDepth.directionY() * cloudReach;

@@ -176,7 +176,7 @@ final class NodeAllocator {
             }
             SkillNode grantedNode = SkillTree.get(grantedNodeId);
             if (grantedNode == null) {
-                return NodeGrantStatus.of(grantedNodeId, NodeGrantStatus.State.AREA_OFF);
+                return NodeGrantStatus.of(grantedNodeId, NodeGrantStatus.State.VOLUME_OFF);
             }
             if (skillData.isAllocated(grantedNodeId)) {
                 if (!skillData.isGrantFree(grantedNodeId)) {

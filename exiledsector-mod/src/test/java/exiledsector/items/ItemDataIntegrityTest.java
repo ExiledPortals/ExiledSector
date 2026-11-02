@@ -308,31 +308,31 @@ class ItemDataIntegrityTest {
     }
 
     @Test
-    void hullItemsAndSubroutinesMayOnlyNameAKnownArea() throws Exception {
-        ItemAreas.bind(new TestAreas(Set.of("tania")));
+    void hullItemsAndSubroutinesMayOnlyNameAKnownVolume() throws Exception {
+        ItemVolumes.bind(new TestAreas(Set.of("tania")));
         try {
             JSONArray hullItems = validHullItems()
-                    .put(poolItem("tania_relic", "@HULL_MULT", "@ARMOR_PERCENT", true).put(ItemAreas.AREA_COLUMN, "tania"))
-                    .put(poolItem("lost_relic", "@HULL_MULT", "@ARMOR_PERCENT", true).put(ItemAreas.AREA_COLUMN, "atlantis"));
+                    .put(poolItem("tania_relic", "@HULL_MULT", "@ARMOR_PERCENT", true).put(ItemVolumes.VOLUME_COLUMN, "tania"))
+                    .put(poolItem("lost_relic", "@HULL_MULT", "@ARMOR_PERCENT", true).put(ItemVolumes.VOLUME_COLUMN, "atlantis"));
 
             List<String> errors = errors(validModifiers(), validSubroutines(), hullItems, validImplicits());
 
-            assertTrue(errors.contains("lost_relic names the area \"atlantis\"; expected one of [tania]"), errors.toString());
+            assertTrue(errors.contains("lost_relic names the volume \"atlantis\"; expected one of [tania]"), errors.toString());
             assertTrue(errors.stream().noneMatch(error -> error.startsWith("tania_relic")), errors.toString());
         } finally {
-            ItemAreas.bind(null);
+            ItemVolumes.bind(null);
         }
     }
 
-    private record TestAreas(Set<String> areas) implements ItemAreas.Toggles {
+    private record TestAreas(Set<String> volumes) implements ItemVolumes.Toggles {
 
         @Override
-        public boolean modInstalled(String area) {
+        public boolean modInstalled(String volume) {
             return true;
         }
 
         @Override
-        public boolean switchedOn(String area) {
+        public boolean switchedOn(String volume) {
             return true;
         }
     }

@@ -25,7 +25,7 @@ export function TagGroupsField({ label, vocabulary, tags, groups, onChange }: Ta
             return null;
           }
           const error = inScope ? undefined : 'Not expected here - remove';
-          if (key === 'region' && inScope) {
+          if (key === 'volume' && inScope) {
             return (
               <Select
                 key={key}
@@ -36,7 +36,7 @@ export function TagGroupsField({ label, vocabulary, tags, groups, onChange }: Ta
                 onChange={(value) => change(key, value ? [value] : [])}
                 searchable
                 clearable
-                error={active.length > 1 ? `Several region tags: ${active.join(', ')}` : undefined}
+                error={active.length > 1 ? `Several volume tags: ${active.join(', ')}` : undefined}
                 leftSection={<span style={{ fontSize: 10, opacity: 0.6 }}>{groupLabel}</span>}
                 leftSectionWidth={56}
               />

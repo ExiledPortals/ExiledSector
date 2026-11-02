@@ -9,7 +9,7 @@ import { ModifierPool } from '../components/ModifierPool.tsx';
 import { modifierLinesOf, useLineDescriptions, type LineDescriptions } from '../describedLines.ts';
 import type { ItemsPanelProps } from '../itemsDocument.ts';
 import {
-  areaOptions,
+  volumeOptions,
   editablePool,
   hasModspecCacheFields,
   isModspecCacheSubroutine,
@@ -223,12 +223,12 @@ function SubroutineForm({ document, model, vocabulary, definition, index, kinds,
         onUnlock={(unlock) => edit((draft) => void (draft.unlock = unlock))}
       />
       <Select
-        label="Area"
-        description="Loaded only while that area's mod is installed, and drops only while the area is switched on. Blank for always."
-        data={areaOptions(vocabulary.itemAreas, definition.area ?? '')}
-        value={definition.area ?? ''}
+        label="Volume"
+        description="Loaded only while that volume's mod is installed, and drops only while the volume is switched on. Blank for always."
+        data={volumeOptions(vocabulary.itemVolumes, definition.volume ?? '')}
+        value={definition.volume ?? ''}
         allowDeselect={false}
-        onChange={(area) => edit((draft) => void (draft.area = area ?? ''))}
+        onChange={(volume) => edit((draft) => void (draft.volume = volume ?? ''))}
       />
       <DescriptionField description={definition.description} onChange={(description) => edit((draft) => void (draft.description = description))} />
       {(isModspecCacheSubroutine(definition) || hasModspecCacheFields(definition)) && <ModspecCacheFields definition={definition} edit={edit} />}

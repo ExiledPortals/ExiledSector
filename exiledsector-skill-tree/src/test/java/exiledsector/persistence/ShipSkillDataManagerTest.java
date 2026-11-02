@@ -162,7 +162,7 @@ class ShipSkillDataManagerTest {
     }
 
     @Test
-    void nodesDroppedWithASwitchedOffAreaRefundTheirItemCostAndBankedAllocation() {
+    void nodesDroppedWithASwitchedOffVolumeRefundTheirItemCostAndBankedAllocation() {
         SkillNode root = typedNode("root", SkillTier.ROOT, null);
         SkillNode lobster = typedNode("lobster", SkillTier.SMALL, new SkillItemCost("lobster", 50f));
         SkillNode freebie = typedNode("freebie", SkillTier.SMALL, null);

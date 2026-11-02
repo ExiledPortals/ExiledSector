@@ -109,7 +109,7 @@ class ShipSkillDataSocketTest {
     }
 
     @Test
-    void anAreaToggleThatRemovesTheSocketEmptiesIt() {
+    void anVolumeToggleThatRemovesTheSocketEmptiesIt() {
         ShipSkillData data = socketed();
 
         ShipTrees.forgetUnknownNodes(data, Map.of("root", root), Map.of());

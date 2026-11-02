@@ -38,7 +38,7 @@ public final class FactionFleetDrops {
         }
 
         boolean dropsFrom(String factionId) {
-            return factionId != null && (anyFaction || extraFactionIds.contains(factionId) || volume != null && volume.equals(NpcFactionVolumes.regionFor(factionId)));
+            return factionId != null && (anyFaction || extraFactionIds.contains(factionId) || volume != null && volume.equals(NpcFactionVolumes.volumeFor(factionId)));
         }
     }
 

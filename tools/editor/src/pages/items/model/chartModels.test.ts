@@ -28,7 +28,7 @@ import {
 
 const vocabulary = buildVocabulary({
   effects: [{ name: 'HULL_MULT', statMode: 'MULT', lowerIsBetter: false }],
-  tags: { theme: [], region: [], requirement: [] },
+  tags: { theme: [], volume: [], requirement: [] },
   tiers: [],
   unlockConditionTypes: [],
   blueprintCategories: [],

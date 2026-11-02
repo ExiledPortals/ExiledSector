@@ -97,27 +97,27 @@ class NpcSkillTreeBuilderTest {
         node(exitId, exit, List.of(volume));
     }
 
-    private static void wormholePair(String core, String far, String coreRegion, String farRegion, String coreLink) {
+    private static void wormholePair(String core, String far, String coreVolume, String farVolume, String coreLink) {
         SkillType wormhole = SkillTree.getType("wormhole") != null ? SkillTree.getType("wormhole")
                 : registerType(builder("wormhole", SkillTier.WORMHOLE).build());
         SkillTree.register(new SkillNode(core, wormhole, List.of(coreLink, far), 0f, 0f,
-                new SkillNodeDecoration(null, null, null, null, far), List.of(coreRegion)));
+                new SkillNodeDecoration(null, null, null, null, far), List.of(coreVolume)));
         SkillTree.register(new SkillNode(far, wormhole, List.of(core), 0f, 0f,
-                new SkillNodeDecoration(null, null, null, null, core), List.of(farRegion)));
+                new SkillNodeDecoration(null, null, null, null, core), List.of(farVolume)));
     }
 
     private static NpcTreeBuild generate(int nodeCount) {
         return generate(nodeCount, null, NpcHullMods.NONE, NpcFreedOp.NONE, 1L);
     }
 
-    private static NpcTreeBuild generate(int nodeCount, String factionRegion, NpcHullMods hullMods, NpcFreedOp freedOp, long seed) {
-        return generate(BALLISTIC_FRIGATE, null, nodeCount, factionRegion, hullMods, freedOp, seed);
+    private static NpcTreeBuild generate(int nodeCount, String factionVolume, NpcHullMods hullMods, NpcFreedOp freedOp, long seed) {
+        return generate(BALLISTIC_FRIGATE, null, nodeCount, factionVolume, hullMods, freedOp, seed);
     }
 
-    private static NpcTreeBuild generate(ShipProfile profile, String designType, int nodeCount, String factionRegion,
+    private static NpcTreeBuild generate(ShipProfile profile, String designType, int nodeCount, String factionVolume,
                                          NpcHullMods hullMods, NpcFreedOp freedOp, long seed) {
-        return NpcSkillTreeBuilder.generate(new NpcBuildRequest(profile, designType, factionRegion, hullMods, freedOp, nodeCount,
-                NpcTestAnchors.idFor(factionRegion)),
+        return NpcSkillTreeBuilder.generate(new NpcBuildRequest(profile, designType, factionVolume, hullMods, freedOp, nodeCount,
+                NpcTestAnchors.idFor(factionVolume)),
                 new Random(seed));
     }
 

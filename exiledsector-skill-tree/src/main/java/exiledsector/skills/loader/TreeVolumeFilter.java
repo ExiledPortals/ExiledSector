@@ -11,18 +11,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public final class TreeRegionFilter {
+public final class TreeVolumeFilter {
 
-    private TreeRegionFilter() {
+    private TreeVolumeFilter() {
     }
 
-    public static Set<String> disabledNodeIds(Collection<SkillNode> nodes, Set<String> disabledRegions) {
+    public static Set<String> disabledNodeIds(Collection<SkillNode> nodes, Set<String> disabledVolumes) {
         Set<String> disabledNodeIds = new HashSet<>();
-        if (disabledRegions.isEmpty()) {
+        if (disabledVolumes.isEmpty()) {
             return disabledNodeIds;
         }
         for (SkillNode node : nodes) {
-            if (isDisabled(node, disabledRegions)) {
+            if (isDisabled(node, disabledVolumes)) {
                 disabledNodeIds.add(node.getId());
             }
         }
@@ -34,11 +34,11 @@ public final class TreeRegionFilter {
         return disabledNodeIds;
     }
 
-    public static SkillTreeLoader.ParsedTree apply(SkillTreeLoader.ParsedTree parsedTree, Set<String> disabledRegions) {
-        if (disabledRegions.isEmpty()) {
+    public static SkillTreeLoader.ParsedTree apply(SkillTreeLoader.ParsedTree parsedTree, Set<String> disabledVolumes) {
+        if (disabledVolumes.isEmpty()) {
             return parsedTree;
         }
-        Set<String> removedNodeIds = disabledNodeIds(parsedTree.nodes, disabledRegions);
+        Set<String> removedNodeIds = disabledNodeIds(parsedTree.nodes, disabledVolumes);
         List<SkillNode> keptNodes = parsedTree.nodes.stream()
                 .filter(node -> !removedNodeIds.contains(node.getId()))
                 .map(node -> node.withoutConnectionsTo(removedNodeIds))
@@ -56,12 +56,12 @@ public final class TreeRegionFilter {
             }
         }
         return new SkillTreeLoader.ParsedTree(keptNodes, parsedTree.declaredNodeCount, keptCurves, keptHiddenConnectors,
-                parsedTree.decorations.outsideRegions(disabledRegions));
+                parsedTree.decorations.outsideVolumes(disabledVolumes));
     }
 
-    private static boolean isDisabled(SkillTreeObject treeObject, Set<String> disabledRegions) {
-        String region = treeObject.getRegion();
-        return region != null && disabledRegions.contains(region);
+    private static boolean isDisabled(SkillTreeObject treeObject, Set<String> disabledVolumes) {
+        String volume = treeObject.getVolume();
+        return volume != null && disabledVolumes.contains(volume);
     }
 
     private static boolean keepsConnector(String connectorKey, Set<String> removedNodeIds) {

@@ -46,8 +46,8 @@ record AbyssalDepth(float directionX, float directionY, float fadeStart, float f
     }
 
     static boolean isAbyssal(SkillNode node) {
-        String region = node.getRegion();
-        return region != null && SkillTags.ABYSSAL_REGIONS.contains(region);
+        String volume = node.getVolume();
+        return volume != null && SkillTags.ABYSSAL_VOLUMES.contains(volume);
     }
 
     float depthAt(float treeX, float treeY) {

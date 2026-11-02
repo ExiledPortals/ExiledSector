@@ -105,9 +105,9 @@ class ExiledSectorModPluginTest {
         when(settings.getMergedSpreadsheetDataForMod("ability_id", "data/config/exiledSector/chart_blocked_abilities.csv", "exiledSector"))
                 .thenReturn(new JSONArray("[{\"ability_id\": \"fracture_jump\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/npc_faction_volumes.csv", "exiledSector"))
-                .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
+                .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"volume\": \"hegemony\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/tree_fleet_factions.csv", "exiledSector"))
-                .thenReturn(new JSONArray("[{\"faction\": \"threat\", \"region\": \"threat\"}]"));
+                .thenReturn(new JSONArray("[{\"faction\": \"threat\", \"volume\": \"threat\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/npc_faction_focus.csv", "exiledSector"))
                 .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"focus\": \"armour:2\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("system", "data/config/exiledSector/npc_ship_system_focus.csv", "exiledSector"))
@@ -373,7 +373,7 @@ class ExiledSectorModPluginTest {
     void onApplicationLoadLoadsTheNpcFactionVolumesMergedAcrossMods() throws Exception {
         new ExiledSectorModPlugin().onApplicationLoad();
 
-        assertEquals("hegemony", NpcFactionVolumes.regionFor("hegemony"));
+        assertEquals("hegemony", NpcFactionVolumes.volumeFor("hegemony"));
     }
 
     @Test

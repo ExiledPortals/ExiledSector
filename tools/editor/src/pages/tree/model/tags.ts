@@ -1,25 +1,25 @@
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 
-export type TagGroupKey = 'theme' | 'region' | 'requirement' | 'gate';
+export type TagGroupKey = 'theme' | 'volume' | 'requirement' | 'gate';
 
 export const TAG_GROUPS: { key: TagGroupKey; label: string }[] = [
   { key: 'theme', label: 'Theme' },
-  { key: 'region', label: 'Region' },
+  { key: 'volume', label: 'Volume' },
   { key: 'requirement', label: 'Requirement' },
   { key: 'gate', label: 'Gate' },
 ];
 
 export const TYPE_TAG_GROUPS: TagGroupKey[] = ['theme', 'requirement'];
-export const NODE_TAG_GROUPS: TagGroupKey[] = ['region', 'requirement', 'gate'];
-export const REGION_ONLY_TAG_GROUPS: TagGroupKey[] = ['region'];
+export const NODE_TAG_GROUPS: TagGroupKey[] = ['volume', 'requirement', 'gate'];
+export const VOLUME_ONLY_TAG_GROUPS: TagGroupKey[] = ['volume'];
 
-export function isRegionTag(vocabulary: Vocabulary, tag: string): boolean {
-  return vocabulary.regionTags.includes(tag);
+export function isVolumeTag(vocabulary: Vocabulary, tag: string): boolean {
+  return vocabulary.volumeTags.includes(tag);
 }
 
 export function tagGroupOf(vocabulary: Vocabulary, tag: string): TagGroupKey {
-  if (isRegionTag(vocabulary, tag)) {
-    return 'region';
+  if (isVolumeTag(vocabulary, tag)) {
+    return 'volume';
   }
   if (vocabulary.gateTags.includes(tag)) {
     return 'gate';

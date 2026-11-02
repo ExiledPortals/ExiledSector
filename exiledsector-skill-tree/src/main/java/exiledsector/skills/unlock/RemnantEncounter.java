@@ -25,7 +25,7 @@ public final class RemnantEncounter {
             return;
         }
         if (GateTriggers.awaits(sector, UnlockConditionType.REMNANT_FOUGHT, isFought(sector))
-                && GateTriggers.foughtFaction(battle, factionId -> SkillTags.REDACTED_REGION.equals(NpcFactionVolumes.regionFor(factionId)))) {
+                && GateTriggers.foughtFaction(battle, factionId -> SkillTags.REDACTED_VOLUME.equals(NpcFactionVolumes.volumeFor(factionId)))) {
             GateTriggers.record(sector, UnlockConditionType.REMNANT_FOUGHT, sector.getPlayerMemoryWithoutUpdate(), FOUGHT_REMNANT_KEY,
                     "The player fought a Remnant fleet; the Remnant volume is now revealed");
         }

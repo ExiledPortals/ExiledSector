@@ -404,11 +404,11 @@ drops only from those salvage sites' unique rolls and never from battles or tran
 restricts nothing: in a battle where that faction lost the most deployment points, the unique's drop weight is
 doubled (`ItemDrops.pickUniqueFromFaction`, `FACTION_SOURCE_WEIGHT_MULT`).
 
-### Item areas
+### Item volumes
 
-A hull item or subroutine can name an `area`, one of the toggled tree regions. `ItemAreas` asks the skill tree's
-`AreaToggles`, bound at application load: a definition whose area's mod isn't installed is never loaded, so its
-faction sources are never checked, and one whose area is switched off stays loaded but is left out of every drop
+A hull item or subroutine can name a `volume`, one of the toggled tree volumes. `ItemVolumes` asks the skill tree's
+`VolumeToggles`, bound at application load: a definition whose volume's mod isn't installed is never loaded, so its
+faction sources are never checked, and one whose volume is switched off stays loaded but is left out of every drop
 pool (`ItemDrops`, `ItemUnlock.canDrop`) and of Transposition.
 
 ### Exclusive modifiers
@@ -426,7 +426,7 @@ Janus Device (`JanusDevice`, `AnchorJanusGate`, lifted by the "Allow Wormhole An
 setting, Hyper-Nav Beacon exempt), its own unlock is met, and no closed `withheld` gate holds its exit. Each gate
 in `node_gates.json` sets `anchors` (`withheld` by default, or `free`) and `rewardAnchor`. Nightcross is `free`
 and opens on `anchorFound` once any of its anchors reaches the player (`AnchorFinds`). The Singularity and Existential
-Threat battles add one area anchor to their loot once per save (`GateRewardAnchors`). NPC anchors ignore all of
+Threat battles add one volume anchor to their loot once per save (`GateRewardAnchors`). NPC anchors ignore all of
 this, and open wormholes stay open.
 
 An anchor with `guaranteed_drop` in `wormhole_anchors.csv` drops from every won battle that defeats one of its

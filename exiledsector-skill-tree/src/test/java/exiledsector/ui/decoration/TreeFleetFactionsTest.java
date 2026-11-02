@@ -24,32 +24,32 @@ class TreeFleetFactionsTest {
 
     @Test
     void fleetsRoamTheVanillaVolumesAndEveryVolumeGivenAFleetFaction() throws Exception {
-        TreeFleetFactions.register(new JSONArray("[{\"faction\": \"threat\", \"region\": \"threat\"},"
-                + "{\"faction\": \"kesteven\", \"region\": \"kesteven\"}]"));
+        TreeFleetFactions.register(new JSONArray("[{\"faction\": \"threat\", \"volume\": \"threat\"},"
+                + "{\"faction\": \"kesteven\", \"volume\": \"kesteven\"}]"));
 
-        List<String> regions = TreeFleetFactions.regions();
+        List<String> volumes = TreeFleetFactions.volumes();
 
-        assertTrue(regions.containsAll(SkillTags.FACTION_VOLUMES));
-        assertTrue(regions.contains("threat"));
-        assertTrue(regions.contains("kesteven"));
-        assertEquals(SkillTags.FACTION_VOLUMES.size() + 2, regions.size());
+        assertTrue(volumes.containsAll(SkillTags.FACTION_VOLUMES));
+        assertTrue(volumes.contains("threat"));
+        assertTrue(volumes.contains("kesteven"));
+        assertEquals(SkillTags.FACTION_VOLUMES.size() + 2, volumes.size());
     }
 
     @Test
     void aVolumesFleetsComeFromBothItsNpcFactionsAndItsFleetOnlyFactions() throws Exception {
-        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"pirates\", \"region\": \"pirate\"}]"));
-        TreeFleetFactions.register(new JSONArray("[{\"faction\": \"scavengers\", \"region\": \"pirate\"},"
-                + "{\"faction\": \"pirates\", \"region\": \"pirate\"}]"));
+        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"pirates\", \"volume\": \"pirate\"}]"));
+        TreeFleetFactions.register(new JSONArray("[{\"faction\": \"scavengers\", \"volume\": \"pirate\"},"
+                + "{\"faction\": \"pirates\", \"volume\": \"pirate\"}]"));
 
         assertEquals(List.of("pirates", "scavengers"), TreeFleetFactions.factionsIn("pirate"));
     }
 
     @Test
-    void rowsPointingAtTheCoreOrUnknownRegionsAreIgnored() throws Exception {
-        TreeFleetFactions.register(new JSONArray("[{\"faction\": \"everyone\", \"region\": \"core\"},"
-                + "{\"faction\": \"typo\", \"region\": \"thret\"}]"));
+    void rowsPointingAtTheCoreOrUnknownVolumesAreIgnored() throws Exception {
+        TreeFleetFactions.register(new JSONArray("[{\"faction\": \"everyone\", \"volume\": \"core\"},"
+                + "{\"faction\": \"typo\", \"volume\": \"thret\"}]"));
 
-        assertEquals(SkillTags.FACTION_VOLUMES.size(), TreeFleetFactions.regions().size());
+        assertEquals(SkillTags.FACTION_VOLUMES.size(), TreeFleetFactions.volumes().size());
         assertEquals(List.of(), TreeFleetFactions.factionsIn("core"));
     }
 
@@ -60,6 +60,6 @@ class TreeFleetFactionsTest {
 
         assertEquals(List.of("threat"), TreeFleetFactions.factionsIn("threat"));
         assertEquals(List.of(), TreeFleetFactions.factionsIn("exotech"));
-        assertTrue(TreeFleetFactions.regions().containsAll(List.of("enigma", "kesteven", "abyss", "nightcross", "stargazer", "tania")));
+        assertTrue(TreeFleetFactions.volumes().containsAll(List.of("enigma", "kesteven", "abyss", "nightcross", "stargazer", "tania")));
     }
 }

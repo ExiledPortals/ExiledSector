@@ -22,7 +22,7 @@ const vocabulary = buildVocabulary({
     { name: 'ARMOR_FLAT', statMode: 'FLAT', lowerIsBetter: false },
     { name: 'ARMOR_PERCENT', statMode: 'PERCENT', lowerIsBetter: false },
   ],
-  tags: { theme: [], region: [], requirement: [] },
+  tags: { theme: [], volume: [], requirement: [] },
   tiers: [],
   unlockConditionTypes: [],
   blueprintCategories: [],
@@ -140,7 +140,7 @@ describe('item modifiers', () => {
   it('keeps star chart modifiers out of item_modifiers.csv', () => {
     const withCharts = buildVocabulary({
       effects: [{ name: 'HULL_MULT', statMode: 'MULT', lowerIsBetter: false }],
-      tags: { theme: [], region: [], requirement: [] },
+      tags: { theme: [], volume: [], requirement: [] },
       tiers: [],
       unlockConditionTypes: [],
       blueprintCategories: [],
@@ -180,7 +180,7 @@ describe('item modifiers', () => {
   it('counts unique subroutine lines as unique_subroutine uses, renames them and checks their scope', () => {
     const withUniques = buildVocabulary({
       effects: [{ name: 'HULL_MULT', statMode: 'MULT', lowerIsBetter: false }],
-      tags: { theme: [], region: [], requirement: [] },
+      tags: { theme: [], volume: [], requirement: [] },
       tiers: [],
       unlockConditionTypes: [],
       blueprintCategories: [],

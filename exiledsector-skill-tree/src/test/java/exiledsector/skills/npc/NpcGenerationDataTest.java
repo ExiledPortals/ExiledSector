@@ -155,11 +155,11 @@ class NpcGenerationDataTest {
             if (tier == SkillTier.ROOT) {
                 continue;
             }
-            String region = node.getRegion();
-            if (region != null && !SkillTags.CORE_REGION.equals(region) && !region.equals(faction)) {
-                problems.add(label + ": " + nodeId + " is in " + region);
+            String volume = node.getVolume();
+            if (volume != null && !SkillTags.CORE_VOLUME.equals(volume) && !volume.equals(faction)) {
+                problems.add(label + ": " + nodeId + " is in " + volume);
             }
-            tasted |= faction != null && faction.equals(region) && (tier == SkillTier.NOTABLE || tier == SkillTier.KEYSTONE);
+            tasted |= faction != null && faction.equals(volume) && (tier == SkillTier.NOTABLE || tier == SkillTier.KEYSTONE);
             if (node.getConnectedNodeIds().stream().noneMatch(data::isAllocated)) {
                 problems.add(label + ": " + nodeId + " is not connected");
             }
@@ -190,7 +190,7 @@ class NpcGenerationDataTest {
 
     private static boolean hasUsableNotable(String faction, Archetype archetype) {
         for (SkillNode node : SkillTree.topology().sortedById()) {
-            if (faction.equals(node.getRegion()) && (node.getType().getTier() == SkillTier.NOTABLE || node.getType().getTier() == SkillTier.KEYSTONE)
+            if (faction.equals(node.getVolume()) && (node.getType().getTier() == SkillTier.NOTABLE || node.getType().getTier() == SkillTier.KEYSTONE)
                     && NodeRequirements.firstUnmet(node.effectiveTags((SkillType) null), archetype.profile()) == null) {
                 return true;
             }

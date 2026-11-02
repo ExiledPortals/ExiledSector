@@ -12,7 +12,7 @@ import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.npc.NpcTreeConfig;
 import exiledsector.skills.npc.NpcTreeSize;
 import exiledsector.skills.progression.ShipLevelConfig;
-import exiledsector.skills.tags.AreaToggles;
+import exiledsector.skills.tags.VolumeToggles;
 import exiledsector.items.HullUpgradesSetting;
 import exiledsector.items.UniqueSubroutinesSetting;
 import exiledsector.ui.inspect.NpcInspectConfig;
@@ -142,31 +142,31 @@ class ExiledSectorSettingsTest {
     }
 
     @Test
-    void registersTheLostSectorAreaToggleDefaultingToAuto() {
+    void registersTheLostSectorVolumeToggleDefaultingToAuto() {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addRadio(eq("exiledSector"),
-                eq(AreaToggles.LOST_SECTOR_FIELD_ID), anyString(), anyString(), eq(AreaToggles.AUTO),
-                eq(String.join(",", AreaToggles.OPTIONS)), eq(SkillTreeSettings.skillTreeTab())));
+                eq(VolumeToggles.LOST_SECTOR_FIELD_ID), anyString(), anyString(), eq(VolumeToggles.AUTO),
+                eq(String.join(",", VolumeToggles.OPTIONS)), eq(SkillTreeSettings.skillTreeTab())));
     }
 
     @Test
-    void registersTheRandomAssortmentAreaToggleDefaultingToAuto() {
+    void registersTheRandomAssortmentVolumeToggleDefaultingToAuto() {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addRadio(eq("exiledSector"),
-                eq(AreaToggles.RANDOM_ASSORTMENT_FIELD_ID), anyString(), anyString(), eq(AreaToggles.AUTO),
-                eq(String.join(",", AreaToggles.REQUIRED_MOD_OPTIONS)), eq(SkillTreeSettings.skillTreeTab())));
+                eq(VolumeToggles.RANDOM_ASSORTMENT_FIELD_ID), anyString(), anyString(), eq(VolumeToggles.AUTO),
+                eq(String.join(",", VolumeToggles.REQUIRED_MOD_OPTIONS)), eq(SkillTreeSettings.skillTreeTab())));
     }
 
     @Test
-    void registersTheNightcrossAreaToggleDefaultingToAuto() {
+    void registersTheNightcrossVolumeToggleDefaultingToAuto() {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addRadio(eq("exiledSector"),
-                eq(AreaToggles.NIGHTCROSS_FIELD_ID), anyString(), anyString(), eq(AreaToggles.AUTO),
-                eq(String.join(",", AreaToggles.OPTIONS)), eq(SkillTreeSettings.skillTreeTab())));
+                eq(VolumeToggles.NIGHTCROSS_FIELD_ID), anyString(), anyString(), eq(VolumeToggles.AUTO),
+                eq(String.join(",", VolumeToggles.OPTIONS)), eq(SkillTreeSettings.skillTreeTab())));
     }
 
     @Test
     void registersTheTaniaAreaToggleDefaultingToAuto() {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addRadio(eq("exiledSector"),
-                eq(AreaToggles.TANIA_FIELD_ID), anyString(), anyString(), eq(AreaToggles.AUTO),
-                eq(String.join(",", AreaToggles.REQUIRED_MOD_OPTIONS)), eq(SkillTreeSettings.skillTreeTab())));
+                eq(VolumeToggles.TANIA_FIELD_ID), anyString(), anyString(), eq(VolumeToggles.AUTO),
+                eq(String.join(",", VolumeToggles.REQUIRED_MOD_OPTIONS)), eq(SkillTreeSettings.skillTreeTab())));
     }
 
     @Test
@@ -212,11 +212,11 @@ class ExiledSectorSettingsTest {
         ExiledSectorSettings.registerLanguage();
         ExiledSectorSettings.register(ExiledSectorModPlugin.DOMAINS);
         String options = String.join(",", LanguageSetting.OPTIONS);
-        String areaOptions = String.join(",", AreaToggles.OPTIONS);
+        String areaOptions = String.join(",", VolumeToggles.OPTIONS);
         for (String text : registeredTexts) {
             boolean untranslated = text.isEmpty() || text.startsWith("exiledSector") || text.equals(options)
-                    || LanguageSetting.OPTIONS.contains(text) || text.equals(areaOptions) || text.equals(String.join(",", AreaToggles.REQUIRED_MOD_OPTIONS))
-                    || AreaToggles.OPTIONS.contains(text) || ItemAnimationSetting.OPTIONS.contains(text)
+                    || LanguageSetting.OPTIONS.contains(text) || text.equals(areaOptions) || text.equals(String.join(",", VolumeToggles.REQUIRED_MOD_OPTIONS))
+                    || VolumeToggles.OPTIONS.contains(text) || ItemAnimationSetting.OPTIONS.contains(text)
                     || text.equals(String.join(",", ItemAnimationSetting.OPTIONS)) || HullUpgradesSetting.POINTS_OPTIONS.contains(text)
                     || text.equals(String.join(",", HullUpgradesSetting.POINTS_OPTIONS)) || NpcTreeConfig.LEVEL_MODE_OPTIONS.contains(text)
                     || text.equals(String.join(",", NpcTreeConfig.LEVEL_MODE_OPTIONS));

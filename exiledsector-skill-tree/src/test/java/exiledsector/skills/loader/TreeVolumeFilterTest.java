@@ -24,16 +24,16 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-class TreeRegionFilterTest {
+class TreeVolumeFilterTest {
 
     private static final SkillType TYPE = new SkillType.Builder("t", "T", "a.png", SkillTier.SMALL).build();
 
-    private static SkillNode node(String id, String region, List<String> connectedTo) {
-        return new SkillNode(id, TYPE, connectedTo, 0f, 0f, SkillNodeDecoration.NONE, List.of(region));
+    private static SkillNode node(String id, String volume, List<String> connectedTo) {
+        return new SkillNode(id, TYPE, connectedTo, 0f, 0f, SkillNodeDecoration.NONE, List.of(volume));
     }
 
-    private static SkillNode wormhole(String id, String region, String pairedWith, List<String> connectedTo) {
-        return new SkillNode(id, TYPE, connectedTo, 0f, 0f, new SkillNodeDecoration(null, null, null, null, pairedWith), List.of(region));
+    private static SkillNode wormhole(String id, String volume, String pairedWith, List<String> connectedTo) {
+        return new SkillNode(id, TYPE, connectedTo, 0f, 0f, new SkillNodeDecoration(null, null, null, null, pairedWith), List.of(volume));
     }
 
     private static SkillTreeLoader.ParsedTree tree() {
@@ -61,15 +61,15 @@ class TreeRegionFilterTest {
     }
 
     @Test
-    void anAreaThatIsOnLeavesTheTreeUntouched() {
+    void anVolumeThatIsOnLeavesTheTreeUntouched() {
         SkillTreeLoader.ParsedTree tree = tree();
 
-        assertSame(tree, TreeRegionFilter.apply(tree, Set.of()));
+        assertSame(tree, TreeVolumeFilter.apply(tree, Set.of()));
     }
 
     @Test
-    void switchingAnAreaOffRemovesItsNodesAndTheWormholeEndsThatLeadIntoIt() {
-        SkillTreeLoader.ParsedTree filtered = TreeRegionFilter.apply(tree(), Set.of("enigma"));
+    void switchingAnVolumeOffRemovesItsNodesAndTheWormholeEndsThatLeadIntoIt() {
+        SkillTreeLoader.ParsedTree filtered = TreeVolumeFilter.apply(tree(), Set.of("enigma"));
 
         assertEquals(List.of("root", "plain"), filtered.nodes.stream().map(SkillNode::getId).toList());
         assertEquals(List.of("plain"), filtered.nodes.get(0).getConnectedNodeIds());
@@ -79,8 +79,8 @@ class TreeRegionFilterTest {
     }
 
     @Test
-    void switchingAnAreaOffHidesItsStarsAndBeltsButKeepsUntaggedDecorations() {
-        SkillTreeLoader.ParsedTree filtered = TreeRegionFilter.apply(tree(), Set.of("enigma"));
+    void switchingAnVolumeOffHidesItsStarsAndBeltsButKeepsUntaggedDecorations() {
+        SkillTreeLoader.ParsedTree filtered = TreeVolumeFilter.apply(tree(), Set.of("enigma"));
 
         assertEquals(List.of("cloud", "untagged", "sun", "hive"), filtered.decorations.all().stream().map(Decoration::getId).toList());
         assertEquals(List.of("sun"), filtered.decorations.stars().stream().map(Star::getId).toList());
@@ -89,7 +89,7 @@ class TreeRegionFilterTest {
     }
 
     @Test
-    void theWormholeEndsLeadingIntoADisabledAreaAreDisabledToo() {
-        assertEquals(Set.of("gate_in", "heart", "gate_out"), TreeRegionFilter.disabledNodeIds(tree().nodes, Set.of("enigma")));
+    void theWormholeEndsLeadingIntoADisabledVolumeAreDisabledToo() {
+        assertEquals(Set.of("gate_in", "heart", "gate_out"), TreeVolumeFilter.disabledNodeIds(tree().nodes, Set.of("enigma")));
     }
 }

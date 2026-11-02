@@ -17,7 +17,7 @@ import { shipItemTypes, validateModifiers, type ItemModifier } from './modifiers
 
 const vocabulary = buildVocabulary({
   effects: [{ name: 'HULL_MULT', statMode: 'MULT', lowerIsBetter: false }],
-  tags: { theme: [], region: ['core', 'hegemony', 'pirate', 'exotech'], requirement: [] },
+  tags: { theme: [], volume: ['core', 'hegemony', 'pirate', 'exotech'], requirement: [] },
   tiers: [],
   unlockConditionTypes: [],
   blueprintCategories: [],

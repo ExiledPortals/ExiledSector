@@ -18,7 +18,7 @@ public final class TreeFactionColours {
     }
 
     public static void publish() {
-        FactionStarColours.register(colours(SkillTree.getDecorations().stars(), TreeFleetFactions.regions(), TreeFleetFactions::factionsIn,
+        FactionStarColours.register(colours(SkillTree.getDecorations().stars(), TreeFleetFactions.volumes(), TreeFleetFactions::factionsIn,
                 TreeFactionColours::coronaColour));
     }
 
@@ -27,17 +27,17 @@ public final class TreeFactionColours {
         return spec != null && spec.isStar() ? spec.getCoronaColor() : null;
     }
 
-    static Map<String, Color> colours(List<Star> stars, List<String> regions, Function<String, List<String>> factionsIn,
+    static Map<String, Color> colours(List<Star> stars, List<String> volumes, Function<String, List<String>> factionsIn,
                                       Function<String, Color> starTypeColour) {
         Map<String, Color> colours = new HashMap<>();
-        for (String region : regions) {
-            Star star = stars.stream().filter(candidate -> region.equals(candidate.getRegion())).findFirst().orElse(null);
+        for (String volume : volumes) {
+            Star star = stars.stream().filter(candidate -> volume.equals(candidate.getVolume())).findFirst().orElse(null);
             Color colour = star == null ? null : ColorUtil.parseHexColor(star.getColor(), starTypeColour.apply(star.getStarType()));
             if (colour == null) {
                 continue;
             }
             Color opaque = new Color(colour.getRed(), colour.getGreen(), colour.getBlue());
-            for (String factionId : factionsIn.apply(region)) {
+            for (String factionId : factionsIn.apply(volume)) {
                 colours.putIfAbsent(factionId, opaque);
             }
         }

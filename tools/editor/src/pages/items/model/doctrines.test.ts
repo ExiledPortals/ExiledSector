@@ -18,7 +18,7 @@ import { modifierById, validateModifiers, type ItemModifier } from './modifiers.
 
 const vocabulary = buildVocabulary({
   effects: [{ name: 'ARMOR_PERCENT', statMode: 'PERCENT', lowerIsBetter: false }],
-  tags: { theme: [], region: ['core'], requirement: [] },
+  tags: { theme: [], volume: ['core'], requirement: [] },
   tiers: [],
   unlockConditionTypes: [],
   blueprintCategories: [],

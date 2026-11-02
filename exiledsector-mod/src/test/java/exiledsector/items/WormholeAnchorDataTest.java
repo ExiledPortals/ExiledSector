@@ -71,7 +71,7 @@ class WormholeAnchorDataTest {
             exitsByVolume.put(WormholeAnchorDefinitions.volume(definition.id()), WormholeAnchorDefinitions.exitNodeId(definition.id()));
         }
         assertEquals(EXPECTED_EXITS, exitsByVolume);
-        Set<String> volumes = SkillTags.REGION.stream().filter(region -> !SkillTags.CORE_REGION.equals(region)).collect(Collectors.toSet());
+        Set<String> volumes = SkillTags.VOLUME.stream().filter(volume -> !SkillTags.CORE_VOLUME.equals(volume)).collect(Collectors.toSet());
         assertEquals(volumes, exitsByVolume.keySet());
         ItemDefinition beacon = ItemDefinitions.get("wormhole_anchor_exotech");
         assertEquals("Hyper-Nav Beacon", beacon.name());
@@ -167,7 +167,7 @@ class WormholeAnchorDataTest {
                 "line 4: second_hegemony leads to hegemony, which already has an anchor on line 2",
                 "line 5: wrong_volume exits at luddic_2, which is in luddic rather than tritachyon",
                 "line 6: not_a_wormhole exits at pirate_notable, which is a NOTABLE node rather than a wormhole exit",
-                "line 7: core_anchor has volume \"core\"; expected a tree region other than core",
+                "line 7: core_anchor has volume \"core\"; expected a tree volume other than core",
                 "line 7: core_anchor has no exit node",
                 "line 8: id taken is already used by a subroutine, hull item or star chart",
                 "line 9: odd_unlock exits at luddic_2, which is in luddic rather than abyss",
@@ -186,7 +186,7 @@ class WormholeAnchorDataTest {
         assertTrue(messages.contains("HULL_MULT rolls on wormhole_anchor, but wormhole anchors do not roll modifiers"), messages.toString());
     }
 
-    private static SkillNode node(String id, SkillType type, String region) {
-        return new SkillNode(id, type, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of(region));
+    private static SkillNode node(String id, SkillType type, String volume) {
+        return new SkillNode(id, type, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of(volume));
     }
 }

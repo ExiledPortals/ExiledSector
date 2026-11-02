@@ -254,7 +254,7 @@ public final class ShipTreeSync {
     static List<String> dropNpcAnchors(ShipSkillData adoptedTree) {
         NpcItems.unsocketAll(adoptedTree);
         return ShipTrees.releaseUnreachable(adoptedTree, SkillTree.topology(), ShipTrees.resolveStartingRootId(adoptedTree),
-                node -> !SkillTags.CORE_REGION.equals(node.getRegion())).nodeIds();
+                node -> !SkillTags.CORE_VOLUME.equals(node.getVolume())).nodeIds();
     }
 
     static void dropNpcTree(FleetMemberAPI member) {

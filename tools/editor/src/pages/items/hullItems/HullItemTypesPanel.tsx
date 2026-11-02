@@ -9,7 +9,7 @@ import { modifierLinesOf, useLineDescriptions, type LineDescriptions } from '../
 import { hullItemKinds } from '../itemOptions.ts';
 import type { ItemsPanelProps } from '../itemsDocument.ts';
 import {
-  areaOptions,
+  volumeOptions,
   AFFIX_GROUPS,
   HULL_ITEM_TYPE,
   isTrueText,
@@ -244,12 +244,12 @@ function HullItemForm({ document, model, vocabulary, definition, index, descript
         />
       )}
       <Select
-        label="Area"
-        description="Loaded only while that area's mod is installed, and drops only while the area is switched on. Blank for always."
-        data={areaOptions(vocabulary.itemAreas, definition.area ?? '')}
-        value={definition.area ?? ''}
+        label="Volume"
+        description="Loaded only while that volume's mod is installed, and drops only while the volume is switched on. Blank for always."
+        data={volumeOptions(vocabulary.itemVolumes, definition.volume ?? '')}
+        value={definition.volume ?? ''}
         allowDeselect={false}
-        onChange={(area) => edit((draft) => void (draft.area = area ?? ''))}
+        onChange={(volume) => edit((draft) => void (draft.volume = volume ?? ''))}
       />
       <Select
         label="Crew"

@@ -23,12 +23,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HyperspaceTest {
 
-    private static Star star(String id, float x, float y, String region) {
-        return new Star(id, x, y, 400f, "star_yellow", null, region == null ? List.of() : List.of(region));
+    private static Star star(String id, float x, float y, String volume) {
+        return new Star(id, x, y, 400f, "star_yellow", null, volume == null ? List.of() : List.of(volume));
     }
 
-    private static StaticImage image(String id, String region) {
-        return new StaticImage(id, 3000f, 7000f, new StaticImage.Shape(3400f, 2000f, "a.png", new Rotation(0f, 0f)), List.of(region));
+    private static StaticImage image(String id, String volume) {
+        return new StaticImage(id, 3000f, 7000f, new StaticImage.Shape(3400f, 2000f, "a.png", new Rotation(0f, 0f)), List.of(volume));
     }
 
     private static List<HyperspaceAnchor> anchorsOf(Decoration... decorations) {
@@ -36,15 +36,15 @@ class HyperspaceTest {
     }
 
     @Test
-    void everyRegionStarIsAnAnchorAndUntaggedStarsAreNot() {
+    void everyVolumeStarIsAnAnchorAndUntaggedStarsAreNot() {
         List<HyperspaceAnchor> anchors = anchorsOf(star("sun", 0f, 0f, "core"), star("stray", 5f, 5f, null), star("dictat", -6000f, -4000f, "sindrian_dictat"));
 
         assertEquals(List.of("sun", "dictat"), anchors.stream().map(HyperspaceAnchor::id).toList());
-        assertEquals("sindrian_dictat", anchors.get(1).region());
+        assertEquals("sindrian_dictat", anchors.get(1).volume());
     }
 
     @Test
-    void aRegionWithoutAStarIsAnchoredOnItsFirstImage() {
+    void aVolumeWithoutAStarIsAnchoredOnItsFirstImage() {
         List<HyperspaceAnchor> anchors = anchorsOf(star("sun", 0f, 0f, "core"), image("cloud", "core"), image("luddic_nebula", "luddic"),
                 image("luddic_wisp", "luddic"));
 
@@ -53,7 +53,7 @@ class HyperspaceTest {
     }
 
     @Test
-    void aStarlessRegionIsAnchoredOnItsThreatUnitBeforeAnyImage() {
+    void aStarlessVolumeIsAnchoredOnItsThreatUnitBeforeAnyImage() {
         List<HyperspaceAnchor> anchors = anchorsOf(star("sun", 0f, 0f, "core"),
                 new ThreatUnit("fabricator", 100f, 200f, ThreatUnit.FABRICATOR, 600f, 0f, List.of("threat")), image("threat_cloud", "threat"));
 
@@ -63,7 +63,7 @@ class HyperspaceTest {
     }
 
     @Test
-    void aStarlessRegionIsAnchoredOnItsShroudedMawBeforeAnyImage() {
+    void aStarlessVolumeIsAnchoredOnItsShroudedMawBeforeAnyImage() {
         List<HyperspaceAnchor> anchors = anchorsOf(image("shroud_cloud", "shrouded"), new ShroudedMaw("maw", 100f, 200f, 620f, 0f, List.of("shrouded")));
 
         assertEquals(List.of("maw"), anchors.stream().map(HyperspaceAnchor::id).toList());
@@ -197,13 +197,13 @@ class HyperspaceTest {
         assertEquals(0f, transition.labelAlpha(), 1e-6f);
     }
 
-    private static SkillNode wormhole(String id, String region) {
+    private static SkillNode wormhole(String id, String volume) {
         SkillType type = new SkillType.Builder("wormhole", "Wormhole", "a.png", SkillTier.WORMHOLE).build();
-        return new SkillNode(id, type, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of(region));
+        return new SkillNode(id, type, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of(volume));
     }
 
     @Test
-    void wormholePairsBecomeRoutesBetweenTheStarsOfTheirEndsRegions() {
+    void wormholePairsBecomeRoutesBetweenTheStarsOfTheirEndsVolumes() {
         HyperspaceAnchor core = new HyperspaceAnchor("sun", "core", 0f, 0f, 150f, true);
         HyperspaceAnchor league = new HyperspaceAnchor("league", "persean_league", -7800f, 1600f, 400f, true);
         HyperspaceAnchor kesteven = new HyperspaceAnchor("kesteven", "kesteven", -11200f, 6600f, 400f, true);
@@ -233,7 +233,7 @@ class HyperspaceTest {
         assertEquals(1000f / ((3000f + reach) * 2f), camera.zoom(), 0.0001f, "the far side sets the zoom so both sides fit around the core");
     }
 
-    private record Node(String region, boolean hidden) {
+    private record Node(String volume, boolean hidden) {
     }
 
     @Test
@@ -244,6 +244,6 @@ class HyperspaceTest {
                 new Node("core", false),
                 new Node(null, true));
 
-        assertEquals(Set.of("abyss"), HyperspaceAnchor.lockedRegions(nodes, Node::region, Node::hidden));
+        assertEquals(Set.of("abyss"), HyperspaceAnchor.lockedVolumes(nodes, Node::volume, Node::hidden));
     }
 }

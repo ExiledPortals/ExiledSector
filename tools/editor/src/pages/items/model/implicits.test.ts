@@ -22,7 +22,7 @@ const vocabulary = buildVocabulary({
     { name: 'ARMOR_PERCENT', statMode: 'PERCENT', lowerIsBetter: false },
     { name: 'FLUX_CAPACITY_PERCENT', statMode: 'PERCENT', lowerIsBetter: false },
   ],
-  tags: { theme: [], region: [], requirement: [] },
+  tags: { theme: [], volume: [], requirement: [] },
   tiers: [],
   unlockConditionTypes: [],
   blueprintCategories: [],

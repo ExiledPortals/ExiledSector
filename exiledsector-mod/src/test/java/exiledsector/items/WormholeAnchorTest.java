@@ -252,13 +252,13 @@ class WormholeAnchorTest {
         assertFalse(NodeSocketable.fits(hegemony, exit));
         assertFalse(NodeSocketable.fits(hegemony, null));
         assertFalse(HullItem.fits(hegemony, ShipSection.BRIDGE));
-        assertFalse(NodeSocketable.fits(abyss, socket), "the abyss exit is not in the active tree, as when its area is off");
+        assertFalse(NodeSocketable.fits(abyss, socket), "the abyss exit is not in the active tree, as when its volume is off");
         assertTrue(TreeSocketCustody.fitsTreeSocket(hegemony));
         assertTrue(TreeSocketCustody.fitsTreeSocket(abyss));
     }
 
     @Test
-    void anAnchorWhoseAreaIsOffExplainsWhyItCannotBeInstalled() {
+    void anAnchorWhoseVolumeIsOffExplainsWhyItCannotBeInstalled() {
         WormholeAnchor hegemony = (WormholeAnchor) anchor(HEGEMONY_ANCHOR);
         WormholeAnchor abyss = (WormholeAnchor) anchor(ABYSS_ANCHOR);
 

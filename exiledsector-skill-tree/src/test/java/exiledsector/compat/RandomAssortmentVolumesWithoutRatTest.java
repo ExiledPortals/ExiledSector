@@ -12,7 +12,7 @@ import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.RealSkillData;
-import exiledsector.skills.tags.AreaToggles;
+import exiledsector.skills.tags.VolumeToggles;
 import exiledsector.skills.unlock.NodeGates;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import lunalib.lunaSettings.LunaSettings;
@@ -31,7 +31,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class RandomAssortmentAreasWithoutRatTest {
+class RandomAssortmentVolumesWithoutRatTest {
 
     private MockedStatic<LunaSettings> lunaSettingsMock;
     private MockSector mockSector;
@@ -65,13 +65,13 @@ class RandomAssortmentAreasWithoutRatTest {
         RandomAssortmentCompat.clearCachedLookups();
     }
 
-    private static List<SkillNode> ratAreaNodes() {
+    private static List<SkillNode> ratVolumeNodes() {
         List<SkillNode> nodes = new ArrayList<>();
         for (SkillNode node : SkillTree.getAllNodes().values()) {
-            boolean inArea = AreaToggles.RANDOM_ASSORTMENT_REGIONS.contains(node.getRegion());
+            boolean inVolume = VolumeToggles.RANDOM_ASSORTMENT_VOLUMES.contains(node.getVolume());
             SkillNode paired = node.getPairedNodeId() == null ? null : SkillTree.get(node.getPairedNodeId());
-            boolean leadsIn = paired != null && AreaToggles.RANDOM_ASSORTMENT_REGIONS.contains(paired.getRegion());
-            if (inArea || leadsIn) {
+            boolean leadsIn = paired != null && VolumeToggles.RANDOM_ASSORTMENT_VOLUMES.contains(paired.getVolume());
+            if (inVolume || leadsIn) {
                 nodes.add(node);
             }
         }
@@ -79,18 +79,18 @@ class RandomAssortmentAreasWithoutRatTest {
     }
 
     @Test
-    void noRatAreaNodeIsLockedOrHiddenWithoutRat() {
-        List<String> blocked = ratAreaNodes().stream()
+    void noRatVolumeNodeIsLockedOrHiddenWithoutRat() {
+        List<String> blocked = ratVolumeNodes().stream()
                 .filter(node -> SkillTypeUnlockStatus.isLocked(node.getType(), null) || NodeGates.isLocked(node, null))
                 .map(SkillNode::getId).toList();
 
         assertTrue(blocked.isEmpty(), "Locked without RAT: " + blocked);
-        assertTrue(ratAreaNodes().size() > 30);
+        assertTrue(ratVolumeNodes().size() > 30);
     }
 
     @Test
     void abyssalMatterCostsAreWaivedWithoutRat() {
-        List<String> stillCosting = ratAreaNodes().stream()
+        List<String> stillCosting = ratVolumeNodes().stream()
                 .filter(node -> node.getType().getItemCost() != null)
                 .map(SkillNode::getId).toList();
 
@@ -98,9 +98,9 @@ class RandomAssortmentAreasWithoutRatTest {
     }
 
     @Test
-    void noRatAreaTooltipShowsARawRatId() {
+    void noRatVolumeTooltipShowsARawRatId() {
         List<String> leaks = new ArrayList<>();
-        for (SkillNode node : ratAreaNodes()) {
+        for (SkillNode node : ratVolumeNodes()) {
             for (HullSize hullSize : new HullSize[]{null, HullSize.FRIGATE, HullSize.CAPITAL_SHIP}) {
                 for (DescriptionLine line : SkillNode.describeMechanics(node.getType(), hullSize).all()) {
                     if (line.text().plain().contains("rat_")) {

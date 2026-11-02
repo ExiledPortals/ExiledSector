@@ -5,7 +5,7 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.decoration.Decoration;
 import exiledsector.skills.npc.RealSkillData;
-import exiledsector.skills.tags.AreaToggles;
+import exiledsector.skills.tags.VolumeToggles;
 import exiledsector.skills.tags.SkillTags;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -18,9 +18,9 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class AreaToggleDataTest {
+class VolumeToggleDataTest {
 
-    private static final List<Set<String>> TOGGLED_AREAS = AreaToggles.TOGGLED_AREAS;
+    private static final List<Set<String>> TOGGLED_VOLUMES = VolumeToggles.TOGGLED_VOLUMES;
 
     private static JSONObject treeJson() throws Exception {
         return ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(RealSkillData.TREE_FILE));
@@ -37,13 +37,13 @@ class AreaToggleDataTest {
 
 
     @Test
-    void everyDecorationCarriesExactlyOneRegionTag() throws Exception {
+    void everyDecorationCarriesExactlyOneVolumeTag() throws Exception {
         SkillTreeLoader.ParsedTree tree = realTree();
         List<String> problems = new ArrayList<>();
         for (Decoration decoration : tree.decorations.all()) {
-            List<String> regions = decoration.getTags().stream().filter(SkillTags::isRegion).toList();
-            if (regions.size() != 1) {
-                problems.add(decoration.kind().dataKey() + " " + decoration.getId() + " has region tags " + regions);
+            List<String> volumes = decoration.getTags().stream().filter(SkillTags::isVolume).toList();
+            if (volumes.size() != 1) {
+                problems.add(decoration.kind().dataKey() + " " + decoration.getId() + " has volume tags " + volumes);
             }
         }
         assertTrue(!tree.decorations.all().isEmpty(), "the tree has no decorations");
@@ -52,27 +52,27 @@ class AreaToggleDataTest {
     }
 
     @Test
-    void switchingAToggledAreaOffStrandsNothingAndLeavesNoHalfWormholes() throws Exception {
+    void switchingAToggledVolumeOffStrandsNothingAndLeavesNoHalfWormholes() throws Exception {
         SkillTreeLoader.ParsedTree tree = realTree();
         List<String> problems = new ArrayList<>();
-        for (Set<String> area : TOGGLED_AREAS) {
-            SkillTreeLoader.ParsedTree filtered = TreeRegionFilter.apply(tree, area);
+        for (Set<String> volume : TOGGLED_VOLUMES) {
+            SkillTreeLoader.ParsedTree filtered = TreeVolumeFilter.apply(tree, volume);
             Map<String, SkillNode> byId = new HashMap<>();
             filtered.nodes.forEach(node -> byId.put(node.getId(), node));
             for (SkillNode node : filtered.nodes) {
                 for (String other : node.getConnectedNodeIds()) {
                     if (!byId.containsKey(other)) {
-                        problems.add(area + " off: " + node.getId() + " still links to missing " + other);
+                        problems.add(volume + " off: " + node.getId() + " still links to missing " + other);
                     }
                 }
                 if (node.getPairedNodeId() != null && !byId.containsKey(node.getPairedNodeId())) {
-                    problems.add(area + " off: wormhole " + node.getId() + " lost its pair " + node.getPairedNodeId());
+                    problems.add(volume + " off: wormhole " + node.getId() + " lost its pair " + node.getPairedNodeId());
                 }
             }
             Set<String> reached = TreeReachability.fromRootsAndExits(filtered.nodes, node -> true);
             for (SkillNode node : filtered.nodes) {
                 if (!reached.contains(node.getId())) {
-                    problems.add(area + " off: " + node.getId() + " can no longer be reached from any root or wormhole exit");
+                    problems.add(volume + " off: " + node.getId() + " can no longer be reached from any root or wormhole exit");
                 }
             }
         }

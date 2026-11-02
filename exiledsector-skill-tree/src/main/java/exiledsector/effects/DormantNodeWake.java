@@ -45,7 +45,7 @@ final class DormantNodeWake {
                 dormantNode -> fitsTheOpBudget(shipData, dormantNode, opCostPerNode, totalOp) && isEligible(shipData, dormantNode, shipFacts));
         refund(shipData, releasedNodeIds);
         if (!releasedNodeIds.isEmpty()) {
-            LOG.info("[ExiledSector] Released hidden-area nodes of ship " + member.getId()
+            LOG.info("[ExiledSector] Released hidden-volume nodes of ship " + member.getId()
                     + " that no longer connect to its tree, fit its OP or node cap, or are allowed on it: " + releasedNodeIds);
         }
         member.setStatUpdateNeeded(true);

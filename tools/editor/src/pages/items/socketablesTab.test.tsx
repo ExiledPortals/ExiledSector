@@ -41,7 +41,7 @@ describe('skill tree socketables', () => {
     await save('Saved subroutines.csv');
 
     const lines = readProjectFile(SUBROUTINES_FILE).split(/\r?\n/);
-    expect(lines[0]).toMatch(/,radius,area$/);
+    expect(lines[0]).toMatch(/,radius,volume$/);
     expect(lines.find((line) => line.startsWith('unique_p_space_lattice,'))).toMatch(/,large,$/);
   }, 90000);
 

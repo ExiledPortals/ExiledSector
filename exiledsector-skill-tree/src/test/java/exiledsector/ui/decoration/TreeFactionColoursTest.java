@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 class TreeFactionColoursTest {
 
     @Test
-    void factionsTakeTheColourOfTheirRegionsStar() {
+    void factionsTakeTheColourOfTheirVolumesStar() {
         List<Star> stars = List.of(new Star("tritach_star", 0f, 0f, 400f, "star_blue_giant", "#00479e", List.of("tritachyon")),
                 new Star("pirate_star", 0f, 0f, 300f, "star_red_dwarf", null, List.of("pirate")));
         Map<String, List<String>> factions = Map.of("tritachyon", List.of("tritachyon"), "pirate", List.of("pirates", "pirate_raiders"),

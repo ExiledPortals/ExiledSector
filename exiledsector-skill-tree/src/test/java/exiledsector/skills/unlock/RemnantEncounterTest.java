@@ -35,8 +35,8 @@ class RemnantEncounterTest {
     void setUp() throws Exception {
         when(sector.getPlayerMemoryWithoutUpdate()).thenReturn(playerMemory);
         NpcFactionVolumes.register(new JSONArray()
-                .put(new JSONObject().put("faction", "remnant").put("region", "REDACTED"))
-                .put(new JSONObject().put("faction", "hegemony").put("region", "hegemony")));
+                .put(new JSONObject().put("faction", "remnant").put("volume", "REDACTED"))
+                .put(new JSONObject().put("faction", "hegemony").put("volume", "hegemony")));
     }
 
     @AfterEach

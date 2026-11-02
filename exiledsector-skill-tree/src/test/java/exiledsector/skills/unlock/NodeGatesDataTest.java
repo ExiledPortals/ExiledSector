@@ -13,7 +13,7 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.RealSkillData;
-import exiledsector.skills.tags.AreaToggles;
+import exiledsector.skills.tags.VolumeToggles;
 import exiledsector.skills.tags.SkillTags;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterAll;
@@ -83,7 +83,7 @@ class NodeGatesDataTest {
     @Test
     void everyAbyssNodeAndTheWormholeIntoItAreGated() {
         List<String> ungated = SkillTree.getAllNodes().values().stream()
-                .filter(node -> SkillTags.ABYSS_REGION.equals(node.getRegion()) || leadsIntoTheAbyss(node))
+                .filter(node -> SkillTags.ABYSS_VOLUME.equals(node.getVolume()) || leadsIntoTheAbyss(node))
                 .filter(node -> !node.getTags().contains(ABYSS_GATE))
                 .map(SkillNode::getId).toList();
 
@@ -115,8 +115,8 @@ class NodeGatesDataTest {
     void everyShroudedNodeAndTheWormholeIntoItWaitUntilTheDwellersAreFought() {
         assertEquals(List.of(UnlockConditionType.DWELLER_FOUGHT),
                 NodeGates.all().get(DWELLER_GATE).stream().map(UnlockCondition::getType).toList());
-        assertTrue(ungatedIn(SkillTags.SHROUDED_REGION, DWELLER_GATE).isEmpty(),
-                "Shrouded nodes without the gate: " + ungatedIn(SkillTags.SHROUDED_REGION, DWELLER_GATE));
+        assertTrue(ungatedIn(SkillTags.SHROUDED_VOLUME, DWELLER_GATE).isEmpty(),
+                "Shrouded nodes without the gate: " + ungatedIn(SkillTags.SHROUDED_VOLUME, DWELLER_GATE));
     }
 
     @Test
@@ -130,8 +130,8 @@ class NodeGatesDataTest {
     void everyRemnantNodeAndTheWormholeIntoItWaitUntilTheRemnantIsFought() {
         assertEquals(List.of(UnlockConditionType.REMNANT_FOUGHT),
                 NodeGates.all().get(REMNANT_GATE).stream().map(UnlockCondition::getType).toList());
-        assertTrue(ungatedIn(SkillTags.REDACTED_REGION, REMNANT_GATE).isEmpty(),
-                "Remnant nodes without the gate: " + ungatedIn(SkillTags.REDACTED_REGION, REMNANT_GATE));
+        assertTrue(ungatedIn(SkillTags.REDACTED_VOLUME, REMNANT_GATE).isEmpty(),
+                "Remnant nodes without the gate: " + ungatedIn(SkillTags.REDACTED_VOLUME, REMNANT_GATE));
     }
 
     @Test
@@ -153,9 +153,9 @@ class NodeGatesDataTest {
 
     @Test
     void withNightcrossInstalledAFreshSaveLocksEveryNightcrossAndStargazerNode() {
-        List<String> areaNodes = SkillTree.getAllNodes().values().stream()
-                .filter(node -> AreaToggles.NIGHTCROSS_REGIONS.contains(node.getRegion())).map(SkillNode::getId).sorted().toList();
-        assertEquals(areaNodes, lockedNightcrossNodes(true));
+        List<String> volumeNodes = SkillTree.getAllNodes().values().stream()
+                .filter(node -> VolumeToggles.NIGHTCROSS_VOLUMES.contains(node.getVolume())).map(SkillNode::getId).sorted().toList();
+        assertEquals(volumeNodes, lockedNightcrossNodes(true));
     }
 
     private static List<String> lockedNightcrossNodes(boolean nightcrossInstalled) {
@@ -172,7 +172,7 @@ class NodeGatesDataTest {
             lunaSettings.when(() -> LunaSettings.getBoolean(anyString(), anyString())).thenReturn(null);
             mockSector.global.when(Global::getSettings).thenReturn(settings);
             return SkillTree.getAllNodes().values().stream()
-                    .filter(node -> AreaToggles.NIGHTCROSS_REGIONS.contains(node.getRegion()))
+                    .filter(node -> VolumeToggles.NIGHTCROSS_VOLUMES.contains(node.getVolume()))
                     .filter(node -> NodeGates.isLocked(node, null))
                     .map(SkillNode::getId).sorted().toList();
         }
@@ -191,23 +191,23 @@ class NodeGatesDataTest {
         });
     }
 
-    private static List<String> ungatedIn(String region, String gateTag) {
+    private static List<String> ungatedIn(String volume, String gateTag) {
         return SkillTree.getAllNodes().values().stream()
                 .filter(node -> !node.getId().equals(CANDLES_GRACE_NODE_ID))
-                .filter(node -> region.equals(node.getRegion()) || leadsInto(node, region))
+                .filter(node -> volume.equals(node.getVolume()) || leadsInto(node, volume))
                 .filter(node -> !node.getTags().contains(gateTag))
                 .map(SkillNode::getId).toList();
     }
 
-    private static boolean leadsInto(SkillNode node, String region) {
+    private static boolean leadsInto(SkillNode node, String volume) {
         SkillNode paired = node.getPairedNodeId() == null ? null : SkillTree.get(node.getPairedNodeId());
-        return paired != null && region.equals(paired.getRegion());
+        return paired != null && volume.equals(paired.getVolume());
     }
 
     @Test
     void everyAbyssNotableAndKeystoneCostsTwentyFiveAbyssalMatter() {
         SkillTree.getAllNodes().values().stream()
-                .filter(node -> SkillTags.ABYSS_REGION.equals(node.getRegion()))
+                .filter(node -> SkillTags.ABYSS_VOLUME.equals(node.getVolume()))
                 .filter(node -> node.getType().getTier() == SkillTier.NOTABLE || node.getType().getTier() == SkillTier.KEYSTONE)
                 .filter(node -> !node.getType().getId().equals("chronos_adaptability"))
                 .forEach(node -> {
@@ -225,6 +225,6 @@ class NodeGatesDataTest {
 
     private static boolean leadsIntoTheAbyss(SkillNode node) {
         SkillNode paired = node.getPairedNodeId() == null ? null : SkillTree.get(node.getPairedNodeId());
-        return paired != null && SkillTags.ABYSS_REGION.equals(paired.getRegion());
+        return paired != null && SkillTags.ABYSS_VOLUME.equals(paired.getVolume());
     }
 }

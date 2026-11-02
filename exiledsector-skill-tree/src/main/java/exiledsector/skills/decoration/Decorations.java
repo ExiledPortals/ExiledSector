@@ -29,11 +29,11 @@ public final class Decorations {
         return all.stream().filter(type::isInstance).map(type::cast).toList();
     }
 
-    public Decorations outsideRegions(Set<String> disabledRegions) {
-        if (disabledRegions.isEmpty()) {
+    public Decorations outsideVolumes(Set<String> disabledVolumes) {
+        if (disabledVolumes.isEmpty()) {
             return this;
         }
-        return new Decorations(all.stream().filter(decoration -> decoration.getRegion() == null || !disabledRegions.contains(decoration.getRegion())).toList());
+        return new Decorations(all.stream().filter(decoration -> decoration.getVolume() == null || !disabledVolumes.contains(decoration.getVolume())).toList());
     }
 
     public List<Decoration> all() {

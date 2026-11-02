@@ -15,9 +15,9 @@ public final class NpcFactionVolumes {
 
     static final String DATA_PATH = "data/config/exiledSector/npc_faction_volumes.csv";
     private static final String FACTION_COLUMN = "faction";
-    private static final String REGION_COLUMN = "region";
+    private static final String VOLUME_COLUMN = "volume";
     private static final Logger LOG = Logger.getLogger(NpcFactionVolumes.class);
-    private static final AtomicReference<Map<String, String>> REGION_BY_FACTION = new AtomicReference<>(Map.of());
+    private static final AtomicReference<Map<String, String>> VOLUME_BY_FACTION = new AtomicReference<>(Map.of());
 
     private NpcFactionVolumes() {
     }
@@ -30,30 +30,30 @@ public final class NpcFactionVolumes {
         Map<String, String> loaded = new HashMap<>();
         ModCsv.forEach(rows, (index, row) -> {
             String faction = ModCsv.text(row, FACTION_COLUMN);
-            String region = ModCsv.text(row, REGION_COLUMN);
+            String volume = ModCsv.text(row, VOLUME_COLUMN);
             if (faction.isEmpty()) {
                 return;
             }
-            if (!SkillTags.FACTION_VOLUMES.contains(region)) {
-                LOG.warn("Ignoring faction " + faction + " in " + DATA_PATH + ": '" + region
+            if (!SkillTags.FACTION_VOLUMES.contains(volume)) {
+                LOG.warn("Ignoring faction " + faction + " in " + DATA_PATH + ": '" + volume
                         + "' is not a vanilla faction volume " + SkillTags.FACTION_VOLUMES);
                 return;
             }
-            loaded.put(faction, region);
+            loaded.put(faction, volume);
         });
-        REGION_BY_FACTION.set(Map.copyOf(loaded));
+        VOLUME_BY_FACTION.set(Map.copyOf(loaded));
     }
 
-    public static String regionFor(String factionId) {
-        return factionId == null ? null : REGION_BY_FACTION.get().get(factionId);
+    public static String volumeFor(String factionId) {
+        return factionId == null ? null : VOLUME_BY_FACTION.get().get(factionId);
     }
 
-    public static List<String> factionsIn(String region) {
-        return REGION_BY_FACTION.get().entrySet().stream().filter(entry -> entry.getValue().equals(region)).map(Map.Entry::getKey)
+    public static List<String> factionsIn(String volume) {
+        return VOLUME_BY_FACTION.get().entrySet().stream().filter(entry -> entry.getValue().equals(volume)).map(Map.Entry::getKey)
                 .sorted().toList();
     }
 
     public static void clear() {
-        REGION_BY_FACTION.set(Map.of());
+        VOLUME_BY_FACTION.set(Map.of());
     }
 }

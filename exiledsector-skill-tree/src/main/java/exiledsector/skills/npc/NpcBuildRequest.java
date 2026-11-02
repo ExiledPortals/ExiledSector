@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public record NpcBuildRequest(ShipProfile profile, String designType, String factionRegion, NpcHullMods hullMods,
+public record NpcBuildRequest(ShipProfile profile, String designType, String factionVolume, NpcHullMods hullMods,
                               NpcFreedOp freedOp, int nodeCount, String factionAnchorItemId, Predicate<SkillType> lockedTypes, String hullId,
                               Map<String, Float> focus, List<String> grantedNodeIds) {
 
@@ -21,28 +21,28 @@ public record NpcBuildRequest(ShipProfile profile, String designType, String fac
         grantedNodeIds = grantedNodeIds == null ? List.of() : List.copyOf(grantedNodeIds);
     }
 
-    public NpcBuildRequest(ShipProfile profile, String designType, String factionRegion, NpcHullMods hullMods, NpcFreedOp freedOp,
+    public NpcBuildRequest(ShipProfile profile, String designType, String factionVolume, NpcHullMods hullMods, NpcFreedOp freedOp,
                            int nodeCount, String factionAnchorItemId, Predicate<SkillType> lockedTypes, String hullId, Map<String, Float> focus) {
-        this(profile, designType, factionRegion, hullMods, freedOp, nodeCount, factionAnchorItemId, lockedTypes, hullId, focus, null);
+        this(profile, designType, factionVolume, hullMods, freedOp, nodeCount, factionAnchorItemId, lockedTypes, hullId, focus, null);
     }
 
-    public NpcBuildRequest(ShipProfile profile, String designType, String factionRegion, NpcHullMods hullMods, NpcFreedOp freedOp,
+    public NpcBuildRequest(ShipProfile profile, String designType, String factionVolume, NpcHullMods hullMods, NpcFreedOp freedOp,
                            int nodeCount, String factionAnchorItemId, Predicate<SkillType> lockedTypes, String hullId) {
-        this(profile, designType, factionRegion, hullMods, freedOp, nodeCount, factionAnchorItemId, lockedTypes, hullId, null);
+        this(profile, designType, factionVolume, hullMods, freedOp, nodeCount, factionAnchorItemId, lockedTypes, hullId, null);
     }
 
-    public NpcBuildRequest(ShipProfile profile, String designType, String factionRegion, NpcHullMods hullMods, NpcFreedOp freedOp,
+    public NpcBuildRequest(ShipProfile profile, String designType, String factionVolume, NpcHullMods hullMods, NpcFreedOp freedOp,
                            int nodeCount, String factionAnchorItemId, Predicate<SkillType> lockedTypes) {
-        this(profile, designType, factionRegion, hullMods, freedOp, nodeCount, factionAnchorItemId, lockedTypes, null, null);
+        this(profile, designType, factionVolume, hullMods, freedOp, nodeCount, factionAnchorItemId, lockedTypes, null, null);
     }
 
-    public NpcBuildRequest(ShipProfile profile, String designType, String factionRegion, NpcHullMods hullMods, NpcFreedOp freedOp,
+    public NpcBuildRequest(ShipProfile profile, String designType, String factionVolume, NpcHullMods hullMods, NpcFreedOp freedOp,
                            int nodeCount, String factionAnchorItemId) {
-        this(profile, designType, factionRegion, hullMods, freedOp, nodeCount, factionAnchorItemId, null, null, null);
+        this(profile, designType, factionVolume, hullMods, freedOp, nodeCount, factionAnchorItemId, null, null, null);
     }
 
-    public NpcBuildRequest(ShipProfile profile, String designType, String factionRegion, NpcHullMods hullMods, NpcFreedOp freedOp,
+    public NpcBuildRequest(ShipProfile profile, String designType, String factionVolume, NpcHullMods hullMods, NpcFreedOp freedOp,
                            int nodeCount) {
-        this(profile, designType, factionRegion, hullMods, freedOp, nodeCount, null, null, null, null);
+        this(profile, designType, factionVolume, hullMods, freedOp, nodeCount, null, null, null, null);
     }
 }

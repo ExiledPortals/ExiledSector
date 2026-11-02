@@ -13,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class SkillTagsTest {
 
     @Test
-    void allIsThemeThenRegionThenRequirementThenGate() {
+    void allIsThemeThenVolumeThenRequirementThenGate() {
         List<String> expected = new ArrayList<>(SkillTags.THEME);
-        expected.addAll(SkillTags.REGION);
+        expected.addAll(SkillTags.VOLUME);
         expected.addAll(SkillTags.REQUIREMENT);
         expected.addAll(SkillTags.GATE);
 
@@ -30,15 +30,15 @@ class SkillTagsTest {
     @Test
     void theRetiredLuddicPathTagIsNotInTheVocabulary() {
         assertFalse(SkillTags.ALL.contains("luddic_path"));
-        assertTrue(SkillTags.isRegion("luddic"));
+        assertTrue(SkillTags.isVolume("luddic"));
     }
 
     @Test
-    void isRegionRecognisesOnlyRegionTags() {
-        assertTrue(SkillTags.isRegion("tritachyon"));
-        assertFalse(SkillTags.isRegion("shield"));
-        assertFalse(SkillTags.isRegion("req_shields"));
-        assertFalse(SkillTags.isRegion(null));
+    void isVolumeRecognisesOnlyVolumeTags() {
+        assertTrue(SkillTags.isVolume("tritachyon"));
+        assertFalse(SkillTags.isVolume("shield"));
+        assertFalse(SkillTags.isVolume("req_shields"));
+        assertFalse(SkillTags.isVolume(null));
     }
 
     @Test

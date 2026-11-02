@@ -17,7 +17,7 @@ public final class RandomAssortmentCompat {
     public static final List<String> REQUIRED_HULL_MOD_IDS = List.of("rat_exogrid", "rat_hypatia_hullmod", "rat_abyssal_grid",
             "rat_abyssal_core", "rat_seraphs_grace", "rat_raphaels_grace");
     public static final List<String> REQUIRED_COMMODITY_IDS = List.of("rat_abyssal_matter", "rat_chronos_core");
-    public static final CompatTarget TARGET = new CompatTarget("Random Assortment of Things areas", List.of(MOD_ID), TESTED_VERSIONS,
+    public static final CompatTarget TARGET = new CompatTarget("Random Assortment of Things volumes", List.of(MOD_ID), TESTED_VERSIONS,
             RandomAssortmentCompat::missingFeatures);
 
     static final String GENESIS_HULL_ID = "rat_genesis";

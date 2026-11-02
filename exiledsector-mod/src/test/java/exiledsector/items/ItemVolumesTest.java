@@ -13,32 +13,32 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ItemAreasTest {
+class ItemVolumesTest {
 
     private final Set<String> installed = new HashSet<>();
     private final Set<String> switchedOn = new HashSet<>();
 
     @AfterEach
     void tearDown() {
-        ItemAreas.bind(null);
+        ItemVolumes.bind(null);
         ItemDefinitions.clear();
     }
 
     private void bindAreas() {
-        ItemAreas.bind(new ItemAreas.Toggles() {
+        ItemVolumes.bind(new ItemVolumes.Toggles() {
             @Override
-            public Set<String> areas() {
+            public Set<String> volumes() {
                 return Set.of("tania", "nightcross");
             }
 
             @Override
-            public boolean modInstalled(String area) {
-                return installed.contains(area);
+            public boolean modInstalled(String volume) {
+                return installed.contains(volume);
             }
 
             @Override
-            public boolean switchedOn(String area) {
-                return switchedOn.contains(area);
+            public boolean switchedOn(String volume) {
+                return switchedOn.contains(volume);
             }
         });
     }
@@ -46,12 +46,12 @@ class ItemAreasTest {
     private static void registerItems() throws Exception {
         ItemDefinitions.register(new JSONArray()
                 .put(HullItemRows.row("plain", "bridge", "HULL_PERCENT:1:1"))
-                .put(HullItemRows.row("tania_item", "bridge", "HULL_PERCENT:1:1").put(ItemAreas.AREA_COLUMN, "tania"))
-                .put(HullItemRows.row("nightcross_item", "bridge", "HULL_PERCENT:1:1").put(ItemAreas.AREA_COLUMN, "nightcross")));
+                .put(HullItemRows.row("tania_item", "bridge", "HULL_PERCENT:1:1").put(ItemVolumes.VOLUME_COLUMN, "tania"))
+                .put(HullItemRows.row("nightcross_item", "bridge", "HULL_PERCENT:1:1").put(ItemVolumes.VOLUME_COLUMN, "nightcross")));
     }
 
     @Test
-    void itemsOfAnAreaWhoseModIsMissingAreNeverLoaded() throws Exception {
+    void itemsOfAnVolumeWhoseModIsMissingAreNeverLoaded() throws Exception {
         installed.add("nightcross");
         bindAreas();
 
@@ -59,11 +59,11 @@ class ItemAreasTest {
 
         assertNotNull(ItemDefinitions.get("plain"));
         assertNull(ItemDefinitions.get("tania_item"));
-        assertEquals("nightcross", ItemDefinitions.get("nightcross_item").area());
+        assertEquals("nightcross", ItemDefinitions.get("nightcross_item").volume());
     }
 
     @Test
-    void itemsOfASwitchedOffAreaStayLoadedButNeverDrop() throws Exception {
+    void itemsOfASwitchedOffVolumeStayLoadedButNeverDrop() throws Exception {
         installed.addAll(Set.of("tania", "nightcross"));
         switchedOn.add("tania");
         bindAreas();

@@ -1,6 +1,6 @@
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { isUnshippedImagePath } from '../../../shared/imagePaths.ts';
-import { isRegionTag } from './tags.ts';
+import { isVolumeTag } from './tags.ts';
 import { tierOf, type TreeDocument } from './types.ts';
 
 function validateWormholes(document: TreeDocument, issues: string[]): void {
@@ -41,11 +41,11 @@ function validateWormholes(document: TreeDocument, issues: string[]): void {
 function validateTags(document: TreeDocument, vocabulary: Vocabulary, issues: string[]): void {
   for (const node of document.nodes) {
     const nodeTags = node.tags ?? [];
-    const regionTags = nodeTags.filter((tag) => isRegionTag(vocabulary, tag));
-    if (regionTags.length === 0) {
-      issues.push(`Node "${node.id}" has no region tag`);
-    } else if (regionTags.length > 1) {
-      issues.push(`Node "${node.id}" has ${regionTags.length} region tags (${regionTags.join(', ')}), needs exactly one`);
+    const volumeTags = nodeTags.filter((tag) => isVolumeTag(vocabulary, tag));
+    if (volumeTags.length === 0) {
+      issues.push(`Node "${node.id}" has no volume tag`);
+    } else if (volumeTags.length > 1) {
+      issues.push(`Node "${node.id}" has ${volumeTags.length} volume tags (${volumeTags.join(', ')}), needs exactly one`);
     }
     for (const tag of nodeTags) {
       if (!vocabulary.allTags.includes(tag)) {
@@ -57,8 +57,8 @@ function validateTags(document: TreeDocument, vocabulary: Vocabulary, issues: st
     for (const tag of type.tags ?? []) {
       if (!vocabulary.allTags.includes(tag)) {
         issues.push(`Type "${type.id}" has unknown tag "${tag}"`);
-      } else if (isRegionTag(vocabulary, tag)) {
-        issues.push(`Type "${type.id}" carries region tag "${tag}", region tags belong on nodes`);
+      } else if (isVolumeTag(vocabulary, tag)) {
+        issues.push(`Type "${type.id}" carries volume tag "${tag}", volume tags belong on nodes`);
       }
     }
   }

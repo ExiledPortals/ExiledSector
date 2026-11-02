@@ -33,11 +33,11 @@ public class GrantWormholeAnchorsCommand extends RandomPlayerFleetCommand {
         List<ItemData> grantedItems = ConsoleItems.grantRolled(playerFleet.getCargo(), grantedDefinitions, 1, random);
         List<String> inertIds = grantedItems.stream()
                 .map(ItemData::definitionId)
-                .filter(id -> !WormholeAnchorDefinitions.areaActive(id))
+                .filter(id -> !WormholeAnchorDefinitions.volumeActive(id))
                 .toList();
         WormholeAnchorDefinitions.recordFound(grantedItems, Global.getSector(), "granted by the console");
         Console.showMessage("Added " + counted(grantedDefinitions.size(), "wormhole anchor", "wormhole anchors") + " to your cargo."
-                + (inertIds.isEmpty() ? "" : " Inert because their area is off: " + String.join(", ", inertIds) + "."));
+                + (inertIds.isEmpty() ? "" : " Inert because their volume is off: " + String.join(", ", inertIds) + "."));
         return CommandResult.SUCCESS;
     }
 }
