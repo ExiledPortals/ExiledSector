@@ -2,7 +2,7 @@
 
 An ion storm front drifts slowly across the system on a path you can see in advance. Any battle fought inside it is fought in the storm: lightning arcs strike ships on both sides every few seconds. Battles inside drop more loot, so where you fight becomes the decision.
 
-Status: built 2026-10-29 apart from the in-game checks (step 2's Terrain FX pass, strike feel, visuals); move this plan to `completed/anomalies/` once those are done. Proposed 2026-10-28. See `overview.md` for the shared framework.
+Status: built 2026-10-29 apart from the in-game checks (step 2's Terrain FX pass, strike feel, visuals), which are still open. Proposed 2026-10-28. See `docs/plans/anomalies/overview.md` for the shared framework.
 
 ## How it plays
 
@@ -14,7 +14,7 @@ The storm adds no fleets. Chart fleets, bosses, convoys and anomaly fleets can a
 
 A battle is in the storm when the player fleet is inside the terrain as the engagement starts. The flag is recorded then, the way `ShaftEncounters.battleContextCreated` records the cavern battle, and a combat plugin of ours reads it.
 
-In the battle, an arc strikes every few seconds (placeholder 6), hitting a random ship on the field weighted by hull size, from either side. Strikes are EMP arcs (`CombatEngineAPI.spawnEmpArc`) that shields can block and phased ships can't be hit by, so raising shields and phasing are how you weather them. A brief flash and drifting cloud overlay are drawn by a `CombatLayeredRenderingPlugin` of ours, GL11 only, with no `glGet` calls while drawing (Fast Rendering rules). Combat nebula tiles are never used, per the Foiler mods rules in `../atlas.md`.
+In the battle, an arc strikes every few seconds (placeholder 6), hitting a random ship on the field weighted by hull size, from either side. Strikes are EMP arcs (`CombatEngineAPI.spawnEmpArc`) that shields can block and phased ships can't be hit by, so raising shields and phasing are how you weather them. A brief flash and drifting cloud overlay are drawn by a `CombatLayeredRenderingPlugin` of ours, GL11 only, with no `glGet` calls while drawing (Fast Rendering rules). Combat nebula tiles are never used, per the Foiler mods rules in `docs/plans/atlas.md`.
 
 ## Rewards
 
@@ -26,7 +26,7 @@ The storm counts as terrain for the Supply Convoy's escorts (`ConvoyTerrain`), s
 
 ## Chart modifiers
 
-Tuning lines are chart effects carried by an atlas source, per `overview.md`:
+Tuning lines are chart effects carried by an atlas source, per `docs/plans/anomalies/overview.md`:
 
 - `CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT`: increased quantity of items dropped by battles in the storm.
 - `CHART_STORM_STRIKE_FREQUENCY_PERCENT`: increased frequency of storm strikes.

@@ -2,7 +2,7 @@
 
 Two biome landmarks: a Remnant Nexus in every Remnant Expanse pocket and a Domain-era survey mothership in every Derelict Graveyard pocket. Each is a station that launches and rebuilds fleets of its faction for as long as it stands, the way a vanilla Nexus does.
 
-Status: built 2026-10-29 apart from the in-game checks (package `exiledsector.charts.anomaly.station`); move this plan to `completed/anomalies/` once those are done. Requested 2026-10-29. See `overview.md` for the shared framework.
+Status: built 2026-10-29 apart from the in-game checks (package `exiledsector.charts.anomaly.station`), which are still open. Requested 2026-10-29. See `docs/plans/anomalies/overview.md` for the shared framework.
 
 ## Placement
 

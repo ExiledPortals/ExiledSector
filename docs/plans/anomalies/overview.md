@@ -4,19 +4,23 @@ An anomaly is anything a star chart system holds beyond its ordinary layout, fle
 
 | Anomaly | Plan | Fights it adds |
 |---|---|---|
-| Relay Network | `relay_network.md` | none, escalates the systems it leads to |
+| Relay Network (built) | `../completed/anomalies/relay_network.md` | none, escalates the systems it leads to |
 | Excavation Sites (built) | `../completed/anomalies/excavation_sites.md` | one optional per open shaft, frigates and destroyers only; collapsed shafts are a marine raid |
-| Faction Skirmish | `faction_skirmish.md` | two sides' fleets; you join one or fight both |
+| Faction Skirmish (built) | `../completed/anomalies/faction_skirmish.md` | two sides' fleets; you join one or fight both |
 | Listening Post (built) | `../completed/anomalies/listening_post.md` | zero if you get in unseen, one if the alarm goes up |
-| Derelict Forge | `derelict_forge.md` | one, a Guardian and its drones guarding the forge |
-| Storm Front | `storm_front.md` | none, changes the fights the chart already has |
+| Derelict Forge (built) | `../completed/anomalies/derelict_forge.md` | one, a Guardian and its drones guarding the forge |
+| Storm Front (built) | `../completed/anomalies/storm_front.md` | none, changes the fights the chart already has |
 | Spatial Breach (built) | `../completed/anomalies/spatial_breach.md` | none |
 | Supply Convoy (built) | `../completed/anomalies/supply_convoy.md` | zero or one, sized by where you strike; a raid if it delivers |
 | Anomalous Debris (built) | `../completed/anomalies/anomalous_debris.md` | optional, one per dormant fleet |
-| Remnant Nexus and Domain-era Mothership | `biome_stations.md` | the station, plus the few fleets it keeps launching until it dies |
-| Coronal Hypershunt | `coronal_hypershunt.md` | one, the Omega fleet guarding the hypershunt |
+| Remnant Nexus and Domain-era Mothership (built) | `../completed/anomalies/biome_stations.md` | the station, plus the few fleets it keeps launching until it dies |
+| Coronal Hypershunt (built) | `../completed/anomalies/coronal_hypershunt.md` | one, the Omega fleet guarding the hypershunt |
+| Minefield | `minefield.md` | none, mines strewn across the fights the chart already has |
+| Fear the Reaper | `fear_the_reaper.md` | none, refits the chart's fleets with tracking Reapers |
+| Mirrored Space | `mirrored_ranges.md` | none, mirrors weapon ranges in the fights the chart already has |
+| Fire Ship Hangar (needs Secrets of the Frontier) | `fire_ship_hangar.md` | none, adds a capturable objective launching Dram fire ships to the fights the chart already has |
 
-Black Hole, Neutron Star, Dense Nebula, Asteroid Storm, Magnetic Storm and Stellar Flares are built and described in `../atlas.md` (Regions, layouts and anomalies). Powerful Boss, the former atlas marker (a bigger boss with more spoils and a guaranteed tier-up chart), is built as `../atlas.md` step 19; it rolls on its own `atlas_markers.csv` row instead of the shared anomaly chance. The Remnant Nexus and Domain-era Mothership never roll: a `biomes` column places each in exactly one system of every pocket of its biome (`biome_stations.md`), and they are the one exception to "no anomaly spawns waves", kept to two or three fleets at a time.
+Black Hole, Neutron Star, Dense Nebula, Asteroid Storm, Magnetic Storm and Stellar Flares are built and described in `../atlas.md` (Regions, layouts and anomalies). Powerful Boss, the former atlas marker (a bigger boss with more spoils and a guaranteed tier-up chart), is built as `../atlas.md` step 19; it rolls on its own `atlas_markers.csv` row instead of the shared anomaly chance. The Remnant Nexus and Domain-era Mothership never roll: a `biomes` column places each in exactly one system of every pocket of its biome (`../completed/anomalies/biome_stations.md`), and they are the one exception to "no anomaly spawns waves", kept to two or three fleets at a time.
 
 ## Fights
 
@@ -42,7 +46,7 @@ Every anomaly follows the Foiler mods compatibility rules in `../atlas.md`: no c
 
 Star Charts roll no anomaly lines (since 2026-10-26, `../completed/anomalies/spatial_breach_changes.md`): every anomaly comes from the atlas, rolled by a cell or inserted, so the `CHART_<ANOMALY>_CHANCE` lines in the unbuilt plans are dropped. An anomaly's own tuning lines are still chart effects, carried by an atlas source (an anomaly's `effects` column or an atlas node's effects), and follow `docs/tooltip_wording.md`.
 
-Players favour one anomaly over the others with intel and atlas passives, and can insert anomalies into atlas systems (`../atlas.md`, Anomalies) with Atlas Catalysts (`atlas_catalysts.md`).
+Players favour one anomaly over the others with intel and atlas passives, and can insert anomalies into atlas systems (`../atlas.md`, Anomalies) with Atlas Catalysts (`../completed/anomalies/atlas_catalysts.md`).
 
 ## Build order
 

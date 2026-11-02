@@ -2,7 +2,7 @@
 
 Two factions fight over a system on the border between their territories on the atlas. Before the wormhole opens, the player sides with the defender, sides with the attacker, or stays out. Siding with the attacker and winning hands the system to the attacker on the atlas; every other outcome leaves it with its owner.
 
-Status: built 2026-10-26, its Atlas Catalyst 2026-10-29, apart from the in-game checks below; move this plan to `completed/` once those are done. Redesigned 2026-10-26 around atlas territories, replacing the allied-foothold design. See `overview.md` for the shared framework.
+Status: built 2026-10-26, its Atlas Catalyst 2026-10-29, apart from the in-game checks below, which are still open. Redesigned 2026-10-26 around atlas territories, replacing the allied-foothold design. See `docs/plans/anomalies/overview.md` for the shared framework.
 
 ## Where it appears
 

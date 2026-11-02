@@ -148,7 +148,7 @@ Per-anomaly translation key prefixes don't match ids or packages: `chart.debris`
 - `docs/i18n/glossary-zh_CN.md` still lists Modular Hull Socket, Socketable Parts, Socket Modification, the Kernels and Synthesise, which contradicts `zh_CN.json`. Translators follow it, so fix it first.
 - `special_items.csv` fallback text: "Modular Hull Socket Item", "Wards can only be found", "Replication Kernels can't be synthesised", "Fixed modifiers". `commodities.csv` and `descriptions.csv` have more of the same.
 - `chart.ui.settings.debugTools.tooltip` puts the Complete button on the bench; it is on the atlas.
-- `charts_packages.md` lists `BuiltInTable` in the root and a `ChartObjective` that doesn't exist. `atlas.md` mentions `ChartExpansion` and `ChartPhenomenon`, and `atlas_catalysts.md` mentions `CatalystTile`.
+- `completed/charts_packages.md` lists `BuiltInTable` in the root and a `ChartObjective` that doesn't exist. `atlas.md` mentions `ChartExpansion` and `ChartPhenomenon`, and `atlas_catalysts.md` mentions `CatalystTile`.
 - `tools/HullUpgradeIcons.java` generates 12 icons, of which only `hull_upgrade_cruiser_unique.png` is used. The old `*_kernel.png` cargo icons are used only by legacy `commodities.csv`.
 
 ## Order of work

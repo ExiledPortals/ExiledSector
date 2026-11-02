@@ -2,7 +2,7 @@
 
 Dormant Domain-era relays sit around the system: a nav buoy, a comm relay and a sensor array. Waking all three recovers a data trace someone left behind, and finishing the system sends the network on, further out along the trail. Each step of the chain makes the whole next system harder and richer, for three or four steps, and the last boss guarantees a unique. Missing a step loses the trace for good.
 
-Status: built 2026-10-27 apart from the in-game checks below; move this plan to `completed/` once those are done. Redesigned 2026-10-27 as a chain across atlas systems, replacing the pre-captured battle objectives. See `overview.md` for the shared framework.
+Status: built 2026-10-27 apart from the in-game checks below, which are still open. Redesigned 2026-10-27 as a chain across atlas systems, replacing the pre-captured battle objectives. See `docs/plans/anomalies/overview.md` for the shared framework.
 
 ## In a system
 
@@ -37,7 +37,7 @@ Stage 1 adds nothing. From stage 2 on, each stage adds lines to the whole system
 
 ## Chart modifiers
 
-Tuning lines are chart effects carried by an atlas source, per `overview.md`:
+Tuning lines are chart effects carried by an atlas source, per `docs/plans/anomalies/overview.md`:
 
 - `CHART_RELAY_COST_PERCENT`: reduced or increased supply and machinery cost to wake relays.
 - `CHART_RELAY_CHAIN_STAGES`: +N to relay chain stages.

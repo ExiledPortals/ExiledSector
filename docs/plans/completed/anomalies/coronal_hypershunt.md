@@ -2,7 +2,7 @@
 
 A rare star anomaly found only far out in the Outer Reaches: the system's star is a blue supergiant with a Domain coronal hypershunt in its corona, guarded by an Omega fleet. Beating the fleet earns its loot, but the hypershunt itself can never be restored.
 
-Status: built 2026-10-31 apart from the in-game checks; move this plan to `completed/anomalies/` once those are done. Requested 2026-10-31. See `overview.md` for the shared framework.
+Status: built 2026-10-31 apart from the in-game checks, which are still open. Requested 2026-10-31. See `docs/plans/anomalies/overview.md` for the shared framework.
 
 ## Design
 
