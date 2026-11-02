@@ -140,9 +140,16 @@ final class LionsGazeListener extends ShipCombatListener implements DamageDealtM
     }
 
     private List<ShipAPI> findNearbyEnemies(ShipAPI primaryTarget, Vector2f point, float radius, int count) {
+        boolean stationTarget = rootShip(primaryTarget).isStation();
         List<ShipAPI> candidates = CombatQueries.hostilesNear(ownerShip, point, radius,
-                other -> other != ownerShip && other != primaryTarget && !other.isFighter());
+                other -> other != ownerShip && other != primaryTarget && !other.isFighter()
+                        && (stationTarget || !CombatQueries.isSameStation(primaryTarget, other)));
         return CombatQueries.nearestFirst(candidates, point, count);
+    }
+
+    private static ShipAPI rootShip(ShipAPI ship) {
+        ShipAPI parent = ship.getParentStation();
+        return parent != null ? parent : ship;
     }
 
     private void spawnSimulatedBeam(CombatEngineAPI engine, Vector2f from, ShipAPI splitTarget,

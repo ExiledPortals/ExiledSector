@@ -188,6 +188,42 @@ class LionsGazeListenerTest {
     }
 
     @Test
+    void aBeamHittingAModularShipSkipsItsSiblingModulesAndParentButNotOtherShips() {
+        ShipAPI firing = shipAt(0f, 0);
+        when(firing.getMutableStats().getDynamic().getValue(LionsGazeListener.TARGETS_KEY, 0f)).thenReturn(3f);
+        ShipAPI parent = shipAt(150f, 1);
+        ShipAPI primaryModule = shipAt(100f, 1);
+        when(primaryModule.getParentStation()).thenReturn(parent);
+        ShipAPI siblingModule = shipAt(120f, 1);
+        when(siblingModule.getParentStation()).thenReturn(parent);
+        ShipAPI otherShip = shipAt(300f, 1);
+        ships.addAll(List.of(firing, parent, primaryModule, siblingModule, otherShip));
+        splitTargetFlux(otherShip, 100f, 150f, new boolean[1]);
+
+        new LionsGazeListener(firing).modifyDamageDealt(beamFrom(simulatedWeapon()), primaryModule, tick(false), new Vector2f(100f, 0f), true);
+
+        verify(engine).applyDamage(any(), eq(otherShip), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
+        verify(engine, never()).applyDamage(any(), eq(parent), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
+        verify(engine, never()).applyDamage(any(), eq(siblingModule), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
+    }
+
+    @Test
+    void aBeamHittingAStationStillSplitsToItsModules() {
+        ShipAPI firing = shipAt(0f, 0);
+        when(firing.getMutableStats().getDynamic().getValue(LionsGazeListener.TARGETS_KEY, 0f)).thenReturn(1f);
+        ShipAPI station = shipAt(100f, 1);
+        when(station.isStation()).thenReturn(true);
+        ShipAPI module = shipAt(200f, 1);
+        when(module.getParentStation()).thenReturn(station);
+        ships.addAll(List.of(firing, station, module));
+        splitTargetFlux(module, 100f, 150f, new boolean[1]);
+
+        new LionsGazeListener(firing).modifyDamageDealt(beamFrom(simulatedWeapon()), station, tick(false), new Vector2f(100f, 0f), true);
+
+        verify(engine).applyDamage(any(), eq(module), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
+    }
+
+    @Test
     void aBeamWithOnlyFightersNearbyDoesNotSplit() {
         ShipAPI firing = shipAt(0f, 0);
         when(firing.getMutableStats().getDynamic().getValue(LionsGazeListener.TARGETS_KEY, 0f)).thenReturn(1f);

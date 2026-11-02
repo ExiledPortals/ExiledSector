@@ -210,7 +210,8 @@ modules don't count (`KillFluxVentListener`).
 
 A beam hit on an enemy ship splits to up to N more targets (`BEAM_WEAPON_SPLIT_TARGETS_FLAT`): the nearest
 hittable hostile non-fighters within half the beam's range of the impact, picked again every 0.2 s or when one
-dies. Damage is shared evenly. The
+dies. Modules of the hit ship, or the ship its hit module belongs to, are skipped unless it's a station. Damage is
+shared evenly. The
 original target's share is a damage modifier (so it also scales that hit's EMP), and the split runs before
 every other damage-dealt effect, so they all see the shared amount.
 
