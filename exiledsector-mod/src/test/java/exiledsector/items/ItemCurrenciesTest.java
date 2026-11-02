@@ -56,7 +56,7 @@ class ItemCurrenciesTest {
         }
 
         @Override
-        public boolean synthesisable() {
+        public boolean growable() {
             return true;
         }
 
@@ -106,54 +106,54 @@ class ItemCurrenciesTest {
         when(cargo.getQuantity(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(itemId))).thenReturn(quantity);
     }
 
-    private record Expected(String itemId, String key, int partsCost, float dropWeight, MaterialTier tier, boolean synthesisable) {
+    private record Expected(String itemId, String key, int partsCost, float dropWeight, MaterialTier tier, boolean growable) {
     }
 
     @Test
     void materialsGetRarerAndCostlierToGrowInTheIntendedOrder() {
         List<String> commonestFirst = List.of(
-                CraftingCurrency.AUGMENTATION.itemId(), CraftingCurrency.ATTUNEMENT.itemId(), CraftingCurrency.SUBSTITUTION.itemId(),
-                CraftingCurrency.CORRUPTION.itemId(), CraftingInhibitor.PREFIX.itemId(), CraftingInhibitor.SUFFIX.itemId(),
-                CraftingCurrency.TRANSPOSITION.itemId(), CraftingCurrency.ANNULMENT.itemId(), CraftingCurrency.RECALIBRATION.itemId(), CraftingCurrency.FIXATION.itemId(),
-                CraftingCurrency.REPLICATION.itemId());
+                Nanoswarm.AUGMENTATION.itemId(), Nanoswarm.FUNDAMENTAL.itemId(), Nanoswarm.RESHAPING.itemId(),
+                Nanoswarm.CORRUPTION.itemId(), CraftingInhibitor.PREFIX.itemId(), CraftingInhibitor.SUFFIX.itemId(),
+                Nanoswarm.METAMORPH.itemId(), Nanoswarm.ANNULMENT.itemId(), Nanoswarm.TUNING.itemId(), Nanoswarm.IMMUTABLE.itemId(),
+                Nanoswarm.REPLICATION.itemId());
         float previousWeight = Float.MAX_VALUE;
         int previousCost = 0;
         for (String itemId : commonestFirst) {
-            CraftingCurrency currency = CraftingCurrency.byItemId(itemId);
+            Nanoswarm currency = Nanoswarm.byItemId(itemId);
             GrowableMaterial material = currency != null ? currency : CraftingInhibitor.byItemId(itemId);
             float weight = currency != null ? currency.dropWeight() : CraftingInhibitor.byItemId(itemId).dropWeight();
             assertTrue(weight <= previousWeight, itemId + " drops more often than the material before it");
             previousWeight = weight;
-            if (material.synthesisable()) {
+            if (material.growable()) {
                 assertTrue(material.partsCost() >= previousCost, itemId + " is cheaper to grow than a commoner material");
                 previousCost = material.partsCost();
             }
         }
-        assertTrue(CraftingInhibitor.PREFIX.dropWeight() < CraftingCurrency.CORRUPTION.dropWeight());
-        assertTrue(CraftingCurrency.TRANSPOSITION.dropWeight() < CraftingInhibitor.SUFFIX.dropWeight());
+        assertTrue(CraftingInhibitor.PREFIX.dropWeight() < Nanoswarm.CORRUPTION.dropWeight());
+        assertTrue(Nanoswarm.METAMORPH.dropWeight() < CraftingInhibitor.SUFFIX.dropWeight());
     }
 
     @Test
     void everyBuiltInCurrencyIsRegisteredCommonestFirstWithItsValues() {
         List<Expected> expected = List.of(
-                new Expected("exiledSector_augmentation_kernel", "augmentation", 10, 6f, MaterialTier.MINOR, true),
-                new Expected("exiledSector_attunement_kernel", "attunement", 15, 4f, MaterialTier.MINOR, true),
-                new Expected("exiledSector_substitution_kernel", "substitution", 20, 3f, MaterialTier.MAJOR, true),
-                new Expected("exiledSector_corruption_kernel", "corruption", 50, 1.5f, MaterialTier.EXOTIC, true),
-                new Expected("exiledSector_transposition_kernel", "transposition", 150, 0.4f, MaterialTier.MYTHIC, true),
-                new Expected("exiledSector_annulment_kernel", "annulment", 200, 0.3f, MaterialTier.MYTHIC, true),
-                new Expected("exiledSector_recalibration_kernel", "recalibration", 200, 0.3f, MaterialTier.MYTHIC, true),
-                new Expected("exiledSector_fixation_kernel", "fixation", 300, 0.2f, MaterialTier.MYTHIC, true),
-                new Expected("exiledSector_replication_kernel", "replication", 0, 0.035f, MaterialTier.MYTHIC, false));
+                new Expected("exiledSector_augmentation_nanoswarm", "augmentation", 10, 6f, MaterialTier.MINOR, true),
+                new Expected("exiledSector_fundamental_nanoswarm", "fundamental", 15, 4f, MaterialTier.MINOR, true),
+                new Expected("exiledSector_reshaping_nanoswarm", "reshaping", 20, 3f, MaterialTier.MAJOR, true),
+                new Expected("exiledSector_corrupted_nanoswarm", "corruption", 50, 1.5f, MaterialTier.EXOTIC, true),
+                new Expected("exiledSector_metamorph_nanoswarm", "metamorph", 150, 0.4f, MaterialTier.MYTHIC, true),
+                new Expected("exiledSector_annulment_nanoswarm", "annulment", 200, 0.3f, MaterialTier.MYTHIC, true),
+                new Expected("exiledSector_tuning_nanoswarm", "tuning", 200, 0.3f, MaterialTier.MYTHIC, true),
+                new Expected("exiledSector_immutable_nanoswarm", "immutable", 300, 0.2f, MaterialTier.MYTHIC, true),
+                new Expected("exiledSector_replicator_nanoseed", "replication", 0, 0.035f, MaterialTier.MYTHIC, false));
 
-        assertEquals(Arrays.asList(CraftingCurrency.values()), ItemCurrencies.all());
+        assertEquals(Arrays.asList(Nanoswarm.values()), ItemCurrencies.all());
         assertEquals(expected, ItemCurrencies.all().stream().map(currency -> new Expected(currency.itemId(), currency.key(),
-                currency.partsCost(), currency.dropWeight(), currency.tier(), currency.synthesisable())).toList());
-        for (CraftingCurrency currency : CraftingCurrency.values()) {
+                currency.partsCost(), currency.dropWeight(), currency.tier(), currency.growable())).toList());
+        for (Nanoswarm currency : Nanoswarm.values()) {
             assertSame(currency, ItemCurrencies.byItemId(currency.itemId()));
             assertEquals(currency.name().toLowerCase(java.util.Locale.ROOT), currency.key());
         }
-        assertEquals(ItemCurrencies.all().stream().filter(currency -> currency != CraftingCurrency.ANNULMENT).toList(),
+        assertEquals(ItemCurrencies.all().stream().filter(currency -> currency != Nanoswarm.ANNULMENT).toList(),
                 ItemCurrencies.forType(ItemType.SUBROUTINE));
         assertEquals(ItemCurrencies.all(), ItemCurrencies.forType(ItemType.HULL_ITEM));
         assertEquals(List.of(), ItemCurrencies.forType(null));
@@ -163,10 +163,10 @@ class ItemCurrenciesTest {
 
     @Test
     void theBuiltInsKeepTheirWardAndCopyRules() {
-        Set<CraftingCurrency> respectsInhibitors = EnumSet.noneOf(CraftingCurrency.class);
-        Set<CraftingCurrency> createsCopy = EnumSet.noneOf(CraftingCurrency.class);
-        Set<CraftingCurrency> mayChangeDefinition = EnumSet.noneOf(CraftingCurrency.class);
-        for (CraftingCurrency currency : CraftingCurrency.values()) {
+        Set<Nanoswarm> respectsInhibitors = EnumSet.noneOf(Nanoswarm.class);
+        Set<Nanoswarm> createsCopy = EnumSet.noneOf(Nanoswarm.class);
+        Set<Nanoswarm> mayChangeDefinition = EnumSet.noneOf(Nanoswarm.class);
+        for (Nanoswarm currency : Nanoswarm.values()) {
             if (currency.respectsInhibitors()) {
                 respectsInhibitors.add(currency);
             }
@@ -178,16 +178,16 @@ class ItemCurrenciesTest {
             }
         }
 
-        assertEquals(EnumSet.of(CraftingCurrency.RECALIBRATION, CraftingCurrency.SUBSTITUTION, CraftingCurrency.ANNULMENT,
-                CraftingCurrency.FIXATION), respectsInhibitors);
-        assertEquals(EnumSet.of(CraftingCurrency.REPLICATION), createsCopy);
-        assertEquals(EnumSet.of(CraftingCurrency.TRANSPOSITION, CraftingCurrency.CORRUPTION), mayChangeDefinition);
+        assertEquals(EnumSet.of(Nanoswarm.TUNING, Nanoswarm.RESHAPING, Nanoswarm.ANNULMENT,
+                Nanoswarm.IMMUTABLE), respectsInhibitors);
+        assertEquals(EnumSet.of(Nanoswarm.REPLICATION), createsCopy);
+        assertEquals(EnumSet.of(Nanoswarm.METAMORPH, Nanoswarm.CORRUPTION), mayChangeDefinition);
     }
 
     @Test
     void kernelDropsListEveryCurrencyAndInhibitorByWeight() {
         List<ItemDrops.CurrencyDrop> builtInDrops = new ArrayList<>();
-        for (CraftingCurrency currency : CraftingCurrency.values()) {
+        for (Nanoswarm currency : Nanoswarm.values()) {
             builtInDrops.add(new ItemDrops.CurrencyDrop(currency.itemId(), currency.dropWeight()));
         }
         for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
@@ -205,7 +205,7 @@ class ItemCurrenciesTest {
         owns(PURGE_ID, 2f);
 
         assertSame(purge, ItemCurrencies.byItemId(PURGE_ID));
-        assertEquals(purge, ItemCurrencies.all().get(CraftingCurrency.values().length));
+        assertEquals(purge, ItemCurrencies.all().get(Nanoswarm.values().length));
         assertTrue(ItemCurrencies.forType(ItemType.HULL_ITEM).contains(purge));
         assertFalse(ItemCurrencies.forType(ItemType.SUBROUTINE).contains(purge));
         assertTrue(MaterialItems.isMaterial(PURGE_ID));
@@ -225,13 +225,13 @@ class ItemCurrenciesTest {
         ItemCurrencies.register(purge);
 
         assertThrows(IllegalArgumentException.class, () -> ItemCurrencies.register(purge));
-        assertThrows(IllegalArgumentException.class, () -> ItemCurrencies.register(CraftingCurrency.AUGMENTATION));
+        assertThrows(IllegalArgumentException.class, () -> ItemCurrencies.register(Nanoswarm.AUGMENTATION));
         assertThrows(IllegalArgumentException.class, () -> ItemCurrencies.register(null));
-        assertFalse(ItemCurrencies.unregister(CraftingCurrency.AUGMENTATION));
+        assertFalse(ItemCurrencies.unregister(Nanoswarm.AUGMENTATION));
         assertFalse(ItemCurrencies.unregister(null));
         assertTrue(ItemCurrencies.unregister(purge));
         assertFalse(ItemCurrencies.unregister(purge));
-        assertEquals(Arrays.asList(CraftingCurrency.values()), ItemCurrencies.all());
+        assertEquals(Arrays.asList(Nanoswarm.values()), ItemCurrencies.all());
         assertFalse(MaterialItems.isMaterial(PURGE_ID));
     }
 }

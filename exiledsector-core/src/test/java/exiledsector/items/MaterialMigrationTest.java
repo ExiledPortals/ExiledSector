@@ -17,7 +17,7 @@ class MaterialMigrationTest {
     @Test
     void legacyCommodityStacksBecomeSpecialItemStacks() {
         CargoAPI cargo = mock(CargoAPI.class);
-        String fixation = CraftingCurrency.FIXATION.itemId();
+        String fixation = Nanoswarm.IMMUTABLE.itemId();
         when(cargo.getCommodityQuantity(anyString())).thenReturn(0f);
         when(cargo.getCommodityQuantity(ItemDisassembly.PARTS_ITEM_ID)).thenReturn(37f);
         when(cargo.getCommodityQuantity(fixation)).thenReturn(2f);

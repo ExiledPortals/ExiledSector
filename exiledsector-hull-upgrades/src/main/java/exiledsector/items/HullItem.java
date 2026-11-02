@@ -168,7 +168,7 @@ public final class HullItem extends Item {
     }
 
     @Override
-    public boolean retuneTrait(Random random) {
+    public boolean tuneTrait(Random random) {
         if (!hasTunableTrait()) {
             return false;
         }

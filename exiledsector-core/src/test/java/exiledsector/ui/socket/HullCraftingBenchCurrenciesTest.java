@@ -1,6 +1,6 @@
 package exiledsector.ui.socket;
 
-import exiledsector.items.CraftingCurrency;
+import exiledsector.items.Nanoswarm;
 import exiledsector.items.ItemCurrency;
 import exiledsector.items.ItemNature;
 import exiledsector.items.ItemType;
@@ -29,15 +29,15 @@ class HullCraftingBenchCurrenciesTest {
     void anExtraHullItemCurrencyShowsOnlyWhileOwned() {
         ItemCurrency engram = extra("engram", ItemType.HULL_ITEM);
         ItemCurrency chartOnly = extra("cipher", ItemType.STAR_CHART);
-        List<ItemCurrency> registered = List.of(CraftingCurrency.AUGMENTATION, engram, chartOnly);
+        List<ItemCurrency> registered = List.of(Nanoswarm.AUGMENTATION, engram, chartOnly);
 
         List<ItemCurrency> owned = HullCraftingBench.hullCraftingBenchCurrencies(registered, itemId -> 1);
         List<ItemCurrency> none = HullCraftingBench.hullCraftingBenchCurrencies(registered, itemId -> 0);
 
-        assertEquals(CraftingCurrency.values().length + 1, owned.size());
+        assertEquals(Nanoswarm.values().length + 1, owned.size());
         assertTrue(owned.contains(engram));
         assertFalse(owned.contains(chartOnly));
-        assertEquals(List.of(CraftingCurrency.values()), none);
+        assertEquals(List.of(Nanoswarm.values()), none);
     }
 
     @Test
@@ -45,7 +45,7 @@ class HullCraftingBenchCurrenciesTest {
         ItemCurrency engram = extra("engram", ItemType.HULL_ITEM);
         List<ItemCurrency> shown = HullCraftingBench.hullCraftingBenchCurrencies(List.of(engram), itemId -> 1);
 
-        assertEquals(List.of(CraftingCurrency.values()), shown.stream().filter(HullCraftingBench.INSTANCE::inOrbit).toList());
+        assertEquals(List.of(Nanoswarm.values()), shown.stream().filter(HullCraftingBench.INSTANCE::inOrbit).toList());
         assertEquals(80f, CraftingBenchPanel.columnTileTop(0, 1, 100f, 40f, 10f, 300f));
         assertEquals(55f, CraftingBenchPanel.columnTileTop(0, 2, 100f, 40f, 10f, 300f));
         assertEquals(105f, CraftingBenchPanel.columnTileTop(1, 2, 100f, 40f, 10f, 300f));
@@ -62,7 +62,7 @@ class HullCraftingBenchCurrenciesTest {
     @Test
     void theUsedNoticeComesFromTheCurrencyUnlessACorruptionOutcomeNamesIt() {
         assertEquals("ui.craftingBench.notice.used.augmentation.hardware",
-                HullCraftingBench.usedNoticeKey(CraftingCurrency.AUGMENTATION, null, ItemNature.HARDWARE));
+                HullCraftingBench.usedNoticeKey(Nanoswarm.AUGMENTATION, null, ItemNature.HARDWARE));
         assertEquals("notice.engram", HullCraftingBench.usedNoticeKey(extra("engram", ItemType.HULL_ITEM), null, ItemNature.HARDWARE));
     }
 }

@@ -1,6 +1,6 @@
 package exiledsector.ui.cargo;
 
-import exiledsector.items.CraftingCurrency;
+import exiledsector.items.Nanoswarm;
 import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.ItemDisassembly;
 import exiledsector.items.MaterialTier;
@@ -70,9 +70,9 @@ class CargoIconFxTest {
     @Test
     void eachMaterialGetsItsOwnSwarmMotion() {
         assertEquals(SwarmMotion.SLURRY, CargoIconLooks.swarmFor(ItemDisassembly.PARTS_ITEM_ID));
-        assertEquals(SwarmMotion.ORBIT, CargoIconLooks.swarmFor(CraftingCurrency.AUGMENTATION.itemId()));
-        assertEquals(SwarmMotion.FERAL, CargoIconLooks.swarmFor(CraftingCurrency.CORRUPTION.itemId()));
-        assertEquals(SwarmMotion.REPLICATING, CargoIconLooks.swarmFor(CraftingCurrency.REPLICATION.itemId()));
+        assertEquals(SwarmMotion.ORBIT, CargoIconLooks.swarmFor(Nanoswarm.AUGMENTATION.itemId()));
+        assertEquals(SwarmMotion.FERAL, CargoIconLooks.swarmFor(Nanoswarm.CORRUPTION.itemId()));
+        assertEquals(SwarmMotion.REPLICATING, CargoIconLooks.swarmFor(Nanoswarm.REPLICATION.itemId()));
         assertEquals(SwarmMotion.CONTAINED, CargoIconLooks.swarmFor(CraftingInhibitor.PREFIX.itemId()));
         assertEquals(SwarmMotion.NONE, CargoIconLook.outlined(Color.WHITE).swarm(), "hull items have no swarm");
     }
@@ -104,7 +104,7 @@ class CargoIconFxTest {
         assertNull(MaterialDropAnnouncer.bestTier(Map.of()));
         assertEquals(MaterialTier.BASIC, MaterialDropAnnouncer.bestTier(Map.of(ItemDisassembly.PARTS_ITEM_ID, 4)));
         assertEquals(MaterialTier.EXOTIC, MaterialDropAnnouncer.bestTier(Map.of(ItemDisassembly.PARTS_ITEM_ID, 4,
-                CraftingCurrency.CORRUPTION.itemId(), 1, CraftingCurrency.AUGMENTATION.itemId(), 1)));
+                Nanoswarm.CORRUPTION.itemId(), 1, Nanoswarm.AUGMENTATION.itemId(), 1)));
         assertTrue(MaterialTier.MYTHIC.announced());
         assertFalse(MaterialTier.MAJOR.announced());
     }

@@ -2,7 +2,7 @@ package exiledsector.ui.socket;
 
 import exiledsector.i18n.RealCatalogue;
 import exiledsector.items.CorruptionOutcome;
-import exiledsector.items.CraftingCurrency;
+import exiledsector.items.Nanoswarm;
 import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.ItemNature;
 import exiledsector.items.MaterialItems;
@@ -27,9 +27,9 @@ class CraftingBenchStringKeysTest {
             require(catalogue, "material." + itemId + ".name", missing);
             require(catalogue, "material." + itemId + ".description", missing);
         }
-        for (CraftingCurrency currency : CraftingCurrency.values()) {
+        for (Nanoswarm currency : Nanoswarm.values()) {
             require(catalogue, HullCraftingBench.INSTANCE.currencyDescriptionKey(currency), missing);
-            if (currency == CraftingCurrency.CORRUPTION) {
+            if (currency == Nanoswarm.CORRUPTION) {
                 for (ItemNature nature : ItemNature.values()) {
                     for (CorruptionOutcome outcome : shownOutcomes(nature)) {
                         require(catalogue, HullCraftingBench.usedNoticeKey(currency, outcome, nature), missing);

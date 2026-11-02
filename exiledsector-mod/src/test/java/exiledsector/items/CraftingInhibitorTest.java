@@ -59,84 +59,84 @@ class CraftingInhibitorTest {
     }
 
     @Test
-    void aPrefixInhibitorKeepsRecalibrationOffEveryPrefix() {
+    void aPrefixInhibitorKeepsTuningOffEveryPrefix() {
         Item item = rare();
         List<RolledModifier> prefixes = side(item, ModifierSlot.PREFIX);
 
         for (long seed = 0; seed < 20; seed++) {
-            assertNotNull(ItemCrafting.recalibrate(item, new Random(seed), Set.of(ModifierSlot.PREFIX)));
+            assertNotNull(ItemCrafting.tune(item, new Random(seed), Set.of(ModifierSlot.PREFIX)));
             assertEquals(prefixes, side(item, ModifierSlot.PREFIX));
         }
     }
 
     @Test
-    void aSuffixInhibitorKeepsSubstitutionOffEverySuffix() {
+    void aSuffixInhibitorKeepsReshapingOffEverySuffix() {
         Item item = rare();
         List<RolledModifier> suffixes = side(item, ModifierSlot.SUFFIX);
 
         for (long seed = 0; seed < 20; seed++) {
-            ItemCrafting.substitute(item, new Random(seed), Set.of(ModifierSlot.SUFFIX));
+            ItemCrafting.reshape(item, new Random(seed), Set.of(ModifierSlot.SUFFIX));
             assertEquals(suffixes, side(item, ModifierSlot.SUFFIX));
         }
     }
 
     @Test
-    void aWardPicksWhichSideFixationLands() {
+    void anInhibitorPicksWhichSideImmutableLands() {
         for (long seed = 0; seed < 20; seed++) {
             Item item = rare();
-            ItemCrafting.fixate(item, new Random(seed), Set.of(ModifierSlot.PREFIX));
-            assertTrue(side(item, ModifierSlot.SUFFIX).stream().anyMatch(RolledModifier::locked));
-            assertFalse(side(item, ModifierSlot.PREFIX).stream().anyMatch(RolledModifier::locked));
+            ItemCrafting.makeImmutable(item, new Random(seed), Set.of(ModifierSlot.PREFIX));
+            assertTrue(side(item, ModifierSlot.SUFFIX).stream().anyMatch(RolledModifier::immutable));
+            assertFalse(side(item, ModifierSlot.PREFIX).stream().anyMatch(RolledModifier::immutable));
         }
     }
 
     @Test
-    void inhibitorsBlockTranspositionButLeaveCorruptionAndReplicationAlone() {
+    void inhibitorsBlockMetamorphButLeaveCorruptionAndReplicationAlone() {
         Item unique = store.add(ItemDefinitions.get("relic_a"), 5L);
         List<CraftingInhibitor> prefixInhibitor = List.of(CraftingInhibitor.PREFIX);
 
-        assertTrue(ItemCrafting.canUse(CraftingCurrency.TRANSPOSITION, unique, definition -> true));
-        assertFalse(ItemCrafting.canUse(CraftingCurrency.TRANSPOSITION, unique, definition -> true, prefixInhibitor));
-        assertTrue(ItemCrafting.canUse(CraftingCurrency.CORRUPTION, unique, definition -> true, prefixInhibitor));
-        assertTrue(ItemCrafting.canUse(CraftingCurrency.REPLICATION, unique, definition -> true, prefixInhibitor));
-        assertTrue(ItemCrafting.inhibitorsSpentBy(CraftingCurrency.CORRUPTION, unique, prefixInhibitor).isEmpty());
-        assertTrue(ItemCrafting.inhibitorsSpentBy(CraftingCurrency.REPLICATION, unique, prefixInhibitor).isEmpty());
-        assertTrue(ItemCrafting.inhibitorsSpentBy(CraftingCurrency.AUGMENTATION, rare(), prefixInhibitor).isEmpty());
+        assertTrue(ItemCrafting.canUse(Nanoswarm.METAMORPH, unique, definition -> true));
+        assertFalse(ItemCrafting.canUse(Nanoswarm.METAMORPH, unique, definition -> true, prefixInhibitor));
+        assertTrue(ItemCrafting.canUse(Nanoswarm.CORRUPTION, unique, definition -> true, prefixInhibitor));
+        assertTrue(ItemCrafting.canUse(Nanoswarm.REPLICATION, unique, definition -> true, prefixInhibitor));
+        assertTrue(ItemCrafting.inhibitorsSpentBy(Nanoswarm.CORRUPTION, unique, prefixInhibitor).isEmpty());
+        assertTrue(ItemCrafting.inhibitorsSpentBy(Nanoswarm.REPLICATION, unique, prefixInhibitor).isEmpty());
+        assertTrue(ItemCrafting.inhibitorsSpentBy(Nanoswarm.AUGMENTATION, rare(), prefixInhibitor).isEmpty());
     }
 
     @Test
     void aWardIsSpentOnlyWhenItProtectsAnEffect() {
         Item item = rare();
-        owns(CraftingCurrency.RECALIBRATION.itemId(), 1f);
+        owns(Nanoswarm.TUNING.itemId(), 1f);
         owns(CraftingInhibitor.PREFIX.itemId(), 1f);
 
-        assertEquals(Set.of(CraftingInhibitor.PREFIX), ItemCrafting.inhibitorsSpentBy(CraftingCurrency.RECALIBRATION, item, List.of(CraftingInhibitor.PREFIX)));
-        assertNotNull(ItemCrafting.use(CraftingCurrency.RECALIBRATION, item, CraftingMaterials.cargoOnly(cargo), store, new Random(3L),
+        assertEquals(Set.of(CraftingInhibitor.PREFIX), ItemCrafting.inhibitorsSpentBy(Nanoswarm.TUNING, item, List.of(CraftingInhibitor.PREFIX)));
+        assertNotNull(ItemCrafting.use(Nanoswarm.TUNING, item, CraftingMaterials.cargoOnly(cargo), store, new Random(3L),
                 definition -> true, List.of(CraftingInhibitor.PREFIX)));
 
         verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(CraftingInhibitor.PREFIX.itemId()), 1);
-        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(CraftingCurrency.RECALIBRATION.itemId()), 1);
+        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(Nanoswarm.TUNING.itemId()), 1);
     }
 
     @Test
     void aWardGuardingOnlyAFixedEffectIsNotSpent() throws Exception {
         ItemDefinitions.register(new JSONArray().put(HullItemRows.row("lean", "bridge", "HULL_MULT:4:6", "ARMOR_PERCENT:6:9")));
         Item item = store.add(HullItemRows.data("lean", 1L, List.of(new RolledEffect("HULL_MULT", 5f), new RolledEffect("ARMOR_PERCENT", 7f)), null));
-        ItemCrafting.fixate(item, new Random(1L), Set.of(ModifierSlot.SUFFIX));
+        ItemCrafting.makeImmutable(item, new Random(1L), Set.of(ModifierSlot.SUFFIX));
 
-        assertTrue(side(item, ModifierSlot.PREFIX).get(0).locked());
-        assertTrue(ItemCrafting.inhibitorsSpentBy(CraftingCurrency.RECALIBRATION, item, List.of(CraftingInhibitor.PREFIX)).isEmpty());
-        assertTrue(ItemCrafting.inhibitorsSpentBy(CraftingCurrency.SUBSTITUTION, item, List.of(CraftingInhibitor.PREFIX)).isEmpty());
-        assertEquals(Set.of(CraftingInhibitor.SUFFIX), ItemCrafting.inhibitorsSpentBy(CraftingCurrency.RECALIBRATION, item, List.of(CraftingInhibitor.SUFFIX)));
+        assertTrue(side(item, ModifierSlot.PREFIX).get(0).immutable());
+        assertTrue(ItemCrafting.inhibitorsSpentBy(Nanoswarm.TUNING, item, List.of(CraftingInhibitor.PREFIX)).isEmpty());
+        assertTrue(ItemCrafting.inhibitorsSpentBy(Nanoswarm.RESHAPING, item, List.of(CraftingInhibitor.PREFIX)).isEmpty());
+        assertEquals(Set.of(CraftingInhibitor.SUFFIX), ItemCrafting.inhibitorsSpentBy(Nanoswarm.TUNING, item, List.of(CraftingInhibitor.SUFFIX)));
     }
 
     @Test
     void aWardYouDoNotOwnStopsTheModification() {
         Item item = rare();
-        owns(CraftingCurrency.RECALIBRATION.itemId(), 1f);
+        owns(Nanoswarm.TUNING.itemId(), 1f);
         owns(CraftingInhibitor.SUFFIX.itemId(), 0f);
 
-        assertEquals(null, ItemCrafting.use(CraftingCurrency.RECALIBRATION, item, CraftingMaterials.cargoOnly(cargo), store, new Random(3L),
+        assertEquals(null, ItemCrafting.use(Nanoswarm.TUNING, item, CraftingMaterials.cargoOnly(cargo), store, new Random(3L),
                 definition -> true, List.of(CraftingInhibitor.SUFFIX)));
         verify(cargo, never()).removeItems(Mockito.any(), Mockito.any(), anyFloat());
     }

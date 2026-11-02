@@ -506,8 +506,8 @@ public final class CraftingBenchPanel extends HoloPanel {
     }
 
     private boolean growable(GrowableMaterial material) {
-        if (!material.synthesisable()) {
-            showNotice(Translation.msg("ui.craftingBench.notice.notSynthesisable").arg("name", recipeName(material)).text());
+        if (!material.growable()) {
+            showNotice(Translation.msg("ui.craftingBench.notice.notGrowable").arg("name", recipeName(material)).text());
             return false;
         }
         CraftingMaterials materials = playerMaterials();
@@ -521,10 +521,10 @@ public final class CraftingBenchPanel extends HoloPanel {
     }
 
     private void applyGrowth(GrowableMaterial material) {
-        if (!ItemCrafting.synthesise(material, playerMaterials())) {
+        if (!ItemCrafting.grow(material, playerMaterials())) {
             return;
         }
-        noticeText = Translation.msg("ui.craftingBench.notice.synthesisedCurrency").arg("name", recipeName(material)).text();
+        noticeText = Translation.msg("ui.craftingBench.notice.grown").arg("name", recipeName(material)).text();
         SkillTreeSounds.crafted();
         socketFlair.flash(SkillTreePanelStyle.GLOW_COLOR);
         afterChange();
@@ -931,7 +931,7 @@ public final class CraftingBenchPanel extends HoloPanel {
             return;
         }
         if (playerMaterials().count(inhibitor.itemId()) < 1) {
-            showNotice(Translation.msg(inhibitor.synthesisable() ? "ui.craftingBench.notice.noneOwned" : "ui.craftingBench.notice.noneFound").arg("name", inhibitorName).text());
+            showNotice(Translation.msg(inhibitor.growable() ? "ui.craftingBench.notice.noneOwned" : "ui.craftingBench.notice.noneFound").arg("name", inhibitorName).text());
             return;
         }
         activeInhibitors.add(inhibitor);
@@ -1031,7 +1031,7 @@ public final class CraftingBenchPanel extends HoloPanel {
         int ownedCount = playerMaterials().count(currency.itemId());
         hints.add(Translation.msg("ui.craftingBench.tile.inStorage").arg("count", ownedCount).text());
         if (ownedCount == 0) {
-            if (currency.synthesisable()) {
+            if (currency.growable()) {
                 hints.add(Translation.text("ui.craftingBench.tile.noneOwned"));
             }
         } else {
@@ -1045,9 +1045,9 @@ public final class CraftingBenchPanel extends HoloPanel {
     }
 
     private static String growHint(GrowableMaterial material) {
-        return material.synthesisable()
-                ? Translation.msg("ui.craftingBench.tile.synthesise").arg("cost", material.partsCost()).text()
-                : Translation.text("ui.craftingBench.tile.notSynthesisable");
+        return material.growable()
+                ? Translation.msg("ui.craftingBench.tile.grow").arg("cost", material.partsCost()).text()
+                : Translation.text("ui.craftingBench.tile.notGrowable");
     }
 
     private static List<String> recipeIcons(ItemCurrency currency) {

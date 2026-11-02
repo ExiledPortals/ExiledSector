@@ -2,7 +2,7 @@ package exiledsector.ui.cargo;
 
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.items.CraftingCurrency;
+import exiledsector.items.Nanoswarm;
 import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDisassembly;
@@ -21,16 +21,16 @@ class LootAlertTest {
 
     @Test
     void tuningAnnulmentImmutableAndReplicatorAreValuable() {
-        assertEquals(LootAlert.VALUABLE, alertFor(CraftingCurrency.RECALIBRATION.itemId()));
-        assertEquals(LootAlert.VALUABLE, alertFor(CraftingCurrency.ANNULMENT.itemId()));
-        assertEquals(LootAlert.VALUABLE, alertFor(CraftingCurrency.FIXATION.itemId()));
-        assertEquals(LootAlert.VALUABLE, alertFor(CraftingCurrency.REPLICATION.itemId()));
+        assertEquals(LootAlert.VALUABLE, alertFor(Nanoswarm.TUNING.itemId()));
+        assertEquals(LootAlert.VALUABLE, alertFor(Nanoswarm.ANNULMENT.itemId()));
+        assertEquals(LootAlert.VALUABLE, alertFor(Nanoswarm.IMMUTABLE.itemId()));
+        assertEquals(LootAlert.VALUABLE, alertFor(Nanoswarm.REPLICATION.itemId()));
     }
 
     @Test
     void otherCurrenciesAndInhibitorsGetTheStandardAlert() {
-        assertEquals(LootAlert.STANDARD, alertFor(CraftingCurrency.AUGMENTATION.itemId()));
-        assertEquals(LootAlert.STANDARD, alertFor(CraftingCurrency.TRANSPOSITION.itemId()));
+        assertEquals(LootAlert.STANDARD, alertFor(Nanoswarm.AUGMENTATION.itemId()));
+        assertEquals(LootAlert.STANDARD, alertFor(Nanoswarm.METAMORPH.itemId()));
         assertEquals(LootAlert.STANDARD, alertFor(CraftingInhibitor.PREFIX.itemId()));
     }
 

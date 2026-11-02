@@ -32,6 +32,17 @@ class ItemSaveTest {
     }
 
     @Test
+    void anImmutableModifierKeepsItsSavedLockedFieldName() {
+        RolledModifier immutable = RolledModifier.single(ModifierSlot.PREFIX, new RolledEffect("HULL_MULT", 6f)).asImmutable();
+
+        String xml = xstream().toXML(immutable);
+        RolledModifier loaded = (RolledModifier) xstream().fromXML(xml);
+
+        assertTrue(xml.contains("<locked>true</locked>"), xml);
+        assertTrue(loaded.immutable());
+    }
+
+    @Test
     void itemsSavedAsLooseEffectsLoadAsModifiersWithSlotsFromTheirDefinition() throws Exception {
         HullItemRows.registerMilitary();
         String legacyXml = "<exiledSector.SocketableStore><owned><exiledSector.Socketable>"

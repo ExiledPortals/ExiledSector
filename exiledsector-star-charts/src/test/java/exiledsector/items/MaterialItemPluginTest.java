@@ -24,7 +24,7 @@ class MaterialItemPluginTest {
 
     @Test
     void onlyKernelsThatAlsoWorkOnChartsSayTheyDo() {
-        for (CraftingCurrency kernel : CraftingCurrency.values()) {
+        for (Nanoswarm kernel : Nanoswarm.values()) {
             assertEquals(StarChartCipher.KERNELS_ON_CHARTS.contains(kernel), MaterialItemPlugin.alsoWorksOnStarCharts(kernel.itemId()),
                     kernel.name());
         }
@@ -38,7 +38,7 @@ class MaterialItemPluginTest {
     void withStarChartsOffNoKernelMentionsThem() {
         StarChartSettings.setEnabledForTests(false);
 
-        for (CraftingCurrency kernel : CraftingCurrency.values()) {
+        for (Nanoswarm kernel : Nanoswarm.values()) {
             assertFalse(MaterialItemPlugin.alsoWorksOnStarCharts(kernel.itemId()), kernel.name());
         }
     }

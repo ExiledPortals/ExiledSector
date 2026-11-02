@@ -132,8 +132,8 @@ class HullUpgradeTest {
         HullItem warranty = (HullItem) store.add(ItemDefinitions.get("warranty"), 7L);
         ShipSection firstTarget = warranty.targetSection();
 
-        assertTrue(ItemCrafting.canRecalibrate(warranty, warranty.definition(), Set.of()));
-        assertNotNull(ItemCrafting.recalibrate(warranty, new java.util.Random(3L)));
+        assertTrue(ItemCrafting.canTune(warranty, warranty.definition(), Set.of()));
+        assertNotNull(ItemCrafting.tune(warranty, new java.util.Random(3L)));
 
         assertNotEquals(firstTarget, warranty.targetSection());
         assertNotEquals(ShipSection.BRIDGE, warranty.targetSection());
@@ -213,7 +213,7 @@ class HullUpgradeTest {
     }
 
     @Test
-    void aRespecKeepsTheSectionAndATransposedMisfitLeavesItsSocket() {
+    void aRespecKeepsTheSectionAndAMetamorphosedMisfitLeavesItsSocket() {
         ShipSkillData shipData = shipWithPoints("ship", 1);
         HullUpgradeRules.unlock(shipData, ShipSection.BRIDGE, fit(ShieldType.FRONT));
         Item officer = store.add(ItemDefinitions.get("officer"), 1L);
@@ -221,10 +221,10 @@ class HullUpgradeTest {
 
         ShipTrees.resetAllocations(shipData);
         assertEquals(List.of("bridge"), shipData.getUnlockedSocketTypeIds());
-        Item transposed = Item.withEffects(officer.id(), "chip", 3L, List.of());
-        store.replace(officer, transposed);
+        Item metamorphosed = Item.withEffects(officer.id(), "chip", 3L, List.of());
+        store.replace(officer, metamorphosed);
 
-        assertTrue(SocketCustody.unsocketIfMisfit(ships, transposed));
+        assertTrue(SocketCustody.unsocketIfMisfit(ships, metamorphosed));
         assertNull(shipData.getSectionItem("bridge"));
         assertNotNull(store.find(officer.id()));
     }

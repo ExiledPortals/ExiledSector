@@ -4,7 +4,7 @@ public interface GrowableMaterial {
 
     String itemId();
 
-    boolean synthesisable();
+    boolean growable();
 
     int partsCost();
 }

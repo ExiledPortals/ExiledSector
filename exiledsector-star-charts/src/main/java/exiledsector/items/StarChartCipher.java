@@ -14,8 +14,8 @@ public enum StarChartCipher implements ItemCurrency {
     ERASURE("exiledSector_erasure_cipher", "erasure", 40, 3f, MaterialTier.MAJOR, new Color(175, 180, 200)),
     CARTOGRAPHY("exiledSector_cartographer_cipher", "cartographer", 120, 2f, MaterialTier.EXOTIC, new Color(245, 215, 110));
 
-    public static final List<CraftingCurrency> KERNELS_ON_CHARTS = List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.CORRUPTION,
-            CraftingCurrency.ANNULMENT, CraftingCurrency.RECALIBRATION);
+    public static final List<Nanoswarm> KERNELS_ON_CHARTS = List.of(Nanoswarm.AUGMENTATION, Nanoswarm.CORRUPTION,
+            Nanoswarm.ANNULMENT, Nanoswarm.TUNING);
     static final int MAX_REFORGE_ATTEMPTS = 16;
 
     private final String itemId;
@@ -40,7 +40,7 @@ public enum StarChartCipher implements ItemCurrency {
                 ItemCurrencies.register(currency);
             }
         }
-        for (CraftingCurrency kernel : KERNELS_ON_CHARTS) {
+        for (Nanoswarm kernel : KERNELS_ON_CHARTS) {
             ItemCurrencies.extend(kernel, ItemType.STAR_CHART);
         }
     }
@@ -80,7 +80,7 @@ public enum StarChartCipher implements ItemCurrency {
     }
 
     @Override
-    public boolean synthesisable() {
+    public boolean growable() {
         return defaultPartsCost > 0;
     }
 
@@ -189,7 +189,7 @@ public enum StarChartCipher implements ItemCurrency {
         List<RolledModifier> explicits = chart.explicits();
         for (int index = 0; index < explicits.size(); index++) {
             RolledModifier rolled = explicits.get(index);
-            if (!rolled.locked() && !inhibited.contains(rolled.slot())) {
+            if (!rolled.immutable() && !inhibited.contains(rolled.slot())) {
                 removable.add(index);
             }
         }

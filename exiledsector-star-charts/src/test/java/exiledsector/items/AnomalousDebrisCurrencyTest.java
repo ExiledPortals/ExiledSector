@@ -118,9 +118,9 @@ class AnomalousDebrisCurrencyTest {
         Item item = withModifiers(new RolledModifier(GRANTED_SUFFIX, ModifierSlot.SUFFIX, List.of(new RolledEffect("BEAM_WEAPON_RANGE_PERCENT", 20f))));
         Set<Float> rolledValues = new HashSet<>();
 
-        assertTrue(ItemCrafting.canUse(CraftingCurrency.RECALIBRATION, item, definition -> true));
+        assertTrue(ItemCrafting.canUse(Nanoswarm.TUNING, item, definition -> true));
         for (long seed = 0; seed < 20; seed++) {
-            assertSame(item, ItemCrafting.recalibrate(item, new Random(seed)));
+            assertSame(item, ItemCrafting.tune(item, new Random(seed)));
             RolledModifier granted = item.explicits().get(0);
             assertEquals(GRANTED_SUFFIX, granted.modifierId());
             float magnitude = granted.lines().get(0).magnitude();
@@ -134,11 +134,11 @@ class AnomalousDebrisCurrencyTest {
     void theTuningNanoswarmRefusesAFixedGrantedModifier() {
         Item item = withModifiers(new RolledModifier(GRANTED_PREFIX, ModifierSlot.PREFIX, List.of(new RolledEffect("HULL_PERCENT", 15f))));
 
-        assertFalse(ItemCrafting.canUse(CraftingCurrency.RECALIBRATION, item, definition -> true));
+        assertFalse(ItemCrafting.canUse(Nanoswarm.TUNING, item, definition -> true));
     }
 
     private Item lockedWith(String effectName, ModifierSlot slot, float magnitude) {
-        return store.add(new ItemData(BASE, 9L, List.of(RolledModifier.single(slot, new RolledEffect(effectName, magnitude)).asLocked()), null));
+        return store.add(new ItemData(BASE, 9L, List.of(RolledModifier.single(slot, new RolledEffect(effectName, magnitude)).asImmutable()), null));
     }
 
     @Test
@@ -153,7 +153,7 @@ class AnomalousDebrisCurrencyTest {
                 List<RolledModifier> explicits = item.explicits();
                 assertEquals(4, explicits.size());
                 assertEquals(2, explicits.stream().filter(rolled -> rolled.slot() == ModifierSlot.PREFIX).count());
-                RolledModifier locked = explicits.stream().filter(RolledModifier::locked).findFirst().orElseThrow();
+                RolledModifier locked = explicits.stream().filter(RolledModifier::immutable).findFirst().orElseThrow();
                 assertEquals("FLUX_CAPACITY_MULT", locked.lines().get(0).effectName());
                 assertEquals(5f, locked.lines().get(0).magnitude());
                 assertTrue(explicits.stream().anyMatch(rolled -> rolled.modifierId().equals(currency.modifierId())));
@@ -180,7 +180,7 @@ class AnomalousDebrisCurrencyTest {
             Item item = common();
             currency(REVENANT).use(item, new CraftingContext(store, definition -> true, Set.of()), new Random(seed));
             List<RolledModifier> locked = new java.util.ArrayList<>(item.explicits());
-            locked.replaceAll(rolled -> rolled.modifierId().equals(GRANTED_PREFIX) ? rolled.asLocked() : rolled);
+            locked.replaceAll(rolled -> rolled.modifierId().equals(GRANTED_PREFIX) ? rolled.asImmutable() : rolled);
             item.replaceExplicits(locked);
 
             assertNotNull(ItemCrafting.randomiseModifiers(store, item, new Random(seed + 100L), definition -> true));
@@ -188,7 +188,7 @@ class AnomalousDebrisCurrencyTest {
             long hullLines = item.explicits().stream().flatMap(rolled -> rolled.lines().stream())
                     .filter(line -> line.effectName().equals("HULL_PERCENT")).count();
             assertEquals(1, hullLines);
-            assertTrue(item.explicits().stream().anyMatch(rolled -> rolled.locked() && rolled.modifierId().equals(GRANTED_PREFIX)));
+            assertTrue(item.explicits().stream().anyMatch(rolled -> rolled.immutable() && rolled.modifierId().equals(GRANTED_PREFIX)));
         }
     }
 
@@ -305,7 +305,7 @@ class AnomalousDebrisCurrencyTest {
     @Test
     void theCurrenciesNeverDropFromShipLootAndReserveTheirModifiers() {
         assertFalse(currency(REVENANT).dropsFromShipLoot());
-        assertFalse(currency(REVENANT).synthesisable());
+        assertFalse(currency(REVENANT).growable());
         assertTrue(ReservedModifiers.isReserved(GRANTED_PREFIX));
         assertEquals(VIGIL, ReservedModifiers.owner(GRANTED_SUFFIX));
     }

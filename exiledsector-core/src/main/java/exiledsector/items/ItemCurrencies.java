@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public final class ItemCurrencies {
 
-    private static final List<ItemCurrency> BUILT_IN = List.of(CraftingCurrency.values());
+    private static final List<ItemCurrency> BUILT_IN = List.of(Nanoswarm.values());
     private static final AtomicReference<List<ItemCurrency>> REGISTERED = new AtomicReference<>(BUILT_IN);
     private static final AtomicReference<Set<Extension>> EXTENSIONS = new AtomicReference<>(Set.of());
 

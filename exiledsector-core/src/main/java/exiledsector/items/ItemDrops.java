@@ -207,10 +207,10 @@ public final class ItemDrops {
     }
 
     public static ItemDefinition pickBasic(Random random) {
-        return pick(random, ItemDrops::canBeSynthesised);
+        return pick(random, ItemDrops::canBeGrown);
     }
 
-    public static boolean canBeSynthesised(ItemDefinition definition) {
+    public static boolean canBeGrown(ItemDefinition definition) {
         return definition.type() == ItemType.SUBROUTINE && !definition.unique() && isDroppable(definition);
     }
 

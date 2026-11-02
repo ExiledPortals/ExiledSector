@@ -89,7 +89,7 @@ class ItemForgingTest {
     void exciseRemovesTheChosenModifierButNeverAnImmutableOne() {
         Item item = plate(new RolledEffect("FLUX_CAPACITY_MULT", 5f), new RolledEffect("ARMOR_PERCENT", 7f));
         RolledModifier armor = item.explicits().get(1);
-        item.replaceExplicits(List.of(item.explicits().get(0).asLocked(), armor));
+        item.replaceExplicits(List.of(item.explicits().get(0).asImmutable(), armor));
 
         assertEquals(List.of(ForgeChoice.modifier(armor)), ForgeOperation.EXCISE.choices(item));
         assertTrue(ForgeOperation.EXCISE.apply(item, ForgeChoice.modifier(armor), new Random(1L)));

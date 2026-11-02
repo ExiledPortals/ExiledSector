@@ -286,7 +286,7 @@ public final class Subroutine extends Item implements NodeSocketable {
     }
 
     @Override
-    public boolean retuneTrait(Random random) {
+    public boolean tuneTrait(Random random) {
         if (!hasTunableTrait()) {
             return false;
         }

@@ -86,10 +86,10 @@ public final class StarChartCrafting {
         if (currency == StarChartCipher.CARTOGRAPHY && chart.tier() >= StarChart.HIGHEST_TIER) {
             return MAX_TIER;
         }
-        if ((currency == StarChartCipher.ERASURE || currency == CraftingCurrency.ANNULMENT) && chart.explicits().isEmpty()) {
+        if ((currency == StarChartCipher.ERASURE || currency == Nanoswarm.ANNULMENT) && chart.explicits().isEmpty()) {
             return NO_MODIFIERS;
         }
-        return currency == CraftingCurrency.AUGMENTATION ? FULL : CANNOT_USE;
+        return currency == Nanoswarm.AUGMENTATION ? FULL : CANNOT_USE;
     }
 
     public static Used use(ItemCurrency currency, Item chart, ItemStore store, CraftingMaterials materials, Random random,

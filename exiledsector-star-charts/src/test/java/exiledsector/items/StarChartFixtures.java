@@ -87,7 +87,7 @@ public final class StarChartFixtures {
         for (StarChartCipher currency : StarChartCipher.values()) {
             ItemCurrencies.unregister(currency);
         }
-        for (CraftingCurrency kernel : StarChartCipher.KERNELS_ON_CHARTS) {
+        for (Nanoswarm kernel : StarChartCipher.KERNELS_ON_CHARTS) {
             ItemCurrencies.retract(kernel, ItemType.STAR_CHART);
         }
     }

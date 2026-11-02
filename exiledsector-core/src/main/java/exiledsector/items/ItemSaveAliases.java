@@ -16,6 +16,10 @@ public final class ItemSaveAliases {
             "exiledSector.FrozenName", FrozenName.class,
             "exiledSector.RolledModifier", RolledModifier.class,
             "exiledSector.ModifierSlot", ModifierSlot.class);
+    static final List<FieldAlias> FIELD_ALIASES = List.of(new FieldAlias("locked", RolledModifier.class, "immutable"));
+
+    record FieldAlias(String savedName, Class<?> definedIn, String fieldName) {
+    }
 
     private ItemSaveAliases() {
     }
@@ -24,6 +28,7 @@ public final class ItemSaveAliases {
         LEGACY_ITEM_ALIASES.forEach(legacyAlias -> xstream.alias(legacyAlias, UnresolvedItem.class));
         xstream.alias(UNRESOLVED_ITEM_ALIAS, UnresolvedItem.class);
         ALIASES.forEach(xstream::alias);
+        FIELD_ALIASES.forEach(alias -> xstream.aliasField(alias.savedName(), alias.definedIn(), alias.fieldName()));
         ItemTypes.all().forEach(support -> xstream.alias(support.saveAlias(), support.itemClass()));
     }
 }

@@ -1,6 +1,6 @@
 package exiledsector.ui.socket;
 
-import exiledsector.items.CraftingCurrency;
+import exiledsector.items.Nanoswarm;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -9,7 +9,7 @@ class CraftingBenchLayoutTest {
 
     @Test
     void nanoswarmTilesSpreadEvenlyOverTheTopOfTheSlotFromLeftToRight() {
-        int tileCount = CraftingCurrency.values().length;
+        int tileCount = Nanoswarm.values().length;
         float firstAngle = (float) Math.PI + BenchScene.ORBIT_DROP_RADIANS;
         float lastAngle = -BenchScene.ORBIT_DROP_RADIANS;
         float spacing = (firstAngle - lastAngle) / (tileCount - 1);

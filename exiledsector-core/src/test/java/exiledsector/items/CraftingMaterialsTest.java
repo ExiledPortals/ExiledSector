@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 class CraftingMaterialsTest {
 
     private static final String PARTS = ItemDisassembly.PARTS_ITEM_ID;
-    private static final String AUGMENTATION = CraftingCurrency.AUGMENTATION.itemId();
+    private static final String AUGMENTATION = Nanoswarm.AUGMENTATION.itemId();
 
     private static CargoAPI cargoHolding(String commodityId, float quantity) {
         CargoAPI cargo = mock(CargoAPI.class);
@@ -95,7 +95,7 @@ class CraftingMaterialsTest {
 
     @Test
     void thePartsEveryKernelAndEveryInhibitorAreManaged() {
-        assertEquals(1 + CraftingCurrency.values().length + CraftingInhibitor.values().length, MaterialItems.ids().size());
+        assertEquals(1 + Nanoswarm.values().length + CraftingInhibitor.values().length, MaterialItems.ids().size());
         assertTrue(MaterialItems.ids().contains(PARTS));
     }
 }

@@ -93,12 +93,12 @@ class ItemHybridTest {
     }
 
     @Test
-    void recalibratingAHybridRerollsEachOfItsLines() {
+    void tuningAHybridRerollsEachOfItsLines() {
         Item item = item(List.of(platedFrame(5f, 3f)));
 
         for (long seed = 0; seed < 20; seed++) {
             List<RolledModifier> before = item.explicits();
-            assertSame(item, ItemCrafting.recalibrate(item, new Random(seed)));
+            assertSame(item, ItemCrafting.tune(item, new Random(seed)));
             assertNotEquals(before, item.explicits());
             assertEquals("plated_frame", item.explicits().get(0).modifierId());
             assertEquals(2, item.explicits().get(0).lines().size());

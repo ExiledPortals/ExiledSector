@@ -138,7 +138,7 @@ class StarChartTest {
         assertTrue(mirror.mirrored());
         assertEquals(chart.implicits(), mirror.implicits());
 
-        assertSame(chart, ItemCrafting.recalibrate(chart, new Random(3)));
+        assertSame(chart, ItemCrafting.tune(chart, new Random(3)));
         assertEquals(9, chart.tier());
         assertSame(chart, ItemCrafting.randomiseModifiers(store, chart, new Random(4), definition -> true));
         assertEquals(9, chart.tier());
@@ -151,10 +151,10 @@ class StarChartTest {
                 .filter(definition -> definition.unique() && definition.type() == ItemType.HULL_ITEM).findFirst().orElseThrow();
         Item item = store.add(shipUnique, 1L);
         for (int attempt = 0; attempt < 40; attempt++) {
-            Item transposed = ItemCrafting.transpose(store, item, new Random(attempt), definition -> true);
-            assertNotNull(transposed);
-            assertTrue(transposed.type() != ItemType.STAR_CHART, transposed.definitionId());
-            item = transposed;
+            Item metamorphosed = ItemCrafting.metamorph(store, item, new Random(attempt), definition -> true);
+            assertNotNull(metamorphosed);
+            assertTrue(metamorphosed.type() != ItemType.STAR_CHART, metamorphosed.definitionId());
+            item = metamorphosed;
         }
     }
 

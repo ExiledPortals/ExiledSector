@@ -7,7 +7,7 @@ import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import exiledsector.MockSector;
-import exiledsector.items.CraftingCurrency;
+import exiledsector.items.Nanoswarm;
 import exiledsector.items.ItemDisassembly;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,7 +58,7 @@ class LootAlertListenerTest {
     @Test
     void watchesTheLootScreensStorageInsteadOfTheReportedLoot() {
         LootAlertListener listener = new LootAlertListener();
-        CargoAPI loot = cargoWith(CraftingCurrency.FIXATION.itemId());
+        CargoAPI loot = cargoWith(Nanoswarm.IMMUTABLE.itemId());
         CargoAPI shown = mock(CargoAPI.class);
 
         listener.reportAboutToShowLootToPlayer(loot, null);
@@ -72,7 +72,7 @@ class LootAlertListenerTest {
     @Test
     void ignoresStorageUpdatesOnceTheWatcherHasStarted() {
         LootAlertListener listener = new LootAlertListener();
-        CargoAPI loot = cargoWith(CraftingCurrency.FIXATION.itemId());
+        CargoAPI loot = cargoWith(Nanoswarm.IMMUTABLE.itemId());
         listener.reportAboutToShowLootToPlayer(loot, null);
         listener.activeWatcher().advance(0f);
 

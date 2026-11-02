@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 class MaterialIdAliasesTest {
 
     private static final String OLD_ID = "exiledSector_old_swarm";
-    private static final String NEW_ID = CraftingCurrency.AUGMENTATION.itemId();
+    private static final String NEW_ID = Nanoswarm.AUGMENTATION.itemId();
 
     @AfterEach
     void tearDown() {

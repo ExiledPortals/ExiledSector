@@ -14,8 +14,8 @@ import java.util.function.Predicate;
 
 public final class ItemCrafting {
 
-    static final int MAX_RECALIBRATION_ATTEMPTS = 64;
-    static final int MIN_FIXATION_MODIFIERS = 2;
+    static final int MAX_TUNING_ATTEMPTS = 64;
+    static final int MIN_IMMUTABLE_MODIFIERS = 2;
     static final float CORRUPTION_RANGE_STRETCH = 0.35f;
     static final int CORRUPTION_REROLL_ATTEMPTS = 16;
     static final int RARE_BASE_MIN_MODIFIERS = 3;
@@ -28,8 +28,8 @@ public final class ItemCrafting {
         return materials.count(ItemDisassembly.PARTS_ITEM_ID);
     }
 
-    public static boolean synthesise(GrowableMaterial material, CraftingMaterials materials) {
-        if (!material.synthesisable() || !materials.take(ItemDisassembly.PARTS_ITEM_ID, material.partsCost())) {
+    public static boolean grow(GrowableMaterial material, CraftingMaterials materials) {
+        if (!material.growable() || !materials.take(ItemDisassembly.PARTS_ITEM_ID, material.partsCost())) {
             return false;
         }
         materials.add(material.itemId(), 1);
@@ -55,8 +55,8 @@ public final class ItemCrafting {
             return UseVerdict.ALLOW;
         }
         if (canUse(currency, item, allowedUniques)) {
-            return UseVerdict.refused(currency == CraftingCurrency.TRANSPOSITION
-                    ? "ui.craftingBench.notice.inhibitorBlocksTransposition" : "ui.craftingBench.notice.inhibitorBlocks");
+            return UseVerdict.refused(currency == Nanoswarm.METAMORPH
+                    ? "ui.craftingBench.notice.inhibitorBlocksMetamorph" : "ui.craftingBench.notice.inhibitorBlocks");
         }
         if (item == null) {
             return UseVerdict.refused("ui.craftingBench.notice.loadFirst");
@@ -71,10 +71,10 @@ public final class ItemCrafting {
         if (isLockedFromCurrency(definition)) {
             return UseVerdict.refused("ui.craftingBench.notice.uniqueSubroutine");
         }
-        if (currency == CraftingCurrency.FIXATION && item.hasLockedModifier()) {
-            return UseVerdict.refused("ui.craftingBench.notice.alreadyFixed");
+        if (currency == Nanoswarm.IMMUTABLE && item.hasImmutableModifier()) {
+            return UseVerdict.refused("ui.craftingBench.notice.alreadyImmutable");
         }
-        if (currency == CraftingCurrency.TRANSPOSITION && definition != null && definition.unique()) {
+        if (currency == Nanoswarm.METAMORPH && definition != null && definition.unique()) {
             return UseVerdict.refused("ui.craftingBench.notice.noOtherUnique");
         }
         String refusalKey = currency.refusalNoticeKey(item);
@@ -85,7 +85,7 @@ public final class ItemCrafting {
         return definition != null && ItemTypes.lockedFromCurrency(definition);
     }
 
-    public static boolean inhibitorBlocksTransposition(Item item, Set<ModifierSlot> inhibited) {
+    public static boolean inhibitorBlocksMetamorph(Item item, Set<ModifierSlot> inhibited) {
         return item != null && item.explicits().stream().anyMatch(rolled -> inhibited.contains(rolled.slot()));
     }
 
@@ -97,7 +97,7 @@ public final class ItemCrafting {
         }
         for (CraftingInhibitor inhibitor : inhibitors) {
             if (item.explicits().stream().anyMatch(rolled -> rolled.slot() == inhibitor.inhibitedSlot()
-                    && !rolled.locked() && currency.wouldChange(item, rolled))) {
+                    && !rolled.immutable() && currency.wouldChange(item, rolled))) {
                 spent.add(inhibitor);
             }
         }
@@ -150,7 +150,7 @@ public final class ItemCrafting {
     }
 
     private static boolean guards(RolledModifier rolled, Set<ModifierSlot> inhibited) {
-        return rolled.locked() || inhibited.contains(rolled.slot());
+        return rolled.immutable() || inhibited.contains(rolled.slot());
     }
 
     static boolean canAugment(Item item) {
@@ -169,28 +169,28 @@ public final class ItemCrafting {
         return addedModifier;
     }
 
-    static boolean canRecalibrate(Item item, ItemDefinition definition, Set<ModifierSlot> inhibited) {
+    static boolean canTune(Item item, ItemDefinition definition, Set<ModifierSlot> inhibited) {
         return definition != null && (item.hasTunableTrait() || item.explicits().stream().anyMatch(rolled -> !guards(rolled, inhibited) && canVary(item, rolled)));
     }
 
-    static Item recalibrate(Item item, Random random) {
-        return recalibrate(item, random, Set.of());
+    static Item tune(Item item, Random random) {
+        return tune(item, random, Set.of());
     }
 
-    static Item recalibrate(Item item, Random random, Set<ModifierSlot> inhibited) {
+    static Item tune(Item item, Random random, Set<ModifierSlot> inhibited) {
         ItemDefinition definition = item.definition();
         if (definition == null) {
             return null;
         }
-        boolean traitRetuned = item.retuneTrait(random);
-        for (int attempt = 0; attempt < MAX_RECALIBRATION_ATTEMPTS; attempt++) {
+        boolean traitTuned = item.tuneTrait(random);
+        for (int attempt = 0; attempt < MAX_TUNING_ATTEMPTS; attempt++) {
             List<RolledModifier> rerolled = reroll(item, random, inhibited);
             if (!rerolled.equals(item.explicits())) {
                 item.replaceExplicits(rerolled);
                 return item;
             }
         }
-        return traitRetuned ? item : null;
+        return traitTuned ? item : null;
     }
 
     private static List<RolledModifier> reroll(Item item, Random random, Set<ModifierSlot> inhibited) {
@@ -202,15 +202,15 @@ public final class ItemCrafting {
         return rerolled;
     }
 
-    static boolean canAttune(Item item) {
+    static boolean canRerollFundamentals(Item item) {
         return item.implicits().stream().anyMatch(item::implicitCanVary);
     }
 
-    static Item attune(Item item, Random random) {
+    static Item rerollFundamentals(Item item, Random random) {
         if (item.implicits().isEmpty()) {
             return null;
         }
-        for (int attempt = 0; attempt < MAX_RECALIBRATION_ATTEMPTS; attempt++) {
+        for (int attempt = 0; attempt < MAX_TUNING_ATTEMPTS; attempt++) {
             List<RolledModifier> rerolled = new ArrayList<>(item.implicits().size());
             for (RolledModifier implicit : item.implicits()) {
                 rerolled.add(item.rerolledImplicit(implicit, random));
@@ -223,15 +223,15 @@ public final class ItemCrafting {
         return null;
     }
 
-    static boolean canSubstitute(Item item, ItemDefinition definition, Set<ModifierSlot> inhibited) {
-        return definition != null && !definition.unique() && !removableForSubstitution(item, definition, inhibited).isEmpty();
+    static boolean canReshape(Item item, ItemDefinition definition, Set<ModifierSlot> inhibited) {
+        return definition != null && !definition.unique() && !removableForReshaping(item, definition, inhibited).isEmpty();
     }
 
-    static boolean canSubstituteAway(Item item, ItemDefinition definition, RolledModifier rolled) {
+    static boolean canReshapeAway(Item item, ItemDefinition definition, RolledModifier rolled) {
         return definition != null && !definition.unique() && !replacementSides(definition, item.explicits(), rolled, item.tier()).isEmpty();
     }
 
-    private static List<RolledModifier> removableForSubstitution(Item item, ItemDefinition definition, Set<ModifierSlot> inhibited) {
+    private static List<RolledModifier> removableForReshaping(Item item, ItemDefinition definition, Set<ModifierSlot> inhibited) {
         return item.explicits().stream()
                 .filter(rolled -> !guards(rolled, inhibited) && !replacementSides(definition, item.explicits(), rolled, item.tier()).isEmpty()).toList();
     }
@@ -246,16 +246,16 @@ public final class ItemCrafting {
                 .filter(side -> !side.isEmpty()).toList();
     }
 
-    static Item substitute(Item item, Random random) {
-        return substitute(item, random, Set.of());
+    static Item reshape(Item item, Random random) {
+        return reshape(item, random, Set.of());
     }
 
-    static Item substitute(Item item, Random random, Set<ModifierSlot> inhibited) {
+    static Item reshape(Item item, Random random, Set<ModifierSlot> inhibited) {
         ItemDefinition definition = item.definition();
         if (definition == null || definition.unique()) {
             return null;
         }
-        List<RolledModifier> removable = removableForSubstitution(item, definition, inhibited);
+        List<RolledModifier> removable = removableForReshaping(item, definition, inhibited);
         if (removable.isEmpty()) {
             return null;
         }
@@ -287,27 +287,27 @@ public final class ItemCrafting {
         return modifiers.stream().filter(rolled -> !guards(rolled, inhibited)).toList();
     }
 
-    static boolean canFixate(Item item, Set<ModifierSlot> inhibited) {
-        return item.explicits().size() >= MIN_FIXATION_MODIFIERS && !item.hasLockedModifier() && !fixable(item.explicits(), inhibited).isEmpty();
+    static boolean canMakeImmutable(Item item, Set<ModifierSlot> inhibited) {
+        return item.explicits().size() >= MIN_IMMUTABLE_MODIFIERS && !item.hasImmutableModifier() && !immutableCandidates(item.explicits(), inhibited).isEmpty();
     }
 
-    static Item fixate(Item item, Random random) {
-        return fixate(item, random, Set.of());
+    static Item makeImmutable(Item item, Random random) {
+        return makeImmutable(item, random, Set.of());
     }
 
-    static Item fixate(Item item, Random random, Set<ModifierSlot> inhibited) {
-        List<Integer> candidates = fixable(item.explicits(), inhibited);
-        if (item.explicits().size() < MIN_FIXATION_MODIFIERS || item.hasLockedModifier() || candidates.isEmpty()) {
+    static Item makeImmutable(Item item, Random random, Set<ModifierSlot> inhibited) {
+        List<Integer> candidates = immutableCandidates(item.explicits(), inhibited);
+        if (item.explicits().size() < MIN_IMMUTABLE_MODIFIERS || item.hasImmutableModifier() || candidates.isEmpty()) {
             return null;
         }
         List<RolledModifier> modifiers = new ArrayList<>(item.explicits());
         int lockedIndex = candidates.get(random.nextInt(candidates.size()));
-        modifiers.set(lockedIndex, modifiers.get(lockedIndex).asLocked());
+        modifiers.set(lockedIndex, modifiers.get(lockedIndex).asImmutable());
         item.replaceExplicits(modifiers);
         return item;
     }
 
-    private static List<Integer> fixable(List<RolledModifier> modifiers, Set<ModifierSlot> inhibited) {
+    private static List<Integer> immutableCandidates(List<RolledModifier> modifiers, Set<ModifierSlot> inhibited) {
         List<Integer> candidates = new ArrayList<>();
         for (int index = 0; index < modifiers.size(); index++) {
             if (!inhibited.contains(modifiers.get(index).slot())) {
@@ -419,7 +419,7 @@ public final class ItemCrafting {
         }
         List<RolledModifier> explicits = new ArrayList<>(item.explicits().size());
         for (RolledModifier rolled : item.explicits()) {
-            explicits.add(stretchedReroll(rolled, rolled.locked() ? null : item.explicitModifier(rolled.modifierId()), random));
+            explicits.add(stretchedReroll(rolled, rolled.immutable() ? null : item.explicitModifier(rolled.modifierId()), random));
         }
         List<RolledModifier> implicits = new ArrayList<>(item.implicits().size());
         for (RolledModifier rolled : item.implicits()) {
@@ -450,7 +450,7 @@ public final class ItemCrafting {
             return null;
         }
         if (definition.unique()) {
-            return canTranspose(definition, item.tier(), allowedUniques) ? transpose(store, item, random, allowedUniques) : null;
+            return canMetamorph(definition, item.tier(), allowedUniques) ? metamorph(store, item, random, allowedUniques) : null;
         }
         if (definition.prefixes().isEmpty() && definition.suffixes().isEmpty()) {
             return null;
@@ -470,13 +470,13 @@ public final class ItemCrafting {
         if (best == null) {
             return null;
         }
-        item.replaceExplicits(keepLocked(item.explicits(), best, AffixLayout.limits(definition.type()).maxPerSide(), random));
+        item.replaceExplicits(keepImmutable(item.explicits(), best, AffixLayout.limits(definition.type()).maxPerSide(), random));
         item.refreezeName();
         return item;
     }
 
-    private static List<RolledModifier> keepLocked(List<RolledModifier> previous, List<RolledModifier> rerolled, int maxPerSide, Random random) {
-        RolledModifier locked = previous.stream().filter(RolledModifier::locked).findFirst().orElse(null);
+    private static List<RolledModifier> keepImmutable(List<RolledModifier> previous, List<RolledModifier> rerolled, int maxPerSide, Random random) {
+        RolledModifier locked = previous.stream().filter(RolledModifier::immutable).findFirst().orElse(null);
         if (locked == null) {
             return rerolled;
         }
@@ -493,7 +493,7 @@ public final class ItemCrafting {
         return merged;
     }
 
-    static boolean canTranspose(ItemDefinition currentDefinition, int tier, Predicate<ItemDefinition> allowedUniques) {
+    static boolean canMetamorph(ItemDefinition currentDefinition, int tier, Predicate<ItemDefinition> allowedUniques) {
         if (!currentDefinition.unique()) {
             return false;
         }
@@ -505,7 +505,7 @@ public final class ItemCrafting {
         return false;
     }
 
-    static Item transpose(ItemStore store, Item item, Random random, Predicate<ItemDefinition> allowedUniques) {
+    static Item metamorph(ItemStore store, Item item, Random random, Predicate<ItemDefinition> allowedUniques) {
         ItemDefinition currentDefinition = item.definition();
         if (currentDefinition == null) {
             return null;

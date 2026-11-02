@@ -373,7 +373,7 @@ crafting can still take it to four.
 
 A hull item with a targeting effect rolls one other section as its target (`HullItem.targetSection`, from its seed,
 stored once rolled); the Extended Warranty Contract's 100% doubles that item, drawbacks included. The Tuning
-Nanoswarm rerolls the target (`Item.retuneTrait`). On load a unique item follows its definition's current pool
+Nanoswarm rerolls the target (`Item.tuneTrait`). On load a unique item follows its definition's current pool
 (`ItemDefinition.withCurrentUniquePool`): it rolls modifiers added since it dropped, from its seed, and loses those
 taken out. A modifier whose effect no longer loads is kept.
 
@@ -409,7 +409,7 @@ doubled (`ItemDrops.pickUniqueFromFaction`, `FACTION_SOURCE_WEIGHT_MULT`).
 A hull item or subroutine can name a `volume`, one of the toggled tree volumes. `ItemVolumes` asks the skill tree's
 `VolumeToggles`, bound at application load: a definition whose volume's mod isn't installed is never loaded, so its
 faction sources are never checked, and one whose volume is switched off stays loaded but is left out of every drop
-pool (`ItemDrops`, `ItemUnlock.canDrop`) and of Transposition.
+pool (`ItemDrops`, `ItemUnlock.canDrop`) and of the Metamorph Nanoswarm.
 
 ### Exclusive modifiers
 

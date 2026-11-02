@@ -261,9 +261,9 @@ class ItemDropsTest {
 
         assertEquals(share, averageKernels(station), 0.02);
         assertEquals(0.5 * share, averageKernels(materials("probe", 1f)), 0.02);
-        assertEquals(share * dropShare(CraftingCurrency.AUGMENTATION), materialShare(station, roll -> roll.containsKey(CraftingCurrency.AUGMENTATION.itemId())), 0.02);
-        assertEquals(share * dropShare(CraftingCurrency.TRANSPOSITION), materialShare(station, roll -> roll.containsKey(CraftingCurrency.TRANSPOSITION.itemId())), 0.01);
-        assertTrue(dropShare(CraftingCurrency.REPLICATION) < 0.005);
+        assertEquals(share * dropShare(Nanoswarm.AUGMENTATION), materialShare(station, roll -> roll.containsKey(Nanoswarm.AUGMENTATION.itemId())), 0.02);
+        assertEquals(share * dropShare(Nanoswarm.METAMORPH), materialShare(station, roll -> roll.containsKey(Nanoswarm.METAMORPH.itemId())), 0.01);
+        assertTrue(dropShare(Nanoswarm.REPLICATION) < 0.005);
         assertEquals(share * CraftingInhibitor.PREFIX.dropWeight() / totalKernelWeight(), materialShare(station, roll -> roll.containsKey(CraftingInhibitor.PREFIX.itemId())), 0.01);
         assertTrue(station.stream().anyMatch(roll -> kernelKinds(roll) > 1));
     }
@@ -297,16 +297,16 @@ class ItemDropsTest {
     }
 
     private static boolean isKernel(String itemId) {
-        return java.util.Arrays.stream(CraftingCurrency.values()).anyMatch(currency -> currency.itemId().equals(itemId))
+        return java.util.Arrays.stream(Nanoswarm.values()).anyMatch(currency -> currency.itemId().equals(itemId))
                 || java.util.Arrays.stream(CraftingInhibitor.values()).anyMatch(inhibitor -> inhibitor.itemId().equals(itemId));
     }
 
-    private static double dropShare(CraftingCurrency currency) {
+    private static double dropShare(Nanoswarm currency) {
         return currency.dropWeight() / totalKernelWeight();
     }
 
     private static double totalKernelWeight() {
-        return java.util.Arrays.stream(CraftingCurrency.values()).mapToDouble(CraftingCurrency::dropWeight).sum()
+        return java.util.Arrays.stream(Nanoswarm.values()).mapToDouble(Nanoswarm::dropWeight).sum()
                 + java.util.Arrays.stream(CraftingInhibitor.values()).mapToDouble(CraftingInhibitor::dropWeight).sum();
     }
 

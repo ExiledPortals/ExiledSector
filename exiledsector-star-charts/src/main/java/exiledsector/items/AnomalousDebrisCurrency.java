@@ -51,7 +51,7 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
     }
 
     @Override
-    public boolean synthesisable() {
+    public boolean growable() {
         return false;
     }
 
@@ -104,11 +104,11 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
     }
 
     static RolledModifier lockedModifier(Item item) {
-        return item.explicits().stream().filter(RolledModifier::locked).findFirst().orElse(null);
+        return item.explicits().stream().filter(RolledModifier::immutable).findFirst().orElse(null);
     }
 
     static List<RolledModifier> keptModifiers(Item item, Set<ModifierSlot> inhibited) {
-        return item.explicits().stream().filter(rolled -> rolled.locked() || inhibited.contains(rolled.slot())).toList();
+        return item.explicits().stream().filter(rolled -> rolled.immutable() || inhibited.contains(rolled.slot())).toList();
     }
 
     static boolean keptClash(Item item, Modifier granted, Set<ModifierSlot> inhibited) {

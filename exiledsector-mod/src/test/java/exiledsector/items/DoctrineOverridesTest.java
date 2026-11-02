@@ -409,8 +409,8 @@ class DoctrineOverridesTest {
         data.socketItem(socket.getId(), doctrine.id());
         int revisionBefore = doctrine.firmwareRevision();
 
-        assertTrue(ItemCrafting.canRecalibrate(doctrine, doctrine.definition(), Set.of()));
-        assertSame(doctrine, ItemCrafting.recalibrate(doctrine, new Random(5L)));
+        assertTrue(ItemCrafting.canTune(doctrine, doctrine.definition(), Set.of()));
+        assertSame(doctrine, ItemCrafting.tune(doctrine, new Random(5L)));
         data.markChanged();
 
         assertNotEquals(revisionBefore, doctrine.firmwareRevision());

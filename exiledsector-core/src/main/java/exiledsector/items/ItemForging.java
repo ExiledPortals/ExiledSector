@@ -98,7 +98,7 @@ public final class ItemForging {
         if (definition == null || definition.unique()) {
             return List.of();
         }
-        return item.explicits().stream().filter(rolled -> !rolled.locked()).toList();
+        return item.explicits().stream().filter(rolled -> !rolled.immutable()).toList();
     }
 
     public static boolean excise(Item item, RolledModifier removed) {
@@ -151,7 +151,7 @@ public final class ItemForging {
             return false;
         }
         int modifierCount = item.explicits().size();
-        List<RolledModifier> modifiers = new ArrayList<>(item.explicits().stream().filter(rolled -> rolled.locked() || rolled.equals(anchor)).toList());
+        List<RolledModifier> modifiers = new ArrayList<>(item.explicits().stream().filter(rolled -> rolled.immutable() || rolled.equals(anchor)).toList());
         while (modifiers.size() < modifierCount) {
             List<List<PoolEntry>> openSides = AffixLayout.openSides(definition, modifiers, item.tier());
             if (openSides.isEmpty()) {

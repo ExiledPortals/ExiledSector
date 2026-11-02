@@ -5,9 +5,9 @@ import java.awt.Color;
 import java.util.Locale;
 import java.util.Random;
 
-public enum CraftingCurrency implements ItemCurrency {
+public enum Nanoswarm implements ItemCurrency {
 
-    AUGMENTATION("exiledSector_augmentation_kernel", 10, 6, MaterialTier.MINOR, new Color(90, 170, 255)) {
+    AUGMENTATION("exiledSector_augmentation_nanoswarm", 10, 6, MaterialTier.MINOR, new Color(90, 170, 255)) {
         @Override
         public boolean canUse(Item item, CraftingContext context) {
             return ItemCrafting.canAugment(item);
@@ -18,26 +18,26 @@ public enum CraftingCurrency implements ItemCurrency {
             return ItemCrafting.augment(item, random) == null ? null : item;
         }
     },
-    ATTUNEMENT("exiledSector_attunement_kernel", 15, 4, MaterialTier.MINOR, new Color(185, 125, 255)) {
+    FUNDAMENTAL("exiledSector_fundamental_nanoswarm", 15, 4, MaterialTier.MINOR, new Color(185, 125, 255)) {
         @Override
         public boolean canUse(Item item, CraftingContext context) {
-            return ItemCrafting.canAttune(item);
+            return ItemCrafting.canRerollFundamentals(item);
         }
 
         @Override
         public Item use(Item item, CraftingContext context, Random random) {
-            return ItemCrafting.attune(item, random);
+            return ItemCrafting.rerollFundamentals(item, random);
         }
     },
-    SUBSTITUTION("exiledSector_substitution_kernel", 20, 3, MaterialTier.MAJOR, new Color(255, 195, 80)) {
+    RESHAPING("exiledSector_reshaping_nanoswarm", 20, 3, MaterialTier.MAJOR, new Color(255, 195, 80)) {
         @Override
         public boolean canUse(Item item, CraftingContext context) {
-            return ItemCrafting.canSubstitute(item, item.definition(), context.inhibitedSlots());
+            return ItemCrafting.canReshape(item, item.definition(), context.inhibitedSlots());
         }
 
         @Override
         public Item use(Item item, CraftingContext context, Random random) {
-            return ItemCrafting.substitute(item, random, context.inhibitedSlots());
+            return ItemCrafting.reshape(item, random, context.inhibitedSlots());
         }
 
         @Override
@@ -47,10 +47,10 @@ public enum CraftingCurrency implements ItemCurrency {
 
         @Override
         public boolean wouldChange(Item item, RolledModifier rolled) {
-            return ItemCrafting.canSubstituteAway(item, item.definition(), rolled);
+            return ItemCrafting.canReshapeAway(item, item.definition(), rolled);
         }
     },
-    CORRUPTION("exiledSector_corruption_kernel", 50, 1.5f, MaterialTier.EXOTIC, Item.CORRUPTED_FRAME_COLOR) {
+    CORRUPTION("exiledSector_corrupted_nanoswarm", 50, 1.5f, MaterialTier.EXOTIC, Item.CORRUPTED_FRAME_COLOR) {
         @Override
         public boolean canUse(Item item, CraftingContext context) {
             return true;
@@ -66,16 +66,16 @@ public enum CraftingCurrency implements ItemCurrency {
             return true;
         }
     },
-    TRANSPOSITION("exiledSector_transposition_kernel", 150, 0.4f, MaterialTier.MYTHIC, new Color(255, 140, 50)) {
+    METAMORPH("exiledSector_metamorph_nanoswarm", 150, 0.4f, MaterialTier.MYTHIC, new Color(255, 140, 50)) {
         @Override
         public boolean canUse(Item item, CraftingContext context) {
-            return !ItemCrafting.inhibitorBlocksTransposition(item, context.inhibitedSlots())
-                    && ItemCrafting.canTranspose(item.definition(), item.tier(), context.allowedUniques());
+            return !ItemCrafting.inhibitorBlocksMetamorph(item, context.inhibitedSlots())
+                    && ItemCrafting.canMetamorph(item.definition(), item.tier(), context.allowedUniques());
         }
 
         @Override
         public Item use(Item item, CraftingContext context, Random random) {
-            return ItemCrafting.transpose(context.store(), item, random, context.allowedUniques());
+            return ItemCrafting.metamorph(context.store(), item, random, context.allowedUniques());
         }
 
         @Override
@@ -83,7 +83,7 @@ public enum CraftingCurrency implements ItemCurrency {
             return true;
         }
     },
-    ANNULMENT("exiledSector_annulment_kernel", 200, 0.3f, MaterialTier.MYTHIC, new Color(80, 230, 200)) {
+    ANNULMENT("exiledSector_annulment_nanoswarm", 200, 0.3f, MaterialTier.MYTHIC, new Color(80, 230, 200)) {
         @Override
         public boolean appliesTo(ItemType type) {
             return type == ItemType.HULL_ITEM;
@@ -109,15 +109,15 @@ public enum CraftingCurrency implements ItemCurrency {
             return true;
         }
     },
-    RECALIBRATION("exiledSector_recalibration_kernel", 200, 0.3f, MaterialTier.MYTHIC, new Color(110, 235, 140)) {
+    TUNING("exiledSector_tuning_nanoswarm", 200, 0.3f, MaterialTier.MYTHIC, new Color(110, 235, 140)) {
         @Override
         public boolean canUse(Item item, CraftingContext context) {
-            return ItemCrafting.canRecalibrate(item, item.definition(), context.inhibitedSlots());
+            return ItemCrafting.canTune(item, item.definition(), context.inhibitedSlots());
         }
 
         @Override
         public Item use(Item item, CraftingContext context, Random random) {
-            return ItemCrafting.recalibrate(item, random, context.inhibitedSlots());
+            return ItemCrafting.tune(item, random, context.inhibitedSlots());
         }
 
         @Override
@@ -130,15 +130,15 @@ public enum CraftingCurrency implements ItemCurrency {
             return ItemCrafting.canVary(item, rolled);
         }
     },
-    FIXATION("exiledSector_fixation_kernel", 300, 0.2f, MaterialTier.MYTHIC, new Color(230, 80, 175)) {
+    IMMUTABLE("exiledSector_immutable_nanoswarm", 300, 0.2f, MaterialTier.MYTHIC, new Color(230, 80, 175)) {
         @Override
         public boolean canUse(Item item, CraftingContext context) {
-            return ItemCrafting.canFixate(item, context.inhibitedSlots());
+            return ItemCrafting.canMakeImmutable(item, context.inhibitedSlots());
         }
 
         @Override
         public Item use(Item item, CraftingContext context, Random random) {
-            return ItemCrafting.fixate(item, random, context.inhibitedSlots());
+            return ItemCrafting.makeImmutable(item, random, context.inhibitedSlots());
         }
 
         @Override
@@ -151,7 +151,7 @@ public enum CraftingCurrency implements ItemCurrency {
             return true;
         }
     },
-    REPLICATION("exiledSector_replication_kernel", 0, 0.035f, MaterialTier.MYTHIC, new Color(225, 240, 255)) {
+    REPLICATION("exiledSector_replicator_nanoseed", 0, 0.035f, MaterialTier.MYTHIC, new Color(225, 240, 255)) {
         @Override
         public boolean canUse(Item item, CraftingContext context) {
             return true;
@@ -174,7 +174,7 @@ public enum CraftingCurrency implements ItemCurrency {
     private final MaterialTier tier;
     private final Color color;
 
-    CraftingCurrency(String itemId, int defaultPartsCost, float dropWeight, MaterialTier tier, Color color) {
+    Nanoswarm(String itemId, int defaultPartsCost, float dropWeight, MaterialTier tier, Color color) {
         this.itemId = itemId;
         this.defaultPartsCost = defaultPartsCost;
         this.dropWeight = dropWeight;
@@ -182,8 +182,8 @@ public enum CraftingCurrency implements ItemCurrency {
         this.color = color;
     }
 
-    public static CraftingCurrency byItemId(String itemId) {
-        for (CraftingCurrency currency : values()) {
+    public static Nanoswarm byItemId(String itemId) {
+        for (Nanoswarm currency : values()) {
             if (currency.itemId.equals(itemId)) {
                 return currency;
             }
@@ -217,7 +217,7 @@ public enum CraftingCurrency implements ItemCurrency {
     }
 
     @Override
-    public boolean synthesisable() {
+    public boolean growable() {
         return defaultPartsCost > 0;
     }
 

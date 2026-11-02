@@ -179,7 +179,7 @@ class UniqueSubroutinesTest {
         }
 
         assertTrue(ItemCrafting.isLockedFromCurrency(item.definition()));
-        assertFalse(ItemCrafting.canTranspose(item.definition(), item.tier(), definition -> true));
+        assertFalse(ItemCrafting.canMetamorph(item.definition(), item.tier(), definition -> true));
         assertEquals(rolled, item.explicits());
         assertFalse(item.corrupted());
         assertEquals(List.of(item), store.owned());
@@ -191,7 +191,7 @@ class UniqueSubroutinesTest {
         for (int trial = 0; trial < 200; trial++) {
             Item hullUnique = store.add(ItemData.rolled(ItemDefinitions.get(HULL_RELIC_A), random.nextLong()));
 
-            Item replacement = ItemCrafting.transpose(store, hullUnique, random, definition -> true);
+            Item replacement = ItemCrafting.metamorph(store, hullUnique, random, definition -> true);
 
             assertNotNull(replacement);
             assertEquals(HULL_RELIC_B, replacement.definitionId());

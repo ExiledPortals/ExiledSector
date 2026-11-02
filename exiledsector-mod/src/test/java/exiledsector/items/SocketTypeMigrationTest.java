@@ -93,7 +93,7 @@ class SocketTypeMigrationTest {
     }
 
     @Test
-    void aTransposedItemThatChangedTypeLeavesItsTreeSocket() {
+    void aMetamorphosedItemThatChangedTypeLeavesItsTreeSocket() {
         Item chip = store.add(ItemDefinitions.get("chip"), 1L);
         Item gunners = store.add(ItemDefinitions.get("gunners"), 2L);
         ShipSkillData shipData = shipWith(chip, gunners);

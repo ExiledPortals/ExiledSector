@@ -219,11 +219,11 @@ class WormholeAnchorTest {
             assertNull(ItemCrafting.use(currency, anchor, CraftingMaterials.cargoOnly(cargo), store, new Random(1L), definition -> true),
                     currency.key());
         }
-        assertTrue(ItemCurrencies.extend(CraftingCurrency.REPLICATION, ItemType.WORMHOLE_ANCHOR));
+        assertTrue(ItemCurrencies.extend(Nanoswarm.REPLICATION, ItemType.WORMHOLE_ANCHOR));
         try {
-            assertFalse(ItemCrafting.canUse(CraftingCurrency.REPLICATION, anchor, definition -> true));
+            assertFalse(ItemCrafting.canUse(Nanoswarm.REPLICATION, anchor, definition -> true));
         } finally {
-            ItemCurrencies.retract(CraftingCurrency.REPLICATION, ItemType.WORMHOLE_ANCHOR);
+            ItemCurrencies.retract(Nanoswarm.REPLICATION, ItemType.WORMHOLE_ANCHOR);
         }
         verify(cargo, never()).removeItems(Mockito.any(), Mockito.any(), anyFloat());
         assertTrue(ItemCurrencies.forType(ItemType.WORMHOLE_ANCHOR).isEmpty());
@@ -298,7 +298,7 @@ class WormholeAnchorTest {
                 assertFalse(anchorIds.contains(item.definitionId()), item.definitionId());
             }
         }
-        assertFalse(ItemDrops.canBeSynthesised(ItemDefinitions.get(HEGEMONY_ANCHOR)));
+        assertFalse(ItemDrops.canBeGrown(ItemDefinitions.get(HEGEMONY_ANCHOR)));
     }
 
     private static void assertNotAnchor(ItemDefinition picked, Set<String> anchorIds) {

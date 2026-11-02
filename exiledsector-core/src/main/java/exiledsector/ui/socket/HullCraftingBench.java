@@ -5,7 +5,7 @@ import exiledsector.ExiledSector;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.items.CorruptionOutcome;
-import exiledsector.items.CraftingCurrency;
+import exiledsector.items.Nanoswarm;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.Item;
@@ -84,9 +84,9 @@ public final class HullCraftingBench implements BenchModeSupport {
     }
 
     static List<ItemCurrency> hullCraftingBenchCurrencies(List<ItemCurrency> registered, ToIntFunction<String> owned) {
-        List<ItemCurrency> shown = new ArrayList<>(List.of(CraftingCurrency.values()));
+        List<ItemCurrency> shown = new ArrayList<>(List.of(Nanoswarm.values()));
         for (ItemCurrency currency : registered) {
-            if (!(currency instanceof CraftingCurrency) && currency.appliesToShipItems() && owned.applyAsInt(currency.itemId()) > 0) {
+            if (!(currency instanceof Nanoswarm) && currency.appliesToShipItems() && owned.applyAsInt(currency.itemId()) > 0) {
                 shown.add(currency);
             }
         }
@@ -95,7 +95,7 @@ public final class HullCraftingBench implements BenchModeSupport {
 
     @Override
     public boolean inOrbit(ItemCurrency currency) {
-        return currency instanceof CraftingCurrency;
+        return currency instanceof Nanoswarm;
     }
 
     @Override
@@ -117,7 +117,7 @@ public final class HullCraftingBench implements BenchModeSupport {
     public Refusal refusal(ItemCurrency currency, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
                            Set<CraftingInhibitor> inhibitors) {
         if (materials.count(currency.itemId()) < 1) {
-            return new Refusal(UseVerdict.refused(currency.synthesisable() ? "ui.craftingBench.notice.noneOwned" : "ui.craftingBench.notice.noneFound"), false);
+            return new Refusal(UseVerdict.refused(currency.growable() ? "ui.craftingBench.notice.noneOwned" : "ui.craftingBench.notice.noneFound"), false);
         }
         if (loaded == null) {
             return new Refusal(LOAD_FIRST, false);
@@ -143,7 +143,7 @@ public final class HullCraftingBench implements BenchModeSupport {
     }
 
     static String usedNoticeKey(ItemCurrency currency, CorruptionOutcome outcome, ItemNature nature) {
-        if (currency == CraftingCurrency.CORRUPTION && outcome != null) {
+        if (currency == Nanoswarm.CORRUPTION && outcome != null) {
             return "ui.craftingBench.notice.corrupted." + outcome.name().toLowerCase(Locale.ROOT) + "." + nature.name().toLowerCase(Locale.ROOT);
         }
         return currency.usedNoticeKey(nature);

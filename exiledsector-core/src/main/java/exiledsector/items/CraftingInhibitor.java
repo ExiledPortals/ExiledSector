@@ -47,7 +47,7 @@ public enum CraftingInhibitor implements GrowableMaterial {
     }
 
     @Override
-    public boolean synthesisable() {
+    public boolean growable() {
         return defaultPartsCost > 0;
     }
 

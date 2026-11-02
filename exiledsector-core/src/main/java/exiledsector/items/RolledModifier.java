@@ -18,17 +18,17 @@ public final class RolledModifier {
     private final String modifierId;
     private final ModifierSlot slot;
     private final List<RolledEffect> lines;
-    private final boolean locked;
+    private final boolean immutable;
 
     public RolledModifier(String modifierId, ModifierSlot slot, List<RolledEffect> lines) {
         this(modifierId, slot, lines, false);
     }
 
-    public RolledModifier(String modifierId, ModifierSlot slot, List<RolledEffect> lines, boolean locked) {
+    public RolledModifier(String modifierId, ModifierSlot slot, List<RolledEffect> lines, boolean immutable) {
         this.modifierId = modifierId;
         this.slot = slot;
         this.lines = new ArrayList<>(lines);
-        this.locked = locked;
+        this.immutable = immutable;
     }
 
     public static RolledModifier single(ModifierSlot slot, RolledEffect line) {
@@ -77,7 +77,7 @@ public final class RolledModifier {
 
     private Object readResolve() {
         String currentId = RolledEffect.currentName(modifierId);
-        return Objects.equals(currentId, modifierId) ? this : new RolledModifier(currentId, slot, lines(), locked);
+        return Objects.equals(currentId, modifierId) ? this : new RolledModifier(currentId, slot, lines(), immutable);
     }
 
     public String modifierId() {
@@ -96,11 +96,11 @@ public final class RolledModifier {
         return lines == null ? List.of() : Collections.unmodifiableList(lines);
     }
 
-    public boolean locked() {
-        return locked;
+    public boolean immutable() {
+        return immutable;
     }
 
-    public RolledModifier asLocked() {
+    public RolledModifier asImmutable() {
         return new RolledModifier(modifierId, slot, lines(), true);
     }
 
@@ -109,7 +109,7 @@ public final class RolledModifier {
     }
 
     public RolledModifier withLines(List<RolledEffect> replacementLines) {
-        return new RolledModifier(modifierId, slot, replacementLines, locked);
+        return new RolledModifier(modifierId, slot, replacementLines, immutable);
     }
 
     public RolledModifier mapLines(UnaryOperator<RolledEffect> lineMapper) {
@@ -130,12 +130,12 @@ public final class RolledModifier {
     @Override
     public boolean equals(Object other) {
         return other instanceof RolledModifier rolled && Objects.equals(modifierId, rolled.modifierId) && slot == rolled.slot
-                && lines().equals(rolled.lines()) && locked == rolled.locked;
+                && lines().equals(rolled.lines()) && immutable == rolled.immutable;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(modifierId, slot, lines(), locked);
+        return Objects.hash(modifierId, slot, lines(), immutable);
     }
 
     @Override

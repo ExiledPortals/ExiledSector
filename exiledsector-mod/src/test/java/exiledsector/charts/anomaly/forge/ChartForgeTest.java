@@ -111,7 +111,7 @@ class ChartForgeTest {
         ChartRun run = liveForgeRun(List.of(excise), 1);
         owns(100f, 100f, 50);
         Item item = plate();
-        RolledModifier notOnTheItem = plate().explicits().get(0).asLocked();
+        RolledModifier notOnTheItem = plate().explicits().get(0).asImmutable();
 
         assertFalse(ChartForge.run(run, excise, item, ForgeChoice.modifier(notOnTheItem), cargo, materials, new Random(1L)));
 

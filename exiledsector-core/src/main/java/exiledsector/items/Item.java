@@ -296,8 +296,8 @@ public abstract class Item {
         corruption = outcome;
     }
 
-    public boolean hasLockedModifier() {
-        return explicits().stream().anyMatch(RolledModifier::locked);
+    public boolean hasImmutableModifier() {
+        return explicits().stream().anyMatch(RolledModifier::immutable);
     }
 
     public void refreezeName() {
@@ -371,7 +371,7 @@ public abstract class Item {
         return false;
     }
 
-    public boolean retuneTrait(Random random) {
+    public boolean tuneTrait(Random random) {
         return false;
     }
 
@@ -502,7 +502,7 @@ public abstract class Item {
             StyledText description = explicitLine(effects, effect, modifier == null ? null : modifier.line(effect.effectName()),
                     withRollRanges, context);
             if (description != null) {
-                StyledText shown = rolledModifier.locked() ? description.withUnstyledAs(Style.IMMUTABLE) : description;
+                StyledText shown = rolledModifier.immutable() ? description.withUnstyledAs(Style.IMMUTABLE) : description;
                 ModifierEffect resolvedEffect = effect.effect(effects);
                 described.add(resolvedEffect == null ? new SlottedLine(rolledModifier.slot(), shown)
                         : new SlottedLine(rolledModifier.slot(), shown, resolvedEffect.detailTitle(), resolvedEffect.detailLines()));

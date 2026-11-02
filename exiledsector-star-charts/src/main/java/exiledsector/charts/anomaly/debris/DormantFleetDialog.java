@@ -13,7 +13,7 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRuns;
-import exiledsector.items.CraftingCurrency;
+import exiledsector.items.Nanoswarm;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.ui.VanillaText;
 
@@ -21,7 +21,7 @@ public class DormantFleetDialog extends AnomalyDialog {
 
     static final String ENGAGE_OPTION = "exiledSector_debrisEngage";
     static final String CORRUPT = "exiledSector_debrisCorrupt";
-    static final String KERNEL_ID = CraftingCurrency.CORRUPTION.itemId();
+    static final String KERNEL_ID = Nanoswarm.CORRUPTION.itemId();
     static final int KERNEL_COST = 1;
 
     private CampaignFleetAPI dormantFleet;

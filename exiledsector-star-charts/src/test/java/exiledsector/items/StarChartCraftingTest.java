@@ -46,7 +46,7 @@ class StarChartCraftingTest {
         }
 
         @Override
-        public boolean synthesisable() {
+        public boolean growable() {
             return false;
         }
 
@@ -103,20 +103,20 @@ class StarChartCraftingTest {
     @Test
     void theChartCurrenciesAndTheExtendedKernelsJoinTheRowOnlyOnceRegistered() {
         assertEquals(List.of(), StarChartCrafting.currencies());
-        for (CraftingCurrency currency : CraftingCurrency.values()) {
+        for (Nanoswarm currency : Nanoswarm.values()) {
             assertEquals(StarChartCrafting.CANNOT_USE, refusalWithOne(currency));
         }
 
         StarChartCipher.registerAll();
 
-        assertEquals(List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.CORRUPTION, CraftingCurrency.ANNULMENT, CraftingCurrency.RECALIBRATION,
+        assertEquals(List.of(Nanoswarm.AUGMENTATION, Nanoswarm.CORRUPTION, Nanoswarm.ANNULMENT, Nanoswarm.TUNING,
                 StarChartCipher.REFORGE, StarChartCipher.ERASURE, StarChartCipher.CARTOGRAPHY), StarChartCrafting.currencies());
-        for (ItemCurrency currency : List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.RECALIBRATION, CraftingCurrency.CORRUPTION, CraftingCurrency.ANNULMENT,
+        for (ItemCurrency currency : List.of(Nanoswarm.AUGMENTATION, Nanoswarm.TUNING, Nanoswarm.CORRUPTION, Nanoswarm.ANNULMENT,
                 StarChartCipher.REFORGE, StarChartCipher.ERASURE, StarChartCipher.CARTOGRAPHY)) {
             assertEquals(UseVerdict.ALLOW, refusalWithOne(currency), currency.key());
         }
-        for (CraftingCurrency currency : List.of(CraftingCurrency.ATTUNEMENT, CraftingCurrency.SUBSTITUTION, CraftingCurrency.FIXATION,
-                CraftingCurrency.REPLICATION, CraftingCurrency.TRANSPOSITION)) {
+        for (Nanoswarm currency : List.of(Nanoswarm.FUNDAMENTAL, Nanoswarm.RESHAPING, Nanoswarm.IMMUTABLE,
+                Nanoswarm.REPLICATION, Nanoswarm.METAMORPH)) {
             assertEquals(StarChartCrafting.CANNOT_USE, refusalWithOne(currency), currency.key());
         }
     }
@@ -129,7 +129,7 @@ class StarChartCraftingTest {
         Item topTier = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 3L, 15));
 
         assertEquals(StarChartCrafting.MAX_TIER, StarChartCrafting.refusal(StarChartCipher.CARTOGRAPHY, topTier, store, materials, definition -> true));
-        assertEquals(StarChartCrafting.CANNOT_USE, StarChartCrafting.refusal(CraftingCurrency.TRANSPOSITION, chart, store, materials, definition -> true));
+        assertEquals(StarChartCrafting.CANNOT_USE, StarChartCrafting.refusal(Nanoswarm.METAMORPH, chart, store, materials, definition -> true));
         assertEquals(StarChartCrafting.INHIBITOR_BLOCKS, StarChartCrafting.refusal(StarChartCipher.ERASURE, chart, store, materials, definition -> true,
                 List.of(CraftingInhibitor.PREFIX, CraftingInhibitor.SUFFIX)));
         Random random = new Random(4L);
@@ -137,11 +137,11 @@ class StarChartCraftingTest {
             assertTrue(chart.explicits().size() < 6);
         }
         assertEquals(StarChartCrafting.NO_MODIFIERS, StarChartCrafting.refusal(StarChartCipher.ERASURE, chart, store, materials, definition -> true));
-        while (StarChartCrafting.use(CraftingCurrency.AUGMENTATION, chart, store, materials, random, definition -> true) != null) {
+        while (StarChartCrafting.use(Nanoswarm.AUGMENTATION, chart, store, materials, random, definition -> true) != null) {
             assertTrue(chart.explicits().size() <= 6);
         }
         assertEquals(6, chart.explicits().size());
-        assertEquals(StarChartCrafting.FULL, StarChartCrafting.refusal(CraftingCurrency.AUGMENTATION, chart, store, materials, definition -> true));
+        assertEquals(StarChartCrafting.FULL, StarChartCrafting.refusal(Nanoswarm.AUGMENTATION, chart, store, materials, definition -> true));
     }
 
     @Test

@@ -1,6 +1,6 @@
 package exiledsector.ui.socket;
 
-import exiledsector.items.CraftingCurrency;
+import exiledsector.items.Nanoswarm;
 import exiledsector.items.StarChartCipher;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +35,7 @@ class BenchSceneTest {
 
     @Test
     void tilesStayClearOfTheConsolesTheNoticeAndTheDetailsPlateInEveryMode() {
-        assertTilesClear(BenchMode.HULL_ITEMS, CraftingCurrency.values().length);
+        assertTilesClear(BenchMode.HULL_ITEMS, Nanoswarm.values().length);
         assertTilesClear(BenchMode.STAR_CHARTS, StarChartCipher.KERNELS_ON_CHARTS.size() + StarChartCipher.values().length);
     }
 

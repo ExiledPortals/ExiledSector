@@ -9,7 +9,7 @@ import exiledsector.charts.atlas.AtlasCatalystUse;
 import exiledsector.charts.atlas.RedeploymentCatalystUse;
 import exiledsector.charts.wormhole.StarChartOpening;
 import exiledsector.charts.wormhole.WormholeOpenCheck;
-import exiledsector.items.CraftingCurrency;
+import exiledsector.items.Nanoswarm;
 import exiledsector.items.StarChartCrafting;
 import exiledsector.items.StarChartCipher;
 import exiledsector.items.UseVerdict;
@@ -71,7 +71,7 @@ class StarChartUiStringKeysTest {
             require(catalogue, "material." + currency.itemId() + ".description", missing);
             require(catalogue, "chart.currency." + currency.key() + ".description", missing);
         }
-        for (CraftingCurrency kernel : StarChartCipher.KERNELS_ON_CHARTS) {
+        for (Nanoswarm kernel : StarChartCipher.KERNELS_ON_CHARTS) {
             require(catalogue, "chart.currency." + kernel.key() + ".description", missing);
         }
         require(catalogue, "chart.drop.reward", missing);
