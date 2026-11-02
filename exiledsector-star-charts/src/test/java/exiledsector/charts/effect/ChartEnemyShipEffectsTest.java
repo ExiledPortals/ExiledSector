@@ -140,7 +140,7 @@ class ChartEnemyShipEffectsTest {
 
         ChartEnemyShipEffects.grant(fleet, context);
 
-        assertEquals(Set.of("reckless_assault_1", "hull_breacher_1"), Set.copyOf(StarChartLootSource.INSTANCE.grantedNodeIds(fleet.getMemoryWithoutUpdate())));
+        assertEquals(Set.of("freebooters_charge_1", "hullbreacher_rounds_1"), Set.copyOf(StarChartLootSource.INSTANCE.grantedNodeIds(fleet.getMemoryWithoutUpdate())));
         assertEquals(Map.of(ChartFleetStat.ENEMY_KINETIC_DAMAGE_DEALT, 1.2f), ChartEnemyShipEffects.grantedTo(member).statMults());
         verify(variant).addMod(SkillTreeHullMod.ID);
     }

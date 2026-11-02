@@ -460,7 +460,7 @@ class ChartGenContextTest {
         assertEquals(2.2f, context.fleetStatMults().get(ChartFleetStat.SHIELD_DAMAGE_TAKEN), TOLERANCE);
         assertEquals(0.1f, context.fleetStatMults().get(ChartFleetStat.ARMOR), TOLERANCE);
         assertEquals(0.1f, context.fleetStatMults().get(ChartFleetStat.COMMAND_POINT_RATE), TOLERANCE);
-        assertEquals(Set.of("energy_chain_1"), context.enemyGrantedNodeIds());
+        assertEquals(Set.of("refracting_projectiles_1"), context.enemyGrantedNodeIds());
         assertFalse(ChartGenContext.none().twinnedBoss());
         assertTrue(ChartGenContext.none().bannedCombatHullSizes().isEmpty());
         assertFalse(ChartGenContext.none().shipSystemsDisabled());

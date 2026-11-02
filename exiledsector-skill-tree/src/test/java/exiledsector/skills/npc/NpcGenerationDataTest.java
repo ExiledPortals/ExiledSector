@@ -91,7 +91,7 @@ class NpcGenerationDataTest {
                 root.getType().getEffects().forEach(effect -> rootEffects.add(effect.effect().name()));
                 for (String nodeId : data.getAllocatedNodeIds()) {
                     SkillNode node = SkillTree.get(nodeId);
-                    if (node != null && "small_flux_optional".equals(node.getType().getId())) {
+                    if (node != null && "affinity".equals(node.getType().getId())) {
                         SkillType option = SkillTree.getType(data.getOptionalSelection(nodeId));
                         if (option == null || option.getEffects().stream().noneMatch(effect -> rootEffects.contains(effect.effect().name()))) {
                             problems.add(label + ": " + nodeId + " took " + data.getOptionalSelection(nodeId) + " on " + root.getId());

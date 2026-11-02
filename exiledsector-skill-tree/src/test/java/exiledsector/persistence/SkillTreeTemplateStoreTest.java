@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SkillTreeTemplateStoreTest {
 
-    private static final List<TemplateStep> STEPS = List.of(new TemplateStep("armor_1", null), new TemplateStep("slot_2", "affinity_low_tech"));
+    private static final List<TemplateStep> STEPS = List.of(new TemplateStep("armor_1", null), new TemplateStep("slot_2", "low_tech_affinity"));
 
     private MockSector mockSector;
     private Map<String, Object> persistentData;

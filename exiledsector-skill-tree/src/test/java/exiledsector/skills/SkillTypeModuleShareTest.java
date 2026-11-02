@@ -54,8 +54,8 @@ class SkillTypeModuleShareTest {
 
     @Test
     void nodesWhoseUpsideIsExcludedNeverShareTheirDownside() {
-        for (String typeId : List.of("shared_fate", "safety_overrides", "adaptiveshields", "frontemitter", "high_scatter_amp",
-                "unstable_injector", "nskr_volatile", "frontshield", "shield_shunt", "dynamic_grid")) {
+        for (String typeId : List.of("shared_fate", "safety_overrides", "shield_conversion_omni", "shield_conversion_front", "high_scatter_amplifier",
+                "unstable_injector", "nskr_volatile", "makeshift_shield_generator", "shield_shunt", "dynamic_grid")) {
             for (HullSize hullSize : HULL_SIZES) {
                 assertEquals(List.of(), sharedNames(typeId, hullSize), typeId);
             }
@@ -64,16 +64,16 @@ class SkillTypeModuleShareTest {
 
     @Test
     void penaltiesOnSharedEffectsTravelWithTheNode() {
-        assertEquals(List.of("MISSILE_WEAPON_AMMO_PERCENT", "MISSILE_WEAPON_FIRE_RATE_PERCENT"), sharedNames("missleracks", HullSize.CRUISER));
-        assertEquals(List.of("REPAIR_TIME_PERCENT", "SHIELD_DAMAGE_TAKEN_MULT"), sharedNames("seraphs_grace", HullSize.CRUISER));
-        assertTrue(sharedNames("reckless_assault", HullSize.CRUISER).containsAll(List.of("WEAPON_DAMAGE_PERCENT", "ARMOR_PERCENT")));
+        assertEquals(List.of("MISSILE_WEAPON_AMMO_PERCENT", "MISSILE_WEAPON_FIRE_RATE_PERCENT"), sharedNames("expanded_missile_racks", HullSize.CRUISER));
+        assertEquals(List.of("REPAIR_TIME_PERCENT", "SHIELD_DAMAGE_TAKEN_MULT"), sharedNames("borrowed_grace", HullSize.CRUISER));
+        assertTrue(sharedNames("freebooters_charge", HullSize.CRUISER).containsAll(List.of("WEAPON_DAMAGE_PERCENT", "ARMOR_PERCENT")));
     }
 
     @Test
     void allSharesTheShareablePartAndLeavesTheRestOnTheParent() {
-        assertEquals(List.of("ARMOR_PERCENT", "WEAPON_RECOIL_MULT"), sharedNames("armoredweapons", HullSize.CRUISER));
-        assertTrue(sharedNames("heavyarmor", HullSize.CAPITAL_SHIP).containsAll(List.of("ARMOR_PERCENT", "HULL_FLAT")));
-        assertTrue(!sharedNames("heavyarmor", HullSize.CAPITAL_SHIP).contains("MANEUVERABILITY_PERCENT"));
+        assertEquals(List.of("ARMOR_PERCENT", "WEAPON_RECOIL_MULT"), sharedNames("armored_weapon_mounts", HullSize.CRUISER));
+        assertTrue(sharedNames("heavy_armor", HullSize.CAPITAL_SHIP).containsAll(List.of("ARMOR_PERCENT", "HULL_FLAT")));
+        assertTrue(!sharedNames("heavy_armor", HullSize.CAPITAL_SHIP).contains("MANEUVERABILITY_PERCENT"));
     }
 
     @Test

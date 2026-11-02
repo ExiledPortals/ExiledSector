@@ -15,7 +15,7 @@ How tree effects are totalled and applied to a ship.
 
 ### Affinity
 
-Roots and `small_flux_optional` nodes grant Low Tech, High Tech or Midline affinity (`*_AFFINITY_FLAT`), which
+Roots and `affinity` nodes grant Low Tech, High Tech or Midline affinity (`*_AFFINITY_FLAT`), which
 apply no stat themselves. `EffectTotals` sums each ship's permanent affinity first and turns it into tree MULT
 bonuses for every whole step of 5, 10, 15 or 20, from the one table in `AffinitySteps`, so diminishing returns, NPC
 scaling and the summary see the stat bonuses. `ModuleTreeShare` steps the shared nodes' affinity the same way.

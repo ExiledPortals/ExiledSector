@@ -249,7 +249,7 @@ class SkillTypesDataConsistencyTest {
                     .map(SkillType::getId)
                     .toList();
 
-            assertEquals(List.of("heavyarmor"), standIns);
+            assertEquals(List.of("heavy_armor"), standIns);
         } finally {
             RealSkillData.clear();
         }

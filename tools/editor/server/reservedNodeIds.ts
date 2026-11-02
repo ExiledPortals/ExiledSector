@@ -26,8 +26,8 @@ function releasedNodeIds(paths: ProjectPaths): string[] {
     return [];
   }
   try {
-    const released = JSON.parse(readDataFile(releasedPath).content) as { nodes?: unknown };
-    return Array.isArray(released.nodes) ? released.nodes.filter((id): id is string => typeof id === 'string') : [];
+    const released = JSON.parse(readDataFile(releasedPath).content) as { nodes?: unknown; retired?: unknown };
+    return [released.nodes, released.retired].flatMap((ids) => (Array.isArray(ids) ? ids.filter((id): id is string => typeof id === 'string') : []));
   } catch {
     return [];
   }

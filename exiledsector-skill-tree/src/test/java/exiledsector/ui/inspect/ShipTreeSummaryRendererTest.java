@@ -51,7 +51,7 @@ class ShipTreeSummaryRendererTest {
         SkillTree.clearNodes();
         SkillTree.clearTypes();
         SkillNode root = new SkillNode("root_1", new SkillType.Builder("root", "Low Tech", "a.png", SkillTier.ROOT).build(), List.of(), 0f, 0f);
-        SkillNode armor = new SkillNode("heavyarmor_1", new SkillType.Builder("heavyarmor", "Heavy Armor", "a.png", SkillTier.NOTABLE)
+        SkillNode armor = new SkillNode("heavy_armor_1", new SkillType.Builder("heavyarmor", "Heavy Armor", "a.png", SkillTier.NOTABLE)
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f))).build(), List.of("root_1"), 0f, 0f);
         SkillTree.register(root);
         SkillTree.register(armor);

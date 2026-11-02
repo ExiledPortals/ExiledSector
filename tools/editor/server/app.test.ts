@@ -155,13 +155,13 @@ describe('data files', () => {
 });
 
 describe('reserved node ids', () => {
-  it('lists retired ids from node_replacements.csv and released ids, read-only', async () => {
+  it('lists replaced ids from node_replacements.csv and released and retired ids, read-only', async () => {
     writeProjectFile('data/config/exiledSector/node_replacements.csv', 'old,new\r\nflux_8,socket_2\r\n\r\nflux_15,socket_1\r\n');
-    writeProjectFile('exiledsector-skill-tree/src/test/resources/released_skill_nodes.json', '{\n  "nodes": ["flux_1", "flux_2"],\n  "roots": []\n}\n');
+    writeProjectFile('exiledsector-skill-tree/src/test/resources/released_skill_nodes.json', '{\n  "nodes": ["flux_1", "flux_2"],\n  "roots": [],\n  "retired": ["old_flux_3"]\n}\n');
 
     const response = await app.inject({ method: 'GET', url: '/api/reserved-node-ids' });
 
-    expect(response.json()).toEqual({ ok: true, replaced: ['flux_8', 'flux_15'], released: ['flux_1', 'flux_2'] });
+    expect(response.json()).toEqual({ ok: true, replaced: ['flux_8', 'flux_15'], released: ['flux_1', 'flux_2', 'old_flux_3'] });
     const save = await app.inject({
       method: 'POST',
       url: '/api/files',

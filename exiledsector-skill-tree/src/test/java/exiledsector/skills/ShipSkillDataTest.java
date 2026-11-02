@@ -511,7 +511,7 @@ class ShipSkillDataTest {
                 new SkillType.Builder("root_low_tech", "Root Low Tech", "a.png", SkillTier.ROOT)
                         .effects(List.of())
                         .build(),
-                List.of("small_logistics_optional_11", "small_logistics_optional_31", "small_logistics_optional_14", "small_flux_optional_34"),
+                List.of("small_logistics_optional_11", "small_logistics_optional_31", "small_logistics_optional_14", "affinity_34"),
                 0f, 0f);
         SkillNode n3 = node("small_logistics_optional_3", List.of("root_high_tech_1", "small_logistics_optional_6", "small_logistics_optional_24"));
         SkillNode n6 = node("small_logistics_optional_6", List.of("small_logistics_optional_8", "small_logistics_optional_3"));
@@ -519,12 +519,12 @@ class ShipSkillDataTest {
         SkillNode n12 = node("small_logistics_optional_12", List.of("small_logistics_optional_8", "small_logistics_optional_11"));
         SkillNode n11 = node("small_logistics_optional_11", List.of("root_low_tech_1", "small_logistics_optional_26", "small_logistics_optional_12"));
         SkillNode n5 = node("small_logistics_optional_5", List.of("small_logistics_optional_7", "small_logistics_optional_25"));
-        SkillNode n7 = node("small_logistics_optional_7", List.of("small_logistics_optional_5", "small_logistics_optional_10", "survey_generic_cost_reduction_1"));
+        SkillNode n7 = node("small_logistics_optional_7", List.of("small_logistics_optional_5", "small_logistics_optional_10", "survey_cost_reduction_1"));
         SkillNode n9 = node("small_logistics_optional_9", List.of("small_logistics_optional_13", "small_logistics_optional_25"));
-        SkillNode n10 = node("small_logistics_optional_10", List.of("small_logistics_optional_7", "root_high_tech_1", "increased_sensor_strength_2", "small_logistics_optional_23"));
-        SkillNode n13 = node("small_logistics_optional_13", List.of("small_logistics_optional_9", "small_logistics_optional_14", "cargo_capacity_flat_2", "fuel_flat_2"));
+        SkillNode n10 = node("small_logistics_optional_10", List.of("small_logistics_optional_7", "root_high_tech_1", "sensor_strength_2", "small_logistics_optional_23"));
+        SkillNode n13 = node("small_logistics_optional_13", List.of("small_logistics_optional_9", "small_logistics_optional_14", "cargo_capacity_2", "fuel_2"));
         SkillNode n14 = node("small_logistics_optional_14", List.of("small_logistics_optional_13", "root_low_tech_1", "small_logistics_optional_22"));
-        SkillNode n25 = node("small_logistics_optional_25", List.of("small_logistics_optional_4", "small_logistics_optional_9", "small_logistics_optional_5", "operations_center_1", "efficiency_overhaul_1", "converted_fighterbay_1"));
+        SkillNode n25 = node("small_logistics_optional_25", List.of("small_logistics_optional_4", "small_logistics_optional_9", "small_logistics_optional_5", "operations_center_1", "efficiency_overhaul_1", "converted_fighter_bay_1"));
 
         List<SkillNode> allNodes = List.of(rootLowTech, n3, n6, n8, n12, n11, n5, n7, n9, n10, n13, n14, n25);
 
@@ -543,12 +543,12 @@ class ShipSkillDataTest {
 
     @Test
     void reproduceReportedAcceleratedShieldsWheelLockup() {
-        SkillNode hub = node("advancedshieldemitter_1", List.of("shield_raise_rate_1", "shield_turn_rate_1"));
-        SkillNode raise1 = node("shield_raise_rate_1", List.of("shield_raise_rate_2", "advancedshieldemitter_1"));
-        SkillNode raise2 = node("shield_raise_rate_2", List.of("shield_raise_rate_1", "shield_turn_raise_rate_optional_1"));
-        SkillNode bridge = node("shield_turn_raise_rate_optional_1", List.of("small_flux_optional_25", "shield_raise_rate_2", "shield_turn_rate_2"));
-        SkillNode turn2 = node("shield_turn_rate_2", List.of("shield_turn_rate_1", "shield_turn_raise_rate_optional_1"));
-        SkillNode turn1 = node("shield_turn_rate_1", List.of("shield_turn_rate_2", "advancedshieldemitter_1"));
+        SkillNode hub = node("accelerated_shields_1", List.of("shield_raise_rate_1", "shield_turn_rate_1"));
+        SkillNode raise1 = node("shield_raise_rate_1", List.of("shield_raise_rate_2", "accelerated_shields_1"));
+        SkillNode raise2 = node("shield_raise_rate_2", List.of("shield_raise_rate_1", "shield_raise_rate_or_shield_turn_rate_1"));
+        SkillNode bridge = node("shield_raise_rate_or_shield_turn_rate_1", List.of("affinity_25", "shield_raise_rate_2", "shield_turn_rate_2"));
+        SkillNode turn2 = node("shield_turn_rate_2", List.of("shield_turn_rate_1", "shield_raise_rate_or_shield_turn_rate_1"));
+        SkillNode turn1 = node("shield_turn_rate_1", List.of("shield_turn_rate_2", "accelerated_shields_1"));
 
         List<SkillNode> ring = List.of(hub, raise1, raise2, bridge, turn2, turn1);
 
@@ -559,11 +559,11 @@ class ShipSkillDataTest {
 
         for (SkillNode n : ring) {
             if (n == bridge) continue;
-            assertTrue(ShipTrees.canDeallocate(data, n, ring, "small_flux_optional_25"),
+            assertTrue(ShipTrees.canDeallocate(data, n, ring, "affinity_25"),
                     "expected " + n.getId() + " to be deallocatable");
         }
-        assertFalse(ShipTrees.canDeallocate(data, bridge, ring, "small_flux_optional_25"),
-                "shield_turn_raise_rate_optional_1 is the ring's sole bridge and must stay blocked while the rest of the ring is allocated");
+        assertFalse(ShipTrees.canDeallocate(data, bridge, ring, "affinity_25"),
+                "shield_raise_rate_or_shield_turn_rate_1 is the ring's sole bridge and must stay blocked while the rest of the ring is allocated");
     }
 
     @Test

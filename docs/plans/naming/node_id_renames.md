@@ -45,7 +45,7 @@ The gap: `ShipTrees.replaceNode` was built for removed nodes. It drops whatever 
 
 1. Add `data/config/exiledSector/node_id_renames.csv` and `type_id_renames.csv` (`old,new`; only released rows for nodes). Keep them separate from `node_replacements.csv` so they can be deleted on their own later. `NodeReplacements.load` merges the node rows into its lookup and remembers which are renames. A small type-alias lookup maps old option ids in `optionalSelections`, `NodeEntry` and `ShipTrees.carryOptionOver` / `hasInvalidOption`. Done: `NodeReplacements.load` reads both files (`registerRenames`, `isRename`, `registerTypeRenames`, `currentTypeId`). `AffinityOptions.currentOptionId` runs option ids through `currentTypeId`, which covers `optionalSelections` and `NodeEntry`; the two `ShipTrees` checks use `currentTypeId` alone, so the retired affinity options stay limited to `AffinityOptions.migrate`. Tests in `NodeReplacementsTest`.
 2. Add a rename path in `ShipTrees` that moves every node-keyed field listed above without dropping sockets, charges or options. `ShipTreeRepairs` uses it for rename rows and keeps `replaceNode` for replacement rows. Done: `ShipTrees.renameNode` moves every node-keyed set and map in order, also for nodes that aren't allocated, and runs the kept option through `currentTypeId`. `ShipTreeRepairs.replaceRemovedNodes` renames when every hop to the current node is a rename row. Tests in `ShipTreeRenamesTest`, including a saved ship with renamed allocated, dormant, free, paired, socketed, charged and optional nodes.
-3. Point the existing `node_replacements.csv` targets straight at the new ids (`small_flux_optional_15` becomes `affinity_15`, `non_beam_energy_damage_6` becomes `non_beam_energy_weapon_damage_6`).
+3. Point the existing `node_replacements.csv` targets straight at the new ids (`small_flux_optional_15` becomes `affinity_15`, `non_beam_energy_damage_6` becomes `non_beam_energy_weapon_damage_6`). Done, together with steps 4 and 5, since the data tests only pass once all three are in.
 4. Rewrite the data:
    - `skill_types.json`: `id`, `optionalOptions` and any type references.
    - `ship_skill_tree.json`: node `id`, `type`, `connectedTo` and `pairedWith`.
@@ -56,12 +56,16 @@ The gap: `ShipTrees.replaceNode` was built for removed nodes. It drops whatever 
    - Tests: about 50 Java test files and a few editor tests name these ids.
 
    Rename identifiers outside string literals only, then diff every changed string literal. The run must not touch hull mod ids.
-5. Update `released_skill_nodes.json`: switch `nodes` to the new ids and add a `retired` list with the old ones. That list keeps the old ids reserved after the CSVs go. `tools/editor/server/reservedNodeIds.ts` should read it too.
+
+   Done: all of the above, plus `descriptions.en.golden` (the same lines re-sorted under the new ids), `docs/docs.md` and the NPC tag's granted entries, which now go through `NodeReplacements.current` like the rest of the tag. Tests that build their own fixture types keep ids that double as hull mod ids (`heavyarmor`, `frontemitter`); tests that read the real data use the new ids. The changed literals were all reviewed and none is a hull mod id.
+5. Update `released_skill_nodes.json`: switch `nodes` to the new ids and add a `retired` list with the old ones. That list keeps the old ids reserved after the CSVs go. `tools/editor/server/reservedNodeIds.ts` should read it too. Done: `retired` holds the 277 old ids, `reservedNodeIds.ts` treats them as released, and `Save-ReleasedSkillNodes` in `build-common.ps1` keeps the list when a release rewrites the ledger. `ReleasedSkillNodesTest` checks no retired id is back in the tree.
 6. Change the editor to build new node ids from the type's display name instead of its id (`tools/editor/src/pages/tree/state/treeActions.ts:42`). Also add a data test that every type id equals its display-name slug (except the kept ids listed above), so the ids don't drift again.
 7. Tests:
    - A data test that every `old` is gone from the tree, every `new` is present, and no `new` equals a released or retired id.
    - A `ShipTrees` test showing a rename keeps sockets, charges, options, free and dormant state.
    - A template and option round trip using old option ids.
+
+   Done: `NodeIdRenamesDataTest` (the first, with the real CSVs and ledger), `ShipTreeRenamesTest` (the second) and `NodeReplacementsTest` (the third).
 8. In the changelog, note the rename and that owned Doctrine Archives roll new rewrites once ("Save compatible.").
 
 ## Retiring the mapping

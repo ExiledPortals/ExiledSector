@@ -90,10 +90,10 @@ public enum ChartEffect implements ModifierEffect {
             return Translation.msg(key()).arg("value", Math.abs(magnitude)).styled();
         }
     },
-    CHART_ENEMY_LIONS_GAZE("beam_split_1"),
-    CHART_ENEMY_REFRACTING_PROJECTILES("energy_chain_1"),
-    CHART_ENEMY_HULLBREACHER_ROUNDS("hull_breacher_1"),
-    CHART_ENEMY_FREEBOOTERS_CHARGE("reckless_assault_1"),
+    CHART_ENEMY_LIONS_GAZE("lions_gaze_1"),
+    CHART_ENEMY_REFRACTING_PROJECTILES("refracting_projectiles_1"),
+    CHART_ENEMY_HULLBREACHER_ROUNDS("hullbreacher_rounds_1"),
+    CHART_ENEMY_FREEBOOTERS_CHARGE("freebooters_charge_1"),
     CHART_QUANTITY_PERCENT(false, ChartGenContext::addQuantityPercent),
     CHART_POI_BUDGET_PERCENT(false, ChartGenContext::addAllSiteBudgetsPercent),
     CHART_CACHE_BUDGET_PERCENT(false, (context, value) -> context.addSiteBudgetPercent(ChartPoi.Kind.CACHE, value)),

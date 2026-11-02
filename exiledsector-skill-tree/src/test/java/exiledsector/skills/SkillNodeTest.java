@@ -87,7 +87,7 @@ class SkillNodeTest {
                 .vanillaHullModId(null)
                 .todo(null)
                 .build();
-        SkillNode node = new SkillNode("heavyarmor_1", type, List.of(), 0f, 0f);
+        SkillNode node = new SkillNode("heavy_armor_1", type, List.of(), 0f, 0f);
 
         assertEquals("15% increased armor.\n\n5% increased hull points.", description(node.getType()));
     }
@@ -245,7 +245,7 @@ class SkillNodeTest {
                 .optionalOptionIds(List.of())
                 .exclusiveHullModIds(List.of("armoredcladding"))
                 .build();
-        SkillNode node = new SkillNode("heavyarmor_1", type, List.of(), 0f, 0f);
+        SkillNode node = new SkillNode("heavy_armor_1", type, List.of(), 0f, 0f);
 
         assertEquals("15% increased armor.\n\nMutually exclusive with hullmod:\n• Armored Cladding", description(node.getType()));
     }
@@ -290,7 +290,7 @@ class SkillNodeTest {
                 .exclusiveHullModIds(List.of())
                 .exclusiveSkillTypeIds(List.of("adaptiveshields"))
                 .build();
-        SkillNode node = new SkillNode("frontemitter_1", type, List.of(), 0f, 0f);
+        SkillNode node = new SkillNode("shield_conversion_front_1", type, List.of(), 0f, 0f);
 
         assertEquals("Mutually exclusive with node:\n• Shield Conversion - Omni", description(node.getType()));
     }
@@ -301,7 +301,7 @@ class SkillNodeTest {
                 .exclusiveSkillTypeIds(List.of("frontemitter"))
                 .build());
         SkillType type = new SkillType.Builder("frontemitter", "Shield Conversion - Front", "a.png", SkillTier.NOTABLE).build();
-        SkillNode node = new SkillNode("frontemitter_1", type, List.of(), 0f, 0f);
+        SkillNode node = new SkillNode("shield_conversion_front_1", type, List.of(), 0f, 0f);
 
         assertEquals("Mutually exclusive with node:\n• Shield Conversion - Omni", description(node.getType()));
     }
@@ -317,7 +317,7 @@ class SkillNodeTest {
                 .exclusiveHullModIds(List.of())
                 .exclusiveSkillTypeIds(List.of("unknown_type"))
                 .build();
-        SkillNode node = new SkillNode("frontemitter_1", type, List.of(), 0f, 0f);
+        SkillNode node = new SkillNode("shield_conversion_front_1", type, List.of(), 0f, 0f);
 
         assertEquals("Mutually exclusive with node:\n• unknown_type", description(node.getType()));
     }
@@ -346,7 +346,7 @@ class SkillNodeTest {
                 .exclusiveHullModIds(List.of("escort_package"))
                 .exclusiveSkillTypeIds(List.of("adaptiveshields"))
                 .build();
-        SkillNode node = new SkillNode("frontemitter_1", type, List.of(), 0f, 0f);
+        SkillNode node = new SkillNode("shield_conversion_front_1", type, List.of(), 0f, 0f);
 
         assertEquals("Mutually exclusive with hullmod:\n• Escort Package\n\nMutually exclusive with node:\n• Shield Conversion - Omni", description(node.getType()));
     }
@@ -392,7 +392,7 @@ class SkillNodeTest {
                 .exclusiveHullModIds(List.of("shield_shunt"))
                 .exclusiveSkillTypeIds(List.of("shield_shunt"))
                 .build();
-        SkillNode node = new SkillNode("frontemitter_1", type, List.of(), 0f, 0f);
+        SkillNode node = new SkillNode("shield_conversion_front_1", type, List.of(), 0f, 0f);
 
         assertEquals("Mutually exclusive with hullmod:\n• Shield Shunt\n\nMutually exclusive with node:\n• Shield Shunt", description(node.getType()));
     }

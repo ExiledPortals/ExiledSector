@@ -5,7 +5,7 @@
 			"type": "flux_capacity",
 			"connectedTo": [
 				"flux_capacity_3",
-				"small_flux_optional_1"
+				"affinity_1"
 			],
 			"x": -305,
 			"y": -2059,
@@ -19,7 +19,7 @@
 			"id": "flux_dissipation_1",
 			"type": "flux_dissipation",
 			"connectedTo": [
-				"small_flux_optional_4",
+				"affinity_4",
 				"flux_dissipation_2"
 			],
 			"x": -532,
@@ -31,11 +31,11 @@
 			]
 		},
 		{
-			"id": "missile_damage_1",
-			"type": "missile_damage",
+			"id": "missile_weapon_damage_1",
+			"type": "missile_weapon_damage",
 			"connectedTo": [
-				"missile_damage_2",
-				"missleracks_1"
+				"missile_weapon_damage_2",
+				"expanded_missile_racks_1"
 			],
 			"x": -516,
 			"y": 3558,
@@ -46,11 +46,11 @@
 			]
 		},
 		{
-			"id": "beam_damage_1",
-			"type": "beam_damage",
+			"id": "beam_weapon_damage_1",
+			"type": "beam_weapon_damage",
 			"connectedTo": [
-				"beam_damage_5",
-				"beam_damage_3"
+				"beam_weapon_damage_5",
+				"beam_weapon_damage_3"
 			],
 			"x": -3789,
 			"y": -572,
@@ -61,11 +61,11 @@
 			]
 		},
 		{
-			"id": "non_beam_energy_damage_1",
-			"type": "non_beam_energy_damage",
+			"id": "non_beam_energy_weapon_damage_1",
+			"type": "non_beam_energy_weapon_damage",
 			"connectedTo": [
-				"magazines_1",
-				"non_beam_energy_damage_2"
+				"expanded_magazines_1",
+				"non_beam_energy_weapon_damage_2"
 			],
 			"x": -1122,
 			"y": 1884,
@@ -108,7 +108,7 @@
 			"id": "safety_overrides_1",
 			"type": "safety_overrides",
 			"connectedTo": [
-				"small_flux_optional_17"
+				"affinity_17"
 			],
 			"x": -1940,
 			"y": 3594,
@@ -119,8 +119,8 @@
 			]
 		},
 		{
-			"id": "heavyarmor_1",
-			"type": "heavyarmor",
+			"id": "heavy_armor_1",
+			"type": "heavy_armor",
 			"connectedTo": [
 				"armor_3",
 				"hull_multi_3"
@@ -134,8 +134,8 @@
 			]
 		},
 		{
-			"id": "armoredweapons_1",
-			"type": "armoredweapons",
+			"id": "armored_weapon_mounts_1",
+			"type": "armored_weapon_mounts",
 			"connectedTo": [
 				"weapon_durability_1"
 			],
@@ -148,8 +148,8 @@
 			]
 		},
 		{
-			"id": "reinforcedhull_1",
-			"type": "reinforcedhull",
+			"id": "reinforced_bulkheads_1",
+			"type": "reinforced_bulkheads",
 			"connectedTo": [
 				"hull_multi_6",
 				"hull_multi_4"
@@ -183,7 +183,7 @@
 			"connectedTo": [
 				"hull_multi_2",
 				"armor_1",
-				"small_flux_optional_31"
+				"affinity_31"
 			],
 			"x": 1894,
 			"y": 1598,
@@ -194,11 +194,11 @@
 			]
 		},
 		{
-			"id": "fluxbreakers_1",
-			"type": "fluxbreakers",
+			"id": "resistant_flux_conduits_1",
+			"type": "resistant_flux_conduits",
 			"connectedTo": [
 				"increased_vent_rate_1",
-				"emp_damage_taken_multi_1"
+				"less_emp_damage_taken_1"
 			],
 			"x": 1856,
 			"y": -3319,
@@ -209,8 +209,8 @@
 			]
 		},
 		{
-			"id": "autorepair_1",
-			"type": "autorepair",
+			"id": "automated_repair_unit_1",
+			"type": "automated_repair_unit",
 			"connectedTo": [
 				"repair_time_3",
 				"repair_time_2"
@@ -229,7 +229,7 @@
 			"connectedTo": [
 				"repair_time_3",
 				"repair_time_2",
-				"small_flux_optional_102"
+				"affinity_102"
 			],
 			"x": -1839,
 			"y": -1188,
@@ -243,7 +243,7 @@
 			"id": "repair_time_2",
 			"type": "repair_time",
 			"connectedTo": [
-				"autorepair_1",
+				"automated_repair_unit_1",
 				"repair_time_1"
 			],
 			"x": -1659,
@@ -269,8 +269,8 @@
 			]
 		},
 		{
-			"id": "turretgyros_1",
-			"type": "turretgyros",
+			"id": "advanced_turret_gyros_1",
+			"type": "advanced_turret_gyros",
 			"connectedTo": [
 				"weapon_turn_rate_2",
 				"weapon_turn_rate_3"
@@ -288,7 +288,7 @@
 			"type": "weapon_turn_rate",
 			"connectedTo": [
 				"weapon_turn_rate_2",
-				"small_flux_optional_45",
+				"affinity_45",
 				"weapon_turn_rate_3"
 			],
 			"x": -1760,
@@ -303,7 +303,7 @@
 			"id": "weapon_turn_rate_2",
 			"type": "weapon_turn_rate",
 			"connectedTo": [
-				"turretgyros_1",
+				"advanced_turret_gyros_1",
 				"weapon_turn_rate_1"
 			],
 			"x": -1580,
@@ -318,7 +318,7 @@
 			"id": "ballistic_rangefinder_1",
 			"type": "ballistic_rangefinder",
 			"connectedTo": [
-				"ballistic_damage_3",
+				"ballistic_weapon_damage_3",
 				"ballistic_projectile_speed_3"
 			],
 			"x": 2109,
@@ -332,11 +332,11 @@
 			]
 		},
 		{
-			"id": "magazines_1",
-			"type": "magazines",
+			"id": "expanded_magazines_1",
+			"type": "expanded_magazines",
 			"connectedTo": [
-				"ballistic_damage_4",
-				"non_beam_energy_damage_1"
+				"ballistic_weapon_damage_4",
+				"non_beam_energy_weapon_damage_1"
 			],
 			"x": -931,
 			"y": 1803,
@@ -347,10 +347,10 @@
 			]
 		},
 		{
-			"id": "pointdefenseai_1",
-			"type": "pointdefenseai",
+			"id": "integrated_point_defense_ai_1",
+			"type": "integrated_point_defense_ai",
 			"connectedTo": [
-				"pd_damage_to_missiles_1"
+				"point_defense_damage_to_missiles_1"
 			],
 			"x": 3757,
 			"y": -1892,
@@ -361,10 +361,10 @@
 			]
 		},
 		{
-			"id": "missleracks_1",
-			"type": "missleracks",
+			"id": "expanded_missile_racks_1",
+			"type": "expanded_missile_racks",
 			"connectedTo": [
-				"missile_damage_1"
+				"missile_weapon_damage_1"
 			],
 			"x": -696,
 			"y": 3378,
@@ -378,7 +378,7 @@
 			"id": "missile_autoloader_1",
 			"type": "missile_autoloader",
 			"connectedTo": [
-				"small_flux_optional_10"
+				"affinity_10"
 			],
 			"x": 3995,
 			"y": -95,
@@ -392,7 +392,7 @@
 			"id": "neural_interface_1",
 			"type": "neural_interface",
 			"connectedTo": [
-				"small_flux_optional_44"
+				"affinity_44"
 			],
 			"x": -558,
 			"y": -2638,
@@ -403,10 +403,10 @@
 			]
 		},
 		{
-			"id": "eccm_1",
-			"type": "eccm",
+			"id": "eccm_package_1",
+			"type": "eccm_package",
 			"connectedTo": [
-				"missile_damage_4"
+				"missile_weapon_damage_4"
 			],
 			"x": -2706,
 			"y": 2692,
@@ -417,10 +417,10 @@
 			]
 		},
 		{
-			"id": "high_scatter_amp_1",
-			"type": "high_scatter_amp",
+			"id": "high_scatter_amplifier_1",
+			"type": "high_scatter_amplifier",
 			"connectedTo": [
-				"beam_damage_5"
+				"beam_weapon_damage_5"
 			],
 			"x": -3400,
 			"y": -953,
@@ -429,13 +429,13 @@
 			]
 		},
 		{
-			"id": "beam_split_1",
-			"type": "beam_split",
+			"id": "lions_gaze_1",
+			"type": "lions_gaze",
 			"connectedTo": [
 				"ballistic_and_energy_weapon_range_7",
-				"beam_split_reduced_damage_1",
-				"beam_split_reduced_damage_2",
-				"beam_split_reduced_damage_3"
+				"additional_beam_splits_1",
+				"additional_beam_splits_2",
+				"additional_beam_splits_3"
 			],
 			"x": -10963,
 			"y": -8102,
@@ -445,10 +445,10 @@
 			]
 		},
 		{
-			"id": "advancedoptics_1",
-			"type": "advancedoptics",
+			"id": "advanced_optics_1",
+			"type": "advanced_optics",
 			"connectedTo": [
-				"beam_damage_5"
+				"beam_weapon_damage_5"
 			],
 			"x": -3784,
 			"y": -953,
@@ -469,8 +469,8 @@
 			]
 		},
 		{
-			"id": "targetingunit_1",
-			"type": "targetingunit",
+			"id": "integrated_targeting_unit_1",
+			"type": "integrated_targeting_unit",
 			"connectedTo": [
 				"ballistic_and_energy_weapon_range_1"
 			],
@@ -481,8 +481,8 @@
 			]
 		},
 		{
-			"id": "ecm_1",
-			"type": "ecm",
+			"id": "ecm_package_1",
+			"type": "ecm_package",
 			"connectedTo": [
 				"ecm_resistance_2"
 			],
@@ -498,7 +498,7 @@
 			"id": "defensive_targeting_array_1",
 			"type": "defensive_targeting_array",
 			"connectedTo": [
-				"small_flux_optional_36"
+				"affinity_36"
 			],
 			"x": -1364,
 			"y": 3160,
@@ -509,8 +509,8 @@
 			]
 		},
 		{
-			"id": "advancedshieldemitter_1",
-			"type": "advancedshieldemitter",
+			"id": "accelerated_shields_1",
+			"type": "accelerated_shields",
 			"connectedTo": [
 				"shield_raise_rate_1",
 				"shield_turn_rate_1"
@@ -524,8 +524,8 @@
 			]
 		},
 		{
-			"id": "extendedshieldemitter_1",
-			"type": "extendedshieldemitter",
+			"id": "extended_shields_1",
+			"type": "extended_shields",
 			"connectedTo": [
 				"shield_arc_2"
 			],
@@ -538,10 +538,10 @@
 			]
 		},
 		{
-			"id": "hardenedshieldemitter_1",
-			"type": "hardenedshieldemitter",
+			"id": "hardened_shields_1",
+			"type": "hardened_shields",
 			"connectedTo": [
-				"shield_damage_taken_multi_1"
+				"shield_flux_damage_reduction_1"
 			],
 			"x": -3187,
 			"y": -1944,
@@ -552,10 +552,10 @@
 			]
 		},
 		{
-			"id": "stabilizedshieldemitter_1",
-			"type": "stabilizedshieldemitter",
+			"id": "stabilized_shields_1",
+			"type": "stabilized_shields",
 			"connectedTo": [
-				"shield_upkeep_multi_1"
+				"shield_upkeep_reduction_1"
 			],
 			"x": -3750,
 			"y": 20,
@@ -581,10 +581,10 @@
 			]
 		},
 		{
-			"id": "frontshield_1",
-			"type": "frontshield",
+			"id": "makeshift_shield_generator_1",
+			"type": "makeshift_shield_generator",
 			"connectedTo": [
-				"small_flux_optional_28"
+				"affinity_28"
 			],
 			"x": 3348,
 			"y": -644,
@@ -595,8 +595,8 @@
 			]
 		},
 		{
-			"id": "frontemitter_1",
-			"type": "frontemitter",
+			"id": "shield_conversion_front_1",
+			"type": "shield_conversion_front",
 			"connectedTo": [
 				"shield_arc_3"
 			],
@@ -609,12 +609,12 @@
 			]
 		},
 		{
-			"id": "adaptiveshields_1",
-			"type": "adaptiveshields",
+			"id": "shield_conversion_omni_1",
+			"type": "shield_conversion_omni",
 			"connectedTo": [
-				"shield_arc_mult_1",
-				"shield_arc_mult_2",
-				"small_flux_optional_43"
+				"shield_arc_multiplier_1",
+				"shield_arc_multiplier_2",
+				"affinity_43"
 			],
 			"x": -1495,
 			"y": -2188,
@@ -627,11 +627,11 @@
 			]
 		},
 		{
-			"id": "auxiliarythrusters_1",
-			"type": "auxiliarythrusters",
+			"id": "auxiliary_thrusters_1",
+			"type": "auxiliary_thrusters",
 			"connectedTo": [
-				"maneuverability_percent_1",
-				"acceleration_percent_1"
+				"maneuverability_1",
+				"maneuverability_7"
 			],
 			"x": 2316,
 			"y": -120,
@@ -645,7 +645,7 @@
 			"id": "unstable_injector_1",
 			"type": "unstable_injector",
 			"connectedTo": [
-				"small_flux_optional_11"
+				"affinity_11"
 			],
 			"x": 3991,
 			"y": 959,
@@ -669,8 +669,8 @@
 			]
 		},
 		{
-			"id": "adaptive_coils_1",
-			"type": "adaptive_coils",
+			"id": "adaptive_phase_coils_1",
+			"type": "adaptive_phase_coils",
 			"connectedTo": [
 				"phase_cloak_flux_threshold_2"
 			],
@@ -686,7 +686,7 @@
 			"id": "phase_anchor_1",
 			"type": "phase_anchor",
 			"connectedTo": [
-				"small_flux_optional_24"
+				"affinity_24"
 			],
 			"x": -1411,
 			"y": -3889,
@@ -700,8 +700,8 @@
 			"id": "additional_berthing_1",
 			"type": "additional_berthing",
 			"connectedTo": [
-				"crew_capacity_flat_2",
-				"crew_capacity_flat_9"
+				"crew_capacity_2",
+				"crew_capacity_9"
 			],
 			"x": -2136,
 			"y": 483,
@@ -712,10 +712,10 @@
 			]
 		},
 		{
-			"id": "augmentedengines_1",
-			"type": "augmentedengines",
+			"id": "augmented_drive_field_1",
+			"type": "augmented_drive_field",
 			"connectedTo": [
-				"small_flux_optional_94"
+				"affinity_94"
 			],
 			"x": 2844,
 			"y": -2880,
@@ -729,7 +729,7 @@
 			"id": "auxiliary_fuel_tanks_1",
 			"type": "auxiliary_fuel_tanks",
 			"connectedTo": [
-				"fuel_flat_1"
+				"fuel_1"
 			],
 			"x": 2716,
 			"y": 2548,
@@ -743,7 +743,7 @@
 			"id": "efficiency_overhaul_1",
 			"type": "efficiency_overhaul",
 			"connectedTo": [
-				"small_flux_optional_102"
+				"affinity_102"
 			],
 			"x": -2281,
 			"y": -516,
@@ -757,7 +757,7 @@
 			"id": "expanded_cargo_holds_1",
 			"type": "expanded_cargo_holds",
 			"connectedTo": [
-				"cargo_capacity_flat_1"
+				"cargo_capacity_1"
 			],
 			"x": -3386,
 			"y": 318,
@@ -768,10 +768,10 @@
 			]
 		},
 		{
-			"id": "hiressensors_1",
-			"type": "hiressensors",
+			"id": "high_resolution_sensors_1",
+			"type": "high_resolution_sensors",
 			"connectedTo": [
-				"increased_sensor_strength_2"
+				"sensor_strength_2"
 			],
 			"x": -653,
 			"y": -3913,
@@ -782,10 +782,10 @@
 			]
 		},
 		{
-			"id": "insulatedengine_1",
-			"type": "insulatedengine",
+			"id": "insulated_engine_assembly_1",
+			"type": "insulated_engine_assembly",
 			"connectedTo": [
-				"engine_durability_1"
+				"engine_durability_and_sensor_profile_1"
 			],
 			"x": -1073,
 			"y": 3715,
@@ -799,7 +799,7 @@
 			"id": "militarized_subsystems_1",
 			"type": "militarized_subsystems",
 			"connectedTo": [
-				"small_flux_optional_87"
+				"affinity_87"
 			],
 			"x": -2294,
 			"y": 3022,
@@ -813,7 +813,7 @@
 			"id": "solar_shielding_1",
 			"type": "solar_shielding",
 			"connectedTo": [
-				"less_energy_damage_taken_3"
+				"energy_damage_resistance_3"
 			],
 			"x": 3966,
 			"y": -617,
@@ -827,7 +827,7 @@
 			"id": "surveying_equipment_1",
 			"type": "surveying_equipment",
 			"connectedTo": [
-				"survey_generic_cost_reduction_2"
+				"survey_cost_reduction_2"
 			],
 			"x": 349,
 			"y": -3848,
@@ -841,7 +841,7 @@
 			"id": "converted_hangar_1",
 			"type": "converted_hangar",
 			"connectedTo": [
-				"small_flux_optional_3"
+				"affinity_3"
 			],
 			"x": -292,
 			"y": 2264,
@@ -852,10 +852,10 @@
 			]
 		},
 		{
-			"id": "converted_fighterbay_1",
-			"type": "converted_fighterbay",
+			"id": "converted_fighter_bay_1",
+			"type": "converted_fighter_bay",
 			"connectedTo": [
-				"small_flux_optional_101"
+				"affinity_101"
 			],
 			"x": 1934,
 			"y": -1207,
@@ -869,7 +869,7 @@
 			"id": "expanded_deck_crew_1",
 			"type": "expanded_deck_crew",
 			"connectedTo": [
-				"fighter_replacement_1"
+				"strikecraft_replacement_1"
 			],
 			"x": -2160,
 			"y": 35,
@@ -883,7 +883,7 @@
 			"id": "recovery_shuttles_1",
 			"type": "recovery_shuttles",
 			"connectedTo": [
-				"fighter_weapon_damage_2"
+				"strikecraft_weapon_damage_2"
 			],
 			"x": 3388,
 			"y": -1465,
@@ -897,7 +897,7 @@
 			"id": "operations_center_1",
 			"type": "operations_center",
 			"connectedTo": [
-				"small_flux_optional_14"
+				"affinity_14"
 			],
 			"x": 1442,
 			"y": 3614,
@@ -923,12 +923,12 @@
 			]
 		},
 		{
-			"id": "beam_damage_5",
-			"type": "beam_damage",
+			"id": "beam_weapon_damage_5",
+			"type": "beam_weapon_damage",
 			"connectedTo": [
-				"beam_damage_1",
-				"high_scatter_amp_1",
-				"advancedoptics_1"
+				"beam_weapon_damage_1",
+				"high_scatter_amplifier_1",
+				"advanced_optics_1"
 			],
 			"x": -3609,
 			"y": -752,
@@ -939,11 +939,11 @@
 			]
 		},
 		{
-			"id": "non_beam_energy_damage_2",
-			"type": "non_beam_energy_damage",
+			"id": "non_beam_energy_weapon_damage_2",
+			"type": "non_beam_energy_weapon_damage",
 			"connectedTo": [
-				"small_flux_optional_37",
-				"non_beam_energy_damage_1"
+				"affinity_37",
+				"non_beam_energy_weapon_damage_1"
 			],
 			"x": -1112,
 			"y": 2089,
@@ -957,9 +957,9 @@
 			"id": "root_low_tech_1",
 			"type": "root_low_tech",
 			"connectedTo": [
-				"small_flux_optional_34",
-				"small_flux_optional_83",
-				"small_flux_optional_100"
+				"affinity_34",
+				"affinity_83",
+				"affinity_100"
 			],
 			"x": 1299,
 			"y": 750,
@@ -970,13 +970,13 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_15",
-			"type": "small_flux_optional",
+			"id": "affinity_15",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_16",
-				"small_flux_optional_14",
-				"small_flux_optional_35",
-				"small_flux_optional_86"
+				"affinity_16",
+				"affinity_14",
+				"affinity_35",
+				"affinity_86"
 			],
 			"x": 0,
 			"y": 4500,
@@ -990,9 +990,9 @@
 			"id": "root_midline_1",
 			"type": "root_midline",
 			"connectedTo": [
-				"small_flux_optional_45",
-				"small_flux_optional_97",
-				"small_flux_optional_92"
+				"affinity_45",
+				"affinity_97",
+				"affinity_92"
 			],
 			"x": -1299,
 			"y": 750,
@@ -1006,9 +1006,9 @@
 			"id": "root_high_tech_1",
 			"type": "root_high_tech",
 			"connectedTo": [
-				"small_flux_optional_1",
-				"small_flux_optional_90",
-				"small_flux_optional_79"
+				"affinity_1",
+				"affinity_90",
+				"affinity_79"
 			],
 			"x": 0,
 			"y": -1500,
@@ -1019,11 +1019,11 @@
 			]
 		},
 		{
-			"id": "fighter_weapon_damage_1",
-			"type": "fighter_weapon_damage",
+			"id": "strikecraft_weapon_damage_1",
+			"type": "strikecraft_weapon_damage",
 			"connectedTo": [
-				"small_flux_optional_28",
-				"fighter_weapon_damage_2"
+				"affinity_28",
+				"strikecraft_weapon_damage_2"
 			],
 			"x": 3088,
 			"y": -1465,
@@ -1034,11 +1034,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_79",
-			"type": "small_flux_optional",
+			"id": "affinity_79",
+			"type": "affinity",
 			"connectedTo": [
 				"root_high_tech_1",
-				"small_flux_optional_84"
+				"affinity_84"
 			],
 			"x": 750,
 			"y": -1299,
@@ -1049,12 +1049,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_84",
-			"type": "small_flux_optional",
+			"id": "affinity_84",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_83",
-				"small_flux_optional_101",
-				"small_flux_optional_79"
+				"affinity_83",
+				"affinity_101",
+				"affinity_79"
 			],
 			"x": 1299,
 			"y": -750,
@@ -1065,10 +1065,10 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_83",
-			"type": "small_flux_optional",
+			"id": "affinity_83",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_84",
+				"affinity_84",
 				"root_low_tech_1"
 			],
 			"x": 1500,
@@ -1080,10 +1080,10 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_90",
-			"type": "small_flux_optional",
+			"id": "affinity_90",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_91",
+				"affinity_91",
 				"root_high_tech_1"
 			],
 			"x": -750,
@@ -1095,12 +1095,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_91",
-			"type": "small_flux_optional",
+			"id": "affinity_91",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_92",
-				"small_flux_optional_102",
-				"small_flux_optional_90"
+				"affinity_92",
+				"affinity_102",
+				"affinity_90"
 			],
 			"x": -1299,
 			"y": -750,
@@ -1111,11 +1111,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_92",
-			"type": "small_flux_optional",
+			"id": "affinity_92",
+			"type": "affinity",
 			"connectedTo": [
 				"root_midline_1",
-				"small_flux_optional_91"
+				"affinity_91"
 			],
 			"x": -1500,
 			"y": 0,
@@ -1126,10 +1126,10 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_97",
-			"type": "small_flux_optional",
+			"id": "affinity_97",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_98",
+				"affinity_98",
 				"root_midline_1"
 			],
 			"x": -882,
@@ -1141,12 +1141,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_98",
-			"type": "small_flux_optional",
+			"id": "affinity_98",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_99",
-				"small_flux_optional_97",
-				"small_flux_optional_3"
+				"affinity_99",
+				"affinity_97",
+				"affinity_3"
 			],
 			"x": -312,
 			"y": 1467,
@@ -1157,12 +1157,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_99",
-			"type": "small_flux_optional",
+			"id": "affinity_99",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_100",
-				"small_flux_optional_98",
-				"small_flux_optional_3"
+				"affinity_100",
+				"affinity_98",
+				"affinity_3"
 			],
 			"x": 312,
 			"y": 1467,
@@ -1173,11 +1173,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_100",
-			"type": "small_flux_optional",
+			"id": "affinity_100",
+			"type": "affinity",
 			"connectedTo": [
 				"root_low_tech_1",
-				"small_flux_optional_99"
+				"affinity_99"
 			],
 			"x": 882,
 			"y": 1214,
@@ -1188,10 +1188,10 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_1",
-			"type": "small_flux_optional",
+			"id": "affinity_1",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_4",
+				"affinity_4",
 				"shield_arc_1",
 				"flux_capacity_1",
 				"root_high_tech_1"
@@ -1203,16 +1203,16 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_4",
-			"type": "small_flux_optional",
+			"id": "affinity_4",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_1",
-				"small_flux_optional_25",
-				"small_flux_optional_44",
-				"small_flux_optional_2",
+				"affinity_1",
+				"affinity_25",
+				"affinity_44",
+				"affinity_2",
 				"flux_dissipation_1",
-				"survey_generic_cost_reduction_1",
-				"modular_hull_socket_18"
+				"survey_cost_reduction_1",
+				"subroutine_socket_18"
 			],
 			"x": 0,
 			"y": -3000,
@@ -1267,11 +1267,11 @@
 			]
 		},
 		{
-			"id": "survey_generic_cost_reduction_1",
-			"type": "survey_generic_cost_reduction",
+			"id": "survey_cost_reduction_1",
+			"type": "survey_cost_reduction",
 			"connectedTo": [
-				"small_flux_optional_4",
-				"survey_generic_cost_reduction_2"
+				"affinity_4",
+				"survey_cost_reduction_2"
 			],
 			"x": 349,
 			"y": -3488,
@@ -1282,11 +1282,11 @@
 			]
 		},
 		{
-			"id": "survey_generic_cost_reduction_2",
-			"type": "survey_generic_cost_reduction",
+			"id": "survey_cost_reduction_2",
+			"type": "survey_cost_reduction",
 			"connectedTo": [
 				"surveying_equipment_1",
-				"survey_generic_cost_reduction_1"
+				"survey_cost_reduction_1"
 			],
 			"x": 169,
 			"y": -3668,
@@ -1297,11 +1297,11 @@
 			]
 		},
 		{
-			"id": "increased_sensor_strength_1",
-			"type": "increased_sensor_strength",
+			"id": "sensor_strength_1",
+			"type": "sensor_strength",
 			"connectedTo": [
-				"small_flux_optional_2",
-				"increased_sensor_strength_2"
+				"affinity_2",
+				"sensor_strength_2"
 			],
 			"x": -473,
 			"y": -4225,
@@ -1312,11 +1312,11 @@
 			]
 		},
 		{
-			"id": "increased_sensor_strength_2",
-			"type": "increased_sensor_strength",
+			"id": "sensor_strength_2",
+			"type": "sensor_strength",
 			"connectedTo": [
-				"increased_sensor_strength_1",
-				"hiressensors_1"
+				"sensor_strength_1",
+				"high_resolution_sensors_1"
 			],
 			"x": -719,
 			"y": -4159,
@@ -1327,11 +1327,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_94",
-			"type": "small_flux_optional",
+			"id": "affinity_94",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_95",
-				"augmentedengines_1"
+				"affinity_95",
+				"augmented_drive_field_1"
 			],
 			"x": 2604,
 			"y": -2969,
@@ -1342,11 +1342,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_95",
-			"type": "small_flux_optional",
+			"id": "affinity_95",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_26",
-				"small_flux_optional_94"
+				"affinity_26",
+				"affinity_94"
 			],
 			"x": 2516,
 			"y": -2732,
@@ -1357,12 +1357,12 @@
 			]
 		},
 		{
-			"id": "crew_capacity_flat_1",
-			"type": "crew_capacity_flat",
+			"id": "crew_capacity_1",
+			"type": "crew_capacity",
 			"connectedTo": [
-				"small_flux_optional_39",
-				"crew_capacity_flat_2",
-				"crew_capacity_flat_9"
+				"affinity_39",
+				"crew_capacity_2",
+				"crew_capacity_9"
 			],
 			"x": -2414,
 			"y": 711,
@@ -1373,10 +1373,10 @@
 			]
 		},
 		{
-			"id": "crew_capacity_flat_2",
-			"type": "crew_capacity_flat",
+			"id": "crew_capacity_2",
+			"type": "crew_capacity",
 			"connectedTo": [
-				"crew_capacity_flat_1",
+				"crew_capacity_1",
 				"additional_berthing_1"
 			],
 			"x": -2388,
@@ -1388,10 +1388,10 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_87",
-			"type": "small_flux_optional",
+			"id": "affinity_87",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_88",
+				"affinity_88",
 				"militarized_subsystems_1"
 			],
 			"x": -2224,
@@ -1403,11 +1403,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_88",
-			"type": "small_flux_optional",
+			"id": "affinity_88",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_37",
-				"small_flux_optional_87"
+				"affinity_37",
+				"affinity_87"
 			],
 			"x": -1980,
 			"y": 2848,
@@ -1418,11 +1418,11 @@
 			]
 		},
 		{
-			"id": "engine_durability_1",
-			"type": "engine_durability",
+			"id": "engine_durability_and_sensor_profile_1",
+			"type": "engine_durability_and_sensor_profile",
 			"connectedTo": [
-				"engine_durability_2",
-				"insulatedengine_1"
+				"engine_durability_and_sensor_profile_2",
+				"insulated_engine_assembly_1"
 			],
 			"x": -1230,
 			"y": 3916,
@@ -1433,11 +1433,11 @@
 			]
 		},
 		{
-			"id": "engine_durability_2",
-			"type": "engine_durability",
+			"id": "engine_durability_and_sensor_profile_2",
+			"type": "engine_durability_and_sensor_profile",
 			"connectedTo": [
-				"small_flux_optional_16",
-				"engine_durability_1"
+				"affinity_16",
+				"engine_durability_and_sensor_profile_1"
 			],
 			"x": -1029,
 			"y": 4073,
@@ -1448,11 +1448,11 @@
 			]
 		},
 		{
-			"id": "cargo_capacity_flat_1",
-			"type": "cargo_capacity_flat",
+			"id": "cargo_capacity_1",
+			"type": "cargo_capacity",
 			"connectedTo": [
 				"expanded_cargo_holds_1",
-				"cargo_capacity_flat_2"
+				"cargo_capacity_2"
 			],
 			"x": -3566,
 			"y": 498,
@@ -1463,11 +1463,11 @@
 			]
 		},
 		{
-			"id": "cargo_capacity_flat_2",
-			"type": "cargo_capacity_flat",
+			"id": "cargo_capacity_2",
+			"type": "cargo_capacity",
 			"connectedTo": [
-				"small_flux_optional_39",
-				"cargo_capacity_flat_1"
+				"affinity_39",
+				"cargo_capacity_1"
 			],
 			"x": -3386,
 			"y": 678,
@@ -1478,10 +1478,10 @@
 			]
 		},
 		{
-			"id": "augmentedengines_2",
-			"type": "augmentedengines",
+			"id": "augmented_drive_field_2",
+			"type": "augmented_drive_field",
 			"connectedTo": [
-				"small_flux_optional_93"
+				"affinity_93"
 			],
 			"x": 731,
 			"y": 3883,
@@ -1492,11 +1492,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_93",
-			"type": "small_flux_optional",
+			"id": "affinity_93",
+			"type": "affinity",
 			"connectedTo": [
-				"augmentedengines_2",
-				"small_flux_optional_96"
+				"augmented_drive_field_2",
+				"affinity_96"
 			],
 			"x": 551,
 			"y": 4063,
@@ -1507,11 +1507,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_96",
-			"type": "small_flux_optional",
+			"id": "affinity_96",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_93",
-				"small_flux_optional_14"
+				"affinity_93",
+				"affinity_14"
 			],
 			"x": 731,
 			"y": 4243,
@@ -1522,10 +1522,10 @@
 			]
 		},
 		{
-			"id": "fuel_flat_1",
-			"type": "fuel_flat",
+			"id": "fuel_1",
+			"type": "fuel",
 			"connectedTo": [
-				"fuel_flat_2",
+				"fuel_2",
 				"auxiliary_fuel_tanks_1"
 			],
 			"x": 2876,
@@ -1537,11 +1537,11 @@
 			]
 		},
 		{
-			"id": "fuel_flat_2",
-			"type": "fuel_flat",
+			"id": "fuel_2",
+			"type": "fuel",
 			"connectedTo": [
-				"small_flux_optional_12",
-				"fuel_flat_1"
+				"affinity_12",
+				"fuel_1"
 			],
 			"x": 3074,
 			"y": 2586,
@@ -1552,14 +1552,14 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_2",
-			"type": "small_flux_optional",
+			"id": "affinity_2",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_24",
-				"small_flux_optional_6",
-				"small_flux_optional_4",
+				"affinity_24",
+				"affinity_6",
+				"affinity_4",
 				"hightech_wormhole_2",
-				"increased_sensor_strength_1"
+				"sensor_strength_1"
 			],
 			"x": 0,
 			"y": -4500,
@@ -1570,11 +1570,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_6",
-			"type": "small_flux_optional",
+			"id": "affinity_6",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_2",
-				"small_flux_optional_7",
+				"affinity_2",
+				"affinity_7",
 				"vent_rate_and_emp_damage_1"
 			],
 			"x": 1391,
@@ -1586,12 +1586,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_7",
-			"type": "small_flux_optional",
+			"id": "affinity_7",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_6",
-				"small_flux_optional_26",
-				"small_flux_optional_8"
+				"affinity_6",
+				"affinity_26",
+				"affinity_8"
 			],
 			"x": 2645,
 			"y": -3641,
@@ -1602,13 +1602,13 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_9",
-			"type": "small_flux_optional",
+			"id": "affinity_9",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_10",
-				"small_flux_optional_28",
-				"small_flux_optional_8",
-				"less_energy_damage_taken_4"
+				"affinity_10",
+				"affinity_28",
+				"affinity_8",
+				"energy_damage_resistance_4"
 			],
 			"x": 4280,
 			"y": -1391,
@@ -1619,11 +1619,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_10",
-			"type": "small_flux_optional",
+			"id": "affinity_10",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_9",
-				"small_flux_optional_11",
+				"affinity_9",
+				"affinity_11",
 				"missile_autoloader_1"
 			],
 			"x": 4500,
@@ -1635,12 +1635,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_11",
-			"type": "small_flux_optional",
+			"id": "affinity_11",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_10",
-				"small_flux_optional_12",
-				"small_flux_optional_30",
+				"affinity_10",
+				"affinity_12",
+				"affinity_30",
 				"lowtech_wormhole_1",
 				"unstable_injector_1"
 			],
@@ -1653,14 +1653,14 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_12",
-			"type": "small_flux_optional",
+			"id": "affinity_12",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_11",
-				"small_flux_optional_13",
-				"small_flux_optional_31",
+				"affinity_11",
+				"affinity_13",
+				"affinity_31",
 				"lowtech_wormhole_1",
-				"fuel_flat_2"
+				"fuel_2"
 			],
 			"x": 3641,
 			"y": 2645,
@@ -1671,11 +1671,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_13",
-			"type": "small_flux_optional",
+			"id": "affinity_13",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_12",
-				"small_flux_optional_14"
+				"affinity_12",
+				"affinity_14"
 			],
 			"x": 2645,
 			"y": 3641,
@@ -1686,12 +1686,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_14",
-			"type": "small_flux_optional",
+			"id": "affinity_14",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_13",
-				"small_flux_optional_15",
-				"small_flux_optional_96",
+				"affinity_13",
+				"affinity_15",
+				"affinity_96",
 				"operations_center_1"
 			],
 			"x": 1391,
@@ -1703,12 +1703,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_16",
-			"type": "small_flux_optional",
+			"id": "affinity_16",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_17",
-				"small_flux_optional_15",
-				"engine_durability_2"
+				"affinity_17",
+				"affinity_15",
+				"engine_durability_and_sensor_profile_2"
 			],
 			"x": -1391,
 			"y": 4280,
@@ -1719,11 +1719,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_17",
-			"type": "small_flux_optional",
+			"id": "affinity_17",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_16",
-				"small_flux_optional_18",
+				"affinity_16",
+				"affinity_18",
 				"safety_overrides_1"
 			],
 			"x": -2645,
@@ -1735,14 +1735,14 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_18",
-			"type": "small_flux_optional",
+			"id": "affinity_18",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_19",
-				"small_flux_optional_17",
-				"small_flux_optional_38",
+				"affinity_19",
+				"affinity_17",
+				"affinity_38",
 				"midline_wormhole_1",
-				"missile_damage_3"
+				"missile_weapon_damage_3"
 			],
 			"x": -3641,
 			"y": 2645,
@@ -1753,12 +1753,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_19",
-			"type": "small_flux_optional",
+			"id": "affinity_19",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_20",
-				"small_flux_optional_18",
-				"small_flux_optional_39",
+				"affinity_20",
+				"affinity_18",
+				"affinity_39",
 				"armor_2",
 				"midline_wormhole_1"
 			],
@@ -1771,12 +1771,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_20",
-			"type": "small_flux_optional",
+			"id": "affinity_20",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_21",
-				"small_flux_optional_19",
-				"shield_upkeep_multi_2"
+				"affinity_21",
+				"affinity_19",
+				"shield_upkeep_reduction_2"
 			],
 			"x": -4500,
 			"y": 0,
@@ -1787,12 +1787,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_21",
-			"type": "small_flux_optional",
+			"id": "affinity_21",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_20",
-				"small_flux_optional_41",
-				"small_flux_optional_22"
+				"affinity_20",
+				"affinity_41",
+				"affinity_22"
 			],
 			"x": -4280,
 			"y": -1391,
@@ -1803,12 +1803,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_23",
-			"type": "small_flux_optional",
+			"id": "affinity_23",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_24",
-				"small_flux_optional_43",
-				"small_flux_optional_22",
+				"affinity_24",
+				"affinity_43",
+				"affinity_22",
 				"reduced_monthly_supplies_1"
 			],
 			"x": -2645,
@@ -1820,11 +1820,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_24",
-			"type": "small_flux_optional",
+			"id": "affinity_24",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_23",
-				"small_flux_optional_2",
+				"affinity_23",
+				"affinity_2",
 				"phase_anchor_1"
 			],
 			"x": -1391,
@@ -1840,7 +1840,7 @@
 			"type": "shield_arc",
 			"connectedTo": [
 				"shield_arc_2",
-				"small_flux_optional_1"
+				"affinity_1"
 			],
 			"x": 304,
 			"y": -2497,
@@ -1854,7 +1854,7 @@
 			"id": "shield_arc_2",
 			"type": "shield_arc",
 			"connectedTo": [
-				"extendedshieldemitter_1",
+				"extended_shields_1",
 				"shield_arc_1"
 			],
 			"x": 484,
@@ -1870,7 +1870,7 @@
 			"type": "shield_raise_rate",
 			"connectedTo": [
 				"shield_raise_rate_2",
-				"advancedshieldemitter_1"
+				"accelerated_shields_1"
 			],
 			"x": 1217,
 			"y": -3532,
@@ -1885,7 +1885,7 @@
 			"type": "shield_raise_rate",
 			"connectedTo": [
 				"shield_raise_rate_1",
-				"shield_turn_raise_rate_optional_1"
+				"shield_raise_rate_or_shield_turn_rate_1"
 			],
 			"x": 1210,
 			"y": -3358,
@@ -1900,7 +1900,7 @@
 			"type": "shield_turn_rate",
 			"connectedTo": [
 				"shield_turn_rate_2",
-				"advancedshieldemitter_1"
+				"accelerated_shields_1"
 			],
 			"x": 896,
 			"y": -3534,
@@ -1915,7 +1915,7 @@
 			"type": "shield_turn_rate",
 			"connectedTo": [
 				"shield_turn_rate_1",
-				"shield_turn_raise_rate_optional_1"
+				"shield_raise_rate_or_shield_turn_rate_1"
 			],
 			"x": 901,
 			"y": -3359,
@@ -1926,12 +1926,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_25",
-			"type": "small_flux_optional",
+			"id": "affinity_25",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_4",
-				"small_flux_optional_26",
-				"shield_turn_raise_rate_optional_1"
+				"affinity_4",
+				"affinity_26",
+				"shield_raise_rate_or_shield_turn_rate_1"
 			],
 			"x": 966,
 			"y": -2840,
@@ -1942,14 +1942,14 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_26",
-			"type": "small_flux_optional",
+			"id": "affinity_26",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_25",
-				"small_flux_optional_7",
-				"small_flux_optional_27",
+				"affinity_25",
+				"affinity_7",
+				"affinity_27",
 				"shield_arc_4",
-				"small_flux_optional_95"
+				"affinity_95"
 			],
 			"x": 1745,
 			"y": -2440,
@@ -1960,11 +1960,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_27",
-			"type": "small_flux_optional",
+			"id": "affinity_27",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_26",
-				"small_flux_optional_28",
+				"affinity_26",
+				"affinity_28",
 				"ecm_resistance_1",
 				"hightech_wormhole_1"
 			],
@@ -1977,15 +1977,15 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_28",
-			"type": "small_flux_optional",
+			"id": "affinity_28",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_27",
-				"small_flux_optional_9",
-				"small_flux_optional_29",
-				"fighter_weapon_damage_1",
-				"frontshield_1",
-				"small_flux_optional_101"
+				"affinity_27",
+				"affinity_9",
+				"affinity_29",
+				"strikecraft_weapon_damage_1",
+				"makeshift_shield_generator_1",
+				"affinity_101"
 			],
 			"x": 2861,
 			"y": -903,
@@ -1996,11 +1996,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_29",
-			"type": "small_flux_optional",
+			"id": "affinity_29",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_28",
-				"small_flux_optional_30",
+				"affinity_28",
+				"affinity_30",
 				"ballistic_and_energy_weapon_range_4"
 			],
 			"x": 3000,
@@ -2012,14 +2012,14 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_30",
-			"type": "small_flux_optional",
+			"id": "affinity_30",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_29",
-				"small_flux_optional_31",
-				"small_flux_optional_11",
-				"small_flux_optional_34",
-				"modular_hull_socket_17"
+				"affinity_29",
+				"affinity_31",
+				"affinity_11",
+				"affinity_34",
+				"subroutine_socket_17"
 			],
 			"x": 2810,
 			"y": 1051,
@@ -2030,13 +2030,13 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_31",
-			"type": "small_flux_optional",
+			"id": "affinity_31",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_30",
-				"small_flux_optional_32",
-				"small_flux_optional_34",
-				"small_flux_optional_12",
+				"affinity_30",
+				"affinity_32",
+				"affinity_34",
+				"affinity_12",
 				"hull_multi_1",
 				"peak_cr_duration_2"
 			],
@@ -2049,12 +2049,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_32",
-			"type": "small_flux_optional",
+			"id": "affinity_32",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_31",
-				"small_flux_optional_33",
-				"ballistic_damage_2",
+				"affinity_31",
+				"affinity_33",
+				"ballistic_weapon_damage_2",
 				"weapon_durability_2"
 			],
 			"x": 1739,
@@ -2066,11 +2066,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_33",
-			"type": "small_flux_optional",
+			"id": "affinity_33",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_32",
-				"small_flux_optional_35",
+				"affinity_32",
+				"affinity_35",
 				"armor_5"
 			],
 			"x": 950,
@@ -2082,12 +2082,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_34",
-			"type": "small_flux_optional",
+			"id": "affinity_34",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_31",
+				"affinity_31",
 				"root_low_tech_1",
-				"small_flux_optional_30",
+				"affinity_30",
 				"hull_multi_5"
 			],
 			"x": 1946,
@@ -2097,10 +2097,10 @@
 			]
 		},
 		{
-			"id": "shield_turn_raise_rate_optional_1",
-			"type": "shield_turn_raise_rate_optional",
+			"id": "shield_raise_rate_or_shield_turn_rate_1",
+			"type": "shield_raise_rate_or_shield_turn_rate",
 			"connectedTo": [
-				"small_flux_optional_25",
+				"affinity_25",
 				"shield_raise_rate_2",
 				"shield_turn_rate_2"
 			],
@@ -2113,11 +2113,11 @@
 			]
 		},
 		{
-			"id": "missile_damage_2",
-			"type": "missile_damage",
+			"id": "missile_weapon_damage_2",
+			"type": "missile_weapon_damage",
 			"connectedTo": [
-				"missile_damage_1",
-				"small_flux_optional_35"
+				"missile_weapon_damage_1",
+				"affinity_35"
 			],
 			"x": -336,
 			"y": 3378,
@@ -2128,15 +2128,15 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_35",
-			"type": "small_flux_optional",
+			"id": "affinity_35",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_33",
-				"small_flux_optional_36",
-				"small_flux_optional_3",
-				"ballistic_damage_5",
-				"missile_damage_2",
-				"small_flux_optional_15",
+				"affinity_33",
+				"affinity_36",
+				"affinity_3",
+				"ballistic_weapon_damage_5",
+				"missile_weapon_damage_2",
+				"affinity_15",
 				"ballistic_and_energy_weapon_range_while_escorting_1"
 			],
 			"x": 0,
@@ -2148,11 +2148,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_36",
-			"type": "small_flux_optional",
+			"id": "affinity_36",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_35",
-				"small_flux_optional_37",
+				"affinity_35",
+				"affinity_37",
 				"defensive_targeting_array_1"
 			],
 			"x": -1015,
@@ -2164,13 +2164,13 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_37",
-			"type": "small_flux_optional",
+			"id": "affinity_37",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_36",
-				"small_flux_optional_38",
-				"non_beam_energy_damage_2",
-				"small_flux_optional_88"
+				"affinity_36",
+				"affinity_38",
+				"non_beam_energy_weapon_damage_2",
+				"affinity_88"
 			],
 			"x": -1762,
 			"y": 2428,
@@ -2181,13 +2181,13 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_38",
-			"type": "small_flux_optional",
+			"id": "affinity_38",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_37",
-				"small_flux_optional_39",
-				"small_flux_optional_45",
-				"small_flux_optional_18",
+				"affinity_37",
+				"affinity_39",
+				"affinity_45",
+				"affinity_18",
 				"top_speed_1"
 			],
 			"x": -2434,
@@ -2199,16 +2199,16 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_39",
-			"type": "small_flux_optional",
+			"id": "affinity_39",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_38",
-				"small_flux_optional_40",
-				"small_flux_optional_19",
-				"small_flux_optional_45",
-				"crew_capacity_flat_1",
-				"cargo_capacity_flat_2",
-				"modular_hull_socket_16"
+				"affinity_38",
+				"affinity_40",
+				"affinity_19",
+				"affinity_45",
+				"crew_capacity_1",
+				"cargo_capacity_2",
+				"subroutine_socket_16"
 			],
 			"x": -2831,
 			"y": 992,
@@ -2219,13 +2219,13 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_40",
-			"type": "small_flux_optional",
+			"id": "affinity_40",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_39",
-				"small_flux_optional_41",
-				"fighter_replacement_2",
-				"beam_damage_3"
+				"affinity_39",
+				"affinity_41",
+				"strikecraft_replacement_2",
+				"beam_weapon_damage_3"
 			],
 			"x": -3000,
 			"y": 0,
@@ -2236,13 +2236,13 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_41",
-			"type": "small_flux_optional",
+			"id": "affinity_41",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_40",
-				"small_flux_optional_42",
-				"small_flux_optional_21",
-				"small_flux_optional_102",
+				"affinity_40",
+				"affinity_42",
+				"affinity_21",
+				"affinity_102",
 				"combat_vision_2"
 			],
 			"x": -2827,
@@ -2254,13 +2254,13 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_42",
-			"type": "small_flux_optional",
+			"id": "affinity_42",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_41",
-				"small_flux_optional_43",
+				"affinity_41",
+				"affinity_43",
 				"ballistic_and_energy_weapon_range_2",
-				"shield_damage_taken_multi_2",
+				"shield_flux_damage_reduction_2",
 				"wormhole_6"
 			],
 			"x": -2379,
@@ -2272,13 +2272,13 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_43",
-			"type": "small_flux_optional",
+			"id": "affinity_43",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_42",
-				"small_flux_optional_44",
-				"small_flux_optional_23",
-				"adaptiveshields_1",
+				"affinity_42",
+				"affinity_44",
+				"affinity_23",
+				"shield_conversion_omni_1",
 				"phase_cloak_flux_threshold_1"
 			],
 			"x": -1725,
@@ -2290,11 +2290,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_44",
-			"type": "small_flux_optional",
+			"id": "affinity_44",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_43",
-				"small_flux_optional_4",
+				"affinity_43",
+				"affinity_4",
 				"neural_interface_1"
 			],
 			"x": -1023,
@@ -2306,11 +2306,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_45",
-			"type": "small_flux_optional",
+			"id": "affinity_45",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_38",
-				"small_flux_optional_39",
+				"affinity_38",
+				"affinity_39",
 				"root_midline_1",
 				"weapon_turn_rate_1"
 			],
@@ -2326,7 +2326,7 @@
 			"connectedTo": [
 				"armor_3",
 				"hull_multi_3",
-				"small_flux_optional_19"
+				"affinity_19"
 			],
 			"x": -4149,
 			"y": 903,
@@ -2341,7 +2341,7 @@
 			"type": "armor",
 			"connectedTo": [
 				"armor_2",
-				"heavyarmor_1"
+				"heavy_armor_1"
 			],
 			"x": -3895,
 			"y": 903,
@@ -2352,12 +2352,12 @@
 			]
 		},
 		{
-			"id": "ballistic_damage_2",
-			"type": "ballistic_damage",
+			"id": "ballistic_weapon_damage_2",
+			"type": "ballistic_weapon_damage",
 			"connectedTo": [
-				"ballistic_damage_3",
+				"ballistic_weapon_damage_3",
 				"ballistic_projectile_speed_3",
-				"small_flux_optional_32"
+				"affinity_32"
 			],
 			"x": 2093,
 			"y": 2908,
@@ -2368,10 +2368,10 @@
 			]
 		},
 		{
-			"id": "ballistic_damage_3",
-			"type": "ballistic_damage",
+			"id": "ballistic_weapon_damage_3",
+			"type": "ballistic_weapon_damage",
 			"connectedTo": [
-				"ballistic_damage_2",
+				"ballistic_weapon_damage_2",
 				"ballistic_rangefinder_1"
 			],
 			"x": 2281,
@@ -2387,7 +2387,7 @@
 			"type": "ballistic_and_energy_weapon_range",
 			"connectedTo": [
 				"ballistic_and_energy_weapon_range_2",
-				"targetingunit_1"
+				"integrated_targeting_unit_1"
 			],
 			"x": -2427,
 			"y": -2575,
@@ -2400,7 +2400,7 @@
 			"type": "ballistic_and_energy_weapon_range",
 			"connectedTo": [
 				"ballistic_and_energy_weapon_range_1",
-				"small_flux_optional_42"
+				"affinity_42"
 			],
 			"x": -2404,
 			"y": -2217,
@@ -2426,7 +2426,7 @@
 			"type": "ballistic_and_energy_weapon_range",
 			"connectedTo": [
 				"ballistic_and_energy_weapon_range_3",
-				"small_flux_optional_29"
+				"affinity_29"
 			],
 			"x": 3304,
 			"y": 143,
@@ -2453,7 +2453,7 @@
 			"id": "armor_5",
 			"type": "armor",
 			"connectedTo": [
-				"small_flux_optional_33",
+				"affinity_33",
 				"armor_4"
 			],
 			"x": 547,
@@ -2469,7 +2469,7 @@
 			"type": "shield_arc",
 			"connectedTo": [
 				"shield_arc_4",
-				"frontemitter_1"
+				"shield_conversion_front_1"
 			],
 			"x": 1285,
 			"y": -1726,
@@ -2484,7 +2484,7 @@
 			"type": "shield_arc",
 			"connectedTo": [
 				"shield_arc_3",
-				"small_flux_optional_26"
+				"affinity_26"
 			],
 			"x": 1465,
 			"y": -1906,
@@ -2495,11 +2495,11 @@
 			]
 		},
 		{
-			"id": "shield_arc_mult_1",
-			"type": "shield_arc_mult",
+			"id": "shield_arc_multiplier_1",
+			"type": "shield_arc_multiplier",
 			"connectedTo": [
-				"adaptiveshields_1",
-				"shield_arc_mult_2"
+				"shield_conversion_omni_1",
+				"shield_arc_multiplier_2"
 			],
 			"x": -1431,
 			"y": -1883,
@@ -2510,11 +2510,11 @@
 			]
 		},
 		{
-			"id": "shield_arc_mult_2",
-			"type": "shield_arc_mult",
+			"id": "shield_arc_multiplier_2",
+			"type": "shield_arc_multiplier",
 			"connectedTo": [
-				"adaptiveshields_1",
-				"shield_arc_mult_1"
+				"shield_conversion_omni_1",
+				"shield_arc_multiplier_1"
 			],
 			"x": -1199,
 			"y": -2091,
@@ -2525,11 +2525,11 @@
 			]
 		},
 		{
-			"id": "shield_damage_taken_multi_1",
-			"type": "shield_damage_taken_multi",
+			"id": "shield_flux_damage_reduction_1",
+			"type": "shield_flux_damage_reduction",
 			"connectedTo": [
-				"shield_damage_taken_multi_2",
-				"hardenedshieldemitter_1"
+				"shield_flux_damage_reduction_2",
+				"hardened_shields_1"
 			],
 			"x": -2977,
 			"y": -2154,
@@ -2540,11 +2540,11 @@
 			]
 		},
 		{
-			"id": "shield_damage_taken_multi_2",
-			"type": "shield_damage_taken_multi",
+			"id": "shield_flux_damage_reduction_2",
+			"type": "shield_flux_damage_reduction",
 			"connectedTo": [
-				"shield_damage_taken_multi_1",
-				"small_flux_optional_42"
+				"shield_flux_damage_reduction_1",
+				"affinity_42"
 			],
 			"x": -2767,
 			"y": -1944,
@@ -2555,11 +2555,11 @@
 			]
 		},
 		{
-			"id": "shield_upkeep_multi_1",
-			"type": "shield_upkeep_multi",
+			"id": "shield_upkeep_reduction_1",
+			"type": "shield_upkeep_reduction",
 			"connectedTo": [
-				"shield_upkeep_multi_2",
-				"stabilizedshieldemitter_1"
+				"shield_upkeep_reduction_2",
+				"stabilized_shields_1"
 			],
 			"x": -3940,
 			"y": 210,
@@ -2570,11 +2570,11 @@
 			]
 		},
 		{
-			"id": "shield_upkeep_multi_2",
-			"type": "shield_upkeep_multi",
+			"id": "shield_upkeep_reduction_2",
+			"type": "shield_upkeep_reduction",
 			"connectedTo": [
-				"shield_upkeep_multi_1",
-				"small_flux_optional_20"
+				"shield_upkeep_reduction_1",
+				"affinity_20"
 			],
 			"x": -4130,
 			"y": 20,
@@ -2589,7 +2589,7 @@
 			"type": "top_speed",
 			"connectedTo": [
 				"top_speed_2",
-				"small_flux_optional_38"
+				"affinity_38"
 			],
 			"x": -2993,
 			"y": 1518,
@@ -2619,7 +2619,7 @@
 			"type": "phase_cloak_flux_threshold",
 			"connectedTo": [
 				"phase_cloak_flux_threshold_2",
-				"small_flux_optional_43"
+				"affinity_43"
 			],
 			"x": -1692,
 			"y": -3142,
@@ -2634,7 +2634,7 @@
 			"type": "phase_cloak_flux_threshold",
 			"connectedTo": [
 				"phase_cloak_flux_threshold_1",
-				"adaptive_coils_1"
+				"adaptive_phase_coils_1"
 			],
 			"x": -1512,
 			"y": -3322,
@@ -2645,11 +2645,11 @@
 			]
 		},
 		{
-			"id": "emp_damage_taken_multi_1",
-			"type": "emp_damage_taken_multi",
+			"id": "less_emp_damage_taken_1",
+			"type": "less_emp_damage_taken",
 			"connectedTo": [
 				"vent_rate_and_emp_damage_1",
-				"fluxbreakers_1"
+				"resistant_flux_conduits_1"
 			],
 			"x": 1676,
 			"y": -3499,
@@ -2664,7 +2664,7 @@
 			"type": "increased_vent_rate",
 			"connectedTo": [
 				"vent_rate_and_emp_damage_1",
-				"fluxbreakers_1"
+				"resistant_flux_conduits_1"
 			],
 			"x": 2036,
 			"y": -3499,
@@ -2678,9 +2678,9 @@
 			"id": "vent_rate_and_emp_damage_1",
 			"type": "vent_rate_and_emp_damage",
 			"connectedTo": [
-				"emp_damage_taken_multi_1",
+				"less_emp_damage_taken_1",
 				"increased_vent_rate_1",
-				"small_flux_optional_6"
+				"affinity_6"
 			],
 			"x": 1856,
 			"y": -3679,
@@ -2691,11 +2691,11 @@
 			]
 		},
 		{
-			"id": "beam_damage_3",
-			"type": "beam_damage",
+			"id": "beam_weapon_damage_3",
+			"type": "beam_weapon_damage",
 			"connectedTo": [
-				"beam_damage_1",
-				"small_flux_optional_40"
+				"beam_weapon_damage_1",
+				"affinity_40"
 			],
 			"x": -3609,
 			"y": -392,
@@ -2709,7 +2709,7 @@
 			"id": "weapon_durability_1",
 			"type": "weapon_durability",
 			"connectedTo": [
-				"armoredweapons_1",
+				"armored_weapon_mounts_1",
 				"weapon_durability_2"
 			],
 			"x": 971,
@@ -2724,7 +2724,7 @@
 			"id": "weapon_durability_2",
 			"type": "weapon_durability",
 			"connectedTo": [
-				"small_flux_optional_32",
+				"affinity_32",
 				"weapon_durability_1"
 			],
 			"x": 1268,
@@ -2736,13 +2736,13 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_3",
-			"type": "small_flux_optional",
+			"id": "affinity_3",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_35",
+				"affinity_35",
 				"converted_hangar_1",
-				"small_flux_optional_99",
-				"small_flux_optional_98",
+				"affinity_99",
+				"affinity_98",
 				"lowtech_wormhole_2"
 			],
 			"x": 0,
@@ -2756,7 +2756,7 @@
 			"type": "wormhole",
 			"connectedTo": [
 				"midline_wormhole_1",
-				"small_flux_optional_27"
+				"affinity_27"
 			],
 			"x": 2040,
 			"y": -1551,
@@ -2770,8 +2770,8 @@
 			"type": "wormhole",
 			"connectedTo": [
 				"hightech_wormhole_1",
-				"small_flux_optional_19",
-				"small_flux_optional_18"
+				"affinity_19",
+				"affinity_18"
 			],
 			"x": -3655,
 			"y": 1874,
@@ -2785,7 +2785,7 @@
 			"type": "wormhole",
 			"connectedTo": [
 				"lowtech_wormhole_2",
-				"small_flux_optional_2"
+				"affinity_2"
 			],
 			"x": 358,
 			"y": -4204,
@@ -2800,7 +2800,7 @@
 			"type": "wormhole",
 			"connectedTo": [
 				"hightech_wormhole_2",
-				"small_flux_optional_3"
+				"affinity_3"
 			],
 			"x": 0,
 			"y": 1778,
@@ -2815,8 +2815,8 @@
 			"type": "wormhole",
 			"connectedTo": [
 				"wormhole_6",
-				"small_flux_optional_12",
-				"small_flux_optional_11"
+				"affinity_12",
+				"affinity_11"
 			],
 			"x": 3683,
 			"y": 1862,
@@ -2831,7 +2831,7 @@
 			"type": "wormhole",
 			"connectedTo": [
 				"lowtech_wormhole_1",
-				"small_flux_optional_42"
+				"affinity_42"
 			],
 			"x": -1998,
 			"y": -1575,
@@ -2842,11 +2842,11 @@
 			]
 		},
 		{
-			"id": "ballistic_damage_4",
-			"type": "ballistic_damage",
+			"id": "ballistic_weapon_damage_4",
+			"type": "ballistic_weapon_damage",
 			"connectedTo": [
-				"ballistic_damage_5",
-				"magazines_1"
+				"ballistic_weapon_damage_5",
+				"expanded_magazines_1"
 			],
 			"x": -791,
 			"y": 1949,
@@ -2857,11 +2857,11 @@
 			]
 		},
 		{
-			"id": "ballistic_damage_5",
-			"type": "ballistic_damage",
+			"id": "ballistic_weapon_damage_5",
+			"type": "ballistic_weapon_damage",
 			"connectedTo": [
-				"ballistic_damage_4",
-				"small_flux_optional_35"
+				"ballistic_weapon_damage_4",
+				"affinity_35"
 			],
 			"x": -866,
 			"y": 2127,
@@ -2872,11 +2872,11 @@
 			]
 		},
 		{
-			"id": "missile_damage_3",
-			"type": "missile_damage",
+			"id": "missile_weapon_damage_3",
+			"type": "missile_weapon_damage",
 			"connectedTo": [
-				"missile_damage_4",
-				"small_flux_optional_18"
+				"missile_weapon_damage_4",
+				"affinity_18"
 			],
 			"x": -3066,
 			"y": 2692,
@@ -2887,11 +2887,11 @@
 			]
 		},
 		{
-			"id": "missile_damage_4",
-			"type": "missile_damage",
+			"id": "missile_weapon_damage_4",
+			"type": "missile_weapon_damage",
 			"connectedTo": [
-				"missile_damage_3",
-				"eccm_1"
+				"missile_weapon_damage_3",
+				"eccm_package_1"
 			],
 			"x": -2886,
 			"y": 2512,
@@ -2902,11 +2902,11 @@
 			]
 		},
 		{
-			"id": "pd_damage_to_missiles_1",
-			"type": "pd_damage_to_missiles",
+			"id": "point_defense_damage_to_missiles_1",
+			"type": "point_defense_damage_to_missiles",
 			"connectedTo": [
-				"pd_damage_to_missiles_2",
-				"pointdefenseai_1"
+				"point_defense_damage_to_missiles_2",
+				"integrated_point_defense_ai_1"
 			],
 			"x": 3445,
 			"y": -1892,
@@ -2917,11 +2917,11 @@
 			]
 		},
 		{
-			"id": "pd_damage_to_missiles_2",
-			"type": "pd_damage_to_missiles",
+			"id": "point_defense_damage_to_missiles_2",
+			"type": "point_defense_damage_to_missiles",
 			"connectedTo": [
-				"pd_damage_to_missiles_1",
-				"small_flux_optional_8"
+				"point_defense_damage_to_missiles_1",
+				"affinity_8"
 			],
 			"x": 3601,
 			"y": -2162,
@@ -2932,11 +2932,11 @@
 			]
 		},
 		{
-			"id": "maneuverability_percent_1",
-			"type": "maneuverability_percent",
+			"id": "maneuverability_1",
+			"type": "maneuverability",
 			"connectedTo": [
-				"auxiliarythrusters_1",
-				"turn_acceleration_percent_1"
+				"auxiliary_thrusters_1",
+				"maneuverability_9"
 			],
 			"x": 2136,
 			"y": -300,
@@ -2947,11 +2947,11 @@
 			]
 		},
 		{
-			"id": "acceleration_percent_1",
-			"type": "maneuverability_percent",
+			"id": "maneuverability_7",
+			"type": "maneuverability",
 			"connectedTo": [
-				"turn_acceleration_percent_1",
-				"auxiliarythrusters_1"
+				"maneuverability_9",
+				"auxiliary_thrusters_1"
 			],
 			"x": 2496,
 			"y": -300,
@@ -2962,12 +2962,12 @@
 			]
 		},
 		{
-			"id": "turn_acceleration_percent_1",
-			"type": "maneuverability_percent",
+			"id": "maneuverability_9",
+			"type": "maneuverability",
 			"connectedTo": [
-				"acceleration_percent_1",
-				"small_flux_optional_101",
-				"maneuverability_percent_1"
+				"maneuverability_7",
+				"affinity_101",
+				"maneuverability_1"
 			],
 			"x": 2316,
 			"y": -480,
@@ -2982,7 +2982,7 @@
 			"type": "top_speed",
 			"connectedTo": [
 				"top_speed_4",
-				"small_flux_optional_54"
+				"affinity_54"
 			],
 			"x": 4740,
 			"y": 11651,
@@ -2991,10 +2991,10 @@
 			]
 		},
 		{
-			"id": "fighter_replacement_1",
-			"type": "fighter_replacement",
+			"id": "strikecraft_replacement_1",
+			"type": "strikecraft_replacement",
 			"connectedTo": [
-				"fighter_replacement_2",
+				"strikecraft_replacement_2",
 				"expanded_deck_crew_1"
 			],
 			"x": -2340,
@@ -3006,11 +3006,11 @@
 			]
 		},
 		{
-			"id": "fighter_replacement_2",
-			"type": "fighter_replacement",
+			"id": "strikecraft_replacement_2",
+			"type": "strikecraft_replacement",
 			"connectedTo": [
-				"fighter_replacement_1",
-				"small_flux_optional_40"
+				"strikecraft_replacement_1",
+				"affinity_40"
 			],
 			"x": -2520,
 			"y": 35,
@@ -3024,7 +3024,7 @@
 			"id": "reduced_monthly_supplies_1",
 			"type": "reduced_monthly_supplies",
 			"connectedTo": [
-				"small_flux_optional_23",
+				"affinity_23",
 				"reduced_monthly_supplies_2"
 			],
 			"x": -2951,
@@ -3098,7 +3098,7 @@
 			"type": "combat_vision",
 			"connectedTo": [
 				"combat_vision_1",
-				"small_flux_optional_41"
+				"affinity_41"
 			],
 			"x": -3425,
 			"y": -1610,
@@ -3109,11 +3109,11 @@
 			]
 		},
 		{
-			"id": "fighter_weapon_damage_2",
-			"type": "fighter_weapon_damage",
+			"id": "strikecraft_weapon_damage_2",
+			"type": "strikecraft_weapon_damage",
 			"connectedTo": [
 				"recovery_shuttles_1",
-				"fighter_weapon_damage_1"
+				"strikecraft_weapon_damage_1"
 			],
 			"x": 3238,
 			"y": -1615,
@@ -3143,7 +3143,7 @@
 			"type": "hull_multi",
 			"connectedTo": [
 				"armor_2",
-				"heavyarmor_1"
+				"heavy_armor_1"
 			],
 			"x": -4149,
 			"y": 649,
@@ -3158,7 +3158,7 @@
 			"type": "hull_multi",
 			"connectedTo": [
 				"hull_multi_5",
-				"reinforcedhull_1"
+				"reinforced_bulkheads_1"
 			],
 			"x": 2433,
 			"y": 607,
@@ -3174,7 +3174,7 @@
 			"connectedTo": [
 				"hull_multi_4",
 				"hull_multi_6",
-				"small_flux_optional_34"
+				"affinity_34"
 			],
 			"x": 2180,
 			"y": 634,
@@ -3189,7 +3189,7 @@
 			"type": "hull_multi",
 			"connectedTo": [
 				"hull_multi_5",
-				"reinforcedhull_1"
+				"reinforced_bulkheads_1"
 			],
 			"x": 2153,
 			"y": 381,
@@ -3203,9 +3203,9 @@
 			"id": "tritach_2",
 			"type": "wormhole_exit",
 			"connectedTo": [
-				"small_flux_optional_46",
-				"small_flux_optional_48",
-				"fighter_speed_4"
+				"affinity_46",
+				"affinity_48",
+				"strikecraft_speed_4"
 			],
 			"x": -1,
 			"y": -11688,
@@ -3216,12 +3216,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_46",
-			"type": "small_flux_optional",
+			"id": "affinity_46",
+			"type": "affinity",
 			"connectedTo": [
 				"tritach_2",
-				"engine_durability_3",
-				"small_flux_optional_47"
+				"engine_durability_and_sensor_profile_3",
+				"affinity_47"
 			],
 			"x": -1311,
 			"y": -12998,
@@ -3232,11 +3232,11 @@
 			]
 		},
 		{
-			"id": "phase_sensor_upgrades_1",
-			"type": "phase_hull_upgrades",
+			"id": "hybrid_p_space_shrouding_1",
+			"type": "hybrid_p_space_shrouding",
 			"connectedTo": [
-				"engine_durability_4",
-				"engine_durability_5"
+				"engine_durability_and_sensor_profile_4",
+				"engine_durability_and_sensor_profile_5"
 			],
 			"x": -668,
 			"y": -12990,
@@ -3247,8 +3247,8 @@
 			]
 		},
 		{
-			"id": "tactical_superiority_1",
-			"type": "tactical_superiority",
+			"id": "tripad_backdoor_1",
+			"type": "tripad_backdoor",
 			"connectedTo": [
 				"objective_capture_range_3",
 				"objective_capture_range_1"
@@ -3265,7 +3265,7 @@
 			"id": "objective_capture_range_1",
 			"type": "objective_capture_range",
 			"connectedTo": [
-				"tactical_superiority_1",
+				"tripad_backdoor_1",
 				"objective_capture_range_2"
 			],
 			"x": -178,
@@ -3277,12 +3277,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_48",
-			"type": "small_flux_optional",
+			"id": "affinity_48",
+			"type": "affinity",
 			"connectedTo": [
-				"non_beam_energy_damage_4",
+				"non_beam_energy_weapon_damage_4",
 				"tritach_2",
-				"small_flux_optional_47"
+				"affinity_47"
 			],
 			"x": 1309,
 			"y": -12998,
@@ -3293,11 +3293,11 @@
 			]
 		},
 		{
-			"id": "energy_chain_1",
-			"type": "energy_chain",
+			"id": "refracting_projectiles_1",
+			"type": "refracting_projectiles",
 			"connectedTo": [
-				"non_beam_energy_damage_3",
-				"non_beam_energy_damage_5"
+				"non_beam_energy_weapon_damage_3",
+				"non_beam_energy_weapon_damage_5"
 			],
 			"x": 687,
 			"y": -12994,
@@ -3308,12 +3308,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_49",
-			"type": "small_flux_optional",
+			"id": "affinity_49",
+			"type": "affinity",
 			"connectedTo": [
 				"REDACTED_2",
-				"small_flux_optional_66",
-				"small_flux_optional_50"
+				"affinity_66",
+				"affinity_50"
 			],
 			"x": 11465,
 			"y": -8107,
@@ -3325,12 +3325,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_51",
-			"type": "small_flux_optional",
+			"id": "affinity_51",
+			"type": "affinity",
 			"connectedTo": [
 				"REDACTED_2",
-				"small_flux_optional_72",
-				"small_flux_optional_50"
+				"affinity_72",
+				"affinity_50"
 			],
 			"x": 8865,
 			"y": -8107,
@@ -3345,8 +3345,8 @@
 			"id": "REDACTED_2",
 			"type": "wormhole_exit",
 			"connectedTo": [
-				"small_flux_optional_49",
-				"small_flux_optional_51",
+				"affinity_49",
+				"affinity_51",
 				"combat_readiness_1"
 			],
 			"x": 10165,
@@ -3359,12 +3359,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_5",
-			"type": "small_flux_optional",
+			"id": "affinity_5",
+			"type": "affinity",
 			"connectedTo": [
 				"dictat_wormhole_2",
-				"beam_damage_4",
-				"small_flux_optional_52"
+				"beam_weapon_damage_4",
+				"affinity_52"
 			],
 			"x": -10169,
 			"y": -9322,
@@ -3378,7 +3378,7 @@
 			"id": "crustacean_integration_1",
 			"type": "crustacean_integration",
 			"connectedTo": [
-				"beam_damage_6"
+				"beam_weapon_damage_6"
 			],
 			"x": -9989,
 			"y": -8890,
@@ -3392,8 +3392,8 @@
 			"id": "dictat_wormhole_2",
 			"type": "wormhole_exit",
 			"connectedTo": [
-				"small_flux_optional_5",
-				"small_flux_optional_53"
+				"affinity_5",
+				"affinity_53"
 			],
 			"x": -8951,
 			"y": -8104,
@@ -3404,12 +3404,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_53",
-			"type": "small_flux_optional",
+			"id": "affinity_53",
+			"type": "affinity",
 			"connectedTo": [
 				"dictat_wormhole_2",
-				"less_energy_damage_taken_2",
-				"small_flux_optional_52"
+				"energy_damage_resistance_2",
+				"affinity_52"
 			],
 			"x": -10169,
 			"y": -6886,
@@ -3423,9 +3423,9 @@
 			"id": "luddic_2",
 			"type": "wormhole_exit",
 			"connectedTo": [
-				"small_flux_optional_54",
-				"small_flux_optional_56",
-				"fighter_speed_1"
+				"affinity_54",
+				"affinity_56",
+				"strikecraft_speed_1"
 			],
 			"x": 5649,
 			"y": 10407,
@@ -3436,12 +3436,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_54",
-			"type": "small_flux_optional",
+			"id": "affinity_54",
+			"type": "affinity",
 			"connectedTo": [
 				"luddic_2",
 				"top_speed_3",
-				"small_flux_optional_55"
+				"affinity_55"
 			],
 			"x": 4339,
 			"y": 11717,
@@ -3452,11 +3452,11 @@
 			]
 		},
 		{
-			"id": "violence_of_action_1",
-			"type": "violence_of_action",
+			"id": "knights_charge_1",
+			"type": "knights_charge",
 			"connectedTo": [
-				"temporary_acceleration_1",
-				"temporary_acceleration_2"
+				"temporary_maneuverability_1",
+				"temporary_maneuverability_2"
 			],
 			"x": 5645,
 			"y": 12430,
@@ -3467,12 +3467,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_56",
-			"type": "small_flux_optional",
+			"id": "affinity_56",
+			"type": "affinity",
 			"connectedTo": [
 				"luddic_2",
-				"reduced_D_mod_effect_1",
-				"small_flux_optional_55"
+				"reduced_d_mod_effect_1",
+				"affinity_55"
 			],
 			"x": 6959,
 			"y": 11717,
@@ -3483,11 +3483,11 @@
 			]
 		},
 		{
-			"id": "perseverence_through_faith_1",
-			"type": "perseverence_through_faith",
+			"id": "perseverance_through_faith_1",
+			"type": "perseverance_through_faith",
 			"connectedTo": [
-				"reduced_D_mod_effect_2",
-				"reduced_D_mod_effect_6"
+				"reduced_d_mod_effect_2",
+				"reduced_d_mod_effect_6"
 			],
 			"x": 6328,
 			"y": 11724,
@@ -3498,12 +3498,12 @@
 			]
 		},
 		{
-			"id": "reduced_D_mod_effect_1",
-			"type": "reduced_D_mod_effect",
+			"id": "reduced_d_mod_effect_1",
+			"type": "reduced_d_mod_effect",
 			"connectedTo": [
-				"small_flux_optional_56",
-				"reduced_D_mod_effect_2",
-				"reduced_D_mod_effect_6"
+				"affinity_56",
+				"reduced_d_mod_effect_2",
+				"reduced_d_mod_effect_6"
 			],
 			"x": 6688,
 			"y": 11724,
@@ -3514,11 +3514,11 @@
 			]
 		},
 		{
-			"id": "fuel_core_overload_1",
-			"type": "fuel_core_overload",
+			"id": "ludds_light_1",
+			"type": "ludds_light",
 			"connectedTo": [
 				"top_speed_4",
-				"exposed_fuel_lines_1"
+				"at_any_cost_1"
 			],
 			"x": 5529,
 			"y": 11534,
@@ -3529,10 +3529,10 @@
 			]
 		},
 		{
-			"id": "exposed_fuel_lines_1",
-			"type": "exposed_fuel_lines",
+			"id": "at_any_cost_1",
+			"type": "at_any_cost",
 			"connectedTo": [
-				"fuel_core_overload_1"
+				"ludds_light_1"
 			],
 			"x": 5489,
 			"y": 11747,
@@ -3546,8 +3546,8 @@
 			"id": "hegemony_2",
 			"type": "wormhole_exit",
 			"connectedTo": [
-				"small_flux_optional_57",
-				"small_flux_optional_59",
+				"affinity_57",
+				"affinity_59",
 				"ballistic_projectile_speed_5"
 			],
 			"x": -5640,
@@ -3559,8 +3559,8 @@
 			]
 		},
 		{
-			"id": "hull_breacher_1",
-			"type": "hull_breacher",
+			"id": "hullbreacher_rounds_1",
+			"type": "hullbreacher_rounds",
 			"connectedTo": [
 				"ballistic_projectile_speed_6"
 			],
@@ -3571,12 +3571,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_57",
-			"type": "small_flux_optional",
+			"id": "affinity_57",
+			"type": "affinity",
 			"connectedTo": [
 				"hegemony_2",
-				"ballistic_damage_6",
-				"small_flux_optional_58"
+				"ballistic_weapon_damage_6",
+				"affinity_58"
 			],
 			"x": -4340,
 			"y": 11713,
@@ -3617,12 +3617,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_59",
-			"type": "small_flux_optional",
+			"id": "affinity_59",
+			"type": "affinity",
 			"connectedTo": [
 				"hegemony_2",
 				"missile_top_speed_2",
-				"small_flux_optional_58"
+				"affinity_58"
 			],
 			"x": -6940,
 			"y": 11713,
@@ -3633,10 +3633,10 @@
 			]
 		},
 		{
-			"id": "torpedo_specialisation_1",
-			"type": "torpedo_specialisation",
+			"id": "xiv_torpedo_doctrine_1",
+			"type": "xiv_torpedo_doctrine",
 			"connectedTo": [
-				"missile_damage_5",
+				"missile_weapon_damage_5",
 				"missile_top_speed_1"
 			],
 			"x": -6308,
@@ -3652,7 +3652,7 @@
 			"type": "missile_top_speed",
 			"connectedTo": [
 				"missile_top_speed_2",
-				"torpedo_specialisation_1"
+				"xiv_torpedo_doctrine_1"
 			],
 			"x": -6488,
 			"y": 11893,
@@ -3666,9 +3666,9 @@
 			"id": "missile_top_speed_2",
 			"type": "missile_top_speed",
 			"connectedTo": [
-				"missile_damage_5",
+				"missile_weapon_damage_5",
 				"missile_top_speed_1",
-				"small_flux_optional_59"
+				"affinity_59"
 			],
 			"x": -6668,
 			"y": 11713,
@@ -3682,8 +3682,8 @@
 			"id": "pirate_wormhole_2",
 			"type": "wormhole_exit",
 			"connectedTo": [
-				"small_flux_optional_60",
-				"small_flux_optional_62",
+				"affinity_60",
+				"affinity_62",
 				"combat_readiness_6"
 			],
 			"x": 11456,
@@ -3695,12 +3695,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_60",
-			"type": "small_flux_optional",
+			"id": "affinity_60",
+			"type": "affinity",
 			"connectedTo": [
 				"pirate_wormhole_2",
-				"turn_acceleration_percent_2",
-				"small_flux_optional_61"
+				"maneuverability_10",
+				"affinity_61"
 			],
 			"x": 12674,
 			"y": 1675,
@@ -3726,8 +3726,8 @@
 			]
 		},
 		{
-			"id": "hoarded_arms_1",
-			"type": "hoarded_arms",
+			"id": "league_reload_drill_1",
+			"type": "league_reload_drill",
 			"connectedTo": [
 				"ammo_capacity_1",
 				"ammo_capacity_3"
@@ -3744,8 +3744,8 @@
 			"id": "ground_support_1",
 			"type": "ground_support",
 			"connectedTo": [
-				"crew_capacity_flat_3",
-				"crew_capacity_flat_8"
+				"crew_capacity_3",
+				"crew_capacity_8"
 			],
 			"x": 13304,
 			"y": 2898,
@@ -3756,11 +3756,11 @@
 			]
 		},
 		{
-			"id": "ballistic_momentum_1",
-			"type": "ballistic_momentum",
+			"id": "navy_heartbeat_1",
+			"type": "navy_heartbeat",
 			"connectedTo": [
-				"ballistic_damage_7",
-				"ballistic_damage_1"
+				"ballistic_weapon_damage_7",
+				"ballistic_weapon_damage_1"
 			],
 			"x": -4989,
 			"y": 11710,
@@ -3771,12 +3771,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_62",
-			"type": "small_flux_optional",
+			"id": "affinity_62",
+			"type": "affinity",
 			"connectedTo": [
 				"pirate_wormhole_2",
-				"reduced_D_mod_effect_3",
-				"small_flux_optional_61"
+				"reduced_d_mod_effect_3",
+				"affinity_61"
 			],
 			"x": 12674,
 			"y": 4111,
@@ -3790,8 +3790,8 @@
 			"id": "restriction_breeds_creativity_1",
 			"type": "restriction_breeds_creativity",
 			"connectedTo": [
-				"reduced_D_mod_effect_4",
-				"reduced_D_mod_effect_5"
+				"reduced_d_mod_effect_4",
+				"reduced_d_mod_effect_5"
 			],
 			"x": 12677,
 			"y": 3559,
@@ -3805,7 +3805,7 @@
 			"id": "top_speed_4",
 			"type": "top_speed",
 			"connectedTo": [
-				"fuel_core_overload_1",
+				"ludds_light_1",
 				"top_speed_3"
 			],
 			"x": 5145,
@@ -3818,9 +3818,9 @@
 			"id": "league_wormhole_2",
 			"type": "wormhole_exit",
 			"connectedTo": [
-				"small_flux_optional_63",
-				"small_flux_optional_65",
-				"wing_scramble_1"
+				"affinity_63",
+				"affinity_65",
+				"coalition_flight_doctrine_1"
 			],
 			"x": -11470,
 			"y": 2892,
@@ -3831,12 +3831,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_63",
-			"type": "small_flux_optional",
+			"id": "affinity_63",
+			"type": "affinity",
 			"connectedTo": [
 				"league_wormhole_2",
-				"increased_sensor_strength_4",
-				"small_flux_optional_64"
+				"sensor_strength_4",
+				"affinity_64"
 			],
 			"x": -12674,
 			"y": 1688,
@@ -3847,11 +3847,11 @@
 			]
 		},
 		{
-			"id": "attuned_sensors_1",
-			"type": "attuned_sensors",
+			"id": "league_picket_targeting_1",
+			"type": "league_picket_targeting",
 			"connectedTo": [
-				"increased_sensor_strength_3",
-				"increased_sensor_strength_5"
+				"sensor_strength_3",
+				"sensor_strength_5"
 			],
 			"x": -12676,
 			"y": 2269,
@@ -3862,12 +3862,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_65",
-			"type": "small_flux_optional",
+			"id": "affinity_65",
+			"type": "affinity",
 			"connectedTo": [
 				"league_wormhole_2",
 				"ammo_capacity_2",
-				"small_flux_optional_64"
+				"affinity_64"
 			],
 			"x": -12674,
 			"y": 4096,
@@ -3908,11 +3908,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_66",
-			"type": "small_flux_optional",
+			"id": "affinity_66",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_49",
-				"small_flux_optional_67"
+				"affinity_49",
+				"affinity_67"
 			],
 			"x": 10979,
 			"y": -8627,
@@ -3922,10 +3922,10 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_67",
-			"type": "small_flux_optional",
+			"id": "affinity_67",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_66",
+				"affinity_66",
 				"machine_precision_1"
 			],
 			"x": 10530,
@@ -3939,7 +3939,7 @@
 			"id": "machine_precision_1",
 			"type": "machine_precision",
 			"connectedTo": [
-				"small_flux_optional_67"
+				"affinity_67"
 			],
 			"x": 10169,
 			"y": -8294,
@@ -3953,7 +3953,7 @@
 			"type": "combat_readiness",
 			"connectedTo": [
 				"combat_readiness_3",
-				"small_flux_optional_50"
+				"affinity_50"
 			],
 			"x": 9610,
 			"y": -8909,
@@ -3990,11 +3990,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_72",
-			"type": "small_flux_optional",
+			"id": "affinity_72",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_51",
-				"small_flux_optional_73"
+				"affinity_51",
+				"affinity_73"
 			],
 			"x": 9280,
 			"y": -7614,
@@ -4004,10 +4004,10 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_73",
-			"type": "small_flux_optional",
+			"id": "affinity_73",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_72",
+				"affinity_72",
 				"nanoforge_mending_1"
 			],
 			"x": 9831,
@@ -4021,7 +4021,7 @@
 			"id": "nanoforge_mending_1",
 			"type": "nanoforge_mending",
 			"connectedTo": [
-				"small_flux_optional_73"
+				"affinity_73"
 			],
 			"x": 10155,
 			"y": -7899,
@@ -4075,8 +4075,8 @@
 			"id": "ballistic_and_energy_weapon_range_7",
 			"type": "ballistic_and_energy_weapon_range",
 			"connectedTo": [
-				"beam_split_1",
-				"small_flux_optional_52"
+				"lions_gaze_1",
+				"affinity_52"
 			],
 			"x": -11143,
 			"y": -8100,
@@ -4087,10 +4087,10 @@
 			]
 		},
 		{
-			"id": "beam_split_reduced_damage_1",
-			"type": "beam_split_reduced_damage",
+			"id": "additional_beam_splits_1",
+			"type": "additional_beam_splits",
 			"connectedTo": [
-				"beam_split_1"
+				"lions_gaze_1"
 			],
 			"x": -10963,
 			"y": -8280,
@@ -4101,11 +4101,11 @@
 			]
 		},
 		{
-			"id": "non_beam_energy_damage_3",
-			"type": "non_beam_energy_damage",
+			"id": "non_beam_energy_weapon_damage_3",
+			"type": "non_beam_energy_weapon_damage",
 			"connectedTo": [
-				"non_beam_energy_damage_4",
-				"energy_chain_1"
+				"non_beam_energy_weapon_damage_4",
+				"refracting_projectiles_1"
 			],
 			"x": 867,
 			"y": -12814,
@@ -4116,12 +4116,12 @@
 			]
 		},
 		{
-			"id": "non_beam_energy_damage_4",
-			"type": "non_beam_energy_damage",
+			"id": "non_beam_energy_weapon_damage_4",
+			"type": "non_beam_energy_weapon_damage",
 			"connectedTo": [
-				"non_beam_energy_damage_3",
-				"small_flux_optional_48",
-				"non_beam_energy_damage_5"
+				"non_beam_energy_weapon_damage_3",
+				"affinity_48",
+				"non_beam_energy_weapon_damage_5"
 			],
 			"x": 1047,
 			"y": -12994,
@@ -4132,11 +4132,11 @@
 			]
 		},
 		{
-			"id": "non_beam_energy_damage_5",
-			"type": "non_beam_energy_damage",
+			"id": "non_beam_energy_weapon_damage_5",
+			"type": "non_beam_energy_weapon_damage",
 			"connectedTo": [
-				"non_beam_energy_damage_4",
-				"energy_chain_1"
+				"non_beam_energy_weapon_damage_4",
+				"refracting_projectiles_1"
 			],
 			"x": 867,
 			"y": -13174,
@@ -4147,10 +4147,10 @@
 			]
 		},
 		{
-			"id": "beam_split_reduced_damage_2",
-			"type": "beam_split_reduced_damage",
+			"id": "additional_beam_splits_2",
+			"type": "additional_beam_splits",
 			"connectedTo": [
-				"beam_split_1"
+				"lions_gaze_1"
 			],
 			"x": -10783,
 			"y": -8100,
@@ -4161,10 +4161,10 @@
 			]
 		},
 		{
-			"id": "beam_split_reduced_damage_3",
-			"type": "beam_split_reduced_damage",
+			"id": "additional_beam_splits_3",
+			"type": "additional_beam_splits",
 			"connectedTo": [
-				"beam_split_1"
+				"lions_gaze_1"
 			],
 			"x": -10963,
 			"y": -7920,
@@ -4175,12 +4175,12 @@
 			]
 		},
 		{
-			"id": "ballistic_damage_6",
-			"type": "ballistic_damage",
+			"id": "ballistic_weapon_damage_6",
+			"type": "ballistic_weapon_damage",
 			"connectedTo": [
-				"ballistic_damage_7",
-				"small_flux_optional_57",
-				"ballistic_damage_1"
+				"ballistic_weapon_damage_7",
+				"affinity_57",
+				"ballistic_weapon_damage_1"
 			],
 			"x": -4629,
 			"y": 11710,
@@ -4191,11 +4191,11 @@
 			]
 		},
 		{
-			"id": "ballistic_damage_7",
-			"type": "ballistic_damage",
+			"id": "ballistic_weapon_damage_7",
+			"type": "ballistic_weapon_damage",
 			"connectedTo": [
-				"ballistic_damage_6",
-				"ballistic_momentum_1"
+				"ballistic_weapon_damage_6",
+				"navy_heartbeat_1"
 			],
 			"x": -4809,
 			"y": 11530,
@@ -4206,12 +4206,12 @@
 			]
 		},
 		{
-			"id": "increased_sensor_strength_4",
-			"type": "increased_sensor_strength",
+			"id": "sensor_strength_4",
+			"type": "sensor_strength",
 			"connectedTo": [
-				"increased_sensor_strength_3",
-				"small_flux_optional_63",
-				"increased_sensor_strength_5"
+				"sensor_strength_3",
+				"affinity_63",
+				"sensor_strength_5"
 			],
 			"x": -12676,
 			"y": 1909,
@@ -4222,11 +4222,11 @@
 			]
 		},
 		{
-			"id": "increased_sensor_strength_3",
-			"type": "increased_sensor_strength",
+			"id": "sensor_strength_3",
+			"type": "sensor_strength",
 			"connectedTo": [
-				"attuned_sensors_1",
-				"increased_sensor_strength_4"
+				"league_picket_targeting_1",
+				"sensor_strength_4"
 			],
 			"x": -12496,
 			"y": 2089,
@@ -4237,11 +4237,11 @@
 			]
 		},
 		{
-			"id": "beam_damage_4",
-			"type": "beam_damage",
+			"id": "beam_weapon_damage_4",
+			"type": "beam_weapon_damage",
 			"connectedTo": [
-				"beam_damage_6",
-				"small_flux_optional_5"
+				"beam_weapon_damage_6",
+				"affinity_5"
 			],
 			"x": -10349,
 			"y": -8890,
@@ -4252,10 +4252,10 @@
 			]
 		},
 		{
-			"id": "beam_damage_6",
-			"type": "beam_damage",
+			"id": "beam_weapon_damage_6",
+			"type": "beam_weapon_damage",
 			"connectedTo": [
-				"beam_damage_4",
+				"beam_weapon_damage_4",
 				"crustacean_integration_1"
 			],
 			"x": -10169,
@@ -4267,11 +4267,11 @@
 			]
 		},
 		{
-			"id": "missile_damage_5",
-			"type": "missile_damage",
+			"id": "missile_weapon_damage_5",
+			"type": "missile_weapon_damage",
 			"connectedTo": [
 				"missile_top_speed_2",
-				"torpedo_specialisation_1"
+				"xiv_torpedo_doctrine_1"
 			],
 			"x": -6488,
 			"y": 11533,
@@ -4287,7 +4287,7 @@
 			"connectedTo": [
 				"ballistic_projectile_speed_1",
 				"ballistic_projectile_speed_4",
-				"small_flux_optional_58"
+				"affinity_58"
 			],
 			"x": -5643,
 			"y": 12734,
@@ -4301,7 +4301,7 @@
 			"id": "sindrian_shielding_1",
 			"type": "sindrian_shielding",
 			"connectedTo": [
-				"less_energy_damage_taken_1"
+				"energy_damage_resistance_1"
 			],
 			"x": -10353,
 			"y": -7323,
@@ -4312,11 +4312,11 @@
 			]
 		},
 		{
-			"id": "less_energy_damage_taken_1",
-			"type": "less_energy_damage_taken",
+			"id": "energy_damage_resistance_1",
+			"type": "energy_damage_resistance",
 			"connectedTo": [
 				"sindrian_shielding_1",
-				"less_energy_damage_taken_2"
+				"energy_damage_resistance_2"
 			],
 			"x": -10173,
 			"y": -7503,
@@ -4327,11 +4327,11 @@
 			]
 		},
 		{
-			"id": "less_energy_damage_taken_2",
-			"type": "less_energy_damage_taken",
+			"id": "energy_damage_resistance_2",
+			"type": "energy_damage_resistance",
 			"connectedTo": [
-				"small_flux_optional_53",
-				"less_energy_damage_taken_1"
+				"affinity_53",
+				"energy_damage_resistance_1"
 			],
 			"x": -9993,
 			"y": -7323,
@@ -4345,7 +4345,7 @@
 			"id": "ballistic_projectile_speed_3",
 			"type": "ballistic_projectile_speed",
 			"connectedTo": [
-				"ballistic_damage_2",
+				"ballistic_weapon_damage_2",
 				"ballistic_rangefinder_1"
 			],
 			"x": 1921,
@@ -4362,7 +4362,7 @@
 			"connectedTo": [
 				"shared_damage_taken",
 				"shared_damage_taken_2",
-				"small_flux_optional_64"
+				"affinity_64"
 			],
 			"x": -13656,
 			"y": 2888,
@@ -4388,11 +4388,11 @@
 			]
 		},
 		{
-			"id": "reduced_D_mod_effect_2",
-			"type": "reduced_D_mod_effect",
+			"id": "reduced_d_mod_effect_2",
+			"type": "reduced_d_mod_effect",
 			"connectedTo": [
-				"reduced_D_mod_effect_1",
-				"perseverence_through_faith_1"
+				"reduced_d_mod_effect_1",
+				"perseverance_through_faith_1"
 			],
 			"x": 6508,
 			"y": 11904,
@@ -4403,12 +4403,12 @@
 			]
 		},
 		{
-			"id": "reduced_D_mod_effect_3",
-			"type": "reduced_D_mod_effect",
+			"id": "reduced_d_mod_effect_3",
+			"type": "reduced_d_mod_effect",
 			"connectedTo": [
-				"reduced_D_mod_effect_4",
-				"small_flux_optional_62",
-				"reduced_D_mod_effect_5"
+				"reduced_d_mod_effect_4",
+				"affinity_62",
+				"reduced_d_mod_effect_5"
 			],
 			"x": 12677,
 			"y": 3919,
@@ -4419,10 +4419,10 @@
 			]
 		},
 		{
-			"id": "reduced_D_mod_effect_4",
-			"type": "reduced_D_mod_effect",
+			"id": "reduced_d_mod_effect_4",
+			"type": "reduced_d_mod_effect",
 			"connectedTo": [
-				"reduced_D_mod_effect_3",
+				"reduced_d_mod_effect_3",
 				"restriction_breeds_creativity_1"
 			],
 			"x": 12497,
@@ -4438,7 +4438,7 @@
 			"type": "ammo_capacity",
 			"connectedTo": [
 				"ammo_capacity_2",
-				"hoarded_arms_1"
+				"league_reload_drill_1"
 			],
 			"x": -12849,
 			"y": 3703,
@@ -4453,7 +4453,7 @@
 			"type": "ammo_capacity",
 			"connectedTo": [
 				"ammo_capacity_1",
-				"small_flux_optional_65",
+				"affinity_65",
 				"ammo_capacity_3"
 			],
 			"x": -12669,
@@ -4484,7 +4484,7 @@
 			"type": "peak_cr_duration",
 			"connectedTo": [
 				"peak_cr_duration_1",
-				"small_flux_optional_31"
+				"affinity_31"
 			],
 			"x": 2946,
 			"y": 1639,
@@ -4495,10 +4495,10 @@
 			]
 		},
 		{
-			"id": "temporary_acceleration_1",
-			"type": "temporary_acceleration",
+			"id": "temporary_maneuverability_1",
+			"type": "temporary_maneuverability",
 			"connectedTo": [
-				"violence_of_action_1",
+				"knights_charge_1",
 				"top_speed_5"
 			],
 			"x": 5465,
@@ -4510,10 +4510,10 @@
 			]
 		},
 		{
-			"id": "temporary_acceleration_2",
-			"type": "temporary_acceleration",
+			"id": "temporary_maneuverability_2",
+			"type": "temporary_maneuverability",
 			"connectedTo": [
-				"violence_of_action_1",
+				"knights_charge_1",
 				"top_speed_5"
 			],
 			"x": 5825,
@@ -4528,9 +4528,9 @@
 			"id": "top_speed_5",
 			"type": "top_speed",
 			"connectedTo": [
-				"temporary_acceleration_1",
-				"temporary_acceleration_2",
-				"small_flux_optional_55"
+				"temporary_maneuverability_1",
+				"temporary_maneuverability_2",
+				"affinity_55"
 			],
 			"x": 5645,
 			"y": 12790,
@@ -4546,7 +4546,7 @@
 			"connectedTo": [
 				"objective_capture_range_1",
 				"objective_capture_range_3",
-				"small_flux_optional_47"
+				"affinity_47"
 			],
 			"x": 2,
 			"y": -14085,
@@ -4557,11 +4557,11 @@
 			]
 		},
 		{
-			"id": "reckless_assault_1",
-			"type": "reckless_assault",
+			"id": "freebooters_charge_1",
+			"type": "freebooters_charge",
 			"connectedTo": [
-				"maneuverability_percent_2",
-				"acceleration_percent_2"
+				"maneuverability_2",
+				"maneuverability_8"
 			],
 			"x": 12676,
 			"y": 2244,
@@ -4572,12 +4572,12 @@
 			]
 		},
 		{
-			"id": "turn_acceleration_percent_2",
-			"type": "maneuverability_percent",
+			"id": "maneuverability_10",
+			"type": "maneuverability",
 			"connectedTo": [
-				"small_flux_optional_60",
-				"maneuverability_percent_2",
-				"acceleration_percent_2"
+				"affinity_60",
+				"maneuverability_2",
+				"maneuverability_8"
 			],
 			"x": 12676,
 			"y": 1884,
@@ -4588,11 +4588,11 @@
 			]
 		},
 		{
-			"id": "acceleration_percent_2",
-			"type": "maneuverability_percent",
+			"id": "maneuverability_8",
+			"type": "maneuverability",
 			"connectedTo": [
-				"turn_acceleration_percent_2",
-				"reckless_assault_1"
+				"maneuverability_10",
+				"freebooters_charge_1"
 			],
 			"x": 12856,
 			"y": 2064,
@@ -4603,11 +4603,11 @@
 			]
 		},
 		{
-			"id": "maneuverability_percent_2",
-			"type": "maneuverability_percent",
+			"id": "maneuverability_2",
+			"type": "maneuverability",
 			"connectedTo": [
-				"turn_acceleration_percent_2",
-				"reckless_assault_1"
+				"maneuverability_10",
+				"freebooters_charge_1"
 			],
 			"x": 12496,
 			"y": 2064,
@@ -4618,12 +4618,12 @@
 			]
 		},
 		{
-			"id": "engine_durability_3",
-			"type": "engine_durability",
+			"id": "engine_durability_and_sensor_profile_3",
+			"type": "engine_durability_and_sensor_profile",
 			"connectedTo": [
-				"engine_durability_4",
-				"small_flux_optional_46",
-				"engine_durability_5"
+				"engine_durability_and_sensor_profile_4",
+				"affinity_46",
+				"engine_durability_and_sensor_profile_5"
 			],
 			"x": -1028,
 			"y": -12990,
@@ -4634,11 +4634,11 @@
 			]
 		},
 		{
-			"id": "engine_durability_4",
-			"type": "engine_durability",
+			"id": "engine_durability_and_sensor_profile_4",
+			"type": "engine_durability_and_sensor_profile",
 			"connectedTo": [
-				"engine_durability_3",
-				"phase_sensor_upgrades_1"
+				"engine_durability_and_sensor_profile_3",
+				"hybrid_p_space_shrouding_1"
 			],
 			"x": -848,
 			"y": -13170,
@@ -4653,7 +4653,7 @@
 			"type": "objective_capture_range",
 			"connectedTo": [
 				"objective_capture_range_2",
-				"tactical_superiority_1"
+				"tripad_backdoor_1"
 			],
 			"x": 182,
 			"y": -13905,
@@ -4708,10 +4708,10 @@
 			]
 		},
 		{
-			"id": "crew_capacity_flat_3",
-			"type": "crew_capacity_flat",
+			"id": "crew_capacity_3",
+			"type": "crew_capacity",
 			"connectedTo": [
-				"crew_capacity_flat_4",
+				"crew_capacity_4",
 				"ground_support_1"
 			],
 			"x": 13484,
@@ -4723,12 +4723,12 @@
 			]
 		},
 		{
-			"id": "crew_capacity_flat_4",
-			"type": "crew_capacity_flat",
+			"id": "crew_capacity_4",
+			"type": "crew_capacity",
 			"connectedTo": [
-				"crew_capacity_flat_3",
-				"small_flux_optional_61",
-				"crew_capacity_flat_8"
+				"crew_capacity_3",
+				"affinity_61",
+				"crew_capacity_8"
 			],
 			"x": 13664,
 			"y": 2898,
@@ -4800,10 +4800,10 @@
 			]
 		},
 		{
-			"id": "energy_flux_cost_1",
-			"type": "energy_flux_cost",
+			"id": "energy_weapon_flux_cost_1",
+			"type": "energy_weapon_flux_cost",
 			"connectedTo": [
-				"energy_flux_cost_2",
+				"energy_weapon_flux_cost_2",
 				"nskr_volatile_1"
 			],
 			"x": -14995,
@@ -4815,11 +4815,11 @@
 			]
 		},
 		{
-			"id": "energy_flux_cost_2",
-			"type": "energy_flux_cost",
+			"id": "energy_weapon_flux_cost_2",
+			"type": "energy_weapon_flux_cost",
 			"connectedTo": [
-				"energy_flux_cost_1",
-				"small_flux_optional_70"
+				"energy_weapon_flux_cost_1",
+				"affinity_70"
 			],
 			"x": -14815,
 			"y": 9209,
@@ -4833,7 +4833,7 @@
 			"id": "nskr_volatile_1",
 			"type": "nskr_volatile",
 			"connectedTo": [
-				"energy_flux_cost_1"
+				"energy_weapon_flux_cost_1"
 			],
 			"x": -14815,
 			"y": 9569,
@@ -4850,9 +4850,9 @@
 			"type": "frozen_heart",
 			"connectedTo": [
 				"lost_sector_wormhole1",
-				"missile_damage_7",
+				"missile_weapon_damage_7",
 				"weapon_durability_4",
-				"crew_capacity_flat_6"
+				"crew_capacity_6"
 			],
 			"x": 8386,
 			"y": -15928,
@@ -4867,8 +4867,8 @@
 			"id": "all_must_serve_1",
 			"type": "all_must_serve",
 			"connectedTo": [
-				"crew_capacity_flat_5",
-				"crew_capacity_flat_7"
+				"crew_capacity_5",
+				"crew_capacity_7"
 			],
 			"x": 7324,
 			"y": -15923,
@@ -4883,8 +4883,8 @@
 			"id": "live_munitions_1",
 			"type": "live_munitions",
 			"connectedTo": [
-				"missile_damage_6",
-				"missile_damage_8"
+				"missile_weapon_damage_6",
+				"missile_weapon_damage_8"
 			],
 			"x": 9404,
 			"y": -15922,
@@ -4915,7 +4915,7 @@
 			"id": "nskr_absorption_1",
 			"type": "nskr_absorption",
 			"connectedTo": [
-				"shield_damage_taken_multi_4"
+				"shield_flux_damage_reduction_4"
 			],
 			"x": -15454,
 			"y": 10216,
@@ -4926,11 +4926,11 @@
 			]
 		},
 		{
-			"id": "shield_damage_taken_multi_3",
-			"type": "shield_damage_taken_multi",
+			"id": "shield_flux_damage_reduction_3",
+			"type": "shield_flux_damage_reduction",
 			"connectedTo": [
-				"shield_damage_taken_multi_4",
-				"small_flux_optional_69"
+				"shield_flux_damage_reduction_4",
+				"affinity_69"
 			],
 			"x": -15814,
 			"y": 10216,
@@ -4956,10 +4956,10 @@
 			]
 		},
 		{
-			"id": "shield_damage_taken_multi_4",
-			"type": "shield_damage_taken_multi",
+			"id": "shield_flux_damage_reduction_4",
+			"type": "shield_flux_damage_reduction",
 			"connectedTo": [
-				"shield_damage_taken_multi_3",
+				"shield_flux_damage_reduction_3",
 				"nskr_absorption_1"
 			],
 			"x": -15634,
@@ -4975,7 +4975,7 @@
 			"type": "top_speed",
 			"connectedTo": [
 				"top_speed_6",
-				"small_flux_optional_68"
+				"affinity_68"
 			],
 			"x": -14817,
 			"y": 11254,
@@ -4986,12 +4986,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_68",
-			"type": "small_flux_optional",
+			"id": "affinity_68",
+			"type": "affinity",
 			"connectedTo": [
 				"top_speed_7",
 				"kesteven_wormhole1",
-				"small_flux_optional_69"
+				"affinity_69"
 			],
 			"x": -14818,
 			"y": 11513,
@@ -5002,12 +5002,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_70",
-			"type": "small_flux_optional",
+			"id": "affinity_70",
+			"type": "affinity",
 			"connectedTo": [
-				"energy_flux_cost_2",
+				"energy_weapon_flux_cost_2",
 				"kesteven_wormhole1",
-				"small_flux_optional_69"
+				"affinity_69"
 			],
 			"x": -14818,
 			"y": 8913,
@@ -5021,8 +5021,8 @@
 			"id": "kesteven_wormhole1",
 			"type": "wormhole_exit",
 			"connectedTo": [
-				"small_flux_optional_70",
-				"small_flux_optional_68",
+				"affinity_70",
+				"affinity_68",
 				"armor_6"
 			],
 			"x": -13518,
@@ -5035,10 +5035,10 @@
 			]
 		},
 		{
-			"id": "reduced_D_mod_effect_5",
-			"type": "reduced_D_mod_effect",
+			"id": "reduced_d_mod_effect_5",
+			"type": "reduced_d_mod_effect",
 			"connectedTo": [
-				"reduced_D_mod_effect_3",
+				"reduced_d_mod_effect_3",
 				"restriction_breeds_creativity_1"
 			],
 			"x": 12857,
@@ -5050,11 +5050,11 @@
 			]
 		},
 		{
-			"id": "reduced_D_mod_effect_6",
-			"type": "reduced_D_mod_effect",
+			"id": "reduced_d_mod_effect_6",
+			"type": "reduced_d_mod_effect",
 			"connectedTo": [
-				"reduced_D_mod_effect_1",
-				"perseverence_through_faith_1"
+				"reduced_d_mod_effect_1",
+				"perseverance_through_faith_1"
 			],
 			"x": 6508,
 			"y": 11544,
@@ -5080,11 +5080,11 @@
 			]
 		},
 		{
-			"id": "ballistic_damage_1",
-			"type": "ballistic_damage",
+			"id": "ballistic_weapon_damage_1",
+			"type": "ballistic_weapon_damage",
 			"connectedTo": [
-				"ballistic_damage_6",
-				"ballistic_momentum_1"
+				"ballistic_weapon_damage_6",
+				"navy_heartbeat_1"
 			],
 			"x": -4809,
 			"y": 11890,
@@ -5098,7 +5098,7 @@
 			"id": "ammo_capacity_3",
 			"type": "ammo_capacity",
 			"connectedTo": [
-				"hoarded_arms_1",
+				"league_reload_drill_1",
 				"ammo_capacity_2"
 			],
 			"x": -12489,
@@ -5110,11 +5110,11 @@
 			]
 		},
 		{
-			"id": "increased_sensor_strength_5",
-			"type": "increased_sensor_strength",
+			"id": "sensor_strength_5",
+			"type": "sensor_strength",
 			"connectedTo": [
-				"increased_sensor_strength_4",
-				"attuned_sensors_1"
+				"sensor_strength_4",
+				"league_picket_targeting_1"
 			],
 			"x": -12856,
 			"y": 2089,
@@ -5125,11 +5125,11 @@
 			]
 		},
 		{
-			"id": "engine_durability_5",
-			"type": "engine_durability",
+			"id": "engine_durability_and_sensor_profile_5",
+			"type": "engine_durability_and_sensor_profile",
 			"connectedTo": [
-				"engine_durability_3",
-				"phase_sensor_upgrades_1"
+				"engine_durability_and_sensor_profile_3",
+				"hybrid_p_space_shrouding_1"
 			],
 			"x": -848,
 			"y": -12810,
@@ -5155,10 +5155,10 @@
 			]
 		},
 		{
-			"id": "missile_damage_6",
-			"type": "missile_damage",
+			"id": "missile_weapon_damage_6",
+			"type": "missile_weapon_damage",
 			"connectedTo": [
-				"missile_damage_7",
+				"missile_weapon_damage_7",
 				"live_munitions_1"
 			],
 			"x": 9224,
@@ -5171,12 +5171,12 @@
 			]
 		},
 		{
-			"id": "missile_damage_7",
-			"type": "missile_damage",
+			"id": "missile_weapon_damage_7",
+			"type": "missile_weapon_damage",
 			"connectedTo": [
-				"missile_damage_6",
+				"missile_weapon_damage_6",
 				"frozen_heart_1",
-				"missile_damage_8"
+				"missile_weapon_damage_8"
 			],
 			"x": 9044,
 			"y": -15922,
@@ -5191,7 +5191,7 @@
 			"id": "ecm_resistance_1",
 			"type": "ecm_resistance",
 			"connectedTo": [
-				"small_flux_optional_27",
+				"affinity_27",
 				"ecm_resistance_2"
 			],
 			"x": 2699,
@@ -5207,7 +5207,7 @@
 			"type": "ecm_resistance",
 			"connectedTo": [
 				"ecm_resistance_1",
-				"ecm_1"
+				"ecm_package_1"
 			],
 			"x": 2916,
 			"y": -2250,
@@ -5221,7 +5221,7 @@
 			"id": "repair_time_3",
 			"type": "repair_time",
 			"connectedTo": [
-				"autorepair_1",
+				"automated_repair_unit_1",
 				"repair_time_1"
 			],
 			"x": -1659,
@@ -5266,11 +5266,11 @@
 			]
 		},
 		{
-			"id": "crew_capacity_flat_5",
-			"type": "crew_capacity_flat",
+			"id": "crew_capacity_5",
+			"type": "crew_capacity",
 			"connectedTo": [
 				"all_must_serve_1",
-				"crew_capacity_flat_6"
+				"crew_capacity_6"
 			],
 			"x": 7504,
 			"y": -16103,
@@ -5282,12 +5282,12 @@
 			]
 		},
 		{
-			"id": "crew_capacity_flat_6",
-			"type": "crew_capacity_flat",
+			"id": "crew_capacity_6",
+			"type": "crew_capacity",
 			"connectedTo": [
-				"crew_capacity_flat_5",
+				"crew_capacity_5",
 				"frozen_heart_1",
-				"crew_capacity_flat_7"
+				"crew_capacity_7"
 			],
 			"x": 7684,
 			"y": -15923,
@@ -5299,13 +5299,13 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_8",
-			"type": "small_flux_optional",
+			"id": "affinity_8",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_9",
-				"small_flux_optional_7",
-				"pd_damage_to_missiles_2",
-				"small_flux_optional_82"
+				"affinity_9",
+				"affinity_7",
+				"point_defense_damage_to_missiles_2",
+				"affinity_82"
 			],
 			"x": 3662,
 			"y": -2616,
@@ -5316,12 +5316,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_22",
-			"type": "small_flux_optional",
+			"id": "affinity_22",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_23",
-				"small_flux_optional_21",
-				"small_flux_optional_77"
+				"affinity_23",
+				"affinity_21",
+				"affinity_77"
 			],
 			"x": -3641,
 			"y": -2645,
@@ -5332,12 +5332,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_61",
-			"type": "small_flux_optional",
+			"id": "affinity_61",
+			"type": "affinity",
 			"connectedTo": [
-				"crew_capacity_flat_4",
-				"small_flux_optional_60",
-				"small_flux_optional_62"
+				"crew_capacity_4",
+				"affinity_60",
+				"affinity_62"
 			],
 			"x": 13892,
 			"y": 2893,
@@ -5348,12 +5348,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_50",
-			"type": "small_flux_optional",
+			"id": "affinity_50",
+			"type": "affinity",
 			"connectedTo": [
 				"combat_readiness_4",
-				"small_flux_optional_51",
-				"small_flux_optional_49"
+				"affinity_51",
+				"affinity_49"
 			],
 			"x": 10165,
 			"y": -9407,
@@ -5365,12 +5365,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_47",
-			"type": "small_flux_optional",
+			"id": "affinity_47",
+			"type": "affinity",
 			"connectedTo": [
 				"objective_capture_range_2",
-				"small_flux_optional_46",
-				"small_flux_optional_48"
+				"affinity_46",
+				"affinity_48"
 			],
 			"x": -1,
 			"y": -14308,
@@ -5381,11 +5381,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_55",
-			"type": "small_flux_optional",
+			"id": "affinity_55",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_54",
-				"small_flux_optional_56",
+				"affinity_54",
+				"affinity_56",
 				"top_speed_5"
 			],
 			"x": 5649,
@@ -5397,12 +5397,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_58",
-			"type": "small_flux_optional",
+			"id": "affinity_58",
+			"type": "affinity",
 			"connectedTo": [
 				"ballistic_projectile_speed_2",
-				"small_flux_optional_59",
-				"small_flux_optional_57"
+				"affinity_59",
+				"affinity_57"
 			],
 			"x": -5640,
 			"y": 13013,
@@ -5413,12 +5413,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_64",
-			"type": "small_flux_optional",
+			"id": "affinity_64",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_65",
+				"affinity_65",
 				"shared_damage_taken_1",
-				"small_flux_optional_63"
+				"affinity_63"
 			],
 			"x": -13878,
 			"y": 2892,
@@ -5429,12 +5429,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_69",
-			"type": "small_flux_optional",
+			"id": "affinity_69",
+			"type": "affinity",
 			"connectedTo": [
-				"shield_damage_taken_multi_3",
-				"small_flux_optional_70",
-				"small_flux_optional_68"
+				"shield_flux_damage_reduction_3",
+				"affinity_70",
+				"affinity_68"
 			],
 			"x": -16118,
 			"y": 10213,
@@ -5445,11 +5445,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_52",
-			"type": "small_flux_optional",
+			"id": "affinity_52",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_5",
-				"small_flux_optional_53",
+				"affinity_5",
+				"affinity_53",
 				"ballistic_and_energy_weapon_range_7"
 			],
 			"x": -11387,
@@ -5478,7 +5478,7 @@
 			"type": "ballistic_projectile_speed",
 			"connectedTo": [
 				"ballistic_projectile_speed_5",
-				"hull_breacher_1"
+				"hullbreacher_rounds_1"
 			],
 			"x": -5642,
 			"y": 10881,
@@ -5487,10 +5487,10 @@
 			]
 		},
 		{
-			"id": "crew_capacity_flat_7",
-			"type": "crew_capacity_flat",
+			"id": "crew_capacity_7",
+			"type": "crew_capacity",
 			"connectedTo": [
-				"crew_capacity_flat_6",
+				"crew_capacity_6",
 				"all_must_serve_1"
 			],
 			"x": 7504,
@@ -5519,10 +5519,10 @@
 			]
 		},
 		{
-			"id": "missile_damage_8",
-			"type": "missile_damage",
+			"id": "missile_weapon_damage_8",
+			"type": "missile_weapon_damage",
 			"connectedTo": [
-				"missile_damage_7",
+				"missile_weapon_damage_7",
 				"live_munitions_1"
 			],
 			"x": 9224,
@@ -5535,11 +5535,11 @@
 			]
 		},
 		{
-			"id": "less_energy_damage_taken_3",
-			"type": "less_energy_damage_taken",
+			"id": "energy_damage_resistance_3",
+			"type": "energy_damage_resistance",
 			"connectedTo": [
 				"solar_shielding_1",
-				"less_energy_damage_taken_4"
+				"energy_damage_resistance_4"
 			],
 			"x": 4146,
 			"y": -797,
@@ -5550,11 +5550,11 @@
 			]
 		},
 		{
-			"id": "less_energy_damage_taken_4",
-			"type": "less_energy_damage_taken",
+			"id": "energy_damage_resistance_4",
+			"type": "energy_damage_resistance",
 			"connectedTo": [
-				"less_energy_damage_taken_3",
-				"small_flux_optional_9"
+				"energy_damage_resistance_3",
+				"affinity_9"
 			],
 			"x": 3966,
 			"y": -977,
@@ -5565,13 +5565,13 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_101",
-			"type": "small_flux_optional",
+			"id": "affinity_101",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_84",
-				"small_flux_optional_28",
-				"converted_fighterbay_1",
-				"turn_acceleration_percent_1"
+				"affinity_84",
+				"affinity_28",
+				"converted_fighter_bay_1",
+				"maneuverability_9"
 			],
 			"x": 2145,
 			"y": -833,
@@ -5580,11 +5580,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_102",
-			"type": "small_flux_optional",
+			"id": "affinity_102",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_91",
-				"small_flux_optional_41",
+				"affinity_91",
+				"affinity_41",
 				"efficiency_overhaul_1",
 				"repair_time_1"
 			],
@@ -5600,7 +5600,7 @@
 			"connectedTo": [
 				"ballistic_and_energy_weapon_range_while_escorting_2",
 				"top_speed_while_escorting_1",
-				"small_flux_optional_35"
+				"affinity_35"
 			],
 			"x": 390,
 			"y": 2444,
@@ -5641,11 +5641,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_107",
-			"type": "small_flux_optional",
+			"id": "affinity_107",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_71",
-				"small_flux_optional_74",
+				"affinity_71",
+				"affinity_74",
 				"energy_weapon_fire_rate_1"
 			],
 			"x": -18786,
@@ -5658,10 +5658,10 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_71",
-			"type": "small_flux_optional",
+			"id": "affinity_71",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_107",
+				"affinity_107",
 				"nightcross_wormhole_1",
 				"hull_multi_7"
 			],
@@ -5675,12 +5675,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_74",
-			"type": "small_flux_optional",
+			"id": "affinity_74",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_107",
+				"affinity_107",
 				"nightcross_wormhole_1",
-				"fighter_weapon_damage_3"
+				"strikecraft_weapon_damage_3"
 			],
 			"x": -17586,
 			"y": -2654,
@@ -5695,8 +5695,8 @@
 			"id": "nightcross_wormhole_1",
 			"type": "wormhole_exit",
 			"connectedTo": [
-				"small_flux_optional_71",
-				"small_flux_optional_74",
+				"affinity_71",
+				"affinity_74",
 				"dynamic_grid_1"
 			],
 			"x": -16386,
@@ -5713,7 +5713,7 @@
 			"type": "energy_weapon_fire_rate",
 			"connectedTo": [
 				"energy_weapon_fire_rate_2",
-				"small_flux_optional_107",
+				"affinity_107",
 				"energy_weapon_fire_rate_3"
 			],
 			"x": -18539,
@@ -5730,7 +5730,7 @@
 			"type": "energy_weapon_fire_rate",
 			"connectedTo": [
 				"energy_weapon_fire_rate_1",
-				"ion_rounds_1"
+				"ion_bolter_rounds_1"
 			],
 			"x": -18379,
 			"y": -4017,
@@ -5742,8 +5742,8 @@
 			]
 		},
 		{
-			"id": "ion_rounds_1",
-			"type": "ion_rounds",
+			"id": "ion_bolter_rounds_1",
+			"type": "ion_bolter_rounds",
 			"connectedTo": [
 				"energy_weapon_fire_rate_2",
 				"energy_weapon_fire_rate_3"
@@ -5758,12 +5758,12 @@
 			]
 		},
 		{
-			"id": "fighter_weapon_damage_3",
-			"type": "fighter_weapon_damage",
+			"id": "strikecraft_weapon_damage_3",
+			"type": "strikecraft_weapon_damage",
 			"connectedTo": [
-				"small_flux_optional_74",
-				"fighter_weapon_damage_4",
-				"fighter_weapon_damage_5"
+				"affinity_74",
+				"strikecraft_weapon_damage_4",
+				"strikecraft_weapon_damage_5"
 			],
 			"x": -17586,
 			"y": -2934,
@@ -5775,11 +5775,11 @@
 			]
 		},
 		{
-			"id": "fighter_weapon_damage_4",
-			"type": "fighter_weapon_damage",
+			"id": "strikecraft_weapon_damage_4",
+			"type": "strikecraft_weapon_damage",
 			"connectedTo": [
-				"fighter_weapon_damage_3",
-				"hardlight_infusion_1"
+				"strikecraft_weapon_damage_3",
+				"hardlight_marking_1"
 			],
 			"x": -17426,
 			"y": -3094,
@@ -5791,11 +5791,11 @@
 			]
 		},
 		{
-			"id": "hardlight_infusion_1",
-			"type": "hardlight_infusion",
+			"id": "hardlight_marking_1",
+			"type": "hardlight_marking",
 			"connectedTo": [
-				"fighter_weapon_damage_4",
-				"fighter_weapon_damage_5"
+				"strikecraft_weapon_damage_4",
+				"strikecraft_weapon_damage_5"
 			],
 			"x": -17586,
 			"y": -3254,
@@ -5823,9 +5823,9 @@
 			"id": "top_speed_8",
 			"type": "top_speed",
 			"connectedTo": [
-				"maneuverability_percent_3",
-				"maneuverability_percent_4",
-				"small_flux_optional_108"
+				"maneuverability_3",
+				"maneuverability_4",
+				"affinity_108"
 			],
 			"x": 18149,
 			"y": -5279,
@@ -5837,11 +5837,11 @@
 			]
 		},
 		{
-			"id": "gravitational_drag_1",
-			"type": "gravitational_drag",
+			"id": "candles_grace_replica_1",
+			"type": "candles_grace_replica",
 			"connectedTo": [
-				"maneuverability_percent_3",
-				"maneuverability_percent_4"
+				"maneuverability_3",
+				"maneuverability_4"
 			],
 			"x": 17829,
 			"y": -5279,
@@ -5854,11 +5854,11 @@
 			]
 		},
 		{
-			"id": "maneuverability_percent_3",
-			"type": "maneuverability_percent",
+			"id": "maneuverability_3",
+			"type": "maneuverability",
 			"connectedTo": [
 				"top_speed_8",
-				"gravitational_drag_1"
+				"candles_grace_replica_1"
 			],
 			"x": 17989,
 			"y": -5439,
@@ -5874,7 +5874,7 @@
 			"type": "energy_weapon_fire_rate",
 			"connectedTo": [
 				"energy_weapon_fire_rate_1",
-				"ion_rounds_1"
+				"ion_bolter_rounds_1"
 			],
 			"x": -18379,
 			"y": -3697,
@@ -5886,11 +5886,11 @@
 			]
 		},
 		{
-			"id": "fighter_weapon_damage_5",
-			"type": "fighter_weapon_damage",
+			"id": "strikecraft_weapon_damage_5",
+			"type": "strikecraft_weapon_damage",
 			"connectedTo": [
-				"fighter_weapon_damage_3",
-				"hardlight_infusion_1"
+				"strikecraft_weapon_damage_3",
+				"hardlight_marking_1"
 			],
 			"x": -17746,
 			"y": -3094,
@@ -5902,11 +5902,11 @@
 			]
 		},
 		{
-			"id": "maneuverability_percent_4",
-			"type": "maneuverability_percent",
+			"id": "maneuverability_4",
+			"type": "maneuverability",
 			"connectedTo": [
 				"top_speed_8",
-				"gravitational_drag_1"
+				"candles_grace_replica_1"
 			],
 			"x": 17989,
 			"y": -5119,
@@ -5918,11 +5918,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_75",
-			"type": "small_flux_optional",
+			"id": "affinity_75",
+			"type": "affinity",
 			"connectedTo": [
 				"stargazer_wormhole_1",
-				"small_flux_optional_108",
+				"affinity_108",
 				"ecm_resistance_3"
 			],
 			"x": 17365,
@@ -5935,10 +5935,10 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_76",
-			"type": "small_flux_optional",
+			"id": "affinity_76",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_108",
+				"affinity_108",
 				"stargazer_wormhole_1",
 				"energy_weapon_fire_rate_4"
 			],
@@ -5952,13 +5952,13 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_108",
-			"type": "small_flux_optional",
+			"id": "affinity_108",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_76",
-				"small_flux_optional_75",
+				"affinity_76",
+				"affinity_75",
 				"top_speed_8",
-				"beam_damage_2"
+				"beam_weapon_damage_2"
 			],
 			"x": 18565,
 			"y": -4745,
@@ -5973,8 +5973,8 @@
 			"id": "stargazer_wormhole_1",
 			"type": "wormhole_exit",
 			"connectedTo": [
-				"small_flux_optional_76",
-				"small_flux_optional_75",
+				"affinity_76",
+				"affinity_75",
 				"beautiful_nightmare_1"
 			],
 			"x": 16165,
@@ -5987,12 +5987,12 @@
 			]
 		},
 		{
-			"id": "beam_damage_2",
-			"type": "beam_damage",
+			"id": "beam_weapon_damage_2",
+			"type": "beam_weapon_damage",
 			"connectedTo": [
-				"beam_damage_7",
-				"beam_damage_8",
-				"small_flux_optional_108"
+				"beam_weapon_damage_7",
+				"beam_weapon_damage_8",
+				"affinity_108"
 			],
 			"x": 18164,
 			"y": -4279,
@@ -6004,10 +6004,10 @@
 			]
 		},
 		{
-			"id": "beam_damage_7",
-			"type": "beam_damage",
+			"id": "beam_weapon_damage_7",
+			"type": "beam_weapon_damage",
 			"connectedTo": [
-				"beam_damage_2",
+				"beam_weapon_damage_2",
 				"corrosion_beam_1"
 			],
 			"x": 18004,
@@ -6023,8 +6023,8 @@
 			"id": "corrosion_beam_1",
 			"type": "corrosion_beam",
 			"connectedTo": [
-				"beam_damage_7",
-				"beam_damage_8"
+				"beam_weapon_damage_7",
+				"beam_weapon_damage_8"
 			],
 			"x": 17844,
 			"y": -4279,
@@ -6039,7 +6039,7 @@
 			"id": "energy_weapon_fire_rate_4",
 			"type": "energy_weapon_fire_rate",
 			"connectedTo": [
-				"small_flux_optional_76",
+				"affinity_76",
 				"energy_weapon_fire_rate_5",
 				"energy_weapon_fire_rate_6"
 			],
@@ -6104,7 +6104,7 @@
 			"id": "ecm_resistance_3",
 			"type": "ecm_resistance",
 			"connectedTo": [
-				"small_flux_optional_75",
+				"affinity_75",
 				"ecm_resistance_4",
 				"ecm_resistance_5"
 			],
@@ -6153,7 +6153,7 @@
 			"id": "exoship",
 			"type": "exoship",
 			"connectedTo": [
-				"energy_flux_cost_3",
+				"energy_weapon_flux_cost_3",
 				"phase_cloak_flux_threshold_3",
 				"timeflow_1",
 				"sensor_profile_1"
@@ -6165,12 +6165,12 @@
 			]
 		},
 		{
-			"id": "energy_flux_cost_3",
-			"type": "energy_flux_cost",
+			"id": "energy_weapon_flux_cost_3",
+			"type": "energy_weapon_flux_cost",
 			"connectedTo": [
 				"exoship",
-				"energy_flux_cost_4",
-				"energy_flux_cost_7"
+				"energy_weapon_flux_cost_4",
+				"energy_weapon_flux_cost_7"
 			],
 			"x": -3780,
 			"y": -8461,
@@ -6181,11 +6181,11 @@
 			]
 		},
 		{
-			"id": "energy_flux_cost_4",
-			"type": "energy_flux_cost",
+			"id": "energy_weapon_flux_cost_4",
+			"type": "energy_weapon_flux_cost",
 			"connectedTo": [
-				"energy_flux_cost_3",
-				"warpfield_1"
+				"energy_weapon_flux_cost_3",
+				"hypatia_pattern_warpfield_1"
 			],
 			"x": -3620,
 			"y": -8621,
@@ -6196,11 +6196,11 @@
 			]
 		},
 		{
-			"id": "warpfield_1",
-			"type": "warpfield",
+			"id": "hypatia_pattern_warpfield_1",
+			"type": "hypatia_pattern_warpfield",
 			"connectedTo": [
-				"energy_flux_cost_4",
-				"energy_flux_cost_7"
+				"energy_weapon_flux_cost_4",
+				"energy_weapon_flux_cost_7"
 			],
 			"x": -3780,
 			"y": -8781,
@@ -6231,7 +6231,7 @@
 			"type": "sensor_profile",
 			"connectedTo": [
 				"sensor_profile_1",
-				"phased_recharging_1"
+				"phase_fed_magazines_1"
 			],
 			"x": -2899,
 			"y": -7610,
@@ -6242,8 +6242,8 @@
 			]
 		},
 		{
-			"id": "phased_recharging_1",
-			"type": "phased_recharging",
+			"id": "phase_fed_magazines_1",
+			"type": "phase_fed_magazines",
 			"connectedTo": [
 				"sensor_profile_2",
 				"sensor_profile_3"
@@ -6277,7 +6277,7 @@
 			"type": "phase_cloak_flux_threshold",
 			"connectedTo": [
 				"phase_cloak_flux_threshold_3",
-				"coil_efficiency_1"
+				"exo_tech_coil_tuning_1"
 			],
 			"x": -3908,
 			"y": -6890,
@@ -6288,8 +6288,8 @@
 			]
 		},
 		{
-			"id": "coil_efficiency_1",
-			"type": "coil_efficiency",
+			"id": "exo_tech_coil_tuning_1",
+			"type": "exo_tech_coil_tuning",
 			"connectedTo": [
 				"phase_cloak_flux_threshold_4",
 				"phase_cloak_flux_threshold_5"
@@ -6323,7 +6323,7 @@
 			"type": "timeflow",
 			"connectedTo": [
 				"timeflow_1",
-				"exogrid_1"
+				"exo_tech_grid_splice_1"
 			],
 			"x": -4631,
 			"y": -7907,
@@ -6334,8 +6334,8 @@
 			]
 		},
 		{
-			"id": "exogrid_1",
-			"type": "exogrid",
+			"id": "exo_tech_grid_splice_1",
+			"type": "exo_tech_grid_splice",
 			"connectedTo": [
 				"timeflow_2",
 				"timeflow_3"
@@ -6350,12 +6350,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_105",
-			"type": "small_flux_optional",
+			"id": "affinity_105",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_109",
+				"affinity_109",
 				"rat_abyss_wormhole_1",
-				"system_cooldown_1"
+				"ship_system_cooldown_1"
 			],
 			"x": -45507,
 			"y": 28915,
@@ -6367,10 +6367,10 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_106",
-			"type": "small_flux_optional",
+			"id": "affinity_106",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_109",
+				"affinity_109",
 				"rat_abyss_wormhole_1",
 				"armor_8"
 			],
@@ -6384,11 +6384,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_109",
-			"type": "small_flux_optional",
+			"id": "affinity_109",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_106",
-				"small_flux_optional_105",
+				"affinity_106",
+				"affinity_105",
 				"weapon_durability_6"
 			],
 			"x": -46707,
@@ -6404,9 +6404,9 @@
 			"id": "rat_abyss_wormhole_1",
 			"type": "wormhole_exit",
 			"connectedTo": [
-				"small_flux_optional_105",
-				"small_flux_optional_106",
-				"non_beam_energy_damage_6"
+				"affinity_105",
+				"affinity_106",
+				"non_beam_energy_weapon_damage_6"
 			],
 			"x": -44307,
 			"y": 27715,
@@ -6418,12 +6418,12 @@
 			]
 		},
 		{
-			"id": "non_beam_energy_damage_6",
-			"type": "non_beam_energy_damage",
+			"id": "non_beam_energy_weapon_damage_6",
+			"type": "non_beam_energy_weapon_damage",
 			"connectedTo": [
 				"rat_abyss_wormhole_1",
-				"non_beam_energy_damage_7",
-				"non_beam_energy_damage_8"
+				"non_beam_energy_weapon_damage_7",
+				"non_beam_energy_weapon_damage_8"
 			],
 			"x": -44587,
 			"y": 27715,
@@ -6435,11 +6435,11 @@
 			]
 		},
 		{
-			"id": "non_beam_energy_damage_7",
-			"type": "non_beam_energy_damage",
+			"id": "non_beam_energy_weapon_damage_7",
+			"type": "non_beam_energy_weapon_damage",
 			"connectedTo": [
-				"non_beam_energy_damage_6",
-				"abyssal_grid_1"
+				"non_beam_energy_weapon_damage_6",
+				"salvaged_abyssal_grid_1"
 			],
 			"x": -44747,
 			"y": 27555,
@@ -6451,11 +6451,11 @@
 			]
 		},
 		{
-			"id": "abyssal_grid_1",
-			"type": "abyssal_grid",
+			"id": "salvaged_abyssal_grid_1",
+			"type": "salvaged_abyssal_grid",
 			"connectedTo": [
-				"non_beam_energy_damage_7",
-				"non_beam_energy_damage_8"
+				"non_beam_energy_weapon_damage_7",
+				"non_beam_energy_weapon_damage_8"
 			],
 			"x": -44907,
 			"y": 27715,
@@ -6467,12 +6467,12 @@
 			]
 		},
 		{
-			"id": "system_cooldown_1",
-			"type": "system_cooldown",
+			"id": "ship_system_cooldown_1",
+			"type": "ship_system_cooldown",
 			"connectedTo": [
-				"small_flux_optional_105",
-				"system_cooldown_2",
-				"system_cooldown_3"
+				"affinity_105",
+				"ship_system_cooldown_2",
+				"ship_system_cooldown_3"
 			],
 			"x": -45507,
 			"y": 28635,
@@ -6484,11 +6484,11 @@
 			]
 		},
 		{
-			"id": "system_cooldown_2",
-			"type": "system_cooldown",
+			"id": "ship_system_cooldown_2",
+			"type": "ship_system_cooldown",
 			"connectedTo": [
-				"system_cooldown_1",
-				"chronos_adaptability_1"
+				"ship_system_cooldown_1",
+				"chronos_rhythms_1"
 			],
 			"x": -45347,
 			"y": 28475,
@@ -6500,11 +6500,11 @@
 			]
 		},
 		{
-			"id": "chronos_adaptability_1",
-			"type": "chronos_adaptability",
+			"id": "chronos_rhythms_1",
+			"type": "chronos_rhythms",
 			"connectedTo": [
-				"system_cooldown_2",
-				"system_cooldown_3"
+				"ship_system_cooldown_2",
+				"ship_system_cooldown_3"
 			],
 			"x": -45507,
 			"y": 28315,
@@ -6519,7 +6519,7 @@
 			"id": "weapon_durability_6",
 			"type": "weapon_durability",
 			"connectedTo": [
-				"small_flux_optional_109",
+				"affinity_109",
 				"weapon_durability_7",
 				"weapon_durability_8"
 			],
@@ -6537,7 +6537,7 @@
 			"type": "weapon_durability",
 			"connectedTo": [
 				"weapon_durability_6",
-				"seraphs_grace_1"
+				"borrowed_grace_1"
 			],
 			"x": -46267,
 			"y": 27875,
@@ -6549,8 +6549,8 @@
 			]
 		},
 		{
-			"id": "seraphs_grace_1",
-			"type": "seraphs_grace",
+			"id": "borrowed_grace_1",
+			"type": "borrowed_grace",
 			"connectedTo": [
 				"weapon_durability_7",
 				"weapon_durability_8"
@@ -6569,7 +6569,7 @@
 			"id": "armor_8",
 			"type": "armor",
 			"connectedTo": [
-				"small_flux_optional_106",
+				"affinity_106",
 				"armor_9"
 			],
 			"x": -45507,
@@ -6586,7 +6586,7 @@
 			"type": "armor",
 			"connectedTo": [
 				"armor_8",
-				"seraphim_1"
+				"seraph_hunting_routines_1"
 			],
 			"x": -45667,
 			"y": 26955,
@@ -6598,8 +6598,8 @@
 			]
 		},
 		{
-			"id": "seraphim_1",
-			"type": "seraphim",
+			"id": "seraph_hunting_routines_1",
+			"type": "seraph_hunting_routines",
 			"connectedTo": [
 				"armor_9"
 			],
@@ -6617,7 +6617,7 @@
 			"type": "weapon_durability",
 			"connectedTo": [
 				"weapon_durability_6",
-				"seraphs_grace_1"
+				"borrowed_grace_1"
 			],
 			"x": -46267,
 			"y": 27555,
@@ -6633,7 +6633,7 @@
 			"type": "timeflow",
 			"connectedTo": [
 				"timeflow_1",
-				"exogrid_1"
+				"exo_tech_grid_splice_1"
 			],
 			"x": -4631,
 			"y": -7587,
@@ -6648,7 +6648,7 @@
 			"type": "sensor_profile",
 			"connectedTo": [
 				"sensor_profile_1",
-				"phased_recharging_1"
+				"phase_fed_magazines_1"
 			],
 			"x": -2899,
 			"y": -7930,
@@ -6663,7 +6663,7 @@
 			"type": "phase_cloak_flux_threshold",
 			"connectedTo": [
 				"phase_cloak_flux_threshold_3",
-				"coil_efficiency_1"
+				"exo_tech_coil_tuning_1"
 			],
 			"x": -3588,
 			"y": -6890,
@@ -6674,11 +6674,11 @@
 			]
 		},
 		{
-			"id": "energy_flux_cost_7",
-			"type": "energy_flux_cost",
+			"id": "energy_weapon_flux_cost_7",
+			"type": "energy_weapon_flux_cost",
 			"connectedTo": [
-				"energy_flux_cost_3",
-				"warpfield_1"
+				"energy_weapon_flux_cost_3",
+				"hypatia_pattern_warpfield_1"
 			],
 			"x": -3940,
 			"y": -8621,
@@ -6689,11 +6689,11 @@
 			]
 		},
 		{
-			"id": "system_cooldown_3",
-			"type": "system_cooldown",
+			"id": "ship_system_cooldown_3",
+			"type": "ship_system_cooldown",
 			"connectedTo": [
-				"system_cooldown_1",
-				"chronos_adaptability_1"
+				"ship_system_cooldown_1",
+				"chronos_rhythms_1"
 			],
 			"x": -45667,
 			"y": 28475,
@@ -6705,11 +6705,11 @@
 			]
 		},
 		{
-			"id": "non_beam_energy_damage_8",
-			"type": "non_beam_energy_damage",
+			"id": "non_beam_energy_weapon_damage_8",
+			"type": "non_beam_energy_weapon_damage",
 			"connectedTo": [
-				"non_beam_energy_damage_6",
-				"abyssal_grid_1"
+				"non_beam_energy_weapon_damage_6",
+				"salvaged_abyssal_grid_1"
 			],
 			"x": -44747,
 			"y": 27875,
@@ -6721,11 +6721,11 @@
 			]
 		},
 		{
-			"id": "beam_damage_8",
-			"type": "beam_damage",
+			"id": "beam_weapon_damage_8",
+			"type": "beam_weapon_damage",
 			"connectedTo": [
 				"corrosion_beam_1",
-				"beam_damage_2"
+				"beam_weapon_damage_2"
 			],
 			"x": 18004,
 			"y": -4439,
@@ -6772,7 +6772,7 @@
 			"id": "hull_multi_7",
 			"type": "hull_multi",
 			"connectedTo": [
-				"small_flux_optional_71",
+				"affinity_71",
 				"armor_10",
 				"armor_11"
 			],
@@ -6834,12 +6834,12 @@
 			]
 		},
 		{
-			"id": "fighter_speed_1",
-			"type": "fighter_speed",
+			"id": "strikecraft_speed_1",
+			"type": "strikecraft_speed",
 			"connectedTo": [
 				"luddic_2",
-				"fighter_speed_2",
-				"fighter_speed_3"
+				"strikecraft_speed_2",
+				"strikecraft_speed_3"
 			],
 			"x": 5649,
 			"y": 10644,
@@ -6850,10 +6850,10 @@
 			]
 		},
 		{
-			"id": "fighter_speed_2",
-			"type": "fighter_speed",
+			"id": "strikecraft_speed_2",
+			"type": "strikecraft_speed",
 			"connectedTo": [
-				"fighter_speed_1",
+				"strikecraft_speed_1",
 				"martyrs_payload_1"
 			],
 			"x": 5469,
@@ -6865,11 +6865,11 @@
 			]
 		},
 		{
-			"id": "fighter_speed_3",
-			"type": "fighter_speed",
+			"id": "strikecraft_speed_3",
+			"type": "strikecraft_speed",
 			"connectedTo": [
 				"martyrs_payload_1",
-				"fighter_speed_1"
+				"strikecraft_speed_1"
 			],
 			"x": 5829,
 			"y": 10824,
@@ -6883,8 +6883,8 @@
 			"id": "martyrs_payload_1",
 			"type": "martyrs_payload",
 			"connectedTo": [
-				"fighter_speed_2",
-				"fighter_speed_3"
+				"strikecraft_speed_2",
+				"strikecraft_speed_3"
 			],
 			"x": 5649,
 			"y": 11004,
@@ -6895,8 +6895,8 @@
 			]
 		},
 		{
-			"id": "wing_scramble_1",
-			"type": "wing_scramble",
+			"id": "coalition_flight_doctrine_1",
+			"type": "coalition_flight_doctrine",
 			"connectedTo": [
 				"league_wormhole_2"
 			],
@@ -6908,11 +6908,11 @@
 			]
 		},
 		{
-			"id": "crew_capacity_flat_8",
-			"type": "crew_capacity_flat",
+			"id": "crew_capacity_8",
+			"type": "crew_capacity",
 			"connectedTo": [
 				"ground_support_1",
-				"crew_capacity_flat_4"
+				"crew_capacity_4"
 			],
 			"x": 13484,
 			"y": 2718,
@@ -6923,12 +6923,12 @@
 			]
 		},
 		{
-			"id": "fighter_speed_4",
-			"type": "fighter_speed",
+			"id": "strikecraft_speed_4",
+			"type": "strikecraft_speed",
 			"connectedTo": [
 				"tritach_2",
-				"fighter_replacement_3",
-				"fighter_replacement_4"
+				"strikecraft_replacement_3",
+				"strikecraft_replacement_4"
 			],
 			"x": 0,
 			"y": -11996,
@@ -6939,10 +6939,10 @@
 			]
 		},
 		{
-			"id": "fighter_replacement_3",
-			"type": "fighter_replacement",
+			"id": "strikecraft_replacement_3",
+			"type": "strikecraft_replacement",
 			"connectedTo": [
-				"fighter_speed_4",
+				"strikecraft_speed_4",
 				"phase_entangled_wings_1"
 			],
 			"x": -180,
@@ -6954,10 +6954,10 @@
 			]
 		},
 		{
-			"id": "fighter_replacement_4",
-			"type": "fighter_replacement",
+			"id": "strikecraft_replacement_4",
+			"type": "strikecraft_replacement",
 			"connectedTo": [
-				"fighter_speed_4",
+				"strikecraft_speed_4",
 				"phase_entangled_wings_1"
 			],
 			"x": 180,
@@ -6972,8 +6972,8 @@
 			"id": "phase_entangled_wings_1",
 			"type": "phase_entangled_wings",
 			"connectedTo": [
-				"fighter_replacement_3",
-				"fighter_replacement_4"
+				"strikecraft_replacement_3",
+				"strikecraft_replacement_4"
 			],
 			"x": 0,
 			"y": -12356,
@@ -6984,10 +6984,10 @@
 			]
 		},
 		{
-			"id": "modular_hull_socket_12",
-			"type": "modular_hull_socket",
+			"id": "subroutine_socket_12",
+			"type": "subroutine_socket",
 			"connectedTo": [
-				"small_flux_optional_78"
+				"affinity_78"
 			],
 			"x": -3272,
 			"y": -2221,
@@ -6998,10 +6998,10 @@
 			]
 		},
 		{
-			"id": "modular_hull_socket_16",
-			"type": "modular_hull_socket",
+			"id": "subroutine_socket_16",
+			"type": "subroutine_socket",
 			"connectedTo": [
-				"small_flux_optional_39"
+				"affinity_39"
 			],
 			"x": -2438,
 			"y": 1267,
@@ -7010,10 +7010,10 @@
 			]
 		},
 		{
-			"id": "modular_hull_socket_17",
-			"type": "modular_hull_socket",
+			"id": "subroutine_socket_17",
+			"type": "subroutine_socket",
 			"connectedTo": [
-				"small_flux_optional_30"
+				"affinity_30"
 			],
 			"x": 2389,
 			"y": 1315,
@@ -7022,10 +7022,10 @@
 			]
 		},
 		{
-			"id": "modular_hull_socket_18",
-			"type": "modular_hull_socket",
+			"id": "subroutine_socket_18",
+			"type": "subroutine_socket",
 			"connectedTo": [
-				"small_flux_optional_4"
+				"affinity_4"
 			],
 			"x": 644,
 			"y": -3186,
@@ -7034,10 +7034,10 @@
 			]
 		},
 		{
-			"id": "modular_hull_socket_19",
-			"type": "modular_hull_socket",
+			"id": "subroutine_socket_19",
+			"type": "subroutine_socket",
 			"connectedTo": [
-				"small_flux_optional_85"
+				"affinity_85"
 			],
 			"x": 3234,
 			"y": -2304,
@@ -7048,10 +7048,10 @@
 			]
 		},
 		{
-			"id": "modular_hull_socket_20",
-			"type": "modular_hull_socket",
+			"id": "subroutine_socket_20",
+			"type": "subroutine_socket",
 			"connectedTo": [
-				"small_flux_optional_89"
+				"affinity_89"
 			],
 			"x": -241,
 			"y": 4018,
@@ -7190,7 +7190,7 @@
 			"type": "weapon_turn_rate",
 			"connectedTo": [
 				"weapon_turn_rate_1",
-				"turretgyros_1"
+				"advanced_turret_gyros_1"
 			],
 			"x": -1940,
 			"y": 1670,
@@ -7201,10 +7201,10 @@
 			]
 		},
 		{
-			"id": "crew_capacity_flat_9",
-			"type": "crew_capacity_flat",
+			"id": "crew_capacity_9",
+			"type": "crew_capacity",
 			"connectedTo": [
-				"crew_capacity_flat_1",
+				"crew_capacity_1",
 				"additional_berthing_1"
 			],
 			"x": -2161,
@@ -7216,11 +7216,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_77",
-			"type": "small_flux_optional",
+			"id": "affinity_77",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_78",
-				"small_flux_optional_22"
+				"affinity_78",
+				"affinity_22"
 			],
 			"x": -3572,
 			"y": -2221,
@@ -7231,11 +7231,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_78",
-			"type": "small_flux_optional",
+			"id": "affinity_78",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_77",
-				"modular_hull_socket_12"
+				"affinity_77",
+				"subroutine_socket_12"
 			],
 			"x": -3422,
 			"y": -2071,
@@ -7246,11 +7246,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_82",
-			"type": "small_flux_optional",
+			"id": "affinity_82",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_8",
-				"small_flux_optional_85"
+				"affinity_8",
+				"affinity_85"
 			],
 			"x": 3234,
 			"y": -2604,
@@ -7261,11 +7261,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_85",
-			"type": "small_flux_optional",
+			"id": "affinity_85",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_82",
-				"modular_hull_socket_19"
+				"affinity_82",
+				"subroutine_socket_19"
 			],
 			"x": 3084,
 			"y": -2454,
@@ -7276,11 +7276,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_86",
-			"type": "small_flux_optional",
+			"id": "affinity_86",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_15",
-				"small_flux_optional_89"
+				"affinity_15",
+				"affinity_89"
 			],
 			"x": -241,
 			"y": 4318,
@@ -7291,11 +7291,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_89",
-			"type": "small_flux_optional",
+			"id": "affinity_89",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_86",
-				"modular_hull_socket_20"
+				"affinity_86",
+				"subroutine_socket_20"
 			],
 			"x": -391,
 			"y": 4168,
@@ -7336,7 +7336,7 @@
 		},
 		{
 			"id": "tania_small_flux_optional_1",
-			"type": "small_flux_optional",
+			"type": "affinity",
 			"connectedTo": [
 				"tania_weapon_fire_rate_1",
 				"tania_wormhole_1"
@@ -7349,9 +7349,9 @@
 		},
 		{
 			"id": "tania_small_flux_optional_2",
-			"type": "small_flux_optional",
+			"type": "affinity",
 			"connectedTo": [
-				"maneuverability_percent_5",
+				"maneuverability_5",
 				"tania_wormhole_1"
 			],
 			"x": 650,
@@ -7405,7 +7405,7 @@
 			"id": "tania_top_speed_2",
 			"type": "top_speed",
 			"connectedTo": [
-				"maneuverability_percent_5",
+				"maneuverability_5",
 				"top_speed_9",
 				"tania_carina_charge_1",
 				"tania_merite_lunge_1"
@@ -7461,7 +7461,7 @@
 		},
 		{
 			"id": "tania_small_flux_optional_3",
-			"type": "small_flux_optional",
+			"type": "affinity",
 			"connectedTo": [
 				"tania_hull_2",
 				"tania_wormhole_1"
@@ -7486,12 +7486,12 @@
 			]
 		},
 		{
-			"id": "maneuverability_percent_5",
-			"type": "maneuverability_percent",
+			"id": "maneuverability_5",
+			"type": "maneuverability",
 			"connectedTo": [
 				"tania_small_flux_optional_2",
 				"tania_top_speed_2",
-				"maneuverability_percent_6"
+				"maneuverability_6"
 			],
 			"x": 650,
 			"y": 18800,
@@ -7500,10 +7500,10 @@
 			]
 		},
 		{
-			"id": "maneuverability_percent_6",
-			"type": "maneuverability_percent",
+			"id": "maneuverability_6",
+			"type": "maneuverability",
 			"connectedTo": [
-				"maneuverability_percent_5"
+				"maneuverability_5"
 			],
 			"x": 325,
 			"y": 18800,
@@ -7538,7 +7538,7 @@
 		},
 		{
 			"id": "tania_weapon_damage_optional_1",
-			"type": "ballistic_or_energy_damage_optional",
+			"type": "ballistic_or_energy_weapon_damage",
 			"connectedTo": [
 				"tania_weapon_fire_rate_2"
 			],
@@ -7563,7 +7563,7 @@
 		},
 		{
 			"id": "tania_weapon_damage_optional_2",
-			"type": "ballistic_or_energy_damage_optional",
+			"type": "ballistic_or_energy_weapon_damage",
 			"connectedTo": [
 				"tania_weapon_fire_rate_1"
 			],
@@ -7614,7 +7614,7 @@
 			"id": "shrouded_wormhole_1",
 			"type": "wormhole_exit",
 			"connectedTo": [
-				"small_flux_optional_80"
+				"affinity_80"
 			],
 			"x": -34386,
 			"y": 26838,
@@ -7661,7 +7661,7 @@
 			"connectedTo": [
 				"shrouded_lens_damage_2",
 				"shrouded_lens_damage_3",
-				"small_flux_optional_103"
+				"affinity_103"
 			],
 			"x": -33911,
 			"y": 27834,
@@ -7709,7 +7709,7 @@
 			"type": "hungering_rift_healing",
 			"connectedTo": [
 				"hungering_rift_healing_1",
-				"small_flux_optional_81",
+				"affinity_81",
 				"hungering_rift_healing_3"
 			],
 			"x": -34884,
@@ -7726,7 +7726,7 @@
 			"type": "rift_lightning_damage",
 			"connectedTo": [
 				"rift_lightning_damage_2",
-				"small_flux_optional_104",
+				"affinity_104",
 				"rift_lightning_damage_3"
 			],
 			"x": -34384,
@@ -7771,12 +7771,12 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_80",
-			"type": "small_flux_optional",
+			"id": "affinity_80",
+			"type": "affinity",
 			"connectedTo": [
 				"shrouded_wormhole_1",
-				"small_flux_optional_81",
-				"small_flux_optional_103"
+				"affinity_81",
+				"affinity_103"
 			],
 			"x": -34386,
 			"y": 27128,
@@ -7788,11 +7788,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_81",
-			"type": "small_flux_optional",
+			"id": "affinity_81",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_80",
-				"small_flux_optional_104",
+				"affinity_80",
+				"affinity_104",
 				"hungering_rift_healing_2"
 			],
 			"x": -35090,
@@ -7805,11 +7805,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_103",
-			"type": "small_flux_optional",
+			"id": "affinity_103",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_80",
-				"small_flux_optional_104",
+				"affinity_80",
+				"affinity_104",
 				"shrouded_lens_damage_1"
 			],
 			"x": -33682,
@@ -7822,11 +7822,11 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_104",
-			"type": "small_flux_optional",
+			"id": "affinity_104",
+			"type": "affinity",
 			"connectedTo": [
-				"small_flux_optional_81",
-				"small_flux_optional_103",
+				"affinity_81",
+				"affinity_103",
 				"rift_lightning_damage_1"
 			],
 			"x": -34386,
@@ -7889,92 +7889,92 @@
 	],
 	"connectorCurves": [
 		{
-			"a": "extendedshieldemitter_1",
+			"a": "extended_shields_1",
 			"b": "shield_arc_2",
 			"controlX": 611,
 			"controlY": -2370
 		},
 		{
-			"a": "small_flux_optional_2",
-			"b": "small_flux_optional_24",
+			"a": "affinity_2",
+			"b": "affinity_24",
 			"controlX": -704,
 			"controlY": -4445
 		},
 		{
-			"a": "small_flux_optional_2",
-			"b": "small_flux_optional_6",
+			"a": "affinity_2",
+			"b": "affinity_6",
 			"controlX": 704,
 			"controlY": -4445
 		},
 		{
-			"a": "small_flux_optional_6",
-			"b": "small_flux_optional_7",
+			"a": "affinity_6",
+			"b": "affinity_7",
 			"controlX": 2043,
 			"controlY": -4010
 		},
 		{
-			"a": "small_flux_optional_10",
-			"b": "small_flux_optional_9",
+			"a": "affinity_10",
+			"b": "affinity_9",
 			"controlX": 4445,
 			"controlY": -704
 		},
 		{
-			"a": "small_flux_optional_10",
-			"b": "small_flux_optional_11",
+			"a": "affinity_10",
+			"b": "affinity_11",
 			"controlX": 4445,
 			"controlY": 704
 		},
 		{
-			"a": "small_flux_optional_11",
-			"b": "small_flux_optional_12",
+			"a": "affinity_11",
+			"b": "affinity_12",
 			"controlX": 4010,
 			"controlY": 2043
 		},
 		{
-			"a": "small_flux_optional_12",
-			"b": "small_flux_optional_13",
+			"a": "affinity_12",
+			"b": "affinity_13",
 			"controlX": 3182,
 			"controlY": 3182
 		},
 		{
-			"a": "small_flux_optional_13",
-			"b": "small_flux_optional_14",
+			"a": "affinity_13",
+			"b": "affinity_14",
 			"controlX": 2043,
 			"controlY": 4010
 		},
 		{
-			"a": "small_flux_optional_16",
-			"b": "small_flux_optional_17",
+			"a": "affinity_16",
+			"b": "affinity_17",
 			"controlX": -2043,
 			"controlY": 4010
 		},
 		{
-			"a": "small_flux_optional_20",
-			"b": "small_flux_optional_21",
+			"a": "affinity_20",
+			"b": "affinity_21",
 			"controlX": -4445,
 			"controlY": -704
 		},
 		{
-			"a": "small_flux_optional_23",
-			"b": "small_flux_optional_24",
+			"a": "affinity_23",
+			"b": "affinity_24",
 			"controlX": -2043,
 			"controlY": -4010
 		},
 		{
-			"a": "small_flux_optional_19",
-			"b": "small_flux_optional_20",
+			"a": "affinity_19",
+			"b": "affinity_20",
 			"controlX": -4444,
 			"controlY": 707
 		},
 		{
-			"a": "small_flux_optional_18",
-			"b": "small_flux_optional_19",
+			"a": "affinity_18",
+			"b": "affinity_19",
 			"controlX": -4008,
 			"controlY": 2046
 		},
 		{
-			"a": "small_flux_optional_17",
-			"b": "small_flux_optional_18",
+			"a": "affinity_17",
+			"b": "affinity_18",
 			"controlX": -3182,
 			"controlY": 3182
 		},
@@ -7997,128 +7997,128 @@
 			"controlY": -3446
 		},
 		{
-			"a": "small_flux_optional_25",
-			"b": "small_flux_optional_4",
+			"a": "affinity_25",
+			"b": "affinity_4",
 			"controlX": 490,
 			"controlY": -2960
 		},
 		{
-			"a": "small_flux_optional_25",
-			"b": "small_flux_optional_26",
+			"a": "affinity_25",
+			"b": "affinity_26",
 			"controlX": 1371,
 			"controlY": -2669
 		},
 		{
-			"a": "small_flux_optional_26",
-			"b": "small_flux_optional_27",
+			"a": "affinity_26",
+			"b": "affinity_27",
 			"controlX": 2098,
 			"controlY": -2144
 		},
 		{
-			"a": "small_flux_optional_27",
-			"b": "small_flux_optional_28",
+			"a": "affinity_27",
+			"b": "affinity_28",
 			"controlX": 2669,
 			"controlY": -1370
 		},
 		{
-			"a": "small_flux_optional_28",
-			"b": "small_flux_optional_29",
+			"a": "affinity_28",
+			"b": "affinity_29",
 			"controlX": 2965,
 			"controlY": -457
 		},
 		{
-			"a": "small_flux_optional_29",
-			"b": "small_flux_optional_30",
+			"a": "affinity_29",
+			"b": "affinity_30",
 			"controlX": 2952,
 			"controlY": 534
 		},
 		{
-			"a": "small_flux_optional_30",
-			"b": "small_flux_optional_31",
+			"a": "affinity_30",
+			"b": "affinity_31",
 			"controlX": 2639,
 			"controlY": 1427
 		},
 		{
-			"a": "small_flux_optional_31",
-			"b": "small_flux_optional_32",
+			"a": "affinity_31",
+			"b": "affinity_32",
 			"controlX": 2105,
 			"controlY": 2137
 		},
 		{
-			"a": "small_flux_optional_32",
-			"b": "small_flux_optional_33",
+			"a": "affinity_32",
+			"b": "affinity_33",
 			"controlX": 1359,
 			"controlY": 2674
 		},
 		{
-			"a": "missile_damage_1",
-			"b": "missile_damage_2",
+			"a": "missile_weapon_damage_1",
+			"b": "missile_weapon_damage_2",
 			"controlX": -389,
 			"controlY": 3505
 		},
 		{
-			"a": "small_flux_optional_33",
-			"b": "small_flux_optional_35",
+			"a": "affinity_33",
+			"b": "affinity_35",
 			"controlX": 481,
 			"controlY": 2961
 		},
 		{
-			"a": "small_flux_optional_35",
-			"b": "small_flux_optional_36",
+			"a": "affinity_35",
+			"b": "affinity_36",
 			"controlX": -515,
 			"controlY": 2955
 		},
 		{
-			"a": "small_flux_optional_36",
-			"b": "small_flux_optional_37",
+			"a": "affinity_36",
+			"b": "affinity_37",
 			"controlX": -1403,
 			"controlY": 2652
 		},
 		{
-			"a": "small_flux_optional_37",
-			"b": "small_flux_optional_38",
+			"a": "affinity_37",
+			"b": "affinity_38",
 			"controlX": -2125,
 			"controlY": 2118
 		},
 		{
-			"a": "small_flux_optional_38",
-			"b": "small_flux_optional_39",
+			"a": "affinity_38",
+			"b": "affinity_39",
 			"controlX": -2660,
 			"controlY": 1387
 		},
 		{
-			"a": "small_flux_optional_39",
-			"b": "small_flux_optional_40",
+			"a": "affinity_39",
+			"b": "affinity_40",
 			"controlX": -2958,
 			"controlY": 503
 		},
 		{
-			"a": "small_flux_optional_40",
-			"b": "small_flux_optional_41",
+			"a": "affinity_40",
+			"b": "affinity_41",
 			"controlX": -2956,
 			"controlY": -509
 		},
 		{
-			"a": "small_flux_optional_41",
-			"b": "small_flux_optional_42",
+			"a": "affinity_41",
+			"b": "affinity_42",
 			"controlX": -2635,
 			"controlY": -1434
 		},
 		{
-			"a": "small_flux_optional_42",
-			"b": "small_flux_optional_43",
+			"a": "affinity_42",
+			"b": "affinity_43",
 			"controlX": -2076,
 			"controlY": -2166
 		},
 		{
-			"a": "small_flux_optional_43",
-			"b": "small_flux_optional_44",
+			"a": "affinity_43",
+			"b": "affinity_44",
 			"controlX": -1386,
 			"controlY": -2661
 		},
 		{
-			"a": "small_flux_optional_4",
-			"b": "small_flux_optional_44",
+			"a": "affinity_4",
+			"b": "affinity_44",
 			"controlX": -519,
 			"controlY": -2955
 		},
@@ -8130,18 +8130,18 @@
 		},
 		{
 			"a": "armor_3",
-			"b": "heavyarmor_1",
+			"b": "heavy_armor_1",
 			"controlX": -3895,
 			"controlY": 776
 		},
 		{
-			"a": "ballistic_damage_2",
-			"b": "ballistic_damage_3",
+			"a": "ballistic_weapon_damage_2",
+			"b": "ballistic_weapon_damage_3",
 			"controlX": 2187,
 			"controlY": 2994
 		},
 		{
-			"a": "ballistic_damage_3",
+			"a": "ballistic_weapon_damage_3",
 			"b": "ballistic_rangefinder_1",
 			"controlX": 2195,
 			"controlY": 3174
@@ -8160,18 +8160,18 @@
 		},
 		{
 			"a": "shield_raise_rate_2",
-			"b": "shield_turn_raise_rate_optional_1",
+			"b": "shield_raise_rate_or_shield_turn_rate_1",
 			"controlX": 1145,
 			"controlY": -3294
 		},
 		{
-			"a": "advancedshieldemitter_1",
+			"a": "accelerated_shields_1",
 			"b": "shield_raise_rate_1",
 			"controlX": 1150,
 			"controlY": -3604
 		},
 		{
-			"a": "advancedshieldemitter_1",
+			"a": "accelerated_shields_1",
 			"b": "shield_turn_rate_1",
 			"controlX": 963,
 			"controlY": -3605
@@ -8183,44 +8183,44 @@
 			"controlY": -1779
 		},
 		{
-			"a": "frontemitter_1",
+			"a": "shield_conversion_front_1",
 			"b": "shield_arc_3",
 			"controlX": 1158,
 			"controlY": -1779
 		},
 		{
-			"a": "adaptiveshields_1",
-			"b": "shield_arc_mult_1",
+			"a": "shield_conversion_omni_1",
+			"b": "shield_arc_multiplier_1",
 			"controlX": -1463,
 			"controlY": -2035
 		},
 		{
-			"a": "adaptiveshields_1",
-			"b": "shield_arc_mult_2",
+			"a": "shield_conversion_omni_1",
+			"b": "shield_arc_multiplier_2",
 			"controlX": -1347,
 			"controlY": -2140
 		},
 		{
-			"a": "shield_damage_taken_multi_1",
-			"b": "shield_damage_taken_multi_2",
+			"a": "shield_flux_damage_reduction_1",
+			"b": "shield_flux_damage_reduction_2",
 			"controlX": -2829,
 			"controlY": -2092
 		},
 		{
-			"a": "hardenedshieldemitter_1",
-			"b": "shield_damage_taken_multi_1",
+			"a": "hardened_shields_1",
+			"b": "shield_flux_damage_reduction_1",
 			"controlX": -3125,
 			"controlY": -2092
 		},
 		{
-			"a": "shield_upkeep_multi_1",
-			"b": "shield_upkeep_multi_2",
+			"a": "shield_upkeep_reduction_1",
+			"b": "shield_upkeep_reduction_2",
 			"controlX": -4074,
 			"controlY": 154
 		},
 		{
-			"a": "shield_upkeep_multi_1",
-			"b": "stabilizedshieldemitter_1",
+			"a": "shield_upkeep_reduction_1",
+			"b": "stabilized_shields_1",
 			"controlX": -3806,
 			"controlY": 154
 		},
@@ -8231,68 +8231,68 @@
 			"controlY": -3269
 		},
 		{
-			"a": "adaptive_coils_1",
+			"a": "adaptive_phase_coils_1",
 			"b": "phase_cloak_flux_threshold_2",
 			"controlX": -1385,
 			"controlY": -3269
 		},
 		{
-			"a": "shield_turn_raise_rate_optional_1",
+			"a": "shield_raise_rate_or_shield_turn_rate_1",
 			"b": "shield_turn_rate_2",
 			"controlX": 967,
 			"controlY": -3295
 		},
 		{
-			"a": "missile_damage_3",
-			"b": "missile_damage_4",
+			"a": "missile_weapon_damage_3",
+			"b": "missile_weapon_damage_4",
 			"controlX": -3013,
 			"controlY": 2565
 		},
 		{
-			"a": "eccm_1",
-			"b": "missile_damage_4",
+			"a": "eccm_package_1",
+			"b": "missile_weapon_damage_4",
 			"controlX": -2759,
 			"controlY": 2565
 		},
 		{
-			"a": "pd_damage_to_missiles_1",
-			"b": "pd_damage_to_missiles_2",
+			"a": "point_defense_damage_to_missiles_1",
+			"b": "point_defense_damage_to_missiles_2",
 			"controlX": 3523,
 			"controlY": -2027
 		},
 		{
-			"a": "pd_damage_to_missiles_1",
-			"b": "pointdefenseai_1",
+			"a": "point_defense_damage_to_missiles_1",
+			"b": "integrated_point_defense_ai_1",
 			"controlX": 3601,
 			"controlY": -1892
 		},
 		{
-			"a": "auxiliarythrusters_1",
-			"b": "maneuverability_percent_1",
+			"a": "auxiliary_thrusters_1",
+			"b": "maneuverability_1",
 			"controlX": 2189,
 			"controlY": -173
 		},
 		{
-			"a": "acceleration_percent_1",
-			"b": "turn_acceleration_percent_1",
+			"a": "maneuverability_7",
+			"b": "maneuverability_9",
 			"controlX": 2443,
 			"controlY": -427
 		},
 		{
-			"a": "acceleration_percent_1",
-			"b": "auxiliarythrusters_1",
+			"a": "maneuverability_7",
+			"b": "auxiliary_thrusters_1",
 			"controlX": 2443,
 			"controlY": -173
 		},
 		{
-			"a": "fighter_replacement_1",
-			"b": "fighter_replacement_2",
+			"a": "strikecraft_replacement_1",
+			"b": "strikecraft_replacement_2",
 			"controlX": -2467,
 			"controlY": -92
 		},
 		{
 			"a": "expanded_deck_crew_1",
-			"b": "fighter_replacement_1",
+			"b": "strikecraft_replacement_1",
 			"controlX": -2213,
 			"controlY": -92
 		},
@@ -8309,7 +8309,7 @@
 			"controlY": -1483
 		},
 		{
-			"a": "fighter_weapon_damage_2",
+			"a": "strikecraft_weapon_damage_2",
 			"b": "recovery_shuttles_1",
 			"controlX": 3344,
 			"controlY": -1571
@@ -8321,8 +8321,8 @@
 			"controlY": 1688
 		},
 		{
-			"a": "shield_arc_mult_1",
-			"b": "shield_arc_mult_2",
+			"a": "shield_arc_multiplier_1",
+			"b": "shield_arc_multiplier_2",
 			"controlX": -1315,
 			"controlY": -1987
 		},
@@ -8351,7 +8351,7 @@
 			"controlY": 776
 		},
 		{
-			"a": "turretgyros_1",
+			"a": "advanced_turret_gyros_1",
 			"b": "weapon_turn_rate_2",
 			"controlX": -1633,
 			"controlY": 1797
@@ -8370,121 +8370,121 @@
 		},
 		{
 			"a": "hull_multi_6",
-			"b": "reinforcedhull_1",
+			"b": "reinforced_bulkheads_1",
 			"controlX": 2279,
 			"controlY": 367
 		},
 		{
 			"a": "hull_multi_4",
-			"b": "reinforcedhull_1",
+			"b": "reinforced_bulkheads_1",
 			"controlX": 2420,
 			"controlY": 480
 		},
 		{
 			"a": "REDACTED_2",
-			"b": "small_flux_optional_49",
+			"b": "affinity_49",
 			"controlX": 11084,
 			"controlY": -7188
 		},
 		{
 			"a": "REDACTED_2",
-			"b": "small_flux_optional_51",
+			"b": "affinity_51",
 			"controlX": 9246,
 			"controlY": -7188
 		},
 		{
 			"a": "dictat_wormhole_2",
-			"b": "small_flux_optional_5",
+			"b": "affinity_5",
 			"controlX": -9308,
 			"controlY": -8965
 		},
 		{
 			"a": "dictat_wormhole_2",
-			"b": "small_flux_optional_53",
+			"b": "affinity_53",
 			"controlX": -9308,
 			"controlY": -7243
 		},
 		{
 			"a": "hegemony_2",
-			"b": "small_flux_optional_57",
+			"b": "affinity_57",
 			"controlX": -4721,
 			"controlY": 10794
 		},
 		{
 			"a": "hegemony_2",
-			"b": "small_flux_optional_59",
+			"b": "affinity_59",
 			"controlX": -6559,
 			"controlY": 10794
 		},
 		{
 			"a": "luddic_2",
-			"b": "small_flux_optional_54",
+			"b": "affinity_54",
 			"controlX": 4723,
 			"controlY": 10791
 		},
 		{
 			"a": "luddic_2",
-			"b": "small_flux_optional_56",
+			"b": "affinity_56",
 			"controlX": 6575,
 			"controlY": 10791
 		},
 		{
 			"a": "pirate_wormhole_2",
-			"b": "small_flux_optional_60",
+			"b": "affinity_60",
 			"controlX": 11813,
 			"controlY": 2032
 		},
 		{
 			"a": "pirate_wormhole_2",
-			"b": "small_flux_optional_62",
+			"b": "affinity_62",
 			"controlX": 11813,
 			"controlY": 3754
 		},
 		{
 			"a": "league_wormhole_2",
-			"b": "small_flux_optional_63",
+			"b": "affinity_63",
 			"controlX": -11823,
 			"controlY": 2041
 		},
 		{
 			"a": "league_wormhole_2",
-			"b": "small_flux_optional_65",
+			"b": "affinity_65",
 			"controlX": -11823,
 			"controlY": 3743
 		},
 		{
-			"a": "small_flux_optional_49",
-			"b": "small_flux_optional_66",
+			"a": "affinity_49",
+			"b": "affinity_66",
 			"controlX": 11299,
 			"controlY": -8440
 		},
 		{
-			"a": "small_flux_optional_66",
-			"b": "small_flux_optional_67",
+			"a": "affinity_66",
+			"b": "affinity_67",
 			"controlX": 10761,
 			"controlY": -8677
 		},
 		{
-			"a": "small_flux_optional_67",
+			"a": "affinity_67",
 			"b": "machine_precision_1",
 			"controlX": 10302,
 			"controlY": -8509
 		},
 		{
-			"a": "small_flux_optional_73",
+			"a": "affinity_73",
 			"b": "nanoforge_mending_1",
 			"controlX": 10021,
 			"controlY": -7738
 		},
 		{
-			"a": "small_flux_optional_72",
-			"b": "small_flux_optional_73",
+			"a": "affinity_72",
+			"b": "affinity_73",
 			"controlX": 9560,
 			"controlY": -7578
 		},
 		{
-			"a": "small_flux_optional_51",
-			"b": "small_flux_optional_72",
+			"a": "affinity_51",
+			"b": "affinity_72",
 			"controlX": 9017,
 			"controlY": -7798
 		},
@@ -8519,55 +8519,55 @@
 			"controlY": -6946
 		},
 		{
-			"a": "non_beam_energy_damage_3",
-			"b": "non_beam_energy_damage_4",
+			"a": "non_beam_energy_weapon_damage_3",
+			"b": "non_beam_energy_weapon_damage_4",
 			"controlX": 994,
 			"controlY": -12867
 		},
 		{
-			"a": "energy_chain_1",
-			"b": "non_beam_energy_damage_3",
+			"a": "refracting_projectiles_1",
+			"b": "non_beam_energy_weapon_damage_3",
 			"controlX": 740,
 			"controlY": -12867
 		},
 		{
-			"a": "non_beam_energy_damage_4",
-			"b": "non_beam_energy_damage_5",
+			"a": "non_beam_energy_weapon_damage_4",
+			"b": "non_beam_energy_weapon_damage_5",
 			"controlX": 994,
 			"controlY": -13121
 		},
 		{
-			"a": "energy_chain_1",
-			"b": "non_beam_energy_damage_5",
+			"a": "refracting_projectiles_1",
+			"b": "non_beam_energy_weapon_damage_5",
 			"controlX": 740,
 			"controlY": -13121
 		},
 		{
-			"a": "ballistic_damage_6",
-			"b": "ballistic_damage_7",
+			"a": "ballistic_weapon_damage_6",
+			"b": "ballistic_weapon_damage_7",
 			"controlX": -4682,
 			"controlY": 11583
 		},
 		{
-			"a": "ballistic_damage_7",
-			"b": "ballistic_momentum_1",
+			"a": "ballistic_weapon_damage_7",
+			"b": "navy_heartbeat_1",
 			"controlX": -4936,
 			"controlY": 11583
 		},
 		{
-			"a": "attuned_sensors_1",
-			"b": "increased_sensor_strength_3",
+			"a": "league_picket_targeting_1",
+			"b": "sensor_strength_3",
 			"controlX": -12549,
 			"controlY": 2216
 		},
 		{
-			"a": "beam_damage_4",
-			"b": "beam_damage_6",
+			"a": "beam_weapon_damage_4",
+			"b": "beam_weapon_damage_6",
 			"controlX": -10296,
 			"controlY": -8763
 		},
 		{
-			"a": "missile_damage_5",
+			"a": "missile_weapon_damage_5",
 			"b": "missile_top_speed_2",
 			"controlX": -6615,
 			"controlY": 11586
@@ -8579,20 +8579,20 @@
 			"controlY": 11840
 		},
 		{
-			"a": "missile_damage_5",
-			"b": "torpedo_specialisation_1",
+			"a": "missile_weapon_damage_5",
+			"b": "xiv_torpedo_doctrine_1",
 			"controlX": -6361,
 			"controlY": 11586
 		},
 		{
 			"a": "missile_top_speed_1",
-			"b": "torpedo_specialisation_1",
+			"b": "xiv_torpedo_doctrine_1",
 			"controlX": -6361,
 			"controlY": 11840
 		},
 		{
-			"a": "exposed_fuel_lines_1",
-			"b": "fuel_core_overload_1",
+			"a": "at_any_cost_1",
+			"b": "ludds_light_1",
 			"controlX": 5550,
 			"controlY": 11643
 		},
@@ -8609,19 +8609,19 @@
 			"controlY": 12681
 		},
 		{
-			"a": "less_energy_damage_taken_1",
+			"a": "energy_damage_resistance_1",
 			"b": "sindrian_shielding_1",
 			"controlX": -10300,
 			"controlY": -7450
 		},
 		{
-			"a": "beam_damage_6",
+			"a": "beam_weapon_damage_6",
 			"b": "crustacean_integration_1",
 			"controlX": -10042,
 			"controlY": -8763
 		},
 		{
-			"a": "ballistic_damage_2",
+			"a": "ballistic_weapon_damage_2",
 			"b": "ballistic_projectile_speed_3",
 			"controlX": 2007,
 			"controlY": 3002
@@ -8645,8 +8645,8 @@
 			"controlY": 2761
 		},
 		{
-			"a": "increased_sensor_strength_3",
-			"b": "increased_sensor_strength_4",
+			"a": "sensor_strength_3",
+			"b": "sensor_strength_4",
 			"controlX": -12549,
 			"controlY": 1962
 		},
@@ -8663,32 +8663,32 @@
 			"controlY": 3015
 		},
 		{
-			"a": "reduced_D_mod_effect_1",
-			"b": "reduced_D_mod_effect_2",
+			"a": "reduced_d_mod_effect_1",
+			"b": "reduced_d_mod_effect_2",
 			"controlX": 6635,
 			"controlY": 11851
 		},
 		{
-			"a": "perseverence_through_faith_1",
-			"b": "reduced_D_mod_effect_2",
+			"a": "perseverance_through_faith_1",
+			"b": "reduced_d_mod_effect_2",
 			"controlX": 6381,
 			"controlY": 11851
 		},
 		{
-			"a": "reduced_D_mod_effect_3",
-			"b": "reduced_D_mod_effect_4",
+			"a": "reduced_d_mod_effect_3",
+			"b": "reduced_d_mod_effect_4",
 			"controlX": 12550,
 			"controlY": 3866
 		},
 		{
-			"a": "reduced_D_mod_effect_4",
+			"a": "reduced_d_mod_effect_4",
 			"b": "restriction_breeds_creativity_1",
 			"controlX": 12550,
 			"controlY": 3612
 		},
 		{
-			"a": "less_energy_damage_taken_1",
-			"b": "less_energy_damage_taken_2",
+			"a": "energy_damage_resistance_1",
+			"b": "energy_damage_resistance_2",
 			"controlX": -10046,
 			"controlY": -7450
 		},
@@ -8700,37 +8700,37 @@
 		},
 		{
 			"a": "ammo_capacity_1",
-			"b": "hoarded_arms_1",
+			"b": "league_reload_drill_1",
 			"controlX": -12796,
 			"controlY": 3576
 		},
 		{
-			"a": "temporary_acceleration_1",
-			"b": "violence_of_action_1",
+			"a": "temporary_maneuverability_1",
+			"b": "knights_charge_1",
 			"controlX": 5518,
 			"controlY": 12483
 		},
 		{
-			"a": "temporary_acceleration_2",
-			"b": "violence_of_action_1",
+			"a": "temporary_maneuverability_2",
+			"b": "knights_charge_1",
 			"controlX": 5772,
 			"controlY": 12483
 		},
 		{
-			"a": "temporary_acceleration_1",
+			"a": "temporary_maneuverability_1",
 			"b": "top_speed_5",
 			"controlX": 5518,
 			"controlY": 12737
 		},
 		{
-			"a": "temporary_acceleration_2",
+			"a": "temporary_maneuverability_2",
 			"b": "top_speed_5",
 			"controlX": 5772,
 			"controlY": 12737
 		},
 		{
 			"a": "objective_capture_range_1",
-			"b": "tactical_superiority_1",
+			"b": "tripad_backdoor_1",
 			"controlX": -125,
 			"controlY": -13778
 		},
@@ -8741,50 +8741,50 @@
 			"controlY": -14032
 		},
 		{
-			"a": "small_flux_optional_46",
+			"a": "affinity_46",
 			"b": "tritach_2",
 			"controlX": -927,
 			"controlY": -12072
 		},
 		{
-			"a": "small_flux_optional_48",
+			"a": "affinity_48",
 			"b": "tritach_2",
 			"controlX": 925,
 			"controlY": -12072
 		},
 		{
-			"a": "maneuverability_percent_2",
-			"b": "turn_acceleration_percent_2",
+			"a": "maneuverability_2",
+			"b": "maneuverability_10",
 			"controlX": 12549,
 			"controlY": 1937
 		},
 		{
-			"a": "acceleration_percent_2",
-			"b": "turn_acceleration_percent_2",
+			"a": "maneuverability_8",
+			"b": "maneuverability_10",
 			"controlX": 12803,
 			"controlY": 1937
 		},
 		{
-			"a": "maneuverability_percent_2",
-			"b": "reckless_assault_1",
+			"a": "maneuverability_2",
+			"b": "freebooters_charge_1",
 			"controlX": 12549,
 			"controlY": 2191
 		},
 		{
-			"a": "acceleration_percent_2",
-			"b": "reckless_assault_1",
+			"a": "maneuverability_8",
+			"b": "freebooters_charge_1",
 			"controlX": 12803,
 			"controlY": 2191
 		},
 		{
-			"a": "engine_durability_3",
-			"b": "engine_durability_4",
+			"a": "engine_durability_and_sensor_profile_3",
+			"b": "engine_durability_and_sensor_profile_4",
 			"controlX": -975,
 			"controlY": -13117
 		},
 		{
-			"a": "engine_durability_4",
-			"b": "phase_sensor_upgrades_1",
+			"a": "engine_durability_and_sensor_profile_4",
+			"b": "hybrid_p_space_shrouding_1",
 			"controlX": -721,
 			"controlY": -13117
 		},
@@ -8796,7 +8796,7 @@
 		},
 		{
 			"a": "objective_capture_range_3",
-			"b": "tactical_superiority_1",
+			"b": "tripad_backdoor_1",
 			"controlX": 129,
 			"controlY": -13778
 		},
@@ -8813,13 +8813,13 @@
 			"controlY": 10089
 		},
 		{
-			"a": "crew_capacity_flat_3",
-			"b": "crew_capacity_flat_4",
+			"a": "crew_capacity_3",
+			"b": "crew_capacity_4",
 			"controlX": 13611,
 			"controlY": 3025
 		},
 		{
-			"a": "crew_capacity_flat_3",
+			"a": "crew_capacity_3",
 			"b": "ground_support_1",
 			"controlX": 13357,
 			"controlY": 3025
@@ -8831,14 +8831,14 @@
 			"controlY": 2761
 		},
 		{
-			"a": "energy_flux_cost_1",
-			"b": "energy_flux_cost_2",
+			"a": "energy_weapon_flux_cost_1",
+			"b": "energy_weapon_flux_cost_2",
 			"controlX": -14942,
 			"controlY": 9262
 		},
 		{
-			"a": "shield_damage_taken_multi_3",
-			"b": "shield_damage_taken_multi_4",
+			"a": "shield_flux_damage_reduction_3",
+			"b": "shield_flux_damage_reduction_4",
 			"controlX": -15761,
 			"controlY": 10343
 		},
@@ -8856,19 +8856,19 @@
 		},
 		{
 			"a": "nskr_absorption_1",
-			"b": "shield_damage_taken_multi_4",
+			"b": "shield_flux_damage_reduction_4",
 			"controlX": -15507,
 			"controlY": 10343
 		},
 		{
 			"a": "kesteven_wormhole1",
-			"b": "small_flux_optional_70",
+			"b": "affinity_70",
 			"controlX": -13899,
 			"controlY": 9294
 		},
 		{
 			"a": "kesteven_wormhole1",
-			"b": "small_flux_optional_68",
+			"b": "affinity_68",
 			"controlX": -13899,
 			"controlY": 11132
 		},
@@ -8879,26 +8879,26 @@
 			"controlY": 2761
 		},
 		{
-			"a": "reduced_D_mod_effect_3",
-			"b": "reduced_D_mod_effect_5",
+			"a": "reduced_d_mod_effect_3",
+			"b": "reduced_d_mod_effect_5",
 			"controlX": 12804,
 			"controlY": 3866
 		},
 		{
-			"a": "reduced_D_mod_effect_5",
+			"a": "reduced_d_mod_effect_5",
 			"b": "restriction_breeds_creativity_1",
 			"controlX": 12804,
 			"controlY": 3612
 		},
 		{
-			"a": "reduced_D_mod_effect_1",
-			"b": "reduced_D_mod_effect_6",
+			"a": "reduced_d_mod_effect_1",
+			"b": "reduced_d_mod_effect_6",
 			"controlX": 6635,
 			"controlY": 11597
 		},
 		{
-			"a": "perseverence_through_faith_1",
-			"b": "reduced_D_mod_effect_6",
+			"a": "perseverance_through_faith_1",
+			"b": "reduced_d_mod_effect_6",
 			"controlX": 6381,
 			"controlY": 11597
 		},
@@ -8915,20 +8915,20 @@
 			"controlY": 12427
 		},
 		{
-			"a": "ballistic_damage_1",
-			"b": "ballistic_damage_6",
+			"a": "ballistic_weapon_damage_1",
+			"b": "ballistic_weapon_damage_6",
 			"controlX": -4682,
 			"controlY": 11837
 		},
 		{
-			"a": "ballistic_damage_1",
-			"b": "ballistic_momentum_1",
+			"a": "ballistic_weapon_damage_1",
+			"b": "navy_heartbeat_1",
 			"controlX": -4936,
 			"controlY": 11837
 		},
 		{
 			"a": "ammo_capacity_3",
-			"b": "hoarded_arms_1",
+			"b": "league_reload_drill_1",
 			"controlX": -12542,
 			"controlY": 3576
 		},
@@ -8939,26 +8939,26 @@
 			"controlY": 3830
 		},
 		{
-			"a": "increased_sensor_strength_4",
-			"b": "increased_sensor_strength_5",
+			"a": "sensor_strength_4",
+			"b": "sensor_strength_5",
 			"controlX": -12803,
 			"controlY": 1962
 		},
 		{
-			"a": "attuned_sensors_1",
-			"b": "increased_sensor_strength_5",
+			"a": "league_picket_targeting_1",
+			"b": "sensor_strength_5",
 			"controlX": -12803,
 			"controlY": 2216
 		},
 		{
-			"a": "engine_durability_3",
-			"b": "engine_durability_5",
+			"a": "engine_durability_and_sensor_profile_3",
+			"b": "engine_durability_and_sensor_profile_5",
 			"controlX": -975,
 			"controlY": -12863
 		},
 		{
-			"a": "engine_durability_5",
-			"b": "phase_sensor_upgrades_1",
+			"a": "engine_durability_and_sensor_profile_5",
+			"b": "hybrid_p_space_shrouding_1",
 			"controlX": -721,
 			"controlY": -12863
 		},
@@ -8975,26 +8975,26 @@
 			"controlY": 3015
 		},
 		{
-			"a": "energy_flux_cost_1",
+			"a": "energy_weapon_flux_cost_1",
 			"b": "nskr_volatile_1",
 			"controlX": -14942,
 			"controlY": 9516
 		},
 		{
-			"a": "missile_damage_6",
-			"b": "missile_damage_7",
+			"a": "missile_weapon_damage_6",
+			"b": "missile_weapon_damage_7",
 			"controlX": 9097,
 			"controlY": -15795
 		},
 		{
 			"a": "live_munitions_1",
-			"b": "missile_damage_6",
+			"b": "missile_weapon_damage_6",
 			"controlX": 9351,
 			"controlY": -15795
 		},
 		{
-			"a": "fighter_weapon_damage_1",
-			"b": "fighter_weapon_damage_2",
+			"a": "strikecraft_weapon_damage_1",
+			"b": "strikecraft_weapon_damage_2",
 			"controlX": 3132,
 			"controlY": -1571
 		},
@@ -9005,13 +9005,13 @@
 			"controlY": -2138
 		},
 		{
-			"a": "ecm_1",
+			"a": "ecm_package_1",
 			"b": "ecm_resistance_2",
 			"controlX": 2765,
 			"controlY": -2288
 		},
 		{
-			"a": "autorepair_1",
+			"a": "automated_repair_unit_1",
 			"b": "repair_time_3",
 			"controlX": -1532,
 			"controlY": -1061
@@ -9036,37 +9036,37 @@
 		},
 		{
 			"a": "all_must_serve_1",
-			"b": "crew_capacity_flat_5",
+			"b": "crew_capacity_5",
 			"controlX": 7377,
 			"controlY": -16050
 		},
 		{
-			"a": "crew_capacity_flat_5",
-			"b": "crew_capacity_flat_6",
+			"a": "crew_capacity_5",
+			"b": "crew_capacity_6",
 			"controlX": 7631,
 			"controlY": -16050
 		},
 		{
-			"a": "autorepair_1",
+			"a": "automated_repair_unit_1",
 			"b": "repair_time_2",
 			"controlX": -1532,
 			"controlY": -1315
 		},
 		{
-			"a": "ballistic_damage_4",
-			"b": "ballistic_damage_5",
+			"a": "ballistic_weapon_damage_4",
+			"b": "ballistic_weapon_damage_5",
 			"controlX": -803,
 			"controlY": 2049
 		},
 		{
-			"a": "magazines_1",
-			"b": "non_beam_energy_damage_1",
+			"a": "expanded_magazines_1",
+			"b": "non_beam_energy_weapon_damage_1",
 			"controlX": -1039,
 			"controlY": 1813
 		},
 		{
-			"a": "ballistic_damage_4",
-			"b": "magazines_1",
+			"a": "ballistic_weapon_damage_4",
+			"b": "expanded_magazines_1",
 			"controlX": -839,
 			"controlY": 1855
 		},
@@ -9083,152 +9083,152 @@
 			"controlY": 1647
 		},
 		{
-			"a": "beam_damage_1",
-			"b": "beam_damage_3",
+			"a": "beam_weapon_damage_1",
+			"b": "beam_weapon_damage_3",
 			"controlX": -3736,
 			"controlY": -445
 		},
 		{
-			"a": "beam_damage_1",
-			"b": "beam_damage_5",
+			"a": "beam_weapon_damage_1",
+			"b": "beam_weapon_damage_5",
 			"controlX": -3736,
 			"controlY": -699
 		},
 		{
-			"a": "small_flux_optional_47",
-			"b": "small_flux_optional_46",
+			"a": "affinity_47",
+			"b": "affinity_46",
 			"controlX": -927,
 			"controlY": -13924
 		},
 		{
-			"a": "small_flux_optional_47",
-			"b": "small_flux_optional_48",
+			"a": "affinity_47",
+			"b": "affinity_48",
 			"controlX": 925,
 			"controlY": -13924
 		},
 		{
-			"a": "small_flux_optional_50",
-			"b": "small_flux_optional_51",
+			"a": "affinity_50",
+			"b": "affinity_51",
 			"controlX": 9246,
 			"controlY": -9026
 		},
 		{
-			"a": "small_flux_optional_50",
-			"b": "small_flux_optional_49",
+			"a": "affinity_50",
+			"b": "affinity_49",
 			"controlX": 11084,
 			"controlY": -9026
 		},
 		{
-			"a": "small_flux_optional_61",
-			"b": "small_flux_optional_60",
+			"a": "affinity_61",
+			"b": "affinity_60",
 			"controlX": 13535,
 			"controlY": 2032
 		},
 		{
-			"a": "small_flux_optional_61",
-			"b": "small_flux_optional_62",
+			"a": "affinity_61",
+			"b": "affinity_62",
 			"controlX": 13535,
 			"controlY": 3754
 		},
 		{
-			"a": "small_flux_optional_55",
-			"b": "small_flux_optional_54",
+			"a": "affinity_55",
+			"b": "affinity_54",
 			"controlX": 4723,
 			"controlY": 12643
 		},
 		{
-			"a": "small_flux_optional_55",
-			"b": "small_flux_optional_56",
+			"a": "affinity_55",
+			"b": "affinity_56",
 			"controlX": 6575,
 			"controlY": 12643
 		},
 		{
-			"a": "small_flux_optional_58",
-			"b": "small_flux_optional_59",
+			"a": "affinity_58",
+			"b": "affinity_59",
 			"controlX": -6559,
 			"controlY": 12632
 		},
 		{
-			"a": "small_flux_optional_58",
-			"b": "small_flux_optional_57",
+			"a": "affinity_58",
+			"b": "affinity_57",
 			"controlX": -4721,
 			"controlY": 12632
 		},
 		{
-			"a": "small_flux_optional_69",
-			"b": "small_flux_optional_70",
+			"a": "affinity_69",
+			"b": "affinity_70",
 			"controlX": -15737,
 			"controlY": 9294
 		},
 		{
-			"a": "small_flux_optional_69",
-			"b": "small_flux_optional_68",
+			"a": "affinity_69",
+			"b": "affinity_68",
 			"controlX": -15737,
 			"controlY": 11132
 		},
 		{
-			"a": "small_flux_optional_64",
-			"b": "small_flux_optional_65",
+			"a": "affinity_64",
+			"b": "affinity_65",
 			"controlX": -13525,
 			"controlY": 3743
 		},
 		{
-			"a": "small_flux_optional_64",
-			"b": "small_flux_optional_63",
+			"a": "affinity_64",
+			"b": "affinity_63",
 			"controlX": -13525,
 			"controlY": 2041
 		},
 		{
-			"a": "small_flux_optional_52",
-			"b": "small_flux_optional_5",
+			"a": "affinity_52",
+			"b": "affinity_5",
 			"controlX": -11030,
 			"controlY": -8965
 		},
 		{
-			"a": "small_flux_optional_52",
-			"b": "small_flux_optional_53",
+			"a": "affinity_52",
+			"b": "affinity_53",
 			"controlX": -11030,
 			"controlY": -7243
 		},
 		{
 			"a": "combat_readiness_4",
-			"b": "small_flux_optional_50",
+			"b": "affinity_50",
 			"controlX": 9824,
 			"controlY": -9211
 		},
 		{
-			"a": "small_flux_optional_8",
-			"b": "small_flux_optional_9",
+			"a": "affinity_8",
+			"b": "affinity_9",
 			"controlX": 4018,
 			"controlY": -2027
 		},
 		{
-			"a": "small_flux_optional_8",
-			"b": "small_flux_optional_7",
+			"a": "affinity_8",
+			"b": "affinity_7",
 			"controlX": 3195,
 			"controlY": -3169
 		},
 		{
-			"a": "small_flux_optional_22",
-			"b": "small_flux_optional_21",
+			"a": "affinity_22",
+			"b": "affinity_21",
 			"controlX": -4010,
 			"controlY": -2043
 		},
 		{
-			"a": "small_flux_optional_22",
-			"b": "small_flux_optional_23",
+			"a": "affinity_22",
+			"b": "affinity_23",
 			"controlX": -3182,
 			"controlY": -3182
 		},
 		{
-			"a": "small_flux_optional_15",
-			"b": "small_flux_optional_16",
+			"a": "affinity_15",
+			"b": "affinity_16",
 			"controlX": -704,
 			"controlY": 4445
 		},
 		{
-			"a": "small_flux_optional_15",
-			"b": "small_flux_optional_14",
+			"a": "affinity_15",
+			"b": "affinity_14",
 			"controlX": 704,
 			"controlY": 4445
 		},
@@ -9239,20 +9239,20 @@
 			"controlY": 1543
 		},
 		{
-			"a": "non_beam_energy_damage_1",
-			"b": "non_beam_energy_damage_2",
+			"a": "non_beam_energy_weapon_damage_1",
+			"b": "non_beam_energy_weapon_damage_2",
 			"controlX": -1149,
 			"controlY": 1988
 		},
 		{
-			"a": "crew_capacity_flat_6",
-			"b": "crew_capacity_flat_7",
+			"a": "crew_capacity_6",
+			"b": "crew_capacity_7",
 			"controlX": 7631,
 			"controlY": -15796
 		},
 		{
 			"a": "all_must_serve_1",
-			"b": "crew_capacity_flat_7",
+			"b": "crew_capacity_7",
 			"controlX": 7377,
 			"controlY": -15796
 		},
@@ -9269,19 +9269,19 @@
 			"controlY": -16890
 		},
 		{
-			"a": "missile_damage_7",
-			"b": "missile_damage_8",
+			"a": "missile_weapon_damage_7",
+			"b": "missile_weapon_damage_8",
 			"controlX": 9097,
 			"controlY": -16049
 		},
 		{
 			"a": "live_munitions_1",
-			"b": "missile_damage_8",
+			"b": "missile_weapon_damage_8",
 			"controlX": 9351,
 			"controlY": -16049
 		},
 		{
-			"a": "heavyarmor_1",
+			"a": "heavy_armor_1",
 			"b": "hull_multi_3",
 			"controlX": -4022,
 			"controlY": 649
@@ -9299,56 +9299,56 @@
 			"controlY": 1766
 		},
 		{
-			"a": "small_flux_optional_83",
-			"b": "small_flux_optional_84",
+			"a": "affinity_83",
+			"b": "affinity_84",
 			"controlX": 1449,
 			"controlY": -388
 		},
 		{
 			"a": "root_low_tech_1",
-			"b": "small_flux_optional_83",
+			"b": "affinity_83",
 			"controlX": 1449,
 			"controlY": 388
 		},
 		{
 			"a": "root_low_tech_1",
-			"b": "small_flux_optional_100",
+			"b": "affinity_100",
 			"controlX": 1115,
 			"controlY": 1004
 		},
 		{
-			"a": "small_flux_optional_100",
-			"b": "small_flux_optional_99",
+			"a": "affinity_100",
+			"b": "affinity_99",
 			"controlX": 610,
 			"controlY": 1370
 		},
 		{
-			"a": "small_flux_optional_98",
-			"b": "small_flux_optional_99",
+			"a": "affinity_98",
+			"b": "affinity_99",
 			"controlX": 0,
 			"controlY": 1500
 		},
 		{
-			"a": "small_flux_optional_97",
-			"b": "small_flux_optional_98",
+			"a": "affinity_97",
+			"b": "affinity_98",
 			"controlX": -610,
 			"controlY": 1370
 		},
 		{
 			"a": "root_midline_1",
-			"b": "small_flux_optional_97",
+			"b": "affinity_97",
 			"controlX": -1115,
 			"controlY": 1004
 		},
 		{
 			"a": "root_midline_1",
-			"b": "small_flux_optional_92",
+			"b": "affinity_92",
 			"controlX": -1449,
 			"controlY": 388
 		},
 		{
-			"a": "small_flux_optional_91",
-			"b": "small_flux_optional_92",
+			"a": "affinity_91",
+			"b": "affinity_92",
 			"controlX": -1449,
 			"controlY": -388
 		},
@@ -9365,92 +9365,92 @@
 			"controlY": -2691
 		},
 		{
-			"a": "increased_sensor_strength_1",
-			"b": "increased_sensor_strength_2",
+			"a": "sensor_strength_1",
+			"b": "sensor_strength_2",
 			"controlX": -610,
 			"controlY": -4243
 		},
 		{
-			"a": "hiressensors_1",
-			"b": "increased_sensor_strength_2",
+			"a": "high_resolution_sensors_1",
+			"b": "sensor_strength_2",
 			"controlX": -737,
 			"controlY": -4022
 		},
 		{
-			"a": "small_flux_optional_94",
-			"b": "small_flux_optional_95",
+			"a": "affinity_94",
+			"b": "affinity_95",
 			"controlX": 2511,
 			"controlY": -2868
 		},
 		{
-			"a": "augmentedengines_1",
-			"b": "small_flux_optional_94",
+			"a": "augmented_drive_field_1",
+			"b": "affinity_94",
 			"controlX": 2742,
 			"controlY": -2975
 		},
 		{
-			"a": "survey_generic_cost_reduction_2",
+			"a": "survey_cost_reduction_2",
 			"b": "surveying_equipment_1",
 			"controlX": 222,
 			"controlY": -3795
 		},
 		{
-			"a": "cargo_capacity_flat_1",
+			"a": "cargo_capacity_1",
 			"b": "expanded_cargo_holds_1",
 			"controlX": -3513,
 			"controlY": 371
 		},
 		{
-			"a": "augmentedengines_2",
-			"b": "small_flux_optional_93",
+			"a": "augmented_drive_field_2",
+			"b": "affinity_93",
 			"controlX": 604,
 			"controlY": 3936
 		},
 		{
-			"a": "fuel_flat_1",
-			"b": "fuel_flat_2",
+			"a": "fuel_1",
+			"b": "fuel_2",
 			"controlX": 3008,
 			"controlY": 2707
 		},
 		{
 			"a": "auxiliary_fuel_tanks_1",
-			"b": "fuel_flat_1",
+			"b": "fuel_1",
 			"controlX": 2755,
 			"controlY": 2680
 		},
 		{
-			"a": "engine_durability_1",
-			"b": "engine_durability_2",
+			"a": "engine_durability_and_sensor_profile_1",
+			"b": "engine_durability_and_sensor_profile_2",
 			"controlX": -1162,
 			"controlY": 4036
 		},
 		{
-			"a": "engine_durability_1",
-			"b": "insulatedengine_1",
+			"a": "engine_durability_and_sensor_profile_1",
+			"b": "insulated_engine_assembly_1",
 			"controlX": -1193,
 			"controlY": 3783
 		},
 		{
-			"a": "small_flux_optional_87",
-			"b": "small_flux_optional_88",
+			"a": "affinity_87",
+			"b": "affinity_88",
 			"controlX": -2087,
 			"controlY": 2762
 		},
 		{
 			"a": "militarized_subsystems_1",
-			"b": "small_flux_optional_87",
+			"b": "affinity_87",
 			"controlX": -2310,
 			"controlY": 2885
 		},
 		{
-			"a": "crew_capacity_flat_1",
-			"b": "crew_capacity_flat_2",
+			"a": "crew_capacity_1",
+			"b": "crew_capacity_2",
 			"controlX": -2454,
 			"controlY": 579
 		},
 		{
 			"a": "additional_berthing_1",
-			"b": "crew_capacity_flat_2",
+			"b": "crew_capacity_2",
 			"controlX": -2257,
 			"controlY": 418
 		},
@@ -9461,14 +9461,14 @@
 			"controlY": -3437
 		},
 		{
-			"a": "survey_generic_cost_reduction_1",
-			"b": "survey_generic_cost_reduction_2",
+			"a": "survey_cost_reduction_1",
+			"b": "survey_cost_reduction_2",
 			"controlX": 222,
 			"controlY": -3541
 		},
 		{
-			"a": "cargo_capacity_flat_1",
-			"b": "cargo_capacity_flat_2",
+			"a": "cargo_capacity_1",
+			"b": "cargo_capacity_2",
 			"controlX": -3513,
 			"controlY": 625
 		},
@@ -9479,8 +9479,8 @@
 			"controlY": 1635
 		},
 		{
-			"a": "missile_damage_1",
-			"b": "missleracks_1",
+			"a": "missile_weapon_damage_1",
+			"b": "expanded_missile_racks_1",
 			"controlX": -643,
 			"controlY": 3505
 		},
@@ -9491,8 +9491,8 @@
 			"controlY": 3353
 		},
 		{
-			"a": "small_flux_optional_93",
-			"b": "small_flux_optional_96",
+			"a": "affinity_93",
+			"b": "affinity_96",
 			"controlX": 604,
 			"controlY": 4190
 		},
@@ -9503,19 +9503,19 @@
 			"controlY": -3437
 		},
 		{
-			"a": "less_energy_damage_taken_3",
+			"a": "energy_damage_resistance_3",
 			"b": "solar_shielding_1",
 			"controlX": 4093,
 			"controlY": -670
 		},
 		{
-			"a": "less_energy_damage_taken_3",
-			"b": "less_energy_damage_taken_4",
+			"a": "energy_damage_resistance_3",
+			"b": "energy_damage_resistance_4",
 			"controlX": 4093,
 			"controlY": -924
 		},
 		{
-			"a": "emp_damage_taken_multi_1",
+			"a": "less_emp_damage_taken_1",
 			"b": "vent_rate_and_emp_damage_1",
 			"controlX": 1766,
 			"controlY": -3589
@@ -9527,14 +9527,14 @@
 			"controlY": -3589
 		},
 		{
-			"a": "fluxbreakers_1",
+			"a": "resistant_flux_conduits_1",
 			"b": "increased_vent_rate_1",
 			"controlX": 1946,
 			"controlY": -3409
 		},
 		{
-			"a": "emp_damage_taken_multi_1",
-			"b": "fluxbreakers_1",
+			"a": "less_emp_damage_taken_1",
+			"b": "resistant_flux_conduits_1",
 			"controlX": 1766,
 			"controlY": -3409
 		},
@@ -9563,37 +9563,37 @@
 			"controlY": 2317
 		},
 		{
-			"a": "maneuverability_percent_1",
-			"b": "turn_acceleration_percent_1",
+			"a": "maneuverability_1",
+			"b": "maneuverability_9",
 			"controlX": 2189,
 			"controlY": -427
 		},
 		{
-			"a": "small_flux_optional_90",
-			"b": "small_flux_optional_91",
+			"a": "affinity_90",
+			"b": "affinity_91",
 			"controlX": -1061,
 			"controlY": -1061
 		},
 		{
 			"a": "root_high_tech_1",
-			"b": "small_flux_optional_90",
+			"b": "affinity_90",
 			"controlX": -388,
 			"controlY": -1449
 		},
 		{
 			"a": "root_high_tech_1",
-			"b": "small_flux_optional_79",
+			"b": "affinity_79",
 			"controlX": 388,
 			"controlY": -1449
 		},
 		{
-			"a": "small_flux_optional_79",
-			"b": "small_flux_optional_84",
+			"a": "affinity_79",
+			"b": "affinity_84",
 			"controlX": 1061,
 			"controlY": -1061
 		},
 		{
-			"a": "armoredweapons_1",
+			"a": "armored_weapon_mounts_1",
 			"b": "weapon_durability_1",
 			"controlX": 1087,
 			"controlY": 1934
@@ -9611,26 +9611,26 @@
 			"controlY": 3507
 		},
 		{
-			"a": "small_flux_optional_107",
-			"b": "small_flux_optional_71",
+			"a": "affinity_107",
+			"b": "affinity_71",
 			"controlX": -18435,
 			"controlY": -4703
 		},
 		{
-			"a": "small_flux_optional_107",
-			"b": "small_flux_optional_74",
+			"a": "affinity_107",
+			"b": "affinity_74",
 			"controlX": -18435,
 			"controlY": -3005
 		},
 		{
 			"a": "nightcross_wormhole_1",
-			"b": "small_flux_optional_71",
+			"b": "affinity_71",
 			"controlX": -16737,
 			"controlY": -4703
 		},
 		{
 			"a": "nightcross_wormhole_1",
-			"b": "small_flux_optional_74",
+			"b": "affinity_74",
 			"controlX": -16737,
 			"controlY": -3005
 		},
@@ -9642,31 +9642,31 @@
 		},
 		{
 			"a": "energy_weapon_fire_rate_2",
-			"b": "ion_rounds_1",
+			"b": "ion_bolter_rounds_1",
 			"controlX": -18266,
 			"controlY": -3970
 		},
 		{
-			"a": "fighter_weapon_damage_3",
-			"b": "fighter_weapon_damage_4",
+			"a": "strikecraft_weapon_damage_3",
+			"b": "strikecraft_weapon_damage_4",
 			"controlX": -17473,
 			"controlY": -2981
 		},
 		{
-			"a": "fighter_weapon_damage_4",
-			"b": "hardlight_infusion_1",
+			"a": "strikecraft_weapon_damage_4",
+			"b": "hardlight_marking_1",
 			"controlX": -17473,
 			"controlY": -3207
 		},
 		{
-			"a": "maneuverability_percent_3",
+			"a": "maneuverability_3",
 			"b": "top_speed_8",
 			"controlX": 18102,
 			"controlY": -5392
 		},
 		{
-			"a": "gravitational_drag_1",
-			"b": "maneuverability_percent_3",
+			"a": "candles_grace_replica_1",
+			"b": "maneuverability_3",
 			"controlX": 17876,
 			"controlY": -5392
 		},
@@ -9678,66 +9678,66 @@
 		},
 		{
 			"a": "energy_weapon_fire_rate_3",
-			"b": "ion_rounds_1",
+			"b": "ion_bolter_rounds_1",
 			"controlX": -18266,
 			"controlY": -3744
 		},
 		{
-			"a": "fighter_weapon_damage_3",
-			"b": "fighter_weapon_damage_5",
+			"a": "strikecraft_weapon_damage_3",
+			"b": "strikecraft_weapon_damage_5",
 			"controlX": -17699,
 			"controlY": -2981
 		},
 		{
-			"a": "fighter_weapon_damage_5",
-			"b": "hardlight_infusion_1",
+			"a": "strikecraft_weapon_damage_5",
+			"b": "hardlight_marking_1",
 			"controlX": -17699,
 			"controlY": -3207
 		},
 		{
-			"a": "maneuverability_percent_4",
+			"a": "maneuverability_4",
 			"b": "top_speed_8",
 			"controlX": 18102,
 			"controlY": -5166
 		},
 		{
-			"a": "gravitational_drag_1",
-			"b": "maneuverability_percent_4",
+			"a": "candles_grace_replica_1",
+			"b": "maneuverability_4",
 			"controlX": 17876,
 			"controlY": -5166
 		},
 		{
-			"a": "small_flux_optional_108",
-			"b": "small_flux_optional_76",
+			"a": "affinity_108",
+			"b": "affinity_76",
 			"controlX": 18214,
 			"controlY": -3896
 		},
 		{
-			"a": "small_flux_optional_76",
+			"a": "affinity_76",
 			"b": "stargazer_wormhole_1",
 			"controlX": 16516,
 			"controlY": -3896
 		},
 		{
 			"a": "stargazer_wormhole_1",
-			"b": "small_flux_optional_75",
+			"b": "affinity_75",
 			"controlX": 16516,
 			"controlY": -5594
 		},
 		{
-			"a": "small_flux_optional_75",
-			"b": "small_flux_optional_108",
+			"a": "affinity_75",
+			"b": "affinity_108",
 			"controlX": 18214,
 			"controlY": -5594
 		},
 		{
-			"a": "beam_damage_2",
-			"b": "beam_damage_7",
+			"a": "beam_weapon_damage_2",
+			"b": "beam_weapon_damage_7",
 			"controlX": 18117,
 			"controlY": -4166
 		},
 		{
-			"a": "beam_damage_7",
+			"a": "beam_weapon_damage_7",
 			"b": "corrosion_beam_1",
 			"controlX": 17891,
 			"controlY": -4166
@@ -9767,14 +9767,14 @@
 			"controlY": -5402
 		},
 		{
-			"a": "energy_flux_cost_3",
-			"b": "energy_flux_cost_4",
+			"a": "energy_weapon_flux_cost_3",
+			"b": "energy_weapon_flux_cost_4",
 			"controlX": -3667,
 			"controlY": -8508
 		},
 		{
-			"a": "energy_flux_cost_4",
-			"b": "warpfield_1",
+			"a": "energy_weapon_flux_cost_4",
+			"b": "hypatia_pattern_warpfield_1",
 			"controlX": -3667,
 			"controlY": -8734
 		},
@@ -9786,7 +9786,7 @@
 		},
 		{
 			"a": "sensor_profile_2",
-			"b": "phased_recharging_1",
+			"b": "phase_fed_magazines_1",
 			"controlX": -2786,
 			"controlY": -7657
 		},
@@ -9798,7 +9798,7 @@
 		},
 		{
 			"a": "phase_cloak_flux_threshold_4",
-			"b": "coil_efficiency_1",
+			"b": "exo_tech_coil_tuning_1",
 			"controlX": -3861,
 			"controlY": -6777
 		},
@@ -9809,56 +9809,56 @@
 			"controlY": -7860
 		},
 		{
-			"a": "exogrid_1",
+			"a": "exo_tech_grid_splice_1",
 			"b": "timeflow_2",
 			"controlX": -4744,
 			"controlY": -7860
 		},
 		{
-			"a": "small_flux_optional_109",
-			"b": "small_flux_optional_106",
+			"a": "affinity_109",
+			"b": "affinity_106",
 			"controlX": -46356,
 			"controlY": 26866
 		},
 		{
-			"a": "small_flux_optional_109",
-			"b": "small_flux_optional_105",
+			"a": "affinity_109",
+			"b": "affinity_105",
 			"controlX": -46356,
 			"controlY": 28564
 		},
 		{
 			"a": "rat_abyss_wormhole_1",
-			"b": "small_flux_optional_105",
+			"b": "affinity_105",
 			"controlX": -44658,
 			"controlY": 28564
 		},
 		{
-			"a": "small_flux_optional_106",
+			"a": "affinity_106",
 			"b": "rat_abyss_wormhole_1",
 			"controlX": -44658,
 			"controlY": 26866
 		},
 		{
-			"a": "non_beam_energy_damage_6",
-			"b": "non_beam_energy_damage_7",
+			"a": "non_beam_energy_weapon_damage_6",
+			"b": "non_beam_energy_weapon_damage_7",
 			"controlX": -44634,
 			"controlY": 27602
 		},
 		{
-			"a": "non_beam_energy_damage_7",
-			"b": "abyssal_grid_1",
+			"a": "non_beam_energy_weapon_damage_7",
+			"b": "salvaged_abyssal_grid_1",
 			"controlX": -44860,
 			"controlY": 27602
 		},
 		{
-			"a": "system_cooldown_1",
-			"b": "system_cooldown_2",
+			"a": "ship_system_cooldown_1",
+			"b": "ship_system_cooldown_2",
 			"controlX": -45394,
 			"controlY": 28588
 		},
 		{
-			"a": "system_cooldown_2",
-			"b": "chronos_adaptability_1",
+			"a": "ship_system_cooldown_2",
+			"b": "chronos_rhythms_1",
 			"controlX": -45394,
 			"controlY": 28362
 		},
@@ -9870,7 +9870,7 @@
 		},
 		{
 			"a": "weapon_durability_7",
-			"b": "seraphs_grace_1",
+			"b": "borrowed_grace_1",
 			"controlX": -46154,
 			"controlY": 27828
 		},
@@ -9882,7 +9882,7 @@
 		},
 		{
 			"a": "armor_9",
-			"b": "seraphim_1",
+			"b": "seraph_hunting_routines_1",
 			"controlX": -45620,
 			"controlY": 27068
 		},
@@ -9893,7 +9893,7 @@
 			"controlY": 27602
 		},
 		{
-			"a": "seraphs_grace_1",
+			"a": "borrowed_grace_1",
 			"b": "weapon_durability_8",
 			"controlX": -46154,
 			"controlY": 27602
@@ -9905,7 +9905,7 @@
 			"controlY": -7634
 		},
 		{
-			"a": "exogrid_1",
+			"a": "exo_tech_grid_splice_1",
 			"b": "timeflow_3",
 			"controlX": -4744,
 			"controlY": -7634
@@ -9917,7 +9917,7 @@
 			"controlY": -7883
 		},
 		{
-			"a": "phased_recharging_1",
+			"a": "phase_fed_magazines_1",
 			"b": "sensor_profile_3",
 			"controlX": -2786,
 			"controlY": -7883
@@ -9929,56 +9929,56 @@
 			"controlY": -7003
 		},
 		{
-			"a": "coil_efficiency_1",
+			"a": "exo_tech_coil_tuning_1",
 			"b": "phase_cloak_flux_threshold_5",
 			"controlX": -3635,
 			"controlY": -6777
 		},
 		{
-			"a": "energy_flux_cost_3",
-			"b": "energy_flux_cost_7",
+			"a": "energy_weapon_flux_cost_3",
+			"b": "energy_weapon_flux_cost_7",
 			"controlX": -3893,
 			"controlY": -8508
 		},
 		{
-			"a": "energy_flux_cost_7",
-			"b": "warpfield_1",
+			"a": "energy_weapon_flux_cost_7",
+			"b": "hypatia_pattern_warpfield_1",
 			"controlX": -3893,
 			"controlY": -8734
 		},
 		{
-			"a": "system_cooldown_1",
-			"b": "system_cooldown_3",
+			"a": "ship_system_cooldown_1",
+			"b": "ship_system_cooldown_3",
 			"controlX": -45620,
 			"controlY": 28588
 		},
 		{
-			"a": "chronos_adaptability_1",
-			"b": "system_cooldown_3",
+			"a": "chronos_rhythms_1",
+			"b": "ship_system_cooldown_3",
 			"controlX": -45620,
 			"controlY": 28362
 		},
 		{
-			"a": "non_beam_energy_damage_6",
-			"b": "non_beam_energy_damage_8",
+			"a": "non_beam_energy_weapon_damage_6",
+			"b": "non_beam_energy_weapon_damage_8",
 			"controlX": -44634,
 			"controlY": 27828
 		},
 		{
-			"a": "abyssal_grid_1",
-			"b": "non_beam_energy_damage_8",
+			"a": "salvaged_abyssal_grid_1",
+			"b": "non_beam_energy_weapon_damage_8",
 			"controlX": -44860,
 			"controlY": 27828
 		},
 		{
-			"a": "beam_damage_8",
+			"a": "beam_weapon_damage_8",
 			"b": "corrosion_beam_1",
 			"controlX": 17891,
 			"controlY": -4392
 		},
 		{
-			"a": "beam_damage_2",
-			"b": "beam_damage_8",
+			"a": "beam_weapon_damage_2",
+			"b": "beam_weapon_damage_8",
 			"controlX": 18117,
 			"controlY": -4392
 		},
@@ -10031,61 +10031,61 @@
 			"controlY": -4501
 		},
 		{
-			"a": "crew_capacity_flat_8",
+			"a": "crew_capacity_8",
 			"b": "ground_support_1",
 			"controlX": 13357,
 			"controlY": 2771
 		},
 		{
-			"a": "crew_capacity_flat_4",
-			"b": "crew_capacity_flat_8",
+			"a": "crew_capacity_4",
+			"b": "crew_capacity_8",
 			"controlX": 13611,
 			"controlY": 2771
 		},
 		{
-			"a": "fighter_replacement_3",
-			"b": "fighter_speed_4",
+			"a": "strikecraft_replacement_3",
+			"b": "strikecraft_speed_4",
 			"controlX": -127,
 			"controlY": -12049
 		},
 		{
 			"a": "phase_entangled_wings_1",
-			"b": "fighter_replacement_3",
+			"b": "strikecraft_replacement_3",
 			"controlX": -127,
 			"controlY": -12303
 		},
 		{
-			"a": "fighter_replacement_4",
-			"b": "fighter_speed_4",
+			"a": "strikecraft_replacement_4",
+			"b": "strikecraft_speed_4",
 			"controlX": 127,
 			"controlY": -12049
 		},
 		{
 			"a": "phase_entangled_wings_1",
-			"b": "fighter_replacement_4",
+			"b": "strikecraft_replacement_4",
 			"controlX": 127,
 			"controlY": -12303
 		},
 		{
-			"a": "fighter_speed_1",
-			"b": "fighter_speed_2",
+			"a": "strikecraft_speed_1",
+			"b": "strikecraft_speed_2",
 			"controlX": 5522,
 			"controlY": 10697
 		},
 		{
-			"a": "fighter_speed_1",
-			"b": "fighter_speed_3",
+			"a": "strikecraft_speed_1",
+			"b": "strikecraft_speed_3",
 			"controlX": 5776,
 			"controlY": 10697
 		},
 		{
-			"a": "fighter_speed_2",
+			"a": "strikecraft_speed_2",
 			"b": "martyrs_payload_1",
 			"controlX": 5522,
 			"controlY": 10951
 		},
 		{
-			"a": "fighter_speed_3",
+			"a": "strikecraft_speed_3",
 			"b": "martyrs_payload_1",
 			"controlX": 5776,
 			"controlY": 10951
@@ -10133,56 +10133,56 @@
 			"controlY": 1543
 		},
 		{
-			"a": "turretgyros_1",
+			"a": "advanced_turret_gyros_1",
 			"b": "weapon_turn_rate_3",
 			"controlX": -1887,
 			"controlY": 1797
 		},
 		{
-			"a": "crew_capacity_flat_1",
-			"b": "crew_capacity_flat_9",
+			"a": "crew_capacity_1",
+			"b": "crew_capacity_9",
 			"controlX": -2293,
 			"controlY": 776
 		},
 		{
 			"a": "additional_berthing_1",
-			"b": "crew_capacity_flat_9",
+			"b": "crew_capacity_9",
 			"controlX": -2096,
 			"controlY": 615
 		},
 		{
-			"a": "small_flux_optional_77",
-			"b": "small_flux_optional_78",
+			"a": "affinity_77",
+			"b": "affinity_78",
 			"controlX": -3528,
 			"controlY": -2115
 		},
 		{
-			"a": "modular_hull_socket_12",
-			"b": "small_flux_optional_78",
+			"a": "subroutine_socket_12",
+			"b": "affinity_78",
 			"controlX": -3316,
 			"controlY": -2115
 		},
 		{
-			"a": "small_flux_optional_82",
-			"b": "small_flux_optional_85",
+			"a": "affinity_82",
+			"b": "affinity_85",
 			"controlX": 3128,
 			"controlY": -2560
 		},
 		{
-			"a": "modular_hull_socket_19",
-			"b": "small_flux_optional_85",
+			"a": "subroutine_socket_19",
+			"b": "affinity_85",
 			"controlX": 3128,
 			"controlY": -2348
 		},
 		{
-			"a": "small_flux_optional_86",
-			"b": "small_flux_optional_89",
+			"a": "affinity_86",
+			"b": "affinity_89",
 			"controlX": -347,
 			"controlY": 4274
 		},
 		{
-			"a": "modular_hull_socket_20",
-			"b": "small_flux_optional_89",
+			"a": "subroutine_socket_20",
+			"b": "affinity_89",
 			"controlX": -347,
 			"controlY": 4062
 		},
@@ -10211,26 +10211,26 @@
 			"controlY": 28032
 		},
 		{
-			"a": "small_flux_optional_80",
-			"b": "small_flux_optional_81",
+			"a": "affinity_80",
+			"b": "affinity_81",
 			"controlX": -34884,
 			"controlY": 27334
 		},
 		{
-			"a": "small_flux_optional_103",
-			"b": "small_flux_optional_80",
+			"a": "affinity_103",
+			"b": "affinity_80",
 			"controlX": -33888,
 			"controlY": 27334
 		},
 		{
-			"a": "small_flux_optional_104",
-			"b": "small_flux_optional_81",
+			"a": "affinity_104",
+			"b": "affinity_81",
 			"controlX": -34884,
 			"controlY": 28330
 		},
 		{
-			"a": "small_flux_optional_103",
-			"b": "small_flux_optional_104",
+			"a": "affinity_103",
+			"b": "affinity_104",
 			"controlX": -33888,
 			"controlY": 28330
 		},

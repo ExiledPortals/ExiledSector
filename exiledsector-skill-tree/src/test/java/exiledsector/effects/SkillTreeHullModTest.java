@@ -199,7 +199,7 @@ class SkillTreeHullModTest {
                 .vanillaHullModId(null)
                 .todo(null)
                 .build();
-        SkillNode multiNode = new SkillNode("heavyarmor_1", multiType, List.of(), 0f, 0f);
+        SkillNode multiNode = new SkillNode("heavy_armor_1", multiType, List.of(), 0f, 0f);
         SkillTree.register(multiNode);
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
@@ -215,8 +215,8 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
 
-        verify(armorBonus).modifyPercent("exiledSector_skill_heavyarmor_1_ARMOR_PERCENT", 15f);
-        verify(hullBonus).modifyPercent("exiledSector_skill_heavyarmor_1_HULL_PERCENT", 5f);
+        verify(armorBonus).modifyPercent("exiledSector_skill_heavy_armor_1_ARMOR_PERCENT", 15f);
+        verify(hullBonus).modifyPercent("exiledSector_skill_heavy_armor_1_HULL_PERCENT", 5f);
     }
 
     @Test
@@ -313,7 +313,7 @@ class SkillTreeHullModTest {
                 .optionalOptionIds(List.of())
                 .exclusiveHullModIds(List.of("adaptiveshields"))
                 .build();
-        SkillNode frontNode = new SkillNode("frontemitter_1", frontType, List.of(), 0f, 0f);
+        SkillNode frontNode = new SkillNode("shield_conversion_front_1", frontType, List.of(), 0f, 0f);
         SkillTree.register(frontNode);
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
@@ -416,7 +416,7 @@ class SkillTreeHullModTest {
                 .optionalOptionIds(List.of())
                 .exclusiveHullModIds(List.of("adaptiveshields"))
                 .build();
-        SkillNode frontNode = new SkillNode("frontemitter_1", frontType, List.of(), 0f, 0f);
+        SkillNode frontNode = new SkillNode("shield_conversion_front_1", frontType, List.of(), 0f, 0f);
         SkillTree.register(frontNode);
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
@@ -675,7 +675,7 @@ class SkillTreeHullModTest {
         SkillType targetingType = new SkillType.Builder("targetingunit", "Integrated Targeting Unit", "a.png", SkillTier.NOTABLE)
                 .exclusiveHullModIds(List.of("advancedcore"))
                 .build();
-        SkillNode targetingNode = new SkillNode("targetingunit_1", targetingType, List.of(), 0f, 0f);
+        SkillNode targetingNode = new SkillNode("integrated_targeting_unit_1", targetingType, List.of(), 0f, 0f);
         SkillTree.register(targetingNode);
         ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), targetingNode, 1);
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
@@ -736,7 +736,7 @@ class SkillTreeHullModTest {
                 .optionalOptionIds(List.of())
                 .exclusiveHullModIds(List.of("adaptiveshields"))
                 .build();
-        SkillNode frontNode = new SkillNode("frontemitter_1", frontType, List.of(), 0f, 0f);
+        SkillNode frontNode = new SkillNode("shield_conversion_front_1", frontType, List.of(), 0f, 0f);
         SkillTree.register(frontNode);
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
@@ -893,7 +893,7 @@ class SkillTreeHullModTest {
                 .vanillaHullModId("frontshield")
                 .todo(null)
                 .build();
-        SkillNode keystoneNode = new SkillNode("frontshield_1", keystoneType, List.of(), 0f, 0f);
+        SkillNode keystoneNode = new SkillNode("makeshift_shield_generator_1", keystoneType, List.of(), 0f, 0f);
         SkillTree.register(keystoneNode);
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
@@ -1009,7 +1009,7 @@ class SkillTreeHullModTest {
                 .vanillaHullModId(null)
                 .todo(null)
                 .build();
-        SkillNode fighterNode = new SkillNode("fighter_weapon_damage_1", fighterType, List.of(), 0f, 0f);
+        SkillNode fighterNode = new SkillNode("strikecraft_weapon_damage_1", fighterType, List.of(), 0f, 0f);
         SkillTree.register(fighterNode);
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
@@ -1022,7 +1022,7 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().applyEffectsToFighterSpawnedByShip(fighter, ship, "exiledSector_core");
 
-        verify(fighterEffect).applyToFighterSpawnedByShip(fighter, ship, "exiledSector_skill_fighter_weapon_damage_1_TEST_EFFECT", 15f);
+        verify(fighterEffect).applyToFighterSpawnedByShip(fighter, ship, "exiledSector_skill_strikecraft_weapon_damage_1_TEST_EFFECT", 15f);
     }
 
     @Test
@@ -1034,7 +1034,7 @@ class SkillTreeHullModTest {
                 .vanillaHullModId(null)
                 .todo(null)
                 .build();
-        SkillNode fighterNode = new SkillNode("fighter_weapon_damage_1", fighterType, List.of(), 0f, 0f);
+        SkillNode fighterNode = new SkillNode("strikecraft_weapon_damage_1", fighterType, List.of(), 0f, 0f);
         SkillTree.register(fighterNode);
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
@@ -1051,7 +1051,7 @@ class SkillTreeHullModTest {
 
         assertTrue(plan.resolvedTree() != null);
         assertTrue(ship.getCustomData().containsValue(plan));
-        verify(fighterEffect).applyToFighterSpawnedByShip(secondFighter, ship, "exiledSector_skill_fighter_weapon_damage_1_TEST_EFFECT", 15f);
+        verify(fighterEffect).applyToFighterSpawnedByShip(secondFighter, ship, "exiledSector_skill_strikecraft_weapon_damage_1_TEST_EFFECT", 15f);
     }
 
     @Test
@@ -1076,7 +1076,7 @@ class SkillTreeHullModTest {
                 .vanillaHullModId(null)
                 .todo(null)
                 .build();
-        SkillNode listenerNode = new SkillNode("high_scatter_amp_1", listenerType, List.of(), 0f, 0f);
+        SkillNode listenerNode = new SkillNode("high_scatter_amplifier_1", listenerType, List.of(), 0f, 0f);
         SkillTree.register(listenerNode);
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
@@ -1088,7 +1088,7 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().applyEffectsAfterShipCreation(ship, "exiledSector_core");
 
-        verify(listenerEffect).applyAfterShipCreation(ship, "exiledSector_skill_high_scatter_amp_1_TEST_EFFECT", 50f);
+        verify(listenerEffect).applyAfterShipCreation(ship, "exiledSector_skill_high_scatter_amplifier_1_TEST_EFFECT", 50f);
     }
 
     @Test
@@ -1218,7 +1218,7 @@ class SkillTreeHullModTest {
                 .vanillaHullModId(null)
                 .todo(null)
                 .build();
-        SkillNode ventNode = new SkillNode("fluxbreakers_1", ventType, List.of(), 0f, 0f);
+        SkillNode ventNode = new SkillNode("resistant_flux_conduits_1", ventType, List.of(), 0f, 0f);
         SkillTree.register(ventNode);
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
@@ -1235,7 +1235,7 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
 
-        verify(dissipation).modifyPercent("exiledSector_skill_fluxbreakers_1_FLUX_DISSIPATION_WHILE_VENTING_PERCENT", 25f);
+        verify(dissipation).modifyPercent("exiledSector_skill_resistant_flux_conduits_1_FLUX_DISSIPATION_WHILE_VENTING_PERCENT", 25f);
         verify(dissipation, never()).unmodify(anyString());
     }
 
@@ -1246,7 +1246,7 @@ class SkillTreeHullModTest {
                 .vanillaHullModId(null)
                 .todo(null)
                 .build();
-        SkillNode ventNode = new SkillNode("fluxbreakers_1", ventType, List.of(), 0f, 0f);
+        SkillNode ventNode = new SkillNode("resistant_flux_conduits_1", ventType, List.of(), 0f, 0f);
         SkillTree.register(ventNode);
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
@@ -1263,7 +1263,7 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
 
-        verify(dissipation).modifyPercent("exiledSector_skill_fluxbreakers_1_FLUX_DISSIPATION_WHILE_VENTING_PERCENT", 0f);
+        verify(dissipation).modifyPercent("exiledSector_skill_resistant_flux_conduits_1_FLUX_DISSIPATION_WHILE_VENTING_PERCENT", 0f);
     }
 
     @Test
@@ -1460,7 +1460,7 @@ class SkillTreeHullModTest {
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 40f),
                         new SkillTypeEffect(DefenseSkillEffect.SHIP_RECOVERY_CHANCE_BONUS, 1000f)))
                 .build();
-        SkillNode bulkheadsNode = new SkillNode("reinforcedhull_1", bulkheads, List.of(), 0f, 0f);
+        SkillNode bulkheadsNode = new SkillNode("reinforced_bulkheads_1", bulkheads, List.of(), 0f, 0f);
         SkillTree.register(bulkheadsNode);
         ShipSkillDataManager.get("npc-ship").markNpcBuild();
         ShipTrees.allocate(ShipSkillDataManager.get("npc-ship"), bulkheadsNode, 1);
@@ -1475,10 +1475,10 @@ class SkillTreeHullModTest {
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.CRUISER,
                 statsWithHullAndRecovery("player-ship", playerHull, playerRecovery), SkillTreeHullMod.ID);
 
-        verify(npcHull).modifyPercent("exiledSector_skill_reinforcedhull_1_HULL_PERCENT", 40f);
+        verify(npcHull).modifyPercent("exiledSector_skill_reinforced_bulkheads_1_HULL_PERCENT", 40f);
         verify(npcRecovery, never()).modifyFlat(anyString(), anyFloat());
-        verify(playerHull).modifyPercent("exiledSector_skill_reinforcedhull_1_HULL_PERCENT", 40f);
-        verify(playerRecovery).modifyFlat("exiledSector_skill_reinforcedhull_1_SHIP_RECOVERY_CHANCE_BONUS", 1000f);
+        verify(playerHull).modifyPercent("exiledSector_skill_reinforced_bulkheads_1_HULL_PERCENT", 40f);
+        verify(playerRecovery).modifyFlat("exiledSector_skill_reinforced_bulkheads_1_SHIP_RECOVERY_CHANCE_BONUS", 1000f);
     }
 
     private static SkillNode registerNpcRoot() {
@@ -1551,8 +1551,8 @@ class SkillTreeHullModTest {
         SkillType frontType = new SkillType.Builder("frontemitter", "Shield Conversion - Front", "a.png", SkillTier.NOTABLE)
                 .exclusiveHullModIds(List.of("adaptiveshields"))
                 .build();
-        SkillTree.register(new SkillNode("frontemitter_1", frontType, List.of("root_1"), 0f, 0f));
-        ShipVariantAPI variant = npcVariant("frontemitter_1");
+        SkillTree.register(new SkillNode("shield_conversion_front_1", frontType, List.of("root_1"), 0f, 0f));
+        ShipVariantAPI variant = npcVariant("shield_conversion_front_1");
         when(variant.hasHullMod("adaptiveshields")).thenReturn(true);
         FleetMemberAPI member = memberWithId("npc-ship");
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);

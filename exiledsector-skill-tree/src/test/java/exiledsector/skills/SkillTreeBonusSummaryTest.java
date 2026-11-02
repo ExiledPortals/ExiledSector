@@ -149,7 +149,7 @@ class SkillTreeBonusSummaryTest {
         allocate("hull_1", small("hull", new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 5f)));
         SkillType notable = new SkillType.Builder("heavyarmor", "Heavy Armor", "a.png", SkillTier.NOTABLE).build();
         SkillType keystone = new SkillType.Builder("rangefinder", "Ballistic Rangefinder", "a.png", SkillTier.KEYSTONE).build();
-        allocate("heavyarmor_1", notable);
+        allocate("heavy_armor_1", notable);
         allocate("rangefinder_1", keystone);
 
         Summary summary = SkillTreeBonusSummary.of(data, HullSize.CRUISER);
