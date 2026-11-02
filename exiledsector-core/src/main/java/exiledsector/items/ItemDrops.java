@@ -184,8 +184,8 @@ public final class ItemDrops {
                 kernelDrops.add(new CurrencyDrop(currency.itemId(), currency.dropWeight()));
             }
         }
-        for (CraftingWard ward : CraftingWard.values()) {
-            kernelDrops.add(new CurrencyDrop(ward.itemId(), ward.dropWeight()));
+        for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
+            kernelDrops.add(new CurrencyDrop(inhibitor.itemId(), inhibitor.dropWeight()));
         }
         return kernelDrops;
     }

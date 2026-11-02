@@ -5,7 +5,7 @@ import com.fs.starfarer.api.ui.CustomPanelAPI;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.items.CraftingMaterials;
-import exiledsector.items.CraftingWard;
+import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.Item;
 import exiledsector.items.ItemCurrency;
 import exiledsector.items.ItemDefinition;
@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 
 public interface BenchModeSupport {
 
-    record Refusal(UseVerdict verdict, boolean checksWards) {
+    record Refusal(UseVerdict verdict, boolean checksInhibitors) {
 
         public boolean allowed() {
             return verdict.allowed();
@@ -127,10 +127,10 @@ public interface BenchModeSupport {
     }
 
     Refusal refusal(ItemCurrency currency, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
-                    Set<CraftingWard> wards);
+                    Set<CraftingInhibitor> inhibitors);
 
     Use use(ItemCurrency currency, Item loaded, ItemStore store, CraftingMaterials materials, Random random,
-            Predicate<ItemDefinition> allowedUniques, Set<CraftingWard> wards, String nameBefore);
+            Predicate<ItemDefinition> allowedUniques, Set<CraftingInhibitor> inhibitors, String nameBefore);
 
     UseVerdict cannotUse();
 

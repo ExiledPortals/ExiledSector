@@ -1,2 +1,4 @@
 alias,id
 exiledSector_annul_cipher,exiledSector_erasure_cipher
+exiledSector_prefix_ward,exiledSector_prefix_inhibitor
+exiledSector_suffix_ward,exiledSector_suffix_inhibitor

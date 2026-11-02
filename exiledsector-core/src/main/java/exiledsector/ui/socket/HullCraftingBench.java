@@ -7,7 +7,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.items.CorruptionOutcome;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.CraftingMaterials;
-import exiledsector.items.CraftingWard;
+import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.Item;
 import exiledsector.items.ItemCrafting;
 import exiledsector.items.ItemCurrency;
@@ -115,20 +115,20 @@ public final class HullCraftingBench implements BenchModeSupport {
 
     @Override
     public Refusal refusal(ItemCurrency currency, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
-                           Set<CraftingWard> wards) {
+                           Set<CraftingInhibitor> inhibitors) {
         if (materials.count(currency.itemId()) < 1) {
             return new Refusal(UseVerdict.refused(currency.synthesisable() ? "ui.craftingBench.notice.noneOwned" : "ui.craftingBench.notice.noneFound"), false);
         }
         if (loaded == null) {
             return new Refusal(LOAD_FIRST, false);
         }
-        return new Refusal(ItemCrafting.verdict(currency, loaded, allowedUniques, wards), true);
+        return new Refusal(ItemCrafting.verdict(currency, loaded, allowedUniques, inhibitors), true);
     }
 
     @Override
     public Use use(ItemCurrency currency, Item loaded, ItemStore store, CraftingMaterials materials, Random random,
-                   Predicate<ItemDefinition> allowedUniques, Set<CraftingWard> wards, String nameBefore) {
-        Item result = ItemCrafting.use(currency, loaded, materials, store, random, allowedUniques, wards);
+                   Predicate<ItemDefinition> allowedUniques, Set<CraftingInhibitor> inhibitors, String nameBefore) {
+        Item result = ItemCrafting.use(currency, loaded, materials, store, random, allowedUniques, inhibitors);
         if (result == null) {
             return null;
         }

@@ -24,7 +24,7 @@ public interface ItemCurrency extends GrowableMaterial {
 
     Item use(Item item, CraftingContext context, Random random);
 
-    default boolean respectsWards() {
+    default boolean respectsInhibitors() {
         return false;
     }
 

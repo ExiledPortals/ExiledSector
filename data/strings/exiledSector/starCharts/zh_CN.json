@@ -489,7 +489,7 @@
     "chart.ui.currency.refused.max_tier": "{target}已经是15级。",
     "chart.ui.currency.refused.no_modifiers": "{target}没有可移除的效果。",
     "chart.ui.currency.refused.full": "{target}已经没有空间容纳更多效果。",
-    "chart.ui.currency.refused.ward_blocks": "抑制程序使{name}无可改造。关闭一个抑制程序后才能使用。",
+    "chart.ui.currency.refused.inhibitor_blocks": "抑制程序使{name}无可改造。关闭一个抑制程序后才能使用。",
     "chart.drop.reward.other": "从星域中回收了{count}张星图。",
     "chart.effect.CHART_BREACH_GROWTH_PERCENT": "空间裂隙扩张速度提高<bad>{value}%</bad>",
     "chart.effect.CHART_BREACH_CACHE_PERCENT": "裂隙储藏数量提高<good>{value}%</good>",

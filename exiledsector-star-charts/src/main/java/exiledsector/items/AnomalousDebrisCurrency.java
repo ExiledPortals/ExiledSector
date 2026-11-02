@@ -85,11 +85,11 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
             return false;
         }
         Modifier granted = modifier();
-        return !lockedClash(item, granted) && !keptClash(item, granted, context.guardedSlots());
+        return !lockedClash(item, granted) && !keptClash(item, granted, context.inhibitedSlots());
     }
 
     @Override
-    public boolean respectsWards() {
+    public boolean respectsInhibitors() {
         return true;
     }
 
@@ -107,12 +107,12 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
         return item.explicits().stream().filter(RolledModifier::locked).findFirst().orElse(null);
     }
 
-    static List<RolledModifier> keptModifiers(Item item, Set<ModifierSlot> guarded) {
-        return item.explicits().stream().filter(rolled -> rolled.locked() || guarded.contains(rolled.slot())).toList();
+    static List<RolledModifier> keptModifiers(Item item, Set<ModifierSlot> inhibited) {
+        return item.explicits().stream().filter(rolled -> rolled.locked() || inhibited.contains(rolled.slot())).toList();
     }
 
-    static boolean keptClash(Item item, Modifier granted, Set<ModifierSlot> guarded) {
-        List<RolledModifier> others = keptModifiers(item, guarded).stream().filter(rolled -> !rolled.modifierId().equals(granted.id())).toList();
+    static boolean keptClash(Item item, Modifier granted, Set<ModifierSlot> inhibited) {
+        List<RolledModifier> others = keptModifiers(item, inhibited).stream().filter(rolled -> !rolled.modifierId().equals(granted.id())).toList();
         Set<String> grantedEffects = effectsOf(granted);
         ItemDefinition definition = item.definition();
         AffixLayout.Limits limits = AffixLayout.limits(definition == null ? null : definition.type());
@@ -142,7 +142,7 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
         if (!canUse(item, context)) {
             return null;
         }
-        item.replaceExplicits(reroll(item.definition(), modifier(), keptModifiers(item, context.guardedSlots()), random));
+        item.replaceExplicits(reroll(item.definition(), modifier(), keptModifiers(item, context.inhibitedSlots()), random));
         item.refreezeName();
         return item;
     }

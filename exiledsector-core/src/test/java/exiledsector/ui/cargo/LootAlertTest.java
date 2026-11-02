@@ -3,7 +3,7 @@ package exiledsector.ui.cargo;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.items.CraftingCurrency;
-import exiledsector.items.CraftingWard;
+import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDisassembly;
 import exiledsector.items.ItemRarity;
@@ -31,7 +31,7 @@ class LootAlertTest {
     void otherCurrenciesAndInhibitorsGetTheStandardAlert() {
         assertEquals(LootAlert.STANDARD, alertFor(CraftingCurrency.AUGMENTATION.itemId()));
         assertEquals(LootAlert.STANDARD, alertFor(CraftingCurrency.TRANSPOSITION.itemId()));
-        assertEquals(LootAlert.STANDARD, alertFor(CraftingWard.PREFIX.itemId()));
+        assertEquals(LootAlert.STANDARD, alertFor(CraftingInhibitor.PREFIX.itemId()));
     }
 
     @Test

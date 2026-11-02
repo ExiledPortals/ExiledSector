@@ -14,7 +14,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.items.MaterialItems;
-import exiledsector.items.CraftingWard;
+import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.GrowableMaterial;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.Item;
@@ -99,7 +99,7 @@ public final class CraftingBenchPanel extends HoloPanel {
 
     private static final float CONFIRM_WIDTH = 460f;
     private static final float USE_CONFIRM_HEIGHT = 180f;
-    private static final float WARD_LINE_HEIGHT = 22f;
+    private static final float INHIBITOR_LINE_HEIGHT = 22f;
     private static final float GROW_CONFIRM_HEIGHT = 140f;
 
     private final Listener craftingBenchListener;
@@ -122,7 +122,7 @@ public final class CraftingBenchPanel extends HoloPanel {
     private boolean wormholeOpened;
     private Item loadedItem;
     private CargoIconLook loadedLook;
-    private final Set<CraftingWard> activeWards = EnumSet.noneOf(CraftingWard.class);
+    private final Set<CraftingInhibitor> activeInhibitors = EnumSet.noneOf(CraftingInhibitor.class);
     private final WormholeButtonFx openFx = new WormholeButtonFx();
     private BenchLayout embeddedLayout;
     private BenchMaterialsPanel materialsPanel;
@@ -478,11 +478,11 @@ public final class CraftingBenchPanel extends HoloPanel {
 
     private void openUseConfirm(ItemCurrency currency) {
         pendingCurrency = currency;
-        Set<CraftingWard> spentWards = ItemCrafting.wardsSpentBy(currency, loadedItem, activeWards);
+        Set<CraftingInhibitor> spentInhibitors = ItemCrafting.inhibitorsSpentBy(currency, loadedItem, activeInhibitors);
         String name = recipeName(currency);
-        openConfirm(USE_CONFIRM_HEIGHT + spentWards.size() * WARD_LINE_HEIGHT,
+        openConfirm(USE_CONFIRM_HEIGHT + spentInhibitors.size() * INHIBITOR_LINE_HEIGHT,
                 element -> writeCraftConfirm(element, Translation.msg("ui.craftingBench.confirm.useTitle").arg("name", name).arg("target", loadedItem.name()).text(),
-                        support().currencyDescription(currency), spentWards),
+                        support().currencyDescription(currency), spentInhibitors),
                 "ui.craftingBench.confirm.use", Control.CONFIRM_USE, "ui.craftingBench.confirm.cancel", Control.CANCEL_CONFIRM);
     }
 
@@ -495,11 +495,11 @@ public final class CraftingBenchPanel extends HoloPanel {
                 "ui.craftingBench.confirm.grow", Control.CONFIRM_GROW, "ui.craftingBench.confirm.cancel", Control.CANCEL_CONFIRM);
     }
 
-    private void writeCraftConfirm(TooltipMakerAPI element, String title, String body, Set<CraftingWard> spentWards) {
+    private void writeCraftConfirm(TooltipMakerAPI element, String title, String body, Set<CraftingInhibitor> spentInhibitors) {
         VanillaText.plainPara(element, title, 0f, Misc.getBasePlayerColor());
         VanillaText.plainPara(element, body, LINE_PAD * 2f, Misc.getTextColor());
-        for (CraftingWard ward : spentWards) {
-            VanillaText.plainPara(element, Translation.msg("ui.craftingBench.confirm.wardSpent").arg("name", MaterialItems.displayName(ward.itemId())).text(),
+        for (CraftingInhibitor inhibitor : spentInhibitors) {
+            VanillaText.plainPara(element, Translation.msg("ui.craftingBench.confirm.inhibitorSpent").arg("name", MaterialItems.displayName(inhibitor.itemId())).text(),
                     LINE_PAD * 2f, Misc.getHighlightColor());
         }
         VanillaText.plainPara(element, Translation.text("ui.craftingBench.confirm.skipHint"), LINE_PAD * 2f, Misc.getGrayColor());
@@ -532,8 +532,8 @@ public final class CraftingBenchPanel extends HoloPanel {
 
     private boolean usable(ItemCurrency currency) {
         CraftingMaterials materials = playerMaterials();
-        BenchModeSupport.Refusal refusal = support().refusal(currency, loadedItem, support().store(), materials, allowedUniques(), activeWards);
-        if (refusal.checksWards() && droppedMissingWards(materials)) {
+        BenchModeSupport.Refusal refusal = support().refusal(currency, loadedItem, support().store(), materials, allowedUniques(), activeInhibitors);
+        if (refusal.checksInhibitors() && droppedMissingInhibitors(materials)) {
             return false;
         }
         if (refusal.allowed()) {
@@ -543,13 +543,13 @@ public final class CraftingBenchPanel extends HoloPanel {
         return false;
     }
 
-    private boolean droppedMissingWards(CraftingMaterials materials) {
-        List<CraftingWard> missingWards = activeWards.stream().filter(ward -> materials.count(ward.itemId()) < 1).toList();
-        if (missingWards.isEmpty()) {
+    private boolean droppedMissingInhibitors(CraftingMaterials materials) {
+        List<CraftingInhibitor> missingInhibitors = activeInhibitors.stream().filter(inhibitor -> materials.count(inhibitor.itemId()) < 1).toList();
+        if (missingInhibitors.isEmpty()) {
             return false;
         }
-        missingWards.forEach(activeWards::remove);
-        showNotice(Translation.msg("ui.craftingBench.notice.wardMissing").arg("name", MaterialItems.displayName(missingWards.get(0).itemId())).text());
+        missingInhibitors.forEach(activeInhibitors::remove);
+        showNotice(Translation.msg("ui.craftingBench.notice.inhibitorMissing").arg("name", MaterialItems.displayName(missingInhibitors.get(0).itemId())).text());
         return true;
     }
 
@@ -563,25 +563,25 @@ public final class CraftingBenchPanel extends HoloPanel {
 
     private void applyUse(ItemCurrency currency) {
         String nameBefore = loadedItem.name();
-        Set<CraftingWard> spentWards = ItemCrafting.wardsSpentBy(currency, loadedItem, activeWards);
+        Set<CraftingInhibitor> spentInhibitors = ItemCrafting.inhibitorsSpentBy(currency, loadedItem, activeInhibitors);
         BenchModeSupport.Use used = support().use(currency, loadedItem, support().store(), playerMaterials(), craftingRandom,
-                allowedUniques(), activeWards, nameBefore);
+                allowedUniques(), activeInhibitors, nameBefore);
         if (used == null) {
             showNotice(refusalText(currency, support().cannotUse()));
             return;
         }
-        activeWards.removeAll(spentWards);
+        activeInhibitors.removeAll(spentInhibitors);
         loadedItem = used.selectedAfter();
-        noticeText = withSpentWards(used.notice(), spentWards);
+        noticeText = withSpentInhibitors(used.notice(), spentInhibitors);
         SkillTreeSounds.socketed();
         socketFlair.flash(used.result().frameColor());
         afterChange();
     }
 
-    private static String withSpentWards(String notice, Set<CraftingWard> spentWards) {
+    private static String withSpentInhibitors(String notice, Set<CraftingInhibitor> spentInhibitors) {
         String combined = notice;
-        for (CraftingWard ward : spentWards) {
-            String spentNotice = Translation.msg("ui.craftingBench.notice.wardSpent").arg("name", MaterialItems.displayName(ward.itemId())).text();
+        for (CraftingInhibitor inhibitor : spentInhibitors) {
+            String spentNotice = Translation.msg("ui.craftingBench.notice.inhibitorSpent").arg("name", MaterialItems.displayName(inhibitor.itemId())).text();
             combined = Translation.msg("format.sentences").arg("a", combined).arg("b", spentNotice).text();
         }
         return combined;
@@ -779,7 +779,7 @@ public final class CraftingBenchPanel extends HoloPanel {
         Item confirmedItem = pendingOpenItem;
         int entries = support().openEntries(confirmedItem);
         BenchModeSupport.OpenTexts openTexts = support().openTexts();
-        openConfirm(OPEN_CONFIRM_HEIGHT + confirmLines.size() * WARD_LINE_HEIGHT,
+        openConfirm(OPEN_CONFIRM_HEIGHT + confirmLines.size() * INHIBITOR_LINE_HEIGHT,
                 element -> writeOpenConfirm(element, openTexts, confirmedItem, entries, confirmLines), openTexts.confirmYesKey(),
                 Control.CONFIRM_OPEN, openTexts.confirmNoKey(), Control.CANCEL_CONFIRM);
     }
@@ -859,9 +859,9 @@ public final class CraftingBenchPanel extends HoloPanel {
     }
 
     private void addInhibitorTiles(TooltipMakerAPI element, float tileSize, CraftingMaterials materials) {
-        float wardTop = benchMode.wardY() * sceneScale - tileSize / 2f;
-        addWardTile(element, CraftingWard.PREFIX, benchMode.leftWardX() * sceneScale - tileSize / 2f, wardTop, tileSize, materials);
-        addWardTile(element, CraftingWard.SUFFIX, benchMode.rightWardX() * sceneScale - tileSize / 2f, wardTop, tileSize, materials);
+        float inhibitorTop = benchMode.inhibitorY() * sceneScale - tileSize / 2f;
+        addInhibitorTile(element, CraftingInhibitor.PREFIX, benchMode.leftInhibitorX() * sceneScale - tileSize / 2f, inhibitorTop, tileSize, materials);
+        addInhibitorTile(element, CraftingInhibitor.SUFFIX, benchMode.rightInhibitorX() * sceneScale - tileSize / 2f, inhibitorTop, tileSize, materials);
     }
 
     private void rebuildMaterials() {
@@ -876,11 +876,11 @@ public final class CraftingBenchPanel extends HoloPanel {
         List<SectionedTileGrid.Section> sections = new ArrayList<>();
         sections.add(new SectionedTileGrid.Section(Translation.text("ui.craftingBench.materials.currencies"), Misc.getBasePlayerColor(), currencyTiles));
         if (support().usesInhibitors()) {
-            List<SectionedTileGrid.Tile> wardTiles = new ArrayList<>();
-            for (CraftingWard ward : List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)) {
-                wardTiles.add(new SectionedTileGrid.Tile(wardTile(ward), materials.count(ward.itemId())));
+            List<SectionedTileGrid.Tile> inhibitorTiles = new ArrayList<>();
+            for (CraftingInhibitor inhibitor : List.of(CraftingInhibitor.PREFIX, CraftingInhibitor.SUFFIX)) {
+                inhibitorTiles.add(new SectionedTileGrid.Tile(inhibitorTile(inhibitor), materials.count(inhibitor.itemId())));
             }
-            sections.add(new SectionedTileGrid.Section(Translation.text("ui.craftingBench.materials.inhibitors"), Misc.getBasePlayerColor(), wardTiles));
+            sections.add(new SectionedTileGrid.Section(Translation.text("ui.craftingBench.materials.inhibitors"), Misc.getBasePlayerColor(), inhibitorTiles));
         }
         if (materialsPanel == null) {
             materialsPanel = BenchMaterialsPanel.open(hostPanel, embeddedLayout.materials(), sections, () -> queue(hoverTooltip::hide));
@@ -889,14 +889,14 @@ public final class CraftingBenchPanel extends HoloPanel {
         }
     }
 
-    private static List<String> wardIcons(CraftingWard ward) {
-        String iconPath = MaterialItems.loadedIconPath(ward.itemId());
+    private static List<String> inhibitorIcons(CraftingInhibitor inhibitor) {
+        String iconPath = MaterialItems.loadedIconPath(inhibitor.itemId());
         return List.of(iconPath == null ? FALLBACK_ICON : iconPath);
     }
 
-    private TileInput.Handler wardHandler(CraftingWard ward) {
-        return tileHandler(ward, anchor -> showWardTooltip(ward, anchor), skipConfirm -> toggleWard(ward),
-                skipConfirm -> tileRightClicked(ward, skipConfirm));
+    private TileInput.Handler inhibitorHandler(CraftingInhibitor inhibitor) {
+        return tileHandler(inhibitor, anchor -> showInhibitorTooltip(inhibitor, anchor), skipConfirm -> toggleInhibitor(inhibitor),
+                skipConfirm -> tileRightClicked(inhibitor, skipConfirm));
     }
 
     private TileInput.Handler currencyHandler(ItemCurrency currency) {
@@ -904,15 +904,15 @@ public final class CraftingBenchPanel extends HoloPanel {
                 skipConfirm -> tileRightClicked(currency, skipConfirm));
     }
 
-    private void addWardTile(TooltipMakerAPI element, CraftingWard ward, float tileLeft, float tileTop, float tileSize,
+    private void addInhibitorTile(TooltipMakerAPI element, CraftingInhibitor inhibitor, float tileLeft, float tileTop, float tileSize,
                              CraftingMaterials materials) {
-        CustomPanelAPI tilePanel = Global.getSettings().createCustom(tileSize, tileSize, wardTile(ward));
+        CustomPanelAPI tilePanel = Global.getSettings().createCustom(tileSize, tileSize, inhibitorTile(inhibitor));
         element.addCustom(tilePanel, 0f).getPosition().inTL(tileLeft, tileTop);
-        addCount(element, ward.itemId(), tileLeft, tileTop, tileSize, materials);
+        addCount(element, inhibitor.itemId(), tileLeft, tileTop, tileSize, materials);
     }
 
-    private CraftingBenchTile wardTile(CraftingWard ward) {
-        return CraftingBenchTile.toggle(wardIcons(ward), CargoIconLooks.forMaterial(ward.itemId()), () -> activeWards.contains(ward), wardHandler(ward));
+    private CraftingBenchTile inhibitorTile(CraftingInhibitor inhibitor) {
+        return CraftingBenchTile.toggle(inhibitorIcons(inhibitor), CargoIconLooks.forMaterial(inhibitor.itemId()), () -> activeInhibitors.contains(inhibitor), inhibitorHandler(inhibitor));
     }
 
     private CraftingBenchTile currencyTile(ItemCurrency currency, CraftingMaterials materials) {
@@ -920,50 +920,50 @@ public final class CraftingBenchPanel extends HoloPanel {
         return CraftingBenchTile.usable(recipeIcons(currency), recipeLook(currency), () -> owned, currencyHandler(currency));
     }
 
-    private void toggleWard(CraftingWard ward) {
+    private void toggleInhibitor(CraftingInhibitor inhibitor) {
         hoverTooltip.hide();
         if (wormholeOpened || isConfirmOpen()) {
             return;
         }
-        String wardName = MaterialItems.displayName(ward.itemId());
-        if (activeWards.remove(ward)) {
-            showNotice(Translation.msg("ui.craftingBench.notice.wardOff").arg("name", wardName).text());
+        String inhibitorName = MaterialItems.displayName(inhibitor.itemId());
+        if (activeInhibitors.remove(inhibitor)) {
+            showNotice(Translation.msg("ui.craftingBench.notice.inhibitorOff").arg("name", inhibitorName).text());
             return;
         }
-        if (playerMaterials().count(ward.itemId()) < 1) {
-            showNotice(Translation.msg(ward.synthesisable() ? "ui.craftingBench.notice.noneOwned" : "ui.craftingBench.notice.noneFound").arg("name", wardName).text());
+        if (playerMaterials().count(inhibitor.itemId()) < 1) {
+            showNotice(Translation.msg(inhibitor.synthesisable() ? "ui.craftingBench.notice.noneOwned" : "ui.craftingBench.notice.noneFound").arg("name", inhibitorName).text());
             return;
         }
-        activeWards.add(ward);
-        showNotice(Translation.msg("ui.craftingBench.notice.wardOn." + ward.name().toLowerCase(Locale.ROOT)).arg("name", wardName).text());
+        activeInhibitors.add(inhibitor);
+        showNotice(Translation.msg("ui.craftingBench.notice.inhibitorOn." + inhibitor.name().toLowerCase(Locale.ROOT)).arg("name", inhibitorName).text());
     }
 
-    private void showWardTooltip(CraftingWard ward, PositionAPI anchor) {
+    private void showInhibitorTooltip(CraftingInhibitor inhibitor, PositionAPI anchor) {
         if (isClosing()) {
             hoverTooltip.hide();
             return;
         }
-        hoverTooltip.show(ward, TOOLTIP_WIDTH, (element, expanded) -> writeWardTooltip(element, ward), anchor,
+        hoverTooltip.show(inhibitor, TOOLTIP_WIDTH, (element, expanded) -> writeInhibitorTooltip(element, inhibitor), anchor,
                 ItemHoverTooltip.Placement.BELOW, PAD);
     }
 
-    private void writeWardTooltip(TooltipMakerAPI element, CraftingWard ward) {
+    private void writeInhibitorTooltip(TooltipMakerAPI element, CraftingInhibitor inhibitor) {
         element.setParaFont(Fonts.ORBITRON_20AA);
-        VanillaText.plainPara(element, MaterialItems.displayName(ward.itemId()), 0f, ward.color());
+        VanillaText.plainPara(element, MaterialItems.displayName(inhibitor.itemId()), 0f, inhibitor.color());
         element.setParaFontDefault();
-        VanillaText.plainPara(element, Translation.text(wardDescriptionKey(ward)), GAP, Misc.getTextColor());
-        int ownedCount = playerMaterials().count(ward.itemId());
+        VanillaText.plainPara(element, Translation.text(inhibitorDescriptionKey(inhibitor)), GAP, Misc.getTextColor());
+        int ownedCount = playerMaterials().count(inhibitor.itemId());
         VanillaText.plainPara(element, Translation.msg("ui.craftingBench.tile.inStorage").arg("count", ownedCount).text(), GAP, Misc.getGrayColor());
-        if (activeWards.contains(ward)) {
-            VanillaText.plainPara(element, Translation.text("ui.craftingBench.ward.on"), GAP, Misc.getGrayColor());
+        if (activeInhibitors.contains(inhibitor)) {
+            VanillaText.plainPara(element, Translation.text("ui.craftingBench.inhibitor.on"), GAP, Misc.getGrayColor());
         } else if (ownedCount > 0) {
-            VanillaText.plainPara(element, Translation.text("ui.craftingBench.ward.off"), GAP, Misc.getGrayColor());
+            VanillaText.plainPara(element, Translation.text("ui.craftingBench.inhibitor.off"), GAP, Misc.getGrayColor());
         }
-        VanillaText.plainPara(element, growHint(ward), GAP, Misc.getGrayColor());
+        VanillaText.plainPara(element, growHint(inhibitor), GAP, Misc.getGrayColor());
     }
 
-    static String wardDescriptionKey(CraftingWard ward) {
-        return MaterialItems.descriptionKey(ward.itemId());
+    static String inhibitorDescriptionKey(CraftingInhibitor inhibitor) {
+        return MaterialItems.descriptionKey(inhibitor.itemId());
     }
 
     private TileInput.Handler tileHandler(Object tooltipKey, Consumer<PositionAPI> showTooltip, Consumer<Boolean> clicked,
@@ -1036,7 +1036,7 @@ public final class CraftingBenchPanel extends HoloPanel {
             }
         } else {
             BenchModeSupport.Refusal refusal = support().refusal(currency, loadedItem, support().store(), playerMaterials(), allowedUniques(),
-                    activeWards);
+                    activeInhibitors);
             hints.add(refusal.allowed()
                     ? Translation.msg(support().useHintKey()).arg("target", loadedItem.name()).text() : refusalText(currency, refusal.verdict()));
         }

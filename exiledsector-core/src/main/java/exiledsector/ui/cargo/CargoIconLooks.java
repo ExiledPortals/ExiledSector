@@ -3,7 +3,7 @@ package exiledsector.ui.cargo;
 import exiledsector.domain.DomainContributions;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.items.CraftingCurrency;
-import exiledsector.items.CraftingWard;
+import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.ItemCurrencies;
 import exiledsector.items.ItemCurrency;
 import exiledsector.items.Item;
@@ -27,7 +27,7 @@ public final class CargoIconLooks {
     }
 
     static SwarmMotion swarmFor(String itemId) {
-        if (CraftingWard.byItemId(itemId) != null) {
+        if (CraftingInhibitor.byItemId(itemId) != null) {
             return SwarmMotion.CONTAINED;
         }
         ItemCurrency currency = ItemCurrencies.byItemId(itemId);

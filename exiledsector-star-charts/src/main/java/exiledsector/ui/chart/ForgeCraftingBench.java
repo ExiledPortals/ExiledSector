@@ -8,7 +8,7 @@ import exiledsector.charts.anomaly.forge.ChartForge;
 import exiledsector.charts.anomaly.forge.ForgeTexts;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.items.CraftingMaterials;
-import exiledsector.items.CraftingWard;
+import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.ForgeChoice;
 import exiledsector.items.Item;
 import exiledsector.items.ItemCurrency;
@@ -93,13 +93,13 @@ public final class ForgeCraftingBench implements BenchModeSupport {
 
     @Override
     public Refusal refusal(ItemCurrency currency, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
-                           Set<CraftingWard> wards) {
+                           Set<CraftingInhibitor> inhibitors) {
         return new Refusal(cannotUse(), false);
     }
 
     @Override
     public Use use(ItemCurrency currency, Item loaded, ItemStore store, CraftingMaterials materials, Random random,
-                   Predicate<ItemDefinition> allowedUniques, Set<CraftingWard> wards, String nameBefore) {
+                   Predicate<ItemDefinition> allowedUniques, Set<CraftingInhibitor> inhibitors, String nameBefore) {
         return null;
     }
 

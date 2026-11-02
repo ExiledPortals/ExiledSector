@@ -1,7 +1,7 @@
 package exiledsector.ui.cargo;
 
 import exiledsector.items.CraftingCurrency;
-import exiledsector.items.CraftingWard;
+import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.ItemDisassembly;
 import exiledsector.items.MaterialTier;
 import org.junit.jupiter.api.Test;
@@ -73,7 +73,7 @@ class CargoIconFxTest {
         assertEquals(SwarmMotion.ORBIT, CargoIconLooks.swarmFor(CraftingCurrency.AUGMENTATION.itemId()));
         assertEquals(SwarmMotion.FERAL, CargoIconLooks.swarmFor(CraftingCurrency.CORRUPTION.itemId()));
         assertEquals(SwarmMotion.REPLICATING, CargoIconLooks.swarmFor(CraftingCurrency.REPLICATION.itemId()));
-        assertEquals(SwarmMotion.CONTAINED, CargoIconLooks.swarmFor(CraftingWard.PREFIX.itemId()));
+        assertEquals(SwarmMotion.CONTAINED, CargoIconLooks.swarmFor(CraftingInhibitor.PREFIX.itemId()));
         assertEquals(SwarmMotion.NONE, CargoIconLook.outlined(Color.WHITE).swarm(), "hull items have no swarm");
     }
 

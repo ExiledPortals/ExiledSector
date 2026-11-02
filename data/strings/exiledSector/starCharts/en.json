@@ -505,7 +505,7 @@
     "chart.ui.currency.refused.max_tier": "{target} is already tier 15.",
     "chart.ui.currency.refused.no_modifiers": "{target} has no modifiers to remove.",
     "chart.ui.currency.refused.full": "{target} has no room for another modifier.",
-    "chart.ui.currency.refused.ward_blocks": "Your inhibitors leave nothing for {name} to modify. Turn one off to use it.",
+    "chart.ui.currency.refused.inhibitor_blocks": "Your inhibitors leave nothing for {name} to modify. Turn one off to use it.",
     "chart.drop.reward.one": "{count} Star Chart was recovered from the system.",
     "chart.drop.reward.other": "{count} Star Charts were recovered from the system.",
     "chart.effect.CHART_BREACH_GROWTH_PERCENT": "<bad>{value}%</bad> increased Spatial Breach growth rate",

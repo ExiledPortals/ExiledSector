@@ -26,8 +26,8 @@ public final class MaterialItems {
         for (ItemCurrency currency : ItemCurrencies.all()) {
             itemIds.add(currency.itemId());
         }
-        for (CraftingWard ward : CraftingWard.values()) {
-            itemIds.add(ward.itemId());
+        for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
+            itemIds.add(inhibitor.itemId());
         }
         return itemIds;
     }
@@ -41,8 +41,8 @@ public final class MaterialItems {
         if (currency != null) {
             return currency.tier();
         }
-        CraftingWard ward = CraftingWard.byItemId(itemId);
-        return ward == null ? MaterialTier.BASIC : ward.tier();
+        CraftingInhibitor inhibitor = CraftingInhibitor.byItemId(itemId);
+        return inhibitor == null ? MaterialTier.BASIC : inhibitor.tier();
     }
 
     public static Color color(String itemId) {
@@ -50,8 +50,8 @@ public final class MaterialItems {
         if (currency != null) {
             return currency.color();
         }
-        CraftingWard ward = CraftingWard.byItemId(itemId);
-        return ward == null ? PARTS_COLOR : ward.color();
+        CraftingInhibitor inhibitor = CraftingInhibitor.byItemId(itemId);
+        return inhibitor == null ? PARTS_COLOR : inhibitor.color();
     }
 
     public static SpecialItemData data(String itemId) {

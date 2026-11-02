@@ -5,9 +5,9 @@ import exiledsector.modifiers.ModifierSlot;
 import java.util.Set;
 import java.util.function.Predicate;
 
-public record CraftingContext(ItemStore store, Predicate<ItemDefinition> allowedUniques, Set<ModifierSlot> guardedSlots) {
+public record CraftingContext(ItemStore store, Predicate<ItemDefinition> allowedUniques, Set<ModifierSlot> inhibitedSlots) {
 
     public CraftingContext {
-        guardedSlots = guardedSlots == null ? Set.of() : guardedSlots;
+        inhibitedSlots = inhibitedSlots == null ? Set.of() : inhibitedSlots;
     }
 }

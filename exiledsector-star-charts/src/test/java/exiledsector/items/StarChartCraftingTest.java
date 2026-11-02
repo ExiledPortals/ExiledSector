@@ -130,8 +130,8 @@ class StarChartCraftingTest {
 
         assertEquals(StarChartCrafting.MAX_TIER, StarChartCrafting.refusal(StarChartCipher.CARTOGRAPHY, topTier, store, materials, definition -> true));
         assertEquals(StarChartCrafting.CANNOT_USE, StarChartCrafting.refusal(CraftingCurrency.TRANSPOSITION, chart, store, materials, definition -> true));
-        assertEquals(StarChartCrafting.WARD_BLOCKS, StarChartCrafting.refusal(StarChartCipher.ERASURE, chart, store, materials, definition -> true,
-                List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)));
+        assertEquals(StarChartCrafting.INHIBITOR_BLOCKS, StarChartCrafting.refusal(StarChartCipher.ERASURE, chart, store, materials, definition -> true,
+                List.of(CraftingInhibitor.PREFIX, CraftingInhibitor.SUFFIX)));
         Random random = new Random(4L);
         while (StarChartCrafting.use(StarChartCipher.ERASURE, chart, store, materials, random, definition -> true) != null) {
             assertTrue(chart.explicits().size() < 6);

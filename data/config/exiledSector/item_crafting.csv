@@ -3,8 +3,8 @@ exiledSector_augmentation_kernel,10
 exiledSector_attunement_kernel,15
 exiledSector_substitution_kernel,20
 exiledSector_corruption_kernel,50
-exiledSector_prefix_ward,100
-exiledSector_suffix_ward,100
+exiledSector_prefix_inhibitor,100
+exiledSector_suffix_inhibitor,100
 exiledSector_transposition_kernel,150
 exiledSector_annulment_kernel,200
 exiledSector_recalibration_kernel,200

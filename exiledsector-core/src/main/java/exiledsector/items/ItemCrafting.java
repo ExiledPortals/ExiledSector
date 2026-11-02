@@ -41,22 +41,22 @@ public final class ItemCrafting {
     }
 
     public static boolean canUse(ItemCurrency currency, Item item, Predicate<ItemDefinition> allowedUniques,
-                                 Collection<CraftingWard> wards) {
+                                 Collection<CraftingInhibitor> inhibitors) {
         ItemDefinition definition = item == null ? null : item.definition();
         if (definition == null || !ItemTypes.takesCurrency(definition.type()) || item.mirrored() || item.corrupted() || isLockedFromCurrency(definition)
                 || !ItemCurrencies.appliesTo(currency, definition.type())) {
             return false;
         }
-        return currency.canUse(item, new CraftingContext(null, allowedUniques, CraftingWard.guardedSlots(wards)));
+        return currency.canUse(item, new CraftingContext(null, allowedUniques, CraftingInhibitor.inhibitedSlots(inhibitors)));
     }
 
-    public static UseVerdict verdict(ItemCurrency currency, Item item, Predicate<ItemDefinition> allowedUniques, Collection<CraftingWard> wards) {
-        if (canUse(currency, item, allowedUniques, wards)) {
+    public static UseVerdict verdict(ItemCurrency currency, Item item, Predicate<ItemDefinition> allowedUniques, Collection<CraftingInhibitor> inhibitors) {
+        if (canUse(currency, item, allowedUniques, inhibitors)) {
             return UseVerdict.ALLOW;
         }
         if (canUse(currency, item, allowedUniques)) {
             return UseVerdict.refused(currency == CraftingCurrency.TRANSPOSITION
-                    ? "ui.craftingBench.notice.wardBlocksTransposition" : "ui.craftingBench.notice.wardBlocks");
+                    ? "ui.craftingBench.notice.inhibitorBlocksTransposition" : "ui.craftingBench.notice.inhibitorBlocks");
         }
         if (item == null) {
             return UseVerdict.refused("ui.craftingBench.notice.loadFirst");
@@ -85,20 +85,20 @@ public final class ItemCrafting {
         return definition != null && ItemTypes.lockedFromCurrency(definition);
     }
 
-    public static boolean wardBlocksTransposition(Item item, Set<ModifierSlot> guarded) {
-        return item != null && item.explicits().stream().anyMatch(rolled -> guarded.contains(rolled.slot()));
+    public static boolean inhibitorBlocksTransposition(Item item, Set<ModifierSlot> inhibited) {
+        return item != null && item.explicits().stream().anyMatch(rolled -> inhibited.contains(rolled.slot()));
     }
 
-    public static Set<CraftingWard> wardsSpentBy(ItemCurrency currency, Item item, Collection<CraftingWard> wards) {
-        Set<CraftingWard> spent = EnumSet.noneOf(CraftingWard.class);
+    public static Set<CraftingInhibitor> inhibitorsSpentBy(ItemCurrency currency, Item item, Collection<CraftingInhibitor> inhibitors) {
+        Set<CraftingInhibitor> spent = EnumSet.noneOf(CraftingInhibitor.class);
         ItemDefinition definition = item == null ? null : item.definition();
-        if (definition == null || !currency.respectsWards()) {
+        if (definition == null || !currency.respectsInhibitors()) {
             return spent;
         }
-        for (CraftingWard ward : wards) {
-            if (item.explicits().stream().anyMatch(rolled -> rolled.slot() == ward.guardedSlot()
+        for (CraftingInhibitor inhibitor : inhibitors) {
+            if (item.explicits().stream().anyMatch(rolled -> rolled.slot() == inhibitor.inhibitedSlot()
                     && !rolled.locked() && currency.wouldChange(item, rolled))) {
-                spent.add(ward);
+                spent.add(inhibitor);
             }
         }
         return spent;
@@ -116,12 +116,12 @@ public final class ItemCrafting {
     }
 
     public static Item use(ItemCurrency currency, Item item, CraftingMaterials materials, ItemStore store, Random random,
-                           Predicate<ItemDefinition> allowedUniques, Collection<CraftingWard> wards) {
-        return Consumables.use(new CurrencyUse(currency, store, random, allowedUniques, wards), item, materials);
+                           Predicate<ItemDefinition> allowedUniques, Collection<CraftingInhibitor> inhibitors) {
+        return Consumables.use(new CurrencyUse(currency, store, random, allowedUniques, inhibitors), item, materials);
     }
 
     private record CurrencyUse(ItemCurrency currency, ItemStore store, Random random, Predicate<ItemDefinition> allowedUniques,
-                               Collection<CraftingWard> wards) implements Consumable<Item, Item> {
+                               Collection<CraftingInhibitor> inhibitors) implements Consumable<Item, Item> {
 
         @Override
         public String itemId() {
@@ -130,27 +130,27 @@ public final class ItemCrafting {
 
         @Override
         public UseVerdict check(Item item) {
-            return verdict(currency, item, allowedUniques, wards);
+            return verdict(currency, item, allowedUniques, inhibitors);
         }
 
         @Override
         public Item apply(Item item) {
-            return currency.use(item, new CraftingContext(store, allowedUniques, CraftingWard.guardedSlots(wards)), random);
+            return currency.use(item, new CraftingContext(store, allowedUniques, CraftingInhibitor.inhibitedSlots(inhibitors)), random);
         }
 
         @Override
         public Collection<String> requiredItemIds() {
-            return wards.stream().map(CraftingWard::itemId).toList();
+            return inhibitors.stream().map(CraftingInhibitor::itemId).toList();
         }
 
         @Override
         public Collection<String> spentAlongside(Item item) {
-            return wardsSpentBy(currency, item, wards).stream().map(CraftingWard::itemId).toList();
+            return inhibitorsSpentBy(currency, item, inhibitors).stream().map(CraftingInhibitor::itemId).toList();
         }
     }
 
-    private static boolean guards(RolledModifier rolled, Set<ModifierSlot> guarded) {
-        return rolled.locked() || guarded.contains(rolled.slot());
+    private static boolean guards(RolledModifier rolled, Set<ModifierSlot> inhibited) {
+        return rolled.locked() || inhibited.contains(rolled.slot());
     }
 
     static boolean canAugment(Item item) {
@@ -169,22 +169,22 @@ public final class ItemCrafting {
         return addedModifier;
     }
 
-    static boolean canRecalibrate(Item item, ItemDefinition definition, Set<ModifierSlot> guarded) {
-        return definition != null && (item.hasTunableTrait() || item.explicits().stream().anyMatch(rolled -> !guards(rolled, guarded) && canVary(item, rolled)));
+    static boolean canRecalibrate(Item item, ItemDefinition definition, Set<ModifierSlot> inhibited) {
+        return definition != null && (item.hasTunableTrait() || item.explicits().stream().anyMatch(rolled -> !guards(rolled, inhibited) && canVary(item, rolled)));
     }
 
     static Item recalibrate(Item item, Random random) {
         return recalibrate(item, random, Set.of());
     }
 
-    static Item recalibrate(Item item, Random random, Set<ModifierSlot> guarded) {
+    static Item recalibrate(Item item, Random random, Set<ModifierSlot> inhibited) {
         ItemDefinition definition = item.definition();
         if (definition == null) {
             return null;
         }
         boolean traitRetuned = item.retuneTrait(random);
         for (int attempt = 0; attempt < MAX_RECALIBRATION_ATTEMPTS; attempt++) {
-            List<RolledModifier> rerolled = reroll(item, random, guarded);
+            List<RolledModifier> rerolled = reroll(item, random, inhibited);
             if (!rerolled.equals(item.explicits())) {
                 item.replaceExplicits(rerolled);
                 return item;
@@ -193,10 +193,10 @@ public final class ItemCrafting {
         return traitRetuned ? item : null;
     }
 
-    private static List<RolledModifier> reroll(Item item, Random random, Set<ModifierSlot> guarded) {
+    private static List<RolledModifier> reroll(Item item, Random random, Set<ModifierSlot> inhibited) {
         List<RolledModifier> rerolled = new ArrayList<>(item.explicits().size());
         for (RolledModifier rolled : item.explicits()) {
-            Modifier modifier = guards(rolled, guarded) ? null : item.explicitModifier(rolled.modifierId());
+            Modifier modifier = guards(rolled, inhibited) ? null : item.explicitModifier(rolled.modifierId());
             rerolled.add(modifier == null ? rolled : rolled.rerolled(modifier::line, random));
         }
         return rerolled;
@@ -223,17 +223,17 @@ public final class ItemCrafting {
         return null;
     }
 
-    static boolean canSubstitute(Item item, ItemDefinition definition, Set<ModifierSlot> guarded) {
-        return definition != null && !definition.unique() && !removableForSubstitution(item, definition, guarded).isEmpty();
+    static boolean canSubstitute(Item item, ItemDefinition definition, Set<ModifierSlot> inhibited) {
+        return definition != null && !definition.unique() && !removableForSubstitution(item, definition, inhibited).isEmpty();
     }
 
     static boolean canSubstituteAway(Item item, ItemDefinition definition, RolledModifier rolled) {
         return definition != null && !definition.unique() && !replacementSides(definition, item.explicits(), rolled, item.tier()).isEmpty();
     }
 
-    private static List<RolledModifier> removableForSubstitution(Item item, ItemDefinition definition, Set<ModifierSlot> guarded) {
+    private static List<RolledModifier> removableForSubstitution(Item item, ItemDefinition definition, Set<ModifierSlot> inhibited) {
         return item.explicits().stream()
-                .filter(rolled -> !guards(rolled, guarded) && !replacementSides(definition, item.explicits(), rolled, item.tier()).isEmpty()).toList();
+                .filter(rolled -> !guards(rolled, inhibited) && !replacementSides(definition, item.explicits(), rolled, item.tier()).isEmpty()).toList();
     }
 
     private static List<List<PoolEntry>> replacementSides(ItemDefinition definition, List<RolledModifier> modifiers, RolledModifier removed,
@@ -250,12 +250,12 @@ public final class ItemCrafting {
         return substitute(item, random, Set.of());
     }
 
-    static Item substitute(Item item, Random random, Set<ModifierSlot> guarded) {
+    static Item substitute(Item item, Random random, Set<ModifierSlot> inhibited) {
         ItemDefinition definition = item.definition();
         if (definition == null || definition.unique()) {
             return null;
         }
-        List<RolledModifier> removable = removableForSubstitution(item, definition, guarded);
+        List<RolledModifier> removable = removableForSubstitution(item, definition, inhibited);
         if (removable.isEmpty()) {
             return null;
         }
@@ -265,38 +265,38 @@ public final class ItemCrafting {
         return item;
     }
 
-    static boolean canAnnul(Item item, Set<ModifierSlot> guarded) {
+    static boolean canAnnul(Item item, Set<ModifierSlot> inhibited) {
         ItemDefinition definition = item.definition();
-        return definition != null && !definition.unique() && !annullable(item.explicits(), guarded).isEmpty();
+        return definition != null && !definition.unique() && !annullable(item.explicits(), inhibited).isEmpty();
     }
 
     static Item annul(Item item, Random random) {
         return annul(item, random, Set.of());
     }
 
-    static Item annul(Item item, Random random, Set<ModifierSlot> guarded) {
-        if (!canAnnul(item, guarded)) {
+    static Item annul(Item item, Random random, Set<ModifierSlot> inhibited) {
+        if (!canAnnul(item, inhibited)) {
             return null;
         }
-        List<RolledModifier> removable = annullable(item.explicits(), guarded);
+        List<RolledModifier> removable = annullable(item.explicits(), inhibited);
         item.removeExplicit(removable.get(random.nextInt(removable.size())));
         return item;
     }
 
-    private static List<RolledModifier> annullable(List<RolledModifier> modifiers, Set<ModifierSlot> guarded) {
-        return modifiers.stream().filter(rolled -> !guards(rolled, guarded)).toList();
+    private static List<RolledModifier> annullable(List<RolledModifier> modifiers, Set<ModifierSlot> inhibited) {
+        return modifiers.stream().filter(rolled -> !guards(rolled, inhibited)).toList();
     }
 
-    static boolean canFixate(Item item, Set<ModifierSlot> guarded) {
-        return item.explicits().size() >= MIN_FIXATION_MODIFIERS && !item.hasLockedModifier() && !fixable(item.explicits(), guarded).isEmpty();
+    static boolean canFixate(Item item, Set<ModifierSlot> inhibited) {
+        return item.explicits().size() >= MIN_FIXATION_MODIFIERS && !item.hasLockedModifier() && !fixable(item.explicits(), inhibited).isEmpty();
     }
 
     static Item fixate(Item item, Random random) {
         return fixate(item, random, Set.of());
     }
 
-    static Item fixate(Item item, Random random, Set<ModifierSlot> guarded) {
-        List<Integer> candidates = fixable(item.explicits(), guarded);
+    static Item fixate(Item item, Random random, Set<ModifierSlot> inhibited) {
+        List<Integer> candidates = fixable(item.explicits(), inhibited);
         if (item.explicits().size() < MIN_FIXATION_MODIFIERS || item.hasLockedModifier() || candidates.isEmpty()) {
             return null;
         }
@@ -307,10 +307,10 @@ public final class ItemCrafting {
         return item;
     }
 
-    private static List<Integer> fixable(List<RolledModifier> modifiers, Set<ModifierSlot> guarded) {
+    private static List<Integer> fixable(List<RolledModifier> modifiers, Set<ModifierSlot> inhibited) {
         List<Integer> candidates = new ArrayList<>();
         for (int index = 0; index < modifiers.size(); index++) {
-            if (!guarded.contains(modifiers.get(index).slot())) {
+            if (!inhibited.contains(modifiers.get(index).slot())) {
                 candidates.add(index);
             }
         }

@@ -100,8 +100,8 @@ public enum StarChartCipher implements ItemCurrency {
             return false;
         }
         return switch (this) {
-            case REFORGE -> canReforge(chart, context.guardedSlots());
-            case ERASURE -> !erasable(chart, context.guardedSlots()).isEmpty();
+            case REFORGE -> canReforge(chart, context.inhibitedSlots());
+            case ERASURE -> !erasable(chart, context.inhibitedSlots()).isEmpty();
             case CARTOGRAPHY -> chart.tier() < StarChart.HIGHEST_TIER;
         };
     }
@@ -113,47 +113,47 @@ public enum StarChartCipher implements ItemCurrency {
         }
         StarChart chart = (StarChart) item;
         return switch (this) {
-            case REFORGE -> reforge(chart, random, context.guardedSlots());
-            case ERASURE -> erase(chart, context.guardedSlots());
+            case REFORGE -> reforge(chart, random, context.inhibitedSlots());
+            case ERASURE -> erase(chart, context.inhibitedSlots());
             case CARTOGRAPHY -> raiseTier(chart);
         };
     }
 
     @Override
-    public boolean respectsWards() {
+    public boolean respectsInhibitors() {
         return this == REFORGE || this == ERASURE;
     }
 
     @Override
     public boolean wouldChange(Item item, RolledModifier rolled) {
-        return respectsWards();
+        return respectsInhibitors();
     }
 
     static boolean canReforge(StarChart chart) {
         return canReforge(chart, Set.of());
     }
 
-    static boolean canReforge(StarChart chart, Set<ModifierSlot> guarded) {
+    static boolean canReforge(StarChart chart, Set<ModifierSlot> inhibited) {
         ItemDefinition definition = chart.definition();
-        return definition != null && (rerollable(definition, definition.prefixes(), ModifierSlot.PREFIX, chart.tier(), guarded)
-                || rerollable(definition, definition.suffixes(), ModifierSlot.SUFFIX, chart.tier(), guarded));
+        return definition != null && (rerollable(definition, definition.prefixes(), ModifierSlot.PREFIX, chart.tier(), inhibited)
+                || rerollable(definition, definition.suffixes(), ModifierSlot.SUFFIX, chart.tier(), inhibited));
     }
 
-    private static boolean rerollable(ItemDefinition definition, List<PoolEntry> side, ModifierSlot slot, int tier, Set<ModifierSlot> guarded) {
-        return !guarded.contains(slot) && !AffixLayout.rollableAt(definition.type(), side, tier).isEmpty();
+    private static boolean rerollable(ItemDefinition definition, List<PoolEntry> side, ModifierSlot slot, int tier, Set<ModifierSlot> inhibited) {
+        return !inhibited.contains(slot) && !AffixLayout.rollableAt(definition.type(), side, tier).isEmpty();
     }
 
     static StarChart reforge(StarChart chart, Random random) {
         return reforge(chart, random, Set.of());
     }
 
-    static StarChart reforge(StarChart chart, Random random, Set<ModifierSlot> guarded) {
+    static StarChart reforge(StarChart chart, Random random, Set<ModifierSlot> inhibited) {
         ItemDefinition definition = chart.definition();
         if (definition == null) {
             return null;
         }
         for (int attempt = 0; attempt < MAX_REFORGE_ATTEMPTS; attempt++) {
-            List<RolledModifier> rerolled = keepGuarded(chart.explicits(), ItemRoller.rollAtTier(definition, random.nextLong(), chart.tier()), guarded);
+            List<RolledModifier> rerolled = keepInhibited(chart.explicits(), ItemRoller.rollAtTier(definition, random.nextLong(), chart.tier()), inhibited);
             if (!rerolled.equals(chart.explicits())) {
                 chart.replaceExplicits(rerolled);
                 chart.refreezeName();
@@ -163,13 +163,13 @@ public enum StarChartCipher implements ItemCurrency {
         return null;
     }
 
-    private static List<RolledModifier> keepGuarded(List<RolledModifier> previous, List<RolledModifier> rerolled, Set<ModifierSlot> guarded) {
-        if (guarded.isEmpty()) {
+    private static List<RolledModifier> keepInhibited(List<RolledModifier> previous, List<RolledModifier> rerolled, Set<ModifierSlot> inhibited) {
+        if (inhibited.isEmpty()) {
             return rerolled;
         }
-        List<RolledModifier> merged = new ArrayList<>(previous.stream().filter(rolled -> guarded.contains(rolled.slot())).toList());
+        List<RolledModifier> merged = new ArrayList<>(previous.stream().filter(rolled -> inhibited.contains(rolled.slot())).toList());
         for (RolledModifier rolled : rerolled) {
-            if (!guarded.contains(rolled.slot()) && !ModifierExclusivity.clashesWithRolled(rolled.modifierId(), merged)) {
+            if (!inhibited.contains(rolled.slot()) && !ModifierExclusivity.clashesWithRolled(rolled.modifierId(), merged)) {
                 merged.add(AffixLayout.insertIndex(merged, rolled.slot()), rolled);
             }
         }
@@ -180,7 +180,7 @@ public enum StarChartCipher implements ItemCurrency {
         return erasable(chart, Set.of());
     }
 
-    static List<Integer> erasable(StarChart chart, Set<ModifierSlot> guarded) {
+    static List<Integer> erasable(StarChart chart, Set<ModifierSlot> inhibited) {
         List<Integer> removable = new ArrayList<>();
         ItemDefinition definition = chart.definition();
         if (definition == null) {
@@ -189,15 +189,15 @@ public enum StarChartCipher implements ItemCurrency {
         List<RolledModifier> explicits = chart.explicits();
         for (int index = 0; index < explicits.size(); index++) {
             RolledModifier rolled = explicits.get(index);
-            if (!rolled.locked() && !guarded.contains(rolled.slot())) {
+            if (!rolled.locked() && !inhibited.contains(rolled.slot())) {
                 removable.add(index);
             }
         }
         return removable;
     }
 
-    static StarChart erase(StarChart chart, Set<ModifierSlot> guarded) {
-        List<Integer> removable = erasable(chart, guarded);
+    static StarChart erase(StarChart chart, Set<ModifierSlot> inhibited) {
+        List<Integer> removable = erasable(chart, inhibited);
         List<RolledModifier> remaining = new ArrayList<>();
         List<RolledModifier> explicits = chart.explicits();
         for (int index = 0; index < explicits.size(); index++) {

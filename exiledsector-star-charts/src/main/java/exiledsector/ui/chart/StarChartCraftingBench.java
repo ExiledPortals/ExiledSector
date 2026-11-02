@@ -16,7 +16,7 @@ import exiledsector.charts.wormhole.StarChartOpening;
 import exiledsector.charts.wormhole.WormholeOpenCheck;
 import exiledsector.i18n.StyledText;
 import exiledsector.items.CraftingMaterials;
-import exiledsector.items.CraftingWard;
+import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.Item;
 import exiledsector.items.ItemCurrency;
 import exiledsector.items.ItemDefinition;
@@ -99,15 +99,15 @@ public final class StarChartCraftingBench implements BenchModeSupport {
 
     @Override
     public Refusal refusal(ItemCurrency currency, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
-                           Set<CraftingWard> wards) {
-        UseVerdict verdict = StarChartCrafting.refusal(currency, loaded, store, materials, allowedUniques, wards);
+                           Set<CraftingInhibitor> inhibitors) {
+        UseVerdict verdict = StarChartCrafting.refusal(currency, loaded, store, materials, allowedUniques, inhibitors);
         return new Refusal(verdict, !verdict.equals(StarChartCrafting.NO_CHART) && !verdict.equals(StarChartCrafting.NONE_OWNED));
     }
 
     @Override
     public Use use(ItemCurrency currency, Item loaded, ItemStore store, CraftingMaterials materials, Random random,
-                   Predicate<ItemDefinition> allowedUniques, Set<CraftingWard> wards, String nameBefore) {
-        StarChartCrafting.Used used = StarChartCrafting.use(currency, loaded, store, materials, random, allowedUniques, wards);
+                   Predicate<ItemDefinition> allowedUniques, Set<CraftingInhibitor> inhibitors, String nameBefore) {
+        StarChartCrafting.Used used = StarChartCrafting.use(currency, loaded, store, materials, random, allowedUniques, inhibitors);
         return used == null ? null : new Use(used.result(), used.selectedAfter(), StarChartCrafting.usedNotice(currency, nameBefore, used));
     }
 

@@ -94,8 +94,8 @@ class CraftingMaterialsTest {
     }
 
     @Test
-    void thePartsEveryKernelAndEveryWardAreManaged() {
-        assertEquals(1 + CraftingCurrency.values().length + CraftingWard.values().length, MaterialItems.ids().size());
+    void thePartsEveryKernelAndEveryInhibitorAreManaged() {
+        assertEquals(1 + CraftingCurrency.values().length + CraftingInhibitor.values().length, MaterialItems.ids().size());
         assertTrue(MaterialItems.ids().contains(PARTS));
     }
 }

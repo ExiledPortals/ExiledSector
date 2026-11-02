@@ -3,7 +3,7 @@ package exiledsector.ui.socket;
 import exiledsector.i18n.RealCatalogue;
 import exiledsector.items.CorruptionOutcome;
 import exiledsector.items.CraftingCurrency;
-import exiledsector.items.CraftingWard;
+import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.ItemNature;
 import exiledsector.items.MaterialItems;
 import exiledsector.modifiers.ModifierSlot;
@@ -41,9 +41,9 @@ class CraftingBenchStringKeysTest {
                 }
             }
         }
-        for (CraftingWard ward : CraftingWard.values()) {
-            require(catalogue, CraftingBenchPanel.wardDescriptionKey(ward), missing);
-            require(catalogue, "ui.craftingBench.notice.wardOn." + ward.name().toLowerCase(java.util.Locale.ROOT), missing);
+        for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
+            require(catalogue, CraftingBenchPanel.inhibitorDescriptionKey(inhibitor), missing);
+            require(catalogue, "ui.craftingBench.notice.inhibitorOn." + inhibitor.name().toLowerCase(java.util.Locale.ROOT), missing);
         }
         for (ModifierSlot slot : List.of(ModifierSlot.PREFIX, ModifierSlot.SUFFIX)) {
             require(catalogue, CraftingBenchPanel.slotTagKey(slot), missing);

@@ -23,7 +23,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class CraftingWardTest {
+class CraftingInhibitorTest {
 
     private final ItemStore store = new ItemStore();
     private final CargoAPI cargo = mock(CargoAPI.class);
@@ -59,7 +59,7 @@ class CraftingWardTest {
     }
 
     @Test
-    void aPrefixWardKeepsRecalibrationOffEveryPrefix() {
+    void aPrefixInhibitorKeepsRecalibrationOffEveryPrefix() {
         Item item = rare();
         List<RolledModifier> prefixes = side(item, ModifierSlot.PREFIX);
 
@@ -70,7 +70,7 @@ class CraftingWardTest {
     }
 
     @Test
-    void aSuffixWardKeepsSubstitutionOffEverySuffix() {
+    void aSuffixInhibitorKeepsSubstitutionOffEverySuffix() {
         Item item = rare();
         List<RolledModifier> suffixes = side(item, ModifierSlot.SUFFIX);
 
@@ -91,30 +91,30 @@ class CraftingWardTest {
     }
 
     @Test
-    void wardsBlockTranspositionButLeaveCorruptionAndReplicationAlone() {
+    void inhibitorsBlockTranspositionButLeaveCorruptionAndReplicationAlone() {
         Item unique = store.add(ItemDefinitions.get("relic_a"), 5L);
-        List<CraftingWard> prefixWard = List.of(CraftingWard.PREFIX);
+        List<CraftingInhibitor> prefixInhibitor = List.of(CraftingInhibitor.PREFIX);
 
         assertTrue(ItemCrafting.canUse(CraftingCurrency.TRANSPOSITION, unique, definition -> true));
-        assertFalse(ItemCrafting.canUse(CraftingCurrency.TRANSPOSITION, unique, definition -> true, prefixWard));
-        assertTrue(ItemCrafting.canUse(CraftingCurrency.CORRUPTION, unique, definition -> true, prefixWard));
-        assertTrue(ItemCrafting.canUse(CraftingCurrency.REPLICATION, unique, definition -> true, prefixWard));
-        assertTrue(ItemCrafting.wardsSpentBy(CraftingCurrency.CORRUPTION, unique, prefixWard).isEmpty());
-        assertTrue(ItemCrafting.wardsSpentBy(CraftingCurrency.REPLICATION, unique, prefixWard).isEmpty());
-        assertTrue(ItemCrafting.wardsSpentBy(CraftingCurrency.AUGMENTATION, rare(), prefixWard).isEmpty());
+        assertFalse(ItemCrafting.canUse(CraftingCurrency.TRANSPOSITION, unique, definition -> true, prefixInhibitor));
+        assertTrue(ItemCrafting.canUse(CraftingCurrency.CORRUPTION, unique, definition -> true, prefixInhibitor));
+        assertTrue(ItemCrafting.canUse(CraftingCurrency.REPLICATION, unique, definition -> true, prefixInhibitor));
+        assertTrue(ItemCrafting.inhibitorsSpentBy(CraftingCurrency.CORRUPTION, unique, prefixInhibitor).isEmpty());
+        assertTrue(ItemCrafting.inhibitorsSpentBy(CraftingCurrency.REPLICATION, unique, prefixInhibitor).isEmpty());
+        assertTrue(ItemCrafting.inhibitorsSpentBy(CraftingCurrency.AUGMENTATION, rare(), prefixInhibitor).isEmpty());
     }
 
     @Test
     void aWardIsSpentOnlyWhenItProtectsAnEffect() {
         Item item = rare();
         owns(CraftingCurrency.RECALIBRATION.itemId(), 1f);
-        owns(CraftingWard.PREFIX.itemId(), 1f);
+        owns(CraftingInhibitor.PREFIX.itemId(), 1f);
 
-        assertEquals(Set.of(CraftingWard.PREFIX), ItemCrafting.wardsSpentBy(CraftingCurrency.RECALIBRATION, item, List.of(CraftingWard.PREFIX)));
+        assertEquals(Set.of(CraftingInhibitor.PREFIX), ItemCrafting.inhibitorsSpentBy(CraftingCurrency.RECALIBRATION, item, List.of(CraftingInhibitor.PREFIX)));
         assertNotNull(ItemCrafting.use(CraftingCurrency.RECALIBRATION, item, CraftingMaterials.cargoOnly(cargo), store, new Random(3L),
-                definition -> true, List.of(CraftingWard.PREFIX)));
+                definition -> true, List.of(CraftingInhibitor.PREFIX)));
 
-        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(CraftingWard.PREFIX.itemId()), 1);
+        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(CraftingInhibitor.PREFIX.itemId()), 1);
         verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(CraftingCurrency.RECALIBRATION.itemId()), 1);
     }
 
@@ -125,28 +125,28 @@ class CraftingWardTest {
         ItemCrafting.fixate(item, new Random(1L), Set.of(ModifierSlot.SUFFIX));
 
         assertTrue(side(item, ModifierSlot.PREFIX).get(0).locked());
-        assertTrue(ItemCrafting.wardsSpentBy(CraftingCurrency.RECALIBRATION, item, List.of(CraftingWard.PREFIX)).isEmpty());
-        assertTrue(ItemCrafting.wardsSpentBy(CraftingCurrency.SUBSTITUTION, item, List.of(CraftingWard.PREFIX)).isEmpty());
-        assertEquals(Set.of(CraftingWard.SUFFIX), ItemCrafting.wardsSpentBy(CraftingCurrency.RECALIBRATION, item, List.of(CraftingWard.SUFFIX)));
+        assertTrue(ItemCrafting.inhibitorsSpentBy(CraftingCurrency.RECALIBRATION, item, List.of(CraftingInhibitor.PREFIX)).isEmpty());
+        assertTrue(ItemCrafting.inhibitorsSpentBy(CraftingCurrency.SUBSTITUTION, item, List.of(CraftingInhibitor.PREFIX)).isEmpty());
+        assertEquals(Set.of(CraftingInhibitor.SUFFIX), ItemCrafting.inhibitorsSpentBy(CraftingCurrency.RECALIBRATION, item, List.of(CraftingInhibitor.SUFFIX)));
     }
 
     @Test
     void aWardYouDoNotOwnStopsTheModification() {
         Item item = rare();
         owns(CraftingCurrency.RECALIBRATION.itemId(), 1f);
-        owns(CraftingWard.SUFFIX.itemId(), 0f);
+        owns(CraftingInhibitor.SUFFIX.itemId(), 0f);
 
         assertEquals(null, ItemCrafting.use(CraftingCurrency.RECALIBRATION, item, CraftingMaterials.cargoOnly(cargo), store, new Random(3L),
-                definition -> true, List.of(CraftingWard.SUFFIX)));
+                definition -> true, List.of(CraftingInhibitor.SUFFIX)));
         verify(cargo, never()).removeItems(Mockito.any(), Mockito.any(), anyFloat());
     }
 
     @Test
     void wardsAreRareFoundMaterialsThatCannotBeSynthesised() {
-        for (CraftingWard ward : CraftingWard.values()) {
-            assertTrue(MaterialItems.ids().contains(ward.itemId()));
-            assertEquals(MaterialTier.EXOTIC, MaterialItems.tier(ward.itemId()));
-            assertTrue(ward.dropWeight() < 1f);
+        for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
+            assertTrue(MaterialItems.ids().contains(inhibitor.itemId()));
+            assertEquals(MaterialTier.EXOTIC, MaterialItems.tier(inhibitor.itemId()));
+            assertTrue(inhibitor.dropWeight() < 1f);
         }
     }
 }

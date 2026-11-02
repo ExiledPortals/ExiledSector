@@ -201,11 +201,11 @@ class ItemCraftingTest {
     void anInhibitorGrowsFromItsPartsCost() {
         owns(PARTS, 100f);
 
-        assertTrue(CraftingWard.PREFIX.synthesisable());
-        assertTrue(ItemCrafting.synthesise(CraftingWard.PREFIX, CraftingMaterials.cargoOnly(cargo)));
+        assertTrue(CraftingInhibitor.PREFIX.synthesisable());
+        assertTrue(ItemCrafting.synthesise(CraftingInhibitor.PREFIX, CraftingMaterials.cargoOnly(cargo)));
 
         verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(PARTS), 100);
-        verify(cargo).addSpecial(MaterialItems.data(CraftingWard.PREFIX.itemId()), 1);
+        verify(cargo).addSpecial(MaterialItems.data(CraftingInhibitor.PREFIX.itemId()), 1);
     }
 
     @Test
@@ -319,13 +319,13 @@ class ItemCraftingTest {
     void annulmentSkipsUniquesSubroutinesAndGuardedSlots() {
         Item unique = store.add(ItemDefinitions.get("relic_a"), 5L);
         Item item = common();
-        Set<ModifierSlot> bothGuarded = EnumSet.allOf(ModifierSlot.class);
+        Set<ModifierSlot> bothInhibited = EnumSet.allOf(ModifierSlot.class);
 
         assertFalse(ItemCrafting.canUse(CraftingCurrency.ANNULMENT, unique, definition -> true));
         assertFalse(CraftingCurrency.ANNULMENT.appliesTo(ItemType.SUBROUTINE));
         assertTrue(CraftingCurrency.ANNULMENT.appliesTo(ItemType.HULL_ITEM));
-        assertFalse(ItemCrafting.canAnnul(item, bothGuarded));
-        assertNull(ItemCrafting.annul(item, new Random(1L), bothGuarded));
+        assertFalse(ItemCrafting.canAnnul(item, bothInhibited));
+        assertNull(ItemCrafting.annul(item, new Random(1L), bothInhibited));
         assertEquals(2, item.explicits().size());
     }
 

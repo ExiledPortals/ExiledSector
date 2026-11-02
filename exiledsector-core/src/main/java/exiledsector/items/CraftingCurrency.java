@@ -32,16 +32,16 @@ public enum CraftingCurrency implements ItemCurrency {
     SUBSTITUTION("exiledSector_substitution_kernel", 20, 3, MaterialTier.MAJOR, new Color(255, 195, 80)) {
         @Override
         public boolean canUse(Item item, CraftingContext context) {
-            return ItemCrafting.canSubstitute(item, item.definition(), context.guardedSlots());
+            return ItemCrafting.canSubstitute(item, item.definition(), context.inhibitedSlots());
         }
 
         @Override
         public Item use(Item item, CraftingContext context, Random random) {
-            return ItemCrafting.substitute(item, random, context.guardedSlots());
+            return ItemCrafting.substitute(item, random, context.inhibitedSlots());
         }
 
         @Override
-        public boolean respectsWards() {
+        public boolean respectsInhibitors() {
             return true;
         }
 
@@ -69,7 +69,7 @@ public enum CraftingCurrency implements ItemCurrency {
     TRANSPOSITION("exiledSector_transposition_kernel", 150, 0.4f, MaterialTier.MYTHIC, new Color(255, 140, 50)) {
         @Override
         public boolean canUse(Item item, CraftingContext context) {
-            return !ItemCrafting.wardBlocksTransposition(item, context.guardedSlots())
+            return !ItemCrafting.inhibitorBlocksTransposition(item, context.inhibitedSlots())
                     && ItemCrafting.canTranspose(item.definition(), item.tier(), context.allowedUniques());
         }
 
@@ -91,16 +91,16 @@ public enum CraftingCurrency implements ItemCurrency {
 
         @Override
         public boolean canUse(Item item, CraftingContext context) {
-            return ItemCrafting.canAnnul(item, context.guardedSlots());
+            return ItemCrafting.canAnnul(item, context.inhibitedSlots());
         }
 
         @Override
         public Item use(Item item, CraftingContext context, Random random) {
-            return ItemCrafting.annul(item, random, context.guardedSlots());
+            return ItemCrafting.annul(item, random, context.inhibitedSlots());
         }
 
         @Override
-        public boolean respectsWards() {
+        public boolean respectsInhibitors() {
             return true;
         }
 
@@ -112,16 +112,16 @@ public enum CraftingCurrency implements ItemCurrency {
     RECALIBRATION("exiledSector_recalibration_kernel", 200, 0.3f, MaterialTier.MYTHIC, new Color(110, 235, 140)) {
         @Override
         public boolean canUse(Item item, CraftingContext context) {
-            return ItemCrafting.canRecalibrate(item, item.definition(), context.guardedSlots());
+            return ItemCrafting.canRecalibrate(item, item.definition(), context.inhibitedSlots());
         }
 
         @Override
         public Item use(Item item, CraftingContext context, Random random) {
-            return ItemCrafting.recalibrate(item, random, context.guardedSlots());
+            return ItemCrafting.recalibrate(item, random, context.inhibitedSlots());
         }
 
         @Override
-        public boolean respectsWards() {
+        public boolean respectsInhibitors() {
             return true;
         }
 
@@ -133,16 +133,16 @@ public enum CraftingCurrency implements ItemCurrency {
     FIXATION("exiledSector_fixation_kernel", 300, 0.2f, MaterialTier.MYTHIC, new Color(230, 80, 175)) {
         @Override
         public boolean canUse(Item item, CraftingContext context) {
-            return ItemCrafting.canFixate(item, context.guardedSlots());
+            return ItemCrafting.canFixate(item, context.inhibitedSlots());
         }
 
         @Override
         public Item use(Item item, CraftingContext context, Random random) {
-            return ItemCrafting.fixate(item, random, context.guardedSlots());
+            return ItemCrafting.fixate(item, random, context.inhibitedSlots());
         }
 
         @Override
-        public boolean respectsWards() {
+        public boolean respectsInhibitors() {
             return true;
         }
 

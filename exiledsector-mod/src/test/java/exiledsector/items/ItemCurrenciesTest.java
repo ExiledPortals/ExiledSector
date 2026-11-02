@@ -113,15 +113,15 @@ class ItemCurrenciesTest {
     void materialsGetRarerAndCostlierToGrowInTheIntendedOrder() {
         List<String> commonestFirst = List.of(
                 CraftingCurrency.AUGMENTATION.itemId(), CraftingCurrency.ATTUNEMENT.itemId(), CraftingCurrency.SUBSTITUTION.itemId(),
-                CraftingCurrency.CORRUPTION.itemId(), CraftingWard.PREFIX.itemId(), CraftingWard.SUFFIX.itemId(),
+                CraftingCurrency.CORRUPTION.itemId(), CraftingInhibitor.PREFIX.itemId(), CraftingInhibitor.SUFFIX.itemId(),
                 CraftingCurrency.TRANSPOSITION.itemId(), CraftingCurrency.ANNULMENT.itemId(), CraftingCurrency.RECALIBRATION.itemId(), CraftingCurrency.FIXATION.itemId(),
                 CraftingCurrency.REPLICATION.itemId());
         float previousWeight = Float.MAX_VALUE;
         int previousCost = 0;
         for (String itemId : commonestFirst) {
             CraftingCurrency currency = CraftingCurrency.byItemId(itemId);
-            GrowableMaterial material = currency != null ? currency : CraftingWard.byItemId(itemId);
-            float weight = currency != null ? currency.dropWeight() : CraftingWard.byItemId(itemId).dropWeight();
+            GrowableMaterial material = currency != null ? currency : CraftingInhibitor.byItemId(itemId);
+            float weight = currency != null ? currency.dropWeight() : CraftingInhibitor.byItemId(itemId).dropWeight();
             assertTrue(weight <= previousWeight, itemId + " drops more often than the material before it");
             previousWeight = weight;
             if (material.synthesisable()) {
@@ -129,8 +129,8 @@ class ItemCurrenciesTest {
                 previousCost = material.partsCost();
             }
         }
-        assertTrue(CraftingWard.PREFIX.dropWeight() < CraftingCurrency.CORRUPTION.dropWeight());
-        assertTrue(CraftingCurrency.TRANSPOSITION.dropWeight() < CraftingWard.SUFFIX.dropWeight());
+        assertTrue(CraftingInhibitor.PREFIX.dropWeight() < CraftingCurrency.CORRUPTION.dropWeight());
+        assertTrue(CraftingCurrency.TRANSPOSITION.dropWeight() < CraftingInhibitor.SUFFIX.dropWeight());
     }
 
     @Test
@@ -163,12 +163,12 @@ class ItemCurrenciesTest {
 
     @Test
     void theBuiltInsKeepTheirWardAndCopyRules() {
-        Set<CraftingCurrency> respectsWards = EnumSet.noneOf(CraftingCurrency.class);
+        Set<CraftingCurrency> respectsInhibitors = EnumSet.noneOf(CraftingCurrency.class);
         Set<CraftingCurrency> createsCopy = EnumSet.noneOf(CraftingCurrency.class);
         Set<CraftingCurrency> mayChangeDefinition = EnumSet.noneOf(CraftingCurrency.class);
         for (CraftingCurrency currency : CraftingCurrency.values()) {
-            if (currency.respectsWards()) {
-                respectsWards.add(currency);
+            if (currency.respectsInhibitors()) {
+                respectsInhibitors.add(currency);
             }
             if (currency.createsCopy()) {
                 createsCopy.add(currency);
@@ -179,7 +179,7 @@ class ItemCurrenciesTest {
         }
 
         assertEquals(EnumSet.of(CraftingCurrency.RECALIBRATION, CraftingCurrency.SUBSTITUTION, CraftingCurrency.ANNULMENT,
-                CraftingCurrency.FIXATION), respectsWards);
+                CraftingCurrency.FIXATION), respectsInhibitors);
         assertEquals(EnumSet.of(CraftingCurrency.REPLICATION), createsCopy);
         assertEquals(EnumSet.of(CraftingCurrency.TRANSPOSITION, CraftingCurrency.CORRUPTION), mayChangeDefinition);
     }
@@ -190,8 +190,8 @@ class ItemCurrenciesTest {
         for (CraftingCurrency currency : CraftingCurrency.values()) {
             builtInDrops.add(new ItemDrops.CurrencyDrop(currency.itemId(), currency.dropWeight()));
         }
-        for (CraftingWard ward : CraftingWard.values()) {
-            builtInDrops.add(new ItemDrops.CurrencyDrop(ward.itemId(), ward.dropWeight()));
+        for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
+            builtInDrops.add(new ItemDrops.CurrencyDrop(inhibitor.itemId(), inhibitor.dropWeight()));
         }
         assertEquals(builtInDrops, ItemDrops.kernelDrops());
     }
@@ -216,7 +216,7 @@ class ItemCurrenciesTest {
         assertSame(hullItem, ItemCrafting.use(purge, hullItem, CraftingMaterials.cargoOnly(cargo), store, new Random(2L), definition -> true));
         assertEquals(explicitsBefore - 1, hullItem.explicits().size());
         verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(PURGE_ID), 1);
-        assertTrue(ItemCrafting.wardsSpentBy(purge, hullItem, List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)).isEmpty());
+        assertTrue(ItemCrafting.inhibitorsSpentBy(purge, hullItem, List.of(CraftingInhibitor.PREFIX, CraftingInhibitor.SUFFIX)).isEmpty());
         assertTrue(ItemDrops.kernelDrops().stream().anyMatch(drop -> drop.itemId().equals(PURGE_ID)));
     }
 

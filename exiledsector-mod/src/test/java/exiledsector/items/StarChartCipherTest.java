@@ -324,28 +324,28 @@ class StarChartCipherTest {
     void anInhibitorKeepsItsSideThroughErasureAndIsUsedUp() {
         StarChart chart = storedWith(SINGLE, 9, candidate -> side(candidate, ModifierSlot.PREFIX) >= 1 && side(candidate, ModifierSlot.SUFFIX) >= 1);
         List<RolledModifier> prefixes = chart.explicits().stream().filter(rolled -> rolled.slot() == ModifierSlot.PREFIX).toList();
-        List<CraftingWard> prefixWard = List.of(CraftingWard.PREFIX);
+        List<CraftingInhibitor> prefixInhibitor = List.of(CraftingInhibitor.PREFIX);
 
-        assertEquals(Set.of(CraftingWard.PREFIX), ItemCrafting.wardsSpentBy(StarChartCipher.ERASURE, chart, prefixWard));
-        assertSame(chart, ItemCrafting.use(StarChartCipher.ERASURE, chart, materials, store, new Random(2L), ANY_UNIQUE, prefixWard));
+        assertEquals(Set.of(CraftingInhibitor.PREFIX), ItemCrafting.inhibitorsSpentBy(StarChartCipher.ERASURE, chart, prefixInhibitor));
+        assertSame(chart, ItemCrafting.use(StarChartCipher.ERASURE, chart, materials, store, new Random(2L), ANY_UNIQUE, prefixInhibitor));
 
         assertEquals(prefixes, chart.explicits());
-        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(CraftingWard.PREFIX.itemId()), 1);
-        assertFalse(ItemCrafting.canUse(StarChartCipher.ERASURE, chart, ANY_UNIQUE, prefixWard));
-        assertFalse(ItemCrafting.canUse(StarChartCipher.ERASURE, chart, ANY_UNIQUE, List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)));
+        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(CraftingInhibitor.PREFIX.itemId()), 1);
+        assertFalse(ItemCrafting.canUse(StarChartCipher.ERASURE, chart, ANY_UNIQUE, prefixInhibitor));
+        assertFalse(ItemCrafting.canUse(StarChartCipher.ERASURE, chart, ANY_UNIQUE, List.of(CraftingInhibitor.PREFIX, CraftingInhibitor.SUFFIX)));
         assertTrue(ItemCrafting.canUse(StarChartCipher.ERASURE, chart, ANY_UNIQUE));
     }
 
     @Test
     void anInhibitorKeepsItsSideThroughAReforgeAndOnlyTheOtherSideIsRerolled() {
         StarChart chart = storedWith(SINGLE, 6, candidate -> side(candidate, ModifierSlot.SUFFIX) >= 1);
-        List<CraftingWard> suffixWard = List.of(CraftingWard.SUFFIX);
+        List<CraftingInhibitor> suffixInhibitor = List.of(CraftingInhibitor.SUFFIX);
         boolean prefixesChanged = false;
         for (long seed = 0; seed < 40; seed++) {
             List<RolledModifier> suffixes = chart.explicits().stream().filter(rolled -> rolled.slot() == ModifierSlot.SUFFIX).toList();
             List<RolledModifier> prefixes = chart.explicits().stream().filter(rolled -> rolled.slot() == ModifierSlot.PREFIX).toList();
 
-            assertSame(chart, ItemCrafting.use(StarChartCipher.REFORGE, chart, materials, store, new Random(seed), ANY_UNIQUE, suffixWard));
+            assertSame(chart, ItemCrafting.use(StarChartCipher.REFORGE, chart, materials, store, new Random(seed), ANY_UNIQUE, suffixInhibitor));
 
             assertEquals(suffixes, chart.explicits().stream().filter(rolled -> rolled.slot() == ModifierSlot.SUFFIX).toList());
             prefixesChanged |= !prefixes.equals(chart.explicits().stream().filter(rolled -> rolled.slot() == ModifierSlot.PREFIX).toList());
@@ -353,15 +353,15 @@ class StarChartCipherTest {
             assertEquals(chart.explicits().size() <= 2 ? ItemRarity.COMMON : ItemRarity.RARE, chart.rarity());
         }
         assertTrue(prefixesChanged);
-        assertFalse(ItemCrafting.canUse(StarChartCipher.REFORGE, chart, ANY_UNIQUE, List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)));
+        assertFalse(ItemCrafting.canUse(StarChartCipher.REFORGE, chart, ANY_UNIQUE, List.of(CraftingInhibitor.PREFIX, CraftingInhibitor.SUFFIX)));
     }
 
     @Test
     void cartographyIgnoresInhibitors() {
         StarChart chart = storedWith(SINGLE, 4, candidate -> !candidate.explicits().isEmpty());
 
-        assertTrue(ItemCrafting.wardsSpentBy(StarChartCipher.CARTOGRAPHY, chart, List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)).isEmpty());
-        assertTrue(ItemCrafting.canUse(StarChartCipher.CARTOGRAPHY, chart, ANY_UNIQUE, List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)));
+        assertTrue(ItemCrafting.inhibitorsSpentBy(StarChartCipher.CARTOGRAPHY, chart, List.of(CraftingInhibitor.PREFIX, CraftingInhibitor.SUFFIX)).isEmpty());
+        assertTrue(ItemCrafting.canUse(StarChartCipher.CARTOGRAPHY, chart, ANY_UNIQUE, List.of(CraftingInhibitor.PREFIX, CraftingInhibitor.SUFFIX)));
     }
 
     @Test
@@ -424,8 +424,8 @@ class StarChartCipherTest {
         for (CraftingCurrency currency : CraftingCurrency.values()) {
             builtInDrops.add(new ItemDrops.CurrencyDrop(currency.itemId(), currency.dropWeight()));
         }
-        for (CraftingWard ward : CraftingWard.values()) {
-            builtInDrops.add(new ItemDrops.CurrencyDrop(ward.itemId(), ward.dropWeight()));
+        for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
+            builtInDrops.add(new ItemDrops.CurrencyDrop(inhibitor.itemId(), inhibitor.dropWeight()));
         }
         assertEquals(builtInDrops, ItemDrops.kernelDrops());
     }

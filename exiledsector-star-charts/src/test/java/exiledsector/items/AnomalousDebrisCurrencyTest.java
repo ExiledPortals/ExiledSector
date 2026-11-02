@@ -285,21 +285,21 @@ class AnomalousDebrisCurrencyTest {
     void anEngramIsRefusedWhenTheInhibitedSideHasNoRoomOrSharesItsEffect() {
         Item fullPrefixes = withModifiers(rolled(ModifierSlot.PREFIX, "FLUX_CAPACITY_MULT", 5f), rolled(ModifierSlot.PREFIX, "FLUX_DISSIPATION_MULT", 5f));
         Item sameEffect = withModifiers(rolled(ModifierSlot.SUFFIX, "BEAM_WEAPON_RANGE_PERCENT", 5f));
-        CraftingContext prefixWard = new CraftingContext(store, definition -> true, Set.of(ModifierSlot.PREFIX));
-        CraftingContext suffixWard = new CraftingContext(store, definition -> true, Set.of(ModifierSlot.SUFFIX));
+        CraftingContext prefixInhibitor = new CraftingContext(store, definition -> true, Set.of(ModifierSlot.PREFIX));
+        CraftingContext suffixInhibitor = new CraftingContext(store, definition -> true, Set.of(ModifierSlot.SUFFIX));
 
-        assertFalse(currency(REVENANT).canUse(fullPrefixes, prefixWard));
-        assertTrue(currency(REVENANT).canUse(common(), prefixWard));
-        assertFalse(currency(VIGIL).canUse(sameEffect, suffixWard));
-        assertTrue(currency(VIGIL).canUse(sameEffect, prefixWard));
+        assertFalse(currency(REVENANT).canUse(fullPrefixes, prefixInhibitor));
+        assertTrue(currency(REVENANT).canUse(common(), prefixInhibitor));
+        assertFalse(currency(VIGIL).canUse(sameEffect, suffixInhibitor));
+        assertTrue(currency(VIGIL).canUse(sameEffect, prefixInhibitor));
     }
 
     @Test
     void anInhibitorIsSpentOnlyWhenItsSideHasSomethingToKeep() {
         Item withSuffix = withModifiers(rolled(ModifierSlot.PREFIX, "FLUX_CAPACITY_MULT", 5f), rolled(ModifierSlot.SUFFIX, "ARMOR_PERCENT", 5f));
 
-        assertEquals(Set.of(CraftingWard.SUFFIX), ItemCrafting.wardsSpentBy(currency(REVENANT), withSuffix, List.of(CraftingWard.SUFFIX)));
-        assertEquals(Set.of(), ItemCrafting.wardsSpentBy(currency(REVENANT), common(), List.of(CraftingWard.SUFFIX)));
+        assertEquals(Set.of(CraftingInhibitor.SUFFIX), ItemCrafting.inhibitorsSpentBy(currency(REVENANT), withSuffix, List.of(CraftingInhibitor.SUFFIX)));
+        assertEquals(Set.of(), ItemCrafting.inhibitorsSpentBy(currency(REVENANT), common(), List.of(CraftingInhibitor.SUFFIX)));
     }
 
     @Test
