@@ -52,4 +52,8 @@ public final class MaterialIdAliases {
     public static Map<String, String> currentIdsByAlias() {
         return CURRENT_IDS_BY_ALIAS.get();
     }
+
+    public static String currentId(String itemId) {
+        return itemId == null ? null : CURRENT_IDS_BY_ALIAS.get().getOrDefault(itemId, itemId);
+    }
 }

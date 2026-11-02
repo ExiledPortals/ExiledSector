@@ -18,6 +18,11 @@ public class MaterialItemPlugin extends AnimatedCargoItemPlugin {
     private static final float LINE_PAD = 3f;
 
     @Override
+    public void setId(String id) {
+        super.setId(MaterialIdAliases.currentId(id));
+    }
+
+    @Override
     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, CargoTransferHandlerAPI transferHandler, Object stackSource) {
         tooltip.addTitle(getName(), MaterialItems.color(itemId));
         String description = spec == null ? null : spec.getDesc();
