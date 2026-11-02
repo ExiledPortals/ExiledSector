@@ -10,7 +10,9 @@ import java.util.Set;
 
 public class ShipSkillData {
 
-    public static final Map<String, String> SAVED_FIELD_NAMES = Map.of("unlockedSections", "unlockedSocketTypes", "hullItemsBySection", "frameworkItemsBySocketType");
+    public static final Map<String, String> SAVED_FIELD_NAMES = Map.of("unlockedSections", "unlockedSocketTypes",
+            "hullItemsBySection", "frameworkItemsBySocketType", "paidItemCostIds", "chargedItemIds", "paidItemCostQuantities", "chargedItemQuantities",
+            "pairGrantedNodeIds", "pairedFreeNodeIds", "subroutineGrantedNodeIds", "grantFreeNodeIds");
 
     final Set<String> allocatedNodeIds = new LinkedHashSet<>();
     Map<String, String> optionalSelections = new LinkedHashMap<>();
@@ -18,23 +20,23 @@ public class ShipSkillData {
     float xp = 0f;
     int bankedFreeAllocations = 0;
     Set<String> freeNodeIds = new LinkedHashSet<>();
-    Set<String> pairedFreeNodeIds = new LinkedHashSet<>();
-    Set<String> grantFreeNodeIds;
+    Set<String> pairGrantedNodeIds = new LinkedHashSet<>();
+    Set<String> subroutineGrantedNodeIds;
     transient Set<String> fleetGrantNodeIds;
     Set<String> replacementAllocatedNodeIds;
     String startingRootId;
     boolean npcBuild;
     transient int revision;
     Map<String, String> socketedItems;
-    Map<String, String> chargedItemIds;
-    Map<String, Float> chargedItemQuantities;
+    Map<String, String> paidItemCostIds;
+    Map<String, Float> paidItemCostQuantities;
     Set<String> dormantNodeIds;
     int frameworkPoints;
     boolean skillTreeUnlocked;
     List<String> unlockedSections;
     Map<String, String> hullItemsBySection;
     boolean autoAllocateTemplate;
-    transient int pendingTemplateCredits;
+    transient int pendingTemplateFreeAllocations;
     transient LinkCache<AnchorLinkMaps> anchorLinks;
     transient LinkCache<Map<String, List<String>>> grantLinks;
 
@@ -61,9 +63,9 @@ public class ShipSkillData {
         return dormantNodeIds;
     }
 
-    Set<String> pairedFreeNodeIds() {
-        if (pairedFreeNodeIds == null) pairedFreeNodeIds = new LinkedHashSet<>();
-        return pairedFreeNodeIds;
+    Set<String> pairGrantedNodeIds() {
+        if (pairGrantedNodeIds == null) pairGrantedNodeIds = new LinkedHashSet<>();
+        return pairGrantedNodeIds;
     }
 
     Set<String> replacementAllocatedNodeIds() {
@@ -71,9 +73,9 @@ public class ShipSkillData {
         return replacementAllocatedNodeIds;
     }
 
-    Set<String> grantFreeNodeIds() {
-        if (grantFreeNodeIds == null) grantFreeNodeIds = new LinkedHashSet<>();
-        return grantFreeNodeIds;
+    Set<String> subroutineGrantedNodeIds() {
+        if (subroutineGrantedNodeIds == null) subroutineGrantedNodeIds = new LinkedHashSet<>();
+        return subroutineGrantedNodeIds;
     }
 
     Set<String> fleetGrantNodeIds() {
@@ -238,16 +240,16 @@ public class ShipSkillData {
     }
 
     public boolean isGrantFree(String nodeId) {
-        return grantFreeNodeIds != null && grantFreeNodeIds.contains(nodeId);
+        return subroutineGrantedNodeIds != null && subroutineGrantedNodeIds.contains(nodeId);
     }
 
     public int usedNodeSlots() {
-        if (grantFreeNodeIds == null || grantFreeNodeIds.isEmpty()) {
+        if (subroutineGrantedNodeIds == null || subroutineGrantedNodeIds.isEmpty()) {
             return allocatedNodeIds.size();
         }
         int used = 0;
         for (String nodeId : allocatedNodeIds) {
-            if (!grantFreeNodeIds.contains(nodeId)) {
+            if (!subroutineGrantedNodeIds.contains(nodeId)) {
                 used++;
             }
         }
@@ -271,7 +273,7 @@ public class ShipSkillData {
     }
 
     public boolean isFreeNode(String nodeId) {
-        return freeNodeIds().contains(nodeId) || pairedFreeNodeIds().contains(nodeId) || isGrantFree(nodeId);
+        return freeNodeIds().contains(nodeId) || pairGrantedNodeIds().contains(nodeId) || isGrantFree(nodeId);
     }
 
     public boolean isAutoAllocatingTemplate() {
@@ -284,12 +286,12 @@ public class ShipSkillData {
 
     public void bankLevelUpForTemplate() {
         bankedFreeAllocations++;
-        pendingTemplateCredits++;
+        pendingTemplateFreeAllocations++;
     }
 
-    public int takePendingTemplateCredits() {
-        int pending = pendingTemplateCredits;
-        pendingTemplateCredits = 0;
+    public int takePendingTemplateFreeAllocations() {
+        int pending = pendingTemplateFreeAllocations;
+        pendingTemplateFreeAllocations = 0;
         return pending;
     }
 
@@ -341,7 +343,7 @@ public class ShipSkillData {
         }
     }
 
-    public void addFreeAllocationCredit() {
+    public void addFreeAllocation() {
         bankedFreeAllocations++;
     }
 
@@ -370,10 +372,10 @@ public class ShipSkillData {
         if (freeNodeIds().remove(nodeId)) {
             bankedFreeAllocations++;
         } else {
-            pairedFreeNodeIds().remove(nodeId);
+            pairGrantedNodeIds().remove(nodeId);
         }
-        if (grantFreeNodeIds != null) {
-            grantFreeNodeIds.remove(nodeId);
+        if (subroutineGrantedNodeIds != null) {
+            subroutineGrantedNodeIds.remove(nodeId);
         }
         if (fleetGrantNodeIds != null) {
             fleetGrantNodeIds.remove(nodeId);

@@ -1,7 +1,7 @@
 package exiledsector.persistence;
 
 import exiledsector.MockSector;
-import exiledsector.skills.ItemChargeLedger;
+import exiledsector.skills.ItemCostLedger;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeRepairs;
 import exiledsector.skills.ShipTrees;
@@ -143,12 +143,12 @@ class ShipSkillDataManagerTest {
         ShipSkillData healthy = ShipSkillDataManager.get("healthy");
         ShipTrees.chooseStartingRoot(healthy, root);
         ShipTrees.allocate(healthy, lobster, 3);
-        ItemChargeLedger.recordItemCharge(healthy, "lobster", lobster.getType().getItemCost());
+        ItemCostLedger.recordPaidItemCost(healthy, "lobster", lobster.getType().getItemCost());
         ShipTrees.allocate(healthy, node("removed"), 3);
         ShipSkillData rootless = ShipSkillDataManager.get("rootless");
         ShipTrees.chooseStartingRoot(rootless, removedRoot);
         ShipTrees.allocate(rootless, lobster, 3);
-        ItemChargeLedger.recordItemCharge(rootless, "lobster", lobster.getType().getItemCost());
+        ItemCostLedger.recordPaidItemCost(rootless, "lobster", lobster.getType().getItemCost());
         rootless.incrementLevel();
         List<SkillItemCost> refunds = new ArrayList<>();
         Map<String, SkillNode> tree = Map.of("root", root, "lobster", lobster);
@@ -169,8 +169,8 @@ class ShipSkillDataManagerTest {
         ShipSkillData ship = ShipSkillDataManager.get("ship");
         ShipTrees.chooseStartingRoot(ship, root);
         ShipTrees.allocate(ship, lobster, 3);
-        ItemChargeLedger.recordItemCharge(ship, "lobster", lobster.getType().getItemCost());
-        ship.addFreeAllocationCredit();
+        ItemCostLedger.recordPaidItemCost(ship, "lobster", lobster.getType().getItemCost());
+        ship.addFreeAllocation();
         ShipTrees.allocate(ship, freebie, 3);
         List<SkillItemCost> refunds = new ArrayList<>();
 
@@ -189,15 +189,15 @@ class ShipSkillDataManagerTest {
         ShipSkillData owned = ShipSkillDataManager.get("owned");
         ShipTrees.chooseStartingRoot(owned, root);
         ShipTrees.allocate(owned, lobster, 3);
-        ItemChargeLedger.recordItemCharge(owned, "lobster", lobster.getType().getItemCost());
+        ItemCostLedger.recordPaidItemCost(owned, "lobster", lobster.getType().getItemCost());
         ShipSkillData sold = ShipSkillDataManager.get("sold");
         ShipTrees.chooseStartingRoot(sold, root);
         ShipTrees.allocate(sold, lobster, 3);
-        ItemChargeLedger.recordItemCharge(sold, "lobster", lobster.getType().getItemCost());
+        ItemCostLedger.recordPaidItemCost(sold, "lobster", lobster.getType().getItemCost());
         ShipSkillData destroyed = ShipSkillDataManager.get("destroyed");
         ShipTrees.chooseStartingRoot(destroyed, removedRoot);
         ShipTrees.allocate(destroyed, lobster, 3);
-        ItemChargeLedger.recordItemCharge(destroyed, "lobster", lobster.getType().getItemCost());
+        ItemCostLedger.recordPaidItemCost(destroyed, "lobster", lobster.getType().getItemCost());
         List<SkillItemCost> refunds = new ArrayList<>();
 
         ShipTreeRepairs.forgetUnknownNodes(Map.of("root", root), Map.of("root", root), Map.of(), "owned"::equals, refunds::add);
@@ -217,7 +217,7 @@ class ShipSkillDataManagerTest {
         ShipTrees.chooseStartingRoot(ship, root);
         ShipTrees.allocate(ship, bridge, 3);
         ShipTrees.allocate(ship, behind, 3);
-        ItemChargeLedger.recordItemCharge(ship, "behind", lobsterType.getItemCost());
+        ItemCostLedger.recordPaidItemCost(ship, "behind", lobsterType.getItemCost());
         List<SkillItemCost> refunds = new ArrayList<>();
         Map<String, SkillNode> tree = Map.of("root", root, "behind", behind);
 

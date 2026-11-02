@@ -21,7 +21,7 @@ public final class ShipTrees {
     public static void selectOption(ShipSkillData data, SkillNode node, SkillType chosenOption, int opCost) {
         data.revision++;
         if (!data.isAllocated(node.getId())) {
-            ItemChargeLedger.discard(data, node.getId());
+            ItemCostLedger.discard(data, node.getId());
             data.charge(node.getId(), opCost);
         }
         data.allocatedNodeIds.add(node.getId());
@@ -67,7 +67,7 @@ public final class ShipTrees {
         if (!data.canUnchooseStartingRoot()) {
             return false;
         }
-        ItemChargeLedger.ensure(data);
+        ItemCostLedger.ensure(data);
         data.allocatedNodeIds.remove(data.startingRootId);
         data.release(data.startingRootId);
         data.startingRootId = null;
@@ -81,10 +81,10 @@ public final class ShipTrees {
         if (rewritten) {
             data.replacementAllocatedNodeIds().add(nodeId);
         }
-        ItemChargeLedger.discard(data, nodeId);
+        ItemCostLedger.discard(data, nodeId);
         data.dormantNodeIds().remove(nodeId);
         data.allocatedNodeIds.add(nodeId);
-        data.grantFreeNodeIds().add(nodeId);
+        data.subroutineGrantedNodeIds().add(nodeId);
     }
 
     public static void allocateFleetGrant(ShipSkillData data, SkillNode node) {
@@ -106,7 +106,7 @@ public final class ShipTrees {
     }
 
     private static List<String> ungrantedFreeNodeIds(ShipSkillData data) {
-        if (data.grantFreeNodeIds == null || data.grantFreeNodeIds.isEmpty()) {
+        if (data.subroutineGrantedNodeIds == null || data.subroutineGrantedNodeIds.isEmpty()) {
             return List.of();
         }
         Set<String> granted = ShipTreeLinks.grantedNodeIds(data);
@@ -122,7 +122,7 @@ public final class ShipTrees {
             });
         }
         List<String> ungranted = new ArrayList<>();
-        for (String nodeId : data.grantFreeNodeIds) {
+        for (String nodeId : data.subroutineGrantedNodeIds) {
             if (data.allocatedNodeIds.contains(nodeId) && !granted.contains(nodeId)) {
                 ungranted.add(nodeId);
             }
@@ -166,10 +166,10 @@ public final class ShipTrees {
             String exitId = link.getValue();
             if (!data.isAllocated(exitId) && data.usedNodeSlots() < maxAllocatedNodes && canOpen(data, link.getKey(), lookup)) {
                 data.revision++;
-                ItemChargeLedger.discard(data, exitId);
+                ItemCostLedger.discard(data, exitId);
                 data.dormantNodeIds().remove(exitId);
                 data.allocatedNodeIds.add(exitId);
-                data.pairedFreeNodeIds().add(exitId);
+                data.pairGrantedNodeIds().add(exitId);
                 openedExitIds.add(exitId);
             }
         }
@@ -196,7 +196,7 @@ public final class ShipTrees {
         return paid;
     }
 
-    public static void refundBankedCreditAsOp(ShipSkillData data, Collection<SkillNode> allNodes) {
+    public static void refundBankedFreeAllocationAsOp(ShipSkillData data, Collection<SkillNode> allNodes) {
         if (data.bankedFreeAllocations <= 0) {
             return;
         }
@@ -213,7 +213,7 @@ public final class ShipTrees {
         if (data.optionalSelections != null) {
             copy.optionalSelections.putAll(data.optionalSelections);
         }
-        copy.grantFreeNodeIds = data.grantFreeNodeIds == null ? null : new LinkedHashSet<>(data.grantFreeNodeIds);
+        copy.subroutineGrantedNodeIds = data.subroutineGrantedNodeIds == null ? null : new LinkedHashSet<>(data.subroutineGrantedNodeIds);
         copy.fleetGrantNodeIds = data.fleetGrantNodeIds == null ? null : new LinkedHashSet<>(data.fleetGrantNodeIds);
         copy.replacementAllocatedNodeIds = data.replacementAllocatedNodeIds == null ? null : new LinkedHashSet<>(data.replacementAllocatedNodeIds);
         copy.mirrorSocketedItems(data);
@@ -223,10 +223,10 @@ public final class ShipTrees {
     private static ShipSkillData releaseCopy(ShipSkillData data) {
         ShipSkillData copy = planningCopy(data);
         copy.freeNodeIds = new LinkedHashSet<>(data.freeNodeIds());
-        copy.pairedFreeNodeIds = new LinkedHashSet<>(data.pairedFreeNodeIds());
+        copy.pairGrantedNodeIds = new LinkedHashSet<>(data.pairGrantedNodeIds());
         copy.bankedFreeAllocations = data.bankedFreeAllocations;
-        copy.chargedItemIds = new LinkedHashMap<>();
-        copy.chargedItemQuantities = new LinkedHashMap<>();
+        copy.paidItemCostIds = new LinkedHashMap<>();
+        copy.paidItemCostQuantities = new LinkedHashMap<>();
         copy.npcBuild = data.npcBuild;
         return copy;
     }
@@ -298,7 +298,7 @@ public final class ShipTrees {
         if (allocatedBefore.isEmpty()) {
             return ReleasedNodes.NONE;
         }
-        return new ReleasedNodes(List.copyOf(allocatedBefore), ItemChargeLedger.takeItemCharges(data, allocatedBefore));
+        return new ReleasedNodes(List.copyOf(allocatedBefore), ItemCostLedger.takePaidItemCosts(data, allocatedBefore));
     }
 
     private static void deallocateUnreachable(ShipSkillData data, SkillTreeTopology topology, String satisfiedRootId, Predicate<SkillNode> releasable) {
@@ -366,7 +366,7 @@ public final class ShipTrees {
         for (int i = order.size() - 1; i >= 0; i--) {
             String nodeId = order.get(i);
             SkillNode node = tree.get(nodeId);
-            if (node != null && candidate.test(nodeId) && !nodeId.equals(startingRoot) && !data.pairedFreeNodeIds().contains(nodeId)
+            if (node != null && candidate.test(nodeId) && !nodeId.equals(startingRoot) && !data.pairGrantedNodeIds().contains(nodeId)
                     && ShipTreeLinks.anchorPartner(data, nodeId) == null && !ShipTreeLinks.isGrantHeld(data, nodeId)
                     && !ShipTreeLinks.grantedNodesBySocket(data).containsKey(nodeId)
                     && canDeallocate(data, node, topology, startingRoot)) {
@@ -417,22 +417,22 @@ public final class ShipTrees {
 
     public static void allocate(ShipSkillData data, SkillNode node, int opCost) {
         data.revision++;
-        ItemChargeLedger.discard(data, node.getId());
+        ItemCostLedger.discard(data, node.getId());
         data.allocatedNodeIds.add(node.getId());
         data.charge(node.getId(), opCost);
 
         String pairedId = ShipTreeLinks.wormholePartner(data, node);
         if (pairedId != null && !data.isAllocated(pairedId)) {
-            ItemChargeLedger.discard(data, pairedId);
+            ItemCostLedger.discard(data, pairedId);
             data.allocatedNodeIds.add(pairedId);
-            data.pairedFreeNodeIds().add(pairedId);
+            data.pairGrantedNodeIds().add(pairedId);
         }
     }
 
     public static void deallocate(ShipSkillData data, SkillNode node) {
         String pairedId = ShipTreeLinks.wormholePartner(data, node);
         data.revision++;
-        ItemChargeLedger.ensure(data);
+        ItemCostLedger.ensure(data);
         data.allocatedNodeIds.remove(node.getId());
         data.release(node.getId());
 
@@ -446,7 +446,7 @@ public final class ShipTrees {
             return false;
         }
         data.revision++;
-        ItemChargeLedger.ensure(data);
+        ItemCostLedger.ensure(data);
         data.allocatedNodeIds.remove(exitNodeId);
         data.release(exitNodeId);
         return true;
@@ -454,9 +454,9 @@ public final class ShipTrees {
 
     public static List<SkillItemCost> takeOverAsGranted(ShipSkillData data, String nodeId) {
         data.revision++;
-        ItemChargeLedger.ensure(data);
-        data.grantFreeNodeIds().add(nodeId);
-        return ItemChargeLedger.takeItemCharges(data, List.of(nodeId));
+        ItemCostLedger.ensure(data);
+        data.subroutineGrantedNodeIds().add(nodeId);
+        return ItemCostLedger.takePaidItemCosts(data, List.of(nodeId));
     }
 
     public static boolean replaceNode(ShipSkillData data, String oldId, String newId) {
@@ -465,7 +465,7 @@ public final class ShipTrees {
         if ((!dormant && !data.allocatedNodeIds.contains(oldId)) || data.allocatedNodeIds.contains(newId) || data.getDormantNodeIds().contains(newId)) {
             return false;
         }
-        ItemChargeLedger.ensure(data);
+        ItemCostLedger.ensure(data);
         Set<String> holdingNodeIds = dormant ? data.dormantNodeIds : data.allocatedNodeIds;
         List<String> order = new ArrayList<>(holdingNodeIds);
         holdingNodeIds.clear();
@@ -473,11 +473,11 @@ public final class ShipTrees {
         if (data.freeNodeIds().remove(oldId)) {
             data.freeNodeIds().add(newId);
         }
-        if (data.pairedFreeNodeIds().remove(oldId)) {
-            data.pairedFreeNodeIds().add(newId);
+        if (data.pairGrantedNodeIds().remove(oldId)) {
+            data.pairGrantedNodeIds().add(newId);
         }
-        if (data.grantFreeNodeIds != null && data.grantFreeNodeIds.remove(oldId)) {
-            data.grantFreeNodeIds.add(newId);
+        if (data.subroutineGrantedNodeIds != null && data.subroutineGrantedNodeIds.remove(oldId)) {
+            data.subroutineGrantedNodeIds.add(newId);
         }
         if (data.replacementAllocatedNodeIds != null && data.replacementAllocatedNodeIds.remove(oldId)) {
             data.replacementAllocatedNodeIds.add(newId);
@@ -485,9 +485,9 @@ public final class ShipTrees {
         if (oldId.equals(data.startingRootId)) {
             data.startingRootId = newId;
         }
-        SkillItemCost movedCharge = ItemChargeLedger.takeItemCharge(data, oldId);
+        SkillItemCost movedCharge = ItemCostLedger.takePaidItemCost(data, oldId);
         if (movedCharge != null) {
-            ItemChargeLedger.recordItemCharge(data, newId, movedCharge);
+            ItemCostLedger.recordPaidItemCost(data, newId, movedCharge);
         }
         carryOptionOver(data, oldId, newId);
         data.unsocketItem(oldId);
@@ -514,7 +514,7 @@ public final class ShipTrees {
 
     public static List<String> forgetUnknownNodes(ShipSkillData data, Map<String, SkillNode> tree, Map<String, SkillNode> declaredTree, Map<String, SkillType> types) {
         data.revision++;
-        ItemChargeLedger.ensure(data);
+        ItemCostLedger.ensure(data);
         List<String> forgotten = new ArrayList<>();
         for (String nodeId : List.copyOf(data.getDormantNodeIds())) {
             SkillNode declaredNode = declaredTree.get(nodeId);
@@ -560,7 +560,7 @@ public final class ShipTrees {
 
     public static List<String> resetAllocations(ShipSkillData data) {
         data.revision++;
-        ItemChargeLedger.ensure(data);
+        ItemCostLedger.ensure(data);
         List<String> released = new ArrayList<>(data.allocatedNodeIds);
         released.addAll(data.getDormantNodeIds());
         released.forEach(data::release);
@@ -569,9 +569,9 @@ public final class ShipTrees {
             data.dormantNodeIds.clear();
         }
         data.freeNodeIds().clear();
-        data.pairedFreeNodeIds().clear();
-        if (data.grantFreeNodeIds != null) {
-            data.grantFreeNodeIds.clear();
+        data.pairGrantedNodeIds().clear();
+        if (data.subroutineGrantedNodeIds != null) {
+            data.subroutineGrantedNodeIds.clear();
         }
         if (data.fleetGrantNodeIds != null) {
             data.fleetGrantNodeIds.clear();
@@ -588,7 +588,7 @@ public final class ShipTrees {
         data.level = 0;
         data.xp = 0f;
         data.bankedFreeAllocations = 0;
-        data.pendingTemplateCredits = 0;
+        data.pendingTemplateFreeAllocations = 0;
         return released;
     }
 

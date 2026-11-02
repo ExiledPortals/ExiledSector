@@ -171,10 +171,10 @@ class WormholeAnchorLinksTest {
         ShipSkillData data = shipWithSocket();
         data.socketItem("socket", ANCHOR);
         ShipTrees.openAnchorWormholes(data, 100);
-        data.addFreeAllocationCredit();
+        data.addFreeAllocation();
         ShipTrees.allocate(data, volumeSmall, 1);
         ShipTrees.allocate(data, volumeNotable, 1);
-        ItemChargeLedger.recordItemCharge(data, "vol_b", new SkillItemCost("alpha_core", 1f));
+        ItemCostLedger.recordPaidItemCost(data, "vol_b", new SkillItemCost("alpha_core", 1f));
         int paidBefore = ShipTrees.paidNodeCount(data);
 
         data.unsocketItem("socket");

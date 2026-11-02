@@ -7,7 +7,7 @@ import exiledsector.PlayerFleet;
 import exiledsector.items.NodeGrantStatus;
 import exiledsector.items.SocketCustody;
 import exiledsector.persistence.ShipSkillDataManager;
-import exiledsector.skills.ItemChargeLedger;
+import exiledsector.skills.ItemCostLedger;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
@@ -82,7 +82,7 @@ public class LockGatesCommand extends CampaignCommand {
         CargoAPI cargo = PlayerFleet.cargoOrNull();
         String startingRootId = ShipTrees.resolveStartingRootId(shipData);
         if (startingRootId == null || lockedNodeIds.contains(startingRootId)) {
-            ItemChargeLedger.takeItemCharges(shipData, ShipTrees.resetAllocations(shipData)).forEach(charge -> charge.refundTo(cargo));
+            ItemCostLedger.takePaidItemCosts(shipData, ShipTrees.resetAllocations(shipData)).forEach(charge -> charge.refundTo(cargo));
         } else {
             SkillTreeTopology topology = SkillTree.topology();
             List<SkillNode> lockedNodes = lockedNodeIds.stream().map(topology::node).filter(Objects::nonNull).toList();

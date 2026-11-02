@@ -126,7 +126,7 @@ class NodeGrantTest {
     @Test
     void aGrantedNodeCostsNoOpNoNodeSlotAndNoFreeAllocation() {
         ShipSkillData data = shipWithSocketed(CACHE);
-        data.addFreeAllocationCredit();
+        data.addFreeAllocation();
         int spentBefore = ShipTrees.getSpentOp(data, 1);
         int slotsBefore = data.usedNodeSlots();
 
@@ -178,7 +178,7 @@ class NodeGrantTest {
     @Test
     void removingTheSubroutineReleasesTheGrantedNotableWithoutTouchingBankedAllocations() {
         ShipSkillData data = shipWithGrantedNotable();
-        data.addFreeAllocationCredit();
+        data.addFreeAllocation();
 
         assertEquals(Set.of("notable"), ShipTrees.previewRelease(data, topology, "root", planned -> planned.unsocketItem("socket")));
         Set<String> reachableBefore = ShipTrees.reachableAllocatedNodeIds(data, topology, "root");

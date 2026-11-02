@@ -29,7 +29,7 @@ class ShipSkillDataSaveAliasTest {
     private static Map<String, ShipSkillData> records() {
         ShipSkillData data = new ShipSkillData();
         data.incrementLevel();
-        data.addFreeAllocationCredit();
+        data.addFreeAllocation();
         Map<String, ShipSkillData> records = new HashMap<>();
         records.put("ship-a", data);
         return records;

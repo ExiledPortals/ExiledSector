@@ -149,12 +149,12 @@ class TemplateLevelUpTest {
     }
 
     @Test
-    void creditsBankedByHandAreSpentButNeverRefundedAsOp() {
+    void freeAllocationsBankedByHandAreSpentButNeverRefundedAsOp() {
         assignTemplate("first", "second");
         shipData.setAutoAllocateTemplate(true);
-        shipData.addFreeAllocationCredit();
-        shipData.addFreeAllocationCredit();
-        shipData.addFreeAllocationCredit();
+        shipData.addFreeAllocation();
+        shipData.addFreeAllocation();
+        shipData.addFreeAllocation();
 
         assertEquals(2, TemplateLevelUp.spendFreeAllocations(member));
 

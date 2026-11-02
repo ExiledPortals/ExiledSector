@@ -103,7 +103,7 @@ public final class ShipLevelSystem {
         if (shipData.isAutoAllocatingTemplate()) {
             shipData.bankLevelUpForTemplate();
         } else if (!ShipTrees.convertMostRecentAllocationToFree(shipData, allNodes)) {
-            shipData.addFreeAllocationCredit();
+            shipData.addFreeAllocation();
         }
     }
 

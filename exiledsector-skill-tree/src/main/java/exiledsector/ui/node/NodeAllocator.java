@@ -16,7 +16,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocationGate;
 import exiledsector.skills.HullModNames;
-import exiledsector.skills.ItemChargeLedger;
+import exiledsector.skills.ItemCostLedger;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ReleasedNodes;
 import exiledsector.skills.RespecPlan;
@@ -143,7 +143,7 @@ final class NodeAllocator {
             if (!skillData.isAllocated(node.getId())) {
                 return allocationRefusalReason(node, option);
             }
-            return reason(node.getId() + '/' + option.getId(), gate.optionSwitch(node, option), ItemChargeLedger.itemCharge(skillData, node.getId()));
+            return reason(node.getId() + '/' + option.getId(), gate.optionSwitch(node, option), ItemCostLedger.paidItemCost(skillData, node.getId()));
         }
 
         private String reason(String key, AllocationGate.Verdict verdict, SkillItemCost refund) {
@@ -278,13 +278,13 @@ final class NodeAllocator {
             return false;
         }
         ShipSkillData skillData = snapshot.skillData();
-        SkillItemCost refund = ItemChargeLedger.itemCharge(skillData, node.getId());
+        SkillItemCost refund = ItemCostLedger.paidItemCost(skillData, node.getId());
         SkillItemCost itemCost = gate.itemCost(node, option);
         if (itemCost != null && heldInCargo(itemCost.itemId()) + refundOf(refund, itemCost.itemId()) < itemCost.quantity()) {
             return false;
         }
         if (refund != null) {
-            ItemChargeLedger.takeItemCharge(skillData, node.getId());
+            ItemCostLedger.takePaidItemCost(skillData, node.getId());
             refund.refundTo(PlayerFleet.cargoOrNull());
         }
         ShipTrees.selectOption(skillData, node, option, gate.opCostFor(node));
@@ -444,7 +444,7 @@ final class NodeAllocator {
             return;
         }
         CostItems.remove(cargo, itemCost.itemId(), itemCost.quantity());
-        ItemChargeLedger.recordItemCharge(skillData, nodeId, itemCost);
+        ItemCostLedger.recordPaidItemCost(skillData, nodeId, itemCost);
     }
 
     private void refreshVariantHullModsOnce() {

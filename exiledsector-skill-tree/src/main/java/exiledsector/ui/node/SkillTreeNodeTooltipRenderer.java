@@ -13,7 +13,7 @@ import exiledsector.skills.ShipFacts;
 import exiledsector.effects.ModuleShareSetting;
 import exiledsector.skills.AllocationGate;
 import exiledsector.skills.CostItems;
-import exiledsector.skills.ItemChargeLedger;
+import exiledsector.skills.ItemCostLedger;
 import exiledsector.skills.ModuleShareExtent;
 import exiledsector.skills.NodeDescription;
 import exiledsector.skills.NodeEligibility;
@@ -233,7 +233,7 @@ final class SkillTreeNodeTooltipRenderer {
     private ItemCostLine itemCostLine(SkillNode node, SkillType option, NodeAllocator.Snapshot allocation) {
         ShipSkillData skillData = allocation.skillData();
         boolean allocated = skillData.isAllocated(node.getId());
-        SkillItemCost charged = allocated ? ItemChargeLedger.itemCharge(skillData, node.getId()) : null;
+        SkillItemCost charged = allocated ? ItemCostLedger.paidItemCost(skillData, node.getId()) : null;
         if (allocated && option == null) {
             return paidCostLine(charged);
         }

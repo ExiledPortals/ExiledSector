@@ -7,7 +7,7 @@ import exiledsector.PlayerFleet;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.DormantNodes;
-import exiledsector.skills.ItemChargeLedger;
+import exiledsector.skills.ItemCostLedger;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
@@ -65,6 +65,6 @@ final class DormantNodeWake {
 
     private static void refund(ShipSkillData shipData, List<String> releasedNodeIds) {
         CargoAPI cargo = PlayerFleet.cargoOrNull();
-        ItemChargeLedger.takeItemCharges(shipData, releasedNodeIds).forEach(charged -> charged.refundTo(cargo));
+        ItemCostLedger.takePaidItemCosts(shipData, releasedNodeIds).forEach(charged -> charged.refundTo(cargo));
     }
 }

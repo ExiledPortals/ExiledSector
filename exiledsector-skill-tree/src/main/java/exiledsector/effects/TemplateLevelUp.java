@@ -33,11 +33,11 @@ final class TemplateLevelUp {
         if (shipData == null) {
             return 0;
         }
-        int pendingCredits = shipData.takePendingTemplateCredits();
+        int pendingCredits = shipData.takePendingTemplateFreeAllocations();
         int allocatedCount = shipData.isAutoAllocatingTemplate() ? allocateTemplateSteps(member, variant, shipData) : 0;
         int unspentCredits = Math.max(0, pendingCredits - allocatedCount);
         for (int i = 0; i < unspentCredits; i++) {
-            ShipTrees.refundBankedCreditAsOp(shipData, SkillTree.getAllNodes().values());
+            ShipTrees.refundBankedFreeAllocationAsOp(shipData, SkillTree.getAllNodes().values());
         }
         if (allocatedCount > 0 || unspentCredits > 0) {
             member.setStatUpdateNeeded(true);

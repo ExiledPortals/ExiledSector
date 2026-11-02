@@ -59,7 +59,7 @@ The zh_CN catalogue was drafted by Claude and still needs review by a native spe
 | Skill tree | 技能树 | |
 | Node | 节点 | |
 | Notable / keystone | 重要节点 / 基石节点 | |
-| Starting location (root) | 起点 | |
+| Root (where a ship's tree starts) | 起点 | |
 | Allocate / deallocate | 分配 / 取消分配 | |
 | Free allocation | 免费分配 | |
 | Level / XP | 等级 / 经验 | |

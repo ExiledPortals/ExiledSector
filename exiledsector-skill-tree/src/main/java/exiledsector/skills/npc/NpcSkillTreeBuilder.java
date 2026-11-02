@@ -93,7 +93,7 @@ public final class NpcSkillTreeBuilder {
             return null;
         }
         for (int i = 0; i < startingLevel; i++) {
-            shipData.addFreeAllocationCredit();
+            shipData.addFreeAllocation();
             shipData.incrementLevel();
         }
         return shipData;

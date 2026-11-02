@@ -60,7 +60,7 @@ class NodeReplacementsTest {
     void aRemovedNodeIsSwappedForItsReplacementKeepingItsPlaceAndFreeStatus() {
         ShipSkillData data = new ShipSkillData();
         ShipTrees.chooseStartingRoot(data, root);
-        data.addFreeAllocationCredit();
+        data.addFreeAllocation();
         ShipTrees.allocate(data, new SkillNode("removed", kept.getType(), List.of(), 0f, 0f), 3);
         ShipTrees.allocate(data, kept, 3);
 

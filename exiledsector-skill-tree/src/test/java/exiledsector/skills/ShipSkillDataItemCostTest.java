@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ShipSkillDataItemChargeTest {
+class ShipSkillDataItemCostTest {
 
     private static final SkillItemCost LOBSTERS = new SkillItemCost("lobster", 50f);
 
@@ -45,8 +45,8 @@ class ShipSkillDataItemChargeTest {
         XStream xstream = new XStream(new DomDriver());
         XStream.setupDefaultSecurity(xstream);
         xstream.addPermission(AnyTypePermission.ANY);
-        String olderXml = xstream.toXML(data).replaceAll("<chargedItem(Ids|Quantities)[^>]*/>", "")
-                .replaceAll("(?s)<chargedItem(Ids|Quantities)[^>]*>.*?</chargedItem\\1>", "");
+        String olderXml = xstream.toXML(data).replaceAll("<paidItemCost(Ids|Quantities)[^>]*/>", "")
+                .replaceAll("(?s)<paidItemCost(Ids|Quantities)[^>]*>.*?</paidItemCost\\1>", "");
         return (ShipSkillData) xstream.fromXML(olderXml);
     }
 
@@ -55,12 +55,12 @@ class ShipSkillDataItemChargeTest {
         ShipSkillData data = new ShipSkillData();
         ShipTrees.chooseStartingRoot(data, root);
         ShipTrees.allocate(data, lobster, 3);
-        ItemChargeLedger.recordItemCharge(data, "lobster", LOBSTERS);
+        ItemCostLedger.recordPaidItemCost(data, "lobster", LOBSTERS);
 
         ShipTrees.deallocate(data, lobster);
 
-        assertEquals(LOBSTERS, ItemChargeLedger.takeItemCharge(data, "lobster"));
-        assertNull(ItemChargeLedger.takeItemCharge(data, "lobster"));
+        assertEquals(LOBSTERS, ItemCostLedger.takePaidItemCost(data, "lobster"));
+        assertNull(ItemCostLedger.takePaidItemCost(data, "lobster"));
     }
 
     @Test
@@ -68,12 +68,12 @@ class ShipSkillDataItemChargeTest {
         ShipSkillData data = new ShipSkillData();
         ShipTrees.chooseStartingRoot(data, root);
         ShipTrees.allocate(data, lobster, 3);
-        ItemChargeLedger.recordItemCharge(data, "lobster", LOBSTERS);
+        ItemCostLedger.recordPaidItemCost(data, "lobster", LOBSTERS);
         ShipTrees.deallocate(data, lobster);
 
         ShipTrees.allocate(data, lobster, 3);
 
-        assertNull(ItemChargeLedger.itemCharge(data, "lobster"));
+        assertNull(ItemCostLedger.paidItemCost(data, "lobster"));
     }
 
     @Test
@@ -82,12 +82,12 @@ class ShipSkillDataItemChargeTest {
         ShipSkillData data = new ShipSkillData();
         ShipTrees.chooseStartingRoot(data, root);
         ShipTrees.allocate(data, lobster, 3);
-        ItemChargeLedger.recordItemCharge(data, "lobster", LOBSTERS);
+        ItemCostLedger.recordPaidItemCost(data, "lobster", LOBSTERS);
 
         assertTrue(ShipTrees.replaceNode(data, "lobster", "lobster_v2"));
 
-        assertNull(ItemChargeLedger.itemCharge(data, "lobster"));
-        assertEquals(LOBSTERS, ItemChargeLedger.itemCharge(data, "lobster_v2"));
+        assertNull(ItemCostLedger.paidItemCost(data, "lobster"));
+        assertEquals(LOBSTERS, ItemCostLedger.paidItemCost(data, "lobster_v2"));
     }
 
     @Test
@@ -98,8 +98,8 @@ class ShipSkillDataItemChargeTest {
 
         ShipSkillData loaded = roundTripWithoutTheLedger(written);
 
-        assertEquals(LOBSTERS, ItemChargeLedger.itemCharge(loaded, "lobster"));
-        assertNull(ItemChargeLedger.itemCharge(loaded, "root"));
+        assertEquals(LOBSTERS, ItemCostLedger.paidItemCost(loaded, "lobster"));
+        assertNull(ItemCostLedger.paidItemCost(loaded, "root"));
     }
 
     @Test
@@ -112,7 +112,7 @@ class ShipSkillDataItemChargeTest {
 
         assertTrue(ShipTrees.replaceNode(loaded, "lobster", "lobster_v2"));
 
-        assertEquals(LOBSTERS, ItemChargeLedger.itemCharge(loaded, "lobster_v2"));
+        assertEquals(LOBSTERS, ItemCostLedger.paidItemCost(loaded, "lobster_v2"));
     }
 
     @Test
@@ -122,7 +122,7 @@ class ShipSkillDataItemChargeTest {
         ShipTrees.chooseStartingRoot(written, root);
         ShipTrees.allocate(written, lobster, 3);
 
-        assertNull(ItemChargeLedger.itemCharge(roundTripWithoutTheLedger(written), "lobster"));
+        assertNull(ItemCostLedger.paidItemCost(roundTripWithoutTheLedger(written), "lobster"));
     }
 
     @Test
@@ -133,6 +133,6 @@ class ShipSkillDataItemChargeTest {
         ShipSkillData loaded = roundTripWithoutTheLedger(written);
 
         assertEquals(List.of("lobster"), ShipTrees.forgetUnknownNodes(loaded, Map.of("root", root), SkillTree.getAllTypes()));
-        assertEquals(LOBSTERS, ItemChargeLedger.takeItemCharge(loaded, "lobster"));
+        assertEquals(LOBSTERS, ItemCostLedger.takePaidItemCost(loaded, "lobster"));
     }
 }

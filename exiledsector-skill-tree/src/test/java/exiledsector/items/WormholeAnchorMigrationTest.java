@@ -1,7 +1,7 @@
 package exiledsector.items;
 
 import exiledsector.skills.AnchorLinks;
-import exiledsector.skills.ItemChargeLedger;
+import exiledsector.skills.ItemCostLedger;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillItemCost;
@@ -63,7 +63,7 @@ class WormholeAnchorMigrationTest {
         ShipTrees.allocate(data, strandedCore, 1);
         ShipTrees.allocate(data, exit, 0);
         ShipTrees.allocate(data, volumeSmall, 1);
-        ItemChargeLedger.recordItemCharge(data, "heg_a", new SkillItemCost("alpha_core", 1f));
+        ItemCostLedger.recordPaidItemCost(data, "heg_a", new SkillItemCost("alpha_core", 1f));
         return data;
     }
 
