@@ -11,7 +11,7 @@ public final class DoctrineText {
     public static StyledText rewrittenBy(DoctrineRewrite rewrite) {
         ItemDefinition definition = ItemDefinitions.get(rewrite.doctrineDefinitionId());
         String doctrineName = definition == null ? rewrite.doctrineDefinitionId() : definition.displayName();
-        String key = rewrite.transformed() ? "socketable.doctrine.transformedBy" : "socketable.doctrine.augmentedBy";
+        String key = rewrite.rewritten() ? "socketable.doctrine.rewrittenBy" : "socketable.doctrine.augmentedBy";
         return Translation.msg(key).arg("doctrine", doctrineName).arg("revision", String.valueOf(rewrite.revision())).styled();
     }
 

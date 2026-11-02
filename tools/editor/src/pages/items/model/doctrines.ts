@@ -6,7 +6,7 @@ export const DOCTRINE_TYPE = 'doctrine';
 export const DOCTRINE_SUBROUTINE_KIND = 'DOCTRINE';
 export const DOCTRINE_ARCHIVE_RESOURCE = 'doctrine-archives';
 export const DOCTRINE_ARCHIVE_FILE_NAME = 'doctrine_archives.csv';
-export const TRANSFORM_BEHAVIOUR = 'TRANSFORM';
+export const REWRITE_BEHAVIOUR = 'REWRITE';
 export const AUGMENT_BEHAVIOUR = 'AUGMENT';
 export const DOCTRINE_ARCHIVE_COLUMNS = ['id', 'behaviour', 'radius', 'faction', 'notables', 'keystones', 'small_nodes', 'modifiers', 'min_lines', 'max_lines'] as const;
 export const DOCTRINE_POOL_TIERS = { notables: 'NOTABLE', keystones: 'KEYSTONE', smallNodes: 'SMALL' } as const;
@@ -120,7 +120,7 @@ export function newDoctrineArchive(archives: DoctrineArchive[], doctrineSubrouti
   return {
     cells: [],
     id,
-    behaviour: vocabulary.doctrineBehaviours[0] ?? TRANSFORM_BEHAVIOUR,
+    behaviour: vocabulary.doctrineBehaviours[0] ?? REWRITE_BEHAVIOUR,
     radius: vocabulary.radiusSizes[1] ?? vocabulary.radiusSizes[0] ?? 'medium',
     faction: '',
     notables: '',
@@ -228,7 +228,7 @@ export function validateDoctrineArchives(
     }
     const listedTypes = listEntries(archive.notables).length + listEntries(archive.keystones).length + listEntries(archive.smallNodes).length;
     issues.push(...poolIssues(label, archive, typeFacts));
-    if (archive.behaviour === TRANSFORM_BEHAVIOUR) {
+    if (archive.behaviour === REWRITE_BEHAVIOUR) {
       if (listedTypes === 0) {
         issues.push(`${label}: a transforming doctrine needs at least one replacement notable, keystone or small node`);
       }

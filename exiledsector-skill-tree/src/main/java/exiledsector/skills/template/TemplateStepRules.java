@@ -31,7 +31,7 @@ public final class TemplateStepRules {
                 return StepVerdict.NO_OPTION;
             }
         }
-        if (NodeEligibility.itemCost(DoctrineOverrides.asTransformed(shipData, node), optionType) != null) {
+        if (NodeEligibility.itemCost(DoctrineOverrides.asRewritten(shipData, node), optionType) != null) {
             return StepVerdict.ITEM_COST;
         }
         AllocationGate.Verdict verdict = allocationVerdict.apply(node, optionType);

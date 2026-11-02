@@ -679,7 +679,7 @@ public final class TreeAllocationSession {
         if (holdsDoctrine(skillData, node)) {
             warningKey = "socketable.doctrine.releaseConfirm";
         } else {
-            warningKey = partnerId == null && !grantedNodeIds.isEmpty() ? "socketable.cache.releaseConfirm" : "socketable.anchor.closeConfirm";
+            warningKey = partnerId == null && !grantedNodeIds.isEmpty() ? "subroutine.grant.releaseConfirm" : "socketable.anchor.closeConfirm";
         }
         String warning = Translation.msg(warningKey).count(released.size()).arg("op", returnedOp).text();
         releaseConfirmation.arm(actionKey, node.getId(), warning);

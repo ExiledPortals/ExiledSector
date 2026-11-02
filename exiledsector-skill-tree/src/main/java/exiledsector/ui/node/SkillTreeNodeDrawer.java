@@ -34,10 +34,10 @@ public final class SkillTreeNodeDrawer {
 
     private static final Color ALLOCATED_TINT = Color.WHITE;
     private static final Color UNALLOCATED_TINT = new Color(90, 90, 90);
-    private static final Color TRANSFORMED_TINT = new Color(255, 196, 120);
+    private static final Color REWRITTEN_TINT = new Color(255, 196, 120);
     private static final Color AUGMENTED_TINT = new Color(150, 220, 255);
     private static final float UNALLOCATED_TINT_SCALE = UNALLOCATED_TINT.getRed() / 255f;
-    private static final Color TRANSFORMED_UNALLOCATED_TINT = scaled(TRANSFORMED_TINT, UNALLOCATED_TINT_SCALE);
+    private static final Color REWRITTEN_UNALLOCATED_TINT = scaled(REWRITTEN_TINT, UNALLOCATED_TINT_SCALE);
     private static final Color AUGMENTED_UNALLOCATED_TINT = scaled(AUGMENTED_TINT, UNALLOCATED_TINT_SCALE);
     private static final float EXOSHIP_HIT_SHARE = 0.6f;
     private static final float SOCKET_COLLAPSE_SHARE = 0.4f;
@@ -249,8 +249,8 @@ public final class SkillTreeNodeDrawer {
             return tint;
         }
         boolean lit = tint == ALLOCATED_TINT;
-        if (rewrite.transformed()) {
-            return lit ? TRANSFORMED_TINT : TRANSFORMED_UNALLOCATED_TINT;
+        if (rewrite.rewritten()) {
+            return lit ? REWRITTEN_TINT : REWRITTEN_UNALLOCATED_TINT;
         }
         return lit ? AUGMENTED_TINT : AUGMENTED_UNALLOCATED_TINT;
     }

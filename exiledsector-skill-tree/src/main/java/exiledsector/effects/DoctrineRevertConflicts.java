@@ -40,7 +40,7 @@ public final class DoctrineRevertConflicts {
         }
         for (DoctrineRewrite rewrite : layer.rewrites().values()) {
             SkillNode node = SkillTree.get(rewrite.nodeId());
-            if (!rewrite.transformed() || node == null || !data.isAllocated(node.getId())) {
+            if (!rewrite.rewritten() || node == null || !data.isAllocated(node.getId())) {
                 continue;
             }
             Set<String> keptByReplacement = new LinkedHashSet<>(rewrite.replacementType().getExclusiveAndOwnHullModIds());

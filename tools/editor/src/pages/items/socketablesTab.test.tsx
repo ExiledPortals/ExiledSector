@@ -50,7 +50,7 @@ describe('skill tree socketables', () => {
     const doctrines = await openItems('Skill Tree Socketables', 'Doctrine Archives');
 
     expect((await within(doctrines).findAllByText('AUGMENT - large', undefined, LOAD_TIMEOUT)).length).toBe(4);
-    expect(within(doctrines).getAllByText('TRANSFORM - large').length).toBe(3);
+    expect(within(doctrines).getAllByText('REWRITE - large').length).toBe(3);
     fireEvent.click(within(doctrines).getByText('Hegemony Doctrine Archive'));
     fireEvent.change(await findLabelled('Max lines per node', doctrines), { target: { value: '3' } });
     fireEvent.change(await findLabelled('Name', doctrines), { target: { value: 'Hegemony Battle Doctrine' } });

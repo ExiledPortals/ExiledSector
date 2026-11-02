@@ -60,7 +60,7 @@ final class DormantNodeWake {
     private static boolean isEligible(ShipSkillData shipData, SkillNode dormantNode, ShipFacts shipFacts) {
         SkillType option = dormantNode.offersOptions(shipData) ? SkillTree.getType(shipData.getOptionalSelection(dormantNode.getId())) : null;
         NodeEligibility.Context context = NodeEligibility.Context.forShip(shipData, shipFacts, itemId -> Double.MAX_VALUE);
-        return NodeEligibility.check(DoctrineOverrides.asTransformed(shipData, dormantNode), option, context) == null;
+        return NodeEligibility.check(DoctrineOverrides.asRewritten(shipData, dormantNode), option, context) == null;
     }
 
     private static void refund(ShipSkillData shipData, List<String> releasedNodeIds) {

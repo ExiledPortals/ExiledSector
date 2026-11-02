@@ -23,7 +23,7 @@ import {
   newDoctrineArchive,
   renameDoctrineArchive,
   replacementCandidates,
-  TRANSFORM_BEHAVIOUR,
+  REWRITE_BEHAVIOUR,
   type DoctrineArchive,
   type DoctrineModifierReference,
   type DoctrinePoolKey,
@@ -239,7 +239,7 @@ function ArchiveFields({ document, model, vocabulary, archive, descriptions, edi
       <Group grow align="flex-start">
         <Select
           label="Behaviour"
-          description="Transform swaps nodes for replacements; augment adds lines to every node"
+          description="Rewrite swaps nodes for replacements; augment adds lines to every node"
           data={withCurrent(vocabulary.doctrineBehaviours, archive.behaviour === '' ? [] : [archive.behaviour])}
           value={archive.behaviour === '' ? null : archive.behaviour}
           onChange={(value) => editArchive((draft) => void (draft.behaviour = value ?? ''))}
@@ -282,7 +282,7 @@ function ArchiveFields({ document, model, vocabulary, archive, descriptions, edi
           <DoctrineReplacementPools archive={archive} source={typeSource({ document, model })} />
         </>
       )}
-      {archive.behaviour !== TRANSFORM_BEHAVIOUR && (
+      {archive.behaviour !== REWRITE_BEHAVIOUR && (
         <>
           <Group grow align="flex-start">
             <TextInput

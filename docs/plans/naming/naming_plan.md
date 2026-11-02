@@ -75,9 +75,9 @@ Type and node ids are covered by [node_id_renames.md](node_id_renames.md). The r
 | Starting location / starting point / start / root | `startingRootId`, `StartingRootChoice`, item "Root Conduit" | one player word ("root", since the item already shows it) | text |
 | Item cost | `itemCost` vs `ItemChargeLedger`, `chargedItemIds` (saved); "charges" also means ship-system charges | "item cost" in code | code, saved fields |
 | Free allocation | also "credit" (`addFreeAllocationCredit`, `pendingTemplateCredits`); three kinds of "free" node set | "free allocation" for the level token, "granted" for subroutine and pair nodes | code |
-| Node-granting subroutine lines | keys `socketable.cache.*` used for every granting kind; code says `NodeGrant*` | keys `subroutine.grant.*` | keys |
-| "Rewritten by" (doctrine) | `DoctrineBehaviour.TRANSFORM` (csv value) | `REWRITE` | data, keys |
-| Mutually exclusive / can't be combined | `phantomConflict.*` keys show an internal term | `node.conflict.*` | keys |
+| Node-granting subroutine lines | keys `socketable.cache.*` used for every granting kind; code says `NodeGrant*` | keys `subroutine.grant.*` | keys. [x] Built. |
+| "Rewritten by" (doctrine) | `DoctrineBehaviour.TRANSFORM` (csv value) | `REWRITE` | data, keys. [x] Built: `DoctrineBehaviour.REWRITE` in `doctrine_archives.csv`, the editor and `editor_vocabulary.json`; `DoctrineArchive.rewritesNodes`, `rewritableIds` and the other doctrine identifiers; keys `socketable.doctrine.rewrittenBy`, `codex.doctrine.rewrites`. |
+| Mutually exclusive / can't be combined | `phantomConflict.*` keys show an internal term | `node.conflict.*` | keys. [x] Built. |
 
 Also:
 - `gate_pascal_visited` now opens on the Nightcross anchor (`node_gates.json`), and `commands.csv` still describes a "Pascal" area.

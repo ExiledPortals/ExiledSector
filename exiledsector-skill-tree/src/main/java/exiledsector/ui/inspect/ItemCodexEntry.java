@@ -135,7 +135,7 @@ public class ItemCodexEntry extends BoxedCodexEntry {
             writePool(info, "codex.doctrine.lines", doctrine.modifierPool(), doctrine.lineChances(), textWidth);
             return;
         }
-        VanillaText.addPara(info, Translation.msg("codex.doctrine.transforms").arg("radius", radiusName).styled(), PAD, Misc.getTextColor());
+        VanillaText.addPara(info, Translation.msg("codex.doctrine.rewrites").arg("radius", radiusName).styled(), PAD, Misc.getTextColor());
         writeReplacements(info, "codex.doctrine.notables", doctrine.notableTypeIds());
         writeReplacements(info, "codex.doctrine.keystones", doctrine.keystoneTypeIds());
         writeReplacements(info, "codex.doctrine.smallNodes", doctrine.smallTypeIds());

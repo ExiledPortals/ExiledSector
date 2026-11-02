@@ -222,7 +222,7 @@ final class SkillTreeNodeTooltipRenderer {
             return description;
         }
         List<DescriptionLine> effects = new ArrayList<>(description.effects());
-        effects.add(new DescriptionLine(Translation.msg("socketable.cache.grantedBy").arg("item", grantingItem.name()).styled(), false));
+        effects.add(new DescriptionLine(Translation.msg("subroutine.grant.grantedBy").arg("item", grantingItem.name()).styled(), false));
         return new NodeDescription(effects, description.details());
     }
 
@@ -373,7 +373,7 @@ final class SkillTreeNodeTooltipRenderer {
                 effects.add(new DescriptionLine(line, effect.effect().invertsDescriptionColours()));
             }
         }
-        if (rewrite.transformed()) {
+        if (rewrite.rewritten()) {
             effects.add(new DescriptionLine(Translation.msg("socketable.doctrine.originally").arg("node", rewrite.originalType().getDisplayName())
                     .styled(), false));
         }

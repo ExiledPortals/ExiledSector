@@ -75,10 +75,10 @@ public final class ShipTrees {
     }
 
     public static void allocateGranted(ShipSkillData data, SkillNode node) {
-        boolean transformed = DoctrineOverrides.replacementType(data, node) != null;
+        boolean rewritten = DoctrineOverrides.replacementType(data, node) != null;
         data.revision++;
         String nodeId = node.getId();
-        if (transformed) {
+        if (rewritten) {
             data.replacementAllocatedNodeIds().add(nodeId);
         }
         ItemChargeLedger.discard(data, nodeId);
@@ -393,14 +393,14 @@ public final class ShipTrees {
     }
 
     public static void allocate(ShipSkillData data, SkillNode node, SkillType option, int opCost) {
-        boolean transformed = DoctrineOverrides.replacementType(data, node) != null;
-        SkillType storedOption = option != null || !transformed ? option : firstOption(node.getType());
+        boolean rewritten = DoctrineOverrides.replacementType(data, node) != null;
+        SkillType storedOption = option != null || !rewritten ? option : firstOption(node.getType());
         if (storedOption != null) {
             selectOption(data, node, storedOption, opCost);
         } else {
             allocate(data, node, opCost);
         }
-        if (transformed) {
+        if (rewritten) {
             data.replacementAllocatedNodeIds().add(node.getId());
         }
     }

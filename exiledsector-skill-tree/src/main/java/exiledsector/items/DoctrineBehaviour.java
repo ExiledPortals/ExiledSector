@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public enum DoctrineBehaviour {
 
-    TRANSFORM,
+    REWRITE,
     AUGMENT;
 
     public String id() {

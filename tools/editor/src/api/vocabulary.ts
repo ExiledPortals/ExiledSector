@@ -95,7 +95,7 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     itemKindTypes: new Map(file.itemKinds.map((kind) => [kind.id, kind.type])),
     subroutineKinds: (file.subroutineKinds ?? []).slice(),
     modifierScopes: (file.modifierScopes ?? file.itemTypes).slice(),
-    doctrineBehaviours: (file.doctrineBehaviours ?? ['TRANSFORM', 'AUGMENT']).slice(),
+    doctrineBehaviours: (file.doctrineBehaviours ?? ['REWRITE', 'AUGMENT']).slice(),
     radiusSizes: (file.radiusSizes ?? ['small', 'medium', 'large']).slice(),
     uniqueSourceKinds: (file.uniqueSourceKinds ?? ['faction', 'site']).slice(),
     hullItemMechanics: (file.hullItemMechanics ?? ['one_of']).slice(),

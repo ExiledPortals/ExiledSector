@@ -62,7 +62,7 @@ class DoctrineIconLookTest {
     }
 
     private static JSONObject archiveRow(String id, String factionId) throws Exception {
-        return new JSONObject().put("id", id).put("behaviour", "TRANSFORM").put("radius", "large").put("faction", factionId)
+        return new JSONObject().put("id", id).put("behaviour", "REWRITE").put("radius", "large").put("faction", factionId)
                 .put("notables", "some_notable");
     }
 

@@ -265,7 +265,7 @@ public final class AllocationGate {
     }
 
     private SkillNode checkedNode(SkillNode node) {
-        return DoctrineOverrides.asTransformed(data, node);
+        return DoctrineOverrides.asRewritten(data, node);
     }
 
     private NodeVerdicts verdictsFor(SkillNode node) {

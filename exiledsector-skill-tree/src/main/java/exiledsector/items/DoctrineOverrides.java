@@ -53,7 +53,7 @@ public final class DoctrineOverrides {
         return rewrite == null ? null : rewrite.replacementType();
     }
 
-    public static SkillNode asTransformed(ShipSkillData data, SkillNode node) {
+    public static SkillNode asRewritten(ShipSkillData data, SkillNode node) {
         SkillType replacement = replacementType(data, node);
         return replacement == null ? node : rewrittenNode(node, replacement);
     }
@@ -155,8 +155,8 @@ public final class DoctrineOverrides {
             }
         }
         int revision = DoctrineRewriter.revision(doctrine.seed());
-        Map<String, DoctrineRewrite> rewrites = archive.transforms()
-                ? transformed(data, rangeNodes, doctrine, archive, revision, facts)
+        Map<String, DoctrineRewrite> rewrites = archive.rewritesNodes()
+                ? rewritten(data, rangeNodes, doctrine, archive, revision, facts)
                 : augmented(data, rangeNodes, doctrine, archive, revision);
         return new DoctrineLayer(socket.getId(), archive, rewrites, stamp, fingerprint(archive, facts));
     }
@@ -177,18 +177,18 @@ public final class DoctrineOverrides {
         return rewrites;
     }
 
-    private static Map<String, DoctrineRewrite> transformed(ShipSkillData data, List<SkillNode> rangeNodes, Subroutine doctrine,
+    private static Map<String, DoctrineRewrite> rewritten(ShipSkillData data, List<SkillNode> rangeNodes, Subroutine doctrine,
                                                            DoctrineArchive archive, int revision, ShipFacts facts) {
-        Set<String> transformableIds = new HashSet<>();
+        Set<String> rewritableIds = new HashSet<>();
         for (SkillNode node : rangeNodes) {
             if (!archive.replacementPool(node.getType().getTier()).isEmpty()) {
-                transformableIds.add(node.getId());
+                rewritableIds.add(node.getId());
             }
         }
         Set<String> keptNodeIds = new HashSet<>();
         while (true) {
             Set<String> unresolvedNodeIds = new HashSet<>();
-            Map<String, DoctrineRewrite> rewrites = transformPass(data, rangeNodes, doctrine, archive, revision, facts, transformableIds, keptNodeIds,
+            Map<String, DoctrineRewrite> rewrites = rewritePass(data, rangeNodes, doctrine, archive, revision, facts, rewritableIds, keptNodeIds,
                     unresolvedNodeIds);
             if (unresolvedNodeIds.isEmpty()) {
                 return rewrites;
@@ -197,14 +197,14 @@ public final class DoctrineOverrides {
         }
     }
 
-    private static Map<String, DoctrineRewrite> transformPass(ShipSkillData data, List<SkillNode> rangeNodes, Subroutine doctrine,
-                                                             DoctrineArchive archive, int revision, ShipFacts facts, Set<String> transformableIds,
+    private static Map<String, DoctrineRewrite> rewritePass(ShipSkillData data, List<SkillNode> rangeNodes, Subroutine doctrine,
+                                                             DoctrineArchive archive, int revision, ShipFacts facts, Set<String> rewritableIds,
                                                              Set<String> keptNodeIds, Set<String> unresolvedNodeIds) {
         List<AllocatedNode> context = new ArrayList<>();
         Set<String> takenTypeIds = new HashSet<>();
         for (String nodeId : data.getAllocatedNodeIds()) {
             SkillNode node = SkillTree.get(nodeId);
-            if (node != null && !transformableIds.contains(nodeId)) {
+            if (node != null && !rewritableIds.contains(nodeId)) {
                 SkillType baseType = node.resolveBaseType(data);
                 context.add(new AllocatedNode(node, baseType));
                 takenTypeIds.add(baseType.getId());
@@ -220,7 +220,7 @@ public final class DoctrineOverrides {
         }
         Map<String, DoctrineRewrite> rewrites = new LinkedHashMap<>();
         for (SkillNode node : rangeNodes) {
-            if (!transformableIds.contains(node.getId()) || keptNodeIds.contains(node.getId())) {
+            if (!rewritableIds.contains(node.getId()) || keptNodeIds.contains(node.getId())) {
                 continue;
             }
             SkillTier tier = node.getType().getTier();
