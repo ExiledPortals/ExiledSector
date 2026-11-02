@@ -90,6 +90,13 @@ high_scatter_amp_1,high_scatter_amplifier_1,High Scatter Amplifier,yes
 hiressensors_1,high_resolution_sensors_1,High Resolution Sensors,yes
 hoarded_arms_1,league_reload_drill_1,League Reload Drill,yes
 hull_breacher_1,hullbreacher_rounds_1,Hullbreacher Rounds,yes
+hull_multi_1,more_hull_1,More Hull,yes
+hull_multi_2,more_hull_2,More Hull,yes
+hull_multi_3,more_hull_3,More Hull,yes
+hull_multi_4,more_hull_4,More Hull,yes
+hull_multi_5,more_hull_5,More Hull,yes
+hull_multi_6,more_hull_6,More Hull,yes
+hull_multi_7,more_hull_7,More Hull,yes
 increased_sensor_strength_1,sensor_strength_1,Sensor Strength,yes
 increased_sensor_strength_2,sensor_strength_2,Sensor Strength,yes
 increased_sensor_strength_3,sensor_strength_3,Sensor Strength,yes

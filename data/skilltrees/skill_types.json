@@ -37,8 +37,8 @@
 			]
 		},
 		{
-			"id": "hull",
-			"name": "Hull",
+			"id": "increased_hull",
+			"name": "Increased Hull",
 			"icon": "graphics/icons/hull.png",
 			"effects": [
 				{
@@ -409,8 +409,8 @@
 			]
 		},
 		{
-			"id": "hull_multi",
-			"name": "Hull",
+			"id": "more_hull",
+			"name": "More Hull",
 			"icon": "graphics/icons/hull_multi.png",
 			"effects": [
 				{

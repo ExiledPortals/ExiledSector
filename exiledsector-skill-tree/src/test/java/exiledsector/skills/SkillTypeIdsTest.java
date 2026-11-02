@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -15,7 +14,6 @@ class SkillTypeIdsTest {
 
     private static final List<String> KEPT_ID_PREFIXES = List.of("nskr_", "rat_", "tania_");
     private static final String DOCTRINE_PREFIX = "doctrine_";
-    private static final Set<String> AWAITING_A_DISPLAY_NAME = Set.of("hull_multi");
 
     @BeforeEach
     void setUp() throws Exception {
@@ -32,8 +30,7 @@ class SkillTypeIdsTest {
     }
 
     private static boolean keepsItsId(SkillType type) {
-        return type.getTier() == SkillTier.ROOT || AWAITING_A_DISPLAY_NAME.contains(type.getId())
-                || KEPT_ID_PREFIXES.stream().anyMatch(type.getId()::startsWith);
+        return type.getTier() == SkillTier.ROOT || KEPT_ID_PREFIXES.stream().anyMatch(type.getId()::startsWith);
     }
 
     @Test

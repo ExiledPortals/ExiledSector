@@ -80,7 +80,7 @@
 			"type": "armor",
 			"connectedTo": [
 				"blast_doors_1",
-				"hull_multi_1"
+				"more_hull_1"
 			],
 			"x": 1716,
 			"y": 1776,
@@ -123,7 +123,7 @@
 			"type": "heavy_armor",
 			"connectedTo": [
 				"armor_3",
-				"hull_multi_3"
+				"more_hull_3"
 			],
 			"x": -3895,
 			"y": 649,
@@ -151,8 +151,8 @@
 			"id": "reinforced_bulkheads_1",
 			"type": "reinforced_bulkheads",
 			"connectedTo": [
-				"hull_multi_6",
-				"hull_multi_4"
+				"more_hull_6",
+				"more_hull_4"
 			],
 			"x": 2406,
 			"y": 354,
@@ -167,7 +167,7 @@
 			"type": "blast_doors",
 			"connectedTo": [
 				"armor_1",
-				"hull_multi_2"
+				"more_hull_2"
 			],
 			"x": 1538,
 			"y": 1598,
@@ -178,10 +178,10 @@
 			]
 		},
 		{
-			"id": "hull_multi_1",
-			"type": "hull_multi",
+			"id": "more_hull_1",
+			"type": "more_hull",
 			"connectedTo": [
-				"hull_multi_2",
+				"more_hull_2",
 				"armor_1",
 				"affinity_31"
 			],
@@ -2037,7 +2037,7 @@
 				"affinity_32",
 				"affinity_34",
 				"affinity_12",
-				"hull_multi_1",
+				"more_hull_1",
 				"peak_cr_duration_2"
 			],
 			"x": 2418,
@@ -2088,7 +2088,7 @@
 				"affinity_31",
 				"root_low_tech_1",
 				"affinity_30",
-				"hull_multi_5"
+				"more_hull_5"
 			],
 			"x": 1946,
 			"y": 1086,
@@ -2325,7 +2325,7 @@
 			"type": "armor",
 			"connectedTo": [
 				"armor_3",
-				"hull_multi_3",
+				"more_hull_3",
 				"affinity_19"
 			],
 			"x": -4149,
@@ -3124,10 +3124,10 @@
 			]
 		},
 		{
-			"id": "hull_multi_2",
-			"type": "hull_multi",
+			"id": "more_hull_2",
+			"type": "more_hull",
 			"connectedTo": [
-				"hull_multi_1",
+				"more_hull_1",
 				"blast_doors_1"
 			],
 			"x": 1716,
@@ -3139,8 +3139,8 @@
 			]
 		},
 		{
-			"id": "hull_multi_3",
-			"type": "hull_multi",
+			"id": "more_hull_3",
+			"type": "more_hull",
 			"connectedTo": [
 				"armor_2",
 				"heavy_armor_1"
@@ -3154,10 +3154,10 @@
 			]
 		},
 		{
-			"id": "hull_multi_4",
-			"type": "hull_multi",
+			"id": "more_hull_4",
+			"type": "more_hull",
 			"connectedTo": [
-				"hull_multi_5",
+				"more_hull_5",
 				"reinforced_bulkheads_1"
 			],
 			"x": 2433,
@@ -3169,11 +3169,11 @@
 			]
 		},
 		{
-			"id": "hull_multi_5",
-			"type": "hull_multi",
+			"id": "more_hull_5",
+			"type": "more_hull",
 			"connectedTo": [
-				"hull_multi_4",
-				"hull_multi_6",
+				"more_hull_4",
+				"more_hull_6",
 				"affinity_34"
 			],
 			"x": 2180,
@@ -3185,10 +3185,10 @@
 			]
 		},
 		{
-			"id": "hull_multi_6",
-			"type": "hull_multi",
+			"id": "more_hull_6",
+			"type": "more_hull",
 			"connectedTo": [
-				"hull_multi_5",
+				"more_hull_5",
 				"reinforced_bulkheads_1"
 			],
 			"x": 2153,
@@ -5663,7 +5663,7 @@
 			"connectedTo": [
 				"affinity_107",
 				"nightcross_wormhole_1",
-				"hull_multi_7"
+				"more_hull_7"
 			],
 			"x": -17586,
 			"y": -5054,
@@ -6769,8 +6769,8 @@
 			]
 		},
 		{
-			"id": "hull_multi_7",
-			"type": "hull_multi",
+			"id": "more_hull_7",
+			"type": "more_hull",
 			"connectedTo": [
 				"affinity_71",
 				"armor_10",
@@ -6789,7 +6789,7 @@
 			"id": "armor_10",
 			"type": "armor",
 			"connectedTo": [
-				"hull_multi_7",
+				"more_hull_7",
 				"repair_coordinator_1"
 			],
 			"x": -17746,
@@ -6805,7 +6805,7 @@
 			"id": "armor_11",
 			"type": "armor",
 			"connectedTo": [
-				"hull_multi_7",
+				"more_hull_7",
 				"repair_coordinator_1"
 			],
 			"x": -17426,
@@ -7375,7 +7375,7 @@
 		},
 		{
 			"id": "tania_hull_2",
-			"type": "hull",
+			"type": "increased_hull",
 			"connectedTo": [
 				"tania_small_flux_optional_3",
 				"tania_hull_3",
@@ -7389,7 +7389,7 @@
 		},
 		{
 			"id": "tania_hull_3",
-			"type": "hull",
+			"type": "increased_hull",
 			"connectedTo": [
 				"tania_hull_2",
 				"tania_rise_from_the_ashes_1",
@@ -8327,26 +8327,26 @@
 			"controlY": -1987
 		},
 		{
-			"a": "hull_multi_1",
-			"b": "hull_multi_2",
+			"a": "more_hull_1",
+			"b": "more_hull_2",
 			"controlX": 1806,
 			"controlY": 1508
 		},
 		{
 			"a": "armor_1",
-			"b": "hull_multi_1",
+			"b": "more_hull_1",
 			"controlX": 1806,
 			"controlY": 1688
 		},
 		{
 			"a": "blast_doors_1",
-			"b": "hull_multi_2",
+			"b": "more_hull_2",
 			"controlX": 1626,
 			"controlY": 1508
 		},
 		{
 			"a": "armor_2",
-			"b": "hull_multi_3",
+			"b": "more_hull_3",
 			"controlX": -4149,
 			"controlY": 776
 		},
@@ -8357,25 +8357,25 @@
 			"controlY": 1797
 		},
 		{
-			"a": "hull_multi_4",
-			"b": "hull_multi_5",
+			"a": "more_hull_4",
+			"b": "more_hull_5",
 			"controlX": 2307,
 			"controlY": 621
 		},
 		{
-			"a": "hull_multi_5",
-			"b": "hull_multi_6",
+			"a": "more_hull_5",
+			"b": "more_hull_6",
 			"controlX": 2166,
 			"controlY": 508
 		},
 		{
-			"a": "hull_multi_6",
+			"a": "more_hull_6",
 			"b": "reinforced_bulkheads_1",
 			"controlX": 2279,
 			"controlY": 367
 		},
 		{
-			"a": "hull_multi_4",
+			"a": "more_hull_4",
 			"b": "reinforced_bulkheads_1",
 			"controlX": 2420,
 			"controlY": 480
@@ -9282,7 +9282,7 @@
 		},
 		{
 			"a": "heavy_armor_1",
-			"b": "hull_multi_3",
+			"b": "more_hull_3",
 			"controlX": -4022,
 			"controlY": 649
 		},
@@ -10008,7 +10008,7 @@
 		},
 		{
 			"a": "armor_10",
-			"b": "hull_multi_7",
+			"b": "more_hull_7",
 			"controlX": -17699,
 			"controlY": -4727
 		},
@@ -10020,7 +10020,7 @@
 		},
 		{
 			"a": "armor_11",
-			"b": "hull_multi_7",
+			"b": "more_hull_7",
 			"controlX": -17473,
 			"controlY": -4727
 		},

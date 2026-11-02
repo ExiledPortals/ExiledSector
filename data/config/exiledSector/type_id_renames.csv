@@ -69,7 +69,9 @@ heavyarmor,heavy_armor
 high_scatter_amp,high_scatter_amplifier
 hiressensors,high_resolution_sensors
 hoarded_arms,league_reload_drill
+hull,increased_hull
 hull_breacher,hullbreacher_rounds
+hull_multi,more_hull
 hybrid_flux,flux_capacity_and_dissipation
 increased_sensor_strength,sensor_strength
 insulatedengine,insulated_engine_assembly

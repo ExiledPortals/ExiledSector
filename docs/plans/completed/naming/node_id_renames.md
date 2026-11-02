@@ -4,8 +4,8 @@ Goal: someone reading a node's name in game can search the code for it. "Heavy A
 
 Two proposed mappings, generated on 2026-11-02 from `skill_types.json`, `ship_skill_tree.json`, `released_skill_nodes.json` and `node_replacements.csv`:
 
-- [type_id_renames.csv](type_id_renames.csv): 110 of 224 skill types.
-- [node_id_renames.csv](node_id_renames.csv): 283 of 516 nodes, 277 of them in released saves (`in_released_saves = yes`). The other 6 never shipped and need no row.
+- [type_id_renames.csv](type_id_renames.csv): 112 of 224 skill types.
+- [node_id_renames.csv](node_id_renames.csv): 290 of 516 nodes, 284 of them in released saves (`in_released_saves = yes`). The other 6 never shipped and need no row.
 
 If display names change before this lands, regenerate both files rather than hand-editing them.
 
@@ -18,7 +18,6 @@ If display names change before this lands, regenerate both files rather than han
   - Mod-prefixed ids (`nskr_`, `rat_`, `tania_`), including Tania nodes whose type is renamed (`tania_small_flux_optional_1`).
   - The root types and nodes.
   - Wormholes and wormhole exits, and `exoship`.
-  - `hull_multi` (see decision 2).
 - No new id reuses an id that is in the tree, in `released_skill_nodes.json` or in `node_replacements.csv`. A reused id would make an old save's node look already current.
 - Hull mod ids are not type ids, even where they look the same. `hullmod_conflicts.csv`, `LostSectorCompat` and the `phantomHullMods` / `exclusiveHullMods` lists keep `heavyarmor`, `adaptive_coils` and the rest. No code assumes a type id equals a hull mod id.
 
@@ -30,7 +29,7 @@ If display names change before this lands, regenerate both files rather than han
    - (c) store augment lines on the item.
 
    Transform picks can't be frozen on the item, because they depend on the ship.
-2. `hull` and `hull_multi` are both called "Hull" but give different amounts (2% vs 5%). One of them needs another display name before `hull_multi` can be renamed.
+2. `hull` and `hull_multi` are both called "Hull" but give different amounts (2% vs 5%). One of them needs another display name before `hull_multi` can be renamed. Decided 2026-11-02: `hull` is "Increased Hull" (`increased_hull`) and `hull_multi` is "More Hull" (`more_hull`), named in `skill_types.json` and `zh_CN.json`. Both get rename rows like every other type.
 3. Display names that aren't title case become ids as they are, so fix them first: "Crew capacity", "Survey cost reduction", "Survey supplies cost reduction", "Shield Raise rate or Shield Turn rate", "Shield flux/damage reduction", "Less EMP damage taken", "Increased vent rate", "Vent rate and EMP damage". Done 2026-11-02: all eight are title case in `skill_types.json`, and the CSV rows were regenerated. The ids don't change.
 
 ## What saves hold
@@ -58,15 +57,15 @@ The gap: `ShipTrees.replaceNode` was built for removed nodes. It drops whatever 
    Rename identifiers outside string literals only, then diff every changed string literal. The run must not touch hull mod ids.
 
    Done: all of the above, plus `descriptions.en.golden` (the same lines re-sorted under the new ids), `docs/docs.md` and the NPC tag's granted entries, which now go through `NodeReplacements.current` like the rest of the tag. Tests that build their own fixture types keep ids that double as hull mod ids (`heavyarmor`, `frontemitter`); tests that read the real data use the new ids. The changed literals were all reviewed and none is a hull mod id.
-5. Update `released_skill_nodes.json`: switch `nodes` to the new ids and add a `retired` list with the old ones. That list keeps the old ids reserved after the CSVs go. `tools/editor/server/reservedNodeIds.ts` should read it too. Done: `retired` holds the 277 old ids, `reservedNodeIds.ts` treats them as released, and `Save-ReleasedSkillNodes` in `build-common.ps1` keeps the list when a release rewrites the ledger. `ReleasedSkillNodesTest` checks no retired id is back in the tree.
-6. Change the editor to build new node ids from the type's display name instead of its id (`tools/editor/src/pages/tree/state/treeActions.ts:42`). Also add a data test that every type id equals its display-name slug (except the kept ids listed above), so the ids don't drift again. Done: `nodeIdStem` in `tools/editor/src/pages/tree/model/types.ts` names new and duplicated nodes after the type's display name, and keeps the type id for roots, mod-prefixed types and a name that is already another type's id (which covers `hull_multi`). `SkillTypeIdsTest` checks every type id, exempting roots, mod-prefixed ids and `hull_multi` until decision 2 is made.
+5. Update `released_skill_nodes.json`: switch `nodes` to the new ids and add a `retired` list with the old ones. That list keeps the old ids reserved after the CSVs go. `tools/editor/server/reservedNodeIds.ts` should read it too. Done: `retired` holds the 284 old ids, `reservedNodeIds.ts` treats them as released, and `Save-ReleasedSkillNodes` in `build-common.ps1` keeps the list when a release rewrites the ledger. `ReleasedSkillNodesTest` checks no retired id is back in the tree.
+6. Change the editor to build new node ids from the type's display name instead of its id (`tools/editor/src/pages/tree/state/treeActions.ts:42`). Also add a data test that every type id equals its display-name slug (except the kept ids listed above), so the ids don't drift again. Done: `nodeIdStem` in `tools/editor/src/pages/tree/model/types.ts` names new and duplicated nodes after the type's display name, and keeps the type id for roots, mod-prefixed types and a name that is already another type's id. `SkillTypeIdsTest` checks every type id, exempting roots and mod-prefixed ids.
 7. Tests:
    - A data test that every `old` is gone from the tree, every `new` is present, and no `new` equals a released or retired id.
    - A `ShipTrees` test showing a rename keeps sockets, charges, options, free and dormant state.
    - A template and option round trip using old option ids.
 
    Done: `NodeIdRenamesDataTest` (the first, with the real CSVs and ledger), `ShipTreeRenamesTest` (the second) and `NodeReplacementsTest` (the third).
-8. In the changelog, note the rename and that owned Doctrine Archives roll new rewrites once ("Save compatible.").
+8. In the changelog, note the rename and that owned Doctrine Archives roll new rewrites once ("Save compatible."). The repo keeps no changelog between releases, so this goes in the next release's notes.
 
 ## Retiring the mapping
 
