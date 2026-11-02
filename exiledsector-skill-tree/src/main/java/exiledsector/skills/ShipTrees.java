@@ -495,7 +495,7 @@ public final class ShipTrees {
     }
 
     private static void carryOptionOver(ShipSkillData data, String oldId, String newId) {
-        String oldOptionId = data.optionalSelections == null ? null : data.optionalSelections.remove(oldId);
+        String oldOptionId = data.optionalSelections == null ? null : NodeReplacements.currentTypeId(data.optionalSelections.remove(oldId));
         SkillNode replacement = SkillTree.getDeclared(newId);
         if (replacement == null || !replacement.getType().isOptional()) {
             return;
@@ -547,7 +547,7 @@ public final class ShipTrees {
     }
 
     private static boolean hasInvalidOption(ShipSkillData data, SkillNode node, Map<String, SkillType> types) {
-        return node.getType().isOptional() && NodeEligibility.optionProblem(node.getType(), data.getOptionalSelection(node.getId()), types::get) != null;
+        return node.getType().isOptional() && NodeEligibility.optionProblem(node.getType(), NodeReplacements.currentTypeId(data.getOptionalSelection(node.getId())), types::get) != null;
     }
 
     public static boolean hasLostStartingRoot(ShipSkillData data, Map<String, SkillNode> tree) {

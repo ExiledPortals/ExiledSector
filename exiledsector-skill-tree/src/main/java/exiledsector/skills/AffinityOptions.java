@@ -15,7 +15,7 @@ public final class AffinityOptions {
     }
 
     public static String currentOptionId(String optionTypeId) {
-        return optionTypeId == null ? null : RETIRED_OPTIONS.getOrDefault(optionTypeId, optionTypeId);
+        return optionTypeId == null ? null : NodeReplacements.currentTypeId(RETIRED_OPTIONS.getOrDefault(optionTypeId, optionTypeId));
     }
 
     public static boolean migrate(ShipSkillData data) {
