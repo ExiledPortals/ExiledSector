@@ -42,7 +42,7 @@ class StarChartCurrencyTest {
 
     private static final String SINGLE = "star_chart";
     private static final String GATED = StarChartFixtures.TEST_GATED;
-    private static final String FLEET_SIZE = "HYBRID_CHART_FLEET_SIZE";
+    private static final String FLEET_SIZE = "CHART_FLEET_SIZE_PERCENT";
     private static final Predicate<ItemDefinition> ANY_UNIQUE = definition -> true;
 
     private final ItemStore store = ItemStore.forStarCharts();

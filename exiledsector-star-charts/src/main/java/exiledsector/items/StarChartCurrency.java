@@ -169,7 +169,7 @@ public enum StarChartCurrency implements ItemCurrency {
         }
         List<RolledModifier> merged = new ArrayList<>(previous.stream().filter(rolled -> guarded.contains(rolled.slot())).toList());
         for (RolledModifier rolled : rerolled) {
-            if (!guarded.contains(rolled.slot())) {
+            if (!guarded.contains(rolled.slot()) && !ModifierExclusivity.clashesWithRolled(rolled.modifierId(), merged)) {
                 merged.add(AffixLayout.insertIndex(merged, rolled.slot()), rolled);
             }
         }

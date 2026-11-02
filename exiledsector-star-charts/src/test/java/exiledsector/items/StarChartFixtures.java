@@ -40,10 +40,10 @@ public final class StarChartFixtures {
     }
 
     private static JSONArray withTestCharts(JSONArray rows) throws JSONException {
-        return rows.put(chartRow(TEST_FIXED, "BINARY_FAR", TEST_FIXED_NAME, 1, "@TEST_SENSOR_RANGE; @HYBRID_CHART_FLEET_QUALITY",
+        return rows.put(chartRow(TEST_FIXED, "BINARY_FAR", TEST_FIXED_NAME, 1, "@TEST_SENSOR_RANGE; @CHART_FLEET_QUALITY_PERCENT",
                         "@TEST_EXTRA_POIS; @CHART_ITEM_PERCENT"))
                 .put(chartRow(TEST_GATED, "TRINARY_2FAR", TEST_GATED_NAME, TEST_GATED_MIN_TIER,
-                        "@TEST_GATED_BOSS_SIZE; @HYBRID_CHART_OFFICER_LEVEL", "@TEST_GATED_BOSS_SPOILS; @CHART_REWARD_PERCENT"));
+                        "@TEST_GATED_BOSS_SIZE; @CHART_OFFICER_LEVEL_BONUS", "@TEST_GATED_BOSS_SPOILS; @CHART_REWARD_PERCENT"));
     }
 
     private static JSONObject chartRow(String id, String systemType, String name, int minTier, String prefixes, String suffixes)

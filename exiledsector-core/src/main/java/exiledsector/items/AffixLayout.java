@@ -182,6 +182,7 @@ public final class AffixLayout {
         }
         List<PoolEntry> openEntries = rollablePool.stream()
                 .filter(entry -> !presentModifiers.contains(entry.modifier().id()))
+                .filter(entry -> !ModifierExclusivity.clashes(entry.modifier().id(), presentModifiers))
                 .filter(entry -> entry.modifier().lines().stream().noneMatch(line -> reservedEffects.contains(line.effectName()))).toList();
         if (!openEntries.isEmpty()) {
             sides.add(openEntries);

@@ -118,7 +118,8 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
         AffixLayout.Limits limits = AffixLayout.limits(definition == null ? null : definition.type());
         long grantedSide = others.stream().filter(rolled -> rolled.slot() == granted.slot()).count();
         return grantedSide >= limits.maxPerSide() || others.size() >= limits.maxEffects()
-                || others.stream().anyMatch(rolled -> rolled.lines().stream().anyMatch(line -> grantedEffects.contains(line.effectName())));
+                || others.stream().anyMatch(rolled -> rolled.lines().stream().anyMatch(line -> grantedEffects.contains(line.effectName())))
+                || ModifierExclusivity.clashes(granted.id(), others.stream().map(RolledModifier::modifierId).toList());
     }
 
     static boolean lockedClash(Item item, Modifier granted) {
@@ -129,7 +130,7 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
         Set<String> grantedEffects = effectsOf(granted);
         boolean sharesEffect = locked.lines().stream().anyMatch(line -> grantedEffects.contains(line.effectName()));
         boolean sideFull = locked.slot() == granted.slot() && AffixLayout.limits(item.definition().type()).maxPerSide() < 2;
-        return sharesEffect || sideFull;
+        return sharesEffect || sideFull || ModifierExclusivity.clashes(granted.id(), List.of(locked.modifierId()));
     }
 
     private static Set<String> effectsOf(Modifier modifier) {
@@ -169,9 +170,9 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
         }
         int othersLeft = limits.maxEffects() - prefixes.size() - suffixes.size();
         othersLeft -= draw(candidates(definition, definition.prefixes(), takenIds, takenEffects),
-                Math.min(limits.maxPerSide() - prefixes.size(), othersLeft), random, prefixes);
+                Math.min(limits.maxPerSide() - prefixes.size(), othersLeft), random, takenIds, prefixes);
         draw(candidates(definition, definition.suffixes(), takenIds, takenEffects), Math.min(limits.maxPerSide() - suffixes.size(), othersLeft),
-                random, suffixes);
+                random, takenIds, suffixes);
         List<RolledModifier> rerolled = new ArrayList<>(prefixes);
         rerolled.addAll(suffixes);
         return rerolled;
@@ -180,16 +181,20 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
     private static List<PoolEntry> candidates(ItemDefinition definition, List<PoolEntry> side, Set<String> takenIds, Set<String> takenEffects) {
         return AffixLayout.rollableAt(definition.type(), side, TierRange.NO_TIER).stream()
                 .filter(entry -> !takenIds.contains(entry.modifier().id()))
+                .filter(entry -> !ModifierExclusivity.clashes(entry.modifier().id(), takenIds))
                 .filter(entry -> entry.modifier().lines().stream().noneMatch(line -> takenEffects.contains(line.effectName())))
                 .toList();
     }
 
-    private static int draw(List<PoolEntry> pool, int count, Random random, List<RolledModifier> drawn) {
+    private static int draw(List<PoolEntry> pool, int count, Random random, Set<String> takenIds, List<RolledModifier> drawn) {
         List<PoolEntry> remaining = new ArrayList<>(pool);
-        int drawCount = Math.max(0, Math.min(count, remaining.size()));
-        for (int left = drawCount; left > 0; left--) {
+        int drawCount = 0;
+        for (int left = Math.max(0, count); left > 0 && !remaining.isEmpty(); left--) {
             PoolEntry entry = remaining.remove(WeightedPick.index(remaining, PoolEntry::weight, random.nextFloat()));
             drawn.add(RolledModifier.roll(entry.modifier(), random, false));
+            takenIds.add(entry.modifier().id());
+            remaining.removeIf(candidate -> ModifierExclusivity.clashes(candidate.modifier().id(), takenIds));
+            drawCount++;
         }
         return drawCount;
     }

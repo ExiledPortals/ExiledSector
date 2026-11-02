@@ -33,8 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -126,8 +124,8 @@ class ChartRunEffectsTest {
         watchdog.advance(0f);
         watchdog.advance(0f);
 
-        verify(stats, atLeastOnce()).addTemporaryModMult(eq(ChartRunEffects.SENSOR_MOD_DAYS), eq(ChartIds.SENSOR_MOD_ID), anyString(), eq(0.5f),
-                eq(sensorRange));
+        assertEquals(0.5f, sensorRange.getMultBonus(ChartIds.SENSOR_MOD_ID).getValue(), 0.0001f);
+        verify(stats, never()).addTemporaryModMult(anyFloat(), anyString(), anyString(), anyFloat(), Mockito.any(StatBonus.class));
         verify(stats, never()).removeTemporaryMod(ChartIds.SENSOR_MOD_ID);
 
         when(playerFleet.getContainingLocation()).thenReturn(hyperspace);
@@ -135,6 +133,7 @@ class ChartRunEffectsTest {
         watchdog.advance(0f);
 
         verify(stats).removeTemporaryMod(ChartIds.SENSOR_MOD_ID);
+        assertNull(sensorRange.getMultBonus(ChartIds.SENSOR_MOD_ID));
     }
 
     @Test
@@ -148,7 +147,7 @@ class ChartRunEffectsTest {
         when(playerFleet.getContainingLocation()).thenReturn(hyperspace);
         watchdog.advance(0f);
 
-        verify(stats, never()).addTemporaryModMult(anyFloat(), anyString(), anyString(), anyFloat(), Mockito.any(StatBonus.class));
+        assertNull(sensorRange.getMultBonus(ChartIds.SENSOR_MOD_ID));
         verify(stats).removeTemporaryMod(ChartRunEffects.VANILLA_NAV_BUOY_MOD_ID);
     }
 
@@ -203,7 +202,7 @@ class ChartRunEffectsTest {
         ChartLoadSweep.liftEffectsOutsideSystem(sector);
         assertFalse(sensorRange.getMultBonus(ChartIds.SENSOR_MOD_ID) == null, "the load sweep keeps the penalty of a closing run");
         new ChartRunScript().watch(sector, run);
-        verify(stats).addTemporaryModMult(eq(ChartRunEffects.SENSOR_MOD_DAYS), eq(ChartIds.SENSOR_MOD_ID), anyString(), eq(0.5f), eq(sensorRange));
+        assertEquals(0.5f, sensorRange.getMultBonus(ChartIds.SENSOR_MOD_ID).getValue(), 0.0001f);
         verify(stats, never()).removeTemporaryMod(ChartIds.SENSOR_MOD_ID);
 
         assertTrue(ChartRunState.CLOSING.keepsRunEffects());

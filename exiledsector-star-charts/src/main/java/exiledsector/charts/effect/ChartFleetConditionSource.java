@@ -2,6 +2,7 @@ package exiledsector.charts.effect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import exiledsector.effects.ResolvedTree;
 import exiledsector.effects.ShipEffectSource;
 
 public final class ChartFleetConditionSource implements ShipEffectSource {
@@ -19,5 +20,10 @@ public final class ChartFleetConditionSource implements ShipEffectSource {
     @Override
     public void applyToFighter(ShipAPI fighter, ShipAPI ship) {
         ChartFleetConditions.applyToFighter(fighter, ship);
+    }
+
+    @Override
+    public void afterShipCreation(ShipAPI ship, ResolvedTree resolvedTree) {
+        ChartFleetConditions.afterShipCreation(ship);
     }
 }

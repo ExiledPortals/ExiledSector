@@ -66,7 +66,7 @@ class RetiredUniqueChartsTest {
     @Test
     void retiredUniqueChartsLeaveChartStorage() throws Exception {
         StarChartDefinitions.register(HullItemRows.shippedRows(StarChartDefinitions.DATA_PATH).put(new JSONObject().put("id", RETIRED_ID)
-                .put("system_type", "BINARY_FAR").put("name", "The Silent Reach").put("rarity", "1").put("prefixes", "@HYBRID_CHART_FLEET_QUALITY")));
+                .put("system_type", "BINARY_FAR").put("name", "The Silent Reach").put("rarity", "1").put("prefixes", "@CHART_FLEET_QUALITY_PERCENT")));
         ItemStore store = ItemStore.starCharts();
         Item kept = store.add(chart("star_chart"));
         store.add(chart(RETIRED_ID));

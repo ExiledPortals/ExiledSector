@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Divider, Group, MultiSelect, Paper, Select, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
+import { ActionIcon, Button, Divider, Group, MultiSelect, Paper, Select, Stack, TagsInput, Text, TextInput, Title, Tooltip } from '@mantine/core';
 import { IconCopy, IconPlus, IconTrash, IconX } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import type { Draft } from 'immer';
@@ -171,6 +171,15 @@ export function ModifierForm({ document, model, vocabulary, family, modifier, in
           edit((draft) => void (draft.name = text));
         }}
       />
+      {!isImplicit && (
+        <TagsInput
+          label="Exclusive groups"
+          description="An item never rolls two modifiers that share a group."
+          splitChars={[';', ',', ' ']}
+          value={modifier.exclusiveGroups ?? []}
+          onChange={(groups) => edit((draft) => void (draft.exclusiveGroups = groups))}
+        />
+      )}
       <Divider />
       <Title order={5}>{modifier.lines.length > 1 ? 'Values - a hybrid rolls every line and counts as one modifier' : 'Values'}</Title>
       {modifier.lines.map((line, lineIndex) => (

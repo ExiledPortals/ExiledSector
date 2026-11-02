@@ -1,5 +1,6 @@
 package exiledsector.charts.generation;
 
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.content.ChartPoi;
@@ -15,12 +16,17 @@ import exiledsector.items.StarChart;
 import exiledsector.loot.LootModifiers;
 import exiledsector.modifiers.ModifierEffect;
 import exiledsector.modifiers.ModifierEffects;
+import exiledsector.modifiers.ModifierSlot;
 import exiledsector.modifiers.ScaleContext;
+import exiledsector.modifiers.TierGroup;
+import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.onhit.OnHitSkillEffect;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -34,6 +40,8 @@ public final class ChartGenContext {
     static final float MAX_SENSOR_RANGE_MULT = 2f;
     public static final float PERCENT = 100f;
     static final float QUANTITY_PERCENT_PER_QUALITY = 1f;
+    static final float ENEMY_ENERGY_CHAIN_FALLOFF_PERCENT = 20f;
+    static final Map<TierGroup, Float> QUANTITY_PERCENT_PER_PREFIX = Map.of(TierGroup.LOW, 5f, TierGroup.MID, 15f, TierGroup.HIGH, 25f);
     private static final Logger LOG = Logger.getLogger(ChartGenContext.class);
     private static final Set<String> REPORTED_UNRESOLVED_ROLLS = ConcurrentHashMap.newKeySet();
 
@@ -54,6 +62,13 @@ public final class ChartGenContext {
     private float fleetQualityPercent;
     private float sensorRangePercent;
     private float enemySensorRangeBonus;
+    private boolean twinnedBoss;
+    private final Set<HullSize> bannedCombatHullSizes = EnumSet.noneOf(HullSize.class);
+    private boolean shipSystemsDisabled;
+    private boolean autopilotForced;
+    private float arcStrikeEmp;
+    private float damagePercentPerSMod;
+    private final Map<SkillEffect, Float> enemyShipEffects = new LinkedHashMap<>();
     private float battleSizeBonus;
     private float quantityPercent;
     private final Map<ChartPoi.Kind, Float> siteBudgetPercents = new EnumMap<>(ChartPoi.Kind.class);
@@ -120,7 +135,17 @@ public final class ChartGenContext {
                 }
             }
         }
+        long prefixes = chart.explicits().stream().filter(modifier -> modifier.slot() == ModifierSlot.PREFIX).count();
+        float prefixQuantityPercent = prefixes * quantityPercentPerPrefix(chart.tier());
+        if (prefixQuantityPercent > 0f) {
+            applied.add(new AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, prefixQuantityPercent));
+        }
         return of(applied, chart instanceof StarChart starChart ? starChart.quality() : 0, factionId);
+    }
+
+    static float quantityPercentPerPrefix(int tier) {
+        TierGroup group = TierGroup.forTier(tier);
+        return group == null ? 0f : QUANTITY_PERCENT_PER_PREFIX.get(group);
     }
 
     private static void reportUnresolved(Item chart, ChartEffect effect) {
@@ -184,6 +209,67 @@ public final class ChartGenContext {
 
     public float enemySensorRangeBonus() {
         return enemySensorRangeBonus;
+    }
+
+    public void twinBoss() {
+        twinnedBoss = true;
+    }
+
+    public boolean twinnedBoss() {
+        return twinnedBoss;
+    }
+
+    public void banCombatHullSize(HullSize hullSize) {
+        bannedCombatHullSizes.add(hullSize);
+    }
+
+    public Set<HullSize> bannedCombatHullSizes() {
+        return Collections.unmodifiableSet(bannedCombatHullSizes);
+    }
+
+    public void disableShipSystems() {
+        shipSystemsDisabled = true;
+    }
+
+    public boolean shipSystemsDisabled() {
+        return shipSystemsDisabled;
+    }
+
+    public void forceAutopilot() {
+        autopilotForced = true;
+    }
+
+    public boolean autopilotForced() {
+        return autopilotForced;
+    }
+
+    public void addArcStrikeEmp(float emp) {
+        arcStrikeEmp += emp;
+    }
+
+    public float arcStrikeEmp() {
+        return Math.max(0f, arcStrikeEmp);
+    }
+
+    public void addDamagePercentPerSMod(float percent) {
+        damagePercentPerSMod += percent;
+    }
+
+    public float damagePercentPerSMod() {
+        return damagePercentPerSMod;
+    }
+
+    public void addEnemyShipEffect(SkillEffect effect, float magnitude) {
+        enemyShipEffects.merge(effect, magnitude, Float::sum);
+    }
+
+    public void addEnemyEnergyChainChance(float chancePercent) {
+        addEnemyShipEffect(OnHitSkillEffect.NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT, chancePercent);
+        enemyShipEffects.put(OnHitSkillEffect.NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT, ENEMY_ENERGY_CHAIN_FALLOFF_PERCENT);
+    }
+
+    public Map<SkillEffect, Float> enemyShipEffects() {
+        return Collections.unmodifiableMap(enemyShipEffects);
     }
 
     public void addBattleSizeBonus(float value) {
@@ -495,10 +581,13 @@ public final class ChartGenContext {
         }
         return factionText + String.format(Locale.ROOT, "fleet size %+.0f%%, %+d rolled fleet(s), %+d added fleet(s), %+d officer level(s), %+d officer(s), boss size %+.0f%%, "
                         + "fleet quality %+.0f%%, site budgets %s, %+d point(s) of interest, item drops %+.0f%%, item rarity %+.0f%%, drop types %s, "
-                        + "boss spoils x%.2f, reward x%.2f, sensor range x%.2f, chart quality %d, anomalies %s",
+                        + "boss spoils x%.2f, reward x%.2f, sensor range x%.2f, chart quality %d, anomalies %s, twinned boss %b, "
+                        + "barred combat hulls %s, ship systems disabled %b, autopilot forced %b, arc strike EMP %.0f, damage per S-mod %+.0f%%",
                 fleetSizePercent, baseFleets, extraFleets, officerLevelBonus, extraOfficers, bossSizePercent,
                 fleetQualityPercent, siteBudgetText(), extraPois(), itemPercent, itemRarityPercent, describeDropPercents(), bossSpoilsMult(), rewardMult(),
-                sensorRangeMult(), quality, forcedAnomalies.isEmpty() ? "none" : forcedAnomalies.toString());
+                sensorRangeMult(), quality, forcedAnomalies.isEmpty() ? "none" : forcedAnomalies.toString(), twinnedBoss,
+                bannedCombatHullSizes.isEmpty() ? "none" : bannedCombatHullSizes.toString(), shipSystemsDisabled, autopilotForced, arcStrikeEmp(),
+                damagePercentPerSMod);
     }
 
     private String describeDropPercents() {

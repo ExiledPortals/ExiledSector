@@ -6,6 +6,8 @@ import exiledsector.compat.CompatTarget;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.layout.abyss.AbyssArt;
+import exiledsector.charts.effect.ChartEnemyInflationListener;
+import exiledsector.charts.effect.ChartEnemyShipEffects;
 import exiledsector.charts.effect.ChartFleetConditionSource;
 import exiledsector.charts.loot.StarChartLootSource;
 import exiledsector.charts.objective.GatewayUpgradeRewards;
@@ -55,7 +57,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public List<ShipEffectSource> shipEffectSources() {
-        return List.of(ChartFleetConditionSource.INSTANCE);
+        return List.of(ChartFleetConditionSource.INSTANCE, ChartEnemyShipEffects.INSTANCE);
     }
 
     @Override
@@ -134,6 +136,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     @Override
     public void afterSaveRepair() {
         Global.getSector().getListenerManager().addListener(new WormholeGatewayOption(), true);
+        Global.getSector().getListenerManager().addListener(new ChartEnemyInflationListener(), true);
     }
 
     @Override

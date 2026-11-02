@@ -11,6 +11,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.effect.ChartFleetConditions;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.objective.ChartObjectives;
 import exiledsector.charts.run.cleanup.ChartLoadSweep;
 import exiledsector.charts.run.cleanup.ChartRunCloser;
@@ -27,6 +28,7 @@ public class ChartRunScript implements EveryFrameScript {
     private boolean failureReported;
     private float secondsSinceObjectiveCheck;
     private boolean effectsApplied;
+    private transient ChartGenContext appliedContext;
     private String sensorSourceText;
     private boolean transverseJumpSwapped;
 
@@ -154,8 +156,12 @@ public class ChartRunScript implements EveryFrameScript {
 
     void applyRunEffects(CampaignFleetAPI playerFleet, ChartRun run, boolean inside) {
         if (inside) {
-            ChartRunEffects.apply(playerFleet, run, sensorSource());
-            effectsApplied = true;
+            ChartGenContext runContext = ChartRunEffects.contextOf(run);
+            if (runContext != appliedContext || !effectsApplied) {
+                ChartRunEffects.apply(playerFleet, runContext, sensorSource());
+                appliedContext = runContext;
+                effectsApplied = true;
+            }
         } else if (hasEffectsToLift()) {
             liftRunEffects(playerFleet);
         }
@@ -167,6 +173,7 @@ public class ChartRunScript implements EveryFrameScript {
 
     private void liftRunEffects(CampaignFleetAPI playerFleet) {
         ChartRunEffects.lift(playerFleet);
+        appliedContext = null;
         effectsApplied = false;
     }
 

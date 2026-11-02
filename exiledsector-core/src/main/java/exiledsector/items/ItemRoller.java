@@ -117,9 +117,11 @@ public final class ItemRoller {
 
     private static void draw(List<PoolEntry> pool, int drawCount, Random random, boolean averageRolls, List<RolledModifier> rolledModifiers) {
         List<PoolEntry> remainingPool = new ArrayList<>(pool);
-        for (int drawsLeft = Math.min(drawCount, pool.size()); drawsLeft > 0; drawsLeft--) {
+        remainingPool.removeIf(entry -> ModifierExclusivity.clashesWithRolled(entry.modifier().id(), rolledModifiers));
+        for (int drawsLeft = Math.min(drawCount, pool.size()); drawsLeft > 0 && !remainingPool.isEmpty(); drawsLeft--) {
             PoolEntry entry = remainingPool.remove(WeightedPick.index(remainingPool, PoolEntry::weight, random.nextFloat()));
             rolledModifiers.add(RolledModifier.roll(entry.modifier(), random, averageRolls));
+            remainingPool.removeIf(candidate -> ModifierExclusivity.clashesWithRolled(candidate.modifier().id(), rolledModifiers));
         }
     }
 }

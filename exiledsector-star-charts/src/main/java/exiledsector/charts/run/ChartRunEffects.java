@@ -15,7 +15,6 @@ import java.util.Objects;
 
 public final class ChartRunEffects {
 
-    static final float SENSOR_MOD_DAYS = 0.1f;
     static final String VANILLA_NAV_BUOY_MOD_ID = "nav_buoy";
     static final String VANILLA_SENSOR_ARRAY_MOD_ID = "sensor_array";
     private static ChartRun contextRun;
@@ -51,14 +50,21 @@ public final class ChartRunEffects {
         return context;
     }
 
-    public static void apply(CampaignFleetAPI fleet, ChartRun run, String sensorSource) {
-        ChartGenContext runContext = contextOf(run);
+    public static void apply(CampaignFleetAPI fleet, ChartGenContext runContext, String sensorSource) {
         MutableFleetStatsAPI stats = fleet == null ? null : fleet.getStats();
-        if (stats != null && runContext.sensorRangeMult() != 1f) {
-            stats.addTemporaryModMult(SENSOR_MOD_DAYS, ChartIds.SENSOR_MOD_ID, sensorSource, runContext.sensorRangeMult(), stats.getSensorRangeMod());
+        if (stats != null && stats.getSensorRangeMod() != null) {
+            if (runContext.sensorRangeMult() != 1f) {
+                stats.getSensorRangeMod().modifyMult(ChartIds.SENSOR_MOD_ID, runContext.sensorRangeMult(), sensorSource);
+            } else {
+                stats.getSensorRangeMod().unmodify(ChartIds.SENSOR_MOD_ID);
+            }
         }
         ChartFleetConditions.set(runContext.fleetStatMults(), fleet);
         ChartFleetConditions.setBattleSizeBonus(runContext.battleSizeBonus());
+        ChartFleetConditions.setShipSystemsDisabled(runContext.shipSystemsDisabled());
+        ChartFleetConditions.setAutopilotForced(runContext.autopilotForced());
+        ChartFleetConditions.setArcStrikeEmp(runContext.arcStrikeEmp());
+        ChartFleetConditions.setDamagePercentPerSMod(runContext.damagePercentPerSMod());
     }
 
     public static void lift(CampaignFleetAPI fleet) {

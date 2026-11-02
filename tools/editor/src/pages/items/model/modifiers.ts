@@ -1,11 +1,12 @@
 import type { Vocabulary } from '../../../api/vocabulary.ts';
-import { csvTableFromRows, parseCsvTable, serializeCsvTable, trimmedCsvCells, type CsvTable } from '../../../shared/csv.ts';
+import { csvCell, csvTableFromRows, parseCsvTable, serializeCsvTable, trimmedCsvCells, type CsvTable } from '../../../shared/csv.ts';
 import { isNumberText } from '../../../shared/decimalText.ts';
 import { WORMHOLE_ANCHOR_TYPE } from './anchors.ts';
 import { DOCTRINE_TYPE } from './doctrines.ts';
 import { familyEffectNames, isFamilyEffect, MODIFIER_FILE_NAMES, type ItemFamily } from './itemFamily.ts';
 
 export const MODIFIER_COLUMNS = ['id', 'slot', 'item_types', 'lines', 'name'] as const;
+export const EXCLUSIVE_GROUPS_COLUMN = 'exclusive_groups';
 export const MODIFIER_SLOTS = ['implicit', 'prefix', 'suffix'] as const;
 export type ModifierSlot = (typeof MODIFIER_SLOTS)[number];
 export const MODIFIER_SLOT_LABELS: Record<ModifierSlot, string> = { implicit: 'Implicit', prefix: 'Prefix', suffix: 'Suffix' };
@@ -51,6 +52,7 @@ export interface ItemModifier {
   itemTypes: string[];
   lines: ModifierLine[];
   name: string;
+  exclusiveGroups?: string[];
   loadedId?: string;
 }
 
@@ -158,6 +160,7 @@ export function parseModifiersCsv(text: string): ModifiersModel {
       itemTypes: parseItemTypes(columns.item_types),
       lines: parseModifierLines(columns.lines),
       name: columns.name,
+      exclusiveGroups: parseItemTypes(csvCell(table, cells, EXCLUSIVE_GROUPS_COLUMN)),
       loadedId: columns.id,
     };
   });
@@ -165,6 +168,8 @@ export function parseModifiersCsv(text: string): ModifiersModel {
 }
 
 export function serializeModifiersCsv(model: ModifiersModel): string {
+  const writesGroups =
+    model.table.header.includes(EXCLUSIVE_GROUPS_COLUMN) || model.modifiers.some((modifier) => (modifier.exclusiveGroups ?? []).length > 0);
   return serializeCsvTable(
     csvTableFromRows(model.table, model.modifiers, (modifier) => ({
       id: modifier.id,
@@ -172,6 +177,7 @@ export function serializeModifiersCsv(model: ModifiersModel): string {
       item_types: modifier.itemTypes.join(';'),
       lines: formatModifierLines(modifier.lines),
       name: modifier.name,
+      ...(writesGroups ? { exclusive_groups: (modifier.exclusiveGroups ?? []).join(';') } : {}),
     })),
   );
 }
@@ -408,6 +414,11 @@ export function validateModifiers(
       issues.push(`${label}: pick at least one item type it rolls on`);
     } else {
       issues.push(...itemTypeIssues(label, modifier, vocabulary, family));
+    }
+    for (const group of modifier.exclusiveGroups ?? []) {
+      if (!MODIFIER_ID_PATTERN.test(group)) {
+        issues.push(`${label}: exclusive group "${group}" must be letters, digits and underscores`);
+      }
     }
     const modifierUsage = usage.get(modifier.id);
     if (modifierUsage && modifierUsage.nonUniqueItems.length > 0 && !modifier.name.trim()) {

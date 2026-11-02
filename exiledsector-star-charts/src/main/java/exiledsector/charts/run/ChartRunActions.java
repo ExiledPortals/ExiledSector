@@ -181,7 +181,7 @@ public final class ChartRunActions {
 
     public static boolean enter(SectorAPI sector, ChartRun run, SectorEntityToken outerWormhole) {
         CampaignFleetAPI playerFleet = sector.getPlayerFleet();
-        if (!run.canEnter() || playerFleet == null || playerFleet.isInHyperspaceTransition()) {
+        if (!run.canEnter() || playerFleet == null || playerFleet.isInHyperspaceTransition() || !ChartEntryBans.breached(run, playerFleet).isEmpty()) {
             return false;
         }
         StarSystemAPI system = sector.getStarSystem(run.systemId());

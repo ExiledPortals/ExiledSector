@@ -405,6 +405,13 @@ A hull item or subroutine can name an `area`, one of the toggled tree regions. `
 faction sources are never checked, and one whose area is switched off stays loaded but is left out of every drop
 pool (`ItemDrops`, `ItemUnlock.canDrop`) and of Transposition.
 
+### Exclusive modifiers
+
+A modifier row's `exclusive_groups` column names groups, and an item never carries two modifiers that share one
+(`ModifierExclusivity`). Rolls, rerolls, crafting adds and replacements skip a modifier that clashes with one already
+there, and a granted modifier that clashes with a kept one is refused. Unshielded, Phaselocked and Brittle charts share
+`crippled_defense`, so a chart leaves at least one defence working, and Jammed and Severed share `command_point_rate`.
+
 ### Wormhole anchors
 
 An anchor drops, stocks or shows in showcase salvage only while it is obtainable
@@ -541,7 +548,8 @@ each group its own range (`low=15-20/mid=50-70/high=150-200`), and the chart's t
 is kept as a position in the range, so a chart raised into the next group keeps its relative roll. A modifier rolls only
 on tiers its groups cover, so one written as `mid=/high=` never appears below tier 6 (`ModifierLine.rollsAtTier`).
 
-Wormhole entries are set per group, 6, 3 and 1 by default (`StarChartSettings.wormholeEntries`).
+Wormhole entries are set per group, 6, 3 and 1 by default (`StarChartSettings.wormholeEntries`). Each prefix adds 5%,
+15% or 25% item quantity by group, on top of its own line (`ChartGenContext.QUANTITY_PERCENT_PER_PREFIX`).
 
 ### Atlas Catalysts
 
@@ -573,6 +581,23 @@ is the boss and carries the boss loot. Station rows whose variant the game has n
 at load, and a station that still fails to spawn is replaced by a full-size fleet boss (`ChartContentGenerator`).
 Either kind is detected by the player from anywhere in the system, so it always shows on the radar
 (`ChartContentGenerator.revealBoss`).
+
+### Chart system rules
+
+The chart's player-side lines are set once on entering the system (`ChartRunScript`) and reach the player's ships at
+ship creation (`ChartFleetConditions`). Each hostile chart fleet is granted the enemy-side lines when it is generated: they
+are stored on the fleet and the hidden hull mod is added to its ships, again after each inflation
+(`ChartEnemyInflationListener`), which then apply them as skill effects, stats and
+damage listeners at ship creation (`ChartEnemyShipEffects`). Only battle size and command point rate are battle rules
+(`ChartBattlePlugin`). Inert switches off the ship system of each player fleet ship once, as it is created; the engine
+keeps it off for that battle. Overridden swallows the autopilot key, stops manual control from turning autopilot off and
+turns it back on whenever the player ship has no AI (`ChartAutopilotPlugin`). Ionized strikes a random player-side ship
+every 8 seconds with a shield-piercing, EMP-only arc (`ChartArcStrikePlugin`). Tarnished gives player fleet ships with
+S-mods, and their fighters, a listener cutting damage dealt by 5% for each S-mod (`ChartSModDamageListener`).
+
+Twinned spawns a second fleet the size of the boss's fleet, or of a station's guard, from its own seed at its own spot,
+so its ships and loot differ; only the original counts for the objective. A hull size bar keeps the fleet out at the Gateway while it holds a non-civilian
+ship of that size (`ChartEntryBans`).
 
 ### Transverse Jump in charts
 

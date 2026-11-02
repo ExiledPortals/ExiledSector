@@ -2,9 +2,11 @@ package exiledsector.charts.effect;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
+import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
@@ -14,7 +16,9 @@ import exiledsector.charts.generation.ChartGenContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -136,7 +141,7 @@ class ChartFleetConditionsTest {
     void shieldAndArmorDrawbacksReachTheirShipStatsAndEnemyDamageStaysOffShips() {
         ChartFleetConditions.set(Map.of(ChartFleetStat.SHIELD_UPKEEP, 1.5f, ChartFleetStat.SHIELD_RAISE_RATE, 0.6f,
                 ChartFleetStat.SHIELD_DAMAGE_TAKEN, 1.2f, ChartFleetStat.ARMOR_DAMAGE_TAKEN, 1.15f,
-                ChartFleetStat.ENEMY_ENERGY_DAMAGE_DEALT, 1.2f), playerFleet);
+                ChartFleetStat.ENEMY_ENERGY_DAMAGE_DEALT, 1.2f, ChartFleetStat.ENEMY_OBJECTIVE_CAPTURE_RATE, 1.5f), playerFleet);
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         MutableStat upkeep = new MutableStat(1f);
         MutableStat raiseRate = new MutableStat(1f);
@@ -155,6 +160,100 @@ class ChartFleetConditionsTest {
         assertEquals(1.2f, shieldTaken.getModifiedValue(), 0.0001f);
         assertEquals(1.15f, armorTaken.getModifiedValue(), 0.0001f);
         assertFalse(ChartFleetStat.ENEMY_ENERGY_DAMAGE_DEALT.appliesToShips());
+        assertFalse(ChartFleetStat.ENEMY_OBJECTIVE_CAPTURE_RATE.appliesToShips());
+        assertTrue(ChartFleetStat.ENEMY_OBJECTIVE_CAPTURE_RATE.appliesToEnemyShips());
+    }
+
+    @Test
+    void lessRepairSpeedLengthensWeaponAndEngineRepairTimes() {
+        ChartFleetConditions.set(Map.of(ChartFleetStat.WEAPON_AND_ENGINE_REPAIR_SPEED, 0.6f), playerFleet);
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        MutableStat weaponRepairTime = new MutableStat(1f);
+        MutableStat engineRepairTime = new MutableStat(1f);
+        when(stats.getFleetMember()).thenReturn(playerMember);
+        when(stats.getCombatWeaponRepairTimeMult()).thenReturn(weaponRepairTime);
+        when(stats.getCombatEngineRepairTimeMult()).thenReturn(engineRepairTime);
+
+        ChartFleetConditions.applyToShip(stats);
+
+        assertEquals(1f / 0.6f, weaponRepairTime.getModifiedValue(), 0.0001f);
+        assertEquals(1f / 0.6f, engineRepairTime.getModifiedValue(), 0.0001f);
+    }
+
+    @Test
+    void decrepitStrengthensTheDModsOfPlayerFleetShips() {
+        ChartFleetConditions.set(Map.of(ChartFleetStat.DMOD_EFFECT, 1.4f), playerFleet);
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
+        MutableStat dModEffect = new MutableStat(1f);
+        when(stats.getFleetMember()).thenReturn(playerMember);
+        when(stats.getDynamic()).thenReturn(dynamic);
+        when(dynamic.getStat(Stats.DMOD_EFFECT_MULT)).thenReturn(dModEffect);
+
+        ChartFleetConditions.applyToShip(stats);
+
+        assertEquals(1.4f, dModEffect.getModifiedValue(), 0.0001f);
+    }
+
+    @Test
+    void tarnishedCutsTheDamageOfPlayerFleetShipsAndTheirFightersByItsPercentForEachSMod() {
+        ChartFleetConditions.setDamagePercentPerSMod(-5f);
+        ShipVariantAPI threeSMods = mock(ShipVariantAPI.class);
+        when(threeSMods.getSMods()).thenReturn(new LinkedHashSet<>(List.of("a", "b", "c")));
+        ShipAPI playerShip = mock(ShipAPI.class);
+        when(playerShip.getFleetMember()).thenReturn(playerMember);
+        when(playerShip.getMutableStats()).thenReturn(mock(MutableShipStatsAPI.class));
+        when(playerShip.getMutableStats().getFleetMember()).thenReturn(playerMember);
+        when(playerShip.getVariant()).thenReturn(threeSMods);
+        ShipAPI fighter = mock(ShipAPI.class);
+        ShipAPI unmodded = mock(ShipAPI.class);
+        when(unmodded.getFleetMember()).thenReturn(playerMember);
+        when(unmodded.getVariant()).thenReturn(mock(ShipVariantAPI.class));
+        ShipAPI otherShip = mock(ShipAPI.class);
+        when(otherShip.getFleetMember()).thenReturn(mock(FleetMemberAPI.class));
+        when(otherShip.getVariant()).thenReturn(threeSMods);
+
+        ChartFleetConditions.afterShipCreation(playerShip);
+        ChartFleetConditions.applyToFighter(fighter, playerShip);
+        ChartFleetConditions.afterShipCreation(unmodded);
+        ChartFleetConditions.afterShipCreation(otherShip);
+
+        ArgumentCaptor<ChartSModDamageListener> added = ArgumentCaptor.forClass(ChartSModDamageListener.class);
+        verify(playerShip).addListener(added.capture());
+        assertEquals(0.85f, added.getValue().mult(), 0.0001f);
+        verify(fighter).addListener(any(ChartSModDamageListener.class));
+        verify(unmodded, never()).addListener(any());
+        verify(otherShip, never()).addListener(any());
+        verify(playerShip, never()).setShipSystemDisabled(true);
+
+        DamageAPI damage = mock(DamageAPI.class);
+        MutableStat damageModifier = new MutableStat(1f);
+        when(damage.getModifier()).thenReturn(damageModifier);
+        added.getValue().modifyDamageDealt(null, null, damage, null, false);
+        assertEquals(0.85f, damageModifier.getModifiedValue(), 0.0001f);
+    }
+
+    @Test
+    void inertDisablesTheShipSystemsOfPlayerFleetShipsOnlyAndClearsWithTheRun() {
+        ChartFleetConditions.setShipSystemsDisabled(true);
+        ShipAPI playerShip = mock(ShipAPI.class);
+        when(playerShip.getFleetMember()).thenReturn(playerMember);
+        ShipAPI otherShip = mock(ShipAPI.class);
+        when(otherShip.getFleetMember()).thenReturn(mock(FleetMemberAPI.class));
+
+        assertTrue(ChartFleetConditions.isActive());
+        ChartFleetConditions.afterShipCreation(playerShip);
+        ChartFleetConditions.afterShipCreation(otherShip);
+
+        verify(playerShip).setShipSystemDisabled(true);
+        verify(otherShip, never()).setShipSystemDisabled(true);
+
+        ChartFleetConditions.clear(playerFleet);
+        ShipAPI laterShip = mock(ShipAPI.class);
+        when(laterShip.getFleetMember()).thenReturn(playerMember);
+        ChartFleetConditions.afterShipCreation(laterShip);
+        assertFalse(ChartFleetConditions.isActive());
+        verify(laterShip, never()).setShipSystemDisabled(true);
     }
 
     @Test

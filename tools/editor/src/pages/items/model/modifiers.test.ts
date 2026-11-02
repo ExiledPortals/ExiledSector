@@ -66,6 +66,21 @@ describe('item modifiers', () => {
     expect(serializeModifiersCsv(model)).toBe(text);
   });
 
+  it('reads and writes exclusive groups, adding the column only once a modifier has one', () => {
+    const text = 'id,slot,item_types,lines,name,exclusive_groups\nHULL_MULT,prefix,hull_item,HULL_MULT:4:6,Reinforced,crippled;other\nARMOR_PERCENT,prefix,hull_item,ARMOR_PERCENT:4:6,Plated,\n';
+    const model = parseModifiersCsv(text);
+    const ungrouped = parseModifiersCsv('id,slot,item_types,lines,name\nHULL_MULT,prefix,hull_item,HULL_MULT:4:6,Reinforced\n');
+
+    expect(model.modifiers.map((modifier) => modifier.exclusiveGroups)).toEqual([['crippled', 'other'], []]);
+    expect(serializeModifiersCsv(model)).toBe(text);
+    expect(serializeModifiersCsv(ungrouped)).toBe('id,slot,item_types,lines,name\nHULL_MULT,prefix,hull_item,HULL_MULT:4:6,Reinforced\n');
+    ungrouped.modifiers[0].exclusiveGroups = ['bad group'];
+    expect(serializeModifiersCsv(ungrouped)).toBe('id,slot,item_types,lines,name,exclusive_groups\nHULL_MULT,prefix,hull_item,HULL_MULT:4:6,Reinforced,bad group\n');
+    expect(validateModifiers(ungrouped.modifiers, vocabulary, modifierUsage(definitions(), []))).toContain(
+      'HULL_MULT: exclusive group "bad group" must be letters, digits and underscores',
+    );
+  });
+
   it('suggests ids that follow the naming convention', () => {
     expect(suggestedModifierId(parseModifierLines('HULL_MULT:1:2'))).toBe('HULL_MULT');
     expect(suggestedModifierId(parseModifierLines('HULL_MULT:1:2'), 'reactor')).toBe('HULL_MULT_REACTOR');

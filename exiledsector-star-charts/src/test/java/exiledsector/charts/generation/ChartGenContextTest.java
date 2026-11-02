@@ -20,6 +20,9 @@ import exiledsector.charts.content.ChartFleetSpread;
 import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartFleetStat;
+import exiledsector.skills.skilleffect.onhit.OnHitSkillEffect;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.charts.loot.ChartLootTotals;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.objective.ChartRewards;
@@ -36,6 +39,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -256,7 +260,7 @@ class ChartGenContextTest {
             assertTrue(english.has(key) || english.has(key + ".other") && english.has(key + ".one"), key);
             assertTrue(chinese.has(key) || chinese.has(key + ".other"), key);
             String description = effect.description(3f).plain();
-            assertTrue(description.contains("3") && !description.contains(key), description);
+            assertTrue(description.contains("3") != effect.isFlag() && !description.contains(key), description);
             assertFalse(effect.description(3f).spans().isEmpty(), key);
         }
         assertTrue(ChartEffect.CHART_SENSOR_RANGE_PERCENT.description(-30f).plain().contains("30%"));
@@ -432,5 +436,35 @@ class ChartGenContextTest {
         assertEquals(1f, context.itemChances().general(), TOLERANCE);
         assertEquals(1f, ChartGenContext.none().itemChances().rarity(), TOLERANCE);
         assertEquals(1.5f, context.itemChances().scaled(2f).rarity(), TOLERANCE);
+    }
+
+    @Test
+    void systemRuleLinesSetTheirFlagsAndEnemyShipEffectsAddUp() {
+        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_TWINNED_BOSS, 1f),
+                new AppliedEffect(ChartEffect.CHART_NO_COMBAT_CRUISERS, 1f), new AppliedEffect(ChartEffect.CHART_NO_COMBAT_FRIGATES, 1f),
+                new AppliedEffect(ChartEffect.CHART_SHIELD_DAMAGE_TAKEN_PERCENT, 20f), new AppliedEffect(ChartEffect.CHART_UNSHIELDED_SHIELD_DAMAGE_TAKEN_PERCENT, 100f),
+                new AppliedEffect(ChartEffect.CHART_ARMOR_PERCENT, -90f), new AppliedEffect(ChartEffect.CHART_NO_SHIP_SYSTEMS, 1f),
+                new AppliedEffect(ChartEffect.CHART_COMMAND_POINT_RATE_PERCENT, -40f),
+                new AppliedEffect(ChartEffect.CHART_SEVERED_COMMAND_POINT_RATE_PERCENT, -90f), new AppliedEffect(ChartEffect.CHART_FORCED_AUTOPILOT, 1f),
+                new AppliedEffect(ChartEffect.CHART_ARC_STRIKE_EMP_FLAT, 800f), new AppliedEffect(ChartEffect.CHART_WEAPON_AND_ENGINE_REPAIR_SPEED_PERCENT, -40f),
+                new AppliedEffect(ChartEffect.CHART_ENEMY_ENERGY_CHAIN_CHANCE_PERCENT, 30f),
+                new AppliedEffect(ChartEffect.CHART_ENEMY_ENERGY_CHAIN_CHANCE_PERCENT, 30f)));
+
+        assertTrue(context.twinnedBoss());
+        assertEquals(Set.of(HullSize.CRUISER, HullSize.FRIGATE), context.bannedCombatHullSizes());
+        assertTrue(context.shipSystemsDisabled());
+        assertTrue(context.autopilotForced());
+        assertEquals(800f, context.arcStrikeEmp(), TOLERANCE);
+        assertEquals(0.6f, context.fleetStatMults().get(ChartFleetStat.WEAPON_AND_ENGINE_REPAIR_SPEED), TOLERANCE);
+        assertEquals(2.2f, context.fleetStatMults().get(ChartFleetStat.SHIELD_DAMAGE_TAKEN), TOLERANCE);
+        assertEquals(0.1f, context.fleetStatMults().get(ChartFleetStat.ARMOR), TOLERANCE);
+        assertEquals(0.1f, context.fleetStatMults().get(ChartFleetStat.COMMAND_POINT_RATE), TOLERANCE);
+        assertEquals(Map.of(OnHitSkillEffect.NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT, 60f,
+                OnHitSkillEffect.NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT, ChartGenContext.ENEMY_ENERGY_CHAIN_FALLOFF_PERCENT), context.enemyShipEffects());
+        assertFalse(ChartGenContext.none().twinnedBoss());
+        assertTrue(ChartGenContext.none().bannedCombatHullSizes().isEmpty());
+        assertFalse(ChartGenContext.none().shipSystemsDisabled());
+        assertFalse(ChartGenContext.none().autopilotForced());
+        assertEquals(0f, ChartGenContext.none().arcStrikeEmp(), TOLERANCE);
     }
 }

@@ -158,19 +158,19 @@ class StarChartTest {
     @Test
     void chartRollsRespectMinimumTierGates() {
         ItemDefinition single = ItemDefinitions.get(SINGLE);
-        boolean extraOfficersAtHighTier = false;
+        boolean stationBudgetAtHighTier = false;
         boolean bossSizeAtTierOne = false;
         for (long seed = 0; seed < 400; seed++) {
-            assertFalse(modifierIds(StarChartFixtures.chart(SINGLE, seed, 2)).contains("HYBRID_CHART_EXTRA_OFFICERS"), "seed " + seed);
-            extraOfficersAtHighTier |= modifierIds(StarChartFixtures.chart(SINGLE, seed, 10)).contains("HYBRID_CHART_EXTRA_OFFICERS");
-            bossSizeAtTierOne |= modifierIds(StarChartFixtures.chart(SINGLE, seed, 1)).contains("HYBRID_CHART_BOSS_SIZE");
+            assertFalse(modifierIds(StarChartFixtures.chart(SINGLE, seed, 2)).contains("CHART_STATION_BUDGET_PERCENT"), "seed " + seed);
+            stationBudgetAtHighTier |= modifierIds(StarChartFixtures.chart(SINGLE, seed, 10)).contains("CHART_STATION_BUDGET_PERCENT");
+            bossSizeAtTierOne |= modifierIds(StarChartFixtures.chart(SINGLE, seed, 1)).contains("CHART_BOSS_SIZE_PERCENT");
         }
-        assertTrue(extraOfficersAtHighTier);
+        assertTrue(stationBudgetAtHighTier);
         assertTrue(bossSizeAtTierOne, "every tier has a boss, so its size prefix rolls from tier 1");
-        assertEquals(TierRange.atLeast(3), single.poolEntryFor("HYBRID_CHART_EXTRA_OFFICERS").tiers());
-        assertEquals(TierRange.ANY, single.poolEntryFor("HYBRID_CHART_BOSS_SIZE").tiers());
+        assertEquals(TierRange.atLeast(3), single.poolEntryFor("CHART_STATION_BUDGET_PERCENT").tiers());
+        assertEquals(TierRange.ANY, single.poolEntryFor("CHART_BOSS_SIZE_PERCENT").tiers());
         assertEquals(TierRange.ANY, single.poolEntryFor("CHART_BOSS_SPOILS_PERCENT").tiers());
-        assertEquals(TierRange.ANY, single.poolEntryFor("HYBRID_CHART_FLEET_SIZE").tiers());
+        assertEquals(TierRange.ANY, single.poolEntryFor("CHART_FLEET_SIZE_PERCENT").tiers());
     }
 
     @Test
@@ -184,6 +184,24 @@ class StarChartTest {
             assertEquals(chart.explicits().size() <= 2 ? ItemRarity.COMMON : ItemRarity.RARE, chart.rarity());
         }
         assertEquals(Set.of(1, 2, 3, 4, 5, 6), counts);
+    }
+
+    @Test
+    void aChartNeverRollsMoreThanOneModifierThatCripplesShieldsArmourOrPhase() {
+        Set<String> crippling = Set.of("CHART_UNSHIELDED_SHIELD_DAMAGE_TAKEN_PERCENT", "CHART_PHASELOCKED_PHASE_ACTIVATION_COST_PERCENT",
+                "CHART_ARMOR_PERCENT");
+        crippling.forEach(modifierId -> assertEquals(Set.of("crippled_defense"), ItemModifiers.exclusiveGroups(modifierId)));
+        ItemDefinition single = ItemDefinitions.get(SINGLE);
+        boolean rolledOne = false;
+        for (long seed = 0; seed < 1000; seed++) {
+            List<RolledModifier> rolled = ItemRoller.rollAtTierWithEffectCount(single, seed, StarChart.HIGHEST_TIER,
+                    StarChartCorruption.EXPANDED_MODIFIERS, StarChartCorruption.EXPANDED_PER_SIDE);
+            long cripplingCount = rolled.stream().filter(modifier -> crippling.contains(modifier.modifierId())).count();
+
+            assertTrue(cripplingCount <= 1, "seed " + seed);
+            rolledOne |= cripplingCount == 1;
+        }
+        assertTrue(rolledOne);
     }
 
     @Test
@@ -423,15 +441,32 @@ class StarChartTest {
     }
 
     @Test
+    void everyPrefixAddsItemQuantityByTierGroup() {
+        Set<Long> prefixCounts = new HashSet<>();
+        for (int[] tierAndPercent : new int[][] {{1, 5}, {5, 5}, {6, 15}, {10, 15}, {11, 25}, {16, 25}}) {
+            for (long seed = 0; seed < 20; seed++) {
+                StarChart chart = StarChartFixtures.chart(SINGLE, seed, tierAndPercent[0]);
+                long prefixes = chart.rolls().stream().filter(roll -> roll.slot() == ModifierSlot.PREFIX).count();
+                float quantity = ChartGenContext.from(chart).applied().stream()
+                        .filter(applied -> applied.effect() == ChartEffect.CHART_QUANTITY_PERCENT).map(AppliedEffect::value).reduce(0f, Float::sum);
+
+                assertEquals(prefixes * tierAndPercent[1], quantity, 1e-4f, "tier " + tierAndPercent[0] + " seed " + seed);
+                prefixCounts.add(prefixes);
+            }
+        }
+        assertTrue(prefixCounts.stream().anyMatch(count -> count > 1), prefixCounts.toString());
+    }
+
+    @Test
     void aRollWhoseModifierLeftThePoolFallsBackToTheCatalogueOrIsDroppedAndFlagged() {
-        List<RolledModifier> movedExplicits = List.of(new RolledModifier("HYBRID_CHART_BOSS_SIZE", ModifierSlot.PREFIX,
-                List.of(new RolledEffect("CHART_BOSS_SIZE_PERCENT", 100f), new RolledEffect("CHART_QUANTITY_PERCENT", 0f))));
+        List<RolledModifier> movedExplicits = List.of(new RolledModifier("CHART_BOSS_SIZE_PERCENT", ModifierSlot.PREFIX,
+                List.of(new RolledEffect("CHART_BOSS_SIZE_PERCENT", 100f))));
         StarChart moved = (StarChart) Item.create(null, UNGATED, 4L, movedExplicits, ItemTraits.ofTier(12));
         ChartGenContext movedContext = ChartGenContext.from(moved);
 
-        assertNull(moved.definition().poolEntryFor("HYBRID_CHART_BOSS_SIZE"));
+        assertNull(moved.definition().poolEntryFor("CHART_BOSS_SIZE_PERCENT"));
         assertTrue(movedContext.applied().contains(new AppliedEffect(ChartEffect.CHART_BOSS_SIZE_PERCENT, 540f)), movedContext.applied().toString());
-        assertTrue(movedContext.applied().contains(new AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, 8f)), movedContext.applied().toString());
+        assertTrue(movedContext.applied().contains(new AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, 25f)), movedContext.applied().toString());
         assertTrue(moved.effectLines().get(0).plain().contains("540%"), moved.effectLines().toString());
 
         List<RolledModifier> orphanExplicits = List.of(new RolledModifier("CHART_REMOVED_MODIFIER", ModifierSlot.SUFFIX,
@@ -489,7 +524,7 @@ class StarChartTest {
             Item chart = new ItemData(SINGLE, seed).preview();
             assertEquals(StarChart.LOWEST_TIER, chart.tier());
             Set<String> ids = modifierIds(chart);
-            assertFalse(ids.contains("HYBRID_CHART_EXTRA_OFFICERS"), "seed " + seed + ": " + ids);
+            assertFalse(ids.contains("CHART_STATION_BUDGET_PERCENT"), "seed " + seed + ": " + ids);
         }
     }
 
@@ -538,10 +573,10 @@ class StarChartTest {
     void rollOddsLeaveOutEntriesGatedAboveTheTier() {
         ItemDefinition single = ItemDefinitions.get(SINGLE);
 
-        assertFalse(ItemRollOdds.weightShares(single, 1).containsKey("HYBRID_CHART_EXTRA_OFFICERS"));
-        assertTrue(ItemRollOdds.weightShares(single, 3).containsKey("HYBRID_CHART_EXTRA_OFFICERS"));
-        assertTrue(ItemRollOdds.weightShares(single).containsKey("HYBRID_CHART_EXTRA_OFFICERS"));
-        assertTrue(ItemRollOdds.weightShares(single, 1).containsKey("HYBRID_CHART_BOSS_SIZE"));
+        assertFalse(ItemRollOdds.weightShares(single, 1).containsKey("CHART_STATION_BUDGET_PERCENT"));
+        assertTrue(ItemRollOdds.weightShares(single, 3).containsKey("CHART_STATION_BUDGET_PERCENT"));
+        assertTrue(ItemRollOdds.weightShares(single).containsKey("CHART_STATION_BUDGET_PERCENT"));
+        assertTrue(ItemRollOdds.weightShares(single, 1).containsKey("CHART_BOSS_SIZE_PERCENT"));
         double prefixShare = ItemRollOdds.weightShares(single, 1).entrySet().stream()
                 .filter(entry -> single.poolEntryFor(entry.getKey()).slot() == ModifierSlot.PREFIX).mapToDouble(java.util.Map.Entry::getValue).sum();
         assertEquals(1.0, prefixShare, 1e-9);

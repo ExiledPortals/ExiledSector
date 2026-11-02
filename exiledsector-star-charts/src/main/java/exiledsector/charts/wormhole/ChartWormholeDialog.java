@@ -4,15 +4,19 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.run.ChartEntryBans;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunActions;
 import exiledsector.charts.run.ChartRunState;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.ui.BaseDialogPlugin;
 import exiledsector.ui.VanillaText;
+
+import java.util.Set;
 
 public class ChartWormholeDialog extends BaseDialogPlugin {
 
@@ -58,8 +62,12 @@ public class ChartWormholeDialog extends BaseDialogPlugin {
         VanillaText.plainPara(text(), entriesLeft > 0
                 ? I18n.forGameText(() -> Translation.msg("chart.dialog.outer.entriesLeft").count(entriesLeft).text())
                 : Translation.gameText("chart.dialog.outer.noEntries"));
+        Set<HullSize> barred = ChartEntryBans.breached(run, Global.getSector().getPlayerFleet());
+        for (HullSize hullSize : barred) {
+            VanillaText.plainPara(text(), Translation.gameText("chart.dialog.outer.barred." + hullSize.name()));
+        }
         options.addOption(I18n.forGameText(() -> Translation.msg("chart.dialog.option.enter").count(entriesLeft).text()), ENTER);
-        options.setEnabled(ENTER, run.canEnter());
+        options.setEnabled(ENTER, run.canEnter() && barred.isEmpty());
         options.addOption(Translation.gameText("chart.dialog.option.collapse"), COLLAPSE);
         options.addOptionConfirmation(COLLAPSE, Translation.gameText("chart.dialog.collapse.confirm"),
                 Translation.gameText("chart.dialog.collapse.yes"), Translation.gameText("chart.dialog.collapse.no"));

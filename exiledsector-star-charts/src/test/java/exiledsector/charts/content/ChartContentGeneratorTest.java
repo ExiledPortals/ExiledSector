@@ -51,6 +51,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -764,6 +765,42 @@ class ChartContentGeneratorTest {
             assertEquals("yes", run.anomalyState(stateKey));
         } finally {
             ChartAnomalies.resetForTests();
+        }
+    }
+
+    @Test
+    void aTwinnedBossAddsARevealedBossSizedFleetFromItsOwnSeedThatTheObjectiveIgnores() {
+        ChartGenContext twinned = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_TWINNED_BOSS, 1f)));
+        ChartContent content = ChartContentGenerator.generate(sector, system, RUN_ID, 11L, 8, WORMHOLE, twinned, null, List.of());
+        ChartContentPlan plan = ChartContentPlanner.plan(11L, ChartTiers.forTier(8), ChartPois.all(), ChartFactions.all(), id -> true);
+
+        assertEquals(plan.fleets().size() + 1, engine.fleets.size());
+        List<CampaignFleetAPI> bosses = engine.fleets.stream().filter(fleet -> fleet.getMemoryWithoutUpdate().getBoolean(ChartIds.BOSS_MEMORY_KEY)).toList();
+        assertEquals(2, bosses.size());
+        CampaignFleetAPI boss = bosses.stream().filter(fleet -> fleet.getId().equals(content.bossFleetId())).findFirst().orElseThrow();
+        CampaignFleetAPI twin = bosses.get(bosses.get(0) == boss ? 1 : 0);
+        assertEquals(engine.fleetParams.get(engine.fleets.indexOf(boss)).combatPts, engine.fleetParams.get(engine.fleets.indexOf(twin)).combatPts, 0.001f);
+        assertNotEquals(ChartIds.fleetSeed(boss.getMemoryWithoutUpdate()), ChartIds.fleetSeed(twin.getMemoryWithoutUpdate()));
+        assertTrue(inSystem.contains(twin));
+        verify(twin).setExtendedDetectedAtRange(ChartFleetVisibility.REVEAL_EXTENDED_RANGE);
+        assertEquals(ChartContentGenerator.TWIN_OFFSET, Vector2f.sub(boss.getLocation(), twin.getLocation(), new Vector2f()).length(), 1f);
+    }
+
+    @Test
+    void anAlliedBossIsNeverTwinned() {
+        useStationBosses();
+        try {
+            skirmish(SkirmishSide.DEFENDER);
+            int alliedPlanFleets = engine.fleets.size();
+            engine = FakeChartContentEngine.install(new FakeChartContentEngine().offering(-4000f, 0f, 0f, 5000f, 0f, -5000f, 6500f, 0f));
+            ChartGenContext context = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID), false)
+                    .withAnomalyData(FactionSkirmish.ANOMALY_ID, new SkirmishJoin(SkirmishSide.DEFENDER, "tritachyon").encode()))
+                    .withEffects(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_TWINNED_BOSS, 1f)));
+            ChartContentGenerator.generate(sector, system, RUN_ID, 11L, 8, WORMHOLE, context, null, List.of(FactionSkirmish.ANOMALY_ID));
+
+            assertEquals(alliedPlanFleets, engine.fleets.size());
+        } finally {
+            ChartBosses.resetForTests();
         }
     }
 }

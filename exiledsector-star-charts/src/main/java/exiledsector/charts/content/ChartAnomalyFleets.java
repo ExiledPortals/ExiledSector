@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.fleets.FleetParamsV3;
+import exiledsector.charts.effect.ChartEnemyShipEffects;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.RunFactionDress;
 import exiledsector.charts.content.ChartContentPlan.FleetRole;
@@ -99,6 +100,7 @@ public final class ChartAnomalyFleets {
         ChartContentGenerator.prepareFleet(fleet, runId, tier, FleetRole.PATROL, 0, fleetSeed);
         if (!lootable) {
             fleet.getMemoryWithoutUpdate().unset(ChartIds.START_DP_MEMORY_KEY);
+            ChartEnemyShipEffects.grant(fleet, context);
             return;
         }
         arm(fleet, false, context, tier);

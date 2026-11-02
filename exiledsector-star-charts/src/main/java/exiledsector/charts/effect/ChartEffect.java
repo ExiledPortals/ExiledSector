@@ -1,6 +1,7 @@
 package exiledsector.charts.effect;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.data.EnumKeys;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartGenerated;
@@ -9,6 +10,8 @@ import exiledsector.i18n.Message;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.modifiers.ModifierEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.onhit.OnHitSkillEffect;
 import exiledsector.charts.loot.DropType;
 
 public enum ChartEffect implements ModifierEffect {
@@ -32,6 +35,7 @@ public enum ChartEffect implements ModifierEffect {
     CHART_ENERGY_DAMAGE_TAKEN_PERCENT(ChartFleetStat.ENERGY_DAMAGE_TAKEN),
     CHART_SHIELD_DAMAGE_TAKEN_PERCENT(ChartFleetStat.SHIELD_DAMAGE_TAKEN),
     CHART_ARMOR_DAMAGE_TAKEN_PERCENT(ChartFleetStat.ARMOR_DAMAGE_TAKEN),
+    CHART_ARMOR_PERCENT(ChartFleetStat.ARMOR),
     CHART_TOP_SPEED_PERCENT(ChartFleetStat.TOP_SPEED),
     CHART_MANEUVERABILITY_PERCENT(ChartFleetStat.MANEUVERABILITY),
     CHART_SHIELD_ARC_PERCENT(ChartFleetStat.SHIELD_ARC),
@@ -39,9 +43,11 @@ public enum ChartEffect implements ModifierEffect {
     CHART_SHIELD_RAISE_RATE_PERCENT(ChartFleetStat.SHIELD_RAISE_RATE),
     CHART_PHASE_ACTIVATION_COST_PERCENT(ChartFleetStat.PHASE_ACTIVATION_COST),
     CHART_FLUX_DISSIPATION_PERCENT(ChartFleetStat.FLUX_DISSIPATION),
+    CHART_WEAPON_AND_ENGINE_REPAIR_SPEED_PERCENT(ChartFleetStat.WEAPON_AND_ENGINE_REPAIR_SPEED),
     CHART_BALLISTIC_WEAPON_RANGE_PERCENT(ChartFleetStat.BALLISTIC_WEAPON_RANGE),
     CHART_ENERGY_WEAPON_RANGE_PERCENT(ChartFleetStat.ENERGY_WEAPON_RANGE),
     CHART_MISSILE_WEAPON_RANGE_PERCENT(ChartFleetStat.MISSILE_WEAPON_RANGE),
+    CHART_DMOD_EFFECT_PERCENT(ChartFleetStat.DMOD_EFFECT),
     CHART_DEPLOYMENT_COST_PERCENT(ChartFleetStat.DEPLOYMENT_COST),
     CHART_ENEMY_DEPLOYMENT_COST_PERCENT(ChartFleetStat.ENEMY_DEPLOYMENT_COST),
     CHART_COMMAND_POINT_RATE_PERCENT(ChartFleetStat.COMMAND_POINT_RATE),
@@ -53,6 +59,31 @@ public enum ChartEffect implements ModifierEffect {
     CHART_SMALLER_BATTLES_FLAT(false, (context, value) -> context.addBattleSizeBonus(-value)),
     CHART_LARGER_BATTLES_FLAT(false, ChartGenContext::addBattleSizeBonus),
     CHART_ENEMY_SENSOR_RANGE_FLAT(false, ChartGenContext::addEnemySensorRangeBonus),
+    CHART_TWINNED_BOSS(ChartGenContext::twinBoss),
+    CHART_NO_COMBAT_CAPITAL_SHIPS(HullSize.CAPITAL_SHIP),
+    CHART_NO_COMBAT_CRUISERS(HullSize.CRUISER),
+    CHART_NO_COMBAT_DESTROYERS(HullSize.DESTROYER),
+    CHART_NO_COMBAT_FRIGATES(HullSize.FRIGATE),
+    CHART_UNSHIELDED_SHIELD_DAMAGE_TAKEN_PERCENT(ChartFleetStat.SHIELD_DAMAGE_TAKEN),
+    CHART_PHASELOCKED_PHASE_ACTIVATION_COST_PERCENT(ChartFleetStat.PHASE_ACTIVATION_COST),
+    CHART_NO_SHIP_SYSTEMS(ChartGenContext::disableShipSystems),
+    CHART_SEVERED_COMMAND_POINT_RATE_PERCENT(ChartFleetStat.COMMAND_POINT_RATE),
+    CHART_FORCED_AUTOPILOT(ChartGenContext::forceAutopilot),
+    CHART_ARC_STRIKE_EMP_FLAT(false, ChartGenContext::addArcStrikeEmp) {
+        @Override
+        public StyledText description(float magnitude) {
+            return Translation.msg(key()).arg("value", magnitude).arg("seconds", ChartArcStrikePlugin.INTERVAL_SECONDS).styled();
+        }
+    },
+    CHART_DAMAGE_PER_SMOD_PERCENT(false, ChartGenContext::addDamagePercentPerSMod) {
+        @Override
+        public StyledText description(float magnitude) {
+            return Translation.msg(key()).arg("value", Math.abs(magnitude)).styled();
+        }
+    },
+    CHART_ENEMY_BEAM_SPLIT_TARGETS_FLAT(true, OnHitSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT),
+    CHART_ENEMY_ENERGY_CHAIN_CHANCE_PERCENT(false, ChartGenContext::addEnemyEnergyChainChance),
+    CHART_ENEMY_BALLISTIC_PIERCE_CHANCE_PERCENT(false, OnHitSkillEffect.BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT),
     CHART_QUANTITY_PERCENT(false, ChartGenContext::addQuantityPercent),
     CHART_POI_BUDGET_PERCENT(false, ChartGenContext::addAllSiteBudgetsPercent),
     CHART_CACHE_BUDGET_PERCENT(false, (context, value) -> context.addSiteBudgetPercent(ChartPoi.Kind.CACHE, value)),
@@ -111,6 +142,10 @@ public enum ChartEffect implements ModifierEffect {
         void addTo(ChartGenContext context, float value);
     }
 
+    private interface Flag {
+        void raise(ChartGenContext context);
+    }
+
     private enum AnomalyLine {
         PERCENT(false, null),
         PERCENT_REDUCED_WHEN_NEGATIVE(false, ".reduced"),
@@ -132,32 +167,50 @@ public enum ChartEffect implements ModifierEffect {
     private final String anomalyTuningKey;
     private final String negativeKeySuffix;
     private final Contribution contribution;
+    private final boolean flag;
 
     ChartEffect(boolean counted, Contribution contribution) {
-        this(counted, null, null, null, null, contribution);
+        this(counted, null, null, null, null, contribution, false);
+    }
+
+    ChartEffect(Flag flag) {
+        this(false, null, null, null, null, (context, value) -> flag.raise(context), true);
     }
 
     ChartEffect(DropType dropType) {
-        this(false, dropType, null, null, null, (context, value) -> context.addDropPercent(dropType, value));
+        this(false, dropType, null, null, null, (context, value) -> context.addDropPercent(dropType, value), false);
+    }
+
+    ChartEffect(boolean counted, SkillEffect enemyShipEffect) {
+        this(counted, null, null, null, null, (context, value) -> context.addEnemyShipEffect(enemyShipEffect, value), false);
+    }
+
+    ChartEffect(HullSize bannedCombatHullSize) {
+        this(context -> context.banCombatHullSize(bannedCombatHullSize));
     }
 
     ChartEffect(ChartFleetStat fleetStat) {
-        this(false, null, fleetStat, null, null, (context, value) -> context.addFleetStatPercent(fleetStat, value));
+        this(false, null, fleetStat, null, null, (context, value) -> context.addFleetStatPercent(fleetStat, value), false);
     }
 
     ChartEffect(String anomalyTuningKey, AnomalyLine line) {
         this(line.counted, null, null, anomalyTuningKey, line.negativeKeySuffix,
-                (context, value) -> context.addAnomalyPercent(anomalyTuningKey, line.counted ? Math.round(value) : value));
+                (context, value) -> context.addAnomalyPercent(anomalyTuningKey, line.counted ? Math.round(value) : value), false);
     }
 
     ChartEffect(boolean counted, DropType dropType, ChartFleetStat fleetStat, String anomalyTuningKey, String negativeKeySuffix,
-                Contribution contribution) {
+                Contribution contribution, boolean flag) {
         this.counted = counted;
         this.dropType = dropType;
         this.fleetStat = fleetStat;
         this.anomalyTuningKey = anomalyTuningKey;
         this.negativeKeySuffix = negativeKeySuffix;
         this.contribution = contribution;
+        this.flag = flag;
+    }
+
+    public boolean isFlag() {
+        return flag;
     }
 
     public ChartFleetStat fleetStat() {
@@ -186,6 +239,9 @@ public enum ChartEffect implements ModifierEffect {
             return Translation.msg(magnitude < 0f ? key() + negativeKeySuffix : key()).arg("value", Math.abs(magnitude)).styled();
         }
         Message message = Translation.msg(key());
+        if (flag) {
+            return message.styled();
+        }
         if (counted) {
             int count = Math.round(magnitude);
             return message.count(count).arg("value", count).styled();

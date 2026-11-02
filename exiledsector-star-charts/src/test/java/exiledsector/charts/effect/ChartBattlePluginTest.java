@@ -7,16 +7,10 @@ import com.fs.starfarer.api.combat.BattleObjectiveAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatFleetManagerAPI;
 import com.fs.starfarer.api.combat.CombatTaskManagerAPI;
-import com.fs.starfarer.api.combat.DamageAPI;
-import com.fs.starfarer.api.combat.DamageType;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
-import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.mission.FleetSide;
-import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
 import exiledsector.charts.generation.ChartGenContext;
@@ -31,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -65,12 +60,6 @@ class ChartBattlePluginTest {
         ChartBattlePlugin plugin = new ChartBattlePlugin();
         plugin.init(engine);
         return plugin;
-    }
-
-    private static DynamicStatsAPI dynamicStatsOf(MutableShipStatsAPI stats) {
-        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
-        when(stats.getDynamic()).thenReturn(dynamic);
-        return dynamic;
     }
 
     @Test
@@ -140,74 +129,12 @@ class ChartBattlePluginTest {
     }
 
     @Test
-    void onlyEnemyShipsCaptureFaster() {
-        MutableStat enemyCapture = new MutableStat(1f);
-        MutableStat playerCapture = new MutableStat(1f);
-        ShipAPI enemyShip = shipWithCaptureRate(ChartBattlePlugin.ENEMY_OWNER, enemyCapture);
-        ShipAPI playerShip = shipWithCaptureRate(0, playerCapture);
-        when(engine.getShips()).thenReturn(List.of(enemyShip, playerShip));
-        ChartBattlePlugin plugin = startedPlugin(Map.of(ChartFleetStat.ENEMY_OBJECTIVE_CAPTURE_RATE, 1.5f));
-
-        plugin.advance(0f, List.of());
-
-        assertEquals(1.5f, enemyCapture.getModifiedValue(), 0.0001f);
-        assertEquals(1f, playerCapture.getModifiedValue(), 0.0001f);
-    }
-
-    @Test
-    void enemyShipsAndFightersGetTheDamageListenerOnce() {
-        ShipAPI enemyShip = mock(ShipAPI.class);
-        ShipAPI enemyFighter = mock(ShipAPI.class);
-        ShipAPI playerShip = mock(ShipAPI.class);
-        when(enemyShip.getOwner()).thenReturn(ChartBattlePlugin.ENEMY_OWNER);
-        when(enemyFighter.getOwner()).thenReturn(ChartBattlePlugin.ENEMY_OWNER);
-        when(enemyFighter.isFighter()).thenReturn(true);
-        when(enemyFighter.hasListenerOfClass(ChartEnemyDamageListener.class)).thenReturn(true);
-        when(playerShip.getOwner()).thenReturn(0);
-        when(engine.getShips()).thenReturn(List.of(enemyShip, enemyFighter, playerShip));
-        ChartBattlePlugin plugin = startedPlugin(Map.of(ChartFleetStat.ENEMY_KINETIC_DAMAGE_DEALT, 1.2f));
-
-        plugin.advance(0f, List.of());
-
-        verify(enemyShip).addListener(ChartEnemyDamageListener.INSTANCE);
-        verify(enemyFighter, never()).addListener(ChartEnemyDamageListener.INSTANCE);
-        verify(playerShip, never()).addListener(ChartEnemyDamageListener.INSTANCE);
-    }
-
-    @Test
-    void theEnemyDamageListenerRaisesOnlyItsDamageType() {
-        ChartFleetConditions.set(Map.of(ChartFleetStat.ENEMY_KINETIC_DAMAGE_DEALT, 1.2f), null);
-        DamageAPI kinetic = damageOf(DamageType.KINETIC);
-        DamageAPI energy = damageOf(DamageType.ENERGY);
-
-        assertEquals(ChartFleetConditions.MOD_ID, ChartEnemyDamageListener.INSTANCE.modifyDamageDealt(null, null, kinetic, null, false));
-        assertNull(ChartEnemyDamageListener.INSTANCE.modifyDamageDealt(null, null, energy, null, true));
-
-        assertEquals(1.2f, kinetic.getModifier().getMultStatMod(ChartFleetConditions.MOD_ID).getValue(), 0.0001f);
-        assertNull(energy.getModifier().getMultStatMod(ChartFleetConditions.MOD_ID));
-    }
-
-    private static DamageAPI damageOf(DamageType type) {
-        DamageAPI damage = mock(DamageAPI.class);
-        MutableStat modifier = new MutableStat(1f);
-        when(damage.getType()).thenReturn(type);
-        when(damage.getModifier()).thenReturn(modifier);
-        return damage;
-    }
-
-    private static ShipAPI shipWithCaptureRate(int owner, MutableStat captureRate) {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        when(ship.getOwner()).thenReturn(owner);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(dynamicStatsOf(stats).getStat(Stats.SHIP_OBJECTIVE_CAP_RATE_MULT)).thenReturn(captureRate);
-        return ship;
-    }
-
-    @Test
     void thePluginStaysOffOutsideChartBattlesAndInSimulations() {
-        ChartBattlePlugin onlyShipDrawbacks = startedPlugin(Map.of(ChartFleetStat.TOP_SPEED, 0.8f));
+        ChartBattlePlugin onlyShipDrawbacks = startedPlugin(Map.of(ChartFleetStat.TOP_SPEED, 0.8f, ChartFleetStat.ENEMY_OBJECTIVE_CAPTURE_RATE, 1.5f,
+                ChartFleetStat.ENEMY_KINETIC_DAMAGE_DEALT, 1.2f));
         onlyShipDrawbacks.advance(0f, List.of());
+        assertFalse(ChartBattlePlugin.hasBattleConditions());
+        verify(engine, never()).getShips();
 
         ChartFleetConditions.set(Map.of(ChartFleetStat.ENEMY_DEPLOYMENT_COST, 0.8f), null);
         when(engine.isSimulation()).thenReturn(true);

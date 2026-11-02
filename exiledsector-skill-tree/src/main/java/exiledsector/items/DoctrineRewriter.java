@@ -52,11 +52,14 @@ public final class DoctrineRewriter {
         int lineCount = archive.minLines() + random.nextInt(archive.maxLines() - archive.minLines() + 1);
         List<PoolEntry> remainingPool = new ArrayList<>(pool);
         List<AugmentLine> lines = new ArrayList<>();
-        for (int drawsLeft = Math.min(lineCount, pool.size()); drawsLeft > 0; drawsLeft--) {
+        List<String> drawnIds = new ArrayList<>();
+        for (int drawsLeft = Math.min(lineCount, pool.size()); drawsLeft > 0 && !remainingPool.isEmpty(); drawsLeft--) {
             PoolEntry entry = remainingPool.remove(WeightedPick.index(remainingPool, PoolEntry::weight, random.nextFloat()));
             for (ModifierLine line : entry.modifier().lines()) {
                 lines.add(new AugmentLine(entry.modifier().id(), line, line.roll(random)));
             }
+            drawnIds.add(entry.modifier().id());
+            remainingPool.removeIf(candidate -> ModifierExclusivity.clashes(candidate.modifier().id(), drawnIds));
         }
         return List.copyOf(lines);
     }

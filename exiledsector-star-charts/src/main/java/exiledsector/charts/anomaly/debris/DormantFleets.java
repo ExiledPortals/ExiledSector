@@ -30,6 +30,7 @@ import exiledsector.charts.anomaly.RunFactionDress;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.ChartFaction;
 import exiledsector.charts.content.ChartFactions;
+import exiledsector.charts.effect.ChartEnemyShipEffects;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartTiers;
@@ -79,6 +80,7 @@ public final class DormantFleets {
         prepare(fleet, runId, tier, seed, new Random(seed));
         setStrengthBonus(fleet, tier, context, false);
         ChartVanillaLoot.addToFleet(fleet, false, context == null ? ChartGenContext.none() : context, tier);
+        ChartEnemyShipEffects.grant(fleet, context);
         return fleet;
     }
 
@@ -253,6 +255,7 @@ public final class DormantFleets {
         memory.set(CORRUPTED_KEY, true);
         setStrengthBonus(fleet, tier, context, true);
         ChartFleetLoot.recordStart(fleet);
+        ChartEnemyShipEffects.grant(fleet, context);
         fleet.setName(Translation.gameText("chart.debris.fleet.corrupted.name"));
         return true;
     }

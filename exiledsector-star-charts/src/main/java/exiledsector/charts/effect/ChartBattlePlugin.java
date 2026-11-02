@@ -8,8 +8,6 @@ import com.fs.starfarer.api.combat.CombatFleetManagerAPI;
 import com.fs.starfarer.api.combat.CombatTaskManagerAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.MutableStat.StatMod;
-import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.mission.FleetSide;
 import org.apache.log4j.Logger;
@@ -34,6 +32,7 @@ public class ChartBattlePlugin extends BaseEveryFrameCombatPlugin {
     private int enemyBaseCap;
     private int appliedPlayerCap;
     private int appliedEnemyCap;
+    private boolean commandPointRateApplied;
 
     @Override
     public void init(CombatEngineAPI engine) {
@@ -43,6 +42,7 @@ public class ChartBattlePlugin extends BaseEveryFrameCombatPlugin {
         capsFrozen = false;
         appliedPlayerCap = -1;
         appliedEnemyCap = -1;
+        commandPointRateApplied = false;
         active = engine != null && engine.isInCampaign() && !engine.isSimulation() && !engine.isInCampaignSim() && hasBattleConditions();
     }
 
@@ -51,7 +51,7 @@ public class ChartBattlePlugin extends BaseEveryFrameCombatPlugin {
             return true;
         }
         for (ChartFleetStat stat : ChartFleetConditions.active().keySet()) {
-            if (!stat.appliesToShips()) {
+            if (stat.battleRule()) {
                 return true;
             }
         }
@@ -63,13 +63,13 @@ public class ChartBattlePlugin extends BaseEveryFrameCombatPlugin {
         if (!active) {
             return;
         }
-        secondsSinceRefresh += amount;
-        if (started && secondsSinceRefresh < REFRESH_SECONDS) {
-            return;
-        }
-        secondsSinceRefresh = 0f;
-        started = true;
         try {
+            secondsSinceRefresh += amount;
+            if (started && secondsSinceRefresh < REFRESH_SECONDS) {
+                return;
+            }
+            secondsSinceRefresh = 0f;
+            started = true;
             refresh();
         } catch (RuntimeException | LinkageError e) {
             active = false;
@@ -82,9 +82,9 @@ public class ChartBattlePlugin extends BaseEveryFrameCombatPlugin {
 
     void refresh() {
         refreshBattleCaps(ChartFleetConditions.battleSizeBonus(), ChartFleetConditions.mult(ChartFleetStat.ENEMY_DEPLOYMENT_COST));
-        refreshCommandPointRate(ChartFleetConditions.mult(ChartFleetStat.COMMAND_POINT_RATE));
-        refreshEnemyObjectiveCaptureRate(ChartFleetConditions.mult(ChartFleetStat.ENEMY_OBJECTIVE_CAPTURE_RATE));
-        refreshEnemyDamageDealt();
+        if (!commandPointRateApplied) {
+            commandPointRateApplied = applyCommandPointRate(ChartFleetConditions.mult(ChartFleetStat.COMMAND_POINT_RATE));
+        }
     }
 
     void refreshBattleCaps(int bonusPoints, float enemyCostMult) {
@@ -133,40 +133,19 @@ public class ChartBattlePlugin extends BaseEveryFrameCombatPlugin {
         return bonus;
     }
 
-    void refreshCommandPointRate(float mult) {
+    boolean applyCommandPointRate(float mult) {
         if (mult == 1f) {
-            return;
+            return true;
         }
         CombatFleetManagerAPI manager = engine.getFleetManager(FleetSide.PLAYER);
         CombatTaskManagerAPI taskManager = manager == null ? null : manager.getTaskManager(false);
         if (taskManager == null) {
-            return;
+            return false;
         }
         MutableStat rateModifier = taskManager.getCPRateModifier();
         StatMod ours = rateModifier.getFlatStatMod(MOD_ID);
         float rateWithoutOurs = taskManager.getCPRateMult() - (ours == null ? 0f : ours.getValue());
         rateModifier.modifyFlat(MOD_ID, rateWithoutOurs > 0f ? rateWithoutOurs * (mult - 1f) : 0f);
-    }
-
-    void refreshEnemyObjectiveCaptureRate(float mult) {
-        if (mult == 1f) {
-            return;
-        }
-        for (ShipAPI ship : engine.getShips()) {
-            if (ship.getOwner() == ENEMY_OWNER && !ship.isFighter()) {
-                ship.getMutableStats().getDynamic().getStat(Stats.SHIP_OBJECTIVE_CAP_RATE_MULT).modifyMult(MOD_ID, mult);
-            }
-        }
-    }
-
-    void refreshEnemyDamageDealt() {
-        if (!ChartEnemyDamageListener.anyActive()) {
-            return;
-        }
-        for (ShipAPI ship : engine.getShips()) {
-            if (ship.getOwner() == ENEMY_OWNER && !ship.hasListenerOfClass(ChartEnemyDamageListener.class)) {
-                ship.addListener(ChartEnemyDamageListener.INSTANCE);
-            }
-        }
+        return true;
     }
 }

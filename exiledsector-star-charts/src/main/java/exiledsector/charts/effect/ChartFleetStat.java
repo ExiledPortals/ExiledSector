@@ -3,6 +3,7 @@ package exiledsector.charts.effect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.skills.skilleffect.SkillEffectSupport;
 
 public enum ChartFleetStat {
 
@@ -24,6 +25,7 @@ public enum ChartFleetStat {
     }),
     SHIELD_DAMAGE_TAKEN((stats, id, mult) -> stats.getShieldDamageTakenMult().modifyMult(id, mult)),
     ARMOR_DAMAGE_TAKEN((stats, id, mult) -> stats.getArmorDamageTakenMult().modifyMult(id, mult)),
+    ARMOR((stats, id, mult) -> stats.getArmorBonus().modifyMult(id, mult)),
     TOP_SPEED((stats, id, mult) -> stats.getMaxSpeed().modifyMult(id, mult)),
     MANEUVERABILITY((stats, id, mult) -> {
         stats.getAcceleration().modifyMult(id, mult);
@@ -36,33 +38,59 @@ public enum ChartFleetStat {
     SHIELD_RAISE_RATE((stats, id, mult) -> stats.getShieldUnfoldRateMult().modifyMult(id, mult)),
     PHASE_ACTIVATION_COST((stats, id, mult) -> stats.getPhaseCloakActivationCostBonus().modifyMult(id, mult)),
     FLUX_DISSIPATION((stats, id, mult) -> stats.getFluxDissipation().modifyMult(id, mult)),
+    WEAPON_AND_ENGINE_REPAIR_SPEED((stats, id, mult) -> {
+        stats.getCombatWeaponRepairTimeMult().modifyMult(id, 1f / mult);
+        stats.getCombatEngineRepairTimeMult().modifyMult(id, 1f / mult);
+    }),
     BALLISTIC_WEAPON_RANGE((stats, id, mult) -> stats.getBallisticWeaponRangeBonus().modifyMult(id, mult)),
     ENERGY_WEAPON_RANGE((stats, id, mult) -> stats.getEnergyWeaponRangeBonus().modifyMult(id, mult)),
     MISSILE_WEAPON_RANGE((stats, id, mult) -> stats.getMissileWeaponRangeBonus().modifyMult(id, mult)),
+    DMOD_EFFECT((stats, id, mult) -> SkillEffectSupport.applyDModEffectMult(stats, id, (mult - 1f) * ChartGenContext.PERCENT)),
     DEPLOYMENT_COST((stats, id, mult) -> stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyMult(id, mult)),
-    ENEMY_DEPLOYMENT_COST(null),
-    COMMAND_POINT_RATE(null),
-    ENEMY_OBJECTIVE_CAPTURE_RATE(null),
-    ENEMY_KINETIC_DAMAGE_DEALT(null),
-    ENEMY_HIGH_EXPLOSIVE_DAMAGE_DEALT(null),
-    ENEMY_ENERGY_DAMAGE_DEALT(null),
-    ENEMY_FRAGMENTATION_DAMAGE_DEALT(null);
+    ENEMY_DEPLOYMENT_COST(Scope.BATTLE, null),
+    COMMAND_POINT_RATE(Scope.BATTLE, null),
+    ENEMY_OBJECTIVE_CAPTURE_RATE(Scope.ENEMY_SHIPS,
+            (stats, id, mult) -> stats.getDynamic().getStat(Stats.SHIP_OBJECTIVE_CAP_RATE_MULT).modifyMult(id, mult)),
+    ENEMY_KINETIC_DAMAGE_DEALT(Scope.ENEMY_SHIPS, null),
+    ENEMY_HIGH_EXPLOSIVE_DAMAGE_DEALT(Scope.ENEMY_SHIPS, null),
+    ENEMY_ENERGY_DAMAGE_DEALT(Scope.ENEMY_SHIPS, null),
+    ENEMY_FRAGMENTATION_DAMAGE_DEALT(Scope.ENEMY_SHIPS, null);
 
     static final float MIN_MULT = 0.1f;
     static final float MAX_MULT = 10f;
+
+    enum Scope {
+        PLAYER_SHIPS,
+        ENEMY_SHIPS,
+        BATTLE
+    }
 
     interface ShipStatApplier {
         void apply(MutableShipStatsAPI stats, String id, float mult);
     }
 
+    private final Scope scope;
     private final ShipStatApplier shipStatApplier;
 
     ChartFleetStat(ShipStatApplier shipStatApplier) {
+        this(Scope.PLAYER_SHIPS, shipStatApplier);
+    }
+
+    ChartFleetStat(Scope scope, ShipStatApplier shipStatApplier) {
+        this.scope = scope;
         this.shipStatApplier = shipStatApplier;
     }
 
     public boolean appliesToShips() {
-        return shipStatApplier != null;
+        return scope == Scope.PLAYER_SHIPS;
+    }
+
+    public boolean appliesToEnemyShips() {
+        return scope == Scope.ENEMY_SHIPS;
+    }
+
+    public boolean battleRule() {
+        return scope == Scope.BATTLE;
     }
 
     void applyToShip(MutableShipStatsAPI stats, String id, float mult) {

@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,14 +32,16 @@ public final class ItemModifiers {
     static final String DATA_FILE = "item_modifiers.csv";
     public static final String REFERENCE_MARK = "@";
     public static final Pattern ID_PATTERN = Pattern.compile("[A-Za-z0-9_]+");
+    public static final String EXCLUSIVE_GROUPS_COLUMN = "exclusive_groups";
     private static final String LINE_SEPARATOR = ";";
     private static final Logger LOG = Logger.getLogger(ItemModifiers.class);
     private static final AtomicReference<Catalogue> LOADED = new AtomicReference<>(Catalogue.EMPTY);
     private static final AtomicReference<Catalogue> SHIP_ITEM_PART = new AtomicReference<>(Catalogue.EMPTY);
     private static final Map<ModifierScope, Catalogue> PARTS_BY_SCOPE = new EnumMap<>(ModifierScope.class);
 
-    private record Catalogue(Map<String, Modifier> modifiersById, Map<String, String> namesById, Map<String, Set<ModifierScope>> scopesById) {
-        static final Catalogue EMPTY = new Catalogue(Map.of(), Map.of(), Map.of());
+    private record Catalogue(Map<String, Modifier> modifiersById, Map<String, String> namesById, Map<String, Set<ModifierScope>> scopesById,
+                             Map<String, Set<String>> exclusiveGroupsById) {
+        static final Catalogue EMPTY = new Catalogue(Map.of(), Map.of(), Map.of(), Map.of());
 
         static Catalogue merged(Catalogue first, Catalogue second) {
             if (second.modifiersById().isEmpty()) {
@@ -47,6 +50,7 @@ public final class ItemModifiers {
             Map<String, Modifier> modifiersById = new LinkedHashMap<>(first.modifiersById());
             Map<String, String> namesById = new LinkedHashMap<>(first.namesById());
             Map<String, Set<ModifierScope>> scopesById = new LinkedHashMap<>(first.scopesById());
+            Map<String, Set<String>> exclusiveGroupsById = new LinkedHashMap<>(first.exclusiveGroupsById());
             second.modifiersById().forEach((modifierId, modifier) -> {
                 if (modifiersById.putIfAbsent(modifierId, modifier) == null) {
                     scopesById.put(modifierId, second.scopesById().get(modifierId));
@@ -54,10 +58,14 @@ public final class ItemModifiers {
                     if (englishName != null) {
                         namesById.put(modifierId, englishName);
                     }
+                    Set<String> exclusiveGroups = second.exclusiveGroupsById().get(modifierId);
+                    if (exclusiveGroups != null) {
+                        exclusiveGroupsById.put(modifierId, exclusiveGroups);
+                    }
                 }
             });
             return new Catalogue(Collections.unmodifiableMap(modifiersById), Collections.unmodifiableMap(namesById),
-                    Collections.unmodifiableMap(scopesById));
+                    Collections.unmodifiableMap(scopesById), Collections.unmodifiableMap(exclusiveGroupsById));
         }
     }
 
@@ -105,6 +113,7 @@ public final class ItemModifiers {
         Map<String, Modifier> modifiersById = new LinkedHashMap<>();
         Map<String, String> namesById = new LinkedHashMap<>();
         Map<String, Set<ModifierScope>> scopesById = new LinkedHashMap<>();
+        Map<String, Set<String>> exclusiveGroupsById = new LinkedHashMap<>();
         CsvRows.forEachRow(rows, sourcePath, LOG, (index, row) -> {
             Modifier modifier = parse(row);
             Set<ModifierScope> scopes = parseScopes(modifier.id(), ModCsv.text(row, "item_types"));
@@ -120,9 +129,28 @@ public final class ItemModifiers {
             if (!englishName.isEmpty()) {
                 namesById.put(modifier.id(), englishName);
             }
+            Set<String> exclusiveGroups = parseExclusiveGroups(modifier.id(), ModCsv.text(row, EXCLUSIVE_GROUPS_COLUMN));
+            if (!exclusiveGroups.isEmpty()) {
+                exclusiveGroupsById.put(modifier.id(), exclusiveGroups);
+            }
         });
         return new Catalogue(Collections.unmodifiableMap(modifiersById), Collections.unmodifiableMap(namesById),
-                Collections.unmodifiableMap(scopesById));
+                Collections.unmodifiableMap(scopesById), Collections.unmodifiableMap(exclusiveGroupsById));
+    }
+
+    static Set<String> parseExclusiveGroups(String modifierId, String groupsText) {
+        Set<String> groups = new LinkedHashSet<>();
+        for (String groupText : groupsText.split(LINE_SEPARATOR)) {
+            String group = groupText.trim();
+            if (group.isEmpty()) {
+                continue;
+            }
+            if (!ID_PATTERN.matcher(group).matches()) {
+                throw new IllegalArgumentException(modifierId + " lists exclusive group \"" + group + "\"; it must be letters, digits and underscores");
+            }
+            groups.add(group);
+        }
+        return Collections.unmodifiableSet(groups);
     }
 
     public static Modifier parse(JSONObject row) {
@@ -228,6 +256,10 @@ public final class ItemModifiers {
 
     public static Set<ModifierScope> scopes(String modifierId) {
         return modifierId == null ? Set.of() : LOADED.get().scopesById().getOrDefault(modifierId, Set.of());
+    }
+
+    public static Set<String> exclusiveGroups(String modifierId) {
+        return modifierId == null ? Set.of() : LOADED.get().exclusiveGroupsById().getOrDefault(modifierId, Set.of());
     }
 
     public static Set<ItemType> itemTypes(String modifierId) {
