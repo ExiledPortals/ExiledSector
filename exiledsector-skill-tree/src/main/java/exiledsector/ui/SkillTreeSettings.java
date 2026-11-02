@@ -114,8 +114,8 @@ public final class SkillTreeSettings {
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_treeItemsHeader", Translation.text("settings.treeItems.header"), treeTab);
         SettingsCreator.addInt(MOD_ID, UniqueSubroutinesSetting.UNLOCK_LEVEL_FIELD_ID,
-                Translation.text("settings.socketStorage.uniqueSubroutinesLevel.name"),
-                Translation.text("settings.socketStorage.uniqueSubroutinesLevel.tooltip"),
+                Translation.text("settings.hullItems.uniqueSubroutinesLevel.name"),
+                Translation.text("settings.hullItems.uniqueSubroutinesLevel.tooltip"),
                 UniqueSubroutinesSetting.DEFAULT_UNLOCK_LEVEL, UniqueSubroutinesSetting.MIN_UNLOCK_LEVEL, UniqueSubroutinesSetting.MAX_UNLOCK_LEVEL,
                 treeTab);
         SettingsCreator.addBoolean(MOD_ID, AnchorJanusGate.ALLOW_BEFORE_JANUS_FIELD_ID,

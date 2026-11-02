@@ -90,13 +90,13 @@ public final class HullUpgradeLootSource implements LootSource, MarketStock {
         if (!battle.playerWon() || sector == null) {
             return HullItemDrops.SectionItemLoot.NONE;
         }
-        boolean sectionsOpen = HullUpgradesSetting.sectionsOpen(sector);
-        if (!sectionsOpen && !MasterSchematic.required()) {
+        boolean hullItemDropsOpen = HullUpgradesSetting.hullItemDropsOpen(sector);
+        if (!hullItemDropsOpen && !MasterSchematic.required()) {
             return HullItemDrops.SectionItemLoot.NONE;
         }
         try {
             return BattleItemDrops.roll(losses(battle).battleItems(), BattleItemDrops.settingMultiplier(), battle.random(),
-                    definition -> ItemUnlock.canDrop(definition, sector), sectionsOpen);
+                    definition -> ItemUnlock.canDrop(definition, sector), hullItemDropsOpen);
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Rolling battle hull item drops failed", e);
             return HullItemDrops.SectionItemLoot.NONE;
@@ -105,7 +105,7 @@ public final class HullUpgradeLootSource implements LootSource, MarketStock {
 
     @Override
     public void addSiteFinds(SiteFind find) {
-        if (HullUpgradesSetting.sectionsOpen(find.sector())) {
+        if (HullUpgradesSetting.hullItemDropsOpen(find.sector())) {
             HullItemDrops.SectionItemLoot sectionItemLoot = HullItemDrops.rollSectionItemLoot(find.dropSite(), find.random(), find.chances());
             find.items().addAll(sectionItemLoot.items());
             find.upgrades().addAll(sectionItemLoot.upgrades());
@@ -120,7 +120,7 @@ public final class HullUpgradeLootSource implements LootSource, MarketStock {
 
     @Override
     public List<ItemData> restock(SubmarketAPI submarket, Random random) {
-        if (!HullUpgradesSetting.sectionsOpen(Global.getSector())) {
+        if (!HullUpgradesSetting.hullItemDropsOpen(Global.getSector())) {
             return List.of();
         }
         return MarketHullItems.roll(submarket.getSpecId(), random);

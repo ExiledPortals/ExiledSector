@@ -15,7 +15,7 @@ import com.fs.starfarer.api.ui.UIPanelAPI;
 import exiledsector.compat.ExoticaCompat;
 import exiledsector.items.HullUpgradesSetting;
 import exiledsector.skills.SkillTreeSetting;
-import exiledsector.ui.HullUpgradesRefitButton;
+import exiledsector.ui.HullItemsRefitButton;
 import exiledsector.ui.CraftingBenchRefitButton;
 import exiledsector.ui.SkillTreeRefitButton;
 import lunalib.lunaSettings.LunaSettings;
@@ -62,7 +62,7 @@ class RefitButtonColumnTest {
 
     private MockedStatic<Global> globalMock;
     private MockedStatic<SkillTreeRefitButton> refitButtonMock;
-    private MockedStatic<HullUpgradesRefitButton> hullUpgradesButtonMock;
+    private MockedStatic<HullItemsRefitButton> hullUpgradesButtonMock;
     private MockedStatic<LunaSettings> lunaSettingsMock;
     private ModWidget widget;
     private ButtonAPI buildIn;
@@ -133,7 +133,7 @@ class RefitButtonColumnTest {
         globalMock.when(Global::getSettings).thenReturn(settings);
         globalMock.when(Global::getSector).thenReturn(mock(SectorAPI.class, Mockito.RETURNS_DEEP_STUBS));
         refitButtonMock = Mockito.mockStatic(SkillTreeRefitButton.class);
-        hullUpgradesButtonMock = Mockito.mockStatic(HullUpgradesRefitButton.class);
+        hullUpgradesButtonMock = Mockito.mockStatic(HullItemsRefitButton.class);
         benchButtonMock = Mockito.mockStatic(CraftingBenchRefitButton.class);
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
         buttonUnderHullMods(true);
@@ -267,10 +267,10 @@ class RefitButtonColumnTest {
     void pressingTheHullUpgradesButtonOpensTheHullUpgradesScreen() {
         RefitButtonColumn.attach(widget);
 
-        hullUpgradesPlugin.buttonPressed(HullUpgradesRefitButton.COLUMN_BUTTON.id());
+        hullUpgradesPlugin.buttonPressed(HullItemsRefitButton.COLUMN_BUTTON.id());
         hullUpgradesPlugin.buttonPressed(SkillTreeRefitButton.COLUMN_BUTTON.id());
 
-        hullUpgradesButtonMock.verify(() -> HullUpgradesRefitButton.openPanel(null), times(1));
+        hullUpgradesButtonMock.verify(() -> HullItemsRefitButton.openPanel(null), times(1));
         refitButtonMock.verify(() -> SkillTreeRefitButton.openPanel(null), never());
     }
 
@@ -282,12 +282,12 @@ class RefitButtonColumnTest {
         HullUpgradesSetting.setEnabledForTests(false);
 
         RefitButtonColumn.attach(widget);
-        hullUpgradesPlugin.buttonPressed(HullUpgradesRefitButton.COLUMN_BUTTON.id());
+        hullUpgradesPlugin.buttonPressed(HullItemsRefitButton.COLUMN_BUTTON.id());
 
         verify(widget, never()).removeComponent(any());
         verify(hullUpgradesContainer).setOpacity(0f);
         verify(hullUpgradesButton).setEnabled(false);
-        hullUpgradesButtonMock.verify(() -> HullUpgradesRefitButton.openPanel(null), never());
+        hullUpgradesButtonMock.verify(() -> HullItemsRefitButton.openPanel(null), never());
     }
 
     @Test
@@ -333,10 +333,10 @@ class RefitButtonColumnTest {
         RefitButtonColumn.attach(widget);
 
         benchPlugin.buttonPressed(RefitButtonColumn.BENCH_BUTTON.id());
-        benchPlugin.buttonPressed(HullUpgradesRefitButton.COLUMN_BUTTON.id());
+        benchPlugin.buttonPressed(HullItemsRefitButton.COLUMN_BUTTON.id());
 
         benchButtonMock.verify(() -> CraftingBenchRefitButton.openPanel(null), times(1));
-        hullUpgradesButtonMock.verify(() -> HullUpgradesRefitButton.openPanel(null), never());
+        hullUpgradesButtonMock.verify(() -> HullItemsRefitButton.openPanel(null), never());
     }
 
     @Test

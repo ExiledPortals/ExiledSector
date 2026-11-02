@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
-final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
+final class HullItemsScreen extends BaseCustomUIPanelPlugin {
 
     static final float OPEN_SECONDS = 0.25f;
     static final float CONTENT_SECONDS = 0.3f;
@@ -49,7 +49,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     private final RefitShipPortrait portrait;
     private final ShipAnchors sectionAnchors;
     private final SectionLayout.ShipExtent shipExtent;
-    private final HullUpgradesLayout screenLayout;
+    private final HullItemsLayout screenLayout;
     private final Consumer<SocketPanelTab> tabListener = this::switchTab;
     private CustomPanelAPI hostPanel;
     private SectionEditor sectionEditor;
@@ -65,7 +65,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     private float mouseX;
     private float mouseY;
 
-    HullUpgradesScreen(FleetMemberAPI member, ShipVariantAPI variant, BaseRefitButton refitButton, RefitScreenLayout layout) {
+    HullItemsScreen(FleetMemberAPI member, ShipVariantAPI variant, BaseRefitButton refitButton, RefitScreenLayout layout) {
         this.member = member;
         this.variant = variant;
         this.refitButton = refitButton;
@@ -74,7 +74,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         this.sectionAnchors = portrait == null ? null : ShipAnchors.of(portrait);
         this.shipExtent = portrait == null ? SectionLayout.ShipExtent.square(0f)
                 : new SectionLayout.ShipExtent(portrait.halfWidthPixels(layout.shipZoom()), portrait.halfLengthPixels(layout.shipZoom()));
-        this.screenLayout = HullUpgradesLayout.of(layout, shipExtent);
+        this.screenLayout = HullItemsLayout.of(layout, shipExtent);
     }
 
     void attach(CustomPanelAPI panel) {
@@ -120,11 +120,11 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     }
 
     private float panelTop() {
-        return Global.getSettings().getScreenHeight() - layout.frameTop() + HullUpgradesLayout.PANEL_MARGIN;
+        return Global.getSettings().getScreenHeight() - layout.frameTop() + HullItemsLayout.PANEL_MARGIN;
     }
 
     private float panelHeight() {
-        return layout.frameHeight() - HullUpgradesLayout.PANEL_MARGIN * 2f;
+        return layout.frameHeight() - HullItemsLayout.PANEL_MARGIN * 2f;
     }
 
     private SocketPanelPlacement placement(boolean instantly) {

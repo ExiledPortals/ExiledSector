@@ -11,19 +11,19 @@ import exiledsector.ui.refit.RefitScreenLayout;
 import lunalib.lunaRefit.LunaRefitManager;
 import org.lwjgl.input.Keyboard;
 
-public class HullUpgradesRefitButton extends FullScreenRefitButton {
+public class HullItemsRefitButton extends FullScreenRefitButton {
 
-    static final String BUTTON_KEY = "ui.hullUpgradesRefitButton";
+    static final String BUTTON_KEY = "ui.hullItemsRefitButton";
     public static final RefitButtonColumn.ButtonSpec COLUMN_BUTTON = new RefitButtonColumn.ButtonSpec("exiledSector_hullUpgradesButton",
             BUTTON_KEY, () -> Keyboard.KEY_L, RefitButtonConfig::buttonUnderHullMods, () -> openPanel(null));
     static final String ICON_PATH = "graphics/icons/hull_upgrades/hull_upgrade_cruiser_unique.png";
 
     public static void addButton() {
-        LunaRefitManager.addRefitButton(new HullUpgradesRefitButton());
+        LunaRefitManager.addRefitButton(new HullItemsRefitButton());
     }
 
     public static boolean openPanel(InputEventAPI event) {
-        return HullUpgradesSetting.enabled() && openScreen(HullUpgradesRefitButton.class, event);
+        return HullUpgradesSetting.enabled() && openScreen(HullItemsRefitButton.class, event);
     }
 
     @Override
@@ -47,13 +47,13 @@ public class HullUpgradesRefitButton extends FullScreenRefitButton {
     }
 
     @Override
-    protected Class<HullUpgradesScreen> screenClass() {
-        return HullUpgradesScreen.class;
+    protected Class<HullItemsScreen> screenClass() {
+        return HullItemsScreen.class;
     }
 
     @Override
     protected RefitPanelLauncher.Background createScreen(FleetMemberAPI member, ShipVariantAPI variant) {
-        HullUpgradesScreen screen = new HullUpgradesScreen(member, variant, this, RefitScreenLayout.measure());
+        HullItemsScreen screen = new HullItemsScreen(member, variant, this, RefitScreenLayout.measure());
         return new RefitPanelLauncher.Background(screen, screen::attach);
     }
 }

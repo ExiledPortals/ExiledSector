@@ -11,9 +11,9 @@ import exiledsector.ui.util.SpriteDraw;
 
 import java.util.List;
 
-public class HullUpgradeItemPlugin extends BaseSpecialItemPlugin {
+public class RefitSchematicItemPlugin extends BaseSpecialItemPlugin {
 
-    private static final SpriteCache SPRITES = new SpriteCache(HullUpgradeItemPlugin.class);
+    private static final SpriteCache SPRITES = new SpriteCache(RefitSchematicItemPlugin.class);
 
     private RefitSchematic schematic;
 
@@ -35,7 +35,7 @@ public class HullUpgradeItemPlugin extends BaseSpecialItemPlugin {
 
     @Override
     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, CargoTransferHandlerAPI transferHandler, Object stackSource) {
-        HullUpgradeTooltip.write(tooltip, schematic, () -> List.of(Translation.styled("upgrade.tooltip.storage")));
+        RefitSchematicTooltip.write(tooltip, schematic, () -> List.of(Translation.styled("schematic.tooltip.storage")));
         addCostLabel(tooltip, ItemTooltip.PAD, transferHandler, stackSource);
     }
 

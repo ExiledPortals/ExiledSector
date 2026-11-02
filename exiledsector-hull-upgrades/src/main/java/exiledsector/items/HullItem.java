@@ -30,7 +30,7 @@ public final class HullItem extends Item {
 
         @Override
         public boolean available(SectorAPI sector) {
-            return HullUpgradesSetting.sectionsOpen(sector);
+            return HullUpgradesSetting.hullItemDropsOpen(sector);
         }
 
         @Override

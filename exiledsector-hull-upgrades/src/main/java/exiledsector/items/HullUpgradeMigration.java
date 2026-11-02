@@ -38,13 +38,15 @@ public final class HullUpgradeMigration {
         int convertedCount = 0;
         for (CargoStackAPI stack : cargo.getStacksCopy()) {
             SpecialItemData special = stack.getSpecialDataIfSpecial();
-            if (special == null || !RefitSchematic.ITEM_ID.equals(special.getId()) || !RefitSchematic.isLegacyData(special.getData())) {
+            boolean legacyId = special != null && RefitSchematic.LEGACY_ITEM_ID.equals(special.getId());
+            if (special == null || !legacyId && !(RefitSchematic.ITEM_ID.equals(special.getId()) && RefitSchematic.isLegacyData(special.getData()))) {
                 continue;
             }
+            RefitSchematic schematic = RefitSchematic.of(special);
             int stackCount = Math.round(stack.getSize());
             cargo.removeStack(stack);
             if (stackCount > 0) {
-                cargo.addSpecial(RefitSchematic.STANDARD.toSpecialItem(), stackCount);
+                cargo.addSpecial((schematic == null ? RefitSchematic.STANDARD : schematic).toSpecialItem(), stackCount);
                 convertedCount += stackCount;
             }
         }

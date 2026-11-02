@@ -17,7 +17,7 @@ public enum LootAlert {
 
     STANDARD("exiledSector_loot_alert"),
     VALUABLE("exiledSector_loot_alert_valuable"),
-    REFIT_SCHEMATIC("exiledSector_loot_alert_hull_upgrade"),
+    REFIT_SCHEMATIC("exiledSector_loot_alert_refit_schematic"),
     STAR_CHART("exiledSector_loot_alert_star_chart");
 
     private static final Set<String> VALUABLE_CURRENCY_IDS = Set.of(Nanoswarm.TUNING.itemId(),

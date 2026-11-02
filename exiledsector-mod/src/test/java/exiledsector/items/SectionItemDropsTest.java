@@ -43,9 +43,9 @@ class SectionItemDropsTest {
 
     @Test
     void sectionItemsOpenAtPlayerLevelFifteen() {
-        assertFalse(HullUpgradesSetting.sectionsOpen(14));
-        assertTrue(HullUpgradesSetting.sectionsOpen(15));
-        assertFalse(HullUpgradesSetting.sectionsOpen((SectorAPI) null));
+        assertFalse(HullUpgradesSetting.hullItemDropsOpen(14));
+        assertTrue(HullUpgradesSetting.hullItemDropsOpen(15));
+        assertFalse(HullUpgradesSetting.hullItemDropsOpen((SectorAPI) null));
     }
 
     @Test

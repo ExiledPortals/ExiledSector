@@ -9,20 +9,20 @@ import exiledsector.ui.VanillaText;
 import java.util.List;
 import java.util.function.Supplier;
 
-public final class HullUpgradeTooltip {
+public final class RefitSchematicTooltip {
 
-    private HullUpgradeTooltip() {
+    private RefitSchematicTooltip() {
     }
 
     public static void write(TooltipMakerAPI tooltip, RefitSchematic schematic, Supplier<List<StyledText>> footer) {
         ItemTooltip.writeFrame(tooltip, schematic == null ? null : () -> {
             tooltip.addTitle(schematic.displayName(), schematic.color());
-            VanillaText.addPara(tooltip, Translation.msg("upgrade.tooltip.body")
+            VanillaText.addPara(tooltip, Translation.msg("schematic.tooltip.body")
                     .arg("points", schematic.points()).styled(), ItemTooltip.PAD, Misc.getTextColor());
             if (!HullUpgradesSetting.enabled()) {
-                VanillaText.addPara(tooltip, Translation.msg("upgrade.tooltip.disabled").styled(), ItemTooltip.PAD, Misc.getNegativeHighlightColor());
+                VanillaText.addPara(tooltip, Translation.msg("schematic.tooltip.disabled").styled(), ItemTooltip.PAD, Misc.getNegativeHighlightColor());
             } else if (!HullUpgradePoints.schematicsInUse()) {
-                VanillaText.addPara(tooltip, Translation.styled("upgrade.tooltip.chartMode"), ItemTooltip.PAD, Misc.getNegativeHighlightColor());
+                VanillaText.addPara(tooltip, Translation.styled("schematic.tooltip.chartMode"), ItemTooltip.PAD, Misc.getNegativeHighlightColor());
             }
         }, footer);
     }
@@ -42,7 +42,7 @@ public final class HullUpgradeTooltip {
         if (section.requirementTag() == null) {
             return StyledText.of(section.displayName());
         }
-        return Translation.msg("framework.socketNeeds").arg("type", section.displayName())
+        return Translation.msg("framework.sectionNeeds").arg("type", section.displayName())
                 .arg("requirement", requirementText(section.requirementTag())).styled();
     }
 

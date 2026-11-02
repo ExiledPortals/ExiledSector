@@ -133,14 +133,14 @@ public final class BattleItemDrops {
     }
 
     public static HullItemDrops.SectionItemLoot roll(Battle battle, float dropMultiplier, Random random, Predicate<ItemDefinition> uniqueAllowed,
-                                                 boolean sectionsOpen) {
+                                                 boolean hullItemDropsOpen) {
         if (battle == null || battle.isEmpty() || !(dropMultiplier > 0f)) {
             return HullItemDrops.SectionItemLoot.NONE;
         }
         List<ItemData> items = new ArrayList<>();
         List<ShipCurrency> upgrades = new ArrayList<>();
-        List<ItemKind> kindsWithBasics = sectionsOpen ? HullItemDrops.sectionKindsWithBasics() : List.of();
-        for (Planned planned : plan(battle.sources(), dropMultiplier, kindsWithBasics, random, sectionsOpen)) {
+        List<ItemKind> kindsWithBasics = hullItemDropsOpen ? HullItemDrops.sectionKindsWithBasics() : List.of();
+        for (Planned planned : plan(battle.sources(), dropMultiplier, kindsWithBasics, random, hullItemDropsOpen)) {
             if (planned.drop() == Drop.REFIT_SCHEMATIC) {
                 upgrades.add(RefitSchematic.roll(random));
             } else if (planned.drop() == Drop.MASTER_SCHEMATIC) {
@@ -165,10 +165,10 @@ public final class BattleItemDrops {
     }
 
     static List<Planned> plan(List<SourcePower> sources, float dropMultiplier, List<ItemKind> kindsWithBasics, Random random,
-                              boolean sectionsOpen) {
+                              boolean hullItemDropsOpen) {
         List<Planned> planned = new ArrayList<>();
         for (Drop drop : Drop.values()) {
-            if (!allowed(drop, sectionsOpen)) {
+            if (!allowed(drop, hullItemDropsOpen)) {
                 continue;
             }
             float expected = 0f;
@@ -192,11 +192,11 @@ public final class BattleItemDrops {
         return planned;
     }
 
-    static boolean allowed(Drop drop, boolean sectionsOpen) {
+    static boolean allowed(Drop drop, boolean hullItemDropsOpen) {
         return switch (drop) {
             case MASTER_SCHEMATIC -> MasterSchematic.required();
-            case REFIT_SCHEMATIC -> sectionsOpen && RefitSchematic.dropsAllowed();
-            default -> sectionsOpen;
+            case REFIT_SCHEMATIC -> hullItemDropsOpen && RefitSchematic.dropsAllowed();
+            default -> hullItemDropsOpen;
         };
     }
 

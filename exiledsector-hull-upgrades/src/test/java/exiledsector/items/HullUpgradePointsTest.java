@@ -208,6 +208,18 @@ class HullUpgradePointsTest {
     }
 
     @Test
+    void schematicsUnderTheOldItemIdBecomeTheSameSchematicUnderTheCurrentId() {
+        CargoStackAPI oldIdStack = stack(new SpecialItemData(RefitSchematic.LEGACY_ITEM_ID, RefitSchematic.MILITARY.toSpecialItem().getData()), 2f);
+        CargoAPI cargo = mock(CargoAPI.class);
+        when(cargo.getStacksCopy()).thenReturn(new ArrayList<>(List.of(oldIdStack)));
+
+        assertEquals(2, HullUpgradeMigration.convertCargo(cargo));
+
+        verify(cargo).removeStack(oldIdStack);
+        verify(cargo).addSpecial(RefitSchematic.MILITARY.toSpecialItem(), 2f);
+    }
+
+    @Test
     void theMigrationKeepsShipPointsAndTurnsEachOldUpgradeIntoOneStandardSchematicOnce() {
         ShipSkillData oldShip = shipWithStoredPoints(3);
         store.addLegacyHullUpgrades("CRUISER", 2);

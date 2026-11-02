@@ -70,24 +70,24 @@ public final class ExiledSectorSettings {
         SettingsCreator.addBoolean(MOD_ID, SkillTreeSounds.ENABLED_FIELD_ID,
                 Translation.text("settings.sounds.enabled.name"), Translation.text("settings.sounds.enabled.tooltip"),
                 SkillTreeSounds.DEFAULT_ENABLED, MAIN_TAB);
-        SettingsCreator.addRadio(MOD_ID, ItemAnimationSetting.FIELD_ID, Translation.text("settings.socketStorage.itemAnimations.name"),
-                Translation.text("settings.socketStorage.itemAnimations.tooltip"), ItemAnimationSetting.FULL,
+        SettingsCreator.addRadio(MOD_ID, ItemAnimationSetting.FIELD_ID, Translation.text("settings.hullItems.itemAnimations.name"),
+                Translation.text("settings.hullItems.itemAnimations.tooltip"), ItemAnimationSetting.FULL,
                 String.join(",", ItemAnimationSetting.OPTIONS), MAIN_TAB);
     }
 
     private static void registerItems() {
         String itemsTab = itemsTab();
-        SettingsCreator.addHeader(MOD_ID, "exiledSector_socketStorageHeader", Translation.text("settings.socketStorage.header"), itemsTab);
+        SettingsCreator.addHeader(MOD_ID, "exiledSector_socketStorageHeader", Translation.text("settings.hullItems.header"), itemsTab);
         SettingsCreator.addBoolean(MOD_ID, SalvageSiteCompat.DROPS_FIELD_ID,
-                Translation.text("settings.socketStorage.otherModDrops.name"), Translation.text("settings.socketStorage.otherModDrops.tooltip"),
+                Translation.text("settings.hullItems.otherModDrops.name"), Translation.text("settings.hullItems.otherModDrops.tooltip"),
                 SalvageSiteCompat.DEFAULT_DROPS, itemsTab);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_craftingHeader", Translation.text("settings.crafting.header"), itemsTab);
         SettingsCreator.addInt(MOD_ID, ItemDrops.BATTLE_FEEDSTOCK_FIELD_ID,
-                Translation.text("settings.socketStorage.battleFeedstock.name"), Translation.text("settings.socketStorage.battleFeedstock.tooltip"),
+                Translation.text("settings.hullItems.battleFeedstock.name"), Translation.text("settings.hullItems.battleFeedstock.tooltip"),
                 ItemDrops.DEFAULT_BATTLE_FEEDSTOCK_PER_100_DP, 0, ItemDrops.MAX_BATTLE_PARTS_PER_100_DP, itemsTab);
         SettingsCreator.addBoolean(MOD_ID, CraftingMaterials.STORE_FIELD_ID,
-                Translation.text("settings.socketStorage.storeMaterials.name"), Translation.text("settings.socketStorage.storeMaterials.tooltip"),
+                Translation.text("settings.hullItems.storeMaterials.name"), Translation.text("settings.hullItems.storeMaterials.tooltip"),
                 CraftingMaterials.DEFAULT_STORE, itemsTab);
     }
 
