@@ -87,7 +87,7 @@ public final class AtlasProgress {
     }
 
     static void fail(AtlasState state, AtlasCell cell) {
-        state.add(cell, AtlasState.FAILED | AtlasState.MARKERS_SPENT);
+        state.add(cell, AtlasState.FAILED | AtlasState.ANOMALIES_SPENT);
         state.spendInsertedAnomalies(cell);
     }
 

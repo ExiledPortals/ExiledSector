@@ -92,35 +92,35 @@ class ExcavationSiteDialogTest {
 
     @Test
     void goingDownTheShaftNeedsAFrigateOrDestroyerThatCanDeploy() {
-        FleetMemberAPI cruiser = ShaftBattleTest.ship(HullSize.CRUISER);
-        FleetMemberAPI destroyer = ShaftBattleTest.ship(HullSize.DESTROYER);
-        FleetMemberAPI mothballedFrigate = ShaftBattleTest.ship(HullSize.FRIGATE);
+        FleetMemberAPI cruiser = ExcavationBattleTest.ship(HullSize.CRUISER);
+        FleetMemberAPI destroyer = ExcavationBattleTest.ship(HullSize.DESTROYER);
+        FleetMemberAPI mothballedFrigate = ExcavationBattleTest.ship(HullSize.FRIGATE);
         when(mothballedFrigate.canBeDeployedForCombat()).thenReturn(false);
 
-        FleetMemberAPI storedFrigate = ShaftBattleTest.ship(HullSize.FRIGATE);
+        FleetMemberAPI storedFrigate = ExcavationBattleTest.ship(HullSize.FRIGATE);
         when(storedFrigate.isMothballed()).thenReturn(true);
-        FleetMemberAPI civilianDestroyer = ShaftBattleTest.ship(HullSize.DESTROYER);
+        FleetMemberAPI civilianDestroyer = ExcavationBattleTest.ship(HullSize.DESTROYER);
         when(civilianDestroyer.isCivilian()).thenReturn(true);
 
-        assertTrue(ExcavationSiteDialog.hasShaftShips(List.of(cruiser, destroyer)));
-        assertFalse(ExcavationSiteDialog.hasShaftShips(List.of(cruiser, mothballedFrigate)));
-        assertFalse(ExcavationSiteDialog.hasShaftShips(List.of(storedFrigate, civilianDestroyer)));
-        assertFalse(ExcavationSiteDialog.hasShaftShips(List.of()));
-        assertFalse(ExcavationSiteDialog.hasShaftShips((CampaignFleetAPI) null));
+        assertTrue(ExcavationSiteDialog.hasExcavationShips(List.of(cruiser, destroyer)));
+        assertFalse(ExcavationSiteDialog.hasExcavationShips(List.of(cruiser, mothballedFrigate)));
+        assertFalse(ExcavationSiteDialog.hasExcavationShips(List.of(storedFrigate, civilianDestroyer)));
+        assertFalse(ExcavationSiteDialog.hasExcavationShips(List.of()));
+        assertFalse(ExcavationSiteDialog.hasExcavationShips((CampaignFleetAPI) null));
     }
 
     @Test
     void pressingOnIsGreyedOutOnceNoFrigateOrDestroyerCanFight() {
         mockSector.global.when(Global::getSettings).thenReturn(mock(SettingsAPI.class));
-        FleetMemberAPI civilianDestroyer = ShaftBattleTest.ship(HullSize.DESTROYER);
+        FleetMemberAPI civilianDestroyer = ExcavationBattleTest.ship(HullSize.DESTROYER);
         when(civilianDestroyer.isCivilian()).thenReturn(true);
         OptionPanelAPI options = mock(OptionPanelAPI.class);
         when(options.hasOption(OptionId.ENGAGE)).thenReturn(true);
 
-        ShaftEncounterDialog.disableEngageWithoutShaftShips(options, fleetOf(ShaftBattleTest.ship(HullSize.FRIGATE)));
+        ExcavationEncounterDialog.disableEngageWithoutExcavationShips(options, fleetOf(ExcavationBattleTest.ship(HullSize.FRIGATE)));
         verify(options, never()).setEnabled(OptionId.ENGAGE, false);
 
-        ShaftEncounterDialog.disableEngageWithoutShaftShips(options, fleetOf(civilianDestroyer, ShaftBattleTest.ship(HullSize.CAPITAL_SHIP)));
+        ExcavationEncounterDialog.disableEngageWithoutExcavationShips(options, fleetOf(civilianDestroyer, ExcavationBattleTest.ship(HullSize.CAPITAL_SHIP)));
         verify(options).setEnabled(OptionId.ENGAGE, false);
     }
 
@@ -134,8 +134,8 @@ class ExcavationSiteDialogTest {
 
     @Test
     void theSiteFleetLosesAnyLargeHullAndKeepsItsLean() {
-        FleetMemberAPI frigate = ShaftBattleTest.ship(HullSize.FRIGATE);
-        FleetMemberAPI capital = ShaftBattleTest.ship(HullSize.CAPITAL_SHIP);
+        FleetMemberAPI frigate = ExcavationBattleTest.ship(HullSize.FRIGATE);
+        FleetMemberAPI capital = ExcavationBattleTest.ship(HullSize.CAPITAL_SHIP);
         List<FleetMemberAPI> members = new ArrayList<>(List.of(frigate, capital));
         FleetDataAPI fleetData = mock(FleetDataAPI.class);
         when(fleetData.getMembersListCopy()).thenAnswer(invocation -> new ArrayList<>(members));
@@ -144,15 +144,15 @@ class ExcavationSiteDialogTest {
         when(fleet.getFleetData()).thenReturn(fleetData);
         when(fleet.isEmpty()).thenAnswer(invocation -> members.isEmpty());
 
-        assertFalse(ShaftFleets.dropLargeHulls(fleet));
+        assertFalse(ExcavationFleets.dropLargeHulls(fleet));
         assertEquals(List.of(frigate), members);
 
         MemoryAPI memory = mock(MemoryAPI.class);
-        when(memory.getString(ShaftFleets.LEAN_KEY)).thenReturn(DropType.AI_CORE.name());
+        when(memory.getString(ExcavationFleets.LEAN_KEY)).thenReturn(DropType.AI_CORE.name());
         when(fleet.getMemoryWithoutUpdate()).thenReturn(memory);
-        assertNull(ShaftFleets.leanOf(fleet));
-        when(fleet.hasTag(ShaftFleets.FLEET_TAG)).thenReturn(true);
-        assertEquals(DropType.AI_CORE, ShaftFleets.leanOf(fleet));
-        assertTrue(ShaftFleets.isShaftFleet(fleet));
+        assertNull(ExcavationFleets.leanOf(fleet));
+        when(fleet.hasTag(ExcavationFleets.FLEET_TAG)).thenReturn(true);
+        assertEquals(DropType.AI_CORE, ExcavationFleets.leanOf(fleet));
+        assertTrue(ExcavationFleets.isExcavationFleet(fleet));
     }
 }

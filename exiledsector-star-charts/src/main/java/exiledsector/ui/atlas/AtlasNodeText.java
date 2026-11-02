@@ -50,7 +50,7 @@ public final class AtlasNodeText {
 
     static List<AtlasLine> markers(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasNode node) {
         List<AtlasLine> lines = new ArrayList<>();
-        boolean spent = state.has(cell, AtlasState.MARKERS_SPENT);
+        boolean spent = state.has(cell, AtlasState.ANOMALIES_SPENT);
         AtlasSpecial special = generator.specialAt(cell);
         if (special != null) {
             lines.add(new AtlasLine(AtlasNames.name("special", special.id()), Tone.MARKER));

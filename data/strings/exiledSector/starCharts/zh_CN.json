@@ -289,7 +289,7 @@
     "chart.atlas.node.anomaly": "异象：{anomaly}",
     "chart.atlas.node.infested": "受{infestation}感染",
     "chart.atlas.node.cleansed": "已净化",
-    "chart.atlas.node.spent": "标记已消耗：有星图在此失败",
+    "chart.atlas.node.spent": "异常已消耗：有星图在此失败",
     "chart.atlas.node.completed": "已完成",
     "chart.atlas.node.attempted": "已挑战堡垒；只允许一次尝试",
     "chart.atlas.node.open": "点击为此星系选择星图",

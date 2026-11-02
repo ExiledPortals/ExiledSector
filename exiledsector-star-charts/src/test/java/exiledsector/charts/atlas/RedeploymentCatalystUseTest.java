@@ -25,8 +25,8 @@ class RedeploymentCatalystUseTest {
             1f, 1, AtlasCatalysts.Effect.REDEPLOY, "graphics/test.png");
 
     private static AtlasGenerator generator(AtlasState state, Map<String, Float> factions) {
-        AtlasRules rules = new AtlasRules(REGIONS, Map.of("compact", 1f), factions, new AtlasMarkerRule(0.3f, 0f, 0.3f),
-                AtlasMarkerRule.NEVER, List.of(), List.of());
+        AtlasRules rules = new AtlasRules(REGIONS, Map.of("compact", 1f), factions, new AtlasAnomalyChance(0.3f, 0f, 0.3f),
+                AtlasAnomalyChance.NEVER, List.of(), List.of());
         return new AtlasGenerator(SEED, rules, AtlasUnlocks.NONE, state);
     }
 

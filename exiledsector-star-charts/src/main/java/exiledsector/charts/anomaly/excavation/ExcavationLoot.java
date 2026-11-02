@@ -34,7 +34,7 @@ public final class ExcavationLoot {
 
     public static ItemDrops.SiteLoot fleetItems(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, float share,
                                                 Random random) {
-        DropType lean = ShaftFleets.leanOf(fleet);
+        DropType lean = ExcavationFleets.leanOf(fleet);
         return lean == null ? null : LOOT.fleetItems(sector, run, context, leaning(lean), share, random);
     }
 }

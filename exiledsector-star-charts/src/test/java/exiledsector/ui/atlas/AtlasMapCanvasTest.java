@@ -8,7 +8,7 @@ import exiledsector.charts.atlas.AtlasAnomalyRecord;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasDevTools;
 import exiledsector.charts.atlas.AtlasGenerator;
-import exiledsector.charts.atlas.AtlasMarkerRule;
+import exiledsector.charts.atlas.AtlasAnomalyChance;
 import exiledsector.charts.atlas.AtlasReach;
 import exiledsector.charts.atlas.AtlasRegion;
 import exiledsector.charts.atlas.AtlasRules;
@@ -33,7 +33,7 @@ class AtlasMapCanvasTest {
         List<AtlasRegion> regions = List.of(new AtlasRegion(AtlasRegion.NORMAL, 1f, 0, "", "", Map.of(), Map.of(), Map.of()));
         List<AtlasSpecial> specials = List.of(
                 new AtlasSpecial("bastion", AtlasSpecial.Kind.BASTION, AtlasSpecial.Placement.FIXED, 0f, 1f, 0f, 3, 25f, "", "", ""));
-        AtlasRules rules = new AtlasRules(regions, Map.of("compact", 1f), Map.of("pirates", 1f), AtlasMarkerRule.NEVER, AtlasMarkerRule.NEVER,
+        AtlasRules rules = new AtlasRules(regions, Map.of("compact", 1f), Map.of("pirates", 1f), AtlasAnomalyChance.NEVER, AtlasAnomalyChance.NEVER,
                 specials, List.of());
         return new AtlasGenerator(SEED, rules, AtlasUnlocks.NONE, state);
     }

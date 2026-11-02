@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledsector.charts.anomaly.storm.StormLoot;
+import exiledsector.charts.anomaly.stormfront.StormLoot;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;

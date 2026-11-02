@@ -86,11 +86,11 @@ public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunPa
 
     @Override
     public BattleCreationPlugin battleFor(SectorEntityToken opponent) {
-        if (!ShaftEncounters.isShaftBattle(opponent)) {
+        if (!ExcavationEncounters.isExcavationBattle(opponent)) {
             return null;
         }
         LOG.info("[ExiledSector] Offering the cavern map for the shaft fight against " + opponent.getName());
-        return new ShaftBattleCreationPlugin();
+        return new ExcavationBattleCreationPlugin();
     }
 
     @Override

@@ -41,18 +41,18 @@ public class ExcavationSiteDialog extends AnomalyDialog {
         return target instanceof PlanetAPI planet && !planet.isStar() && ExcavationStates.standingAt(run, planet.getId()) != null;
     }
 
-    static boolean hasShaftShips(List<FleetMemberAPI> combatReady) {
+    static boolean hasExcavationShips(List<FleetMemberAPI> combatReady) {
         for (FleetMemberAPI member : combatReady) {
             if (member.canBeDeployedForCombat() && !member.isMothballed() && !member.isCivilian()
-                    && member.getHullSpec() != null && ExcavationRules.fitsShaft(member.getHullSpec().getHullSize())) {
+                    && member.getHullSpec() != null && ExcavationRules.fitsExcavation(member.getHullSpec().getHullSize())) {
                 return true;
             }
         }
         return false;
     }
 
-    static boolean hasShaftShips(CampaignFleetAPI playerFleet) {
-        return playerFleet != null && playerFleet.getFleetData() != null && hasShaftShips(playerFleet.getFleetData().getCombatReadyMembersListCopy());
+    static boolean hasExcavationShips(CampaignFleetAPI playerFleet) {
+        return playerFleet != null && playerFleet.getFleetData() != null && hasExcavationShips(playerFleet.getFleetData().getCombatReadyMembersListCopy());
     }
 
     static StyledText leanLine(DropType lean) {
@@ -90,7 +90,7 @@ public class ExcavationSiteDialog extends AnomalyDialog {
             if (site.access() == ExcavationSite.Access.OPEN) {
                 options.addOption(Translation.gameText("chart.excavation.dialog.option.descend"), DESCEND,
                         Translation.gameText("chart.excavation.dialog.descendTooltip"));
-                if (!hasShaftShips(PlayerFleet.orNull())) {
+                if (!hasExcavationShips(PlayerFleet.orNull())) {
                     options.setEnabled(DESCEND, false);
                     options.setTooltip(DESCEND, Translation.gameText("chart.excavation.dialog.noShaftShips"));
                 }
@@ -109,7 +109,7 @@ public class ExcavationSiteDialog extends AnomalyDialog {
         if (raid.handles(optionData)) {
             raid.optionSelected(optionData);
         } else if (DESCEND.equals(optionData) && standing && site.access() == ExcavationSite.Access.OPEN
-                && hasShaftShips(PlayerFleet.orNull())) {
+                && hasExcavationShips(PlayerFleet.orNull())) {
             descend(site);
         } else if (RAID_OPTION.equals(optionData) && standing && site.access() == ExcavationSite.Access.COLLAPSED) {
             raid.launch(dialog(), run().tier(), site.seed() * 31L, this::objectives);
@@ -122,14 +122,14 @@ public class ExcavationSiteDialog extends AnomalyDialog {
 
     private void descend(ExcavationSite site) {
         ChartRun run = run();
-        CampaignFleetAPI fleet = ShaftFleets.fleetFor(planet, run, site);
+        CampaignFleetAPI fleet = ExcavationFleets.fleetFor(planet, run, site);
         if (fleet == null) {
             VanillaText.plainPara(text(), Translation.gameText("chart.excavation.dialog.silent"));
             ExcavationStates.clear(run, site);
             showMain();
             return;
         }
-        encounter = new ShaftEncounterDialog(ShaftEncounters.config(leaving -> surface(leaving, site, fleet)));
+        encounter = new ExcavationEncounterDialog(ExcavationEncounters.config(leaving -> surface(leaving, site, fleet)));
         AnomalyEncounters.engage(dialog(), fleet, encounter);
     }
 
@@ -139,7 +139,7 @@ public class ExcavationSiteDialog extends AnomalyDialog {
         encounter = null;
         if (won || fleet.isEmpty()) {
             ExcavationStates.clear(run(), site);
-            ShaftFleets.forget(planet);
+            ExcavationFleets.forget(planet);
         }
         showMain();
     }

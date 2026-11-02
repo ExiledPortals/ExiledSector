@@ -25,10 +25,10 @@ class ExcavationRulesTest {
 
     @Test
     void onlyFrigatesAndDestroyersFitTheShaft() {
-        assertTrue(ExcavationRules.fitsShaft(HullSize.FRIGATE));
-        assertTrue(ExcavationRules.fitsShaft(HullSize.DESTROYER));
-        assertFalse(ExcavationRules.fitsShaft(HullSize.CRUISER));
-        assertFalse(ExcavationRules.fitsShaft(HullSize.CAPITAL_SHIP));
+        assertTrue(ExcavationRules.fitsExcavation(HullSize.FRIGATE));
+        assertTrue(ExcavationRules.fitsExcavation(HullSize.DESTROYER));
+        assertFalse(ExcavationRules.fitsExcavation(HullSize.CRUISER));
+        assertFalse(ExcavationRules.fitsExcavation(HullSize.CAPITAL_SHIP));
         assertTrue(ExcavationRules.holdsAbove(HullSize.CRUISER));
         assertTrue(ExcavationRules.holdsAbove(HullSize.CAPITAL_SHIP));
         assertFalse(ExcavationRules.holdsAbove(HullSize.DESTROYER));

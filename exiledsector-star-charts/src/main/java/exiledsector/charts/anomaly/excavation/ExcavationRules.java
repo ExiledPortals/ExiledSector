@@ -49,7 +49,7 @@ public final class ExcavationRules {
         return Math.max(MIN_RAID_SHARE, Math.min(1f, share));
     }
 
-    public static boolean fitsShaft(HullSize size) {
+    public static boolean fitsExcavation(HullSize size) {
         return size == HullSize.FRIGATE || size == HullSize.DESTROYER;
     }
 

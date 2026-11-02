@@ -521,7 +521,7 @@ Each save has one atlas: `AtlasState` keeps the seed and per-system flags in per
 rebuilds everything else from the seed. A chart opens a system joined by a lane to a completed one (`AtlasReach`), and
 the system supplies the layout seed, faction, region recipe, anomalies and the lines from
 `atlas_node_effects.csv` for infested, cleansed and special-site systems, kept on the run as an
-`AtlasRunNode` (`AtlasOpening`). An anomaly with its own `atlas_markers.csv` row rolls on that chance instead of the
+`AtlasRunNode` (`AtlasOpening`). An anomaly with its own `atlas_anomaly_chances.csv` row rolls on that chance instead of the
 shared one. Powerful Boss (`PowerfulBoss`) does, and its run's boss always drops a chart one tier up
 (`LootShaper.guaranteesBossTierUp`); anomaly effects reach the content plan, so its line sizes the boss. Chart drops
 inside a run never fall below its tier.
@@ -681,9 +681,9 @@ array turns player-owned, so vanilla's objective plugins give their bonus; a wok
 fleet's `detected_by_player_range_mult` and raises its extended detection range, so the player sees them at any range.
 
 The stage rides on an inserted record (`AtlasAnomalyRecord.Chain`); a rolled network is stage 1 of 3 or 4. A completed
-system keeps a chained record until the run closes, then `RelayChain.settle` moves it two or three lanes further out
+system keeps a chained record until the run closes, then `RelayStages.settle` moves it two or three lanes further out
 through uncompleted systems if all three relays woke, or at the same stage if the network could not be placed, and
-removes it otherwise. Each stage past the first adds the `relay_stage` lines of `atlas_node_effects.csv` once more (`RelayChain.join`), and the last stage's boss, if it dies with all three
+removes it otherwise. Each stage past the first adds the `relay_stage` lines of `atlas_node_effects.csv` once more (`RelayStages.join`), and the last stage's boss, if it dies with all three
 relays woken, drops one unique hull item or subroutine whatever its source (`ChartFleetLoot.guaranteedUnique`).
 
 ### Supply Convoy
@@ -731,9 +731,9 @@ plus the `exiledSector_chart_excavation` item row, sized by tier and the site qu
 
 An open shaft starts a fleet of the chart faction, or a derelict picket, built with `maxShipSize` 2 and kept in the
 planet's memory until beaten, repairing between fights like vanilla's salvage defenders (`HeldGuards`); it carries the site's vanilla drops and rolls its items in `ChartFleetLoot`. The
-encounter pulls in no other fleet and allows no AI retreat (`ShaftEncounters`), and `ChartCampaignPlugin` picks
-`ShaftBattleCreationPlugin` for it: a small dark map with rock fields along the edges, no objectives, and no cruiser or
-capital ship on either side. `ShaftBattlePlugin`, a global combat plugin, also removes them from the reserves in any
+encounter pulls in no other fleet and allows no AI retreat (`ExcavationEncounters`), and `ChartCampaignPlugin` picks
+`ExcavationBattleCreationPlugin` for it: a small dark map with rock fields along the edges, no objectives, and no cruiser or
+capital ship on either side. `ExcavationBattlePlugin`, a global combat plugin, also removes them from the reserves in any
 battle against a shaft fleet, so the rule holds even when another mod's battle plugin builds the map. A collapsed shaft is a
 `anomaly.ChartRaid` at a tier-based difficulty whose objective yields the site's items scaled by raid effectiveness.
 
@@ -742,7 +742,7 @@ battle against a shaft fleet, so the rule holds even when another mod's battle p
 The anomaly adds one moving `BaseTerrain` band, 3000 su wide and as long as the system is wide, that enters at a random
 edge when the run opens and leaves past the far edge 30 days later, then stops affecting anything
 (`StormFront`, `StormFrontTerrainPlugin`, geometry in `StormPath`, numbers in `StormRules`; package
-`charts.anomaly.storm`). Fleets inside it have 50% less sensor range, convoy fleets slow in it as in nebulae, and chart
+`charts.anomaly.stormfront`). Fleets inside it have 50% less sensor range, convoy fleets slow in it as in nebulae, and chart
 intel names the next worlds and POIs it reaches. The size and strike lines scale its width and strike rate.
 
 A battle is in the storm when the player fleet is inside the band as it starts. The global `StormBattlePlugin` then
@@ -774,7 +774,7 @@ program has changed the item.
 
 The anomaly places a post of the chart faction on a clear orbit away from the inner wormhole and three to five
 non-aggressive pickets with 50% more sensor range in a ring 1800 su around it, always shown on the map (package
-`charts.anomaly.heist`, numbers in `HeistRules`). Suspicion, the alarm and the vault's share live on the run record
+`charts.anomaly.listeningpost`, numbers in `ListeningPostRules`). Suspicion, the alarm and the vault's share live on the run record
 (`PostState`). Every 0.1 days `PostScript` asks each picket how well it sees the player: sensor contact (outer half of
 its range, transponder off) builds suspicion 25% a day, which drains 10% a day out of contact; identification starts
 that picket's half-day report. Full suspicion, a report going out, or a picket left with ships after a battle with the
@@ -825,7 +825,7 @@ systems that are not special sites or infested (`AtlasBiomeAnomalies`). It comes
 it always fits under the limit of 9, and a failed run doesn't spend it.
 
 Each places a station-mode fleet of its faction, marked with the run's tier and carrying a chart fleet's loot, on a
-clear orbit away from the inner wormhole (package `charts.anomaly.station`): a damaged Nexus up to tier 7 and a full
+clear orbit away from the inner wormhole (package `charts.anomaly.landmark`): a damaged Nexus up to tier 7 and a full
 one after, or the survey mothership. A system script launches up to two or three fleets of 35% of the tier's fleet
 size, 5% more per fleet lost (at most 60%), that patrol the system, drop no chart items and stop once the station
 dies. `NexusFleetManager` is vanilla's `RemnantStationFleetManager` without its hyperspace encounter point;

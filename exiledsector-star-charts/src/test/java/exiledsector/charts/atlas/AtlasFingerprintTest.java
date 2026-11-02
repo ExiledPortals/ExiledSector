@@ -31,7 +31,7 @@ class AtlasFingerprintTest {
         ChartTables.loadAnomalies();
         AtlasData.registerLayouts(ChartTables.csvRows(AtlasData.LAYOUTS_PATH));
         AtlasData.registerRegions(ChartTables.csvRows(AtlasData.REGIONS_PATH), AtlasData.factionIds());
-        AtlasData.registerMarkers(ChartTables.csvRows(AtlasData.MARKERS_PATH));
+        AtlasData.registerAnomalyChances(ChartTables.csvRows(AtlasData.ANOMALY_CHANCES_PATH));
         AtlasData.registerSpecials(ChartTables.csvRows(AtlasData.SPECIALS_PATH));
         AtlasRules rules = AtlasData.rules();
         Set<String> flags = new HashSet<>();

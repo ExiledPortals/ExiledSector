@@ -299,7 +299,7 @@
     "chart.atlas.node.anomaly": "Anomaly: {anomaly}",
     "chart.atlas.node.infested": "Infested from the {infestation}",
     "chart.atlas.node.cleansed": "Cleansed",
-    "chart.atlas.node.spent": "Markers spent: a chart failed here",
+    "chart.atlas.node.spent": "Anomalies spent: a chart failed here",
     "chart.atlas.node.completed": "Completed",
     "chart.atlas.node.attempted": "Bastion attempted; it allows one try",
     "chart.atlas.node.open": "Click to pick a Star Chart for this system",

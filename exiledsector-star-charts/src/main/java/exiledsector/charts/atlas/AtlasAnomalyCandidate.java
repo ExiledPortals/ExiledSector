@@ -3,7 +3,7 @@ package exiledsector.charts.atlas;
 import java.util.Set;
 
 public record AtlasAnomalyCandidate(String id, float weight, String requiredMod, boolean replacesStar, Set<String> excludes, Weighting weighting,
-                                    AtlasMarkerRule ownChance, Set<String> biomes) {
+                                    AtlasAnomalyChance ownChance, Set<String> biomes) {
 
     @FunctionalInterface
     public interface Weighting {
@@ -19,7 +19,7 @@ public record AtlasAnomalyCandidate(String id, float weight, String requiredMod,
     }
 
     public AtlasAnomalyCandidate(String id, float weight, String requiredMod, boolean replacesStar, Set<String> excludes, Weighting weighting,
-                                 AtlasMarkerRule ownChance) {
+                                 AtlasAnomalyChance ownChance) {
         this(id, weight, requiredMod, replacesStar, excludes, weighting, ownChance, Set.of());
     }
 
@@ -39,7 +39,7 @@ public record AtlasAnomalyCandidate(String id, float weight, String requiredMod,
         return new AtlasAnomalyCandidate(id, 0f, requiredMod, false, Set.of(), null, null, biomes);
     }
 
-    public AtlasMarkerRule chanceRule(AtlasMarkerRule shared) {
+    public AtlasAnomalyChance chanceRule(AtlasAnomalyChance shared) {
         return ownChance == null ? shared : ownChance;
     }
 

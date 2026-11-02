@@ -12,7 +12,7 @@ import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
 import exiledsector.MockSector;
-import exiledsector.charts.anomaly.storm.StormFront;
+import exiledsector.charts.anomaly.stormfront.StormFront;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
 import exiledsector.charts.generation.ChartGenContext;

@@ -3,7 +3,7 @@ package exiledsector.charts.atlas;
 import java.util.Map;
 
 public record AtlasRegion(String id, float weight, int minSteps, String requiredMod, String unlock, Map<String, Float> layoutWeights,
-                          Map<String, Float> factionWeights, Map<String, Float> markerWeights, int maxSteps, float weightPerStep, float size,
+                          Map<String, Float> factionWeights, Map<String, Float> anomalyWeights, int maxSteps, float weightPerStep, float size,
                           float density, Map<String, Float> neighbourWeights, float clouds, float walls) {
 
     public static final String NORMAL = "normal";
@@ -24,19 +24,19 @@ public record AtlasRegion(String id, float weight, int minSteps, String required
         walls = Float.isNaN(walls) ? 0f : Math.max(0f, Math.min(1f, walls));
         layoutWeights = Map.copyOf(layoutWeights);
         factionWeights = Map.copyOf(factionWeights);
-        markerWeights = Map.copyOf(markerWeights);
+        anomalyWeights = Map.copyOf(anomalyWeights);
         neighbourWeights = Map.copyOf(neighbourWeights);
     }
 
     public AtlasRegion(String id, float weight, int minSteps, String requiredMod, String unlock, Map<String, Float> layoutWeights,
-                       Map<String, Float> factionWeights, Map<String, Float> markerWeights) {
-        this(id, weight, minSteps, requiredMod, unlock, layoutWeights, factionWeights, markerWeights, NO_MAX_STEPS, 0f, 1f, 1f, Map.of());
+                       Map<String, Float> factionWeights, Map<String, Float> anomalyWeights) {
+        this(id, weight, minSteps, requiredMod, unlock, layoutWeights, factionWeights, anomalyWeights, NO_MAX_STEPS, 0f, 1f, 1f, Map.of());
     }
 
     public AtlasRegion(String id, float weight, int minSteps, String requiredMod, String unlock, Map<String, Float> layoutWeights,
-                       Map<String, Float> factionWeights, Map<String, Float> markerWeights, int maxSteps, float weightPerStep, float size,
+                       Map<String, Float> factionWeights, Map<String, Float> anomalyWeights, int maxSteps, float weightPerStep, float size,
                        float density, Map<String, Float> neighbourWeights) {
-        this(id, weight, minSteps, requiredMod, unlock, layoutWeights, factionWeights, markerWeights, maxSteps, weightPerStep, size, density,
+        this(id, weight, minSteps, requiredMod, unlock, layoutWeights, factionWeights, anomalyWeights, maxSteps, weightPerStep, size, density,
                 neighbourWeights, 0f, 0f);
     }
 
@@ -44,8 +44,8 @@ public record AtlasRegion(String id, float weight, int minSteps, String required
         return NORMAL.equals(id);
     }
 
-    public float markerWeight(String markerId) {
-        return markerWeights.getOrDefault(markerId, 1f);
+    public float anomalyWeight(String markerId) {
+        return anomalyWeights.getOrDefault(markerId, 1f);
     }
 
     public float weightAt(float distance) {

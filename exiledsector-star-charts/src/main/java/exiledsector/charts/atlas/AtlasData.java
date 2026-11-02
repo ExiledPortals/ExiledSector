@@ -40,7 +40,7 @@ public final class AtlasData {
 
     static final String REGIONS_PATH = "data/config/exiledSector/atlas_regions.csv";
     static final String LAYOUTS_PATH = "data/config/exiledSector/atlas_layouts.csv";
-    static final String MARKERS_PATH = "data/config/exiledSector/atlas_markers.csv";
+    static final String ANOMALY_CHANCES_PATH = "data/config/exiledSector/atlas_anomaly_chances.csv";
     static final String SPECIALS_PATH = "data/config/exiledSector/atlas_specials.csv";
     static final String NODE_EFFECTS_PATH = "data/config/exiledSector/atlas_node_effects.csv";
     static final String DECORATIONS_PATH = "data/config/exiledSector/atlas_decorations.csv";
@@ -58,7 +58,7 @@ public final class AtlasData {
     private static volatile Map<String, AtlasDecoration> decorations = Map.of();
     private static volatile Map<String, AbyssPalette> abyssPalettes = Map.of();
     private static volatile List<AtlasRegion> regions = List.of();
-    private static volatile Map<String, AtlasMarkerRule> markerRules = Map.of();
+    private static volatile Map<String, AtlasAnomalyChance> anomalyChances = Map.of();
     private static volatile List<AtlasSpecial> specials = List.of();
     private static volatile Map<String, List<ChartGenContext.AppliedEffect>> nodeEffects = Map.of();
 
@@ -70,7 +70,7 @@ public final class AtlasData {
         ModCsv.load(ID_COLUMN, DECORATIONS_PATH, LOG, AtlasData::registerDecorations);
         ModCsv.load(ID_COLUMN, ABYSS_PALETTES_PATH, LOG, AtlasData::registerAbyssPalettes);
         ModCsv.load(ID_COLUMN, REGIONS_PATH, LOG, rows -> registerRegions(rows, factionIds(), ModdedChartFactions.detect(factionIds())));
-        ModCsv.load(ID_COLUMN, MARKERS_PATH, LOG, AtlasData::registerMarkers);
+        ModCsv.load(ID_COLUMN, ANOMALY_CHANCES_PATH, LOG, AtlasData::registerAnomalyChances);
         ModCsv.load(ID_COLUMN, SPECIALS_PATH, LOG, AtlasData::registerSpecials);
         ModCsv.load(ID_COLUMN, NODE_EFFECTS_PATH, LOG, AtlasData::registerNodeEffects);
         AtlasRuntime.invalidate();
@@ -83,7 +83,7 @@ public final class AtlasData {
         for (ChartFaction faction : ChartFactions.all()) {
             factionWeights.put(faction.factionId(), faction.weight());
         }
-        Map<String, AtlasMarkerRule> rules = markerRules;
+        Map<String, AtlasAnomalyChance> rules = anomalyChances;
         List<AtlasAnomalyCandidate> anomalies = new ArrayList<>();
         for (ChartAnomalies.Definition definition : ChartAnomalies.definitions()) {
             ChartAnomaly anomaly = ChartAnomalies.byId(definition.id());
@@ -141,8 +141,8 @@ public final class AtlasData {
         return new AtlasUnlocks(ChartModGates::met, unlocked);
     }
 
-    private static AtlasMarkerRule rule(Map<String, AtlasMarkerRule> rules, String id) {
-        return rules.getOrDefault(id, AtlasMarkerRule.NEVER);
+    private static AtlasAnomalyChance rule(Map<String, AtlasAnomalyChance> rules, String id) {
+        return rules.getOrDefault(id, AtlasAnomalyChance.NEVER);
     }
 
     static Set<String> factionIds() {
@@ -281,7 +281,7 @@ public final class AtlasData {
             loaded.put(id, new AtlasRegion(id, csv.number(row, "weight", 1f, id), csv.integer(row, "min_steps", 0, id),
                     ModCsv.text(row, "requires_mod"), ModCsv.text(row, "unlock"), csv.weights(row, "layouts", id, layoutIds),
                     factionWeights(csv, row, id, knownFactions, moddedFactions),
-                    csv.weights(row, "markers", id, null),
+                    csv.weights(row, "anomaly_weights", id, null),
                     csv.integer(row, "max_steps", AtlasRegion.NO_MAX_STEPS, id), csv.number(row, "weight_per_step", 0f, id), size, density,
                     csv.weights(row, "neighbours", id, null), fraction(csv, row, "clouds", id), fraction(csv, row, "walls", id)));
             loadedLooks.put(id, look(csv, row, id));
@@ -300,7 +300,7 @@ public final class AtlasData {
         } else if (!normal.requiredMod().isEmpty() || !normal.unlock().isEmpty() || normal.minSteps() > 0) {
             csv.problem(AtlasRegion.NORMAL, "requires_mod/unlock/min_steps", "set (normal space is always open, so these are ignored)");
             loaded.put(AtlasRegion.NORMAL, new AtlasRegion(AtlasRegion.NORMAL, normal.weight(), 0, "", "", normal.layoutWeights(),
-                    normal.factionWeights(), normal.markerWeights(), normal.maxSteps(), normal.weightPerStep(), normal.size(), normal.density(),
+                    normal.factionWeights(), normal.anomalyWeights(), normal.maxSteps(), normal.weightPerStep(), normal.size(), normal.density(),
                     normal.neighbourWeights(), normal.clouds(), normal.walls()));
         }
         csv.report(LOG);
@@ -326,7 +326,7 @@ public final class AtlasData {
     }
 
     private static AtlasAmbience ambience(CsvRows csv, JSONObject row, String rowId) {
-        float storms = fraction(csv, row, "storms", rowId);
+        float storms = fraction(csv, row, "hyperspace_storms", rowId);
         Map<String, Float> picks = csv.weights(row, "decorations", rowId, decorations.keySet());
         return new AtlasAmbience(storms, colour(csv, row, "cloud_colour", rowId), picks,
                 csv.number(row, "decoration_density", picks.isEmpty() ? 0f : 1f, rowId), csv.flag(row, "abyss", false, rowId));
@@ -376,19 +376,19 @@ public final class AtlasData {
                 decoration.glowColour(), decoration.alpha(), decoration.pulse(), decoration.ping(), known);
     }
 
-    static List<String> registerMarkers(JSONArray rows) throws JSONException {
-        Map<String, AtlasMarkerRule> loaded = new LinkedHashMap<>();
-        CsvRows csv = new CsvRows(MARKERS_PATH);
+    static List<String> registerAnomalyChances(JSONArray rows) throws JSONException {
+        Map<String, AtlasAnomalyChance> loaded = new LinkedHashMap<>();
+        CsvRows csv = new CsvRows(ANOMALY_CHANCES_PATH);
         CsvRows.forEachIdRow(rows, ID_COLUMN, (id, row) -> {
             if (!List.of(VOID_MARKER, ANOMALY_MARKER).contains(id) && ChartAnomalies.byId(id) == null) {
                 csv.skipRow(id, "no atlas marker or anomaly has this id");
                 return;
             }
             float chance = csv.number(row, "chance", 0f, id);
-            loaded.put(id, new AtlasMarkerRule(chance, csv.number(row, "chance_per_step", 0f, id), csv.number(row, "max_chance", 1f, id)));
+            loaded.put(id, new AtlasAnomalyChance(chance, csv.number(row, "chance_per_step", 0f, id), csv.number(row, "max_chance", 1f, id)));
         });
         csv.report(LOG);
-        markerRules = Map.copyOf(loaded);
+        anomalyChances = Map.copyOf(loaded);
         return csv.problems();
     }
 
@@ -454,7 +454,7 @@ public final class AtlasData {
         decorations = Map.of();
         abyssPalettes = Map.of();
         regions = List.of();
-        markerRules = Map.of();
+        anomalyChances = Map.of();
         specials = List.of();
     }
 }

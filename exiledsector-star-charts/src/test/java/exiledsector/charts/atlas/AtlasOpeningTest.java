@@ -35,8 +35,8 @@ class AtlasOpeningTest {
         List<AtlasSpecial> specials = List.of(
                 new AtlasSpecial("nexus", AtlasSpecial.Kind.INFESTATION, AtlasSpecial.Placement.CHUNK, 1f, 3f, 2.5f, 1, 1f, "", "", "remnant"),
                 new AtlasSpecial("bastion", AtlasSpecial.Kind.BASTION, AtlasSpecial.Placement.FIXED, 0f, 1f, 0f, 3, 25f, "", "", ""));
-        return new AtlasRules(regions, Map.of("compact", 1f), Map.of("pirates", 1f), new AtlasMarkerRule(0.3f, 0f, 0.3f),
-                new AtlasMarkerRule(1f, 0f, 1f), specials,
+        return new AtlasRules(regions, Map.of("compact", 1f), Map.of("pirates", 1f), new AtlasAnomalyChance(0.3f, 0f, 0.3f),
+                new AtlasAnomalyChance(1f, 0f, 1f), specials,
                 List.of(new AtlasAnomalyCandidate(SpatialBreach.ANOMALY_ID, 1f, ""), new AtlasAnomalyCandidate(PowerfulBoss.ANOMALY_ID, 1f, "")));
     }
 
@@ -83,7 +83,7 @@ class AtlasOpeningTest {
         assertEquals(ChartAnomalies.definition(PowerfulBoss.ANOMALY_ID).effects().get(0).value(), context.bossSizePercent());
         assertTrue(context.bossSpoilsMult() > 1f);
 
-        state.add(cell, AtlasState.MARKERS_SPENT | AtlasState.CLEANSED);
+        state.add(cell, AtlasState.ANOMALIES_SPENT | AtlasState.CLEANSED);
         AtlasRunNode spent = AtlasOpening.runNode(generator, state, cell);
 
         assertEquals(List.of(), spent.anomalyIds());

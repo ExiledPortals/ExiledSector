@@ -128,12 +128,12 @@ Also:
 | Player sees | Code says | Rename to | Kind |
 |---|---|---|---|
 | Biomes, "{region}, held by…" | `AtlasRegion` (row) and `AtlasBiome` (instance), `AtlasState.siteRegions` (saved), `atlas_regions.csv`, `chart_anomalies.csv` column `biomes` holding region ids; docs and tests say "pocket" | "biome" for the type, "biome pocket" for one placed | code, data, saved field |
-| Anomalies ("Markers spent") | `AtlasMarkerRule`, `atlas_markers.csv`, `markers` column, `markerWeights`, `MARKERS_SPENT` (109 refs) | "anomaly chance", "anomalies spent" | data, code, keys |
-| Listening Post | package `anomaly.heist`, `HeistRules`; `custom_entities.json` plugin path | `anomaly.listeningpost`, `ListeningPostRules` | code, data |
-| Excavation Site | also "bolt-hole", "shaft", "cavern"; `Shaft*` classes (120 refs), `$exiledSector_shaftOpponent` | `Excavation*`; "bolt-hole" stays flavour | code, saved memory keys |
-| Remnant Nexus / Domain-era Mothership | package `anomaly.station`, `LaunchingStation`; the plan calls them "biome landmarks" | `anomaly.landmark` | code |
-| Relay Network stage | `RelayChain`, `AtlasAnomalyRecord.Chain`, "lines" in notes | "stage" | code |
-| Storm Front | package `anomaly.storm` holds only Storm Front; `AsteroidStorm` and `MagneticStorm` are in the root; `storms` column = hyperspace storms | package `stormfront`; column `hyperspace_storms` | code, data |
+| Anomalies ("Markers spent") | `AtlasMarkerRule`, `atlas_markers.csv`, `markers` column, `markerWeights`, `MARKERS_SPENT` (109 refs) | "anomaly chance", "anomalies spent" | data, code, keys. [x] Built: `AtlasAnomalyChance`, `atlas_anomaly_chances.csv`, the `atlas_regions.csv` column `anomaly_weights`, `anomalyWeights`, `AtlasState.ANOMALIES_SPENT` (same flag value), and "Anomalies spent" (异常已消耗). |
+| Listening Post | package `anomaly.heist`, `HeistRules`; `custom_entities.json` plugin path | `anomaly.listeningpost`, `ListeningPostRules` | code, data. [x] Built, with the `custom_entities.json` plugin path. Its saved classes keep their `exiledSector.*` aliases. |
+| Excavation Site | also "bolt-hole", "shaft", "cavern"; `Shaft*` classes (120 refs), `$exiledSector_shaftOpponent` | `Excavation*`; "bolt-hole" stays flavour | code, saved memory keys. [x] Built: `ExcavationBattlePlugin` (and its `settings.json` path), `ExcavationBattleCreationPlugin`, `ExcavationEncounters`, `ExcavationEncounterDialog`, `ExcavationFleets`. The memory key value `$exiledSector_shaftOpponent` stays so a run open in a save keeps its opponent; "shaft" stays where it means the physical shaft. |
+| Remnant Nexus / Domain-era Mothership | package `anomaly.station`, `LaunchingStation`; the plan calls them "biome landmarks" | `anomaly.landmark` | code. [x] Built (main and tests). |
+| Relay Network stage | `RelayChain`, `AtlasAnomalyRecord.Chain`, "lines" in notes | "stage" | code. [x] Built: `RelayStages` (test `RelayStagesTest`). |
+| Storm Front | package `anomaly.storm` holds only Storm Front; `AsteroidStorm` and `MagneticStorm` are in the root; `storms` column = hyperspace storms | package `stormfront`; column `hyperspace_storms` | code, data. [x] Built: `anomaly.stormfront` (with the `terrain.json` and `settings.json` paths) and the `atlas_regions.csv` column `hyperspace_storms`. |
 | "hands the system over" | `AtlasState.capturedSystems` (saved), `AtlasCapture`, `REDEPLOY` | one verb | code |
 
 Per-anomaly translation key prefixes don't match ids or packages: `chart.debris`, `chart.post`, `chart.nexus`, `chart.mothership`, `chart.storm`, `chart.breach`, and the intel keys are split two ways. Move them to `chart.anomaly.<id>.*` (about 150 keys) and the wormhole dialog to `chart.wormhole.dialog.*`.

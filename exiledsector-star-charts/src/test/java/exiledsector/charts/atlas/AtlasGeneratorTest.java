@@ -47,7 +47,7 @@ class AtlasGeneratorTest {
     private static AtlasRules rules(List<AtlasRegion> regions) {
         return new AtlasRules(regions, Map.of("compact", 1f, "sprawling", 2f, "ringed", 1f),
                 Map.of("pirates", 5f, "hegemony", 3f, "remnant", 2f, "derelict", 2f, "independent", 1f),
-                new AtlasMarkerRule(0.5f, 0f, 0.5f), new AtlasMarkerRule(0.15f, 0.01f, 0.5f), SPECIALS,
+                new AtlasAnomalyChance(0.5f, 0f, 0.5f), new AtlasAnomalyChance(0.15f, 0.01f, 0.5f), SPECIALS,
                 List.of(new AtlasAnomalyCandidate("relay", 1f, ""), new AtlasAnomalyCandidate("hunter", 1f, ""),
                         new AtlasAnomalyCandidate("black_hole", 1f, "", true, Set.of(), null), new AtlasAnomalyCandidate("flares", 1f, "")));
     }
@@ -64,7 +64,7 @@ class AtlasGeneratorTest {
         return withAnomalies(rules, rules.anomalyRule(), anomalies);
     }
 
-    private static AtlasRules withAnomalies(AtlasRules rules, AtlasMarkerRule anomalyRule, List<AtlasAnomalyCandidate> anomalies) {
+    private static AtlasRules withAnomalies(AtlasRules rules, AtlasAnomalyChance anomalyRule, List<AtlasAnomalyCandidate> anomalies) {
         return new AtlasRules(rules.regions(), rules.layoutWeights(), rules.factionWeights(), rules.voidRule(),
                 anomalyRule, rules.specials(), anomalies);
     }
@@ -790,7 +790,7 @@ class AtlasGeneratorTest {
         int several = 0;
         int hunters = 0;
         int neutrons = 0;
-        for (AtlasNode node : scan(generator(withAnomalies(rules(), new AtlasMarkerRule(0.6f, 0f, 0.6f), anomalies)))) {
+        for (AtlasNode node : scan(generator(withAnomalies(rules(), new AtlasAnomalyChance(0.6f, 0f, 0.6f), anomalies)))) {
             List<String> ids = node.anomalyIds();
             several += ids.size() >= 3 ? 1 : 0;
             hunters += ids.contains("hunter") ? 1 : 0;
@@ -896,9 +896,9 @@ class AtlasGeneratorTest {
     @Test
     void anAnomalyWithItsOwnChanceRollsOnItInPlaceOfTheSharedOne() {
         List<AtlasAnomalyCandidate> anomalies = new ArrayList<>(rules().anomalies());
-        anomalies.add(new AtlasAnomalyCandidate("powerful", 1f, "", false, Set.of(), null, new AtlasMarkerRule(0.25f, 0f, 0.25f)));
+        anomalies.add(new AtlasAnomalyCandidate("powerful", 1f, "", false, Set.of(), null, new AtlasAnomalyChance(0.25f, 0f, 0.25f)));
         List<AtlasNode> withShared = scan(generator(withAnomalies(rules(), anomalies)));
-        List<AtlasNode> withoutShared = scan(generator(withAnomalies(rules(), AtlasMarkerRule.NEVER, anomalies)));
+        List<AtlasNode> withoutShared = scan(generator(withAnomalies(rules(), AtlasAnomalyChance.NEVER, anomalies)));
         int open = 0;
         int powerful = 0;
         for (int index = 0; index < withShared.size(); index++) {

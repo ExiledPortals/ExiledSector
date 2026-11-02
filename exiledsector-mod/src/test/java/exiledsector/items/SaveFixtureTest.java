@@ -129,7 +129,7 @@ class SaveFixtureTest {
         assertEquals(424242L, atlas.seed());
         assertTrue(atlas.isCompleted(new AtlasCell(1, 0)));
         assertTrue(atlas.has(new AtlasCell(2, -1), AtlasState.FAILED));
-        assertTrue(atlas.has(new AtlasCell(-1, 3), AtlasState.MARKERS_SPENT));
+        assertTrue(atlas.has(new AtlasCell(-1, 3), AtlasState.ANOMALIES_SPENT));
         assertEquals(Set.of(1, 2), atlas.clearedTiers());
         assertEquals(5, atlas.atlasPoints());
         assertEquals(1, atlas.keyFragments());

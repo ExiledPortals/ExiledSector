@@ -6,7 +6,7 @@ import exiledsector.charts.atlas.AtlasCatalystUse;
 import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
-import exiledsector.charts.atlas.AtlasMarkerRule;
+import exiledsector.charts.atlas.AtlasAnomalyChance;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasRegion;
 import exiledsector.charts.atlas.AtlasRules;
@@ -32,7 +32,7 @@ class PowerfulBossTest {
 
     private static final long SEED = 0xB055L;
     private static final AtlasRules RULES = new AtlasRules(List.of(AtlasRegion.DEFAULT_NORMAL), Map.of("compact", 1f), Map.of("pirates", 1f),
-            AtlasMarkerRule.NEVER, AtlasMarkerRule.NEVER, List.of(), List.of());
+            AtlasAnomalyChance.NEVER, AtlasAnomalyChance.NEVER, List.of(), List.of());
 
     @BeforeEach
     void setUp() throws Exception {

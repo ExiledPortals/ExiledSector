@@ -68,17 +68,17 @@ public final class RelayNetwork implements ContentPlacer, RunParticipant, LootSh
 
     @Override
     public List<AtlasLine> atlasLines(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        return RelayChain.lines(generator, state, cell);
+        return RelayStages.lines(generator, state, cell);
     }
 
     @Override
     public AtlasRunNode joinRunNode(AtlasRunNode node, AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasRunChoice choice) {
-        return RelayChain.join(node, generator, state, cell);
+        return RelayStages.join(node, generator, state, cell);
     }
 
     @Override
     public void runClosed(SectorAPI sector, ChartRun run) {
-        RelayChain.closed(sector, run);
+        RelayStages.closed(sector, run);
     }
 
     @Override
