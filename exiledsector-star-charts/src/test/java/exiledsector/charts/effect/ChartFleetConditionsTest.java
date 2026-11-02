@@ -97,7 +97,7 @@ class ChartFleetConditionsTest {
     @Test
     void onlyShipsAndFightersOfThePlayerFleetAreAffected() {
         ChartFleetConditions.set(Map.of(ChartFleetStat.TOP_SPEED, 0.8f, ChartFleetStat.MISSILE_WEAPON_RANGE, 0.9f,
-                ChartFleetStat.ENERGY_DAMAGE_TAKEN, 1.25f), playerFleet);
+                ChartFleetStat.ENERGY_DAMAGE_TAKEN, 1.25f, ChartFleetStat.MISSILE_AMMO, 0.7f), playerFleet);
         ShipStats playerShip = new ShipStats(playerMember);
         FleetMemberAPI otherMember = mock(FleetMemberAPI.class);
         ShipStats otherShip = new ShipStats(otherMember);
@@ -107,6 +107,7 @@ class ChartFleetConditionsTest {
 
         assertEquals(0.8f, playerShip.maxSpeed.getMultStatMod(ChartFleetConditions.MOD_ID).getValue(), 0.0001f);
         assertEquals(0.9f, playerShip.missileRange.getMultBonus(ChartFleetConditions.MOD_ID).getValue(), 0.0001f);
+        assertEquals(0.7f, playerShip.missileAmmo.getMultBonus(ChartFleetConditions.MOD_ID).getValue(), 0.0001f);
         assertEquals(1.25f, playerShip.energyTaken.getMultStatMod(ChartFleetConditions.MOD_ID).getValue(), 0.0001f);
         assertEquals(1.25f, playerShip.energyShieldTaken.getMultStatMod(ChartFleetConditions.MOD_ID).getValue(), 0.0001f);
         assertNull(otherShip.maxSpeed.getMultStatMod(ChartFleetConditions.MOD_ID));
@@ -292,6 +293,7 @@ class ChartFleetConditionsTest {
         final MutableStat energyTaken = new MutableStat(1f);
         final MutableStat energyShieldTaken = new MutableStat(1f);
         final StatBonus missileRange = new StatBonus();
+        final StatBonus missileAmmo = new StatBonus();
 
         ShipStats(FleetMemberAPI member) {
             when(stats.getFleetMember()).thenReturn(member);
@@ -301,6 +303,7 @@ class ChartFleetConditionsTest {
             when(stats.getBallisticWeaponRangeBonus()).thenReturn(new StatBonus());
             when(stats.getEnergyWeaponRangeBonus()).thenReturn(new StatBonus());
             when(stats.getMissileWeaponRangeBonus()).thenReturn(missileRange);
+            when(stats.getMissileAmmoBonus()).thenReturn(missileAmmo);
         }
     }
 }

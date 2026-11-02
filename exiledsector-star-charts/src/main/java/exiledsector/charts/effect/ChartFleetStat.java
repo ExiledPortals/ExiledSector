@@ -51,6 +51,7 @@ public enum ChartFleetStat {
     BALLISTIC_WEAPON_RANGE((stats, id, mult) -> stats.getBallisticWeaponRangeBonus().modifyMult(id, mult)),
     ENERGY_WEAPON_RANGE((stats, id, mult) -> stats.getEnergyWeaponRangeBonus().modifyMult(id, mult)),
     MISSILE_WEAPON_RANGE((stats, id, mult) -> stats.getMissileWeaponRangeBonus().modifyMult(id, mult)),
+    MISSILE_AMMO((stats, id, mult) -> stats.getMissileAmmoBonus().modifyMult(id, mult)),
     DMOD_EFFECT((stats, id, mult) -> SkillEffectSupport.applyDModEffectMult(stats, id, (mult - 1f) * ChartGenContext.PERCENT)),
     DEPLOYMENT_COST((stats, id, mult) -> stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyMult(id, mult)),
     ENEMY_DEPLOYMENT_COST(Scope.BATTLE, null),

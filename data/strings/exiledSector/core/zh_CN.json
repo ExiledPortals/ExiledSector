@@ -370,6 +370,7 @@
     "socketable.modifier.CHART_BALLISTIC_WEAPON_RANGE_PERCENT": "拖曳",
     "socketable.modifier.CHART_ENERGY_WEAPON_RANGE_PERCENT": "弥散",
     "socketable.modifier.CHART_MISSILE_WEAPON_RANGE_PERCENT": "致盲",
+    "socketable.modifier.CHART_MISSILE_AMMO_PERCENT": "配给",
     "socketable.modifier.CHART_SHIELD_UPKEEP_PERCENT": "吸蚀",
     "socketable.modifier.CHART_SHIELD_RAISE_RATE_PERCENT": "迟滞",
     "socketable.modifier.CHART_SHIELD_DAMAGE_TAKEN_PERCENT": "破碎",

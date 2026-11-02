@@ -117,6 +117,7 @@
     "chart.effect.CHART_BALLISTIC_WEAPON_RANGE_PERCENT": "在星域内，你的舰队舰船实弹武器射程降低<bad>{value}%</bad>（乘算）",
     "chart.effect.CHART_ENERGY_WEAPON_RANGE_PERCENT": "在星域内，你的舰队舰船能量武器射程降低<bad>{value}%</bad>（乘算）",
     "chart.effect.CHART_MISSILE_WEAPON_RANGE_PERCENT": "在星域内，你的舰队舰船导弹武器射程降低<bad>{value}%</bad>（乘算）",
+    "chart.effect.CHART_MISSILE_AMMO_PERCENT": "在星域内，你的舰队舰船导弹弹药量降低<bad>{value}%</bad>（乘算）",
     "chart.effect.CHART_DMOD_EFFECT_PERCENT": "在星域内，你的舰队舰船D插的负面效果提高<bad>{value}%</bad>（乘算）",
     "chart.effect.CHART_DEPLOYMENT_COST_PERCENT": "在星域内，你的舰队舰船部署点消耗提高<bad>{value}%</bad>（乘算）",
     "chart.effect.CHART_ENEMY_DEPLOYMENT_COST_PERCENT": "在星域内，敌方舰船部署点消耗降低<bad>{value}%</bad>（乘算）",

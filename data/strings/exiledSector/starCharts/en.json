@@ -124,6 +124,7 @@
     "chart.effect.CHART_BALLISTIC_WEAPON_RANGE_PERCENT": "Ships in your fleet have <bad>{value}%</bad> less ballistic weapon range in the system",
     "chart.effect.CHART_ENERGY_WEAPON_RANGE_PERCENT": "Ships in your fleet have <bad>{value}%</bad> less energy weapon range in the system",
     "chart.effect.CHART_MISSILE_WEAPON_RANGE_PERCENT": "Ships in your fleet have <bad>{value}%</bad> less missile weapon range in the system",
+    "chart.effect.CHART_MISSILE_AMMO_PERCENT": "Ships in your fleet have <bad>{value}%</bad> less missile ammo in the system",
     "chart.effect.CHART_DMOD_EFFECT_PERCENT": "Ships in your fleet have <bad>{value}%</bad> more negative effects from D-mods in the system",
     "chart.effect.CHART_DEPLOYMENT_COST_PERCENT": "Ships in your fleet have <bad>{value}%</bad> more deployment point cost in the system",
     "chart.effect.CHART_ENEMY_DEPLOYMENT_COST_PERCENT": "Enemy ships have <bad>{value}%</bad> less deployment point cost in the system",
