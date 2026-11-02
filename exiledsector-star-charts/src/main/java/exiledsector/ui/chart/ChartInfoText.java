@@ -11,6 +11,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.items.ItemName;
+import exiledsector.items.SlottedLine;
 import exiledsector.items.StarChart;
 import exiledsector.ui.atlas.AtlasNodeText;
 import exiledsector.ui.socket.AtlasAnomalyPanel.Entry;
@@ -24,7 +25,7 @@ final class ChartInfoText {
     }
 
     record Content(ItemName chartName, String summary, List<Entry> anomalies, Objective objective, List<StyledText> rewardLines,
-                   List<StyledText> modifierLines) {
+                   List<SlottedLine> modifierLines) {
     }
 
     record Key(String runId, boolean objectiveComplete, boolean objectiveLost, List<String> anomalyIds) {
@@ -70,12 +71,13 @@ final class ChartInfoText {
                 StyledText.of(Translation.gameText(ChartObjectiveIntel.descriptionKey(run)) + "\n" + status));
     }
 
-    static List<StyledText> modifierLines(StarChart chart) {
+    static List<SlottedLine> modifierLines(StarChart chart) {
         if (chart == null) {
             return List.of();
         }
-        List<StyledText> lines = new ArrayList<>(chart.implicitLines(false));
-        lines.addAll(chart.effectLines());
+        List<SlottedLine> lines = new ArrayList<>();
+        chart.implicitLines(false).forEach(line -> lines.add(new SlottedLine(null, line)));
+        lines.addAll(chart.slottedEffectLines(false, null));
         return lines;
     }
 }

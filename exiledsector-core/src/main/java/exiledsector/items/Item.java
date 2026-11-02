@@ -464,7 +464,7 @@ public abstract class Item {
         for (RolledModifier implicit : implicits()) {
             addModifierLines(lines, implicit, implicitModifier(implicit.modifierId()), effects, withRollRanges, context);
         }
-        return texts(lines);
+        return texts(lines, withRollRanges);
     }
 
     public List<StyledText> effectLines() {
@@ -476,7 +476,7 @@ public abstract class Item {
     }
 
     public List<StyledText> effectLines(boolean withRollRanges, HullSize hullSize) {
-        return texts(slottedEffectLines(withRollRanges, hullSize));
+        return texts(slottedEffectLines(withRollRanges, hullSize), withRollRanges);
     }
 
     public List<SlottedLine> slottedEffectLines(boolean withRollRanges, HullSize hullSize) {
@@ -492,39 +492,41 @@ public abstract class Item {
     public List<StyledText> explicitLines(RolledModifier explicitModifier) {
         List<SlottedLine> lines = new ArrayList<>();
         addModifierLines(lines, explicitModifier, explicitModifier(explicitModifier.modifierId()), modifierEffects(), false, scaleContext(null));
-        return texts(lines);
+        return texts(lines, false);
     }
 
     private void addModifierLines(List<SlottedLine> lines, RolledModifier rolledModifier, Modifier modifier, ModifierEffects effects,
                                   boolean withRollRanges, ScaleContext context) {
-        List<StyledText> descriptions = new ArrayList<>();
-        List<List<StyledText>> detailLines = new ArrayList<>();
+        List<SlottedLine> described = new ArrayList<>();
         for (RolledEffect effect : rolledModifier.lines()) {
             StyledText description = explicitLine(effects, effect, modifier == null ? null : modifier.line(effect.effectName()),
                     withRollRanges, context);
             if (description != null) {
-                descriptions.add(rolledModifier.locked() ? description.withUnstyledAs(Style.IMMUTABLE) : description);
-                ModifierEffect resolvedEffect = withRollRanges ? effect.effect(effects) : null;
-                detailLines.add(resolvedEffect == null ? List.of() : resolvedEffect.detailLines());
+                StyledText shown = rolledModifier.locked() ? description.withUnstyledAs(Style.IMMUTABLE) : description;
+                ModifierEffect resolvedEffect = effect.effect(effects);
+                described.add(resolvedEffect == null ? new SlottedLine(rolledModifier.slot(), shown)
+                        : new SlottedLine(rolledModifier.slot(), shown, resolvedEffect.detailTitle(), resolvedEffect.detailLines()));
             }
         }
-        boolean hybrid = withRollRanges && descriptions.size() >= 2;
-        if (hybrid) {
-            lines.add(new SlottedLine(rolledModifier.slot(), Translation.styled("socketable.tooltip.hybrid")));
+        if (!withRollRanges || described.size() < 2) {
+            lines.addAll(described);
+            return;
         }
-        for (int index = 0; index < descriptions.size(); index++) {
-            StyledText description = descriptions.get(index);
-            lines.add(hybrid ? new SlottedLine(null, Translation.msg("socketable.tooltip.hybridLine").arg("line", description).styled())
-                    : new SlottedLine(rolledModifier.slot(), description));
-            for (StyledText detailLine : detailLines.get(index)) {
-                lines.add(new SlottedLine(null, Translation.msg("socketable.tooltip.detailLine").arg("line", detailLine).styled()));
-            }
+        lines.add(new SlottedLine(rolledModifier.slot(), Translation.styled("socketable.tooltip.hybrid")));
+        for (SlottedLine line : described) {
+            lines.add(new SlottedLine(null, Translation.msg("socketable.tooltip.hybridLine").arg("line", line.text()).styled(),
+                    line.detailTitle(), line.details()));
         }
     }
 
-    private static List<StyledText> texts(List<SlottedLine> lines) {
+    private static List<StyledText> texts(List<SlottedLine> lines, boolean withDetails) {
         List<StyledText> texts = new ArrayList<>(lines.size());
-        lines.forEach(line -> texts.add(line.text()));
+        for (SlottedLine line : lines) {
+            texts.add(line.text());
+            if (withDetails) {
+                line.details().forEach(detail -> texts.add(Translation.msg("socketable.tooltip.detailLine").arg("line", detail).styled()));
+            }
+        }
         return texts;
     }
 

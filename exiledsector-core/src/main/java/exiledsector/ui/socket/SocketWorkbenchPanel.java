@@ -1088,12 +1088,14 @@ public final class SocketWorkbenchPanel extends HoloPanel {
                 centred(VanillaText.addPara(element, line, linePad, Misc.getTextColor()));
                 linePad = LINE_PAD;
             }
-            addDetailSection(element, "hullItem.tooltip.implicit", loadedItem.implicitLines(detailsShowRollRanges), paraPad);
+            List<SlottedLine> implicitLines = new ArrayList<>();
+            loadedItem.implicitLines(detailsShowRollRanges).forEach(line -> implicitLines.add(new SlottedLine(null, line)));
+            addDetailSection(element, "hullItem.tooltip.implicit", implicitLines, paraPad);
             if (detailsShowRollRanges) {
                 addSlottedDetailSection(element, "socketable.tooltip.primaryData", loadedItem.slottedEffectLines(true, null), paraPad,
                         detailsWidth);
             } else {
-                addDetailSection(element, "socketable.tooltip.primaryData", loadedItem.effectLines(false), paraPad);
+                addDetailSection(element, "socketable.tooltip.primaryData", loadedItem.slottedEffectLines(false, null), paraPad);
             }
         }
         float detailsLeft = embeddedLayout != null ? embeddedLayout.details().left() : artX(BenchScene.detailsLeft(benchMode));
@@ -1101,16 +1103,34 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         detailsElement = placedComponent(replaceElement(detailsElement, element, detailsLeft, detailsTop));
     }
 
-    private static void addDetailSection(TooltipMakerAPI element, String headingKey, List<StyledText> lines, float headingPad) {
+    private static void addDetailSection(TooltipMakerAPI element, String headingKey, List<SlottedLine> lines, float headingPad) {
         if (lines.isEmpty()) {
             return;
         }
         element.addSectionHeading(Translation.text(headingKey), Alignment.MID, headingPad);
         float linePad = GAP;
-        for (StyledText line : lines) {
-            VanillaText.addPara(element, line, linePad, Misc.getTextColor());
+        for (SlottedLine line : lines) {
+            VanillaText.addPara(element, line.text(), linePad, Misc.getTextColor());
+            addLineDetailTooltip(element, line);
             linePad = LINE_PAD;
         }
+    }
+
+    private static void addLineDetailTooltip(TooltipMakerAPI element, SlottedLine line) {
+        if (!line.hasDetails()) {
+            return;
+        }
+        element.addTooltipToPrevious(new GameTextTooltip(TOOLTIP_WIDTH, tooltip -> {
+            float detailPad = 0f;
+            if (line.detailTitle() != null) {
+                tooltip.addTitle(line.detailTitle());
+                detailPad = GAP;
+            }
+            for (StyledText detail : line.details()) {
+                VanillaText.addPara(tooltip, detail, detailPad, Misc.getTextColor());
+                detailPad = LINE_PAD;
+            }
+        }), TooltipMakerAPI.TooltipLocation.BELOW);
     }
 
     private static void addSlottedDetailSection(TooltipMakerAPI element, String headingKey, List<SlottedLine> lines, float headingPad,
@@ -1126,6 +1146,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             VanillaText.addPara(textCell, line.text(), 0f, Misc.getTextColor());
             element.endSubTooltip();
             element.addCustom(textCell, linePad);
+            addLineDetailTooltip(element, line);
             linePad = LINE_PAD;
             if (line.slot() == null) {
                 continue;

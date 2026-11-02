@@ -273,6 +273,25 @@ class StarChartTest {
     }
 
     @Test
+    void aGrantedNodesSlottedLineCarriesItsDetailsForATooltipInsteadOfInlineLines() throws Exception {
+        RealSkillData.load();
+        try {
+            StarChart chart = StarChartFixtures.chart(SINGLE, 8L, 3);
+            chart.replaceExplicits(List.of(new RolledModifier("CHART_ENEMY_HULLBREACHER_ROUNDS", ModifierSlot.PREFIX,
+                    List.of(new RolledEffect("CHART_ENEMY_HULLBREACHER_ROUNDS", 1f)))));
+
+            List<SlottedLine> lines = chart.slottedEffectLines(false, null);
+
+            assertEquals(chart.effectLines(false), lines.stream().map(SlottedLine::text).toList());
+            assertEquals(SkillTree.get("hull_breacher_1").getDisplayName(), lines.get(0).detailTitle());
+            assertEquals(chart.effectLines(true).size() - 1, lines.get(0).details().size());
+            assertEquals(1, chart.slottedEffectLines(true, null).size());
+        } finally {
+            RealSkillData.clear();
+        }
+    }
+
+    @Test
     void aDroppedChartCarriesNoImplicits() {
         ItemData dropped = ItemData.rolledAtTier(ItemDefinitions.get(SINGLE), 8L, 3);
 

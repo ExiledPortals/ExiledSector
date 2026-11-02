@@ -14,6 +14,10 @@ public interface ModifierEffect {
         return false;
     }
 
+    default String detailTitle() {
+        return null;
+    }
+
     default List<StyledText> detailLines() {
         return List.of();
     }

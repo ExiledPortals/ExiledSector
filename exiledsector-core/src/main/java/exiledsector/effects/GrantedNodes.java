@@ -22,6 +22,11 @@ public final class GrantedNodes {
         return lookups.isEmpty() ? List.of() : lookups.get(0).withoutTree(nodeIds, context, modIdPrefix);
     }
 
+    public static String displayName(String nodeId) {
+        List<GrantedNodeEffects> lookups = LOOKUPS.all();
+        return lookups.isEmpty() ? null : lookups.get(0).displayName(nodeId);
+    }
+
     public static List<StyledText> descriptionLines(String nodeId) {
         List<GrantedNodeEffects> lookups = LOOKUPS.all();
         return lookups.isEmpty() ? List.of() : lookups.get(0).descriptionLines(nodeId);

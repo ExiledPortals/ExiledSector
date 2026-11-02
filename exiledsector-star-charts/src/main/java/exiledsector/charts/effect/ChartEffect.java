@@ -255,6 +255,11 @@ public enum ChartEffect implements ModifierEffect {
     }
 
     @Override
+    public String detailTitle() {
+        return grantedNodeId == null ? null : GrantedNodes.displayName(grantedNodeId);
+    }
+
+    @Override
     public List<StyledText> detailLines() {
         return grantedNodeId == null ? List.of() : GrantedNodes.descriptionLines(grantedNodeId).stream().map(StyledText::inverted).toList();
     }

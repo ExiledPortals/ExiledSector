@@ -67,6 +67,12 @@ public final class SkillTreeGrantedNodeEffects implements GrantedNodeEffects {
     }
 
     @Override
+    public String displayName(String nodeId) {
+        SkillNode node = SkillTree.get(nodeId);
+        return node == null ? null : node.getDisplayName();
+    }
+
+    @Override
     public List<StyledText> descriptionLines(String nodeId) {
         SkillNode node = SkillTree.get(nodeId);
         if (node == null) {

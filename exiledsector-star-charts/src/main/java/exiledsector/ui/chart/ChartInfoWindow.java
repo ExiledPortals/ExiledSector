@@ -5,6 +5,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.items.ItemName;
+import exiledsector.items.SlottedLine;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.socket.AtlasAnomalyPanel.Entry;
@@ -73,6 +74,42 @@ final class ChartInfoWindow {
             if (body != null) {
                 body.dispose();
             }
+        }
+    }
+
+    private final class TooltipLine implements Block {
+
+        private final TextLabel label;
+        private final Entry tooltip;
+        private final float gapBefore;
+
+        private TooltipLine(TextLabel label, Entry tooltip, float gapBefore) {
+            this.label = label;
+            this.tooltip = tooltip;
+            this.gapBefore = gapBefore;
+        }
+
+        @Override
+        public float gapBefore() {
+            return gapBefore;
+        }
+
+        @Override
+        public float height() {
+            return label.height();
+        }
+
+        @Override
+        public void draw(float left, float top, float alphaMult) {
+            label.setAlpha(alphaMult).draw(left, top);
+            if (tooltip != null && hoverable && Rects.contains(left, top - label.height(), label.width(), label.height(), mouseX, mouseY)) {
+                hoveredEntry = tooltip;
+            }
+        }
+
+        @Override
+        public void dispose() {
+            label.dispose();
         }
     }
 
@@ -153,7 +190,7 @@ final class ChartInfoWindow {
         addAnomalies(content.anomalies(), fullWidth, grayColor);
         addObjective(content.objective(), fullWidth, textColor);
         addLines("chart.panel.rewards", content.rewardLines(), fullWidth, textColor);
-        addLines("chart.panel.modifiers", content.modifierLines(), fullWidth, textColor);
+        addModifiers(content.modifierLines(), fullWidth, textColor);
         contentHeight = 0f;
         for (Block block : blocks) {
             contentHeight += block.gapBefore() + block.height();
@@ -247,6 +284,20 @@ final class ChartInfoWindow {
         }
         blocks.add(heading(headingKey));
         blocks.add(new TextBlock(paragraph(StyledText.join(StyledText.of("\n"), lines), fullWidth, textColor), null, ENTRY_GAP));
+    }
+
+    private void addModifiers(List<SlottedLine> lines, float fullWidth, Color textColor) {
+        if (lines.isEmpty()) {
+            return;
+        }
+        blocks.add(heading("chart.panel.modifiers"));
+        float gapBefore = ENTRY_GAP;
+        for (SlottedLine line : lines) {
+            Entry tooltip = line.hasDetails() ? new Entry(line.detailTitle() == null ? "" : line.detailTitle(), "",
+                    StyledText.join(StyledText.of("\n"), line.details())) : null;
+            blocks.add(new TooltipLine(paragraph(line.text(), fullWidth, textColor), tooltip, gapBefore));
+            gapBefore = 0f;
+        }
     }
 
     private TextBlock heading(String key) {

@@ -11,6 +11,7 @@ import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.items.ItemData;
+import exiledsector.items.SlottedLine;
 import exiledsector.items.StarChart;
 import exiledsector.items.StarChartFixtures;
 import exiledsector.ui.socket.AtlasAnomalyPanel.Entry;
@@ -102,7 +103,7 @@ class ChartInfoTextTest {
         List<StyledText> modifiers = new ArrayList<>(chart.implicitLines(false));
         modifiers.addAll(chart.effectLines());
         assertEquals(chart.displayName().title(), content.chartName().title());
-        assertEquals(modifiers, content.modifierLines());
+        assertEquals(modifiers, content.modifierLines().stream().map(SlottedLine::text).toList());
         assertFalse(content.modifierLines().isEmpty());
         assertEquals(ChartLootTotals.lines(ChartRunEffects.contextOf(run)), content.rewardLines());
     }
