@@ -129,8 +129,8 @@ final class SkillTreeChrome {
         return mode.enables(CanvasMode.Chrome.STATS_TOGGLE);
     }
 
-    void render(PositionAPI canvasPosition, CanvasMode mode, float mouseX, float mouseY, float alphaMult, float workbenchDim) {
-        statPanel.render(canvasPosition, mouseX, mouseY, alphaMult, visibility.alpha(CanvasMode.Chrome.STATS_TOGGLE) * (1f - workbenchDim),
+    void render(PositionAPI canvasPosition, CanvasMode mode, float mouseX, float mouseY, float alphaMult, float craftingBenchDim) {
+        statPanel.render(canvasPosition, mouseX, mouseY, alphaMult, visibility.alpha(CanvasMode.Chrome.STATS_TOGGLE) * (1f - craftingBenchDim),
                 statsToggleLive(mode));
         float readoutAlpha = alphaMult * visibility.alpha(CanvasMode.Chrome.READOUTS);
         ordnancePointsBar.render(canvasPosition, readoutAlpha, null);
@@ -148,7 +148,7 @@ final class SkillTreeChrome {
                 mode.enables(CanvasMode.Chrome.STORAGE_BUTTON));
         ScreenRect frame = shipCardFrame(canvasPosition);
         BorderedPanel.draw(frame.left(), frame.bottom(), frame.width(), frame.height(), alphaMult);
-        statPanel.renderSheet(canvasPosition, mouseX, mouseY, alphaMult * visibility.alpha(CanvasMode.Chrome.STATS_TOGGLE) * (1f - workbenchDim),
+        statPanel.renderSheet(canvasPosition, mouseX, mouseY, alphaMult * visibility.alpha(CanvasMode.Chrome.STATS_TOGGLE) * (1f - craftingBenchDim),
                 statsToggleLive(mode));
     }
 

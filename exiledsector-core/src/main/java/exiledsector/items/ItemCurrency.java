@@ -61,6 +61,6 @@ public interface ItemCurrency extends GrowableMaterial {
     }
 
     default String usedNoticeKey(ItemNature nature) {
-        return "ui.workbench.notice.used." + key() + "." + nature.name().toLowerCase(Locale.ROOT);
+        return "ui.craftingBench.notice.used." + key() + "." + nature.name().toLowerCase(Locale.ROOT);
     }
 }

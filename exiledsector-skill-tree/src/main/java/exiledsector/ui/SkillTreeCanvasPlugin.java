@@ -41,8 +41,8 @@ import java.util.function.Consumer;
 
 public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
-    private static final float WORKBENCH_DIM_SECONDS = 0.25f;
-    private static final float WORKBENCH_DIM_ALPHA = 0.45f;
+    private static final float CRAFTING_BENCH_DIM_SECONDS = 0.25f;
+    private static final float CRAFTING_BENCH_DIM_ALPHA = 0.45f;
 
     private final StarfieldRenderer starfieldRenderer;
     private final AbyssDarknessRenderer abyssDarkness = AbyssDarknessRenderer.forActiveTree();
@@ -69,7 +69,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private float mouseY = 0f;
     private boolean mouseKnown = false;
     private boolean swallowEscapeUp;
-    private float workbenchDimProgress;
+    private float craftingBenchDimProgress;
     private boolean hoverRingShown;
 
     public SkillTreeCanvasPlugin(FleetMemberAPI member, ShipVariantAPI variant, float shipCardHeight, BaseRefitButton refitButton,
@@ -155,7 +155,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private CanvasMode mode() {
-        return CanvasMode.resolve(treeSession.isStartingRootInputLocked(), templateUi.isModalOpen(), socketPlacement.isWorkbenchOpen(),
+        return CanvasMode.resolve(treeSession.isStartingRootInputLocked(), templateUi.isModalOpen(), socketPlacement.isCraftingBenchOpen(),
                 hyperspaceMode.isActive(), exoshipView.isActive());
     }
 
@@ -197,8 +197,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         nodeSearch.setStatFocus(statPanel.hoveredNodeIds());
         chrome.advanceVisibility(amount, mode, hyperspaceMode.chromeAlpha(), hyperspaceMode.treeAlpha());
         chrome.advance(amount, canvasPosition, mode, treeSession.budget(), mouseX, mouseY, mouseKnown);
-        float dimStep = amount / WORKBENCH_DIM_SECONDS;
-        workbenchDimProgress = Fade.step(workbenchDimProgress, socketPlacement.isWorkbenchOpen(), dimStep);
+        float dimStep = amount / CRAFTING_BENCH_DIM_SECONDS;
+        craftingBenchDimProgress = Fade.step(craftingBenchDimProgress, socketPlacement.isCraftingBenchOpen(), dimStep);
         rememberCamera(mode);
     }
 
@@ -253,7 +253,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             switch (mode) {
                 case ROOT_CHOICE -> handleRootChoiceEvent(event, mode);
                 case MODAL -> handleModalEvent(event);
-                case WORKBENCH -> handleWorkbenchEvent(event, mode);
+                case CRAFTING_BENCH -> handleCraftingBenchEvent(event, mode);
                 case HYPERSPACE -> hyperspaceMode.handleEvent(event, canvasPosition,
                         event.isLMBDownEvent() && chrome.contains(canvasPosition, mode, event.getX(), event.getY()));
                 case EXOSHIP_VIEW, TREE -> handleTreeEvent(event, mode);
@@ -330,7 +330,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         consume(event);
     }
 
-    private void handleWorkbenchEvent(InputEventAPI event, CanvasMode mode) {
+    private void handleCraftingBenchEvent(InputEventAPI event, CanvasMode mode) {
         if ((event.isMouseDownEvent() || event.isMouseScrollEvent()) && canvasPosition.containsEvent(event)) {
             if (event.isLMBDownEvent()) {
                 chrome.press(canvasPosition, mode, event.getX(), event.getY());
@@ -539,14 +539,14 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         float shipAlpha = backgroundAlpha + (alphaMult * treeSession.treeAlpha() - backgroundAlpha) * exoshipView.viewLevel();
         exoshipView.render(viewport, shipAlpha * treeAlpha);
         decorations.renderOverTree(decorationScene);
-        if (workbenchDimProgress > 0f) {
+        if (craftingBenchDimProgress > 0f) {
             GLDraw.fillQuad(canvasPosition.getX(), canvasPosition.getY(), canvasPosition.getWidth(), canvasPosition.getHeight(), Color.BLACK,
-                    WORKBENCH_DIM_ALPHA * workbenchDimProgress * alphaMult);
+                    CRAFTING_BENCH_DIM_ALPHA * craftingBenchDimProgress * alphaMult);
         }
         if (hyperspaceMode.isActive()) {
             hyperspaceMode.render(viewport, alphaMult, pointerOverTree, mouseX, mouseY);
         }
-        chrome.render(canvasPosition, mode, mouseX, mouseY, alphaMult, workbenchDimProgress);
+        chrome.render(canvasPosition, mode, mouseX, mouseY, alphaMult, craftingBenchDimProgress);
         boolean nodeTooltipShown = !camera.isDragging() && mouseKnown && treeHovered;
         if (nodeTooltipShown) {
             nodeDrawer.renderHoverTooltip(layers, mouseX, mouseY, alphaMult);

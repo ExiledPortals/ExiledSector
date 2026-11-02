@@ -20,7 +20,7 @@ class CanvasModeTest {
     @Test
     void modesResolveInPriorityOrder() {
         assertEquals(CanvasMode.MODAL, CanvasMode.resolve(false, true, true, true, true));
-        assertEquals(CanvasMode.WORKBENCH, CanvasMode.resolve(false, false, true, true, true));
+        assertEquals(CanvasMode.CRAFTING_BENCH, CanvasMode.resolve(false, false, true, true, true));
         assertEquals(CanvasMode.HYPERSPACE, CanvasMode.resolve(false, false, false, true, true));
         assertEquals(CanvasMode.EXOSHIP_VIEW, CanvasMode.resolve(false, false, false, false, true));
         assertEquals(CanvasMode.TREE, CanvasMode.resolve(false, false, false, false, false));
@@ -39,7 +39,7 @@ class CanvasModeTest {
     @Test
     void blockingModesLeaveOnlyTheirOwnChromeLive() {
         assertEquals(EnumSet.noneOf(CanvasMode.Chrome.class), enabledIn(CanvasMode.MODAL));
-        assertEquals(EnumSet.of(CanvasMode.Chrome.STORAGE_BUTTON), enabledIn(CanvasMode.WORKBENCH));
+        assertEquals(EnumSet.of(CanvasMode.Chrome.STORAGE_BUTTON), enabledIn(CanvasMode.CRAFTING_BENCH));
         assertEquals(EnumSet.of(CanvasMode.Chrome.READOUTS), enabledIn(CanvasMode.HYPERSPACE));
     }
 
@@ -56,7 +56,7 @@ class CanvasModeTest {
     void hyperspaceAndRootChoiceHideTheSearchBar() {
         assertFalse(CanvasMode.HYPERSPACE.shows(CanvasMode.Chrome.SEARCH));
         assertFalse(CanvasMode.ROOT_CHOICE.shows(CanvasMode.Chrome.SEARCH));
-        assertTrue(CanvasMode.WORKBENCH.shows(CanvasMode.Chrome.SEARCH));
+        assertTrue(CanvasMode.CRAFTING_BENCH.shows(CanvasMode.Chrome.SEARCH));
         assertTrue(CanvasMode.MODAL.shows(CanvasMode.Chrome.READOUTS));
     }
 
@@ -76,14 +76,14 @@ class CanvasModeTest {
         assertTrue(CanvasMode.TREE.hoversTree());
         assertTrue(CanvasMode.ROOT_CHOICE.hoversTree());
         assertFalse(CanvasMode.MODAL.hoversTree());
-        assertFalse(CanvasMode.WORKBENCH.hoversTree());
+        assertFalse(CanvasMode.CRAFTING_BENCH.hoversTree());
         assertFalse(CanvasMode.HYPERSPACE.hoversTree());
     }
 
     @Test
-    void chromeTooltipsAreHiddenUnderModalsAndTheWorkbench() {
+    void chromeTooltipsAreHiddenUnderModalsAndTheCraftingBench() {
         assertFalse(CanvasMode.MODAL.showsChromeTooltips());
-        assertFalse(CanvasMode.WORKBENCH.showsChromeTooltips());
+        assertFalse(CanvasMode.CRAFTING_BENCH.showsChromeTooltips());
         assertTrue(CanvasMode.HYPERSPACE.showsChromeTooltips());
         assertTrue(CanvasMode.ROOT_CHOICE.showsChromeTooltips());
     }

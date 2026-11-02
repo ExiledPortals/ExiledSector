@@ -20,7 +20,7 @@ import exiledsector.ui.refit.RefitScreenLayout;
 import exiledsector.ui.section.SectionLayout;
 import exiledsector.ui.socket.HullUpgradePanel;
 import exiledsector.ui.socket.ItemStoragePanel;
-import exiledsector.ui.socket.ModificationBay;
+import exiledsector.ui.socket.CraftingBench;
 import exiledsector.ui.socket.SocketPanelPlacement;
 import exiledsector.ui.socket.SocketPanelTab;
 import exiledsector.ui.socket.StoragePlacement;
@@ -56,7 +56,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     private SectionsDisplay sectionsDisplay;
     private final StoragePlacement<ShipSection> storage = new StoragePlacement<>(this::placingHint);
     private HullUpgradePanel upgradesPanel;
-    private ModificationBay bay;
+    private CraftingBench bay;
     private float bayDim;
     private final OverlayFade fade = new OverlayFade(OPEN_SECONDS);
     private float contentLevel;
@@ -169,8 +169,8 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         }
         swapOutStorage();
         SkillTreeSounds.panelOpened();
-        bay = ModificationBay.openHullItemsOnly(hostPanel, ModificationBenchScreen.benchArea(Global.getSettings().getScreenWidth(),
-                Global.getSettings().getScreenHeight(), false), storage.shipNames(), new ModificationBay.Listener() {
+        bay = CraftingBench.openHullItemsOnly(hostPanel, CraftingBenchScreen.benchArea(Global.getSettings().getScreenWidth(),
+                Global.getSettings().getScreenHeight(), false), storage.shipNames(), new CraftingBench.Listener() {
             @Override
             public void closed() {
                 bay = null;
@@ -305,7 +305,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     }
 
     private int sectionIndexAt(float x, float y) {
-        boolean sectionsLive = contentLevel >= 0.5f && bay == null && (!storage.isOpen() || !storage.panel().isWorkbenchOpen());
+        boolean sectionsLive = contentLevel >= 0.5f && bay == null && (!storage.isOpen() || !storage.panel().isCraftingBenchOpen());
         return sectionsLive ? sectionsDisplay.sectionAt(x, y) : -1;
     }
 
@@ -349,7 +349,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
 
     private boolean panelContains(float x, float y) {
         return (bay != null && bay.contains(x, y))
-                || (storage.isOpen() && (storage.panel().contains(x, y) || storage.panel().workbenchContains(x, y)))
+                || (storage.isOpen() && (storage.panel().contains(x, y) || storage.panel().craftingBenchContains(x, y)))
                 || (upgradesPanel != null && upgradesPanel.contains(x, y));
     }
 

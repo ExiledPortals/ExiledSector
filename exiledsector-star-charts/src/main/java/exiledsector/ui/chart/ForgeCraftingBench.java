@@ -26,14 +26,14 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
 
-public final class ForgeBench implements BenchModeSupport {
+public final class ForgeCraftingBench implements BenchModeSupport {
 
-    public static final ForgeBench INSTANCE = new ForgeBench();
+    public static final ForgeCraftingBench INSTANCE = new ForgeCraftingBench();
     static final String RAN_PREFIX = "chart.forge.ran.";
     private static final OpenTexts OPEN_TEXTS = new OpenTexts("chart.forge.bench.run", "chart.forge.bench.run.tooltip", "chart.forge.bench.confirm.title",
             "chart.forge.bench.confirm.body", null, "chart.forge.bench.confirm.yes", "chart.forge.bench.confirm.no");
 
-    private ForgeBench() {
+    private ForgeCraftingBench() {
     }
 
     @Override

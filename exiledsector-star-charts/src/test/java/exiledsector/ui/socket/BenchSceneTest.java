@@ -21,16 +21,16 @@ class BenchSceneTest {
 
     @Test
     void thePanelWrapsTheArtInItsFrame() {
-        float scale = SocketWorkbenchPanel.scaleFor(1300f + SocketWorkbenchPanel.FRAME_INSET * 2f, 740f + SocketWorkbenchPanel.FRAME_INSET * 2f);
+        float scale = CraftingBenchPanel.scaleFor(1300f + CraftingBenchPanel.FRAME_INSET * 2f, 740f + CraftingBenchPanel.FRAME_INSET * 2f);
         assertEquals(4f, scale);
-        assertEquals(1280f + SocketWorkbenchPanel.FRAME_INSET * 2f, SocketWorkbenchPanel.sizeFor(scale, BenchScene.ART_WIDTH));
-        assertEquals(720f + SocketWorkbenchPanel.FRAME_INSET * 2f, SocketWorkbenchPanel.sizeFor(scale, BenchScene.ART_HEIGHT));
+        assertEquals(1280f + CraftingBenchPanel.FRAME_INSET * 2f, CraftingBenchPanel.sizeFor(scale, BenchScene.ART_WIDTH));
+        assertEquals(720f + CraftingBenchPanel.FRAME_INSET * 2f, CraftingBenchPanel.sizeFor(scale, BenchScene.ART_HEIGHT));
     }
 
     @Test
     void storageSitsBesideTheBenchOnlyWhenTheBenchCanStillDrawAtTripleSize() {
-        assertTrue(ModificationBay.fitsSideBySide(1840f, 1000f), "1920x1080 with margins");
-        assertFalse(ModificationBay.fitsSideBySide(1286f, 688f), "1366x768 with margins uses the drawer");
+        assertTrue(CraftingBench.fitsSideBySide(1840f, 1000f), "1920x1080 with margins");
+        assertFalse(CraftingBench.fitsSideBySide(1286f, 688f), "1366x768 with margins uses the drawer");
     }
 
     @Test
@@ -43,7 +43,7 @@ class BenchSceneTest {
         float halfTile = BenchScene.TILE_SIZE / 2f;
         float[][] centres = new float[tileCount][];
         for (int index = 0; index < tileCount; index++) {
-            float angle = SocketWorkbenchPanel.tileAngle(index, tileCount);
+            float angle = CraftingBenchPanel.tileAngle(index, tileCount);
             float centreX = mode.socketX() + mode.orbitRadiusX() * (float) Math.cos(angle);
             float centreY = mode.socketY() - mode.orbitRadiusY() * (float) Math.sin(angle);
             centres[index] = new float[]{centreX, centreY};

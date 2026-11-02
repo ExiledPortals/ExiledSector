@@ -39,7 +39,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
-class ModificationBenchCargoLauncherTest {
+class CraftingBenchCargoLauncherTest {
 
     private static final float SCREEN_WIDTH = 1920f;
     private static final float SCREEN_HEIGHT = 1080f;
@@ -106,20 +106,20 @@ class ModificationBenchCargoLauncherTest {
 
     @Test
     void theBenchCoversTheScreenOnTheCoreUiAndOnlyOnce() {
-        assertTrue(ModificationBenchCargoLauncher.open(campaignUI, null));
+        assertTrue(CraftingBenchCargoLauncher.open(campaignUI, null));
 
         verify(settings).createCustom(SCREEN_WIDTH, SCREEN_HEIGHT, benchPlugin);
-        assertInstanceOf(ModificationBenchScreen.class, benchPlugin);
+        assertInstanceOf(CraftingBenchScreen.class, benchPlugin);
         verify(placement).inTL(0f, 0f);
 
-        assertFalse(ModificationBenchCargoLauncher.open(campaignUI, null));
+        assertFalse(CraftingBenchCargoLauncher.open(campaignUI, null));
         verify(settings, times(1)).createCustom(anyFloat(), anyFloat(), any());
     }
 
     @Test
     void closingRemovesTheBenchOnTheNextFrameAndThenRunsTheAfterCloseStep() {
         AtomicInteger afterCloseRuns = new AtomicInteger();
-        ModificationBenchCargoLauncher.open(campaignUI, afterCloseRuns::incrementAndGet);
+        CraftingBenchCargoLauncher.open(campaignUI, afterCloseRuns::incrementAndGet);
 
         InputEventAPI escape = mock(InputEventAPI.class);
         when(escape.isKeyUpEvent()).thenReturn(true);

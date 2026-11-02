@@ -24,7 +24,7 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
     static final Color DEFAULT_COLOR = new Color(120, 225, 210);
     static final String DESCRIPTION_KEY = "chart.debris.currency.description";
     static final String ITEMS_KEY_PREFIX = "chart.debris.currency.items.";
-    static final String USED_NOTICE_KEY_PREFIX = "ui.workbench.notice.used.anomalousDebris.";
+    static final String USED_NOTICE_KEY_PREFIX = "ui.craftingBench.notice.used.anomalousDebris.";
     static final String LOCKED_CLASH_KEY = "chart.debris.currency.lockedClash";
     static final String SLOT_KEY_PREFIX = "chart.debris.currency.slot.";
     static final String ITEMS_SEPARATOR = " or ";

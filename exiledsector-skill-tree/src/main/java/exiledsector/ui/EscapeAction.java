@@ -6,7 +6,7 @@ enum EscapeAction {
     static EscapeAction resolve(CanvasMode mode, boolean socketEngaged, boolean dropdownOpen, boolean planning) {
         return switch (mode) {
             case MODAL, HYPERSPACE, ROOT_CHOICE -> NONE;
-            case WORKBENCH -> SOCKET_PLACEMENT;
+            case CRAFTING_BENCH -> SOCKET_PLACEMENT;
             case TREE, EXOSHIP_VIEW -> {
                 if (socketEngaged) {
                     yield SOCKET_PLACEMENT;

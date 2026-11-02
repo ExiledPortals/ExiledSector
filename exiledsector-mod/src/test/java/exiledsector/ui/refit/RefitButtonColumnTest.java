@@ -16,7 +16,7 @@ import exiledsector.compat.ExoticaCompat;
 import exiledsector.items.HullUpgradesSetting;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.ui.HullUpgradesRefitButton;
-import exiledsector.ui.ModificationBenchRefitButton;
+import exiledsector.ui.CraftingBenchRefitButton;
 import exiledsector.ui.SkillTreeRefitButton;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
@@ -76,7 +76,7 @@ class RefitButtonColumnTest {
     private CustomPanelAPI benchContainer;
     private ButtonAPI benchButton;
     private CustomUIPanelPlugin benchPlugin;
-    private MockedStatic<ModificationBenchRefitButton> benchButtonMock;
+    private MockedStatic<CraftingBenchRefitButton> benchButtonMock;
     private int createdButtons;
 
     @BeforeEach
@@ -134,7 +134,7 @@ class RefitButtonColumnTest {
         globalMock.when(Global::getSector).thenReturn(mock(SectorAPI.class, Mockito.RETURNS_DEEP_STUBS));
         refitButtonMock = Mockito.mockStatic(SkillTreeRefitButton.class);
         hullUpgradesButtonMock = Mockito.mockStatic(HullUpgradesRefitButton.class);
-        benchButtonMock = Mockito.mockStatic(ModificationBenchRefitButton.class);
+        benchButtonMock = Mockito.mockStatic(CraftingBenchRefitButton.class);
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
         buttonUnderHullMods(true);
     }
@@ -311,7 +311,7 @@ class RefitButtonColumnTest {
     }
 
     @Test
-    void theModificationBenchButtonSitsRightBelowTheHullItemsButtonWithNoHotkeyByDefault() {
+    void theCraftingBenchButtonSitsRightBelowTheHullItemsButtonWithNoHotkeyByDefault() {
         RefitButtonColumn.attach(widget);
 
         verify(benchContainer).createUIElement(150f, 25f, false);
@@ -329,13 +329,13 @@ class RefitButtonColumnTest {
     }
 
     @Test
-    void pressingTheModificationBenchButtonOpensTheBench() {
+    void pressingTheCraftingBenchButtonOpensTheBench() {
         RefitButtonColumn.attach(widget);
 
         benchPlugin.buttonPressed(RefitButtonColumn.BENCH_BUTTON.id());
         benchPlugin.buttonPressed(HullUpgradesRefitButton.COLUMN_BUTTON.id());
 
-        benchButtonMock.verify(() -> ModificationBenchRefitButton.openPanel(null), times(1));
+        benchButtonMock.verify(() -> CraftingBenchRefitButton.openPanel(null), times(1));
         hullUpgradesButtonMock.verify(() -> HullUpgradesRefitButton.openPanel(null), never());
     }
 

@@ -8,7 +8,7 @@ import com.fs.starfarer.api.ui.CustomPanelAPI;
 import exiledsector.items.SocketCustody;
 import exiledsector.ui.socket.BenchMode;
 import exiledsector.ui.socket.BenchModeSupport;
-import exiledsector.ui.socket.ModificationBay;
+import exiledsector.ui.socket.CraftingBench;
 import exiledsector.ui.socket.SocketPanelPlacement;
 import exiledsector.ui.util.GLDraw;
 import lunalib.lunaRefit.BaseRefitButton;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-final class ModificationBenchScreen extends BaseCustomUIPanelPlugin implements CampaignOverlay.Screen {
+final class CraftingBenchScreen extends BaseCustomUIPanelPlugin implements CampaignOverlay.Screen {
 
     static final float SCREEN_MARGIN = 40f;
     private static final float OPEN_SECONDS = 0.2f;
@@ -42,16 +42,16 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin implements C
     private final BenchModeSupport.OpenTarget openTarget;
     private final Consumer<String> opened;
     private CustomPanelAPI hostPanel;
-    private ModificationBay bay;
+    private CraftingBench bay;
     private Map<String, FleetMemberAPI> ownedShips = Map.of();
     private final OverlayFade fade = new OverlayFade(OPEN_SECONDS);
     private boolean bayOpened;
 
-    ModificationBenchScreen(CampaignOverlay.Host host) {
+    CraftingBenchScreen(CampaignOverlay.Host host) {
         this(host, null, null, null);
     }
 
-    ModificationBenchScreen(CampaignOverlay.Host host, BenchMode benchMode, BenchModeSupport.OpenTarget openTarget, Consumer<String> opened) {
+    CraftingBenchScreen(CampaignOverlay.Host host, BenchMode benchMode, BenchModeSupport.OpenTarget openTarget, Consumer<String> opened) {
         this.host = host;
         this.benchMode = benchMode;
         this.openTarget = openTarget;
@@ -78,7 +78,7 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin implements C
             bayOpened = true;
             SkillTreeSounds.panelOpened();
             SocketPanelPlacement area = benchArea(Global.getSettings().getScreenWidth(), Global.getSettings().getScreenHeight(), false);
-            ModificationBay.Listener bayListener = new ModificationBay.Listener() {
+            CraftingBench.Listener bayListener = new CraftingBench.Listener() {
                 @Override
                 public void closed() {
                     fade.close();
@@ -95,8 +95,8 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin implements C
                     }
                 }
             };
-            bay = benchMode == null ? ModificationBay.open(hostPanel, area, SocketCustody.shipNames(ownedShips), bayListener)
-                    : ModificationBay.openMode(hostPanel, area, benchMode, SocketCustody.shipNames(ownedShips), openTarget, bayListener);
+            bay = benchMode == null ? CraftingBench.open(hostPanel, area, SocketCustody.shipNames(ownedShips), bayListener)
+                    : CraftingBench.openMode(hostPanel, area, benchMode, SocketCustody.shipNames(ownedShips), openTarget, bayListener);
         }
         if (finishedClosing) {
             host.close();

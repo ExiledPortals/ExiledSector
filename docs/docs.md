@@ -761,7 +761,7 @@ the tier's fleet size, cruisers at most) under one alpha-core Guardian into the 
 `ForgeDialog` hands them to vanilla `SalvageDefenderInteraction`. As at every chart site with vanilla defenders, a win
 leaves the main sector's derelict tally untouched (`ChartDefenderTallies`). It then
 lists the programs and their costs, which grow 15% per tier and follow the cost line (`ForgeRules`), and opens the
-Modification Bench in Forge mode (`ForgeBench`), which takes hull items only.
+Crafting Bench in Forge mode (`ForgeCraftingBench`), which takes hull items only.
 
 The programs are `ForgeOperation`s in core (`ItemForging`), refusing mirrored, corrupted and locked items as nanoswarms
 do. Graft groups modifiers by the `skilleffect` subpackage of each line's effect, so a hybrid counts for every part it

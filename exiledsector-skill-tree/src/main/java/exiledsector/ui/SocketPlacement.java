@@ -64,8 +64,8 @@ final class SocketPlacement {
         return storage.isOpen() || storage.placingItem() != null;
     }
 
-    boolean isWorkbenchOpen() {
-        return storage.isOpen() && storage.panel().isWorkbenchOpen();
+    boolean isCraftingBenchOpen() {
+        return storage.isOpen() && storage.panel().isCraftingBenchOpen();
     }
 
     boolean panelContains(float x, float y) {

@@ -5,17 +5,17 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import lunalib.lunaRefit.LunaRefitManager;
 
-public class ModificationBenchRefitButton extends FullScreenRefitButton {
+public class CraftingBenchRefitButton extends FullScreenRefitButton {
 
-    public static final String BUTTON_KEY = "ui.benchRefitButton";
+    public static final String BUTTON_KEY = "ui.craftingBench.refitButton";
     static final String ICON_PATH = "graphics/icons/cargo/nanoswarm_augmentation.png";
 
     public static void addButton() {
-        LunaRefitManager.addRefitButton(new ModificationBenchRefitButton());
+        LunaRefitManager.addRefitButton(new CraftingBenchRefitButton());
     }
 
     public static boolean openPanel(InputEventAPI event) {
-        return openScreen(ModificationBenchRefitButton.class, event);
+        return openScreen(CraftingBenchRefitButton.class, event);
     }
 
     @Override
@@ -29,13 +29,13 @@ public class ModificationBenchRefitButton extends FullScreenRefitButton {
     }
 
     @Override
-    protected Class<ModificationBenchScreen> screenClass() {
-        return ModificationBenchScreen.class;
+    protected Class<CraftingBenchScreen> screenClass() {
+        return CraftingBenchScreen.class;
     }
 
     @Override
     protected RefitPanelLauncher.Background createScreen(FleetMemberAPI member, ShipVariantAPI variant) {
-        ModificationBenchScreen screen = new ModificationBenchScreen(new ModificationBenchScreen.RefitHost(this));
+        CraftingBenchScreen screen = new CraftingBenchScreen(new CraftingBenchScreen.RefitHost(this));
         return new RefitPanelLauncher.Background(screen, screen::attach);
     }
 }

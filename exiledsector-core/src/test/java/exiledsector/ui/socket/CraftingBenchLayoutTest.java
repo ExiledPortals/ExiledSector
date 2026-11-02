@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class SocketWorkbenchLayoutTest {
+class CraftingBenchLayoutTest {
 
     @Test
     void nanoswarmTilesSpreadEvenlyOverTheTopOfTheSlotFromLeftToRight() {
@@ -14,15 +14,15 @@ class SocketWorkbenchLayoutTest {
         float lastAngle = -BenchScene.ORBIT_DROP_RADIANS;
         float spacing = (firstAngle - lastAngle) / (tileCount - 1);
 
-        assertEquals(firstAngle, SocketWorkbenchPanel.tileAngle(0, tileCount), 1e-6f);
+        assertEquals(firstAngle, CraftingBenchPanel.tileAngle(0, tileCount), 1e-6f);
         for (int index = 1; index < tileCount; index++) {
-            assertEquals(spacing, SocketWorkbenchPanel.tileAngle(index - 1, tileCount) - SocketWorkbenchPanel.tileAngle(index, tileCount), 1e-5f);
+            assertEquals(spacing, CraftingBenchPanel.tileAngle(index - 1, tileCount) - CraftingBenchPanel.tileAngle(index, tileCount), 1e-5f);
         }
-        assertEquals(lastAngle, SocketWorkbenchPanel.tileAngle(tileCount - 1, tileCount), 1e-5f);
+        assertEquals(lastAngle, CraftingBenchPanel.tileAngle(tileCount - 1, tileCount), 1e-5f);
     }
 
     @Test
     void aLoneTileSitsAboveTheSlot() {
-        assertEquals((float) (Math.PI / 2.0), SocketWorkbenchPanel.tileAngle(0, 1), 1e-6f);
+        assertEquals((float) (Math.PI / 2.0), CraftingBenchPanel.tileAngle(0, 1), 1e-6f);
     }
 }

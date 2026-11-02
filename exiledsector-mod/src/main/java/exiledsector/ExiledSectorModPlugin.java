@@ -46,7 +46,7 @@ import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillTreeDomain;
 import exiledsector.ui.ExiledSectorSettings;
-import exiledsector.ui.ModificationBenchRefitButton;
+import exiledsector.ui.CraftingBenchRefitButton;
 import exiledsector.ui.cargo.CargoCraftingTabListener;
 import exiledsector.ui.cargo.LootAlertListener;
 import exiledsector.ui.util.TexturePreloader;
@@ -75,7 +75,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         Global.getLogger(ExiledSectorModPlugin.class).info(ExiledSector.LOG_TAG + " loaded");
         localiseGameText();
         DOMAINS.forEach(ExiledSectorDomain::onApplicationLoad);
-        ModificationBenchRefitButton.addButton();
+        CraftingBenchRefitButton.addButton();
         ExiledSectorSettings.register(DOMAINS);
         EffectAliases.load();
         CsvIdList.loadAll();

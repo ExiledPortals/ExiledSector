@@ -16,11 +16,11 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class WorkbenchStringKeysTest {
+class CraftingBenchStringKeysTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"en", "zh_CN"})
-    void everyKeyTheWorkbenchBuildsForAKernelOrOutcomeExists(String language) throws Exception {
+    void everyKeyTheCraftingBenchBuildsForAKernelOrOutcomeExists(String language) throws Exception {
         JSONObject catalogue = new JSONObject(RealCatalogue.entries(language));
         List<String> missing = new ArrayList<>();
         for (String itemId : MaterialItems.ids()) {
@@ -28,25 +28,25 @@ class WorkbenchStringKeysTest {
             require(catalogue, "material." + itemId + ".description", missing);
         }
         for (CraftingCurrency currency : CraftingCurrency.values()) {
-            require(catalogue, HullBench.INSTANCE.currencyDescriptionKey(currency), missing);
+            require(catalogue, HullCraftingBench.INSTANCE.currencyDescriptionKey(currency), missing);
             if (currency == CraftingCurrency.CORRUPTION) {
                 for (ItemNature nature : ItemNature.values()) {
                     for (CorruptionOutcome outcome : shownOutcomes(nature)) {
-                        require(catalogue, HullBench.usedNoticeKey(currency, outcome, nature), missing);
+                        require(catalogue, HullCraftingBench.usedNoticeKey(currency, outcome, nature), missing);
                     }
                 }
             } else {
                 for (ItemNature nature : ItemNature.values()) {
-                    require(catalogue, HullBench.usedNoticeKey(currency, null, nature), missing);
+                    require(catalogue, HullCraftingBench.usedNoticeKey(currency, null, nature), missing);
                 }
             }
         }
         for (CraftingWard ward : CraftingWard.values()) {
-            require(catalogue, SocketWorkbenchPanel.wardDescriptionKey(ward), missing);
-            require(catalogue, "ui.workbench.notice.wardOn." + ward.name().toLowerCase(java.util.Locale.ROOT), missing);
+            require(catalogue, CraftingBenchPanel.wardDescriptionKey(ward), missing);
+            require(catalogue, "ui.craftingBench.notice.wardOn." + ward.name().toLowerCase(java.util.Locale.ROOT), missing);
         }
         for (ModifierSlot slot : List.of(ModifierSlot.PREFIX, ModifierSlot.SUFFIX)) {
-            require(catalogue, SocketWorkbenchPanel.slotTagKey(slot), missing);
+            require(catalogue, CraftingBenchPanel.slotTagKey(slot), missing);
         }
         assertEquals(List.of(), missing);
     }

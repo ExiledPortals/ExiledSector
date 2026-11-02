@@ -11,7 +11,7 @@ import java.awt.Color;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 
-final class WorkbenchTile extends BaseCustomUIPanelPlugin {
+final class CraftingBenchTile extends BaseCustomUIPanelPlugin {
 
     record Style(float onGlowAlpha, float onBorderWidth, boolean scrollClearsHover) {
     }
@@ -26,7 +26,7 @@ final class WorkbenchTile extends BaseCustomUIPanelPlugin {
     private static final float HOVER_GLOW_ALPHA = 0.45f;
     private static final float DULL_ICON_ALPHA = 0.3f;
     private static final float DULL_BORDER_ALPHA = 0.18f;
-    private static final SpriteCache ICONS = new SpriteCache(WorkbenchTile.class);
+    private static final SpriteCache ICONS = new SpriteCache(CraftingBenchTile.class);
 
     private final CyclingIcon cyclingIcon;
     private final TileInput tileInput;
@@ -36,7 +36,7 @@ final class WorkbenchTile extends BaseCustomUIPanelPlugin {
     private final Style style;
     private PositionAPI tilePosition;
 
-    private WorkbenchTile(List<String> iconPaths, CargoIconLook iconLook, BooleanSupplier available, BooleanSupplier toggledOn, Style style,
+    private CraftingBenchTile(List<String> iconPaths, CargoIconLook iconLook, BooleanSupplier available, BooleanSupplier toggledOn, Style style,
                           TileInput.Handler tileHandler) {
         this.cyclingIcon = new CyclingIcon(iconPaths);
         this.iconLook = iconLook;
@@ -46,20 +46,20 @@ final class WorkbenchTile extends BaseCustomUIPanelPlugin {
         this.tileInput = new TileInput(tileHandler, style.scrollClearsHover());
     }
 
-    static WorkbenchTile usable(List<String> iconPaths, CargoIconLook iconLook, BooleanSupplier available, TileInput.Handler tileHandler) {
-        return new WorkbenchTile(iconPaths, unframed(iconLook), available, NEVER, TOGGLE_STYLE, tileHandler);
+    static CraftingBenchTile usable(List<String> iconPaths, CargoIconLook iconLook, BooleanSupplier available, TileInput.Handler tileHandler) {
+        return new CraftingBenchTile(iconPaths, unframed(iconLook), available, NEVER, TOGGLE_STYLE, tileHandler);
     }
 
-    static WorkbenchTile toggle(List<String> iconPaths, CargoIconLook iconLook, BooleanSupplier toggledOn, TileInput.Handler tileHandler) {
-        return new WorkbenchTile(iconPaths, unframed(iconLook), toggledOn, toggledOn, TOGGLE_STYLE, tileHandler);
+    static CraftingBenchTile toggle(List<String> iconPaths, CargoIconLook iconLook, BooleanSupplier toggledOn, TileInput.Handler tileHandler) {
+        return new CraftingBenchTile(iconPaths, unframed(iconLook), toggledOn, toggledOn, TOGGLE_STYLE, tileHandler);
     }
 
     private static CargoIconLook unframed(CargoIconLook iconLook) {
         return iconLook == null ? null : iconLook.unframed();
     }
 
-    static WorkbenchTile selectable(String iconPath, CargoIconLook iconLook, BooleanSupplier selected, TileInput.Handler tileHandler) {
-        return new WorkbenchTile(List.of(iconPath), iconLook, ALWAYS, selected, SELECTION_STYLE, tileHandler);
+    static CraftingBenchTile selectable(String iconPath, CargoIconLook iconLook, BooleanSupplier selected, TileInput.Handler tileHandler) {
+        return new CraftingBenchTile(List.of(iconPath), iconLook, ALWAYS, selected, SELECTION_STYLE, tileHandler);
     }
 
     @Override

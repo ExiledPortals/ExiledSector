@@ -14,8 +14,8 @@ class EscapeActionTest {
     }
 
     @Test
-    void theWorkbenchAlwaysStepsBackThroughSocketPlacement() {
-        assertEquals(EscapeAction.SOCKET_PLACEMENT, EscapeAction.resolve(CanvasMode.WORKBENCH, true, true, false));
+    void theCraftingBenchAlwaysStepsBackThroughSocketPlacement() {
+        assertEquals(EscapeAction.SOCKET_PLACEMENT, EscapeAction.resolve(CanvasMode.CRAFTING_BENCH, true, true, false));
     }
 
     @Test

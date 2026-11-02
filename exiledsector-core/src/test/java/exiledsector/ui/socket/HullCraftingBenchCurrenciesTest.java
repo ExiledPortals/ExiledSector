@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class HullBenchCurrenciesTest {
+class HullCraftingBenchCurrenciesTest {
 
     private static ItemCurrency extra(String itemId, ItemType type) {
         ItemCurrency currency = mock(ItemCurrency.class);
@@ -31,8 +31,8 @@ class HullBenchCurrenciesTest {
         ItemCurrency chartOnly = extra("cipher", ItemType.STAR_CHART);
         List<ItemCurrency> registered = List.of(CraftingCurrency.AUGMENTATION, engram, chartOnly);
 
-        List<ItemCurrency> owned = HullBench.hullBenchCurrencies(registered, itemId -> 1);
-        List<ItemCurrency> none = HullBench.hullBenchCurrencies(registered, itemId -> 0);
+        List<ItemCurrency> owned = HullCraftingBench.hullCraftingBenchCurrencies(registered, itemId -> 1);
+        List<ItemCurrency> none = HullCraftingBench.hullCraftingBenchCurrencies(registered, itemId -> 0);
 
         assertEquals(CraftingCurrency.values().length + 1, owned.size());
         assertTrue(owned.contains(engram));
@@ -43,26 +43,26 @@ class HullBenchCurrenciesTest {
     @Test
     void extraCurrenciesLeaveTheOrbitForACentredColumn() {
         ItemCurrency engram = extra("engram", ItemType.HULL_ITEM);
-        List<ItemCurrency> shown = HullBench.hullBenchCurrencies(List.of(engram), itemId -> 1);
+        List<ItemCurrency> shown = HullCraftingBench.hullCraftingBenchCurrencies(List.of(engram), itemId -> 1);
 
-        assertEquals(List.of(CraftingCurrency.values()), shown.stream().filter(HullBench.INSTANCE::inOrbit).toList());
-        assertEquals(80f, SocketWorkbenchPanel.columnTileTop(0, 1, 100f, 40f, 10f, 300f));
-        assertEquals(55f, SocketWorkbenchPanel.columnTileTop(0, 2, 100f, 40f, 10f, 300f));
-        assertEquals(105f, SocketWorkbenchPanel.columnTileTop(1, 2, 100f, 40f, 10f, 300f));
-        assertEquals(0f, SocketWorkbenchPanel.columnTileTop(0, 5, 60f, 40f, 10f, 300f), "a tall column stays inside the bench");
+        assertEquals(List.of(CraftingCurrency.values()), shown.stream().filter(HullCraftingBench.INSTANCE::inOrbit).toList());
+        assertEquals(80f, CraftingBenchPanel.columnTileTop(0, 1, 100f, 40f, 10f, 300f));
+        assertEquals(55f, CraftingBenchPanel.columnTileTop(0, 2, 100f, 40f, 10f, 300f));
+        assertEquals(105f, CraftingBenchPanel.columnTileTop(1, 2, 100f, 40f, 10f, 300f));
+        assertEquals(0f, CraftingBenchPanel.columnTileTop(0, 5, 60f, 40f, 10f, 300f), "a tall column stays inside the bench");
     }
 
     @Test
-    void aBenchModeNoDomainServesFallsBackToTheHullBench() {
-        assertEquals(HullBench.INSTANCE, BenchModes.of(BenchMode.HULL_ITEMS));
-        assertEquals(HullBench.INSTANCE, BenchModes.of(BenchMode.FORGE));
+    void aBenchModeNoDomainServesFallsBackToTheHullCraftingBench() {
+        assertEquals(HullCraftingBench.INSTANCE, BenchModes.of(BenchMode.HULL_ITEMS));
+        assertEquals(HullCraftingBench.INSTANCE, BenchModes.of(BenchMode.FORGE));
         assertEquals(BenchMode.HULL_ITEMS, BenchModes.modeFor(ItemType.STAR_CHART));
     }
 
     @Test
     void theUsedNoticeComesFromTheCurrencyUnlessACorruptionOutcomeNamesIt() {
-        assertEquals("ui.workbench.notice.used.augmentation.hardware",
-                HullBench.usedNoticeKey(CraftingCurrency.AUGMENTATION, null, ItemNature.HARDWARE));
-        assertEquals("notice.engram", HullBench.usedNoticeKey(extra("engram", ItemType.HULL_ITEM), null, ItemNature.HARDWARE));
+        assertEquals("ui.craftingBench.notice.used.augmentation.hardware",
+                HullCraftingBench.usedNoticeKey(CraftingCurrency.AUGMENTATION, null, ItemNature.HARDWARE));
+        assertEquals("notice.engram", HullCraftingBench.usedNoticeKey(extra("engram", ItemType.HULL_ITEM), null, ItemNature.HARDWARE));
     }
 }

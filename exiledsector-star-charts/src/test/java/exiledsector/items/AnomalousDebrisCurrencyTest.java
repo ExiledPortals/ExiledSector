@@ -193,8 +193,8 @@ class AnomalousDebrisCurrencyTest {
     }
 
     @Test
-    void theStarChartsDomainOffersItsEngramsToTheHullBench() {
-        assertEquals(Set.of(REVENANT, VIGIL), new HashSet<>(new exiledsector.charts.StarChartsDomain().hullBenchCurrencies().stream()
+    void theStarChartsDomainOffersItsEngramsToTheHullCraftingBench() {
+        assertEquals(Set.of(REVENANT, VIGIL), new HashSet<>(new exiledsector.charts.StarChartsDomain().hullCraftingBenchCurrencies().stream()
                 .map(ItemCurrency::itemId).toList()));
     }
 

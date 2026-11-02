@@ -21,30 +21,30 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
-class ModificationBayModeTest {
+class CraftingBenchModeTest {
 
     private static final SocketPanelPlacement SIDE_BY_SIDE_AREA = new SocketPanelPlacement(40f, 40f, 1840f, 1000f, true);
 
     private final AtomicReference<BenchMode> openedMode = new AtomicReference<>();
-    private final AtomicReference<SocketWorkbenchPanel.Listener> benchListener = new AtomicReference<>();
+    private final AtomicReference<CraftingBenchPanel.Listener> benchListener = new AtomicReference<>();
     private MockSector mockSector;
-    private MockedStatic<SocketWorkbenchPanel> workbenchMock;
+    private MockedStatic<CraftingBenchPanel> craftingBenchMock;
     private MockedStatic<ItemStoragePanel> itemStorageMock;
     private MockedStatic<StarChartStoragePanel> chartStorageMock;
     private MockedStatic<StarChartBrowser> browserMock;
-    private final ModificationBay.Listener bayListener = mock(ModificationBay.Listener.class);
+    private final CraftingBench.Listener bayListener = mock(CraftingBench.Listener.class);
 
     @BeforeEach
     void setUp() {
         mockSector = new MockSector();
-        SocketWorkbenchPanel workbench = mock(SocketWorkbenchPanel.class);
-        workbenchMock = Mockito.mockStatic(SocketWorkbenchPanel.class, invocation -> {
+        CraftingBenchPanel craftingBench = mock(CraftingBenchPanel.class);
+        craftingBenchMock = Mockito.mockStatic(CraftingBenchPanel.class, invocation -> {
             if (!"open".equals(invocation.getMethod().getName())) {
                 return invocation.callRealMethod();
             }
             openedMode.set(invocation.getArgument(3));
             benchListener.set(invocation.getArgument(4));
-            return workbench;
+            return craftingBench;
         });
         itemStorageMock = Mockito.mockStatic(ItemStoragePanel.class);
         chartStorageMock = Mockito.mockStatic(StarChartStoragePanel.class);
@@ -56,14 +56,14 @@ class ModificationBayModeTest {
         browserMock.close();
         chartStorageMock.close();
         itemStorageMock.close();
-        workbenchMock.close();
+        craftingBenchMock.close();
         mockSector.close();
     }
 
     @Test
     void theStarChartsOnlyBayOpensOnChartsAndOffersItsTarget() {
         BenchModeSupport.OpenTarget target = new BenchModeSupport.OpenTarget("system", List::of);
-        ModificationBay bay = ModificationBay.openMode(mock(CustomPanelAPI.class), SIDE_BY_SIDE_AREA, BenchMode.STAR_CHARTS, item -> null, target,
+        CraftingBench bay = CraftingBench.openMode(mock(CustomPanelAPI.class), SIDE_BY_SIDE_AREA, BenchMode.STAR_CHARTS, item -> null, target,
                 bayListener);
 
         assertEquals(BenchMode.STAR_CHARTS, openedMode.get());
@@ -75,7 +75,7 @@ class ModificationBayModeTest {
 
     @Test
     void theCraftingBayOpensOnHullItemsWithoutCharts() {
-        ModificationBay bay = ModificationBay.open(mock(CustomPanelAPI.class), SIDE_BY_SIDE_AREA, item -> null, bayListener);
+        CraftingBench bay = CraftingBench.open(mock(CustomPanelAPI.class), SIDE_BY_SIDE_AREA, item -> null, bayListener);
 
         assertEquals(BenchMode.HULL_ITEMS, openedMode.get());
         assertEquals(BenchMode.HULL_ITEMS, bay.mode());
@@ -85,7 +85,7 @@ class ModificationBayModeTest {
 
     @Test
     void theHullItemsOnlyBayHidesWormholeOpening() {
-        ModificationBay.openHullItemsOnly(mock(CustomPanelAPI.class), SIDE_BY_SIDE_AREA, item -> null, bayListener);
+        CraftingBench.openHullItemsOnly(mock(CustomPanelAPI.class), SIDE_BY_SIDE_AREA, item -> null, bayListener);
 
         assertEquals(BenchMode.HULL_ITEMS, openedMode.get());
         assertNull(benchListener.get().openTarget());
@@ -93,7 +93,7 @@ class ModificationBayModeTest {
 
     @Test
     void aStarChartsBayWithoutATargetOffersNoWormhole() {
-        ModificationBay.openMode(mock(CustomPanelAPI.class), SIDE_BY_SIDE_AREA, BenchMode.STAR_CHARTS, item -> null, bayListener);
+        CraftingBench.openMode(mock(CustomPanelAPI.class), SIDE_BY_SIDE_AREA, BenchMode.STAR_CHARTS, item -> null, bayListener);
 
         assertNull(benchListener.get().openTarget());
     }

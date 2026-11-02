@@ -16,7 +16,7 @@ public final class CargoCraftingTabListener implements CoreUITabListener {
 
     @Override
     public void reportAboutToOpenCoreTab(CoreUITabId tab, Object param) {
-        if (tab != CoreUITabId.CARGO || CargoCraftingButton.failed()) return;
+        if (tab != CoreUITabId.CARGO || CargoCraftingBenchButton.failed()) return;
         SectorAPI sector = Global.getSector();
         if (sector == null) return;
         if (activeWatcher != null) {
@@ -29,7 +29,7 @@ public final class CargoCraftingTabListener implements CoreUITabListener {
     static final class Watcher implements EveryFrameScript {
 
         private UIPanelAPI tradePanel;
-        private CargoCraftingButton attachedButton;
+        private CargoCraftingBenchButton attachedButton;
         private int unresolvedFrames;
         private boolean done;
 
@@ -48,7 +48,7 @@ public final class CargoCraftingTabListener implements CoreUITabListener {
             if (done) return;
             SectorAPI sector = Global.getSector();
             CampaignUIAPI campaignUI = sector == null ? null : sector.getCampaignUI();
-            if (campaignUI == null || CargoCraftingButton.failed()) {
+            if (campaignUI == null || CargoCraftingBenchButton.failed()) {
                 done = true;
                 return;
             }
@@ -57,14 +57,14 @@ public final class CargoCraftingTabListener implements CoreUITabListener {
                 return;
             }
             if (tradePanel == null) {
-                tradePanel = CargoCraftingButton.tradePanel(campaignUI);
+                tradePanel = CargoCraftingBenchButton.tradePanel(campaignUI);
                 if (tradePanel == null) {
                     if (waitedTooLong()) done = true;
                     return;
                 }
             }
             if (attachedButton == null || !attachedButton.advancedSinceLastCheck()) {
-                attachedButton = CargoCraftingButton.attachIfMissing(tradePanel);
+                attachedButton = CargoCraftingBenchButton.attachIfMissing(tradePanel);
             }
         }
 

@@ -56,29 +56,29 @@ public final class ItemCrafting {
         }
         if (canUse(currency, item, allowedUniques)) {
             return UseVerdict.refused(currency == CraftingCurrency.TRANSPOSITION
-                    ? "ui.workbench.notice.wardBlocksTransposition" : "ui.workbench.notice.wardBlocks");
+                    ? "ui.craftingBench.notice.wardBlocksTransposition" : "ui.craftingBench.notice.wardBlocks");
         }
         if (item == null) {
-            return UseVerdict.refused("ui.workbench.notice.loadFirst");
+            return UseVerdict.refused("ui.craftingBench.notice.loadFirst");
         }
         ItemDefinition definition = item.definition();
         if (item.mirrored()) {
-            return UseVerdict.refused("ui.workbench.notice.mirrored");
+            return UseVerdict.refused("ui.craftingBench.notice.mirrored");
         }
         if (item.corrupted()) {
-            return UseVerdict.refused("ui.workbench.notice.corruptedItem");
+            return UseVerdict.refused("ui.craftingBench.notice.corruptedItem");
         }
         if (isLockedFromCurrency(definition)) {
-            return UseVerdict.refused("ui.workbench.notice.uniqueSubroutine");
+            return UseVerdict.refused("ui.craftingBench.notice.uniqueSubroutine");
         }
         if (currency == CraftingCurrency.FIXATION && item.hasLockedModifier()) {
-            return UseVerdict.refused("ui.workbench.notice.alreadyFixed");
+            return UseVerdict.refused("ui.craftingBench.notice.alreadyFixed");
         }
         if (currency == CraftingCurrency.TRANSPOSITION && definition != null && definition.unique()) {
-            return UseVerdict.refused("ui.workbench.notice.noOtherUnique");
+            return UseVerdict.refused("ui.craftingBench.notice.noOtherUnique");
         }
         String refusalKey = currency.refusalNoticeKey(item);
-        return UseVerdict.refused(refusalKey != null ? refusalKey : "ui.workbench.notice.cannotUse");
+        return UseVerdict.refused(refusalKey != null ? refusalKey : "ui.craftingBench.notice.cannotUse");
     }
 
     public static boolean isLockedFromCurrency(ItemDefinition definition) {

@@ -36,15 +36,15 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
 
-public final class StarChartBench implements BenchModeSupport {
+public final class StarChartCraftingBench implements BenchModeSupport {
 
-    public static final StarChartBench INSTANCE = new StarChartBench();
+    public static final StarChartCraftingBench INSTANCE = new StarChartCraftingBench();
     static final String NO_SYSTEM_KEY = "chart.atlas.blocked.no_system";
     private static final DebugAction COMPLETE_TARGET = new DebugAction("chart.atlas.debug.complete", "chart.atlas.debug.complete.tooltip");
     private static final OpenTexts OPEN_TEXTS = new OpenTexts("chart.ui.open.button", "chart.ui.open.tooltip", "chart.ui.open.confirm.title",
             "chart.ui.open.confirm.body", "chart.ui.open.confirm.entries", "chart.ui.open.confirm.yes", "chart.ui.open.confirm.no");
 
-    private StarChartBench() {
+    private StarChartCraftingBench() {
     }
 
     @Override

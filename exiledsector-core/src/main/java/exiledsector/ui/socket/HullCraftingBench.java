@@ -27,13 +27,13 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
-public final class HullBench implements BenchModeSupport {
+public final class HullCraftingBench implements BenchModeSupport {
 
-    public static final HullBench INSTANCE = new HullBench();
-    private static final UseVerdict LOAD_FIRST = UseVerdict.refused("ui.workbench.notice.loadFirst");
-    private static final UseVerdict CANNOT_USE = UseVerdict.refused("ui.workbench.notice.cannotUse");
+    public static final HullCraftingBench INSTANCE = new HullCraftingBench();
+    private static final UseVerdict LOAD_FIRST = UseVerdict.refused("ui.craftingBench.notice.loadFirst");
+    private static final UseVerdict CANNOT_USE = UseVerdict.refused("ui.craftingBench.notice.cannotUse");
 
-    private HullBench() {
+    private HullCraftingBench() {
     }
 
     @Override
@@ -58,17 +58,17 @@ public final class HullBench implements BenchModeSupport {
 
     @Override
     public String titleKey() {
-        return "ui.workbench.title";
+        return "ui.craftingBench.title";
     }
 
     @Override
     public String emptyKey() {
-        return "ui.workbench.empty";
+        return "ui.craftingBench.empty";
     }
 
     @Override
     public String useHintKey() {
-        return "ui.workbench.tile.use";
+        return "ui.craftingBench.tile.use";
     }
 
     @Override
@@ -79,11 +79,11 @@ public final class HullBench implements BenchModeSupport {
     @Override
     public List<ItemCurrency> currencies() {
         List<ItemCurrency> offered = new ArrayList<>();
-        ExiledSector.enabledDomains().forEach(domain -> offered.addAll(domain.hullBenchCurrencies()));
-        return hullBenchCurrencies(offered, HoloPanel.playerMaterials()::count);
+        ExiledSector.enabledDomains().forEach(domain -> offered.addAll(domain.hullCraftingBenchCurrencies()));
+        return hullCraftingBenchCurrencies(offered, HoloPanel.playerMaterials()::count);
     }
 
-    static List<ItemCurrency> hullBenchCurrencies(List<ItemCurrency> registered, ToIntFunction<String> owned) {
+    static List<ItemCurrency> hullCraftingBenchCurrencies(List<ItemCurrency> registered, ToIntFunction<String> owned) {
         List<ItemCurrency> shown = new ArrayList<>(List.of(CraftingCurrency.values()));
         for (ItemCurrency currency : registered) {
             if (!(currency instanceof CraftingCurrency) && currency.appliesToShipItems() && owned.applyAsInt(currency.itemId()) > 0) {
@@ -117,7 +117,7 @@ public final class HullBench implements BenchModeSupport {
     public Refusal refusal(ItemCurrency currency, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
                            Set<CraftingWard> wards) {
         if (materials.count(currency.itemId()) < 1) {
-            return new Refusal(UseVerdict.refused(currency.synthesisable() ? "ui.workbench.notice.noneOwned" : "ui.workbench.notice.noneFound"), false);
+            return new Refusal(UseVerdict.refused(currency.synthesisable() ? "ui.craftingBench.notice.noneOwned" : "ui.craftingBench.notice.noneFound"), false);
         }
         if (loaded == null) {
             return new Refusal(LOAD_FIRST, false);
@@ -136,7 +136,7 @@ public final class HullBench implements BenchModeSupport {
                 .arg("before", nameBefore).arg("name", result.name()).text();
         SocketCustody.markHostsChanged(result);
         if (currency.mayChangeDefinition() && SocketCustody.unsocketIfMisfit(result)) {
-            String movedNotice = Translation.msg("ui.workbench.notice.movedToStorage").arg("name", result.name()).arg("type", result.kindName()).text();
+            String movedNotice = Translation.msg("ui.craftingBench.notice.movedToStorage").arg("name", result.name()).arg("type", result.kindName()).text();
             notice = Translation.msg("format.sentences").arg("a", notice).arg("b", movedNotice).text();
         }
         return new Use(result, currency.createsCopy() ? loaded : result, notice);
@@ -144,7 +144,7 @@ public final class HullBench implements BenchModeSupport {
 
     static String usedNoticeKey(ItemCurrency currency, CorruptionOutcome outcome, ItemNature nature) {
         if (currency == CraftingCurrency.CORRUPTION && outcome != null) {
-            return "ui.workbench.notice.corrupted." + outcome.name().toLowerCase(Locale.ROOT) + "." + nature.name().toLowerCase(Locale.ROOT);
+            return "ui.craftingBench.notice.corrupted." + outcome.name().toLowerCase(Locale.ROOT) + "." + nature.name().toLowerCase(Locale.ROOT);
         }
         return currency.usedNoticeKey(nature);
     }

@@ -12,7 +12,7 @@ public final class BenchModes {
     }
 
     public static BenchModeSupport of(BenchMode mode) {
-        return SUPPORTS.firstOr(support -> support.mode() == mode ? support : null, HullBench.INSTANCE);
+        return SUPPORTS.firstOr(support -> support.mode() == mode ? support : null, HullCraftingBench.INSTANCE);
     }
 
     static BenchMode modeFor(ItemType type) {

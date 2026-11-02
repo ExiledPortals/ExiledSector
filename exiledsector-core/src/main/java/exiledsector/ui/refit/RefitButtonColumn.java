@@ -13,7 +13,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.compat.ExoticaCompat;
 import exiledsector.domain.DomainContributions;
 import exiledsector.i18n.Translation;
-import exiledsector.ui.ModificationBenchRefitButton;
+import exiledsector.ui.CraftingBenchRefitButton;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -28,8 +28,8 @@ public final class RefitButtonColumn {
     public record ButtonSpec(String id, String labelKey, IntSupplier hotkey, BooleanSupplier wanted, Runnable press) {
     }
 
-    static final ButtonSpec BENCH_BUTTON = new ButtonSpec("exiledSector_modificationBenchButton", ModificationBenchRefitButton.BUTTON_KEY,
-            RefitButtonConfig::benchKey, RefitButtonConfig::buttonUnderHullMods, () -> ModificationBenchRefitButton.openPanel(null));
+    static final ButtonSpec BENCH_BUTTON = new ButtonSpec("exiledSector_craftingBenchButton", CraftingBenchRefitButton.BUTTON_KEY,
+            RefitButtonConfig::benchKey, RefitButtonConfig::buttonUnderHullMods, () -> CraftingBenchRefitButton.openPanel(null));
     static final float GAP_BELOW_BUILD_IN = 3f;
     static final float GAP_BETWEEN_BUTTONS = 3f;
     static final float X_ALIGN_OFFSET = -5f;

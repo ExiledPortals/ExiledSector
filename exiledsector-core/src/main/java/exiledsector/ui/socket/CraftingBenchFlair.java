@@ -11,7 +11,7 @@ import exiledsector.ui.util.HoloShapes;
 
 import java.awt.Color;
 
-final class SocketWorkbenchFlair {
+final class CraftingBenchFlair {
 
     private static final float LOAD_SECONDS = 0.45f;
     private static final float FLASH_SECONDS = 0.7f;
@@ -23,7 +23,7 @@ final class SocketWorkbenchFlair {
     private static final float BRACKET_TRAVEL = 14f;
     private static final float ICON_INSET = 0.12f;
     private static final Color SOCKET_FILL = new Color(0, 0, 0, 170);
-    private static final SpriteCache ICONS = new SpriteCache(SocketWorkbenchFlair.class);
+    private static final SpriteCache ICONS = new SpriteCache(CraftingBenchFlair.class);
 
     private float elapsedSeconds;
     private float loadProgress;

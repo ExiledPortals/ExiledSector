@@ -38,8 +38,8 @@ import exiledsector.items.WormholeTechItems;
 import exiledsector.loot.FleetDifficulty;
 import exiledsector.loot.LootSource;
 import exiledsector.ui.cargo.CatalystIconFx;
-import exiledsector.ui.chart.ForgeBench;
-import exiledsector.ui.chart.StarChartBench;
+import exiledsector.ui.chart.ForgeCraftingBench;
+import exiledsector.ui.chart.StarChartCraftingBench;
 import exiledsector.ui.chart.WormholeGatewayOption;
 import exiledsector.ui.socket.BenchModeSupport;
 import lunalib.lunaSettings.LunaSettings.SettingsCreator;
@@ -160,7 +160,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     }
 
     @Override
-    public List<ItemCurrency> hullBenchCurrencies() {
+    public List<ItemCurrency> hullCraftingBenchCurrencies() {
         return List.copyOf(AnomalousDebrisCurrencies.all());
     }
 
@@ -171,7 +171,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public List<BenchModeSupport> benchModes() {
-        return List.of(StarChartBench.INSTANCE, ForgeBench.INSTANCE);
+        return List.of(StarChartCraftingBench.INSTANCE, ForgeCraftingBench.INSTANCE);
     }
 
     @Override

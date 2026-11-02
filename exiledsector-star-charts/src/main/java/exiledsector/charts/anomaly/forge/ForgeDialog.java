@@ -15,7 +15,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.GuardedSiteDialog;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.items.CraftingMaterials;
-import exiledsector.ui.ModificationBenchCargoLauncher;
+import exiledsector.ui.CraftingBenchCargoLauncher;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.socket.BenchMode;
 import exiledsector.ui.socket.BenchModeSupport;
@@ -105,7 +105,7 @@ public class ForgeDialog extends GuardedSiteDialog {
             return;
         }
         BenchModeSupport.OpenTarget target = new BenchModeSupport.OpenTarget(new ChartForge.Order(run.runId(), program), List::of);
-        boolean opened = ModificationBenchCargoLauncher.openMode(Global.getSector().getCampaignUI(), BenchMode.FORGE, target,
+        boolean opened = CraftingBenchCargoLauncher.openMode(Global.getSector().getCampaignUI(), BenchMode.FORGE, target,
                 message -> ranMessage = message, this::benchClosed);
         if (!opened) {
             showState(false);

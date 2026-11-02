@@ -54,8 +54,8 @@ class StarChartUiStringKeysTest {
         for (OpenResult result : OpenResult.values()) {
             require(catalogue, new StarChartOpening.Outcome(result, null).messageKey(), missing);
         }
-        for (String key : List.of("chart.ui.currency.alsoStarCharts", "ui.workbench.confirm.useTitle", "ui.workbench.confirm.growTitle", "ui.workbench.confirm.growBody",
-                "ui.workbench.confirm.skipHint", "ui.workbench.confirm.use", "ui.workbench.confirm.grow", "ui.workbench.confirm.cancel")) {
+        for (String key : List.of("chart.ui.currency.alsoStarCharts", "ui.craftingBench.confirm.useTitle", "ui.craftingBench.confirm.growTitle", "ui.craftingBench.confirm.growBody",
+                "ui.craftingBench.confirm.skipHint", "ui.craftingBench.confirm.use", "ui.craftingBench.confirm.grow", "ui.craftingBench.confirm.cancel")) {
             require(catalogue, key, missing);
         }
         assertEquals(List.of(), missing);

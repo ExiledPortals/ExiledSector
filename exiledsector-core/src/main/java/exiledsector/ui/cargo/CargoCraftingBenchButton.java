@@ -12,15 +12,15 @@ import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.Translation;
-import exiledsector.ui.ModificationBenchCargoLauncher;
+import exiledsector.ui.CraftingBenchCargoLauncher;
 import exiledsector.ui.refit.RefitButtonConfig;
 import exiledsector.ui.refit.UiReflection;
 import org.apache.log4j.Logger;
 
-public final class CargoCraftingButton extends BaseCustomUIPanelPlugin {
+public final class CargoCraftingBenchButton extends BaseCustomUIPanelPlugin {
 
-    private static final Logger LOG = Logger.getLogger(CargoCraftingButton.class);
-    static final String BUTTON_ID = "exiledSector_cargoCraftingButton";
+    private static final Logger LOG = Logger.getLogger(CargoCraftingBenchButton.class);
+    static final String BUTTON_ID = "exiledSector_cargoCraftingBenchButton";
     static final float BUTTON_WIDTH = 263f;
     static final float BUTTON_HEIGHT = 25f;
     static final float GAP_BELOW_TRANSACTION_PANEL = 10f;
@@ -34,7 +34,7 @@ public final class CargoCraftingButton extends BaseCustomUIPanelPlugin {
     private boolean usable = true;
     private boolean advancedSinceCheck;
 
-    private CargoCraftingButton(UIPanelAPI tradePanel) {
+    private CargoCraftingBenchButton(UIPanelAPI tradePanel) {
         this.tradePanel = tradePanel;
     }
 
@@ -54,11 +54,11 @@ public final class CargoCraftingButton extends BaseCustomUIPanelPlugin {
         }
     }
 
-    static CargoCraftingButton attachIfMissing(UIPanelAPI tradePanel) {
+    static CargoCraftingBenchButton attachIfMissing(UIPanelAPI tradePanel) {
         if (failed || tradePanel == null) return null;
         try {
             for (Object child : UiReflection.children(tradePanel)) {
-                if (child instanceof CustomPanelAPI panel && panel.getPlugin() instanceof CargoCraftingButton attached) return attached;
+                if (child instanceof CustomPanelAPI panel && panel.getPlugin() instanceof CargoCraftingBenchButton attached) return attached;
             }
             return attach(tradePanel);
         } catch (Throwable e) {
@@ -73,15 +73,15 @@ public final class CargoCraftingButton extends BaseCustomUIPanelPlugin {
         return advanced;
     }
 
-    private static CargoCraftingButton attach(UIPanelAPI tradePanel) throws Throwable {
+    private static CargoCraftingBenchButton attach(UIPanelAPI tradePanel) throws Throwable {
         if (!(UiReflection.childWithMethod(tradePanel, "getTakeAll", 0) instanceof UIComponentAPI transactionPanel)) {
             throw new IllegalStateException("The inventory screen has no transaction panel to anchor the Crafting button below");
         }
-        CargoCraftingButton plugin = new CargoCraftingButton(tradePanel);
+        CargoCraftingBenchButton plugin = new CargoCraftingBenchButton(tradePanel);
         CustomPanelAPI container = Global.getSettings().createCustom(BUTTON_WIDTH, BUTTON_HEIGHT, plugin);
         TooltipMakerAPI element = container.createUIElement(BUTTON_WIDTH, BUTTON_HEIGHT, false);
         element.setButtonFontOrbitron20Bold();
-        ButtonAPI button = element.addButton(Translation.gameText("ui.cargoCraftingButton"), BUTTON_ID,
+        ButtonAPI button = element.addButton(Translation.gameText("ui.craftingBench.cargoButton"), BUTTON_ID,
                 Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(), Alignment.MID, CutStyle.ALL, BUTTON_WIDTH, BUTTON_HEIGHT, 0f);
         int hotkey = RefitButtonConfig.benchKey();
         if (hotkey > 0) button.setShortcut(hotkey, true);
@@ -150,7 +150,7 @@ public final class CargoCraftingButton extends BaseCustomUIPanelPlugin {
     @Override
     public void buttonPressed(Object buttonId) {
         if (!usable || failed || !BUTTON_ID.equals(buttonId)) return;
-        ModificationBenchCargoLauncher.open(Global.getSector().getCampaignUI(), this::refreshCargoViews);
+        CraftingBenchCargoLauncher.open(Global.getSector().getCampaignUI(), this::refreshCargoViews);
     }
 
     private void refreshCargoViews() {

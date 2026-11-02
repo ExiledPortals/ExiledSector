@@ -6,7 +6,7 @@ import exiledsector.ui.SkillTreeSounds;
 
 import java.util.function.Function;
 
-public final class ModificationBay {
+public final class CraftingBench {
 
     public interface Listener {
 
@@ -27,7 +27,7 @@ public final class ModificationBay {
     private final CustomPanelAPI hostPanel;
     private final Listener bayListener;
     private Function<Item, String> installedShipLookup;
-    private SocketWorkbenchPanel benchPanel;
+    private CraftingBenchPanel benchPanel;
     private BenchModeSupport.PickerSession picker;
     private SocketPanelPlacement drawerPlacement;
     private BenchMode benchMode = BenchMode.HULL_ITEMS;
@@ -36,35 +36,35 @@ public final class ModificationBay {
     private boolean drawer;
     private boolean closing;
 
-    private ModificationBay(CustomPanelAPI hostPanel, Function<Item, String> installedShipLookup, Listener bayListener) {
+    private CraftingBench(CustomPanelAPI hostPanel, Function<Item, String> installedShipLookup, Listener bayListener) {
         this.hostPanel = hostPanel;
         this.installedShipLookup = installedShipLookup;
         this.bayListener = bayListener;
     }
 
-    public static ModificationBay open(CustomPanelAPI hostPanel, SocketPanelPlacement area, Function<Item, String> installedShipLookup,
+    public static CraftingBench open(CustomPanelAPI hostPanel, SocketPanelPlacement area, Function<Item, String> installedShipLookup,
                                        Listener bayListener) {
-        ModificationBay bay = new ModificationBay(hostPanel, installedShipLookup, bayListener);
+        CraftingBench bay = new CraftingBench(hostPanel, installedShipLookup, bayListener);
         bay.layOut(area);
         return bay;
     }
 
-    public static ModificationBay openHullItemsOnly(CustomPanelAPI hostPanel, SocketPanelPlacement area, Function<Item, String> installedShipLookup,
+    public static CraftingBench openHullItemsOnly(CustomPanelAPI hostPanel, SocketPanelPlacement area, Function<Item, String> installedShipLookup,
                                                     Listener bayListener) {
-        ModificationBay bay = new ModificationBay(hostPanel, installedShipLookup, bayListener);
+        CraftingBench bay = new CraftingBench(hostPanel, installedShipLookup, bayListener);
         bay.hullItemsOnly = true;
         bay.layOut(area);
         return bay;
     }
 
-    public static ModificationBay openMode(CustomPanelAPI hostPanel, SocketPanelPlacement area, BenchMode mode, Function<Item, String> installedShipLookup,
+    public static CraftingBench openMode(CustomPanelAPI hostPanel, SocketPanelPlacement area, BenchMode mode, Function<Item, String> installedShipLookup,
                                            Listener bayListener) {
         return openMode(hostPanel, area, mode, installedShipLookup, null, bayListener);
     }
 
-    public static ModificationBay openMode(CustomPanelAPI hostPanel, SocketPanelPlacement area, BenchMode mode, Function<Item, String> installedShipLookup,
+    public static CraftingBench openMode(CustomPanelAPI hostPanel, SocketPanelPlacement area, BenchMode mode, Function<Item, String> installedShipLookup,
                                            BenchModeSupport.OpenTarget openTarget, Listener bayListener) {
-        ModificationBay bay = new ModificationBay(hostPanel, installedShipLookup, bayListener);
+        CraftingBench bay = new CraftingBench(hostPanel, installedShipLookup, bayListener);
         bay.benchMode = mode;
         bay.openTarget = openTarget;
         bay.layOut(area);
@@ -72,23 +72,23 @@ public final class ModificationBay {
     }
 
     static boolean fitsSideBySide(float areaWidth, float areaHeight) {
-        return SocketWorkbenchPanel.scaleFor(areaWidth - ItemStoragePanel.COMPACT_WIDTH - PANEL_GAP, areaHeight) >= SIDE_BY_SIDE_MIN_SCALE;
+        return CraftingBenchPanel.scaleFor(areaWidth - ItemStoragePanel.COMPACT_WIDTH - PANEL_GAP, areaHeight) >= SIDE_BY_SIDE_MIN_SCALE;
     }
 
     private void layOut(SocketPanelPlacement area) {
         drawer = !fitsSideBySide(area.panelWidth(), area.panelHeight());
         float benchAreaWidth = drawer ? area.panelWidth() : area.panelWidth() - ItemStoragePanel.COMPACT_WIDTH - PANEL_GAP;
-        float scale = SocketWorkbenchPanel.scaleFor(benchAreaWidth, area.panelHeight());
-        float benchWidth = SocketWorkbenchPanel.sizeFor(scale, BenchScene.ART_WIDTH);
-        float benchHeight = SocketWorkbenchPanel.sizeFor(scale, BenchScene.ART_HEIGHT);
+        float scale = CraftingBenchPanel.scaleFor(benchAreaWidth, area.panelHeight());
+        float benchWidth = CraftingBenchPanel.sizeFor(scale, BenchScene.ART_WIDTH);
+        float benchHeight = CraftingBenchPanel.sizeFor(scale, BenchScene.ART_HEIGHT);
         float groupWidth = drawer ? benchWidth : ItemStoragePanel.COMPACT_WIDTH + PANEL_GAP + benchWidth;
         float groupLeft = area.panelLeft() + (area.panelWidth() - groupWidth) / 2f;
         float groupTop = area.panelTop() + (area.panelHeight() - benchHeight) / 2f;
         float benchLeft = drawer ? groupLeft : groupLeft + ItemStoragePanel.COMPACT_WIDTH + PANEL_GAP;
-        benchPanel = SocketWorkbenchPanel.open(hostPanel, new SocketPanelPlacement(benchLeft, groupTop, benchWidth, benchHeight, area.instantly()),
+        benchPanel = CraftingBenchPanel.open(hostPanel, new SocketPanelPlacement(benchLeft, groupTop, benchWidth, benchHeight, area.instantly()),
                 false, benchMode, benchListener());
         if (drawer) {
-            float inset = SocketWorkbenchPanel.FRAME_INSET;
+            float inset = CraftingBenchPanel.FRAME_INSET;
             drawerPlacement = new SocketPanelPlacement(benchLeft + inset, groupTop + inset, ItemStoragePanel.COMPACT_WIDTH, benchHeight - inset * 2f,
                     false);
         } else {
@@ -96,8 +96,8 @@ public final class ModificationBay {
         }
     }
 
-    private SocketWorkbenchPanel.Listener benchListener() {
-        return new SocketWorkbenchPanel.Listener() {
+    private CraftingBenchPanel.Listener benchListener() {
+        return new CraftingBenchPanel.Listener() {
             @Override
             public void changed(Item loaded) {
                 if (picker != null) {
