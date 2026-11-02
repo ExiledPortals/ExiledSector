@@ -7,7 +7,10 @@ import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
+import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
+import exiledsector.skills.SkillTree;
+import exiledsector.skills.npc.RealSkillData;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
@@ -246,6 +249,27 @@ class StarChartTest {
                 List.of(new RolledEffect("CHART_BASE_FLEETS", 1f)))));
 
         assertEquals(seeded, chart.implicits());
+    }
+
+    @Test
+    void theExpandedViewListsAGrantedNodesFullDescriptionUnderItsLineFromThePlayersSide() throws Exception {
+        RealSkillData.load();
+        try {
+            StarChart chart = StarChartFixtures.chart(SINGLE, 8L, 3);
+            chart.replaceExplicits(List.of(new RolledModifier("CHART_ENEMY_HULLBREACHER_ROUNDS", ModifierSlot.PREFIX,
+                    List.of(new RolledEffect("CHART_ENEMY_HULLBREACHER_ROUNDS", 1f)))));
+
+            List<StyledText> collapsed = chart.effectLines(false);
+            List<StyledText> expanded = chart.effectLines(true);
+
+            assertEquals(1, collapsed.size());
+            assertEquals(collapsed.get(0).plain(), expanded.get(0).plain());
+            assertTrue(expanded.size() > 2, expanded.toString());
+            assertTrue(expanded.get(1).spans().stream().anyMatch(span -> span.style() == Style.BAD), expanded.get(1).toMarkup());
+            assertTrue(expanded.get(expanded.size() - 1).plain().endsWith(SkillTree.get("hull_breacher_1").getType().getFlavourText()));
+        } finally {
+            RealSkillData.clear();
+        }
     }
 
     @Test

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public final class NpcTreeTag {
 
@@ -28,6 +29,7 @@ public final class NpcTreeTag {
     private static final int CHARGED_NODE_COST = 1;
     static final String GENERATED = "generated";
     static final String SOCKETS_MARKER = "sockets:";
+    static final String GRANTED_MARKER = "granted:";
     static final String LEGACY_ANCHORS_MARKER = "anchors:";
     private static final int MIN_FIELDS = 3;
     private static final int MAX_FIELDS = 7;
@@ -39,6 +41,9 @@ public final class NpcTreeTag {
     public static String encode(ShipSkillData shipData) {
         List<String> nodeEntries = new ArrayList<>();
         for (String nodeId : shipData.getAllocatedNodeIds()) {
+            if (shipData.isFleetGranted(nodeId)) {
+                continue;
+            }
             nodeEntries.add(new NodeEntry(nodeId, shipData.getOptionalSelection(nodeId)).format());
         }
         String tag = PREFIX + GENERATED + FIELD_SEPARATOR + shipData.getLevel() + FIELD_SEPARATOR + String.join(NODE_SEPARATOR, nodeEntries);
@@ -48,7 +53,11 @@ public final class NpcTreeTag {
                 socketEntries.add(nodeId + OPTION_SEPARATOR + itemId);
             }
         });
-        return socketEntries.isEmpty() ? tag : tag + FIELD_SEPARATOR + SOCKETS_MARKER + String.join(NODE_SEPARATOR, socketEntries);
+        if (!socketEntries.isEmpty()) {
+            tag += FIELD_SEPARATOR + SOCKETS_MARKER + String.join(NODE_SEPARATOR, socketEntries);
+        }
+        Set<String> grantedNodeIds = shipData.getFleetGrantNodeIds();
+        return grantedNodeIds.isEmpty() ? tag : tag + FIELD_SEPARATOR + GRANTED_MARKER + String.join(NODE_SEPARATOR, grantedNodeIds);
     }
 
     public static String find(ShipVariantAPI variant) {
@@ -97,7 +106,9 @@ public final class NpcTreeTag {
         }
         Map<String, String> anchorsBySocketId = new LinkedHashMap<>();
         for (int fieldIndex = MIN_FIELDS; fieldIndex < tagFields.length; fieldIndex++) {
-            if (tagFields[fieldIndex].startsWith(SOCKETS_MARKER)) {
+            if (tagFields[fieldIndex].startsWith(GRANTED_MARKER)) {
+                restoreGrants(shipData, tagFields[fieldIndex].substring(GRANTED_MARKER.length()));
+            } else if (tagFields[fieldIndex].startsWith(SOCKETS_MARKER)) {
                 readAnchors(anchorsBySocketId, tagFields[fieldIndex].substring(SOCKETS_MARKER.length()));
             } else if (tagFields[fieldIndex].startsWith(LEGACY_ANCHORS_MARKER)) {
                 readLegacyAnchors(anchorsBySocketId, tagFields[fieldIndex].substring(LEGACY_ANCHORS_MARKER.length()));
@@ -111,6 +122,15 @@ public final class NpcTreeTag {
         }
         ShipTrees.releaseUnreachable(shipData, SkillTree.topology(), rootNode.getId());
         return shipData;
+    }
+
+    private static void restoreGrants(ShipSkillData shipData, String grantedEntries) {
+        for (String nodeId : grantedEntries.split(NODE_SEPARATOR)) {
+            SkillNode node = SkillTree.get(nodeId);
+            if (node != null && !shipData.isAllocated(nodeId)) {
+                ShipTrees.allocateFleetGrant(shipData, node);
+            }
+        }
     }
 
     private static void readAnchors(Map<String, String> anchorsBySocketId, String socketEntries) {

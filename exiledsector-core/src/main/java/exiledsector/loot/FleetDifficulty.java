@@ -3,6 +3,8 @@ package exiledsector.loot;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 
+import java.util.List;
+
 public interface FleetDifficulty {
 
     default Float difficultyMultiplier(float battleDifficulty) {
@@ -22,6 +24,10 @@ public interface FleetDifficulty {
     }
 
     default String levelSeed(MemoryAPI fleetMemory) {
+        return null;
+    }
+
+    default List<String> grantedNodeIds(MemoryAPI fleetMemory) {
         return null;
     }
 }

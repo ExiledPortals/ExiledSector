@@ -1,6 +1,7 @@
 package exiledsector.charts.effect;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
@@ -9,33 +10,38 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.data.EnumKeys;
+import exiledsector.effects.GrantedNodeOrigin;
+import exiledsector.effects.GrantedNodes;
 import exiledsector.effects.ResolvedTree;
 import exiledsector.effects.ShipEffectContext;
 import exiledsector.effects.ShipEffectSource;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.skills.EffectContribution;
 import exiledsector.skills.ShipFacts;
+import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillTypeEffect;
-import exiledsector.skills.skilleffect.SkillEffect;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public final class ChartEnemyShipEffects implements ShipEffectSource {
 
     public static final ChartEnemyShipEffects INSTANCE = new ChartEnemyShipEffects();
     static final String MOD_ID_PREFIX = ChartIds.PREFIX + "enemy_";
+    static final String NODE_MOD_ID_PREFIX = MOD_ID_PREFIX + "node_";
     private static final String ENTRY_SEPARATOR = ";";
     private static final String VALUE_SEPARATOR = "=";
     private static final String STAT_PREFIX = "stat:";
+    private static final String NODE_PREFIX = "node:";
     private static final Logger LOG = Logger.getLogger(ChartEnemyShipEffects.class);
 
-    record Granted(List<SkillTypeEffect> skillEffects, Map<ChartFleetStat, Float> statMults, ChartEnemyDamageListener damageListener) {
+    record Granted(Map<ChartFleetStat, Float> statMults, ChartEnemyDamageListener damageListener, List<String> nodeIds) {
 
-        static final Granted NONE = new Granted(List.of(), Map.of(), null);
+        static final Granted NONE = new Granted(Map.of(), null, List.of());
     }
 
     private static String lastEncoded;
@@ -80,12 +86,12 @@ public final class ChartEnemyShipEffects implements ShipEffectSource {
 
     static String encode(ChartGenContext context) {
         List<String> entries = new ArrayList<>();
-        context.enemyShipEffects().forEach((effect, magnitude) -> entries.add(effect.name() + VALUE_SEPARATOR + magnitude));
         context.fleetStatMults().forEach((stat, mult) -> {
             if (stat.appliesToEnemyShips()) {
                 entries.add(STAT_PREFIX + stat.name() + VALUE_SEPARATOR + mult);
             }
         });
+        context.enemyGrantedNodeIds().forEach(nodeId -> entries.add(NODE_PREFIX + nodeId));
         return String.join(ENTRY_SEPARATOR, entries);
     }
 
@@ -101,25 +107,30 @@ public final class ChartEnemyShipEffects implements ShipEffectSource {
     }
 
     private static Granted parse(String encoded) {
-        List<SkillTypeEffect> skillEffects = new ArrayList<>();
         Map<ChartFleetStat, Float> statMults = new EnumMap<>(ChartFleetStat.class);
+        List<String> nodeIds = new ArrayList<>();
         for (String entry : encoded.split(ENTRY_SEPARATOR)) {
+            if (entry.startsWith(NODE_PREFIX)) {
+                nodeIds.add(entry.substring(NODE_PREFIX.length()));
+                continue;
+            }
             String[] fields = entry.split(VALUE_SEPARATOR);
             try {
                 float value = Float.parseFloat(fields[1]);
-                if (fields[0].startsWith(STAT_PREFIX)) {
-                    ChartFleetStat stat = EnumKeys.parse(ChartFleetStat.class, fields[0].substring(STAT_PREFIX.length()));
-                    if (stat != null && stat.appliesToEnemyShips()) {
-                        statMults.put(stat, value);
-                    }
-                } else {
-                    skillEffects.add(new SkillTypeEffect(SkillEffect.byName(fields[0]), value));
+                ChartFleetStat stat = fields[0].startsWith(STAT_PREFIX)
+                        ? EnumKeys.parse(ChartFleetStat.class, fields[0].substring(STAT_PREFIX.length())) : null;
+                if (stat != null && stat.appliesToEnemyShips()) {
+                    statMults.put(stat, value);
                 }
             } catch (RuntimeException e) {
                 LOG.warn("[ExiledSector] Skipping the unreadable chart enemy effect " + entry, e);
             }
         }
-        return new Granted(List.copyOf(skillEffects), Map.copyOf(statMults), ChartEnemyDamageListener.of(statMults));
+        return new Granted(Map.copyOf(statMults), ChartEnemyDamageListener.of(statMults), List.copyOf(nodeIds));
+    }
+
+    public static List<String> grantedNodeIds(MemoryAPI fleetMemory) {
+        return fleetMemory == null ? List.of() : decode(fleetMemory.getString(ChartIds.ENEMY_EFFECTS_MEMORY_KEY)).nodeIds();
     }
 
     static Granted grantedTo(FleetMemberAPI member) {
@@ -129,13 +140,17 @@ public final class ChartEnemyShipEffects implements ShipEffectSource {
 
     @Override
     public Object cacheKey(ShipEffectContext context) {
-        return grantedTo(context.member()).skillEffects();
+        Granted granted = grantedTo(context.member());
+        if (granted.nodeIds().isEmpty() || context.variant() == null || context.variant().getHullSpec() == null) {
+            return granted.nodeIds();
+        }
+        return List.of(granted.nodeIds(), context.variant().getHullSpec().getHullId(),
+                Set.copyOf(context.variant().getHullMods()));
     }
 
     @Override
     public List<EffectContribution> contributions(ShipEffectContext context) {
-        List<SkillTypeEffect> effects = grantedTo(context.member()).skillEffects();
-        return effects.isEmpty() ? List.of() : List.of(new EffectContribution(this, MOD_ID_PREFIX, effects, null, null, false, false));
+        return GrantedNodes.withoutTree(grantedTo(context.member()).nodeIds(), context, NODE_MOD_ID_PREFIX);
     }
 
     @Override
@@ -154,16 +169,34 @@ public final class ChartEnemyShipEffects implements ShipEffectSource {
         }
         addDamageListener(ship, granted);
         if (ship.getHullSpec() != null && ShipFacts.hasModuleSlots(ship.getHullSpec())) {
-            ship.addListener(new ChartEnemyModuleGrant(ship, granted));
+            ship.addListener(new ChartEnemyModuleGrant(ship, granted, nodeIdsGrantedWithoutTree(resolvedTree)));
         }
     }
 
-    static void applyToModule(ShipAPI module, Granted granted) {
+    static List<String> nodeIdsGrantedWithoutTree(ResolvedTree resolvedTree) {
+        if (resolvedTree == null) {
+            return List.of();
+        }
+        List<String> nodeIds = new ArrayList<>();
+        for (EffectContribution contribution : resolvedTree.contributions()) {
+            if (contribution.origin() instanceof GrantedNodeOrigin origin) {
+                nodeIds.add(origin.nodeId());
+            }
+        }
+        return nodeIds;
+    }
+
+    static void applyToModule(ShipAPI module, Granted granted, List<String> nodeIdsGrantedWithoutTree) {
         MutableShipStatsAPI stats = module.getMutableStats();
         granted.statMults().forEach((stat, mult) -> stat.applyToShip(stats, MOD_ID_PREFIX, mult));
-        for (SkillTypeEffect effect : granted.skillEffects()) {
-            effect.effect().apply(stats, MOD_ID_PREFIX, effect.magnitude());
-            effect.effect().applyAfterShipCreation(module, MOD_ID_PREFIX, effect.magnitude());
+        ShipEffectContext moduleContext = new ShipEffectContext(new ShipSkillData(), null, module.getVariant(), module.getHullSize());
+        for (EffectContribution contribution : GrantedNodes.withoutTree(nodeIdsGrantedWithoutTree, moduleContext, NODE_MOD_ID_PREFIX)) {
+            if (contribution.permanent()) {
+                for (SkillTypeEffect effect : contribution.effects()) {
+                    effect.effect().apply(stats, contribution.modIdPrefix(), effect.magnitude());
+                    effect.effect().applyAfterShipCreation(module, contribution.modIdPrefix(), effect.magnitude());
+                }
+            }
         }
         addDamageListener(module, granted);
     }

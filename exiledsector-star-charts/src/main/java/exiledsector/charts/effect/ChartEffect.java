@@ -6,13 +6,14 @@ import exiledsector.data.EnumKeys;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartGenerated;
 import exiledsector.charts.content.ChartPoi;
+import exiledsector.effects.GrantedNodes;
 import exiledsector.i18n.Message;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.modifiers.ModifierEffect;
-import exiledsector.skills.skilleffect.SkillEffect;
-import exiledsector.skills.skilleffect.onhit.OnHitSkillEffect;
 import exiledsector.charts.loot.DropType;
+
+import java.util.List;
 
 public enum ChartEffect implements ModifierEffect {
 
@@ -82,9 +83,10 @@ public enum ChartEffect implements ModifierEffect {
             return Translation.msg(key()).arg("value", Math.abs(magnitude)).styled();
         }
     },
-    CHART_ENEMY_BEAM_SPLIT_TARGETS_FLAT(true, OnHitSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT),
-    CHART_ENEMY_ENERGY_CHAIN_CHANCE_PERCENT(false, ChartGenContext::addEnemyEnergyChainChance),
-    CHART_ENEMY_BALLISTIC_PIERCE_CHANCE_PERCENT(false, OnHitSkillEffect.BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT),
+    CHART_ENEMY_LIONS_GAZE("beam_split_1"),
+    CHART_ENEMY_REFRACTING_PROJECTILES("energy_chain_1"),
+    CHART_ENEMY_HULLBREACHER_ROUNDS("hull_breacher_1"),
+    CHART_ENEMY_FREEBOOTERS_CHARGE("reckless_assault_1"),
     CHART_QUANTITY_PERCENT(false, ChartGenContext::addQuantityPercent),
     CHART_POI_BUDGET_PERCENT(false, ChartGenContext::addAllSiteBudgetsPercent),
     CHART_CACHE_BUDGET_PERCENT(false, (context, value) -> context.addSiteBudgetPercent(ChartPoi.Kind.CACHE, value)),
@@ -169,6 +171,7 @@ public enum ChartEffect implements ModifierEffect {
     private final String negativeKeySuffix;
     private final Contribution contribution;
     private final boolean flag;
+    private String grantedNodeId;
 
     ChartEffect(boolean counted, Contribution contribution) {
         this(counted, null, null, null, null, contribution, false);
@@ -182,8 +185,9 @@ public enum ChartEffect implements ModifierEffect {
         this(false, dropType, null, null, null, (context, value) -> context.addDropPercent(dropType, value), false);
     }
 
-    ChartEffect(boolean counted, SkillEffect enemyShipEffect) {
-        this(counted, null, null, null, null, (context, value) -> context.addEnemyShipEffect(enemyShipEffect, value), false);
+    ChartEffect(String grantedNodeId) {
+        this(context -> context.grantEnemyNode(grantedNodeId));
+        this.grantedNodeId = grantedNodeId;
     }
 
     ChartEffect(HullSize bannedCombatHullSize) {
@@ -248,6 +252,11 @@ public enum ChartEffect implements ModifierEffect {
             return message.count(count).arg("value", count).styled();
         }
         return message.arg("value", fleetStat != null ? Math.abs(magnitude) : magnitude).styled();
+    }
+
+    @Override
+    public List<StyledText> detailLines() {
+        return grantedNodeId == null ? List.of() : GrantedNodes.descriptionLines(grantedNodeId).stream().map(StyledText::inverted).toList();
     }
 
     public void beforeGeneration(ChartGenContext context, float value) {

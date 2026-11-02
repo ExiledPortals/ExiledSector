@@ -9,6 +9,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.thoughtworks.xstream.XStream;
 import exiledsector.compat.CompatTarget;
+import exiledsector.effects.GrantedNodeEffects;
 import exiledsector.effects.PlayerEngagementPipeline;
 import exiledsector.effects.ShipEffectSource;
 import exiledsector.items.ItemCurrency;
@@ -135,6 +136,10 @@ public interface ExiledSectorDomain {
     }
 
     default List<ShipEffectSource> shipEffectSources() {
+        return List.of();
+    }
+
+    default List<GrantedNodeEffects> grantedNodeEffects() {
         return List.of();
     }
 

@@ -324,6 +324,12 @@ battle chance per 100 enemy deployment points defeated, scaled by battle difficu
 `level_min` the strongest defeated NPC reached (`ChartDrops.forBattle`). With the skill tree switched off, the
 tier instead rises one per `strength_per_tier` deployment points defeated.
 
+Node-granting lines such as Freebooting store node ids with the fleet's enemy rules. An enemy ship that gets an NPC tree
+has the node placed first as a free grant; the builder avoids nodes that conflict with it and only paths through it
+once its own path reaches it (`NpcSkillTreeBuilder`, kept in the tree tag by `NpcTreeTag`). A recovered ship loses the
+grant. Every other enemy ship, and all of them while the skill tree is switched off, takes only the node's own effects
+(`SkillTreeGrantedNodeEffects`). Hulls the node isn't allowed on get nothing.
+
 </details>
 
 <details>
@@ -587,7 +593,7 @@ Either kind is detected by the player from anywhere in the system, so it always 
 The chart's player-side lines are set once on entering the system (`ChartRunScript`) and reach the player's ships at
 ship creation (`ChartFleetConditions`). Each hostile chart fleet is granted the enemy-side lines when it is generated: they
 are stored on the fleet and the hidden hull mod is added to its ships, again after each inflation
-(`ChartEnemyInflationListener`), which then apply them as skill effects, stats and
+(`ChartEnemyInflationListener`), which then apply them as granted nodes, stats and
 damage listeners at ship creation (`ChartEnemyShipEffects`). Only battle size and command point rate are battle rules
 (`ChartBattlePlugin`). Inert switches off the ship system of each player fleet ship once, as it is created; the engine
 keeps it off for that battle. Overridden swallows the autopilot key, stops manual control from turning autopilot off and

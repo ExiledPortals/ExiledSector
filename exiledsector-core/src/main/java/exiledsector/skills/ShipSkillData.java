@@ -18,6 +18,7 @@ public class ShipSkillData {
     Set<String> freeNodeIds = new LinkedHashSet<>();
     Set<String> pairedFreeNodeIds = new LinkedHashSet<>();
     Set<String> grantFreeNodeIds;
+    transient Set<String> fleetGrantNodeIds;
     Set<String> replacementAllocatedNodeIds;
     String startingRootId;
     boolean npcBuild;
@@ -71,6 +72,11 @@ public class ShipSkillData {
     Set<String> grantFreeNodeIds() {
         if (grantFreeNodeIds == null) grantFreeNodeIds = new LinkedHashSet<>();
         return grantFreeNodeIds;
+    }
+
+    Set<String> fleetGrantNodeIds() {
+        if (fleetGrantNodeIds == null) fleetGrantNodeIds = new LinkedHashSet<>();
+        return fleetGrantNodeIds;
     }
 
     public String getSocketedItem(String nodeId) {
@@ -221,6 +227,14 @@ public class ShipSkillData {
         return revision;
     }
 
+    public boolean isFleetGranted(String nodeId) {
+        return fleetGrantNodeIds != null && fleetGrantNodeIds.contains(nodeId);
+    }
+
+    public Set<String> getFleetGrantNodeIds() {
+        return fleetGrantNodeIds == null ? Set.of() : Collections.unmodifiableSet(fleetGrantNodeIds);
+    }
+
     public boolean isGrantFree(String nodeId) {
         return grantFreeNodeIds != null && grantFreeNodeIds.contains(nodeId);
     }
@@ -358,6 +372,9 @@ public class ShipSkillData {
         }
         if (grantFreeNodeIds != null) {
             grantFreeNodeIds.remove(nodeId);
+        }
+        if (fleetGrantNodeIds != null) {
+            fleetGrantNodeIds.remove(nodeId);
         }
         if (replacementAllocatedNodeIds != null) {
             replacementAllocatedNodeIds.remove(nodeId);

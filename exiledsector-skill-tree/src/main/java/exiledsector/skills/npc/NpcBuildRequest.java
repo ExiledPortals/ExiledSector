@@ -3,12 +3,13 @@ package exiledsector.skills.npc;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.tags.ShipProfile;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
 public record NpcBuildRequest(ShipProfile profile, String designType, String factionRegion, NpcHullMods hullMods,
                               NpcFreedOp freedOp, int nodeCount, String factionAnchorItemId, Predicate<SkillType> lockedTypes, String hullId,
-                              Map<String, Float> focus) {
+                              Map<String, Float> focus, List<String> grantedNodeIds) {
 
     private static final Predicate<SkillType> NOTHING_LOCKED = type -> false;
 
@@ -17,6 +18,12 @@ public record NpcBuildRequest(ShipProfile profile, String designType, String fac
         freedOp = freedOp == null ? NpcFreedOp.NONE : freedOp;
         lockedTypes = lockedTypes == null ? NOTHING_LOCKED : lockedTypes;
         focus = focus == null ? Map.of() : Map.copyOf(focus);
+        grantedNodeIds = grantedNodeIds == null ? List.of() : List.copyOf(grantedNodeIds);
+    }
+
+    public NpcBuildRequest(ShipProfile profile, String designType, String factionRegion, NpcHullMods hullMods, NpcFreedOp freedOp,
+                           int nodeCount, String factionAnchorItemId, Predicate<SkillType> lockedTypes, String hullId, Map<String, Float> focus) {
+        this(profile, designType, factionRegion, hullMods, freedOp, nodeCount, factionAnchorItemId, lockedTypes, hullId, focus, null);
     }
 
     public NpcBuildRequest(ShipProfile profile, String designType, String factionRegion, NpcHullMods hullMods, NpcFreedOp freedOp,

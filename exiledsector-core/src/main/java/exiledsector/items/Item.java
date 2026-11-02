@@ -498,20 +498,27 @@ public abstract class Item {
     private void addModifierLines(List<SlottedLine> lines, RolledModifier rolledModifier, Modifier modifier, ModifierEffects effects,
                                   boolean withRollRanges, ScaleContext context) {
         List<StyledText> descriptions = new ArrayList<>();
+        List<List<StyledText>> detailLines = new ArrayList<>();
         for (RolledEffect effect : rolledModifier.lines()) {
             StyledText description = explicitLine(effects, effect, modifier == null ? null : modifier.line(effect.effectName()),
                     withRollRanges, context);
             if (description != null) {
                 descriptions.add(rolledModifier.locked() ? description.withUnstyledAs(Style.IMMUTABLE) : description);
+                ModifierEffect resolvedEffect = withRollRanges ? effect.effect(effects) : null;
+                detailLines.add(resolvedEffect == null ? List.of() : resolvedEffect.detailLines());
             }
         }
-        if (!withRollRanges || descriptions.size() < 2) {
-            descriptions.forEach(description -> lines.add(new SlottedLine(rolledModifier.slot(), description)));
-            return;
+        boolean hybrid = withRollRanges && descriptions.size() >= 2;
+        if (hybrid) {
+            lines.add(new SlottedLine(rolledModifier.slot(), Translation.styled("socketable.tooltip.hybrid")));
         }
-        lines.add(new SlottedLine(rolledModifier.slot(), Translation.styled("socketable.tooltip.hybrid")));
-        for (StyledText description : descriptions) {
-            lines.add(new SlottedLine(null, Translation.msg("socketable.tooltip.hybridLine").arg("line", description).styled()));
+        for (int index = 0; index < descriptions.size(); index++) {
+            StyledText description = descriptions.get(index);
+            lines.add(hybrid ? new SlottedLine(null, Translation.msg("socketable.tooltip.hybridLine").arg("line", description).styled())
+                    : new SlottedLine(rolledModifier.slot(), description));
+            for (StyledText detailLine : detailLines.get(index)) {
+                lines.add(new SlottedLine(null, Translation.msg("socketable.tooltip.detailLine").arg("line", detailLine).styled()));
+            }
         }
     }
 

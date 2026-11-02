@@ -15,6 +15,8 @@ public record NpcBuildStep(String nodeId, String outcome) {
     public static final String MISSING_OPTION = "missing option";
     public static final String INVALID_OPTION = "invalid option: ";
     public static final String UNEXPECTED_OPTION = "unexpected option: ";
+    public static final String GRANTED = "granted by the fleet, free";
+    public static final String GRANT_SKIPPED = "fleet grant skipped, not allowed on this ship";
     public static final String ANCHOR_REMOVED = "wormhole anchor removed, no faction volume node within reach";
 
     public boolean isAllocated() {

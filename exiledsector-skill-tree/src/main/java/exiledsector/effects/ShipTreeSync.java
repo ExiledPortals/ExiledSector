@@ -235,6 +235,7 @@ public final class ShipTreeSync {
         ShipSkillData npcTree = NpcTreeTag.decode(npcTreeTag);
         if (npcTree != null && ShipSkillDataManager.get(member.getId()).isBlank() && NpcLevelCaps.keepsTreeOnRecovery(member.getVariant())) {
             npcTree.clearNpcBuild();
+            ShipTrees.dropFleetGrants(npcTree);
             dropNpcAnchors(npcTree);
             npcTree.capLevel(ShipLevelConfig.maxLevel());
             List<String> trimmedNodeIds = new ArrayList<>(ShipTrees.trimFreeAllocationsToLevel(npcTree, SkillTree.getAllNodes(), SkillTree.topology()));

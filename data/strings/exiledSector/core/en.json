@@ -261,6 +261,7 @@
     "socketable.tooltip.primaryData": "Explicit",
     "socketable.tooltip.hybrid": "<muted>Hybrid</muted>",
     "socketable.tooltip.hybridLine": "<muted>|</muted> {line}",
+    "socketable.tooltip.detailLine": "<muted>-</muted> {line}",
     "hullItem.tooltip.implicit": "Implicit",
     "socketable.noun.subroutine": "subroutine",
     "socketable.noun.bridge": "command suite",

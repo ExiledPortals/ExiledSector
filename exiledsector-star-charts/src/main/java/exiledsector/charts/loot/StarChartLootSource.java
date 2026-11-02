@@ -13,6 +13,7 @@ import exiledsector.PlayerFleet;
 import exiledsector.Seeds;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.effect.ChartEnemyShipEffects;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.LootShaper;
@@ -219,5 +220,11 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
     @Override
     public String levelSeed(MemoryAPI fleetMemory) {
         return ChartIds.fleetSeed(fleetMemory);
+    }
+
+    @Override
+    public List<String> grantedNodeIds(MemoryAPI fleetMemory) {
+        List<String> nodeIds = ChartEnemyShipEffects.grantedNodeIds(fleetMemory);
+        return nodeIds.isEmpty() ? null : nodeIds;
     }
 }

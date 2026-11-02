@@ -2,6 +2,8 @@ package exiledsector.modifiers;
 
 import exiledsector.i18n.StyledText;
 
+import java.util.List;
+
 public interface ModifierEffect {
 
     String name();
@@ -10,5 +12,9 @@ public interface ModifierEffect {
 
     default boolean invertsDescriptionColours() {
         return false;
+    }
+
+    default List<StyledText> detailLines() {
+        return List.of();
     }
 }

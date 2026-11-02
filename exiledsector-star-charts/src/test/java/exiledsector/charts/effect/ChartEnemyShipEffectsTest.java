@@ -16,16 +16,15 @@ import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
+import exiledsector.charts.loot.StarChartLootSource;
 import exiledsector.effects.ShipEffectContext;
 import exiledsector.effects.SkillTreeHullMod;
-import exiledsector.skills.EffectContribution;
-import exiledsector.skills.SkillTypeEffect;
-import exiledsector.skills.skilleffect.onhit.OnHitSkillEffect;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -45,8 +44,7 @@ class ChartEnemyShipEffectsTest {
     private static final float TOLERANCE = 0.0001f;
 
     private static ChartGenContext enemyRules() {
-        return ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_ENEMY_BALLISTIC_PIERCE_CHANCE_PERCENT, 30f),
-                new AppliedEffect(ChartEffect.CHART_ENEMY_OBJECTIVE_CAPTURE_RATE_PERCENT, 50f),
+        return ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_ENEMY_OBJECTIVE_CAPTURE_RATE_PERCENT, 50f),
                 new AppliedEffect(ChartEffect.CHART_ENEMY_KINETIC_DAMAGE_PERCENT, 20f),
                 new AppliedEffect(ChartEffect.CHART_TOP_SPEED_PERCENT, -20f)));
     }
@@ -91,14 +89,9 @@ class ChartEnemyShipEffectsTest {
         verify(copy).addMod(SkillTreeHullMod.ID);
         verify(stock, never()).addMod(anyString());
         ChartEnemyShipEffects.Granted granted = ChartEnemyShipEffects.grantedTo(member);
-        assertEquals(List.of(new SkillTypeEffect(OnHitSkillEffect.BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT, 30f)), granted.skillEffects());
         assertEquals(Map.of(ChartFleetStat.ENEMY_OBJECTIVE_CAPTURE_RATE, 1.5f, ChartFleetStat.ENEMY_KINETIC_DAMAGE_DEALT, 1.2f), granted.statMults());
         assertNotNull(granted.damageListener());
-
-        List<EffectContribution> contributions = ChartEnemyShipEffects.INSTANCE.contributions(new ShipEffectContext(null, member, null, null));
-        assertEquals(1, contributions.size());
-        assertEquals(granted.skillEffects(), contributions.get(0).effects());
-        assertTrue(contributions.get(0).permanent());
+        assertTrue(granted.nodeIds().isEmpty());
     }
 
     @Test
@@ -132,8 +125,35 @@ class ChartEnemyShipEffectsTest {
         CampaignFleetAPI combined = fleetWith(member);
         when(member.getFleetDataForStats()).thenReturn(sourceData);
 
-        assertEquals(1, ChartEnemyShipEffects.grantedTo(member).skillEffects().size());
+        assertEquals(2, ChartEnemyShipEffects.grantedTo(member).statMults().size());
         assertTrue(combined.getMemoryWithoutUpdate().getString(ChartIds.ENEMY_EFFECTS_MEMORY_KEY) == null);
+    }
+
+    @Test
+    void grantedNodesTravelWithTheFleetToTheTreeBuilderBesideTheOtherEnemyRules() {
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(variant.getSource()).thenReturn(VariantSource.REFIT);
+        FleetMemberAPI member = memberWith(variant);
+        CampaignFleetAPI fleet = fleetWith(member);
+        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_ENEMY_FREEBOOTERS_CHARGE, 1f),
+                new AppliedEffect(ChartEffect.CHART_ENEMY_HULLBREACHER_ROUNDS, 1f), new AppliedEffect(ChartEffect.CHART_ENEMY_KINETIC_DAMAGE_PERCENT, 20f)));
+
+        ChartEnemyShipEffects.grant(fleet, context);
+
+        assertEquals(Set.of("reckless_assault_1", "hull_breacher_1"), Set.copyOf(StarChartLootSource.INSTANCE.grantedNodeIds(fleet.getMemoryWithoutUpdate())));
+        assertEquals(Map.of(ChartFleetStat.ENEMY_KINETIC_DAMAGE_DEALT, 1.2f), ChartEnemyShipEffects.grantedTo(member).statMults());
+        verify(variant).addMod(SkillTreeHullMod.ID);
+    }
+
+    @Test
+    void fleetsTheChartGrantedNoNodesHandTheTreeBuilderNone() {
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(variant.getSource()).thenReturn(VariantSource.REFIT);
+        CampaignFleetAPI fleet = fleetWith(memberWith(variant));
+
+        ChartEnemyShipEffects.grant(fleet, enemyRules());
+
+        assertNull(StarChartLootSource.INSTANCE.grantedNodeIds(fleet.getMemoryWithoutUpdate()));
     }
 
     @Test

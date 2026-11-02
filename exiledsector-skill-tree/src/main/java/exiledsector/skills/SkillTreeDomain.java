@@ -38,7 +38,9 @@ import exiledsector.effects.PlayerTreePower;
 import exiledsector.effects.ShipTreeSync;
 import exiledsector.effects.SkillConflictWarningHullMod;
 import exiledsector.effects.ShipEffectSource;
+import exiledsector.effects.GrantedNodeEffects;
 import exiledsector.effects.SkillTreeEffectSource;
+import exiledsector.effects.SkillTreeGrantedNodeEffects;
 import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.effects.SkillTreeLootSource;
 import exiledsector.i18n.I18n;
@@ -120,6 +122,11 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
     @Override
     public List<ShipEffectSource> shipEffectSources() {
         return List.of(SkillTreeEffectSource.INSTANCE);
+    }
+
+    @Override
+    public List<GrantedNodeEffects> grantedNodeEffects() {
+        return List.of(SkillTreeGrantedNodeEffects.INSTANCE);
     }
 
     @Override

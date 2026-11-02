@@ -21,7 +21,6 @@ import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.effect.ChartFleetStat;
-import exiledsector.skills.skilleffect.onhit.OnHitSkillEffect;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.charts.loot.ChartLootTotals;
 import exiledsector.charts.loot.DropType;
@@ -439,7 +438,7 @@ class ChartGenContextTest {
     }
 
     @Test
-    void systemRuleLinesSetTheirFlagsAndEnemyShipEffectsAddUp() {
+    void systemRuleLinesSetTheirFlagsAndEnemyNodeGrantsCollapse() {
         ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_TWINNED_BOSS, 1f),
                 new AppliedEffect(ChartEffect.CHART_NO_COMBAT_CRUISERS, 1f), new AppliedEffect(ChartEffect.CHART_NO_COMBAT_FRIGATES, 1f),
                 new AppliedEffect(ChartEffect.CHART_SHIELD_DAMAGE_TAKEN_PERCENT, 20f), new AppliedEffect(ChartEffect.CHART_UNSHIELDED_SHIELD_DAMAGE_TAKEN_PERCENT, 100f),
@@ -447,8 +446,8 @@ class ChartGenContextTest {
                 new AppliedEffect(ChartEffect.CHART_COMMAND_POINT_RATE_PERCENT, -40f),
                 new AppliedEffect(ChartEffect.CHART_SEVERED_COMMAND_POINT_RATE_PERCENT, -90f), new AppliedEffect(ChartEffect.CHART_FORCED_AUTOPILOT, 1f),
                 new AppliedEffect(ChartEffect.CHART_ARC_STRIKE_EMP_FLAT, 800f), new AppliedEffect(ChartEffect.CHART_WEAPON_AND_ENGINE_REPAIR_SPEED_PERCENT, -40f),
-                new AppliedEffect(ChartEffect.CHART_ENEMY_ENERGY_CHAIN_CHANCE_PERCENT, 30f),
-                new AppliedEffect(ChartEffect.CHART_ENEMY_ENERGY_CHAIN_CHANCE_PERCENT, 30f)));
+                new AppliedEffect(ChartEffect.CHART_ENEMY_REFRACTING_PROJECTILES, 1f),
+                new AppliedEffect(ChartEffect.CHART_ENEMY_REFRACTING_PROJECTILES, 1f)));
 
         assertTrue(context.twinnedBoss());
         assertEquals(Set.of(HullSize.CRUISER, HullSize.FRIGATE), context.bannedCombatHullSizes());
@@ -459,8 +458,7 @@ class ChartGenContextTest {
         assertEquals(2.2f, context.fleetStatMults().get(ChartFleetStat.SHIELD_DAMAGE_TAKEN), TOLERANCE);
         assertEquals(0.1f, context.fleetStatMults().get(ChartFleetStat.ARMOR), TOLERANCE);
         assertEquals(0.1f, context.fleetStatMults().get(ChartFleetStat.COMMAND_POINT_RATE), TOLERANCE);
-        assertEquals(Map.of(OnHitSkillEffect.NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT, 60f,
-                OnHitSkillEffect.NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT, ChartGenContext.ENEMY_ENERGY_CHAIN_FALLOFF_PERCENT), context.enemyShipEffects());
+        assertEquals(Set.of("energy_chain_1"), context.enemyGrantedNodeIds());
         assertFalse(ChartGenContext.none().twinnedBoss());
         assertTrue(ChartGenContext.none().bannedCombatHullSizes().isEmpty());
         assertFalse(ChartGenContext.none().shipSystemsDisabled());

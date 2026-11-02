@@ -87,11 +87,32 @@ public final class ShipTrees {
         data.grantFreeNodeIds().add(nodeId);
     }
 
+    public static void allocateFleetGrant(ShipSkillData data, SkillNode node) {
+        allocateGranted(data, node);
+        data.fleetGrantNodeIds().add(node.getId());
+    }
+
+    public static boolean isFleetGrantable(SkillNode node) {
+        SkillTier tier = node.getType().getTier();
+        return !tier.isWormhole() && tier != SkillTier.ROOT && tier != SkillTier.SOCKET;
+    }
+
+    public static List<String> dropFleetGrants(ShipSkillData data) {
+        if (data.fleetGrantNodeIds == null || data.fleetGrantNodeIds.isEmpty()) {
+            return List.of();
+        }
+        data.fleetGrantNodeIds.clear();
+        return releaseUnreachable(data, SkillTree.topology(), resolveStartingRootId(data)).nodeIds();
+    }
+
     private static List<String> ungrantedFreeNodeIds(ShipSkillData data) {
         if (data.grantFreeNodeIds == null || data.grantFreeNodeIds.isEmpty()) {
             return List.of();
         }
         Set<String> granted = ShipTreeLinks.grantedNodeIds(data);
+        if (data.fleetGrantNodeIds != null) {
+            granted.addAll(data.fleetGrantNodeIds);
+        }
         if (data.socketedItems != null && data.dormantNodeIds != null) {
             NodeGrants.GrantLookup lookup = NodeGrants.lookup();
             data.socketedItems.forEach((socketId, itemId) -> {
@@ -129,7 +150,7 @@ public final class ShipTrees {
     }
 
     public static Set<String> grantOnlyNodeIds(ShipSkillData data, SkillTreeTopology topology, String satisfiedRootId) {
-        if (ShipTreeLinks.grantedNodesBySocket(data).isEmpty()) {
+        if (ShipTreeLinks.grantedNodesBySocket(data).isEmpty() && (data.fleetGrantNodeIds == null || data.fleetGrantNodeIds.isEmpty())) {
             return Set.of();
         }
         Set<String> pathReached = pathReachableAllocatedNodeIds(data, topology, satisfiedRootId, Set.of());
@@ -193,6 +214,7 @@ public final class ShipTrees {
             copy.optionalSelections.putAll(data.optionalSelections);
         }
         copy.grantFreeNodeIds = data.grantFreeNodeIds == null ? null : new LinkedHashSet<>(data.grantFreeNodeIds);
+        copy.fleetGrantNodeIds = data.fleetGrantNodeIds == null ? null : new LinkedHashSet<>(data.fleetGrantNodeIds);
         copy.replacementAllocatedNodeIds = data.replacementAllocatedNodeIds == null ? null : new LinkedHashSet<>(data.replacementAllocatedNodeIds);
         copy.mirrorSocketedItems(data);
         return copy;
@@ -551,6 +573,9 @@ public final class ShipTrees {
         if (data.grantFreeNodeIds != null) {
             data.grantFreeNodeIds.clear();
         }
+        if (data.fleetGrantNodeIds != null) {
+            data.fleetGrantNodeIds.clear();
+        }
         if (data.optionalSelections != null) {
             data.optionalSelections.clear();
         }
@@ -619,6 +644,13 @@ public final class ShipTrees {
             for (String grantedNodeId : grantLink.getValue()) {
                 if (data.isAllocated(grantedNodeId) && !excludedNodeIds.contains(grantedNodeId) && topology.node(grantedNodeId) != null) {
                     granted.add(grantedNodeId);
+                }
+            }
+        }
+        if (data.fleetGrantNodeIds != null) {
+            for (String fleetGrantedId : data.fleetGrantNodeIds) {
+                if (data.isAllocated(fleetGrantedId) && !excludedNodeIds.contains(fleetGrantedId) && topology.node(fleetGrantedId) != null) {
+                    granted.add(fleetGrantedId);
                 }
             }
         }

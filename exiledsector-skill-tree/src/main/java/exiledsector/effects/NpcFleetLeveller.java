@@ -59,6 +59,7 @@ public final class NpcFleetLeveller {
         float chartTreeShare = chartRange == null || !MasterSchematic.required() ? 1f : chartRange.treeShare();
         NpcLevelLimit levelLimit = null;
         String chartSeed = LootSources.levelSeed(npcFleet.getMemoryWithoutUpdate());
+        List<String> grantedNodeIds = LootSources.grantedNodeIds(npcFleet.getMemoryWithoutUpdate());
         List<FleetMemberAPI> members = npcFleet.getFleetData().getMembersListCopy();
         for (int memberIndex = 0; memberIndex < members.size(); memberIndex++) {
             FleetMemberAPI member = members.get(memberIndex);
@@ -79,7 +80,7 @@ public final class NpcFleetLeveller {
                 }
                 String memberSeedKey = chartSeed != null ? String.valueOf(memberIndex) : member.getId();
                 memberRecord = decide(member, playerShipPowers, chartLevels, chartTreeShare, levelLimit, fleetFactionId, factionRegion,
-                        Seeds.random(seedPrefix + memberSeedKey));
+                        grantedNodeIds, Seeds.random(seedPrefix + memberSeedKey));
                 recordsByMemberId.put(member.getId(), memberRecord);
             }
             if (NpcTreeRecords.isLevelled(memberRecord)) {
@@ -105,7 +106,7 @@ public final class NpcFleetLeveller {
     }
 
     static String decide(FleetMemberAPI member, List<Integer> playerShipPowers, NpcNodeRange chartLevels, float chartTreeShare,
-                         NpcLevelLimit levelLimit, String fleetFactionId, String factionRegion, Random random) {
+                         NpcLevelLimit levelLimit, String fleetFactionId, String factionRegion, List<String> grantedNodeIds, Random random) {
         if (!NpcShipSelector.isCandidate(member) || !NpcShipSelector.isChosen(member, random)) {
             return NpcTreeRecords.NOT_LEVELLED;
         }
@@ -124,7 +125,7 @@ public final class NpcFleetLeveller {
         NpcTreeBuild treeBuild = NpcSkillTreeBuilder.generate(new NpcBuildRequest(shipProfile, designType, factionRegion, hullMods,
                 NpcFreedOp.of(member, hullMods), nodeCount, NpcItems.anchorFor(factionRegion), SkillTypeUnlockStatus.lockedFor(null),
                 member.getHullSpec().getHullId(), NpcFocus.of(fleetFactionId, member.getHullSpec().getShipSystemId(),
-                member.getHullSpec().getShipDefenseId())), random);
+                member.getHullSpec().getShipDefenseId()), grantedNodeIds), random);
         return NpcTreeTag.encode(treeBuild.shipData());
     }
 

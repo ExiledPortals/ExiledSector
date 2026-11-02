@@ -19,8 +19,6 @@ import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierSlot;
 import exiledsector.modifiers.ScaleContext;
 import exiledsector.modifiers.TierGroup;
-import exiledsector.skills.skilleffect.SkillEffect;
-import exiledsector.skills.skilleffect.onhit.OnHitSkillEffect;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -28,6 +26,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -40,7 +39,6 @@ public final class ChartGenContext {
     static final float MAX_SENSOR_RANGE_MULT = 2f;
     public static final float PERCENT = 100f;
     static final float QUANTITY_PERCENT_PER_QUALITY = 1f;
-    static final float ENEMY_ENERGY_CHAIN_FALLOFF_PERCENT = 20f;
     static final Map<TierGroup, Float> QUANTITY_PERCENT_PER_PREFIX = Map.of(TierGroup.LOW, 5f, TierGroup.MID, 15f, TierGroup.HIGH, 25f);
     private static final Logger LOG = Logger.getLogger(ChartGenContext.class);
     private static final Set<String> REPORTED_UNRESOLVED_ROLLS = ConcurrentHashMap.newKeySet();
@@ -68,7 +66,7 @@ public final class ChartGenContext {
     private boolean autopilotForced;
     private float arcStrikeEmp;
     private float damagePercentPerSMod;
-    private final Map<SkillEffect, Float> enemyShipEffects = new LinkedHashMap<>();
+    private final Set<String> enemyGrantedNodeIds = new LinkedHashSet<>();
     private float battleSizeBonus;
     private float quantityPercent;
     private final Map<ChartPoi.Kind, Float> siteBudgetPercents = new EnumMap<>(ChartPoi.Kind.class);
@@ -259,17 +257,12 @@ public final class ChartGenContext {
         return damagePercentPerSMod;
     }
 
-    public void addEnemyShipEffect(SkillEffect effect, float magnitude) {
-        enemyShipEffects.merge(effect, magnitude, Float::sum);
+    public void grantEnemyNode(String nodeId) {
+        enemyGrantedNodeIds.add(nodeId);
     }
 
-    public void addEnemyEnergyChainChance(float chancePercent) {
-        addEnemyShipEffect(OnHitSkillEffect.NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT, chancePercent);
-        enemyShipEffects.put(OnHitSkillEffect.NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT, ENEMY_ENERGY_CHAIN_FALLOFF_PERCENT);
-    }
-
-    public Map<SkillEffect, Float> enemyShipEffects() {
-        return Collections.unmodifiableMap(enemyShipEffects);
+    public Set<String> enemyGrantedNodeIds() {
+        return Collections.unmodifiableSet(enemyGrantedNodeIds);
     }
 
     public void addBattleSizeBonus(float value) {
@@ -582,12 +575,12 @@ public final class ChartGenContext {
         return factionText + String.format(Locale.ROOT, "fleet size %+.0f%%, %+d rolled fleet(s), %+d added fleet(s), %+d officer level(s), %+d officer(s), boss size %+.0f%%, "
                         + "fleet quality %+.0f%%, site budgets %s, %+d point(s) of interest, item drops %+.0f%%, item rarity %+.0f%%, drop types %s, "
                         + "boss spoils x%.2f, reward x%.2f, sensor range x%.2f, chart quality %d, anomalies %s, twinned boss %b, "
-                        + "barred combat hulls %s, ship systems disabled %b, autopilot forced %b, arc strike EMP %.0f, damage per S-mod %+.0f%%",
+                        + "barred combat hulls %s, ship systems disabled %b, autopilot forced %b, arc strike EMP %.0f, damage per S-mod %+.0f%%, enemy node grants %s",
                 fleetSizePercent, baseFleets, extraFleets, officerLevelBonus, extraOfficers, bossSizePercent,
                 fleetQualityPercent, siteBudgetText(), extraPois(), itemPercent, itemRarityPercent, describeDropPercents(), bossSpoilsMult(), rewardMult(),
                 sensorRangeMult(), quality, forcedAnomalies.isEmpty() ? "none" : forcedAnomalies.toString(), twinnedBoss,
                 bannedCombatHullSizes.isEmpty() ? "none" : bannedCombatHullSizes.toString(), shipSystemsDisabled, autopilotForced, arcStrikeEmp(),
-                damagePercentPerSMod);
+                damagePercentPerSMod, enemyGrantedNodeIds.isEmpty() ? "none" : enemyGrantedNodeIds.toString());
     }
 
     private String describeDropPercents() {
