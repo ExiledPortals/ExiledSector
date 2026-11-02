@@ -89,7 +89,7 @@ One place decides a run's anomalies. When a run opens, `ChartAnomalies.planned` 
 
 Marker icons, tooltip lines and intel come from `chart_anomalies.csv` columns, so the node drawer and the intel item need nothing per anomaly. Outer Reach Intel is the Tablet equivalent: one item type keyed by anomaly id, added at opening, which adds its anomaly to the run or strengthens one the node already has, stacking with intel of the same type. Intel drops only for anomalies that don't replace the star.
 
-Anomaly tuning, region effects and later atlas passives all reach a run as `ChartEffect` lines through `ChartGenContext`, next to the chart's own lines, so none of them needs a new pipeline.
+Anomaly tuning, region effects and later atlas passives all reach a run as `ChartModifier` lines through `ChartGenContext`, next to the chart's own lines, so none of them needs a new pipeline.
 
 ## Special sites
 

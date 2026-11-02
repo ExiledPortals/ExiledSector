@@ -52,11 +52,11 @@ class ChartBattlePluginTest {
 
     @AfterEach
     void tearDown() {
-        ChartFleetConditions.clear(null);
+        ChartPlayerModifiers.clear(null);
     }
 
     private ChartBattlePlugin startedPlugin(Map<ChartFleetStat, Float> mults) {
-        ChartFleetConditions.set(mults, null);
+        ChartPlayerModifiers.set(mults, null);
         ChartBattlePlugin plugin = new ChartBattlePlugin();
         plugin.init(engine);
         return plugin;
@@ -70,7 +70,7 @@ class ChartBattlePluginTest {
         when(objective.getOwner()).thenReturn(-1);
         when(objective.getBattleSizeFractionBonus()).thenReturn(0.1f);
         when(engine.getObjectives()).thenReturn(List.of(objective));
-        ChartFleetConditions.setBattleSizeBonus(-50);
+        ChartPlayerModifiers.setBattleSizeBonus(-50);
         ChartBattlePlugin plugin = startedPlugin(Map.of());
 
         try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
@@ -91,10 +91,10 @@ class ChartBattlePluginTest {
 
     @Test
     void battleSizeLinesShowTheirSign() {
-        assertTrue(ChartEffect.CHART_SMALLER_BATTLES_FLAT.description(30f).plain().contains("-30"));
-        assertTrue(ChartEffect.CHART_LARGER_BATTLES_FLAT.description(40f).plain().contains("+40"));
-        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_SMALLER_BATTLES_FLAT, 30f),
-                new AppliedEffect(ChartEffect.CHART_LARGER_BATTLES_FLAT, 45f)));
+        assertTrue(ChartModifier.CHART_SMALLER_BATTLES_FLAT.description(30f).plain().contains("-30"));
+        assertTrue(ChartModifier.CHART_LARGER_BATTLES_FLAT.description(40f).plain().contains("+40"));
+        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_SMALLER_BATTLES_FLAT, 30f),
+                new AppliedEffect(ChartModifier.CHART_LARGER_BATTLES_FLAT, 45f)));
         assertEquals(15, context.battleSizeBonus());
     }
 
@@ -136,7 +136,7 @@ class ChartBattlePluginTest {
         assertFalse(ChartBattlePlugin.hasBattleConditions());
         verify(engine, never()).getShips();
 
-        ChartFleetConditions.set(Map.of(ChartFleetStat.ENEMY_DEPLOYMENT_COST, 0.8f), null);
+        ChartPlayerModifiers.set(Map.of(ChartFleetStat.ENEMY_DEPLOYMENT_COST, 0.8f), null);
         when(engine.isSimulation()).thenReturn(true);
         ChartBattlePlugin simulation = new ChartBattlePlugin();
         simulation.init(engine);
@@ -147,7 +147,7 @@ class ChartBattlePluginTest {
 
     @Test
     void huntedGivesEveryChartFleetTheSensorBonusAtSpawn() {
-        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_ENEMY_SENSOR_RANGE_FLAT, 5000f)));
+        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_ENEMY_SENSOR_RANGE_FLAT, 5000f)));
         CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
         MutableFleetStatsAPI fleetStats = mock(MutableFleetStatsAPI.class);
         StatBonus sensorRange = new StatBonus();

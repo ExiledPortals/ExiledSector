@@ -44,9 +44,9 @@ class ChartEnemyShipEffectsTest {
     private static final float TOLERANCE = 0.0001f;
 
     private static ChartGenContext enemyRules() {
-        return ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_ENEMY_OBJECTIVE_CAPTURE_RATE_PERCENT, 50f),
-                new AppliedEffect(ChartEffect.CHART_ENEMY_KINETIC_DAMAGE_PERCENT, 20f),
-                new AppliedEffect(ChartEffect.CHART_TOP_SPEED_PERCENT, -20f)));
+        return ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_ENEMY_OBJECTIVE_CAPTURE_RATE_PERCENT, 50f),
+                new AppliedEffect(ChartModifier.CHART_ENEMY_KINETIC_DAMAGE_PERCENT, 20f),
+                new AppliedEffect(ChartModifier.CHART_TOP_SPEED_PERCENT, -20f)));
     }
 
     private static CampaignFleetAPI fleetWith(FleetMemberAPI... members) {
@@ -135,8 +135,8 @@ class ChartEnemyShipEffectsTest {
         when(variant.getSource()).thenReturn(VariantSource.REFIT);
         FleetMemberAPI member = memberWith(variant);
         CampaignFleetAPI fleet = fleetWith(member);
-        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_ENEMY_FREEBOOTERS_CHARGE, 1f),
-                new AppliedEffect(ChartEffect.CHART_ENEMY_HULLBREACHER_ROUNDS, 1f), new AppliedEffect(ChartEffect.CHART_ENEMY_KINETIC_DAMAGE_PERCENT, 20f)));
+        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_ENEMY_FREEBOOTERS_CHARGE, 1f),
+                new AppliedEffect(ChartModifier.CHART_ENEMY_HULLBREACHER_ROUNDS, 1f), new AppliedEffect(ChartModifier.CHART_ENEMY_KINETIC_DAMAGE_PERCENT, 20f)));
 
         ChartEnemyShipEffects.grant(fleet, context);
 
@@ -202,11 +202,11 @@ class ChartEnemyShipEffectsTest {
         DamageAPI kinetic = damageOf(DamageType.KINETIC);
         DamageAPI energy = damageOf(DamageType.ENERGY);
 
-        assertEquals(ChartFleetConditions.MOD_ID, listener.modifyDamageDealt(null, null, kinetic, null, false));
+        assertEquals(ChartPlayerModifiers.MOD_ID, listener.modifyDamageDealt(null, null, kinetic, null, false));
         assertNull(listener.modifyDamageDealt(null, null, energy, null, true));
 
-        assertEquals(1.2f, kinetic.getModifier().getMultStatMod(ChartFleetConditions.MOD_ID).getValue(), TOLERANCE);
-        assertNull(energy.getModifier().getMultStatMod(ChartFleetConditions.MOD_ID));
+        assertEquals(1.2f, kinetic.getModifier().getMultStatMod(ChartPlayerModifiers.MOD_ID).getValue(), TOLERANCE);
+        assertNull(energy.getModifier().getMultStatMod(ChartPlayerModifiers.MOD_ID));
         assertNull(ChartEnemyDamageListener.of(Map.of(ChartFleetStat.ENEMY_OBJECTIVE_CAPTURE_RATE, 1.5f)));
     }
 

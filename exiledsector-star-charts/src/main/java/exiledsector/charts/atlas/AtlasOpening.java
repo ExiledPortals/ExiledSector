@@ -37,7 +37,7 @@ public final class AtlasOpening {
         public String reasonKey() {
             String key = "chart.atlas.blocked." + name().toLowerCase(Locale.ROOT);
             if (this == GATEWAY_TIER_LIMIT) {
-                return key + (GatewayTierLimit.maxTier(Global.getSector()) < GatewayTierLimit.ADVANCED_MAX_TIER ? ".advanced" : ".perfected");
+                return key + (GatewayTierLimit.maxTier(Global.getSector()) < GatewayTierLimit.ARRAY_MAX_TIER ? ".advanced" : ".perfected");
             }
             return key;
         }

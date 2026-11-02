@@ -12,7 +12,7 @@ import com.fs.starfarer.api.util.MutableValue;
 import exiledsector.MockSector;
 import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.content.ChartContent;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
@@ -264,8 +264,8 @@ class ChartDropsTest {
 
     @Test
     void theCatalystModifierScalesOnlyCatalystsAndTheQuantityLinesScaleThemToo() {
-        ChartGenContext catalysts = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_CATALYST_PERCENT, 50f)));
-        ChartGenContext quantity = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, 20f)));
+        ChartGenContext catalysts = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_CATALYST_PERCENT, 50f)));
+        ChartGenContext quantity = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, 20f)));
 
         assertEquals(new ChartDrops.Mults(1f, 1f, 1.5f), ChartDrops.Mults.of(catalysts, 1f));
         assertEquals(2.4f, ChartDrops.Mults.of(quantity, 2f).catalyst(), 0.0001f);

@@ -12,7 +12,7 @@ import exiledsector.charts.anomaly.LayoutShaper;
 import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.RunFactionDress;
 import exiledsector.charts.anomaly.RunParticipant;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.atlas.AtlasTraits;
 import exiledsector.charts.content.ChartAnomalyFleets;
 import exiledsector.i18n.Translation;
@@ -26,9 +26,9 @@ import java.util.Set;
 public final class SupplyConvoy implements LayoutShaper, ContentPlacer, RunParticipant, LootShaper, AtlasRule {
 
     public static final String ANOMALY_ID = "supply_convoy";
-    public static final String CARGO_KEY = ChartEffect.CHART_CONVOY_CARGO_PERCENT.anomalyTuningKey();
-    public static final String ESCORT_KEY = ChartEffect.CHART_CONVOY_ESCORT_PERCENT.anomalyTuningKey();
-    public static final String EXTRA_KEY = ChartEffect.CHART_EXTRA_CONVOYS.anomalyTuningKey();
+    public static final String CARGO_KEY = ChartModifier.CHART_CONVOY_CARGO_PERCENT.anomalyTuningKey();
+    public static final String ESCORT_KEY = ChartModifier.CHART_CONVOY_ESCORT_PERCENT.anomalyTuningKey();
+    public static final String EXTRA_KEY = ChartModifier.CHART_EXTRA_CONVOYS.anomalyTuningKey();
     public static final String CONVOY_MEMORY_KEY = "$exiledSector_chartConvoy";
     public static final SupplyConvoy INSTANCE = new SupplyConvoy();
     static final int MIN_PLANETS = 3;

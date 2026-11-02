@@ -591,7 +591,7 @@ Either kind is detected by the player from anywhere in the system, so it always 
 ### Chart system rules
 
 The chart's player-side lines are set once on entering the system (`ChartRunScript`) and reach the player's ships at
-ship creation (`ChartFleetConditions`). Each hostile chart fleet is granted the enemy-side lines when it is generated: they
+ship creation (`ChartPlayerModifiers`). Each hostile chart fleet is granted the enemy-side lines when it is generated: they
 are stored on the fleet and the hidden hull mod is added to its ships, again after each inflation
 (`ChartEnemyInflationListener`), which then apply them as granted nodes, stats and
 damage listeners at ship creation (`ChartEnemyShipEffects`). Only battle size and command point rate are battle rules
@@ -717,7 +717,7 @@ detected-range multiplier hides each one until the player fleet comes within 600
 no reputation change and an AI that holds its field (`DormantFleets.wake`), then hands over to vanilla's encounter.
 Corrupting first spends a Corrupted Nanoswarm and rebuilds the fleet stronger, and the first engagement won against it
 drops an engram (`DormantFleetLoot`). An engram rerolls a non-unique hull item with four modifiers, one always its own
-from the reserved pool that no other roll draws from (`AnomalousDebrisCurrency`, core `ReservedModifiers`). An immutable
+from the reserved pool that no other roll draws from (`Engram`, core `ReservedModifiers`). An immutable
 modifier and an inhibited side's modifiers are kept, and the reroll fills up to two per side and four in total around them.
 Crafting that rerolls values (Tuning Nanoswarm, corruption) finds the reserved modifier through `Item.explicitModifier`.
 

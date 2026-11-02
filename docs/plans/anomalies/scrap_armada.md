@@ -41,5 +41,5 @@ The anomaly's `effects` column also carries an existing loot line, more feedstoc
 
 1. [ ] `ScrapArmada`, its insertable `chart_anomalies.csv` row and atlas marker icon (placeholder).
 2. [ ] The d-mod top-up in the generation and inflation path, with the count rule in a static helper for tests.
-3. [ ] The enemy-side lines (`CHART_ENEMY_DMOD_DEPLOYMENT_COST_PERCENT`, `CHART_ENEMY_DMOD_HULL_DAMAGE_CHANCE_PERCENT`, `CHART_ENEMY_DMOD_MAX_CR_PERCENT`, `CHART_ENEMY_DMOD_RESIDUAL_ARMOR_PERCENT`, each per d-mod) in `ChartEffect`, applied through `ChartEnemyShipEffects`, and the hull damage listener.
+3. [ ] The enemy-side lines (`CHART_ENEMY_DMOD_DEPLOYMENT_COST_PERCENT`, `CHART_ENEMY_DMOD_HULL_DAMAGE_CHANCE_PERCENT`, `CHART_ENEMY_DMOD_MAX_CR_PERCENT`, `CHART_ENEMY_DMOD_RESIDUAL_ARMOR_PERCENT`, each per d-mod) in `ChartModifier`, applied through `ChartEnemyShipEffects`, and the hull damage listener.
 4. [ ] Strings (en and zh_CN draft) following `docs/tooltip_wording.md`, for example "Enemy ships have 5 d-mods" and "Enemy ships have a 15% chance per d-mod to take 90% less hull damage from a hit"; the `overview.md` table row; the `docs/docs.md` section; tests for the compounding DP, the shieldless check and the damage roll.

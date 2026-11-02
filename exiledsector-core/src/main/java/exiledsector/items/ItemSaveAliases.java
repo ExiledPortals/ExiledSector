@@ -16,7 +16,8 @@ public final class ItemSaveAliases {
             "exiledSector.FrozenName", FrozenName.class,
             "exiledSector.RolledModifier", RolledModifier.class,
             "exiledSector.ModifierSlot", ModifierSlot.class);
-    static final List<FieldAlias> FIELD_ALIASES = List.of(new FieldAlias("locked", RolledModifier.class, "immutable"));
+    static final List<FieldAlias> FIELD_ALIASES = List.of(new FieldAlias("locked", RolledModifier.class, "immutable"),
+            new FieldAlias("chartQuality", UnresolvedItem.class, "chartQuantity"));
 
     record FieldAlias(String savedName, Class<?> definedIn, String fieldName) {
     }

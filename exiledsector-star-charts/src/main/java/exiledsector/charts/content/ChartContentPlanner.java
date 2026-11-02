@@ -88,7 +88,7 @@ public final class ChartContentPlanner {
     static PlannedStation plannedStation(ChartTier tier, String variantId, List<PlannedFleet> plannedFleets) {
         int guardedPoi = NO_POI;
         for (PlannedFleet planned : plannedFleets) {
-            if (planned.role() == FleetRole.DEFENDER) {
+            if (planned.role() == FleetRole.STATION_GUARD) {
                 guardedPoi = planned.poiIndex();
             }
         }
@@ -221,7 +221,7 @@ public final class ChartContentPlanner {
         float fleetShare = definition == null ? 1f : definition.fleetShare();
         float bossSize = Math.max(MIN_FLEET_SIZE, tier.bossSize() * fleetShare);
         float bossQuality = bossQuality(fleetQuality);
-        FleetRole role = bossType == ChartBossType.STATION ? FleetRole.DEFENDER : FleetRole.BOSS;
+        FleetRole role = bossType == ChartBossType.STATION ? FleetRole.STATION_GUARD : FleetRole.BOSS;
         return new PlannedFleet(role, targetPoi, ChartTier.fleetPoints(Math.min(BOSS_SIZE_CAP, bossSize)),
                 bossQuality / ChartTier.PERCENT,
                 tier.officerLevelBonus() + BOSS_OFFICER_LEVEL_BONUS, tier.officerCountBonus() + BOSS_OFFICER_COUNT_BONUS,

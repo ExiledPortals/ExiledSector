@@ -22,8 +22,8 @@ public final class StarChart extends Item {
     public static final int LOWEST_TIER = ItemTraits.LOWEST_TIER;
     public static final int HIGHEST_TIER = ItemTraits.HIGHEST_TIER;
     public static final int CORRUPTED_TIER = HIGHEST_TIER + 1;
-    public static final int LOWEST_QUALITY = 0;
-    public static final int HIGHEST_QUALITY = 20;
+    public static final int LOWEST_QUANTITY = 0;
+    public static final int HIGHEST_QUANTITY = 20;
     static final String LOW_TIER_ICON = "graphics/icons/star_charts/star_chart_white.png";
     static final String HIGH_TIER_ICON = "graphics/icons/star_charts/star_chart_red.png";
     private static final int LAST_LOW_TIER = 5;
@@ -83,7 +83,7 @@ public final class StarChart extends Item {
     private static volatile Function<StarChart, List<StyledText>> lootTotals = chart -> List.of();
 
     private int tier = LOWEST_TIER;
-    private int quality;
+    private int quantity;
 
     StarChart(String id, String definitionId, long seed, List<RolledModifier> explicitModifiers) {
         super(id, definitionId, seed, explicitModifiers);
@@ -93,10 +93,10 @@ public final class StarChart extends Item {
         super(source);
         if (source instanceof StarChart chart) {
             tier = chart.tier;
-            quality = chart.quality;
+            quantity = chart.quantity;
         } else if (source instanceof UnresolvedItem unresolved) {
             tier = unresolved.chartTier(LOWEST_TIER);
-            quality = unresolved.chartQuality(LOWEST_QUALITY);
+            quantity = unresolved.chartQuantity(LOWEST_QUANTITY);
         }
     }
 
@@ -104,13 +104,13 @@ public final class StarChart extends Item {
         return Math.max(LOWEST_TIER, Math.min(CORRUPTED_TIER, tier));
     }
 
-    public static int clampQuality(int quality) {
-        return Math.max(LOWEST_QUALITY, Math.min(HIGHEST_QUALITY, quality));
+    public static int clampQuantity(int quantity) {
+        return Math.max(LOWEST_QUANTITY, Math.min(HIGHEST_QUANTITY, quantity));
     }
 
     @Override
     public void keepWhenUnresolved(UnresolvedItem unresolved) {
-        unresolved.keepChart(tier(), quality());
+        unresolved.keepChart(tier(), quantity());
     }
 
     @Override
@@ -140,8 +140,8 @@ public final class StarChart extends Item {
         return super.iconPath();
     }
 
-    public int quality() {
-        return clampQuality(quality);
+    public int quantity() {
+        return clampQuantity(quantity);
     }
 
     public String systemType() {
@@ -152,21 +152,21 @@ public final class StarChart extends Item {
     public void applyTraits(ItemTraits traits) {
         super.applyTraits(traits);
         tier = StarChartDefinitions.tierAtLeastMinimum(definitionId(), traits.tier());
-        quality = clampQuality(traits.quality());
+        quantity = clampQuantity(traits.quantity());
     }
 
     @Override
     public void copyTraitsFrom(Item source) {
         if (source instanceof StarChart chart) {
             tier = chart.tier();
-            quality = chart.quality();
+            quantity = chart.quantity();
         }
     }
 
     @Override
     public ItemTraits traits() {
         List<RolledModifier> currentImplicits = implicits();
-        return new ItemTraits(tier(), quality(), corruption(), currentImplicits.isEmpty() ? null : currentImplicits, mirrored());
+        return new ItemTraits(tier(), quantity(), corruption(), currentImplicits.isEmpty() ? null : currentImplicits, mirrored());
     }
 
     @Override
@@ -242,8 +242,8 @@ public final class StarChart extends Item {
     public List<StyledText> headerLines() {
         List<StyledText> lines = new ArrayList<>();
         lines.add(Translation.msg("chart.item.tier").arg("tier", tier()).arg("systemType", systemTypeName(systemType())).styled());
-        if (quality() > 0) {
-            lines.add(Translation.msg("chart.item.quality").arg("quality", quality()).styled());
+        if (quantity() > 0) {
+            lines.add(Translation.msg("chart.item.quantity").arg("quantity", quantity()).styled());
         }
         lines.addAll(super.headerLines());
         return lines;

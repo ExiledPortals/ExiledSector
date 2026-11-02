@@ -10,7 +10,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Abilities;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.effect.ChartFleetConditions;
+import exiledsector.charts.effect.ChartPlayerModifiers;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.objective.ChartObjectives;
 import exiledsector.charts.run.cleanup.ChartLoadSweep;
@@ -168,7 +168,7 @@ public class ChartRunScript implements EveryFrameScript {
     }
 
     private boolean hasEffectsToLift() {
-        return effectsApplied || ChartFleetConditions.isActive();
+        return effectsApplied || ChartPlayerModifiers.isActive();
     }
 
     private void liftRunEffects(CampaignFleetAPI playerFleet) {
@@ -179,7 +179,7 @@ public class ChartRunScript implements EveryFrameScript {
 
     private String sensorSource() {
         if (sensorSourceText == null) {
-            sensorSourceText = Translation.gameText("chart.effect.sensorSource");
+            sensorSourceText = Translation.gameText("chart.modifier.sensorSource");
         }
         return sensorSourceText;
     }

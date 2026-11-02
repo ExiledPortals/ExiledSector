@@ -11,7 +11,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ContentPlacer;
@@ -32,8 +32,8 @@ import java.util.Random;
 public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunParticipant, LootShaper {
 
     public static final String ANOMALY_ID = "excavation_sites";
-    public static final String EXTRA_KEY = ChartEffect.CHART_EXTRA_EXCAVATION_SITES.anomalyTuningKey();
-    public static final String LOOT_KEY = ChartEffect.CHART_EXCAVATION_LOOT_QUANTITY_PERCENT.anomalyTuningKey();
+    public static final String EXTRA_KEY = ChartModifier.CHART_EXTRA_EXCAVATION_SITES.anomalyTuningKey();
+    public static final String LOOT_KEY = ChartModifier.CHART_EXCAVATION_LOOT_QUANTITY_PERCENT.anomalyTuningKey();
     public static final ExcavationSites INSTANCE = new ExcavationSites();
     static final long PLACEMENT_SALT = 0x45584341564154L;
     private static final Logger LOG = Logger.getLogger(ExcavationSites.class);

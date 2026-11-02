@@ -13,7 +13,7 @@ import exiledsector.effects.SkillTreeHullMod;
 import java.util.EnumMap;
 import java.util.Map;
 
-public final class ChartFleetConditions {
+public final class ChartPlayerModifiers {
 
     public static final String MOD_ID = ChartIds.PREFIX + "fleet_conditions";
 
@@ -26,7 +26,7 @@ public final class ChartFleetConditions {
     private static float weaponMisfireRate;
     private static float damagePercentPerSMod;
 
-    private ChartFleetConditions() {
+    private ChartPlayerModifiers() {
     }
 
     public static Map<ChartFleetStat, Float> active() {

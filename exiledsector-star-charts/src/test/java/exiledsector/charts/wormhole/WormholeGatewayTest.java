@@ -51,7 +51,7 @@ class WormholeGatewayTest {
         for (String industryId : WormholeGateway.INDUSTRY_IDS) {
             IndustrySpecAPI spec = mock(IndustrySpecAPI.class);
             when(spec.getId()).thenReturn(industryId);
-            when(spec.getUpgrade()).thenReturn(WormholeGateway.PERFECTED_INDUSTRY_ID.equals(industryId) ? null : "next");
+            when(spec.getUpgrade()).thenReturn(WormholeGateway.NEXUS_INDUSTRY_ID.equals(industryId) ? null : "next");
             when(settings.getIndustrySpec(industryId)).thenReturn(spec);
         }
         when(settings.getModManager()).thenReturn(modManager);
@@ -93,8 +93,8 @@ class WormholeGatewayTest {
     private static MockedStatic<VaultsOfKnowledgeCompat> vaults(boolean advanced, boolean perfected) {
         MockedStatic<VaultsOfKnowledgeCompat> compat = Mockito.mockStatic(VaultsOfKnowledgeCompat.class, Mockito.CALLS_REAL_METHODS);
         compat.when(VaultsOfKnowledgeCompat::isModEnabled).thenReturn(true);
-        compat.when(() -> VaultsOfKnowledgeCompat.isResearchedForPlayer(VaultsOfKnowledgeCompat.GATEWAY_ADVANCED_RESEARCH_ID)).thenReturn(advanced);
-        compat.when(() -> VaultsOfKnowledgeCompat.isResearchedForPlayer(VaultsOfKnowledgeCompat.GATEWAY_PERFECTED_RESEARCH_ID)).thenReturn(perfected);
+        compat.when(() -> VaultsOfKnowledgeCompat.isResearchedForPlayer(VaultsOfKnowledgeCompat.GATEWAY_ARRAY_RESEARCH_ID)).thenReturn(advanced);
+        compat.when(() -> VaultsOfKnowledgeCompat.isResearchedForPlayer(VaultsOfKnowledgeCompat.GATEWAY_NEXUS_RESEARCH_ID)).thenReturn(perfected);
         return compat;
     }
 
@@ -199,15 +199,15 @@ class WormholeGatewayTest {
         MarketAPI colony = colony("Home");
         when(colony.hasIndustry(WormholeGateway.INDUSTRY_ID)).thenReturn(true);
         try (MockedStatic<VaultsOfKnowledgeCompat> ignored = vaults(false, false)) {
-            WormholeGateway advanced = gatewayOn(colony, WormholeGateway.ADVANCED_INDUSTRY_ID);
+            WormholeGateway advanced = gatewayOn(colony, WormholeGateway.ARRAY_INDUSTRY_ID);
             assertFalse(advanced.isAvailableToBuild());
             assertEquals("Requires the Gateway Array research.", advanced.getUnavailableReason());
         }
         try (MockedStatic<VaultsOfKnowledgeCompat> ignored = vaults(true, true)) {
-            assertTrue(gatewayOn(colony, WormholeGateway.ADVANCED_INDUSTRY_ID).isAvailableToBuild());
-            assertFalse(gatewayOn(colony, WormholeGateway.PERFECTED_INDUSTRY_ID).isAvailableToBuild());
-            when(colony.hasIndustry(WormholeGateway.ADVANCED_INDUSTRY_ID)).thenReturn(true);
-            assertTrue(gatewayOn(colony, WormholeGateway.PERFECTED_INDUSTRY_ID).isAvailableToBuild());
+            assertTrue(gatewayOn(colony, WormholeGateway.ARRAY_INDUSTRY_ID).isAvailableToBuild());
+            assertFalse(gatewayOn(colony, WormholeGateway.NEXUS_INDUSTRY_ID).isAvailableToBuild());
+            when(colony.hasIndustry(WormholeGateway.ARRAY_INDUSTRY_ID)).thenReturn(true);
+            assertTrue(gatewayOn(colony, WormholeGateway.NEXUS_INDUSTRY_ID).isAvailableToBuild());
         }
     }
 
@@ -218,22 +218,22 @@ class WormholeGatewayTest {
         assertFalse(gatewayOn(colony).canUpgrade());
         try (MockedStatic<VaultsOfKnowledgeCompat> ignored = vaults(true, true)) {
             assertTrue(gatewayOn(colony).canUpgrade());
-            assertTrue(gatewayOn(colony, WormholeGateway.ADVANCED_INDUSTRY_ID).canUpgrade());
-            assertFalse(gatewayOn(colony, WormholeGateway.PERFECTED_INDUSTRY_ID).canUpgrade());
+            assertTrue(gatewayOn(colony, WormholeGateway.ARRAY_INDUSTRY_ID).canUpgrade());
+            assertFalse(gatewayOn(colony, WormholeGateway.NEXUS_INDUSTRY_ID).canUpgrade());
         }
     }
 
     @Test
     void anUpgradedGatewayStillCountsAsTheFactionsGateway() {
         MarketAPI first = colony("Home");
-        when(first.hasIndustry(WormholeGateway.PERFECTED_INDUSTRY_ID)).thenReturn(true);
+        when(first.hasIndustry(WormholeGateway.NEXUS_INDUSTRY_ID)).thenReturn(true);
         when(first.isPlayerOwned()).thenReturn(true);
         Industry perfected = mock(Industry.class);
-        when(perfected.getId()).thenReturn(WormholeGateway.PERFECTED_INDUSTRY_ID);
-        when(first.getIndustry(WormholeGateway.PERFECTED_INDUSTRY_ID)).thenReturn(perfected);
+        when(perfected.getId()).thenReturn(WormholeGateway.NEXUS_INDUSTRY_ID);
+        when(first.getIndustry(WormholeGateway.NEXUS_INDUSTRY_ID)).thenReturn(perfected);
 
         assertFalse(gatewayOn(colony("Outpost")).isAvailableToBuild());
-        assertEquals(WormholeGateway.PERFECTED_INDUSTRY_ID, WormholeGateway.playerGatewayId(mockSector.sector));
+        assertEquals(WormholeGateway.NEXUS_INDUSTRY_ID, WormholeGateway.playerGatewayId(mockSector.sector));
     }
 
     @Test

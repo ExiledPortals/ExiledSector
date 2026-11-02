@@ -8,7 +8,7 @@ import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.layout.abyss.AbyssArt;
 import exiledsector.charts.effect.ChartEnemyInflationListener;
 import exiledsector.charts.effect.ChartEnemyShipEffects;
-import exiledsector.charts.effect.ChartFleetConditionSource;
+import exiledsector.charts.effect.ChartPlayerModifierSource;
 import exiledsector.charts.loot.StarChartLootSource;
 import exiledsector.charts.objective.GatewayUpgradeRewards;
 import exiledsector.charts.run.ChartRuns;
@@ -24,7 +24,7 @@ import exiledsector.effects.ShipEffectSource;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.SpecLocalisation;
 import exiledsector.i18n.Translation;
-import exiledsector.items.AnomalousDebrisCurrencies;
+import exiledsector.items.Engrams;
 import exiledsector.items.AtlasCatalystItems;
 import exiledsector.items.ItemCurrency;
 import exiledsector.items.ItemDataRules;
@@ -57,7 +57,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public List<ShipEffectSource> shipEffectSources() {
-        return List.of(ChartFleetConditionSource.INSTANCE, ChartEnemyShipEffects.INSTANCE);
+        return List.of(ChartPlayerModifierSource.INSTANCE, ChartEnemyShipEffects.INSTANCE);
     }
 
     @Override
@@ -121,9 +121,9 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     @Override
     public void loadItems() {
         StarChartItems.load();
-        AnomalousDebrisCurrencies.load();
+        Engrams.load();
         ChartAnomalies.all().forEach(ChartAnomaly::loadItems);
-        I18n.forGameText(AnomalousDebrisCurrencies::localise);
+        I18n.forGameText(Engrams::localise);
         I18n.forGameText(AtlasCatalystItems::localise);
         I18n.forGameText(WormholeTechItems::localise);
     }
@@ -161,7 +161,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public List<ItemCurrency> hullCraftingBenchCurrencies() {
-        return List.copyOf(AnomalousDebrisCurrencies.all());
+        return List.copyOf(Engrams.all());
     }
 
     @Override

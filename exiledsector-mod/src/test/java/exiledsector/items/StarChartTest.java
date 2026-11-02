@@ -12,7 +12,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.RealSkillData;
 import exiledsector.skills.skilleffect.SkillEffect;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
@@ -309,7 +309,7 @@ class StarChartTest {
 
         assertTrue(encoded.contains("\"t\":6") && encoded.contains("\"q\":12") && encoded.contains("\"c\":\"VALUES_RANDOMISED\""), encoded);
         assertEquals(6, restored.tier());
-        assertEquals(12, restored.quality());
+        assertEquals(12, restored.quantity());
         assertEquals(CorruptionOutcome.VALUES_RANDOMISED, restored.corruption());
         assertEquals(chart.explicits(), restored.explicits());
         assertEquals(chart.implicits(), restored.implicits());
@@ -458,8 +458,8 @@ class StarChartTest {
     }
 
     @Test
-    void chartEffectNamesNeverOverlapSkillEffectNames() {
-        for (ChartEffect effect : ChartEffect.values()) {
+    void chartModifierNamesNeverOverlapSkillEffectNames() {
+        for (ChartModifier effect : ChartModifier.values()) {
             assertTrue(effect.name().startsWith("CHART_"), effect.name());
             assertThrows(IllegalArgumentException.class, () -> SkillEffect.byName(effect.name()), effect.name());
             assertSame(effect, ItemEffects.forType(ItemType.STAR_CHART).byName(effect.name()));
@@ -491,7 +491,7 @@ class StarChartTest {
                 StarChart chart = StarChartFixtures.chart(SINGLE, seed, tierAndPercent[0]);
                 long prefixes = chart.rolls().stream().filter(roll -> roll.slot() == ModifierSlot.PREFIX).count();
                 float quantity = ChartGenContext.from(chart).applied().stream()
-                        .filter(applied -> applied.effect() == ChartEffect.CHART_QUANTITY_PERCENT).map(AppliedEffect::value).reduce(0f, Float::sum);
+                        .filter(applied -> applied.effect() == ChartModifier.CHART_QUANTITY_PERCENT).map(AppliedEffect::value).reduce(0f, Float::sum);
 
                 assertEquals(prefixes * tierAndPercent[1], quantity, 1e-4f, "tier " + tierAndPercent[0] + " seed " + seed);
                 prefixCounts.add(prefixes);
@@ -508,8 +508,8 @@ class StarChartTest {
         ChartGenContext movedContext = ChartGenContext.from(moved);
 
         assertNull(moved.definition().poolEntryFor("CHART_BOSS_SIZE_PERCENT"));
-        assertTrue(movedContext.applied().contains(new AppliedEffect(ChartEffect.CHART_BOSS_SIZE_PERCENT, 540f)), movedContext.applied().toString());
-        assertTrue(movedContext.applied().contains(new AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, 25f)), movedContext.applied().toString());
+        assertTrue(movedContext.applied().contains(new AppliedEffect(ChartModifier.CHART_BOSS_SIZE_PERCENT, 540f)), movedContext.applied().toString());
+        assertTrue(movedContext.applied().contains(new AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, 25f)), movedContext.applied().toString());
         assertTrue(moved.effectLines().get(0).plain().contains("540%"), moved.effectLines().toString());
 
         List<RolledModifier> orphanExplicits = List.of(new RolledModifier("CHART_REMOVED_MODIFIER", ModifierSlot.SUFFIX,
@@ -518,7 +518,7 @@ class StarChartTest {
         ChartGenContext orphanContext = ChartGenContext.from(orphaned);
         List<String> orphanLines = orphaned.effectLines().stream().map(StyledText::plain).toList();
 
-        assertTrue(orphanContext.applied().stream().noneMatch(applied -> applied.effect() == ChartEffect.CHART_EXTRA_FLEETS),
+        assertTrue(orphanContext.applied().stream().noneMatch(applied -> applied.effect() == ChartModifier.CHART_EXTRA_FLEETS),
                 orphanContext.applied().toString());
         assertEquals(1, orphanLines.size(), orphanLines.toString());
         assertTrue(orphanLines.get(0).contains("Unreadable modifier"), orphanLines.toString());

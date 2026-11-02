@@ -11,7 +11,7 @@ import java.util.Locale;
 public record ChartFactionEffect(String factionId) implements ModifierEffect {
 
     public static final String NAME_PREFIX = "CHART_FACTION_";
-    static final String KEY = ChartEffect.KEY_PREFIX + "CHART_FACTION";
+    static final String KEY = ChartModifier.KEY_PREFIX + "CHART_FACTION";
 
     public static String effectName(String factionId) {
         return NAME_PREFIX + factionId.toUpperCase(Locale.ROOT);

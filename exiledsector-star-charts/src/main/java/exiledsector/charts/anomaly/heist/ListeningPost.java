@@ -4,7 +4,7 @@ import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.AtlasRule;
@@ -21,9 +21,9 @@ import java.util.Random;
 public final class ListeningPost implements AtlasRule, ContentPlacer, RunParticipant, LootShaper {
 
     public static final String ANOMALY_ID = "listening_post";
-    public static final String PICKETS_KEY = ChartEffect.CHART_LISTENING_POST_PICKETS.anomalyTuningKey();
-    public static final String LOOT_KEY = ChartEffect.CHART_LISTENING_POST_LOOT_QUANTITY_PERCENT.anomalyTuningKey();
-    public static final String PURGE_KEY = ChartEffect.CHART_LISTENING_POST_PURGE_PERCENT.anomalyTuningKey();
+    public static final String PICKETS_KEY = ChartModifier.CHART_LISTENING_POST_PICKETS.anomalyTuningKey();
+    public static final String LOOT_KEY = ChartModifier.CHART_LISTENING_POST_LOOT_QUANTITY_PERCENT.anomalyTuningKey();
+    public static final String PURGE_KEY = ChartModifier.CHART_LISTENING_POST_PURGE_PERCENT.anomalyTuningKey();
     public static final String ENTITY_TYPE = ChartIds.PREFIX + "listening_post";
     public static final String POST_TAG = ChartIds.PREFIX + "listening_post";
     public static final ListeningPost INSTANCE = new ListeningPost();

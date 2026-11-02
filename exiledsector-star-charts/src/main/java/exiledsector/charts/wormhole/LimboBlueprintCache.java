@@ -63,7 +63,7 @@ public final class LimboBlueprintCache {
         }
         MaterialItems.add(playerFleet.getCargo(), WormholeTechItems.BLUEPRINT, 1);
         sectorMemory.set(PLACED_FLAG, true);
-        CampaignMessages.plain(Translation.gameText("gatewayItem.blueprint.granted"), Misc.getPositiveHighlightColor());
+        CampaignMessages.plain(Translation.gameText("wormholeTech.blueprint.granted"), Misc.getPositiveHighlightColor());
         return Outcome.GRANTED;
     }
 

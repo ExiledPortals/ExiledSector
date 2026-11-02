@@ -5,7 +5,7 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
-import exiledsector.charts.effect.ChartFleetConditions;
+import exiledsector.charts.effect.ChartPlayerModifiers;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunBound;
@@ -55,7 +55,7 @@ public final class ChartLoadSweep {
         boolean insideRunSystem = playerFleet != null && system != null && run.runState().keepsRunEffects()
                 && playerFleet.getContainingLocation() == system;
         if (insideRunSystem) {
-            ChartFleetConditions.clear(playerFleet);
+            ChartPlayerModifiers.clear(playerFleet);
         } else {
             ChartRunEffects.lift(playerFleet);
         }

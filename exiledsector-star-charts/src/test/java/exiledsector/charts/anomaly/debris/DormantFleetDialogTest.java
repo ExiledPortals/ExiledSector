@@ -10,7 +10,7 @@ import exiledsector.MockSector;
 import exiledsector.charts.anomaly.LiveAnomalyRuns;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartCampaignPlugin;
-import exiledsector.items.AnomalousDebrisCurrencies;
+import exiledsector.items.Engrams;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemModifiers;
 import exiledsector.items.ReservedModifiers;
@@ -43,13 +43,13 @@ class DormantFleetDialogTest {
     void setUp() throws Exception {
         ItemModifiers.register(new JSONArray().put(new JSONObject().put("id", "HULL_PERCENT_ANOMALOUS_DEBRIS").put("affix", "prefix")
                 .put("scopes", "hull_item").put("lines", "HULL_PERCENT:15:15").put("name", "Revenant")));
-        AnomalousDebrisCurrencies.register(new JSONArray().put(new JSONObject().put("id", ENGRAM).put("name", "Engram")
+        Engrams.register(new JSONArray().put(new JSONObject().put("id", ENGRAM).put("name", "Engram")
                 .put("modifier", "HULL_PERCENT_ANOMALOUS_DEBRIS").put("item_types", "hull_item").put("min_tier", "1").put("weight", "1")));
     }
 
     @AfterEach
     void tearDown() {
-        AnomalousDebrisCurrencies.unregisterAll();
+        Engrams.unregisterAll();
         ReservedModifiers.clear();
         ItemModifiers.clear();
     }

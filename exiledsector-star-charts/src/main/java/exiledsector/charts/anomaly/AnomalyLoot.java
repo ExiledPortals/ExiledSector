@@ -3,7 +3,7 @@ package exiledsector.charts.anomaly;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.ChartCargoLoot;
@@ -35,7 +35,7 @@ public record AnomalyLoot(String scope, String siteId, float baseSteps, float st
         ChartGenContext base = context == null ? ChartGenContext.none() : context;
         List<ChartGenContext.AppliedEffect> effects = new ArrayList<>();
         for (DropType lean : leans) {
-            ChartEffect effect = ChartEffect.forDropType(lean);
+            ChartModifier effect = ChartModifier.forDropType(lean);
             if (effect != null) {
                 effects.add(new ChartGenContext.AppliedEffect(effect, leanPercent));
             }

@@ -14,7 +14,7 @@ import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.ChartFleetVisibility;
 import exiledsector.charts.content.FakeChartContentEngine;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import org.junit.jupiter.api.AfterEach;
@@ -131,7 +131,7 @@ class ListeningPostTest {
 
     @Test
     void thePicketsLineAddsPickets() {
-        ChartGenContext context = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_LISTENING_POST_PICKETS, 2f)));
+        ChartGenContext context = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_LISTENING_POST_PICKETS, 2f)));
         for (long seed = 0; seed < 10; seed++) {
             postSystem.scripts.clear();
             PostScript script = PostSystem.placeIn(postSystem.site(context, new Vector2f(9000f, 0f), seed), run());

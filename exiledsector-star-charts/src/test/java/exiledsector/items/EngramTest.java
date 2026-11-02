@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class AnomalousDebrisCurrencyTest {
+class EngramTest {
 
     private static final String REVENANT = "exiledSector_test_revenant";
     private static final String VIGIL = "exiledSector_test_vigil";
@@ -39,14 +39,14 @@ class AnomalousDebrisCurrencyTest {
                 definition(BASE, false, List.of(prefix("HULL_PERCENT"), prefix("FLUX_CAPACITY_MULT"), prefix("FLUX_DISSIPATION_MULT")),
                         List.of(suffix("BEAM_WEAPON_RANGE_PERCENT"), suffix("ARMOR_PERCENT"), suffix("HULL_MULT"))),
                 definition(RELIC, true, List.of(prefix("ARMOR_PERCENT")), List.of())));
-        AnomalousDebrisCurrencies.register(new JSONArray()
+        Engrams.register(new JSONArray()
                 .put(currencyRow(REVENANT, GRANTED_PREFIX, "hull_item", 1))
                 .put(currencyRow(VIGIL, GRANTED_SUFFIX, "hull_item", 6)));
     }
 
     @AfterEach
     void tearDown() {
-        AnomalousDebrisCurrencies.resetForTests();
+        Engrams.resetForTests();
         ReservedModifiers.clear();
         ItemDefinitions.clear();
         ItemModifiers.clear();
@@ -74,8 +74,8 @@ class AnomalousDebrisCurrencyTest {
                 null));
     }
 
-    private static AnomalousDebrisCurrency currency(String itemId) {
-        return (AnomalousDebrisCurrency) ItemCurrencies.byItemId(itemId);
+    private static Engram currency(String itemId) {
+        return (Engram) ItemCurrencies.byItemId(itemId);
     }
 
     @Test
@@ -83,7 +83,7 @@ class AnomalousDebrisCurrencyTest {
         for (long seed = 0; seed < 40; seed++) {
             for (String currencyId : List.of(REVENANT, VIGIL)) {
                 Item item = common();
-                AnomalousDebrisCurrency currency = currency(currencyId);
+                Engram currency = currency(currencyId);
 
                 assertSame(item, currency.use(item, new CraftingContext(store, definition -> true, Set.of()), new Random(seed)));
 
@@ -146,7 +146,7 @@ class AnomalousDebrisCurrencyTest {
         for (long seed = 0; seed < 40; seed++) {
             for (String currencyId : List.of(REVENANT, VIGIL)) {
                 Item item = lockedWith("FLUX_CAPACITY_MULT", ModifierSlot.PREFIX, 5f);
-                AnomalousDebrisCurrency currency = currency(currencyId);
+                Engram currency = currency(currencyId);
 
                 assertSame(item, currency.use(item, new CraftingContext(store, definition -> true, Set.of()), new Random(seed)));
 
@@ -169,7 +169,7 @@ class AnomalousDebrisCurrencyTest {
         CraftingContext context = new CraftingContext(store, definition -> true, Set.of());
 
         assertFalse(currency(REVENANT).canUse(item, context));
-        assertEquals(AnomalousDebrisCurrency.LOCKED_CLASH_KEY, currency(REVENANT).refusalNoticeKey(item));
+        assertEquals(Engram.LOCKED_CLASH_KEY, currency(REVENANT).refusalNoticeKey(item));
         assertTrue(currency(VIGIL).canUse(item, context));
         assertNull(currency(VIGIL).refusalNoticeKey(item));
     }
@@ -313,24 +313,24 @@ class AnomalousDebrisCurrencyTest {
     @Test
     void aCurrencyDropsOnlyFromItsMinimumTier() {
         for (long seed = 0; seed < 20; seed++) {
-            assertEquals(REVENANT, AnomalousDebrisCurrencies.pick(1, new Random(seed)).itemId());
+            assertEquals(REVENANT, Engrams.pick(1, new Random(seed)).itemId());
         }
         Set<String> picked = new HashSet<>();
         Random random = new Random(11L);
         for (int draw = 0; draw < 40; draw++) {
-            picked.add(AnomalousDebrisCurrencies.pick(6, random).itemId());
+            picked.add(Engrams.pick(6, random).itemId());
         }
         assertEquals(Set.of(REVENANT, VIGIL), picked);
     }
 
     @Test
     void rowsWithAnUnknownModifierOrNoTakenItemTypeAreSkipped() throws Exception {
-        List<String> problems = AnomalousDebrisCurrencies.register(new JSONArray()
+        List<String> problems = Engrams.register(new JSONArray()
                 .put(currencyRow("exiledSector_test_missing", "NOT_A_MODIFIER", "hull_item", 1))
                 .put(currencyRow("exiledSector_test_chart", GRANTED_PREFIX, "star_chart", 1))
                 .put(currencyRow(REVENANT, GRANTED_PREFIX, "hull_item", 1)));
 
-        assertEquals(1, AnomalousDebrisCurrencies.all().size());
+        assertEquals(1, Engrams.all().size());
         assertNull(ItemCurrencies.byItemId("exiledSector_test_missing"));
         assertFalse(ReservedModifiers.isReserved(GRANTED_SUFFIX));
         assertFalse(problems.isEmpty());
@@ -343,8 +343,8 @@ class AnomalousDebrisCurrencyTest {
                 .put(HullItemRows.modifierRow("ARMOR_PERCENT", "suffix", "ARMOR_PERCENT:6:9", "Plated")), ItemModifiers.dataPath());
         integrity.checkDefinitions(new JSONArray().put(HullItemRows.row("pooled", "bridge", "@" + GRANTED_PREFIX, "@ARMOR_PERCENT")),
                 "hull_items.csv", ItemType.HULL_ITEM);
-        AnomalousDebrisCurrencies.checkRows(integrity, new JSONArray().put(currencyRow(REVENANT, GRANTED_PREFIX, "hull_item", 1))
-                .put(currencyRow(VIGIL, "NOT_A_MODIFIER", "hull_item", 1)), AnomalousDebrisCurrencies.PATH);
+        Engrams.checkRows(integrity, new JSONArray().put(currencyRow(REVENANT, GRANTED_PREFIX, "hull_item", 1))
+                .put(currencyRow(VIGIL, "NOT_A_MODIFIER", "hull_item", 1)), Engrams.PATH);
 
         List<String> errors = integrity.finish().stream().filter(violation -> violation.severity() == ItemDataIntegrity.Severity.ERROR)
                 .map(ItemDataIntegrity.Violation::message).toList();
@@ -355,11 +355,11 @@ class AnomalousDebrisCurrencyTest {
 
     @Test
     void theTooltipNamesTheModifierAndListsItsLines() {
-        AnomalousDebrisCurrency revenant = currency(REVENANT);
+        Engram revenant = currency(REVENANT);
 
         assertEquals(1, revenant.grantedLines().size());
         assertTrue(revenant.grantedLines().get(0).plain().contains("15"));
         assertTrue(revenant.description().contains("Revenant"));
-        assertEquals(AnomalousDebrisCurrency.DEFAULT_COLOR, revenant.color());
+        assertEquals(Engram.DEFAULT_COLOR, revenant.color());
     }
 }

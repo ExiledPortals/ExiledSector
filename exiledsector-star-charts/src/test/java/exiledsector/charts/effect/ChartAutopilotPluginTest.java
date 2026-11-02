@@ -44,12 +44,12 @@ class ChartAutopilotPluginTest {
     @AfterEach
     void tearDown() {
         ChartAutopilotPlugin.holdTurnOffSetting(settings, false);
-        ChartFleetConditions.clear(null);
+        ChartPlayerModifiers.clear(null);
     }
 
     @Test
     void aForcedAutopilotChartSwallowsTheToggleKeyAndStopsManualControlTurningItOffUntilTheNextBattle() {
-        ChartFleetConditions.setAutopilotForced(true);
+        ChartPlayerModifiers.setAutopilotForced(true);
         ChartAutopilotPlugin plugin = initialised();
         InputEventAPI toggle = keyDown(TOGGLE_KEY);
         InputEventAPI other = keyDown(OTHER_KEY);
@@ -60,7 +60,7 @@ class ChartAutopilotPluginTest {
         verify(toggle).consume();
         verify(other, never()).consume();
 
-        ChartFleetConditions.setAutopilotForced(false);
+        ChartPlayerModifiers.setAutopilotForced(false);
         initialised();
         initialised();
         verify(settings, times(1)).setBoolean(ChartAutopilotPlugin.TURN_OFF_SETTING, true);
@@ -73,7 +73,7 @@ class ChartAutopilotPluginTest {
         outside.processInputPreCoreControls(0f, List.of(toggle));
         outside.advance(0f, List.of());
 
-        ChartFleetConditions.setAutopilotForced(true);
+        ChartPlayerModifiers.setAutopilotForced(true);
         when(engine.isSimulation()).thenReturn(true);
         ChartAutopilotPlugin simulation = initialised();
         simulation.processInputPreCoreControls(0f, List.of(toggle));

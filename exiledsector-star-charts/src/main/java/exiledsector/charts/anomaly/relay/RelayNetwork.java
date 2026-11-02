@@ -8,7 +8,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.AtlasRule;
@@ -36,8 +36,8 @@ import java.util.Set;
 public final class RelayNetwork implements ContentPlacer, RunParticipant, LootShaper, AtlasRule {
 
     public static final String ANOMALY_ID = "relay_network";
-    public static final String COST_KEY = ChartEffect.CHART_RELAY_COST_PERCENT.anomalyTuningKey();
-    public static final String STAGES_KEY = ChartEffect.CHART_RELAY_CHAIN_STAGES.anomalyTuningKey();
+    public static final String COST_KEY = ChartModifier.CHART_RELAY_COST_PERCENT.anomalyTuningKey();
+    public static final String STAGES_KEY = ChartModifier.CHART_RELAY_CHAIN_STAGES.anomalyTuningKey();
     public static final String RELAY_TAG = ChartIds.PREFIX + "relay";
     public static final String KIND_MEMORY_KEY = "$exiledSector_chartRelayKind";
     public static final RelayNetwork INSTANCE = new RelayNetwork();

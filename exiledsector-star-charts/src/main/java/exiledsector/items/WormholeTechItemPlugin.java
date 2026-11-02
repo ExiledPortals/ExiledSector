@@ -28,18 +28,18 @@ public class WormholeTechItemPlugin extends BaseSpecialItemPlugin {
     }
 
     static String usageKey(String itemId, boolean researchMod, boolean colonyFree) {
-        return colonyFree && WormholeTechItems.BLUEPRINT.equals(itemId) ? "gatewayItem.tooltip.blueprint.atlas" : usageKey(itemId, researchMod);
+        return colonyFree && WormholeTechItems.BLUEPRINT.equals(itemId) ? "wormholeTech.tooltip.blueprint.atlas" : usageKey(itemId, researchMod);
     }
 
     static String usageKey(String itemId, boolean researchMod) {
         if (WormholeTechItems.BLUEPRINT.equals(itemId)) {
-            return researchMod ? "gatewayItem.tooltip.blueprint.research" : "gatewayItem.tooltip.blueprint.rightClick";
+            return researchMod ? "wormholeTech.tooltip.blueprint.research" : "wormholeTech.tooltip.blueprint.rightClick";
         }
         if (!researchMod) {
-            return "gatewayItem.tooltip.upgrade.noResearch";
+            return "wormholeTech.tooltip.upgrade.noResearch";
         }
-        return WormholeTechItems.UPGRADE_PERFECTED.equals(itemId) ? "gatewayItem.tooltip.upgrade.perfected"
-                : "gatewayItem.tooltip.upgrade.advanced";
+        return WormholeTechItems.UPGRADE_NEXUS.equals(itemId) ? "wormholeTech.tooltip.upgrade.perfected"
+                : "wormholeTech.tooltip.upgrade.advanced";
     }
 
     @Override
@@ -59,7 +59,7 @@ public class WormholeTechItemPlugin extends BaseSpecialItemPlugin {
         }
         WormholeGateway.unlock(Global.getSector());
         ColonyFreeAtlas.syncAbility(Global.getSector());
-        CampaignMessages.plain(Translation.gameText(ColonyFreeAtlas.active() ? "gatewayItem.unlocked.atlas" : "gatewayItem.unlocked"),
+        CampaignMessages.plain(Translation.gameText(ColonyFreeAtlas.active() ? "wormholeTech.unlocked.atlas" : "wormholeTech.unlocked"),
                 Misc.getPositiveHighlightColor());
     }
 }

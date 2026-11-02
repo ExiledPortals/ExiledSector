@@ -5,17 +5,17 @@ import java.util.List;
 import java.util.Map;
 
 public record ChartContentPlan(int tier, ChartFaction faction, List<PlannedPoi> pois, List<PlannedFleet> fleets,
-                               List<String> anomalies, ChartBossType bossType, PlannedStation bossStation, boolean alliedDefenders,
+                               List<String> anomalies, ChartBossType bossType, PlannedStation bossStation, boolean alliedStation,
                                Map<String, Object> anomalyPlans) {
 
     public enum FleetRole {
         GUARD,
         PATROL,
         BOSS,
-        DEFENDER;
+        STATION_GUARD;
 
         public boolean bossFleet() {
-            return this == BOSS || this == DEFENDER;
+            return this == BOSS || this == STATION_GUARD;
         }
     }
 
@@ -53,7 +53,7 @@ public record ChartContentPlan(int tier, ChartFaction faction, List<PlannedPoi> 
     public ChartContentPlan withAnomalyPlan(String anomalyId, Object anomalyPlan) {
         Map<String, Object> changed = new LinkedHashMap<>(anomalyPlans);
         changed.put(anomalyId, anomalyPlan);
-        return new ChartContentPlan(tier, faction, pois, fleets, anomalies, bossType, bossStation, alliedDefenders, changed);
+        return new ChartContentPlan(tier, faction, pois, fleets, anomalies, bossType, bossStation, alliedStation, changed);
     }
 
     public Object anomalyPlan(String anomalyId) {

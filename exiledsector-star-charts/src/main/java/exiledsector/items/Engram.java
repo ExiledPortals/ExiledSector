@@ -17,19 +17,19 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public record AnomalousDebrisCurrency(String itemId, String englishName, String modifierId, Set<ItemType> itemTypes, int minTier, float weight,
+public record Engram(String itemId, String englishName, String modifierId, Set<ItemType> itemTypes, int minTier, float weight,
                                       Color color)
         implements ItemCurrency {
 
     static final Color DEFAULT_COLOR = new Color(120, 225, 210);
-    static final String DESCRIPTION_KEY = "chart.debris.currency.description";
-    static final String ITEMS_KEY_PREFIX = "chart.debris.currency.items.";
-    static final String USED_NOTICE_KEY_PREFIX = "ui.craftingBench.notice.used.anomalousDebris.";
-    static final String LOCKED_CLASH_KEY = "chart.debris.currency.lockedClash";
-    static final String SLOT_KEY_PREFIX = "chart.debris.currency.slot.";
+    static final String DESCRIPTION_KEY = "chart.engram.description";
+    static final String ITEMS_KEY_PREFIX = "chart.engram.items.";
+    static final String USED_NOTICE_KEY_PREFIX = "ui.craftingBench.notice.used.engram.";
+    static final String LOCKED_CLASH_KEY = "chart.engram.lockedClash";
+    static final String SLOT_KEY_PREFIX = "chart.engram.slot.";
     static final String ITEMS_SEPARATOR = " or ";
 
-    public AnomalousDebrisCurrency {
+    public Engram {
         itemTypes = Set.copyOf(itemTypes);
         weight = Math.max(0f, weight);
         color = color == null ? DEFAULT_COLOR : color;

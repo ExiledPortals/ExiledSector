@@ -34,11 +34,11 @@ final class GatewayUpgradeDialog extends BaseDialogPlugin {
                 text.addImage(spec.getIconName());
             }
             String itemName = MaterialItems.displayName(itemId);
-            VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("gatewayItem.upgrade.popup").arg("item", itemName).text()));
+            VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("wormholeTech.upgrade.popup").arg("item", itemName).text()));
             AddRemoveCommodity.addItemGainText(MaterialItems.data(itemId), 1, text);
         }
         options().clearOptions();
-        addLeaveOption(Translation.gameText("gatewayItem.upgrade.popup.continue"), CONTINUE);
+        addLeaveOption(Translation.gameText("wormholeTech.upgrade.popup.continue"), CONTINUE);
     }
 
     @Override

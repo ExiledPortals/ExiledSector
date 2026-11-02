@@ -48,7 +48,7 @@ final class ChartEnemyDamageListener implements DamageDealtModifier {
         if (mult == null) {
             return null;
         }
-        damage.getModifier().modifyMult(ChartFleetConditions.MOD_ID, mult);
-        return ChartFleetConditions.MOD_ID;
+        damage.getModifier().modifyMult(ChartPlayerModifiers.MOD_ID, mult);
+        return ChartPlayerModifiers.MOD_ID;
     }
 }

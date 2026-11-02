@@ -16,7 +16,7 @@ import java.util.List;
 
 public class ChartBattlePlugin extends BaseEveryFrameCombatPlugin {
 
-    public static final String MOD_ID = ChartFleetConditions.MOD_ID;
+    public static final String MOD_ID = ChartPlayerModifiers.MOD_ID;
     static final float REFRESH_SECONDS = 1f;
     static final int PLAYER_OWNER = 0;
     static final int ENEMY_OWNER = 1;
@@ -47,10 +47,10 @@ public class ChartBattlePlugin extends BaseEveryFrameCombatPlugin {
     }
 
     static boolean hasBattleConditions() {
-        if (ChartFleetConditions.battleSizeBonus() != 0) {
+        if (ChartPlayerModifiers.battleSizeBonus() != 0) {
             return true;
         }
-        for (ChartFleetStat stat : ChartFleetConditions.active().keySet()) {
+        for (ChartFleetStat stat : ChartPlayerModifiers.active().keySet()) {
             if (stat.battleRule()) {
                 return true;
             }
@@ -81,9 +81,9 @@ public class ChartBattlePlugin extends BaseEveryFrameCombatPlugin {
     }
 
     void refresh() {
-        refreshBattleCaps(ChartFleetConditions.battleSizeBonus(), ChartFleetConditions.mult(ChartFleetStat.ENEMY_DEPLOYMENT_COST));
+        refreshBattleCaps(ChartPlayerModifiers.battleSizeBonus(), ChartPlayerModifiers.mult(ChartFleetStat.ENEMY_DEPLOYMENT_COST));
         if (!commandPointRateApplied) {
-            commandPointRateApplied = applyCommandPointRate(ChartFleetConditions.mult(ChartFleetStat.COMMAND_POINT_RATE));
+            commandPointRateApplied = applyCommandPointRate(ChartPlayerModifiers.mult(ChartFleetStat.COMMAND_POINT_RATE));
         }
     }
 

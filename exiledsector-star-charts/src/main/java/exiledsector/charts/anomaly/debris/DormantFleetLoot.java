@@ -3,8 +3,8 @@ package exiledsector.charts.anomaly.debris;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.items.AnomalousDebrisCurrencies;
-import exiledsector.items.AnomalousDebrisCurrency;
+import exiledsector.items.Engrams;
+import exiledsector.items.Engram;
 import exiledsector.items.ItemDrops;
 
 import java.util.LinkedHashMap;
@@ -29,7 +29,7 @@ public final class DormantFleetLoot {
         float quantityMult = (context == null ? ChartGenContext.none() : context).anomalyMult(AnomalousDebris.CURRENCY_KEY);
         Map<String, Integer> currencies = new LinkedHashMap<>();
         for (int drop = DebrisRules.currencyCount(quantityMult, random); drop > 0; drop--) {
-            AnomalousDebrisCurrency currency = AnomalousDebrisCurrencies.pick(tier, random);
+            Engram currency = Engrams.pick(tier, random);
             if (currency != null) {
                 currencies.merge(currency.itemId(), 1, Integer::sum);
             }

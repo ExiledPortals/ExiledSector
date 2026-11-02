@@ -38,7 +38,7 @@ public class ChartAutopilotPlugin extends BaseEveryFrameCombatPlugin {
         this.engine = engine;
         announced = false;
         active = engine != null && engine.isInCampaign() && !engine.isSimulation() && !engine.isInCampaignSim()
-                && ChartFleetConditions.autopilotForced();
+                && ChartPlayerModifiers.autopilotForced();
         holdTurnOffSetting(Global.getSettings(), active);
         toggleKey = active ? toggleKeyCode(Global.getSettings()) : NO_KEY;
     }

@@ -30,7 +30,7 @@ public final class ItemCodec {
     private static final String RARE_MODEL_KEY = "rm";
     private static final String PRODUCT_KEY = "rp";
     private static final String TIER_KEY = "t";
-    private static final String QUALITY_KEY = "q";
+    private static final String QUANTITY_KEY = "q";
     private static final String CORRUPTED_KEY = "c";
     private static final String IMPLICITS_KEY = "i";
     private static final String MIRRORED_KEY = "m";
@@ -253,8 +253,8 @@ public final class ItemCodec {
             return;
         }
         json.put(TIER_KEY, traits.tier());
-        if (traits.quality() != 0) {
-            json.put(QUALITY_KEY, traits.quality());
+        if (traits.quantity() != 0) {
+            json.put(QUANTITY_KEY, traits.quantity());
         }
         if (traits.corruption() != null) {
             json.put(CORRUPTED_KEY, traits.corruption().name());
@@ -268,11 +268,11 @@ public final class ItemCodec {
     }
 
     private static ItemTraits traits(JSONObject json, String definitionId) throws JSONException {
-        if (!json.has(TIER_KEY) && !json.has(QUALITY_KEY) && !json.has(CORRUPTED_KEY) && !json.has(IMPLICITS_KEY) && !json.has(MIRRORED_KEY)) {
+        if (!json.has(TIER_KEY) && !json.has(QUANTITY_KEY) && !json.has(CORRUPTED_KEY) && !json.has(IMPLICITS_KEY) && !json.has(MIRRORED_KEY)) {
             return null;
         }
         List<RolledModifier> implicits = json.has(IMPLICITS_KEY) ? decodeModifiers(json.getString(IMPLICITS_KEY), definitionId) : null;
-        return new ItemTraits(json.optInt(TIER_KEY, ItemTraits.LOWEST_TIER), json.optInt(QUALITY_KEY, 0), corruption(json), implicits,
+        return new ItemTraits(json.optInt(TIER_KEY, ItemTraits.LOWEST_TIER), json.optInt(QUANTITY_KEY, 0), corruption(json), implicits,
                 json.optBoolean(MIRRORED_KEY, false));
     }
 

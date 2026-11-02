@@ -43,7 +43,7 @@ public class ChartArcStrikePlugin extends BaseEveryFrameCombatPlugin {
         this.engine = engine;
         secondsToStrike = INTERVAL_SECONDS;
         boolean campaignBattle = engine != null && engine.isInCampaign() && !engine.isSimulation() && !engine.isInCampaignSim();
-        emp = campaignBattle ? ChartFleetConditions.arcStrikeEmp() : 0f;
+        emp = campaignBattle ? ChartPlayerModifiers.arcStrikeEmp() : 0f;
     }
 
     @Override

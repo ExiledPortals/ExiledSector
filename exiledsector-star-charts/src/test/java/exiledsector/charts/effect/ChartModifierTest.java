@@ -14,24 +14,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ChartEffectTest {
+class ChartModifierTest {
 
     @Test
     void everyAnomalyLineTunesItsOwnKey() {
         Set<String> keys = new HashSet<>();
-        for (ChartEffect effect : ChartEffect.values()) {
+        for (ChartModifier effect : ChartModifier.values()) {
             if (effect.anomalyTuningKey() != null) {
                 assertTrue(keys.add(effect.anomalyTuningKey()), effect.name());
             }
         }
         assertEquals(21, keys.size());
-        assertNull(ChartEffect.CHART_ITEM_PERCENT.anomalyTuningKey());
+        assertNull(ChartModifier.CHART_ITEM_PERCENT.anomalyTuningKey());
     }
 
     @Test
     void anomalyLinesAddToTheirAnomalysTuningAndCountedLinesRoundToWholeCounts() {
-        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_EXTRA_CONVOYS, 1.6f),
-                new AppliedEffect(ChartEffect.CHART_FORGE_COST_PERCENT, -20f), new AppliedEffect(ChartEffect.CHART_FORGE_COST_PERCENT, 5f)));
+        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_EXTRA_CONVOYS, 1.6f),
+                new AppliedEffect(ChartModifier.CHART_FORGE_COST_PERCENT, -20f), new AppliedEffect(ChartModifier.CHART_FORGE_COST_PERCENT, 5f)));
 
         assertEquals(2f, context.anomalyPercent(SupplyConvoy.EXTRA_KEY));
         assertEquals(-15f, context.anomalyPercent(DerelictForge.COST_KEY));

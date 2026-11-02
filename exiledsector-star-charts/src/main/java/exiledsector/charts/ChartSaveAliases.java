@@ -28,6 +28,7 @@ import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunState;
 import exiledsector.charts.wormhole.ChartWormholePlugin;
 import exiledsector.charts.wormhole.WormholeGateway;
+import exiledsector.items.StarChart;
 import exiledsector.ui.atlas.AtlasAbility;
 
 import java.util.Map;
@@ -76,5 +77,6 @@ public final class ChartSaveAliases {
     public static void register(XStream xstream) {
         MOVED.forEach(xstream::alias);
         ALIASES.forEach(xstream::alias);
+        xstream.aliasField("quality", StarChart.class, "quantity");
     }
 }

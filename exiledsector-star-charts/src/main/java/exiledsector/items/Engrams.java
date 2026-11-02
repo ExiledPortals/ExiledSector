@@ -22,27 +22,27 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public final class AnomalousDebrisCurrencies {
+public final class Engrams {
 
-    public static final String PATH = "data/config/exiledSector/anomalous_debris_currencies.csv";
+    public static final String PATH = "data/config/exiledSector/engrams.csv";
     static final String ID_COLUMN = "id";
     static final Set<ModifierScope> TAKEN_SCOPES = Set.of(ModifierScope.HULL_ITEM, ModifierScope.SUBROUTINE);
-    private static final Logger LOG = Logger.getLogger(AnomalousDebrisCurrencies.class);
-    private static volatile List<AnomalousDebrisCurrency> loaded = List.of();
+    private static final Logger LOG = Logger.getLogger(Engrams.class);
+    private static volatile List<Engram> loaded = List.of();
 
-    private AnomalousDebrisCurrencies() {
+    private Engrams() {
     }
 
     public static void load() {
-        ModCsv.load(ID_COLUMN, PATH, LOG, AnomalousDebrisCurrencies::register);
+        ModCsv.load(ID_COLUMN, PATH, LOG, Engrams::register);
     }
 
     public static List<String> register(JSONArray rows) throws JSONException {
         unregisterAll();
         CsvRows csv = new CsvRows(PATH);
-        List<AnomalousDebrisCurrency> registered = new ArrayList<>();
+        List<Engram> registered = new ArrayList<>();
         CsvRows.forEachIdRow(rows, ID_COLUMN, (id, row) -> {
-            AnomalousDebrisCurrency currency = parse(csv, row, id);
+            Engram currency = parse(csv, row, id);
             if (currency == null) {
                 return;
             }
@@ -61,7 +61,7 @@ public final class AnomalousDebrisCurrencies {
         return csv.problems();
     }
 
-    static AnomalousDebrisCurrency parse(CsvRows csv, JSONObject row, String id) {
+    static Engram parse(CsvRows csv, JSONObject row, String id) {
         String modifierId = ModCsv.text(row, "modifier");
         Modifier modifier = ItemModifiers.get(modifierId);
         if (modifier == null || modifier.slot() == ModifierSlot.IMPLICIT) {
@@ -81,29 +81,29 @@ public final class AnomalousDebrisCurrencies {
             return null;
         }
         int minTier = ChartTiers.clamp(csv.integer(row, "min_tier", ChartTiers.LOWEST_TIER, id));
-        Color color = ColorUtil.parseHexColor(ModCsv.text(row, "color"), AnomalousDebrisCurrency.DEFAULT_COLOR, LOG, id + " color in " + PATH);
-        return new AnomalousDebrisCurrency(id, ModCsv.text(row, "name"), modifierId, itemTypes, minTier, csv.number(row, "weight", 1f, id), color);
+        Color color = ColorUtil.parseHexColor(ModCsv.text(row, "color"), Engram.DEFAULT_COLOR, LOG, id + " color in " + PATH);
+        return new Engram(id, ModCsv.text(row, "name"), modifierId, itemTypes, minTier, csv.number(row, "weight", 1f, id), color);
     }
 
     public static void unregisterAll() {
-        for (AnomalousDebrisCurrency currency : loaded) {
+        for (Engram currency : loaded) {
             ItemCurrencies.unregister(currency);
             ReservedModifiers.release(currency.itemId());
         }
         loaded = List.of();
     }
 
-    public static List<AnomalousDebrisCurrency> all() {
+    public static List<Engram> all() {
         return loaded;
     }
 
-    public static AnomalousDebrisCurrency pick(int tier, Random random) {
-        List<AnomalousDebrisCurrency> dropping = loaded.stream().filter(currency -> currency.dropsAt(tier)).toList();
-        return dropping.isEmpty() ? null : WeightedPick.pick(dropping, AnomalousDebrisCurrency::dropWeight, random);
+    public static Engram pick(int tier, Random random) {
+        List<Engram> dropping = loaded.stream().filter(currency -> currency.dropsAt(tier)).toList();
+        return dropping.isEmpty() ? null : WeightedPick.pick(dropping, Engram::dropWeight, random);
     }
 
     public static void localise() {
-        for (AnomalousDebrisCurrency currency : loaded) {
+        for (Engram currency : loaded) {
             SpecialItemSpecAPI spec = MaterialItems.spec(currency.itemId());
             if (spec != null) {
                 String englishName = currency.englishName().isEmpty() ? spec.getName() : currency.englishName();

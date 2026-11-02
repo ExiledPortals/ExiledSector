@@ -9,7 +9,7 @@ import org.lwjgl.util.vector.Vector2f;
 
 final class ChartSModDamageListener implements DamageDealtModifier {
 
-    static final String MOD_ID = ChartFleetConditions.MOD_ID + "_smod_damage";
+    static final String MOD_ID = ChartPlayerModifiers.MOD_ID + "_smod_damage";
 
     private final float mult;
 

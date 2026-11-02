@@ -14,7 +14,7 @@ import exiledsector.charts.atlas.AtlasRules;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasUnlocks;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import org.json.JSONArray;
@@ -67,7 +67,7 @@ class RelayChainTest {
 
     private static void everyNetworkCarriesOneExtraStage() {
         ChartTables.useAnomalies(List.of(RelayNetwork.INSTANCE), List.of(new ChartAnomalies.Definition(RelayNetwork.ANOMALY_ID, 1f, 1, 15, "", "", true, Set.of(),
-                false, List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_RELAY_CHAIN_STAGES, 1f)))));
+                false, List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_RELAY_CHAIN_STAGES, 1f)))));
     }
 
     @Test
@@ -177,19 +177,19 @@ class RelayChainTest {
 
     @Test
     void theChainStagesLineAddsStagesThroughTheRunContext() {
-        ChartGenContext context = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_RELAY_CHAIN_STAGES, 2f)));
+        ChartGenContext context = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_RELAY_CHAIN_STAGES, 2f)));
 
         assertEquals(2, RelayChain.extraStages(context));
         assertEquals(0, RelayChain.extraStages(ChartGenContext.none()));
         assertEquals(0, RelayChain.extraStages(null));
-        assertEquals("2 additional Relay Network stages", ChartEffect.CHART_RELAY_CHAIN_STAGES.description(2f).plain());
+        assertEquals("2 additional Relay Network stages", ChartModifier.CHART_RELAY_CHAIN_STAGES.description(2f).plain());
     }
 
     @Test
     void eachStagePastTheFirstAddsTheStageLinesOnceMore() {
         assertEquals(List.of(), RelayChain.stageEffects(1));
-        assertEquals(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_FLEET_SIZE_PERCENT, 40f),
-                new ChartGenContext.AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, 50f)), RelayChain.stageEffects(3));
+        assertEquals(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_FLEET_SIZE_PERCENT, 40f),
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, 50f)), RelayChain.stageEffects(3));
     }
 
     @Test

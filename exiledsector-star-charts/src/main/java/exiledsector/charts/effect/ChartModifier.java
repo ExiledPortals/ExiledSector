@@ -15,7 +15,7 @@ import exiledsector.charts.loot.DropType;
 
 import java.util.List;
 
-public enum ChartEffect implements ModifierEffect {
+public enum ChartModifier implements ModifierEffect {
 
     CHART_FLEET_SIZE_PERCENT(false, ChartGenContext::addFleetSizePercent),
     CHART_BASE_FLEETS(true, (context, value) -> context.addBaseFleets(Math.round(value))),
@@ -146,7 +146,7 @@ public enum ChartEffect implements ModifierEffect {
     CHART_LISTENING_POST_LOOT_QUANTITY_PERCENT("listening_post.loot", AnomalyLine.PERCENT),
     CHART_LISTENING_POST_PURGE_PERCENT("listening_post.purge", AnomalyLine.PERCENT_INCREASED_WHEN_NEGATIVE);
 
-    static final String KEY_PREFIX = "chart.effect.";
+    static final String KEY_PREFIX = "chart.modifier.";
 
     private interface Contribution {
         void addTo(ChartGenContext context, float value);
@@ -180,37 +180,37 @@ public enum ChartEffect implements ModifierEffect {
     private final boolean flag;
     private String grantedNodeId;
 
-    ChartEffect(boolean counted, Contribution contribution) {
+    ChartModifier(boolean counted, Contribution contribution) {
         this(counted, null, null, null, null, contribution, false);
     }
 
-    ChartEffect(Flag flag) {
+    ChartModifier(Flag flag) {
         this(false, null, null, null, null, (context, value) -> flag.raise(context), true);
     }
 
-    ChartEffect(DropType dropType) {
+    ChartModifier(DropType dropType) {
         this(false, dropType, null, null, null, (context, value) -> context.addDropPercent(dropType, value), false);
     }
 
-    ChartEffect(String grantedNodeId) {
+    ChartModifier(String grantedNodeId) {
         this(context -> context.grantEnemyNode(grantedNodeId));
         this.grantedNodeId = grantedNodeId;
     }
 
-    ChartEffect(HullSize bannedCombatHullSize) {
+    ChartModifier(HullSize bannedCombatHullSize) {
         this(context -> context.banCombatHullSize(bannedCombatHullSize));
     }
 
-    ChartEffect(ChartFleetStat fleetStat) {
+    ChartModifier(ChartFleetStat fleetStat) {
         this(false, null, fleetStat, null, null, (context, value) -> context.addFleetStatPercent(fleetStat, value), false);
     }
 
-    ChartEffect(String anomalyTuningKey, AnomalyLine line) {
+    ChartModifier(String anomalyTuningKey, AnomalyLine line) {
         this(line.counted, null, null, anomalyTuningKey, line.negativeKeySuffix,
                 (context, value) -> context.addAnomalyPercent(anomalyTuningKey, line.counted ? Math.round(value) : value), false);
     }
 
-    ChartEffect(boolean counted, DropType dropType, ChartFleetStat fleetStat, String anomalyTuningKey, String negativeKeySuffix,
+    ChartModifier(boolean counted, DropType dropType, ChartFleetStat fleetStat, String anomalyTuningKey, String negativeKeySuffix,
                 Contribution contribution, boolean flag) {
         this.counted = counted;
         this.dropType = dropType;
@@ -278,12 +278,12 @@ public enum ChartEffect implements ModifierEffect {
     public void afterGeneration(ChartGenerated generated, float value) {
     }
 
-    public static ChartEffect byNameOrNull(String effectName) {
-        return EnumKeys.parse(ChartEffect.class, effectName);
+    public static ChartModifier byNameOrNull(String effectName) {
+        return EnumKeys.parse(ChartModifier.class, effectName);
     }
 
-    public static ChartEffect forDropType(DropType type) {
-        for (ChartEffect effect : values()) {
+    public static ChartModifier forDropType(DropType type) {
+        for (ChartModifier effect : values()) {
             if (type != null && effect.dropType == type) {
                 return effect;
             }

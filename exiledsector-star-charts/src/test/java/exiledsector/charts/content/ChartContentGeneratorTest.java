@@ -33,7 +33,7 @@ import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.anomaly.skirmish.SkirmishJoin;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.loot.ChartLoot;
 import exiledsector.charts.loot.ChartVanillaLoot;
 import org.json.JSONArray;
@@ -547,7 +547,7 @@ class ChartContentGeneratorTest {
         ChartColonyItems.register(new JSONArray().put(new JSONObject().put("id", "ceiling").put("value", "0.9999999"))
                 .put(new JSONObject().put("id", "synchrotron").put("value", "10")).put(new JSONObject().put("id", "mantle_bore").put("value", "10")),
                 itemId -> true);
-        return ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_COLONY_ITEM_PERCENT, 100000f)));
+        return ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_COLONY_ITEM_PERCENT, 100000f)));
     }
 
     @Test
@@ -593,7 +593,7 @@ class ChartContentGeneratorTest {
             for (ChartPoi poi : ChartPois.all()) {
                 engine.siteDropsBySpec.put(poi.specForSalvage(), new ChartVanillaLoot.SiteDrops(List.of(specWeapons), List.of()));
             }
-            ChartGenContext moreWeapons = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_WEAPON_PERCENT, 50f)));
+            ChartGenContext moreWeapons = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_WEAPON_PERCENT, 50f)));
 
             ChartContentGenerator.generate(sector, system, RUN_ID, 3L, 12, WORMHOLE, moreWeapons);
 
@@ -770,7 +770,7 @@ class ChartContentGeneratorTest {
 
     @Test
     void aTwinnedBossAddsARevealedBossSizedFleetFromItsOwnSeedThatTheObjectiveIgnores() {
-        ChartGenContext twinned = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_TWINNED_BOSS, 1f)));
+        ChartGenContext twinned = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_TWINNED_BOSS, 1f)));
         ChartContent content = ChartContentGenerator.generate(sector, system, RUN_ID, 11L, 8, WORMHOLE, twinned, null, List.of());
         ChartContentPlan plan = ChartContentPlanner.plan(11L, ChartTiers.forTier(8), ChartPois.all(), ChartFactions.all(), id -> true);
 
@@ -795,7 +795,7 @@ class ChartContentGeneratorTest {
             engine = FakeChartContentEngine.install(new FakeChartContentEngine().offering(-4000f, 0f, 0f, 5000f, 0f, -5000f, 6500f, 0f));
             ChartGenContext context = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID), false)
                     .withAnomalyData(FactionSkirmish.ANOMALY_ID, new SkirmishJoin(SkirmishSide.DEFENDER, "tritachyon").encode()))
-                    .withEffects(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_TWINNED_BOSS, 1f)));
+                    .withEffects(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_TWINNED_BOSS, 1f)));
             ChartContentGenerator.generate(sector, system, RUN_ID, 11L, 8, WORMHOLE, context, null, List.of(FactionSkirmish.ANOMALY_ID));
 
             assertEquals(alliedPlanFleets, engine.fleets.size());

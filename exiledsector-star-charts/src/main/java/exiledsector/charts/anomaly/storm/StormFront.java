@@ -5,7 +5,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import exiledsector.charts.ChartIds;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.AnomalyTerrains;
@@ -22,9 +22,9 @@ import java.util.Random;
 public final class StormFront implements ContentPlacer, RunParticipant, LootShaper {
 
     public static final String ANOMALY_ID = "storm_front";
-    public static final String LOOT_KEY = ChartEffect.CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT.anomalyTuningKey();
-    public static final String STRIKE_KEY = ChartEffect.CHART_STORM_STRIKE_FREQUENCY_PERCENT.anomalyTuningKey();
-    public static final String SIZE_KEY = ChartEffect.CHART_STORM_FRONT_SIZE_PERCENT.anomalyTuningKey();
+    public static final String LOOT_KEY = ChartModifier.CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT.anomalyTuningKey();
+    public static final String STRIKE_KEY = ChartModifier.CHART_STORM_STRIKE_FREQUENCY_PERCENT.anomalyTuningKey();
+    public static final String SIZE_KEY = ChartModifier.CHART_STORM_FRONT_SIZE_PERCENT.anomalyTuningKey();
     public static final String TERRAIN_ID = "exiledSector_chart_storm_front";
     public static final String FRONT_TAG = ChartIds.PREFIX + "storm_front";
     public static final StormFront INSTANCE = new StormFront();

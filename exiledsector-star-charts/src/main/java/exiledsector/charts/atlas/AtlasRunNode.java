@@ -1,6 +1,6 @@
 package exiledsector.charts.atlas;
 
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 
 import java.util.ArrayList;
@@ -93,7 +93,7 @@ public record AtlasRunNode(long cell, String factionId, List<ChartGenContext.App
             if (separator <= 0) {
                 continue;
             }
-            ChartEffect effect = ChartEffect.byNameOrNull(part.substring(0, separator));
+            ChartModifier effect = ChartModifier.byNameOrNull(part.substring(0, separator));
             if (effect != null) {
                 effects.add(new ChartGenContext.AppliedEffect(effect, Float.parseFloat(part.substring(separator + 1))));
             }

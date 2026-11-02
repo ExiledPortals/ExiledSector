@@ -134,7 +134,7 @@ public final class ChartEnemyShipEffects implements ShipEffectSource {
     }
 
     static Granted grantedTo(FleetMemberAPI member) {
-        CampaignFleetAPI fleet = ChartFleetConditions.sourceFleetOf(member);
+        CampaignFleetAPI fleet = ChartPlayerModifiers.sourceFleetOf(member);
         return fleet == null ? Granted.NONE : decode(fleet.getMemoryWithoutUpdate().getString(ChartIds.ENEMY_EFFECTS_MEMORY_KEY));
     }
 

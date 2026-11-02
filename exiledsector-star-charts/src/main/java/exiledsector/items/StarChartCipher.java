@@ -211,7 +211,7 @@ public enum StarChartCipher implements ItemCurrency {
     }
 
     static StarChart raiseTier(StarChart chart) {
-        chart.applyTraits(new ItemTraits(chart.tier() + 1, chart.quality(), null, null, false));
+        chart.applyTraits(new ItemTraits(chart.tier() + 1, chart.quantity(), null, null, false));
         return chart;
     }
 }

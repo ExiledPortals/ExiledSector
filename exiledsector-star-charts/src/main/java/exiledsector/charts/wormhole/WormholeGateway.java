@@ -25,9 +25,9 @@ import java.util.List;
 public class WormholeGateway extends BaseIndustry {
 
     public static final String INDUSTRY_ID = "exiledSector_wormhole_gateway";
-    public static final String ADVANCED_INDUSTRY_ID = "exiledSector_wormhole_gateway_advanced";
-    public static final String PERFECTED_INDUSTRY_ID = "exiledSector_wormhole_gateway_perfected";
-    public static final List<String> INDUSTRY_IDS = List.of(INDUSTRY_ID, ADVANCED_INDUSTRY_ID, PERFECTED_INDUSTRY_ID);
+    public static final String ARRAY_INDUSTRY_ID = "exiledSector_wormhole_gateway_advanced";
+    public static final String NEXUS_INDUSTRY_ID = "exiledSector_wormhole_gateway_perfected";
+    public static final List<String> INDUSTRY_IDS = List.of(INDUSTRY_ID, ARRAY_INDUSTRY_ID, NEXUS_INDUSTRY_ID);
     public static final String UNLOCKED_FLAG = "$exiledSector_gatewayUnlocked";
     private static final float TOOLTIP_PAD = 10f;
 
@@ -136,17 +136,17 @@ public class WormholeGateway extends BaseIndustry {
     }
 
     static String predecessorOf(String industryId) {
-        if (ADVANCED_INDUSTRY_ID.equals(industryId)) {
+        if (ARRAY_INDUSTRY_ID.equals(industryId)) {
             return INDUSTRY_ID;
         }
-        return PERFECTED_INDUSTRY_ID.equals(industryId) ? ADVANCED_INDUSTRY_ID : null;
+        return NEXUS_INDUSTRY_ID.equals(industryId) ? ARRAY_INDUSTRY_ID : null;
     }
 
     static String researchFor(String industryId) {
-        if (ADVANCED_INDUSTRY_ID.equals(industryId)) {
-            return VaultsOfKnowledgeCompat.GATEWAY_ADVANCED_RESEARCH_ID;
+        if (ARRAY_INDUSTRY_ID.equals(industryId)) {
+            return VaultsOfKnowledgeCompat.GATEWAY_ARRAY_RESEARCH_ID;
         }
-        return PERFECTED_INDUSTRY_ID.equals(industryId) ? VaultsOfKnowledgeCompat.GATEWAY_PERFECTED_RESEARCH_ID : null;
+        return NEXUS_INDUSTRY_ID.equals(industryId) ? VaultsOfKnowledgeCompat.GATEWAY_NEXUS_RESEARCH_ID : null;
     }
 
     static boolean upgradeResearched(String industryId) {
@@ -182,7 +182,7 @@ public class WormholeGateway extends BaseIndustry {
             return super.getUnavailableReason();
         }
         if (predecessorOf(getId()) != null) {
-            return Translation.gameText(ADVANCED_INDUSTRY_ID.equals(getId()) ? "chart.gateway.unavailable.researchAdvanced"
+            return Translation.gameText(ARRAY_INDUSTRY_ID.equals(getId()) ? "chart.gateway.unavailable.researchAdvanced"
                     : "chart.gateway.unavailable.researchPerfected");
         }
         if (!isUnlockedFor(market)) {

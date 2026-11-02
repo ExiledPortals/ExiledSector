@@ -4,7 +4,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.content.ChartPoi;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.effect.ChartFactionEffect;
 import exiledsector.charts.effect.ChartFleetStat;
 import exiledsector.charts.loot.DropType;
@@ -43,13 +43,13 @@ public final class ChartGenContext {
     private static final Logger LOG = Logger.getLogger(ChartGenContext.class);
     private static final Set<String> REPORTED_UNRESOLVED_ROLLS = ConcurrentHashMap.newKeySet();
 
-    public record AppliedEffect(ChartEffect effect, float value) {
+    public record AppliedEffect(ChartModifier effect, float value) {
     }
 
     private static final ChartGenContext NONE = new ChartGenContext(List.of(), 0, null);
 
     private final List<AppliedEffect> applied;
-    private final int quality;
+    private final int quantity;
     private final String factionId;
     private float fleetSizePercent;
     private int baseFleets;
@@ -85,9 +85,9 @@ public final class ChartGenContext {
     private boolean guaranteedBossUnique;
     private final Map<String, String> anomalyData = new LinkedHashMap<>();
 
-    private ChartGenContext(List<AppliedEffect> applied, int quality, String factionId) {
+    private ChartGenContext(List<AppliedEffect> applied, int quantity, String factionId) {
         this.applied = List.copyOf(applied);
-        this.quality = Math.max(0, quality);
+        this.quantity = Math.max(0, quantity);
         this.factionId = factionId;
         for (AppliedEffect effect : this.applied) {
             effect.effect().beforeGeneration(this, effect.value());
@@ -102,16 +102,16 @@ public final class ChartGenContext {
         return of(applied, 0);
     }
 
-    public static ChartGenContext of(List<AppliedEffect> applied, int quality) {
-        return of(applied, quality, null);
+    public static ChartGenContext of(List<AppliedEffect> applied, int quantity) {
+        return of(applied, quantity, null);
     }
 
-    public static ChartGenContext of(List<AppliedEffect> applied, int quality, String factionId) {
+    public static ChartGenContext of(List<AppliedEffect> applied, int quantity, String factionId) {
         boolean noEffects = applied == null || applied.isEmpty();
-        if (noEffects && quality <= 0 && factionId == null) {
+        if (noEffects && quantity <= 0 && factionId == null) {
             return NONE;
         }
-        return new ChartGenContext(noEffects ? List.of() : applied, quality, factionId);
+        return new ChartGenContext(noEffects ? List.of() : applied, quantity, factionId);
     }
 
     public static ChartGenContext from(Item chart) {
@@ -126,7 +126,7 @@ public final class ChartGenContext {
             ModifierEffect rolledLine = roll.roll().effect(effects);
             if (rolledLine instanceof ChartFactionEffect faction) {
                 factionId = factionId == null ? faction.factionId() : factionId;
-            } else if (rolledLine instanceof ChartEffect effect) {
+            } else if (rolledLine instanceof ChartModifier effect) {
                 if (roll.line() == null) {
                     reportUnresolved(chart, effect);
                 } else {
@@ -137,9 +137,9 @@ public final class ChartGenContext {
         long prefixes = chart.explicits().stream().filter(modifier -> modifier.slot() == ModifierSlot.PREFIX).count();
         float prefixQuantityPercent = prefixes * quantityPercentPerPrefix(chart.tier());
         if (prefixQuantityPercent > 0f) {
-            applied.add(new AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, prefixQuantityPercent));
+            applied.add(new AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, prefixQuantityPercent));
         }
-        return of(applied, chart instanceof StarChart starChart ? starChart.quality() : 0, factionId);
+        return of(applied, chart instanceof StarChart starChart ? starChart.quantity() : 0, factionId);
     }
 
     static float quantityPercentPerPrefix(int tier) {
@@ -147,7 +147,7 @@ public final class ChartGenContext {
         return group == null ? 0f : QUANTITY_PERCENT_PER_PREFIX.get(group);
     }
 
-    private static void reportUnresolved(Item chart, ChartEffect effect) {
+    private static void reportUnresolved(Item chart, ChartModifier effect) {
         if (REPORTED_UNRESOLVED_ROLLS.add(chart.definitionId() + "/" + effect.name())) {
             LOG.warn("[ExiledSector] Star Chart " + chart.definitionId() + " has a " + effect.name()
                     + " roll whose modifier is no longer defined; the roll is ignored");
@@ -158,8 +158,8 @@ public final class ChartGenContext {
         return applied;
     }
 
-    public int quality() {
-        return quality;
+    public int quantity() {
+        return quantity;
     }
 
     public String factionId() {
@@ -167,7 +167,7 @@ public final class ChartGenContext {
     }
 
     public boolean isEmpty() {
-        return applied.isEmpty() && quality == 0;
+        return applied.isEmpty() && quantity == 0;
     }
 
     public void addFleetSizePercent(float value) {
@@ -376,7 +376,7 @@ public final class ChartGenContext {
     }
 
     private ChartGenContext derive(List<AppliedEffect> effects, String derivedFactionId) {
-        ChartGenContext context = new ChartGenContext(effects, quality, derivedFactionId);
+        ChartGenContext context = new ChartGenContext(effects, quantity, derivedFactionId);
         context.forceAnomalies(forcedAnomalies);
         context.guaranteedBossTierUp = guaranteedBossTierUp;
         context.guaranteedBossUnique = guaranteedBossUnique;
@@ -485,7 +485,7 @@ public final class ChartGenContext {
     }
 
     private float qualityQuantityPercent() {
-        return quality * QUANTITY_PERCENT_PER_QUALITY;
+        return quantity * QUANTITY_PERCENT_PER_QUALITY;
     }
 
     public float siteBudgetPercent(ChartPoi.Kind kind) {
@@ -589,7 +589,7 @@ public final class ChartGenContext {
                         + "barred combat hulls %s, ship systems disabled %b, autopilot forced %b, arc strike EMP %.0f, weapon misfires %.3f/s, damage per S-mod %+.0f%%, enemy node grants %s",
                 fleetSizePercent, baseFleets, extraFleets, officerLevelBonus, extraOfficers, bossSizePercent,
                 fleetQualityPercent, siteBudgetText(), extraPois(), itemPercent, itemRarityPercent, describeDropPercents(), bossSpoilsMult(), rewardMult(),
-                sensorRangeMult(), quality, forcedAnomalies.isEmpty() ? "none" : forcedAnomalies.toString(), twinnedBoss,
+                sensorRangeMult(), quantity, forcedAnomalies.isEmpty() ? "none" : forcedAnomalies.toString(), twinnedBoss,
                 bannedCombatHullSizes.isEmpty() ? "none" : bannedCombatHullSizes.toString(), shipSystemsDisabled, autopilotForced, arcStrikeEmp(), weaponMisfireRate,
                 damagePercentPerSMod, enemyGrantedNodeIds.isEmpty() ? "none" : enemyGrantedNodeIds.toString());
     }

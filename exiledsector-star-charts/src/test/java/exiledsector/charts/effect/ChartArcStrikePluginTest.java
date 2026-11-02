@@ -45,12 +45,12 @@ class ChartArcStrikePluginTest {
 
     @AfterEach
     void tearDown() {
-        ChartFleetConditions.clear(null);
+        ChartPlayerModifiers.clear(null);
     }
 
     @Test
     void everyIntervalAShieldPiercingEmpOnlyArcStrikesAPlayerSideShip() {
-        ChartFleetConditions.setArcStrikeEmp(EMP);
+        ChartPlayerModifiers.setArcStrikeEmp(EMP);
         ChartArcStrikePlugin plugin = initialised();
 
         plugin.advance(ChartArcStrikePlugin.INTERVAL_SECONDS - 1f, List.of());
@@ -66,7 +66,7 @@ class ChartArcStrikePluginTest {
         ChartArcStrikePlugin outside = initialised();
         outside.advance(ChartArcStrikePlugin.INTERVAL_SECONDS * 2f, List.of());
 
-        ChartFleetConditions.setArcStrikeEmp(EMP);
+        ChartPlayerModifiers.setArcStrikeEmp(EMP);
         when(engine.isSimulation()).thenReturn(true);
         ChartArcStrikePlugin simulation = initialised();
         simulation.advance(ChartArcStrikePlugin.INTERVAL_SECONDS * 2f, List.of());

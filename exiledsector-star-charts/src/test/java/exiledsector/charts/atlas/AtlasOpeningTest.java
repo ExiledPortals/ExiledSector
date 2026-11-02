@@ -1,6 +1,6 @@
 package exiledsector.charts.atlas;
 
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.ChartAnomalies;
@@ -78,7 +78,7 @@ class AtlasOpeningTest {
         assertEquals("remnant", node.factionId());
         assertEquals(Set.of(SpatialBreach.ANOMALY_ID, PowerfulBoss.ANOMALY_ID), Set.copyOf(node.anomalyIds()));
         assertTrue(node.guaranteedBossTierUp());
-        assertEquals(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_FLEET_SIZE_PERCENT, 25f)), node.effects());
+        assertEquals(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_FLEET_SIZE_PERCENT, 25f)), node.effects());
         ChartGenContext context = ChartGenContext.none().withAtlasNode(node).withAnomalyEffects(node.anomalyIds());
         assertEquals(ChartAnomalies.definition(PowerfulBoss.ANOMALY_ID).effects().get(0).value(), context.bossSizePercent());
         assertTrue(context.bossSpoilsMult() > 1f);
@@ -89,7 +89,7 @@ class AtlasOpeningTest {
         assertEquals(List.of(), spent.anomalyIds());
         assertFalse(spent.guaranteedBossTierUp());
         assertEquals(generator.node(cell).factionId(), spent.factionId());
-        assertEquals(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_REWARD_PERCENT, 50f)), spent.effects());
+        assertEquals(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_REWARD_PERCENT, 50f)), spent.effects());
     }
 
     @Test
@@ -221,8 +221,8 @@ class AtlasOpeningTest {
     @Test
     void aRunNodeSurvivesEncoding() {
         AtlasRunNode node = new AtlasRunNode(new AtlasCell(-3, 7).pack(), "remnant",
-                List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_BOSS_SIZE_PERCENT, 50f),
-                        new ChartGenContext.AppliedEffect(ChartEffect.CHART_FLEET_SIZE_PERCENT, -30f)), List.of("spatial_breach", "black_hole"), true);
+                List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_BOSS_SIZE_PERCENT, 50f),
+                        new ChartGenContext.AppliedEffect(ChartModifier.CHART_FLEET_SIZE_PERCENT, -30f)), List.of("spatial_breach", "black_hole"), true);
 
         assertEquals(node, AtlasRunNode.decode(node.encode()));
         assertEquals(new AtlasRunNode(5L, "", List.of(), List.of(), false), AtlasRunNode.decode(new AtlasRunNode(5L, null, null, null, false).encode()));
@@ -250,7 +250,7 @@ class AtlasOpeningTest {
     @Test
     void aRunNodeKeepsItsGuaranteedUniqueAndSkirmishNodesSavedBeforeItReadWithout() {
         AtlasRunNode node = new AtlasRunNode(9L, "hegemony", List.of(), List.of("relay_network"), false)
-                .withExtraEffects(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, 50f)), true);
+                .withExtraEffects(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, 50f)), true);
         AtlasRunNode decoded = AtlasRunNode.decode(node.encode());
 
         assertEquals(node, decoded);

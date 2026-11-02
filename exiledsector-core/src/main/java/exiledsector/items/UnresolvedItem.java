@@ -5,7 +5,7 @@ import java.util.List;
 public final class UnresolvedItem extends Item {
 
     private Integer chartTier;
-    private Integer chartQuality;
+    private Integer chartQuantity;
     private List<String> rolledNodeIds;
     private String targetId;
 
@@ -20,14 +20,14 @@ public final class UnresolvedItem extends Item {
 
     @Override
     public void keepWhenUnresolved(UnresolvedItem unresolved) {
-        unresolved.keepChart(chartTier, chartQuality);
+        unresolved.keepChart(chartTier, chartQuantity);
         unresolved.keepRolledNodeIds(rolledNodeIds);
         unresolved.keepTarget(targetId);
     }
 
-    public void keepChart(Integer tier, Integer quality) {
+    public void keepChart(Integer tier, Integer quantity) {
         chartTier = tier;
-        chartQuality = quality;
+        chartQuantity = quantity;
     }
 
     public void keepRolledNodeIds(List<String> nodeIds) {
@@ -51,8 +51,8 @@ public final class UnresolvedItem extends Item {
         return chartTier == null ? fallback : chartTier;
     }
 
-    public int chartQuality(int fallback) {
-        return chartQuality == null ? fallback : chartQuality;
+    public int chartQuantity(int fallback) {
+        return chartQuantity == null ? fallback : chartQuantity;
     }
 
     public List<String> rolledNodeIds() {

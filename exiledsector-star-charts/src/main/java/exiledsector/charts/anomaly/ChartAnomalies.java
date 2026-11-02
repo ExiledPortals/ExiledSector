@@ -25,7 +25,7 @@ import exiledsector.charts.atlas.AtlasRunChoice;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.compat.ChartModGates;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.table.BuiltInTable;
@@ -141,7 +141,7 @@ public final class ChartAnomalies {
         }
         List<ChartGenContext.AppliedEffect> effects = new ArrayList<>();
         csv.weights(row, "effects", id, null, true).forEach((name, value) -> {
-            ChartEffect effect = ChartEffect.byNameOrNull(name);
+            ChartModifier effect = ChartModifier.byNameOrNull(name);
             if (effect == null) {
                 csv.problem(id, "effects", name + " (not a chart effect)");
             } else {

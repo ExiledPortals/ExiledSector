@@ -2,7 +2,7 @@ package exiledsector.charts.anomaly.storm;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 
 class StormRulesTest {
 
-    private static ChartGenContext withEffect(ChartEffect effect, float value) {
+    private static ChartGenContext withEffect(ChartModifier effect, float value) {
         return ChartGenContext.none().withEffects(List.of(new ChartGenContext.AppliedEffect(effect, value)));
     }
 
@@ -44,10 +44,10 @@ class StormRulesTest {
     @Test
     void theChartLinesTuneTheStorm() {
         assertEquals(1.5f, StormRules.lootQuantityMult(ChartGenContext.none()), 0.001f);
-        assertEquals(2f, StormRules.lootQuantityMult(withEffect(ChartEffect.CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT, 50f)), 0.001f);
-        ChartGenContext faster = withEffect(ChartEffect.CHART_STORM_STRIKE_FREQUENCY_PERCENT, 100f);
+        assertEquals(2f, StormRules.lootQuantityMult(withEffect(ChartModifier.CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT, 50f)), 0.001f);
+        ChartGenContext faster = withEffect(ChartModifier.CHART_STORM_STRIKE_FREQUENCY_PERCENT, 100f);
         assertEquals(StormRules.STRIKE_SECONDS / 2f, StormRules.strikeSeconds(faster.anomalyMult(StormFront.STRIKE_KEY)), 0.001f);
-        ChartGenContext wider = withEffect(ChartEffect.CHART_STORM_FRONT_SIZE_PERCENT, 50f);
+        ChartGenContext wider = withEffect(ChartModifier.CHART_STORM_FRONT_SIZE_PERCENT, 50f);
         assertEquals(StormRules.BAND_WIDTH * 1.5f, StormRules.bandWidth(wider.anomalyMult(StormFront.SIZE_KEY)), 0.01f);
     }
 

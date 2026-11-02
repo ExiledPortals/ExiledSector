@@ -17,7 +17,7 @@ Placeholder magnitudes copy vanilla's; they go to `docs/analysis/balance.csv` re
 
 ## Where it lives
 
-`ChartGenContext.improviseHangars()` sets the flag, `ChartFleetConditions` carries it beside `shipSystemsDisabled`, and `ChartFleetConditions.applyToShip` (reached through `ChartFleetConditionSource`, so before ship creation) adds the penalties under the chart's `MOD_ID`. A small `ChartHangarPenalties` class in `charts.effect` holds the numbers and the wing OP sum (`FighterWingSpecAPI.getOpCost(stats)` over `getVariant().getFittedWings()`). The DP and supply penalties are deployment-time stats, so they must be in place when the refit and deployment screens read them; `PlayerFleetStats.markForStatUpdate` on entering and leaving already covers that for `DEPLOYMENT_COST`.
+`ChartGenContext.improviseHangars()` sets the flag, `ChartPlayerModifiers` carries it beside `shipSystemsDisabled`, and `ChartPlayerModifiers.applyToShip` (reached through `ChartFleetConditionSource`, so before ship creation) adds the penalties under the chart's `MOD_ID`. A small `ChartHangarPenalties` class in `charts.effect` holds the numbers and the wing OP sum (`FighterWingSpecAPI.getOpCost(stats)` over `getVariant().getFittedWings()`). The DP and supply penalties are deployment-time stats, so they must be in place when the refit and deployment screens read them; `PlayerFleetStats.markForStatUpdate` on entering and leaving already covers that for `DEPLOYMENT_COST`.
 
 ## Open questions
 
@@ -27,7 +27,7 @@ Placeholder magnitudes copy vanilla's; they go to `docs/analysis/balance.csv` re
 
 ## Build order
 
-1. [ ] `CHART_IMPROVISED_HANGARS` in `ChartEffect`, `star_chart_modifiers.csv` row, the flag through `ChartGenContext`, `ChartFleetConditions` (set, clear) and `ChartRunScript`.
-2. [ ] `ChartHangarPenalties` applied in `ChartFleetConditions.applyToShip`; fighters need nothing extra since the stats live on the carrier.
+1. [ ] `CHART_IMPROVISED_HANGARS` in `ChartModifier`, `star_chart_modifiers.csv` row, the flag through `ChartGenContext`, `ChartPlayerModifiers` (set, clear) and `ChartRunScript`.
+2. [ ] `ChartHangarPenalties` applied in `ChartPlayerModifiers.applyToShip`; fighters need nothing extra since the stats live on the carrier.
 3. [ ] Strings (en and zh_CN draft) following `docs/tooltip_wording.md`, for example "Ships in your fleet suffer <bad>Converted Hangar</bad>'s penalties in the system"; `tools/editor_vocabulary.json` if the editor lists chart lines.
 4. [ ] Tests in `ChartFleetConditionsTest` (penalties on a player ship with wings, none on another fleet's, DP from wing OP, the bayless rule); `docs/docs.md` "Chart system rules" sentence.

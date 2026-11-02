@@ -50,8 +50,8 @@ class GatewayTierLimitTest {
     void theBuiltGatewayRaisesTheLimitFromFiveToTenToEveryTier() {
         try (MockedStatic<VaultsOfKnowledgeCompat> ignored = vaults(true)) {
             assertEquals(5, GatewayTierLimit.maxTier(sectorWithGateway(WormholeGateway.INDUSTRY_ID)));
-            assertEquals(10, GatewayTierLimit.maxTier(sectorWithGateway(WormholeGateway.ADVANCED_INDUSTRY_ID)));
-            assertEquals(ChartTiers.CORRUPTED_TIER, GatewayTierLimit.maxTier(sectorWithGateway(WormholeGateway.PERFECTED_INDUSTRY_ID)));
+            assertEquals(10, GatewayTierLimit.maxTier(sectorWithGateway(WormholeGateway.ARRAY_INDUSTRY_ID)));
+            assertEquals(ChartTiers.CORRUPTED_TIER, GatewayTierLimit.maxTier(sectorWithGateway(WormholeGateway.NEXUS_INDUSTRY_ID)));
         }
     }
 

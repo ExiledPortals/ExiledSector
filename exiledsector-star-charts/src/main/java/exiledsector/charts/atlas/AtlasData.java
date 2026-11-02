@@ -7,7 +7,7 @@ import exiledsector.charts.anomaly.AtlasRule;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.content.ChartFaction;
 import exiledsector.charts.content.ChartFactions;
-import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.layout.feature.ChartFeatures;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.layout.ChartLayoutGenerator;
@@ -431,7 +431,7 @@ public final class AtlasData {
         CsvRows.forEachIdRow(rows, ID_COLUMN, (id, row) -> {
             List<ChartGenContext.AppliedEffect> effects = new ArrayList<>();
             csv.weights(row, "effects", id, null, true).forEach((name, value) -> {
-                ChartEffect effect = ChartEffect.byNameOrNull(name);
+                ChartModifier effect = ChartModifier.byNameOrNull(name);
                 if (effect == null) {
                     csv.problem(id, "effects", name + " (not a chart effect)");
                 } else {

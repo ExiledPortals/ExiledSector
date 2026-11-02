@@ -11,7 +11,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-class AnomalousDebrisCurrencyDataTest {
+class EngramDataTest {
 
     @Test
     void theShippedCurrenciesReserveModifiersThatNoItemPoolLists() throws Exception {
@@ -24,8 +24,8 @@ class AnomalousDebrisCurrencyDataTest {
                 "the subroutine corruption pool", ItemType.SUBROUTINE);
         integrity.checkCorruptionPool(HullItemRows.shippedRows(ItemImplicits.corruptionDataPath()), ItemImplicits.corruptionDataPath(),
                 "the hull item corruption pool", ItemType.HULL_ITEM);
-        JSONArray currencies = HullItemRows.shippedRows(AnomalousDebrisCurrencies.PATH);
-        AnomalousDebrisCurrencies.checkRows(integrity, currencies, AnomalousDebrisCurrencies.PATH);
+        JSONArray currencies = HullItemRows.shippedRows(Engrams.PATH);
+        Engrams.checkRows(integrity, currencies, Engrams.PATH);
 
         List<Violation> violations = integrity.finish();
         assertEquals(List.of(), violations.stream().filter(violation -> violation.severity() == Severity.ERROR).toList());

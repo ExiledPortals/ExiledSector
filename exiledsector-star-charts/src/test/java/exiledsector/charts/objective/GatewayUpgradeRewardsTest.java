@@ -63,25 +63,25 @@ class GatewayUpgradeRewardsTest {
     }
 
     @Test
-    void aTierFiveRunGrantsTheAdvancedUpgradeOnceAndQueuesThePopup() {
-        assertEquals(List.of(WormholeTechItems.UPGRADE_ADVANCED), GatewayUpgradeRewards.completed(mockSector.sector, 5));
+    void aTierFiveRunGrantsTheArrayUpgradeOnceAndQueuesThePopup() {
+        assertEquals(List.of(WormholeTechItems.UPGRADE_ARRAY), GatewayUpgradeRewards.completed(mockSector.sector, 5));
         assertEquals(List.of(), GatewayUpgradeRewards.completed(mockSector.sector, 7));
 
-        verify(cargo, times(1)).addSpecial(item(WormholeTechItems.UPGRADE_ADVANCED), eq(1f));
-        assertEquals(List.of(WormholeTechItems.UPGRADE_ADVANCED), GatewayUpgradeRewards.pending(mockSector.sector));
+        verify(cargo, times(1)).addSpecial(item(WormholeTechItems.UPGRADE_ARRAY), eq(1f));
+        assertEquals(List.of(WormholeTechItems.UPGRADE_ARRAY), GatewayUpgradeRewards.pending(mockSector.sector));
         verify(mockSector.sector).addTransientScript(argThat((EveryFrameScript script) -> script instanceof GatewayUpgradeNotice));
     }
 
     @Test
     void aTierTenRunOnAFreshSaveGrantsBoth() {
-        assertEquals(List.of(WormholeTechItems.UPGRADE_ADVANCED, WormholeTechItems.UPGRADE_PERFECTED),
+        assertEquals(List.of(WormholeTechItems.UPGRADE_ARRAY, WormholeTechItems.UPGRADE_NEXUS),
                 GatewayUpgradeRewards.completed(mockSector.sector, 10));
 
-        verify(cargo).addSpecial(item(WormholeTechItems.UPGRADE_ADVANCED), eq(1f));
-        verify(cargo).addSpecial(item(WormholeTechItems.UPGRADE_PERFECTED), eq(1f));
-        assertTrue(sectorMemory.getBoolean(GatewayUpgradeRewards.ADVANCED_GRANTED));
-        assertTrue(sectorMemory.getBoolean(GatewayUpgradeRewards.PERFECTED_GRANTED));
-        assertEquals(List.of(WormholeTechItems.UPGRADE_ADVANCED, WormholeTechItems.UPGRADE_PERFECTED),
+        verify(cargo).addSpecial(item(WormholeTechItems.UPGRADE_ARRAY), eq(1f));
+        verify(cargo).addSpecial(item(WormholeTechItems.UPGRADE_NEXUS), eq(1f));
+        assertTrue(sectorMemory.getBoolean(GatewayUpgradeRewards.ARRAY_GRANTED));
+        assertTrue(sectorMemory.getBoolean(GatewayUpgradeRewards.NEXUS_GRANTED));
+        assertEquals(List.of(WormholeTechItems.UPGRADE_ARRAY, WormholeTechItems.UPGRADE_NEXUS),
                 new GatewayUpgradeDialog(GatewayUpgradeRewards.pending(mockSector.sector)).itemIds());
     }
 
@@ -99,18 +99,18 @@ class GatewayUpgradeRewardsTest {
         state.clearTier(3);
         state.clearTier(11);
         mockSector.persistentData.put(AtlasState.PERSISTENT_KEY, state);
-        sectorMemory.set(GatewayUpgradeRewards.ADVANCED_GRANTED, true);
+        sectorMemory.set(GatewayUpgradeRewards.ARRAY_GRANTED, true);
 
         GatewayUpgradeRewards.onGameLoad(mockSector.sector);
 
-        verify(cargo, never()).addSpecial(item(WormholeTechItems.UPGRADE_ADVANCED), anyFloat());
-        verify(cargo).addSpecial(item(WormholeTechItems.UPGRADE_PERFECTED), eq(1f));
-        assertEquals(List.of(WormholeTechItems.UPGRADE_PERFECTED), GatewayUpgradeRewards.pending(mockSector.sector));
+        verify(cargo, never()).addSpecial(item(WormholeTechItems.UPGRADE_ARRAY), anyFloat());
+        verify(cargo).addSpecial(item(WormholeTechItems.UPGRADE_NEXUS), eq(1f));
+        assertEquals(List.of(WormholeTechItems.UPGRADE_NEXUS), GatewayUpgradeRewards.pending(mockSector.sector));
     }
 
     @Test
     void aPopupQueuedBeforeASaveIsShownAgainAfterLoading() {
-        sectorMemory.set(GatewayUpgradeRewards.PENDING_KEY, WormholeTechItems.UPGRADE_ADVANCED);
+        sectorMemory.set(GatewayUpgradeRewards.PENDING_KEY, WormholeTechItems.UPGRADE_ARRAY);
 
         GatewayUpgradeRewards.onGameLoad(mockSector.sector);
 
