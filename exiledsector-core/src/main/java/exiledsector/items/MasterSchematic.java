@@ -11,7 +11,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BooleanSupplier;
 
-public enum MasterSchematic implements ShipCurrency {
+public enum MasterSchematic implements ShipSchematic {
 
     INSTANCE;
 
@@ -54,7 +54,7 @@ public enum MasterSchematic implements ShipCurrency {
     }
 
 
-    public static List<ShipCurrency> rollSalvage(float firstItemChance, Random random) {
+    public static List<ShipSchematic> rollSalvage(float firstItemChance, Random random) {
         return required() && random.nextFloat() < firstItemChance * SALVAGE_CHANCE_SHARE ? List.of(INSTANCE) : List.of();
     }
 

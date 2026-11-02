@@ -10,7 +10,7 @@ import exiledsector.items.CraftingMaterials;
 import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.Item;
 import exiledsector.items.ItemCrafting;
-import exiledsector.items.ItemCurrency;
+import exiledsector.items.CraftingMaterialFamily;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemNature;
 import exiledsector.items.ItemStore;
@@ -77,15 +77,15 @@ public final class HullCraftingBench implements BenchModeSupport {
     }
 
     @Override
-    public List<ItemCurrency> currencies() {
-        List<ItemCurrency> offered = new ArrayList<>();
+    public List<CraftingMaterialFamily> currencies() {
+        List<CraftingMaterialFamily> offered = new ArrayList<>();
         ExiledSector.enabledDomains().forEach(domain -> offered.addAll(domain.hullCraftingBenchCurrencies()));
         return hullCraftingBenchCurrencies(offered, HoloPanel.playerMaterials()::count);
     }
 
-    static List<ItemCurrency> hullCraftingBenchCurrencies(List<ItemCurrency> registered, ToIntFunction<String> owned) {
-        List<ItemCurrency> shown = new ArrayList<>(List.of(Nanoswarm.values()));
-        for (ItemCurrency currency : registered) {
+    static List<CraftingMaterialFamily> hullCraftingBenchCurrencies(List<CraftingMaterialFamily> registered, ToIntFunction<String> owned) {
+        List<CraftingMaterialFamily> shown = new ArrayList<>(List.of(Nanoswarm.values()));
+        for (CraftingMaterialFamily currency : registered) {
             if (!(currency instanceof Nanoswarm) && currency.appliesToShipItems() && owned.applyAsInt(currency.itemId()) > 0) {
                 shown.add(currency);
             }
@@ -94,27 +94,27 @@ public final class HullCraftingBench implements BenchModeSupport {
     }
 
     @Override
-    public boolean inOrbit(ItemCurrency currency) {
+    public boolean inOrbit(CraftingMaterialFamily currency) {
         return currency instanceof Nanoswarm;
     }
 
     @Override
-    public String currencyDescriptionKey(ItemCurrency currency) {
+    public String currencyDescriptionKey(CraftingMaterialFamily currency) {
         return MaterialItems.descriptionKey(currency.itemId());
     }
 
     @Override
-    public String currencyDescription(ItemCurrency currency) {
+    public String currencyDescription(CraftingMaterialFamily currency) {
         return currency.description();
     }
 
     @Override
-    public List<StyledText> currencyLines(ItemCurrency currency) {
+    public List<StyledText> currencyLines(CraftingMaterialFamily currency) {
         return currency.grantedLines();
     }
 
     @Override
-    public Refusal refusal(ItemCurrency currency, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
+    public Refusal refusal(CraftingMaterialFamily currency, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
                            Set<CraftingInhibitor> inhibitors) {
         if (materials.count(currency.itemId()) < 1) {
             return new Refusal(UseVerdict.refused(currency.growable() ? "ui.craftingBench.notice.noneOwned" : "ui.craftingBench.notice.noneFound"), false);
@@ -126,7 +126,7 @@ public final class HullCraftingBench implements BenchModeSupport {
     }
 
     @Override
-    public Use use(ItemCurrency currency, Item loaded, ItemStore store, CraftingMaterials materials, Random random,
+    public Use use(CraftingMaterialFamily currency, Item loaded, ItemStore store, CraftingMaterials materials, Random random,
                    Predicate<ItemDefinition> allowedUniques, Set<CraftingInhibitor> inhibitors, String nameBefore) {
         Item result = ItemCrafting.use(currency, loaded, materials, store, random, allowedUniques, inhibitors);
         if (result == null) {
@@ -142,7 +142,7 @@ public final class HullCraftingBench implements BenchModeSupport {
         return new Use(result, currency.createsCopy() ? loaded : result, notice);
     }
 
-    static String usedNoticeKey(ItemCurrency currency, CorruptionOutcome outcome, ItemNature nature) {
+    static String usedNoticeKey(CraftingMaterialFamily currency, CorruptionOutcome outcome, ItemNature nature) {
         if (currency == Nanoswarm.CORRUPTION && outcome != null) {
             return "ui.craftingBench.notice.corrupted." + outcome.name().toLowerCase(Locale.ROOT) + "." + nature.name().toLowerCase(Locale.ROOT);
         }

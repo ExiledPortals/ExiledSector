@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-public interface ItemCurrency extends GrowableMaterial {
+public interface CraftingMaterialFamily extends GrowableMaterial {
 
     String key();
 

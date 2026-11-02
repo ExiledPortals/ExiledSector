@@ -1,7 +1,7 @@
 package exiledsector.ui.socket;
 
 import exiledsector.items.Nanoswarm;
-import exiledsector.items.ItemCurrency;
+import exiledsector.items.CraftingMaterialFamily;
 import exiledsector.items.ItemNature;
 import exiledsector.items.ItemType;
 import org.junit.jupiter.api.Test;
@@ -16,8 +16,8 @@ import static org.mockito.Mockito.when;
 
 class HullCraftingBenchCurrenciesTest {
 
-    private static ItemCurrency extra(String itemId, ItemType type) {
-        ItemCurrency currency = mock(ItemCurrency.class);
+    private static CraftingMaterialFamily extra(String itemId, ItemType type) {
+        CraftingMaterialFamily currency = mock(CraftingMaterialFamily.class);
         when(currency.itemId()).thenReturn(itemId);
         when(currency.appliesTo(type)).thenReturn(true);
         when(currency.appliesToShipItems()).thenCallRealMethod();
@@ -27,12 +27,12 @@ class HullCraftingBenchCurrenciesTest {
 
     @Test
     void anExtraHullItemCurrencyShowsOnlyWhileOwned() {
-        ItemCurrency engram = extra("engram", ItemType.HULL_ITEM);
-        ItemCurrency chartOnly = extra("cipher", ItemType.STAR_CHART);
-        List<ItemCurrency> registered = List.of(Nanoswarm.AUGMENTATION, engram, chartOnly);
+        CraftingMaterialFamily engram = extra("engram", ItemType.HULL_ITEM);
+        CraftingMaterialFamily chartOnly = extra("cipher", ItemType.STAR_CHART);
+        List<CraftingMaterialFamily> registered = List.of(Nanoswarm.AUGMENTATION, engram, chartOnly);
 
-        List<ItemCurrency> owned = HullCraftingBench.hullCraftingBenchCurrencies(registered, itemId -> 1);
-        List<ItemCurrency> none = HullCraftingBench.hullCraftingBenchCurrencies(registered, itemId -> 0);
+        List<CraftingMaterialFamily> owned = HullCraftingBench.hullCraftingBenchCurrencies(registered, itemId -> 1);
+        List<CraftingMaterialFamily> none = HullCraftingBench.hullCraftingBenchCurrencies(registered, itemId -> 0);
 
         assertEquals(Nanoswarm.values().length + 1, owned.size());
         assertTrue(owned.contains(engram));
@@ -42,8 +42,8 @@ class HullCraftingBenchCurrenciesTest {
 
     @Test
     void extraCurrenciesLeaveTheOrbitForACentredColumn() {
-        ItemCurrency engram = extra("engram", ItemType.HULL_ITEM);
-        List<ItemCurrency> shown = HullCraftingBench.hullCraftingBenchCurrencies(List.of(engram), itemId -> 1);
+        CraftingMaterialFamily engram = extra("engram", ItemType.HULL_ITEM);
+        List<CraftingMaterialFamily> shown = HullCraftingBench.hullCraftingBenchCurrencies(List.of(engram), itemId -> 1);
 
         assertEquals(List.of(Nanoswarm.values()), shown.stream().filter(HullCraftingBench.INSTANCE::inOrbit).toList());
         assertEquals(80f, CraftingBenchPanel.columnTileTop(0, 1, 100f, 40f, 10f, 300f));

@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 public record Engram(String itemId, String englishName, String modifierId, Set<ItemType> itemTypes, int minTier, float weight,
                                       Color color)
-        implements ItemCurrency {
+        implements CraftingMaterialFamily {
 
     static final Color DEFAULT_COLOR = new Color(120, 225, 210);
     static final String DESCRIPTION_KEY = "chart.engram.description";

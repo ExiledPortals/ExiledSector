@@ -271,7 +271,7 @@ class ItemDropsTest {
     @Test
     void aCurrencyChanceAboveOneDropsThatManyWithAChanceOfOneMore() {
         Random random = new Random(9L);
-        List<ItemDrops.CurrencyDrop> drops = List.of(new ItemDrops.CurrencyDrop("a", 3f), new ItemDrops.CurrencyDrop("b", 1f));
+        List<ItemDrops.MaterialDrop> drops = List.of(new ItemDrops.MaterialDrop("a", 3f), new ItemDrops.MaterialDrop("b", 1f));
         double totalA = 0;
         for (int i = 0; i < TRIALS; i++) {
             Map<String, Integer> dropped = new java.util.HashMap<>();

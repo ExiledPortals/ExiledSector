@@ -146,7 +146,7 @@ public final class ItemDrops {
         if (feedstockFound > 0) {
             droppedMaterials.put(ItemDisassembly.FEEDSTOCK_ITEM_ID, feedstockFound);
         }
-        rollEachCurrency(kernelDrops(), rule.chances().get(0) * KERNEL_CHANCE_SHARE * currencyMult, random, droppedMaterials);
+        rollEachCurrency(materialDrops(), rule.chances().get(0) * KERNEL_CHANCE_SHARE * currencyMult, random, droppedMaterials);
         return droppedMaterials;
     }
 
@@ -177,28 +177,28 @@ public final class ItemDrops {
         return wholePartCount + (random.nextFloat() < exactFeedstock - wholePartCount ? 1 : 0);
     }
 
-    static List<CurrencyDrop> kernelDrops() {
-        List<CurrencyDrop> kernelDrops = new ArrayList<>();
-        for (ItemCurrency currency : ItemCurrencies.all()) {
+    static List<MaterialDrop> materialDrops() {
+        List<MaterialDrop> materialDrops = new ArrayList<>();
+        for (CraftingMaterialFamily currency : CraftingMaterialFamilies.all()) {
             if (currency.dropsFromShipLoot()) {
-                kernelDrops.add(new CurrencyDrop(currency.itemId(), currency.dropWeight()));
+                materialDrops.add(new MaterialDrop(currency.itemId(), currency.dropWeight()));
             }
         }
         for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
-            kernelDrops.add(new CurrencyDrop(inhibitor.itemId(), inhibitor.dropWeight()));
+            materialDrops.add(new MaterialDrop(inhibitor.itemId(), inhibitor.dropWeight()));
         }
-        return kernelDrops;
+        return materialDrops;
     }
 
-    public record CurrencyDrop(String itemId, float weight) {
+    public record MaterialDrop(String itemId, float weight) {
     }
 
-    public static void rollEachCurrency(List<CurrencyDrop> drops, float expectedDrops, Random random, Map<String, Integer> droppedMaterials) {
+    public static void rollEachCurrency(List<MaterialDrop> drops, float expectedDrops, Random random, Map<String, Integer> droppedMaterials) {
         double totalWeight = drops.stream().mapToDouble(drop -> Math.max(0f, drop.weight())).sum();
         if (!(expectedDrops > 0f) || !(totalWeight > 0d)) {
             return;
         }
-        for (CurrencyDrop drop : drops) {
+        for (MaterialDrop drop : drops) {
             int count = wholeFeedstock((float) (expectedDrops * Math.max(0f, drop.weight()) / totalWeight), random);
             if (count > 0) {
                 droppedMaterials.merge(drop.itemId(), count, Integer::sum);
@@ -214,7 +214,7 @@ public final class ItemDrops {
         return definition.type() == ItemType.SUBROUTINE && !definition.unique() && isDroppable(definition);
     }
 
-    public record SiteLoot(List<ItemData> items, List<ShipCurrency> upgrades, Map<String, Integer> materials) {
+    public record SiteLoot(List<ItemData> items, List<ShipSchematic> upgrades, Map<String, Integer> materials) {
 
         public static final SiteLoot NONE = new SiteLoot(List.of(), List.of(), Map.of());
 
@@ -228,13 +228,13 @@ public final class ItemDrops {
             return items.isEmpty() && upgrades.isEmpty() && materials.isEmpty();
         }
 
-        public SiteLoot plus(List<ItemData> moreItems, List<ShipCurrency> moreUpgrades, Map<String, Integer> moreMaterials) {
+        public SiteLoot plus(List<ItemData> moreItems, List<ShipSchematic> moreUpgrades, Map<String, Integer> moreMaterials) {
             if (moreItems.isEmpty() && moreUpgrades.isEmpty() && moreMaterials.isEmpty()) {
                 return this;
             }
             List<ItemData> allItems = new ArrayList<>(items);
             allItems.addAll(moreItems);
-            List<ShipCurrency> allUpgrades = new ArrayList<>(upgrades);
+            List<ShipSchematic> allUpgrades = new ArrayList<>(upgrades);
             allUpgrades.addAll(moreUpgrades);
             Map<String, Integer> allMaterials = new LinkedHashMap<>(materials);
             moreMaterials.forEach((itemId, quantity) -> allMaterials.merge(itemId, quantity, Integer::sum));

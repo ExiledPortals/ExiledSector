@@ -231,18 +231,18 @@ class HullUpgradeTest {
 
     @Test
     void theSchematicRevisionMovesOnlyWhenTheCountsChange() {
-        int startRevision = store.shipCurrencyRevision();
+        int startRevision = store.shipSchematicRevision();
 
         store.addSchematics(RefitSchematic.SCRAPPED, 0);
         assertFalse(store.takeSchematic(RefitSchematic.SCRAPPED));
-        assertEquals(startRevision, store.shipCurrencyRevision());
+        assertEquals(startRevision, store.shipSchematicRevision());
 
         store.addSchematics(RefitSchematic.SCRAPPED, 2);
-        int afterAdding = store.shipCurrencyRevision();
+        int afterAdding = store.shipSchematicRevision();
         assertNotEquals(startRevision, afterAdding);
 
         assertTrue(store.takeSchematic(RefitSchematic.SCRAPPED));
-        assertNotEquals(afterAdding, store.shipCurrencyRevision());
+        assertNotEquals(afterAdding, store.shipSchematicRevision());
     }
 
     @Test

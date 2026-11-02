@@ -43,7 +43,7 @@ Each node gets these traits.
 | Faction | A Voronoi layer of large territories that span biomes. A region with a faction pool that lacks the territory faction swaps it for one pool faction per territory. Replaces the faction implicit. | faction pool per region |
 | Boss | Every node has one. About 1 in 4 carries the Powerful Boss anomaly: a bigger boss with more spoils and a guaranteed tier-up chart, rolled on its own chance rather than the shared anomaly one. | `chart_anomalies.csv`, `atlas_anomaly_chances.csv` |
 | Anomalies | Any number, each rolled on its own and leaned on by the region, more often further out, plus any inserted later (see Anomalies). | `chart_anomalies.csv` |
-| Special site | Rare per-chunk rolls (Sensor Array, Infestation Nexus, unique systems), plus fixed positions for Bastions. | `atlas_specials.csv` |
+| Special site | Rare per-chunk rolls (Sensor Array, Infestation, unique systems), plus fixed positions for Bastions. | `atlas_specials.csv` |
 
 Further from the origin, nodes roll more markers and rarer biomes. Distance never gates the tier, matching PoE2.
 
@@ -95,7 +95,7 @@ Anomaly tuning, region effects and later atlas passives all reach a run as `Char
 
 A Sensor Array is a short run with a boss. Completing it reveals 6 lanes around it, drops intel and grants an atlas point.
 
-An infestation is a cluster of infested nodes around an Infestation Nexus. There are two kinds: Remnant infestations, and Threat infestations, which appear only once the player has met the Threat (vanilla's `$encounteredThreat`). Infested nodes have stronger fleets and a better loot multiplier. The Nexus needs a chart with at least four modifiers. Infested nodes are those within a radius of the Nexus (2.5 cells to start). Clearing it turns every infested node into a Cleansed node with exclusive drops, and grants an atlas point. Infestations never spread, because charts have no timers. Like biomes, a Threat infestation is decided when its chunk is revealed, so one never appears in space the player has already seen.
+An infestation is a cluster of infested nodes around an Infestation. There are two kinds: Remnant infestations, and Threat infestations, which appear only once the player has met the Threat (vanilla's `$encounteredThreat`). Infested nodes have stronger fleets and a better loot multiplier. The Nexus needs a chart with at least four modifiers. Infested nodes are those within a radius of the Nexus (2.5 cells to start). Clearing it turns every infested node into a Cleansed node with exclusive drops, and grants an atlas point. Infestations never spread, because charts have no timers. Like biomes, a Threat infestation is decided when its chunk is revealed, so one never appears in space the player has already seen.
 
 Bastions are three nodes at fixed bearings 25 cells out, so every save has the same long-range goals. Each needs a tier 15 chart and allows one attempt. Each drops a key fragment, and three fragments open a pinnacle encounter at the Gateway. The pinnacle gets its own plan.
 

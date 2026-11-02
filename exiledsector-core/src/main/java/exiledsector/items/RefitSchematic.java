@@ -11,7 +11,7 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BooleanSupplier;
 
-public enum RefitSchematic implements ShipCurrency {
+public enum RefitSchematic implements ShipSchematic {
 
     SCRAPPED(2, 60f, new Color(170, 170, 170)),
     STANDARD(3, 28f, ItemRarity.COMMON.color()),

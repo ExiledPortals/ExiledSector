@@ -87,7 +87,7 @@ class StarChartCipherTest {
         return chart.explicits().stream().anyMatch(rolled -> rolled.modifierId().equals(modifierId));
     }
 
-    private Item use(ItemCurrency currency, Item chart, long seed) {
+    private Item use(CraftingMaterialFamily currency, Item chart, long seed) {
         return ItemCrafting.use(currency, chart, materials, store, new Random(seed), ANY_UNIQUE);
     }
 
@@ -99,13 +99,13 @@ class StarChartCipherTest {
     void theChartRowListsTheExtendedKernelsThenTheChartCurrenciesAndShipTypesStayAsTheyWere() {
         assertEquals(List.of(Nanoswarm.AUGMENTATION, Nanoswarm.CORRUPTION, Nanoswarm.ANNULMENT, Nanoswarm.TUNING,
                         StarChartCipher.REFORGE, StarChartCipher.ERASURE, StarChartCipher.CARTOGRAPHY),
-                ItemCurrencies.forType(ItemType.STAR_CHART));
+                CraftingMaterialFamilies.forType(ItemType.STAR_CHART));
         assertEquals(Arrays.stream(Nanoswarm.values()).filter(kernel -> kernel != Nanoswarm.ANNULMENT).toList(),
-                ItemCurrencies.forType(ItemType.SUBROUTINE));
-        assertEquals(Arrays.asList(Nanoswarm.values()), ItemCurrencies.forType(ItemType.HULL_ITEM));
+                CraftingMaterialFamilies.forType(ItemType.SUBROUTINE));
+        assertEquals(Arrays.asList(Nanoswarm.values()), CraftingMaterialFamilies.forType(ItemType.HULL_ITEM));
         for (StarChartCipher currency : StarChartCipher.values()) {
             assertFalse(currency.dropsFromShipLoot(), currency.name());
-            assertSame(currency, ItemCurrencies.byItemId(currency.itemId()));
+            assertSame(currency, CraftingMaterialFamilies.byItemId(currency.itemId()));
             assertTrue(MaterialItems.isMaterial(currency.itemId()));
         }
         for (Nanoswarm kernel : Nanoswarm.values()) {
@@ -114,14 +114,14 @@ class StarChartCipherTest {
         }
 
         StarChartCipher.registerAll();
-        assertEquals(7, ItemCurrencies.forType(ItemType.STAR_CHART).size());
+        assertEquals(7, CraftingMaterialFamilies.forType(ItemType.STAR_CHART).size());
         StarChartFixtures.unregisterCurrencies();
-        assertEquals(List.of(), ItemCurrencies.forType(ItemType.STAR_CHART));
-        assertEquals(Arrays.asList(Nanoswarm.values()), ItemCurrencies.all());
-        assertThrows(IllegalArgumentException.class, () -> ItemCurrencies.extend(StarChartCipher.REFORGE, ItemType.HULL_ITEM));
-        assertFalse(ItemCurrencies.extend(Nanoswarm.AUGMENTATION, ItemType.HULL_ITEM));
-        assertFalse(ItemCurrencies.appliesTo(null, ItemType.STAR_CHART));
-        assertFalse(ItemCurrencies.appliesTo(Nanoswarm.AUGMENTATION, null));
+        assertEquals(List.of(), CraftingMaterialFamilies.forType(ItemType.STAR_CHART));
+        assertEquals(Arrays.asList(Nanoswarm.values()), CraftingMaterialFamilies.all());
+        assertThrows(IllegalArgumentException.class, () -> CraftingMaterialFamilies.extend(StarChartCipher.REFORGE, ItemType.HULL_ITEM));
+        assertFalse(CraftingMaterialFamilies.extend(Nanoswarm.AUGMENTATION, ItemType.HULL_ITEM));
+        assertFalse(CraftingMaterialFamilies.appliesTo(null, ItemType.STAR_CHART));
+        assertFalse(CraftingMaterialFamilies.appliesTo(Nanoswarm.AUGMENTATION, null));
     }
 
     @Test
@@ -209,7 +209,7 @@ class StarChartCipherTest {
                 assertNotEquals(implicitsBefore, corrupted.implicits());
                 corrupted.implicits().forEach(implicit -> assertTrue(chartImplicitIds.contains(implicit.modifierId()), implicit.modifierId()));
             }
-            for (ItemCurrency currency : ItemCurrencies.forType(ItemType.STAR_CHART)) {
+            for (CraftingMaterialFamily currency : CraftingMaterialFamilies.forType(ItemType.STAR_CHART)) {
                 assertFalse(ItemCrafting.canUse(currency, corrupted, ANY_UNIQUE), currency.key());
             }
         }
@@ -420,21 +420,21 @@ class StarChartCipherTest {
 
     @Test
     void shipKernelDropsLeaveOutChartCurrencies() {
-        List<ItemDrops.CurrencyDrop> builtInDrops = new ArrayList<>();
+        List<ItemDrops.MaterialDrop> builtInDrops = new ArrayList<>();
         for (Nanoswarm currency : Nanoswarm.values()) {
-            builtInDrops.add(new ItemDrops.CurrencyDrop(currency.itemId(), currency.dropWeight()));
+            builtInDrops.add(new ItemDrops.MaterialDrop(currency.itemId(), currency.dropWeight()));
         }
         for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
-            builtInDrops.add(new ItemDrops.CurrencyDrop(inhibitor.itemId(), inhibitor.dropWeight()));
+            builtInDrops.add(new ItemDrops.MaterialDrop(inhibitor.itemId(), inhibitor.dropWeight()));
         }
-        assertEquals(builtInDrops, ItemDrops.kernelDrops());
+        assertEquals(builtInDrops, ItemDrops.materialDrops());
     }
 
     @Test
     void chartCurrencyDropsListOnlyTheChartOnlyCurrenciesByWeight() {
-        Set<ItemDrops.CurrencyDrop> expected = new HashSet<>();
+        Set<ItemDrops.MaterialDrop> expected = new HashSet<>();
         for (StarChartCipher currency : StarChartCipher.values()) {
-            expected.add(new ItemDrops.CurrencyDrop(currency.itemId(), currency.dropWeight()));
+            expected.add(new ItemDrops.MaterialDrop(currency.itemId(), currency.dropWeight()));
         }
         assertEquals(expected, Set.copyOf(ChartDrops.chartCurrencyDrops()));
 

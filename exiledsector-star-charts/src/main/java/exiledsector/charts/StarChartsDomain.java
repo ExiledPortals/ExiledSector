@@ -26,7 +26,7 @@ import exiledsector.i18n.SpecLocalisation;
 import exiledsector.i18n.Translation;
 import exiledsector.items.Engrams;
 import exiledsector.items.AtlasCatalystItems;
-import exiledsector.items.ItemCurrency;
+import exiledsector.items.CraftingMaterialFamily;
 import exiledsector.items.ItemDataRules;
 import exiledsector.items.ItemTypeSupport;
 import exiledsector.items.MaterialItems;
@@ -160,7 +160,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     }
 
     @Override
-    public List<ItemCurrency> hullCraftingBenchCurrencies() {
+    public List<CraftingMaterialFamily> hullCraftingBenchCurrencies() {
         return List.copyOf(Engrams.all());
     }
 

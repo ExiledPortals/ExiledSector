@@ -168,12 +168,12 @@ class UniqueSubroutinesTest {
         Item item = fleetRelic(7L);
         List<RolledModifier> rolled = item.explicits();
         CargoAPI cargo = mock(CargoAPI.class);
-        for (ItemCurrency currency : ItemCurrencies.all()) {
+        for (CraftingMaterialFamily currency : CraftingMaterialFamilies.all()) {
             when(cargo.getQuantity(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(currency.itemId()))).thenReturn(5f);
         }
         CraftingMaterials materials = CraftingMaterials.cargoOnly(cargo);
 
-        for (ItemCurrency currency : ItemCurrencies.all()) {
+        for (CraftingMaterialFamily currency : CraftingMaterialFamilies.all()) {
             assertFalse(ItemCrafting.canUse(currency, item, definition -> true), currency.key());
             assertNull(ItemCrafting.use(currency, item, materials, store, new Random(1L), definition -> true), currency.key());
         }

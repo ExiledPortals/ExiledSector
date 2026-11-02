@@ -75,7 +75,7 @@ class EngramTest {
     }
 
     private static Engram currency(String itemId) {
-        return (Engram) ItemCurrencies.byItemId(itemId);
+        return (Engram) CraftingMaterialFamilies.byItemId(itemId);
     }
 
     @Test
@@ -195,7 +195,7 @@ class EngramTest {
     @Test
     void theStarChartsDomainOffersItsEngramsToTheHullCraftingBench() {
         assertEquals(Set.of(REVENANT, VIGIL), new HashSet<>(new exiledsector.charts.StarChartsDomain().hullCraftingBenchCurrencies().stream()
-                .map(ItemCurrency::itemId).toList()));
+                .map(CraftingMaterialFamily::itemId).toList()));
     }
 
     @Test
@@ -331,7 +331,7 @@ class EngramTest {
                 .put(currencyRow(REVENANT, GRANTED_PREFIX, "hull_item", 1)));
 
         assertEquals(1, Engrams.all().size());
-        assertNull(ItemCurrencies.byItemId("exiledSector_test_missing"));
+        assertNull(CraftingMaterialFamilies.byItemId("exiledSector_test_missing"));
         assertFalse(ReservedModifiers.isReserved(GRANTED_SUFFIX));
         assertFalse(problems.isEmpty());
     }

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-public enum StarChartCipher implements ItemCurrency {
+public enum StarChartCipher implements CraftingMaterialFamily {
 
     REFORGE("exiledSector_reforge_cipher", "reforge", 30, 5f, MaterialTier.MAJOR, new Color(80, 205, 225)),
     ERASURE("exiledSector_erasure_cipher", "erasure", 40, 3f, MaterialTier.MAJOR, new Color(175, 180, 200)),
@@ -36,12 +36,12 @@ public enum StarChartCipher implements ItemCurrency {
 
     public static void registerAll() {
         for (StarChartCipher currency : values()) {
-            if (!ItemCurrencies.isRegistered(currency)) {
-                ItemCurrencies.register(currency);
+            if (!CraftingMaterialFamilies.isRegistered(currency)) {
+                CraftingMaterialFamilies.register(currency);
             }
         }
         for (Nanoswarm kernel : KERNELS_ON_CHARTS) {
-            ItemCurrencies.extend(kernel, ItemType.STAR_CHART);
+            CraftingMaterialFamilies.extend(kernel, ItemType.STAR_CHART);
         }
     }
 

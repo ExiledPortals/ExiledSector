@@ -2,7 +2,7 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.SpecialItemData;
 
-public interface ShipCurrency {
+public interface ShipSchematic {
 
     SpecialItemData toSpecialItem();
 

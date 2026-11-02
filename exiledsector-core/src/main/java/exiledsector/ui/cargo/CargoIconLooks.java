@@ -4,8 +4,8 @@ import exiledsector.domain.DomainContributions;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.items.Nanoswarm;
 import exiledsector.items.CraftingInhibitor;
-import exiledsector.items.ItemCurrencies;
-import exiledsector.items.ItemCurrency;
+import exiledsector.items.CraftingMaterialFamilies;
+import exiledsector.items.CraftingMaterialFamily;
 import exiledsector.items.Item;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemRarity;
@@ -30,7 +30,7 @@ public final class CargoIconLooks {
         if (CraftingInhibitor.byItemId(itemId) != null) {
             return SwarmMotion.CONTAINED;
         }
-        ItemCurrency currency = ItemCurrencies.byItemId(itemId);
+        CraftingMaterialFamily currency = CraftingMaterialFamilies.byItemId(itemId);
         if (currency == null) {
             return SwarmMotion.SLURRY;
         }

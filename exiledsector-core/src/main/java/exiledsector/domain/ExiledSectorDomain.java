@@ -12,7 +12,7 @@ import exiledsector.compat.CompatTarget;
 import exiledsector.effects.GrantedNodeEffects;
 import exiledsector.effects.PlayerEngagementPipeline;
 import exiledsector.effects.ShipEffectSource;
-import exiledsector.items.ItemCurrency;
+import exiledsector.items.CraftingMaterialFamily;
 import exiledsector.items.ItemDataRules;
 import exiledsector.items.ItemTypeSupport;
 import exiledsector.items.ShipCustody;
@@ -84,7 +84,7 @@ public interface ExiledSectorDomain {
         return List.of();
     }
 
-    default List<ItemCurrency> hullCraftingBenchCurrencies() {
+    default List<CraftingMaterialFamily> hullCraftingBenchCurrencies() {
         return List.of();
     }
 

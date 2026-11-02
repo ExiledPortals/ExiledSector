@@ -138,7 +138,7 @@ public final class BattleItemDrops {
             return HullItemDrops.SectionItemLoot.NONE;
         }
         List<ItemData> items = new ArrayList<>();
-        List<ShipCurrency> upgrades = new ArrayList<>();
+        List<ShipSchematic> upgrades = new ArrayList<>();
         List<ItemKind> kindsWithBasics = hullItemDropsOpen ? HullItemDrops.sectionKindsWithBasics() : List.of();
         for (Planned planned : plan(battle.sources(), dropMultiplier, kindsWithBasics, random, hullItemDropsOpen)) {
             if (planned.drop() == Drop.REFIT_SCHEMATIC) {

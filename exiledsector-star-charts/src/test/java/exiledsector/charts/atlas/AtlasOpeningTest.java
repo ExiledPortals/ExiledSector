@@ -46,7 +46,7 @@ class AtlasOpeningTest {
         AtlasData.registerNodeEffects(new JSONArray()
                 .put(new JSONObject().put("id", AtlasOpening.INFESTED).put("effects", "CHART_FLEET_SIZE_PERCENT:25"))
                 .put(new JSONObject().put("id", AtlasOpening.CLEANSED).put("effects", "CHART_REWARD_PERCENT:50"))
-                .put(new JSONObject().put("id", AtlasOpening.NEXUS).put("effects", "CHART_BOSS_SIZE_PERCENT:100; CHART_FLEET_SIZE_PERCENT:-10")));
+                .put(new JSONObject().put("id", AtlasOpening.INFESTATION_EFFECTS_ID).put("effects", "CHART_BOSS_SIZE_PERCENT:100; CHART_FLEET_SIZE_PERCENT:-10")));
     }
 
     @AfterEach

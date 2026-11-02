@@ -5,7 +5,7 @@ import java.awt.Color;
 import java.util.Locale;
 import java.util.Random;
 
-public enum Nanoswarm implements ItemCurrency {
+public enum Nanoswarm implements CraftingMaterialFamily {
 
     AUGMENTATION("exiledSector_augmentation_nanoswarm", 10, 6, MaterialTier.MINOR, new Color(90, 170, 255)) {
         @Override

@@ -213,20 +213,20 @@ class WormholeAnchorTest {
     void noCurrencyCanBeUsedOnAnAnchorEvenOneExtendedToAnchors() {
         Item anchor = anchor(HEGEMONY_ANCHOR);
         ItemStore store = new ItemStore();
-        for (ItemCurrency currency : ItemCurrencies.all()) {
+        for (CraftingMaterialFamily currency : CraftingMaterialFamilies.all()) {
             when(cargo.getQuantity(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(currency.itemId()))).thenReturn(5f);
             assertFalse(ItemCrafting.canUse(currency, anchor, definition -> true), currency.key());
             assertNull(ItemCrafting.use(currency, anchor, CraftingMaterials.cargoOnly(cargo), store, new Random(1L), definition -> true),
                     currency.key());
         }
-        assertTrue(ItemCurrencies.extend(Nanoswarm.REPLICATION, ItemType.WORMHOLE_ANCHOR));
+        assertTrue(CraftingMaterialFamilies.extend(Nanoswarm.REPLICATION, ItemType.WORMHOLE_ANCHOR));
         try {
             assertFalse(ItemCrafting.canUse(Nanoswarm.REPLICATION, anchor, definition -> true));
         } finally {
-            ItemCurrencies.retract(Nanoswarm.REPLICATION, ItemType.WORMHOLE_ANCHOR);
+            CraftingMaterialFamilies.retract(Nanoswarm.REPLICATION, ItemType.WORMHOLE_ANCHOR);
         }
         verify(cargo, never()).removeItems(Mockito.any(), Mockito.any(), anyFloat());
-        assertTrue(ItemCurrencies.forType(ItemType.WORMHOLE_ANCHOR).isEmpty());
+        assertTrue(CraftingMaterialFamilies.forType(ItemType.WORMHOLE_ANCHOR).isEmpty());
         assertFalse(ItemTypes.takesCurrency(ItemType.WORMHOLE_ANCHOR));
     }
 

@@ -15,7 +15,7 @@ import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.data.CsvRows;
 import exiledsector.ModCsv;
-import exiledsector.items.ItemCurrencies;
+import exiledsector.items.CraftingMaterialFamilies;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDrops;
@@ -234,10 +234,10 @@ public final class ChartDrops {
         return ItemDrops.pickOfType(random, ItemType.STAR_CHART, definition -> ItemTypes.rollsAtTier(definition, tier));
     }
 
-    public static List<ItemDrops.CurrencyDrop> chartCurrencyDrops() {
-        return ItemCurrencies.forType(ItemType.STAR_CHART).stream()
+    public static List<ItemDrops.MaterialDrop> chartCurrencyDrops() {
+        return CraftingMaterialFamilies.forType(ItemType.STAR_CHART).stream()
                 .filter(currency -> !currency.dropsFromShipLoot() && currency.dropWeight() > 0f)
-                .map(currency -> new ItemDrops.CurrencyDrop(currency.itemId(), currency.dropWeight()))
+                .map(currency -> new ItemDrops.MaterialDrop(currency.itemId(), currency.dropWeight()))
                 .toList();
     }
 

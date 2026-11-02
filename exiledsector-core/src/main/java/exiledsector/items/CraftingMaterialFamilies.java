@@ -7,34 +7,34 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-public final class ItemCurrencies {
+public final class CraftingMaterialFamilies {
 
-    private static final List<ItemCurrency> BUILT_IN = List.of(Nanoswarm.values());
-    private static final AtomicReference<List<ItemCurrency>> REGISTERED = new AtomicReference<>(BUILT_IN);
+    private static final List<CraftingMaterialFamily> BUILT_IN = List.of(Nanoswarm.values());
+    private static final AtomicReference<List<CraftingMaterialFamily>> REGISTERED = new AtomicReference<>(BUILT_IN);
     private static final AtomicReference<Set<Extension>> EXTENSIONS = new AtomicReference<>(Set.of());
 
-    private record Extension(ItemCurrency currency, ItemType type) {
+    private record Extension(CraftingMaterialFamily currency, ItemType type) {
     }
 
-    private ItemCurrencies() {
+    private CraftingMaterialFamilies() {
     }
 
-    public static List<ItemCurrency> all() {
+    public static List<CraftingMaterialFamily> all() {
         return REGISTERED.get();
     }
 
-    public static List<ItemCurrency> forType(ItemType type) {
+    public static List<CraftingMaterialFamily> forType(ItemType type) {
         return all().stream().filter(currency -> appliesTo(currency, type)).toList();
     }
 
-    public static boolean appliesTo(ItemCurrency currency, ItemType type) {
+    public static boolean appliesTo(CraftingMaterialFamily currency, ItemType type) {
         if (currency == null || type == null) {
             return false;
         }
         return currency.appliesTo(type) || EXTENSIONS.get().contains(new Extension(currency, type));
     }
 
-    public static boolean extend(ItemCurrency currency, ItemType type) {
+    public static boolean extend(CraftingMaterialFamily currency, ItemType type) {
         if (currency == null || type == null || !all().contains(currency)) {
             throw new IllegalArgumentException("only a registered currency can be extended to another item type");
         }
@@ -55,7 +55,7 @@ public final class ItemCurrencies {
         return true;
     }
 
-    public static boolean retract(ItemCurrency currency, ItemType type) {
+    public static boolean retract(CraftingMaterialFamily currency, ItemType type) {
         Set<Extension> previous;
         Set<Extension> updated;
         do {
@@ -70,11 +70,11 @@ public final class ItemCurrencies {
         return true;
     }
 
-    public static ItemCurrency byItemId(String itemId) {
+    public static CraftingMaterialFamily byItemId(String itemId) {
         if (itemId == null) {
             return null;
         }
-        for (ItemCurrency currency : all()) {
+        for (CraftingMaterialFamily currency : all()) {
             if (currency.itemId().equals(itemId)) {
                 return currency;
             }
@@ -82,22 +82,22 @@ public final class ItemCurrencies {
         return null;
     }
 
-    public static boolean isRegistered(ItemCurrency currency) {
+    public static boolean isRegistered(CraftingMaterialFamily currency) {
         return currency != null && all().contains(currency);
     }
 
-    public static void register(ItemCurrency currency) {
+    public static void register(CraftingMaterialFamily currency) {
         if (currency == null || currency.itemId() == null || currency.key() == null) {
             throw new IllegalArgumentException("a currency needs an item id and a key");
         }
         if (CraftingInhibitor.byItemId(currency.itemId()) != null || ItemDisassembly.FEEDSTOCK_ITEM_ID.equals(currency.itemId())) {
             throw new IllegalArgumentException(currency.itemId() + " is already a crafting material");
         }
-        List<ItemCurrency> previous;
-        List<ItemCurrency> updated;
+        List<CraftingMaterialFamily> previous;
+        List<CraftingMaterialFamily> updated;
         do {
             previous = REGISTERED.get();
-            for (ItemCurrency known : previous) {
+            for (CraftingMaterialFamily known : previous) {
                 if (known.itemId().equals(currency.itemId()) || known.key().equals(currency.key())) {
                     throw new IllegalArgumentException("a currency with the item id " + currency.itemId() + " or the key "
                             + currency.key() + " is already registered");
@@ -109,12 +109,12 @@ public final class ItemCurrencies {
         } while (!REGISTERED.compareAndSet(previous, updated));
     }
 
-    public static boolean unregister(ItemCurrency currency) {
+    public static boolean unregister(CraftingMaterialFamily currency) {
         if (currency == null || BUILT_IN.contains(currency)) {
             return false;
         }
-        List<ItemCurrency> previous;
-        List<ItemCurrency> updated;
+        List<CraftingMaterialFamily> previous;
+        List<CraftingMaterialFamily> updated;
         do {
             previous = REGISTERED.get();
             if (!previous.contains(currency)) {

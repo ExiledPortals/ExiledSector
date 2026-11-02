@@ -7,7 +7,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.Item;
-import exiledsector.items.ItemCurrency;
+import exiledsector.items.CraftingMaterialFamily;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemStore;
 import exiledsector.items.ItemType;
@@ -110,26 +110,26 @@ public interface BenchModeSupport {
 
     PickerSession pickerSession();
 
-    List<ItemCurrency> currencies();
+    List<CraftingMaterialFamily> currencies();
 
-    String currencyDescriptionKey(ItemCurrency currency);
+    String currencyDescriptionKey(CraftingMaterialFamily currency);
 
-    default String currencyDescription(ItemCurrency currency) {
+    default String currencyDescription(CraftingMaterialFamily currency) {
         return Translation.text(currencyDescriptionKey(currency));
     }
 
-    default List<StyledText> currencyLines(ItemCurrency currency) {
+    default List<StyledText> currencyLines(CraftingMaterialFamily currency) {
         return List.of();
     }
 
-    default boolean inOrbit(ItemCurrency currency) {
+    default boolean inOrbit(CraftingMaterialFamily currency) {
         return true;
     }
 
-    Refusal refusal(ItemCurrency currency, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
+    Refusal refusal(CraftingMaterialFamily currency, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
                     Set<CraftingInhibitor> inhibitors);
 
-    Use use(ItemCurrency currency, Item loaded, ItemStore store, CraftingMaterials materials, Random random,
+    Use use(CraftingMaterialFamily currency, Item loaded, ItemStore store, CraftingMaterials materials, Random random,
             Predicate<ItemDefinition> allowedUniques, Set<CraftingInhibitor> inhibitors, String nameBefore);
 
     UseVerdict cannotUse();

@@ -269,7 +269,7 @@ class BattleItemDropsTest {
         Random random = new Random(5L);
         Map<RefitSchematic, Integer> tierCounts = new EnumMap<>(RefitSchematic.class);
         for (int trial = 0; trial < battles; trial++) {
-            for (ShipCurrency upgrade : BattleItemDrops.roll(battle, 1f, random, definition -> true, true).upgrades()) {
+            for (ShipSchematic upgrade : BattleItemDrops.roll(battle, 1f, random, definition -> true, true).upgrades()) {
                 if (upgrade instanceof RefitSchematic schematic) {
                     tierCounts.merge(schematic, 1, Integer::sum);
                 }

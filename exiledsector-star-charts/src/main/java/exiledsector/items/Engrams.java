@@ -47,11 +47,11 @@ public final class Engrams {
                 return;
             }
             try {
-                ItemCurrencies.register(currency);
+                CraftingMaterialFamilies.register(currency);
                 ReservedModifiers.reserve(currency.modifierId(), currency.itemId());
                 registered.add(currency);
             } catch (IllegalArgumentException e) {
-                ItemCurrencies.unregister(currency);
+                CraftingMaterialFamilies.unregister(currency);
                 csv.skipRow(id, e.getMessage());
             }
         });
@@ -87,7 +87,7 @@ public final class Engrams {
 
     public static void unregisterAll() {
         for (Engram currency : loaded) {
-            ItemCurrencies.unregister(currency);
+            CraftingMaterialFamilies.unregister(currency);
             ReservedModifiers.release(currency.itemId());
         }
         loaded = List.of();

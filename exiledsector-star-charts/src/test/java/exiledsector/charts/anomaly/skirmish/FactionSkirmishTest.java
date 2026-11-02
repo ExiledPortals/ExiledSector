@@ -82,7 +82,7 @@ class FactionSkirmishTest {
         assertFalse(FactionSkirmish.INSTANCE.fitsAt(traits("hegemony", List.of(NEUTRAL), null, null)));
         assertFalse(FactionSkirmish.INSTANCE.fitsAt(traits(NEUTRAL, List.of("hegemony"), null, null)));
         assertFalse(FactionSkirmish.INSTANCE.fitsAt(traits("hegemony", List.of("tritachyon"), "bastion", null)));
-        assertFalse(FactionSkirmish.INSTANCE.fitsAt(traits("hegemony", List.of("tritachyon"), null, "remnant_nexus")));
+        assertFalse(FactionSkirmish.INSTANCE.fitsAt(traits("hegemony", List.of("tritachyon"), null, "remnant_infestation")));
     }
 
     @Test

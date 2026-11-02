@@ -36,21 +36,21 @@ public final class ItemCrafting {
         return true;
     }
 
-    public static boolean canUse(ItemCurrency currency, Item item, Predicate<ItemDefinition> allowedUniques) {
+    public static boolean canUse(CraftingMaterialFamily currency, Item item, Predicate<ItemDefinition> allowedUniques) {
         return canUse(currency, item, allowedUniques, Set.of());
     }
 
-    public static boolean canUse(ItemCurrency currency, Item item, Predicate<ItemDefinition> allowedUniques,
+    public static boolean canUse(CraftingMaterialFamily currency, Item item, Predicate<ItemDefinition> allowedUniques,
                                  Collection<CraftingInhibitor> inhibitors) {
         ItemDefinition definition = item == null ? null : item.definition();
         if (definition == null || !ItemTypes.takesCurrency(definition.type()) || item.mirrored() || item.corrupted() || isLockedFromCurrency(definition)
-                || !ItemCurrencies.appliesTo(currency, definition.type())) {
+                || !CraftingMaterialFamilies.appliesTo(currency, definition.type())) {
             return false;
         }
         return currency.canUse(item, new CraftingContext(null, allowedUniques, CraftingInhibitor.inhibitedSlots(inhibitors)));
     }
 
-    public static UseVerdict verdict(ItemCurrency currency, Item item, Predicate<ItemDefinition> allowedUniques, Collection<CraftingInhibitor> inhibitors) {
+    public static UseVerdict verdict(CraftingMaterialFamily currency, Item item, Predicate<ItemDefinition> allowedUniques, Collection<CraftingInhibitor> inhibitors) {
         if (canUse(currency, item, allowedUniques, inhibitors)) {
             return UseVerdict.ALLOW;
         }
@@ -89,7 +89,7 @@ public final class ItemCrafting {
         return item != null && item.explicits().stream().anyMatch(rolled -> inhibited.contains(rolled.slot()));
     }
 
-    public static Set<CraftingInhibitor> inhibitorsSpentBy(ItemCurrency currency, Item item, Collection<CraftingInhibitor> inhibitors) {
+    public static Set<CraftingInhibitor> inhibitorsSpentBy(CraftingMaterialFamily currency, Item item, Collection<CraftingInhibitor> inhibitors) {
         Set<CraftingInhibitor> spent = EnumSet.noneOf(CraftingInhibitor.class);
         ItemDefinition definition = item == null ? null : item.definition();
         if (definition == null || !currency.respectsInhibitors()) {
@@ -110,17 +110,17 @@ public final class ItemCrafting {
                 .anyMatch(line -> line != null && line.canVary());
     }
 
-    public static Item use(ItemCurrency currency, Item item, CraftingMaterials materials, ItemStore store, Random random,
+    public static Item use(CraftingMaterialFamily currency, Item item, CraftingMaterials materials, ItemStore store, Random random,
                                  Predicate<ItemDefinition> allowedUniques) {
         return use(currency, item, materials, store, random, allowedUniques, Set.of());
     }
 
-    public static Item use(ItemCurrency currency, Item item, CraftingMaterials materials, ItemStore store, Random random,
+    public static Item use(CraftingMaterialFamily currency, Item item, CraftingMaterials materials, ItemStore store, Random random,
                            Predicate<ItemDefinition> allowedUniques, Collection<CraftingInhibitor> inhibitors) {
         return Consumables.use(new CurrencyUse(currency, store, random, allowedUniques, inhibitors), item, materials);
     }
 
-    private record CurrencyUse(ItemCurrency currency, ItemStore store, Random random, Predicate<ItemDefinition> allowedUniques,
+    private record CurrencyUse(CraftingMaterialFamily currency, ItemStore store, Random random, Predicate<ItemDefinition> allowedUniques,
                                Collection<CraftingInhibitor> inhibitors) implements Consumable<Item, Item> {
 
         @Override

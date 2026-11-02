@@ -24,11 +24,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class ItemCurrenciesTest {
+class CraftingMaterialFamiliesTest {
 
     private static final String PURGE_ID = "exiledSector_test_purge_kernel";
 
-    private static final class PurgeCurrency implements ItemCurrency {
+    private static final class PurgeCurrency implements CraftingMaterialFamily {
 
         @Override
         public String itemId() {
@@ -85,7 +85,7 @@ class ItemCurrenciesTest {
         }
     }
 
-    private final ItemCurrency purge = new PurgeCurrency();
+    private final CraftingMaterialFamily purge = new PurgeCurrency();
     private final ItemStore store = new ItemStore();
     private final CargoAPI cargo = mock(CargoAPI.class);
 
@@ -98,7 +98,7 @@ class ItemCurrenciesTest {
 
     @AfterEach
     void tearDown() {
-        ItemCurrencies.unregister(purge);
+        CraftingMaterialFamilies.unregister(purge);
         ItemDefinitions.clear();
     }
 
@@ -146,19 +146,19 @@ class ItemCurrenciesTest {
                 new Expected("exiledSector_immutable_nanoswarm", "immutable", 300, 0.2f, MaterialTier.MYTHIC, true),
                 new Expected("exiledSector_replicator_nanoseed", "replication", 0, 0.035f, MaterialTier.MYTHIC, false));
 
-        assertEquals(Arrays.asList(Nanoswarm.values()), ItemCurrencies.all());
-        assertEquals(expected, ItemCurrencies.all().stream().map(currency -> new Expected(currency.itemId(), currency.key(),
+        assertEquals(Arrays.asList(Nanoswarm.values()), CraftingMaterialFamilies.all());
+        assertEquals(expected, CraftingMaterialFamilies.all().stream().map(currency -> new Expected(currency.itemId(), currency.key(),
                 currency.feedstockCost(), currency.dropWeight(), currency.tier(), currency.growable())).toList());
         for (Nanoswarm currency : Nanoswarm.values()) {
-            assertSame(currency, ItemCurrencies.byItemId(currency.itemId()));
+            assertSame(currency, CraftingMaterialFamilies.byItemId(currency.itemId()));
             assertEquals(currency.name().toLowerCase(java.util.Locale.ROOT), currency.key());
         }
-        assertEquals(ItemCurrencies.all().stream().filter(currency -> currency != Nanoswarm.ANNULMENT).toList(),
-                ItemCurrencies.forType(ItemType.SUBROUTINE));
-        assertEquals(ItemCurrencies.all(), ItemCurrencies.forType(ItemType.HULL_ITEM));
-        assertEquals(List.of(), ItemCurrencies.forType(null));
-        assertNull(ItemCurrencies.byItemId(ItemDisassembly.FEEDSTOCK_ITEM_ID));
-        assertNull(ItemCurrencies.byItemId(null));
+        assertEquals(CraftingMaterialFamilies.all().stream().filter(currency -> currency != Nanoswarm.ANNULMENT).toList(),
+                CraftingMaterialFamilies.forType(ItemType.SUBROUTINE));
+        assertEquals(CraftingMaterialFamilies.all(), CraftingMaterialFamilies.forType(ItemType.HULL_ITEM));
+        assertEquals(List.of(), CraftingMaterialFamilies.forType(null));
+        assertNull(CraftingMaterialFamilies.byItemId(ItemDisassembly.FEEDSTOCK_ITEM_ID));
+        assertNull(CraftingMaterialFamilies.byItemId(null));
     }
 
     @Test
@@ -186,28 +186,28 @@ class ItemCurrenciesTest {
 
     @Test
     void kernelDropsListEveryCurrencyAndInhibitorByWeight() {
-        List<ItemDrops.CurrencyDrop> builtInDrops = new ArrayList<>();
+        List<ItemDrops.MaterialDrop> builtInDrops = new ArrayList<>();
         for (Nanoswarm currency : Nanoswarm.values()) {
-            builtInDrops.add(new ItemDrops.CurrencyDrop(currency.itemId(), currency.dropWeight()));
+            builtInDrops.add(new ItemDrops.MaterialDrop(currency.itemId(), currency.dropWeight()));
         }
         for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
-            builtInDrops.add(new ItemDrops.CurrencyDrop(inhibitor.itemId(), inhibitor.dropWeight()));
+            builtInDrops.add(new ItemDrops.MaterialDrop(inhibitor.itemId(), inhibitor.dropWeight()));
         }
-        assertEquals(builtInDrops, ItemDrops.kernelDrops());
+        assertEquals(builtInDrops, ItemDrops.materialDrops());
     }
 
     @Test
     void anAddedCurrencyJoinsTheMaterialsDropsAndCraftingForItsTypesOnly() {
-        ItemCurrencies.register(purge);
+        CraftingMaterialFamilies.register(purge);
         Item hullItem = store.add(ItemDefinitions.get(HullItemRows.MILITARY), 4L);
         Item subroutine = store.add(ItemDefinitions.get("volume"), 4L);
         int explicitsBefore = hullItem.explicits().size();
         owns(PURGE_ID, 2f);
 
-        assertSame(purge, ItemCurrencies.byItemId(PURGE_ID));
-        assertEquals(purge, ItemCurrencies.all().get(Nanoswarm.values().length));
-        assertTrue(ItemCurrencies.forType(ItemType.HULL_ITEM).contains(purge));
-        assertFalse(ItemCurrencies.forType(ItemType.SUBROUTINE).contains(purge));
+        assertSame(purge, CraftingMaterialFamilies.byItemId(PURGE_ID));
+        assertEquals(purge, CraftingMaterialFamilies.all().get(Nanoswarm.values().length));
+        assertTrue(CraftingMaterialFamilies.forType(ItemType.HULL_ITEM).contains(purge));
+        assertFalse(CraftingMaterialFamilies.forType(ItemType.SUBROUTINE).contains(purge));
         assertTrue(MaterialItems.isMaterial(PURGE_ID));
         assertEquals(MaterialTier.MAJOR, MaterialItems.tier(PURGE_ID));
         assertEquals(Color.CYAN, MaterialItems.color(PURGE_ID));
@@ -217,21 +217,21 @@ class ItemCurrenciesTest {
         assertEquals(explicitsBefore - 1, hullItem.explicits().size());
         verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(PURGE_ID), 1);
         assertTrue(ItemCrafting.inhibitorsSpentBy(purge, hullItem, List.of(CraftingInhibitor.PREFIX, CraftingInhibitor.SUFFIX)).isEmpty());
-        assertTrue(ItemDrops.kernelDrops().stream().anyMatch(drop -> drop.itemId().equals(PURGE_ID)));
+        assertTrue(ItemDrops.materialDrops().stream().anyMatch(drop -> drop.itemId().equals(PURGE_ID)));
     }
 
     @Test
     void currenciesCannotReuseAMaterialIdOrKey() {
-        ItemCurrencies.register(purge);
+        CraftingMaterialFamilies.register(purge);
 
-        assertThrows(IllegalArgumentException.class, () -> ItemCurrencies.register(purge));
-        assertThrows(IllegalArgumentException.class, () -> ItemCurrencies.register(Nanoswarm.AUGMENTATION));
-        assertThrows(IllegalArgumentException.class, () -> ItemCurrencies.register(null));
-        assertFalse(ItemCurrencies.unregister(Nanoswarm.AUGMENTATION));
-        assertFalse(ItemCurrencies.unregister(null));
-        assertTrue(ItemCurrencies.unregister(purge));
-        assertFalse(ItemCurrencies.unregister(purge));
-        assertEquals(Arrays.asList(Nanoswarm.values()), ItemCurrencies.all());
+        assertThrows(IllegalArgumentException.class, () -> CraftingMaterialFamilies.register(purge));
+        assertThrows(IllegalArgumentException.class, () -> CraftingMaterialFamilies.register(Nanoswarm.AUGMENTATION));
+        assertThrows(IllegalArgumentException.class, () -> CraftingMaterialFamilies.register(null));
+        assertFalse(CraftingMaterialFamilies.unregister(Nanoswarm.AUGMENTATION));
+        assertFalse(CraftingMaterialFamilies.unregister(null));
+        assertTrue(CraftingMaterialFamilies.unregister(purge));
+        assertFalse(CraftingMaterialFamilies.unregister(purge));
+        assertEquals(Arrays.asList(Nanoswarm.values()), CraftingMaterialFamilies.all());
         assertFalse(MaterialItems.isMaterial(PURGE_ID));
     }
 }

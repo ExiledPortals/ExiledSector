@@ -23,7 +23,7 @@ public final class MaterialItems {
     public static List<String> ids() {
         List<String> itemIds = new ArrayList<>();
         itemIds.add(ItemDisassembly.FEEDSTOCK_ITEM_ID);
-        for (ItemCurrency currency : ItemCurrencies.all()) {
+        for (CraftingMaterialFamily currency : CraftingMaterialFamilies.all()) {
             itemIds.add(currency.itemId());
         }
         for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
@@ -37,7 +37,7 @@ public final class MaterialItems {
     }
 
     public static MaterialTier tier(String itemId) {
-        ItemCurrency currency = ItemCurrencies.byItemId(itemId);
+        CraftingMaterialFamily currency = CraftingMaterialFamilies.byItemId(itemId);
         if (currency != null) {
             return currency.tier();
         }
@@ -46,7 +46,7 @@ public final class MaterialItems {
     }
 
     public static Color color(String itemId) {
-        ItemCurrency currency = ItemCurrencies.byItemId(itemId);
+        CraftingMaterialFamily currency = CraftingMaterialFamilies.byItemId(itemId);
         if (currency != null) {
             return currency.color();
         }

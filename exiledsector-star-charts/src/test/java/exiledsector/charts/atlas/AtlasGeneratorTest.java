@@ -933,9 +933,9 @@ class AtlasGeneratorTest {
     void threatSpaceKeepsOutEveryInfestationButTheThreats() {
         AtlasRegion threatSpace = new AtlasRegion("threat_expanse", 1f, 0, "", "", Map.of(), Map.of("threat", 1f), Map.of());
         AtlasRegion graveyard = new AtlasRegion("derelict_graveyard", 1f, 0, "", "", Map.of(), Map.of("derelict", 1f), Map.of());
-        AtlasSpecial remnant = new AtlasSpecial("remnant_nexus", AtlasSpecial.Kind.INFESTATION, AtlasSpecial.Placement.CHUNK, 1f, 0f, 2.5f, 1, 1f, "", "",
+        AtlasSpecial remnant = new AtlasSpecial("remnant_infestation", AtlasSpecial.Kind.INFESTATION, AtlasSpecial.Placement.CHUNK, 1f, 0f, 2.5f, 1, 1f, "", "",
                 "remnant");
-        AtlasSpecial threat = new AtlasSpecial("threat_nexus", AtlasSpecial.Kind.INFESTATION, AtlasSpecial.Placement.CHUNK, 1f, 0f, 2.5f, 1, 1f, "", "",
+        AtlasSpecial threat = new AtlasSpecial("threat_infestation", AtlasSpecial.Kind.INFESTATION, AtlasSpecial.Placement.CHUNK, 1f, 0f, 2.5f, 1, 1f, "", "",
                 "threat");
 
         assertTrue(AtlasGenerator.keepsOut(threatSpace, remnant));

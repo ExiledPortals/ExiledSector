@@ -19,7 +19,7 @@ import exiledsector.items.GrowableMaterial;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.Item;
 import exiledsector.items.ItemCrafting;
-import exiledsector.items.ItemCurrency;
+import exiledsector.items.CraftingMaterialFamily;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemName;
 import exiledsector.items.ItemStore;
@@ -109,7 +109,7 @@ public final class CraftingBenchPanel extends HoloPanel {
     private float sceneScale;
     private UIComponentAPI headerElement;
     private BenchMode benchMode = BenchMode.HULL_ITEMS;
-    private ItemCurrency pendingCurrency;
+    private CraftingMaterialFamily pendingCurrency;
     private GrowableMaterial pendingGrowth;
     private boolean detailsShowRollRanges;
     private UIComponentAPI recipesElement;
@@ -406,7 +406,7 @@ public final class CraftingBenchPanel extends HoloPanel {
             pendingOpenTarget = choice.target();
             confirmOpen();
         } else if (id == Control.CONFIRM_USE) {
-            ItemCurrency currency = pendingCurrency;
+            CraftingMaterialFamily currency = pendingCurrency;
             cancelConfirm();
             if (currency != null && usable(currency)) {
                 applyUse(currency);
@@ -452,7 +452,7 @@ public final class CraftingBenchPanel extends HoloPanel {
         return Math.min(CONFIRM_WIDTH, panelWidth - PAD * 2f);
     }
 
-    private void tileClicked(ItemCurrency currency, boolean skipConfirm) {
+    private void tileClicked(CraftingMaterialFamily currency, boolean skipConfirm) {
         hoverTooltip.hide();
         if (wormholeOpened || isConfirmOpen() || !usable(currency)) {
             return;
@@ -476,7 +476,7 @@ public final class CraftingBenchPanel extends HoloPanel {
         }
     }
 
-    private void openUseConfirm(ItemCurrency currency) {
+    private void openUseConfirm(CraftingMaterialFamily currency) {
         pendingCurrency = currency;
         Set<CraftingInhibitor> spentInhibitors = ItemCrafting.inhibitorsSpentBy(currency, loadedItem, activeInhibitors);
         String name = recipeName(currency);
@@ -530,7 +530,7 @@ public final class CraftingBenchPanel extends HoloPanel {
         afterChange();
     }
 
-    private boolean usable(ItemCurrency currency) {
+    private boolean usable(CraftingMaterialFamily currency) {
         CraftingMaterials materials = playerMaterials();
         BenchModeSupport.Refusal refusal = support().refusal(currency, loadedItem, support().store(), materials, allowedUniques(), activeInhibitors);
         if (refusal.checksInhibitors() && droppedMissingInhibitors(materials)) {
@@ -553,7 +553,7 @@ public final class CraftingBenchPanel extends HoloPanel {
         return true;
     }
 
-    private String refusalText(ItemCurrency currency, UseVerdict verdict) {
+    private String refusalText(CraftingMaterialFamily currency, UseVerdict verdict) {
         return verdict.text(MaterialItems.displayName(currency.itemId()), loadedItem == null ? "" : loadedItem.name());
     }
 
@@ -561,7 +561,7 @@ public final class CraftingBenchPanel extends HoloPanel {
         return BenchModes.of(benchMode);
     }
 
-    private void applyUse(ItemCurrency currency) {
+    private void applyUse(CraftingMaterialFamily currency) {
         String nameBefore = loadedItem.name();
         Set<CraftingInhibitor> spentInhibitors = ItemCrafting.inhibitorsSpentBy(currency, loadedItem, activeInhibitors);
         BenchModeSupport.Use used = support().use(currency, loadedItem, support().store(), playerMaterials(), craftingRandom,
@@ -834,9 +834,9 @@ public final class CraftingBenchPanel extends HoloPanel {
         TooltipMakerAPI element = panelRoot.createUIElement(artWidth, artHeight, false);
         CraftingMaterials materials = playerMaterials();
         BenchModeSupport support = support();
-        List<ItemCurrency> shownCurrencies = support.currencies();
-        List<ItemCurrency> orbitCurrencies = shownCurrencies.stream().filter(support::inOrbit).toList();
-        List<ItemCurrency> columnCurrencies = shownCurrencies.stream().filter(currency -> !support.inOrbit(currency)).toList();
+        List<CraftingMaterialFamily> shownCurrencies = support.currencies();
+        List<CraftingMaterialFamily> orbitCurrencies = shownCurrencies.stream().filter(support::inOrbit).toList();
+        List<CraftingMaterialFamily> columnCurrencies = shownCurrencies.stream().filter(currency -> !support.inOrbit(currency)).toList();
         float tileSize = tileSize();
         float socketX = benchMode.socketX() * sceneScale;
         float socketY = benchMode.socketY() * sceneScale;
@@ -870,7 +870,7 @@ public final class CraftingBenchPanel extends HoloPanel {
         }
         CraftingMaterials materials = playerMaterials();
         List<SectionedTileGrid.Tile> currencyTiles = new ArrayList<>();
-        for (ItemCurrency currency : support().currencies()) {
+        for (CraftingMaterialFamily currency : support().currencies()) {
             currencyTiles.add(new SectionedTileGrid.Tile(currencyTile(currency, materials), materials.count(currency.itemId())));
         }
         List<SectionedTileGrid.Section> sections = new ArrayList<>();
@@ -899,7 +899,7 @@ public final class CraftingBenchPanel extends HoloPanel {
                 skipConfirm -> tileRightClicked(inhibitor, skipConfirm));
     }
 
-    private TileInput.Handler currencyHandler(ItemCurrency currency) {
+    private TileInput.Handler currencyHandler(CraftingMaterialFamily currency) {
         return tileHandler(currency, anchor -> showTooltip(currency, anchor), skipConfirm -> tileClicked(currency, skipConfirm),
                 skipConfirm -> tileRightClicked(currency, skipConfirm));
     }
@@ -915,7 +915,7 @@ public final class CraftingBenchPanel extends HoloPanel {
         return CraftingBenchTile.toggle(inhibitorIcons(inhibitor), CargoIconLooks.forMaterial(inhibitor.itemId()), () -> activeInhibitors.contains(inhibitor), inhibitorHandler(inhibitor));
     }
 
-    private CraftingBenchTile currencyTile(ItemCurrency currency, CraftingMaterials materials) {
+    private CraftingBenchTile currencyTile(CraftingMaterialFamily currency, CraftingMaterials materials) {
         boolean owned = materials.count(currency.itemId()) > 0;
         return CraftingBenchTile.usable(recipeIcons(currency), recipeLook(currency), () -> owned, currencyHandler(currency));
     }
@@ -995,14 +995,14 @@ public final class CraftingBenchPanel extends HoloPanel {
         element.setParaFontDefault();
     }
 
-    private void addTile(TooltipMakerAPI element, ItemCurrency currency, float tileLeft, float tileTop, float tileSize,
+    private void addTile(TooltipMakerAPI element, CraftingMaterialFamily currency, float tileLeft, float tileTop, float tileSize,
                          CraftingMaterials materials) {
         CustomPanelAPI tilePanel = Global.getSettings().createCustom(tileSize, tileSize, currencyTile(currency, materials));
         element.addCustom(tilePanel, 0f).getPosition().inTL(tileLeft, tileTop);
         addCount(element, currency.itemId(), tileLeft, tileTop, tileSize, materials);
     }
 
-    private void showTooltip(ItemCurrency currency, PositionAPI anchor) {
+    private void showTooltip(CraftingMaterialFamily currency, PositionAPI anchor) {
         if (isClosing()) {
             hoverTooltip.hide();
             return;
@@ -1011,7 +1011,7 @@ public final class CraftingBenchPanel extends HoloPanel {
                 ItemHoverTooltip.Placement.BELOW, PAD);
     }
 
-    private void writeTooltip(TooltipMakerAPI element, ItemCurrency currency) {
+    private void writeTooltip(TooltipMakerAPI element, CraftingMaterialFamily currency) {
         element.setParaFont(Fonts.ORBITRON_20AA);
         VanillaText.plainPara(element, recipeName(currency), 0f, Misc.getBrightPlayerColor());
         element.setParaFontDefault();
@@ -1026,7 +1026,7 @@ public final class CraftingBenchPanel extends HoloPanel {
         }
     }
 
-    private List<String> tooltipHints(ItemCurrency currency) {
+    private List<String> tooltipHints(CraftingMaterialFamily currency) {
         List<String> hints = new ArrayList<>();
         int ownedCount = playerMaterials().count(currency.itemId());
         hints.add(Translation.msg("ui.craftingBench.tile.inStorage").arg("count", ownedCount).text());
@@ -1050,12 +1050,12 @@ public final class CraftingBenchPanel extends HoloPanel {
                 : Translation.text("ui.craftingBench.tile.notGrowable");
     }
 
-    private static List<String> recipeIcons(ItemCurrency currency) {
+    private static List<String> recipeIcons(CraftingMaterialFamily currency) {
         String iconPath = MaterialItems.loadedIconPath(currency.itemId());
         return List.of(iconPath == null ? FALLBACK_ICON : iconPath);
     }
 
-    private static CargoIconLook recipeLook(ItemCurrency currency) {
+    private static CargoIconLook recipeLook(CraftingMaterialFamily currency) {
         return CargoIconLooks.forMaterial(currency.itemId());
     }
 

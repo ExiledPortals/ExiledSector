@@ -27,13 +27,13 @@ public record AtlasSpecial(String id, Kind kind, Placement placement, float chan
         }
 
         public String nodeEffectsId() {
-            return this == INFESTATION ? AtlasOpening.NEXUS : key();
+            return this == INFESTATION ? AtlasOpening.INFESTATION_EFFECTS_ID : key();
         }
 
         AtlasOpening.Blocker openBlocker(StarChart chart) {
             return switch (this) {
                 case BASTION -> chart == null || chart.tier() < ChartTiers.HIGHEST_TIER ? AtlasOpening.Blocker.BASTION_NEEDS_TOP_TIER : null;
-                case INFESTATION -> AtlasOpening.explicitModifiers(chart) < AtlasOpening.NEXUS_MODIFIERS ? AtlasOpening.Blocker.NEXUS_NEEDS_MODIFIERS : null;
+                case INFESTATION -> AtlasOpening.explicitModifiers(chart) < AtlasOpening.INFESTATION_MODIFIERS ? AtlasOpening.Blocker.INFESTATION_NEEDS_MODIFIERS : null;
                 default -> null;
             };
         }

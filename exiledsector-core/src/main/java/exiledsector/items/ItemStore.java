@@ -64,7 +64,7 @@ public final class ItemStore {
     private transient Map<String, Item> byId;
     // java:S2065: XStream skips transient fields, so this change counter restarts after loading instead of being written into saves
     @SuppressWarnings("java:S2065")
-    private transient int shipCurrencyRevision;
+    private transient int shipSchematicRevision;
 
     public ItemStore() {
     }
@@ -214,8 +214,8 @@ public final class ItemStore {
         return refitSchematics == null || schematic == null ? 0 : refitSchematics.getOrDefault(schematic.name(), 0);
     }
 
-    public int shipCurrencyRevision() {
-        return shipCurrencyRevision;
+    public int shipSchematicRevision() {
+        return shipSchematicRevision;
     }
 
     public Map<RefitSchematic, Integer> schematicCounts() {
@@ -237,7 +237,7 @@ public final class ItemStore {
             refitSchematics = new LinkedHashMap<>();
         }
         refitSchematics.merge(schematic.name(), count, Integer::sum);
-        shipCurrencyRevision++;
+        shipSchematicRevision++;
     }
 
     public boolean takeSchematic(RefitSchematic schematic) {
@@ -250,7 +250,7 @@ public final class ItemStore {
         } else {
             refitSchematics.put(schematic.name(), count - 1);
         }
-        shipCurrencyRevision++;
+        shipSchematicRevision++;
         return true;
     }
 
@@ -263,7 +263,7 @@ public final class ItemStore {
             return;
         }
         masterSchematics += count;
-        shipCurrencyRevision++;
+        shipSchematicRevision++;
     }
 
     public boolean takeMasterSchematic() {
@@ -271,7 +271,7 @@ public final class ItemStore {
             return false;
         }
         masterSchematics--;
-        shipCurrencyRevision++;
+        shipSchematicRevision++;
         return true;
     }
 

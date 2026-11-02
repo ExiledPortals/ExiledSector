@@ -93,7 +93,7 @@ final class SectionsDisplay {
         int revision = sectionEditor.revision();
         int pointsRevision = HullUpgradePoints.revision();
         ItemStore store = upgradeStore();
-        int schematicRevision = store == null ? 0 : store.shipCurrencyRevision();
+        int schematicRevision = store == null ? 0 : store.shipSchematicRevision();
         if (revision == shownRevision && pointsRevision == shownPointsRevision && schematicRevision == shownSchematicRevision) {
             return false;
         }
@@ -117,7 +117,7 @@ final class SectionsDisplay {
         ItemStore store = upgradeStore();
         if (playerFleet != null && store != null) {
             store.absorbFrom(playerFleet.getCargo());
-            shownSchematicRevision = store.shipCurrencyRevision();
+            shownSchematicRevision = store.shipSchematicRevision();
             shownSchematicCounts = store.schematicCounts();
             shownMasterSchematicCount = store.masterSchematicCount();
         }

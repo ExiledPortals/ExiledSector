@@ -9,7 +9,7 @@ import java.util.function.Predicate;
 
 public final class HullItemDrops {
 
-    public record SectionItemLoot(List<ItemData> items, List<ShipCurrency> upgrades) {
+    public record SectionItemLoot(List<ItemData> items, List<ShipSchematic> upgrades) {
 
         public static final SectionItemLoot NONE = new SectionItemLoot(List.of(), List.of());
 
@@ -34,7 +34,7 @@ public final class HullItemDrops {
     private HullItemDrops() {
     }
 
-    public static List<ShipCurrency> rollMasterSchematic(String siteId, Random random, float chanceMult) {
+    public static List<ShipSchematic> rollMasterSchematic(String siteId, Random random, float chanceMult) {
         ItemDrops.Rule rule = ItemDrops.activeRule(siteId);
         return rule == null || rule.chances().isEmpty() ? List.of() : MasterSchematic.rollSalvage(rule.chances().get(0) * chanceMult, random);
     }
@@ -50,7 +50,7 @@ public final class HullItemDrops {
         }
         List<ItemData> droppedItems = ItemDrops.rollCascade(rule, random, chances.general(), chances.rarity(), HullItemDrops::pickSectionItemBasic);
         droppedItems.removeIf(item -> random.nextFloat() >= SALVAGE_SHARE);
-        List<ShipCurrency> droppedUpgrades = new ArrayList<>();
+        List<ShipSchematic> droppedUpgrades = new ArrayList<>();
         if (random.nextFloat() < rule.chances().get(0) * chances.general() && RefitSchematic.dropsAllowed()) {
             droppedUpgrades.add(RefitSchematic.roll(random));
         }

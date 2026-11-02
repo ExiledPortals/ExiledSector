@@ -79,7 +79,7 @@ public final class HullUpgradeLootSource implements LootSource, MarketStock {
         HullItemDrops.SectionItemLoot battleItems = battleItemDrops(battle);
         battleItems.items().forEach(item -> playerCargo.addSpecial(item.toSpecialItem(), 1f));
         ItemLootListener.announceBattleItems(battleItems.items());
-        for (ShipCurrency upgrade : battleItems.upgrades()) {
+        for (ShipSchematic upgrade : battleItems.upgrades()) {
             playerCargo.addSpecial(upgrade.toSpecialItem(), 1f);
             ItemLootListener.announceSalvaged(upgrade::displayName);
         }
