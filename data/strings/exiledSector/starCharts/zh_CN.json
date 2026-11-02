@@ -187,7 +187,7 @@
     "chart.ui.settings.openAnywhere.name": "在任意位置开启虫洞",
     "chart.ui.settings.openAnywhere.tooltip": "允许外缘星图册在虫洞门户之外开启虫洞。",
     "chart.ui.settings.debugTools.name": "调试工具",
-    "chart.ui.settings.debugTools.tooltip": "在星图改造台上添加用于测试的“完成”按钮。",
+    "chart.ui.settings.debugTools.tooltip": "在外缘星图册上添加用于测试的“完成”按钮。",
     "chart.ui.storage.title": "星图",
     "chart.ui.storage.close": "关闭",
     "chart.ui.storage.tierTab": "{tier}级（{count}）",

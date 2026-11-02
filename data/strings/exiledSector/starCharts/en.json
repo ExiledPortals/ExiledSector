@@ -195,7 +195,7 @@
     "chart.ui.settings.openAnywhere.name": "Open Wormholes Anywhere",
     "chart.ui.settings.openAnywhere.tooltip": "Lets the Atlas open wormholes away from a Wormhole Gateway.",
     "chart.ui.settings.debugTools.name": "Debug Tools",
-    "chart.ui.settings.debugTools.tooltip": "Adds a Complete button to the Star Charts bench for testing.",
+    "chart.ui.settings.debugTools.tooltip": "Adds a Complete button to the Outer Reach Atlas for testing.",
     "chart.ui.storage.title": "Star Charts",
     "chart.ui.storage.close": "Close",
     "chart.ui.storage.tierTab": "T{tier} ({count})",
