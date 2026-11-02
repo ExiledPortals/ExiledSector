@@ -16,6 +16,7 @@ import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
+import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
@@ -273,6 +274,28 @@ class StarChartTest {
     }
 
     @Test
+    void theZealousHybridGrantsLuddsLightAndAtAnyCostTogetherOnlyAtHighTiers() {
+        Modifier zealous = ItemModifiers.get("HYBRID_CHART_ENEMY_LUDDS_LIGHT_AT_ANY_COST");
+
+        assertEquals(List.of("CHART_ENEMY_LUDDS_LIGHT", "CHART_ENEMY_AT_ANY_COST"), zealous.lines().stream().map(ModifierLine::effectName).toList());
+        assertFalse(zealous.rollsAtTier(StarChart.LOWEST_TIER));
+        assertTrue(zealous.rollsAtTier(StarChart.HIGHEST_TIER));
+    }
+
+    @Test
+    void everyNodeGrantingLineNamesARealNode() throws Exception {
+        RealSkillData.load();
+        try {
+            assertEquals(List.of("Lion's Gaze", "Refracting Projectiles", "Hullbreacher Rounds", "Freebooter's Charge", "Rise From the Ashes",
+                    "XIV Torpedo Doctrine", "Shared Fate", "TriPad Backdoor", "Terrifying Presence", "Disintegration", "Knight's Charge",
+                    "Critical Point Refit", "Phase-Entangled Wings", "Corrosion Beam", "Ludd's Light", "At Any Cost"), List.of(ChartEffect.values()).stream()
+                    .map(ChartEffect::detailTitle).filter(title -> title != null).toList());
+        } finally {
+            RealSkillData.clear();
+        }
+    }
+
+    @Test
     void aGrantedNodesSlottedLineCarriesItsDetailsForATooltipInsteadOfInlineLines() throws Exception {
         RealSkillData.load();
         try {
@@ -489,7 +512,7 @@ class StarChartTest {
         for (int[] tierAndPercent : new int[][] {{1, 5}, {5, 5}, {6, 15}, {10, 15}, {11, 25}, {16, 25}}) {
             for (long seed = 0; seed < 20; seed++) {
                 StarChart chart = StarChartFixtures.chart(SINGLE, seed, tierAndPercent[0]);
-                long prefixes = chart.rolls().stream().filter(roll -> roll.slot() == ModifierSlot.PREFIX).count();
+                long prefixes = chart.explicits().stream().filter(modifier -> modifier.slot() == ModifierSlot.PREFIX).count();
                 float quantity = ChartGenContext.from(chart).applied().stream()
                         .filter(applied -> applied.effect() == ChartEffect.CHART_QUANTITY_PERCENT).map(AppliedEffect::value).reduce(0f, Float::sum);
 
