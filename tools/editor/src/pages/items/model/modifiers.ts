@@ -5,7 +5,7 @@ import { WORMHOLE_ANCHOR_TYPE } from './anchors.ts';
 import { DOCTRINE_TYPE } from './doctrines.ts';
 import { familyEffectNames, isFamilyEffect, MODIFIER_FILE_NAMES, type ItemFamily } from './itemFamily.ts';
 
-export const MODIFIER_COLUMNS = ['id', 'slot', 'item_types', 'lines', 'name'] as const;
+export const MODIFIER_COLUMNS = ['id', 'affix', 'scopes', 'lines', 'name'] as const;
 export const EXCLUSIVE_GROUPS_COLUMN = 'exclusive_groups';
 export const MODIFIER_SLOTS = ['implicit', 'prefix', 'suffix'] as const;
 export type ModifierSlot = (typeof MODIFIER_SLOTS)[number];
@@ -156,8 +156,8 @@ export function parseModifiersCsv(text: string): ModifiersModel {
     return {
       cells,
       id: columns.id,
-      slot: columns.slot,
-      itemTypes: parseItemTypes(columns.item_types),
+      slot: columns.affix,
+      itemTypes: parseItemTypes(columns.scopes),
       lines: parseModifierLines(columns.lines),
       name: columns.name,
       exclusiveGroups: parseItemTypes(csvCell(table, cells, EXCLUSIVE_GROUPS_COLUMN)),
@@ -173,8 +173,8 @@ export function serializeModifiersCsv(model: ModifiersModel): string {
   return serializeCsvTable(
     csvTableFromRows(model.table, model.modifiers, (modifier) => ({
       id: modifier.id,
-      slot: modifier.slot,
-      item_types: modifier.itemTypes.join(';'),
+      affix: modifier.slot,
+      scopes: modifier.itemTypes.join(';'),
       lines: formatModifierLines(modifier.lines),
       name: modifier.name,
       ...(writesGroups ? { exclusive_groups: (modifier.exclusiveGroups ?? []).join(';') } : {}),

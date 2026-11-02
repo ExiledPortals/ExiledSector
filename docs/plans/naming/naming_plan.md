@@ -44,7 +44,7 @@ Each of these picks the canonical word; the work items below follow from it.
 Smaller ones:
 - [x] `AffixLayout.Limits` and `ItemRoller …WithEffectCount` count modifiers but say "effects". The player text has the same drift ("rolled effects will be lost"). Built: `commonMaxModifiers`, `maxModifiers`, `modifierCountChances`, `rollWithModifierCount` and the rest; the disassembly confirmations say "rolled modifiers".
 - [x] `ModifierLine` (template) vs `RolledEffect` (rolled line): rename the latter `RolledLine`. Built; it keeps its `exiledSector.RolledEffect` save alias.
-- `item_modifiers.csv` `item_types` holds `ModifierScope` ids: rename it to `scopes`. Its `slot` column means affix position, so rename that to `affix`.
+- [x] `item_modifiers.csv` `item_types` holds `ModifierScope` ids: rename it to `scopes`. Its `slot` column means affix position, so rename that to `affix`. Built in `item_modifiers.csv` and `star_chart_modifiers.csv` (same loader), `ItemModifiers`, `ItemDataIntegrity` and the editor serialiser `modifiers.ts`. The `item_types` columns of `anomalous_debris_currencies.csv` and `chart_forge_programs.csv` are other tables and stay.
 - [x] `LootModifiers` are multipliers, not item modifiers. Built: `LootMultipliers` (core `loot`).
 - [x] Stardust mote vs `CORROSION_MOTE_*` / `CorrosionMoteListener`. Built: `STARDUST_MOTE_DAMAGE_FLAT` (old name in `effect_aliases.csv`) and `StardustMoteListener`.
 

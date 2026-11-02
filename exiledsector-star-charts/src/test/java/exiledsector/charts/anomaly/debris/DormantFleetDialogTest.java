@@ -41,8 +41,8 @@ class DormantFleetDialogTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        ItemModifiers.register(new JSONArray().put(new JSONObject().put("id", "HULL_PERCENT_ANOMALOUS_DEBRIS").put("slot", "prefix")
-                .put("item_types", "hull_item").put("lines", "HULL_PERCENT:15:15").put("name", "Revenant")));
+        ItemModifiers.register(new JSONArray().put(new JSONObject().put("id", "HULL_PERCENT_ANOMALOUS_DEBRIS").put("affix", "prefix")
+                .put("scopes", "hull_item").put("lines", "HULL_PERCENT:15:15").put("name", "Revenant")));
         AnomalousDebrisCurrencies.register(new JSONArray().put(new JSONObject().put("id", ENGRAM).put("name", "Engram")
                 .put("modifier", "HULL_PERCENT_ANOMALOUS_DEBRIS").put("item_types", "hull_item").put("min_tier", "1").put("weight", "1")));
     }

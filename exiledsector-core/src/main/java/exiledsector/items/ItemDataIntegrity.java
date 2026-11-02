@@ -147,12 +147,12 @@ public final class ItemDataIntegrity {
                         + (earlier.file().equals(file) ? "" : " of " + earlier.file()));
                 return;
             }
-            String slotText = ModCsv.text(row, "slot");
+            String slotText = ModCsv.text(row, "affix");
             ModifierSlot slot = ModifierSlot.byIdOrNull(slotText);
             if (slot == null) {
                 error(file, line, modifierId + " has slot \"" + slotText + "\"; expected implicit, prefix or suffix");
             }
-            Set<ModifierScope> scopes = checkScopes(file, line, modifierId, ModCsv.text(row, "item_types"));
+            Set<ModifierScope> scopes = checkScopes(file, line, modifierId, ModCsv.text(row, "scopes"));
             checkScopeSlots(file, line, modifierId, scopes, slot);
             if (scopes.contains(ModifierScope.UNIQUE_SUBROUTINE) && slot != null && slot != ModifierSlot.PREFIX) {
                 error(file, line, modifierId + " rolls on " + ModifierScope.UNIQUE_SUBROUTINE.id() + ", so its slot must be "

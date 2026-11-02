@@ -37,7 +37,7 @@ const vocabulary = buildVocabulary({
 
 const catalogue = modifierById(
   parseModifiersCsv(
-    'id,slot,item_types,lines,name\n' +
+    'id,affix,scopes,lines,name\n' +
       'HULL_MULT,prefix,hull_item,HULL_MULT:1:2,Reinforced\n' +
       'HULL_MULT_BRIDGE,prefix,hull_item,HULL_MULT:3:4,Reinforced\n' +
       'ARMOR_FLAT,suffix,hull_item,ARMOR_FLAT:5/10/15/20,Plating\n',
@@ -300,7 +300,7 @@ describe('item volumes', () => {
 describe('unique subroutines', () => {
   const uniqueCatalogue = modifierById(
     parseModifiersCsv(
-      'id,slot,item_types,lines,name\n' +
+      'id,affix,scopes,lines,name\n' +
         'HULL_MULT_RELIC,prefix,unique_subroutine,HULL_MULT:5:8,\n' +
         'ARMOR_FLAT_RELIC,suffix,unique_subroutine,ARMOR_FLAT:5:10,\n' +
         'HULL_MULT,prefix,hull_item,HULL_MULT:1:2,Reinforced\n',

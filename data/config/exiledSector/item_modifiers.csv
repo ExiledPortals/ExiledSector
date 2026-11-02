@@ -1,4 +1,4 @@
-id,slot,item_types,lines,name
+id,affix,scopes,lines,name
 ARMOR_PERCENT_IMPLICIT,implicit,hull_item,ARMOR_PERCENT:5:10,
 CR_RECOVERY_RATE_PERCENT_IMPLICIT,implicit,hull_item,CR_RECOVERY_RATE_PERCENT:10:20,
 FIGHTER_RATE_OF_FIRE_PERCENT_IMPLICIT,implicit,hull_item,FIGHTER_RATE_OF_FIRE_PERCENT:5:10,

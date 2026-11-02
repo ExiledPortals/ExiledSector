@@ -1,4 +1,4 @@
-id,slot,item_types,lines,name,exclusive_groups
+id,affix,scopes,lines,name,exclusive_groups
 CHART_FLEET_SIZE_PERCENT,prefix,star_chart,CHART_FLEET_SIZE_PERCENT:low=15-20/mid=50-70/high=150-200,Fortified,
 CHART_EXTRA_FLEETS,prefix,star_chart,CHART_EXTRA_FLEETS:low=1/mid=2/high=3,Crowded,
 CHART_OFFICER_LEVEL_BONUS,prefix,star_chart,CHART_OFFICER_LEVEL_BONUS:low=1/mid=1/high=2,Veteran,
