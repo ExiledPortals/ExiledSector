@@ -9,8 +9,8 @@ import exiledsector.skills.AffinityScaling;
 import exiledsector.skills.CombatGate;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.SocketedItemScaling;
-import exiledsector.skills.skilleffect.hullmodule.ModuleShare;
-import exiledsector.skills.skilleffect.hullmodule.ModuleShares;
+import exiledsector.skills.skilleffect.stationmodule.ModuleShare;
+import exiledsector.skills.skilleffect.stationmodule.ModuleShares;
 
 public interface SkillEffect extends ModifierEffect {
 

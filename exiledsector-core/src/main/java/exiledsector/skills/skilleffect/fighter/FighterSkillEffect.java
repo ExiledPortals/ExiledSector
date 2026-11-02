@@ -41,17 +41,17 @@ public enum FighterSkillEffect implements BackedSkillEffect {
     FIGHTER_WEAPON_DAMAGE_PERCENT(RoleStat.WEAPON_DAMAGE),
     FIGHTER_TOP_SPEED_PERCENT(RoleStat.TOP_SPEED),
     FIGHTER_CREW_LOSS_PERCENT(statEffect(PERCENT, dynamicStat("fighter_crew_loss_mult"),
-            "stat.casualtiesSufferedByFighterPilotsLaunchedFromThisShip", true)) {
+            "stat.pilotCasualties", true)) {
         @Override
         public StyledText description(float magnitude) {
-            return describeLaunched(PERCENT, null, magnitude, "stat.casualtiesSufferedByFighterPilotsLaunchedFromThisShip");
+            return describeLaunched(PERCENT, null, magnitude, "stat.pilotCasualties");
         }
     },
     FIGHTER_CREW_LOSS_MULT(statEffect(MULT, dynamicStat("fighter_crew_loss_mult"),
-            "stat.casualtiesSufferedByFighterPilotsLaunchedFromThisShip", true)) {
+            "stat.pilotCasualties", true)) {
         @Override
         public StyledText description(float magnitude) {
-            return describeLaunched(MULT, null, magnitude, "stat.casualtiesSufferedByFighterPilotsLaunchedFromThisShip");
+            return describeLaunched(MULT, null, magnitude, "stat.pilotCasualties");
         }
     },
     FIGHTER_REFIT_TIME_MULT(statEffect(MULT, liveStat(MutableShipStatsAPI::getFighterRefitTimeMult), "stat.fighterRefitTime", true)),
@@ -75,9 +75,9 @@ public enum FighterSkillEffect implements BackedSkillEffect {
         }
     },
     FIGHTER_REPLACEMENT_DECAY_PERCENT(statEffect(PERCENT, dynamicStat("replacement_rate_decrease_mult"),
-            "stat.rateAtWhichFighterReplacementRateDecreasesDueToFighterLosses", true)),
+            "stat.replacementRateDecrease", true)),
     FIGHTER_REPLACEMENT_RECOVERY_PERCENT(statEffect(PERCENT, dynamicStat("replacement_rate_increase_mult"),
-            "stat.rateAtWhichFighterReplacementRateRecovers", false)),
+            "stat.replacementRateRecovery", false)),
     FIGHTER_PD_DAMAGE_BONUS_PERCENT {
         @Override
         public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
@@ -88,7 +88,7 @@ public enum FighterSkillEffect implements BackedSkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return describeLaunched(PERCENT, null, magnitude, "stat.damageDealtByFightersLaunchedFromThisShipToOtherFightersAndMissiles");
+            return describeLaunched(PERCENT, null, magnitude, "stat.strikecraftDamageToStrikecraftAndMissiles");
         }
     },
     FIGHTER_RELAUNCH_TIME_FLAT {

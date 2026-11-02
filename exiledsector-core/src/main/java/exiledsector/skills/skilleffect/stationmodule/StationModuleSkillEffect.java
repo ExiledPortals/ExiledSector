@@ -1,4 +1,4 @@
-package exiledsector.skills.skilleffect.hullmodule;
+package exiledsector.skills.skilleffect.stationmodule;
 
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.EffectBacking;

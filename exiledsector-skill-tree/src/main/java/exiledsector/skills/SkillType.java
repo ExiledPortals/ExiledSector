@@ -3,8 +3,8 @@ package exiledsector.skills;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.skills.skilleffect.hullmodule.ModuleShare;
-import exiledsector.skills.skilleffect.hullmodule.StationModuleSkillEffect;
+import exiledsector.skills.skilleffect.stationmodule.ModuleShare;
+import exiledsector.skills.skilleffect.stationmodule.StationModuleSkillEffect;
 import exiledsector.skills.unlock.UnlockCondition;
 
 import java.util.ArrayList;

@@ -11,7 +11,7 @@ import exiledsector.skills.EffectTotals;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
-import exiledsector.skills.skilleffect.hullmodule.ModuleBoost;
+import exiledsector.skills.skilleffect.stationmodule.ModuleBoost;
 import exiledsector.persistence.ShipRecords;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.InstalledHullMods;

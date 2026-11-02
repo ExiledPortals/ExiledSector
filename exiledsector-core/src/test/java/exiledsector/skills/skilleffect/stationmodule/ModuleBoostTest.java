@@ -1,4 +1,4 @@
-package exiledsector.skills.skilleffect.hullmodule;
+package exiledsector.skills.skilleffect.stationmodule;
 
 import com.fs.starfarer.api.combat.ArmorGridAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;

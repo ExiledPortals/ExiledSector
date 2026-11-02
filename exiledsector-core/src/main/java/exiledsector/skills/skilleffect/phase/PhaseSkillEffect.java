@@ -44,7 +44,7 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
             "stat.hardFluxLevelForMinimumPhaseSpeed", false)),
     COMBAT_BOOST_WHILE_PHASED(new ConditionalStatEffect(MULT, all(stat(MutableShipStatsAPI::getFluxDissipation),
             WeaponStatFamily.RATE_OF_FIRE.target(WeaponScope.ALL), WeaponStatFamily.AMMO_REGEN.target(WeaponScope.ALL)),
-            "stat.fluxRateOfFireAndAmmoRegenWhilePhased", PhaseSkillEffect::isBoostedByPhase)),
+            "stat.phasedTimeFlowStats", PhaseSkillEffect::isBoostedByPhase)),
     PHASE_TOP_SPEED_PERCENT(new ConditionalStatEffect(PERCENT, stat(MutableShipStatsAPI::getMaxSpeed), "stat.topSpeedWhilePhased",
             PhaseSkillEffect::isBoostedByPhase)),
     FLUX_DISSIPATION_WHILE_PHASED_PERCENT(new ConditionalStatEffect(PERCENT, stat(MutableShipStatsAPI::getFluxDissipation),

@@ -101,9 +101,9 @@ Also:
 | combat D-mods | `NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD` | `COMBAT_DMOD_*` | effect name. [x] Built: `COMBAT_DMOD_EFFECT_MULT_PER_DMOD`. Every old effect name is a row in `effect_aliases.csv`, which also covers modifier ids of the same name. |
 
 Also:
-- About 15 `stat.*` keys are camel-cased from old sentences (`stat.minimumCrewRequiredPerFighterBayCappedAt80Total`). Shorten them to the stat name.
-- Package `skilleffect.hullmodule` holds `StationModuleSkillEffect`, which breaks the `<Part>SkillEffect` rule.
-- `ARMOUR` / `diminishingArmour` (setting id) vs `ARMOR_*` (237 uses).
+- [x] About 15 `stat.*` keys are camel-cased from old sentences (`stat.minimumCrewRequiredPerFighterBayCappedAt80Total`). Shorten them to the stat name. Built: 19 keys, for example `stat.minimumCrewPerBay` and `stat.combatDModEffects`.
+- [x] Package `skilleffect.hullmodule` holds `StationModuleSkillEffect`, which breaks the `<Part>SkillEffect` rule. Built: `skilleffect.stationmodule` (main and tests); the part name also feeds `StatGroup` and the forge key `chart.forge.part.stationmodule`.
+- [x] `ARMOUR` / `diminishingArmour` (setting id) vs `ARMOR_*` (237 uses). Built: `DiminishedStat.ARMOR`, key `diminishing.stat.ARMOR`; the setting id stays.
 
 ## Star Charts: runs, modifiers and loot
 

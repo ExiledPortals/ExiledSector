@@ -739,7 +739,7 @@
     "chart.forge.part.defense": "Hull and armor",
     "chart.forge.part.fighter": "Strikecraft",
     "chart.forge.part.flux": "Flux",
-    "chart.forge.part.hullmodule": "Station modules",
+    "chart.forge.part.stationmodule": "Station modules",
     "chart.forge.part.logistics": "Logistics",
     "chart.forge.part.movement": "Engines",
     "chart.forge.part.onhit": "On hit",

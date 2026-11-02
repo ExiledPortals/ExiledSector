@@ -712,7 +712,7 @@
     "chart.forge.part.defense": "船体与装甲",
     "chart.forge.part.fighter": "舰载机",
     "chart.forge.part.flux": "幅能",
-    "chart.forge.part.hullmodule": "空间站模块",
+    "chart.forge.part.stationmodule": "空间站模块",
     "chart.forge.part.logistics": "后勤",
     "chart.forge.part.movement": "引擎",
     "chart.forge.part.onhit": "命中时",

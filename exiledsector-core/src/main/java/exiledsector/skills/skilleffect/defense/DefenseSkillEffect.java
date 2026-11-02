@@ -44,7 +44,7 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             return false;
         }
     },
-    BREAK_PROBABILITY_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getBreakProb), "stat.chanceOfThisShipBreakingApartWhenDestroyed", true)),
+    BREAK_PROBABILITY_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getBreakProb), "stat.breakApartChance", true)),
     ARMOR_PERCENT(statEffect(PERCENT, bonus(MutableShipStatsAPI::getArmorBonus), "stat.armor", false)),
     ARMOR_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getArmorBonus), "stat.armor", false)),
     ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD(new PerDModMultEffect(liveStat(MutableShipStatsAPI::getArmorDamageTakenMult),
@@ -110,9 +110,9 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
     },
     DMOD_EFFECT_MULT_PER_DMOD(new PerDModMultEffect(SkillEffectSupport::applyDModEffectMult, "stat.negativeEffectsFromDModsPerDMod", true, false)),
     COMBAT_DMOD_EFFECT_MULT_PER_DMOD(new PerDModMultEffect(SkillEffectSupport::applyNonLogisticsDModEffectMult,
-            "stat.negativeEffectsFromNonLogisticsDModsPerDMod", true, false)),
+            "stat.combatDModEffects", true, false)),
     LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD(new PerDModMultEffect(SkillEffectSupport::applyLogisticsDModEffectMult,
-            "stat.negativeEffectsFromLogisticsDModsPerDMod", true, false)),
+            "stat.logisticsDModEffects", true, false)),
     ENGINE_DURABILITY_PERCENT(statEffect(PERCENT, bonus(MutableShipStatsAPI::getEngineHealthBonus), "stat.engineDurability", false)),
     REPAIR_TIME_PERCENT(statEffect(PERCENT, all(liveStat(MutableShipStatsAPI::getCombatWeaponRepairTimeMult),
             liveStat(MutableShipStatsAPI::getCombatEngineRepairTimeMult)),
