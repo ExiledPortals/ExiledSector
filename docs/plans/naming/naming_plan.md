@@ -158,7 +158,7 @@ Per-anomaly translation key prefixes don't match ids or packages: `chart.debris`
 ## Order of work
 
 1. Stale text and docs (the last section). No risk, and it fixes what translators and players read today.
-2. Decisions 1-4, then the display-name fixes in [node_id_renames.md](node_id_renames.md) decision 3.
+2. [~] Decisions 1-4, then the display-name fixes in [node_id_renames.md](node_id_renames.md) decision 3. Built apart from decision 4, which waits on the reshuffle choice.
 3. Code-only renames, one domain per change: classes, packages, enums that aren't saved. Each one is a rename plus a test run.
 4. Translation key families, each with `en.json`, `zh_CN.json` and `TranslationKeyReferencesTest`.
 5. Saved ids in one release, together with the node and type renames: material and item ids through `ItemIdAliases` / `MaterialMigration`, saved fields with readResolve or aliases, memory keys with a load-time copy. Leave LunaLib setting ids alone unless the reset is acceptable.
