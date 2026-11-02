@@ -84,7 +84,7 @@ class ItemImplicitsTest {
 
     @Test
     void implicitsApplyAlongsideExplicitsWithoutChangingRarity() {
-        Item plate = Item.withEffects("plate", "armor_plating_plate", 9L, List.of(new RolledEffect("HULL_PERCENT", 5f)));
+        Item plate = Item.withEffects("plate", "armor_plate", 9L, List.of(new RolledEffect("HULL_PERCENT", 5f)));
         List<SkillTypeEffect> applied = plate.skillEffects();
 
         assertEquals(2, applied.size());
@@ -94,7 +94,7 @@ class ItemImplicitsTest {
 
     @Test
     void anItemGroupsItsRollsIntoImplicitAndExplicitWithPrefixesAndSuffixesUnderExplicit() {
-        Item plate = Item.withEffects("plate", "armor_plating_plate", 9L,
+        Item plate = Item.withEffects("plate", "armor_plate", 9L,
                 List.of(new RolledEffect("HULL_PERCENT", 5f), new RolledEffect("KINETIC_DAMAGE_TAKEN_PERCENT", -5f)));
 
         assertEquals(List.of(ModifierSlot.IMPLICIT), plate.rolls(ModifierCategory.IMPLICIT).stream().map(SlottedRoll::slot).toList());
