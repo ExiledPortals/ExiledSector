@@ -30,8 +30,9 @@ public final class MagneticStorm implements LayoutShaper {
 
     @Override
     public void shape(AnomalyLayoutSite site) {
-        float starEdge = site.centre().getRadius() + site.between(500f, 900f);
-        addField(site, site.centre(), STAR_WIDTH, starEdge + STAR_WIDTH / 2f, starEdge, starEdge + STAR_WIDTH, 1f);
+        SectorEntityToken star = site.stars().isEmpty() ? site.centre() : site.stars().get(0);
+        float starEdge = star.getRadius() + site.between(500f, 900f);
+        addField(site, star, STAR_WIDTH, starEdge + STAR_WIDTH / 2f, starEdge, starEdge + STAR_WIDTH, 1f);
         List<PlanetAPI> worlds = new ArrayList<>(site.worlds());
         for (int count = 0; count < MAX_WORLDS && !worlds.isEmpty(); count++) {
             PlanetAPI world = worlds.remove(site.random().nextInt(worlds.size()));
