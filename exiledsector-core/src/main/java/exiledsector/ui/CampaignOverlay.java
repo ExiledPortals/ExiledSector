@@ -3,6 +3,7 @@ package exiledsector.ui;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CustomUIPanelPlugin;
+import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import exiledsector.effects.TransientScripts;
@@ -35,7 +36,21 @@ public final class CampaignOverlay {
     @SuppressWarnings("java:S1181")
     public static boolean open(CampaignUIAPI campaignUI, Function<Host, Screen> screenFor, Runnable afterClose) {
         try {
-            UIPanelAPI hostPanel = hostPanel(campaignUI);
+            return openOver(hostPanel(campaignUI), screenFor, afterClose);
+        } catch (Throwable e) {
+            LOG.error("[ExiledSector] Could not open a full-screen window over the campaign screens", e);
+            return false;
+        }
+    }
+
+    public static boolean openIn(InteractionDialogAPI dialog, Function<Host, Screen> screenFor, Runnable afterClose) {
+        return openOver(dialog instanceof UIPanelAPI dialogPanel ? dialogPanel : null, screenFor, afterClose);
+    }
+
+    // java:S1181: UiReflection declares Throwable, and a changed engine may only cost this overlay, never the game
+    @SuppressWarnings("java:S1181")
+    private static boolean openOver(UIPanelAPI hostPanel, Function<Host, Screen> screenFor, Runnable afterClose) {
+        try {
             if (hostPanel == null || overlayOpenIn(hostPanel)) return false;
             OverlayHost host = new OverlayHost(hostPanel, afterClose);
             Screen screen = screenFor.apply(host);

@@ -11,7 +11,6 @@ final class AtlasAbilityDialog extends BaseDialogPlugin {
     @Override
     protected void open() {
         options().clearOptions();
-        opened = openAtlas();
     }
 
     @Override
@@ -19,14 +18,10 @@ final class AtlasAbilityDialog extends BaseDialogPlugin {
         if (opened || dismissed) {
             return;
         }
-        opened = openAtlas();
+        opened = AtlasScreen.openIn(dialog(), this::dismiss);
         if (!opened) {
             dismiss();
         }
-    }
-
-    private boolean openAtlas() {
-        return AtlasScreen.open(Global.getSector().getCampaignUI(), this::dismiss);
     }
 
     private void dismiss() {

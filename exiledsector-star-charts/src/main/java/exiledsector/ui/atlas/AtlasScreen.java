@@ -3,6 +3,7 @@ package exiledsector.ui.atlas;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.Alignment;
@@ -157,6 +158,10 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
 
     public static boolean open(CampaignUIAPI campaignUI, Runnable afterClose) {
         return CampaignOverlay.open(campaignUI, AtlasScreen::new, afterClose);
+    }
+
+    static boolean openIn(InteractionDialogAPI dialog, Runnable afterClose) {
+        return CampaignOverlay.openIn(dialog, AtlasScreen::new, afterClose);
     }
 
     @Override
