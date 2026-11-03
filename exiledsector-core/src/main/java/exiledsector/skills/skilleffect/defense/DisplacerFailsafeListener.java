@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
+import exiledsector.ModSounds;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 import org.lazywizard.lazylib.MathUtils;
@@ -63,7 +64,7 @@ final class DisplacerFailsafeListener extends ShipCombatListener implements Dama
         ownerShip.getLocation().set(to);
         ownerShip.getVelocity().set(0f, 0f);
         flash(engine, to);
-        Global.getSoundPlayer().playSound(SOUND, 1f, 1f, to, ownerShip.getVelocity());
+        ModSounds.playAt(SOUND, 1f, to, ownerShip.getVelocity());
     }
 
     Vector2f clearDestination(Vector2f from, Vector2f enemyLocation, float mapWidth, float mapHeight) {

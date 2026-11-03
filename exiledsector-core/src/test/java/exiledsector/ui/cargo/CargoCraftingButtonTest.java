@@ -182,6 +182,7 @@ class CargoCraftingButtonTest {
         globalMock.when(Global::getSettings).thenReturn(settings);
         globalMock.when(Global::getSector).thenReturn(sector);
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
+        buttonsUnderHullMods(true);
         launcherMock = Mockito.mockStatic(CraftingBenchCargoLauncher.class);
     }
 
@@ -256,6 +257,38 @@ class CargoCraftingButtonTest {
 
         verify(container).setOpacity(1f);
         verify(button).setEnabled(true);
+    }
+
+    @Test
+    void turningTheRefitButtonsOffHidesTheButtonAndBlocksPresses() {
+        CargoCraftingBenchButton.attachIfMissing(tradePanel);
+        buttonsUnderHullMods(false);
+
+        buttonPlugin.advance(0f);
+        buttonPlugin.buttonPressed(CargoCraftingBenchButton.BUTTON_ID);
+
+        verify(container).setOpacity(0f);
+        verify(button).setEnabled(false);
+        launcherMock.verify(() -> CraftingBenchCargoLauncher.open(any(), any()), never());
+
+        buttonsUnderHullMods(true);
+        buttonPlugin.advance(0f);
+
+        verify(container).setOpacity(1f);
+        verify(button).setEnabled(true);
+    }
+
+    @Test
+    void withTheRefitButtonsOffOpeningTheCargoTabStartsNoWatcher() {
+        buttonsUnderHullMods(false);
+
+        new CargoCraftingTabListener().reportAboutToOpenCoreTab(CoreUITabId.CARGO, null);
+
+        verify(sector, never()).addTransientScript(any());
+    }
+
+    private void buttonsUnderHullMods(boolean shown) {
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", RefitButtonConfig.FIELD_ID)).thenReturn(shown);
     }
 
     @Test

@@ -18,6 +18,7 @@ import exiledsector.skills.SkillTreeSetting;
 import exiledsector.ui.HullItemsRefitButton;
 import exiledsector.ui.CraftingBenchRefitButton;
 import exiledsector.ui.SkillTreeRefitButton;
+import lunalib.lunaRefit.BaseRefitButton;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -243,14 +244,19 @@ class RefitButtonColumnTest {
     }
 
     @Test
-    void theAdditionalOptionsDropdownListsTheSkillTreeOnlyWhenTheButtonIsOff() {
+    void theAdditionalOptionsDropdownListsEveryRefitScreenOnlyWhenTheButtonsAreOff() {
         refitButtonMock.close();
+        hullUpgradesButtonMock.close();
+        benchButtonMock.close();
         try {
-            assertFalse(new SkillTreeRefitButton().shouldShow(null, null, null));
+            List<BaseRefitButton> dropdownButtons = List.of(new SkillTreeRefitButton(), new HullItemsRefitButton(), new CraftingBenchRefitButton());
+            dropdownButtons.forEach(dropdownButton -> assertFalse(dropdownButton.shouldShow(null, null, null)));
             buttonUnderHullMods(false);
-            assertTrue(new SkillTreeRefitButton().shouldShow(null, null, null));
+            dropdownButtons.forEach(dropdownButton -> assertTrue(dropdownButton.shouldShow(null, null, null)));
         } finally {
             refitButtonMock = Mockito.mockStatic(SkillTreeRefitButton.class);
+            hullUpgradesButtonMock = Mockito.mockStatic(HullItemsRefitButton.class);
+            benchButtonMock = Mockito.mockStatic(CraftingBenchRefitButton.class);
         }
     }
 

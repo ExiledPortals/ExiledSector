@@ -1,11 +1,11 @@
 package exiledsector.charts.anomaly.stormfront;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BaseEveryFrameCombatPlugin;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
+import exiledsector.ModSounds;
 import exiledsector.compat.CombatGlow;
 import exiledsector.charts.run.ChartRun;
 import org.apache.log4j.Logger;
@@ -92,8 +92,8 @@ public class StormBattlePlugin extends BaseEveryFrameCombatPlugin {
         }
         Vector2f origin = StormStrikes.origin(target.getLocation(), random);
         engine.spawnEmpArc(null, origin, null, target, DamageType.ENERGY, StormRules.strikeDamage(tier), StormRules.strikeEmp(tier), ARC_RANGE,
-                IMPACT_SOUND, ARC_THICKNESS, ARC_FRINGE, ARC_CORE);
-        Global.getSoundPlayer().playSound(THUNDER_SOUND, 1f, 1f, origin, new Vector2f());
+                ModSounds.orSilent(IMPACT_SOUND), ARC_THICKNESS, ARC_FRINGE, ARC_CORE);
+        ModSounds.playAt(THUNDER_SOUND, 1f, origin, new Vector2f());
         overlay.flash(target.getLocation());
         CombatGlow.flash(new Vector2f(target.getLocation()), null, ARC_FRINGE, LIGHT_SIZE, LIGHT_INTENSITY, LIGHT_SECONDS);
     }

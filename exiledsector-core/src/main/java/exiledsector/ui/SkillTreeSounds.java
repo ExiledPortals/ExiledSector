@@ -1,13 +1,8 @@
 package exiledsector.ui;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.SoundPlayerAPI;
-import exiledsector.ModSettings;
+import exiledsector.ModSounds;
 
 public final class SkillTreeSounds {
-
-    public static final String ENABLED_FIELD_ID = "exiledSector_skillTreeSounds";
-    public static final boolean DEFAULT_ENABLED = true;
 
     static final String ALLOCATE_SMALL = "technology1";
     static final String ALLOCATE_MEDIUM = "technology3";
@@ -94,14 +89,7 @@ public final class SkillTreeSounds {
         play(soundId);
     }
 
-    static boolean enabled() {
-        return ModSettings.booleanOr(ENABLED_FIELD_ID, DEFAULT_ENABLED);
-    }
-
     static void play(String soundId) {
-        SoundPlayerAPI player = Global.getSoundPlayer();
-        if (player != null && enabled()) {
-            player.playUISound(soundId, 1f, 1f);
-        }
+        ModSounds.playUi(soundId);
     }
 }

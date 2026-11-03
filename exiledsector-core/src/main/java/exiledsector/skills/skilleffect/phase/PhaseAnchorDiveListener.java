@@ -9,6 +9,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.skills.NeuralLinkScript;
 import com.fs.starfarer.api.util.FaderUtil;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.ModSounds;
 import exiledsector.compat.CombatGlow;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.skilleffect.special.LethalHitArbiter;
@@ -104,7 +105,7 @@ final class PhaseAnchorDiveListener implements LethalHitArbiter.Saver, Advanceab
         }
 
         if (diveFader.isIdle()) {
-            Global.getSoundPlayer().playSound("phase_anchor_vanish", 1f, 1f, ownerShip.getLocation(), ownerShip.getVelocity());
+            ModSounds.playAt("phase_anchor_vanish", 1f, ownerShip.getLocation(), ownerShip.getVelocity());
             vanishGlow(effectColor);
         }
         diveFader.fadeOut();

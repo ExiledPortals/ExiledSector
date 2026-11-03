@@ -1,7 +1,6 @@
 package exiledsector.skills.skilleffect.fighter;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.SoundPlayerAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.characters.ShipSkillEffect;
@@ -26,6 +25,7 @@ import com.fs.starfarer.api.loading.FighterWingSpecAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import com.fs.starfarer.api.loading.WingRole;
+import exiledsector.ModSounds;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
@@ -409,10 +409,7 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
         fighter.setAlly(ownerShip.isAlly());
         fighter.getLocation().set(launchLocation);
         fighter.getVelocity().set(ownerShip.getVelocity());
-        SoundPlayerAPI sounds = Global.getSoundPlayer();
-        if (sounds != null) {
-            sounds.playSound(TAKEOFF_SOUND, 1f, 1f, ownerShip.getLocation(), ownerShip.getVelocity());
-        }
+        ModSounds.playAt(TAKEOFF_SOUND, 1f, ownerShip.getLocation(), ownerShip.getVelocity());
     }
 
     private PersonAPI fleetCommanderFor(CombatFleetManagerAPI fleetManager) {

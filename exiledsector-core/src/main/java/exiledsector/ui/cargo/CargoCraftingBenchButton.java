@@ -127,7 +127,7 @@ public final class CargoCraftingBenchButton extends BaseCustomUIPanelPlugin {
     }
 
     private void refreshState() throws Throwable {
-        boolean nowShown = !failed && !Boolean.TRUE.equals(UiReflection.call(tradePanel, "isShowingMarketInfo"));
+        boolean nowShown = !failed && RefitButtonConfig.buttonUnderHullMods() && !Boolean.TRUE.equals(UiReflection.call(tradePanel, "isShowingMarketInfo"));
         show(nowShown, nowShown && !transferPending());
     }
 

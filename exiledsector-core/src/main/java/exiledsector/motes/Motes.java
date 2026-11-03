@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.MissileAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
+import exiledsector.ModSounds;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -57,9 +58,7 @@ public final class Motes {
         mote.getDamage().setFluxComponent(launch.emp());
         engine.applyDamageModifiersToSpawnedProjectileWithNullWeapon(launch.source(), WeaponAPI.WeaponType.ENERGY, false, mote.getDamage());
         liveMotes.add(mote);
-        if (Global.getSoundPlayer() != null) {
-            Global.getSoundPlayer().playSound(LAUNCH_SOUND, 1f, LAUNCH_SOUND_VOLUME, mote.getLocation(), mote.getVelocity());
-        }
+        ModSounds.playAt(LAUNCH_SOUND, LAUNCH_SOUND_VOLUME, mote.getLocation(), mote.getVelocity());
         return mote;
     }
 

@@ -2,6 +2,7 @@ package exiledsector.ui;
 
 import exiledsector.ExiledSector;
 import exiledsector.ModSettingsListener;
+import exiledsector.ModSounds;
 import exiledsector.compat.CombatGlow;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.LanguageSetting;
@@ -56,6 +57,8 @@ public final class ExiledSectorSettings {
         ModSettingsListener.onReload(DiminishingReturns.class, DiminishingReturns::reloadSettings);
         ModSettingsListener.onReload(ItemAnimationSetting.class, ItemAnimationSetting::reloadSettings);
         ItemAnimationSetting.reloadSettings();
+        ModSettingsListener.onReload(ModSounds.class, ModSounds::reloadSettings);
+        ModSounds.reloadSettings();
         ModSettingsListener.onReload(ExiledSectorDomain.class, () -> ExiledSector.domains().forEach(ExiledSectorDomain::reloadSettings));
         domains.forEach(ExiledSectorDomain::reloadSettings);
     }
@@ -67,9 +70,9 @@ public final class ExiledSectorSettings {
         SettingsCreator.addKeybind(MOD_ID, RefitButtonConfig.BENCH_KEYBIND_FIELD_ID,
                 Translation.text("settings.refit.craftingBenchKey.name"), Translation.text("settings.refit.craftingBenchKey.tooltip"),
                 RefitButtonConfig.DEFAULT_BENCH_KEY, MAIN_TAB);
-        SettingsCreator.addBoolean(MOD_ID, SkillTreeSounds.ENABLED_FIELD_ID,
+        SettingsCreator.addBoolean(MOD_ID, ModSounds.ENABLED_FIELD_ID,
                 Translation.text("settings.sounds.enabled.name"), Translation.text("settings.sounds.enabled.tooltip"),
-                SkillTreeSounds.DEFAULT_ENABLED, MAIN_TAB);
+                ModSounds.DEFAULT_ENABLED, MAIN_TAB);
         SettingsCreator.addRadio(MOD_ID, ItemAnimationSetting.FIELD_ID, Translation.text("settings.hullItems.itemAnimations.name"),
                 Translation.text("settings.hullItems.itemAnimations.tooltip"), ItemAnimationSetting.FULL,
                 String.join(",", ItemAnimationSetting.OPTIONS), MAIN_TAB);

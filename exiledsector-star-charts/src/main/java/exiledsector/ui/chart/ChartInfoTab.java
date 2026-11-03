@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.listeners.CampaignInputListener;
 import com.fs.starfarer.api.campaign.listeners.CampaignUIRenderingListener;
 import com.fs.starfarer.api.combat.ViewportAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
+import exiledsector.ModSounds;
 import exiledsector.charts.objective.ChartObjectiveIntel;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
@@ -139,7 +140,7 @@ public final class ChartInfoTab implements CampaignUIRenderingListener, Campaign
         } else {
             frame.close();
         }
-        Global.getSoundPlayer().playUISound(CLICK_SOUND, 1f, 1f);
+        ModSounds.playUi(CLICK_SOUND);
     }
 
     private void refresh(ChartRun run, float amount) {

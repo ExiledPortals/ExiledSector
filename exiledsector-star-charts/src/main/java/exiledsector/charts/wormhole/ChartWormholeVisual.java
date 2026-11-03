@@ -9,6 +9,7 @@ import com.fs.starfarer.api.combat.ViewportAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.FaderUtil;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.ModSounds;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
@@ -192,7 +193,7 @@ final class ChartWormholeVisual {
 
     private void open(SectorEntityToken wormhole) {
         if (!openFader.isFadingIn() && !openFader.isFadedIn() && wormhole.isInCurrentLocation()) {
-            Global.getSoundPlayer().playSound(OPEN_SOUND, 1f, 1f, wormhole.getLocation(), wormhole.getVelocity());
+            ModSounds.playAt(OPEN_SOUND, 1f, wormhole.getLocation(), wormhole.getVelocity());
         }
         secondsSinceOpened = 0f;
         openFader.fadeIn();
@@ -200,7 +201,7 @@ final class ChartWormholeVisual {
 
     private void close(SectorEntityToken wormhole) {
         if (!openFader.isFadingOut() && !openFader.isFadedOut() && wormhole.isInCurrentLocation()) {
-            Global.getSoundPlayer().playSound(CLOSE_SOUND, 1f, 1f, wormhole.getLocation(), wormhole.getVelocity());
+            ModSounds.playAt(CLOSE_SOUND, 1f, wormhole.getLocation(), wormhole.getVelocity());
         }
         openFader.fadeOut();
     }

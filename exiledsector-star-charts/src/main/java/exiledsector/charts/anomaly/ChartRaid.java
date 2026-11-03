@@ -19,6 +19,7 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD.RaidDangerLevel;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.ModSounds;
 import exiledsector.PlayerFleet;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.i18n.I18n;
@@ -488,7 +489,7 @@ public class ChartRaid {
             raidLoot.getCredits().set(0f);
         }
         contText = raidLoot.isEmpty() ? null : Translation.gameText("chart.raid.option.pick");
-        Global.getSoundPlayer().playUISound("ui_raid_finished", 1f, 1f);
+        ModSounds.playUi("ui_raid_finished");
         options.clearOptions();
         options.addOption(contText != null ? contText : Translation.gameText("chart.raid.option.continue"), RAID_RESULT);
     }

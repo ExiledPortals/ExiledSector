@@ -2,7 +2,6 @@ package exiledsector.ui.cargo;
 
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.SoundPlayerAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
@@ -10,6 +9,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.campaign.listeners.ShowLootListener;
 import com.fs.starfarer.api.campaign.listeners.SubmarketUpdateListener;
+import exiledsector.ModSounds;
 
 public final class LootAlertListener implements ShowLootListener, SubmarketUpdateListener {
 
@@ -80,15 +80,8 @@ public final class LootAlertListener implements ShowLootListener, SubmarketUpdat
             }
             started = true;
             long nowNanos = System.nanoTime();
-            cascade.advance(watchedCargo().getStacksCopy(), nowNanos, Watcher::play);
+            cascade.advance(watchedCargo().getStacksCopy(), nowNanos, ModSounds::playUi);
             done = cascade.finished(nowNanos);
-        }
-
-        private static void play(String soundId) {
-            SoundPlayerAPI soundPlayer = Global.getSoundPlayer();
-            if (soundPlayer != null) {
-                soundPlayer.playUISound(soundId, 1f, 1f);
-            }
         }
     }
 }

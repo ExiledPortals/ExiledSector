@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.CoreUITabId;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.listeners.CoreUITabListener;
 import com.fs.starfarer.api.ui.UIPanelAPI;
+import exiledsector.ui.refit.RefitButtonConfig;
 
 public final class CargoCraftingTabListener implements CoreUITabListener {
 
@@ -16,7 +17,7 @@ public final class CargoCraftingTabListener implements CoreUITabListener {
 
     @Override
     public void reportAboutToOpenCoreTab(CoreUITabId tab, Object param) {
-        if (tab != CoreUITabId.CARGO || CargoCraftingBenchButton.failed()) return;
+        if (tab != CoreUITabId.CARGO || CargoCraftingBenchButton.failed() || !RefitButtonConfig.buttonUnderHullMods()) return;
         SectorAPI sector = Global.getSector();
         if (sector == null) return;
         if (activeWatcher != null) {

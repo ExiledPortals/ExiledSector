@@ -2,6 +2,7 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SoundPlayerAPI;
+import exiledsector.ModSounds;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +38,7 @@ class SkillTreeSoundsTest {
         globalMock.close();
         lunaSettingsMock.close();
         SkillTreeSounds.resetForTests();
+        ModSounds.setEnabledForTests(ModSounds.DEFAULT_ENABLED);
     }
 
     @Test
@@ -89,7 +91,7 @@ class SkillTreeSoundsTest {
 
     @Test
     void turningSkillTreeSoundsOffInLunaLibSilencesEverySound() {
-        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", SkillTreeSounds.ENABLED_FIELD_ID)).thenReturn(false);
+        ModSounds.setEnabledForTests(false);
 
         SkillTreeSounds.allocated(SkillTreeSounds.NodeSize.LARGE);
         SkillTreeSounds.refused();

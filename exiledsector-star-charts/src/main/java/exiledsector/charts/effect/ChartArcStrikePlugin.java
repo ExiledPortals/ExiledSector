@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
+import exiledsector.ModSounds;
 import exiledsector.charts.content.ChartSites;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
@@ -83,7 +84,7 @@ public class ChartArcStrikePlugin extends BaseEveryFrameCombatPlugin {
         }
         Vector2f origin = ChartSites.pointAround(target.getLocation(), random.nextDouble() * Math.PI * 2d,
                 target.getCollisionRadius() + ORIGIN_DISTANCE);
-        engine.spawnEmpArcPierceShields(null, origin, null, target, DamageType.ENERGY, 0f, emp, ARC_RANGE, IMPACT_SOUND, ARC_THICKNESS,
+        engine.spawnEmpArcPierceShields(null, origin, null, target, DamageType.ENERGY, 0f, emp, ARC_RANGE, ModSounds.orSilent(IMPACT_SOUND), ARC_THICKNESS,
                 ARC_FRINGE, ARC_CORE);
     }
 }

@@ -1,6 +1,6 @@
 package exiledsector.ui.cargo;
 
-import com.fs.starfarer.api.Global;
+import exiledsector.ModSounds;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.items.MaterialItems;
@@ -16,8 +16,8 @@ public final class MaterialDropAnnouncer {
 
     public static void announce(Map<String, Integer> droppedMaterials) {
         MaterialTier bestTier = bestTier(droppedMaterials);
-        if (bestTier != null && bestTier.dropSoundId() != null && Global.getSoundPlayer() != null) {
-            Global.getSoundPlayer().playUISound(bestTier.dropSoundId(), 1f, 1f);
+        if (bestTier != null && bestTier.dropSoundId() != null) {
+            ModSounds.playUi(bestTier.dropSoundId());
         }
         announceOnLootScreen(droppedMaterials);
     }
