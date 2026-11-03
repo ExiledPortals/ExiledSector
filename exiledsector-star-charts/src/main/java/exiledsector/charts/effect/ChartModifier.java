@@ -250,6 +250,9 @@ public enum ChartModifier implements ModifierEffect {
     }
 
     public boolean canRoll(SectorAPI sector) {
+        if (grantedNodeId != null && !GrantedNodes.exists(grantedNodeId)) {
+            return false;
+        }
         return dropType == null || dropType.canDrop(sector);
     }
 

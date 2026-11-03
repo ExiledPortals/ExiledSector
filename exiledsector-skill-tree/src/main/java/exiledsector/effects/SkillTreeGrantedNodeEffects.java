@@ -67,6 +67,11 @@ public final class SkillTreeGrantedNodeEffects implements GrantedNodeEffects {
     }
 
     @Override
+    public boolean exists(String nodeId) {
+        return SkillTree.get(nodeId) != null;
+    }
+
+    @Override
     public String displayName(String nodeId) {
         SkillNode node = SkillTree.get(nodeId);
         return node == null ? null : node.getDisplayName();

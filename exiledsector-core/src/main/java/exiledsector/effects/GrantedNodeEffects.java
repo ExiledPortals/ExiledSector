@@ -9,6 +9,8 @@ public interface GrantedNodeEffects {
 
     List<EffectContribution> withoutTree(List<String> nodeIds, ShipEffectContext context, String modIdPrefix);
 
+    boolean exists(String nodeId);
+
     String displayName(String nodeId);
 
     List<StyledText> descriptionLines(String nodeId);
