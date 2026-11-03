@@ -394,6 +394,7 @@ class ChartContentGeneratorTest {
             for (CampaignFleetAPI ally : allies) {
                 MemoryAPI memory = ally.getMemoryWithoutUpdate();
                 assertFalse(memory.getBoolean(MemFlags.MEMORY_KEY_MAKE_HOSTILE));
+                assertFalse(memory.getBoolean(MemFlags.MEMORY_KEY_IGNORE_PLAYER_COMMS));
                 assertTrue(memory.getBoolean(ChartContentGenerator.MAKE_NON_HOSTILE));
                 assertTrue(memory.getBoolean(ChartContentGenerator.NON_HOSTILE_TAKES_PRIORITY));
                 assertFalse(memory.contains(ChartIds.START_DP_MEMORY_KEY));

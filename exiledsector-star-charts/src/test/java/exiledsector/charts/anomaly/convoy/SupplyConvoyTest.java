@@ -80,6 +80,7 @@ class SupplyConvoyTest {
             CampaignFleetAPI fleet = convoySystem.fleet(convoy, role);
             assertTrue(fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_MAKE_NON_HOSTILE), role.key());
             assertFalse(fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_MAKE_HOSTILE), role.key());
+            assertFalse(fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_IGNORE_PLAYER_COMMS), role.key());
             assertFalse(fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE), role.key());
             assertTrue(fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_NO_REP_IMPACT), role.key());
         }

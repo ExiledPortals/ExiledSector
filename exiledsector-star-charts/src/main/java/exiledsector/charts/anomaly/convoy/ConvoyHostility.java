@@ -9,7 +9,7 @@ import java.util.List;
 final class ConvoyHostility {
 
     static final List<String> HOSTILE_FLAGS = List.of(MemFlags.MEMORY_KEY_MAKE_HOSTILE, MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE,
-            MemFlags.MEMORY_KEY_ALLOW_LONG_PURSUIT, MemFlags.MEMORY_KEY_SAW_PLAYER_WITH_TRANSPONDER_ON);
+            MemFlags.MEMORY_KEY_ALLOW_LONG_PURSUIT, MemFlags.MEMORY_KEY_SAW_PLAYER_WITH_TRANSPONDER_ON, MemFlags.MEMORY_KEY_IGNORE_PLAYER_COMMS);
     static final List<String> UNREPUTABLE_FLAGS = List.of(MemFlags.MEMORY_KEY_NO_REP_IMPACT, MemFlags.MEMORY_KEY_LOW_REP_IMPACT);
 
     private ConvoyHostility() {
@@ -27,6 +27,7 @@ final class ConvoyHostility {
         memory.unset(MemFlags.MEMORY_KEY_MAKE_NON_HOSTILE);
         memory.set(MemFlags.MEMORY_KEY_MAKE_HOSTILE, true);
         memory.set(MemFlags.MEMORY_KEY_SAW_PLAYER_WITH_TRANSPONDER_ON, true);
+        memory.set(MemFlags.MEMORY_KEY_IGNORE_PLAYER_COMMS, true);
         if (role != ConvoyRole.FREIGHTERS) {
             memory.set(MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE, true);
             memory.set(MemFlags.MEMORY_KEY_ALLOW_LONG_PURSUIT, true);

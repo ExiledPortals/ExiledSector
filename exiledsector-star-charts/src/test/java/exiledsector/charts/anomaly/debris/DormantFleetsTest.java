@@ -95,6 +95,7 @@ class DormantFleetsTest {
         assertFalse(DormantFleets.isDormant(attacked));
         assertTrue(memory.getBoolean(MemFlags.MEMORY_KEY_MAKE_HOSTILE));
         assertTrue(memory.getBoolean(MemFlags.MEMORY_KEY_NO_REP_IMPACT));
+        assertTrue(memory.getBoolean(MemFlags.MEMORY_KEY_IGNORE_PLAYER_COMMS));
         assertFalse(memory.contains(MemFlags.MEMORY_KEY_ALLOW_LONG_PURSUIT));
         assertFalse(DormantFleets.isHidden(attacked));
         verify(attacked).setAI(ai);

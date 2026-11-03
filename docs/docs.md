@@ -609,7 +609,8 @@ S-mods, and their fighters, a listener cutting damage dealt by 5% for each S-mod
 
 Twinned spawns a second fleet the size of the boss's fleet, or of a station's guard, from its own seed at its own spot,
 so its ships and loot differ; only the original counts for the objective. A hull size bar keeps the fleet out at the Gateway while it holds a non-civilian
-ship of that size (`ChartEntryBans`).
+ship of that size (`ChartEntryBans`). Hostile chart fleets, convoys and woken dormant fleets ignore comm requests, so no
+tithe, bribe or high-reputation talk turns them (`ChartContentGenerator.HOSTILITY_FLAGS`).
 
 ### Transverse Jump in charts
 

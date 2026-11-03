@@ -165,6 +165,7 @@ class ConvoyScriptTest {
         for (ConvoyRole role : ConvoyRole.values()) {
             CampaignFleetAPI fleet = convoySystem.fleet(convoy(), role);
             assertTrue(fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_MAKE_HOSTILE), role.key());
+            assertTrue(fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_IGNORE_PLAYER_COMMS), role.key());
             assertFalse(fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_MAKE_NON_HOSTILE), role.key());
             assertTrue(fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_NO_REP_IMPACT), role.key());
             assertFalse(ConvoyEncounterDialog.wantsToHandle(fleet), role.key());

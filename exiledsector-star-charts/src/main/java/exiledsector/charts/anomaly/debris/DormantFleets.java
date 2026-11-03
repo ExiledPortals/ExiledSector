@@ -279,6 +279,7 @@ public final class DormantFleets {
         memory.unset(MemFlags.MEMORY_KEY_ALLOW_LONG_PURSUIT);
         memory.set(MemFlags.MEMORY_KEY_MAKE_HOSTILE, true);
         memory.set(MemFlags.MEMORY_KEY_NO_REP_IMPACT, true);
+        memory.set(MemFlags.MEMORY_KEY_IGNORE_PLAYER_COMMS, true);
         reveal(fleet);
         Vector2f home = new Vector2f(fleet.getLocation());
         if (fleet.getAI() == null) {

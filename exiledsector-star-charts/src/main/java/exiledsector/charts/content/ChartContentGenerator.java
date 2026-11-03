@@ -85,7 +85,7 @@ public final class ChartContentGenerator {
     static final String NON_HOSTILE_TAKES_PRIORITY = "$makeNonHostileTakesPriority";
     static final List<String> HOSTILITY_FLAGS = List.of(MemFlags.MEMORY_KEY_MAKE_HOSTILE, MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE,
             MemFlags.MEMORY_KEY_ALLOW_LONG_PURSUIT, MemFlags.MEMORY_KEY_NO_JUMP, MemFlags.MEMORY_KEY_SAW_PLAYER_WITH_TRANSPONDER_ON,
-            MemFlags.MEMORY_KEY_NO_REP_IMPACT, MemFlags.MEMORY_KEY_LOW_REP_IMPACT);
+            MemFlags.MEMORY_KEY_NO_REP_IMPACT, MemFlags.MEMORY_KEY_LOW_REP_IMPACT, MemFlags.MEMORY_KEY_IGNORE_PLAYER_COMMS);
     static final List<String> REMOVED_ABILITIES = List.of(Abilities.GO_DARK, Abilities.TRANSVERSE_JUMP);
     static final Set<String> MEEK_PERSONALITIES = Set.of(Personalities.TIMID, Personalities.CAUTIOUS, Personalities.STEADY);
     private static final Logger LOG = Logger.getLogger(ChartContentGenerator.class);
@@ -248,6 +248,7 @@ public final class ChartContentGenerator {
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
         memory.unset(MemFlags.MEMORY_KEY_MAKE_HOSTILE);
         memory.unset(MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE);
+        memory.unset(MemFlags.MEMORY_KEY_IGNORE_PLAYER_COMMS);
         memory.set(MAKE_NON_HOSTILE, true);
         memory.set(NON_HOSTILE_TAKES_PRIORITY, true);
         memory.unset(ChartIds.START_DP_MEMORY_KEY);
