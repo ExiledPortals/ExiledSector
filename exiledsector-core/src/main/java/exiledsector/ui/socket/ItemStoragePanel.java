@@ -28,6 +28,7 @@ import exiledsector.ui.cargo.CargoIconLooks;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -64,6 +65,7 @@ public final class ItemStoragePanel extends HoloPanel {
     private static final float CRAFTING_BENCH_EDGE_MARGIN = 16f;
     private static final float BUTTON_TEXT_PADDING = 30f;
     private static final float SEARCH_DELAY_SECONDS = 0.25f;
+    private static final float SORT_TOOLTIP_WIDTH = 320f;
     private static final ItemCell.Look CELL_LOOK = new ItemCell.Look(7f, true, 1f);
 
     private enum Control {CLOSE, CRAFTING_BENCH, DISASSEMBLY_MODE, CONFIRM_DISASSEMBLE, CANCEL_DISASSEMBLE}
@@ -72,6 +74,9 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private record RarityChip(ItemRarity rarity) {
+    }
+
+    private record SortChip(ItemStorageFilter.Sort sort) {
     }
 
     private record TypeChip(ItemKind sectionKind) {
@@ -389,6 +394,9 @@ public final class ItemStoragePanel extends HoloPanel {
         } else if (id instanceof RarityChip chip) {
             storageFilter.toggleRarity(chip.rarity());
             rebuildControls();
+        } else if (id instanceof SortChip chip) {
+            storageFilter.pickSort(chip.sort());
+            rebuildControls();
         } else if (id instanceof TypeChip chip) {
             storageFilter.toggleSection(chip.sectionKind());
             reloadRows();
@@ -594,10 +602,21 @@ public final class ItemStoragePanel extends HoloPanel {
         return sectionItemsOnly ? ItemKind.sectionItemTypes() : List.of(ItemKind.values());
     }
 
+    private static String sortKey(ItemStorageFilter.Sort sort) {
+        return "ui.socketStorage.sort." + sort.name().toLowerCase(Locale.ROOT);
+    }
+
+    private String sortLabel(ItemStorageFilter.Sort sort) {
+        boolean reversed = storageFilter.sort == sort && storageFilter.sortReversed;
+        return Translation.text(sortKey(sort) + (reversed ? ".reversed" : ""));
+    }
+
     private void rebuildControls() {
         List<ItemKind> chipTypes = chipTypes();
+        List<String> sortLabels = Arrays.stream(ItemStorageFilter.Sort.values()).map(this::sortLabel).toList();
+        int sortRows = ChipFlow.rowsFor(sortLabels, innerWidth());
         int typeRows = ChipFlow.rowsFor(chipTypes.stream().map(ItemKind::displayName).toList(), innerWidth());
-        int controlRows = FIXED_CONTROL_ROWS + typeRows;
+        int controlRows = FIXED_CONTROL_ROWS + sortRows + typeRows;
         TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), ChipFlow.height(controlRows), false);
         ChipFlow chips = new ChipFlow(element, innerWidth());
         for (ItemStorageFilter.Status status : ItemStorageFilter.Status.values()) {
@@ -610,6 +629,13 @@ public final class ItemStoragePanel extends HoloPanel {
             chips.placeInRow(label, new RarityChip(rarity), ChipFlow.Colors.of(rarity.color()), storageFilter.rarities.contains(rarity));
         }
         chips.startRow(FIXED_CONTROL_ROWS);
+        for (ItemStorageFilter.Sort sort : ItemStorageFilter.Sort.values()) {
+            chips.place(sortLabel(sort), new SortChip(sort), ChipFlow.Colors.player(), storageFilter.sort == sort);
+            String tooltipText = Translation.text(sortKey(sort) + ".tooltip");
+            element.addTooltipToPrevious(new GameTextTooltip(SORT_TOOLTIP_WIDTH, tooltip -> VanillaText.plainPara(tooltip, tooltipText, 0f,
+                    Misc.getTextColor())), TooltipMakerAPI.TooltipLocation.BELOW);
+        }
+        chips.startRow(FIXED_CONTROL_ROWS + sortRows);
         for (ItemKind sectionKind : chipTypes) {
             chips.place(sectionKind.displayName(), new TypeChip(sectionKind), ChipFlow.Colors.of(typeColor(sectionKind)),
                     storageFilter.sectionKinds.contains(sectionKind));

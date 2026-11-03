@@ -46,8 +46,8 @@ class ItemStorageAnchorTest {
         ItemStorageRow row = ItemStorageRow.of(anchor, 0, item -> null);
 
         assertEquals("Abyss Wormhole Anchor", row.name());
-        assertTrue(row.searchText().contains("wormhole anchor"), row.searchText());
-        assertTrue(row.searchText().contains("opens a wormhole to the abyss volume"), row.searchText());
+        assertTrue(row.searchLines().stream().anyMatch(line -> line.contains("wormhole anchor")), row.searchLines().toString());
+        assertTrue(row.searchLines().stream().anyMatch(line -> line.contains("opens a wormhole to the abyss volume")), row.searchLines().toString());
         assertNull(row.installedShipName());
     }
 
