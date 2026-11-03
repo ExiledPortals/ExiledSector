@@ -39,7 +39,7 @@ public final class ItemDrops {
     private static final Logger LOG = Logger.getLogger(ItemDrops.class);
     private static final AtomicReference<Map<String, Rule>> RULES = new AtomicReference<>(Map.of());
 
-    record Rule(List<Float> chances, float uniqueChance, int feedstockMin, int feedstockMax, boolean otherMod) {
+    record Rule(List<Float> chances, float uniqueChance, int feedstockMin, int feedstockMax, float hullItemShare, boolean otherMod) {
     }
 
     private ItemDrops() {
@@ -85,8 +85,10 @@ public final class ItemDrops {
                 String feedstockMaxText = ModCsv.text(row, "feedstockMax");
                 int feedstockMin = feedstockMinText.isEmpty() ? 0 : Math.max(0, Integer.parseInt(feedstockMinText));
                 int feedstockMax = feedstockMaxText.isEmpty() ? feedstockMin : Math.max(feedstockMin, Integer.parseInt(feedstockMaxText));
+                String hullItemShareText = ModCsv.text(row, "hullItemShare");
+                float hullItemShare = hullItemShareText.isEmpty() ? 1f : Math.max(0f, Float.parseFloat(hullItemShareText));
                 loaded.put(siteId, new Rule(List.copyOf(chances), uniqueChanceText.isEmpty() ? 0f : Float.parseFloat(uniqueChanceText),
-                        feedstockMin, feedstockMax, otherMod));
+                        feedstockMin, feedstockMax, hullItemShare, otherMod));
             } catch (NumberFormatException e) {
                 LOG.error("Skipping the salvage drop row for site " + siteId + ": " + e.getMessage());
             }

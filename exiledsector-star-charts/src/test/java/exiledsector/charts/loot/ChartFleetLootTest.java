@@ -297,6 +297,65 @@ class ChartFleetLootTest {
     }
 
     @Test
+    void aWholeTiersWorthOfFleetPointsDropsTheChartMaterialAmountForItsTierAndBiggerFleetsDropMore() throws Exception {
+        ChartMaterials.register(new JSONArray().put(new JSONObject().put("drop", "exiledSector_augmentation_nanoswarm")
+                .put("tier_1", "1").put("tier_15", "15")));
+        try {
+            ChartRun run = storeLiveRun(8);
+            float wholeChart = ChartFleetLoot.expectedFleetPoints(8);
+            int swarms = 0;
+            int doubledSwarms = 0;
+            Random random = new Random(3L);
+            for (int trial = 0; trial < 2000; trial++) {
+                swarms += ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, wholeChart), run,
+                        ChartGenContext.none(), wholeChart, random).materials().getOrDefault("exiledSector_augmentation_nanoswarm", 0);
+                doubledSwarms += ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("big", RUN_ID, 2f * wholeChart), run,
+                        ChartGenContext.none(), 2f * wholeChart, random).materials().getOrDefault("exiledSector_augmentation_nanoswarm", 0);
+            }
+
+            assertEquals(8.0, swarms / 2000.0, 0.15);
+            assertEquals(16.0, doubledSwarms / 2000.0, 0.3);
+        } finally {
+            ChartMaterials.clear();
+        }
+    }
+
+    @Test
+    void aMaterialTheChartTableCoversNoLongerRollsFromTheBattleRatesInsideCharts() throws Exception {
+        BattleLootRates.register(new JSONArray()
+                .put(new JSONObject().put("drop", "exiledSector_augmentation_nanoswarm").put("per_100_dp", "100").put("curve", "linear"))
+                .put(new JSONObject().put("drop", "exiledSector_fundamental_nanoswarm").put("per_100_dp", "100").put("curve", "linear")));
+        ChartMaterials.register(new JSONArray().put(new JSONObject().put("drop", "exiledSector_augmentation_nanoswarm")
+                .put("tier_1", "0").put("tier_15", "0")));
+        try {
+            ChartRun run = storeLiveRun(6);
+
+            ItemDrops.SiteLoot loot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f), run,
+                    ChartGenContext.none(), 100f, new Random(1L));
+
+            assertEquals(Map.of("exiledSector_fundamental_nanoswarm", 100), loot.materials());
+        } finally {
+            BattleLootRates.clear();
+            ChartMaterials.clear();
+        }
+    }
+
+    @Test
+    void chartMaterialAmountsRunLinearlyFromTierOneToFifteenAndSkipRowsThatAreNoMaterial() throws Exception {
+        ChartMaterials.register(new JSONArray()
+                .put(new JSONObject().put("drop", "exiledSector_corrupted_nanoswarm").put("tier_1", "1").put("tier_15", "18"))
+                .put(new JSONObject().put("drop", "not_a_material").put("tier_1", "1").put("tier_15", "1")));
+        try {
+            assertEquals(1f, ChartMaterials.amount("exiledSector_corrupted_nanoswarm", 1), 0.0001f);
+            assertEquals(9.5f, ChartMaterials.amount("exiledSector_corrupted_nanoswarm", 8), 0.0001f);
+            assertEquals(18f, ChartMaterials.amount("exiledSector_corrupted_nanoswarm", 15), 0.0001f);
+            assertFalse(ChartMaterials.covers("not_a_material"));
+        } finally {
+            ChartMaterials.clear();
+        }
+    }
+
+    @Test
     void theBossAddsNoCraftingCurrenciesOfItsOwnBeyondItsDeploymentPoints() throws Exception {
         ItemDrops.register(new JSONArray()
                 .put(new JSONObject().put("site", ChartIds.BOSS_LOOT_SITE).put("chances", "0").put("uniqueChance", "0")));

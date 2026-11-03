@@ -205,9 +205,11 @@ public final class ChartFleetLoot {
         float share = claimedShare * lootFleets(fleet) * quantityMult;
         float lootDeploymentPoints = claimedShare * ledger.getFloat(ChartIds.START_DP_MEMORY_KEY) * spoilsMult * quantityMult;
         float chartShare = claimedShare * startFleetPoints(ledger) / Math.max(1f, expectedFleetPoints(run.tier())) * spoilsMult * quantityMult;
+        float materialShare = chartShare * BattleLootRates.difficulty(battle.difficultyMultiplier()) * context.dropMult(DropType.CURRENCY);
         ItemDrops.SiteLoot fleetLoot = subroutines(context, lootDeploymentPoints, battle, random)
                 .plus(List.of(), List.of(), BattleMaterials.roll(lootDeploymentPoints, battle.deploymentPoints(), battle.difficultyMultiplier(),
-                        FleetLootRules.full(context.lootMultipliers(1f)), random))
+                        FleetLootRules.full(context.lootMultipliers(1f)), drop -> !ChartMaterials.covers(drop), random))
+                .plus(List.of(), List.of(), ChartMaterials.roll(run.tier(), materialShare, random))
                 .plus(chartDrops(run, context, boss, chartShare, random));
         for (LootShaper anomaly : ChartAnomalies.inRun(run, LootShaper.class)) {
             ItemDrops.SiteLoot anomalyItems = anomaly.fleetItems(sector, fleet, run, context, share, random);

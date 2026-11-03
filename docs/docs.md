@@ -373,7 +373,8 @@ ledger still owes, so rebuilt salvage defenders can't be farmed. Endlessly launc
 
 Hull items read the hull rows (`BattleItemDrops`): an enemy ship's tree raises the share rolled with two modifiers
 (`levelBoost`), never the count. Chart fleets roll subroutines from the `subroutine` row, and star charts and
-catalysts from `chart_drops.csv` as a whole-chart amount, each fleet taking its fleet points at spawn over what its
+catalysts from `chart_drops.csv` and nanoswarms and inhibitors from `chart_materials.csv` (set at tiers 1 and 15,
+linear between, `ChartMaterials`) as a whole-chart amount, each fleet taking its fleet points at spawn over what its
 tier spawns (`ChartFleetLoot.expectedFleetPoints`). Each dropped chart rolls its tier from the row's `minus_2` to
 `plus_2` weights around the run tier (`ChartDrops.dropTier`). An anomaly's own fleet loot (`LootShaper.fleetItems`)
 comes on top.
@@ -382,7 +383,8 @@ comes on top.
 
 Hull items share `item_salvage.csv` with subroutines but keep only half its rolls: each item of the site cascade, the
 targeted extras and a unique hull item from the site's unique roll survive at `HullItemDrops.SALVAGE_SHARE`
-(`ItemTypeSupport.salvageShare`). Battle drops (`battle_loot.csv`) and market stock (`market_hull_items.csv`)
+(`ItemTypeSupport.salvageShare`). A site's `hullItemShare` scales its basic items and targeted extras on top, so the
+chart boss's chest and the chart reward (0) drop only uniques. Battle drops (`battle_loot.csv`) and market stock (`market_hull_items.csv`)
 carry their own rates. A dropped non-unique hull item has one or two modifiers
 (`HullItemDrops.DROP_LIMITS` through `ItemTypeSupport.dropLimits`), storm-touched loot included, so it never drops rare;
 crafting can still take it to four.
@@ -612,7 +614,7 @@ the boss's fleet: the whole boss, or the station's guard. The boss counts as kil
 the flagship or station it spawned with, whatever removed it (`ChartRun.bossFlagshipId`, `ChartObjectives.reconcile`).
 The first battle that damages the boss adds one basic hull item unless its loot already held one, once per run
 (`ChartFleetLoot.withBossGuarantees`). The boss's chest (`exiledSector_chart_boss` in `item_salvage.csv`) holds items
-and parts but no crafting currencies. The completion reward's credits go straight to the player, and its items and
+and parts but no crafting currencies or basic hull items. The completion reward's credits go straight to the player, and its items and
 charts join the loot of the battle that kills the flagship (`ChartRewardLootSource`); a boss killed outside a player
 battle puts them in the cargo instead.
 

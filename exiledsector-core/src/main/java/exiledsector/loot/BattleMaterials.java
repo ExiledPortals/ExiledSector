@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Predicate;
 
 public final class BattleMaterials {
 
@@ -53,9 +54,16 @@ public final class BattleMaterials {
 
     public static Map<String, Integer> roll(float lootDeploymentPoints, float battleDeploymentPoints, float difficultyMultiplier,
                                             FleetLootRules rules, Random random) {
+        return roll(lootDeploymentPoints, battleDeploymentPoints, difficultyMultiplier, rules, drop -> true, random);
+    }
+
+    public static Map<String, Integer> roll(float lootDeploymentPoints, float battleDeploymentPoints, float difficultyMultiplier,
+                                            FleetLootRules rules, Predicate<String> rolledDrops, Random random) {
         Map<String, Integer> materials = new LinkedHashMap<>();
         for (BattleLootRates.Rate rate : materialRates()) {
-            addCount(materials, rate, expected(rate, lootDeploymentPoints, battleDeploymentPoints, difficultyMultiplier, rules), random);
+            if (rolledDrops.test(rate.drop())) {
+                addCount(materials, rate, expected(rate, lootDeploymentPoints, battleDeploymentPoints, difficultyMultiplier, rules), random);
+            }
         }
         return materials;
     }
@@ -77,7 +85,7 @@ public final class BattleMaterials {
         return BattleLootRates.all().stream().filter(rate -> isMaterial(rate.drop())).toList();
     }
 
-    static boolean isMaterial(String itemId) {
+    public static boolean isMaterial(String itemId) {
         return CraftingMaterialFamilies.byItemId(itemId) != null || CraftingInhibitor.byItemId(itemId) != null;
     }
 }

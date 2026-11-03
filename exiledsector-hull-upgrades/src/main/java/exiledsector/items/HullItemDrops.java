@@ -48,15 +48,16 @@ public final class HullItemDrops {
         if (rule == null || rule.chances().isEmpty()) {
             return SectionItemLoot.NONE;
         }
+        float basicShare = SALVAGE_SHARE * rule.hullItemShare();
         List<ItemData> droppedItems = ItemDrops.rollCascade(rule, random, chances.general(), chances.rarity(), HullItemDrops::pickSectionItemBasic);
-        droppedItems.removeIf(item -> random.nextFloat() >= SALVAGE_SHARE);
+        droppedItems.removeIf(item -> random.nextFloat() >= basicShare);
         List<ShipSchematic> droppedUpgrades = new ArrayList<>();
         if (random.nextFloat() < rule.chances().get(0) * chances.general() && RefitSchematic.dropsAllowed()) {
             droppedUpgrades.add(RefitSchematic.roll(random));
         }
         List<ItemKind> kindsWithBasics = sectionKindsWithBasics();
         for (ItemKind kind : kindsWithBasics) {
-            ItemDrops.rollTargeted(rule, random, chances.targeted(kind) * SALVAGE_SHARE, chances.rarity(), kindsWithBasics.size(), kind,
+            ItemDrops.rollTargeted(rule, random, chances.targeted(kind) * basicShare, chances.rarity(), kindsWithBasics.size(), kind,
                     droppedItems);
         }
         return new SectionItemLoot(droppedItems, droppedUpgrades);

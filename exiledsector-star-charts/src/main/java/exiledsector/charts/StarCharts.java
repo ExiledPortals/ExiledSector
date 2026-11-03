@@ -16,6 +16,7 @@ import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.layout.feature.ChartFeatures;
 import exiledsector.charts.loot.ChartDrops;
 import exiledsector.charts.loot.ChartLoot;
+import exiledsector.charts.loot.ChartMaterials;
 import exiledsector.charts.run.ChartBlockedAbilities;
 import exiledsector.charts.run.ChartCampaignPlugin;
 import exiledsector.charts.run.ChartContentListener;
@@ -73,6 +74,7 @@ public final class StarCharts {
         ChartBlockedAbilities.load();
         ChartTiers.load();
         ChartDrops.load();
+        ChartMaterials.load();
         ChartPois.load();
         ChartLoot.load();
         ChartColonyItems.load();

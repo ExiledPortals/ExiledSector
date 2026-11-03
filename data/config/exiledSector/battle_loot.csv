@@ -14,7 +14,7 @@ exiledSector_reforge_cipher,0.15,linear,0,"Chart ciphers drop 1.5x as often as a
 exiledSector_erasure_cipher,0.15,linear,0,
 exiledSector_cartographer_cipher,0.045,diminishing,0,
 subroutine,0.06,diminishing,0,"Basic subroutines from chart fleets, plus the item quantity bonus's targeted extras"
-hull_item,0.12,diminishing,1,"Basic hull items; enemy tree size raises the share that drop with two modifiers instead of the count"
+hull_item,0.066,diminishing,1.82,"Basic hull items; enemy tree size raises the share that drop with two modifiers instead of the count"
 unique_hull_item,0.006,diminishing,1,
 refit_schematic,0.08,diminishing,1,
 master_schematic,0.05,diminishing,1,"Only while the Master Schematic is still needed"

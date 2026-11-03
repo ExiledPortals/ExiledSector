@@ -32,7 +32,8 @@ class SectionItemDropsTest {
                 .put(row("bridge_relic", "bridge", "HULL_PERCENT:4:6").put("unique", "true")));
         ItemDrops.register(new JSONArray()
                 .put(new JSONObject().put("site", "station").put("chances", "1;0.5").put("uniqueChance", "0"))
-                .put(new JSONObject().put("site", "empty").put("chances", "").put("uniqueChance", "0.5")));
+                .put(new JSONObject().put("site", "empty").put("chances", "").put("uniqueChance", "0.5"))
+                .put(new JSONObject().put("site", "chest").put("chances", "1;1").put("uniqueChance", "0").put("hullItemShare", "0")));
     }
 
     @AfterEach
@@ -129,6 +130,20 @@ class SectionItemDropsTest {
         assertEquals(0, subroutines);
         assertEquals(1.5f, ItemDrops.expectedCascadeCount(List.of(1f, 0.5f)), 0.0001f);
         assertEquals(0.75f, ItemDrops.expectedCascadeCount(List.of(0.5f, 0.5f, 0f)), 0.0001f);
+    }
+
+    @Test
+    void aSiteWithNoHullItemShareDropsNoBasicHullItemsButKeepsItsSchematics() {
+        Random random = new Random(7L);
+        ItemChances bridgeBonus = new ItemChances(1f, Map.of(ItemKind.BRIDGE, 2f));
+        int upgrades = 0;
+        for (int i = 0; i < 200; i++) {
+            HullItemDrops.SectionItemLoot loot = HullItemDrops.rollSectionItemLoot("chest", random, bridgeBonus);
+            assertEquals(List.of(), loot.items());
+            upgrades += loot.upgrades().size();
+        }
+
+        assertEquals(200, upgrades);
     }
 
     @Test
