@@ -1,11 +1,10 @@
 package exiledsector.ui.node;
 
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.skills.AffinitySteps;
-import exiledsector.skills.SocketedItemScaling;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
-import exiledsector.effects.SkillTreeEffectSource;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
@@ -40,14 +39,14 @@ final class RootAffinityNumber {
         }
     }
 
-    private final HullSize hullSize;
+    private final FleetMemberAPI member;
     private final Map<String, SizedLabel> labelsByRootId = new HashMap<>();
     private ShipSkillData totalsShip;
     private int totalsRevision = -1;
     private Map<SkillEffect, Float> totals = Map.of();
 
-    RootAffinityNumber(HullSize hullSize) {
-        this.hullSize = hullSize;
+    RootAffinityNumber(FleetMemberAPI member) {
+        this.member = member;
     }
 
     void draw(SkillNode root, ShipSkillData shipData, boolean rootPending, float centerX, float centerY, float rootRadius, float alphaMult) {
@@ -83,7 +82,7 @@ final class RootAffinityNumber {
 
     private Map<SkillEffect, Float> totalsFor(ShipSkillData shipData) {
         if (shipData != totalsShip || shipData.revision() != totalsRevision) {
-            totals = AffinitySteps.totals(SocketedItemScaling.withScaledItems(SkillTreeEffectSource.contributions(shipData, hullSize)));
+            totals = SkillTreeHullMod.affinityTotals(shipData, member, member.getVariant());
             totalsShip = shipData;
             totalsRevision = shipData.revision();
         }

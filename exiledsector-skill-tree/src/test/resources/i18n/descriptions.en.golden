@@ -5246,7 +5246,7 @@ summary|option0|FRIGATE|136	0	<good>3%</good> increased missile top speed for ea
 summary|option0|FRIGATE|137	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
 summary|option0|FRIGATE|138	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 summary|option0|FRIGATE|139	0	<good>5%</good> increased beam weapon range.
-summary|option0|FRIGATE|140	0	<bad>20%</bad> less top speed.
+summary|option0|FRIGATE|140	0	<good>8%</good> more top speed.
 summary|option0|FRIGATE|141	0	Installs a makeshift, front-facing shield if this ship has none.
 summary|option0|FRIGATE|142	0	Bombers launched from this ship have <good>50%</good> increased top speed.
 summary|option0|FRIGATE|143	0	Bombers launched from this ship have <good>50%</good> increased acceleration.
@@ -5479,7 +5479,7 @@ summary|option0|DESTROYER|136	0	<good>3%</good> increased missile top speed for 
 summary|option0|DESTROYER|137	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
 summary|option0|DESTROYER|138	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 summary|option0|DESTROYER|139	0	<good>5%</good> increased beam weapon range.
-summary|option0|DESTROYER|140	0	<bad>20%</bad> less top speed.
+summary|option0|DESTROYER|140	0	<good>8%</good> more top speed.
 summary|option0|DESTROYER|141	0	Installs a makeshift, front-facing shield if this ship has none.
 summary|option0|DESTROYER|142	0	Bombers launched from this ship have <good>50%</good> increased top speed.
 summary|option0|DESTROYER|143	0	Bombers launched from this ship have <good>50%</good> increased acceleration.
@@ -5712,7 +5712,7 @@ summary|option0|CRUISER|136	0	<good>3%</good> increased missile top speed for ea
 summary|option0|CRUISER|137	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
 summary|option0|CRUISER|138	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 summary|option0|CRUISER|139	0	<good>5%</good> increased beam weapon range.
-summary|option0|CRUISER|140	0	<bad>20%</bad> less top speed.
+summary|option0|CRUISER|140	0	<good>8%</good> more top speed.
 summary|option0|CRUISER|141	0	Installs a makeshift, front-facing shield if this ship has none.
 summary|option0|CRUISER|142	0	Bombers launched from this ship have <good>50%</good> increased top speed.
 summary|option0|CRUISER|143	0	Bombers launched from this ship have <good>50%</good> increased acceleration.
@@ -5945,7 +5945,7 @@ summary|option0|CAPITAL_SHIP|136	0	<good>3%</good> increased missile top speed f
 summary|option0|CAPITAL_SHIP|137	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
 summary|option0|CAPITAL_SHIP|138	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 summary|option0|CAPITAL_SHIP|139	0	<good>5%</good> increased beam weapon range.
-summary|option0|CAPITAL_SHIP|140	0	<bad>20%</bad> less top speed.
+summary|option0|CAPITAL_SHIP|140	0	<good>8%</good> more top speed.
 summary|option0|CAPITAL_SHIP|141	0	Installs a makeshift, front-facing shield if this ship has none.
 summary|option0|CAPITAL_SHIP|142	0	Bombers launched from this ship have <good>50%</good> increased top speed.
 summary|option0|CAPITAL_SHIP|143	0	Bombers launched from this ship have <good>50%</good> increased acceleration.
@@ -7058,7 +7058,7 @@ summary|option2|FRIGATE|92	0	<good>100%</good> increased missile weapon ammo cap
 summary|option2|FRIGATE|93	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option2|FRIGATE|94	0	<good>+100</good> to shield arc.
 summary|option2|FRIGATE|95	0	<good>232%</good> more flux capacity.
-summary|option2|FRIGATE|96	0	<good>161%</good> more flux dissipation.
+summary|option2|FRIGATE|96	0	<good>133%</good> more flux dissipation.
 summary|option2|FRIGATE|97	0	<good>80%</good> increased fragment swarm size.
 summary|option2|FRIGATE|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option2|FRIGATE|99	1	<good>50%</good> increased crew casualties.
@@ -7110,7 +7110,7 @@ summary|option2|FRIGATE|144	1	Every 3 seconds, each bomber launched from this sh
 summary|option2|FRIGATE|145	0	Removes the penalties of a civilian-grade hull.
 summary|option2|FRIGATE|146	1	<good>100%</good> increased minimum crew required.
 summary|option2|FRIGATE|147	0	<good>24%</good> increased missile weapon damage.
-summary|option2|FRIGATE|148	0	<good>263%</good> more hull points.
+summary|option2|FRIGATE|148	0	<good>151%</good> more hull points.
 summary|option2|FRIGATE|149	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option2|FRIGATE|150	0	Your fleet has <good>+2</good> to nav rating.
 summary|option2|FRIGATE|151	0	<good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
@@ -7292,7 +7292,7 @@ summary|option2|DESTROYER|92	0	<good>100%</good> increased missile weapon ammo c
 summary|option2|DESTROYER|93	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option2|DESTROYER|94	0	<good>+100</good> to shield arc.
 summary|option2|DESTROYER|95	0	<good>232%</good> more flux capacity.
-summary|option2|DESTROYER|96	0	<good>161%</good> more flux dissipation.
+summary|option2|DESTROYER|96	0	<good>133%</good> more flux dissipation.
 summary|option2|DESTROYER|97	0	<good>80%</good> increased fragment swarm size.
 summary|option2|DESTROYER|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option2|DESTROYER|99	1	<good>50%</good> increased crew casualties.
@@ -7344,7 +7344,7 @@ summary|option2|DESTROYER|144	1	Every 3 seconds, each bomber launched from this 
 summary|option2|DESTROYER|145	0	Removes the penalties of a civilian-grade hull.
 summary|option2|DESTROYER|146	1	<good>100%</good> increased minimum crew required.
 summary|option2|DESTROYER|147	0	<good>24%</good> increased missile weapon damage.
-summary|option2|DESTROYER|148	0	<good>263%</good> more hull points.
+summary|option2|DESTROYER|148	0	<good>151%</good> more hull points.
 summary|option2|DESTROYER|149	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option2|DESTROYER|150	0	Your fleet has <good>+3</good> to nav rating.
 summary|option2|DESTROYER|151	0	<good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
@@ -7526,7 +7526,7 @@ summary|option2|CRUISER|92	0	<good>100%</good> increased missile weapon ammo cap
 summary|option2|CRUISER|93	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option2|CRUISER|94	0	<good>+100</good> to shield arc.
 summary|option2|CRUISER|95	0	<good>232%</good> more flux capacity.
-summary|option2|CRUISER|96	0	<good>161%</good> more flux dissipation.
+summary|option2|CRUISER|96	0	<good>133%</good> more flux dissipation.
 summary|option2|CRUISER|97	0	<good>80%</good> increased fragment swarm size.
 summary|option2|CRUISER|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option2|CRUISER|99	1	<good>50%</good> increased crew casualties.
@@ -7578,7 +7578,7 @@ summary|option2|CRUISER|144	1	Every 3 seconds, each bomber launched from this sh
 summary|option2|CRUISER|145	0	Removes the penalties of a civilian-grade hull.
 summary|option2|CRUISER|146	1	<good>100%</good> increased minimum crew required.
 summary|option2|CRUISER|147	0	<good>24%</good> increased missile weapon damage.
-summary|option2|CRUISER|148	0	<good>263%</good> more hull points.
+summary|option2|CRUISER|148	0	<good>151%</good> more hull points.
 summary|option2|CRUISER|149	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option2|CRUISER|150	0	Your fleet has <good>+4</good> to nav rating.
 summary|option2|CRUISER|151	0	<good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
@@ -7760,7 +7760,7 @@ summary|option2|CAPITAL_SHIP|92	0	<good>100%</good> increased missile weapon amm
 summary|option2|CAPITAL_SHIP|93	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option2|CAPITAL_SHIP|94	0	<good>+100</good> to shield arc.
 summary|option2|CAPITAL_SHIP|95	0	<good>232%</good> more flux capacity.
-summary|option2|CAPITAL_SHIP|96	0	<good>161%</good> more flux dissipation.
+summary|option2|CAPITAL_SHIP|96	0	<good>133%</good> more flux dissipation.
 summary|option2|CAPITAL_SHIP|97	0	<good>80%</good> increased fragment swarm size.
 summary|option2|CAPITAL_SHIP|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option2|CAPITAL_SHIP|99	1	<good>50%</good> increased crew casualties.
@@ -7812,7 +7812,7 @@ summary|option2|CAPITAL_SHIP|144	1	Every 3 seconds, each bomber launched from th
 summary|option2|CAPITAL_SHIP|145	0	Removes the penalties of a civilian-grade hull.
 summary|option2|CAPITAL_SHIP|146	1	<good>100%</good> increased minimum crew required.
 summary|option2|CAPITAL_SHIP|147	0	<good>24%</good> increased missile weapon damage.
-summary|option2|CAPITAL_SHIP|148	0	<good>263%</good> more hull points.
+summary|option2|CAPITAL_SHIP|148	0	<good>151%</good> more hull points.
 summary|option2|CAPITAL_SHIP|149	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option2|CAPITAL_SHIP|150	0	Your fleet has <good>+5</good> to nav rating.
 summary|option2|CAPITAL_SHIP|151	0	<good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.

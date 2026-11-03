@@ -16,6 +16,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.AffinitySteps;
 import exiledsector.skills.DiminishingReturns;
+import exiledsector.skills.EffectContribution;
 import exiledsector.skills.StatBaseline;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.fighter.AffinityStrikecraft;
@@ -97,8 +98,12 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     }
 
     public static Map<SkillEffect, Float> affinityTotals(ShipSkillData shipData, FleetMemberAPI member, ShipVariantAPI variant) {
+        return AffinitySteps.totals(contributions(shipData, member, variant));
+    }
+
+    public static List<EffectContribution> contributions(ShipSkillData shipData, FleetMemberAPI member, ShipVariantAPI variant) {
         ResolvedTree resolvedTree = variant == null ? null : resolve(shipData, member, variant);
-        return resolvedTree == null ? Map.of() : AffinitySteps.totals(resolvedTree.contributions());
+        return resolvedTree == null ? List.of() : resolvedTree.contributions();
     }
 
     public static ResolvedTree resolvedTree(FleetMemberAPI member, ShipVariantAPI variant) {

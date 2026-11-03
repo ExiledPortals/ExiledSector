@@ -58,6 +58,7 @@ public final class SkillTreePanelStyle {
     private static final float TOOLTIP_CURSOR_OFFSET = 18f;
     private static final float TOOLTIP_TITLE_BOLD_OFFSET = 1f;
     private static final float TOOLTIP_TABLE_GAP = 14f;
+    private static final float TOOLTIP_SEPARATOR_THICKNESS = 1f;
     private static final float TOOLTIP_SCREEN_MARGIN = 4f;
     private static final float TOOLTIP_FLAVOUR_GAP = 8f;
 
@@ -114,11 +115,11 @@ public final class SkillTreePanelStyle {
     }
 
     public void drawTitleBodyTooltip(TextLabel title, TextLabel body, float mouseX, float mouseY, float alphaMult) {
-        drawTitleBodyTooltip(title, null, body, List.of(), null, mouseX, mouseY, alphaMult);
+        drawTitleBodyTooltip(title, null, body, List.of(), null, null, mouseX, mouseY, alphaMult);
     }
 
     public void drawTitleBodyTooltip(TextLabel title, ItalicTextLabel flavour, TextLabel body, List<SkillTreeTooltipTable> tables,
-                                     TextLabel footer, float mouseX, float mouseY, float alphaMult) {
+                                     TextLabel separatedSection, TextLabel footer, float mouseX, float mouseY, float alphaMult) {
         float contentWidth = Math.max(title.width(), body.width());
         float flavourHeight = 0f;
         if (flavour != null) {
@@ -130,13 +131,18 @@ public final class SkillTreePanelStyle {
             contentWidth = Math.max(contentWidth, table.width());
             tablesHeight += TOOLTIP_TABLE_GAP + table.height();
         }
+        float separatedHeight = 0f;
+        if (separatedSection != null) {
+            contentWidth = Math.max(contentWidth, separatedSection.width());
+            separatedHeight = TOOLTIP_TABLE_GAP * 2f + TOOLTIP_SEPARATOR_THICKNESS + separatedSection.height();
+        }
         float footerHeight = 0f;
         if (footer != null) {
             contentWidth = Math.max(contentWidth, footer.width());
             footerHeight = TOOLTIP_TABLE_GAP + footer.height();
         }
         float boxWidth = contentWidth + TOOLTIP_PADDING * 2f + TOOLTIP_WIDTH_SAFETY_MARGIN;
-        float boxHeight = title.height() + TOOLTIP_TITLE_BODY_GAP + flavourHeight + body.height() + tablesHeight + footerHeight
+        float boxHeight = title.height() + TOOLTIP_TITLE_BODY_GAP + flavourHeight + body.height() + tablesHeight + separatedHeight + footerHeight
                 + TOOLTIP_PADDING * 2f;
         float boxX = tooltipLeft(mouseX, boxWidth, Global.getSettings().getScreenWidth());
         float boxY = Math.max(TOOLTIP_SCREEN_MARGIN, mouseY - boxHeight - TOOLTIP_CURSOR_OFFSET);
@@ -163,6 +169,13 @@ public final class SkillTreePanelStyle {
             tableTop -= TOOLTIP_TABLE_GAP;
             table.draw(boxX + TOOLTIP_PADDING, tableTop, tableWidth, accent, alphaMult);
             tableTop -= table.height();
+        }
+        if (separatedSection != null) {
+            tableTop -= TOOLTIP_TABLE_GAP + TOOLTIP_SEPARATOR_THICKNESS;
+            GLDraw.fillQuad(boxX + TOOLTIP_PADDING, tableTop, tableWidth, TOOLTIP_SEPARATOR_THICKNESS, accent, alphaMult);
+            tableTop -= TOOLTIP_TABLE_GAP;
+            separatedSection.setAlpha(alphaMult).draw(boxX + TOOLTIP_PADDING, tableTop);
+            tableTop -= separatedSection.height();
         }
         if (footer != null) {
             footer.setAlpha(alphaMult).draw(boxX + TOOLTIP_PADDING, tableTop - TOOLTIP_TABLE_GAP);

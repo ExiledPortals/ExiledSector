@@ -4,6 +4,7 @@ import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.flux.FluxSkillEffect;
 import exiledsector.skills.skilleffect.logistics.LogisticsSkillEffect;
+import exiledsector.skills.skilleffect.movement.MovementSkillEffect;
 import exiledsector.skills.skilleffect.special.SpecialSkillEffect;
 
 import java.util.ArrayList;
@@ -17,8 +18,8 @@ public final class AffinitySteps {
     public static final String MOD_ID_PREFIX = "exiledLib_affinity_";
     static final int SMALL_STEP = 5;
     static final int LARGE_STEP = 10;
-    static final int LOW_TECH_ARMOR_STEP = 15;
-    static final int MIDLINE_ARMOR_STEP = 20;
+    static final int LARGER_STEP = 15;
+    static final int LARGEST_STEP = 20;
 
     public record Step(int size, SkillEffect effect, float bonusPerStep) {
     }
@@ -40,7 +41,8 @@ public final class AffinitySteps {
         Map<SkillEffect, List<Step>> steps = new LinkedHashMap<>();
         steps.put(SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT, List.of(
                 new Step(SMALL_STEP, DefenseSkillEffect.HULL_MULT, 2f),
-                new Step(LOW_TECH_ARMOR_STEP, DefenseSkillEffect.ARMOR_MULT, 1f),
+                new Step(LARGER_STEP, DefenseSkillEffect.ARMOR_MULT, 1f),
+                new Step(LARGEST_STEP, MovementSkillEffect.TOP_SPEED_MULT, 1f),
                 new Step(SMALL_STEP, LogisticsSkillEffect.FUEL_CAPACITY_MULT, 1f)));
         steps.put(SpecialSkillEffect.HIGH_TECH_AFFINITY_FLAT, List.of(
                 new Step(SMALL_STEP, FluxSkillEffect.FLUX_CAPACITY_MULT, 2f),
@@ -48,9 +50,9 @@ public final class AffinitySteps {
                 new Step(SMALL_STEP, LogisticsSkillEffect.CREW_CAPACITY_MULT, 1f)));
         steps.put(SpecialSkillEffect.MIDLINE_AFFINITY_FLAT, List.of(
                 new Step(SMALL_STEP, FluxSkillEffect.FLUX_CAPACITY_MULT, 2f),
-                new Step(SMALL_STEP, DefenseSkillEffect.HULL_MULT, 2f),
-                new Step(MIDLINE_ARMOR_STEP, DefenseSkillEffect.ARMOR_MULT, 1f),
-                new Step(LARGE_STEP, FluxSkillEffect.FLUX_DISSIPATION_MULT, 1f),
+                new Step(SMALL_STEP, DefenseSkillEffect.HULL_MULT, 1f),
+                new Step(LARGEST_STEP, DefenseSkillEffect.ARMOR_MULT, 1f),
+                new Step(LARGEST_STEP, FluxSkillEffect.FLUX_DISSIPATION_MULT, 1f),
                 new Step(SMALL_STEP, LogisticsSkillEffect.CARGO_CAPACITY_MULT, 1f)));
         return Collections.unmodifiableMap(steps);
     }

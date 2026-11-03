@@ -79,7 +79,7 @@ public final class SkillTreeNodeDrawer {
         this.allocationAnimation = new AllocationAnimation(new AnimatedTree(), new AnimationSounds());
         this.connectorRenderer = new SkillTreeNodeConnectorRenderer(panelStyle, nodeSearch, wormholeOpenness, socketWormholes, beams);
         this.tooltipRenderer = new SkillTreeNodeTooltipRenderer(member, panelStyle);
-        this.rootAffinityNumber = new RootAffinityNumber(member.getHullSpec().getHullSize());
+        this.rootAffinityNumber = new RootAffinityNumber(member);
         this.choicePickerRenderer = new SkillTreeNodeChoicePickerRenderer(panelStyle);
     }
 

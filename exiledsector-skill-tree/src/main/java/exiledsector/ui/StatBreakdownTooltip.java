@@ -35,7 +35,7 @@ final class StatBreakdownTooltip {
         if (breakdown != shownBreakdown) {
             show(font, breakdown);
         }
-        panelStyle.drawTitleBodyTooltip(titleLabel, null, bodyLabel, tables, notesLabel.isEmpty() ? null : notesLabel, mouseX, mouseY, alphaMult);
+        panelStyle.drawTitleBodyTooltip(titleLabel, null, bodyLabel, tables, null, notesLabel.isEmpty() ? null : notesLabel, mouseX, mouseY, alphaMult);
     }
 
     private void show(LazyFont font, ShipStatSheet.Breakdown breakdown) {

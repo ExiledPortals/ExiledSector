@@ -11,8 +11,10 @@ import exiledsector.i18n.Translation;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.ShipFacts;
 import exiledsector.effects.ModuleShareSetting;
+import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.CostItems;
+import exiledsector.skills.EffectContribution;
 import exiledsector.skills.ItemCostLedger;
 import exiledsector.skills.ModuleShareExtent;
 import exiledsector.skills.NodeDescription;
@@ -64,6 +66,7 @@ final class SkillTreeNodeTooltipRenderer {
     private final Map<String, TextLabel> tooltipBodies = new HashMap<>();
     private final Map<String, TextLabel> typeTooltipTitles = new HashMap<>();
     private final Map<String, TextLabel> typeTooltipBodies = new HashMap<>();
+    private final Map<String, TextLabel> affinitySections = new HashMap<>();
     private final Map<TextLabel, Boolean> expandableBodies = new HashMap<>();
     private final Map<Boolean, TextLabel> footers = new HashMap<>();
     private final Map<String, ItalicTextLabel> flavours = new HashMap<>();
@@ -98,7 +101,7 @@ final class SkillTreeNodeTooltipRenderer {
         ItemCostLine costLine = hidden || socketed != null ? null : itemCostLine(node, null, allocation);
         String refusalReason = withoutItemCostRefusal(allocation.refusalReason(node), costLine, () -> allocation.gate().allocation(node));
         List<NodeGrantStatus> socketGrantStatuses = socketed instanceof Subroutine ? allocation.nodeGrantStatuses(node.getId()) : List.of();
-        boolean affinityTooltip = node.getType().getTier() == SkillTier.ROOT || RootAffinityNumber.affinityOf(effectiveType) != null;
+        boolean affinityTooltip = RootAffinityNumber.affinityOf(effectiveType) != null;
         boolean shipStateTooltip = socketed instanceof WormholeAnchor || affinityTooltip;
         Object shipState = shipStateTooltip ? skillData : "";
         int shipStateRevision = shipStateTooltip ? skillData.revision() : 0;
@@ -120,10 +123,16 @@ final class SkillTreeNodeTooltipRenderer {
                 () -> withCostLine(withGrantLine(withDoctrineLines(describe(node, skillData, effectiveType, hidden, showChoiceHint, socketed,
                         socketGrantStatuses, expanded), rewrite), grantingItem), costLine),
                 expanded, tooltipWarning != null ? tooltipWarning : refusalReason);
+        TextLabel affinitySection = showsAffinity(effectiveType, hidden, showChoiceHint, socketed)
+                ? affinitySections.computeIfAbsent(node.getId(), id -> new TextLabel(TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR))
+                        .refresh(signature, label -> writeBodyText(label, affinityLines(effectiveType, skillData).details()))
+                : null;
 
         List<SkillTreeTooltipTable> tables = showChoiceHint || hidden ? List.of() : tablesFor(font, effectiveType);
         ItalicTextLabel flavour = hidden || socketed != null ? null : flavourFor(effectiveType);
-        panelStyle.drawTitleBodyTooltip(title, flavour, body, tables, footer(body, expanded), mouseX, mouseY, alphaMult);
+        boolean expandable = expandableBodies.getOrDefault(body, false) || affinitySection != null;
+        panelStyle.drawTitleBodyTooltip(title, flavour, body, tables, expanded ? affinitySection : null, footer(expandable, expanded),
+                mouseX, mouseY, alphaMult);
     }
 
     void renderTooltipForType(SkillNode choicePickerNode, SkillType type, NodeAllocator.Snapshot allocation, String optionRefusalReason,
@@ -142,7 +151,8 @@ final class SkillTreeNodeTooltipRenderer {
                 () -> withCostLine(withModuleShareLine(SkillNode.describeMechanics(type, fleetMember.getHullSpec().getHullSize()), type), costLine),
                 expanded, refusalReason);
 
-        panelStyle.drawTitleBodyTooltip(title, flavourFor(type), body, tablesFor(font, type), footer(body, expanded), mouseX, mouseY, alphaMult);
+        panelStyle.drawTitleBodyTooltip(title, flavourFor(type), body, tablesFor(font, type), null,
+                footer(expandableBodies.getOrDefault(body, false), expanded), mouseX, mouseY, alphaMult);
     }
 
     private static TextLabel titleLabel() {
@@ -164,8 +174,8 @@ final class SkillTreeNodeTooltipRenderer {
         return bodyLabel;
     }
 
-    private TextLabel footer(TextLabel body, boolean expanded) {
-        if (!expandableBodies.getOrDefault(body, false)) {
+    private TextLabel footer(boolean expandable, boolean expanded) {
+        if (!expandable) {
             return null;
         }
         return footers.computeIfAbsent(expanded, footerExpanded -> writeBodyText(new TextLabel(TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR),
@@ -344,12 +354,9 @@ final class SkillTreeNodeTooltipRenderer {
             NodeDescription description = SkillNode.describeMechanics(effectiveType, fleetMember.getHullSpec().getHullSize());
             effects.addAll(description.effects());
             details.addAll(description.details());
-            HullSize hullSize = fleetMember.getHullSpec().getHullSize();
-            NodeDescription affinity = node.getType().getTier() == SkillTier.ROOT
-                    ? AffinityTooltipLines.forRoot(node.getType(), skillData, hullSize)
-                    : AffinityTooltipLines.forNode(node, effectiveType, skillData, hullSize);
-            effects.addAll(affinity.effects());
-            details.addAll(affinity.details());
+            if (showsAffinity(effectiveType, false, false, null)) {
+                effects.addAll(affinityLines(effectiveType, skillData).effects());
+            }
             StyledText moduleShareLine = moduleShareLine(effectiveType);
             if (moduleShareLine != null) {
                 details.add(new DescriptionLine(moduleShareLine, false));
@@ -359,6 +366,15 @@ final class SkillTreeNodeTooltipRenderer {
             effects.add(plainLine("ui.node.socket.installHint"));
         }
         return new NodeDescription(effects, details);
+    }
+
+    private static boolean showsAffinity(SkillType effectiveType, boolean hidden, boolean showChoiceHint, Item socketed) {
+        return !hidden && !showChoiceHint && socketed == null && RootAffinityNumber.affinityOf(effectiveType) != null;
+    }
+
+    private NodeDescription affinityLines(SkillType effectiveType, ShipSkillData skillData) {
+        List<EffectContribution> shipContributions = SkillTreeHullMod.contributions(skillData, fleetMember, fleetMember.getVariant());
+        return AffinityTooltipLines.forType(effectiveType, shipContributions, fleetMember.getHullSpec().getHullSize());
     }
 
     private NodeDescription withDoctrineLines(NodeDescription description, DoctrineRewrite rewrite) {
