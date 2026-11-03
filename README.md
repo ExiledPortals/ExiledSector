@@ -14,7 +14,7 @@ Exiled Sector adds three major modules: a skill tree for every ship, hull upgrad
 
 ### The skill tree
 
-Press the Skill Tree button in the refit screen and every ship in your fleet gets a tree of its own, over 300 nodes of armor, flux, guns and questionable engineering decisions. Ships level up in combat and every level buys a node, so your veteran Lasher eventually stops being a Lasher and starts being a problem. The small nodes along the tree's main paths grant Low Tech, High Tech or Midline affinity, which adds up across the ship into hull, armor, flux and cargo bonuses.
+Press the Skill Tree button in the refit screen and every ship in your fleet gets a tree of its own, over 300 nodes of armor, flux, guns and questionable engineering decisions. Ships level up in combat and every level buys a node, so your veteran Lasher eventually stops being a Lasher and starts being a problem. The small nodes along the tree's main paths grant Low Tech, High Tech or Midline affinity, which adds up across the ship into hull, armor, flux and cargo bonuses. Ships with station modules share part of their tree with them.
 
 <details>
 <summary>The skill tree</summary>
@@ -32,7 +32,7 @@ You might have to travel a bit for the juicy nodes. Slot a Wormhole Anchor into 
 
 </details>
 
-Every major faction has a volume of its own, full of nodes that think the way it does. The Hegemony thickens your armor, Tri-Tachyon invoices you for it and the Luddic Path would quite like your ship to explode, ideally next to someone else's.
+Every major faction has a volume of its own, full of nodes that think the way it does. The Hegemony thickens your armor, Tri-Tachyon invoices you for it and the Luddic Path would quite like your ship to explode, ideally next to someone else's. The Dwellers have one too, if you can pry its anchor off them.
 
 <details>
 <summary>Unique faction volume nodes</summary>
@@ -50,7 +50,7 @@ Doctrine Archives are faction playbooks your crew definitely didn't steal. Some 
 
 </details>
 
-Running Random Assortment of Things, Nightcross Armory, Navarchy of Tania or LOST_SECTOR? Explore them to find more ways to blow up your enemies.
+Running Random Assortment of Things, Nightcross Armory or LOST_SECTOR? Explore them to find more ways to blow up your enemies.
 
 <details>
 <summary>Spoilers: volumes from other mods</summary>
@@ -78,7 +78,7 @@ For a harder game, switch on Require Master Schematics in LunaLib settings. Each
 
 </details>
 
-Hull items come common, rare and unique, rolling prefixes and suffixes the way the Karui ancestors intended.
+Hull items come common, rare and unique, rolling prefixes and suffixes the way the Karui ancestors intended. Some only fit crewed ships, others only automated ones.
 
 <details>
 <summary>Hull items</summary>
@@ -94,7 +94,7 @@ Hull items come common, rare and unique, rolling prefixes and suffixes the way t
 
 </details>
 
-Don't like the rolls? Find nanoswarms (or grow them from Nanite Feedstock) and set them loose on your items at the crafting bench to add, reroll, reshape or freeze their modifiers. Or corrupt one and find out. Results may vary. Results will vary.
+Don't like the rolls? Find nanoswarms (or grow them from Nanite Feedstock) and set them loose on your items at the crafting bench to add, remove, reroll, reshape or freeze their modifiers. Or corrupt one and find out. Results may vary. Results will vary. Engrams, pried out of corrupted dormant fleets, reroll an item around a modifier nothing else can roll.
 
 <details>
 <summary>The crafting bench</summary>
@@ -132,7 +132,9 @@ The loot turns up everywhere you'd expect it to: research stations, orbital labs
 
 Star Charts lead to systems no map shows, cut off from hyperspace and guarded by fleets that weren't expecting company. They come in 15 tiers of increasingly poor life choices and turn up on tough enemy fleets and inside other charts, so every run you survive hands you an excuse for a worse one.
 
-To open one you need a Wormhole Gateway, a colony structure for people who have run out of normal places to kill their crew.
+To open one you need a Wormhole Gateway, a colony structure for people who have run out of normal places to kill their crew. The gateway opens the Outer Reach Atlas, a map of the systems past the sector's edge, where you craft charts and pick the system each one opens. A chart can only reach a system joined to one you've already cleared.
+
+Atlas systems belong to factions and biomes, and can carry any of 20 anomalies that change what's waiting inside. Atlas Catalysts, which only drop inside charts, add anomalies to a system or hand it to another faction. No colony? Switch on No Colony Requirement in LunaLib settings and the atlas opens from anywhere.
 
 Charts roll modifiers too, and the same nanoswarms work on them. Bigger fleets, nastier bosses, better rewards. You asked for this (I think? Maybe it was me that asked for this).
 
@@ -143,7 +145,7 @@ Charts roll modifiers too, and the same nanoswarms work on them. Bigger fleets, 
 
 </details>
 
-Open the wormhole, fly in, deal with whoever is home and take everything that isn't bolted down. When the run ends the system goes with it, along with anything you forgot to pick up. No it will not bloat your save (I hope).
+Open the wormhole, fly in, deal with whoever is home and take everything that isn't bolted down. The chart is done once its boss's flagship or station is dead. When the run ends the system goes with it, along with anything you forgot to pick up. No it will not bloat your save (I hope).
 
 ## Requirements
 
@@ -176,7 +178,6 @@ These mods have dedicated compatibility. The version listed is the one I last te
 | Exotica Technologies | 1.8.7 | The Skill Tree button moves one slot down on the refit screen so it doesn't cover the Exotica button. |
 | Random Assortment of Things | 3.3.1 | REDACTED |
 | Nightcross Armory | 2.1.6 | REDACTED |
-| Navarchy of Tania | 1.3.0 | REDACTED |
 | Nexerelin | 0.12.2d | Faction fleets roaming the skill tree count factions in their alliance as allies, so they travel to those volumes too. |
 | [GraphicsLib](https://fractalsoftworks.com/forum/index.php?topic=10982.0) | 1.12.1 | Optional. When its lights and distortion are on, many of Exiled Sector's combat effects gain shockwaves, glows, lighting and distortion. The Exiled Sector settings can switch almost all of it off. |
 
@@ -297,21 +298,21 @@ Exiled Sector is meant as an endgame expansion, so the extra modules wait until 
 <details>
 <summary><b>How do Star Charts get harder?</b></summary>
 
-Each tier brings more fleets, bigger fleets and better ships, crewed by more and better officers, with the ships themselves further along their skill trees. Every chart is also guarded by a Star Chart Boss, a large fleet that grows with each tier. A chart's modifiers push it further still: some add fleet size, quality or strength, others make the boss bigger. Higher tiers drop more to make up for it, including a small chance of colony items from tier 6.
+Each tier brings more fleets, bigger fleets and better ships, crewed by more and better officers, with the ships themselves further along their skill trees. Every chart is also guarded by a Star Chart Boss, a large fleet or a station that grows with each tier. A chart's modifiers push it further still: some add fleet size, quality or strength, others make the boss bigger. Higher tiers drop more to make up for it, including a small chance of colony items from tier 6.
 
 A few tiers for comparison, with numbers still being balanced:
 
 | | Tier 1 | Tier 4 | Tier 10 | Tier 15 |
 |---|---|---|---|---|
-| Fleet size (each fleet) | 100 | 160 | 335 | 550 |
-| Number of fleets | 2–3 | 3–4 | 5–6 | 6–7 |
-| Fleet quality | 30 | 45 | 75 | 100 |
+| Fleet size (each fleet) | 200 | 320 | 670 | 1100 |
+| Number of fleets | 4–6 | 6–8 | 10–12 | 13–14 |
+| Fleet quality | 60 | 90 | 150 | 200 |
 | Ship skill tree level | 26–29 | 31–34 | 40–43 | 47–50 |
-| Officer level / extra officers | +0 / +0 | +1 / +1 | +3 / +3 | +5 / +5 |
-| Boss fleet size | 180 | 300 | 660 | 1100 |
-| Colony item chance | 0 | 0 | 1.5% | 4% |
+| Officer level / extra officers | +0 / +0 | +2 / +2 | +6 / +6 | +10 / +10 |
+| Boss fleet size | 720 | 1200 | 2640 | 4400 |
+| Colony item chance | 0 | 0 | 0.3% | 0.8% |
 
-Battles outside charts drop charts up to tier 6, at a tier set by the strongest NPC ship you beat. Past that you climb from inside: finishing a chart's objective drops another chart, often a tier higher, and chart fleets and salvage drop charts at the chart's own tier.
+Battles outside charts drop charts up to tier 6, at a tier set by the strongest NPC ship you beat. Past that you climb from inside: killing a chart's boss drops another chart, often a tier higher, and chart fleets and salvage drop charts at the chart's own tier.
 
 </details>
 
@@ -385,7 +386,7 @@ You can find me on various Starsector Discords or by direct message @portals_
 
 ## Credits
 
-A big thank you to Lukas04 for letting me build the Exo-Tech and Abyss volumes from Random Assortment of Things, to YukiM for the same in Nightcross Armory, to I Spectros I, whose Navarchy of Tania art the Tania area uses and to Kissa Mies and SirHartley for LOST_SECTOR. The loot alert sounds are from Path of Exile and are copyright Grinding Gear Games. [CREDITS.md](CREDITS.md) lists every borrowed file, who made it and the terms it is used under.
+A big thank you to Lukas04 for letting me build the Exo-Tech and Abyss volumes from Random Assortment of Things, to YukiM for the same in Nightcross Armory and to Kissa Mies and SirHartley for LOST_SECTOR. The loot alert sounds are from Path of Exile and are copyright Grinding Gear Games. [CREDITS.md](CREDITS.md) lists every borrowed file, who made it and the terms it is used under.
 
 ## License
 
