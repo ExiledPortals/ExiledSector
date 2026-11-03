@@ -22,8 +22,6 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -75,15 +73,7 @@ class TaniaUnlocksTest {
     }
 
     @Test
-    void whileHiddenUntilReleaseTaniaCountsAsNotInstalled() {
-        assumeTrue(TaniaCompat.HIDDEN_UNTIL_RELEASE);
-
-        assertFalse(TaniaCompat.isModEnabled());
-    }
-
-    @Test
     void eachNodeStaysLockedUntilItsOwnMissionIsDone() {
-        assumeFalse(TaniaCompat.HIDDEN_UNTIL_RELEASE);
         ALL_GATES.forEach(gate -> assertTrue(SkillTypeUnlockStatus.isLocked(gate, null)));
 
         sectorMemory.set(TaniaUnlocks.BLOOD_TRAIL_DEFEATED_FLAG, true);

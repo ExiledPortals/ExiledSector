@@ -351,9 +351,6 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
 
     @Override
     public List<CompatTarget> compatTargets() {
-        if (TaniaCompat.HIDDEN_UNTIL_RELEASE) {
-            return List.of(LostSectorCompat.TARGET, MagicLibCompat.TARGET, NightcrossCompat.TARGET, NexerelinCompat.TARGET);
-        }
         return List.of(LostSectorCompat.TARGET, MagicLibCompat.TARGET, NightcrossCompat.TARGET, TaniaCompat.TARGET,
                 NexerelinCompat.TARGET);
     }

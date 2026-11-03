@@ -1,7 +1,6 @@
 package exiledsector.ui;
 
 import exiledsector.ModSettingsListener;
-import exiledsector.compat.TaniaCompat;
 import exiledsector.effects.ModuleShareSetting;
 import exiledsector.effects.NpcBonusScale;
 import exiledsector.i18n.Translation;
@@ -131,10 +130,8 @@ public final class SkillTreeSettings {
                 Translation.text("settings.volumes.randomAssortment.tooltip"), VolumeToggles.AUTO, String.join(",", VolumeToggles.REQUIRED_MOD_OPTIONS), treeTab);
         SettingsCreator.addRadio(MOD_ID, VolumeToggles.NIGHTCROSS_FIELD_ID, Translation.text("settings.volumes.nightcross.name"),
                 Translation.text("settings.volumes.nightcross.tooltip"), VolumeToggles.AUTO, String.join(",", VolumeToggles.OPTIONS), treeTab);
-        if (!TaniaCompat.HIDDEN_UNTIL_RELEASE) {
-            SettingsCreator.addRadio(MOD_ID, VolumeToggles.TANIA_FIELD_ID, Translation.text("settings.volumes.tania.name"),
-                    Translation.text("settings.volumes.tania.tooltip"), VolumeToggles.AUTO, String.join(",", VolumeToggles.REQUIRED_MOD_OPTIONS), treeTab);
-        }
+        SettingsCreator.addRadio(MOD_ID, VolumeToggles.TANIA_FIELD_ID, Translation.text("settings.volumes.tania.name"),
+                Translation.text("settings.volumes.tania.tooltip"), VolumeToggles.AUTO, String.join(",", VolumeToggles.REQUIRED_MOD_OPTIONS), treeTab);
     }
 
     private static void registerNpc() {

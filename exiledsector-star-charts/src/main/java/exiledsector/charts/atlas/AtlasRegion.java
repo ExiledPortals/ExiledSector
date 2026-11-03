@@ -1,15 +1,12 @@
 package exiledsector.charts.atlas;
 
 import java.util.Map;
-import java.util.Set;
 
 public record AtlasRegion(String id, float weight, int minSteps, String requiredMod, String unlock, Map<String, Float> layoutWeights,
                           Map<String, Float> factionWeights, Map<String, Float> anomalyWeights, int maxSteps, float weightPerStep, float size,
                           float density, Map<String, Float> neighbourWeights, float clouds, float walls) {
 
     public static final String NORMAL = "normal";
-    // TODO: delete this set and its check once the Abyssal Rift is approved
-    static final Set<String> HIDDEN_UNTIL_APPROVED = Set.of("abyssal_rift");
     public static final int NO_MAX_STEPS = -1;
     public static final float MIN_SIZE = 0.5f;
     public static final float MAX_SIZE = 2f;
@@ -63,10 +60,6 @@ public record AtlasRegion(String id, float weight, int minSteps, String required
     }
 
     boolean availableWith(AtlasUnlocks unlocks) {
-        return keptWith(unlocks) && unlocks.allows("", unlock);
-    }
-
-    boolean keptWith(AtlasUnlocks unlocks) {
-        return !HIDDEN_UNTIL_APPROVED.contains(id) && unlocks.allows(requiredMod, "");
+        return unlocks.allows(requiredMod, unlock);
     }
 }
