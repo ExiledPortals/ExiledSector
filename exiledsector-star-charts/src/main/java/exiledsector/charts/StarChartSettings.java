@@ -19,9 +19,9 @@ public final class StarChartSettings {
     public static final int MIN_ENTRIES = 1;
     public static final int MAX_ENTRIES = 10;
     public static final String FLEET_LIMIT_FIELD_ID = "exiledSector_starChartFleetLimit";
-    public static final int DEFAULT_FLEET_LIMIT = 7;
+    public static final int DEFAULT_FLEET_LIMIT = 14;
     public static final int MIN_FLEET_LIMIT = 1;
-    public static final int MAX_FLEET_LIMIT = 12;
+    public static final int MAX_FLEET_LIMIT = 20;
     public static final String NO_COLONY_FIELD_ID = "exiledSector_starChartNoColony";
     public static final boolean DEFAULT_NO_COLONY = false;
     public static final String DEBUG_TOOLS_FIELD_ID = "exiledSector_starChartDebugTools";

@@ -256,8 +256,8 @@ class ChartContentPlannerTest {
             assertEquals(boss ? 1 + ChartContentPlanner.BOSS_OFFICER_LEVEL_BONUS : 1, fleet.officerLevelBonus());
         }
         assertEquals(ChartContentPlanner.MAX_OVERFLOW_STRENGTH, ChartContentPlanner.overflowStrength(8000f, ChartContentPlanner.BOSS_SIZE_CAP));
-        assertEquals(25, ChartContentPlanner.overflowStrength(3000f, ChartContentPlanner.FLEET_SIZE_CAP));
-        assertEquals(0, ChartContentPlanner.overflowStrength(2400f, ChartContentPlanner.FLEET_SIZE_CAP));
+        assertEquals(25, ChartContentPlanner.overflowStrength(1500f, ChartContentPlanner.FLEET_SIZE_CAP));
+        assertEquals(0, ChartContentPlanner.overflowStrength(1200f, ChartContentPlanner.FLEET_SIZE_CAP));
     }
 
     @Test

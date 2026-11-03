@@ -79,9 +79,9 @@ class StarChartSettingsTest {
     }
 
     @Test
-    void readsTheFleetLimitWithinItsRangeAndDefaultsToSeven() {
+    void readsTheFleetLimitWithinItsRangeAndDefaultsToFourteen() {
         lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", StarChartSettings.FLEET_LIMIT_FIELD_ID)).thenReturn(null);
-        assertEquals(7, StarChartSettings.fleetLimit());
+        assertEquals(14, StarChartSettings.fleetLimit());
 
         lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", StarChartSettings.FLEET_LIMIT_FIELD_ID)).thenReturn(4);
         assertEquals(4, StarChartSettings.fleetLimit());

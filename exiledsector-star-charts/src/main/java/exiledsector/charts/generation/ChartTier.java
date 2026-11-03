@@ -8,8 +8,8 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
 
     public static final float FLEET_SIZE_BASE_POINTS = 50f;
     public static final float PERCENT = 100f;
-    static final float FALLBACK_FIRST_TIER_FLEET_SIZE = 200f;
-    static final float FALLBACK_FLEET_SIZE_PER_TIER = 64f;
+    static final float FALLBACK_FIRST_TIER_FLEET_SIZE = 100f;
+    static final float FALLBACK_FLEET_SIZE_PER_TIER = 32f;
     static final float FALLBACK_FIRST_TIER_BOSS_SIZE = 360f;
     static final float FALLBACK_BOSS_SIZE_PER_TIER = 130f;
     static final float FALLBACK_POI_BUDGET_PER_TIER = 3f;
@@ -64,8 +64,8 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
         int steps = Math.max(0, tier - 1);
         int levelMin = FALLBACK_FIRST_TIER_LEVEL + Math.round(FALLBACK_LEVELS_PER_TIER * steps);
         float poiBudget = FALLBACK_FIRST_TIER_POI_BUDGET + FALLBACK_POI_BUDGET_PER_TIER * steps;
-        return new ChartTier(tier, FALLBACK_FIRST_TIER_FLEET_SIZE + FALLBACK_FLEET_SIZE_PER_TIER * steps, 2 + steps / 3,
-                4 + steps / 3,
+        return new ChartTier(tier, FALLBACK_FIRST_TIER_FLEET_SIZE + FALLBACK_FLEET_SIZE_PER_TIER * steps, 4 + 2 * steps / 3,
+                6 + 2 * steps / 3,
                 steps / 3, steps / 3, Math.min(100f, 30f + 5f * steps), levelMin, levelMin + FALLBACK_LEVEL_SPREAD,
                 poiBudget * FALLBACK_CACHE_SHARE, tier >= FALLBACK_FIRST_DOMAIN_TIER ? poiBudget * FALLBACK_DOMAIN_SHARE : 0f,
                 tier >= FALLBACK_FIRST_STATION_TIER ? poiBudget * FALLBACK_STATION_SHARE : 0f, poiBudget * FALLBACK_DERELICT_SHARE, true,
