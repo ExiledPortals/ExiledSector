@@ -11,6 +11,7 @@ public final class ForgeStates {
 
     static final String PROGRAMS_FIELD = "offered";
     static final String RUNS_FIELD = "runsLeft";
+    static final String REACHED_FIELD = "reached";
 
     private ForgeStates() {
     }
@@ -37,6 +38,17 @@ public final class ForgeStates {
 
     public static int runsLeft(ChartRun run) {
         return Math.max(0, of(run).integer(RUNS_FIELD));
+    }
+
+    static boolean reachControlRoom(ChartRun run, ForgePrograms.Program program) {
+        AnomalyState state = of(run);
+        List<String> reached = StateFields.list(state.text(REACHED_FIELD));
+        if (reached.contains(program.id())) {
+            return false;
+        }
+        reached.add(program.id());
+        state.put(REACHED_FIELD, StateFields.join(reached));
+        return true;
     }
 
     static boolean spendRun(ChartRun run) {

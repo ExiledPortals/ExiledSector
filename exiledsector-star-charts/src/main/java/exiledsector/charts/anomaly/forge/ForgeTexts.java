@@ -20,6 +20,10 @@ public final class ForgeTexts {
         return Translation.text(KEY_PREFIX + "program." + program.id() + ".description");
     }
 
+    static String routeKey(ForgePrograms.Program program) {
+        return KEY_PREFIX + "route." + program.id();
+    }
+
     public static String costText(ForgeRules.Cost cost) {
         return Translation.msg(KEY_PREFIX + "cost").arg("metals", cost.metals()).arg("rareMetals", cost.rareMetals()).arg("feedstock", cost.feedstock())
                 .text();

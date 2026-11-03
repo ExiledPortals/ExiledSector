@@ -27,6 +27,9 @@ public class ForgeDialog extends GuardedSiteDialog {
     private record RunOption(ForgePrograms.Program program) {
     }
 
+    private record BeginOption(ForgePrograms.Program program) {
+    }
+
     private String ranMessage;
 
     @Override
@@ -98,6 +101,19 @@ public class ForgeDialog extends GuardedSiteDialog {
         }
     }
 
+    private void chooseProgram(ForgePrograms.Program program) {
+        ChartRun run = liveRun();
+        if (run == null || !ForgeStates.reachControlRoom(run, program)) {
+            openBench(program);
+            return;
+        }
+        VanillaText.plainPara(text(), Translation.gameText(ForgeTexts.routeKey(program)));
+        OptionPanelAPI options = options();
+        options.clearOptions();
+        options.addOption(Translation.gameText("chart.anomaly.derelict_forge.option.begin"), new BeginOption(program));
+        addLeaveOption();
+    }
+
     private void openBench(ForgePrograms.Program program) {
         ChartRun run = liveRun();
         if (run == null) {
@@ -125,6 +141,8 @@ public class ForgeDialog extends GuardedSiteDialog {
     @Override
     protected void siteOptionSelected(Object optionData) {
         if (optionData instanceof RunOption option) {
+            chooseProgram(option.program());
+        } else if (optionData instanceof BeginOption option) {
             openBench(option.program());
         } else {
             dialog().dismiss();

@@ -18,6 +18,7 @@ import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
+import exiledsector.i18n.Translation;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -167,6 +168,25 @@ class DerelictForgeTest {
         assertEquals(0, ForgeStates.runsLeft(run));
         assertFalse(ForgeStates.spendRun(run));
         assertEquals(List.of(ForgePrograms.byId("graft")), ForgeStates.programs(run));
+    }
+
+    @Test
+    void eachControlRoomIsReachedOnce() {
+        ChartRun run = run();
+        ForgePrograms.Program graft = ForgePrograms.byId("graft");
+        ForgePrograms.Program excise = ForgePrograms.byId("excise");
+
+        assertTrue(ForgeStates.reachControlRoom(run, graft));
+        assertFalse(ForgeStates.reachControlRoom(run, graft));
+        assertTrue(ForgeStates.reachControlRoom(run, excise));
+        assertFalse(ForgeStates.reachControlRoom(run, excise));
+    }
+
+    @Test
+    void everyProgramHasARoute() {
+        for (ForgePrograms.Program program : ForgePrograms.all()) {
+            assertTrue(Translation.has(ForgeTexts.routeKey(program)), program.id());
+        }
     }
 
     @Test
