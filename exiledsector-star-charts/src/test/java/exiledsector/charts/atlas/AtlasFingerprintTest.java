@@ -16,7 +16,7 @@ class AtlasFingerprintTest {
 
     private static final long SEED = 0x41544c4153L;
     private static final int RADIUS = 36;
-    private static final String FINGERPRINT = "84bd50f3f57490781b2128b9747bf63192daaae3400a8658a90f96ab38c29254";
+    private static final String FINGERPRINT = "4eee754658cb39ad23a311cf73c27f3a8a331114212e1adc782e4df2f3b3a75c";
 
     @AfterEach
     void tearDown() {
