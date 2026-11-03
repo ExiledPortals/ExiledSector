@@ -84,6 +84,21 @@ class ShapeAnomaliesTest {
     }
 
     @Test
+    void aMagneticStormInAMultiStarSystemFollowsThePrimaryStarNotTheCentre() {
+        SectorEntityToken barycentre = mock(SectorEntityToken.class);
+        List<SectorEntityToken> fields = new ArrayList<>();
+        when(system.addTerrain(eq(Terrain.MAGNETIC_FIELD), any())).thenAnswer(invocation -> {
+            SectorEntityToken field = mock(SectorEntityToken.class);
+            fields.add(field);
+            return field;
+        });
+
+        MagneticStorm.INSTANCE.shape(new AnomalyLayoutSite(system, barycentre, List.of(star, mock(PlanetAPI.class)), 9000f, new Random(4)));
+
+        verify(fields.get(0)).setCircularOrbit(star, 0, 0, 100);
+    }
+
+    @Test
     void stellarFlaresRefuseASystemWithNoVisibleStar() {
         assertThrows(IllegalStateException.class,
                 () -> StellarFlares.INSTANCE.shape(new AnomalyLayoutSite(system, star, List.of(), 9000f, new Random(4))));
