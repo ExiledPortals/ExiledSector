@@ -11,6 +11,7 @@ public final class StatSheetPanelPlugin extends BaseCustomUIPanelPlugin {
 
     private static ShipStatSheet cachedSheet;
     private static float cachedWidth = Float.NaN;
+    private static int cachedColumns;
     private static StatSheetLayout cachedLayout;
 
     private final StatSheetLayout layout;
@@ -20,11 +21,11 @@ public final class StatSheetPanelPlugin extends BaseCustomUIPanelPlugin {
         this.layout = layout;
     }
 
-    public static boolean addTo(TooltipMakerAPI tooltip, ShipStatSheet sheet, float width, float pad) {
+    public static boolean addTo(TooltipMakerAPI tooltip, ShipStatSheet sheet, float width, int columns, float pad) {
         if (sheet.isEmpty() || SkillTreePanelStyle.font() == null) {
             return false;
         }
-        StatSheetLayout layout = layoutFor(sheet, width);
+        StatSheetLayout layout = layoutFor(sheet, width, columns);
         StatSheetPanelPlugin plugin = new StatSheetPanelPlugin(layout);
         CustomPanelAPI panel = Global.getSettings().createCustom(width, layout.height(), plugin);
         if (panel == null) {
@@ -34,14 +35,15 @@ public final class StatSheetPanelPlugin extends BaseCustomUIPanelPlugin {
         return true;
     }
 
-    private static StatSheetLayout layoutFor(ShipStatSheet sheet, float width) {
-        if (cachedLayout == null || !sheet.equals(cachedSheet) || width != cachedWidth) {
+    private static StatSheetLayout layoutFor(ShipStatSheet sheet, float width, int columns) {
+        if (cachedLayout == null || !sheet.equals(cachedSheet) || width != cachedWidth || columns != cachedColumns) {
             if (cachedLayout != null) {
                 cachedLayout.dispose();
             }
-            cachedLayout = StatSheetLayout.build(sheet, width, 1);
+            cachedLayout = StatSheetLayout.build(sheet, width, columns);
             cachedSheet = sheet;
             cachedWidth = width;
+            cachedColumns = columns;
         }
         return cachedLayout;
     }

@@ -41,7 +41,8 @@ public final class StatSheetLayout {
     private static final float HEADER_RULE_ALPHA = 0.5f;
     private static final float SECTION_GAP = 14f;
     private static final float GRID_GAP = 6f;
-    private static final float COLUMN_GAP = 24f;
+    public static final float COLUMN_GAP = 24f;
+    public static final float MIN_COLUMN_WIDTH = 400f;
     private static final float CHANGE_WIDTH = 66f;
     private static final float VALUE_GAP = 10f;
     private static final float MAX_GRID_CELL_WIDTH = 84f;
@@ -95,6 +96,10 @@ public final class StatSheetLayout {
             tallest = Math.max(tallest, columnHeight);
         }
         return new StatSheetLayout(List.copyOf(labels), List.copyOf(bars), List.copyOf(regions), width, tallest);
+    }
+
+    public static float minWidth(int columnCount) {
+        return MIN_COLUMN_WIDTH * columnCount + COLUMN_GAP * (columnCount - 1);
     }
 
     public float width() {

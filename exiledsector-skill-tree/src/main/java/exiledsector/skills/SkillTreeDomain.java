@@ -325,6 +325,11 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
     }
 
     @Override
+    public float shipDescriptionWidth() {
+        return ShipTreeSummaryRenderer.HULL_MOD_TOOLTIP_WIDTH;
+    }
+
+    @Override
     public void refitScreenListed() {
         PhantomHullModRefitHider.requestRefresh();
     }

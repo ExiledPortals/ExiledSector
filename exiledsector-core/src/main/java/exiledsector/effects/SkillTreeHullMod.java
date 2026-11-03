@@ -164,7 +164,11 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
 
     @Override
     public float getTooltipWidth() {
-        return TOOLTIP_WIDTH;
+        float tooltipWidth = TOOLTIP_WIDTH;
+        for (ExiledSectorDomain domain : ExiledSector.enabledDomains()) {
+            tooltipWidth = Math.max(tooltipWidth, domain.shipDescriptionWidth());
+        }
+        return tooltipWidth;
     }
 
     @Override

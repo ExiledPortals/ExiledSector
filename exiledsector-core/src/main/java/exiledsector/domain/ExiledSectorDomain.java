@@ -121,6 +121,10 @@ public interface ExiledSectorDomain {
     default void describeShip(TooltipMakerAPI tooltip, HullSize hullSize, ShipAPI ship) {
     }
 
+    default float shipDescriptionWidth() {
+        return 0f;
+    }
+
     default void refitScreenListed() {
     }
 

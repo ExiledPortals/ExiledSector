@@ -21,8 +21,6 @@ final class SkillTreeStatPanel {
 
     private static final float PADDING = 22f;
     private static final float COMPACT_CONTENT_WIDTH = 430f;
-    private static final float MIN_SHEET_COLUMN_WIDTH = 400f;
-    private static final float SHEET_COLUMN_GAP = 24f;
     private static final float TOGGLE_GAP = 8f;
     private static final float SCROLL_STEP = 60f;
 
@@ -248,7 +246,7 @@ final class SkillTreeStatPanel {
         ensureSheet(sheetView);
         Viewport viewport = sheetViewport(canvasPosition);
         float contentWidth = viewport.width() - PADDING * 2f;
-        int columns = Math.max(1, (int) ((contentWidth + SHEET_COLUMN_GAP) / (MIN_SHEET_COLUMN_WIDTH + SHEET_COLUMN_GAP)));
+        int columns = Math.max(1, (int) ((contentWidth + StatSheetLayout.COLUMN_GAP) / (StatSheetLayout.MIN_COLUMN_WIDTH + StatSheetLayout.COLUMN_GAP)));
         renderView(sheetView, viewport, columns, mouseX, mouseY, alphaMult, live && expanded);
     }
 
