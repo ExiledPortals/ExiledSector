@@ -72,10 +72,10 @@ public final class AtlasProgress {
     }
 
     public static void closed(SectorAPI sector, ChartRun run) {
-        closedWithoutObjective(sector, run);
         if (sector != null && run != null && run.atlasNode() != null) {
             ChartAnomalies.runClosed(sector, run);
         }
+        closedWithoutObjective(sector, run);
     }
 
     public static void closedWithoutObjective(SectorAPI sector, ChartRun run) {

@@ -41,13 +41,13 @@ final class RelayText {
     }
 
     static String nextStep(ChartRun run, AtlasAnomalyRecord.Chain stage) {
-        if (stage == null || run.isObjectiveLost()) {
+        if (stage == null) {
             return null;
         }
-        if (stage.isLast()) {
-            return run.isObjectiveComplete() ? null : "last";
+        if (!stage.isLast()) {
+            return "traced";
         }
-        return run.isObjectiveComplete() ? "traced" : "next";
+        return run.isObjectiveComplete() || run.isObjectiveLost() ? null : "last";
     }
 
     static List<String> wokenMessages(ChartRun run, String relayName, AtlasAnomalyRecord.Chain stage) {

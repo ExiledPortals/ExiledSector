@@ -38,9 +38,8 @@ class RelayTextTest {
     }
 
     @Test
-    void theLastWokenRelayPointsAtTheBossAndTheNextStage() {
-        assertEquals(List.of("Sensor Array is awake", "All three relays are awake",
-                        "Destroy the Star Chart Boss to follow their trace to stage 2 of 3 in another Atlas system"),
+    void theLastWokenRelayPointsAtTheNextStageOrTheFinalBoss() {
+        assertEquals(List.of("Sensor Array is awake", "All three relays are awake", "Their trace leads to stage 2 of 3 in another Atlas system"),
                 RelayText.wokenMessages(allAwake(), "Sensor Array", FIRST_OF_THREE));
         assertEquals("Destroy the Star Chart Boss for a unique hull item or subroutine",
                 RelayText.wokenMessages(allAwake(), "Sensor Array", LAST_OF_THREE).get(2));
@@ -48,15 +47,15 @@ class RelayTextTest {
     }
 
     @Test
-    void aBossAlreadyDestroyedOrLostChangesTheNextStep() {
+    void aBossAlreadyDestroyedOrLostOnlyChangesTheLastStage() {
         ChartRun beaten = allAwake();
         beaten.markObjectiveComplete();
         ChartRun lost = allAwake();
         lost.markObjectiveLost();
 
-        assertEquals("Their trace leads to stage 2 of 3 in another Atlas system", RelayText.wokenMessages(beaten, "Nav Buoy", FIRST_OF_THREE).get(2));
+        assertEquals("Their trace leads to stage 2 of 3 in another Atlas system", RelayText.wokenMessages(lost, "Nav Buoy", FIRST_OF_THREE).get(2));
         assertEquals(2, RelayText.wokenMessages(beaten, "Nav Buoy", LAST_OF_THREE).size());
-        assertEquals(2, RelayText.wokenMessages(lost, "Nav Buoy", FIRST_OF_THREE).size());
+        assertEquals(2, RelayText.wokenMessages(lost, "Nav Buoy", LAST_OF_THREE).size());
     }
 
     @Test
@@ -82,8 +81,10 @@ class RelayTextTest {
         assertEquals("1 of the three Domain-era relays is awake.", RelayText.status(runWithAwake(RelayKind.SENSOR_ARRAY), FIRST_OF_THREE));
         assertEquals("2 of the three Domain-era relays are awake.",
                 RelayText.status(runWithAwake(RelayKind.SENSOR_ARRAY, RelayKind.NAV_BUOY), FIRST_OF_THREE));
-        assertEquals("All three Domain-era relays are awake. Destroy the Star Chart Boss to follow their trace to stage 2 of 3 in another Atlas system.",
+        assertEquals("All three Domain-era relays are awake. Their trace leads to stage 2 of 3 in another Atlas system.",
                 RelayText.status(allAwake(), FIRST_OF_THREE));
+        assertEquals("All three Domain-era relays are awake. Destroy the Star Chart Boss for a unique hull item or subroutine.",
+                RelayText.status(allAwake(), LAST_OF_THREE));
         assertEquals("All three Domain-era relays are awake.", RelayText.status(allAwake(), null));
     }
 }

@@ -87,7 +87,7 @@ class RelayStagesTest {
     void completingAFirstStageWithEveryRelayAwakeStartsTheChainFurtherOut() {
         state.add(start, AtlasState.COMPLETED);
 
-        AtlasCell target = RelayStages.settle(generator, state, start, true, true, true);
+        AtlasCell target = RelayStages.settle(generator, state, start, true, true);
 
         assertNotNull(target);
         AtlasAnomalyRecord moved = RelayStages.recordAt(state, target);
@@ -102,7 +102,7 @@ class RelayStagesTest {
         int recordId = insertAtStart(new AtlasAnomalyRecord.Chain(2, 4, AtlasCell.ORIGIN));
         state.add(start, AtlasState.COMPLETED);
 
-        AtlasCell target = RelayStages.settle(generator, state, start, true, true, true);
+        AtlasCell target = RelayStages.settle(generator, state, start, true, true);
 
         assertEquals(target, state.anomalyRecord(recordId).cell());
         assertEquals(new AtlasAnomalyRecord.Chain(3, 4, start), state.anomalyRecord(recordId).chain());
@@ -110,15 +110,21 @@ class RelayStagesTest {
     }
 
     @Test
-    void aDormantRelayOrAFailedRunLosesTheTrace() {
+    void aDormantRelayLosesTheTrace() {
         int recordId = insertAtStart(new AtlasAnomalyRecord.Chain(2, 4, AtlasCell.ORIGIN));
 
-        assertNull(RelayStages.settle(generator, state, start, true, true, false));
+        assertNull(RelayStages.settle(generator, state, start, true, false));
         assertNull(state.anomalyRecord(recordId));
+    }
 
-        insertAtStart(new AtlasAnomalyRecord.Chain(2, 4, AtlasCell.ORIGIN));
-        assertNull(RelayStages.settle(generator, state, start, false, true, true));
-        assertEquals(List.of(), state.anomalyRecords());
+    @Test
+    void aMiddleStageMovesOnWithoutTheBossDying() {
+        int recordId = insertAtStart(new AtlasAnomalyRecord.Chain(2, 4, AtlasCell.ORIGIN));
+
+        AtlasCell target = RelayStages.settle(generator, state, start, true, true);
+
+        assertNotNull(target);
+        assertEquals(new AtlasAnomalyRecord.Chain(3, 4, start), state.anomalyRecord(recordId).chain());
     }
 
     @Test
@@ -126,7 +132,7 @@ class RelayStagesTest {
         int recordId = insertAtStart(new AtlasAnomalyRecord.Chain(2, 4, AtlasCell.ORIGIN));
         state.add(start, AtlasState.COMPLETED);
 
-        AtlasCell target = RelayStages.settle(generator, state, start, true, false, false);
+        AtlasCell target = RelayStages.settle(generator, state, start, false, false);
 
         assertNotNull(target);
         assertEquals(new AtlasAnomalyRecord.Chain(2, 4, start), state.anomalyRecord(recordId).chain());
@@ -138,7 +144,7 @@ class RelayStagesTest {
         insertAtStart(new AtlasAnomalyRecord.Chain(3, 3, AtlasCell.ORIGIN));
         state.add(start, AtlasState.COMPLETED);
 
-        assertNull(RelayStages.settle(generator, state, start, true, true, true));
+        assertNull(RelayStages.settle(generator, state, start, true, true));
         assertEquals(List.of(), state.anomalyRecords());
     }
 
@@ -165,7 +171,7 @@ class RelayStagesTest {
             assertEquals(chain.isLast(), RelayStages.join(new AtlasRunNode(cell.pack(), "pirates", List.of(), List.of(RelayNetwork.ANOMALY_ID), false),
                     generator, state, cell).guaranteedBossUnique());
             state.add(cell, AtlasState.COMPLETED);
-            cell = RelayStages.settle(generator, state, cell, true, true, true);
+            cell = RelayStages.settle(generator, state, cell, true, true);
             settled++;
         }
 

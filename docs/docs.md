@@ -719,8 +719,8 @@ for supplies and heavy machinery (`RelayDialog`; flags on the run record in `Rel
 array turns player-owned, so vanilla's objective plugins give their bonus; a woken comm relay multiplies every other
 fleet's `detected_by_player_range_mult` and raises its extended detection range, so the player sees them at any range.
 
-The stage rides on an inserted record (`AtlasAnomalyRecord.Chain`); a rolled network is stage 1 of 3. A completed
-system keeps a chained record until the run closes, then `RelayStages.settle` moves it to an adjacent system further
+The stage rides on an inserted record (`AtlasAnomalyRecord.Chain`); a rolled network is stage 1 of 3. When the run
+closes, boss killed or not, `RelayStages.settle` moves the record to an adjacent system further
 from the Gateway, or two lanes out if none qualifies (`AtlasAnomalies.onward` takes the nearest), if all three relays
 woke, or at the same stage if the network could not be placed, and removes it otherwise. Each stage past the first adds the `relay_stage` lines of `atlas_node_effects.csv` once more (`RelayStages.join`), and the last stage's boss, if it dies with all three
 relays woken, drops one unique hull item or subroutine whatever its source (`ChartFleetLoot.guaranteedUnique`).

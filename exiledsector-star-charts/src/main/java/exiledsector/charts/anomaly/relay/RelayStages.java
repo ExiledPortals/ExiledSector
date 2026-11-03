@@ -109,17 +109,17 @@ public final class RelayStages {
         if (node == null || !RelayStates.markSettled(run)) {
             return;
         }
-        settle(AtlasRuntime.generator(sector), AtlasState.get(sector), AtlasCell.unpack(node.cell()), run.isObjectiveComplete(),
+        settle(AtlasRuntime.generator(sector), AtlasState.get(sector), AtlasCell.unpack(node.cell()),
                 run.anomalyIds().contains(RelayNetwork.ANOMALY_ID), RelayStates.allWoken(run));
     }
 
-    static AtlasCell settle(AtlasGenerator generator, AtlasState state, AtlasCell cell, boolean completed, boolean placed, boolean allWoken) {
+    static AtlasCell settle(AtlasGenerator generator, AtlasState state, AtlasCell cell, boolean placed, boolean allWoken) {
         AtlasAnomalyRecord record = recordAt(state, cell);
         AtlasAnomalyRecord.Chain current = chainAt(generator, state, cell, record);
         AtlasAnomalyRecord.Chain next = null;
-        if (completed && !placed) {
+        if (!placed) {
             next = new AtlasAnomalyRecord.Chain(current.stage(), current.stages(), cell);
-        } else if (completed && allWoken && !current.isLast()) {
+        } else if (allWoken && !current.isLast()) {
             next = new AtlasAnomalyRecord.Chain(current.stage() + 1, current.stages(), cell);
         }
         AtlasCell target = next == null ? null
