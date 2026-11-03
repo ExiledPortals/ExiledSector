@@ -728,7 +728,7 @@ are built like the map's boss, with the close escort above the boss's size and t
 arrives, the system script `ConvoyScript` sends them past two to four planets or stations to unload at an existing planet,
 avoiding planets another anomaly holds where it can, with intel in `ConvoyIntel`. The convoy is non-hostile until the player attacks it through `ConvoyEncounterDialog` or hits
 one of its fleets with Interdiction Pulse (which also holds that fleet); then all three turn hostile for the run and the
-freighters run for the destination. The screen rides 1200 su ahead, the freighters never outrun the escorts in open space,
+freighters run for the destination. The screen rides 1200 su ahead, the freighters never outrun the escorts in open space (they lack Sustained Burn until attacked, `ConvoyHostility`),
 and asteroids and nebulae slow each fleet by its own amount (`ConvoyTerrain`).
 
 The cargo is the `convoy` scope of `chart_loot.csv` plus the `exiledSector_chart_convoy` item row, sized by the

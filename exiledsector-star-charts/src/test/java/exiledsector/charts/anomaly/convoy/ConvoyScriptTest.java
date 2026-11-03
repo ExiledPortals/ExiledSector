@@ -5,6 +5,7 @@ import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CampaignClockAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.impl.campaign.ids.Abilities;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import org.lwjgl.util.vector.Vector2f;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
@@ -175,6 +176,20 @@ class ConvoyScriptTest {
         assertEquals(new FakeChartContentEngine.Assignment(FleetAssignment.ORBIT_AGGRESSIVE, freighters),
                 convoySystem.assignments(convoySystem.fleet(convoy(), ConvoyRole.SCREEN)).get(0));
         verify(mockSector.sector, never()).adjustPlayerReputation(any(), any(String.class));
+    }
+
+    @Test
+    void peacefulFreightersCannotSustainedBurnAwayFromTheirEscortsButFleeWithItOnceAttacked() {
+        CampaignFleetAPI freighters = convoySystem.fleet(convoy(), ConvoyRole.FREIGHTERS);
+        verify(freighters).removeAbility(Abilities.SUSTAINED_BURN);
+        for (ConvoyRole role : List.of(ConvoyRole.SCREEN, ConvoyRole.ESCORT)) {
+            verify(convoySystem.fleet(convoy(), role), never()).removeAbility(Abilities.SUSTAINED_BURN);
+        }
+        when(freighters.hasAbility(Abilities.SUSTAINED_BURN)).thenReturn(false);
+
+        convoySystem.script().turnHostile(convoy());
+
+        verify(freighters).addAbility(Abilities.SUSTAINED_BURN);
     }
 
     @Test

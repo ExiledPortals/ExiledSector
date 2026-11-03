@@ -99,6 +99,6 @@ final class ConvoyFleets {
         if (role == ConvoyRole.FREIGHTERS) {
             memory.set(MemFlags.MEMORY_KEY_TRADE_FLEET, true);
         }
-        ConvoyHostility.makePeaceful(fleet);
+        ConvoyHostility.makePeaceful(fleet, role);
     }
 }

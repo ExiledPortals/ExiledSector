@@ -2,6 +2,7 @@ package exiledsector.charts.anomaly.convoy;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Abilities;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 
 import java.util.List;
@@ -15,11 +16,14 @@ final class ConvoyHostility {
     private ConvoyHostility() {
     }
 
-    static void makePeaceful(CampaignFleetAPI fleet) {
+    static void makePeaceful(CampaignFleetAPI fleet, ConvoyRole role) {
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
         HOSTILE_FLAGS.forEach(memory::unset);
         memory.set(MemFlags.MEMORY_KEY_MAKE_NON_HOSTILE, true);
         UNREPUTABLE_FLAGS.forEach(flag -> memory.set(flag, true));
+        if (role == ConvoyRole.FREIGHTERS && fleet.hasAbility(Abilities.SUSTAINED_BURN)) {
+            fleet.removeAbility(Abilities.SUSTAINED_BURN);
+        }
     }
 
     static void makeHostile(CampaignFleetAPI fleet, ConvoyRole role) {
@@ -31,6 +35,8 @@ final class ConvoyHostility {
         if (role != ConvoyRole.FREIGHTERS) {
             memory.set(MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE, true);
             memory.set(MemFlags.MEMORY_KEY_ALLOW_LONG_PURSUIT, true);
+        } else if (!fleet.hasAbility(Abilities.SUSTAINED_BURN)) {
+            fleet.addAbility(Abilities.SUSTAINED_BURN);
         }
         UNREPUTABLE_FLAGS.forEach(flag -> memory.set(flag, true));
     }
