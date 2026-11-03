@@ -104,6 +104,10 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
     protected void rebuildHeader() {
     }
 
+    protected float headerToolsWidth() {
+        return 0f;
+    }
+
     public final void setTabListener(Consumer<SocketPanelTab> listener) {
         if (listener == tabListener) {
             return;
@@ -305,7 +309,7 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
                 labels.add(panelTab.label());
             }
         }
-        float tabRoom = panelWidth - PAD * 2f - CLOSE_BUTTON_WIDTH - GAP;
+        float tabRoom = panelWidth - PAD * 2f - CLOSE_BUTTON_WIDTH - GAP - headerToolsWidth();
         int fontIndex = fittingTabFontIndex(labels, tabRoom, (label, font) -> Global.getSettings().computeStringWidth(label, font));
         String tabFont = TAB_FONTS.get(fontIndex);
         if (fontIndex > 0) {

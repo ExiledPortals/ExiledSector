@@ -11,7 +11,9 @@ import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.items.HullItem;
 import exiledsector.items.Item;
 import exiledsector.items.ItemKind;
+import exiledsector.items.ItemStore;
 import exiledsector.items.ShipSection;
+import exiledsector.items.SocketCustody;
 import exiledsector.skills.ShipSections;
 import exiledsector.ui.decoration.InspectedShip;
 import exiledsector.ui.decoration.RefitShipPortrait;
@@ -240,9 +242,11 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
                 Global.getSettings().getScreenHeight(), false), storage.shipNames(), new CraftingBench.Listener() {
             @Override
             public void closed() {
+                Item craftedItem = bay == null ? null : bay.craftedItem();
                 bay = null;
                 if (!fade.closing()) {
                     showStorage(null);
+                    showCrafted(craftedItem);
                 }
             }
 
@@ -251,6 +255,16 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
                 sectionsDisplay.hideTooltip();
             }
         });
+    }
+
+    private void showCrafted(Item craftedItem) {
+        if (craftedItem == null || !storage.isOpen() || !ItemStore.get().owned().contains(craftedItem)) {
+            return;
+        }
+        storage.panel().spotlight(craftedItem);
+        if (storage.target() == null && !SocketCustody.isInstalled(craftedItem)) {
+            storage.startPlacing(craftedItem);
+        }
     }
 
     private void switchTab(SocketPanelTab tab) {

@@ -8,45 +8,41 @@ import java.util.Set;
 
 public final class ItemStorageFilter {
 
-    public enum Status {ALL, FREE, INSTALLED}
+    public enum Status {FREE, INSTALLED}
 
-    public enum Sort {AGE, RARITY, VALUE}
+    public enum Sort {NEWEST, OLDEST, RAREST, MOST_COMMON, HIGHEST_VALUE, LOWEST_VALUE}
 
     static final ItemStorageFilter SESSION = new ItemStorageFilter();
 
-    Status status = Status.FREE;
+    final Set<Status> statuses = EnumSet.of(Status.FREE);
     String query = "";
-    Sort sort = Sort.AGE;
-    boolean sortReversed;
+    Sort sort = Sort.NEWEST;
     final Set<ItemRarity> rarities = EnumSet.noneOf(ItemRarity.class);
     final Set<ItemKind> sectionKinds = EnumSet.noneOf(ItemKind.class);
 
-    void setStatus(Status value) {
-        status = value;
+    void toggleStatus(Status status) {
+        toggle(statuses, status);
     }
 
-    void pickSort(Sort chosen) {
-        if (chosen == sort) {
-            sortReversed = !sortReversed;
-            return;
-        }
+    void setSort(Sort chosen) {
         sort = chosen;
-        sortReversed = false;
     }
 
     void toggleRarity(ItemRarity rarity) {
-        if (!rarities.remove(rarity)) {
-            rarities.add(rarity);
-        }
+        toggle(rarities, rarity);
     }
 
     void toggleSection(ItemKind sectionKind) {
-        if (!sectionKinds.remove(sectionKind)) {
-            sectionKinds.add(sectionKind);
-        }
+        toggle(sectionKinds, sectionKind);
     }
 
     void setQuery(String value) {
         query = value == null ? "" : value;
+    }
+
+    private static <T> void toggle(Set<T> chosen, T value) {
+        if (!chosen.remove(value)) {
+            chosen.add(value);
+        }
     }
 }

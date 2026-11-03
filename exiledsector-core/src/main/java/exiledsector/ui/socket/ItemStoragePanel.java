@@ -2,6 +2,7 @@ package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
+import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.ui.PositionAPI;
@@ -29,8 +30,10 @@ import exiledsector.ui.cargo.CargoIconLooks;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -53,7 +56,8 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private static final float FIELD_HEIGHT = 26f;
-    private static final int FIXED_CONTROL_ROWS = 2;
+    private static final float MIN_MENU_BUTTON_WIDTH = 150f;
+    private static final int NARROW_MENU_COLUMNS = 2;
     private static final float LABEL_WIDTH = 70f;
     private static final float NOTICE_HEIGHT = 56f;
     private static final float FOOTER_HEIGHT = 24f;
@@ -61,14 +65,19 @@ public final class ItemStoragePanel extends HoloPanel {
     private static final int TREE_COLUMNS = 6;
     public static final float COMPACT_WIDTH = widthFor(COMPACT_COLUMNS);
     public static final float WIDTH = widthFor(TREE_COLUMNS);
+    private static final float SEARCH_TOOLTIP_WIDTH = 360f;
     private static final float CRAFTING_BENCH_GAP = 12f;
     private static final float CRAFTING_BENCH_EDGE_MARGIN = 16f;
     private static final float BUTTON_TEXT_PADDING = 30f;
     private static final float SEARCH_DELAY_SECONDS = 0.25f;
-    private static final float SORT_TOOLTIP_WIDTH = 320f;
     private static final ItemCell.Look CELL_LOOK = new ItemCell.Look(7f, true, 1f);
 
     private enum Control {CLOSE, CRAFTING_BENCH, DISASSEMBLY_MODE, CONFIRM_DISASSEMBLE, CANCEL_DISASSEMBLE}
+
+    private enum Menu {STATUS, RARITY, TYPE, SORT}
+
+    private record MenuButton(Menu menu) {
+    }
 
     private record StatusChip(ItemStorageFilter.Status status) {
     }
@@ -84,6 +93,8 @@ public final class ItemStoragePanel extends HoloPanel {
 
     private final Listener storageListener;
     private final ItemStorageFilter storageFilter = ItemStorageFilter.SESSION;
+    private final FilterMenu filterMenu = new FilterMenu(this::buttonPressed, () -> queue(this::closeFilterMenu));
+    private final Map<Menu, ButtonAPI> menuButtons = new EnumMap<>(Menu.class);
 
     private Function<Item, String> installedShipLookup;
     private CraftingBenchPanel craftingBenchPanel;
@@ -91,17 +102,19 @@ public final class ItemStoragePanel extends HoloPanel {
     private float gridTop;
     private UIComponentAPI headerElement;
     private UIComponentAPI searchRowElement;
-    private UIComponentAPI toolsElement;
+    private UIComponentAPI feedstockElement;
     private UIComponentAPI controlsElement;
     private TooltipMakerAPI gridElement;
     private boolean keepGridScroll;
     private UIComponentAPI noticeElement;
-    private UIComponentAPI summaryElement;
+    private UIComponentAPI footerElement;
     private TextFieldAPI searchField;
     private String typedQuery;
     private float searchDelay;
     private List<ItemStorageRow> storageRows = List.of();
     private Item selectedItem;
+    private Item spotlightItem;
+    private Item craftedItem;
     private String placingHint;
     private String socketRefusalNotice;
     private boolean targetingSocket;
@@ -189,6 +202,7 @@ public final class ItemStoragePanel extends HoloPanel {
     @Override
     protected void onClose() {
         hideHoverTooltip();
+        closeFilterMenu();
         if (craftingBenchPanel != null) {
             craftingBenchPanel.close();
         }
@@ -197,6 +211,7 @@ public final class ItemStoragePanel extends HoloPanel {
 
     @Override
     protected void onSwappedOut() {
+        closeFilterMenu();
         if (craftingBenchPanel != null) {
             craftingBenchPanel.close();
         }
@@ -208,13 +223,18 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     @Override
+    protected float headerToolsWidth() {
+        return PARTS_ROOM + GAP;
+    }
+
+    @Override
     protected UIComponentAPI[] chromeComponents() {
-        return new UIComponentAPI[]{headerElement, searchRowElement, toolsElement};
+        return new UIComponentAPI[]{headerElement, searchRowElement, feedstockElement};
     }
 
     @Override
     protected UIComponentAPI[] contentComponents() {
-        return new UIComponentAPI[]{controlsElement, placedComponent(gridElement), noticeElement, summaryElement};
+        return new UIComponentAPI[]{controlsElement, placedComponent(gridElement), noticeElement, footerElement, filterMenu.panel()};
     }
 
     public void restrictTo(ItemKind sectionKind) {
@@ -223,6 +243,7 @@ public final class ItemStoragePanel extends HoloPanel {
         }
         kindFilter = sectionKind;
         queue(() -> {
+            closeFilterMenu();
             closeDisassemblyConfirm();
             reloadRows();
             rebuildControls();
@@ -235,7 +256,7 @@ public final class ItemStoragePanel extends HoloPanel {
 
     public void showRefusal(String refusal) {
         socketRefusalNotice = refusal;
-        queue(() -> rebuildFooter(ItemStorageQuery.apply(storageRows, storageFilter)));
+        queue(this::rebuildFooter);
     }
 
     public void clearRefusal() {
@@ -243,7 +264,12 @@ public final class ItemStoragePanel extends HoloPanel {
             return;
         }
         socketRefusalNotice = null;
-        queue(() -> rebuildFooter(ItemStorageQuery.apply(storageRows, storageFilter)));
+        queue(this::rebuildFooter);
+    }
+
+    public void spotlight(Item item) {
+        spotlightItem = item;
+        queue(this::rebuildGrid);
     }
 
     public void setSelected(Item item, String hint) {
@@ -253,7 +279,7 @@ public final class ItemStoragePanel extends HoloPanel {
         if (item != null) {
             disassembly.leave();
         }
-        queue(() -> rebuildFooter(ItemStorageQuery.apply(storageRows, storageFilter)));
+        queue(this::rebuildFooter);
     }
 
     public void setTargetingSocket(boolean targeting) {
@@ -266,7 +292,7 @@ public final class ItemStoragePanel extends HoloPanel {
         if (targeting) {
             disassembly.leave();
         }
-        queue(() -> rebuildFooter(ItemStorageQuery.apply(storageRows, storageFilter)));
+        queue(this::rebuildFooter);
     }
 
     public void refresh(Function<Item, String> installedShipLookup) {
@@ -277,7 +303,7 @@ public final class ItemStoragePanel extends HoloPanel {
             }
             reloadRows();
             disassembly.forget(item -> SocketCustody.isInstalled(item) || !ItemStore.get().owned().contains(item));
-            rebuildTools();
+            rebuildFeedstock();
             rebuildGridKeepingScroll();
             if (craftingBenchPanel != null) {
                 craftingBenchPanel.refresh();
@@ -286,6 +312,10 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     public boolean escape() {
+        if (filterMenu.isOpen()) {
+            queue(this::closeFilterMenu);
+            return true;
+        }
         if (isConfirmOpen()) {
             queue(this::closeDisassemblyConfirm);
             return true;
@@ -329,7 +359,7 @@ public final class ItemStoragePanel extends HoloPanel {
             disassembly.leave();
         }
         reloadRows();
-        rebuildTools();
+        rebuildFeedstock();
         keepGridScroll = true;
         rebuildControls();
     }
@@ -388,20 +418,65 @@ public final class ItemStoragePanel extends HoloPanel {
             toggleCraftingBench();
         } else if (id == Control.DISASSEMBLY_MODE) {
             disassemblyModePressed();
+        } else if (id instanceof MenuButton button) {
+            menuButtonPressed(button.menu());
         } else if (id instanceof StatusChip chip) {
-            storageFilter.setStatus(chip.status());
-            rebuildControls();
+            storageFilter.toggleStatus(chip.status());
+            filtersChanged();
         } else if (id instanceof RarityChip chip) {
             storageFilter.toggleRarity(chip.rarity());
-            rebuildControls();
+            filtersChanged();
         } else if (id instanceof SortChip chip) {
-            storageFilter.pickSort(chip.sort());
+            storageFilter.setSort(chip.sort());
+            closeFilterMenu();
             rebuildControls();
         } else if (id instanceof TypeChip chip) {
             storageFilter.toggleSection(chip.sectionKind());
             reloadRows();
-            rebuildControls();
+            filtersChanged();
         }
+    }
+
+    private void menuButtonPressed(Menu menu) {
+        if (filterMenu.isOpen(menu)) {
+            closeFilterMenu();
+            return;
+        }
+        openFilterMenu(menu);
+    }
+
+    private void filtersChanged() {
+        Object openMenu = filterMenu.openMenuId();
+        rebuildControls();
+        if (openMenu instanceof Menu menu) {
+            openFilterMenu(menu);
+        }
+    }
+
+    private void openFilterMenu(Menu menu) {
+        List<Menu> menus = menus();
+        int menuIndex = menus.indexOf(menu);
+        if (menuIndex < 0 || isConfirmOpen()) {
+            return;
+        }
+        hideHoverTooltip();
+        int columns = menuColumns(menus.size());
+        float buttonWidth = menuButtonWidth(columns);
+        float buttonLeft = PAD + (menuIndex % columns) * (buttonWidth + GAP);
+        float buttonTop = controlsTop() + (menuIndex / columns) * (ChipFlow.CHIP_HEIGHT + GAP);
+        filterMenu.open(panelRoot, panelWidth, panelHeight, menu, new FilterMenu.Anchor(buttonLeft, buttonTop + ChipFlow.CHIP_HEIGHT + LINE_PAD, buttonWidth),
+                menuOptions(menu));
+        syncMenuButtons();
+        refreshOpacity();
+    }
+
+    private void closeFilterMenu() {
+        filterMenu.close();
+        syncMenuButtons();
+    }
+
+    private void syncMenuButtons() {
+        menuButtons.forEach((menu, button) -> button.setChecked(filterMenu.isOpen(menu)));
     }
 
     private void disassemblyModePressed() {
@@ -410,10 +485,10 @@ public final class ItemStoragePanel extends HoloPanel {
             if (selectedItem != null) {
                 storageListener.selected(null);
             }
-            rebuildFooter(ItemStorageQuery.apply(storageRows, storageFilter));
+            rebuildFooter();
         } else if (disassembly.nothingMarked()) {
             disassembly.leave();
-            rebuildFooter(ItemStorageQuery.apply(storageRows, storageFilter));
+            rebuildFooter();
         } else {
             openDisassemblyConfirm(disassembly.marked());
         }
@@ -430,7 +505,7 @@ public final class ItemStoragePanel extends HoloPanel {
         if (disassembly.active()) {
             queue(() -> {
                 disassembly.toggle(row.item());
-                rebuildFooter(ItemStorageQuery.apply(storageRows, storageFilter));
+                rebuildFooter();
             });
             return;
         }
@@ -469,6 +544,7 @@ public final class ItemStoragePanel extends HoloPanel {
         if (selectedItem != null) {
             storageListener.selected(null);
         }
+        closeFilterMenu();
         SkillTreeSounds.panelOpened();
         float benchLeft = panelLeft + panelWidth + CRAFTING_BENCH_GAP;
         float benchWidth = hostPanel.getPosition().getWidth() - benchLeft - CRAFTING_BENCH_EDGE_MARGIN;
@@ -476,6 +552,9 @@ public final class ItemStoragePanel extends HoloPanel {
                 new CraftingBenchPanel.Listener() {
                     @Override
                     public void changed(Item loaded) {
+                        if (loaded != null) {
+                            craftedItem = loaded;
+                        }
                         List<Item> owned = ItemStore.get().owned();
                         if (disassembly.pending().stream().anyMatch(item -> !owned.contains(item))) {
                             closeDisassemblyConfirm();
@@ -486,7 +565,7 @@ public final class ItemStoragePanel extends HoloPanel {
                         }
                         disassembly.forget(item -> !owned.contains(item));
                         reloadRows();
-                        rebuildTools();
+                        rebuildFeedstock();
                         rebuildGridKeepingScroll();
                     }
 
@@ -494,6 +573,11 @@ public final class ItemStoragePanel extends HoloPanel {
                     public void closed() {
                         fadingCraftingBenchPanel = craftingBenchPanel;
                         craftingBenchPanel = null;
+                        Item benchItem = craftedItem;
+                        craftedItem = null;
+                        if (benchItem != null && !isClosing()) {
+                            queue(() -> backFromBench(benchItem));
+                        }
                     }
 
                     @Override
@@ -517,7 +601,6 @@ public final class ItemStoragePanel extends HoloPanel {
     protected void build() {
         rebuildHeader();
         buildSearch();
-        rebuildTools();
         reloadRows();
         rebuildControls();
     }
@@ -526,6 +609,13 @@ public final class ItemStoragePanel extends HoloPanel {
     protected void rebuildHeader() {
         closeDisassemblyConfirm();
         headerElement = finishHeader(startHeader(titleKey,"ui.socketStorage.close", Control.CLOSE), headerElement);
+        rebuildFeedstock();
+    }
+
+    private void rebuildFeedstock() {
+        TooltipMakerAPI element = panelRoot.createUIElement(PARTS_ROOM, HEADER_HEIGHT, false);
+        addFeedstockCount(element, 0f);
+        feedstockElement = replaceElement(feedstockElement, element, PAD + innerWidth() - CLOSE_BUTTON_WIDTH - GAP - PARTS_ROOM, PAD);
         refreshOpacity();
     }
 
@@ -533,39 +623,31 @@ public final class ItemStoragePanel extends HoloPanel {
         return Global.getSettings().computeStringWidth(Translation.text("ui.socketStorage.craftingBench"), Fonts.ORBITRON_20AA) + BUTTON_TEXT_PADDING;
     }
 
-    private static float toolsWidth() {
-        return craftingBenchButtonWidth() + GAP + PARTS_ROOM;
-    }
-
-    private float searchRowTop() {
-        return PAD + HEADER_HEIGHT + GAP;
+    private void backFromBench(Item item) {
+        if (!ItemStore.get().owned().contains(item)) {
+            return;
+        }
+        spotlightItem = item;
+        rebuildGrid();
+        if (!SocketCustody.isInstalled(item) && !targetingSocket && !pickerMode) {
+            storageListener.selected(item);
+        }
     }
 
     private void buildSearch() {
-        float searchWidth = innerWidth() - toolsWidth() - GAP;
+        float searchWidth = innerWidth();
         TooltipMakerAPI element = panelRoot.createUIElement(searchWidth, FIELD_HEIGHT, false);
         VanillaText.plainPara(element, Translation.text("ui.socketStorage.search"), 0f, Misc.getGrayColor())
                 .getPosition().inTL(0f, LINE_PAD * 2f);
+        String searchTooltip = Translation.text("ui.socketStorage.search.tooltip");
+        element.addTooltipToPrevious(new GameTextTooltip(SEARCH_TOOLTIP_WIDTH, tooltip -> VanillaText.plainPara(tooltip, searchTooltip, 0f,
+                Misc.getTextColor())), TooltipMakerAPI.TooltipLocation.BELOW);
         searchField = element.addTextField(searchWidth - LABEL_WIDTH, FIELD_HEIGHT, Fonts.DEFAULT_SMALL, 0f);
         searchField.getPosition().inTL(LABEL_WIDTH, 0f);
         searchField.setText(storageFilter.query);
         typedQuery = storageFilter.query;
-        panelRoot.addUIElement(element).inTL(PAD, searchRowTop());
+        panelRoot.addUIElement(element).inTL(PAD, PAD + HEADER_HEIGHT + GAP);
         searchRowElement = element;
-    }
-
-    private void rebuildTools() {
-        TooltipMakerAPI element = panelRoot.createUIElement(toolsWidth(), FIELD_HEIGHT, false);
-        if (pickerMode) {
-            addFeedstockCount(element, 0f);
-        } else {
-            float craftingBenchWidth = craftingBenchButtonWidth();
-            element.addButton(Translation.text("ui.socketStorage.craftingBench"), Control.CRAFTING_BENCH, craftingBenchWidth, HEADER_BUTTON_HEIGHT, 0f)
-                    .getPosition().inTR(0f, (FIELD_HEIGHT - HEADER_BUTTON_HEIGHT) / 2f);
-            addFeedstockCount(element, craftingBenchWidth + GAP);
-        }
-        toolsElement = replaceElement(toolsElement, element, PAD + innerWidth() - toolsWidth(), searchRowTop());
-        refreshOpacity();
     }
 
     private void reloadRows() {
@@ -606,43 +688,90 @@ public final class ItemStoragePanel extends HoloPanel {
         return "ui.socketStorage.sort." + sort.name().toLowerCase(Locale.ROOT);
     }
 
-    private String sortLabel(ItemStorageFilter.Sort sort) {
-        boolean reversed = storageFilter.sort == sort && storageFilter.sortReversed;
-        return Translation.text(sortKey(sort) + (reversed ? ".reversed" : ""));
+    private static String statusLabel(ItemStorageFilter.Status status) {
+        return Translation.text("ui.socketStorage.status." + status.name().toLowerCase(Locale.ROOT));
+    }
+
+    private static String rarityLabel(ItemRarity rarity) {
+        return Translation.text("ui.socketStorage.rarity." + rarity.name().toLowerCase(Locale.ROOT));
+    }
+
+    private List<Menu> menus() {
+        List<Menu> shown = new ArrayList<>(List.of(Menu.STATUS, Menu.RARITY));
+        if (!chipTypes().isEmpty()) {
+            shown.add(Menu.TYPE);
+        }
+        shown.add(Menu.SORT);
+        return shown;
+    }
+
+    private int menuColumns(int menuCount) {
+        float oneRowWidth = menuCount * MIN_MENU_BUTTON_WIDTH + (menuCount - 1) * GAP;
+        return innerWidth() >= oneRowWidth ? menuCount : Math.min(menuCount, NARROW_MENU_COLUMNS);
+    }
+
+    private float menuButtonWidth(int columns) {
+        return (innerWidth() - (columns - 1) * GAP) / columns;
+    }
+
+    private float controlsTop() {
+        return PAD + HEADER_HEIGHT + GAP + FIELD_HEIGHT + GAP;
+    }
+
+    private List<FilterMenu.Option> menuOptions(Menu menu) {
+        return switch (menu) {
+            case STATUS -> Arrays.stream(ItemStorageFilter.Status.values()).map(status -> new FilterMenu.Option(statusLabel(status),
+                    new StatusChip(status), ChipFlow.Colors.player(), storageFilter.statuses.contains(status), null)).toList();
+            case RARITY -> Arrays.stream(ItemRarity.values()).map(rarity -> new FilterMenu.Option(rarityLabel(rarity), new RarityChip(rarity),
+                    ChipFlow.Colors.of(rarity.color()), storageFilter.rarities.contains(rarity), null)).toList();
+            case TYPE -> chipTypes().stream().map(sectionKind -> new FilterMenu.Option(sectionKind.displayName(), new TypeChip(sectionKind),
+                    ChipFlow.Colors.of(typeColor(sectionKind)), storageFilter.sectionKinds.contains(sectionKind), null)).toList();
+            case SORT -> Arrays.stream(ItemStorageFilter.Sort.values()).map(sort -> new FilterMenu.Option(Translation.text(sortKey(sort)),
+                    new SortChip(sort), ChipFlow.Colors.player(), storageFilter.sort == sort, Translation.text(sortKey(sort) + ".tooltip"))).toList();
+        };
+    }
+
+    private String menuButtonLabel(Menu menu, float buttonWidth) {
+        List<String> chosenLabels = switch (menu) {
+            case STATUS -> chosenLabels(Arrays.asList(ItemStorageFilter.Status.values()), storageFilter.statuses, ItemStoragePanel::statusLabel);
+            case RARITY -> chosenLabels(Arrays.asList(ItemRarity.values()), storageFilter.rarities, ItemStoragePanel::rarityLabel);
+            case TYPE -> chosenLabels(chipTypes(), storageFilter.sectionKinds, ItemKind::displayName);
+            case SORT -> List.of(Translation.text(sortKey(storageFilter.sort)));
+        };
+        String menuName = Translation.text("ui.socketStorage.menu." + menu.name().toLowerCase(Locale.ROOT));
+        String choice = chosenLabels.isEmpty() ? Translation.text("ui.socketStorage.menu.any")
+                : String.join(Translation.text("ui.socketStorage.menu.separator"), chosenLabels);
+        String label = Translation.msg("ui.socketStorage.menu.label").arg("menu", menuName).arg("choice", choice).text();
+        if (chosenLabels.size() > 1 && ChipFlow.width(label) > buttonWidth) {
+            String countChoice = Translation.msg("ui.socketStorage.menu.count").arg("count", chosenLabels.size()).text();
+            label = Translation.msg("ui.socketStorage.menu.label").arg("menu", menuName).arg("choice", countChoice).text();
+        }
+        return label;
+    }
+
+    private static <T> List<String> chosenLabels(List<T> options, Set<T> chosen, Function<T, String> labeller) {
+        List<T> picked = options.stream().filter(chosen::contains).toList();
+        return picked.size() == options.size() ? List.of() : picked.stream().map(labeller).toList();
     }
 
     private void rebuildControls() {
-        List<ItemKind> chipTypes = chipTypes();
-        List<String> sortLabels = Arrays.stream(ItemStorageFilter.Sort.values()).map(this::sortLabel).toList();
-        int sortRows = ChipFlow.rowsFor(sortLabels, innerWidth());
-        int typeRows = ChipFlow.rowsFor(chipTypes.stream().map(ItemKind::displayName).toList(), innerWidth());
-        int controlRows = FIXED_CONTROL_ROWS + sortRows + typeRows;
-        TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), ChipFlow.height(controlRows), false);
-        ChipFlow chips = new ChipFlow(element, innerWidth());
-        for (ItemStorageFilter.Status status : ItemStorageFilter.Status.values()) {
-            String label = Translation.text("ui.socketStorage.status." + status.name().toLowerCase(Locale.ROOT));
-            chips.placeInRow(label, new StatusChip(status), ChipFlow.Colors.player(), storageFilter.status == status);
+        List<Menu> menus = menus();
+        int columns = menuColumns(menus.size());
+        int rows = (menus.size() + columns - 1) / columns;
+        float buttonWidth = menuButtonWidth(columns);
+        TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), ChipFlow.height(rows), false);
+        ChipFlow.Colors colors = ChipFlow.Colors.player();
+        menuButtons.clear();
+        for (int index = 0; index < menus.size(); index++) {
+            Menu menu = menus.get(index);
+            ButtonAPI menuButton = element.addAreaCheckbox(menuButtonLabel(menu, buttonWidth), new MenuButton(menu), colors.base(), colors.dark(),
+                    colors.bright(), buttonWidth, ChipFlow.CHIP_HEIGHT, 0f);
+            menuButton.getPosition().inTL((index % columns) * (buttonWidth + GAP), (index / columns) * (ChipFlow.CHIP_HEIGHT + GAP));
+            menuButtons.put(menu, menuButton);
         }
-        chips.startRow(1);
-        for (ItemRarity rarity : ItemRarity.values()) {
-            String label = Translation.text("ui.socketStorage.rarity." + rarity.name().toLowerCase(Locale.ROOT));
-            chips.placeInRow(label, new RarityChip(rarity), ChipFlow.Colors.of(rarity.color()), storageFilter.rarities.contains(rarity));
-        }
-        chips.startRow(FIXED_CONTROL_ROWS);
-        for (ItemStorageFilter.Sort sort : ItemStorageFilter.Sort.values()) {
-            chips.place(sortLabel(sort), new SortChip(sort), ChipFlow.Colors.player(), storageFilter.sort == sort);
-            String tooltipText = Translation.text(sortKey(sort) + ".tooltip");
-            element.addTooltipToPrevious(new GameTextTooltip(SORT_TOOLTIP_WIDTH, tooltip -> VanillaText.plainPara(tooltip, tooltipText, 0f,
-                    Misc.getTextColor())), TooltipMakerAPI.TooltipLocation.BELOW);
-        }
-        chips.startRow(FIXED_CONTROL_ROWS + sortRows);
-        for (ItemKind sectionKind : chipTypes) {
-            chips.place(sectionKind.displayName(), new TypeChip(sectionKind), ChipFlow.Colors.of(typeColor(sectionKind)),
-                    storageFilter.sectionKinds.contains(sectionKind));
-        }
-        float controlsTop = PAD + HEADER_HEIGHT + GAP + FIELD_HEIGHT + GAP;
-        controlsElement = replaceElement(controlsElement, element, PAD, controlsTop);
-        gridTop = controlsTop + ChipFlow.rowsHeight(controlRows) + NOTICE_HEIGHT;
+        syncMenuButtons();
+        controlsElement = replaceElement(controlsElement, element, PAD, controlsTop());
+        gridTop = controlsTop() + ChipFlow.rowsHeight(rows) + NOTICE_HEIGHT;
         rebuildGrid();
     }
 
@@ -667,7 +796,7 @@ public final class ItemStoragePanel extends HoloPanel {
         float restoredScroll = keepGridScroll ? gridScrollOffset() : 0f;
         keepGridScroll = false;
         hideHoverTooltip();
-        List<ItemStorageRow> matching = ItemStorageQuery.apply(storageRows, storageFilter);
+        List<ItemStorageRow> matching = spotlightFirst(ItemStorageQuery.apply(storageRows, storageFilter));
         int columns = ItemGrid.columnsFor(panelWidth);
         float gridHeight = Math.max(ItemGrid.cellSize(innerWidth(), columns), panelHeight - PAD - FOOTER_HEIGHT - GAP - gridTop);
         TooltipMakerAPI element = ItemGrid.build(panelRoot, innerWidth(), gridHeight, columns, matching, this::cellFor, emptyText());
@@ -675,7 +804,19 @@ public final class ItemStoragePanel extends HoloPanel {
         if (restoredScroll > 0f && element.getExternalScroller() != null) {
             element.getExternalScroller().setYOffset(Math.min(restoredScroll, Math.max(0f, element.getHeightSoFar() - gridHeight)));
         }
-        rebuildFooter(matching);
+        rebuildFooter();
+    }
+
+    private List<ItemStorageRow> spotlightFirst(List<ItemStorageRow> matching) {
+        ItemStorageRow spotlightRow = storageRows.stream().filter(row -> row.item() == spotlightItem && !row.installed()).findFirst().orElse(null);
+        if (spotlightRow == null) {
+            spotlightItem = null;
+            return matching;
+        }
+        List<ItemStorageRow> ordered = new ArrayList<>(matching.size() + 1);
+        ordered.add(spotlightRow);
+        matching.stream().filter(row -> row != spotlightRow).forEach(ordered::add);
+        return ordered;
     }
 
     private String emptyText() {
@@ -686,8 +827,7 @@ public final class ItemStoragePanel extends HoloPanel {
                 : "ui.socketStorage.noMatches");
     }
 
-    private void rebuildFooter(List<ItemStorageRow> matching) {
-        int shownCount = matching.size();
+    private void rebuildFooter() {
         TooltipMakerAPI newNotice = panelRoot.createUIElement(innerWidth(), NOTICE_HEIGHT, false);
         if (disassembly.active()) {
             VanillaText.plainPara(newNotice, disassembly.hint(), 0f, Misc.getNegativeHighlightColor());
@@ -708,19 +848,21 @@ public final class ItemStoragePanel extends HoloPanel {
         }
         noticeElement = replaceElement(noticeElement, newNotice, PAD, gridTop - NOTICE_HEIGHT);
 
-        TooltipMakerAPI newSummary = panelRoot.createUIElement(innerWidth(), FOOTER_HEIGHT, false);
-        int installedCount = (int) storageRows.stream().filter(ItemStorageRow::installed).count();
-        VanillaText.plainPara(newSummary, Translation.msg("ui.socketStorage.summary")
-                .arg("shown", shownCount).arg("stored", storageRows.size()).arg("installed", installedCount).text(), 0f, Misc.getGrayColor())
-                .getPosition().inTL(0f, FEEDSTOCK_TEXT_TOP);
-        disassembly.addModeButton(newSummary, Control.DISASSEMBLY_MODE, FOOTER_HEIGHT, storageRows.stream().anyMatch(row -> !row.installed()));
-        summaryElement = replaceElement(summaryElement, newSummary, PAD, panelHeight - PAD - FOOTER_HEIGHT);
+        TooltipMakerAPI newFooter = panelRoot.createUIElement(innerWidth(), FOOTER_HEIGHT, false);
+        if (!pickerMode && !disassembly.active()) {
+            newFooter.addButton(Translation.text("ui.socketStorage.craftingBench"), Control.CRAFTING_BENCH, craftingBenchButtonWidth(), FOOTER_HEIGHT, 0f)
+                    .getPosition().inTL(0f, 0f);
+        }
+        disassembly.addModeButton(newFooter, Control.DISASSEMBLY_MODE, FOOTER_HEIGHT, storageRows.stream().anyMatch(row -> !row.installed()));
+        footerElement = replaceElement(footerElement, newFooter, PAD, panelHeight - PAD - FOOTER_HEIGHT);
+        filterMenu.raise();
     }
 
     private void openDisassemblyConfirm(List<Item> targets) {
         if (targets.isEmpty() || isConfirmOpen()) {
             return;
         }
+        closeFilterMenu();
         disassembly.confirming(targets);
         openConfirm(disassembly.confirmHeight(targets), element -> disassembly.writeConfirm(element, targets), "ui.socketStorage.confirm.disassemble",
                 Control.CONFIRM_DISASSEMBLE, "ui.socketStorage.confirm.cancel", Control.CANCEL_DISASSEMBLE);
@@ -823,7 +965,7 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private void showHoverTooltip(ItemStorageRow row, PositionAPI cellPosition) {
-        if (isConfirmOpen()) {
+        if (isConfirmOpen() || filterMenu.isOpen()) {
             return;
         }
         hoverTooltip.show(row, row.item(), expanded -> cellFooter(row, expanded), cellPosition);

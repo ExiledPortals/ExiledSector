@@ -9,7 +9,16 @@ import java.util.List;
 
 final class InputBlocker extends BaseCustomUIPanelPlugin {
 
+    private final Runnable pressHandler;
     private PositionAPI blockerPosition;
+
+    InputBlocker() {
+        this(() -> { });
+    }
+
+    InputBlocker(Runnable pressHandler) {
+        this.pressHandler = pressHandler;
+    }
 
     @Override
     public void positionChanged(PositionAPI blockerPosition) {
@@ -22,6 +31,9 @@ final class InputBlocker extends BaseCustomUIPanelPlugin {
             boolean escape = event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE;
             boolean press = (event.isMouseDownEvent() || event.isMouseScrollEvent()) && blockerPosition != null
                     && blockerPosition.containsEvent(event);
+            if (!event.isConsumed() && event.isMouseDownEvent() && press) {
+                pressHandler.run();
+            }
             if (!event.isConsumed() && (press || (event.isKeyboardEvent() && !escape))) {
                 event.consume();
             }

@@ -35,6 +35,7 @@ public final class CraftingBench {
     private boolean hullItemsOnly;
     private boolean drawer;
     private boolean closing;
+    private Item craftedItem;
 
     private CraftingBench(CustomPanelAPI hostPanel, Function<Item, String> installedShipLookup, Listener bayListener) {
         this.hostPanel = hostPanel;
@@ -100,6 +101,9 @@ public final class CraftingBench {
         return new CraftingBenchPanel.Listener() {
             @Override
             public void changed(Item loaded) {
+                if (loaded != null) {
+                    craftedItem = loaded;
+                }
                 if (picker != null) {
                     picker.changed(loaded);
                 }
@@ -231,6 +235,10 @@ public final class CraftingBench {
 
     public BenchMode mode() {
         return benchMode;
+    }
+
+    public Item craftedItem() {
+        return craftedItem;
     }
 
     public boolean escape() {
