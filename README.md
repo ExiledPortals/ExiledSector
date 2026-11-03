@@ -130,18 +130,32 @@ The loot turns up everywhere you'd expect it to: research stations, orbital labs
 
 ### Star charts
 
-Star Charts lead to systems no map shows, cut off from hyperspace and guarded by fleets that weren't expecting company. They come in 15 tiers of increasingly poor life choices and turn up on tough enemy fleets and inside other charts, so every run you survive hands you an excuse for a worse one.
+Star Charts lead to systems outside the sector, cut off from hyperspace and guarded by fleets that weren't expecting company. They come in 15 tiers of increasingly poor life choices and turn up on tough enemy fleets and inside other charts, so every run you survive hands you an excuse for a worse one.
 
 To open one you need a Wormhole Gateway, a colony structure for people who have run out of normal places to kill their crew. The gateway opens the Outer Reach Atlas, a map of the systems past the sector's edge, where you craft charts and pick the system each one opens. A chart can only reach a system joined to one you've already cleared.
+
+<details>
+<summary>Opening the Outer Reach Atlas</summary>
+
+<img src="graphics/description/atlas_open.gif" alt="Opening the Outer Reach Atlas">
+
+</details>
 
 Atlas systems belong to factions and biomes, and can carry any of 20 anomalies that change what's waiting inside. Atlas Catalysts, which only drop inside charts, add anomalies to a system or hand it to another faction. No colony? Switch on No Colony Requirement in LunaLib settings and the atlas opens from anywhere.
 
 Charts roll modifiers too, and the same nanoswarms work on them. Bigger fleets, nastier bosses, better rewards. You asked for this (I think? Maybe it was me that asked for this).
 
 <details>
-<summary>Building a Wormhole Gateway and crafting a Star Chart</summary>
+<summary>Inspecting an atlas system</summary>
 
-<img src="graphics/description/star_charts.gif" alt="Building a Wormhole Gateway and crafting a Star Chart">
+<img src="graphics/description/atlas_system.gif" alt="Inspecting an atlas system">
+
+</details>
+
+<details>
+<summary>Crafting a Star Chart</summary>
+
+<img src="graphics/description/atlas_chart_bench.gif" alt="Crafting a Star Chart">
 
 </details>
 
