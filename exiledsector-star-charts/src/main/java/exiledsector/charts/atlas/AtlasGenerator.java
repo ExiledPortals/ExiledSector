@@ -275,7 +275,7 @@ public final class AtlasGenerator {
         }
     }
 
-    private AtlasRegion regionOf(AtlasCell cell) {
+    AtlasRegion regionOf(AtlasCell cell) {
         if (cell.equals(AtlasCell.ORIGIN)) {
             return rules.normalRegion();
         }

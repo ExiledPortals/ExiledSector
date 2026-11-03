@@ -97,6 +97,7 @@ public class AtlasAnomalyCommand extends AtlasTargetCommand {
             case ALREADY_PRESENT -> "the system already has it";
             case FULL -> "the system already has " + AtlasAnomalies.MAX_PER_SYSTEM + " anomalies";
             case CONFLICT -> "it conflicts with an anomaly already there";
+            case NOT_IN_BIOME -> "that system's biome never holds it";
             case DOES_NOT_FIT -> "it can't exist at that system";
         };
     }

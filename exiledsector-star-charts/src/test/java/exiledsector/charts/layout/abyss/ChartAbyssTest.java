@@ -27,19 +27,32 @@ class ChartAbyssTest {
     }
 
     @Test
-    void satellitePhotospheresStayInsideTheReachAndApartFromEachOther() {
-        float reach = ChartAbyss.reach(8000f);
+    void satellitePhotospheresSitAColossalSpacingFromTheCentreAndFromEachOther() {
         for (long seed = 0; seed < 40; seed++) {
-            List<Vector2f> spots = ChartAbyss.satelliteSpots(ChartAbyss.MAX_SATELLITES, reach, new Random(seed));
+            List<Vector2f> spots = ChartAbyss.satelliteSpots(ChartAbyss.MAX_SATELLITES, new Random(seed));
+            float fogReach = ChartAbyss.fogReach(ChartAbyss.reach(0f), spots);
 
-            assertTrue(!spots.isEmpty(), "seed " + seed);
+            assertEquals(ChartAbyss.MAX_SATELLITES, spots.size(), "seed " + seed);
             for (int i = 0; i < spots.size(); i++) {
                 float distance = spots.get(i).length();
-                assertTrue(distance >= reach * ChartAbyss.SATELLITE_INNER_SHARE - 0.01f && distance <= reach + 0.01f, "seed " + seed);
+                assertTrue(distance >= ChartAbyss.SATELLITE_SPACING - 0.01f
+                        && distance <= ChartAbyss.SATELLITE_SPACING + ChartAbyss.SATELLITE_SPREAD + 0.01f, "seed " + seed);
+                assertTrue(fogReach >= distance + ChartAbyss.SATELLITE_CORE_RADIUS, "seed " + seed);
                 for (int j = i + 1; j < spots.size(); j++) {
                     assertTrue(Vector2f.sub(spots.get(i), spots.get(j), null).length() >= ChartAbyss.SATELLITE_SPACING, "seed " + seed);
                 }
             }
+        }
+    }
+
+    @Test
+    void lightsReachAsFarAsRandomAssortmentOfThingsColossalPhotospheres() {
+        for (long seed = 0; seed < 20; seed++) {
+            ChartAbyss.Light satellite = ChartAbyss.rollLight(new Vector2f(), ChartAbyss.SATELLITE_CORE_RADIUS, 0f, new Random(seed));
+            ChartAbyss.Light centre = ChartAbyss.rollLight(new Vector2f(), ChartAbyss.CENTRE_CORE_RADIUS, ChartAbyss.CENTRE_EXTRA_LIGHT, new Random(seed));
+
+            assertTrue(satellite.lightRadius() >= 600f + 41500f && satellite.lightRadius() <= 600f + 43000f, "seed " + seed);
+            assertTrue(centre.lightRadius() >= 1000f + 45500f && centre.lightRadius() <= 1000f + 47000f, "seed " + seed);
         }
     }
 

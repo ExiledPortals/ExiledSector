@@ -706,6 +706,7 @@
     "catalyst.refused.already_present": "该星系已经存在这种异象。",
     "catalyst.refused.full": "一个星系最多只能容纳9个异象。",
     "catalyst.refused.conflict": "这里的{other}无法与{anomaly}共存于同一星系。",
+    "catalyst.refused.not_in_biome": "{anomaly}从不在该星域中形成。",
     "catalyst.refused.does_not_fit": "{anomaly}无法在该星系中形成。",
     "catalyst.refused.special": "没有势力控制这个地点。",
     "catalyst.refused.infested": "该星系由{faction}控制，它不接受任何指令。",

@@ -3,6 +3,7 @@ package exiledsector.charts.atlas;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import exiledsector.charts.layout.ChartLayoutRecipe;
 import exiledsector.charts.ChartTables;
+import exiledsector.charts.anomaly.AsteroidStorm;
 import exiledsector.charts.anomaly.PowerfulBoss;
 import exiledsector.charts.layout.abyss.AbyssPalette;
 import org.json.JSONArray;
@@ -70,6 +71,8 @@ class AtlasDataTest {
         assertEquals(0f, AtlasData.rules().layoutWeights().get("abyssal_void"));
         assertEquals(0f, AtlasData.rules().layoutWeights().get("abyssal_depths"));
         assertEquals(4, AtlasData.recipeFor("abyssal_rift", "abyssal_depths").look().abyssPalettes().size());
+        assertEquals(0, AtlasData.recipeFor("abyssal_rift", "abyssal_depths").shape().maxOrbits());
+        assertEquals(0f, AtlasData.rules().region("abyssal_rift").anomalyWeight(AsteroidStorm.ANOMALY_ID));
         assertFalse(AtlasData.recipeFor("threat_expanse", "abyssal_void").look().abyssal());
         assertEquals(3, rules.specials().stream().filter(special -> special.placement() == AtlasSpecial.Placement.FIXED)
                 .mapToInt(AtlasSpecial::count).sum());
@@ -89,6 +92,18 @@ class AtlasDataTest {
         assertEquals(4f, reach.anomalyWeight("black_hole"));
         assertEquals(1f, reach.anomalyWeight("flares"));
         assertEquals(2, problems.size());
+    }
+
+    @Test
+    void theAnyAnomalyEntryWeighsEveryAnomalyTheRegionDoesNotList() throws Exception {
+        JSONArray rows = new JSONArray().put(new JSONObject().put("id", AtlasRegion.NORMAL))
+                .put(new JSONObject().put("id", "rift").put("anomaly_weights", "*:0; black_hole:2"));
+
+        assertEquals(List.of(), AtlasData.registerRegions(rows, Set.of()));
+        AtlasRegion rift = AtlasData.rules().region("rift");
+
+        assertEquals(2f, rift.anomalyWeight("black_hole"));
+        assertEquals(0f, rift.anomalyWeight("flares"));
     }
 
     @Test

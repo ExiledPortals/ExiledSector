@@ -8,7 +8,7 @@ import java.util.List;
 
 public final class AbyssArt {
 
-    static final String CORE = "graphics/fx/rat_center.png";
+    static final String CORE = "graphics/fx/rat_center_colossal.png";
     static final String HALO = "graphics/fx/rat_halo.png";
     static final String BAND = "graphics/fx/abyss_portal_textures_small.png";
     static final String VIGNETTE = "graphics/fx/rat_darkness_vignette.png";

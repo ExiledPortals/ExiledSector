@@ -731,6 +731,7 @@
     "catalyst.refused.already_present": "This system already holds that anomaly.",
     "catalyst.refused.full": "A system can hold at most 9 anomalies.",
     "catalyst.refused.conflict": "{other} here can't share the system with {anomaly}.",
+    "catalyst.refused.not_in_biome": "{anomaly} never forms in this biome.",
     "catalyst.refused.does_not_fit": "{anomaly} can't form in this system.",
     "catalyst.refused.special": "No faction holds this site.",
     "catalyst.refused.infested": "This system is held by {faction}, which takes no orders.",

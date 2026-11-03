@@ -123,6 +123,20 @@ class AtlasAnomaliesTest {
     }
 
     @Test
+    void insertingRefusesAnAnomalyTheBiomeWeighsAtZeroEvenWhenForcingAStar() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasRegion ownAnomaliesOnly = new AtlasRegion(AtlasRegion.NORMAL, 1f, 0, "", "", Map.of(), Map.of(),
+                Map.of(AtlasRegion.ANY_ANOMALY, 0f, AsteroidStorm.ANOMALY_ID, 1f));
+        AtlasGenerator generator = new AtlasGenerator(SEED, new AtlasRules(List.of(ownAnomaliesOnly), Map.of("compact", 1f), Map.of("pirates", 1f),
+                new AtlasAnomalyChance(0.3f, 0f, 0.3f), AtlasAnomalyChance.NEVER, List.of(), List.of()), AtlasUnlocks.NONE, state);
+        AtlasCell cell = system(generator, 0);
+
+        assertEquals(AtlasAnomalies.InsertCheck.NOT_IN_BIOME, AtlasAnomalies.canInsert(generator, state, cell, SpatialBreach.ANOMALY_ID, null));
+        assertEquals(AtlasAnomalies.InsertCheck.NOT_IN_BIOME, AtlasAnomalies.canInsert(generator, state, cell, "black_hole", null, true));
+        assertEquals(AtlasAnomalies.InsertCheck.ALLOWED, AtlasAnomalies.canInsert(generator, state, cell, AsteroidStorm.ANOMALY_ID, null));
+    }
+
+    @Test
     void insertingRefusesMissingModsConflictsAndSystemsTheAnomalyDoesNotFit() {
         ChartTables.useAnomalies(List.of(definition(SpatialBreach.ANOMALY_ID, true, Set.of(AsteroidStorm.ANOMALY_ID), ""), definition(AsteroidStorm.ANOMALY_ID, true, Set.of(), ""),
                 definition("black_hole", true, Set.of(), "a_mod_that_is_not_here")));

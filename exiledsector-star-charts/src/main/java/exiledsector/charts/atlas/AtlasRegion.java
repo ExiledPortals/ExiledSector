@@ -7,6 +7,7 @@ public record AtlasRegion(String id, float weight, int minSteps, String required
                           float density, Map<String, Float> neighbourWeights, float clouds, float walls) {
 
     public static final String NORMAL = "normal";
+    public static final String ANY_ANOMALY = "*";
     public static final int NO_MAX_STEPS = -1;
     public static final float MIN_SIZE = 0.5f;
     public static final float MAX_SIZE = 2f;
@@ -45,7 +46,7 @@ public record AtlasRegion(String id, float weight, int minSteps, String required
     }
 
     public float anomalyWeight(String markerId) {
-        return anomalyWeights.getOrDefault(markerId, 1f);
+        return anomalyWeights.getOrDefault(markerId, anomalyWeights.getOrDefault(ANY_ANOMALY, 1f));
     }
 
     public float weightAt(float distance) {

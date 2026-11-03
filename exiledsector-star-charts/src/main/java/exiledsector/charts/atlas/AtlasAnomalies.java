@@ -30,6 +30,7 @@ public final class AtlasAnomalies {
         ALREADY_PRESENT,
         FULL,
         CONFLICT,
+        NOT_IN_BIOME,
         DOES_NOT_FIT;
 
         public boolean allows() {
@@ -99,6 +100,9 @@ public final class AtlasAnomalies {
         InsertCheck system = systemCheck(generator, state, cell, openRunCell);
         if (!system.allows()) {
             return system;
+        }
+        if (generator.regionOf(cell).anomalyWeight(anomalyId) <= 0f) {
+            return InsertCheck.NOT_IN_BIOME;
         }
         List<String> present = effective(generator, state, cell);
         if (present.contains(anomalyId)) {

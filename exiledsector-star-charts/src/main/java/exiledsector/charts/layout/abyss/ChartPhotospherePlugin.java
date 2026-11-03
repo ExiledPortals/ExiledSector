@@ -19,10 +19,11 @@ public class ChartPhotospherePlugin extends BaseCustomEntityPlugin {
     static final float BAND_INNER_MULT = 0.3f;
     static final float BAND_OUTER_MULT = 1.3f;
     static final float BAND_ALPHA = 0.5f;
-    static final float INNER_HALO_SHARE = 0.05f;
+    static final float INNER_HALO_SHARE = 1f / 15f;
     static final float OUTER_HALO_SHARE = 0.5f;
-    static final float INNER_HALO_ALPHA = 0.3f;
+    static final float INNER_HALO_ALPHA = 0.39f;
     static final float OUTER_HALO_ALPHA = 0.22f;
+    static final float BAND_SPEED = 0.33f;
     static final float ANIMATION_WRAP_SECONDS = 3600f;
 
     public record Params(Color colour, float lightRadius) {
@@ -59,7 +60,7 @@ public class ChartPhotospherePlugin extends BaseCustomEntityPlugin {
 
     @Override
     public void advance(float amount) {
-        elapsedSeconds = (elapsedSeconds + amount) % ANIMATION_WRAP_SECONDS;
+        elapsedSeconds = (elapsedSeconds + amount * BAND_SPEED) % ANIMATION_WRAP_SECONDS;
     }
 
     @Override
@@ -84,7 +85,7 @@ public class ChartPhotospherePlugin extends BaseCustomEntityPlugin {
     private void renderCore(Vector2f at, float radius, float alphaMult, float viewMult) {
         SpriteAPI band = AbyssArt.texture(AbyssArt.BAND);
         if (band != null) {
-            AuroraBeltRenderer.render(band, new RadialBand(at, radius * BAND_INNER_MULT, radius * BAND_OUTER_MULT), colour, alphaMult * BAND_ALPHA,
+            AuroraBeltRenderer.renderShaded(band, new RadialBand(at, radius * BAND_INNER_MULT, radius * BAND_OUTER_MULT), colour, alphaMult * BAND_ALPHA,
                     elapsedSeconds, viewMult > 0f ? 1f / viewMult : 1f);
         }
         SpriteDraw.drawAtCenter(AbyssArt.sprite(AbyssArt.CORE), at.x, at.y, radius * CORE_SIZE_MULT, radius * CORE_SIZE_MULT, colour, alphaMult, 0f);
