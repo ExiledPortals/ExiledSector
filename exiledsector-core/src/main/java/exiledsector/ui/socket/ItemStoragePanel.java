@@ -59,7 +59,7 @@ public final class ItemStoragePanel extends HoloPanel {
     private static final float MIN_MENU_BUTTON_WIDTH = 150f;
     private static final int NARROW_MENU_COLUMNS = 2;
     private static final float LABEL_WIDTH = 70f;
-    private static final float NOTICE_HEIGHT = 56f;
+    private static final float NOTICE_HEIGHT = 38f;
     private static final float FOOTER_HEIGHT = 24f;
     private static final int COMPACT_COLUMNS = 5;
     private static final int TREE_COLUMNS = 6;
@@ -72,7 +72,7 @@ public final class ItemStoragePanel extends HoloPanel {
     private static final float SEARCH_DELAY_SECONDS = 0.25f;
     private static final ItemCell.Look CELL_LOOK = new ItemCell.Look(7f, true, 1f);
 
-    private enum Control {CLOSE, CRAFTING_BENCH, DISASSEMBLY_MODE, CONFIRM_DISASSEMBLE, CANCEL_DISASSEMBLE}
+    private enum Control {CLOSE, CRAFTING_BENCH, DISASSEMBLY_MODE, CONFIRM_DISASSEMBLE, CANCEL_DISASSEMBLE, RESET_FILTERS}
 
     private enum Menu {STATUS, RARITY, TYPE, SORT}
 
@@ -104,6 +104,7 @@ public final class ItemStoragePanel extends HoloPanel {
     private UIComponentAPI searchRowElement;
     private UIComponentAPI feedstockElement;
     private UIComponentAPI controlsElement;
+    private ButtonAPI resetFiltersButton;
     private TooltipMakerAPI gridElement;
     private boolean keepGridScroll;
     private UIComponentAPI noticeElement;
@@ -418,6 +419,8 @@ public final class ItemStoragePanel extends HoloPanel {
             toggleCraftingBench();
         } else if (id == Control.DISASSEMBLY_MODE) {
             disassemblyModePressed();
+        } else if (id == Control.RESET_FILTERS) {
+            resetFilters();
         } else if (id instanceof MenuButton button) {
             menuButtonPressed(button.menu());
         } else if (id instanceof StatusChip chip) {
@@ -445,6 +448,18 @@ public final class ItemStoragePanel extends HoloPanel {
         openFilterMenu(menu);
     }
 
+    private void resetFilters() {
+        closeFilterMenu();
+        storageFilter.reset();
+        if (searchField != null) {
+            searchField.setText("");
+        }
+        typedQuery = "";
+        searchDelay = 0f;
+        reloadRows();
+        rebuildControls();
+    }
+
     private void filtersChanged() {
         Object openMenu = filterMenu.openMenuId();
         rebuildControls();
@@ -460,7 +475,7 @@ public final class ItemStoragePanel extends HoloPanel {
             return;
         }
         hideHoverTooltip();
-        int columns = menuColumns(menus.size());
+        int columns = controlColumns(menus);
         float buttonWidth = menuButtonWidth(columns);
         float buttonLeft = PAD + (menuIndex % columns) * (buttonWidth + GAP);
         float buttonTop = controlsTop() + (menuIndex / columns) * (ChipFlow.CHIP_HEIGHT + GAP);
@@ -705,9 +720,10 @@ public final class ItemStoragePanel extends HoloPanel {
         return shown;
     }
 
-    private int menuColumns(int menuCount) {
-        float oneRowWidth = menuCount * MIN_MENU_BUTTON_WIDTH + (menuCount - 1) * GAP;
-        return innerWidth() >= oneRowWidth ? menuCount : Math.min(menuCount, NARROW_MENU_COLUMNS);
+    private int controlColumns(List<Menu> menus) {
+        int slotCount = menus.size() + 1;
+        float oneRowWidth = slotCount * MIN_MENU_BUTTON_WIDTH + (slotCount - 1) * GAP;
+        return innerWidth() >= oneRowWidth ? slotCount : Math.min(slotCount, NARROW_MENU_COLUMNS);
     }
 
     private float menuButtonWidth(int columns) {
@@ -756,8 +772,8 @@ public final class ItemStoragePanel extends HoloPanel {
 
     private void rebuildControls() {
         List<Menu> menus = menus();
-        int columns = menuColumns(menus.size());
-        int rows = (menus.size() + columns - 1) / columns;
+        int columns = controlColumns(menus);
+        int rows = (menus.size() + columns) / columns;
         float buttonWidth = menuButtonWidth(columns);
         TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), ChipFlow.height(rows), false);
         ChipFlow.Colors colors = ChipFlow.Colors.player();
@@ -769,6 +785,9 @@ public final class ItemStoragePanel extends HoloPanel {
             menuButton.getPosition().inTL((index % columns) * (buttonWidth + GAP), (index / columns) * (ChipFlow.CHIP_HEIGHT + GAP));
             menuButtons.put(menu, menuButton);
         }
+        resetFiltersButton = element.addAreaCheckbox(Translation.text("ui.socketStorage.resetFilters"), Control.RESET_FILTERS, colors.base(),
+                colors.dark(), colors.bright(), buttonWidth, ChipFlow.CHIP_HEIGHT, 0f);
+        resetFiltersButton.getPosition().inTL((columns - 1) * (buttonWidth + GAP), (rows - 1) * (ChipFlow.CHIP_HEIGHT + GAP));
         syncMenuButtons();
         controlsElement = replaceElement(controlsElement, element, PAD, controlsTop());
         gridTop = controlsTop() + ChipFlow.rowsHeight(rows) + NOTICE_HEIGHT;
@@ -796,6 +815,9 @@ public final class ItemStoragePanel extends HoloPanel {
         float restoredScroll = keepGridScroll ? gridScrollOffset() : 0f;
         keepGridScroll = false;
         hideHoverTooltip();
+        if (resetFiltersButton != null) {
+            resetFiltersButton.setEnabled(!storageFilter.isDefault());
+        }
         List<ItemStorageRow> matching = spotlightFirst(ItemStorageQuery.apply(storageRows, storageFilter));
         int columns = ItemGrid.columnsFor(panelWidth);
         float gridHeight = Math.max(ItemGrid.cellSize(innerWidth(), columns), panelHeight - PAD - FOOTER_HEIGHT - GAP - gridTop);

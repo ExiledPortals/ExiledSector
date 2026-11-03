@@ -10,7 +10,7 @@ public final class ItemStorageFilter {
 
     public enum Status {FREE, INSTALLED}
 
-    public enum Sort {NEWEST, OLDEST, RAREST, MOST_COMMON, HIGHEST_VALUE, LOWEST_VALUE}
+    public enum Sort {NEWEST, OLDEST, RAREST}
 
     static final ItemStorageFilter SESSION = new ItemStorageFilter();
 
@@ -38,6 +38,19 @@ public final class ItemStorageFilter {
 
     void setQuery(String value) {
         query = value == null ? "" : value;
+    }
+
+    boolean isDefault() {
+        return statuses.equals(EnumSet.of(Status.FREE)) && query.isBlank() && sort == Sort.NEWEST && rarities.isEmpty() && sectionKinds.isEmpty();
+    }
+
+    void reset() {
+        statuses.clear();
+        statuses.add(Status.FREE);
+        query = "";
+        sort = Sort.NEWEST;
+        rarities.clear();
+        sectionKinds.clear();
     }
 
     private static <T> void toggle(Set<T> chosen, T value) {

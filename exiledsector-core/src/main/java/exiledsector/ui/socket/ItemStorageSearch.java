@@ -30,11 +30,6 @@ final class ItemStorageSearch {
         boolean matches(List<String> searchLines) {
             return searchLines.stream().anyMatch(this::matchesLine);
         }
-
-        OptionalDouble value(List<String> searchLines) {
-            return searchLines.stream().filter(this::matchesLine).map(ItemStorageSearch::firstNumber)
-                    .filter(OptionalDouble::isPresent).mapToDouble(OptionalDouble::getAsDouble).max();
-        }
     }
 
     private final List<Term> terms;
@@ -78,16 +73,8 @@ final class ItemStorageSearch {
         return words.isEmpty() && minimumValue == null ? null : new Term(words, minimumValue);
     }
 
-    int termCount() {
-        return terms.size();
-    }
-
     boolean matches(List<String> searchLines) {
         return terms.stream().allMatch(term -> term.matches(searchLines));
-    }
-
-    List<OptionalDouble> termValues(List<String> searchLines) {
-        return terms.stream().map(term -> term.value(searchLines)).toList();
     }
 
     static OptionalDouble firstNumber(String searchLine) {

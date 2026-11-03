@@ -9,6 +9,8 @@ import java.util.Locale;
 import java.util.OptionalDouble;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ItemStorageQueryTest {
 
@@ -106,13 +108,10 @@ class ItemStorageQueryTest {
     }
 
     @Test
-    void rarityOrdersPutTheRarestOrTheMostCommonFirst() {
+    void rarestOrderPutsTheRarestFirst() {
         ItemStorageFilter filter = everything();
         filter.setSort(ItemStorageFilter.Sort.RAREST);
         assertEquals(names(List.of(CORE, CONSUMER, MILITARY)), shown(filter));
-
-        filter.setSort(ItemStorageFilter.Sort.MOST_COMMON);
-        assertEquals(names(List.of(MILITARY, CONSUMER, CORE)), shown(filter));
     }
 
     @Test
@@ -123,23 +122,17 @@ class ItemStorageQueryTest {
     }
 
     @Test
-    void valueOrderRanksByTheMatchedLineAndPutsItemsWithoutOneLast() {
-        ItemStorageFilter filter = everything();
-        filter.setSort(ItemStorageFilter.Sort.HIGHEST_VALUE);
-        filter.setQuery("damage");
-        assertEquals(names(List.of(MILITARY, CONSUMER)), shown(filter));
+    void resetRestoresTheUntouchedFilter() {
+        ItemStorageFilter filter = new ItemStorageFilter();
+        filter.toggleStatus(ItemStorageFilter.Status.INSTALLED);
+        filter.toggleRarity(ItemRarity.RARE);
+        filter.setSort(ItemStorageFilter.Sort.OLDEST);
+        filter.setQuery("speed");
+        assertFalse(filter.isDefault());
 
-        filter.setQuery("shield upkeep");
-        assertEquals(names(List.of(MILITARY, CORE)), shown(filter));
-
-        filter.setSort(ItemStorageFilter.Sort.LOWEST_VALUE);
+        filter.reset();
+        assertTrue(filter.isDefault());
         assertEquals(names(List.of(CORE, MILITARY)), shown(filter));
-
-        filter.setQuery("");
-        assertEquals(names(List.of(CORE, CONSUMER, MILITARY)), shown(filter));
-
-        filter.setQuery("subroutine");
-        assertEquals(names(List.of(CONSUMER, MILITARY)), shown(filter));
     }
 
     private static final ItemStorageRow HARDENED = row(10, "Hardened Shield Emitter", ItemRarity.RARE, null,
@@ -150,34 +143,25 @@ class ItemStorageQueryTest {
             "5% less damage taken by shields.", "Increases flux dissipation by 9%.");
     private static final List<ItemStorageRow> EMITTERS = List.of(HARDENED, DISPERSION, BULWARK);
 
-    private static List<String> shownEmitters(String query, ItemStorageFilter.Sort sort) {
+    private static List<String> shownEmitters(String query) {
         ItemStorageFilter filter = everything();
         filter.setQuery(query);
-        filter.setSort(sort);
         return names(ItemStorageQuery.apply(EMITTERS, filter));
     }
 
     @Test
     void quotedWordsMatchOnlyAsOnePhrase() {
-        assertEquals(names(List.of(BULWARK, DISPERSION, HARDENED)), shownEmitters("less damage", ItemStorageFilter.Sort.NEWEST));
-        assertEquals(names(List.of(BULWARK, HARDENED)), shownEmitters("\"less damage\"", ItemStorageFilter.Sort.NEWEST));
-        assertEquals(names(List.of(BULWARK, HARDENED)), shownEmitters("\"less  damage", ItemStorageFilter.Sort.NEWEST));
-        assertEquals(names(List.of(BULWARK, HARDENED)), shownEmitters("“less damage”", ItemStorageFilter.Sort.NEWEST));
+        assertEquals(names(List.of(BULWARK, DISPERSION, HARDENED)), shownEmitters("less damage"));
+        assertEquals(names(List.of(BULWARK, HARDENED)), shownEmitters("\"less damage\""));
+        assertEquals(names(List.of(BULWARK, HARDENED)), shownEmitters("\"less  damage"));
+        assertEquals(names(List.of(BULWARK, HARDENED)), shownEmitters("“less damage”"));
     }
 
     @Test
     void commaSeparatedTermsMustEachMatchSomeLine() {
-        assertEquals(names(List.of(BULWARK, HARDENED)), shownEmitters("\"less damage\", dissipation", ItemStorageFilter.Sort.NEWEST));
-        assertEquals(names(List.of(DISPERSION)), shownEmitters("energy，dissipation 10+", ItemStorageFilter.Sort.NEWEST));
-        assertEquals(List.of(), shownEmitters("\"less damage\", speed", ItemStorageFilter.Sort.NEWEST));
-    }
-
-    @Test
-    void severalTermsRankByEachValueMeasuredAgainstTheBestShown() {
-        assertEquals(names(List.of(HARDENED, BULWARK)), shownEmitters("\"less damage\"", ItemStorageFilter.Sort.HIGHEST_VALUE));
-        assertEquals(names(List.of(BULWARK, HARDENED)), shownEmitters("\"less damage\", dissipation", ItemStorageFilter.Sort.HIGHEST_VALUE));
-        assertEquals(names(List.of(HARDENED, BULWARK)), shownEmitters("\"less damage\", dissipation", ItemStorageFilter.Sort.LOWEST_VALUE));
-        assertEquals(names(List.of(DISPERSION, BULWARK, HARDENED)), shownEmitters("damage, dissipation", ItemStorageFilter.Sort.HIGHEST_VALUE));
+        assertEquals(names(List.of(BULWARK, HARDENED)), shownEmitters("\"less damage\", dissipation"));
+        assertEquals(names(List.of(DISPERSION)), shownEmitters("energy，dissipation 10+"));
+        assertEquals(List.of(), shownEmitters("\"less damage\", speed"));
     }
 
     @Test
