@@ -8,10 +8,10 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
 
     public static final float FLEET_SIZE_BASE_POINTS = 50f;
     public static final float PERCENT = 100f;
-    static final float FALLBACK_FIRST_TIER_FLEET_SIZE = 100f;
-    static final float FALLBACK_FLEET_SIZE_PER_TIER = 32f;
-    static final float FALLBACK_FIRST_TIER_BOSS_SIZE = 180f;
-    static final float FALLBACK_BOSS_SIZE_PER_TIER = 65f;
+    static final float FALLBACK_FIRST_TIER_FLEET_SIZE = 200f;
+    static final float FALLBACK_FLEET_SIZE_PER_TIER = 64f;
+    static final float FALLBACK_FIRST_TIER_BOSS_SIZE = 360f;
+    static final float FALLBACK_BOSS_SIZE_PER_TIER = 130f;
     static final float FALLBACK_POI_BUDGET_PER_TIER = 3f;
     static final float FALLBACK_FIRST_TIER_POI_BUDGET = 6f;
     static final float FALLBACK_CACHE_SHARE = 0.35f;
