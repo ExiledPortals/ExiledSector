@@ -24,11 +24,13 @@ import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.ui.stats.ShipStatSheet.Breakdown;
 import exiledsector.ui.stats.ShipStatSheet.Cell;
+import exiledsector.ui.stats.ShipStatSheet.Combine;
 import exiledsector.ui.stats.ShipStatSheet.Detail;
 import exiledsector.ui.stats.ShipStatSheet.EffectRow;
 import exiledsector.ui.stats.ShipStatSheet.Grid;
 import exiledsector.ui.stats.ShipStatSheet.GridRow;
 import exiledsector.ui.stats.ShipStatSheet.Section;
+import exiledsector.ui.stats.ShipStatSheet.SourceGroup;
 import exiledsector.ui.stats.ShipStatSheet.SourceLine;
 import exiledsector.ui.stats.ShipStatSheet.Trend;
 import exiledsector.ui.stats.ShipStatSheet.ValueRow;
@@ -260,30 +262,111 @@ public final class ShipStatSheets {
 
     private Breakdown breakdown(String title, StatReading reading, Shape shape) {
         String summary = shape == Shape.CHANGE ? null : Translation.msg("ui.stats.breakdown.base").arg("value", baseText(reading, shape)).text();
-        List<SourceLine> lines = new ArrayList<>();
+        boolean points = shape == Shape.POINTS;
+        Map<Combine, List<SourceLine>> linesByCombine = new EnumMap<>(Combine.class);
+        Map<Integer, List<StatReading.Modifier>> scaledPercents = new LinkedHashMap<>();
         Set<String> nodeIds = new LinkedHashSet<>();
         Set<String> notes = new LinkedHashSet<>();
+        float addedTotal = 0f;
+        float increasedTotal = 0f;
         for (StatReading.Modifier modifier : reading.modifiers()) {
-            String amount = modifierAmount(modifier, shape == Shape.POINTS);
-            ResolvedTree.AppliedModifier applied = sources.applied(modifier.modId());
-            if (applied == null) {
-                lines.add(new SourceLine(StatSources.outsideSourceName(modifier.modId(), modifier.desc()), amount, false));
+            if (modifier.kind() == StatReading.Kind.PERCENT && modifier.pool() > 0) {
+                scaledPercents.computeIfAbsent(modifier.pool(), pool -> new ArrayList<>()).add(modifier);
                 continue;
             }
-            if (applied.effect() != null) {
-                coveredEffects.add(applied.effect());
-                if (applied.reductionCap()) {
-                    coveredEffects.addAll(capContributors(applied.effect()));
-                    notes.add(cappedNote());
-                }
-                if (diminished(applied.effect())) {
-                    notes.add(Translation.text("ui.stats.note.diminished"));
+            if (modifier.kind() == StatReading.Kind.FLAT) {
+                addedTotal += modifier.value();
+            } else if (modifier.kind() == StatReading.Kind.PERCENT) {
+                increasedTotal += modifier.value();
+            }
+            linesByCombine.computeIfAbsent(combine(modifier.kind()), combine -> new ArrayList<>())
+                    .add(sourceLine(modifier, modifierAmount(modifier, points), nodeIds, notes));
+        }
+        scaledPercents.values().forEach(modifiers -> linesByCombine.computeIfAbsent(Combine.MORE, combine -> new ArrayList<>())
+                .add(scaledPercentLine(modifiers, nodeIds, notes)));
+        List<SourceGroup> groups = new ArrayList<>();
+        for (Map.Entry<Combine, List<SourceLine>> entry : linesByCombine.entrySet()) {
+            List<SourceLine> lines = entry.getValue();
+            String total = lines.size() < 2 ? null : switch (entry.getKey()) {
+                case INCREASED -> StatFormat.increased(increasedTotal);
+                case ADDED -> points ? StatFormat.signedPercent(addedTotal * 100f) : StatFormat.signedNumber(addedTotal);
+                default -> null;
+            };
+            groups.add(new SourceGroup(entry.getKey(), List.copyOf(lines), total));
+        }
+        String result = groups.isEmpty() ? null : resultText(reading, shape);
+        return new Breakdown(title, summary, List.copyOf(groups), result, List.copyOf(notes), Set.copyOf(nodeIds));
+    }
+
+    private SourceLine sourceLine(StatReading.Modifier modifier, String amount, Set<String> nodeIds, Set<String> notes) {
+        ResolvedTree.AppliedModifier applied = sources.applied(modifier.modId());
+        if (applied == null) {
+            return new SourceLine(StatSources.outsideSourceName(modifier.modId(), modifier.desc()), amount, false);
+        }
+        if (applied.effect() != null) {
+            coveredEffects.add(applied.effect());
+            if (applied.reductionCap()) {
+                coveredEffects.addAll(capContributors(applied.effect()));
+                notes.add(cappedNote());
+            }
+            if (diminished(applied.effect())) {
+                notes.add(Translation.text("ui.stats.note.diminished"));
+            }
+        }
+        nodeIds.addAll(StatSources.nodeIds(applied.sources()));
+        return new SourceLine(sourceNames(applied.sources()), amount, true, pooledParts(applied, modifier));
+    }
+
+    private List<SourceLine> pooledParts(ResolvedTree.AppliedModifier applied, StatReading.Modifier modifier) {
+        if (modifier.kind() != StatReading.Kind.MULT || applied.reductionCap() || applied.effect() == null || applied.sources().size() < 2) {
+            return List.of();
+        }
+        Map<String, Float> magnitudesBySource = new LinkedHashMap<>();
+        float totalMagnitude = 0f;
+        for (EffectContribution contribution : applied.sources()) {
+            for (SkillTypeEffect effect : contribution.effects()) {
+                if (effect.effect() == applied.effect()) {
+                    magnitudesBySource.merge(sources.originName(contribution.origin()), effect.magnitude(), Float::sum);
+                    totalMagnitude += effect.magnitude();
                 }
             }
-            lines.add(new SourceLine(sourceNames(applied.sources()), amount, true));
-            nodeIds.addAll(StatSources.nodeIds(applied.sources()));
         }
-        return new Breakdown(title, summary, List.copyOf(lines), List.copyOf(notes), Set.copyOf(nodeIds));
+        if (magnitudesBySource.size() < 2 || totalMagnitude == 0f) {
+            return List.of();
+        }
+        float appliedPercent = (modifier.value() - 1f) * 100f;
+        float scale = appliedPercent / totalMagnitude;
+        List<SourceLine> parts = new ArrayList<>();
+        magnitudesBySource.forEach((source, magnitude) -> parts.add(new SourceLine(source, StatFormat.percent(magnitude * scale), true)));
+        return List.copyOf(parts);
+    }
+
+    private SourceLine scaledPercentLine(List<StatReading.Modifier> modifiers, Set<String> nodeIds, Set<String> notes) {
+        if (modifiers.size() == 1) {
+            StatReading.Modifier modifier = modifiers.get(0);
+            return sourceLine(modifier, StatFormat.multiplier(1f + modifier.value() / 100f), nodeIds, notes);
+        }
+        float totalPercent = 0f;
+        Set<String> names = new LinkedHashSet<>();
+        boolean fromTree = false;
+        List<SourceLine> parts = new ArrayList<>();
+        for (StatReading.Modifier modifier : modifiers) {
+            SourceLine part = sourceLine(modifier, StatFormat.percent(modifier.value()), nodeIds, notes);
+            totalPercent += modifier.value();
+            names.add(part.source());
+            fromTree |= part.fromTree();
+            parts.add(part);
+        }
+        return new SourceLine(String.join(Translation.text("ui.stats.sourceSeparator"), names), StatFormat.multiplier(1f + totalPercent / 100f),
+                fromTree, List.copyOf(parts));
+    }
+
+    private static Combine combine(StatReading.Kind kind) {
+        return switch (kind) {
+            case FLAT -> Combine.ADDED;
+            case PERCENT -> Combine.INCREASED;
+            case MULT -> Combine.MORE;
+        };
     }
 
     private Set<SkillEffect> capContributors(SkillEffect cappedEffect) {
@@ -352,8 +435,6 @@ public final class ShipStatSheets {
                 nodeIds.addAll(StatSources.nodeIds(contribution.origin()));
             }
         }
-        List<SourceLine> lines = new ArrayList<>();
-        amountsBySource.forEach((source, amount) -> lines.add(new SourceLine(source, effectAmount(line.effect(), amount), true)));
         List<String> notes = new ArrayList<>();
         boolean permanent = line.gate() == null && line.temporarySeconds() == null;
         if (permanent && diminished(line.effect())) {
@@ -362,7 +443,38 @@ public final class ShipStatSheets {
         if (permanent && capped(line.effect())) {
             notes.add(cappedNote());
         }
-        return new Breakdown(line.line().plain(), null, List.copyOf(lines), List.copyOf(notes), Set.copyOf(nodeIds));
+        List<SourceGroup> groups = amountsBySource.isEmpty() ? List.of() : List.of(effectGroup(line, amountsBySource));
+        return new Breakdown(line.line().plain(), null, groups, null, List.copyOf(notes), Set.copyOf(nodeIds));
+    }
+
+    private static SourceGroup effectGroup(SkillTreeBonusSummary.EffectLine line, Map<String, Float> amountsBySource) {
+        SkillEffect effect = line.effect();
+        Combine combine = effectCombine(effect);
+        float totalAmount = 0f;
+        for (float amount : amountsBySource.values()) {
+            totalAmount += amount;
+        }
+        if (combine == Combine.MORE && line.temporarySeconds() == null && amountsBySource.size() > 1) {
+            List<SourceLine> parts = new ArrayList<>();
+            amountsBySource.forEach((source, amount) -> parts.add(new SourceLine(source, StatFormat.percent(amount), true)));
+            String names = String.join(Translation.text("ui.stats.sourceSeparator"), amountsBySource.keySet());
+            return new SourceGroup(combine, List.of(new SourceLine(names, effectAmount(effect, totalAmount), true, List.copyOf(parts))), null);
+        }
+        List<SourceLine> lines = new ArrayList<>();
+        amountsBySource.forEach((source, amount) -> lines.add(new SourceLine(source, effectAmount(effect, amount), true)));
+        boolean summed = combine == Combine.INCREASED || combine == Combine.ADDED;
+        return new SourceGroup(combine, List.copyOf(lines), summed && lines.size() > 1 ? effectAmount(effect, totalAmount) : null);
+    }
+
+    private static Combine effectCombine(SkillEffect effect) {
+        if (effect.isMultiplicative()) {
+            return Combine.MORE;
+        }
+        StatMode mode = effect.statMode();
+        if (mode == StatMode.PERCENT) {
+            return Combine.INCREASED;
+        }
+        return mode == StatMode.FLAT ? Combine.ADDED : Combine.OTHER;
     }
 
     private static boolean matches(SkillEffect lineEffect, SkillEffect contributed) {
@@ -384,22 +496,24 @@ public final class ShipStatSheets {
     }
 
     private static String effectAmount(SkillEffect effect, float amount) {
-        StatMode mode = effect.statMode();
-        if (mode == StatMode.PERCENT) {
-            return StatFormat.signedPercent(amount);
-        }
-        if (mode == StatMode.MULT) {
-            return StatFormat.multiplier(1f + amount / 100f);
-        }
-        return StatFormat.signedNumber(amount);
+        return switch (effectCombine(effect)) {
+            case INCREASED -> StatFormat.increased(amount);
+            case MORE -> StatFormat.multiplier(1f + amount / 100f);
+            case ADDED, OTHER -> StatFormat.signedNumber(amount);
+        };
     }
 
     private static String modifierAmount(StatReading.Modifier modifier, boolean points) {
         return switch (modifier.kind()) {
             case FLAT -> points ? StatFormat.signedPercent(modifier.value() * 100f) : StatFormat.signedNumber(modifier.value());
-            case PERCENT -> StatFormat.signedPercent(modifier.value());
+            case PERCENT -> StatFormat.increased(modifier.value());
             case MULT -> StatFormat.multiplier(modifier.value());
         };
+    }
+
+    private static String resultText(StatReading reading, Shape shape) {
+        String key = shape == Shape.CHANGE ? "ui.stats.breakdown.netChange" : "ui.stats.breakdown.final";
+        return Translation.msg(key).arg("value", valueText(reading, shape)).text();
     }
 
     private static String valueText(StatReading reading, Shape shape) {

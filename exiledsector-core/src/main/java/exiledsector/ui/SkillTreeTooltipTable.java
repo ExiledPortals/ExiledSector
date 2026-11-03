@@ -7,6 +7,7 @@ import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public final class SkillTreeTooltipTable {
@@ -32,23 +33,48 @@ public final class SkillTreeTooltipTable {
     }
 
     public static SkillTreeTooltipTable measure(LazyFont font, TooltipTable table) {
-        int columnCount = table.headers().size();
+        return build(table, contentWidths(font, table));
+    }
+
+    public static List<SkillTreeTooltipTable> measureAligned(LazyFont font, List<TooltipTable> tables) {
+        float[] sharedWidths = new float[0];
+        for (TooltipTable table : tables) {
+            float[] widths = contentWidths(font, table);
+            if (widths.length > sharedWidths.length) {
+                sharedWidths = Arrays.copyOf(sharedWidths, widths.length);
+            }
+            for (int i = 0; i < widths.length; i++) {
+                sharedWidths[i] = Math.max(sharedWidths[i], widths[i]);
+            }
+        }
+        List<SkillTreeTooltipTable> measured = new ArrayList<>();
+        for (TooltipTable table : tables) {
+            measured.add(build(table, Arrays.copyOf(sharedWidths, table.columnCount())));
+        }
+        return measured;
+    }
+
+    private static float[] contentWidths(LazyFont font, TooltipTable table) {
+        int columnCount = table.columnCount();
         float[] measuredWidths = new float[columnCount];
         for (int i = 0; i < columnCount; i++) {
-            measuredWidths[i] = font.calcWidth(table.headers().get(i), FONT_SIZE);
+            measuredWidths[i] = table.headers().isEmpty() ? 0f : font.calcWidth(table.headers().get(i), FONT_SIZE);
             for (TooltipTable.Row row : table.rows()) {
                 measuredWidths[i] = Math.max(measuredWidths[i], font.calcWidth(row.cells().get(i), FONT_SIZE));
             }
             measuredWidths[i] += CELL_PADDING * 2f;
         }
+        return measuredWidths;
+    }
 
+    private static SkillTreeTooltipTable build(TooltipTable table, float[] columnWidths) {
         SkillTreeTooltipTable measured = new SkillTreeTooltipTable(
-                centered(table.heading(), HEADING_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR), measuredWidths);
+                centered(table.heading(), HEADING_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR), columnWidths);
         for (String header : table.headers()) {
             measured.headerCells.add(centered(header, FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR));
         }
         for (TooltipTable.Row row : table.rows()) {
-            Color color = row.highlighted() ? Misc.getHighlightColor() : Misc.getGrayColor();
+            Color color = color(row.tone());
             List<TextLabel> cells = new ArrayList<>();
             for (String cell : row.cells()) {
                 cells.add(centered(cell, FONT_SIZE, color));
@@ -58,11 +84,24 @@ public final class SkillTreeTooltipTable {
         return measured;
     }
 
+    private static Color color(TooltipTable.Tone tone) {
+        return switch (tone) {
+            case PLAIN -> Misc.getGrayColor();
+            case HIGHLIGHTED -> Misc.getHighlightColor();
+            case TOTAL -> SkillTreePanelStyle.TOOLTIP_TITLE_COLOR;
+            case DETAIL -> Misc.getDarkHighlightColor();
+        };
+    }
+
     private static TextLabel centered(String text, float size, Color color) {
         return new TextLabel(size, color, LazyFont.TextAnchor.TOP_CENTER).set(text);
     }
 
     public float width() {
+        return Math.max(columnsWidth(), headingText.width() + CELL_PADDING * 2f);
+    }
+
+    private float columnsWidth() {
         float totalWidth = 0f;
         for (float width : columnWidths) {
             totalWidth += width;
@@ -71,7 +110,11 @@ public final class SkillTreeTooltipTable {
     }
 
     public float height() {
-        return HEADING_HEIGHT + HEADING_GAP + ROW_HEIGHT * (1 + bodyRows.size());
+        return HEADING_HEIGHT + HEADING_GAP + ROW_HEIGHT * rowCount();
+    }
+
+    private int rowCount() {
+        return (headerCells.isEmpty() ? 0 : 1) + bodyRows.size();
     }
 
     public void draw(float x, float topY, float tableWidth, Color accent, float alphaMult) {
@@ -80,13 +123,18 @@ public final class SkillTreeTooltipTable {
 
         float[] stretchedWidths = stretched(tableWidth);
         float tableTop = topY - HEADING_HEIGHT - HEADING_GAP;
-        float tableHeight = ROW_HEIGHT * (1 + bodyRows.size());
-        GLDraw.fillQuad(x, tableTop - ROW_HEIGHT, tableWidth, ROW_HEIGHT, accent, HEADER_FILL_ALPHA * alphaMult);
+        float tableHeight = ROW_HEIGHT * rowCount();
         GLDraw.strokeQuad(x, tableTop - tableHeight, tableWidth, tableHeight, accent, BORDER_THICKNESS, alphaMult);
 
-        drawRow(headerCells, x, tableTop, stretchedWidths, alphaMult);
-        for (int i = 0; i < bodyRows.size(); i++) {
-            drawRow(bodyRows.get(i), x, tableTop - ROW_HEIGHT * (i + 1), stretchedWidths, alphaMult);
+        float rowTop = tableTop;
+        if (!headerCells.isEmpty()) {
+            GLDraw.fillQuad(x, tableTop - ROW_HEIGHT, tableWidth, ROW_HEIGHT, accent, HEADER_FILL_ALPHA * alphaMult);
+            drawRow(headerCells, x, rowTop, stretchedWidths, alphaMult);
+            rowTop -= ROW_HEIGHT;
+        }
+        for (List<TextLabel> bodyRow : bodyRows) {
+            drawRow(bodyRow, x, rowTop, stretchedWidths, alphaMult);
+            rowTop -= ROW_HEIGHT;
         }
     }
 
@@ -100,7 +148,7 @@ public final class SkillTreeTooltipTable {
     }
 
     private float[] stretched(float tableWidth) {
-        float extra = Math.max(0f, tableWidth - width()) / columnWidths.length;
+        float extra = Math.max(0f, tableWidth - columnsWidth()) / columnWidths.length;
         float[] stretchedWidths = new float[columnWidths.length];
         for (int i = 0; i < columnWidths.length; i++) {
             stretchedWidths[i] = columnWidths[i] + extra;

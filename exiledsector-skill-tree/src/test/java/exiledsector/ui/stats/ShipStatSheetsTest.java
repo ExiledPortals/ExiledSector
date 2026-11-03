@@ -19,8 +19,10 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.ui.stats.ShipStatSheet.Combine;
 import exiledsector.ui.stats.ShipStatSheet.Detail;
 import exiledsector.ui.stats.ShipStatSheet.Section;
+import exiledsector.ui.stats.ShipStatSheet.SourceGroup;
 import exiledsector.ui.stats.ShipStatSheet.SourceLine;
 import exiledsector.ui.stats.ShipStatSheet.Trend;
 import exiledsector.ui.stats.ShipStatSheet.ValueRow;
@@ -96,8 +98,70 @@ class ShipStatSheetsTest {
         assertEquals("1200", maxFlux.value());
         assertEquals("+20%", maxFlux.change());
         assertEquals(Trend.BETTER, maxFlux.trend());
-        assertEquals(List.of(new SourceLine("Capacitor Banks", "+20%", true)), maxFlux.breakdown().sources());
+        assertEquals(List.of(new SourceLine("Capacitor Banks", "20% increased", true)), maxFlux.breakdown().sources());
         assertTrue(maxFlux.breakdown().nodeIds().contains("capacitors_1"));
+    }
+
+    @Test
+    void sourcesAreGroupedInTheOrderTheEngineCombinesThem() {
+        MutableStat fluxCapacity = stats.getFluxCapacity();
+        fluxCapacity.modifyMult("overload", 1.1f, "Overload");
+        fluxCapacity.modifyFlat("capacitors", 100f, "Capacitors");
+        fluxCapacity.modifyPercent("lattice", 20f, "Lattice");
+        fluxCapacity.modifyPercent("strain", -5f, "Strain");
+
+        ShipStatSheet.Breakdown breakdown = row(build(null, Detail.STANDARD), StatGroup.FLUX, "Max Flux").breakdown();
+
+        assertEquals(List.of(Combine.INCREASED, Combine.ADDED, Combine.MORE), breakdown.groups().stream().map(SourceGroup::combine).toList());
+        SourceGroup increased = breakdown.groups().get(0);
+        assertEquals(List.of(new SourceLine("Lattice", "20% increased", false), new SourceLine("Strain", "5% reduced", false)), increased.lines());
+        assertEquals("15% increased", increased.total());
+        assertNull(breakdown.groups().get(1).total());
+        assertEquals(List.of(new SourceLine("Overload", "10% more", false)), breakdown.groups().get(2).lines());
+        assertEquals("Final value: 1375", breakdown.result());
+    }
+
+    @Test
+    void theTreesPooledMultiplierListsEachNodesShare() {
+        SkillNode cells = new SkillNode("cells_1", new SkillType.Builder("cells", "Overcharged Cells", "a.png", SkillTier.SMALL)
+                .effects(List.of(new SkillTypeEffect(FluxSkillEffect.FLUX_CAPACITY_MULT, 10f))).build(), List.of("root_1"), 0f, 0f);
+        SkillNode lattice = new SkillNode("lattice_1", new SkillType.Builder("lattice", "Hardened Lattice", "a.png", SkillTier.SMALL)
+                .effects(List.of(new SkillTypeEffect(FluxSkillEffect.FLUX_CAPACITY_MULT, 5f))).build(), List.of("root_1"), 0f, 0f);
+        SkillTree.register(cells);
+        SkillTree.register(lattice);
+        ShipTrees.allocate(data, cells, 0);
+        ShipTrees.allocate(data, lattice, 0);
+
+        ValueRow maxFlux = row(sheetWithTree(Detail.STANDARD), StatGroup.FLUX, "Max Flux");
+
+        SourceGroup more = maxFlux.breakdown().groups().stream().filter(group -> group.combine() == Combine.MORE).findFirst().orElseThrow();
+        assertEquals(1, more.lines().size());
+        assertEquals("15% more", more.lines().get(0).amount());
+        assertEquals(List.of(new SourceLine("Overcharged Cells", "10%", true), new SourceLine("Hardened Lattice", "5%", true)),
+                more.lines().get(0).parts());
+        assertEquals("1380", maxFlux.value());
+    }
+
+    @Test
+    void percentsOnASecondScaledStatMultiplyTheFirstStatsPercents() {
+        MutableStat absorption = new MutableStat(1f);
+        MutableStat damageTaken = new MutableStat(1f);
+        absorption.modifyPercent("absorb", -10f, "Absorb");
+        damageTaken.modifyPercent("harden", -20f, "Harden");
+        damageTaken.modifyPercent("brace", -10f, "Brace");
+        when(stats.getShieldAbsorptionMult()).thenReturn(absorption);
+        when(stats.getShieldDamageTakenMult()).thenReturn(damageTaken);
+        when(hullSpec.getShieldType()).thenReturn(ShieldAPI.ShieldType.FRONT);
+        when(hullSpec.getShieldSpec()).thenReturn(mock(ShipHullSpecAPI.ShieldSpecAPI.class));
+        when(hullSpec.getBaseShieldFluxPerDamageAbsorbed()).thenReturn(1f);
+
+        ShipStatSheet.Breakdown breakdown = row(build(null, Detail.STANDARD), StatGroup.SHIELDS, "Shield Flux/Damage").breakdown();
+
+        assertEquals(List.of(Combine.INCREASED, Combine.MORE), breakdown.groups().stream().map(SourceGroup::combine).toList());
+        assertEquals(List.of(new SourceLine("Absorb", "10% reduced", false)), breakdown.groups().get(0).lines());
+        SourceLine pooled = breakdown.groups().get(1).lines().get(0);
+        assertEquals("30% less", pooled.amount());
+        assertEquals(List.of(new SourceLine("Brace", "-10%", false), new SourceLine("Harden", "-20%", false)), pooled.parts());
     }
 
     @Test

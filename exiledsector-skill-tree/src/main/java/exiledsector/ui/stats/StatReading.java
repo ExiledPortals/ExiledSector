@@ -18,25 +18,30 @@ record StatReading(float base, float value, float flat, float factor, List<Modif
         MULT
     }
 
-    record Modifier(String modId, Kind kind, float value, String desc) {
+    record Modifier(String modId, Kind kind, float value, String desc, int pool) {
     }
 
     static StatReading of(MutableStat stat) {
+        return of(stat, 0);
+    }
+
+    private static StatReading of(MutableStat stat, int pool) {
         return new StatReading(stat.getBaseValue(), stat.getModifiedValue(), stat.getFlatMod(), (1f + stat.getPercentMod() / 100f) * stat.getMult(),
-                modifiers(stat.getFlatMods(), stat.getPercentMods(), stat.getMultMods()));
+                modifiers(stat.getFlatMods(), stat.getPercentMods(), stat.getMultMods(), pool));
     }
 
     static StatReading of(StatBonus bonus, float base) {
         return new StatReading(base, bonus.computeEffective(base), bonus.getFlatBonus(), bonus.getBonusMult(),
-                modifiers(bonus.getFlatBonuses(), bonus.getPercentBonuses(), bonus.getMultBonuses()));
+                modifiers(bonus.getFlatBonuses(), bonus.getPercentBonuses(), bonus.getMultBonuses(), 0));
     }
 
     static StatReading scaled(float base, List<MutableStat> factors) {
         float factor = 1f;
         List<Modifier> modifiers = new ArrayList<>();
-        for (MutableStat stat : factors) {
+        for (int pool = 0; pool < factors.size(); pool++) {
+            MutableStat stat = factors.get(pool);
             factor *= stat.getBaseValue() == 0f ? 1f : stat.getModifiedValue() / stat.getBaseValue();
-            modifiers.addAll(of(stat).modifiers());
+            modifiers.addAll(of(stat, pool).modifiers());
         }
         return new StatReading(base, base * factor, 0f, factor, List.copyOf(modifiers));
     }
@@ -46,22 +51,22 @@ record StatReading(float base, float value, float flat, float factor, List<Modif
     }
 
     private static List<Modifier> modifiers(Map<String, MutableStat.StatMod> flatMods, Map<String, MutableStat.StatMod> percentMods,
-                                            Map<String, MutableStat.StatMod> multMods) {
+                                            Map<String, MutableStat.StatMod> multMods, int pool) {
         List<Modifier> modifiers = new ArrayList<>();
-        add(modifiers, Kind.FLAT, flatMods, 0f);
-        add(modifiers, Kind.PERCENT, percentMods, 0f);
-        add(modifiers, Kind.MULT, multMods, 1f);
+        add(modifiers, Kind.FLAT, flatMods, 0f, pool);
+        add(modifiers, Kind.PERCENT, percentMods, 0f, pool);
+        add(modifiers, Kind.MULT, multMods, 1f, pool);
         return List.copyOf(modifiers);
     }
 
-    private static void add(List<Modifier> modifiers, Kind kind, Map<String, MutableStat.StatMod> mods, float neutralValue) {
+    private static void add(List<Modifier> modifiers, Kind kind, Map<String, MutableStat.StatMod> mods, float neutralValue, int pool) {
         if (mods == null) {
             return;
         }
         List<Modifier> added = new ArrayList<>();
         mods.forEach((modId, mod) -> {
             if (mod != null && Math.abs(mod.getValue() - neutralValue) > EPSILON) {
-                added.add(new Modifier(modId, kind, mod.getValue(), mod.getDesc()));
+                added.add(new Modifier(modId, kind, mod.getValue(), mod.getDesc(), pool));
             }
         });
         added.sort(Comparator.comparing(Modifier::modId));

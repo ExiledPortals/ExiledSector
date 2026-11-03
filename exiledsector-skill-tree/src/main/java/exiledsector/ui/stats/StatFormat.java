@@ -42,6 +42,10 @@ final class StatFormat {
         return signedNumber(percent) + "%";
     }
 
+    static String increased(float percent) {
+        return Translation.msg(percent >= 0f ? "ui.stats.amount.increased" : "ui.stats.amount.reduced").arg("value", number(Math.abs(percent))).text();
+    }
+
     static String multiplier(float mult) {
         float percent = Math.abs(mult - 1f) * 100f;
         return Translation.msg(mult >= 1f ? "ui.stats.amount.more" : "ui.stats.amount.less").arg("value", number(percent)).text();
