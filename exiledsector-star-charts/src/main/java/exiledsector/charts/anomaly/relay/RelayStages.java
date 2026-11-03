@@ -35,11 +35,6 @@ public final class RelayStages {
         return null;
     }
 
-    public static int rolledStages(AtlasState state, AtlasCell cell) {
-        int spread = RelayRules.MAX_STAGES - RelayRules.MIN_STAGES + 1;
-        return RelayRules.MIN_STAGES + Math.min(spread - 1, (int) (AtlasAnomalies.roll(state, cell, RelayNetwork.ANOMALY_ID) * spread));
-    }
-
     public static AtlasAnomalyRecord.Chain stageAt(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
         if (!AtlasAnomalies.effective(generator, state, cell).contains(RelayNetwork.ANOMALY_ID)) {
             return null;
@@ -47,11 +42,19 @@ public final class RelayStages {
         return chainAt(generator, state, cell, recordAt(state, cell));
     }
 
+    public static AtlasAnomalyRecord.Chain liveStage(SectorAPI sector, ChartRun run) {
+        AtlasRunNode node = run == null ? null : run.atlasNode();
+        if (node == null || sector == null) {
+            return null;
+        }
+        return stageAt(AtlasRuntime.generator(sector), AtlasState.get(sector), AtlasCell.unpack(node.cell()));
+    }
+
     private static AtlasAnomalyRecord.Chain chainAt(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasAnomalyRecord record) {
         if (record != null && record.chain() != null) {
             return record.chain();
         }
-        return new AtlasAnomalyRecord.Chain(1, rolledStages(state, cell) + atlasExtraStages(generator, state, cell), null);
+        return new AtlasAnomalyRecord.Chain(1, RelayRules.STAGES + atlasExtraStages(generator, state, cell), null);
     }
 
     static int atlasExtraStages(AtlasGenerator generator, AtlasState state, AtlasCell cell) {

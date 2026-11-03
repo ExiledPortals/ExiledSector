@@ -2,6 +2,7 @@ package exiledsector.charts.anomaly;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.atlas.AtlasAnomalies;
+import exiledsector.charts.atlas.AtlasAnomalyRecord;
 import exiledsector.charts.atlas.AtlasCatalystUse;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
@@ -41,6 +42,10 @@ public interface AtlasRule extends ChartAnomaly {
 
     default List<AtlasLine> atlasLines(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
         return List.of();
+    }
+
+    default AtlasAnomalyRecord.Chain chainAt(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        return null;
     }
 
     default List<String> confirmLines(AtlasGenerator generator, AtlasState state, AtlasCell cell) {

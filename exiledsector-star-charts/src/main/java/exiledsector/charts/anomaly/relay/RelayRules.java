@@ -21,10 +21,9 @@ public final class RelayRules {
     static final int SUPPLIES_PER_TIER = 4;
     static final int MACHINERY_BASE = 5;
     static final int MACHINERY_PER_TIER = 2;
-    public static final int MIN_ONWARD_LANES = 2;
-    public static final int MAX_ONWARD_LANES = 3;
-    public static final int MIN_STAGES = 3;
-    public static final int MAX_STAGES = 4;
+    public static final int MIN_ONWARD_LANES = 1;
+    public static final int MAX_ONWARD_LANES = 2;
+    public static final int STAGES = 3;
 
     public record Cost(int supplies, int machinery) {
     }

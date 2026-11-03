@@ -1,5 +1,6 @@
 package exiledsector.charts.anomaly.relay;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
@@ -12,6 +13,7 @@ import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.AtlasRule;
+import exiledsector.charts.atlas.AtlasAnomalyRecord;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasLine;
@@ -63,12 +65,17 @@ public final class RelayNetwork implements ContentPlacer, RunParticipant, LootSh
 
     @Override
     public String intelText(AnomalyRun run) {
-        return intelLine();
+        return RelayText.status(run.run(), RelayStages.liveStage(Global.getSector(), run.run()));
     }
 
     @Override
     public List<AtlasLine> atlasLines(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
         return RelayStages.lines(generator, state, cell);
+    }
+
+    @Override
+    public AtlasAnomalyRecord.Chain chainAt(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        return RelayStages.stageAt(generator, state, cell);
     }
 
     @Override

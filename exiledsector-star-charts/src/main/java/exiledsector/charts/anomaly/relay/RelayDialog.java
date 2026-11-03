@@ -1,5 +1,6 @@
 package exiledsector.charts.anomaly.relay;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
@@ -13,6 +14,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyDialog;
+import exiledsector.charts.atlas.AtlasAnomalyRecord;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.ui.VanillaText;
@@ -29,8 +31,12 @@ public class RelayDialog extends AnomalyDialog {
         relay = dialog().getInteractionTarget();
         kind = RelayKind.of(relay);
         showEntityVisual(relay);
+        ChartRun run = ChartRuns.liveOwning(relay);
         if (kind != null) {
             VanillaText.plainPara(text(), Translation.gameText("chart.anomaly.relay_network." + kind.key() + ".description"));
+        }
+        if (kind != null && run != null) {
+            VanillaText.plainPara(text(), Translation.gameText(RelayText.trailKey(RelayStages.liveStage(Global.getSector(), run))));
         }
         showState();
     }
@@ -43,8 +49,11 @@ public class RelayDialog extends AnomalyDialog {
         if (run == null || kind == null) {
             VanillaText.plainPara(text, Translation.gameText("chart.anomaly.relay_network.stale"));
         } else if (RelayStates.isWoken(run, kind)) {
+            AtlasAnomalyRecord.Chain stage = RelayStages.liveStage(Global.getSector(), run);
             VanillaText.plainPara(text, Translation.gameText("chart.anomaly.relay_network.awake"));
+            VanillaText.plainPara(text, Translation.gameText(RelayText.logKey(kind, stage)));
             VanillaText.addPara(text, wokenEffect(kind), Misc.getTextColor());
+            VanillaText.plainPara(text, RelayText.status(run, stage));
         } else {
             showDormant(run, text, options);
         }

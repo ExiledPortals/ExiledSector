@@ -279,6 +279,25 @@ class AtlasAnomaliesTest {
         assertNull(AtlasAnomalies.onward(generator, state, from, SpatialBreach.ANOMALY_ID, 2, 3));
     }
 
+    @Test
+    void anOnwardTargetIsTheNearestQualifyingSystemSoAnAdjacentOneWinsOverOneFurtherOut() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = generator(state);
+        AtlasCell from = generator.lanes(AtlasCell.ORIGIN).get(0);
+        state.add(from, AtlasState.COMPLETED);
+
+        AtlasCell adjacent = AtlasAnomalies.onward(generator, state, from, SpatialBreach.ANOMALY_ID, 1, 2);
+
+        assertNotNull(adjacent);
+        assertTrue(generator.lanes(from).contains(adjacent));
+        for (AtlasCell neighbour : generator.lanes(from)) {
+            AtlasAnomalies.insert(generator, state, neighbour, SpatialBreach.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null);
+        }
+        AtlasCell further = AtlasAnomalies.onward(generator, state, from, SpatialBreach.ANOMALY_ID, 1, 2);
+        assertNotNull(further);
+        assertEquals(2, lanesThroughUncompleted(generator, state, from, further));
+    }
+
     private static int lanesThroughUncompleted(AtlasGenerator generator, AtlasState state, AtlasCell from, AtlasCell target) {
         Map<AtlasCell, Integer> lanesAway = new HashMap<>(Map.of(from, 0));
         ArrayDeque<AtlasCell> frontier = new ArrayDeque<>(List.of(from));

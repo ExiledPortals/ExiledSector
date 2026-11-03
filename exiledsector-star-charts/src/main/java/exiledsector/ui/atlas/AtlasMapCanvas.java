@@ -2,7 +2,9 @@ package exiledsector.ui.atlas;
 
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.skilleffect.render.SpriteCache;
+import exiledsector.charts.anomaly.AtlasRule;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.layout.sketch.ChartSketchPalette;
 import exiledsector.charts.layout.sketch.ChartSystemSketch;
 import exiledsector.charts.layout.sketch.ChartSystemSketcher;
@@ -72,10 +74,21 @@ final class AtlasMapCanvas {
     static final float TARGET_REFUSED_ALPHA = 0.35f;
     static final int LOOK_STATES = 4;
 
-    record AnomalyIcon(AtlasCell cell, String anomalyId, String iconPath, int slot, boolean fogged) {
+    static final float PING_START_SHARE = 1.1f;
+    static final float PING_REACH_PER_STAGE = 0.45f;
+    static final float PING_SECONDS = 2.4f;
+    static final float PING_SPEEDUP_PER_STAGE = 0.25f;
+    static final float PING_ALPHA = 0.9f;
+    static final int MAX_PINGS = 4;
+    static final float PING_CULL_SHARE = PING_START_SHARE + PING_REACH_PER_STAGE * (MAX_PINGS + 1);
+    static final float FINAL_HALO_SHARE = 1.35f;
+    static final float FINAL_HALO_SPEED = 2.5f;
+    static final Color FINAL_STAGE_COLOUR = new Color(255, 200, 90);
+
+    record AnomalyIcon(AtlasCell cell, String anomalyId, String iconPath, int slot, boolean fogged, AtlasAnomalyRecord.Chain chain) {
 
         AnomalyIcon(AtlasCell cell, String anomalyId, String iconPath, int slot) {
-            this(cell, anomalyId, iconPath, slot, false);
+            this(cell, anomalyId, iconPath, slot, false, null);
         }
     }
 
@@ -144,8 +157,9 @@ final class AtlasMapCanvas {
                         AtlasData.recipeFor(node.regionId(), node.layoutId()), anomalyIds, palette);
                 sketches.put(cell, AtlasSystemPreview.Prepared.of(nodeKey(cell), sketch, anomalyIds));
                 for (int slot = 0; slot < anomalyIds.size(); slot++) {
-                    ChartAnomalies.Definition definition = ChartAnomalies.definition(anomalyIds.get(slot));
-                    anomalyIcons.add(new AnomalyIcon(cell, anomalyIds.get(slot), definition == null ? "" : definition.icon(), slot));
+                    String anomalyId = anomalyIds.get(slot);
+                    ChartAnomalies.Definition definition = ChartAnomalies.definition(anomalyId);
+                    anomalyIcons.add(new AnomalyIcon(cell, anomalyId, definition == null ? "" : definition.icon(), slot, false, chainAt(cell, anomalyId)));
                 }
             }
         }
@@ -176,9 +190,14 @@ final class AtlasMapCanvas {
             if (!visible.contains(record.cell())) {
                 nodes.computeIfAbsent(record.cell(), generator::node);
                 ChartAnomalies.Definition definition = ChartAnomalies.definition(record.anomalyId());
-                anomalyIcons.add(new AnomalyIcon(record.cell(), record.anomalyId(), definition == null ? "" : definition.icon(), 0, true));
+                anomalyIcons.add(new AnomalyIcon(record.cell(), record.anomalyId(), definition == null ? "" : definition.icon(), 0, true, chain));
             }
         }
+    }
+
+    private AtlasAnomalyRecord.Chain chainAt(AtlasCell cell, String anomalyId) {
+        ChartAnomaly anomaly = ChartAnomalies.byId(anomalyId);
+        return anomaly == null || state.isCompleted(cell) ? null : AtlasRule.of(anomaly).chainAt(generator, state, cell);
     }
 
     List<Trace> traces() {
@@ -536,7 +555,7 @@ final class AtlasMapCanvas {
             float radius = anomalyIconRadius(footprint, scale);
             float x = anomalyX(view, icon, footprint, scale);
             float y = anomalyY(view, icon, footprint, scale);
-            if (openness <= 0f || !view.isVisible(x, y, radius * 2f)) {
+            if (openness <= 0f || !view.isVisible(x, y, radius * PING_CULL_SHARE)) {
                 continue;
             }
             float alpha = openness * alphaMult;
@@ -544,8 +563,33 @@ final class AtlasMapCanvas {
                 SpriteDraw.drawAtCenter(spriteCache, icon.iconPath(), x, y, radius * 2f, radius * 2f, Color.WHITE, alpha);
             }
             beams.ring(x, y, NodeBeams.huggingRingRadius(radius, ringWidthScale), null, ringLook, alpha, ringWidthScale);
+            if (icon.chain() != null) {
+                addChainPings(icon.chain(), x, y, radius, alpha, ringWidthScale);
+            }
         }
         beams.flush();
+    }
+
+    private void addChainPings(AtlasAnomalyRecord.Chain chain, float x, float y, float radius, float alpha, float ringWidthScale) {
+        BeamStroke.Look look = beams.lit(chain.isLast() ? FINAL_STAGE_COLOUR : TRACE_COLOUR);
+        int pings = Math.min(MAX_PINGS, chain.stage());
+        float startRadius = radius * PING_START_SHARE;
+        float endRadius = radius * (PING_START_SHARE + PING_REACH_PER_STAGE * (pings + 1));
+        float seconds = PING_SECONDS / (1f + PING_SPEEDUP_PER_STAGE * (pings - 1));
+        for (int ping = 0; ping < pings; ping++) {
+            float progress = pingProgress(ringArt.elapsedSeconds(), seconds, ping, pings);
+            float fade = (1f - progress) * (1f - progress);
+            beams.ring(x, y, lerp(startRadius, endRadius, progress), null, look, PING_ALPHA * fade * alpha, ringWidthScale);
+        }
+        if (chain.isLast()) {
+            float breath = (float) Math.sin(ringArt.elapsedSeconds() * FINAL_HALO_SPEED) * 0.5f + 0.5f;
+            beams.ring(x, y, radius * FINAL_HALO_SHARE, null, look, (0.4f + 0.6f * breath) * alpha, ringWidthScale);
+        }
+    }
+
+    static float pingProgress(float elapsedSeconds, float seconds, int ping, int pings) {
+        float phase = elapsedSeconds / seconds + ping / (float) pings;
+        return phase - (float) Math.floor(phase);
     }
 
     private NodeRingArt.NotableLook notableLook(boolean lit, boolean open, Color tint, Color accent) {

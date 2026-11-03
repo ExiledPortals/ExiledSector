@@ -87,6 +87,7 @@ class AtlasMapCanvasTest {
                     .orElseThrow();
             assertEquals(SpatialBreach.ANOMALY_ID, icon.anomalyId());
             assertEquals("graphics/icons/anomalies/spatial_breach.png", icon.iconPath());
+            assertNull(icon.chain());
 
             float orbit = AtlasMapCanvas.footprint(view) * AtlasMapCanvas.ANOMALY_ORBIT_SHARE;
             float iconX = canvas.screenX(view, bastion) + (float) Math.cos(AtlasMapCanvas.ANOMALY_FIRST_ANGLE) * orbit;
@@ -119,10 +120,19 @@ class AtlasMapCanvasTest {
                     .orElseThrow();
             assertTrue(icon.fogged());
             assertEquals(RelayNetwork.ANOMALY_ID, icon.anomalyId());
+            assertEquals(new AtlasAnomalyRecord.Chain(2, 3, left), icon.chain());
             assertEquals(icon, canvas.anomalyAt(view, canvas.screenX(view, fogged), canvas.screenY(view, fogged)));
             assertEquals(generator.node(fogged), canvas.nodeAt(fogged));
         } finally {
             ChartTables.resetAnomalies();
         }
+    }
+
+    @Test
+    void aChainStagesPingsAreSpreadEvenlyThroughEachCycle() {
+        assertEquals(0f, AtlasMapCanvas.pingProgress(0f, 2f, 0, 3), 0.001f);
+        assertEquals(1f / 3f, AtlasMapCanvas.pingProgress(0f, 2f, 1, 3), 0.001f);
+        assertEquals(0.5f, AtlasMapCanvas.pingProgress(1f, 2f, 0, 3), 0.001f);
+        assertEquals(1f / 6f, AtlasMapCanvas.pingProgress(1f, 2f, 2, 3), 0.001f);
     }
 }

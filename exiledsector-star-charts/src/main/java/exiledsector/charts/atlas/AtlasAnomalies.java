@@ -159,11 +159,12 @@ public final class AtlasAnomalies {
         lanesAway.put(from, 0);
         frontier.add(from);
         AtlasCell best = null;
+        int bestLanes = Integer.MAX_VALUE;
         double bestRoll = Double.POSITIVE_INFINITY;
         while (!frontier.isEmpty()) {
             AtlasCell cell = frontier.poll();
             int lanes = lanesAway.get(cell) + 1;
-            if (lanes > maxLanes) {
+            if (lanes > maxLanes || lanes > bestLanes) {
                 continue;
             }
             for (AtlasCell neighbour : generator.lanes(cell)) {
@@ -179,6 +180,7 @@ public final class AtlasAnomalies {
                 double roll = AtlasHash.unit(AtlasHash.of(state.seed(), ONWARD_SALT ^ from.pack(), anomalyId, neighbour.gridX(), neighbour.gridY()));
                 if (roll < bestRoll) {
                     bestRoll = roll;
+                    bestLanes = lanes;
                     best = neighbour;
                 }
             }

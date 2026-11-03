@@ -76,12 +76,11 @@ class RelayStagesTest {
     }
 
     @Test
-    void aChainRollsThreeOrFourStagesOnTheCellHash() {
-        for (AtlasCell cell : AtlasCell.ORIGIN.around(4)) {
-            int stages = RelayStages.rolledStages(state, cell);
-            assertTrue(stages >= RelayRules.MIN_STAGES && stages <= RelayRules.MAX_STAGES, "stages " + stages);
-            assertEquals(stages, RelayStages.rolledStages(state, cell));
-        }
+    void aChainRunsThroughThreeSystems() {
+        insertAtStart(null);
+
+        assertEquals(3, RelayRules.STAGES);
+        assertEquals(new AtlasAnomalyRecord.Chain(1, 3, null), RelayStages.stageAt(generator, state, start));
     }
 
     @Test
@@ -92,7 +91,7 @@ class RelayStagesTest {
 
         assertNotNull(target);
         AtlasAnomalyRecord moved = RelayStages.recordAt(state, target);
-        assertEquals(new AtlasAnomalyRecord.Chain(2, RelayStages.rolledStages(state, start), start), moved.chain());
+        assertEquals(new AtlasAnomalyRecord.Chain(2, RelayRules.STAGES, start), moved.chain());
         assertEquals(AtlasAnomalyRecord.Source.WORLD, moved.source());
         assertEquals(moved.chain(), RelayStages.stageAt(generator, state, target));
         assertTrue(target.centreDistance() > start.centreDistance());
@@ -148,14 +147,14 @@ class RelayStagesTest {
         assertNull(RelayStages.stageAt(generator, state, start));
 
         insertAtStart(null);
-        assertEquals(new AtlasAnomalyRecord.Chain(1, RelayStages.rolledStages(state, start), null), RelayStages.stageAt(generator, state, start));
+        assertEquals(new AtlasAnomalyRecord.Chain(1, RelayRules.STAGES, null), RelayStages.stageAt(generator, state, start));
     }
 
     @Test
     void extraStagesCountOnceWhenTheChainStartsSoAChainWhereEveryRunAddsOneStillEnds() {
         everyNetworkCarriesOneExtraStage();
         insertAtStart(null);
-        int stages = RelayStages.rolledStages(state, start) + 1;
+        int stages = RelayRules.STAGES + 1;
         assertEquals(new AtlasAnomalyRecord.Chain(1, stages, null), RelayStages.stageAt(generator, state, start));
 
         AtlasCell cell = start;

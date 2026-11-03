@@ -1,5 +1,6 @@
 package exiledsector.charts.anomaly.relay;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignClockAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
@@ -58,7 +59,9 @@ public final class ChartRelays {
             if (synced(sector.getClock(), playerFleet, relay, kind)) {
                 RelayStates.add(run, kind, RelayStates.SYNCED);
                 announce("chart.anomaly.relay_network.message.synced", relay);
-                wakeIfReady(run, system, relay, kind);
+                if (wakeIfReady(run, system, relay, kind)) {
+                    RelayLogIntel.report(sector, run);
+                }
                 changed = true;
             }
         }
@@ -126,9 +129,8 @@ public final class ChartRelays {
         if (!RelayStates.readyToWake(run, kind) || !wake(run, system, relay, kind)) {
             return false;
         }
-        announce("chart.anomaly.relay_network.message.woken", relay);
-        if (RelayStates.allWoken(run)) {
-            CampaignMessages.plain(Translation.gameText("chart.anomaly.relay_network.message.allWoken"), MESSAGE_COLOUR);
+        for (String message : RelayText.wokenMessages(run, relay.getName(), RelayStages.liveStage(Global.getSector(), run))) {
+            CampaignMessages.plain(message, MESSAGE_COLOUR);
         }
         return true;
     }

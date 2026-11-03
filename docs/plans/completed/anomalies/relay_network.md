@@ -1,6 +1,6 @@
 # Anomaly: Relay Network
 
-Dormant Domain-era relays sit around the system: a nav buoy, a comm relay and a sensor array. Waking all three recovers a data trace someone left behind, and finishing the system sends the network on, further out along the trail. Each step of the chain makes the whole next system harder and richer, for three or four steps, and the last boss guarantees a unique. Missing a step loses the trace for good.
+Dormant Domain-era relays sit around the system: a nav buoy, a comm relay and a sensor array. Waking all three recovers a data trace someone left behind, and finishing the system sends the network on, further out along the trail. Each step of the chain makes the whole next system harder and richer, for three steps, and the last boss guarantees a unique. Missing a step loses the trace for good.
 
 Status: built 2026-10-27 apart from the in-game checks below, which are still open. Redesigned 2026-10-27 as a chain across atlas systems, replacing the pre-captured battle objectives. See `docs/plans/anomalies/overview.md` for the shared framework.
 
@@ -20,7 +20,7 @@ Relays never touch battle objectives.
 
 ## The chain
 
-The anomaly rolls on the atlas like any other and starts the chain at stage 1. Completing the system with all three relays woken moves the network on as an inserted anomaly record carrying the next stage (`AtlasAnomalyRecord`, `AtlasAnomalies.move`). The target is two or three lanes away, reached only through uncompleted systems, further from the Gateway than the system the network leaves, and accepted by `AtlasAnomalies.canInsert`; it is picked on the cell's hash. If no system qualifies, the chain ends there.
+The anomaly rolls on the atlas like any other and starts the chain at stage 1. Completing the system with all three relays woken moves the network on as an inserted anomaly record carrying the next stage (`AtlasAnomalyRecord`, `AtlasAnomalies.move`). The target is an adjacent system if one qualifies, otherwise one two lanes away (changed 2026-11-03 from two or three lanes), reached only through uncompleted systems, further from the Gateway than the system the network leaves, and accepted by `AtlasAnomalies.canInsert`; among the nearest it is picked on the cell's hash. If no system qualifies, the chain ends there.
 
 The atlas always shows where the chain is: the network's icon on its current system, a trace line drawn from the system it left, and the stage in the node tooltip. The network belongs to its system, so it waits there while the player runs other systems.
 
@@ -29,7 +29,7 @@ The trace is lost, and the record removed, when:
 - the run in the network's system fails;
 - the run closes with any relay still dormant.
 
-A chain has three or four stages, rolled when it starts. Completing the last stage's system with all three relays woken ends the chain, and that system's boss drops a random unique hull item or unique subroutine, picked from every unique whatever its source, as long as all three relays there are woken when it dies (decided 2026-10-27).
+A chain has three stages (changed 2026-11-03 from a roll of three or four), so nine relays in all. Completing the last stage's system with all three relays woken ends the chain, and that system's boss drops a random unique hull item or unique subroutine, picked from every unique whatever its source, as long as all three relays there are woken when it dies (decided 2026-10-27).
 
 ## Escalation
 
