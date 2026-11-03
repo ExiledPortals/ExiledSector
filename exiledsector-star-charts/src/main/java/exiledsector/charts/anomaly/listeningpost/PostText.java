@@ -1,5 +1,6 @@
 package exiledsector.charts.anomaly.listeningpost;
 
+import com.fs.starfarer.api.campaign.FactionAPI;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 
@@ -15,6 +16,14 @@ final class PostText {
 
     static int percent(float share) {
         return Math.round(share * PERCENT_SCALE);
+    }
+
+    static String factionPrefix(FactionAPI faction) {
+        if (faction == null) {
+            return "";
+        }
+        String prefix = faction.getPersonNamePrefix();
+        return prefix == null || prefix.isBlank() ? faction.getDisplayName() : prefix;
     }
 
     static List<String> lines(PostState state, PostScript script) {

@@ -124,7 +124,7 @@ class ListeningPostTest {
     void thePostAndItsPicketsFlyTheSystemsFactionHoweverTheAnomalyArrived() {
         PostSystem.placeIn(postSystem.site(ChartGenContext.none(), new Vector2f(9000f, 0f), 5L), run());
 
-        verify(postSystem.system).addCustomEntity(ListeningPost.postId(PostSystem.RUN_ID), "Listening Post", ListeningPost.ENTITY_TYPE, "pirates");
+        verify(postSystem.system).addCustomEntity(ListeningPost.postId(PostSystem.RUN_ID), "Depot", ListeningPost.ENTITY_TYPE, "pirates");
         assertFalse(postSystem.engine.fleetParams.isEmpty());
         postSystem.engine.fleetParams.forEach(params -> assertEquals("pirates", params.factionId));
     }

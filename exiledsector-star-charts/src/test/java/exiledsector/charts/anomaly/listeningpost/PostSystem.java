@@ -63,7 +63,7 @@ final class PostSystem {
         CustomCampaignEntityAPI entity = engine.tagged(mock(CustomCampaignEntityAPI.class));
         when(entity.getId()).thenReturn(id);
         when(entity.getContainingLocation()).thenReturn(system);
-        when(entity.getName()).thenReturn("Listening Post");
+        when(entity.getName()).thenReturn("Depot");
         Vector2f location = new Vector2f();
         when(entity.getLocation()).thenReturn(location);
         doAnswer(invocation -> {

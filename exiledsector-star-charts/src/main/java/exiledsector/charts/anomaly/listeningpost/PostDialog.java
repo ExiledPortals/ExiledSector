@@ -25,8 +25,17 @@ import java.util.Random;
 
 public class PostDialog extends AnomalyDialog {
 
+    static final String INFILTRATE = "exiledSector_postInfiltrate";
     static final String OPEN = "exiledSector_postOpen";
     static final String ENGAGE_OPTION = "exiledSector_postEngage";
+
+    private static final String[] INFILTRATION_KEYS = {
+            "chart.anomaly.listening_post.dialog.infiltrate.approach",
+            "chart.anomaly.listening_post.dialog.infiltrate.entry",
+            "chart.anomaly.listening_post.dialog.infiltrate.resistance",
+            "chart.anomaly.listening_post.dialog.infiltrate.silence",
+            "chart.anomaly.listening_post.dialog.infiltrate.vault"
+    };
 
     private SectorEntityToken post;
 
@@ -34,7 +43,8 @@ public class PostDialog extends AnomalyDialog {
     protected void open() {
         post = dialog().getInteractionTarget();
         showEntityVisual(post);
-        VanillaText.plainPara(text(), Translation.gameText("chart.anomaly.listening_post.dialog.description"));
+        String faction = PostText.factionPrefix(post.getFaction());
+        VanillaText.plainPara(text(), I18n.forGameText(() -> Translation.msg("chart.anomaly.listening_post.dialog.description").arg("faction", faction).text()));
         showMain();
     }
 
@@ -58,7 +68,7 @@ public class PostDialog extends AnomalyDialog {
             VanillaText.plainPara(text, Translation.gameText("chart.anomaly.listening_post.dialog.taken"));
         } else if (!state.alarm()) {
             VanillaText.plainPara(text, Translation.gameText("chart.anomaly.listening_post.dialog.quiet"));
-            options.addOption(Translation.gameText("chart.anomaly.listening_post.dialog.option.open"), OPEN);
+            options.addOption(Translation.gameText("chart.anomaly.listening_post.dialog.option.infiltrate"), INFILTRATE);
         } else {
             int vault = PostText.percent(state.vaultShare());
             boolean defended = script != null && script.defended();
@@ -79,13 +89,26 @@ public class PostDialog extends AnomalyDialog {
         PostState state = PostState.of(run);
         PostScript script = script();
         boolean open = state != null && !state.taken() && (!state.alarm() || script == null || !script.defended());
-        if (OPEN.equals(optionData) && open) {
+        if (INFILTRATE.equals(optionData) && state != null && !state.taken() && !state.alarm()) {
+            infiltrate();
+        } else if (OPEN.equals(optionData) && open) {
             openVault(run, state);
         } else if (ENGAGE_OPTION.equals(optionData) && state != null && state.alarm() && !state.taken() && script != null) {
             engage(script.gatherDefenders());
         } else {
             dialog().dismiss();
         }
+    }
+
+    void infiltrate() {
+        TextPanelAPI text = text();
+        for (String key : INFILTRATION_KEYS) {
+            VanillaText.plainPara(text, Translation.gameText(key));
+        }
+        OptionPanelAPI options = options();
+        options.clearOptions();
+        options.addOption(Translation.gameText("chart.anomaly.listening_post.dialog.option.open"), OPEN);
+        addLeaveOption();
     }
 
     void openVault(ChartRun run, PostState state) {

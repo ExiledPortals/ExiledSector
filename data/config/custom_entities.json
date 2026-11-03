@@ -57,9 +57,9 @@
 		"pluginClass":"exiledsector.charts.anomaly.breach.BreachCorePlugin",
 	},
 	"exiledSector_chart_listening_post":{
-		"defaultName":"Listening Post",
-		"nameInText":"listening post",
-		"shortName":"listening post",
+		"defaultName":"Depot",
+		"nameInText":"depot",
+		"shortName":"depot",
 		"aOrAn":"a",
 		"isOrAre":"is",
 		"defaultRadius":45,
