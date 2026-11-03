@@ -299,6 +299,26 @@ class ChartObjectivesTest {
     }
 
     @Test
+    void theBossFlagshipFallingInBattleCompletesTheObjectiveWithoutTouchingTheCargo() {
+        ChartRun run = openBossRun("flagship");
+        CampaignFleetAPI boss = bossFleet("flagship", "escort");
+        List<FleetMemberAPI> members = boss.getFleetData().getMembersListCopy();
+
+        assertTrue(ChartObjectives.bossFellInBattle(sector, boss, List.of(members.get(1))).isEmpty());
+        assertTrue(ChartObjectives.bossFellInBattle(sector, fleet("guard", true), List.of(members.get(0))).isEmpty());
+        assertFalse(run.isObjectiveComplete());
+
+        ChartObjectives.bossFellInBattle(sector, boss, members);
+
+        assertTrue(run.isObjectiveComplete());
+        assertTrue(run.isRewardClaimed());
+        verify(credits, times(1)).add((float) ChartRewards.creditsFor(7));
+        verify(mockSector.cargo(), never()).addSpecial(Mockito.any(), anyFloat());
+        assertTrue(ChartObjectives.bossFellInBattle(sector, boss, members).isEmpty());
+        assertFalse(ChartObjectives.reconcile(sector));
+    }
+
+    @Test
     void theFlagshipOnlyCountsForTheBossFleet() {
         ChartRun run = openBossRun("flagship");
         CampaignFleetAPI boss = bossFleet("flagship");

@@ -10,6 +10,7 @@ import exiledsector.charts.effect.ChartEnemyInflationListener;
 import exiledsector.charts.effect.ChartEnemyShipEffects;
 import exiledsector.charts.effect.ChartPlayerModifierSource;
 import exiledsector.charts.loot.StarChartLootSource;
+import exiledsector.charts.objective.ChartRewardLootSource;
 import exiledsector.charts.objective.GatewayUpgradeRewards;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.run.ChartTransverseJump;
@@ -62,7 +63,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public List<LootSource> lootSources() {
-        return List.of(StarChartLootSource.INSTANCE);
+        return List.of(StarChartLootSource.INSTANCE, ChartRewardLootSource.INSTANCE);
     }
 
     @Override

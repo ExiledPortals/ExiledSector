@@ -74,7 +74,6 @@ class StarChartUiStringKeysTest {
         for (Nanoswarm kernel : StarChartCipher.KERNELS_ON_CHARTS) {
             require(catalogue, "chart.currency." + kernel.key() + ".description", missing);
         }
-        require(catalogue, "chart.drop.reward", missing);
         assertEquals(List.of(), missing);
         for (String key : catalogue.keySet()) {
             if (key.startsWith("chart.currency.") || key.startsWith("chart.drop.")) {

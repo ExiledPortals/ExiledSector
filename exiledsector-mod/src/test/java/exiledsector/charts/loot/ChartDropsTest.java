@@ -31,7 +31,6 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.util.HashMap;
@@ -49,9 +48,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -414,7 +414,7 @@ class ChartDropsTest {
     }
 
     @Test
-    void completingAnObjectiveRecordsTheClearedTierAndDropsChartsIntoCargo() throws Exception {
+    void completingAnObjectiveRecordsTheClearedTierAndRollsChartsIntoTheRewardLoot() throws Exception {
         ChartDrops.register(new JSONArray().put(rule("run_reward", 1f, 0f, 0f, 2f)));
         CargoAPI cargo = mockSector.cargo();
         when(cargo.getCredits()).thenReturn(mock(MutableValue.class));
@@ -423,14 +423,12 @@ class ChartDropsTest {
 
         ChartRewards.Reward reward = ChartRewards.grant(sector, run);
 
-        assertEquals(1, reward.starCharts());
         assertEquals(4, ItemUnlock.highestClearedChartTier(sector));
-        ArgumentCaptor<SpecialItemData> specials = ArgumentCaptor.forClass(SpecialItemData.class);
-        verify(cargo, atLeastOnce()).addSpecial(specials.capture(), Mockito.eq(1f));
-        List<SpecialItemData> charts = specials.getAllValues().stream().filter(special -> ItemData.STAR_CHART_ITEM_ID.equals(special.getId())).toList();
+        List<ItemData> charts = reward.loot().items().stream().filter(item -> ItemData.STAR_CHART_ITEM_ID.equals(item.toSpecialItem().getId())).toList();
         assertEquals(1, charts.size());
-        assertEquals(4, ItemData.ofStarChart(charts.get(0)).preview().tier());
-        assertTrue(specials.getAllValues().stream().anyMatch(special -> CHART_CURRENCY_IDS.contains(special.getId())));
+        assertEquals(4, charts.get(0).preview().tier());
+        assertTrue(reward.loot().materials().keySet().stream().anyMatch(CHART_CURRENCY_IDS::contains));
+        verify(cargo, never()).addSpecial(any(SpecialItemData.class), anyFloat());
         assertNull(ChartRewards.grant(sector, run));
     }
 }

@@ -10,6 +10,8 @@ import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.atlas.AtlasProgress;
+import exiledsector.effects.ItemLootListener;
+import exiledsector.items.ItemDrops;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -43,7 +45,7 @@ public final class ChartObjectives {
         if (!isBossFleet(run, fleet)) {
             return false;
         }
-        completed(sector, run);
+        completedOutsideBattle(sector, run);
         return true;
     }
 
@@ -90,7 +92,7 @@ public final class ChartObjectives {
         if (bossStanding) {
             return false;
         }
-        completed(sector, run);
+        completedOutsideBattle(sector, run);
         return true;
     }
 
@@ -128,15 +130,37 @@ public final class ChartObjectives {
         }
     }
 
-    private static void completed(SectorAPI sector, ChartRun run) {
+    public static ItemDrops.SiteLoot bossFellInBattle(SectorAPI sector, CampaignFleetAPI sourceFleet, List<FleetMemberAPI> lostMembers) {
+        ChartRun run = trackedRun();
+        if (run == null || sourceFleet == null || run.bossFlagshipId() == null || !isBossFleet(run, sourceFleet)
+                || lostMembers.stream().noneMatch(member -> run.bossFlagshipId().equals(member.getId()))
+                || run.protectedFleetId() != null && protectedFallen(sector, run)) {
+            return ItemDrops.SiteLoot.NONE;
+        }
+        return completed(sector, run);
+    }
+
+    private static void completedOutsideBattle(SectorAPI sector, ChartRun run) {
+        ItemDrops.SiteLoot rewardLoot = completed(sector, run);
+        CampaignFleetAPI playerFleet = sector.getPlayerFleet();
+        if (!rewardLoot.isEmpty() && playerFleet != null && playerFleet.getCargo() != null) {
+            ItemLootListener.addSiteLoot(playerFleet.getCargo(), rewardLoot);
+        }
+    }
+
+    private static ItemDrops.SiteLoot completed(SectorAPI sector, ChartRun run) {
         if (!run.markObjectiveComplete()) {
-            return;
+            return ItemDrops.SiteLoot.NONE;
         }
         AtlasProgress.completed(sector, run);
+        ItemDrops.SiteLoot rewardLoot = ItemDrops.SiteLoot.NONE;
         try {
-            ChartRewards.grant(sector, run);
+            ChartRewards.Reward reward = ChartRewards.grant(sector, run);
+            if (reward != null) {
+                rewardLoot = reward.loot();
+            }
         } catch (RuntimeException | LinkageError e) {
-            LOG.error("[ExiledSector] Delivering the Star Chart reward for run " + run.runId() + " failed", e);
+            LOG.error("[ExiledSector] Rolling the Star Chart reward for run " + run.runId() + " failed", e);
         }
         try {
             GatewayUpgradeRewards.completed(sector, run.tier());
@@ -144,6 +168,7 @@ public final class ChartObjectives {
             LOG.error("[ExiledSector] Granting the Wormhole Gateway upgrade for run " + run.runId() + " failed", e);
         }
         updateIntel(sector, run);
+        return rewardLoot;
     }
 
     private static void updateIntel(SectorAPI sector, ChartRun run) {
