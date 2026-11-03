@@ -1468,23 +1468,13 @@
 			"name": "Heavy Armor",
 			"icon": "graphics/icons/heavyarmor.png",
 			"tier": "NOTABLE",
-			"effects": [
-				{
-					"effect": "MANEUVERABILITY_PERCENT",
-					"magnitude": -20
-				},
-				{
-					"effect": "ARMOR_PERCENT",
-					"magnitude": 30
-				}
-			],
 			"hullSizeEffects": [
 				{
-					"effect": "HULL_FLAT",
-					"frigate": 100,
-					"destroyer": 200,
-					"cruiser": 300,
-					"capitalShip": 400
+					"effect": "ARMOR_FLAT",
+					"frigate": 150,
+					"destroyer": 300,
+					"cruiser": 400,
+					"capitalShip": 500
 				}
 			],
 			"unlockConditions": [

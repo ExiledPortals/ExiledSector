@@ -72,8 +72,7 @@ class SkillTypeModuleShareTest {
     @Test
     void allSharesTheShareablePartAndLeavesTheRestOnTheParent() {
         assertEquals(List.of("ARMOR_PERCENT", "WEAPON_RECOIL_MULT"), sharedNames("armored_weapon_mounts", HullSize.CRUISER));
-        assertTrue(sharedNames("heavy_armor", HullSize.CAPITAL_SHIP).containsAll(List.of("ARMOR_PERCENT", "HULL_FLAT")));
-        assertTrue(!sharedNames("heavy_armor", HullSize.CAPITAL_SHIP).contains("MANEUVERABILITY_PERCENT"));
+        assertEquals(List.of("ARMOR_FLAT"), sharedNames("heavy_armor", HullSize.CAPITAL_SHIP));
     }
 
     @Test
