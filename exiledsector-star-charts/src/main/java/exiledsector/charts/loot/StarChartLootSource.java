@@ -52,6 +52,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
     private static final class Losses {
         private final Map<CampaignFleetAPI, Float> chartFleetDeploymentPoints = new LinkedHashMap<>();
         private final Map<CampaignFleetAPI, Float> chartFleetDifficultyWeighted = new LinkedHashMap<>();
+        private final ChartShipSalvage shipSalvage = new ChartShipSalvage();
         private float deploymentPointsDefeated;
         private float chartDpDefeated;
         private int highestDefeatedLevel;
@@ -77,6 +78,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
                 losses.chartFleetDeploymentPoints.merge(sourceFleet, deploymentPoints, Float::sum);
                 losses.chartFleetDifficultyWeighted.merge(sourceFleet, deploymentPoints * BattleLootRates.difficulty(engagement.difficultyMultiplier()),
                         Float::sum);
+                losses.shipSalvage.record(sourceFleet, members);
             }
             for (FleetMemberAPI member : members) {
                 losses.highestDefeatedLevel = Math.max(losses.highestDefeatedLevel, LootSources.shipLevel(member));
@@ -113,6 +115,11 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
     @Override
     public void addEncounterLoot(BattleLoot battle, CargoAPI loot) {
         ItemLootListener.addSiteLoot(loot, battleLoot(battle));
+        try {
+            losses(battle).shipSalvage.addTo(loot, battle.encounterSalvage(), battle.random());
+        } catch (RuntimeException e) {
+            LOG.error("[ExiledSector] Adding Star Chart salvage from destroyed ships failed", e);
+        }
     }
 
     @Override

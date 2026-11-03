@@ -24,6 +24,7 @@ import exiledsector.items.ShipSchematic;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
 import exiledsector.loot.BattleMaterials;
+import exiledsector.loot.EncounterSalvage;
 import exiledsector.loot.LootSources;
 import exiledsector.ui.CampaignMessages;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
@@ -95,6 +96,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
     public void reportEncounterLootGenerated(FleetEncounterContextPlugin encounterPlugin, CargoAPI loot) {
         Pending pendingLoot = encounterPlugin == null ? null : pendingByBattle.remove(encounterPlugin.getBattle());
         if (pendingLoot != null && loot != null) {
+            pendingLoot.battleLoot.setEncounterSalvage(EncounterSalvage.of(encounterPlugin));
             LootSources.all().forEach(source -> source.addEncounterLoot(pendingLoot.battleLoot, loot));
             int wholeFeedstock = ItemDrops.wholeFeedstock(pendingLoot.materials.feedstock(), lootRandom);
             if (wholeFeedstock > 0) {

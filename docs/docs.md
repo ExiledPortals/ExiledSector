@@ -575,6 +575,18 @@ on tiers its groups cover, so one written as `mid=/high=` never appears below ti
 Wormhole entries are set per group, 6, 3 and 1 by default (`StarChartSettings.wormholeEntries`). Each prefix adds 5%,
 15% or 25% item quantity by group, on top of its own line (`ChartGenContext.QUANTITY_PERCENT_PER_PREFIX`).
 
+### Chart vanilla loot
+
+Each chart site copies its salvage spec's drops and its own, extra by its drop type's bonus plus item quantity, for the
+groups `chart_loot.csv` maps to a type, then adds its kind's rows; chart fleets get the `fleet` and `boss` rows per
+100 fleet points (`ChartVanillaLoot`). A row with `requires_mod` loads only with that mod, and colony item groups are
+never mapped.
+
+A won chart battle also adds vanilla's own battle salvage for the same extra share (`ChartShipSalvage`): weapons and
+wings from the lost chart ships' fittings on vanilla's recovery chances, scrap for their fleet points, and the cargo
+vanilla took from their fleets. Fittings and cargo are snapshotted at the engagement, ships the player recovers add
+nothing, and all of it is scaled by vanilla's player share of the damage (core `EncounterSalvage`).
+
 ### Atlas Catalysts
 
 Atlas Catalysts are special items listed in `atlas_catalysts.csv` (`AtlasCatalysts`) and used on a revealed atlas system.

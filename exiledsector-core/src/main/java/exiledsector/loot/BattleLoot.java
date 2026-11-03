@@ -11,6 +11,7 @@ public final class BattleLoot {
     private final Random independentRandom;
     private final Map<Object, Object> states = new IdentityHashMap<>();
     private boolean playerWon;
+    private EncounterSalvage encounterSalvage = EncounterSalvage.FULL;
 
     public BattleLoot(Random random, Random independentRandom) {
         this.random = random;
@@ -23,6 +24,14 @@ public final class BattleLoot {
 
     public void setPlayerWon(boolean playerWon) {
         this.playerWon = playerWon;
+    }
+
+    public EncounterSalvage encounterSalvage() {
+        return encounterSalvage;
+    }
+
+    public void setEncounterSalvage(EncounterSalvage encounterSalvage) {
+        this.encounterSalvage = encounterSalvage == null ? EncounterSalvage.FULL : encounterSalvage;
     }
 
     public Random random() {

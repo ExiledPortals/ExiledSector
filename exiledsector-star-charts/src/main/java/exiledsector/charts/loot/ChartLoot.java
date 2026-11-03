@@ -7,6 +7,7 @@ import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.generation.ChartTiers;
+import exiledsector.compat.CompatTarget;
 import exiledsector.data.CsvRows;
 import exiledsector.ModCsv;
 import org.apache.log4j.Logger;
@@ -109,6 +110,10 @@ public final class ChartLoot {
         String scope = ModCsv.text(row, "scope").toLowerCase(Locale.ROOT);
         if (type == null) {
             csv.skipRow(id, "drop_type must be one of " + VANILLA_TYPE_NAMES);
+            return;
+        }
+        String requiredMod = ModCsv.text(row, "requires_mod");
+        if (!requiredMod.isEmpty() && !CompatTarget.isModEnabled(requiredMod)) {
             return;
         }
         if (group.isEmpty() || !groupExists.test(group)) {

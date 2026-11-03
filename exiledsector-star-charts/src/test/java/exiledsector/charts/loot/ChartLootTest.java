@@ -118,6 +118,16 @@ class ChartLootTest {
     }
 
     @Test
+    void aRowForAMissingModIsLeftOutWithoutAProblem() throws Exception {
+        List<String> problems = ChartLoot.register(new JSONArray()
+                .put(mapping("resource", "goods").put("requires_mod", "absent_mod"))
+                .put(mapping("resource", "basic")), group -> true);
+
+        assertEquals(List.of(), problems);
+        assertEquals(Map.of("basic", DropType.RESOURCE), ChartLoot.groupTypes());
+    }
+
+    @Test
     void aSiteGetsExtraChancesOnItsOwnMappedSpecDropsOnly() throws Exception {
         registerTable();
         DropData weapons = drop("weapons2", 10, -1);
