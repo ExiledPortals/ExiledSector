@@ -115,7 +115,6 @@ public final class HullUpgradesDomain implements ExiledSectorDomain {
     @Override
     public void loadItems() {
         MarketHullItems.load();
-        BattleItemDrops.load();
     }
 
     @Override

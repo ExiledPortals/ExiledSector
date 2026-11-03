@@ -9,6 +9,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.effects.ItemLootListener;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
+import exiledsector.loot.BattleLootRates;
 import exiledsector.loot.LootSource;
 import exiledsector.loot.LootSources;
 import exiledsector.loot.MarketStock;
@@ -26,13 +27,21 @@ public final class HullUpgradeLootSource implements LootSource, MarketStock {
     public static final HullUpgradeLootSource INSTANCE = new HullUpgradeLootSource();
     private static final Logger LOG = Logger.getLogger(HullUpgradeLootSource.class);
 
+    private static final class FleetLosses {
+        private float deploymentPoints;
+        private float difficultyWeighted;
+        private float levelBoostWeighted;
+    }
+
     private static final class Losses {
         private final Map<String, Float> defeatedDeploymentPointsByFaction = new LinkedHashMap<>();
-        private final Map<CampaignFleetAPI, Float> battlePowerByFleet = new LinkedHashMap<>();
+        private final Map<CampaignFleetAPI, FleetLosses> lossesByFleet = new LinkedHashMap<>();
 
         BattleItemDrops.Battle battleItems() {
-            List<BattleItemDrops.SourcePower> sources = new ArrayList<>();
-            battlePowerByFleet.forEach((fleet, power) -> sources.add(new BattleItemDrops.SourcePower(power, LootSources.itemChancesFor(fleet))));
+            List<BattleItemDrops.SourceLoss> sources = new ArrayList<>();
+            lossesByFleet.forEach((fleet, fleetLosses) -> sources.add(new BattleItemDrops.SourceLoss(fleetLosses.deploymentPoints,
+                    fleetLosses.difficultyWeighted / fleetLosses.deploymentPoints, fleetLosses.levelBoostWeighted / fleetLosses.deploymentPoints,
+                    LootSources.fleetLootRules(fleet))));
             return new BattleItemDrops.Battle(sources, mostDefeatedFaction());
         }
 
@@ -59,11 +68,15 @@ public final class HullUpgradeLootSource implements LootSource, MarketStock {
         Losses losses = losses(battle);
         engagement.deploymentPointsLostByFaction().forEach((factionId, deploymentPoints) ->
                 losses.defeatedDeploymentPointsByFaction.merge(factionId, deploymentPoints, Float::sum));
+        float difficulty = BattleLootRates.difficulty(engagement.difficultyMultiplier());
         engagement.lostEnemiesBySourceFleet().forEach((sourceFleet, members) -> {
             for (FleetMemberAPI member : members) {
-                float power = BattleItemDrops.shipPower(member.getDeploymentPointsCost(), LootSources.shipLevel(member)) * engagement.difficultyMultiplier();
-                if (power > 0f) {
-                    losses.battlePowerByFleet.merge(sourceFleet, power, Float::sum);
+                float deploymentPoints = member.getDeploymentPointsCost();
+                if (deploymentPoints > 0f) {
+                    FleetLosses fleetLosses = losses.lossesByFleet.computeIfAbsent(sourceFleet, fleet -> new FleetLosses());
+                    fleetLosses.deploymentPoints += deploymentPoints;
+                    fleetLosses.difficultyWeighted += deploymentPoints * difficulty;
+                    fleetLosses.levelBoostWeighted += deploymentPoints * BattleItemDrops.levelBoost(LootSources.shipLevel(member));
                 }
             }
         });

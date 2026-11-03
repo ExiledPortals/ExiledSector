@@ -24,9 +24,13 @@ import exiledsector.items.ItemData;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.MaterialItems;
 import exiledsector.loot.BattleEngagement;
+import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.loot.BattleLoot;
+import exiledsector.loot.BattleLootRates;
 import exiledsector.loot.FleetDifficulty;
 import exiledsector.loot.FleetLevelRange;
+import exiledsector.loot.FleetLootRules;
 import exiledsector.loot.LootMultipliers;
 import exiledsector.loot.LootSource;
 import exiledsector.loot.LootSources;
@@ -47,6 +51,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
 
     private static final class Losses {
         private final Map<CampaignFleetAPI, Float> chartFleetDeploymentPoints = new LinkedHashMap<>();
+        private final Map<CampaignFleetAPI, Float> chartFleetDifficultyWeighted = new LinkedHashMap<>();
         private float deploymentPointsDefeated;
         private float chartDpDefeated;
         private int highestDefeatedLevel;
@@ -68,7 +73,10 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
         }
         engagement.lostEnemiesBySourceFleet().forEach((sourceFleet, members) -> {
             if (ChartFleetLoot.isChartFleet(sourceFleet) || adoptedAsDefender(sourceFleet)) {
-                losses.chartFleetDeploymentPoints.merge(sourceFleet, BattleEngagement.deploymentPoints(members), Float::sum);
+                float deploymentPoints = BattleEngagement.deploymentPoints(members);
+                losses.chartFleetDeploymentPoints.merge(sourceFleet, deploymentPoints, Float::sum);
+                losses.chartFleetDifficultyWeighted.merge(sourceFleet, deploymentPoints * BattleLootRates.difficulty(engagement.difficultyMultiplier()),
+                        Float::sum);
             }
             for (FleetMemberAPI member : members) {
                 losses.highestDefeatedLevel = Math.max(losses.highestDefeatedLevel, LootSources.shipLevel(member));
@@ -131,10 +139,22 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
         }
         for (Map.Entry<CampaignFleetAPI, Float> fleetLosses : losses.chartFleetDeploymentPoints.entrySet()) {
             try {
-                chartLoot = chartLoot.plus(ChartFleetLoot.roll(sector, fleetLosses.getKey(), fleetLosses.getValue(), battle.independentRandom(),
-                        losses.battleAnomalies == null ? List.of() : losses.battleAnomalies));
+                float deploymentPoints = fleetLosses.getValue();
+                float difficulty = deploymentPoints > 0f ? losses.chartFleetDifficultyWeighted.getOrDefault(fleetLosses.getKey(), 0f) / deploymentPoints : 1f;
+                ChartFleetLoot.Battle fleetBattle = new ChartFleetLoot.Battle(losses.deploymentPointsDefeated, difficulty,
+                        losses.battleAnomalies == null ? List.of() : losses.battleAnomalies);
+                chartLoot = chartLoot.plus(ChartFleetLoot.roll(sector, fleetLosses.getKey(), deploymentPoints, fleetBattle, battle.independentRandom()));
             } catch (RuntimeException e) {
                 LOG.error("[ExiledSector] Rolling Star Chart fleet loot failed for fleet " + fleetLosses.getKey().getId(), e);
+            }
+        }
+        if (battle.playerWon() && !losses.chartFleetDeploymentPoints.isEmpty() && losses.battleAnomalies != null) {
+            for (LootShaper anomaly : losses.battleAnomalies) {
+                try {
+                    chartLoot = chartLoot.plus(anomaly.battleBonus(sector, battle.independentRandom()));
+                } catch (RuntimeException e) {
+                    LOG.error("[ExiledSector] Rolling an anomaly's battle bonus failed", e);
+                }
             }
         }
         return chartLoot;
@@ -147,6 +167,29 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Reading the item chances of a defeated fleet failed", e);
             return LootContexts.global().itemChances();
+        }
+    }
+
+    @Override
+    public FleetLootRules fleetLootRules(CampaignFleetAPI fleet) {
+        try {
+            ChartRun run = fleet == null ? null : ChartFleetLoot.liveRunOf(fleet);
+            if (run == null) {
+                return null;
+            }
+            if (fleet.getMemoryWithoutUpdate().getBoolean(ChartIds.FEEDSTOCK_ONLY_MEMORY_KEY)) {
+                return FleetLootRules.FEEDSTOCK_ONLY;
+            }
+            if (!ChartFleetLoot.isChartFleet(fleet)) {
+                return null;
+            }
+            ChartGenContext context = ChartRunEffects.contextOf(run);
+            float battleLootMult = ChartFleetLoot.battleLootMult(anomaliesHoldingBattle(), context);
+            return new FleetLootRules(FleetLootRules.Rates.FULL, true, context.lootMultipliers(battleLootMult),
+                    ChartFleetLoot.isBoss(fleet, run) ? context.bossSpoilsMult() : 1f);
+        } catch (RuntimeException e) {
+            LOG.error("[ExiledSector] Reading the loot rules of a defeated fleet failed", e);
+            return null;
         }
     }
 

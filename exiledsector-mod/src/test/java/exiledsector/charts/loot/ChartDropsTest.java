@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -96,7 +97,8 @@ class ChartDropsTest {
 
     private static JSONObject rule(String source, float chance, float extraChance, float tierUpChance, float currencyChance) throws Exception {
         return new JSONObject().put("source", source).put("chance", String.valueOf(chance)).put("extra_chance", String.valueOf(extraChance))
-                .put("tier_up_chance", String.valueOf(tierUpChance)).put("currency_chance", String.valueOf(currencyChance));
+                .put("same_tier", String.valueOf(1f - tierUpChance)).put("plus_1", String.valueOf(tierUpChance))
+                .put("currency_chance", String.valueOf(currencyChance));
     }
 
     private static int tierOf(ItemData chart) {
@@ -111,14 +113,39 @@ class ChartDropsTest {
             ChartDrops.Rule rule = ChartDrops.rule(source);
             assertNotNull(rule, source.id());
             assertTrue(rule.chance() > 0f, source.id());
-            assertEquals(source.insideSystem(), rule.currencyChance() > 0f, source.id());
+            assertTrue(source.insideSystem() || rule.currencyChance() == 0f, source.id());
             assertEquals(source.insideSystem(), rule.catalystChance() > 0f, source.id());
             if (!source.insideSystem()) {
                 assertTrue(rule.maxTier() <= 6, source.id() + " must leave the high tiers to the sustain loop");
-                assertEquals(0f, rule.tierUpChance(), source.id());
+                assertEquals(ChartDrops.SAME_TIER_ONLY, rule.tierWeights(), source.id());
             }
         }
         assertEquals(1f, ChartDrops.rule(ChartDrops.Source.RUN_REWARD).chance());
+        assertEquals(0f, ChartDrops.rule(ChartDrops.Source.CHART_FLEET).currencyChance(), "chart fleets drop currencies per deployment point");
+    }
+
+    @Test
+    void theShippedSpreadDropsFleetChartsWithinTwoTiersBelowToOneAboveAndTheBossRarelyTwoAbove() throws Exception {
+        ChartDrops.register(ChartTables.csvRows(ChartDrops.PATH));
+        Random random = new Random(21L);
+        Set<Integer> fleetTiers = new TreeSet<>();
+        Set<Integer> bossTiers = new TreeSet<>();
+        int bossCharts = 0;
+        int bossTwoUp = 0;
+        for (int roll = 0; roll < 3000; roll++) {
+            ChartDrops.roll(ChartDrops.Source.CHART_FLEET, 10, 1f, random).charts().forEach(chart -> fleetTiers.add(tierOf(chart)));
+            for (ItemData chart : ChartDrops.roll(ChartDrops.Source.CHART_BOSS, 10, 1f, random).charts()) {
+                bossTiers.add(tierOf(chart));
+                bossCharts++;
+                bossTwoUp += tierOf(chart) == 12 ? 1 : 0;
+            }
+            ChartDrops.roll(ChartDrops.Source.CHART_BOSS, 15, 1f, random).charts().forEach(chart -> assertTrue(tierOf(chart) <= 15));
+            ChartDrops.roll(ChartDrops.Source.CHART_FLEET, 1, 1f, random).charts().forEach(chart -> assertTrue(tierOf(chart) >= 1));
+        }
+
+        assertEquals(Set.of(8, 9, 10, 11), fleetTiers);
+        assertEquals(Set.of(8, 9, 10, 11, 12), bossTiers);
+        assertEquals(0.1, bossTwoUp / (double) bossCharts, 0.02);
     }
 
     @Test
@@ -148,7 +175,7 @@ class ChartDropsTest {
     }
 
     @Test
-    void chartsDroppedInsideARunNeverFallBelowTheRunTierButOutsideDropsKeepTheirCap() throws Exception {
+    void aSameTierRuleDropsAtTheRunTierInsideAndOutsideDropsKeepTheirCap() throws Exception {
         ChartDrops.register(new JSONArray().put(rule("chart_fleet", 1f, 0f, 0f, 0f).put("max_tier", "3"))
                 .put(rule("battle", 1f, 0f, 0f, 0f).put("max_tier", "3")));
 

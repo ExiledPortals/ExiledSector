@@ -1,48 +1,37 @@
 package exiledsector.items;
 
-import exiledsector.ExiledSector;
-import exiledsector.ModCsv;
 import exiledsector.ModSettings;
-import exiledsector.data.CsvRows;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
+import exiledsector.loot.BattleLootRates;
+import exiledsector.loot.FleetLootRules;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
 public final class BattleItemDrops {
 
-    public static final String DATA_PATH = ExiledSector.configPath("battle_item_drops.csv");
     public static final String DROP_PERCENT_FIELD_ID = "exiledSector_battleItemDropPercent";
     public static final int DEFAULT_DROP_PERCENT = 100;
     public static final int MAX_DROP_PERCENT = 1000;
-    static final String DROP_COLUMN = "drop";
-    static final String RATE_COLUMN = "per_100_power";
+    static final String HULL_ITEM_RATE = "hull_item";
     static final float NODES_PER_DOUBLING = 30f;
-    private static final float POWER_PER_RATE_STEP = 100f;
-    private static final Logger LOG = Logger.getLogger(BattleItemDrops.class);
-    private static final AtomicReference<Map<Drop, Float>> RATES = new AtomicReference<>(Map.of());
+    static final float BASE_TWO_MODIFIER_SHARE = 1f / 3f;
+    static final float MAX_TWO_MODIFIER_SHARE = 0.75f;
 
     public enum Drop {
-        MODS_1("mods_1", 1, false),
-        MODS_2("mods_2", 2, false),
+        MODS_1(HULL_ITEM_RATE, 1, false),
+        MODS_2(HULL_ITEM_RATE, 2, false),
         REFIT_SCHEMATIC("refit_schematic", 0, false),
         MASTER_SCHEMATIC("master_schematic", 0, false),
-        UNIQUE("unique", 0, true);
+        UNIQUE("unique_hull_item", 0, true);
 
-        private final String id;
+        private final String rateId;
         private final int modifierCount;
         private final boolean rare;
 
-        Drop(String id, int modifierCount, boolean rare) {
-            this.id = id;
+        Drop(String rateId, int modifierCount, boolean rare) {
+            this.rateId = rateId;
             this.modifierCount = modifierCount;
             this.rare = rare;
         }
@@ -51,43 +40,50 @@ public final class BattleItemDrops {
             return rare;
         }
 
-        public String id() {
-            return id;
+        public String rateId() {
+            return rateId;
         }
 
         public int modifierCount() {
             return modifierCount;
         }
+    }
 
-        static Drop byIdOrNull(String id) {
-            for (Drop drop : values()) {
-                if (drop.id.equals(id)) {
-                    return drop;
-                }
-            }
-            return null;
+    public record SourceLoss(float deploymentPoints, float difficultyMultiplier, float levelBoost, FleetLootRules rules) {
+
+        public SourceLoss {
+            deploymentPoints = Math.max(0f, deploymentPoints);
+            levelBoost = Math.max(1f, levelBoost);
+            rules = rules == null ? FleetLootRules.REGULAR : rules;
+        }
+
+        ItemChances chances() {
+            return rules.multipliers().itemChances();
+        }
+
+        float twoModifierShare() {
+            return Math.min(MAX_TWO_MODIFIER_SHARE, BASE_TWO_MODIFIER_SHARE * levelBoost);
         }
     }
 
-    public record SourcePower(float power, ItemChances chances) {
-
-        public SourcePower {
-            power = Math.max(0f, power);
-            chances = chances == null ? ItemChances.BASE : chances;
-        }
-    }
-
-    public record Battle(List<SourcePower> sources, String uniqueFactionId) {
+    public record Battle(List<SourceLoss> sources, String uniqueFactionId) {
 
         public Battle {
             sources = sources == null ? List.of() : List.copyOf(sources);
         }
 
         public boolean isEmpty() {
-            return sources.stream().noneMatch(source -> source.power() > 0f);
+            return deploymentPoints() <= 0f;
+        }
+
+        float deploymentPoints() {
+            float total = 0f;
+            for (SourceLoss source : sources) {
+                total += source.deploymentPoints();
+            }
+            return total;
         }
     }
-
 
     record Planned(Drop drop, ItemKind kind) {
     }
@@ -95,41 +91,12 @@ public final class BattleItemDrops {
     private BattleItemDrops() {
     }
 
-    public static void load() {
-        ModCsv.load(DROP_COLUMN, DATA_PATH, LOG, BattleItemDrops::register);
-    }
-
-    public static void register(JSONArray rows) throws JSONException {
-        Map<Drop, Float> rates = new EnumMap<>(Drop.class);
-        ModCsv.forEach(rows == null ? new JSONArray() : rows, (index, row) -> {
-            String dropId = ModCsv.text(row, DROP_COLUMN);
-            Drop drop = Drop.byIdOrNull(dropId);
-            float rate = CsvRows.numberOrNaN(ModCsv.text(row, RATE_COLUMN));
-            if (drop == null) {
-                LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": unknown drop \"" + dropId + "\"");
-            } else if (!(rate >= 0f) || Float.isInfinite(rate)) {
-                LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": " + dropId + " needs a rate of 0 or more");
-            } else {
-                rates.put(drop, rate);
-            }
-        });
-        RATES.set(Collections.unmodifiableMap(rates));
-    }
-
-    public static void clear() {
-        RATES.set(Map.of());
-    }
-
-    public static float rate(Drop drop) {
-        return RATES.get().getOrDefault(drop, 0f);
-    }
-
     public static float settingMultiplier() {
         return Math.max(0, ModSettings.intOr(DROP_PERCENT_FIELD_ID, DEFAULT_DROP_PERCENT)) / 100f;
     }
 
-    public static float shipPower(float deploymentPoints, int allocatedNodeCount) {
-        return Math.max(0f, deploymentPoints) * (1f + Math.max(0, allocatedNodeCount) / NODES_PER_DOUBLING);
+    public static float levelBoost(int allocatedNodeCount) {
+        return 1f + Math.max(0, allocatedNodeCount) / NODES_PER_DOUBLING;
     }
 
     public static HullItemDrops.SectionItemLoot roll(Battle battle, float dropMultiplier, Random random, Predicate<ItemDefinition> uniqueAllowed,
@@ -140,7 +107,7 @@ public final class BattleItemDrops {
         List<ItemData> items = new ArrayList<>();
         List<ShipSchematic> upgrades = new ArrayList<>();
         List<ItemKind> kindsWithBasics = hullItemDropsOpen ? HullItemDrops.sectionKindsWithBasics() : List.of();
-        for (Planned planned : plan(battle.sources(), dropMultiplier, kindsWithBasics, random, hullItemDropsOpen)) {
+        for (Planned planned : plan(battle, dropMultiplier, kindsWithBasics, random, hullItemDropsOpen)) {
             if (planned.drop() == Drop.REFIT_SCHEMATIC) {
                 upgrades.add(RefitSchematic.roll(random));
             } else if (planned.drop() == Drop.MASTER_SCHEMATIC) {
@@ -164,16 +131,16 @@ public final class BattleItemDrops {
         return new HullItemDrops.SectionItemLoot(items, upgrades);
     }
 
-    static List<Planned> plan(List<SourcePower> sources, float dropMultiplier, List<ItemKind> kindsWithBasics, Random random,
-                              boolean hullItemDropsOpen) {
+    static List<Planned> plan(Battle battle, float dropMultiplier, List<ItemKind> kindsWithBasics, Random random, boolean hullItemDropsOpen) {
         List<Planned> planned = new ArrayList<>();
+        float battleDeploymentPoints = battle.deploymentPoints();
         for (Drop drop : Drop.values()) {
             if (!allowed(drop, hullItemDropsOpen)) {
                 continue;
             }
             float expected = 0f;
-            for (SourcePower source : sources) {
-                expected += expected(source, drop, dropMultiplier) * source.chances().general();
+            for (SourceLoss source : battle.sources()) {
+                expected += expected(source, drop, battleDeploymentPoints, dropMultiplier) * source.chances().general();
             }
             addPlanned(planned, drop, null, ItemDrops.wholeFeedstock(expected, random));
         }
@@ -183,8 +150,8 @@ public final class BattleItemDrops {
                     continue;
                 }
                 float expected = 0f;
-                for (SourcePower source : sources) {
-                    expected += expected(source, drop, dropMultiplier) * source.chances().targeted(kind) / kindsWithBasics.size();
+                for (SourceLoss source : battle.sources()) {
+                    expected += expected(source, drop, battleDeploymentPoints, dropMultiplier) * source.chances().targeted(kind) / kindsWithBasics.size();
                 }
                 addPlanned(planned, drop, kind, ItemDrops.wholeFeedstock(expected, random));
             }
@@ -200,9 +167,20 @@ public final class BattleItemDrops {
         };
     }
 
-    private static float expected(SourcePower source, Drop drop, float dropMultiplier) {
+    private static float expected(SourceLoss source, Drop drop, float battleDeploymentPoints, float dropMultiplier) {
+        BattleLootRates.Rate rate = BattleLootRates.rate(drop.rateId());
+        if (rate == null) {
+            return 0f;
+        }
+        FleetLootRules rules = source.rules();
         float rarityMult = drop.rare() ? source.chances().rarity() : 1f;
-        return source.power() / POWER_PER_RATE_STEP * rate(drop) * dropMultiplier * rarityMult;
+        float modifierShare = switch (drop) {
+            case MODS_1 -> 1f - source.twoModifierShare();
+            case MODS_2 -> source.twoModifierShare();
+            default -> 1f;
+        };
+        return rate.expected(source.deploymentPoints() * rules.deploymentPointsMult(), battleDeploymentPoints)
+                * BattleLootRates.difficulty(source.difficultyMultiplier()) * rules.share(rate) * modifierShare * dropMultiplier * rarityMult;
     }
 
     private static void addPlanned(List<Planned> planned, Drop drop, ItemKind kind, int count) {

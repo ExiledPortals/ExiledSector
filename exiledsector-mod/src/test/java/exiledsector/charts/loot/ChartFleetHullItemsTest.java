@@ -72,7 +72,6 @@ class ChartFleetHullItemsTest {
                 .put(new JSONObject().put("id", "hull_relic").put("section", "bridge").put("rarity", "10").put("unique", "true")
                         .put("prefixes", "HULL_PERCENT:4:6")));
         ItemDrops.register(new JSONArray()
-                .put(new JSONObject().put("site", ChartIds.FLEET_LOOT_SITE).put("chances", "1;1;1").put("uniqueChance", "1"))
                 .put(new JSONObject().put("site", ChartIds.BOSS_LOOT_SITE).put("chances", "1;1;1").put("uniqueChance", "1")));
         try {
             ChartRun run = storeLiveRun(6);
@@ -84,9 +83,9 @@ class ChartFleetHullItemsTest {
 
             assertTrue(guardLoot.upgrades().isEmpty());
             assertTrue(guardLoot.items().stream().noneMatch(item -> ItemDefinitions.get(item.definitionId()) != null), guardLoot.toString());
-            assertFalse(guardLoot.materials().isEmpty());
+            assertTrue(guardLoot.materials().isEmpty(), "materials drop per deployment point from the battle, not from the fleet roll");
             assertFalse(bossLoot.upgrades().isEmpty());
-            assertTrue(bossLoot.items().stream().anyMatch(item -> "bridge_basic".equals(item.definitionId())));
+            assertTrue(bossLoot.items().stream().anyMatch(item -> ItemDefinitions.get(item.definitionId()) != null), bossLoot.toString());
         } finally {
             ItemDrops.clear();
             ItemDefinitions.clear();
@@ -99,7 +98,6 @@ class ChartFleetHullItemsTest {
         ItemDefinitions.register(new JSONArray()
                 .put(new JSONObject().put("id", "bridge_basic").put("section", "bridge").put("rarity", "10").put("prefixes", "HULL_PERCENT:4:6")));
         ItemDrops.register(new JSONArray()
-                .put(new JSONObject().put("site", ChartIds.FLEET_LOOT_SITE).put("chances", "0").put("uniqueChance", "0"))
                 .put(new JSONObject().put("site", ChartIds.BOSS_LOOT_SITE).put("chances", "0").put("uniqueChance", "0")));
         try {
             ChartRun run = storeLiveRun(6);
@@ -124,7 +122,6 @@ class ChartFleetHullItemsTest {
                 .put(new JSONObject().put("id", "site_relic").put("section", "bridge").put("rarity", "10").put("unique", "true")
                         .put("source", "site:somewhere_else").put("prefixes", "HULL_PERCENT:4:6")));
         ItemDrops.register(new JSONArray()
-                .put(new JSONObject().put("site", ChartIds.FLEET_LOOT_SITE).put("chances", "0").put("uniqueChance", "0"))
                 .put(new JSONObject().put("site", ChartIds.BOSS_LOOT_SITE).put("chances", "0").put("uniqueChance", "0")));
         try {
             ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
@@ -170,7 +167,6 @@ class ChartFleetHullItemsTest {
                 .put(new JSONObject().put("id", "site_relic").put("section", "bridge").put("rarity", "10").put("unique", "true")
                         .put("source", "site:somewhere_else").put("prefixes", "HULL_PERCENT:4:6")));
         ItemDrops.register(new JSONArray()
-                .put(new JSONObject().put("site", ChartIds.FLEET_LOOT_SITE).put("chances", "0").put("uniqueChance", "0"))
                 .put(new JSONObject().put("site", ChartIds.BOSS_LOOT_SITE).put("chances", "0").put("uniqueChance", "0")));
         try {
             ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);

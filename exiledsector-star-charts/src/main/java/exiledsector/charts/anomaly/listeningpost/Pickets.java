@@ -114,6 +114,7 @@ final class Pickets {
         MemoryAPI picketMemory = picket.getMemoryWithoutUpdate();
         if (guardMemory.contains(ChartIds.START_DP_MEMORY_KEY) && picketMemory.contains(ChartIds.START_DP_MEMORY_KEY)) {
             addTo(guardMemory, picketMemory, ChartIds.START_DP_MEMORY_KEY);
+            addTo(guardMemory, picketMemory, ChartIds.START_FP_MEMORY_KEY);
             addTo(guardMemory, picketMemory, ChartIds.LOOT_DP_PAID_MEMORY_KEY);
             guardMemory.set(ChartFleetLoot.LOOT_FLEETS_MEMORY_KEY, ChartFleetLoot.lootFleets(guard) + ChartFleetLoot.lootFleets(picket));
         }

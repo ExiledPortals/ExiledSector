@@ -41,8 +41,8 @@ public interface LootShaper extends ChartAnomaly {
         return 1f;
     }
 
-    default ItemDrops.SiteLoot touchBattleLoot(ItemDrops.SiteLoot loot, Random random) {
-        return loot;
+    default ItemDrops.SiteLoot battleBonus(SectorAPI sector, Random random) {
+        return ItemDrops.SiteLoot.NONE;
     }
 
     default ItemChances siteChances(MemoryAPI siteMemory, ItemChances chances) {

@@ -29,6 +29,10 @@ public interface LootSource {
         return null;
     }
 
+    default FleetLootRules fleetLootRules(CampaignFleetAPI fleet) {
+        return null;
+    }
+
     default LootMultipliers modifiersAt(LocationAPI location) {
         return null;
     }

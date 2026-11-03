@@ -361,12 +361,29 @@ A locked ship counts as 0 tree power in `PlayerTreePower`, and an open-world NPC
 the share of NPC ships with trees follows the share of unlocked player ships. Chart ships are levelled only at their tier's
 `tree_share` in `star_chart_tiers.csv` (bosses always). A captured NPC ship keeps its tree but arrives locked.
 
+### Battle loot
+
+Battle drops come from `battle_loot.csv`: each row expects its rate per 100 deployment points an enemy fleet lost,
+curved over the whole battle (linear, or diminishing past 2000 DP with the square root), then times battle difficulty
+capped at 3x and the fleet's `FleetLootRules`. Fleets outside Star Charts get the row's `regular_share`, and core
+rolls their crafting materials per battle (`BattleMaterials`). A chart fleet gets the full rate, its run's loot
+multipliers and, for the boss, its spoils multiplier as extra DP; `ChartFleetLoot` rolls its materials from the DP its
+ledger still owes, so rebuilt salvage defenders can't be farmed. Endlessly launched station fleets
+(`FEEDSTOCK_ONLY_MEMORY_KEY`) drop only base feedstock.
+
+Hull items read the hull rows (`BattleItemDrops`): an enemy ship's tree raises the share rolled with two modifiers
+(`levelBoost`), never the count. Chart fleets roll subroutines from the `subroutine` row, and star charts and
+catalysts from `chart_drops.csv` as a whole-chart amount, each fleet taking its fleet points at spawn over what its
+tier spawns (`ChartFleetLoot.expectedFleetPoints`). Each dropped chart rolls its tier from the row's `minus_2` to
+`plus_2` weights around the run tier (`ChartDrops.dropTier`). An anomaly's own fleet loot (`LootShaper.fleetItems`)
+comes on top.
+
 ### Hull item drops
 
 Hull items share `item_salvage.csv` with subroutines but keep only half its rolls: each item of the site cascade, the
 targeted extras and a unique hull item from the site's unique roll survive at `HullItemDrops.SALVAGE_SHARE`
-(`ItemTypeSupport.salvageShare`). Battle drops (`battle_item_drops.csv`) and market stock (`market_hull_items.csv`)
-are hull-only tables and carry their own rates. A dropped non-unique hull item has one or two modifiers
+(`ItemTypeSupport.salvageShare`). Battle drops (`battle_loot.csv`) and market stock (`market_hull_items.csv`)
+carry their own rates. A dropped non-unique hull item has one or two modifiers
 (`HullItemDrops.DROP_LIMITS` through `ItemTypeSupport.dropLimits`), storm-touched loot included, so it never drops rare;
 crafting can still take it to four.
 
@@ -569,9 +586,9 @@ as a capture (`RedeploymentCatalystUse`). A row with the `star` effect may inser
 `AtlasAnomalies.canInsert` and `insert` with `forcingStar`, which skip only the insertable check, so it never replaces a star
 anomaly already there; it never drops. Both go through core `Consumables.use`, which spends the item only once the change has taken.
 
-Every chart drop source inside a live run rolls its `catalyst_chance` from `chart_drops.csv` after its chart currency,
+Every chart drop source inside a live run rolls its `catalyst_chance` from `chart_drops.csv` as an expected count,
 picking by weight among catalysts whose `min_tier` the run's tier reaches (`ChartDrops.roll`, `AtlasCatalysts.pickDrop`).
-The Catalyst % chart line and the quantity lines scale the chance, and nothing outside chart systems drops one.
+The Catalyst % chart line and the quantity lines scale it, and nothing outside chart systems drops one.
 
 ### Chart bosses
 
@@ -581,9 +598,9 @@ and rows without factions serve every faction without its own. A faction in a ro
 that type, so the Remnant and derelicts always get a fleet boss. Each row's `fleet_share` scales the boss size for
 the boss's fleet: the whole boss, or the station's guard. The boss counts as killed once its fleet no longer holds
 the flagship or station it spawned with, whatever removed it (`ChartRun.bossFlagshipId`, `ChartObjectives.reconcile`).
-The first battle that damages the boss tops its loot up to at least one basic hull item, one item crafting currency and
-two chart currencies, once per run (`ChartFleetLoot.withBossGuarantees`). Chart fleets and the boss drop twice the site rate of item crafting
-currencies (`ChartFleetLoot.BATTLE_CRAFTING_MULT`).
+The first battle that damages the boss adds one basic hull item unless its loot already held one, once per run
+(`ChartFleetLoot.withBossGuarantees`). The boss's chest (`exiledSector_chart_boss` in `item_salvage.csv`) holds items
+and parts but no crafting currencies.
 
 A station boss is a vanilla station-mode fleet with no market (`VanillaChartContentEngine.createStation`) orbiting
 the boss's spot, and its guard holds a passive orbit beside it, so engaging either pulls in the other. The station
@@ -753,8 +770,9 @@ intel names the next worlds and POIs it reaches. The size and strike lines scale
 A battle is in the storm when the player fleet is inside the band as it starts. The global `StormBattlePlugin` then
 fires an EMP arc with no source ship every 6 seconds at a random non-phased ship of either side, weighted by hull size
 and 10% stronger per tier, so shields block it. `StarChartLootSource` records the flag at the first engagement, so
-auto-resolved battles count too, and `ChartFleetLoot` rolls chart fleet items with 50% more quantity, rerolling a
-quarter of hull items around one reserved storm modifier (`StormLoot`, `GrantedModifiers`).
+auto-resolved battles count too, and chart fleets drop 50% more loot. A won storm battle against chart fleets also
+adds one basic hull item rerolled around a reserved storm modifier (`StormFront.battleBonus`, `StormLoot`,
+`GrantedModifiers`).
 
 ### Derelict Forge
 

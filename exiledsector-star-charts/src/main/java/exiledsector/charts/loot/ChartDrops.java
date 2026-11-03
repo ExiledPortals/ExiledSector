@@ -21,6 +21,7 @@ import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemTypes;
+import exiledsector.items.WeightedPick;
 import exiledsector.loot.LootSources;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -40,6 +41,9 @@ public final class ChartDrops {
     static final String SOURCE_COLUMN = "source";
     static final int NO_TIER = 0;
     static final float BATTLE_DEPLOYMENT_POINTS_PER_CHANCE = 100f;
+    static final List<String> TIER_OFFSET_COLUMNS = List.of("minus_2", "minus_1", "same_tier", "plus_1", "plus_2");
+    static final int LOWEST_TIER_OFFSET = -2;
+    static final List<Float> SAME_TIER_ONLY = List.of(0f, 0f, 1f, 0f, 0f);
     private static final Logger LOG = Logger.getLogger(ChartDrops.class);
     private static volatile Map<Source, Rule> rules = Map.of();
 
@@ -72,18 +76,24 @@ public final class ChartDrops {
         }
     }
 
-    record Rule(float chance, float extraChance, float tierUpChance, float currencyChance, float catalystChance, float minDefeatedDp,
+    record Rule(float chance, float extraChance, List<Float> tierWeights, float currencyChance, float catalystChance, float minDefeatedDp,
                 float defeatedDpPerTier, int maxTier) {
 
         Rule {
             chance = Math.max(0f, chance);
             extraChance = Math.max(0f, extraChance);
-            tierUpChance = Math.max(0f, Math.min(1f, tierUpChance));
+            tierWeights = tierWeights == null || tierWeights.size() != TIER_OFFSET_COLUMNS.size()
+                    || tierWeights.stream().noneMatch(weight -> weight > 0f) ? SAME_TIER_ONLY : List.copyOf(tierWeights);
             currencyChance = Math.max(0f, currencyChance);
             catalystChance = Math.max(0f, catalystChance);
             minDefeatedDp = Math.max(0f, minDefeatedDp);
             defeatedDpPerTier = Math.max(0f, defeatedDpPerTier);
             maxTier = ChartTiers.clamp(maxTier);
+        }
+
+        int pickTierOffset(Random random) {
+            int index = WeightedPick.index(tierWeights, weight -> Math.max(0f, weight), random.nextFloat());
+            return index + LOWEST_TIER_OFFSET;
         }
     }
 
@@ -164,8 +174,12 @@ public final class ChartDrops {
                     csv.problem(rowLabel, "catalyst_chance", sourceText + " is outside a chart system, where Atlas Catalysts never drop");
                     catalystChance = 0f;
                 }
+                List<Float> tierWeights = new ArrayList<>();
+                for (String column : TIER_OFFSET_COLUMNS) {
+                    tierWeights.add(csv.number(row, column, 0f, sourceText));
+                }
                 loaded.put(source, new Rule(csv.number(row, "chance", 0f, sourceText), csv.number(row, "extra_chance", 0f, sourceText),
-                        csv.number(row, "tier_up_chance", 0f, sourceText), currencyChance, catalystChance,
+                        tierWeights, currencyChance, catalystChance,
                         csv.number(row, "min_defeated_dp", 0f, sourceText), csv.number(row, "defeated_dp_per_tier", 0f, sourceText),
                         csv.integer(row, "max_tier", ChartTiers.HIGHEST_TIER, sourceText)));
             });
@@ -208,8 +222,7 @@ public final class ChartDrops {
         }
         for (int i = 0; i < chartCount; i++) {
             boolean forced = guaranteedTierUp && i == 0;
-            boolean tierUp = forced || random.nextFloat() < rule.tierUpChance();
-            int dropTier = tierUp ? Math.max(baseTier, Math.min(forced ? ChartTiers.HIGHEST_TIER : rule.maxTier(), baseTier + 1)) : baseTier;
+            int dropTier = forced ? Math.min(ChartTiers.HIGHEST_TIER, baseTier + 1) : dropTier(rule, baseTier, rule.pickTierOffset(random));
             ItemDefinition definition = pickChartAtTier(random, dropTier);
             if (definition != null) {
                 charts.add(ItemData.rolledAtTier(definition, random.nextLong(), dropTier));
@@ -220,14 +233,19 @@ public final class ChartDrops {
             ItemDrops.rollEachCurrency(chartCurrencyDrops(), rule.currencyChance() * Math.max(0f, mults.currency()), random, currencies);
         }
         Map<String, Integer> catalysts = new LinkedHashMap<>();
-        if (source.insideSystem() && rule.catalystChance() > 0f && !AtlasCatalysts.all().isEmpty()
-                && random.nextFloat() < rule.catalystChance() * Math.max(0f, mults.catalyst())) {
+        int catalystCount = source.insideSystem() && !AtlasCatalysts.all().isEmpty()
+                ? ItemDrops.wholeFeedstock(rule.catalystChance() * Math.max(0f, mults.catalyst()), random) : 0;
+        for (int i = 0; i < catalystCount; i++) {
             AtlasCatalysts.Catalyst catalyst = AtlasCatalysts.pickDrop(baseTier, random);
             if (catalyst != null) {
                 catalysts.merge(catalyst.itemId(), 1, Integer::sum);
             }
         }
         return charts.isEmpty() && currencies.isEmpty() && catalysts.isEmpty() ? Loot.NONE : new Loot(charts, currencies, catalysts);
+    }
+
+    static int dropTier(Rule rule, int baseTier, int offset) {
+        return Math.max(ChartTiers.LOWEST_TIER, Math.min(Math.max(baseTier, rule.maxTier()), baseTier + offset));
     }
 
     public static ItemDefinition pickChartAtTier(Random random, int tier) {

@@ -23,6 +23,7 @@ import exiledsector.items.ItemRarity;
 import exiledsector.items.ShipSchematic;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
+import exiledsector.loot.BattleMaterials;
 import exiledsector.loot.LootSources;
 import exiledsector.ui.CampaignMessages;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
@@ -40,7 +41,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
 
     private static final class Pending {
         private final BattleLoot battleLoot;
-        private float feedstockEarned;
+        private final BattleMaterials materials = new BattleMaterials();
 
         Pending(BattleLoot battleLoot) {
             this.battleLoot = battleLoot;
@@ -81,9 +82,8 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         BattleEngagement battleEngagement = new BattleEngagement(engagementResult.getBattle(), difficultyMultiplier, defeatedDp,
                 engagement.enemyLosses());
         LootSources.all().forEach(source -> source.recordEngagement(pendingLoot.battleLoot, battleEngagement));
-        if (defeatedDp > 0f) {
-            pendingLoot.feedstockEarned += defeatedDp * ItemDrops.battleFeedstockPerDeploymentPoint() * difficultyMultiplier;
-        }
+        battleEngagement.lostEnemiesBySourceFleet().forEach((sourceFleet, members) -> pendingLoot.materials.record(
+                BattleEngagement.deploymentPoints(members), difficultyMultiplier, LootSources.fleetLootRules(sourceFleet)));
     }
 
     @Override
@@ -96,10 +96,11 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         Pending pendingLoot = encounterPlugin == null ? null : pendingByBattle.remove(encounterPlugin.getBattle());
         if (pendingLoot != null && loot != null) {
             LootSources.all().forEach(source -> source.addEncounterLoot(pendingLoot.battleLoot, loot));
-            int wholeFeedstock = ItemDrops.wholeFeedstock(pendingLoot.feedstockEarned, lootRandom);
+            int wholeFeedstock = ItemDrops.wholeFeedstock(pendingLoot.materials.feedstock(), lootRandom);
             if (wholeFeedstock > 0) {
                 MaterialItems.add(loot, ItemDisassembly.FEEDSTOCK_ITEM_ID, wholeFeedstock);
             }
+            pendingLoot.materials.rollMaterials(lootRandom).forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
         }
         pendingByBattle.keySet().removeIf(BattleAPI::isDone);
     }
@@ -112,7 +113,10 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
             return;
         }
         LootSources.all().forEach(source -> source.deliverBattleLoot(pendingLoot.battleLoot, playerFleet.getCargo()));
-        int wholeFeedstock = ItemDrops.wholeFeedstock(pendingLoot.feedstockEarned, lootRandom);
+        Map<String, Integer> materials = pendingLoot.materials.rollMaterials(lootRandom);
+        materials.forEach((itemId, quantity) -> MaterialItems.add(playerFleet.getCargo(), itemId, quantity));
+        MaterialDropAnnouncer.announce(materials);
+        int wholeFeedstock = ItemDrops.wholeFeedstock(pendingLoot.materials.feedstock(), lootRandom);
         if (wholeFeedstock > 0) {
             MaterialItems.add(playerFleet.getCargo(), ItemDisassembly.FEEDSTOCK_ITEM_ID, wholeFeedstock);
             String feedstockName = MaterialItems.displayName(ItemDisassembly.FEEDSTOCK_ITEM_ID);

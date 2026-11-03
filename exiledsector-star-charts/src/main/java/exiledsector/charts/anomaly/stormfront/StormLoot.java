@@ -7,9 +7,9 @@ import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemType;
 import exiledsector.items.ReservedModifiers;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Predicate;
 
 public final class StormLoot {
 
@@ -25,26 +25,17 @@ public final class StormLoot {
         }
     }
 
-    public static ItemDrops.SiteLoot touch(ItemDrops.SiteLoot loot, Random random) {
-        if (loot == null || loot.items().isEmpty()) {
-            return loot;
+    public static ItemData guaranteedItem(Random random, Predicate<ItemDefinition> allowed) {
+        ItemDefinition definition = ItemDrops.pickOfType(random, ItemType.HULL_ITEM,
+                candidate -> !candidate.unique() && allowed.test(candidate) && !grantable(candidate).isEmpty());
+        if (definition == null) {
+            return null;
         }
-        List<ItemData> touched = new ArrayList<>(loot.items().size());
-        for (ItemData item : loot.items()) {
-            touched.add(touch(item, random));
-        }
-        return new ItemDrops.SiteLoot(touched, loot.upgrades(), loot.materials());
+        List<String> grantable = grantable(definition);
+        return GrantedModifiers.grant(ItemData.rolled(definition, random.nextLong()), grantable.get(random.nextInt(grantable.size())), random);
     }
 
-    static ItemData touch(ItemData item, Random random) {
-        ItemDefinition definition = item == null ? null : item.definition();
-        if (definition == null || definition.type() != ItemType.HULL_ITEM || random.nextFloat() >= StormRules.STORM_MODIFIER_CHANCE) {
-            return item;
-        }
-        List<String> grantable = MODIFIER_IDS.stream().filter(modifierId -> GrantedModifiers.canGrant(definition, modifierId)).toList();
-        if (grantable.isEmpty()) {
-            return item;
-        }
-        return GrantedModifiers.grant(item, grantable.get(random.nextInt(grantable.size())), random);
+    private static List<String> grantable(ItemDefinition definition) {
+        return MODIFIER_IDS.stream().filter(modifierId -> GrantedModifiers.canGrant(definition, modifierId)).toList();
     }
 }

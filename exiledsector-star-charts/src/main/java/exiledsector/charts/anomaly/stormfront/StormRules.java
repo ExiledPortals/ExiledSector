@@ -15,7 +15,6 @@ public final class StormRules {
     static final float STRIKE_EMP = 800f;
     static final float TIER_STEP = 0.1f;
     static final float LOOT_QUANTITY_PERCENT = 50f;
-    static final float STORM_MODIFIER_CHANCE = 0.25f;
 
     private StormRules() {
     }

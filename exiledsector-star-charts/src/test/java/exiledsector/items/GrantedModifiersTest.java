@@ -7,13 +7,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -83,19 +82,14 @@ class GrantedModifiersTest {
     }
 
     @Test
-    void aShareOfHullItemsFromStormBattlesCarryAStormModifier() {
-        List<ItemData> items = new ArrayList<>();
-        for (long seed = 0; seed < 400; seed++) {
-            items.add(ItemData.rolled(ItemDefinitions.get(BASE), seed));
+    void aStormFightsGuaranteedHullItemIsABasicOneCarryingAStormModifier() {
+        Random random = new Random(9L);
+        for (int fight = 0; fight < 50; fight++) {
+            ItemData stormItem = StormLoot.guaranteedItem(random, definition -> true);
+
+            assertEquals(BASE, stormItem.definitionId());
+            assertTrue(stormItem.explicits().stream().anyMatch(rolled -> StormLoot.MODIFIER_IDS.contains(rolled.modifierId())), stormItem.toString());
         }
-        ItemDrops.SiteLoot loot = new ItemDrops.SiteLoot(items, List.of(), Map.of("material", 2));
-
-        ItemDrops.SiteLoot touched = StormLoot.touch(loot, new Random(9L));
-
-        long stormy = touched.items().stream().filter(item -> item.explicits().stream()
-                .anyMatch(rolled -> StormLoot.MODIFIER_IDS.contains(rolled.modifierId()))).count();
-        assertEquals(400, touched.items().size());
-        assertEquals(100f, stormy, 30f);
-        assertEquals(Map.of("material", 2), touched.materials());
+        assertNull(StormLoot.guaranteedItem(random, definition -> false));
     }
 }

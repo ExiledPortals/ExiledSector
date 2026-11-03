@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.ids.FleetTypes;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantAssignmentAI;
+import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartAnomalyFleets;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
@@ -50,6 +51,7 @@ final class StationFleets {
         ChartAnomalyFleets.prepare(fleet, runId, runTier, fleetSeed, false, context);
         fleet.getMemoryWithoutUpdate().set(MemFlags.MEMORY_KEY_NO_JUMP, true);
         fleet.getMemoryWithoutUpdate().set(SOURCE_ID_KEY, source.getId());
+        fleet.getMemoryWithoutUpdate().set(ChartIds.FEEDSTOCK_ONLY_MEMORY_KEY, true);
         if (location instanceof StarSystemAPI system) {
             fleet.addScript(new RemnantAssignmentAI(fleet, system, source));
         }

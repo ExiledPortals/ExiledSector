@@ -34,6 +34,10 @@ public final class LootSources {
         return SOURCES.firstOr(source -> source.itemChancesFor(fleet), LootMultipliers.NONE.itemChances());
     }
 
+    public static FleetLootRules fleetLootRules(CampaignFleetAPI fleet) {
+        return SOURCES.firstOr(source -> source.fleetLootRules(fleet), FleetLootRules.REGULAR);
+    }
+
     public static LootMultipliers modifiersFor(SectorEntityToken site) {
         return SOURCES.firstOr(source -> source.modifiersFor(site), LootMultipliers.NONE);
     }

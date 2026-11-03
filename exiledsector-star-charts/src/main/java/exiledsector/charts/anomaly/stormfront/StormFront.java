@@ -3,6 +3,7 @@ package exiledsector.charts.anomaly.stormfront;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.effect.ChartModifier;
@@ -13,10 +14,14 @@ import exiledsector.charts.anomaly.ContentPlacer;
 import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.items.ItemData;
 import exiledsector.items.ItemDrops;
+import exiledsector.items.ItemType;
+import exiledsector.items.ItemUnlock;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public final class StormFront implements ContentPlacer, RunParticipant, LootShaper {
@@ -95,8 +100,12 @@ public final class StormFront implements ContentPlacer, RunParticipant, LootShap
     }
 
     @Override
-    public ItemDrops.SiteLoot touchBattleLoot(ItemDrops.SiteLoot loot, Random random) {
-        return StormLoot.touch(loot, random);
+    public ItemDrops.SiteLoot battleBonus(SectorAPI sector, Random random) {
+        if (!ItemUnlock.available(ItemType.HULL_ITEM, sector)) {
+            return ItemDrops.SiteLoot.NONE;
+        }
+        ItemData stormItem = StormLoot.guaranteedItem(random, definition -> ItemUnlock.canDrop(definition, sector));
+        return stormItem == null ? ItemDrops.SiteLoot.NONE : new ItemDrops.SiteLoot(List.of(stormItem), List.of(), Map.of());
     }
 
     @Override

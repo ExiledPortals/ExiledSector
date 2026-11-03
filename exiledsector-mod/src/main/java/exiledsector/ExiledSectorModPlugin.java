@@ -30,6 +30,7 @@ import exiledsector.items.ItemCraftingCosts;
 import exiledsector.items.ItemDataIntegrity;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;
+import exiledsector.loot.BattleLootRates;
 import exiledsector.items.ItemIdAliases;
 import exiledsector.items.ItemImplicits;
 import exiledsector.items.ItemModifiers;
@@ -91,6 +92,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         ItemCraftingCosts.load();
         ItemNames.load();
         ItemDrops.load();
+        BattleLootRates.load();
         UniqueSourceCheck.logUnreachableSources();
         CompatChecks.logAtStartup(compatTargets());
         GraphicsLibCompat.loadLightData(LIGHT_DATA_PATH);

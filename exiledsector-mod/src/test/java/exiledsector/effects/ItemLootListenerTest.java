@@ -9,6 +9,7 @@ import exiledsector.items.MaterialItems;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.loot.ChartDrops;
 import exiledsector.charts.loot.ChartFleetFixtures;
+import exiledsector.charts.loot.ChartFleetLoot;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
@@ -30,7 +31,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.npc.RealSkillData;
-import exiledsector.items.BattleItemDrops;
+import exiledsector.loot.BattleLootRates;
 import exiledsector.items.FactionFleetDrops;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
@@ -285,6 +286,28 @@ class ItemLootListenerTest {
     }
 
     @Test
+    void wonBattlesDropCraftingMaterialsPerDeploymentPointAtTheRegularShareAndNoChartOnlyOnes() throws Exception {
+        BattleLootRates.register(new JSONArray()
+                .put(new JSONObject().put("drop", "exiledSector_augmentation_nanoswarm").put("per_100_dp", "1").put("curve", "linear")
+                        .put("regular_share", "0.5"))
+                .put(new JSONObject().put("drop", "exiledSector_fundamental_nanoswarm").put("per_100_dp", "1").put("curve", "linear")
+                        .put("regular_share", "0")));
+        try {
+            ItemLootListener unluckyListener = new ItemLootListener(neverLucky());
+            BattleAPI battle = mock(BattleAPI.class);
+            unluckyListener.holdLoot(PlayerEngagement.of(engagement(battle, List.of(warship("a", 300f)), List.of(warship("b", 100f))), 1f));
+            CargoAPI loot = mock(CargoAPI.class);
+
+            unluckyListener.reportEncounterLootGenerated(context(battle), loot);
+
+            verify(loot).addSpecial(MaterialItems.data("exiledSector_augmentation_nanoswarm"), 2);
+            verify(loot, never()).addSpecial(Mockito.eq(MaterialItems.data("exiledSector_fundamental_nanoswarm")), anyFloat());
+        } finally {
+            BattleLootRates.clear();
+        }
+    }
+
+    @Test
     void lostBattlesAddNoParts() {
         BattleAPI battle = mock(BattleAPI.class);
         EngagementResultAPI result = engagement(battle, List.of(warship("a", 200f)), List.of());
@@ -307,7 +330,7 @@ class ItemLootListenerTest {
     void wonBattlesRollStarChartsFromChartFleetsAtTheRunTierAndOutsideOnlyFromStrongEnemies() throws Exception {
         StarChartFixtures.registerShipped();
         ChartDrops.register(new JSONArray()
-                .put(new JSONObject().put("source", "chart_fleet").put("chance", "1"))
+                .put(new JSONObject().put("source", "chart_fleet").put("chance", String.valueOf(ChartFleetLoot.expectedFleetPoints(8) / 20f)))
                 .put(new JSONObject().put("source", "battle").put("chance", "0.25").put("min_defeated_dp", "150").put("defeated_dp_per_tier", "100")
                         .put("max_tier", "6")));
         try {
@@ -379,7 +402,8 @@ class ItemLootListenerTest {
         when(mockSector.sector.getPlayerStats()).thenReturn(playerStats);
         ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "test_bridge").put("section", "bridge").put("rarity", "10")
                 .put("prefixes", "HULL_PERCENT:4:6")));
-        BattleItemDrops.register(new JSONArray().put(new JSONObject().put("drop", "mods_1").put("per_100_power", "1")));
+        BattleLootRates.register(new JSONArray().put(new JSONObject().put("drop", "hull_item").put("per_100_dp", "3").put("curve", "linear")
+                .put("regular_share", "1")));
         try {
             ItemLootListener unluckyListener = new ItemLootListener(neverLucky());
             BattleAPI battle = mock(BattleAPI.class);
@@ -392,16 +416,17 @@ class ItemLootListenerTest {
             unluckyListener.reportEncounterLootGenerated(context(battle), loot);
             return hullItemsAdded(loot);
         } finally {
-            BattleItemDrops.clear();
+            BattleLootRates.clear();
         }
     }
 
     @Test
-    void aWonBattleDropsHullItemsByTheDefeatedShipsPowerFromPlayerLevelFifteen() throws Exception {
+    void aWonBattleDropsHullItemsByTheDefeatedDeploymentPointsFromPlayerLevelFifteenAndABiggerEnemyTreeTurnsMoreTwoModifier()
+            throws Exception {
         String thirtyNodeTree = "exiledSector_npcTree|generated|30|root" + ",n".repeat(30);
 
-        assertEquals(1, battleHullItems(15, null).size());
-        assertEquals(2, battleHullItems(15, thirtyNodeTree).size());
+        assertEquals(2, battleHullItems(15, null).size(), "a single-prefix bridge drops only the one-modifier share");
+        assertEquals(1, battleHullItems(15, thirtyNodeTree).size());
         assertEquals(0, battleHullItems(14, thirtyNodeTree).size());
     }
 }
