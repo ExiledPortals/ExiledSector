@@ -681,6 +681,9 @@ caches. The core can't be clicked. Every 0.1 days the player fleet inside burns 
 (`BreachSupplyBuff`), both stronger toward the core. Its caches are its only loot: planned at creation, they form once
 the field reaches them and vanish once the collapse passes them, with item rarity raised by depth and item quantity by
 the cache item line, and content sites it covers get a smaller rarity bonus (`StarChartLootSource.modifiersFor`).
+While it is open, every fleet in the system that has an AI, isn't a station and isn't a dormant debris fleet gets an
+attack order on the breach ahead of its own orders (`BreachCharge`, checked each tick so late arrivals join); the
+collapse removes that order and the fleets go back to what they were doing.
 
 ### Neutron Star charts
 

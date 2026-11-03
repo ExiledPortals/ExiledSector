@@ -211,6 +211,7 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
             dissolveCaches(location);
         }
         touchSites(location);
+        BreachCharge.rally(location, entity);
         for (CampaignFleetAPI fleet : location.getFleets()) {
             applyTo(fleet, days);
         }
@@ -327,6 +328,7 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
         if (location == null) {
             return;
         }
+        BreachCharge.release(location, entity);
         for (CampaignFleetAPI fleet : location.getFleets()) {
             liftFrom(fleet);
         }
@@ -411,6 +413,7 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
         int supplyIncrease = Math.round(BreachRules.SUPPLY_USE_PERCENT);
         VanillaText.addPara(tooltip, Translation.msg("chart.anomaly.spatial_breach.effect.supplies").arg("value", supplyIncrease).styled(), TOOLTIP_PAD, text);
         VanillaText.addPara(tooltip, Translation.msg("chart.anomaly.spatial_breach.effect.fuel").styled(), TOOLTIP_PAD, text);
+        VanillaText.plainPara(tooltip, Translation.gameText("chart.anomaly.spatial_breach.effect.charge"), TOOLTIP_PAD, text);
         VanillaText.plainPara(tooltip, Translation.gameText("chart.anomaly.spatial_breach.effect.depth"), TOOLTIP_PAD, Misc.getGrayColor());
     }
 
