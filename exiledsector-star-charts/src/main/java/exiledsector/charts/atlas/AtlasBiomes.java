@@ -242,7 +242,7 @@ final class AtlasBiomes {
 
     private AtlasRegion recordedRegion(Site site) {
         AtlasRegion recorded = rules.region(memory.recordedRegion(site.key()));
-        return recorded != null && unlocks.allows(recorded.requiredMod(), "") ? recorded : null;
+        return recorded != null && recorded.keptWith(unlocks) ? recorded : null;
     }
 
     private List<AtlasRegion> decidedNeighbours(Site site) {
