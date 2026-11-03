@@ -4,7 +4,7 @@ Exiled Sector's source code is licensed under the [GNU General Public License v3
 
 ## Random Assortment of Things
 
-By Lukas04 and SnazzyPantsMcGee. Used with permission from Lukas04 for RAT-themed skill tree areas using RAT's icons and themes.
+By Lukas04 and SnazzyPantsMcGee. Used with permission from Lukas04 for RAT-themed skill tree areas using RAT's icons and themes, and for the Abyssal Rift atlas region using RAT's Abyss look.
 
 Files: everything prefixed `rat_`, which covers the icons in `graphics/icons`, the Abyss clouds in `graphics/backgrounds/static_images`, the Exoship, escort and serpent sprites in `graphics/fx`, and the Exoship warp sounds in `sounds/exiledSector`.
 
