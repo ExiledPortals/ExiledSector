@@ -43,31 +43,20 @@ public record ShipStatSheet(List<Section> sections) {
     }
 
     public enum Combine {
-        INCREASED,
-        ADDED,
-        MORE,
+        FLAT,
+        PERCENT,
+        MULTI,
         OTHER
     }
 
-    public record Breakdown(String title, String summary, List<SourceGroup> groups, String result, List<String> notes, Set<String> nodeIds) {
+    public record Breakdown(String title, String summary, List<SourceLine> sources, String result, List<String> notes, Set<String> nodeIds) {
 
         public boolean isEmpty() {
-            return summary == null && groups.isEmpty() && notes.isEmpty();
-        }
-
-        public List<SourceLine> sources() {
-            return groups.stream().flatMap(group -> group.lines().stream()).toList();
+            return summary == null && sources.isEmpty() && notes.isEmpty();
         }
     }
 
-    public record SourceGroup(Combine combine, List<SourceLine> lines, String total) {
-    }
-
-    public record SourceLine(String source, String amount, boolean fromTree, List<SourceLine> parts) {
-
-        public SourceLine(String source, String amount, boolean fromTree) {
-            this(source, amount, fromTree, List.of());
-        }
+    public record SourceLine(String source, Combine combine, String amount, boolean fromTree) {
     }
 
     public boolean isEmpty() {

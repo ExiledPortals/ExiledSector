@@ -8,7 +8,6 @@ import org.lazywizard.lazylib.ui.LazyFont;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 final class StatBreakdownTooltip {
 
@@ -16,11 +15,8 @@ final class StatBreakdownTooltip {
     private static final float MAX_NOTES_HEIGHT = 200f;
     private static final float NOTES_FONT_SIZE = 17f;
     private static final Color NOTES_COLOR = new Color(0xA0, 0xA0, 0xA0);
-    private static final Map<ShipStatSheet.Combine, String> HEADING_KEYS = Map.of(
-            ShipStatSheet.Combine.INCREASED, "ui.stats.breakdown.increased",
-            ShipStatSheet.Combine.ADDED, "ui.stats.breakdown.added",
-            ShipStatSheet.Combine.MORE, "ui.stats.breakdown.more",
-            ShipStatSheet.Combine.OTHER, "ui.stats.breakdown.heading");
+    private static final List<ShipStatSheet.Combine> VALUE_COLUMNS = List.of(ShipStatSheet.Combine.FLAT, ShipStatSheet.Combine.PERCENT,
+            ShipStatSheet.Combine.MULTI);
 
     private final SkillTreePanelStyle panelStyle;
     private final TextLabel titleLabel = new TextLabel(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
@@ -52,24 +48,39 @@ final class StatBreakdownTooltip {
         bodyLabel.setWrapped(breakdown.summary() == null ? "" : breakdown.summary(), SkillTreePanelStyle.TOOLTIP_MAX_TEXT_WIDTH, MAX_NOTES_HEIGHT);
         resultLabel.setWrapped(breakdown.result() == null ? "" : breakdown.result(), SkillTreePanelStyle.TOOLTIP_MAX_TEXT_WIDTH, MAX_NOTES_HEIGHT);
         notesLabel.setWrapped(String.join("\n", breakdown.notes()), SkillTreePanelStyle.TOOLTIP_MAX_TEXT_WIDTH, MAX_NOTES_HEIGHT);
-        List<TooltipTable> groupTables = new ArrayList<>();
-        for (ShipStatSheet.SourceGroup group : breakdown.groups()) {
-            groupTables.add(new TooltipTable(Translation.text(HEADING_KEYS.get(group.combine())), List.of(), rows(group)));
+        if (breakdown.sources().isEmpty()) {
+            tables = List.of();
+            return;
         }
-        tables = SkillTreeTooltipTable.measureAligned(font, groupTables);
+        boolean combined = breakdown.sources().stream().anyMatch(line -> line.combine() != ShipStatSheet.Combine.OTHER);
+        TooltipTable table = new TooltipTable(Translation.text("ui.stats.breakdown.heading"), combined ? combinedHeaders() : amountHeaders(),
+                combined ? combinedRows(breakdown.sources()) : amountRows(breakdown.sources()));
+        tables = List.of(SkillTreeTooltipTable.measure(font, table));
     }
 
-    private static List<TooltipTable.Row> rows(ShipStatSheet.SourceGroup group) {
+    private static List<String> combinedHeaders() {
+        return List.of(Translation.text("ui.stats.breakdown.source"), Translation.text("ui.stats.breakdown.flat"),
+                Translation.text("ui.stats.breakdown.percent"), Translation.text("ui.stats.breakdown.multi"));
+    }
+
+    private static List<String> amountHeaders() {
+        return List.of(Translation.text("ui.stats.breakdown.source"), Translation.text("ui.stats.breakdown.amount"));
+    }
+
+    private static List<TooltipTable.Row> combinedRows(List<ShipStatSheet.SourceLine> lines) {
         List<TooltipTable.Row> rows = new ArrayList<>();
-        for (ShipStatSheet.SourceLine line : group.lines()) {
-            rows.add(TooltipTable.Row.of(line.fromTree(), line.source(), line.amount()));
-            for (ShipStatSheet.SourceLine part : line.parts()) {
-                rows.add(TooltipTable.Row.of(part.fromTree() ? TooltipTable.Tone.DETAIL : TooltipTable.Tone.PLAIN, part.source(), part.amount()));
-            }
+        for (ShipStatSheet.SourceLine line : lines) {
+            List<String> cells = new ArrayList<>();
+            cells.add(line.source());
+            VALUE_COLUMNS.forEach(column -> cells.add(column == line.combine() ? line.amount() : ""));
+            rows.add(new TooltipTable.Row(List.copyOf(cells), line.fromTree()));
         }
-        if (group.total() != null) {
-            rows.add(TooltipTable.Row.of(TooltipTable.Tone.TOTAL, Translation.text("ui.stats.breakdown.total"), group.total()));
-        }
+        return rows;
+    }
+
+    private static List<TooltipTable.Row> amountRows(List<ShipStatSheet.SourceLine> lines) {
+        List<TooltipTable.Row> rows = new ArrayList<>();
+        lines.forEach(line -> rows.add(TooltipTable.Row.of(line.fromTree(), line.source(), line.amount())));
         return rows;
     }
 }
