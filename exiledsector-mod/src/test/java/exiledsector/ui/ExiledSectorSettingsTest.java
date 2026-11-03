@@ -1,6 +1,7 @@
 package exiledsector.ui;
 
 import exiledsector.ExiledSectorModPlugin;
+import exiledsector.compat.TaniaCompat;
 import exiledsector.ui.cargo.ItemAnimationSetting;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.i18n.I18n;
@@ -31,8 +32,11 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 
 class ExiledSectorSettingsTest {
 
@@ -163,7 +167,17 @@ class ExiledSectorSettingsTest {
     }
 
     @Test
+    void hidesTheTaniaAreaToggleUntilRelease() {
+        assumeTrue(TaniaCompat.HIDDEN_UNTIL_RELEASE);
+
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addRadio(anyString(), eq(VolumeToggles.TANIA_FIELD_ID), anyString(),
+                anyString(), anyString(), anyString(), anyString()), never());
+    }
+
+    @Test
     void registersTheTaniaAreaToggleDefaultingToAuto() {
+        assumeFalse(TaniaCompat.HIDDEN_UNTIL_RELEASE);
+
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addRadio(eq("exiledSector"),
                 eq(VolumeToggles.TANIA_FIELD_ID), anyString(), anyString(), eq(VolumeToggles.AUTO),
                 eq(String.join(",", VolumeToggles.REQUIRED_MOD_OPTIONS)), eq(SkillTreeSettings.skillTreeTab())));
