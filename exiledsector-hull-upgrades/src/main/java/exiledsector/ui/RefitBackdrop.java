@@ -40,9 +40,10 @@ final class RefitBackdrop {
         if (alpha <= 0f) {
             return;
         }
-        GLDraw.fillQuad(layout.frameX() + 1f, layout.frameY() + 1f, layout.frameWidth() - 2f, layout.frameHeight() - 2f, Color.BLACK,
-                FRAME_FILL_ALPHA * alpha);
-        GLDraw.strokeQuad(layout.frameX() + 0.5f, layout.frameY() + 0.5f, layout.frameWidth() - 1f, layout.frameHeight() - 1f, borderColor, 1f,
+        float left = layout.fleetListRight();
+        float width = layout.frameX() + layout.frameWidth() - left;
+        GLDraw.fillQuad(left, layout.frameY() + 1f, width - 1f, layout.frameHeight() - 2f, Color.BLACK, FRAME_FILL_ALPHA * alpha);
+        GLDraw.strokeQuad(left + 0.5f, layout.frameY() + 0.5f, width - 1f, layout.frameHeight() - 1f, borderColor, 1f,
                 FRAME_BORDER_ALPHA * alpha);
     }
 
@@ -50,7 +51,7 @@ final class RefitBackdrop {
         if (alpha <= 0f) {
             return;
         }
-        float left = layout.frameX() + 1f;
+        float left = layout.fleetListRight() + 1f;
         float bottom = layout.shipAreaY();
         float width = layout.shipAreaX() + layout.shipAreaWidth() - left;
         float height = layout.shipAreaHeight();

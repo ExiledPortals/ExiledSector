@@ -34,6 +34,14 @@ public record RefitScreenLayout(float frameX, float frameY, float frameWidth, fl
         return frameY + frameHeight;
     }
 
+    public float fleetListRight() {
+        return shipAreaX;
+    }
+
+    public boolean insideFleetList(float x, float y) {
+        return x >= frameX && x < fleetListRight() && y >= frameY && y <= frameTop();
+    }
+
     public static RefitScreenLayout measure() {
         try {
             RefitScreenLayout measured = measured(Global.getSector().getCampaignUI());

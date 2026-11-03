@@ -16,6 +16,7 @@ import exiledsector.skills.ShipSections;
 import exiledsector.ui.decoration.InspectedShip;
 import exiledsector.ui.decoration.RefitShipPortrait;
 import exiledsector.ui.decoration.ShipAnchors;
+import exiledsector.ui.refit.RefitFleetList;
 import exiledsector.ui.refit.RefitScreenLayout;
 import exiledsector.ui.section.SectionLayout;
 import exiledsector.ui.socket.HullUpgradePanel;
@@ -25,6 +26,7 @@ import exiledsector.ui.socket.SocketPanelPlacement;
 import exiledsector.ui.socket.SocketPanelTab;
 import exiledsector.ui.socket.StoragePlacement;
 import exiledsector.ui.util.GLDraw;
+import lunalib.backend.ui.refit.RefitButtonAdder;
 import lunalib.lunaRefit.BaseRefitButton;
 import org.lwjgl.input.Keyboard;
 
@@ -41,16 +43,21 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
     static final Set<SocketPanelTab> SHOWN_TABS = EnumSet.of(SocketPanelTab.HULL_ITEMS, SocketPanelTab.HULL_UPGRADES);
     private static final float BAY_BACKDROP_ALPHA = 0.8f;
 
-    private final FleetMemberAPI member;
-    private final ShipVariantAPI variant;
     private final BaseRefitButton refitButton;
-    private final RefitScreenLayout layout;
+    private RefitScreenLayout layout;
     private final RefitBackdrop backdrop = new RefitBackdrop();
-    private final RefitShipPortrait portrait;
-    private final ShipAnchors sectionAnchors;
-    private final SectionLayout.ShipExtent shipExtent;
-    private final HullItemsLayout screenLayout;
+    private FleetMemberAPI member;
+    private ShipVariantAPI variant;
+    private RefitShipPortrait portrait;
+    private ShipAnchors sectionAnchors;
+    private SectionLayout.ShipExtent shipExtent;
+    private HullItemsLayout screenLayout;
     private final Consumer<SocketPanelTab> tabListener = this::switchTab;
+    private RefitButtonAdder refitAdder;
+    private FleetMemberAPI lastRefitMember;
+    private boolean switchingShip;
+    private boolean swallowFleetListMouseUp;
+    private boolean pointerInFleetList;
     private CustomPanelAPI hostPanel;
     private SectionEditor sectionEditor;
     private SectionsDisplay sectionsDisplay;
@@ -66,23 +73,82 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
     private float mouseY;
 
     HullItemsScreen(FleetMemberAPI member, ShipVariantAPI variant, BaseRefitButton refitButton, RefitScreenLayout layout) {
-        this.member = member;
-        this.variant = variant;
         this.refitButton = refitButton;
         this.layout = layout;
-        this.portrait = RefitShipPortrait.of(member, variant);
-        this.sectionAnchors = portrait == null ? null : ShipAnchors.of(portrait);
-        this.shipExtent = portrait == null ? SectionLayout.ShipExtent.square(0f)
+        loadShip(member, variant);
+    }
+
+    private void loadShip(FleetMemberAPI shownMember, ShipVariantAPI shownVariant) {
+        member = shownMember;
+        variant = shownVariant;
+        portrait = RefitShipPortrait.of(member, variant);
+        sectionAnchors = portrait == null ? null : ShipAnchors.of(portrait);
+        shipExtent = portrait == null ? SectionLayout.ShipExtent.square(0f)
                 : new SectionLayout.ShipExtent(portrait.halfWidthPixels(layout.shipZoom()), portrait.halfLengthPixels(layout.shipZoom()));
-        this.screenLayout = HullItemsLayout.of(layout, shipExtent);
+        screenLayout = HullItemsLayout.of(layout, shipExtent);
     }
 
     void attach(CustomPanelAPI panel) {
         hostPanel = panel;
+        refitAdder = RefitPanelLauncher.refitButtonAdder();
+        lastRefitMember = refitAdder == null ? null : refitAdder.getMember();
         storage.reconcileOwnedShips();
+        startEditing();
+    }
+
+    private void startEditing() {
         sectionEditor = new SectionEditor(member, variant, refitButton);
-        sectionsDisplay = new SectionsDisplay(panel, sectionEditor);
+        sectionsDisplay = new SectionsDisplay(hostPanel, sectionEditor);
         sectionsDisplay.refreshIfChanged();
+    }
+
+    private void switchShip(FleetMemberAPI target) {
+        if (switchingShip || target == member || fade.closing()) {
+            return;
+        }
+        switchingShip = true;
+        SkillTreeSounds.play("ui_button_pressed");
+        Global.getSector().addTransientScript(RefitShipSwitch.to(target, shown -> {
+            switchingShip = false;
+            if (fade.closing()) {
+                return;
+            }
+            if (shown == null) {
+                close();
+            } else {
+                showShip(shown.member(), shown.variant());
+            }
+        }));
+    }
+
+    private void followRefitScreenShip() {
+        FleetMemberAPI refitMember = refitAdder == null ? null : refitAdder.getMember();
+        if (refitMember == lastRefitMember) {
+            return;
+        }
+        lastRefitMember = refitMember;
+        if (refitMember != null && refitMember != member && refitAdder.getVariant() != null && !switchingShip && bay == null && !fade.closing()) {
+            showShip(refitMember, refitAdder.getVariant());
+        }
+    }
+
+    private void showShip(FleetMemberAPI shownMember, ShipVariantAPI shownVariant) {
+        sectionsDisplay.hideTooltip();
+        storage.stopPlacing();
+        clearTarget();
+        if (portrait != null) {
+            portrait.cleanup();
+        }
+        layout = RefitScreenLayout.measure();
+        loadShip(shownMember, shownVariant);
+        startEditing();
+        if (upgradesPanel != null) {
+            swapOutUpgrades();
+            openUpgrades(true);
+        } else if (storage.isOpen()) {
+            swapOutStorage();
+            openStorage(null);
+        }
     }
 
     @Override
@@ -90,6 +156,7 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
         if (hostPanel == null) {
             return;
         }
+        followRefitScreenShip();
         boolean contentWanted = fade.fullyOpen();
         contentLevel = Fade.step(contentLevel, contentWanted, amount / CONTENT_SECONDS);
         boolean finishedClosing = fade.advance(amount, contentLevel > 0f);
@@ -364,6 +431,20 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
             if (event.isConsumed()) {
                 continue;
             }
+            if (event.isMouseEvent() && bay == null && !fade.closing()) {
+                boolean wasInFleetList = pointerInFleetList;
+                pointerInFleetList = layout.insideFleetList(event.getX(), event.getY());
+                if (pointerInFleetList) {
+                    fleetListInput(event);
+                    continue;
+                }
+                if (wasInFleetList && event.isMouseMoveEvent()) {
+                    continue;
+                }
+            }
+            if (event.isLMBUpEvent()) {
+                swallowFleetListMouseUp = false;
+            }
             if (event.isKeyUpEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
                 if (!fade.closing()) {
                     escape();
@@ -376,6 +457,21 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
                 TooltipExpansion.toggle();
             }
             event.consume();
+        }
+    }
+
+    private void fleetListInput(InputEventAPI event) {
+        if (event.isLMBDownEvent()) {
+            FleetMemberAPI clicked = RefitFleetList.memberAt(event.getX(), event.getY());
+            if (clicked != null) {
+                event.consume();
+                swallowFleetListMouseUp = true;
+                sectionsDisplay.hideTooltip();
+                switchShip(clicked);
+            }
+        } else if (event.isLMBUpEvent() && swallowFleetListMouseUp) {
+            event.consume();
+            swallowFleetListMouseUp = false;
         }
     }
 

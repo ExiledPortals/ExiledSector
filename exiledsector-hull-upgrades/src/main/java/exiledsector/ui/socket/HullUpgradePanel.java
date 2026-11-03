@@ -64,8 +64,11 @@ public final class HullUpgradePanel extends HoloPanel {
     private static final float UPGRADE_TILE_SIZE = 64f;
     private static final float POINTS_WIDTH = 80f;
     private static final float SCROLLBAR_ROOM = 14f;
-    private static final float SECTION_NAME_HEIGHT = 36f;
-    private static final float STATE_HEIGHT = 20f;
+    static final float SECTION_NAME_HEIGHT = 36f;
+    static final float STATE_HEIGHT = 20f;
+    static final float SECTION_ROW_GAP = GAP * 2f;
+    static final float MIN_SECTION_TILE_SIZE = 48f;
+    static final float SECTION_FIT_SLACK = 4f;
     private static final float TOOLTIP_WIDTH = 520f;
     private static final Color BLOCKED_TEXT_COLOR = new Color(130, 130, 130);
     private static final float CONFIRM_HEIGHT = 170f;
@@ -218,23 +221,33 @@ public final class HullUpgradePanel extends HoloPanel {
         VanillaText.plainPara(element, hint, GAP * 2f, Misc.getGrayColor());
         element.addSectionHeading(Translation.text("framework.panel.sockets"), Alignment.MID, GAP * 3f);
         float columnWidth = (gridWidth - GAP * (SECTION_COLUMNS - 1)) / SECTION_COLUMNS;
-        float cellHeight = columnWidth + SECTION_NAME_HEIGHT + STATE_HEIGHT;
         List<SectionEntry> sections = view.sections();
+        int rows = (sections.size() + SECTION_COLUMNS - 1) / SECTION_COLUMNS;
+        float tileSize = sectionTileSize(columnWidth, listHeight - element.getHeightSoFar(), rows);
+        float cellHeight = tileSize + SECTION_NAME_HEIGHT + STATE_HEIGHT;
         for (int start = 0; start < sections.size(); start += SECTION_COLUMNS) {
             int rowCount = Math.min(sections.size(), start + SECTION_COLUMNS) - start;
             float rowLeft = (gridWidth - rowCount * columnWidth - (rowCount - 1) * GAP) / 2f;
             CustomPanelAPI rowPanel = Global.getSettings().createCustom(gridWidth, cellHeight, null);
             for (int i = 0; i < rowCount; i++) {
-                rowPanel.addComponent(sectionCell(sections.get(start + i), columnWidth, columnWidth))
+                rowPanel.addComponent(sectionCell(sections.get(start + i), columnWidth, tileSize))
                         .inTL(rowLeft + i * (columnWidth + GAP), 0f);
             }
-            element.addCustom(rowPanel, GAP * 2f);
+            element.addCustom(rowPanel, SECTION_ROW_GAP);
         }
         listElement = replaceElement(placedComponent(listElement), element, PAD, listTop);
         if (restoredScroll > 0f && element.getExternalScroller() != null) {
             element.getExternalScroller().setYOffset(Math.min(restoredScroll, Math.max(0f, element.getHeightSoFar() - listHeight)));
         }
         refreshOpacity();
+    }
+
+    static float sectionTileSize(float columnWidth, float roomBelowHeadings, int rows) {
+        if (rows <= 0) {
+            return columnWidth;
+        }
+        float roomPerTile = (roomBelowHeadings - SECTION_FIT_SLACK) / rows - SECTION_ROW_GAP - SECTION_NAME_HEIGHT - STATE_HEIGHT;
+        return Math.max(MIN_SECTION_TILE_SIZE, Math.min(columnWidth, (float) Math.floor(roomPerTile)));
     }
 
     private float listScrollOffset() {

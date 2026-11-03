@@ -14,7 +14,7 @@ record HullItemsLayout(float panelLeft, float panelWidth, float settledShipX, Se
 
     static HullItemsLayout of(RefitScreenLayout layout, SectionLayout.ShipExtent extent) {
         float radius = SectionLayout.SECTION_RADIUS;
-        float panelLeft = layout.frameX() + PANEL_MARGIN;
+        float panelLeft = layout.fleetListRight() + PANEL_MARGIN;
         float frameRight = layout.frameX() + layout.frameWidth();
         float settledShipX = frameRight - SHIP_EDGE_MARGIN - Math.max(extent.halfWidth(), radius + SECTION_LABEL_OVERHANG);
         float leftColumnCentre = settledShipX - (extent.halfWidth() + SectionLayout.COLUMN_GAP + radius);

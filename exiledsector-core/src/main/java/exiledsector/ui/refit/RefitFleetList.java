@@ -7,6 +7,8 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
+import com.fs.starfarer.api.ui.UIComponentAPI;
+import exiledsector.ui.util.Rects;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -51,6 +53,29 @@ public final class RefitFleetList {
             logFailure(e);
             return null;
         }
+    }
+
+    // java:S1181: UiReflection calls declare Throwable, and a changed refit screen may only cost clicking ships in the fleet list
+    @SuppressWarnings("java:S1181")
+    public static FleetMemberAPI memberAt(float x, float y) {
+        try {
+            Object refitTab = refitTab();
+            return refitTab == null ? null : memberAt(refitTab, x, y);
+        } catch (Throwable e) {
+            logFailure(e);
+            return null;
+        }
+    }
+
+    static FleetMemberAPI memberAt(Object refitTab, float x, float y) throws Throwable {
+        Map<?, ?> buttonToMember = buttonToMember(refitTab);
+        for (Object item : listItems(refitTab)) {
+            if (item instanceof UIComponentAPI button && Rects.contains(button.getPosition(), x, y)
+                    && buttonToMember.get(item) instanceof FleetMemberAPI member) {
+                return member;
+            }
+        }
+        return null;
     }
 
     static Shown select(Object refitTab, FleetMemberAPI member) throws Throwable {
@@ -121,7 +146,7 @@ public final class RefitFleetList {
     private static void logFailure(Throwable e) {
         if (!failureLogged) {
             failureLogged = true;
-            LOG.warn("[ExiledSector] Couldn't read the refit screen's fleet list; the skill tree's ship list stays closed", e);
+            LOG.warn("[ExiledSector] Couldn't read the refit screen's fleet list; switching ships from Exiled Sector screens stays off", e);
         }
     }
 }

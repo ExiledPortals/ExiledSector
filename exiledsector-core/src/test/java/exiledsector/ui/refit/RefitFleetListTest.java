@@ -3,6 +3,7 @@ package exiledsector.ui.refit;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
+import com.fs.starfarer.api.ui.PositionAPI;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -146,6 +147,28 @@ class RefitFleetListTest {
         refitTab.blockedByDialog = true;
 
         assertNull(RefitFleetList.select(refitTab, second));
+    }
+
+    @Test
+    void theShipUnderThePointerIsTheOneWhoseListButtonContainsIt() throws Throwable {
+        FakeRefitTab refitTab = new FakeRefitTab();
+        FleetMemberAPI first = mock(FleetMemberAPI.class);
+        FleetMemberAPI second = mock(FleetMemberAPI.class);
+        placeAt(refitTab.add(first, true), 0f, 200f);
+        placeAt(refitTab.add(second, false), 0f, 100f);
+
+        assertSame(second, RefitFleetList.memberAt(refitTab, 50f, 150f));
+        assertSame(first, RefitFleetList.memberAt(refitTab, 50f, 250f));
+        assertNull(RefitFleetList.memberAt(refitTab, 50f, 50f));
+    }
+
+    private static void placeAt(ButtonAPI button, float left, float bottom) {
+        PositionAPI position = mock(PositionAPI.class);
+        when(position.getX()).thenReturn(left);
+        when(position.getY()).thenReturn(bottom);
+        when(position.getWidth()).thenReturn(100f);
+        when(position.getHeight()).thenReturn(90f);
+        when(button.getPosition()).thenReturn(position);
     }
 
     @Test

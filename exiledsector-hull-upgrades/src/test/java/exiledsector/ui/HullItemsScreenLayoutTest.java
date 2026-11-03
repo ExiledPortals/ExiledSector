@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HullItemsScreenLayoutTest {
@@ -32,20 +33,31 @@ class HullItemsScreenLayoutTest {
 
     @Test
     void theShipSettlesAgainstTheRightEdgeAndThePanelTakesTheRoomLeftOfTheSocketColumn() {
-        SectionLayout.ShipExtent capital = new SectionLayout.ShipExtent(160f, 180f);
-        HullItemsLayout screenLayout = HullItemsLayout.of(WIDE_FRAME, capital);
+        SectionLayout.ShipExtent cruiser = new SectionLayout.ShipExtent(100f, 180f);
+        HullItemsLayout screenLayout = HullItemsLayout.of(WIDE_FRAME, cruiser);
         float frameRight = WIDE_FRAME.frameX() + WIDE_FRAME.frameWidth();
 
-        assertEquals(frameRight - HullItemsLayout.SHIP_EDGE_MARGIN - 160f, screenLayout.settledShipX(), 0.001f);
+        assertEquals(frameRight - HullItemsLayout.SHIP_EDGE_MARGIN - SectionLayout.SECTION_RADIUS - HullItemsLayout.SECTION_LABEL_OVERHANG,
+                screenLayout.settledShipX(), 0.001f);
         assertTrue(screenLayout.panelWidth() > ItemStoragePanel.COMPACT_WIDTH, "a wide frame widens the panel: " + screenLayout.panelWidth());
         float leftSocketX = SectionLayout.sectionX(new SectionLayout.Placement(SectionLayout.Side.LEFT, 0, 1),
-                screenLayout.settledShipX(), capital);
+                screenLayout.settledShipX(), cruiser);
         assertEquals(leftSocketX, screenLayout.sectionBounds().clampX(leftSocketX), 0.001f, "the left column is not pushed by the panel");
     }
 
     @Test
+    void thePanelStartsRightOfTheVanillaFleetList() {
+        HullItemsLayout screenLayout = HullItemsLayout.of(WIDE_FRAME, new SectionLayout.ShipExtent(100f, 180f));
+
+        assertEquals(WIDE_FRAME.fleetListRight() + HullItemsLayout.PANEL_MARGIN, screenLayout.panelLeft(), 0.001f);
+        assertTrue(WIDE_FRAME.insideFleetList(WIDE_FRAME.frameX() + 50f, 500f));
+        assertFalse(WIDE_FRAME.insideFleetList(screenLayout.panelLeft(), 500f));
+    }
+
+    @Test
     void aSmallShipNeverStretchesThePanelPastItsCap() {
-        HullItemsLayout screenLayout = HullItemsLayout.of(WIDE_FRAME, new SectionLayout.ShipExtent(30f, 50f));
+        RefitScreenLayout extraWideFrame = new RefitScreenLayout(0f, 114f, 2000f, 852f, 211f, 115f, 1785f, 850f, 1f);
+        HullItemsLayout screenLayout = HullItemsLayout.of(extraWideFrame, new SectionLayout.ShipExtent(30f, 50f));
 
         assertEquals(HullItemsLayout.MAX_PANEL_WIDTH, screenLayout.panelWidth(), 0.001f);
     }
