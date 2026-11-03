@@ -372,6 +372,8 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
                 pressLeft(event.getX(), event.getY());
             } else if (event.isRMBDownEvent() && !fade.closing()) {
                 pressRight(event.getX(), event.getY());
+            } else if (TooltipExpansion.isToggle(event) && !fade.closing()) {
+                TooltipExpansion.toggle();
             }
             event.consume();
         }
