@@ -1,12 +1,15 @@
 package exiledsector.charts.anomaly.excavation;
 
 import exiledsector.charts.anomaly.AnomalyState;
+import exiledsector.charts.anomaly.StateFields;
 import exiledsector.charts.run.ChartRun;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public final class ExcavationStates {
+
+    static final String SCOUTED_FIELD = "scouted";
 
     private ExcavationStates() {
     }
@@ -53,6 +56,17 @@ public final class ExcavationStates {
     public static ExcavationSite standingAt(ChartRun run, String planetId) {
         ExcavationSite site = at(run, planetId);
         return site == null || site.cleared() ? null : site;
+    }
+
+    static boolean scout(ChartRun run, ExcavationSite site) {
+        AnomalyState state = of(run);
+        List<String> scouted = StateFields.list(state.text(SCOUTED_FIELD));
+        if (scouted.contains(site.planetId())) {
+            return false;
+        }
+        scouted.add(site.planetId());
+        state.put(SCOUTED_FIELD, StateFields.join(scouted));
+        return true;
     }
 
     static boolean clear(ChartRun run, ExcavationSite site) {

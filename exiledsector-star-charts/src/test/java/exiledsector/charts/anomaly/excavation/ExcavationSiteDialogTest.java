@@ -21,6 +21,7 @@ import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.ChartCampaignPlugin;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
+import exiledsector.i18n.Translation;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,6 +69,30 @@ class ExcavationSiteDialogTest {
         when(planet.getId()).thenReturn(id);
         when(planet.getContainingLocation()).thenReturn(location);
         return planet;
+    }
+
+    @Test
+    void eachSiteIsScoutedOnce() {
+        ExcavationSite rock = new ExcavationSite(0, "rock", ExcavationSite.Access.OPEN, DropType.WEAPON, 1L, false);
+        ExcavationSite ice = new ExcavationSite(1, "ice", ExcavationSite.Access.COLLAPSED, DropType.AI_CORE, 2L, false);
+        ExcavationStates.record(ExcavationStates.of(run), rock);
+        ExcavationStates.record(ExcavationStates.of(run), ice);
+
+        assertTrue(ExcavationStates.scout(run, rock));
+        assertFalse(ExcavationStates.scout(run, rock));
+        assertTrue(ExcavationStates.scout(run, ice));
+        assertFalse(ExcavationStates.scout(run, ice));
+        assertEquals(List.of(rock, ice), ExcavationStates.all(run));
+    }
+
+    @Test
+    void everyAccessAndLeanHasScoutingText() {
+        for (ExcavationSite.Access access : ExcavationSite.Access.values()) {
+            assertTrue(Translation.has(ExcavationSiteDialog.scoutedKey(access)), access.name());
+        }
+        for (DropType lean : ExcavationRules.LEANS) {
+            assertTrue(Translation.has(ExcavationSiteDialog.storesKey(lean)), lean.name());
+        }
     }
 
     @Test
