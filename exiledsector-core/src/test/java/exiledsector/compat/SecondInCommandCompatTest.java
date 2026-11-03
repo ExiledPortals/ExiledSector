@@ -13,6 +13,8 @@ import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.MockSector;
 import exiledsector.skills.skilleffect.fighter.FighterSkillEffect;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +23,9 @@ import second_in_command.SCUtils;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -123,6 +127,40 @@ class SecondInCommandCompatTest {
 
         assertTrue(SecondInCommandCompat.hasDeactivatedSMod(variant, "hbi"));
         assertFalse(SecondInCommandCompat.hasDeactivatedSMod(variant, "heavyarmor"));
+    }
+
+    private void stubSkillSpreadsheet() throws Exception {
+        JSONArray rows = new JSONArray()
+                .put(new JSONObject().put("id", "sc_warfare_iron_sight").put("name", "Iron Sight"))
+                .put(new JSONObject().put("id", "").put("name", ""));
+        when(settings.getMergedSpreadsheetDataForMod("id", "data/config/secondInCommand/SCSkills.csv", SecondInCommandCompat.MOD_ID))
+                .thenReturn(rows);
+    }
+
+    @Test
+    void namesASkillModifierAfterItsSecondInCommandSkill() throws Exception {
+        enableSecondInCommandWith();
+        stubSkillSpreadsheet();
+
+        assertEquals("Iron Sight", SecondInCommandCompat.skillModifierName("sc_skill_controller_sc_warfare_iron_sight"));
+        assertNull(SecondInCommandCompat.skillModifierName("sc_skill_controller_sc_unknown_skill"));
+        assertNull(SecondInCommandCompat.skillModifierName("sc_warfare_iron_sight"));
+    }
+
+    @Test
+    void skillModifiersHaveNoNameWhenSecondInCommandIsNotEnabled() throws Exception {
+        stubSkillSpreadsheet();
+
+        assertNull(SecondInCommandCompat.skillModifierName("sc_skill_controller_sc_warfare_iron_sight"));
+    }
+
+    @Test
+    void anUnreadableSkillSpreadsheetLeavesSkillModifiersUnnamed() throws Exception {
+        enableSecondInCommandWith();
+        when(settings.getMergedSpreadsheetDataForMod("id", "data/config/secondInCommand/SCSkills.csv", SecondInCommandCompat.MOD_ID))
+                .thenThrow(new RuntimeException("missing"));
+
+        assertNull(SecondInCommandCompat.skillModifierName("sc_skill_controller_sc_warfare_iron_sight"));
     }
 
     @Test

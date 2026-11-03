@@ -7,6 +7,7 @@ import exiledsector.skills.AffinitySteps;
 import exiledsector.skills.BallisticEnergyMirror;
 import exiledsector.skills.EffectContribution;
 import exiledsector.skills.SocketedItem;
+import exiledsector.compat.SecondInCommandCompat;
 import exiledsector.effects.ResolvedTree;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
@@ -16,6 +17,7 @@ import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.HullModNames;
 import exiledsector.skills.ShipSkillData;
 
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +26,11 @@ import java.util.Set;
 final class StatSources {
 
     private static final List<String> OWN_MOD_ID_PREFIXES = List.of("exiledSector_", "exiledLib_");
+    private static final Map<String, String> VANILLA_SOURCE_KEYS = Map.of(
+            "flux_capacitors", "ui.stats.source.fluxCapacitors",
+            "flux_vents", "ui.stats.source.fluxVents",
+            "cr_effect", "ui.stats.source.combatReadiness");
+    private static final Map<String, String> LOADED_SOURCE_NAMES = new HashMap<>();
 
     private final Map<String, ResolvedTree.AppliedModifier> appliedModifiers;
     private final ShipSkillData skillData;
@@ -107,12 +114,34 @@ final class StatSources {
                 return Translation.text("ui.stats.source.exiledSector");
             }
         }
-        String hullModName = loadedHullModName(modId);
-        if (hullModName != null) {
-            return hullModName;
+        String vanillaKey = VANILLA_SOURCE_KEYS.get(modId);
+        if (vanillaKey != null) {
+            return Translation.text(vanillaKey);
         }
-        String skillName = loadedSkillName(modId);
-        return skillName != null ? skillName : modId;
+        String secondInCommandSkill = SecondInCommandCompat.skillModifierName(modId);
+        if (secondInCommandSkill != null) {
+            return secondInCommandSkill;
+        }
+        return LOADED_SOURCE_NAMES.computeIfAbsent(modId, StatSources::loadedSourceName);
+    }
+
+    private static String loadedSourceName(String modId) {
+        for (String candidate = modId; candidate != null; candidate = shorterPrefix(candidate)) {
+            String hullModName = loadedHullModName(candidate);
+            if (hullModName != null) {
+                return hullModName;
+            }
+            String skillName = loadedSkillName(candidate);
+            if (skillName != null) {
+                return skillName;
+            }
+        }
+        return modId;
+    }
+
+    private static String shorterPrefix(String id) {
+        int lastSeparator = id.lastIndexOf('_');
+        return lastSeparator > 0 ? id.substring(0, lastSeparator) : null;
     }
 
     private String socketedItemId(String socketNodeId) {

@@ -6,14 +6,19 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.ModCsv;
 import exiledsector.PlayerFleet;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public final class SecondInCommandCompat {
@@ -25,6 +30,9 @@ public final class SecondInCommandCompat {
     public static final CompatTarget TARGET = new CompatTarget("Second-in-Command", List.of(MOD_ID), TESTED_VERSIONS,
             SecondInCommandCompat::missingFeatures);
     private static final String INACTIVE_SMOD_TAG_PREFIX = "sc_inactive_smods_";
+    private static final String SKILL_MODIFIER_PREFIX = CONTROLLER_HULLMOD_ID + "_";
+    private static final String SKILLS_CSV = "data/config/secondInCommand/SCSkills.csv";
+    private static final Logger LOG = Logger.getLogger(SecondInCommandCompat.class);
 
     private static final String SC_UTILS_CLASS = "second_in_command.SCUtils";
     private static final String SC_DATA_CLASS = "second_in_command.SCData";
@@ -40,6 +48,7 @@ public final class SecondInCommandCompat {
     private static long cachedPlayerFleetAt;
     private static int cachedPlayerMemberCount = -1;
     private static Set<String> cachedPlayerMemberIds = Set.of();
+    private static Map<String, String> skillNames;
 
     private SecondInCommandCompat() {
     }
@@ -62,10 +71,37 @@ public final class SecondInCommandCompat {
         }, false);
     }
 
+    public static String skillModifierName(String modId) {
+        if (modId == null || !modId.startsWith(SKILL_MODIFIER_PREFIX) || !isModEnabled()) {
+            return null;
+        }
+        if (skillNames == null) {
+            skillNames = loadSkillNames();
+        }
+        return skillNames.get(modId.substring(SKILL_MODIFIER_PREFIX.length()));
+    }
+
+    private static Map<String, String> loadSkillNames() {
+        Map<String, String> names = new HashMap<>();
+        try {
+            ModCsv.forEach(Global.getSettings().getMergedSpreadsheetDataForMod("id", SKILLS_CSV, MOD_ID), (rowIndex, row) -> {
+                String skillId = ModCsv.text(row, "id");
+                String skillName = ModCsv.text(row, "name");
+                if (!skillId.isEmpty() && !skillName.isEmpty()) {
+                    names.put(skillId, skillName);
+                }
+            });
+        } catch (IOException | JSONException | RuntimeException e) {
+            LOG.error("Failed to load Second-in-Command skill names from " + SKILLS_CSV, e);
+        }
+        return Map.copyOf(names);
+    }
+
     public static void clearCachedLookups() {
         SKILL_API.reset();
         cachedPlayerFleetData = new WeakReference<>(null);
         cachedPlayerMemberIds = Set.of();
+        skillNames = null;
     }
 
     public static boolean hasDeactivatedSMod(ShipVariantAPI variant, String hullModId) {
