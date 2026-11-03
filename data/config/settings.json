@@ -7,6 +7,9 @@
 		"exiledSector_stormFrontBattlePlugin":"exiledsector.charts.anomaly.stormfront.StormBattlePlugin",
 		"exiledSector_shaftBattlePlugin":"exiledsector.charts.anomaly.excavation.ExcavationBattlePlugin",
 	},
+	"ruleCommandPackages":[
+		"exiledsector.charts.run",
+	],
 	"graphics":{
 		"ui_icons_tech_tree":{
 			"exiledSector_wormhole_gateway":"graphics/icons/tech/exiledSector_wormhole_gateway.png",

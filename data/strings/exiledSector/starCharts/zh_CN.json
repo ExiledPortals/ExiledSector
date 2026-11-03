@@ -14,6 +14,7 @@
     "chart.wormhole.dialog.collapse.confirm": "使虫洞坍缩将永久结束本次探索。留在星域内的一切都会消失。",
     "chart.wormhole.dialog.collapse.yes": "坍缩",
     "chart.wormhole.dialog.collapse.no": "算了",
+    "chart.run.option.temporarySystem": "本星域会在探索结束时消失，在此建造的一切都无法留存。",
     "chart.wormhole.dialog.option.leave": "离开",
     "chart.wormhole.dialog.option.return": "穿过虫洞返回",
     "chart.wormhole.dialog.inner.description": "出口虫洞通往星图开启的地方。",

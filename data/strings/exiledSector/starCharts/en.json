@@ -16,6 +16,7 @@
     "chart.wormhole.dialog.collapse.confirm": "Collapsing the wormhole ends this run for good. Anything left inside the system is lost.",
     "chart.wormhole.dialog.collapse.yes": "Collapse it",
     "chart.wormhole.dialog.collapse.no": "Never mind",
+    "chart.run.option.temporarySystem": "This system vanishes when the run ends, so nothing built here would last.",
     "chart.wormhole.dialog.option.leave": "Leave",
     "chart.wormhole.dialog.option.return": "Return through the wormhole",
     "chart.wormhole.dialog.inner.description": "The exit wormhole leads back to where the chart was opened.",
