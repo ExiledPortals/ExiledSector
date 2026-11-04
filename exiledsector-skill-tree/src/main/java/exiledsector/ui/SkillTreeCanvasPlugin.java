@@ -101,6 +101,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (startingRoot != null && cameraMemory.isSaved()) {
             camera.jumpTo(cameraMemory.camera());
         } else if (startingRoot != null) {
+            camera.jumpZoomTo(SmoothZoom.MIN_ZOOM);
             camera.centreOn(startingRoot.getOffsetX(), startingRoot.getOffsetY());
         }
     }
