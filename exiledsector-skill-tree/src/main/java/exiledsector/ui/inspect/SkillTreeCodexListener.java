@@ -1,7 +1,10 @@
 package exiledsector.ui.inspect;
 
+import com.fs.starfarer.api.GameState;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.listeners.CodexEventListener;
+import com.fs.starfarer.api.combat.CombatEngineAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.codex.CodexDataV2;
@@ -48,16 +51,55 @@ public class SkillTreeCodexListener implements CodexEventListener {
     }
 
     private void attach(CodexEntryPlugin memberEntry, FleetMemberAPI member) {
-        ShipTreeLookup.ShipTree shipTree = I18n.forGameText(() -> ShipTreeLookup.find(member));
+        FleetMemberAPI treeOwner = member;
+        ShipTreeLookup.ShipTree shipTree = treeOf(member);
+        if (shipTree == null) {
+            treeOwner = parentStationInCombat(member);
+            shipTree = treeOf(treeOwner);
+        }
         if (shipTree == null) {
             return;
         }
-        SkillTreeCodexEntry treeEntry = new SkillTreeCodexEntry(SkillTreeCodexEntry.ID_PREFIX + memberEntry.getId(), member, shipTree);
+        List<CodexEntryPlugin> moduleEntries = moduleEntriesOf(memberEntry);
+        SkillTreeCodexEntry treeEntry = new SkillTreeCodexEntry(SkillTreeCodexEntry.ID_PREFIX + memberEntry.getId(), treeOwner, shipTree);
         CodexDataV2.ENTRIES.put(treeEntry.getId(), treeEntry);
-        memberEntry.addRelatedEntry(treeEntry);
-        treeEntry.addRelatedEntry(memberEntry);
+        link(memberEntry, treeEntry);
+        moduleEntries.forEach(moduleEntry -> link(moduleEntry, treeEntry));
         linkInstalledItems(treeEntry, shipTree);
         addedEntries.add(treeEntry);
+    }
+
+    private static ShipTreeLookup.ShipTree treeOf(FleetMemberAPI member) {
+        return member == null ? null : I18n.forGameText(() -> ShipTreeLookup.find(member));
+    }
+
+    private static FleetMemberAPI parentStationInCombat(FleetMemberAPI moduleMember) {
+        CombatEngineAPI engine = Global.getSettings() == null || Global.getCurrentState() != GameState.COMBAT ? null : Global.getCombatEngine();
+        if (engine == null) {
+            return null;
+        }
+        for (ShipAPI ship : engine.getShips()) {
+            ShipAPI station = ship.getParentStation();
+            if (station != null && (ship.getVariant() == moduleMember.getVariant() || ship.getFleetMember() == moduleMember)) {
+                return station.getFleetMember();
+            }
+        }
+        return null;
+    }
+
+    private static List<CodexEntryPlugin> moduleEntriesOf(CodexEntryPlugin stationEntry) {
+        List<CodexEntryPlugin> moduleEntries = new ArrayList<>();
+        for (CodexEntryPlugin related : stationEntry.getRelatedEntries()) {
+            if (related.getParam2() instanceof FleetMemberAPI && !related.hasTag(CodexDataV2.TAG_EMPTY_MODULE)) {
+                moduleEntries.add(related);
+            }
+        }
+        return moduleEntries;
+    }
+
+    private static void link(CodexEntryPlugin entry, CodexEntryPlugin treeEntry) {
+        entry.addRelatedEntry(treeEntry);
+        treeEntry.addRelatedEntry(entry);
     }
 
     private static void linkInstalledItems(SkillTreeCodexEntry treeEntry, ShipTreeLookup.ShipTree shipTree) {

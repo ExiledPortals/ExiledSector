@@ -1,5 +1,10 @@
 package exiledsector.ui.inspect;
 
+import com.fs.starfarer.api.GameState;
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.combat.CombatEngineAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -17,6 +22,8 @@ import exiledsector.skills.SkillType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +31,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -183,6 +191,59 @@ class SkillTreeCodexListenerTest {
         new SkillTreeCodexListener().reportAboutToOpenCodex();
 
         assertTrue(shipEntry.getRelatedEntries().contains(safetyOverrides));
+    }
+
+    private static CodexEntryPlugin moduleSubEntry(String id, CodexEntryPlugin stationEntry, boolean emptyModule) {
+        CodexEntryV2 entry = new CodexEntryV2(id, "Some module", null, mock(ShipHullSpecAPI.class));
+        entry.setParam2(npc());
+        if (emptyModule) {
+            entry.addTag(CodexDataV2.TAG_EMPTY_MODULE);
+        }
+        CodexDataV2.ENTRIES.put(id, entry);
+        link(stationEntry, entry);
+        return entry;
+    }
+
+    @Test
+    void theModulesListedUnderAStationShareTheStationsSkillTreeEntry() {
+        CodexEntryPlugin stationEntry = memberEntry("temp-1", npc(NPC_TAG));
+        CodexEntryPlugin moduleEntry = moduleSubEntry("module-1", stationEntry, false);
+        CodexEntryPlugin emptyModuleEntry = moduleSubEntry("module-2", stationEntry, true);
+
+        new SkillTreeCodexListener().reportAboutToOpenCodex();
+
+        CodexEntryPlugin treeEntry = skillTreeEntries().get(0);
+        assertTrue(moduleEntry.getRelatedEntries().contains(treeEntry));
+        assertTrue(treeEntry.getRelatedEntries().contains(moduleEntry));
+        assertFalse(emptyModuleEntry.getRelatedEntries().contains(treeEntry));
+    }
+
+    @Test
+    void aModuleTargetedInCombatShowsItsStationsSkillTree() {
+        FleetMemberAPI stationMember = npc(NPC_TAG);
+        FleetMemberAPI moduleMember = npc();
+        ShipVariantAPI moduleVariant = moduleMember.getVariant();
+        ShipAPI station = mock(ShipAPI.class);
+        when(station.getFleetMember()).thenReturn(stationMember);
+        ShipAPI module = mock(ShipAPI.class);
+        when(module.getParentStation()).thenReturn(station);
+        when(module.getVariant()).thenReturn(moduleVariant);
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        when(engine.getShips()).thenReturn(List.of(station, module));
+        CodexEntryPlugin moduleEntry = memberEntry("temp-1", moduleMember);
+
+        try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            global.when(Global::getSettings).thenReturn(mock(SettingsAPI.class));
+            global.when(Global::getCurrentState).thenReturn(GameState.COMBAT);
+            global.when(Global::getCombatEngine).thenReturn(engine);
+
+            new SkillTreeCodexListener().reportAboutToOpenCodex();
+        }
+
+        List<CodexEntryPlugin> added = skillTreeEntries();
+        assertEquals(1, added.size());
+        assertSame(stationMember, added.get(0).getParam());
+        assertTrue(moduleEntry.getRelatedEntries().contains(added.get(0)));
     }
 
     @Test
