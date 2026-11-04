@@ -2374,12 +2374,12 @@ effect|SHIELD_DAMAGE_SHARED_PERCENT|12.5	0	Disperses 12.5% of shield damage take
 effect|SHIELD_DAMAGE_SHARED_PERCENT|100.0	0	Disperses 90% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 effect|SHIELD_DAMAGE_SHARED_PERCENT|-10.0	0	Disperses -10% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 effect|SHIELD_DAMAGE_SHARED_PERCENT|-12.5	0	Disperses -12.5% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|1.0	1	<good>1%</good> reduced damage taken by shields while moving faster than 75% of top speed.
-effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|10.0	1	<good>10%</good> reduced damage taken by shields while moving faster than 75% of top speed.
-effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|12.5	1	<good>12.5%</good> reduced damage taken by shields while moving faster than 75% of top speed.
-effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|100.0	1	<good>100%</good> reduced damage taken by shields while moving faster than 75% of top speed.
-effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|-10.0	1	<good>10%</good> reduced damage taken by shields while moving faster than 75% of top speed.
-effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|-12.5	1	<good>12.5%</good> reduced damage taken by shields while moving faster than 75% of top speed.
+effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|1.0	0	<good>1%</good> reduced damage taken by shields while moving faster than 75% of top speed.
+effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|10.0	0	<good>10%</good> reduced damage taken by shields while moving faster than 75% of top speed.
+effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|12.5	0	<good>12.5%</good> reduced damage taken by shields while moving faster than 75% of top speed.
+effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|100.0	0	<good>100%</good> reduced damage taken by shields while moving faster than 75% of top speed.
+effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|-10.0	0	<good>10%</good> reduced damage taken by shields while moving faster than 75% of top speed.
+effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|-12.5	0	<good>12.5%</good> reduced damage taken by shields while moving faster than 75% of top speed.
 effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|1.0	0	<good>1%</good> less shield damage taken from automated ships.
 effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|10.0	0	<good>10%</good> less shield damage taken from automated ships.
 effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|12.5	0	<good>12.5%</good> less shield damage taken from automated ships.
@@ -2434,12 +2434,12 @@ effect|SHIELD_TURN_RATE_PERCENT|12.5	0	<good>12.5%</good> increased shield turn 
 effect|SHIELD_TURN_RATE_PERCENT|100.0	0	<good>100%</good> increased shield turn rate.
 effect|SHIELD_TURN_RATE_PERCENT|-10.0	0	<bad>10%</bad> reduced shield turn rate.
 effect|SHIELD_TURN_RATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced shield turn rate.
-effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|1.0	1	<good>1%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
-effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|10.0	1	<good>10%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
-effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|12.5	1	<good>12.5%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
-effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|100.0	1	<good>100%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
-effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|-10.0	1	<good>10%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
-effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|-12.5	1	<good>12.5%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
+effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|1.0	0	<good>1%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
+effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|10.0	0	<good>10%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
+effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|12.5	0	<good>12.5%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
+effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|100.0	0	<good>100%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
+effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|-10.0	0	<good>10%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
+effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|-12.5	0	<good>12.5%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
 effect|SHIELD_UPKEEP_MULT|1.0	1	<good>1%</good> more shield flux upkeep.
 effect|SHIELD_UPKEEP_MULT|10.0	1	<good>10%</good> more shield flux upkeep.
 effect|SHIELD_UPKEEP_MULT|12.5	1	<good>12.5%</good> more shield flux upkeep.

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
@@ -35,5 +36,14 @@ class StationaryShieldUpkeepTest {
 
         effect.advanceInCombat(ship(25f, shieldUpkeep), "mod_id", -35f);
         assertEquals(1f, shieldUpkeep.getModifiedValue(), EPSILON);
+    }
+
+    @Test
+    void speedDependentShieldReductionsKeepTheirWrittenColours() {
+        for (ShieldSkillEffect effect : new ShieldSkillEffect[]{ShieldSkillEffect.SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT,
+                ShieldSkillEffect.SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT}) {
+            assertTrue(effect.lowerIsBetter(), effect.name());
+            assertFalse(effect.invertsDescriptionColours(), effect.name());
+        }
     }
 }

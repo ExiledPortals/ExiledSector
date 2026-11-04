@@ -116,6 +116,11 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
         }
 
         @Override
+        public boolean invertsDescriptionColours() {
+            return false;
+        }
+
+        @Override
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", Math.abs(magnitude)).arg("speed", HighSpeed.TOP_SPEED_FRACTION * 100f).styled();
         }
@@ -136,6 +141,11 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
         @Override
         public boolean lowerIsBetter() {
             return true;
+        }
+
+        @Override
+        public boolean invertsDescriptionColours() {
+            return false;
         }
 
         @Override
