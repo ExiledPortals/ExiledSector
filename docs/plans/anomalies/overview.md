@@ -20,6 +20,7 @@ An anomaly is anything a star chart system holds beyond its ordinary layout, fle
 | Mirrored Space | `mirrored_ranges.md` | none, mirrors weapon ranges in the fights the chart already has |
 | Scrap Armada | `scrap_armada.md` | none, gives the chart's fleets 5 d-mods and derelict crews |
 | Fire Ship Hangar (needs Secrets of the Frontier) | `fire_ship_hangar.md` | none, adds a capturable objective launching Dram fire ships to the fights the chart already has |
+| Abyssal Shipyard, Research Complex and Storm (Abyssal Rift only) | `abyssal_rift.md` | one each for the Shipyard and the Research Complex, their guards; none for the Storm |
 
 Black Hole, Neutron Star, Dense Nebula, Asteroid Storm, Magnetic Storm and Stellar Flares are built and described in `../atlas.md` (Regions, layouts and anomalies). Powerful Boss, the former atlas marker (a bigger boss with more spoils and a guaranteed tier-up chart), is built as `../atlas.md` step 19; it rolls on its own `atlas_anomaly_chances.csv` row instead of the shared anomaly chance. The Remnant Nexus and Domain-era Mothership never roll: a `biomes` column places each in exactly one system of every pocket of its biome (`../completed/anomalies/biome_stations.md`), and they are the one exception to "no anomaly spawns waves", kept to two or three fleets at a time.
 
