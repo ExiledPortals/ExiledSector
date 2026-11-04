@@ -586,6 +586,20 @@ rides on each strikecraft the ship launches, counting a strikecraft with no mini
 Borrowed Grace stacks give a fixed 1% each, so the Armor Plate's stacks (every 150 damage) work without the node; with
 both, one pool holds both maximums and stacks come every 100 damage (`BorrowedGraceListener`).
 
+### Threat Expanse modifiers
+
+They spend and regrow vanilla Fragment Swarm fragments through `FragmentSwarms`: a spend needs that many fragments not
+already fading out, and regrowth never fills the swarm past its maintained size. The fleet's sensor strength gains the
+highest carrier's percent once for each active ship whose variant has `fragment_swarm`, the Threat volume's notable
+included, at each fleet sync (`FleetWideEffects.applySwarmSensorStrength`). Shield damage spends 1 fragment per 30
+absorbed, beams included (`FractalShieldListener`). Phase hulls can't carry a swarm, so the phase upkeep cover draws on
+the nearest allied ship's swarm within 1000 su (`PhaseVoidUpkeepListener`). The strikecraft rebuild watches each bay's
+replacement rate and restores a drop when it can spend the fragments (`HiveReplacementListener`).
+
+The armor repair counts, once a second while the swarm is full, the fragments vanilla's regrowth would add at the
+swarm's respawn rate, and each repairs the most damaged armor cell. Only armor actually restored counts toward its 10%
+per-battle cap, kept per fleet member like the phase-entry repair's (`SwarmOverflowRepairListener`).
+
 ### Chart tier groups
 
 Chart tiers fall into three groups: low (1-5), mid (6-10) and high (11-16) (`TierGroup`). A chart modifier line gives

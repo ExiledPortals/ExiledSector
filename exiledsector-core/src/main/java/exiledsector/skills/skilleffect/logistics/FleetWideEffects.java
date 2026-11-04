@@ -10,6 +10,7 @@ import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.ExiledSector;
 import exiledsector.PlayerFleet;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.skilleffect.shipsystem.FragmentSwarms;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,8 @@ public final class FleetWideEffects {
     static final String MOVE_SLOW_BURN_LEVEL_KEY = "exiledLib_moveSlowBurnLevelContribution";
     static final float MAX_MOVE_SLOW_BURN_LEVEL_BONUS = 6f;
     private static final String MOVE_SLOW_BURN_LEVEL_FLEET_MOD = "moveSlowBurnLevel";
+    static final String SWARM_SENSOR_STRENGTH_KEY = "exiledLib_swarmSensorStrengthPercent";
+    private static final String SWARM_SENSOR_STRENGTH_FLEET_MOD = "swarmSensorStrength";
     private static final String SENSOR_STRENGTH_ALWAYS_COUNTS_FLEET_MOD = "sensorStrengthAlwaysCounts";
     private static final String MAX_SENSOR_SHIPS_SETTING = "maxSensorShips";
     private static final int DEFAULT_MAX_SENSOR_SHIPS = 5;
@@ -87,6 +90,34 @@ public final class FleetWideEffects {
             }
         }
         return Math.min(MAX_MOVE_SLOW_BURN_LEVEL_BONUS, bonus);
+    }
+
+    public static void applySwarmSensorStrength(CampaignFleetAPI fleet) {
+        if (fleet == null || fleet.getStats() == null || fleet.getFleetData() == null) {
+            return;
+        }
+        float percent = swarmSensorStrengthPercent(fleet.getFleetData().getMembersListCopy());
+        StatBonus sensorStrengthMod = fleet.getStats().getSensorStrengthMod();
+        if (percent > 0f) {
+            sensorStrengthMod.modifyPercent(ExiledSector.key(SWARM_SENSOR_STRENGTH_FLEET_MOD), percent, Translation.gameText("fleet.swarmSensorStrength"));
+        } else {
+            sensorStrengthMod.unmodifyPercent(ExiledSector.key(SWARM_SENSOR_STRENGTH_FLEET_MOD));
+        }
+    }
+
+    static float swarmSensorStrengthPercent(List<FleetMemberAPI> members) {
+        float percentPerSwarm = 0f;
+        int swarms = 0;
+        for (FleetMemberAPI member : members) {
+            if (member.isMothballed()) {
+                continue;
+            }
+            percentPerSwarm = Math.max(percentPerSwarm, member.getStats().getDynamic().getValue(SWARM_SENSOR_STRENGTH_KEY, 0f));
+            if (FragmentSwarms.hasSwarmHullMod(member.getVariant())) {
+                swarms++;
+            }
+        }
+        return percentPerSwarm * swarms;
     }
 
     private static boolean alwaysCounts(FleetMemberAPI member) {

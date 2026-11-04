@@ -1,16 +1,21 @@
 package exiledsector.skills.skilleffect.movement;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import exiledsector.i18n.StyledText;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
+import exiledsector.skills.skilleffect.ConditionalStatEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
+import exiledsector.skills.skilleffect.EffectText;
 import exiledsector.skills.skilleffect.PerDModMultEffect;
 import exiledsector.skills.skilleffect.StatTarget;
+import exiledsector.skills.skilleffect.shipsystem.FragmentSwarms;
 
 import static exiledsector.skills.skilleffect.Backings.statEffect;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
 import static exiledsector.skills.skilleffect.StatTarget.liveStat;
+import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 public enum MovementSkillEffect implements BackedSkillEffect {
 
@@ -19,6 +24,13 @@ public enum MovementSkillEffect implements BackedSkillEffect {
     TOP_SPEED_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getMaxSpeed), StatNames.TOP_SPEED, false)),
     TOP_SPEED_FLAT(statEffect(FLAT, liveStat(MutableShipStatsAPI::getMaxSpeed), StatNames.TOP_SPEED, false)),
     TOP_SPEED_MULT(statEffect(MULT, liveStat(MutableShipStatsAPI::getMaxSpeed), StatNames.TOP_SPEED, false)),
+    TOP_SPEED_WHILE_SWARM_FULL_PERCENT(new ConditionalStatEffect(PERCENT, stat(MutableShipStatsAPI::getMaxSpeed), StatNames.TOP_SPEED,
+            ship -> FragmentSwarms.isFullTo(FragmentSwarms.swarmOf(ship), SwarmHunt.FULL_PERCENT / 100f))) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("full", SwarmHunt.FULL_PERCENT).styled();
+        }
+    },
     ACCELERATION_FLAT(statEffect(FLAT, liveStat(MutableShipStatsAPI::getAcceleration), "stat.acceleration", false)),
     ACCELERATION_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getAcceleration), "stat.acceleration", false)),
     DECELERATION_FLAT(statEffect(FLAT, liveStat(MutableShipStatsAPI::getDeceleration), "stat.deceleration", false)),
@@ -42,6 +54,13 @@ public enum MovementSkillEffect implements BackedSkillEffect {
         static final String TOP_SPEED = "stat.topSpeed";
 
         private StatNames() {
+        }
+    }
+
+    static final class SwarmHunt {
+        static final float FULL_PERCENT = 90f;
+
+        private SwarmHunt() {
         }
     }
 }

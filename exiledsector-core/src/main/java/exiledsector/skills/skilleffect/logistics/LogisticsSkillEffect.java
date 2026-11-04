@@ -69,6 +69,13 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
     SENSOR_STRENGTH_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getSensorStrength), "stat.sensorStrength", false)),
     SENSOR_STRENGTH_FLAT(statEffect(FLAT, stat(MutableShipStatsAPI::getSensorStrength), "stat.sensorStrength", false)),
     SENSOR_STRENGTH_ALWAYS_COUNTS(flag(FleetWideEffects.SENSOR_STRENGTH_ALWAYS_COUNTS_KEY)),
+    SENSOR_STRENGTH_PERCENT_PER_FRAGMENT_SWARM(statEffect(FLAT, dynamicMod(FleetWideEffects.SWARM_SENSOR_STRENGTH_KEY),
+            "stat.fleetSensorStrengthPerFragmentSwarm", false)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.templated(this, magnitude);
+        }
+    },
     MOVE_SLOW_BURN_LEVEL_FLAT(statEffect(FLAT, dynamicMod(FleetWideEffects.MOVE_SLOW_BURN_LEVEL_KEY), "stat.moveSlowBurnLevel", false)) {
         @Override
         public StyledText description(float magnitude) {

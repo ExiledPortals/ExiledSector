@@ -60,6 +60,14 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("cap", PhaseEntryRepairListener.BATTLE_CAP_PERCENT).styled();
         }
     },
+    PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT(listener(PhaseVoidUpkeepListener.COVERED_PERCENT_KEY, PhaseVoidUpkeepListener.class,
+            PhaseVoidUpkeepListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", Math.min(magnitude, PhaseVoidUpkeepListener.MAX_COVERED_PERCENT))
+                    .arg("range", PhaseVoidUpkeepListener.ALLIED_SWARM_RANGE).arg("flux", PhaseVoidUpkeepListener.FLUX_PER_FRAGMENT).styled();
+        }
+    },
     PHASE_ANCHOR_EMERGENCY_DIVE {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

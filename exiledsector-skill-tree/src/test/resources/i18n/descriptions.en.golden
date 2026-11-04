@@ -964,6 +964,12 @@ effect|FIGHTER_REPLACEMENT_RATE_MULT|12.5	0	The strikecraft replacement rate bot
 effect|FIGHTER_REPLACEMENT_RATE_MULT|100.0	0	The strikecraft replacement rate both decays and recovers <bad>100%</bad> more slowly.
 effect|FIGHTER_REPLACEMENT_RATE_MULT|-10.0	0	The strikecraft replacement rate both decays and recovers <good>10%</good> more quickly.
 effect|FIGHTER_REPLACEMENT_RATE_MULT|-12.5	0	The strikecraft replacement rate both decays and recovers <good>12.5%</good> more quickly.
+effect|FIGHTER_REPLACEMENT_RATE_RESTORED_BY_FRAGMENTS_PERCENT|1.0	0	Each time a strikecraft is replaced, this ship's Fragment Swarm spends 5 fragments, if it has them, to restore <good>1%</good> of the strikecraft replacement rate lost.
+effect|FIGHTER_REPLACEMENT_RATE_RESTORED_BY_FRAGMENTS_PERCENT|10.0	0	Each time a strikecraft is replaced, this ship's Fragment Swarm spends 5 fragments, if it has them, to restore <good>10%</good> of the strikecraft replacement rate lost.
+effect|FIGHTER_REPLACEMENT_RATE_RESTORED_BY_FRAGMENTS_PERCENT|12.5	0	Each time a strikecraft is replaced, this ship's Fragment Swarm spends 5 fragments, if it has them, to restore <good>12.5%</good> of the strikecraft replacement rate lost.
+effect|FIGHTER_REPLACEMENT_RATE_RESTORED_BY_FRAGMENTS_PERCENT|100.0	0	Each time a strikecraft is replaced, this ship's Fragment Swarm spends 5 fragments, if it has them, to restore <good>100%</good> of the strikecraft replacement rate lost.
+effect|FIGHTER_REPLACEMENT_RATE_RESTORED_BY_FRAGMENTS_PERCENT|-10.0	0	Each time a strikecraft is replaced, this ship's Fragment Swarm spends 5 fragments, if it has them, to restore <good>-10%</good> of the strikecraft replacement rate lost.
+effect|FIGHTER_REPLACEMENT_RATE_RESTORED_BY_FRAGMENTS_PERCENT|-12.5	0	Each time a strikecraft is replaced, this ship's Fragment Swarm spends 5 fragments, if it has them, to restore <good>-12.5%</good> of the strikecraft replacement rate lost.
 effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|1.0	0	<good>1%</good> increased rate at which the strikecraft replacement rate recovers.
 effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|10.0	0	<good>10%</good> increased rate at which the strikecraft replacement rate recovers.
 effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|12.5	0	<good>12.5%</good> increased rate at which the strikecraft replacement rate recovers.
@@ -1114,12 +1120,24 @@ effect|FRAGMENT_REPLACEMENT_RATE_PERCENT|12.5	0	<good>12.5%</good> increased fra
 effect|FRAGMENT_REPLACEMENT_RATE_PERCENT|100.0	0	<good>100%</good> increased fragment replacement rate.
 effect|FRAGMENT_REPLACEMENT_RATE_PERCENT|-10.0	0	<bad>10%</bad> reduced fragment replacement rate.
 effect|FRAGMENT_REPLACEMENT_RATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced fragment replacement rate.
+effect|FRAGMENT_REPLACEMENT_RATE_PERCENT_PER_AFFINITY|1.0	0	<good>1%</good> increased fragment replacement rate for every 5 affinity.
+effect|FRAGMENT_REPLACEMENT_RATE_PERCENT_PER_AFFINITY|10.0	0	<good>10%</good> increased fragment replacement rate for every 5 affinity.
+effect|FRAGMENT_REPLACEMENT_RATE_PERCENT_PER_AFFINITY|12.5	0	<good>12.5%</good> increased fragment replacement rate for every 5 affinity.
+effect|FRAGMENT_REPLACEMENT_RATE_PERCENT_PER_AFFINITY|100.0	0	<good>100%</good> increased fragment replacement rate for every 5 affinity.
+effect|FRAGMENT_REPLACEMENT_RATE_PERCENT_PER_AFFINITY|-10.0	0	<bad>10%</bad> reduced fragment replacement rate for every 5 affinity.
+effect|FRAGMENT_REPLACEMENT_RATE_PERCENT_PER_AFFINITY|-12.5	0	<bad>12.5%</bad> reduced fragment replacement rate for every 5 affinity.
 effect|FRAGMENT_SWARM_SIZE_PERCENT|1.0	0	<good>1%</good> increased fragment swarm size.
 effect|FRAGMENT_SWARM_SIZE_PERCENT|10.0	0	<good>10%</good> increased fragment swarm size.
 effect|FRAGMENT_SWARM_SIZE_PERCENT|12.5	0	<good>12.5%</good> increased fragment swarm size.
 effect|FRAGMENT_SWARM_SIZE_PERCENT|100.0	0	<good>100%</good> increased fragment swarm size.
 effect|FRAGMENT_SWARM_SIZE_PERCENT|-10.0	0	<bad>10%</bad> reduced fragment swarm size.
 effect|FRAGMENT_SWARM_SIZE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced fragment swarm size.
+effect|FRAGMENT_SWARM_SIZE_PERCENT_PER_AFFINITY|1.0	0	<good>1%</good> increased fragment swarm size for every 5 affinity.
+effect|FRAGMENT_SWARM_SIZE_PERCENT_PER_AFFINITY|10.0	0	<good>10%</good> increased fragment swarm size for every 5 affinity.
+effect|FRAGMENT_SWARM_SIZE_PERCENT_PER_AFFINITY|12.5	0	<good>12.5%</good> increased fragment swarm size for every 5 affinity.
+effect|FRAGMENT_SWARM_SIZE_PERCENT_PER_AFFINITY|100.0	0	<good>100%</good> increased fragment swarm size for every 5 affinity.
+effect|FRAGMENT_SWARM_SIZE_PERCENT_PER_AFFINITY|-10.0	0	<bad>10%</bad> reduced fragment swarm size for every 5 affinity.
+effect|FRAGMENT_SWARM_SIZE_PERCENT_PER_AFFINITY|-12.5	0	<bad>12.5%</bad> reduced fragment swarm size for every 5 affinity.
 effect|FUEL_CAPACITY_FLAT|1.0	0	<good>+1</good> to fuel capacity.
 effect|FUEL_CAPACITY_FLAT|10.0	0	<good>+10</good> to fuel capacity.
 effect|FUEL_CAPACITY_FLAT|12.5	0	<good>+12.5</good> to fuel capacity.
@@ -1270,6 +1288,12 @@ effect|HIGH_TECH_AFFINITY_FLAT|12.5	0	<good>+12.5</good> to High Tech Affinity.
 effect|HIGH_TECH_AFFINITY_FLAT|100.0	0	<good>+100</good> to High Tech Affinity.
 effect|HIGH_TECH_AFFINITY_FLAT|-10.0	0	<bad>-10</bad> to High Tech Affinity.
 effect|HIGH_TECH_AFFINITY_FLAT|-12.5	0	<bad>-12.5</bad> to High Tech Affinity.
+effect|HULL_DAMAGE_FRAGMENT_REGROWTH_FLAT|1.0	0	Every 300 hull damage this ship deals to enemy ships regrows <good>1</good> of its Fragment Swarm's fragments, up to the swarm's full size.
+effect|HULL_DAMAGE_FRAGMENT_REGROWTH_FLAT|10.0	0	Every 300 hull damage this ship deals to enemy ships regrows <good>10</good> of its Fragment Swarm's fragments, up to the swarm's full size.
+effect|HULL_DAMAGE_FRAGMENT_REGROWTH_FLAT|12.5	0	Every 300 hull damage this ship deals to enemy ships regrows <good>12.5</good> of its Fragment Swarm's fragments, up to the swarm's full size.
+effect|HULL_DAMAGE_FRAGMENT_REGROWTH_FLAT|100.0	0	Every 300 hull damage this ship deals to enemy ships regrows <good>100</good> of its Fragment Swarm's fragments, up to the swarm's full size.
+effect|HULL_DAMAGE_FRAGMENT_REGROWTH_FLAT|-10.0	0	Every 300 hull damage this ship deals to enemy ships regrows <good>-10</good> of its Fragment Swarm's fragments, up to the swarm's full size.
+effect|HULL_DAMAGE_FRAGMENT_REGROWTH_FLAT|-12.5	0	Every 300 hull damage this ship deals to enemy ships regrows <good>-12.5</good> of its Fragment Swarm's fragments, up to the swarm's full size.
 effect|HULL_FLAT|1.0	0	<good>+1</good> to hull points.
 effect|HULL_FLAT|10.0	0	<good>+10</good> to hull points.
 effect|HULL_FLAT|12.5	0	<good>+12.5</good> to hull points.
@@ -1882,6 +1906,12 @@ effect|PHASE_TOP_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased top speed whi
 effect|PHASE_TOP_SPEED_PERCENT|100.0	0	<good>100%</good> increased top speed while phased.
 effect|PHASE_TOP_SPEED_PERCENT|-10.0	0	<bad>10%</bad> reduced top speed while phased.
 effect|PHASE_TOP_SPEED_PERCENT|-12.5	0	<bad>12.5%</bad> reduced top speed while phased.
+effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|1.0	0	While phased, fragments from this ship's Fragment Swarm, or else the nearest allied one within 1000 su, cover <good>1%</good> of phase cloak flux upkeep, spending 1 fragment for every 50 flux covered.
+effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|10.0	0	While phased, fragments from this ship's Fragment Swarm, or else the nearest allied one within 1000 su, cover <good>10%</good> of phase cloak flux upkeep, spending 1 fragment for every 50 flux covered.
+effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|12.5	0	While phased, fragments from this ship's Fragment Swarm, or else the nearest allied one within 1000 su, cover <good>12.5%</good> of phase cloak flux upkeep, spending 1 fragment for every 50 flux covered.
+effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|100.0	0	While phased, fragments from this ship's Fragment Swarm, or else the nearest allied one within 1000 su, cover <good>90%</good> of phase cloak flux upkeep, spending 1 fragment for every 50 flux covered.
+effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|-10.0	0	While phased, fragments from this ship's Fragment Swarm, or else the nearest allied one within 1000 su, cover <good>-10%</good> of phase cloak flux upkeep, spending 1 fragment for every 50 flux covered.
+effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|-12.5	0	While phased, fragments from this ship's Fragment Swarm, or else the nearest allied one within 1000 su, cover <good>-12.5%</good> of phase cloak flux upkeep, spending 1 fragment for every 50 flux covered.
 effect|POST_BATTLE_SALVAGE_PERCENT|1.0	0	Your fleet has <good>1%</good> increased post-battle salvage.
 effect|POST_BATTLE_SALVAGE_PERCENT|10.0	0	Your fleet has <good>10%</good> increased post-battle salvage.
 effect|POST_BATTLE_SALVAGE_PERCENT|12.5	0	Your fleet has <good>12.5%</good> increased post-battle salvage.
@@ -1990,6 +2020,12 @@ effect|SENSOR_STRENGTH_PERCENT|12.5	0	<good>12.5%</good> increased this ship's s
 effect|SENSOR_STRENGTH_PERCENT|100.0	0	<good>100%</good> increased this ship's sensor strength.
 effect|SENSOR_STRENGTH_PERCENT|-10.0	0	<bad>10%</bad> reduced this ship's sensor strength.
 effect|SENSOR_STRENGTH_PERCENT|-12.5	0	<bad>12.5%</bad> reduced this ship's sensor strength.
+effect|SENSOR_STRENGTH_PERCENT_PER_FRAGMENT_SWARM|1.0	0	Your fleet has <good>1%</good> increased sensor strength for each ship in it with a Fragment Swarm.
+effect|SENSOR_STRENGTH_PERCENT_PER_FRAGMENT_SWARM|10.0	0	Your fleet has <good>10%</good> increased sensor strength for each ship in it with a Fragment Swarm.
+effect|SENSOR_STRENGTH_PERCENT_PER_FRAGMENT_SWARM|12.5	0	Your fleet has <good>12.5%</good> increased sensor strength for each ship in it with a Fragment Swarm.
+effect|SENSOR_STRENGTH_PERCENT_PER_FRAGMENT_SWARM|100.0	0	Your fleet has <good>100%</good> increased sensor strength for each ship in it with a Fragment Swarm.
+effect|SENSOR_STRENGTH_PERCENT_PER_FRAGMENT_SWARM|-10.0	0	Your fleet has <good>-10%</good> increased sensor strength for each ship in it with a Fragment Swarm.
+effect|SENSOR_STRENGTH_PERCENT_PER_FRAGMENT_SWARM|-12.5	0	Your fleet has <good>-12.5%</good> increased sensor strength for each ship in it with a Fragment Swarm.
 effect|SERAPH_HUNTING_DAMAGE_BONUS_PERCENT|1.0	0	Up to <good>1%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 effect|SERAPH_HUNTING_DAMAGE_BONUS_PERCENT|10.0	0	Up to <good>10%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 effect|SERAPH_HUNTING_DAMAGE_BONUS_PERCENT|12.5	0	Up to <good>12.5%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
@@ -2050,6 +2086,12 @@ effect|SHIELD_ARC_PERCENT|12.5	0	<good>12.5%</good> increased shield arc.
 effect|SHIELD_ARC_PERCENT|100.0	0	<good>100%</good> increased shield arc.
 effect|SHIELD_ARC_PERCENT|-10.0	0	<bad>10%</bad> reduced shield arc.
 effect|SHIELD_ARC_PERCENT|-12.5	0	<bad>12.5%</bad> reduced shield arc.
+effect|SHIELD_DAMAGE_ABSORBED_BY_FRAGMENTS_PERCENT|1.0	0	<good>1%</good> reduced shield damage taken while this ship's Fragment Swarm has fragments, spending 1 fragment for every 30 damage absorbed.
+effect|SHIELD_DAMAGE_ABSORBED_BY_FRAGMENTS_PERCENT|10.0	0	<good>10%</good> reduced shield damage taken while this ship's Fragment Swarm has fragments, spending 1 fragment for every 30 damage absorbed.
+effect|SHIELD_DAMAGE_ABSORBED_BY_FRAGMENTS_PERCENT|12.5	0	<good>12.5%</good> reduced shield damage taken while this ship's Fragment Swarm has fragments, spending 1 fragment for every 30 damage absorbed.
+effect|SHIELD_DAMAGE_ABSORBED_BY_FRAGMENTS_PERCENT|100.0	0	<good>90%</good> reduced shield damage taken while this ship's Fragment Swarm has fragments, spending 1 fragment for every 30 damage absorbed.
+effect|SHIELD_DAMAGE_ABSORBED_BY_FRAGMENTS_PERCENT|-10.0	0	<good>-10%</good> reduced shield damage taken while this ship's Fragment Swarm has fragments, spending 1 fragment for every 30 damage absorbed.
+effect|SHIELD_DAMAGE_ABSORBED_BY_FRAGMENTS_PERCENT|-12.5	0	<good>-12.5%</good> reduced shield damage taken while this ship's Fragment Swarm has fragments, spending 1 fragment for every 30 damage absorbed.
 effect|SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT|1.0	0	<good>1%</good> of shield damage taken is passed to the nearest allied ship within 1000 su as soft flux.
 effect|SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT|10.0	0	<good>10%</good> of shield damage taken is passed to the nearest allied ship within 1000 su as soft flux.
 effect|SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT|12.5	0	<good>12.5%</good> of shield damage taken is passed to the nearest allied ship within 1000 su as soft flux.
@@ -2254,6 +2296,12 @@ effect|SURVEY_COST_REDUCTION_SUPPLIES|12.5	1	Your fleet has <bad>-12.5</bad> to 
 effect|SURVEY_COST_REDUCTION_SUPPLIES|100.0	1	Your fleet has <bad>-100</bad> to supplies needed to perform surveys.
 effect|SURVEY_COST_REDUCTION_SUPPLIES|-10.0	1	Your fleet has <good>+10</good> to supplies needed to perform surveys.
 effect|SURVEY_COST_REDUCTION_SUPPLIES|-12.5	1	Your fleet has <good>+12.5</good> to supplies needed to perform surveys.
+effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|1.0	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>1%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per battle.
+effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|10.0	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>10%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per battle.
+effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|12.5	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>12.5%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per battle.
+effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|100.0	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>100%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per battle.
+effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|-10.0	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>-10%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per battle.
+effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|-12.5	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>-12.5%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per battle.
 effect|SYSTEM_CHARGES_FLAT|1.0	0	<good>+1</good> to ship system charges.
 effect|SYSTEM_CHARGES_FLAT|10.0	0	<good>+10</good> to ship system charges.
 effect|SYSTEM_CHARGES_FLAT|12.5	0	<good>+12.5</good> to ship system charges.
@@ -2350,6 +2398,12 @@ effect|TOP_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased top speed.
 effect|TOP_SPEED_PERCENT|100.0	0	<good>100%</good> increased top speed.
 effect|TOP_SPEED_PERCENT|-10.0	0	<bad>10%</bad> reduced top speed.
 effect|TOP_SPEED_PERCENT|-12.5	0	<bad>12.5%</bad> reduced top speed.
+effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|1.0	0	<good>1%</good> increased top speed while this ship's Fragment Swarm is at least 90% full.
+effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|10.0	0	<good>10%</good> increased top speed while this ship's Fragment Swarm is at least 90% full.
+effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|12.5	0	<good>12.5%</good> increased top speed while this ship's Fragment Swarm is at least 90% full.
+effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|100.0	0	<good>100%</good> increased top speed while this ship's Fragment Swarm is at least 90% full.
+effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|-10.0	0	<good>-10%</good> increased top speed while this ship's Fragment Swarm is at least 90% full.
+effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|-12.5	0	<good>-12.5%</good> increased top speed while this ship's Fragment Swarm is at least 90% full.
 effect|VENT_RATE_MULT|1.0	0	<good>1%</good> more venting speed.
 effect|VENT_RATE_MULT|10.0	0	<good>10%</good> more venting speed.
 effect|VENT_RATE_MULT|12.5	0	<good>12.5%</good> more venting speed.

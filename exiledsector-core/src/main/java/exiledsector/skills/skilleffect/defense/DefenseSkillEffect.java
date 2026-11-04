@@ -152,6 +152,13 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
                     .arg("limit", NanoforgeMendingListener.MAX_TOTAL_REGEN_PERCENT_OF_HULL).styled();
         }
     },
+    SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT(listener(SwarmOverflowRepairListener.REPAIR_PERCENT_KEY, SwarmOverflowRepairListener.class,
+            SwarmOverflowRepairListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("cap", SwarmOverflowRepairListener.BATTLE_CAP_PERCENT).styled();
+        }
+    },
     RISE_FROM_THE_ASHES_HULL_PERCENT(listener(RiseFromTheAshesListener.HULL_PERCENT_KEY, RiseFromTheAshesListener.class,
             RiseFromTheAshesListener::new)),
     RISE_FROM_THE_ASHES_ARMOR_RESTORE_PERCENT(listener(RiseFromTheAshesListener.ARMOR_RESTORE_PERCENT_KEY, RiseFromTheAshesListener.class,

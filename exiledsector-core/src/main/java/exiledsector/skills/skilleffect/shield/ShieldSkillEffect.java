@@ -144,6 +144,14 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
                     .arg("drain", AbsorbReserveListener.DRAIN_PER_SECOND).arg("max", AbsorbReserveListener.MAX_RESERVE).styled();
         }
     },
+    SHIELD_DAMAGE_ABSORBED_BY_FRAGMENTS_PERCENT(listener(FractalShieldListener.ABSORBED_PERCENT_KEY, FractalShieldListener.class,
+            FractalShieldListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", Math.min(magnitude, FractalShieldListener.MAX_ABSORBED_PERCENT))
+                    .arg("damage", FractalShieldListener.DAMAGE_PER_FRAGMENT).styled();
+        }
+    },
     DYNAMIC_GRID_ENERGY_WEAPON_BONUS_PERCENT(listener(DynamicGridListener.ENERGY_BONUS_PERCENT_KEY, DynamicGridListener.class,
             DynamicGridListener::new)) {
         @Override
