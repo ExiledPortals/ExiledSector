@@ -650,7 +650,7 @@
     "stat.hardFluxDissipationWhileShieldsUp": "hard flux dissipation while shields are up",
     "effect.HARD_FLUX_DISSIPATION_PERCENT": "<good>{value}%</good> of flux dissipation clears hard flux while shields are up.",
     "effect.SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT": "<good>{value}%</good> of shield damage taken is passed to the nearest allied ship within {range} su as soft flux.",
-    "effect.NO_SHIELD_UPKEEP_BELOW_SPEED_PERCENT": "No shield flux upkeep while speed is below <good>{value}%</good> of top speed.",
+    "effect.SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT": "<good>{value}%</good> reduced shield flux upkeep while moving slower than {speed}% of top speed.",
     "effect.SHIELD_DEFLECT_CHANCE_PERCENT": "<good>{value}%</good> chance for non-missile projectiles hitting shields to be deflected for no flux.",
     "effect.SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT": "<good>{value}%</good> less shield damage taken from automated ships.",
     "effect.PHASE_FIELD_CONTRIBUTION_PERCENT": "{value}% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.",

@@ -131,23 +131,16 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
     SHIELD_PIERCE_CHANCE_MULT(statEffect(MULT, dynamicStat(Stats.SHIELD_PIERCED_MULT), "stat.empArcShieldPierceChance", true)),
     SHIELD_UPKEEP_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getShieldUpkeepMult), "stat.shieldFluxUpkeep", true)),
     SHIELD_UPKEEP_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getShieldUpkeepMult), "stat.shieldFluxUpkeep", true)),
-    NO_SHIELD_UPKEEP_BELOW_SPEED_PERCENT {
+    SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT(new ConditionalStatEffect(PERCENT, stat(MutableShipStatsAPI::getShieldUpkeepMult),
+            "stat.shieldFluxUpkeep", LowSpeed::isMovingSlowly)) {
         @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        }
-
-        @Override
-        public boolean advancesInCombat() {
+        public boolean lowerIsBetter() {
             return true;
         }
 
         @Override
-        public void advanceInCombat(ShipAPI ship, String modId, float magnitude) {
-            if (ship.getVelocity().length() < ship.getMaxSpeedWithoutBoost() * magnitude / 100f) {
-                ship.getMutableStats().getShieldUpkeepMult().modifyMult(modId, 0f);
-            } else {
-                ship.getMutableStats().getShieldUpkeepMult().unmodifyMult(modId);
-            }
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", Math.abs(magnitude)).arg("speed", LowSpeed.TOP_SPEED_FRACTION * 100f).styled();
         }
 
         @Override

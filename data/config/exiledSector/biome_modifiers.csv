@@ -39,7 +39,7 @@ MOVE_SLOW_SUPPLY_USE_MULT_FROZEN_FRINGE,frozen_fringe,crew_quarters,"Overwintere
 HIGH_TECH_AFFINITY_FLAT_FROZEN_FRINGE,frozen_fringe,engine_room,"Superconducting: drive coils that only work this cold"
 FLUX_DISSIPATION_WITHOUT_HARD_FLUX_PERCENT_FROZEN_FRINGE,frozen_fringe,reactor,"Cryo-cooled: cold radiators"
 ENERGY_WEAPON_DAMAGE_PERCENT_PER_HIGH_TECH_AFFINITY_FROZEN_FRINGE,frozen_fringe,weapon_mount,"of the Frost: supercooled emitters"
-NO_SHIELD_UPKEEP_BELOW_SPEED_PERCENT_FROZEN_FRINGE,frozen_fringe,shield_generator,"Glacial: stillness"
+SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT_FROZEN_FRINGE,frozen_fringe,shield_generator,"Glacial: stillness"
 PEAK_TIME_PAUSED_WHILE_PHASED_FROZEN_FRINGE,frozen_fringe,phase_coil,"of the Long Night: cold sleep"
 FIGHTER_REPLACEMENT_RECOVERY_WHILE_REGROUPING_PERCENT_FROZEN_FRINGE,frozen_fringe,flight_deck,"Cold-stored: wings kept on ice"
 ARMOR_PERCENT_PER_HIGH_TECH_AFFINITY_FROZEN_FRINGE,frozen_fringe,armor_plating,"Permafrost: a frozen layer that never cracks"

@@ -1984,12 +1984,6 @@ effect|NO_PHASE_UPKEEP_NEAR_WRECK_RANGE|12.5	0	No phase cloak flux upkeep while 
 effect|NO_PHASE_UPKEEP_NEAR_WRECK_RANGE|100.0	0	No phase cloak flux upkeep while within <good>100</good> su of a wreck.
 effect|NO_PHASE_UPKEEP_NEAR_WRECK_RANGE|-10.0	0	No phase cloak flux upkeep while within <good>-10</good> su of a wreck.
 effect|NO_PHASE_UPKEEP_NEAR_WRECK_RANGE|-12.5	0	No phase cloak flux upkeep while within <good>-12.5</good> su of a wreck.
-effect|NO_SHIELD_UPKEEP_BELOW_SPEED_PERCENT|1.0	0	No shield flux upkeep while speed is below <good>1%</good> of top speed.
-effect|NO_SHIELD_UPKEEP_BELOW_SPEED_PERCENT|10.0	0	No shield flux upkeep while speed is below <good>10%</good> of top speed.
-effect|NO_SHIELD_UPKEEP_BELOW_SPEED_PERCENT|12.5	0	No shield flux upkeep while speed is below <good>12.5%</good> of top speed.
-effect|NO_SHIELD_UPKEEP_BELOW_SPEED_PERCENT|100.0	0	No shield flux upkeep while speed is below <good>100%</good> of top speed.
-effect|NO_SHIELD_UPKEEP_BELOW_SPEED_PERCENT|-10.0	0	No shield flux upkeep while speed is below <good>-10%</good> of top speed.
-effect|NO_SHIELD_UPKEEP_BELOW_SPEED_PERCENT|-12.5	0	No shield flux upkeep while speed is below <good>-12.5%</good> of top speed.
 effect|OBJECTIVE_CAPTURE_RANGE_FLAT|1.0	0	<good>+1</good> to range from which combat objectives can be captured.
 effect|OBJECTIVE_CAPTURE_RANGE_FLAT|10.0	0	<good>+10</good> to range from which combat objectives can be captured.
 effect|OBJECTIVE_CAPTURE_RANGE_FLAT|12.5	0	<good>+12.5</good> to range from which combat objectives can be captured.
@@ -2416,6 +2410,12 @@ effect|SHIELD_TURN_RATE_PERCENT|12.5	0	<good>12.5%</good> increased shield turn 
 effect|SHIELD_TURN_RATE_PERCENT|100.0	0	<good>100%</good> increased shield turn rate.
 effect|SHIELD_TURN_RATE_PERCENT|-10.0	0	<bad>10%</bad> reduced shield turn rate.
 effect|SHIELD_TURN_RATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced shield turn rate.
+effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|1.0	1	<good>1%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
+effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|10.0	1	<good>10%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
+effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|12.5	1	<good>12.5%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
+effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|100.0	1	<good>100%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
+effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|-10.0	1	<good>10%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
+effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|-12.5	1	<good>12.5%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
 effect|SHIELD_UPKEEP_MULT|1.0	1	<good>1%</good> more shield flux upkeep.
 effect|SHIELD_UPKEEP_MULT|10.0	1	<good>10%</good> more shield flux upkeep.
 effect|SHIELD_UPKEEP_MULT|12.5	1	<good>12.5%</good> more shield flux upkeep.

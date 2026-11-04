@@ -24,15 +24,16 @@ class StationaryShieldUpkeepTest {
     }
 
     @Test
-    void shieldsCostNoUpkeepBelowTheSpeedThresholdAndNormalUpkeepAboveIt() {
+    void shieldUpkeepIsReducedBelowTenPercentOfTopSpeedAndNormalAboveIt() {
         MutableStat shieldUpkeep = new MutableStat(1f);
-        ShieldSkillEffect effect = ShieldSkillEffect.NO_SHIELD_UPKEEP_BELOW_SPEED_PERCENT;
+        ShieldSkillEffect effect = ShieldSkillEffect.SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT;
 
         assertTrue(effect.advancesInCombat());
-        effect.advanceInCombat(ship(15f, shieldUpkeep), "mod_id", 10f);
-        assertEquals(0f, shieldUpkeep.getModifiedValue(), EPSILON);
+        assertTrue(effect.lowerIsBetter());
+        effect.advanceInCombat(ship(15f, shieldUpkeep), "mod_id", -35f);
+        assertEquals(0.65f, shieldUpkeep.getModifiedValue(), EPSILON);
 
-        effect.advanceInCombat(ship(25f, shieldUpkeep), "mod_id", 10f);
+        effect.advanceInCombat(ship(25f, shieldUpkeep), "mod_id", -35f);
         assertEquals(1f, shieldUpkeep.getModifiedValue(), EPSILON);
     }
 }
