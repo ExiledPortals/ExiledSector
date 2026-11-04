@@ -1,12 +1,19 @@
 # Hull item advanced search
 
-Status: planned, nothing built.
+Status: in progress on branch `advanced-search`, steps 1 and 2 built.
 
 The storage panel's text search matches words and one "20+" minimum per term. Players with large stashes want a Path of Exile style trade search instead: pick stats from a list, give each a min and max, and combine them in AND and COUNT groups.
 
 ## Layout
 
-An Advanced button next to the search field opens a pane over the storage panel. The free-text search stays as the quick option, and both apply together.
+An Advanced search button sits in the hull items panel's filter controls, just left of Reset filters. The controls lay out the filter menus first, then Advanced search and Reset filters in the last two slots, so the narrow two-column layout puts them side by side on the last row. The button stays checked while the pane is open, and pressing it again closes the pane. The free-text search stays as the quick option, and both apply together.
+
+The pane opens to the left of the hull items panel, covering the vanilla ship list. It's placed in screen coordinates on the screen-sized host panel, so it isn't bound by the refit frame:
+- Its right edge sits one margin left of the hull items panel. Its width grows to fit one-line rows, up to the screen's left margin. At 1920 wide that leaves about 530 px, at 2560 about 850 px.
+- Its bottom lines up with the hull items panel's bottom. Its height grows upward with its groups and rows, up to the screen's top margin, past the refit frame's top. Beyond that the group list scrolls.
+- At least the fleet list's width (210 px) is always free. When the space can't fit a one-line row, as at 1280 wide, each row wraps onto two lines: the stat picker on the first, then the lines button, min, max and remove on the second.
+- It stays open while the player works with the hull items panel, closing only from its button, Escape or the hull items panel closing. Clicks inside it don't reach the ship list underneath.
+- The stat picker's list opens below its field, or above it when there isn't room below, and stays inside the pane.
 
 From top to bottom:
 1. The existing Socket type and Rarity filters, shared with the storage panel, so picking one in either place updates both.
@@ -48,9 +55,9 @@ All in `exiledsector-core`, `exiledsector.ui.socket` except where noted:
 
 ## Steps
 
-1. `ItemStatTotals` with tests: hybrid lines summed into each of their stats, the implicit/explicit split, per-hull-size totals and rounding to the shown decimals.
-2. `ModifierSearch` with tests: AND, COUNT, blank min and max, each lines choice, ignored empty rows and groups, a stat missing from the item.
+1. `ItemStatTotals` with tests: hybrid lines summed into each of their stats, the implicit/explicit split, per-hull-size totals and rounding to the shown decimals. Done on branch `advanced-search`: `exiledsector.items.ItemStatTotals`, built in `ItemStorageRow.of`, tested in `ItemStatTotalsTest`.
+2. `ModifierSearch` with tests: AND, COUNT, blank min and max, each lines choice, ignored empty rows and groups, a stat missing from the item. Done on branch `advanced-search`: `ModifierSearch` on `ItemStorageFilter`, applied in `ItemStorageQuery.apply` and cleared by `reset`, tested in `ModifierSearchTest`.
 3. Stat pool per socket type, with a test that every hull item stat appears in at least one pool.
 4. `StatPicker`, filtering on each keystroke.
-5. `AdvancedSearchPane` and the Advanced button, wired into `ItemStorageQuery` and Reset.
+5. `AdvancedSearchPane` and the Advanced search button, wired into `ItemStorageQuery` and Reset. The pane's bounds come from the storage panel's placement and the screen size, with a test for the 1280, 1920 and 2560 widths, including the two-line rows.
 6. A `docs/docs.md` section if any matching rule isn't evident from play.

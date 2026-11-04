@@ -19,6 +19,7 @@ public final class ItemStorageFilter {
     Sort sort = Sort.NEWEST;
     final Set<ItemRarity> rarities = EnumSet.noneOf(ItemRarity.class);
     final Set<ItemKind> sectionKinds = EnumSet.noneOf(ItemKind.class);
+    final ModifierSearch modifierSearch = new ModifierSearch();
 
     void toggleStatus(Status status) {
         toggle(statuses, status);
@@ -41,7 +42,12 @@ public final class ItemStorageFilter {
     }
 
     boolean isDefault() {
-        return statuses.equals(EnumSet.of(Status.FREE)) && query.isBlank() && sort == Sort.NEWEST && rarities.isEmpty() && sectionKinds.isEmpty();
+        return isDefault(true);
+    }
+
+    boolean isDefault(boolean withModifierSearch) {
+        return statuses.equals(EnumSet.of(Status.FREE)) && query.isBlank() && sort == Sort.NEWEST && rarities.isEmpty() && sectionKinds.isEmpty()
+                && (!withModifierSearch || modifierSearch.isDefault());
     }
 
     void reset() {
@@ -51,6 +57,7 @@ public final class ItemStorageFilter {
         sort = Sort.NEWEST;
         rarities.clear();
         sectionKinds.clear();
+        modifierSearch.clear();
     }
 
     private static <T> void toggle(Set<T> chosen, T value) {
