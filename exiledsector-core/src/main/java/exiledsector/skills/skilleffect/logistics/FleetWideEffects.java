@@ -23,6 +23,9 @@ public final class FleetWideEffects {
     static final String MOVE_SLOW_BURN_LEVEL_KEY = "exiledLib_moveSlowBurnLevelContribution";
     static final float MAX_MOVE_SLOW_BURN_LEVEL_BONUS = 6f;
     private static final String MOVE_SLOW_BURN_LEVEL_FLEET_MOD = "moveSlowBurnLevel";
+    static final String TRANSPONDER_OFF_SENSOR_PROFILE_KEY = "exiledLib_transponderOffSensorProfileContribution";
+    static final float MAX_TRANSPONDER_OFF_SENSOR_PROFILE_REDUCTION = 30f;
+    private static final String TRANSPONDER_OFF_SENSOR_PROFILE_FLEET_MOD = "transponderOffSensorProfile";
     private static final String SENSOR_STRENGTH_ALWAYS_COUNTS_FLEET_MOD = "sensorStrengthAlwaysCounts";
     private static final String MAX_SENSOR_SHIPS_SETTING = "maxSensorShips";
     private static final int DEFAULT_MAX_SENSOR_SHIPS = 5;
@@ -87,6 +90,30 @@ public final class FleetWideEffects {
             }
         }
         return Math.min(MAX_MOVE_SLOW_BURN_LEVEL_BONUS, bonus);
+    }
+
+    public static void applyTransponderOffSensorProfile(CampaignFleetAPI fleet) {
+        StatBonus detectedRangeMod = fleet == null || fleet.getStats() == null ? null : fleet.getStats().getDetectedRangeMod();
+        if (detectedRangeMod == null || fleet.getFleetData() == null) {
+            return;
+        }
+        float percent = fleet.isTransponderOn() ? 0f : transponderOffSensorProfilePercent(fleet.getFleetData().getMembersListCopy());
+        if (percent < 0f) {
+            detectedRangeMod.modifyPercent(ExiledSector.key(TRANSPONDER_OFF_SENSOR_PROFILE_FLEET_MOD), percent,
+                    Translation.gameText("fleet.transponderOffSensorProfile"));
+        } else {
+            detectedRangeMod.unmodifyPercent(ExiledSector.key(TRANSPONDER_OFF_SENSOR_PROFILE_FLEET_MOD));
+        }
+    }
+
+    static float transponderOffSensorProfilePercent(List<FleetMemberAPI> members) {
+        float percent = 0f;
+        for (FleetMemberAPI member : members) {
+            if (!member.isMothballed()) {
+                percent += member.getStats().getDynamic().getValue(TRANSPONDER_OFF_SENSOR_PROFILE_KEY, 0f);
+            }
+        }
+        return Math.max(-MAX_TRANSPONDER_OFF_SENSOR_PROFILE_REDUCTION, Math.min(0f, percent));
     }
 
     private static boolean alwaysCounts(FleetMemberAPI member) {
@@ -158,6 +185,7 @@ public final class FleetWideEffects {
         phaseFieldStale = false;
         lastTransponderOn = transponderOn;
         recomputeExtendedPhaseField(playerFleet);
+        applyTransponderOffSensorProfile(playerFleet);
     }
 
     private static void recomputeExtendedPhaseField(CampaignFleetAPI playerFleet) {

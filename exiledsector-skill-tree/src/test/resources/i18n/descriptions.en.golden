@@ -634,6 +634,12 @@ effect|DAMAGE_TO_FRIGATE_PERCENT|12.5	0	<good>12.5%</good> increased damage to f
 effect|DAMAGE_TO_FRIGATE_PERCENT|100.0	0	<good>100%</good> increased damage to frigates.
 effect|DAMAGE_TO_FRIGATE_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to frigates.
 effect|DAMAGE_TO_FRIGATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to frigates.
+effect|DAMAGE_TO_HELPLESS_SHIP_PERCENT|1.0	0	<good>1%</good> increased damage to overloaded, venting or flamed-out ships.
+effect|DAMAGE_TO_HELPLESS_SHIP_PERCENT|10.0	0	<good>10%</good> increased damage to overloaded, venting or flamed-out ships.
+effect|DAMAGE_TO_HELPLESS_SHIP_PERCENT|12.5	0	<good>12.5%</good> increased damage to overloaded, venting or flamed-out ships.
+effect|DAMAGE_TO_HELPLESS_SHIP_PERCENT|100.0	0	<good>100%</good> increased damage to overloaded, venting or flamed-out ships.
+effect|DAMAGE_TO_HELPLESS_SHIP_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to overloaded, venting or flamed-out ships.
+effect|DAMAGE_TO_HELPLESS_SHIP_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to overloaded, venting or flamed-out ships.
 effect|DEATH_ON_COLLISION|1.0	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
 effect|DEATH_ON_COLLISION|10.0	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
 effect|DEATH_ON_COLLISION|12.5	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
@@ -1354,6 +1360,12 @@ effect|LOWEST_AFFINITY_AS_HIGHEST|12.5	0	Your lowest affinity counts as equal to
 effect|LOWEST_AFFINITY_AS_HIGHEST|100.0	0	Your lowest affinity counts as equal to your highest.
 effect|LOWEST_AFFINITY_AS_HIGHEST|-10.0	0	Your lowest affinity counts as equal to your highest.
 effect|LOWEST_AFFINITY_AS_HIGHEST|-12.5	0	Your lowest affinity counts as equal to your highest.
+effect|LOW_HULL_TOP_SPEED_PERCENT|1.0	0	<good>1%</good> increased top speed while below 50% hull.
+effect|LOW_HULL_TOP_SPEED_PERCENT|10.0	0	<good>10%</good> increased top speed while below 50% hull.
+effect|LOW_HULL_TOP_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased top speed while below 50% hull.
+effect|LOW_HULL_TOP_SPEED_PERCENT|100.0	0	<good>100%</good> increased top speed while below 50% hull.
+effect|LOW_HULL_TOP_SPEED_PERCENT|-10.0	0	<good>-10%</good> increased top speed while below 50% hull.
+effect|LOW_HULL_TOP_SPEED_PERCENT|-12.5	0	<good>-12.5%</good> increased top speed while below 50% hull.
 effect|LOW_TECH_AFFINITY_FLAT|1.0	0	<good>+1</good> to Low Tech Affinity.
 effect|LOW_TECH_AFFINITY_FLAT|10.0	0	<good>+10</good> to Low Tech Affinity.
 effect|LOW_TECH_AFFINITY_FLAT|12.5	0	<good>+12.5</good> to Low Tech Affinity.
@@ -1780,6 +1792,12 @@ effect|OBJECTIVE_CAPTURE_RATE_MULT|12.5	0	<good>12.5%</good> more combat objecti
 effect|OBJECTIVE_CAPTURE_RATE_MULT|100.0	0	<good>100%</good> more combat objective capture rate.
 effect|OBJECTIVE_CAPTURE_RATE_MULT|-10.0	0	<bad>10%</bad> less combat objective capture rate.
 effect|OBJECTIVE_CAPTURE_RATE_MULT|-12.5	0	<bad>12.5%</bad> less combat objective capture rate.
+effect|OPENING_WEAPON_DAMAGE_PERCENT|1.0	0	<good>1%</good> increased weapon damage for the first 30 seconds after this ship deploys.
+effect|OPENING_WEAPON_DAMAGE_PERCENT|10.0	0	<good>10%</good> increased weapon damage for the first 30 seconds after this ship deploys.
+effect|OPENING_WEAPON_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased weapon damage for the first 30 seconds after this ship deploys.
+effect|OPENING_WEAPON_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased weapon damage for the first 30 seconds after this ship deploys.
+effect|OPENING_WEAPON_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> increased weapon damage for the first 30 seconds after this ship deploys.
+effect|OPENING_WEAPON_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> increased weapon damage for the first 30 seconds after this ship deploys.
 effect|PD_BEST_TARGET_LEADING|1.0	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 effect|PD_BEST_TARGET_LEADING|10.0	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 effect|PD_BEST_TARGET_LEADING|12.5	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
@@ -1894,6 +1912,12 @@ effect|RAM_BIGGEST_ENEMY|12.5	0	When this ship isn't flown by you, it flies stra
 effect|RAM_BIGGEST_ENEMY|100.0	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
 effect|RAM_BIGGEST_ENEMY|-10.0	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
 effect|RAM_BIGGEST_ENEMY|-12.5	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
+effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|1.0	0	<good>1%</good> more collision damage dealt to enemy ships and <good>1%</good> less collision damage taken.
+effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|10.0	0	<good>10%</good> more collision damage dealt to enemy ships and <good>10%</good> less collision damage taken.
+effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> more collision damage dealt to enemy ships and <good>12.5%</good> less collision damage taken.
+effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|100.0	0	<good>100%</good> more collision damage dealt to enemy ships and <good>100%</good> less collision damage taken.
+effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> more collision damage dealt to enemy ships and <good>-10%</good> less collision damage taken.
+effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> more collision damage dealt to enemy ships and <good>-12.5%</good> less collision damage taken.
 effect|REMOVE_ALL_FIGHTER_BAYS|1.0	0	Removes all of this ship's strikecraft bays.
 effect|REMOVE_ALL_FIGHTER_BAYS|10.0	0	Removes all of this ship's strikecraft bays.
 effect|REMOVE_ALL_FIGHTER_BAYS|12.5	0	Removes all of this ship's strikecraft bays.
@@ -2062,6 +2086,12 @@ effect|SHIELD_DAMAGE_SHARED_PERCENT|12.5	0	Disperses 12.5% of shield damage take
 effect|SHIELD_DAMAGE_SHARED_PERCENT|100.0	0	Disperses 90% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 effect|SHIELD_DAMAGE_SHARED_PERCENT|-10.0	0	Disperses -10% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 effect|SHIELD_DAMAGE_SHARED_PERCENT|-12.5	0	Disperses -12.5% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|1.0	1	<good>1%</good> reduced damage taken by shields while moving faster than 75% of top speed.
+effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|10.0	1	<good>10%</good> reduced damage taken by shields while moving faster than 75% of top speed.
+effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|12.5	1	<good>12.5%</good> reduced damage taken by shields while moving faster than 75% of top speed.
+effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|100.0	1	<good>100%</good> reduced damage taken by shields while moving faster than 75% of top speed.
+effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|-10.0	1	<good>10%</good> reduced damage taken by shields while moving faster than 75% of top speed.
+effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|-12.5	1	<good>12.5%</good> reduced damage taken by shields while moving faster than 75% of top speed.
 effect|SHIELD_DAMAGE_TAKEN_MULT|1.0	1	<good>1%</good> more damage taken by shields.
 effect|SHIELD_DAMAGE_TAKEN_MULT|10.0	1	<good>10%</good> more damage taken by shields.
 effect|SHIELD_DAMAGE_TAKEN_MULT|12.5	1	<good>12.5%</good> more damage taken by shields.
@@ -2194,6 +2224,12 @@ effect|STARDUST_MOTE_DAMAGE_FLAT|12.5	0	Every 2 seconds a beam weapon spends on 
 effect|STARDUST_MOTE_DAMAGE_FLAT|100.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>100</good> energy damage and <good>100</good> EMP. At most 20 of this ship's motes fly at once.
 effect|STARDUST_MOTE_DAMAGE_FLAT|-10.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>-10</good> energy damage and <good>-10</good> EMP. At most 20 of this ship's motes fly at once.
 effect|STARDUST_MOTE_DAMAGE_FLAT|-12.5	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>-12.5</good> energy damage and <good>-12.5</good> EMP. At most 20 of this ship's motes fly at once.
+effect|STRIKECRAFT_DAMAGE_TO_DAMAGED_SHIPS_PERCENT|1.0	0	Strikecraft launched from this ship deal <good>1%</good> increased damage to ships below 50% hull.
+effect|STRIKECRAFT_DAMAGE_TO_DAMAGED_SHIPS_PERCENT|10.0	0	Strikecraft launched from this ship deal <good>10%</good> increased damage to ships below 50% hull.
+effect|STRIKECRAFT_DAMAGE_TO_DAMAGED_SHIPS_PERCENT|12.5	0	Strikecraft launched from this ship deal <good>12.5%</good> increased damage to ships below 50% hull.
+effect|STRIKECRAFT_DAMAGE_TO_DAMAGED_SHIPS_PERCENT|100.0	0	Strikecraft launched from this ship deal <good>100%</good> increased damage to ships below 50% hull.
+effect|STRIKECRAFT_DAMAGE_TO_DAMAGED_SHIPS_PERCENT|-10.0	0	Strikecraft launched from this ship deal <good>-10%</good> increased damage to ships below 50% hull.
+effect|STRIKECRAFT_DAMAGE_TO_DAMAGED_SHIPS_PERCENT|-12.5	0	Strikecraft launched from this ship deal <good>-12.5%</good> increased damage to ships below 50% hull.
 effect|STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT|1.0	0	Strikecraft launched from this ship deal <good>1%</good> increased damage to drone strikecraft.
 effect|STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT|10.0	0	Strikecraft launched from this ship deal <good>10%</good> increased damage to drone strikecraft.
 effect|STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT|12.5	0	Strikecraft launched from this ship deal <good>12.5%</good> increased damage to drone strikecraft.
@@ -2350,6 +2386,12 @@ effect|TOP_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased top speed.
 effect|TOP_SPEED_PERCENT|100.0	0	<good>100%</good> increased top speed.
 effect|TOP_SPEED_PERCENT|-10.0	0	<bad>10%</bad> reduced top speed.
 effect|TOP_SPEED_PERCENT|-12.5	0	<bad>12.5%</bad> reduced top speed.
+effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|1.0	1	Your fleet has <good>1%</good> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|10.0	1	Your fleet has <good>10%</good> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|12.5	1	Your fleet has <good>12.5%</good> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|100.0	1	Your fleet has <good>100%</good> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|-10.0	1	Your fleet has <good>10%</good> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|-12.5	1	Your fleet has <good>12.5%</good> reduced sensor profile while its transponder is off, up to a maximum of 30%.
 effect|VENT_RATE_MULT|1.0	0	<good>1%</good> more venting speed.
 effect|VENT_RATE_MULT|10.0	0	<good>10%</good> more venting speed.
 effect|VENT_RATE_MULT|12.5	0	<good>12.5%</good> more venting speed.

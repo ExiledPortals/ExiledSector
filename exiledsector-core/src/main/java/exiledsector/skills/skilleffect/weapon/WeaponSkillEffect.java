@@ -11,6 +11,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import exiledsector.compat.LostSectorCompat;
 import exiledsector.i18n.StyledText;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
+import exiledsector.skills.skilleffect.ConditionalStatEffect;
 import exiledsector.skills.skilleffect.DerivedStatEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
@@ -90,6 +91,20 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
         @Override
         public StyledText description(float magnitude) {
             return PERCENT.describeStat(magnitude, "stat.damageToAutomatedShips");
+        }
+    },
+    DAMAGE_TO_HELPLESS_SHIP_PERCENT(listener(HelplessShipDamageListener.DAMAGE_PERCENT_KEY, HelplessShipDamageListener.class,
+            HelplessShipDamageListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return PERCENT.describeStat(magnitude, "stat.damageToHelplessShips");
+        }
+    },
+    OPENING_WEAPON_DAMAGE_PERCENT(new ConditionalStatEffect(PERCENT, WeaponStatFamily.DAMAGE.target(WeaponScope.ALL), "weapon.stat.DAMAGE",
+            OpeningVolley::isUnderway)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("seconds", OpeningVolley.SECONDS).styled();
         }
     },
     WEAPON_MALFUNCTION_PERCENT(statEffect(PERCENT, new StatTarget.PercentagePoints(MutableShipStatsAPI::getWeaponMalfunctionChance),
