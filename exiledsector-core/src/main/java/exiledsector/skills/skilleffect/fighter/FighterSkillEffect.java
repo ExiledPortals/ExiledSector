@@ -228,6 +228,13 @@ public enum FighterSkillEffect implements BackedSkillEffect {
     },
     STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT(new FighterListenerEffect<>(DroneDamageListener.DAMAGE_PERCENT_KEY, DroneDamageListener.class,
             DroneDamageListener::new)),
+    STRIKECRAFT_DAMAGE_TO_DAMAGED_SHIPS_PERCENT(new FighterListenerEffect<>(DamagedShipDamageListener.DAMAGE_PERCENT_KEY,
+            DamagedShipDamageListener.class, DamagedShipDamageListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("hull", DamagedShipDamageListener.DAMAGED_HULL_LEVEL * 100f).styled();
+        }
+    },
     FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER(new FighterListenerEffect<>(WingNumbersDamageListener.REDUCTION_PERCENT_PER_FIGHTER_KEY,
             WingNumbersDamageListener.class, WingNumbersDamageListener::new)) {
 

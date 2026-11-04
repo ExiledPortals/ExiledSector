@@ -8,6 +8,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
+import exiledsector.skills.skilleffect.ConditionalStatEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
 import exiledsector.skills.skilleffect.SkillEffect;
@@ -107,6 +108,18 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
     SHIELD_ARC_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getShieldArcBonus), StatNames.SHIELD_ARC, false)),
     SHIELD_ABSORPTION_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getShieldAbsorptionMult), StatNames.DAMAGE_TAKEN_BY_SHIELDS, true)),
     SHIELD_DAMAGE_TAKEN_MULT(statEffect(MULT, liveStat(MutableShipStatsAPI::getShieldDamageTakenMult), StatNames.DAMAGE_TAKEN_BY_SHIELDS, true)),
+    SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT(new ConditionalStatEffect(PERCENT, liveStat(MutableShipStatsAPI::getShieldDamageTakenMult),
+            StatNames.DAMAGE_TAKEN_BY_SHIELDS, HighSpeed::isMovingFast)) {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", Math.abs(magnitude)).arg("speed", HighSpeed.TOP_SPEED_FRACTION * 100f).styled();
+        }
+    },
     SHIELD_PIERCE_CHANCE_PERCENT(statEffect(PERCENT, dynamicStat(Stats.SHIELD_PIERCED_MULT), "stat.empArcShieldPierceChance", true)),
     SHIELD_PIERCE_CHANCE_MULT(statEffect(MULT, dynamicStat(Stats.SHIELD_PIERCED_MULT), "stat.empArcShieldPierceChance", true)),
     SHIELD_UPKEEP_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getShieldUpkeepMult), "stat.shieldFluxUpkeep", true)),

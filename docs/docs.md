@@ -586,6 +586,16 @@ rides on each strikecraft the ship launches, counting a strikecraft with no mini
 Borrowed Grace stacks give a fixed 1% each, so the Armor Plate's stacks (every 150 damage) work without the node; with
 both, one pool holds both maximums and stacks come every 100 damage (`BorrowedGraceListener`).
 
+### Pirate Badlands modifiers
+
+Ram-plated changes only collision damage. The engine applies it with no projectile and no weapon stats, so a hit counts
+as a collision when it also carries no EMP, is kinetic or energy, and the two hulls are in contact; dealt damage is
+multiplied against enemy ships only, damage taken from any collision, never below zero (`CollisionDamageListener`).
+
+Of the Smuggler adds up each active ship's share, capped at 30%, as a percent on the fleet's detected-at range while
+the transponder is off, reapplied at each fleet sync and, for the player, when the transponder is toggled
+(`FleetWideEffects.applyTransponderOffSensorProfile`). Ambusher's counts from each ship's own deployment (`OpeningVolley`).
+
 ### Chart tier groups
 
 Chart tiers fall into three groups: low (1-5), mid (6-10) and high (11-16) (`TierGroup`). A chart modifier line gives

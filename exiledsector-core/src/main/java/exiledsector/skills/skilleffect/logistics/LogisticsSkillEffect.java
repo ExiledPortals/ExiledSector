@@ -75,6 +75,14 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("max", FleetWideEffects.MAX_MOVE_SLOW_BURN_LEVEL_BONUS).styled();
         }
     },
+    TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT(statEffect(FLAT, dynamicMod(FleetWideEffects.TRANSPONDER_OFF_SENSOR_PROFILE_KEY),
+            "stat.fleetSensorProfileTransponderOff", true)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", Math.abs(magnitude))
+                    .arg("max", FleetWideEffects.MAX_TRANSPONDER_OFF_SENSOR_PROFILE_REDUCTION).styled();
+        }
+    },
     COMBAT_VISION(statEffect(FLAT, bonus(MutableShipStatsAPI::getSightRadiusMod), "stat.inCombatSensorVisionRange", false)),
     MIN_CREW_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getMinCrewMod), StatNames.MIN_CREW_REQUIRED, true)),
     MIN_CREW_PERCENT(statEffect(PERCENT, bonus(MutableShipStatsAPI::getMinCrewMod), StatNames.MIN_CREW_REQUIRED, true)),
