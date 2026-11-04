@@ -12,8 +12,8 @@ import org.lwjgl.util.vector.Vector2f;
 
 final class WreckShelterListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String RANGE_KEY = "exiledLib_noPhaseUpkeepNearWreckRange";
-    private static final String MOD_ID_PREFIX = "exiledLib_noPhaseUpkeepNearWreck_";
+    static final String RANGE_KEY = "exiledSector_noPhaseUpkeepNearWreckRange";
+    private static final String MOD_ID_PREFIX = "exiledSector_noPhaseUpkeepNearWreck_";
     private static final float CHECK_SECONDS = 0.25f;
 
     private final IntervalUtil checkInterval = new IntervalUtil(CHECK_SECONDS, CHECK_SECONDS);

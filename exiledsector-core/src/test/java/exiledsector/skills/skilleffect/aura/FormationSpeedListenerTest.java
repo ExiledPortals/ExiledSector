@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 
 class FormationSpeedListenerTest {
 
-    private static final String MOD_ID = "exiledLib_formationSpeed_owner";
+    private static final String MOD_ID = "exiledSector_formationSpeed_owner";
 
     private final List<Object> gridShips = new ArrayList<>();
     private MockedStatic<Global> globalMock;

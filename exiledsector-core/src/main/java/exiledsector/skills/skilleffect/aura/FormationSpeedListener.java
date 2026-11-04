@@ -10,11 +10,11 @@ import exiledsector.skills.skilleffect.StatTarget;
 
 final class FormationSpeedListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String SPEED_PERCENT_PER_ALLY_KEY = "exiledLib_formationSpeedPercentPerAlly";
+    static final String SPEED_PERCENT_PER_ALLY_KEY = "exiledSector_formationSpeedPercentPerAlly";
     static final float RANGE = 1000f;
     static final float MAX_SPEED_PERCENT = 10f;
     static final float SCAN_INTERVAL_SECONDS = 0.5f;
-    private static final String MOD_ID_PREFIX = "exiledLib_formationSpeed_";
+    private static final String MOD_ID_PREFIX = "exiledSector_formationSpeed_";
     private static final ScaledBonus FORMATION_SPEED = new ScaledBonus(ScaledBonus.percent(StatTarget.liveStat(MutableShipStatsAPI::getMaxSpeed)));
 
     private final ScaledBonus.Tracker formationSpeed = FORMATION_SPEED.tracker();

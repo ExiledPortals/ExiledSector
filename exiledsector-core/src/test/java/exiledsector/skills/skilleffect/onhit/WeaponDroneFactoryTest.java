@@ -178,7 +178,7 @@ class WeaponDroneFactoryTest {
         ShipAPI firingShip = mock(ShipAPI.class);
         ShipVariantAPI firingVariant = mock(ShipVariantAPI.class);
         when(firingShip.getVariant()).thenReturn(firingVariant);
-        when(firingVariant.getHullMods()).thenReturn(List.of("ix_dawnstar_neutron", "exiledLib_core", "safetyoverrides"));
+        when(firingVariant.getHullMods()).thenReturn(List.of("ix_dawnstar_neutron", "exiledSector_core", "safetyoverrides"));
         ShipAPI drone = mock(ShipAPI.class);
         ShipVariantAPI droneVariant = mock(ShipVariantAPI.class);
         java.util.Set<String> droneMods = new java.util.LinkedHashSet<>();

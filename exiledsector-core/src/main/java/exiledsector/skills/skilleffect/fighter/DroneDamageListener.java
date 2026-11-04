@@ -10,8 +10,8 @@ import org.lwjgl.util.vector.Vector2f;
 
 final class DroneDamageListener implements DamageDealtModifier {
 
-    static final String DAMAGE_PERCENT_KEY = "exiledLib_strikecraftDamageToDronesPercent";
-    static final String DAMAGE_MOD_ID = "exiledLib_strikecraftDamageToDrones";
+    static final String DAMAGE_PERCENT_KEY = "exiledSector_strikecraftDamageToDronesPercent";
+    static final String DAMAGE_MOD_ID = "exiledSector_strikecraftDamageToDrones";
 
     private final ShipAPI fighter;
     private final ShipAPI carrier;

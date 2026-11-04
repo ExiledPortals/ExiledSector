@@ -11,9 +11,9 @@ import org.lwjgl.util.vector.Vector2f;
 
 final class DistantTargetDamageListener extends ShipCombatListener implements DamageDealtModifier {
 
-    static final String DAMAGE_PERCENT_KEY = "exiledLib_damageToDistantTargetsPercent";
+    static final String DAMAGE_PERCENT_KEY = "exiledSector_damageToDistantTargetsPercent";
     static final float MIN_DISTANCE = 1000f;
-    private static final String MOD_ID_PREFIX = "exiledLib_distantTargetDamage_";
+    private static final String MOD_ID_PREFIX = "exiledSector_distantTargetDamage_";
 
     DistantTargetDamageListener(ShipAPI ownerShip) {
         super(ownerShip, MOD_ID_PREFIX);

@@ -10,7 +10,7 @@ import java.util.Random;
 
 public final class SalvagedArmaments {
 
-    static final String CONTRIBUTION_KEY = "exiledLib_postBattleWeaponSalvageContribution";
+    static final String CONTRIBUTION_KEY = "exiledSector_postBattleWeaponSalvageContribution";
 
     private SalvagedArmaments() {
     }

@@ -15,10 +15,10 @@ import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 final class HoldFireShieldListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String REDUCTION_PERCENT_KEY = "exiledLib_holdFireShieldDamageReductionPercent";
+    static final String REDUCTION_PERCENT_KEY = "exiledSector_holdFireShieldDamageReductionPercent";
     static final float TAPER_SECONDS = 3f;
     static final float CHECK_INTERVAL_SECONDS = 0.1f;
-    private static final String MOD_ID_PREFIX = "exiledLib_holdFireShield_";
+    private static final String MOD_ID_PREFIX = "exiledSector_holdFireShield_";
     private static final ScaledBonus SHIELD_DAMAGE_REDUCTION = new ScaledBonus(
             percent(scaled(stat(MutableShipStatsAPI::getShieldDamageTakenMult), -1f), REDUCTION_PERCENT_KEY));
 

@@ -25,13 +25,13 @@ import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 final class BorrowedGraceListener extends ShipCombatListener implements DamageListener, AdvanceableListener {
 
-    static final String MAX_STACKS_KEY = "exiledLib_seraphsGraceMaxStacks";
-    static final String SLOW_MAX_STACKS_KEY = "exiledLib_seraphsGraceSlowMaxStacks";
+    static final String MAX_STACKS_KEY = "exiledSector_seraphsGraceMaxStacks";
+    static final String SLOW_MAX_STACKS_KEY = "exiledSector_seraphsGraceSlowMaxStacks";
     static final float PERCENT_PER_STACK = 1f;
     static final float DAMAGE_PER_STACK = 100f;
     static final float SLOW_DAMAGE_PER_STACK = 150f;
     static final float STACK_DURATION_SECONDS = 15f;
-    private static final String MOD_ID_PREFIX = "exiledLib_seraphsGrace_";
+    private static final String MOD_ID_PREFIX = "exiledSector_seraphsGrace_";
     private static final ScaledBonus GRACE_BONUS = new ScaledBonus(
             fixed(all(stat(MutableShipStatsAPI::getMaxSpeed), stat(MutableShipStatsAPI::getFluxDissipation),
                     WeaponStatFamily.RATE_OF_FIRE.target(WeaponScope.ALL)), StatMode.PERCENT, PERCENT_PER_STACK),

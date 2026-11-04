@@ -10,7 +10,7 @@ import org.lwjgl.util.vector.Vector2f;
 
 final class EmpDamageListener extends ShipCombatListener implements DamageDealtModifier {
 
-    static final String EMP_PERCENT_KEY = "exiledLib_empDamagePercent";
+    static final String EMP_PERCENT_KEY = "exiledSector_empDamagePercent";
 
     EmpDamageListener(ShipAPI ownerShip) {
         super(ownerShip);

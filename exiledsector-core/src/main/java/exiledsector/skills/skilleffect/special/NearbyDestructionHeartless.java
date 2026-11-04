@@ -8,7 +8,7 @@ import exiledsector.skills.skilleffect.ShipCombatListener;
 
 final class NearbyDestructionHeartless extends ShipCombatListener implements AdvanceableListener {
 
-    static final String RANGE_KEY = "exiledLib_heartlessNearbyDestructionRange";
+    static final String RANGE_KEY = "exiledSector_heartlessNearbyDestructionRange";
     private static final float CHECK_SECONDS = 0.25f;
 
     private final IntervalUtil checkInterval = new IntervalUtil(CHECK_SECONDS, CHECK_SECONDS);

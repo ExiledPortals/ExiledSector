@@ -52,7 +52,7 @@ class AutomatedShipDamageListenerTest {
 
         String modId = listener(40f).modifyDamageDealt(null, ship("remnant", 1, true), hit, new Vector2f(), false);
 
-        assertEquals("exiledLib_automatedShipDamage_pather", modId);
+        assertEquals("exiledSector_automatedShipDamage_pather", modId);
         verify(hit.getModifier()).modifyPercent(modId, 40f);
     }
 

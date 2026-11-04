@@ -17,8 +17,8 @@ import java.util.List;
 
 final class RefractionListener extends ShipCombatListener implements DamageDealtModifier, DroneSpawner {
 
-    static final String CHANCE_KEY = "exiledLib_energyChainChance";
-    static final String FALLOFF_KEY = "exiledLib_energyChainFalloff";
+    static final String CHANCE_KEY = "exiledSector_energyChainChance";
+    static final String FALLOFF_KEY = "exiledSector_energyChainFalloff";
 
     private final RefractionDrones drones;
 

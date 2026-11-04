@@ -9,8 +9,8 @@ import org.lwjgl.util.vector.Vector2f;
 
 final class DamagedShipDamageListener implements DamageDealtModifier {
 
-    static final String DAMAGE_PERCENT_KEY = "exiledLib_strikecraftDamageToDamagedShipsPercent";
-    static final String DAMAGE_MOD_ID = "exiledLib_strikecraftDamageToDamagedShips";
+    static final String DAMAGE_PERCENT_KEY = "exiledSector_strikecraftDamageToDamagedShipsPercent";
+    static final String DAMAGE_MOD_ID = "exiledSector_strikecraftDamageToDamagedShips";
     static final float DAMAGED_HULL_LEVEL = 0.5f;
 
     private final ShipAPI fighter;

@@ -9,7 +9,7 @@ import java.util.List;
 
 public final class BallisticEnergyMirror {
 
-    static final String MOD_ID_PREFIX = "exiledLib_ballisticAsEnergy_";
+    static final String MOD_ID_PREFIX = "exiledSector_ballisticAsEnergy_";
 
     public record Origin(Object mirroredOrigin) {
     }

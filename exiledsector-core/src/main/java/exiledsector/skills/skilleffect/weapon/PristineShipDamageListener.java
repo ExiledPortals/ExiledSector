@@ -14,8 +14,8 @@ import java.util.Map;
 
 final class PristineShipDamageListener extends ShipCombatListener implements DamageDealtModifier {
 
-    static final String DAMAGE_PERCENT_KEY = "exiledLib_damageToPristineShipsPercent";
-    private static final String MOD_ID_PREFIX = "exiledLib_pristineShipDamage_";
+    static final String DAMAGE_PERCENT_KEY = "exiledSector_damageToPristineShipsPercent";
+    private static final String MOD_ID_PREFIX = "exiledSector_pristineShipDamage_";
 
     private final Map<ShipAPI, Boolean> pristineByTarget = new IdentityHashMap<>();
 

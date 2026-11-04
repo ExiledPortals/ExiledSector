@@ -49,7 +49,7 @@ class HelplessShipDamageListenerTest {
 
             String modId = listener.modifyDamageDealt(null, target, hit, new Vector2f(), false);
 
-            assertEquals("exiledLib_helplessShipDamage_raider", modId);
+            assertEquals("exiledSector_helplessShipDamage_raider", modId);
             verify(hit.getModifier()).modifyPercent(modId, 15f);
         }
     }

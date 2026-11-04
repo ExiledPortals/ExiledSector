@@ -9,10 +9,10 @@ import exiledsector.skills.skilleffect.defense.ArmorCells;
 
 final class WreckPlatingListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String REPAIR_CAP_PERCENT_KEY = "exiledLib_nearbyDestructionArmorRepairCapPercent";
+    static final String REPAIR_CAP_PERCENT_KEY = "exiledSector_nearbyDestructionArmorRepairCapPercent";
     static final float RANGE = 1000f;
     static final float REPAIR_PERCENT_PER_WRECK = 5f;
-    static final String REPAIRED_KEY_PREFIX = "exiledLib_nearbyDestructionArmorRepaired_";
+    static final String REPAIRED_KEY_PREFIX = "exiledSector_nearbyDestructionArmorRepaired_";
     private static final float CHECK_SECONDS = 0.25f;
 
     private final IntervalUtil checkInterval = new IntervalUtil(CHECK_SECONDS, CHECK_SECONDS);

@@ -87,7 +87,7 @@ class MovementSkillEffectTest {
         doAnswer(call -> customData.put(call.getArgument(0), call.getArgument(1))).when(ship).setCustomData(anyString(), any());
         when(ship.getMass()).thenAnswer(call -> mass[0]);
         doAnswer(call -> mass[0] = call.<Float>getArgument(0)).when(ship).setMass(anyFloat());
-        when(dynamic.getMod("exiledLib_SHIP_MASS")).thenReturn(new StatBonus());
+        when(dynamic.getMod("exiledSector_SHIP_MASS")).thenReturn(new StatBonus());
         return mass;
     }
 

@@ -7,9 +7,9 @@ import exiledsector.skills.skilleffect.defense.ArmorCells;
 
 final class PhaseEntryRepairListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String REPAIR_PERCENT_KEY = "exiledLib_phaseEntryArmorRepairPercent";
+    static final String REPAIR_PERCENT_KEY = "exiledSector_phaseEntryArmorRepairPercent";
     static final float BATTLE_CAP_PERCENT = 50f;
-    static final String REPAIRED_KEY_PREFIX = "exiledLib_phaseEntryArmorRepaired_";
+    static final String REPAIRED_KEY_PREFIX = "exiledSector_phaseEntryArmorRepaired_";
 
     private boolean wasPhased;
 

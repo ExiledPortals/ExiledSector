@@ -11,8 +11,8 @@ import org.lwjgl.util.vector.Vector2f;
 
 final class AutomatedShieldDamageListener extends ShipCombatListener implements DamageTakenModifier {
 
-    static final String REDUCTION_PERCENT_KEY = "exiledLib_shieldDamageTakenFromAutomatedPercent";
-    private static final String MOD_ID_PREFIX = "exiledLib_automatedShieldDamage_";
+    static final String REDUCTION_PERCENT_KEY = "exiledSector_shieldDamageTakenFromAutomatedPercent";
+    private static final String MOD_ID_PREFIX = "exiledSector_automatedShieldDamage_";
 
     AutomatedShieldDamageListener(ShipAPI ownerShip) {
         super(ownerShip, MOD_ID_PREFIX);

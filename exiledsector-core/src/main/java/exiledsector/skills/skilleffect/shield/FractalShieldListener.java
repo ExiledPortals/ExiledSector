@@ -13,10 +13,10 @@ import exiledsector.skills.skilleffect.shipsystem.FragmentSwarms;
 
 final class FractalShieldListener extends ShipCombatListener implements DamageListener, AdvanceableListener {
 
-    static final String ABSORBED_PERCENT_KEY = "exiledLib_fractalShieldAbsorbedPercent";
+    static final String ABSORBED_PERCENT_KEY = "exiledSector_fractalShieldAbsorbedPercent";
     static final float DAMAGE_PER_FRAGMENT = 30f;
     static final float MAX_ABSORBED_PERCENT = 90f;
-    private static final String MOD_ID_PREFIX = "exiledLib_fractalShield_";
+    private static final String MOD_ID_PREFIX = "exiledSector_fractalShield_";
     private static final float SWARM_CHECK_SECONDS = 0.5f;
 
     private final IntervalUtil swarmCheck = new IntervalUtil(SWARM_CHECK_SECONDS, SWARM_CHECK_SECONDS);

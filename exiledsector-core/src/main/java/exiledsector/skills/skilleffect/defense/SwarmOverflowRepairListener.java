@@ -14,9 +14,9 @@ import java.util.Map;
 
 final class SwarmOverflowRepairListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String REPAIR_PERCENT_KEY = "exiledLib_swarmOverflowArmorRepairPercent";
+    static final String REPAIR_PERCENT_KEY = "exiledSector_swarmOverflowArmorRepairPercent";
     static final float BATTLE_CAP_PERCENT = 10f;
-    static final String REPAIRED_KEY_PREFIX = "exiledLib_swarmOverflowArmorRepaired_";
+    static final String REPAIRED_KEY_PREFIX = "exiledSector_swarmOverflowArmorRepaired_";
     private static final float CHECK_SECONDS = 1f;
 
     private final IntervalUtil overflowCheck = new IntervalUtil(CHECK_SECONDS, CHECK_SECONDS);

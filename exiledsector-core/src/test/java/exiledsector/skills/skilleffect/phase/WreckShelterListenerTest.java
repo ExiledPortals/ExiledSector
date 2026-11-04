@@ -82,11 +82,11 @@ class WreckShelterListenerTest {
 
         listener.advance(0.3f);
         listener.advance(0.3f);
-        verify(upkeep, times(1)).modifyMult("exiledLib_noPhaseUpkeepNearWreck_ship0.0", 0f);
+        verify(upkeep, times(1)).modifyMult("exiledSector_noPhaseUpkeepNearWreck_ship0.0", 0f);
 
         when(wreck.getLocation()).thenReturn(new Vector2f(600f, 0f));
         listener.advance(0.3f);
-        verify(upkeep).unmodifyMult("exiledLib_noPhaseUpkeepNearWreck_ship0.0");
+        verify(upkeep).unmodifyMult("exiledSector_noPhaseUpkeepNearWreck_ship0.0");
     }
 
     @Test

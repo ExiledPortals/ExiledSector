@@ -5,7 +5,7 @@ import exiledsector.skills.skilleffect.ShipCombatListener;
 
 final class GravityDragListener extends ShipCombatListener implements AuraField.Source {
 
-    static final String TIMEFLOW_PERCENT_KEY = "exiledLib_gravityDragTimeflowPercent";
+    static final String TIMEFLOW_PERCENT_KEY = "exiledSector_gravityDragTimeflowPercent";
     static final String PHASED_TIMEFLOW_PERCENT_KEY = "exiledSector_gravityDragPhasedTimeflowPercent";
     static final float PHASED_MULT = 2f;
 
