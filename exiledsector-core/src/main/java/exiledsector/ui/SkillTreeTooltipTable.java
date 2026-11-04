@@ -13,7 +13,7 @@ import java.util.List;
 public final class SkillTreeTooltipTable {
 
     private static final TextFont CELL_FONT = SkillTreePanelStyle.TOOLTIP_BODY_FONT;
-    private static final TextFont HEADING_FONT = SkillTreePanelStyle.TOOLTIP_TITLE_FONT;
+    private static final TextFont HEADING_FONT = SkillTreePanelStyle.TOOLTIP_HEADING_FONT;
     private static final float HEADING_HEIGHT = 20f;
     private static final float HEADING_GAP = 6f;
     private static final float ROW_HEIGHT = 20f;

@@ -32,7 +32,8 @@ public final class SkillTreePanelStyle {
     public static final float UI_TITLE_FONT_SIZE = 24f;
     public static final float UI_FONT_SIZE = 20f;
     public static final float UI_HINT_FONT_SIZE = 17f;
-    public static final TextFont TOOLTIP_TITLE_FONT = new TextFont(SkillTreePanelStyle::tooltipTitleFont, 15f);
+    public static final TextFont TOOLTIP_TITLE_FONT = new TextFont(SkillTreePanelStyle::font, 18f);
+    public static final TextFont TOOLTIP_HEADING_FONT = new TextFont(SkillTreePanelStyle::tooltipHeadingFont, 15f);
     public static final TextFont TOOLTIP_BODY_FONT = new TextFont(SkillTreePanelStyle::tooltipBodyFont, 15f);
     public static final Color TOOLTIP_TITLE_COLOR = Color.WHITE;
     public static final Color TOOLTIP_BODY_COLOR = new Color(230, 230, 230);
@@ -66,7 +67,7 @@ public final class SkillTreePanelStyle {
     private static final float TOOLTIP_FLAVOUR_GAP = 8f;
 
     static final String DEFAULT_FONT_PATH = "graphics/fonts/orbitron20aabold.fnt";
-    static final String TOOLTIP_TITLE_FONT_PATH = "graphics/fonts/orbitron12condensed.fnt";
+    static final String TOOLTIP_HEADING_FONT_PATH = "graphics/fonts/orbitron12condensed.fnt";
     static final String TOOLTIP_BODY_FONT_PATH = "graphics/fonts/insignia15LTaa.fnt";
     private static final Map<String, Optional<LazyFont>> FONTS_BY_DEFAULT_PATH = new HashMap<>();
     private static final Map<String, Optional<LazyFont>> FONTS_BY_FILE = new HashMap<>();
@@ -89,8 +90,8 @@ public final class SkillTreePanelStyle {
         return localeFontOr(DEFAULT_FONT_PATH);
     }
 
-    public static LazyFont tooltipTitleFont() {
-        return localeFontOr(TOOLTIP_TITLE_FONT_PATH);
+    public static LazyFont tooltipHeadingFont() {
+        return localeFontOr(TOOLTIP_HEADING_FONT_PATH);
     }
 
     public static LazyFont tooltipBodyFont() {
