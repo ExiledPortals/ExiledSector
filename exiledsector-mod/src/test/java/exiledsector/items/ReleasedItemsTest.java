@@ -28,11 +28,16 @@ class ReleasedItemsTest {
 
     private static final Path LEDGER = Path.of("exiledsector-mod/src/test/resources/released_items.csv");
     private static final String LEDGER_HEADER = "definition,effect,firstRelease,retiredAfter";
+    private static final String OLDEST_RELEASE_KEEPING_NAMES = "0.9.0";
 
     record ReleasedPoolEffect(String definitionId, String effectName, String firstRelease, String retiredAfter) {
 
         boolean retired() {
             return !retiredAfter.isEmpty();
+        }
+
+        boolean retiredBefore(String release) {
+            return retired() && compareReleases(retiredAfter, release) < 0;
         }
 
         String currentEffectName() {
@@ -159,12 +164,26 @@ class ReleasedItemsTest {
     void everyReleasedEffectOnARollingDefinitionKeepsTheNameItsFrozenNamesUse() throws Exception {
         List<ReleasedPoolEffect> nameless = ledger().stream()
                 .filter(entry -> ItemDefinitions.get(entry.definitionId()) != null && !ItemDefinitions.get(entry.definitionId()).unique())
+                .filter(entry -> !entry.retiredBefore(OLDEST_RELEASE_KEEPING_NAMES))
                 .filter(entry -> !namesEffect(ItemDefinitions.get(entry.definitionId()), entry.currentEffectName()))
                 .toList();
 
         assertEquals(List.of(), nameless, "These pool effects shipped in a release but no named modifier in " + ItemModifiers.dataPath()
                 + " covers them. Common items keep the effect in their frozen name, so the name loses that word. Keep a named modifier"
                 + " for the effect in the slot it had, even after it leaves the pool.");
+    }
+
+    private static int compareReleases(String first, String second) {
+        String[] firstParts = first.split("\\.");
+        String[] secondParts = second.split("\\.");
+        for (int i = 0; i < Math.max(firstParts.length, secondParts.length); i++) {
+            int firstPart = i < firstParts.length ? Integer.parseInt(firstParts[i]) : 0;
+            int secondPart = i < secondParts.length ? Integer.parseInt(secondParts[i]) : 0;
+            if (firstPart != secondPart) {
+                return Integer.compare(firstPart, secondPart);
+            }
+        }
+        return 0;
     }
 
     private static boolean namesEffect(ItemDefinition definition, String effectName) {
