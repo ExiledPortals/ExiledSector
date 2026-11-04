@@ -662,7 +662,7 @@
 		{
 			"id": "flak_screen_doctrine",
 			"name": "Flak Screen Doctrine",
-			"icon": "graphics/icons/pointdefenseai.png",
+			"icon": "graphics/icons/pointdefenseai_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -672,7 +672,6 @@
 			],
 			"flavour": "Hegemony point defense crews pack their flak loads for a wide burst, on the theory that a missile is rarely alone. The crew learns the trick escorting a Dominator through a missile strike. Its captain bills them for the ammunition.",
 			"flavourAutomated": "Hegemony point defense crews pack their flak loads for a wide burst, on the theory that a missile is rarely alone. The ship's core records the pattern while escorting a Dominator through a missile strike, and the refit crew repacks the magazines to match. The Dominator's captain bills for the ammunition.",
-			"todo": "Needs an icon.",
 			"tags": [
 				"point_defense",
 				"weapons"
@@ -681,7 +680,7 @@
 		{
 			"id": "hold_the_line",
 			"name": "Hold the Line",
-			"icon": "graphics/icons/heavyarmor.png",
+			"icon": "graphics/icons/coordinated_maneuvers_shifted_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -722,7 +721,7 @@
 		{
 			"id": "concussion_shells",
 			"name": "Concussion Shells",
-			"icon": "graphics/icons/heavy_ballistics_integration.png",
+			"icon": "graphics/icons/explosion2_shifted_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2876,7 +2875,7 @@
 		{
 			"id": "increased_sensor_strength",
 			"name": "Increased Sensor Strength",
-			"icon": "",
+			"icon": "graphics/icons/sensors_circular_shifted.png",
 			"effects": [
 				{
 					"effect": "SENSOR_STRENGTH_PERCENT",
@@ -3392,23 +3391,9 @@
 			]
 		},
 		{
-			"id": "point_defense_damage_to_missiles",
-			"name": "Point Defense Damage to Missiles",
-			"icon": "graphics/icons/pd_damage_to_missiles.png",
-			"effects": [
-				{
-					"effect": "PD_DAMAGE_TO_MISSILES_PERCENT",
-					"magnitude": 25
-				}
-			],
-			"tags": [
-				"point_defense"
-			]
-		},
-		{
 			"id": "point_defense_damage_to_missiles_and_fighters",
 			"name": "Point Defense Damage to Missiles and Fighters",
-			"icon": "",
+			"icon": "graphics/icons/pd_damage_to_missiles.png",
 			"effects": [
 				{
 					"effect": "PD_DAMAGE_TO_MISSILES_PERCENT",

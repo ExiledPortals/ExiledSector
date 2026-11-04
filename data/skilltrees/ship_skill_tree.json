@@ -350,7 +350,7 @@
 			"id": "integrated_point_defense_ai_1",
 			"type": "integrated_point_defense_ai",
 			"connectedTo": [
-				"point_defense_damage_to_missiles_1"
+				"point_defense_damage_to_missiles_and_fighters_3"
 			],
 			"x": 3757,
 			"y": -1892,
@@ -2902,10 +2902,10 @@
 			]
 		},
 		{
-			"id": "point_defense_damage_to_missiles_1",
-			"type": "point_defense_damage_to_missiles",
+			"id": "point_defense_damage_to_missiles_and_fighters_3",
+			"type": "point_defense_damage_to_missiles_and_fighters",
 			"connectedTo": [
-				"point_defense_damage_to_missiles_2",
+				"point_defense_damage_to_missiles_and_fighters_4",
 				"integrated_point_defense_ai_1"
 			],
 			"x": 3445,
@@ -2917,10 +2917,10 @@
 			]
 		},
 		{
-			"id": "point_defense_damage_to_missiles_2",
-			"type": "point_defense_damage_to_missiles",
+			"id": "point_defense_damage_to_missiles_and_fighters_4",
+			"type": "point_defense_damage_to_missiles_and_fighters",
 			"connectedTo": [
-				"point_defense_damage_to_missiles_1",
+				"point_defense_damage_to_missiles_and_fighters_3",
 				"affinity_8"
 			],
 			"x": 3601,
@@ -5304,7 +5304,7 @@
 			"connectedTo": [
 				"affinity_9",
 				"affinity_7",
-				"point_defense_damage_to_missiles_2",
+				"point_defense_damage_to_missiles_and_fighters_4",
 				"affinity_82"
 			],
 			"x": 3662,
@@ -7946,8 +7946,7 @@
 			"type": "affinity",
 			"connectedTo": [
 				"affinity_112",
-				"affinity_142",
-				"increased_sensor_strength_1"
+				"affinity_142"
 			],
 			"x": -5641,
 			"y": 9474,
@@ -8018,14 +8017,14 @@
 			"type": "increased_sensor_strength",
 			"connectedTo": [
 				"increased_sensor_strength_2",
-				"affinity_113"
+				"affinity_137"
 			],
-			"x": -5646,
-			"y": 9729,
+			"x": -12674,
+			"y": 1000,
 			"orbitAnchorId": "anchor_95",
 			"orbitAngle": 270,
 			"tags": [
-				"hegemony"
+				"persean_league"
 			]
 		},
 		{
@@ -8035,12 +8034,12 @@
 				"increased_sensor_strength_1",
 				"comsec_discipline_1"
 			],
-			"x": -5826,
-			"y": 9909,
+			"x": -12854,
+			"y": 1180,
 			"orbitAnchorId": "anchor_95",
 			"orbitAngle": 180,
 			"tags": [
-				"hegemony"
+				"persean_league"
 			]
 		},
 		{
@@ -8199,12 +8198,12 @@
 			"connectedTo": [
 				"increased_sensor_strength_2"
 			],
-			"x": -5646,
-			"y": 10089,
+			"x": -12674,
+			"y": 1360,
 			"orbitAnchorId": "anchor_95",
 			"orbitAngle": 90,
 			"tags": [
-				"hegemony"
+				"persean_league"
 			]
 		},
 		{
@@ -8581,7 +8580,8 @@
 			"type": "affinity",
 			"connectedTo": [
 				"affinity_136",
-				"affinity_134"
+				"affinity_134",
+				"increased_sensor_strength_1"
 			],
 			"x": -12674,
 			"y": 745,
@@ -9008,13 +9008,13 @@
 			"controlY": 2565
 		},
 		{
-			"a": "point_defense_damage_to_missiles_1",
-			"b": "point_defense_damage_to_missiles_2",
+			"a": "point_defense_damage_to_missiles_and_fighters_3",
+			"b": "point_defense_damage_to_missiles_and_fighters_4",
 			"controlX": 3523,
 			"controlY": -2027
 		},
 		{
-			"a": "point_defense_damage_to_missiles_1",
+			"a": "point_defense_damage_to_missiles_and_fighters_3",
 			"b": "integrated_point_defense_ai_1",
 			"controlX": 3601,
 			"controlY": -1892
@@ -11272,14 +11272,14 @@
 		{
 			"a": "increased_sensor_strength_1",
 			"b": "increased_sensor_strength_2",
-			"controlX": -5773,
-			"controlY": 9782
+			"controlX": -12801,
+			"controlY": 1053
 		},
 		{
 			"a": "comsec_discipline_1",
 			"b": "increased_sensor_strength_2",
-			"controlX": -5773,
-			"controlY": 10036
+			"controlX": -12801,
+			"controlY": 1307
 		},
 		{
 			"a": "flak_screen_doctrine_1",
@@ -12051,8 +12051,8 @@
 		},
 		{
 			"id": "anchor_95",
-			"x": -5646,
-			"y": 9909,
+			"x": -12674,
+			"y": 1180,
 			"radius": 180
 		},
 		{

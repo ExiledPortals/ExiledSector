@@ -1558,12 +1558,12 @@ effect|LOW_TECH_AFFINITY_PERCENT|12.5	0	<good>12.5%</good> increased Low Tech Af
 effect|LOW_TECH_AFFINITY_PERCENT|100.0	0	<good>100%</good> increased Low Tech Affinity.
 effect|LOW_TECH_AFFINITY_PERCENT|-10.0	0	<bad>10%</bad> reduced Low Tech Affinity.
 effect|LOW_TECH_AFFINITY_PERCENT|-12.5	0	<bad>12.5%</bad> reduced Low Tech Affinity.
-effect|MALFUNCTION_AURA_PERCENT|1.0	0	Enemy ships within 1000 su have <good>1%</good> chance for their weapons to malfunction. Only the strongest applies.
-effect|MALFUNCTION_AURA_PERCENT|10.0	0	Enemy ships within 1000 su have <good>10%</good> chance for their weapons to malfunction. Only the strongest applies.
-effect|MALFUNCTION_AURA_PERCENT|12.5	0	Enemy ships within 1000 su have <good>12.5%</good> chance for their weapons to malfunction. Only the strongest applies.
-effect|MALFUNCTION_AURA_PERCENT|100.0	0	Enemy ships within 1000 su have <good>100%</good> chance for their weapons to malfunction. Only the strongest applies.
-effect|MALFUNCTION_AURA_PERCENT|-10.0	0	Enemy ships within 1000 su have <good>-10%</good> chance for their weapons to malfunction. Only the strongest applies.
-effect|MALFUNCTION_AURA_PERCENT|-12.5	0	Enemy ships within 1000 su have <good>-12.5%</good> chance for their weapons to malfunction. Only the strongest applies.
+effect|MALFUNCTION_AURA_PERCENT|1.0	0	Enemy ships within 1000 su have <good>1%</good> chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.
+effect|MALFUNCTION_AURA_PERCENT|10.0	0	Enemy ships within 1000 su have <good>10%</good> chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.
+effect|MALFUNCTION_AURA_PERCENT|12.5	0	Enemy ships within 1000 su have <good>12.5%</good> chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.
+effect|MALFUNCTION_AURA_PERCENT|100.0	0	Enemy ships within 1000 su have <good>100%</good> chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.
+effect|MALFUNCTION_AURA_PERCENT|-10.0	0	Enemy ships within 1000 su have <good>-10%</good> chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.
+effect|MALFUNCTION_AURA_PERCENT|-12.5	0	Enemy ships within 1000 su have <good>-12.5%</good> chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.
 effect|MANEUVERABILITY_MULT|1.0	0	<good>1%</good> more maneuverability.
 effect|MANEUVERABILITY_MULT|10.0	0	<good>10%</good> more maneuverability.
 effect|MANEUVERABILITY_MULT|12.5	0	<good>12.5%</good> more maneuverability.
@@ -2470,12 +2470,12 @@ effect|SHROUDED_LENS_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased Shrouded
 effect|SHROUDED_LENS_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased Shrouded Lens damage.
 effect|SHROUDED_LENS_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> increased Shrouded Lens damage.
 effect|SHROUDED_LENS_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> increased Shrouded Lens damage.
-effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|1.0	0	Allied ships of a smaller hull size within 800 su take <good>1%</good> less damage. Only the strongest applies.
-effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|10.0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest applies.
-effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|12.5	0	Allied ships of a smaller hull size within 800 su take <good>12.5%</good> less damage. Only the strongest applies.
-effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|100.0	0	Allied ships of a smaller hull size within 800 su take <good>100%</good> less damage. Only the strongest applies.
-effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|-10.0	0	Allied ships of a smaller hull size within 800 su take <good>-10%</good> less damage. Only the strongest applies.
-effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|-12.5	0	Allied ships of a smaller hull size within 800 su take <good>-12.5%</good> less damage. Only the strongest applies.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|1.0	0	Allied ships of a smaller hull size within 800 su take <good>1%</good> less damage. Only the strongest buff of this effect applies at any one time.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|10.0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|12.5	0	Allied ships of a smaller hull size within 800 su take <good>12.5%</good> less damage. Only the strongest buff of this effect applies at any one time.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|100.0	0	Allied ships of a smaller hull size within 800 su take <good>100%</good> less damage. Only the strongest buff of this effect applies at any one time.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|-10.0	0	Allied ships of a smaller hull size within 800 su take <good>-10%</good> less damage. Only the strongest buff of this effect applies at any one time.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|-12.5	0	Allied ships of a smaller hull size within 800 su take <good>-12.5%</good> less damage. Only the strongest buff of this effect applies at any one time.
 effect|SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP|1.0	0	All damage from weapons in small energy mounts is converted to EMP damage.
 effect|SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP|10.0	0	All damage from weapons in small energy mounts is converted to EMP damage.
 effect|SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP|12.5	0	All damage from weapons in small energy mounts is converted to EMP damage.
@@ -3165,15 +3165,15 @@ type|auxiliary_fuel_tanks|CAPITAL_SHIP|1	0	<good>+125</good> to fuel capacity.
 type-detail|auxiliary_fuel_tanks|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Auxiliary Fuel Tanks</hullmod>
 flavour|auxiliary_screen	0	Hegemony auxiliary fleets are made of whatever the Navy can requisition, and the battle line is expected to shelter them. A cycle of convoy duty out of Jangala teaches the crew to keep the ship between the enemy and the smaller hulls. The auxiliaries are grateful, in the manner of people who have been told to be.
 flavourAutomated|auxiliary_screen	0	Hegemony auxiliary fleets are made of whatever the Navy can requisition, and the battle line is expected to shelter them. The ship's core logs a cycle of convoy duty out of Jangala and learns to keep its hull between the enemy and the smaller ships. The auxiliaries are grateful, in the manner of people who have been told to be.
-type|auxiliary_screen|null|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest applies.
+type|auxiliary_screen|null|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
 type-detail|auxiliary_screen|null|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
-type|auxiliary_screen|FRIGATE|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest applies.
+type|auxiliary_screen|FRIGATE|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
 type-detail|auxiliary_screen|FRIGATE|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
-type|auxiliary_screen|DESTROYER|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest applies.
+type|auxiliary_screen|DESTROYER|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
 type-detail|auxiliary_screen|DESTROYER|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
-type|auxiliary_screen|CRUISER|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest applies.
+type|auxiliary_screen|CRUISER|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
 type-detail|auxiliary_screen|CRUISER|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
-type|auxiliary_screen|CAPITAL_SHIP|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest applies.
+type|auxiliary_screen|CAPITAL_SHIP|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
 type-detail|auxiliary_screen|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
 type|auxiliary_thrusters|null|0	0	<good>50%</good> increased maneuverability.
 type-detail|auxiliary_thrusters|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Auxiliary Thrusters</hullmod>
@@ -4445,15 +4445,15 @@ type|knights_charge|CAPITAL_SHIP|2	0	These effects only last for the first 60 se
 flavour|language_of_the_lost	0	The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code. The crew learns to strip that code out and fire it back.
 flavourAutomated|language_of_the_lost	0	The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code. The ship's core strips that code out and fires it back.
 type|language_of_the_lost|null|0	0	<good>+1</good> to ECM rating.
-type|language_of_the_lost|null|1	0	Enemy ships within 1000 su have <good>5%</good> chance for their weapons to malfunction. Only the strongest applies.
+type|language_of_the_lost|null|1	0	Enemy ships within 1000 su have <good>5%</good> chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.
 type|language_of_the_lost|FRIGATE|0	0	<good>+1</good> to ECM rating.
-type|language_of_the_lost|FRIGATE|1	0	Enemy ships within 1000 su have <good>5%</good> chance for their weapons to malfunction. Only the strongest applies.
+type|language_of_the_lost|FRIGATE|1	0	Enemy ships within 1000 su have <good>5%</good> chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.
 type|language_of_the_lost|DESTROYER|0	0	<good>+1</good> to ECM rating.
-type|language_of_the_lost|DESTROYER|1	0	Enemy ships within 1000 su have <good>5%</good> chance for their weapons to malfunction. Only the strongest applies.
+type|language_of_the_lost|DESTROYER|1	0	Enemy ships within 1000 su have <good>5%</good> chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.
 type|language_of_the_lost|CRUISER|0	0	<good>+1</good> to ECM rating.
-type|language_of_the_lost|CRUISER|1	0	Enemy ships within 1000 su have <good>5%</good> chance for their weapons to malfunction. Only the strongest applies.
+type|language_of_the_lost|CRUISER|1	0	Enemy ships within 1000 su have <good>5%</good> chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.
 type|language_of_the_lost|CAPITAL_SHIP|0	0	<good>+1</good> to ECM rating.
-type|language_of_the_lost|CAPITAL_SHIP|1	0	Enemy ships within 1000 su have <good>5%</good> chance for their weapons to malfunction. Only the strongest applies.
+type|language_of_the_lost|CAPITAL_SHIP|1	0	Enemy ships within 1000 su have <good>5%</good> chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.
 flavour|league_picket_targeting	0	Studying the sensor pickets the League posts along its Hegemony border shows the crew how to slave energy weapon targeting to the ship's own sensors. The pickets are the one League institution every member world agrees to fund.
 flavourAutomated|league_picket_targeting	0	The ship's core logs the sweeps of the sensor pickets the League posts along its Hegemony border and slaves its energy weapon targeting to its own sensors on the same pattern. The pickets are the one League institution every member world agrees to fund.
 type|league_picket_targeting|null|0	0	<good>+1</good> to energy weapon range for every point of this ship's sensor strength.
@@ -4884,11 +4884,6 @@ type|phase_fed_magazines|FRIGATE|0	0	<good>100%</good> increased ammo regenerati
 type|phase_fed_magazines|DESTROYER|0	0	<good>100%</good> increased ammo regeneration while phased.
 type|phase_fed_magazines|CRUISER|0	0	<good>100%</good> increased ammo regeneration while phased.
 type|phase_fed_magazines|CAPITAL_SHIP|0	0	<good>100%</good> increased ammo regeneration while phased.
-type|point_defense_damage_to_missiles|null|0	0	<good>25%</good> increased damage to missiles.
-type|point_defense_damage_to_missiles|FRIGATE|0	0	<good>25%</good> increased damage to missiles.
-type|point_defense_damage_to_missiles|DESTROYER|0	0	<good>25%</good> increased damage to missiles.
-type|point_defense_damage_to_missiles|CRUISER|0	0	<good>25%</good> increased damage to missiles.
-type|point_defense_damage_to_missiles|CAPITAL_SHIP|0	0	<good>25%</good> increased damage to missiles.
 type|point_defense_damage_to_missiles_and_fighters|null|0	0	<good>10%</good> increased damage to missiles.
 type|point_defense_damage_to_missiles_and_fighters|null|1	0	<good>10%</good> increased damage to fighters.
 type|point_defense_damage_to_missiles_and_fighters|FRIGATE|0	0	<good>10%</good> increased damage to missiles.

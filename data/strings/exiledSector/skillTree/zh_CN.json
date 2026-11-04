@@ -695,7 +695,6 @@
     "skillType.wormhole_exit.name": "虫洞出口",
     "skillType.exoship.name": "外星舰",
     "skillType.subroutine_socket.name": "子程序插槽",
-    "skillType.point_defense_damage_to_missiles.name": "点防御对导弹伤害",
     "skillType.point_defense_damage_to_missiles_and_fighters.name": "点防御对导弹和战机伤害",
     "skillType.maneuverability.name": "机动性",
     "skillType.strikecraft_replacement.name": "战机补充",
