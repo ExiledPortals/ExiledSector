@@ -81,6 +81,13 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
         }
     },
     KILL_FLUX_VENT_PERCENT(listener(KillFluxVentListener.MAX_FLUX_PERCENT_KEY, KillFluxVentListener.class, KillFluxVentListener::new)),
+    HULL_DAMAGE_FRAGMENT_REGROWTH_FLAT(listener(HullDamageRegrowthListener.FRAGMENTS_PER_STEP_KEY, HullDamageRegrowthListener.class,
+            HullDamageRegrowthListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("damage", HullDamageRegrowthListener.HULL_DAMAGE_PER_STEP).styled();
+        }
+    },
     STARDUST_MOTE_DAMAGE_FLAT(listener(StardustMoteListener.MOTE_DAMAGE_KEY, StardustMoteListener.class, StardustMoteListener::new)) {
         @Override
         public StyledText description(float magnitude) {

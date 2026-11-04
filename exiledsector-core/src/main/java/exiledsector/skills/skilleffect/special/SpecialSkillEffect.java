@@ -12,6 +12,7 @@ import exiledsector.skills.skilleffect.StatMode;
 import exiledsector.skills.skilleffect.battle.BattleSkillEffect;
 import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.fighter.FighterSkillEffect;
+import exiledsector.skills.skilleffect.shipsystem.ShipSystemSkillEffect;
 import exiledsector.skills.skilleffect.weapon.ScopedWeaponEffect;
 import exiledsector.skills.skilleffect.weapon.WeaponScope;
 import exiledsector.skills.skilleffect.weapon.WeaponStatFamily;
@@ -86,6 +87,10 @@ public enum SpecialSkillEffect implements BackedSkillEffect {
             FighterSkillEffect.FIGHTER_DAMAGE_TAKEN_MULT)),
     NAV_RATING_PER_HIGH_TECH_AFFINITY(new AffinityScaling(AffinityScaling.Filter.HIGH_TECH, AffinityScaling.NAV_RATING_STEP,
             BattleSkillEffect.NAV_RATING)),
+    FRAGMENT_SWARM_SIZE_PERCENT_PER_AFFINITY(new AffinityScaling(AffinityScaling.Filter.ALL, AffinityScaling.SMALL_STEP,
+            ShipSystemSkillEffect.FRAGMENT_SWARM_SIZE_PERCENT)),
+    FRAGMENT_REPLACEMENT_RATE_PERCENT_PER_AFFINITY(new AffinityScaling(AffinityScaling.Filter.ALL, AffinityScaling.SMALL_STEP,
+            ShipSystemSkillEffect.FRAGMENT_REPLACEMENT_RATE_PERCENT)),
     HIGHEST_AFFINITY_FLAT_PER_S_MOD(new AffinityTally()),
     LOWEST_AFFINITY_AS_HIGHEST(new AffinityTally()) {
         @Override

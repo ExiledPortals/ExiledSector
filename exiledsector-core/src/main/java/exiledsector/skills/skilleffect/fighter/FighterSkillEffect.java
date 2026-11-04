@@ -81,6 +81,14 @@ public enum FighterSkillEffect implements BackedSkillEffect {
             "stat.replacementRateRecovery", false)),
     FIGHTER_REPLACEMENT_RECOVERY_WHILE_REGROUPING_PERCENT(new ConditionalStatEffect(PERCENT, dynamicStat("replacement_rate_increase_mult"),
             "stat.replacementRateRecoveryWhileRegrouping", ShipAPI::isPullBackFighters)),
+    FIGHTER_REPLACEMENT_RATE_RESTORED_BY_FRAGMENTS_PERCENT(listener(HiveReplacementListener.RESTORED_PERCENT_KEY,
+            HiveReplacementListener.class, HiveReplacementListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", Math.min(magnitude, 100f))
+                    .arg("fragments", HiveReplacementListener.FRAGMENTS_PER_REPLACEMENT).styled();
+        }
+    },
     FIGHTER_PD_DAMAGE_BONUS_PERCENT {
         @Override
         public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
