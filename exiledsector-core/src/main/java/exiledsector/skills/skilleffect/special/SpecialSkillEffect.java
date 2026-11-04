@@ -9,6 +9,7 @@ import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
 import exiledsector.skills.skilleffect.StatMode;
+import exiledsector.skills.skilleffect.battle.BattleSkillEffect;
 import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.fighter.FighterSkillEffect;
 import exiledsector.skills.skilleffect.weapon.ScopedWeaponEffect;
@@ -79,6 +80,8 @@ public enum SpecialSkillEffect implements BackedSkillEffect {
             FighterSkillEffect.FIGHTER_WEAPON_DAMAGE_PERCENT)),
     FIGHTER_DAMAGE_TAKEN_MULT_PER_AFFINITY(new AffinityScaling(AffinityScaling.Filter.ALL, AffinityScaling.LARGEST_STEP,
             FighterSkillEffect.FIGHTER_DAMAGE_TAKEN_MULT)),
+    NAV_RATING_PER_HIGH_TECH_AFFINITY(new AffinityScaling(AffinityScaling.Filter.HIGH_TECH, AffinityScaling.NAV_RATING_STEP,
+            BattleSkillEffect.NAV_RATING)),
     HIGHEST_AFFINITY_FLAT_PER_S_MOD(new AffinityTally()),
     LOWEST_AFFINITY_AS_HIGHEST(new AffinityTally()) {
         @Override

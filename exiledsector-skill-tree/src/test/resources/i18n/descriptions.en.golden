@@ -694,6 +694,12 @@ effect|ELECTRONIC_WARFARE_PENALTY_PERCENT|12.5	1	<good>12.5%</good> increased el
 effect|ELECTRONIC_WARFARE_PENALTY_PERCENT|100.0	1	<good>100%</good> increased electronic warfare penalty against this ship's weapon range.
 effect|ELECTRONIC_WARFARE_PENALTY_PERCENT|-10.0	1	<bad>10%</bad> reduced electronic warfare penalty against this ship's weapon range.
 effect|ELECTRONIC_WARFARE_PENALTY_PERCENT|-12.5	1	<bad>12.5%</bad> reduced electronic warfare penalty against this ship's weapon range.
+effect|EMP_DAMAGE_PERCENT|1.0	0	<good>1%</good> more EMP damage.
+effect|EMP_DAMAGE_PERCENT|10.0	0	<good>10%</good> more EMP damage.
+effect|EMP_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> more EMP damage.
+effect|EMP_DAMAGE_PERCENT|100.0	0	<good>100%</good> more EMP damage.
+effect|EMP_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> more EMP damage.
+effect|EMP_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> more EMP damage.
 effect|EMP_DAMAGE_TAKEN_MULT|1.0	1	<good>1%</good> more EMP damage taken.
 effect|EMP_DAMAGE_TAKEN_MULT|10.0	1	<good>10%</good> more EMP damage taken.
 effect|EMP_DAMAGE_TAKEN_MULT|12.5	1	<good>12.5%</good> more EMP damage taken.
@@ -1198,6 +1204,12 @@ effect|HARDLIGHT_MARKING_MAX_DAMAGE_PERCENT|12.5	0	Strikecraft marks grant up to
 effect|HARDLIGHT_MARKING_MAX_DAMAGE_PERCENT|100.0	0	Strikecraft marks grant up to a maximum of <good>100%</good> increased damage taken.
 effect|HARDLIGHT_MARKING_MAX_DAMAGE_PERCENT|-10.0	0	Strikecraft marks grant up to a maximum of <good>-10%</good> increased damage taken.
 effect|HARDLIGHT_MARKING_MAX_DAMAGE_PERCENT|-12.5	0	Strikecraft marks grant up to a maximum of <good>-12.5%</good> increased damage taken.
+effect|HARD_FLUX_DISSIPATION_PERCENT|1.0	0	<good>1%</good> of flux dissipation clears hard flux while shields are up.
+effect|HARD_FLUX_DISSIPATION_PERCENT|10.0	0	<good>10%</good> of flux dissipation clears hard flux while shields are up.
+effect|HARD_FLUX_DISSIPATION_PERCENT|12.5	0	<good>12.5%</good> of flux dissipation clears hard flux while shields are up.
+effect|HARD_FLUX_DISSIPATION_PERCENT|100.0	0	<good>100%</good> of flux dissipation clears hard flux while shields are up.
+effect|HARD_FLUX_DISSIPATION_PERCENT|-10.0	0	<good>-10%</good> of flux dissipation clears hard flux while shields are up.
+effect|HARD_FLUX_DISSIPATION_PERCENT|-12.5	0	<good>-12.5%</good> of flux dissipation clears hard flux while shields are up.
 effect|HEARTLESS_ARMOR_PERCENT_PER_STACK|1.0	0	Each Heartless stack grants <good>1%</good> more armor in every armor cell, above its normal maximum.
 effect|HEARTLESS_ARMOR_PERCENT_PER_STACK|10.0	0	Each Heartless stack grants <good>10%</good> more armor in every armor cell, above its normal maximum.
 effect|HEARTLESS_ARMOR_PERCENT_PER_STACK|12.5	0	Each Heartless stack grants <good>12.5%</good> more armor in every armor cell, above its normal maximum.
@@ -1270,6 +1282,12 @@ effect|HIGH_TECH_AFFINITY_FLAT|12.5	0	<good>+12.5</good> to High Tech Affinity.
 effect|HIGH_TECH_AFFINITY_FLAT|100.0	0	<good>+100</good> to High Tech Affinity.
 effect|HIGH_TECH_AFFINITY_FLAT|-10.0	0	<bad>-10</bad> to High Tech Affinity.
 effect|HIGH_TECH_AFFINITY_FLAT|-12.5	0	<bad>-12.5</bad> to High Tech Affinity.
+effect|HOLD_FIRE_SHIELD_DAMAGE_REDUCTION_PERCENT|1.0	0	Up to <good>1%</good> reduced damage taken by shields, building up over 3 seconds while no weapons fire and fading over 3 seconds while any do.
+effect|HOLD_FIRE_SHIELD_DAMAGE_REDUCTION_PERCENT|10.0	0	Up to <good>10%</good> reduced damage taken by shields, building up over 3 seconds while no weapons fire and fading over 3 seconds while any do.
+effect|HOLD_FIRE_SHIELD_DAMAGE_REDUCTION_PERCENT|12.5	0	Up to <good>12.5%</good> reduced damage taken by shields, building up over 3 seconds while no weapons fire and fading over 3 seconds while any do.
+effect|HOLD_FIRE_SHIELD_DAMAGE_REDUCTION_PERCENT|100.0	0	Up to <good>100%</good> reduced damage taken by shields, building up over 3 seconds while no weapons fire and fading over 3 seconds while any do.
+effect|HOLD_FIRE_SHIELD_DAMAGE_REDUCTION_PERCENT|-10.0	0	Up to <good>-10%</good> reduced damage taken by shields, building up over 3 seconds while no weapons fire and fading over 3 seconds while any do.
+effect|HOLD_FIRE_SHIELD_DAMAGE_REDUCTION_PERCENT|-12.5	0	Up to <good>-12.5%</good> reduced damage taken by shields, building up over 3 seconds while no weapons fire and fading over 3 seconds while any do.
 effect|HULL_FLAT|1.0	0	<good>+1</good> to hull points.
 effect|HULL_FLAT|10.0	0	<good>+10</good> to hull points.
 effect|HULL_FLAT|12.5	0	<good>+12.5</good> to hull points.
@@ -1654,6 +1672,12 @@ effect|NAV_RATING|12.5	0	Your fleet has <good>+12.5</good> to nav rating.
 effect|NAV_RATING|100.0	0	Your fleet has <good>+100</good> to nav rating.
 effect|NAV_RATING|-10.0	0	Your fleet has <bad>-10</bad> to nav rating.
 effect|NAV_RATING|-12.5	0	Your fleet has <bad>-12.5</bad> to nav rating.
+effect|NAV_RATING_PER_HIGH_TECH_AFFINITY|1.0	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
+effect|NAV_RATING_PER_HIGH_TECH_AFFINITY|10.0	0	Your fleet has <good>+10</good> to nav rating for every 50 High Tech Affinity.
+effect|NAV_RATING_PER_HIGH_TECH_AFFINITY|12.5	0	Your fleet has <good>+12.5</good> to nav rating for every 50 High Tech Affinity.
+effect|NAV_RATING_PER_HIGH_TECH_AFFINITY|100.0	0	Your fleet has <good>+100</good> to nav rating for every 50 High Tech Affinity.
+effect|NAV_RATING_PER_HIGH_TECH_AFFINITY|-10.0	0	Your fleet has <bad>-10</bad> to nav rating for every 50 High Tech Affinity.
+effect|NAV_RATING_PER_HIGH_TECH_AFFINITY|-12.5	0	Your fleet has <bad>-12.5</bad> to nav rating for every 50 High Tech Affinity.
 effect|NON_BEAM_ENERGY_WEAPON_AMMO_FLAT|1.0	0	<good>+1</good> to non-beam energy weapon ammo capacity. The refit screen's weapon tooltips don't show this.
 effect|NON_BEAM_ENERGY_WEAPON_AMMO_FLAT|10.0	0	<good>+10</good> to non-beam energy weapon ammo capacity. The refit screen's weapon tooltips don't show this.
 effect|NON_BEAM_ENERGY_WEAPON_AMMO_FLAT|12.5	0	<good>+12.5</good> to non-beam energy weapon ammo capacity. The refit screen's weapon tooltips don't show this.
@@ -2014,6 +2038,12 @@ effect|SERAPH_HUNTING_HEAL_PERCENT|12.5	0	Repairs hull equal to <good>12.5%</goo
 effect|SERAPH_HUNTING_HEAL_PERCENT|100.0	0	Repairs hull equal to <good>100%</good> of the armor and hull damage this ship deals to enemy ships.
 effect|SERAPH_HUNTING_HEAL_PERCENT|-10.0	0	Repairs hull equal to <good>-10%</good> of the armor and hull damage this ship deals to enemy ships.
 effect|SERAPH_HUNTING_HEAL_PERCENT|-12.5	0	Repairs hull equal to <good>-12.5%</good> of the armor and hull damage this ship deals to enemy ships.
+effect|SHARED_TARGET_DAMAGE_PERCENT|1.0	0	<good>1%</good> increased damage to enemy ships an allied ship has targeted.
+effect|SHARED_TARGET_DAMAGE_PERCENT|10.0	0	<good>10%</good> increased damage to enemy ships an allied ship has targeted.
+effect|SHARED_TARGET_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased damage to enemy ships an allied ship has targeted.
+effect|SHARED_TARGET_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased damage to enemy ships an allied ship has targeted.
+effect|SHARED_TARGET_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> increased damage to enemy ships an allied ship has targeted.
+effect|SHARED_TARGET_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> increased damage to enemy ships an allied ship has targeted.
 effect|SHIELD_ABSORB_RATE_OF_FIRE_PERCENT|1.0	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>1%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
 effect|SHIELD_ABSORB_RATE_OF_FIRE_PERCENT|10.0	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>10%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
 effect|SHIELD_ABSORB_RATE_OF_FIRE_PERCENT|12.5	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>12.5%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
@@ -2206,6 +2236,12 @@ effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|12.5	0	Strikecraft launched from this s
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|100.0	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|-10.0	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|-12.5	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
+effect|STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT|1.0	0	Strikecraft launched from this ship have <good>1%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
+effect|STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT|10.0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
+effect|STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT|12.5	0	Strikecraft launched from this ship have <good>12.5%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
+effect|STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT|100.0	0	Strikecraft launched from this ship have <good>100%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
+effect|STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT|-10.0	0	Strikecraft launched from this ship have <good>-10%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
+effect|STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT|-12.5	0	Strikecraft launched from this ship have <good>-12.5%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
 effect|SUPPLIES_PER_MONTH_MULT|1.0	1	<good>1%</good> more supply use for maintenance.
 effect|SUPPLIES_PER_MONTH_MULT|10.0	1	<good>10%</good> more supply use for maintenance.
 effect|SUPPLIES_PER_MONTH_MULT|12.5	1	<good>12.5%</good> more supply use for maintenance.
@@ -2350,6 +2386,18 @@ effect|TOP_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased top speed.
 effect|TOP_SPEED_PERCENT|100.0	0	<good>100%</good> increased top speed.
 effect|TOP_SPEED_PERCENT|-10.0	0	<bad>10%</bad> reduced top speed.
 effect|TOP_SPEED_PERCENT|-12.5	0	<bad>12.5%</bad> reduced top speed.
+effect|TOP_SPEED_PERCENT_PER_NEARBY_ALLY|1.0	0	<good>1%</good> increased top speed for every allied ship within 1000 su, up to 10%.
+effect|TOP_SPEED_PERCENT_PER_NEARBY_ALLY|10.0	0	<good>10%</good> increased top speed for every allied ship within 1000 su, up to 10%.
+effect|TOP_SPEED_PERCENT_PER_NEARBY_ALLY|12.5	0	<good>12.5%</good> increased top speed for every allied ship within 1000 su, up to 10%.
+effect|TOP_SPEED_PERCENT_PER_NEARBY_ALLY|100.0	0	<good>100%</good> increased top speed for every allied ship within 1000 su, up to 10%.
+effect|TOP_SPEED_PERCENT_PER_NEARBY_ALLY|-10.0	0	<good>-10%</good> increased top speed for every allied ship within 1000 su, up to 10%.
+effect|TOP_SPEED_PERCENT_PER_NEARBY_ALLY|-12.5	0	<good>-12.5%</good> increased top speed for every allied ship within 1000 su, up to 10%.
+effect|UNHIT_ARMOR_REGEN_PERCENT|1.0	0	Armor cells not hit for 5 seconds repair <good>1%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per battle.
+effect|UNHIT_ARMOR_REGEN_PERCENT|10.0	0	Armor cells not hit for 5 seconds repair <good>10%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per battle.
+effect|UNHIT_ARMOR_REGEN_PERCENT|12.5	0	Armor cells not hit for 5 seconds repair <good>12.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per battle.
+effect|UNHIT_ARMOR_REGEN_PERCENT|100.0	0	Armor cells not hit for 5 seconds repair <good>100%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per battle.
+effect|UNHIT_ARMOR_REGEN_PERCENT|-10.0	0	Armor cells not hit for 5 seconds repair <good>-10%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per battle.
+effect|UNHIT_ARMOR_REGEN_PERCENT|-12.5	0	Armor cells not hit for 5 seconds repair <good>-12.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per battle.
 effect|VENT_RATE_MULT|1.0	0	<good>1%</good> more venting speed.
 effect|VENT_RATE_MULT|10.0	0	<good>10%</good> more venting speed.
 effect|VENT_RATE_MULT|12.5	0	<good>12.5%</good> more venting speed.

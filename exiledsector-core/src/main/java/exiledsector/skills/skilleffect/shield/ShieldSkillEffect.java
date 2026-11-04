@@ -107,6 +107,13 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
     SHIELD_ARC_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getShieldArcBonus), StatNames.SHIELD_ARC, false)),
     SHIELD_ABSORPTION_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getShieldAbsorptionMult), StatNames.DAMAGE_TAKEN_BY_SHIELDS, true)),
     SHIELD_DAMAGE_TAKEN_MULT(statEffect(MULT, liveStat(MutableShipStatsAPI::getShieldDamageTakenMult), StatNames.DAMAGE_TAKEN_BY_SHIELDS, true)),
+    HOLD_FIRE_SHIELD_DAMAGE_REDUCTION_PERCENT(listener(HoldFireShieldListener.REDUCTION_PERCENT_KEY, HoldFireShieldListener.class,
+            HoldFireShieldListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("seconds", HoldFireShieldListener.TAPER_SECONDS).styled();
+        }
+    },
     SHIELD_PIERCE_CHANCE_PERCENT(statEffect(PERCENT, dynamicStat(Stats.SHIELD_PIERCED_MULT), "stat.empArcShieldPierceChance", true)),
     SHIELD_PIERCE_CHANCE_MULT(statEffect(MULT, dynamicStat(Stats.SHIELD_PIERCED_MULT), "stat.empArcShieldPierceChance", true)),
     SHIELD_UPKEEP_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getShieldUpkeepMult), "stat.shieldFluxUpkeep", true)),
