@@ -248,21 +248,12 @@ final class AtlasMapCanvas {
         return reachable.contains(cell);
     }
 
-    float focusX() {
-        return focus(true);
+    float gatewayX() {
+        return displayX(AtlasCell.ORIGIN);
     }
 
-    float focusY() {
-        return focus(false);
-    }
-
-    private float focus(boolean horizontal) {
-        Set<AtlasCell> focus = reachable.isEmpty() ? Set.of(AtlasCell.ORIGIN) : reachable;
-        float sum = 0f;
-        for (AtlasCell cell : focus) {
-            sum += horizontal ? displayX(cell) : displayY(cell);
-        }
-        return sum / focus.size();
+    float gatewayY() {
+        return displayY(AtlasCell.ORIGIN);
     }
 
     void advance(float amount) {

@@ -173,7 +173,12 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
                 SectorSystemSketcher.sketch(WormholeGateway.playerGatewaySystem(sector)));
         showOverlay(true);
         camera.jumpZoomTo(AtlasMapCanvas.MIN_ZOOM);
-        camera.centreOn(map.focusX(), map.focusY());
+        AtlasCameraMemory.Centre remembered = AtlasCameraMemory.recall(sector);
+        if (remembered != null) {
+            camera.centreOn(remembered.treeX(), remembered.treeY());
+        } else {
+            camera.centreOn(map.gatewayX(), map.gatewayY());
+        }
         I18n.forGameText(this::buildChrome);
     }
 
@@ -831,6 +836,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             chooseElement.setOpacity(Fade.smooth(focusLevel));
         }
         if (finishedClosing) {
+            AtlasCameraMemory.remember(Global.getSector(), camera.centreTreeX(), camera.centreTreeY());
             if (wormholeMessage != null) {
                 host.leave(wormholeMessage);
             } else {
