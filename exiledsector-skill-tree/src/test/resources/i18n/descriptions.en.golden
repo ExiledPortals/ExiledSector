@@ -46,6 +46,12 @@ effect|ARMOR_DAMAGE_EMP_ARCS_FLAT|12.5	0	Every 500 damage this ship's armor abso
 effect|ARMOR_DAMAGE_EMP_ARCS_FLAT|100.0	0	Every 500 damage this ship's armor absorbs discharges <good>100</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
 effect|ARMOR_DAMAGE_EMP_ARCS_FLAT|-10.0	0	Every 500 damage this ship's armor absorbs discharges <good>-10</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
 effect|ARMOR_DAMAGE_EMP_ARCS_FLAT|-12.5	0	Every 500 damage this ship's armor absorbs discharges <good>-12.5</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
+effect|ARMOR_DAMAGE_TAKEN_AT_LOW_SPEED_PERCENT|1.0	0	<good>1%</good> reduced armor damage taken while moving slower than 25% of top speed.
+effect|ARMOR_DAMAGE_TAKEN_AT_LOW_SPEED_PERCENT|10.0	0	<good>10%</good> reduced armor damage taken while moving slower than 25% of top speed.
+effect|ARMOR_DAMAGE_TAKEN_AT_LOW_SPEED_PERCENT|12.5	0	<good>12.5%</good> reduced armor damage taken while moving slower than 25% of top speed.
+effect|ARMOR_DAMAGE_TAKEN_AT_LOW_SPEED_PERCENT|100.0	0	<good>100%</good> reduced armor damage taken while moving slower than 25% of top speed.
+effect|ARMOR_DAMAGE_TAKEN_AT_LOW_SPEED_PERCENT|-10.0	0	<good>10%</good> reduced armor damage taken while moving slower than 25% of top speed.
+effect|ARMOR_DAMAGE_TAKEN_AT_LOW_SPEED_PERCENT|-12.5	0	<good>12.5%</good> reduced armor damage taken while moving slower than 25% of top speed.
 effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|1.0	1	<good>1%</good> more armor damage taken per D-mod, up to 5 D-mods.
 effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|10.0	1	<good>10%</good> more armor damage taken per D-mod, up to 5 D-mods.
 effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|12.5	1	<good>12.5%</good> more armor damage taken per D-mod, up to 5 D-mods.
@@ -664,6 +670,12 @@ effect|DAMAGE_TO_DISTANT_TARGETS_PERCENT|12.5	0	<good>12.5%</good> increased dam
 effect|DAMAGE_TO_DISTANT_TARGETS_PERCENT|100.0	0	<good>100%</good> increased damage to targets more than 1000 su away.
 effect|DAMAGE_TO_DISTANT_TARGETS_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to targets more than 1000 su away.
 effect|DAMAGE_TO_DISTANT_TARGETS_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to targets more than 1000 su away.
+effect|DAMAGE_TO_FIGHTERS_PERCENT|1.0	0	<good>1%</good> increased damage to fighters.
+effect|DAMAGE_TO_FIGHTERS_PERCENT|10.0	0	<good>10%</good> increased damage to fighters.
+effect|DAMAGE_TO_FIGHTERS_PERCENT|12.5	0	<good>12.5%</good> increased damage to fighters.
+effect|DAMAGE_TO_FIGHTERS_PERCENT|100.0	0	<good>100%</good> increased damage to fighters.
+effect|DAMAGE_TO_FIGHTERS_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to fighters.
+effect|DAMAGE_TO_FIGHTERS_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to fighters.
 effect|DAMAGE_TO_FRIGATE_PERCENT|1.0	0	<good>1%</good> increased damage to frigates.
 effect|DAMAGE_TO_FRIGATE_PERCENT|10.0	0	<good>10%</good> increased damage to frigates.
 effect|DAMAGE_TO_FRIGATE_PERCENT|12.5	0	<good>12.5%</good> increased damage to frigates.
@@ -1510,6 +1522,12 @@ effect|KINETIC_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased kinetic 
 effect|KINETIC_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased kinetic damage taken.
 effect|KINETIC_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced kinetic damage taken.
 effect|KINETIC_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced kinetic damage taken.
+effect|LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|1.0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>1%</good> chance to disable the weapon or engine nearest the impact.
+effect|LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|10.0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
+effect|LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|12.5	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>12.5%</good> chance to disable the weapon or engine nearest the impact.
+effect|LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|100.0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>100%</good> chance to disable the weapon or engine nearest the impact.
+effect|LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|-10.0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>-10%</good> chance to disable the weapon or engine nearest the impact.
+effect|LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|-12.5	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>-12.5%</good> chance to disable the weapon or engine nearest the impact.
 effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|1.0	1	<good>1%</good> more negative effects from logistics D-mods per D-mod, up to 5 D-mods.
 effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|10.0	1	<good>10%</good> more negative effects from logistics D-mods per D-mod, up to 5 D-mods.
 effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|12.5	1	<good>12.5%</good> more negative effects from logistics D-mods per D-mod, up to 5 D-mods.
@@ -1612,6 +1630,12 @@ effect|MISSILE_EJECTION_CHANCE_PERCENT|12.5	0	<good>12.5%</good> chance for miss
 effect|MISSILE_EJECTION_CHANCE_PERCENT|100.0	0	<good>100%</good> chance for missiles about to hit armor or hull to be ejected into p-space, dealing no damage.
 effect|MISSILE_EJECTION_CHANCE_PERCENT|-10.0	0	<good>-10%</good> chance for missiles about to hit armor or hull to be ejected into p-space, dealing no damage.
 effect|MISSILE_EJECTION_CHANCE_PERCENT|-12.5	0	<good>-12.5%</good> chance for missiles about to hit armor or hull to be ejected into p-space, dealing no damage.
+effect|MISSILE_KILL_FLAK_DAMAGE_FLAT|1.0	0	Enemy missiles destroyed by this ship burst for <good>1</good> fragmentation damage to other enemy missiles and fighters within 100 su.
+effect|MISSILE_KILL_FLAK_DAMAGE_FLAT|10.0	0	Enemy missiles destroyed by this ship burst for <good>10</good> fragmentation damage to other enemy missiles and fighters within 100 su.
+effect|MISSILE_KILL_FLAK_DAMAGE_FLAT|12.5	0	Enemy missiles destroyed by this ship burst for <good>12.5</good> fragmentation damage to other enemy missiles and fighters within 100 su.
+effect|MISSILE_KILL_FLAK_DAMAGE_FLAT|100.0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
+effect|MISSILE_KILL_FLAK_DAMAGE_FLAT|-10.0	0	Enemy missiles destroyed by this ship burst for <good>-10</good> fragmentation damage to other enemy missiles and fighters within 100 su.
+effect|MISSILE_KILL_FLAK_DAMAGE_FLAT|-12.5	0	Enemy missiles destroyed by this ship burst for <good>-12.5</good> fragmentation damage to other enemy missiles and fighters within 100 su.
 effect|MISSILE_RELOAD_PERCENT_PER_MINUTE|1.0	0	Missile weapons that cannot regenerate ammo reload <good>1%</good> of their base ammo every minute in combat.
 effect|MISSILE_RELOAD_PERCENT_PER_MINUTE|10.0	0	Missile weapons that cannot regenerate ammo reload <good>10%</good> of their base ammo every minute in combat.
 effect|MISSILE_RELOAD_PERCENT_PER_MINUTE|12.5	0	Missile weapons that cannot regenerate ammo reload <good>12.5%</good> of their base ammo every minute in combat.
@@ -2014,12 +2038,12 @@ effect|PD_BEST_TARGET_LEADING|12.5	0	Point-defense weapons get the best possible
 effect|PD_BEST_TARGET_LEADING|100.0	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 effect|PD_BEST_TARGET_LEADING|-10.0	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 effect|PD_BEST_TARGET_LEADING|-12.5	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-effect|PD_DAMAGE_TO_MISSILES_PERCENT|1.0	0	<good>1%</good> increased damage dealt to missiles by point-defense weapons.
-effect|PD_DAMAGE_TO_MISSILES_PERCENT|10.0	0	<good>10%</good> increased damage dealt to missiles by point-defense weapons.
-effect|PD_DAMAGE_TO_MISSILES_PERCENT|12.5	0	<good>12.5%</good> increased damage dealt to missiles by point-defense weapons.
-effect|PD_DAMAGE_TO_MISSILES_PERCENT|100.0	0	<good>100%</good> increased damage dealt to missiles by point-defense weapons.
-effect|PD_DAMAGE_TO_MISSILES_PERCENT|-10.0	0	<bad>10%</bad> reduced damage dealt to missiles by point-defense weapons.
-effect|PD_DAMAGE_TO_MISSILES_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage dealt to missiles by point-defense weapons.
+effect|PD_DAMAGE_TO_MISSILES_PERCENT|1.0	0	<good>1%</good> increased damage to missiles.
+effect|PD_DAMAGE_TO_MISSILES_PERCENT|10.0	0	<good>10%</good> increased damage to missiles.
+effect|PD_DAMAGE_TO_MISSILES_PERCENT|12.5	0	<good>12.5%</good> increased damage to missiles.
+effect|PD_DAMAGE_TO_MISSILES_PERCENT|100.0	0	<good>100%</good> increased damage to missiles.
+effect|PD_DAMAGE_TO_MISSILES_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to missiles.
+effect|PD_DAMAGE_TO_MISSILES_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to missiles.
 effect|PD_IGNORES_DECOY_FLARES|1.0	0	Point-defense weapons can identify and ignore decoy flares.
 effect|PD_IGNORES_DECOY_FLARES|10.0	0	Point-defense weapons can identify and ignore decoy flares.
 effect|PD_IGNORES_DECOY_FLARES|12.5	0	Point-defense weapons can identify and ignore decoy flares.
@@ -2446,6 +2470,12 @@ effect|SHROUDED_LENS_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased Shrouded
 effect|SHROUDED_LENS_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased Shrouded Lens damage.
 effect|SHROUDED_LENS_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> increased Shrouded Lens damage.
 effect|SHROUDED_LENS_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> increased Shrouded Lens damage.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|1.0	0	Allied ships of a smaller hull size within 800 su take <good>1%</good> less damage. Only the strongest applies.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|10.0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest applies.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|12.5	0	Allied ships of a smaller hull size within 800 su take <good>12.5%</good> less damage. Only the strongest applies.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|100.0	0	Allied ships of a smaller hull size within 800 su take <good>100%</good> less damage. Only the strongest applies.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|-10.0	0	Allied ships of a smaller hull size within 800 su take <good>-10%</good> less damage. Only the strongest applies.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|-12.5	0	Allied ships of a smaller hull size within 800 su take <good>-12.5%</good> less damage. Only the strongest applies.
 effect|SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP|1.0	0	All damage from weapons in small energy mounts is converted to EMP damage.
 effect|SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP|10.0	0	All damage from weapons in small energy mounts is converted to EMP damage.
 effect|SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP|12.5	0	All damage from weapons in small energy mounts is converted to EMP damage.
@@ -3133,6 +3163,18 @@ type-detail|auxiliary_fuel_tanks|CRUISER|0	0	Mutually exclusive with <hullmod>hu
 type|auxiliary_fuel_tanks|CAPITAL_SHIP|0	0	<good>20%</good> increased fuel capacity.
 type|auxiliary_fuel_tanks|CAPITAL_SHIP|1	0	<good>+125</good> to fuel capacity.
 type-detail|auxiliary_fuel_tanks|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Auxiliary Fuel Tanks</hullmod>
+flavour|auxiliary_screen	0	Hegemony auxiliary fleets are made of whatever the Navy can requisition, and the battle line is expected to shelter them. A cycle of convoy duty out of Jangala teaches the crew to keep the ship between the enemy and the smaller hulls. The auxiliaries are grateful, in the manner of people who have been told to be.
+flavourAutomated|auxiliary_screen	0	Hegemony auxiliary fleets are made of whatever the Navy can requisition, and the battle line is expected to shelter them. The ship's core logs a cycle of convoy duty out of Jangala and learns to keep its hull between the enemy and the smaller ships. The auxiliaries are grateful, in the manner of people who have been told to be.
+type|auxiliary_screen|null|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest applies.
+type-detail|auxiliary_screen|null|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
+type|auxiliary_screen|FRIGATE|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest applies.
+type-detail|auxiliary_screen|FRIGATE|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
+type|auxiliary_screen|DESTROYER|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest applies.
+type-detail|auxiliary_screen|DESTROYER|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
+type|auxiliary_screen|CRUISER|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest applies.
+type-detail|auxiliary_screen|CRUISER|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
+type|auxiliary_screen|CAPITAL_SHIP|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest applies.
+type-detail|auxiliary_screen|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
 type|auxiliary_thrusters|null|0	0	<good>50%</good> increased maneuverability.
 type-detail|auxiliary_thrusters|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Auxiliary Thrusters</hullmod>
 type|auxiliary_thrusters|FRIGATE|0	0	<good>50%</good> increased maneuverability.
@@ -3307,6 +3349,25 @@ type|combat_vision|FRIGATE|0	0	<good>+300</good> to in-combat sensor/vision rang
 type|combat_vision|DESTROYER|0	0	<good>+500</good> to in-combat sensor/vision range.
 type|combat_vision|CRUISER|0	0	<good>+700</good> to in-combat sensor/vision range.
 type|combat_vision|CAPITAL_SHIP|0	0	<good>+900</good> to in-combat sensor/vision range.
+flavour|comsec_discipline	0	A COMSEC signals manual, left behind at an Ancyra customs post, shows the crew how to keep fire control working through enemy jamming. Every page is stamped restricted, including the blank ones.
+flavourAutomated|comsec_discipline	0	A COMSEC signals manual, left behind at an Ancyra customs post, sets out how to keep fire control working through enemy jamming. The ship's core adopts its procedures in full. Every page is stamped restricted, including the blank ones.
+type|comsec_discipline|null|0	1	<bad>25%</bad> reduced electronic warfare penalty against this ship's weapon range.
+type|comsec_discipline|null|1	0	<good>15%</good> increased this ship's sensor strength.
+type|comsec_discipline|FRIGATE|0	1	<bad>25%</bad> reduced electronic warfare penalty against this ship's weapon range.
+type|comsec_discipline|FRIGATE|1	0	<good>15%</good> increased this ship's sensor strength.
+type|comsec_discipline|DESTROYER|0	1	<bad>25%</bad> reduced electronic warfare penalty against this ship's weapon range.
+type|comsec_discipline|DESTROYER|1	0	<good>15%</good> increased this ship's sensor strength.
+type|comsec_discipline|CRUISER|0	1	<bad>25%</bad> reduced electronic warfare penalty against this ship's weapon range.
+type|comsec_discipline|CRUISER|1	0	<good>15%</good> increased this ship's sensor strength.
+type|comsec_discipline|CAPITAL_SHIP|0	1	<bad>25%</bad> reduced electronic warfare penalty against this ship's weapon range.
+type|comsec_discipline|CAPITAL_SHIP|1	0	<good>15%</good> increased this ship's sensor strength.
+flavour|concussion_shells	0	Planetary defense batteries on Eventide fire heavy shells with a delayed charge that bursts just inside the plating, shaking loose whatever is mounted nearby. A retired battery sergeant teaches the crew to pack them in exchange for passage off-world. The sergeant asks not to be told where the shells end up.
+flavourAutomated|concussion_shells	0	Planetary defense batteries on Eventide fire heavy shells with a delayed charge that bursts just inside the plating, shaking loose whatever is mounted nearby. The ship's core copies the fusing tables from a salvaged battery fire-control unit, and the refit crew packs the shells to match. The unit is still listed as in service.
+type|concussion_shells|null|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
+type|concussion_shells|FRIGATE|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
+type|concussion_shells|DESTROYER|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
+type|concussion_shells|CRUISER|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
+type|concussion_shells|CAPITAL_SHIP|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
 flavour|converted_fighter_bay	0	The built-in bays are stripped of launch rails and chassis forges, leaving a great deal of oddly shaped cargo space.
 type|converted_fighter_bay|null|0	0	Removes all of this ship's strikecraft bays.
 type|converted_fighter_bay|null|1	1	<bad>20%</bad> reduced minimum crew required per strikecraft bay, up to 80% in total.
@@ -3665,16 +3726,28 @@ type|doctrine_tireless_cadence|CAPITAL_SHIP|1	0	<good>15%</good> increased flux 
 type|doctrine_tireless_cadence|CAPITAL_SHIP|2	0	<bad>50%</bad> reduced combat readiness recovery rate.
 flavour|doctrine_unblinking_watch	0	Remnant point defense never tires and never flinches. Its tracking routines, recovered from a gutted drone, carry none of the hesitation a human gunner would add.
 flavourAutomated|doctrine_unblinking_watch	0	Remnant point defense never tires and never flinches. Its tracking routines, recovered from a gutted drone, carry none of the hesitation a human gunner would add, and this ship has no gunner to add any.
-type|doctrine_unblinking_watch|null|0	0	<good>50%</good> increased damage dealt to missiles by point-defense weapons.
+type|doctrine_unblinking_watch|null|0	0	<good>50%</good> increased damage to missiles.
 type|doctrine_unblinking_watch|null|1	0	<good>30%</good> increased weapon turn rate.
-type|doctrine_unblinking_watch|FRIGATE|0	0	<good>50%</good> increased damage dealt to missiles by point-defense weapons.
+type|doctrine_unblinking_watch|FRIGATE|0	0	<good>50%</good> increased damage to missiles.
 type|doctrine_unblinking_watch|FRIGATE|1	0	<good>30%</good> increased weapon turn rate.
-type|doctrine_unblinking_watch|DESTROYER|0	0	<good>50%</good> increased damage dealt to missiles by point-defense weapons.
+type|doctrine_unblinking_watch|DESTROYER|0	0	<good>50%</good> increased damage to missiles.
 type|doctrine_unblinking_watch|DESTROYER|1	0	<good>30%</good> increased weapon turn rate.
-type|doctrine_unblinking_watch|CRUISER|0	0	<good>50%</good> increased damage dealt to missiles by point-defense weapons.
+type|doctrine_unblinking_watch|CRUISER|0	0	<good>50%</good> increased damage to missiles.
 type|doctrine_unblinking_watch|CRUISER|1	0	<good>30%</good> increased weapon turn rate.
-type|doctrine_unblinking_watch|CAPITAL_SHIP|0	0	<good>50%</good> increased damage dealt to missiles by point-defense weapons.
+type|doctrine_unblinking_watch|CAPITAL_SHIP|0	0	<good>50%</good> increased damage to missiles.
 type|doctrine_unblinking_watch|CAPITAL_SHIP|1	0	<good>30%</good> increased weapon turn rate.
+flavour|domain_pattern_laminate	0	Hegemony refit yards still lay armor plate to Domain specifications, unchanged since before the Collapse. A yard foreman on Chicomoztoc sells the crew the pattern on the understanding that it does not exist.
+flavourAutomated|domain_pattern_laminate	0	Hegemony refit yards still lay armor plate to Domain specifications, unchanged since before the Collapse. The ship's core finds the pattern in a Chicomoztoc yard's maintenance logs, and the refit crew lays it to the letter. The logs list the pattern as not existing.
+type|domain_pattern_laminate|null|0	1	<bad>8%</bad> reduced kinetic damage taken.
+type|domain_pattern_laminate|null|1	1	<bad>8%</bad> reduced high-explosive damage taken.
+type|domain_pattern_laminate|FRIGATE|0	1	<bad>8%</bad> reduced kinetic damage taken.
+type|domain_pattern_laminate|FRIGATE|1	1	<bad>8%</bad> reduced high-explosive damage taken.
+type|domain_pattern_laminate|DESTROYER|0	1	<bad>8%</bad> reduced kinetic damage taken.
+type|domain_pattern_laminate|DESTROYER|1	1	<bad>8%</bad> reduced high-explosive damage taken.
+type|domain_pattern_laminate|CRUISER|0	1	<bad>8%</bad> reduced kinetic damage taken.
+type|domain_pattern_laminate|CRUISER|1	1	<bad>8%</bad> reduced high-explosive damage taken.
+type|domain_pattern_laminate|CAPITAL_SHIP|0	1	<bad>8%</bad> reduced kinetic damage taken.
+type|domain_pattern_laminate|CAPITAL_SHIP|1	1	<bad>8%</bad> reduced high-explosive damage taken.
 flavour|dynamic_grid	0	Nightcross Armory fits its dynamic coils to almost every hull it builds and never sells them on their own, so the crew pulls a set from a boarded Nightcross wreck. The warranty, naturally, does not cover third-party installation.
 flavourAutomated|dynamic_grid	0	Nightcross Armory fits its dynamic coils to almost every hull it builds and never sells them on their own, so the refit crew pulls a set from a boarded Nightcross wreck. The warranty, naturally, does not cover third-party installation, least of all into a machine.
 type|dynamic_grid|null|0	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
@@ -3985,6 +4058,13 @@ type|extended_shields|CRUISER|0	0	<good>+40</good> to shield arc.
 type-detail|extended_shields|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Knight Refit</hullmod>\n• <hullmod>Primitive Shields</hullmod>\n• <hullmod>Low Arc Shield Emitter</hullmod>\n• <hullmod>Hardlight Matrix</hullmod>\n• <hullmod>Aegis Deflectors</hullmod>\n• <hullmod>Lostech Engineering</hullmod>\n• <hullmod>Extended Shields</hullmod>
 type|extended_shields|CAPITAL_SHIP|0	0	<good>+40</good> to shield arc.
 type-detail|extended_shields|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Knight Refit</hullmod>\n• <hullmod>Primitive Shields</hullmod>\n• <hullmod>Low Arc Shield Emitter</hullmod>\n• <hullmod>Hardlight Matrix</hullmod>\n• <hullmod>Aegis Deflectors</hullmod>\n• <hullmod>Lostech Engineering</hullmod>\n• <hullmod>Extended Shields</hullmod>
+flavour|flak_screen_doctrine	0	Hegemony point defense crews pack their flak loads for a wide burst, on the theory that a missile is rarely alone. The crew learns the trick escorting a Dominator through a missile strike. Its captain bills them for the ammunition.
+flavourAutomated|flak_screen_doctrine	0	Hegemony point defense crews pack their flak loads for a wide burst, on the theory that a missile is rarely alone. The ship's core records the pattern while escorting a Dominator through a missile strike, and the refit crew repacks the magazines to match. The Dominator's captain bills for the ammunition.
+type|flak_screen_doctrine|null|0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
+type|flak_screen_doctrine|FRIGATE|0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
+type|flak_screen_doctrine|DESTROYER|0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
+type|flak_screen_doctrine|CRUISER|0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
+type|flak_screen_doctrine|CAPITAL_SHIP|0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
 type|flux_capacity|null|0	0	<good>2%</good> more flux capacity.
 type|flux_capacity|FRIGATE|0	0	<good>2%</good> more flux capacity.
 type|flux_capacity|DESTROYER|0	0	<good>2%</good> more flux capacity.
@@ -4029,6 +4109,11 @@ type|fragment_swarm_size|FRIGATE|0	0	<good>10%</good> increased fragment swarm s
 type|fragment_swarm_size|DESTROYER|0	0	<good>10%</good> increased fragment swarm size.
 type|fragment_swarm_size|CRUISER|0	0	<good>10%</good> increased fragment swarm size.
 type|fragment_swarm_size|CAPITAL_SHIP|0	0	<good>10%</good> increased fragment swarm size.
+type|fragmentation_damage_resistance|null|0	1	<bad>4%</bad> reduced fragmentation damage taken.
+type|fragmentation_damage_resistance|FRIGATE|0	1	<bad>4%</bad> reduced fragmentation damage taken.
+type|fragmentation_damage_resistance|DESTROYER|0	1	<bad>4%</bad> reduced fragmentation damage taken.
+type|fragmentation_damage_resistance|CRUISER|0	1	<bad>4%</bad> reduced fragmentation damage taken.
+type|fragmentation_damage_resistance|CAPITAL_SHIP|0	1	<bad>4%</bad> reduced fragmentation damage taken.
 flavour|freebooters_charge	0	Pirate captains who joined the crew drill the habits that make freebooters so dangerous up close: charge in, fire everything and count the casualties later. They rarely do the counting.
 flavourAutomated|freebooters_charge	0	The ship's core logs every fight it sees freebooters win up close: charge in, fire everything and count the casualties later. It copies the first two steps exactly. It always does the counting.
 type|freebooters_charge|null|0	1	<good>50%</good> increased crew casualties.
@@ -4192,6 +4277,13 @@ type|high_tech_affinity|FRIGATE|0	0	<good>+5</good> to High Tech Affinity.
 type|high_tech_affinity|DESTROYER|0	0	<good>+5</good> to High Tech Affinity.
 type|high_tech_affinity|CRUISER|0	0	<good>+5</good> to High Tech Affinity.
 type|high_tech_affinity|CAPITAL_SHIP|0	0	<good>+5</good> to High Tech Affinity.
+flavour|hold_the_line	0	Hegemony line drill holds that a battle line which keeps station cannot be broken, only worn down. The crew posts damage-control teams behind the forward armor and learns to stop the ship when the shooting starts. Navy instructors call this courage. Navy accountants call it cheaper than engines.
+flavourAutomated|hold_the_line	0	Hegemony line drill holds that a battle line which keeps station cannot be broken, only worn down. The ship's core studies recordings of Navy lines under fire, and the refit crew braces the forward armor for a ship that stops when the shooting starts. Navy instructors call this courage. Navy accountants call it cheaper than engines.
+type|hold_the_line|null|0	0	<good>15%</good> reduced armor damage taken while moving slower than 25% of top speed.
+type|hold_the_line|FRIGATE|0	0	<good>15%</good> reduced armor damage taken while moving slower than 25% of top speed.
+type|hold_the_line|DESTROYER|0	0	<good>15%</good> reduced armor damage taken while moving slower than 25% of top speed.
+type|hold_the_line|CRUISER|0	0	<good>15%</good> reduced armor damage taken while moving slower than 25% of top speed.
+type|hold_the_line|CAPITAL_SHIP|0	0	<good>15%</good> reduced armor damage taken while moving slower than 25% of top speed.
 flavour|hullbreacher_rounds	0	Former Hegemony Navy gunners in the crew remember the breacher loads the Navy keeps for boarding actions, shells hardened to punch through plating instead of bursting on it. The crew sees no reason to save them for boarding.
 flavourAutomated|hullbreacher_rounds	0	The Hegemony Navy keeps breacher loads for boarding actions, shells hardened to punch through plating instead of bursting on it. The ship's core finds their specifications in a seized Navy ordnance manifest and loads them for every fight. It has no boarding actions to save them for.
 type|hullbreacher_rounds|null|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
@@ -4263,6 +4355,11 @@ type|increased_hull|FRIGATE|0	0	<good>2%</good> more hull points.
 type|increased_hull|DESTROYER|0	0	<good>2%</good> more hull points.
 type|increased_hull|CRUISER|0	0	<good>2%</good> more hull points.
 type|increased_hull|CAPITAL_SHIP|0	0	<good>2%</good> more hull points.
+type|increased_sensor_strength|null|0	0	<good>5%</good> increased this ship's sensor strength.
+type|increased_sensor_strength|FRIGATE|0	0	<good>5%</good> increased this ship's sensor strength.
+type|increased_sensor_strength|DESTROYER|0	0	<good>5%</good> increased this ship's sensor strength.
+type|increased_sensor_strength|CRUISER|0	0	<good>5%</good> increased this ship's sensor strength.
+type|increased_sensor_strength|CAPITAL_SHIP|0	0	<good>5%</good> increased this ship's sensor strength.
 type|increased_vent_rate|null|0	0	<good>20%</good> increased venting speed.
 type|increased_vent_rate|FRIGATE|0	0	<good>20%</good> increased venting speed.
 type|increased_vent_rate|DESTROYER|0	0	<good>20%</good> increased venting speed.
@@ -4787,11 +4884,21 @@ type|phase_fed_magazines|FRIGATE|0	0	<good>100%</good> increased ammo regenerati
 type|phase_fed_magazines|DESTROYER|0	0	<good>100%</good> increased ammo regeneration while phased.
 type|phase_fed_magazines|CRUISER|0	0	<good>100%</good> increased ammo regeneration while phased.
 type|phase_fed_magazines|CAPITAL_SHIP|0	0	<good>100%</good> increased ammo regeneration while phased.
-type|point_defense_damage_to_missiles|null|0	0	<good>25%</good> increased damage dealt to missiles by point-defense weapons.
-type|point_defense_damage_to_missiles|FRIGATE|0	0	<good>25%</good> increased damage dealt to missiles by point-defense weapons.
-type|point_defense_damage_to_missiles|DESTROYER|0	0	<good>25%</good> increased damage dealt to missiles by point-defense weapons.
-type|point_defense_damage_to_missiles|CRUISER|0	0	<good>25%</good> increased damage dealt to missiles by point-defense weapons.
-type|point_defense_damage_to_missiles|CAPITAL_SHIP|0	0	<good>25%</good> increased damage dealt to missiles by point-defense weapons.
+type|point_defense_damage_to_missiles|null|0	0	<good>25%</good> increased damage to missiles.
+type|point_defense_damage_to_missiles|FRIGATE|0	0	<good>25%</good> increased damage to missiles.
+type|point_defense_damage_to_missiles|DESTROYER|0	0	<good>25%</good> increased damage to missiles.
+type|point_defense_damage_to_missiles|CRUISER|0	0	<good>25%</good> increased damage to missiles.
+type|point_defense_damage_to_missiles|CAPITAL_SHIP|0	0	<good>25%</good> increased damage to missiles.
+type|point_defense_damage_to_missiles_and_fighters|null|0	0	<good>10%</good> increased damage to missiles.
+type|point_defense_damage_to_missiles_and_fighters|null|1	0	<good>10%</good> increased damage to fighters.
+type|point_defense_damage_to_missiles_and_fighters|FRIGATE|0	0	<good>10%</good> increased damage to missiles.
+type|point_defense_damage_to_missiles_and_fighters|FRIGATE|1	0	<good>10%</good> increased damage to fighters.
+type|point_defense_damage_to_missiles_and_fighters|DESTROYER|0	0	<good>10%</good> increased damage to missiles.
+type|point_defense_damage_to_missiles_and_fighters|DESTROYER|1	0	<good>10%</good> increased damage to fighters.
+type|point_defense_damage_to_missiles_and_fighters|CRUISER|0	0	<good>10%</good> increased damage to missiles.
+type|point_defense_damage_to_missiles_and_fighters|CRUISER|1	0	<good>10%</good> increased damage to fighters.
+type|point_defense_damage_to_missiles_and_fighters|CAPITAL_SHIP|0	0	<good>10%</good> increased damage to missiles.
+type|point_defense_damage_to_missiles_and_fighters|CAPITAL_SHIP|1	0	<good>10%</good> increased damage to fighters.
 type|rationing|null|0	1	<bad>10%</bad> less supply use for maintenance.
 type|rationing|null|1	1	<bad>10%</bad> less fuel consumption rate.
 type|rationing|FRIGATE|0	1	<bad>10%</bad> less supply use for maintenance.

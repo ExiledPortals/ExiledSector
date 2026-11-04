@@ -615,6 +615,130 @@
 			]
 		},
 		{
+			"id": "comsec_discipline",
+			"name": "COMSEC Discipline",
+			"icon": "graphics/icons/eccm.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ELECTRONIC_WARFARE_PENALTY_PERCENT",
+					"magnitude": -25
+				},
+				{
+					"effect": "SENSOR_STRENGTH_PERCENT",
+					"magnitude": 15
+				}
+			],
+			"flavour": "A COMSEC signals manual, left behind at an Ancyra customs post, shows the crew how to keep fire control working through enemy jamming. Every page is stamped restricted, including the blank ones.",
+			"flavourAutomated": "A COMSEC signals manual, left behind at an Ancyra customs post, sets out how to keep fire control working through enemy jamming. The ship's core adopts its procedures in full. Every page is stamped restricted, including the blank ones.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons",
+				"range"
+			]
+		},
+		{
+			"id": "domain_pattern_laminate",
+			"name": "Domain-Pattern Laminate",
+			"icon": "graphics/icons/armor.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "KINETIC_DAMAGE_TAKEN_PERCENT",
+					"magnitude": -8
+				},
+				{
+					"effect": "HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT",
+					"magnitude": -8
+				}
+			],
+			"flavour": "Hegemony refit yards still lay armor plate to Domain specifications, unchanged since before the Collapse. A yard foreman on Chicomoztoc sells the crew the pattern on the understanding that it does not exist.",
+			"flavourAutomated": "Hegemony refit yards still lay armor plate to Domain specifications, unchanged since before the Collapse. The ship's core finds the pattern in a Chicomoztoc yard's maintenance logs, and the refit crew lays it to the letter. The logs list the pattern as not existing.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"armour"
+			]
+		},
+		{
+			"id": "flak_screen_doctrine",
+			"name": "Flak Screen Doctrine",
+			"icon": "graphics/icons/pointdefenseai.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "MISSILE_KILL_FLAK_DAMAGE_FLAT",
+					"magnitude": 100
+				}
+			],
+			"flavour": "Hegemony point defense crews pack their flak loads for a wide burst, on the theory that a missile is rarely alone. The crew learns the trick escorting a Dominator through a missile strike. Its captain bills them for the ammunition.",
+			"flavourAutomated": "Hegemony point defense crews pack their flak loads for a wide burst, on the theory that a missile is rarely alone. The ship's core records the pattern while escorting a Dominator through a missile strike, and the refit crew repacks the magazines to match. The Dominator's captain bills for the ammunition.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"point_defense",
+				"weapons"
+			]
+		},
+		{
+			"id": "hold_the_line",
+			"name": "Hold the Line",
+			"icon": "graphics/icons/heavyarmor.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ARMOR_DAMAGE_TAKEN_AT_LOW_SPEED_PERCENT",
+					"magnitude": -15
+				}
+			],
+			"flavour": "Hegemony line drill holds that a battle line which keeps station cannot be broken, only worn down. The crew posts damage-control teams behind the forward armor and learns to stop the ship when the shooting starts. Navy instructors call this courage. Navy accountants call it cheaper than engines.",
+			"flavourAutomated": "Hegemony line drill holds that a battle line which keeps station cannot be broken, only worn down. The ship's core studies recordings of Navy lines under fire, and the refit crew braces the forward armor for a ship that stops when the shooting starts. Navy instructors call this courage. Navy accountants call it cheaper than engines.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"armour"
+			]
+		},
+		{
+			"id": "auxiliary_screen",
+			"name": "Auxiliary Screen",
+			"icon": "graphics/icons/escort_package.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "SMALLER_ALLY_DAMAGE_TAKEN_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"requiredHullSizes": [
+				"DESTROYER",
+				"CRUISER",
+				"CAPITAL_SHIP"
+			],
+			"flavour": "Hegemony auxiliary fleets are made of whatever the Navy can requisition, and the battle line is expected to shelter them. A cycle of convoy duty out of Jangala teaches the crew to keep the ship between the enemy and the smaller hulls. The auxiliaries are grateful, in the manner of people who have been told to be.",
+			"flavourAutomated": "Hegemony auxiliary fleets are made of whatever the Navy can requisition, and the battle line is expected to shelter them. The ship's core logs a cycle of convoy duty out of Jangala and learns to keep its hull between the enemy and the smaller ships. The auxiliaries are grateful, in the manner of people who have been told to be.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"fleet_support"
+			]
+		},
+		{
+			"id": "concussion_shells",
+			"name": "Concussion Shells",
+			"icon": "graphics/icons/heavy_ballistics_integration.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"flavour": "Planetary defense batteries on Eventide fire heavy shells with a delayed charge that bursts just inside the plating, shaking loose whatever is mounted nearby. A retired battery sergeant teaches the crew to pack them in exchange for passage off-world. The sergeant asks not to be told where the shells end up.",
+			"flavourAutomated": "Planetary defense batteries on Eventide fire heavy shells with a delayed charge that bursts just inside the plating, shaking loose whatever is mounted nearby. The ship's core copies the fusing tables from a salvaged battery fire-control unit, and the refit crew packs the shells to match. The unit is still listed as in service.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"ballistic",
+				"req_ballistic"
+			]
+		},
+		{
 			"id": "league_picket_targeting",
 			"name": "League Picket Targeting",
 			"icon": "graphics/icons/attuned_sensors.png",
@@ -2750,6 +2874,20 @@
 			]
 		},
 		{
+			"id": "increased_sensor_strength",
+			"name": "Increased Sensor Strength",
+			"icon": "",
+			"effects": [
+				{
+					"effect": "SENSOR_STRENGTH_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"tags": [
+				"logistics"
+			]
+		},
+		{
 			"id": "knights_charge",
 			"name": "Knight's Charge",
 			"icon": "graphics/icons/violence_of_action.png",
@@ -3268,6 +3406,24 @@
 			]
 		},
 		{
+			"id": "point_defense_damage_to_missiles_and_fighters",
+			"name": "Point Defense Damage to Missiles and Fighters",
+			"icon": "",
+			"effects": [
+				{
+					"effect": "PD_DAMAGE_TO_MISSILES_PERCENT",
+					"magnitude": 10
+				},
+				{
+					"effect": "DAMAGE_TO_FIGHTERS_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"point_defense"
+			]
+		},
+		{
 			"id": "maneuverability",
 			"name": "Maneuverability",
 			"icon": "graphics/icons/maneuverability_percent.png",
@@ -3429,6 +3585,20 @@
 			],
 			"tags": [
 				"dmgtypeenergy"
+			]
+		},
+		{
+			"id": "fragmentation_damage_resistance",
+			"name": "Fragmentation Damage Resistance",
+			"icon": "",
+			"effects": [
+				{
+					"effect": "FRAGMENTATION_DAMAGE_TAKEN_PERCENT",
+					"magnitude": -4
+				}
+			],
+			"tags": [
+				"armour"
 			]
 		},
 		{

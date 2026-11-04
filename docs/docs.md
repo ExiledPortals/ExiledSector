@@ -204,6 +204,29 @@ refreshed by each hit, capped at 90% less. As with shield disruption, the strong
 share of maximum flux from whichever ship dealt the killing blow, if it has the effect. Strikecraft and station
 modules don't count (`KillFluxVentListener`).
 
+### Flak bursts
+
+`MISSILE_KILL_FLAK_DAMAGE_FLAT` remembers each enemy missile this ship's weapons hit and, on the next frame, bursts
+at any whose hitpoints reached zero. The burst deals flat fragmentation damage to enemy missiles and strike craft
+within 100 su, and missiles it destroys don't burst again (`FlakBurstListener`).
+
+### Concussion Shells
+
+A large ballistic projectile hit on an enemy ship's armor or hull rolls `LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT`
+and temporarily disables whichever working weapon or engine sits nearest the impact (`ConcussionShellListener`).
+
+### Auxiliary Screen
+
+`SMALLER_ALLY_DAMAGE_TAKEN_PERCENT` multiplies the hull, armor and shield damage taken by allied ships of a smaller
+hull size within 800 su, rechecked every 0.25 seconds. Strike craft and station modules don't count, and only the
+strongest source applies (`AuxiliaryScreenField`).
+
+### Range per sensor strength
+
+`ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT` applies after every other tree effect and again once the ship is built,
+so sensor strength from the tree, such as COMSEC Discipline's, and from hull mods counts toward it
+(`WeaponSkillEffect.applySensorRange`).
+
 </details>
 
 <details>

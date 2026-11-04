@@ -213,6 +213,23 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("hull", LowHull.HULL_LEVEL * 100f).styled();
         }
     },
+    ARMOR_DAMAGE_TAKEN_AT_LOW_SPEED_PERCENT(new ConditionalStatEffect(PERCENT, liveStat(MutableShipStatsAPI::getArmorDamageTakenMult),
+            "stat.armorDamageTaken", HoldingStation::isHoldingStation)) {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
+        public boolean invertsDescriptionColours() {
+            return false;
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", Math.abs(magnitude)).arg("speed", HoldingStation.TOP_SPEED_FRACTION * 100f).styled();
+        }
+    },
     RAM_PROW_COLLISION_DAMAGE_PERCENT(listener(CollisionDamageListener.COLLISION_DAMAGE_PERCENT_KEY, CollisionDamageListener.class,
             CollisionDamageListener::new)),
     HUNGERING_RIFT_HEALING_PERCENT {

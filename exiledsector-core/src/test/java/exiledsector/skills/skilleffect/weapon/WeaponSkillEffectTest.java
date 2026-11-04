@@ -16,6 +16,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.logistics.LogisticsSkillEffect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -155,6 +156,20 @@ class WeaponSkillEffectTest {
         assertEquals(60f, energyRange.getFlatBonus(), EPSILON);
         assertEquals(0f, beamRange.getFlatBonus(), EPSILON);
         assertEquals(0f, ballisticRange.getFlatBonus(), EPSILON);
+    }
+
+    @Test
+    void sensorStrengthPercentFromTheTreeRaisesTheEnergyRangeBonus() {
+        StatBonus energyRange = new StatBonus();
+        when(stats.getSensorStrength()).thenReturn(new MutableStat(100f));
+        when(stats.getEnergyWeaponRangeBonus()).thenReturn(energyRange);
+        when(stats.getBallisticWeaponRangeBonus()).thenReturn(new StatBonus());
+
+        LogisticsSkillEffect.SENSOR_STRENGTH_PERCENT.apply(stats, "comsec", 20f);
+        WeaponSkillEffect.ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT.apply(stats, "mod_id", 0.5f);
+
+        assertFalse(LogisticsSkillEffect.SENSOR_STRENGTH_PERCENT.appliesAfterOtherEffects());
+        assertEquals(60f, energyRange.getFlatBonus(), EPSILON);
     }
 
     @Test

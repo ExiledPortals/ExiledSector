@@ -73,7 +73,6 @@ hull,increased_hull
 hull_breacher,hullbreacher_rounds
 hull_multi,more_hull
 hybrid_flux,flux_capacity_and_dissipation
-increased_sensor_strength,sensor_strength
 insulatedengine,insulated_engine_assembly
 ion_rounds,ion_bolter_rounds
 less_energy_damage_taken,energy_damage_resistance

@@ -82,6 +82,7 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
         }
     },
     NON_MISSILE_WEAPON_RANGE_CAP_FLAT(new DerivedStatEffect(WeaponSkillEffect::capRange, null, true)),
+    DAMAGE_TO_FIGHTERS_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToFighters), "stat.damageToFighters", false)),
     DAMAGE_TO_FRIGATE_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToFrigates), "stat.damageToFrigates", false)),
     DAMAGE_TO_DESTROYER_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToDestroyers), "stat.damageToDestroyers", false)),
     DAMAGE_TO_CRUISER_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToCruisers), "stat.damageToCruisers", false)),

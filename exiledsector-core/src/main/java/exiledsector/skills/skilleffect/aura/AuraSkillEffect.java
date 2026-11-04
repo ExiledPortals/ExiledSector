@@ -57,6 +57,13 @@ public enum AuraSkillEffect implements BackedSkillEffect {
                     .arg("cap", GravityDragField.MAX_TOTAL_REDUCTION_PERCENT).styled();
         }
     },
+    SMALLER_ALLY_DAMAGE_TAKEN_PERCENT(listener(AuxiliaryScreenListener.DAMAGE_TAKEN_PERCENT_KEY, AuxiliaryScreenListener.class,
+            AuxiliaryScreenListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", AuxiliaryScreenField.RANGE).styled();
+        }
+    },
     MALFUNCTION_AURA_PERCENT(listener(MalfunctionAuraListener.MALFUNCTION_PERCENT_KEY, MalfunctionAuraListener.class, MalfunctionAuraListener::new)) {
         @Override
         public StyledText description(float magnitude) {
