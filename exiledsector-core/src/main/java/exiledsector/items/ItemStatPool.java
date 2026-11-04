@@ -29,18 +29,7 @@ public final class ItemStatPool {
     private static final Pattern LEADING_NON_LETTERS = Pattern.compile("^[^\\p{L}]+");
     private static final AtomicReference<Pools> CACHED = new AtomicReference<>();
 
-    private record Source(Collection<ItemDefinition> definitions, Collection<Modifier> modifiers, List<Modifier> corruptionPool) {
-
-        static Source current() {
-            return new Source(ItemDefinitions.all(), ItemModifiers.all(), ItemImplicits.corruptionPool());
-        }
-
-        boolean sameAs(Source other) {
-            return definitions == other.definitions && modifiers == other.modifiers && corruptionPool == other.corruptionPool;
-        }
-    }
-
-    private record Pools(Source source, Map<ItemKind, Set<String>> statsByKind, Set<String> allStats, Map<String, Float> sampleValues,
+    private record Pools(ModifierParts.Index index, Map<ItemKind, Set<String>> statsByKind, Set<String> allStats, Map<String, Float> sampleValues,
                          Map<String, String> labels) {
     }
 
@@ -71,44 +60,28 @@ public final class ItemStatPool {
     }
 
     private static Pools pools() {
-        Source source = Source.current();
+        ModifierParts.Index index = ModifierParts.index();
         Pools cached = CACHED.get();
-        if (cached != null && cached.source().sameAs(source)) {
+        if (cached != null && cached.index() == index) {
             return cached;
         }
-        Pools built = build(source);
+        Pools built = build(index);
         CACHED.set(built);
         return built;
     }
 
-    private static Pools build(Source source) {
+    private static Pools build(ModifierParts.Index index) {
         ModifierEffects effects = ItemEffects.forType(ItemType.HULL_ITEM);
         Map<String, Float> sampleValues = new LinkedHashMap<>();
         Map<ItemKind, Set<String>> statsByKind = new EnumMap<>(ItemKind.class);
-        Set<String> pooledStats = new LinkedHashSet<>();
+        Set<String> allStats = new LinkedHashSet<>();
         for (ItemKind kind : ItemKind.sectionItemTypes()) {
             Set<String> kindStats = new LinkedHashSet<>();
-            ItemImplicits.forType(kind).forEach(implicit -> addLines(kindStats, implicit, effects, sampleValues));
-            for (ItemDefinition definition : source.definitions()) {
-                if (definition.kind() == kind) {
-                    definition.pool().forEach(entry -> addLines(kindStats, entry.modifier(), effects, sampleValues));
-                }
-            }
+            index.modifiers(kind).forEach(modifier -> addLines(kindStats, modifier, effects, sampleValues));
             statsByKind.put(kind, kindStats);
-            pooledStats.addAll(kindStats);
+            allStats.addAll(kindStats);
         }
-        Set<String> unpooledStats = new LinkedHashSet<>();
-        for (Modifier modifier : source.modifiers()) {
-            if (ItemModifiers.itemTypes(modifier.id()).contains(ItemType.HULL_ITEM)) {
-                addLines(unpooledStats, modifier, effects, sampleValues);
-            }
-        }
-        source.corruptionPool().forEach(implicit -> addLines(unpooledStats, implicit, effects, sampleValues));
-        unpooledStats.removeAll(pooledStats);
-        statsByKind.values().forEach(kindStats -> kindStats.addAll(unpooledStats));
-        Set<String> allStats = new LinkedHashSet<>(pooledStats);
-        allStats.addAll(unpooledStats);
-        return new Pools(source, statsByKind, Set.copyOf(allStats), sampleValues, new ConcurrentHashMap<>());
+        return new Pools(index, statsByKind, Set.copyOf(allStats), sampleValues, new ConcurrentHashMap<>());
     }
 
     private static void addLines(Set<String> stats, Modifier modifier, ModifierEffects effects, Map<String, Float> sampleValues) {
