@@ -89,7 +89,9 @@ public final class ModifierParts {
         Map<ItemKind, List<Modifier>> listedByPart = new EnumMap<>(ItemKind.class);
         modifiersByPart.forEach((part, modifiers) -> {
             listedByPart.put(part, List.copyOf(modifiers.values()));
-            modifiers.keySet().forEach(modifierId -> partsByModifier.computeIfAbsent(modifierId, id -> EnumSet.noneOf(ItemKind.class)).add(part));
+            for (String modifierId : modifiers.keySet()) {
+                partsByModifier.computeIfAbsent(modifierId, id -> EnumSet.noneOf(ItemKind.class)).add(part);
+            }
         });
         partsByModifier.replaceAll((modifierId, parts) -> Collections.unmodifiableSet(parts));
         return new Index(Collections.unmodifiableMap(partsByModifier), Collections.unmodifiableMap(listedByPart));

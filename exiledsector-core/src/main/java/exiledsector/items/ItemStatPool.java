@@ -29,8 +29,8 @@ public final class ItemStatPool {
     private static final Pattern LEADING_NON_LETTERS = Pattern.compile("^[^\\p{L}]+");
     private static final AtomicReference<Pools> CACHED = new AtomicReference<>();
 
-    private record Pools(ModifierParts.Index index, Map<ItemKind, Set<String>> statsByKind, Set<String> allStats, Map<String, Float> sampleValues,
-                         Map<String, String> labels) {
+    private record Pools(ModifierParts.Index index, Map<ItemKind, Set<String>> statsByKind, Set<String> allStats,
+                         Map<String, Float> sampleValues, Map<String, String> labels) {
     }
 
     private ItemStatPool() {

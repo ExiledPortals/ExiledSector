@@ -61,7 +61,8 @@ class ModifierPartsTest {
 
     private static void registerImplicits() throws Exception {
         ItemImplicits.register(new JSONArray().put(new JSONObject().put("section", "bridge").put("implicits", "@" + BRIDGE_IMPLICIT)));
-        ItemImplicits.registerCorruptionPool(new JSONArray().put(new JSONObject().put(CorruptionImplicitPool.IMPLICIT_COLUMN, "@" + CORRUPTION_IMPLICIT)));
+        ItemImplicits.registerCorruptionPool(new JSONArray()
+                .put(new JSONObject().put(CorruptionImplicitPool.IMPLICIT_COLUMN, "@" + CORRUPTION_IMPLICIT)));
     }
 
     @Test
