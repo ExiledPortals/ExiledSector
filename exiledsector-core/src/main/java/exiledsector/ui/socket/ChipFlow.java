@@ -32,12 +32,18 @@ final class ChipFlow {
 
     private final TooltipMakerAPI element;
     private final float rowWidth;
+    private final float flowTop;
     private float chipLeft;
     private int chipRow;
 
     ChipFlow(TooltipMakerAPI element, float rowWidth) {
+        this(element, rowWidth, 0f);
+    }
+
+    ChipFlow(TooltipMakerAPI element, float rowWidth, float flowTop) {
         this.element = element;
         this.rowWidth = rowWidth;
+        this.flowTop = flowTop;
     }
 
     static float width(String label) {
@@ -83,26 +89,27 @@ final class ChipFlow {
         return rows * (CHIP_HEIGHT + HoloPanel.GAP);
     }
 
-    void place(String label, Object chipId, Colors colors, boolean checked) {
-        place(label, chipId, colors, checked, width(label));
+    ButtonAPI place(String label, Object chipId, Colors colors, boolean checked) {
+        return place(label, chipId, colors, checked, width(label));
     }
 
-    void place(String label, Object chipId, Colors colors, boolean checked, float chipWidth) {
+    ButtonAPI place(String label, Object chipId, Colors colors, boolean checked, float chipWidth) {
         if (chipLeft > 0f && chipLeft + chipWidth > rowWidth + 0.5f) {
             nextRow();
         }
-        placeInRow(label, chipId, colors, checked, chipWidth);
+        return placeInRow(label, chipId, colors, checked, chipWidth);
     }
 
     void placeInRow(String label, Object chipId, Colors colors, boolean checked) {
         placeInRow(label, chipId, colors, checked, width(label));
     }
 
-    private void placeInRow(String label, Object chipId, Colors colors, boolean checked, float chipWidth) {
+    private ButtonAPI placeInRow(String label, Object chipId, Colors colors, boolean checked, float chipWidth) {
         ButtonAPI chip = element.addAreaCheckbox(label, chipId, colors.base(), colors.dark(), colors.bright(), chipWidth, CHIP_HEIGHT, 0f);
         chip.setChecked(checked);
-        chip.getPosition().inTL(chipLeft, chipRow * (CHIP_HEIGHT + HoloPanel.GAP));
+        chip.getPosition().inTL(chipLeft, flowTop + chipRow * (CHIP_HEIGHT + HoloPanel.GAP));
         chipLeft += chipWidth + HoloPanel.GAP;
+        return chip;
     }
 
     void nextRow() {

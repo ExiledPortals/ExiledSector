@@ -200,6 +200,10 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
         return new SocketPanelPlacement(screenLayout.panelLeft(), panelTop(), screenLayout.panelWidth(), panelHeight(), instantly);
     }
 
+    private SocketPanelPlacement storagePlacement() {
+        return placement(true).withAdvancedSearchArea(screenLayout.advancedSearchArea(panelTop(), panelHeight()));
+    }
+
     private void openUpgrades(boolean instantly) {
         upgradesPanel = HullUpgradePanel.open(hostPanel, placement(instantly), sectionsDisplay.panelView(), sectionsDisplay.panelListener(() -> {
             upgradesPanel = null;
@@ -211,7 +215,7 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
     }
 
     private void openStorage(ItemKind kindFilter) {
-        ItemStoragePanel storagePanel = ItemStoragePanel.openSectionItems(hostPanel, placement(true), storage.shipNames(), new ItemStoragePanel.Listener() {
+        ItemStoragePanel storagePanel = ItemStoragePanel.openSectionItems(hostPanel, storagePlacement(), storage.shipNames(), new ItemStoragePanel.Listener() {
             @Override
             public void selected(Item item) {
                 chooseFromStorage(item);
@@ -430,7 +434,8 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
 
     private boolean panelContains(float x, float y) {
         return (bay != null && bay.contains(x, y))
-                || (storage.isOpen() && (storage.panel().contains(x, y) || storage.panel().craftingBenchContains(x, y)))
+                || (storage.isOpen() && (storage.panel().contains(x, y) || storage.panel().craftingBenchContains(x, y)
+                || storage.panel().advancedSearchContains(x, y)))
                 || (upgradesPanel != null && upgradesPanel.contains(x, y));
     }
 

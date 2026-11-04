@@ -2,6 +2,7 @@ package exiledsector.ui;
 
 import exiledsector.ui.section.SectionLayout;
 import exiledsector.ui.refit.RefitScreenLayout;
+import exiledsector.ui.socket.FreeArea;
 import exiledsector.ui.socket.ItemStoragePanel;
 
 record HullItemsLayout(float panelLeft, float panelWidth, float settledShipX, SectionsDisplay.SectionBounds sectionBounds) {
@@ -11,6 +12,7 @@ record HullItemsLayout(float panelLeft, float panelWidth, float settledShipX, Se
     static final float SHIP_EDGE_MARGIN = 24f;
     static final float SECTION_LABEL_OVERHANG = 24f;
     static final float MAX_PANEL_WIDTH = 640f;
+    static final float SCREEN_MARGIN = 10f;
 
     static HullItemsLayout of(RefitScreenLayout layout, SectionLayout.ShipExtent extent) {
         float radius = SectionLayout.SECTION_RADIUS;
@@ -25,5 +27,11 @@ record HullItemsLayout(float panelLeft, float panelWidth, float settledShipX, Se
                 panelLeft + panelWidth + SECTION_BAND_MARGIN + radius, frameRight - SECTION_BAND_MARGIN - radius,
                 layout.frameY() + PANEL_MARGIN + verticalReach, layout.frameTop() - PANEL_MARGIN - verticalReach);
         return new HullItemsLayout(panelLeft, panelWidth, settledShipX, bounds);
+    }
+
+    FreeArea advancedSearchArea(float panelTop, float panelHeight) {
+        float areaRight = panelLeft - PANEL_MARGIN;
+        float areaBottom = panelTop + panelHeight;
+        return new FreeArea(SCREEN_MARGIN, SCREEN_MARGIN, Math.max(0f, areaRight - SCREEN_MARGIN), Math.max(0f, areaBottom - SCREEN_MARGIN));
     }
 }
