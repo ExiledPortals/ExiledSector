@@ -124,6 +124,13 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
             return PERCENT.describeStat(magnitude, "stat.damageToSlowerShips");
         }
     },
+    DAMAGE_TO_PRISTINE_SHIP_PERCENT(listener(PristineShipDamageListener.DAMAGE_PERCENT_KEY, PristineShipDamageListener.class,
+            PristineShipDamageListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return PERCENT.describeStat(magnitude, "stat.damageToPristineShips");
+        }
+    },
     WEAPON_MALFUNCTION_PERCENT(statEffect(PERCENT, new StatTarget.PercentagePoints(MutableShipStatsAPI::getWeaponMalfunctionChance),
             "stat.weaponMalfunctionChance", true)),
     PD_IGNORES_DECOY_FLARES(flag(Stats.PD_IGNORES_FLARES)),

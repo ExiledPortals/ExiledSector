@@ -9,6 +9,7 @@ import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.DerivedStatEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
+import exiledsector.skills.skilleffect.PerDModMultEffect;
 import exiledsector.skills.skilleffect.StatMode;
 
 import static exiledsector.skills.skilleffect.Backings.flag;
@@ -16,6 +17,7 @@ import static exiledsector.skills.skilleffect.Backings.statEffect;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
+import static exiledsector.skills.skilleffect.StatTarget.all;
 import static exiledsector.skills.skilleffect.StatTarget.bonus;
 import static exiledsector.skills.skilleffect.StatTarget.dynamicMod;
 import static exiledsector.skills.skilleffect.StatTarget.dynamicStat;
@@ -157,6 +159,8 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
     },
     SUPPLIES_PER_MONTH_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getSuppliesPerMonth), "stat.supplyUseForMaintenance", true)),
     FUEL_USE_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getFuelUseMod), "stat.fuelConsumptionRate", true)),
+    FUEL_AND_SUPPLY_USE_MULT_PER_DMOD(new PerDModMultEffect(all(bonus(MutableShipStatsAPI::getFuelUseMod), stat(MutableShipStatsAPI::getSuppliesPerMonth)),
+            "stat.fuelAndSupplyUsePerDMod", true)),
     REMOVE_CIVILIAN_HULL_PENALTY {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -231,6 +235,38 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
         @Override
         public StyledText description(float magnitude) {
             return StatMode.PERCENT.describeStat(magnitude, YOUR_FLEET, "stat.blackHoleHullItemQuantity");
+        }
+    },
+    POST_BATTLE_WEAPON_SALVAGE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(SalvagedArmaments.CONTRIBUTION_KEY).modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public boolean appliesToNpcShips() {
+            return false;
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return StatMode.PERCENT.describeStat(magnitude, YOUR_FLEET, "stat.postBattleWeaponAndWingSalvage");
+        }
+    },
+    RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(RecoveryDModAvoidance.CHANCE_PERCENT_KEY).modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public boolean appliesToNpcShips() {
+            return false;
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("max", RecoveryDModAvoidance.MAX_CHANCE_PERCENT).styled();
         }
     },
     PHASE_FIELD_CONTRIBUTION_PERCENT {

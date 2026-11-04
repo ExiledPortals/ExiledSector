@@ -662,6 +662,18 @@ The armor repair counts, once a second while the swarm is full, the fragments va
 swarm's respawn rate, and each repairs the most damaged armor cell. Only armor actually restored counts toward its 10%
 per-battle cap, kept per fleet member like the phase-entry repair's (`SwarmOverflowRepairListener`).
 
+### Derelict Graveyard modifiers
+
+The recovery chance adds up over the fleet's active ships, capped at 30%, and is rolled when vanilla adds battle
+d-mods to a ship the player can recover: a `DModAdderPlugin` that wins the roll adds none (`RecoveryDModAvoidance`).
+The weapon and wing share adds up the same way, uncapped, and when post-battle salvage is generated each weapon and
+wing stack gains that share, the fraction rolled (`SalvagedArmaments`, from `ItemLootListener`).
+
+Each enemy ship destroyed within 1000 su repairs every armor cell by 5% of its maximum, and only armor actually
+restored counts toward the rolled per-battle cap (`WreckPlatingListener`, through `ArmorCells.repairWithinBattleCap`
+as the Rift's phase-entry repair). Free phase upkeep counts any non-strikecraft hulk on the battlefield
+(`WreckShelterListener`), and the per-d-mod lines count d-mods as `TOP_SPEED_MULT_PER_DMOD` does.
+
 ### Chart tier groups
 
 Chart tiers fall into three groups: low (1-5), mid (6-10) and high (11-16) (`TierGroup`). A chart modifier line gives

@@ -33,6 +33,7 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
             "stat.phaseCloakActivationCost", true)),
     PHASE_CLOAK_UPKEEP_COST_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getPhaseCloakUpkeepCostBonus),
             "stat.phaseCloakUpkeepCost", true)),
+    NO_PHASE_UPKEEP_NEAR_WRECK_RANGE(listener(WreckShelterListener.RANGE_KEY, WreckShelterListener.class, WreckShelterListener::new)),
     PHASE_CLOAK_COOLDOWN_PERCENT(statEffect(PERCENT, bonus(MutableShipStatsAPI::getPhaseCloakCooldownBonus),
             "stat.phaseCloakCooldown", true)),
     PHASE_CLOAK_ACCELERATION_PERCENT(statEffect(FLAT, dynamicMod(Stats.PHASE_CLOAK_ACCEL_MOD), "stat.accelerationWhilePhased", false)) {

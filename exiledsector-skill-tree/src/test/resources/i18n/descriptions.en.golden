@@ -670,6 +670,12 @@ effect|DAMAGE_TO_HELPLESS_SHIP_PERCENT|12.5	0	<good>12.5%</good> increased damag
 effect|DAMAGE_TO_HELPLESS_SHIP_PERCENT|100.0	0	<good>100%</good> increased damage to overloaded, venting or flamed-out ships.
 effect|DAMAGE_TO_HELPLESS_SHIP_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to overloaded, venting or flamed-out ships.
 effect|DAMAGE_TO_HELPLESS_SHIP_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to overloaded, venting or flamed-out ships.
+effect|DAMAGE_TO_PRISTINE_SHIP_PERCENT|1.0	0	<good>1%</good> increased damage to ships without D-mods.
+effect|DAMAGE_TO_PRISTINE_SHIP_PERCENT|10.0	0	<good>10%</good> increased damage to ships without D-mods.
+effect|DAMAGE_TO_PRISTINE_SHIP_PERCENT|12.5	0	<good>12.5%</good> increased damage to ships without D-mods.
+effect|DAMAGE_TO_PRISTINE_SHIP_PERCENT|100.0	0	<good>100%</good> increased damage to ships without D-mods.
+effect|DAMAGE_TO_PRISTINE_SHIP_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to ships without D-mods.
+effect|DAMAGE_TO_PRISTINE_SHIP_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to ships without D-mods.
 effect|DAMAGE_TO_SLOWER_SHIP_PERCENT|1.0	0	<good>1%</good> increased damage to ships with a lower top speed than this one.
 effect|DAMAGE_TO_SLOWER_SHIP_PERCENT|10.0	0	<good>10%</good> increased damage to ships with a lower top speed than this one.
 effect|DAMAGE_TO_SLOWER_SHIP_PERCENT|12.5	0	<good>12.5%</good> increased damage to ships with a lower top speed than this one.
@@ -1144,6 +1150,12 @@ effect|FLUX_DISSIPATION_MULT|12.5	0	<good>12.5%</good> more flux dissipation.
 effect|FLUX_DISSIPATION_MULT|100.0	0	<good>100%</good> more flux dissipation.
 effect|FLUX_DISSIPATION_MULT|-10.0	0	<bad>10%</bad> less flux dissipation.
 effect|FLUX_DISSIPATION_MULT|-12.5	0	<bad>12.5%</bad> less flux dissipation.
+effect|FLUX_DISSIPATION_MULT_PER_DMOD|1.0	0	<good>1%</good> more flux dissipation per D-mod, up to 5 D-mods.
+effect|FLUX_DISSIPATION_MULT_PER_DMOD|10.0	0	<good>10%</good> more flux dissipation per D-mod, up to 5 D-mods.
+effect|FLUX_DISSIPATION_MULT_PER_DMOD|12.5	0	<good>12.5%</good> more flux dissipation per D-mod, up to 5 D-mods.
+effect|FLUX_DISSIPATION_MULT_PER_DMOD|100.0	0	<good>100%</good> more flux dissipation per D-mod, up to 5 D-mods.
+effect|FLUX_DISSIPATION_MULT_PER_DMOD|-10.0	0	<bad>10%</bad> less flux dissipation per D-mod, up to 5 D-mods.
+effect|FLUX_DISSIPATION_MULT_PER_DMOD|-12.5	0	<bad>12.5%</bad> less flux dissipation per D-mod, up to 5 D-mods.
 effect|FLUX_DISSIPATION_PERCENT|1.0	0	<good>1%</good> increased flux dissipation.
 effect|FLUX_DISSIPATION_PERCENT|10.0	0	<good>10%</good> increased flux dissipation.
 effect|FLUX_DISSIPATION_PERCENT|12.5	0	<good>12.5%</good> increased flux dissipation.
@@ -1210,6 +1222,12 @@ effect|FRAGMENT_SWARM_SIZE_PERCENT_PER_AFFINITY|12.5	0	<good>12.5%</good> increa
 effect|FRAGMENT_SWARM_SIZE_PERCENT_PER_AFFINITY|100.0	0	<good>100%</good> increased fragment swarm size for every 5 affinity.
 effect|FRAGMENT_SWARM_SIZE_PERCENT_PER_AFFINITY|-10.0	0	<bad>10%</bad> reduced fragment swarm size for every 5 affinity.
 effect|FRAGMENT_SWARM_SIZE_PERCENT_PER_AFFINITY|-12.5	0	<bad>12.5%</bad> reduced fragment swarm size for every 5 affinity.
+effect|FUEL_AND_SUPPLY_USE_MULT_PER_DMOD|1.0	1	<good>1%</good> more fuel and supply use per D-mod, up to 5 D-mods.
+effect|FUEL_AND_SUPPLY_USE_MULT_PER_DMOD|10.0	1	<good>10%</good> more fuel and supply use per D-mod, up to 5 D-mods.
+effect|FUEL_AND_SUPPLY_USE_MULT_PER_DMOD|12.5	1	<good>12.5%</good> more fuel and supply use per D-mod, up to 5 D-mods.
+effect|FUEL_AND_SUPPLY_USE_MULT_PER_DMOD|100.0	1	<good>100%</good> more fuel and supply use per D-mod, up to 5 D-mods.
+effect|FUEL_AND_SUPPLY_USE_MULT_PER_DMOD|-10.0	1	<bad>10%</bad> less fuel and supply use per D-mod, up to 5 D-mods.
+effect|FUEL_AND_SUPPLY_USE_MULT_PER_DMOD|-12.5	1	<bad>12.5%</bad> less fuel and supply use per D-mod, up to 5 D-mods.
 effect|FUEL_CAPACITY_FLAT|1.0	0	<good>+1</good> to fuel capacity.
 effect|FUEL_CAPACITY_FLAT|10.0	0	<good>+10</good> to fuel capacity.
 effect|FUEL_CAPACITY_FLAT|12.5	0	<good>+12.5</good> to fuel capacity.
@@ -1816,6 +1834,18 @@ effect|NAV_RATING_PER_HIGH_TECH_AFFINITY|12.5	0	Your fleet has <good>+12.5</good
 effect|NAV_RATING_PER_HIGH_TECH_AFFINITY|100.0	0	Your fleet has <good>+100</good> to nav rating for every 50 High Tech Affinity.
 effect|NAV_RATING_PER_HIGH_TECH_AFFINITY|-10.0	0	Your fleet has <bad>-10</bad> to nav rating for every 50 High Tech Affinity.
 effect|NAV_RATING_PER_HIGH_TECH_AFFINITY|-12.5	0	Your fleet has <bad>-12.5</bad> to nav rating for every 50 High Tech Affinity.
+effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|1.0	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>1%</good> of this ship's total armor per battle.
+effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|10.0	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>10%</good> of this ship's total armor per battle.
+effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|12.5	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>12.5%</good> of this ship's total armor per battle.
+effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|100.0	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>100%</good> of this ship's total armor per battle.
+effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|-10.0	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>-10%</good> of this ship's total armor per battle.
+effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|-12.5	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>-12.5%</good> of this ship's total armor per battle.
+effect|NEARBY_DESTRUCTION_REPLACEMENT_RATE_PERCENT|1.0	0	<good>+1%</good> to strikecraft replacement rate whenever an enemy ship is destroyed within 1500 su.
+effect|NEARBY_DESTRUCTION_REPLACEMENT_RATE_PERCENT|10.0	0	<good>+10%</good> to strikecraft replacement rate whenever an enemy ship is destroyed within 1500 su.
+effect|NEARBY_DESTRUCTION_REPLACEMENT_RATE_PERCENT|12.5	0	<good>+12.5%</good> to strikecraft replacement rate whenever an enemy ship is destroyed within 1500 su.
+effect|NEARBY_DESTRUCTION_REPLACEMENT_RATE_PERCENT|100.0	0	<good>+100%</good> to strikecraft replacement rate whenever an enemy ship is destroyed within 1500 su.
+effect|NEARBY_DESTRUCTION_REPLACEMENT_RATE_PERCENT|-10.0	0	<good>+-10%</good> to strikecraft replacement rate whenever an enemy ship is destroyed within 1500 su.
+effect|NEARBY_DESTRUCTION_REPLACEMENT_RATE_PERCENT|-12.5	0	<good>+-12.5%</good> to strikecraft replacement rate whenever an enemy ship is destroyed within 1500 su.
 effect|NON_BEAM_ENERGY_WEAPON_AMMO_FLAT|1.0	0	<good>+1</good> to non-beam energy weapon ammo capacity. The refit screen's weapon tooltips don't show this.
 effect|NON_BEAM_ENERGY_WEAPON_AMMO_FLAT|10.0	0	<good>+10</good> to non-beam energy weapon ammo capacity. The refit screen's weapon tooltips don't show this.
 effect|NON_BEAM_ENERGY_WEAPON_AMMO_FLAT|12.5	0	<good>+12.5</good> to non-beam energy weapon ammo capacity. The refit screen's weapon tooltips don't show this.
@@ -1930,6 +1960,12 @@ effect|NON_MISSILE_WEAPON_RANGE_CAP_FLAT|12.5	0	Non-missile weapon range can't e
 effect|NON_MISSILE_WEAPON_RANGE_CAP_FLAT|100.0	0	Non-missile weapon range can't exceed <bad>100</bad> su.
 effect|NON_MISSILE_WEAPON_RANGE_CAP_FLAT|-10.0	0	Non-missile weapon range can't exceed <bad>-10</bad> su.
 effect|NON_MISSILE_WEAPON_RANGE_CAP_FLAT|-12.5	0	Non-missile weapon range can't exceed <bad>-12.5</bad> su.
+effect|NO_PHASE_UPKEEP_NEAR_WRECK_RANGE|1.0	0	No phase cloak flux upkeep while within <good>1</good> su of a wreck.
+effect|NO_PHASE_UPKEEP_NEAR_WRECK_RANGE|10.0	0	No phase cloak flux upkeep while within <good>10</good> su of a wreck.
+effect|NO_PHASE_UPKEEP_NEAR_WRECK_RANGE|12.5	0	No phase cloak flux upkeep while within <good>12.5</good> su of a wreck.
+effect|NO_PHASE_UPKEEP_NEAR_WRECK_RANGE|100.0	0	No phase cloak flux upkeep while within <good>100</good> su of a wreck.
+effect|NO_PHASE_UPKEEP_NEAR_WRECK_RANGE|-10.0	0	No phase cloak flux upkeep while within <good>-10</good> su of a wreck.
+effect|NO_PHASE_UPKEEP_NEAR_WRECK_RANGE|-12.5	0	No phase cloak flux upkeep while within <good>-12.5</good> su of a wreck.
 effect|NO_SHIELD_UPKEEP_BELOW_SPEED_PERCENT|1.0	0	No shield flux upkeep while speed is below <good>1%</good> of top speed.
 effect|NO_SHIELD_UPKEEP_BELOW_SPEED_PERCENT|10.0	0	No shield flux upkeep while speed is below <good>10%</good> of top speed.
 effect|NO_SHIELD_UPKEEP_BELOW_SPEED_PERCENT|12.5	0	No shield flux upkeep while speed is below <good>12.5%</good> of top speed.
@@ -2086,6 +2122,12 @@ effect|POST_BATTLE_SALVAGE_PERCENT|12.5	0	Your fleet has <good>12.5%</good> incr
 effect|POST_BATTLE_SALVAGE_PERCENT|100.0	0	Your fleet has <good>100%</good> increased post-battle salvage.
 effect|POST_BATTLE_SALVAGE_PERCENT|-10.0	0	Your fleet has <bad>10%</bad> reduced post-battle salvage.
 effect|POST_BATTLE_SALVAGE_PERCENT|-12.5	0	Your fleet has <bad>12.5%</bad> reduced post-battle salvage.
+effect|POST_BATTLE_WEAPON_SALVAGE_PERCENT|1.0	0	Your fleet has <good>1%</good> increased quantity of weapons and strikecraft wings in post-battle salvage.
+effect|POST_BATTLE_WEAPON_SALVAGE_PERCENT|10.0	0	Your fleet has <good>10%</good> increased quantity of weapons and strikecraft wings in post-battle salvage.
+effect|POST_BATTLE_WEAPON_SALVAGE_PERCENT|12.5	0	Your fleet has <good>12.5%</good> increased quantity of weapons and strikecraft wings in post-battle salvage.
+effect|POST_BATTLE_WEAPON_SALVAGE_PERCENT|100.0	0	Your fleet has <good>100%</good> increased quantity of weapons and strikecraft wings in post-battle salvage.
+effect|POST_BATTLE_WEAPON_SALVAGE_PERCENT|-10.0	0	Your fleet has <bad>10%</bad> reduced quantity of weapons and strikecraft wings in post-battle salvage.
+effect|POST_BATTLE_WEAPON_SALVAGE_PERCENT|-12.5	0	Your fleet has <bad>12.5%</bad> reduced quantity of weapons and strikecraft wings in post-battle salvage.
 effect|RAM_BIGGEST_ENEMY|1.0	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
 effect|RAM_BIGGEST_ENEMY|10.0	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
 effect|RAM_BIGGEST_ENEMY|12.5	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
@@ -2098,6 +2140,12 @@ effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> more collisio
 effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|100.0	0	<good>100%</good> more collision damage dealt to enemy ships and <good>100%</good> less collision damage taken.
 effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> more collision damage dealt to enemy ships and <good>-10%</good> less collision damage taken.
 effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> more collision damage dealt to enemy ships and <good>-12.5%</good> less collision damage taken.
+effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|1.0	0	Your fleet has a <good>1%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
+effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|10.0	0	Your fleet has a <good>10%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
+effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|12.5	0	Your fleet has a <good>12.5%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
+effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|100.0	0	Your fleet has a <good>100%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
+effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|-10.0	0	Your fleet has a <good>-10%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
+effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|-12.5	0	Your fleet has a <good>-12.5%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
 effect|REMOVE_ALL_FIGHTER_BAYS|1.0	0	Removes all of this ship's strikecraft bays.
 effect|REMOVE_ALL_FIGHTER_BAYS|10.0	0	Removes all of this ship's strikecraft bays.
 effect|REMOVE_ALL_FIGHTER_BAYS|12.5	0	Removes all of this ship's strikecraft bays.
@@ -2290,6 +2338,12 @@ effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|12.5	1	<good>12.5%</good> reduced da
 effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|100.0	1	<good>100%</good> reduced damage taken by shields while moving faster than 75% of top speed.
 effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|-10.0	1	<good>10%</good> reduced damage taken by shields while moving faster than 75% of top speed.
 effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|-12.5	1	<good>12.5%</good> reduced damage taken by shields while moving faster than 75% of top speed.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|1.0	0	<good>1%</good> less shield damage taken from automated ships.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|10.0	0	<good>10%</good> less shield damage taken from automated ships.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|12.5	0	<good>12.5%</good> less shield damage taken from automated ships.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|100.0	0	<good>100%</good> less shield damage taken from automated ships.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|-10.0	0	<good>-10%</good> less shield damage taken from automated ships.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|-12.5	0	<good>-12.5%</good> less shield damage taken from automated ships.
 effect|SHIELD_DAMAGE_TAKEN_MULT|1.0	1	<good>1%</good> more damage taken by shields.
 effect|SHIELD_DAMAGE_TAKEN_MULT|10.0	1	<good>10%</good> more damage taken by shields.
 effect|SHIELD_DAMAGE_TAKEN_MULT|12.5	1	<good>12.5%</good> more damage taken by shields.
