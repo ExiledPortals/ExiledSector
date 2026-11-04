@@ -8,6 +8,8 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.impl.campaign.rulecmd.FireAll;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.wormhole.WormholeGateway;
@@ -16,6 +18,7 @@ import exiledsector.ui.atlas.AtlasScreen;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -27,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -113,11 +117,25 @@ class ExiledSectorAtlasOptionTest {
 
     @Test
     void choosingTheOptionOpensTheAtlas() {
-        atlasMock.when(() -> AtlasScreen.open(campaignUI)).thenReturn(true);
+        atlasMock.when(() -> AtlasScreen.open(eq(campaignUI), any())).thenReturn(true);
 
         assertTrue(command.execute("rule", dialog, List.of(new Misc.Token(ExiledSectorAtlasOption.OPEN, Misc.TokenType.LITERAL)), Map.of()));
 
-        atlasMock.verify(() -> AtlasScreen.open(campaignUI), times(1));
+        atlasMock.verify(() -> AtlasScreen.open(eq(campaignUI), any()), times(1));
         verify(options, never()).addOption(anyString(), any(), anyString());
+    }
+
+    @Test
+    void closingTheAtlasRestoresTheColonyMenu() {
+        ArgumentCaptor<Runnable> afterClose = ArgumentCaptor.forClass(Runnable.class);
+        atlasMock.when(() -> AtlasScreen.open(eq(campaignUI), afterClose.capture())).thenReturn(true);
+        Map<String, MemoryAPI> memoryMap = Map.of();
+        command.execute("rule", dialog, List.of(new Misc.Token(ExiledSectorAtlasOption.OPEN, Misc.TokenType.LITERAL)), memoryMap);
+
+        try (MockedStatic<FireAll> fireAll = Mockito.mockStatic(FireAll.class)) {
+            afterClose.getValue().run();
+
+            fireAll.verify(() -> FireAll.fire(null, dialog, memoryMap, ExiledSectorAtlasOption.POPULATE_OPTIONS), times(1));
+        }
     }
 }
