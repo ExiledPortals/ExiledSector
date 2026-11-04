@@ -16,10 +16,13 @@ import exiledsector.items.ItemKind;
 import exiledsector.items.ItemRarity;
 import exiledsector.items.ItemStatPool;
 import exiledsector.ui.VanillaText;
+import exiledsector.ui.util.GLDraw;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +45,6 @@ final class AdvancedSearchPane extends HoloPanel {
         void closed();
     }
 
-    private static final float LABEL_HEIGHT = 18f;
     private static final float LABEL_TEXT_TOP = 4f;
     private static final float TOOLTIP_WIDTH = 320f;
     private static final float COUNT_FIELD_WIDTH = 36f;
@@ -62,6 +64,20 @@ final class AdvancedSearchPane extends HoloPanel {
         Action(String labelKey) {
             this.labelKey = labelKey;
         }
+    }
+
+    private enum Menu {
+        TYPE("ui.socketStorage.menu.type"),
+        RARITY("ui.socketStorage.menu.rarity");
+
+        private final String nameKey;
+
+        Menu(String nameKey) {
+            this.nameKey = nameKey;
+        }
+    }
+
+    private record MenuButton(Menu menu) {
     }
 
     private record TypeChip(ItemKind sectionKind) {
@@ -108,6 +124,8 @@ final class AdvancedSearchPane extends HoloPanel {
     private final List<PolledField> polledFields = new ArrayList<>();
     private final Map<ModifierSearch.Row, ButtonAPI> linesButtons = new IdentityHashMap<>();
     private final Map<Action, ButtonAPI> actionButtons = new IdentityHashMap<>();
+    private final Map<Menu, ButtonAPI> menuButtons = new EnumMap<>(Menu.class);
+    private final FilterMenu filterMenu = new FilterMenu(this::buttonPressed, () -> queue(this::closeFilterMenu));
     private UIComponentAPI headerElement;
     private UIComponentAPI filtersElement;
     private TooltipMakerAPI groupsElement;
@@ -125,8 +143,7 @@ final class AdvancedSearchPane extends HoloPanel {
     static AdvancedSearchPane open(CustomPanelAPI hostPanel, AdvancedSearchLayout layout, ItemStorageFilter storageFilter, Host host) {
         AdvancedSearchPane pane = new AdvancedSearchPane(hostPanel, layout, storageFilter, host);
         pane.keepAGroup();
-        float paneHeight = layout.paneHeight(pane.contentHeight());
-        pane.attach(layout.paneLeft(), layout.paneTop(paneHeight), layout.paneWidth(), paneHeight, false);
+        pane.attach(layout.paneLeft(), layout.paneTop(), layout.paneWidth(), layout.paneHeight(), false);
         return pane;
     }
 
@@ -135,6 +152,10 @@ final class AdvancedSearchPane extends HoloPanel {
     }
 
     boolean escape() {
+        if (filterMenu.isOpen()) {
+            queue(this::closeFilterMenu);
+            return true;
+        }
         if (activePicker != null && activePicker.isListOpen()) {
             queue(this::closePicker);
             return true;
@@ -151,9 +172,9 @@ final class AdvancedSearchPane extends HoloPanel {
         actionButtons.clear();
         activePicker = null;
         headerElement = finishHeader(startHeader(TITLE_KEY, null, null), null);
-        float filtersTop = PAD + HEADER_HEIGHT + GAP;
-        filtersElement = buildFilters(filtersTop);
-        float groupsTop = filtersTop + filtersHeight() + GAP;
+        filtersElement = null;
+        rebuildFilters();
+        float groupsTop = filtersTop() + ChipFlow.CHIP_HEIGHT + GAP;
         float actionsHeight = actionsHeight();
         float actionsTop = panelHeight - PAD - actionsHeight;
         groupsElement = buildGroups(groupsTop, Math.max(AdvancedSearchLayout.CONTROL_HEIGHT, actionsTop - GAP - groupsTop));
@@ -165,9 +186,9 @@ final class AdvancedSearchPane extends HoloPanel {
         pollFields();
         float restoredScroll = groupsScrollOffset();
         closePicker();
+        closeFilterMenu();
         keepAGroup();
-        float paneHeight = layout.paneHeight(contentHeight());
-        reattach(layout.paneLeft(), layout.paneTop(paneHeight), layout.paneWidth(), paneHeight);
+        reattach(layout.paneLeft(), layout.paneTop(), layout.paneWidth(), layout.paneHeight());
         build();
         if (restoredScroll > 0f && groupsElement.getExternalScroller() != null) {
             float viewHeight = groupsElement.getExternalScroller().getPosition().getHeight();
@@ -188,69 +209,89 @@ final class AdvancedSearchPane extends HoloPanel {
         return groupsElement.getExternalScroller().getYOffset();
     }
 
-    private float contentHeight() {
-        return PAD + HEADER_HEIGHT + GAP + filtersHeight() + GAP + groupsHeight() + GAP + actionsHeight() + PAD;
-    }
-
-    private float filtersHeight() {
-        List<String> typeLabels = typeLabels();
-        float typesHeight = typeLabels.isEmpty() ? 0f : chipFilterHeight(typeLabels) + GAP;
-        return typesHeight + chipFilterHeight(rarityLabels());
-    }
-
-    private float chipFilterHeight(List<String> labels) {
-        return LABEL_HEIGHT + ChipFlow.height(ChipFlow.rowsFor(labels, layout.innerWidth()));
-    }
-
-    private float groupsHeight() {
-        float rowHeight = layout.columns().rowHeight();
-        float groupsHeight = 0f;
-        for (ModifierSearch.Group group : search.groups()) {
-            groupsHeight += groupsHeight > 0f ? PAD : 0f;
-            groupsHeight += AdvancedSearchLayout.CONTROL_HEIGHT + GAP + group.rows.size() * (rowHeight + GAP) + AdvancedSearchLayout.CONTROL_HEIGHT;
-        }
-        return groupsHeight;
-    }
-
     private float actionsHeight() {
         return ChipFlow.height(ChipFlow.rowsFor(actionLabels(), layout.innerWidth()));
-    }
-
-    private List<String> typeLabels() {
-        return host.typeChoices().stream().map(ItemKind::displayName).toList();
-    }
-
-    private static List<String> rarityLabels() {
-        return Arrays.stream(ItemRarity.values()).map(ItemStoragePanel::rarityLabel).toList();
     }
 
     private static List<String> actionLabels() {
         return Arrays.stream(Action.values()).map(action -> Translation.text(action.labelKey)).toList();
     }
 
-    private UIComponentAPI buildFilters(float filtersTop) {
-        TooltipMakerAPI element = panelRoot.createUIElement(layout.innerWidth(), filtersHeight(), false);
-        float blockTop = 0f;
-        List<ItemKind> typeChoices = host.typeChoices();
-        if (!typeChoices.isEmpty()) {
-            ChipFlow typeFlow = startChipFilter(element, "ui.socketStorage.menu.type", blockTop);
-            for (ItemKind sectionKind : typeChoices) {
-                typeFlow.place(sectionKind.displayName(), new TypeChip(sectionKind), ChipFlow.Colors.of(ItemStoragePanel.typeColor(sectionKind)),
-                        storageFilter.sectionKinds.contains(sectionKind));
-            }
-            blockTop += chipFilterHeight(typeLabels()) + GAP;
-        }
-        ChipFlow rarityFlow = startChipFilter(element, "ui.socketStorage.menu.rarity", blockTop);
-        for (ItemRarity rarity : ItemRarity.values()) {
-            rarityFlow.place(ItemStoragePanel.rarityLabel(rarity), new RarityChip(rarity), ChipFlow.Colors.of(rarity.color()),
-                    storageFilter.rarities.contains(rarity));
-        }
-        return replaceElement(null, element, PAD, filtersTop);
+    private static float filtersTop() {
+        return PAD + HEADER_HEIGHT + GAP;
     }
 
-    private ChipFlow startChipFilter(TooltipMakerAPI element, String labelKey, float blockTop) {
-        VanillaText.plainPara(element, Translation.text(labelKey), 0f, Misc.getGrayColor()).getPosition().inTL(0f, blockTop);
-        return new ChipFlow(element, layout.innerWidth(), blockTop + LABEL_HEIGHT);
+    private List<Menu> menus() {
+        return host.typeChoices().isEmpty() ? List.of(Menu.RARITY) : List.of(Menu.TYPE, Menu.RARITY);
+    }
+
+    private float menuButtonWidth(int menuCount) {
+        return (layout.innerWidth() - (menuCount - 1) * GAP) / menuCount;
+    }
+
+    private void rebuildFilters() {
+        List<Menu> menus = menus();
+        float buttonWidth = menuButtonWidth(menus.size());
+        TooltipMakerAPI element = panelRoot.createUIElement(layout.innerWidth(), ChipFlow.CHIP_HEIGHT, false);
+        ChipFlow.Colors colors = ChipFlow.Colors.player();
+        menuButtons.clear();
+        for (int index = 0; index < menus.size(); index++) {
+            Menu menu = menus.get(index);
+            ButtonAPI menuButton = element.addAreaCheckbox(menuButtonLabel(menu, buttonWidth), new MenuButton(menu), colors.base(), colors.dark(),
+                    colors.bright(), buttonWidth, ChipFlow.CHIP_HEIGHT, 0f);
+            menuButton.getPosition().inTL(index * (buttonWidth + GAP), 0f);
+            menuButtons.put(menu, menuButton);
+        }
+        syncMenuButtons();
+        filtersElement = replaceElement(filtersElement, element, PAD, filtersTop());
+    }
+
+    private String menuButtonLabel(Menu menu, float buttonWidth) {
+        List<String> chosenLabels = switch (menu) {
+            case TYPE -> FilterMenu.chosenLabels(host.typeChoices(), storageFilter.sectionKinds, ItemKind::displayName);
+            case RARITY -> FilterMenu.chosenLabels(Arrays.asList(ItemRarity.values()), storageFilter.rarities, ItemStoragePanel::rarityLabel);
+        };
+        return FilterMenu.buttonLabel(menu.nameKey, chosenLabels, buttonWidth);
+    }
+
+    private List<FilterMenu.Option> menuOptions(Menu menu) {
+        return switch (menu) {
+            case TYPE -> FilterMenu.typeOptions(host.typeChoices(), storageFilter.sectionKinds, TypeChip::new);
+            case RARITY -> FilterMenu.rarityOptions(storageFilter.rarities, RarityChip::new);
+        };
+    }
+
+    private void openFilterMenu(Menu menu) {
+        List<Menu> menus = menus();
+        int menuIndex = menus.indexOf(menu);
+        if (menuIndex < 0) {
+            return;
+        }
+        closePicker();
+        float buttonWidth = menuButtonWidth(menus.size());
+        float buttonLeft = PAD + menuIndex * (buttonWidth + GAP);
+        float menuTop = filtersTop() + ChipFlow.CHIP_HEIGHT + LINE_PAD;
+        filterMenu.open(panelRoot, panelWidth, panelHeight, menu, new FilterMenu.Anchor(buttonLeft, menuTop, buttonWidth), menuOptions(menu));
+        syncMenuButtons();
+        refreshOpacity();
+    }
+
+    private void closeFilterMenu() {
+        filterMenu.close();
+        syncMenuButtons();
+    }
+
+    private void syncMenuButtons() {
+        menuButtons.forEach((menu, button) -> button.setChecked(filterMenu.isOpen(menu)));
+    }
+
+    private void filtersPicked(boolean sectionsChanged) {
+        Object openMenu = filterMenu.openMenuId();
+        rebuildFilters();
+        if (openMenu instanceof Menu menu) {
+            openFilterMenu(menu);
+        }
+        host.filtersPicked(sectionsChanged);
     }
 
     private TooltipMakerAPI buildGroups(float groupsTop, float viewHeight) {
@@ -306,10 +347,9 @@ final class AdvancedSearchPane extends HoloPanel {
                         AdvancedSearchLayout.RowColumns columns) {
         TextFieldAPI pickerField = element.addTextField(columns.pickerWidth(), AdvancedSearchLayout.CONTROL_HEIGHT, Fonts.DEFAULT_SMALL, 0f);
         pickerField.getPosition().inTL(0f, rowTop);
-        pickerField.setLimitByStringWidth(false);
+        pickerField.setLimitByStringWidth(true);
         pickerField.setMaxChars(PICKER_MAX_CHARS);
-        pickerField.setText(row.hasStat() ? ItemStatPool.label(row.statName) : "");
-        element.addTooltipToPrevious(tooltip("ui.advancedSearch.picker.tooltip"), TooltipMakerAPI.TooltipLocation.BELOW);
+        element.addTooltipToPrevious(pickerTooltip(row), TooltipMakerAPI.TooltipLocation.BELOW);
         pickers.add(new StatPicker(row, pickerField));
         float controlsTop = rowTop + columns.controlsTop();
         ChipFlow.Colors colors = ChipFlow.Colors.player();
@@ -348,6 +388,18 @@ final class AdvancedSearchPane extends HoloPanel {
         return replaceElement(null, element, PAD, actionsTop);
     }
 
+    private static GameTextTooltip pickerTooltip(ModifierSearch.Row row) {
+        String helpText = Translation.text("ui.advancedSearch.picker.tooltip");
+        if (!row.hasStat()) {
+            return new GameTextTooltip(TOOLTIP_WIDTH, tooltipElement -> VanillaText.plainPara(tooltipElement, helpText, 0f, Misc.getTextColor()));
+        }
+        String statLabel = ItemStatPool.label(row.statName);
+        return new GameTextTooltip(TOOLTIP_WIDTH, tooltipElement -> {
+            VanillaText.plainPara(tooltipElement, statLabel, 0f, Misc.getHighlightColor());
+            VanillaText.plainPara(tooltipElement, helpText, PAD, Misc.getTextColor());
+        });
+    }
+
     private static GameTextTooltip tooltip(String textKey) {
         String text = Translation.text(textKey);
         return new GameTextTooltip(TOOLTIP_WIDTH, tooltipElement -> VanillaText.plainPara(tooltipElement, text, 0f, Misc.getTextColor()));
@@ -376,13 +428,19 @@ final class AdvancedSearchPane extends HoloPanel {
         } else if (id instanceof RemoveRow remove) {
             search.removeRow(remove.group(), remove.row());
             rebuild();
+        } else if (id instanceof MenuButton button) {
+            if (filterMenu.isOpen(button.menu())) {
+                closeFilterMenu();
+            } else {
+                openFilterMenu(button.menu());
+            }
         } else if (id instanceof TypeChip chip) {
             closePicker();
             storageFilter.toggleSection(chip.sectionKind());
-            host.filtersPicked(true);
+            filtersPicked(true);
         } else if (id instanceof RarityChip chip) {
             storageFilter.toggleRarity(chip.rarity());
-            host.filtersPicked(false);
+            filtersPicked(false);
         } else if (id instanceof Action action) {
             actionPressed(action);
         }
@@ -432,6 +490,7 @@ final class AdvancedSearchPane extends HoloPanel {
     }
 
     private void openPicker(StatPicker picker) {
+        closeFilterMenu();
         if (activePicker != null && activePicker != picker) {
             activePicker.closeList();
         }
@@ -467,7 +526,7 @@ final class AdvancedSearchPane extends HoloPanel {
             if (activePicker != null && pressOrScroll && !activePicker.contains(event.getX(), event.getY())) {
                 queue(this::closePicker);
             }
-            if (event.isMouseDownEvent()) {
+            if (event.isMouseDownEvent() && !filterMenu.isOpen()) {
                 reopenPickerAt(event.getX(), event.getY());
             }
         }
@@ -487,6 +546,7 @@ final class AdvancedSearchPane extends HoloPanel {
     @Override
     protected void onClose() {
         closePicker();
+        closeFilterMenu();
         host.closed();
     }
 
@@ -498,6 +558,15 @@ final class AdvancedSearchPane extends HoloPanel {
     @Override
     protected UIComponentAPI[] contentComponents() {
         return new UIComponentAPI[]{filtersElement, placedComponent(groupsElement), actionsElement,
-                activePicker == null ? null : activePicker.listPanel()};
+                activePicker == null ? null : activePicker.listPanel(), filterMenu.panel()};
+    }
+
+    @Override
+    public void renderBelow(float alphaMult) {
+        if (panelPosition != null) {
+            GLDraw.fillQuad(panelPosition.getX(), panelPosition.getY(), panelPosition.getWidth(), panelPosition.getHeight(), Color.BLACK,
+                    contentAlpha() * alphaMult);
+        }
+        super.renderBelow(alphaMult);
     }
 }

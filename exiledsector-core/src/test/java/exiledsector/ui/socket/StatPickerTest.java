@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.ToDoubleFunction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,29 +33,36 @@ class StatPickerTest {
     }
 
     @Test
-    void theListOpensBelowItsFieldWhenThereIsRoom() {
-        StatPicker.ListBounds bounds = StatPicker.place(40f, 100f, 124f, 200f, 260f, 150f, 500f, 600f);
+    void theListOpensBelowItsFieldWithTheRoomDownToThePaneEdge() {
+        StatPicker.ListBounds bounds = StatPicker.place(40f, 124f, 200f, 260f, 500f, 600f);
 
         assertEquals(124f + HoloPanel.LINE_PAD, bounds.top(), 0.001f);
-        assertEquals(150f, bounds.height(), 0.001f);
+        assertEquals(600f - HoloPanel.PAD - bounds.top(), bounds.height(), 0.001f);
         assertEquals(260f, bounds.width(), 0.001f);
     }
 
     @Test
-    void theListOpensAboveItsFieldWhenThereIsNoRoomBelowAndStaysInsideThePane() {
-        StatPicker.ListBounds bounds = StatPicker.place(400f, 500f, 524f, 200f, 900f, 300f, 500f, 560f);
+    void aFieldNearThePaneBottomStillOpensItsListBelowAndStaysInsideThePane() {
+        StatPicker.ListBounds bounds = StatPicker.place(400f, 524f, 200f, 900f, 500f, 560f);
 
-        assertEquals(500f - HoloPanel.LINE_PAD - bounds.height(), bounds.top(), 0.001f);
-        assertTrue(bounds.top() >= HoloPanel.PAD);
+        assertEquals(524f + HoloPanel.LINE_PAD, bounds.top(), 0.001f);
+        assertTrue(bounds.top() + bounds.height() <= 560f - HoloPanel.PAD + 0.001f);
         assertTrue(bounds.left() >= HoloPanel.PAD);
         assertTrue(bounds.left() + bounds.width() <= 500f - HoloPanel.PAD + 0.001f);
     }
 
     @Test
-    void aTallListShrinksToTheRoomOnTheRoomierSide() {
-        StatPicker.ListBounds bounds = StatPicker.place(20f, 200f, 224f, 200f, 200f, 1000f, 500f, 400f);
+    void choicesStackWithALinePadBetweenThem() {
+        assertEquals(20f + 34f + HoloPanel.LINE_PAD, StatPicker.stackHeight(List.of(20f, 34f)), 0.001f);
+        assertEquals(0f, StatPicker.stackHeight(List.of()), 0.001f);
+    }
 
-        assertEquals(200f - HoloPanel.LINE_PAD - HoloPanel.PAD, bounds.height(), 0.001f);
-        assertEquals(HoloPanel.PAD, bounds.top(), 0.001f);
+    @Test
+    void aLabelTooWideForTheFieldIsCutWithAnEllipsis() {
+        ToDoubleFunction<String> tenPerChar = text -> text.length() * 10.0;
+
+        assertEquals("#% increased armor", StatPicker.fitted("#% increased armor", 180f, tenPerChar));
+        assertEquals("#% increased...", StatPicker.fitted("#% increased armor", 150f, tenPerChar));
+        assertEquals("...", StatPicker.fitted("#% increased armor", 30f, tenPerChar));
     }
 }

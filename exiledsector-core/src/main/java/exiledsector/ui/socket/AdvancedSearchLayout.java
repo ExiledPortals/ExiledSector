@@ -1,27 +1,23 @@
 package exiledsector.ui.socket;
 
-public record AdvancedSearchLayout(float paneLeft, float paneWidth, float paneBottom, float maxPaneHeight, boolean twoLineRows) {
+public record AdvancedSearchLayout(float paneLeft, float paneWidth, float paneBottom, float paneHeight, boolean twoLineRows) {
 
     static final float CONTROL_HEIGHT = 24f;
     static final float LINES_BUTTON_WIDTH = 80f;
     static final float BOUND_FIELD_WIDTH = 52f;
     static final float REMOVE_BUTTON_WIDTH = 24f;
     static final float MIN_PICKER_WIDTH = 200f;
-    static final float PREFERRED_PICKER_WIDTH = 300f;
     private static final float LINES_SHARE_WHEN_WRAPPED = 0.4f;
     private static final float CONTROLS_AFTER_PICKER = LINES_BUTTON_WIDTH + BOUND_FIELD_WIDTH * 2f + REMOVE_BUTTON_WIDTH + HoloPanel.GAP * 4f;
     private static final float PANE_EDGES = HoloPanel.PAD * 2f + ItemGrid.SCROLLBAR_ROOM;
     public static final float MIN_ONE_LINE_PANE_WIDTH = MIN_PICKER_WIDTH + CONTROLS_AFTER_PICKER + PANE_EDGES;
-    public static final float PREFERRED_PANE_WIDTH = PREFERRED_PICKER_WIDTH + CONTROLS_AFTER_PICKER + PANE_EDGES;
 
     record RowColumns(float pickerWidth, float linesLeft, float linesWidth, float minLeft, float maxLeft, float boundWidth,
                       float removeLeft, float controlsTop, float rowHeight) {
     }
 
     public static AdvancedSearchLayout in(FreeArea area) {
-        float paneWidth = Math.min(area.width(), PREFERRED_PANE_WIDTH);
-        return new AdvancedSearchLayout(area.right() - paneWidth, paneWidth, area.bottom(), area.height(),
-                paneWidth < MIN_ONE_LINE_PANE_WIDTH);
+        return new AdvancedSearchLayout(area.left(), area.width(), area.bottom(), area.height(), area.width() < MIN_ONE_LINE_PANE_WIDTH);
     }
 
     public float innerWidth() {
@@ -32,11 +28,7 @@ public record AdvancedSearchLayout(float paneLeft, float paneWidth, float paneBo
         return paneWidth - PANE_EDGES;
     }
 
-    public float paneHeight(float contentHeight) {
-        return Math.min(maxPaneHeight, contentHeight);
-    }
-
-    public float paneTop(float paneHeight) {
+    public float paneTop() {
         return paneBottom - paneHeight;
     }
 

@@ -43,8 +43,8 @@ class AdvancedSearchPlacementTest {
         assertEquals(screen.screenLayout().panelLeft() - HullItemsLayout.PANEL_MARGIN, pane.paneLeft() + pane.paneWidth(), 0.001f);
         assertTrue(pane.paneLeft() >= HullItemsLayout.SCREEN_MARGIN - 0.001f, "left " + pane.paneLeft());
         assertEquals(screen.panelBottom(), pane.paneBottom(), 0.001f);
-        assertEquals(HullItemsLayout.SCREEN_MARGIN, pane.paneTop(pane.paneHeight(10000f)), 0.001f, "a tall pane grows to the screen's top margin");
-        assertEquals(400f, pane.paneHeight(400f), 0.001f, "a short pane is only as tall as its content");
+        assertEquals(HullItemsLayout.SCREEN_MARGIN, pane.paneTop(), 0.001f, "the pane reaches the screen's top margin");
+        assertEquals(HullItemsLayout.SCREEN_MARGIN, pane.paneLeft(), 0.001f, "the pane reaches the screen's left margin");
     }
 
     @Test
@@ -69,12 +69,12 @@ class AdvancedSearchPlacementTest {
     }
 
     @Test
-    void at2560WideThePaneStopsGrowingOnceOneLineRowsFit() {
+    void at2560WideThePaneKeepsGrowingToFillTheRoomLeftOfThePanel() {
         Screen screen = screen(2560f, 1440f);
         AdvancedSearchLayout pane = screen.pane();
 
         assertPlacedLeftOfThePanel(screen);
-        assertEquals(AdvancedSearchLayout.PREFERRED_PANE_WIDTH, pane.paneWidth(), 0.001f);
+        assertEquals(screen.screenLayout().panelLeft() - HullItemsLayout.PANEL_MARGIN - HullItemsLayout.SCREEN_MARGIN, pane.paneWidth(), 0.001f);
         assertFalse(pane.twoLineRows());
     }
 }

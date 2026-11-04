@@ -48,7 +48,15 @@ class AdvancedSearchLayoutTest {
     void theOneLineWidthIsTheNarrowestPaneThatKeepsRowsOnOneLine() {
         assertFalse(paneIn(AdvancedSearchLayout.MIN_ONE_LINE_PANE_WIDTH).twoLineRows());
         assertTrue(paneIn(AdvancedSearchLayout.MIN_ONE_LINE_PANE_WIDTH - 1f).twoLineRows());
-        assertEquals(AdvancedSearchLayout.PREFERRED_PANE_WIDTH, paneIn(2000f).paneWidth(), 0.001f);
-        assertEquals(10f + 2000f - AdvancedSearchLayout.PREFERRED_PANE_WIDTH, paneIn(2000f).paneLeft(), 0.001f);
+    }
+
+    @Test
+    void thePaneFillsTheWholeFreeArea() {
+        AdvancedSearchLayout layout = paneIn(2000f);
+
+        assertEquals(2000f, layout.paneWidth(), 0.001f);
+        assertEquals(10f, layout.paneLeft(), 0.001f);
+        assertEquals(800f, layout.paneHeight(), 0.001f);
+        assertEquals(10f, layout.paneTop(), 0.001f);
     }
 }

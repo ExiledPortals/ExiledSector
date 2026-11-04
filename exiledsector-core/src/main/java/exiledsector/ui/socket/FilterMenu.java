@@ -6,11 +6,17 @@ import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.i18n.Translation;
+import exiledsector.items.ItemKind;
+import exiledsector.items.ItemRarity;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.util.FramedPanelPlugin;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 final class FilterMenu {
 
@@ -73,6 +79,33 @@ final class FilterMenu {
         float menuLeft = Math.max(HoloPanel.PAD, Math.min(anchor.left(), rootWidth - HoloPanel.PAD - menuWidth));
         root.addComponent(blocker).inTL(0f, 0f);
         root.addComponent(menuPanel).inTL(menuLeft, anchor.top());
+    }
+
+    static String buttonLabel(String menuNameKey, List<String> chosenLabels, float buttonWidth) {
+        String menuName = Translation.text(menuNameKey);
+        String choice = chosenLabels.isEmpty() ? Translation.text("ui.socketStorage.menu.any")
+                : String.join(Translation.text("ui.socketStorage.menu.separator"), chosenLabels);
+        String label = Translation.msg("ui.socketStorage.menu.label").arg("menu", menuName).arg("choice", choice).text();
+        if (chosenLabels.size() > 1 && ChipFlow.width(label) > buttonWidth) {
+            String countChoice = Translation.msg("ui.socketStorage.menu.count").arg("count", chosenLabels.size()).text();
+            label = Translation.msg("ui.socketStorage.menu.label").arg("menu", menuName).arg("choice", countChoice).text();
+        }
+        return label;
+    }
+
+    static <T> List<String> chosenLabels(List<T> options, Set<T> chosen, Function<T, String> labeller) {
+        List<T> picked = options.stream().filter(chosen::contains).toList();
+        return picked.size() == options.size() ? List.of() : picked.stream().map(labeller).toList();
+    }
+
+    static List<Option> rarityOptions(Set<ItemRarity> chosen, Function<ItemRarity, Object> optionId) {
+        return Arrays.stream(ItemRarity.values()).map(rarity -> new Option(ItemStoragePanel.rarityLabel(rarity), optionId.apply(rarity),
+                ChipFlow.Colors.of(rarity.color()), chosen.contains(rarity), null)).toList();
+    }
+
+    static List<Option> typeOptions(List<ItemKind> sectionKinds, Set<ItemKind> chosen, Function<ItemKind, Object> optionId) {
+        return sectionKinds.stream().map(sectionKind -> new Option(sectionKind.displayName(), optionId.apply(sectionKind),
+                ChipFlow.Colors.of(ItemStoragePanel.typeColor(sectionKind)), chosen.contains(sectionKind), null)).toList();
     }
 
     private static float widestOption(List<Option> options) {

@@ -848,10 +848,8 @@ public final class ItemStoragePanel extends HoloPanel {
         return switch (menu) {
             case STATUS -> Arrays.stream(ItemStorageFilter.Status.values()).map(status -> new FilterMenu.Option(statusLabel(status),
                     new StatusChip(status), ChipFlow.Colors.player(), storageFilter.statuses.contains(status), null)).toList();
-            case RARITY -> Arrays.stream(ItemRarity.values()).map(rarity -> new FilterMenu.Option(rarityLabel(rarity), new RarityChip(rarity),
-                    ChipFlow.Colors.of(rarity.color()), storageFilter.rarities.contains(rarity), null)).toList();
-            case TYPE -> chipTypes().stream().map(sectionKind -> new FilterMenu.Option(sectionKind.displayName(), new TypeChip(sectionKind),
-                    ChipFlow.Colors.of(typeColor(sectionKind)), storageFilter.sectionKinds.contains(sectionKind), null)).toList();
+            case RARITY -> FilterMenu.rarityOptions(storageFilter.rarities, RarityChip::new);
+            case TYPE -> FilterMenu.typeOptions(chipTypes(), storageFilter.sectionKinds, TypeChip::new);
             case SORT -> Arrays.stream(ItemStorageFilter.Sort.values()).map(sort -> new FilterMenu.Option(Translation.text(sortKey(sort)),
                     new SortChip(sort), ChipFlow.Colors.player(), storageFilter.sort == sort, Translation.text(sortKey(sort) + ".tooltip"))).toList();
         };
@@ -859,25 +857,13 @@ public final class ItemStoragePanel extends HoloPanel {
 
     private String menuButtonLabel(Menu menu, float buttonWidth) {
         List<String> chosenLabels = switch (menu) {
-            case STATUS -> chosenLabels(Arrays.asList(ItemStorageFilter.Status.values()), storageFilter.statuses, ItemStoragePanel::statusLabel);
-            case RARITY -> chosenLabels(Arrays.asList(ItemRarity.values()), storageFilter.rarities, ItemStoragePanel::rarityLabel);
-            case TYPE -> chosenLabels(chipTypes(), storageFilter.sectionKinds, ItemKind::displayName);
+            case STATUS -> FilterMenu.chosenLabels(Arrays.asList(ItemStorageFilter.Status.values()), storageFilter.statuses,
+                    ItemStoragePanel::statusLabel);
+            case RARITY -> FilterMenu.chosenLabels(Arrays.asList(ItemRarity.values()), storageFilter.rarities, ItemStoragePanel::rarityLabel);
+            case TYPE -> FilterMenu.chosenLabels(chipTypes(), storageFilter.sectionKinds, ItemKind::displayName);
             case SORT -> List.of(Translation.text(sortKey(storageFilter.sort)));
         };
-        String menuName = Translation.text("ui.socketStorage.menu." + menu.name().toLowerCase(Locale.ROOT));
-        String choice = chosenLabels.isEmpty() ? Translation.text("ui.socketStorage.menu.any")
-                : String.join(Translation.text("ui.socketStorage.menu.separator"), chosenLabels);
-        String label = Translation.msg("ui.socketStorage.menu.label").arg("menu", menuName).arg("choice", choice).text();
-        if (chosenLabels.size() > 1 && ChipFlow.width(label) > buttonWidth) {
-            String countChoice = Translation.msg("ui.socketStorage.menu.count").arg("count", chosenLabels.size()).text();
-            label = Translation.msg("ui.socketStorage.menu.label").arg("menu", menuName).arg("choice", countChoice).text();
-        }
-        return label;
-    }
-
-    private static <T> List<String> chosenLabels(List<T> options, Set<T> chosen, Function<T, String> labeller) {
-        List<T> picked = options.stream().filter(chosen::contains).toList();
-        return picked.size() == options.size() ? List.of() : picked.stream().map(labeller).toList();
+        return FilterMenu.buttonLabel("ui.socketStorage.menu." + menu.name().toLowerCase(Locale.ROOT), chosenLabels, buttonWidth);
     }
 
     private void rebuildControls() {
