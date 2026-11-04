@@ -2563,9 +2563,9 @@
 			"name": "Affinity",
 			"icon": "graphics/icons/small_flux_optional.png",
 			"options": [
-				"low_tech_affinity",
 				"high_tech_affinity",
-				"midline_affinity"
+				"midline_affinity",
+				"low_tech_affinity"
 			],
 			"tags": [
 				"flux",
