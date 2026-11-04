@@ -26,6 +26,7 @@ import static exiledsector.skills.skilleffect.Backings.listener;
 import static exiledsector.skills.skilleffect.Backings.statEffect;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
+import static exiledsector.skills.skilleffect.weapon.TargetDamageBonusEffect.targetDamage;
 
 public enum WeaponSkillEffect implements BackedSkillEffect {
 
@@ -86,20 +87,10 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     DAMAGE_TO_DESTROYER_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToDestroyers), "stat.damageToDestroyers", false)),
     DAMAGE_TO_CRUISER_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToCruisers), "stat.damageToCruisers", false)),
     DAMAGE_TO_CAPITAL_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToCapital), "stat.damageToCapitalShips", false)),
-    DAMAGE_TO_AUTOMATED_SHIP_PERCENT(listener(AutomatedShipDamageListener.DAMAGE_PERCENT_KEY, AutomatedShipDamageListener.class,
-            AutomatedShipDamageListener::new)) {
-        @Override
-        public StyledText description(float magnitude) {
-            return PERCENT.describeStat(magnitude, "stat.damageToAutomatedShips");
-        }
-    },
-    DAMAGE_TO_HELPLESS_SHIP_PERCENT(listener(HelplessShipDamageListener.DAMAGE_PERCENT_KEY, HelplessShipDamageListener.class,
-            HelplessShipDamageListener::new)) {
-        @Override
-        public StyledText description(float magnitude) {
-            return PERCENT.describeStat(magnitude, "stat.damageToHelplessShips");
-        }
-    },
+    DAMAGE_TO_AUTOMATED_SHIP_PERCENT(targetDamage(AutomatedShipDamageListener.DAMAGE_PERCENT_KEY, AutomatedShipDamageListener.class,
+            AutomatedShipDamageListener::new, "stat.damageToAutomatedShips")),
+    DAMAGE_TO_HELPLESS_SHIP_PERCENT(targetDamage(HelplessShipDamageListener.DAMAGE_PERCENT_KEY, HelplessShipDamageListener.class,
+            HelplessShipDamageListener::new, "stat.damageToHelplessShips")),
     OPENING_WEAPON_DAMAGE_PERCENT(new ConditionalStatEffect(PERCENT, WeaponStatFamily.DAMAGE.target(WeaponScope.ALL), "weapon.stat.DAMAGE",
             OpeningVolley::isUnderway)) {
         @Override
@@ -117,20 +108,10 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
             return EffectText.signed(this, magnitude).arg("range", Math.round(DistantTargetDamageListener.MIN_DISTANCE)).styled();
         }
     },
-    DAMAGE_TO_SLOWER_SHIP_PERCENT(listener(SlowerShipDamageListener.DAMAGE_PERCENT_KEY, SlowerShipDamageListener.class,
-            SlowerShipDamageListener::new)) {
-        @Override
-        public StyledText description(float magnitude) {
-            return PERCENT.describeStat(magnitude, "stat.damageToSlowerShips");
-        }
-    },
-    DAMAGE_TO_PRISTINE_SHIP_PERCENT(listener(PristineShipDamageListener.DAMAGE_PERCENT_KEY, PristineShipDamageListener.class,
-            PristineShipDamageListener::new)) {
-        @Override
-        public StyledText description(float magnitude) {
-            return PERCENT.describeStat(magnitude, "stat.damageToPristineShips");
-        }
-    },
+    DAMAGE_TO_SLOWER_SHIP_PERCENT(targetDamage(SlowerShipDamageListener.DAMAGE_PERCENT_KEY, SlowerShipDamageListener.class,
+            SlowerShipDamageListener::new, "stat.damageToSlowerShips")),
+    DAMAGE_TO_PRISTINE_SHIP_PERCENT(targetDamage(PristineShipDamageListener.DAMAGE_PERCENT_KEY, PristineShipDamageListener.class,
+            PristineShipDamageListener::new, "stat.damageToPristineShips")),
     WEAPON_MALFUNCTION_PERCENT(statEffect(PERCENT, new StatTarget.PercentagePoints(MutableShipStatsAPI::getWeaponMalfunctionChance),
             "stat.weaponMalfunctionChance", true)),
     PD_IGNORES_DECOY_FLARES(flag(Stats.PD_IGNORES_FLARES)),
