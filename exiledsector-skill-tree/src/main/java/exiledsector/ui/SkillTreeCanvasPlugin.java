@@ -31,6 +31,7 @@ import exiledsector.ui.node.NodeRadiusRingRenderer;
 import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.SkillTreeNodeDrawer;
 import exiledsector.ui.node.TreeAllocationSession;
+import exiledsector.ui.refit.RefitButtonColumn;
 import exiledsector.ui.util.GLDraw;
 import lunalib.lunaRefit.BaseRefitButton;
 import org.lwjgl.input.Keyboard;
@@ -63,6 +64,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final PointerGesture<CanvasMode> gesture = new PointerGesture<>();
     private final TreeCameraMemory.View cameraMemory;
     private final FleetShipList shipList;
+    private final BaseRefitButton refitButton;
 
     private PositionAPI canvasPosition;
     private float mouseX = 0f;
@@ -95,6 +97,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.socketPlacement = new SocketPlacement(hostPanel, treeSession, nodeSearch, searchBar);
         this.chrome = new SkillTreeChrome(member, panelStyle, statPanel, searchBar, templateUi, socketPlacement, shipCardHeight);
         this.shipList = new FleetShipList(hostPanel, shipCardHeight, shipSwitcher);
+        this.refitButton = refitButton;
 
         this.cameraMemory = TreeCameraMemory.forShip(member.getId());
         SkillNode startingRoot = treeSession.getStartingRoot();
@@ -188,6 +191,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         camera.applyStartingRootFollow(treeSession, followingStartingRoot);
         CanvasMode mode = mode();
         dropStaleGesture(mode);
+        if (keyboardPans(mode)) {
+            KeyboardPan.advance(camera, amount);
+        }
         if (!mode.switchesShips()) {
             shipList.close();
         }
@@ -201,6 +207,17 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         float dimStep = amount / CRAFTING_BENCH_DIM_SECONDS;
         craftingBenchDimProgress = Fade.step(craftingBenchDimProgress, socketPlacement.isCraftingBenchOpen(), dimStep);
         rememberCamera(mode);
+    }
+
+    private boolean keyboardPans(CanvasMode mode) {
+        if (searchBar.isFocused()) {
+            return false;
+        }
+        return switch (mode) {
+            case TREE, EXOSHIP_VIEW -> true;
+            case HYPERSPACE -> hyperspaceMode.isOnMap();
+            case ROOT_CHOICE, MODAL, CRAFTING_BENCH -> false;
+        };
     }
 
     private void rememberCamera(CanvasMode mode) {
@@ -247,6 +264,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             consume(event);
         } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_F2 && openHoveredItemCodex(mode)) {
             event.consume();
+        } else if (isOpenShortcut(event) && closesOnOpenShortcut(mode)) {
+            refitButton.closePanel();
+            event.consume();
         } else if (mode != CanvasMode.MODAL && TooltipExpansion.isToggle(event)) {
             TooltipExpansion.toggle();
             event.consume();
@@ -260,6 +280,21 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 case EXOSHIP_VIEW, TREE -> handleTreeEvent(event, mode);
             }
         }
+    }
+
+    private static boolean isOpenShortcut(InputEventAPI event) {
+        RefitButtonColumn.ButtonSpec button = SkillTreeRefitButton.COLUMN_BUTTON;
+        return event.isKeyDownEvent() && button.wanted().getAsBoolean() && event.getEventValue() == button.hotkey().getAsInt();
+    }
+
+    private boolean closesOnOpenShortcut(CanvasMode mode) {
+        if (refitButton == null || searchBar.isFocused() || socketPlacement.isEngaged()) {
+            return false;
+        }
+        return switch (mode) {
+            case TREE, EXOSHIP_VIEW, HYPERSPACE, ROOT_CHOICE -> true;
+            case MODAL, CRAFTING_BENCH -> false;
+        };
     }
 
     private boolean openHoveredItemCodex(CanvasMode mode) {

@@ -127,13 +127,22 @@ public class CanvasCamera {
         if (!dragging) {
             return false;
         }
+        shiftBy(dx, dy);
+        return true;
+    }
+
+    public void panBy(float dx, float dy) {
+        panAnimation = null;
+        shiftBy(dx, dy);
+    }
+
+    private void shiftBy(float dx, float dy) {
         panX += dx;
         panY += dy;
         if (followingTarget && currentZoom > 0f) {
             followNudgeX -= dx / currentZoom;
             followNudgeY += dy / currentZoom;
         }
-        return true;
     }
 
     public void scrollAt(boolean in, float screenX, float screenY, PositionAPI canvasPosition) {

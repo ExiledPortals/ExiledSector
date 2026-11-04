@@ -3,6 +3,7 @@ package exiledsector.ui;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class CanvasCameraFollowTest {
 
@@ -34,6 +35,28 @@ class CanvasCameraFollowTest {
 
         assertEquals(1000f - 120f, camera.centreTreeX(), 1e-3f);
         assertEquals(2000f - 40f, camera.centreTreeY(), 1e-3f);
+    }
+
+    @Test
+    void panningByKeyWhileFollowingKeepsTheOffsetLikeADrag() {
+        CanvasCamera camera = settledOn(0f, 0f);
+
+        camera.panBy(120f, -40f);
+        camera.follow(1000f, 2000f, 0.1f);
+
+        assertEquals(1000f - 120f, camera.centreTreeX(), 1e-3f);
+        assertEquals(2000f - 40f, camera.centreTreeY(), 1e-3f);
+    }
+
+    @Test
+    void panningByKeyCancelsAPanAnimation() {
+        CanvasCamera camera = new CanvasCamera();
+        camera.panTo(5000f, 5000f);
+
+        camera.panBy(10f, 0f);
+
+        assertFalse(camera.isPanning());
+        assertEquals(-10f, camera.centreTreeX(), 1e-3f);
     }
 
     @Test
