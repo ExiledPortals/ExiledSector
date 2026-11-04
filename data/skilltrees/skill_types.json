@@ -640,7 +640,7 @@
 		{
 			"id": "domain_pattern_laminate",
 			"name": "Domain-Pattern Laminate",
-			"icon": "graphics/icons/armor.png",
+			"icon": "graphics/icons/fleet_logistics_shifted_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3590,7 +3590,7 @@
 		{
 			"id": "fragmentation_damage_resistance",
 			"name": "Fragmentation Damage Resistance",
-			"icon": "",
+			"icon": "graphics/icons/repair_coordinator_shifted_shifted_shifted.png",
 			"effects": [
 				{
 					"effect": "FRAGMENTATION_DAMAGE_TAKEN_PERCENT",
