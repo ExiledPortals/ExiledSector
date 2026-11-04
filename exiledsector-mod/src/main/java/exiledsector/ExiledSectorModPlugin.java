@@ -15,6 +15,7 @@ import exiledsector.skills.skilleffect.CsvIdList;
 import exiledsector.skills.skilleffect.EffectAliases;
 import exiledsector.skills.skilleffect.logistics.FleetCrewLedger;
 import exiledsector.skills.skilleffect.logistics.FleetWideEffects;
+import exiledsector.skills.skilleffect.logistics.MoveSlowSupplyScript;
 import exiledsector.charts.StarChartsDomain;
 import exiledsector.compat.CompatChecks;
 import exiledsector.domain.ExiledSectorDomain;
@@ -149,6 +150,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         MaterialMigration.run(savedCargoes);
         ShipSkillDataManager.removeBlankRecords();
         FleetWideEffects.markPhaseFieldStale();
+        sector.addTransientScript(new MoveSlowSupplyScript());
         DOMAINS.forEach(ExiledSectorDomain::afterSaveRepair);
         sector.getListenerManager().addListener(new CargoCraftingTabListener(), true);
         SocketLossListener socketLossListener = new SocketLossListener();

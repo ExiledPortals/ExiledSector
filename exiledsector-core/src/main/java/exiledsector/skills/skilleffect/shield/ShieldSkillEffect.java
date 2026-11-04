@@ -131,6 +131,30 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
     SHIELD_PIERCE_CHANCE_MULT(statEffect(MULT, dynamicStat(Stats.SHIELD_PIERCED_MULT), "stat.empArcShieldPierceChance", true)),
     SHIELD_UPKEEP_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getShieldUpkeepMult), "stat.shieldFluxUpkeep", true)),
     SHIELD_UPKEEP_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getShieldUpkeepMult), "stat.shieldFluxUpkeep", true)),
+    NO_SHIELD_UPKEEP_BELOW_SPEED_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public boolean advancesInCombat() {
+            return true;
+        }
+
+        @Override
+        public void advanceInCombat(ShipAPI ship, String modId, float magnitude) {
+            if (ship.getVelocity().length() < ship.getMaxSpeedWithoutBoost() * magnitude / 100f) {
+                ship.getMutableStats().getShieldUpkeepMult().modifyMult(modId, 0f);
+            } else {
+                ship.getMutableStats().getShieldUpkeepMult().unmodifyMult(modId);
+            }
+        }
+
+        @Override
+        public String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
+            return noShieldsReason(currentShieldType);
+        }
+    },
     SHIELD_TURN_RATE_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getShieldTurnRateMult), "stat.shieldTurnRate", false)),
     SHIELD_RAISE_RATE_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getShieldUnfoldRateMult), "stat.shieldRaiseRate", false)),
     SHIELD_SOFT_FLUX_CONVERSION_PERCENT(statEffect(PERCENT, new StatTarget.PercentagePoints(MutableShipStatsAPI::getShieldSoftFluxConversion),

@@ -67,6 +67,8 @@ public enum FluxSkillEffect implements BackedSkillEffect {
                     .arg("limit", HighFluxMendingListener.MAX_TOTAL_REGEN_PERCENT_OF_HULL).styled();
         }
     },
+    FLUX_DISSIPATION_WITHOUT_HARD_FLUX_PERCENT(new ConditionalStatEffect(PERCENT, stat(MutableShipStatsAPI::getFluxDissipation),
+            "stat.fluxDissipationWithoutHardFlux", ship -> ship.getFluxTracker().getHardFlux() <= 0f)),
     FLUX_DISSIPATION_PER_FLUX_VENT_FLAT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

@@ -62,6 +62,7 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
     },
     PHASE_ENTRY_HARD_FLUX_TO_SOFT_PERCENT(listener(PhaseEntryFluxShedListener.SHED_PERCENT_KEY, PhaseEntryFluxShedListener.class,
             PhaseEntryFluxShedListener::new)),
+    PEAK_TIME_PAUSED_WHILE_PHASED(listener(PhasedPeakTimeListener.PAUSED_KEY, PhasedPeakTimeListener.class, PhasedPeakTimeListener::new)),
     PHASE_ANCHOR_EMERGENCY_DIVE {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

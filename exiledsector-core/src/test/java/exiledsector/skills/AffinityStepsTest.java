@@ -63,6 +63,15 @@ class AffinityStepsTest {
     }
 
     @Test
+    void highTechArmorScalingCountsOnlyHighTechAffinity() {
+        EffectContribution item = EffectContribution.scaledPermanent("item", "item_", List.of(
+                new SkillTypeEffect(SpecialSkillEffect.ARMOR_PERCENT_PER_HIGH_TECH_AFFINITY, 1f)));
+
+        assertEquals(Map.of(DefenseSkillEffect.ARMOR_PERCENT, 3f), scaled(List.of(item, node(HIGH_TECH, 35f), node(LOW_TECH, 40f))));
+        assertEquals(Map.of(), scaled(List.of(item, node(LOW_TECH, 40f))));
+    }
+
+    @Test
     void perSModAffinityGoesToTheHighestAndLowestAsHighestRaisesTheLowestAfterwards() {
         EffectContribution vault = EffectContribution.scaledPermanent("vault", "vault_", List.of(
                 new SkillTypeEffect(SpecialSkillEffect.HIGHEST_AFFINITY_FLAT_PER_S_MOD, 6f)));

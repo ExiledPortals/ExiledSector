@@ -2,15 +2,18 @@ package exiledsector.skills.skilleffect.logistics;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.hullmods.PhaseField;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import com.fs.starfarer.api.util.Misc;
 import exiledsector.ExiledSector;
 import exiledsector.PlayerFleet;
 import exiledsector.i18n.Translation;
 
+import exiledsector.skills.skilleffect.SkillEffect;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -29,6 +32,8 @@ public final class FleetWideEffects {
     static final String CORONA_RESISTANCE_CONTRIBUTION_KEY = "exiledSector_fleetCoronaResistanceContribution";
     static final float MAX_CORONA_RESISTANCE_PERCENT = 100f;
     private static final String CORONA_RESISTANCE_FLEET_MOD = "fleetCoronaResistance";
+    static final String MOVE_SLOW_SUPPLY_USE_KEY = "exiledLib_moveSlowSupplyUseContribution";
+    private static final String MOVE_SLOW_SUPPLY_USE_MEMBER_MOD = "moveSlowSupplyUse";
     private static final String SENSOR_STRENGTH_ALWAYS_COUNTS_FLEET_MOD = "sensorStrengthAlwaysCounts";
     private static final String MAX_SENSOR_SHIPS_SETTING = "maxSensorShips";
     private static final int DEFAULT_MAX_SENSOR_SHIPS = 5;
@@ -146,6 +151,35 @@ public final class FleetWideEffects {
             }
         }
         return Math.min(MAX_CORONA_RESISTANCE_PERCENT, resistance);
+    }
+
+    public static void applyMoveSlowSupplyUse(CampaignFleetAPI fleet) {
+        if (fleet == null || fleet.getFleetData() == null) {
+            return;
+        }
+        List<FleetMemberAPI> members = fleet.getFleetData().getMembersListCopy();
+        float percent = Misc.isSlowMoving(fleet) ? strongestMoveSlowSupplyUse(members) : 0f;
+        String modId = ExiledSector.key(MOVE_SLOW_SUPPLY_USE_MEMBER_MOD);
+        String source = percent != 0f ? Translation.gameText("fleet.moveSlowSupplyUse") : null;
+        for (FleetMemberAPI member : members) {
+            MutableStat suppliesPerMonth = member.getStats().getSuppliesPerMonth();
+            if (percent != 0f) {
+                suppliesPerMonth.modifyMult(modId, 1f + percent / 100f, source);
+            } else {
+                suppliesPerMonth.unmodifyMult(modId);
+            }
+        }
+    }
+
+    static float strongestMoveSlowSupplyUse(List<FleetMemberAPI> members) {
+        float strongest = 0f;
+        for (FleetMemberAPI member : members) {
+            float percent = member.isMothballed() ? 0f : member.getStats().getDynamic().getValue(MOVE_SLOW_SUPPLY_USE_KEY, 0f);
+            if (Math.abs(percent) > Math.abs(strongest)) {
+                strongest = percent;
+            }
+        }
+        return SkillEffect.addedMultiplier(strongest);
     }
 
     private static boolean alwaysCounts(FleetMemberAPI member) {

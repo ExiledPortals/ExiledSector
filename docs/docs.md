@@ -625,6 +625,17 @@ The Armor Plate's hull repair runs only above 50% flux and stops at 20% of maxim
 (`PhaseEntryFluxShedListener`). Destroyed strikecraft burst on the lethal hit, reaching ships whose edge is within range
 (`CinderBurstListener`).
 
+### Frozen Fringe modifiers
+
+The Overwintered crew's supply cut applies while vanilla counts the player fleet as moving slowly (`Misc.isSlowMoving`,
+standing still included): the strongest value among its active ships multiplies every ship's maintenance supply use. A
+transient script reapplies it every quarter second, as stat rebuilds drop it (`FleetWideEffects.applyMoveSlowSupplyUse`,
+`MoveSlowSupplyScript`).
+
+Patient measures from this ship to the target ship's center (`DistantTargetDamageListener`). Glacial compares speed with
+top speed without the zero-flux boost, so turning in place still counts as stationary. Of the Long Night holds the ship's
+deployed time at its phase-entry value while phased (`PhasedPeakTimeListener`).
+
 ### Chart tier groups
 
 Chart tiers fall into three groups: low (1-5), mid (6-10) and high (11-16) (`TierGroup`). A chart modifier line gives

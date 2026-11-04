@@ -83,6 +83,32 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
                     .arg("max", FleetWideEffects.MAX_TRANSPONDER_OFF_SENSOR_PROFILE_REDUCTION).styled();
         }
     },
+    MOVE_SLOW_SUPPLY_USE_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(FleetWideEffects.MOVE_SLOW_SUPPLY_USE_KEY).modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public StatMode statMode() {
+            return MULT;
+        }
+
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
+        public boolean appliesToNpcShips() {
+            return false;
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.signed(this, magnitude).styled();
+        }
+    },
     COMBAT_VISION(statEffect(FLAT, bonus(MutableShipStatsAPI::getSightRadiusMod), "stat.inCombatSensorVisionRange", false)),
     MIN_CREW_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getMinCrewMod), StatNames.MIN_CREW_REQUIRED, true)),
     MIN_CREW_PERCENT(statEffect(PERCENT, bonus(MutableShipStatsAPI::getMinCrewMod), StatNames.MIN_CREW_REQUIRED, true)),

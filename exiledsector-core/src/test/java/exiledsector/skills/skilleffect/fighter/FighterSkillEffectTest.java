@@ -72,6 +72,23 @@ class FighterSkillEffectTest {
     }
 
     @Test
+    void replacementRateRecoversFasterOnlyWhileStrikecraftRegroup() {
+        MutableStat recovery = new MutableStat(1f);
+        when(dynamic.getStat("replacement_rate_increase_mult")).thenReturn(recovery);
+        ShipAPI carrier = mock(ShipAPI.class);
+        when(carrier.getMutableStats()).thenReturn(stats);
+        FighterSkillEffect effect = FighterSkillEffect.FIGHTER_REPLACEMENT_RECOVERY_WHILE_REGROUPING_PERCENT;
+
+        when(carrier.isPullBackFighters()).thenReturn(true);
+        effect.advanceInCombat(carrier, "mod_id", 25f);
+        assertEquals(1.25f, recovery.getModifiedValue(), EPSILON);
+
+        when(carrier.isPullBackFighters()).thenReturn(false);
+        effect.advanceInCombat(carrier, "mod_id", 25f);
+        assertEquals(1f, recovery.getModifiedValue(), EPSILON);
+    }
+
+    @Test
     void relaunchTimeAddsAFractionOfTheBaseRefitTime() {
         StatBonus extraRearm = realDynamicMod("fighter_rearm_time_extra_fraction_of_base_refit_time_mod");
 
