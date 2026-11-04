@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -60,6 +62,31 @@ class StatSourcesTest {
         when(settings.getSkillSpec("statsources_skill")).thenReturn(spec);
 
         assertEquals("Test Skill", StatSources.outsideSourceName("statsources_skill_elite", null));
+    }
+
+    @Test
+    void vanillaSkillModifiersWithTheirOwnIdsAreNamedAfterTheirSkill() {
+        Map<String, String> skillNames = Map.of(
+                "bulk_transport", "Bulk Transport",
+                "salvaging", "Salvaging",
+                "navigation", "Navigation",
+                "containment_procedures", "Containment Procedures",
+                "makeshift_equipment", "Makeshift Equipment",
+                "coordinated_maneuvers", "Coordinated Maneuvers");
+        skillNames.forEach((skillId, skillName) -> {
+            SkillSpecAPI spec = mock(SkillSpecAPI.class);
+            when(spec.getName()).thenReturn(skillName);
+            when(settings.getSkillSpec(skillId)).thenReturn(spec);
+        });
+
+        assertEquals("Bulk Transport", StatSources.outsideSourceName("bt_cargo_cap_mod", null));
+        assertEquals("Bulk Transport", StatSources.outsideSourceName("bt_fuel_cap_mod", null));
+        assertEquals("Bulk Transport", StatSources.outsideSourceName("bt_crew_cap_mod", null));
+        assertEquals("Salvaging", StatSources.outsideSourceName("sal_cargo_cap_mod", null));
+        assertEquals("Navigation", StatSources.outsideSourceName("nav_fuel_use_mod", null));
+        assertEquals("Containment Procedures", StatSources.outsideSourceName("sp_fuel_use_mod", null));
+        assertEquals("Makeshift Equipment", StatSources.outsideSourceName("surveying_supply_use_mod", null));
+        assertEquals("Coordinated Maneuvers", StatSources.outsideSourceName("coord_maneuvers_bonus", null));
     }
 
     @Test
