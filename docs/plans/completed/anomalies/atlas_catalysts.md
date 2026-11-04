@@ -6,11 +6,11 @@ Status: built 2026-10-28 apart from the in-game checks of steps 3 to 8, which ar
 
 ## Lore
 
-The factions are pushing into the Outer Reaches through wormholes, and the Gateway is how you follow them: it holds a system's coordinates steady long enough to open a way there. A catalyst is something the Gateway can lock onto alongside those coordinates. Feeding one into the projectors changes what is waiting at the far end. Each family explains what that something is:
+The factions are pushing into the Outer Reaches through wormholes, and the Gateway is how you follow them: it holds a system's coordinates steady long enough to open a way there. A catalyst creates nothing: it lets the crew find something that was already in the system and the first survey missed. Each family explains how:
 
-- Unstable Termini are burnt-out wormhole anchors, salvaged from the factions' careless early pushes. Locked onto a system, the terminus opens and fails, and the collapse scars the system.
-- Explorarium Surveys are Domain survey records recovered in the Outer Reaches. They create nothing. They show where something old lies, and the Gateway plots the way to it.
-- Transit Orders are a faction's intercepted wormhole transit orders. Rewritten with a system's coordinates, they send that faction's next push to the system you chose.
+- Unstable Termini are the last telemetry bursts from probes lost in unstable wormholes. Replayed by the sensor crew, their final readings turn up hazards nobody charted.
+- Explorarium Surveys are Domain survey records recovered in the Outer Reaches. Matched against fresh scans, they show where something old lies, and the Gateway plots the way to it.
+- Transit Orders are a faction's intercepted wormhole transit orders. Decrypted, they show which systems that faction's fleets are already bound for.
 
 Star anomalies have no catalyst that drops: not even a failing terminus can turn a star into a black hole. The one exception is the dev-only Hypershunt Survey (`coronal_hypershunt.md`), a `star` catalyst with weight 0 that only the console grants.
 
