@@ -5,6 +5,7 @@ import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.ui.UIComponentAPI;
 import exiledsector.i18n.Catalogue;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
@@ -21,11 +22,13 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -94,8 +97,8 @@ class ItemTooltipTest {
         ItemDefinitions.register(new org.json.JSONArray().put(HullItemRows.row("plating", "bridge", "ARMOR_FLAT:5/10/15/20")));
         Item item = Item.withEffects("socketable_6", "plating", 1L, List.of(new RolledLine("ARMOR_FLAT", 5f)));
 
-        List<String> onCapital = writtenParagraphs(item, HullSize.CAPITAL_SHIP, List::of);
-        List<String> withoutShip = writtenParagraphs(item, null, List::of);
+        List<String> onCapital = writtenParagraphs(item, HullSize.CAPITAL_SHIP, List::of, true);
+        List<String> withoutShip = writtenParagraphs(item, null, List::of, true);
 
         assertTrue(onCapital.stream().anyMatch(text -> text.contains("20")), onCapital.toString());
         assertTrue(onCapital.stream().noneMatch(text -> text.contains("5/10/15/20")), onCapital.toString());
@@ -106,17 +109,40 @@ class ItemTooltipTest {
     void theFooterIsBuiltWithTheGameTextCatalogue() {
         I18n.install(new Catalogue("zh_CN", Map.of()), new Catalogue("en", Map.of()));
 
-        List<String> paragraphs = writtenParagraphs(null, null, () -> List.of(StyledText.of("footer in " + I18n.locale())));
+        List<String> paragraphs = writtenParagraphs(null, null, () -> List.of(StyledText.of("footer in " + I18n.locale())), true);
 
         assertTrue(paragraphs.contains("footer in en"), paragraphs.toString());
     }
 
-    private static List<String> writtenParagraphs(Item item, HullSize hullSize, Supplier<List<StyledText>> footer) {
+    @Test
+    void theExpandedCargoTooltipMarksEachExplicitAsPrefixOrSuffixAndTheCompactOneDoesNot() throws Exception {
+        HullItemRows.registerMilitary();
+        Item item = Item.withEffects("socketable_7", HullItemRows.MILITARY, 1L,
+                List.of(new RolledLine("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledLine("SHIELD_DAMAGE_TAKEN_MULT", -12f)));
+        String prefixTag = I18n.forGameText(() -> exiledsector.i18n.Translation.text(SlottedRows.slotTagKey(ModifierSlot.PREFIX)));
+        String suffixTag = I18n.forGameText(() -> exiledsector.i18n.Translation.text(SlottedRows.slotTagKey(ModifierSlot.SUFFIX)));
+
+        List<String> expanded = writtenParagraphs(item, null, List::of, true);
+        List<String> compact = writtenParagraphs(item, null, List::of, false);
+
+        int beamLine = expanded.indexOf("12% (10%-15%) increased beam weapon damage.");
+        int shieldLine = expanded.indexOf("12% (10%-15%) less damage taken by shields.");
+        assertTrue(beamLine >= 0 && shieldLine >= 0, expanded.toString());
+        assertEquals(prefixTag, expanded.get(beamLine + 1));
+        assertEquals(suffixTag, expanded.get(shieldLine + 1));
+        assertTrue(compact.contains("12% increased beam weapon damage."), compact.toString());
+        assertFalse(compact.contains(prefixTag) || compact.contains(suffixTag), compact.toString());
+    }
+
+    private static List<String> writtenParagraphs(Item item, HullSize hullSize, Supplier<List<StyledText>> footer, boolean expanded) {
         TooltipMakerAPI tooltip = mock(TooltipMakerAPI.class);
         when(tooltip.addPara(anyString(), anyFloat(), (Color) any(), (Color) any(), any(String[].class))).thenReturn(mock(LabelAPI.class));
+        when(tooltip.beginSubTooltip(anyFloat())).thenReturn(tooltip);
+        UIComponentAPI placed = mock(UIComponentAPI.class, RETURNS_DEEP_STUBS);
+        when(tooltip.addCustomDoNotSetPosition(any())).thenReturn(placed);
         try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
             globalMock.when(Global::getSettings).thenReturn(mock(SettingsAPI.class));
-            ItemTooltip.write(tooltip, item, hullSize, footer, true);
+            ItemTooltip.write(tooltip, item, hullSize, footer, expanded);
         }
         ArgumentCaptor<String> paragraphs = ArgumentCaptor.forClass(String.class);
         verify(tooltip, atLeastOnce()).addPara(eq("%s"), anyFloat(), (Color) any(), (Color) any(), paragraphs.capture());

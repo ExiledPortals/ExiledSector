@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.Set;
 
 public final class ChartVanillaLoot {
 
@@ -107,10 +108,14 @@ public final class ChartVanillaLoot {
     }
 
     public static void addToFleet(CampaignFleetAPI fleet, boolean boss, ChartGenContext context, int tier) {
+        addToFleet(fleet, boss, context, tier, Set.of());
+    }
+
+    public static void addToFleet(CampaignFleetAPI fleet, boolean boss, ChartGenContext context, int tier, Set<DropType> withheld) {
         float fleetPointSteps = fleet.getFleetPoints() / FLEET_POINTS_PER_STEP;
-        SiteDrops fleetDrops = drops(ChartLoot.FLEET_SCOPE, tier, fleetPointSteps, context);
+        SiteDrops fleetDrops = drops(ChartLoot.FLEET_SCOPE, tier, fleetPointSteps, context, withheld);
         if (boss) {
-            SiteDrops spoils = drops(ChartLoot.BOSS_SCOPE, tier, fleetPointSteps * context.bossSpoilsMult(), context);
+            SiteDrops spoils = drops(ChartLoot.BOSS_SCOPE, tier, fleetPointSteps * context.bossSpoilsMult(), context, withheld);
             fleetDrops = fleetDrops.plus(spoils.random(), spoils.value());
         }
         fleetDrops.random().forEach(fleet::addDropRandom);
@@ -118,6 +123,10 @@ public final class ChartVanillaLoot {
     }
 
     public static SiteDrops drops(String scope, int tier, float steps, ChartGenContext context) {
+        return drops(scope, tier, steps, context, Set.of());
+    }
+
+    private static SiteDrops drops(String scope, int tier, float steps, ChartGenContext context, Set<DropType> withheld) {
         List<DropData> random = new ArrayList<>();
         List<DropData> value = new ArrayList<>();
         if (!(steps > 0f)) {
@@ -125,7 +134,7 @@ public final class ChartVanillaLoot {
         }
         for (ChartLoot.Entry entry : ChartLoot.entriesFor(scope, tier)) {
             float mult = steps * context.dropMult(entry.type());
-            if (!(mult > 0f)) {
+            if (!(mult > 0f) || withheld.contains(entry.type())) {
                 continue;
             }
             if (entry.mode() == ChartLoot.Mode.RANDOM) {

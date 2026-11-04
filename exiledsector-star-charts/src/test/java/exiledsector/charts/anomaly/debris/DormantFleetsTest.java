@@ -10,9 +10,14 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.ai.CampaignFleetAIAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl.FIDConfig;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
+import com.fs.starfarer.api.impl.campaign.ids.Tags;
+import com.fs.starfarer.api.loading.VariantSource;
+import exiledsector.charts.loot.DropType;
 import exiledsector.MockSector;
 import exiledsector.charts.anomaly.AnomalyEncounters;
 import org.junit.jupiter.api.AfterEach;
@@ -25,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
@@ -80,6 +86,23 @@ class DormantFleetsTest {
         when(fleet.getDetectedRangeMod()).thenReturn(detected);
         DormantFleets.hide(fleet);
         return fleet;
+    }
+
+    @Test
+    void debrisShipsNeverDropTheirCaptainsCoreAndTheFleetCarriesNoCoreDrops() {
+        ShipVariantAPI original = mock(ShipVariantAPI.class);
+        ShipVariantAPI own = mock(ShipVariantAPI.class);
+        when(original.clone()).thenReturn(own);
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getVariant()).thenReturn(original);
+
+        assertSame(own, DormantFleets.ownCorelessVariant(member));
+
+        verify(own).addTag(Tags.VARIANT_DO_NOT_DROP_AI_CORE_FROM_CAPTAIN);
+        verify(own).setSource(VariantSource.REFIT);
+        verify(member).setVariant(own, false, false);
+        verify(original, never()).addTag(anyString());
+        assertTrue(DormantFleets.WITHHELD_DROPS.contains(DropType.AI_CORE));
     }
 
     @Test

@@ -880,7 +880,8 @@ freighters are lost, every convoy fleet left leaves through the exit.
 
 The anomaly places one to four visual-only debris fields plus the extra-debris line, each hiding a dormant fleet built
 above the map boss's size and quality, its ships drawn by weight from `chart_factions.csv` factions and each captained by an AI core
-of a tier-based level (`AnomalousDebris`, `DormantFleets`, numbers in `DebrisRules`). The fleets fly as the neutral
+of a tier-based level (`AnomalousDebris`, `DormantFleets`, numbers in `DebrisRules`). Those cores never drop: each
+ship's variant carries vanilla's no-captain-core tag and the fleet's chart drops leave out AI cores. The fleets fly as the neutral
 `exiledSector_dormant` faction with vanilla's dormant setup and no fleet AI, so they never move or join a battle. A 0
 detected-range multiplier hides each one until the player fleet comes within 600 su of its field's edge
 (`AnomalousDebrisTerrainPlugin`).

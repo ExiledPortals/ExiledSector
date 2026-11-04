@@ -6,6 +6,7 @@ import exiledsector.items.Nanoswarm;
 import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.ItemNature;
 import exiledsector.items.MaterialItems;
+import exiledsector.items.SlottedRows;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONObject;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -46,7 +47,7 @@ class CraftingBenchStringKeysTest {
             require(catalogue, "ui.craftingBench.notice.inhibitorOn." + inhibitor.name().toLowerCase(java.util.Locale.ROOT), missing);
         }
         for (ModifierSlot slot : List.of(ModifierSlot.PREFIX, ModifierSlot.SUFFIX)) {
-            require(catalogue, CraftingBenchPanel.slotTagKey(slot), missing);
+            require(catalogue, SlottedRows.slotTagKey(slot), missing);
         }
         assertEquals(List.of(), missing);
     }

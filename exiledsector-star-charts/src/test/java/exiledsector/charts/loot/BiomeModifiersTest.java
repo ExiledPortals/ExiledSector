@@ -1,5 +1,7 @@
 package exiledsector.charts.loot;
 
+import exiledsector.charts.ChartTables;
+import exiledsector.i18n.RealCatalogue;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
@@ -14,8 +16,12 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -74,6 +80,7 @@ class BiomeModifiersTest {
         BiomeModifiers.register(new JSONArray().put(biomeRow(CHRONAL, RIFT, "bridge")).put(biomeRow(PLASMATIC, RIFT, "shield_generator")));
 
         assertEquals(BiomeModifiers.OWNER_PREFIX + RIFT, ReservedModifiers.owner(CHRONAL));
+        assertEquals(BiomeModifiers.headerKey(RIFT), ReservedModifiers.headerKey(PLASMATIC));
         assertEquals(CHRONAL, BiomeModifiers.modifierFor(RIFT, ItemKind.BRIDGE));
         assertEquals(PLASMATIC, BiomeModifiers.modifierFor(RIFT, ItemKind.SHIELD_GENERATOR));
         assertNull(BiomeModifiers.modifierFor(RIFT, ItemKind.REACTOR));
@@ -123,6 +130,23 @@ class BiomeModifiersTest {
         assertSame(bridge, BiomeModifiers.onDrop(bridge, "normal"));
         assertSame(emitter, BiomeModifiers.onDrop(emitter, RIFT));
         assertSame(relic, BiomeModifiers.onDrop(relic, RIFT));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"en", "zh_CN"})
+    void everyBiomeWithModifiersHasAOneWordHeader(String language) throws Exception {
+        Map<String, String> catalogue = RealCatalogue.entries(language);
+        JSONArray rows = ChartTables.csvRows(BiomeModifiers.PATH);
+        List<String> problems = new ArrayList<>();
+        for (int index = 0; index < rows.length(); index++) {
+            String headerKey = BiomeModifiers.headerKey(rows.getJSONObject(index).getString("biome"));
+            String header = catalogue.get(headerKey);
+            if (header == null || header.replaceAll("<[^>]+>", "").isBlank() || header.replaceAll("<[^>]+>", "").contains(" ")) {
+                problems.add(headerKey + " = " + header);
+            }
+        }
+
+        assertEquals(List.of(), problems);
     }
 
     @Test

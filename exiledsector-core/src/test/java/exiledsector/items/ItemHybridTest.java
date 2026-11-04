@@ -39,6 +39,7 @@ class ItemHybridTest {
     @AfterEach
     void clear() {
         ItemDefinitions.clear();
+        ReservedModifiers.clear();
     }
 
     private static Item item(List<RolledModifier> explicits) {
@@ -90,6 +91,30 @@ class ItemHybridTest {
         assertTrue(expanded.get(3).text().plain().contains("(4%-6%)"));
         assertTrue(collapsed.stream().noneMatch(line -> line.plain().startsWith("|") || line.plain().equals("Hybrid")));
         assertEquals(3, collapsed.size());
+    }
+
+    @Test
+    void aBiomesModifierShowsTheBiomeAboveItsLinesLikeAHybridHeaderWhenExpanded() {
+        String abyssalHeader = "chart.biomeModifier.header.abyssal_rift";
+        RolledModifier fortitude = RolledModifier.single(ModifierSlot.SUFFIX, new RolledLine("HULL_MULT", 5f));
+        ReservedModifiers.reserve(fortitude.modifierId(), "biome:abyssal_rift", abyssalHeader);
+        ReservedModifiers.reserve("plated_frame", "biome:abyssal_rift", abyssalHeader);
+        Item item = item(List.of(platedFrame(7f, 4f), fortitude));
+
+        List<SlottedLine> expanded = item.slottedEffectLines(true, null);
+        List<StyledText> collapsed = item.effectLines(false);
+
+        assertEquals(Arrays.asList(ModifierSlot.PREFIX, null, null, null, ModifierSlot.SUFFIX, null),
+                expanded.stream().map(SlottedLine::slot).toList());
+        assertEquals("<muted>Abyssal</muted>", expanded.get(0).text().toMarkup());
+        assertEquals("<muted>Hybrid</muted>", expanded.get(1).text().toMarkup());
+        assertTrue(expanded.get(2).text().toMarkup().startsWith("<muted>|</muted> "));
+        assertTrue(expanded.get(3).text().toMarkup().startsWith("<muted>|</muted> "));
+        assertEquals("<muted>Abyssal</muted>", expanded.get(4).text().toMarkup());
+        assertTrue(expanded.get(5).text().toMarkup().startsWith("<muted>|</muted> "));
+        assertTrue(expanded.get(5).text().plain().contains("(4%-6%)"));
+        assertEquals(3, collapsed.size());
+        assertTrue(collapsed.stream().noneMatch(line -> line.plain().equals("Abyssal") || line.plain().startsWith("|")));
     }
 
     @Test
