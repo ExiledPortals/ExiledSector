@@ -68,7 +68,8 @@ public final class ChartContentPlanner {
         plannedPois = addExtraPois(tier, pois, plannedPois, context.extraPois(), Seeds.derived(seed, EXTRA_POI_SALT));
         List<ContentPlacer> placers = ChartAnomalies.anomaliesOf(plannedAnomalies, ContentPlacer.class);
         Random bossRandom = Seeds.derived(seed, BOSS_SALT);
-        ChartBossType bossType = placers.stream().anyMatch(ContentPlacer::forcesStationBoss) ? ChartBossType.STATION
+        ChartBossType bossType = context.stationBossBarred() ? ChartBossType.FLEET
+                : placers.stream().anyMatch(ContentPlacer::forcesStationBoss) ? ChartBossType.STATION
                 : tier.boss() ? ChartBosses.pickType(tier.tier(), faction.factionId(), bossRandom) : ChartBossType.FLEET;
         String stationVariant = bossType == ChartBossType.STATION ? ChartBosses.pickStation(faction.factionId(), tier.tier(), bossRandom) : null;
         if (stationVariant == null) {

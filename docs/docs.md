@@ -563,8 +563,8 @@ the look of Random Assortment of Things' Abyss: Colossal Photospheres sized as i
 over, under abyssal fog and darkness, with none of RAT's sensor or storm effects (`ChartAbyss`). A biome's `*` anomaly
 weight covers every anomaly it doesn't list; the Rift's is 0, and no anomaly a biome weighs at 0 can be inserted there
 (`AtlasAnomalies.canInsert`). The Threat Expanse's fleets are built like vanilla's abyssal Threat
-fleets, filled to the chart's fleet points with a fabricator leading each boss (`ChartThreatFleets`), and its boss is
-never a station. Hyperspace clouds are impassable terrain clumping inside biomes and ridging along some
+fleets, filled to the chart's fleet points with a fabricator leading each boss (`ChartThreatFleets`). A boss in an
+`abyss` biome (the Rift and the Threat Expanse) is never a station, even under a Faction Skirmish (`AtlasOpening.request`). Hyperspace clouds are impassable terrain clumping inside biomes and ridging along some
 biome borders: no system sits under one and lanes route around them, and a grid of cleared corridors keeps the
 Gateway and every Bastion joined to the rest of the map (`AtlasTerrain`). A biome or Threat infestation behind
 an unlock is decided when first seen, and that is saved.

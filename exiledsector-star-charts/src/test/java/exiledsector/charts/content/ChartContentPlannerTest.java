@@ -71,6 +71,23 @@ class ChartContentPlannerTest {
     }
 
     @Test
+    void aBarredStationBossIsAlwaysAFleet() {
+        ChartBosses.useForTests(List.of(new ChartBosses.Definition(ChartBossType.STATION, 1f, 1, 15, 0.5f)),
+                List.of(new ChartBosses.Station("station2_Standard", Set.of(), 1, 15, 1f)));
+        try {
+            ChartGenContext barred = ChartGenContext.none().withStationBossBarred(true);
+            for (long seed = 0; seed < 10; seed++) {
+                ChartContentPlan plan = ChartContentPlanner.plan(seed, ChartTiers.forTier(10), ChartPois.all(), ChartFactions.all(), EVERY_FACTION, barred);
+                assertEquals(ChartBossType.FLEET, plan.bossType());
+                assertEquals(1, plan.count(FleetRole.BOSS));
+                assertEquals(0, plan.count(FleetRole.STATION_GUARD));
+            }
+        } finally {
+            ChartBosses.resetForTests();
+        }
+    }
+
+    @Test
     void withoutBossTablesEveryBossIsAFleet() {
         for (long seed = 0; seed < 10; seed++) {
             ChartContentPlan plan = plan(seed, 6);

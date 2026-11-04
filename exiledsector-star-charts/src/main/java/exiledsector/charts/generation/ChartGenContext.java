@@ -83,6 +83,7 @@ public final class ChartGenContext {
     private final List<String> forcedAnomalies = new ArrayList<>();
     private boolean guaranteedBossTierUp;
     private boolean guaranteedBossUnique;
+    private boolean stationBossBarred;
     private final Map<String, String> anomalyData = new LinkedHashMap<>();
 
     private ChartGenContext(List<AppliedEffect> applied, int quantity, String factionId) {
@@ -380,6 +381,7 @@ public final class ChartGenContext {
         context.forceAnomalies(forcedAnomalies);
         context.guaranteedBossTierUp = guaranteedBossTierUp;
         context.guaranteedBossUnique = guaranteedBossUnique;
+        context.stationBossBarred = stationBossBarred;
         context.anomalyData.putAll(anomalyData);
         return context;
     }
@@ -402,6 +404,19 @@ public final class ChartGenContext {
 
     public boolean guaranteedBossUnique() {
         return guaranteedBossUnique;
+    }
+
+    public ChartGenContext withStationBossBarred(boolean barred) {
+        if (barred == stationBossBarred) {
+            return this;
+        }
+        ChartGenContext context = derive(applied, factionId);
+        context.stationBossBarred = barred;
+        return context;
+    }
+
+    public boolean stationBossBarred() {
+        return stationBossBarred;
     }
 
     public ChartGenContext withAnomalyData(String anomalyId, String data) {
