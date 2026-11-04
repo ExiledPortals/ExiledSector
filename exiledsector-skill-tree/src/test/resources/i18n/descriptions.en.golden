@@ -4388,19 +4388,19 @@ type|lions_gaze|FRIGATE|0	0	Beam weapon hits split their damage evenly across th
 type|lions_gaze|DESTROYER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
 type|lions_gaze|CRUISER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
 type|lions_gaze|CAPITAL_SHIP|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
-type|live_munitions|null|0	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
+type|live_munitions|null|0	0	Each Heartless stack has a <bad>9%</bad> chance to sacrifice a crew member for each missile fired.
 type|live_munitions|null|1	0	<good>3%</good> increased missile damage for each Heartless stack while the fleet has crew left to give.
 type|live_munitions|null|2	0	<good>3%</good> increased missile top speed for each Heartless stack while the fleet has crew left to give.
-type|live_munitions|FRIGATE|0	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
+type|live_munitions|FRIGATE|0	0	Each Heartless stack has a <bad>9%</bad> chance to sacrifice a crew member for each missile fired.
 type|live_munitions|FRIGATE|1	0	<good>3%</good> increased missile damage for each Heartless stack while the fleet has crew left to give.
 type|live_munitions|FRIGATE|2	0	<good>3%</good> increased missile top speed for each Heartless stack while the fleet has crew left to give.
-type|live_munitions|DESTROYER|0	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
+type|live_munitions|DESTROYER|0	0	Each Heartless stack has a <bad>9%</bad> chance to sacrifice a crew member for each missile fired.
 type|live_munitions|DESTROYER|1	0	<good>3%</good> increased missile damage for each Heartless stack while the fleet has crew left to give.
 type|live_munitions|DESTROYER|2	0	<good>3%</good> increased missile top speed for each Heartless stack while the fleet has crew left to give.
-type|live_munitions|CRUISER|0	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
+type|live_munitions|CRUISER|0	0	Each Heartless stack has a <bad>9%</bad> chance to sacrifice a crew member for each missile fired.
 type|live_munitions|CRUISER|1	0	<good>3%</good> increased missile damage for each Heartless stack while the fleet has crew left to give.
 type|live_munitions|CRUISER|2	0	<good>3%</good> increased missile top speed for each Heartless stack while the fleet has crew left to give.
-type|live_munitions|CAPITAL_SHIP|0	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
+type|live_munitions|CAPITAL_SHIP|0	0	Each Heartless stack has a <bad>9%</bad> chance to sacrifice a crew member for each missile fired.
 type|live_munitions|CAPITAL_SHIP|1	0	<good>3%</good> increased missile damage for each Heartless stack while the fleet has crew left to give.
 type|live_munitions|CAPITAL_SHIP|2	0	<good>3%</good> increased missile top speed for each Heartless stack while the fleet has crew left to give.
 type|low_tech_affinity|null|0	0	<good>+5</good> to Low Tech Affinity.
