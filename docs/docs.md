@@ -569,6 +569,21 @@ biome borders: no system sits under one and lanes route around them, and a grid 
 Gateway and every Bastion joined to the rest of the map (`AtlasTerrain`). A biome or Threat infestation behind
 an unlock is decided when first seen, and that is saved.
 
+### Biome modifiers
+
+A biome can own one modifier per hull item part (`biome_modifiers.csv`), reserved so no other roll draws it
+(`BiomeModifiers`). A non-unique hull item dropped while the player is in a run system of that biome has a 30% chance,
+fixed by its seed, to gain its part's modifier: `LootSources.shapeDrops` passes each drop through every loot source's `shapeDrop`, called from the
+drop helpers in `ItemLootListener` and from the hull item battle drops. The item keeps its other modifiers, except one
+sharing the added effect; on a full side a random modifier makes way (`GrantedModifiers.add`).
+
+Of the Abyssal Rift's, the moving-slowly burn level adds up over the fleet's active ships, capped at +6, onto vanilla's
+`move_slow_speed_bonus_mod` at each fleet sync (`FleetWideEffects.applyMoveSlowBurnLevel`). The phase-entry repair
+counts only armor actually restored toward its per-battle cap (`PhaseEntryRepairListener`), and the drone damage bonus
+rides on each strikecraft the ship launches, counting a strikecraft with no minimum crew as a drone (`DroneDamageListener`).
+Borrowed Grace stacks give a fixed 1% each, so the Armor Plate's stacks (every 150 damage) work without the node; with
+both, one pool holds both maximums and stacks come every 100 damage (`BorrowedGraceListener`).
+
 ### Chart tier groups
 
 Chart tiers fall into three groups: low (1-5), mid (6-10) and high (11-16) (`TierGroup`). A chart modifier line gives

@@ -11,10 +11,12 @@ import exiledsector.skills.ShipFacts;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.ConditionalStatEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
+import exiledsector.skills.skilleffect.EffectText;
 import exiledsector.skills.skilleffect.SkillEffectSupport;
 import exiledsector.skills.skilleffect.weapon.WeaponScope;
 import exiledsector.skills.skilleffect.weapon.WeaponStatFamily;
 
+import static exiledsector.skills.skilleffect.Backings.listener;
 import static exiledsector.skills.skilleffect.Backings.statEffect;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
@@ -51,6 +53,13 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
             "stat.fluxDissipationWhilePhased", PhaseSkillEffect::isBoostedByPhase)),
     AMMO_REGEN_WHILE_PHASED_PERCENT(new ConditionalStatEffect(PERCENT, WeaponStatFamily.AMMO_REGEN.target(WeaponScope.ALL),
             "stat.ammoRegenWhilePhased", PhaseSkillEffect::isBoostedByPhase)),
+    PHASE_ENTRY_ARMOR_REPAIR_PERCENT(listener(PhaseEntryRepairListener.REPAIR_PERCENT_KEY, PhaseEntryRepairListener.class,
+            PhaseEntryRepairListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("cap", PhaseEntryRepairListener.BATTLE_CAP_PERCENT).styled();
+        }
+    },
     PHASE_ANCHOR_EMERGENCY_DIVE {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

@@ -1,6 +1,6 @@
 # Abyssal Rift content and biome modifiers
 
-The Abyssal Rift (Random Assortment of Things only) gets its own content built from RAT's Abyss: abyssal salvage sites, the Abyssal Shipyard, the Abyssal Research Complex and the Abyssal Storm. Every hull item dropped in a Rift system carries an abyssal modifier, the first case of biome modifiers, which every atlas biome will get.
+The Abyssal Rift (Random Assortment of Things only) gets its own content built from RAT's Abyss: abyssal salvage sites, the Abyssal Shipyard, the Abyssal Research Complex and the Abyssal Storm. Hull items dropped in a Rift system can carry an abyssal modifier, the first case of biome modifiers, which every atlas biome will get.
 
 Status: proposed 2026-11-04. See `overview.md` for the shared anomaly framework. RAT's Abyss assets are approved for use.
 
@@ -10,9 +10,9 @@ RAT picks the dialog for its abyss stations by custom entity id in any location 
 
 ## Biome modifiers
 
-Each atlas biome can own one modifier per base hull item type, kept in a new table `data/config/exiledSector/biome_modifiers.csv` (`biome,item,modifier,note`). Every hull item dropped in that biome's systems gets its type's modifier: chart fleets, the boss, salvage sites and anomaly drops alike. Uniques keep their fixed modifiers and get none.
+Each atlas biome can own one modifier per base hull item type, kept in `data/config/exiledSector/biome_modifiers.csv` (`modifier,biome,item,note`). 30% of the hull items dropped in that biome's systems (placeholder, `BiomeModifiers.DROP_CHANCE`) get their type's modifier: chart fleets, the boss, salvage sites and anomaly drops alike. Uniques keep their fixed modifiers and get none.
 
-The modifiers are `item_modifiers.csv` rows ending in the biome's suffix (`_ABYSSAL_RIFT` here), reserved at item load the way `StormLoot.reserveModifiers` reserves the storm ones, so no other roll ever draws them. They are added through `GrantedModifiers.grant`, which already handles items with no free slot. A nanoswarm reroll can remove one like any other modifier; only the biome, or a program like the Research Complex's, adds it again.
+The modifiers are `item_modifiers.csv` rows ending in the biome's suffix (`_ABYSSAL_RIFT` here), reserved at item load the way `StormLoot.reserveModifiers` reserves the storm ones, so no other roll ever draws them. They are added through `GrantedModifiers.add`, which keeps the item's other modifiers and, on a full side, drops a random one to make room. A nanoswarm reroll can remove one like any other modifier; only the biome, or a program like the Research Complex's, adds it again.
 
 ### Abyssal Rift modifiers
 
@@ -67,9 +67,9 @@ The Rift weighs every anomaly it doesn't list at 0 (`*:0`). The Research Complex
 
 ## Build order
 
-1. [ ] Biome modifiers: `biome_modifiers.csv` and its loader, reserving the modifiers at item load; every hull item dropped in a biome's systems granted its type's modifier, through one hook for fleet, boss, site and anomaly drops; the eight Rift rows in `item_modifiers.csv` and `biome_modifiers.csv`, with strings (en and zh_CN).
-1a. [ ] The new effects: the fleet-wide moving-slowly burn level (capped at +6 per fleet), the phase-entry armor repair with its per-combat cap, and damage to drone fighters, each in its ship part's `skilleffect` package with tests.
-1b. [ ] Borrowed Grace: the per-stack effect moves into the stack, the node drops `BORROWED_GRACE_PERCENT_PER_STACK`, and the item's stack source with its 150 damage threshold shares the node's stack pool; update the node's lines, `docs/docs.md` and the Borrowed Grace tests.
+1. [x] Biome modifiers: `biome_modifiers.csv` and its loader, reserving the modifiers at item load; every hull item dropped in a biome's systems granted its type's modifier, through one hook for fleet, boss, site and anomaly drops; the eight Rift rows in `item_modifiers.csv` and `biome_modifiers.csv`, with strings (en and zh_CN). Built: `charts.loot.BiomeModifiers`, the `LootSource.shapeDrop` hook (`LootSources.shapeDrops`), `GrantedModifiers.add`.
+1a. [x] The new effects: the fleet-wide moving-slowly burn level (capped at +6 per fleet), the phase-entry armor repair with its per-combat cap, and damage to drone fighters, each in its ship part's `skilleffect` package with tests. Built: `MOVE_SLOW_BURN_LEVEL_FLAT` (`FleetWideEffects`), `PHASE_ENTRY_ARMOR_REPAIR_PERCENT` (`PhaseEntryRepairListener`), `STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT` (`DroneDamageListener`).
+1b. [x] Borrowed Grace: the per-stack effect moves into the stack, the node drops `BORROWED_GRACE_PERCENT_PER_STACK`, and the item's stack source with its 150 damage threshold shares the node's stack pool; update the node's lines, `docs/docs.md` and the Borrowed Grace tests. Built: `BORROWED_GRACE_SLOW_MAX_STACKS_FLAT` in `BorrowedGraceListener`.
 2. [ ] Abyssal salvage sites: the `biomes` column on `chart_poi.csv`, our three custom entities and salvage specs, placement in the orbitless Rift layout.
 3. [ ] Abyssal Shipyard: its landmark row, entity, guard fleet and salvage.
 4. [ ] Abyssal Research Complex: Rift-only `fitsAt`, entity, Seraph guards and the abyssal graft program on the forge's bench mode.

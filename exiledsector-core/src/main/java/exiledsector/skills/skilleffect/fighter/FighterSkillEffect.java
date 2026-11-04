@@ -226,6 +226,8 @@ public enum FighterSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", Math.min(magnitude, PhaseEntangledWingsListener.MAX_SHARED_PERCENT)).styled();
         }
     },
+    STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT(new FighterListenerEffect<>(DroneDamageListener.DAMAGE_PERCENT_KEY, DroneDamageListener.class,
+            DroneDamageListener::new)),
     FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER(new FighterListenerEffect<>(WingNumbersDamageListener.REDUCTION_PERCENT_PER_FIGHTER_KEY,
             WingNumbersDamageListener.class, WingNumbersDamageListener::new)) {
 

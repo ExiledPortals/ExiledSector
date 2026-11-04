@@ -9,6 +9,7 @@ import exiledsector.charts.layout.abyss.AbyssArt;
 import exiledsector.charts.effect.ChartEnemyInflationListener;
 import exiledsector.charts.effect.ChartEnemyShipEffects;
 import exiledsector.charts.effect.ChartPlayerModifierSource;
+import exiledsector.charts.loot.BiomeModifiers;
 import exiledsector.charts.loot.StarChartLootSource;
 import exiledsector.charts.objective.ChartRewardLootSource;
 import exiledsector.charts.objective.GatewayUpgradeRewards;
@@ -120,6 +121,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     public void loadItems() {
         StarChartItems.load();
         Engrams.load();
+        BiomeModifiers.load();
         ChartAnomalies.all().forEach(ChartAnomaly::loadItems);
         I18n.forGameText(Engrams::localise);
         I18n.forGameText(AtlasCatalystItems::localise);

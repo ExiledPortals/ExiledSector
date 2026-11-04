@@ -36,7 +36,7 @@ class BorrowedGraceListenerTest {
     }
 
     private static ShipAPI graceShip(float maxStacks) {
-        return ship("grace", 0, Map.of(BorrowedGraceListener.MAX_STACKS_KEY, maxStacks, BorrowedGraceListener.PERCENT_PER_STACK_KEY, 1f));
+        return ship("grace", 0, Map.of(BorrowedGraceListener.MAX_STACKS_KEY, maxStacks));
     }
 
     @Test
@@ -57,6 +57,30 @@ class BorrowedGraceListenerTest {
         grace.reportDamageApplied(null, ship, hit(0f, 60f));
         assertEquals(2, grace.stacks());
         verify(stats.getFluxDissipation()).modifyPercent(GRACE_MOD_ID, 2f);
+    }
+
+    @Test
+    void slowStacksAloneComeEvery150DamageWithTheFullStackEffect() {
+        ShipAPI ship = ship("grace", 0, Map.of(BorrowedGraceListener.SLOW_MAX_STACKS_KEY, 10f));
+        BorrowedGraceListener grace = new BorrowedGraceListener(ship);
+
+        grace.reportDamageApplied(null, ship, hit(0f, 100f));
+        assertEquals(0, grace.stacks());
+
+        grace.reportDamageApplied(null, ship, hit(50f, 0f));
+        assertEquals(1, grace.stacks());
+        verify(ship.getMutableStats().getMaxSpeed()).modifyPercent(GRACE_MOD_ID, BorrowedGraceListener.PERCENT_PER_STACK);
+    }
+
+    @Test
+    void theNodeAndSlowStacksShareOnePoolAtTheNodesFasterRate() {
+        ShipAPI ship = ship("grace", 0, Map.of(BorrowedGraceListener.MAX_STACKS_KEY, 2f, BorrowedGraceListener.SLOW_MAX_STACKS_KEY, 1f));
+        BorrowedGraceListener grace = new BorrowedGraceListener(ship);
+
+        assertEquals(3, grace.maxStacks());
+        assertEquals(BorrowedGraceListener.DAMAGE_PER_STACK, grace.damagePerStack());
+        grace.reportDamageApplied(null, ship, hit(0f, 400f));
+        assertEquals(3, grace.stacks());
     }
 
     @Test

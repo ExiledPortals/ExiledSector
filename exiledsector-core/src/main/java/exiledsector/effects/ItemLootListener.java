@@ -131,17 +131,18 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
     }
 
     public static void addSiteLoot(CargoAPI loot, ItemDrops.SiteLoot siteLoot) {
-        addSpecials(loot, siteLoot.items(), siteLoot.upgrades());
+        addItems(loot, siteLoot.items(), siteLoot.upgrades());
         siteLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
     }
 
-    private static void addSpecials(CargoAPI cargo, List<ItemData> items, List<ShipSchematic> upgrades) {
-        items.forEach(item -> cargo.addSpecial(item.toSpecialItem(), 1f));
+    public static void addItems(CargoAPI cargo, List<ItemData> items, List<ShipSchematic> upgrades) {
+        LootSources.shapeDrops(items).forEach(item -> cargo.addSpecial(item.toSpecialItem(), 1f));
         upgrades.forEach(upgrade -> cargo.addSpecial(upgrade.toSpecialItem(), 1f));
     }
 
     public static void deliverSiteLoot(CargoAPI cargo, ItemDrops.SiteLoot siteLoot) {
-        deliverSiteLoot(cargo, siteLoot, ItemLootListener::announceSalvaged, MaterialDropAnnouncer::announce);
+        deliverSiteLoot(cargo, new ItemDrops.SiteLoot(LootSources.shapeDrops(siteLoot.items()), siteLoot.upgrades(), siteLoot.materials()),
+                ItemLootListener::announceSalvaged, MaterialDropAnnouncer::announce);
     }
 
     public static void deliverSiteLoot(CargoAPI cargo, ItemDrops.SiteLoot siteLoot, Consumer<Supplier<String>> announceFind,
@@ -156,7 +157,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
     }
 
     public static void deliverItems(CargoAPI cargo, List<ItemData> items) {
-        deliverItems(cargo, items, ItemLootListener::announceSalvaged);
+        deliverItems(cargo, LootSources.shapeDrops(items), ItemLootListener::announceSalvaged);
     }
 
     private static void deliverItems(CargoAPI cargo, List<ItemData> items, Consumer<Supplier<String>> announceFind) {

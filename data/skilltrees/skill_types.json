@@ -3953,10 +3953,6 @@
 					"magnitude": 20
 				},
 				{
-					"effect": "BORROWED_GRACE_PERCENT_PER_STACK",
-					"magnitude": 1
-				},
-				{
 					"effect": "WEAPON_DURABILITY_PERCENT",
 					"magnitude": 20
 				},

@@ -49,11 +49,16 @@ public enum SpecialSkillEffect implements BackedSkillEffect {
     BORROWED_GRACE_MAX_STACKS_FLAT(listener(BorrowedGraceListener.MAX_STACKS_KEY, BorrowedGraceListener.class, BorrowedGraceListener::new)) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).arg("damage", BorrowedGraceListener.DAMAGE_PER_STACK)
-                    .arg("duration", BorrowedGraceListener.STACK_DURATION_SECONDS).styled();
+            return BorrowedGraceListener.describe(this, magnitude, BorrowedGraceListener.DAMAGE_PER_STACK);
         }
     },
-    BORROWED_GRACE_PERCENT_PER_STACK(listener(BorrowedGraceListener.PERCENT_PER_STACK_KEY, BorrowedGraceListener.class, BorrowedGraceListener::new)),
+    BORROWED_GRACE_SLOW_MAX_STACKS_FLAT(listener(BorrowedGraceListener.SLOW_MAX_STACKS_KEY, BorrowedGraceListener.class,
+            BorrowedGraceListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return BorrowedGraceListener.describe(this, magnitude, BorrowedGraceListener.SLOW_DAMAGE_PER_STACK);
+        }
+    },
     SERAPH_HUNTING_HEAL_PERCENT(listener(SeraphHuntingListener.HEAL_PERCENT_KEY, SeraphHuntingListener.class, SeraphHuntingListener::new)),
     SERAPH_HUNTING_HEAL_CAP_PERCENT(listener(SeraphHuntingListener.HEAL_CAP_PERCENT_KEY, SeraphHuntingListener.class, SeraphHuntingListener::new)),
     SERAPH_HUNTING_DAMAGE_BONUS_PERCENT(listener(SeraphHuntingListener.DAMAGE_BONUS_PERCENT_KEY, SeraphHuntingListener.class, SeraphHuntingListener::new)),

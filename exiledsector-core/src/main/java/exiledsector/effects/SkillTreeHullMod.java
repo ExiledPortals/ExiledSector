@@ -229,6 +229,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
             ExiledSector.domains().forEach(ExiledSectorDomain::playerFleetSynced);
         }
         FleetWideEffects.applyAlwaysCountingSensorStrength(fleet);
+        FleetWideEffects.applyMoveSlowBurnLevel(fleet);
     }
 
     @Override

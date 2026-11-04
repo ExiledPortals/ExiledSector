@@ -1,10 +1,12 @@
 package exiledsector.loot;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.PlayerFleet;
 import exiledsector.domain.DomainContributions;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.items.ItemChances;
@@ -54,6 +56,23 @@ public final class LootSources {
         List<ItemData> drops = new ArrayList<>();
         SOURCES.all().forEach(source -> drops.addAll(source.bossDrops(chartTier, bossFactionId, chanceMult, random, allowed)));
         return drops;
+    }
+
+    public static List<ItemData> shapeDrops(List<ItemData> items) {
+        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
+        LocationAPI location = playerFleet == null ? null : playerFleet.getContainingLocation();
+        if (location == null || items.isEmpty()) {
+            return items;
+        }
+        List<ItemData> shaped = new ArrayList<>(items.size());
+        for (ItemData item : items) {
+            ItemData shapedItem = item;
+            for (LootSource source : SOURCES.all()) {
+                shapedItem = source.shapeDrop(shapedItem, location);
+            }
+            shaped.add(shapedItem);
+        }
+        return shaped;
     }
 
     public static float difficultyMultiplier(float battleDifficulty) {

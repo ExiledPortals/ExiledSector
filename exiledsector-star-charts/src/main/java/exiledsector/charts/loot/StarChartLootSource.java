@@ -263,6 +263,16 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
     }
 
     @Override
+    public ItemData shapeDrop(ItemData item, LocationAPI location) {
+        try {
+            return BiomeModifiers.onDrop(Global.getSector(), item, location);
+        } catch (RuntimeException e) {
+            LOG.error("[ExiledSector] Adding a biome modifier to a dropped item failed", e);
+            return item;
+        }
+    }
+
+    @Override
     public FleetLevelRange levelRange(MemoryAPI fleetMemory) {
         return ChartTiers.fleetStrengthRangeFor(fleetMemory);
     }

@@ -24,6 +24,10 @@ public final class AtlasRuntime {
         return cachedGenerator;
     }
 
+    public static String regionOf(SectorAPI sector, AtlasRunNode node) {
+        return sector == null || node == null ? null : generator(sector).regionOf(AtlasCell.unpack(node.cell())).id();
+    }
+
     public static synchronized void invalidate() {
         cachedGenerator = null;
         cachedState = null;

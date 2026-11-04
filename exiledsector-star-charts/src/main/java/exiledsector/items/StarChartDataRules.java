@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import exiledsector.ModCsv;
+import exiledsector.charts.loot.BiomeModifiers;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.TierGroup;
 import exiledsector.modifiers.TierRange;
@@ -47,6 +48,12 @@ public final class StarChartDataRules implements ItemDataRules {
                 ItemType.STAR_CHART);
         checkImplicits(integrity, ItemDataIntegrity.orEmpty(ModCsv.rows(StarChartImplicits.SYSTEM_TYPE_COLUMN, StarChartImplicits.DATA_PATH)));
         Engrams.checkData(integrity);
+        checkBiomeModifiers(integrity, ItemDataIntegrity.orEmpty(ModCsv.rows(BiomeModifiers.ID_COLUMN, BiomeModifiers.PATH)));
+    }
+
+    static void checkBiomeModifiers(ItemDataIntegrity integrity, JSONArray rows) throws JSONException {
+        ModCsv.forEach(rows, (index, row) -> integrity.checkReservedModifier(BiomeModifiers.PATH, index + FIRST_DATA_LINE,
+                BiomeModifiers.OWNER_PREFIX + ModCsv.text(row, "biome"), ModCsv.text(row, BiomeModifiers.ID_COLUMN), Set.of(ModifierScope.HULL_ITEM)));
     }
 
     @Override

@@ -60,4 +60,8 @@ public interface LootSource {
 
     default void itemsBought(List<ItemData> boughtItems) {
     }
+
+    default ItemData shapeDrop(ItemData item, LocationAPI location) {
+        return item;
+    }
 }

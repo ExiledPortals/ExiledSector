@@ -1,0 +1,9 @@
+modifier,biome,item,note
+TIMEFLOW_PERCENT_ABYSSAL_RIFT,abyssal_rift,bridge,"Chronal: Chronos cores"
+SENSOR_PROFILE_PERCENT_ABYSSAL_RIFT,abyssal_rift,reactor,"Lightless: abyssal darkness"
+BEAM_WEAPON_HARD_FLUX_PERCENT_ABYSSAL_RIFT,abyssal_rift,weapon_mount,"of the Abyss: abyssal beam drones"
+SHIELD_UPKEEP_MULT_ABYSSAL_RIFT,abyssal_rift,shield_generator,"Plasmatic: RAT's Plasmatic Shield"
+MOVE_SLOW_BURN_LEVEL_FLAT_ABYSSAL_RIFT,abyssal_rift,engine_room,"of the Depths: RAT's fog hides slow fleets"
+PHASE_ENTRY_ARMOR_REPAIR_PERCENT_ABYSSAL_RIFT,abyssal_rift,phase_coil,"of the Seraph: Seraph hulls"
+STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT_ABYSSAL_RIFT,abyssal_rift,flight_deck,"Fabricator-fed: abyssal drone wings"
+BORROWED_GRACE_SLOW_MAX_STACKS_FLAT_ABYSSAL_RIFT,abyssal_rift,armor_plating,"Graced: Seraph's Grace"

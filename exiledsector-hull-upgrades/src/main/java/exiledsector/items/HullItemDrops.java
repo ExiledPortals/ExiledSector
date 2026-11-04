@@ -1,7 +1,5 @@
 package exiledsector.items;
 
-import com.fs.starfarer.api.campaign.CargoAPI;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -20,11 +18,6 @@ public final class HullItemDrops {
 
         public boolean isEmpty() {
             return items.isEmpty() && upgrades.isEmpty();
-        }
-
-        public void addTo(CargoAPI cargo) {
-            items.forEach(item -> cargo.addSpecial(item.toSpecialItem(), 1f));
-            upgrades.forEach(upgrade -> cargo.addSpecial(upgrade.toSpecialItem(), 1f));
         }
     }
 

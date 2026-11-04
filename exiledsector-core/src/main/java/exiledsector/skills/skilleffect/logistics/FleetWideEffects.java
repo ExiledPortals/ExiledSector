@@ -2,9 +2,11 @@ package exiledsector.skills.skilleffect.logistics;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.hullmods.PhaseField;
+import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.ExiledSector;
 import exiledsector.PlayerFleet;
 import exiledsector.i18n.Translation;
@@ -18,6 +20,9 @@ public final class FleetWideEffects {
     static final String POST_BATTLE_SALVAGE_CONTRIBUTION_KEY = "exiledLib_postBattleSalvageContribution";
     static final String PHASE_FIELD_CONTRIBUTION_KEY = "exiledLib_phaseFieldContributionPercent";
     static final String SENSOR_STRENGTH_ALWAYS_COUNTS_KEY = "exiledLib_sensorStrengthAlwaysCounts";
+    static final String MOVE_SLOW_BURN_LEVEL_KEY = "exiledLib_moveSlowBurnLevelContribution";
+    static final float MAX_MOVE_SLOW_BURN_LEVEL_BONUS = 6f;
+    private static final String MOVE_SLOW_BURN_LEVEL_FLEET_MOD = "moveSlowBurnLevel";
     private static final String SENSOR_STRENGTH_ALWAYS_COUNTS_FLEET_MOD = "sensorStrengthAlwaysCounts";
     private static final String MAX_SENSOR_SHIPS_SETTING = "maxSensorShips";
     private static final int DEFAULT_MAX_SENSOR_SHIPS = 5;
@@ -58,6 +63,30 @@ public final class FleetWideEffects {
         } else {
             fleet.getStats().getSensorStrengthMod().unmodifyFlat(ExiledSector.key(SENSOR_STRENGTH_ALWAYS_COUNTS_FLEET_MOD));
         }
+    }
+
+    public static void applyMoveSlowBurnLevel(CampaignFleetAPI fleet) {
+        DynamicStatsAPI fleetDynamic = fleet == null || fleet.getStats() == null ? null : fleet.getStats().getDynamic();
+        if (fleetDynamic == null || fleet.getFleetData() == null) {
+            return;
+        }
+        float bonus = moveSlowBurnLevelBonus(fleet.getFleetData().getMembersListCopy());
+        StatBonus moveSlowMod = fleetDynamic.getMod(Stats.MOVE_SLOW_SPEED_BONUS_MOD);
+        if (bonus > 0f) {
+            moveSlowMod.modifyFlat(ExiledSector.key(MOVE_SLOW_BURN_LEVEL_FLEET_MOD), bonus, Translation.gameText("fleet.moveSlowBurnLevel"));
+        } else {
+            moveSlowMod.unmodifyFlat(ExiledSector.key(MOVE_SLOW_BURN_LEVEL_FLEET_MOD));
+        }
+    }
+
+    static float moveSlowBurnLevelBonus(List<FleetMemberAPI> members) {
+        float bonus = 0f;
+        for (FleetMemberAPI member : members) {
+            if (!member.isMothballed()) {
+                bonus += member.getStats().getDynamic().getValue(MOVE_SLOW_BURN_LEVEL_KEY, 0f);
+            }
+        }
+        return Math.min(MAX_MOVE_SLOW_BURN_LEVEL_BONUS, bonus);
     }
 
     private static boolean alwaysCounts(FleetMemberAPI member) {

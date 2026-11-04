@@ -8,6 +8,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.DerivedStatEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
+import exiledsector.skills.skilleffect.EffectText;
 import exiledsector.skills.skilleffect.StatMode;
 
 import static exiledsector.skills.skilleffect.Backings.flag;
@@ -68,6 +69,12 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
     SENSOR_STRENGTH_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getSensorStrength), "stat.sensorStrength", false)),
     SENSOR_STRENGTH_FLAT(statEffect(FLAT, stat(MutableShipStatsAPI::getSensorStrength), "stat.sensorStrength", false)),
     SENSOR_STRENGTH_ALWAYS_COUNTS(flag(FleetWideEffects.SENSOR_STRENGTH_ALWAYS_COUNTS_KEY)),
+    MOVE_SLOW_BURN_LEVEL_FLAT(statEffect(FLAT, dynamicMod(FleetWideEffects.MOVE_SLOW_BURN_LEVEL_KEY), "stat.moveSlowBurnLevel", false)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("max", FleetWideEffects.MAX_MOVE_SLOW_BURN_LEVEL_BONUS).styled();
+        }
+    },
     COMBAT_VISION(statEffect(FLAT, bonus(MutableShipStatsAPI::getSightRadiusMod), "stat.inCombatSensorVisionRange", false)),
     MIN_CREW_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getMinCrewMod), StatNames.MIN_CREW_REQUIRED, true)),
     MIN_CREW_PERCENT(statEffect(PERCENT, bonus(MutableShipStatsAPI::getMinCrewMod), StatNames.MIN_CREW_REQUIRED, true)),

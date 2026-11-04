@@ -412,18 +412,18 @@ effect|BOMBER_ROLE_TOP_SPEED_PERCENT|12.5	0	Bombers launched from this ship have
 effect|BOMBER_ROLE_TOP_SPEED_PERCENT|100.0	0	Bombers launched from this ship have <good>100%</good> increased top speed.
 effect|BOMBER_ROLE_TOP_SPEED_PERCENT|-10.0	0	Bombers launched from this ship have <bad>10%</bad> reduced top speed.
 effect|BOMBER_ROLE_TOP_SPEED_PERCENT|-12.5	0	Bombers launched from this ship have <bad>12.5%</bad> reduced top speed.
-effect|BORROWED_GRACE_MAX_STACKS_FLAT|1.0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>1</good> stacks. Stack timers pause while the ship is phased.
-effect|BORROWED_GRACE_MAX_STACKS_FLAT|10.0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>10</good> stacks. Stack timers pause while the ship is phased.
-effect|BORROWED_GRACE_MAX_STACKS_FLAT|12.5	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>12.5</good> stacks. Stack timers pause while the ship is phased.
-effect|BORROWED_GRACE_MAX_STACKS_FLAT|100.0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>100</good> stacks. Stack timers pause while the ship is phased.
-effect|BORROWED_GRACE_MAX_STACKS_FLAT|-10.0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>-10</good> stacks. Stack timers pause while the ship is phased.
-effect|BORROWED_GRACE_MAX_STACKS_FLAT|-12.5	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>-12.5</good> stacks. Stack timers pause while the ship is phased.
-effect|BORROWED_GRACE_PERCENT_PER_STACK|1.0	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
-effect|BORROWED_GRACE_PERCENT_PER_STACK|10.0	0	Each Borrowed Grace stack grants <good>10%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>10%</good> reduced weapon flux cost and damage taken.
-effect|BORROWED_GRACE_PERCENT_PER_STACK|12.5	0	Each Borrowed Grace stack grants <good>12.5%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>12.5%</good> reduced weapon flux cost and damage taken.
-effect|BORROWED_GRACE_PERCENT_PER_STACK|100.0	0	Each Borrowed Grace stack grants <good>100%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>100%</good> reduced weapon flux cost and damage taken.
-effect|BORROWED_GRACE_PERCENT_PER_STACK|-10.0	0	Each Borrowed Grace stack grants <good>-10%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>-10%</good> reduced weapon flux cost and damage taken.
-effect|BORROWED_GRACE_PERCENT_PER_STACK|-12.5	0	Each Borrowed Grace stack grants <good>-12.5%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>-12.5%</good> reduced weapon flux cost and damage taken.
+effect|BORROWED_GRACE_MAX_STACKS_FLAT|1.0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>1</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+effect|BORROWED_GRACE_MAX_STACKS_FLAT|10.0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>10</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+effect|BORROWED_GRACE_MAX_STACKS_FLAT|12.5	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>12.5</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+effect|BORROWED_GRACE_MAX_STACKS_FLAT|100.0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>100</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+effect|BORROWED_GRACE_MAX_STACKS_FLAT|-10.0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>-10</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+effect|BORROWED_GRACE_MAX_STACKS_FLAT|-12.5	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>-12.5</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+effect|BORROWED_GRACE_SLOW_MAX_STACKS_FLAT|1.0	0	Every 150 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>1</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+effect|BORROWED_GRACE_SLOW_MAX_STACKS_FLAT|10.0	0	Every 150 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>10</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+effect|BORROWED_GRACE_SLOW_MAX_STACKS_FLAT|12.5	0	Every 150 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>12.5</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+effect|BORROWED_GRACE_SLOW_MAX_STACKS_FLAT|100.0	0	Every 150 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>100</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+effect|BORROWED_GRACE_SLOW_MAX_STACKS_FLAT|-10.0	0	Every 150 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>-10</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+effect|BORROWED_GRACE_SLOW_MAX_STACKS_FLAT|-12.5	0	Every 150 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>-12.5</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
 effect|BREAK_PROBABILITY_PERCENT|1.0	1	<good>1%</good> increased chance of this ship breaking apart when destroyed.
 effect|BREAK_PROBABILITY_PERCENT|10.0	1	<good>10%</good> increased chance of this ship breaking apart when destroyed.
 effect|BREAK_PROBABILITY_PERCENT|12.5	1	<good>12.5%</good> increased chance of this ship breaking apart when destroyed.
@@ -1636,6 +1636,12 @@ effect|MODULE_HULL_PERCENT|12.5	0	This ship's modules have <good>12.5%</good> in
 effect|MODULE_HULL_PERCENT|100.0	0	This ship's modules have <good>100%</good> increased hull points.
 effect|MODULE_HULL_PERCENT|-10.0	0	This ship's modules have <good>-10%</good> increased hull points.
 effect|MODULE_HULL_PERCENT|-12.5	0	This ship's modules have <good>-12.5%</good> increased hull points.
+effect|MOVE_SLOW_BURN_LEVEL_FLAT|1.0	0	Your fleet has <good>+1</good> to the burn level at which it counts as moving slowly, up to a maximum of +6.
+effect|MOVE_SLOW_BURN_LEVEL_FLAT|10.0	0	Your fleet has <good>+10</good> to the burn level at which it counts as moving slowly, up to a maximum of +6.
+effect|MOVE_SLOW_BURN_LEVEL_FLAT|12.5	0	Your fleet has <good>+12.5</good> to the burn level at which it counts as moving slowly, up to a maximum of +6.
+effect|MOVE_SLOW_BURN_LEVEL_FLAT|100.0	0	Your fleet has <good>+100</good> to the burn level at which it counts as moving slowly, up to a maximum of +6.
+effect|MOVE_SLOW_BURN_LEVEL_FLAT|-10.0	0	Your fleet has <good>+-10</good> to the burn level at which it counts as moving slowly, up to a maximum of +6.
+effect|MOVE_SLOW_BURN_LEVEL_FLAT|-12.5	0	Your fleet has <good>+-12.5</good> to the burn level at which it counts as moving slowly, up to a maximum of +6.
 effect|NANOFORGE_HULL_REGEN_PERCENT|1.0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 effect|NANOFORGE_HULL_REGEN_PERCENT|10.0	0	After 5 seconds without taking hull damage, repairs 10% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 effect|NANOFORGE_HULL_REGEN_PERCENT|12.5	0	After 5 seconds without taking hull damage, repairs 12.5% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
@@ -1846,6 +1852,12 @@ effect|PHASE_CLOAK_UPKEEP_COST_MULT|12.5	1	<good>12.5%</good> more phase cloak f
 effect|PHASE_CLOAK_UPKEEP_COST_MULT|100.0	1	<good>100%</good> more phase cloak flux upkeep.
 effect|PHASE_CLOAK_UPKEEP_COST_MULT|-10.0	1	<bad>10%</bad> less phase cloak flux upkeep.
 effect|PHASE_CLOAK_UPKEEP_COST_MULT|-12.5	1	<bad>12.5%</bad> less phase cloak flux upkeep.
+effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|1.0	0	When this ship enters phase, every armor cell repairs <good>1%</good> of its maximum armor, up to 50% of this ship's total armor per battle.
+effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|10.0	0	When this ship enters phase, every armor cell repairs <good>10%</good> of its maximum armor, up to 50% of this ship's total armor per battle.
+effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|12.5	0	When this ship enters phase, every armor cell repairs <good>12.5%</good> of its maximum armor, up to 50% of this ship's total armor per battle.
+effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|100.0	0	When this ship enters phase, every armor cell repairs <good>100%</good> of its maximum armor, up to 50% of this ship's total armor per battle.
+effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|-10.0	0	When this ship enters phase, every armor cell repairs <good>-10%</good> of its maximum armor, up to 50% of this ship's total armor per battle.
+effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|-12.5	0	When this ship enters phase, every armor cell repairs <good>-12.5%</good> of its maximum armor, up to 50% of this ship's total armor per battle.
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|1.0	0	1% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|10.0	0	10% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|12.5	0	12.5% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
@@ -2182,6 +2194,12 @@ effect|STARDUST_MOTE_DAMAGE_FLAT|12.5	0	Every 2 seconds a beam weapon spends on 
 effect|STARDUST_MOTE_DAMAGE_FLAT|100.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>100</good> energy damage and <good>100</good> EMP. At most 20 of this ship's motes fly at once.
 effect|STARDUST_MOTE_DAMAGE_FLAT|-10.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>-10</good> energy damage and <good>-10</good> EMP. At most 20 of this ship's motes fly at once.
 effect|STARDUST_MOTE_DAMAGE_FLAT|-12.5	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>-12.5</good> energy damage and <good>-12.5</good> EMP. At most 20 of this ship's motes fly at once.
+effect|STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT|1.0	0	Strikecraft launched from this ship deal <good>1%</good> increased damage to drone strikecraft.
+effect|STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT|10.0	0	Strikecraft launched from this ship deal <good>10%</good> increased damage to drone strikecraft.
+effect|STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT|12.5	0	Strikecraft launched from this ship deal <good>12.5%</good> increased damage to drone strikecraft.
+effect|STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT|100.0	0	Strikecraft launched from this ship deal <good>100%</good> increased damage to drone strikecraft.
+effect|STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT|-10.0	0	Strikecraft launched from this ship deal <good>-10%</good> increased damage to drone strikecraft.
+effect|STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT|-12.5	0	Strikecraft launched from this ship deal <good>-12.5%</good> increased damage to drone strikecraft.
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|1.0	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|10.0	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|12.5	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
@@ -2818,35 +2836,30 @@ type-detail|blast_doors|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmo
 flavour|borrowed_grace	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the crew rewires the ship to do the same. The shield emitters were never built for that load.
 flavourAutomated|borrowed_grace	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the refit crew rewires the ship to do the same. The shield emitters were never built for that load.
 itemCost|borrowed_grace	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
-type|borrowed_grace|null|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-type|borrowed_grace|null|1	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
-type|borrowed_grace|null|2	0	<good>20%</good> increased weapon durability.
-type|borrowed_grace|null|3	1	<bad>20%</bad> reduced weapon and engine repair time.
-type|borrowed_grace|null|4	1	<good>20%</good> more damage taken by shields.
+type|borrowed_grace|null|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+type|borrowed_grace|null|1	0	<good>20%</good> increased weapon durability.
+type|borrowed_grace|null|2	1	<bad>20%</bad> reduced weapon and engine repair time.
+type|borrowed_grace|null|3	1	<good>20%</good> more damage taken by shields.
 type-detail|borrowed_grace|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
-type|borrowed_grace|FRIGATE|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-type|borrowed_grace|FRIGATE|1	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
-type|borrowed_grace|FRIGATE|2	0	<good>20%</good> increased weapon durability.
-type|borrowed_grace|FRIGATE|3	1	<bad>20%</bad> reduced weapon and engine repair time.
-type|borrowed_grace|FRIGATE|4	1	<good>20%</good> more damage taken by shields.
+type|borrowed_grace|FRIGATE|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+type|borrowed_grace|FRIGATE|1	0	<good>20%</good> increased weapon durability.
+type|borrowed_grace|FRIGATE|2	1	<bad>20%</bad> reduced weapon and engine repair time.
+type|borrowed_grace|FRIGATE|3	1	<good>20%</good> more damage taken by shields.
 type-detail|borrowed_grace|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
-type|borrowed_grace|DESTROYER|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-type|borrowed_grace|DESTROYER|1	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
-type|borrowed_grace|DESTROYER|2	0	<good>20%</good> increased weapon durability.
-type|borrowed_grace|DESTROYER|3	1	<bad>20%</bad> reduced weapon and engine repair time.
-type|borrowed_grace|DESTROYER|4	1	<good>20%</good> more damage taken by shields.
+type|borrowed_grace|DESTROYER|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+type|borrowed_grace|DESTROYER|1	0	<good>20%</good> increased weapon durability.
+type|borrowed_grace|DESTROYER|2	1	<bad>20%</bad> reduced weapon and engine repair time.
+type|borrowed_grace|DESTROYER|3	1	<good>20%</good> more damage taken by shields.
 type-detail|borrowed_grace|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
-type|borrowed_grace|CRUISER|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-type|borrowed_grace|CRUISER|1	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
-type|borrowed_grace|CRUISER|2	0	<good>20%</good> increased weapon durability.
-type|borrowed_grace|CRUISER|3	1	<bad>20%</bad> reduced weapon and engine repair time.
-type|borrowed_grace|CRUISER|4	1	<good>20%</good> more damage taken by shields.
+type|borrowed_grace|CRUISER|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+type|borrowed_grace|CRUISER|1	0	<good>20%</good> increased weapon durability.
+type|borrowed_grace|CRUISER|2	1	<bad>20%</bad> reduced weapon and engine repair time.
+type|borrowed_grace|CRUISER|3	1	<good>20%</good> more damage taken by shields.
 type-detail|borrowed_grace|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
-type|borrowed_grace|CAPITAL_SHIP|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-type|borrowed_grace|CAPITAL_SHIP|1	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
-type|borrowed_grace|CAPITAL_SHIP|2	0	<good>20%</good> increased weapon durability.
-type|borrowed_grace|CAPITAL_SHIP|3	1	<bad>20%</bad> reduced weapon and engine repair time.
-type|borrowed_grace|CAPITAL_SHIP|4	1	<good>20%</good> more damage taken by shields.
+type|borrowed_grace|CAPITAL_SHIP|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+type|borrowed_grace|CAPITAL_SHIP|1	0	<good>20%</good> increased weapon durability.
+type|borrowed_grace|CAPITAL_SHIP|2	1	<bad>20%</bad> reduced weapon and engine repair time.
+type|borrowed_grace|CAPITAL_SHIP|3	1	<good>20%</good> more damage taken by shields.
 type-detail|borrowed_grace|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
 flavour|candles_grace_replica	0	Inside a recovered Ancient Prototype, where every conduit converges on a perfectly spherical void, the crew finds the Candle's Grace device that drags at the timeflow of anything near it. Who or what Candle's Grace was is not recorded, and the replica is mostly guesswork.
 flavourAutomated|candles_grace_replica	0	Inside a recovered Ancient Prototype, where every conduit converges on a perfectly spherical void, the refit crew finds the Candle's Grace device that drags at the timeflow of anything near it. Who or what Candle's Grace was is not recorded, and the replica is mostly guesswork.

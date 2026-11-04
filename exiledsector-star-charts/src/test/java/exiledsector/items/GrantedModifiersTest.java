@@ -7,6 +7,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -22,11 +23,14 @@ class GrantedModifiersTest {
     private static final String THUNDERHEAD = "NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT_STORM_FRONT";
     private static final String BASE = "test_bridge";
     private static final String RELIC = "test_relic";
+    private static final String PLAIN_PREFIX = "TIMEFLOW_PERCENT_PLAIN";
+    private static final AffixLayout.Limits LIMITS = new AffixLayout.Limits(2, 4, 2, List.of(0.4f, 0.3f, 0.2f));
 
     @BeforeEach
     void setUp() throws Exception {
         ItemModifiers.register(new JSONArray()
                 .put(HullItemRows.modifierRow(STORMPROOF, "prefix", "EMP_DAMAGE_TAKEN_PERCENT:-25:-25", "Stormproof"))
+                .put(HullItemRows.modifierRow(PLAIN_PREFIX, "prefix", "TIMEFLOW_PERCENT:3:5", "Plain"))
                 .put(HullItemRows.modifierRow(THUNDERHEAD, "suffix", "NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT:8:8", "Thunderhead")));
         ItemDefinitions.register(List.of(
                 definition(BASE, false, List.of(prefix("HULL_PERCENT"), prefix("FLUX_CAPACITY_MULT"), prefix("FLUX_DISSIPATION_MULT")),
@@ -79,6 +83,63 @@ class GrantedModifiersTest {
 
         assertFalse(GrantedModifiers.canGrant(ItemDefinitions.get(RELIC), STORMPROOF));
         assertSame(relic, GrantedModifiers.grant(relic, STORMPROOF, new Random(1L)));
+    }
+
+    @Test
+    void addingKeepsTheOtherModifiersWhileTheSideHasRoom() {
+        ItemData item = itemWith(prefix("HULL_PERCENT"), suffix("ARMOR_PERCENT"));
+
+        ItemData added = GrantedModifiers.add(item, STORMPROOF, LIMITS, new Random(3L));
+
+        assertEquals(List.of("HULL_PERCENT", STORMPROOF, "ARMOR_PERCENT"), modifierIds(added));
+        assertEquals(item.seed(), added.seed());
+    }
+
+    @Test
+    void aFullSideGivesUpOneModifierForTheAddedOne() {
+        ItemData item = itemWith(prefix("HULL_PERCENT"), prefix("FLUX_CAPACITY_MULT"), suffix("ARMOR_PERCENT"));
+
+        List<String> added = modifierIds(GrantedModifiers.add(item, STORMPROOF, LIMITS, new Random(3L)));
+
+        assertEquals(3, added.size());
+        assertTrue(added.contains(STORMPROOF));
+        assertTrue(added.contains("ARMOR_PERCENT"));
+        assertTrue(added.contains("HULL_PERCENT") != added.contains("FLUX_CAPACITY_MULT"), added.toString());
+    }
+
+    @Test
+    void aReservedModifierKeepsItsPlaceOnAFullSide() {
+        for (long seed = 0L; seed < 20L; seed++) {
+            ItemData stormItem = GrantedModifiers.add(itemWith(prefix("HULL_PERCENT")), STORMPROOF, LIMITS, new Random(seed));
+
+            assertEquals(List.of(STORMPROOF, PLAIN_PREFIX), modifierIds(GrantedModifiers.add(stormItem, PLAIN_PREFIX, LIMITS, new Random(seed))));
+        }
+    }
+
+    @Test
+    void aModifierSharingTheAddedEffectMakesWayForIt() {
+        ItemData item = itemWith(prefix("EMP_DAMAGE_TAKEN_PERCENT"), suffix("ARMOR_PERCENT"));
+
+        assertEquals(List.of(STORMPROOF, "ARMOR_PERCENT"), modifierIds(GrantedModifiers.add(item, STORMPROOF, LIMITS, new Random(3L))));
+    }
+
+    @Test
+    void addingAModifierTheItemHasOrToAUniqueChangesNothing() {
+        ItemData item = GrantedModifiers.add(itemWith(prefix("HULL_PERCENT")), STORMPROOF, LIMITS, new Random(3L));
+        ItemData relic = ItemData.rolled(ItemDefinitions.get(RELIC), 7L);
+
+        assertSame(item, GrantedModifiers.add(item, STORMPROOF, LIMITS, new Random(4L)));
+        assertSame(relic, GrantedModifiers.add(relic, STORMPROOF, LIMITS, new Random(4L)));
+    }
+
+    private static ItemData itemWith(PoolEntry... entries) {
+        Random random = new Random(1L);
+        List<RolledModifier> explicits = Arrays.stream(entries).map(entry -> RolledModifier.roll(entry.modifier(), random)).toList();
+        return new ItemData(BASE, 7L, explicits, null);
+    }
+
+    private static List<String> modifierIds(ItemData item) {
+        return item.explicits().stream().map(RolledModifier::modifierId).toList();
     }
 
     @Test
