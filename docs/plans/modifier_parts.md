@@ -1,6 +1,6 @@
 # Modifier parts
 
-Status: planned, nothing built.
+Status: built on branch `modifier-parts` (2026-11-04), not yet merged, except design point 4 (see its note). Two orphan modifiers still await a decision. Not yet tried in game.
 
 The advanced search's stat picker narrows its list to the stats a chosen ship part can roll. Core can only see part data for the base drop pools, so every biome, anomaly and corruption stat lands on every part's list. This plan gives core one index of which parts each hull item modifier can appear on, whatever its source.
 
@@ -38,6 +38,7 @@ Each fact stays where it lives now, with the parts added where they're missing. 
    It rebuilds when item data reloads or a source reserves or releases. Lookups never scan the catalogue.
 3. `ItemStatPool` builds its per-part stat lists from `ModifierParts`. The fallback that puts unpooled stats on every part goes away.
 4. A source switched off with its domain releases its reservation (`BiomeModifiers.unregisterAll` already does). Its modifiers then leave the index and the stat picker, the same way other content hooks skip switched-off domains.
+   - Not built. Every domain's `loadItems` runs whatever its switch, and nothing calls `unregisterAll` on a switch-off, so the sources stay reserved and stay in the index. Releasing them would also stop `Item.explicitModifier` finding the reserved modifier on items the player already holds, since a reservation is what keeps those modifiers on an item. Leaving them listed lets the search still find those items.
 5. A data integrity test in exiledsector-mod, which sees every domain, fails when a hull item modifier in `item_modifiers.csv` has no part in the index. Orphans like the 14 above can't come back unnoticed. The same test checks that pool entries in a generic row's prefix column are prefixes and those in its suffix column are suffixes, unless `ItemDataIntegrity` already checks that.
 
 Why not a `parts` column on `item_modifiers.csv`? It would repeat what the generic pools already say, along with their weights and tiers. It would also make core own biome placement, which belongs to the Star Charts domain. The index gives a single source for each fact and keeps the domain split.
@@ -69,5 +70,5 @@ Still to decide: `ENERGY_WEAPON_FLUX_COST_PERCENT` and `WEAPON_TURN_RATE_PERCENT
 3. [x] Switch `ItemStatPool` to `ModifierParts` and drop the every-part fallback, updating `ItemStatPoolTest`. Built: `ItemStatPool` reads each part's modifiers from `ModifierParts` and caches on the index. Tests: `ItemStatPoolTest` (exiledsector-mod, loading every shipped source through `ShippedModifierParts`) checks each part lists what it can carry and that a biome stat stays off parts nothing else gives it.
 4. [x] Delete the 12 orphan rows and their zh_CN name keys, and handle the other two as decided. Run the full build to confirm no shipped-data test relied on them. Built: the 12 rows are gone from `item_modifiers.csv` and their 11 keys from `data/strings/exiledSector/core/zh_CN.json`; the full build passes. The other two are left untouched pending the decision above.
 5. [x] The integrity test in exiledsector-mod. Built: `ModifierPartsDataTest` loads every shipped source and fails on a hull item modifier in `item_modifiers.csv` with no part, exempting `ENERGY_WEAPON_FLUX_COST_PERCENT` and `WEAPON_TURN_RATE_PERCENT_BRIDGE`; a second test fails once an exempt id gains a part or leaves the file. The prefix and suffix column check already lives in `ItemDataIntegrity.referencedModifier`, run on shipped data by `ItemDataIntegrityTest`, so it isn't repeated.
-6. Check whether `tools/editor` serialises any file this changes. As planned, no data file gains a column, so this should be a no-op.
-7. Update the Advanced search section of `docs/docs.md` if it mentions the every-part fallback.
+6. [x] Check whether `tools/editor` serialises any file this changes. As planned, no data file gains a column, so this should be a no-op. Checked: the editor reads and writes `item_modifiers.csv` but only lost rows, and its round-trip and modifier tests pass; it doesn't touch `zh_CN.json`. No change.
+7. [x] Update the Advanced search section of `docs/docs.md` if it mentions the every-part fallback. Done: the section now says the list comes from `ModifierParts`.

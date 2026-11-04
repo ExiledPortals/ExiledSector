@@ -451,8 +451,9 @@ even when min and max are blank.
 
 An AND group needs every row, a COUNT group at least its count, and a row or group with no stat picked is ignored
 (`ModifierSearch`, kept on the session's `ItemStorageFilter` and applied only when Search is pressed). The stat list
-narrows to the chosen socket types' implicits and pools; catalogue stats that no part lists, like biome modifiers, show
-for every type (`ItemStatPool`).
+narrows to the stats the chosen socket types can carry (`ItemStatPool`), read from core `ModifierParts`: each part's
+pools, unique items and implicits, the corruption pool on every part, and the parts biome, engram and Storm Front
+sources reserve their modifiers for (`ModifierSources`).
 
 ### Wormhole anchors
 
