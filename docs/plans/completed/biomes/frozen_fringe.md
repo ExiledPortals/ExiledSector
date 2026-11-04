@@ -2,7 +2,7 @@
 
 Hull items dropped in Frozen Fringe systems can carry a Frozen Fringe modifier. The biome is cold, wide systems around dim stars, so its set is about patience and stillness, reach and staying efficient while the ship holds still or coasts, and cold-running High Tech: three of its modifiers grant or read High Tech Affinity.
 
-Status: built 2026-11-04. The framework is built (`../anomalies/abyssal_rift.md`, Biome modifiers): rows in `item_modifiers.csv` ending `_FROZEN_FRINGE`, mapped in `biome_modifiers.csv`, reserved at item load and granted to 30% of hull items dropped here. Values are placeholders.
+Status: built 2026-11-04. The framework is built (`../anomalies/abyssal_rift.md`, Biome modifiers): rows in `item_modifiers.csv` ending `_FROZEN_FRINGE`, mapped in `biome_modifiers.csv`, reserved at item load and granted to 10% of hull items dropped here. Values are placeholders.
 
 ## Modifiers
 

@@ -2,7 +2,7 @@
 
 Hull items dropped in Threat Expanse systems can carry a Threat Expanse modifier. The biome is abyssal hyperspace holding only Threat fleets, so every modifier works through vanilla's Fragment Swarm: growing it, regrowing it, and spending its fragments in place of flux, armor or replacement rate. Two of them scale with affinity of every kind, since the Threat learns from all three lines alike.
 
-Status: built 2026-11-04. The framework is built (`../anomalies/abyssal_rift.md`, Biome modifiers): rows in `item_modifiers.csv` ending `_THREAT_EXPANSE`, mapped in `biome_modifiers.csv`, reserved at item load and granted to 30% of hull items dropped here. Values are placeholders.
+Status: built 2026-11-04. The framework is built (`../anomalies/abyssal_rift.md`, Biome modifiers): rows in `item_modifiers.csv` ending `_THREAT_EXPANSE`, mapped in `biome_modifiers.csv`, reserved at item load and granted to 10% of hull items dropped here. Values are placeholders.
 
 ## Modifiers
 

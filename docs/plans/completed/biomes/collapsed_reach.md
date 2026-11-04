@@ -2,7 +2,7 @@
 
 Hull items dropped in Collapsed Reach systems can carry a Collapsed Reach modifier. The biome leans on black holes, neutron stars and pulsars, so its set is about gravity and time: nothing slower escapes, time flow, deflected shots, pulsar radiation and missiles falling into p-space.
 
-Status: built 2026-11-04. The framework is built (`../anomalies/abyssal_rift.md`, Biome modifiers): rows in `item_modifiers.csv` ending `_COLLAPSED_REACH`, mapped in `biome_modifiers.csv`, reserved at item load and granted to 30% of hull items dropped here. Values are placeholders.
+Status: built 2026-11-04. The framework is built (`../anomalies/abyssal_rift.md`, Biome modifiers): rows in `item_modifiers.csv` ending `_COLLAPSED_REACH`, mapped in `biome_modifiers.csv`, reserved at item load and granted to 10% of hull items dropped here. Values are placeholders.
 
 ## Modifiers
 

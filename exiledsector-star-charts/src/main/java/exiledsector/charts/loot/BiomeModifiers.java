@@ -34,7 +34,7 @@ public final class BiomeModifiers {
     public static final String PATH = "data/config/exiledSector/biome_modifiers.csv";
     public static final String ID_COLUMN = "modifier";
     public static final String OWNER_PREFIX = "biome:";
-    static final float DROP_CHANCE = 0.3f;
+    static final float DROP_CHANCE = 0.1f;
     private static final long GRANT_SEED_SALT = 0x62696F6D65L;
     private static final Logger LOG = Logger.getLogger(BiomeModifiers.class);
 

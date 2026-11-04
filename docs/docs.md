@@ -577,7 +577,7 @@ an unlock is decided when first seen, and that is saved.
 ### Biome modifiers
 
 A biome can own one modifier per hull item part (`biome_modifiers.csv`), reserved so no other roll draws it
-(`BiomeModifiers`). A non-unique hull item dropped while the player is in a run system of that biome has a 30% chance,
+(`BiomeModifiers`). A non-unique hull item dropped while the player is in a run system of that biome has a 10% chance,
 fixed by its seed, to gain its part's modifier: `LootSources.shapeDrops` passes each drop through every loot source's `shapeDrop`, called from the
 drop helpers in `ItemLootListener` and from the hull item battle drops. The item keeps its other modifiers, except one
 sharing the added effect; on a full side a random modifier makes way (`GrantedModifiers.add`).

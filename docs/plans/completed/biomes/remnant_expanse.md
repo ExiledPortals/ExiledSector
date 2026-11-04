@@ -2,7 +2,7 @@
 
 Hull items dropped in Remnant Expanse systems can carry a Remnant Expanse modifier. The biome is Remnant space, so its set is about networked machines: bonuses from nearby allies and shared targets, ion damage, fortress shields, self-repair, and High Tech Affinity on two of its items.
 
-Status: built 2026-11-04. The framework is built (`../anomalies/abyssal_rift.md`, Biome modifiers): rows in `item_modifiers.csv` ending `_REMNANT_EXPANSE`, mapped in `biome_modifiers.csv`, reserved at item load and granted to 30% of hull items dropped here. Values are placeholders, and the effect lines are settled when built, after checking how each effect stacks (`docs/tooltip_wording.md`).
+Status: built 2026-11-04. The framework is built (`../anomalies/abyssal_rift.md`, Biome modifiers): rows in `item_modifiers.csv` ending `_REMNANT_EXPANSE`, mapped in `biome_modifiers.csv`, reserved at item load and granted to 10% of hull items dropped here. Values are placeholders, and the effect lines are settled when built, after checking how each effect stacks (`docs/tooltip_wording.md`).
 
 ## Modifiers
 

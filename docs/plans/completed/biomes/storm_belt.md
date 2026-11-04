@@ -2,7 +2,7 @@
 
 Hull items dropped in Storm Belt systems can carry a Storm Belt modifier. The biome is deep hyperspace cloud and frequent storms, so its set is about lightning, taking EMP and turning it to use and arcing it back out, and the Midline workhorses that ply the storms: three of its items grant or read Midline Affinity.
 
-Status: built 2026-11-04. The framework is built (`../anomalies/abyssal_rift.md`, Biome modifiers): rows in `item_modifiers.csv` ending `_STORM_BELT`, mapped in `biome_modifiers.csv`, reserved at item load and granted to 30% of hull items dropped here. Values are placeholders, and the effect lines are settled when built, after checking how each effect stacks (`docs/tooltip_wording.md`).
+Status: built 2026-11-04. The framework is built (`../anomalies/abyssal_rift.md`, Biome modifiers): rows in `item_modifiers.csv` ending `_STORM_BELT`, mapped in `biome_modifiers.csv`, reserved at item load and granted to 10% of hull items dropped here. Values are placeholders, and the effect lines are settled when built, after checking how each effect stacks (`docs/tooltip_wording.md`).
 
 ## Modifiers
 
