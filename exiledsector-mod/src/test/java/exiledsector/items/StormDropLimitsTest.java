@@ -30,7 +30,7 @@ class StormDropLimitsTest {
 
     @AfterEach
     void tearDown() {
-        ReservedModifiers.clear();
+        ModifierSources.clear();
         ItemDefinitions.clear();
         ItemModifiers.clear();
     }

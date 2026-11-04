@@ -433,7 +433,7 @@ public abstract class Item {
         if (entry != null) {
             return entry.modifier();
         }
-        boolean reservedForType = definition != null && ReservedModifiers.isReserved(modifierId)
+        boolean reservedForType = definition != null && ModifierSources.isReserved(modifierId)
                 && ItemModifiers.itemTypes(modifierId).contains(definition.type());
         return reservedForType ? ItemModifiers.get(modifierId) : null;
     }
@@ -530,7 +530,7 @@ public abstract class Item {
 
     private static List<String> headerKeys(RolledModifier rolledModifier, boolean hybrid) {
         List<String> headerKeys = new ArrayList<>(2);
-        String originHeaderKey = ReservedModifiers.headerKey(rolledModifier.modifierId());
+        String originHeaderKey = ModifierSources.headerKey(rolledModifier.modifierId());
         if (originHeaderKey != null) {
             headerKeys.add(originHeaderKey);
         }

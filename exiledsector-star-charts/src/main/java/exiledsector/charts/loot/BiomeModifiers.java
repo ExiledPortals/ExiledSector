@@ -15,7 +15,7 @@ import exiledsector.items.ItemKind;
 import exiledsector.items.ItemModifiers;
 import exiledsector.items.ItemType;
 import exiledsector.items.ModifierScope;
-import exiledsector.items.ReservedModifiers;
+import exiledsector.items.ModifierSources;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierSlot;
 import org.apache.log4j.Logger;
@@ -66,7 +66,7 @@ public final class BiomeModifiers {
                 return;
             }
             try {
-                ReservedModifiers.reserve(modifierId, OWNER_PREFIX + key.biomeId(), headerKey(key.biomeId()));
+                ModifierSources.reserve(modifierId, OWNER_PREFIX + key.biomeId(), Set.of(key.kind()), headerKey(key.biomeId()));
                 registered.put(key, modifierId);
             } catch (IllegalArgumentException e) {
                 csv.skipRow(modifierId, e.getMessage());
@@ -104,7 +104,7 @@ public final class BiomeModifiers {
     }
 
     public static void unregisterAll() {
-        biomeIds.forEach(biomeId -> ReservedModifiers.release(OWNER_PREFIX + biomeId));
+        biomeIds.forEach(biomeId -> ModifierSources.release(OWNER_PREFIX + biomeId));
         modifiersByKey = Map.of();
         biomeIds = Set.of();
     }

@@ -41,7 +41,7 @@ class GrantedModifiersTest {
 
     @AfterEach
     void tearDown() {
-        ReservedModifiers.clear();
+        ModifierSources.clear();
         ItemDefinitions.clear();
         ItemModifiers.clear();
     }
@@ -60,8 +60,9 @@ class GrantedModifiersTest {
 
     @Test
     void theStormModifiersAreReservedSoNoPoolRollsThem() {
-        assertTrue(ReservedModifiers.isReserved(STORMPROOF));
-        assertTrue(ReservedModifiers.isReserved(THUNDERHEAD));
+        assertTrue(ModifierSources.isReserved(STORMPROOF));
+        assertTrue(ModifierSources.isReserved(THUNDERHEAD));
+        assertEquals(ItemKind.sectionItemTypes(), List.copyOf(ModifierSources.parts(STORMPROOF)));
     }
 
     @Test

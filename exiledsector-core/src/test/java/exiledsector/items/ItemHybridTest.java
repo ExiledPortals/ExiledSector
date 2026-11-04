@@ -39,7 +39,7 @@ class ItemHybridTest {
     @AfterEach
     void clear() {
         ItemDefinitions.clear();
-        ReservedModifiers.clear();
+        ModifierSources.clear();
     }
 
     private static Item item(List<RolledModifier> explicits) {
@@ -97,8 +97,8 @@ class ItemHybridTest {
     void aBiomesModifierShowsTheBiomeAboveItsLinesLikeAHybridHeaderWhenExpanded() {
         String abyssalHeader = "chart.biomeModifier.header.abyssal_rift";
         RolledModifier fortitude = RolledModifier.single(ModifierSlot.SUFFIX, new RolledLine("HULL_MULT", 5f));
-        ReservedModifiers.reserve(fortitude.modifierId(), "biome:abyssal_rift", abyssalHeader);
-        ReservedModifiers.reserve("plated_frame", "biome:abyssal_rift", abyssalHeader);
+        ModifierSources.reserve(fortitude.modifierId(), "biome:abyssal_rift", List.of(), abyssalHeader);
+        ModifierSources.reserve("plated_frame", "biome:abyssal_rift", List.of(), abyssalHeader);
         Item item = item(List.of(platedFrame(7f, 4f), fortitude));
 
         List<SlottedLine> expanded = item.slottedEffectLines(true, null);

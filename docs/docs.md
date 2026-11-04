@@ -451,8 +451,9 @@ even when min and max are blank.
 
 An AND group needs every row, a COUNT group at least its count, and a row or group with no stat picked is ignored
 (`ModifierSearch`, kept on the session's `ItemStorageFilter` and applied only when Search is pressed). The stat list
-narrows to the chosen socket types' implicits and pools; catalogue stats that no part lists, like biome modifiers, show
-for every type (`ItemStatPool`).
+narrows to the stats the chosen socket types can carry (`ItemStatPool`), read from core `ModifierParts`: each part's
+pools, unique items and implicits, the corruption pool on every part, and the parts biome, engram and Storm Front
+sources reserve their modifiers for (`ModifierSources`).
 
 ### Wormhole anchors
 
@@ -890,7 +891,7 @@ detected-range multiplier hides each one until the player fleet comes within 600
 no reputation change and an AI that holds its field (`DormantFleets.wake`), then hands over to vanilla's encounter.
 Corrupting first spends a Corrupted Nanoswarm and rebuilds the fleet stronger, and the first engagement won against it
 drops an engram (`DormantFleetLoot`). An engram rerolls a non-unique hull item with four modifiers, one always its own
-from the reserved pool that no other roll draws from (`Engram`, core `ReservedModifiers`). An immutable
+from the reserved pool that no other roll draws from (`Engram`, core `ModifierSources`). An immutable
 modifier and an inhibited side's modifiers are kept, and the reroll fills up to two per side and four in total around them.
 Crafting that rerolls values (Tuning Nanoswarm, corruption) finds the reserved modifier through `Item.explicitModifier`.
 

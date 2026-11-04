@@ -7,8 +7,8 @@ import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemModifiers;
+import exiledsector.items.ModifierSources;
 import exiledsector.items.PoolEntry;
-import exiledsector.items.ReservedModifiers;
 import exiledsector.items.RolledModifier;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONArray;
@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -53,7 +54,7 @@ class BiomeModifiersTest {
     @AfterEach
     void tearDown() {
         BiomeModifiers.unregisterAll();
-        ReservedModifiers.clear();
+        ModifierSources.clear();
         ItemDefinitions.clear();
         ItemModifiers.clear();
     }
@@ -79,12 +80,22 @@ class BiomeModifiersTest {
     void eachRowReservesItsModifierForItsBiomeAndPart() throws Exception {
         BiomeModifiers.register(new JSONArray().put(biomeRow(CHRONAL, RIFT, "bridge")).put(biomeRow(PLASMATIC, RIFT, "shield_generator")));
 
-        assertEquals(BiomeModifiers.OWNER_PREFIX + RIFT, ReservedModifiers.owner(CHRONAL));
-        assertEquals(BiomeModifiers.headerKey(RIFT), ReservedModifiers.headerKey(PLASMATIC));
+        assertEquals(BiomeModifiers.OWNER_PREFIX + RIFT, ModifierSources.owner(CHRONAL));
+        assertEquals(BiomeModifiers.headerKey(RIFT), ModifierSources.headerKey(PLASMATIC));
+        assertEquals(Set.of(ItemKind.BRIDGE), ModifierSources.parts(CHRONAL));
+        assertEquals(Set.of(ItemKind.SHIELD_GENERATOR), ModifierSources.parts(PLASMATIC));
         assertEquals(CHRONAL, BiomeModifiers.modifierFor(RIFT, ItemKind.BRIDGE));
         assertEquals(PLASMATIC, BiomeModifiers.modifierFor(RIFT, ItemKind.SHIELD_GENERATOR));
         assertNull(BiomeModifiers.modifierFor(RIFT, ItemKind.REACTOR));
         assertNull(BiomeModifiers.modifierFor("normal", ItemKind.BRIDGE));
+    }
+
+    @Test
+    void oneModifierOnTwoPartsOfABiomeReservesBothParts() throws Exception {
+        BiomeModifiers.register(new JSONArray().put(biomeRow(CHRONAL, RIFT, "bridge")).put(biomeRow(CHRONAL, RIFT, "shield_generator")));
+
+        assertEquals(Set.of(ItemKind.BRIDGE, ItemKind.SHIELD_GENERATOR), ModifierSources.parts(CHRONAL));
+        assertEquals(CHRONAL, BiomeModifiers.modifierFor(RIFT, ItemKind.SHIELD_GENERATOR));
     }
 
     @Test
@@ -93,7 +104,7 @@ class BiomeModifiersTest {
                 .put(biomeRow("MISSING_MODIFIER", RIFT, "reactor")));
 
         assertEquals(CHRONAL, BiomeModifiers.modifierFor(RIFT, ItemKind.BRIDGE));
-        assertFalse(ReservedModifiers.isReserved(PLASMATIC));
+        assertFalse(ModifierSources.isReserved(PLASMATIC));
         assertNull(BiomeModifiers.modifierFor(RIFT, ItemKind.REACTOR));
     }
 
@@ -155,7 +166,7 @@ class BiomeModifiersTest {
 
         BiomeModifiers.unregisterAll();
 
-        assertFalse(ReservedModifiers.isReserved(CHRONAL));
+        assertFalse(ModifierSources.isReserved(CHRONAL));
         assertNull(BiomeModifiers.modifierFor(RIFT, ItemKind.BRIDGE));
     }
 }

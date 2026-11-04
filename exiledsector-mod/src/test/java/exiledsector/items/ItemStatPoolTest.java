@@ -1,8 +1,10 @@
 package exiledsector.items;
 
+import exiledsector.charts.loot.BiomeModifiers;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
-import exiledsector.skills.skilleffect.EffectAliases;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,48 +21,56 @@ class ItemStatPoolTest {
 
     @BeforeEach
     void loadRealData() throws Exception {
-        EffectAliases.register(HullItemRows.shippedRows(EffectAliases.dataPath()));
-        ItemModifiers.register(HullItemRows.shippedRows(ItemModifiers.dataPath()));
-        ItemDefinitions.register(HullItemRows.shippedRows(SubroutineDefinitions.dataPath()), HullItemRows.shippedRows(HullItem.definitionsPath()));
-        ItemImplicits.register(HullItemRows.shippedRows(ItemImplicits.dataPath()));
-        ItemImplicits.registerCorruptionPool(HullItemRows.shippedRows(ItemImplicits.corruptionDataPath()));
+        ShippedModifierParts.load();
     }
 
     @AfterEach
     void clear() {
-        ItemImplicits.clear();
-        ItemDefinitions.clear();
-        ItemModifiers.clear();
+        ShippedModifierParts.clear();
     }
 
-    private static Set<String> hullItemStats() {
+    private static Set<String> statsOf(List<Modifier> modifiers) {
         Set<String> stats = new LinkedHashSet<>();
-        for (Modifier modifier : ItemModifiers.all()) {
-            if (ItemModifiers.itemTypes(modifier.id()).contains(ItemType.HULL_ITEM)) {
-                modifier.lines().stream().map(ModifierLine::effectName).forEach(stats::add);
-            }
-        }
-        for (ItemKind kind : ItemKind.sectionItemTypes()) {
-            kind.implicits().forEach(implicit -> implicit.lines().stream().map(ModifierLine::effectName).forEach(stats::add));
-        }
-        for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.HULL_ITEM)) {
-            definition.pool().forEach(entry -> entry.modifier().lines().stream().map(ModifierLine::effectName).forEach(stats::add));
-        }
-        ItemImplicits.corruptionPool().forEach(implicit -> implicit.lines().stream().map(ModifierLine::effectName).forEach(stats::add));
+        modifiers.forEach(modifier -> modifier.lines().stream().map(ModifierLine::effectName).forEach(stats::add));
         return stats;
     }
 
     @Test
-    void everyHullItemStatIsInAtLeastOneSocketTypesPool() {
-        Set<String> pooled = new LinkedHashSet<>();
+    void eachPartListsTheStatsOfEveryModifierItCanCarry() {
+        Set<String> listed = new LinkedHashSet<>();
         for (ItemKind kind : ItemKind.sectionItemTypes()) {
-            pooled.addAll(ItemStatPool.stats(List.of(kind)));
-        }
-        Set<String> missing = new LinkedHashSet<>(hullItemStats());
-        missing.removeAll(pooled);
+            List<String> kindStats = ItemStatPool.stats(List.of(kind));
+            Set<String> missing = statsOf(ModifierParts.modifiers(kind));
+            kindStats.forEach(missing::remove);
 
-        assertTrue(missing.isEmpty(), "stats no socket type lists: " + missing);
-        assertEquals(pooled, new LinkedHashSet<>(ItemStatPool.stats(List.of())), "no chosen type lists every stat");
+            assertTrue(missing.isEmpty(), kind.id() + " does not list " + missing);
+            listed.addAll(kindStats);
+        }
+        assertEquals(listed, new LinkedHashSet<>(ItemStatPool.stats(List.of())), "no chosen type lists every stat");
+    }
+
+    @Test
+    void aBiomeStatShowsOnlyOnThePartsThatCanCarryIt() throws Exception {
+        JSONArray biomeRows = HullItemRows.shippedRows(BiomeModifiers.PATH);
+        int absentChecks = 0;
+        for (int i = 0; i < biomeRows.length(); i++) {
+            JSONObject row = biomeRows.getJSONObject(i);
+            ItemKind biomePart = ItemKind.byId(row.getString("item"));
+            Set<String> biomeStats = statsOf(List.of(ItemModifiers.get(row.getString(BiomeModifiers.ID_COLUMN))));
+
+            assertTrue(ItemStatPool.stats(List.of(biomePart)).containsAll(biomeStats), row.toString());
+            for (ItemKind otherPart : ItemKind.sectionItemTypes()) {
+                Set<String> carried = statsOf(ModifierParts.modifiers(otherPart));
+                List<String> otherStats = ItemStatPool.stats(List.of(otherPart));
+                for (String stat : biomeStats) {
+                    if (!carried.contains(stat)) {
+                        assertFalse(otherStats.contains(stat), stat + " shows on " + otherPart.id());
+                        absentChecks++;
+                    }
+                }
+            }
+        }
+        assertTrue(absentChecks > 0, "every biome stat can appear on every part");
     }
 
     @Test

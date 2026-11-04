@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
@@ -48,7 +49,7 @@ public final class Engrams {
             }
             try {
                 CraftingMaterialFamilies.register(craftingItem);
-                ReservedModifiers.reserve(craftingItem.modifierId(), craftingItem.itemId());
+                ModifierSources.reserve(craftingItem.modifierId(), craftingItem.itemId(), parts(craftingItem));
                 registered.add(craftingItem);
             } catch (IllegalArgumentException e) {
                 CraftingMaterialFamilies.unregister(craftingItem);
@@ -85,10 +86,14 @@ public final class Engrams {
         return new Engram(id, ModCsv.text(row, "name"), modifierId, itemTypes, minTier, csv.number(row, "weight", 1f, id), color);
     }
 
+    private static List<ItemKind> parts(Engram craftingItem) {
+        return Arrays.stream(ItemKind.values()).filter(kind -> craftingItem.appliesTo(kind.type())).toList();
+    }
+
     public static void unregisterAll() {
         for (Engram craftingItem : loaded) {
             CraftingMaterialFamilies.unregister(craftingItem);
-            ReservedModifiers.release(craftingItem.itemId());
+            ModifierSources.release(craftingItem.itemId());
         }
         loaded = List.of();
     }

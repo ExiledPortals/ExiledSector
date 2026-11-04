@@ -4,8 +4,9 @@ import exiledsector.items.GrantedModifiers;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDrops;
+import exiledsector.items.ItemKind;
 import exiledsector.items.ItemType;
-import exiledsector.items.ReservedModifiers;
+import exiledsector.items.ModifierSources;
 
 import java.util.List;
 import java.util.Random;
@@ -21,7 +22,7 @@ public final class StormLoot {
 
     public static void reserveModifiers() {
         for (String modifierId : MODIFIER_IDS) {
-            ReservedModifiers.reserve(modifierId, StormFront.ANOMALY_ID);
+            ModifierSources.reserve(modifierId, StormFront.ANOMALY_ID, ItemKind.sectionItemTypes());
         }
     }
 
