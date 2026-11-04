@@ -1,5 +1,6 @@
 package exiledsector.charts.content;
 
+import exiledsector.ProjectFiles;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartTiers;
@@ -13,6 +14,8 @@ import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -39,7 +42,7 @@ class ChartContentDataTest {
         ChartTables.loadShipped();
 
         for (ChartPoi.Kind kind : ChartPoi.Kind.values()) {
-            List<ChartPoi> members = ChartPois.ofKind(ChartPois.all(), kind);
+            List<ChartPoi> members = ChartPois.ofKind(ChartPois.inBiome(ChartPois.all(), null), kind);
             assertFalse(members.isEmpty(), kind + " has no point of interest");
             int firstTier = members.stream().mapToInt(ChartPoi::minTier).min().orElseThrow();
             for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
@@ -136,6 +139,32 @@ class ChartContentDataTest {
             assertTrue(sites.contains(poi.specForSalvage()), poi.id() + " drops no hull items: " + poi.specForSalvage());
         }
         assertTrue(dropSites.contains(ChartRewards.REWARD_SITE));
+    }
+
+    @Test
+    void everyBiomeSiteNamesAnAtlasRegionAndShipsItsOwnEntitySalvageSpecAndName() throws Exception {
+        ChartPois.register(ChartTables.csvRows(ChartPois.PATH));
+        Set<String> regionIds = columnOf(ChartTables.csvRows("data/config/exiledSector/atlas_regions.csv"), "id");
+        Set<String> salvageSpecs = columnOf(ChartTables.csvRows("data/campaign/procgen/salvage_entity_gen_data.csv"), "id");
+        String entities = Files.readString(ProjectFiles.projectRoot().resolve("data/config/custom_entities.json"), StandardCharsets.UTF_8);
+        String names = Files.readString(ProjectFiles.projectRoot().resolve("data/strings/exiledSector/starCharts/en.json"), StandardCharsets.UTF_8);
+
+        List<ChartPoi> biomeSites = ChartPois.all().stream().filter(poi -> !poi.biomes().isEmpty()).toList();
+        assertFalse(biomeSites.isEmpty());
+        for (ChartPoi poi : biomeSites) {
+            assertTrue(regionIds.containsAll(poi.biomes()), poi.id() + " " + poi.biomes());
+            assertTrue(entities.contains("\"" + poi.entityType() + "\":{"), poi.entityType());
+            assertTrue(salvageSpecs.contains(poi.specForSalvage()), poi.specForSalvage());
+            assertTrue(names.contains("\"chart.poi." + poi.id() + ".name\""), poi.id());
+        }
+    }
+
+    private static Set<String> columnOf(JSONArray rows, String column) throws Exception {
+        Set<String> values = new HashSet<>();
+        for (int i = 0; i < rows.length(); i++) {
+            values.add(rows.getJSONObject(i).optString(column));
+        }
+        return values;
     }
 
     private static Set<String> compatDropSites(String modId) throws Exception {

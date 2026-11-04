@@ -3,9 +3,11 @@ package exiledsector.charts.content;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
+import exiledsector.charts.ChartIds;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.ChartVanillaLoot;
+import exiledsector.i18n.Translation;
 import exiledsector.items.WeightedPick;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
@@ -37,7 +39,7 @@ public final class ChartSites {
     }
 
     public static ChartPoi pick(ChartPoi.Kind kind, int tier, Random random) {
-        return WeightedPick.pick(ChartPois.ofKind(ChartPois.lootAt(ChartPois.all(), ChartTiers.clamp(tier)), kind), ChartPoi::weight, random);
+        return WeightedPick.pick(ChartPois.ofKind(ChartPois.lootAt(ChartPois.inBiome(ChartPois.all(), null), ChartTiers.clamp(tier)), kind), ChartPoi::weight, random);
     }
 
     public static SectorEntityToken addCache(StarSystemAPI system, String runId, int tier, ChartGenContext context, Vector2f at, Random random) {
@@ -70,6 +72,9 @@ public final class ChartSites {
         }
         try {
             position.accept(site);
+            if (poi.entityType().startsWith(ChartIds.PREFIX)) {
+                site.setName(Translation.gameText("chart.poi." + poi.id() + ".name"));
+            }
             if (!derelict) {
                 site.getMemoryWithoutUpdate().set(MemFlags.SALVAGE_SPEC_ID_OVERRIDE, poi.specForSalvage());
             }

@@ -40,6 +40,9 @@ public final class ChartAbyss {
     static final int MAX_FOG_TILES = 128;
     static final int FOG_TEXTURE_TILES = 4;
     static final float LIGHT_TINT = 0.35f;
+    static final int SITE_SPOTS_PER_PHOTOSPHERE = 10;
+    static final float MIN_SITE_GAP = 800f;
+    static final float MAX_SITE_GAP = 4000f;
 
     record Light(Vector2f at, float coreRadius, float lightRadius) {
     }
@@ -74,6 +77,25 @@ public final class ChartAbyss {
         }
         addFog(system, palette, fogReach(reach(outermost), spots), lights, random);
         system.addTerrain(AbyssalDarknessTerrainPlugin.TERRAIN_ID, new AbyssalDarknessTerrainPlugin.Params(palette));
+    }
+
+    public static List<Vector2f> siteSpots(StarSystemAPI system, Random random) {
+        List<Vector2f> spots = new ArrayList<>();
+        for (CustomCampaignEntityAPI entity : system.getCustomEntities()) {
+            if (ChartPhotospherePlugin.ENTITY_TYPE.equals(entity.getCustomEntityType()) && entity.getLocation() != null) {
+                spots.addAll(spotsAround(entity.getLocation(), entity.getRadius(), random));
+            }
+        }
+        return spots;
+    }
+
+    static List<Vector2f> spotsAround(Vector2f centre, float coreRadius, Random random) {
+        List<Vector2f> spots = new ArrayList<>();
+        for (int i = 0; i < SITE_SPOTS_PER_PHOTOSPHERE; i++) {
+            float distance = coreRadius + MIN_SITE_GAP + (MAX_SITE_GAP - MIN_SITE_GAP) * random.nextFloat();
+            spots.add(ChartSites.pointAround(centre, random.nextDouble() * Math.PI * 2d, distance));
+        }
+        return spots;
     }
 
     static float reach(float outermost) {

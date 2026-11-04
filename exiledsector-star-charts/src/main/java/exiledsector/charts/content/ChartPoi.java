@@ -4,7 +4,7 @@ import exiledsector.data.EnumKeys;
 import java.util.List;
 
 public record ChartPoi(String id, Kind kind, String entityType, String salvageSpec, String derelictType, float cost, float weight, int minTier,
-                       int maxTier, boolean guarded, String requiredMod, List<String> planetCategories) {
+                       int maxTier, boolean guarded, String requiredMod, List<String> planetCategories, List<String> biomes) {
 
     public enum Kind {
         CACHE,
@@ -22,6 +22,7 @@ public record ChartPoi(String id, Kind kind, String entityType, String salvageSp
         derelictType = derelictType == null ? "" : derelictType;
         requiredMod = requiredMod == null ? "" : requiredMod;
         planetCategories = planetCategories == null ? List.of() : List.copyOf(planetCategories);
+        biomes = biomes == null ? List.of() : List.copyOf(biomes);
         cost = Math.max(0f, cost);
         weight = Math.max(0f, weight);
     }
@@ -29,6 +30,11 @@ public record ChartPoi(String id, Kind kind, String entityType, String salvageSp
     public ChartPoi(String id, Kind kind, String entityType, String salvageSpec, String derelictType, float cost, float weight, int minTier,
                     int maxTier, boolean guarded, String requiredMod) {
         this(id, kind, entityType, salvageSpec, derelictType, cost, weight, minTier, maxTier, guarded, requiredMod, List.of());
+    }
+
+    public ChartPoi(String id, Kind kind, String entityType, String salvageSpec, String derelictType, float cost, float weight, int minTier,
+                    int maxTier, boolean guarded, String requiredMod, List<String> planetCategories) {
+        this(id, kind, entityType, salvageSpec, derelictType, cost, weight, minTier, maxTier, guarded, requiredMod, planetCategories, List.of());
     }
 
     public boolean allowedAt(int tier) {

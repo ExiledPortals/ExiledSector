@@ -30,6 +30,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -84,6 +85,7 @@ public final class ChartGenContext {
     private boolean guaranteedBossTierUp;
     private boolean guaranteedBossUnique;
     private boolean stationBossBarred;
+    private String biomeId;
     private final Map<String, String> anomalyData = new LinkedHashMap<>();
 
     private ChartGenContext(List<AppliedEffect> applied, int quantity, String factionId) {
@@ -382,6 +384,7 @@ public final class ChartGenContext {
         context.guaranteedBossTierUp = guaranteedBossTierUp;
         context.guaranteedBossUnique = guaranteedBossUnique;
         context.stationBossBarred = stationBossBarred;
+        context.biomeId = biomeId;
         context.anomalyData.putAll(anomalyData);
         return context;
     }
@@ -417,6 +420,19 @@ public final class ChartGenContext {
 
     public boolean stationBossBarred() {
         return stationBossBarred;
+    }
+
+    public ChartGenContext withBiome(String regionId) {
+        if (Objects.equals(regionId, biomeId)) {
+            return this;
+        }
+        ChartGenContext context = derive(applied, factionId);
+        context.biomeId = regionId;
+        return context;
+    }
+
+    public String biomeId() {
+        return biomeId;
     }
 
     public ChartGenContext withAnomalyData(String anomalyId, String data) {

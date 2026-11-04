@@ -88,7 +88,8 @@ class ChartPoiModRequirementTest {
         assertEquals("IndEvo_arsenalStation", arsenal.specForSalvage());
         assertEquals(ChartPoi.Kind.STATION, arsenal.kind());
         assertEquals(5, arsenal.minTier());
-        assertTrue(ChartPois.all().stream().filter(poi -> !poi.id().equals(ARSENAL_ID)).allMatch(poi -> poi.requiredMod().isEmpty()));
+        assertTrue(ChartPois.all().stream().filter(poi -> !poi.id().equals(ARSENAL_ID) && poi.biomes().isEmpty())
+                .allMatch(poi -> poi.requiredMod().isEmpty()));
     }
 
     @Test

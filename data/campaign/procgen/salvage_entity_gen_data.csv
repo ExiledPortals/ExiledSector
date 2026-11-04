@@ -1,0 +1,4 @@
+id,rating,detection_range,type,autoXP,xpDiscover,xpSalvage,tags,drop_value,drop_random,defFaction,defQuality,probDefenders,minStr,maxStr,minSize,maxSize,probStation,stationRole
+exiledSector_chart_abyss_fabricator,1,3500,DISCOVERABLE,1000,1000,3000,,basic:12500,"rat_abyss_alterations_rare:3,rat_abyss_weapons:4,rat_abyss_artifact_rare:1,rare_tech_low:1,blueprints_low:1,any_hullmod_medium:1,weapons2:4",,,,,,,,,
+exiledSector_chart_abyss_accumulator,1,3500,DISCOVERABLE,1000,1000,3000,,basic:25000,"rat_abyss_alterations_rare:3,rat_abyss_weapons:3,rat_abyss_artifact_rare:1,rare_tech_low:1,blueprints_low:1",,,,,,,,,
+exiledSector_chart_abyss_research_station,1,4000,DISCOVERABLE,5000,5000,3000,,basic:10000,"rat_abyss_alteration_common:3,rat_abyss_weapons:25,rat_abyss_transmitter:1,rat_abyss_artifact_common:1,rare_tech_low:1",,,,,,,,,

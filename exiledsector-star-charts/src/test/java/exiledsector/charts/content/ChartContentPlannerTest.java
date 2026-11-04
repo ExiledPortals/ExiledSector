@@ -88,6 +88,32 @@ class ChartContentPlannerTest {
     }
 
     @Test
+    void aBiomeWithItsOwnSitesPlacesOnlyThemAndOtherBiomesNeverDo() {
+        ChartPoi ordinary = site("ordinary", ChartPoi.Kind.CACHE, 1f);
+        ChartPoi own = new ChartPoi("own", ChartPoi.Kind.STATION, "supply_cache", "", "", 2f, 1f, 1, 15, false, "", List.of(), List.of("rift"));
+        List<ChartPoi> pois = List.of(ordinary, own);
+        for (long seed = 0; seed < 10; seed++) {
+            ChartContentPlan rift = ChartContentPlanner.plan(seed, ChartTiers.forTier(8), pois, ChartFactions.all(), EVERY_FACTION,
+                    ChartGenContext.none().withBiome("rift"));
+            ChartContentPlan normal = ChartContentPlanner.plan(seed, ChartTiers.forTier(8), pois, ChartFactions.all(), EVERY_FACTION,
+                    ChartGenContext.none().withBiome("normal"));
+
+            assertFalse(rift.pois().isEmpty());
+            assertTrue(rift.pois().stream().allMatch(planned -> planned.poi() == own));
+            assertTrue(normal.pois().stream().noneMatch(planned -> planned.poi() == own));
+        }
+    }
+
+    @Test
+    void aBiomesOwnSitesSpendTheBudgetsOfEveryKind() {
+        ChartPoi own = new ChartPoi("own", ChartPoi.Kind.STATION, "supply_cache", "", "", 2f, 1f, 1, 15, false, "", List.of(), List.of("rift"));
+
+        List<PlannedPoi> planned = ChartContentPlanner.spendPooledLoot(withSiteBudgets(5, 3f, 0f, 0f, 3f), List.of(own), new Random(4L));
+
+        assertEquals(3, planned.size());
+    }
+
+    @Test
     void withoutBossTablesEveryBossIsAFleet() {
         for (long seed = 0; seed < 10; seed++) {
             ChartContentPlan plan = plan(seed, 6);

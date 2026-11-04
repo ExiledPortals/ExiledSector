@@ -72,7 +72,7 @@ public final class ChartPois {
         BuiltInTable.TierRange tiers = BuiltInTable.TierRange.parse(csv, row, id);
         return new ChartPoi(id, kind, entityType, ModCsv.text(row, "salvage_spec"), derelictType, csv.number(row, "cost", 1f, id),
                 csv.number(row, "weight", 1f, id), tiers.minTier(), tiers.maxTier(), csv.flag(row, "guarded", false, id),
-                ModCsv.text(row, "requires_mod"), CsvRows.entries(ModCsv.text(row, "planet_categories")));
+                ModCsv.text(row, "requires_mod"), CsvRows.entries(ModCsv.text(row, "planet_categories")), CsvRows.entries(ModCsv.text(row, "biomes")));
     }
 
     public static List<ChartPoi> all() {
@@ -96,6 +96,29 @@ public final class ChartPois {
             }
         }
         return eligible;
+    }
+
+    public static List<ChartPoi> inBiome(List<ChartPoi> candidates, String biomeId) {
+        boolean ownSites = hasOwnSites(candidates, biomeId);
+        List<ChartPoi> members = new ArrayList<>();
+        for (ChartPoi poi : candidates) {
+            if (ownSites ? poi.biomes().contains(biomeId) : poi.biomes().isEmpty()) {
+                members.add(poi);
+            }
+        }
+        return members;
+    }
+
+    public static boolean hasOwnSites(List<ChartPoi> candidates, String biomeId) {
+        if (biomeId == null) {
+            return false;
+        }
+        for (ChartPoi poi : candidates) {
+            if (poi.biomes().contains(biomeId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     static boolean requirementMet(ChartPoi poi) {

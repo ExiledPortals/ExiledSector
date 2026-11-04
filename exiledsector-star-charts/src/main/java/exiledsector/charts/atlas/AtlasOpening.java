@@ -126,7 +126,8 @@ public final class AtlasOpening {
 
     public static ChartLayoutRequest request(AtlasGenerator generator, AtlasState state, AtlasCell cell, StarChart chart, AtlasRunNode runNode) {
         AtlasNode node = generator.node(cell);
-        ChartGenContext context = ChartGenContext.from(chart).withAtlasNode(runNode).withStationBossBarred(AtlasData.ambience(node.regionId()).abyss());
+        ChartGenContext context = ChartGenContext.from(chart).withAtlasNode(runNode).withStationBossBarred(AtlasData.ambience(node.regionId()).abyss())
+                .withBiome(node.regionId());
         return new ChartLayoutRequest(layoutSeed(state, cell), null, chart.tier(), context, AtlasData.recipeFor(node.regionId(), node.layoutId()), chart.seed());
     }
 }

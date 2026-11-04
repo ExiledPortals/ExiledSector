@@ -42,6 +42,7 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import exiledsector.charts.anomaly.RunFactionDress;
 import exiledsector.charts.loot.ChartVanillaLoot;
+import exiledsector.charts.layout.abyss.ChartAbyss;
 import exiledsector.i18n.Translation;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -76,6 +77,10 @@ final class VanillaChartContentEngine implements ChartContentEngine {
 
     @Override
     public List<ChartSpot> spots(StarSystemAPI system, Random random, Set<SectorEntityToken> excludedFoci, float gap) {
+        List<Vector2f> abyssSpots = ChartAbyss.siteSpots(system, random);
+        if (!abyssSpots.isEmpty()) {
+            return abyssSpots.stream().map(at -> new ChartSpot(null, at, null, 1f)).toList();
+        }
         WeightedRandomPicker<EntityLocation> picker = BaseThemeGenerator.getLocations(random, system, excludedFoci, gap, locationWeights());
         List<ChartSpot> spots = new ArrayList<>();
         List<EntityLocation> locations = picker.getItems();

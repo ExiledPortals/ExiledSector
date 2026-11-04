@@ -64,8 +64,10 @@ public final class ChartContentPlanner {
         ChartGenContext context = chartContext.withAnomalyEffects(plannedAnomalies);
         ChartTier tier = context.adjust(baseTier);
         ChartFaction faction = ChartFactions.resolve(context.factionId(), factions, factionLoaded, Seeds.derived(seed, FACTION_SALT));
-        List<PlannedPoi> plannedPois = spendLoot(tier, pois, Seeds.derived(seed, LOOT_SALT));
-        plannedPois = addExtraPois(tier, pois, plannedPois, context.extraPois(), Seeds.derived(seed, EXTRA_POI_SALT));
+        List<ChartPoi> biomePois = ChartPois.inBiome(pois, context.biomeId());
+        List<PlannedPoi> plannedPois = ChartPois.hasOwnSites(pois, context.biomeId())
+                ? spendPooledLoot(tier, biomePois, Seeds.derived(seed, LOOT_SALT)) : spendLoot(tier, biomePois, Seeds.derived(seed, LOOT_SALT));
+        plannedPois = addExtraPois(tier, biomePois, plannedPois, context.extraPois(), Seeds.derived(seed, EXTRA_POI_SALT));
         List<ContentPlacer> placers = ChartAnomalies.anomaliesOf(plannedAnomalies, ContentPlacer.class);
         Random bossRandom = Seeds.derived(seed, BOSS_SALT);
         ChartBossType bossType = context.stationBossBarred() ? ChartBossType.FLEET
@@ -107,6 +109,16 @@ public final class ChartContentPlanner {
         for (ChartPoi.Kind kind : SPEND_ORDER) {
             spendSiteBudget(tier.siteBudget(kind), ChartPois.ofKind(eligible, kind), planned, random);
         }
+        return planned;
+    }
+
+    static List<PlannedPoi> spendPooledLoot(ChartTier tier, List<ChartPoi> pois, Random random) {
+        List<PlannedPoi> planned = new ArrayList<>();
+        float budget = 0f;
+        for (ChartPoi.Kind kind : SPEND_ORDER) {
+            budget += tier.siteBudget(kind);
+        }
+        spendSiteBudget(budget, ChartPois.lootAt(pois, tier.tier()), planned, random);
         return planned;
     }
 

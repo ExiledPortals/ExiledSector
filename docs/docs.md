@@ -560,7 +560,9 @@ territories keep their faction (`AtlasState.recordReveal`), so a faction added m
 The Threat Expanse holds only the Threat, and no other faction's infestation reaches it (`AtlasGenerator`). Its systems use the starless `DEEP_SPACE` layout, one world at the centre
 under vanilla's abyssal light (`ChartStarSystemGenerator`). Abyssal Rift systems have no star or planets and copy only
 the look of Random Assortment of Things' Abyss: Colossal Photospheres sized as in its Sea of Harmony, which fleets fly
-over, under abyssal fog and darkness, with none of RAT's sensor or storm effects (`ChartAbyss`). A biome's `*` anomaly
+over, under abyssal fog and darkness, with none of RAT's sensor or storm effects (`ChartAbyss`). A biome with its own
+`chart_poi.csv` sites (`biomes` column) places only those and spends every site budget on them (`ChartPois.inBiome`);
+the Rift's are three abyssal stations rebuilt from RAT's with its drop groups, set around the photospheres (`ChartAbyss.siteSpots`). A biome's `*` anomaly
 weight covers every anomaly it doesn't list; the Rift's is 0, and no anomaly a biome weighs at 0 can be inserted there
 (`AtlasAnomalies.canInsert`). The Threat Expanse's fleets are built like vanilla's abyssal Threat
 fleets, filled to the chart's fleet points with a fabricator leading each boss (`ChartThreatFleets`). A boss in an

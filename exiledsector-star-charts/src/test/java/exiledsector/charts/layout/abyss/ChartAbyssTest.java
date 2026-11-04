@@ -57,6 +57,19 @@ class ChartAbyssTest {
     }
 
     @Test
+    void siteSpotsRingEachPhotosphereOutsideItsCore() {
+        Vector2f centre = new Vector2f(14000f, -3000f);
+        List<Vector2f> spots = ChartAbyss.spotsAround(centre, ChartAbyss.SATELLITE_CORE_RADIUS, new Random(5L));
+
+        assertEquals(ChartAbyss.SITE_SPOTS_PER_PHOTOSPHERE, spots.size());
+        for (Vector2f spot : spots) {
+            float distance = Vector2f.sub(spot, centre, null).length();
+            assertTrue(distance >= ChartAbyss.SATELLITE_CORE_RADIUS + ChartAbyss.MIN_SITE_GAP - 0.5f, String.valueOf(distance));
+            assertTrue(distance <= ChartAbyss.SATELLITE_CORE_RADIUS + ChartAbyss.MAX_SITE_GAP + 0.5f, String.valueOf(distance));
+        }
+    }
+
+    @Test
     void theReachNeverFallsBelowTheMinimum() {
         assertEquals(ChartAbyss.MIN_REACH, ChartAbyss.reach(0f));
         assertEquals(15000f + ChartAbyss.REACH_MARGIN, ChartAbyss.reach(15000f));

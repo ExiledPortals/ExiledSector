@@ -11,3 +11,6 @@ rat_gravitational_dynamo,1;0.6;0.3;0.1,0.19,20,30
 rat_medical_laboratory,1;0.6;0.3;0.1,0.19,20,30
 rat_spatial_laboratory,1;0.6;0.3;0.1,0.19,20,30
 rat_damaged_cryosleeper,1;0.6;0.3;0.1,0.19,20,30
+exiledSector_chart_abyss_fabricator,1;0.6;0.3;0.1,0.19,20,30
+exiledSector_chart_abyss_accumulator,1;0.6;0.3;0.1,0.19,20,30
+exiledSector_chart_abyss_research_station,1;0.6;0.3;0.1,0.19,20,30
