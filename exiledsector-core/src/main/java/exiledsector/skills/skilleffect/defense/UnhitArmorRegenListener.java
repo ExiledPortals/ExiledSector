@@ -6,10 +6,9 @@ import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
+import exiledsector.skills.skilleffect.BattleRepairRecord;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.ShipCombatListener;
-
-import java.util.Map;
 
 final class UnhitArmorRegenListener extends ShipCombatListener implements AdvanceableListener {
 
@@ -47,13 +46,11 @@ final class UnhitArmorRegenListener extends ShipCombatListener implements Advanc
         if (percent <= 0f || enemyShipNear(engine)) {
             return;
         }
-        Map<String, Object> customData = engine.getCustomData();
-        String repairedKey = repairedKey(ownerShip);
-        float repaired = customData.get(repairedKey) instanceof Float earlier ? earlier : 0f;
-        float budget = Math.min(ArmorCells.total(grid) * BATTLE_CAP_PERCENT / 100f - repaired, fluxRoom() / HARD_FLUX_PER_ARMOR);
+        BattleRepairRecord repairRecord = BattleRepairRecord.of(engine, ownerShip, REPAIRED_KEY_PREFIX);
+        float budget = Math.min(repairRecord.remainingBelow(ArmorCells.total(grid) * BATTLE_CAP_PERCENT / 100f), fluxRoom() / HARD_FLUX_PER_ARMOR);
         float restored = mend(grid, cellSecondsUnhit, grid.getMaxArmorInCell() * percent / 100f * elapsed, budget);
         if (restored > 0f) {
-            customData.put(repairedKey, repaired + restored);
+            repairRecord.record(restored);
             ownerShip.getFluxTracker().increaseFlux(restored * HARD_FLUX_PER_ARMOR, true);
             ownerShip.syncWithArmorGridState();
             snapshot(grid);
@@ -124,11 +121,6 @@ final class UnhitArmorRegenListener extends ShipCombatListener implements Advanc
             return 0f;
         }
         return Math.max(0f, Math.min(perCell, maxArmorInCell - grid.getArmorValue(x, y)));
-    }
-
-    static String repairedKey(ShipAPI ship) {
-        String memberId = ship.getFleetMemberId();
-        return REPAIRED_KEY_PREFIX + (memberId != null ? memberId : ship.getId());
     }
 
     private float fluxRoom() {

@@ -634,8 +634,8 @@ multiplies every member's vanilla `corona_resistance`, which also covers flares,
 (`FleetWideEffects.applyCoronaResistance`). The Shield Emitter scales `HULL_DAMAGE_TAKEN_PERCENT`, capped like the typed
 damage taken stats, with Low Tech Affinity.
 
-The Armor Plate's hull repair runs only above 50% flux and stops at 20% of maximum hull per deployment
-(`HighFluxMendingListener`). The Reactor Regulator's dissipation bonus moves in whole 5% steps of hard flux
+The Armor Plate's hull repair runs only above 50% flux and stops at 20% of maximum hull per battle, redeployments
+included (`HighFluxMendingListener`). The Reactor Regulator's dissipation bonus moves in whole 5% steps of hard flux
 (`HardFluxDissipationListener`), and the Phase Coil Array lowers hard flux on each phase entry without changing total flux
 (`PhaseEntryFluxShedListener`). Destroyed strikecraft burst on the lethal hit, reaching ships whose edge is within range
 (`CinderBurstListener`).

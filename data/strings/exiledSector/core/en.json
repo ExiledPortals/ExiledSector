@@ -625,7 +625,7 @@
     "effect.EMP_ARC_STRIKE_SPEED_PERCENT": "<good>{value}%</good> increased top speed and maneuverability for {seconds} seconds after an EMP arc strikes this ship.",
     "effect.VOLATILE_FLUX_TOP_SPEED_FLAT": "Top speed changes with flux, from <good>+{value}</good> su/s at no flux to <bad>-{value}</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>{value}%</good> increased acceleration and turn acceleration.",
     "effect.FLUX_DISSIPATION_PERCENT_PER_HARD_FLUX": "<good>{value}%</good> increased flux dissipation for every {step}% hard flux.",
-    "effect.HIGH_FLUX_HULL_REGEN_PERCENT": "Above {threshold}% flux, repairs <good>{value}%</good> of maximum hull per second in combat, up to {limit}% of maximum hull in total per deployment.",
+    "effect.HIGH_FLUX_HULL_REGEN_PERCENT": "Above {threshold}% flux, repairs <good>{value}%</good> of maximum hull per second in combat, up to {limit}% of maximum hull in total per battle.",
     "effect.VOLATILE_FLUX_RATE_OF_FIRE_PERCENT": "Weapon rate of fire changes with flux, from <good>{value}%</good> increased at no flux to <bad>{value}%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.",
     "effect.FLUX_CAPACITOR_EFFECTIVENESS_PERCENT": "<good>{value}%</good> increased flux capacity granted by each flux capacitor.",
     "effect.AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT": "On hulls with Augmented Systems, <good>{value}%</good> reduced effect of the high-flux top speed and rate of fire penalties.",

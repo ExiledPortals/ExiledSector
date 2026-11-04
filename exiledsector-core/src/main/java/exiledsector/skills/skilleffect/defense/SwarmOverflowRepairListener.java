@@ -7,10 +7,9 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.impl.combat.threat.RoilingSwarmEffect;
 import com.fs.starfarer.api.util.IntervalUtil;
+import exiledsector.skills.skilleffect.BattleRepairRecord;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 import exiledsector.skills.skilleffect.shipsystem.FragmentSwarms;
-
-import java.util.Map;
 
 final class SwarmOverflowRepairListener extends ShipCombatListener implements AdvanceableListener {
 
@@ -52,20 +51,14 @@ final class SwarmOverflowRepairListener extends ShipCombatListener implements Ad
         if (grid == null || engine == null || percent <= 0f) {
             return;
         }
-        Map<String, Object> customData = engine.getCustomData();
-        String repairedKey = repairedKey(ownerShip);
-        float repaired = customData.get(repairedKey) instanceof Float earlier ? earlier : 0f;
+        BattleRepairRecord repairRecord = BattleRepairRecord.of(engine, ownerShip, REPAIRED_KEY_PREFIX);
         float totalArmor = ArmorCells.total(grid);
-        float restored = restoreMostDamaged(grid, fragments, totalArmor * percent / 100f, totalArmor * BATTLE_CAP_PERCENT / 100f - repaired);
+        float restored = restoreMostDamaged(grid, fragments, totalArmor * percent / 100f,
+                repairRecord.remainingBelow(totalArmor * BATTLE_CAP_PERCENT / 100f));
         if (restored > 0f) {
-            customData.put(repairedKey, repaired + restored);
+            repairRecord.record(restored);
             ownerShip.syncWithArmorGridState();
         }
-    }
-
-    static String repairedKey(ShipAPI ship) {
-        String memberId = ship.getFleetMemberId();
-        return REPAIRED_KEY_PREFIX + (memberId != null ? memberId : ship.getId());
     }
 
     static float restoreMostDamaged(ArmorGridAPI grid, int fragments, float perFragment, float budget) {

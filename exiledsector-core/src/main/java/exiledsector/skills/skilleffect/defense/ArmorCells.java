@@ -4,8 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ArmorGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-
-import java.util.Map;
+import exiledsector.skills.skilleffect.BattleRepairRecord;
 
 public final class ArmorCells {
 
@@ -58,21 +57,14 @@ public final class ArmorCells {
         if (grid == null || engine == null || perCellPercent <= 0f) {
             return 0f;
         }
-        Map<String, Object> customData = engine.getCustomData();
-        String repairedKey = repairedKey(ship, repairedKeyPrefix);
-        float repaired = customData.get(repairedKey) instanceof Float earlier ? earlier : 0f;
-        float budget = total(grid) * battleCapPercent / 100f - repaired;
+        BattleRepairRecord repairRecord = BattleRepairRecord.of(engine, ship, repairedKeyPrefix);
+        float budget = repairRecord.remainingBelow(total(grid) * battleCapPercent / 100f);
         float restored = restore(grid, grid.getMaxArmorInCell() * perCellPercent / 100f, budget);
         if (restored > 0f) {
-            customData.put(repairedKey, repaired + restored);
+            repairRecord.record(restored);
             ship.syncWithArmorGridState();
         }
         return restored;
-    }
-
-    private static String repairedKey(ShipAPI ship, String repairedKeyPrefix) {
-        String memberId = ship.getFleetMemberId();
-        return repairedKeyPrefix + (memberId != null ? memberId : ship.getId());
     }
 
     static float restore(ArmorGridAPI grid, float perCell, float budget) {

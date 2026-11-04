@@ -1402,12 +1402,12 @@ effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased h
 effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased high-explosive damage taken.
 effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced high-explosive damage taken.
 effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced high-explosive damage taken.
-effect|HIGH_FLUX_HULL_REGEN_PERCENT|1.0	0	Above 50% flux, repairs <good>1%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per deployment.
-effect|HIGH_FLUX_HULL_REGEN_PERCENT|10.0	0	Above 50% flux, repairs <good>10%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per deployment.
-effect|HIGH_FLUX_HULL_REGEN_PERCENT|12.5	0	Above 50% flux, repairs <good>12.5%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per deployment.
-effect|HIGH_FLUX_HULL_REGEN_PERCENT|100.0	0	Above 50% flux, repairs <good>100%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per deployment.
-effect|HIGH_FLUX_HULL_REGEN_PERCENT|-10.0	0	Above 50% flux, repairs <good>-10%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per deployment.
-effect|HIGH_FLUX_HULL_REGEN_PERCENT|-12.5	0	Above 50% flux, repairs <good>-12.5%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per deployment.
+effect|HIGH_FLUX_HULL_REGEN_PERCENT|1.0	0	Above 50% flux, repairs <good>1%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per battle.
+effect|HIGH_FLUX_HULL_REGEN_PERCENT|10.0	0	Above 50% flux, repairs <good>10%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per battle.
+effect|HIGH_FLUX_HULL_REGEN_PERCENT|12.5	0	Above 50% flux, repairs <good>12.5%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per battle.
+effect|HIGH_FLUX_HULL_REGEN_PERCENT|100.0	0	Above 50% flux, repairs <good>100%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per battle.
+effect|HIGH_FLUX_HULL_REGEN_PERCENT|-10.0	0	Above 50% flux, repairs <good>-10%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per battle.
+effect|HIGH_FLUX_HULL_REGEN_PERCENT|-12.5	0	Above 50% flux, repairs <good>-12.5%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per battle.
 effect|HIGH_TECH_AFFINITY_FLAT|1.0	0	<good>+1</good> to High Tech Affinity.
 effect|HIGH_TECH_AFFINITY_FLAT|10.0	0	<good>+10</good> to High Tech Affinity.
 effect|HIGH_TECH_AFFINITY_FLAT|12.5	0	<good>+12.5</good> to High Tech Affinity.
