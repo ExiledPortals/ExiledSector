@@ -447,6 +447,7 @@ class ChartContentGeneratorTest {
         assertEquals(2, params.officerNumberBonus);
         assertNull(params.averageSMods);
         assertEquals(Boolean.TRUE, params.ignoreMarketFleetSizeMult);
+        assertEquals(Boolean.TRUE, params.doNotPrune);
         assertNotNull(params.random);
     }
 

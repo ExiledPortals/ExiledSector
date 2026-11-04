@@ -531,9 +531,9 @@ class StarChartTest {
         ChartGenContext movedContext = ChartGenContext.from(moved);
 
         assertNull(moved.definition().poolEntryFor("CHART_BOSS_SIZE_PERCENT"));
-        assertTrue(movedContext.applied().contains(new AppliedEffect(ChartModifier.CHART_BOSS_SIZE_PERCENT, 540f)), movedContext.applied().toString());
+        assertTrue(movedContext.applied().contains(new AppliedEffect(ChartModifier.CHART_BOSS_SIZE_PERCENT, 135f)), movedContext.applied().toString());
         assertTrue(movedContext.applied().contains(new AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, 25f)), movedContext.applied().toString());
-        assertTrue(moved.effectLines().get(0).plain().contains("540%"), moved.effectLines().toString());
+        assertTrue(moved.effectLines().get(0).plain().contains("135%"), moved.effectLines().toString());
 
         List<RolledModifier> orphanExplicits = List.of(new RolledModifier("CHART_REMOVED_MODIFIER", ModifierSlot.SUFFIX,
                 List.of(new RolledLine("CHART_EXTRA_FLEETS", 73f))));

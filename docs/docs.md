@@ -326,7 +326,8 @@ Chart ships roll a level in their tier's `level_min` to `level_max` from `star_c
 Fleet Strength %, and bosses roll one higher. Outside charts, a won battle's chart chance is `chart_drops.csv`'s
 battle chance per 100 enemy deployment points defeated, scaled by battle difficulty, at the highest tier whose
 `level_min` the strongest defeated NPC reached (`ChartDrops.forBattle`). With the skill tree switched off, the
-tier instead rises one per `defeated_dp_per_tier` deployment points defeated.
+tier instead rises one per `defeated_dp_per_tier` deployment points defeated. Chart fleets are built with
+`doNotPrune`, so vanilla never trades their fleet points past 30 ships for bigger hulls (`ChartContentGenerator.fleetParams`).
 
 Node-granting lines such as Freebooting store node ids with the fleet's enemy rules. An enemy ship that gets an NPC tree
 has the node placed first as a free grant; the builder avoids nodes that conflict with it and only paths through it

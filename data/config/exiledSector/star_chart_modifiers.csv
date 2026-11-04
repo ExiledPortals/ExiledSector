@@ -1,9 +1,9 @@
 id,affix,scopes,lines,name,exclusive_groups
-CHART_FLEET_SIZE_PERCENT,prefix,star_chart,CHART_FLEET_SIZE_PERCENT:low=15-20/mid=50-70/high=150-200,Fortified,
+CHART_FLEET_SIZE_PERCENT,prefix,star_chart,CHART_FLEET_SIZE_PERCENT:low=4-5/mid=12-18/high=38-50,Fortified,
 CHART_EXTRA_FLEETS,prefix,star_chart,CHART_EXTRA_FLEETS:low=1/mid=2/high=3,Crowded,
 CHART_OFFICER_LEVEL_BONUS,prefix,star_chart,CHART_OFFICER_LEVEL_BONUS:low=1/mid=1/high=2,Veteran,
 CHART_EXTRA_OFFICERS,prefix,star_chart,CHART_EXTRA_OFFICERS:low=1/mid=2/high=3,Commanded,
-CHART_BOSS_SIZE_PERCENT,prefix,star_chart,CHART_BOSS_SIZE_PERCENT:low=60-90/mid=180-240/high=450-540,Warded,
+CHART_BOSS_SIZE_PERCENT,prefix,star_chart,CHART_BOSS_SIZE_PERCENT:low=15-22/mid=45-60/high=112-135,Warded,
 CHART_FLEET_QUALITY_PERCENT,prefix,star_chart,CHART_FLEET_QUALITY_PERCENT:low=10-15/mid=15-20/high=20-30,Pristine,
 CHART_SENSOR_RANGE_PERCENT,prefix,star_chart,CHART_SENSOR_RANGE_PERCENT:low=-25--15/mid=-35--25/high=-45--35,Shrouded,
 CHART_FRAGMENTATION_DAMAGE_TAKEN_PERCENT,prefix,star_chart,CHART_FRAGMENTATION_DAMAGE_TAKEN_PERCENT:low=10-15/mid=15-20/high=20-25,Splintering,

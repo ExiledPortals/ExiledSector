@@ -371,7 +371,7 @@ class StarChartCipherTest {
         ModifierLine line = ItemDefinitions.get(SINGLE).poolEntryFor(FLEET_SIZE).modifier().line(fleetSize.lines().get(0).effectName());
         float position = fleetSize.lines().get(0).magnitude();
         float tierFiveValue = line.valueFor(position, chart.scaleContext(null));
-        assertTrue(tierFiveValue >= 15f && tierFiveValue <= 20f);
+        assertTrue(tierFiveValue >= 4f && tierFiveValue <= 5f);
 
         assertSame(chart, use(StarChartCipher.CARTOGRAPHY, chart, 1L));
 
@@ -379,7 +379,7 @@ class StarChartCipherTest {
         RolledModifier after = chart.explicits().stream().filter(rolled -> rolled.modifierId().equals(FLEET_SIZE)).findFirst().orElseThrow();
         assertEquals(position, after.lines().get(0).magnitude());
         float tierSixValue = line.valueFor(position, chart.scaleContext(null));
-        assertTrue(tierSixValue >= 50f && tierSixValue <= 70f, "value " + tierSixValue);
+        assertTrue(tierSixValue >= 12f && tierSixValue <= 18f, "value " + tierSixValue);
         StarChart reloaded = (StarChart) ItemData.of(chart).preview();
         assertEquals(6, reloaded.tier());
     }

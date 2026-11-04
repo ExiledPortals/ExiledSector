@@ -32,7 +32,7 @@ public final class ChartThreatFleets {
     static final String FLEET_TYPE_KEY = "$fleetType";
     static final List<Map.Entry<String, Float>> ESCORT_ROLES = List.of(Map.entry(ShipRoles.COMBAT_SMALL, 4f), Map.entry(ShipRoles.COMBAT_MEDIUM, 3f),
             Map.entry(ShipRoles.COMBAT_LARGE, 2f), Map.entry(OVERSEER_ROLE, 1.5f), Map.entry(HIVE_ROLE, 1f));
-    static final float SECOND_FABRICATOR_POINTS = 1500f;
+    static final float SECOND_FABRICATOR_POINTS = 375f;
     static final int MOST_SHIPS = 60;
     static final int MOST_FAILED_PICKS = 3;
     static final List<String> WRECK_FACTIONS = List.of(Factions.TRITACHYON, Factions.PIRATES, Factions.INDEPENDENT, Factions.MERCENARY);

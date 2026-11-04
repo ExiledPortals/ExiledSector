@@ -59,6 +59,7 @@ public final class ChartAnomalyFleets {
                 spec.freighterPoints(), spec.tankerPoints(), 0f, 0f, 0f, 0f);
         params.random = random;
         params.ignoreMarketFleetSizeMult = true;
+        params.doNotPrune = true;
         params.withOfficers = spec.combatPoints() > 0f;
         params.officerLevelBonus = spec.officerLevelBonus();
         params.officerNumberBonus = spec.officerCountBonus();

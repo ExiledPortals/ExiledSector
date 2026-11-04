@@ -321,23 +321,23 @@ class ChartGenContextTest {
     @Test
     void rolledFleetsPastTheFleetLimitMergeIntoTheRestAsSizeAndStrength() {
         int limit = StarChartSettings.DEFAULT_FLEET_LIMIT;
-        assertEquals(new ChartFleetSpread(limit, 200f, 0), ChartFleetSpread.of(limit, 200f, 0, limit));
-        ChartFleetSpread doubled = ChartFleetSpread.of(limit * 2, 200f, 0, limit);
+        assertEquals(new ChartFleetSpread(limit, 50f, 0), ChartFleetSpread.of(limit, 50f, 0, limit));
+        ChartFleetSpread doubled = ChartFleetSpread.of(limit * 2, 50f, 0, limit);
         assertEquals(limit, doubled.fleets());
-        assertEquals(350f, doubled.fleetSize(), TOLERANCE, "75% of the cut fleets' size goes to the kept fleets");
+        assertEquals(87.5f, doubled.fleetSize(), TOLERANCE, "75% of the cut fleets' size goes to the kept fleets");
         assertEquals(25, doubled.strengthBonus(), "25% of it goes to their strength");
-        assertEquals(limit + 2, ChartFleetSpread.of(limit * 2, 200f, 2, limit).fleets(), "crowded fleets still spawn");
-        assertEquals(ChartContentPlanner.MAX_FLEETS, ChartFleetSpread.of(limit, 200f, 30, limit).fleets());
-        assertEquals(1, ChartFleetSpread.of(2, 200f, -5, limit).fleets());
-        ChartFleetSpread squeezed = ChartFleetSpread.of(7, 1100f, 0, 4);
+        assertEquals(limit + 2, ChartFleetSpread.of(limit * 2, 50f, 2, limit).fleets(), "crowded fleets still spawn");
+        assertEquals(ChartContentPlanner.MAX_FLEETS, ChartFleetSpread.of(limit, 50f, 30, limit).fleets());
+        assertEquals(1, ChartFleetSpread.of(2, 50f, -5, limit).fleets());
+        ChartFleetSpread squeezed = ChartFleetSpread.of(7, 275f, 0, 4);
         assertEquals(ChartContentPlanner.FLEET_SIZE_CAP, squeezed.cappedFleetSize(), TOLERANCE);
         assertEquals(ChartContentPlanner.MAX_OVERFLOW_STRENGTH, squeezed.totalStrengthBonus(), "size past the cap adds strength too");
 
-        ChartTier overRolled = new ChartTier(15, 200f, limit * 2, limit * 2, 0, 0, 50f, 100, 100, 0f, 0f, 0f, 0f, false, 0f);
+        ChartTier overRolled = new ChartTier(15, 50f, limit * 2, limit * 2, 0, 0, 50f, 100, 100, 0f, 0f, 0f, 0f, false, 0f);
         for (long seed = 0; seed < 20; seed++) {
             ChartContentPlan plain = ChartContentPlanner.plan(seed, overRolled, List.of(), List.of(), faction -> true);
             assertEquals(limit, plain.count(FleetRole.GUARD) + plain.count(FleetRole.PATROL), "seed " + seed);
-            assertEquals(limit * ChartTier.fleetPoints(350f), plain.fleetPoints(FleetRole.GUARD) + plain.fleetPoints(FleetRole.PATROL), 1f, "seed " + seed);
+            assertEquals(limit * ChartTier.fleetPoints(87.5f), plain.fleetPoints(FleetRole.GUARD) + plain.fleetPoints(FleetRole.PATROL), 1f, "seed " + seed);
             assertTrue(plain.fleets().stream().allMatch(fleet -> fleet.strengthBonus() == 25), plain.fleets().toString());
             ChartContentPlan crowdedPlan = ChartContentPlanner.plan(seed, overRolled, List.of(), List.of(), faction -> true,
                     with(ChartModifier.CHART_EXTRA_FLEETS, 3f));

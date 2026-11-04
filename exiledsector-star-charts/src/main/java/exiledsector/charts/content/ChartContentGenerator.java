@@ -214,6 +214,7 @@ public final class ChartContentGenerator {
                 0f, 0f, 0f, 0f, 0f, 0f);
         params.random = fleetRandom;
         params.ignoreMarketFleetSizeMult = true;
+        params.doNotPrune = true;
         params.withOfficers = true;
         params.officerLevelBonus = planned.officerLevelBonus();
         params.officerNumberBonus = planned.officerCountBonus();

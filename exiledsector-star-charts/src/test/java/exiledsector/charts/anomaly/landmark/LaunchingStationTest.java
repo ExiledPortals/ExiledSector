@@ -170,6 +170,7 @@ class LaunchingStationTest {
         FleetParamsV3 params = engine.fleetParams.get(0);
         assertEquals(Factions.REMNANTS, params.factionId);
         assertEquals(launchPoints(6, 0), params.combatPts, 0.001f);
+        assertEquals(Boolean.TRUE, params.doNotPrune);
         assertEquals(6, first.getMemoryWithoutUpdate().get(ChartIds.TIER_MEMORY_KEY));
         assertTrue(first.getMemoryWithoutUpdate().getBoolean(ChartIds.fleetRunKey(RUN_ID)));
         assertFalse(first.getMemoryWithoutUpdate().contains(ChartIds.START_DP_MEMORY_KEY));
