@@ -363,7 +363,7 @@
     "ui.stats.breakdown.heading": "Sources",
     "ui.stats.breakdown.source": "Source",
     "ui.stats.breakdown.amount": "Amount",
-    "ui.stats.breakdown.flat": "Flat Added",
+    "ui.stats.breakdown.flat": "Flat",
     "ui.stats.breakdown.percent": "Percent",
     "ui.stats.breakdown.multi": "Multi",
     "ui.stats.breakdown.final": "Final value: {value}",
