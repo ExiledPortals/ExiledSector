@@ -1,6 +1,7 @@
 package exiledsector.ui.socket;
 
 import exiledsector.items.ItemRarity;
+import exiledsector.items.ItemStatTotals;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ class ItemStorageQueryTest {
         for (String effectLine : effectLines) {
             searchLines.add(effectLine.toLowerCase(Locale.ROOT));
         }
-        return new ItemStorageRow(null, order, name, rarity, searchLines, installedIn);
+        return new ItemStorageRow(null, order, name, rarity, searchLines, installedIn, ItemStatTotals.NONE);
     }
 
     private static final ItemStorageRow MILITARY = row(0, "Military-grade Domain Subroutine", ItemRarity.COMMON, null,

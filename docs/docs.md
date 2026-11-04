@@ -441,6 +441,19 @@ A modifier row's `exclusive_groups` column names groups, and an item never carri
 there, and a granted modifier that clashes with a kept one is refused. Unshielded, Phaselocked and Brittle charts share
 `crippled_defense`, so a chart leaves at least one defence working, and Jammed and Severed share `command_point_rate`.
 
+### Advanced search
+
+The hull items panel's advanced search compares a stat's total on each item: every line of that stat, hybrid lines
+included, from the implicits, the explicits or both, summed as the item shows them, rounded to the shown decimals and
+signed, so a reduction is negative (`ItemStatTotals`, built once per storage row). A line that scales with hull size
+gives one total per hull size, and the row matches if any of them is in range. An item without the stat fails the row
+even when min and max are blank.
+
+An AND group needs every row, a COUNT group at least its count, and a row or group with no stat picked is ignored
+(`ModifierSearch`, kept on the session's `ItemStorageFilter` and applied only when Search is pressed). The stat list
+narrows to the chosen socket types' implicits and pools; catalogue stats that no part lists, like biome modifiers, show
+for every type (`ItemStatPool`).
+
 ### Wormhole anchors
 
 An anchor drops, stocks or shows in showcase salvage only while it is obtainable

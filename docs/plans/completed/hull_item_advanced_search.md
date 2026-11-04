@@ -1,6 +1,6 @@
 # Hull item advanced search
 
-Status: planned, nothing built.
+Status: built on branch `advanced-search` (2026-11-04), not yet merged. Not yet tried in game.
 
 The storage panel's text search matches words and one "20+" minimum per term. Players with large stashes want a Path of Exile style trade search instead: pick stats from a list, give each a min and max, and combine them in AND and COUNT groups.
 
@@ -55,9 +55,9 @@ All in `exiledsector-core`, `exiledsector.ui.socket` except where noted:
 
 ## Steps
 
-1. `ItemStatTotals` with tests: hybrid lines summed into each of their stats, the implicit/explicit split, per-hull-size totals and rounding to the shown decimals.
-2. `ModifierSearch` with tests: AND, COUNT, blank min and max, each lines choice, ignored empty rows and groups, a stat missing from the item.
-3. Stat pool per socket type, with a test that every hull item stat appears in at least one pool.
-4. `StatPicker`, filtering on each keystroke.
-5. `AdvancedSearchPane` and the Advanced search button, wired into `ItemStorageQuery` and Reset. The pane's bounds come from the storage panel's placement and the screen size, with a test for the 1280, 1920 and 2560 widths, including the two-line rows.
-6. A `docs/docs.md` section if any matching rule isn't evident from play.
+1. `ItemStatTotals` with tests: hybrid lines summed into each of their stats, the implicit/explicit split, per-hull-size totals and rounding to the shown decimals. Done on branch `advanced-search`: `exiledsector.items.ItemStatTotals`, built in `ItemStorageRow.of`, tested in `ItemStatTotalsTest`.
+2. `ModifierSearch` with tests: AND, COUNT, blank min and max, each lines choice, ignored empty rows and groups, a stat missing from the item. Done on branch `advanced-search`: `ModifierSearch` on `ItemStorageFilter`, applied in `ItemStorageQuery.apply` and cleared by `reset`, tested in `ModifierSearchTest`.
+3. Stat pool per socket type, with a test that every hull item stat appears in at least one pool. Done on branch `advanced-search`: `exiledsector.items.ItemStatPool`, tested with the shipped data in `ItemStatPoolTest` (exiledsector-mod). Catalogue stats that no part lists, such as biome and corruption-only modifiers, go in every part's pool, since core can't tell which part they drop on.
+4. `StatPicker`, filtering on each keystroke. Done on branch `advanced-search`: `StatPicker` (field polling, the list popup and its placement), tested in `StatPickerTest`.
+5. `AdvancedSearchPane` and the Advanced search button, wired into `ItemStorageQuery` and Reset. The pane's bounds come from the storage panel's placement and the screen size, with a test for the 1280, 1920 and 2560 widths, including the two-line rows. Done on branch `advanced-search`: `AdvancedSearchPane`, `AdvancedSearchLayout` and `FreeArea` in core, the button and wiring in `ItemStoragePanel`, the free area passed from `HullItemsScreen` through `SocketPanelPlacement` (`HullItemsLayout.advancedSearchArea`). Tested in `AdvancedSearchLayoutTest` and `AdvancedSearchPlacementTest` (exiledsector-hull-upgrades). The pane's own Reset clears its groups and the applied search; Reset filters on the panel clears everything. Only the hull items panel offers the search; other storage panels ignore it.
+6. A `docs/docs.md` section if any matching rule isn't evident from play. Done: the Advanced search section.

@@ -30,6 +30,7 @@ import exiledsector.ui.cargo.CargoIconLooks;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
@@ -72,7 +73,7 @@ public final class ItemStoragePanel extends HoloPanel {
     private static final float SEARCH_DELAY_SECONDS = 0.25f;
     private static final ItemCell.Look CELL_LOOK = new ItemCell.Look(7f, true, 1f);
 
-    private enum Control {CLOSE, CRAFTING_BENCH, DISASSEMBLY_MODE, CONFIRM_DISASSEMBLE, CANCEL_DISASSEMBLE, RESET_FILTERS}
+    private enum Control {CLOSE, CRAFTING_BENCH, DISASSEMBLY_MODE, CONFIRM_DISASSEMBLE, CANCEL_DISASSEMBLE, RESET_FILTERS, ADVANCED_SEARCH}
 
     private enum Menu {STATUS, RARITY, TYPE, SORT}
 
@@ -105,6 +106,9 @@ public final class ItemStoragePanel extends HoloPanel {
     private UIComponentAPI feedstockElement;
     private UIComponentAPI controlsElement;
     private ButtonAPI resetFiltersButton;
+    private ButtonAPI advancedSearchButton;
+    private FreeArea advancedSearchArea;
+    private AdvancedSearchPane advancedSearchPane;
     private TooltipMakerAPI gridElement;
     private boolean keepGridScroll;
     private UIComponentAPI noticeElement;
@@ -168,6 +172,7 @@ public final class ItemStoragePanel extends HoloPanel {
     private void attachFresh(SocketPanelPlacement placement) {
         movedFromCargo = absorbPlayerCargo();
         materialsNotice = settleMaterials();
+        advancedSearchArea = placement.advancedSearchArea();
         attach(placement.panelLeft(), placement.panelTop(), placement.panelWidth(), placement.panelHeight(), placement.instantly());
     }
 
@@ -204,6 +209,7 @@ public final class ItemStoragePanel extends HoloPanel {
     protected void onClose() {
         hideHoverTooltip();
         closeFilterMenu();
+        closeAdvancedSearch();
         if (craftingBenchPanel != null) {
             craftingBenchPanel.close();
         }
@@ -213,6 +219,7 @@ public final class ItemStoragePanel extends HoloPanel {
     @Override
     protected void onSwappedOut() {
         closeFilterMenu();
+        closeAdvancedSearch();
         if (craftingBenchPanel != null) {
             craftingBenchPanel.close();
         }
@@ -248,6 +255,7 @@ public final class ItemStoragePanel extends HoloPanel {
             closeDisassemblyConfirm();
             reloadRows();
             rebuildControls();
+            refreshAdvancedSearch();
         });
     }
 
@@ -319,6 +327,9 @@ public final class ItemStoragePanel extends HoloPanel {
         }
         if (isConfirmOpen()) {
             queue(this::closeDisassemblyConfirm);
+            return true;
+        }
+        if (advancedSearchPane != null && advancedSearchPane.escape()) {
             return true;
         }
         if (disassembly.active()) {
@@ -421,6 +432,8 @@ public final class ItemStoragePanel extends HoloPanel {
             disassemblyModePressed();
         } else if (id == Control.RESET_FILTERS) {
             resetFilters();
+        } else if (id == Control.ADVANCED_SEARCH) {
+            toggleAdvancedSearch();
         } else if (id instanceof MenuButton button) {
             menuButtonPressed(button.menu());
         } else if (id instanceof StatusChip chip) {
@@ -429,6 +442,7 @@ public final class ItemStoragePanel extends HoloPanel {
         } else if (id instanceof RarityChip chip) {
             storageFilter.toggleRarity(chip.rarity());
             filtersChanged();
+            refreshAdvancedSearch();
         } else if (id instanceof SortChip chip) {
             storageFilter.setSort(chip.sort());
             closeFilterMenu();
@@ -437,6 +451,7 @@ public final class ItemStoragePanel extends HoloPanel {
             storageFilter.toggleSection(chip.sectionKind());
             reloadRows();
             filtersChanged();
+            refreshAdvancedSearch();
         }
     }
 
@@ -458,6 +473,97 @@ public final class ItemStoragePanel extends HoloPanel {
         searchDelay = 0f;
         reloadRows();
         rebuildControls();
+        refreshAdvancedSearch();
+    }
+
+    private boolean offersAdvancedSearch() {
+        return advancedSearchArea != null;
+    }
+
+    public boolean advancedSearchContains(float x, float y) {
+        return advancedSearchPane != null && advancedSearchPane.contains(x, y);
+    }
+
+    private void toggleAdvancedSearch() {
+        if (advancedSearchPane != null) {
+            closeAdvancedSearch();
+            return;
+        }
+        if (!offersAdvancedSearch()) {
+            return;
+        }
+        closeFilterMenu();
+        hideHoverTooltip();
+        advancedSearchPane = AdvancedSearchPane.open(hostPanel, AdvancedSearchLayout.in(advancedSearchArea), storageFilter, new AdvancedSearchHost());
+        syncAdvancedSearchButton();
+    }
+
+    private void closeAdvancedSearch() {
+        AdvancedSearchPane closingPane = advancedSearchPane;
+        advancedSearchPane = null;
+        if (closingPane != null) {
+            closingPane.close();
+        }
+        syncAdvancedSearchButton();
+    }
+
+    private void refreshAdvancedSearch() {
+        if (advancedSearchPane != null) {
+            advancedSearchPane.refresh();
+        }
+    }
+
+    private void syncAdvancedSearchButton() {
+        if (advancedSearchButton != null) {
+            advancedSearchButton.setChecked(advancedSearchPane != null);
+        }
+    }
+
+    private final class AdvancedSearchHost implements AdvancedSearchPane.Host {
+
+        @Override
+        public List<ItemKind> typeChoices() {
+            return chipTypes();
+        }
+
+        @Override
+        public Collection<ItemKind> rollableKinds() {
+            if (kindFilter != null) {
+                return List.of(kindFilter);
+            }
+            return chipTypes().stream().filter(storageFilter.sectionKinds::contains).toList();
+        }
+
+        @Override
+        public void filtersPicked(boolean sectionsChanged) {
+            queue(() -> {
+                closeDisassemblyConfirm();
+                if (sectionsChanged) {
+                    reloadRows();
+                }
+                filtersChanged();
+            });
+        }
+
+        @Override
+        public void searchApplied() {
+            queue(() -> {
+                closeDisassemblyConfirm();
+                rebuildGrid();
+            });
+        }
+
+        @Override
+        public void pressedInside() {
+            hideHoverTooltip();
+            storageListener.pressedInside();
+        }
+
+        @Override
+        public void closed() {
+            advancedSearchPane = null;
+            syncAdvancedSearchButton();
+        }
     }
 
     private void filtersChanged() {
@@ -707,7 +813,7 @@ public final class ItemStoragePanel extends HoloPanel {
         return Translation.text("ui.socketStorage.status." + status.name().toLowerCase(Locale.ROOT));
     }
 
-    private static String rarityLabel(ItemRarity rarity) {
+    static String rarityLabel(ItemRarity rarity) {
         return Translation.text("ui.socketStorage.rarity." + rarity.name().toLowerCase(Locale.ROOT));
     }
 
@@ -720,8 +826,12 @@ public final class ItemStoragePanel extends HoloPanel {
         return shown;
     }
 
+    private int controlSlots(List<Menu> menus) {
+        return menus.size() + (offersAdvancedSearch() ? 2 : 1);
+    }
+
     private int controlColumns(List<Menu> menus) {
-        int slotCount = menus.size() + 1;
+        int slotCount = controlSlots(menus);
         float oneRowWidth = slotCount * MIN_MENU_BUTTON_WIDTH + (slotCount - 1) * GAP;
         return innerWidth() >= oneRowWidth ? slotCount : Math.min(slotCount, NARROW_MENU_COLUMNS);
     }
@@ -773,7 +883,7 @@ public final class ItemStoragePanel extends HoloPanel {
     private void rebuildControls() {
         List<Menu> menus = menus();
         int columns = controlColumns(menus);
-        int rows = (menus.size() + columns) / columns;
+        int rows = (controlSlots(menus) + columns - 1) / columns;
         float buttonWidth = menuButtonWidth(columns);
         TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), ChipFlow.height(rows), false);
         ChipFlow.Colors colors = ChipFlow.Colors.player();
@@ -788,13 +898,20 @@ public final class ItemStoragePanel extends HoloPanel {
         resetFiltersButton = element.addAreaCheckbox(Translation.text("ui.socketStorage.resetFilters"), Control.RESET_FILTERS, colors.base(),
                 colors.dark(), colors.bright(), buttonWidth, ChipFlow.CHIP_HEIGHT, 0f);
         resetFiltersButton.getPosition().inTL((columns - 1) * (buttonWidth + GAP), (rows - 1) * (ChipFlow.CHIP_HEIGHT + GAP));
+        advancedSearchButton = null;
+        if (offersAdvancedSearch()) {
+            advancedSearchButton = element.addAreaCheckbox(Translation.text("ui.advancedSearch.button"), Control.ADVANCED_SEARCH, colors.base(),
+                    colors.dark(), colors.bright(), buttonWidth, ChipFlow.CHIP_HEIGHT, 0f);
+            advancedSearchButton.getPosition().inTL((columns - 2) * (buttonWidth + GAP), (rows - 1) * (ChipFlow.CHIP_HEIGHT + GAP));
+            syncAdvancedSearchButton();
+        }
         syncMenuButtons();
         controlsElement = replaceElement(controlsElement, element, PAD, controlsTop());
         gridTop = controlsTop() + ChipFlow.rowsHeight(rows) + NOTICE_HEIGHT;
         rebuildGrid();
     }
 
-    private static Color typeColor(ItemKind sectionKind) {
+    static Color typeColor(ItemKind sectionKind) {
         Color kindColor = CargoIconLooks.kindColor(sectionKind);
         return kindColor != null ? kindColor : Misc.getBasePlayerColor();
     }
@@ -816,9 +933,9 @@ public final class ItemStoragePanel extends HoloPanel {
         keepGridScroll = false;
         hideHoverTooltip();
         if (resetFiltersButton != null) {
-            resetFiltersButton.setEnabled(!storageFilter.isDefault());
+            resetFiltersButton.setEnabled(!storageFilter.isDefault(offersAdvancedSearch()));
         }
-        List<ItemStorageRow> matching = spotlightFirst(ItemStorageQuery.apply(storageRows, storageFilter));
+        List<ItemStorageRow> matching = spotlightFirst(ItemStorageQuery.apply(storageRows, storageFilter, offersAdvancedSearch()));
         int columns = ItemGrid.columnsFor(panelWidth);
         float gridHeight = Math.max(ItemGrid.cellSize(innerWidth(), columns), panelHeight - PAD - FOOTER_HEIGHT - GAP - gridTop);
         TooltipMakerAPI element = ItemGrid.build(panelRoot, innerWidth(), gridHeight, columns, matching, this::cellFor, emptyText());

@@ -12,11 +12,16 @@ final class ItemStorageQuery {
     }
 
     static List<ItemStorageRow> apply(List<ItemStorageRow> rows, ItemStorageFilter filter) {
+        return apply(rows, filter, true);
+    }
+
+    static List<ItemStorageRow> apply(List<ItemStorageRow> rows, ItemStorageFilter filter, boolean withModifierSearch) {
         ItemStorageSearch search = ItemStorageSearch.parse(filter.query);
         return rows.stream()
                 .filter(row -> matchesStatus(row, filter))
                 .filter(row -> filter.rarities.isEmpty() || filter.rarities.contains(row.rarity()))
                 .filter(row -> search.matches(row.searchLines()))
+                .filter(row -> !withModifierSearch || filter.modifierSearch.matches(row.statTotals()))
                 .sorted(order(filter.sort))
                 .toList();
     }
