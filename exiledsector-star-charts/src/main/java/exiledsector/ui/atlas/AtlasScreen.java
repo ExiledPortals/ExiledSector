@@ -112,10 +112,10 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private final StarfieldRenderer starfield = new StarfieldRenderer(panelStyle);
     private final CanvasCamera camera = new CanvasCamera(AtlasMapCanvas.MIN_ZOOM, AtlasMapCanvas.MAX_ZOOM);
     private final PointerGesture<Void> gesture = new PointerGesture<>();
-    private final TextLabel titleLabel = new TextLabel(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-    private final TextLabel hintLabel = new TextLabel(SkillTreePanelStyle.TOOLTIP_FLAVOUR_FONT_SIZE, HINT_COLOUR);
-    private final TextLabel tooltipTitle = new TextLabel(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-    private final TextLabel tooltipBody = new TextLabel(SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
+    private final TextLabel titleLabel = new TextLabel(SkillTreePanelStyle.UI_TITLE_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
+    private final TextLabel hintLabel = new TextLabel(SkillTreePanelStyle.UI_HINT_FONT_SIZE, HINT_COLOUR);
+    private final TextLabel tooltipTitle = new TextLabel(SkillTreePanelStyle.TOOLTIP_TITLE_FONT, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
+    private final TextLabel tooltipBody = new TextLabel(SkillTreePanelStyle.TOOLTIP_BODY_FONT, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
     private AtlasMapCanvas map;
     private CustomPanelAPI panelRoot;
     private PositionAPI panelPosition;

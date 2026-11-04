@@ -818,7 +818,6 @@
     "ui.forge.refused.infuse.clash": "此物品已有效果相同的词缀。",
     "ui.forge.refused.infuse.full": "此物品没有空位容纳更多词缀。",
     "meta.font": "graphics/fonts/exiledSector/notosanssc.fnt",
-    "meta.fakeBold": "false",
 
     "format.list.sep": "、",
     "format.sentences": "{a}{b}",

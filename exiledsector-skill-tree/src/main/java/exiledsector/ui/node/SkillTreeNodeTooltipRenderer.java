@@ -51,10 +51,9 @@ import java.util.function.Supplier;
 
 import static exiledsector.ui.SkillTreePanelStyle.NODE_TOOLTIP_MAX_TEXT_WIDTH;
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_COLOR;
-import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
-import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_FLAVOUR_FONT_SIZE;
+import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_FONT;
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_TITLE_COLOR;
-import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE;
+import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_TITLE_FONT;
 
 final class SkillTreeNodeTooltipRenderer {
 
@@ -87,7 +86,7 @@ final class SkillTreeNodeTooltipRenderer {
     }
 
     void renderTooltip(SkillNode node, NodeAllocator.Snapshot allocation, String tooltipWarning, float mouseX, float mouseY, float alphaMult) {
-        LazyFont font = SkillTreePanelStyle.font();
+        LazyFont font = SkillTreePanelStyle.tooltipBodyFont();
         if (font == null) return;
 
         ShipSkillData skillData = allocation.skillData();
@@ -124,7 +123,7 @@ final class SkillTreeNodeTooltipRenderer {
                         socketGrantStatuses, expanded), rewrite), grantingItem), costLine),
                 expanded, tooltipWarning != null ? tooltipWarning : refusalReason);
         TextLabel affinitySection = showsAffinity(effectiveType, hidden, showChoiceHint, socketed)
-                ? affinitySections.computeIfAbsent(node.getId(), id -> new TextLabel(TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR))
+                ? affinitySections.computeIfAbsent(node.getId(), id -> new TextLabel(TOOLTIP_BODY_FONT, TOOLTIP_BODY_COLOR))
                         .refresh(signature, label -> writeBodyText(label, affinityLines(effectiveType, skillData).details()))
                 : null;
 
@@ -137,7 +136,7 @@ final class SkillTreeNodeTooltipRenderer {
 
     void renderTooltipForType(SkillNode choicePickerNode, SkillType type, NodeAllocator.Snapshot allocation, String optionRefusalReason,
                               float mouseX, float mouseY, float alphaMult) {
-        LazyFont font = SkillTreePanelStyle.font();
+        LazyFont font = SkillTreePanelStyle.tooltipBodyFont();
         if (font == null) return;
 
         boolean expanded = TooltipExpansion.isExpanded();
@@ -156,12 +155,12 @@ final class SkillTreeNodeTooltipRenderer {
     }
 
     private static TextLabel titleLabel() {
-        return new TextLabel(TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR);
+        return new TextLabel(TOOLTIP_TITLE_FONT, TOOLTIP_TITLE_COLOR);
     }
 
     private TextLabel body(Map<String, TextLabel> bodies, String key, Object signature, Supplier<NodeDescription> description, boolean expanded,
                            String refusalReason) {
-        TextLabel bodyLabel = bodies.computeIfAbsent(key, id -> new TextLabel(TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
+        TextLabel bodyLabel = bodies.computeIfAbsent(key, id -> new TextLabel(TOOLTIP_BODY_FONT, TOOLTIP_BODY_COLOR));
         bodyLabel.refresh(signature, label -> {
             NodeDescription described = description.get();
             List<DescriptionLine> lines = new ArrayList<>(expanded ? described.all() : described.effects());
@@ -178,7 +177,7 @@ final class SkillTreeNodeTooltipRenderer {
         if (!expandable) {
             return null;
         }
-        return footers.computeIfAbsent(expanded, footerExpanded -> writeBodyText(new TextLabel(TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR),
+        return footers.computeIfAbsent(expanded, footerExpanded -> writeBodyText(new TextLabel(TOOLTIP_BODY_FONT, TOOLTIP_BODY_COLOR),
                 List.of(plainLine(Boolean.TRUE.equals(footerExpanded) ? "ui.tooltip.collapseHint" : "ui.tooltip.expandHint"))));
     }
 
@@ -187,7 +186,7 @@ final class SkillTreeNodeTooltipRenderer {
             return flavours.get(type.getId());
         }
         String flavourText = flavourText(type, fleetMember);
-        ItalicTextLabel flavour = flavourText == null ? null : new ItalicTextLabel(TOOLTIP_FLAVOUR_FONT_SIZE, Misc.getGrayColor())
+        ItalicTextLabel flavour = flavourText == null ? null : new ItalicTextLabel(TOOLTIP_BODY_FONT, Misc.getGrayColor())
                 .setWrapped(flavourText, NODE_TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT);
         flavours.put(type.getId(), flavour);
         return flavour;

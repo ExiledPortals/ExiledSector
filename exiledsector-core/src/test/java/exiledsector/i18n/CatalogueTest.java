@@ -76,11 +76,10 @@ class CatalogueTest {
     @Test
     void thePseudoLocaleWrapsTextButLeavesMetadataUntouched() {
         Catalogue pseudo = Catalogue.compose(PseudoLocale.LOCALE, locale -> locale.equals("en")
-                ? Map.of("meta.font", "graphics/fonts/orbitron20aabold.fnt", "meta.fakeBold", "true", "a", "Text")
+                ? Map.of("meta.font", "graphics/fonts/orbitron20aabold.fnt", "a", "Text")
                 : Map.of());
 
         assertEquals("graphics/fonts/orbitron20aabold.fnt", pseudo.raw("meta.font"));
-        assertEquals("true", pseudo.raw("meta.fakeBold"));
         assertEquals("[Text~]", pseudo.raw("a"));
     }
 
@@ -88,7 +87,6 @@ class CatalogueTest {
     void englishAndThePseudoLocaleLeaveTheFontSettingsToTheCodeDefaults() {
         for (Catalogue catalogue : List.of(RealCatalogue.english(), RealCatalogue.of(PseudoLocale.LOCALE))) {
             assertFalse(catalogue.has("meta.font"));
-            assertFalse(catalogue.has("meta.fakeBold"));
         }
     }
 

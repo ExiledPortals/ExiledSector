@@ -13,16 +13,15 @@ final class StatBreakdownTooltip {
 
     private static final float MAX_TITLE_HEIGHT = 200f;
     private static final float MAX_NOTES_HEIGHT = 200f;
-    private static final float NOTES_FONT_SIZE = 17f;
     private static final Color NOTES_COLOR = new Color(0xA0, 0xA0, 0xA0);
     private static final List<ShipStatSheet.Combine> VALUE_COLUMNS = List.of(ShipStatSheet.Combine.FLAT, ShipStatSheet.Combine.PERCENT,
             ShipStatSheet.Combine.MULTI);
 
     private final SkillTreePanelStyle panelStyle;
-    private final TextLabel titleLabel = new TextLabel(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-    private final TextLabel bodyLabel = new TextLabel(SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
-    private final TextLabel resultLabel = new TextLabel(SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-    private final TextLabel notesLabel = new TextLabel(NOTES_FONT_SIZE, NOTES_COLOR);
+    private final TextLabel titleLabel = new TextLabel(SkillTreePanelStyle.TOOLTIP_TITLE_FONT, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
+    private final TextLabel bodyLabel = new TextLabel(SkillTreePanelStyle.TOOLTIP_BODY_FONT, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
+    private final TextLabel resultLabel = new TextLabel(SkillTreePanelStyle.TOOLTIP_BODY_FONT, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
+    private final TextLabel notesLabel = new TextLabel(SkillTreePanelStyle.TOOLTIP_BODY_FONT, NOTES_COLOR);
     private ShipStatSheet.Breakdown shownBreakdown;
     private List<SkillTreeTooltipTable> tables = List.of();
 
@@ -31,7 +30,7 @@ final class StatBreakdownTooltip {
     }
 
     void render(ShipStatSheet.Breakdown breakdown, float mouseX, float mouseY, float alphaMult) {
-        LazyFont font = SkillTreePanelStyle.font();
+        LazyFont font = SkillTreePanelStyle.tooltipBodyFont();
         if (font == null || breakdown == null) {
             return;
         }

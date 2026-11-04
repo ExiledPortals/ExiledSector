@@ -170,8 +170,8 @@ final class ChartInfoWindow {
 
     private final SpriteCache spriteCache = new SpriteCache(ChartInfoWindow.class);
     private final SkillTreePanelStyle tooltipStyle = new SkillTreePanelStyle();
-    private final TextLabel tooltipTitle = new TextLabel(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-    private final TextLabel tooltipBody = new TextLabel(SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
+    private final TextLabel tooltipTitle = new TextLabel(SkillTreePanelStyle.TOOLTIP_TITLE_FONT, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
+    private final TextLabel tooltipBody = new TextLabel(SkillTreePanelStyle.TOOLTIP_BODY_FONT, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
     private final List<Block> blocks = new ArrayList<>();
     private float contentHeight;
     private float scrollOffset;

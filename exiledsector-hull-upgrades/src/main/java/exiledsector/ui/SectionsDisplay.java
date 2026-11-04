@@ -49,7 +49,7 @@ final class SectionsDisplay {
     static final int MAX_SECTIONS = HullUpgradePoints.MOST_POINTS;
     private static final float HOVER_SECONDS = 0.15f;
     private static final float LABEL_GAP = 8f;
-    private static final float LABEL_FONT_SIZE = SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
+    private static final float LABEL_FONT_SIZE = SkillTreePanelStyle.UI_FONT_SIZE;
     static final float VERTICAL_REACH = SectionLayout.SECTION_RADIUS + LABEL_GAP + LABEL_FONT_SIZE * 2f;
     private static final float OTHER_SECTION_DIM = 0.3f;
 

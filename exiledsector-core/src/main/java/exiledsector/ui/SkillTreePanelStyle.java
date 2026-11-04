@@ -9,6 +9,7 @@ import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.skilleffect.render.FallbackSupport;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.ItalicTextLabel;
+import exiledsector.ui.util.TextFont;
 import exiledsector.ui.util.TextLabel;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
@@ -23,16 +24,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class SkillTreePanelStyle {
 
-    public static final float TOOLTIP_TITLE_FONT_SIZE = 24f;
-    public static final float TOOLTIP_BODY_FONT_SIZE = 20f;
+    public static final float UI_TITLE_FONT_SIZE = 24f;
+    public static final float UI_FONT_SIZE = 20f;
+    public static final float UI_HINT_FONT_SIZE = 17f;
+    public static final TextFont TOOLTIP_TITLE_FONT = new TextFont(SkillTreePanelStyle::tooltipTitleFont, 15f);
+    public static final TextFont TOOLTIP_BODY_FONT = new TextFont(SkillTreePanelStyle::tooltipBodyFont, 15f);
     public static final Color TOOLTIP_TITLE_COLOR = Color.WHITE;
     public static final Color TOOLTIP_BODY_COLOR = new Color(230, 230, 230);
-    public static final float TOOLTIP_FLAVOUR_FONT_SIZE = 17f;
-    public static final float TOOLTIP_MAX_TEXT_WIDTH = 480f;
+    public static final float TOOLTIP_MAX_TEXT_WIDTH = 360f;
     public static final float NODE_TOOLTIP_MAX_TEXT_WIDTH = TOOLTIP_MAX_TEXT_WIDTH * 1.2f;
     public static final float FONT_LINE_HEIGHT_FACTOR = 1f;
     public static final Color TOOLTIP_BACKGROUND_COLOR = Color.BLACK;
@@ -56,16 +60,16 @@ public final class SkillTreePanelStyle {
     private static final float TOOLTIP_WIDTH_SAFETY_MARGIN = 8f;
     private static final float TOOLTIP_TITLE_BODY_GAP = 6f;
     private static final float TOOLTIP_CURSOR_OFFSET = 18f;
-    private static final float TOOLTIP_TITLE_BOLD_OFFSET = 1f;
     private static final float TOOLTIP_TABLE_GAP = 14f;
     private static final float TOOLTIP_SEPARATOR_THICKNESS = 1f;
     private static final float TOOLTIP_SCREEN_MARGIN = 4f;
     private static final float TOOLTIP_FLAVOUR_GAP = 8f;
 
     static final String DEFAULT_FONT_PATH = "graphics/fonts/orbitron20aabold.fnt";
-    private static LazyFont cachedFont;
-    private static boolean fontLoadFailed;
-    private static Boolean cachedFakeBold;
+    static final String TOOLTIP_TITLE_FONT_PATH = "graphics/fonts/orbitron12condensed.fnt";
+    static final String TOOLTIP_BODY_FONT_PATH = "graphics/fonts/insignia15LTaa.fnt";
+    private static final Map<String, Optional<LazyFont>> FONTS_BY_DEFAULT_PATH = new HashMap<>();
+    private static final Map<String, Optional<LazyFont>> FONTS_BY_FILE = new HashMap<>();
 
     private static final Map<String, Color> ACCENT_COLORS_BY_ICON = new ConcurrentHashMap<>();
 
@@ -81,19 +85,25 @@ public final class SkillTreePanelStyle {
         }
     }
 
-    private static boolean fakeBold() {
-        if (cachedFakeBold == null) {
-            cachedFakeBold = !Translation.has("meta.fakeBold") || !"false".equals(Translation.text("meta.fakeBold"));
-        }
-        return cachedFakeBold;
+    public static LazyFont font() {
+        return localeFontOr(DEFAULT_FONT_PATH);
     }
 
-    public static LazyFont font() {
-        if (cachedFont == null && !fontLoadFailed) {
-            cachedFont = loadFontOrDefault(Translation.has("meta.font") ? Translation.text("meta.font") : DEFAULT_FONT_PATH);
-            fontLoadFailed = cachedFont == null;
-        }
-        return cachedFont;
+    public static LazyFont tooltipTitleFont() {
+        return localeFontOr(TOOLTIP_TITLE_FONT_PATH);
+    }
+
+    public static LazyFont tooltipBodyFont() {
+        return localeFontOr(TOOLTIP_BODY_FONT_PATH);
+    }
+
+    private static LazyFont localeFontOr(String path) {
+        return FONTS_BY_DEFAULT_PATH.computeIfAbsent(path,
+                key -> loadedFont(Translation.has("meta.font") ? Translation.text("meta.font") : key)).orElse(null);
+    }
+
+    private static Optional<LazyFont> loadedFont(String file) {
+        return FONTS_BY_FILE.computeIfAbsent(file, key -> Optional.ofNullable(loadFontOrDefault(key)));
     }
 
     static LazyFont loadFontOrDefault(String path) {
@@ -155,9 +165,6 @@ public final class SkillTreePanelStyle {
         float bodyY = flavourY - flavourHeight;
         float titleX = boxX + (boxWidth - title.width()) / 2f;
         title.setAlpha(alphaMult).draw(titleX, titleY);
-        if (fakeBold()) {
-            title.draw(titleX + TOOLTIP_TITLE_BOLD_OFFSET, titleY);
-        }
         if (flavour != null) {
             flavour.setAlpha(alphaMult).draw(boxX + TOOLTIP_PADDING, flavourY);
         }

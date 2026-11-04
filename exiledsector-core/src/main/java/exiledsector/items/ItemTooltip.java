@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 
 public final class ItemTooltip {
 
-    public static final float WIDTH = 700f;
+    public static final float WIDTH = 450f;
     public static final float PAD = 10f;
     private static final float LINE_PAD = 3f;
     private static final float SLOT_TAG_WIDTH = 30f;
@@ -56,28 +56,21 @@ public final class ItemTooltip {
         }
         tooltip.addSectionHeading(Translation.text("item.tooltip.explicit"), Alignment.MID, PAD);
         if (showRollRanges) {
-            SlottedRows.Layout layout = new SlottedRows.Layout(tooltip.getWidthSoFar(), SLOT_TAG_WIDTH, SLOT_TAG_GAP, ItemTooltip::useBodyFont);
+            SlottedRows.Layout layout = new SlottedRows.Layout(tooltip.getWidthSoFar(), SLOT_TAG_WIDTH, SLOT_TAG_GAP, TooltipMakerAPI::setParaFontDefault);
             SlottedRows.add(tooltip, effectRows, layout, PAD, LINE_PAD);
         } else {
             addLines(tooltip, effectRows.stream().map(SlottedLine::text).toList(), Misc.getTextColor());
         }
     }
 
-    private static void useBodyFont(TooltipMakerAPI tooltip) {
-        tooltip.setParaInsigniaVeryLarge();
-    }
-
     public static void writeFrame(TooltipMakerAPI tooltip, Runnable knownItemBody, Supplier<List<StyledText>> footer) {
         I18n.forGameText(() -> {
-            tooltip.setTitleOrbitronVeryLarge();
-            useBodyFont(tooltip);
             if (knownItemBody == null) {
                 tooltip.addTitle(Translation.text("socketable.unknown"));
             } else {
                 knownItemBody.run();
             }
             addLines(tooltip, footer.get(), Misc.getGrayColor());
-            tooltip.setParaFontDefault();
         });
     }
 

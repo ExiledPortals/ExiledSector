@@ -10,7 +10,7 @@ import java.awt.Color;
 final class SkillTreeUiButton {
 
     private static final float PADDING_X = 16f;
-    private static final float FONT_SIZE = SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
+    private static final float FONT_SIZE = SkillTreePanelStyle.UI_FONT_SIZE;
     private static final float HOVER_INSET = 3f;
     private static final float HOVER_ALPHA = 0.25f;
     private static final float SELECTED_ALPHA = 0.18f;

@@ -28,8 +28,8 @@ public final class ItalicTextLabel {
     private final List<TextLabel> lineLabels = new ArrayList<>();
     private int lineCount;
 
-    public ItalicTextLabel(float fontSize, Color color) {
-        this(SkillTreePanelStyle::font, fontSize, color);
+    public ItalicTextLabel(TextFont font, Color color) {
+        this(font.source(), font.size(), color);
     }
 
     ItalicTextLabel(Supplier<LazyFont> fontSource, float fontSize, Color color) {

@@ -13,7 +13,7 @@ import java.util.Map;
 
 final class HyperspaceLabels {
 
-    static final float FONT_SIZE = SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
+    static final float FONT_SIZE = SkillTreePanelStyle.UI_FONT_SIZE;
     private static final float PADDING_X = 16f;
     private static final float PADDING_Y = 8f;
     private static final float GAP = 6f;
