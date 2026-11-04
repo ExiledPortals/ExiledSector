@@ -79,12 +79,20 @@ public final class ChartAbyss {
         system.addTerrain(AbyssalDarknessTerrainPlugin.TERRAIN_ID, new AbyssalDarknessTerrainPlugin.Params(palette));
     }
 
-    public static List<Vector2f> siteSpots(StarSystemAPI system, Random random) {
-        List<Vector2f> spots = new ArrayList<>();
+    public static List<CustomCampaignEntityAPI> photospheres(StarSystemAPI system) {
+        List<CustomCampaignEntityAPI> photospheres = new ArrayList<>();
         for (CustomCampaignEntityAPI entity : system.getCustomEntities()) {
             if (ChartPhotospherePlugin.ENTITY_TYPE.equals(entity.getCustomEntityType()) && entity.getLocation() != null) {
-                spots.addAll(spotsAround(entity.getLocation(), entity.getRadius(), random));
+                photospheres.add(entity);
             }
+        }
+        return photospheres;
+    }
+
+    public static List<Vector2f> siteSpots(StarSystemAPI system, Random random) {
+        List<Vector2f> spots = new ArrayList<>();
+        for (CustomCampaignEntityAPI photosphere : photospheres(system)) {
+            spots.addAll(spotsAround(photosphere.getLocation(), photosphere.getRadius(), random));
         }
         return spots;
     }

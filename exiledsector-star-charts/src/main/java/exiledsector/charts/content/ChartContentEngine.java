@@ -30,6 +30,8 @@ interface ChartContentEngine {
 
     boolean addCoreFlagship(CampaignFleetAPI fleet, String variantId, String aiCoreId, Random random);
 
+    boolean addCoreShip(CampaignFleetAPI fleet, String variantId, String aiCoreId, Random random);
+
     ChartVanillaLoot.SiteDrops siteDrops(String salvageSpec);
 
     void addColonyItem(SectorEntityToken holder, String itemId);

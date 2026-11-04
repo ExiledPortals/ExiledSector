@@ -6,3 +6,4 @@ exiledSector_transposition_kernel,RESOURCE,"Rewrites a unique hull item into a d
 exiledSector_chart_abyss_fabricator,CUSTOM,"A dead station built around refineries and forges that worked the exotic matter of the abyss into ship components. Nothing has moved inside it in a very long time.",,,,,
 exiledSector_chart_abyss_accumulator,CUSTOM,"A station that gathered abyssal matter in bulk and processed it on site. Its collectors still face the nearest photosphere.",,,,,
 exiledSector_chart_abyss_research_station,CUSTOM,"An abandoned research station that once studied the matter of the abyss. Most of its sensor booms have broken away.",,,,,
+exiledSector_chart_abyssal_shipyard,CUSTOM,"An abyssal shipyard, its slips still holding drone hulls half assembled. Whatever built it left the defenders running.",,,,,

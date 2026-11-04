@@ -201,30 +201,51 @@ final class VanillaChartContentEngine implements ChartContentEngine {
 
     @Override
     public boolean addCoreFlagship(CampaignFleetAPI fleet, String variantId, String aiCoreId, Random random) {
-        AICoreOfficerPlugin core = Misc.getAICoreOfficerPlugin(aiCoreId);
-        if (!Global.getSettings().doesVariantExist(variantId) || core == null) {
-            return false;
-        }
-        FleetMemberAPI flagship = fleet.getFleetData().addFleetMember(variantId);
+        FleetMemberAPI flagship = coreShip(fleet, variantId, aiCoreId, random);
         if (flagship == null) {
             return false;
         }
-        FactionAPI faction = fleet.getFaction();
-        flagship.setShipName(faction.pickRandomShipName(random));
-        PersonAPI commander = core.createPerson(aiCoreId, faction.getId(), random);
-        commander.setPortraitSprite(faction.createRandomPerson().getPortraitSprite());
         for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
             member.setFlagship(member == flagship);
             member.getRepairTracker().setCR(member.getRepairTracker().getMaxCR());
         }
-        fleet.setCommander(commander);
-        flagship.setCaptain(commander);
-        RemnantOfficerGeneratorPlugin.integrateAndAdaptCoreForAIFleet(flagship);
+        fleet.setCommander(flagship.getCaptain());
+        fleet.getFleetData().sort();
+        return true;
+    }
+
+    @Override
+    public boolean addCoreShip(CampaignFleetAPI fleet, String variantId, String aiCoreId, Random random) {
+        FleetMemberAPI ship = coreShip(fleet, variantId, aiCoreId, random);
+        if (ship == null) {
+            return false;
+        }
+        ship.getRepairTracker().setCR(ship.getRepairTracker().getMaxCR());
+        fleet.getFleetData().sort();
+        return true;
+    }
+
+    private static FleetMemberAPI coreShip(CampaignFleetAPI fleet, String variantId, String aiCoreId, Random random) {
+        AICoreOfficerPlugin core = aiCoreId == null ? null : Misc.getAICoreOfficerPlugin(aiCoreId);
+        if (!Global.getSettings().doesVariantExist(variantId) || aiCoreId != null && core == null) {
+            return null;
+        }
+        FleetMemberAPI ship = fleet.getFleetData().addFleetMember(variantId);
+        if (ship == null) {
+            return null;
+        }
+        FactionAPI faction = fleet.getFaction();
+        ship.setShipName(faction.pickRandomShipName(random));
+        if (core != null) {
+            PersonAPI captain = core.createPerson(aiCoreId, faction.getId(), random);
+            captain.setPortraitSprite(faction.createRandomPerson().getPortraitSprite());
+            ship.setCaptain(captain);
+            RemnantOfficerGeneratorPlugin.integrateAndAdaptCoreForAIFleet(ship);
+        }
         if (fleet.getInflater() != null) {
             fleet.getInflater().setRemoveAfterInflating(false);
         }
-        fleet.getFleetData().sort();
-        return true;
+        return ship;
     }
 
     private static PersonAPI stationCommander(FactionAPI faction, FleetMemberAPI station, int officerLevel, Random random) {

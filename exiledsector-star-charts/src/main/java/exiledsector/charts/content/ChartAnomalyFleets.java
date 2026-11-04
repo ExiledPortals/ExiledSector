@@ -96,6 +96,10 @@ public final class ChartAnomalyFleets {
         return fleet != null && ChartContentGenerator.engine().addCoreFlagship(fleet, variantId, aiCoreId, random);
     }
 
+    public static boolean addCoreShip(CampaignFleetAPI fleet, String variantId, String aiCoreId, Random random) {
+        return fleet != null && ChartContentGenerator.engine().addCoreShip(fleet, variantId, aiCoreId, random);
+    }
+
     public static void prepare(CampaignFleetAPI fleet, String runId, int tier, long fleetSeed, boolean lootable, ChartGenContext context) {
         ChartContentGenerator.prepareFleet(fleet, runId, tier, FleetRole.PATROL, 0, fleetSeed);
         if (!lootable) {

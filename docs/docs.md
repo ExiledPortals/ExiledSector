@@ -893,4 +893,12 @@ size, 5% more per fleet lost (at most 60%), that patrol the system, drop no char
 dies. `NexusFleetManager` is vanilla's `RemnantStationFleetManager` without its hyperspace encounter point;
 `MothershipFleetManager` does the same on `SourceBasedFleetManager` with derelict drones up to cruisers.
 
+### Abyssal Shipyard
+
+A `biomes` landmark like the Nexus: exactly one system in each Abyssal Rift pocket holds a neutral shipyard orbiting a
+photosphere (`charts.anomaly.shipyard`). Its guards are RAT's lineup in our own fleet: a Chronos-cored Morkoth flagship
+and three escorts at tier 1, one more every two tiers up to RAT's nine (`ShipyardGuards`), fought through vanilla's
+defender interaction. Once they are beaten the shipyard can be salvaged once, for the `abyssal_shipyard` scope of
+`chart_loot.csv` (RAT's drop groups) and the `exiledSector_chart_abyssal_shipyard` item row (`ShipyardDialog`).
+
 </details>

@@ -57,6 +57,7 @@ public final class FakeChartContentEngine implements ChartContentEngine {
     public final List<String> dressedFactions = new ArrayList<>();
     public final List<CampaignFleetAPI> emptyFleetsCreated = new ArrayList<>();
     public final List<Flagship> flagships = new ArrayList<>();
+    public final List<Flagship> coreShips = new ArrayList<>();
     public String alliesFactionId = "allies";
     public String convoyFactionId = "convoy";
     public int fleetPoints;
@@ -233,6 +234,15 @@ public final class FakeChartContentEngine implements ChartContentEngine {
             return false;
         }
         flagships.add(new Flagship(fleet, variantId, aiCoreId));
+        return true;
+    }
+
+    @Override
+    public boolean addCoreShip(CampaignFleetAPI fleet, String variantId, String aiCoreId, Random random) {
+        if (missingFlagships) {
+            return false;
+        }
+        coreShips.add(new Flagship(fleet, variantId, aiCoreId));
         return true;
     }
 

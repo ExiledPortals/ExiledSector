@@ -15,6 +15,7 @@ import exiledsector.charts.anomaly.forge.DerelictForge;
 import exiledsector.charts.anomaly.listeningpost.ListeningPost;
 import exiledsector.charts.anomaly.hypershunt.CoronalHypershunt;
 import exiledsector.charts.anomaly.relay.RelayNetwork;
+import exiledsector.charts.anomaly.shipyard.AbyssalShipyard;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.anomaly.landmark.DomainMothership;
 import exiledsector.charts.anomaly.landmark.RemnantNexusStation;
@@ -55,7 +56,7 @@ public final class ChartAnomalies {
             RelayNetwork.INSTANCE, ExcavationSites.INSTANCE, SupplyConvoy.INSTANCE, AnomalousDebris.INSTANCE,
             StormFront.INSTANCE,
             DerelictForge.INSTANCE, ListeningPost.INSTANCE, PreCollapseFacility.INSTANCE, CoronalHypershunt.INSTANCE,
-            RemnantNexusStation.INSTANCE, DomainMothership.INSTANCE,
+            RemnantNexusStation.INSTANCE, DomainMothership.INSTANCE, AbyssalShipyard.INSTANCE,
             PowerfulBoss.INSTANCE);
     private static final Logger LOG = Logger.getLogger(ChartAnomalies.class);
     private static volatile List<ChartAnomaly> anomalies = BUILT_IN;

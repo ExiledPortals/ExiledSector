@@ -67,3 +67,10 @@ pre_collapse_facility_blueprints_low,blueprint,pre_collapse_facility,blueprints_
 pre_collapse_facility_weapon_bp,blueprint,pre_collapse_facility,weapon_bp,random,0.5,4,,
 pre_collapse_facility_ship_bp,blueprint,pre_collapse_facility,ship_bp,random,0.3,8,,
 pre_collapse_facility_ai_cores1,ai_core,pre_collapse_facility,ai_cores1,random,0.5,5,,
+abyssal_shipyard_basic,resource,abyssal_shipyard,basic,value,1500,1,,"An Abyssal Shipyard's salvage, per step (2 at tier 1, 0.35 more per tier), after RAT's shipyard drops"
+abyssal_shipyard_rat_weapons,weapon,abyssal_shipyard,rat_abyss_weapons,random,6,1,assortment_of_things,
+abyssal_shipyard_rat_alterations,resource,abyssal_shipyard,rat_abyss_alteration_common,random,1.5,1,assortment_of_things,
+abyssal_shipyard_rat_artifacts,resource,abyssal_shipyard,rat_abyss_artifact_rare,random,0.5,1,assortment_of_things,
+abyssal_shipyard_weapons2,weapon,abyssal_shipyard,weapons2,random,2,1,,
+abyssal_shipyard_blueprints_low,blueprint,abyssal_shipyard,blueprints_low,random,0.5,1,,
+abyssal_shipyard_hullmods,blueprint,abyssal_shipyard,any_hullmod_medium,random,0.5,1,,
