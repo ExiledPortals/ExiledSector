@@ -59,7 +59,7 @@ public enum MovementSkillEffect implements BackedSkillEffect {
     }
 
     static boolean isAtTopSpeed(ShipAPI ship) {
-        return TopSpeedShare.isAtLeast(ship, ship.getMaxSpeed(), TOP_SPEED_SHARE);
+        return TopSpeedShare.isAtLeast(ship, ship.getMaxSpeedWithoutBoost(), TOP_SPEED_SHARE);
     }
 
     @Override
