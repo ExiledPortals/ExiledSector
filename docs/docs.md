@@ -636,6 +636,18 @@ Patient measures from this ship to the target ship's center (`DistantTargetDamag
 top speed without the zero-flux boost, so turning in place still counts as stationary. Of the Long Night holds the ship's
 deployed time at its phase-entry value while phased (`PhasedPeakTimeListener`).
 
+### Collapsed Reach modifiers
+
+The Specialist Crew's black-hole bonus adds up over the fleet's active ships and only works in a Star Chart system
+with a black hole among its stars. It adds its share to every hull item part's targeted extra rolls, so it sums with
+the chart's item quantity, for fleet battles and salvage sites alike (`BlackHoleSalvage`, `BlackHoleHullItems`). The
+Armor Plate ejects a missile that directly hits armor or hull by zeroing the hit and marking the missile as having
+dealt damage, which skips its explosion and on-hit effect; proximity-fused explosions aren't caught (`MissileEjectionListener`).
+
+The Phase Coil Array's drag joins the Gravity Drag node's listener: while phased it adds to the node's doubled drag,
+under the same per-ship cap (`GravityDragListener`). The Launch Assembly's stacks belong to the carrier, one for each
+of its strikecraft destroyed, each expiring after 20 seconds (`AccretionStacks`).
+
 ### Chart tier groups
 
 Chart tiers fall into three groups: low (1-5), mid (6-10) and high (11-16) (`TierGroup`). A chart modifier line gives

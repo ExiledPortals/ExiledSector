@@ -253,6 +253,14 @@ public enum FighterSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("range", CinderBurstListener.BURST_RADIUS).styled();
         }
     },
+    STRIKECRAFT_DAMAGE_PER_LOST_STRIKECRAFT_PERCENT(new FighterListenerEffect<>(AccretionListener.DAMAGE_PERCENT_PER_STACK_KEY,
+            AccretionListener.class, AccretionListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("seconds", AccretionStacks.STACK_SECONDS)
+                    .arg("max", AccretionStacks.MAX_STACKS).styled();
+        }
+    },
     FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER(new FighterListenerEffect<>(WingNumbersDamageListener.REDUCTION_PERCENT_PER_FIGHTER_KEY,
             WingNumbersDamageListener.class, WingNumbersDamageListener::new)) {
 

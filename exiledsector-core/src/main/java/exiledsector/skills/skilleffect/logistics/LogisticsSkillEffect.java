@@ -210,6 +210,22 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
             return StatMode.PERCENT.describeStat(magnitude, YOUR_FLEET, "stat.postBattleSalvageRecoveredFleetWide");
         }
     },
+    BLACK_HOLE_HULL_ITEM_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(BlackHoleSalvage.HULL_ITEM_PERCENT_KEY).modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public boolean appliesToNpcShips() {
+            return false;
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return StatMode.PERCENT.describeStat(magnitude, YOUR_FLEET, "stat.blackHoleHullItemQuantity");
+        }
+    },
     PHASE_FIELD_CONTRIBUTION_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

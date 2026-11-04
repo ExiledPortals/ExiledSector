@@ -25,6 +25,11 @@ public final class HitDamageRestorer implements DamageListener {
         damage.setFluxComponent(damage.getFluxComponent() + baseDamage * empShare);
     }
 
+    public static void addEmpForThisHit(DamageAPI damage, float extraEmp, CombatEntityAPI target) {
+        track(damage, target);
+        damage.setFluxComponent(damage.getFluxComponent() + extraEmp);
+    }
+
     public static void scaleEmpForThisHit(DamageAPI damage, float empMult, CombatEntityAPI target) {
         track(damage, target);
         damage.setFluxComponent(damage.getFluxComponent() * empMult);

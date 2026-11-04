@@ -66,6 +66,19 @@ class GravityDragFieldTest {
     }
 
     @Test
+    void thePhasedOnlyDragAddsOnTopOfTheNodeOnlyWhilePhased() {
+        ShipAPI calm = ship("calm", 0, Map.of(GravityDragListener.PHASED_TIMEFLOW_PERCENT_KEY, 12f));
+        ShipAPI phased = ship("phased", 0, Map.of(GravityDragListener.PHASED_TIMEFLOW_PERCENT_KEY, 12f));
+        when(phased.isPhased()).thenReturn(true);
+        ShipAPI both = ship("both", 0, Map.of(GravityDragListener.TIMEFLOW_PERCENT_KEY, 5f, GravityDragListener.PHASED_TIMEFLOW_PERCENT_KEY, 12f));
+        when(both.isPhased()).thenReturn(true);
+
+        assertEquals(0f, new GravityDragListener(calm).reductionPercentAtPointBlank());
+        assertEquals(12f, new GravityDragListener(phased).reductionPercentAtPointBlank(), 0.001f);
+        assertEquals(22f, new GravityDragListener(both).reductionPercentAtPointBlank(), 0.001f);
+    }
+
+    @Test
     void gravityDragFromManySourcesIsCappedPerShip() {
         ShipAPI near = enemyAt(0f);
         GravityDragField.ShipsNear everyone = (source, radius, filter) -> List.of(near).stream().filter(filter).toList();
