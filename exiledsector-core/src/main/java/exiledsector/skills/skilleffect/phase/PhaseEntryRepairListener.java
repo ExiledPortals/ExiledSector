@@ -1,28 +1,20 @@
 package exiledsector.skills.skilleffect.phase;
 
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
-import exiledsector.skills.skilleffect.ShipCombatListener;
 import exiledsector.skills.skilleffect.defense.ArmorCells;
 
-final class PhaseEntryRepairListener extends ShipCombatListener implements AdvanceableListener {
+final class PhaseEntryRepairListener extends PhaseTransitionListener {
 
     static final String REPAIR_PERCENT_KEY = "exiledLib_phaseEntryArmorRepairPercent";
     static final float BATTLE_CAP_PERCENT = 50f;
     static final String REPAIRED_KEY_PREFIX = "exiledLib_phaseEntryArmorRepaired_";
-
-    private boolean wasPhased;
 
     PhaseEntryRepairListener(ShipAPI ownerShip) {
         super(ownerShip);
     }
 
     @Override
-    public void advance(float amount) {
-        boolean phased = ownerShip.isPhased();
-        if (phased && !wasPhased) {
-            ArmorCells.repairWithinBattleCap(ownerShip, REPAIRED_KEY_PREFIX, magnitude(REPAIR_PERCENT_KEY), BATTLE_CAP_PERCENT);
-        }
-        wasPhased = phased;
+    void onPhaseEntry() {
+        ArmorCells.repairWithinBattleCap(ownerShip, REPAIRED_KEY_PREFIX, magnitude(REPAIR_PERCENT_KEY), BATTLE_CAP_PERCENT);
     }
 }
