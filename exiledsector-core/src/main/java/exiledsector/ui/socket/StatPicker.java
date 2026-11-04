@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.Fonts;
+import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TextFieldAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -15,10 +16,13 @@ import exiledsector.ui.VanillaText;
 import exiledsector.ui.util.FramedPanelPlugin;
 import exiledsector.ui.util.Rects;
 
+import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.ToDoubleFunction;
 
 final class StatPicker {
 
@@ -29,11 +33,13 @@ final class StatPicker {
     }
 
     static final float CHOICE_HEIGHT = 20f;
-    private static final int VISIBLE_CHOICES = 12;
-    private static final float CHOICE_TEXT_PADDING = 20f;
+    private static final float CHOICE_TEXT_INSET = 6f;
+    private static final float FIELD_TEXT_INSET = 8f;
+    private static final String ELLIPSIS = "...";
 
     private final ModifierSearch.Row row;
     private final TextFieldAPI field;
+    private final String shownLabel;
     private String polledText;
     private boolean focused;
     private CustomPanelAPI listHost;
@@ -42,7 +48,10 @@ final class StatPicker {
     StatPicker(ModifierSearch.Row row, TextFieldAPI field) {
         this.row = row;
         this.field = field;
-        this.polledText = field.getText();
+        this.shownLabel = row.hasStat() ? fitted(ItemStatPool.label(row.statName), field.getPosition().getWidth() - FIELD_TEXT_INSET * 2f,
+                text -> Global.getSettings().computeStringWidth(text, Fonts.DEFAULT_SMALL)) : "";
+        field.setText(shownLabel);
+        this.polledText = shownLabel;
     }
 
     boolean poll() {
@@ -57,7 +66,18 @@ final class StatPicker {
 
     String filterText() {
         String typed = field.getText().trim();
-        return row.hasStat() && typed.equals(ItemStatPool.label(row.statName)) ? "" : typed;
+        return row.hasStat() && typed.equals(shownLabel.trim()) ? "" : typed;
+    }
+
+    static String fitted(String text, float maxWidth, ToDoubleFunction<String> measure) {
+        if (measure.applyAsDouble(text) <= maxWidth) {
+            return text;
+        }
+        int keptChars = text.length();
+        while (keptChars > 0 && measure.applyAsDouble(text.substring(0, keptChars).stripTrailing() + ELLIPSIS) > maxWidth) {
+            keptChars--;
+        }
+        return text.substring(0, keptChars).stripTrailing() + ELLIPSIS;
     }
 
     boolean isListOpen() {
@@ -84,54 +104,78 @@ final class StatPicker {
         return statNames.stream().filter(statName -> labeller.apply(statName).toLowerCase(Locale.ROOT).contains(needle)).toList();
     }
 
-    static float listHeight(int choiceCount) {
-        int shownChoices = Math.max(1, Math.min(VISIBLE_CHOICES, choiceCount));
-        return shownChoices * CHOICE_HEIGHT + (shownChoices - 1) * HoloPanel.LINE_PAD + HoloPanel.GAP * 2f;
-    }
-
-    static ListBounds place(float fieldLeft, float fieldTop, float fieldBottom, float fieldWidth, float wantedWidth, float wantedHeight,
-                            float paneWidth, float paneHeight) {
+    static ListBounds place(float fieldLeft, float fieldBottom, float fieldWidth, float wantedWidth, float paneWidth, float paneHeight) {
         float listWidth = Math.min(paneWidth - HoloPanel.PAD * 2f, Math.max(fieldWidth, wantedWidth));
         float listLeft = Math.max(HoloPanel.PAD, Math.min(fieldLeft, paneWidth - HoloPanel.PAD - listWidth));
-        float roomBelow = paneHeight - HoloPanel.PAD - fieldBottom - HoloPanel.LINE_PAD;
-        float roomAbove = fieldTop - HoloPanel.LINE_PAD - HoloPanel.PAD;
-        boolean below = roomBelow >= wantedHeight || roomBelow >= roomAbove;
-        float listHeight = Math.max(0f, Math.min(wantedHeight, below ? roomBelow : roomAbove));
-        float listTop = below ? fieldBottom + HoloPanel.LINE_PAD : fieldTop - HoloPanel.LINE_PAD - listHeight;
-        return new ListBounds(listLeft, listTop, listWidth, listHeight);
+        float listTop = fieldBottom + HoloPanel.LINE_PAD;
+        float roomBelow = Math.max(0f, paneHeight - HoloPanel.PAD - listTop);
+        return new ListBounds(listLeft, listTop, listWidth, roomBelow);
+    }
+
+    static float stackHeight(List<Float> choiceHeights) {
+        float stackHeight = 0f;
+        for (float choiceHeight : choiceHeights) {
+            stackHeight += choiceHeight;
+        }
+        return stackHeight + Math.max(0, choiceHeights.size() - 1) * HoloPanel.LINE_PAD;
     }
 
     void openList(CustomPanelAPI paneRoot, PositionAPI panePosition, List<String> statNames, Consumer<Object> buttonListener) {
         closeList();
         float paneTopY = panePosition.getY() + panePosition.getHeight();
         PositionAPI fieldPosition = field.getPosition();
-        float fieldTop = paneTopY - (fieldPosition.getY() + fieldPosition.getHeight());
         float fieldBottom = paneTopY - fieldPosition.getY();
-        float wantedHeight = listHeight(statNames.size());
-        boolean scrolls = statNames.size() > VISIBLE_CHOICES;
-        float wantedWidth = widestLabel(statNames) + CHOICE_TEXT_PADDING + HoloPanel.GAP * 2f + (scrolls ? ItemGrid.SCROLLBAR_ROOM : 0f);
-        ListBounds bounds = place(fieldPosition.getX() - panePosition.getX(), fieldTop, fieldBottom, fieldPosition.getWidth(), wantedWidth,
-                wantedHeight, panePosition.getWidth(), panePosition.getHeight());
-        float listInnerHeight = Math.max(0f, bounds.height() - HoloPanel.GAP * 2f);
-        float choiceWidth = bounds.width() - HoloPanel.GAP * 2f - (scrolls || wantedHeight > bounds.height() ? ItemGrid.SCROLLBAR_ROOM : 0f);
-        listPanel = Global.getSettings().createCustom(bounds.width(), bounds.height(), new FramedPanelPlugin(buttonListener));
-        TooltipMakerAPI element = listPanel.createUIElement(bounds.width() - HoloPanel.GAP * 2f, listInnerHeight, true);
-        if (statNames.isEmpty()) {
-            VanillaText.plainPara(element, Translation.text("ui.advancedSearch.noStats"), 0f, Misc.getGrayColor());
+        float wantedWidth = widestLabel(statNames) + CHOICE_TEXT_INSET * 2f + HoloPanel.GAP * 2f + ItemGrid.SCROLLBAR_ROOM;
+        ListBounds room = place(fieldPosition.getX() - panePosition.getX(), fieldBottom, fieldPosition.getWidth(), wantedWidth,
+                panePosition.getWidth(), panePosition.getHeight());
+        List<String> labels = statNames.isEmpty() ? List.of(Translation.text("ui.advancedSearch.noStats"))
+                : statNames.stream().map(ItemStatPool::label).toList();
+        float roomInside = Math.max(0f, room.height() - HoloPanel.GAP * 2f);
+        float choiceWidth = room.width() - HoloPanel.GAP * 2f;
+        List<Float> choiceHeights = choiceHeights(paneRoot, labels, choiceWidth);
+        if (stackHeight(choiceHeights) > roomInside) {
+            choiceWidth -= ItemGrid.SCROLLBAR_ROOM;
+            choiceHeights = choiceHeights(paneRoot, labels, choiceWidth);
         }
+        float listInnerHeight = Math.min(roomInside, stackHeight(choiceHeights));
+        float listHeight = listInnerHeight + HoloPanel.GAP * 2f;
+        listPanel = Global.getSettings().createCustom(room.width(), listHeight, new FramedPanelPlugin(buttonListener));
+        TooltipMakerAPI element = listPanel.createUIElement(room.width() - HoloPanel.GAP * 2f, listInnerHeight, true);
+        element.setParaFont(Fonts.DEFAULT_SMALL);
         ChipFlow.Colors colors = ChipFlow.Colors.player();
-        element.setAreaCheckboxFont(Fonts.DEFAULT_SMALL);
-        float choicePad = 0f;
-        for (String statName : statNames) {
-            ButtonAPI choiceButton = element.addAreaCheckbox(ItemStatPool.label(statName), new Choice(row, statName), colors.base(), colors.dark(),
-                    colors.bright(), choiceWidth, CHOICE_HEIGHT, choicePad);
-            choiceButton.setChecked(statName.equals(row.statName));
-            choicePad = HoloPanel.LINE_PAD;
+        float choiceTop = 0f;
+        for (int index = 0; index < labels.size(); index++) {
+            float choiceHeight = choiceHeights.get(index);
+            if (!statNames.isEmpty()) {
+                String statName = statNames.get(index);
+                ButtonAPI choiceButton = element.addAreaCheckbox("", new Choice(row, statName), colors.base(), colors.dark(), colors.bright(),
+                        choiceWidth, choiceHeight, 0f);
+                choiceButton.setChecked(statName.equals(row.statName));
+                choiceButton.getPosition().inTL(0f, choiceTop);
+            }
+            Color textColor = statNames.isEmpty() ? Misc.getGrayColor() : colors.base();
+            LabelAPI choiceLabel = VanillaText.plainPara(element, labels.get(index), 0f, textColor);
+            float textHeight = choiceLabel.autoSizeToWidth(choiceWidth - CHOICE_TEXT_INSET * 2f).getHeight();
+            choiceLabel.getPosition().inTL(CHOICE_TEXT_INSET, choiceTop + (choiceHeight - textHeight) / 2f);
+            choiceTop += choiceHeight + HoloPanel.LINE_PAD;
         }
-        element.setAreaCheckboxFontDefault();
+        element.setHeightSoFar(stackHeight(choiceHeights));
+        element.setParaFontDefault();
         listPanel.addUIElement(element).inTL(HoloPanel.GAP, HoloPanel.GAP);
-        paneRoot.addComponent(listPanel).inTL(bounds.left(), bounds.top());
+        paneRoot.addComponent(listPanel).inTL(room.left(), room.top());
         listHost = paneRoot;
+    }
+
+    private static List<Float> choiceHeights(CustomPanelAPI paneRoot, List<String> labels, float choiceWidth) {
+        float textWidth = choiceWidth - CHOICE_TEXT_INSET * 2f;
+        TooltipMakerAPI measure = paneRoot.createUIElement(textWidth, 0f, false);
+        measure.setParaFont(Fonts.DEFAULT_SMALL);
+        List<Float> choiceHeights = new ArrayList<>(labels.size());
+        for (String label : labels) {
+            float textHeight = VanillaText.plainPara(measure, label, 0f, Misc.getTextColor()).autoSizeToWidth(textWidth).getHeight();
+            choiceHeights.add(Math.max(CHOICE_HEIGHT, textHeight + HoloPanel.LINE_PAD * 2f));
+        }
+        return choiceHeights;
     }
 
     void closeList() {
