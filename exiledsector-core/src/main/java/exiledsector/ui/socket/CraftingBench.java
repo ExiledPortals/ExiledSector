@@ -30,6 +30,7 @@ public final class CraftingBench {
     private CraftingBenchPanel benchPanel;
     private BenchModeSupport.PickerSession picker;
     private SocketPanelPlacement drawerPlacement;
+    private BenchSideBySide sideBySide;
     private BenchMode benchMode = BenchMode.HULL_ITEMS;
     private BenchModeSupport.OpenTarget openTarget;
     private boolean hullItemsOnly;
@@ -78,22 +79,52 @@ public final class CraftingBench {
 
     private void layOut(SocketPanelPlacement area) {
         drawer = !fitsSideBySide(area.panelWidth(), area.panelHeight());
-        float benchAreaWidth = drawer ? area.panelWidth() : area.panelWidth() - ItemStoragePanel.COMPACT_WIDTH - PANEL_GAP;
-        float scale = CraftingBenchPanel.scaleFor(benchAreaWidth, area.panelHeight());
-        float benchWidth = CraftingBenchPanel.sizeFor(scale, BenchScene.ART_WIDTH);
-        float benchHeight = CraftingBenchPanel.sizeFor(scale, BenchScene.ART_HEIGHT);
-        float groupWidth = drawer ? benchWidth : ItemStoragePanel.COMPACT_WIDTH + PANEL_GAP + benchWidth;
-        float groupLeft = area.panelLeft() + (area.panelWidth() - groupWidth) / 2f;
-        float groupTop = area.panelTop() + (area.panelHeight() - benchHeight) / 2f;
-        float benchLeft = drawer ? groupLeft : groupLeft + ItemStoragePanel.COMPACT_WIDTH + PANEL_GAP;
-        benchPanel = CraftingBenchPanel.open(hostPanel, new SocketPanelPlacement(benchLeft, groupTop, benchWidth, benchHeight, area.instantly()),
-                false, benchMode, benchListener());
         if (drawer) {
+            float scale = CraftingBenchPanel.scaleFor(area.panelWidth(), area.panelHeight());
+            float benchWidth = CraftingBenchPanel.sizeFor(scale, BenchScene.ART_WIDTH);
+            float benchHeight = CraftingBenchPanel.sizeFor(scale, BenchScene.ART_HEIGHT);
+            float benchLeft = area.panelLeft() + (area.panelWidth() - benchWidth) / 2f;
+            float benchTop = area.panelTop() + (area.panelHeight() - benchHeight) / 2f;
+            benchPanel = CraftingBenchPanel.open(hostPanel, new SocketPanelPlacement(benchLeft, benchTop, benchWidth, benchHeight, area.instantly()),
+                    false, benchMode, benchListener());
             float inset = CraftingBenchPanel.FRAME_INSET;
-            drawerPlacement = new SocketPanelPlacement(benchLeft + inset, groupTop + inset, ItemStoragePanel.COMPACT_WIDTH, benchHeight - inset * 2f,
+            drawerPlacement = new SocketPanelPlacement(benchLeft + inset, benchTop + inset, ItemStoragePanel.COMPACT_WIDTH, benchHeight - inset * 2f,
                     false);
-        } else {
-            openPicker(new SocketPanelPlacement(groupLeft, groupTop, ItemStoragePanel.COMPACT_WIDTH, benchHeight, area.instantly()));
+            return;
+        }
+        sideBySide = BenchSideBySide.in(area);
+        BenchSideBySide.Placed placed = sideBySide.placed(false);
+        benchPanel = CraftingBenchPanel.open(hostPanel, new SocketPanelPlacement(placed.benchLeft(), placed.benchTop(), placed.benchWidth(),
+                placed.benchHeight(), area.instantly()), false, benchMode, benchListener());
+        openPicker(new SocketPanelPlacement(placed.storageLeft(), sideBySide.groupTop(), ItemStoragePanel.COMPACT_WIDTH, sideBySide.groupHeight(),
+                area.instantly()).withAdvancedSearchRoom(advancedSearchRoom()));
+    }
+
+    private AdvancedSearchRoom advancedSearchRoom() {
+        return new AdvancedSearchRoom() {
+            @Override
+            public FreeArea open() {
+                arrange(true);
+                return sideBySide.searchArea();
+            }
+
+            @Override
+            public void closed() {
+                arrange(false);
+            }
+        };
+    }
+
+    private void arrange(boolean searchOpen) {
+        if (closing) {
+            return;
+        }
+        BenchSideBySide.Placed placed = sideBySide.placed(searchOpen);
+        if (benchPanel != null) {
+            benchPanel.rescale(placed.benchLeft(), placed.benchTop(), placed.benchScale());
+        }
+        if (picker != null) {
+            picker.moveTo(placed.storageLeft(), sideBySide.groupTop());
         }
     }
 

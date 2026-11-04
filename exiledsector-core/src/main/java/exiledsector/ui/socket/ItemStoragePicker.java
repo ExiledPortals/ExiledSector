@@ -80,7 +80,14 @@ final class ItemStoragePicker implements BenchModeSupport.PickerSession {
     }
 
     @Override
+    public void moveTo(float left, float top) {
+        if (storagePanel != null) {
+            storagePanel.moveTo(left, top);
+        }
+    }
+
+    @Override
     public boolean contains(float x, float y) {
-        return storagePanel != null && storagePanel.contains(x, y);
+        return storagePanel != null && (storagePanel.contains(x, y) || storagePanel.advancedSearchContains(x, y));
     }
 }

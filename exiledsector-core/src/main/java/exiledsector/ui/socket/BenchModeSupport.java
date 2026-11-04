@@ -86,6 +86,9 @@ public interface BenchModeSupport {
         void close();
 
         boolean contains(float x, float y);
+
+        default void moveTo(float left, float top) {
+        }
     }
 
     BenchMode mode();

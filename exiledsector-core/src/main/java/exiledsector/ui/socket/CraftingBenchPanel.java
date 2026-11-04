@@ -238,6 +238,22 @@ public final class CraftingBenchPanel extends HoloPanel {
         });
     }
 
+    void rescale(float left, float top, float scale) {
+        queue(() -> {
+            cancelConfirm();
+            hoverTooltip.hide();
+            sceneScale = scale;
+            headerElement = null;
+            recipesElement = null;
+            detailsElement = null;
+            noticeElement = null;
+            openElement = null;
+            embeddedOpenButton = null;
+            reattach(left, top, sizeFor(scale, BenchScene.ART_WIDTH), sizeFor(scale, BenchScene.ART_HEIGHT));
+            build();
+        });
+    }
+
     public void refresh() {
         queue(() -> {
             ItemStore store = support().store();

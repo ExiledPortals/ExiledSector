@@ -107,7 +107,7 @@ public final class ItemStoragePanel extends HoloPanel {
     private UIComponentAPI controlsElement;
     private ButtonAPI resetFiltersButton;
     private ButtonAPI advancedSearchButton;
-    private FreeArea advancedSearchArea;
+    private AdvancedSearchRoom advancedSearchRoom;
     private AdvancedSearchPane advancedSearchPane;
     private TooltipMakerAPI gridElement;
     private boolean keepGridScroll;
@@ -172,7 +172,7 @@ public final class ItemStoragePanel extends HoloPanel {
     private void attachFresh(SocketPanelPlacement placement) {
         movedFromCargo = absorbPlayerCargo();
         materialsNotice = settleMaterials();
-        advancedSearchArea = placement.advancedSearchArea();
+        advancedSearchRoom = placement.advancedSearchRoom();
         attach(placement.panelLeft(), placement.panelTop(), placement.panelWidth(), placement.panelHeight(), placement.instantly());
     }
 
@@ -477,7 +477,7 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private boolean offersAdvancedSearch() {
-        return advancedSearchArea != null;
+        return advancedSearchRoom != null;
     }
 
     public boolean advancedSearchContains(float x, float y) {
@@ -494,7 +494,8 @@ public final class ItemStoragePanel extends HoloPanel {
         }
         closeFilterMenu();
         hideHoverTooltip();
-        advancedSearchPane = AdvancedSearchPane.open(hostPanel, AdvancedSearchLayout.in(advancedSearchArea), storageFilter, new AdvancedSearchHost());
+        advancedSearchPane = AdvancedSearchPane.open(hostPanel, AdvancedSearchLayout.in(advancedSearchRoom.open()), storageFilter,
+                new AdvancedSearchHost());
         syncAdvancedSearchButton();
     }
 
@@ -563,6 +564,9 @@ public final class ItemStoragePanel extends HoloPanel {
         public void closed() {
             advancedSearchPane = null;
             syncAdvancedSearchButton();
+            if (!isClosing()) {
+                advancedSearchRoom.closed();
+            }
         }
 
         @Override
