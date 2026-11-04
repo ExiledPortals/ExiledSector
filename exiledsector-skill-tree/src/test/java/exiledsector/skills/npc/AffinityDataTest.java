@@ -55,7 +55,7 @@ class AffinityDataTest {
     void theAffinityNodeOffersExactlyTheThreeAffinitiesAtFiveEach() {
         SkillType affinityNode = SkillTree.getType("affinity");
 
-        assertEquals(List.of("low_tech_affinity", "high_tech_affinity", "midline_affinity"), affinityNode.getChoiceOptionIds());
+        assertEquals(List.of("high_tech_affinity", "midline_affinity", "low_tech_affinity"), affinityNode.getChoiceOptionIds());
         for (String optionId : affinityNode.getChoiceOptionIds()) {
             List<SkillTypeEffect> effects = SkillTree.getType(optionId).getEffects();
             assertEquals(1, effects.size(), optionId);
