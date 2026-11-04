@@ -1,7 +1,9 @@
 package exiledsector.skills.skilleffect.movement;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
+import exiledsector.skills.skilleffect.ConditionalStatEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.PerDModMultEffect;
 import exiledsector.skills.skilleffect.StatTarget;
@@ -24,13 +26,22 @@ public enum MovementSkillEffect implements BackedSkillEffect {
     DECELERATION_FLAT(statEffect(FLAT, liveStat(MutableShipStatsAPI::getDeceleration), "stat.deceleration", false)),
     TIMEFLOW_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getTimeMult), "stat.timeflow", false)),
     TIMEFLOW_MULT(statEffect(MULT, liveStat(MutableShipStatsAPI::getTimeMult), "stat.timeflow", false)),
+    TIMEFLOW_AT_TOP_SPEED_PERCENT(new ConditionalStatEffect(PERCENT, liveStat(MutableShipStatsAPI::getTimeMult), "stat.timeflowAtTopSpeed",
+            MovementSkillEffect::isAtTopSpeed)),
     SHIP_MASS_PERCENT(statEffect(PERCENT, new StatTarget.ShipMass(), "stat.shipMass", false)),
     TOP_SPEED_MULT_PER_DMOD(new PerDModMultEffect(liveStat(MutableShipStatsAPI::getMaxSpeed), "stat.topSpeedPerDMod", false));
+
+    static final float TOP_SPEED_SHARE = 0.95f;
 
     private final EffectBacking backing;
 
     MovementSkillEffect(EffectBacking backing) {
         this.backing = backing;
+    }
+
+    static boolean isAtTopSpeed(ShipAPI ship) {
+        float topSpeed = ship.getMaxSpeed() * TOP_SPEED_SHARE;
+        return topSpeed > 0f && ship.getVelocity().lengthSquared() >= topSpeed * topSpeed;
     }
 
     @Override

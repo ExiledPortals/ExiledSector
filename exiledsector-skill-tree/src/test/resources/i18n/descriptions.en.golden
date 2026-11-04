@@ -298,6 +298,12 @@ effect|BEAM_WEAPON_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased beam weapo
 effect|BEAM_WEAPON_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased beam weapon damage.
 effect|BEAM_WEAPON_DAMAGE_PERCENT|-10.0	0	<bad>10%</bad> reduced beam weapon damage.
 effect|BEAM_WEAPON_DAMAGE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced beam weapon damage.
+effect|BEAM_WEAPON_EMP_PERCENT|1.0	0	Beam weapon hits on armor and hull deal additional EMP damage equal to <good>1%</good> of their damage.
+effect|BEAM_WEAPON_EMP_PERCENT|10.0	0	Beam weapon hits on armor and hull deal additional EMP damage equal to <good>10%</good> of their damage.
+effect|BEAM_WEAPON_EMP_PERCENT|12.5	0	Beam weapon hits on armor and hull deal additional EMP damage equal to <good>12.5%</good> of their damage.
+effect|BEAM_WEAPON_EMP_PERCENT|100.0	0	Beam weapon hits on armor and hull deal additional EMP damage equal to <good>100%</good> of their damage.
+effect|BEAM_WEAPON_EMP_PERCENT|-10.0	0	Beam weapon hits on armor and hull deal additional EMP damage equal to <good>-10%</good> of their damage.
+effect|BEAM_WEAPON_EMP_PERCENT|-12.5	0	Beam weapon hits on armor and hull deal additional EMP damage equal to <good>-12.5%</good> of their damage.
 effect|BEAM_WEAPON_FLUX_COST_MULT|1.0	1	<good>1%</good> more beam weapon flux cost.
 effect|BEAM_WEAPON_FLUX_COST_MULT|10.0	1	<good>10%</good> more beam weapon flux cost.
 effect|BEAM_WEAPON_FLUX_COST_MULT|12.5	1	<good>12.5%</good> more beam weapon flux cost.
@@ -370,6 +376,12 @@ effect|BEAM_WEAPON_TURN_RATE_PERCENT|12.5	0	<good>12.5%</good> increased beam we
 effect|BEAM_WEAPON_TURN_RATE_PERCENT|100.0	0	<good>100%</good> increased beam weapon turn rate.
 effect|BEAM_WEAPON_TURN_RATE_PERCENT|-10.0	0	<bad>10%</bad> reduced beam weapon turn rate.
 effect|BEAM_WEAPON_TURN_RATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced beam weapon turn rate.
+effect|BLACK_HOLE_HULL_ITEM_PERCENT|1.0	0	Your fleet has <good>1%</good> increased quantity of hull items found in Star Chart systems with a black hole.
+effect|BLACK_HOLE_HULL_ITEM_PERCENT|10.0	0	Your fleet has <good>10%</good> increased quantity of hull items found in Star Chart systems with a black hole.
+effect|BLACK_HOLE_HULL_ITEM_PERCENT|12.5	0	Your fleet has <good>12.5%</good> increased quantity of hull items found in Star Chart systems with a black hole.
+effect|BLACK_HOLE_HULL_ITEM_PERCENT|100.0	0	Your fleet has <good>100%</good> increased quantity of hull items found in Star Chart systems with a black hole.
+effect|BLACK_HOLE_HULL_ITEM_PERCENT|-10.0	0	Your fleet has <bad>10%</bad> reduced quantity of hull items found in Star Chart systems with a black hole.
+effect|BLACK_HOLE_HULL_ITEM_PERCENT|-12.5	0	Your fleet has <bad>12.5%</bad> reduced quantity of hull items found in Star Chart systems with a black hole.
 effect|BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT|1.0	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>1%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.
 effect|BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT|10.0	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>10%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.
 effect|BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT|12.5	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>12.5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.
@@ -634,6 +646,12 @@ effect|DAMAGE_TO_FRIGATE_PERCENT|12.5	0	<good>12.5%</good> increased damage to f
 effect|DAMAGE_TO_FRIGATE_PERCENT|100.0	0	<good>100%</good> increased damage to frigates.
 effect|DAMAGE_TO_FRIGATE_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to frigates.
 effect|DAMAGE_TO_FRIGATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to frigates.
+effect|DAMAGE_TO_SLOWER_SHIP_PERCENT|1.0	0	<good>1%</good> increased damage to ships with a lower top speed than this one.
+effect|DAMAGE_TO_SLOWER_SHIP_PERCENT|10.0	0	<good>10%</good> increased damage to ships with a lower top speed than this one.
+effect|DAMAGE_TO_SLOWER_SHIP_PERCENT|12.5	0	<good>12.5%</good> increased damage to ships with a lower top speed than this one.
+effect|DAMAGE_TO_SLOWER_SHIP_PERCENT|100.0	0	<good>100%</good> increased damage to ships with a lower top speed than this one.
+effect|DAMAGE_TO_SLOWER_SHIP_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to ships with a lower top speed than this one.
+effect|DAMAGE_TO_SLOWER_SHIP_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to ships with a lower top speed than this one.
 effect|DEATH_ON_COLLISION|1.0	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
 effect|DEATH_ON_COLLISION|10.0	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
 effect|DEATH_ON_COLLISION|12.5	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
@@ -1168,6 +1186,12 @@ effect|GATES_RADIUS_WHILE_SYSTEM_ACTIVE|12.5	0	Allocated nodes in its radius app
 effect|GATES_RADIUS_WHILE_SYSTEM_ACTIVE|100.0	0	Allocated nodes in its radius apply only while the ship system is active, at <good>100</good> times their strength. Their effects that aren't read live in combat are ignored.
 effect|GATES_RADIUS_WHILE_SYSTEM_ACTIVE|-10.0	0	Allocated nodes in its radius apply only while the ship system is active, at <good>-10</good> times their strength. Their effects that aren't read live in combat are ignored.
 effect|GATES_RADIUS_WHILE_SYSTEM_ACTIVE|-12.5	0	Allocated nodes in its radius apply only while the ship system is active, at <good>-12.5</good> times their strength. Their effects that aren't read live in combat are ignored.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|1.0	0	While this ship is phased, enemy ships within 1500 su have up to <good>1%</good> less timeflow, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|10.0	0	While this ship is phased, enemy ships within 1500 su have up to <good>10%</good> less timeflow, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|12.5	0	While this ship is phased, enemy ships within 1500 su have up to <good>12.5%</good> less timeflow, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|100.0	0	While this ship is phased, enemy ships within 1500 su have up to <good>100%</good> less timeflow, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|-10.0	0	While this ship is phased, enemy ships within 1500 su have up to <good>-10%</good> less timeflow, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|-12.5	0	While this ship is phased, enemy ships within 1500 su have up to <good>-12.5%</good> less timeflow, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
 effect|GRAVITY_DRAG_TIMEFLOW_PERCENT|1.0	0	Enemy ships within 1500 su have up to <good>1%</good> less timeflow, strongest at close range, or up to <good>2%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
 effect|GRAVITY_DRAG_TIMEFLOW_PERCENT|10.0	0	Enemy ships within 1500 su have up to <good>10%</good> less timeflow, strongest at close range, or up to <good>20%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
 effect|GRAVITY_DRAG_TIMEFLOW_PERCENT|12.5	0	Enemy ships within 1500 su have up to <good>12.5%</good> less timeflow, strongest at close range, or up to <good>25%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
@@ -1426,6 +1450,12 @@ effect|MIN_CREW_PER_FIGHTER_BAY|12.5	1	<good>+12.5</good> to minimum crew requir
 effect|MIN_CREW_PER_FIGHTER_BAY|100.0	1	<good>+100</good> to minimum crew required per strikecraft bay.
 effect|MIN_CREW_PER_FIGHTER_BAY|-10.0	1	<bad>-10</bad> to minimum crew required per strikecraft bay.
 effect|MIN_CREW_PER_FIGHTER_BAY|-12.5	1	<bad>-12.5</bad> to minimum crew required per strikecraft bay.
+effect|MISSILE_EJECTION_CHANCE_PERCENT|1.0	0	<good>1%</good> chance for missiles about to hit armor or hull to be ejected into p-space, dealing no damage.
+effect|MISSILE_EJECTION_CHANCE_PERCENT|10.0	0	<good>10%</good> chance for missiles about to hit armor or hull to be ejected into p-space, dealing no damage.
+effect|MISSILE_EJECTION_CHANCE_PERCENT|12.5	0	<good>12.5%</good> chance for missiles about to hit armor or hull to be ejected into p-space, dealing no damage.
+effect|MISSILE_EJECTION_CHANCE_PERCENT|100.0	0	<good>100%</good> chance for missiles about to hit armor or hull to be ejected into p-space, dealing no damage.
+effect|MISSILE_EJECTION_CHANCE_PERCENT|-10.0	0	<good>-10%</good> chance for missiles about to hit armor or hull to be ejected into p-space, dealing no damage.
+effect|MISSILE_EJECTION_CHANCE_PERCENT|-12.5	0	<good>-12.5%</good> chance for missiles about to hit armor or hull to be ejected into p-space, dealing no damage.
 effect|MISSILE_RELOAD_PERCENT_PER_MINUTE|1.0	0	Missile weapons that cannot regenerate ammo reload <good>1%</good> of their base ammo every minute in combat.
 effect|MISSILE_RELOAD_PERCENT_PER_MINUTE|10.0	0	Missile weapons that cannot regenerate ammo reload <good>10%</good> of their base ammo every minute in combat.
 effect|MISSILE_RELOAD_PERCENT_PER_MINUTE|12.5	0	Missile weapons that cannot regenerate ammo reload <good>12.5%</good> of their base ammo every minute in combat.
@@ -1780,6 +1810,12 @@ effect|OBJECTIVE_CAPTURE_RATE_MULT|12.5	0	<good>12.5%</good> more combat objecti
 effect|OBJECTIVE_CAPTURE_RATE_MULT|100.0	0	<good>100%</good> more combat objective capture rate.
 effect|OBJECTIVE_CAPTURE_RATE_MULT|-10.0	0	<bad>10%</bad> less combat objective capture rate.
 effect|OBJECTIVE_CAPTURE_RATE_MULT|-12.5	0	<bad>12.5%</bad> less combat objective capture rate.
+effect|OVERLOAD_DURATION_PERCENT|1.0	1	<good>1%</good> increased overload duration.
+effect|OVERLOAD_DURATION_PERCENT|10.0	1	<good>10%</good> increased overload duration.
+effect|OVERLOAD_DURATION_PERCENT|12.5	1	<good>12.5%</good> increased overload duration.
+effect|OVERLOAD_DURATION_PERCENT|100.0	1	<good>100%</good> increased overload duration.
+effect|OVERLOAD_DURATION_PERCENT|-10.0	1	<bad>10%</bad> reduced overload duration.
+effect|OVERLOAD_DURATION_PERCENT|-12.5	1	<bad>12.5%</bad> reduced overload duration.
 effect|PD_BEST_TARGET_LEADING|1.0	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 effect|PD_BEST_TARGET_LEADING|10.0	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 effect|PD_BEST_TARGET_LEADING|12.5	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
@@ -2068,6 +2104,12 @@ effect|SHIELD_DAMAGE_TAKEN_MULT|12.5	1	<good>12.5%</good> more damage taken by s
 effect|SHIELD_DAMAGE_TAKEN_MULT|100.0	1	<good>100%</good> more damage taken by shields.
 effect|SHIELD_DAMAGE_TAKEN_MULT|-10.0	1	<bad>10%</bad> less damage taken by shields.
 effect|SHIELD_DAMAGE_TAKEN_MULT|-12.5	1	<bad>12.5%</bad> less damage taken by shields.
+effect|SHIELD_DEFLECT_CHANCE_PERCENT|1.0	0	<good>1%</good> chance for non-missile projectiles hitting shields to be deflected for no flux.
+effect|SHIELD_DEFLECT_CHANCE_PERCENT|10.0	0	<good>10%</good> chance for non-missile projectiles hitting shields to be deflected for no flux.
+effect|SHIELD_DEFLECT_CHANCE_PERCENT|12.5	0	<good>12.5%</good> chance for non-missile projectiles hitting shields to be deflected for no flux.
+effect|SHIELD_DEFLECT_CHANCE_PERCENT|100.0	0	<good>100%</good> chance for non-missile projectiles hitting shields to be deflected for no flux.
+effect|SHIELD_DEFLECT_CHANCE_PERCENT|-10.0	0	<good>-10%</good> chance for non-missile projectiles hitting shields to be deflected for no flux.
+effect|SHIELD_DEFLECT_CHANCE_PERCENT|-12.5	0	<good>-12.5%</good> chance for non-missile projectiles hitting shields to be deflected for no flux.
 effect|SHIELD_PIERCE_CHANCE_MULT|1.0	1	<good>1%</good> more chance for shields to be pierced by EMP arcs.
 effect|SHIELD_PIERCE_CHANCE_MULT|10.0	1	<good>10%</good> more chance for shields to be pierced by EMP arcs.
 effect|SHIELD_PIERCE_CHANCE_MULT|12.5	1	<good>12.5%</good> more chance for shields to be pierced by EMP arcs.
@@ -2194,6 +2236,12 @@ effect|STARDUST_MOTE_DAMAGE_FLAT|12.5	0	Every 2 seconds a beam weapon spends on 
 effect|STARDUST_MOTE_DAMAGE_FLAT|100.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>100</good> energy damage and <good>100</good> EMP. At most 20 of this ship's motes fly at once.
 effect|STARDUST_MOTE_DAMAGE_FLAT|-10.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>-10</good> energy damage and <good>-10</good> EMP. At most 20 of this ship's motes fly at once.
 effect|STARDUST_MOTE_DAMAGE_FLAT|-12.5	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>-12.5</good> energy damage and <good>-12.5</good> EMP. At most 20 of this ship's motes fly at once.
+effect|STRIKECRAFT_DAMAGE_PER_LOST_STRIKECRAFT_PERCENT|1.0	0	Strikecraft launched from this ship deal <good>1%</good> increased damage for each strikecraft this ship lost in the last 20 seconds, up to 20 strikecraft.
+effect|STRIKECRAFT_DAMAGE_PER_LOST_STRIKECRAFT_PERCENT|10.0	0	Strikecraft launched from this ship deal <good>10%</good> increased damage for each strikecraft this ship lost in the last 20 seconds, up to 20 strikecraft.
+effect|STRIKECRAFT_DAMAGE_PER_LOST_STRIKECRAFT_PERCENT|12.5	0	Strikecraft launched from this ship deal <good>12.5%</good> increased damage for each strikecraft this ship lost in the last 20 seconds, up to 20 strikecraft.
+effect|STRIKECRAFT_DAMAGE_PER_LOST_STRIKECRAFT_PERCENT|100.0	0	Strikecraft launched from this ship deal <good>100%</good> increased damage for each strikecraft this ship lost in the last 20 seconds, up to 20 strikecraft.
+effect|STRIKECRAFT_DAMAGE_PER_LOST_STRIKECRAFT_PERCENT|-10.0	0	Strikecraft launched from this ship deal <good>-10%</good> increased damage for each strikecraft this ship lost in the last 20 seconds, up to 20 strikecraft.
+effect|STRIKECRAFT_DAMAGE_PER_LOST_STRIKECRAFT_PERCENT|-12.5	0	Strikecraft launched from this ship deal <good>-12.5%</good> increased damage for each strikecraft this ship lost in the last 20 seconds, up to 20 strikecraft.
 effect|STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT|1.0	0	Strikecraft launched from this ship deal <good>1%</good> increased damage to drone strikecraft.
 effect|STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT|10.0	0	Strikecraft launched from this ship deal <good>10%</good> increased damage to drone strikecraft.
 effect|STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT|12.5	0	Strikecraft launched from this ship deal <good>12.5%</good> increased damage to drone strikecraft.
@@ -2314,6 +2362,12 @@ effect|THERMO_ACCELERATOR_FLUX_COST_REDUCTION_PERCENT|12.5	0	Turret weapons have
 effect|THERMO_ACCELERATOR_FLUX_COST_REDUCTION_PERCENT|100.0	0	Turret weapons have <good>100%</good> reduced flux cost. Hardpoint weapons can't fire.
 effect|THERMO_ACCELERATOR_FLUX_COST_REDUCTION_PERCENT|-10.0	0	Turret weapons have <good>-10%</good> reduced flux cost. Hardpoint weapons can't fire.
 effect|THERMO_ACCELERATOR_FLUX_COST_REDUCTION_PERCENT|-12.5	0	Turret weapons have <good>-12.5%</good> reduced flux cost. Hardpoint weapons can't fire.
+effect|TIMEFLOW_AT_TOP_SPEED_PERCENT|1.0	0	<good>1%</good> increased timeflow while at top speed.
+effect|TIMEFLOW_AT_TOP_SPEED_PERCENT|10.0	0	<good>10%</good> increased timeflow while at top speed.
+effect|TIMEFLOW_AT_TOP_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased timeflow while at top speed.
+effect|TIMEFLOW_AT_TOP_SPEED_PERCENT|100.0	0	<good>100%</good> increased timeflow while at top speed.
+effect|TIMEFLOW_AT_TOP_SPEED_PERCENT|-10.0	0	<bad>10%</bad> reduced timeflow while at top speed.
+effect|TIMEFLOW_AT_TOP_SPEED_PERCENT|-12.5	0	<bad>12.5%</bad> reduced timeflow while at top speed.
 effect|TIMEFLOW_MULT|1.0	0	<good>1%</good> more timeflow.
 effect|TIMEFLOW_MULT|10.0	0	<good>10%</good> more timeflow.
 effect|TIMEFLOW_MULT|12.5	0	<good>12.5%</good> more timeflow.

@@ -6,6 +6,7 @@ import exiledsector.skills.skilleffect.ShipCombatListener;
 final class GravityDragListener extends ShipCombatListener implements AuraField.Source {
 
     static final String TIMEFLOW_PERCENT_KEY = "exiledLib_gravityDragTimeflowPercent";
+    static final String PHASED_TIMEFLOW_PERCENT_KEY = "exiledSector_gravityDragPhasedTimeflowPercent";
     static final float PHASED_MULT = 2f;
 
     GravityDragListener(ShipAPI ownerShip) {
@@ -23,6 +24,6 @@ final class GravityDragListener extends ShipCombatListener implements AuraField.
             return 0f;
         }
         float percent = magnitude(TIMEFLOW_PERCENT_KEY);
-        return ownerShip.isPhased() ? percent * PHASED_MULT : percent;
+        return ownerShip.isPhased() ? percent * PHASED_MULT + magnitude(PHASED_TIMEFLOW_PERCENT_KEY) : percent;
     }
 }

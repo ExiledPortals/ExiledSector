@@ -41,6 +41,14 @@ public enum AuraSkillEffect implements BackedSkillEffect {
                     .arg("phased", magnitude * GravityDragListener.PHASED_MULT).arg("cap", GravityDragField.MAX_TOTAL_REDUCTION_PERCENT).styled();
         }
     },
+    GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT(listener(GravityDragListener.PHASED_TIMEFLOW_PERCENT_KEY, GravityDragListener.class,
+            GravityDragListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", GravityDragField.RANGE)
+                    .arg("cap", GravityDragField.MAX_TOTAL_REDUCTION_PERCENT).styled();
+        }
+    },
     MALFUNCTION_AURA_PERCENT(listener(MalfunctionAuraListener.MALFUNCTION_PERCENT_KEY, MalfunctionAuraListener.class, MalfunctionAuraListener::new)) {
         @Override
         public StyledText description(float magnitude) {
