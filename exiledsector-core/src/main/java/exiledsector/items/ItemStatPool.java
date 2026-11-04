@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierEffect;
@@ -23,6 +24,7 @@ import java.util.regex.Pattern;
 public final class ItemStatPool {
 
     static final String VALUE_MARK = "#";
+    private static final String LOCALE_SEPARATOR = "\u0000";
     private static final Pattern SHOWN_NUMBER = Pattern.compile("\\d[\\d,]*(?:\\.\\d+)?");
     private static final Pattern LEADING_NON_LETTERS = Pattern.compile("^[^\\p{L}]+");
     private static final AtomicReference<Pools> CACHED = new AtomicReference<>();
@@ -60,7 +62,8 @@ public final class ItemStatPool {
     }
 
     private static String label(Pools pools, String statName) {
-        return pools.labels().computeIfAbsent(statName, stat -> labelFor(stat, pools.sampleValues().get(stat)));
+        String localeKey = I18n.locale() + LOCALE_SEPARATOR + statName;
+        return pools.labels().computeIfAbsent(localeKey, key -> labelFor(statName, pools.sampleValues().get(statName)));
     }
 
     private static String sortKey(String statLabel) {

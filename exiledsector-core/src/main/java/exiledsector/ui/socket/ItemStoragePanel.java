@@ -537,6 +537,7 @@ public final class ItemStoragePanel extends HoloPanel {
         @Override
         public void filtersPicked(boolean sectionsChanged) {
             queue(() -> {
+                closeDisassemblyConfirm();
                 if (sectionsChanged) {
                     reloadRows();
                 }
@@ -546,7 +547,10 @@ public final class ItemStoragePanel extends HoloPanel {
 
         @Override
         public void searchApplied() {
-            queue(ItemStoragePanel.this::rebuildGrid);
+            queue(() -> {
+                closeDisassemblyConfirm();
+                rebuildGrid();
+            });
         }
 
         @Override

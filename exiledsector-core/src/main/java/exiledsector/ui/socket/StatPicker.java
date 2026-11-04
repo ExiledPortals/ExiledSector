@@ -65,7 +65,11 @@ final class StatPicker {
     }
 
     boolean contains(float x, float y) {
-        return Rects.contains(field.getPosition(), x, y) || (listPanel != null && Rects.contains(listPanel.getPosition(), x, y));
+        return fieldContains(x, y) || (listPanel != null && Rects.contains(listPanel.getPosition(), x, y));
+    }
+
+    boolean fieldContains(float x, float y) {
+        return Rects.contains(field.getPosition(), x, y);
     }
 
     UIComponentAPI listPanel() {

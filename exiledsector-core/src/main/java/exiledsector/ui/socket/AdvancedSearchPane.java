@@ -10,6 +10,7 @@ import com.fs.starfarer.api.ui.TextFieldAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemRarity;
@@ -161,6 +162,7 @@ final class AdvancedSearchPane extends HoloPanel {
     }
 
     private void rebuild() {
+        pollFields();
         float restoredScroll = groupsScrollOffset();
         closePicker();
         keepAGroup();
@@ -357,6 +359,7 @@ final class AdvancedSearchPane extends HoloPanel {
     }
 
     private void handleButton(Object id) {
+        pollFields();
         if (id instanceof StatPicker.Choice choice) {
             choice.row().statName = choice.statName();
             rebuild();
@@ -414,13 +417,17 @@ final class AdvancedSearchPane extends HoloPanel {
 
     @Override
     protected void advanceOpen(float amount) {
-        for (PolledField polledField : polledFields) {
-            polledField.poll();
-        }
+        pollFields();
         for (StatPicker picker : pickers) {
             if (picker.poll()) {
-                openPicker(picker);
+                I18n.forGameText(() -> openPicker(picker));
             }
+        }
+    }
+
+    private void pollFields() {
+        for (PolledField polledField : polledFields) {
+            polledField.poll();
         }
     }
 
@@ -432,6 +439,15 @@ final class AdvancedSearchPane extends HoloPanel {
         List<String> statNames = StatPicker.matching(ItemStatPool.stats(host.rollableKinds()), ItemStatPool::label, picker.filterText());
         picker.openList(panelRoot, panelPosition, statNames, this::buttonPressed);
         refreshOpacity();
+    }
+
+    private void reopenPickerAt(float x, float y) {
+        for (StatPicker picker : pickers) {
+            if (!picker.isListOpen() && picker.fieldContains(x, y)) {
+                queue(() -> openPicker(picker));
+                return;
+            }
+        }
     }
 
     private void closePicker() {
@@ -447,8 +463,12 @@ final class AdvancedSearchPane extends HoloPanel {
             return;
         }
         for (InputEventAPI event : events) {
-            if (activePicker != null && event.isMouseDownEvent() && !activePicker.contains(event.getX(), event.getY())) {
+            boolean pressOrScroll = event.isMouseDownEvent() || event.isMouseScrollEvent();
+            if (activePicker != null && pressOrScroll && !activePicker.contains(event.getX(), event.getY())) {
                 queue(this::closePicker);
+            }
+            if (event.isMouseDownEvent()) {
+                reopenPickerAt(event.getX(), event.getY());
             }
         }
         super.processInput(events);
