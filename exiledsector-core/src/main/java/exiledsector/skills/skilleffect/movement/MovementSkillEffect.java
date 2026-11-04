@@ -11,6 +11,7 @@ import exiledsector.skills.skilleffect.PerDModMultEffect;
 import exiledsector.skills.skilleffect.StatTarget;
 import exiledsector.skills.skilleffect.shipsystem.FragmentSwarms;
 
+import static exiledsector.skills.skilleffect.Backings.listener;
 import static exiledsector.skills.skilleffect.Backings.statEffect;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
@@ -30,6 +31,12 @@ public enum MovementSkillEffect implements BackedSkillEffect {
         @Override
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", magnitude).arg("full", SwarmHunt.FULL_PERCENT).styled();
+        }
+    },
+    EMP_ARC_STRIKE_SPEED_PERCENT(listener(ArcStrikeSpeedListener.SPEED_PERCENT_KEY, ArcStrikeSpeedListener.class, ArcStrikeSpeedListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("seconds", ArcStrikeSpeedListener.BURST_SECONDS).styled();
         }
     },
     ACCELERATION_FLAT(statEffect(FLAT, liveStat(MutableShipStatsAPI::getAcceleration), "stat.acceleration", false)),

@@ -269,6 +269,8 @@ public enum FighterSkillEffect implements BackedSkillEffect {
                     .arg("max", AccretionStacks.MAX_STACKS).styled();
         }
     },
+    STRIKECRAFT_EMP_DAMAGE_PERCENT(new FighterListenerEffect<>(StrikecraftEmpListener.EMP_PERCENT_KEY, StrikecraftEmpListener.class,
+            StrikecraftEmpListener::new)),
     FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER(new FighterListenerEffect<>(WingNumbersDamageListener.REDUCTION_PERCENT_PER_FIGHTER_KEY,
             WingNumbersDamageListener.class, WingNumbersDamageListener::new)) {
 
