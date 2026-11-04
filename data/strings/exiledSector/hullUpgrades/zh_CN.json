@@ -162,7 +162,7 @@
     "socketable.unique_corrosion_lens_filter.description": "按观星者腐蚀光束的样式切割的透镜滤光片。装上舰上的每一具光束发射器后，它把射出的光变成能蚀穿装甲的东西。",
     "socketable.unique_cosmic_shunt_array.description": "一套把护盾负荷泄入舰船之间星尘的分流阵列，由最近一艘友舰的幅能网络接住。工程组的报告只有一页，大半是道歉。",
     "socketable.unique_radiant_shield_lattice.description": "从一艘沉睡的残存者战舰舰首切下的护盾晶格。在本该将它熔化的火力下它依旧冰冷，传感器却显示不出任何原因。",
-    "socketable.unique_equivalent_exchange_core.description": "从一座残存者枢纽中回收的反应堆调节器，仍在核对一本并非人类写下的账目。舰船放弃的一切，它都以另一种形式收回，却从不及当初交出的那么多。",
+    "socketable.unique_equivalent_exchange_core.description": "从一座残存者枢纽中回收的反应堆调节器。和所有AI一样，它归还的永远不及它拿走的多。",
     "socketable.unique_ordo_feed_conversion.description": "从一支机械序列的战舰上拆下的供能组件，为永远无需装填的武器而造。你的舰员把导弹架封在其后，把舰船的能量送往原本属于弹药的地方。",
     "socketable.unique_displacer_failsafe.description": "从一艘总是逃出射程的机械护卫舰上拆下的位移器。它接在船体警报上，会在舰员再也无力自救的那一刻，把舰船抛出险境一次。",
     "socketable.unique_pather_wing_zealots.description": "这些卢德之路飞行员把双翼献给了这艘船，而非任何机器心智。他们与放出自己的舰体如同一个会众般飞行，把舰员为它塑造的一切带入战斗。",
