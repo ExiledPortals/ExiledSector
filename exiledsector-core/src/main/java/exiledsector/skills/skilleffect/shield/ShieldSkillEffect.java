@@ -13,6 +13,7 @@ import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.StatTarget;
+import exiledsector.skills.skilleffect.TopSpeedShare;
 
 import java.util.List;
 
@@ -109,7 +110,7 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
     SHIELD_ABSORPTION_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getShieldAbsorptionMult), StatNames.DAMAGE_TAKEN_BY_SHIELDS, true)),
     SHIELD_DAMAGE_TAKEN_MULT(statEffect(MULT, liveStat(MutableShipStatsAPI::getShieldDamageTakenMult), StatNames.DAMAGE_TAKEN_BY_SHIELDS, true)),
     SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT(new ConditionalStatEffect(PERCENT, liveStat(MutableShipStatsAPI::getShieldDamageTakenMult),
-            StatNames.DAMAGE_TAKEN_BY_SHIELDS, HighSpeed::isMovingFast)) {
+            StatNames.DAMAGE_TAKEN_BY_SHIELDS, ShieldSkillEffect::isMovingFast)) {
         @Override
         public boolean lowerIsBetter() {
             return true;
@@ -117,7 +118,7 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", Math.abs(magnitude)).arg("speed", HighSpeed.TOP_SPEED_FRACTION * 100f).styled();
+            return EffectText.msg(this).arg("value", Math.abs(magnitude)).arg("speed", FAST_TOP_SPEED_SHARE * 100f).styled();
         }
     },
     HOLD_FIRE_SHIELD_DAMAGE_REDUCTION_PERCENT(listener(HoldFireShieldListener.REDUCTION_PERCENT_KEY, HoldFireShieldListener.class,
@@ -132,7 +133,7 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
     SHIELD_UPKEEP_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getShieldUpkeepMult), "stat.shieldFluxUpkeep", true)),
     SHIELD_UPKEEP_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getShieldUpkeepMult), "stat.shieldFluxUpkeep", true)),
     SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT(new ConditionalStatEffect(PERCENT, stat(MutableShipStatsAPI::getShieldUpkeepMult),
-            "stat.shieldFluxUpkeep", LowSpeed::isMovingSlowly)) {
+            "stat.shieldFluxUpkeep", ShieldSkillEffect::isMovingSlowly)) {
         @Override
         public boolean lowerIsBetter() {
             return true;
@@ -140,7 +141,7 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", Math.abs(magnitude)).arg("speed", LowSpeed.TOP_SPEED_FRACTION * 100f).styled();
+            return EffectText.msg(this).arg("value", Math.abs(magnitude)).arg("speed", SLOW_TOP_SPEED_SHARE * 100f).styled();
         }
 
         @Override
@@ -209,6 +210,8 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
     public static final float MAKESHIFT_SHIELD_UPKEEP = 0.5f;
     public static final float MAKESHIFT_SHIELD_EFFICIENCY = 1.2f;
     public static final float MAKESHIFT_SHIELD_ARC = 90f;
+    static final float FAST_TOP_SPEED_SHARE = 0.75f;
+    static final float SLOW_TOP_SPEED_SHARE = 0.1f;
 
     private final EffectBacking backing;
 
@@ -239,6 +242,14 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
             }
         }
         return type;
+    }
+
+    static boolean isMovingFast(ShipAPI ship) {
+        return TopSpeedShare.isAbove(ship, ship.getMaxSpeedWithoutBoost(), FAST_TOP_SPEED_SHARE);
+    }
+
+    static boolean isMovingSlowly(ShipAPI ship) {
+        return TopSpeedShare.isBelow(ship, ship.getMaxSpeedWithoutBoost(), SLOW_TOP_SPEED_SHARE);
     }
 
     private static boolean hasShields(ShieldAPI.ShieldType type) {

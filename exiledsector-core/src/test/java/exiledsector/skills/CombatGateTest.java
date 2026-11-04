@@ -1,4 +1,4 @@
-package exiledsector.skills.skilleffect.defense;
+package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 import org.junit.jupiter.api.Test;
@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class LowHullTest {
+class CombatGateTest {
 
     private static ShipAPI atHullLevel(float hullLevel) {
         ShipAPI ship = mock(ShipAPI.class);
@@ -17,10 +17,10 @@ class LowHullTest {
     }
 
     @Test
-    void onlyHullBelowTheThresholdCounts() {
-        assertTrue(LowHull.isBelowThreshold(atHullLevel(0.1f)));
-        assertTrue(LowHull.isBelowThreshold(atHullLevel(LowHull.HULL_LEVEL - 0.01f)));
-        assertFalse(LowHull.isBelowThreshold(atHullLevel(LowHull.HULL_LEVEL)));
-        assertFalse(LowHull.isBelowThreshold(atHullLevel(1f)));
+    void onlyHullBelowTheLowHullLevelCounts() {
+        assertTrue(CombatGate.LOW_HULL.holds(atHullLevel(0.1f)));
+        assertTrue(CombatGate.LOW_HULL.holds(atHullLevel(CombatGate.LOW_HULL_LEVEL - 0.01f)));
+        assertFalse(CombatGate.LOW_HULL.holds(atHullLevel(CombatGate.LOW_HULL_LEVEL)));
+        assertFalse(CombatGate.LOW_HULL.holds(atHullLevel(1f)));
     }
 }

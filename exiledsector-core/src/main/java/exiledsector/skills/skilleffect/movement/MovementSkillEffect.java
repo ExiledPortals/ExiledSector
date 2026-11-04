@@ -9,6 +9,7 @@ import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
 import exiledsector.skills.skilleffect.PerDModMultEffect;
 import exiledsector.skills.skilleffect.StatTarget;
+import exiledsector.skills.skilleffect.TopSpeedShare;
 import exiledsector.skills.skilleffect.shipsystem.FragmentSwarms;
 
 import static exiledsector.skills.skilleffect.Backings.listener;
@@ -58,8 +59,7 @@ public enum MovementSkillEffect implements BackedSkillEffect {
     }
 
     static boolean isAtTopSpeed(ShipAPI ship) {
-        float topSpeed = ship.getMaxSpeed() * TOP_SPEED_SHARE;
-        return topSpeed > 0f && ship.getVelocity().lengthSquared() >= topSpeed * topSpeed;
+        return TopSpeedShare.isAtLeast(ship, ship.getMaxSpeed(), TOP_SPEED_SHARE);
     }
 
     @Override

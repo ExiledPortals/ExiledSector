@@ -9,6 +9,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.combat.dweller.AssayingRiftEffect;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.CombatGate;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.skilleffect.ArcDischarge;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
@@ -207,10 +208,10 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
     TERMINAL_DESCENT_SHIELD_DAMAGE_TAKEN_PERCENT(listener(TerminalDescentListener.SHIELD_DAMAGE_TAKEN_PERCENT_KEY, TerminalDescentListener.class,
             TerminalDescentListener::new)),
     LOW_HULL_TOP_SPEED_PERCENT(new ConditionalStatEffect(PERCENT, liveStat(MutableShipStatsAPI::getMaxSpeed), "stat.topSpeed",
-            LowHull::isBelowThreshold)) {
+            CombatGate.LOW_HULL::holds)) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).arg("hull", LowHull.HULL_LEVEL * 100f).styled();
+            return EffectText.msg(this).arg("value", magnitude).arg("hull", CombatGate.LOW_HULL_LEVEL * 100f).styled();
         }
     },
     RAM_PROW_COLLISION_DAMAGE_PERCENT(listener(CollisionDamageListener.COLLISION_DAMAGE_PERCENT_KEY, CollisionDamageListener.class,
