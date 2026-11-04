@@ -216,9 +216,10 @@ public final class HullUpgradePanel extends HoloPanel {
         element.addSectionHeading(Translation.text("framework.panel.upgrades"), Alignment.MID, masterSchematicShown ? GAP * 3f : 0f);
         boolean schematicsShown = view.chartProgress() == null;
         element.addCustom(schematicsShown ? schematicRow(gridWidth) : chartProgressRow(gridWidth), GAP * 2f);
-        String hint = (schematicsShown ? Translation.msg("framework.panel.hint") : Translation.msg("framework.panel.hintCharts"))
-                .arg("max", view.maxPoints()).text();
-        VanillaText.plainPara(element, hint, GAP * 2f, Misc.getGrayColor());
+        if (!schematicsShown) {
+            VanillaText.plainPara(element, Translation.msg("framework.panel.hintCharts").arg("max", view.maxPoints()).text(), GAP * 2f,
+                    Misc.getGrayColor());
+        }
         element.addSectionHeading(Translation.text("framework.panel.sockets"), Alignment.MID, GAP * 3f);
         float columnWidth = (gridWidth - GAP * (SECTION_COLUMNS - 1)) / SECTION_COLUMNS;
         List<SectionEntry> sections = view.sections();
@@ -284,7 +285,7 @@ public final class HullUpgradePanel extends HoloPanel {
         cellPanel.addComponent(Global.getSettings().createCustom(tileSize, tileSize, new IconTileCell(iconPath, color, blocked, hooks)))
                 .inTL((cellWidth - tileSize) / 2f, 0f);
         TooltipMakerAPI labelElement = cellPanel.createUIElement(cellWidth, STATE_HEIGHT, false);
-        addLabel(labelElement, Translation.msg("framework.panel.inStorage").arg("count", inStorage).text(),
+        addLabel(labelElement, String.valueOf(inStorage),
                 blocked ? BLOCKED_TEXT_COLOR : color, Alignment.MID, cellWidth, 0f, STATE_HEIGHT);
         cellPanel.addUIElement(labelElement).inTL(0f, tileSize);
         return cellPanel;
