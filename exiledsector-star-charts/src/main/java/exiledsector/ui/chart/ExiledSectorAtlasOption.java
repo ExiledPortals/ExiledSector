@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
+import com.fs.starfarer.api.impl.campaign.rulecmd.FireAll;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.wormhole.WormholeGateway;
@@ -19,6 +20,7 @@ public final class ExiledSectorAtlasOption extends BaseCommandPlugin {
     public static final String OPTION_ID = "exiledSector_viewAtlas";
     static final String OPEN = "open";
     static final int OPTION_ORDER = 11;
+    static final String POPULATE_OPTIONS = "PopulateOptions";
 
     @Override
     public boolean doesCommandAddOptions() {
@@ -36,7 +38,7 @@ public final class ExiledSectorAtlasOption extends BaseCommandPlugin {
             return false;
         }
         if (params != null && !params.isEmpty() && OPEN.equals(params.get(0).getString(memoryMap))) {
-            return AtlasScreen.open(Global.getSector().getCampaignUI());
+            return AtlasScreen.open(Global.getSector().getCampaignUI(), () -> FireAll.fire(null, dialog, memoryMap, POPULATE_OPTIONS));
         }
         OptionPanelAPI options = dialog.getOptionPanel();
         if (!options.hasOption(OPTION_ID)) {

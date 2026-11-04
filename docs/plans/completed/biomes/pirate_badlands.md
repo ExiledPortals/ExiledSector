@@ -2,7 +2,7 @@
 
 Hull items dropped in Pirate Badlands systems can carry a Pirate Badlands modifier. The biome is pirate country, so its set is about ambush and kicking ships that are down: opening strikes, bonuses against crippled or overloaded targets, running away, ramming and smuggling. Like the pirate doctrine, one modifier carries a downside.
 
-Status: built 2026-11-04. The framework is built (`../anomalies/abyssal_rift.md`, Biome modifiers): rows in `item_modifiers.csv` ending `_PIRATE_BADLANDS`, mapped in `biome_modifiers.csv`, reserved at item load and granted to 30% of hull items dropped here. Values are placeholders.
+Status: built 2026-11-04. The framework is built (`../anomalies/abyssal_rift.md`, Biome modifiers): rows in `item_modifiers.csv` ending `_PIRATE_BADLANDS`, mapped in `biome_modifiers.csv`, reserved at item load and granted to 10% of hull items dropped here. Values are placeholders.
 
 ## Modifiers
 

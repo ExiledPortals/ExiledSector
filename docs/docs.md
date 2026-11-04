@@ -590,7 +590,7 @@ an unlock is decided when first seen, and that is saved.
 ### Biome modifiers
 
 A biome can own one modifier per hull item part (`biome_modifiers.csv`), reserved so no other roll draws it
-(`BiomeModifiers`). A non-unique hull item dropped while the player is in a run system of that biome has a 30% chance,
+(`BiomeModifiers`). A non-unique hull item dropped while the player is in a run system of that biome has a 10% chance,
 fixed by its seed, to gain its part's modifier: `LootSources.shapeDrops` passes each drop through every loot source's `shapeDrop`, called from the
 drop helpers in `ItemLootListener` and from the hull item battle drops. The item keeps its other modifiers, except one
 sharing the added effect; on a full side a random modifier makes way (`GrantedModifiers.add`).
@@ -637,6 +637,65 @@ The Armor Plate's hull repair runs only above 50% flux and stops at 20% of maxim
 (`HardFluxDissipationListener`), and the Phase Coil Array lowers hard flux on each phase entry without changing total flux
 (`PhaseEntryFluxShedListener`). Destroyed strikecraft burst on the lethal hit, reaching ships whose edge is within range
 (`CinderBurstListener`).
+
+### Frozen Fringe modifiers
+
+The Overwintered crew's supply cut applies while vanilla counts the player fleet as moving slowly (`Misc.isSlowMoving`,
+standing still included): the strongest value among its active ships multiplies every ship's maintenance supply use. A
+transient script reapplies it every quarter second, as stat rebuilds drop it (`FleetWideEffects.applyMoveSlowSupplyUse`,
+`MoveSlowSupplyScript`).
+
+Patient measures from this ship to the target ship's center (`DistantTargetDamageListener`). Glacial compares speed with
+top speed without the zero-flux boost, so turning in place still counts as stationary. Of the Long Night holds the ship's
+deployed time at its phase-entry value while phased (`PhasedPeakTimeListener`).
+
+### Collapsed Reach modifiers
+
+The Specialist Crew's black-hole bonus adds up over the fleet's active ships and only works in a Star Chart system
+with a black hole among its stars. It adds its share to every hull item part's targeted extra rolls, so it sums with
+the chart's item quantity, for fleet battles and salvage sites alike (`BlackHoleSalvage`, `BlackHoleHullItems`). The
+Armor Plate ejects a missile that directly hits armor or hull by zeroing the hit and marking the missile as having
+dealt damage, which skips its explosion and on-hit effect; proximity-fused explosions aren't caught (`MissileEjectionListener`).
+
+The Phase Coil Array's drag joins the Gravity Drag node's listener: while phased it adds to the node's doubled drag,
+under the same per-ship cap (`GravityDragListener`). The Launch Assembly's stacks belong to the carrier, one for each
+of its strikecraft destroyed, each expiring after 20 seconds (`AccretionStacks`).
+
+### Threat Expanse modifiers
+
+They spend and regrow vanilla Fragment Swarm fragments through `FragmentSwarms`: a spend needs that many fragments not
+already fading out, and regrowth never fills the swarm past its maintained size. The fleet's sensor strength gains the
+highest carrier's percent once for each active ship whose variant has `fragment_swarm`, the Threat volume's notable
+included, at each fleet sync (`FleetWideEffects.applySwarmSensorStrength`). Shield damage spends 1 fragment per 30
+absorbed, beams included (`FractalShieldListener`). Phase hulls can't carry a swarm, so the phase upkeep cover draws on
+the nearest allied ship's swarm within 1000 su (`PhaseVoidUpkeepListener`). The strikecraft rebuild watches each bay's
+replacement rate and restores a drop when it can spend the fragments (`HiveReplacementListener`).
+
+The armor repair counts, once a second while the swarm is full, the fragments vanilla's regrowth would add at the
+swarm's respawn rate, and each repairs the most damaged armor cell. Only armor actually restored counts toward its 10%
+per-battle cap, kept per fleet member like the phase-entry repair's (`SwarmOverflowRepairListener`).
+
+### Derelict Graveyard modifiers
+
+The recovery chance adds up over the fleet's active ships, capped at 30%, and is rolled when vanilla adds battle
+d-mods to a ship the player can recover: a `DModAdderPlugin` that wins the roll adds none (`RecoveryDModAvoidance`).
+The weapon and wing share adds up the same way, uncapped, and when post-battle salvage is generated each weapon and
+wing stack gains that share, the fraction rolled (`SalvagedArmaments`, from `ItemLootListener`).
+
+Each enemy ship destroyed within 1000 su repairs every armor cell by 5% of its maximum, and only armor actually
+restored counts toward the rolled per-battle cap (`WreckPlatingListener`, through `ArmorCells.repairWithinBattleCap`
+as the Rift's phase-entry repair). Free phase upkeep counts any non-strikecraft hulk on the battlefield
+(`WreckShelterListener`), and the per-d-mod lines count d-mods as `TOP_SPEED_MULT_PER_DMOD` does.
+
+### Storm Belt modifiers
+
+The terrain penalty reduction adds up over the fleet's active ships, capped at 50%, as a flat modifier on the
+commander's `nav_penalty_mult`, the stat vanilla's Navigation skill lowers (`FleetWideEffects.applyTerrainMovementPenalty`).
+The speed burst starts on any EMP arc striking the ship, shields included (`ArcStrikeSpeedListener`).
+
+Phase-exit and armor arcs (`ArcDischarge`) go to the nearest enemy ships, not strikecraft, within 600 su, cycling when
+there are fewer ships than arcs, with energy and EMP damage set by the ship's hull size. Armor damage taken builds the
+armor's discharges, holding one while no enemy is in range (`ArmorArcListener`).
 
 ### Chart tier groups
 

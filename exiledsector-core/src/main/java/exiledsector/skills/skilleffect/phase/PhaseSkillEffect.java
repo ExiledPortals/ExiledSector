@@ -8,6 +8,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipFacts;
+import exiledsector.skills.skilleffect.ArcDischarge;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.ConditionalStatEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
@@ -33,6 +34,7 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
             "stat.phaseCloakActivationCost", true)),
     PHASE_CLOAK_UPKEEP_COST_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getPhaseCloakUpkeepCostBonus),
             "stat.phaseCloakUpkeepCost", true)),
+    NO_PHASE_UPKEEP_NEAR_WRECK_RANGE(listener(WreckShelterListener.RANGE_KEY, WreckShelterListener.class, WreckShelterListener::new)),
     PHASE_CLOAK_COOLDOWN_PERCENT(statEffect(PERCENT, bonus(MutableShipStatsAPI::getPhaseCloakCooldownBonus),
             "stat.phaseCloakCooldown", true)),
     PHASE_CLOAK_ACCELERATION_PERCENT(statEffect(FLAT, dynamicMod(Stats.PHASE_CLOAK_ACCEL_MOD), "stat.accelerationWhilePhased", false)) {
@@ -62,6 +64,22 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
     },
     PHASE_ENTRY_HARD_FLUX_TO_SOFT_PERCENT(listener(PhaseEntryFluxShedListener.SHED_PERCENT_KEY, PhaseEntryFluxShedListener.class,
             PhaseEntryFluxShedListener::new)),
+    PEAK_TIME_PAUSED_WHILE_PHASED(listener(PhasedPeakTimeListener.PAUSED_KEY, PhasedPeakTimeListener.class, PhasedPeakTimeListener::new)),
+    PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT(listener(PhaseVoidUpkeepListener.COVERED_PERCENT_KEY, PhaseVoidUpkeepListener.class,
+            PhaseVoidUpkeepListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", Math.min(magnitude, PhaseVoidUpkeepListener.MAX_COVERED_PERCENT))
+                    .arg("range", PhaseVoidUpkeepListener.ALLIED_SWARM_RANGE).arg("flux", PhaseVoidUpkeepListener.FLUX_PER_FRAGMENT).styled();
+        }
+    },
+    PHASE_EXIT_EMP_ARCS_FLAT(listener(PhaseExitArcListener.ARC_COUNT_KEY, PhaseExitArcListener.class, PhaseExitArcListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return ArcDischarge.DAMAGE.withShipSizeArgs(EffectText.msg(this).count(Math.round(magnitude)).arg("value", magnitude)
+                    .arg("range", ArcDischarge.RANGE)).styled();
+        }
+    },
     PHASE_ANCHOR_EMERGENCY_DIVE {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

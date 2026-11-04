@@ -2,15 +2,20 @@ package exiledsector.skills.skilleffect.logistics;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
+import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.hullmods.PhaseField;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import com.fs.starfarer.api.util.Misc;
 import exiledsector.ExiledSector;
 import exiledsector.PlayerFleet;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.skilleffect.shipsystem.FragmentSwarms;
 
+import exiledsector.skills.skilleffect.SkillEffect;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -29,6 +34,13 @@ public final class FleetWideEffects {
     static final String CORONA_RESISTANCE_CONTRIBUTION_KEY = "exiledSector_fleetCoronaResistanceContribution";
     static final float MAX_CORONA_RESISTANCE_PERCENT = 100f;
     private static final String CORONA_RESISTANCE_FLEET_MOD = "fleetCoronaResistance";
+    static final String MOVE_SLOW_SUPPLY_USE_KEY = "exiledLib_moveSlowSupplyUseContribution";
+    private static final String MOVE_SLOW_SUPPLY_USE_MEMBER_MOD = "moveSlowSupplyUse";
+    static final String SWARM_SENSOR_STRENGTH_KEY = "exiledLib_swarmSensorStrengthPercent";
+    private static final String SWARM_SENSOR_STRENGTH_FLEET_MOD = "swarmSensorStrength";
+    static final String TERRAIN_MOVEMENT_PENALTY_KEY = "exiledSector_terrainMovementPenaltyContribution";
+    static final float MAX_TERRAIN_MOVEMENT_PENALTY_REDUCTION_PERCENT = 50f;
+    private static final String TERRAIN_MOVEMENT_PENALTY_FLEET_MOD = "terrainMovementPenalty";
     private static final String SENSOR_STRENGTH_ALWAYS_COUNTS_FLEET_MOD = "sensorStrengthAlwaysCounts";
     private static final String MAX_SENSOR_SHIPS_SETTING = "maxSensorShips";
     private static final int DEFAULT_MAX_SENSOR_SHIPS = 5;
@@ -146,6 +158,88 @@ public final class FleetWideEffects {
             }
         }
         return Math.min(MAX_CORONA_RESISTANCE_PERCENT, resistance);
+    }
+
+    public static void applyMoveSlowSupplyUse(CampaignFleetAPI fleet) {
+        if (fleet == null || fleet.getFleetData() == null) {
+            return;
+        }
+        List<FleetMemberAPI> members = fleet.getFleetData().getMembersListCopy();
+        float percent = Misc.isSlowMoving(fleet) ? strongestMoveSlowSupplyUse(members) : 0f;
+        String modId = ExiledSector.key(MOVE_SLOW_SUPPLY_USE_MEMBER_MOD);
+        String source = percent != 0f ? Translation.gameText("fleet.moveSlowSupplyUse") : null;
+        for (FleetMemberAPI member : members) {
+            MutableStat suppliesPerMonth = member.getStats().getSuppliesPerMonth();
+            if (percent != 0f) {
+                suppliesPerMonth.modifyMult(modId, 1f + percent / 100f, source);
+            } else {
+                suppliesPerMonth.unmodifyMult(modId);
+            }
+        }
+    }
+
+    static float strongestMoveSlowSupplyUse(List<FleetMemberAPI> members) {
+        float strongest = 0f;
+        for (FleetMemberAPI member : members) {
+            float percent = member.isMothballed() ? 0f : member.getStats().getDynamic().getValue(MOVE_SLOW_SUPPLY_USE_KEY, 0f);
+            if (Math.abs(percent) > Math.abs(strongest)) {
+                strongest = percent;
+            }
+        }
+        return SkillEffect.addedMultiplier(strongest);
+    }
+
+    public static void applySwarmSensorStrength(CampaignFleetAPI fleet) {
+        if (fleet == null || fleet.getStats() == null || fleet.getFleetData() == null) {
+            return;
+        }
+        float percent = swarmSensorStrengthPercent(fleet.getFleetData().getMembersListCopy());
+        StatBonus sensorStrengthMod = fleet.getStats().getSensorStrengthMod();
+        if (percent > 0f) {
+            sensorStrengthMod.modifyPercent(ExiledSector.key(SWARM_SENSOR_STRENGTH_FLEET_MOD), percent, Translation.gameText("fleet.swarmSensorStrength"));
+        } else {
+            sensorStrengthMod.unmodifyPercent(ExiledSector.key(SWARM_SENSOR_STRENGTH_FLEET_MOD));
+        }
+    }
+
+    static float swarmSensorStrengthPercent(List<FleetMemberAPI> members) {
+        float percentPerSwarm = 0f;
+        int swarms = 0;
+        for (FleetMemberAPI member : members) {
+            if (member.isMothballed()) {
+                continue;
+            }
+            percentPerSwarm = Math.max(percentPerSwarm, member.getStats().getDynamic().getValue(SWARM_SENSOR_STRENGTH_KEY, 0f));
+            if (FragmentSwarms.hasSwarmHullMod(member.getVariant())) {
+                swarms++;
+            }
+        }
+        return percentPerSwarm * swarms;
+    }
+
+    public static void applyTerrainMovementPenalty(CampaignFleetAPI fleet) {
+        MutableCharacterStatsAPI commanderStats = fleet == null ? null : fleet.getCommanderStats();
+        if (commanderStats == null || commanderStats.getDynamic() == null || fleet.getFleetData() == null) {
+            return;
+        }
+        float percent = terrainMovementPenaltyPercent(fleet.getFleetData().getMembersListCopy());
+        MutableStat penaltyMult = commanderStats.getDynamic().getStat(Stats.NAVIGATION_PENALTY_MULT);
+        if (percent != 0f) {
+            penaltyMult.modifyFlat(ExiledSector.key(TERRAIN_MOVEMENT_PENALTY_FLEET_MOD), percent / 100f,
+                    Translation.gameText("fleet.terrainMovementPenalty"));
+        } else {
+            penaltyMult.unmodifyFlat(ExiledSector.key(TERRAIN_MOVEMENT_PENALTY_FLEET_MOD));
+        }
+    }
+
+    static float terrainMovementPenaltyPercent(List<FleetMemberAPI> members) {
+        float percent = 0f;
+        for (FleetMemberAPI member : members) {
+            if (!member.isMothballed()) {
+                percent += member.getStats().getDynamic().getValue(TERRAIN_MOVEMENT_PENALTY_KEY, 0f);
+            }
+        }
+        return Math.max(-MAX_TERRAIN_MOVEMENT_PENALTY_REDUCTION_PERCENT, percent);
     }
 
     private static boolean alwaysCounts(FleetMemberAPI member) {

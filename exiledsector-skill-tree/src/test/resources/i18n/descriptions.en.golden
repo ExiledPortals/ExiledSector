@@ -40,6 +40,12 @@ effect|ARMOR_BURN_DAMAGE_PERCENT|12.5	0	Weapon hits on enemy armor burn it for <
 effect|ARMOR_BURN_DAMAGE_PERCENT|100.0	0	Weapon hits on enemy armor burn it for <good>100%</good> of the hit's damage over 3 seconds.
 effect|ARMOR_BURN_DAMAGE_PERCENT|-10.0	0	Weapon hits on enemy armor burn it for <good>-10%</good> of the hit's damage over 3 seconds.
 effect|ARMOR_BURN_DAMAGE_PERCENT|-12.5	0	Weapon hits on enemy armor burn it for <good>-12.5%</good> of the hit's damage over 3 seconds.
+effect|ARMOR_DAMAGE_EMP_ARCS_FLAT|1.0	0	Every 500 damage this ship's armor absorbs discharges <good>1</good> EMP arc at the nearest enemy ship within 600 su, dealing 100/150/200/300 energy and EMP damage.
+effect|ARMOR_DAMAGE_EMP_ARCS_FLAT|10.0	0	Every 500 damage this ship's armor absorbs discharges <good>10</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
+effect|ARMOR_DAMAGE_EMP_ARCS_FLAT|12.5	0	Every 500 damage this ship's armor absorbs discharges <good>12.5</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
+effect|ARMOR_DAMAGE_EMP_ARCS_FLAT|100.0	0	Every 500 damage this ship's armor absorbs discharges <good>100</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
+effect|ARMOR_DAMAGE_EMP_ARCS_FLAT|-10.0	0	Every 500 damage this ship's armor absorbs discharges <good>-10</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
+effect|ARMOR_DAMAGE_EMP_ARCS_FLAT|-12.5	0	Every 500 damage this ship's armor absorbs discharges <good>-12.5</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
 effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|1.0	1	<good>1%</good> more armor damage taken per D-mod, up to 5 D-mods.
 effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|10.0	1	<good>10%</good> more armor damage taken per D-mod, up to 5 D-mods.
 effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|12.5	1	<good>12.5%</good> more armor damage taken per D-mod, up to 5 D-mods.
@@ -70,6 +76,12 @@ effect|ARMOR_PERCENT|12.5	0	<good>12.5%</good> increased armor.
 effect|ARMOR_PERCENT|100.0	0	<good>100%</good> increased armor.
 effect|ARMOR_PERCENT|-10.0	0	<bad>10%</bad> reduced armor.
 effect|ARMOR_PERCENT|-12.5	0	<bad>12.5%</bad> reduced armor.
+effect|ARMOR_PERCENT_PER_HIGH_TECH_AFFINITY|1.0	0	<good>1%</good> increased armor for every 10 High Tech Affinity.
+effect|ARMOR_PERCENT_PER_HIGH_TECH_AFFINITY|10.0	0	<good>10%</good> increased armor for every 10 High Tech Affinity.
+effect|ARMOR_PERCENT_PER_HIGH_TECH_AFFINITY|12.5	0	<good>12.5%</good> increased armor for every 10 High Tech Affinity.
+effect|ARMOR_PERCENT_PER_HIGH_TECH_AFFINITY|100.0	0	<good>100%</good> increased armor for every 10 High Tech Affinity.
+effect|ARMOR_PERCENT_PER_HIGH_TECH_AFFINITY|-10.0	0	<bad>10%</bad> reduced armor for every 10 High Tech Affinity.
+effect|ARMOR_PERCENT_PER_HIGH_TECH_AFFINITY|-12.5	0	<bad>12.5%</bad> reduced armor for every 10 High Tech Affinity.
 effect|ARMOR_PERCENT_PER_LOW_TECH_AFFINITY|1.0	0	<good>1%</good> increased armor for every 10 Low Tech Affinity.
 effect|ARMOR_PERCENT_PER_LOW_TECH_AFFINITY|10.0	0	<good>10%</good> increased armor for every 10 Low Tech Affinity.
 effect|ARMOR_PERCENT_PER_LOW_TECH_AFFINITY|12.5	0	<good>12.5%</good> increased armor for every 10 Low Tech Affinity.
@@ -304,6 +316,12 @@ effect|BEAM_WEAPON_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased beam weapo
 effect|BEAM_WEAPON_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased beam weapon damage.
 effect|BEAM_WEAPON_DAMAGE_PERCENT|-10.0	0	<bad>10%</bad> reduced beam weapon damage.
 effect|BEAM_WEAPON_DAMAGE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced beam weapon damage.
+effect|BEAM_WEAPON_EMP_PERCENT|1.0	0	Beam weapon hits on armor and hull deal additional EMP damage equal to <good>1%</good> of their damage.
+effect|BEAM_WEAPON_EMP_PERCENT|10.0	0	Beam weapon hits on armor and hull deal additional EMP damage equal to <good>10%</good> of their damage.
+effect|BEAM_WEAPON_EMP_PERCENT|12.5	0	Beam weapon hits on armor and hull deal additional EMP damage equal to <good>12.5%</good> of their damage.
+effect|BEAM_WEAPON_EMP_PERCENT|100.0	0	Beam weapon hits on armor and hull deal additional EMP damage equal to <good>100%</good> of their damage.
+effect|BEAM_WEAPON_EMP_PERCENT|-10.0	0	Beam weapon hits on armor and hull deal additional EMP damage equal to <good>-10%</good> of their damage.
+effect|BEAM_WEAPON_EMP_PERCENT|-12.5	0	Beam weapon hits on armor and hull deal additional EMP damage equal to <good>-12.5%</good> of their damage.
 effect|BEAM_WEAPON_FLUX_COST_MULT|1.0	1	<good>1%</good> more beam weapon flux cost.
 effect|BEAM_WEAPON_FLUX_COST_MULT|10.0	1	<good>10%</good> more beam weapon flux cost.
 effect|BEAM_WEAPON_FLUX_COST_MULT|12.5	1	<good>12.5%</good> more beam weapon flux cost.
@@ -376,6 +394,12 @@ effect|BEAM_WEAPON_TURN_RATE_PERCENT|12.5	0	<good>12.5%</good> increased beam we
 effect|BEAM_WEAPON_TURN_RATE_PERCENT|100.0	0	<good>100%</good> increased beam weapon turn rate.
 effect|BEAM_WEAPON_TURN_RATE_PERCENT|-10.0	0	<bad>10%</bad> reduced beam weapon turn rate.
 effect|BEAM_WEAPON_TURN_RATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced beam weapon turn rate.
+effect|BLACK_HOLE_HULL_ITEM_PERCENT|1.0	0	Your fleet has <good>1%</good> increased quantity of hull items found in Star Chart systems with a black hole.
+effect|BLACK_HOLE_HULL_ITEM_PERCENT|10.0	0	Your fleet has <good>10%</good> increased quantity of hull items found in Star Chart systems with a black hole.
+effect|BLACK_HOLE_HULL_ITEM_PERCENT|12.5	0	Your fleet has <good>12.5%</good> increased quantity of hull items found in Star Chart systems with a black hole.
+effect|BLACK_HOLE_HULL_ITEM_PERCENT|100.0	0	Your fleet has <good>100%</good> increased quantity of hull items found in Star Chart systems with a black hole.
+effect|BLACK_HOLE_HULL_ITEM_PERCENT|-10.0	0	Your fleet has <bad>10%</bad> reduced quantity of hull items found in Star Chart systems with a black hole.
+effect|BLACK_HOLE_HULL_ITEM_PERCENT|-12.5	0	Your fleet has <bad>12.5%</bad> reduced quantity of hull items found in Star Chart systems with a black hole.
 effect|BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT|1.0	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>1%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.
 effect|BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT|10.0	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>10%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.
 effect|BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT|12.5	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>12.5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.
@@ -634,6 +658,12 @@ effect|DAMAGE_TO_DESTROYER_PERCENT|12.5	0	<good>12.5%</good> increased damage to
 effect|DAMAGE_TO_DESTROYER_PERCENT|100.0	0	<good>100%</good> increased damage to destroyers.
 effect|DAMAGE_TO_DESTROYER_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to destroyers.
 effect|DAMAGE_TO_DESTROYER_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to destroyers.
+effect|DAMAGE_TO_DISTANT_TARGETS_PERCENT|1.0	0	<good>1%</good> increased damage to targets more than 1000 su away.
+effect|DAMAGE_TO_DISTANT_TARGETS_PERCENT|10.0	0	<good>10%</good> increased damage to targets more than 1000 su away.
+effect|DAMAGE_TO_DISTANT_TARGETS_PERCENT|12.5	0	<good>12.5%</good> increased damage to targets more than 1000 su away.
+effect|DAMAGE_TO_DISTANT_TARGETS_PERCENT|100.0	0	<good>100%</good> increased damage to targets more than 1000 su away.
+effect|DAMAGE_TO_DISTANT_TARGETS_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to targets more than 1000 su away.
+effect|DAMAGE_TO_DISTANT_TARGETS_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to targets more than 1000 su away.
 effect|DAMAGE_TO_FRIGATE_PERCENT|1.0	0	<good>1%</good> increased damage to frigates.
 effect|DAMAGE_TO_FRIGATE_PERCENT|10.0	0	<good>10%</good> increased damage to frigates.
 effect|DAMAGE_TO_FRIGATE_PERCENT|12.5	0	<good>12.5%</good> increased damage to frigates.
@@ -646,6 +676,18 @@ effect|DAMAGE_TO_HELPLESS_SHIP_PERCENT|12.5	0	<good>12.5%</good> increased damag
 effect|DAMAGE_TO_HELPLESS_SHIP_PERCENT|100.0	0	<good>100%</good> increased damage to overloaded, venting or flamed-out ships.
 effect|DAMAGE_TO_HELPLESS_SHIP_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to overloaded, venting or flamed-out ships.
 effect|DAMAGE_TO_HELPLESS_SHIP_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to overloaded, venting or flamed-out ships.
+effect|DAMAGE_TO_PRISTINE_SHIP_PERCENT|1.0	0	<good>1%</good> increased damage to ships without D-mods.
+effect|DAMAGE_TO_PRISTINE_SHIP_PERCENT|10.0	0	<good>10%</good> increased damage to ships without D-mods.
+effect|DAMAGE_TO_PRISTINE_SHIP_PERCENT|12.5	0	<good>12.5%</good> increased damage to ships without D-mods.
+effect|DAMAGE_TO_PRISTINE_SHIP_PERCENT|100.0	0	<good>100%</good> increased damage to ships without D-mods.
+effect|DAMAGE_TO_PRISTINE_SHIP_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to ships without D-mods.
+effect|DAMAGE_TO_PRISTINE_SHIP_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to ships without D-mods.
+effect|DAMAGE_TO_SLOWER_SHIP_PERCENT|1.0	0	<good>1%</good> increased damage to ships with a lower top speed than this one.
+effect|DAMAGE_TO_SLOWER_SHIP_PERCENT|10.0	0	<good>10%</good> increased damage to ships with a lower top speed than this one.
+effect|DAMAGE_TO_SLOWER_SHIP_PERCENT|12.5	0	<good>12.5%</good> increased damage to ships with a lower top speed than this one.
+effect|DAMAGE_TO_SLOWER_SHIP_PERCENT|100.0	0	<good>100%</good> increased damage to ships with a lower top speed than this one.
+effect|DAMAGE_TO_SLOWER_SHIP_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to ships with a lower top speed than this one.
+effect|DAMAGE_TO_SLOWER_SHIP_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to ships with a lower top speed than this one.
 effect|DEATH_ON_COLLISION|1.0	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
 effect|DEATH_ON_COLLISION|10.0	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
 effect|DEATH_ON_COLLISION|12.5	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
@@ -706,12 +748,24 @@ effect|ELECTRONIC_WARFARE_PENALTY_PERCENT|12.5	1	<good>12.5%</good> increased el
 effect|ELECTRONIC_WARFARE_PENALTY_PERCENT|100.0	1	<good>100%</good> increased electronic warfare penalty against this ship's weapon range.
 effect|ELECTRONIC_WARFARE_PENALTY_PERCENT|-10.0	1	<bad>10%</bad> reduced electronic warfare penalty against this ship's weapon range.
 effect|ELECTRONIC_WARFARE_PENALTY_PERCENT|-12.5	1	<bad>12.5%</bad> reduced electronic warfare penalty against this ship's weapon range.
+effect|EMP_ARC_STRIKE_SPEED_PERCENT|1.0	0	<good>1%</good> increased top speed and maneuverability for 3 seconds after an EMP arc strikes this ship.
+effect|EMP_ARC_STRIKE_SPEED_PERCENT|10.0	0	<good>10%</good> increased top speed and maneuverability for 3 seconds after an EMP arc strikes this ship.
+effect|EMP_ARC_STRIKE_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased top speed and maneuverability for 3 seconds after an EMP arc strikes this ship.
+effect|EMP_ARC_STRIKE_SPEED_PERCENT|100.0	0	<good>100%</good> increased top speed and maneuverability for 3 seconds after an EMP arc strikes this ship.
+effect|EMP_ARC_STRIKE_SPEED_PERCENT|-10.0	0	<good>-10%</good> increased top speed and maneuverability for 3 seconds after an EMP arc strikes this ship.
+effect|EMP_ARC_STRIKE_SPEED_PERCENT|-12.5	0	<good>-12.5%</good> increased top speed and maneuverability for 3 seconds after an EMP arc strikes this ship.
 effect|EMP_DAMAGE_PERCENT|1.0	0	<good>1%</good> more EMP damage.
 effect|EMP_DAMAGE_PERCENT|10.0	0	<good>10%</good> more EMP damage.
 effect|EMP_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> more EMP damage.
 effect|EMP_DAMAGE_PERCENT|100.0	0	<good>100%</good> more EMP damage.
 effect|EMP_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> more EMP damage.
 effect|EMP_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> more EMP damage.
+effect|EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT|1.0	0	Taking EMP damage vents hard flux equal to <good>1%</good> of that EMP damage.
+effect|EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT|10.0	0	Taking EMP damage vents hard flux equal to <good>10%</good> of that EMP damage.
+effect|EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT|12.5	0	Taking EMP damage vents hard flux equal to <good>12.5%</good> of that EMP damage.
+effect|EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT|100.0	0	Taking EMP damage vents hard flux equal to <good>100%</good> of that EMP damage.
+effect|EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT|-10.0	0	Taking EMP damage vents hard flux equal to <good>-10%</good> of that EMP damage.
+effect|EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT|-12.5	0	Taking EMP damage vents hard flux equal to <good>-12.5%</good> of that EMP damage.
 effect|EMP_DAMAGE_TAKEN_MULT|1.0	1	<good>1%</good> more EMP damage taken.
 effect|EMP_DAMAGE_TAKEN_MULT|10.0	1	<good>10%</good> more EMP damage taken.
 effect|EMP_DAMAGE_TAKEN_MULT|12.5	1	<good>12.5%</good> more EMP damage taken.
@@ -982,12 +1036,24 @@ effect|FIGHTER_REPLACEMENT_RATE_MULT|12.5	0	The strikecraft replacement rate bot
 effect|FIGHTER_REPLACEMENT_RATE_MULT|100.0	0	The strikecraft replacement rate both decays and recovers <bad>100%</bad> more slowly.
 effect|FIGHTER_REPLACEMENT_RATE_MULT|-10.0	0	The strikecraft replacement rate both decays and recovers <good>10%</good> more quickly.
 effect|FIGHTER_REPLACEMENT_RATE_MULT|-12.5	0	The strikecraft replacement rate both decays and recovers <good>12.5%</good> more quickly.
+effect|FIGHTER_REPLACEMENT_RATE_RESTORED_BY_FRAGMENTS_PERCENT|1.0	0	Each time a strikecraft is replaced, this ship's Fragment Swarm spends 5 fragments, if it has them, to restore <good>1%</good> of the strikecraft replacement rate lost.
+effect|FIGHTER_REPLACEMENT_RATE_RESTORED_BY_FRAGMENTS_PERCENT|10.0	0	Each time a strikecraft is replaced, this ship's Fragment Swarm spends 5 fragments, if it has them, to restore <good>10%</good> of the strikecraft replacement rate lost.
+effect|FIGHTER_REPLACEMENT_RATE_RESTORED_BY_FRAGMENTS_PERCENT|12.5	0	Each time a strikecraft is replaced, this ship's Fragment Swarm spends 5 fragments, if it has them, to restore <good>12.5%</good> of the strikecraft replacement rate lost.
+effect|FIGHTER_REPLACEMENT_RATE_RESTORED_BY_FRAGMENTS_PERCENT|100.0	0	Each time a strikecraft is replaced, this ship's Fragment Swarm spends 5 fragments, if it has them, to restore <good>100%</good> of the strikecraft replacement rate lost.
+effect|FIGHTER_REPLACEMENT_RATE_RESTORED_BY_FRAGMENTS_PERCENT|-10.0	0	Each time a strikecraft is replaced, this ship's Fragment Swarm spends 5 fragments, if it has them, to restore <good>-10%</good> of the strikecraft replacement rate lost.
+effect|FIGHTER_REPLACEMENT_RATE_RESTORED_BY_FRAGMENTS_PERCENT|-12.5	0	Each time a strikecraft is replaced, this ship's Fragment Swarm spends 5 fragments, if it has them, to restore <good>-12.5%</good> of the strikecraft replacement rate lost.
 effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|1.0	0	<good>1%</good> increased rate at which the strikecraft replacement rate recovers.
 effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|10.0	0	<good>10%</good> increased rate at which the strikecraft replacement rate recovers.
 effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|12.5	0	<good>12.5%</good> increased rate at which the strikecraft replacement rate recovers.
 effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|100.0	0	<good>100%</good> increased rate at which the strikecraft replacement rate recovers.
 effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|-10.0	0	<bad>10%</bad> reduced rate at which the strikecraft replacement rate recovers.
 effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|-12.5	0	<bad>12.5%</bad> reduced rate at which the strikecraft replacement rate recovers.
+effect|FIGHTER_REPLACEMENT_RECOVERY_WHILE_REGROUPING_PERCENT|1.0	0	<good>1%</good> increased rate at which the strikecraft replacement rate recovers while strikecraft regroup.
+effect|FIGHTER_REPLACEMENT_RECOVERY_WHILE_REGROUPING_PERCENT|10.0	0	<good>10%</good> increased rate at which the strikecraft replacement rate recovers while strikecraft regroup.
+effect|FIGHTER_REPLACEMENT_RECOVERY_WHILE_REGROUPING_PERCENT|12.5	0	<good>12.5%</good> increased rate at which the strikecraft replacement rate recovers while strikecraft regroup.
+effect|FIGHTER_REPLACEMENT_RECOVERY_WHILE_REGROUPING_PERCENT|100.0	0	<good>100%</good> increased rate at which the strikecraft replacement rate recovers while strikecraft regroup.
+effect|FIGHTER_REPLACEMENT_RECOVERY_WHILE_REGROUPING_PERCENT|-10.0	0	<bad>10%</bad> reduced rate at which the strikecraft replacement rate recovers while strikecraft regroup.
+effect|FIGHTER_REPLACEMENT_RECOVERY_WHILE_REGROUPING_PERCENT|-12.5	0	<bad>12.5%</bad> reduced rate at which the strikecraft replacement rate recovers while strikecraft regroup.
 effect|FIGHTER_ROLE_ARMOR_PERCENT|1.0	0	Fighters launched from this ship have <good>1%</good> increased armor.
 effect|FIGHTER_ROLE_ARMOR_PERCENT|10.0	0	Fighters launched from this ship have <good>10%</good> increased armor.
 effect|FIGHTER_ROLE_ARMOR_PERCENT|12.5	0	Fighters launched from this ship have <good>12.5%</good> increased armor.
@@ -1102,6 +1168,12 @@ effect|FLUX_DISSIPATION_MULT|12.5	0	<good>12.5%</good> more flux dissipation.
 effect|FLUX_DISSIPATION_MULT|100.0	0	<good>100%</good> more flux dissipation.
 effect|FLUX_DISSIPATION_MULT|-10.0	0	<bad>10%</bad> less flux dissipation.
 effect|FLUX_DISSIPATION_MULT|-12.5	0	<bad>12.5%</bad> less flux dissipation.
+effect|FLUX_DISSIPATION_MULT_PER_DMOD|1.0	0	<good>1%</good> more flux dissipation per D-mod, up to 5 D-mods.
+effect|FLUX_DISSIPATION_MULT_PER_DMOD|10.0	0	<good>10%</good> more flux dissipation per D-mod, up to 5 D-mods.
+effect|FLUX_DISSIPATION_MULT_PER_DMOD|12.5	0	<good>12.5%</good> more flux dissipation per D-mod, up to 5 D-mods.
+effect|FLUX_DISSIPATION_MULT_PER_DMOD|100.0	0	<good>100%</good> more flux dissipation per D-mod, up to 5 D-mods.
+effect|FLUX_DISSIPATION_MULT_PER_DMOD|-10.0	0	<bad>10%</bad> less flux dissipation per D-mod, up to 5 D-mods.
+effect|FLUX_DISSIPATION_MULT_PER_DMOD|-12.5	0	<bad>12.5%</bad> less flux dissipation per D-mod, up to 5 D-mods.
 effect|FLUX_DISSIPATION_PERCENT|1.0	0	<good>1%</good> increased flux dissipation.
 effect|FLUX_DISSIPATION_PERCENT|10.0	0	<good>10%</good> increased flux dissipation.
 effect|FLUX_DISSIPATION_PERCENT|12.5	0	<good>12.5%</good> increased flux dissipation.
@@ -1132,6 +1204,12 @@ effect|FLUX_DISSIPATION_WHILE_VENTING_PERCENT|12.5	0	<good>12.5%</good> increase
 effect|FLUX_DISSIPATION_WHILE_VENTING_PERCENT|100.0	0	<good>100%</good> increased flux dissipation rate while venting.
 effect|FLUX_DISSIPATION_WHILE_VENTING_PERCENT|-10.0	0	<bad>10%</bad> reduced flux dissipation rate while venting.
 effect|FLUX_DISSIPATION_WHILE_VENTING_PERCENT|-12.5	0	<bad>12.5%</bad> reduced flux dissipation rate while venting.
+effect|FLUX_DISSIPATION_WITHOUT_HARD_FLUX_PERCENT|1.0	0	<good>1%</good> increased flux dissipation while this ship has no hard flux.
+effect|FLUX_DISSIPATION_WITHOUT_HARD_FLUX_PERCENT|10.0	0	<good>10%</good> increased flux dissipation while this ship has no hard flux.
+effect|FLUX_DISSIPATION_WITHOUT_HARD_FLUX_PERCENT|12.5	0	<good>12.5%</good> increased flux dissipation while this ship has no hard flux.
+effect|FLUX_DISSIPATION_WITHOUT_HARD_FLUX_PERCENT|100.0	0	<good>100%</good> increased flux dissipation while this ship has no hard flux.
+effect|FLUX_DISSIPATION_WITHOUT_HARD_FLUX_PERCENT|-10.0	0	<bad>10%</bad> reduced flux dissipation while this ship has no hard flux.
+effect|FLUX_DISSIPATION_WITHOUT_HARD_FLUX_PERCENT|-12.5	0	<bad>12.5%</bad> reduced flux dissipation while this ship has no hard flux.
 effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased fragmentation damage taken.
 effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased fragmentation damage taken.
 effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased fragmentation damage taken.
@@ -1144,12 +1222,30 @@ effect|FRAGMENT_REPLACEMENT_RATE_PERCENT|12.5	0	<good>12.5%</good> increased fra
 effect|FRAGMENT_REPLACEMENT_RATE_PERCENT|100.0	0	<good>100%</good> increased fragment replacement rate.
 effect|FRAGMENT_REPLACEMENT_RATE_PERCENT|-10.0	0	<bad>10%</bad> reduced fragment replacement rate.
 effect|FRAGMENT_REPLACEMENT_RATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced fragment replacement rate.
+effect|FRAGMENT_REPLACEMENT_RATE_PERCENT_PER_AFFINITY|1.0	0	<good>1%</good> increased fragment replacement rate for every 5 affinity.
+effect|FRAGMENT_REPLACEMENT_RATE_PERCENT_PER_AFFINITY|10.0	0	<good>10%</good> increased fragment replacement rate for every 5 affinity.
+effect|FRAGMENT_REPLACEMENT_RATE_PERCENT_PER_AFFINITY|12.5	0	<good>12.5%</good> increased fragment replacement rate for every 5 affinity.
+effect|FRAGMENT_REPLACEMENT_RATE_PERCENT_PER_AFFINITY|100.0	0	<good>100%</good> increased fragment replacement rate for every 5 affinity.
+effect|FRAGMENT_REPLACEMENT_RATE_PERCENT_PER_AFFINITY|-10.0	0	<bad>10%</bad> reduced fragment replacement rate for every 5 affinity.
+effect|FRAGMENT_REPLACEMENT_RATE_PERCENT_PER_AFFINITY|-12.5	0	<bad>12.5%</bad> reduced fragment replacement rate for every 5 affinity.
 effect|FRAGMENT_SWARM_SIZE_PERCENT|1.0	0	<good>1%</good> increased fragment swarm size.
 effect|FRAGMENT_SWARM_SIZE_PERCENT|10.0	0	<good>10%</good> increased fragment swarm size.
 effect|FRAGMENT_SWARM_SIZE_PERCENT|12.5	0	<good>12.5%</good> increased fragment swarm size.
 effect|FRAGMENT_SWARM_SIZE_PERCENT|100.0	0	<good>100%</good> increased fragment swarm size.
 effect|FRAGMENT_SWARM_SIZE_PERCENT|-10.0	0	<bad>10%</bad> reduced fragment swarm size.
 effect|FRAGMENT_SWARM_SIZE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced fragment swarm size.
+effect|FRAGMENT_SWARM_SIZE_PERCENT_PER_AFFINITY|1.0	0	<good>1%</good> increased fragment swarm size for every 5 affinity.
+effect|FRAGMENT_SWARM_SIZE_PERCENT_PER_AFFINITY|10.0	0	<good>10%</good> increased fragment swarm size for every 5 affinity.
+effect|FRAGMENT_SWARM_SIZE_PERCENT_PER_AFFINITY|12.5	0	<good>12.5%</good> increased fragment swarm size for every 5 affinity.
+effect|FRAGMENT_SWARM_SIZE_PERCENT_PER_AFFINITY|100.0	0	<good>100%</good> increased fragment swarm size for every 5 affinity.
+effect|FRAGMENT_SWARM_SIZE_PERCENT_PER_AFFINITY|-10.0	0	<bad>10%</bad> reduced fragment swarm size for every 5 affinity.
+effect|FRAGMENT_SWARM_SIZE_PERCENT_PER_AFFINITY|-12.5	0	<bad>12.5%</bad> reduced fragment swarm size for every 5 affinity.
+effect|FUEL_AND_SUPPLY_USE_MULT_PER_DMOD|1.0	1	<good>1%</good> more fuel and supply use per D-mod, up to 5 D-mods.
+effect|FUEL_AND_SUPPLY_USE_MULT_PER_DMOD|10.0	1	<good>10%</good> more fuel and supply use per D-mod, up to 5 D-mods.
+effect|FUEL_AND_SUPPLY_USE_MULT_PER_DMOD|12.5	1	<good>12.5%</good> more fuel and supply use per D-mod, up to 5 D-mods.
+effect|FUEL_AND_SUPPLY_USE_MULT_PER_DMOD|100.0	1	<good>100%</good> more fuel and supply use per D-mod, up to 5 D-mods.
+effect|FUEL_AND_SUPPLY_USE_MULT_PER_DMOD|-10.0	1	<bad>10%</bad> less fuel and supply use per D-mod, up to 5 D-mods.
+effect|FUEL_AND_SUPPLY_USE_MULT_PER_DMOD|-12.5	1	<bad>12.5%</bad> less fuel and supply use per D-mod, up to 5 D-mods.
 effect|FUEL_CAPACITY_FLAT|1.0	0	<good>+1</good> to fuel capacity.
 effect|FUEL_CAPACITY_FLAT|10.0	0	<good>+10</good> to fuel capacity.
 effect|FUEL_CAPACITY_FLAT|12.5	0	<good>+12.5</good> to fuel capacity.
@@ -1198,6 +1294,12 @@ effect|GATES_RADIUS_WHILE_SYSTEM_ACTIVE|12.5	0	Allocated nodes in its radius app
 effect|GATES_RADIUS_WHILE_SYSTEM_ACTIVE|100.0	0	Allocated nodes in its radius apply only while the ship system is active, at <good>100</good> times their strength. Their effects that aren't read live in combat are ignored.
 effect|GATES_RADIUS_WHILE_SYSTEM_ACTIVE|-10.0	0	Allocated nodes in its radius apply only while the ship system is active, at <good>-10</good> times their strength. Their effects that aren't read live in combat are ignored.
 effect|GATES_RADIUS_WHILE_SYSTEM_ACTIVE|-12.5	0	Allocated nodes in its radius apply only while the ship system is active, at <good>-12.5</good> times their strength. Their effects that aren't read live in combat are ignored.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|1.0	0	While this ship is phased, enemy ships within 1500 su have up to <good>1%</good> less timeflow, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|10.0	0	While this ship is phased, enemy ships within 1500 su have up to <good>10%</good> less timeflow, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|12.5	0	While this ship is phased, enemy ships within 1500 su have up to <good>12.5%</good> less timeflow, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|100.0	0	While this ship is phased, enemy ships within 1500 su have up to <good>100%</good> less timeflow, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|-10.0	0	While this ship is phased, enemy ships within 1500 su have up to <good>-10%</good> less timeflow, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|-12.5	0	While this ship is phased, enemy ships within 1500 su have up to <good>-12.5%</good> less timeflow, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
 effect|GRAVITY_DRAG_TIMEFLOW_PERCENT|1.0	0	Enemy ships within 1500 su have up to <good>1%</good> less timeflow, strongest at close range, or up to <good>2%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
 effect|GRAVITY_DRAG_TIMEFLOW_PERCENT|10.0	0	Enemy ships within 1500 su have up to <good>10%</good> less timeflow, strongest at close range, or up to <good>20%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
 effect|GRAVITY_DRAG_TIMEFLOW_PERCENT|12.5	0	Enemy ships within 1500 su have up to <good>12.5%</good> less timeflow, strongest at close range, or up to <good>25%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
@@ -1318,6 +1420,12 @@ effect|HOLD_FIRE_SHIELD_DAMAGE_REDUCTION_PERCENT|12.5	0	Up to <good>12.5%</good>
 effect|HOLD_FIRE_SHIELD_DAMAGE_REDUCTION_PERCENT|100.0	0	Up to <good>100%</good> reduced damage taken by shields, building up over 3 seconds while no weapons fire and fading over 3 seconds while any do.
 effect|HOLD_FIRE_SHIELD_DAMAGE_REDUCTION_PERCENT|-10.0	0	Up to <good>-10%</good> reduced damage taken by shields, building up over 3 seconds while no weapons fire and fading over 3 seconds while any do.
 effect|HOLD_FIRE_SHIELD_DAMAGE_REDUCTION_PERCENT|-12.5	0	Up to <good>-12.5%</good> reduced damage taken by shields, building up over 3 seconds while no weapons fire and fading over 3 seconds while any do.
+effect|HULL_DAMAGE_FRAGMENT_REGROWTH_FLAT|1.0	0	Every 300 hull damage this ship deals to enemy ships regrows <good>1</good> of its Fragment Swarm's fragments, up to the swarm's full size.
+effect|HULL_DAMAGE_FRAGMENT_REGROWTH_FLAT|10.0	0	Every 300 hull damage this ship deals to enemy ships regrows <good>10</good> of its Fragment Swarm's fragments, up to the swarm's full size.
+effect|HULL_DAMAGE_FRAGMENT_REGROWTH_FLAT|12.5	0	Every 300 hull damage this ship deals to enemy ships regrows <good>12.5</good> of its Fragment Swarm's fragments, up to the swarm's full size.
+effect|HULL_DAMAGE_FRAGMENT_REGROWTH_FLAT|100.0	0	Every 300 hull damage this ship deals to enemy ships regrows <good>100</good> of its Fragment Swarm's fragments, up to the swarm's full size.
+effect|HULL_DAMAGE_FRAGMENT_REGROWTH_FLAT|-10.0	0	Every 300 hull damage this ship deals to enemy ships regrows <good>-10</good> of its Fragment Swarm's fragments, up to the swarm's full size.
+effect|HULL_DAMAGE_FRAGMENT_REGROWTH_FLAT|-12.5	0	Every 300 hull damage this ship deals to enemy ships regrows <good>-12.5</good> of its Fragment Swarm's fragments, up to the swarm's full size.
 effect|HULL_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased hull damage taken.
 effect|HULL_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased hull damage taken.
 effect|HULL_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased hull damage taken.
@@ -1498,6 +1606,12 @@ effect|MIN_CREW_PER_FIGHTER_BAY|12.5	1	<good>+12.5</good> to minimum crew requir
 effect|MIN_CREW_PER_FIGHTER_BAY|100.0	1	<good>+100</good> to minimum crew required per strikecraft bay.
 effect|MIN_CREW_PER_FIGHTER_BAY|-10.0	1	<bad>-10</bad> to minimum crew required per strikecraft bay.
 effect|MIN_CREW_PER_FIGHTER_BAY|-12.5	1	<bad>-12.5</bad> to minimum crew required per strikecraft bay.
+effect|MISSILE_EJECTION_CHANCE_PERCENT|1.0	0	<good>1%</good> chance for missiles about to hit armor or hull to be ejected into p-space, dealing no damage.
+effect|MISSILE_EJECTION_CHANCE_PERCENT|10.0	0	<good>10%</good> chance for missiles about to hit armor or hull to be ejected into p-space, dealing no damage.
+effect|MISSILE_EJECTION_CHANCE_PERCENT|12.5	0	<good>12.5%</good> chance for missiles about to hit armor or hull to be ejected into p-space, dealing no damage.
+effect|MISSILE_EJECTION_CHANCE_PERCENT|100.0	0	<good>100%</good> chance for missiles about to hit armor or hull to be ejected into p-space, dealing no damage.
+effect|MISSILE_EJECTION_CHANCE_PERCENT|-10.0	0	<good>-10%</good> chance for missiles about to hit armor or hull to be ejected into p-space, dealing no damage.
+effect|MISSILE_EJECTION_CHANCE_PERCENT|-12.5	0	<good>-12.5%</good> chance for missiles about to hit armor or hull to be ejected into p-space, dealing no damage.
 effect|MISSILE_RELOAD_PERCENT_PER_MINUTE|1.0	0	Missile weapons that cannot regenerate ammo reload <good>1%</good> of their base ammo every minute in combat.
 effect|MISSILE_RELOAD_PERCENT_PER_MINUTE|10.0	0	Missile weapons that cannot regenerate ammo reload <good>10%</good> of their base ammo every minute in combat.
 effect|MISSILE_RELOAD_PERCENT_PER_MINUTE|12.5	0	Missile weapons that cannot regenerate ammo reload <good>12.5%</good> of their base ammo every minute in combat.
@@ -1714,6 +1828,12 @@ effect|MOVE_SLOW_BURN_LEVEL_FLAT|12.5	0	Your fleet has <good>+12.5</good> to the
 effect|MOVE_SLOW_BURN_LEVEL_FLAT|100.0	0	Your fleet has <good>+100</good> to the burn level at which it counts as moving slowly, up to a maximum of +6.
 effect|MOVE_SLOW_BURN_LEVEL_FLAT|-10.0	0	Your fleet has <good>+-10</good> to the burn level at which it counts as moving slowly, up to a maximum of +6.
 effect|MOVE_SLOW_BURN_LEVEL_FLAT|-12.5	0	Your fleet has <good>+-12.5</good> to the burn level at which it counts as moving slowly, up to a maximum of +6.
+effect|MOVE_SLOW_SUPPLY_USE_MULT|1.0	1	Your fleet has <good>1%</good> more supply use for maintenance while moving slowly. Only the strongest applies.
+effect|MOVE_SLOW_SUPPLY_USE_MULT|10.0	1	Your fleet has <good>10%</good> more supply use for maintenance while moving slowly. Only the strongest applies.
+effect|MOVE_SLOW_SUPPLY_USE_MULT|12.5	1	Your fleet has <good>12.5%</good> more supply use for maintenance while moving slowly. Only the strongest applies.
+effect|MOVE_SLOW_SUPPLY_USE_MULT|100.0	1	Your fleet has <good>100%</good> more supply use for maintenance while moving slowly. Only the strongest applies.
+effect|MOVE_SLOW_SUPPLY_USE_MULT|-10.0	1	Your fleet has <bad>10%</bad> less supply use for maintenance while moving slowly. Only the strongest applies.
+effect|MOVE_SLOW_SUPPLY_USE_MULT|-12.5	1	Your fleet has <bad>12.5%</bad> less supply use for maintenance while moving slowly. Only the strongest applies.
 effect|NANOFORGE_HULL_REGEN_PERCENT|1.0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 effect|NANOFORGE_HULL_REGEN_PERCENT|10.0	0	After 5 seconds without taking hull damage, repairs 10% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 effect|NANOFORGE_HULL_REGEN_PERCENT|12.5	0	After 5 seconds without taking hull damage, repairs 12.5% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
@@ -1732,6 +1852,18 @@ effect|NAV_RATING_PER_HIGH_TECH_AFFINITY|12.5	0	Your fleet has <good>+12.5</good
 effect|NAV_RATING_PER_HIGH_TECH_AFFINITY|100.0	0	Your fleet has <good>+100</good> to nav rating for every 50 High Tech Affinity.
 effect|NAV_RATING_PER_HIGH_TECH_AFFINITY|-10.0	0	Your fleet has <bad>-10</bad> to nav rating for every 50 High Tech Affinity.
 effect|NAV_RATING_PER_HIGH_TECH_AFFINITY|-12.5	0	Your fleet has <bad>-12.5</bad> to nav rating for every 50 High Tech Affinity.
+effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|1.0	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>1%</good> of this ship's total armor per battle.
+effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|10.0	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>10%</good> of this ship's total armor per battle.
+effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|12.5	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>12.5%</good> of this ship's total armor per battle.
+effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|100.0	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>100%</good> of this ship's total armor per battle.
+effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|-10.0	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>-10%</good> of this ship's total armor per battle.
+effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|-12.5	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>-12.5%</good> of this ship's total armor per battle.
+effect|NEARBY_DESTRUCTION_REPLACEMENT_RATE_PERCENT|1.0	0	<good>+1%</good> to strikecraft replacement rate whenever an enemy ship is destroyed within 1500 su.
+effect|NEARBY_DESTRUCTION_REPLACEMENT_RATE_PERCENT|10.0	0	<good>+10%</good> to strikecraft replacement rate whenever an enemy ship is destroyed within 1500 su.
+effect|NEARBY_DESTRUCTION_REPLACEMENT_RATE_PERCENT|12.5	0	<good>+12.5%</good> to strikecraft replacement rate whenever an enemy ship is destroyed within 1500 su.
+effect|NEARBY_DESTRUCTION_REPLACEMENT_RATE_PERCENT|100.0	0	<good>+100%</good> to strikecraft replacement rate whenever an enemy ship is destroyed within 1500 su.
+effect|NEARBY_DESTRUCTION_REPLACEMENT_RATE_PERCENT|-10.0	0	<good>+-10%</good> to strikecraft replacement rate whenever an enemy ship is destroyed within 1500 su.
+effect|NEARBY_DESTRUCTION_REPLACEMENT_RATE_PERCENT|-12.5	0	<good>+-12.5%</good> to strikecraft replacement rate whenever an enemy ship is destroyed within 1500 su.
 effect|NON_BEAM_ENERGY_WEAPON_AMMO_FLAT|1.0	0	<good>+1</good> to non-beam energy weapon ammo capacity. The refit screen's weapon tooltips don't show this.
 effect|NON_BEAM_ENERGY_WEAPON_AMMO_FLAT|10.0	0	<good>+10</good> to non-beam energy weapon ammo capacity. The refit screen's weapon tooltips don't show this.
 effect|NON_BEAM_ENERGY_WEAPON_AMMO_FLAT|12.5	0	<good>+12.5</good> to non-beam energy weapon ammo capacity. The refit screen's weapon tooltips don't show this.
@@ -1846,6 +1978,12 @@ effect|NON_MISSILE_WEAPON_RANGE_CAP_FLAT|12.5	0	Non-missile weapon range can't e
 effect|NON_MISSILE_WEAPON_RANGE_CAP_FLAT|100.0	0	Non-missile weapon range can't exceed <bad>100</bad> su.
 effect|NON_MISSILE_WEAPON_RANGE_CAP_FLAT|-10.0	0	Non-missile weapon range can't exceed <bad>-10</bad> su.
 effect|NON_MISSILE_WEAPON_RANGE_CAP_FLAT|-12.5	0	Non-missile weapon range can't exceed <bad>-12.5</bad> su.
+effect|NO_PHASE_UPKEEP_NEAR_WRECK_RANGE|1.0	0	No phase cloak flux upkeep while within <good>1</good> su of a wreck.
+effect|NO_PHASE_UPKEEP_NEAR_WRECK_RANGE|10.0	0	No phase cloak flux upkeep while within <good>10</good> su of a wreck.
+effect|NO_PHASE_UPKEEP_NEAR_WRECK_RANGE|12.5	0	No phase cloak flux upkeep while within <good>12.5</good> su of a wreck.
+effect|NO_PHASE_UPKEEP_NEAR_WRECK_RANGE|100.0	0	No phase cloak flux upkeep while within <good>100</good> su of a wreck.
+effect|NO_PHASE_UPKEEP_NEAR_WRECK_RANGE|-10.0	0	No phase cloak flux upkeep while within <good>-10</good> su of a wreck.
+effect|NO_PHASE_UPKEEP_NEAR_WRECK_RANGE|-12.5	0	No phase cloak flux upkeep while within <good>-12.5</good> su of a wreck.
 effect|OBJECTIVE_CAPTURE_RANGE_FLAT|1.0	0	<good>+1</good> to range from which combat objectives can be captured.
 effect|OBJECTIVE_CAPTURE_RANGE_FLAT|10.0	0	<good>+10</good> to range from which combat objectives can be captured.
 effect|OBJECTIVE_CAPTURE_RANGE_FLAT|12.5	0	<good>+12.5</good> to range from which combat objectives can be captured.
@@ -1864,6 +2002,12 @@ effect|OPENING_WEAPON_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased weapon 
 effect|OPENING_WEAPON_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased weapon damage for the first 30 seconds after this ship deploys.
 effect|OPENING_WEAPON_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> increased weapon damage for the first 30 seconds after this ship deploys.
 effect|OPENING_WEAPON_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> increased weapon damage for the first 30 seconds after this ship deploys.
+effect|OVERLOAD_DURATION_PERCENT|1.0	1	<good>1%</good> increased overload duration.
+effect|OVERLOAD_DURATION_PERCENT|10.0	1	<good>10%</good> increased overload duration.
+effect|OVERLOAD_DURATION_PERCENT|12.5	1	<good>12.5%</good> increased overload duration.
+effect|OVERLOAD_DURATION_PERCENT|100.0	1	<good>100%</good> increased overload duration.
+effect|OVERLOAD_DURATION_PERCENT|-10.0	1	<bad>10%</bad> reduced overload duration.
+effect|OVERLOAD_DURATION_PERCENT|-12.5	1	<bad>12.5%</bad> reduced overload duration.
 effect|PD_BEST_TARGET_LEADING|1.0	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 effect|PD_BEST_TARGET_LEADING|10.0	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 effect|PD_BEST_TARGET_LEADING|12.5	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
@@ -1900,6 +2044,12 @@ effect|PEAK_CR_DURATION_PERCENT|12.5	0	<good>12.5%</good> increased peak combat 
 effect|PEAK_CR_DURATION_PERCENT|100.0	0	<good>100%</good> increased peak combat readiness duration.
 effect|PEAK_CR_DURATION_PERCENT|-10.0	0	<bad>10%</bad> reduced peak combat readiness duration.
 effect|PEAK_CR_DURATION_PERCENT|-12.5	0	<bad>12.5%</bad> reduced peak combat readiness duration.
+effect|PEAK_TIME_PAUSED_WHILE_PHASED|1.0	0	The peak combat readiness timer pauses while phased.
+effect|PEAK_TIME_PAUSED_WHILE_PHASED|10.0	0	The peak combat readiness timer pauses while phased.
+effect|PEAK_TIME_PAUSED_WHILE_PHASED|12.5	0	The peak combat readiness timer pauses while phased.
+effect|PEAK_TIME_PAUSED_WHILE_PHASED|100.0	0	The peak combat readiness timer pauses while phased.
+effect|PEAK_TIME_PAUSED_WHILE_PHASED|-10.0	0	The peak combat readiness timer pauses while phased.
+effect|PEAK_TIME_PAUSED_WHILE_PHASED|-12.5	0	The peak combat readiness timer pauses while phased.
 effect|PHASE_ANCHOR_EMERGENCY_DIVE|1.0	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 1% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
 effect|PHASE_ANCHOR_EMERGENCY_DIVE|10.0	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 10% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
 effect|PHASE_ANCHOR_EMERGENCY_DIVE|12.5	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 12.5% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
@@ -1948,6 +2098,12 @@ effect|PHASE_ENTRY_HARD_FLUX_TO_SOFT_PERCENT|12.5	0	When this ship enters phase,
 effect|PHASE_ENTRY_HARD_FLUX_TO_SOFT_PERCENT|100.0	0	When this ship enters phase, <good>100%</good> of its hard flux is converted to soft flux.
 effect|PHASE_ENTRY_HARD_FLUX_TO_SOFT_PERCENT|-10.0	0	When this ship enters phase, <good>-10%</good> of its hard flux is converted to soft flux.
 effect|PHASE_ENTRY_HARD_FLUX_TO_SOFT_PERCENT|-12.5	0	When this ship enters phase, <good>-12.5%</good> of its hard flux is converted to soft flux.
+effect|PHASE_EXIT_EMP_ARCS_FLAT|1.0	0	When this ship leaves phase, it discharges <good>1</good> EMP arc at the nearest enemy ship within 600 su, dealing 100/150/200/300 energy and EMP damage.
+effect|PHASE_EXIT_EMP_ARCS_FLAT|10.0	0	When this ship leaves phase, it discharges <good>10</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
+effect|PHASE_EXIT_EMP_ARCS_FLAT|12.5	0	When this ship leaves phase, it discharges <good>12.5</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
+effect|PHASE_EXIT_EMP_ARCS_FLAT|100.0	0	When this ship leaves phase, it discharges <good>100</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
+effect|PHASE_EXIT_EMP_ARCS_FLAT|-10.0	0	When this ship leaves phase, it discharges <good>-10</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
+effect|PHASE_EXIT_EMP_ARCS_FLAT|-12.5	0	When this ship leaves phase, it discharges <good>-12.5</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|1.0	0	1% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|10.0	0	10% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|12.5	0	12.5% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
@@ -1972,12 +2128,24 @@ effect|PHASE_TOP_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased top speed whi
 effect|PHASE_TOP_SPEED_PERCENT|100.0	0	<good>100%</good> increased top speed while phased.
 effect|PHASE_TOP_SPEED_PERCENT|-10.0	0	<bad>10%</bad> reduced top speed while phased.
 effect|PHASE_TOP_SPEED_PERCENT|-12.5	0	<bad>12.5%</bad> reduced top speed while phased.
+effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|1.0	0	While phased, fragments from this ship's Fragment Swarm, or else the nearest allied one within 1000 su, cover <good>1%</good> of phase cloak flux upkeep, spending 1 fragment for every 50 flux covered.
+effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|10.0	0	While phased, fragments from this ship's Fragment Swarm, or else the nearest allied one within 1000 su, cover <good>10%</good> of phase cloak flux upkeep, spending 1 fragment for every 50 flux covered.
+effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|12.5	0	While phased, fragments from this ship's Fragment Swarm, or else the nearest allied one within 1000 su, cover <good>12.5%</good> of phase cloak flux upkeep, spending 1 fragment for every 50 flux covered.
+effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|100.0	0	While phased, fragments from this ship's Fragment Swarm, or else the nearest allied one within 1000 su, cover <good>90%</good> of phase cloak flux upkeep, spending 1 fragment for every 50 flux covered.
+effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|-10.0	0	While phased, fragments from this ship's Fragment Swarm, or else the nearest allied one within 1000 su, cover <good>-10%</good> of phase cloak flux upkeep, spending 1 fragment for every 50 flux covered.
+effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|-12.5	0	While phased, fragments from this ship's Fragment Swarm, or else the nearest allied one within 1000 su, cover <good>-12.5%</good> of phase cloak flux upkeep, spending 1 fragment for every 50 flux covered.
 effect|POST_BATTLE_SALVAGE_PERCENT|1.0	0	Your fleet has <good>1%</good> increased post-battle salvage.
 effect|POST_BATTLE_SALVAGE_PERCENT|10.0	0	Your fleet has <good>10%</good> increased post-battle salvage.
 effect|POST_BATTLE_SALVAGE_PERCENT|12.5	0	Your fleet has <good>12.5%</good> increased post-battle salvage.
 effect|POST_BATTLE_SALVAGE_PERCENT|100.0	0	Your fleet has <good>100%</good> increased post-battle salvage.
 effect|POST_BATTLE_SALVAGE_PERCENT|-10.0	0	Your fleet has <bad>10%</bad> reduced post-battle salvage.
 effect|POST_BATTLE_SALVAGE_PERCENT|-12.5	0	Your fleet has <bad>12.5%</bad> reduced post-battle salvage.
+effect|POST_BATTLE_WEAPON_SALVAGE_PERCENT|1.0	0	Your fleet has <good>1%</good> increased quantity of weapons and strikecraft wings in post-battle salvage.
+effect|POST_BATTLE_WEAPON_SALVAGE_PERCENT|10.0	0	Your fleet has <good>10%</good> increased quantity of weapons and strikecraft wings in post-battle salvage.
+effect|POST_BATTLE_WEAPON_SALVAGE_PERCENT|12.5	0	Your fleet has <good>12.5%</good> increased quantity of weapons and strikecraft wings in post-battle salvage.
+effect|POST_BATTLE_WEAPON_SALVAGE_PERCENT|100.0	0	Your fleet has <good>100%</good> increased quantity of weapons and strikecraft wings in post-battle salvage.
+effect|POST_BATTLE_WEAPON_SALVAGE_PERCENT|-10.0	0	Your fleet has <bad>10%</bad> reduced quantity of weapons and strikecraft wings in post-battle salvage.
+effect|POST_BATTLE_WEAPON_SALVAGE_PERCENT|-12.5	0	Your fleet has <bad>12.5%</bad> reduced quantity of weapons and strikecraft wings in post-battle salvage.
 effect|RAM_BIGGEST_ENEMY|1.0	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
 effect|RAM_BIGGEST_ENEMY|10.0	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
 effect|RAM_BIGGEST_ENEMY|12.5	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
@@ -1990,6 +2158,12 @@ effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> more collisio
 effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|100.0	0	<good>100%</good> more collision damage dealt to enemy ships and <good>100%</good> less collision damage taken.
 effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> more collision damage dealt to enemy ships and <good>-10%</good> less collision damage taken.
 effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> more collision damage dealt to enemy ships and <good>-12.5%</good> less collision damage taken.
+effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|1.0	0	Your fleet has a <good>1%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
+effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|10.0	0	Your fleet has a <good>10%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
+effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|12.5	0	Your fleet has a <good>12.5%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
+effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|100.0	0	Your fleet has a <good>100%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
+effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|-10.0	0	Your fleet has a <good>-10%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
+effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|-12.5	0	Your fleet has a <good>-12.5%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
 effect|REMOVE_ALL_FIGHTER_BAYS|1.0	0	Removes all of this ship's strikecraft bays.
 effect|REMOVE_ALL_FIGHTER_BAYS|10.0	0	Removes all of this ship's strikecraft bays.
 effect|REMOVE_ALL_FIGHTER_BAYS|12.5	0	Removes all of this ship's strikecraft bays.
@@ -2086,6 +2260,12 @@ effect|SENSOR_STRENGTH_PERCENT|12.5	0	<good>12.5%</good> increased this ship's s
 effect|SENSOR_STRENGTH_PERCENT|100.0	0	<good>100%</good> increased this ship's sensor strength.
 effect|SENSOR_STRENGTH_PERCENT|-10.0	0	<bad>10%</bad> reduced this ship's sensor strength.
 effect|SENSOR_STRENGTH_PERCENT|-12.5	0	<bad>12.5%</bad> reduced this ship's sensor strength.
+effect|SENSOR_STRENGTH_PERCENT_PER_FRAGMENT_SWARM|1.0	0	Your fleet has <good>1%</good> increased sensor strength for each ship in it with a Fragment Swarm.
+effect|SENSOR_STRENGTH_PERCENT_PER_FRAGMENT_SWARM|10.0	0	Your fleet has <good>10%</good> increased sensor strength for each ship in it with a Fragment Swarm.
+effect|SENSOR_STRENGTH_PERCENT_PER_FRAGMENT_SWARM|12.5	0	Your fleet has <good>12.5%</good> increased sensor strength for each ship in it with a Fragment Swarm.
+effect|SENSOR_STRENGTH_PERCENT_PER_FRAGMENT_SWARM|100.0	0	Your fleet has <good>100%</good> increased sensor strength for each ship in it with a Fragment Swarm.
+effect|SENSOR_STRENGTH_PERCENT_PER_FRAGMENT_SWARM|-10.0	0	Your fleet has <good>-10%</good> increased sensor strength for each ship in it with a Fragment Swarm.
+effect|SENSOR_STRENGTH_PERCENT_PER_FRAGMENT_SWARM|-12.5	0	Your fleet has <good>-12.5%</good> increased sensor strength for each ship in it with a Fragment Swarm.
 effect|SERAPH_HUNTING_DAMAGE_BONUS_PERCENT|1.0	0	Up to <good>1%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 effect|SERAPH_HUNTING_DAMAGE_BONUS_PERCENT|10.0	0	Up to <good>10%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 effect|SERAPH_HUNTING_DAMAGE_BONUS_PERCENT|12.5	0	Up to <good>12.5%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
@@ -2152,6 +2332,12 @@ effect|SHIELD_ARC_PERCENT|12.5	0	<good>12.5%</good> increased shield arc.
 effect|SHIELD_ARC_PERCENT|100.0	0	<good>100%</good> increased shield arc.
 effect|SHIELD_ARC_PERCENT|-10.0	0	<bad>10%</bad> reduced shield arc.
 effect|SHIELD_ARC_PERCENT|-12.5	0	<bad>12.5%</bad> reduced shield arc.
+effect|SHIELD_DAMAGE_ABSORBED_BY_FRAGMENTS_PERCENT|1.0	0	<good>1%</good> reduced shield damage taken while this ship's Fragment Swarm has fragments, spending 1 fragment for every 30 damage absorbed.
+effect|SHIELD_DAMAGE_ABSORBED_BY_FRAGMENTS_PERCENT|10.0	0	<good>10%</good> reduced shield damage taken while this ship's Fragment Swarm has fragments, spending 1 fragment for every 30 damage absorbed.
+effect|SHIELD_DAMAGE_ABSORBED_BY_FRAGMENTS_PERCENT|12.5	0	<good>12.5%</good> reduced shield damage taken while this ship's Fragment Swarm has fragments, spending 1 fragment for every 30 damage absorbed.
+effect|SHIELD_DAMAGE_ABSORBED_BY_FRAGMENTS_PERCENT|100.0	0	<good>90%</good> reduced shield damage taken while this ship's Fragment Swarm has fragments, spending 1 fragment for every 30 damage absorbed.
+effect|SHIELD_DAMAGE_ABSORBED_BY_FRAGMENTS_PERCENT|-10.0	0	<good>-10%</good> reduced shield damage taken while this ship's Fragment Swarm has fragments, spending 1 fragment for every 30 damage absorbed.
+effect|SHIELD_DAMAGE_ABSORBED_BY_FRAGMENTS_PERCENT|-12.5	0	<good>-12.5%</good> reduced shield damage taken while this ship's Fragment Swarm has fragments, spending 1 fragment for every 30 damage absorbed.
 effect|SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT|1.0	0	<good>1%</good> of shield damage taken is passed to the nearest allied ship within 1000 su as soft flux.
 effect|SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT|10.0	0	<good>10%</good> of shield damage taken is passed to the nearest allied ship within 1000 su as soft flux.
 effect|SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT|12.5	0	<good>12.5%</good> of shield damage taken is passed to the nearest allied ship within 1000 su as soft flux.
@@ -2170,12 +2356,24 @@ effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|12.5	1	<good>12.5%</good> reduced da
 effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|100.0	1	<good>100%</good> reduced damage taken by shields while moving faster than 75% of top speed.
 effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|-10.0	1	<good>10%</good> reduced damage taken by shields while moving faster than 75% of top speed.
 effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|-12.5	1	<good>12.5%</good> reduced damage taken by shields while moving faster than 75% of top speed.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|1.0	0	<good>1%</good> less shield damage taken from automated ships.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|10.0	0	<good>10%</good> less shield damage taken from automated ships.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|12.5	0	<good>12.5%</good> less shield damage taken from automated ships.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|100.0	0	<good>100%</good> less shield damage taken from automated ships.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|-10.0	0	<good>-10%</good> less shield damage taken from automated ships.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|-12.5	0	<good>-12.5%</good> less shield damage taken from automated ships.
 effect|SHIELD_DAMAGE_TAKEN_MULT|1.0	1	<good>1%</good> more damage taken by shields.
 effect|SHIELD_DAMAGE_TAKEN_MULT|10.0	1	<good>10%</good> more damage taken by shields.
 effect|SHIELD_DAMAGE_TAKEN_MULT|12.5	1	<good>12.5%</good> more damage taken by shields.
 effect|SHIELD_DAMAGE_TAKEN_MULT|100.0	1	<good>100%</good> more damage taken by shields.
 effect|SHIELD_DAMAGE_TAKEN_MULT|-10.0	1	<bad>10%</bad> less damage taken by shields.
 effect|SHIELD_DAMAGE_TAKEN_MULT|-12.5	1	<bad>12.5%</bad> less damage taken by shields.
+effect|SHIELD_DEFLECT_CHANCE_PERCENT|1.0	0	<good>1%</good> chance for non-missile projectiles hitting shields to be deflected for no flux.
+effect|SHIELD_DEFLECT_CHANCE_PERCENT|10.0	0	<good>10%</good> chance for non-missile projectiles hitting shields to be deflected for no flux.
+effect|SHIELD_DEFLECT_CHANCE_PERCENT|12.5	0	<good>12.5%</good> chance for non-missile projectiles hitting shields to be deflected for no flux.
+effect|SHIELD_DEFLECT_CHANCE_PERCENT|100.0	0	<good>100%</good> chance for non-missile projectiles hitting shields to be deflected for no flux.
+effect|SHIELD_DEFLECT_CHANCE_PERCENT|-10.0	0	<good>-10%</good> chance for non-missile projectiles hitting shields to be deflected for no flux.
+effect|SHIELD_DEFLECT_CHANCE_PERCENT|-12.5	0	<good>-12.5%</good> chance for non-missile projectiles hitting shields to be deflected for no flux.
 effect|SHIELD_PIERCE_CHANCE_MULT|1.0	1	<good>1%</good> more chance for shields to be pierced by EMP arcs.
 effect|SHIELD_PIERCE_CHANCE_MULT|10.0	1	<good>10%</good> more chance for shields to be pierced by EMP arcs.
 effect|SHIELD_PIERCE_CHANCE_MULT|12.5	1	<good>12.5%</good> more chance for shields to be pierced by EMP arcs.
@@ -2188,6 +2386,12 @@ effect|SHIELD_PIERCE_CHANCE_PERCENT|12.5	1	<good>12.5%</good> increased chance f
 effect|SHIELD_PIERCE_CHANCE_PERCENT|100.0	1	<good>100%</good> increased chance for shields to be pierced by EMP arcs.
 effect|SHIELD_PIERCE_CHANCE_PERCENT|-10.0	1	<bad>10%</bad> reduced chance for shields to be pierced by EMP arcs.
 effect|SHIELD_PIERCE_CHANCE_PERCENT|-12.5	1	<bad>12.5%</bad> reduced chance for shields to be pierced by EMP arcs.
+effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|1.0	1	<bad>1%</bad> increased chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
+effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|10.0	1	<bad>10%</bad> increased chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
+effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|12.5	1	<bad>12.5%</bad> increased chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
+effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|100.0	1	<bad>100%</bad> increased chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
+effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|-10.0	1	<good>10%</good> reduced chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
+effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|-12.5	1	<good>12.5%</good> reduced chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
 effect|SHIELD_RAISE_RATE_PERCENT|1.0	0	<good>1%</good> increased shield raise rate.
 effect|SHIELD_RAISE_RATE_PERCENT|10.0	0	<good>10%</good> increased shield raise rate.
 effect|SHIELD_RAISE_RATE_PERCENT|12.5	0	<good>12.5%</good> increased shield raise rate.
@@ -2206,6 +2410,12 @@ effect|SHIELD_TURN_RATE_PERCENT|12.5	0	<good>12.5%</good> increased shield turn 
 effect|SHIELD_TURN_RATE_PERCENT|100.0	0	<good>100%</good> increased shield turn rate.
 effect|SHIELD_TURN_RATE_PERCENT|-10.0	0	<bad>10%</bad> reduced shield turn rate.
 effect|SHIELD_TURN_RATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced shield turn rate.
+effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|1.0	1	<good>1%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
+effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|10.0	1	<good>10%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
+effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|12.5	1	<good>12.5%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
+effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|100.0	1	<good>100%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
+effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|-10.0	1	<good>10%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
+effect|SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT|-12.5	1	<good>12.5%</good> reduced shield flux upkeep while moving slower than 10% of top speed.
 effect|SHIELD_UPKEEP_MULT|1.0	1	<good>1%</good> more shield flux upkeep.
 effect|SHIELD_UPKEEP_MULT|10.0	1	<good>10%</good> more shield flux upkeep.
 effect|SHIELD_UPKEEP_MULT|12.5	1	<good>12.5%</good> more shield flux upkeep.
@@ -2302,6 +2512,12 @@ effect|STARDUST_MOTE_DAMAGE_FLAT|12.5	0	Every 2 seconds a beam weapon spends on 
 effect|STARDUST_MOTE_DAMAGE_FLAT|100.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>100</good> energy damage and <good>100</good> EMP. At most 20 of this ship's motes fly at once.
 effect|STARDUST_MOTE_DAMAGE_FLAT|-10.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>-10</good> energy damage and <good>-10</good> EMP. At most 20 of this ship's motes fly at once.
 effect|STARDUST_MOTE_DAMAGE_FLAT|-12.5	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>-12.5</good> energy damage and <good>-12.5</good> EMP. At most 20 of this ship's motes fly at once.
+effect|STRIKECRAFT_DAMAGE_PER_LOST_STRIKECRAFT_PERCENT|1.0	0	Strikecraft launched from this ship deal <good>1%</good> increased damage for each strikecraft this ship lost in the last 20 seconds, up to 20 strikecraft.
+effect|STRIKECRAFT_DAMAGE_PER_LOST_STRIKECRAFT_PERCENT|10.0	0	Strikecraft launched from this ship deal <good>10%</good> increased damage for each strikecraft this ship lost in the last 20 seconds, up to 20 strikecraft.
+effect|STRIKECRAFT_DAMAGE_PER_LOST_STRIKECRAFT_PERCENT|12.5	0	Strikecraft launched from this ship deal <good>12.5%</good> increased damage for each strikecraft this ship lost in the last 20 seconds, up to 20 strikecraft.
+effect|STRIKECRAFT_DAMAGE_PER_LOST_STRIKECRAFT_PERCENT|100.0	0	Strikecraft launched from this ship deal <good>100%</good> increased damage for each strikecraft this ship lost in the last 20 seconds, up to 20 strikecraft.
+effect|STRIKECRAFT_DAMAGE_PER_LOST_STRIKECRAFT_PERCENT|-10.0	0	Strikecraft launched from this ship deal <good>-10%</good> increased damage for each strikecraft this ship lost in the last 20 seconds, up to 20 strikecraft.
+effect|STRIKECRAFT_DAMAGE_PER_LOST_STRIKECRAFT_PERCENT|-12.5	0	Strikecraft launched from this ship deal <good>-12.5%</good> increased damage for each strikecraft this ship lost in the last 20 seconds, up to 20 strikecraft.
 effect|STRIKECRAFT_DAMAGE_TO_DAMAGED_SHIPS_PERCENT|1.0	0	Strikecraft launched from this ship deal <good>1%</good> increased damage to ships below 50% hull.
 effect|STRIKECRAFT_DAMAGE_TO_DAMAGED_SHIPS_PERCENT|10.0	0	Strikecraft launched from this ship deal <good>10%</good> increased damage to ships below 50% hull.
 effect|STRIKECRAFT_DAMAGE_TO_DAMAGED_SHIPS_PERCENT|12.5	0	Strikecraft launched from this ship deal <good>12.5%</good> increased damage to ships below 50% hull.
@@ -2320,6 +2536,12 @@ effect|STRIKECRAFT_DEATH_BURST_DAMAGE_FLAT|12.5	0	Strikecraft launched from this
 effect|STRIKECRAFT_DEATH_BURST_DAMAGE_FLAT|100.0	0	Strikecraft launched from this ship burst when destroyed, dealing <good>100</good> fragmentation damage to enemy ships and strikecraft within 150 su.
 effect|STRIKECRAFT_DEATH_BURST_DAMAGE_FLAT|-10.0	0	Strikecraft launched from this ship burst when destroyed, dealing <good>-10</good> fragmentation damage to enemy ships and strikecraft within 150 su.
 effect|STRIKECRAFT_DEATH_BURST_DAMAGE_FLAT|-12.5	0	Strikecraft launched from this ship burst when destroyed, dealing <good>-12.5</good> fragmentation damage to enemy ships and strikecraft within 150 su.
+effect|STRIKECRAFT_EMP_DAMAGE_PERCENT|1.0	0	Strikecraft launched from this ship deal extra EMP damage equal to <good>1%</good> of each hit's damage.
+effect|STRIKECRAFT_EMP_DAMAGE_PERCENT|10.0	0	Strikecraft launched from this ship deal extra EMP damage equal to <good>10%</good> of each hit's damage.
+effect|STRIKECRAFT_EMP_DAMAGE_PERCENT|12.5	0	Strikecraft launched from this ship deal extra EMP damage equal to <good>12.5%</good> of each hit's damage.
+effect|STRIKECRAFT_EMP_DAMAGE_PERCENT|100.0	0	Strikecraft launched from this ship deal extra EMP damage equal to <good>100%</good> of each hit's damage.
+effect|STRIKECRAFT_EMP_DAMAGE_PERCENT|-10.0	0	Strikecraft launched from this ship deal extra EMP damage equal to <good>-10%</good> of each hit's damage.
+effect|STRIKECRAFT_EMP_DAMAGE_PERCENT|-12.5	0	Strikecraft launched from this ship deal extra EMP damage equal to <good>-12.5%</good> of each hit's damage.
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|1.0	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|10.0	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|12.5	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
@@ -2380,6 +2602,12 @@ effect|SURVEY_COST_REDUCTION_SUPPLIES|12.5	1	Your fleet has <bad>-12.5</bad> to 
 effect|SURVEY_COST_REDUCTION_SUPPLIES|100.0	1	Your fleet has <bad>-100</bad> to supplies needed to perform surveys.
 effect|SURVEY_COST_REDUCTION_SUPPLIES|-10.0	1	Your fleet has <good>+10</good> to supplies needed to perform surveys.
 effect|SURVEY_COST_REDUCTION_SUPPLIES|-12.5	1	Your fleet has <good>+12.5</good> to supplies needed to perform surveys.
+effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|1.0	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>1%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per battle.
+effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|10.0	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>10%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per battle.
+effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|12.5	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>12.5%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per battle.
+effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|100.0	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>100%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per battle.
+effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|-10.0	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>-10%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per battle.
+effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|-12.5	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>-12.5%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per battle.
 effect|SYSTEM_CHARGES_FLAT|1.0	0	<good>+1</good> to ship system charges.
 effect|SYSTEM_CHARGES_FLAT|10.0	0	<good>+10</good> to ship system charges.
 effect|SYSTEM_CHARGES_FLAT|12.5	0	<good>+12.5</good> to ship system charges.
@@ -2428,6 +2656,12 @@ effect|TERMINAL_DESCENT_SYSTEM_REGEN_PERCENT|12.5	0	<good>12.5%</good> increased
 effect|TERMINAL_DESCENT_SYSTEM_REGEN_PERCENT|100.0	0	<good>100%</good> increased ship system charge regeneration during Terminal Descent.
 effect|TERMINAL_DESCENT_SYSTEM_REGEN_PERCENT|-10.0	0	<good>-10%</good> increased ship system charge regeneration during Terminal Descent.
 effect|TERMINAL_DESCENT_SYSTEM_REGEN_PERCENT|-12.5	0	<good>-12.5%</good> increased ship system charge regeneration during Terminal Descent.
+effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|1.0	1	Your fleet has <bad>1%</bad> increased terrain movement penalty.
+effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|10.0	1	Your fleet has <bad>10%</bad> increased terrain movement penalty.
+effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|12.5	1	Your fleet has <bad>12.5%</bad> increased terrain movement penalty.
+effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|100.0	1	Your fleet has <bad>100%</bad> increased terrain movement penalty.
+effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|-10.0	1	Your fleet has <good>10%</good> reduced terrain movement penalty, up to a maximum of 50%.
+effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|-12.5	1	Your fleet has <good>12.5%</good> reduced terrain movement penalty, up to a maximum of 50%.
 effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|1.0	0	Enemy ships within 1000 su have <good>-1%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|10.0	0	Enemy ships within 1000 su have <good>-10%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|12.5	0	Enemy ships within 1000 su have <good>-12.5%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
@@ -2440,6 +2674,12 @@ effect|THERMO_ACCELERATOR_FLUX_COST_REDUCTION_PERCENT|12.5	0	Turret weapons have
 effect|THERMO_ACCELERATOR_FLUX_COST_REDUCTION_PERCENT|100.0	0	Turret weapons have <good>100%</good> reduced flux cost. Hardpoint weapons can't fire.
 effect|THERMO_ACCELERATOR_FLUX_COST_REDUCTION_PERCENT|-10.0	0	Turret weapons have <good>-10%</good> reduced flux cost. Hardpoint weapons can't fire.
 effect|THERMO_ACCELERATOR_FLUX_COST_REDUCTION_PERCENT|-12.5	0	Turret weapons have <good>-12.5%</good> reduced flux cost. Hardpoint weapons can't fire.
+effect|TIMEFLOW_AT_TOP_SPEED_PERCENT|1.0	0	<good>1%</good> increased timeflow while at top speed.
+effect|TIMEFLOW_AT_TOP_SPEED_PERCENT|10.0	0	<good>10%</good> increased timeflow while at top speed.
+effect|TIMEFLOW_AT_TOP_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased timeflow while at top speed.
+effect|TIMEFLOW_AT_TOP_SPEED_PERCENT|100.0	0	<good>100%</good> increased timeflow while at top speed.
+effect|TIMEFLOW_AT_TOP_SPEED_PERCENT|-10.0	0	<bad>10%</bad> reduced timeflow while at top speed.
+effect|TIMEFLOW_AT_TOP_SPEED_PERCENT|-12.5	0	<bad>12.5%</bad> reduced timeflow while at top speed.
 effect|TIMEFLOW_MULT|1.0	0	<good>1%</good> more timeflow.
 effect|TIMEFLOW_MULT|10.0	0	<good>10%</good> more timeflow.
 effect|TIMEFLOW_MULT|12.5	0	<good>12.5%</good> more timeflow.
@@ -2482,6 +2722,12 @@ effect|TOP_SPEED_PERCENT_PER_NEARBY_ALLY|12.5	0	<good>12.5%</good> increased top
 effect|TOP_SPEED_PERCENT_PER_NEARBY_ALLY|100.0	0	<good>100%</good> increased top speed for every allied ship within 1000 su, up to 10%.
 effect|TOP_SPEED_PERCENT_PER_NEARBY_ALLY|-10.0	0	<good>-10%</good> increased top speed for every allied ship within 1000 su, up to 10%.
 effect|TOP_SPEED_PERCENT_PER_NEARBY_ALLY|-12.5	0	<good>-12.5%</good> increased top speed for every allied ship within 1000 su, up to 10%.
+effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|1.0	0	<good>1%</good> increased top speed while this ship's Fragment Swarm is at least 90% full.
+effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|10.0	0	<good>10%</good> increased top speed while this ship's Fragment Swarm is at least 90% full.
+effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|12.5	0	<good>12.5%</good> increased top speed while this ship's Fragment Swarm is at least 90% full.
+effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|100.0	0	<good>100%</good> increased top speed while this ship's Fragment Swarm is at least 90% full.
+effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|-10.0	0	<good>-10%</good> increased top speed while this ship's Fragment Swarm is at least 90% full.
+effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|-12.5	0	<good>-12.5%</good> increased top speed while this ship's Fragment Swarm is at least 90% full.
 effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|1.0	1	Your fleet has <good>1%</good> reduced sensor profile while its transponder is off, up to a maximum of 30%.
 effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|10.0	1	Your fleet has <good>10%</good> reduced sensor profile while its transponder is off, up to a maximum of 30%.
 effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|12.5	1	Your fleet has <good>12.5%</good> reduced sensor profile while its transponder is off, up to a maximum of 30%.
@@ -2674,6 +2920,12 @@ effect|WEAPON_RATE_OF_FIRE_PERCENT|12.5	0	<good>12.5%</good> increased weapon ra
 effect|WEAPON_RATE_OF_FIRE_PERCENT|100.0	0	<good>100%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
 effect|WEAPON_RATE_OF_FIRE_PERCENT|-10.0	0	<bad>10%</bad> reduced weapon rate of fire. Burst beams instead recharge faster between bursts.
 effect|WEAPON_RATE_OF_FIRE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|WEAPON_RATE_OF_FIRE_PERCENT_PER_MIDLINE_AFFINITY|1.0	0	<good>1%</good> increased weapon rate of fire for every 10 Midline Affinity.
+effect|WEAPON_RATE_OF_FIRE_PERCENT_PER_MIDLINE_AFFINITY|10.0	0	<good>10%</good> increased weapon rate of fire for every 10 Midline Affinity.
+effect|WEAPON_RATE_OF_FIRE_PERCENT_PER_MIDLINE_AFFINITY|12.5	0	<good>12.5%</good> increased weapon rate of fire for every 10 Midline Affinity.
+effect|WEAPON_RATE_OF_FIRE_PERCENT_PER_MIDLINE_AFFINITY|100.0	0	<good>100%</good> increased weapon rate of fire for every 10 Midline Affinity.
+effect|WEAPON_RATE_OF_FIRE_PERCENT_PER_MIDLINE_AFFINITY|-10.0	0	<bad>10%</bad> reduced weapon rate of fire for every 10 Midline Affinity.
+effect|WEAPON_RATE_OF_FIRE_PERCENT_PER_MIDLINE_AFFINITY|-12.5	0	<bad>12.5%</bad> reduced weapon rate of fire for every 10 Midline Affinity.
 effect|WEAPON_RECOIL_MULT|1.0	1	<good>1%</good> more weapon recoil.
 effect|WEAPON_RECOIL_MULT|10.0	1	<good>10%</good> more weapon recoil.
 effect|WEAPON_RECOIL_MULT|12.5	1	<good>12.5%</good> more weapon recoil.

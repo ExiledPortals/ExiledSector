@@ -18,6 +18,7 @@ import static exiledsector.skills.skilleffect.Backings.listener;
 public enum OnHitSkillEffect implements BackedSkillEffect {
 
     BEAM_WEAPON_HARD_FLUX_PERCENT(listener(BeamHardFluxListener.HARD_FLUX_PERCENT_KEY, BeamHardFluxListener.class, ship -> new BeamHardFluxListener())),
+    BEAM_WEAPON_EMP_PERCENT(listener(BeamEmpListener.EMP_PERCENT_KEY, BeamEmpListener.class, BeamEmpListener::new)),
     BEAM_WEAPON_SHIELD_DISRUPTION_PERCENT(listener(BeamShieldDisruptionListener.SHIELD_DAMAGE_PERCENT_KEY, BeamShieldDisruptionListener.class,
             BeamShieldDisruptionListener::new)),
     BEAM_WEAPON_SPLIT_TARGETS_FLAT(listener(LionsGazeListener.TARGETS_KEY, LionsGazeListener.class, LionsGazeListener::new)) {
@@ -80,6 +81,13 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
         }
     },
     KILL_FLUX_VENT_PERCENT(listener(KillFluxVentListener.MAX_FLUX_PERCENT_KEY, KillFluxVentListener.class, KillFluxVentListener::new)),
+    HULL_DAMAGE_FRAGMENT_REGROWTH_FLAT(listener(HullDamageRegrowthListener.FRAGMENTS_PER_STEP_KEY, HullDamageRegrowthListener.class,
+            HullDamageRegrowthListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("damage", HullDamageRegrowthListener.HULL_DAMAGE_PER_STEP).styled();
+        }
+    },
     STARDUST_MOTE_DAMAGE_FLAT(listener(StardustMoteListener.MOTE_DAMAGE_KEY, StardustMoteListener.class, StardustMoteListener::new)) {
         @Override
         public StyledText description(float magnitude) {

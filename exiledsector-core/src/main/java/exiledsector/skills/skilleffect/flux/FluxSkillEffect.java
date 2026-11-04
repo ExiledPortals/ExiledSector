@@ -11,12 +11,14 @@ import exiledsector.skills.skilleffect.ConditionalStatEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
 import exiledsector.skills.skilleffect.StatTarget;
+import exiledsector.skills.skilleffect.PerDModMultEffect;
 
 import static exiledsector.skills.skilleffect.Backings.listener;
 import static exiledsector.skills.skilleffect.Backings.statEffect;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
+import static exiledsector.skills.skilleffect.StatTarget.bonus;
 import static exiledsector.skills.skilleffect.StatTarget.liveStat;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
 
@@ -35,8 +37,10 @@ public enum FluxSkillEffect implements BackedSkillEffect {
             return EffectText.templated(this, magnitude);
         }
     },
+    FLUX_DISSIPATION_MULT_PER_DMOD(new PerDModMultEffect(liveStat(MutableShipStatsAPI::getFluxDissipation), "stat.fluxDissipationPerDMod", false)),
     VENT_RATE_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getVentRateMult), "stat.ventingSpeed", false)),
     VENT_RATE_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getVentRateMult), "stat.ventingSpeed", false)),
+    OVERLOAD_DURATION_PERCENT(statEffect(PERCENT, bonus(MutableShipStatsAPI::getOverloadTimeMod), "stat.overloadDuration", true)),
     ZERO_FLUX_SPEED_FLAT(statEffect(FLAT, liveStat(MutableShipStatsAPI::getZeroFluxSpeedBoost), "stat.zeroFluxSpeedBoost", false)),
     ZERO_FLUX_ALWAYS_ON {
         @Override
@@ -67,6 +71,8 @@ public enum FluxSkillEffect implements BackedSkillEffect {
                     .arg("limit", HighFluxMendingListener.MAX_TOTAL_REGEN_PERCENT_OF_HULL).styled();
         }
     },
+    FLUX_DISSIPATION_WITHOUT_HARD_FLUX_PERCENT(new ConditionalStatEffect(PERCENT, stat(MutableShipStatsAPI::getFluxDissipation),
+            "stat.fluxDissipationWithoutHardFlux", ship -> ship.getFluxTracker().getHardFlux() <= 0f)),
     FLUX_DISSIPATION_PER_FLUX_VENT_FLAT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -88,6 +94,8 @@ public enum FluxSkillEffect implements BackedSkillEffect {
             stats.getFluxCapacity().modifyFlat(modId + CAPACITOR_MOD_SUFFIX, capacitors * fluxPerCapacitor() * magnitude / 100f);
         }
     },
+    EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT(listener(EmpHardFluxVentListener.VENT_PERCENT_KEY, EmpHardFluxVentListener.class,
+            EmpHardFluxVentListener::new)),
     VOLATILE_FLUX_TOP_SPEED_FLAT(listener(VolatileFluxListener.TOP_SPEED_KEY,
             VolatileFluxListener.class, VolatileFluxListener::new)),
     VOLATILE_FLUX_RATE_OF_FIRE_PERCENT(listener(VolatileFluxListener.RATE_OF_FIRE_KEY,

@@ -49,6 +49,14 @@ public enum AuraSkillEffect implements BackedSkillEffect {
                     .arg("phased", magnitude * GravityDragListener.PHASED_MULT).arg("cap", GravityDragField.MAX_TOTAL_REDUCTION_PERCENT).styled();
         }
     },
+    GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT(listener(GravityDragListener.PHASED_TIMEFLOW_PERCENT_KEY, GravityDragListener.class,
+            GravityDragListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", GravityDragField.RANGE)
+                    .arg("cap", GravityDragField.MAX_TOTAL_REDUCTION_PERCENT).styled();
+        }
+    },
     MALFUNCTION_AURA_PERCENT(listener(MalfunctionAuraListener.MALFUNCTION_PERCENT_KEY, MalfunctionAuraListener.class, MalfunctionAuraListener::new)) {
         @Override
         public StyledText description(float magnitude) {
@@ -62,6 +70,21 @@ public enum AuraSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("range", RepairCoordinatorField.RANGE)
                     .arg("perShip", RepairCoordinatorField.MAX_REPAIR_PERCENT_PER_COORDINATOR)
                     .arg("limit", RepairCoordinatorField.MAX_REPAIR_PERCENT_OF_ARMOR).styled();
+        }
+    },
+    NEARBY_DESTRUCTION_REPLACEMENT_RATE_PERCENT(listener(WreckReclaimListener.RESTORE_PERCENT_KEY, WreckReclaimListener.class,
+            WreckReclaimListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", WreckReclaimListener.RANGE).styled();
+        }
+    },
+    NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT(listener(WreckPlatingListener.REPAIR_CAP_PERCENT_KEY, WreckPlatingListener.class,
+            WreckPlatingListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", WreckPlatingListener.RANGE)
+                    .arg("percent", WreckPlatingListener.REPAIR_PERCENT_PER_WRECK).styled();
         }
     },
     CREW_STEAL_RANGE_FLAT(listener(CrewStealListener.RANGE_KEY, CrewStealListener.class, CrewStealListener::new)),

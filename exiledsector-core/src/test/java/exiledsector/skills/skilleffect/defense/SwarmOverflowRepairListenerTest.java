@@ -1,4 +1,4 @@
-package exiledsector.skills.skilleffect.phase;
+package exiledsector.skills.skilleffect.defense;
 
 import com.fs.starfarer.api.combat.ArmorGridAPI;
 import org.junit.jupiter.api.Test;
@@ -11,7 +11,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class PhaseEntryRepairListenerTest {
+class SwarmOverflowRepairListenerTest {
 
     private static ArmorGridAPI grid(float maxArmorInCell, float[][] cells) {
         ArmorGridAPI grid = mock(ArmorGridAPI.class);
@@ -26,31 +26,28 @@ class PhaseEntryRepairListenerTest {
     }
 
     @Test
-    void everyCellRepairsItsShareUpToFullArmor() {
-        float[][] cells = {{50f, 95f}, {100f, 0f}};
+    void eachFragmentRepairsTheMostDamagedCellAtThatMoment() {
+        float[][] cells = {{20f, 50f}, {100f, 40f}};
 
-        float restored = PhaseEntryRepairListener.restore(grid(100f, cells), 10f, 1000f);
+        float restored = SwarmOverflowRepairListener.restoreMostDamaged(grid(100f, cells), 3, 25f, 1000f);
 
-        assertEquals(10f + 5f + 0f + 10f, restored, 0.001f);
-        assertArrayEquals(new float[]{60f, 100f}, cells[0], 0.001f);
-        assertArrayEquals(new float[]{100f, 10f}, cells[1], 0.001f);
+        assertEquals(75f, restored, 0.001f);
+        assertArrayEquals(new float[]{70f, 50f}, cells[0], 0.001f);
+        assertArrayEquals(new float[]{100f, 65f}, cells[1], 0.001f);
     }
 
     @Test
-    void undamagedArmorRepairsNothingSoNothingCountsTowardTheCap() {
+    void aRepairNeverOverfillsACellOrPassesTheBattleCap() {
+        float[][] cells = {{95f, 0f}};
+
+        assertEquals(30f, SwarmOverflowRepairListener.restoreMostDamaged(grid(100f, cells), 5, 50f, 30f), 0.001f);
+        assertArrayEquals(new float[]{95f, 30f}, cells[0], 0.001f);
+    }
+
+    @Test
+    void undamagedArmorTakesNoRepairSoNothingCountsTowardTheCap() {
         float[][] cells = {{100f, 100f}};
 
-        assertEquals(0f, PhaseEntryRepairListener.restore(grid(100f, cells), 10f, 1000f));
-    }
-
-    @Test
-    void theLastRepairIsCutShortToLandExactlyOnTheCap() {
-        float[][] cells = {{0f, 0f}};
-
-        float restored = PhaseEntryRepairListener.restore(grid(100f, cells), 10f, 5f);
-
-        assertEquals(5f, restored, 0.001f);
-        assertArrayEquals(new float[]{2.5f, 2.5f}, cells[0], 0.001f);
-        assertEquals(0f, PhaseEntryRepairListener.restore(grid(100f, cells), 10f, 0f));
+        assertEquals(0f, SwarmOverflowRepairListener.restoreMostDamaged(grid(100f, cells), 4, 25f, 1000f));
     }
 }

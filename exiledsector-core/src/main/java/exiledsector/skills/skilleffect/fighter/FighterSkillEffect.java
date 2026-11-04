@@ -12,6 +12,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
+import exiledsector.skills.skilleffect.ConditionalStatEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
 import exiledsector.skills.skilleffect.SimpleStatEffect;
@@ -78,6 +79,16 @@ public enum FighterSkillEffect implements BackedSkillEffect {
             "stat.replacementRateDecrease", true)),
     FIGHTER_REPLACEMENT_RECOVERY_PERCENT(statEffect(PERCENT, dynamicStat("replacement_rate_increase_mult"),
             "stat.replacementRateRecovery", false)),
+    FIGHTER_REPLACEMENT_RECOVERY_WHILE_REGROUPING_PERCENT(new ConditionalStatEffect(PERCENT, dynamicStat("replacement_rate_increase_mult"),
+            "stat.replacementRateRecoveryWhileRegrouping", ShipAPI::isPullBackFighters)),
+    FIGHTER_REPLACEMENT_RATE_RESTORED_BY_FRAGMENTS_PERCENT(listener(HiveReplacementListener.RESTORED_PERCENT_KEY,
+            HiveReplacementListener.class, HiveReplacementListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", Math.min(magnitude, 100f))
+                    .arg("fragments", HiveReplacementListener.FRAGMENTS_PER_REPLACEMENT).styled();
+        }
+    },
     FIGHTER_PD_DAMAGE_BONUS_PERCENT {
         @Override
         public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
@@ -250,6 +261,16 @@ public enum FighterSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("range", CinderBurstListener.BURST_RADIUS).styled();
         }
     },
+    STRIKECRAFT_DAMAGE_PER_LOST_STRIKECRAFT_PERCENT(new FighterListenerEffect<>(AccretionListener.DAMAGE_PERCENT_PER_STACK_KEY,
+            AccretionListener.class, AccretionListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("seconds", AccretionStacks.STACK_SECONDS)
+                    .arg("max", AccretionStacks.MAX_STACKS).styled();
+        }
+    },
+    STRIKECRAFT_EMP_DAMAGE_PERCENT(new FighterListenerEffect<>(StrikecraftEmpListener.EMP_PERCENT_KEY, StrikecraftEmpListener.class,
+            StrikecraftEmpListener::new)),
     FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER(new FighterListenerEffect<>(WingNumbersDamageListener.REDUCTION_PERCENT_PER_FIGHTER_KEY,
             WingNumbersDamageListener.class, WingNumbersDamageListener::new)) {
 

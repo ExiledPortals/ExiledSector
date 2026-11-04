@@ -110,6 +110,27 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     SHARED_TARGET_DAMAGE_PERCENT(listener(SharedTargetDamageListener.DAMAGE_PERCENT_KEY, SharedTargetDamageListener.class,
             SharedTargetDamageListener::new)),
     EMP_DAMAGE_PERCENT(listener(EmpDamageListener.EMP_PERCENT_KEY, EmpDamageListener.class, EmpDamageListener::new)),
+    DAMAGE_TO_DISTANT_TARGETS_PERCENT(listener(DistantTargetDamageListener.DAMAGE_PERCENT_KEY, DistantTargetDamageListener.class,
+            DistantTargetDamageListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.signed(this, magnitude).arg("range", Math.round(DistantTargetDamageListener.MIN_DISTANCE)).styled();
+        }
+    },
+    DAMAGE_TO_SLOWER_SHIP_PERCENT(listener(SlowerShipDamageListener.DAMAGE_PERCENT_KEY, SlowerShipDamageListener.class,
+            SlowerShipDamageListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return PERCENT.describeStat(magnitude, "stat.damageToSlowerShips");
+        }
+    },
+    DAMAGE_TO_PRISTINE_SHIP_PERCENT(listener(PristineShipDamageListener.DAMAGE_PERCENT_KEY, PristineShipDamageListener.class,
+            PristineShipDamageListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return PERCENT.describeStat(magnitude, "stat.damageToPristineShips");
+        }
+    },
     WEAPON_MALFUNCTION_PERCENT(statEffect(PERCENT, new StatTarget.PercentagePoints(MutableShipStatsAPI::getWeaponMalfunctionChance),
             "stat.weaponMalfunctionChance", true)),
     PD_IGNORES_DECOY_FLARES(flag(Stats.PD_IGNORES_FLARES)),

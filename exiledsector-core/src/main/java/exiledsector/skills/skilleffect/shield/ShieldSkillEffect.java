@@ -131,6 +131,23 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
     SHIELD_PIERCE_CHANCE_MULT(statEffect(MULT, dynamicStat(Stats.SHIELD_PIERCED_MULT), "stat.empArcShieldPierceChance", true)),
     SHIELD_UPKEEP_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getShieldUpkeepMult), "stat.shieldFluxUpkeep", true)),
     SHIELD_UPKEEP_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getShieldUpkeepMult), "stat.shieldFluxUpkeep", true)),
+    SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT(new ConditionalStatEffect(PERCENT, stat(MutableShipStatsAPI::getShieldUpkeepMult),
+            "stat.shieldFluxUpkeep", LowSpeed::isMovingSlowly)) {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", Math.abs(magnitude)).arg("speed", LowSpeed.TOP_SPEED_FRACTION * 100f).styled();
+        }
+
+        @Override
+        public String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
+            return noShieldsReason(currentShieldType);
+        }
+    },
     SHIELD_TURN_RATE_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getShieldTurnRateMult), "stat.shieldTurnRate", false)),
     SHIELD_RAISE_RATE_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getShieldUnfoldRateMult), "stat.shieldRaiseRate", false)),
     SHIELD_SOFT_FLUX_CONVERSION_PERCENT(statEffect(PERCENT, new StatTarget.PercentagePoints(MutableShipStatsAPI::getShieldSoftFluxConversion),
@@ -156,12 +173,24 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
                     .arg("range", Math.round(SharedShieldDamageListener.RANGE)).styled();
         }
     },
+    SHIELD_DEFLECT_CHANCE_PERCENT(listener(ShieldDeflectionListener.CHANCE_PERCENT_KEY, ShieldDeflectionListener.class,
+            ShieldDeflectionListener::new)),
+    SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT(listener(AutomatedShieldDamageListener.REDUCTION_PERCENT_KEY,
+            AutomatedShieldDamageListener.class, AutomatedShieldDamageListener::new)),
     SHIELD_ABSORB_RATE_OF_FIRE_PERCENT(listener(AbsorbReserveListener.RATE_OF_FIRE_PERCENT_KEY,
             AbsorbReserveListener.class, AbsorbReserveListener::new)) {
         @Override
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", magnitude).arg("full", AbsorbReserveListener.FULL_RESERVE)
                     .arg("drain", AbsorbReserveListener.DRAIN_PER_SECOND).arg("max", AbsorbReserveListener.MAX_RESERVE).styled();
+        }
+    },
+    SHIELD_DAMAGE_ABSORBED_BY_FRAGMENTS_PERCENT(listener(FractalShieldListener.ABSORBED_PERCENT_KEY, FractalShieldListener.class,
+            FractalShieldListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", Math.min(magnitude, FractalShieldListener.MAX_ABSORBED_PERCENT))
+                    .arg("damage", FractalShieldListener.DAMAGE_PER_FRAGMENT).styled();
         }
     },
     DYNAMIC_GRID_ENERGY_WEAPON_BONUS_PERCENT(listener(DynamicGridListener.ENERGY_BONUS_PERCENT_KEY, DynamicGridListener.class,
