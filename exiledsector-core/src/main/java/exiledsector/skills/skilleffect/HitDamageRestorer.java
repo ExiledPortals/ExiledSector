@@ -30,6 +30,11 @@ public final class HitDamageRestorer implements DamageListener {
         damage.setFluxComponent(damage.getFluxComponent() * empMult);
     }
 
+    public static void addEmpForThisHit(DamageAPI damage, float addedEmp, CombatEntityAPI target) {
+        track(damage, target);
+        damage.setFluxComponent(damage.getFluxComponent() + addedEmp);
+    }
+
     public static float originalHitDamage(DamageAPI damage) {
         HitDamageRestorer restorer = SkillEffectSupport.existingEngineListener(HitDamageRestorer.class);
         PendingRestore entry = restorer == null ? null : restorer.entryFor(damage);

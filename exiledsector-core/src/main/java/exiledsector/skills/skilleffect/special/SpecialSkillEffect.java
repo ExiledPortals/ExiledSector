@@ -11,6 +11,7 @@ import exiledsector.skills.skilleffect.EffectText;
 import exiledsector.skills.skilleffect.StatMode;
 import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.fighter.FighterSkillEffect;
+import exiledsector.skills.skilleffect.shield.ShieldSkillEffect;
 import exiledsector.skills.skilleffect.weapon.ScopedWeaponEffect;
 import exiledsector.skills.skilleffect.weapon.WeaponScope;
 import exiledsector.skills.skilleffect.weapon.WeaponStatFamily;
@@ -72,6 +73,10 @@ public enum SpecialSkillEffect implements BackedSkillEffect {
             ScopedWeaponEffect.find(WeaponStatFamily.DAMAGE, WeaponScope.ENERGY, StatMode.PERCENT))),
     MISSILE_WEAPON_DAMAGE_PERCENT_PER_MIDLINE_AFFINITY(new AffinityScaling(AffinityScaling.Filter.MIDLINE, AffinityScaling.SMALL_STEP,
             ScopedWeaponEffect.find(WeaponStatFamily.DAMAGE, WeaponScope.MISSILE, StatMode.PERCENT))),
+    WEAPON_RATE_OF_FIRE_PERCENT_PER_MIDLINE_AFFINITY(new AffinityScaling(AffinityScaling.Filter.MIDLINE, AffinityScaling.LARGE_STEP,
+            ScopedWeaponEffect.find(WeaponStatFamily.RATE_OF_FIRE, WeaponScope.ALL, StatMode.PERCENT))),
+    SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY(new AffinityScaling(AffinityScaling.Filter.MIDLINE, AffinityScaling.LARGE_STEP,
+            ShieldSkillEffect.SHIELD_PIERCE_CHANCE_PERCENT)),
     ARMOR_PERCENT_PER_LOW_TECH_AFFINITY(new AffinityScaling(AffinityScaling.Filter.LOW_TECH, AffinityScaling.LARGE_STEP, DefenseSkillEffect.ARMOR_PERCENT)),
     WEAPON_RANGE_PERCENT_PER_AFFINITY(new AffinityScaling(AffinityScaling.Filter.ALL, AffinityScaling.LARGE_STEP,
             ScopedWeaponEffect.find(WeaponStatFamily.RANGE, WeaponScope.ALL, StatMode.PERCENT))),

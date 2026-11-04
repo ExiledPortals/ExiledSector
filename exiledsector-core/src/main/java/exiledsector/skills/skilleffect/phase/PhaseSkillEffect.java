@@ -8,6 +8,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipFacts;
+import exiledsector.skills.skilleffect.ArcDischarge;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.ConditionalStatEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
@@ -58,6 +59,13 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
         @Override
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", magnitude).arg("cap", PhaseEntryRepairListener.BATTLE_CAP_PERCENT).styled();
+        }
+    },
+    PHASE_EXIT_EMP_ARCS_FLAT(listener(PhaseExitArcListener.ARC_COUNT_KEY, PhaseExitArcListener.class, PhaseExitArcListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return ArcDischarge.DAMAGE.withShipSizeArgs(EffectText.msg(this).count(Math.round(magnitude)).arg("value", magnitude)
+                    .arg("range", ArcDischarge.RANGE)).styled();
         }
     },
     PHASE_ANCHOR_EMERGENCY_DIVE {

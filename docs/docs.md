@@ -586,6 +586,16 @@ rides on each strikecraft the ship launches, counting a strikecraft with no mini
 Borrowed Grace stacks give a fixed 1% each, so the Armor Plate's stacks (every 150 damage) work without the node; with
 both, one pool holds both maximums and stacks come every 100 damage (`BorrowedGraceListener`).
 
+### Storm Belt modifiers
+
+The terrain penalty reduction adds up over the fleet's active ships, capped at 50%, as a flat modifier on the
+commander's `nav_penalty_mult`, the stat vanilla's Navigation skill lowers (`FleetWideEffects.applyTerrainMovementPenalty`).
+The speed burst starts on any EMP arc striking the ship, shields included (`ArcStrikeSpeedListener`).
+
+Phase-exit and armor arcs (`ArcDischarge`) go to the nearest enemy ships, not strikecraft, within 600 su, cycling when
+there are fewer ships than arcs, with energy and EMP damage set by the ship's hull size. Armor damage taken builds the
+armor's discharges, holding one while no enemy is in range (`ArmorArcListener`).
+
 ### Chart tier groups
 
 Chart tiers fall into three groups: low (1-5), mid (6-10) and high (11-16) (`TierGroup`). A chart modifier line gives

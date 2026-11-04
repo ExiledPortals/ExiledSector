@@ -10,6 +10,7 @@ import com.fs.starfarer.api.impl.combat.dweller.AssayingRiftEffect;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipFacts;
+import exiledsector.skills.skilleffect.ArcDischarge;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
@@ -150,6 +151,13 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("seconds", NanoforgeMendingListener.UNDAMAGED_SECONDS).arg("value", magnitude)
                     .arg("limit", NanoforgeMendingListener.MAX_TOTAL_REGEN_PERCENT_OF_HULL).styled();
+        }
+    },
+    ARMOR_DAMAGE_EMP_ARCS_FLAT(listener(ArmorArcListener.ARC_COUNT_KEY, ArmorArcListener.class, ArmorArcListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return ArcDischarge.DAMAGE.withShipSizeArgs(EffectText.msg(this).count(Math.round(magnitude)).arg("value", magnitude)
+                    .arg("damage", ArmorArcListener.ARMOR_DAMAGE_PER_DISCHARGE).arg("range", ArcDischarge.RANGE)).styled();
         }
     },
     RISE_FROM_THE_ASHES_HULL_PERCENT(listener(RiseFromTheAshesListener.HULL_PERCENT_KEY, RiseFromTheAshesListener.class,

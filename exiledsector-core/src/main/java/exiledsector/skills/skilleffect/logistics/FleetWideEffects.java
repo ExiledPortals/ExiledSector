@@ -2,6 +2,8 @@ package exiledsector.skills.skilleffect.logistics;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
+import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
@@ -23,6 +25,9 @@ public final class FleetWideEffects {
     static final String MOVE_SLOW_BURN_LEVEL_KEY = "exiledLib_moveSlowBurnLevelContribution";
     static final float MAX_MOVE_SLOW_BURN_LEVEL_BONUS = 6f;
     private static final String MOVE_SLOW_BURN_LEVEL_FLEET_MOD = "moveSlowBurnLevel";
+    static final String TERRAIN_MOVEMENT_PENALTY_KEY = "exiledSector_terrainMovementPenaltyContribution";
+    static final float MAX_TERRAIN_MOVEMENT_PENALTY_REDUCTION_PERCENT = 50f;
+    private static final String TERRAIN_MOVEMENT_PENALTY_FLEET_MOD = "terrainMovementPenalty";
     private static final String SENSOR_STRENGTH_ALWAYS_COUNTS_FLEET_MOD = "sensorStrengthAlwaysCounts";
     private static final String MAX_SENSOR_SHIPS_SETTING = "maxSensorShips";
     private static final int DEFAULT_MAX_SENSOR_SHIPS = 5;
@@ -87,6 +92,31 @@ public final class FleetWideEffects {
             }
         }
         return Math.min(MAX_MOVE_SLOW_BURN_LEVEL_BONUS, bonus);
+    }
+
+    public static void applyTerrainMovementPenalty(CampaignFleetAPI fleet) {
+        MutableCharacterStatsAPI commanderStats = fleet == null ? null : fleet.getCommanderStats();
+        if (commanderStats == null || commanderStats.getDynamic() == null || fleet.getFleetData() == null) {
+            return;
+        }
+        float percent = terrainMovementPenaltyPercent(fleet.getFleetData().getMembersListCopy());
+        MutableStat penaltyMult = commanderStats.getDynamic().getStat(Stats.NAVIGATION_PENALTY_MULT);
+        if (percent != 0f) {
+            penaltyMult.modifyFlat(ExiledSector.key(TERRAIN_MOVEMENT_PENALTY_FLEET_MOD), percent / 100f,
+                    Translation.gameText("fleet.terrainMovementPenalty"));
+        } else {
+            penaltyMult.unmodifyFlat(ExiledSector.key(TERRAIN_MOVEMENT_PENALTY_FLEET_MOD));
+        }
+    }
+
+    static float terrainMovementPenaltyPercent(List<FleetMemberAPI> members) {
+        float percent = 0f;
+        for (FleetMemberAPI member : members) {
+            if (!member.isMothballed()) {
+                percent += member.getStats().getDynamic().getValue(TERRAIN_MOVEMENT_PENALTY_KEY, 0f);
+            }
+        }
+        return Math.max(-MAX_TERRAIN_MOVEMENT_PENALTY_REDUCTION_PERCENT, percent);
     }
 
     private static boolean alwaysCounts(FleetMemberAPI member) {

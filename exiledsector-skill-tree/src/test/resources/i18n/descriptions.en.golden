@@ -34,6 +34,12 @@ effect|AMMO_REGEN_WHILE_PHASED_PERCENT|12.5	0	<good>12.5%</good> increased ammo 
 effect|AMMO_REGEN_WHILE_PHASED_PERCENT|100.0	0	<good>100%</good> increased ammo regeneration while phased.
 effect|AMMO_REGEN_WHILE_PHASED_PERCENT|-10.0	0	<bad>10%</bad> reduced ammo regeneration while phased.
 effect|AMMO_REGEN_WHILE_PHASED_PERCENT|-12.5	0	<bad>12.5%</bad> reduced ammo regeneration while phased.
+effect|ARMOR_DAMAGE_EMP_ARCS_FLAT|1.0	0	Every 500 damage this ship's armor absorbs discharges <good>1</good> EMP arc at the nearest enemy ship within 600 su, dealing 100/150/200/300 energy and EMP damage.
+effect|ARMOR_DAMAGE_EMP_ARCS_FLAT|10.0	0	Every 500 damage this ship's armor absorbs discharges <good>10</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
+effect|ARMOR_DAMAGE_EMP_ARCS_FLAT|12.5	0	Every 500 damage this ship's armor absorbs discharges <good>12.5</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
+effect|ARMOR_DAMAGE_EMP_ARCS_FLAT|100.0	0	Every 500 damage this ship's armor absorbs discharges <good>100</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
+effect|ARMOR_DAMAGE_EMP_ARCS_FLAT|-10.0	0	Every 500 damage this ship's armor absorbs discharges <good>-10</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
+effect|ARMOR_DAMAGE_EMP_ARCS_FLAT|-12.5	0	Every 500 damage this ship's armor absorbs discharges <good>-12.5</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
 effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|1.0	1	<good>1%</good> more armor damage taken per D-mod, up to 5 D-mods.
 effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|10.0	1	<good>10%</good> more armor damage taken per D-mod, up to 5 D-mods.
 effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|12.5	1	<good>12.5%</good> more armor damage taken per D-mod, up to 5 D-mods.
@@ -694,6 +700,18 @@ effect|ELECTRONIC_WARFARE_PENALTY_PERCENT|12.5	1	<good>12.5%</good> increased el
 effect|ELECTRONIC_WARFARE_PENALTY_PERCENT|100.0	1	<good>100%</good> increased electronic warfare penalty against this ship's weapon range.
 effect|ELECTRONIC_WARFARE_PENALTY_PERCENT|-10.0	1	<bad>10%</bad> reduced electronic warfare penalty against this ship's weapon range.
 effect|ELECTRONIC_WARFARE_PENALTY_PERCENT|-12.5	1	<bad>12.5%</bad> reduced electronic warfare penalty against this ship's weapon range.
+effect|EMP_ARC_STRIKE_SPEED_PERCENT|1.0	0	<good>1%</good> increased top speed and maneuverability for 3 seconds after an EMP arc strikes this ship.
+effect|EMP_ARC_STRIKE_SPEED_PERCENT|10.0	0	<good>10%</good> increased top speed and maneuverability for 3 seconds after an EMP arc strikes this ship.
+effect|EMP_ARC_STRIKE_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased top speed and maneuverability for 3 seconds after an EMP arc strikes this ship.
+effect|EMP_ARC_STRIKE_SPEED_PERCENT|100.0	0	<good>100%</good> increased top speed and maneuverability for 3 seconds after an EMP arc strikes this ship.
+effect|EMP_ARC_STRIKE_SPEED_PERCENT|-10.0	0	<good>-10%</good> increased top speed and maneuverability for 3 seconds after an EMP arc strikes this ship.
+effect|EMP_ARC_STRIKE_SPEED_PERCENT|-12.5	0	<good>-12.5%</good> increased top speed and maneuverability for 3 seconds after an EMP arc strikes this ship.
+effect|EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT|1.0	0	Taking EMP damage vents hard flux equal to <good>1%</good> of that EMP damage.
+effect|EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT|10.0	0	Taking EMP damage vents hard flux equal to <good>10%</good> of that EMP damage.
+effect|EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT|12.5	0	Taking EMP damage vents hard flux equal to <good>12.5%</good> of that EMP damage.
+effect|EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT|100.0	0	Taking EMP damage vents hard flux equal to <good>100%</good> of that EMP damage.
+effect|EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT|-10.0	0	Taking EMP damage vents hard flux equal to <good>-10%</good> of that EMP damage.
+effect|EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT|-12.5	0	Taking EMP damage vents hard flux equal to <good>-12.5%</good> of that EMP damage.
 effect|EMP_DAMAGE_TAKEN_MULT|1.0	1	<good>1%</good> more EMP damage taken.
 effect|EMP_DAMAGE_TAKEN_MULT|10.0	1	<good>10%</good> more EMP damage taken.
 effect|EMP_DAMAGE_TAKEN_MULT|12.5	1	<good>12.5%</good> more EMP damage taken.
@@ -1858,6 +1876,12 @@ effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|12.5	0	When this ship enters phase, ever
 effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|100.0	0	When this ship enters phase, every armor cell repairs <good>100%</good> of its maximum armor, up to 50% of this ship's total armor per battle.
 effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|-10.0	0	When this ship enters phase, every armor cell repairs <good>-10%</good> of its maximum armor, up to 50% of this ship's total armor per battle.
 effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|-12.5	0	When this ship enters phase, every armor cell repairs <good>-12.5%</good> of its maximum armor, up to 50% of this ship's total armor per battle.
+effect|PHASE_EXIT_EMP_ARCS_FLAT|1.0	0	When this ship leaves phase, it discharges <good>1</good> EMP arc at the nearest enemy ship within 600 su, dealing 100/150/200/300 energy and EMP damage.
+effect|PHASE_EXIT_EMP_ARCS_FLAT|10.0	0	When this ship leaves phase, it discharges <good>10</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
+effect|PHASE_EXIT_EMP_ARCS_FLAT|12.5	0	When this ship leaves phase, it discharges <good>12.5</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
+effect|PHASE_EXIT_EMP_ARCS_FLAT|100.0	0	When this ship leaves phase, it discharges <good>100</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
+effect|PHASE_EXIT_EMP_ARCS_FLAT|-10.0	0	When this ship leaves phase, it discharges <good>-10</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
+effect|PHASE_EXIT_EMP_ARCS_FLAT|-12.5	0	When this ship leaves phase, it discharges <good>-12.5</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|1.0	0	1% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|10.0	0	10% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|12.5	0	12.5% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
@@ -2080,6 +2104,12 @@ effect|SHIELD_PIERCE_CHANCE_PERCENT|12.5	1	<good>12.5%</good> increased chance f
 effect|SHIELD_PIERCE_CHANCE_PERCENT|100.0	1	<good>100%</good> increased chance for shields to be pierced by EMP arcs.
 effect|SHIELD_PIERCE_CHANCE_PERCENT|-10.0	1	<bad>10%</bad> reduced chance for shields to be pierced by EMP arcs.
 effect|SHIELD_PIERCE_CHANCE_PERCENT|-12.5	1	<bad>12.5%</bad> reduced chance for shields to be pierced by EMP arcs.
+effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|1.0	1	<bad>1%</bad> increased chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
+effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|10.0	1	<bad>10%</bad> increased chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
+effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|12.5	1	<bad>12.5%</bad> increased chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
+effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|100.0	1	<bad>100%</bad> increased chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
+effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|-10.0	1	<good>10%</good> reduced chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
+effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|-12.5	1	<good>12.5%</good> reduced chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
 effect|SHIELD_RAISE_RATE_PERCENT|1.0	0	<good>1%</good> increased shield raise rate.
 effect|SHIELD_RAISE_RATE_PERCENT|10.0	0	<good>10%</good> increased shield raise rate.
 effect|SHIELD_RAISE_RATE_PERCENT|12.5	0	<good>12.5%</good> increased shield raise rate.
@@ -2200,6 +2230,12 @@ effect|STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT|12.5	0	Strikecraft launched from thi
 effect|STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT|100.0	0	Strikecraft launched from this ship deal <good>100%</good> increased damage to drone strikecraft.
 effect|STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT|-10.0	0	Strikecraft launched from this ship deal <good>-10%</good> increased damage to drone strikecraft.
 effect|STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT|-12.5	0	Strikecraft launched from this ship deal <good>-12.5%</good> increased damage to drone strikecraft.
+effect|STRIKECRAFT_EMP_DAMAGE_PERCENT|1.0	0	Strikecraft launched from this ship deal extra EMP damage equal to <good>1%</good> of each hit's damage.
+effect|STRIKECRAFT_EMP_DAMAGE_PERCENT|10.0	0	Strikecraft launched from this ship deal extra EMP damage equal to <good>10%</good> of each hit's damage.
+effect|STRIKECRAFT_EMP_DAMAGE_PERCENT|12.5	0	Strikecraft launched from this ship deal extra EMP damage equal to <good>12.5%</good> of each hit's damage.
+effect|STRIKECRAFT_EMP_DAMAGE_PERCENT|100.0	0	Strikecraft launched from this ship deal extra EMP damage equal to <good>100%</good> of each hit's damage.
+effect|STRIKECRAFT_EMP_DAMAGE_PERCENT|-10.0	0	Strikecraft launched from this ship deal extra EMP damage equal to <good>-10%</good> of each hit's damage.
+effect|STRIKECRAFT_EMP_DAMAGE_PERCENT|-12.5	0	Strikecraft launched from this ship deal extra EMP damage equal to <good>-12.5%</good> of each hit's damage.
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|1.0	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|10.0	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|12.5	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
@@ -2302,6 +2338,12 @@ effect|TERMINAL_DESCENT_SYSTEM_REGEN_PERCENT|12.5	0	<good>12.5%</good> increased
 effect|TERMINAL_DESCENT_SYSTEM_REGEN_PERCENT|100.0	0	<good>100%</good> increased ship system charge regeneration during Terminal Descent.
 effect|TERMINAL_DESCENT_SYSTEM_REGEN_PERCENT|-10.0	0	<good>-10%</good> increased ship system charge regeneration during Terminal Descent.
 effect|TERMINAL_DESCENT_SYSTEM_REGEN_PERCENT|-12.5	0	<good>-12.5%</good> increased ship system charge regeneration during Terminal Descent.
+effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|1.0	1	Your fleet has <bad>1%</bad> increased terrain movement penalty.
+effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|10.0	1	Your fleet has <bad>10%</bad> increased terrain movement penalty.
+effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|12.5	1	Your fleet has <bad>12.5%</bad> increased terrain movement penalty.
+effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|100.0	1	Your fleet has <bad>100%</bad> increased terrain movement penalty.
+effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|-10.0	1	Your fleet has <good>10%</good> reduced terrain movement penalty, up to a maximum of 50%.
+effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|-12.5	1	Your fleet has <good>12.5%</good> reduced terrain movement penalty, up to a maximum of 50%.
 effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|1.0	0	Enemy ships within 1000 su have <good>-1%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|10.0	0	Enemy ships within 1000 su have <good>-10%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|12.5	0	Enemy ships within 1000 su have <good>-12.5%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
@@ -2530,6 +2572,12 @@ effect|WEAPON_RATE_OF_FIRE_PERCENT|12.5	0	<good>12.5%</good> increased weapon ra
 effect|WEAPON_RATE_OF_FIRE_PERCENT|100.0	0	<good>100%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
 effect|WEAPON_RATE_OF_FIRE_PERCENT|-10.0	0	<bad>10%</bad> reduced weapon rate of fire. Burst beams instead recharge faster between bursts.
 effect|WEAPON_RATE_OF_FIRE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|WEAPON_RATE_OF_FIRE_PERCENT_PER_MIDLINE_AFFINITY|1.0	0	<good>1%</good> increased weapon rate of fire for every 10 Midline Affinity.
+effect|WEAPON_RATE_OF_FIRE_PERCENT_PER_MIDLINE_AFFINITY|10.0	0	<good>10%</good> increased weapon rate of fire for every 10 Midline Affinity.
+effect|WEAPON_RATE_OF_FIRE_PERCENT_PER_MIDLINE_AFFINITY|12.5	0	<good>12.5%</good> increased weapon rate of fire for every 10 Midline Affinity.
+effect|WEAPON_RATE_OF_FIRE_PERCENT_PER_MIDLINE_AFFINITY|100.0	0	<good>100%</good> increased weapon rate of fire for every 10 Midline Affinity.
+effect|WEAPON_RATE_OF_FIRE_PERCENT_PER_MIDLINE_AFFINITY|-10.0	0	<bad>10%</bad> reduced weapon rate of fire for every 10 Midline Affinity.
+effect|WEAPON_RATE_OF_FIRE_PERCENT_PER_MIDLINE_AFFINITY|-12.5	0	<bad>12.5%</bad> reduced weapon rate of fire for every 10 Midline Affinity.
 effect|WEAPON_RECOIL_MULT|1.0	1	<good>1%</good> more weapon recoil.
 effect|WEAPON_RECOIL_MULT|10.0	1	<good>10%</good> more weapon recoil.
 effect|WEAPON_RECOIL_MULT|12.5	1	<good>12.5%</good> more weapon recoil.

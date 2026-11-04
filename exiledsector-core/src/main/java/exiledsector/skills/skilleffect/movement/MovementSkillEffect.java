@@ -1,11 +1,14 @@
 package exiledsector.skills.skilleffect.movement;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import exiledsector.i18n.StyledText;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
+import exiledsector.skills.skilleffect.EffectText;
 import exiledsector.skills.skilleffect.PerDModMultEffect;
 import exiledsector.skills.skilleffect.StatTarget;
 
+import static exiledsector.skills.skilleffect.Backings.listener;
 import static exiledsector.skills.skilleffect.Backings.statEffect;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
@@ -19,6 +22,12 @@ public enum MovementSkillEffect implements BackedSkillEffect {
     TOP_SPEED_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getMaxSpeed), StatNames.TOP_SPEED, false)),
     TOP_SPEED_FLAT(statEffect(FLAT, liveStat(MutableShipStatsAPI::getMaxSpeed), StatNames.TOP_SPEED, false)),
     TOP_SPEED_MULT(statEffect(MULT, liveStat(MutableShipStatsAPI::getMaxSpeed), StatNames.TOP_SPEED, false)),
+    EMP_ARC_STRIKE_SPEED_PERCENT(listener(ArcStrikeSpeedListener.SPEED_PERCENT_KEY, ArcStrikeSpeedListener.class, ArcStrikeSpeedListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("seconds", ArcStrikeSpeedListener.BURST_SECONDS).styled();
+        }
+    },
     ACCELERATION_FLAT(statEffect(FLAT, liveStat(MutableShipStatsAPI::getAcceleration), "stat.acceleration", false)),
     ACCELERATION_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getAcceleration), "stat.acceleration", false)),
     DECELERATION_FLAT(statEffect(FLAT, liveStat(MutableShipStatsAPI::getDeceleration), "stat.deceleration", false)),
