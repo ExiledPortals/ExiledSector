@@ -213,6 +213,27 @@ class ShipStatSheetsTest {
     }
 
     @Test
+    void theAllProjectileSpeedMultiplierScalesTheBallisticAndEnergyCellsButNotMissiles() {
+        MutableStat allProjectileSpeed = new MutableStat(1f);
+        allProjectileSpeed.modifyMult("ugh_magnetobarrels", 2f, "Magneto Turbo Barrels");
+        MutableStat ballisticProjectileSpeed = new MutableStat(1f);
+        ballisticProjectileSpeed.modifyPercent("rangefinder", 10f, "Rangefinder");
+        when(stats.getProjectileSpeedMult()).thenReturn(allProjectileSpeed);
+        when(stats.getBallisticProjectileSpeedMult()).thenReturn(ballisticProjectileSpeed);
+        when(stats.getEnergyProjectileSpeedMult()).thenReturn(new MutableStat(1f));
+        when(stats.getMissileMaxSpeedBonus()).thenReturn(new StatBonus());
+
+        ShipStatSheet.Grid weapons = section(build(null, Detail.STANDARD), StatGroup.WEAPONS).grids().get(0);
+        ShipStatSheet.GridRow projectileSpeed = weapons.rows().stream().filter(row -> row.label().equals("Projectile Speed")).findFirst().orElseThrow();
+
+        assertEquals("+120%", projectileSpeed.cells().get(0).text());
+        assertEquals("+100%", projectileSpeed.cells().get(1).text());
+        assertEquals("0%", projectileSpeed.cells().get(2).text());
+        assertEquals(List.of(new SourceLine("Rangefinder", Combine.PERCENT, "+10%", false),
+                new SourceLine("Magneto Turbo Barrels", Combine.MULTI, "+100%", false)), projectileSpeed.cells().get(0).breakdown().sources());
+    }
+
+    @Test
     void theChangedDetailOnlyShowsWhatTheTreeChanged() {
         armorBonus.modifyFlat("heavyarmor", 500f, "Heavy Armor");
         energyDamage.modifyPercent("energyMod", 10f);

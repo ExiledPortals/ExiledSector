@@ -180,8 +180,10 @@ final class StatRows {
                         unitBonus(MutableShipStatsAPI::getMissileAmmoBonus), null),
                 gridRow("weaponAmmoRegen", false, stat(MutableShipStatsAPI::getBallisticAmmoRegenMult),
                         stat(MutableShipStatsAPI::getEnergyAmmoRegenMult), stat(MutableShipStatsAPI::getMissileAmmoRegenMult), null),
-                gridRow("projectileSpeed", false, stat(MutableShipStatsAPI::getBallisticProjectileSpeedMult),
-                        stat(MutableShipStatsAPI::getEnergyProjectileSpeedMult), unitBonus(MutableShipStatsAPI::getMissileMaxSpeedBonus),
+                gridRow("projectileSpeed", false,
+                        multiplied(MutableShipStatsAPI::getBallisticProjectileSpeedMult, MutableShipStatsAPI::getProjectileSpeedMult),
+                        multiplied(MutableShipStatsAPI::getEnergyProjectileSpeedMult, MutableShipStatsAPI::getProjectileSpeedMult),
+                        unitBonus(MutableShipStatsAPI::getMissileMaxSpeedBonus),
                         unitBonus(MutableShipStatsAPI::getBeamSpeedMod)))));
         grids.add(new GridSpec(StatGroup.WEAPONS, HULL_SIZE_COLUMNS, Set.of(), List.of(
                 gridRow("damageDealt", false, stat(MutableShipStatsAPI::getDamageToFrigates), stat(MutableShipStatsAPI::getDamageToDestroyers),
@@ -214,6 +216,20 @@ final class StatRows {
         return context -> {
             MutableStat stat = getter.apply(context.stats());
             return stat == null ? null : StatReading.of(stat);
+        };
+    }
+
+    @SafeVarargs
+    private static Function<Context, StatReading> multiplied(Function<MutableShipStatsAPI, MutableStat>... getters) {
+        return context -> {
+            List<MutableStat> factors = new ArrayList<>();
+            for (Function<MutableShipStatsAPI, MutableStat> getter : getters) {
+                MutableStat stat = getter.apply(context.stats());
+                if (stat != null) {
+                    factors.add(stat);
+                }
+            }
+            return factors.isEmpty() ? null : StatReading.scaled(1f, factors);
         };
     }
 
