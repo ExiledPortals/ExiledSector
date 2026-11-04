@@ -255,6 +255,7 @@
     "chart.gateway.tooltip.tierLimit": "Holds Star Charts up to tier {tier}.",
     "chart.gateway.tooltip.everyTier": "Holds Star Charts of every tier.",
     "chart.gateway.option.open": "Outer Reach Atlas",
+    "chart.gateway.option.colonyMenu": "View the Outer Reach Atlas",
     "chart.gateway.option.tooltip": "Pick a system in the Outer Reach Atlas, ready a Star Chart for it and open its wormhole.",
     "wormholeTech.exiledSector_wormhole_blueprint.name": "Wormhole Tech Blueprint",
     "wormholeTech.exiledSector_wormhole_blueprint.description": "Calibration routines, field geometry and fuel-feed schematics lifted from the Explorarium anchor cache in Limbo. The science teams have spent weeks tracing how the Domain held a wormhole's far end steady, and believe they can build a lattice that does the same for a single set of coordinates. Not a gate. Nothing like one. But it opens.",

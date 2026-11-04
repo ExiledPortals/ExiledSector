@@ -9,6 +9,7 @@
 	},
 	"ruleCommandPackages":[
 		"exiledsector.charts.run",
+		"exiledsector.ui.chart",
 	],
 	"graphics":{
 		"ui_icons_tech_tree":{

@@ -1,2 +1,6 @@
 id,trigger,conditions,script,text,options,notes
 exiledSector_chartDisableForeignColonyOptions,PopulateOptions,$player.locTag:exiledSector_chart_system,ExiledSectorDisableChartOptions ratCreateSettlement nex_outpostPreview,,,"Chart systems are deleted when the run ends, so Random Assortment of Things settlements and Nexerelin outposts are disabled there. RemoveOption would rebuild the option list and drop every shortcut, including ESC on Leave"
+exiledSector_gatewayViewAtlasOption,PopulateOptions,"$hasMarket
+$menuState == main
+$faction.id == player",ExiledSectorAtlasOption,,,
+exiledSector_gatewayViewAtlasSel,DialogOptionSelected,$option == exiledSector_viewAtlas,ExiledSectorAtlasOption open,,,

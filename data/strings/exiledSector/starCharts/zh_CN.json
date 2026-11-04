@@ -246,6 +246,7 @@
     "chart.gateway.tooltip.tierLimit": "可承载最高{tier}级的星图。",
     "chart.gateway.tooltip.everyTier": "可承载任意等级的星图。",
     "chart.gateway.option.open": "外缘星图册",
+    "chart.gateway.option.colonyMenu": "查看外缘星图册",
     "chart.gateway.option.tooltip": "在外缘星图册中选择一个星系，为其准备一张星图并开启虫洞。",
     "wormholeTech.exiledSector_wormhole_blueprint.name": "虫洞技术蓝图",
     "wormholeTech.exiledSector_wormhole_blueprint.description": "从地狱边境的探索者锚点储藏中取得的校准程序、场几何结构与燃料供给图纸。科研团队花了数周时间追溯人类领域如何稳住虫洞的远端，并相信他们能造出一座晶格，为单一一组坐标做到同样的事。这不是星门，也远远比不上星门。但它能打开。",
