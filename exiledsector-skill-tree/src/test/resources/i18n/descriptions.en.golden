@@ -64,6 +64,12 @@ effect|ARMOR_PERCENT|12.5	0	<good>12.5%</good> increased armor.
 effect|ARMOR_PERCENT|100.0	0	<good>100%</good> increased armor.
 effect|ARMOR_PERCENT|-10.0	0	<bad>10%</bad> reduced armor.
 effect|ARMOR_PERCENT|-12.5	0	<bad>12.5%</bad> reduced armor.
+effect|ARMOR_PERCENT_PER_HIGH_TECH_AFFINITY|1.0	0	<good>1%</good> increased armor for every 10 High Tech Affinity.
+effect|ARMOR_PERCENT_PER_HIGH_TECH_AFFINITY|10.0	0	<good>10%</good> increased armor for every 10 High Tech Affinity.
+effect|ARMOR_PERCENT_PER_HIGH_TECH_AFFINITY|12.5	0	<good>12.5%</good> increased armor for every 10 High Tech Affinity.
+effect|ARMOR_PERCENT_PER_HIGH_TECH_AFFINITY|100.0	0	<good>100%</good> increased armor for every 10 High Tech Affinity.
+effect|ARMOR_PERCENT_PER_HIGH_TECH_AFFINITY|-10.0	0	<bad>10%</bad> reduced armor for every 10 High Tech Affinity.
+effect|ARMOR_PERCENT_PER_HIGH_TECH_AFFINITY|-12.5	0	<bad>12.5%</bad> reduced armor for every 10 High Tech Affinity.
 effect|ARMOR_PERCENT_PER_LOW_TECH_AFFINITY|1.0	0	<good>1%</good> increased armor for every 10 Low Tech Affinity.
 effect|ARMOR_PERCENT_PER_LOW_TECH_AFFINITY|10.0	0	<good>10%</good> increased armor for every 10 Low Tech Affinity.
 effect|ARMOR_PERCENT_PER_LOW_TECH_AFFINITY|12.5	0	<good>12.5%</good> increased armor for every 10 Low Tech Affinity.
@@ -628,6 +634,12 @@ effect|DAMAGE_TO_DESTROYER_PERCENT|12.5	0	<good>12.5%</good> increased damage to
 effect|DAMAGE_TO_DESTROYER_PERCENT|100.0	0	<good>100%</good> increased damage to destroyers.
 effect|DAMAGE_TO_DESTROYER_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to destroyers.
 effect|DAMAGE_TO_DESTROYER_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to destroyers.
+effect|DAMAGE_TO_DISTANT_TARGETS_PERCENT|1.0	0	<good>1%</good> increased damage to targets more than 1000 su away.
+effect|DAMAGE_TO_DISTANT_TARGETS_PERCENT|10.0	0	<good>10%</good> increased damage to targets more than 1000 su away.
+effect|DAMAGE_TO_DISTANT_TARGETS_PERCENT|12.5	0	<good>12.5%</good> increased damage to targets more than 1000 su away.
+effect|DAMAGE_TO_DISTANT_TARGETS_PERCENT|100.0	0	<good>100%</good> increased damage to targets more than 1000 su away.
+effect|DAMAGE_TO_DISTANT_TARGETS_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to targets more than 1000 su away.
+effect|DAMAGE_TO_DISTANT_TARGETS_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to targets more than 1000 su away.
 effect|DAMAGE_TO_FRIGATE_PERCENT|1.0	0	<good>1%</good> increased damage to frigates.
 effect|DAMAGE_TO_FRIGATE_PERCENT|10.0	0	<good>10%</good> increased damage to frigates.
 effect|DAMAGE_TO_FRIGATE_PERCENT|12.5	0	<good>12.5%</good> increased damage to frigates.
@@ -970,6 +982,12 @@ effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|12.5	0	<good>12.5%</good> increased 
 effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|100.0	0	<good>100%</good> increased rate at which the strikecraft replacement rate recovers.
 effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|-10.0	0	<bad>10%</bad> reduced rate at which the strikecraft replacement rate recovers.
 effect|FIGHTER_REPLACEMENT_RECOVERY_PERCENT|-12.5	0	<bad>12.5%</bad> reduced rate at which the strikecraft replacement rate recovers.
+effect|FIGHTER_REPLACEMENT_RECOVERY_WHILE_REGROUPING_PERCENT|1.0	0	<good>1%</good> increased rate at which the strikecraft replacement rate recovers while strikecraft regroup.
+effect|FIGHTER_REPLACEMENT_RECOVERY_WHILE_REGROUPING_PERCENT|10.0	0	<good>10%</good> increased rate at which the strikecraft replacement rate recovers while strikecraft regroup.
+effect|FIGHTER_REPLACEMENT_RECOVERY_WHILE_REGROUPING_PERCENT|12.5	0	<good>12.5%</good> increased rate at which the strikecraft replacement rate recovers while strikecraft regroup.
+effect|FIGHTER_REPLACEMENT_RECOVERY_WHILE_REGROUPING_PERCENT|100.0	0	<good>100%</good> increased rate at which the strikecraft replacement rate recovers while strikecraft regroup.
+effect|FIGHTER_REPLACEMENT_RECOVERY_WHILE_REGROUPING_PERCENT|-10.0	0	<bad>10%</bad> reduced rate at which the strikecraft replacement rate recovers while strikecraft regroup.
+effect|FIGHTER_REPLACEMENT_RECOVERY_WHILE_REGROUPING_PERCENT|-12.5	0	<bad>12.5%</bad> reduced rate at which the strikecraft replacement rate recovers while strikecraft regroup.
 effect|FIGHTER_ROLE_ARMOR_PERCENT|1.0	0	Fighters launched from this ship have <good>1%</good> increased armor.
 effect|FIGHTER_ROLE_ARMOR_PERCENT|10.0	0	Fighters launched from this ship have <good>10%</good> increased armor.
 effect|FIGHTER_ROLE_ARMOR_PERCENT|12.5	0	Fighters launched from this ship have <good>12.5%</good> increased armor.
@@ -1102,6 +1120,12 @@ effect|FLUX_DISSIPATION_WHILE_VENTING_PERCENT|12.5	0	<good>12.5%</good> increase
 effect|FLUX_DISSIPATION_WHILE_VENTING_PERCENT|100.0	0	<good>100%</good> increased flux dissipation rate while venting.
 effect|FLUX_DISSIPATION_WHILE_VENTING_PERCENT|-10.0	0	<bad>10%</bad> reduced flux dissipation rate while venting.
 effect|FLUX_DISSIPATION_WHILE_VENTING_PERCENT|-12.5	0	<bad>12.5%</bad> reduced flux dissipation rate while venting.
+effect|FLUX_DISSIPATION_WITHOUT_HARD_FLUX_PERCENT|1.0	0	<good>1%</good> increased flux dissipation while this ship has no hard flux.
+effect|FLUX_DISSIPATION_WITHOUT_HARD_FLUX_PERCENT|10.0	0	<good>10%</good> increased flux dissipation while this ship has no hard flux.
+effect|FLUX_DISSIPATION_WITHOUT_HARD_FLUX_PERCENT|12.5	0	<good>12.5%</good> increased flux dissipation while this ship has no hard flux.
+effect|FLUX_DISSIPATION_WITHOUT_HARD_FLUX_PERCENT|100.0	0	<good>100%</good> increased flux dissipation while this ship has no hard flux.
+effect|FLUX_DISSIPATION_WITHOUT_HARD_FLUX_PERCENT|-10.0	0	<bad>10%</bad> reduced flux dissipation while this ship has no hard flux.
+effect|FLUX_DISSIPATION_WITHOUT_HARD_FLUX_PERCENT|-12.5	0	<bad>12.5%</bad> reduced flux dissipation while this ship has no hard flux.
 effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased fragmentation damage taken.
 effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased fragmentation damage taken.
 effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased fragmentation damage taken.
@@ -1642,6 +1666,12 @@ effect|MOVE_SLOW_BURN_LEVEL_FLAT|12.5	0	Your fleet has <good>+12.5</good> to the
 effect|MOVE_SLOW_BURN_LEVEL_FLAT|100.0	0	Your fleet has <good>+100</good> to the burn level at which it counts as moving slowly, up to a maximum of +6.
 effect|MOVE_SLOW_BURN_LEVEL_FLAT|-10.0	0	Your fleet has <good>+-10</good> to the burn level at which it counts as moving slowly, up to a maximum of +6.
 effect|MOVE_SLOW_BURN_LEVEL_FLAT|-12.5	0	Your fleet has <good>+-12.5</good> to the burn level at which it counts as moving slowly, up to a maximum of +6.
+effect|MOVE_SLOW_SUPPLY_USE_MULT|1.0	1	Your fleet has <good>1%</good> more supply use for maintenance while moving slowly. Only the strongest applies.
+effect|MOVE_SLOW_SUPPLY_USE_MULT|10.0	1	Your fleet has <good>10%</good> more supply use for maintenance while moving slowly. Only the strongest applies.
+effect|MOVE_SLOW_SUPPLY_USE_MULT|12.5	1	Your fleet has <good>12.5%</good> more supply use for maintenance while moving slowly. Only the strongest applies.
+effect|MOVE_SLOW_SUPPLY_USE_MULT|100.0	1	Your fleet has <good>100%</good> more supply use for maintenance while moving slowly. Only the strongest applies.
+effect|MOVE_SLOW_SUPPLY_USE_MULT|-10.0	1	Your fleet has <bad>10%</bad> less supply use for maintenance while moving slowly. Only the strongest applies.
+effect|MOVE_SLOW_SUPPLY_USE_MULT|-12.5	1	Your fleet has <bad>12.5%</bad> less supply use for maintenance while moving slowly. Only the strongest applies.
 effect|NANOFORGE_HULL_REGEN_PERCENT|1.0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 effect|NANOFORGE_HULL_REGEN_PERCENT|10.0	0	After 5 seconds without taking hull damage, repairs 10% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 effect|NANOFORGE_HULL_REGEN_PERCENT|12.5	0	After 5 seconds without taking hull damage, repairs 12.5% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
@@ -1768,6 +1798,12 @@ effect|NON_MISSILE_WEAPON_RANGE_CAP_FLAT|12.5	0	Non-missile weapon range can't e
 effect|NON_MISSILE_WEAPON_RANGE_CAP_FLAT|100.0	0	Non-missile weapon range can't exceed <bad>100</bad> su.
 effect|NON_MISSILE_WEAPON_RANGE_CAP_FLAT|-10.0	0	Non-missile weapon range can't exceed <bad>-10</bad> su.
 effect|NON_MISSILE_WEAPON_RANGE_CAP_FLAT|-12.5	0	Non-missile weapon range can't exceed <bad>-12.5</bad> su.
+effect|NO_SHIELD_UPKEEP_BELOW_SPEED_PERCENT|1.0	0	No shield flux upkeep while speed is below <good>1%</good> of top speed.
+effect|NO_SHIELD_UPKEEP_BELOW_SPEED_PERCENT|10.0	0	No shield flux upkeep while speed is below <good>10%</good> of top speed.
+effect|NO_SHIELD_UPKEEP_BELOW_SPEED_PERCENT|12.5	0	No shield flux upkeep while speed is below <good>12.5%</good> of top speed.
+effect|NO_SHIELD_UPKEEP_BELOW_SPEED_PERCENT|100.0	0	No shield flux upkeep while speed is below <good>100%</good> of top speed.
+effect|NO_SHIELD_UPKEEP_BELOW_SPEED_PERCENT|-10.0	0	No shield flux upkeep while speed is below <good>-10%</good> of top speed.
+effect|NO_SHIELD_UPKEEP_BELOW_SPEED_PERCENT|-12.5	0	No shield flux upkeep while speed is below <good>-12.5%</good> of top speed.
 effect|OBJECTIVE_CAPTURE_RANGE_FLAT|1.0	0	<good>+1</good> to range from which combat objectives can be captured.
 effect|OBJECTIVE_CAPTURE_RANGE_FLAT|10.0	0	<good>+10</good> to range from which combat objectives can be captured.
 effect|OBJECTIVE_CAPTURE_RANGE_FLAT|12.5	0	<good>+12.5</good> to range from which combat objectives can be captured.
@@ -1816,6 +1852,12 @@ effect|PEAK_CR_DURATION_PERCENT|12.5	0	<good>12.5%</good> increased peak combat 
 effect|PEAK_CR_DURATION_PERCENT|100.0	0	<good>100%</good> increased peak combat readiness duration.
 effect|PEAK_CR_DURATION_PERCENT|-10.0	0	<bad>10%</bad> reduced peak combat readiness duration.
 effect|PEAK_CR_DURATION_PERCENT|-12.5	0	<bad>12.5%</bad> reduced peak combat readiness duration.
+effect|PEAK_TIME_PAUSED_WHILE_PHASED|1.0	0	The peak combat readiness timer pauses while phased.
+effect|PEAK_TIME_PAUSED_WHILE_PHASED|10.0	0	The peak combat readiness timer pauses while phased.
+effect|PEAK_TIME_PAUSED_WHILE_PHASED|12.5	0	The peak combat readiness timer pauses while phased.
+effect|PEAK_TIME_PAUSED_WHILE_PHASED|100.0	0	The peak combat readiness timer pauses while phased.
+effect|PEAK_TIME_PAUSED_WHILE_PHASED|-10.0	0	The peak combat readiness timer pauses while phased.
+effect|PEAK_TIME_PAUSED_WHILE_PHASED|-12.5	0	The peak combat readiness timer pauses while phased.
 effect|PHASE_ANCHOR_EMERGENCY_DIVE|1.0	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 1% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
 effect|PHASE_ANCHOR_EMERGENCY_DIVE|10.0	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 10% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
 effect|PHASE_ANCHOR_EMERGENCY_DIVE|12.5	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 12.5% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.

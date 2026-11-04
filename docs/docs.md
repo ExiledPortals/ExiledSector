@@ -586,6 +586,17 @@ rides on each strikecraft the ship launches, counting a strikecraft with no mini
 Borrowed Grace stacks give a fixed 1% each, so the Armor Plate's stacks (every 150 damage) work without the node; with
 both, one pool holds both maximums and stacks come every 100 damage (`BorrowedGraceListener`).
 
+### Frozen Fringe modifiers
+
+The Overwintered crew's supply cut applies while vanilla counts the player fleet as moving slowly (`Misc.isSlowMoving`,
+standing still included): the strongest value among its active ships multiplies every ship's maintenance supply use. A
+transient script reapplies it every quarter second, as stat rebuilds drop it (`FleetWideEffects.applyMoveSlowSupplyUse`,
+`MoveSlowSupplyScript`).
+
+Patient measures from this ship to the target ship's center (`DistantTargetDamageListener`). Glacial compares speed with
+top speed without the zero-flux boost, so turning in place still counts as stationary. Of the Long Night holds the ship's
+deployed time at its phase-entry value while phased (`PhasedPeakTimeListener`).
+
 ### Chart tier groups
 
 Chart tiers fall into three groups: low (1-5), mid (6-10) and high (11-16) (`TierGroup`). A chart modifier line gives

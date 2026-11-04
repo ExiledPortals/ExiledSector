@@ -73,6 +73,7 @@ public enum SpecialSkillEffect implements BackedSkillEffect {
     MISSILE_WEAPON_DAMAGE_PERCENT_PER_MIDLINE_AFFINITY(new AffinityScaling(AffinityScaling.Filter.MIDLINE, AffinityScaling.SMALL_STEP,
             ScopedWeaponEffect.find(WeaponStatFamily.DAMAGE, WeaponScope.MISSILE, StatMode.PERCENT))),
     ARMOR_PERCENT_PER_LOW_TECH_AFFINITY(new AffinityScaling(AffinityScaling.Filter.LOW_TECH, AffinityScaling.LARGE_STEP, DefenseSkillEffect.ARMOR_PERCENT)),
+    ARMOR_PERCENT_PER_HIGH_TECH_AFFINITY(new AffinityScaling(AffinityScaling.Filter.HIGH_TECH, AffinityScaling.LARGE_STEP, DefenseSkillEffect.ARMOR_PERCENT)),
     WEAPON_RANGE_PERCENT_PER_AFFINITY(new AffinityScaling(AffinityScaling.Filter.ALL, AffinityScaling.LARGE_STEP,
             ScopedWeaponEffect.find(WeaponStatFamily.RANGE, WeaponScope.ALL, StatMode.PERCENT))),
     FIGHTER_WEAPON_DAMAGE_PERCENT_PER_AFFINITY(new AffinityScaling(AffinityScaling.Filter.ALL, AffinityScaling.LARGE_STEP,

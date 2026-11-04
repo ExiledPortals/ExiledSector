@@ -60,6 +60,7 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("cap", PhaseEntryRepairListener.BATTLE_CAP_PERCENT).styled();
         }
     },
+    PEAK_TIME_PAUSED_WHILE_PHASED(listener(PhasedPeakTimeListener.PAUSED_KEY, PhasedPeakTimeListener.class, PhasedPeakTimeListener::new)),
     PHASE_ANCHOR_EMERGENCY_DIVE {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

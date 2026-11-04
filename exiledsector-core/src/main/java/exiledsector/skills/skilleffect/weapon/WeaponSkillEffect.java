@@ -92,6 +92,13 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
             return PERCENT.describeStat(magnitude, "stat.damageToAutomatedShips");
         }
     },
+    DAMAGE_TO_DISTANT_TARGETS_PERCENT(listener(DistantTargetDamageListener.DAMAGE_PERCENT_KEY, DistantTargetDamageListener.class,
+            DistantTargetDamageListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.signed(this, magnitude).arg("range", Math.round(DistantTargetDamageListener.MIN_DISTANCE)).styled();
+        }
+    },
     WEAPON_MALFUNCTION_PERCENT(statEffect(PERCENT, new StatTarget.PercentagePoints(MutableShipStatsAPI::getWeaponMalfunctionChance),
             "stat.weaponMalfunctionChance", true)),
     PD_IGNORES_DECOY_FLARES(flag(Stats.PD_IGNORES_FLARES)),

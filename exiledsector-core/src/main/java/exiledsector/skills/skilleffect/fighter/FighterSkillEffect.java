@@ -12,6 +12,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
+import exiledsector.skills.skilleffect.ConditionalStatEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
 import exiledsector.skills.skilleffect.SimpleStatEffect;
@@ -78,6 +79,8 @@ public enum FighterSkillEffect implements BackedSkillEffect {
             "stat.replacementRateDecrease", true)),
     FIGHTER_REPLACEMENT_RECOVERY_PERCENT(statEffect(PERCENT, dynamicStat("replacement_rate_increase_mult"),
             "stat.replacementRateRecovery", false)),
+    FIGHTER_REPLACEMENT_RECOVERY_WHILE_REGROUPING_PERCENT(new ConditionalStatEffect(PERCENT, dynamicStat("replacement_rate_increase_mult"),
+            "stat.replacementRateRecoveryWhileRegrouping", ShipAPI::isPullBackFighters)),
     FIGHTER_PD_DAMAGE_BONUS_PERCENT {
         @Override
         public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {

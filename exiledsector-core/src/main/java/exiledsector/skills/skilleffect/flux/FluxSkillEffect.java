@@ -43,6 +43,8 @@ public enum FluxSkillEffect implements BackedSkillEffect {
     },
     FLUX_DISSIPATION_WHILE_VENTING_PERCENT(new ConditionalStatEffect(PERCENT, stat(MutableShipStatsAPI::getFluxDissipation),
             "stat.fluxDissipationWhileVenting", ship -> ship.getFluxTracker().isVenting())),
+    FLUX_DISSIPATION_WITHOUT_HARD_FLUX_PERCENT(new ConditionalStatEffect(PERCENT, stat(MutableShipStatsAPI::getFluxDissipation),
+            "stat.fluxDissipationWithoutHardFlux", ship -> ship.getFluxTracker().getHardFlux() <= 0f)),
     FLUX_DISSIPATION_PER_FLUX_VENT_FLAT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
