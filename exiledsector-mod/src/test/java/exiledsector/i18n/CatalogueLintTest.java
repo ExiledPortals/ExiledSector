@@ -191,7 +191,7 @@ class CatalogueLintTest {
     @Test
     void metadataKeysNeedNoEnglishSource() {
         assertEquals(List.of(), CatalogueLint.translationProblems("zh_CN", Map.of(),
-                Map.of("meta.font", "graphics/fonts/exiledSector/notosanssc.fnt", "meta.fakeBold", "false"), Map.of()));
+                Map.of("meta.font", "graphics/fonts/exiledSector/notosanssc.fnt"), Map.of()));
     }
 
     @Test

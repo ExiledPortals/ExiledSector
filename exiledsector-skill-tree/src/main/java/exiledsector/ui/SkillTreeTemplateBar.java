@@ -15,7 +15,7 @@ final class SkillTreeTemplateBar {
     private static final float MIN_BUTTON_WIDTH = 120f;
     private static final float STATUS_GAP = 8f;
     private static final float STATUS_LINE_HEIGHT = 22f;
-    private static final float FONT_SIZE = SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
+    private static final float FONT_SIZE = SkillTreePanelStyle.UI_FONT_SIZE;
     private static final float RESULT_SECONDS = 4f;
     private static final Color RESULT_COLOR = SkillTreePanelStyle.TOOLTIP_BODY_COLOR;
 

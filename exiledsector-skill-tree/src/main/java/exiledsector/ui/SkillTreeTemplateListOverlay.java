@@ -35,7 +35,7 @@ final class SkillTreeTemplateListOverlay {
     private static final float FOOTER_HEIGHT = 36f;
     private static final float ROW_FILL_ALPHA = 0.06f;
     private static final float ROW_HOVER_ALPHA = 0.2f;
-    private static final float FONT_SIZE = SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
+    private static final float FONT_SIZE = SkillTreePanelStyle.UI_FONT_SIZE;
     private static final Color META_COLOR = new Color(170, 170, 170);
     private static final Color CONFIRM_COLOR = SkillTreePanelStyle.NEGATIVE_STAT_COLOR;
 
@@ -50,7 +50,7 @@ final class SkillTreeTemplateListOverlay {
     private final String confirmText = Translation.text("ui.template.list.confirmDelete");
     private final String emptyRootText = Translation.text("ui.template.list.empty");
     private final String noMatchText = Translation.text("ui.template.list.noMatch");
-    private final TextLabel titleLine = new TextLabel(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE,
+    private final TextLabel titleLine = new TextLabel(SkillTreePanelStyle.UI_TITLE_FONT_SIZE,
             SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel emptyLine = new TextLabel(FONT_SIZE, META_COLOR);
 
@@ -184,7 +184,7 @@ final class SkillTreeTemplateListOverlay {
 
         float cursorTop = overlayBottom + overlayHeight - PADDING;
         titleLine.setAlpha(alphaMult).draw(overlayLeft + PADDING, cursorTop);
-        cursorTop -= SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE + 12f;
+        cursorTop -= SkillTreePanelStyle.UI_TITLE_FONT_SIZE + 12f;
         float chipBottom = cursorTop - CHIP_HEIGHT;
         float chipLeft = overlayLeft + PADDING;
         for (Map.Entry<HullSize, SkillTreeUiButton> chip : hullSizeChips.entrySet()) {

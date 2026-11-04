@@ -49,6 +49,14 @@ public final class TextLabel {
         this(SkillTreePanelStyle::font, fontSize, color, anchor);
     }
 
+    public TextLabel(TextFont font, Color color) {
+        this(font, color, LazyFont.TextAnchor.TOP_LEFT);
+    }
+
+    public TextLabel(TextFont font, Color color, LazyFont.TextAnchor anchor) {
+        this(font.source(), font.size(), color, anchor);
+    }
+
     TextLabel(Supplier<LazyFont> fontSource, float fontSize, Color color, LazyFont.TextAnchor anchor) {
         this.fontSource = fontSource;
         this.fontSize = fontSize;

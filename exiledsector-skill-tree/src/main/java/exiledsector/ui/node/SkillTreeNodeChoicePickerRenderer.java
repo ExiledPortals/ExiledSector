@@ -19,11 +19,11 @@ import java.util.function.Predicate;
 import static exiledsector.ui.SkillTreePanelStyle.FONT_LINE_HEIGHT_FACTOR;
 import static exiledsector.ui.SkillTreePanelStyle.GLOW_COLOR;
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_COLOR;
-import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
+import static exiledsector.ui.SkillTreePanelStyle.UI_FONT_SIZE;
 
 final class SkillTreeNodeChoicePickerRenderer {
 
-    private static final float CHOICE_PICKER_FONT_SIZE = TOOLTIP_BODY_FONT_SIZE;
+    private static final float CHOICE_PICKER_FONT_SIZE = UI_FONT_SIZE;
     private static final float CHOICE_PICKER_ROW_PADDING = 8f;
     private static final float CHOICE_PICKER_ROW_GAP = 2f;
     private static final float CHOICE_PICKER_TOP_OFFSET = 24f;

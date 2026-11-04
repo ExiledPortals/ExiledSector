@@ -20,8 +20,9 @@ English text.
 
 ## Where text is drawn
 
-The skill tree screen is drawn by the mod itself using LazyLib, in Orbitron or in whatever font the
-language names with `meta.font`, so it can always show the chosen language.
+The skill tree screen and its tooltips are drawn by the mod itself using LazyLib, in the game's own fonts
+(Orbitron for the panel, and the vanilla tooltip fonts for tooltips) or in whatever font the language names
+with `meta.font`, so it can always show the chosen language.
 
 Everything else is drawn by the game with its own fonts. That includes the LunaLib settings, dialogs, the
 codex, combat floating text and hull mod text. The game can only display Chinese characters when its own
@@ -58,8 +59,7 @@ A translation mod can ship its own `<locale>.json` in each catalogue folder, for
 keys of a language that already exists.
 
 If the language needs characters that Orbitron doesn't have, set `meta.font` to a single-page BMFont atlas
-and ship that too; LazyLib can't read fonts that span several pages. If the double-drawn bold effect smears
-the glyphs, set `meta.fakeBold` to `false`.
+and ship that too; LazyLib can't read fonts that span several pages.
 
 The test-scope `BitmapFontGenerator` can build a suitable atlas:
 
@@ -69,8 +69,9 @@ java -cp exiledsector-core/target/test-classes;exiledsector-core/target/classes 
 
 The arguments are, in order: the source font, the output `.fnt` path, the glyph size in pixels, the line
 height, the atlas width and height, and the text files whose characters must be included. Keep the line
-height at 20, the body text size, because LazyLib scales against it; that way body text draws at the
-atlas's own size instead of being scaled down. For the atlas, use the smallest power-of-two size the
+height at 20, the panel text size, because LazyLib scales against it; that way panel text draws at the
+atlas's own size instead of being scaled down. Tooltip text draws at 15, vanilla's tooltip size, scaled
+from the same atlas. For the atlas, use the smallest power-of-two size the
 glyphs fit into, since every pixel costs four bytes of video memory.
 
 On top of the characters in the given files, the generator always includes ASCII, Latin-1, common

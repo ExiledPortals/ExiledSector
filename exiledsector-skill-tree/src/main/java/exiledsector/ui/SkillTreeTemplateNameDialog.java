@@ -26,12 +26,12 @@ final class SkillTreeTemplateNameDialog {
 
     private final HoloFrame modalFrame = new HoloFrame(HoloFrame.Look.MODAL);
     private final SkillTreeTextField nameField = new SkillTreeTextField(TemplateNames.MAX_LENGTH,
-            SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
+            SkillTreePanelStyle.UI_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
     private final SkillTreeUiButton saveButton = new SkillTreeUiButton(Translation.text("ui.template.dialog.save"));
     private final SkillTreeUiButton cancelButton = new SkillTreeUiButton(Translation.text("ui.template.dialog.cancel"));
-    private final TextLabel titleLine = new TextLabel(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-    private final TextLabel summaryLine = new TextLabel(SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
-    private final TextLabel problemLine = new TextLabel(SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, PROBLEM_COLOR)
+    private final TextLabel titleLine = new TextLabel(SkillTreePanelStyle.UI_TITLE_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
+    private final TextLabel summaryLine = new TextLabel(SkillTreePanelStyle.UI_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
+    private final TextLabel problemLine = new TextLabel(SkillTreePanelStyle.UI_FONT_SIZE, PROBLEM_COLOR)
             .set(Translation.text("ui.template.dialog.duplicate"));
 
     private boolean dialogOpen;
@@ -129,9 +129,9 @@ final class SkillTreeTemplateNameDialog {
     private void renderContent(float dialogLeft, float dialogBottom, float mouseX, float mouseY, float alphaMult) {
         float cursorTop = dialogBottom + HEIGHT - PADDING;
         titleLine.setAlpha(alphaMult).draw(dialogLeft + PADDING, cursorTop);
-        cursorTop -= SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE + 8f;
+        cursorTop -= SkillTreePanelStyle.UI_TITLE_FONT_SIZE + 8f;
         summaryLine.setAlpha(alphaMult).draw(dialogLeft + PADDING, cursorTop);
-        cursorTop -= SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE + 12f;
+        cursorTop -= SkillTreePanelStyle.UI_FONT_SIZE + 12f;
         float fieldBottom = cursorTop - FIELD_HEIGHT;
         BorderedPanel.draw(dialogLeft + PADDING, fieldBottom, WIDTH - PADDING * 2f, FIELD_HEIGHT, alphaMult);
         nameField.render(dialogLeft + PADDING + FIELD_TEXT_PADDING, fieldBottom, WIDTH - (PADDING + FIELD_TEXT_PADDING) * 2f, FIELD_HEIGHT, "", alphaMult);

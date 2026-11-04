@@ -19,7 +19,7 @@ final class SkillTreeSearchBar {
     private final NodeSearch nodeSearch;
     private final Runnable onSubmit;
     private final SkillTreeTextField queryField = new SkillTreeTextField(MAX_QUERY_LENGTH,
-            SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
+            SkillTreePanelStyle.UI_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
     private final String placeholderText = Translation.text("ui.search.placeholder");
 
     SkillTreeSearchBar(NodeSearch nodeSearch, Runnable onSubmit) {
