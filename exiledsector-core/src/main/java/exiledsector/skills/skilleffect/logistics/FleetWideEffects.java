@@ -26,6 +26,9 @@ public final class FleetWideEffects {
     static final String TRANSPONDER_OFF_SENSOR_PROFILE_KEY = "exiledLib_transponderOffSensorProfileContribution";
     static final float MAX_TRANSPONDER_OFF_SENSOR_PROFILE_REDUCTION = 30f;
     private static final String TRANSPONDER_OFF_SENSOR_PROFILE_FLEET_MOD = "transponderOffSensorProfile";
+    static final String CORONA_RESISTANCE_CONTRIBUTION_KEY = "exiledSector_fleetCoronaResistanceContribution";
+    static final float MAX_CORONA_RESISTANCE_PERCENT = 100f;
+    private static final String CORONA_RESISTANCE_FLEET_MOD = "fleetCoronaResistance";
     private static final String SENSOR_STRENGTH_ALWAYS_COUNTS_FLEET_MOD = "sensorStrengthAlwaysCounts";
     private static final String MAX_SENSOR_SHIPS_SETTING = "maxSensorShips";
     private static final int DEFAULT_MAX_SENSOR_SHIPS = 5;
@@ -114,6 +117,35 @@ public final class FleetWideEffects {
             }
         }
         return Math.max(-MAX_TRANSPONDER_OFF_SENSOR_PROFILE_REDUCTION, Math.min(0f, percent));
+    }
+
+    public static void applyCoronaResistance(CampaignFleetAPI fleet) {
+        if (fleet == null || fleet.getFleetData() == null) {
+            return;
+        }
+        List<FleetMemberAPI> members = fleet.getFleetData().getMembersListCopy();
+        float resistancePercent = coronaResistancePercent(members);
+        String modId = ExiledSector.key(CORONA_RESISTANCE_FLEET_MOD);
+        if (resistancePercent <= 0f) {
+            for (FleetMemberAPI member : members) {
+                member.getStats().getDynamic().getStat(Stats.CORONA_EFFECT_MULT).unmodifyMult(modId);
+            }
+            return;
+        }
+        String source = Translation.gameText("fleet.coronaResistance");
+        for (FleetMemberAPI member : members) {
+            member.getStats().getDynamic().getStat(Stats.CORONA_EFFECT_MULT).modifyMult(modId, 1f - resistancePercent / 100f, source);
+        }
+    }
+
+    static float coronaResistancePercent(List<FleetMemberAPI> members) {
+        float resistance = 0f;
+        for (FleetMemberAPI member : members) {
+            if (!member.isMothballed()) {
+                resistance += member.getStats().getDynamic().getValue(CORONA_RESISTANCE_CONTRIBUTION_KEY, 0f);
+            }
+        }
+        return Math.min(MAX_CORONA_RESISTANCE_PERCENT, resistance);
     }
 
     private static boolean alwaysCounts(FleetMemberAPI member) {

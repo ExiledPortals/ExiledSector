@@ -34,6 +34,12 @@ effect|AMMO_REGEN_WHILE_PHASED_PERCENT|12.5	0	<good>12.5%</good> increased ammo 
 effect|AMMO_REGEN_WHILE_PHASED_PERCENT|100.0	0	<good>100%</good> increased ammo regeneration while phased.
 effect|AMMO_REGEN_WHILE_PHASED_PERCENT|-10.0	0	<bad>10%</bad> reduced ammo regeneration while phased.
 effect|AMMO_REGEN_WHILE_PHASED_PERCENT|-12.5	0	<bad>12.5%</bad> reduced ammo regeneration while phased.
+effect|ARMOR_BURN_DAMAGE_PERCENT|1.0	0	Weapon hits on enemy armor burn it for <good>1%</good> of the hit's damage over 3 seconds.
+effect|ARMOR_BURN_DAMAGE_PERCENT|10.0	0	Weapon hits on enemy armor burn it for <good>10%</good> of the hit's damage over 3 seconds.
+effect|ARMOR_BURN_DAMAGE_PERCENT|12.5	0	Weapon hits on enemy armor burn it for <good>12.5%</good> of the hit's damage over 3 seconds.
+effect|ARMOR_BURN_DAMAGE_PERCENT|100.0	0	Weapon hits on enemy armor burn it for <good>100%</good> of the hit's damage over 3 seconds.
+effect|ARMOR_BURN_DAMAGE_PERCENT|-10.0	0	Weapon hits on enemy armor burn it for <good>-10%</good> of the hit's damage over 3 seconds.
+effect|ARMOR_BURN_DAMAGE_PERCENT|-12.5	0	Weapon hits on enemy armor burn it for <good>-12.5%</good> of the hit's damage over 3 seconds.
 effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|1.0	1	<good>1%</good> more armor damage taken per D-mod, up to 5 D-mods.
 effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|10.0	1	<good>10%</good> more armor damage taken per D-mod, up to 5 D-mods.
 effect|ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD|12.5	1	<good>12.5%</good> more armor damage taken per D-mod, up to 5 D-mods.
@@ -1054,6 +1060,12 @@ effect|FIGHTER_WING_SHARED_DAMAGE_PERCENT|12.5	0	When a strikecraft launched fro
 effect|FIGHTER_WING_SHARED_DAMAGE_PERCENT|100.0	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>100%</good> of that damage is shared across its wing.
 effect|FIGHTER_WING_SHARED_DAMAGE_PERCENT|-10.0	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>-10%</good> of that damage is shared across its wing.
 effect|FIGHTER_WING_SHARED_DAMAGE_PERCENT|-12.5	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>-12.5%</good> of that damage is shared across its wing.
+effect|FLEET_CORONA_RESISTANCE_PERCENT|1.0	0	Ships in your fleet have <good>1%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+effect|FLEET_CORONA_RESISTANCE_PERCENT|10.0	0	Ships in your fleet have <good>10%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+effect|FLEET_CORONA_RESISTANCE_PERCENT|12.5	0	Ships in your fleet have <good>12.5%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+effect|FLEET_CORONA_RESISTANCE_PERCENT|100.0	0	Ships in your fleet have <good>100%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+effect|FLEET_CORONA_RESISTANCE_PERCENT|-10.0	0	Ships in your fleet have <good>-10%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+effect|FLEET_CORONA_RESISTANCE_PERCENT|-12.5	0	Ships in your fleet have <good>-12.5%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 effect|FLUX_CAPACITOR_EFFECTIVENESS_PERCENT|1.0	0	<good>1%</good> increased flux capacity granted by each flux capacitor.
 effect|FLUX_CAPACITOR_EFFECTIVENESS_PERCENT|10.0	0	<good>10%</good> increased flux capacity granted by each flux capacitor.
 effect|FLUX_CAPACITOR_EFFECTIVENESS_PERCENT|12.5	0	<good>12.5%</good> increased flux capacity granted by each flux capacitor.
@@ -1096,6 +1108,12 @@ effect|FLUX_DISSIPATION_PERCENT|12.5	0	<good>12.5%</good> increased flux dissipa
 effect|FLUX_DISSIPATION_PERCENT|100.0	0	<good>100%</good> increased flux dissipation.
 effect|FLUX_DISSIPATION_PERCENT|-10.0	0	<bad>10%</bad> reduced flux dissipation.
 effect|FLUX_DISSIPATION_PERCENT|-12.5	0	<bad>12.5%</bad> reduced flux dissipation.
+effect|FLUX_DISSIPATION_PERCENT_PER_HARD_FLUX|1.0	0	<good>1%</good> increased flux dissipation for every 5% hard flux.
+effect|FLUX_DISSIPATION_PERCENT_PER_HARD_FLUX|10.0	0	<good>10%</good> increased flux dissipation for every 5% hard flux.
+effect|FLUX_DISSIPATION_PERCENT_PER_HARD_FLUX|12.5	0	<good>12.5%</good> increased flux dissipation for every 5% hard flux.
+effect|FLUX_DISSIPATION_PERCENT_PER_HARD_FLUX|100.0	0	<good>100%</good> increased flux dissipation for every 5% hard flux.
+effect|FLUX_DISSIPATION_PERCENT_PER_HARD_FLUX|-10.0	0	<good>-10%</good> increased flux dissipation for every 5% hard flux.
+effect|FLUX_DISSIPATION_PERCENT_PER_HARD_FLUX|-12.5	0	<good>-12.5%</good> increased flux dissipation for every 5% hard flux.
 effect|FLUX_DISSIPATION_PER_FLUX_VENT_FLAT|1.0	0	<good>+1</good> to flux dissipation per flux vent.
 effect|FLUX_DISSIPATION_PER_FLUX_VENT_FLAT|10.0	0	<good>+10</good> to flux dissipation per flux vent.
 effect|FLUX_DISSIPATION_PER_FLUX_VENT_FLAT|12.5	0	<good>+12.5</good> to flux dissipation per flux vent.
@@ -1282,6 +1300,12 @@ effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased h
 effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased high-explosive damage taken.
 effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced high-explosive damage taken.
 effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced high-explosive damage taken.
+effect|HIGH_FLUX_HULL_REGEN_PERCENT|1.0	0	Above 50% flux, repairs <good>1%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per deployment.
+effect|HIGH_FLUX_HULL_REGEN_PERCENT|10.0	0	Above 50% flux, repairs <good>10%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per deployment.
+effect|HIGH_FLUX_HULL_REGEN_PERCENT|12.5	0	Above 50% flux, repairs <good>12.5%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per deployment.
+effect|HIGH_FLUX_HULL_REGEN_PERCENT|100.0	0	Above 50% flux, repairs <good>100%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per deployment.
+effect|HIGH_FLUX_HULL_REGEN_PERCENT|-10.0	0	Above 50% flux, repairs <good>-10%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per deployment.
+effect|HIGH_FLUX_HULL_REGEN_PERCENT|-12.5	0	Above 50% flux, repairs <good>-12.5%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per deployment.
 effect|HIGH_TECH_AFFINITY_FLAT|1.0	0	<good>+1</good> to High Tech Affinity.
 effect|HIGH_TECH_AFFINITY_FLAT|10.0	0	<good>+10</good> to High Tech Affinity.
 effect|HIGH_TECH_AFFINITY_FLAT|12.5	0	<good>+12.5</good> to High Tech Affinity.
@@ -1294,6 +1318,18 @@ effect|HOLD_FIRE_SHIELD_DAMAGE_REDUCTION_PERCENT|12.5	0	Up to <good>12.5%</good>
 effect|HOLD_FIRE_SHIELD_DAMAGE_REDUCTION_PERCENT|100.0	0	Up to <good>100%</good> reduced damage taken by shields, building up over 3 seconds while no weapons fire and fading over 3 seconds while any do.
 effect|HOLD_FIRE_SHIELD_DAMAGE_REDUCTION_PERCENT|-10.0	0	Up to <good>-10%</good> reduced damage taken by shields, building up over 3 seconds while no weapons fire and fading over 3 seconds while any do.
 effect|HOLD_FIRE_SHIELD_DAMAGE_REDUCTION_PERCENT|-12.5	0	Up to <good>-12.5%</good> reduced damage taken by shields, building up over 3 seconds while no weapons fire and fading over 3 seconds while any do.
+effect|HULL_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased hull damage taken.
+effect|HULL_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased hull damage taken.
+effect|HULL_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased hull damage taken.
+effect|HULL_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased hull damage taken.
+effect|HULL_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced hull damage taken.
+effect|HULL_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced hull damage taken.
+effect|HULL_DAMAGE_TAKEN_PERCENT_PER_LOW_TECH_AFFINITY|1.0	1	<good>1%</good> increased hull damage taken for every 10 Low Tech Affinity.
+effect|HULL_DAMAGE_TAKEN_PERCENT_PER_LOW_TECH_AFFINITY|10.0	1	<good>10%</good> increased hull damage taken for every 10 Low Tech Affinity.
+effect|HULL_DAMAGE_TAKEN_PERCENT_PER_LOW_TECH_AFFINITY|12.5	1	<good>12.5%</good> increased hull damage taken for every 10 Low Tech Affinity.
+effect|HULL_DAMAGE_TAKEN_PERCENT_PER_LOW_TECH_AFFINITY|100.0	1	<good>100%</good> increased hull damage taken for every 10 Low Tech Affinity.
+effect|HULL_DAMAGE_TAKEN_PERCENT_PER_LOW_TECH_AFFINITY|-10.0	1	<bad>10%</bad> reduced hull damage taken for every 10 Low Tech Affinity.
+effect|HULL_DAMAGE_TAKEN_PERCENT_PER_LOW_TECH_AFFINITY|-12.5	1	<bad>12.5%</bad> reduced hull damage taken for every 10 Low Tech Affinity.
 effect|HULL_FLAT|1.0	0	<good>+1</good> to hull points.
 effect|HULL_FLAT|10.0	0	<good>+10</good> to hull points.
 effect|HULL_FLAT|12.5	0	<good>+12.5</good> to hull points.
@@ -1390,6 +1426,12 @@ effect|LOW_TECH_AFFINITY_FLAT|12.5	0	<good>+12.5</good> to Low Tech Affinity.
 effect|LOW_TECH_AFFINITY_FLAT|100.0	0	<good>+100</good> to Low Tech Affinity.
 effect|LOW_TECH_AFFINITY_FLAT|-10.0	0	<bad>-10</bad> to Low Tech Affinity.
 effect|LOW_TECH_AFFINITY_FLAT|-12.5	0	<bad>-12.5</bad> to Low Tech Affinity.
+effect|LOW_TECH_AFFINITY_PERCENT|1.0	0	<good>1%</good> increased Low Tech Affinity.
+effect|LOW_TECH_AFFINITY_PERCENT|10.0	0	<good>10%</good> increased Low Tech Affinity.
+effect|LOW_TECH_AFFINITY_PERCENT|12.5	0	<good>12.5%</good> increased Low Tech Affinity.
+effect|LOW_TECH_AFFINITY_PERCENT|100.0	0	<good>100%</good> increased Low Tech Affinity.
+effect|LOW_TECH_AFFINITY_PERCENT|-10.0	0	<bad>10%</bad> reduced Low Tech Affinity.
+effect|LOW_TECH_AFFINITY_PERCENT|-12.5	0	<bad>12.5%</bad> reduced Low Tech Affinity.
 effect|MALFUNCTION_AURA_PERCENT|1.0	0	Enemy ships within 1000 su have <good>1%</good> chance for their weapons to malfunction. Only the strongest applies.
 effect|MALFUNCTION_AURA_PERCENT|10.0	0	Enemy ships within 1000 su have <good>10%</good> chance for their weapons to malfunction. Only the strongest applies.
 effect|MALFUNCTION_AURA_PERCENT|12.5	0	Enemy ships within 1000 su have <good>12.5%</good> chance for their weapons to malfunction. Only the strongest applies.
@@ -1900,6 +1942,12 @@ effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|12.5	0	When this ship enters phase, ever
 effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|100.0	0	When this ship enters phase, every armor cell repairs <good>100%</good> of its maximum armor, up to 50% of this ship's total armor per battle.
 effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|-10.0	0	When this ship enters phase, every armor cell repairs <good>-10%</good> of its maximum armor, up to 50% of this ship's total armor per battle.
 effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|-12.5	0	When this ship enters phase, every armor cell repairs <good>-12.5%</good> of its maximum armor, up to 50% of this ship's total armor per battle.
+effect|PHASE_ENTRY_HARD_FLUX_TO_SOFT_PERCENT|1.0	0	When this ship enters phase, <good>1%</good> of its hard flux is converted to soft flux.
+effect|PHASE_ENTRY_HARD_FLUX_TO_SOFT_PERCENT|10.0	0	When this ship enters phase, <good>10%</good> of its hard flux is converted to soft flux.
+effect|PHASE_ENTRY_HARD_FLUX_TO_SOFT_PERCENT|12.5	0	When this ship enters phase, <good>12.5%</good> of its hard flux is converted to soft flux.
+effect|PHASE_ENTRY_HARD_FLUX_TO_SOFT_PERCENT|100.0	0	When this ship enters phase, <good>100%</good> of its hard flux is converted to soft flux.
+effect|PHASE_ENTRY_HARD_FLUX_TO_SOFT_PERCENT|-10.0	0	When this ship enters phase, <good>-10%</good> of its hard flux is converted to soft flux.
+effect|PHASE_ENTRY_HARD_FLUX_TO_SOFT_PERCENT|-12.5	0	When this ship enters phase, <good>-12.5%</good> of its hard flux is converted to soft flux.
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|1.0	0	1% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|10.0	0	10% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|12.5	0	12.5% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
@@ -2266,6 +2314,12 @@ effect|STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT|12.5	0	Strikecraft launched from thi
 effect|STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT|100.0	0	Strikecraft launched from this ship deal <good>100%</good> increased damage to drone strikecraft.
 effect|STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT|-10.0	0	Strikecraft launched from this ship deal <good>-10%</good> increased damage to drone strikecraft.
 effect|STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT|-12.5	0	Strikecraft launched from this ship deal <good>-12.5%</good> increased damage to drone strikecraft.
+effect|STRIKECRAFT_DEATH_BURST_DAMAGE_FLAT|1.0	0	Strikecraft launched from this ship burst when destroyed, dealing <good>1</good> fragmentation damage to enemy ships and strikecraft within 150 su.
+effect|STRIKECRAFT_DEATH_BURST_DAMAGE_FLAT|10.0	0	Strikecraft launched from this ship burst when destroyed, dealing <good>10</good> fragmentation damage to enemy ships and strikecraft within 150 su.
+effect|STRIKECRAFT_DEATH_BURST_DAMAGE_FLAT|12.5	0	Strikecraft launched from this ship burst when destroyed, dealing <good>12.5</good> fragmentation damage to enemy ships and strikecraft within 150 su.
+effect|STRIKECRAFT_DEATH_BURST_DAMAGE_FLAT|100.0	0	Strikecraft launched from this ship burst when destroyed, dealing <good>100</good> fragmentation damage to enemy ships and strikecraft within 150 su.
+effect|STRIKECRAFT_DEATH_BURST_DAMAGE_FLAT|-10.0	0	Strikecraft launched from this ship burst when destroyed, dealing <good>-10</good> fragmentation damage to enemy ships and strikecraft within 150 su.
+effect|STRIKECRAFT_DEATH_BURST_DAMAGE_FLAT|-12.5	0	Strikecraft launched from this ship burst when destroyed, dealing <good>-12.5</good> fragmentation damage to enemy ships and strikecraft within 150 su.
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|1.0	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|10.0	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|12.5	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.

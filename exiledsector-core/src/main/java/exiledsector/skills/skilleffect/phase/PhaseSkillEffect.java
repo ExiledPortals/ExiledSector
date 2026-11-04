@@ -60,6 +60,8 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("cap", PhaseEntryRepairListener.BATTLE_CAP_PERCENT).styled();
         }
     },
+    PHASE_ENTRY_HARD_FLUX_TO_SOFT_PERCENT(listener(PhaseEntryFluxShedListener.SHED_PERCENT_KEY, PhaseEntryFluxShedListener.class,
+            PhaseEntryFluxShedListener::new)),
     PHASE_ANCHOR_EMERGENCY_DIVE {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

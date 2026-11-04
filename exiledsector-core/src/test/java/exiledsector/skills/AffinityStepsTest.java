@@ -77,6 +77,23 @@ class AffinityStepsTest {
     }
 
     @Test
+    void increasedLowTechAffinityScalesTheSummedLowTechBeforeSModsAndExchanges() {
+        EffectContribution bellows = EffectContribution.scaledPermanent("bellows", "bellows_", List.of(
+                new SkillTypeEffect(SpecialSkillEffect.LOW_TECH_AFFINITY_PERCENT, 10f),
+                new SkillTypeEffect(SpecialSkillEffect.LOW_TECH_AFFINITY_PERCENT, 10f)));
+        EffectContribution vault = EffectContribution.scaledPermanent("vault", "vault_", List.of(
+                new SkillTypeEffect(SpecialSkillEffect.HIGHEST_AFFINITY_FLAT_PER_S_MOD, 6f)));
+        EffectContribution exchange = EffectContribution.scaledPermanent("exchange", "exchange_", List.of(
+                new SkillTypeEffect(SpecialSkillEffect.AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT, 50f)));
+
+        assertEquals(Map.of(LOW_TECH, 36f, HIGH_TECH, 5f), AffinitySteps.totals(List.of(bellows, node(LOW_TECH, 10f), node(LOW_TECH, 20f),
+                node(HIGH_TECH, 5f))));
+        assertEquals(Map.of(LOW_TECH, 42f, HIGH_TECH, 5f), AffinitySteps.totals(List.of(bellows, vault, node(LOW_TECH, 30f), node(HIGH_TECH, 5f))));
+        assertEquals(Map.of(LOW_TECH, 0f, HIGH_TECH, 23f), AffinitySteps.totals(List.of(bellows, exchange, node(LOW_TECH, 30f), node(HIGH_TECH, 5f))));
+        assertEquals(Map.of(HIGH_TECH, 5f), AffinitySteps.totals(List.of(bellows, node(HIGH_TECH, 5f))));
+    }
+
+    @Test
     void anExchangeEmptiesTheOtherTwoAffinitiesIntoItsOwnAtItsShareAfterLowestAsHighest() {
         EffectContribution exchange = EffectContribution.scaledPermanent("exchange", "exchange_", List.of(
                 new SkillTypeEffect(SpecialSkillEffect.AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT, 50f)));

@@ -243,6 +243,13 @@ public enum FighterSkillEffect implements BackedSkillEffect {
                     .arg("max", SwarmLinkListener.MAX_DAMAGE_PERCENT).styled();
         }
     },
+    STRIKECRAFT_DEATH_BURST_DAMAGE_FLAT(new FighterListenerEffect<>(CinderBurstListener.DAMAGE_KEY, CinderBurstListener.class,
+            CinderBurstListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", CinderBurstListener.BURST_RADIUS).styled();
+        }
+    },
     FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER(new FighterListenerEffect<>(WingNumbersDamageListener.REDUCTION_PERCENT_PER_FIGHTER_KEY,
             WingNumbersDamageListener.class, WingNumbersDamageListener::new)) {
 

@@ -22,7 +22,8 @@ public final class DamageTakenCaps {
             new Cap(DefenseSkillEffect.ENERGY_DAMAGE_TAKEN_PERCENT, Set.of(DefenseSkillEffect.ENERGY_DAMAGE_TAKEN_PERCENT)),
             new Cap(DefenseSkillEffect.KINETIC_DAMAGE_TAKEN_PERCENT, Set.of(DefenseSkillEffect.KINETIC_DAMAGE_TAKEN_PERCENT)),
             new Cap(DefenseSkillEffect.HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT, Set.of(DefenseSkillEffect.HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT)),
-            new Cap(DefenseSkillEffect.FRAGMENTATION_DAMAGE_TAKEN_PERCENT, Set.of(DefenseSkillEffect.FRAGMENTATION_DAMAGE_TAKEN_PERCENT)));
+            new Cap(DefenseSkillEffect.FRAGMENTATION_DAMAGE_TAKEN_PERCENT, Set.of(DefenseSkillEffect.FRAGMENTATION_DAMAGE_TAKEN_PERCENT)),
+            new Cap(DefenseSkillEffect.HULL_DAMAGE_TAKEN_PERCENT, Set.of(DefenseSkillEffect.HULL_DAMAGE_TAKEN_PERCENT)));
 
     private DamageTakenCaps() {
     }
