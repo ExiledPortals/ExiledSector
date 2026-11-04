@@ -5337,7 +5337,8 @@
 			"connectedTo": [
 				"crew_capacity_4",
 				"affinity_60",
-				"affinity_62"
+				"affinity_62",
+				"affinity_126"
 			],
 			"x": 13892,
 			"y": 2893,
@@ -5353,7 +5354,8 @@
 			"connectedTo": [
 				"combat_readiness_4",
 				"affinity_51",
-				"affinity_49"
+				"affinity_49",
+				"affinity_133"
 			],
 			"x": 10165,
 			"y": -9407,
@@ -5370,7 +5372,8 @@
 			"connectedTo": [
 				"objective_capture_range_2",
 				"affinity_46",
-				"affinity_48"
+				"affinity_48",
+				"affinity_121"
 			],
 			"x": -1,
 			"y": -14308,
@@ -5386,7 +5389,8 @@
 			"connectedTo": [
 				"affinity_54",
 				"affinity_56",
-				"top_speed_5"
+				"top_speed_5",
+				"affinity_115"
 			],
 			"x": 5649,
 			"y": 13027,
@@ -5402,7 +5406,8 @@
 			"connectedTo": [
 				"ballistic_projectile_speed_2",
 				"affinity_59",
-				"affinity_57"
+				"affinity_57",
+				"affinity_111"
 			],
 			"x": -5640,
 			"y": 13013,
@@ -5418,7 +5423,8 @@
 			"connectedTo": [
 				"affinity_65",
 				"shared_damage_taken_1",
-				"affinity_63"
+				"affinity_63",
+				"affinity_136"
 			],
 			"x": -13878,
 			"y": 2892,
@@ -5450,7 +5456,8 @@
 			"connectedTo": [
 				"affinity_5",
 				"affinity_53",
-				"ballistic_and_energy_weapon_range_7"
+				"ballistic_and_energy_weapon_range_7",
+				"affinity_124"
 			],
 			"x": -11387,
 			"y": -8104,
@@ -7885,6 +7892,437 @@
 				"shrouded",
 				"gate_dweller_fought"
 			]
+		},
+		{
+			"id": "affinity_110",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_111",
+				"affinity_113"
+			],
+			"x": -3398,
+			"y": 11717,
+			"orbitAnchorId": "anchor_88",
+			"orbitAngle": 0,
+			"tags": [
+				"hegemony"
+			]
+		},
+		{
+			"id": "affinity_111",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_110",
+				"affinity_112",
+				"affinity_58"
+			],
+			"x": -5641,
+			"y": 13960,
+			"orbitAnchorId": "anchor_88",
+			"orbitAngle": 90,
+			"tags": [
+				"hegemony"
+			]
+		},
+		{
+			"id": "affinity_112",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_111",
+				"affinity_113"
+			],
+			"x": -7884,
+			"y": 11717,
+			"orbitAnchorId": "anchor_88",
+			"orbitAngle": 180,
+			"tags": [
+				"hegemony"
+			]
+		},
+		{
+			"id": "affinity_113",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_112",
+				"affinity_110"
+			],
+			"x": -5641,
+			"y": 9474,
+			"orbitAnchorId": "anchor_88",
+			"orbitAngle": 270,
+			"tags": [
+				"hegemony"
+			]
+		},
+		{
+			"id": "affinity_114",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_117",
+				"affinity_115"
+			],
+			"x": 7902,
+			"y": 11717,
+			"orbitAnchorId": "anchor_89",
+			"orbitAngle": 0,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"id": "affinity_115",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_114",
+				"affinity_116",
+				"affinity_55"
+			],
+			"x": 5649,
+			"y": 13970,
+			"orbitAnchorId": "anchor_89",
+			"orbitAngle": 90,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"id": "affinity_116",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_115",
+				"affinity_117"
+			],
+			"x": 3396,
+			"y": 11717,
+			"orbitAnchorId": "anchor_89",
+			"orbitAngle": 180,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"id": "affinity_117",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_116",
+				"affinity_114"
+			],
+			"x": 5649,
+			"y": 9464,
+			"orbitAnchorId": "anchor_89",
+			"orbitAngle": 270,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"id": "affinity_118",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_121",
+				"affinity_119"
+			],
+			"x": 2252,
+			"y": -12998,
+			"orbitAnchorId": "anchor_90",
+			"orbitAngle": 0,
+			"tags": [
+				"tritachyon"
+			]
+		},
+		{
+			"id": "affinity_119",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_118",
+				"affinity_120"
+			],
+			"x": -1,
+			"y": -10745,
+			"orbitAnchorId": "anchor_90",
+			"orbitAngle": 90,
+			"tags": [
+				"tritachyon"
+			]
+		},
+		{
+			"id": "affinity_120",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_119",
+				"affinity_121"
+			],
+			"x": -2254,
+			"y": -12998,
+			"orbitAnchorId": "anchor_90",
+			"orbitAngle": 180,
+			"tags": [
+				"tritachyon"
+			]
+		},
+		{
+			"id": "affinity_121",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_120",
+				"affinity_118",
+				"affinity_47"
+			],
+			"x": -1,
+			"y": -15251,
+			"orbitAnchorId": "anchor_90",
+			"orbitAngle": 270,
+			"tags": [
+				"tritachyon"
+			]
+		},
+		{
+			"id": "affinity_122",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_125",
+				"affinity_123"
+			],
+			"x": -8008,
+			"y": -8104,
+			"orbitAnchorId": "anchor_91",
+			"orbitAngle": 0,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "affinity_123",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_122",
+				"affinity_124"
+			],
+			"x": -10169,
+			"y": -5943,
+			"orbitAnchorId": "anchor_91",
+			"orbitAngle": 90,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "affinity_124",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_123",
+				"affinity_125",
+				"affinity_52"
+			],
+			"x": -12330,
+			"y": -8104,
+			"orbitAnchorId": "anchor_91",
+			"orbitAngle": 180,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "affinity_125",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_124",
+				"affinity_122"
+			],
+			"x": -10169,
+			"y": -10265,
+			"orbitAnchorId": "anchor_91",
+			"orbitAngle": 270,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "affinity_126",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_129",
+				"affinity_127",
+				"affinity_61"
+			],
+			"x": 14835,
+			"y": 2893,
+			"orbitAnchorId": "anchor_92",
+			"orbitAngle": 0,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "affinity_127",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_126",
+				"affinity_128"
+			],
+			"x": 12674,
+			"y": 5054,
+			"orbitAnchorId": "anchor_92",
+			"orbitAngle": 90,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "affinity_128",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_127",
+				"affinity_129"
+			],
+			"x": 10513,
+			"y": 2893,
+			"orbitAnchorId": "anchor_92",
+			"orbitAngle": 180,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "affinity_129",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_128",
+				"affinity_126"
+			],
+			"x": 12674,
+			"y": 732,
+			"orbitAnchorId": "anchor_92",
+			"orbitAngle": 270,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "affinity_130",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_133",
+				"affinity_131"
+			],
+			"x": 12408,
+			"y": -8107,
+			"orbitAnchorId": "anchor_93",
+			"orbitAngle": 0,
+			"tags": [
+				"REDACTED",
+				"gate_remnant_fought"
+			]
+		},
+		{
+			"id": "affinity_131",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_130",
+				"affinity_132"
+			],
+			"x": 10165,
+			"y": -5864,
+			"orbitAnchorId": "anchor_93",
+			"orbitAngle": 90,
+			"tags": [
+				"REDACTED",
+				"gate_remnant_fought"
+			]
+		},
+		{
+			"id": "affinity_132",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_131",
+				"affinity_133"
+			],
+			"x": 7922,
+			"y": -8107,
+			"orbitAnchorId": "anchor_93",
+			"orbitAngle": 180,
+			"tags": [
+				"REDACTED",
+				"gate_remnant_fought"
+			]
+		},
+		{
+			"id": "affinity_133",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_132",
+				"affinity_130",
+				"affinity_50"
+			],
+			"x": 10165,
+			"y": -10350,
+			"orbitAnchorId": "anchor_93",
+			"orbitAngle": 270,
+			"tags": [
+				"REDACTED",
+				"gate_remnant_fought"
+			]
+		},
+		{
+			"id": "affinity_134",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_137",
+				"affinity_135"
+			],
+			"x": -10527,
+			"y": 2892,
+			"orbitAnchorId": "anchor_94",
+			"orbitAngle": 0,
+			"tags": [
+				"persean_league"
+			]
+		},
+		{
+			"id": "affinity_135",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_134",
+				"affinity_136"
+			],
+			"x": -12674,
+			"y": 5039,
+			"orbitAnchorId": "anchor_94",
+			"orbitAngle": 90,
+			"tags": [
+				"persean_league"
+			]
+		},
+		{
+			"id": "affinity_136",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_135",
+				"affinity_137",
+				"affinity_64"
+			],
+			"x": -14821,
+			"y": 2892,
+			"orbitAnchorId": "anchor_94",
+			"orbitAngle": 180,
+			"tags": [
+				"persean_league"
+			]
+		},
+		{
+			"id": "affinity_137",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_136",
+				"affinity_134"
+			],
+			"x": -12674,
+			"y": 745,
+			"orbitAnchorId": "anchor_94",
+			"orbitAngle": 270,
+			"tags": [
+				"persean_league"
+			]
 		}
 	],
 	"connectorCurves": [
@@ -10281,6 +10719,174 @@
 			"b": "shrouded_lens_damage_3",
 			"controlX": -34167,
 			"controlY": 27940
+		},
+		{
+			"a": "affinity_110",
+			"b": "affinity_111",
+			"controlX": -4055,
+			"controlY": 13303
+		},
+		{
+			"a": "affinity_111",
+			"b": "affinity_112",
+			"controlX": -7227,
+			"controlY": 13303
+		},
+		{
+			"a": "affinity_112",
+			"b": "affinity_113",
+			"controlX": -7227,
+			"controlY": 10131
+		},
+		{
+			"a": "affinity_110",
+			"b": "affinity_113",
+			"controlX": -4055,
+			"controlY": 10131
+		},
+		{
+			"a": "affinity_114",
+			"b": "affinity_115",
+			"controlX": 7242,
+			"controlY": 13310
+		},
+		{
+			"a": "affinity_115",
+			"b": "affinity_116",
+			"controlX": 4056,
+			"controlY": 13310
+		},
+		{
+			"a": "affinity_116",
+			"b": "affinity_117",
+			"controlX": 4056,
+			"controlY": 10124
+		},
+		{
+			"a": "affinity_114",
+			"b": "affinity_117",
+			"controlX": 7242,
+			"controlY": 10124
+		},
+		{
+			"a": "affinity_118",
+			"b": "affinity_119",
+			"controlX": 1592,
+			"controlY": -11405
+		},
+		{
+			"a": "affinity_119",
+			"b": "affinity_120",
+			"controlX": -1594,
+			"controlY": -11405
+		},
+		{
+			"a": "affinity_120",
+			"b": "affinity_121",
+			"controlX": -1594,
+			"controlY": -14591
+		},
+		{
+			"a": "affinity_118",
+			"b": "affinity_121",
+			"controlX": 1592,
+			"controlY": -14591
+		},
+		{
+			"a": "affinity_122",
+			"b": "affinity_123",
+			"controlX": -8641,
+			"controlY": -6576
+		},
+		{
+			"a": "affinity_123",
+			"b": "affinity_124",
+			"controlX": -11697,
+			"controlY": -6576
+		},
+		{
+			"a": "affinity_124",
+			"b": "affinity_125",
+			"controlX": -11697,
+			"controlY": -9632
+		},
+		{
+			"a": "affinity_122",
+			"b": "affinity_125",
+			"controlX": -8641,
+			"controlY": -9632
+		},
+		{
+			"a": "affinity_126",
+			"b": "affinity_127",
+			"controlX": 14202,
+			"controlY": 4421
+		},
+		{
+			"a": "affinity_127",
+			"b": "affinity_128",
+			"controlX": 11146,
+			"controlY": 4421
+		},
+		{
+			"a": "affinity_128",
+			"b": "affinity_129",
+			"controlX": 11146,
+			"controlY": 1365
+		},
+		{
+			"a": "affinity_126",
+			"b": "affinity_129",
+			"controlX": 14202,
+			"controlY": 1365
+		},
+		{
+			"a": "affinity_130",
+			"b": "affinity_131",
+			"controlX": 11751,
+			"controlY": -6521
+		},
+		{
+			"a": "affinity_131",
+			"b": "affinity_132",
+			"controlX": 8579,
+			"controlY": -6521
+		},
+		{
+			"a": "affinity_132",
+			"b": "affinity_133",
+			"controlX": 8579,
+			"controlY": -9693
+		},
+		{
+			"a": "affinity_130",
+			"b": "affinity_133",
+			"controlX": 11751,
+			"controlY": -9693
+		},
+		{
+			"a": "affinity_134",
+			"b": "affinity_135",
+			"controlX": -11156,
+			"controlY": 4410
+		},
+		{
+			"a": "affinity_135",
+			"b": "affinity_136",
+			"controlX": -14192,
+			"controlY": 4410
+		},
+		{
+			"a": "affinity_136",
+			"b": "affinity_137",
+			"controlX": -14192,
+			"controlY": 1374
+		},
+		{
+			"a": "affinity_134",
+			"b": "affinity_137",
+			"controlX": -11156,
+			"controlY": 1374
 		}
 	],
 	"hiddenConnectors": [
@@ -10995,6 +11601,48 @@
 			"x": -34061,
 			"y": 27834,
 			"radius": 150
+		},
+		{
+			"id": "anchor_88",
+			"x": -5641,
+			"y": 11717,
+			"radius": 2243
+		},
+		{
+			"id": "anchor_89",
+			"x": 5649,
+			"y": 11717,
+			"radius": 2253
+		},
+		{
+			"id": "anchor_90",
+			"x": -1,
+			"y": -12998,
+			"radius": 2253
+		},
+		{
+			"id": "anchor_91",
+			"x": -10169,
+			"y": -8104,
+			"radius": 2161
+		},
+		{
+			"id": "anchor_92",
+			"x": 12674,
+			"y": 2893,
+			"radius": 2161
+		},
+		{
+			"id": "anchor_93",
+			"x": 10165,
+			"y": -8107,
+			"radius": 2243
+		},
+		{
+			"id": "anchor_94",
+			"x": -12674,
+			"y": 2892,
+			"radius": 2147
 		}
 	],
 	"decorations": [
