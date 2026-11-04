@@ -64,7 +64,7 @@ Still to decide: `ENERGY_WEAPON_FLUX_COST_PERCENT` and `WEAPON_TURN_RATE_PERCENT
 
 ## Steps
 
-1. Rename `ReservedModifiers` to `ModifierSources` and add the parts argument, updating `BiomeModifiers`, `Engrams` and `StormLoot`.
+1. [x] Rename `ReservedModifiers` to `ModifierSources` and add the parts argument, updating `BiomeModifiers`, `Engrams` and `StormLoot`. Built: core `ModifierSources` keeps an owner and its parts per modifier, and the same owner reserving again adds parts (another owner is still refused). `BiomeModifiers` passes the row's part, `Engrams` every part of the item types it takes, `StormLoot` every hull item part. Nothing persisted names the class, so it has no alias. Tests: `ModifierSourcesTest` (core), `BiomeModifiersTest`, `EngramTest`, `GrantedModifiersTest` (star-charts).
 2. `ModifierParts` with tests in core for each source, the corruption implicits and the rebuild on reserve and release.
 3. Switch `ItemStatPool` to `ModifierParts` and drop the every-part fallback, updating `ItemStatPoolTest`.
 4. Delete the 12 orphan rows and their zh_CN name keys, and handle the other two as decided. Run the full build to confirm no shipped-data test relied on them.

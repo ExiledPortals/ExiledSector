@@ -13,7 +13,7 @@ import exiledsector.charts.run.ChartCampaignPlugin;
 import exiledsector.items.Engrams;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemModifiers;
-import exiledsector.items.ReservedModifiers;
+import exiledsector.items.ModifierSources;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -50,7 +50,7 @@ class DormantFleetDialogTest {
     @AfterEach
     void tearDown() {
         Engrams.unregisterAll();
-        ReservedModifiers.clear();
+        ModifierSources.clear();
         ItemModifiers.clear();
     }
 

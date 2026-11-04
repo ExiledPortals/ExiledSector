@@ -58,7 +58,7 @@ public final class GrantedModifiers {
     }
 
     private static RolledModifier makingWay(List<RolledModifier> candidates, Random random) {
-        List<RolledModifier> unreserved = candidates.stream().filter(rolled -> !ReservedModifiers.isReserved(rolled.modifierId())).toList();
+        List<RolledModifier> unreserved = candidates.stream().filter(rolled -> !ModifierSources.isReserved(rolled.modifierId())).toList();
         List<RolledModifier> pool = unreserved.isEmpty() ? candidates : unreserved;
         return pool.get(random.nextInt(pool.size()));
     }

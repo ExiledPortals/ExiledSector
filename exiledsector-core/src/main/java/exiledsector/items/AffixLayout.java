@@ -124,7 +124,7 @@ public final class AffixLayout {
         int takenSuffixes = 0;
         for (RolledModifier modifier : modifiers) {
             presentModifiers.add(modifier.modifierId());
-            if (ReservedModifiers.isReserved(modifier.modifierId())) {
+            if (ModifierSources.isReserved(modifier.modifierId())) {
                 modifier.lines().forEach(line -> reservedEffects.add(line.effectName()));
             }
             if (modifier.slot() == ModifierSlot.PREFIX) {

@@ -47,7 +47,7 @@ class EngramTest {
     @AfterEach
     void tearDown() {
         Engrams.resetForTests();
-        ReservedModifiers.clear();
+        ModifierSources.clear();
         ItemDefinitions.clear();
         ItemModifiers.clear();
     }
@@ -306,8 +306,9 @@ class EngramTest {
     void theCurrenciesNeverDropFromShipLootAndReserveTheirModifiers() {
         assertFalse(currency(REVENANT).dropsFromShipLoot());
         assertFalse(currency(REVENANT).growable());
-        assertTrue(ReservedModifiers.isReserved(GRANTED_PREFIX));
-        assertEquals(VIGIL, ReservedModifiers.owner(GRANTED_SUFFIX));
+        assertTrue(ModifierSources.isReserved(GRANTED_PREFIX));
+        assertEquals(VIGIL, ModifierSources.owner(GRANTED_SUFFIX));
+        assertEquals(Set.copyOf(ItemKind.sectionItemTypes()), ModifierSources.parts(GRANTED_SUFFIX));
     }
 
     @Test
@@ -332,7 +333,7 @@ class EngramTest {
 
         assertEquals(1, Engrams.all().size());
         assertNull(CraftingMaterialFamilies.byItemId("exiledSector_test_missing"));
-        assertFalse(ReservedModifiers.isReserved(GRANTED_SUFFIX));
+        assertFalse(ModifierSources.isReserved(GRANTED_SUFFIX));
         assertFalse(problems.isEmpty());
     }
 

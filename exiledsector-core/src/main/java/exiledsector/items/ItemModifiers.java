@@ -287,7 +287,7 @@ public final class ItemModifiers {
         }
         for (Modifier modifier : catalogue.modifiersById().values()) {
             if (modifier.slot() == slot && !modifier.isHybrid() && modifier.line().effectName().equals(effectName)
-                    && catalogue.namesById().containsKey(modifier.id()) && !ReservedModifiers.isReserved(modifier.id())) {
+                    && catalogue.namesById().containsKey(modifier.id()) && !ModifierSources.isReserved(modifier.id())) {
                 return modifier;
             }
         }
