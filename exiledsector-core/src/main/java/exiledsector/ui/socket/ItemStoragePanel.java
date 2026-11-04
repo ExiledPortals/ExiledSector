@@ -564,6 +564,11 @@ public final class ItemStoragePanel extends HoloPanel {
             advancedSearchPane = null;
             syncAdvancedSearchButton();
         }
+
+        @Override
+        public boolean wantsEnter() {
+            return isConfirmOpen() || (searchField != null && searchField.hasFocus());
+        }
     }
 
     private void filtersChanged() {

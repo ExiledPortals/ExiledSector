@@ -109,19 +109,10 @@ class ModifierSearchTest {
     }
 
     @Test
-    void theLinesChoiceSumsOnlyTheChosenLines() {
-        ModifierSearch search = andGroup(ARMOR, "6", "6");
-        ModifierSearch.Row armorRow = search.groups().get(0).rows.get(0);
-
-        assertFalse(matches(search, ARMORED), "both lines make 20");
-        armorRow.lines = ModifierSearch.LineChoice.IMPLICIT;
-        assertTrue(matches(search, ARMORED));
-        armorRow.lines = ModifierSearch.LineChoice.EXPLICIT;
-        armorRow.minText = "14";
-        armorRow.maxText = "14";
-        assertTrue(matches(search, ARMORED));
-        armorRow.lines = armorRow.lines.next();
-        assertEquals(ModifierSearch.LineChoice.BOTH, armorRow.lines);
+    void aRowSumsTheImplicitAndExplicitLinesTogether() {
+        assertTrue(matches(andGroup(ARMOR, "20", "20"), ARMORED));
+        assertFalse(matches(andGroup(ARMOR, "6", "6"), ARMORED), "the implicit alone never counts");
+        assertFalse(matches(andGroup(ARMOR, "14", "14"), ARMORED), "the explicit alone never counts");
     }
 
     @Test
@@ -138,10 +129,7 @@ class ModifierSearchTest {
     @Test
     void anItemWithoutTheStatFailsTheRowEvenWithNoBounds() {
         assertFalse(matches(andGroup(SPEED, "", ""), ARMORED));
-
-        ModifierSearch implicitOnly = andGroup(HULL, "", "");
-        implicitOnly.groups().get(0).rows.get(0).lines = ModifierSearch.LineChoice.IMPLICIT;
-        assertFalse(matches(implicitOnly, ARMORED), "hull comes only from an explicit line");
+        assertTrue(matches(andGroup(HULL, "", ""), ARMORED), "an explicit-only stat still counts");
     }
 
     @Test

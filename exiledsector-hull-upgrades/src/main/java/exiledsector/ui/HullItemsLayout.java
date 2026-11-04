@@ -31,7 +31,6 @@ record HullItemsLayout(float panelLeft, float panelWidth, float settledShipX, Se
 
     FreeArea advancedSearchArea(float panelTop, float panelHeight) {
         float areaRight = panelLeft - PANEL_MARGIN;
-        float areaBottom = panelTop + panelHeight;
-        return new FreeArea(SCREEN_MARGIN, SCREEN_MARGIN, Math.max(0f, areaRight - SCREEN_MARGIN), Math.max(0f, areaBottom - SCREEN_MARGIN));
+        return new FreeArea(SCREEN_MARGIN, panelTop, Math.max(0f, areaRight - SCREEN_MARGIN), panelHeight);
     }
 }

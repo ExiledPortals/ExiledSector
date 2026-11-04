@@ -43,7 +43,7 @@ class AdvancedSearchPlacementTest {
         assertEquals(screen.screenLayout().panelLeft() - HullItemsLayout.PANEL_MARGIN, pane.paneLeft() + pane.paneWidth(), 0.001f);
         assertTrue(pane.paneLeft() >= HullItemsLayout.SCREEN_MARGIN - 0.001f, "left " + pane.paneLeft());
         assertEquals(screen.panelBottom(), pane.paneBottom(), 0.001f);
-        assertEquals(HullItemsLayout.SCREEN_MARGIN, pane.paneTop(), 0.001f, "the pane reaches the screen's top margin");
+        assertEquals(screen.panelTop(), pane.paneTop(), 0.001f, "the pane matches the hull items panel's height");
         assertEquals(HullItemsLayout.SCREEN_MARGIN, pane.paneLeft(), 0.001f, "the pane reaches the screen's left margin");
     }
 

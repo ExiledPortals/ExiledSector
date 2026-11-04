@@ -16,7 +16,9 @@ class AdvancedSearchLayoutTest {
         AdvancedSearchLayout.RowColumns columns = layout.columns();
         assertTrue(columns.removeLeft() + AdvancedSearchLayout.REMOVE_BUTTON_WIDTH <= layout.rowWidth() + 0.001f,
                 "row " + (columns.removeLeft() + AdvancedSearchLayout.REMOVE_BUTTON_WIDTH) + " of " + layout.rowWidth());
-        assertTrue(columns.pickerWidth() > 0f && columns.linesWidth() > 0f && columns.boundWidth() > 0f);
+        assertTrue(columns.pickerWidth() > 0f && columns.boundWidth() > 0f);
+        assertEquals(columns.pickerWidth() + HoloPanel.GAP, columns.clearLeft(), 0.001f, "the clear button sits right of the stat field");
+        assertTrue(columns.clearLeft() + AdvancedSearchLayout.CLEAR_BUTTON_WIDTH <= layout.rowWidth() + 0.001f);
     }
 
     @Test
@@ -26,7 +28,7 @@ class AdvancedSearchLayoutTest {
 
         assertFalse(layout.twoLineRows());
         assertRowFits(layout);
-        assertEquals(columns.pickerWidth() + HoloPanel.GAP, columns.linesLeft(), 0.001f);
+        assertEquals(columns.clearLeft() + AdvancedSearchLayout.CLEAR_BUTTON_WIDTH + HoloPanel.GAP, columns.minLeft(), 0.001f);
         assertEquals(0f, columns.controlsTop(), 0.001f);
         assertTrue(columns.pickerWidth() >= AdvancedSearchLayout.MIN_PICKER_WIDTH);
     }
@@ -38,8 +40,8 @@ class AdvancedSearchLayoutTest {
 
         assertTrue(layout.twoLineRows());
         assertRowFits(layout);
-        assertEquals(layout.rowWidth(), columns.pickerWidth(), 0.001f);
-        assertEquals(0f, columns.linesLeft(), 0.001f);
+        assertEquals(layout.rowWidth(), columns.clearLeft() + AdvancedSearchLayout.CLEAR_BUTTON_WIDTH, 0.001f);
+        assertEquals(0f, columns.minLeft(), 0.001f);
         assertTrue(columns.controlsTop() >= AdvancedSearchLayout.CONTROL_HEIGHT);
         assertEquals(columns.controlsTop() + AdvancedSearchLayout.CONTROL_HEIGHT, columns.rowHeight(), 0.001f);
     }

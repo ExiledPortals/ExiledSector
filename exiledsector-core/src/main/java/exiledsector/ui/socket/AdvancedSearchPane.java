@@ -17,6 +17,7 @@ import exiledsector.items.ItemRarity;
 import exiledsector.items.ItemStatPool;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.util.GLDraw;
+import org.lwjgl.input.Keyboard;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -43,6 +44,8 @@ final class AdvancedSearchPane extends HoloPanel {
         void pressedInside();
 
         void closed();
+
+        boolean wantsEnter();
     }
 
     private static final float LABEL_TEXT_TOP = 4f;
@@ -52,6 +55,11 @@ final class AdvancedSearchPane extends HoloPanel {
     private static final int BOUND_MAX_CHARS = 10;
     private static final int COUNT_MAX_CHARS = 3;
     private static final String TITLE_KEY = "ui.advancedSearch.title";
+    private static final String HELP_ICON_PATH = "graphics/ui/icons/fleettab/more_info.png";
+    private static final float HELP_ICON_SIZE = 24f;
+    private static final float HELP_TOOLTIP_WIDTH = 450f;
+    private static final List<String> HELP_PARAGRAPH_KEYS = List.of("ui.advancedSearch.help.rows", "ui.advancedSearch.help.totals",
+            "ui.advancedSearch.help.groups", "ui.advancedSearch.help.apply");
 
     private enum Action {
         ADD_AND_GROUP("ui.advancedSearch.addAndGroup"),
@@ -92,7 +100,7 @@ final class AdvancedSearchPane extends HoloPanel {
     private record RemoveRow(ModifierSearch.Group group, ModifierSearch.Row row) {
     }
 
-    private record CycleLines(ModifierSearch.Row row) {
+    private record ClearStat(ModifierSearch.Row row) {
     }
 
     private static final class PolledField {
@@ -122,7 +130,7 @@ final class AdvancedSearchPane extends HoloPanel {
     private final AdvancedSearchLayout layout;
     private final List<StatPicker> pickers = new ArrayList<>();
     private final List<PolledField> polledFields = new ArrayList<>();
-    private final Map<ModifierSearch.Row, ButtonAPI> linesButtons = new IdentityHashMap<>();
+    private final List<TextFieldAPI> tabOrder = new ArrayList<>();
     private final Map<Action, ButtonAPI> actionButtons = new IdentityHashMap<>();
     private final Map<Menu, ButtonAPI> menuButtons = new EnumMap<>(Menu.class);
     private final FilterMenu filterMenu = new FilterMenu(this::buttonPressed, () -> queue(this::closeFilterMenu));
@@ -131,6 +139,7 @@ final class AdvancedSearchPane extends HoloPanel {
     private TooltipMakerAPI groupsElement;
     private UIComponentAPI actionsElement;
     private StatPicker activePicker;
+    private boolean fieldFocused;
 
     private AdvancedSearchPane(CustomPanelAPI hostPanel, AdvancedSearchLayout layout, ItemStorageFilter storageFilter, Host host) {
         super(hostPanel);
@@ -168,10 +177,13 @@ final class AdvancedSearchPane extends HoloPanel {
     protected void build() {
         pickers.clear();
         polledFields.clear();
-        linesButtons.clear();
+        tabOrder.clear();
+        fieldFocused = false;
         actionButtons.clear();
         activePicker = null;
-        headerElement = finishHeader(startHeader(TITLE_KEY, null, null), null);
+        TooltipMakerAPI header = startHeader(TITLE_KEY, null, null);
+        addHelpIcon(header);
+        headerElement = finishHeader(header, null);
         filtersElement = null;
         rebuildFilters();
         float groupsTop = filtersTop() + ChipFlow.CHIP_HEIGHT + GAP;
@@ -180,6 +192,19 @@ final class AdvancedSearchPane extends HoloPanel {
         groupsElement = buildGroups(groupsTop, Math.max(AdvancedSearchLayout.CONTROL_HEIGHT, actionsTop - GAP - groupsTop));
         actionsElement = buildActions(actionsTop, actionsHeight);
         refreshOpacity();
+    }
+
+    private static void addHelpIcon(TooltipMakerAPI header) {
+        header.addImage(HELP_ICON_PATH, HELP_ICON_SIZE, HELP_ICON_SIZE, 0f);
+        header.getPrev().getPosition().inTR(0f, (HEADER_HEIGHT - HELP_ICON_SIZE) / 2f);
+        header.addTooltipToPrevious(new GameTextTooltip(HELP_TOOLTIP_WIDTH, AdvancedSearchPane::writeHelp), TooltipMakerAPI.TooltipLocation.BELOW);
+    }
+
+    private static void writeHelp(TooltipMakerAPI tooltip) {
+        tooltip.addTitle(Translation.text("ui.advancedSearch.help.title"));
+        for (String paragraphKey : HELP_PARAGRAPH_KEYS) {
+            VanillaText.addPara(tooltip, Translation.styled(paragraphKey), PAD, Misc.getTextColor());
+        }
     }
 
     private void rebuild() {
@@ -331,6 +356,7 @@ final class AdvancedSearchPane extends HoloPanel {
             countField.setText(group.countText);
             element.addTooltipToPrevious(tooltip(kindKey + ".tooltip"), TooltipMakerAPI.TooltipLocation.BELOW);
             polledFields.add(new PolledField(countField, text -> group.countText = text));
+            tabOrder.add(countField);
         }
         if (!layout.twoLineRows()) {
             addColumnLabel(element, "ui.advancedSearch.column.min", columns.minLeft(), rowTop, columns.boundWidth());
@@ -351,14 +377,13 @@ final class AdvancedSearchPane extends HoloPanel {
         pickerField.setMaxChars(PICKER_MAX_CHARS);
         element.addTooltipToPrevious(pickerTooltip(row), TooltipMakerAPI.TooltipLocation.BELOW);
         pickers.add(new StatPicker(row, pickerField));
+        tabOrder.add(pickerField);
         float controlsTop = rowTop + columns.controlsTop();
         ChipFlow.Colors colors = ChipFlow.Colors.player();
         element.setAreaCheckboxFont(Fonts.DEFAULT_SMALL);
-        ButtonAPI linesButton = element.addAreaCheckbox(Translation.text(row.lines.labelKey()), new CycleLines(row), colors.base(), colors.dark(),
-                colors.bright(), columns.linesWidth(), AdvancedSearchLayout.CONTROL_HEIGHT, 0f);
-        linesButton.getPosition().inTL(columns.linesLeft(), controlsTop);
-        element.addTooltipToPrevious(tooltip("ui.advancedSearch.lines.tooltip"), TooltipMakerAPI.TooltipLocation.BELOW);
-        linesButtons.put(row, linesButton);
+        element.addAreaCheckbox(Translation.text("ui.advancedSearch.clear"), new ClearStat(row), colors.base(), colors.dark(), colors.bright(),
+                AdvancedSearchLayout.CLEAR_BUTTON_WIDTH, AdvancedSearchLayout.CONTROL_HEIGHT, 0f).getPosition().inTL(columns.clearLeft(), rowTop);
+        element.addTooltipToPrevious(tooltip("ui.advancedSearch.clear.tooltip"), TooltipMakerAPI.TooltipLocation.BELOW);
         addBoundField(element, row.minText, text -> row.minText = text, columns.minLeft(), controlsTop, columns.boundWidth(),
                 "ui.advancedSearch.min.tooltip");
         addBoundField(element, row.maxText, text -> row.maxText = text, columns.maxLeft(), controlsTop, columns.boundWidth(),
@@ -377,6 +402,7 @@ final class AdvancedSearchPane extends HoloPanel {
         boundField.setText(boundText);
         element.addTooltipToPrevious(tooltip(tooltipKey), TooltipMakerAPI.TooltipLocation.BELOW);
         polledFields.add(new PolledField(boundField, store));
+        tabOrder.add(boundField);
     }
 
     private UIComponentAPI buildActions(float actionsTop, float actionsHeight) {
@@ -415,13 +441,8 @@ final class AdvancedSearchPane extends HoloPanel {
         if (id instanceof StatPicker.Choice choice) {
             choice.row().statName = choice.statName();
             rebuild();
-        } else if (id instanceof CycleLines cycle) {
-            cycle.row().lines = cycle.row().lines.next();
-            ButtonAPI linesButton = linesButtons.get(cycle.row());
-            if (linesButton != null) {
-                linesButton.setText(Translation.text(cycle.row().lines.labelKey()));
-                linesButton.setChecked(false);
-            }
+        } else if (id instanceof ClearStat clear) {
+            clearStat(clear.row());
         } else if (id instanceof AddRow add) {
             search.addRow(add.group());
             rebuild();
@@ -443,6 +464,16 @@ final class AdvancedSearchPane extends HoloPanel {
             filtersPicked(false);
         } else if (id instanceof Action action) {
             actionPressed(action);
+        }
+    }
+
+    private void clearStat(ModifierSearch.Row row) {
+        row.statName = null;
+        rebuild();
+        for (StatPicker picker : pickers) {
+            if (picker.isFor(row)) {
+                picker.focus();
+            }
         }
     }
 
@@ -481,6 +512,46 @@ final class AdvancedSearchPane extends HoloPanel {
                 I18n.forGameText(() -> openPicker(picker));
             }
         }
+        fieldFocused = focusedFieldIndex() >= 0;
+    }
+
+    private int focusedFieldIndex() {
+        for (int index = 0; index < tabOrder.size(); index++) {
+            if (tabOrder.get(index).hasFocus()) {
+                return index;
+            }
+        }
+        return -1;
+    }
+
+    private void handleKey(InputEventAPI event) {
+        if (!event.isKeyboardEvent() || !(event.isKeyDownEvent() || event.isRepeat())) {
+            return;
+        }
+        int key = event.getEventValue();
+        if (key == Keyboard.KEY_TAB && !event.isConsumed()) {
+            moveFocus(event.isShiftDown() ? -1 : 1, event);
+        } else if ((key == Keyboard.KEY_RETURN || key == Keyboard.KEY_NUMPADENTER) && !event.isRepeat() && enterMeansSearch(event)) {
+            event.consume();
+            buttonPressed(Action.SEARCH);
+        }
+    }
+
+    private void moveFocus(int step, InputEventAPI event) {
+        int focusedIndex = focusedFieldIndex();
+        if (focusedIndex < 0) {
+            return;
+        }
+        tabOrder.get(Math.floorMod(focusedIndex + step, tabOrder.size())).grabFocus();
+        event.consume();
+        queue(this::closePicker);
+    }
+
+    private boolean enterMeansSearch(InputEventAPI event) {
+        if (event.isConsumed()) {
+            return fieldFocused;
+        }
+        return !isConfirmOpen() && !host.wantsEnter();
     }
 
     private void pollFields() {
@@ -522,6 +593,7 @@ final class AdvancedSearchPane extends HoloPanel {
             return;
         }
         for (InputEventAPI event : events) {
+            handleKey(event);
             boolean pressOrScroll = event.isMouseDownEvent() || event.isMouseScrollEvent();
             if (activePicker != null && pressOrScroll && !activePicker.contains(event.getX(), event.getY())) {
                 queue(this::closePicker);

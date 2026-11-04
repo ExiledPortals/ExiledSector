@@ -64,6 +64,14 @@ final class StatPicker {
         return gainedFocus || (typed && focusedNow);
     }
 
+    boolean isFor(ModifierSearch.Row candidate) {
+        return row == candidate;
+    }
+
+    void focus() {
+        field.grabFocus();
+    }
+
     String filterText() {
         String typed = field.getText().trim();
         return row.hasStat() && typed.equals(shownLabel.trim()) ? "" : typed;
