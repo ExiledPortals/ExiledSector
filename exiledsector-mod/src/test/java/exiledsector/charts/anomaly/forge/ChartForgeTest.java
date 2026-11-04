@@ -73,7 +73,7 @@ class ChartForgeTest {
         ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
         run.recordContent(new ChartContent(1, "pirates", "boss", 3, 2, List.of(DerelictForge.ANOMALY_ID)));
         run.recordArrival();
-        ForgeStates.record(ForgeStates.of(run), programs, runs);
+        ForgeStates.record(ForgeStates.of(run, ForgeSite.DERELICT_FORGE), programs, runs);
         ChartRuns.store(run);
         return run;
     }
@@ -93,17 +93,17 @@ class ChartForgeTest {
         ChartRun run = liveForgeRun(List.of(excise), 1);
         owns(100f, 100f, 50);
         Item item = plate();
-        ForgeRules.Cost cost = ChartForge.costFor(run, excise);
+        ForgeRules.Cost cost = ChartForge.costFor(run, ForgeSite.DERELICT_FORGE, excise);
 
-        assertTrue(ChartForge.verdict(run, excise, item, cargo, materials).allowed());
-        assertTrue(ChartForge.run(run, excise, item, ForgeChoice.modifier(item.explicits().get(1)), cargo, materials, new Random(1L)));
+        assertTrue(ChartForge.verdict(run, ForgeSite.DERELICT_FORGE, excise, item, cargo, materials).allowed());
+        assertTrue(ChartForge.run(run, ForgeSite.DERELICT_FORGE, excise, item, ForgeChoice.modifier(item.explicits().get(1)), cargo, materials, new Random(1L)));
 
         assertEquals(1, item.explicits().size());
         verify(cargo).removeCommodity(Commodities.METALS, cost.metals());
         verify(cargo).removeCommodity(Commodities.RARE_METALS, cost.rareMetals());
         assertEquals(50 - cost.feedstock(), materials.count(ChartForge.FEEDSTOCK_ITEM_ID));
-        assertEquals(0, ForgeStates.runsLeft(run));
-        assertSame(ChartForge.DARK, ChartForge.verdict(run, excise, item, cargo, materials));
+        assertEquals(0, ForgeStates.runsLeft(run, ForgeSite.DERELICT_FORGE));
+        assertSame(ChartForge.DARK, ChartForge.verdict(run, ForgeSite.DERELICT_FORGE, excise, item, cargo, materials));
     }
 
     @Test
@@ -113,10 +113,10 @@ class ChartForgeTest {
         Item item = plate();
         RolledModifier notOnTheItem = plate().explicits().get(0).asImmutable();
 
-        assertFalse(ChartForge.run(run, excise, item, ForgeChoice.modifier(notOnTheItem), cargo, materials, new Random(1L)));
+        assertFalse(ChartForge.run(run, ForgeSite.DERELICT_FORGE, excise, item, ForgeChoice.modifier(notOnTheItem), cargo, materials, new Random(1L)));
 
         verify(cargo, never()).removeCommodity(anyString(), anyFloat());
-        assertEquals(1, ForgeStates.runsLeft(run));
+        assertEquals(1, ForgeStates.runsLeft(run, ForgeSite.DERELICT_FORGE));
         assertEquals(2, item.explicits().size());
         assertEquals(50, materials.count(ChartForge.FEEDSTOCK_ITEM_ID));
     }
@@ -127,20 +127,20 @@ class ChartForgeTest {
         ChartRun run = liveForgeRun(List.of(excise), 1);
         owns(100f, 100f, 5);
 
-        assertSame(ChartForge.COST, ChartForge.verdict(run, excise, plate(), cargo, materials));
-        assertSame(ChartForge.DARK, ChartForge.verdict(run, retemper, plate(), cargo, materials));
-        assertEquals("ui.forge.refused.loadFirst", ChartForge.verdict(run, excise, null, cargo, materials).refusalKey());
-        assertSame(ChartForge.DARK, ChartForge.verdict(null, excise, plate(), cargo, materials));
+        assertSame(ChartForge.COST, ChartForge.verdict(run, ForgeSite.DERELICT_FORGE, excise, plate(), cargo, materials));
+        assertSame(ChartForge.DARK, ChartForge.verdict(run, ForgeSite.DERELICT_FORGE, retemper, plate(), cargo, materials));
+        assertEquals("ui.forge.refused.loadFirst", ChartForge.verdict(run, ForgeSite.DERELICT_FORGE, excise, null, cargo, materials).refusalKey());
+        assertSame(ChartForge.DARK, ChartForge.verdict(null, ForgeSite.DERELICT_FORGE, excise, plate(), cargo, materials));
         ChartRun bothPrograms = liveForgeRun(List.of(excise, retemper), 1);
-        assertSame(ChartForge.ITEM_TYPE, ChartForge.verdict(bothPrograms, retemper, plate(), cargo, materials));
+        assertSame(ChartForge.ITEM_TYPE, ChartForge.verdict(bothPrograms, ForgeSite.DERELICT_FORGE, retemper, plate(), cargo, materials));
     }
 
     @Test
     void theCostFollowsTheRunTier() {
         ChartRun run = liveForgeRun(List.of(excise), 1);
 
-        assertEquals(ForgeRules.costFor(excise, 1, 1f), ChartForge.costFor(run, excise));
-        assertNull(ChartForge.liveRun("another"));
+        assertEquals(ForgeRules.costFor(excise, 1f), ChartForge.costFor(run, ForgeSite.DERELICT_FORGE, excise));
+        assertNull(ChartForge.liveRun("another", ForgeSite.DERELICT_FORGE));
         assertEquals(ForgeOperation.EXCISE, excise.operation());
     }
 }

@@ -1,12 +1,12 @@
 package exiledsector.charts.anomaly.shipyard;
 
-import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.anomaly.AbyssOrbits;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ContentPlacer;
@@ -14,12 +14,10 @@ import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.anomaly.VanillaDefenders;
 import exiledsector.charts.content.ChartSites;
-import exiledsector.charts.layout.abyss.ChartAbyss;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 
 import java.util.List;
-import java.util.Random;
 
 public final class AbyssalShipyard implements ContentPlacer, RunParticipant, LootShaper {
 
@@ -47,14 +45,7 @@ public final class AbyssalShipyard implements ContentPlacer, RunParticipant, Loo
 
     @Override
     public void generate(AnomalyContentSite site) {
-        Random random = site.random(PLACEMENT_SALT);
-        List<CustomCampaignEntityAPI> photospheres = ChartAbyss.photospheres(site.system());
-        SectorEntityToken focus = photospheres.isEmpty() ? site.centre() : photospheres.get(random.nextInt(photospheres.size()));
-        float coreRadius = focus == null ? 0f : focus.getRadius();
-        ChartSites.Orbit orbit = site.clearOrbit(focus, coreRadius + MIN_ORBIT_GAP, coreRadius + MAX_ORBIT_GAP, random);
-        if (orbit == null) {
-            orbit = AnomalyContentSite.orbit(focus, random.nextFloat() * 360f, coreRadius + MIN_ORBIT_GAP);
-        }
+        ChartSites.Orbit orbit = AbyssOrbits.nearPhotosphere(site, MIN_ORBIT_GAP, MAX_ORBIT_GAP, site.random(PLACEMENT_SALT));
         SectorEntityToken shipyard = site.addEntity(shipyardId(site.runId()), Translation.gameText("chart.anomaly.abyssal_shipyard.name"),
                 ENTITY_TYPE, Factions.NEUTRAL, orbit);
         shipyard.addTag(SHIPYARD_TAG);

@@ -13,6 +13,7 @@ import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.CoredLineup;
 import exiledsector.charts.anomaly.VanillaDefenders;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.content.ChartContentGenerator;
@@ -163,10 +164,11 @@ class AbyssalShipyardTest {
 
     @Test
     void theGuardsGrowFromThreeEscortsToTheFullLineupWithTier() {
-        assertEquals(ShipyardGuards.ESCORTS_AT_LOWEST_TIER, ShipyardGuards.escortCount(ChartTiers.LOWEST_TIER));
-        assertEquals(ShipyardGuards.ESCORTS.size(), ShipyardGuards.escortCount(ChartTiers.HIGHEST_TIER));
+        CoredLineup lineup = ShipyardGuards.LINEUP;
+        assertEquals(3, lineup.escortCount(ChartTiers.LOWEST_TIER));
+        assertEquals(lineup.escorts().size(), lineup.escortCount(ChartTiers.HIGHEST_TIER));
         for (int tier = ChartTiers.LOWEST_TIER; tier < ChartTiers.HIGHEST_TIER; tier++) {
-            assertTrue(ShipyardGuards.escortCount(tier + 1) >= ShipyardGuards.escortCount(tier));
+            assertTrue(lineup.escortCount(tier + 1) >= lineup.escortCount(tier));
         }
     }
 
@@ -178,9 +180,9 @@ class AbyssalShipyardTest {
 
         assertNotNull(guards);
         assertEquals(1, engine.flagships.size());
-        assertEquals(ShipyardGuards.FLAGSHIP_VARIANT, engine.flagships.get(0).variantId());
+        assertEquals("rat_morkoth_Anchor", engine.flagships.get(0).variantId());
         assertEquals(ShipyardGuards.CHRONOS_CORE, engine.flagships.get(0).aiCoreId());
-        assertEquals(ShipyardGuards.escortCount(1), engine.coreShips.size());
-        assertEquals(ShipyardGuards.ESCORTS.get(0).variantId(), engine.coreShips.get(0).variantId());
+        assertEquals(ShipyardGuards.LINEUP.escortCount(1), engine.coreShips.size());
+        assertEquals(ShipyardGuards.LINEUP.escorts().get(0).variantId(), engine.coreShips.get(0).variantId());
     }
 }

@@ -55,7 +55,7 @@ A Rift landmark: a `biomes=abyssal_rift` row in `chart_anomalies.csv`, so exactl
 
 ## Abyssal Research Complex
 
-A Rift-only anomaly that works like the Derelict Forge (`../completed/anomalies/derelict_forge.md`). It is guarded by a Seraph fleet modelled on RAT's: a Gabriel with Sariels and Raguels under Seraph cores, scaled to the tier. Once the guards are beaten, its one program adds the Abyssal Rift modifier for a hull item's type to a hull item from anywhere, through the forge's bench mode with the forge's refusal rules: no uniques, Subroutines, Star Charts, corrupted or mirrored items, and only an item with room for the modifier. It runs once per run (placeholder) and costs metals, rare metals and Nanite Feedstock scaling with tier (placeholders). It drops no items of its own. RAT's lore logs, the Primordial Catalyst reveal and survey data are left out.
+A Rift landmark like the Shipyard: exactly one system in each Rift pocket holds it. It works like the Derelict Forge (`../completed/anomalies/derelict_forge.md`) and shares its dialog, bench and run tracking through `ForgeSite`. It is guarded by RAT's Seraph lineup: a Gabriel with Sariels and Raguels, every ship under a Seraph core, three escorts at tier 1 and one more every two tiers. Once the guards are beaten, its one program, Abyssal Infusion, adds the Abyssal Rift modifier for a hull item's part to a hull item from anywhere, on its own bench with RAT's research complex art. It refuses uniques, Subroutines, Star Charts, corrupted and mirrored items, parts with no Rift modifier, an item that already has it or a modifier with the same effect, and an item with no room on that side: a full item can't use it. It runs once per run and costs 500 Nanite Feedstock, the same at every tier; the Derelict Forge's costs no longer scale with tier either. It drops no items of its own. RAT's lore logs, the Primordial Catalyst reveal and survey data are left out.
 
 ## Abyssal Storm
 
@@ -63,7 +63,7 @@ A Rift-only anomaly after RAT's Sea of Solitude storms. Every 27 to 33 seconds a
 
 ## Rift-only anomalies
 
-The Rift weighs every anomaly it doesn't list at 0 (`*:0`). The Research Complex and the Abyssal Storm are rolled normally inside the Rift and must never roll or be inserted anywhere else. Their `fitsAt` refuses every node outside a biome that lists them, so `AtlasAnomalies.canInsert` refuses them there too. Only the Shipyard is a `biomes` landmark.
+The Rift weighs every anomaly it doesn't list at 0 (`*:0`). The Abyssal Storm is rolled normally inside the Rift and must never roll or be inserted anywhere else. Its `fitsAt` refuses every node outside a biome that lists it, so `AtlasAnomalies.canInsert` refuses it there too. The Shipyard and the Research Complex are `biomes` landmarks.
 
 ## Build order
 
@@ -72,7 +72,7 @@ The Rift weighs every anomaly it doesn't list at 0 (`*:0`). The Research Complex
 1b. [x] Borrowed Grace: the per-stack effect moves into the stack, the node drops `BORROWED_GRACE_PERCENT_PER_STACK`, and the item's stack source with its 150 damage threshold shares the node's stack pool; update the node's lines, `docs/docs.md` and the Borrowed Grace tests. Built: `BORROWED_GRACE_SLOW_MAX_STACKS_FLAT` in `BorrowedGraceListener`.
 2. [x] Abyssal salvage sites: the `biomes` column on `chart_poi.csv`, our three custom entities and salvage specs, placement in the orbitless Rift layout. Built: `ChartPois.inBiome`, `ChartContentPlanner.spendPooledLoot` (a biome with its own sites spends every kind's budget on them), `ChartGenContext.withBiome`, `ChartAbyss.siteSpots`; RAT's station art copied into `graphics/stations` and `graphics/illustrations`.
 3. [x] Abyssal Shipyard: its landmark row, entity, guard fleet and salvage. Built: `charts.anomaly.shipyard` (`AbyssalShipyard`, `ShipyardGuards`, `ShipyardDialog`); guards scale by escort count with tier (3 at tier 1, +1 per two tiers, up to RAT's 9); placeholder icon from RAT's abyssal crest.
-4. [ ] Abyssal Research Complex: Rift-only `fitsAt`, entity, Seraph guards and the abyssal graft program on the forge's bench mode.
+4. [x] Abyssal Research Complex: landmark row, entity, Seraph guards and the Abyssal Infusion program on its own forge bench. Built: `AbyssalResearchComplex`, `ComplexGuards`, `ForgeSite` in `charts.anomaly.forge`; core `ForgeOperation.INFUSE` with `ForgeInfusions`; `BenchMode.ABYSSAL_FORGE`; shared `CoredLineup` and `AbyssOrbits`.
 5. [ ] Abyssal Storm: the storm script, overlay and sound, its fog check and its `effects` line.
 6. [ ] Atlas marker icons for the three anomalies, catalysts if wanted, the `docs/docs.md` sections and tests for each step.
 
@@ -82,7 +82,6 @@ Decided 2026-11-04: no Abyssal Graveyard of recoverable abyssal wrecks, no Abyss
 
 ## Open questions
 
-- Whether the Research Complex is a rolled Rift anomaly (as above) or a landmark like the Shipyard.
 - Whether "boss fight" means the Shipyard's guards are the chart's boss in its system. As written they are a separate fight, and the system still has its own boss.
-- Whether biome modifiers scale with tier group like chart modifier lines, and whether the Research Complex should cost something abyssal instead of metals and Nanite Feedstock.
+- Whether biome modifiers scale with tier group like chart modifier lines.
 - Whether the Abyssal Storm should also reward fights fought during a storm, as the Storm Front does.

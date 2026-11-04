@@ -59,6 +59,23 @@ public enum ForgeOperation {
         boolean run(Item item, ForgeChoice choice, Random random) {
             return ItemForging.retemper(item, random);
         }
+    },
+    INFUSE {
+        @Override
+        public List<ForgeChoice> choices(Item item) {
+            return ForgeInfusions.block(item) == null ? List.of(ForgeChoice.WHOLE_ITEM) : List.of();
+        }
+
+        @Override
+        String refusalReason(Item item) {
+            ForgeInfusions.Block block = ForgeInfusions.block(item);
+            return block == null ? null : id() + "." + block.name().toLowerCase(Locale.ROOT);
+        }
+
+        @Override
+        boolean run(Item item, ForgeChoice choice, Random random) {
+            return ForgeInfusions.infuse(item, random);
+        }
     };
 
     static final String REFUSAL_PREFIX = "ui.forge.refused.";
@@ -80,8 +97,12 @@ public enum ForgeOperation {
 
     abstract boolean run(Item item, ForgeChoice choice, Random random);
 
+    String refusalReason(Item item) {
+        return choices(item).isEmpty() ? id() : null;
+    }
+
     public boolean picksAChoice() {
-        return this != RETEMPER;
+        return this != RETEMPER && this != INFUSE;
     }
 
     public UseVerdict verdict(Item item) {
@@ -100,7 +121,8 @@ public enum ForgeOperation {
         if (ItemCrafting.isLockedFromCurrency(item.definition())) {
             return UseVerdict.refused(REFUSAL_PREFIX + "uniqueSubroutine");
         }
-        return choices(item).isEmpty() ? UseVerdict.refused(REFUSAL_PREFIX + id()) : UseVerdict.ALLOW;
+        String reason = refusalReason(item);
+        return reason == null ? UseVerdict.ALLOW : UseVerdict.refused(REFUSAL_PREFIX + reason);
     }
 
     public boolean apply(Item item, ForgeChoice choice, Random random) {

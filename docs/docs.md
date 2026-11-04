@@ -822,7 +822,7 @@ Resource %. Like a vanilla cryosleeper, the forge is guarded until beaten: `Forg
 the tier's fleet size, cruisers at most) under one alpha-core Guardian into the forge's `$defenderFleet`, and
 `ForgeDialog` hands them to vanilla `SalvageDefenderInteraction`. As at every chart site with vanilla defenders, a win
 leaves the main sector's derelict tally untouched (`ChartDefenderTallies`). It then
-lists the programs and their costs, which grow 15% per tier and follow the cost line (`ForgeRules`), and opens the
+lists the programs and their costs, the same at every tier and scaled by the cost line (`ForgeRules`), and opens the
 Crafting Bench in Forge mode (`ForgeCraftingBench`), which takes hull items only.
 
 The programs are `ForgeOperation`s in core (`ItemForging`), refusing mirrored, corrupted and locked items as nanoswarms
@@ -883,7 +883,8 @@ the `star` effect and `weight` 0, so only `ExiledSectorGrantAtlasCatalysts` hand
 
 These anomalies never roll or get inserted: an anomaly with a `biomes` column in `chart_anomalies.csv` sits in
 exactly one system of each pocket (biome site) of those biomes, the one with the lowest atlas-seed hash among its
-systems that are not special sites or infested (`AtlasBiomeAnomalies`). It comes first among the node's anomalies, so
+systems that are not special sites or infested (`AtlasBiomeAnomalies`); several in one biome pick in `chart_anomalies.csv` order and
+never share a system. It comes first among the node's anomalies, so
 it always fits under the limit of 9, and a failed run doesn't spend it.
 
 Each places a station-mode fleet of its faction, marked with the run's tier and carrying a chart fleet's loot, on a
@@ -900,5 +901,14 @@ photosphere (`charts.anomaly.shipyard`). Its guards are RAT's lineup in our own 
 and three escorts at tier 1, one more every two tiers up to RAT's nine (`ShipyardGuards`), fought through vanilla's
 defender interaction. Once they are beaten the shipyard can be salvaged once, for the `abyssal_shipyard` scope of
 `chart_loot.csv` (RAT's drop groups) and the `exiledSector_chart_abyssal_shipyard` item row (`ShipyardDialog`).
+
+### Abyssal Research Complex
+
+A second forge site and a Rift landmark like the Shipyard (`AbyssalResearchComplex`). `ForgeSite` gives each forge its
+anomaly id, texts, bench art and guards, so the Complex shares `ForgeDialog`, `ChartForge` and the run record with the
+Derelict Forge. RAT's Seraph lineup guards it (`ComplexGuards`, built like the Shipyard's through `CoredLineup`). Its
+only program, Abyssal Infusion, runs once for 500 Nanite Feedstock: core `ForgeOperation.INFUSE` adds the modifier
+`ForgeInfusions` names for the item's part, the Rift's from `biome_modifiers.csv`, and refuses a full side rather than
+replacing a modifier.
 
 </details>

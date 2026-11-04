@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.PlayerFleet;
 import exiledsector.i18n.StyledText;
 import exiledsector.charts.anomaly.forge.ChartForge;
+import exiledsector.charts.anomaly.forge.ForgeSite;
 import exiledsector.charts.anomaly.forge.ForgeTexts;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.items.CraftingMaterials;
@@ -28,17 +29,21 @@ import java.util.function.Predicate;
 
 public final class ForgeCraftingBench implements BenchModeSupport {
 
-    public static final ForgeCraftingBench INSTANCE = new ForgeCraftingBench();
+    public static final ForgeCraftingBench DERELICT_FORGE = new ForgeCraftingBench(ForgeSite.DERELICT_FORGE);
+    public static final ForgeCraftingBench ABYSSAL_RESEARCH_COMPLEX = new ForgeCraftingBench(ForgeSite.ABYSSAL_RESEARCH_COMPLEX);
     static final String RAN_PREFIX = "chart.anomaly.derelict_forge.ran.";
     private static final OpenTexts OPEN_TEXTS = new OpenTexts("chart.anomaly.derelict_forge.bench.run", "chart.anomaly.derelict_forge.bench.run.tooltip", "chart.anomaly.derelict_forge.bench.confirm.title",
             "chart.anomaly.derelict_forge.bench.confirm.body", null, "chart.anomaly.derelict_forge.bench.confirm.yes", "chart.anomaly.derelict_forge.bench.confirm.no");
 
-    private ForgeCraftingBench() {
+    private final ForgeSite forgeSite;
+
+    private ForgeCraftingBench(ForgeSite forgeSite) {
+        this.forgeSite = forgeSite;
     }
 
     @Override
     public BenchMode mode() {
-        return BenchMode.FORGE;
+        return forgeSite.benchMode();
     }
 
     @Override
@@ -63,17 +68,17 @@ public final class ForgeCraftingBench implements BenchModeSupport {
 
     @Override
     public String titleKey() {
-        return "chart.anomaly.derelict_forge.bench.title";
+        return forgeSite.textKey("bench.title");
     }
 
     @Override
     public String emptyKey() {
-        return "chart.anomaly.derelict_forge.bench.empty";
+        return forgeSite.textKey("bench.empty");
     }
 
     @Override
     public String useHintKey() {
-        return "chart.anomaly.derelict_forge.bench.empty";
+        return forgeSite.textKey("bench.empty");
     }
 
     @Override
@@ -129,7 +134,8 @@ public final class ForgeCraftingBench implements BenchModeSupport {
             return openCheck(sector, store, loaded);
         }
         CargoAPI cargo = PlayerFleet.cargoOrNull();
-        UseVerdict verdict = ChartForge.verdict(ChartForge.liveRun(order.runId()), order.program(), loaded, cargo, materials(cargo));
+        UseVerdict verdict = ChartForge.verdict(ChartForge.liveRun(order.runId(), order.site()), order.site(), order.program(), loaded, cargo,
+                materials(cargo));
         return new OpenCheck(verdict.allowed(), verdict.refusalKey());
     }
 
@@ -138,7 +144,7 @@ public final class ForgeCraftingBench implements BenchModeSupport {
         if (target == null || !(target.target() instanceof ChartForge.Order order)) {
             return List.of();
         }
-        ChartRun run = ChartForge.liveRun(order.runId());
+        ChartRun run = ChartForge.liveRun(order.runId(), order.site());
         if (run == null) {
             return List.of(ForgeTexts.programDescription(order.program()));
         }
@@ -146,7 +152,7 @@ public final class ForgeCraftingBench implements BenchModeSupport {
         if (order.program().operation().picksAChoice()) {
             lines.add(ForgeTexts.choicePrompt(order.program().operation()));
         }
-        lines.add(ForgeTexts.costLine(ChartForge.costFor(run, order.program())));
+        lines.add(ForgeTexts.costLine(ChartForge.costFor(run, order.site(), order.program())));
         return lines;
     }
 
@@ -187,12 +193,13 @@ public final class ForgeCraftingBench implements BenchModeSupport {
         if (pick == null) {
             return open(sector, store, loaded, entries, random);
         }
-        ChartRun run = ChartForge.liveRun(pick.order().runId());
+        ForgeSite site = pick.order().site();
+        ChartRun run = ChartForge.liveRun(pick.order().runId(), site);
         CargoAPI cargo = PlayerFleet.cargoOrNull();
-        if (ChartForge.run(run, pick.order().program(), loaded, pick.choice(), cargo, materials(cargo), random)) {
+        if (ChartForge.run(run, site, pick.order().program(), loaded, pick.choice(), cargo, materials(cargo), random)) {
             return new OpenOutcome(true, RAN_PREFIX + pick.order().program().operation().id());
         }
-        UseVerdict verdict = ChartForge.verdict(run, pick.order().program(), loaded, cargo, materials(cargo));
+        UseVerdict verdict = ChartForge.verdict(run, site, pick.order().program(), loaded, cargo, materials(cargo));
         return new OpenOutcome(false, verdict.allowed() ? ChartForge.FAILED.refusalKey() : verdict.refusalKey());
     }
 }

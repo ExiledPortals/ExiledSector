@@ -117,8 +117,8 @@ class DerelictForgeTest {
         assertTrue(DerelictForge.isForge(forge));
         assertTrue(forge.hasTag(ChartIds.runTag(RUN_ID)));
         verify(forge).setCircularOrbitPointingDown(eq(star), anyFloat(), anyFloat(), anyFloat());
-        assertEquals(ForgeRules.BASE_PROGRAMS, ForgeStates.programs(run).size());
-        assertEquals(ForgeRules.BASE_RUNS, ForgeStates.runsLeft(run));
+        assertEquals(ForgeRules.BASE_PROGRAMS, ForgeStates.programs(run, ForgeSite.DERELICT_FORGE).size());
+        assertEquals(ForgeRules.BASE_RUNS, ForgeStates.runsLeft(run, ForgeSite.DERELICT_FORGE));
     }
 
     @Test
@@ -140,8 +140,8 @@ class DerelictForgeTest {
 
         generateInto(run, site(context, spot -> true));
 
-        assertEquals(ForgeRules.BASE_PROGRAMS + 1, ForgeStates.programs(run).size());
-        assertEquals(ForgeRules.BASE_RUNS + 2, ForgeStates.runsLeft(run));
+        assertEquals(ForgeRules.BASE_PROGRAMS + 1, ForgeStates.programs(run, ForgeSite.DERELICT_FORGE).size());
+        assertEquals(ForgeRules.BASE_RUNS + 2, ForgeStates.runsLeft(run, ForgeSite.DERELICT_FORGE));
     }
 
     @Test
@@ -162,12 +162,12 @@ class DerelictForgeTest {
     @Test
     void spendingTheLastRunDarkensTheForge() {
         ChartRun run = run();
-        ForgeStates.record(ForgeStates.of(run), List.of(ForgePrograms.byId("graft")), 1);
+        ForgeStates.record(ForgeStates.of(run, ForgeSite.DERELICT_FORGE), List.of(ForgePrograms.byId("graft")), 1);
 
-        assertTrue(ForgeStates.spendRun(run));
-        assertEquals(0, ForgeStates.runsLeft(run));
-        assertFalse(ForgeStates.spendRun(run));
-        assertEquals(List.of(ForgePrograms.byId("graft")), ForgeStates.programs(run));
+        assertTrue(ForgeStates.spendRun(run, ForgeSite.DERELICT_FORGE));
+        assertEquals(0, ForgeStates.runsLeft(run, ForgeSite.DERELICT_FORGE));
+        assertFalse(ForgeStates.spendRun(run, ForgeSite.DERELICT_FORGE));
+        assertEquals(List.of(ForgePrograms.byId("graft")), ForgeStates.programs(run, ForgeSite.DERELICT_FORGE));
     }
 
     @Test
@@ -176,10 +176,10 @@ class DerelictForgeTest {
         ForgePrograms.Program graft = ForgePrograms.byId("graft");
         ForgePrograms.Program excise = ForgePrograms.byId("excise");
 
-        assertTrue(ForgeStates.reachControlRoom(run, graft));
-        assertFalse(ForgeStates.reachControlRoom(run, graft));
-        assertTrue(ForgeStates.reachControlRoom(run, excise));
-        assertFalse(ForgeStates.reachControlRoom(run, excise));
+        assertTrue(ForgeStates.reachControlRoom(run, ForgeSite.DERELICT_FORGE, graft));
+        assertFalse(ForgeStates.reachControlRoom(run, ForgeSite.DERELICT_FORGE, graft));
+        assertTrue(ForgeStates.reachControlRoom(run, ForgeSite.DERELICT_FORGE, excise));
+        assertFalse(ForgeStates.reachControlRoom(run, ForgeSite.DERELICT_FORGE, excise));
     }
 
     @Test

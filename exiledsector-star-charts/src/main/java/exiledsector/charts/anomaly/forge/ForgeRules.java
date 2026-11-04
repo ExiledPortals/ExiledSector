@@ -1,7 +1,5 @@
 package exiledsector.charts.anomaly.forge;
 
-import exiledsector.charts.generation.ChartTiers;
-
 public final class ForgeRules {
 
     static final int BASE_PROGRAMS = 3;
@@ -10,7 +8,6 @@ public final class ForgeRules {
     static final float ORBIT_MIN = 2500f;
     static final float ORBIT_BAND_WIDTH = 2000f;
     static final int ORBIT_BANDS = 6;
-    static final float COST_PER_TIER = 0.15f;
     static final float ESCORT_SIZE_SHARE = 0.5f;
     static final int ESCORT_MAX_SHIP_SIZE = 3;
 
@@ -28,8 +25,8 @@ public final class ForgeRules {
         return Math.max(1, BASE_RUNS + Math.round(bonusRuns));
     }
 
-    public static Cost costFor(ForgePrograms.Program program, int tier, float costMult) {
-        float scale = (1f + COST_PER_TIER * (ChartTiers.clamp(tier) - ChartTiers.LOWEST_TIER)) * Math.max(0f, costMult);
+    public static Cost costFor(ForgePrograms.Program program, float costMult) {
+        float scale = Math.max(0f, costMult);
         return new Cost(Math.round(program.metals() * scale), Math.round(program.rareMetals() * scale),
                 Math.round(program.feedstock() * scale));
     }

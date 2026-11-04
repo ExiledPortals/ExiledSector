@@ -5,6 +5,9 @@ import exiledsector.items.ForgeChoice;
 import exiledsector.items.ForgeOperation;
 import exiledsector.items.Item;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class ForgeTexts {
 
     static final String KEY_PREFIX = "chart.anomaly.derelict_forge.";
@@ -25,8 +28,24 @@ public final class ForgeTexts {
     }
 
     public static String costText(ForgeRules.Cost cost) {
-        return Translation.msg(KEY_PREFIX + "cost").arg("metals", cost.metals()).arg("rareMetals", cost.rareMetals()).arg("feedstock", cost.feedstock())
-                .text();
+        List<String> parts = new ArrayList<>();
+        addCostPart(parts, "metals", cost.metals());
+        addCostPart(parts, "rareMetals", cost.rareMetals());
+        addCostPart(parts, "feedstock", cost.feedstock());
+        if (parts.isEmpty()) {
+            return Translation.text(KEY_PREFIX + "cost.free");
+        }
+        if (parts.size() == 1) {
+            return parts.get(0);
+        }
+        String rest = String.join(Translation.text(KEY_PREFIX + "cost.sep"), parts.subList(0, parts.size() - 1));
+        return Translation.msg(KEY_PREFIX + "cost.and").arg("rest", rest).arg("last", parts.get(parts.size() - 1)).text();
+    }
+
+    private static void addCostPart(List<String> parts, String material, int amount) {
+        if (amount > 0) {
+            parts.add(Translation.msg(KEY_PREFIX + "cost." + material).arg("count", amount).text());
+        }
     }
 
     public static String partName(String part) {

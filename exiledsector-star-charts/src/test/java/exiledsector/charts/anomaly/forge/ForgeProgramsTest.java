@@ -71,12 +71,11 @@ class ForgeProgramsTest {
     }
 
     @Test
-    void costsGrowWithTierAndFollowTheCostMultiplier() throws Exception {
+    void costsAreTheProgramsOwnAtEveryTierAndFollowTheCostMultiplier() throws Exception {
         ForgePrograms.register(new JSONArray().put(row("graft", "hull_item", 1)));
         ForgePrograms.Program graft = ForgePrograms.byId("graft");
 
-        assertEquals(new ForgeRules.Cost(10, 5, 20), ForgeRules.costFor(graft, 1, 1f));
-        assertTrue(ForgeRules.costFor(graft, 10, 1f).metals() > 10);
-        assertEquals(new ForgeRules.Cost(5, 3, 10), ForgeRules.costFor(graft, 1, 0.5f));
+        assertEquals(new ForgeRules.Cost(10, 5, 20), ForgeRules.costFor(graft, 1f));
+        assertEquals(new ForgeRules.Cost(5, 3, 10), ForgeRules.costFor(graft, 0.5f));
     }
 }

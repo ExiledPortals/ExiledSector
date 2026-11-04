@@ -171,7 +171,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public List<BenchModeSupport> benchModes() {
-        return List.of(StarChartCraftingBench.INSTANCE, ForgeCraftingBench.INSTANCE);
+        return List.of(StarChartCraftingBench.INSTANCE, ForgeCraftingBench.DERELICT_FORGE, ForgeCraftingBench.ABYSSAL_RESEARCH_COMPLEX);
     }
 
     @Override

@@ -2,10 +2,11 @@ package exiledsector.charts.atlas;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -57,32 +58,34 @@ final class AtlasBiomeAnomalies {
     }
 
     private Map<String, AtlasCell> choose(AtlasBiome biome, List<AtlasAnomalyCandidate> wanted) {
-        Map<String, AtlasCell> best = new HashMap<>();
-        Map<String, Double> bestRolls = new HashMap<>();
+        List<AtlasCell> pocket = new ArrayList<>();
         int centreX = Math.round(biome.centreX());
         int centreY = Math.round(biome.centreY());
         for (int gridX = centreX - POCKET_WINDOW; gridX <= centreX + POCKET_WINDOW; gridX++) {
             for (int gridY = centreY - POCKET_WINDOW; gridY <= centreY + POCKET_WINDOW; gridY++) {
                 AtlasCell cell = new AtlasCell(gridX, gridY);
-                if (biomeOf.apply(cell).siteKey() != biome.siteKey() || !canHold.test(cell)) {
-                    continue;
-                }
-                for (AtlasAnomalyCandidate candidate : wanted) {
-                    double roll = AtlasHash.unit(AtlasHash.of(seed, PICK_SALT, candidate.id(), gridX, gridY));
-                    Double bestRoll = bestRolls.get(candidate.id());
-                    if (bestRoll == null || roll < bestRoll) {
-                        bestRolls.put(candidate.id(), roll);
-                        best.put(candidate.id(), cell);
-                    }
+                if (biomeOf.apply(cell).siteKey() == biome.siteKey() && canHold.test(cell)) {
+                    pocket.add(cell);
                 }
             }
         }
-        Map<String, AtlasCell> ordered = new LinkedHashMap<>();
+        Map<String, AtlasCell> picked = new LinkedHashMap<>();
+        Set<AtlasCell> taken = new HashSet<>();
         for (AtlasAnomalyCandidate candidate : wanted) {
-            if (best.containsKey(candidate.id())) {
-                ordered.put(candidate.id(), best.get(candidate.id()));
+            AtlasCell best = null;
+            double bestRoll = Double.MAX_VALUE;
+            for (AtlasCell cell : pocket) {
+                double roll = AtlasHash.unit(AtlasHash.of(seed, PICK_SALT, candidate.id(), cell.gridX(), cell.gridY()));
+                if (!taken.contains(cell) && roll < bestRoll) {
+                    bestRoll = roll;
+                    best = cell;
+                }
+            }
+            if (best != null) {
+                taken.add(best);
+                picked.put(candidate.id(), best);
             }
         }
-        return Collections.unmodifiableMap(ordered);
+        return Collections.unmodifiableMap(picked);
     }
 }

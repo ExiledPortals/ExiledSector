@@ -17,7 +17,6 @@ import exiledsector.charts.run.ChartRun;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.ui.CraftingBenchCargoLauncher;
 import exiledsector.ui.VanillaText;
-import exiledsector.ui.socket.BenchMode;
 import exiledsector.ui.socket.BenchModeSupport;
 
 import java.util.List;
@@ -30,21 +29,26 @@ public class ForgeDialog extends GuardedSiteDialog {
     private record BeginOption(ForgePrograms.Program program) {
     }
 
+    private final ForgeSite forgeSite;
     private String ranMessage;
+
+    public ForgeDialog(ForgeSite forgeSite) {
+        this.forgeSite = forgeSite;
+    }
 
     @Override
     protected String descriptionKey() {
-        return "chart.anomaly.derelict_forge.description";
+        return forgeSite.textKey("description");
     }
 
     @Override
     protected String guardedKey() {
-        return "chart.anomaly.derelict_forge.guarded";
+        return forgeSite.textKey("guarded");
     }
 
     @Override
     protected CampaignFleetAPI musterGuards() {
-        return ForgeGuards.muster(site(), liveRun());
+        return forgeSite.musterGuards(site(), liveRun());
     }
 
     @Override
@@ -62,9 +66,9 @@ public class ForgeDialog extends GuardedSiteDialog {
         options.clearOptions();
         ChartRun run = liveRun();
         if (run == null) {
-            VanillaText.plainPara(text, Translation.gameText("chart.anomaly.derelict_forge.stale"));
-        } else if (ForgeStates.runsLeft(run) <= 0) {
-            VanillaText.plainPara(text, Translation.gameText("chart.anomaly.derelict_forge.dark"));
+            VanillaText.plainPara(text, Translation.gameText(forgeSite.textKey("stale")));
+        } else if (ForgeStates.runsLeft(run, forgeSite) <= 0) {
+            VanillaText.plainPara(text, Translation.gameText(forgeSite.textKey("dark")));
         } else {
             if (describe) {
                 describePrograms(run, text);
@@ -75,10 +79,10 @@ public class ForgeDialog extends GuardedSiteDialog {
     }
 
     private void describePrograms(ChartRun run, TextPanelAPI text) {
-        int runsLeft = ForgeStates.runsLeft(run);
+        int runsLeft = ForgeStates.runsLeft(run, forgeSite);
         VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.anomaly.derelict_forge.runsLeft").count(runsLeft).arg("count", runsLeft).text()));
-        for (ForgePrograms.Program program : ForgeStates.programs(run)) {
-            ForgeRules.Cost cost = ChartForge.costFor(run, program);
+        for (ForgePrograms.Program program : ForgeStates.programs(run, forgeSite)) {
+            ForgeRules.Cost cost = ChartForge.costFor(run, forgeSite, program);
             VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.anomaly.derelict_forge.programLine").arg("program", ForgeTexts.programName(program))
                     .arg("description", ForgeTexts.programDescription(program)).arg("cost", ForgeTexts.costText(cost)).text()));
         }
@@ -93,17 +97,17 @@ public class ForgeDialog extends GuardedSiteDialog {
     private void addProgramOptions(ChartRun run, OptionPanelAPI options) {
         CargoAPI cargo = PlayerFleet.cargoOrNull();
         CraftingMaterials materials = cargo == null ? null : CraftingMaterials.forPlayer(cargo);
-        for (ForgePrograms.Program program : ForgeStates.programs(run)) {
+        for (ForgePrograms.Program program : ForgeStates.programs(run, forgeSite)) {
             RunOption option = new RunOption(program);
             options.addOption(I18n.forGameText(() -> Translation.msg("chart.anomaly.derelict_forge.option.run").arg("program", ForgeTexts.programName(program)).text()),
                     option);
-            options.setEnabled(option, ChartForge.canAfford(cargo, materials, ChartForge.costFor(run, program)));
+            options.setEnabled(option, ChartForge.canAfford(cargo, materials, ChartForge.costFor(run, forgeSite, program)));
         }
     }
 
     private void chooseProgram(ForgePrograms.Program program) {
         ChartRun run = liveRun();
-        if (run == null || !ForgeStates.reachControlRoom(run, program)) {
+        if (run == null || !ForgeStates.reachControlRoom(run, forgeSite, program)) {
             openBench(program);
             return;
         }
@@ -120,8 +124,8 @@ public class ForgeDialog extends GuardedSiteDialog {
             showState(true);
             return;
         }
-        BenchModeSupport.OpenTarget target = new BenchModeSupport.OpenTarget(new ChartForge.Order(run.runId(), program), List::of);
-        boolean opened = CraftingBenchCargoLauncher.openMode(Global.getSector().getCampaignUI(), BenchMode.FORGE, target,
+        BenchModeSupport.OpenTarget target = new BenchModeSupport.OpenTarget(new ChartForge.Order(run.runId(), forgeSite, program), List::of);
+        boolean opened = CraftingBenchCargoLauncher.openMode(Global.getSector().getCampaignUI(), forgeSite.benchMode(), target,
                 message -> ranMessage = message, this::benchClosed);
         if (!opened) {
             showState(false);

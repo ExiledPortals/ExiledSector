@@ -11,6 +11,7 @@ import exiledsector.charts.anomaly.convoy.SupplyConvoy;
 import exiledsector.charts.anomaly.debris.AnomalousDebris;
 import exiledsector.charts.anomaly.excavation.ExcavationSites;
 import exiledsector.charts.anomaly.facility.PreCollapseFacility;
+import exiledsector.charts.anomaly.forge.AbyssalResearchComplex;
 import exiledsector.charts.anomaly.forge.DerelictForge;
 import exiledsector.charts.anomaly.listeningpost.ListeningPost;
 import exiledsector.charts.anomaly.hypershunt.CoronalHypershunt;
@@ -38,6 +39,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -56,7 +58,7 @@ public final class ChartAnomalies {
             RelayNetwork.INSTANCE, ExcavationSites.INSTANCE, SupplyConvoy.INSTANCE, AnomalousDebris.INSTANCE,
             StormFront.INSTANCE,
             DerelictForge.INSTANCE, ListeningPost.INSTANCE, PreCollapseFacility.INSTANCE, CoronalHypershunt.INSTANCE,
-            RemnantNexusStation.INSTANCE, DomainMothership.INSTANCE, AbyssalShipyard.INSTANCE,
+            RemnantNexusStation.INSTANCE, DomainMothership.INSTANCE, AbyssalShipyard.INSTANCE, AbyssalResearchComplex.INSTANCE,
             PowerfulBoss.INSTANCE);
     private static final Logger LOG = Logger.getLogger(ChartAnomalies.class);
     private static volatile List<ChartAnomaly> anomalies = BUILT_IN;
@@ -115,7 +117,7 @@ public final class ChartAnomalies {
         CsvRows csv = new CsvRows(PATH);
         Map<String, Definition> loaded = BuiltInTable.rows(rows, csv, "anomaly", id -> byId(id) != null, ChartAnomalies::parse);
         csv.report(LOG);
-        definitions = Map.copyOf(loaded);
+        definitions = Collections.unmodifiableMap(new LinkedHashMap<>(loaded));
         LOG.info("[ExiledSector] Star Charts can roll " + loaded.size() + " anomaly/anomalies");
         return csv.problems();
     }
@@ -368,7 +370,7 @@ public final class ChartAnomalies {
         ROLES.clear();
         Map<String, Definition> byId = new LinkedHashMap<>();
         testDefinitions.forEach(definition -> byId.put(definition.id(), definition));
-        definitions = Map.copyOf(byId);
+        definitions = Collections.unmodifiableMap(byId);
     }
 
     public static void useForTests(List<Definition> testDefinitions) {

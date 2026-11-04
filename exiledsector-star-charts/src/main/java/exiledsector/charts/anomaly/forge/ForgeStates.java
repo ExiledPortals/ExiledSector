@@ -16,8 +16,8 @@ public final class ForgeStates {
     private ForgeStates() {
     }
 
-    static AnomalyState of(ChartRun run) {
-        return AnomalyState.of(run, DerelictForge.ANOMALY_ID);
+    static AnomalyState of(ChartRun run, ForgeSite site) {
+        return AnomalyState.of(run, site.anomalyId());
     }
 
     static void record(AnomalyState state, List<ForgePrograms.Program> programs, int runs) {
@@ -25,9 +25,9 @@ public final class ForgeStates {
         state.put(RUNS_FIELD, runs);
     }
 
-    public static List<ForgePrograms.Program> programs(ChartRun run) {
+    public static List<ForgePrograms.Program> programs(ChartRun run, ForgeSite site) {
         List<ForgePrograms.Program> programs = new ArrayList<>();
-        for (String id : StateFields.list(of(run).text(PROGRAMS_FIELD))) {
+        for (String id : StateFields.list(of(run, site).text(PROGRAMS_FIELD))) {
             ForgePrograms.Program program = ForgePrograms.byId(id);
             if (program != null) {
                 programs.add(program);
@@ -36,12 +36,12 @@ public final class ForgeStates {
         return programs;
     }
 
-    public static int runsLeft(ChartRun run) {
-        return Math.max(0, of(run).integer(RUNS_FIELD));
+    public static int runsLeft(ChartRun run, ForgeSite site) {
+        return Math.max(0, of(run, site).integer(RUNS_FIELD));
     }
 
-    static boolean reachControlRoom(ChartRun run, ForgePrograms.Program program) {
-        AnomalyState state = of(run);
+    static boolean reachControlRoom(ChartRun run, ForgeSite site, ForgePrograms.Program program) {
+        AnomalyState state = of(run, site);
         List<String> reached = StateFields.list(state.text(REACHED_FIELD));
         if (reached.contains(program.id())) {
             return false;
@@ -51,12 +51,12 @@ public final class ForgeStates {
         return true;
     }
 
-    static boolean spendRun(ChartRun run) {
-        int left = runsLeft(run);
+    static boolean spendRun(ChartRun run, ForgeSite site) {
+        int left = runsLeft(run, site);
         if (left <= 0) {
             return false;
         }
-        of(run).put(RUNS_FIELD, left - 1);
+        of(run, site).put(RUNS_FIELD, left - 1);
         return true;
     }
 }

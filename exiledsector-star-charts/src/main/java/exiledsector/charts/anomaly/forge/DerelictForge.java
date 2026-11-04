@@ -75,13 +75,13 @@ public final class DerelictForge implements ContentPlacer, RunParticipant {
 
     @Override
     public InteractionDialogPlugin dialogFor(AnomalyRun run, SectorEntityToken target) {
-        return isForge(target) ? new ForgeDialog() : null;
+        return isForge(target) ? new ForgeDialog(ForgeSite.DERELICT_FORGE) : null;
     }
 
     @Override
     public String intelText(AnomalyRun run) {
-        int runsLeft = ForgeStates.runsLeft(run.run());
-        List<ForgePrograms.Program> programs = ForgeStates.programs(run.run());
+        int runsLeft = ForgeStates.runsLeft(run.run(), ForgeSite.DERELICT_FORGE);
+        List<ForgePrograms.Program> programs = ForgeStates.programs(run.run(), ForgeSite.DERELICT_FORGE);
         if (runsLeft <= 0 || programs.isEmpty()) {
             return null;
         }
