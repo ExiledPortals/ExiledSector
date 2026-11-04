@@ -230,6 +230,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         }
         FleetWideEffects.applyAlwaysCountingSensorStrength(fleet);
         FleetWideEffects.applyMoveSlowBurnLevel(fleet);
+        FleetWideEffects.applyCoronaResistance(fleet);
     }
 
     @Override

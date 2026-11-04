@@ -67,6 +67,12 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("seconds", DisintegrationListener.STRIP_SECONDS).styled();
         }
     },
+    ARMOR_BURN_DAMAGE_PERCENT(listener(ArmorBurnListener.BURN_PERCENT_KEY, ArmorBurnListener.class, ArmorBurnListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("seconds", ArmorBurnListener.BURN_SECONDS).styled();
+        }
+    },
     MISSILE_SNARE_TOP_SPEED_PERCENT(listener(MissileSnareListener.TOP_SPEED_PERCENT_KEY, MissileSnareListener.class, MissileSnareListener::new)) {
         @Override
         public StyledText description(float magnitude) {

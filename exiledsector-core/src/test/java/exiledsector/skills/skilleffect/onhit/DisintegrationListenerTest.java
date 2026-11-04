@@ -29,11 +29,11 @@ import static org.mockito.Mockito.when;
 
 class DisintegrationListenerTest {
 
-    private static DisintegrationListener.ArmorDecay decay(ShipAPI target) {
+    private static ArmorDecay decay(ShipAPI target) {
         ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
         verify(target).addListener(captor.capture());
-        DisintegrationListener.ArmorDecay armorDecay = (DisintegrationListener.ArmorDecay) captor.getValue();
-        when(target.getListeners(DisintegrationListener.ArmorDecay.class)).thenReturn(List.of(armorDecay));
+        ArmorDecay armorDecay = (ArmorDecay) captor.getValue();
+        when(target.getListeners(ArmorDecay.class)).thenReturn(List.of(armorDecay));
         return armorDecay;
     }
 
@@ -85,7 +85,7 @@ class DisintegrationListenerTest {
 
         assertEquals(null, modId);
         verify(grid, never()).setArmorValue(anyInt(), anyInt(), anyFloat());
-        DisintegrationListener.ArmorDecay armorDecay = decay(target);
+        ArmorDecay armorDecay = decay(target);
         armorDecay.advance(DisintegrationListener.STRIP_SECONDS / 2f);
         verify(grid).setArmorValue(2, 2, 95f);
         armorDecay.advance(DisintegrationListener.STRIP_SECONDS);

@@ -76,6 +76,7 @@ public final class AffinitySteps {
     public static Map<SkillEffect, Float> totals(List<EffectContribution> contributions) {
         Map<SkillEffect, Float> totals = new LinkedHashMap<>();
         float toHighest = 0f;
+        float lowTechIncreasePercent = 0f;
         boolean lowestAsHighest = false;
         Map<SkillEffect, Float> exchangePercents = new LinkedHashMap<>();
         for (EffectContribution contribution : contributions) {
@@ -84,6 +85,8 @@ public final class AffinitySteps {
                     SkillEffect exchangeTarget = exchangeTarget(effect.effect());
                     if (isAffinity(effect.effect())) {
                         totals.merge(effect.effect(), effect.magnitude(), Float::sum);
+                    } else if (effect.effect() == SpecialSkillEffect.LOW_TECH_AFFINITY_PERCENT) {
+                        lowTechIncreasePercent += effect.magnitude();
                     } else if (effect.effect() == SpecialSkillEffect.HIGHEST_AFFINITY_FLAT_PER_S_MOD) {
                         toHighest += effect.magnitude();
                     } else if (effect.effect() == SpecialSkillEffect.LOWEST_AFFINITY_AS_HIGHEST) {
@@ -93,6 +96,9 @@ public final class AffinitySteps {
                     }
                 }
             }
+        }
+        if (lowTechIncreasePercent != 0f) {
+            increase(totals, SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT, lowTechIncreasePercent);
         }
         if (toHighest != 0f) {
             totals.merge(highest(totals), toHighest, Float::sum);
@@ -115,6 +121,11 @@ public final class AffinitySteps {
             return SpecialSkillEffect.MIDLINE_AFFINITY_FLAT;
         }
         return null;
+    }
+
+    private static void increase(Map<SkillEffect, Float> totals, SkillEffect affinity, float percent) {
+        float multiplier = Math.max(0f, 1f + percent / 100f);
+        totals.computeIfPresent(affinity, (increasedAffinity, total) -> total * multiplier);
     }
 
     private static void exchange(Map<SkillEffect, Float> totals, SkillEffect target, float percent) {

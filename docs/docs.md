@@ -22,7 +22,8 @@ scaling and the summary see the stat bonuses. `ModuleTreeShare` steps the shared
 
 Effects backed by `AffinityScaling` (`*_PER_*_AFFINITY`, on the affinity hull items) apply nothing themselves:
 `AffinitySteps.scaledBonuses` adds their target stat once per whole step of the affinities they read, summed when
-they read all three, in a contribution of its own so module sharing is unaffected. `AffinitySteps.totals` adds
+they read all three, in a contribution of its own so module sharing is unaffected. `AffinitySteps.totals` first
+multiplies the summed Low Tech Affinity by its summed `LOW_TECH_AFFINITY_PERCENT`, then adds
 `HIGHEST_AFFINITY_FLAT_PER_S_MOD` (already multiplied by the ship's s-mods in `HullUpgradeEffectSource`) to the
 highest affinity, then `LOWEST_AFFINITY_AS_HIGHEST` raises the lowest to match it, and last each `AFFINITY_EXCHANGE_TO_*`
 empties the other two affinities (never below zero) into its own at its share. With `STRIKECRAFT_GAIN_AFFINITY_BONUSES`,
@@ -175,7 +176,9 @@ aimed at the target, costing no flux or ammo. Echoes are tagged and never echo a
 
 `DISINTEGRATION_ARMOR_DAMAGE_PERCENT` (energy hits) and `BALLISTIC_DISINTEGRATION_ARMOR_DAMAGE_PERCENT` (ballistic
 hits, allies included) queue that share of a hit's damage on a 5 by 5 patch of armor cells around the impact, on top of the hit
-itself. Each target strips its queued armor evenly over 5 seconds (`DisintegrationListener.ArmorDecay`).
+itself. Each target strips its queued armor evenly over 5 seconds (`ArmorDecay`). `ARMOR_BURN_DAMAGE_PERCENT`
+(`ArmorBurnListener`) queues its share of each weapon hit on an enemy's armor on the struck cell alone, over 3 seconds, so
+burns on one cell add up.
 
 ### Thermo-Accelerator
 
@@ -585,6 +588,19 @@ counts only armor actually restored toward its per-battle cap (`PhaseEntryRepair
 rides on each strikecraft the ship launches, counting a strikecraft with no minimum crew as a drone (`DroneDamageListener`).
 Borrowed Grace stacks give a fixed 1% each, so the Armor Plate's stacks (every 150 damage) work without the node; with
 both, one pool holds both maximums and stacks come every 100 damage (`BorrowedGraceListener`).
+
+### Furnace modifiers
+
+The Command Suite's corona resistance adds up over the fleet's active ships, capped at 100%, and at each fleet sync
+multiplies every member's vanilla `corona_resistance`, which also covers flares, hyperspace storms and pulsar beams
+(`FleetWideEffects.applyCoronaResistance`). The Shield Emitter scales `HULL_DAMAGE_TAKEN_PERCENT`, capped like the typed
+damage taken stats, with Low Tech Affinity.
+
+The Armor Plate's hull repair runs only above 50% flux and stops at 20% of maximum hull per deployment
+(`HighFluxMendingListener`). The Reactor Regulator's dissipation bonus moves in whole 5% steps of hard flux
+(`HardFluxDissipationListener`), and the Phase Coil Array lowers hard flux on each phase entry without changing total flux
+(`PhaseEntryFluxShedListener`). Destroyed strikecraft burst on the lethal hit, reaching ships whose edge is within range
+(`CinderBurstListener`).
 
 ### Chart tier groups
 

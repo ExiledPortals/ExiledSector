@@ -149,6 +149,17 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
     GROUND_SUPPORT_PER_MAX_CREW_PERCENT(new DerivedStatEffect(LogisticsSkillEffect::applyCrewGroundSupport, null, false)),
     CORONA_RESISTANCE_MULT(statEffect(MULT, dynamicStat(Stats.CORONA_EFFECT_MULT),
             "stat.coronaAndStormCrLoss", true)),
+    FLEET_CORONA_RESISTANCE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(FleetWideEffects.CORONA_RESISTANCE_CONTRIBUTION_KEY).modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.templated(this, magnitude);
+        }
+    },
     POST_BATTLE_SALVAGE_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

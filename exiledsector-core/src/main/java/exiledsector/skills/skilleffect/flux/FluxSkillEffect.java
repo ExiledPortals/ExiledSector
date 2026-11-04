@@ -9,6 +9,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.ConditionalStatEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
+import exiledsector.skills.skilleffect.EffectText;
 
 import static exiledsector.skills.skilleffect.Backings.listener;
 import static exiledsector.skills.skilleffect.Backings.statEffect;
@@ -43,6 +44,21 @@ public enum FluxSkillEffect implements BackedSkillEffect {
     },
     FLUX_DISSIPATION_WHILE_VENTING_PERCENT(new ConditionalStatEffect(PERCENT, stat(MutableShipStatsAPI::getFluxDissipation),
             "stat.fluxDissipationWhileVenting", ship -> ship.getFluxTracker().isVenting())),
+    FLUX_DISSIPATION_PERCENT_PER_HARD_FLUX(listener(HardFluxDissipationListener.PERCENT_PER_STEP_KEY, HardFluxDissipationListener.class,
+            HardFluxDissipationListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("step", HardFluxDissipationListener.HARD_FLUX_STEP_PERCENT).styled();
+        }
+    },
+    HIGH_FLUX_HULL_REGEN_PERCENT(listener(HighFluxMendingListener.REGEN_PERCENT_KEY, HighFluxMendingListener.class,
+            HighFluxMendingListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("threshold", HighFluxMendingListener.FLUX_LEVEL_THRESHOLD_PERCENT).arg("value", magnitude)
+                    .arg("limit", HighFluxMendingListener.MAX_TOTAL_REGEN_PERCENT_OF_HULL).styled();
+        }
+    },
     FLUX_DISSIPATION_PER_FLUX_VENT_FLAT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
