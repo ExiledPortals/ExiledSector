@@ -73,13 +73,13 @@ class ExiledSectorAtlasOptionTest {
     }
 
     @Test
-    void aColonyWithTheGatewayOffersTheAtlasRightAfterManageTheColony() {
+    void aColonyWithTheGatewayOffersTheAtlasRightAfterTheDockyardRepair() {
         assertTrue(command.execute("rule", dialog, List.of(), Map.of()));
 
         verify(options).addOption(Translation.gameText("chart.gateway.option.colonyMenu"), ExiledSectorAtlasOption.OPTION_ID,
                 Translation.gameText("chart.gateway.option.tooltip"));
         assertTrue(command.doesCommandAddOptions());
-        assertEquals(11, command.getOptionOrder(List.of(), Map.of()));
+        assertEquals(16, command.getOptionOrder(List.of(), Map.of()));
     }
 
     @Test
