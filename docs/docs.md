@@ -596,6 +596,19 @@ Of the Smuggler adds up each active ship's share, capped at 30%, as a percent on
 the transponder is off, reapplied at each fleet sync and, for the player, when the transponder is toggled
 (`FleetWideEffects.applyTransponderOffSensorProfile`). Ambusher's counts from each ship's own deployment (`OpeningVolley`).
 
+### Remnant Expanse modifiers
+
+The shared target bonus applies to enemies an allied non-strikecraft ship holds as its ship target, and to that
+target's station modules; the list is rebuilt every 0.5 seconds, not per hit (`SharedTargetDamageListener`). The EMP
+bonus scales each hit's EMP after the damage modifier, so it multiplies with damage bonuses (`EmpDamageListener`). The
+shield reduction climbs to full over 3 seconds while no non-decorative weapon fires and falls over 3 seconds while any
+does, checked every 0.1 seconds (`HoldFireShieldListener`).
+
+The armor repair works on 0.5-second ticks: a cell whose armor dropped since the last tick restarts its 5-second
+delay, and repair pauses while an enemy ship (not strikecraft) is within 1500 su. Each point restored adds 1 hard
+flux, so repair is also cut to the flux room left and stops at full flux, and it ends for the battle once it has
+restored 50% of the ship's total armor (`UnhitArmorRegenListener`).
+
 ### Chart tier groups
 
 Chart tiers fall into three groups: low (1-5), mid (6-10) and high (11-16) (`TierGroup`). A chart modifier line gives

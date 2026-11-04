@@ -1,6 +1,7 @@
 package exiledsector.skills;
 
 import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.battle.BattleSkillEffect;
 import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.fighter.FighterSkillEffect;
 import exiledsector.skills.skilleffect.flux.FluxSkillEffect;
@@ -50,6 +51,15 @@ class AffinityStepsTest {
                 scaled(List.of(item, node(LOW_TECH, 25f), node(HIGH_TECH, 9f))));
         assertEquals(Map.of(FighterSkillEffect.FIGHTER_DAMAGE_TAKEN_MULT, -1f), scaled(List.of(item, node(HIGH_TECH, 9f), node(MIDLINE, 6f))));
         assertEquals(Map.of(), scaled(List.of(item, node(LOW_TECH, 9f))));
+    }
+
+    @Test
+    void navRatingPerHighTechAffinityAddsFleetNavRatingEveryFiftyHighTechAffinity() {
+        EffectContribution phaseCoil = EffectContribution.scaledPermanent("item", "item_", List.of(
+                new SkillTypeEffect(SpecialSkillEffect.NAV_RATING_PER_HIGH_TECH_AFFINITY, 1f)));
+
+        assertEquals(Map.of(BattleSkillEffect.NAV_RATING, 2f), scaled(List.of(phaseCoil, node(HIGH_TECH, 35f), node(HIGH_TECH, 70f))));
+        assertEquals(Map.of(), scaled(List.of(phaseCoil, node(HIGH_TECH, 49f), node(LOW_TECH, 60f))));
     }
 
     @Test

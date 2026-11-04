@@ -14,6 +14,7 @@ public record AffinityScaling(Filter filter, int stepSize, SkillEffect target) i
     public static final int SMALL_STEP = 5;
     public static final int LARGE_STEP = 10;
     public static final int LARGEST_STEP = 15;
+    public static final int NAV_RATING_STEP = 50;
 
     public enum Filter {
         LOW_TECH, HIGH_TECH, MIDLINE, ALL;

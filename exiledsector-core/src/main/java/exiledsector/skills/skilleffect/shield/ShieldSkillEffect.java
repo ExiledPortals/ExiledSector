@@ -120,6 +120,13 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", Math.abs(magnitude)).arg("speed", HighSpeed.TOP_SPEED_FRACTION * 100f).styled();
         }
     },
+    HOLD_FIRE_SHIELD_DAMAGE_REDUCTION_PERCENT(listener(HoldFireShieldListener.REDUCTION_PERCENT_KEY, HoldFireShieldListener.class,
+            HoldFireShieldListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("seconds", HoldFireShieldListener.TAPER_SECONDS).styled();
+        }
+    },
     SHIELD_PIERCE_CHANCE_PERCENT(statEffect(PERCENT, dynamicStat(Stats.SHIELD_PIERCED_MULT), "stat.empArcShieldPierceChance", true)),
     SHIELD_PIERCE_CHANCE_MULT(statEffect(MULT, dynamicStat(Stats.SHIELD_PIERCED_MULT), "stat.empArcShieldPierceChance", true)),
     SHIELD_UPKEEP_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getShieldUpkeepMult), "stat.shieldFluxUpkeep", true)),

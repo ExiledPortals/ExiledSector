@@ -27,6 +27,14 @@ public enum AuraSkillEffect implements BackedSkillEffect {
             return escortDescription(this, magnitude);
         }
     },
+    TOP_SPEED_PERCENT_PER_NEARBY_ALLY(listener(FormationSpeedListener.SPEED_PERCENT_PER_ALLY_KEY, FormationSpeedListener.class,
+            FormationSpeedListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", FormationSpeedListener.RANGE)
+                    .arg("max", FormationSpeedListener.MAX_SPEED_PERCENT).styled();
+        }
+    },
     TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT(listener(TerrifyingPresenceListener.ACCURACY_PENALTY_PERCENT_KEY,
             TerrifyingPresenceListener.class, TerrifyingPresenceListener::new)) {
         @Override

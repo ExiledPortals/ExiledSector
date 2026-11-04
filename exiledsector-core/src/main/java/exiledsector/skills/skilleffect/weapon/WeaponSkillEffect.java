@@ -107,6 +107,9 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("seconds", OpeningVolley.SECONDS).styled();
         }
     },
+    SHARED_TARGET_DAMAGE_PERCENT(listener(SharedTargetDamageListener.DAMAGE_PERCENT_KEY, SharedTargetDamageListener.class,
+            SharedTargetDamageListener::new)),
+    EMP_DAMAGE_PERCENT(listener(EmpDamageListener.EMP_PERCENT_KEY, EmpDamageListener.class, EmpDamageListener::new)),
     WEAPON_MALFUNCTION_PERCENT(statEffect(PERCENT, new StatTarget.PercentagePoints(MutableShipStatsAPI::getWeaponMalfunctionChance),
             "stat.weaponMalfunctionChance", true)),
     PD_IGNORES_DECOY_FLARES(flag(Stats.PD_IGNORES_FLARES)),

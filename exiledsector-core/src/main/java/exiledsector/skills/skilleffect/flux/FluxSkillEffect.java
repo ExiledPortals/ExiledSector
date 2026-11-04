@@ -9,6 +9,8 @@ import exiledsector.i18n.StyledText;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.ConditionalStatEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
+import exiledsector.skills.skilleffect.EffectText;
+import exiledsector.skills.skilleffect.StatTarget;
 
 import static exiledsector.skills.skilleffect.Backings.listener;
 import static exiledsector.skills.skilleffect.Backings.statEffect;
@@ -26,6 +28,13 @@ public enum FluxSkillEffect implements BackedSkillEffect {
     FLUX_DISSIPATION_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getFluxDissipation), StatNames.FLUX_DISSIPATION, false)),
     FLUX_DISSIPATION_FLAT(statEffect(FLAT, liveStat(MutableShipStatsAPI::getFluxDissipation), StatNames.FLUX_DISSIPATION, false)),
     FLUX_DISSIPATION_MULT(statEffect(MULT, liveStat(MutableShipStatsAPI::getFluxDissipation), StatNames.FLUX_DISSIPATION, false)),
+    HARD_FLUX_DISSIPATION_PERCENT(statEffect(PERCENT, new StatTarget.PercentagePoints(MutableShipStatsAPI::getHardFluxDissipationFraction),
+            "stat.hardFluxDissipationWhileShieldsUp", false)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.templated(this, magnitude);
+        }
+    },
     VENT_RATE_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getVentRateMult), "stat.ventingSpeed", false)),
     VENT_RATE_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getVentRateMult), "stat.ventingSpeed", false)),
     ZERO_FLUX_SPEED_FLAT(statEffect(FLAT, liveStat(MutableShipStatsAPI::getZeroFluxSpeedBoost), "stat.zeroFluxSpeedBoost", false)),
