@@ -26,8 +26,8 @@ import exiledsector.items.ItemStore;
 import exiledsector.items.ItemVolumes;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.SlottedLine;
+import exiledsector.items.SlottedRows;
 import exiledsector.items.UseVerdict;
-import exiledsector.modifiers.ModifierSlot;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.TooltipExpansion;
@@ -1139,27 +1139,8 @@ public final class CraftingBenchPanel extends HoloPanel {
             return;
         }
         element.addSectionHeading(Translation.text(headingKey), Alignment.MID, headingPad);
-        float textWidth = sectionWidth - SCROLLBAR_ROOM - SLOT_TAG_WIDTH - GAP;
-        float linePad = GAP;
-        for (SlottedLine line : lines) {
-            TooltipMakerAPI textCell = element.beginSubTooltip(textWidth);
-            VanillaText.addPara(textCell, line.text(), 0f, Misc.getTextColor());
-            element.endSubTooltip();
-            element.addCustom(textCell, linePad);
-            addLineDetailTooltip(element, line);
-            linePad = LINE_PAD;
-            if (line.slot() == null) {
-                continue;
-            }
-            TooltipMakerAPI slotCell = element.beginSubTooltip(SLOT_TAG_WIDTH);
-            VanillaText.plainPara(slotCell, Translation.text(slotTagKey(line.slot())), 0f, Misc.getGrayColor()).setAlignment(Alignment.RMID);
-            element.endSubTooltip();
-            element.addCustomDoNotSetPosition(slotCell).getPosition().rightOfTop(textCell, GAP);
-        }
-    }
-
-    static String slotTagKey(ModifierSlot slot) {
-        return slot == ModifierSlot.PREFIX ? "ui.craftingBench.slotTag.prefix" : "ui.craftingBench.slotTag.suffix";
+        SlottedRows.Layout layout = new SlottedRows.Layout(sectionWidth - SCROLLBAR_ROOM, SLOT_TAG_WIDTH, GAP, TooltipMakerAPI::setParaFontDefault);
+        SlottedRows.add(element, lines, layout, GAP, LINE_PAD, line -> addLineDetailTooltip(element, line));
     }
 
     private static void centred(LabelAPI label) {

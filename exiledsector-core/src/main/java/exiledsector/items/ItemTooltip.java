@@ -18,6 +18,8 @@ public final class ItemTooltip {
     public static final float WIDTH = 700f;
     public static final float PAD = 10f;
     private static final float LINE_PAD = 3f;
+    private static final float SLOT_TAG_WIDTH = 30f;
+    private static final float SLOT_TAG_GAP = 6f;
 
     private ItemTooltip() {
     }
@@ -48,17 +50,27 @@ public final class ItemTooltip {
             tooltip.addSectionHeading(Translation.text("item.tooltip.implicit"), Alignment.MID, PAD);
             addLines(tooltip, implicitLines, Misc.getTextColor());
         }
-        List<StyledText> effectLines = item.effectLines(showRollRanges, hullSize);
-        if (!effectLines.isEmpty()) {
-            tooltip.addSectionHeading(Translation.text("item.tooltip.explicit"), Alignment.MID, PAD);
-            addLines(tooltip, effectLines, Misc.getTextColor());
+        List<SlottedLine> effectRows = item.slottedEffectRows(showRollRanges, hullSize);
+        if (effectRows.isEmpty()) {
+            return;
         }
+        tooltip.addSectionHeading(Translation.text("item.tooltip.explicit"), Alignment.MID, PAD);
+        if (showRollRanges) {
+            SlottedRows.Layout layout = new SlottedRows.Layout(tooltip.getWidthSoFar(), SLOT_TAG_WIDTH, SLOT_TAG_GAP, ItemTooltip::useBodyFont);
+            SlottedRows.add(tooltip, effectRows, layout, PAD, LINE_PAD);
+        } else {
+            addLines(tooltip, effectRows.stream().map(SlottedLine::text).toList(), Misc.getTextColor());
+        }
+    }
+
+    private static void useBodyFont(TooltipMakerAPI tooltip) {
+        tooltip.setParaInsigniaVeryLarge();
     }
 
     public static void writeFrame(TooltipMakerAPI tooltip, Runnable knownItemBody, Supplier<List<StyledText>> footer) {
         I18n.forGameText(() -> {
             tooltip.setTitleOrbitronVeryLarge();
-            tooltip.setParaInsigniaVeryLarge();
+            useBodyFont(tooltip);
             if (knownItemBody == null) {
                 tooltip.addTitle(Translation.text("socketable.unknown"));
             } else {

@@ -479,6 +479,10 @@ public abstract class Item {
         return texts(slottedEffectLines(withRollRanges, hullSize), withRollRanges);
     }
 
+    public List<SlottedLine> slottedEffectRows(boolean withRollRanges, HullSize hullSize) {
+        return rows(slottedEffectLines(withRollRanges, hullSize), withRollRanges);
+    }
+
     public List<SlottedLine> slottedEffectLines(boolean withRollRanges, HullSize hullSize) {
         List<SlottedLine> lines = new ArrayList<>();
         ModifierEffects effects = modifierEffects();
@@ -520,14 +524,18 @@ public abstract class Item {
     }
 
     private static List<StyledText> texts(List<SlottedLine> lines, boolean withDetails) {
-        List<StyledText> texts = new ArrayList<>(lines.size());
+        return rows(lines, withDetails).stream().map(SlottedLine::text).toList();
+    }
+
+    private static List<SlottedLine> rows(List<SlottedLine> lines, boolean withDetails) {
+        List<SlottedLine> rows = new ArrayList<>(lines.size());
         for (SlottedLine line : lines) {
-            texts.add(line.text());
+            rows.add(line);
             if (withDetails) {
-                line.details().forEach(detail -> texts.add(Translation.msg("socketable.tooltip.detailLine").arg("line", detail).styled()));
+                line.details().forEach(detail -> rows.add(new SlottedLine(null, Translation.msg("socketable.tooltip.detailLine").arg("line", detail).styled())));
             }
         }
-        return texts;
+        return rows;
     }
 
     public StyledText unresolvedLine(ModifierEffects effects, RolledLine effect) {
