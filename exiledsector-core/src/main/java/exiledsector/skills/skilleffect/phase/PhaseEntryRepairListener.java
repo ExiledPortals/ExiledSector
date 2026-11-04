@@ -6,7 +6,7 @@ import exiledsector.skills.skilleffect.defense.ArmorCells;
 
 final class PhaseEntryRepairListener extends PhaseTransitionListener {
 
-    static final String REPAIR_PERCENT_KEY = "exiledLib_phaseEntryArmorRepairPercent";
+    static final String REPAIR_PERCENT_KEY = "exiledSector_phaseEntryArmorRepairPercent";
     static final float DEPLOYMENT_CAP_PERCENT = 50f;
 
     private final DeploymentRepairTally repairTally = new DeploymentRepairTally();

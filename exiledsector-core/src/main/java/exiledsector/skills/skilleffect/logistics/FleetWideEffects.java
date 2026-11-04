@@ -22,21 +22,21 @@ import java.util.Set;
 
 public final class FleetWideEffects {
 
-    static final String POST_BATTLE_SALVAGE_CONTRIBUTION_KEY = "exiledLib_postBattleSalvageContribution";
-    static final String PHASE_FIELD_CONTRIBUTION_KEY = "exiledLib_phaseFieldContributionPercent";
-    static final String SENSOR_STRENGTH_ALWAYS_COUNTS_KEY = "exiledLib_sensorStrengthAlwaysCounts";
-    static final String MOVE_SLOW_BURN_LEVEL_KEY = "exiledLib_moveSlowBurnLevelContribution";
+    static final String POST_BATTLE_SALVAGE_CONTRIBUTION_KEY = "exiledSector_postBattleSalvageContribution";
+    static final String PHASE_FIELD_CONTRIBUTION_KEY = "exiledSector_phaseFieldContributionPercent";
+    static final String SENSOR_STRENGTH_ALWAYS_COUNTS_KEY = "exiledSector_sensorStrengthAlwaysCountsFlag";
+    static final String MOVE_SLOW_BURN_LEVEL_KEY = "exiledSector_moveSlowBurnLevelContribution";
     static final float MAX_MOVE_SLOW_BURN_LEVEL_BONUS = 6f;
     private static final String MOVE_SLOW_BURN_LEVEL_FLEET_MOD = "moveSlowBurnLevel";
-    static final String TRANSPONDER_OFF_SENSOR_PROFILE_KEY = "exiledLib_transponderOffSensorProfileContribution";
+    static final String TRANSPONDER_OFF_SENSOR_PROFILE_KEY = "exiledSector_transponderOffSensorProfileContribution";
     static final float MAX_TRANSPONDER_OFF_SENSOR_PROFILE_REDUCTION = 30f;
     private static final String TRANSPONDER_OFF_SENSOR_PROFILE_FLEET_MOD = "transponderOffSensorProfile";
     static final String CORONA_RESISTANCE_CONTRIBUTION_KEY = "exiledSector_fleetCoronaResistanceContribution";
     static final float MAX_CORONA_RESISTANCE_PERCENT = 100f;
     private static final String CORONA_RESISTANCE_FLEET_MOD = "fleetCoronaResistance";
-    static final String MOVE_SLOW_SUPPLY_USE_KEY = "exiledLib_moveSlowSupplyUseContribution";
+    static final String MOVE_SLOW_SUPPLY_USE_KEY = "exiledSector_moveSlowSupplyUseContribution";
     private static final String MOVE_SLOW_SUPPLY_USE_MEMBER_MOD = "moveSlowSupplyUse";
-    static final String SWARM_SENSOR_STRENGTH_KEY = "exiledLib_swarmSensorStrengthPercent";
+    static final String SWARM_SENSOR_STRENGTH_KEY = "exiledSector_swarmSensorStrengthPercent";
     private static final String SWARM_SENSOR_STRENGTH_FLEET_MOD = "swarmSensorStrength";
     static final String TERRAIN_MOVEMENT_PENALTY_KEY = "exiledSector_terrainMovementPenaltyContribution";
     static final float MAX_TERRAIN_MOVEMENT_PENALTY_REDUCTION_PERCENT = 50f;

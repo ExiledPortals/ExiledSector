@@ -19,8 +19,8 @@ import java.awt.Color;
 
 final class ProjectileEchoListener extends ShipCombatListener implements DamageDealtModifier {
 
-    static final String CHANCE_KEY = "exiledLib_projectileEchoChance";
-    static final String ECHO_KEY = "exiledLib_projectileEcho";
+    static final String CHANCE_KEY = "exiledSector_projectileEchoChance";
+    static final String ECHO_KEY = "exiledSector_projectileEcho";
     private static final Color ECHO_FLASH_COLOR = new Color(200, 120, 255, 255);
     private static final float ECHO_FLASH_SIZE = 30f;
     private static final float ECHO_FLASH_SECONDS = 0.3f;

@@ -5,8 +5,8 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 
 final class DroneDamageListener extends StrikecraftTargetDamageListener {
 
-    static final String DAMAGE_PERCENT_KEY = "exiledLib_strikecraftDamageToDronesPercent";
-    static final String DAMAGE_MOD_ID = "exiledLib_strikecraftDamageToDrones";
+    static final String DAMAGE_PERCENT_KEY = "exiledSector_strikecraftDamageToDronesPercent";
+    static final String DAMAGE_MOD_ID = "exiledSector_strikecraftDamageToDrones";
 
     DroneDamageListener(ShipAPI fighter, ShipAPI carrier) {
         super(fighter, carrier, DAMAGE_PERCENT_KEY, DAMAGE_MOD_ID);

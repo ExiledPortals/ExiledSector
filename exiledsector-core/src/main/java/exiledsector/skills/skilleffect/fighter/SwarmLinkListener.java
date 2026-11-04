@@ -9,8 +9,8 @@ import exiledsector.skills.skilleffect.weapon.WeaponStatFamily;
 
 final class SwarmLinkListener implements AdvanceableListener {
 
-    static final String DAMAGE_PERCENT_PER_STRIKECRAFT_KEY = "exiledLib_swarmLinkDamagePercentPerStrikecraft";
-    static final String DAMAGE_MOD_ID = "exiledLib_swarmLinkDamage";
+    static final String DAMAGE_PERCENT_PER_STRIKECRAFT_KEY = "exiledSector_swarmLinkDamagePercentPerStrikecraft";
+    static final String DAMAGE_MOD_ID = "exiledSector_swarmLinkDamage";
     static final float RANGE = 500f;
     static final float MAX_DAMAGE_PERCENT = 20f;
     static final float SCAN_INTERVAL_SECONDS = 0.5f;

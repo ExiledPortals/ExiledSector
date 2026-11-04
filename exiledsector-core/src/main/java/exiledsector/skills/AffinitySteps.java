@@ -15,7 +15,7 @@ import java.util.Map;
 
 public final class AffinitySteps {
 
-    public static final String MOD_ID_PREFIX = "exiledLib_affinity_";
+    public static final String MOD_ID_PREFIX = "exiledSector_affinity_";
     static final int SMALL_STEP = 5;
     static final int LARGE_STEP = 10;
     static final int LARGER_STEP = 15;

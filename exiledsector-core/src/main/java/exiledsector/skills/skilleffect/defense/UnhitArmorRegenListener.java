@@ -12,7 +12,7 @@ import exiledsector.skills.skilleffect.ShipCombatListener;
 
 final class UnhitArmorRegenListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String REGEN_PERCENT_KEY = "exiledLib_unhitArmorRegenPercent";
+    static final String REGEN_PERCENT_KEY = "exiledSector_unhitArmorRegenPercent";
     static final float UNHIT_SECONDS = 5f;
     static final float ENEMY_SHIP_RANGE = 1500f;
     static final float HARD_FLUX_PER_ARMOR = 1f;

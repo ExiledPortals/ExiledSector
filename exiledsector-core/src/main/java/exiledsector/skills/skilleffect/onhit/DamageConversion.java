@@ -12,7 +12,7 @@ import java.util.function.ToDoubleFunction;
 record DamageConversion(String flagKey, WeaponType mountType, WeaponSize mountSize, Mounting mounting, boolean beamsOnly,
                         DamageType fromType, DamageType toType) {
 
-    static final String KEY_PREFIX = "exiledLib_damageConversion_";
+    static final String KEY_PREFIX = "exiledSector_damageConversion_";
 
     enum Mounting {
         ANY, HARDPOINT, TURRET;

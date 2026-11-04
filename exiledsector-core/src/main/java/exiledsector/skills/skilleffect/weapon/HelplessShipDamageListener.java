@@ -6,8 +6,8 @@ import com.fs.starfarer.api.combat.ShipEngineControllerAPI;
 
 final class HelplessShipDamageListener extends TargetDamageBonusListener {
 
-    static final String DAMAGE_PERCENT_KEY = "exiledLib_damageToHelplessShipsPercent";
-    private static final String MOD_ID_PREFIX = "exiledLib_helplessShipDamage_";
+    static final String DAMAGE_PERCENT_KEY = "exiledSector_damageToHelplessShipsPercent";
+    private static final String MOD_ID_PREFIX = "exiledSector_helplessShipDamage_";
 
     HelplessShipDamageListener(ShipAPI ownerShip) {
         super(ownerShip, MOD_ID_PREFIX, DAMAGE_PERCENT_KEY);

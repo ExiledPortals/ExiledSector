@@ -11,7 +11,7 @@ import java.util.List;
 
 public final class RecoveryDModAvoidance implements DModAdderPlugin {
 
-    static final String CHANCE_PERCENT_KEY = "exiledLib_recoveredShipDModAvoidChancePercent";
+    static final String CHANCE_PERCENT_KEY = "exiledSector_recoveredShipDModAvoidChancePercent";
     static final float MAX_CHANCE_PERCENT = 30f;
     private static final int NOT_HANDLED = -1;
 

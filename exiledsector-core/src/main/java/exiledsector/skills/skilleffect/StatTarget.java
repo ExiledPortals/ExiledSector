@@ -217,8 +217,8 @@ public sealed interface StatTarget {
 
     record ShipMass() implements StatTarget {
 
-        static final String KEY = "exiledLib_SHIP_MASS";
-        static final String BASE_MASS_KEY = "exiledLib_baseMass";
+        static final String KEY = "exiledSector_SHIP_MASS";
+        static final String BASE_MASS_KEY = "exiledSector_baseMass";
         static final float MIN_MASS_FRACTION = 0.1f;
 
         @Override
@@ -253,7 +253,7 @@ public sealed interface StatTarget {
     record PerWeaponAmmo(WeaponScope scope, boolean regeneration) implements StatTarget {
 
         private String key() {
-            return "exiledLib_" + scope.name() + (regeneration ? "_AMMO_REGEN" : "_AMMO");
+            return "exiledSector_" + scope.name() + (regeneration ? "_AMMO_REGEN" : "_AMMO");
         }
 
         @Override

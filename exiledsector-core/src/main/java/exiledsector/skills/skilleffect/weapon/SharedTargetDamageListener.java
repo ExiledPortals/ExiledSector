@@ -18,9 +18,9 @@ import java.util.Set;
 
 final class SharedTargetDamageListener extends ShipCombatListener implements AdvanceableListener, DamageDealtModifier {
 
-    static final String DAMAGE_PERCENT_KEY = "exiledLib_sharedTargetDamagePercent";
+    static final String DAMAGE_PERCENT_KEY = "exiledSector_sharedTargetDamagePercent";
     static final float SCAN_INTERVAL_SECONDS = 0.5f;
-    private static final String MOD_ID_PREFIX = "exiledLib_sharedTargetDamage_";
+    private static final String MOD_ID_PREFIX = "exiledSector_sharedTargetDamage_";
 
     private final Set<ShipAPI> sharedTargets = Collections.newSetFromMap(new IdentityHashMap<>());
     private float secondsSinceScan = SCAN_INTERVAL_SECONDS;

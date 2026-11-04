@@ -11,7 +11,7 @@ import exiledsector.skills.skilleffect.shipsystem.FragmentSwarms;
 
 final class SwarmOverflowRepairListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String REPAIR_PERCENT_KEY = "exiledLib_swarmOverflowArmorRepairPercent";
+    static final String REPAIR_PERCENT_KEY = "exiledSector_swarmOverflowArmorRepairPercent";
     static final float DEPLOYMENT_CAP_PERCENT = 10f;
     private static final float CHECK_SECONDS = 1f;
 

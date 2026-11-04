@@ -12,7 +12,7 @@ import java.util.List;
 
 final class WreckReclaimListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String RESTORE_PERCENT_KEY = "exiledLib_nearbyDestructionReplacementRatePercent";
+    static final String RESTORE_PERCENT_KEY = "exiledSector_nearbyDestructionReplacementRatePercent";
     static final float RANGE = 1500f;
     private static final float CHECK_SECONDS = 0.25f;
 

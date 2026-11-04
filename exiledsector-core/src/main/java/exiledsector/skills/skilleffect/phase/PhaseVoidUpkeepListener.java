@@ -13,11 +13,11 @@ import exiledsector.skills.skilleffect.shipsystem.FragmentSwarms;
 
 final class PhaseVoidUpkeepListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String COVERED_PERCENT_KEY = "exiledLib_phaseUpkeepCoveredByFragmentsPercent";
+    static final String COVERED_PERCENT_KEY = "exiledSector_phaseUpkeepCoveredByFragmentsPercent";
     static final float FLUX_PER_FRAGMENT = 50f;
     static final float ALLIED_SWARM_RANGE = 1000f;
     static final float MAX_COVERED_PERCENT = 90f;
-    private static final String MOD_ID_PREFIX = "exiledLib_phaseVoidUpkeep_";
+    private static final String MOD_ID_PREFIX = "exiledSector_phaseVoidUpkeep_";
     private static final float SWARM_CHECK_SECONDS = 0.5f;
 
     private final IntervalUtil swarmCheck = new IntervalUtil(SWARM_CHECK_SECONDS, SWARM_CHECK_SECONDS);

@@ -6,7 +6,7 @@ import exiledsector.skills.skilleffect.ShipCombatListener;
 
 final class PhasedPeakTimeListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String PAUSED_KEY = "exiledLib_peakTimePausedWhilePhased";
+    static final String PAUSED_KEY = "exiledSector_peakTimePausedWhilePhased";
 
     private boolean wasPhased;
     private float heldTimeDeployed;

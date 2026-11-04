@@ -5,8 +5,8 @@ import exiledsector.skills.CombatGate;
 
 final class DamagedShipDamageListener extends StrikecraftTargetDamageListener {
 
-    static final String DAMAGE_PERCENT_KEY = "exiledLib_strikecraftDamageToDamagedShipsPercent";
-    static final String DAMAGE_MOD_ID = "exiledLib_strikecraftDamageToDamagedShips";
+    static final String DAMAGE_PERCENT_KEY = "exiledSector_strikecraftDamageToDamagedShipsPercent";
+    static final String DAMAGE_MOD_ID = "exiledSector_strikecraftDamageToDamagedShips";
 
     DamagedShipDamageListener(ShipAPI fighter, ShipAPI carrier) {
         super(fighter, carrier, DAMAGE_PERCENT_KEY, DAMAGE_MOD_ID);

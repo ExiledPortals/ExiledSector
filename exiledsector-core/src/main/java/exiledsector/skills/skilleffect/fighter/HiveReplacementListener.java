@@ -10,7 +10,7 @@ import java.util.List;
 
 final class HiveReplacementListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String RESTORED_PERCENT_KEY = "exiledLib_hiveReplacementRestoredPercent";
+    static final String RESTORED_PERCENT_KEY = "exiledSector_hiveReplacementRestoredPercent";
     static final int FRAGMENTS_PER_REPLACEMENT = 5;
     private static final float RATE_DROP_EPSILON = 0.0001f;
 

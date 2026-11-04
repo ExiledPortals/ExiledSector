@@ -40,7 +40,7 @@ import java.util.Random;
 
 final class BomberPayloadDetonation implements AdvanceableListener {
 
-    static final String CHANCE_PERCENT_KEY = "exiledLib_bomberPayloadDetonationChancePercent";
+    static final String CHANCE_PERCENT_KEY = "exiledSector_bomberPayloadDetonationChancePercent";
     static final float CHECK_INTERVAL_SECONDS = 3f;
     static final float SAFE_DISTANCE_FROM_CARRIER = 600f;
     static final float MIN_BLAST_RADIUS = 75f;
