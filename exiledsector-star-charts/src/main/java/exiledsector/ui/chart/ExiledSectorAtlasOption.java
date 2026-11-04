@@ -19,7 +19,7 @@ public final class ExiledSectorAtlasOption extends BaseCommandPlugin {
 
     public static final String OPTION_ID = "exiledSector_viewAtlas";
     static final String OPEN = "open";
-    static final int OPTION_ORDER = 11;
+    static final int OPTION_ORDER = 16;
     static final String POPULATE_OPTIONS = "PopulateOptions";
 
     @Override
