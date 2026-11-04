@@ -1,6 +1,7 @@
 package exiledsector.ui;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
@@ -328,7 +329,22 @@ final class SkillTreeTemplateController {
     }
 
     private String hullName() {
-        return member.getHullSpec() == null ? "" : member.getHullSpec().getHullName();
+        ShipHullSpecAPI hullSpec = member.getHullSpec();
+        if (hullSpec == null) {
+            return "";
+        }
+        return undamagedHull(hullSpec).getHullName();
+    }
+
+    private static ShipHullSpecAPI undamagedHull(ShipHullSpecAPI hullSpec) {
+        if (!hullSpec.isDHull()) {
+            return hullSpec;
+        }
+        ShipHullSpecAPI parent = hullSpec.getDParentHull();
+        if (parent != null) {
+            return parent;
+        }
+        return hullSpec.getBaseHull() == null ? hullSpec : hullSpec.getBaseHull();
     }
 
     private static String resultText(AutoAllocateRun.Summary summary) {
