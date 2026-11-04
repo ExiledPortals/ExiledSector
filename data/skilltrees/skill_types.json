@@ -1622,7 +1622,7 @@
 			"effects": [
 				{
 					"effect": "HEARTLESS_CREW_DEATH_CHANCE_PERCENT_PER_STACK",
-					"magnitude": 3
+					"magnitude": 9
 				},
 				{
 					"effect": "HEARTLESS_MISSILE_DAMAGE_PERCENT_PER_STACK",
