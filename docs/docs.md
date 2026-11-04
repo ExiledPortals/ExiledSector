@@ -577,7 +577,8 @@ is kept as a position in the range, so a chart raised into the next group keeps 
 on tiers its groups cover, so one written as `mid=/high=` never appears below tier 6 (`ModifierLine.rollsAtTier`).
 
 Wormhole entries are set per group, 6, 3 and 1 by default (`StarChartSettings.wormholeEntries`). Each prefix adds 5%,
-15% or 25% item quantity by group, on top of its own line (`ChartGenContext.QUANTITY_PERCENT_PER_PREFIX`).
+15% or 25% item quantity by group, on top of its own line (`ChartGenContext.QUANTITY_PERCENT_PER_PREFIX`). Every entry
+burns fuel on arrival, 1000 at tier 1 plus 100 per tier above it, and can't start without it (`ChartEntryFuel`).
 
 ### Chart vanilla loot
 

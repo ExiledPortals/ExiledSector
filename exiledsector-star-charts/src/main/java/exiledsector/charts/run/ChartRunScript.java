@@ -111,8 +111,11 @@ public class ChartRunScript implements EveryFrameScript {
         }
         switch (run.runState()) {
             case OPEN -> {
-                if (inside && run.recordArrival()) {
-                    ChartRunCloser.removeOuterWormhole(sector, run);
+                if (inside) {
+                    ChartEntryFuel.charge(run, playerFleet);
+                    if (run.recordArrival()) {
+                        ChartRunCloser.removeOuterWormhole(sector, run);
+                    }
                 }
             }
             case INSIDE -> {

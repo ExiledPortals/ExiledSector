@@ -1,14 +1,19 @@
 package exiledsector.charts.wormhole;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
+import exiledsector.i18n.Style;
+import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartEntryBans;
+import exiledsector.charts.run.ChartEntryFuel;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunActions;
 import exiledsector.charts.run.ChartRunState;
@@ -62,12 +67,19 @@ public class ChartWormholeDialog extends BaseDialogPlugin {
         VanillaText.plainPara(text(), entriesLeft > 0
                 ? I18n.forGameText(() -> Translation.msg("chart.wormhole.dialog.outer.entriesLeft").count(entriesLeft).text())
                 : Translation.gameText("chart.wormhole.dialog.outer.noEntries"));
-        Set<HullSize> barred = ChartEntryBans.breached(run, Global.getSector().getPlayerFleet());
+        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
+        Set<HullSize> barred = ChartEntryBans.breached(run, playerFleet);
         for (HullSize hullSize : barred) {
             VanillaText.plainPara(text(), Translation.gameText("chart.wormhole.dialog.outer.barred." + hullSize.name()));
         }
+        boolean fuelEnough = ChartEntryFuel.canAfford(run, playerFleet);
+        if (entriesLeft > 0) {
+            StyledText fuel = StyledText.styled(Misc.getWithDGS(ChartEntryFuel.cost(run)), fuelEnough ? Style.HIGHLIGHT : Style.BAD);
+            VanillaText.addPara(text(), I18n.forGameText(() -> Translation.msg(fuelEnough ? "chart.wormhole.dialog.outer.fuel"
+                    : "chart.wormhole.dialog.outer.fuelShort").arg("fuel", fuel).styled()), Misc.getTextColor());
+        }
         options.addOption(I18n.forGameText(() -> Translation.msg("chart.wormhole.dialog.option.enter").count(entriesLeft).text()), ENTER);
-        options.setEnabled(ENTER, run.canEnter() && barred.isEmpty());
+        options.setEnabled(ENTER, run.canEnter() && barred.isEmpty() && fuelEnough);
         options.addOption(Translation.gameText("chart.wormhole.dialog.option.collapse"), COLLAPSE);
         options.addOptionConfirmation(COLLAPSE, Translation.gameText("chart.wormhole.dialog.collapse.confirm"),
                 Translation.gameText("chart.wormhole.dialog.collapse.yes"), Translation.gameText("chart.wormhole.dialog.collapse.no"));

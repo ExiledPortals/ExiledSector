@@ -182,6 +182,7 @@ class ChartRunActionsTest {
         when(sector.getStarSystem(run.systemId())).thenReturn(system);
         SectorEntityToken entry = mock(SectorEntityToken.class);
         when(system.createToken(anyFloat(), anyFloat())).thenReturn(entry);
+        when(mockSector.cargo().getFuel()).thenReturn((float) ChartEntryFuel.cost(run));
 
         assertTrue(ChartRunActions.enter(sector, run, outer));
 
@@ -189,6 +190,16 @@ class ChartRunActionsTest {
         verify(sector).doHyperspaceTransition(eq(playerFleet), eq(outer), destination.capture());
         assertSame(entry, destination.getValue().getDestination());
         assertEquals(0, run.entriesUsed(), "the entry is counted when the fleet arrives, so an aborted jump costs nothing");
+    }
+
+    @Test
+    void cannotEnterWithoutTheEntryFuel() {
+        ChartRun run = new ChartRun("abc", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+        when(sector.getStarSystem(run.systemId())).thenReturn(system);
+        when(mockSector.cargo().getFuel()).thenReturn(ChartEntryFuel.cost(run) - 1f);
+
+        assertFalse(ChartRunActions.enter(sector, run, outer));
+        verify(sector, never()).doHyperspaceTransition(any(), any(), any());
     }
 
     @Test

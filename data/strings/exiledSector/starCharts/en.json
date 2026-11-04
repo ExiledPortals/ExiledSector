@@ -6,6 +6,8 @@
     "chart.wormhole.dialog.outer.entriesLeft.one": "It can carry your fleet through {count} more time.",
     "chart.wormhole.dialog.outer.entriesLeft.other": "It can carry your fleet through {count} more times.",
     "chart.wormhole.dialog.outer.noEntries": "It is too unstable to carry your fleet through again.",
+    "chart.wormhole.dialog.outer.fuel": "Each passage burns {fuel} fuel to hold it open.",
+    "chart.wormhole.dialog.outer.fuelShort": "Each passage burns {fuel} fuel to hold it open, more than your fleet carries.",
     "chart.wormhole.dialog.outer.barred.CAPITAL_SHIP": "It won't carry a fleet with combat capital ships through.",
     "chart.wormhole.dialog.outer.barred.CRUISER": "It won't carry a fleet with combat cruisers through.",
     "chart.wormhole.dialog.outer.barred.DESTROYER": "It won't carry a fleet with combat destroyers through.",

@@ -123,6 +123,18 @@ class ChartRunScriptTest {
     }
 
     @Test
+    void arrivingBurnsTheEntryFuelOnce() {
+        ChartRun run = storeRun(2);
+        when(mockSector.cargo().getFuel()).thenReturn(5000f);
+        playerIn(system);
+
+        watchdog.advance(0.1f);
+        watchdog.advance(0.1f);
+
+        verify(mockSector.cargo()).removeFuel(ChartEntryFuel.cost(run));
+    }
+
+    @Test
     void nothingChangesWhileThePlayerIsMidJump() {
         ChartRun run = storeRun(1);
         playerIn(system);
