@@ -30,6 +30,15 @@ final class StatSources {
             "flux_capacitors", "ui.stats.source.fluxCapacitors",
             "flux_vents", "ui.stats.source.fluxVents",
             "cr_effect", "ui.stats.source.combatReadiness");
+    private static final Map<String, String> VANILLA_SKILL_MODIFIER_IDS = Map.of(
+            "bt_cargo_cap_mod", "bulk_transport",
+            "bt_fuel_cap_mod", "bulk_transport",
+            "bt_crew_cap_mod", "bulk_transport",
+            "sal_cargo_cap_mod", "salvaging",
+            "nav_fuel_use_mod", "navigation",
+            "sp_fuel_use_mod", "containment_procedures",
+            "surveying_supply_use_mod", "makeshift_equipment",
+            "coord_maneuvers_bonus", "coordinated_maneuvers");
     private static final Map<String, String> LOADED_SOURCE_NAMES = new HashMap<>();
 
     private final Map<String, ResolvedTree.AppliedModifier> appliedModifiers;
@@ -126,6 +135,13 @@ final class StatSources {
     }
 
     private static String loadedSourceName(String modId) {
+        String vanillaSkillId = VANILLA_SKILL_MODIFIER_IDS.get(modId);
+        if (vanillaSkillId != null) {
+            String skillName = loadedSkillName(vanillaSkillId);
+            if (skillName != null) {
+                return skillName;
+            }
+        }
         for (String candidate = modId; candidate != null; candidate = shorterPrefix(candidate)) {
             String hullModName = loadedHullModName(candidate);
             if (hullModName != null) {
