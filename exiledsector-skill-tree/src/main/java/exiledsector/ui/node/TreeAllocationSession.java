@@ -7,6 +7,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.effects.PhantomConflictWatch;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocationCheck;
+import exiledsector.skills.AllocationPath;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;
@@ -41,6 +42,7 @@ import lunalib.lunaRefit.BaseRefitButton;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -62,6 +64,7 @@ public final class TreeAllocationSession {
     private final Predicate<SkillType> choicePickerOptionUsable = this::isChoicePickerOptionUsable;
     private final TemplatePlanner planner;
     private final ReleaseConfirmation releaseConfirmation = new ReleaseConfirmation();
+    private final Random pathRandom = new Random();
 
     private TreeFeedback feedback = TreeFeedback.NONE;
     private StartingRootChoice rootChoice;
@@ -438,6 +441,56 @@ public final class TreeAllocationSession {
             feedback.pulse(node);
         } else {
             afterAllocationChange(allocatedBefore, node);
+        }
+    }
+
+    public boolean allocatePath(SkillNode target) {
+        if (isBusy() || getStartingRoot() == null) {
+            return false;
+        }
+        NodeAllocator.Snapshot view = viewSnapshot();
+        List<AllocationPath.Step> path = AllocationPath.to(target, view.gate(), SkillTree.topology(), view::isHidden, lastChosenOption, pathRandom);
+        if (path.isEmpty()) {
+            return false;
+        }
+        choicePickerNode = null;
+        if (planner.isActive()) {
+            planPath(target, path);
+        } else {
+            allocateLivePath(target, path);
+        }
+        return true;
+    }
+
+    private void allocateLivePath(SkillNode target, List<AllocationPath.Step> path) {
+        Set<String> allocatedBefore = allocatedNodeIds();
+        boolean allocatedAny = false;
+        for (AllocationPath.Step step : path) {
+            if (!allocator.allocate(step.node(), step.option(), snapshot())) {
+                break;
+            }
+            settleAllocation();
+            allocatedAny = true;
+        }
+        if (!allocatedAny) {
+            SkillTreeSounds.refused();
+            return;
+        }
+        afterAllocationChange(allocatedBefore, target);
+    }
+
+    private void planPath(SkillNode target, List<AllocationPath.Step> path) {
+        boolean plannedAny = false;
+        for (AllocationPath.Step step : path) {
+            if (!planner.add(step.node(), step.option())) {
+                break;
+            }
+            plannedAny = true;
+        }
+        if (plannedAny) {
+            planChanged(target, true);
+        } else {
+            SkillTreeSounds.refused();
         }
     }
 

@@ -462,6 +462,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             treeSession.respec(node);
             return;
         }
+        if (ctrlDown && shiftDown && treeSession.allocatePath(node)) {
+            return;
+        }
         if (jumpTarget == null && socketPlacement.handleSocketClick(node, ctrlDown, canvasPosition, chrome.shipCardFrame(canvasPosition))) {
             return;
         }

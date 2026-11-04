@@ -231,6 +231,8 @@ Click an allocated node to remove it. OP-paid nodes refund their OP, and free no
 
 Ctrl-Shift-click an allocated node to remove it along with every node that depends on it, starting with the farthest. Doing this on your starting point clears the whole tree and lets you choose a new start. For now it does nothing if any of those nodes has its own removal condition.
 
+Ctrl-Shift-click an unallocated node to allocate the shortest path to it from your tree. The path crosses wormholes where that is shorter, and it stops early if you run out of OP or nodes. Multi-choice nodes on the way reuse your last choice, then whatever you picked on an earlier node of the same kind, and otherwise pick at random.
+
 For multi-choice nodes, click to open a dropdown so you can pick an option. Ctrl-click repeats your last choice.
 
 Each ship can have a max of 60 nodes.
