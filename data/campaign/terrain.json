@@ -23,6 +23,10 @@
 		"plugin":"exiledsector.charts.layout.abyss.AbyssalFogTerrainPlugin",
 		"musicSuppression":0,
 	},
+	"exiledSector_chart_abyssal_storm":{
+		"plugin":"exiledsector.charts.anomaly.abyssstorm.AbyssalStormTerrainPlugin",
+		"musicSuppression":0,
+	},
 	"exiledSector_chart_abyssal_darkness":{
 		"plugin":"exiledsector.charts.layout.abyss.AbyssalDarknessTerrainPlugin",
 		"musicSuppression":0,

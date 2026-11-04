@@ -911,4 +911,12 @@ only program, Abyssal Infusion, runs once for 500 Nanite Feedstock: core `ForgeO
 `ForgeInfusions` names for the item's part, the Rift's from `biome_modifiers.csv`, and refuses a full side rather than
 replacing a modifier.
 
+### Abyssal Storm
+
+A rolled anomaly whose `fitsAt` holds it to the Abyssal Rift, the only anomaly the Rift weighs above 0
+(`charts.anomaly.abyssstorm`). It adds one system-wide terrain that, while the player is in the system, runs RAT's Sea
+of Solitude cycle: a storm of 10 to 16 seconds every 27 to 33, flashing in bursts (`StormCycle`). Each flash raises the
+detected range of every fleet outside the abyssal fog by up to 150% more and +150 su, for 0.1 days and refreshed every
+quarter second (`AbyssalStormTerrainPlugin`). Its `effects` column adds 30% item quantity found in the system.
+
 </details>

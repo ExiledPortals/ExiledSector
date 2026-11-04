@@ -73,7 +73,7 @@ The Rift weighs every anomaly it doesn't list at 0 (`*:0`). The Abyssal Storm is
 2. [x] Abyssal salvage sites: the `biomes` column on `chart_poi.csv`, our three custom entities and salvage specs, placement in the orbitless Rift layout. Built: `ChartPois.inBiome`, `ChartContentPlanner.spendPooledLoot` (a biome with its own sites spends every kind's budget on them), `ChartGenContext.withBiome`, `ChartAbyss.siteSpots`; RAT's station art copied into `graphics/stations` and `graphics/illustrations`.
 3. [x] Abyssal Shipyard: its landmark row, entity, guard fleet and salvage. Built: `charts.anomaly.shipyard` (`AbyssalShipyard`, `ShipyardGuards`, `ShipyardDialog`); guards scale by escort count with tier (3 at tier 1, +1 per two tiers, up to RAT's 9); placeholder icon from RAT's abyssal crest.
 4. [x] Abyssal Research Complex: landmark row, entity, Seraph guards and the Abyssal Infusion program on its own forge bench. Built: `AbyssalResearchComplex`, `ComplexGuards`, `ForgeSite` in `charts.anomaly.forge`; core `ForgeOperation.INFUSE` with `ForgeInfusions`; `BenchMode.ABYSSAL_FORGE`; shared `CoredLineup` and `AbyssOrbits`.
-5. [ ] Abyssal Storm: the storm script, overlay and sound, its fog check and its `effects` line.
+5. [x] Abyssal Storm: the storm script, overlay and sound, its fog check and its `effects` line. Built: `charts.anomaly.abyssstorm` (`AbyssalStorm`, `StormCycle`, `AbyssalStormTerrainPlugin`, a system-wide terrain rather than a script so it can draw the flash); thunder is vanilla's `terrain_hyperspace_lightning`; the Rift's `anomaly_weights` lists `abyssal_storm:1`.
 6. [ ] Atlas marker icons for the three anomalies, catalysts if wanted, the `docs/docs.md` sections and tests for each step.
 
 ## Not pursued

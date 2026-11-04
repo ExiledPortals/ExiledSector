@@ -15,7 +15,8 @@ public final class AbyssArt {
     static final String FOG = "graphics/terrain/rat_depths1.png";
     static final String FOG_MAP = "graphics/terrain/rat_depths1_map.png";
     static final String BACKGROUND = "graphics/backgrounds/abyss/Abyss2.jpg";
-    static final List<String> TEXTURES = List.of(CORE, HALO, BAND, VIGNETTE, FOG, FOG_MAP, BACKGROUND);
+    static final String THUNDER = "graphics/fx/rat_solitude_thunder.png";
+    static final List<String> TEXTURES = List.of(CORE, HALO, BAND, VIGNETTE, FOG, FOG_MAP, BACKGROUND, THUNDER);
     private static final SpriteCache SPRITES = new SpriteCache(AbyssArt.class);
 
     private AbyssArt() {
@@ -25,6 +26,10 @@ public final class AbyssArt {
         if (RandomAssortmentCompat.isModEnabled()) {
             TEXTURES.forEach(SPRITES::ensureLoaded);
         }
+    }
+
+    public static SpriteAPI thunder() {
+        return sprite(THUNDER);
     }
 
     static SpriteAPI sprite(String path) {

@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import exiledsector.ModCsv;
+import exiledsector.charts.anomaly.abyssstorm.AbyssalStorm;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.convoy.SupplyConvoy;
 import exiledsector.charts.anomaly.debris.AnomalousDebris;
@@ -58,7 +59,7 @@ public final class ChartAnomalies {
             RelayNetwork.INSTANCE, ExcavationSites.INSTANCE, SupplyConvoy.INSTANCE, AnomalousDebris.INSTANCE,
             StormFront.INSTANCE,
             DerelictForge.INSTANCE, ListeningPost.INSTANCE, PreCollapseFacility.INSTANCE, CoronalHypershunt.INSTANCE,
-            RemnantNexusStation.INSTANCE, DomainMothership.INSTANCE, AbyssalShipyard.INSTANCE, AbyssalResearchComplex.INSTANCE,
+            RemnantNexusStation.INSTANCE, DomainMothership.INSTANCE, AbyssalShipyard.INSTANCE, AbyssalResearchComplex.INSTANCE, AbyssalStorm.INSTANCE,
             PowerfulBoss.INSTANCE);
     private static final Logger LOG = Logger.getLogger(ChartAnomalies.class);
     private static volatile List<ChartAnomaly> anomalies = BUILT_IN;

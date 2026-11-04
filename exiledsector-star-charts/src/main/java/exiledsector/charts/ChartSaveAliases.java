@@ -17,6 +17,8 @@ import exiledsector.charts.anomaly.listeningpost.PostScript;
 import exiledsector.charts.anomaly.landmark.MothershipFleetManager;
 import exiledsector.charts.anomaly.landmark.NexusFleetManager;
 import exiledsector.charts.anomaly.landmark.StationLaunches;
+import exiledsector.charts.anomaly.abyssstorm.AbyssalStormTerrainPlugin;
+import exiledsector.charts.anomaly.abyssstorm.StormCycle;
 import exiledsector.charts.anomaly.stormfront.StormFrontTerrainPlugin;
 import exiledsector.charts.layout.ChartCoronaTerrainPlugin;
 import exiledsector.charts.layout.ChartPulsarBeamTerrainPlugin;
@@ -57,6 +59,8 @@ public final class ChartSaveAliases {
             Map.entry("exiledSector.RelayLogIntel", RelayLogIntel.class),
             Map.entry("exiledSector.AnomalousDebrisTerrainPlugin", AnomalousDebrisTerrainPlugin.class),
             Map.entry("exiledSector.StormFrontTerrainPlugin", StormFrontTerrainPlugin.class),
+            Map.entry("exiledSector.AbyssalStormTerrainPlugin", AbyssalStormTerrainPlugin.class),
+            Map.entry("exiledSector.AbyssalStormCycle", StormCycle.class),
             Map.entry("exiledSector.ChartPhotospherePlugin", ChartPhotospherePlugin.class),
             Map.entry("exiledSector.AbyssalFogTerrainPlugin", AbyssalFogTerrainPlugin.class),
             Map.entry("exiledSector.AbyssalDarknessTerrainPlugin", AbyssalDarknessTerrainPlugin.class),
