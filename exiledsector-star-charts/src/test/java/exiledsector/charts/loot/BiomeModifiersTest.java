@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -90,12 +91,13 @@ class BiomeModifiersTest {
     }
 
     @Test
-    void aboutAThirdOfTheBiomesDropsGainTheModifier() throws Exception {
+    void aboutATenthOfTheBiomesDropsGainTheModifier() throws Exception {
         BiomeModifiers.register(new JSONArray().put(biomeRow(CHRONAL, RIFT, "bridge")));
         int drops = 2000;
         int touched = 0;
-        for (long seed = 0L; seed < drops; seed++) {
-            if (carries(BiomeModifiers.onDrop(ItemData.rolled(ItemDefinitions.get(BRIDGE), seed), RIFT), CHRONAL)) {
+        Random seeds = new Random(1L);
+        for (int drop = 0; drop < drops; drop++) {
+            if (carries(BiomeModifiers.onDrop(ItemData.rolled(ItemDefinitions.get(BRIDGE), seeds.nextLong()), RIFT), CHRONAL)) {
                 touched++;
             }
         }
