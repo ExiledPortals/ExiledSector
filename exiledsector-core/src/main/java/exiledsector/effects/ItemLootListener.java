@@ -26,6 +26,7 @@ import exiledsector.loot.BattleLoot;
 import exiledsector.loot.BattleMaterials;
 import exiledsector.loot.EncounterSalvage;
 import exiledsector.loot.LootSources;
+import exiledsector.skills.skilleffect.logistics.SalvagedArmaments;
 import exiledsector.ui.CampaignMessages;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
 
@@ -94,6 +95,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
 
     @Override
     public void reportEncounterLootGenerated(FleetEncounterContextPlugin encounterPlugin, CargoAPI loot) {
+        SalvagedArmaments.addExtra(PlayerFleet.orNull(), loot, lootRandom);
         Pending pendingLoot = encounterPlugin == null ? null : pendingByBattle.remove(encounterPlugin.getBattle());
         if (pendingLoot != null && loot != null) {
             pendingLoot.battleLoot.setEncounterSalvage(EncounterSalvage.of(encounterPlugin));

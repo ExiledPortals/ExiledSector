@@ -56,6 +56,21 @@ public enum AuraSkillEffect implements BackedSkillEffect {
                     .arg("limit", RepairCoordinatorField.MAX_REPAIR_PERCENT_OF_ARMOR).styled();
         }
     },
+    NEARBY_DESTRUCTION_REPLACEMENT_RATE_PERCENT(listener(WreckReclaimListener.RESTORE_PERCENT_KEY, WreckReclaimListener.class,
+            WreckReclaimListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", WreckReclaimListener.RANGE).styled();
+        }
+    },
+    NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT(listener(WreckPlatingListener.REPAIR_CAP_PERCENT_KEY, WreckPlatingListener.class,
+            WreckPlatingListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", WreckPlatingListener.RANGE)
+                    .arg("percent", WreckPlatingListener.REPAIR_PERCENT_PER_WRECK).styled();
+        }
+    },
     CREW_STEAL_RANGE_FLAT(listener(CrewStealListener.RANGE_KEY, CrewStealListener.class, CrewStealListener::new)),
     CREW_STEAL_SKELETON_CREW_PERCENT(listener(CrewStealListener.SKELETON_CREW_PERCENT_KEY, CrewStealListener.class, CrewStealListener::new));
 

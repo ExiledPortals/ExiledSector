@@ -81,6 +81,10 @@ public final class SkillEffectSupport {
         return dModSpecs(stats.getVariant()).size();
     }
 
+    public static boolean hasDMods(ShipVariantAPI variant) {
+        return !dModSpecs(variant).isEmpty();
+    }
+
     public static void applyDModEffectMult(MutableShipStatsAPI stats, String modId, float magnitude) {
         applyMult(stats.getDynamic().getStat(Stats.DMOD_EFFECT_MULT), modId, magnitude);
         reapplyDMods(stats);

@@ -15,6 +15,7 @@ import exiledsector.skills.skilleffect.CsvIdList;
 import exiledsector.skills.skilleffect.EffectAliases;
 import exiledsector.skills.skilleffect.logistics.FleetCrewLedger;
 import exiledsector.skills.skilleffect.logistics.FleetWideEffects;
+import exiledsector.skills.skilleffect.logistics.RecoveryDModAvoidance;
 import exiledsector.charts.StarChartsDomain;
 import exiledsector.compat.CompatChecks;
 import exiledsector.domain.ExiledSectorDomain;
@@ -161,6 +162,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         sector.getListenerManager().addListener(new TechMiningItemListener(), true);
         sector.getListenerManager().addListener(new LootAlertListener(), true);
         sector.getListenerManager().addListener(new MarketItemStock(), true);
+        RecoveryDModAvoidance.install(sector);
         DOMAINS.forEach(ExiledSectorDomain::afterLootListeners);
         SectionFitMigration.run();
         SocketCustody.reconcile();

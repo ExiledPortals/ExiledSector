@@ -136,6 +136,8 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
                     .arg("range", Math.round(SharedShieldDamageListener.RANGE)).styled();
         }
     },
+    SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT(listener(AutomatedShieldDamageListener.REDUCTION_PERCENT_KEY,
+            AutomatedShieldDamageListener.class, AutomatedShieldDamageListener::new)),
     SHIELD_ABSORB_RATE_OF_FIRE_PERCENT(listener(AbsorbReserveListener.RATE_OF_FIRE_PERCENT_KEY,
             AbsorbReserveListener.class, AbsorbReserveListener::new)) {
         @Override
