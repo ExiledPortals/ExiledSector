@@ -21,6 +21,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Abilities;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.ids.ShipRoles;
+import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantSeededFleetManager;
 import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.util.Misc;
@@ -36,6 +37,7 @@ import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.ChartFleetLoot;
 import exiledsector.charts.loot.ChartVanillaLoot;
+import exiledsector.charts.loot.DropType;
 import exiledsector.items.WeightedPick;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -43,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 public final class DormantFleets {
 
@@ -61,6 +64,7 @@ public final class DormantFleets {
     static final int MOST_PICKS = 150;
     static final int MOST_FAILED_PICKS = 6;
     static final int SEED_RADIX = Character.MAX_RADIX;
+    static final Set<DropType> WITHHELD_DROPS = Set.of(DropType.AI_CORE);
 
     record HullFaction(FactionAPI faction, float weight) {
     }
@@ -79,7 +83,7 @@ public final class DormantFleets {
         }
         prepare(fleet, runId, tier, seed, new Random(seed));
         setStrengthBonus(fleet, tier, context, false);
-        ChartVanillaLoot.addToFleet(fleet, false, context == null ? ChartGenContext.none() : context, tier);
+        ChartVanillaLoot.addToFleet(fleet, false, context == null ? ChartGenContext.none() : context, tier, WITHHELD_DROPS);
         ChartEnemyShipEffects.grant(fleet, context);
         return fleet;
     }
@@ -180,9 +184,7 @@ public final class DormantFleets {
     }
 
     private static void crew(FleetMemberAPI member, int tier, boolean corrupted, float averageDMods, Random random) {
-        ShipVariantAPI variant = member.getVariant().clone();
-        variant.setSource(VariantSource.REFIT);
-        member.setVariant(variant, false, false);
+        ShipVariantAPI variant = ownCorelessVariant(member);
         int dMods = DefaultFleetInflater.getNumDModsToAdd(variant, averageDMods, random);
         if (dMods > 0) {
             DModManager.addDMods(member, false, dMods, random);
@@ -194,6 +196,14 @@ public final class DormantFleets {
             member.setCaptain(captain);
         }
         member.getRepairTracker().setCR(member.getRepairTracker().getMaxCR());
+    }
+
+    static ShipVariantAPI ownCorelessVariant(FleetMemberAPI member) {
+        ShipVariantAPI variant = member.getVariant().clone();
+        variant.setSource(VariantSource.REFIT);
+        variant.addTag(Tags.VARIANT_DO_NOT_DROP_AI_CORE_FROM_CAPTAIN);
+        member.setVariant(variant, false, false);
+        return variant;
     }
 
     static void prepare(CampaignFleetAPI fleet, String runId, int tier, long seed, Random random) {

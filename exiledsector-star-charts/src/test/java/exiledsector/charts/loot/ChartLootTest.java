@@ -219,6 +219,19 @@ class ChartLootTest {
     }
 
     @Test
+    void aWithheldDropTypeIsLeftOutOfAFleetsDropsWhileTheRestStay() throws Exception {
+        registerTable();
+        CampaignFleetAPI boss = mock(CampaignFleetAPI.class);
+        when(boss.getFleetPoints()).thenReturn(400);
+
+        ChartVanillaLoot.addToFleet(boss, true, ChartGenContext.none(), 8, Set.of(DropType.AI_CORE));
+
+        List<DropData> bossDrops = randomDropsAddedTo(boss);
+        assertEquals(1, bossDrops.size());
+        assertEquals("weapons1", bossDrops.get(0).group);
+    }
+
+    @Test
     void quantityNeverReachesUnmappedColonyItemGroups() throws Exception {
         registerTable();
         SectorEntityToken site = mock(SectorEntityToken.class);
