@@ -2,7 +2,7 @@
 
 Hull items dropped in Derelict Graveyard systems can carry a Derelict Graveyard modifier. The biome is old battlefields and dead fleets, so its set rewards scarred ships and feeds on destruction: bonuses per d-mod, damage to pristine hulls, and repairs and fighters taken from ships dying nearby.
 
-Status: proposed 2026-11-04. The framework is built (`../anomalies/abyssal_rift.md`, Biome modifiers): rows in `item_modifiers.csv` ending `_DERELICT_GRAVEYARD`, mapped in `biome_modifiers.csv`, reserved at item load and granted to 30% of hull items dropped here. Values are placeholders, and the effect lines are settled when built, after checking how each effect stacks (`docs/tooltip_wording.md`).
+Status: proposed 2026-11-04. The framework is built (`../completed/anomalies/abyssal_rift.md`, Biome modifiers): rows in `item_modifiers.csv` ending `_DERELICT_GRAVEYARD`, mapped in `biome_modifiers.csv`, reserved at item load and granted to 30% of hull items dropped here. Values are placeholders, and the effect lines are settled when built, after checking how each effect stacks (`docs/tooltip_wording.md`).
 
 ## Modifiers
 

@@ -711,6 +711,7 @@
     "catalyst.exiledSector_forge_survey.name": "Forge Survey",
     "catalyst.exiledSector_facility_survey.name": "Facility Survey",
     "catalyst.exiledSector_hypershunt_survey.name": "Hypershunt Survey",
+    "catalyst.exiledSector_abyssal_terminus.name": "Abyssal Terminus",
     "chart.atlas.catalysts": "Catalysts ({count})",
     "catalyst.window.title": "Atlas Catalysts",
     "catalyst.window.close": "Close",

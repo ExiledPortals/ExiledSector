@@ -917,6 +917,7 @@ A rolled anomaly whose `fitsAt` holds it to the Abyssal Rift, the only anomaly t
 (`charts.anomaly.abyssstorm`). It adds one system-wide terrain that, while the player is in the system, runs RAT's Sea
 of Solitude cycle: a storm of 10 to 16 seconds every 27 to 33, flashing in bursts (`StormCycle`). Each flash raises the
 detected range of every fleet outside the abyssal fog by up to 150% more and +150 su, for 0.1 days and refreshed every
-quarter second (`AbyssalStormTerrainPlugin`). Its `effects` column adds 30% item quantity found in the system.
+quarter second (`AbyssalStormTerrainPlugin`). Its `effects` column adds 30% item quantity found in the system. Its Abyssal Terminus
+catalyst has weight 0, so only `ExiledSectorGrantAtlasCatalysts` gives it.
 
 </details>

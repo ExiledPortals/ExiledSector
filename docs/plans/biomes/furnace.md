@@ -2,7 +2,7 @@
 
 Hull items dropped in Furnace systems can carry a Furnace modifier. The biome is hot, tight systems around giant stars, so its set rewards running hot and old Low Tech: bonuses at high flux, burning damage, hull that reflows in the heat, and Low Tech Affinity on three of its items.
 
-Status: proposed 2026-11-04. The framework is built (`../anomalies/abyssal_rift.md`, Biome modifiers): rows in `item_modifiers.csv` ending `_FURNACE`, mapped in `biome_modifiers.csv`, reserved at item load and granted to 30% of hull items dropped here. Values are placeholders, and the effect lines are settled when built, after checking how each effect stacks (`docs/tooltip_wording.md`).
+Status: proposed 2026-11-04. The framework is built (`../completed/anomalies/abyssal_rift.md`, Biome modifiers): rows in `item_modifiers.csv` ending `_FURNACE`, mapped in `biome_modifiers.csv`, reserved at item load and granted to 30% of hull items dropped here. Values are placeholders, and the effect lines are settled when built, after checking how each effect stacks (`docs/tooltip_wording.md`).
 
 ## Modifiers
 

@@ -686,6 +686,7 @@
     "catalyst.exiledSector_forge_survey.name": "熔炉勘测",
     "catalyst.exiledSector_facility_survey.name": "设施勘测",
     "catalyst.exiledSector_hypershunt_survey.name": "分流器勘测",
+    "catalyst.exiledSector_abyssal_terminus.name": "深渊终端",
     "chart.atlas.catalysts": "催化物（{count}）",
     "catalyst.window.title": "星图册催化物",
     "catalyst.window.close": "关闭",

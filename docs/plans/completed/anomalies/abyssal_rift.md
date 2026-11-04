@@ -2,7 +2,7 @@
 
 The Abyssal Rift (Random Assortment of Things only) gets its own content built from RAT's Abyss: abyssal salvage sites, the Abyssal Shipyard, the Abyssal Research Complex and the Abyssal Storm. Hull items dropped in a Rift system can carry an abyssal modifier, the first case of biome modifiers, which every atlas biome will get.
 
-Status: proposed 2026-11-04. See `overview.md` for the shared anomaly framework. RAT's Abyss assets are approved for use.
+Status: built 2026-11-04, apart from in-game checks. See `../../anomalies/overview.md` for the shared anomaly framework. RAT's Abyss assets are approved for use.
 
 ## Rebuild, don't spawn RAT's entities
 
@@ -51,11 +51,11 @@ Three Rift-only `chart_poi.csv` rows of the station kind, each a custom entity o
 
 ## Abyssal Shipyard
 
-A Rift landmark: a `biomes=abyssal_rift` row in `chart_anomalies.csv`, so exactly one system in each Rift pocket holds it (as the Remnant Nexus, `../completed/anomalies/biome_stations.md`). It is a fight and nothing else. The shipyard is a salvage entity guarded by a heavy abyssal fleet in its `$defenderFleet`, fought through vanilla's defender interaction as the Derelict Forge's guards are. RAT's lineup is the model: a Morkoth flagship, Aboleths, Chuul, Makara and Merrow under Chronos and Cosmos cores, scaled to the chart tier. Beating it opens the shipyard's salvage (RAT's shipyard drop groups) plus chart fleet items. It never launches fleets, and RAT's Abyssal Burn grant is left out.
+A Rift landmark: a `biomes=abyssal_rift` row in `chart_anomalies.csv`, so exactly one system in each Rift pocket holds it (as the Remnant Nexus, `biome_stations.md`). It is a fight and nothing else. The shipyard is a salvage entity guarded by a heavy abyssal fleet in its `$defenderFleet`, fought through vanilla's defender interaction as the Derelict Forge's guards are. RAT's lineup is the model: a Morkoth flagship, Aboleths, Chuul, Makara and Merrow under Chronos and Cosmos cores, scaled to the chart tier. Beating it opens the shipyard's salvage (RAT's shipyard drop groups) plus chart fleet items. It never launches fleets, and RAT's Abyssal Burn grant is left out.
 
 ## Abyssal Research Complex
 
-A Rift landmark like the Shipyard: exactly one system in each Rift pocket holds it. It works like the Derelict Forge (`../completed/anomalies/derelict_forge.md`) and shares its dialog, bench and run tracking through `ForgeSite`. It is guarded by RAT's Seraph lineup: a Gabriel with Sariels and Raguels, every ship under a Seraph core, three escorts at tier 1 and one more every two tiers. Once the guards are beaten, its one program, Abyssal Infusion, adds the Abyssal Rift modifier for a hull item's part to a hull item from anywhere, on its own bench with RAT's research complex art. It refuses uniques, Subroutines, Star Charts, corrupted and mirrored items, parts with no Rift modifier, an item that already has it or a modifier with the same effect, and an item with no room on that side: a full item can't use it. It runs once per run and costs 500 Nanite Feedstock, the same at every tier; the Derelict Forge's costs no longer scale with tier either. It drops no items of its own. RAT's lore logs, the Primordial Catalyst reveal and survey data are left out.
+A Rift landmark like the Shipyard: exactly one system in each Rift pocket holds it. It works like the Derelict Forge (`derelict_forge.md`) and shares its dialog, bench and run tracking through `ForgeSite`. It is guarded by RAT's Seraph lineup: a Gabriel with Sariels and Raguels, every ship under a Seraph core, three escorts at tier 1 and one more every two tiers. Once the guards are beaten, its one program, Abyssal Infusion, adds the Abyssal Rift modifier for a hull item's part to a hull item from anywhere, on its own bench with RAT's research complex art. It refuses uniques, Subroutines, Star Charts, corrupted and mirrored items, parts with no Rift modifier, an item that already has it or a modifier with the same effect, and an item with no room on that side: a full item can't use it. It runs once per run and costs 500 Nanite Feedstock, the same at every tier; the Derelict Forge's costs no longer scale with tier either. It drops no items of its own. RAT's lore logs, the Primordial Catalyst reveal and survey data are left out.
 
 ## Abyssal Storm
 
@@ -74,7 +74,7 @@ The Rift weighs every anomaly it doesn't list at 0 (`*:0`). The Abyssal Storm is
 3. [x] Abyssal Shipyard: its landmark row, entity, guard fleet and salvage. Built: `charts.anomaly.shipyard` (`AbyssalShipyard`, `ShipyardGuards`, `ShipyardDialog`); guards scale by escort count with tier (3 at tier 1, +1 per two tiers, up to RAT's 9); placeholder icon from RAT's abyssal crest.
 4. [x] Abyssal Research Complex: landmark row, entity, Seraph guards and the Abyssal Infusion program on its own forge bench. Built: `AbyssalResearchComplex`, `ComplexGuards`, `ForgeSite` in `charts.anomaly.forge`; core `ForgeOperation.INFUSE` with `ForgeInfusions`; `BenchMode.ABYSSAL_FORGE`; shared `CoredLineup` and `AbyssOrbits`.
 5. [x] Abyssal Storm: the storm script, overlay and sound, its fog check and its `effects` line. Built: `charts.anomaly.abyssstorm` (`AbyssalStorm`, `StormCycle`, `AbyssalStormTerrainPlugin`, a system-wide terrain rather than a script so it can draw the flash); thunder is vanilla's `terrain_hyperspace_lightning`; the Rift's `anomaly_weights` lists `abyssal_storm:1`.
-6. [ ] Atlas marker icons for the three anomalies, catalysts if wanted, the `docs/docs.md` sections and tests for each step.
+6. [x] Atlas marker icons for the three anomalies, catalysts if wanted, the `docs/docs.md` sections and tests for each step. Built: circular 40x40 icons made with the editor's `makeCircularImage` (RAT's abyssal and Seraph crests, a crop of its Sea of Solitude illustration); one dev-only catalyst, the Abyssal Terminus (weight 0, granted only by `ExiledSectorGrantAtlasCatalysts`), since the two landmarks can't be inserted.
 
 ## Not pursued
 
