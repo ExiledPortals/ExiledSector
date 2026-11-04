@@ -1402,12 +1402,12 @@ effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased h
 effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased high-explosive damage taken.
 effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced high-explosive damage taken.
 effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced high-explosive damage taken.
-effect|HIGH_FLUX_HULL_REGEN_PERCENT|1.0	0	Above 50% flux, repairs <good>1%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per battle.
-effect|HIGH_FLUX_HULL_REGEN_PERCENT|10.0	0	Above 50% flux, repairs <good>10%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per battle.
-effect|HIGH_FLUX_HULL_REGEN_PERCENT|12.5	0	Above 50% flux, repairs <good>12.5%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per battle.
-effect|HIGH_FLUX_HULL_REGEN_PERCENT|100.0	0	Above 50% flux, repairs <good>100%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per battle.
-effect|HIGH_FLUX_HULL_REGEN_PERCENT|-10.0	0	Above 50% flux, repairs <good>-10%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per battle.
-effect|HIGH_FLUX_HULL_REGEN_PERCENT|-12.5	0	Above 50% flux, repairs <good>-12.5%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per battle.
+effect|HIGH_FLUX_HULL_REGEN_PERCENT|1.0	0	Above 50% flux, repairs <good>1%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per deployment.
+effect|HIGH_FLUX_HULL_REGEN_PERCENT|10.0	0	Above 50% flux, repairs <good>10%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per deployment.
+effect|HIGH_FLUX_HULL_REGEN_PERCENT|12.5	0	Above 50% flux, repairs <good>12.5%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per deployment.
+effect|HIGH_FLUX_HULL_REGEN_PERCENT|100.0	0	Above 50% flux, repairs <good>100%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per deployment.
+effect|HIGH_FLUX_HULL_REGEN_PERCENT|-10.0	0	Above 50% flux, repairs <good>-10%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per deployment.
+effect|HIGH_FLUX_HULL_REGEN_PERCENT|-12.5	0	Above 50% flux, repairs <good>-12.5%</good> of maximum hull per second in combat, up to 20% of maximum hull in total per deployment.
 effect|HIGH_TECH_AFFINITY_FLAT|1.0	0	<good>+1</good> to High Tech Affinity.
 effect|HIGH_TECH_AFFINITY_FLAT|10.0	0	<good>+10</good> to High Tech Affinity.
 effect|HIGH_TECH_AFFINITY_FLAT|12.5	0	<good>+12.5</good> to High Tech Affinity.
@@ -1852,12 +1852,12 @@ effect|NAV_RATING_PER_HIGH_TECH_AFFINITY|12.5	0	Your fleet has <good>+12.5</good
 effect|NAV_RATING_PER_HIGH_TECH_AFFINITY|100.0	0	Your fleet has <good>+100</good> to nav rating for every 50 High Tech Affinity.
 effect|NAV_RATING_PER_HIGH_TECH_AFFINITY|-10.0	0	Your fleet has <bad>-10</bad> to nav rating for every 50 High Tech Affinity.
 effect|NAV_RATING_PER_HIGH_TECH_AFFINITY|-12.5	0	Your fleet has <bad>-12.5</bad> to nav rating for every 50 High Tech Affinity.
-effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|1.0	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>1%</good> of this ship's total armor per battle.
-effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|10.0	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>10%</good> of this ship's total armor per battle.
-effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|12.5	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>12.5%</good> of this ship's total armor per battle.
-effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|100.0	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>100%</good> of this ship's total armor per battle.
-effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|-10.0	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>-10%</good> of this ship's total armor per battle.
-effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|-12.5	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>-12.5%</good> of this ship's total armor per battle.
+effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|1.0	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>1%</good> of this ship's total armor per deployment.
+effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|10.0	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>10%</good> of this ship's total armor per deployment.
+effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|12.5	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>12.5%</good> of this ship's total armor per deployment.
+effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|100.0	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>100%</good> of this ship's total armor per deployment.
+effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|-10.0	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>-10%</good> of this ship's total armor per deployment.
+effect|NEARBY_DESTRUCTION_ARMOR_REPAIR_CAP_PERCENT|-12.5	0	Whenever an enemy ship is destroyed within 1000 su, every armor cell repairs 5% of its maximum armor, up to <good>-12.5%</good> of this ship's total armor per deployment.
 effect|NEARBY_DESTRUCTION_REPLACEMENT_RATE_PERCENT|1.0	0	<good>+1%</good> to strikecraft replacement rate whenever an enemy ship is destroyed within 1500 su.
 effect|NEARBY_DESTRUCTION_REPLACEMENT_RATE_PERCENT|10.0	0	<good>+10%</good> to strikecraft replacement rate whenever an enemy ship is destroyed within 1500 su.
 effect|NEARBY_DESTRUCTION_REPLACEMENT_RATE_PERCENT|12.5	0	<good>+12.5%</good> to strikecraft replacement rate whenever an enemy ship is destroyed within 1500 su.
@@ -2086,12 +2086,12 @@ effect|PHASE_CLOAK_UPKEEP_COST_MULT|12.5	1	<good>12.5%</good> more phase cloak f
 effect|PHASE_CLOAK_UPKEEP_COST_MULT|100.0	1	<good>100%</good> more phase cloak flux upkeep.
 effect|PHASE_CLOAK_UPKEEP_COST_MULT|-10.0	1	<bad>10%</bad> less phase cloak flux upkeep.
 effect|PHASE_CLOAK_UPKEEP_COST_MULT|-12.5	1	<bad>12.5%</bad> less phase cloak flux upkeep.
-effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|1.0	0	When this ship enters phase, every armor cell repairs <good>1%</good> of its maximum armor, up to 50% of this ship's total armor per battle.
-effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|10.0	0	When this ship enters phase, every armor cell repairs <good>10%</good> of its maximum armor, up to 50% of this ship's total armor per battle.
-effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|12.5	0	When this ship enters phase, every armor cell repairs <good>12.5%</good> of its maximum armor, up to 50% of this ship's total armor per battle.
-effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|100.0	0	When this ship enters phase, every armor cell repairs <good>100%</good> of its maximum armor, up to 50% of this ship's total armor per battle.
-effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|-10.0	0	When this ship enters phase, every armor cell repairs <good>-10%</good> of its maximum armor, up to 50% of this ship's total armor per battle.
-effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|-12.5	0	When this ship enters phase, every armor cell repairs <good>-12.5%</good> of its maximum armor, up to 50% of this ship's total armor per battle.
+effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|1.0	0	When this ship enters phase, every armor cell repairs <good>1%</good> of its maximum armor, up to 50% of this ship's total armor per deployment.
+effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|10.0	0	When this ship enters phase, every armor cell repairs <good>10%</good> of its maximum armor, up to 50% of this ship's total armor per deployment.
+effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|12.5	0	When this ship enters phase, every armor cell repairs <good>12.5%</good> of its maximum armor, up to 50% of this ship's total armor per deployment.
+effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|100.0	0	When this ship enters phase, every armor cell repairs <good>100%</good> of its maximum armor, up to 50% of this ship's total armor per deployment.
+effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|-10.0	0	When this ship enters phase, every armor cell repairs <good>-10%</good> of its maximum armor, up to 50% of this ship's total armor per deployment.
+effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|-12.5	0	When this ship enters phase, every armor cell repairs <good>-12.5%</good> of its maximum armor, up to 50% of this ship's total armor per deployment.
 effect|PHASE_ENTRY_HARD_FLUX_TO_SOFT_PERCENT|1.0	0	When this ship enters phase, <good>1%</good> of its hard flux is converted to soft flux.
 effect|PHASE_ENTRY_HARD_FLUX_TO_SOFT_PERCENT|10.0	0	When this ship enters phase, <good>10%</good> of its hard flux is converted to soft flux.
 effect|PHASE_ENTRY_HARD_FLUX_TO_SOFT_PERCENT|12.5	0	When this ship enters phase, <good>12.5%</good> of its hard flux is converted to soft flux.
@@ -2602,12 +2602,12 @@ effect|SURVEY_COST_REDUCTION_SUPPLIES|12.5	1	Your fleet has <bad>-12.5</bad> to 
 effect|SURVEY_COST_REDUCTION_SUPPLIES|100.0	1	Your fleet has <bad>-100</bad> to supplies needed to perform surveys.
 effect|SURVEY_COST_REDUCTION_SUPPLIES|-10.0	1	Your fleet has <good>+10</good> to supplies needed to perform surveys.
 effect|SURVEY_COST_REDUCTION_SUPPLIES|-12.5	1	Your fleet has <good>+12.5</good> to supplies needed to perform surveys.
-effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|1.0	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>1%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per battle.
-effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|10.0	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>10%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per battle.
-effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|12.5	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>12.5%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per battle.
-effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|100.0	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>100%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per battle.
-effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|-10.0	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>-10%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per battle.
-effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|-12.5	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>-12.5%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per battle.
+effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|1.0	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>1%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per deployment.
+effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|10.0	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>10%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per deployment.
+effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|12.5	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>12.5%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per deployment.
+effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|100.0	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>100%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per deployment.
+effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|-10.0	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>-10%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per deployment.
+effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|-12.5	0	While this ship's Fragment Swarm is full, each fragment it would regrow instead repairs <good>-12.5%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per deployment.
 effect|SYSTEM_CHARGES_FLAT|1.0	0	<good>+1</good> to ship system charges.
 effect|SYSTEM_CHARGES_FLAT|10.0	0	<good>+10</good> to ship system charges.
 effect|SYSTEM_CHARGES_FLAT|12.5	0	<good>+12.5</good> to ship system charges.
@@ -2734,12 +2734,12 @@ effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|12.5	1	Your fleet has <good>12.5%<
 effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|100.0	1	Your fleet has <good>100%</good> reduced sensor profile while its transponder is off, up to a maximum of 30%.
 effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|-10.0	1	Your fleet has <good>10%</good> reduced sensor profile while its transponder is off, up to a maximum of 30%.
 effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|-12.5	1	Your fleet has <good>12.5%</good> reduced sensor profile while its transponder is off, up to a maximum of 30%.
-effect|UNHIT_ARMOR_REGEN_PERCENT|1.0	0	Armor cells not hit for 5 seconds repair <good>1%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per battle.
-effect|UNHIT_ARMOR_REGEN_PERCENT|10.0	0	Armor cells not hit for 5 seconds repair <good>10%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per battle.
-effect|UNHIT_ARMOR_REGEN_PERCENT|12.5	0	Armor cells not hit for 5 seconds repair <good>12.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per battle.
-effect|UNHIT_ARMOR_REGEN_PERCENT|100.0	0	Armor cells not hit for 5 seconds repair <good>100%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per battle.
-effect|UNHIT_ARMOR_REGEN_PERCENT|-10.0	0	Armor cells not hit for 5 seconds repair <good>-10%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per battle.
-effect|UNHIT_ARMOR_REGEN_PERCENT|-12.5	0	Armor cells not hit for 5 seconds repair <good>-12.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per battle.
+effect|UNHIT_ARMOR_REGEN_PERCENT|1.0	0	Armor cells not hit for 5 seconds repair <good>1%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per deployment.
+effect|UNHIT_ARMOR_REGEN_PERCENT|10.0	0	Armor cells not hit for 5 seconds repair <good>10%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per deployment.
+effect|UNHIT_ARMOR_REGEN_PERCENT|12.5	0	Armor cells not hit for 5 seconds repair <good>12.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per deployment.
+effect|UNHIT_ARMOR_REGEN_PERCENT|100.0	0	Armor cells not hit for 5 seconds repair <good>100%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per deployment.
+effect|UNHIT_ARMOR_REGEN_PERCENT|-10.0	0	Armor cells not hit for 5 seconds repair <good>-10%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per deployment.
+effect|UNHIT_ARMOR_REGEN_PERCENT|-12.5	0	Armor cells not hit for 5 seconds repair <good>-12.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per deployment.
 effect|VENT_RATE_MULT|1.0	0	<good>1%</good> more venting speed.
 effect|VENT_RATE_MULT|10.0	0	<good>10%</good> more venting speed.
 effect|VENT_RATE_MULT|12.5	0	<good>12.5%</good> more venting speed.

@@ -1,10 +1,8 @@
 package exiledsector.skills.skilleffect.defense;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ArmorGridAPI;
-import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import exiledsector.skills.skilleffect.BattleRepairRecord;
+import exiledsector.skills.skilleffect.DeploymentRepairTally;
 
 public final class ArmorCells {
 
@@ -51,17 +49,15 @@ public final class ArmorCells {
         return grid.getMaxArmorInCell() * cellCount;
     }
 
-    public static float repairWithinBattleCap(ShipAPI ship, String repairedKeyPrefix, float perCellPercent, float battleCapPercent) {
+    public static float repairWithinCap(ShipAPI ship, DeploymentRepairTally repairTally, float perCellPercent, float deploymentCapPercent) {
         ArmorGridAPI grid = ship.getArmorGrid();
-        CombatEngineAPI engine = Global.getCombatEngine();
-        if (grid == null || engine == null || perCellPercent <= 0f) {
+        if (grid == null || perCellPercent <= 0f) {
             return 0f;
         }
-        BattleRepairRecord repairRecord = BattleRepairRecord.of(engine, ship, repairedKeyPrefix);
-        float budget = repairRecord.remainingBelow(total(grid) * battleCapPercent / 100f);
+        float budget = repairTally.remainingBelow(total(grid) * deploymentCapPercent / 100f);
         float restored = restore(grid, grid.getMaxArmorInCell() * perCellPercent / 100f, budget);
         if (restored > 0f) {
-            repairRecord.record(restored);
+            repairTally.record(restored);
             ship.syncWithArmorGridState();
         }
         return restored;

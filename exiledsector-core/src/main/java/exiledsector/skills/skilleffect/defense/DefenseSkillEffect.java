@@ -164,14 +164,14 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("seconds", UnhitArmorRegenListener.UNHIT_SECONDS).arg("value", magnitude)
                     .arg("range", UnhitArmorRegenListener.ENEMY_SHIP_RANGE).arg("flux", UnhitArmorRegenListener.HARD_FLUX_PER_ARMOR)
-                    .arg("cap", UnhitArmorRegenListener.BATTLE_CAP_PERCENT).styled();
+                    .arg("cap", UnhitArmorRegenListener.DEPLOYMENT_CAP_PERCENT).styled();
         }
     },
     SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT(listener(SwarmOverflowRepairListener.REPAIR_PERCENT_KEY, SwarmOverflowRepairListener.class,
             SwarmOverflowRepairListener::new)) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).arg("cap", SwarmOverflowRepairListener.BATTLE_CAP_PERCENT).styled();
+            return EffectText.msg(this).arg("value", magnitude).arg("cap", SwarmOverflowRepairListener.DEPLOYMENT_CAP_PERCENT).styled();
         }
     },
     ARMOR_DAMAGE_EMP_ARCS_FLAT(listener(ArmorArcListener.ARC_COUNT_KEY, ArmorArcListener.class, ArmorArcListener::new)) {

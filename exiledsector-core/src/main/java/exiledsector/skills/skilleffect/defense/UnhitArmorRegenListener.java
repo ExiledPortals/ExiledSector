@@ -6,8 +6,8 @@ import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
-import exiledsector.skills.skilleffect.BattleRepairRecord;
 import exiledsector.skills.skilleffect.CombatQueries;
+import exiledsector.skills.skilleffect.DeploymentRepairTally;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 
 final class UnhitArmorRegenListener extends ShipCombatListener implements AdvanceableListener {
@@ -16,10 +16,10 @@ final class UnhitArmorRegenListener extends ShipCombatListener implements Advanc
     static final float UNHIT_SECONDS = 5f;
     static final float ENEMY_SHIP_RANGE = 1500f;
     static final float HARD_FLUX_PER_ARMOR = 1f;
-    static final float BATTLE_CAP_PERCENT = 50f;
+    static final float DEPLOYMENT_CAP_PERCENT = 50f;
     static final float TICK_SECONDS = 0.5f;
-    static final String REPAIRED_KEY_PREFIX = "exiledLib_unhitArmorRegenRepaired_";
 
+    private final DeploymentRepairTally repairTally = new DeploymentRepairTally();
     private float[][] lastCellArmor;
     private float[][] cellSecondsUnhit;
     private float secondsSinceTick;
@@ -46,11 +46,10 @@ final class UnhitArmorRegenListener extends ShipCombatListener implements Advanc
         if (percent <= 0f || enemyShipNear(engine)) {
             return;
         }
-        BattleRepairRecord repairRecord = BattleRepairRecord.of(engine, ownerShip, REPAIRED_KEY_PREFIX);
-        float budget = Math.min(repairRecord.remainingBelow(ArmorCells.total(grid) * BATTLE_CAP_PERCENT / 100f), fluxRoom() / HARD_FLUX_PER_ARMOR);
+        float budget = Math.min(repairTally.remainingBelow(ArmorCells.total(grid) * DEPLOYMENT_CAP_PERCENT / 100f), fluxRoom() / HARD_FLUX_PER_ARMOR);
         float restored = mend(grid, cellSecondsUnhit, grid.getMaxArmorInCell() * percent / 100f * elapsed, budget);
         if (restored > 0f) {
-            repairRecord.record(restored);
+            repairTally.record(restored);
             ownerShip.getFluxTracker().increaseFlux(restored * HARD_FLUX_PER_ARMOR, true);
             ownerShip.syncWithArmorGridState();
             snapshot(grid);

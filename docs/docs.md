@@ -599,7 +599,7 @@ sharing the added effect; on a full side a random modifier makes way (`GrantedMo
 
 Of the Abyssal Rift's, the moving-slowly burn level adds up over the fleet's active ships, capped at +6, onto vanilla's
 `move_slow_speed_bonus_mod` at each fleet sync (`FleetWideEffects.applyMoveSlowBurnLevel`). The phase-entry repair
-counts only armor actually restored toward its per-battle cap (`PhaseEntryRepairListener`), and the drone damage bonus
+counts only armor actually restored toward its per-deployment cap (`PhaseEntryRepairListener`), and the drone damage bonus
 rides on each strikecraft the ship launches, counting a strikecraft with no minimum crew as a drone (`DroneDamageListener`).
 Borrowed Grace stacks give a fixed 1% each, so the Armor Plate's stacks (every 150 damage) work without the node; with
 both, one pool holds both maximums and stacks come every 100 damage (`BorrowedGraceListener`).
@@ -624,7 +624,7 @@ does, checked every 0.1 seconds (`HoldFireShieldListener`).
 
 The armor repair works on 0.5-second ticks: a cell whose armor dropped since the last tick restarts its 5-second
 delay, and repair pauses while an enemy ship (not strikecraft) is within 1500 su. Each point restored adds 1 hard
-flux, so repair is also cut to the flux room left and stops at full flux, and it ends for the battle once it has
+flux, so repair is also cut to the flux room left and stops at full flux, and it ends for the deployment once it has
 restored 50% of the ship's total armor (`UnhitArmorRegenListener`).
 
 ### Furnace modifiers
@@ -634,8 +634,8 @@ multiplies every member's vanilla `corona_resistance`, which also covers flares,
 (`FleetWideEffects.applyCoronaResistance`). The Shield Emitter scales `HULL_DAMAGE_TAKEN_PERCENT`, capped like the typed
 damage taken stats, with Low Tech Affinity.
 
-The Armor Plate's hull repair runs only above 50% flux and stops at 20% of maximum hull per battle, redeployments
-included (`HighFluxMendingListener`). The Reactor Regulator's dissipation bonus moves in whole 5% steps of hard flux
+The Armor Plate's hull repair runs only above 50% flux and stops at 20% of maximum hull per deployment
+(`HighFluxMendingListener`). The Reactor Regulator's dissipation bonus moves in whole 5% steps of hard flux
 (`HardFluxDissipationListener`), and the Phase Coil Array lowers hard flux on each phase entry without changing total flux
 (`PhaseEntryFluxShedListener`). Destroyed strikecraft burst on the lethal hit, reaching ships whose edge is within range
 (`CinderBurstListener`).
@@ -675,7 +675,7 @@ replacement rate and restores a drop when it can spend the fragments (`HiveRepla
 
 The armor repair counts, once a second while the swarm is full, the fragments vanilla's regrowth would add at the
 swarm's respawn rate, and each repairs the most damaged armor cell. Only armor actually restored counts toward its 10%
-per-battle cap, kept per fleet member like the phase-entry repair's (`SwarmOverflowRepairListener`).
+per-deployment cap (`SwarmOverflowRepairListener`).
 
 ### Derelict Graveyard modifiers
 
@@ -685,7 +685,7 @@ The weapon and wing share adds up the same way, uncapped, and when post-battle s
 wing stack gains that share, the fraction rolled (`SalvagedArmaments`, from `ItemLootListener`).
 
 Each enemy ship destroyed within 1000 su repairs every armor cell by 5% of its maximum, and only armor actually
-restored counts toward the rolled per-battle cap (`WreckPlatingListener`, through `ArmorCells.repairWithinBattleCap`
+restored counts toward the rolled per-deployment cap (`WreckPlatingListener`, through `ArmorCells.repairWithinCap`
 as the Rift's phase-entry repair). Free phase upkeep counts any non-strikecraft hulk on the battlefield
 (`WreckShelterListener`), and the per-d-mod lines count d-mods as `TOP_SPEED_MULT_PER_DMOD` does.
 
