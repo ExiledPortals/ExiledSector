@@ -5,8 +5,8 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.combat.ViewportAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.impl.campaign.BaseCustomEntityPlugin;
-import exiledsector.ui.belt.AuroraBeltRenderer;
 import exiledsector.ui.belt.RadialBand;
+import exiledsector.ui.belt.RingBeltRenderer;
 import exiledsector.ui.util.SpriteDraw;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -16,9 +16,12 @@ public class ChartPhotospherePlugin extends BaseCustomEntityPlugin {
 
     public static final String ENTITY_TYPE = "exiledSector_chart_photosphere";
     static final float CORE_SIZE_MULT = 1.8f;
-    static final float BAND_INNER_MULT = 0.3f;
-    static final float BAND_OUTER_MULT = 1.3f;
-    static final float BAND_ALPHA = 0.5f;
+    static final int BAND_SLOT = 3;
+    static final float BAND_SLOT_WIDTH = 64f;
+    static final float BAND_INNER_MULT = 0.6375f;
+    static final float BAND_OUTER_MULT = 1.8875f;
+    static final float BAND_ALPHA = 125f / 255f;
+    static final float BAND_SPIN_DEG_PER_SEC = 10f;
     static final float INNER_HALO_SHARE = 1f / 15f;
     static final float OUTER_HALO_SHARE = 0.5f;
     static final float INNER_HALO_ALPHA = 0.39f;
@@ -76,19 +79,19 @@ public class ChartPhotospherePlugin extends BaseCustomEntityPlugin {
         Vector2f at = entity.getLocation();
         float alphaMult = viewport.getAlphaMult();
         if (layer == CampaignEngineLayers.TERRAIN_7A) {
-            renderCore(at, entity.getRadius(), alphaMult, viewport.getViewMult());
+            renderCore(at, entity.getRadius(), alphaMult);
         } else if (layer == CampaignEngineLayers.ABOVE) {
             renderHalo(at, lightRadius, alphaMult, colour);
         }
     }
 
-    private void renderCore(Vector2f at, float radius, float alphaMult, float viewMult) {
+    private void renderCore(Vector2f at, float radius, float alphaMult) {
+        SpriteDraw.drawAtCenter(AbyssArt.sprite(AbyssArt.CORE), at.x, at.y, radius * CORE_SIZE_MULT, radius * CORE_SIZE_MULT, colour, alphaMult, 0f);
         SpriteAPI band = AbyssArt.texture(AbyssArt.BAND);
         if (band != null) {
-            AuroraBeltRenderer.renderShaded(band, new RadialBand(at, radius * BAND_INNER_MULT, radius * BAND_OUTER_MULT), colour, alphaMult * BAND_ALPHA,
-                    elapsedSeconds, viewMult > 0f ? 1f / viewMult : 1f);
+            RingBeltRenderer.renderSlot(band, new RadialBand(at, radius * BAND_INNER_MULT, radius * BAND_OUTER_MULT), BAND_SLOT, BAND_SLOT_WIDTH, colour,
+                    alphaMult * BAND_ALPHA, elapsedSeconds * BAND_SPIN_DEG_PER_SEC);
         }
-        SpriteDraw.drawAtCenter(AbyssArt.sprite(AbyssArt.CORE), at.x, at.y, radius * CORE_SIZE_MULT, radius * CORE_SIZE_MULT, colour, alphaMult, 0f);
     }
 
     static void renderHalo(Vector2f at, float lightRadius, float alphaMult, Color colour) {
