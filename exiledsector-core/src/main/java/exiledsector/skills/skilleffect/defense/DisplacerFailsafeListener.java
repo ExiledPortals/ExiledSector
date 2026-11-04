@@ -19,7 +19,7 @@ import java.awt.Color;
 
 final class DisplacerFailsafeListener extends ShipCombatListener implements DamageListener {
 
-    static final String HULL_PERCENT_KEY = "exiledLib_displacerFailsafeHullPercent";
+    static final String HULL_PERCENT_KEY = "exiledSector_displacerFailsafeHullPercent";
     static final float DISPLACE_DISTANCE = 1200f;
     private static final float ENEMY_SEARCH_RADIUS = 6000f;
     private static final float MAP_EDGE_MARGIN = 300f;

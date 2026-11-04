@@ -15,8 +15,13 @@ import static org.mockito.Mockito.when;
 class TimeflowAtTopSpeedTest {
 
     private static ShipAPI ship(float topSpeed, float speed) {
+        return ship(topSpeed, topSpeed, speed);
+    }
+
+    private static ShipAPI ship(float unboostedTopSpeed, float boostedTopSpeed, float speed) {
         ShipAPI ship = mock(ShipAPI.class, RETURNS_DEEP_STUBS);
-        when(ship.getMaxSpeed()).thenReturn(topSpeed);
+        when(ship.getMaxSpeedWithoutBoost()).thenReturn(unboostedTopSpeed);
+        when(ship.getMaxSpeed()).thenReturn(boostedTopSpeed);
         when(ship.getVelocity()).thenReturn(new Vector2f(speed, 0f));
         return ship;
     }
@@ -27,6 +32,12 @@ class TimeflowAtTopSpeedTest {
         assertTrue(MovementSkillEffect.isAtTopSpeed(ship(100f, 95f)));
         assertFalse(MovementSkillEffect.isAtTopSpeed(ship(100f, 90f)));
         assertFalse(MovementSkillEffect.isAtTopSpeed(ship(0f, 0f)));
+    }
+
+    @Test
+    void theZeroFluxBoostDoesNotRaiseTheTopSpeedToReach() {
+        assertTrue(MovementSkillEffect.isAtTopSpeed(ship(100f, 150f, 95f)));
+        assertFalse(MovementSkillEffect.isAtTopSpeed(ship(100f, 150f, 90f)));
     }
 
     @Test

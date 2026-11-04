@@ -20,10 +20,10 @@ import java.util.function.Supplier;
 public final class SkillEffectSupport {
 
     static final int MAX_COUNTED_DMODS = 5;
-    static final String COMBAT_DMOD_EFFECT_MULT = "exiledLib_nonLogisticsDModEffectMult";
-    static final String LOGISTICS_DMOD_EFFECT_MULT = "exiledLib_logisticsDModEffectMult";
-    static final String LOGISTICS_COPY_PREFIX = "exiledLib_logisticsDModCopy_";
-    private static final String COPY_SCALE_ID = "exiledLib_logisticsDModCopyScale";
+    static final String COMBAT_DMOD_EFFECT_MULT = "exiledSector_nonLogisticsDModEffectMult";
+    static final String LOGISTICS_DMOD_EFFECT_MULT = "exiledSector_logisticsDModEffectMult";
+    static final String LOGISTICS_COPY_PREFIX = "exiledSector_logisticsDModCopy_";
+    private static final String COPY_SCALE_ID = "exiledSector_logisticsDModCopyScale";
     private static final float MIN_EFFECT_MULT = 0.0001f;
     static final float MIN_INVERTED_MULT = 0.01f;
 

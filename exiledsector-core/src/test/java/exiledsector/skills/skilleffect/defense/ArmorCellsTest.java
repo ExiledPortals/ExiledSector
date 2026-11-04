@@ -1,13 +1,9 @@
 package exiledsector.skills.skilleffect.defense;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ArmorGridAPI;
-import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import exiledsector.MockSector;
+import exiledsector.skills.skilleffect.DeploymentRepairTally;
 import org.junit.jupiter.api.Test;
-
-import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -61,24 +57,30 @@ class ArmorCellsTest {
     }
 
     @Test
-    void repairsStopForTheBattleOnceTheyTotalTheCapEvenForARedeployedShip() {
+    void repairsStopOnceTheyTotalTheCapForTheirTally() {
         float[][] cells = {{0f, 0f}};
-        ArmorGridAPI grid = grid(100f, cells);
-        try (MockSector mockSector = new MockSector()) {
-            CombatEngineAPI engine = mock(CombatEngineAPI.class);
-            when(engine.getCustomData()).thenReturn(new HashMap<>());
-            mockSector.global.when(Global::getCombatEngine).thenReturn(engine);
-            ShipAPI firstDeployment = mock(ShipAPI.class);
-            ShipAPI redeployed = mock(ShipAPI.class);
-            for (ShipAPI ship : new ShipAPI[]{firstDeployment, redeployed}) {
-                when(ship.getArmorGrid()).thenReturn(grid);
-                when(ship.getFleetMemberId()).thenReturn("member");
-            }
+        ArmorGridAPI armorGrid = grid(100f, cells);
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getArmorGrid()).thenReturn(armorGrid);
+        DeploymentRepairTally repairTally = new DeploymentRepairTally();
 
-            assertEquals(20f, ArmorCells.repairWithinBattleCap(firstDeployment, "prefix_", 10f, 15f), 0.001f);
-            assertEquals(10f, ArmorCells.repairWithinBattleCap(redeployed, "prefix_", 10f, 15f), 0.001f);
-            assertEquals(0f, ArmorCells.repairWithinBattleCap(redeployed, "prefix_", 10f, 15f));
-            assertArrayEquals(new float[]{15f, 15f}, cells[0], 0.001f);
-        }
+        assertEquals(20f, ArmorCells.repairWithinCap(ship, repairTally, 10f, 15f), 0.001f);
+        assertEquals(10f, ArmorCells.repairWithinCap(ship, repairTally, 10f, 15f), 0.001f);
+        assertEquals(0f, ArmorCells.repairWithinCap(ship, repairTally, 10f, 15f));
+        assertArrayEquals(new float[]{15f, 15f}, cells[0], 0.001f);
+        assertEquals(30f, repairTally.repaired(), 0.001f);
+    }
+
+    @Test
+    void aFreshTallyStartsAFreshCap() {
+        float[][] cells = {{0f, 0f}};
+        ArmorGridAPI armorGrid = grid(100f, cells);
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getArmorGrid()).thenReturn(armorGrid);
+        DeploymentRepairTally firstDeployment = new DeploymentRepairTally();
+        ArmorCells.repairWithinCap(ship, firstDeployment, 20f, 15f);
+
+        assertEquals(30f, ArmorCells.repairWithinCap(ship, new DeploymentRepairTally(), 20f, 15f), 0.001f);
+        assertArrayEquals(new float[]{30f, 30f}, cells[0], 0.001f);
     }
 }

@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -39,7 +38,6 @@ class NearbyDestructionTest {
     @BeforeEach
     void setUp() {
         CombatEngineAPI engine = mock(CombatEngineAPI.class);
-        when(engine.getCustomData()).thenReturn(new HashMap<>());
         CollisionGridAPI shipGrid = mock(CollisionGridAPI.class);
         when(engine.getShipGrid()).thenReturn(shipGrid);
         when(shipGrid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(invocation -> new ArrayList<>(gridShips).iterator());
@@ -111,10 +109,9 @@ class NearbyDestructionTest {
     }
 
     @Test
-    void enemyShipsDestroyedInRangeRepairArmorUntilTheBattleCap() {
+    void enemyShipsDestroyedInRangeRepairArmorUntilTheDeploymentCap() {
         ShipAPI plated = ship(0f, PLAYER);
         when(plated.getMutableStats().getDynamic().getValue(WreckPlatingListener.REPAIR_CAP_PERCENT_KEY, 0f)).thenReturn(10f);
-        when(plated.getFleetMemberId()).thenReturn("plated");
         float[][] cells = {{0f, 50f}, {100f, 0f}};
         ArmorGridAPI armorGrid = grid(100f, cells);
         when(plated.getArmorGrid()).thenReturn(armorGrid);

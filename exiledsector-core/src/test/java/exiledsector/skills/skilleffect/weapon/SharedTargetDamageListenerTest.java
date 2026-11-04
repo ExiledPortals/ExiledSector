@@ -47,8 +47,8 @@ class SharedTargetDamageListenerTest {
 
         listener.scan(List.of(owner, ally, enemy));
 
-        assertEquals("exiledLib_sharedTargetDamage_owner", listener.modifyDamageDealt(null, enemy, damage, new Vector2f(), false));
-        verify(damage.getModifier()).modifyPercent("exiledLib_sharedTargetDamage_owner", 8f);
+        assertEquals("exiledSector_sharedTargetDamage_owner", listener.modifyDamageDealt(null, enemy, damage, new Vector2f(), false));
+        verify(damage.getModifier()).modifyPercent("exiledSector_sharedTargetDamage_owner", 8f);
     }
 
     @Test

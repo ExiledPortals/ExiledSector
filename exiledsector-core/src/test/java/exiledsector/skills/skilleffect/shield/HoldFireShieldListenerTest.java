@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 
 class HoldFireShieldListenerTest {
 
-    private static final String MOD_ID = "exiledLib_holdFireShield_fortress";
+    private static final String MOD_ID = "exiledSector_holdFireShield_fortress";
 
     private static ShipAPI ship(WeaponAPI weapon) {
         ShipAPI ship = mock(ShipAPI.class, RETURNS_DEEP_STUBS);

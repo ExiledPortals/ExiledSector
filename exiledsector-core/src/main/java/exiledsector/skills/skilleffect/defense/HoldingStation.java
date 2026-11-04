@@ -1,7 +1,7 @@
 package exiledsector.skills.skilleffect.defense;
 
 import com.fs.starfarer.api.combat.ShipAPI;
-import exiledsector.skills.skilleffect.shield.LowSpeed;
+import exiledsector.skills.skilleffect.TopSpeedShare;
 
 final class HoldingStation {
 
@@ -11,6 +11,6 @@ final class HoldingStation {
     }
 
     static boolean isHoldingStation(ShipAPI ship) {
-        return LowSpeed.isSlowerThan(ship, TOP_SPEED_FRACTION);
+        return TopSpeedShare.isBelow(ship, ship.getMaxSpeedWithoutBoost(), TOP_SPEED_FRACTION);
     }
 }

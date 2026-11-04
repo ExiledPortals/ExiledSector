@@ -25,7 +25,7 @@ import java.util.Set;
 
 final class StatSources {
 
-    private static final List<String> OWN_MOD_ID_PREFIXES = List.of("exiledSector_", "exiledLib_");
+    private static final List<String> OWN_MOD_ID_PREFIXES = List.of("exiledSector_");
     private static final Map<String, String> VANILLA_SOURCE_KEYS = Map.of(
             "flux_capacitors", "ui.stats.source.fluxCapacitors",
             "flux_vents", "ui.stats.source.fluxVents",

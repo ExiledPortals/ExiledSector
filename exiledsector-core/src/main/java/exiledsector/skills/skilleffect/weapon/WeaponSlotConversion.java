@@ -20,7 +20,7 @@ import java.util.Set;
 
 public final class WeaponSlotConversion {
 
-    static final String HULL_TAG = "exiledLib_slotConversion";
+    static final String HULL_TAG = "exiledSector_slotConversion";
     static final String SLOT_TAG_PREFIX = HULL_TAG + ":";
     static final char ORIGINAL_TYPE_SEPARATOR = ':';
     static final String CLONE = "clone";

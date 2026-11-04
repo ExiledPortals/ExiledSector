@@ -82,7 +82,7 @@ class PristineShipDamageListenerTest {
         String modId = listener.modifyDamageDealt(null, pristine, firstHit, new Vector2f(), false);
         listener.modifyDamageDealt(null, pristine, secondHit, new Vector2f(), true);
 
-        assertEquals("exiledLib_pristineShipDamage_reaper", modId);
+        assertEquals("exiledSector_pristineShipDamage_reaper", modId);
         verify(firstHit.getModifier()).modifyPercent(modId, 8f);
         verify(secondHit.getModifier()).modifyPercent(modId, 8f);
         verify(pristine.getVariant(), times(1)).getHullMods();

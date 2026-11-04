@@ -37,12 +37,12 @@ import java.util.function.Predicate;
 
 final class WeaponDroneFactory {
 
-    static final String SOURCE_MOUNT_KEY = "exiledLib_droneSourceMount";
+    static final String SOURCE_MOUNT_KEY = "exiledSector_droneSourceMount";
     private static final String HULL_NAME = "split_beam_drone";
 
     static final float SINGLE_SHOT_REFIRE_DELAY = 60f;
 
-    private static final String INVULNERABLE_MOD_ID = "exiledLib_splitBeamDrone";
+    private static final String INVULNERABLE_MOD_ID = "exiledSector_splitBeamDrone";
     private static final float MOTHERSHIP_FLAG_DURATION = 100000f;
     private static final Logger LOG = Logger.getLogger(WeaponDroneFactory.class);
     private static final Set<String> SKILLS_UNSAFE_ON_DRONES = ConcurrentHashMap.newKeySet();

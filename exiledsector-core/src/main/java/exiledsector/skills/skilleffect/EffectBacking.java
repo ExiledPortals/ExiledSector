@@ -40,5 +40,9 @@ public interface EffectBacking {
         return false;
     }
 
+    default boolean appliesToNpcShips() {
+        return true;
+    }
+
     StyledText description(SkillEffect effect, float magnitude);
 }

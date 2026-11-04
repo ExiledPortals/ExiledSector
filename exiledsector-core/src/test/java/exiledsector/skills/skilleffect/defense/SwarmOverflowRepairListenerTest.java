@@ -37,7 +37,7 @@ class SwarmOverflowRepairListenerTest {
     }
 
     @Test
-    void aRepairNeverOverfillsACellOrPassesTheBattleCap() {
+    void aRepairNeverOverfillsACellOrPassesTheDeploymentCap() {
         float[][] cells = {{95f, 0f}};
 
         assertEquals(30f, SwarmOverflowRepairListener.restoreMostDamaged(grid(100f, cells), 5, 50f, 30f), 0.001f);

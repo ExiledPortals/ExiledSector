@@ -22,21 +22,21 @@ import java.util.Set;
 
 public final class FleetWideEffects {
 
-    static final String POST_BATTLE_SALVAGE_CONTRIBUTION_KEY = "exiledLib_postBattleSalvageContribution";
-    static final String PHASE_FIELD_CONTRIBUTION_KEY = "exiledLib_phaseFieldContributionPercent";
-    static final String SENSOR_STRENGTH_ALWAYS_COUNTS_KEY = "exiledLib_sensorStrengthAlwaysCounts";
-    static final String MOVE_SLOW_BURN_LEVEL_KEY = "exiledLib_moveSlowBurnLevelContribution";
+    static final String POST_BATTLE_SALVAGE_CONTRIBUTION_KEY = "exiledSector_postBattleSalvageContribution";
+    static final String PHASE_FIELD_CONTRIBUTION_KEY = "exiledSector_phaseFieldContributionPercent";
+    static final String SENSOR_STRENGTH_ALWAYS_COUNTS_KEY = "exiledSector_sensorStrengthAlwaysCountsFlag";
+    static final String MOVE_SLOW_BURN_LEVEL_KEY = "exiledSector_moveSlowBurnLevelContribution";
     static final float MAX_MOVE_SLOW_BURN_LEVEL_BONUS = 6f;
     private static final String MOVE_SLOW_BURN_LEVEL_FLEET_MOD = "moveSlowBurnLevel";
-    static final String TRANSPONDER_OFF_SENSOR_PROFILE_KEY = "exiledLib_transponderOffSensorProfileContribution";
+    static final String TRANSPONDER_OFF_SENSOR_PROFILE_KEY = "exiledSector_transponderOffSensorProfileContribution";
     static final float MAX_TRANSPONDER_OFF_SENSOR_PROFILE_REDUCTION = 30f;
     private static final String TRANSPONDER_OFF_SENSOR_PROFILE_FLEET_MOD = "transponderOffSensorProfile";
     static final String CORONA_RESISTANCE_CONTRIBUTION_KEY = "exiledSector_fleetCoronaResistanceContribution";
     static final float MAX_CORONA_RESISTANCE_PERCENT = 100f;
     private static final String CORONA_RESISTANCE_FLEET_MOD = "fleetCoronaResistance";
-    static final String MOVE_SLOW_SUPPLY_USE_KEY = "exiledLib_moveSlowSupplyUseContribution";
+    static final String MOVE_SLOW_SUPPLY_USE_KEY = "exiledSector_moveSlowSupplyUseContribution";
     private static final String MOVE_SLOW_SUPPLY_USE_MEMBER_MOD = "moveSlowSupplyUse";
-    static final String SWARM_SENSOR_STRENGTH_KEY = "exiledLib_swarmSensorStrengthPercent";
+    static final String SWARM_SENSOR_STRENGTH_KEY = "exiledSector_swarmSensorStrengthPercent";
     private static final String SWARM_SENSOR_STRENGTH_FLEET_MOD = "swarmSensorStrength";
     static final String TERRAIN_MOVEMENT_PENALTY_KEY = "exiledSector_terrainMovementPenaltyContribution";
     static final float MAX_TERRAIN_MOVEMENT_PENALTY_REDUCTION_PERCENT = 50f;
@@ -58,13 +58,9 @@ public final class FleetWideEffects {
         if (playerFleet == null) {
             return;
         }
-        float totalPercent = 0f;
-        for (FleetMemberAPI member : playerFleet.getFleetData().getMembersListCopy()) {
-            if (member.isMothballed() || departingMemberIds.contains(member.getId())) {
-                continue;
-            }
-            totalPercent += member.getStats().getDynamic().getValue(POST_BATTLE_SALVAGE_CONTRIBUTION_KEY, 0f);
-        }
+        List<FleetMemberAPI> stayingMembers = playerFleet.getFleetData().getMembersListCopy().stream()
+                .filter(member -> !departingMemberIds.contains(member.getId())).toList();
+        float totalPercent = FleetContributions.sum(stayingMembers, POST_BATTLE_SALVAGE_CONTRIBUTION_KEY);
         playerFleet.getStats().getDynamic().getStat(Stats.BATTLE_SALVAGE_MULT_FLEET)
                 .modifyFlat(ExiledSector.key(POST_BATTLE_SALVAGE_FLEET_MOD), totalPercent / 100f);
     }
@@ -98,13 +94,7 @@ public final class FleetWideEffects {
     }
 
     static float moveSlowBurnLevelBonus(List<FleetMemberAPI> members) {
-        float bonus = 0f;
-        for (FleetMemberAPI member : members) {
-            if (!member.isMothballed()) {
-                bonus += member.getStats().getDynamic().getValue(MOVE_SLOW_BURN_LEVEL_KEY, 0f);
-            }
-        }
-        return Math.min(MAX_MOVE_SLOW_BURN_LEVEL_BONUS, bonus);
+        return Math.min(MAX_MOVE_SLOW_BURN_LEVEL_BONUS, FleetContributions.sum(members, MOVE_SLOW_BURN_LEVEL_KEY));
     }
 
     public static void applyTransponderOffSensorProfile(CampaignFleetAPI fleet) {
@@ -122,12 +112,7 @@ public final class FleetWideEffects {
     }
 
     static float transponderOffSensorProfilePercent(List<FleetMemberAPI> members) {
-        float percent = 0f;
-        for (FleetMemberAPI member : members) {
-            if (!member.isMothballed()) {
-                percent += member.getStats().getDynamic().getValue(TRANSPONDER_OFF_SENSOR_PROFILE_KEY, 0f);
-            }
-        }
+        float percent = FleetContributions.sum(members, TRANSPONDER_OFF_SENSOR_PROFILE_KEY);
         return Math.max(-MAX_TRANSPONDER_OFF_SENSOR_PROFILE_REDUCTION, Math.min(0f, percent));
     }
 
@@ -151,13 +136,7 @@ public final class FleetWideEffects {
     }
 
     static float coronaResistancePercent(List<FleetMemberAPI> members) {
-        float resistance = 0f;
-        for (FleetMemberAPI member : members) {
-            if (!member.isMothballed()) {
-                resistance += member.getStats().getDynamic().getValue(CORONA_RESISTANCE_CONTRIBUTION_KEY, 0f);
-            }
-        }
-        return Math.min(MAX_CORONA_RESISTANCE_PERCENT, resistance);
+        return Math.min(MAX_CORONA_RESISTANCE_PERCENT, FleetContributions.sum(members, CORONA_RESISTANCE_CONTRIBUTION_KEY));
     }
 
     public static void applyMoveSlowSupplyUse(CampaignFleetAPI fleet) {
@@ -233,13 +212,7 @@ public final class FleetWideEffects {
     }
 
     static float terrainMovementPenaltyPercent(List<FleetMemberAPI> members) {
-        float percent = 0f;
-        for (FleetMemberAPI member : members) {
-            if (!member.isMothballed()) {
-                percent += member.getStats().getDynamic().getValue(TERRAIN_MOVEMENT_PENALTY_KEY, 0f);
-            }
-        }
-        return Math.max(-MAX_TERRAIN_MOVEMENT_PENALTY_REDUCTION_PERCENT, percent);
+        return Math.max(-MAX_TERRAIN_MOVEMENT_PENALTY_REDUCTION_PERCENT, FleetContributions.sum(members, TERRAIN_MOVEMENT_PENALTY_KEY));
     }
 
     private static boolean alwaysCounts(FleetMemberAPI member) {

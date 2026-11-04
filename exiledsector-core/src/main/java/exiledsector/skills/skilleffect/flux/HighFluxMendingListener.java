@@ -2,6 +2,7 @@ package exiledsector.skills.skilleffect.flux;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
+import exiledsector.skills.skilleffect.DeploymentRepairTally;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 
 final class HighFluxMendingListener extends ShipCombatListener implements AdvanceableListener {
@@ -10,7 +11,7 @@ final class HighFluxMendingListener extends ShipCombatListener implements Advanc
     static final float FLUX_LEVEL_THRESHOLD_PERCENT = 50f;
     static final float MAX_TOTAL_REGEN_PERCENT_OF_HULL = 20f;
 
-    private float remainingRegen = -1f;
+    private final DeploymentRepairTally mendTally = new DeploymentRepairTally();
 
     HighFluxMendingListener(ShipAPI ownerShip) {
         super(ownerShip);
@@ -22,19 +23,20 @@ final class HighFluxMendingListener extends ShipCombatListener implements Advanc
             return;
         }
         float maxHitpoints = ownerShip.getMaxHitpoints();
-        if (remainingRegen < 0f) {
-            remainingRegen = maxHitpoints * MAX_TOTAL_REGEN_PERCENT_OF_HULL / 100f;
-        }
         float hitpoints = ownerShip.getHitpoints();
-        if (remainingRegen <= 0f || hitpoints >= maxHitpoints || ownerShip.getFluxTracker().getFluxLevel() * 100f <= FLUX_LEVEL_THRESHOLD_PERCENT) {
+        if (hitpoints >= maxHitpoints || ownerShip.getFluxTracker().getFluxLevel() * 100f <= FLUX_LEVEL_THRESHOLD_PERCENT) {
             return;
         }
         float regenPercent = magnitude(REGEN_PERCENT_KEY);
         if (regenPercent <= 0f) {
             return;
         }
+        float remainingRegen = mendTally.remainingBelow(maxHitpoints * MAX_TOTAL_REGEN_PERCENT_OF_HULL / 100f);
+        if (remainingRegen <= 0f) {
+            return;
+        }
         float healed = Math.min(maxHitpoints * regenPercent / 100f * amount, Math.min(maxHitpoints - hitpoints, remainingRegen));
-        remainingRegen -= healed;
+        mendTally.record(healed);
         ownerShip.setHitpoints(hitpoints + healed);
     }
 }

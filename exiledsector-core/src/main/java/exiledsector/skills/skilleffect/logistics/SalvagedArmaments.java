@@ -10,7 +10,7 @@ import java.util.Random;
 
 public final class SalvagedArmaments {
 
-    static final String CONTRIBUTION_KEY = "exiledLib_postBattleWeaponSalvageContribution";
+    static final String CONTRIBUTION_KEY = "exiledSector_postBattleWeaponSalvageContribution";
 
     private SalvagedArmaments() {
     }
@@ -41,13 +41,7 @@ public final class SalvagedArmaments {
     }
 
     static float bonusPercent(List<FleetMemberAPI> members) {
-        float bonusPercent = 0f;
-        for (FleetMemberAPI member : members) {
-            if (!member.isMothballed()) {
-                bonusPercent += member.getStats().getDynamic().getValue(CONTRIBUTION_KEY, 0f);
-            }
-        }
-        return bonusPercent;
+        return FleetContributions.sum(members, CONTRIBUTION_KEY);
     }
 
     static int extraCount(float quantity, float bonusPercent, Random random) {

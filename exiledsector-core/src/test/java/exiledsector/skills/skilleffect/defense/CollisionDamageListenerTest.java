@@ -90,7 +90,7 @@ class CollisionDamageListenerTest {
 
         String modId = new CollisionDamageListener(rammer(50f)).modifyDamageDealt(null, ship("victim", 1, 150f), hit, new Vector2f(), false);
 
-        assertEquals("exiledLib_ramProwCollisionDamage_rammer", modId);
+        assertEquals("exiledSector_ramProwCollisionDamage_rammer", modId);
         verify(hit.getModifier()).modifyMult(modId, 1.5f);
     }
 
@@ -117,7 +117,7 @@ class CollisionDamageListenerTest {
 
         String modId = new CollisionDamageListener(rammer).modifyDamageTaken(null, rammer, hit, new Vector2f(), false);
 
-        assertEquals("exiledLib_ramProwCollisionDamage_rammer", modId);
+        assertEquals("exiledSector_ramProwCollisionDamage_rammer", modId);
         verify(hit.getModifier()).modifyMult(modId, 0.5f);
     }
 

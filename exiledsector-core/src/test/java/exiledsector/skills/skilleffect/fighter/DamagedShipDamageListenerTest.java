@@ -2,6 +2,7 @@ package exiledsector.skills.skilleffect.fighter;
 
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import exiledsector.skills.CombatGate;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -45,7 +46,7 @@ class DamagedShipDamageListenerTest {
         DamageAPI damage = mock(DamageAPI.class, RETURNS_DEEP_STUBS);
         DamagedShipDamageListener listener = new DamagedShipDamageListener(ship(0, true, 1f), carrier(18f));
 
-        assertNull(listener.modifyDamageDealt(null, ship(1, false, DamagedShipDamageListener.DAMAGED_HULL_LEVEL), damage, new Vector2f(), false));
+        assertNull(listener.modifyDamageDealt(null, ship(1, false, CombatGate.LOW_HULL_LEVEL), damage, new Vector2f(), false));
         assertNull(listener.modifyDamageDealt(null, ship(1, true, 0.1f), damage, new Vector2f(), false));
         assertNull(listener.modifyDamageDealt(null, ship(0, false, 0.1f), damage, new Vector2f(), false));
         assertNull(new DamagedShipDamageListener(ship(0, true, 1f), null).modifyDamageDealt(null, ship(1, false, 0.1f), damage, new Vector2f(), false));

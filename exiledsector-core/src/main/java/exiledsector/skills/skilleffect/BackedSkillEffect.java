@@ -81,6 +81,11 @@ public interface BackedSkillEffect extends SkillEffect {
     }
 
     @Override
+    default boolean appliesToNpcShips() {
+        return backing() == null || backing().appliesToNpcShips();
+    }
+
+    @Override
     default boolean isMultiplicative() {
         return (backing() != null && backing().isMultiplicative()) || SkillEffect.super.isMultiplicative();
     }

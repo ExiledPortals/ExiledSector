@@ -9,6 +9,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.combat.dweller.AssayingRiftEffect;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.CombatGate;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.skilleffect.ArcDischarge;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
@@ -163,14 +164,14 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("seconds", UnhitArmorRegenListener.UNHIT_SECONDS).arg("value", magnitude)
                     .arg("range", UnhitArmorRegenListener.ENEMY_SHIP_RANGE).arg("flux", UnhitArmorRegenListener.HARD_FLUX_PER_ARMOR)
-                    .arg("cap", UnhitArmorRegenListener.BATTLE_CAP_PERCENT).styled();
+                    .arg("cap", UnhitArmorRegenListener.DEPLOYMENT_CAP_PERCENT).styled();
         }
     },
     SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT(listener(SwarmOverflowRepairListener.REPAIR_PERCENT_KEY, SwarmOverflowRepairListener.class,
             SwarmOverflowRepairListener::new)) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).arg("cap", SwarmOverflowRepairListener.BATTLE_CAP_PERCENT).styled();
+            return EffectText.msg(this).arg("value", magnitude).arg("cap", SwarmOverflowRepairListener.DEPLOYMENT_CAP_PERCENT).styled();
         }
     },
     ARMOR_DAMAGE_EMP_ARCS_FLAT(listener(ArmorArcListener.ARC_COUNT_KEY, ArmorArcListener.class, ArmorArcListener::new)) {
@@ -207,10 +208,10 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
     TERMINAL_DESCENT_SHIELD_DAMAGE_TAKEN_PERCENT(listener(TerminalDescentListener.SHIELD_DAMAGE_TAKEN_PERCENT_KEY, TerminalDescentListener.class,
             TerminalDescentListener::new)),
     LOW_HULL_TOP_SPEED_PERCENT(new ConditionalStatEffect(PERCENT, liveStat(MutableShipStatsAPI::getMaxSpeed), "stat.topSpeed",
-            LowHull::isBelowThreshold)) {
+            CombatGate.LOW_HULL::holds)) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).arg("hull", LowHull.HULL_LEVEL * 100f).styled();
+            return EffectText.msg(this).arg("value", magnitude).arg("hull", CombatGate.LOW_HULL_LEVEL * 100f).styled();
         }
     },
     ARMOR_DAMAGE_TAKEN_AT_LOW_SPEED_PERCENT(new ConditionalStatEffect(PERCENT, liveStat(MutableShipStatsAPI::getArmorDamageTakenMult),

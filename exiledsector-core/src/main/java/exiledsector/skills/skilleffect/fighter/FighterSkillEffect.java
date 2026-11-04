@@ -10,6 +10,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.loading.WingRole;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.CombatGate;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.ConditionalStatEffect;
@@ -243,7 +244,7 @@ public enum FighterSkillEffect implements BackedSkillEffect {
             DamagedShipDamageListener.class, DamagedShipDamageListener::new)) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).arg("hull", DamagedShipDamageListener.DAMAGED_HULL_LEVEL * 100f).styled();
+            return EffectText.msg(this).arg("value", magnitude).arg("hull", CombatGate.LOW_HULL_LEVEL * 100f).styled();
         }
     },
     STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT(new FighterListenerEffect<>(SwarmLinkListener.DAMAGE_PERCENT_PER_STRIKECRAFT_KEY,

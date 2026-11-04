@@ -64,7 +64,7 @@ class AutomatedShieldDamageListenerTest {
         String modId = listener.modifyDamageTaken(shotFrom(remnant), owner, shot, new Vector2f(), true);
         listener.modifyDamageTaken(beam, owner, beamTick, new Vector2f(), true);
 
-        assertEquals("exiledLib_automatedShieldDamage_patched", modId);
+        assertEquals("exiledSector_automatedShieldDamage_patched", modId);
         verify(shot.getModifier()).modifyMult(modId, 0.75f);
         verify(beamTick.getModifier()).modifyMult(modId, 0.75f);
     }

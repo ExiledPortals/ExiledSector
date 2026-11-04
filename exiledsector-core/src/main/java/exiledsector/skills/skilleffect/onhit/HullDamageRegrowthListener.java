@@ -17,7 +17,7 @@ import java.util.Map;
 
 final class HullDamageRegrowthListener extends ShipCombatListener {
 
-    static final String FRAGMENTS_PER_STEP_KEY = "exiledLib_hullDamageFragmentRegrowth";
+    static final String FRAGMENTS_PER_STEP_KEY = "exiledSector_hullDamageFragmentRegrowth";
     static final float HULL_DAMAGE_PER_STEP = 300f;
 
     private float fragmentsOwed;

@@ -15,8 +15,8 @@ import org.lwjgl.util.vector.Vector2f;
 
 final class CollisionDamageListener extends ShipCombatListener implements DamageDealtModifier, DamageTakenModifier {
 
-    static final String COLLISION_DAMAGE_PERCENT_KEY = "exiledLib_ramProwCollisionDamagePercent";
-    private static final String MOD_ID_PREFIX = "exiledLib_ramProwCollisionDamage_";
+    static final String COLLISION_DAMAGE_PERCENT_KEY = "exiledSector_ramProwCollisionDamagePercent";
+    private static final String MOD_ID_PREFIX = "exiledSector_ramProwCollisionDamage_";
     private static final float CONTACT_RADIUS_MARGIN = 1.1f;
 
     CollisionDamageListener(ShipAPI ownerShip) {
