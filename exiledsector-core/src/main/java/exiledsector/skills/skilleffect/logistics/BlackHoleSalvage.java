@@ -17,12 +17,6 @@ public final class BlackHoleSalvage {
     }
 
     static float hullItemPercent(List<FleetMemberAPI> members) {
-        float percent = 0f;
-        for (FleetMemberAPI member : members) {
-            if (!member.isMothballed()) {
-                percent += member.getStats().getDynamic().getValue(HULL_ITEM_PERCENT_KEY, 0f);
-            }
-        }
-        return percent;
+        return FleetContributions.sum(members, HULL_ITEM_PERCENT_KEY);
     }
 }

@@ -22,6 +22,8 @@ import static exiledsector.skills.skilleffect.StatTarget.bonus;
 import static exiledsector.skills.skilleffect.StatTarget.dynamicMod;
 import static exiledsector.skills.skilleffect.StatTarget.dynamicStat;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
+import static exiledsector.skills.skilleffect.logistics.FleetContributionEffect.anyFleetContribution;
+import static exiledsector.skills.skilleffect.logistics.FleetContributionEffect.playerFleetContribution;
 
 public enum LogisticsSkillEffect implements BackedSkillEffect {
 
@@ -98,25 +100,10 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
                     .arg("max", FleetWideEffects.MAX_TRANSPONDER_OFF_SENSOR_PROFILE_REDUCTION).styled();
         }
     },
-    MOVE_SLOW_SUPPLY_USE_MULT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(FleetWideEffects.MOVE_SLOW_SUPPLY_USE_KEY).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public StatMode statMode() {
-            return MULT;
-        }
-
+    MOVE_SLOW_SUPPLY_USE_MULT(playerFleetContribution(FleetWideEffects.MOVE_SLOW_SUPPLY_USE_KEY).reportedAs(MULT)) {
         @Override
         public boolean lowerIsBetter() {
             return true;
-        }
-
-        @Override
-        public boolean appliesToNpcShips() {
-            return false;
         }
 
         @Override
@@ -200,95 +187,35 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
     GROUND_SUPPORT_PER_MAX_CREW_PERCENT(new DerivedStatEffect(LogisticsSkillEffect::applyCrewGroundSupport, null, false)),
     CORONA_RESISTANCE_MULT(statEffect(MULT, dynamicStat(Stats.CORONA_EFFECT_MULT),
             "stat.coronaAndStormCrLoss", true)),
-    FLEET_CORONA_RESISTANCE_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(FleetWideEffects.CORONA_RESISTANCE_CONTRIBUTION_KEY).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.templated(this, magnitude);
-        }
-    },
-    POST_BATTLE_SALVAGE_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(FleetWideEffects.POST_BATTLE_SALVAGE_CONTRIBUTION_KEY).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public boolean appliesToNpcShips() {
-            return false;
-        }
-
+    FLEET_CORONA_RESISTANCE_PERCENT(anyFleetContribution(FleetWideEffects.CORONA_RESISTANCE_CONTRIBUTION_KEY)),
+    POST_BATTLE_SALVAGE_PERCENT(playerFleetContribution(FleetWideEffects.POST_BATTLE_SALVAGE_CONTRIBUTION_KEY)) {
         @Override
         public StyledText description(float magnitude) {
             return StatMode.PERCENT.describeStat(magnitude, YOUR_FLEET, "stat.postBattleSalvageRecoveredFleetWide");
         }
     },
-    BLACK_HOLE_HULL_ITEM_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(BlackHoleSalvage.HULL_ITEM_PERCENT_KEY).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public boolean appliesToNpcShips() {
-            return false;
-        }
-
+    BLACK_HOLE_HULL_ITEM_PERCENT(playerFleetContribution(BlackHoleSalvage.HULL_ITEM_PERCENT_KEY)) {
         @Override
         public StyledText description(float magnitude) {
             return StatMode.PERCENT.describeStat(magnitude, YOUR_FLEET, "stat.blackHoleHullItemQuantity");
         }
     },
-    POST_BATTLE_WEAPON_SALVAGE_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(SalvagedArmaments.CONTRIBUTION_KEY).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public boolean appliesToNpcShips() {
-            return false;
-        }
-
+    POST_BATTLE_WEAPON_SALVAGE_PERCENT(playerFleetContribution(SalvagedArmaments.CONTRIBUTION_KEY)) {
         @Override
         public StyledText description(float magnitude) {
             return StatMode.PERCENT.describeStat(magnitude, YOUR_FLEET, "stat.postBattleWeaponAndWingSalvage");
         }
     },
-    RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(RecoveryDModAvoidance.CHANCE_PERCENT_KEY).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public boolean appliesToNpcShips() {
-            return false;
-        }
-
+    RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT(playerFleetContribution(RecoveryDModAvoidance.CHANCE_PERCENT_KEY)) {
         @Override
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", magnitude).arg("max", RecoveryDModAvoidance.MAX_CHANCE_PERCENT).styled();
         }
     },
-    PHASE_FIELD_CONTRIBUTION_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(FleetWideEffects.PHASE_FIELD_CONTRIBUTION_KEY).modifyFlat(modId, magnitude);
-        }
-
+    PHASE_FIELD_CONTRIBUTION_PERCENT(playerFleetContribution(FleetWideEffects.PHASE_FIELD_CONTRIBUTION_KEY)) {
         @Override
         public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
             FleetWideEffects.markPhaseFieldStale();
-        }
-
-        @Override
-        public boolean appliesToNpcShips() {
-            return false;
         }
     };
 

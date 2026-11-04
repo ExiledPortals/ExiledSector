@@ -41,12 +41,6 @@ public final class RecoveryDModAvoidance implements DModAdderPlugin {
     }
 
     static float chancePercent(List<FleetMemberAPI> members) {
-        float chancePercent = 0f;
-        for (FleetMemberAPI member : members) {
-            if (!member.isMothballed()) {
-                chancePercent += member.getStats().getDynamic().getValue(CHANCE_PERCENT_KEY, 0f);
-            }
-        }
-        return Math.min(MAX_CHANCE_PERCENT, chancePercent);
+        return Math.min(MAX_CHANCE_PERCENT, FleetContributions.sum(members, CHANCE_PERCENT_KEY));
     }
 }
