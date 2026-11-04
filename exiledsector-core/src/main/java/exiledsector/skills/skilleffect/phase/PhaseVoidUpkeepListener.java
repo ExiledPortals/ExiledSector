@@ -8,6 +8,7 @@ import com.fs.starfarer.api.impl.combat.threat.RoilingSwarmEffect;
 import com.fs.starfarer.api.util.IntervalUtil;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.ShipCombatListener;
+import exiledsector.skills.skilleffect.shipsystem.FragmentCover;
 import exiledsector.skills.skilleffect.shipsystem.FragmentSwarms;
 
 final class PhaseVoidUpkeepListener extends ShipCombatListener implements AdvanceableListener {
@@ -20,8 +21,8 @@ final class PhaseVoidUpkeepListener extends ShipCombatListener implements Advanc
     private static final float SWARM_CHECK_SECONDS = 0.5f;
 
     private final IntervalUtil swarmCheck = new IntervalUtil(SWARM_CHECK_SECONDS, SWARM_CHECK_SECONDS);
+    private final FragmentCover upkeepCover = new FragmentCover(FLUX_PER_FRAGMENT);
     private RoilingSwarmEffect coveringSwarm;
-    private float coveredFlux;
     private boolean covering;
     private boolean wasPhased;
 
@@ -47,20 +48,10 @@ final class PhaseVoidUpkeepListener extends ShipCombatListener implements Advanc
         if (!covering) {
             return;
         }
-        coveredFlux += coveredFlux(paidUpkeepPerSecond() * amount, coveredPercent);
-        while (coveredFlux >= FLUX_PER_FRAGMENT) {
-            if (!FragmentSwarms.spend(coveringSwarm, 1)) {
-                coveringSwarm = null;
-                coveredFlux = 0f;
-                setCovering(false, coveredPercent);
-                return;
-            }
-            coveredFlux -= FLUX_PER_FRAGMENT;
+        if (!upkeepCover.charge(coveringSwarm, paidUpkeepPerSecond() * amount, coveredPercent)) {
+            coveringSwarm = null;
+            setCovering(false, coveredPercent);
         }
-    }
-
-    static float coveredFlux(float paidFlux, float coveredPercent) {
-        return coveredPercent <= 0f || coveredPercent >= 100f ? 0f : paidFlux * coveredPercent / (100f - coveredPercent);
     }
 
     private RoilingSwarmEffect nearestSwarmWithFragments() {
