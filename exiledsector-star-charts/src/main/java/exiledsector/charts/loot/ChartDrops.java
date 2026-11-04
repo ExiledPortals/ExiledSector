@@ -76,7 +76,7 @@ public final class ChartDrops {
         }
     }
 
-    record Rule(float chance, float extraChance, List<Float> tierWeights, float currencyChance, float catalystChance, float minDefeatedDp,
+    record Rule(float chance, float extraChance, List<Float> tierWeights, float craftingItemChance, float catalystChance, float minDefeatedDp,
                 float defeatedDpPerTier, int maxTier) {
 
         Rule {
@@ -84,7 +84,7 @@ public final class ChartDrops {
             extraChance = Math.max(0f, extraChance);
             tierWeights = tierWeights == null || tierWeights.size() != TIER_OFFSET_COLUMNS.size()
                     || tierWeights.stream().noneMatch(weight -> weight > 0f) ? SAME_TIER_ONLY : List.copyOf(tierWeights);
-            currencyChance = Math.max(0f, currencyChance);
+            craftingItemChance = Math.max(0f, craftingItemChance);
             catalystChance = Math.max(0f, catalystChance);
             minDefeatedDp = Math.max(0f, minDefeatedDp);
             defeatedDpPerTier = Math.max(0f, defeatedDpPerTier);
@@ -97,48 +97,48 @@ public final class ChartDrops {
         }
     }
 
-    public record Mults(float chart, float currency, float catalyst) {
+    public record Mults(float chart, float craftingItem, float catalyst) {
 
         public static Mults uniform(float mult) {
             return new Mults(mult, mult, mult);
         }
 
         public static Mults of(ChartGenContext context, float scale) {
-            return new Mults(context.dropMult(DropType.STAR_CHART) * scale, context.dropMult(DropType.CURRENCY) * scale,
+            return new Mults(context.dropMult(DropType.STAR_CHART) * scale, context.dropMult(DropType.CRAFTING_ITEM) * scale,
                     context.dropMult(DropType.CATALYST) * scale);
         }
 
         public static Mults ofReward(ChartGenContext context) {
-            return new Mults(context.rewardDropMult(DropType.STAR_CHART), context.rewardDropMult(DropType.CURRENCY),
+            return new Mults(context.rewardDropMult(DropType.STAR_CHART), context.rewardDropMult(DropType.CRAFTING_ITEM),
                     context.rewardDropMult(DropType.CATALYST));
         }
 
         boolean any() {
-            return chart > 0f || currency > 0f || catalyst > 0f;
+            return chart > 0f || craftingItem > 0f || catalyst > 0f;
         }
     }
 
-    public record Loot(List<ItemData> charts, Map<String, Integer> currencies, Map<String, Integer> catalysts) {
+    public record Loot(List<ItemData> charts, Map<String, Integer> craftingItems, Map<String, Integer> catalysts) {
 
         public static final Loot NONE = new Loot(List.of(), Map.of(), Map.of());
 
         public Loot {
             charts = List.copyOf(charts);
-            currencies = Map.copyOf(currencies);
+            craftingItems = Map.copyOf(craftingItems);
             catalysts = Map.copyOf(catalysts);
         }
 
         public Map<String, Integer> materials() {
             if (catalysts.isEmpty()) {
-                return currencies;
+                return craftingItems;
             }
-            Map<String, Integer> materials = new LinkedHashMap<>(currencies);
+            Map<String, Integer> materials = new LinkedHashMap<>(craftingItems);
             catalysts.forEach((itemId, quantity) -> materials.merge(itemId, quantity, Integer::sum));
             return materials;
         }
 
         public boolean isEmpty() {
-            return charts.isEmpty() && currencies.isEmpty() && catalysts.isEmpty();
+            return charts.isEmpty() && craftingItems.isEmpty() && catalysts.isEmpty();
         }
     }
 
@@ -164,10 +164,10 @@ public final class ChartDrops {
                     csv.skipRow(rowLabel, "unknown source " + sourceText);
                     return;
                 }
-                float currencyChance = csv.number(row, "currency_chance", 0f, sourceText);
-                if (currencyChance > 0f && !source.insideSystem()) {
-                    csv.problem(rowLabel, "currency_chance", sourceText + " is outside a chart system, where chart currencies never drop");
-                    currencyChance = 0f;
+                float craftingItemChance = csv.number(row, "crafting_item_chance", 0f, sourceText);
+                if (craftingItemChance > 0f && !source.insideSystem()) {
+                    csv.problem(rowLabel, "crafting_item_chance", sourceText + " is outside a chart system, where chart crafting items never drop");
+                    craftingItemChance = 0f;
                 }
                 float catalystChance = csv.number(row, "catalyst_chance", 0f, sourceText);
                 if (catalystChance > 0f && !source.insideSystem()) {
@@ -179,7 +179,7 @@ public final class ChartDrops {
                     tierWeights.add(csv.number(row, column, 0f, sourceText));
                 }
                 loaded.put(source, new Rule(csv.number(row, "chance", 0f, sourceText), csv.number(row, "extra_chance", 0f, sourceText),
-                        tierWeights, currencyChance, catalystChance,
+                        tierWeights, craftingItemChance, catalystChance,
                         csv.number(row, "min_defeated_dp", 0f, sourceText), csv.number(row, "defeated_dp_per_tier", 0f, sourceText),
                         csv.integer(row, "max_tier", ChartTiers.HIGHEST_TIER, sourceText)));
             });
@@ -228,9 +228,9 @@ public final class ChartDrops {
                 charts.add(ItemData.rolledAtTier(definition, random.nextLong(), dropTier));
             }
         }
-        Map<String, Integer> currencies = new LinkedHashMap<>();
+        Map<String, Integer> craftingItems = new LinkedHashMap<>();
         if (source.insideSystem()) {
-            ItemDrops.rollEachCurrency(chartCurrencyDrops(), rule.currencyChance() * Math.max(0f, mults.currency()), random, currencies);
+            ItemDrops.rollEachCraftingItem(chartCraftingItemDrops(), rule.craftingItemChance() * Math.max(0f, mults.craftingItem()), random, craftingItems);
         }
         Map<String, Integer> catalysts = new LinkedHashMap<>();
         int catalystCount = source.insideSystem() && !AtlasCatalysts.all().isEmpty()
@@ -241,7 +241,7 @@ public final class ChartDrops {
                 catalysts.merge(catalyst.itemId(), 1, Integer::sum);
             }
         }
-        return charts.isEmpty() && currencies.isEmpty() && catalysts.isEmpty() ? Loot.NONE : new Loot(charts, currencies, catalysts);
+        return charts.isEmpty() && craftingItems.isEmpty() && catalysts.isEmpty() ? Loot.NONE : new Loot(charts, craftingItems, catalysts);
     }
 
     static int dropTier(Rule rule, int baseTier, int offset) {
@@ -252,10 +252,10 @@ public final class ChartDrops {
         return ItemDrops.pickOfType(random, ItemType.STAR_CHART, definition -> ItemTypes.rollsAtTier(definition, tier));
     }
 
-    public static List<ItemDrops.MaterialDrop> chartCurrencyDrops() {
+    public static List<ItemDrops.MaterialDrop> chartCraftingItemDrops() {
         return CraftingMaterialFamilies.forType(ItemType.STAR_CHART).stream()
-                .filter(currency -> !currency.dropsFromShipLoot() && currency.dropWeight() > 0f)
-                .map(currency -> new ItemDrops.MaterialDrop(currency.itemId(), currency.dropWeight()))
+                .filter(craftingItem -> !craftingItem.dropsFromShipLoot() && craftingItem.dropWeight() > 0f)
+                .map(craftingItem -> new ItemDrops.MaterialDrop(craftingItem.itemId(), craftingItem.dropWeight()))
                 .toList();
     }
 

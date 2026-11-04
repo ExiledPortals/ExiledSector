@@ -87,23 +87,23 @@ public final class ForgeCraftingBench implements BenchModeSupport {
     }
 
     @Override
-    public List<CraftingMaterialFamily> currencies() {
+    public List<CraftingMaterialFamily> craftingItems() {
         return List.of();
     }
 
     @Override
-    public String currencyDescriptionKey(CraftingMaterialFamily currency) {
+    public String craftingItemDescriptionKey(CraftingMaterialFamily craftingItem) {
         return "chart.anomaly.derelict_forge.bench.empty";
     }
 
     @Override
-    public Refusal refusal(CraftingMaterialFamily currency, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
+    public Refusal refusal(CraftingMaterialFamily craftingItem, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
                            Set<CraftingInhibitor> inhibitors) {
         return new Refusal(cannotUse(), false);
     }
 
     @Override
-    public Use use(CraftingMaterialFamily currency, Item loaded, ItemStore store, CraftingMaterials materials, Random random,
+    public Use use(CraftingMaterialFamily craftingItem, Item loaded, ItemStore store, CraftingMaterials materials, Random random,
                    Predicate<ItemDefinition> allowedUniques, Set<CraftingInhibitor> inhibitors, String nameBefore) {
         return null;
     }

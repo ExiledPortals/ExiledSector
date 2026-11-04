@@ -62,11 +62,11 @@ public interface ItemTypeSupport {
         return false;
     }
 
-    default boolean lockedFromCurrency(ItemDefinition definition) {
+    default boolean lockedFromCraftingItem(ItemDefinition definition) {
         return false;
     }
 
-    default boolean takesCurrency() {
+    default boolean takesCraftingItem() {
         return true;
     }
 

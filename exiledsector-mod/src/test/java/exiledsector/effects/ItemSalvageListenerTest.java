@@ -125,7 +125,7 @@ class ItemSalvageListenerTest {
         SectorEntityToken nowhere = mock(SectorEntityToken.class);
 
         LootMultipliers none = new LootMultipliers(ChartGenContext.none().itemChances(), ChartGenContext.none().dropMult(DropType.FEEDSTOCK),
-                ChartGenContext.none().dropMult(DropType.CURRENCY));
+                ChartGenContext.none().dropMult(DropType.CRAFTING_ITEM));
         assertEquals(none, StarChartLootSource.INSTANCE.modifiersAt(outside.getContainingLocation()));
         assertEquals(none, StarChartLootSource.INSTANCE.modifiersAt(nowhere.getContainingLocation()));
     }
@@ -142,10 +142,10 @@ class ItemSalvageListenerTest {
     }
 
     @Test
-    void aSalvagedSystemsiteCanAlsoHoldAStarChartAndAChartCurrency() throws Exception {
+    void aSalvagedSystemsiteCanAlsoHoldAStarChartAndAChartCraftingItem() throws Exception {
         StarChartFixtures.registerShipped();
         StarChartCipher.registerAll();
-        ChartDrops.register(new JSONArray().put(new JSONObject().put("source", "system_salvage").put("chance", "1").put("currency_chance", "10")));
+        ChartDrops.register(new JSONArray().put(new JSONObject().put("source", "system_salvage").put("chance", "1").put("crafting_item_chance", "10")));
         try (MockSector mockSector = new MockSector()) {
             ChartRun run = new ChartRun("salvageRun", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
             run.recordContent(new ChartContent(6, "hegemony", "boss", 4, 6));
@@ -169,7 +169,7 @@ class ItemSalvageListenerTest {
             assertEquals(StarChartCipher.values().length, specials.getAllValues().stream().filter(special -> StarChartCipher.byItemId(special.getId()) != null).count());
         } finally {
             ChartDrops.clear();
-            StarChartFixtures.unregisterCurrencies();
+            StarChartFixtures.unregisterCraftingItems();
             StarChartFixtures.clear();
         }
     }
@@ -214,7 +214,7 @@ class ItemSalvageListenerTest {
             long showcaseItems = showcaseLoot.stream().filter(special -> !materialIds.contains(special.getId())).count();
             assertEquals(plainItems + 1 + 2L * SkillTreeLootSource.SHOWCASE_PICKS, showcaseItems);
             assertTrue(showcaseLoot.stream().map(SpecialItemData::getId).toList().containsAll(materialIds.stream()
-                    .filter(itemId -> ItemUnlock.currencyUsable(itemId, Global.getSector())).toList()));
+                    .filter(itemId -> ItemUnlock.craftingItemUsable(itemId, Global.getSector())).toList()));
             assertFalse(ItemSalvageListener.canShowcase(showcaseStation));
             assertTrue(lootFrom(listener, showcaseStation).isEmpty());
         } finally {

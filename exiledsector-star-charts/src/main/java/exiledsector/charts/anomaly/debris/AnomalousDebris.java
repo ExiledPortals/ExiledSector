@@ -26,7 +26,7 @@ public final class AnomalousDebris implements ContentPlacer, RunParticipant, Loo
 
     public static final String ANOMALY_ID = "anomalous_debris";
     public static final String EXTRA_KEY = ChartModifier.CHART_EXTRA_ANOMALOUS_DEBRIS.anomalyTuningKey();
-    public static final String CURRENCY_KEY = ChartModifier.CHART_ANOMALOUS_DEBRIS_CURRENCY_QUANTITY_PERCENT.anomalyTuningKey();
+    public static final String CRAFTING_ITEM_KEY = ChartModifier.CHART_ANOMALOUS_DEBRIS_CRAFTING_ITEM_QUANTITY_PERCENT.anomalyTuningKey();
     public static final String TERRAIN_ID = "exiledSector_chart_anomalous_debris";
     public static final String FIELD_TAG = ChartIds.PREFIX + "anomalous_debris";
     public static final AnomalousDebris INSTANCE = new AnomalousDebris();
@@ -117,7 +117,7 @@ public final class AnomalousDebris implements ContentPlacer, RunParticipant, Loo
 
     @Override
     public ItemDrops.SiteLoot extraFleetLoot(CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, Random random) {
-        return DormantFleetLoot.currencyFor(fleet, run.tier(), context, random);
+        return DormantFleetLoot.craftingItemFor(fleet, run.tier(), context, random);
     }
 
     public static List<AnomalousDebrisTerrainPlugin> fieldsIn(LocationAPI location) {

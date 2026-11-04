@@ -30,7 +30,7 @@ Each forge rolls three programs (placeholder) from `data/config/exiledSector/cha
 | Anchor reroll | Rerolls every other modifier into new ones, keeping the chosen one and the modifier count. |
 | Retemper | Rerolls a hull item's implicit values, keeping the better roll of the old and the new for each line. |
 
-Each program costs metals, rare metals and 20 to 50 Nanite Feedstock, all scaling with tier (placeholders). Graft, Excise and Anchor reroll refuse unique items; Perfect and Retemper accept them. Items the currency can't touch are refused in the same way (`ItemCrafting.isLockedFromCurrency`, corrupted and mirrored items), and an immutable modifier can't be excised, rerolled or replaced. Prefix and Suffix Inhibitors don't apply, because every program picks exactly what it touches.
+Each program costs metals, rare metals and 20 to 50 Nanite Feedstock, all scaling with tier (placeholders). Graft, Excise and Anchor reroll refuse unique items; Perfect and Retemper accept them. Items the crafting item can't touch are refused in the same way (`ItemCrafting.isLockedFromCraftingItem`, corrupted and mirrored items), and an immutable modifier can't be excised, rerolled or replaced. Prefix and Suffix Inhibitors don't apply, because every program picks exactly what it touches.
 
 ## Rewards
 

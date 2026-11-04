@@ -35,9 +35,9 @@ public enum StarChartCipher implements CraftingMaterialFamily {
     }
 
     public static void registerAll() {
-        for (StarChartCipher currency : values()) {
-            if (!CraftingMaterialFamilies.isRegistered(currency)) {
-                CraftingMaterialFamilies.register(currency);
+        for (StarChartCipher craftingItem : values()) {
+            if (!CraftingMaterialFamilies.isRegistered(craftingItem)) {
+                CraftingMaterialFamilies.register(craftingItem);
             }
         }
         for (Nanoswarm kernel : KERNELS_ON_CHARTS) {
@@ -46,9 +46,9 @@ public enum StarChartCipher implements CraftingMaterialFamily {
     }
 
     public static StarChartCipher byItemId(String itemId) {
-        for (StarChartCipher currency : values()) {
-            if (currency.itemId.equals(itemId)) {
-                return currency;
+        for (StarChartCipher craftingItem : values()) {
+            if (craftingItem.itemId.equals(itemId)) {
+                return craftingItem;
             }
         }
         return null;

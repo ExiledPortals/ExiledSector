@@ -45,7 +45,7 @@ public final class LootSources {
     }
 
     public static ItemDrops.SiteLoot rollSite(SectorAPI sector, String siteId, Random random, LootMultipliers modifiers) {
-        ItemDrops.SiteLoot baseLoot = ItemDrops.rollSite(siteId, random, modifiers.itemChances(), modifiers.feedstockMult(), modifiers.currencyMult());
+        ItemDrops.SiteLoot baseLoot = ItemDrops.rollSite(siteId, random, modifiers.itemChances(), modifiers.feedstockMult(), modifiers.craftingItemMult());
         SiteFind find = new SiteFind(sector, siteId, random, modifiers.itemChances(), new ArrayList<>(), new ArrayList<>());
         SOURCES.all().forEach(source -> source.addSiteFinds(find));
         return baseLoot.plus(find.items(), find.upgrades(), Map.of());

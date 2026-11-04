@@ -8,7 +8,7 @@ Status: built and tested 2026-10-27 (package `exiledsector.charts.anomaly.convoy
 
 The convoy is a freighter fleet with escort fleets travelling with it: a screen ahead and a close escort. It stays inside the chart's system: it enters at the system edge, visits two to four waypoints (planets, stations), reaches its destination, an existing planet in the system, unloads its cargo there and leaves through the edge.
 
-Its route, its destination, its timing and its manifest (for example "1-2 subroutines, currency items") show in intel from the start of the run, so you can plan the strike.
+Its route, its destination, its timing and its manifest (for example "1-2 subroutines, crafting items") show in intel from the start of the run, so you can plan the strike.
 
 The convoy is non-hostile to the player, unlike every other chart fleet, so you can fly alongside it freely and it never attacks first. Attacking any one of its fleets turns the freighters, the screen and the close escort hostile together for the rest of the run, and so does hitting one with Interdiction Pulse. Attacking the convoy never changes your standing with any faction.
 

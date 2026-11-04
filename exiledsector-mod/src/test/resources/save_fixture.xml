@@ -149,11 +149,11 @@
               <locked>false</locked>
             </exiledSector.RolledModifier>
             <exiledSector.RolledModifier>
-              <modifierId>CHART_CURRENCY_PERCENT</modifierId>
+              <modifierId>CHART_CRAFTING_ITEM_PERCENT</modifierId>
               <slot>SUFFIX</slot>
               <lines>
                 <exiledSector.RolledEffect>
-                  <effectName>CHART_CURRENCY_PERCENT</effectName>
+                  <effectName>CHART_CRAFTING_ITEM_PERCENT</effectName>
                   <magnitude>59.0</magnitude>
                 </exiledSector.RolledEffect>
               </lines>

@@ -50,7 +50,7 @@ public final class DormantFleets {
     public static final String FLEET_TAG = ChartIds.PREFIX + "dormant_fleet";
     public static final String DORMANT_KEY = "$exiledSector_debrisDormant";
     public static final String CORRUPTED_KEY = "$exiledSector_debrisCorrupted";
-    public static final String CURRENCY_DROPPED_KEY = "$exiledSector_debrisCurrencyDropped";
+    public static final String CRAFTING_ITEM_DROPPED_KEY = "$exiledSector_debrisCraftingItemDropped";
     static final String BUILD_SEED_KEY = "$exiledSector_debrisBuildSeed";
     static final String HIDDEN_MOD_ID = AnomalousDebris.TERRAIN_ID + "_hidden";
     static final List<Map.Entry<String, Float>> ROLES = List.of(Map.entry(ShipRoles.COMBAT_SMALL, 4f), Map.entry(ShipRoles.COMBAT_MEDIUM, 3f),

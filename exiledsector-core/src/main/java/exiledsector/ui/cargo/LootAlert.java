@@ -20,7 +20,7 @@ public enum LootAlert {
     REFIT_SCHEMATIC("exiledSector_loot_alert_refit_schematic"),
     STAR_CHART("exiledSector_loot_alert_star_chart");
 
-    private static final Set<String> VALUABLE_CURRENCY_IDS = Set.of(Nanoswarm.TUNING.itemId(),
+    private static final Set<String> VALUABLE_CRAFTING_ITEM_IDS = Set.of(Nanoswarm.TUNING.itemId(),
             Nanoswarm.ANNULMENT.itemId(), Nanoswarm.IMMUTABLE.itemId(), Nanoswarm.REPLICATION.itemId());
 
     private final String soundId;
@@ -46,7 +46,7 @@ public enum LootAlert {
         if (ItemData.STAR_CHART_ITEM_ID.equals(itemId)) {
             return STAR_CHART;
         }
-        if (VALUABLE_CURRENCY_IDS.contains(itemId)) {
+        if (VALUABLE_CRAFTING_ITEM_IDS.contains(itemId)) {
             return VALUABLE;
         }
         if (MaterialItems.isMaterial(itemId)) {

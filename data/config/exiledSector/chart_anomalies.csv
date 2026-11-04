@@ -3,7 +3,7 @@ black_hole,1,1,16,,graphics/icons/anomalies/black_hole.png,,,,,"The primary star
 neutron_star,1,1,16,,graphics/icons/anomalies/neutron_star.png,,,,,"The primary star is a neutron star with a sweeping pulsar beam and a research station in orbit"
 dense_nebula,1,1,16,,graphics/icons/anomalies/dense_nebula.png,,,CHART_STAR_CHART_PERCENT:50,,"A starless nebula system: thick nebula everywhere, no central star"
 asteroid_storm,1,1,16,,graphics/icons/anomalies/asteroid_storm.png,yes,,,,"Extra asteroid belts and fields, whose rocks strike fleets passing through, with caches hidden in the belts"
-magnetic_storm,1,1,16,,graphics/icons/anomalies/magnetic_storm.png,yes,,CHART_CURRENCY_PERCENT:50,,"Magnetic fields around the star and several worlds that blind sensors"
+magnetic_storm,1,1,16,,graphics/icons/anomalies/magnetic_storm.png,yes,,CHART_CRAFTING_ITEM_PERCENT:50,,"Magnetic fields around the star and several worlds that blind sensors"
 stellar_flares,1,1,16,,graphics/icons/anomalies/stellar_flares.png,yes,,CHART_FEEDSTOCK_PERCENT:50,,"Every corona throws flares constantly"
 spatial_breach,1,1,16,,graphics/icons/anomalies/spatial_breach.png,yes,,,,"A growing tear into hyperspace: drains, breach caches and every fleet in the system charging it"
 powerful_boss,1,1,16,,graphics/icons/anomalies/powerful_boss.png,yes,,CHART_BOSS_SIZE_PERCENT:50; CHART_BOSS_SPOILS_PERCENT:50,,"A bigger boss with more spoils that always drops a chart one tier up; rolls on its own atlas_markers.csv row. Icon is a placeholder red circular copy of vanilla bounties"

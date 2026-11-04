@@ -82,12 +82,12 @@ A Star Chart line that only applies inside the chart system ends with "in the sy
 
 ## Categories
 
-When a roll affects a whole category, name the category, not its members. "51% increased quantity of currency items found in the system", not "nanoswarms, Inhibitors and Ciphers". The category names are fixed, so the same group is always called the same thing everywhere:
+When a roll affects a whole category, name the category, not its members. "51% increased quantity of crafting items found in the system", not "nanoswarms, Inhibitors and Ciphers". The category names are fixed, so the same group is always called the same thing everywhere:
 
 | Category | Covers |
 |---|---|
 | items | everything the player can pick up |
-| currency items | nanoswarms, Inhibitors and Ciphers |
+| crafting items | nanoswarms, Inhibitors and Ciphers |
 | commodities | supplies, fuel, metals and every other vanilla commodity |
 | Bridge items, Reactor items, ... | hull items for one section |
 | colony items | vanilla colony items (nanoforges, synchrotrons, ...) |
@@ -111,7 +111,7 @@ Conditions go after the value and stat: "while phased", "while in the system", "
 
 ## Capitalisation
 
-Follow Starsector's own style. Stats and generic nouns are lowercase (flux capacity, sensor range, items, currency items, points of interest). Proper names keep their capitals: Star Charts, Star Chart Bosses, Nanite Feedstock, Bridge items, Domain, hullmod and faction names.
+Follow Starsector's own style. Stats and generic nouns are lowercase (flux capacity, sensor range, items, crafting items, points of interest). Proper names keep their capitals: Star Charts, Star Chart Bosses, Nanite Feedstock, Bridge items, Domain, hullmod and faction names.
 
 ## Spelling
 

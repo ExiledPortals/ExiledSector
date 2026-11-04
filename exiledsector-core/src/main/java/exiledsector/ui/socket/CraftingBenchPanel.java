@@ -109,7 +109,7 @@ public final class CraftingBenchPanel extends HoloPanel {
     private float sceneScale;
     private UIComponentAPI headerElement;
     private BenchMode benchMode = BenchMode.HULL_ITEMS;
-    private CraftingMaterialFamily pendingCurrency;
+    private CraftingMaterialFamily pendingCraftingItem;
     private GrowableMaterial pendingGrowth;
     private boolean detailsShowRollRanges;
     private UIComponentAPI recipesElement;
@@ -406,10 +406,10 @@ public final class CraftingBenchPanel extends HoloPanel {
             pendingOpenTarget = choice.target();
             confirmOpen();
         } else if (id == Control.CONFIRM_USE) {
-            CraftingMaterialFamily currency = pendingCurrency;
+            CraftingMaterialFamily craftingItem = pendingCraftingItem;
             cancelConfirm();
-            if (currency != null && usable(currency)) {
-                applyUse(currency);
+            if (craftingItem != null && usable(craftingItem)) {
+                applyUse(craftingItem);
             }
         } else if (id == Control.CONFIRM_GROW) {
             GrowableMaterial material = pendingGrowth;
@@ -441,7 +441,7 @@ public final class CraftingBenchPanel extends HoloPanel {
     }
 
     private void cancelConfirm() {
-        pendingCurrency = null;
+        pendingCraftingItem = null;
         pendingGrowth = null;
         pendingOpenItem = null;
         closeConfirm();
@@ -452,15 +452,15 @@ public final class CraftingBenchPanel extends HoloPanel {
         return Math.min(CONFIRM_WIDTH, panelWidth - PAD * 2f);
     }
 
-    private void tileClicked(CraftingMaterialFamily currency, boolean skipConfirm) {
+    private void tileClicked(CraftingMaterialFamily craftingItem, boolean skipConfirm) {
         hoverTooltip.hide();
-        if (wormholeOpened || isConfirmOpen() || !usable(currency)) {
+        if (wormholeOpened || isConfirmOpen() || !usable(craftingItem)) {
             return;
         }
         if (skipConfirm) {
-            applyUse(currency);
+            applyUse(craftingItem);
         } else {
-            openUseConfirm(currency);
+            openUseConfirm(craftingItem);
         }
     }
 
@@ -476,13 +476,13 @@ public final class CraftingBenchPanel extends HoloPanel {
         }
     }
 
-    private void openUseConfirm(CraftingMaterialFamily currency) {
-        pendingCurrency = currency;
-        Set<CraftingInhibitor> spentInhibitors = ItemCrafting.inhibitorsSpentBy(currency, loadedItem, activeInhibitors);
-        String name = recipeName(currency);
+    private void openUseConfirm(CraftingMaterialFamily craftingItem) {
+        pendingCraftingItem = craftingItem;
+        Set<CraftingInhibitor> spentInhibitors = ItemCrafting.inhibitorsSpentBy(craftingItem, loadedItem, activeInhibitors);
+        String name = recipeName(craftingItem);
         openConfirm(USE_CONFIRM_HEIGHT + spentInhibitors.size() * INHIBITOR_LINE_HEIGHT,
                 element -> writeCraftConfirm(element, Translation.msg("ui.craftingBench.confirm.useTitle").arg("name", name).arg("target", loadedItem.name()).text(),
-                        support().currencyDescription(currency), spentInhibitors),
+                        support().craftingItemDescription(craftingItem), spentInhibitors),
                 "ui.craftingBench.confirm.use", Control.CONFIRM_USE, "ui.craftingBench.confirm.cancel", Control.CANCEL_CONFIRM);
     }
 
@@ -530,16 +530,16 @@ public final class CraftingBenchPanel extends HoloPanel {
         afterChange();
     }
 
-    private boolean usable(CraftingMaterialFamily currency) {
+    private boolean usable(CraftingMaterialFamily craftingItem) {
         CraftingMaterials materials = playerMaterials();
-        BenchModeSupport.Refusal refusal = support().refusal(currency, loadedItem, support().store(), materials, allowedUniques(), activeInhibitors);
+        BenchModeSupport.Refusal refusal = support().refusal(craftingItem, loadedItem, support().store(), materials, allowedUniques(), activeInhibitors);
         if (refusal.checksInhibitors() && droppedMissingInhibitors(materials)) {
             return false;
         }
         if (refusal.allowed()) {
             return true;
         }
-        showNotice(refusalText(currency, refusal.verdict()));
+        showNotice(refusalText(craftingItem, refusal.verdict()));
         return false;
     }
 
@@ -553,21 +553,21 @@ public final class CraftingBenchPanel extends HoloPanel {
         return true;
     }
 
-    private String refusalText(CraftingMaterialFamily currency, UseVerdict verdict) {
-        return verdict.text(MaterialItems.displayName(currency.itemId()), loadedItem == null ? "" : loadedItem.name());
+    private String refusalText(CraftingMaterialFamily craftingItem, UseVerdict verdict) {
+        return verdict.text(MaterialItems.displayName(craftingItem.itemId()), loadedItem == null ? "" : loadedItem.name());
     }
 
     private BenchModeSupport support() {
         return BenchModes.of(benchMode);
     }
 
-    private void applyUse(CraftingMaterialFamily currency) {
+    private void applyUse(CraftingMaterialFamily craftingItem) {
         String nameBefore = loadedItem.name();
-        Set<CraftingInhibitor> spentInhibitors = ItemCrafting.inhibitorsSpentBy(currency, loadedItem, activeInhibitors);
-        BenchModeSupport.Use used = support().use(currency, loadedItem, support().store(), playerMaterials(), craftingRandom,
+        Set<CraftingInhibitor> spentInhibitors = ItemCrafting.inhibitorsSpentBy(craftingItem, loadedItem, activeInhibitors);
+        BenchModeSupport.Use used = support().use(craftingItem, loadedItem, support().store(), playerMaterials(), craftingRandom,
                 allowedUniques(), activeInhibitors, nameBefore);
         if (used == null) {
-            showNotice(refusalText(currency, support().cannotUse()));
+            showNotice(refusalText(craftingItem, support().cannotUse()));
             return;
         }
         activeInhibitors.removeAll(spentInhibitors);
@@ -834,23 +834,23 @@ public final class CraftingBenchPanel extends HoloPanel {
         TooltipMakerAPI element = panelRoot.createUIElement(artWidth, artHeight, false);
         CraftingMaterials materials = playerMaterials();
         BenchModeSupport support = support();
-        List<CraftingMaterialFamily> shownCurrencies = support.currencies();
-        List<CraftingMaterialFamily> orbitCurrencies = shownCurrencies.stream().filter(support::inOrbit).toList();
-        List<CraftingMaterialFamily> columnCurrencies = shownCurrencies.stream().filter(currency -> !support.inOrbit(currency)).toList();
+        List<CraftingMaterialFamily> shownCraftingItems = support.craftingItems();
+        List<CraftingMaterialFamily> orbitCraftingItems = shownCraftingItems.stream().filter(support::inOrbit).toList();
+        List<CraftingMaterialFamily> columnCraftingItems = shownCraftingItems.stream().filter(craftingItem -> !support.inOrbit(craftingItem)).toList();
         float tileSize = tileSize();
         float socketX = benchMode.socketX() * sceneScale;
         float socketY = benchMode.socketY() * sceneScale;
-        for (int i = 0; i < orbitCurrencies.size(); i++) {
-            float angle = tileAngle(i, orbitCurrencies.size());
+        for (int i = 0; i < orbitCraftingItems.size(); i++) {
+            float angle = tileAngle(i, orbitCraftingItems.size());
             float tileCentreX = socketX + benchMode.orbitRadiusX() * sceneScale * (float) Math.cos(angle);
             float tileCentreY = socketY - benchMode.orbitRadiusY() * sceneScale * (float) Math.sin(angle);
-            addTile(element, orbitCurrencies.get(i), tileCentreX - tileSize / 2f, tileCentreY - tileSize / 2f, tileSize, materials);
+            addTile(element, orbitCraftingItems.get(i), tileCentreX - tileSize / 2f, tileCentreY - tileSize / 2f, tileSize, materials);
         }
         float columnLeft = artWidth - BenchScene.COLUMN_RIGHT_MARGIN * sceneScale - tileSize;
         float columnGap = BenchScene.COLUMN_GAP * sceneScale;
-        for (int i = 0; i < columnCurrencies.size(); i++) {
-            float tileTop = columnTileTop(i, columnCurrencies.size(), socketY, tileSize, columnGap, artHeight);
-            addTile(element, columnCurrencies.get(i), columnLeft, tileTop, tileSize, materials);
+        for (int i = 0; i < columnCraftingItems.size(); i++) {
+            float tileTop = columnTileTop(i, columnCraftingItems.size(), socketY, tileSize, columnGap, artHeight);
+            addTile(element, columnCraftingItems.get(i), columnLeft, tileTop, tileSize, materials);
         }
         if (support.usesInhibitors()) {
             addInhibitorTiles(element, tileSize, materials);
@@ -869,12 +869,12 @@ public final class CraftingBenchPanel extends HoloPanel {
             return;
         }
         CraftingMaterials materials = playerMaterials();
-        List<SectionedTileGrid.Tile> currencyTiles = new ArrayList<>();
-        for (CraftingMaterialFamily currency : support().currencies()) {
-            currencyTiles.add(new SectionedTileGrid.Tile(currencyTile(currency, materials), materials.count(currency.itemId())));
+        List<SectionedTileGrid.Tile> craftingItemTiles = new ArrayList<>();
+        for (CraftingMaterialFamily craftingItem : support().craftingItems()) {
+            craftingItemTiles.add(new SectionedTileGrid.Tile(craftingItemTile(craftingItem, materials), materials.count(craftingItem.itemId())));
         }
         List<SectionedTileGrid.Section> sections = new ArrayList<>();
-        sections.add(new SectionedTileGrid.Section(Translation.text("ui.craftingBench.materials.currencies"), Misc.getBasePlayerColor(), currencyTiles));
+        sections.add(new SectionedTileGrid.Section(Translation.text("ui.craftingBench.materials.craftingItems"), Misc.getBasePlayerColor(), craftingItemTiles));
         if (support().usesInhibitors()) {
             List<SectionedTileGrid.Tile> inhibitorTiles = new ArrayList<>();
             for (CraftingInhibitor inhibitor : List.of(CraftingInhibitor.PREFIX, CraftingInhibitor.SUFFIX)) {
@@ -899,9 +899,9 @@ public final class CraftingBenchPanel extends HoloPanel {
                 skipConfirm -> tileRightClicked(inhibitor, skipConfirm));
     }
 
-    private TileInput.Handler currencyHandler(CraftingMaterialFamily currency) {
-        return tileHandler(currency, anchor -> showTooltip(currency, anchor), skipConfirm -> tileClicked(currency, skipConfirm),
-                skipConfirm -> tileRightClicked(currency, skipConfirm));
+    private TileInput.Handler craftingItemHandler(CraftingMaterialFamily craftingItem) {
+        return tileHandler(craftingItem, anchor -> showTooltip(craftingItem, anchor), skipConfirm -> tileClicked(craftingItem, skipConfirm),
+                skipConfirm -> tileRightClicked(craftingItem, skipConfirm));
     }
 
     private void addInhibitorTile(TooltipMakerAPI element, CraftingInhibitor inhibitor, float tileLeft, float tileTop, float tileSize,
@@ -915,9 +915,9 @@ public final class CraftingBenchPanel extends HoloPanel {
         return CraftingBenchTile.toggle(inhibitorIcons(inhibitor), CargoIconLooks.forMaterial(inhibitor.itemId()), () -> activeInhibitors.contains(inhibitor), inhibitorHandler(inhibitor));
     }
 
-    private CraftingBenchTile currencyTile(CraftingMaterialFamily currency, CraftingMaterials materials) {
-        boolean owned = materials.count(currency.itemId()) > 0;
-        return CraftingBenchTile.usable(recipeIcons(currency), recipeLook(currency), () -> owned, currencyHandler(currency));
+    private CraftingBenchTile craftingItemTile(CraftingMaterialFamily craftingItem, CraftingMaterials materials) {
+        boolean owned = materials.count(craftingItem.itemId()) > 0;
+        return CraftingBenchTile.usable(recipeIcons(craftingItem), recipeLook(craftingItem), () -> owned, craftingItemHandler(craftingItem));
     }
 
     private void toggleInhibitor(CraftingInhibitor inhibitor) {
@@ -995,52 +995,52 @@ public final class CraftingBenchPanel extends HoloPanel {
         element.setParaFontDefault();
     }
 
-    private void addTile(TooltipMakerAPI element, CraftingMaterialFamily currency, float tileLeft, float tileTop, float tileSize,
+    private void addTile(TooltipMakerAPI element, CraftingMaterialFamily craftingItem, float tileLeft, float tileTop, float tileSize,
                          CraftingMaterials materials) {
-        CustomPanelAPI tilePanel = Global.getSettings().createCustom(tileSize, tileSize, currencyTile(currency, materials));
+        CustomPanelAPI tilePanel = Global.getSettings().createCustom(tileSize, tileSize, craftingItemTile(craftingItem, materials));
         element.addCustom(tilePanel, 0f).getPosition().inTL(tileLeft, tileTop);
-        addCount(element, currency.itemId(), tileLeft, tileTop, tileSize, materials);
+        addCount(element, craftingItem.itemId(), tileLeft, tileTop, tileSize, materials);
     }
 
-    private void showTooltip(CraftingMaterialFamily currency, PositionAPI anchor) {
+    private void showTooltip(CraftingMaterialFamily craftingItem, PositionAPI anchor) {
         if (isClosing()) {
             hoverTooltip.hide();
             return;
         }
-        hoverTooltip.show(currency, TOOLTIP_WIDTH, (element, expanded) -> writeTooltip(element, currency), anchor,
+        hoverTooltip.show(craftingItem, TOOLTIP_WIDTH, (element, expanded) -> writeTooltip(element, craftingItem), anchor,
                 ItemHoverTooltip.Placement.BELOW, PAD);
     }
 
-    private void writeTooltip(TooltipMakerAPI element, CraftingMaterialFamily currency) {
+    private void writeTooltip(TooltipMakerAPI element, CraftingMaterialFamily craftingItem) {
         element.setParaFont(Fonts.ORBITRON_20AA);
-        VanillaText.plainPara(element, recipeName(currency), 0f, Misc.getBrightPlayerColor());
+        VanillaText.plainPara(element, recipeName(craftingItem), 0f, Misc.getBrightPlayerColor());
         element.setParaFontDefault();
-        VanillaText.plainPara(element, support().currencyDescription(currency), GAP, Misc.getTextColor());
+        VanillaText.plainPara(element, support().craftingItemDescription(craftingItem), GAP, Misc.getTextColor());
         float linePad = GAP;
-        for (StyledText line : support().currencyLines(currency)) {
+        for (StyledText line : support().craftingItemLines(craftingItem)) {
             VanillaText.addPara(element, line, linePad, Misc.getTextColor());
             linePad = LINE_PAD;
         }
-        for (String line : tooltipHints(currency)) {
+        for (String line : tooltipHints(craftingItem)) {
             VanillaText.plainPara(element, line, GAP, Misc.getGrayColor());
         }
     }
 
-    private List<String> tooltipHints(CraftingMaterialFamily currency) {
+    private List<String> tooltipHints(CraftingMaterialFamily craftingItem) {
         List<String> hints = new ArrayList<>();
-        int ownedCount = playerMaterials().count(currency.itemId());
+        int ownedCount = playerMaterials().count(craftingItem.itemId());
         hints.add(Translation.msg("ui.craftingBench.tile.inStorage").arg("count", ownedCount).text());
         if (ownedCount == 0) {
-            if (currency.growable()) {
+            if (craftingItem.growable()) {
                 hints.add(Translation.text("ui.craftingBench.tile.noneOwned"));
             }
         } else {
-            BenchModeSupport.Refusal refusal = support().refusal(currency, loadedItem, support().store(), playerMaterials(), allowedUniques(),
+            BenchModeSupport.Refusal refusal = support().refusal(craftingItem, loadedItem, support().store(), playerMaterials(), allowedUniques(),
                     activeInhibitors);
             hints.add(refusal.allowed()
-                    ? Translation.msg(support().useHintKey()).arg("target", loadedItem.name()).text() : refusalText(currency, refusal.verdict()));
+                    ? Translation.msg(support().useHintKey()).arg("target", loadedItem.name()).text() : refusalText(craftingItem, refusal.verdict()));
         }
-        hints.add(growHint(currency));
+        hints.add(growHint(craftingItem));
         return hints;
     }
 
@@ -1050,13 +1050,13 @@ public final class CraftingBenchPanel extends HoloPanel {
                 : Translation.text("ui.craftingBench.tile.notGrowable");
     }
 
-    private static List<String> recipeIcons(CraftingMaterialFamily currency) {
-        String iconPath = MaterialItems.loadedIconPath(currency.itemId());
+    private static List<String> recipeIcons(CraftingMaterialFamily craftingItem) {
+        String iconPath = MaterialItems.loadedIconPath(craftingItem.itemId());
         return List.of(iconPath == null ? FALLBACK_ICON : iconPath);
     }
 
-    private static CargoIconLook recipeLook(CraftingMaterialFamily currency) {
-        return CargoIconLooks.forMaterial(currency.itemId());
+    private static CargoIconLook recipeLook(CraftingMaterialFamily craftingItem) {
+        return CargoIconLooks.forMaterial(craftingItem.itemId());
     }
 
     private static String recipeName(GrowableMaterial material) {

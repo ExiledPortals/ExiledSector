@@ -30,14 +30,14 @@ public final class CargoIconLooks {
         if (CraftingInhibitor.byItemId(itemId) != null) {
             return SwarmMotion.CONTAINED;
         }
-        CraftingMaterialFamily currency = CraftingMaterialFamilies.byItemId(itemId);
-        if (currency == null) {
+        CraftingMaterialFamily craftingItem = CraftingMaterialFamilies.byItemId(itemId);
+        if (craftingItem == null) {
             return SwarmMotion.SLURRY;
         }
-        if (currency == Nanoswarm.CORRUPTION) {
+        if (craftingItem == Nanoswarm.CORRUPTION) {
             return SwarmMotion.FERAL;
         }
-        return currency == Nanoswarm.REPLICATION ? SwarmMotion.REPLICATING : SwarmMotion.ORBIT;
+        return craftingItem == Nanoswarm.REPLICATION ? SwarmMotion.REPLICATING : SwarmMotion.ORBIT;
     }
 
     static CargoIconLook forMaterial(MaterialTier tier, Color color) {

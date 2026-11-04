@@ -72,7 +72,7 @@ class ChartFleetLootTest {
     void tearDown() {
         mockSector.close();
         ChartDrops.clear();
-        StarChartFixtures.unregisterCurrencies();
+        StarChartFixtures.unregisterCraftingItems();
         StarChartFixtures.clear();
     }
 
@@ -356,7 +356,7 @@ class ChartFleetLootTest {
     }
 
     @Test
-    void theBossAddsNoCraftingCurrenciesOfItsOwnBeyondItsDeploymentPoints() throws Exception {
+    void theBossAddsNoCraftingItemsOfItsOwnBeyondItsDeploymentPoints() throws Exception {
         ItemDrops.register(new JSONArray()
                 .put(new JSONObject().put("site", ChartIds.BOSS_LOOT_SITE).put("chances", "0").put("uniqueChance", "0")));
         try {

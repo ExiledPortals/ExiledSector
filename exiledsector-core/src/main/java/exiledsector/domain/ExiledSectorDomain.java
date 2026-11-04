@@ -84,7 +84,7 @@ public interface ExiledSectorDomain {
         return List.of();
     }
 
-    default List<CraftingMaterialFamily> hullCraftingBenchCurrencies() {
+    default List<CraftingMaterialFamily> hullCraftingBenchCraftingItems() {
         return List.of();
     }
 

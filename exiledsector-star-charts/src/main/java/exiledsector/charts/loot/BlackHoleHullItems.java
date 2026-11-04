@@ -29,7 +29,7 @@ final class BlackHoleHullItems {
             return multipliers;
         }
         ItemChances boosted = withExtraHullItemShare(chances, BlackHoleSalvage.hullItemPercent(PlayerFleet.orNull()) / 100f);
-        return boosted == chances ? multipliers : new LootMultipliers(boosted, multipliers.feedstockMult(), multipliers.currencyMult());
+        return boosted == chances ? multipliers : new LootMultipliers(boosted, multipliers.feedstockMult(), multipliers.craftingItemMult());
     }
 
     static boolean hasBlackHole(StarSystemAPI system) {

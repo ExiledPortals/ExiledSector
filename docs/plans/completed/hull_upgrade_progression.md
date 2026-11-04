@@ -2,7 +2,7 @@
 
 Hull upgrade points let a ship unlock its sections (bridge, reactor, flight deck and so on) for hull items. Today every ship starts with none and gains one per Hull Upgrade item, up to four. This plan replaces that with two ways to earn points, picked in LunaLib:
 
-- Refit schematics (the default): every ship starts with one point. Four tiers of a new currency item raise a ship's points one step at a time, up to five, in the style of Path of Exile 2's Jeweller's Orbs.
+- Refit schematics (the default): every ship starts with one point. Four tiers of a new crafting item raise a ship's points one step at a time, up to five, in the style of Path of Exile 2's Jeweller's Orbs.
 - Star Chart progress: every ship starts with one point, and clearing the first tier 5, 10 and 15 Star Charts raises every player ship to two, three and four.
 
 Status: built, uncommitted on the hull upgrade worktree (branch `hull-upgrade-progression`).
@@ -36,7 +36,7 @@ Points apply to the player's ships only. NPC ships have no hull upgrades (see "N
 
 ## Option 1: refit schematics
 
-Four new currency items, one per tier:
+Four new crafting items, one per tier:
 
 | Tier | Name | Raises a ship | Drop weight |
 |---|---|---|---|
@@ -56,7 +56,7 @@ The schematics fit every hull size. A destroyer and a capital use the same one, 
 ### Items
 
 - One special item id per tier, or one id with the tier as data (like `HullUpgradeData` now). One id with data keeps old cargo stacks readable (see "Migration") and matches the existing item.
-- Built as currency items, alongside `CraftingCurrency` (core): an enum in this module, `RefitSchematic`, implementing `ItemCurrency` if that interface fits use outside the crafting bench. Check what `ItemCurrency` requires before choosing. Schematics are applied only on the Hull Upgrades panel, never on the bench.
+- Built as crafting items, alongside `CraftingItem` (core): an enum in this module, `RefitSchematic`, implementing `ItemCraftingItem` if that interface fits use outside the crafting bench. Check what `ItemCraftingItem` requires before choosing. Schematics are applied only on the Hull Upgrades panel, never on the bench.
 - `ItemStore` keeps counts per tier instead of per hull size. Cargo stacks are absorbed the same way as today.
 - Placeholder icons until art is made, in `graphics/icons/hull_upgrades/`, one per tier with the tier's rarity colour.
 
@@ -119,7 +119,7 @@ Saves with today's Hull Upgrades:
 ## Build order
 
 1. Done (uncommitted on the hull upgrade worktree): `HullUpgradePoints`, the setting, and the point reads moved onto it.
-2. Done (uncommitted on the hull upgrade worktree): the schematic items, `ItemStore` per tier, and applying them on the panel. `RefitSchematic` lives in core `items/` because core's loot records carry it; it is not an `ItemCurrency`.
+2. Done (uncommitted on the hull upgrade worktree): the schematic items, `ItemStore` per tier, and applying them on the panel. `RefitSchematic` lives in core `items/` because core's loot records carry it; it is not an `ItemCraftingItem`.
 3. Done (uncommitted on the hull upgrade worktree): sources switched to schematics.
 4. Done (uncommitted on the hull upgrade worktree): Star Chart progress mode, its panel text and message (`ItemUnlock.addChartClearListener`).
 5. Done (uncommitted on the hull upgrade worktree): NPC leftovers removed.

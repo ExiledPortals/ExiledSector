@@ -45,7 +45,7 @@ public final class WormholeAnchor extends Item implements NodeSocketable {
         }
 
         @Override
-        public boolean takesCurrency() {
+        public boolean takesCraftingItem() {
             return false;
         }
 

@@ -26,9 +26,9 @@ public final class ItemTypes {
         return type == null ? null : SUPPORT_BY_TYPE.get(type);
     }
 
-    public static boolean takesCurrency(ItemType type) {
+    public static boolean takesCraftingItem(ItemType type) {
         ItemTypeSupport support = of(type);
-        return type != null && (support == null || support.takesCurrency());
+        return type != null && (support == null || support.takesCraftingItem());
     }
 
     public static boolean tiered(ItemType type) {
@@ -100,8 +100,8 @@ public final class ItemTypes {
         return support == null ? null : support.corrupt(outcome, item, random);
     }
 
-    public static boolean lockedFromCurrency(ItemDefinition definition) {
+    public static boolean lockedFromCraftingItem(ItemDefinition definition) {
         ItemTypeSupport support = of(definition.type());
-        return support != null && support.lockedFromCurrency(definition);
+        return support != null && support.lockedFromCraftingItem(definition);
     }
 }

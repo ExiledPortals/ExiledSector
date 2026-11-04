@@ -40,8 +40,8 @@ class EngramTest {
                         List.of(suffix("BEAM_WEAPON_RANGE_PERCENT"), suffix("ARMOR_PERCENT"), suffix("HULL_MULT"))),
                 definition(RELIC, true, List.of(prefix("ARMOR_PERCENT")), List.of())));
         Engrams.register(new JSONArray()
-                .put(currencyRow(REVENANT, GRANTED_PREFIX, "hull_item", 1))
-                .put(currencyRow(VIGIL, GRANTED_SUFFIX, "hull_item", 6)));
+                .put(craftingItemRow(REVENANT, GRANTED_PREFIX, "hull_item", 1))
+                .put(craftingItemRow(VIGIL, GRANTED_SUFFIX, "hull_item", 6)));
     }
 
     @AfterEach
@@ -64,7 +64,7 @@ class EngramTest {
         return new ItemDefinition(id, ItemKind.BRIDGE, id, ItemDefinition.FALLBACK_ICON, 1f, unique, "", prefixes, suffixes, "");
     }
 
-    private static JSONObject currencyRow(String id, String modifier, String itemTypes, int minTier) throws JSONException {
+    private static JSONObject craftingItemRow(String id, String modifier, String itemTypes, int minTier) throws JSONException {
         return new JSONObject().put("id", id).put("name", id).put("modifier", modifier).put("item_types", itemTypes)
                 .put("min_tier", String.valueOf(minTier)).put("weight", "1");
     }
@@ -74,23 +74,23 @@ class EngramTest {
                 null));
     }
 
-    private static Engram currency(String itemId) {
+    private static Engram craftingItem(String itemId) {
         return (Engram) CraftingMaterialFamilies.byItemId(itemId);
     }
 
     @Test
     void rerollingGivesFourModifiersWithTheGrantedOneAndAtMostTwoPerSide() {
         for (long seed = 0; seed < 40; seed++) {
-            for (String currencyId : List.of(REVENANT, VIGIL)) {
+            for (String craftingItemId : List.of(REVENANT, VIGIL)) {
                 Item item = common();
-                Engram currency = currency(currencyId);
+                Engram craftingItem = craftingItem(craftingItemId);
 
-                assertSame(item, currency.use(item, new CraftingContext(store, definition -> true, Set.of()), new Random(seed)));
+                assertSame(item, craftingItem.use(item, new CraftingContext(store, definition -> true, Set.of()), new Random(seed)));
 
                 List<RolledModifier> explicits = item.explicits();
                 assertEquals(4, explicits.size());
                 assertEquals(ItemRarity.RARE, item.rarity());
-                assertTrue(explicits.stream().anyMatch(rolled -> rolled.modifierId().equals(currency.modifierId())));
+                assertTrue(explicits.stream().anyMatch(rolled -> rolled.modifierId().equals(craftingItem.modifierId())));
                 assertEquals(2, explicits.stream().filter(rolled -> rolled.slot() == ModifierSlot.PREFIX).count());
                 assertEquals(2, explicits.stream().filter(rolled -> rolled.slot() == ModifierSlot.SUFFIX).count());
                 Set<String> effects = new HashSet<>();
@@ -103,7 +103,7 @@ class EngramTest {
     @Test
     void theGrantedModifierKeepsItsIdAndFixedValueThoughThePoolRollsTheSameEffect() {
         Item item = common();
-        currency(REVENANT).use(item, new CraftingContext(store, definition -> true, Set.of()), new Random(3L));
+        craftingItem(REVENANT).use(item, new CraftingContext(store, definition -> true, Set.of()), new Random(3L));
         Item reloaded = Item.create("reloaded", BASE, 7L, item.explicits());
 
         RolledModifier granted = reloaded.explicits().stream().filter(rolled -> rolled.lines().get(0).effectName().equals("HULL_PERCENT"))
@@ -144,11 +144,11 @@ class EngramTest {
     @Test
     void anEngramKeepsAFixationLockedModifierAndFillsAroundIt() {
         for (long seed = 0; seed < 40; seed++) {
-            for (String currencyId : List.of(REVENANT, VIGIL)) {
+            for (String craftingItemId : List.of(REVENANT, VIGIL)) {
                 Item item = lockedWith("FLUX_CAPACITY_MULT", ModifierSlot.PREFIX, 5f);
-                Engram currency = currency(currencyId);
+                Engram craftingItem = craftingItem(craftingItemId);
 
-                assertSame(item, currency.use(item, new CraftingContext(store, definition -> true, Set.of()), new Random(seed)));
+                assertSame(item, craftingItem.use(item, new CraftingContext(store, definition -> true, Set.of()), new Random(seed)));
 
                 List<RolledModifier> explicits = item.explicits();
                 assertEquals(4, explicits.size());
@@ -156,7 +156,7 @@ class EngramTest {
                 RolledModifier locked = explicits.stream().filter(RolledModifier::immutable).findFirst().orElseThrow();
                 assertEquals("FLUX_CAPACITY_MULT", locked.lines().get(0).effectName());
                 assertEquals(5f, locked.lines().get(0).magnitude());
-                assertTrue(explicits.stream().anyMatch(rolled -> rolled.modifierId().equals(currency.modifierId())));
+                assertTrue(explicits.stream().anyMatch(rolled -> rolled.modifierId().equals(craftingItem.modifierId())));
                 Set<String> effects = new HashSet<>();
                 explicits.forEach(rolled -> rolled.lines().forEach(line -> assertTrue(effects.add(line.effectName()), line.effectName())));
             }
@@ -168,17 +168,17 @@ class EngramTest {
         Item item = lockedWith("HULL_PERCENT", ModifierSlot.PREFIX, 5f);
         CraftingContext context = new CraftingContext(store, definition -> true, Set.of());
 
-        assertFalse(currency(REVENANT).canUse(item, context));
-        assertEquals(Engram.LOCKED_CLASH_KEY, currency(REVENANT).refusalNoticeKey(item));
-        assertTrue(currency(VIGIL).canUse(item, context));
-        assertNull(currency(VIGIL).refusalNoticeKey(item));
+        assertFalse(craftingItem(REVENANT).canUse(item, context));
+        assertEquals(Engram.LOCKED_CLASH_KEY, craftingItem(REVENANT).refusalNoticeKey(item));
+        assertTrue(craftingItem(VIGIL).canUse(item, context));
+        assertNull(craftingItem(VIGIL).refusalNoticeKey(item));
     }
 
     @Test
     void corruptingAroundALockedReservedModifierNeverAddsItsOrdinaryTwin() {
         for (long seed = 0; seed < 60; seed++) {
             Item item = common();
-            currency(REVENANT).use(item, new CraftingContext(store, definition -> true, Set.of()), new Random(seed));
+            craftingItem(REVENANT).use(item, new CraftingContext(store, definition -> true, Set.of()), new Random(seed));
             List<RolledModifier> locked = new java.util.ArrayList<>(item.explicits());
             locked.replaceAll(rolled -> rolled.modifierId().equals(GRANTED_PREFIX) ? rolled.asImmutable() : rolled);
             item.replaceExplicits(locked);
@@ -194,14 +194,14 @@ class EngramTest {
 
     @Test
     void theStarChartsDomainOffersItsEngramsToTheHullCraftingBench() {
-        assertEquals(Set.of(REVENANT, VIGIL), new HashSet<>(new exiledsector.charts.StarChartsDomain().hullCraftingBenchCurrencies().stream()
+        assertEquals(Set.of(REVENANT, VIGIL), new HashSet<>(new exiledsector.charts.StarChartsDomain().hullCraftingBenchCraftingItems().stream()
                 .map(CraftingMaterialFamily::itemId).toList()));
     }
 
     @Test
     void laterCraftingNeverAddsASecondModifierOfTheGrantedEffect() {
         Item item = common();
-        currency(REVENANT).use(item, new CraftingContext(store, definition -> true, Set.of()), new Random(5L));
+        craftingItem(REVENANT).use(item, new CraftingContext(store, definition -> true, Set.of()), new Random(5L));
         List<RolledModifier> withoutOtherPrefix = new java.util.ArrayList<>(item.explicits());
         withoutOtherPrefix.removeIf(rolled -> rolled.slot() == ModifierSlot.PREFIX && !rolled.modifierId().equals(GRANTED_PREFIX));
 
@@ -216,9 +216,9 @@ class EngramTest {
         Item relic = store.add(new ItemData(RELIC, 1L));
         CraftingContext context = new CraftingContext(store, definition -> true, Set.of());
 
-        assertFalse(currency(REVENANT).canUse(relic, context));
-        assertTrue(currency(REVENANT).canUse(common(), context));
-        assertFalse(currency(REVENANT).appliesTo(ItemType.STAR_CHART));
+        assertFalse(craftingItem(REVENANT).canUse(relic, context));
+        assertTrue(craftingItem(REVENANT).canUse(common(), context));
+        assertFalse(craftingItem(REVENANT).appliesTo(ItemType.STAR_CHART));
     }
 
     private Item withModifiers(RolledModifier... modifiers) {
@@ -241,7 +241,7 @@ class EngramTest {
             Item item = withModifiers(rolled(ModifierSlot.PREFIX, "FLUX_CAPACITY_MULT", 5f), armor, hull);
             CraftingContext context = new CraftingContext(store, definition -> true, Set.of(ModifierSlot.SUFFIX));
 
-            assertSame(item, currency(REVENANT).use(item, context, new Random(seed)));
+            assertSame(item, craftingItem(REVENANT).use(item, context, new Random(seed)));
 
             assertEquals(List.of(armor, hull), onSide(item, ModifierSlot.SUFFIX));
             assertEquals(2, onSide(item, ModifierSlot.PREFIX).size());
@@ -256,7 +256,7 @@ class EngramTest {
             Item item = withModifiers(armor);
             CraftingContext context = new CraftingContext(store, definition -> true, Set.of(ModifierSlot.SUFFIX));
 
-            currency(REVENANT).use(item, context, new Random(seed));
+            craftingItem(REVENANT).use(item, context, new Random(seed));
 
             assertEquals(4, item.explicits().size());
             assertEquals(2, onSide(item, ModifierSlot.SUFFIX).size());
@@ -273,7 +273,7 @@ class EngramTest {
             Item item = withModifiers(capacity, dissipation, rolled(ModifierSlot.SUFFIX, "ARMOR_PERCENT", 5f));
             CraftingContext context = new CraftingContext(store, definition -> true, Set.of(ModifierSlot.PREFIX));
 
-            currency(VIGIL).use(item, context, new Random(seed));
+            craftingItem(VIGIL).use(item, context, new Random(seed));
 
             assertEquals(List.of(capacity, dissipation), onSide(item, ModifierSlot.PREFIX));
             assertEquals(2, onSide(item, ModifierSlot.SUFFIX).size());
@@ -288,30 +288,30 @@ class EngramTest {
         CraftingContext prefixInhibitor = new CraftingContext(store, definition -> true, Set.of(ModifierSlot.PREFIX));
         CraftingContext suffixInhibitor = new CraftingContext(store, definition -> true, Set.of(ModifierSlot.SUFFIX));
 
-        assertFalse(currency(REVENANT).canUse(fullPrefixes, prefixInhibitor));
-        assertTrue(currency(REVENANT).canUse(common(), prefixInhibitor));
-        assertFalse(currency(VIGIL).canUse(sameEffect, suffixInhibitor));
-        assertTrue(currency(VIGIL).canUse(sameEffect, prefixInhibitor));
+        assertFalse(craftingItem(REVENANT).canUse(fullPrefixes, prefixInhibitor));
+        assertTrue(craftingItem(REVENANT).canUse(common(), prefixInhibitor));
+        assertFalse(craftingItem(VIGIL).canUse(sameEffect, suffixInhibitor));
+        assertTrue(craftingItem(VIGIL).canUse(sameEffect, prefixInhibitor));
     }
 
     @Test
     void anInhibitorIsSpentOnlyWhenItsSideHasSomethingToKeep() {
         Item withSuffix = withModifiers(rolled(ModifierSlot.PREFIX, "FLUX_CAPACITY_MULT", 5f), rolled(ModifierSlot.SUFFIX, "ARMOR_PERCENT", 5f));
 
-        assertEquals(Set.of(CraftingInhibitor.SUFFIX), ItemCrafting.inhibitorsSpentBy(currency(REVENANT), withSuffix, List.of(CraftingInhibitor.SUFFIX)));
-        assertEquals(Set.of(), ItemCrafting.inhibitorsSpentBy(currency(REVENANT), common(), List.of(CraftingInhibitor.SUFFIX)));
+        assertEquals(Set.of(CraftingInhibitor.SUFFIX), ItemCrafting.inhibitorsSpentBy(craftingItem(REVENANT), withSuffix, List.of(CraftingInhibitor.SUFFIX)));
+        assertEquals(Set.of(), ItemCrafting.inhibitorsSpentBy(craftingItem(REVENANT), common(), List.of(CraftingInhibitor.SUFFIX)));
     }
 
     @Test
-    void theCurrenciesNeverDropFromShipLootAndReserveTheirModifiers() {
-        assertFalse(currency(REVENANT).dropsFromShipLoot());
-        assertFalse(currency(REVENANT).growable());
+    void theCraftingItemsNeverDropFromShipLootAndReserveTheirModifiers() {
+        assertFalse(craftingItem(REVENANT).dropsFromShipLoot());
+        assertFalse(craftingItem(REVENANT).growable());
         assertTrue(ReservedModifiers.isReserved(GRANTED_PREFIX));
         assertEquals(VIGIL, ReservedModifiers.owner(GRANTED_SUFFIX));
     }
 
     @Test
-    void aCurrencyDropsOnlyFromItsMinimumTier() {
+    void aCraftingItemDropsOnlyFromItsMinimumTier() {
         for (long seed = 0; seed < 20; seed++) {
             assertEquals(REVENANT, Engrams.pick(1, new Random(seed)).itemId());
         }
@@ -326,9 +326,9 @@ class EngramTest {
     @Test
     void rowsWithAnUnknownModifierOrNoTakenItemTypeAreSkipped() throws Exception {
         List<String> problems = Engrams.register(new JSONArray()
-                .put(currencyRow("exiledSector_test_missing", "NOT_A_MODIFIER", "hull_item", 1))
-                .put(currencyRow("exiledSector_test_chart", GRANTED_PREFIX, "star_chart", 1))
-                .put(currencyRow(REVENANT, GRANTED_PREFIX, "hull_item", 1)));
+                .put(craftingItemRow("exiledSector_test_missing", "NOT_A_MODIFIER", "hull_item", 1))
+                .put(craftingItemRow("exiledSector_test_chart", GRANTED_PREFIX, "star_chart", 1))
+                .put(craftingItemRow(REVENANT, GRANTED_PREFIX, "hull_item", 1)));
 
         assertEquals(1, Engrams.all().size());
         assertNull(CraftingMaterialFamilies.byItemId("exiledSector_test_missing"));
@@ -343,8 +343,8 @@ class EngramTest {
                 .put(HullItemRows.modifierRow("ARMOR_PERCENT", "suffix", "ARMOR_PERCENT:6:9", "Plated")), ItemModifiers.dataPath());
         integrity.checkDefinitions(new JSONArray().put(HullItemRows.row("pooled", "bridge", "@" + GRANTED_PREFIX, "@ARMOR_PERCENT")),
                 "hull_items.csv", ItemType.HULL_ITEM);
-        Engrams.checkRows(integrity, new JSONArray().put(currencyRow(REVENANT, GRANTED_PREFIX, "hull_item", 1))
-                .put(currencyRow(VIGIL, "NOT_A_MODIFIER", "hull_item", 1)), Engrams.PATH);
+        Engrams.checkRows(integrity, new JSONArray().put(craftingItemRow(REVENANT, GRANTED_PREFIX, "hull_item", 1))
+                .put(craftingItemRow(VIGIL, "NOT_A_MODIFIER", "hull_item", 1)), Engrams.PATH);
 
         List<String> errors = integrity.finish().stream().filter(violation -> violation.severity() == ItemDataIntegrity.Severity.ERROR)
                 .map(ItemDataIntegrity.Violation::message).toList();
@@ -355,7 +355,7 @@ class EngramTest {
 
     @Test
     void theTooltipNamesTheModifierAndListsItsLines() {
-        Engram revenant = currency(REVENANT);
+        Engram revenant = craftingItem(REVENANT);
 
         assertEquals(1, revenant.grantedLines().size());
         assertTrue(revenant.grantedLines().get(0).plain().contains("15"));

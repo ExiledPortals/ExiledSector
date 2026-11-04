@@ -181,18 +181,18 @@ public final class HullUpgradePanel extends HoloPanel {
 
     private void openInstallConfirm(SchematicEntry entry) {
         RefitSchematic schematic = entry.schematic();
-        openCurrencyConfirm(schematic.displayName(), schematic.color(), Translation.msg("framework.confirm.body")
+        openCraftingItemConfirm(schematic.displayName(), schematic.color(), Translation.msg("framework.confirm.body")
                 .arg("left", entry.inStorage() - 1).arg("points", schematic.points()).arg("max", view.maxPoints()).text(), Control.CONFIRM_INSTALL);
         confirmingSchematic = schematic;
     }
 
     private void openMasterSchematicConfirm(MasterSchematicEntry entry) {
-        openCurrencyConfirm(MasterSchematic.INSTANCE.displayName(), MasterSchematic.COLOR,
+        openCraftingItemConfirm(MasterSchematic.INSTANCE.displayName(), MasterSchematic.COLOR,
                 Translation.msg("masterSchematic.confirm.body").arg("left", entry.inStorage() - 1).text(), Control.CONFIRM_MASTER_SCHEMATIC);
         confirmingSchematic = null;
     }
 
-    private void openCurrencyConfirm(String name, Color color, String body, Control confirmControl) {
+    private void openCraftingItemConfirm(String name, Color color, String body, Control confirmControl) {
         openConfirm(CONFIRM_HEIGHT, element -> {
             VanillaText.plainPara(element, Translation.msg("framework.confirm.title").arg("name", name).text(), 0f, color);
             VanillaText.plainPara(element, body, LINE_PAD * 2f, Misc.getTextColor());
@@ -275,10 +275,10 @@ public final class HullUpgradePanel extends HoloPanel {
         RefitSchematic schematic = entry.schematic();
         IconTileCell.Hooks hooks = new IconTileCell.Hooks(() -> queue(() -> openInstallConfirm(entry)),
                 tilePosition -> queue(() -> showSchematicTooltip(entry, tilePosition)), () -> queue(() -> hideTooltipOf(entry)));
-        return currencyCell(schematic.iconPath(), schematic.color(), entry.block() != null, entry.inStorage(), cellWidth, tileSize, hooks);
+        return craftingItemCell(schematic.iconPath(), schematic.color(), entry.block() != null, entry.inStorage(), cellWidth, tileSize, hooks);
     }
 
-    private CustomPanelAPI currencyCell(String iconPath, Color color, boolean blocked, int inStorage, float cellWidth, float tileSize,
+    private CustomPanelAPI craftingItemCell(String iconPath, Color color, boolean blocked, int inStorage, float cellWidth, float tileSize,
                                         IconTileCell.Hooks hooks) {
         CustomPanelAPI cellPanel = Global.getSettings().createCustom(cellWidth, tileSize + STATE_HEIGHT, null);
         cellPanel.addComponent(Global.getSettings().createCustom(tileSize, tileSize, new IconTileCell(iconPath, color, blocked, hooks)))
@@ -296,7 +296,7 @@ public final class HullUpgradePanel extends HoloPanel {
         CustomPanelAPI rowPanel = Global.getSettings().createCustom(gridWidth, tileSize + STATE_HEIGHT, null);
         IconTileCell.Hooks hooks = new IconTileCell.Hooks(() -> queue(() -> openMasterSchematicConfirm(entry)),
                 tilePosition -> queue(() -> showMasterSchematicTooltip(entry, tilePosition)), () -> queue(() -> hideTooltipOf(entry)));
-        rowPanel.addComponent(currencyCell(MasterSchematic.ICON_PATH, MasterSchematic.COLOR, entry.block() != null, entry.inStorage(), cellWidth,
+        rowPanel.addComponent(craftingItemCell(MasterSchematic.ICON_PATH, MasterSchematic.COLOR, entry.block() != null, entry.inStorage(), cellWidth,
                 tileSize, hooks)).inTL(0f, 0f);
         float textLeft = cellWidth + GAP * 2f;
         TooltipMakerAPI textElement = rowPanel.createUIElement(gridWidth - textLeft, tileSize, false);

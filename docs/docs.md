@@ -745,7 +745,7 @@ the boss's fleet: the whole boss, or the station's guard. The boss counts as kil
 the flagship or station it spawned with, whatever removed it (`ChartRun.bossFlagshipId`, `ChartObjectives.reconcile`).
 The first battle that damages the boss adds one basic hull item unless its loot already held one, once per run
 (`ChartFleetLoot.withBossGuarantees`). The boss's chest (`exiledSector_chart_boss` in `item_salvage.csv`) holds items
-and parts but no crafting currencies or basic hull items. The completion reward's credits go straight to the player, and its items and
+and parts but no crafting items or basic hull items. The completion reward's credits go straight to the player, and its items and
 charts join the loot of the battle that kills the flagship (`ChartRewardLootSource`); a boss killed outside a player
 battle puts them in the cargo instead.
 

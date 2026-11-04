@@ -110,26 +110,26 @@ public interface BenchModeSupport {
 
     PickerSession pickerSession();
 
-    List<CraftingMaterialFamily> currencies();
+    List<CraftingMaterialFamily> craftingItems();
 
-    String currencyDescriptionKey(CraftingMaterialFamily currency);
+    String craftingItemDescriptionKey(CraftingMaterialFamily craftingItem);
 
-    default String currencyDescription(CraftingMaterialFamily currency) {
-        return Translation.text(currencyDescriptionKey(currency));
+    default String craftingItemDescription(CraftingMaterialFamily craftingItem) {
+        return Translation.text(craftingItemDescriptionKey(craftingItem));
     }
 
-    default List<StyledText> currencyLines(CraftingMaterialFamily currency) {
+    default List<StyledText> craftingItemLines(CraftingMaterialFamily craftingItem) {
         return List.of();
     }
 
-    default boolean inOrbit(CraftingMaterialFamily currency) {
+    default boolean inOrbit(CraftingMaterialFamily craftingItem) {
         return true;
     }
 
-    Refusal refusal(CraftingMaterialFamily currency, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
+    Refusal refusal(CraftingMaterialFamily craftingItem, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
                     Set<CraftingInhibitor> inhibitors);
 
-    Use use(CraftingMaterialFamily currency, Item loaded, ItemStore store, CraftingMaterials materials, Random random,
+    Use use(CraftingMaterialFamily craftingItem, Item loaded, ItemStore store, CraftingMaterials materials, Random random,
             Predicate<ItemDefinition> allowedUniques, Set<CraftingInhibitor> inhibitors, String nameBefore);
 
     UseVerdict cannotUse();

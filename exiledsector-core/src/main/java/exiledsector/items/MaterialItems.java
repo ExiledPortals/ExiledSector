@@ -23,8 +23,8 @@ public final class MaterialItems {
     public static List<String> ids() {
         List<String> itemIds = new ArrayList<>();
         itemIds.add(ItemDisassembly.FEEDSTOCK_ITEM_ID);
-        for (CraftingMaterialFamily currency : CraftingMaterialFamilies.all()) {
-            itemIds.add(currency.itemId());
+        for (CraftingMaterialFamily craftingItem : CraftingMaterialFamilies.all()) {
+            itemIds.add(craftingItem.itemId());
         }
         for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
             itemIds.add(inhibitor.itemId());
@@ -37,18 +37,18 @@ public final class MaterialItems {
     }
 
     public static MaterialTier tier(String itemId) {
-        CraftingMaterialFamily currency = CraftingMaterialFamilies.byItemId(itemId);
-        if (currency != null) {
-            return currency.tier();
+        CraftingMaterialFamily craftingItem = CraftingMaterialFamilies.byItemId(itemId);
+        if (craftingItem != null) {
+            return craftingItem.tier();
         }
         CraftingInhibitor inhibitor = CraftingInhibitor.byItemId(itemId);
         return inhibitor == null ? MaterialTier.BASIC : inhibitor.tier();
     }
 
     public static Color color(String itemId) {
-        CraftingMaterialFamily currency = CraftingMaterialFamilies.byItemId(itemId);
-        if (currency != null) {
-            return currency.color();
+        CraftingMaterialFamily craftingItem = CraftingMaterialFamilies.byItemId(itemId);
+        if (craftingItem != null) {
+            return craftingItem.color();
         }
         CraftingInhibitor inhibitor = CraftingInhibitor.byItemId(itemId);
         return inhibitor == null ? FEEDSTOCK_COLOR : inhibitor.color();

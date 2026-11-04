@@ -60,7 +60,7 @@ class ChartDropsTest {
     private static final String RUN_ID = "dropRun";
     private static final String GATED = StarChartFixtures.TEST_GATED;
     private static final String UNGATED = StarChartFixtures.TEST_FIXED;
-    private static final Set<String> CHART_CURRENCY_IDS = Set.of(StarChartCipher.REFORGE.itemId(), StarChartCipher.ERASURE.itemId(),
+    private static final Set<String> CHART_CRAFTING_ITEM_IDS = Set.of(StarChartCipher.REFORGE.itemId(), StarChartCipher.ERASURE.itemId(),
             StarChartCipher.CARTOGRAPHY.itemId());
 
     private MockSector mockSector;
@@ -91,14 +91,14 @@ class ChartDropsTest {
         mockSector.close();
         ChartDrops.clear();
         AtlasCatalysts.resetForTests();
-        StarChartFixtures.unregisterCurrencies();
+        StarChartFixtures.unregisterCraftingItems();
         StarChartFixtures.clear();
     }
 
-    private static JSONObject rule(String source, float chance, float extraChance, float tierUpChance, float currencyChance) throws Exception {
+    private static JSONObject rule(String source, float chance, float extraChance, float tierUpChance, float craftingItemChance) throws Exception {
         return new JSONObject().put("source", source).put("chance", String.valueOf(chance)).put("extra_chance", String.valueOf(extraChance))
                 .put("same_tier", String.valueOf(1f - tierUpChance)).put("plus_1", String.valueOf(tierUpChance))
-                .put("currency_chance", String.valueOf(currencyChance));
+                .put("crafting_item_chance", String.valueOf(craftingItemChance));
     }
 
     private static int tierOf(ItemData chart) {
@@ -106,14 +106,14 @@ class ChartDropsTest {
     }
 
     @Test
-    void theShippedTableCoversEverySourceAndKeepsChartCurrenciesInsideSystems() throws Exception {
+    void theShippedTableCoversEverySourceAndKeepsChartCraftingItemsInsideSystems() throws Exception {
         ChartDrops.register(ChartTables.csvRows(ChartDrops.PATH));
 
         for (ChartDrops.Source source : ChartDrops.Source.values()) {
             ChartDrops.Rule rule = ChartDrops.rule(source);
             assertNotNull(rule, source.id());
             assertTrue(rule.chance() > 0f, source.id());
-            assertTrue(source.insideSystem() || rule.currencyChance() == 0f, source.id());
+            assertTrue(source.insideSystem() || rule.craftingItemChance() == 0f, source.id());
             assertEquals(source.insideSystem(), rule.catalystChance() > 0f, source.id());
             if (!source.insideSystem()) {
                 assertTrue(rule.maxTier() <= 6, source.id() + " must leave the high tiers to the sustain loop");
@@ -121,7 +121,7 @@ class ChartDropsTest {
             }
         }
         assertEquals(1f, ChartDrops.rule(ChartDrops.Source.RUN_REWARD).chance());
-        assertEquals(0f, ChartDrops.rule(ChartDrops.Source.CHART_FLEET).currencyChance(), "chart fleets drop currencies per deployment point");
+        assertEquals(0f, ChartDrops.rule(ChartDrops.Source.CHART_FLEET).craftingItemChance(), "chart fleets drop crafting items per deployment point");
     }
 
     @Test
@@ -149,13 +149,13 @@ class ChartDropsTest {
     }
 
     @Test
-    void aCurrencyChanceOutsideASystemIsIgnored() throws Exception {
+    void aCraftingItemChanceOutsideASystemIsIgnored() throws Exception {
         ChartDrops.register(new JSONArray().put(rule("battle", 1f, 0f, 0f, 1f)).put(rule("nowhere", 1f, 0f, 0f, 0f)));
 
-        assertEquals(0f, ChartDrops.rule(ChartDrops.Source.BATTLE).currencyChance());
+        assertEquals(0f, ChartDrops.rule(ChartDrops.Source.BATTLE).craftingItemChance());
         assertFalse(ChartDrops.hasRule(ChartDrops.Source.SALVAGE));
         for (int roll = 0; roll < 200; roll++) {
-            assertTrue(ChartDrops.roll(ChartDrops.Source.BATTLE, 3, 1f, new Random(roll)).currencies().isEmpty());
+            assertTrue(ChartDrops.roll(ChartDrops.Source.BATTLE, 3, 1f, new Random(roll)).craftingItems().isEmpty());
         }
     }
 
@@ -253,13 +253,13 @@ class ChartDropsTest {
     }
 
     @Test
-    void onlySystemsourcesDropChartCurrencies() throws Exception {
+    void onlySystemsourcesDropChartCraftingItems() throws Exception {
         ChartDrops.register(new JSONArray().put(rule("system_salvage", 0f, 0f, 0f, 10f)).put(rule("salvage", 1f, 0f, 0f, 0f)));
 
         ChartDrops.Loot systemLoot = ChartDrops.roll(ChartDrops.Source.SYSTEM_SALVAGE, 4, 1f, new Random(2L));
         assertTrue(systemLoot.charts().isEmpty());
-        assertEquals(CHART_CURRENCY_IDS, systemLoot.currencies().keySet());
-        assertTrue(ChartDrops.roll(ChartDrops.Source.SALVAGE, 4, 1f, new Random(2L)).currencies().isEmpty());
+        assertEquals(CHART_CRAFTING_ITEM_IDS, systemLoot.craftingItems().keySet());
+        assertTrue(ChartDrops.roll(ChartDrops.Source.SALVAGE, 4, 1f, new Random(2L)).craftingItems().isEmpty());
     }
 
     @Test
@@ -396,13 +396,13 @@ class ChartDropsTest {
         storeRun(9);
         ChartDrops.Loot salvage = ChartDrops.forSalvage(sector, system, new Random(1L));
         assertEquals(9, tierOf(salvage.charts().get(0)));
-        assertEquals(CHART_CURRENCY_IDS, salvage.currencies().keySet());
+        assertEquals(CHART_CRAFTING_ITEM_IDS, salvage.craftingItems().keySet());
         assertTrue(ChartDrops.forBattle(system, 400f, 30, new Random(1L)).isEmpty());
         assertTrue(ChartDrops.forSalvage(sector, system("otherRun"), new Random(1L)).isEmpty());
 
         LocationAPI outside = mock(LocationAPI.class);
         assertEquals(1, tierOf(ChartDrops.forSalvage(sector, outside, new Random(1L)).charts().get(0)));
-        assertTrue(ChartDrops.forSalvage(sector, outside, new Random(1L)).currencies().isEmpty());
+        assertTrue(ChartDrops.forSalvage(sector, outside, new Random(1L)).craftingItems().isEmpty());
     }
 
     @Test
@@ -427,7 +427,7 @@ class ChartDropsTest {
         List<ItemData> charts = reward.loot().items().stream().filter(item -> ItemData.STAR_CHART_ITEM_ID.equals(item.toSpecialItem().getId())).toList();
         assertEquals(1, charts.size());
         assertEquals(4, charts.get(0).preview().tier());
-        assertTrue(reward.loot().materials().keySet().stream().anyMatch(CHART_CURRENCY_IDS::contains));
+        assertTrue(reward.loot().materials().keySet().stream().anyMatch(CHART_CRAFTING_ITEM_IDS::contains));
         verify(cargo, never()).addSpecial(any(SpecialItemData.class), anyFloat());
         assertNull(ChartRewards.grant(sector, run));
     }

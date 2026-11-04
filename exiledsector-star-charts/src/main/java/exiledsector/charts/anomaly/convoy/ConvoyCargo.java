@@ -41,7 +41,7 @@ final class ConvoyCargo {
             keys.add(CATEGORY_KEY_PREFIX + "items");
         }
         if (ChartDrops.hasRule(ChartDrops.Source.SYSTEM_SALVAGE)) {
-            keys.add(CATEGORY_KEY_PREFIX + "currency");
+            keys.add(CATEGORY_KEY_PREFIX + "craftingItem");
             keys.add(CATEGORY_KEY_PREFIX + "star_chart");
         }
         return keys;

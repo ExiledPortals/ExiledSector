@@ -72,7 +72,7 @@ public final class Subroutine extends Item implements NodeSocketable {
         }
 
         @Override
-        public boolean lockedFromCurrency(ItemDefinition definition) {
+        public boolean lockedFromCraftingItem(ItemDefinition definition) {
             return SubroutineKind.isUnique(definition);
         }
 

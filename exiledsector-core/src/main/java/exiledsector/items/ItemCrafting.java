@@ -36,26 +36,26 @@ public final class ItemCrafting {
         return true;
     }
 
-    public static boolean canUse(CraftingMaterialFamily currency, Item item, Predicate<ItemDefinition> allowedUniques) {
-        return canUse(currency, item, allowedUniques, Set.of());
+    public static boolean canUse(CraftingMaterialFamily craftingItem, Item item, Predicate<ItemDefinition> allowedUniques) {
+        return canUse(craftingItem, item, allowedUniques, Set.of());
     }
 
-    public static boolean canUse(CraftingMaterialFamily currency, Item item, Predicate<ItemDefinition> allowedUniques,
+    public static boolean canUse(CraftingMaterialFamily craftingItem, Item item, Predicate<ItemDefinition> allowedUniques,
                                  Collection<CraftingInhibitor> inhibitors) {
         ItemDefinition definition = item == null ? null : item.definition();
-        if (definition == null || !ItemTypes.takesCurrency(definition.type()) || item.mirrored() || item.corrupted() || isLockedFromCurrency(definition)
-                || !CraftingMaterialFamilies.appliesTo(currency, definition.type())) {
+        if (definition == null || !ItemTypes.takesCraftingItem(definition.type()) || item.mirrored() || item.corrupted() || isLockedFromCraftingItem(definition)
+                || !CraftingMaterialFamilies.appliesTo(craftingItem, definition.type())) {
             return false;
         }
-        return currency.canUse(item, new CraftingContext(null, allowedUniques, CraftingInhibitor.inhibitedSlots(inhibitors)));
+        return craftingItem.canUse(item, new CraftingContext(null, allowedUniques, CraftingInhibitor.inhibitedSlots(inhibitors)));
     }
 
-    public static UseVerdict verdict(CraftingMaterialFamily currency, Item item, Predicate<ItemDefinition> allowedUniques, Collection<CraftingInhibitor> inhibitors) {
-        if (canUse(currency, item, allowedUniques, inhibitors)) {
+    public static UseVerdict verdict(CraftingMaterialFamily craftingItem, Item item, Predicate<ItemDefinition> allowedUniques, Collection<CraftingInhibitor> inhibitors) {
+        if (canUse(craftingItem, item, allowedUniques, inhibitors)) {
             return UseVerdict.ALLOW;
         }
-        if (canUse(currency, item, allowedUniques)) {
-            return UseVerdict.refused(currency == Nanoswarm.METAMORPH
+        if (canUse(craftingItem, item, allowedUniques)) {
+            return UseVerdict.refused(craftingItem == Nanoswarm.METAMORPH
                     ? "ui.craftingBench.notice.inhibitorBlocksMetamorph" : "ui.craftingBench.notice.inhibitorBlocks");
         }
         if (item == null) {
@@ -68,36 +68,36 @@ public final class ItemCrafting {
         if (item.corrupted()) {
             return UseVerdict.refused("ui.craftingBench.notice.corruptedItem");
         }
-        if (isLockedFromCurrency(definition)) {
+        if (isLockedFromCraftingItem(definition)) {
             return UseVerdict.refused("ui.craftingBench.notice.uniqueSubroutine");
         }
-        if (currency == Nanoswarm.IMMUTABLE && item.hasImmutableModifier()) {
+        if (craftingItem == Nanoswarm.IMMUTABLE && item.hasImmutableModifier()) {
             return UseVerdict.refused("ui.craftingBench.notice.alreadyImmutable");
         }
-        if (currency == Nanoswarm.METAMORPH && definition != null && definition.unique()) {
+        if (craftingItem == Nanoswarm.METAMORPH && definition != null && definition.unique()) {
             return UseVerdict.refused("ui.craftingBench.notice.noOtherUnique");
         }
-        String refusalKey = currency.refusalNoticeKey(item);
+        String refusalKey = craftingItem.refusalNoticeKey(item);
         return UseVerdict.refused(refusalKey != null ? refusalKey : "ui.craftingBench.notice.cannotUse");
     }
 
-    public static boolean isLockedFromCurrency(ItemDefinition definition) {
-        return definition != null && ItemTypes.lockedFromCurrency(definition);
+    public static boolean isLockedFromCraftingItem(ItemDefinition definition) {
+        return definition != null && ItemTypes.lockedFromCraftingItem(definition);
     }
 
     public static boolean inhibitorBlocksMetamorph(Item item, Set<ModifierSlot> inhibited) {
         return item != null && item.explicits().stream().anyMatch(rolled -> inhibited.contains(rolled.slot()));
     }
 
-    public static Set<CraftingInhibitor> inhibitorsSpentBy(CraftingMaterialFamily currency, Item item, Collection<CraftingInhibitor> inhibitors) {
+    public static Set<CraftingInhibitor> inhibitorsSpentBy(CraftingMaterialFamily craftingItem, Item item, Collection<CraftingInhibitor> inhibitors) {
         Set<CraftingInhibitor> spent = EnumSet.noneOf(CraftingInhibitor.class);
         ItemDefinition definition = item == null ? null : item.definition();
-        if (definition == null || !currency.respectsInhibitors()) {
+        if (definition == null || !craftingItem.respectsInhibitors()) {
             return spent;
         }
         for (CraftingInhibitor inhibitor : inhibitors) {
             if (item.explicits().stream().anyMatch(rolled -> rolled.slot() == inhibitor.inhibitedSlot()
-                    && !rolled.immutable() && currency.wouldChange(item, rolled))) {
+                    && !rolled.immutable() && craftingItem.wouldChange(item, rolled))) {
                 spent.add(inhibitor);
             }
         }
@@ -110,32 +110,32 @@ public final class ItemCrafting {
                 .anyMatch(line -> line != null && line.canVary());
     }
 
-    public static Item use(CraftingMaterialFamily currency, Item item, CraftingMaterials materials, ItemStore store, Random random,
+    public static Item use(CraftingMaterialFamily craftingItem, Item item, CraftingMaterials materials, ItemStore store, Random random,
                                  Predicate<ItemDefinition> allowedUniques) {
-        return use(currency, item, materials, store, random, allowedUniques, Set.of());
+        return use(craftingItem, item, materials, store, random, allowedUniques, Set.of());
     }
 
-    public static Item use(CraftingMaterialFamily currency, Item item, CraftingMaterials materials, ItemStore store, Random random,
+    public static Item use(CraftingMaterialFamily craftingItem, Item item, CraftingMaterials materials, ItemStore store, Random random,
                            Predicate<ItemDefinition> allowedUniques, Collection<CraftingInhibitor> inhibitors) {
-        return Consumables.use(new CurrencyUse(currency, store, random, allowedUniques, inhibitors), item, materials);
+        return Consumables.use(new CraftingItemUse(craftingItem, store, random, allowedUniques, inhibitors), item, materials);
     }
 
-    private record CurrencyUse(CraftingMaterialFamily currency, ItemStore store, Random random, Predicate<ItemDefinition> allowedUniques,
+    private record CraftingItemUse(CraftingMaterialFamily craftingItem, ItemStore store, Random random, Predicate<ItemDefinition> allowedUniques,
                                Collection<CraftingInhibitor> inhibitors) implements Consumable<Item, Item> {
 
         @Override
         public String itemId() {
-            return currency.itemId();
+            return craftingItem.itemId();
         }
 
         @Override
         public UseVerdict check(Item item) {
-            return verdict(currency, item, allowedUniques, inhibitors);
+            return verdict(craftingItem, item, allowedUniques, inhibitors);
         }
 
         @Override
         public Item apply(Item item) {
-            return currency.use(item, new CraftingContext(store, allowedUniques, CraftingInhibitor.inhibitedSlots(inhibitors)), random);
+            return craftingItem.use(item, new CraftingContext(store, allowedUniques, CraftingInhibitor.inhibitedSlots(inhibitors)), random);
         }
 
         @Override
@@ -145,7 +145,7 @@ public final class ItemCrafting {
 
         @Override
         public Collection<String> spentAlongside(Item item) {
-            return inhibitorsSpentBy(currency, item, inhibitors).stream().map(CraftingInhibitor::itemId).toList();
+            return inhibitorsSpentBy(craftingItem, item, inhibitors).stream().map(CraftingInhibitor::itemId).toList();
         }
     }
 
@@ -526,7 +526,7 @@ public final class ItemCrafting {
     private static boolean otherUnique(ItemDefinition definition, ItemDefinition currentDefinition, int tier,
                                        Predicate<ItemDefinition> allowedUniques) {
         boolean tierAllowed = ItemTypes.rollsAtTier(definition, tier);
-        return definition.unique() && definition.type() == currentDefinition.type() && !isLockedFromCurrency(definition)
+        return definition.unique() && definition.type() == currentDefinition.type() && !isLockedFromCraftingItem(definition)
                 && !definition.id().equals(currentDefinition.id()) && definition.rarity() > 0f && tierAllowed && allowedUniques.test(definition);
     }
 }

@@ -130,15 +130,15 @@ class SubroutineCreationRollsTest {
     }
 
     @Test
-    void aBornCorruptedSubroutineRefusesEveryCurrencyThatAnUncorruptedOneTakes() {
+    void aBornCorruptedSubroutineRefusesEveryCraftingItemThatAnUncorruptedOneTakes() {
         Item doctrine = stored(DOCTRINE, 3L);
         assertTrue(ItemCrafting.canUse(Nanoswarm.CORRUPTION, doctrine, definition -> true));
         assertTrue(ItemCrafting.canUse(Nanoswarm.REPLICATION, doctrine, definition -> true));
 
         for (String definitionId : List.of(VOLUME, BYPASS)) {
             Item bornCorrupted = stored(definitionId, 3L);
-            for (Nanoswarm currency : Nanoswarm.values()) {
-                assertFalse(ItemCrafting.canUse(currency, bornCorrupted, definition -> true), currency + " on " + definitionId);
+            for (Nanoswarm craftingItem : Nanoswarm.values()) {
+                assertFalse(ItemCrafting.canUse(craftingItem, bornCorrupted, definition -> true), craftingItem + " on " + definitionId);
             }
         }
     }

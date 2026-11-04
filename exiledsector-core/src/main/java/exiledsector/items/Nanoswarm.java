@@ -183,9 +183,9 @@ public enum Nanoswarm implements CraftingMaterialFamily {
     }
 
     public static Nanoswarm byItemId(String itemId) {
-        for (Nanoswarm currency : values()) {
-            if (currency.itemId.equals(itemId)) {
-                return currency;
+        for (Nanoswarm craftingItem : values()) {
+            if (craftingItem.itemId.equals(itemId)) {
+                return craftingItem;
             }
         }
         return null;

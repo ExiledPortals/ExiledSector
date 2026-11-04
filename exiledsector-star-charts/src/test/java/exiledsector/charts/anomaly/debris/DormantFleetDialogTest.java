@@ -108,21 +108,21 @@ class DormantFleetDialogTest {
         CampaignFleetAPI plain = debrisFleet(false);
         Random random = new Random(2L);
 
-        ItemDrops.SiteLoot first = DormantFleetLoot.currencyFor(corrupted, 3, ChartGenContext.none(), random);
+        ItemDrops.SiteLoot first = DormantFleetLoot.craftingItemFor(corrupted, 3, ChartGenContext.none(), random);
         assertEquals(Map.of(ENGRAM, 1), first.materials());
-        assertTrue(DormantFleetLoot.currencyFor(corrupted, 3, ChartGenContext.none(), random).materials().isEmpty());
-        assertTrue(DormantFleetLoot.currencyFor(plain, 3, ChartGenContext.none(), random).materials().isEmpty());
+        assertTrue(DormantFleetLoot.craftingItemFor(corrupted, 3, ChartGenContext.none(), random).materials().isEmpty());
+        assertTrue(DormantFleetLoot.craftingItemFor(plain, 3, ChartGenContext.none(), random).materials().isEmpty());
     }
 
     @Test
     void theQuantityLineRaisesTheEngramsDropped() {
         Random random = new Random(4L);
-        assertEquals(2, DebrisRules.currencyCount(2f, random));
+        assertEquals(2, DebrisRules.craftingItemCount(2f, random));
         int total = 0;
         for (int draw = 0; draw < 1000; draw++) {
-            total += DebrisRules.currencyCount(1.5f, random);
+            total += DebrisRules.craftingItemCount(1.5f, random);
         }
         assertTrue(total > 1400 && total < 1600, String.valueOf(total));
-        assertEquals(1, DebrisRules.currencyCount(1f, random));
+        assertEquals(1, DebrisRules.craftingItemCount(1f, random));
     }
 }

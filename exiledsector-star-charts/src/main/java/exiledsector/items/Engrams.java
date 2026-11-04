@@ -42,22 +42,22 @@ public final class Engrams {
         CsvRows csv = new CsvRows(PATH);
         List<Engram> registered = new ArrayList<>();
         CsvRows.forEachIdRow(rows, ID_COLUMN, (id, row) -> {
-            Engram currency = parse(csv, row, id);
-            if (currency == null) {
+            Engram craftingItem = parse(csv, row, id);
+            if (craftingItem == null) {
                 return;
             }
             try {
-                CraftingMaterialFamilies.register(currency);
-                ReservedModifiers.reserve(currency.modifierId(), currency.itemId());
-                registered.add(currency);
+                CraftingMaterialFamilies.register(craftingItem);
+                ReservedModifiers.reserve(craftingItem.modifierId(), craftingItem.itemId());
+                registered.add(craftingItem);
             } catch (IllegalArgumentException e) {
-                CraftingMaterialFamilies.unregister(currency);
+                CraftingMaterialFamilies.unregister(craftingItem);
                 csv.skipRow(id, e.getMessage());
             }
         });
         loaded = List.copyOf(registered);
         csv.report(LOG);
-        LOG.info("[ExiledSector] Corrupted dormant fleets can drop " + registered.size() + " currency item(s)");
+        LOG.info("[ExiledSector] Corrupted dormant fleets can drop " + registered.size() + " crafting item(s)");
         return csv.problems();
     }
 
@@ -86,9 +86,9 @@ public final class Engrams {
     }
 
     public static void unregisterAll() {
-        for (Engram currency : loaded) {
-            CraftingMaterialFamilies.unregister(currency);
-            ReservedModifiers.release(currency.itemId());
+        for (Engram craftingItem : loaded) {
+            CraftingMaterialFamilies.unregister(craftingItem);
+            ReservedModifiers.release(craftingItem.itemId());
         }
         loaded = List.of();
     }
@@ -98,17 +98,17 @@ public final class Engrams {
     }
 
     public static Engram pick(int tier, Random random) {
-        List<Engram> dropping = loaded.stream().filter(currency -> currency.dropsAt(tier)).toList();
+        List<Engram> dropping = loaded.stream().filter(craftingItem -> craftingItem.dropsAt(tier)).toList();
         return dropping.isEmpty() ? null : WeightedPick.pick(dropping, Engram::dropWeight, random);
     }
 
     public static void localise() {
-        for (Engram currency : loaded) {
-            SpecialItemSpecAPI spec = MaterialItems.spec(currency.itemId());
+        for (Engram craftingItem : loaded) {
+            SpecialItemSpecAPI spec = MaterialItems.spec(craftingItem.itemId());
             if (spec != null) {
-                String englishName = currency.englishName().isEmpty() ? spec.getName() : currency.englishName();
-                spec.setName(Translation.data("material." + currency.itemId() + ".name", englishName));
-                spec.setDesc(currency.description());
+                String englishName = craftingItem.englishName().isEmpty() ? spec.getName() : craftingItem.englishName();
+                spec.setName(Translation.data("material." + craftingItem.itemId() + ".name", englishName));
+                spec.setDesc(craftingItem.description());
             }
         }
     }
@@ -120,17 +120,17 @@ public final class Engrams {
     static void checkRows(ItemDataIntegrity integrity, JSONArray rows, String file) throws JSONException {
         ModCsv.forEach(rows, (index, row) -> {
             int line = index + ItemDataIntegrity.FIRST_DATA_LINE;
-            String currencyId = ModCsv.text(row, ID_COLUMN);
-            if (currencyId.isEmpty()) {
+            String craftingItemId = ModCsv.text(row, ID_COLUMN);
+            if (craftingItemId.isEmpty()) {
                 integrity.error(file, line, "the row has no id");
                 return;
             }
             Set<ModifierScope> scopes = takenScopes(row,
-                    entry -> integrity.error(file, line, currencyId + " lists item type \"" + entry + "\"; expected hull_item or subroutine"));
+                    entry -> integrity.error(file, line, craftingItemId + " lists item type \"" + entry + "\"; expected hull_item or subroutine"));
             if (scopes.isEmpty()) {
-                integrity.error(file, line, currencyId + " needs at least one item type in item_types");
+                integrity.error(file, line, craftingItemId + " needs at least one item type in item_types");
             }
-            integrity.checkReservedModifier(file, line, currencyId, ModCsv.text(row, "modifier"), scopes);
+            integrity.checkReservedModifier(file, line, craftingItemId, ModCsv.text(row, "modifier"), scopes);
         });
     }
 

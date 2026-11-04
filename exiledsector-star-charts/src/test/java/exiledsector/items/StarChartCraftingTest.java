@@ -28,7 +28,7 @@ class StarChartCraftingTest {
     private static final String SURVEY_ID = "exiledSector_test_chart_survey";
     private static final String COPY_ID = "exiledSector_test_chart_copy";
 
-    private record TestChartCurrency(String itemId, String key, boolean copies) implements CraftingMaterialFamily {
+    private record TestChartCraftingItem(String itemId, String key, boolean copies) implements CraftingMaterialFamily {
 
         @Override
         public float dropWeight() {
@@ -76,8 +76,8 @@ class StarChartCraftingTest {
         }
     }
 
-    private final CraftingMaterialFamily survey = new TestChartCurrency(SURVEY_ID, "testChartSurvey", false);
-    private final CraftingMaterialFamily copier = new TestChartCurrency(COPY_ID, "testChartCopy", true);
+    private final CraftingMaterialFamily survey = new TestChartCraftingItem(SURVEY_ID, "testChartSurvey", false);
+    private final CraftingMaterialFamily copier = new TestChartCraftingItem(COPY_ID, "testChartCopy", true);
     private final CargoAPI cargo = mock(CargoAPI.class);
     private final ItemStore store = ItemStore.forStarCharts();
     private Item chart;
@@ -90,7 +90,7 @@ class StarChartCraftingTest {
 
     @AfterEach
     void tearDown() {
-        StarChartFixtures.unregisterCurrencies();
+        StarChartFixtures.unregisterCraftingItems();
         CraftingMaterialFamilies.unregister(survey);
         CraftingMaterialFamilies.unregister(copier);
         StarChartFixtures.clear();
@@ -101,28 +101,28 @@ class StarChartCraftingTest {
     }
 
     @Test
-    void theChartCurrenciesAndTheExtendedKernelsJoinTheRowOnlyOnceRegistered() {
-        assertEquals(List.of(), StarChartCrafting.currencies());
-        for (Nanoswarm currency : Nanoswarm.values()) {
-            assertEquals(StarChartCrafting.CANNOT_USE, refusalWithOne(currency));
+    void theChartCraftingItemsAndTheExtendedKernelsJoinTheRowOnlyOnceRegistered() {
+        assertEquals(List.of(), StarChartCrafting.craftingItems());
+        for (Nanoswarm craftingItem : Nanoswarm.values()) {
+            assertEquals(StarChartCrafting.CANNOT_USE, refusalWithOne(craftingItem));
         }
 
         StarChartCipher.registerAll();
 
         assertEquals(List.of(Nanoswarm.AUGMENTATION, Nanoswarm.CORRUPTION, Nanoswarm.ANNULMENT, Nanoswarm.TUNING,
-                StarChartCipher.REFORGE, StarChartCipher.ERASURE, StarChartCipher.CARTOGRAPHY), StarChartCrafting.currencies());
-        for (CraftingMaterialFamily currency : List.of(Nanoswarm.AUGMENTATION, Nanoswarm.TUNING, Nanoswarm.CORRUPTION, Nanoswarm.ANNULMENT,
+                StarChartCipher.REFORGE, StarChartCipher.ERASURE, StarChartCipher.CARTOGRAPHY), StarChartCrafting.craftingItems());
+        for (CraftingMaterialFamily craftingItem : List.of(Nanoswarm.AUGMENTATION, Nanoswarm.TUNING, Nanoswarm.CORRUPTION, Nanoswarm.ANNULMENT,
                 StarChartCipher.REFORGE, StarChartCipher.ERASURE, StarChartCipher.CARTOGRAPHY)) {
-            assertEquals(UseVerdict.ALLOW, refusalWithOne(currency), currency.key());
+            assertEquals(UseVerdict.ALLOW, refusalWithOne(craftingItem), craftingItem.key());
         }
-        for (Nanoswarm currency : List.of(Nanoswarm.FUNDAMENTAL, Nanoswarm.RESHAPING, Nanoswarm.IMMUTABLE,
+        for (Nanoswarm craftingItem : List.of(Nanoswarm.FUNDAMENTAL, Nanoswarm.RESHAPING, Nanoswarm.IMMUTABLE,
                 Nanoswarm.REPLICATION, Nanoswarm.METAMORPH)) {
-            assertEquals(StarChartCrafting.CANNOT_USE, refusalWithOne(currency), currency.key());
+            assertEquals(StarChartCrafting.CANNOT_USE, refusalWithOne(craftingItem), craftingItem.key());
         }
     }
 
     @Test
-    void eachChartCurrencyExplainsWhyItCannotBeUsed() {
+    void eachChartCraftingItemExplainsWhyItCannotBeUsed() {
         StarChartCipher.registerAll();
         CraftingMaterials materials = CraftingMaterials.cargoOnly(cargo);
         when(cargo.getQuantity(eq(CargoAPI.CargoItemType.SPECIAL), any())).thenReturn(100f);
@@ -145,7 +145,7 @@ class StarChartCraftingTest {
     }
 
     @Test
-    void aChartCurrencyKeepsTheChartSelected() {
+    void aChartCraftingItemKeepsTheChartSelected() {
         StarChartCipher.registerAll();
         CraftingMaterials materials = CraftingMaterials.cargoOnly(cargo);
         owns(StarChartCipher.CARTOGRAPHY.itemId(), 1f);
@@ -157,18 +157,18 @@ class StarChartCraftingTest {
         assertEquals(7, chart.tier());
     }
 
-    private UseVerdict refusalWithOne(CraftingMaterialFamily currency) {
-        owns(currency.itemId(), 1f);
-        return StarChartCrafting.refusal(currency, chart, store, CraftingMaterials.cargoOnly(cargo), definition -> true);
+    private UseVerdict refusalWithOne(CraftingMaterialFamily craftingItem) {
+        owns(craftingItem.itemId(), 1f);
+        return StarChartCrafting.refusal(craftingItem, chart, store, CraftingMaterials.cargoOnly(cargo), definition -> true);
     }
 
     @Test
-    void aRegisteredChartCurrencyJoinsTheRowAndApplies() {
+    void aRegisteredChartCraftingItemJoinsTheRowAndApplies() {
         CraftingMaterialFamilies.register(survey);
         owns(SURVEY_ID, 2f);
         CraftingMaterials materials = CraftingMaterials.cargoOnly(cargo);
 
-        assertEquals(List.of(survey), StarChartCrafting.currencies());
+        assertEquals(List.of(survey), StarChartCrafting.craftingItems());
         assertEquals(UseVerdict.ALLOW, StarChartCrafting.refusal(survey, chart, store, materials, definition -> true));
         StarChartCrafting.Used used = StarChartCrafting.use(survey, chart, store, materials, new Random(1L), definition -> true);
 
@@ -179,7 +179,7 @@ class StarChartCraftingTest {
     }
 
     @Test
-    void aCopyingCurrencyKeepsTheOriginalSelectedAndStoresTheCopy() {
+    void aCopyingCraftingItemKeepsTheOriginalSelectedAndStoresTheCopy() {
         CraftingMaterialFamilies.register(copier);
         owns(COPY_ID, 1f);
 
@@ -193,7 +193,7 @@ class StarChartCraftingTest {
     }
 
     @Test
-    void theNoticeForACopySaysWhereTheCopyWentWhileOtherCurrenciesNameTheChange() {
+    void theNoticeForACopySaysWhereTheCopyWentWhileOtherCraftingItemsNameTheChange() {
         CraftingMaterialFamilies.register(copier);
         CraftingMaterialFamilies.register(survey);
         owns(COPY_ID, 1f);
@@ -204,8 +204,8 @@ class StarChartCraftingTest {
         StarChartCrafting.Used copied = StarChartCrafting.use(copier, chart, store, materials, new Random(1L), definition -> true);
         StarChartCrafting.Used surveyed = StarChartCrafting.use(survey, chart, store, materials, new Random(1L), definition -> true);
 
-        assertEquals("chart.ui.currency.copied", StarChartCrafting.usedNoticeKey(copier));
-        assertEquals("chart.ui.currency.used", StarChartCrafting.usedNoticeKey(survey));
+        assertEquals("chart.ui.craftingItem.copied", StarChartCrafting.usedNoticeKey(copier));
+        assertEquals("chart.ui.craftingItem.used", StarChartCrafting.usedNoticeKey(survey));
         assertEquals(COPY_ID + " used: a copy of " + nameBefore + " went into storage as " + copied.result().name() + ".",
                 StarChartCrafting.usedNotice(copier, nameBefore, copied));
         assertEquals(SURVEY_ID + " used: " + nameBefore + " is now " + surveyed.result().name() + ".",
@@ -213,7 +213,7 @@ class StarChartCraftingTest {
     }
 
     @Test
-    void refusalsExplainWhyACurrencyCannotBeUsed() throws Exception {
+    void refusalsExplainWhyACraftingItemCannotBeUsed() throws Exception {
         CraftingMaterialFamilies.register(survey);
         CraftingMaterials materials = CraftingMaterials.cargoOnly(cargo);
 

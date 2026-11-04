@@ -14,25 +14,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class HullCraftingBenchCurrenciesTest {
+class HullCraftingBenchCraftingItemsTest {
 
     private static CraftingMaterialFamily extra(String itemId, ItemType type) {
-        CraftingMaterialFamily currency = mock(CraftingMaterialFamily.class);
-        when(currency.itemId()).thenReturn(itemId);
-        when(currency.appliesTo(type)).thenReturn(true);
-        when(currency.appliesToShipItems()).thenCallRealMethod();
-        when(currency.usedNoticeKey(ItemNature.HARDWARE)).thenReturn("notice." + itemId);
-        return currency;
+        CraftingMaterialFamily craftingItem = mock(CraftingMaterialFamily.class);
+        when(craftingItem.itemId()).thenReturn(itemId);
+        when(craftingItem.appliesTo(type)).thenReturn(true);
+        when(craftingItem.appliesToShipItems()).thenCallRealMethod();
+        when(craftingItem.usedNoticeKey(ItemNature.HARDWARE)).thenReturn("notice." + itemId);
+        return craftingItem;
     }
 
     @Test
-    void anExtraHullItemCurrencyShowsOnlyWhileOwned() {
+    void anExtraHullItemCraftingItemShowsOnlyWhileOwned() {
         CraftingMaterialFamily engram = extra("engram", ItemType.HULL_ITEM);
         CraftingMaterialFamily chartOnly = extra("cipher", ItemType.STAR_CHART);
         List<CraftingMaterialFamily> registered = List.of(Nanoswarm.AUGMENTATION, engram, chartOnly);
 
-        List<CraftingMaterialFamily> owned = HullCraftingBench.hullCraftingBenchCurrencies(registered, itemId -> 1);
-        List<CraftingMaterialFamily> none = HullCraftingBench.hullCraftingBenchCurrencies(registered, itemId -> 0);
+        List<CraftingMaterialFamily> owned = HullCraftingBench.hullCraftingBenchCraftingItems(registered, itemId -> 1);
+        List<CraftingMaterialFamily> none = HullCraftingBench.hullCraftingBenchCraftingItems(registered, itemId -> 0);
 
         assertEquals(Nanoswarm.values().length + 1, owned.size());
         assertTrue(owned.contains(engram));
@@ -41,9 +41,9 @@ class HullCraftingBenchCurrenciesTest {
     }
 
     @Test
-    void extraCurrenciesLeaveTheOrbitForACentredColumn() {
+    void extraCraftingItemsLeaveTheOrbitForACentredColumn() {
         CraftingMaterialFamily engram = extra("engram", ItemType.HULL_ITEM);
-        List<CraftingMaterialFamily> shown = HullCraftingBench.hullCraftingBenchCurrencies(List.of(engram), itemId -> 1);
+        List<CraftingMaterialFamily> shown = HullCraftingBench.hullCraftingBenchCraftingItems(List.of(engram), itemId -> 1);
 
         assertEquals(List.of(Nanoswarm.values()), shown.stream().filter(HullCraftingBench.INSTANCE::inOrbit).toList());
         assertEquals(80f, CraftingBenchPanel.columnTileTop(0, 1, 100f, 40f, 10f, 300f));
@@ -60,7 +60,7 @@ class HullCraftingBenchCurrenciesTest {
     }
 
     @Test
-    void theUsedNoticeComesFromTheCurrencyUnlessACorruptionOutcomeNamesIt() {
+    void theUsedNoticeComesFromTheCraftingItemUnlessACorruptionOutcomeNamesIt() {
         assertEquals("ui.craftingBench.notice.used.augmentation.hardware",
                 HullCraftingBench.usedNoticeKey(Nanoswarm.AUGMENTATION, null, ItemNature.HARDWARE));
         assertEquals("notice.engram", HullCraftingBench.usedNoticeKey(extra("engram", ItemType.HULL_ITEM), null, ItemNature.HARDWARE));

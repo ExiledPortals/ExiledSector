@@ -27,17 +27,17 @@ class CraftingBenchStringKeysTest {
             require(catalogue, "material." + itemId + ".name", missing);
             require(catalogue, "material." + itemId + ".description", missing);
         }
-        for (Nanoswarm currency : Nanoswarm.values()) {
-            require(catalogue, HullCraftingBench.INSTANCE.currencyDescriptionKey(currency), missing);
-            if (currency == Nanoswarm.CORRUPTION) {
+        for (Nanoswarm craftingItem : Nanoswarm.values()) {
+            require(catalogue, HullCraftingBench.INSTANCE.craftingItemDescriptionKey(craftingItem), missing);
+            if (craftingItem == Nanoswarm.CORRUPTION) {
                 for (ItemNature nature : ItemNature.values()) {
                     for (CorruptionOutcome outcome : shownOutcomes(nature)) {
-                        require(catalogue, HullCraftingBench.usedNoticeKey(currency, outcome, nature), missing);
+                        require(catalogue, HullCraftingBench.usedNoticeKey(craftingItem, outcome, nature), missing);
                     }
                 }
             } else {
                 for (ItemNature nature : ItemNature.values()) {
-                    require(catalogue, HullCraftingBench.usedNoticeKey(currency, null, nature), missing);
+                    require(catalogue, HullCraftingBench.usedNoticeKey(craftingItem, null, nature), missing);
                 }
             }
         }

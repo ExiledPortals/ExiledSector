@@ -1,6 +1,6 @@
 # Master Schematics: plan
 
-An optional mode, off by default, in which a ship's skill tree stays shut until a Master Schematic is used on it. A Master Schematic is consumed on the Hull Upgrades panel of the Hull Items screen and opens the tree for that one ship for good. It's a rare currency, so the player picks which ships get trees.
+An optional mode, off by default, in which a ship's skill tree stays shut until a Master Schematic is used on it. A Master Schematic is consumed on the Hull Upgrades panel of the Hull Items screen and opens the tree for that one ship for good. It's a rare crafting item, so the player picks which ships get trees.
 
 Status: built, uncommitted on `parallel-work` (2026-10-29). Not yet tried in game.
 
@@ -8,7 +8,7 @@ Status: built, uncommitted on `parallel-work` (2026-10-29). Not yet tried in gam
 
 Master Schematic (decided 2026-10-29, after "Refit License" and "Overhaul Refit License" were dropped: hull mods are already the refit, and "Overhaul" clashed with Efficiency Overhaul).
 
-It's the full design file for one hull. Hull mods are generic; this gives the refit crew a far more detailed understanding of their own ship, and with it much finer control. It's written for one hull, which is why it opens one ship and can't be moved. It sits with the Refit Schematics as the second ship currency, and it reads the same on crewed and automated hulls.
+It's the full design file for one hull. Hull mods are generic; this gives the refit crew a far more detailed understanding of their own ship, and with it much finer control. It's written for one hull, which is why it opens one ship and can't be moved. It sits with the Refit Schematics as the second ship crafting item, and it reads the same on crewed and automated hulls.
 
 Flavour (written by the user, 2026-10-29; keep as written):
 
@@ -29,7 +29,7 @@ While Hull Upgrades is switched off, every tree is open whatever this setting sa
 
 ## Where it lives
 
-- Core `items/MasterSchematic`: the item (`exiledSector_master_schematic`), `treeOpen`, the `required` supplier the Hull Upgrades domain binds at load, change listeners, and the salvage roll. `ShipCurrency` is the shared type of Refit and Master Schematics in loot records.
+- Core `items/MasterSchematic`: the item (`exiledSector_master_schematic`), `treeOpen`, the `required` supplier the Hull Upgrades domain binds at load, change listeners, and the salvage roll. `ShipCraftingItem` is the shared type of Refit and Master Schematics in loot records.
 - `ShipSkillData.skillTreeUnlocked` (core), which also keeps the record from being dropped as blank.
 - `ItemStore` keeps a count; cargo stacks are absorbed like Refit Schematics.
 - Hull Upgrades: `HullUpgradeRules.masterSchematicBlock` and `applyMasterSchematic`, `MasterSchematicActivation` (switch-on handling), `MasterSchematicItemPlugin`, the Skill Tree row on `HullUpgradePanel`, and `GrantMasterSchematicsCommand`.

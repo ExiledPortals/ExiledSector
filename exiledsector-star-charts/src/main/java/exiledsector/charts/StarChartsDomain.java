@@ -79,8 +79,8 @@ public final class StarChartsDomain implements ExiledSectorDomain {
         AbyssArt.preload();
         CatalystIconFx.preload();
         I18n.forGameText(() -> {
-            for (StarChartCipher currency : StarChartCipher.values()) {
-                MaterialItems.localise(currency.itemId());
+            for (StarChartCipher craftingItem : StarChartCipher.values()) {
+                MaterialItems.localise(craftingItem.itemId());
             }
             WormholeGateway.INDUSTRY_IDS.forEach(SpecLocalisation::industry);
         });
@@ -160,7 +160,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     }
 
     @Override
-    public List<CraftingMaterialFamily> hullCraftingBenchCurrencies() {
+    public List<CraftingMaterialFamily> hullCraftingBenchCraftingItems() {
         return List.copyOf(Engrams.all());
     }
 

@@ -102,7 +102,7 @@ class ChartLootTest {
     @Test
     void badRowsAreSkippedWithAProblem() throws Exception {
         List<String> problems = ChartLoot.register(new JSONArray()
-                .put(mapping("currency", "weapons1"))
+                .put(mapping("craftingItem", "weapons1"))
                 .put(mapping("weapon", "modded_group"))
                 .put(mapping("weapon", "goods"))
                 .put(mapping("resource", "goods"))

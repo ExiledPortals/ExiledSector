@@ -1,5 +1,5 @@
 {
-    "chart.ui.currency.alsoStarCharts": "Also works on Star Charts.",
+    "chart.ui.craftingItem.alsoStarCharts": "Also works on Star Charts.",
     "schematic.scrapped.name": "Scrapped Refit Schematic",
     "schematic.standard.name": "Standard Refit Schematic",
     "schematic.military.name": "Military Refit Schematic",
@@ -110,7 +110,7 @@
     "ui.craftingBench.title": "Crafting Bench",
     "ui.craftingBench.close": "Close",
     "ui.craftingBench.materials.title": "Crafting Materials",
-    "ui.craftingBench.materials.currencies": "Currencies",
+    "ui.craftingBench.materials.craftingItems": "Crafting items",
     "ui.craftingBench.materials.inhibitors": "Inhibitors",
     "ui.craftingBench.pickItem": "Storage",
     "ui.craftingBench.inhibitor.on": "On. Click to turn it off.",

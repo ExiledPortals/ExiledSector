@@ -210,14 +210,14 @@ class WormholeAnchorTest {
     }
 
     @Test
-    void noCurrencyCanBeUsedOnAnAnchorEvenOneExtendedToAnchors() {
+    void noCraftingItemCanBeUsedOnAnAnchorEvenOneExtendedToAnchors() {
         Item anchor = anchor(HEGEMONY_ANCHOR);
         ItemStore store = new ItemStore();
-        for (CraftingMaterialFamily currency : CraftingMaterialFamilies.all()) {
-            when(cargo.getQuantity(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(currency.itemId()))).thenReturn(5f);
-            assertFalse(ItemCrafting.canUse(currency, anchor, definition -> true), currency.key());
-            assertNull(ItemCrafting.use(currency, anchor, CraftingMaterials.cargoOnly(cargo), store, new Random(1L), definition -> true),
-                    currency.key());
+        for (CraftingMaterialFamily craftingItem : CraftingMaterialFamilies.all()) {
+            when(cargo.getQuantity(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(craftingItem.itemId()))).thenReturn(5f);
+            assertFalse(ItemCrafting.canUse(craftingItem, anchor, definition -> true), craftingItem.key());
+            assertNull(ItemCrafting.use(craftingItem, anchor, CraftingMaterials.cargoOnly(cargo), store, new Random(1L), definition -> true),
+                    craftingItem.key());
         }
         assertTrue(CraftingMaterialFamilies.extend(Nanoswarm.REPLICATION, ItemType.WORMHOLE_ANCHOR));
         try {
@@ -227,7 +227,7 @@ class WormholeAnchorTest {
         }
         verify(cargo, never()).removeItems(Mockito.any(), Mockito.any(), anyFloat());
         assertTrue(CraftingMaterialFamilies.forType(ItemType.WORMHOLE_ANCHOR).isEmpty());
-        assertFalse(ItemTypes.takesCurrency(ItemType.WORMHOLE_ANCHOR));
+        assertFalse(ItemTypes.takesCraftingItem(ItemType.WORMHOLE_ANCHOR));
     }
 
     @Test

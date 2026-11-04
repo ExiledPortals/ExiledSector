@@ -188,7 +188,7 @@ class ItemCraftingTest {
     }
 
     @Test
-    void synthesisingACurrencyTradesItsPartsCostForOneCurrency() {
+    void synthesisingACraftingItemTradesItsPartsCostForOneCraftingItem() {
         owns(FEEDSTOCK, 10f);
 
         assertTrue(ItemCrafting.grow(Nanoswarm.AUGMENTATION, CraftingMaterials.cargoOnly(cargo)));
@@ -209,7 +209,7 @@ class ItemCraftingTest {
     }
 
     @Test
-    void usingACurrencySpendsOneOnlyWhenItWorks() {
+    void usingACraftingItemSpendsOneOnlyWhenItWorks() {
         Item item = common();
         String recalibration = Nanoswarm.TUNING.itemId();
         owns(recalibration, 0f);
@@ -353,7 +353,7 @@ class ItemCraftingTest {
     }
 
     @Test
-    void replicatingAddsAMirroredCopyThatNoCurrencyCanModify() {
+    void replicatingAddsAMirroredCopyThatNoCraftingItemCanModify() {
         Item original = common();
         owns(Nanoswarm.REPLICATION.itemId(), 1f);
 
@@ -368,8 +368,8 @@ class ItemCraftingTest {
         assertEquals(original.explicits(), copy.explicits());
         assertEquals(original.implicits(), copy.implicits());
         assertEquals(original.name(), copy.name());
-        for (Nanoswarm currency : Nanoswarm.values()) {
-            assertFalse(ItemCrafting.canUse(currency, copy, definition -> true), currency + " must not modify a mirrored item");
+        for (Nanoswarm craftingItem : Nanoswarm.values()) {
+            assertFalse(ItemCrafting.canUse(craftingItem, copy, definition -> true), craftingItem + " must not modify a mirrored item");
         }
         assertTrue(ItemCrafting.canUse(Nanoswarm.REPLICATION, original, definition -> true));
         assertTrue(copy.headerLines().stream().anyMatch(line -> line.plain().equals("Mirrored")));

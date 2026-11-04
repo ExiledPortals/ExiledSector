@@ -24,7 +24,7 @@ const SECTION_KINDS = 9;
 const HULL_ITEM_RATE = 0.066;
 const UNIQUE_HULL_ITEM_RATE = 0.006;
 const HULL_ITEM_SALVAGE_SHARE = 0.5;
-const SITE_CURRENCY_SHARE = 0.7;
+const SITE_CRAFTING_ITEM_SHARE = 0.7;
 const FEEDSTOCK_PER_100_DP = 5;
 const REWARD_ITEM_CHANCE_PER_TIER = 0.1;
 const REWARD_FEEDSTOCK = 25;
@@ -67,13 +67,13 @@ const SITES = {
 const TOP_ROLLS = {
   fortified: [20, 70, 200], crowded: [1, 2, 3], warded: [90, 240, 540], prefixQuantity: [5, 15, 25],
   plenty: [20, 30, 40], cacheB: [30, 45, 60], domainB: [30, 45, 60], stationB: [30, 45, 60], derelictB: [30, 45, 60], discovery: [1, 2, 3],
-  item: [25, 40, 60], rarity: [25, 40, 60], targeted: [40, 60, 80], currency: [30, 45, 60], feedstock: [35, 50, 70], catalyst: [30, 45, 60],
+  item: [25, 40, 60], rarity: [25, 40, 60], targeted: [40, 60, 80], craftingItem: [30, 45, 60], feedstock: [35, 50, 70], catalyst: [30, 45, 60],
   hoard: [30, 50, 75], bounty: [20, 35, 50],
 };
 const MODIFIER_NAMES = {
   fortified: 'Fortified', crowded: 'Crowded', warded: 'Warded', twinned: 'Twinned', filler: '', item: 'Salvage', targeted: 'section suffix',
   hoard: 'the Hoard', bounty: 'Bounty', plenty: 'Plenty', discovery: 'Discovery', cacheB: 'Stockpiles', domainB: 'Relics', stationB: 'Outposts',
-  derelictB: 'Wreckage', currency: 'Swarming', catalyst: 'Catalysis',
+  derelictB: 'Wreckage', craftingItem: 'Swarming', catalyst: 'Catalysis',
 };
 
 const diminishingFactor = dp => dp <= DIMINISHING_KNEE_DP ? 1 : DIMINISHING_KNEE_DP * (2 * Math.sqrt(dp / DIMINISHING_KNEE_DP) - 1) / dp;
@@ -163,12 +163,12 @@ function simulateChart(tier, modifiers, samples) {
   const itemMult = 1 + (suffixRoll('item') + quantity) / 100;
   const targetedShare = suffixRoll('targeted') / 100 / SECTION_KINDS;
   const rarityMult = 1 + suffixRoll('rarity') / 100;
-  const currencyMult = 1 + (suffixRoll('currency') + quantity) / 100;
+  const craftingItemMult = 1 + (suffixRoll('craftingItem') + quantity) / 100;
   const feedstockMult = 1 + (suffixRoll('feedstock') + quantity) / 100;
   const catalystMult = 1 + (suffixRoll('catalyst') + quantity) / 100;
   const spoilsMult = 1 + suffixRoll('hoard') / 100;
   const rewardMult = 1 + (suffixRoll('bounty') + quantity) / 100;
-  const rewardCurrencyMult = 1 + (suffixRoll('bounty') + suffixRoll('currency') + quantity) / 100;
+  const rewardCraftingItemMult = 1 + (suffixRoll('bounty') + suffixRoll('craftingItem') + quantity) / 100;
   const rewardCatalystMult = 1 + (suffixRoll('bounty') + suffixRoll('catalyst') + quantity) / 100;
   const budgets = {};
   for (const kind of ['cache', 'domain', 'station', 'derelict']) {
@@ -188,10 +188,10 @@ function simulateChart(tier, modifiers, samples) {
     totals.hull += weight * HULL_ITEM_RATE * hullFactor * (itemMult + targetedShare);
     totals.unique += weight * UNIQUE_HULL_ITEM_RATE * hullFactor * itemMult * rarityMult;
     for (const material of Object.keys(CHART_MATERIALS)) {
-      totals[material] += weight * chartMaterialAmount(material, tier.tier) * fleetPointShare * currencyMult;
+      totals[material] += weight * chartMaterialAmount(material, tier.tier) * fleetPointShare * craftingItemMult;
     }
     for (const [cipher, { rate, diminishing }] of Object.entries(CIPHERS)) {
-      totals[cipher] += weight * rate * lootDp / 100 * (diminishing ? diminishingFactor(dp) : 1) * currencyMult;
+      totals[cipher] += weight * rate * lootDp / 100 * (diminishing ? diminishingFactor(dp) : 1) * craftingItemMult;
     }
     totals.feed += weight * FEEDSTOCK_PER_100_DP * lootDp / 100 * feedstockMult;
     totals.cat += weight * catalystMult * fleetPointShare;
@@ -216,12 +216,12 @@ function simulateChart(tier, modifiers, samples) {
     for (const poi of pois) {
       const [chances, feedstockMin, feedstockMax] = SITES[poi.site];
       totals.hull += weight * HULL_ITEM_SALVAGE_SHARE * (expectedCascadeCount(chances, itemMult) + expectedCascadeCount(chances, 1) * targetedShare);
-      const siteCurrencies = chances[0] * SITE_CURRENCY_SHARE * currencyMult;
+      const siteCraftingItems = chances[0] * SITE_CRAFTING_ITEM_SHARE * craftingItemMult;
       for (const [material, materialWeight] of Object.entries(SITE_MATERIAL_WEIGHTS)) {
-        totals[material] += weight * siteCurrencies * materialWeight / SITE_MATERIAL_WEIGHT_TOTAL;
+        totals[material] += weight * siteCraftingItems * materialWeight / SITE_MATERIAL_WEIGHT_TOTAL;
       }
       for (const [cipher, { weight: cipherWeight }] of Object.entries(CIPHERS)) {
-        totals[cipher] += weight * CHART_DROPS.systemSalvage.ciphers * currencyMult * cipherWeight / CIPHER_WEIGHT_TOTAL;
+        totals[cipher] += weight * CHART_DROPS.systemSalvage.ciphers * craftingItemMult * cipherWeight / CIPHER_WEIGHT_TOTAL;
       }
       totals.feed += weight * (feedstockMin + feedstockMax) / 2 * feedstockMult;
       totals.cat += weight * CHART_DROPS.systemSalvage.catalysts * catalystMult;
@@ -239,10 +239,10 @@ function simulateChart(tier, modifiers, samples) {
 
   const rewardChance = (1 + REWARD_ITEM_CHANCE_PER_TIER * (tier.tier - 1)) * rewardMult;
   for (const [material, materialWeight] of Object.entries(SITE_MATERIAL_WEIGHTS)) {
-    totals[material] += SITE_CURRENCY_SHARE * rewardChance * materialWeight / SITE_MATERIAL_WEIGHT_TOTAL;
+    totals[material] += SITE_CRAFTING_ITEM_SHARE * rewardChance * materialWeight / SITE_MATERIAL_WEIGHT_TOTAL;
   }
   for (const [cipher, { weight: cipherWeight }] of Object.entries(CIPHERS)) {
-    totals[cipher] += CHART_DROPS.runReward.ciphers * rewardCurrencyMult * cipherWeight / CIPHER_WEIGHT_TOTAL;
+    totals[cipher] += CHART_DROPS.runReward.ciphers * rewardCraftingItemMult * cipherWeight / CIPHER_WEIGHT_TOTAL;
   }
   totals.feed += REWARD_FEEDSTOCK * rewardChance;
   totals.cat += CHART_DROPS.runReward.catalysts * rewardCatalystMult;
@@ -264,7 +264,7 @@ function combinations(list, size, start = 0, chosen = [], found = []) {
 const PREFIX_POOL = ['fortified', 'crowded', 'warded', 'twinned', 'filler', 'filler2', 'filler3'];
 const SUFFIX_POOLS = {
   hull: ['item', 'targeted', 'targeted2', 'targeted3', 'hoard', 'bounty', 'plenty', 'discovery', 'cacheB', 'stationB', 'domainB', 'derelictB'],
-  crafting: ['currency', 'hoard', 'bounty', 'plenty', 'discovery', 'cacheB', 'stationB', 'domainB', 'derelictB'],
+  crafting: ['craftingItem', 'hoard', 'bounty', 'plenty', 'discovery', 'cacheB', 'stationB', 'domainB', 'derelictB'],
   cat: ['catalyst', 'hoard', 'bounty', 'plenty', 'discovery', 'cacheB', 'stationB', 'domainB', 'derelictB'],
 };
 const modifierKey = poolEntry => poolEntry.replace(/[23]$/, '');

@@ -9,9 +9,9 @@ size, while hull items scale with DP times enemy tree size times difficulty.
 1. Loot DP: the DP an enemy fleet lost in the battle. A chart fleet's loot is still claimed once through its ledger.
 2. Curve: each drop has a rate per 100 loot DP and a curve. Linear drops scale 1:1. Diminishing drops run at full rate
    up to a knee, then grow with the square root of DP beyond it. The curve resets every battle.
-3. Multipliers after the curve: battle difficulty (capped at 3x for table drops), chart modifiers (currency, item
+3. Multipliers after the curve: battle difficulty (capped at 3x for table drops), chart modifiers (crafting item, item
    quantity and rarity, star chart, catalyst) and the boss's spoils multiplier.
-4. Guarantees stay: boss unique, guaranteed tier-up chart, boss hull item. The boss's guaranteed crafting currency
+4. Guarantees stay: boss unique, guaranteed tier-up chart, boss hull item. The boss's guaranteed crafting item
    and two ciphers are gone.
 5. A chart fleet's crafting materials come from the DP its ledger still owes, so rebuilt defenders can't be farmed.
    An anomaly's own fleet loot comes on top of the usual rewards. Endlessly launched station fleets drop only base

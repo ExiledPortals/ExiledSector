@@ -28,7 +28,7 @@ class CraftingMaterialFamiliesTest {
 
     private static final String PURGE_ID = "exiledSector_test_purge_kernel";
 
-    private static final class PurgeCurrency implements CraftingMaterialFamily {
+    private static final class PurgeCraftingItem implements CraftingMaterialFamily {
 
         @Override
         public String itemId() {
@@ -85,7 +85,7 @@ class CraftingMaterialFamiliesTest {
         }
     }
 
-    private final CraftingMaterialFamily purge = new PurgeCurrency();
+    private final CraftingMaterialFamily purge = new PurgeCraftingItem();
     private final ItemStore store = new ItemStore();
     private final CargoAPI cargo = mock(CargoAPI.class);
 
@@ -119,9 +119,9 @@ class CraftingMaterialFamiliesTest {
         float previousWeight = Float.MAX_VALUE;
         int previousCost = 0;
         for (String itemId : commonestFirst) {
-            Nanoswarm currency = Nanoswarm.byItemId(itemId);
-            GrowableMaterial material = currency != null ? currency : CraftingInhibitor.byItemId(itemId);
-            float weight = currency != null ? currency.dropWeight() : CraftingInhibitor.byItemId(itemId).dropWeight();
+            Nanoswarm craftingItem = Nanoswarm.byItemId(itemId);
+            GrowableMaterial material = craftingItem != null ? craftingItem : CraftingInhibitor.byItemId(itemId);
+            float weight = craftingItem != null ? craftingItem.dropWeight() : CraftingInhibitor.byItemId(itemId).dropWeight();
             assertTrue(weight <= previousWeight, itemId + " drops more often than the material before it");
             previousWeight = weight;
             if (material.growable()) {
@@ -134,7 +134,7 @@ class CraftingMaterialFamiliesTest {
     }
 
     @Test
-    void everyBuiltInCurrencyIsRegisteredCommonestFirstWithItsValues() {
+    void everyBuiltInCraftingItemIsRegisteredCommonestFirstWithItsValues() {
         List<Expected> expected = List.of(
                 new Expected("exiledSector_augmentation_nanoswarm", "augmentation", 10, 6f, MaterialTier.MINOR, true),
                 new Expected("exiledSector_fundamental_nanoswarm", "fundamental", 15, 4f, MaterialTier.MINOR, true),
@@ -147,13 +147,13 @@ class CraftingMaterialFamiliesTest {
                 new Expected("exiledSector_replicator_nanoseed", "replication", 0, 0.035f, MaterialTier.MYTHIC, false));
 
         assertEquals(Arrays.asList(Nanoswarm.values()), CraftingMaterialFamilies.all());
-        assertEquals(expected, CraftingMaterialFamilies.all().stream().map(currency -> new Expected(currency.itemId(), currency.key(),
-                currency.feedstockCost(), currency.dropWeight(), currency.tier(), currency.growable())).toList());
-        for (Nanoswarm currency : Nanoswarm.values()) {
-            assertSame(currency, CraftingMaterialFamilies.byItemId(currency.itemId()));
-            assertEquals(currency.name().toLowerCase(java.util.Locale.ROOT), currency.key());
+        assertEquals(expected, CraftingMaterialFamilies.all().stream().map(craftingItem -> new Expected(craftingItem.itemId(), craftingItem.key(),
+                craftingItem.feedstockCost(), craftingItem.dropWeight(), craftingItem.tier(), craftingItem.growable())).toList());
+        for (Nanoswarm craftingItem : Nanoswarm.values()) {
+            assertSame(craftingItem, CraftingMaterialFamilies.byItemId(craftingItem.itemId()));
+            assertEquals(craftingItem.name().toLowerCase(java.util.Locale.ROOT), craftingItem.key());
         }
-        assertEquals(CraftingMaterialFamilies.all().stream().filter(currency -> currency != Nanoswarm.ANNULMENT).toList(),
+        assertEquals(CraftingMaterialFamilies.all().stream().filter(craftingItem -> craftingItem != Nanoswarm.ANNULMENT).toList(),
                 CraftingMaterialFamilies.forType(ItemType.SUBROUTINE));
         assertEquals(CraftingMaterialFamilies.all(), CraftingMaterialFamilies.forType(ItemType.HULL_ITEM));
         assertEquals(List.of(), CraftingMaterialFamilies.forType(null));
@@ -166,15 +166,15 @@ class CraftingMaterialFamiliesTest {
         Set<Nanoswarm> respectsInhibitors = EnumSet.noneOf(Nanoswarm.class);
         Set<Nanoswarm> createsCopy = EnumSet.noneOf(Nanoswarm.class);
         Set<Nanoswarm> mayChangeDefinition = EnumSet.noneOf(Nanoswarm.class);
-        for (Nanoswarm currency : Nanoswarm.values()) {
-            if (currency.respectsInhibitors()) {
-                respectsInhibitors.add(currency);
+        for (Nanoswarm craftingItem : Nanoswarm.values()) {
+            if (craftingItem.respectsInhibitors()) {
+                respectsInhibitors.add(craftingItem);
             }
-            if (currency.createsCopy()) {
-                createsCopy.add(currency);
+            if (craftingItem.createsCopy()) {
+                createsCopy.add(craftingItem);
             }
-            if (currency.mayChangeDefinition()) {
-                mayChangeDefinition.add(currency);
+            if (craftingItem.mayChangeDefinition()) {
+                mayChangeDefinition.add(craftingItem);
             }
         }
 
@@ -185,10 +185,10 @@ class CraftingMaterialFamiliesTest {
     }
 
     @Test
-    void kernelDropsListEveryCurrencyAndInhibitorByWeight() {
+    void kernelDropsListEveryCraftingItemAndInhibitorByWeight() {
         List<ItemDrops.MaterialDrop> builtInDrops = new ArrayList<>();
-        for (Nanoswarm currency : Nanoswarm.values()) {
-            builtInDrops.add(new ItemDrops.MaterialDrop(currency.itemId(), currency.dropWeight()));
+        for (Nanoswarm craftingItem : Nanoswarm.values()) {
+            builtInDrops.add(new ItemDrops.MaterialDrop(craftingItem.itemId(), craftingItem.dropWeight()));
         }
         for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
             builtInDrops.add(new ItemDrops.MaterialDrop(inhibitor.itemId(), inhibitor.dropWeight()));
@@ -197,7 +197,7 @@ class CraftingMaterialFamiliesTest {
     }
 
     @Test
-    void anAddedCurrencyJoinsTheMaterialsDropsAndCraftingForItsTypesOnly() {
+    void anAddedCraftingItemJoinsTheMaterialsDropsAndCraftingForItsTypesOnly() {
         CraftingMaterialFamilies.register(purge);
         Item hullItem = store.add(ItemDefinitions.get(HullItemRows.MILITARY), 4L);
         Item subroutine = store.add(ItemDefinitions.get("volume"), 4L);
@@ -221,7 +221,7 @@ class CraftingMaterialFamiliesTest {
     }
 
     @Test
-    void currenciesCannotReuseAMaterialIdOrKey() {
+    void craftingItemsCannotReuseAMaterialIdOrKey() {
         CraftingMaterialFamilies.register(purge);
 
         assertThrows(IllegalArgumentException.class, () -> CraftingMaterialFamilies.register(purge));

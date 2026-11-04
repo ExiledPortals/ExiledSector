@@ -109,7 +109,7 @@ public enum ForgeOperation {
         if (item == null) {
             return UseVerdict.refused(REFUSAL_PREFIX + "loadFirst");
         }
-        if (!ItemTypes.takesCurrency(item.type())) {
+        if (!ItemTypes.takesCraftingItem(item.type())) {
             return UseVerdict.refused(REFUSAL_PREFIX + "itemType");
         }
         if (item.mirrored()) {
@@ -118,7 +118,7 @@ public enum ForgeOperation {
         if (item.corrupted()) {
             return UseVerdict.refused(REFUSAL_PREFIX + "corrupted");
         }
-        if (ItemCrafting.isLockedFromCurrency(item.definition())) {
+        if (ItemCrafting.isLockedFromCraftingItem(item.definition())) {
             return UseVerdict.refused(REFUSAL_PREFIX + "uniqueSubroutine");
         }
         String reason = refusalReason(item);

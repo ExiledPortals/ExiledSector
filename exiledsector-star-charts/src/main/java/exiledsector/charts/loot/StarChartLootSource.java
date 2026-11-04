@@ -224,7 +224,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
         for (LootShaper anomaly : ChartAnomalies.with(LootShaper.class)) {
             chances = anomaly.siteChances(memory, chances);
         }
-        return chances == modifiers.itemChances() ? modifiers : new LootMultipliers(chances, modifiers.feedstockMult(), modifiers.currencyMult());
+        return chances == modifiers.itemChances() ? modifiers : new LootMultipliers(chances, modifiers.feedstockMult(), modifiers.craftingItemMult());
     }
 
     @Override
@@ -232,7 +232,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
         ChartDrops.Loot chartLoot = salvageLoot(sector, salvageEntity);
         chartLoot.charts().forEach(chart -> loot.addSpecial(chart.toSpecialItem(), 1f));
         chartLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
-        MaterialDropAnnouncer.announceOnLootScreen(chartLoot.currencies());
+        MaterialDropAnnouncer.announceOnLootScreen(chartLoot.craftingItems());
     }
 
     public static ChartDrops.Loot salvageLoot(SectorAPI sector, SectorEntityToken salvageEntity) {

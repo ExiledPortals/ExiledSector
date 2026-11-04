@@ -269,13 +269,13 @@ class ItemDropsTest {
     }
 
     @Test
-    void aCurrencyChanceAboveOneDropsThatManyWithAChanceOfOneMore() {
+    void aCraftingItemChanceAboveOneDropsThatManyWithAChanceOfOneMore() {
         Random random = new Random(9L);
         List<ItemDrops.MaterialDrop> drops = List.of(new ItemDrops.MaterialDrop("a", 3f), new ItemDrops.MaterialDrop("b", 1f));
         double totalA = 0;
         for (int i = 0; i < TRIALS; i++) {
             Map<String, Integer> dropped = new java.util.HashMap<>();
-            ItemDrops.rollEachCurrency(drops, 2f, random, dropped);
+            ItemDrops.rollEachCraftingItem(drops, 2f, random, dropped);
             int countA = dropped.getOrDefault("a", 0);
             assertTrue(countA == 1 || countA == 2);
             assertTrue(dropped.getOrDefault("b", 0) <= 1);
@@ -297,12 +297,12 @@ class ItemDropsTest {
     }
 
     private static boolean isKernel(String itemId) {
-        return java.util.Arrays.stream(Nanoswarm.values()).anyMatch(currency -> currency.itemId().equals(itemId))
+        return java.util.Arrays.stream(Nanoswarm.values()).anyMatch(craftingItem -> craftingItem.itemId().equals(itemId))
                 || java.util.Arrays.stream(CraftingInhibitor.values()).anyMatch(inhibitor -> inhibitor.itemId().equals(itemId));
     }
 
-    private static double dropShare(Nanoswarm currency) {
-        return currency.dropWeight() / totalKernelWeight();
+    private static double dropShare(Nanoswarm craftingItem) {
+        return craftingItem.dropWeight() / totalKernelWeight();
     }
 
     private static double totalKernelWeight() {
@@ -311,15 +311,15 @@ class ItemDropsTest {
     }
 
     @Test
-    void feedstockAndCurrencyScaleSeparately() {
+    void feedstockAndCraftingItemScaleSeparately() {
         Random random = new Random(17L);
-        List<Map<String, Integer>> currencyOnly = new java.util.ArrayList<>();
+        List<Map<String, Integer>> craftingItemOnly = new java.util.ArrayList<>();
         for (int i = 0; i < TRIALS; i++) {
-            currencyOnly.add(ItemDrops.rollMaterials("probe", random, 0f, 2f));
+            craftingItemOnly.add(ItemDrops.rollMaterials("probe", random, 0f, 2f));
         }
 
-        assertEquals(0.0, materialShare(currencyOnly, roll -> roll.containsKey(ItemDisassembly.FEEDSTOCK_ITEM_ID)), 0.0);
-        assertEquals(2 * 0.5 * ItemDrops.KERNEL_CHANCE_SHARE, averageKernels(currencyOnly), 0.02);
+        assertEquals(0.0, materialShare(craftingItemOnly, roll -> roll.containsKey(ItemDisassembly.FEEDSTOCK_ITEM_ID)), 0.0);
+        assertEquals(2 * 0.5 * ItemDrops.KERNEL_CHANCE_SHARE, averageKernels(craftingItemOnly), 0.02);
     }
 
     @Test

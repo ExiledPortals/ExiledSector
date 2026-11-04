@@ -164,21 +164,21 @@ class UniqueSubroutinesTest {
     }
 
     @Test
-    void everyCurrencyRefusesAUniqueSubroutine() {
+    void everyCraftingItemRefusesAUniqueSubroutine() {
         Item item = fleetRelic(7L);
         List<RolledModifier> rolled = item.explicits();
         CargoAPI cargo = mock(CargoAPI.class);
-        for (CraftingMaterialFamily currency : CraftingMaterialFamilies.all()) {
-            when(cargo.getQuantity(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(currency.itemId()))).thenReturn(5f);
+        for (CraftingMaterialFamily craftingItem : CraftingMaterialFamilies.all()) {
+            when(cargo.getQuantity(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(craftingItem.itemId()))).thenReturn(5f);
         }
         CraftingMaterials materials = CraftingMaterials.cargoOnly(cargo);
 
-        for (CraftingMaterialFamily currency : CraftingMaterialFamilies.all()) {
-            assertFalse(ItemCrafting.canUse(currency, item, definition -> true), currency.key());
-            assertNull(ItemCrafting.use(currency, item, materials, store, new Random(1L), definition -> true), currency.key());
+        for (CraftingMaterialFamily craftingItem : CraftingMaterialFamilies.all()) {
+            assertFalse(ItemCrafting.canUse(craftingItem, item, definition -> true), craftingItem.key());
+            assertNull(ItemCrafting.use(craftingItem, item, materials, store, new Random(1L), definition -> true), craftingItem.key());
         }
 
-        assertTrue(ItemCrafting.isLockedFromCurrency(item.definition()));
+        assertTrue(ItemCrafting.isLockedFromCraftingItem(item.definition()));
         assertFalse(ItemCrafting.canMetamorph(item.definition(), item.tier(), definition -> true));
         assertEquals(rolled, item.explicits());
         assertFalse(item.corrupted());

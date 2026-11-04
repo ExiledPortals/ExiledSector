@@ -104,11 +104,11 @@ class ChartRunEffectsTest {
         ChartTables.loadAnomalies();
         try {
             ChartRun run = new ChartRun("storm", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-            assertEquals(0f, ChartRunEffects.contextOf(run).dropPercent(DropType.CURRENCY));
+            assertEquals(0f, ChartRunEffects.contextOf(run).dropPercent(DropType.CRAFTING_ITEM));
 
             run.recordContent(new ChartContent(1, "pirates", null, 0, 0, List.of(MagneticStorm.ANOMALY_ID)));
 
-            assertTrue(ChartRunEffects.contextOf(run).dropPercent(DropType.CURRENCY) > 0f);
+            assertTrue(ChartRunEffects.contextOf(run).dropPercent(DropType.CRAFTING_ITEM) > 0f);
         } finally {
             ChartTables.resetAnomalies();
         }

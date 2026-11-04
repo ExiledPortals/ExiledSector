@@ -15,4 +15,4 @@ A large overhaul of ground raids, replacing vanilla's dialog of marines against 
 - a battle arena;
 - deploying soldiers or mechs, with AI to control them;
 - terrain that suits where the raid takes place;
-- all tied in with skill effects, and combat units that can be rolled with currency items.
+- all tied in with skill effects, and combat units that can be rolled with crafting items.

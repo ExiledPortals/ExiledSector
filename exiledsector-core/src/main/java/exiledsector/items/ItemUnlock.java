@@ -56,13 +56,13 @@ public enum ItemUnlock {
         return support != null && support.available(sector);
     }
 
-    public static boolean currencyUsable(String itemId, SectorAPI sector) {
-        CraftingMaterialFamily currency = CraftingMaterialFamilies.byItemId(itemId);
-        if (currency == null) {
+    public static boolean craftingItemUsable(String itemId, SectorAPI sector) {
+        CraftingMaterialFamily craftingItem = CraftingMaterialFamilies.byItemId(itemId);
+        if (craftingItem == null) {
             return true;
         }
         for (ItemType type : ItemType.values()) {
-            if (CraftingMaterialFamilies.appliesTo(currency, type) && available(type, sector)) {
+            if (CraftingMaterialFamilies.appliesTo(craftingItem, type) && available(type, sector)) {
                 return true;
             }
         }

@@ -576,7 +576,7 @@ public final class ChartGenContext {
     }
 
     public LootMultipliers lootMultipliers(float scale) {
-        return new LootMultipliers(itemChances().scaled(scale), dropMult(DropType.FEEDSTOCK) * scale, dropMult(DropType.CURRENCY) * scale);
+        return new LootMultipliers(itemChances().scaled(scale), dropMult(DropType.FEEDSTOCK) * scale, dropMult(DropType.CRAFTING_ITEM) * scale);
     }
 
     public float bossSpoilsPercent() {

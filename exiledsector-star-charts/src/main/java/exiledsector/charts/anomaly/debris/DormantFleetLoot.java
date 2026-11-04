@@ -17,23 +17,23 @@ public final class DormantFleetLoot {
     private DormantFleetLoot() {
     }
 
-    public static ItemDrops.SiteLoot currencyFor(CampaignFleetAPI fleet, int tier, ChartGenContext context, Random random) {
+    public static ItemDrops.SiteLoot craftingItemFor(CampaignFleetAPI fleet, int tier, ChartGenContext context, Random random) {
         if (!DormantFleets.isCorrupted(fleet)) {
             return ItemDrops.SiteLoot.NONE;
         }
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
-        if (memory.getBoolean(DormantFleets.CURRENCY_DROPPED_KEY)) {
+        if (memory.getBoolean(DormantFleets.CRAFTING_ITEM_DROPPED_KEY)) {
             return ItemDrops.SiteLoot.NONE;
         }
-        memory.set(DormantFleets.CURRENCY_DROPPED_KEY, true);
-        float quantityMult = (context == null ? ChartGenContext.none() : context).anomalyMult(AnomalousDebris.CURRENCY_KEY);
-        Map<String, Integer> currencies = new LinkedHashMap<>();
-        for (int drop = DebrisRules.currencyCount(quantityMult, random); drop > 0; drop--) {
-            Engram currency = Engrams.pick(tier, random);
-            if (currency != null) {
-                currencies.merge(currency.itemId(), 1, Integer::sum);
+        memory.set(DormantFleets.CRAFTING_ITEM_DROPPED_KEY, true);
+        float quantityMult = (context == null ? ChartGenContext.none() : context).anomalyMult(AnomalousDebris.CRAFTING_ITEM_KEY);
+        Map<String, Integer> craftingItems = new LinkedHashMap<>();
+        for (int drop = DebrisRules.craftingItemCount(quantityMult, random); drop > 0; drop--) {
+            Engram craftingItem = Engrams.pick(tier, random);
+            if (craftingItem != null) {
+                craftingItems.merge(craftingItem.itemId(), 1, Integer::sum);
             }
         }
-        return currencies.isEmpty() ? ItemDrops.SiteLoot.NONE : ItemDrops.SiteLoot.NONE.plus(List.of(), List.of(), currencies);
+        return craftingItems.isEmpty() ? ItemDrops.SiteLoot.NONE : ItemDrops.SiteLoot.NONE.plus(List.of(), List.of(), craftingItems);
     }
 }

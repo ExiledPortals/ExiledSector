@@ -54,7 +54,7 @@ class StarChartUiStringKeysTest {
         for (OpenResult result : OpenResult.values()) {
             require(catalogue, new StarChartOpening.Outcome(result, null).messageKey(), missing);
         }
-        for (String key : List.of("chart.ui.currency.alsoStarCharts", "ui.craftingBench.confirm.useTitle", "ui.craftingBench.confirm.growTitle", "ui.craftingBench.confirm.growBody",
+        for (String key : List.of("chart.ui.craftingItem.alsoStarCharts", "ui.craftingBench.confirm.useTitle", "ui.craftingBench.confirm.growTitle", "ui.craftingBench.confirm.growBody",
                 "ui.craftingBench.confirm.skipHint", "ui.craftingBench.confirm.use", "ui.craftingBench.confirm.grow", "ui.craftingBench.confirm.cancel")) {
             require(catalogue, key, missing);
         }
@@ -63,20 +63,20 @@ class StarChartUiStringKeysTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"en", "zh_CN"})
-    void everyChartCurrencyHasItsNameDescriptionAndRecipeText(String language) {
+    void everyChartCraftingItemHasItsNameDescriptionAndRecipeText(String language) {
         Map<String, String> catalogue = RealCatalogue.entries(language);
         List<String> missing = new ArrayList<>();
-        for (StarChartCipher currency : StarChartCipher.values()) {
-            require(catalogue, "material." + currency.itemId() + ".name", missing);
-            require(catalogue, "material." + currency.itemId() + ".description", missing);
-            require(catalogue, "chart.currency." + currency.key() + ".description", missing);
+        for (StarChartCipher craftingItem : StarChartCipher.values()) {
+            require(catalogue, "material." + craftingItem.itemId() + ".name", missing);
+            require(catalogue, "material." + craftingItem.itemId() + ".description", missing);
+            require(catalogue, "chart.craftingItem." + craftingItem.key() + ".description", missing);
         }
         for (Nanoswarm kernel : StarChartCipher.KERNELS_ON_CHARTS) {
-            require(catalogue, "chart.currency." + kernel.key() + ".description", missing);
+            require(catalogue, "chart.craftingItem." + kernel.key() + ".description", missing);
         }
         assertEquals(List.of(), missing);
         for (String key : catalogue.keySet()) {
-            if (key.startsWith("chart.currency.") || key.startsWith("chart.drop.")) {
+            if (key.startsWith("chart.craftingItem.") || key.startsWith("chart.drop.")) {
                 assertFalse(catalogue.get(key).contains("%"), key);
             }
         }

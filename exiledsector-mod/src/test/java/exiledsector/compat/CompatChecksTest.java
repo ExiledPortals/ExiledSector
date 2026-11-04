@@ -189,7 +189,7 @@ class CompatChecksTest {
     }
 
     @Test
-    void randomAssortmentReportsTheAbyssCurrenciesAndTheGenesisWreckVariantWhenTheyAreGone() {
+    void randomAssortmentReportsTheAbyssCraftingItemsAndTheGenesisWreckVariantWhenTheyAreGone() {
         when(settings.getHullModSpec(anyString())).thenReturn(mock(HullModSpecAPI.class));
         when(settings.getScriptClassLoader()).thenReturn(CompatChecksTest.class.getClassLoader());
         when(settings.getHullSpec("rat_genesis")).thenReturn(mock(ShipHullSpecAPI.class));

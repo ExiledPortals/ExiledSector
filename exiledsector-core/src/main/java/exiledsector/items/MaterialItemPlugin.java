@@ -29,23 +29,23 @@ public class MaterialItemPlugin extends AnimatedCargoItemPlugin {
         if (description != null && !description.isEmpty()) {
             VanillaText.plainPara(tooltip, description, TOOLTIP_PAD, Misc.getGrayColor());
         }
-        CraftingMaterialFamily currency = CraftingMaterialFamilies.byItemId(itemId);
+        CraftingMaterialFamily craftingItem = CraftingMaterialFamilies.byItemId(itemId);
         float linePad = TOOLTIP_PAD;
-        for (StyledText line : currency == null ? List.<StyledText>of() : currency.grantedLines()) {
+        for (StyledText line : craftingItem == null ? List.<StyledText>of() : craftingItem.grantedLines()) {
             VanillaText.addPara(tooltip, line, linePad, Misc.getTextColor());
             linePad = LINE_PAD;
         }
         if (alsoWorksOnStarCharts(itemId)) {
-            VanillaText.plainPara(tooltip, Translation.text("chart.ui.currency.alsoStarCharts"), TOOLTIP_PAD, Misc.getGrayColor());
+            VanillaText.plainPara(tooltip, Translation.text("chart.ui.craftingItem.alsoStarCharts"), TOOLTIP_PAD, Misc.getGrayColor());
         }
         addCostLabel(tooltip, TOOLTIP_PAD, transferHandler, stackSource);
     }
 
     static boolean alsoWorksOnStarCharts(String itemId) {
-        CraftingMaterialFamily currency = CraftingMaterialFamilies.byItemId(itemId);
-        return currency != null && CraftingMaterialFamilies.appliesTo(currency, ItemType.STAR_CHART)
+        CraftingMaterialFamily craftingItem = CraftingMaterialFamilies.byItemId(itemId);
+        return craftingItem != null && CraftingMaterialFamilies.appliesTo(craftingItem, ItemType.STAR_CHART)
                 && ItemUnlock.available(ItemType.STAR_CHART, Global.getSector())
-                && currency.appliesToShipItems();
+                && craftingItem.appliesToShipItems();
     }
 
     @Override

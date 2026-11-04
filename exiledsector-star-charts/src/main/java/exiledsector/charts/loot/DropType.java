@@ -18,7 +18,7 @@ public enum DropType {
     FLIGHT_DECK(ItemKind.FLIGHT_DECK),
     SUBROUTINE(ItemKind.SUBROUTINE),
     STAR_CHART(true, true),
-    CURRENCY(false, true),
+    CRAFTING_ITEM(false, true),
     FEEDSTOCK(false, true),
     CATALYST(false, true),
     WEAPON(false, true),

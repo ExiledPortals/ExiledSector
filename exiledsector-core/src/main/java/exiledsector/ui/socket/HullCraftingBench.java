@@ -77,76 +77,76 @@ public final class HullCraftingBench implements BenchModeSupport {
     }
 
     @Override
-    public List<CraftingMaterialFamily> currencies() {
+    public List<CraftingMaterialFamily> craftingItems() {
         List<CraftingMaterialFamily> offered = new ArrayList<>();
-        ExiledSector.enabledDomains().forEach(domain -> offered.addAll(domain.hullCraftingBenchCurrencies()));
-        return hullCraftingBenchCurrencies(offered, HoloPanel.playerMaterials()::count);
+        ExiledSector.enabledDomains().forEach(domain -> offered.addAll(domain.hullCraftingBenchCraftingItems()));
+        return hullCraftingBenchCraftingItems(offered, HoloPanel.playerMaterials()::count);
     }
 
-    static List<CraftingMaterialFamily> hullCraftingBenchCurrencies(List<CraftingMaterialFamily> registered, ToIntFunction<String> owned) {
+    static List<CraftingMaterialFamily> hullCraftingBenchCraftingItems(List<CraftingMaterialFamily> registered, ToIntFunction<String> owned) {
         List<CraftingMaterialFamily> shown = new ArrayList<>(List.of(Nanoswarm.values()));
-        for (CraftingMaterialFamily currency : registered) {
-            if (!(currency instanceof Nanoswarm) && currency.appliesToShipItems() && owned.applyAsInt(currency.itemId()) > 0) {
-                shown.add(currency);
+        for (CraftingMaterialFamily craftingItem : registered) {
+            if (!(craftingItem instanceof Nanoswarm) && craftingItem.appliesToShipItems() && owned.applyAsInt(craftingItem.itemId()) > 0) {
+                shown.add(craftingItem);
             }
         }
         return shown;
     }
 
     @Override
-    public boolean inOrbit(CraftingMaterialFamily currency) {
-        return currency instanceof Nanoswarm;
+    public boolean inOrbit(CraftingMaterialFamily craftingItem) {
+        return craftingItem instanceof Nanoswarm;
     }
 
     @Override
-    public String currencyDescriptionKey(CraftingMaterialFamily currency) {
-        return MaterialItems.descriptionKey(currency.itemId());
+    public String craftingItemDescriptionKey(CraftingMaterialFamily craftingItem) {
+        return MaterialItems.descriptionKey(craftingItem.itemId());
     }
 
     @Override
-    public String currencyDescription(CraftingMaterialFamily currency) {
-        return currency.description();
+    public String craftingItemDescription(CraftingMaterialFamily craftingItem) {
+        return craftingItem.description();
     }
 
     @Override
-    public List<StyledText> currencyLines(CraftingMaterialFamily currency) {
-        return currency.grantedLines();
+    public List<StyledText> craftingItemLines(CraftingMaterialFamily craftingItem) {
+        return craftingItem.grantedLines();
     }
 
     @Override
-    public Refusal refusal(CraftingMaterialFamily currency, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
+    public Refusal refusal(CraftingMaterialFamily craftingItem, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
                            Set<CraftingInhibitor> inhibitors) {
-        if (materials.count(currency.itemId()) < 1) {
-            return new Refusal(UseVerdict.refused(currency.growable() ? "ui.craftingBench.notice.noneOwned" : "ui.craftingBench.notice.noneFound"), false);
+        if (materials.count(craftingItem.itemId()) < 1) {
+            return new Refusal(UseVerdict.refused(craftingItem.growable() ? "ui.craftingBench.notice.noneOwned" : "ui.craftingBench.notice.noneFound"), false);
         }
         if (loaded == null) {
             return new Refusal(LOAD_FIRST, false);
         }
-        return new Refusal(ItemCrafting.verdict(currency, loaded, allowedUniques, inhibitors), true);
+        return new Refusal(ItemCrafting.verdict(craftingItem, loaded, allowedUniques, inhibitors), true);
     }
 
     @Override
-    public Use use(CraftingMaterialFamily currency, Item loaded, ItemStore store, CraftingMaterials materials, Random random,
+    public Use use(CraftingMaterialFamily craftingItem, Item loaded, ItemStore store, CraftingMaterials materials, Random random,
                    Predicate<ItemDefinition> allowedUniques, Set<CraftingInhibitor> inhibitors, String nameBefore) {
-        Item result = ItemCrafting.use(currency, loaded, materials, store, random, allowedUniques, inhibitors);
+        Item result = ItemCrafting.use(craftingItem, loaded, materials, store, random, allowedUniques, inhibitors);
         if (result == null) {
             return null;
         }
-        String notice = Translation.msg(usedNoticeKey(currency, result.corruption(), ItemNature.of(result.kind())))
+        String notice = Translation.msg(usedNoticeKey(craftingItem, result.corruption(), ItemNature.of(result.kind())))
                 .arg("before", nameBefore).arg("name", result.name()).text();
         SocketCustody.markHostsChanged(result);
-        if (currency.mayChangeDefinition() && SocketCustody.unsocketIfMisfit(result)) {
+        if (craftingItem.mayChangeDefinition() && SocketCustody.unsocketIfMisfit(result)) {
             String movedNotice = Translation.msg("ui.craftingBench.notice.movedToStorage").arg("name", result.name()).arg("type", result.kindName()).text();
             notice = Translation.msg("format.sentences").arg("a", notice).arg("b", movedNotice).text();
         }
-        return new Use(result, currency.createsCopy() ? loaded : result, notice);
+        return new Use(result, craftingItem.createsCopy() ? loaded : result, notice);
     }
 
-    static String usedNoticeKey(CraftingMaterialFamily currency, CorruptionOutcome outcome, ItemNature nature) {
-        if (currency == Nanoswarm.CORRUPTION && outcome != null) {
+    static String usedNoticeKey(CraftingMaterialFamily craftingItem, CorruptionOutcome outcome, ItemNature nature) {
+        if (craftingItem == Nanoswarm.CORRUPTION && outcome != null) {
             return "ui.craftingBench.notice.corrupted." + outcome.name().toLowerCase(Locale.ROOT) + "." + nature.name().toLowerCase(Locale.ROOT);
         }
-        return currency.usedNoticeKey(nature);
+        return craftingItem.usedNoticeKey(nature);
     }
 
     @Override

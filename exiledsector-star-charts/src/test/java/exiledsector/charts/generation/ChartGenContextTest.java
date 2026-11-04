@@ -132,7 +132,7 @@ class ChartGenContextTest {
 
         assertEquals(2.1f, context.rewardDropMult(DropType.STAR_CHART), TOLERANCE);
         assertEquals(1.7f, context.rewardDropMult(DropType.CATALYST), TOLERANCE);
-        assertEquals(1.3f, context.rewardDropMult(DropType.CURRENCY), TOLERANCE);
+        assertEquals(1.3f, context.rewardDropMult(DropType.CRAFTING_ITEM), TOLERANCE);
         assertEquals(1f, ChartGenContext.none().rewardDropMult(DropType.CATALYST), TOLERANCE);
     }
 
@@ -189,12 +189,12 @@ class ChartGenContextTest {
     void dropBonusesAddWithinATypeAndStayApartAcrossTypes() {
         ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, 10f),
                 new AppliedEffect(ChartModifier.CHART_ITEM_PERCENT, 20f), new AppliedEffect(ChartModifier.CHART_REACTOR_ITEM_PERCENT, 40f),
-                new AppliedEffect(ChartModifier.CHART_REACTOR_ITEM_PERCENT, 10f), new AppliedEffect(ChartModifier.CHART_CURRENCY_PERCENT, 30f)));
+                new AppliedEffect(ChartModifier.CHART_REACTOR_ITEM_PERCENT, 10f), new AppliedEffect(ChartModifier.CHART_CRAFTING_ITEM_PERCENT, 30f)));
 
         assertEquals(1.8f, context.dropMult(DropType.REACTOR), TOLERANCE);
         assertEquals(1.3f, context.dropMult(DropType.BRIDGE), TOLERANCE);
         assertEquals(1.3f, context.dropMult(DropType.STAR_CHART), TOLERANCE);
-        assertEquals(1.4f, context.dropMult(DropType.CURRENCY), TOLERANCE, "Salvage only reaches item types");
+        assertEquals(1.4f, context.dropMult(DropType.CRAFTING_ITEM), TOLERANCE, "Salvage only reaches item types");
         assertEquals(1.1f, context.dropMult(DropType.WEAPON), TOLERANCE);
         assertEquals(1f, context.dropMult(DropType.COLONY_ITEM), TOLERANCE, "Quantity leaves colony items out");
         assertEquals(1.3f, context.itemChances().general(), TOLERANCE);
@@ -216,11 +216,11 @@ class ChartGenContextTest {
     @Test
     void theLootTotalsListOnlyTheBonusesThatAreNotZero() {
         ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, 23f),
-                new AppliedEffect(ChartModifier.CHART_CURRENCY_PERCENT, 47f), new AppliedEffect(ChartModifier.CHART_FLEET_SIZE_PERCENT, 30f)));
+                new AppliedEffect(ChartModifier.CHART_CRAFTING_ITEM_PERCENT, 47f), new AppliedEffect(ChartModifier.CHART_FLEET_SIZE_PERCENT, 30f)));
 
         List<String> lines = ChartLootTotals.lines(context).stream().map(StyledText::plain).toList();
 
-        assertEquals(List.of("Item quantity +23%", "Currency items +47%"), lines);
+        assertEquals(List.of("Item quantity +23%", "Crafting items +47%"), lines);
         ChartGenContext sites = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_STATION_BUDGET_PERCENT, 30f)));
         assertEquals(List.of("Stations +30%"), ChartLootTotals.lines(sites).stream().map(StyledText::plain).toList());
         assertEquals(List.of("Rarity of hull items and subroutines +25%"),

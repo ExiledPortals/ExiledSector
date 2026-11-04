@@ -28,7 +28,7 @@ class LootAlertTest {
     }
 
     @Test
-    void otherCurrenciesAndInhibitorsGetTheStandardAlert() {
+    void otherCraftingItemsAndInhibitorsGetTheStandardAlert() {
         assertEquals(LootAlert.STANDARD, alertFor(Nanoswarm.AUGMENTATION.itemId()));
         assertEquals(LootAlert.STANDARD, alertFor(Nanoswarm.METAMORPH.itemId()));
         assertEquals(LootAlert.STANDARD, alertFor(CraftingInhibitor.PREFIX.itemId()));

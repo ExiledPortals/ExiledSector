@@ -154,7 +154,7 @@ class ExiledSectorModPluginTest {
         NpcLevelCaps.clear();
         ItemDefinitions.clear();
         ItemNames.clear();
-        StarChartFixtures.unregisterCurrencies();
+        StarChartFixtures.unregisterCraftingItems();
         settingsCreatorMock.close();
         mockSector.close();
         lunaSettingsMock.close();

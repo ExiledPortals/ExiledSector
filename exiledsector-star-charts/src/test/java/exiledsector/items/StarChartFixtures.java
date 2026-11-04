@@ -83,9 +83,9 @@ public final class StarChartFixtures {
         ItemModifiers.clearPart(ModifierScope.STAR_CHART);
     }
 
-    public static void unregisterCurrencies() {
-        for (StarChartCipher currency : StarChartCipher.values()) {
-            CraftingMaterialFamilies.unregister(currency);
+    public static void unregisterCraftingItems() {
+        for (StarChartCipher craftingItem : StarChartCipher.values()) {
+            CraftingMaterialFamilies.unregister(craftingItem);
         }
         for (Nanoswarm kernel : StarChartCipher.KERNELS_ON_CHARTS) {
             CraftingMaterialFamilies.retract(kernel, ItemType.STAR_CHART);

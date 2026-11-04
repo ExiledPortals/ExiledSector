@@ -74,7 +74,7 @@ public final class StarChartCraftingBench implements BenchModeSupport {
 
     @Override
     public String useHintKey() {
-        return "chart.ui.currency.use";
+        return "chart.ui.craftingItem.use";
     }
 
     @Override
@@ -88,27 +88,27 @@ public final class StarChartCraftingBench implements BenchModeSupport {
     }
 
     @Override
-    public List<CraftingMaterialFamily> currencies() {
-        return StarChartCrafting.currencies().stream().sorted(Comparator.comparingDouble(CraftingMaterialFamily::dropWeight).reversed()).toList();
+    public List<CraftingMaterialFamily> craftingItems() {
+        return StarChartCrafting.craftingItems().stream().sorted(Comparator.comparingDouble(CraftingMaterialFamily::dropWeight).reversed()).toList();
     }
 
     @Override
-    public String currencyDescriptionKey(CraftingMaterialFamily currency) {
-        return StarChartCrafting.currencyDescriptionKey(currency);
+    public String craftingItemDescriptionKey(CraftingMaterialFamily craftingItem) {
+        return StarChartCrafting.craftingItemDescriptionKey(craftingItem);
     }
 
     @Override
-    public Refusal refusal(CraftingMaterialFamily currency, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
+    public Refusal refusal(CraftingMaterialFamily craftingItem, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
                            Set<CraftingInhibitor> inhibitors) {
-        UseVerdict verdict = StarChartCrafting.refusal(currency, loaded, store, materials, allowedUniques, inhibitors);
+        UseVerdict verdict = StarChartCrafting.refusal(craftingItem, loaded, store, materials, allowedUniques, inhibitors);
         return new Refusal(verdict, !verdict.equals(StarChartCrafting.NO_CHART) && !verdict.equals(StarChartCrafting.NONE_OWNED));
     }
 
     @Override
-    public Use use(CraftingMaterialFamily currency, Item loaded, ItemStore store, CraftingMaterials materials, Random random,
+    public Use use(CraftingMaterialFamily craftingItem, Item loaded, ItemStore store, CraftingMaterials materials, Random random,
                    Predicate<ItemDefinition> allowedUniques, Set<CraftingInhibitor> inhibitors, String nameBefore) {
-        StarChartCrafting.Used used = StarChartCrafting.use(currency, loaded, store, materials, random, allowedUniques, inhibitors);
-        return used == null ? null : new Use(used.result(), used.selectedAfter(), StarChartCrafting.usedNotice(currency, nameBefore, used));
+        StarChartCrafting.Used used = StarChartCrafting.use(craftingItem, loaded, store, materials, random, allowedUniques, inhibitors);
+        return used == null ? null : new Use(used.result(), used.selectedAfter(), StarChartCrafting.usedNotice(craftingItem, nameBefore, used));
     }
 
     @Override

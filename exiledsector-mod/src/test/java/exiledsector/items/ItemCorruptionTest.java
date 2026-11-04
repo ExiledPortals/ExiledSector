@@ -158,8 +158,8 @@ class ItemCorruptionTest {
             Item corrupted = ItemCrafting.corrupt(store, item, random, definition -> true);
             assertTrue(corrupted.corrupted());
             seen.add(corrupted.corruption());
-            for (Nanoswarm currency : Nanoswarm.values()) {
-                assertFalse(ItemCrafting.canUse(currency, corrupted, definition -> true), currency + " must not touch a corrupted item");
+            for (Nanoswarm craftingItem : Nanoswarm.values()) {
+                assertFalse(ItemCrafting.canUse(craftingItem, corrupted, definition -> true), craftingItem + " must not touch a corrupted item");
             }
         }
         assertEquals(EnumSet.copyOf(CorruptionOutcome.NANOSWARM_OUTCOMES), seen, "a nanoswarm never makes an item born corrupted");

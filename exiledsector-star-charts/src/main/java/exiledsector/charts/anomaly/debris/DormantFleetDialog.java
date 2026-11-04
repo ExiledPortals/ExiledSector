@@ -56,11 +56,11 @@ public class DormantFleetDialog extends AnomalyDialog {
         options.addOption(Translation.gameText("chart.anomaly.anomalous_debris.dialog.engage"), ENGAGE_OPTION);
         options.setEnabled(ENGAGE_OPTION, choices.canEngage());
         String kernelName = Translation.gameText("material." + KERNEL_ID + ".name");
-        options.addOption(I18n.forGameText(() -> Translation.msg("chart.anomaly.anomalous_debris.dialog.corrupt").arg("count", KERNEL_COST).arg("currency", kernelName)
+        options.addOption(I18n.forGameText(() -> Translation.msg("chart.anomaly.anomalous_debris.dialog.corrupt").arg("count", KERNEL_COST).arg("craftingItem", kernelName)
                 .text()), CORRUPT, Translation.gameText("chart.anomaly.anomalous_debris.dialog.corruptTooltip"));
         options.setEnabled(CORRUPT, choices.canCorrupt());
         if (choices.corruptBlockedKey() != null) {
-            options.setTooltip(CORRUPT, I18n.forGameText(() -> Translation.msg(choices.corruptBlockedKey()).arg("currency", kernelName).text()));
+            options.setTooltip(CORRUPT, I18n.forGameText(() -> Translation.msg(choices.corruptBlockedKey()).arg("craftingItem", kernelName).text()));
         }
         if (!choices.canEngage()) {
             options.setTooltip(ENGAGE_OPTION, Translation.gameText("chart.anomaly.anomalous_debris.dialog.noReadyShips"));

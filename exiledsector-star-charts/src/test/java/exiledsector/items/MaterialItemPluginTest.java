@@ -18,7 +18,7 @@ class MaterialItemPluginTest {
 
     @AfterEach
     void tearDown() {
-        StarChartFixtures.unregisterCurrencies();
+        StarChartFixtures.unregisterCraftingItems();
         StarChartSettings.setEnabledForTests(StarChartSettings.DEFAULT_ENABLED);
     }
 
@@ -46,13 +46,13 @@ class MaterialItemPluginTest {
     @Test
     void ciphersAreUsableOnlyWhileStarChartsAreOn() {
         for (StarChartCipher cipher : StarChartCipher.values()) {
-            assertTrue(ItemUnlock.currencyUsable(cipher.itemId(), null), cipher.name());
+            assertTrue(ItemUnlock.craftingItemUsable(cipher.itemId(), null), cipher.name());
         }
 
         StarChartSettings.setEnabledForTests(false);
 
         for (StarChartCipher cipher : StarChartCipher.values()) {
-            assertFalse(ItemUnlock.currencyUsable(cipher.itemId(), null), cipher.name());
+            assertFalse(ItemUnlock.craftingItemUsable(cipher.itemId(), null), cipher.name());
         }
     }
 }

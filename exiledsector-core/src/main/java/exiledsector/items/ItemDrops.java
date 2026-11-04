@@ -138,7 +138,7 @@ public final class ItemDrops {
         return droppedItems;
     }
 
-    public static Map<String, Integer> rollMaterials(String siteId, Random random, float feedstockMult, float currencyMult) {
+    public static Map<String, Integer> rollMaterials(String siteId, Random random, float feedstockMult, float craftingItemMult) {
         Map<String, Integer> droppedMaterials = new LinkedHashMap<>();
         Rule rule = activeRule(siteId);
         if (rule == null || rule.chances().isEmpty()) {
@@ -148,7 +148,7 @@ public final class ItemDrops {
         if (feedstockFound > 0) {
             droppedMaterials.put(ItemDisassembly.FEEDSTOCK_ITEM_ID, feedstockFound);
         }
-        rollEachCurrency(materialDrops(), rule.chances().get(0) * KERNEL_CHANCE_SHARE * currencyMult, random, droppedMaterials);
+        rollEachCraftingItem(materialDrops(), rule.chances().get(0) * KERNEL_CHANCE_SHARE * craftingItemMult, random, droppedMaterials);
         return droppedMaterials;
     }
 
@@ -181,9 +181,9 @@ public final class ItemDrops {
 
     static List<MaterialDrop> materialDrops() {
         List<MaterialDrop> materialDrops = new ArrayList<>();
-        for (CraftingMaterialFamily currency : CraftingMaterialFamilies.all()) {
-            if (currency.dropsFromShipLoot()) {
-                materialDrops.add(new MaterialDrop(currency.itemId(), currency.dropWeight()));
+        for (CraftingMaterialFamily craftingItem : CraftingMaterialFamilies.all()) {
+            if (craftingItem.dropsFromShipLoot()) {
+                materialDrops.add(new MaterialDrop(craftingItem.itemId(), craftingItem.dropWeight()));
             }
         }
         for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
@@ -192,19 +192,19 @@ public final class ItemDrops {
         return materialDrops;
     }
 
-    public static boolean isCraftingCurrency(String itemId) {
+    public static boolean isCraftingItem(String itemId) {
         return materialDrops().stream().anyMatch(drop -> drop.itemId().equals(itemId));
     }
 
-    public static String pickCraftingCurrency(Random random) {
-        MaterialDrop drop = WeightedPick.pick(materialDrops(), currency -> Math.max(0f, currency.weight()), random);
+    public static String pickCraftingItem(Random random) {
+        MaterialDrop drop = WeightedPick.pick(materialDrops(), craftingItem -> Math.max(0f, craftingItem.weight()), random);
         return drop == null ? null : drop.itemId();
     }
 
     public record MaterialDrop(String itemId, float weight) {
     }
 
-    public static void rollEachCurrency(List<MaterialDrop> drops, float expectedDrops, Random random, Map<String, Integer> droppedMaterials) {
+    public static void rollEachCraftingItem(List<MaterialDrop> drops, float expectedDrops, Random random, Map<String, Integer> droppedMaterials) {
         double totalWeight = drops.stream().mapToDouble(drop -> Math.max(0f, drop.weight())).sum();
         if (!(expectedDrops > 0f) || !(totalWeight > 0d)) {
             return;
@@ -257,14 +257,14 @@ public final class ItemDrops {
         }
     }
 
-    public static SiteLoot rollSite(String siteId, Random random, ItemChances chances, float feedstockMult, float currencyMult) {
+    public static SiteLoot rollSite(String siteId, Random random, ItemChances chances, float feedstockMult, float craftingItemMult) {
         List<ItemData> droppedItems = roll(siteId, random, chances);
-        return new SiteLoot(droppedItems, List.of(), rollMaterials(siteId, random, feedstockMult, currencyMult));
+        return new SiteLoot(droppedItems, List.of(), rollMaterials(siteId, random, feedstockMult, craftingItemMult));
     }
 
-    public static SiteLoot rollFleetSalvage(String siteId, Random random, ItemChances chances, float feedstockMult, float currencyMult) {
+    public static SiteLoot rollFleetSalvage(String siteId, Random random, ItemChances chances, float feedstockMult, float craftingItemMult) {
         List<ItemData> droppedItems = rollItems(siteId, random, chances, definition -> false, false);
-        return new SiteLoot(droppedItems, List.of(), rollMaterials(siteId, random, feedstockMult, currencyMult));
+        return new SiteLoot(droppedItems, List.of(), rollMaterials(siteId, random, feedstockMult, craftingItemMult));
     }
 
     static void rollTargeted(Rule rule, Random random, float extraShare, float rarity, int sharedKinds, ItemKind kind,
