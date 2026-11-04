@@ -512,15 +512,32 @@ public abstract class Item {
                         : new SlottedLine(rolledModifier.slot(), shown, resolvedEffect.detailTitle(), resolvedEffect.detailLines()));
             }
         }
-        if (!withRollRanges || described.size() < 2) {
+        List<String> headerKeys = withRollRanges && !described.isEmpty() ? headerKeys(rolledModifier, described.size() > 1) : List.of();
+        if (headerKeys.isEmpty()) {
             lines.addAll(described);
             return;
         }
-        lines.add(new SlottedLine(rolledModifier.slot(), Translation.styled("socketable.tooltip.hybrid")));
+        ModifierSlot headerSlot = rolledModifier.slot();
+        for (String headerKey : headerKeys) {
+            lines.add(new SlottedLine(headerSlot, Translation.styled(headerKey)));
+            headerSlot = null;
+        }
         for (SlottedLine line : described) {
             lines.add(new SlottedLine(null, Translation.msg("socketable.tooltip.hybridLine").arg("line", line.text()).styled(),
                     line.detailTitle(), line.details()));
         }
+    }
+
+    private static List<String> headerKeys(RolledModifier rolledModifier, boolean hybrid) {
+        List<String> headerKeys = new ArrayList<>(2);
+        String originHeaderKey = ReservedModifiers.headerKey(rolledModifier.modifierId());
+        if (originHeaderKey != null) {
+            headerKeys.add(originHeaderKey);
+        }
+        if (hybrid) {
+            headerKeys.add("socketable.tooltip.hybrid");
+        }
+        return headerKeys;
     }
 
     private static List<StyledText> texts(List<SlottedLine> lines, boolean withDetails) {

@@ -34,6 +34,7 @@ public final class BiomeModifiers {
     public static final String PATH = "data/config/exiledSector/biome_modifiers.csv";
     public static final String ID_COLUMN = "modifier";
     public static final String OWNER_PREFIX = "biome:";
+    public static final String HEADER_KEY_PREFIX = "chart.biomeModifier.header.";
     static final float DROP_CHANCE = 0.1f;
     private static final long GRANT_SEED_SALT = 0x62696F6D65L;
     private static final Logger LOG = Logger.getLogger(BiomeModifiers.class);
@@ -65,7 +66,7 @@ public final class BiomeModifiers {
                 return;
             }
             try {
-                ReservedModifiers.reserve(modifierId, OWNER_PREFIX + key.biomeId());
+                ReservedModifiers.reserve(modifierId, OWNER_PREFIX + key.biomeId(), headerKey(key.biomeId()));
                 registered.put(key, modifierId);
             } catch (IllegalArgumentException e) {
                 csv.skipRow(modifierId, e.getMessage());
@@ -96,6 +97,10 @@ public final class BiomeModifiers {
             return null;
         }
         return new Key(biomeId, kind);
+    }
+
+    public static String headerKey(String biomeId) {
+        return HEADER_KEY_PREFIX + biomeId;
     }
 
     public static void unregisterAll() {
