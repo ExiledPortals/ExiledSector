@@ -36,6 +36,8 @@ class DescriptionGoldenTest {
     static final Path GOLDEN_FILE = Path.of("exiledsector-skill-tree/src/test/resources/i18n/descriptions.en.golden");
     private static final Path ACTUAL_FILE = Path.of("target/i18n/descriptions.en.actual");
     private static final String UPDATE_PROPERTY = "exiledsector.updateGolden";
+    private static final String UPDATE_HINT = "if the change is intended, regenerate with: mvn -q -pl exiledsector-skill-tree -am test"
+            + " -Dtest=DescriptionGoldenTest -Dsurefire.failIfNoSpecifiedTests=false -D" + UPDATE_PROPERTY + "=true";
     private static final float[] SAMPLE_MAGNITUDES = {1f, 10f, 12.5f, 100f, -10f, -12.5f};
     private static final HullSize[] HULL_SIZES = {null, HullSize.FRIGATE, HullSize.DESTROYER, HullSize.CRUISER, HullSize.CAPITAL_SHIP};
 
@@ -56,7 +58,7 @@ class DescriptionGoldenTest {
 
     @Test
     void everyPlayerVisibleDescriptionMatchesTheRecordedEnglishTextAndHighlights() throws IOException {
-        List<String> actual = generate();
+        List<String> actual = descriptionLines();
         assertEquals(Set.of(), headlessGameText.unnamedHullMods(), "Add the in-game names of these hull mods to " + HeadlessGameText.HULL_MOD_NAMES_FILE);
         Path actualFile = ProjectFiles.projectRoot().resolve(ACTUAL_FILE);
         Files.createDirectories(actualFile.getParent());
@@ -68,13 +70,19 @@ class DescriptionGoldenTest {
         }
         assertTrue(Files.isRegularFile(golden), "Missing " + golden + "; run with -D" + UPDATE_PROPERTY + "=true");
         List<String> expected = Files.readAllLines(golden, StandardCharsets.UTF_8);
-        assertEquals(expected.size(), actual.size(), "line count");
+        assertEquals(expected.size(), actual.size(), "line count; " + UPDATE_HINT);
         for (int i = 0; i < expected.size(); i++) {
-            assertEquals(expected.get(i), actual.get(i), "golden line " + (i + 1));
+            assertEquals(expected.get(i), actual.get(i), "golden line " + (i + 1) + "; " + UPDATE_HINT);
         }
     }
 
     static List<String> generate() {
+        List<String> lines = descriptionLines();
+        lines.addAll(treeSummaryLines());
+        return lines;
+    }
+
+    private static List<String> descriptionLines() {
         List<String> lines = new ArrayList<>();
         secondInCommandEnabled = true;
         for (String name : new TreeSet<>(SkillEffectNames.all())) {
@@ -111,6 +119,11 @@ class DescriptionGoldenTest {
                 }
             }
         }
+        return lines;
+    }
+
+    private static List<String> treeSummaryLines() {
+        List<String> lines = new ArrayList<>();
         for (int option = 0; option < 3; option++) {
             ShipSkillData everything = everyNodeAllocated(option);
             for (HullSize hullSize : HULL_SIZES) {
