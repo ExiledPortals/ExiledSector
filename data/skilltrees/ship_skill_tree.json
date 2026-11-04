@@ -7897,14 +7897,14 @@
 			"id": "affinity_110",
 			"type": "affinity",
 			"connectedTo": [
-				"ballistic_weapon_damage_8",
 				"affinity_141",
-				"affinity_142"
+				"affinity_138",
+				"affinity_113"
 			],
-			"x": -3398,
-			"y": 11717,
+			"x": -3705,
+			"y": 10584,
 			"orbitAnchorId": "anchor_88",
-			"orbitAngle": 0,
+			"orbitAngle": -30.328654152406685,
 			"tags": [
 				"hegemony"
 			]
@@ -7933,10 +7933,10 @@
 				"point_defense_damage_to_missiles_and_fighters_1",
 				"affinity_140"
 			],
-			"x": -7884,
-			"y": 11717,
+			"x": -7611,
+			"y": 10644,
 			"orbitAnchorId": "anchor_88",
-			"orbitAngle": 180,
+			"orbitAngle": -151.4138670326823,
 			"tags": [
 				"hegemony"
 			]
@@ -7946,7 +7946,8 @@
 			"type": "affinity",
 			"connectedTo": [
 				"affinity_112",
-				"affinity_142"
+				"ballistic_weapon_damage_8",
+				"affinity_110"
 			],
 			"x": -5641,
 			"y": 9474,
@@ -7962,10 +7963,10 @@
 			"connectedTo": [
 				"ballistic_weapon_damage_9"
 			],
-			"x": -4013,
-			"y": 11717,
+			"x": -5641,
+			"y": 10128,
 			"orbitAnchorId": "anchor_97",
-			"orbitAngle": 180,
+			"orbitAngle": 90,
 			"tags": [
 				"hegemony"
 			]
@@ -7976,10 +7977,10 @@
 			"connectedTo": [
 				"armor_14"
 			],
-			"x": -4216,
-			"y": 12533,
+			"x": -4355,
+			"y": 12693,
 			"orbitAnchorId": "anchor_98",
-			"orbitAngle": 270,
+			"orbitAngle": -134.83262410110444,
 			"tags": [
 				"hegemony"
 			]
@@ -7990,10 +7991,10 @@
 			"connectedTo": [
 				"fragmentation_damage_resistance_2"
 			],
-			"x": -7027,
-			"y": 12650,
+			"x": -6830,
+			"y": 12835,
 			"orbitAnchorId": "anchor_99",
-			"orbitAngle": 270,
+			"orbitAngle": -44.385387281375685,
 			"tags": [
 				"hegemony"
 			]
@@ -8004,10 +8005,10 @@
 			"connectedTo": [
 				"point_defense_damage_to_missiles_and_fighters_2"
 			],
-			"x": -7231,
-			"y": 11717,
+			"x": -7086,
+			"y": 11049,
 			"orbitAnchorId": "anchor_100",
-			"orbitAngle": 0,
+			"orbitAngle": 35.692092380197664,
 			"tags": [
 				"hegemony"
 			]
@@ -8047,12 +8048,12 @@
 			"type": "affinity",
 			"connectedTo": [
 				"affinity_139",
-				"affinity_142"
+				"affinity_110"
 			],
-			"x": -4230,
-			"y": 10458,
+			"x": -3902,
+			"y": 10717,
 			"orbitAnchorId": "anchor_96",
-			"orbitAngle": 0,
+			"orbitAngle": -33.90752745660876,
 			"tags": [
 				"hegemony"
 			]
@@ -8064,10 +8065,10 @@
 				"affinity_138",
 				"auxiliary_screen_1"
 			],
-			"x": -4410,
-			"y": 10638,
+			"x": -3987,
+			"y": 10985,
 			"orbitAnchorId": "anchor_96",
-			"orbitAngle": 90,
+			"orbitAngle": 69.05726172532613,
 			"tags": [
 				"hegemony"
 			]
@@ -8077,12 +8078,12 @@
 			"type": "ballistic_weapon_damage",
 			"connectedTo": [
 				"ballistic_weapon_damage_9",
-				"affinity_110"
+				"affinity_113"
 			],
-			"x": -3653,
-			"y": 11717,
+			"x": -5641,
+			"y": 9768,
 			"orbitAnchorId": "anchor_97",
-			"orbitAngle": 0,
+			"orbitAngle": 270,
 			"tags": [
 				"hegemony"
 			]
@@ -8094,10 +8095,10 @@
 				"ballistic_weapon_damage_8",
 				"concussion_shells_1"
 			],
-			"x": -3833,
-			"y": 11897,
+			"x": -5461,
+			"y": 9948,
 			"orbitAnchorId": "anchor_97",
-			"orbitAngle": 90,
+			"orbitAngle": 0,
 			"tags": [
 				"hegemony"
 			]
@@ -8109,10 +8110,10 @@
 				"armor_14",
 				"affinity_141"
 			],
-			"x": -4216,
-			"y": 12893,
+			"x": -4090,
+			"y": 12936,
 			"orbitAnchorId": "anchor_98",
-			"orbitAngle": 90,
+			"orbitAngle": 39.83135848394538,
 			"tags": [
 				"hegemony"
 			]
@@ -8124,10 +8125,10 @@
 				"armor_13",
 				"hold_the_line_1"
 			],
-			"x": -4036,
-			"y": 12713,
+			"x": -4120,
+			"y": 12677,
 			"orbitAnchorId": "anchor_98",
-			"orbitAngle": 0,
+			"orbitAngle": -53.18948081613198,
 			"tags": [
 				"hegemony"
 			]
@@ -8139,10 +8140,10 @@
 				"fragmentation_damage_resistance_2",
 				"affinity_140"
 			],
-			"x": -7027,
-			"y": 13010,
+			"x": -7086,
+			"y": 13089,
 			"orbitAnchorId": "anchor_99",
-			"orbitAngle": 90,
+			"orbitAngle": 134.85067154639472,
 			"tags": [
 				"hegemony"
 			]
@@ -8154,10 +8155,10 @@
 				"fragmentation_damage_resistance_1",
 				"domain_pattern_laminate_1"
 			],
-			"x": -7207,
-			"y": 12830,
+			"x": -7080,
+			"y": 12827,
 			"orbitAnchorId": "anchor_99",
-			"orbitAngle": 180,
+			"orbitAngle": -132.08896658116004,
 			"tags": [
 				"hegemony"
 			]
@@ -8169,10 +8170,10 @@
 				"point_defense_damage_to_missiles_and_fighters_2",
 				"affinity_112"
 			],
-			"x": -7591,
-			"y": 11717,
+			"x": -7375,
+			"y": 10834,
 			"orbitAnchorId": "anchor_100",
-			"orbitAngle": 180,
+			"orbitAngle": -142.50494094415265,
 			"tags": [
 				"hegemony"
 			]
@@ -8184,10 +8185,10 @@
 				"point_defense_damage_to_missiles_and_fighters_1",
 				"flak_screen_doctrine_1"
 			],
-			"x": -7411,
-			"y": 11537,
+			"x": -7131,
+			"y": 10795,
 			"orbitAnchorId": "anchor_100",
-			"orbitAngle": 270,
+			"orbitAngle": -55.795228131083746,
 			"tags": [
 				"hegemony"
 			]
@@ -8212,10 +8213,10 @@
 			"connectedTo": [
 				"affinity_139"
 			],
-			"x": -4590,
-			"y": 10458,
+			"x": -4217,
+			"y": 10887,
 			"orbitAnchorId": "anchor_96",
-			"orbitAngle": 180,
+			"orbitAngle": 157.27017181573362,
 			"tags": [
 				"hegemony"
 			]
@@ -8619,22 +8620,6 @@
 			"y": 13115,
 			"orbitAnchorId": "anchor_88",
 			"orbitAngle": 38.56428596281955,
-			"tags": [
-				"hegemony"
-			]
-		},
-		{
-			"id": "affinity_142",
-			"type": "affinity",
-			"connectedTo": [
-				"affinity_110",
-				"affinity_113",
-				"affinity_138"
-			],
-			"x": -3974,
-			"y": 10216,
-			"orbitAnchorId": "anchor_88",
-			"orbitAngle": -41.98930126093873,
 			"tags": [
 				"hegemony"
 			]
@@ -11038,8 +11023,8 @@
 		{
 			"a": "affinity_112",
 			"b": "affinity_113",
-			"controlX": -7227,
-			"controlY": 10131
+			"controlX": -6786,
+			"controlY": 9788
 		},
 		{
 			"a": "affinity_114",
@@ -11188,13 +11173,13 @@
 		{
 			"a": "domain_pattern_laminate_1",
 			"b": "fragmentation_damage_resistance_2",
-			"controlX": -7154,
-			"controlY": 12703
+			"controlX": -6953,
+			"controlY": 12781
 		},
 		{
 			"a": "fragmentation_damage_resistance_1",
 			"b": "fragmentation_damage_resistance_2",
-			"controlX": -7154,
+			"controlX": -7139,
 			"controlY": 12957
 		},
 		{
@@ -11206,8 +11191,8 @@
 		{
 			"a": "affinity_112",
 			"b": "affinity_140",
-			"controlX": -7724,
-			"controlY": 12550
+			"controlX": -7865,
+			"controlY": 12010
 		},
 		{
 			"a": "affinity_111",
@@ -11218,56 +11203,44 @@
 		{
 			"a": "affinity_110",
 			"b": "affinity_141",
-			"controlX": -3524,
-			"controlY": 12458
+			"controlX": -3404,
+			"controlY": 11878
 		},
 		{
 			"a": "armor_13",
 			"b": "armor_14",
-			"controlX": -4089,
-			"controlY": 12840
+			"controlX": -4049,
+			"controlY": 12800
 		},
 		{
 			"a": "armor_14",
 			"b": "hold_the_line_1",
-			"controlX": -4089,
-			"controlY": 12586
+			"controlX": -4241,
+			"controlY": 12641
 		},
 		{
 			"a": "ballistic_weapon_damage_8",
 			"b": "ballistic_weapon_damage_9",
-			"controlX": -3706,
-			"controlY": 11844
+			"controlX": -5514,
+			"controlY": 9821
 		},
 		{
 			"a": "ballistic_weapon_damage_9",
 			"b": "concussion_shells_1",
-			"controlX": -3960,
-			"controlY": 11844
-		},
-		{
-			"a": "affinity_110",
-			"b": "affinity_142",
-			"controlX": -3547,
-			"controlY": 10913
-		},
-		{
-			"a": "affinity_113",
-			"b": "affinity_142",
-			"controlX": -4728,
-			"controlY": 9668
+			"controlX": -5514,
+			"controlY": 10075
 		},
 		{
 			"a": "affinity_138",
 			"b": "affinity_139",
-			"controlX": -4283,
-			"controlY": 10585
+			"controlX": -3879,
+			"controlY": 10871
 		},
 		{
 			"a": "affinity_139",
 			"b": "auxiliary_screen_1",
-			"controlX": -4537,
-			"controlY": 10585
+			"controlX": -4122,
+			"controlY": 10982
 		},
 		{
 			"a": "increased_sensor_strength_1",
@@ -11284,14 +11257,20 @@
 		{
 			"a": "flak_screen_doctrine_1",
 			"b": "point_defense_damage_to_missiles_and_fighters_2",
-			"controlX": -7284,
-			"controlY": 11590
+			"controlX": -7055,
+			"controlY": 10913
 		},
 		{
 			"a": "point_defense_damage_to_missiles_and_fighters_1",
 			"b": "point_defense_damage_to_missiles_and_fighters_2",
-			"controlX": -7538,
-			"controlY": 11590
+			"controlX": -7261,
+			"controlY": 10766
+		},
+		{
+			"a": "affinity_110",
+			"b": "affinity_113",
+			"controlX": -4525,
+			"controlY": 9771
 		}
 	],
 	"hiddenConnectors": [
@@ -12057,32 +12036,32 @@
 		},
 		{
 			"id": "anchor_96",
-			"x": -4410,
-			"y": 10458,
+			"x": -4051,
+			"y": 10817,
 			"radius": 180
 		},
 		{
 			"id": "anchor_97",
-			"x": -3833,
-			"y": 11717,
+			"x": -5641,
+			"y": 9948,
 			"radius": 180
 		},
 		{
 			"id": "anchor_98",
-			"x": -4216,
-			"y": 12713,
+			"x": -4228,
+			"y": 12821,
 			"radius": 180
 		},
 		{
 			"id": "anchor_99",
-			"x": -7027,
-			"y": 12830,
+			"x": -6959,
+			"y": 12961,
 			"radius": 180
 		},
 		{
 			"id": "anchor_100",
-			"x": -7411,
-			"y": 11717,
+			"x": -7232,
+			"y": 10944,
 			"radius": 180
 		}
 	],

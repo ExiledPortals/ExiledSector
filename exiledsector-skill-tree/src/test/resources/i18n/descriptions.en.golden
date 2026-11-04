@@ -3349,8 +3349,8 @@ type|combat_vision|FRIGATE|0	0	<good>+300</good> to in-combat sensor/vision rang
 type|combat_vision|DESTROYER|0	0	<good>+500</good> to in-combat sensor/vision range.
 type|combat_vision|CRUISER|0	0	<good>+700</good> to in-combat sensor/vision range.
 type|combat_vision|CAPITAL_SHIP|0	0	<good>+900</good> to in-combat sensor/vision range.
-flavour|comsec_discipline	0	A COMSEC signals manual, left behind at an Ancyra customs post, shows the crew how to keep fire control working through enemy jamming. Every page is stamped restricted, including the blank ones.
-flavourAutomated|comsec_discipline	0	A COMSEC signals manual, left behind at an Ancyra customs post, sets out how to keep fire control working through enemy jamming. The ship's core adopts its procedures in full. Every page is stamped restricted, including the blank ones.
+flavour|comsec_discipline	0	In a joint League fleet, every member world encrypts its own traffic and jams anyone it suspects of listening, which is everyone. Serving under a League commission teaches the crew to keep fire control working through the noise. Most of it comes from their allies.
+flavourAutomated|comsec_discipline	0	In a joint League fleet, every member world encrypts its own traffic and jams anyone it suspects of listening, which is everyone. The ship's core logs months of that interference under a League commission and models its fire control to work through it. Most of the noise comes from its allies.
 type|comsec_discipline|null|0	1	<bad>25%</bad> reduced electronic warfare penalty against this ship's weapon range.
 type|comsec_discipline|null|1	0	<good>15%</good> increased this ship's sensor strength.
 type|comsec_discipline|FRIGATE|0	1	<bad>25%</bad> reduced electronic warfare penalty against this ship's weapon range.
