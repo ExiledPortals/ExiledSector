@@ -315,7 +315,7 @@ final class SkillTreeStatPanel {
     private Viewport compactViewport(PositionAPI canvasPosition) {
         float width = COMPACT_CONTENT_WIDTH + PADDING * 2f;
         float top = panelTop(canvasPosition);
-        float bottom = canvasPosition.getY() + ChromeMetrics.EDGE_MARGIN;
+        float bottom = canvasPosition.getY() + ChromeMetrics.EDGE_MARGIN + ChromeMetrics.CONTROL_HEIGHT + TOGGLE_GAP;
         return new Viewport(canvasRight(canvasPosition) - width, bottom, width, top - bottom);
     }
 
