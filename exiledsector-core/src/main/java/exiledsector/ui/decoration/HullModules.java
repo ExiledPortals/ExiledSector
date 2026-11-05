@@ -131,6 +131,17 @@ final class HullModules {
         }
     }
 
+    HullBounds withModules(HullBounds parentBounds) {
+        HullBounds bounds = parentBounds;
+        for (List<HullModule> modules : List.of(underParent, overParent)) {
+            for (HullModule module : modules) {
+                bounds = bounds.withSprite(module.spriteWidth(), module.spriteHeight(), module.centerX(), module.centerY(), module.forwardOffset(),
+                        module.leftOffset(), module.angleDeg());
+            }
+        }
+        return bounds;
+    }
+
     void drawUnderParent(SpriteCache spriteCache, float screenX, float screenY, float screenScale, float facingDeg, float alpha) {
         draw(underParent, spriteCache, screenX, screenY, screenScale, facingDeg, alpha);
     }

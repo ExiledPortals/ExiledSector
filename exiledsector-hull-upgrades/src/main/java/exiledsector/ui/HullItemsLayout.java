@@ -13,6 +13,7 @@ record HullItemsLayout(float panelLeft, float panelWidth, float settledShipX, Se
     static final float SECTION_LABEL_OVERHANG = 24f;
     static final float MAX_PANEL_WIDTH = 640f;
     static final float SCREEN_MARGIN = 10f;
+    static final float NATURAL_SHIP_ZOOM = 1f;
 
     static HullItemsLayout of(RefitScreenLayout layout, SectionLayout.ShipExtent extent) {
         float radius = SectionLayout.SECTION_RADIUS;
@@ -27,6 +28,30 @@ record HullItemsLayout(float panelLeft, float panelWidth, float settledShipX, Se
                 panelLeft + panelWidth + SECTION_BAND_MARGIN + radius, frameRight - SECTION_BAND_MARGIN - radius,
                 layout.frameY() + PANEL_MARGIN + verticalReach, layout.frameTop() - PANEL_MARGIN - verticalReach);
         return new HullItemsLayout(panelLeft, panelWidth, settledShipX, bounds);
+    }
+
+    static float settledShipZoom(RefitScreenLayout layout, SectionLayout.ShipExtent naturalExtent) {
+        float zoom = Math.max(layout.shipZoom(), NATURAL_SHIP_ZOOM);
+        if (naturalExtent.halfWidth() > 0f) {
+            zoom = Math.min(zoom, maxShipHalfWidth(layout) / naturalExtent.halfWidth());
+        }
+        if (naturalExtent.halfLength() > 0f) {
+            zoom = Math.min(zoom, maxShipHalfLength(layout) / naturalExtent.halfLength());
+        }
+        return zoom;
+    }
+
+    static float maxShipHalfWidth(RefitScreenLayout layout) {
+        float compactPanelRight = layout.fleetListRight() + PANEL_MARGIN + ItemStoragePanel.COMPACT_WIDTH;
+        float sectionColumnWidth = SectionLayout.SECTION_RADIUS * 2f + SECTION_LABEL_OVERHANG;
+        float shipRoom = layout.frameX() + layout.frameWidth() - SHIP_EDGE_MARGIN - compactPanelRight - SECTION_BAND_MARGIN - sectionColumnWidth;
+        return Math.max(SectionLayout.SECTION_RADIUS, shipRoom / 2f);
+    }
+
+    static float maxShipHalfLength(RefitScreenLayout layout) {
+        float roomAbove = layout.frameTop() - layout.shipCentreY();
+        float roomBelow = layout.shipCentreY() - layout.frameY();
+        return Math.max(SectionLayout.SECTION_RADIUS, Math.min(roomAbove, roomBelow) - SHIP_EDGE_MARGIN);
     }
 
     FreeArea advancedSearchArea(float panelTop, float panelHeight) {

@@ -53,6 +53,7 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
     private RefitShipPortrait portrait;
     private ShipAnchors sectionAnchors;
     private SectionLayout.ShipExtent shipExtent;
+    private float settledShipZoom;
     private HullItemsLayout screenLayout;
     private final Consumer<SocketPanelTab> tabListener = this::switchTab;
     private RefitButtonAdder refitAdder;
@@ -85,8 +86,10 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
         variant = shownVariant;
         portrait = RefitShipPortrait.of(member, variant);
         sectionAnchors = portrait == null ? null : ShipAnchors.of(portrait);
-        shipExtent = portrait == null ? SectionLayout.ShipExtent.square(0f)
-                : new SectionLayout.ShipExtent(portrait.halfWidthPixels(layout.shipZoom()), portrait.halfLengthPixels(layout.shipZoom()));
+        SectionLayout.ShipExtent naturalExtent = portrait == null ? SectionLayout.ShipExtent.square(0f)
+                : new SectionLayout.ShipExtent(portrait.halfWidthPixels(1f), portrait.halfLengthPixels(1f));
+        settledShipZoom = HullItemsLayout.settledShipZoom(layout, naturalExtent);
+        shipExtent = naturalExtent.scaled(settledShipZoom);
         screenLayout = HullItemsLayout.of(layout, shipExtent);
     }
 
@@ -312,6 +315,10 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
         return layout.shipCentreX() + (screenLayout.settledShipX() - layout.shipCentreX()) * fade.smoothLevel();
     }
 
+    private float shipZoom() {
+        return layout.shipZoom() + (settledShipZoom - layout.shipZoom()) * fade.smoothLevel();
+    }
+
     private void chooseFromStorage(Item item) {
         if (item == null) {
             storage.stopPlacing();
@@ -506,8 +513,9 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
             return;
         }
         float shipX = shipCentreX();
-        portrait.draw(shipX, layout.shipCentreY(), layout.shipZoom(), frameAlpha);
-        InspectedShip ship = portrait.at(shipX, layout.shipCentreY(), layout.shipZoom());
+        float shipZoom = shipZoom();
+        portrait.draw(shipX, layout.shipCentreY(), shipZoom, frameAlpha);
+        InspectedShip ship = portrait.at(shipX, layout.shipCentreY(), shipZoom);
         sectionsDisplay.render(ship, sectionAnchors, shipExtent, alphaMult * Fade.smooth(contentLevel), screenLayout.sectionBounds(), storage.placingItem(), storage.target());
         if (bayDim > 0f) {
             GLDraw.fillQuad(0f, 0f, Global.getSettings().getScreenWidth(), Global.getSettings().getScreenHeight(), Color.BLACK,

@@ -17,6 +17,7 @@ public final class RefitShipPortrait {
     private final FleetHullVisuals visuals;
     private final HullEngines engines;
     private final ShipHullSpecAPI hullSpec;
+    private final HullBounds hullBounds;
     private FleetMemberAPI member;
     private ShipVariantAPI variant;
     private VanillaShipView vanillaView;
@@ -30,6 +31,7 @@ public final class RefitShipPortrait {
         this.visuals = visuals;
         this.engines = engines;
         this.hullSpec = hullSpec;
+        this.hullBounds = engines.hullBounds(spriteWidth, spriteHeight);
     }
 
     public static RefitShipPortrait of(FleetMemberAPI member, ShipVariantAPI variant) {
@@ -72,11 +74,13 @@ public final class RefitShipPortrait {
     }
 
     public float halfWidthPixels(float zoom) {
-        return spriteWidth * zoom / 2f;
+        float imageCentreLeft = visuals.hasCenter() ? visuals.centerX() - spriteWidth / 2f : 0f;
+        return hullBounds.halfWidthAround(imageCentreLeft) * zoom;
     }
 
     public float halfLengthPixels(float zoom) {
-        return spriteHeight * zoom / 2f;
+        float imageCentreForward = visuals.hasCenter() ? spriteHeight / 2f - visuals.centerY() : 0f;
+        return hullBounds.halfLengthAround(imageCentreForward) * zoom;
     }
 
     public InspectedShip at(float imageCentreX, float imageCentreY, float zoom) {

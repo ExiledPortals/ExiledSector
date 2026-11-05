@@ -60,6 +60,10 @@ public final class HullEngines {
         return GLOW_SIZE_MULT * (1f + IDLE_GLOW_GROWTH * (1f - engineLevel)) * (0.5f + 0.5f * engineLevel);
     }
 
+    HullBounds hullBounds(float spriteWidth, float spriteHeight) {
+        return modules.withModules(HullBounds.EMPTY.withSprite(spriteWidth, spriteHeight, visuals.centerX(), visuals.centerY(), 0f, 0f, 0f));
+    }
+
     public void drawHull(SpriteCache spriteCache, String spritePath, float screenX, float screenY, float hullWidth, float hullHeight,
                          float screenScale, float facingDeg, float alpha) {
         modules.drawUnderParent(spriteCache, screenX, screenY, screenScale, facingDeg, alpha);

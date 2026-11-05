@@ -22,6 +22,10 @@ public final class SectionLayout {
         public static ShipExtent square(float longestSidePixels) {
             return new ShipExtent(longestSidePixels / 2f, longestSidePixels / 2f);
         }
+
+        public ShipExtent scaled(float zoom) {
+            return new ShipExtent(halfWidth * zoom, halfLength * zoom);
+        }
     }
 
     public static final float SECTION_RADIUS = 88f;
