@@ -3516,7 +3516,7 @@ type|dedicated_targeting_core|CAPITAL_SHIP|0	0	<good>50%</good> increased ballis
 type|dedicated_targeting_core|CAPITAL_SHIP|1	0	<good>50%</good> increased energy weapon range.
 type-detail|dedicated_targeting_core|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
 type-detail|dedicated_targeting_core|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Carrier Gunships</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Dedicated Targeting Core</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Integrated Targeting Unit</node>
-flavour|defensive_compact	0	Under the League's founding compact, every member world must defend whatever the League holds. Who holds it is settled afterwards, in committee.
+flavour|defensive_compact	0	Under the League's founding compact, every member world must defend whatever the League holds.
 type|defensive_compact|null|0	0	<good>20%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
 type|defensive_compact|FRIGATE|0	0	<good>20%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
 type|defensive_compact|DESTROYER|0	0	<good>20%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
@@ -4494,13 +4494,13 @@ type|ion_bolter_rounds|FRIGATE|0	0	Energy shots that hit an enemy shield can arc
 type|ion_bolter_rounds|DESTROYER|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
 type|ion_bolter_rounds|CRUISER|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
 type|ion_bolter_rounds|CAPITAL_SHIP|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
-flavour|joint_strike_package	0	No League detachment will launch second, so joint fleets launch every wing at once. The recovery order is still under negotiation.
+flavour|joint_strike_package	0	No League detachment will launch second, so joint fleets launch every wing at once.
 type|joint_strike_package|null|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
 type|joint_strike_package|FRIGATE|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
 type|joint_strike_package|DESTROYER|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
 type|joint_strike_package|CRUISER|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
 type|joint_strike_package|CAPITAL_SHIP|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
-flavour|kazeron_recovery_standards	0	Kazeron's orbital yards will not certify a recovered hull until every frame weld has been inspected. Inspections are billed by the weld.
+flavour|kazeron_recovery_standards	0	Kazeron's orbital yards will not certify a recovered hull until every frame weld has been inspected.
 type|kazeron_recovery_standards|null|0	0	Your fleet has a <good>10%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
 type|kazeron_recovery_standards|FRIGATE|0	0	Your fleet has a <good>10%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
 type|kazeron_recovery_standards|DESTROYER|0	0	Your fleet has a <good>10%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
@@ -4583,7 +4583,7 @@ type|lions_guard_arsenal|CRUISER|0	0	<good>+100</good> to the base range of weap
 type|lions_guard_arsenal|CRUISER|1	0	<bad>15%</bad> less missile weapon damage.
 type|lions_guard_arsenal|CAPITAL_SHIP|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
 type|lions_guard_arsenal|CAPITAL_SHIP|1	0	<bad>15%</bad> less missile weapon damage.
-flavour|lions_roar	0	Diktat warships broadcast the Supreme Executor's addresses on open channels as they close, at a volume no comm filter fully blocks. Sindrian citizens are required to listen to the end.
+flavour|lions_roar	0	Diktat warships broadcast the Supreme Executor's addresses on open channels as they close, at a volume the comm filter can't fully block. Sindrian citizens are required to listen to the end.
 type|lions_roar|null|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
 type|lions_roar|FRIGATE|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
 type|lions_roar|DESTROYER|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
