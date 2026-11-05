@@ -646,6 +646,12 @@ effect|DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT|12.5	0	<good>12.5%</good> reduce
 effect|DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT|100.0	0	<good>100%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
 effect|DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT|-10.0	0	<good>10%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
 effect|DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT|-12.5	0	<good>12.5%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
+effect|DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased damage taken.
+effect|DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased damage taken.
+effect|DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased damage taken.
+effect|DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased damage taken.
+effect|DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced damage taken.
+effect|DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced damage taken.
 effect|DAMAGE_TO_AUTOMATED_SHIP_PERCENT|1.0	0	<good>1%</good> increased damage to automated ships.
 effect|DAMAGE_TO_AUTOMATED_SHIP_PERCENT|10.0	0	<good>10%</good> increased damage to automated ships.
 effect|DAMAGE_TO_AUTOMATED_SHIP_PERCENT|12.5	0	<good>12.5%</good> increased damage to automated ships.
@@ -994,12 +1000,12 @@ effect|FIGHTER_DAMAGE_TAKEN_MULT|12.5	1	Strikecraft launched from this ship have
 effect|FIGHTER_DAMAGE_TAKEN_MULT|100.0	1	Strikecraft launched from this ship have <good>100%</good> more damage taken.
 effect|FIGHTER_DAMAGE_TAKEN_MULT|-10.0	1	Strikecraft launched from this ship have <bad>10%</bad> less damage taken.
 effect|FIGHTER_DAMAGE_TAKEN_MULT|-12.5	1	Strikecraft launched from this ship have <bad>12.5%</bad> less damage taken.
-effect|FIGHTER_DAMAGE_TAKEN_MULT_PER_AFFINITY|1.0	1	Strikecraft launched from this ship take <bad>1%</bad> more damage for every 15 affinity.
-effect|FIGHTER_DAMAGE_TAKEN_MULT_PER_AFFINITY|10.0	1	Strikecraft launched from this ship take <bad>10%</bad> more damage for every 15 affinity.
-effect|FIGHTER_DAMAGE_TAKEN_MULT_PER_AFFINITY|12.5	1	Strikecraft launched from this ship take <bad>12.5%</bad> more damage for every 15 affinity.
-effect|FIGHTER_DAMAGE_TAKEN_MULT_PER_AFFINITY|100.0	1	Strikecraft launched from this ship take <bad>100%</bad> more damage for every 15 affinity.
-effect|FIGHTER_DAMAGE_TAKEN_MULT_PER_AFFINITY|-10.0	1	Strikecraft launched from this ship take <good>10%</good> less damage for every 15 affinity.
-effect|FIGHTER_DAMAGE_TAKEN_MULT_PER_AFFINITY|-12.5	1	Strikecraft launched from this ship take <good>12.5%</good> less damage for every 15 affinity.
+effect|FIGHTER_DAMAGE_TAKEN_MULT_PER_AFFINITY|1.0	1	Strikecraft launched from this ship take <good>1%</good> more damage for every 15 affinity.
+effect|FIGHTER_DAMAGE_TAKEN_MULT_PER_AFFINITY|10.0	1	Strikecraft launched from this ship take <good>10%</good> more damage for every 15 affinity.
+effect|FIGHTER_DAMAGE_TAKEN_MULT_PER_AFFINITY|12.5	1	Strikecraft launched from this ship take <good>12.5%</good> more damage for every 15 affinity.
+effect|FIGHTER_DAMAGE_TAKEN_MULT_PER_AFFINITY|100.0	1	Strikecraft launched from this ship take <good>100%</good> more damage for every 15 affinity.
+effect|FIGHTER_DAMAGE_TAKEN_MULT_PER_AFFINITY|-10.0	1	Strikecraft launched from this ship take <bad>10%</bad> less damage for every 15 affinity.
+effect|FIGHTER_DAMAGE_TAKEN_MULT_PER_AFFINITY|-12.5	1	Strikecraft launched from this ship take <bad>12.5%</bad> less damage for every 15 affinity.
 effect|FIGHTER_ENGAGEMENT_RANGE_MULT|1.0	0	<good>1%</good> more strikecraft engagement range.
 effect|FIGHTER_ENGAGEMENT_RANGE_MULT|10.0	0	<good>10%</good> more strikecraft engagement range.
 effect|FIGHTER_ENGAGEMENT_RANGE_MULT|12.5	0	<good>12.5%</good> more strikecraft engagement range.
@@ -1288,6 +1294,12 @@ effect|FUEL_USE_MULT|12.5	1	<good>12.5%</good> more fuel consumption rate.
 effect|FUEL_USE_MULT|100.0	1	<good>100%</good> more fuel consumption rate.
 effect|FUEL_USE_MULT|-10.0	1	<bad>10%</bad> less fuel consumption rate.
 effect|FUEL_USE_MULT|-12.5	1	<bad>12.5%</bad> less fuel consumption rate.
+effect|FUEL_USE_REDUCTION_PERCENT_WHILE_HALF_FUELED|1.0	0	<good>1%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
+effect|FUEL_USE_REDUCTION_PERCENT_WHILE_HALF_FUELED|10.0	0	<good>10%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
+effect|FUEL_USE_REDUCTION_PERCENT_WHILE_HALF_FUELED|12.5	0	<good>12.5%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
+effect|FUEL_USE_REDUCTION_PERCENT_WHILE_HALF_FUELED|100.0	0	<good>100%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
+effect|FUEL_USE_REDUCTION_PERCENT_WHILE_HALF_FUELED|-10.0	0	<good>-10%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
+effect|FUEL_USE_REDUCTION_PERCENT_WHILE_HALF_FUELED|-12.5	0	<good>-12.5%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
 effect|FUROR_RATE_OF_FIRE_PERCENT|1.0	0	Damage dealt to enemy ships builds fury, granting up to <good>1%</good> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
 effect|FUROR_RATE_OF_FIRE_PERCENT|10.0	0	Damage dealt to enemy ships builds fury, granting up to <good>10%</good> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
 effect|FUROR_RATE_OF_FIRE_PERCENT|12.5	0	Damage dealt to enemy ships builds fury, granting up to <good>12.5%</good> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
@@ -1978,12 +1990,12 @@ effect|NON_BEAM_ENERGY_WEAPON_RANGE_PERCENT|12.5	0	<good>12.5%</good> increased 
 effect|NON_BEAM_ENERGY_WEAPON_RANGE_PERCENT|100.0	0	<good>100%</good> increased non-beam energy weapon range.
 effect|NON_BEAM_ENERGY_WEAPON_RANGE_PERCENT|-10.0	0	<bad>10%</bad> reduced non-beam energy weapon range.
 effect|NON_BEAM_ENERGY_WEAPON_RANGE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced non-beam energy weapon range.
-effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|1.0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>1%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
-effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|10.0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>10%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
-effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|12.5	0	Non-beam energy weapon hits that land on an enemy shield have a <good>12.5%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
-effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|100.0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>100%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
-effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|-10.0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>-10%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
-effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|-12.5	0	Non-beam energy weapon hits that land on an enemy shield have a <good>-12.5%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|1.0	0	Non-beam energy weapons have a <good>1%</good> chance to refract when hitting enemy shields.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|10.0	0	Non-beam energy weapons have a <good>10%</good> chance to refract when hitting enemy shields.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|12.5	0	Non-beam energy weapons have a <good>12.5%</good> chance to refract when hitting enemy shields.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|100.0	0	Non-beam energy weapons have a <good>100%</good> chance to refract when hitting enemy shields.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|-10.0	0	Non-beam energy weapons have a <good>-10%</good> chance to refract when hitting enemy shields.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|-12.5	0	Non-beam energy weapons have a <good>-12.5%</good> chance to refract when hitting enemy shields.
 effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT|1.0	0	Each refraction deals <bad>1%</bad> less damage than the shot before it.
 effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT|10.0	0	Each refraction deals <bad>10%</bad> less damage than the shot before it.
 effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT|12.5	0	Each refraction deals <bad>12.5%</bad> less damage than the shot before it.
@@ -2014,6 +2026,12 @@ effect|NO_PHASE_UPKEEP_NEAR_WRECK_RANGE|12.5	0	No phase cloak flux upkeep while 
 effect|NO_PHASE_UPKEEP_NEAR_WRECK_RANGE|100.0	0	No phase cloak flux upkeep while within <good>100</good> su of a wreck.
 effect|NO_PHASE_UPKEEP_NEAR_WRECK_RANGE|-10.0	0	No phase cloak flux upkeep while within <good>-10</good> su of a wreck.
 effect|NO_PHASE_UPKEEP_NEAR_WRECK_RANGE|-12.5	0	No phase cloak flux upkeep while within <good>-12.5</good> su of a wreck.
+effect|NO_RETREAT|1.0	0	This ship can't retreat.
+effect|NO_RETREAT|10.0	0	This ship can't retreat.
+effect|NO_RETREAT|12.5	0	This ship can't retreat.
+effect|NO_RETREAT|100.0	0	This ship can't retreat.
+effect|NO_RETREAT|-10.0	0	This ship can't retreat.
+effect|NO_RETREAT|-12.5	0	This ship can't retreat.
 effect|OBJECTIVE_CAPTURE_RANGE_FLAT|1.0	0	<good>+1</good> to range from which combat objectives can be captured.
 effect|OBJECTIVE_CAPTURE_RANGE_FLAT|10.0	0	<good>+10</good> to range from which combat objectives can be captured.
 effect|OBJECTIVE_CAPTURE_RANGE_FLAT|12.5	0	<good>+12.5</good> to range from which combat objectives can be captured.
@@ -2188,6 +2206,12 @@ effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> more collisio
 effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|100.0	0	<good>100%</good> more collision damage dealt to enemy ships and <good>100%</good> less collision damage taken.
 effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> more collision damage dealt to enemy ships and <good>-10%</good> less collision damage taken.
 effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> more collision damage dealt to enemy ships and <good>-12.5%</good> less collision damage taken.
+effect|RATE_OF_FIRE_AURA_PERCENT|1.0	0	Enemy ships within 1000 su have <good>1%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+effect|RATE_OF_FIRE_AURA_PERCENT|10.0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+effect|RATE_OF_FIRE_AURA_PERCENT|12.5	0	Enemy ships within 1000 su have <good>12.5%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+effect|RATE_OF_FIRE_AURA_PERCENT|100.0	0	Enemy ships within 1000 su have <good>100%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+effect|RATE_OF_FIRE_AURA_PERCENT|-10.0	0	Enemy ships within 1000 su have <good>-10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+effect|RATE_OF_FIRE_AURA_PERCENT|-12.5	0	Enemy ships within 1000 su have <good>-12.5%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
 effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|1.0	0	Your fleet has a <good>1%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
 effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|10.0	0	Your fleet has a <good>10%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
 effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|12.5	0	Your fleet has a <good>12.5%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
@@ -2416,12 +2440,12 @@ effect|SHIELD_PIERCE_CHANCE_PERCENT|12.5	1	<good>12.5%</good> increased chance f
 effect|SHIELD_PIERCE_CHANCE_PERCENT|100.0	1	<good>100%</good> increased chance for shields to be pierced by EMP arcs.
 effect|SHIELD_PIERCE_CHANCE_PERCENT|-10.0	1	<bad>10%</bad> reduced chance for shields to be pierced by EMP arcs.
 effect|SHIELD_PIERCE_CHANCE_PERCENT|-12.5	1	<bad>12.5%</bad> reduced chance for shields to be pierced by EMP arcs.
-effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|1.0	1	<bad>1%</bad> increased chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
-effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|10.0	1	<bad>10%</bad> increased chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
-effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|12.5	1	<bad>12.5%</bad> increased chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
-effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|100.0	1	<bad>100%</bad> increased chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
-effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|-10.0	1	<good>10%</good> reduced chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
-effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|-12.5	1	<good>12.5%</good> reduced chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
+effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|1.0	1	<good>1%</good> increased chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
+effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|10.0	1	<good>10%</good> increased chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
+effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|12.5	1	<good>12.5%</good> increased chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
+effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|100.0	1	<good>100%</good> increased chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
+effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|-10.0	1	<bad>10%</bad> reduced chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
+effect|SHIELD_PIERCE_CHANCE_PERCENT_PER_MIDLINE_AFFINITY|-12.5	1	<bad>12.5%</bad> reduced chance for shields to be pierced by EMP arcs for every 10 Midline Affinity.
 effect|SHIELD_RAISE_RATE_PERCENT|1.0	0	<good>1%</good> increased shield raise rate.
 effect|SHIELD_RAISE_RATE_PERCENT|10.0	0	<good>10%</good> increased shield raise rate.
 effect|SHIELD_RAISE_RATE_PERCENT|12.5	0	<good>12.5%</good> increased shield raise rate.
@@ -2500,24 +2524,24 @@ effect|SMALL_WEAPON_OP_COST_FLAT|12.5	1	<good>+12.5</good> to ordnance point cos
 effect|SMALL_WEAPON_OP_COST_FLAT|100.0	1	<good>+100</good> to ordnance point cost of small weapons.
 effect|SMALL_WEAPON_OP_COST_FLAT|-10.0	1	<bad>-10</bad> to ordnance point cost of small weapons.
 effect|SMALL_WEAPON_OP_COST_FLAT|-12.5	1	<bad>-12.5</bad> to ordnance point cost of small weapons.
-effect|SOCKETED_HULL_ITEM_DRAWBACK_EFFECT_PERCENT|1.0	1	<bad>1%</bad> increased effect of hull item drawbacks.
-effect|SOCKETED_HULL_ITEM_DRAWBACK_EFFECT_PERCENT|10.0	1	<bad>10%</bad> increased effect of hull item drawbacks.
-effect|SOCKETED_HULL_ITEM_DRAWBACK_EFFECT_PERCENT|12.5	1	<bad>12.5%</bad> increased effect of hull item drawbacks.
-effect|SOCKETED_HULL_ITEM_DRAWBACK_EFFECT_PERCENT|100.0	1	<bad>100%</bad> increased effect of hull item drawbacks.
-effect|SOCKETED_HULL_ITEM_DRAWBACK_EFFECT_PERCENT|-10.0	1	<good>10%</good> reduced effect of hull item drawbacks.
-effect|SOCKETED_HULL_ITEM_DRAWBACK_EFFECT_PERCENT|-12.5	1	<good>12.5%</good> reduced effect of hull item drawbacks.
+effect|SOCKETED_HULL_ITEM_DRAWBACK_EFFECT_PERCENT|1.0	1	<good>1%</good> increased effect of hull item drawbacks.
+effect|SOCKETED_HULL_ITEM_DRAWBACK_EFFECT_PERCENT|10.0	1	<good>10%</good> increased effect of hull item drawbacks.
+effect|SOCKETED_HULL_ITEM_DRAWBACK_EFFECT_PERCENT|12.5	1	<good>12.5%</good> increased effect of hull item drawbacks.
+effect|SOCKETED_HULL_ITEM_DRAWBACK_EFFECT_PERCENT|100.0	1	<good>100%</good> increased effect of hull item drawbacks.
+effect|SOCKETED_HULL_ITEM_DRAWBACK_EFFECT_PERCENT|-10.0	1	<bad>10%</bad> reduced effect of hull item drawbacks.
+effect|SOCKETED_HULL_ITEM_DRAWBACK_EFFECT_PERCENT|-12.5	1	<bad>12.5%</bad> reduced effect of hull item drawbacks.
 effect|SOCKETED_HULL_ITEM_EFFECT_PERCENT|1.0	0	<good>1%</good> increased effect of hull items.
 effect|SOCKETED_HULL_ITEM_EFFECT_PERCENT|10.0	0	<good>10%</good> increased effect of hull items.
 effect|SOCKETED_HULL_ITEM_EFFECT_PERCENT|12.5	0	<good>12.5%</good> increased effect of hull items.
 effect|SOCKETED_HULL_ITEM_EFFECT_PERCENT|100.0	0	<good>100%</good> increased effect of hull items.
 effect|SOCKETED_HULL_ITEM_EFFECT_PERCENT|-10.0	0	<bad>10%</bad> reduced effect of hull items.
 effect|SOCKETED_HULL_ITEM_EFFECT_PERCENT|-12.5	0	<bad>12.5%</bad> reduced effect of hull items.
-effect|SOCKETED_SUBROUTINE_DRAWBACK_EFFECT_PERCENT|1.0	1	<bad>1%</bad> increased effect of subroutine drawbacks.
-effect|SOCKETED_SUBROUTINE_DRAWBACK_EFFECT_PERCENT|10.0	1	<bad>10%</bad> increased effect of subroutine drawbacks.
-effect|SOCKETED_SUBROUTINE_DRAWBACK_EFFECT_PERCENT|12.5	1	<bad>12.5%</bad> increased effect of subroutine drawbacks.
-effect|SOCKETED_SUBROUTINE_DRAWBACK_EFFECT_PERCENT|100.0	1	<bad>100%</bad> increased effect of subroutine drawbacks.
-effect|SOCKETED_SUBROUTINE_DRAWBACK_EFFECT_PERCENT|-10.0	1	<good>10%</good> reduced effect of subroutine drawbacks.
-effect|SOCKETED_SUBROUTINE_DRAWBACK_EFFECT_PERCENT|-12.5	1	<good>12.5%</good> reduced effect of subroutine drawbacks.
+effect|SOCKETED_SUBROUTINE_DRAWBACK_EFFECT_PERCENT|1.0	1	<good>1%</good> increased effect of subroutine drawbacks.
+effect|SOCKETED_SUBROUTINE_DRAWBACK_EFFECT_PERCENT|10.0	1	<good>10%</good> increased effect of subroutine drawbacks.
+effect|SOCKETED_SUBROUTINE_DRAWBACK_EFFECT_PERCENT|12.5	1	<good>12.5%</good> increased effect of subroutine drawbacks.
+effect|SOCKETED_SUBROUTINE_DRAWBACK_EFFECT_PERCENT|100.0	1	<good>100%</good> increased effect of subroutine drawbacks.
+effect|SOCKETED_SUBROUTINE_DRAWBACK_EFFECT_PERCENT|-10.0	1	<bad>10%</bad> reduced effect of subroutine drawbacks.
+effect|SOCKETED_SUBROUTINE_DRAWBACK_EFFECT_PERCENT|-12.5	1	<bad>12.5%</bad> reduced effect of subroutine drawbacks.
 effect|SOCKETED_SUBROUTINE_EFFECT_PERCENT|1.0	0	<good>1%</good> increased effect of subroutines.
 effect|SOCKETED_SUBROUTINE_EFFECT_PERCENT|10.0	0	<good>10%</good> increased effect of subroutines.
 effect|SOCKETED_SUBROUTINE_EFFECT_PERCENT|12.5	0	<good>12.5%</good> increased effect of subroutines.
@@ -2698,12 +2722,12 @@ effect|TERMINAL_DESCENT_SYSTEM_REGEN_PERCENT|12.5	0	<good>12.5%</good> increased
 effect|TERMINAL_DESCENT_SYSTEM_REGEN_PERCENT|100.0	0	<good>100%</good> increased ship system charge regeneration during Terminal Descent.
 effect|TERMINAL_DESCENT_SYSTEM_REGEN_PERCENT|-10.0	0	<good>-10%</good> increased ship system charge regeneration during Terminal Descent.
 effect|TERMINAL_DESCENT_SYSTEM_REGEN_PERCENT|-12.5	0	<good>-12.5%</good> increased ship system charge regeneration during Terminal Descent.
-effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|1.0	1	Your fleet has <bad>1%</bad> increased terrain movement penalty.
-effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|10.0	1	Your fleet has <bad>10%</bad> increased terrain movement penalty.
-effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|12.5	1	Your fleet has <bad>12.5%</bad> increased terrain movement penalty.
-effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|100.0	1	Your fleet has <bad>100%</bad> increased terrain movement penalty.
-effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|-10.0	1	Your fleet has <good>10%</good> reduced terrain movement penalty, up to a maximum of 50%.
-effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|-12.5	1	Your fleet has <good>12.5%</good> reduced terrain movement penalty, up to a maximum of 50%.
+effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|1.0	1	Your fleet has <good>1%</good> increased terrain movement penalty.
+effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|10.0	1	Your fleet has <good>10%</good> increased terrain movement penalty.
+effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|12.5	1	Your fleet has <good>12.5%</good> increased terrain movement penalty.
+effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|100.0	1	Your fleet has <good>100%</good> increased terrain movement penalty.
+effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|-10.0	1	Your fleet has <bad>10%</bad> reduced terrain movement penalty, up to a maximum of 50%.
+effect|TERRAIN_MOVEMENT_PENALTY_PERCENT|-12.5	1	Your fleet has <bad>12.5%</bad> reduced terrain movement penalty, up to a maximum of 50%.
 effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|1.0	0	Enemy ships within 1000 su have <good>-1%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|10.0	0	Enemy ships within 1000 su have <good>-10%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|12.5	0	Enemy ships within 1000 su have <good>-12.5%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
@@ -2764,18 +2788,24 @@ effect|TOP_SPEED_PERCENT_PER_NEARBY_ALLY|12.5	0	<good>12.5%</good> increased top
 effect|TOP_SPEED_PERCENT_PER_NEARBY_ALLY|100.0	0	<good>100%</good> increased top speed for every allied ship within 1000 su, up to 10%.
 effect|TOP_SPEED_PERCENT_PER_NEARBY_ALLY|-10.0	0	<good>-10%</good> increased top speed for every allied ship within 1000 su, up to 10%.
 effect|TOP_SPEED_PERCENT_PER_NEARBY_ALLY|-12.5	0	<good>-12.5%</good> increased top speed for every allied ship within 1000 su, up to 10%.
+effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|1.0	0	Additional top speed equal to <good>1%</good> of your flagship's base top speed while your flagship is deployed.
+effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|10.0	0	Additional top speed equal to <good>10%</good> of your flagship's base top speed while your flagship is deployed.
+effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|12.5	0	Additional top speed equal to <good>12.5%</good> of your flagship's base top speed while your flagship is deployed.
+effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|100.0	0	Additional top speed equal to <good>100%</good> of your flagship's base top speed while your flagship is deployed.
+effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|-10.0	0	Additional top speed equal to <good>-10%</good> of your flagship's base top speed while your flagship is deployed.
+effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|-12.5	0	Additional top speed equal to <good>-12.5%</good> of your flagship's base top speed while your flagship is deployed.
 effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|1.0	0	<good>1%</good> increased top speed while this ship's Fragment Swarm is at least 90% full.
 effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|10.0	0	<good>10%</good> increased top speed while this ship's Fragment Swarm is at least 90% full.
 effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|12.5	0	<good>12.5%</good> increased top speed while this ship's Fragment Swarm is at least 90% full.
 effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|100.0	0	<good>100%</good> increased top speed while this ship's Fragment Swarm is at least 90% full.
 effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|-10.0	0	<good>-10%</good> increased top speed while this ship's Fragment Swarm is at least 90% full.
 effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|-12.5	0	<good>-12.5%</good> increased top speed while this ship's Fragment Swarm is at least 90% full.
-effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|1.0	1	Your fleet has <good>1%</good> reduced sensor profile while its transponder is off, up to a maximum of 30%.
-effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|10.0	1	Your fleet has <good>10%</good> reduced sensor profile while its transponder is off, up to a maximum of 30%.
-effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|12.5	1	Your fleet has <good>12.5%</good> reduced sensor profile while its transponder is off, up to a maximum of 30%.
-effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|100.0	1	Your fleet has <good>100%</good> reduced sensor profile while its transponder is off, up to a maximum of 30%.
-effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|-10.0	1	Your fleet has <good>10%</good> reduced sensor profile while its transponder is off, up to a maximum of 30%.
-effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|-12.5	1	Your fleet has <good>12.5%</good> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|1.0	1	Your fleet has <bad>1%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|10.0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|12.5	1	Your fleet has <bad>12.5%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|100.0	1	Your fleet has <bad>100%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|-10.0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|-12.5	1	Your fleet has <bad>12.5%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
 effect|UNHIT_ARMOR_REGEN_PERCENT|1.0	0	Armor cells not hit for 5 seconds repair <good>1%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per deployment.
 effect|UNHIT_ARMOR_REGEN_PERCENT|10.0	0	Armor cells not hit for 5 seconds repair <good>10%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per deployment.
 effect|UNHIT_ARMOR_REGEN_PERCENT|12.5	0	Armor cells not hit for 5 seconds repair <good>12.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per deployment.
@@ -3361,8 +3391,7 @@ type|combat_vision|FRIGATE|0	0	<good>+300</good> to in-combat sensor/vision rang
 type|combat_vision|DESTROYER|0	0	<good>+500</good> to in-combat sensor/vision range.
 type|combat_vision|CRUISER|0	0	<good>+700</good> to in-combat sensor/vision range.
 type|combat_vision|CAPITAL_SHIP|0	0	<good>+900</good> to in-combat sensor/vision range.
-flavour|comsec_discipline	0	In a joint League fleet, every member world encrypts its own traffic and jams anyone it suspects of listening, which is everyone. Serving under a League commission teaches the crew to keep fire control working through the noise. Most of it comes from their allies.
-flavourAutomated|comsec_discipline	0	In a joint League fleet, every member world encrypts its own traffic and jams anyone it suspects of listening, which is everyone. The ship's core logs months of that interference under a League commission and models its fire control to work through it. Most of the noise comes from its allies.
+flavour|comsec_discipline	0	In a joint League fleet, every member world jams anyone it suspects of listening, which is everyone. Most of the noise comes from allies.
 type|comsec_discipline|null|0	1	<bad>25%</bad> reduced electronic warfare penalty against this ship's weapon range.
 type|comsec_discipline|null|1	0	<good>15%</good> increased this ship's sensor strength.
 type|comsec_discipline|FRIGATE|0	1	<bad>25%</bad> reduced electronic warfare penalty against this ship's weapon range.
@@ -3487,8 +3516,7 @@ type|dedicated_targeting_core|CAPITAL_SHIP|0	0	<good>50%</good> increased ballis
 type|dedicated_targeting_core|CAPITAL_SHIP|1	0	<good>50%</good> increased energy weapon range.
 type-detail|dedicated_targeting_core|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
 type-detail|dedicated_targeting_core|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Carrier Gunships</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Dedicated Targeting Core</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Integrated Targeting Unit</node>
-flavour|defensive_compact	0	The League's founding compact binds every member world to defend whatever the League holds, and to argue over it afterwards. Picket duty at a contested comm relay teaches the crew to fight from beside it. The relay's ownership is still under review.
-flavourAutomated|defensive_compact	0	The League's founding compact binds every member world to defend whatever the League holds, and to argue over it afterwards. The ship's core logs a picket action at a contested comm relay and learns to fight from beside it. The relay's ownership is still under review.
+flavour|defensive_compact	0	Under the League's founding compact, every member world must defend whatever the League holds. Who holds it is settled afterwards, in committee.
 type|defensive_compact|null|0	0	<good>20%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
 type|defensive_compact|FRIGATE|0	0	<good>20%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
 type|defensive_compact|DESTROYER|0	0	<good>20%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
@@ -3938,6 +3966,22 @@ type|escort_package|CAPITAL_SHIP|1	0	While within 700 su of a larger friendly sh
 type|escort_package|CAPITAL_SHIP|2	0	While within 700 su of a larger friendly ship, up to 15% increased ballistic and energy weapon range, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type-detail|escort_package|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
 type-detail|escort_package|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Escort Package</hullmod>
+flavour|executors_decree	0	A standing decree of the Supreme Executor names retreat as treason. It has no provision for appeal.
+type|executors_decree|null|0	0	This ship can't retreat.
+type|executors_decree|null|1	0	<good>15%</good> increased weapon damage.
+type|executors_decree|null|2	1	<bad>5%</bad> reduced damage taken.
+type|executors_decree|FRIGATE|0	0	This ship can't retreat.
+type|executors_decree|FRIGATE|1	0	<good>15%</good> increased weapon damage.
+type|executors_decree|FRIGATE|2	1	<bad>5%</bad> reduced damage taken.
+type|executors_decree|DESTROYER|0	0	This ship can't retreat.
+type|executors_decree|DESTROYER|1	0	<good>15%</good> increased weapon damage.
+type|executors_decree|DESTROYER|2	1	<bad>5%</bad> reduced damage taken.
+type|executors_decree|CRUISER|0	0	This ship can't retreat.
+type|executors_decree|CRUISER|1	0	<good>15%</good> increased weapon damage.
+type|executors_decree|CRUISER|2	1	<bad>5%</bad> reduced damage taken.
+type|executors_decree|CAPITAL_SHIP|0	0	This ship can't retreat.
+type|executors_decree|CAPITAL_SHIP|1	0	<good>15%</good> increased weapon damage.
+type|executors_decree|CAPITAL_SHIP|2	1	<bad>5%</bad> reduced damage taken.
 flavour|exo_tech_coil_tuning	0	Exo-Tech technicians teach the crew to retune the phase coils to their own tolerances, which are tighter than anything the coils were built for.
 flavourAutomated|exo_tech_coil_tuning	0	Exo-Tech technicians teach the refit crew to retune the phase coils to their own tolerances, which are tighter than anything the coils were built for.
 type|exo_tech_coil_tuning|null|0	0	<good>20%</good> increased hard flux level at which phased speed reaches its minimum.
@@ -3968,23 +4012,6 @@ type|exo_tech_grid_splice|FRIGATE|5	0	<bad>-5</bad> to flux dissipation per flux
 type-detail|exo_tech_grid_splice|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Exogrid</hullmod>
 type|exo_tech_grid_splice|DESTROYER|0	0	<good>10%</good> increased timeflow.
 type|exo_tech_grid_splice|DESTROYER|1	1	<bad>25%</bad> reduced sensor profile.
-flavour|executors_decree	0	A standing decree of the Supreme Executor names retreat in the face of the enemy as treason, and Diktat crews hear it read aloud before every engagement. This crew signed it as a condition of its Sindrian docking rights. Nobody aboard has read past the signature line.
-flavourAutomated|executors_decree	0	A standing decree of the Supreme Executor names retreat in the face of the enemy as treason, and Diktat crews hear it read aloud before every engagement. The ship's core received the decree with its Sindrian docking clearance and filed it as a standing order. It has no provision for appeal.
-type|executors_decree|null|0	0	This ship can't retreat.
-type|executors_decree|null|1	0	<good>10%</good> increased weapon damage.
-type|executors_decree|null|2	1	<bad>10%</bad> reduced damage taken.
-type|executors_decree|FRIGATE|0	0	This ship can't retreat.
-type|executors_decree|FRIGATE|1	0	<good>10%</good> increased weapon damage.
-type|executors_decree|FRIGATE|2	1	<bad>10%</bad> reduced damage taken.
-type|executors_decree|DESTROYER|0	0	This ship can't retreat.
-type|executors_decree|DESTROYER|1	0	<good>10%</good> increased weapon damage.
-type|executors_decree|DESTROYER|2	1	<bad>10%</bad> reduced damage taken.
-type|executors_decree|CRUISER|0	0	This ship can't retreat.
-type|executors_decree|CRUISER|1	0	<good>10%</good> increased weapon damage.
-type|executors_decree|CRUISER|2	1	<bad>10%</bad> reduced damage taken.
-type|executors_decree|CAPITAL_SHIP|0	0	This ship can't retreat.
-type|executors_decree|CAPITAL_SHIP|1	0	<good>10%</good> increased weapon damage.
-type|executors_decree|CAPITAL_SHIP|2	1	<bad>10%</bad> reduced damage taken.
 type|exo_tech_grid_splice|DESTROYER|2	1	<bad>25%</bad> reduced sensor profile on phase hulls.
 type|exo_tech_grid_splice|DESTROYER|3	1	<bad>25%</bad> reduced EMP damage taken.
 type|exo_tech_grid_splice|DESTROYER|4	0	<bad>25%</bad> reduced venting speed.
@@ -4320,6 +4347,12 @@ type|hold_the_line|FRIGATE|0	0	<good>15%</good> reduced armor damage taken while
 type|hold_the_line|DESTROYER|0	0	<good>15%</good> reduced armor damage taken while moving slower than 25% of top speed.
 type|hold_the_line|CRUISER|0	0	<good>15%</good> reduced armor damage taken while moving slower than 25% of top speed.
 type|hold_the_line|CAPITAL_SHIP|0	0	<good>15%</good> reduced armor damage taken while moving slower than 25% of top speed.
+flavour|honor_guard	0	The Lion's Guard keeps pace with the Supreme Executor's flagship, never the other way round. Most of its recorded maneuvers are parades.
+type|honor_guard|null|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+type|honor_guard|FRIGATE|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+type|honor_guard|DESTROYER|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+type|honor_guard|CRUISER|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+type|honor_guard|CAPITAL_SHIP|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
 flavour|hullbreacher_rounds	0	Former Hegemony Navy gunners in the crew remember the breacher loads the Navy keeps for boarding actions, shells hardened to punch through plating instead of bursting on it. The crew sees no reason to save them for boarding.
 flavourAutomated|hullbreacher_rounds	0	The Hegemony Navy keeps breacher loads for boarding actions, shells hardened to punch through plating instead of bursting on it. The ship's core finds their specifications in a seized Navy ordnance manifest and loads them for every fight. It has no boarding actions to save them for.
 type|hullbreacher_rounds|null|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
@@ -4350,13 +4383,6 @@ type|husk_plating|CAPITAL_SHIP|2	0	<bad>3%</bad> reduced top speed and maneuvera
 flavour|hybrid_p_space_shrouding	0	Leaked papers from Tri-Tachyon's Hybrid Physics Division (on phase work the corporation swears it abandoned under the Treaty of Thule) show the crew how to bleed this ship's sensor emissions into the masking field phase ships throw over a fleet. Tri-Tachyon maintains the papers are forgeries.
 flavourAutomated|hybrid_p_space_shrouding	0	Leaked papers from Tri-Tachyon's Hybrid Physics Division (on phase work the corporation swears it abandoned under the Treaty of Thule) describe how to bleed a ship's sensor emissions into the masking field phase ships throw over a fleet. The ship's core parses them in full, footnotes included. Tri-Tachyon maintains the papers are forgeries.
 type|hybrid_p_space_shrouding|null|0	0	50% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
-flavour|honor_guard	0	The Lion's Guard escorts the Supreme Executor's flagship wherever it goes, and its pilots hold station at the flagship's pace rather than their own. A former Guard helmsman drills this crew in the same station-keeping. The salute that goes with it took longer to drop.
-flavourAutomated|honor_guard	0	The Lion's Guard escorts the Supreme Executor's flagship wherever it goes, holding station at the flagship's pace rather than its own. The ship's core studies Guard escort formations in recorded fleet reviews and keeps station the same way. The recordings are mostly of parades.
-type|honor_guard|null|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
-type|honor_guard|FRIGATE|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
-type|honor_guard|DESTROYER|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
-type|honor_guard|CRUISER|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
-type|honor_guard|CAPITAL_SHIP|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
 type|hybrid_p_space_shrouding|null|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|hybrid_p_space_shrouding|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Phase Field</hullmod>
 type|hybrid_p_space_shrouding|FRIGATE|0	0	50% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
@@ -4468,15 +4494,13 @@ type|ion_bolter_rounds|FRIGATE|0	0	Energy shots that hit an enemy shield can arc
 type|ion_bolter_rounds|DESTROYER|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
 type|ion_bolter_rounds|CRUISER|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
 type|ion_bolter_rounds|CAPITAL_SHIP|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
-flavour|joint_strike_package	0	A joint League fleet launches every member world's strike craft in one wave, since no detachment will agree to go second. The crew learns to time its launches to join the crowd. The rival flight leads complain on separate channels.
-flavourAutomated|joint_strike_package	0	A joint League fleet launches every member world's strike craft in one wave, since no detachment will agree to go second. The ship's core logs the launch timings from joint fleet traffic and matches them. The rival flight leads complain on separate channels.
+flavour|joint_strike_package	0	No League detachment will launch second, so joint fleets launch every wing at once. The recovery order is still under negotiation.
 type|joint_strike_package|null|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
 type|joint_strike_package|FRIGATE|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
 type|joint_strike_package|DESTROYER|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
 type|joint_strike_package|CRUISER|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
 type|joint_strike_package|CAPITAL_SHIP|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
-flavour|kazeron_recovery_standards	0	Kazeron's orbital yards will not certify a recovered hull until a League inspector has signed off on every frame weld. The crew learns the inspection checklist while it waits on a signature. The inspectors bill by the weld.
-flavourAutomated|kazeron_recovery_standards	0	Kazeron's orbital yards will not certify a recovered hull until a League inspector has signed off on every frame weld. The ship's core copies the inspection checklist from a yard's certification logs. The inspectors bill by the weld.
+flavour|kazeron_recovery_standards	0	Kazeron's orbital yards will not certify a recovered hull until every frame weld has been inspected. Inspections are billed by the weld.
 type|kazeron_recovery_standards|null|0	0	Your fleet has a <good>10%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
 type|kazeron_recovery_standards|FRIGATE|0	0	Your fleet has a <good>10%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
 type|kazeron_recovery_standards|DESTROYER|0	0	Your fleet has a <good>10%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
@@ -4530,8 +4554,7 @@ type|league_reload_drill|CRUISER|0	0	<good>50%</good> increased energy weapon am
 type|league_reload_drill|CRUISER|1	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 type|league_reload_drill|CAPITAL_SHIP|0	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 type|league_reload_drill|CAPITAL_SHIP|1	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
-flavour|league_requisitions	0	Every League member world stocks its depots with spares for its own hulls and turns everyone else away. A cycle of League fleet duty teaches the crew to file each requisition under whichever world builds that hull. Each depot complains to a different world.
-flavourAutomated|league_requisitions	0	Every League member world stocks its depots with spares for its own hulls and turns everyone else away. The ship's core learns each depot's requisition format from a cycle of League fleet traffic and files under whichever world builds that hull. Each depot complains to a different world.
+flavour|league_requisitions	0	Every League depot stocks spares for its own world's hulls and nothing else. The paperwork for a mixed fleet runs to several volumes, one per world.
 type|league_requisitions|null|0	0	Your fleet has <good>3%</good> reduced supply use for maintenance for every different hull type among its ships, up to a maximum of 15%.
 type|league_requisitions|FRIGATE|0	0	Your fleet has <good>3%</good> reduced supply use for maintenance for every different hull type among its ships, up to a maximum of 15%.
 type|league_requisitions|DESTROYER|0	0	Your fleet has <good>3%</good> reduced supply use for maintenance for every different hull type among its ships, up to a maximum of 15%.
@@ -4549,6 +4572,23 @@ type|lions_gaze|FRIGATE|0	0	Beam weapon hits split their damage evenly across th
 type|lions_gaze|DESTROYER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
 type|lions_gaze|CRUISER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
 type|lions_gaze|CAPITAL_SHIP|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
+flavour|lions_guard_arsenal	0	Lion's Guard refits rebuild a hull around its energy mounts. Guard armorers regard missiles as an admission of poor aim.
+type|lions_guard_arsenal|null|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
+type|lions_guard_arsenal|null|1	0	<bad>15%</bad> less missile weapon damage.
+type|lions_guard_arsenal|FRIGATE|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
+type|lions_guard_arsenal|FRIGATE|1	0	<bad>15%</bad> less missile weapon damage.
+type|lions_guard_arsenal|DESTROYER|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
+type|lions_guard_arsenal|DESTROYER|1	0	<bad>15%</bad> less missile weapon damage.
+type|lions_guard_arsenal|CRUISER|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
+type|lions_guard_arsenal|CRUISER|1	0	<bad>15%</bad> less missile weapon damage.
+type|lions_guard_arsenal|CAPITAL_SHIP|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
+type|lions_guard_arsenal|CAPITAL_SHIP|1	0	<bad>15%</bad> less missile weapon damage.
+flavour|lions_roar	0	Diktat warships broadcast the Supreme Executor's addresses on open channels as they close, at a volume no comm filter fully blocks. Sindrian citizens are required to listen to the end.
+type|lions_roar|null|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+type|lions_roar|FRIGATE|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+type|lions_roar|DESTROYER|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+type|lions_roar|CRUISER|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+type|lions_roar|CAPITAL_SHIP|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
 type|live_munitions|null|0	0	Each Heartless stack has a <bad>9%</bad> chance to sacrifice a crew member for each missile fired.
 type|live_munitions|null|1	0	<good>3%</good> increased missile damage for each Heartless stack while the fleet has crew left to give.
 type|live_munitions|null|2	0	<good>3%</good> increased missile top speed for each Heartless stack while the fleet has crew left to give.
@@ -4579,25 +4619,6 @@ flavourAutomated|machine_precision	0	A recovered gamma core holds the targeting 
 type|machine_precision|null|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 type|machine_precision|null|1	0	<good>5%</good> increased energy weapon range.
 type|machine_precision|null|2	0	<good>5%</good> increased ballistic weapon range.
-flavour|lions_guard_arsenal	0	Lion's Guard refits strip a hull down and rebuild it around its energy mounts, and Guard armorers treat missiles as an admission of poor aim. A Guard armorer discharged over a pay dispute brought the method aboard this ship. The dispute is still before a Diktat tribunal.
-flavourAutomated|lions_guard_arsenal	0	Lion's Guard refits strip a hull down and rebuild it around its energy mounts, and Guard armorers treat missiles as an admission of poor aim. The ship's core reconstructs the method from a Guard refit manifest, and the refit crew rebuilds this ship's mounts to match. The manifest lists the missile racks as surplus.
-type|lions_guard_arsenal|null|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
-type|lions_guard_arsenal|null|1	0	<bad>15%</bad> less missile weapon damage.
-type|lions_guard_arsenal|FRIGATE|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
-type|lions_guard_arsenal|FRIGATE|1	0	<bad>15%</bad> less missile weapon damage.
-type|lions_guard_arsenal|DESTROYER|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
-type|lions_guard_arsenal|DESTROYER|1	0	<bad>15%</bad> less missile weapon damage.
-type|lions_guard_arsenal|CRUISER|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
-type|lions_guard_arsenal|CRUISER|1	0	<bad>15%</bad> less missile weapon damage.
-type|lions_guard_arsenal|CAPITAL_SHIP|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
-type|lions_guard_arsenal|CAPITAL_SHIP|1	0	<bad>15%</bad> less missile weapon damage.
-flavour|lions_roar	0	Diktat warships broadcast the Supreme Executor's addresses on open channels as they close, at a volume no comm filter fully blocks. The crew rigs this ship's transmitters to do the same, and enemy gun crews lose their rhythm to it. Sindrian citizens are required to listen to the end.
-flavourAutomated|lions_roar	0	Diktat warships broadcast the Supreme Executor's addresses on open channels as they close, at a volume no comm filter fully blocks. The refit crew rigs this ship's transmitters to do the same, and the ship's core times each broadcast to enemy firing cycles. Sindrian citizens are required to listen to the end.
-type|lions_roar|null|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
-type|lions_roar|FRIGATE|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
-type|lions_roar|DESTROYER|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
-type|lions_roar|CRUISER|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
-type|lions_roar|CAPITAL_SHIP|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
 type|machine_precision|null|3	0	<good>5%</good> increased beam weapon range.
 type|machine_precision|FRIGATE|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 type|machine_precision|FRIGATE|1	0	<good>5%</good> increased energy weapon range.
@@ -5009,15 +5030,15 @@ type|reduced_monthly_supplies|CRUISER|0	1	<bad>5%</bad> less supply use for main
 type|reduced_monthly_supplies|CAPITAL_SHIP|0	1	<bad>5%</bad> less supply use for maintenance.
 flavour|refracting_projectiles	0	Pulling apart the energy converters of wrecked Tri-Tachyon warships shows the crew how to tune this ship's energy bolts to glance off an enemy shield and carry on to another target. Tri-Tachyon sales literature calls this efficiency.
 flavourAutomated|refracting_projectiles	0	Pulling apart the energy converters of wrecked Tri-Tachyon warships shows the refit crew how to tune this ship's energy bolts to glance off an enemy shield and carry on to another target. Tri-Tachyon sales literature calls this efficiency.
-type|refracting_projectiles|null|0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+type|refracting_projectiles|null|0	0	Non-beam energy weapons have a <good>20%</good> chance to refract when hitting enemy shields.
 type|refracting_projectiles|null|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
-type|refracting_projectiles|FRIGATE|0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+type|refracting_projectiles|FRIGATE|0	0	Non-beam energy weapons have a <good>20%</good> chance to refract when hitting enemy shields.
 type|refracting_projectiles|FRIGATE|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
-type|refracting_projectiles|DESTROYER|0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+type|refracting_projectiles|DESTROYER|0	0	Non-beam energy weapons have a <good>20%</good> chance to refract when hitting enemy shields.
 type|refracting_projectiles|DESTROYER|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
-type|refracting_projectiles|CRUISER|0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+type|refracting_projectiles|CRUISER|0	0	Non-beam energy weapons have a <good>20%</good> chance to refract when hitting enemy shields.
 type|refracting_projectiles|CRUISER|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
-type|refracting_projectiles|CAPITAL_SHIP|0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+type|refracting_projectiles|CAPITAL_SHIP|0	0	Non-beam energy weapons have a <good>20%</good> chance to refract when hitting enemy shields.
 type|refracting_projectiles|CAPITAL_SHIP|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 type|reinforced_bulkheads|null|0	0	<good>40%</good> increased hull points.
 type|reinforced_bulkheads|null|1	0	If disabled, this ship is almost always recoverable after the battle.
@@ -5413,6 +5434,12 @@ type|stabilized_shields|CRUISER|0	1	<bad>40%</bad> less shield flux upkeep.
 type-detail|stabilized_shields|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Constellate Design- Jet Black</hullmod>\n• <hullmod>Low Arc Shield Emitter</hullmod>\n• <hullmod>Lostech Engineering</hullmod>\n• <hullmod>Stabilized Shields</hullmod>
 type|stabilized_shields|CAPITAL_SHIP|0	1	<bad>40%</bad> less shield flux upkeep.
 type-detail|stabilized_shields|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Constellate Design- Jet Black</hullmod>\n• <hullmod>Low Arc Shield Emitter</hullmod>\n• <hullmod>Lostech Engineering</hullmod>\n• <hullmod>Stabilized Shields</hullmod>
+flavour|strategic_fuel_reserve	0	Diktat burn tables treat every unit of fuel aboard as state property on loan. Repayment is expected in full.
+type|strategic_fuel_reserve|null|0	0	<good>10%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
+type|strategic_fuel_reserve|FRIGATE|0	0	<good>10%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
+type|strategic_fuel_reserve|DESTROYER|0	0	<good>10%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
+type|strategic_fuel_reserve|CRUISER|0	0	<good>10%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
+type|strategic_fuel_reserve|CAPITAL_SHIP|0	0	<good>10%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
 type|strikecraft_replacement|null|0	0	<good>5%</good> increased rate at which the strikecraft replacement rate recovers.
 type|strikecraft_replacement|null|1	1	<bad>5%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
 type|strikecraft_replacement|FRIGATE|0	0	<good>5%</good> increased rate at which the strikecraft replacement rate recovers.
@@ -5443,13 +5470,6 @@ type|survey_cost_reduction|FRIGATE|0	1	Your fleet has <bad>-1</bad> to heavy mac
 type|survey_cost_reduction|FRIGATE|1	1	Your fleet has <bad>-1</bad> to supplies needed to perform surveys.
 type|survey_cost_reduction|DESTROYER|0	1	Your fleet has <bad>-3</bad> to heavy machinery needed to perform surveys.
 type|survey_cost_reduction|DESTROYER|1	1	Your fleet has <bad>-3</bad> to supplies needed to perform surveys.
-flavour|strategic_fuel_reserve	0	Sindrian fuel is the Diktat's fortune, and its navy treats every unit aboard as state property on loan. Burn tables bought from a Diktat quartermaster keep this ship's drive lean while the tanks stay full. The quartermaster asked to be paid in fuel.
-flavourAutomated|strategic_fuel_reserve	0	Sindrian fuel is the Diktat's fortune, and its navy treats every unit aboard as state property on loan. The ship's core runs its drive on Diktat burn tables recovered from a patrol wreck, lean while the tanks stay full. The tables are stamped as state property too.
-type|strategic_fuel_reserve|null|0	0	<good>10%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
-type|strategic_fuel_reserve|FRIGATE|0	0	<good>10%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
-type|strategic_fuel_reserve|DESTROYER|0	0	<good>10%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
-type|strategic_fuel_reserve|CRUISER|0	0	<good>10%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
-type|strategic_fuel_reserve|CAPITAL_SHIP|0	0	<good>10%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
 type|survey_cost_reduction|CRUISER|0	1	Your fleet has <bad>-5</bad> to heavy machinery needed to perform surveys.
 type|survey_cost_reduction|CRUISER|1	1	Your fleet has <bad>-5</bad> to supplies needed to perform surveys.
 type|survey_cost_reduction|CAPITAL_SHIP|0	1	Your fleet has <bad>-10</bad> to heavy machinery needed to perform surveys.

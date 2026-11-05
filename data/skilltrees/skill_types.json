@@ -617,7 +617,7 @@
 		{
 			"id": "comsec_discipline",
 			"name": "COMSEC Discipline",
-			"icon": "graphics/icons/eccm.png",
+			"icon": "graphics/icons/eccm_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -629,8 +629,7 @@
 					"magnitude": 15
 				}
 			],
-			"flavour": "In a joint League fleet, every member world encrypts its own traffic and jams anyone it suspects of listening, which is everyone. Serving under a League commission teaches the crew to keep fire control working through the noise. Most of it comes from their allies.",
-			"flavourAutomated": "In a joint League fleet, every member world encrypts its own traffic and jams anyone it suspects of listening, which is everyone. The ship's core logs months of that interference under a League commission and models its fire control to work through it. Most of the noise comes from its allies.",
+			"flavour": "In a joint League fleet, every member world jams anyone it suspects of listening, which is everyone. Most of the noise comes from allies.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"weapons",
@@ -640,7 +639,7 @@
 		{
 			"id": "defensive_compact",
 			"name": "Defensive Compact",
-			"icon": "graphics/icons/nav_relay.png",
+			"icon": "graphics/icons/coordinated_maneuvers2_shifted_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -648,8 +647,7 @@
 					"magnitude": -20
 				}
 			],
-			"flavour": "The League's founding compact binds every member world to defend whatever the League holds, and to argue over it afterwards. Picket duty at a contested comm relay teaches the crew to fight from beside it. The relay's ownership is still under review.",
-			"flavourAutomated": "The League's founding compact binds every member world to defend whatever the League holds, and to argue over it afterwards. The ship's core logs a picket action at a contested comm relay and learns to fight from beside it. The relay's ownership is still under review.",
+			"flavour": "Under the League's founding compact, every member world must defend whatever the League holds.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"fleet_support"
@@ -658,7 +656,7 @@
 		{
 			"id": "joint_strike_package",
 			"name": "Joint Strike Package",
-			"icon": "graphics/icons/fighter_weapon_damage_shifted.png",
+			"icon": "graphics/icons/fighters2.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -666,8 +664,7 @@
 					"magnitude": 4
 				}
 			],
-			"flavour": "A joint League fleet launches every member world's strike craft in one wave, since no detachment will agree to go second. The crew learns to time its launches to join the crowd. The rival flight leads complain on separate channels.",
-			"flavourAutomated": "A joint League fleet launches every member world's strike craft in one wave, since no detachment will agree to go second. The ship's core logs the launch timings from joint fleet traffic and matches them. The rival flight leads complain on separate channels.",
+			"flavour": "No League detachment will launch second, so joint fleets launch every wing at once.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"fighter",
@@ -685,8 +682,7 @@
 					"magnitude": 3
 				}
 			],
-			"flavour": "Every League member world stocks its depots with spares for its own hulls and turns everyone else away. A cycle of League fleet duty teaches the crew to file each requisition under whichever world builds that hull. Each depot complains to a different world.",
-			"flavourAutomated": "Every League member world stocks its depots with spares for its own hulls and turns everyone else away. The ship's core learns each depot's requisition format from a cycle of League fleet traffic and files under whichever world builds that hull. Each depot complains to a different world.",
+			"flavour": "Every League depot stocks spares for its own world's hulls and nothing else. The paperwork for a mixed fleet runs to several volumes, one per world.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"logistics",
@@ -704,8 +700,7 @@
 					"magnitude": 10
 				}
 			],
-			"flavour": "Kazeron's orbital yards will not certify a recovered hull until a League inspector has signed off on every frame weld. The crew learns the inspection checklist while it waits on a signature. The inspectors bill by the weld.",
-			"flavourAutomated": "Kazeron's orbital yards will not certify a recovered hull until a League inspector has signed off on every frame weld. The ship's core copies the inspection checklist from a yard's certification logs. The inspectors bill by the weld.",
+			"flavour": "Kazeron's orbital yards will not certify a recovered hull until every frame weld has been inspected.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"logistics",
@@ -3648,8 +3643,7 @@
 					"magnitude": -15
 				}
 			],
-			"flavour": "Lion's Guard refits strip a hull down and rebuild it around its energy mounts, and Guard armorers treat missiles as an admission of poor aim. A Guard armorer discharged over a pay dispute brought the method aboard this ship. The dispute is still before a Diktat tribunal.",
-			"flavourAutomated": "Lion's Guard refits strip a hull down and rebuild it around its energy mounts, and Guard armorers treat missiles as an admission of poor aim. The ship's core reconstructs the method from a Guard refit manifest, and the refit crew rebuilds this ship's mounts to match. The manifest lists the missile racks as surplus.",
+			"flavour": "Lion's Guard refits rebuild a hull around its energy mounts. Guard armorers regard missiles as an admission of poor aim.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"energy",
@@ -3659,7 +3653,7 @@
 		{
 			"id": "strategic_fuel_reserve",
 			"name": "Strategic Fuel Reserve",
-			"icon": "graphics/icons/auxiliary_fuel_tanks.png",
+			"icon": "graphics/icons/loadout_design_shifted_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3667,8 +3661,7 @@
 					"magnitude": 10
 				}
 			],
-			"flavour": "Sindrian fuel is the Diktat's fortune, and its navy treats every unit aboard as state property on loan. Burn tables bought from a Diktat quartermaster keep this ship's drive lean while the tanks stay full. The quartermaster asked to be paid in fuel.",
-			"flavourAutomated": "Sindrian fuel is the Diktat's fortune, and its navy treats every unit aboard as state property on loan. The ship's core runs its drive on Diktat burn tables recovered from a patrol wreck, lean while the tanks stay full. The tables are stamped as state property too.",
+			"flavour": "Diktat burn tables treat every unit of fuel aboard as state property on loan. Repayment is expected in full.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"logistics",
@@ -3678,7 +3671,7 @@
 		{
 			"id": "executors_decree",
 			"name": "Executor's Decree",
-			"icon": "graphics/icons/safety_overrides.png",
+			"icon": "graphics/icons/safety_overrides_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3687,15 +3680,14 @@
 				},
 				{
 					"effect": "WEAPON_DAMAGE_PERCENT",
-					"magnitude": 10
+					"magnitude": 15
 				},
 				{
 					"effect": "DAMAGE_TAKEN_PERCENT",
-					"magnitude": -10
+					"magnitude": -5
 				}
 			],
-			"flavour": "A standing decree of the Supreme Executor names retreat in the face of the enemy as treason, and Diktat crews hear it read aloud before every engagement. This crew signed it as a condition of its Sindrian docking rights. Nobody aboard has read past the signature line.",
-			"flavourAutomated": "A standing decree of the Supreme Executor names retreat in the face of the enemy as treason, and Diktat crews hear it read aloud before every engagement. The ship's core received the decree with its Sindrian docking clearance and filed it as a standing order. It has no provision for appeal.",
+			"flavour": "A standing decree of the Supreme Executor names retreat as treason. It has no provision for appeal.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"weapons"
@@ -3704,7 +3696,7 @@
 		{
 			"id": "lions_roar",
 			"name": "Lion's Roar",
-			"icon": "graphics/icons/ecm.png",
+			"icon": "graphics/icons/sensors_circular_shifted_1.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3712,8 +3704,7 @@
 					"magnitude": 10
 				}
 			],
-			"flavour": "Diktat warships broadcast the Supreme Executor's addresses on open channels as they close, at a volume no comm filter fully blocks. The crew rigs this ship's transmitters to do the same, and enemy gun crews lose their rhythm to it. Sindrian citizens are required to listen to the end.",
-			"flavourAutomated": "Diktat warships broadcast the Supreme Executor's addresses on open channels as they close, at a volume no comm filter fully blocks. The refit crew rigs this ship's transmitters to do the same, and the ship's core times each broadcast to enemy firing cycles. Sindrian citizens are required to listen to the end.",
+			"flavour": "Diktat warships broadcast the Supreme Executor's addresses on open channels as they close, at a volume the comm filter can't fully block. Sindrian citizens are required to listen to the end.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"fleet_support"
@@ -3722,7 +3713,7 @@
 		{
 			"id": "honor_guard",
 			"name": "Honor Guard",
-			"icon": "graphics/icons/top_speed.png",
+			"icon": "graphics/icons/leadership2_shifted_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3730,8 +3721,7 @@
 					"magnitude": 50
 				}
 			],
-			"flavour": "The Lion's Guard escorts the Supreme Executor's flagship wherever it goes, and its pilots hold station at the flagship's pace rather than their own. A former Guard helmsman drills this crew in the same station-keeping. The salute that goes with it took longer to drop.",
-			"flavourAutomated": "The Lion's Guard escorts the Supreme Executor's flagship wherever it goes, holding station at the flagship's pace rather than its own. The ship's core studies Guard escort formations in recorded fleet reviews and keeps station the same way. The recordings are mostly of parades.",
+			"flavour": "The Lion's Guard keeps pace with the Supreme Executor's flagship, never the other way round. Most of its recorded maneuvers are parades.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"speed"

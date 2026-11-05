@@ -3413,6 +3413,7 @@
 			"x": -9365,
 			"y": -8104,
 			"ringBeltPath": "graphics/planets/aurorae.png",
+			"ringBeltColor": "#690234",
 			"tags": [
 				"sindrian_dictat"
 			]
@@ -8035,7 +8036,7 @@
 				"affinity_137"
 			],
 			"x": -13620,
-			"y": 1253,
+			"y": 1259,
 			"orbitAnchorId": "anchor_95",
 			"orbitAngle": -120,
 			"tags": [
@@ -8050,7 +8051,7 @@
 				"comsec_discipline_1"
 			],
 			"x": -13686,
-			"y": 1499,
+			"y": 1505,
 			"orbitAnchorId": "anchor_95",
 			"orbitAngle": 150,
 			"tags": [
@@ -8214,7 +8215,7 @@
 				"increased_sensor_strength_2"
 			],
 			"x": -13440,
-			"y": 1565,
+			"y": 1571,
 			"orbitAnchorId": "anchor_95",
 			"orbitAngle": 60,
 			"tags": [
@@ -8444,7 +8445,7 @@
 				"affinity_125",
 				"top_speed_11"
 			],
-			"x": -10754,
+			"x": -10750,
 			"y": -9903,
 			"orbitAnchorId": "anchor_105",
 			"orbitAngle": 252,
@@ -8459,7 +8460,7 @@
 				"top_speed_10",
 				"honor_guard_1"
 			],
-			"x": -10869,
+			"x": -10865,
 			"y": -9676,
 			"orbitAnchorId": "anchor_105",
 			"orbitAngle": 162,
@@ -8473,7 +8474,7 @@
 			"connectedTo": [
 				"top_speed_11"
 			],
-			"x": -10642,
+			"x": -10638,
 			"y": -9561,
 			"orbitAnchorId": "anchor_105",
 			"orbitAngle": 432,
@@ -8488,8 +8489,8 @@
 				"affinity_122",
 				"ecm_resistance_7"
 			],
-			"x": -8638,
-			"y": -9216,
+			"x": -8647,
+			"y": -9212,
 			"orbitAnchorId": "anchor_106",
 			"orbitAngle": 324,
 			"tags": [
@@ -8503,8 +8504,8 @@
 				"ecm_resistance_6",
 				"lions_roar_1"
 			],
-			"x": -8890,
-			"y": -9256,
+			"x": -8899,
+			"y": -9252,
 			"orbitAnchorId": "anchor_106",
 			"orbitAngle": 234,
 			"tags": [
@@ -8517,8 +8518,8 @@
 			"connectedTo": [
 				"ecm_resistance_7"
 			],
-			"x": -8930,
-			"y": -9004,
+			"x": -8939,
+			"y": -9000,
 			"orbitAnchorId": "anchor_106",
 			"orbitAngle": 504,
 			"tags": [
@@ -8532,7 +8533,7 @@
 				"affinity_123",
 				"more_hull_9"
 			],
-			"x": -8638,
+			"x": -8642,
 			"y": -6992,
 			"orbitAnchorId": "anchor_107",
 			"orbitAngle": 36,
@@ -8547,7 +8548,7 @@
 				"more_hull_8",
 				"executors_decree_1"
 			],
-			"x": -8678,
+			"x": -8682,
 			"y": -7244,
 			"orbitAnchorId": "anchor_107",
 			"orbitAngle": -54,
@@ -8561,7 +8562,7 @@
 			"connectedTo": [
 				"more_hull_9"
 			],
-			"x": -8930,
+			"x": -8934,
 			"y": -7204,
 			"orbitAnchorId": "anchor_107",
 			"orbitAngle": 216,
@@ -8577,7 +8578,7 @@
 				"fuel_4"
 			],
 			"x": -10754,
-			"y": -6305,
+			"y": -6323,
 			"orbitAnchorId": "anchor_108",
 			"orbitAngle": 108,
 			"tags": [
@@ -8592,7 +8593,7 @@
 				"strategic_fuel_reserve_1"
 			],
 			"x": -10527,
-			"y": -6420,
+			"y": -6438,
 			"orbitAnchorId": "anchor_108",
 			"orbitAngle": 18,
 			"tags": [
@@ -8605,10 +8606,10 @@
 			"connectedTo": [
 				"fuel_4"
 			],
-			"x": -10642,
-			"y": -6647,
+			"x": -10641,
+			"y": -6665,
 			"orbitAnchorId": "anchor_108",
-			"orbitAngle": 288,
+			"orbitAngle": -71.5432679315878,
 			"tags": [
 				"sindrian_dictat"
 			]
@@ -8875,7 +8876,7 @@
 				"objective_capture_range_5"
 			],
 			"x": -11728,
-			"y": 1253,
+			"y": 1256,
 			"orbitAnchorId": "anchor_101",
 			"orbitAngle": -60,
 			"tags": [
@@ -8890,7 +8891,7 @@
 				"defensive_compact_1"
 			],
 			"x": -11974,
-			"y": 1319,
+			"y": 1322,
 			"orbitAnchorId": "anchor_101",
 			"orbitAngle": -150,
 			"tags": [
@@ -8904,7 +8905,7 @@
 				"objective_capture_range_5"
 			],
 			"x": -11908,
-			"y": 1565,
+			"y": 1568,
 			"orbitAnchorId": "anchor_101",
 			"orbitAngle": 120,
 			"tags": [
@@ -8918,7 +8919,7 @@
 				"affinity_134",
 				"strikecraft_weapon_damage_7"
 			],
-			"x": -10782,
+			"x": -10793,
 			"y": 2892,
 			"orbitAnchorId": "anchor_102",
 			"orbitAngle": 0,
@@ -8933,7 +8934,7 @@
 				"strikecraft_weapon_damage_6",
 				"joint_strike_package_1"
 			],
-			"x": -10962,
+			"x": -10973,
 			"y": 2712,
 			"orbitAnchorId": "anchor_102",
 			"orbitAngle": -90,
@@ -8947,7 +8948,7 @@
 			"connectedTo": [
 				"strikecraft_weapon_damage_7"
 			],
-			"x": -11142,
+			"x": -11153,
 			"y": 2892,
 			"orbitAnchorId": "anchor_102",
 			"orbitAngle": 180,
@@ -8963,7 +8964,7 @@
 				"reduced_monthly_supplies_4"
 			],
 			"x": -11728,
-			"y": 4531,
+			"y": 4528,
 			"orbitAnchorId": "anchor_103",
 			"orbitAngle": 60,
 			"tags": [
@@ -8978,7 +8979,7 @@
 				"league_requisitions_1"
 			],
 			"x": -11662,
-			"y": 4285,
+			"y": 4282,
 			"orbitAnchorId": "anchor_103",
 			"orbitAngle": -30,
 			"tags": [
@@ -8992,7 +8993,7 @@
 				"reduced_monthly_supplies_4"
 			],
 			"x": -11908,
-			"y": 4219,
+			"y": 4216,
 			"orbitAnchorId": "anchor_103",
 			"orbitAngle": -120,
 			"tags": [
@@ -9006,8 +9007,8 @@
 				"affinity_135",
 				"reduced_d_mod_effect_8"
 			],
-			"x": -13620,
-			"y": 4531,
+			"x": -13614,
+			"y": 4523,
 			"orbitAnchorId": "anchor_104",
 			"orbitAngle": 120,
 			"tags": [
@@ -9021,8 +9022,8 @@
 				"reduced_d_mod_effect_7",
 				"kazeron_recovery_standards_1"
 			],
-			"x": -13374,
-			"y": 4465,
+			"x": -13368,
+			"y": 4457,
 			"orbitAnchorId": "anchor_104",
 			"orbitAngle": 30,
 			"tags": [
@@ -9035,8 +9036,8 @@
 			"connectedTo": [
 				"reduced_d_mod_effect_8"
 			],
-			"x": -13440,
-			"y": 4219,
+			"x": -13434,
+			"y": 4211,
 			"orbitAnchorId": "anchor_104",
 			"orbitAngle": -60,
 			"tags": [
@@ -11616,14 +11617,14 @@
 		{
 			"a": "increased_sensor_strength_1",
 			"b": "increased_sensor_strength_2",
-			"controlX": -12801,
-			"controlY": 1053
+			"controlX": -13704,
+			"controlY": 1368
 		},
 		{
 			"a": "comsec_discipline_1",
 			"b": "increased_sensor_strength_2",
-			"controlX": -12801,
-			"controlY": 1307
+			"controlX": -13577,
+			"controlY": 1589
 		},
 		{
 			"a": "flak_screen_doctrine_1",
@@ -11708,6 +11709,102 @@
 			"b": "affinity_124",
 			"controlX": -11917,
 			"controlY": -6834
+		},
+		{
+			"a": "more_hull_8",
+			"b": "more_hull_9",
+			"controlX": -8610,
+			"controlY": -7126
+		},
+		{
+			"a": "executors_decree_1",
+			"b": "more_hull_9",
+			"controlX": -8816,
+			"controlY": -7276
+		},
+		{
+			"a": "fuel_3",
+			"b": "fuel_4",
+			"controlX": -10616,
+			"controlY": -6334
+		},
+		{
+			"a": "fuel_4",
+			"b": "strategic_fuel_reserve_1",
+			"controlX": -10537,
+			"controlY": -6575
+		},
+		{
+			"a": "ecm_resistance_6",
+			"b": "ecm_resistance_7",
+			"controlX": -8765,
+			"controlY": -9284
+		},
+		{
+			"a": "ecm_resistance_7",
+			"b": "lions_roar_1",
+			"controlX": -8971,
+			"controlY": -9134
+		},
+		{
+			"a": "top_speed_10",
+			"b": "top_speed_11",
+			"controlX": -10854,
+			"controlY": -9814
+		},
+		{
+			"a": "honor_guard_1",
+			"b": "top_speed_11",
+			"controlX": -10776,
+			"controlY": -9572
+		},
+		{
+			"a": "objective_capture_range_4",
+			"b": "objective_capture_range_5",
+			"controlX": -11865,
+			"controlY": 1238
+		},
+		{
+			"a": "defensive_compact_1",
+			"b": "objective_capture_range_5",
+			"controlX": -11992,
+			"controlY": 1459
+		},
+		{
+			"a": "strikecraft_weapon_damage_6",
+			"b": "strikecraft_weapon_damage_7",
+			"controlX": -10846,
+			"controlY": 2765
+		},
+		{
+			"a": "joint_strike_package_1",
+			"b": "strikecraft_weapon_damage_7",
+			"controlX": -11100,
+			"controlY": 2765
+		},
+		{
+			"a": "reduced_monthly_supplies_3",
+			"b": "reduced_monthly_supplies_4",
+			"controlX": -11644,
+			"controlY": 4419
+		},
+		{
+			"a": "league_requisitions_1",
+			"b": "reduced_monthly_supplies_4",
+			"controlX": -11771,
+			"controlY": 4198
+		},
+		{
+			"a": "reduced_d_mod_effect_7",
+			"b": "reduced_d_mod_effect_8",
+			"controlX": -13477,
+			"controlY": 4541
+		},
+		{
+			"a": "kazeron_recovery_standards_1",
+			"b": "reduced_d_mod_effect_8",
+			"controlX": -13350,
+			"controlY": 4320
 		}
 	],
 	"hiddenConnectors": [
@@ -12468,7 +12565,7 @@
 		{
 			"id": "anchor_95",
 			"x": -13530,
-			"y": 1409,
+			"y": 1415,
 			"radius": 180
 		},
 		{
@@ -12504,49 +12601,49 @@
 		{
 			"id": "anchor_101",
 			"x": -11818,
-			"y": 1409,
+			"y": 1412,
 			"radius": 180
 		},
 		{
 			"id": "anchor_102",
-			"x": -10962,
+			"x": -10973,
 			"y": 2892,
 			"radius": 180
 		},
 		{
 			"id": "anchor_103",
 			"x": -11818,
-			"y": 4375,
+			"y": 4372,
 			"radius": 180
 		},
 		{
 			"id": "anchor_104",
-			"x": -13530,
-			"y": 4375,
+			"x": -13524,
+			"y": 4367,
 			"radius": 180
 		},
 		{
 			"id": "anchor_105",
-			"x": -10698,
+			"x": -10694,
 			"y": -9732,
 			"radius": 180
 		},
 		{
 			"id": "anchor_106",
-			"x": -8784,
-			"y": -9110,
+			"x": -8793,
+			"y": -9106,
 			"radius": 180
 		},
 		{
 			"id": "anchor_107",
-			"x": -8784,
+			"x": -8788,
 			"y": -7098,
 			"radius": 180
 		},
 		{
 			"id": "anchor_108",
 			"x": -10698,
-			"y": -6476,
+			"y": -6494,
 			"radius": 180
 		}
 	],
