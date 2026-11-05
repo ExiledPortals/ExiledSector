@@ -1,10 +1,15 @@
 package exiledsector.ui;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.TextPanelAPI;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.campaign.rules.MemKeys;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import org.lwjgl.input.Keyboard;
@@ -20,7 +25,25 @@ public abstract class BaseDialogPlugin implements InteractionDialogPlugin {
     @Override
     public final void init(InteractionDialogAPI interactionDialog) {
         dialog = interactionDialog;
+        fillMemoryMap(interactionDialog.getInteractionTarget());
         open();
+    }
+
+    private void fillMemoryMap(SectorEntityToken target) {
+        memoryMap.clear();
+        if (target == null) {
+            return;
+        }
+        SectorAPI sector = Global.getSector();
+        memoryMap.put(MemKeys.LOCAL, target.getMemoryWithoutUpdate());
+        FactionAPI faction = target.getFaction();
+        memoryMap.put(MemKeys.FACTION, faction != null ? faction.getMemoryWithoutUpdate() : Global.getFactory().createMemory());
+        memoryMap.put(MemKeys.GLOBAL, sector.getMemoryWithoutUpdate());
+        memoryMap.put(MemKeys.PLAYER, sector.getCharacterData().getMemoryWithoutUpdate());
+        MarketAPI market = target.getMarket();
+        if (market != null) {
+            memoryMap.put(MemKeys.MARKET, market.getMemoryWithoutUpdate());
+        }
     }
 
     protected abstract void open();
@@ -57,6 +80,7 @@ public abstract class BaseDialogPlugin implements InteractionDialogPlugin {
     protected final void returnHere(InteractionDialogAPI leaving, SectorEntityToken site) {
         leaving.setPlugin(this);
         leaving.setInteractionTarget(site);
+        fillMemoryMap(site);
     }
 
     @Override

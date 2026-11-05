@@ -1,18 +1,12 @@
 package exiledsector.charts.anomaly;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.FactionAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.rules.MemKeys;
-import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageDefenderInteraction;
 import exiledsector.i18n.Translation;
 import exiledsector.ui.VanillaText;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public abstract class GuardedSiteDialog extends AnomalyDialog {
 
@@ -51,19 +45,8 @@ public abstract class GuardedSiteDialog extends AnomalyDialog {
         if (guards == null) {
             return false;
         }
-        fillMemoryMap();
         VanillaText.plainPara(text(), Translation.gameText(guardedKey()));
         return new SalvageDefenderInteraction().execute(null, dialog(), new ArrayList<>(), getMemoryMap());
-    }
-
-    private void fillMemoryMap() {
-        SectorAPI sector = Global.getSector();
-        Map<String, MemoryAPI> memoryMap = getMemoryMap();
-        memoryMap.put(MemKeys.LOCAL, site.getMemoryWithoutUpdate());
-        FactionAPI faction = site.getFaction();
-        memoryMap.put(MemKeys.FACTION, faction != null ? faction.getMemoryWithoutUpdate() : Global.getFactory().createMemory());
-        memoryMap.put(MemKeys.GLOBAL, sector.getMemoryWithoutUpdate());
-        memoryMap.put(MemKeys.PLAYER, sector.getCharacterData().getMemoryWithoutUpdate());
     }
 
     @Override
