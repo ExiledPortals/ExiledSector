@@ -59,6 +59,8 @@ public final class ExiledSectorSettings {
         ItemAnimationSetting.reloadSettings();
         ModSettingsListener.onReload(ModSounds.class, ModSounds::reloadSettings);
         ModSounds.reloadSettings();
+        ModSettingsListener.onReload(TooltipTextSize.class, TooltipTextSize::reloadSettings);
+        TooltipTextSize.reloadSettings();
         ModSettingsListener.onReload(ExiledSectorDomain.class, () -> ExiledSector.domains().forEach(ExiledSectorDomain::reloadSettings));
         domains.forEach(ExiledSectorDomain::reloadSettings);
     }
@@ -73,6 +75,9 @@ public final class ExiledSectorSettings {
         SettingsCreator.addBoolean(MOD_ID, ModSounds.ENABLED_FIELD_ID,
                 Translation.text("settings.sounds.enabled.name"), Translation.text("settings.sounds.enabled.tooltip"),
                 ModSounds.DEFAULT_ENABLED, MAIN_TAB);
+        SettingsCreator.addBoolean(MOD_ID, TooltipTextSize.LARGE_FIELD_ID,
+                Translation.text("settings.largeTooltipText.name"), Translation.text("settings.largeTooltipText.tooltip"),
+                TooltipTextSize.DEFAULT_LARGE, MAIN_TAB);
         SettingsCreator.addRadio(MOD_ID, ItemAnimationSetting.FIELD_ID, Translation.text("settings.hullItems.itemAnimations.name"),
                 Translation.text("settings.hullItems.itemAnimations.tooltip"), ItemAnimationSetting.FULL,
                 String.join(",", ItemAnimationSetting.OPTIONS), MAIN_TAB);

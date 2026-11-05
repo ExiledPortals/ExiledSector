@@ -53,7 +53,7 @@ public final class ItemHoverTooltip {
         String definitionId = item == null ? null : item.definitionId();
         boolean codexLinked = ItemCodexLink.existingEntryId(definitionId) != null && !Global.getSettings().isShowingCodex();
         String codexDefinitionId = codexLinked ? definitionId : null;
-        show(key, ItemTooltip.WIDTH, (element, expanded) -> ItemTooltip.write(element, item, hullSize,
+        show(key, ItemTooltip.width(), (element, expanded) -> ItemTooltip.write(element, item, hullSize,
                         () -> footerLines(footer.apply(expanded), codexLinked && expanded), expanded),
                 anchor, Placement.BESIDE, PAD, codexDefinitionId);
     }

@@ -7,6 +7,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.ui.TooltipTextSize;
 import exiledsector.ui.VanillaText;
 
 import java.awt.Color;
@@ -15,13 +16,18 @@ import java.util.function.Supplier;
 
 public final class ItemTooltip {
 
-    public static final float WIDTH = 450f;
+    private static final float VANILLA_WIDTH = 450f;
+    private static final float LARGE_TEXT_WIDTH = 700f;
     public static final float PAD = 10f;
     private static final float LINE_PAD = 3f;
     private static final float SLOT_TAG_WIDTH = 30f;
     private static final float SLOT_TAG_GAP = 6f;
 
     private ItemTooltip() {
+    }
+
+    public static float width() {
+        return TooltipTextSize.large() ? LARGE_TEXT_WIDTH : VANILLA_WIDTH;
     }
 
     public static void write(TooltipMakerAPI tooltip, Item item, Supplier<List<StyledText>> footer, boolean showRollRanges) {
@@ -56,7 +62,7 @@ public final class ItemTooltip {
         }
         tooltip.addSectionHeading(Translation.text("item.tooltip.explicit"), Alignment.MID, PAD);
         if (showRollRanges) {
-            SlottedRows.Layout layout = new SlottedRows.Layout(tooltip.getWidthSoFar(), SLOT_TAG_WIDTH, SLOT_TAG_GAP, TooltipMakerAPI::setParaFontDefault);
+            SlottedRows.Layout layout = new SlottedRows.Layout(tooltip.getWidthSoFar(), SLOT_TAG_WIDTH, SLOT_TAG_GAP, TooltipTextSize::applyBodyFont);
             SlottedRows.add(tooltip, effectRows, layout, PAD, LINE_PAD);
         } else {
             addLines(tooltip, effectRows.stream().map(SlottedLine::text).toList(), Misc.getTextColor());
@@ -65,12 +71,15 @@ public final class ItemTooltip {
 
     public static void writeFrame(TooltipMakerAPI tooltip, Runnable knownItemBody, Supplier<List<StyledText>> footer) {
         I18n.forGameText(() -> {
+            TooltipTextSize.applyTitleFont(tooltip);
+            TooltipTextSize.applyBodyFont(tooltip);
             if (knownItemBody == null) {
                 tooltip.addTitle(Translation.text("socketable.unknown"));
             } else {
                 knownItemBody.run();
             }
             addLines(tooltip, footer.get(), Misc.getGrayColor());
+            tooltip.setParaFontDefault();
         });
     }
 

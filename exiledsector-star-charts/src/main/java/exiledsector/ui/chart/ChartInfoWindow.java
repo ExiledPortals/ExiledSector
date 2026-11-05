@@ -8,6 +8,7 @@ import exiledsector.items.ItemName;
 import exiledsector.items.SlottedLine;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.SkillTreePanelStyle;
+import exiledsector.ui.TooltipText;
 import exiledsector.ui.socket.AtlasAnomalyPanel.Entry;
 import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.GLDraw;
@@ -170,8 +171,9 @@ final class ChartInfoWindow {
 
     private final SpriteCache spriteCache = new SpriteCache(ChartInfoWindow.class);
     private final SkillTreePanelStyle tooltipStyle = new SkillTreePanelStyle();
-    private final TextLabel tooltipTitle = new TextLabel(SkillTreePanelStyle.TOOLTIP_TITLE_FONT, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-    private final TextLabel tooltipBody = new TextLabel(SkillTreePanelStyle.TOOLTIP_BODY_FONT, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
+    private final TooltipText tooltipText = SkillTreePanelStyle.tooltipText();
+    private final TextLabel tooltipTitle = new TextLabel(tooltipText.title(), SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
+    private final TextLabel tooltipBody = new TextLabel(tooltipText.body(), SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
     private final List<Block> blocks = new ArrayList<>();
     private float contentHeight;
     private float scrollOffset;
@@ -232,8 +234,8 @@ final class ChartInfoWindow {
         }
         if (hoveredEntry != tooltipEntry) {
             tooltipEntry = hoveredEntry;
-            tooltipTitle.setWrapped(hoveredEntry.title(), SkillTreePanelStyle.TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT);
-            tooltipBody.setParagraphs(List.of(hoveredEntry.body()), SkillTreePanelStyle.TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT,
+            tooltipTitle.setWrapped(hoveredEntry.title(), tooltipText.maxTextWidth(), TOOLTIP_MAX_TEXT_HEIGHT);
+            tooltipBody.setParagraphs(List.of(hoveredEntry.body()), tooltipText.maxTextWidth(), TOOLTIP_MAX_TEXT_HEIGHT,
                     SkillTreePanelStyle::standardHighlightColor);
         }
         tooltipStyle.drawTitleBodyTooltip(tooltipTitle, tooltipBody, mouseX, mouseY, alphaMult);

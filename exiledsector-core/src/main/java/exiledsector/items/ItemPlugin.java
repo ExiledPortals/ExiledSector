@@ -54,7 +54,7 @@ public class ItemPlugin extends AnimatedCargoItemPlugin {
 
     @Override
     public float getTooltipWidth() {
-        return ItemTooltip.WIDTH;
+        return ItemTooltip.width();
     }
 
     @Override

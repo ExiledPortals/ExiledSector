@@ -71,7 +71,7 @@ The arguments are, in order: the source font, the output `.fnt` path, the glyph 
 height, the atlas width and height, and the text files whose characters must be included. Keep the line
 height at 20, the panel text size, because LazyLib scales against it; that way panel text draws at the
 atlas's own size instead of being scaled down. Tooltip text draws at 15, vanilla's tooltip size, scaled
-from the same atlas. For the atlas, use the smallest power-of-two size the
+from the same atlas, or at up to 20 with the Large Tooltip Text setting. For the atlas, use the smallest power-of-two size the
 glyphs fit into, since every pixel costs four bytes of video memory.
 
 On top of the characters in the given files, the generator always includes ASCII, Latin-1, common

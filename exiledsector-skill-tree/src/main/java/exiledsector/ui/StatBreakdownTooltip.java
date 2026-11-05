@@ -3,7 +3,6 @@ package exiledsector.ui;
 import exiledsector.i18n.Translation;
 import exiledsector.ui.stats.ShipStatSheet;
 import exiledsector.ui.util.TextLabel;
-import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -18,10 +17,11 @@ final class StatBreakdownTooltip {
             ShipStatSheet.Combine.MULTI);
 
     private final SkillTreePanelStyle panelStyle;
-    private final TextLabel titleLabel = new TextLabel(SkillTreePanelStyle.TOOLTIP_TITLE_FONT, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-    private final TextLabel bodyLabel = new TextLabel(SkillTreePanelStyle.TOOLTIP_BODY_FONT, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
-    private final TextLabel resultLabel = new TextLabel(SkillTreePanelStyle.TOOLTIP_BODY_FONT, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-    private final TextLabel notesLabel = new TextLabel(SkillTreePanelStyle.TOOLTIP_BODY_FONT, NOTES_COLOR);
+    private final TooltipText tooltipText = SkillTreePanelStyle.tooltipText();
+    private final TextLabel titleLabel = new TextLabel(tooltipText.title(), SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
+    private final TextLabel bodyLabel = new TextLabel(tooltipText.body(), SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
+    private final TextLabel resultLabel = new TextLabel(tooltipText.body(), SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
+    private final TextLabel notesLabel = new TextLabel(tooltipText.flavour(), NOTES_COLOR);
     private ShipStatSheet.Breakdown shownBreakdown;
     private List<SkillTreeTooltipTable> tables = List.of();
 
@@ -30,23 +30,23 @@ final class StatBreakdownTooltip {
     }
 
     void render(ShipStatSheet.Breakdown breakdown, float mouseX, float mouseY, float alphaMult) {
-        LazyFont font = SkillTreePanelStyle.tooltipBodyFont();
-        if (font == null || breakdown == null) {
+        if (!tooltipText.fontsLoaded() || breakdown == null) {
             return;
         }
         if (breakdown != shownBreakdown) {
-            show(font, breakdown);
+            show(breakdown);
         }
         panelStyle.drawTitleBodyTooltip(titleLabel, null, bodyLabel, tables, resultLabel.isEmpty() ? null : resultLabel,
                 notesLabel.isEmpty() ? null : notesLabel, mouseX, mouseY, alphaMult);
     }
 
-    private void show(LazyFont font, ShipStatSheet.Breakdown breakdown) {
+    private void show(ShipStatSheet.Breakdown breakdown) {
         shownBreakdown = breakdown;
-        titleLabel.setWrapped(breakdown.title(), SkillTreePanelStyle.TOOLTIP_MAX_TEXT_WIDTH, MAX_TITLE_HEIGHT);
-        bodyLabel.setWrapped(breakdown.summary() == null ? "" : breakdown.summary(), SkillTreePanelStyle.TOOLTIP_MAX_TEXT_WIDTH, MAX_NOTES_HEIGHT);
-        resultLabel.setWrapped(breakdown.result() == null ? "" : breakdown.result(), SkillTreePanelStyle.TOOLTIP_MAX_TEXT_WIDTH, MAX_NOTES_HEIGHT);
-        notesLabel.setWrapped(String.join("\n", breakdown.notes()), SkillTreePanelStyle.TOOLTIP_MAX_TEXT_WIDTH, MAX_NOTES_HEIGHT);
+        float maxTextWidth = tooltipText.maxTextWidth();
+        titleLabel.setWrapped(breakdown.title(), maxTextWidth, MAX_TITLE_HEIGHT);
+        bodyLabel.setWrapped(breakdown.summary() == null ? "" : breakdown.summary(), maxTextWidth, MAX_NOTES_HEIGHT);
+        resultLabel.setWrapped(breakdown.result() == null ? "" : breakdown.result(), maxTextWidth, MAX_NOTES_HEIGHT);
+        notesLabel.setWrapped(String.join("\n", breakdown.notes()), maxTextWidth, MAX_NOTES_HEIGHT);
         if (breakdown.sources().isEmpty()) {
             tables = List.of();
             return;
@@ -54,7 +54,7 @@ final class StatBreakdownTooltip {
         boolean combined = breakdown.sources().stream().anyMatch(line -> line.combine() != ShipStatSheet.Combine.OTHER);
         TooltipTable table = new TooltipTable(Translation.text("ui.stats.breakdown.heading"), combined ? combinedHeaders() : amountHeaders(),
                 combined ? combinedRows(breakdown.sources()) : amountRows(breakdown.sources()));
-        tables = List.of(SkillTreeTooltipTable.measure(font, table));
+        tables = List.of(SkillTreeTooltipTable.measure(tooltipText, table));
     }
 
     private static List<String> combinedHeaders() {

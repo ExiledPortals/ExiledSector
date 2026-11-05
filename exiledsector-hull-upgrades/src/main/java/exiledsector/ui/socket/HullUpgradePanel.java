@@ -20,6 +20,7 @@ import exiledsector.items.MasterSchematic;
 import exiledsector.items.RefitSchematic;
 import exiledsector.items.ShipSection;
 import exiledsector.ui.SkillTreePanelStyle;
+import exiledsector.ui.TooltipTextSize;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.section.SectionFlair;
 
@@ -426,6 +427,7 @@ public final class HullUpgradePanel extends HoloPanel {
             return;
         }
         hoverTooltip.show(entry, TOOLTIP_WIDTH, (tooltip, expanded) -> I18n.forGameText(() -> {
+            TooltipTextSize.applyTitleFont(tooltip);
             tooltip.addTitle(entry.section().displayName(), SectionFlair.colorOf(entry.section()));
             VanillaText.addPara(tooltip, Translation.styled("framework.sectionDescription." + entry.section().id()), PAD, Misc.getTextColor());
             if (entry.section().requirementTag() != null) {

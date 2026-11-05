@@ -207,6 +207,8 @@
     "settings.refit.craftingBenchKey.tooltip": "Hotkey for the Crafting Bench buttons in the refit and inventory screens.",
     "settings.sounds.enabled.name": "Sounds",
     "settings.sounds.enabled.tooltip": "Every sound Exiled Sector plays, from the skill tree and crafting to loot alerts and combat effects.",
+    "settings.largeTooltipText.name": "Large Tooltip Text",
+    "settings.largeTooltipText.tooltip": "This makes tooltips look different from vanilla, but may be easier on the eyes.",
     "settings.combatEffects.header": "Combat Effects",
     "settings.combatEffects.graphicsLib.name": "GraphicsLib Lighting",
     "settings.combatEffects.graphicsLib.tooltip": "Adds Exiled Sector's own lights and shockwaves to combat when GraphicsLib is installed.",

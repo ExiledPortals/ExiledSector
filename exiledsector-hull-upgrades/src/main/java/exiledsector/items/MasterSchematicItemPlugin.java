@@ -21,7 +21,7 @@ public class MasterSchematicItemPlugin extends BaseSpecialItemPlugin {
 
     @Override
     public float getTooltipWidth() {
-        return ItemTooltip.WIDTH;
+        return ItemTooltip.width();
     }
 
     @Override

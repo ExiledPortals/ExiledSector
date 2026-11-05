@@ -30,7 +30,7 @@ public class RefitSchematicItemPlugin extends BaseSpecialItemPlugin {
 
     @Override
     public float getTooltipWidth() {
-        return ItemTooltip.WIDTH;
+        return ItemTooltip.width();
     }
 
     @Override

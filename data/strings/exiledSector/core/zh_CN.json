@@ -670,6 +670,8 @@
     "settings.refit.craftingBenchKey.tooltip": "改装界面和物品栏界面中“制作台”按钮的快捷键。",
     "settings.sounds.enabled.name": "音效",
     "settings.sounds.enabled.tooltip": "Exiled Sector 播放的所有音效，包括技能树、制作、战利品提示和战斗特效。",
+    "settings.largeTooltipText.name": "大号提示文字",
+    "settings.largeTooltipText.tooltip": "这会让提示框看起来与原版不同，但可能更易于阅读。",
     "settings.combatEffects.header": "战斗特效",
     "settings.combatEffects.graphicsLib.name": "GraphicsLib 光效",
     "settings.combatEffects.graphicsLib.tooltip": "安装 GraphicsLib 后，为战斗加入 Exiled Sector 自己的光照和冲击波。",

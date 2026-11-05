@@ -43,6 +43,7 @@ import exiledsector.ui.ChromeMetrics;
 import exiledsector.ui.PointerGesture;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
+import exiledsector.ui.TooltipText;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.chart.StarChartCraftingBench;
@@ -114,8 +115,9 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private final PointerGesture<Void> gesture = new PointerGesture<>();
     private final TextLabel titleLabel = new TextLabel(SkillTreePanelStyle.UI_TITLE_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel hintLabel = new TextLabel(SkillTreePanelStyle.UI_HINT_FONT_SIZE, HINT_COLOUR);
-    private final TextLabel tooltipTitle = new TextLabel(SkillTreePanelStyle.TOOLTIP_TITLE_FONT, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-    private final TextLabel tooltipBody = new TextLabel(SkillTreePanelStyle.TOOLTIP_BODY_FONT, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
+    private final TooltipText tooltipText = SkillTreePanelStyle.tooltipText();
+    private final TextLabel tooltipTitle = new TextLabel(tooltipText.title(), SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
+    private final TextLabel tooltipBody = new TextLabel(tooltipText.body(), SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
     private AtlasMapCanvas map;
     private CustomPanelAPI panelRoot;
     private PositionAPI panelPosition;
@@ -533,8 +535,8 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         TooltipMakerAPI element = panelRoot.createUIElement(DEBUG_WIDTH, DEBUG_HEIGHT, false);
         element.addButton(Translation.text(debugAction.buttonKey()), Control.DEBUG_COMPLETE, Misc.getNegativeHighlightColor(), Misc.getDarkPlayerColor(),
                 Alignment.MID, CutStyle.ALL, DEBUG_WIDTH, DEBUG_HEIGHT, 0f);
-        String tooltipText = Translation.text(debugAction.tooltipKey());
-        element.addTooltipToPrevious(new GameTextTooltip(DEBUG_TOOLTIP_WIDTH, tooltip -> VanillaText.plainPara(tooltip, tooltipText, 0f,
+        String debugTooltipText = Translation.text(debugAction.tooltipKey());
+        element.addTooltipToPrevious(new GameTextTooltip(DEBUG_TOOLTIP_WIDTH, tooltip -> VanillaText.plainPara(tooltip, debugTooltipText, 0f,
                 Misc.getTextColor())), TooltipMakerAPI.TooltipLocation.ABOVE);
         panelRoot.addUIElement(element).inTL(position.getWidth() - PANEL_MARGIN - CHROME_PAD - DEBUG_WIDTH,
                 position.getHeight() - PANEL_MARGIN - CHROME_PAD - DEBUG_HEIGHT);
@@ -912,8 +914,8 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     }
 
     private void writeTooltipText(String title, StyledText body) {
-        tooltipTitle.setWrapped(title, SkillTreePanelStyle.TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT);
-        tooltipBody.setParagraphs(List.of(body), SkillTreePanelStyle.TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT,
+        tooltipTitle.setWrapped(title, tooltipText.maxTextWidth(), TOOLTIP_MAX_TEXT_HEIGHT);
+        tooltipBody.setParagraphs(List.of(body), tooltipText.maxTextWidth(), TOOLTIP_MAX_TEXT_HEIGHT,
                 SkillTreePanelStyle::standardHighlightColor);
     }
 

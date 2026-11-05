@@ -32,13 +32,8 @@ public final class SkillTreePanelStyle {
     public static final float UI_TITLE_FONT_SIZE = 24f;
     public static final float UI_FONT_SIZE = 20f;
     public static final float UI_HINT_FONT_SIZE = 17f;
-    public static final TextFont TOOLTIP_TITLE_FONT = new TextFont(SkillTreePanelStyle::font, 18f);
-    public static final TextFont TOOLTIP_HEADING_FONT = new TextFont(SkillTreePanelStyle::tooltipHeadingFont, 15f);
-    public static final TextFont TOOLTIP_BODY_FONT = new TextFont(SkillTreePanelStyle::tooltipBodyFont, 15f);
     public static final Color TOOLTIP_TITLE_COLOR = Color.WHITE;
     public static final Color TOOLTIP_BODY_COLOR = new Color(230, 230, 230);
-    public static final float TOOLTIP_MAX_TEXT_WIDTH = 360f;
-    public static final float NODE_TOOLTIP_MAX_TEXT_WIDTH = TOOLTIP_MAX_TEXT_WIDTH * 1.2f;
     public static final float FONT_LINE_HEIGHT_FACTOR = 1f;
     public static final Color TOOLTIP_BACKGROUND_COLOR = Color.BLACK;
     public static final Color OP_TEXT_COLOR = new Color(0xFD, 0xD0, 0x00);
@@ -72,6 +67,21 @@ public final class SkillTreePanelStyle {
     private static final Map<String, Optional<LazyFont>> FONTS_BY_DEFAULT_PATH = new HashMap<>();
     private static final Map<String, Optional<LazyFont>> FONTS_BY_FILE = new HashMap<>();
 
+    private static final TooltipText VANILLA_TOOLTIP_TEXT = new TooltipText(
+            new TextFont(SkillTreePanelStyle::font, 18f),
+            new TextFont(SkillTreePanelStyle::tooltipBodyFont, 15f),
+            new TextFont(SkillTreePanelStyle::tooltipBodyFont, 15f),
+            new TooltipText.Table(new TextFont(SkillTreePanelStyle::tooltipHeadingFont, 15f),
+                    new TextFont(SkillTreePanelStyle::tooltipBodyFont, 15f), 20f, 20f),
+            360f);
+    private static final TooltipText LARGE_TOOLTIP_TEXT = new TooltipText(
+            new TextFont(SkillTreePanelStyle::font, 24f),
+            new TextFont(SkillTreePanelStyle::font, 20f),
+            new TextFont(SkillTreePanelStyle::font, 17f),
+            new TooltipText.Table(new TextFont(SkillTreePanelStyle::font, 18f),
+                    new TextFont(SkillTreePanelStyle::font, 16f), 24f, 22f),
+            480f);
+
     private static final Map<String, Color> ACCENT_COLORS_BY_ICON = new ConcurrentHashMap<>();
 
     private String accentIconPath;
@@ -86,15 +96,19 @@ public final class SkillTreePanelStyle {
         }
     }
 
+    public static TooltipText tooltipText() {
+        return TooltipTextSize.large() ? LARGE_TOOLTIP_TEXT : VANILLA_TOOLTIP_TEXT;
+    }
+
     public static LazyFont font() {
         return localeFontOr(DEFAULT_FONT_PATH);
     }
 
-    public static LazyFont tooltipHeadingFont() {
+    private static LazyFont tooltipHeadingFont() {
         return localeFontOr(TOOLTIP_HEADING_FONT_PATH);
     }
 
-    public static LazyFont tooltipBodyFont() {
+    private static LazyFont tooltipBodyFont() {
         return localeFontOr(TOOLTIP_BODY_FONT_PATH);
     }
 
