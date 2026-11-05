@@ -400,7 +400,7 @@ ledger still owes, so rebuilt salvage defenders can't be farmed. Endlessly launc
 
 Hull items read the hull rows (`BattleItemDrops`): an enemy ship's tree raises the share rolled with two modifiers
 (`levelBoost`), never the count. Chart fleets roll subroutines from the `subroutine` row, and star charts and
-catalysts from `chart_drops.csv` and nanoswarms and inhibitors from `chart_materials.csv` (set at tiers 1 and 15,
+catalysts from `chart_drops.csv` and crafting items from `chart_materials.csv` (set at tiers 1 and 15,
 linear between, `ChartMaterials`) as a whole-chart amount, each fleet taking its fleet points at spawn over what its
 tier spawns (`ChartFleetLoot.expectedFleetPoints`). Each dropped chart rolls its tier from the row's `minus_2` to
 `plus_2` weights around the run tier (`ChartDrops.dropTier`). An anomaly's own fleet loot (`LootShaper.fleetItems`)

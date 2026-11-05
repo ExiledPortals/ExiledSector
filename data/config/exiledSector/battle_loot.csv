@@ -10,9 +10,6 @@ exiledSector_immutable_nanoswarm,0.0168,diminishing,0.125,
 exiledSector_replicator_nanoseed,0.0028,diminishing,0.125,
 exiledSector_prefix_inhibitor,0.04,diminishing,0.125,
 exiledSector_suffix_inhibitor,0.04,diminishing,0.125,
-exiledSector_reforge_cipher,0.6,linear,0,"Chart ciphers drop 1.5x as often as a nanoswarm of their tier, from chart fleets only"
-exiledSector_erasure_cipher,0.6,linear,0,
-exiledSector_cartographer_cipher,0.18,diminishing,0,
 subroutine,0.24,diminishing,0,"Basic subroutines from chart fleets, plus the item quantity bonus's targeted extras"
 hull_item,0.264,diminishing,0.455,"Basic hull items; enemy tree size raises the share that drop with two modifiers instead of the count"
 unique_hull_item,0.024,diminishing,0.25,
