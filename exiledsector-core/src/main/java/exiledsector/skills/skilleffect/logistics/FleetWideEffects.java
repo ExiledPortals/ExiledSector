@@ -17,6 +17,7 @@ import exiledsector.skills.skilleffect.shipsystem.FragmentSwarms;
 
 import exiledsector.skills.skilleffect.SkillEffect;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -36,6 +37,9 @@ public final class FleetWideEffects {
     private static final String CORONA_RESISTANCE_FLEET_MOD = "fleetCoronaResistance";
     static final String MOVE_SLOW_SUPPLY_USE_KEY = "exiledSector_moveSlowSupplyUseContribution";
     private static final String MOVE_SLOW_SUPPLY_USE_MEMBER_MOD = "moveSlowSupplyUse";
+    static final String SUPPLY_USE_PER_HULL_TYPE_KEY = "exiledSector_supplyUsePerHullTypeContribution";
+    static final float MAX_SUPPLY_USE_PER_HULL_TYPE_REDUCTION = 15f;
+    private static final String SUPPLY_USE_PER_HULL_TYPE_MEMBER_MOD = "supplyUsePerHullType";
     static final String SWARM_SENSOR_STRENGTH_KEY = "exiledSector_swarmSensorStrengthPercent";
     private static final String SWARM_SENSOR_STRENGTH_FLEET_MOD = "swarmSensorStrength";
     static final String TERRAIN_MOVEMENT_PENALTY_KEY = "exiledSector_terrainMovementPenaltyContribution";
@@ -166,6 +170,42 @@ public final class FleetWideEffects {
             }
         }
         return SkillEffect.addedMultiplier(strongest);
+    }
+
+    public static void applySupplyUsePerHullType(CampaignFleetAPI fleet) {
+        if (fleet == null || !fleet.isPlayerFleet() || fleet.getFleetData() == null) {
+            return;
+        }
+        List<FleetMemberAPI> members = fleet.getFleetData().getMembersListCopy();
+        float percent = supplyUsePerHullTypeReduction(members);
+        String modId = ExiledSector.key(SUPPLY_USE_PER_HULL_TYPE_MEMBER_MOD);
+        String source = percent > 0f ? Translation.gameText("fleet.supplyUsePerHullType") : null;
+        for (FleetMemberAPI member : members) {
+            MutableStat suppliesPerMonth = member.getStats().getSuppliesPerMonth();
+            if (percent > 0f) {
+                suppliesPerMonth.modifyPercent(modId, -percent, source);
+            } else {
+                suppliesPerMonth.unmodifyPercent(modId);
+            }
+        }
+    }
+
+    static float supplyUsePerHullTypeReduction(List<FleetMemberAPI> members) {
+        float percentPerHullType = FleetContributions.sum(members, SUPPLY_USE_PER_HULL_TYPE_KEY);
+        if (percentPerHullType <= 0f) {
+            return 0f;
+        }
+        return Math.min(MAX_SUPPLY_USE_PER_HULL_TYPE_REDUCTION, percentPerHullType * activeHullTypes(members));
+    }
+
+    private static int activeHullTypes(List<FleetMemberAPI> members) {
+        Set<String> baseHullIds = new HashSet<>();
+        for (FleetMemberAPI member : members) {
+            if (!member.isMothballed() && member.getHullSpec() != null) {
+                baseHullIds.add(member.getHullSpec().getBaseHullId());
+            }
+        }
+        return baseHullIds.size();
     }
 
     public static void applySwarmSensorStrength(CampaignFleetAPI fleet) {

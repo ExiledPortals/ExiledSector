@@ -640,6 +640,12 @@ effect|CR_RECOVERY_RATE_PERCENT|12.5	0	<good>12.5%</good> increased combat readi
 effect|CR_RECOVERY_RATE_PERCENT|100.0	0	<good>100%</good> increased combat readiness recovery rate.
 effect|CR_RECOVERY_RATE_PERCENT|-10.0	0	<bad>10%</bad> reduced combat readiness recovery rate.
 effect|CR_RECOVERY_RATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced combat readiness recovery rate.
+effect|DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT|1.0	0	<good>1%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
+effect|DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT|10.0	0	<good>10%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
+effect|DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT|12.5	0	<good>12.5%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
+effect|DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT|100.0	0	<good>100%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
+effect|DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT|-10.0	0	<good>10%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
+effect|DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT|-12.5	0	<good>12.5%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
 effect|DAMAGE_TO_AUTOMATED_SHIP_PERCENT|1.0	0	<good>1%</good> increased damage to automated ships.
 effect|DAMAGE_TO_AUTOMATED_SHIP_PERCENT|10.0	0	<good>10%</good> increased damage to automated ships.
 effect|DAMAGE_TO_AUTOMATED_SHIP_PERCENT|12.5	0	<good>12.5%</good> increased damage to automated ships.
@@ -2590,6 +2596,12 @@ effect|SUPPLIES_PER_MONTH_MULT|12.5	1	<good>12.5%</good> more supply use for mai
 effect|SUPPLIES_PER_MONTH_MULT|100.0	1	<good>100%</good> more supply use for maintenance.
 effect|SUPPLIES_PER_MONTH_MULT|-10.0	1	<bad>10%</bad> less supply use for maintenance.
 effect|SUPPLIES_PER_MONTH_MULT|-12.5	1	<bad>12.5%</bad> less supply use for maintenance.
+effect|SUPPLY_USE_REDUCTION_PERCENT_PER_HULL_TYPE|1.0	0	Your fleet has <good>1%</good> reduced supply use for maintenance for every different hull type among its ships, up to a maximum of 15%.
+effect|SUPPLY_USE_REDUCTION_PERCENT_PER_HULL_TYPE|10.0	0	Your fleet has <good>10%</good> reduced supply use for maintenance for every different hull type among its ships, up to a maximum of 15%.
+effect|SUPPLY_USE_REDUCTION_PERCENT_PER_HULL_TYPE|12.5	0	Your fleet has <good>12.5%</good> reduced supply use for maintenance for every different hull type among its ships, up to a maximum of 15%.
+effect|SUPPLY_USE_REDUCTION_PERCENT_PER_HULL_TYPE|100.0	0	Your fleet has <good>100%</good> reduced supply use for maintenance for every different hull type among its ships, up to a maximum of 15%.
+effect|SUPPLY_USE_REDUCTION_PERCENT_PER_HULL_TYPE|-10.0	0	Your fleet has <good>-10%</good> reduced supply use for maintenance for every different hull type among its ships, up to a maximum of 15%.
+effect|SUPPLY_USE_REDUCTION_PERCENT_PER_HULL_TYPE|-12.5	0	Your fleet has <good>-12.5%</good> reduced supply use for maintenance for every different hull type among its ships, up to a maximum of 15%.
 effect|SUPPORT_ROLE_ARMOR_PERCENT|1.0	0	Support strikecraft launched from this ship have <good>1%</good> increased armor.
 effect|SUPPORT_ROLE_ARMOR_PERCENT|10.0	0	Support strikecraft launched from this ship have <good>10%</good> increased armor.
 effect|SUPPORT_ROLE_ARMOR_PERCENT|12.5	0	Support strikecraft launched from this ship have <good>12.5%</good> increased armor.
@@ -3475,6 +3487,13 @@ type|dedicated_targeting_core|CAPITAL_SHIP|0	0	<good>50%</good> increased ballis
 type|dedicated_targeting_core|CAPITAL_SHIP|1	0	<good>50%</good> increased energy weapon range.
 type-detail|dedicated_targeting_core|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
 type-detail|dedicated_targeting_core|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Carrier Gunships</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Dedicated Targeting Core</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Integrated Targeting Unit</node>
+flavour|defensive_compact	0	The League's founding compact binds every member world to defend whatever the League holds, and to argue over it afterwards. Picket duty at a contested comm relay teaches the crew to fight from beside it. The relay's ownership is still under review.
+flavourAutomated|defensive_compact	0	The League's founding compact binds every member world to defend whatever the League holds, and to argue over it afterwards. The ship's core logs a picket action at a contested comm relay and learns to fight from beside it. The relay's ownership is still under review.
+type|defensive_compact|null|0	0	<good>20%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
+type|defensive_compact|FRIGATE|0	0	<good>20%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
+type|defensive_compact|DESTROYER|0	0	<good>20%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
+type|defensive_compact|CRUISER|0	0	<good>20%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
+type|defensive_compact|CAPITAL_SHIP|0	0	<good>20%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
 flavour|defensive_targeting_array	0	Wing datalinks rewired to carry the ship's own point-defense solutions. The pilots complain about the short leash. The gunners do not.
 flavourAutomated|defensive_targeting_array	0	Wing datalinks rewired to carry the ship's own point-defense solutions. If the pilots complain about the short leash, nobody aboard hears it.
 type-detail|defensive_targeting_array|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Defensive Targeting Array</hullmod>
@@ -4425,6 +4444,20 @@ type|ion_bolter_rounds|FRIGATE|0	0	Energy shots that hit an enemy shield can arc
 type|ion_bolter_rounds|DESTROYER|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
 type|ion_bolter_rounds|CRUISER|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
 type|ion_bolter_rounds|CAPITAL_SHIP|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
+flavour|joint_strike_package	0	A joint League fleet launches every member world's strike craft in one wave, since no detachment will agree to go second. The crew learns to time its launches to join the crowd. The rival flight leads complain on separate channels.
+flavourAutomated|joint_strike_package	0	A joint League fleet launches every member world's strike craft in one wave, since no detachment will agree to go second. The ship's core logs the launch timings from joint fleet traffic and matches them. The rival flight leads complain on separate channels.
+type|joint_strike_package|null|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
+type|joint_strike_package|FRIGATE|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
+type|joint_strike_package|DESTROYER|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
+type|joint_strike_package|CRUISER|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
+type|joint_strike_package|CAPITAL_SHIP|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
+flavour|kazeron_recovery_standards	0	Kazeron's orbital yards will not certify a recovered hull until a League inspector has signed off on every frame weld. The crew learns the inspection checklist while it waits on a signature. The inspectors bill by the weld.
+flavourAutomated|kazeron_recovery_standards	0	Kazeron's orbital yards will not certify a recovered hull until a League inspector has signed off on every frame weld. The ship's core copies the inspection checklist from a yard's certification logs. The inspectors bill by the weld.
+type|kazeron_recovery_standards|null|0	0	Your fleet has a <good>10%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
+type|kazeron_recovery_standards|FRIGATE|0	0	Your fleet has a <good>10%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
+type|kazeron_recovery_standards|DESTROYER|0	0	Your fleet has a <good>10%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
+type|kazeron_recovery_standards|CRUISER|0	0	Your fleet has a <good>10%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
+type|kazeron_recovery_standards|CAPITAL_SHIP|0	0	Your fleet has a <good>10%</good> chance for each ship it recovers after a battle to gain no D-mods, up to a maximum of 30%.
 flavour|knights_charge	0	The Knights of Ludd hold that a righteous ship meets its enemy at full burn, and drilling alongside them at Ceyx teaches the crew to trim the engines and controls for the charge.
 flavourAutomated|knights_charge	0	The Knights of Ludd hold that a righteous ship meets its enemy at full burn. The ship's core logs their charges at Ceyx and trims its engines and controls to match. The Knights would not call the result righteous.
 type|knights_charge|null|0	0	<good>20%</good> increased maneuverability.
@@ -4473,6 +4506,13 @@ type|league_reload_drill|CRUISER|0	0	<good>50%</good> increased energy weapon am
 type|league_reload_drill|CRUISER|1	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 type|league_reload_drill|CAPITAL_SHIP|0	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 type|league_reload_drill|CAPITAL_SHIP|1	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
+flavour|league_requisitions	0	Every League member world stocks its depots with spares for its own hulls and turns everyone else away. A cycle of League fleet duty teaches the crew to file each requisition under whichever world builds that hull. Each depot complains to a different world.
+flavourAutomated|league_requisitions	0	Every League member world stocks its depots with spares for its own hulls and turns everyone else away. The ship's core learns each depot's requisition format from a cycle of League fleet traffic and files under whichever world builds that hull. Each depot complains to a different world.
+type|league_requisitions|null|0	0	Your fleet has <good>3%</good> reduced supply use for maintenance for every different hull type among its ships, up to a maximum of 15%.
+type|league_requisitions|FRIGATE|0	0	Your fleet has <good>3%</good> reduced supply use for maintenance for every different hull type among its ships, up to a maximum of 15%.
+type|league_requisitions|DESTROYER|0	0	Your fleet has <good>3%</good> reduced supply use for maintenance for every different hull type among its ships, up to a maximum of 15%.
+type|league_requisitions|CRUISER|0	0	Your fleet has <good>3%</good> reduced supply use for maintenance for every different hull type among its ships, up to a maximum of 15%.
+type|league_requisitions|CAPITAL_SHIP|0	0	Your fleet has <good>3%</good> reduced supply use for maintenance for every different hull type among its ships, up to a maximum of 15%.
 type|less_emp_damage_taken|null|0	1	<bad>20%</bad> less EMP damage taken.
 type|less_emp_damage_taken|FRIGATE|0	1	<bad>20%</bad> less EMP damage taken.
 type|less_emp_damage_taken|DESTROYER|0	1	<bad>20%</bad> less EMP damage taken.

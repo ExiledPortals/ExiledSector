@@ -221,6 +221,18 @@ and temporarily disables whichever working weapon or engine sits nearest the imp
 hull size within 800 su, rechecked every 0.25 seconds. Strike craft and station modules don't count, and only the
 strongest source applies (`AuxiliaryScreenField`).
 
+### Defensive Compact
+
+`DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT` reduces hull, armor and shield damage taken while any combat objective
+owned by the ship's side is within 1500 su, checked every frame (`HeldObjective`).
+
+### League Requisitions
+
+`SUPPLY_USE_REDUCTION_PERCENT_PER_HULL_TYPE` adds up over the player fleet's active ships and is multiplied by the
+number of different base hulls among them, so skins count as their base hull and mothballed ships don't count. The
+total, capped at 15%, reduces every member's maintenance supply use at each fleet sync
+(`FleetWideEffects.applySupplyUsePerHullType`).
+
 ### Range per sensor strength
 
 `ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT` applies after every other tree effect and again once the ship is built,

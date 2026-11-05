@@ -638,6 +638,81 @@
 			]
 		},
 		{
+			"id": "defensive_compact",
+			"name": "Defensive Compact",
+			"icon": "graphics/icons/nav_relay.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT",
+					"magnitude": -20
+				}
+			],
+			"flavour": "The League's founding compact binds every member world to defend whatever the League holds, and to argue over it afterwards. Picket duty at a contested comm relay teaches the crew to fight from beside it. The relay's ownership is still under review.",
+			"flavourAutomated": "The League's founding compact binds every member world to defend whatever the League holds, and to argue over it afterwards. The ship's core logs a picket action at a contested comm relay and learns to fight from beside it. The relay's ownership is still under review.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"fleet_support"
+			]
+		},
+		{
+			"id": "joint_strike_package",
+			"name": "Joint Strike Package",
+			"icon": "graphics/icons/fighter_weapon_damage_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT",
+					"magnitude": 4
+				}
+			],
+			"flavour": "A joint League fleet launches every member world's strike craft in one wave, since no detachment will agree to go second. The crew learns to time its launches to join the crowd. The rival flight leads complain on separate channels.",
+			"flavourAutomated": "A joint League fleet launches every member world's strike craft in one wave, since no detachment will agree to go second. The ship's core logs the launch timings from joint fleet traffic and matches them. The rival flight leads complain on separate channels.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"fighter",
+				"req_fighter_bays"
+			]
+		},
+		{
+			"id": "league_requisitions",
+			"name": "League Requisitions",
+			"icon": "graphics/icons/fleet_logistics_shifted_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "SUPPLY_USE_REDUCTION_PERCENT_PER_HULL_TYPE",
+					"magnitude": 3
+				}
+			],
+			"flavour": "Every League member world stocks its depots with spares for its own hulls and turns everyone else away. A cycle of League fleet duty teaches the crew to file each requisition under whichever world builds that hull. Each depot complains to a different world.",
+			"flavourAutomated": "Every League member world stocks its depots with spares for its own hulls and turns everyone else away. The ship's core learns each depot's requisition format from a cycle of League fleet traffic and files under whichever world builds that hull. Each depot complains to a different world.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"logistics",
+				"campaign_only"
+			]
+		},
+		{
+			"id": "kazeron_recovery_standards",
+			"name": "Kazeron Recovery Standards",
+			"icon": "graphics/icons/recovery_shuttles_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"flavour": "Kazeron's orbital yards will not certify a recovered hull until a League inspector has signed off on every frame weld. The crew learns the inspection checklist while it waits on a signature. The inspectors bill by the weld.",
+			"flavourAutomated": "Kazeron's orbital yards will not certify a recovered hull until a League inspector has signed off on every frame weld. The ship's core copies the inspection checklist from a yard's certification logs. The inspectors bill by the weld.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"logistics",
+				"campaign_only"
+			]
+		},
+		{
 			"id": "domain_pattern_laminate",
 			"name": "Domain-Pattern Laminate",
 			"icon": "graphics/icons/fleet_logistics_shifted_shifted.png",

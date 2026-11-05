@@ -8020,10 +8020,10 @@
 				"increased_sensor_strength_2",
 				"affinity_137"
 			],
-			"x": -12674,
-			"y": 1000,
+			"x": -13620,
+			"y": 1253,
 			"orbitAnchorId": "anchor_95",
-			"orbitAngle": 270,
+			"orbitAngle": -120,
 			"tags": [
 				"persean_league"
 			]
@@ -8035,10 +8035,10 @@
 				"increased_sensor_strength_1",
 				"comsec_discipline_1"
 			],
-			"x": -12854,
-			"y": 1180,
+			"x": -13686,
+			"y": 1499,
 			"orbitAnchorId": "anchor_95",
-			"orbitAngle": 180,
+			"orbitAngle": 150,
 			"tags": [
 				"persean_league"
 			]
@@ -8199,10 +8199,10 @@
 			"connectedTo": [
 				"increased_sensor_strength_2"
 			],
-			"x": -12674,
-			"y": 1360,
+			"x": -13440,
+			"y": 1565,
 			"orbitAnchorId": "anchor_95",
-			"orbitAngle": 90,
+			"orbitAngle": 60,
 			"tags": [
 				"persean_league"
 			]
@@ -8534,8 +8534,9 @@
 			"id": "affinity_134",
 			"type": "affinity",
 			"connectedTo": [
-				"affinity_137",
-				"affinity_135"
+				"affinity_142",
+				"affinity_143",
+				"strikecraft_weapon_damage_6"
 			],
 			"x": -10527,
 			"y": 2892,
@@ -8549,13 +8550,14 @@
 			"id": "affinity_135",
 			"type": "affinity",
 			"connectedTo": [
-				"affinity_134",
-				"affinity_136"
+				"affinity_136",
+				"affinity_143",
+				"reduced_d_mod_effect_7"
 			],
-			"x": -12674,
-			"y": 5039,
+			"x": -13747,
+			"y": 4751,
 			"orbitAnchorId": "anchor_94",
-			"orbitAngle": 90,
+			"orbitAngle": 120,
 			"tags": [
 				"persean_league"
 			]
@@ -8581,13 +8583,13 @@
 			"type": "affinity",
 			"connectedTo": [
 				"affinity_136",
-				"affinity_134",
-				"increased_sensor_strength_1"
+				"increased_sensor_strength_1",
+				"affinity_142"
 			],
-			"x": -12674,
-			"y": 745,
+			"x": -13747,
+			"y": 1033,
 			"orbitAnchorId": "anchor_94",
-			"orbitAngle": 270,
+			"orbitAngle": -120,
 			"tags": [
 				"persean_league"
 			]
@@ -8622,6 +8624,214 @@
 			"orbitAngle": 38.56428596281955,
 			"tags": [
 				"hegemony"
+			]
+		},
+		{
+			"id": "affinity_142",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_137",
+				"affinity_134",
+				"objective_capture_range_4"
+			],
+			"x": -11600,
+			"y": 1033,
+			"orbitAnchorId": "anchor_94",
+			"orbitAngle": -60,
+			"tags": [
+				"persean_league"
+			]
+		},
+		{
+			"id": "affinity_143",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_134",
+				"affinity_135",
+				"reduced_monthly_supplies_3"
+			],
+			"x": -11600,
+			"y": 4751,
+			"orbitAnchorId": "anchor_94",
+			"orbitAngle": 60,
+			"tags": [
+				"persean_league"
+			]
+		},
+		{
+			"id": "objective_capture_range_4",
+			"type": "objective_capture_range",
+			"connectedTo": [
+				"affinity_142",
+				"objective_capture_range_5"
+			],
+			"x": -11728,
+			"y": 1253,
+			"orbitAnchorId": "anchor_101",
+			"orbitAngle": -60,
+			"tags": [
+				"persean_league"
+			]
+		},
+		{
+			"id": "objective_capture_range_5",
+			"type": "objective_capture_range",
+			"connectedTo": [
+				"objective_capture_range_4",
+				"defensive_compact_1"
+			],
+			"x": -11974,
+			"y": 1319,
+			"orbitAnchorId": "anchor_101",
+			"orbitAngle": -150,
+			"tags": [
+				"persean_league"
+			]
+		},
+		{
+			"id": "defensive_compact_1",
+			"type": "defensive_compact",
+			"connectedTo": [
+				"objective_capture_range_5"
+			],
+			"x": -11908,
+			"y": 1565,
+			"orbitAnchorId": "anchor_101",
+			"orbitAngle": 120,
+			"tags": [
+				"persean_league"
+			]
+		},
+		{
+			"id": "strikecraft_weapon_damage_6",
+			"type": "strikecraft_weapon_damage",
+			"connectedTo": [
+				"affinity_134",
+				"strikecraft_weapon_damage_7"
+			],
+			"x": -10782,
+			"y": 2892,
+			"orbitAnchorId": "anchor_102",
+			"orbitAngle": 0,
+			"tags": [
+				"persean_league"
+			]
+		},
+		{
+			"id": "strikecraft_weapon_damage_7",
+			"type": "strikecraft_weapon_damage",
+			"connectedTo": [
+				"strikecraft_weapon_damage_6",
+				"joint_strike_package_1"
+			],
+			"x": -10962,
+			"y": 2712,
+			"orbitAnchorId": "anchor_102",
+			"orbitAngle": -90,
+			"tags": [
+				"persean_league"
+			]
+		},
+		{
+			"id": "joint_strike_package_1",
+			"type": "joint_strike_package",
+			"connectedTo": [
+				"strikecraft_weapon_damage_7"
+			],
+			"x": -11142,
+			"y": 2892,
+			"orbitAnchorId": "anchor_102",
+			"orbitAngle": 180,
+			"tags": [
+				"persean_league"
+			]
+		},
+		{
+			"id": "reduced_monthly_supplies_3",
+			"type": "reduced_monthly_supplies",
+			"connectedTo": [
+				"affinity_143",
+				"reduced_monthly_supplies_4"
+			],
+			"x": -11728,
+			"y": 4531,
+			"orbitAnchorId": "anchor_103",
+			"orbitAngle": 60,
+			"tags": [
+				"persean_league"
+			]
+		},
+		{
+			"id": "reduced_monthly_supplies_4",
+			"type": "reduced_monthly_supplies",
+			"connectedTo": [
+				"reduced_monthly_supplies_3",
+				"league_requisitions_1"
+			],
+			"x": -11662,
+			"y": 4285,
+			"orbitAnchorId": "anchor_103",
+			"orbitAngle": -30,
+			"tags": [
+				"persean_league"
+			]
+		},
+		{
+			"id": "league_requisitions_1",
+			"type": "league_requisitions",
+			"connectedTo": [
+				"reduced_monthly_supplies_4"
+			],
+			"x": -11908,
+			"y": 4219,
+			"orbitAnchorId": "anchor_103",
+			"orbitAngle": -120,
+			"tags": [
+				"persean_league"
+			]
+		},
+		{
+			"id": "reduced_d_mod_effect_7",
+			"type": "reduced_d_mod_effect",
+			"connectedTo": [
+				"affinity_135",
+				"reduced_d_mod_effect_8"
+			],
+			"x": -13620,
+			"y": 4531,
+			"orbitAnchorId": "anchor_104",
+			"orbitAngle": 120,
+			"tags": [
+				"persean_league"
+			]
+		},
+		{
+			"id": "reduced_d_mod_effect_8",
+			"type": "reduced_d_mod_effect",
+			"connectedTo": [
+				"reduced_d_mod_effect_7",
+				"kazeron_recovery_standards_1"
+			],
+			"x": -13374,
+			"y": 4465,
+			"orbitAnchorId": "anchor_104",
+			"orbitAngle": 30,
+			"tags": [
+				"persean_league"
+			]
+		},
+		{
+			"id": "kazeron_recovery_standards_1",
+			"type": "kazeron_recovery_standards",
+			"connectedTo": [
+				"reduced_d_mod_effect_8"
+			],
+			"x": -13440,
+			"y": 4219,
+			"orbitAnchorId": "anchor_104",
+			"orbitAngle": -60,
+			"tags": [
+				"persean_league"
 			]
 		}
 	],
@@ -11147,30 +11357,6 @@
 			"controlY": -9693
 		},
 		{
-			"a": "affinity_134",
-			"b": "affinity_135",
-			"controlX": -11156,
-			"controlY": 4410
-		},
-		{
-			"a": "affinity_135",
-			"b": "affinity_136",
-			"controlX": -14192,
-			"controlY": 4410
-		},
-		{
-			"a": "affinity_136",
-			"b": "affinity_137",
-			"controlX": -14192,
-			"controlY": 1374
-		},
-		{
-			"a": "affinity_134",
-			"b": "affinity_137",
-			"controlX": -11156,
-			"controlY": 1374
-		},
-		{
 			"a": "domain_pattern_laminate_1",
 			"b": "fragmentation_damage_resistance_2",
 			"controlX": -6953,
@@ -11271,6 +11457,42 @@
 			"b": "affinity_113",
 			"controlX": -4525,
 			"controlY": 9771
+		},
+		{
+			"a": "affinity_136",
+			"b": "affinity_137",
+			"controlX": -14533,
+			"controlY": 1818
+		},
+		{
+			"a": "affinity_137",
+			"b": "affinity_142",
+			"controlX": -12674,
+			"controlY": 745
+		},
+		{
+			"a": "affinity_142",
+			"b": "affinity_134",
+			"controlX": -10815,
+			"controlY": 1818
+		},
+		{
+			"a": "affinity_134",
+			"b": "affinity_143",
+			"controlX": -10815,
+			"controlY": 3966
+		},
+		{
+			"a": "affinity_143",
+			"b": "affinity_135",
+			"controlX": -12674,
+			"controlY": 5039
+		},
+		{
+			"a": "affinity_135",
+			"b": "affinity_136",
+			"controlX": -14533,
+			"controlY": 3966
 		}
 	],
 	"hiddenConnectors": [
@@ -12030,8 +12252,8 @@
 		},
 		{
 			"id": "anchor_95",
-			"x": -12674,
-			"y": 1180,
+			"x": -13530,
+			"y": 1409,
 			"radius": 180
 		},
 		{
@@ -12062,6 +12284,30 @@
 			"id": "anchor_100",
 			"x": -7232,
 			"y": 10944,
+			"radius": 180
+		},
+		{
+			"id": "anchor_101",
+			"x": -11818,
+			"y": 1409,
+			"radius": 180
+		},
+		{
+			"id": "anchor_102",
+			"x": -10962,
+			"y": 2892,
+			"radius": 180
+		},
+		{
+			"id": "anchor_103",
+			"x": -11818,
+			"y": 4375,
+			"radius": 180
+		},
+		{
+			"id": "anchor_104",
+			"x": -13530,
+			"y": 4375,
 			"radius": 180
 		}
 	],
