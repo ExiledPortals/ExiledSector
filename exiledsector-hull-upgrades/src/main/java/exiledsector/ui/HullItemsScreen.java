@@ -74,6 +74,7 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
     private boolean pointerOverPanel;
     private float mouseX;
     private float mouseY;
+    private HullItemsLevelNotice levelNotice;
 
     HullItemsScreen(FleetMemberAPI member, ShipVariantAPI variant, BaseRefitButton refitButton, RefitScreenLayout layout) {
         this.refitButton = refitButton;
@@ -98,6 +99,7 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
         refitAdder = RefitPanelLauncher.refitButtonAdder();
         lastRefitMember = refitAdder == null ? null : refitAdder.getMember();
         storage.reconcileOwnedShips();
+        levelNotice = HullItemsLevelNotice.forSector(Global.getSector());
         startEditing();
     }
 
@@ -182,6 +184,9 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
             sectionsDisplay.hideTooltip();
             if (portrait != null) {
                 portrait.cleanup();
+            }
+            if (levelNotice != null) {
+                levelNotice.dispose();
             }
             refitButton.closePanel();
         }
@@ -520,6 +525,13 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
         if (bayDim > 0f) {
             GLDraw.fillQuad(0f, 0f, Global.getSettings().getScreenWidth(), Global.getSettings().getScreenHeight(), Color.BLACK,
                     BAY_BACKDROP_ALPHA * Fade.smooth(bayDim) * alphaMult);
+        }
+    }
+
+    @Override
+    public void render(float alphaMult) {
+        if (hostPanel != null && levelNotice != null && bay == null) {
+            levelNotice.draw(layout, alphaMult * Fade.smooth(contentLevel));
         }
     }
 }
