@@ -50,6 +50,20 @@ class CargoIconFxTest {
     }
 
     @Test
+    void aChargedBorderFramesTheIconAndColoursItsArcs() {
+        CargoIconLook common = CargoIconLook.outlined(Color.BLUE);
+        CargoIconLook bordered = common.withChargedBorder(Color.RED);
+
+        assertTrue(bordered.framed());
+        assertTrue(bordered.arcs());
+        assertEquals(Color.RED, bordered.borderColor());
+        assertEquals(Color.RED, bordered.arcColor());
+        assertEquals(Color.BLUE, bordered.color());
+        assertEquals(Color.BLUE, common.arcColor());
+        assertNull(common.borderColor());
+    }
+
+    @Test
     void looksGetLouderWithEachTier() {
         Color color = Color.CYAN;
         CargoIconLook basic = CargoIconLooks.forMaterial(MaterialTier.BASIC, color);

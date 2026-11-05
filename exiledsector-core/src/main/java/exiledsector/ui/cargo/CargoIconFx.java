@@ -49,6 +49,8 @@ public final class CargoIconFx {
     private static final float SWEEP_ROW_PIXELS = 2f;
     private static final float SWEEP_ALPHA = 0.4f;
     private static final float BRACKET_ARM = 0.26f;
+    private static final float BORDER_WIDTH = 3f;
+    private static final float BORDER_ALPHA = 0.6f;
     private static final float BADGE_SIZE = 3.5f;
     private static final float BADGE_MARGIN = 7f;
     private static final int BASE_SPECKS = 12;
@@ -156,7 +158,9 @@ public final class CargoIconFx {
             return;
         }
         try (GlScope scope = GlScope.flat()) {
-            if (look.framed()) {
+            if (look.framed() && look.borderColor() != null) {
+                HoloShapes.outline(cx, cy, half - 1.5f, BORDER_WIDTH, look.borderColor(), BORDER_ALPHA * alphaMult);
+            } else if (look.framed()) {
                 HoloShapes.brackets(cx, cy, half - 1.5f, half * BRACKET_ARM, look.color(), 0.85f * alphaMult);
             }
             if (look.badgeColor() != null) {
@@ -178,7 +182,7 @@ public final class CargoIconFx {
                 drawSparkles(cx, cy, half, t, phaseSeed, alphaMult);
             }
             if (look.arcs()) {
-                drawArcs(look.color(), cx, cy, half * ARC_INSET, t, phaseSeed, alphaMult);
+                drawArcs(look.arcColor(), cx, cy, half * ARC_INSET, t, phaseSeed, alphaMult);
             }
             if (swarming) {
                 drawSwarm(look, cx, cy, iconHalf, t, phaseSeed, alphaMult);

@@ -3,18 +3,31 @@ package exiledsector.ui.cargo;
 import java.awt.Color;
 
 public record CargoIconLook(Color color, float glow, boolean framed, boolean rings, boolean ticks, boolean sparkles, boolean arcs,
-                            boolean heartbeat, boolean prismatic, Color badgeColor, SwarmMotion swarm, IconArt art) {
+                            boolean heartbeat, boolean prismatic, Color badgeColor, SwarmMotion swarm, IconArt art, Color borderColor) {
+
+    public CargoIconLook(Color color, float glow, boolean framed, boolean rings, boolean ticks, boolean sparkles, boolean arcs,
+                         boolean heartbeat, boolean prismatic, Color badgeColor, SwarmMotion swarm, IconArt art) {
+        this(color, glow, framed, rings, ticks, sparkles, arcs, heartbeat, prismatic, badgeColor, swarm, art, null);
+    }
 
     public CargoIconLook withBadge(Color badge) {
-        return new CargoIconLook(color, glow, framed, rings, ticks, sparkles, arcs, heartbeat, prismatic, badge, swarm, art);
+        return new CargoIconLook(color, glow, framed, rings, ticks, sparkles, arcs, heartbeat, prismatic, badge, swarm, art, borderColor);
     }
 
     public CargoIconLook withSwarm(SwarmMotion motion) {
-        return new CargoIconLook(color, glow, framed, rings, ticks, sparkles, arcs, heartbeat, prismatic, badgeColor, motion, art);
+        return new CargoIconLook(color, glow, framed, rings, ticks, sparkles, arcs, heartbeat, prismatic, badgeColor, motion, art, borderColor);
+    }
+
+    public CargoIconLook withChargedBorder(Color border) {
+        return new CargoIconLook(color, glow, true, rings, ticks, sparkles, true, heartbeat, prismatic, badgeColor, swarm, art, border);
     }
 
     public CargoIconLook unframed() {
-        return new CargoIconLook(color, glow, false, rings, ticks, sparkles, arcs, heartbeat, prismatic, badgeColor, swarm, art);
+        return new CargoIconLook(color, glow, false, rings, ticks, sparkles, arcs, heartbeat, prismatic, badgeColor, swarm, art, borderColor);
+    }
+
+    public Color arcColor() {
+        return borderColor != null ? borderColor : color;
     }
 
     public boolean ownArt() {

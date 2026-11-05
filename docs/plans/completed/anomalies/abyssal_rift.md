@@ -10,7 +10,7 @@ RAT picks the dialog for its abyss stations by custom entity id in any location 
 
 ## Biome modifiers
 
-Each atlas biome can own one modifier per base hull item type, kept in `data/config/exiledSector/biome_modifiers.csv` (`modifier,biome,item,note`). 10% of the hull items dropped in that biome's systems (placeholder, `BiomeModifiers.DROP_CHANCE`) get their type's modifier: chart fleets, the boss, salvage sites and anomaly drops alike. Uniques keep their fixed modifiers and get none.
+Each atlas biome can own one modifier per base hull item type, kept in `data/config/exiledSector/biome_modifiers.csv` (`modifier,biome,item,note`). 30% of the hull items dropped in that biome's systems (placeholder, `BiomeModifiers.DROP_CHANCE`) get their type's modifier: chart fleets, the boss, salvage sites and anomaly drops alike. Uniques keep their fixed modifiers and get none.
 
 The modifiers are `item_modifiers.csv` rows ending in the biome's suffix (`_ABYSSAL_RIFT` here), reserved at item load the way `StormLoot.reserveModifiers` reserves the storm ones, so no other roll ever draws them. They are added through `GrantedModifiers.add`, which keeps the item's other modifiers and, on a full side, drops a random one to make room. A nanoswarm reroll can remove one like any other modifier; only the biome, or a program like the Research Complex's, adds it again.
 

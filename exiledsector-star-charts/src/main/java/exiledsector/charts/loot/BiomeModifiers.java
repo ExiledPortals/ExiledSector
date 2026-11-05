@@ -9,6 +9,7 @@ import exiledsector.charts.run.ChartRuns;
 import exiledsector.data.CsvRows;
 import exiledsector.items.AffixLayout;
 import exiledsector.items.GrantedModifiers;
+import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemKind;
@@ -16,6 +17,7 @@ import exiledsector.items.ItemModifiers;
 import exiledsector.items.ItemType;
 import exiledsector.items.ModifierScope;
 import exiledsector.items.ModifierSources;
+import exiledsector.items.RolledModifier;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierSlot;
 import org.apache.log4j.Logger;
@@ -35,7 +37,7 @@ public final class BiomeModifiers {
     public static final String ID_COLUMN = "modifier";
     public static final String OWNER_PREFIX = "biome:";
     public static final String HEADER_KEY_PREFIX = "chart.biomeModifier.header.";
-    static final float DROP_CHANCE = 0.1f;
+    static final float DROP_CHANCE = 0.3f;
     private static final long GRANT_SEED_SALT = 0x62696F6D65L;
     private static final Logger LOG = Logger.getLogger(BiomeModifiers.class);
 
@@ -111,6 +113,16 @@ public final class BiomeModifiers {
 
     public static String modifierFor(String biomeId, ItemKind kind) {
         return biomeId == null || kind == null ? null : modifiersByKey.get(new Key(biomeId, kind));
+    }
+
+    public static String biomeOf(Item item) {
+        for (RolledModifier rolledModifier : item.explicits()) {
+            String owner = ModifierSources.owner(rolledModifier.modifierId());
+            if (owner != null && owner.startsWith(OWNER_PREFIX)) {
+                return owner.substring(OWNER_PREFIX.length());
+            }
+        }
+        return null;
     }
 
     public static ItemData onDrop(ItemData item, String biomeId) {

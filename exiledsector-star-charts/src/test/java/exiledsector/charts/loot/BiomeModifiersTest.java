@@ -2,6 +2,7 @@ package exiledsector.charts.loot;
 
 import exiledsector.charts.ChartTables;
 import exiledsector.i18n.RealCatalogue;
+import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
@@ -109,7 +110,7 @@ class BiomeModifiersTest {
     }
 
     @Test
-    void aboutATenthOfTheBiomesDropsGainTheModifier() throws Exception {
+    void aboutThirtyPercentOfTheBiomesDropsGainTheModifier() throws Exception {
         BiomeModifiers.register(new JSONArray().put(biomeRow(CHRONAL, RIFT, "bridge")));
         int drops = 2000;
         int touched = 0;
@@ -141,6 +142,19 @@ class BiomeModifiersTest {
         assertSame(bridge, BiomeModifiers.onDrop(bridge, "normal"));
         assertSame(emitter, BiomeModifiers.onDrop(emitter, RIFT));
         assertSame(relic, BiomeModifiers.onDrop(relic, RIFT));
+    }
+
+    @Test
+    void anItemCarryingABiomeModifierNamesItsBiome() throws Exception {
+        BiomeModifiers.register(new JSONArray().put(biomeRow(CHRONAL, RIFT, "bridge")));
+        long seed = 0L;
+        while (!carries(BiomeModifiers.onDrop(ItemData.rolled(ItemDefinitions.get(BRIDGE), seed), RIFT), CHRONAL)) {
+            seed++;
+        }
+        ItemData plain = ItemData.rolled(ItemDefinitions.get(BRIDGE), seed);
+
+        assertEquals(RIFT, BiomeModifiers.biomeOf(Item.create("rift", BRIDGE, seed, BiomeModifiers.onDrop(plain, RIFT).explicits())));
+        assertNull(BiomeModifiers.biomeOf(Item.create("plain", BRIDGE, seed, plain.explicits())));
     }
 
     @ParameterizedTest

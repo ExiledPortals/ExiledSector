@@ -108,6 +108,24 @@ public final class HoloShapes {
         GL11.glLineWidth(1f);
     }
 
+    public static void outline(float cx, float cy, float half, float width, Color color, float alpha) {
+        float inner = half - width;
+        Misc.setColor(color, alpha);
+        GL11.glBegin(GL11.GL_QUADS);
+        quad(cx - half, cy - half, cx + half, cy - inner);
+        quad(cx - half, cy + inner, cx + half, cy + half);
+        quad(cx - half, cy - inner, cx - inner, cy + inner);
+        quad(cx + inner, cy - inner, cx + half, cy + inner);
+        GL11.glEnd();
+    }
+
+    private static void quad(float left, float bottom, float right, float top) {
+        GL11.glVertex2f(left, bottom);
+        GL11.glVertex2f(right, bottom);
+        GL11.glVertex2f(right, top);
+        GL11.glVertex2f(left, top);
+    }
+
     public static void diamond(float x, float y, float size, Color color, float alpha) {
         Misc.setColor(color, alpha);
         GL11.glBegin(GL11.GL_QUADS);

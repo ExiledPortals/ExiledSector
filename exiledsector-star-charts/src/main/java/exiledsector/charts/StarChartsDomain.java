@@ -39,7 +39,9 @@ import exiledsector.items.StarChartItems;
 import exiledsector.items.WormholeTechItems;
 import exiledsector.loot.FleetDifficulty;
 import exiledsector.loot.LootSource;
+import exiledsector.ui.cargo.BiomeItemIconLooks;
 import exiledsector.ui.cargo.CatalystIconFx;
+import exiledsector.ui.cargo.ItemIconLooks;
 import exiledsector.ui.chart.ForgeCraftingBench;
 import exiledsector.ui.chart.StarChartCraftingBench;
 import exiledsector.ui.chart.WormholeGatewayOption;
@@ -60,6 +62,11 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     @Override
     public List<ShipEffectSource> shipEffectSources() {
         return List.of(ChartPlayerModifierSource.INSTANCE, ChartEnemyShipEffects.INSTANCE);
+    }
+
+    @Override
+    public List<ItemIconLooks> itemIconLooks() {
+        return List.of(BiomeItemIconLooks.INSTANCE);
     }
 
     @Override
