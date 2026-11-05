@@ -20,7 +20,7 @@ public final class ShipLevelConfig {
     public static final int DEFAULT_MAX_LEVEL = 50;
     public static final int DEFAULT_XP_BASE = 60;
     public static final int DEFAULT_XP_GROWTH_PERCENT = 13;
-    public static final int DEFAULT_XP_GROWTH_CUTOFF_LEVEL = 25;
+    public static final int DEFAULT_XP_GROWTH_CUTOFF_LEVEL = 0;
     public static final float DEFAULT_XP_PER_DEPLOYMENT_POINT = 1f;
     public static final float DEFAULT_XP_LOSS_MULTIPLIER = 0.5f;
     public static final float DEFAULT_XP_DIFFICULTY_STRENGTH = 1f;

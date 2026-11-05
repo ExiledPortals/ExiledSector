@@ -418,7 +418,7 @@
     "settings.level.xpGrowth.name": "XP Growth per Level (Percent)",
     "settings.level.xpGrowth.tooltip": "Extra XP each level needs over the one before.",
     "settings.level.xpGrowthCutoff.name": "XP Growth Cutoff Level",
-    "settings.level.xpGrowthCutoff.tooltip": "From this level on, every level costs the same XP.",
+    "settings.level.xpGrowthCutoff.tooltip": "From this level on, every level costs the same XP. 0 means no cutoff.",
     "settings.level.xpPerDeploymentPoint": "XP per Enemy Deployment Point Destroyed",
     "settings.level.xpLossMultiplier": "XP Multiplier on Loss",
     "settings.level.xpDifficultyStrength.name": "XP Bonus from Battle Difficulty",

@@ -52,7 +52,7 @@ public final class ShipLevelSystem {
     }
 
     public static float xpToReachNextLevel(int currentLevel, float xpBase, float xpGrowth, int growthCutoffLevel) {
-        int cappedLevel = Math.min(currentLevel, Math.max(growthCutoffLevel - 1, 0));
+        int cappedLevel = growthCutoffLevel <= 0 ? currentLevel : Math.min(currentLevel, growthCutoffLevel - 1);
         return xpBase * (float) Math.pow(xpGrowth, cappedLevel);
     }
 

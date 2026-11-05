@@ -460,7 +460,7 @@
     "settings.level.xpGrowth.name": "每级经验增长（百分比）",
     "settings.level.xpGrowth.tooltip": "每一级比上一级多需要的经验。",
     "settings.level.xpGrowthCutoff.name": "经验增长截止等级",
-    "settings.level.xpGrowthCutoff.tooltip": "从该等级起，每一级所需经验都相同。",
+    "settings.level.xpGrowthCutoff.tooltip": "从该等级起，每一级所需经验都相同。0 表示不设截止。",
     "settings.level.xpPerDeploymentPoint": "每摧毁1点敌方部署点获得的经验",
     "settings.level.xpLossMultiplier": "战败时的经验倍率",
     "settings.level.xpDifficultyStrength.name": "战斗难度经验加成强度",

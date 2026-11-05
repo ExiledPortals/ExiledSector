@@ -82,6 +82,12 @@ class ShipLevelSystemTest {
     }
 
     @Test
+    void aCutoffOfZeroKeepsTheXpGrowingAtEveryLevel() {
+        assertEquals(100f, ShipLevelSystem.xpToReachNextLevel(0, XP_BASE, XP_GROWTH, 0));
+        assertEquals(102400f, ShipLevelSystem.xpToReachNextLevel(10, XP_BASE, XP_GROWTH, 0));
+    }
+
+    @Test
     void xpToReachNextLevelBeforeTheCutoffIsUnaffected() {
         assertEquals(100f, ShipLevelSystem.xpToReachNextLevel(0, XP_BASE, XP_GROWTH, 3));
         assertEquals(200f, ShipLevelSystem.xpToReachNextLevel(1, XP_BASE, XP_GROWTH, 3));
