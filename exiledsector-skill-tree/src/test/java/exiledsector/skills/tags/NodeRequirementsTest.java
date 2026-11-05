@@ -86,6 +86,13 @@ class NodeRequirementsTest {
     }
 
     @Test
+    void reqPhaseRejectsAPhaseDefenseSlotWithoutAPhaseCloak() {
+        ShipProfile phaseSlotWithoutCloak = new ShipProfile(HullSize.CAPITAL_SHIP, ShieldType.PHASE, 0, Set.of(), false, 0f, false);
+
+        assertFalse(met("req_phase", phaseSlotWithoutCloak));
+    }
+
+    @Test
     void reqFighterBaysNeedsAtLeastOneBay() {
         assertTrue(met("req_fighter_bays", bays(1)));
         assertFalse(met("req_fighter_bays", bays(0)));

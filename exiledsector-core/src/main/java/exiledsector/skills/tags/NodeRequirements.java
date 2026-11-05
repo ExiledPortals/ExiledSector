@@ -69,7 +69,7 @@ public final class NodeRequirements {
         return switch (requirement) {
             case "req_shields" -> shieldType == ShieldType.FRONT || shieldType == ShieldType.OMNI;
             case "req_no_shields" -> shieldType == ShieldType.NONE;
-            case "req_phase" -> shieldType == ShieldType.PHASE;
+            case "req_phase" -> profile.phaseHull();
             case "req_fighter_bays" -> profile.fighterBays() > 0;
             case "req_no_fighter_bays" -> profile.fighterBays() <= 0;
             case "req_ballistic" -> profile.weaponKinds().contains(WeaponKind.BALLISTIC);
