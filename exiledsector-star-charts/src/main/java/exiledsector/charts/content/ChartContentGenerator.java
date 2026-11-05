@@ -83,8 +83,7 @@ public final class ChartContentGenerator {
     static final String BOSS_REVEAL_MOD_ID = ChartIds.PREFIX + "boss_reveal";
     static final String MAKE_NON_HOSTILE = "$cfai_makeNonHostile";
     static final String NON_HOSTILE_TAKES_PRIORITY = "$makeNonHostileTakesPriority";
-    static final List<String> HOSTILITY_FLAGS = List.of(MemFlags.MEMORY_KEY_MAKE_HOSTILE, MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE,
-            MemFlags.MEMORY_KEY_ALLOW_LONG_PURSUIT, MemFlags.MEMORY_KEY_NO_JUMP, MemFlags.MEMORY_KEY_SAW_PLAYER_WITH_TRANSPONDER_ON,
+    static final List<String> HOSTILITY_FLAGS = List.of(MemFlags.MEMORY_KEY_MAKE_HOSTILE, MemFlags.MEMORY_KEY_ALLOW_LONG_PURSUIT, MemFlags.MEMORY_KEY_NO_JUMP, MemFlags.MEMORY_KEY_SAW_PLAYER_WITH_TRANSPONDER_ON,
             MemFlags.MEMORY_KEY_NO_REP_IMPACT, MemFlags.MEMORY_KEY_LOW_REP_IMPACT, MemFlags.MEMORY_KEY_IGNORE_PLAYER_COMMS);
     static final List<String> REMOVED_ABILITIES = List.of(Abilities.GO_DARK, Abilities.TRANSVERSE_JUMP);
     static final Set<String> MEEK_PERSONALITIES = Set.of(Personalities.TIMID, Personalities.CAUTIOUS, Personalities.STEADY);
@@ -306,6 +305,7 @@ public final class ChartContentGenerator {
             memory.set(flag, true);
         }
         if (boss) {
+            memory.set(MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE, true);
             memory.set(MemFlags.FLEET_FIGHT_TO_THE_LAST, true);
             memory.set(ChartIds.BOSS_MEMORY_KEY, true);
         }

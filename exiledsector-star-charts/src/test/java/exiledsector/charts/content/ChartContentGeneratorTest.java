@@ -190,6 +190,8 @@ class ChartContentGeneratorTest {
             for (String flag : ChartContentGenerator.HOSTILITY_FLAGS) {
                 assertTrue(fleet.getMemoryWithoutUpdate().getBoolean(flag), flag);
             }
+            boolean boss = fleet.getMemoryWithoutUpdate().getBoolean(ChartIds.BOSS_MEMORY_KEY);
+            assertEquals(boss, fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE));
             assertEquals(6, fleet.getMemoryWithoutUpdate().get(ChartIds.TIER_MEMORY_KEY));
             assertNotNull(ChartIds.fleetSeed(fleet.getMemoryWithoutUpdate()));
             assertTrue(fleet.getMemoryWithoutUpdate().getBoolean(ChartIds.fleetRunKey(RUN_ID)));
