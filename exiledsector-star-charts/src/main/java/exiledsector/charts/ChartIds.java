@@ -30,6 +30,7 @@ public final class ChartIds {
     public static final String LOOT_SPENT_MEMORY_KEY = "$exiledSector_chartLootSpent";
     public static final String LOOT_DP_PAID_MEMORY_KEY = "$exiledSector_chartLootDpPaid";
     public static final String DEFENDED_SITE_MEMORY_KEY = "$exiledSector_chartDefendedSite";
+    public static final String ANOMALY_MEMORY_KEY = "$exiledSector_chartAnomaly";
     public static final String DEFENDER_LOOT_ADDED_MEMORY_KEY = "$exiledSector_chartDefenderLootAdded";
     public static final String VANILLA_DEFENDER_FLEET_MEMORY_KEY = "$defenderFleet";
     public static final String SKIRMISH_SIDE_MEMORY_KEY = "$exiledSector_chartSkirmishSide";

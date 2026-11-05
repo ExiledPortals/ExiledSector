@@ -12,6 +12,8 @@ import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
 import exiledsector.MockSector;
+import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.debris.AnomalousDebris;
 import exiledsector.charts.anomaly.stormfront.StormFront;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
@@ -350,6 +352,52 @@ class ChartFleetLootTest {
         } finally {
             BattleLootRates.clear();
             ChartMaterials.clear();
+        }
+    }
+
+    @Test
+    void chartMaterialsFollowBattleDifficultyOnlyAsFarAsTheirRowAllows() throws Exception {
+        ChartMaterials.register(new JSONArray()
+                .put(new JSONObject().put("drop", "exiledSector_augmentation_nanoswarm").put("tier_1", "10").put("tier_15", "10")
+                        .put("difficulty_scaling", "0"))
+                .put(new JSONObject().put("drop", "exiledSector_fundamental_nanoswarm").put("tier_1", "10").put("tier_15", "10")));
+        try {
+            ChartRun run = storeLiveRun(8);
+            float wholeChart = ChartFleetLoot.expectedFleetPoints(8);
+            ChartFleetLoot.Battle hardBattle = new ChartFleetLoot.Battle(wholeChart, 2f, List.of());
+
+            ItemDrops.SiteLoot loot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, wholeChart), run,
+                    ChartGenContext.none(), wholeChart, hardBattle, 1f, new Random(1L));
+
+            assertEquals(Map.of("exiledSector_augmentation_nanoswarm", 10, "exiledSector_fundamental_nanoswarm", 20), loot.materials());
+        } finally {
+            ChartMaterials.clear();
+        }
+    }
+
+    @Test
+    void anAnomalysFleetsDropTheirFleetPointShareTimesItsFleetLootButTheBossKeepsItsFull() throws Exception {
+        ChartAnomalies.register(new JSONArray().put(new JSONObject().put("id", AnomalousDebris.ANOMALY_ID).put("fleet_loot", "0.5")));
+        ChartMaterials.register(new JSONArray().put(new JSONObject().put("drop", "exiledSector_augmentation_nanoswarm")
+                .put("tier_1", "10").put("tier_15", "10")));
+        try {
+            ChartRun run = storeLiveRun(8);
+            float wholeChart = ChartFleetLoot.expectedFleetPoints(8);
+            CampaignFleetAPI debrisFleet = ChartFleetFixtures.chartFleet("debris", RUN_ID, wholeChart);
+            ChartFleetLoot.tagAnomaly(debrisFleet, AnomalousDebris.ANOMALY_ID);
+            CampaignFleetAPI anomalyBoss = ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, wholeChart);
+            ChartFleetLoot.tagAnomaly(anomalyBoss, AnomalousDebris.ANOMALY_ID);
+            CampaignFleetAPI untagged = ChartFleetFixtures.chartFleet("guard", RUN_ID, wholeChart);
+            ChartFleetLoot.tagAnomaly(untagged, "not_an_anomaly");
+
+            assertEquals(0.5f, ChartFleetLoot.anomalyFleetLoot(debrisFleet, run));
+            assertEquals(1f, ChartFleetLoot.anomalyFleetLoot(anomalyBoss, run));
+            assertEquals(1f, ChartFleetLoot.anomalyFleetLoot(untagged, run));
+            assertEquals(Map.of("exiledSector_augmentation_nanoswarm", 5), ChartFleetLoot.roll(sector, debrisFleet, run, ChartGenContext.none(),
+                    wholeChart, new Random(1L)).materials());
+        } finally {
+            ChartMaterials.clear();
+            ChartAnomalies.resetForTests();
         }
     }
 

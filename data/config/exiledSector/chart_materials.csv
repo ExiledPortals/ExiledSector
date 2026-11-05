@@ -1,15 +1,15 @@
-drop,tier_1,tier_15,note
-exiledSector_augmentation_nanoswarm,2.07,9.16,"Expected drops across a whole chart's fleets and boss at tier 1 and tier 15 for a chart without modifiers, linear between. Each defeated fleet drops its fleet points at spawn over what its tier spawns, so more or bigger fleets drop more; then times battle difficulty, the Crafting item bonus with item quantity and, for the boss, its spoils. Chart sites and the objective reward drop their own on top. Inside charts these rows replace battle_loot.csv's"
-exiledSector_fundamental_nanoswarm,0.075,1.34,
-exiledSector_reshaping_nanoswarm,1.47,9.15,
-exiledSector_corrupted_nanoswarm,0.735,9.72,
-exiledSector_metamorph_nanoswarm,0.138,2.13,
-exiledSector_annulment_nanoswarm,0.147,1.03,
-exiledSector_tuning_nanoswarm,0.147,1.03,
-exiledSector_immutable_nanoswarm,0.069,0.781,
-exiledSector_replicator_nanoseed,0.014,0.187,
-exiledSector_prefix_inhibitor,0.129,0.954,
-exiledSector_suffix_inhibitor,0.129,0.954,
-exiledSector_reforge_cipher,1.47,9.15,"Chart ciphers drop only inside Star Charts"
-exiledSector_erasure_cipher,1,6,
-exiledSector_cartographer_cipher,0.075,1.34,
+drop,tier_1,tier_15,difficulty_scaling,note
+exiledSector_augmentation_nanoswarm,2.07,9.16,0,"Expected drops across a whole chart's fleets and boss at tier 1 and tier 15 for a chart without modifiers, linear between. Each defeated fleet drops its fleet points at spawn over what its tier spawns, so more or bigger fleets drop more, and an anomaly's fleets also times its fleet_loot in chart_anomalies.csv; then times battle difficulty as far as difficulty_scaling allows (1 = full, 0 = ignored), the Crafting item bonus with item quantity and, for the boss, its spoils. Chart sites and the objective reward drop their own on top. Inside charts these rows replace battle_loot.csv's"
+exiledSector_fundamental_nanoswarm,0.075,1.34,0,
+exiledSector_reshaping_nanoswarm,1.47,9.15,0,
+exiledSector_corrupted_nanoswarm,0.735,9.72,0,
+exiledSector_metamorph_nanoswarm,0.138,2.13,0,
+exiledSector_annulment_nanoswarm,0.147,1.03,0,
+exiledSector_tuning_nanoswarm,0.147,1.03,0,
+exiledSector_immutable_nanoswarm,0.069,0.781,0,
+exiledSector_replicator_nanoseed,0.014,0.187,0,
+exiledSector_prefix_inhibitor,0.129,0.954,0,
+exiledSector_suffix_inhibitor,0.129,0.954,0,
+exiledSector_reforge_cipher,1.47,9.15,0,"Chart ciphers drop only inside Star Charts"
+exiledSector_erasure_cipher,1,6,0,
+exiledSector_cartographer_cipher,0.075,1.34,0,

@@ -68,7 +68,8 @@ public final class ChartAnomalies {
     private static final Set<String> REPORTED_FAILURES = ConcurrentHashMap.newKeySet();
 
     public record Definition(String id, float weight, int minTier, int maxTier, String requiredMod, String icon, boolean insertable,
-                             Set<String> excludes, boolean replacesStar, List<ChartGenContext.AppliedEffect> effects, Set<String> biomes) {
+                             Set<String> excludes, boolean replacesStar, List<ChartGenContext.AppliedEffect> effects, Set<String> biomes,
+                             float fleetLoot) {
 
         public Definition {
             requiredMod = requiredMod == null ? "" : requiredMod;
@@ -78,6 +79,12 @@ public final class ChartAnomalies {
             biomes = biomes == null ? Set.of() : Set.copyOf(biomes);
             insertable = insertable && !replacesStar && biomes.isEmpty();
             effects = effects == null ? List.of() : List.copyOf(effects);
+            fleetLoot = Float.isFinite(fleetLoot) ? Math.max(0f, fleetLoot) : 1f;
+        }
+
+        public Definition(String id, float weight, int minTier, int maxTier, String requiredMod, String icon, boolean insertable,
+                          Set<String> excludes, boolean replacesStar, List<ChartGenContext.AppliedEffect> effects, Set<String> biomes) {
+            this(id, weight, minTier, maxTier, requiredMod, icon, insertable, excludes, replacesStar, effects, biomes, 1f);
         }
 
         public Definition(String id, float weight, int minTier, int maxTier, String requiredMod, String icon, boolean insertable,
@@ -153,7 +160,7 @@ public final class ChartAnomalies {
             }
         });
         return new Definition(id, csv.number(row, "weight", 1f, id), tiers.minTier(), tiers.maxTier(), ModCsv.text(row, "requires_mod"),
-                ModCsv.text(row, "icon"), insertable, excludes, replacesStar, effects, biomes);
+                ModCsv.text(row, "icon"), insertable, excludes, replacesStar, effects, biomes, csv.number(row, "fleet_loot", 1f, id));
     }
 
     public static ChartAnomaly byId(String id) {

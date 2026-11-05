@@ -70,6 +70,20 @@ public final class ChartFleetLoot {
         }
     }
 
+    public static void tagAnomaly(SectorEntityToken entity, String anomalyId) {
+        MemoryAPI memory = entity == null || anomalyId == null ? null : entity.getMemoryWithoutUpdate();
+        if (memory != null) {
+            memory.set(ChartIds.ANOMALY_MEMORY_KEY, anomalyId);
+        }
+    }
+
+    public static float anomalyFleetLoot(CampaignFleetAPI fleet, ChartRun run) {
+        MemoryAPI ledger = run == null || isBoss(fleet, run) ? null : ledgerOf(fleet);
+        ChartAnomalies.Definition definition = ledger != null && ledger.get(ChartIds.ANOMALY_MEMORY_KEY) instanceof String anomalyId
+                ? ChartAnomalies.definition(anomalyId) : null;
+        return definition == null ? 1f : definition.fleetLoot();
+    }
+
     static float deploymentPoints(CampaignFleetAPI fleet) {
         FleetDataAPI fleetData = fleet == null ? null : fleet.getFleetData();
         if (fleetData == null) {
@@ -203,7 +217,7 @@ public final class ChartFleetLoot {
     }
 
     static ItemDrops.SiteLoot roll(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, float defeatedDeploymentPoints,
-                                   Battle battle, float quantityMult, Random random) {
+                                   Battle battle, float battleLootMult, Random random) {
         float claimedShare = claimShare(fleet, defeatedDeploymentPoints);
         if (!(claimedShare > 0f)) {
             return ItemDrops.SiteLoot.NONE;
@@ -211,14 +225,15 @@ public final class ChartFleetLoot {
         MemoryAPI ledger = ledgerOf(fleet);
         boolean boss = isBoss(fleet, run);
         float spoilsMult = boss ? context.bossSpoilsMult() : 1f;
+        float quantityMult = battleLootMult * anomalyFleetLoot(fleet, run);
         float share = claimedShare * lootFleets(fleet) * quantityMult;
         float lootDeploymentPoints = claimedShare * ledger.getFloat(ChartIds.START_DP_MEMORY_KEY) * spoilsMult * quantityMult;
         float chartShare = claimedShare * startFleetPoints(ledger) / Math.max(1f, expectedFleetPoints(run.tier())) * spoilsMult * quantityMult;
-        float materialShare = chartShare * BattleLootRates.difficulty(battle.difficultyMultiplier()) * context.dropMult(DropType.CRAFTING_ITEM);
+        float materialShare = chartShare * context.dropMult(DropType.CRAFTING_ITEM);
         ItemDrops.SiteLoot fleetLoot = subroutines(context, lootDeploymentPoints, battle, random)
                 .plus(List.of(), List.of(), BattleMaterials.roll(lootDeploymentPoints, battle.deploymentPoints(), battle.difficultyMultiplier(),
                         FleetLootRules.full(context.lootMultipliers(1f)), drop -> !ChartMaterials.covers(drop), random))
-                .plus(List.of(), List.of(), ChartMaterials.roll(run.tier(), materialShare, random))
+                .plus(List.of(), List.of(), ChartMaterials.roll(run.tier(), materialShare, battle.difficultyMultiplier(), random))
                 .plus(chartDrops(run, context, boss, chartShare, random));
         for (LootShaper anomaly : ChartAnomalies.inRun(run, LootShaper.class)) {
             ItemDrops.SiteLoot anomalyItems = anomaly.fleetItems(sector, fleet, run, context, share, random);
@@ -303,7 +318,7 @@ public final class ChartFleetLoot {
         if (rate == null) {
             return ItemDrops.SiteLoot.NONE;
         }
-        float expected = rate.expected(lootDeploymentPoints, battle.deploymentPoints()) * BattleLootRates.difficulty(battle.difficultyMultiplier());
+        float expected = rate.expected(lootDeploymentPoints, battle.deploymentPoints()) * rate.difficulty(battle.difficultyMultiplier());
         ItemChances chances = context.itemChances();
         List<ItemData> items = new ArrayList<>();
         addRolled(items, ItemDrops.wholeFeedstock(expected * chances.general(), random), ItemDrops::pickBasic, chances.rarity(), random);

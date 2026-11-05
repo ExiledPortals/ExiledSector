@@ -426,7 +426,8 @@ the share of NPC ships with trees follows the share of unlocked player ships. Ch
 
 Battle drops come from `battle_loot.csv`: each row expects its rate per 100 deployment points an enemy fleet lost,
 curved over the whole battle (linear, or diminishing past 2000 DP with the square root), then times battle difficulty
-capped at 3x and the fleet's `FleetLootRules`. Fleets outside Star Charts get the row's `regular_share`, and core
+capped at 3x, weighted by the row's `difficulty_scaling` (1 full, 0 ignored; crafting items ignore it), and the
+fleet's `FleetLootRules`. Fleets outside Star Charts get the row's `regular_share`, and core
 rolls their crafting materials per battle (`BattleMaterials`). A chart fleet gets the full rate, its run's loot
 multipliers and, for the boss, its spoils multiplier as extra DP; `ChartFleetLoot` rolls its materials from the DP its
 ledger still owes, so rebuilt salvage defenders can't be farmed. Endlessly launched station fleets
@@ -436,7 +437,9 @@ Hull items read the hull rows (`BattleItemDrops`): an enemy ship's tree raises t
 (`levelBoost`), never the count. Chart fleets roll subroutines from the `subroutine` row, and star charts and
 catalysts from `chart_drops.csv` and crafting items from `chart_materials.csv` (set at tiers 1 and 15,
 linear between, `ChartMaterials`) as a whole-chart amount, each fleet taking its fleet points at spawn over what its
-tier spawns (`ChartFleetLoot.expectedFleetPoints`). Each dropped chart rolls its tier from the row's `minus_2` to
+tier spawns (`ChartFleetLoot.expectedFleetPoints`). Fleets an anomaly placed carry its id
+(`ANOMALY_MEMORY_KEY`) and drop all of this times its `fleet_loot` in `chart_anomalies.csv`
+(`ChartFleetLoot.anomalyFleetLoot`), except the boss. Each dropped chart rolls its tier from the row's `minus_2` to
 `plus_2` weights around the run tier (`ChartDrops.dropTier`). An anomaly's own fleet loot (`LootShaper.fleetItems`)
 comes on top.
 

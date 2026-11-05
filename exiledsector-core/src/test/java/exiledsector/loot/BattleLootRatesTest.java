@@ -50,4 +50,17 @@ class BattleLootRatesTest {
         assertEquals(BattleLootRates.DIFFICULTY_CAP, BattleLootRates.difficulty(6f));
         assertEquals(1f, BattleLootRates.difficulty(Float.NaN));
     }
+
+    @Test
+    void eachRowScalesBattleDifficultyByItsOwnDial() throws Exception {
+        BattleLootRates.register(new JSONArray()
+                .put(row("swarm", "1", "linear", "1").put("difficulty_scaling", "0"))
+                .put(row("relic", "1", "linear", "1").put("difficulty_scaling", "0.5"))
+                .put(row("hull", "1", "linear", "1")));
+
+        assertEquals(1f, BattleLootRates.rate("swarm").difficulty(3f), 1e-4f);
+        assertEquals(1.5f, BattleLootRates.rate("relic").difficulty(2f), 1e-4f);
+        assertEquals(2f, BattleLootRates.rate("hull").difficulty(2f), 1e-4f);
+        assertEquals(BattleLootRates.DIFFICULTY_CAP, BattleLootRates.rate("hull").difficulty(6f), 1e-4f);
+    }
 }

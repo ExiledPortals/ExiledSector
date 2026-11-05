@@ -1,17 +1,17 @@
-drop,per_100_dp,curve,regular_share,note
-exiledSector_augmentation_nanoswarm,1.2,linear,0.125,"Expected drops per 100 deployment points an enemy fleet loses, then times battle difficulty (capped at 3x) and the fleet's loot multipliers. A linear drop scales 1:1; a diminishing one runs at full rate up to 2000 DP in one battle and grows with the square root of DP past it. regular_share is the rate for fleets outside Star Charts (0 = chart fleets only)"
-exiledSector_fundamental_nanoswarm,0.8,linear,0.125,
-exiledSector_reshaping_nanoswarm,0.4,linear,0.125,
-exiledSector_corrupted_nanoswarm,0.12,diminishing,0.125,
-exiledSector_metamorph_nanoswarm,0.0332,diminishing,0.125,
-exiledSector_annulment_nanoswarm,0.0252,diminishing,0.125,
-exiledSector_tuning_nanoswarm,0.0252,diminishing,0.125,
-exiledSector_immutable_nanoswarm,0.0168,diminishing,0.125,
-exiledSector_replicator_nanoseed,0.0028,diminishing,0.125,
-exiledSector_prefix_inhibitor,0.04,diminishing,0.125,
-exiledSector_suffix_inhibitor,0.04,diminishing,0.125,
-subroutine,0.24,diminishing,0,"Basic subroutines from chart fleets, plus the item quantity bonus's targeted extras"
-hull_item,0.264,diminishing,0.455,"Basic hull items; enemy tree size raises the share that drop with two modifiers instead of the count"
-unique_hull_item,0.024,diminishing,0.25,
-refit_schematic,0.32,diminishing,0.25,
-master_schematic,0.2,diminishing,0.25,"Only while the Master Schematic is still needed"
+drop,per_100_dp,curve,regular_share,difficulty_scaling,note
+exiledSector_augmentation_nanoswarm,1.2,linear,0.125,0,"Expected drops per 100 deployment points an enemy fleet loses, then times battle difficulty (capped at 3x, scaled by difficulty_scaling: 1 = full, 0 = ignored) and the fleet's loot multipliers. A linear drop scales 1:1; a diminishing one runs at full rate up to 2000 DP in one battle and grows with the square root of DP past it. regular_share is the rate for fleets outside Star Charts (0 = chart fleets only)"
+exiledSector_fundamental_nanoswarm,0.8,linear,0.125,0,
+exiledSector_reshaping_nanoswarm,0.4,linear,0.125,0,
+exiledSector_corrupted_nanoswarm,0.12,diminishing,0.125,0,
+exiledSector_metamorph_nanoswarm,0.0332,diminishing,0.125,0,
+exiledSector_annulment_nanoswarm,0.0252,diminishing,0.125,0,
+exiledSector_tuning_nanoswarm,0.0252,diminishing,0.125,0,
+exiledSector_immutable_nanoswarm,0.0168,diminishing,0.125,0,
+exiledSector_replicator_nanoseed,0.0028,diminishing,0.125,0,
+exiledSector_prefix_inhibitor,0.04,diminishing,0.125,0,
+exiledSector_suffix_inhibitor,0.04,diminishing,0.125,0,
+subroutine,0.24,diminishing,0,1,"Basic subroutines from chart fleets, plus the item quantity bonus's targeted extras"
+hull_item,0.264,diminishing,0.455,1,"Basic hull items; enemy tree size raises the share that drop with two modifiers instead of the count"
+unique_hull_item,0.024,diminishing,0.25,1,
+refit_schematic,0.32,diminishing,0.25,1,
+master_schematic,0.2,diminishing,0.25,1,"Only while the Master Schematic is still needed"

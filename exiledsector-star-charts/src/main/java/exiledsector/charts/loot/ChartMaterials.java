@@ -5,6 +5,7 @@ import exiledsector.ModCsv;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.data.CsvRows;
 import exiledsector.items.ItemDrops;
+import exiledsector.loot.BattleLootRates;
 import exiledsector.loot.BattleMaterials;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -21,7 +22,7 @@ public final class ChartMaterials {
     private static final Logger LOG = Logger.getLogger(ChartMaterials.class);
     private static volatile Map<String, Amount> amounts = Map.of();
 
-    record Amount(float lowestTierAmount, float highestTierAmount) {
+    record Amount(float lowestTierAmount, float highestTierAmount, float difficultyScaling) {
 
         float at(int tier) {
             float perTier = (highestTierAmount - lowestTierAmount) / (ChartTiers.HIGHEST_TIER - ChartTiers.LOWEST_TIER);
@@ -49,7 +50,8 @@ public final class ChartMaterials {
                     csv.skipRow(drop, "not a nanoswarm or inhibitor");
                     return;
                 }
-                loaded.put(drop, new Amount(csv.number(row, "tier_1", 0f, drop), csv.number(row, "tier_15", 0f, drop)));
+                loaded.put(drop, new Amount(csv.number(row, "tier_1", 0f, drop), csv.number(row, "tier_15", 0f, drop),
+                        csv.number(row, "difficulty_scaling", 1f, drop)));
             });
         }
         csv.report(LOG);
@@ -70,9 +72,14 @@ public final class ChartMaterials {
     }
 
     static Map<String, Integer> roll(int tier, float chartShare, Random random) {
+        return roll(tier, chartShare, 1f, random);
+    }
+
+    static Map<String, Integer> roll(int tier, float chartShare, float difficultyMultiplier, Random random) {
         Map<String, Integer> materials = new LinkedHashMap<>();
         amounts.forEach((drop, amount) -> {
-            int count = ItemDrops.wholeFeedstock(amount.at(tier) * Math.max(0f, chartShare), random);
+            float difficulty = BattleLootRates.scaledDifficulty(difficultyMultiplier, amount.difficultyScaling());
+            int count = ItemDrops.wholeFeedstock(amount.at(tier) * Math.max(0f, chartShare) * difficulty, random);
             if (count > 0) {
                 materials.put(drop, count);
             }
