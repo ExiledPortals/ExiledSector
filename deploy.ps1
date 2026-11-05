@@ -2,8 +2,7 @@ $ErrorActionPreference = "Stop"
 
 $projectRoot = $PSScriptRoot
 $deployCheckouts = @("E:\Dev\ExiledSector-parallel-work", "E:\Dev\ExiledSector")
-$modTarget   = "E:\Dev\Starsector\mods\ExiledSector"
-$retiredLibraryTarget = "E:\Dev\Starsector\mods\ExiledLib"
+$modsFolders = @("E:\Dev\Starsector\mods", "C:\Games\Starsector\mods")
 
 $resolvedRoot = [System.IO.Path]::GetFullPath($projectRoot).TrimEnd('\')
 if ($deployCheckouts -notcontains $resolvedRoot) {
@@ -17,16 +16,24 @@ Invoke-ModBuild -ProjectRoot $projectRoot
 $stageDir = Join-Path ([System.IO.Path]::GetTempPath()) ("ExiledSector-deploy-" + [Guid]::NewGuid().ToString("N"))
 try {
     Copy-ModFiles -ProjectRoot $projectRoot -Destination (Join-Path $stageDir "ExiledSector")
-    Sync-FolderMirror -Source (Join-Path $stageDir "ExiledSector") -Destination $modTarget
+    foreach ($modsFolder in $modsFolders) {
+        if (-not (Test-Path -LiteralPath $modsFolder)) {
+            Write-Warning "Skipped $modsFolder because it does not exist."
+            continue
+        }
+        $modTarget = Join-Path $modsFolder "ExiledSector"
+        Sync-FolderMirror -Source (Join-Path $stageDir "ExiledSector") -Destination $modTarget
+
+        $retiredLibraryTarget = Join-Path $modsFolder "ExiledLib"
+        if (Test-Path -LiteralPath (Join-Path $retiredLibraryTarget "jars\ExiledLib.jar")) {
+            [System.IO.Directory]::Delete($retiredLibraryTarget, $true)
+            Write-Host "Removed the old ExiledLib mod folder from $modsFolder; its code is now part of ExiledSector."
+        }
+
+        Write-Host "Deployed ExiledSector to $modTarget"
+    }
 } finally {
     if (Test-Path -LiteralPath $stageDir) {
         [System.IO.Directory]::Delete($stageDir, $true)
     }
 }
-
-if (Test-Path -LiteralPath (Join-Path $retiredLibraryTarget "jars\ExiledLib.jar")) {
-    [System.IO.Directory]::Delete($retiredLibraryTarget, $true)
-    Write-Host "Removed the old ExiledLib mod folder; its code is now part of ExiledSector."
-}
-
-Write-Host "Deployed ExiledSector to $modTarget"
