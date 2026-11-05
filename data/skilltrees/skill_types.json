@@ -3634,6 +3634,110 @@
 			]
 		},
 		{
+			"id": "lions_guard_arsenal",
+			"name": "Lion's Guard Arsenal",
+			"icon": "graphics/icons/ballistic_and_energy_weapon_range.png",
+			"tier": "KEYSTONE",
+			"effects": [
+				{
+					"effect": "MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT",
+					"magnitude": 100
+				},
+				{
+					"effect": "MISSILE_WEAPON_DAMAGE_MULT",
+					"magnitude": -15
+				}
+			],
+			"flavour": "Lion's Guard refits strip a hull down and rebuild it around its energy mounts, and Guard armorers treat missiles as an admission of poor aim. A Guard armorer discharged over a pay dispute brought the method aboard this ship. The dispute is still before a Diktat tribunal.",
+			"flavourAutomated": "Lion's Guard refits strip a hull down and rebuild it around its energy mounts, and Guard armorers treat missiles as an admission of poor aim. The ship's core reconstructs the method from a Guard refit manifest, and the refit crew rebuilds this ship's mounts to match. The manifest lists the missile racks as surplus.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"energy",
+				"range"
+			]
+		},
+		{
+			"id": "strategic_fuel_reserve",
+			"name": "Strategic Fuel Reserve",
+			"icon": "graphics/icons/auxiliary_fuel_tanks.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "FUEL_USE_REDUCTION_PERCENT_WHILE_HALF_FUELED",
+					"magnitude": 10
+				}
+			],
+			"flavour": "Sindrian fuel is the Diktat's fortune, and its navy treats every unit aboard as state property on loan. Burn tables bought from a Diktat quartermaster keep this ship's drive lean while the tanks stay full. The quartermaster asked to be paid in fuel.",
+			"flavourAutomated": "Sindrian fuel is the Diktat's fortune, and its navy treats every unit aboard as state property on loan. The ship's core runs its drive on Diktat burn tables recovered from a patrol wreck, lean while the tanks stay full. The tables are stamped as state property too.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"logistics",
+				"campaign_only"
+			]
+		},
+		{
+			"id": "executors_decree",
+			"name": "Executor's Decree",
+			"icon": "graphics/icons/safety_overrides.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "NO_RETREAT",
+					"magnitude": 0
+				},
+				{
+					"effect": "WEAPON_DAMAGE_PERCENT",
+					"magnitude": 10
+				},
+				{
+					"effect": "DAMAGE_TAKEN_PERCENT",
+					"magnitude": -10
+				}
+			],
+			"flavour": "A standing decree of the Supreme Executor names retreat in the face of the enemy as treason, and Diktat crews hear it read aloud before every engagement. This crew signed it as a condition of its Sindrian docking rights. Nobody aboard has read past the signature line.",
+			"flavourAutomated": "A standing decree of the Supreme Executor names retreat in the face of the enemy as treason, and Diktat crews hear it read aloud before every engagement. The ship's core received the decree with its Sindrian docking clearance and filed it as a standing order. It has no provision for appeal.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons"
+			]
+		},
+		{
+			"id": "lions_roar",
+			"name": "Lion's Roar",
+			"icon": "graphics/icons/ecm.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "RATE_OF_FIRE_AURA_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"flavour": "Diktat warships broadcast the Supreme Executor's addresses on open channels as they close, at a volume no comm filter fully blocks. The crew rigs this ship's transmitters to do the same, and enemy gun crews lose their rhythm to it. Sindrian citizens are required to listen to the end.",
+			"flavourAutomated": "Diktat warships broadcast the Supreme Executor's addresses on open channels as they close, at a volume no comm filter fully blocks. The refit crew rigs this ship's transmitters to do the same, and the ship's core times each broadcast to enemy firing cycles. Sindrian citizens are required to listen to the end.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"fleet_support"
+			]
+		},
+		{
+			"id": "honor_guard",
+			"name": "Honor Guard",
+			"icon": "graphics/icons/top_speed.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"flavour": "The Lion's Guard escorts the Supreme Executor's flagship wherever it goes, and its pilots hold station at the flagship's pace rather than their own. A former Guard helmsman drills this crew in the same station-keeping. The salute that goes with it took longer to drop.",
+			"flavourAutomated": "The Lion's Guard escorts the Supreme Executor's flagship wherever it goes, holding station at the flagship's pace rather than its own. The ship's core studies Guard escort formations in recorded fleet reviews and keeps station the same way. The recordings are mostly of parades.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"speed"
+			]
+		},
+		{
 			"id": "energy_damage_resistance",
 			"name": "Energy Damage Resistance",
 			"icon": "graphics/icons/less_energy_damage_taken.png",

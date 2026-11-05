@@ -40,6 +40,9 @@ public final class FleetWideEffects {
     static final String SUPPLY_USE_PER_HULL_TYPE_KEY = "exiledSector_supplyUsePerHullTypeContribution";
     static final float MAX_SUPPLY_USE_PER_HULL_TYPE_REDUCTION = 15f;
     private static final String SUPPLY_USE_PER_HULL_TYPE_MEMBER_MOD = "supplyUsePerHullType";
+    static final String HALF_FUELED_FUEL_USE_KEY = "exiledSector_halfFueledFuelUseContribution";
+    static final float HALF_FUELED_SHARE = 0.5f;
+    private static final String HALF_FUELED_FUEL_USE_MEMBER_MOD = "halfFueledFuelUse";
     static final String SWARM_SENSOR_STRENGTH_KEY = "exiledSector_swarmSensorStrengthPercent";
     private static final String SWARM_SENSOR_STRENGTH_FLEET_MOD = "swarmSensorStrength";
     static final String TERRAIN_MOVEMENT_PENALTY_KEY = "exiledSector_terrainMovementPenaltyContribution";
@@ -206,6 +209,28 @@ public final class FleetWideEffects {
             }
         }
         return baseHullIds.size();
+    }
+
+    public static void applyHalfFueledFuelUse(CampaignFleetAPI fleet) {
+        if (fleet == null || !fleet.isPlayerFleet() || fleet.getFleetData() == null || fleet.getCargo() == null) {
+            return;
+        }
+        boolean halfFueled = isHalfFueled(fleet.getCargo().getFuel(), fleet.getCargo().getMaxFuel());
+        String modId = ExiledSector.key(HALF_FUELED_FUEL_USE_MEMBER_MOD);
+        String source = halfFueled ? Translation.gameText("fleet.halfFueledFuelUse") : null;
+        for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
+            float percent = halfFueled ? member.getStats().getDynamic().getValue(HALF_FUELED_FUEL_USE_KEY, 0f) : 0f;
+            StatBonus fuelUse = member.getStats().getFuelUseMod();
+            if (percent > 0f) {
+                fuelUse.modifyPercent(modId, -percent, source);
+            } else {
+                fuelUse.unmodifyPercent(modId);
+            }
+        }
+    }
+
+    static boolean isHalfFueled(float fuel, float maxFuel) {
+        return maxFuel > 0f && fuel >= maxFuel * HALF_FUELED_SHARE;
     }
 
     public static void applySwarmSensorStrength(CampaignFleetAPI fleet) {

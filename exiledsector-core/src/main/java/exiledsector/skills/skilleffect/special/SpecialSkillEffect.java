@@ -25,6 +25,7 @@ public enum SpecialSkillEffect implements BackedSkillEffect {
     EXPLODE_ON_DEATH(listener(DeathExplosionListener.FUEL_DAMAGE_PERCENT_KEY, DeathExplosionListener.class, DeathExplosionListener::new)),
     DEATH_ON_COLLISION(listener(CollisionDeathListener.class, CollisionDeathListener::new)),
     RAM_BIGGEST_ENEMY(listener(RamPilotListener.class, RamPilotListener::new)),
+    NO_RETREAT(listener(NoRetreatListener.class, NoRetreatListener::new)),
     HEARTLESS_ON_NEARBY_DESTRUCTION_RANGE_FLAT(listener(NearbyDestructionHeartless.RANGE_KEY,
             NearbyDestructionHeartless.class, NearbyDestructionHeartless::new)) {
         @Override

@@ -70,6 +70,13 @@ public enum AuraSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("range", MalfunctionAuraField.RANGE).styled();
         }
     },
+    RATE_OF_FIRE_AURA_PERCENT(listener(RateOfFireAuraListener.RATE_OF_FIRE_PERCENT_KEY, RateOfFireAuraListener.class,
+            RateOfFireAuraListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", RateOfFireAuraField.RANGE).styled();
+        }
+    },
     REPAIR_COORDINATOR_ARMOR_PERCENT(listener(RepairCoordinatorListener.ARMOR_REPAIR_PERCENT_KEY, RepairCoordinatorListener.class,
             RepairCoordinatorListener::new)) {
         @Override

@@ -206,6 +206,7 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
             return StatMode.PERCENT.describeStat(magnitude, YOUR_FLEET, "stat.postBattleWeaponAndWingSalvage");
         }
     },
+    FUEL_USE_REDUCTION_PERCENT_WHILE_HALF_FUELED(playerFleetContribution(FleetWideEffects.HALF_FUELED_FUEL_USE_KEY)),
     SUPPLY_USE_REDUCTION_PERCENT_PER_HULL_TYPE(playerFleetContribution(FleetWideEffects.SUPPLY_USE_PER_HULL_TYPE_KEY)) {
         @Override
         public StyledText description(float magnitude) {

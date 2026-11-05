@@ -233,6 +233,28 @@ number of different base hulls among them, so skins count as their base hull and
 total, capped at 15%, reduces every member's maintenance supply use at each fleet sync
 (`FleetWideEffects.applySupplyUsePerHullType`).
 
+### Lion's Roar
+
+`RATE_OF_FIRE_AURA_PERCENT` multiplies the ballistic, energy and missile rate of fire of enemy ships within 1000 su,
+rechecked every 0.25 seconds. Strike craft don't count, and only the strongest source applies (`RateOfFireAuraField`).
+
+### Honor Guard
+
+`TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT` adds a flat share of the flagship's hull top speed, before any modifiers, while
+that flagship is alive on the field, rechecked every second. The flagship is the ship captained by this ship's fleet
+commander, so the flagship itself gains nothing (`FlagshipPaceListener`).
+
+### Executor's Decree
+
+`NO_RETREAT` cancels the ship's retreat whenever it starts, whether from a retreat order, a full retreat or its own AI,
+and gives it a free search and destroy order instead (`NoRetreatListener`).
+
+### Strategic Fuel Reserve
+
+`FUEL_USE_REDUCTION_PERCENT_WHILE_HALF_FUELED` reduces only the fuel use of the ship that has it, while the player
+fleet's fuel is at least half its total fuel capacity. A transient script rechecks it every 0.25 seconds
+(`FleetWideEffects.applyHalfFueledFuelUse`, `PlayerFleetConditionScript`).
+
 ### Range per sensor strength
 
 `ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT` applies after every other tree effect and again once the ship is built,
@@ -680,7 +702,7 @@ The Armor Plate's hull repair runs only above 50% flux and stops at 20% of maxim
 The Overwintered crew's supply cut applies while vanilla counts the player fleet as moving slowly (`Misc.isSlowMoving`,
 standing still included): the strongest value among its active ships multiplies every ship's maintenance supply use. A
 transient script reapplies it every quarter second, as stat rebuilds drop it (`FleetWideEffects.applyMoveSlowSupplyUse`,
-`MoveSlowSupplyScript`).
+`PlayerFleetConditionScript`).
 
 Patient measures from this ship to the target ship's center (`DistantTargetDamageListener`). Glacial compares speed with
 top speed without the zero-flux boost, so turning in place still counts as stationary. Of the Long Night holds the ship's

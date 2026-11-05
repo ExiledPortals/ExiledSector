@@ -1,9 +1,10 @@
 package exiledsector.skills.skilleffect.logistics;
 
 import com.fs.starfarer.api.EveryFrameScript;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import exiledsector.PlayerFleet;
 
-public final class MoveSlowSupplyScript implements EveryFrameScript {
+public final class PlayerFleetConditionScript implements EveryFrameScript {
 
     static final float CHECK_SECONDS = 0.25f;
 
@@ -26,6 +27,8 @@ public final class MoveSlowSupplyScript implements EveryFrameScript {
             return;
         }
         secondsSinceCheck = 0f;
-        FleetWideEffects.applyMoveSlowSupplyUse(PlayerFleet.orNull());
+        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
+        FleetWideEffects.applyMoveSlowSupplyUse(playerFleet);
+        FleetWideEffects.applyHalfFueledFuelUse(playerFleet);
     }
 }

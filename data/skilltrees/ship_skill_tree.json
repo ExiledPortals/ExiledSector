@@ -3393,12 +3393,26 @@
 			"type": "wormhole_exit",
 			"connectedTo": [
 				"affinity_5",
-				"affinity_53"
+				"affinity_53",
+				"lions_guard_arsenal_1"
 			],
 			"x": -8951,
 			"y": -8104,
 			"orbitAnchorId": "dictat_inner",
 			"orbitAngle": 0,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "lions_guard_arsenal_1",
+			"type": "lions_guard_arsenal",
+			"connectedTo": [
+				"dictat_wormhole_2"
+			],
+			"x": -9365,
+			"y": -8104,
+			"ringBeltPath": "graphics/planets/aurorae.png",
 			"tags": [
 				"sindrian_dictat"
 			]
@@ -8348,12 +8362,13 @@
 			"type": "affinity",
 			"connectedTo": [
 				"affinity_125",
-				"affinity_123"
+				"affinity_123",
+				"ecm_resistance_6"
 			],
-			"x": -8008,
-			"y": -8104,
+			"x": -8421,
+			"y": -9374,
 			"orbitAnchorId": "anchor_91",
-			"orbitAngle": 0,
+			"orbitAngle": 324,
 			"tags": [
 				"sindrian_dictat"
 			]
@@ -8363,12 +8378,13 @@
 			"type": "affinity",
 			"connectedTo": [
 				"affinity_122",
-				"affinity_124"
+				"affinity_144",
+				"more_hull_8"
 			],
-			"x": -10169,
-			"y": -5943,
+			"x": -8421,
+			"y": -6834,
 			"orbitAnchorId": "anchor_91",
-			"orbitAngle": 90,
+			"orbitAngle": 36,
 			"tags": [
 				"sindrian_dictat"
 			]
@@ -8377,9 +8393,9 @@
 			"id": "affinity_124",
 			"type": "affinity",
 			"connectedTo": [
-				"affinity_123",
 				"affinity_125",
-				"affinity_52"
+				"affinity_52",
+				"affinity_144"
 			],
 			"x": -12330,
 			"y": -8104,
@@ -8394,12 +8410,205 @@
 			"type": "affinity",
 			"connectedTo": [
 				"affinity_124",
-				"affinity_122"
+				"affinity_122",
+				"top_speed_10"
 			],
-			"x": -10169,
-			"y": -10265,
+			"x": -10837,
+			"y": -10159,
 			"orbitAnchorId": "anchor_91",
-			"orbitAngle": 270,
+			"orbitAngle": 252,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "affinity_144",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_123",
+				"affinity_124",
+				"fuel_3"
+			],
+			"x": -10837,
+			"y": -6049,
+			"orbitAnchorId": "anchor_91",
+			"orbitAngle": 108,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "top_speed_10",
+			"type": "top_speed",
+			"connectedTo": [
+				"affinity_125",
+				"top_speed_11"
+			],
+			"x": -10754,
+			"y": -9903,
+			"orbitAnchorId": "anchor_105",
+			"orbitAngle": 252,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "top_speed_11",
+			"type": "top_speed",
+			"connectedTo": [
+				"top_speed_10",
+				"honor_guard_1"
+			],
+			"x": -10869,
+			"y": -9676,
+			"orbitAnchorId": "anchor_105",
+			"orbitAngle": 162,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "honor_guard_1",
+			"type": "honor_guard",
+			"connectedTo": [
+				"top_speed_11"
+			],
+			"x": -10642,
+			"y": -9561,
+			"orbitAnchorId": "anchor_105",
+			"orbitAngle": 432,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "ecm_resistance_6",
+			"type": "ecm_resistance",
+			"connectedTo": [
+				"affinity_122",
+				"ecm_resistance_7"
+			],
+			"x": -8638,
+			"y": -9216,
+			"orbitAnchorId": "anchor_106",
+			"orbitAngle": 324,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "ecm_resistance_7",
+			"type": "ecm_resistance",
+			"connectedTo": [
+				"ecm_resistance_6",
+				"lions_roar_1"
+			],
+			"x": -8890,
+			"y": -9256,
+			"orbitAnchorId": "anchor_106",
+			"orbitAngle": 234,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "lions_roar_1",
+			"type": "lions_roar",
+			"connectedTo": [
+				"ecm_resistance_7"
+			],
+			"x": -8930,
+			"y": -9004,
+			"orbitAnchorId": "anchor_106",
+			"orbitAngle": 504,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "more_hull_8",
+			"type": "more_hull",
+			"connectedTo": [
+				"affinity_123",
+				"more_hull_9"
+			],
+			"x": -8638,
+			"y": -6992,
+			"orbitAnchorId": "anchor_107",
+			"orbitAngle": 36,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "more_hull_9",
+			"type": "more_hull",
+			"connectedTo": [
+				"more_hull_8",
+				"executors_decree_1"
+			],
+			"x": -8678,
+			"y": -7244,
+			"orbitAnchorId": "anchor_107",
+			"orbitAngle": -54,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "executors_decree_1",
+			"type": "executors_decree",
+			"connectedTo": [
+				"more_hull_9"
+			],
+			"x": -8930,
+			"y": -7204,
+			"orbitAnchorId": "anchor_107",
+			"orbitAngle": 216,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "fuel_3",
+			"type": "fuel",
+			"connectedTo": [
+				"affinity_144",
+				"fuel_4"
+			],
+			"x": -10754,
+			"y": -6305,
+			"orbitAnchorId": "anchor_108",
+			"orbitAngle": 108,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "fuel_4",
+			"type": "fuel",
+			"connectedTo": [
+				"fuel_3",
+				"strategic_fuel_reserve_1"
+			],
+			"x": -10527,
+			"y": -6420,
+			"orbitAnchorId": "anchor_108",
+			"orbitAngle": 18,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "strategic_fuel_reserve_1",
+			"type": "strategic_fuel_reserve",
+			"connectedTo": [
+				"fuel_4"
+			],
+			"x": -10642,
+			"y": -6647,
+			"orbitAnchorId": "anchor_108",
+			"orbitAngle": 288,
 			"tags": [
 				"sindrian_dictat"
 			]
@@ -11285,30 +11494,6 @@
 			"controlY": -14591
 		},
 		{
-			"a": "affinity_122",
-			"b": "affinity_123",
-			"controlX": -8641,
-			"controlY": -6576
-		},
-		{
-			"a": "affinity_123",
-			"b": "affinity_124",
-			"controlX": -11697,
-			"controlY": -6576
-		},
-		{
-			"a": "affinity_124",
-			"b": "affinity_125",
-			"controlX": -11697,
-			"controlY": -9632
-		},
-		{
-			"a": "affinity_122",
-			"b": "affinity_125",
-			"controlX": -8641,
-			"controlY": -9632
-		},
-		{
 			"a": "affinity_126",
 			"b": "affinity_127",
 			"controlX": 14202,
@@ -11493,6 +11678,36 @@
 			"b": "affinity_136",
 			"controlX": -14533,
 			"controlY": 3966
+		},
+		{
+			"a": "affinity_124",
+			"b": "affinity_125",
+			"controlX": -11917,
+			"controlY": -9374
+		},
+		{
+			"a": "affinity_125",
+			"b": "affinity_122",
+			"controlX": -9501,
+			"controlY": -10159
+		},
+		{
+			"a": "affinity_122",
+			"b": "affinity_123",
+			"controlX": -8008,
+			"controlY": -8104
+		},
+		{
+			"a": "affinity_123",
+			"b": "affinity_144",
+			"controlX": -9501,
+			"controlY": -6049
+		},
+		{
+			"a": "affinity_144",
+			"b": "affinity_124",
+			"controlX": -11917,
+			"controlY": -6834
 		}
 	],
 	"hiddenConnectors": [
@@ -12308,6 +12523,30 @@
 			"id": "anchor_104",
 			"x": -13530,
 			"y": 4375,
+			"radius": 180
+		},
+		{
+			"id": "anchor_105",
+			"x": -10698,
+			"y": -9732,
+			"radius": 180
+		},
+		{
+			"id": "anchor_106",
+			"x": -8784,
+			"y": -9110,
+			"radius": 180
+		},
+		{
+			"id": "anchor_107",
+			"x": -8784,
+			"y": -7098,
+			"radius": 180
+		},
+		{
+			"id": "anchor_108",
+			"x": -10698,
+			"y": -6476,
 			"radius": 180
 		}
 	],

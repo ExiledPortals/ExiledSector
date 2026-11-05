@@ -40,6 +40,8 @@ public enum MovementSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("seconds", ArcStrikeSpeedListener.BURST_SECONDS).styled();
         }
     },
+    TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT(listener(FlagshipPaceListener.FLAGSHIP_SPEED_SHARE_PERCENT_KEY, FlagshipPaceListener.class,
+            FlagshipPaceListener::new)),
     ACCELERATION_FLAT(statEffect(FLAT, liveStat(MutableShipStatsAPI::getAcceleration), "stat.acceleration", false)),
     ACCELERATION_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getAcceleration), "stat.acceleration", false)),
     DECELERATION_FLAT(statEffect(FLAT, liveStat(MutableShipStatsAPI::getDeceleration), "stat.deceleration", false)),
