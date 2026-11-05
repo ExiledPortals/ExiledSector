@@ -28,6 +28,9 @@ public final class BattleMaterials {
         float feedstock = 0f;
         for (Loss loss : losses) {
             FleetLootRules rules = loss.rules();
+            if (rules.paysNothing()) {
+                continue;
+            }
             float bonuses = rules.feedstockOnly() ? 1f : loss.difficultyMultiplier() * rules.multipliers().feedstockMult();
             feedstock += loss.deploymentPoints() * ItemDrops.battleFeedstockPerDeploymentPoint() * bonuses;
         }

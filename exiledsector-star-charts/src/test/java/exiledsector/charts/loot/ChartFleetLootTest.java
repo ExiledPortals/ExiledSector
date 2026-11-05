@@ -29,6 +29,7 @@ import exiledsector.items.StarChartFixtures;
 import exiledsector.loot.BattleLootRates;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import exiledsector.loot.FleetLootRules;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,6 +41,7 @@ import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -122,6 +124,17 @@ class ChartFleetLootTest {
         assertEquals(0.4f, ChartFleetLoot.claimShare(fleet, 40f), 1e-6f);
         assertEquals(0.6f, ChartFleetLoot.claimShare(fleet, 80f), 1e-6f);
         assertEquals(0f, ChartFleetLoot.claimShare(fleet, 20f));
+    }
+
+    @Test
+    void aFleetWhoseLootIsSpentPaysNoExiledSectorBattleLoot() {
+        storeLiveRun(7);
+        CampaignFleetAPI fleet = ChartFleetFixtures.chartFleet("convoy", RUN_ID, 100f);
+
+        ChartFleetLoot.spendLoot(fleet);
+
+        assertTrue(ChartFleetLoot.lootSpent(fleet));
+        assertSame(FleetLootRules.NONE, StarChartLootSource.INSTANCE.fleetLootRules(fleet));
     }
 
     @Test

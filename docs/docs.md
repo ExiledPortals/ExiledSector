@@ -885,21 +885,22 @@ relays woken, drops one unique hull item or subroutine whatever its source (`Cha
 
 ### Supply Convoy
 
-The anomaly spawns freighters, a screen and a close escort at the system edge, flying the run-only faction
-`exiledSector_convoy` under its own name with the chart faction's crest (`SupplyConvoy`, `ConvoyFleets`). The escorts
-are built like the map's boss, with the close escort above the boss's size and the screen at 60% of it (`ConvoyRules`). Five days after the player first
-arrives, the system script `ConvoyScript` sends them past two to four planets or stations to unload at an existing planet,
-avoiding planets another anomaly holds where it can, with intel in `ConvoyIntel`. The convoy is non-hostile until the player attacks it through `ConvoyEncounterDialog` or hits
-one of its fleets with Interdiction Pulse (which also holds that fleet); then all three turn hostile for the run and the
-freighters run for the destination. The screen rides 1200 su ahead, the freighters never outrun the escorts in open space (they lack Sustained Burn until attacked, `ConvoyHostility`),
-and asteroids and nebulae slow each fleet by its own amount (`ConvoyTerrain`).
+The anomaly spawns one convoy fleet at the system edge: freighters and tankers plus warships built like the map's boss at
+170% of its size, flying the run-only faction `exiledSector_convoy` under its own name with the chart faction's crest
+(`SupplyConvoy`, `ConvoyFleets`, `ConvoyRules`). Five days after the player first arrives, the system script `ConvoyScript`
+sends it past two to four planets or stations to unload at an existing planet, avoiding planets another anomaly holds where
+it can, with intel in `ConvoyIntel`. The convoy is non-hostile until the player attacks it through `ConvoyEncounterDialog` or
+hits it with Interdiction Pulse (which also holds it); then it turns hostile for the run, gains Sustained Burn and runs for the
+destination (`ConvoyHostility`). Asteroids, nebulae and slowing anomaly terrain cut its burn (`ConvoyTerrain`).
 
-The cargo is the `convoy` scope of `chart_loot.csv` plus the `exiledSector_chart_convoy` item row, sized by the
-freighters' fleet points. Each share of freighter fleet points lost drops as cargo pods, and the rest is cached on the
-destination (`ConvoyState`, `ConvoyCargo`). That planet then offers a raid (`ConvoyCacheDialog`, `anomaly.ChartRaid`, vanilla's
-non-market raid without reputation, response, cooldowns or rules) at a difficulty and danger level set by tier
-(`ChartRaid.difficulty`, `danger`); the cache objective yields exactly the delivered share and stays until taken. Once the
-freighters are lost, every convoy fleet left leaves through the exit.
+Beating the convoy drops ordinary chart fleet loot, and each share of its freighter fleet points lost also drops that share
+of its cargo (the `convoy` scope of `chart_loot.csv` plus the `exiledSector_chart_convoy` item row) as cargo pods
+(`ConvoyState`, `ConvoyCargo`). On unloading, `ConvoyCargo.deliveredCache` rolls the Exiled Sector loot that beating the
+surviving fleet would give (`ItemLootListener.addUnfoughtBattleLoot` runs every loot source without wreck salvage) and the
+cargo still aboard, and keeps 80% of each stack. The fleet's Exiled Sector loot is then spent (`ChartFleetLoot.spendLoot`,
+`FleetLootRules.NONE`); its weapons, cargo and vanilla drops stay with it. The planet then offers a raid (`ConvoyCacheDialog`,
+`anomaly.ChartRaid`, vanilla's non-market raid without reputation, response, cooldowns or rules) at a tier-based difficulty
+and danger level; the cache objective yields the whole cache and stays until taken.
 
 ### Anomalous Debris
 

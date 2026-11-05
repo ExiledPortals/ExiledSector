@@ -82,6 +82,15 @@ public final class ChartFleetLoot {
         return totalDeploymentPoints;
     }
 
+    public static void spendLoot(CampaignFleetAPI fleet) {
+        fleet.getMemoryWithoutUpdate().set(ChartIds.LOOT_SPENT_MEMORY_KEY, true);
+    }
+
+    public static boolean lootSpent(CampaignFleetAPI fleet) {
+        MemoryAPI fleetMemory = fleet == null ? null : fleet.getMemoryWithoutUpdate();
+        return fleetMemory != null && fleetMemory.getBoolean(ChartIds.LOOT_SPENT_MEMORY_KEY);
+    }
+
     public static boolean isChartFleet(CampaignFleetAPI fleet) {
         return ledgerOf(fleet) != null;
     }

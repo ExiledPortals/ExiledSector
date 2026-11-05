@@ -101,8 +101,8 @@ final class ConvoySystem {
         return (ConvoyScript) scripts.get(0);
     }
 
-    CampaignFleetAPI fleet(ConvoyState convoy, ConvoyRole role) {
-        return (CampaignFleetAPI) entities.get(convoy.fleetId(role));
+    CampaignFleetAPI fleet(ConvoyState convoy) {
+        return (CampaignFleetAPI) entities.get(convoy.fleetId());
     }
 
     List<FakeChartContentEngine.Assignment> assignments(CampaignFleetAPI fleet) {

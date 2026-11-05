@@ -16,10 +16,8 @@ public final class ConvoyRules {
     static final float STOP_DAYS = 1f;
     static final float UNLOAD_DAYS = 3f;
     static final float CHECK_DAYS = 0.05f;
-    static final float SCREEN_LEAD = 1200f;
     static final float SPAWN_SPREAD = 300f;
-    static final float SCREEN_BOSS_SHARE = 0.6f;
-    static final float ESCORT_BOSS_SHARE = 1.1f;
+    static final float ESCORT_BOSS_SHARE = 1.7f;
     static final float FREIGHTER_POINTS = 40f;
     static final float FREIGHTER_POINTS_PER_TIER = 10f;
     static final float TANKER_SHARE = 0.25f;
@@ -27,9 +25,8 @@ public final class ConvoyRules {
     static final float CARGO_STEPS_PER_FREIGHTER_POINT = 0.03f;
     static final float POD_SHARE = 1f;
     static final float ITEM_CHANCE_PER_TIER = 0.1f;
-    static final float FREIGHTER_TERRAIN_BURN = 0.8f;
-    static final float SCREEN_TERRAIN_BURN = 0.5f;
-    static final float ESCORT_TERRAIN_BURN = 0.65f;
+    static final float TERRAIN_BURN = 0.8f;
+    static final float DELIVERED_SHARE = 0.8f;
     static final float PULSE_REPEAT_DAYS = 0.15f;
 
     private ConvoyRules() {
@@ -39,13 +36,8 @@ public final class ConvoyRules {
         return FREIGHTER_POINTS + FREIGHTER_POINTS_PER_TIER * (ChartTiers.clamp(tier) - 1);
     }
 
-    static float escortSize(ConvoyRole role, ChartTier tier, float escortMult) {
-        float bossShare = switch (role) {
-            case FREIGHTERS -> 0f;
-            case SCREEN -> SCREEN_BOSS_SHARE;
-            case ESCORT -> ESCORT_BOSS_SHARE;
-        };
-        return Math.max(tier.bossSize(), tier.fleetSize()) * bossShare * Math.max(0f, escortMult);
+    static float escortSize(ChartTier tier, float escortMult) {
+        return Math.max(tier.bossSize(), tier.fleetSize()) * ESCORT_BOSS_SHARE * Math.max(0f, escortMult);
     }
 
     static int convoyCount(float extraConvoys) {
@@ -58,13 +50,5 @@ public final class ConvoyRules {
 
     static float itemChanceMult(int tier, float cargoMult) {
         return (1f + ITEM_CHANCE_PER_TIER * (ChartTiers.clamp(tier) - 1)) * Math.max(0f, cargoMult);
-    }
-
-    static float terrainBurn(ConvoyRole role) {
-        return switch (role) {
-            case FREIGHTERS -> FREIGHTER_TERRAIN_BURN;
-            case SCREEN -> SCREEN_TERRAIN_BURN;
-            case ESCORT -> ESCORT_TERRAIN_BURN;
-        };
     }
 }

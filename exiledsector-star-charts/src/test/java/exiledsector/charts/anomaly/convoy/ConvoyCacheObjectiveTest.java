@@ -8,13 +8,11 @@ import org.junit.jupiter.api.BeforeEach;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD.RaidDangerLevel;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.anomaly.ChartRaid;
 import exiledsector.charts.anomaly.RaidDangerLevels;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 class ConvoyCacheObjectiveTest {
@@ -60,26 +59,22 @@ class ConvoyCacheObjectiveTest {
     }
 
     @Test
-    void aStrongerRaidNeverTakesLessFromTheCache() {
-        ConvoyState convoy = new ConvoyState(0, List.of(), "dest", 0f, 0f, 0f, 0f, 1L);
-        convoy.loadCargo(100f, 3f, 1f);
-        convoy.setPhase(ConvoyState.Phase.EN_ROUTE);
-        convoy.recordFreighterPoints(70f);
+    void anyRaidTakesTheWholeCacheRolledAtDeliveryOnce() {
+        ConvoySystem convoySystem = new ConvoySystem(4);
+        SupplyConvoy.INSTANCE.generate(convoySystem.site(ChartGenContext.none()));
+        ConvoyState convoy = convoySystem.script().convoys().get(0);
         convoy.deliver();
-        float difficulty = ChartRaid.difficulty(8);
-        float previousShare = 0f;
-        boolean bonusFell = false;
-        float previousBonus = 0f;
-        for (int marines = 1; marines <= 2000; marines++) {
-            float bonus = ChartRaid.lootMult(ChartRaid.raidEffectiveness(marines, difficulty));
-            bonusFell |= bonus < previousBonus;
-            previousBonus = bonus;
-            float share = ConvoyCacheObjective.cacheShare(convoy);
-            assertTrue(share >= previousShare, "at " + marines + " marines");
-            previousShare = share;
-        }
-        assertTrue(bonusFell, "vanilla's leftover bonus is a sawtooth, which is why the cache ignores it");
-        assertEquals(0.7f, previousShare, 0.001f);
+        CargoAPI cache = mock(CargoAPI.class);
+        convoy.storeCache(cache);
+        CargoAPI loot = mock(CargoAPI.class);
+        ConvoyCacheObjective objective = new ConvoyCacheObjective(null, convoySystem.script(), 0, RaidDangerLevel.LOW);
+
+        objective.performRaid(loot, new Random(1L), 0.1f, null);
+        objective.performRaid(loot, new Random(1L), 3f, null);
+
+        verify(loot, times(1)).addAll(cache);
+        assertTrue(convoy.isCacheTaken());
+        assertFalse(convoy.hasCache());
     }
 
     @Test

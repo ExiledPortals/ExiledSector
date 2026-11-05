@@ -10,6 +10,7 @@ import java.util.Set;
 public record EncounterSalvage(float playerShare, Set<FleetMemberAPI> recoveredEnemies) {
 
     public static final EncounterSalvage FULL = new EncounterSalvage(1f, Set.of());
+    public static final EncounterSalvage NO_WRECKS = new EncounterSalvage(0f, Set.of());
 
     public static EncounterSalvage of(FleetEncounterContextPlugin encounter) {
         if (encounter == null) {

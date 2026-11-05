@@ -2,7 +2,6 @@ package exiledsector.charts.anomaly.convoy;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignTerrainAPI;
-import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import com.fs.starfarer.api.impl.campaign.terrain.NebulaTerrainPlugin;
@@ -14,9 +13,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -28,11 +25,9 @@ import static org.mockito.Mockito.when;
 
 class ConvoyTerrainTest {
 
-    private static final float VANILLA_BATTLE_JOIN_RANGE = 500f;
-
     private ConvoySystem convoySystem;
     private ConvoyState convoy;
-    private final Map<ConvoyRole, StatBonus> burns = new EnumMap<>(ConvoyRole.class);
+    private final StatBonus burn = new StatBonus();
     private NebulaTerrainPlugin nebula;
 
     @BeforeEach
@@ -40,17 +35,10 @@ class ConvoyTerrainTest {
         convoySystem = new ConvoySystem(4);
         SupplyConvoy.INSTANCE.generate(convoySystem.site(ChartGenContext.none()));
         convoy = convoySystem.script().convoys().get(0);
-        for (ConvoyRole role : ConvoyRole.values()) {
-            CampaignFleetAPI fleet = convoySystem.fleet(convoy, role);
-            StatBonus burn = new StatBonus();
-            MutableFleetStatsAPI stats = mock(MutableFleetStatsAPI.class);
-            when(stats.getFleetwideMaxBurnMod()).thenReturn(burn);
-            when(fleet.getStats()).thenReturn(stats);
-            FleetDataAPI data = mock(FleetDataAPI.class);
-            when(data.getMinBurnLevelUnmodified()).thenReturn(role == ConvoyRole.FREIGHTERS ? 9f : 8f);
-            when(fleet.getFleetData()).thenReturn(data);
-            burns.put(role, burn);
-        }
+        CampaignFleetAPI fleet = convoySystem.fleet(convoy);
+        MutableFleetStatsAPI stats = mock(MutableFleetStatsAPI.class);
+        when(stats.getFleetwideMaxBurnMod()).thenReturn(burn);
+        when(fleet.getStats()).thenReturn(stats);
         nebula = mock(NebulaTerrainPlugin.class);
         CampaignTerrainAPI nebulaTerrain = mock(CampaignTerrainAPI.class);
         when(nebulaTerrain.getPlugin()).thenReturn(nebula);
@@ -66,50 +54,28 @@ class ConvoyTerrainTest {
         ChartContentGenerator.resetForTests();
     }
 
-    private Float burnMult(ConvoyRole role) {
-        return burns.get(role).getMultBonus(ConvoyTerrain.BURN_MOD_ID) == null ? null : burns.get(role).getMultBonus(ConvoyTerrain.BURN_MOD_ID).getValue();
+    private Float burnMult() {
+        return burn.getMultBonus(ConvoyTerrain.BURN_MOD_ID) == null ? null : burn.getMultBonus(ConvoyTerrain.BURN_MOD_ID).getValue();
     }
 
     @Test
-    void inOpenSpaceTheFreightersNeverOutrunTheirSlowestEscort() {
-        convoySystem.script().keepFormation(convoy, ConvoyTerrain.slowingTerrain(convoySystem.system));
+    void theConvoySlowsInANebulaAndPicksUpSpeedOnceOut() {
+        convoySystem.script().slowInTerrain(convoy, ConvoyTerrain.slowingTerrain(convoySystem.system));
+        assertNull(burnMult(), "open space and coronae leave the convoy at full burn");
 
-        assertEquals(8f / 9f, burnMult(ConvoyRole.FREIGHTERS), 0.001f);
-        assertNull(burnMult(ConvoyRole.SCREEN));
-        assertNull(burnMult(ConvoyRole.ESCORT));
-    }
-
-    @Test
-    void inANebulaEachFleetSlowsByADifferentAmountSoTheConvoyDriftsApart() {
         when(nebula.containsEntity(any())).thenReturn(true);
-
-        convoySystem.script().keepFormation(convoy, ConvoyTerrain.slowingTerrain(convoySystem.system));
-
-        assertEquals(ConvoyRules.FREIGHTER_TERRAIN_BURN, burnMult(ConvoyRole.FREIGHTERS), 0.001f);
-        assertEquals(ConvoyRules.SCREEN_TERRAIN_BURN, burnMult(ConvoyRole.SCREEN), 0.001f);
-        assertEquals(ConvoyRules.ESCORT_TERRAIN_BURN, burnMult(ConvoyRole.ESCORT), 0.001f);
-        assertTrue(ConvoyRules.ESCORT_TERRAIN_BURN < ConvoyRules.FREIGHTER_TERRAIN_BURN, "the close escort falls behind in terrain");
+        convoySystem.script().slowInTerrain(convoy, ConvoyTerrain.slowingTerrain(convoySystem.system));
+        assertEquals(ConvoyRules.TERRAIN_BURN, burnMult(), 0.001f);
 
         when(nebula.containsEntity(any())).thenReturn(false);
-        convoySystem.script().keepFormation(convoy, ConvoyTerrain.slowingTerrain(convoySystem.system));
-        assertNull(burnMult(ConvoyRole.ESCORT), "leaving the nebula lifts the slowdown");
+        convoySystem.script().slowInTerrain(convoy, ConvoyTerrain.slowingTerrain(convoySystem.system));
+        assertNull(burnMult(), "leaving the nebula lifts the slowdown");
     }
 
     @Test
-    void onceAttackedTheFreightersRunFlatOut() {
-        convoySystem.script().turnHostile(convoy);
-
-        convoySystem.script().keepFormation(convoy, ConvoyTerrain.slowingTerrain(convoySystem.system));
-
-        assertNull(burnMult(ConvoyRole.FREIGHTERS));
-    }
-
-    @Test
-    void onlyAsteroidsAndNebulaeSplitTheConvoyAndTheScreenRidesBeyondBattleRange() {
+    void onlyAsteroidsNebulaeAndSlowingAnomaliesSlowTheConvoy() {
         assertTrue(ConvoyTerrain.slowsConvoys(nebula));
         assertTrue(ConvoyTerrain.slowsConvoys(new StormFrontTerrainPlugin()));
         assertFalse(ConvoyTerrain.slowsConvoys(mock(StarCoronaTerrainPlugin.class)));
-        assertEquals(1f, ConvoyTerrain.formationMult(8f, 9f));
-        assertTrue(ConvoyRules.SCREEN_LEAD > VANILLA_BATTLE_JOIN_RANGE, "hitting the freighters in open space leaves the screen out");
     }
 }

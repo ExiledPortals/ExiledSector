@@ -72,21 +72,31 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
         if (losses.battleAnomalies == null) {
             losses.battleAnomalies = anomaliesHoldingBattle();
         }
-        engagement.lostEnemiesBySourceFleet().forEach((sourceFleet, members) -> {
+        float spentDeploymentPoints = 0f;
+        for (Map.Entry<CampaignFleetAPI, List<FleetMemberAPI>> fleetLosses : engagement.lostEnemiesBySourceFleet().entrySet()) {
+            CampaignFleetAPI sourceFleet = fleetLosses.getKey();
+            List<FleetMemberAPI> members = fleetLosses.getValue();
+            float deploymentPoints = BattleEngagement.deploymentPoints(members);
+            boolean spent = ChartFleetLoot.lootSpent(sourceFleet);
             if (ChartFleetLoot.isChartFleet(sourceFleet) || adoptedAsDefender(sourceFleet)) {
-                float deploymentPoints = BattleEngagement.deploymentPoints(members);
-                losses.chartFleetDeploymentPoints.merge(sourceFleet, deploymentPoints, Float::sum);
-                losses.chartFleetDifficultyWeighted.merge(sourceFleet, deploymentPoints * BattleLootRates.difficulty(engagement.difficultyMultiplier()),
-                        Float::sum);
                 losses.shipSalvage.record(sourceFleet, members);
+                if (!spent) {
+                    losses.chartFleetDeploymentPoints.merge(sourceFleet, deploymentPoints, Float::sum);
+                    losses.chartFleetDifficultyWeighted.merge(sourceFleet,
+                            deploymentPoints * BattleLootRates.difficulty(engagement.difficultyMultiplier()), Float::sum);
+                }
+            }
+            if (spent) {
+                spentDeploymentPoints += deploymentPoints;
+                continue;
             }
             for (FleetMemberAPI member : members) {
                 losses.highestDefeatedLevel = Math.max(losses.highestDefeatedLevel, LootSources.shipLevel(member));
             }
-        });
+        }
         if (engagement.defeatedDeploymentPoints() > 0f) {
             losses.deploymentPointsDefeated += engagement.defeatedDeploymentPoints();
-            losses.chartDpDefeated += engagement.defeatedDeploymentPoints() * engagement.difficultyMultiplier();
+            losses.chartDpDefeated += Math.max(0f, engagement.defeatedDeploymentPoints() - spentDeploymentPoints) * engagement.difficultyMultiplier();
         }
     }
 
@@ -183,6 +193,9 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
             ChartRun run = fleet == null ? null : ChartFleetLoot.liveRunOf(fleet);
             if (run == null) {
                 return null;
+            }
+            if (ChartFleetLoot.lootSpent(fleet)) {
+                return FleetLootRules.NONE;
             }
             if (fleet.getMemoryWithoutUpdate().getBoolean(ChartIds.FEEDSTOCK_ONLY_MEMORY_KEY)) {
                 return FleetLootRules.FEEDSTOCK_ONLY;

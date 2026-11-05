@@ -27,6 +27,7 @@ public final class ChartIds {
     public static final String START_DP_MEMORY_KEY = "$exiledSector_chartStartDp";
     public static final String START_FP_MEMORY_KEY = "$exiledSector_chartStartFp";
     public static final String FEEDSTOCK_ONLY_MEMORY_KEY = "$exiledSector_chartFeedstockOnly";
+    public static final String LOOT_SPENT_MEMORY_KEY = "$exiledSector_chartLootSpent";
     public static final String LOOT_DP_PAID_MEMORY_KEY = "$exiledSector_chartLootDpPaid";
     public static final String DEFENDED_SITE_MEMORY_KEY = "$exiledSector_chartDefendedSite";
     public static final String DEFENDER_LOOT_ADDED_MEMORY_KEY = "$exiledSector_chartDefenderLootAdded";

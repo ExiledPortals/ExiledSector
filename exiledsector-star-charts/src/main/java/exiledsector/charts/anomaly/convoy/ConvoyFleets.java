@@ -5,9 +5,7 @@ import com.fs.starfarer.api.campaign.FleetAssignment;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.listeners.FleetEventListener;
-import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.FleetTypes;
-import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartContentPlanner;
 import exiledsector.charts.content.ChartSites;
@@ -26,79 +24,54 @@ final class ConvoyFleets {
     private ConvoyFleets() {
     }
 
-    static ChartAnomalyFleets.Spec spec(ConvoyRole role, String factionId, ChartTier tier, float escortMult) {
-        return switch (role) {
-            case FREIGHTERS -> {
-                float freighterPoints = ConvoyRules.freighterPoints(tier.tier());
-                yield ChartAnomalyFleets.freighters(factionId, FleetTypes.TRADE, tier, freighterPoints * (1f - ConvoyRules.TANKER_SHARE),
-                        freighterPoints * ConvoyRules.TANKER_SHARE, ConvoyRules.FREIGHTER_GUARD_POINTS);
-            }
-            case SCREEN -> ChartAnomalyFleets.bossCombat(factionId, FleetTypes.PATROL_MEDIUM, tier, ConvoyRules.escortSize(role, tier, escortMult));
-            case ESCORT -> ChartAnomalyFleets.bossCombat(factionId, FleetTypes.PATROL_LARGE, tier, ConvoyRules.escortSize(role, tier, escortMult));
-        };
+    static ChartAnomalyFleets.Spec spec(String factionId, ChartTier tier, float escortMult) {
+        float freighterPoints = ConvoyRules.freighterPoints(tier.tier());
+        return ChartAnomalyFleets.bossCombat(factionId, FleetTypes.TRADE, tier, ConvoyRules.escortSize(tier, escortMult))
+                .atLeast(ConvoyRules.FREIGHTER_GUARD_POINTS)
+                .withCargoShips(freighterPoints * (1f - ConvoyRules.TANKER_SHARE), freighterPoints * ConvoyRules.TANKER_SHARE);
     }
 
-    static int strengthBonus(ConvoyRole role, ChartTier tier, float escortMult) {
-        return ChartContentPlanner.overflowStrength(ConvoyRules.escortSize(role, tier, escortMult), ChartContentPlanner.BOSS_SIZE_CAP);
+    static int strengthBonus(ChartTier tier, float escortMult) {
+        return ChartContentPlanner.overflowStrength(ConvoyRules.escortSize(tier, escortMult), ChartContentPlanner.BOSS_SIZE_CAP);
     }
 
-    static boolean spawn(AnomalyContentSite site, ConvoyState convoy, String convoyFactionId, FleetEventListener freighterListener, Random random) {
+    static boolean spawn(AnomalyContentSite site, ConvoyState convoy, String convoyFactionId, FleetEventListener convoyListener, Random random) {
         ChartGenContext context = site.context();
         ChartTier tier = ChartAnomalyFleets.tier(site.tier(), context);
         float escortMult = context.anomalyMult(SupplyConvoy.ESCORT_KEY);
         StarSystemAPI system = site.system();
         SectorEntityToken entry = system.createToken(convoy.entryX(), convoy.entryY());
-        SectorEntityToken exit = system.createToken(convoy.exitX(), convoy.exitY());
-        SectorEntityToken lead = system.createToken(convoy.entryX(), convoy.entryY());
-        convoy.placeTokens(entry, exit, lead);
-        CampaignFleetAPI freighters = null;
-        for (ConvoyRole role : ConvoyRole.values()) {
-            long fleetSeed = random.nextLong();
-            if (role != ConvoyRole.FREIGHTERS && !(escortMult > 0f)) {
-                continue;
-            }
-            CampaignFleetAPI fleet = ChartAnomalyFleets.create(spec(role, site.factionId(), tier, escortMult), new Random(fleetSeed));
-            if (fleet == null) {
-                if (role == ConvoyRole.FREIGHTERS) {
-                    return false;
-                }
-                continue;
-            }
-            ChartAnomalyFleets.prepare(fleet, site.runId(), site.tier(), fleetSeed, role != ConvoyRole.FREIGHTERS, context);
-            int strengthBonus = strengthBonus(role, tier, escortMult);
-            if (strengthBonus > 0) {
-                fleet.getMemoryWithoutUpdate().set(ChartIds.STRENGTH_BONUS_MEMORY_KEY, strengthBonus);
-            }
-            dress(fleet, role, convoy, convoyFactionId);
-            double angle = random.nextDouble() * Math.PI * 2d;
-            site.addFleet(fleet, ChartSites.pointAround(new Vector2f(convoy.entryX(), convoy.entryY()), angle, ConvoyRules.SPAWN_SPREAD));
-            convoy.setFleetId(role, fleet.getId());
-            if (role == ConvoyRole.FREIGHTERS) {
-                freighters = fleet;
-                boolean civilianOnly = ConvoyCargo.freighterPoints(fleet, true) > 0f;
-                float freighterPoints = ConvoyCargo.freighterPoints(fleet, civilianOnly);
-                convoy.countCivilianOnly(civilianOnly);
-                convoy.loadCargo(freighterPoints, ConvoyRules.cargoSteps(freighterPoints, context.anomalyMult(SupplyConvoy.CARGO_KEY)),
-                        ConvoyRules.itemChanceMult(site.tier(), context.anomalyMult(SupplyConvoy.CARGO_KEY)));
-                fleet.addAssignment(FleetAssignment.ORBIT_PASSIVE, entry, ChartContentGenerator.ASSIGNMENT_DAYS);
-                fleet.addEventListener(freighterListener);
-            } else {
-                fleet.addAssignment(FleetAssignment.FOLLOW, role == ConvoyRole.SCREEN ? lead : freighters, ChartContentGenerator.ASSIGNMENT_DAYS);
-            }
+        convoy.placeTokens(entry, system.createToken(convoy.exitX(), convoy.exitY()));
+        long fleetSeed = random.nextLong();
+        CampaignFleetAPI fleet = ChartAnomalyFleets.create(spec(site.factionId(), tier, escortMult), new Random(fleetSeed));
+        if (fleet == null) {
+            return false;
         }
-        return freighters != null;
+        ChartAnomalyFleets.prepare(fleet, site.runId(), site.tier(), fleetSeed, true, context);
+        int strengthBonus = strengthBonus(tier, escortMult);
+        if (strengthBonus > 0) {
+            fleet.getMemoryWithoutUpdate().set(ChartIds.STRENGTH_BONUS_MEMORY_KEY, strengthBonus);
+        }
+        dress(fleet, convoy, convoyFactionId);
+        double angle = random.nextDouble() * Math.PI * 2d;
+        site.addFleet(fleet, ChartSites.pointAround(new Vector2f(convoy.entryX(), convoy.entryY()), angle, ConvoyRules.SPAWN_SPREAD));
+        convoy.setFleetId(fleet.getId());
+        boolean civilianOnly = ConvoyCargo.freighterPoints(fleet, true) > 0f;
+        float freighterPoints = ConvoyCargo.freighterPoints(fleet, civilianOnly);
+        convoy.countCivilianOnly(civilianOnly);
+        convoy.loadCargo(freighterPoints, ConvoyRules.cargoSteps(freighterPoints, context.anomalyMult(SupplyConvoy.CARGO_KEY)),
+                ConvoyRules.itemChanceMult(site.tier(), context.anomalyMult(SupplyConvoy.CARGO_KEY)));
+        fleet.addAssignment(FleetAssignment.ORBIT_PASSIVE, entry, ChartContentGenerator.ASSIGNMENT_DAYS);
+        fleet.addEventListener(convoyListener);
+        return true;
     }
 
-    static void dress(CampaignFleetAPI fleet, ConvoyRole role, ConvoyState convoy, String convoyFactionId) {
+    static void dress(CampaignFleetAPI fleet, ConvoyState convoy, String convoyFactionId) {
         if (convoyFactionId != null) {
             fleet.setFaction(convoyFactionId, true);
         }
-        fleet.setName(Translation.gameText("chart.anomaly.supply_convoy.fleet." + role.key() + ".name"));
-        MemoryAPI memory = fleet.getMemoryWithoutUpdate();
-        memory.set(SupplyConvoy.CONVOY_MEMORY_KEY, convoy.index());
-        if (role == ConvoyRole.FREIGHTERS) {
-            memory.set(MemFlags.MEMORY_KEY_TRADE_FLEET, true);
-        }
-        ConvoyHostility.makePeaceful(fleet, role);
+        fleet.setName(Translation.gameText("chart.anomaly.supply_convoy.fleet.name"));
+        fleet.getMemoryWithoutUpdate().set(SupplyConvoy.CONVOY_MEMORY_KEY, convoy.index());
+        ConvoyHostility.makePeaceful(fleet);
     }
 }

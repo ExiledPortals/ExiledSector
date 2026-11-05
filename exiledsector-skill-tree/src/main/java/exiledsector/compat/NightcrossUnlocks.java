@@ -53,11 +53,11 @@ public final class NightcrossUnlocks {
     }
 
     public static boolean existentialThreatBeatenIn(BattleEngagement engagement) {
-        if (engagement == null || engagement.battle() == null || engagement.lostEnemies().isEmpty()) {
+        if (engagement == null || engagement.lostEnemies().isEmpty()) {
             return false;
         }
         for (FleetMemberAPI lost : engagement.lostEnemies()) {
-            CampaignFleetAPI sourceFleet = lost == null ? null : engagement.battle().getSourceFleet(lost);
+            CampaignFleetAPI sourceFleet = engagement.sourceFleetOf(lost);
             if (sourceFleet != null && sourceFleet.getMemoryWithoutUpdate() != null
                     && sourceFleet.getMemoryWithoutUpdate().getBoolean(EXISTENTIAL_THREAT_MEMORY_KEY)) {
                 return sourceFleet.getFleetData() == null || engagement.lostEnemies().containsAll(sourceFleet.getFleetData().getMembersListCopy());

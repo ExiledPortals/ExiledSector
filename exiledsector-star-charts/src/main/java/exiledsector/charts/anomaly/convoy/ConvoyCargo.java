@@ -1,7 +1,9 @@
 package exiledsector.charts.anomaly.convoy;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
+import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
@@ -15,8 +17,10 @@ import exiledsector.charts.content.ChartAnomalyFleets;
 import exiledsector.charts.loot.ChartCargoLoot;
 import exiledsector.charts.loot.ChartDrops;
 import exiledsector.charts.loot.ChartLoot;
+import exiledsector.charts.loot.ChartVanillaLoot;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.ChartRun;
+import exiledsector.effects.ItemLootListener;
 import exiledsector.items.ItemDrops;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -70,6 +74,31 @@ final class ConvoyCargo {
     static CargoAPI roll(SectorAPI sector, ChartRun run, ConvoyState convoy, float share, Random random) {
         return ChartCargoLoot.roll(sector, run, ConvoyRules.LOOT_SCOPE, ConvoyRules.CARGO_SITE, convoy.cargoSteps() * share,
                 convoy.itemChanceMult() * share, random);
+    }
+
+    static CargoAPI deliveredCache(SectorAPI sector, ChartRun run, ConvoyState convoy, CampaignFleetAPI fleet, Random random) {
+        CargoAPI cache = Global.getFactory().createCargo(true);
+        if (fleet != null && !fleet.isEmpty()) {
+            ItemLootListener.addUnfoughtBattleLoot(cache, fleet, random);
+        }
+        cache.addAll(roll(sector, run, convoy, convoy.deliveredShare(), random));
+        keepShare(cache, ConvoyRules.DELIVERED_SHARE, random);
+        cache.sort();
+        return cache;
+    }
+
+    static void keepShare(CargoAPI cargo, float share, Random random) {
+        for (CargoStackAPI stack : cargo.getStacksCopy()) {
+            if (stack.isNull()) {
+                continue;
+            }
+            float size = stack.getSize();
+            int kept = ChartVanillaLoot.stochasticRound(size * share, random);
+            if (kept < size) {
+                cargo.removeItems(stack.getType(), stack.getData(), size - kept);
+            }
+        }
+        cargo.removeEmptyStacks();
     }
 
     static SectorEntityToken dropPods(LocationAPI location, String runId, CargoAPI cargo, Vector2f at) {

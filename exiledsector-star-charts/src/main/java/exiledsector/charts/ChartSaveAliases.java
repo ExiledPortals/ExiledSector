@@ -5,7 +5,6 @@ import exiledsector.charts.anomaly.breach.BreachCorePlugin;
 import exiledsector.charts.anomaly.breach.BreachSupplyBuff;
 import exiledsector.charts.anomaly.breach.BreachTerrainPlugin;
 import exiledsector.charts.anomaly.convoy.ConvoyIntel;
-import exiledsector.charts.anomaly.convoy.ConvoyRole;
 import exiledsector.charts.anomaly.convoy.ConvoyScript;
 import exiledsector.charts.anomaly.convoy.ConvoyState;
 import exiledsector.charts.anomaly.convoy.ConvoyStep;
@@ -52,7 +51,6 @@ public final class ChartSaveAliases {
             Map.entry("exiledSector.ConvoyScript", ConvoyScript.class),
             Map.entry("exiledSector.ConvoyState", ConvoyState.class),
             Map.entry("exiledSector.ConvoyPhase", ConvoyState.Phase.class),
-            Map.entry("exiledSector.ConvoyRole", ConvoyRole.class),
             Map.entry("exiledSector.ConvoyStep", ConvoyStep.class),
             Map.entry("exiledSector.ConvoyStepKind", ConvoyStep.Kind.class),
             Map.entry("exiledSector.ConvoyIntel", ConvoyIntel.class),

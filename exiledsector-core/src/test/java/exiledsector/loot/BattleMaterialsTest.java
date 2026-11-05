@@ -52,6 +52,15 @@ class BattleMaterialsTest {
     }
 
     @Test
+    void aFleetWhoseLootIsSpentDropsNoFeedstockOrMaterials() {
+        BattleMaterials spent = new BattleMaterials();
+        spent.record(200f, 3f, FleetLootRules.NONE);
+
+        assertEquals(0f, spent.feedstock(), 1e-6f);
+        assertTrue(spent.rollMaterials(new Random(1L)).isEmpty());
+    }
+
+    @Test
     void aFleetWhoseSourceRollsItsMaterialsStillCountsTowardsTheBattleButDropsNothingHere() {
         BattleMaterials battle = new BattleMaterials();
         battle.record(300f, 1f, new FleetLootRules(FleetLootRules.Rates.FULL, true, LootMultipliers.NONE, 1f));

@@ -1,11 +1,10 @@
 package exiledsector.charts.anomaly.convoy;
 
+import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 
 public final class ConvoyState {
 
@@ -18,7 +17,7 @@ public final class ConvoyState {
     }
 
     private final int index;
-    private final Map<ConvoyRole, String> fleetIds = new EnumMap<>(ConvoyRole.class);
+    private String fleetId;
     private final List<String> waypointIds;
     private final String destinationId;
     private final float entryX;
@@ -34,11 +33,11 @@ public final class ConvoyState {
     private Phase phase = Phase.WAITING;
     private boolean hostile;
     private float deliveredShare;
+    private CargoAPI cache;
     private boolean cacheTaken;
     private int dropsRolled;
     private SectorEntityToken entryToken;
     private SectorEntityToken exitToken;
-    private SectorEntityToken screenLead;
 
     public ConvoyState(int index, List<String> waypointIds, String destinationId, float entryX, float entryY, float exitX, float exitY, long cargoSeed) {
         this.index = index;
@@ -55,25 +54,12 @@ public final class ConvoyState {
         return index;
     }
 
-    public String fleetId(ConvoyRole role) {
-        return fleetIds.get(role);
+    public String fleetId() {
+        return fleetId;
     }
 
-    void setFleetId(ConvoyRole role, String fleetId) {
-        if (fleetId == null) {
-            fleetIds.remove(role);
-        } else {
-            fleetIds.put(role, fleetId);
-        }
-    }
-
-    public ConvoyRole roleOf(String fleetId) {
-        for (Map.Entry<ConvoyRole, String> entry : fleetIds.entrySet()) {
-            if (entry.getValue().equals(fleetId)) {
-                return entry.getKey();
-            }
-        }
-        return null;
+    void setFleetId(String fleetId) {
+        this.fleetId = fleetId;
     }
 
     public List<String> waypointIds() {
@@ -104,10 +90,9 @@ public final class ConvoyState {
         return cargoSeed;
     }
 
-    void placeTokens(SectorEntityToken entry, SectorEntityToken exit, SectorEntityToken lead) {
+    void placeTokens(SectorEntityToken entry, SectorEntityToken exit) {
         entryToken = entry;
         exitToken = exit;
-        screenLead = lead;
     }
 
     SectorEntityToken entryToken() {
@@ -116,10 +101,6 @@ public final class ConvoyState {
 
     SectorEntityToken exitToken() {
         return exitToken;
-    }
-
-    SectorEntityToken screenLead() {
-        return screenLead;
     }
 
     void loadCargo(float freighterPoints, float steps, float chanceMult) {
@@ -203,16 +184,22 @@ public final class ConvoyState {
         return deliveredShare;
     }
 
-    public boolean hasCache() {
-        return phase == Phase.DELIVERED && deliveredShare > 0f && !cacheTaken;
+    void storeCache(CargoAPI cargo) {
+        cache = cargo;
     }
 
-    boolean takeCache() {
+    public boolean hasCache() {
+        return phase == Phase.DELIVERED && cache != null && !cache.isEmpty() && !cacheTaken;
+    }
+
+    CargoAPI takeCache() {
         if (!hasCache()) {
-            return false;
+            return null;
         }
         cacheTaken = true;
-        return true;
+        CargoAPI taken = cache;
+        cache = null;
+        return taken;
     }
 
     public boolean isCacheTaken() {

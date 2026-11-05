@@ -27,6 +27,11 @@ public final class ChartAnomalyFleets {
                     : new Spec(factionId, fleetType, minCombatPoints, freighterPoints, tankerPoints, quality, officerLevelBonus, officerCountBonus,
                     averageSMods);
         }
+
+        public Spec withCargoShips(float addedFreighterPoints, float addedTankerPoints) {
+            return new Spec(factionId, fleetType, combatPoints, freighterPoints + Math.max(0f, addedFreighterPoints),
+                    tankerPoints + Math.max(0f, addedTankerPoints), quality, officerLevelBonus, officerCountBonus, averageSMods);
+        }
     }
 
     private ChartAnomalyFleets() {

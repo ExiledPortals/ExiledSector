@@ -2,12 +2,16 @@ package exiledsector.charts.anomaly.convoy;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetAssignment;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.loot.ChartLoot;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,10 +21,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
 class SupplyConvoyTest {
@@ -28,6 +32,23 @@ class SupplyConvoyTest {
     @AfterEach
     void tearDown() {
         ChartContentGenerator.resetForTests();
+        ChartLoot.clear();
+    }
+
+    private static JSONObject lootRow(String id, String scope, String mode, String amount) throws Exception {
+        return new JSONObject().put("id", id).put("drop_type", "weapon").put("scope", scope).put("group", "weapons1").put("mode", mode)
+                .put("amount", amount).put("min_tier", scope.isEmpty() ? "" : "1");
+    }
+
+    @Test
+    void theConvoyCarriesTheDropsOfAnOrdinaryChartFleet() throws Exception {
+        ChartLoot.register(new JSONArray().put(lootRow("weapons1", "", "", "")).put(lootRow("fleet_weapons", "fleet", "random", "1")), group -> true);
+        ConvoySystem convoySystem = new ConvoySystem(4);
+        convoySystem.engine.fleetPoints = 100;
+
+        SupplyConvoy.INSTANCE.generate(convoySystem.site(ChartGenContext.none()));
+
+        verify(convoySystem.fleet(convoySystem.script().convoys().get(0))).addDropRandom(any());
     }
 
     @Test
@@ -44,49 +65,39 @@ class SupplyConvoyTest {
     }
 
     @Test
-    void theConvoyGathersAtTheSystemEdgeWithFreightersAScreenAndACloseEscort() {
+    void theConvoyGathersAtTheSystemEdgeAsOneFleetOfFreightersAndWarships() {
         ConvoySystem convoySystem = new ConvoySystem(5);
 
         SupplyConvoy.INSTANCE.generate(convoySystem.site(ChartGenContext.none()));
 
         ConvoyScript script = convoySystem.script();
         ConvoyState convoy = script.convoys().get(0);
-        CampaignFleetAPI freighters = convoySystem.fleet(convoy, ConvoyRole.FREIGHTERS);
-        CampaignFleetAPI screen = convoySystem.fleet(convoy, ConvoyRole.SCREEN);
-        CampaignFleetAPI escort = convoySystem.fleet(convoy, ConvoyRole.ESCORT);
-        assertNotNull(freighters);
-        assertNotNull(screen);
-        assertNotNull(escort);
+        CampaignFleetAPI fleet = convoySystem.fleet(convoy);
+        assertNotNull(fleet);
+        assertEquals(1, convoySystem.engine.fleetParams.size());
+        assertTrue(convoySystem.engine.fleetParams.get(0).combatPts > ConvoyRules.FREIGHTER_GUARD_POINTS);
+        assertTrue(convoySystem.engine.fleetParams.get(0).freighterPts > 0f);
         assertEquals(List.of("pirates"), convoySystem.engine.dressedFactions);
-        for (CampaignFleetAPI fleet : List.of(freighters, screen, escort)) {
-            verify(fleet).setFaction("convoy", true);
-        }
-        assertTrue(freighters.getLocation().length() > 3000f + 1500f * 4, "the convoy starts beyond the outermost planet");
-        assertEquals(FleetAssignment.ORBIT_PASSIVE, convoySystem.assignments(freighters).get(0).assignment());
-        assertEquals(FleetAssignment.FOLLOW, convoySystem.assignments(escort).get(0).assignment());
-        assertSame(freighters, convoySystem.assignments(escort).get(0).target());
-        assertSame(convoy.screenLead(), convoySystem.assignments(screen).get(0).target());
-        assertTrue(freighters.hasTag(ChartIds.runTag(ConvoySystem.RUN_ID)));
+        verify(fleet).setFaction("convoy", true);
+        assertTrue(fleet.getLocation().length() > 3000f + 1500f * 4, "the convoy starts beyond the outermost planet");
+        assertEquals(FleetAssignment.ORBIT_PASSIVE, convoySystem.assignments(fleet).get(0).assignment());
+        assertSame(convoy.entryToken(), convoySystem.assignments(fleet).get(0).target());
+        assertTrue(fleet.hasTag(ChartIds.runTag(ConvoySystem.RUN_ID)));
     }
 
     @Test
-    void everyConvoyFleetIsNonHostileAndCarriesNoReputationImpact() {
+    void theConvoyIsNonHostileAndCarriesNoReputationImpact() {
         ConvoySystem convoySystem = new ConvoySystem(4);
 
         SupplyConvoy.INSTANCE.generate(convoySystem.site(ChartGenContext.none()));
 
-        ConvoyState convoy = convoySystem.script().convoys().get(0);
-        for (ConvoyRole role : ConvoyRole.values()) {
-            CampaignFleetAPI fleet = convoySystem.fleet(convoy, role);
-            assertTrue(fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_MAKE_NON_HOSTILE), role.key());
-            assertFalse(fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_MAKE_HOSTILE), role.key());
-            assertFalse(fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_IGNORE_PLAYER_COMMS), role.key());
-            assertFalse(fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE), role.key());
-            assertTrue(fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_NO_REP_IMPACT), role.key());
-        }
-        assertTrue(convoySystem.fleet(convoy, ConvoyRole.FREIGHTERS).getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_TRADE_FLEET));
-        assertFalse(convoySystem.fleet(convoy, ConvoyRole.FREIGHTERS).getMemoryWithoutUpdate().contains(ChartIds.START_DP_MEMORY_KEY),
-                "freighters carry the convoy's cargo, not ordinary fleet drops");
+        MemoryAPI memory = convoySystem.fleet(convoySystem.script().convoys().get(0)).getMemoryWithoutUpdate();
+        assertTrue(memory.getBoolean(MemFlags.MEMORY_KEY_MAKE_NON_HOSTILE));
+        assertFalse(memory.getBoolean(MemFlags.MEMORY_KEY_MAKE_HOSTILE));
+        assertFalse(memory.getBoolean(MemFlags.MEMORY_KEY_IGNORE_PLAYER_COMMS));
+        assertFalse(memory.getBoolean(MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE));
+        assertTrue(memory.getBoolean(MemFlags.MEMORY_KEY_NO_REP_IMPACT));
+        assertFalse(memory.getBoolean(MemFlags.MEMORY_KEY_TRADE_FLEET));
     }
 
     @Test
@@ -122,20 +133,18 @@ class SupplyConvoyTest {
     }
 
     @Test
-    void theEscortLineScalesTheEscortsAndCanRemoveThem() {
+    void theEscortLineScalesTheWarshipsAndCanStripThemToTheGuard() {
         ConvoySystem plain = new ConvoySystem(4);
         SupplyConvoy.INSTANCE.generate(plain.site(ChartGenContext.none()));
-        ConvoySystem doubled = new ConvoySystem(4);
-        SupplyConvoy.INSTANCE.generate(doubled.site(with(ChartModifier.CHART_CONVOY_ESCORT_PERCENT, 100f)));
+        ConvoySystem halved = new ConvoySystem(4);
+        SupplyConvoy.INSTANCE.generate(halved.site(with(ChartModifier.CHART_CONVOY_ESCORT_PERCENT, -50f)));
         ConvoySystem stripped = new ConvoySystem(4);
         SupplyConvoy.INSTANCE.generate(stripped.site(with(ChartModifier.CHART_CONVOY_ESCORT_PERCENT, -100f)));
 
-        assertEquals(2f * plain.engine.fleetParams.get(2).combatPts, doubled.engine.fleetParams.get(2).combatPts, 0.01f);
-        assertEquals(plain.engine.fleetParams.get(0).freighterPts, doubled.engine.fleetParams.get(0).freighterPts, 0.01f);
-        ConvoyState strippedConvoy = stripped.script().convoys().get(0);
-        assertNotNull(strippedConvoy.fleetId(ConvoyRole.FREIGHTERS));
-        assertNull(strippedConvoy.fleetId(ConvoyRole.SCREEN));
-        assertNull(strippedConvoy.fleetId(ConvoyRole.ESCORT));
+        assertEquals(0.5f * plain.engine.fleetParams.get(0).combatPts, halved.engine.fleetParams.get(0).combatPts, 0.01f);
+        assertEquals(plain.engine.fleetParams.get(0).freighterPts, halved.engine.fleetParams.get(0).freighterPts, 0.01f);
+        assertEquals(ConvoyRules.FREIGHTER_GUARD_POINTS, stripped.engine.fleetParams.get(0).combatPts, 0.01f);
+        assertNotNull(stripped.script().convoys().get(0).fleetId());
     }
 
     @Test

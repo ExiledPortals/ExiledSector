@@ -15,7 +15,7 @@ import java.util.List;
 
 final class ConvoyTerrain {
 
-    static final String BURN_MOD_ID = "exiledSector_convoy_formation";
+    static final String BURN_MOD_ID = "exiledSector_convoy_terrain";
 
     private ConvoyTerrain() {
     }
@@ -44,10 +44,6 @@ final class ConvoyTerrain {
         return false;
     }
 
-    static float formationMult(float freighterBurn, float slowestEscortBurn) {
-        return freighterBurn > 0f && slowestEscortBurn > 0f && slowestEscortBurn < freighterBurn ? slowestEscortBurn / freighterBurn : 1f;
-    }
-
     static void apply(CampaignFleetAPI fleet, float burnMult) {
         StatBonus burn = fleet.getStats() == null ? null : fleet.getStats().getFleetwideMaxBurnMod();
         if (burn == null) {
@@ -58,9 +54,5 @@ final class ConvoyTerrain {
         } else {
             burn.modifyMult(BURN_MOD_ID, burnMult);
         }
-    }
-
-    static float unmodifiedBurn(CampaignFleetAPI fleet) {
-        return fleet.getFleetData() == null ? 0f : fleet.getFleetData().getMinBurnLevelUnmodified();
     }
 }

@@ -81,11 +81,24 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         }
         float difficultyMultiplier = LootSources.difficultyMultiplier(engagement.difficulty());
         float defeatedDp = engagement.enemyDeploymentPointsDefeated();
-        BattleEngagement battleEngagement = new BattleEngagement(engagementResult.getBattle(), difficultyMultiplier, defeatedDp,
-                engagement.enemyLosses());
+        record(pendingLoot, new BattleEngagement(engagementResult.getBattle(), difficultyMultiplier, defeatedDp, engagement.enemyLosses()));
+    }
+
+    private static void record(Pending pendingLoot, BattleEngagement battleEngagement) {
         LootSources.all().forEach(source -> source.recordEngagement(pendingLoot.battleLoot, battleEngagement));
         battleEngagement.lostEnemiesBySourceFleet().forEach((sourceFleet, members) -> pendingLoot.materials.record(
-                BattleEngagement.deploymentPoints(members), difficultyMultiplier, LootSources.fleetLootRules(sourceFleet)));
+                BattleEngagement.deploymentPoints(members), battleEngagement.difficultyMultiplier(), LootSources.fleetLootRules(sourceFleet)));
+    }
+
+    public static void addUnfoughtBattleLoot(CargoAPI loot, CampaignFleetAPI fleet, Random random) {
+        if (loot == null || fleet == null || fleet.getFleetData() == null) {
+            return;
+        }
+        Pending pendingLoot = new Pending(new BattleLoot(random, new Random(random.nextLong())));
+        pendingLoot.battleLoot.setPlayerWon(true);
+        pendingLoot.battleLoot.setEncounterSalvage(EncounterSalvage.NO_WRECKS);
+        record(pendingLoot, BattleEngagement.unfought(fleet, fleet.getFleetData().getMembersListCopy()));
+        addEncounterLoot(pendingLoot, loot, random);
     }
 
     @Override
@@ -99,14 +112,18 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         Pending pendingLoot = encounterPlugin == null ? null : pendingByBattle.remove(encounterPlugin.getBattle());
         if (pendingLoot != null && loot != null) {
             pendingLoot.battleLoot.setEncounterSalvage(EncounterSalvage.of(encounterPlugin));
-            LootSources.all().forEach(source -> source.addEncounterLoot(pendingLoot.battleLoot, loot));
-            int wholeFeedstock = ItemDrops.wholeFeedstock(pendingLoot.materials.feedstock(), lootRandom);
-            if (wholeFeedstock > 0) {
-                MaterialItems.add(loot, ItemDisassembly.FEEDSTOCK_ITEM_ID, wholeFeedstock);
-            }
-            pendingLoot.materials.rollMaterials(lootRandom).forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
+            addEncounterLoot(pendingLoot, loot, lootRandom);
         }
         pendingByBattle.keySet().removeIf(BattleAPI::isDone);
+    }
+
+    private static void addEncounterLoot(Pending pendingLoot, CargoAPI loot, Random random) {
+        LootSources.all().forEach(source -> source.addEncounterLoot(pendingLoot.battleLoot, loot));
+        int wholeFeedstock = ItemDrops.wholeFeedstock(pendingLoot.materials.feedstock(), random);
+        if (wholeFeedstock > 0) {
+            MaterialItems.add(loot, ItemDisassembly.FEEDSTOCK_ITEM_ID, wholeFeedstock);
+        }
+        pendingLoot.materials.rollMaterials(random).forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
     }
 
     @Override

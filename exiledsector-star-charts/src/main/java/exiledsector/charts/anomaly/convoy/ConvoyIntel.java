@@ -141,14 +141,14 @@ public class ConvoyIntel extends BaseIntelPlugin implements ChartRunBound {
     }
 
     float daysToDestination(ConvoyState convoy, CampaignClockAPI clock) {
-        CampaignFleetAPI freighters = script.fleet(convoy, ConvoyRole.FREIGHTERS);
+        CampaignFleetAPI fleet = script.fleet(convoy);
         SectorEntityToken destination = script.entity(convoy.destinationId());
-        if (freighters == null || destination == null) {
+        if (fleet == null || destination == null) {
             return 0f;
         }
         List<Vector2f> stops = new ArrayList<>();
         List<String> waypointIds = convoy.waypointIds();
-        int next = nextWaypoint(freighters, waypointIds);
+        int next = nextWaypoint(fleet, waypointIds);
         for (int i = next; i < waypointIds.size(); i++) {
             SectorEntityToken waypoint = script.entity(waypointIds.get(i));
             if (waypoint != null) {
@@ -157,12 +157,12 @@ public class ConvoyIntel extends BaseIntelPlugin implements ChartRunBound {
         }
         int stopsLeft = stops.size();
         stops.add(destination.getLocation());
-        float speed = Math.max(1f, freighters.getTravelSpeed());
-        return ConvoyRoute.pathLength(freighters.getLocation(), stops) / speed / clock.getSecondsPerDay() + stopsLeft * ConvoyRules.STOP_DAYS;
+        float speed = Math.max(1f, fleet.getTravelSpeed());
+        return ConvoyRoute.pathLength(fleet.getLocation(), stops) / speed / clock.getSecondsPerDay() + stopsLeft * ConvoyRules.STOP_DAYS;
     }
 
-    private int nextWaypoint(CampaignFleetAPI freighters, List<String> waypointIds) {
-        FleetAssignmentDataAPI current = freighters.getCurrentAssignment();
+    private int nextWaypoint(CampaignFleetAPI fleet, List<String> waypointIds) {
+        FleetAssignmentDataAPI current = fleet.getCurrentAssignment();
         SectorEntityToken target = current == null ? null : current.getTarget();
         int index = target == null ? -1 : waypointIds.indexOf(target.getId());
         return index < 0 ? waypointIds.size() : index;
@@ -186,8 +186,8 @@ public class ConvoyIntel extends BaseIntelPlugin implements ChartRunBound {
         if (convoy == null || convoy.phase() == ConvoyState.Phase.LOST) {
             return null;
         }
-        CampaignFleetAPI freighters = convoy.phase() == ConvoyState.Phase.DELIVERED ? null : script.fleet(convoy, ConvoyRole.FREIGHTERS);
-        return freighters != null ? freighters : script.entity(convoy.destinationId());
+        CampaignFleetAPI fleet = convoy.phase() == ConvoyState.Phase.DELIVERED ? null : script.fleet(convoy);
+        return fleet != null ? fleet : script.entity(convoy.destinationId());
     }
 
     @Override

@@ -99,7 +99,7 @@ public final class ChartVanillaLoot {
         return extraDrop;
     }
 
-    static int stochasticRound(float expected, Random random) {
+    public static int stochasticRound(float expected, Random random) {
         if (!(expected > 0f)) {
             return 0;
         }

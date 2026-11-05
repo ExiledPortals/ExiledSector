@@ -30,7 +30,7 @@ class ConvoyPersistenceTest {
 
     @Test
     void everyPersistedConvoyClassHasAStableAlias() {
-        for (Class<?> type : List.of(ConvoyScript.class, ConvoyState.class, ConvoyState.Phase.class, ConvoyRole.class, ConvoyStep.class,
+        for (Class<?> type : List.of(ConvoyScript.class, ConvoyState.class, ConvoyState.Phase.class, ConvoyStep.class,
                 ConvoyStep.Kind.class, ConvoyIntel.class)) {
             assertTrue(ChartSaveAliasesView.aliased(type), type.getName());
         }

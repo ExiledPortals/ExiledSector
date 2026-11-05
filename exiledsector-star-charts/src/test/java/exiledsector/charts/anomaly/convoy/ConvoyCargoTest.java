@@ -2,6 +2,7 @@ package exiledsector.charts.anomaly.convoy;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
+import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -97,7 +99,7 @@ class ConvoyCargoTest {
     }
 
     @Test
-    void attackedFreightersSkipTheirRemainingStopsAndRunForTheDestination() {
+    void anAttackedConvoySkipsItsRemainingStopsAndRunsForTheDestination() {
         ConvoySystem convoySystem = new ConvoySystem(5);
         SupplyConvoy.INSTANCE.generate(convoySystem.site(ChartGenContext.none()));
         ConvoyState convoy = convoySystem.script().convoys().get(0);
@@ -106,9 +108,32 @@ class ConvoyCargoTest {
         convoySystem.script().turnHostile(convoy);
 
         SectorEntityToken destination = convoySystem.entities.get(convoy.destinationId());
-        List<FakeChartContentEngine.Assignment> orders = convoySystem.assignments(convoySystem.fleet(convoy, ConvoyRole.FREIGHTERS));
+        List<FakeChartContentEngine.Assignment> orders = convoySystem.assignments(convoySystem.fleet(convoy));
         assertEquals(List.of(new FakeChartContentEngine.Assignment(FleetAssignment.GO_TO_LOCATION, destination),
                 new FakeChartContentEngine.Assignment(FleetAssignment.ORBIT_PASSIVE, destination)), orders);
+    }
+
+    @Test
+    void theDeliveredCacheKeepsItsShareOfEveryStack() {
+        CargoAPI cargo = mock(CargoAPI.class);
+        CargoStackAPI supplies = stack(CargoAPI.CargoItemType.RESOURCES, "supplies", 10f);
+        CargoStackAPI item = stack(CargoAPI.CargoItemType.SPECIAL, "item", 5f);
+        when(cargo.getStacksCopy()).thenReturn(List.of(supplies, item));
+
+        ConvoyCargo.keepShare(cargo, ConvoyRules.DELIVERED_SHARE, new Random(1L));
+
+        verify(cargo).removeItems(CargoAPI.CargoItemType.RESOURCES, "supplies", 2f);
+        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, "item", 1f);
+        verify(cargo).removeEmptyStacks();
+        assertEquals(0.8f, ConvoyRules.DELIVERED_SHARE, 0.001f);
+    }
+
+    private static CargoStackAPI stack(CargoAPI.CargoItemType type, Object data, float size) {
+        CargoStackAPI stack = mock(CargoStackAPI.class);
+        when(stack.getType()).thenReturn(type);
+        when(stack.getData()).thenReturn(data);
+        when(stack.getSize()).thenReturn(size);
+        return stack;
     }
 
     @Test

@@ -1,6 +1,5 @@
 package exiledsector.charts.anomaly.convoy;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD.RaidDangerLevel;
@@ -9,8 +8,6 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.ChartRaidObjective;
-import exiledsector.charts.run.ChartRun;
-import exiledsector.charts.run.ChartRuns;
 import exiledsector.ui.VanillaText;
 
 import java.util.Random;
@@ -44,16 +41,6 @@ public class ConvoyCacheObjective extends ChartRaidObjective {
     @Override
     protected CargoAPI take(Random random) {
         ConvoyState convoy = script.convoy(convoyIndex);
-        ChartRun run = ChartRuns.live(script.runId());
-        if (convoy == null || run == null || !convoy.hasCache()) {
-            return null;
-        }
-        CargoAPI cargo = ConvoyCargo.roll(Global.getSector(), run, convoy, cacheShare(convoy), random);
-        convoy.takeCache();
-        return cargo;
-    }
-
-    static float cacheShare(ConvoyState convoy) {
-        return convoy.deliveredShare();
+        return convoy == null ? null : convoy.takeCache();
     }
 }

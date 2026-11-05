@@ -5,11 +5,13 @@ public record FleetLootRules(Rates rates, boolean sourceRollsMaterials, LootMult
     public enum Rates {
         REGULAR,
         FULL,
-        FEEDSTOCK_ONLY
+        FEEDSTOCK_ONLY,
+        NONE
     }
 
     public static final FleetLootRules REGULAR = new FleetLootRules(Rates.REGULAR, false, LootMultipliers.NONE, 1f);
     public static final FleetLootRules FEEDSTOCK_ONLY = new FleetLootRules(Rates.FEEDSTOCK_ONLY, false, LootMultipliers.NONE, 1f);
+    public static final FleetLootRules NONE = new FleetLootRules(Rates.NONE, false, LootMultipliers.NONE, 1f);
 
     public FleetLootRules {
         rates = rates == null ? Rates.REGULAR : rates;
@@ -25,11 +27,15 @@ public record FleetLootRules(Rates rates, boolean sourceRollsMaterials, LootMult
         return switch (rates) {
             case FULL -> 1f;
             case REGULAR -> rate.regularShare();
-            case FEEDSTOCK_ONLY -> 0f;
+            case FEEDSTOCK_ONLY, NONE -> 0f;
         };
     }
 
     public boolean feedstockOnly() {
         return rates == Rates.FEEDSTOCK_ONLY;
+    }
+
+    public boolean paysNothing() {
+        return rates == Rates.NONE;
     }
 }

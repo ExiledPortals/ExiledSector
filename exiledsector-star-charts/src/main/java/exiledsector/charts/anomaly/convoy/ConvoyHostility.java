@@ -16,26 +16,23 @@ final class ConvoyHostility {
     private ConvoyHostility() {
     }
 
-    static void makePeaceful(CampaignFleetAPI fleet, ConvoyRole role) {
+    static void makePeaceful(CampaignFleetAPI fleet) {
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
         HOSTILE_FLAGS.forEach(memory::unset);
         memory.set(MemFlags.MEMORY_KEY_MAKE_NON_HOSTILE, true);
         UNREPUTABLE_FLAGS.forEach(flag -> memory.set(flag, true));
-        if (role == ConvoyRole.FREIGHTERS && fleet.hasAbility(Abilities.SUSTAINED_BURN)) {
+        if (fleet.hasAbility(Abilities.SUSTAINED_BURN)) {
             fleet.removeAbility(Abilities.SUSTAINED_BURN);
         }
     }
 
-    static void makeHostile(CampaignFleetAPI fleet, ConvoyRole role) {
+    static void makeHostile(CampaignFleetAPI fleet) {
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
         memory.unset(MemFlags.MEMORY_KEY_MAKE_NON_HOSTILE);
         memory.set(MemFlags.MEMORY_KEY_MAKE_HOSTILE, true);
         memory.set(MemFlags.MEMORY_KEY_SAW_PLAYER_WITH_TRANSPONDER_ON, true);
         memory.set(MemFlags.MEMORY_KEY_IGNORE_PLAYER_COMMS, true);
-        if (role != ConvoyRole.FREIGHTERS) {
-            memory.set(MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE, true);
-            memory.set(MemFlags.MEMORY_KEY_ALLOW_LONG_PURSUIT, true);
-        } else if (!fleet.hasAbility(Abilities.SUSTAINED_BURN)) {
+        if (!fleet.hasAbility(Abilities.SUSTAINED_BURN)) {
             fleet.addAbility(Abilities.SUSTAINED_BURN);
         }
         UNREPUTABLE_FLAGS.forEach(flag -> memory.set(flag, true));
