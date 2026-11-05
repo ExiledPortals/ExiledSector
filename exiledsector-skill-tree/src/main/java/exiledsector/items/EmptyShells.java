@@ -54,8 +54,7 @@ public final class EmptyShells {
     }
 
     private static boolean canBeEmptyShell(SkillNode node) {
-        SkillTier tier = node.getType().getTier();
-        return tier == SkillTier.SMALL || tier == SkillTier.NOTABLE || tier == SkillTier.KEYSTONE;
+        return node.getType().getTier() == SkillTier.SMALL;
     }
 
     public static boolean holdsEmptyShell(ShipSkillData data, String socketId) {

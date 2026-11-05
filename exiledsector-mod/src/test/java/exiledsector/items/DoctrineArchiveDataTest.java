@@ -186,7 +186,7 @@ class DoctrineArchiveDataTest {
                         .put("max_lines", "2"))
                 .put(row("volume_chip", "SHUFFLE", "small")));
 
-        assertTrue(errors.contains("doc_a has radius \"huge\"; expected one of small, medium, large"), errors.toString());
+        assertTrue(errors.contains("doc_a has radius \"huge\"; expected one of small, medium, large, extra_large"), errors.toString());
         assertTrue(errors.contains("doc_a lists keystone_a as a NOTABLE replacement, but it is a KEYSTONE node"), errors.toString());
         assertTrue(errors.contains("doc_a lists missing_type, which is not a skill type"), errors.toString());
         assertTrue(errors.contains("doc_a rewrites nodes, so it lists no modifiers"), errors.toString());

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -29,6 +30,7 @@ class RootConduitsTest {
     private MockSector mockSector;
     private SkillNode root;
     private SkillNode socket;
+    private SkillNode shortcut;
     private final List<SkillNode> chain = new ArrayList<>();
 
     @BeforeEach
@@ -45,8 +47,8 @@ class RootConduitsTest {
             chain.add(link);
             previous = link.getId();
         }
-        socket = node("socket", "socket_type", List.of(previous));
-        node("shortcut_bait", "small_type", List.of("link_2"));
+        shortcut = node("shortcut", "small_type", List.of(root.getId()));
+        socket = node("socket", "socket_type", List.of(previous, shortcut.getId()));
         ItemDefinitions.register(new JSONArray().put(ItemFixtures.subroutineRow("conduit", SubroutineKind.ROOT_CONDUIT)));
     }
 
@@ -63,18 +65,23 @@ class RootConduitsTest {
         return node;
     }
 
-    private ShipSkillData shipWithConduit(Item conduit) {
+    private ShipSkillData shipWithConduit(Item conduit, List<SkillNode> route) {
         ShipSkillData data = new ShipSkillData();
         ShipTrees.chooseStartingRoot(data, root);
+        route.forEach(link -> ShipTrees.allocate(data, link, 0));
         ShipTrees.allocate(data, socket, 0);
         data.socketItem(socket.getId(), conduit.id());
         return data;
     }
 
+    private static Subroutine rolledConduit() {
+        return (Subroutine) ItemStore.get().add(ItemData.rolled(ItemDefinitions.get("conduit"), 9L));
+    }
+
     @Test
-    void aConduitIsBornCorruptedWithOneFrozenAffinityAndCountsTheShortestPathToTheRoot() {
-        Subroutine conduit = (Subroutine) ItemStore.get().add(ItemData.rolled(ItemDefinitions.get("conduit"), 9L));
-        ShipSkillData data = shipWithConduit(conduit);
+    void aConduitIsBornCorruptedWithOneFrozenAffinityAndCountsTheAllocatedRouteNotTheShortestOne() {
+        Subroutine conduit = rolledConduit();
+        ShipSkillData data = shipWithConduit(conduit, chain);
 
         RootConduits.Conduit found = RootConduits.of(data);
 
@@ -82,21 +89,33 @@ class RootConduitsTest {
         assertEquals(conduit.conduitAffinity(), found.affinity());
         assertEquals(8, found.path().size());
         assertEquals(6, found.nodesBetween());
-        assertEquals(5f, found.affinityGranted(), 1e-4f);
+        assertEquals(30f, found.affinityGranted(), 1e-4f);
         assertTrue(found.connectorKeys().contains(SkillTree.curveKey("link_5", "socket")));
+        assertFalse(found.path().contains(shortcut.getId()));
         assertEquals(Set.copyOf(found.path()).size(), found.path().size());
         assertTrue(found.path() == RootConduits.of(data).path());
     }
 
     @Test
     void theSocketGrantsTheConduitAffinityAndAShipWithoutOneGetsNothing() {
-        Subroutine conduit = (Subroutine) ItemStore.get().add(ItemData.rolled(ItemDefinitions.get("conduit"), 9L));
-        ShipSkillData data = shipWithConduit(conduit);
+        Subroutine conduit = rolledConduit();
+        ShipSkillData data = shipWithConduit(conduit, chain);
 
         float granted = AllocatedSkillEffects.treeEffects(data, AllocatedNode.of(data), HullSize.CRUISER).stream()
                 .filter(effect -> effect.effect() == conduit.conduitAffinity()).map(SkillTypeEffect::magnitude).reduce(0f, Float::sum);
 
-        assertEquals(5f, granted, 1e-4f);
+        assertEquals(30f, granted, 1e-4f);
         assertNull(RootConduits.of(new ShipSkillData()));
+    }
+
+    @Test
+    void theRouteFollowsTheAllocationAndASocketItDoesNotReachGrantsNothing() {
+        RootConduits.Conduit viaShortcut = RootConduits.of(shipWithConduit(rolledConduit(), List.of(shortcut)));
+        RootConduits.Conduit unreached = RootConduits.of(shipWithConduit(rolledConduit(), chain.subList(0, 3)));
+
+        assertEquals(List.of("socket", "shortcut", "root"), viaShortcut.path());
+        assertEquals(5f, viaShortcut.affinityGranted(), 1e-4f);
+        assertEquals(List.of(), unreached.path());
+        assertEquals(0f, unreached.affinityGranted(), 1e-4f);
     }
 }

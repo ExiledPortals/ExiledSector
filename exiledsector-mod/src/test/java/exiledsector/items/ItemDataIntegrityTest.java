@@ -287,7 +287,7 @@ class ItemDataIntegrityTest {
 
         List<String> errors = errors(modifiersWithUniqueLines(), subroutines, validImplicits());
 
-        assertTrue(errors.contains("huge has radius \"huge\"; expected one of small, medium, large, or blank for none"), errors.toString());
+        assertTrue(errors.contains("huge has radius \"huge\"; expected one of small, medium, large, extra_large, or blank for none"), errors.toString());
         assertTrue(errors.contains("cache_ring has a radius, but only UNIQUE subroutines read it"), errors.toString());
         assertTrue(errors.stream().noneMatch(error -> error.startsWith("ringed")), errors.toString());
     }

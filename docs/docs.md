@@ -566,17 +566,18 @@ socket one.
 ### Empty shells
 
 A subroutine whose lines hold `EVERY_AFFINITY_FLAT_PER_EMPTY_SHELL_NODE` (Empty Shell Axion) is born corrupted and grants
-every small, notable and keystone node in its radius through the socket grant links (`EmptyShells.radiusNodeIds`,
+every small node in its radius (never notables or keystones) through the socket grant links (`EmptyShells.radiusNodeIds`,
 via `NodeGrantLinks`). `NodeAllocator.grantSocketedNodes` turns paid nodes it covers into free ones, refunding
-their OP and items, and `AllocatedSkillEffects` drops an Empty Shell node's own effects and gives the socket +1 (the line's
-value) to every affinity per Empty Shell node. Unsocketing releases the granted nodes like a Modspec Cache's.
+their OP and items, and `AllocatedSkillEffects` drops an Empty Shell node's own effects and gives the socket +5 (the line's
+value) to every affinity per Empty Shell node. The Axion uses the `extra_large` radius. Unsocketing releases the granted nodes like a Modspec Cache's.
 
 ### Root Conduit
 
 A `ROOT_CONDUIT` subroutine is born corrupted and freezes one affinity from its seed (`Subroutine.conduitAffinity`).
-`RootConduits` finds the shortest path from its socket to the starting root through the whole tree graph, wormhole
-links included and allocation ignored, caches it per ship until the socket, root or tree layout changes, and the
-socket grants +5 of that affinity for every 5 nodes between the two ends. The connector renderer draws the path's
+`RootConduits` follows the allocated route from the starting root to its socket (allocated nodes only, allocated
+wormhole links included; the shortest one if several exist), caches it per ship until the allocation, socket, root or
+tree layout changes, and the socket grants +5 of that affinity for every node between the two ends. A socket the
+allocated route doesn't reach grants nothing. The connector renderer draws the path's
 connectors with the `CONDUIT` look in that affinity's colour (`AffinityColours`). It is player-only.
 
 ### Gated subroutines
@@ -585,7 +586,8 @@ A subroutine line backed by `RadiusGate` (`GATES_RADIUS_*`, Phoenix Ash Archive)
 radius behind a `CombatGate`: below 50% hull, ship system active or phased. `SkillTreeEffectSource` gives those nodes
 a gated contribution holding only their `supportsTemporaryGating` effects, times the line's value; vanilla hull mod
 nodes and other effects are dropped. Gated contributions stay out of permanent totals, affinity and diminishing
-returns, and `ShipCombatPlan` applies them while the gate holds and zeroes them when it stops.
+returns, and `ShipCombatPlan` applies them while the gate holds and zeroes them when it stops. Both gated uniques
+(Phoenix Ash Archive, P-Space Lattice) have rarity 0 in `subroutines.csv`, so they don't drop until reworked.
 
 </details>
 

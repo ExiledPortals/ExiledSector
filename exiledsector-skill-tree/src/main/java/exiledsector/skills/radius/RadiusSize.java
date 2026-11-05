@@ -5,7 +5,8 @@ import java.util.Arrays;
 public enum RadiusSize {
     SMALL("small"),
     MEDIUM("medium"),
-    LARGE("large");
+    LARGE("large"),
+    EXTRA_LARGE("extra_large");
 
     private final String dataKey;
 

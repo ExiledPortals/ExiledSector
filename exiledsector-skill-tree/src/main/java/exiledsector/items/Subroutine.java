@@ -305,8 +305,8 @@ public final class Subroutine extends Item implements NodeSocketable {
     @Override
     public List<StyledText> kindLines() {
         if (subroutineKind() == SubroutineKind.ROOT_CONDUIT) {
-            return List.of(Translation.msg("socketable.rootConduit.line").arg("value", Math.round(RootConduits.AFFINITY_PER_STEP))
-                    .arg("affinity", Translation.text("affinity." + conduitAffinity().name() + ".name")).arg("nodes", RootConduits.NODES_PER_STEP).styled());
+            return List.of(Translation.msg("socketable.rootConduit.line").arg("value", Math.round(RootConduits.AFFINITY_PER_NODE))
+                    .arg("affinity", Translation.text("affinity." + conduitAffinity().name() + ".name")).styled());
         }
         if (subroutineKind() == SubroutineKind.UNIQUE) {
             RadiusSize radiusSize = UniqueSubroutineRadii.sizeOf(definitionId());

@@ -49,7 +49,7 @@ class SubroutineScalingTest {
     void setUp() throws Exception {
         mockSector = new MockSector();
         SkillTree.clear();
-        NodeRadii.register(new JSONObject("{ \"small\": 150, \"medium\": 250, \"large\": 350 }"));
+        NodeRadii.register(new JSONObject("{ \"small\": 150, \"medium\": 250, \"large\": 350, \"extra_large\": 450 }"));
         SkillTree.registerType(type("socket_type", SkillTier.SOCKET, DefenseSkillEffect.HULL_PERCENT, 2f));
         SkillTree.registerType(type("mixed", SkillTier.SMALL, ShieldSkillEffect.SHIELD_ABSORPTION_PERCENT, -10f));
         SkillTree.registerType(type("booster", SkillTier.SMALL, SpecialSkillEffect.SOCKETED_SUBROUTINE_EFFECT_PERCENT, 100f));

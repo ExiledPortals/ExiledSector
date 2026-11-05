@@ -35,7 +35,7 @@ class SkillTreeRadiiTest {
     @BeforeEach
     void setUp() throws Exception {
         SkillTree.clearNodes();
-        NodeRadii.register(new JSONObject("{ \"small\": 150, \"medium\": 250, \"large\": 350 }"));
+        NodeRadii.register(new JSONObject("{ \"small\": 150, \"medium\": 250, \"large\": 350, \"extra_large\": 450 }"));
     }
 
     @AfterEach
@@ -71,7 +71,7 @@ class SkillTreeRadiiTest {
         SkillTree.register(node("b", 200f, 0f));
         assertEquals(Set.of(), SkillTree.radii().nodeIdsWithin("a", RadiusSize.SMALL));
 
-        NodeRadii.register(new JSONObject("{ \"small\": 200, \"medium\": 250, \"large\": 350 }"));
+        NodeRadii.register(new JSONObject("{ \"small\": 200, \"medium\": 250, \"large\": 350, \"extra_large\": 450 }"));
 
         assertEquals(Set.of("b"), SkillTree.radii().nodeIdsWithin("a", RadiusSize.SMALL));
     }

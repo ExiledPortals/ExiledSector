@@ -34,7 +34,7 @@ class NodeRadiiTest {
 
     @Test
     void registerReadsEverySizeFromData() throws Exception {
-        NodeRadii.register(new JSONObject("{ \"small\": 1, \"medium\": 2.5, \"large\": 4 }"));
+        NodeRadii.register(new JSONObject("{ \"small\": 1, \"medium\": 2.5, \"large\": 4, \"extra_large\": 5.5 }"));
 
         assertEquals(1f, NodeRadii.distance(RadiusSize.SMALL));
         assertEquals(2.5f, NodeRadii.distance(RadiusSize.MEDIUM));
@@ -55,7 +55,7 @@ class NodeRadiiTest {
 
     @Test
     void aFileThatFailsToLoadLeavesEveryRadiusEmpty() throws Exception {
-        NodeRadii.register(new JSONObject("{ \"small\": 1, \"medium\": 2, \"large\": 3 }"));
+        NodeRadii.register(new JSONObject("{ \"small\": 1, \"medium\": 2, \"large\": 3, \"extra_large\": 4 }"));
         SettingsAPI settings = mock(SettingsAPI.class);
         when(settings.loadJSON(NodeRadii.DATA_PATH)).thenThrow(new JSONException("broken"));
         try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {

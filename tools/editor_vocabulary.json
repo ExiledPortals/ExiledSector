@@ -531,7 +531,7 @@
   "subroutineKinds": ["MODSPEC_CACHE", "DOCTRINE", "BYPASS", "UNIQUE", "ROOT_CONDUIT"],
   "modifierScopes": ["subroutine", "unique_subroutine", "doctrine", "hull_item", "star_chart", "wormhole_anchor"],
   "doctrineBehaviours": ["REWRITE", "AUGMENT"],
-  "radiusSizes": ["small", "medium", "large"],
+  "radiusSizes": ["small", "medium", "large", "extra_large"],
   "uniqueSourceKinds": ["faction", "site"],
   "hullItemMechanics": ["one_of"],
   "hullItemCrew": ["crewed", "automated"],

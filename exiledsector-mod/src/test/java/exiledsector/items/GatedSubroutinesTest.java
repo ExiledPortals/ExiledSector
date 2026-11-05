@@ -44,7 +44,7 @@ class GatedSubroutinesTest {
     void setUp() throws Exception {
         mockSector = new MockSector();
         SkillTree.clear();
-        NodeRadii.register(new JSONObject("{ \"small\": 150, \"medium\": 250, \"large\": 350 }"));
+        NodeRadii.register(new JSONObject("{ \"small\": 150, \"medium\": 250, \"large\": 350, \"extra_large\": 450 }"));
         SkillTree.registerType(new SkillType.Builder("socket_type", "Socket", "a.png", SkillTier.SOCKET).build());
         SkillTree.registerType(new SkillType.Builder("mixed", "Mixed", "a.png", SkillTier.SMALL)
                 .effects(List.of(new SkillTypeEffect(ShieldSkillEffect.SHIELD_ABSORPTION_PERCENT, -10f), new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 5f)))

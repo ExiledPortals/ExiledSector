@@ -59,7 +59,7 @@ class DoctrineOverridesTest {
     void setUp() throws Exception {
         mockSector = new MockSector();
         SkillTree.clear();
-        NodeRadii.register(new JSONObject("{ \"small\": 150, \"medium\": 250, \"large\": 350 }"));
+        NodeRadii.register(new JSONObject("{ \"small\": 150, \"medium\": 250, \"large\": 350, \"extra_large\": 450 }"));
         registerType(type("original", SkillTier.NOTABLE, "HULL_MULT", 5f).build());
         registerType(type("original_two", SkillTier.NOTABLE, "HULL_MULT", 6f).build());
         registerType(type("small_hull", SkillTier.SMALL, "HULL_MULT", 2f).build());
