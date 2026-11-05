@@ -1,13 +1,15 @@
 package exiledsector.ui.socket;
 
+import java.util.function.Consumer;
+
 public interface AdvancedSearchRoom {
 
-    FreeArea open();
+    void open(Consumer<FreeArea> ready);
 
     default void closed() {
     }
 
     static AdvancedSearchRoom fixed(FreeArea area) {
-        return () -> area;
+        return ready -> ready.accept(area);
     }
 }

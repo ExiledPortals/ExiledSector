@@ -4,6 +4,7 @@ import com.fs.starfarer.api.ui.CustomPanelAPI;
 import exiledsector.items.Item;
 import exiledsector.ui.SkillTreeSounds;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public final class CraftingBench {
@@ -93,38 +94,35 @@ public final class CraftingBench {
             return;
         }
         sideBySide = BenchSideBySide.in(area);
-        BenchSideBySide.Placed placed = sideBySide.placed(false);
-        benchPanel = CraftingBenchPanel.open(hostPanel, new SocketPanelPlacement(placed.benchLeft(), placed.benchTop(), placed.benchWidth(),
-                placed.benchHeight(), area.instantly()), false, benchMode, benchListener());
-        openPicker(new SocketPanelPlacement(placed.storageLeft(), sideBySide.groupTop(), ItemStoragePanel.COMPACT_WIDTH, sideBySide.groupHeight(),
-                area.instantly()).withAdvancedSearchRoom(advancedSearchRoom()));
+        float benchLeft = sideBySide.fullBenchLeft();
+        benchPanel = CraftingBenchPanel.open(hostPanel, new SocketPanelPlacement(benchLeft, sideBySide.groupTop(), sideBySide.fullBenchWidth(),
+                sideBySide.groupHeight(), area.instantly()), false, benchMode, benchListener());
+        openPicker(new SocketPanelPlacement(BenchSideBySide.storageLeft(benchLeft), sideBySide.groupTop(), ItemStoragePanel.COMPACT_WIDTH,
+                sideBySide.groupHeight(), area.instantly()).withAdvancedSearchRoom(advancedSearchRoom()));
     }
 
     private AdvancedSearchRoom advancedSearchRoom() {
         return new AdvancedSearchRoom() {
             @Override
-            public FreeArea open() {
-                arrange(true);
-                return sideBySide.searchArea();
+            public void open(Consumer<FreeArea> ready) {
+                if (!closing && benchPanel != null) {
+                    CraftingBenchPanel contracting = benchPanel;
+                    contracting.contract(true, () -> ready.accept(sideBySide.searchArea(contracting.panelLeft)));
+                }
             }
 
             @Override
             public void closed() {
-                arrange(false);
+                if (!closing && benchPanel != null) {
+                    benchPanel.contract(false, null);
+                }
             }
         };
     }
 
-    private void arrange(boolean searchOpen) {
-        if (closing) {
-            return;
-        }
-        BenchSideBySide.Placed placed = sideBySide.placed(searchOpen);
-        if (benchPanel != null) {
-            benchPanel.rescale(placed.benchLeft(), placed.benchTop(), placed.benchScale());
-        }
-        if (picker != null) {
-            picker.moveTo(placed.storageLeft(), sideBySide.groupTop());
+    private void benchReshaped(float benchLeft) {
+        if (!closing && picker != null && sideBySide != null) {
+            picker.moveTo(BenchSideBySide.storageLeft(benchLeft), sideBySide.groupTop());
         }
     }
 
@@ -176,6 +174,11 @@ public final class CraftingBench {
             public void debugActionApplied() {
                 bayListener.debugActionApplied();
                 close();
+            }
+
+            @Override
+            public void reshaped(float panelLeft) {
+                benchReshaped(panelLeft);
             }
         };
     }

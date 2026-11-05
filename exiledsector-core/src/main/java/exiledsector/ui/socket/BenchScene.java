@@ -53,7 +53,11 @@ final class BenchScene {
         return Math.max(44f, Math.min(80f, TILE_SIZE * scale));
     }
 
-    static void drawArt(BenchMode mode, float left, float bottom, float scale, float alpha) {
+    static float visibleArtLeft(float artShift, float visibleWidth, float scale) {
+        return Math.max(0f, Math.min(ART_WIDTH * scale - visibleWidth, -artShift));
+    }
+
+    static void drawArt(BenchMode mode, float left, float bottom, float scale, float visibleLeft, float visibleWidth, float alpha) {
         SpriteAPI art = mode.drawsStarfield() ? null : SPRITES.sprite(mode.artPath());
         if (art == null || alpha <= 0f) {
             return;
@@ -61,10 +65,16 @@ final class BenchScene {
         art.bindTexture();
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-        art.setSize(ART_WIDTH * scale, ART_HEIGHT * scale);
+        float fullTextureWidth = art.getTextureWidth();
+        float artWidth = ART_WIDTH * scale;
+        art.setTexX(fullTextureWidth * visibleLeft / artWidth);
+        art.setTexWidth(fullTextureWidth * visibleWidth / artWidth);
+        art.setSize(visibleWidth, ART_HEIGHT * scale);
         art.setColor(Color.WHITE);
         art.setAlphaMult(alpha);
         art.setNormalBlend();
         art.render(left, bottom);
+        art.setTexX(0f);
+        art.setTexWidth(fullTextureWidth);
     }
 }

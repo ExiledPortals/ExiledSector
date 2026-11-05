@@ -103,6 +103,15 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         hostPanel.addComponent(panelRoot).inTL(left, top);
     }
 
+    final void reshape(float left, float width) {
+        panelLeft = left;
+        panelWidth = width;
+        if (panelRoot != null) {
+            panelRoot.getPosition().setSize(width, panelHeight);
+            panelRoot.getPosition().inTL(left, panelTop);
+        }
+    }
+
     final void moveTo(float left, float top) {
         panelLeft = left;
         panelTop = top;

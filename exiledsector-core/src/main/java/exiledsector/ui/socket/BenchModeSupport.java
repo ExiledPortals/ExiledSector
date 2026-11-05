@@ -129,6 +129,10 @@ public interface BenchModeSupport {
         return true;
     }
 
+    default boolean reservesColumn() {
+        return craftingItems().stream().anyMatch(craftingItem -> !inOrbit(craftingItem));
+    }
+
     Refusal refusal(CraftingMaterialFamily craftingItem, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
                     Set<CraftingInhibitor> inhibitors);
 

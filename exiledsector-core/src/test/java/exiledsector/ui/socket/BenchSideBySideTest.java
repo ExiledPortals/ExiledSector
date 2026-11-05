@@ -3,7 +3,6 @@ package exiledsector.ui.socket;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BenchSideBySideTest {
 
@@ -14,33 +13,23 @@ class BenchSideBySideTest {
     }
 
     @Test
-    void openingTheSearchCompactsTheBenchByOneStepAndKeepsItsRightEdge() {
+    void theFullBenchEndsAtTheGroupsRightEdgeWithTheHullItemsPanelBesideIt() {
         BenchSideBySide bench = benchOn(1920f, 1080f);
-        BenchSideBySide.Placed closed = bench.placed(false);
-        BenchSideBySide.Placed open = bench.placed(true);
 
-        assertEquals(closed.benchScale() - 1f, open.benchScale(), TOLERANCE);
-        assertEquals(closed.benchLeft() + closed.benchWidth(), open.benchLeft() + open.benchWidth(), TOLERANCE);
-        assertEquals(closed.benchTop() + closed.benchHeight() / 2f, open.benchTop() + open.benchHeight() / 2f, TOLERANCE,
-                "the compacted bench stays centred on the same line");
-        assertEquals(open.benchLeft() - CraftingBench.PANEL_GAP - ItemStoragePanel.COMPACT_WIDTH, open.storageLeft(), TOLERANCE,
-                "the hull items panel moves in with the bench");
+        assertEquals(bench.groupRight(), bench.fullBenchLeft() + bench.fullBenchWidth(), TOLERANCE);
+        assertEquals(bench.groupLeft(), BenchSideBySide.storageLeft(bench.fullBenchLeft()), TOLERANCE);
     }
 
     @Test
-    void theSearchTakesTheHullItemsPanelsLeftEdgeAndHeight() {
+    void theSearchTakesEverythingTheBenchGaveUpAtFullHeight() {
         BenchSideBySide bench = benchOn(1920f, 1080f);
-        FreeArea search = bench.searchArea();
+        float contractedWidth = 600f;
+        float benchLeft = bench.groupRight() - contractedWidth;
+        FreeArea search = bench.searchArea(benchLeft);
 
-        assertEquals(bench.placed(false).storageLeft(), search.left(), TOLERANCE);
+        assertEquals(bench.groupLeft(), search.left(), TOLERANCE);
         assertEquals(bench.groupTop(), search.top(), TOLERANCE);
         assertEquals(bench.groupHeight(), search.height(), TOLERANCE);
-        assertEquals(bench.placed(true).storageLeft() - CraftingBench.PANEL_GAP, search.right(), TOLERANCE);
-        assertTrue(search.width() > 250f && search.width() < ItemStoragePanel.COMPACT_WIDTH, "width " + search.width());
-    }
-
-    @Test
-    void theSearchKeepsTheSameWidthAtLargerScreens() {
-        assertEquals(benchOn(1920f, 1080f).searchArea().width(), benchOn(2560f, 1440f).searchArea().width(), TOLERANCE);
+        assertEquals(bench.fullBenchWidth() - contractedWidth - CraftingBench.PANEL_GAP, search.width(), TOLERANCE);
     }
 }

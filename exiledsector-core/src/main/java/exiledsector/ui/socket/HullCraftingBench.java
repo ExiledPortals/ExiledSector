@@ -86,16 +86,26 @@ public final class HullCraftingBench implements BenchModeSupport {
     static List<CraftingMaterialFamily> hullCraftingBenchCraftingItems(List<CraftingMaterialFamily> registered, ToIntFunction<String> owned) {
         List<CraftingMaterialFamily> shown = new ArrayList<>(List.of(Nanoswarm.values()));
         for (CraftingMaterialFamily craftingItem : registered) {
-            if (!(craftingItem instanceof Nanoswarm) && craftingItem.appliesToShipItems() && owned.applyAsInt(craftingItem.itemId()) > 0) {
+            if (columnCandidate(craftingItem) && owned.applyAsInt(craftingItem.itemId()) > 0) {
                 shown.add(craftingItem);
             }
         }
         return shown;
     }
 
+    private static boolean columnCandidate(CraftingMaterialFamily craftingItem) {
+        return !(craftingItem instanceof Nanoswarm) && craftingItem.appliesToShipItems();
+    }
+
     @Override
     public boolean inOrbit(CraftingMaterialFamily craftingItem) {
         return craftingItem instanceof Nanoswarm;
+    }
+
+    @Override
+    public boolean reservesColumn() {
+        return ExiledSector.enabledDomains().stream().flatMap(domain -> domain.hullCraftingBenchCraftingItems().stream())
+                .anyMatch(HullCraftingBench::columnCandidate);
     }
 
     @Override

@@ -11,6 +11,7 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.items.MaterialItems;
@@ -74,12 +75,24 @@ public final class CraftingBenchPanel extends HoloPanel {
 
         default void debugActionApplied() {
         }
+
+        default void reshaped(float panelLeft) {
+        }
+    }
+
+    private interface TileLeft {
+
+        float in(BenchSpread spread);
+    }
+
+    private record TileSpot(PositionAPI tile, PositionAPI count, TileLeft left, float top, float size) {
     }
 
     static final float FRAME_INSET = 8f;
+    static final float PLATE_PAD = 6f;
     private static final float COUNT_INSET = 4f;
     private static final float PLATE_ALPHA = 0.62f;
-    private static final float PLATE_PAD = 6f;
+    private static final float CONTRACT_SECONDS = 0.3f;
     private static final float VIGNETTE_SHARE = 0.06f;
     private static final float PICK_BUTTON_WIDTH = 120f;
     private static final float TOOLTIP_WIDTH = 340f;
@@ -129,6 +142,12 @@ public final class CraftingBenchPanel extends HoloPanel {
     private boolean openAllowed;
     private String noticeText;
     private boolean noticeIsWarning;
+    private final List<TileSpot> tileSpots = new ArrayList<>();
+    private BenchSpread spread;
+    private BenchSpread contractedSpread;
+    private float contractProgress;
+    private boolean contractWanted;
+    private Runnable contractSettled;
 
     private CraftingBenchPanel(CustomPanelAPI hostPanel, Listener craftingBenchListener) {
         super(hostPanel);
@@ -140,6 +159,7 @@ public final class CraftingBenchPanel extends HoloPanel {
         craftingBenchPanel.benchMode = mode;
         craftingBenchPanel.embeddedLayout = layout;
         craftingBenchPanel.sceneScale = layout.socketRadius() / BenchScene.SLOT_RADIUS;
+        craftingBenchPanel.spread = BenchSpread.full(mode, craftingBenchPanel.sceneScale);
         BenchLayout.Rect panel = layout.panel();
         craftingBenchPanel.attach(panel.left(), panel.top(), panel.width(), panel.height(), false);
         return craftingBenchPanel;
@@ -154,6 +174,7 @@ public final class CraftingBenchPanel extends HoloPanel {
         CraftingBenchPanel craftingBenchPanel = new CraftingBenchPanel(hostPanel, craftingBenchListener);
         craftingBenchPanel.benchMode = mode;
         craftingBenchPanel.sceneScale = scaleFor(area.panelWidth(), area.panelHeight());
+        craftingBenchPanel.spread = BenchSpread.full(mode, craftingBenchPanel.sceneScale);
         float width = sizeFor(craftingBenchPanel.sceneScale, BenchScene.ART_WIDTH);
         float height = sizeFor(craftingBenchPanel.sceneScale, BenchScene.ART_HEIGHT);
         float left = centred ? area.panelLeft() + (area.panelWidth() - width) / 2f : area.panelLeft();
@@ -185,10 +206,6 @@ public final class CraftingBenchPanel extends HoloPanel {
         return columnTop + index * (tileSize + gap);
     }
 
-    private float artX(float artPixels) {
-        return FRAME_INSET + artPixels * sceneScale;
-    }
-
     private float artY(float artPixels) {
         return FRAME_INSET + artPixels * sceneScale;
     }
@@ -202,7 +219,11 @@ public final class CraftingBenchPanel extends HoloPanel {
     }
 
     private float socketScreenX() {
-        return panelPosition.getX() + (embeddedLayout != null ? embeddedLayout.socketX() : artX(benchMode.socketX()));
+        return panelPosition.getX() + (embeddedLayout != null ? embeddedLayout.socketX() : FRAME_INSET + spread.socketX());
+    }
+
+    private float detailsLeftX() {
+        return FRAME_INSET + spread.socketX() - BenchScene.DETAILS_WIDTH / 2f * sceneScale;
     }
 
     private float socketScreenY() {
@@ -238,20 +259,74 @@ public final class CraftingBenchPanel extends HoloPanel {
         });
     }
 
-    void rescale(float left, float top, float scale) {
+    void contract(boolean wanted, Runnable settled) {
         queue(() -> {
             cancelConfirm();
             hoverTooltip.hide();
-            sceneScale = scale;
-            headerElement = null;
-            recipesElement = null;
-            detailsElement = null;
-            noticeElement = null;
-            openElement = null;
-            embeddedOpenButton = null;
-            reattach(left, top, sizeFor(scale, BenchScene.ART_WIDTH), sizeFor(scale, BenchScene.ART_HEIGHT));
-            build();
+            if (wanted && contractProgress == 0f) {
+                contractedSpread = BenchSpread.contracted(benchMode, sceneScale, spreadContents());
+            }
+            contractWanted = wanted;
+            contractSettled = settled;
+            if (contractProgress == contractTarget()) {
+                settleContraction();
+            }
         });
+    }
+
+    private BenchSpread.Contents spreadContents() {
+        BenchModeSupport support = support();
+        boolean orbit = support.craftingItems().stream().anyMatch(support::inOrbit);
+        return new BenchSpread.Contents(support.usesInhibitors(), orbit, support.reservesColumn());
+    }
+
+    private float contractTarget() {
+        return contractWanted ? 1f : 0f;
+    }
+
+    private boolean reshaping() {
+        return contractProgress != contractTarget();
+    }
+
+    private void advanceContraction(float amount) {
+        float target = contractTarget();
+        if (contractProgress == target || contractedSpread == null) {
+            return;
+        }
+        float step = amount / CONTRACT_SECONDS;
+        contractProgress = contractWanted ? Math.min(target, contractProgress + step) : Math.max(target, contractProgress - step);
+        I18n.forGameText(this::applySpread);
+        if (contractProgress == target) {
+            settleContraction();
+        }
+    }
+
+    private void settleContraction() {
+        Runnable settled = contractSettled;
+        contractSettled = null;
+        if (settled != null) {
+            settled.run();
+        }
+    }
+
+    private void applySpread() {
+        spread = BenchSpread.full(benchMode, sceneScale).towards(contractedSpread, BenchSpread.eased(contractProgress));
+        float width = spread.artWidth() + FRAME_INSET * 2f;
+        reshape(panelLeft + panelWidth - width, width);
+        if (recipesElement != null) {
+            recipesElement.getPosition().setSize(spread.artWidth(), BenchScene.ART_HEIGHT * sceneScale);
+        }
+        placeTiles();
+        if (detailsElement != null) {
+            detailsElement.getPosition().inTL(detailsLeftX(), artY(BenchScene.detailsTop(benchMode)));
+        }
+        if (openElement != null) {
+            openElement.getPosition().inTL(detailsLeftX(), openButtonTop());
+        }
+        buildHeader();
+        rebuildNotice();
+        refreshOpacity();
+        craftingBenchListener.reshaped(panelLeft);
     }
 
     public void refresh() {
@@ -321,17 +396,20 @@ public final class CraftingBenchPanel extends HoloPanel {
         }
         float artLeft = panelPosition.getX() + FRAME_INSET;
         float artBottom = panelPosition.getY() + FRAME_INSET;
-        float artWidth = BenchScene.ART_WIDTH * sceneScale;
+        float artWidth = spread.artWidth();
+        float fullArtWidth = BenchScene.ART_WIDTH * sceneScale;
         float artHeight = BenchScene.ART_HEIGHT * sceneScale;
+        float artShift = spread.artShift(benchMode, sceneScale);
         if (benchMode.drawsStarfield()) {
             GLDraw.fillQuad(artLeft, artBottom, artWidth, artHeight, PLATE_COLOR, contentAlpha);
-            starfield.renderInside(artLeft, artBottom, artWidth, artHeight, contentAlpha);
+            starfield.renderWindow(artLeft + artShift, artBottom, fullArtWidth, artHeight, -artShift, artWidth, contentAlpha);
         } else {
-            BenchScene.drawArt(benchMode, artLeft, artBottom, sceneScale, contentAlpha);
+            BenchScene.drawArt(benchMode, artLeft, artBottom, sceneScale, BenchScene.visibleArtLeft(artShift, artWidth, sceneScale), artWidth,
+                    contentAlpha);
         }
-        float vignette = Math.min(artWidth, artHeight) * VIGNETTE_SHARE;
+        float vignette = Math.min(fullArtWidth, artHeight) * VIGNETTE_SHARE;
         GLDraw.innerGlow(artLeft, artBottom, artWidth, artHeight, vignette, PLATE_COLOR, contentAlpha);
-        drawPlate(BenchScene.detailsLeft(benchMode), BenchScene.detailsTop(benchMode), BenchScene.DETAILS_WIDTH, detailsArtHeight(), contentAlpha);
+        drawPlate(detailsLeftX(), BenchScene.detailsTop(benchMode), BenchScene.DETAILS_WIDTH, detailsArtHeight(), contentAlpha);
         Color subjectColor = loadedItem == null ? null : loadedItem.frameColor();
         socketFlair.render(socketScreenX(), socketScreenY(), slotRadius(), SkillTreePanelStyle.GLOW_COLOR, subjectColor,
                 loadedItem == null ? null : loadedItem.iconPath(), loadedLook, contentAlpha);
@@ -350,10 +428,10 @@ public final class CraftingBenchPanel extends HoloPanel {
                 loadedItem == null ? null : loadedItem.iconPath(), loadedLook, alpha);
     }
 
-    private void drawPlate(float artLeft, float artTop, float artWidth, float artHeight, float alpha) {
+    private void drawPlate(float contentLeft, float artTop, float artWidth, float artHeight, float alpha) {
         float plateWidth = artWidth * sceneScale + PLATE_PAD * 2f;
         float plateHeight = artHeight * sceneScale + PLATE_PAD * 2f;
-        float plateLeft = panelPosition.getX() + artX(artLeft) - PLATE_PAD;
+        float plateLeft = panelPosition.getX() + contentLeft - PLATE_PAD;
         float plateBottom = panelPosition.getY() + panelHeight - artY(artTop) - artHeight * sceneScale - PLATE_PAD;
         GLDraw.fillQuad(plateLeft, plateBottom, plateWidth, plateHeight, PLATE_COLOR, PLATE_ALPHA * alpha);
     }
@@ -393,6 +471,7 @@ public final class CraftingBenchPanel extends HoloPanel {
 
     @Override
     protected void advanceOpen(float amount) {
+        advanceContraction(amount);
         hoverTooltip.refreshIfExpansionChanged();
         if (detailsShowRollRanges != TooltipExpansion.isExpandedOrHeld()) {
             rebuildDetails();
@@ -470,7 +549,7 @@ public final class CraftingBenchPanel extends HoloPanel {
 
     private void tileClicked(CraftingMaterialFamily craftingItem, boolean skipConfirm) {
         hoverTooltip.hide();
-        if (wormholeOpened || isConfirmOpen() || !usable(craftingItem)) {
+        if (wormholeOpened || isConfirmOpen() || reshaping() || !usable(craftingItem)) {
             return;
         }
         if (skipConfirm) {
@@ -482,7 +561,7 @@ public final class CraftingBenchPanel extends HoloPanel {
 
     private void tileRightClicked(GrowableMaterial material, boolean skipConfirm) {
         hoverTooltip.hide();
-        if (wormholeOpened || isConfirmOpen() || !growable(material)) {
+        if (wormholeOpened || isConfirmOpen() || reshaping() || !growable(material)) {
             return;
         }
         if (skipConfirm) {
@@ -686,8 +765,7 @@ public final class CraftingBenchPanel extends HoloPanel {
         BenchModeSupport.OpenCheck blocker = openBlocker();
         BenchModeSupport.OpenTexts openTexts = support().openTexts();
         float buttonWidth = BenchScene.DETAILS_WIDTH * sceneScale;
-        float plateBottom = artY(BenchScene.CHART_DETAILS_BOTTOM) + PLATE_PAD;
-        float buttonTop = Math.max(artY(BenchScene.OPEN_BUTTON_TOP), plateBottom + PLATE_PAD);
+        float buttonTop = openButtonTop();
         float artBottom = artY(BenchScene.ART_HEIGHT);
         float buttonHeight = Math.min(Math.max(MIN_OPEN_BUTTON_HEIGHT, BenchScene.OPEN_BUTTON_HEIGHT * sceneScale), artBottom - buttonTop);
         BenchModeSupport.DebugAction debugAction = support().debugAction();
@@ -706,7 +784,12 @@ public final class CraftingBenchPanel extends HoloPanel {
         if (debugAction != null) {
             addDebugButton(element, debugAction, openWidth + DEBUG_BUTTON_GAP, debugWidth, buttonHeight);
         }
-        openElement = replaceElement(openElement, element, artX(BenchScene.detailsLeft(benchMode)), buttonTop);
+        openElement = replaceElement(openElement, element, detailsLeftX(), buttonTop);
+    }
+
+    private float openButtonTop() {
+        float plateBottom = artY(BenchScene.CHART_DETAILS_BOTTOM) + PLATE_PAD;
+        return Math.max(artY(BenchScene.OPEN_BUTTON_TOP), plateBottom + PLATE_PAD);
     }
 
     private void rebuildEmbeddedOpenButton() {
@@ -751,6 +834,9 @@ public final class CraftingBenchPanel extends HoloPanel {
 
     private void openPressed() {
         hoverTooltip.hide();
+        if (reshaping()) {
+            return;
+        }
         BenchModeSupport.OpenCheck blocker = openBlocker();
         if (!blocker.allowsOpening()) {
             SkillTreeSounds.refused();
@@ -845,28 +931,26 @@ public final class CraftingBenchPanel extends HoloPanel {
             rebuildMaterials();
             return;
         }
-        float artWidth = BenchScene.ART_WIDTH * sceneScale;
         float artHeight = BenchScene.ART_HEIGHT * sceneScale;
-        TooltipMakerAPI element = panelRoot.createUIElement(artWidth, artHeight, false);
+        TooltipMakerAPI element = panelRoot.createUIElement(spread.artWidth(), artHeight, false);
+        tileSpots.clear();
         CraftingMaterials materials = playerMaterials();
         BenchModeSupport support = support();
         List<CraftingMaterialFamily> shownCraftingItems = support.craftingItems();
         List<CraftingMaterialFamily> orbitCraftingItems = shownCraftingItems.stream().filter(support::inOrbit).toList();
         List<CraftingMaterialFamily> columnCraftingItems = shownCraftingItems.stream().filter(craftingItem -> !support.inOrbit(craftingItem)).toList();
         float tileSize = tileSize();
-        float socketX = benchMode.socketX() * sceneScale;
         float socketY = benchMode.socketY() * sceneScale;
         for (int i = 0; i < orbitCraftingItems.size(); i++) {
             float angle = tileAngle(i, orbitCraftingItems.size());
-            float tileCentreX = socketX + benchMode.orbitRadiusX() * sceneScale * (float) Math.cos(angle);
+            float socketOffsetX = benchMode.orbitRadiusX() * sceneScale * (float) Math.cos(angle) - tileSize / 2f;
             float tileCentreY = socketY - benchMode.orbitRadiusY() * sceneScale * (float) Math.sin(angle);
-            addTile(element, orbitCraftingItems.get(i), tileCentreX - tileSize / 2f, tileCentreY - tileSize / 2f, tileSize, materials);
+            addTile(element, orbitCraftingItems.get(i), placed -> placed.socketX() + socketOffsetX, tileCentreY - tileSize / 2f, tileSize, materials);
         }
-        float columnLeft = artWidth - BenchScene.COLUMN_RIGHT_MARGIN * sceneScale - tileSize;
         float columnGap = BenchScene.COLUMN_GAP * sceneScale;
         for (int i = 0; i < columnCraftingItems.size(); i++) {
             float tileTop = columnTileTop(i, columnCraftingItems.size(), socketY, tileSize, columnGap, artHeight);
-            addTile(element, columnCraftingItems.get(i), columnLeft, tileTop, tileSize, materials);
+            addTile(element, columnCraftingItems.get(i), BenchSpread::columnLeft, tileTop, tileSize, materials);
         }
         if (support.usesInhibitors()) {
             addInhibitorTiles(element, tileSize, materials);
@@ -876,8 +960,16 @@ public final class CraftingBenchPanel extends HoloPanel {
 
     private void addInhibitorTiles(TooltipMakerAPI element, float tileSize, CraftingMaterials materials) {
         float inhibitorTop = benchMode.inhibitorY() * sceneScale - tileSize / 2f;
-        addInhibitorTile(element, CraftingInhibitor.PREFIX, benchMode.leftInhibitorX() * sceneScale - tileSize / 2f, inhibitorTop, tileSize, materials);
-        addInhibitorTile(element, CraftingInhibitor.SUFFIX, benchMode.rightInhibitorX() * sceneScale - tileSize / 2f, inhibitorTop, tileSize, materials);
+        addInhibitorTile(element, CraftingInhibitor.PREFIX, placed -> placed.prefixX() - tileSize / 2f, inhibitorTop, tileSize, materials);
+        addInhibitorTile(element, CraftingInhibitor.SUFFIX, placed -> placed.suffixX() - tileSize / 2f, inhibitorTop, tileSize, materials);
+    }
+
+    private void placeTiles() {
+        for (TileSpot spot : tileSpots) {
+            float tileLeft = spot.left().in(spread);
+            spot.tile().inTL(tileLeft, spot.top());
+            placeCount(spot.count(), tileLeft, spot.top(), spot.size());
+        }
     }
 
     private void rebuildMaterials() {
@@ -920,11 +1012,20 @@ public final class CraftingBenchPanel extends HoloPanel {
                 skipConfirm -> tileRightClicked(craftingItem, skipConfirm));
     }
 
-    private void addInhibitorTile(TooltipMakerAPI element, CraftingInhibitor inhibitor, float tileLeft, float tileTop, float tileSize,
-                             CraftingMaterials materials) {
+    private void addInhibitorTile(TooltipMakerAPI element, CraftingInhibitor inhibitor, TileLeft tileLeft, float tileTop, float tileSize,
+                                  CraftingMaterials materials) {
         CustomPanelAPI tilePanel = Global.getSettings().createCustom(tileSize, tileSize, inhibitorTile(inhibitor));
-        element.addCustom(tilePanel, 0f).getPosition().inTL(tileLeft, tileTop);
-        addCount(element, inhibitor.itemId(), tileLeft, tileTop, tileSize, materials);
+        addSpot(element, tilePanel, inhibitor.itemId(), tileLeft, tileTop, tileSize, materials);
+    }
+
+    private void addSpot(TooltipMakerAPI element, CustomPanelAPI tilePanel, String itemId, TileLeft tileLeft, float tileTop, float tileSize,
+                         CraftingMaterials materials) {
+        PositionAPI tile = element.addCustom(tilePanel, 0f).getPosition();
+        PositionAPI count = addCount(element, itemId, tileSize, materials);
+        tileSpots.add(new TileSpot(tile, count, tileLeft, tileTop, tileSize));
+        float left = tileLeft.in(spread);
+        tile.inTL(left, tileTop);
+        placeCount(count, left, tileTop, tileSize);
     }
 
     private CraftingBenchTile inhibitorTile(CraftingInhibitor inhibitor) {
@@ -999,23 +1100,25 @@ public final class CraftingBenchPanel extends HoloPanel {
         });
     }
 
-    private static void addCount(TooltipMakerAPI element, String itemId, float tileLeft, float tileTop, float tileSize,
-                                 CraftingMaterials materials) {
+    private static PositionAPI addCount(TooltipMakerAPI element, String itemId, float tileSize, CraftingMaterials materials) {
         int ownedCount = materials.count(itemId);
         Color countColor = ownedCount > 0 ? Misc.getBrightPlayerColor() : Misc.getGrayColor();
         element.setParaFont(Fonts.ORBITRON_12);
         LabelAPI countLabel = VanillaText.plainPara(element, String.valueOf(ownedCount), 0f, countColor);
         countLabel.setAlignment(Alignment.RMID);
-        countLabel.autoSizeToWidth(tileSize - COUNT_INSET * 2f).inTL(tileLeft + COUNT_INSET,
-                tileTop + tileSize - countLabel.getPosition().getHeight() - COUNT_INSET);
+        PositionAPI count = countLabel.autoSizeToWidth(tileSize - COUNT_INSET * 2f);
         element.setParaFontDefault();
+        return count;
     }
 
-    private void addTile(TooltipMakerAPI element, CraftingMaterialFamily craftingItem, float tileLeft, float tileTop, float tileSize,
+    private static void placeCount(PositionAPI count, float tileLeft, float tileTop, float tileSize) {
+        count.inTL(tileLeft + COUNT_INSET, tileTop + tileSize - count.getHeight() - COUNT_INSET);
+    }
+
+    private void addTile(TooltipMakerAPI element, CraftingMaterialFamily craftingItem, TileLeft tileLeft, float tileTop, float tileSize,
                          CraftingMaterials materials) {
         CustomPanelAPI tilePanel = Global.getSettings().createCustom(tileSize, tileSize, craftingItemTile(craftingItem, materials));
-        element.addCustom(tilePanel, 0f).getPosition().inTL(tileLeft, tileTop);
-        addCount(element, craftingItem.itemId(), tileLeft, tileTop, tileSize, materials);
+        addSpot(element, tilePanel, craftingItem.itemId(), tileLeft, tileTop, tileSize, materials);
     }
 
     private void showTooltip(CraftingMaterialFamily craftingItem, PositionAPI anchor) {
@@ -1114,7 +1217,7 @@ public final class CraftingBenchPanel extends HoloPanel {
                 addDetailSection(element, "item.tooltip.explicit", loadedItem.slottedEffectLines(false, null), paraPad);
             }
         }
-        float detailsLeft = embeddedLayout != null ? embeddedLayout.details().left() : artX(BenchScene.detailsLeft(benchMode));
+        float detailsLeft = embeddedLayout != null ? embeddedLayout.details().left() : detailsLeftX();
         float detailsTop = embeddedLayout != null ? embeddedLayout.details().top() : artY(BenchScene.detailsTop(benchMode));
         detailsElement = placedComponent(replaceElement(detailsElement, element, detailsLeft, detailsTop));
     }

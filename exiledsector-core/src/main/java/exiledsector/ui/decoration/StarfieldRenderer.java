@@ -84,17 +84,22 @@ public class StarfieldRenderer {
 
         float panelCenterX = panelPosition.getX() + panelPosition.getWidth() / 2f;
         float panelCenterY = panelPosition.getY() + panelPosition.getHeight() / 2f;
-        drawStars(panelCenterX - fieldWidth / 2f, panelCenterY - fieldHeight / 2f, panX, panY, false, alphaMult);
+        drawStars(panelCenterX - fieldWidth / 2f, panelCenterY - fieldHeight / 2f, panX, panY, false, 0f, fieldWidth, alphaMult);
     }
 
     public void renderInside(float left, float bottom, float width, float height, float alphaMult) {
+        renderWindow(left, bottom, width, height, 0f, width, alphaMult);
+    }
+
+    public void renderWindow(float fieldLeft, float bottom, float width, float height, float windowLeft, float windowWidth, float alphaMult) {
         if (!initialized || fieldWidth != width || fieldHeight != height) {
             initStars(width, height);
         }
-        drawStars(left, bottom, 0f, 0f, true, alphaMult);
+        drawStars(fieldLeft, bottom, 0f, 0f, true, windowLeft, windowLeft + windowWidth, alphaMult);
     }
 
-    private void drawStars(float fieldLeft, float fieldBottom, float panX, float panY, boolean keepInside, float alphaMult) {
+    private void drawStars(float fieldLeft, float fieldBottom, float panX, float panY, boolean keepInside, float keepLeft, float keepRight,
+                           float alphaMult) {
         Color accentColor = panelStyle.getAccentColor();
         for (int spriteIndex = 0; spriteIndex < STAR_SPRITE_PATHS.length; spriteIndex++) {
             List<Star> stars = starsBySprite.get(spriteIndex);
@@ -105,7 +110,7 @@ public class StarfieldRenderer {
                     float wrappedX = wrap(star.baseX + panX * star.parallaxFactor, fieldWidth);
                     float wrappedY = wrap(star.baseY + panY * star.parallaxFactor, fieldHeight);
                     float halfSize = star.spriteSize / 2f;
-                    if (keepInside && (wrappedX < halfSize || wrappedX > fieldWidth - halfSize
+                    if (keepInside && (wrappedX < keepLeft + halfSize || wrappedX > keepRight - halfSize
                             || wrappedY < halfSize || wrappedY > fieldHeight - halfSize)) {
                         continue;
                     }

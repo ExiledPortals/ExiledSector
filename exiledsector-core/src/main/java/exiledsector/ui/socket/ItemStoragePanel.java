@@ -109,6 +109,7 @@ public final class ItemStoragePanel extends HoloPanel {
     private ButtonAPI advancedSearchButton;
     private AdvancedSearchRoom advancedSearchRoom;
     private AdvancedSearchPane advancedSearchPane;
+    private boolean advancedSearchOpening;
     private TooltipMakerAPI gridElement;
     private boolean keepGridScroll;
     private UIComponentAPI noticeElement;
@@ -332,6 +333,10 @@ public final class ItemStoragePanel extends HoloPanel {
         if (advancedSearchPane != null && advancedSearchPane.escape()) {
             return true;
         }
+        if (advancedSearchOpening) {
+            queue(this::closeAdvancedSearch);
+            return true;
+        }
         if (disassembly.active()) {
             queue(() -> {
                 disassembly.leave();
@@ -485,7 +490,7 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private void toggleAdvancedSearch() {
-        if (advancedSearchPane != null) {
+        if (advancedSearchPane != null || advancedSearchOpening) {
             closeAdvancedSearch();
             return;
         }
@@ -494,8 +499,17 @@ public final class ItemStoragePanel extends HoloPanel {
         }
         closeFilterMenu();
         hideHoverTooltip();
-        advancedSearchPane = AdvancedSearchPane.open(hostPanel, AdvancedSearchLayout.in(advancedSearchRoom.open()), storageFilter,
-                new AdvancedSearchHost());
+        advancedSearchOpening = true;
+        syncAdvancedSearchButton();
+        advancedSearchRoom.open(area -> queue(() -> openAdvancedSearchIn(area)));
+    }
+
+    private void openAdvancedSearchIn(FreeArea area) {
+        if (!advancedSearchOpening) {
+            return;
+        }
+        advancedSearchOpening = false;
+        advancedSearchPane = AdvancedSearchPane.open(hostPanel, AdvancedSearchLayout.in(area), storageFilter, new AdvancedSearchHost());
         syncAdvancedSearchButton();
     }
 
@@ -504,6 +518,11 @@ public final class ItemStoragePanel extends HoloPanel {
         advancedSearchPane = null;
         if (closingPane != null) {
             closingPane.close();
+        } else if (advancedSearchOpening) {
+            advancedSearchOpening = false;
+            if (!isClosing()) {
+                advancedSearchRoom.closed();
+            }
         }
         syncAdvancedSearchButton();
     }
@@ -516,7 +535,7 @@ public final class ItemStoragePanel extends HoloPanel {
 
     private void syncAdvancedSearchButton() {
         if (advancedSearchButton != null) {
-            advancedSearchButton.setChecked(advancedSearchPane != null);
+            advancedSearchButton.setChecked(advancedSearchPane != null || advancedSearchOpening);
         }
     }
 
