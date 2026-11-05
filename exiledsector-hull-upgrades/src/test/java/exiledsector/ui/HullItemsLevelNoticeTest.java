@@ -7,6 +7,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -31,6 +32,15 @@ class HullItemsLevelNoticeTest {
         assertEquals(2, notice.paragraphs().size());
         assertTrue(notice.paragraphs().get(0).contains("12"), notice.paragraphs().get(0));
         assertTrue(notice.paragraphs().get(1).contains("LunaLib"), notice.paragraphs().get(1));
+        assertFalse(notice.paragraphs().get(0).startsWith("By default"), notice.paragraphs().get(0));
+    }
+
+    @Test
+    void saysByDefaultOnlyAtTheDefaultLevel() {
+        HullItemsLevelNotice notice = HullItemsLevelNotice.forSector(sectorAtLevel(HullUpgradesSetting.DEFAULT_UNLOCK_LEVEL - 1));
+
+        assertNotNull(notice);
+        assertTrue(notice.paragraphs().get(0).startsWith("By default"), notice.paragraphs().get(0));
     }
 
     @Test

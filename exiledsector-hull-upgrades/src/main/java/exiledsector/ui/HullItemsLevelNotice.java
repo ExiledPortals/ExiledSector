@@ -31,12 +31,16 @@ final class HullItemsLevelNotice {
 
     private HullItemsLevelNotice(int unlockLevel) {
         paragraphs = List.of(
-                Translation.msg("ui.hullItemsLevelNotice.level").arg("level", unlockLevel).text(),
+                Translation.msg(levelKey(unlockLevel)).arg("level", unlockLevel).text(),
                 Translation.text("ui.hullItemsLevelNotice.setting"));
     }
 
     static HullItemsLevelNotice forSector(SectorAPI sector) {
         return HullUpgradesSetting.hullItemDropsOpen(sector) ? null : new HullItemsLevelNotice(HullUpgradesSetting.unlockLevel());
+    }
+
+    private static String levelKey(int unlockLevel) {
+        return unlockLevel == HullUpgradesSetting.DEFAULT_UNLOCK_LEVEL ? "ui.hullItemsLevelNotice.defaultLevel" : "ui.hullItemsLevelNotice.level";
     }
 
     List<String> paragraphs() {
