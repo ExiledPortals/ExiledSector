@@ -580,15 +580,6 @@ tree layout changes, and the socket grants +5 of that affinity for every node be
 allocated route doesn't reach grants nothing. The connector renderer draws the path's
 connectors with the `CONDUIT` look in that affinity's colour (`AffinityColours`). It is player-only.
 
-### Gated subroutines
-
-A subroutine line backed by `RadiusGate` (`GATES_RADIUS_*`, Phoenix Ash Archive) gates the allocated nodes in its
-radius behind a `CombatGate`: below 50% hull, ship system active or phased. `SkillTreeEffectSource` gives those nodes
-a gated contribution holding only their `supportsTemporaryGating` effects, times the line's value; vanilla hull mod
-nodes and other effects are dropped. Gated contributions stay out of permanent totals, affinity and diminishing
-returns, and `ShipCombatPlan` applies them while the gate holds and zeroes them when it stops. Both gated uniques
-(Phoenix Ash Archive, P-Space Lattice) have rarity 0 in `subroutines.csv`, so they don't drop until reworked.
-
 </details>
 
 <details>
