@@ -455,8 +455,8 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
     public void processInput(List<InputEventAPI> events) {
         for (InputEventAPI event : events) {
             if (event.isMouseEvent()) {
-                mouseX = event.getX();
-                mouseY = event.getY();
+                mouseX = Global.getSettings().getMouseX();
+                mouseY = Global.getSettings().getMouseY();
                 pointerOverPanel = panelContains(mouseX, mouseY);
             }
             if (event.isConsumed()) {

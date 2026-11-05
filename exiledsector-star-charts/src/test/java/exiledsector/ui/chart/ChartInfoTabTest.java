@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CoreUITabId;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import com.fs.starfarer.api.input.InputEventAPI;
 import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartContent;
@@ -14,6 +15,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
@@ -60,5 +64,23 @@ class ChartInfoTabTest {
         when(campaignUI.getCurrentCoreTab()).thenReturn(null);
         when(campaignUI.isShowingDialog()).thenReturn(true);
         assertNull(ChartInfoTab.shownRun(sector));
+    }
+
+    @Test
+    void mouseEventsAnotherListenerConsumedAreNeverRead() {
+        SectorAPI sector = mockSector.sector;
+        when(sector.getCampaignUI()).thenReturn(mock(CampaignUIAPI.class));
+        StarSystemAPI chartSystem = mock(StarSystemAPI.class);
+        ChartRun run = run();
+        when(chartSystem.getOptionalUniqueId()).thenReturn(run.systemId());
+        when(mockSector.playerFleet().getContainingLocation()).thenReturn(chartSystem);
+        ChartRuns.store(run);
+        InputEventAPI consumed = mock(InputEventAPI.class);
+        when(consumed.isMouseEvent()).thenReturn(true);
+        when(consumed.isConsumed()).thenReturn(true);
+        when(consumed.getX()).thenThrow(new RuntimeException("Attempt to access data of a consumed InputEvent"));
+        when(consumed.getY()).thenThrow(new RuntimeException("Attempt to access data of a consumed InputEvent"));
+
+        assertDoesNotThrow(() -> new ChartInfoTab().processCampaignInputPreFleetControl(List.of(consumed)));
     }
 }

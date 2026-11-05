@@ -51,8 +51,6 @@ public final class ChartInfoTab implements CampaignUIRenderingListener, Campaign
     private boolean expanded;
     private float secondsSinceRefresh;
     private long lastRenderNanos;
-    private float mouseX;
-    private float mouseY;
 
     @Override
     public void renderInUICoordsBelowUI(ViewportAPI viewport) {
@@ -97,18 +95,15 @@ public final class ChartInfoTab implements CampaignUIRenderingListener, Campaign
             return;
         }
         for (InputEventAPI event : events) {
-            if (!event.isMouseEvent()) {
+            if (!event.isMouseEvent() || event.isConsumed()) {
                 continue;
             }
-            mouseX = event.getX();
-            mouseY = event.getY();
-            if (event.isConsumed()) {
-                continue;
-            }
-            if (event.isLMBDownEvent() && overTab(mouseX, mouseY)) {
+            float eventX = event.getX();
+            float eventY = event.getY();
+            if (event.isLMBDownEvent() && overTab(eventX, eventY)) {
                 toggle();
                 event.consume();
-            } else if (frame.isVisible() && overWindow(mouseX, mouseY)) {
+            } else if (frame.isVisible() && overWindow(eventX, eventY)) {
                 if (event.isMouseScrollEvent()) {
                     window.scroll(event.getEventValue(), windowHeight());
                 }
@@ -155,13 +150,13 @@ public final class ChartInfoTab implements CampaignUIRenderingListener, Campaign
     }
 
     private void renderWindow(float left, float bottom, float width, float height, float alphaMult) {
-        window.render(left, bottom, width, height, alphaMult, frame.contentAlpha() >= 1f, mouseX, mouseY);
+        window.render(left, bottom, width, height, alphaMult, frame.contentAlpha() >= 1f, mouseX(), mouseY());
     }
 
     private void drawTab(float alphaMult) {
         float left = tabLeft();
         float bottom = tabBottom();
-        boolean hovered = overTab(mouseX, mouseY);
+        boolean hovered = overTab(mouseX(), mouseY());
         GLDraw.fillQuad(left, bottom, TAB_WIDTH, TAB_HEIGHT, BorderedPanel.BACKGROUND_COLOR, alphaMult);
         if (hovered) {
             GLDraw.innerGlow(left, bottom, TAB_WIDTH, TAB_HEIGHT, HOVER_GLOW_WIDTH, ACCENT, HOVER_GLOW_ALPHA * alphaMult);
@@ -191,6 +186,14 @@ public final class ChartInfoTab implements CampaignUIRenderingListener, Campaign
 
     private float windowHeight() {
         return window.height(tabTop() - WINDOW_BOTTOM_MARGIN);
+    }
+
+    private static float mouseX() {
+        return Global.getSettings().getMouseX();
+    }
+
+    private static float mouseY() {
+        return Global.getSettings().getMouseY();
     }
 
     private static float tabLeft() {
