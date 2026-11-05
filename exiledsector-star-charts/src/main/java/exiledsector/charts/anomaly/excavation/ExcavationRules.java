@@ -2,6 +2,8 @@ package exiledsector.charts.anomaly.excavation;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.charts.content.ChartContentPlanner;
+import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.loot.DropType;
 
 import java.util.List;
@@ -17,7 +19,7 @@ public final class ExcavationRules {
     static final int MIN_PLANETS = 3;
     static final float OPEN_SHAFT_CHANCE = 0.5f;
     static final float DERELICT_CHANCE = 0.3f;
-    static final float FLEET_SIZE_SHARE = 0.5f;
+    static final float BOSS_SIZE_SHARE = 0.8f;
     static final float LOOT_STEPS = 1f;
     static final float LOOT_STEPS_PER_TIER = 0.25f;
     static final float ITEM_MULT = 1f;
@@ -36,6 +38,14 @@ public final class ExcavationRules {
 
     public static ExcavationSite.Access access(Random random) {
         return random.nextFloat() < OPEN_SHAFT_CHANCE ? ExcavationSite.Access.OPEN : ExcavationSite.Access.COLLAPSED;
+    }
+
+    static float fleetSize(ChartTier adjustedTier) {
+        return Math.max(adjustedTier.bossSize(), adjustedTier.fleetSize()) * BOSS_SIZE_SHARE;
+    }
+
+    static int strengthBonus(ChartTier adjustedTier) {
+        return ChartContentPlanner.overflowStrength(fleetSize(adjustedTier), ChartContentPlanner.BOSS_SIZE_CAP);
     }
 
     public static DropType lean(SectorAPI sector, Random random) {

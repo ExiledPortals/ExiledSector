@@ -11,6 +11,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.HeldGuards;
 import exiledsector.charts.content.ChartAnomalyFleets;
+import exiledsector.charts.content.ChartContentPlanner;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.loot.ChartFleetLoot;
@@ -56,6 +57,10 @@ public final class ExcavationFleets {
         ChartFleetLoot.recordStart(fleet);
         ChartFleetLoot.tagAnomaly(fleet, ExcavationSites.ANOMALY_ID);
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
+        int strengthBonus = ExcavationRules.strengthBonus(tier);
+        if (strengthBonus > 0) {
+            memory.set(ChartIds.STRENGTH_BONUS_MEMORY_KEY, strengthBonus);
+        }
         memory.set(LEAN_KEY, site.lean().name());
         memory.set(MemFlags.MEMORY_KEY_NO_REP_IMPACT, true);
         fleet.addTag(FLEET_TAG);
@@ -65,7 +70,7 @@ public final class ExcavationFleets {
 
     private static CampaignFleetAPI build(String factionId, ChartTier tier, Random random, boolean withOfficers) {
         ChartAnomalyFleets.Spec spec = ChartAnomalyFleets.combat(factionId, FleetTypes.PATROL_MEDIUM, tier,
-                tier.fleetSize() * ExcavationRules.FLEET_SIZE_SHARE);
+                ExcavationRules.fleetSize(tier), ChartContentPlanner.BOSS_SIZE_CAP);
         CampaignFleetAPI fleet = ChartAnomalyFleets.create(spec, random, ExcavationRules.MAX_SHIP_SIZE, withOfficers);
         return fleet == null || dropLargeHulls(fleet) ? null : fleet;
     }

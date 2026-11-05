@@ -1,8 +1,11 @@
 package exiledsector.charts.anomaly.excavation;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.charts.content.ChartContentPlanner;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.generation.ChartTier;
+import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.anomaly.RaidDangerLevels;
 import org.junit.jupiter.api.BeforeAll;
@@ -76,5 +79,18 @@ class ExcavationRulesTest {
         assertSame(ChartModifier.CHART_WEAPON_PERCENT, ChartModifier.forDropType(DropType.WEAPON));
         assertSame(context, ExcavationLoot.LOOT.leaning(context, ExcavationLoot.leaning(null)));
         ExcavationRules.LEANS.forEach(lean -> assertNotNull(ChartModifier.forDropType(lean), lean.name()));
+    }
+
+    @Test
+    void aShaftFleetIsMostOfTheBossSizeOnEveryTier() {
+        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.CORRUPTED_TIER; tier++) {
+            ChartTier chartTier = ChartGenContext.none().adjust(ChartTiers.forTier(tier));
+            float bossSize = Math.max(chartTier.bossSize(), chartTier.fleetSize());
+
+            assertEquals(bossSize * ExcavationRules.BOSS_SIZE_SHARE, ExcavationRules.fleetSize(chartTier), 0.0001f, "tier " + tier);
+            assertEquals(ChartContentPlanner.overflowStrength(bossSize * ExcavationRules.BOSS_SIZE_SHARE, ChartContentPlanner.BOSS_SIZE_CAP),
+                    ExcavationRules.strengthBonus(chartTier), "tier " + tier);
+        }
+        assertEquals(0.8f, ExcavationRules.BOSS_SIZE_SHARE, 0.0001f);
     }
 }

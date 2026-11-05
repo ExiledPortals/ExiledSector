@@ -42,8 +42,12 @@ public final class ChartAnomalyFleets {
     }
 
     public static Spec combat(String factionId, String fleetType, ChartTier tier, float sizePercent) {
+        return combat(factionId, fleetType, tier, sizePercent, ChartContentPlanner.FLEET_SIZE_CAP);
+    }
+
+    public static Spec combat(String factionId, String fleetType, ChartTier tier, float sizePercent, float sizeCap) {
         float quality = ChartContentPlanner.fleetQuality(tier);
-        return new Spec(factionId, fleetType, ChartTier.fleetPoints(Math.min(ChartContentPlanner.FLEET_SIZE_CAP, sizePercent)), 0f, 0f,
+        return new Spec(factionId, fleetType, ChartTier.fleetPoints(Math.min(sizeCap, sizePercent)), 0f, 0f,
                 quality / ChartTier.PERCENT, tier.officerLevelBonus(), tier.officerCountBonus(), ChartContentPlanner.averageSMods(quality));
     }
 
