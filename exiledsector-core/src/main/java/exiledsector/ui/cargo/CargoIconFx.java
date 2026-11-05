@@ -113,6 +113,16 @@ public final class CargoIconFx {
         }
     }
 
+    public static void renderArcs(Color color, float cx, float cy, float boxHalf, int phaseSeed, float alphaMult) {
+        if (ItemAnimationSetting.mode() != ItemAnimationSetting.Mode.FULL) {
+            return;
+        }
+        float t = seconds() + hash(phaseSeed, 1, 1) * SPARKLE_PERIOD * 4f;
+        try (GlScope scope = GlScope.flat().additive()) {
+            drawArcs(color, cx, cy, boxHalf, t, phaseSeed, alphaMult);
+        }
+    }
+
     private static void drawBackLayer(CargoIconLook look, float cx, float cy, float half, float t, boolean full, float alphaMult,
                                       float glowMult) {
         boolean animatedRings = full && (look.rings() || look.ticks());

@@ -6,6 +6,7 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.items.Item;
+import exiledsector.ui.cargo.CargoIconFx;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
 import exiledsector.ui.util.GLDraw;
@@ -18,6 +19,7 @@ public final class ItemCell extends BaseCustomUIPanelPlugin {
 
     private static final float BORDER_WIDTH = 1.5f;
     private static final float SELECTED_BORDER_WIDTH = 3f;
+    private static final float CHARGED_BORDER_WIDTH = 2.5f;
     private static final float GLOW_WIDTH = 14f;
     private static final float GLOW_ALPHA = 0.6f;
     private static final float DIMMED_ICON_ALPHA = 0.35f;
@@ -61,6 +63,7 @@ public final class ItemCell extends BaseCustomUIPanelPlugin {
     private final Listener cellListener;
     private final CargoIconLook ownArtLook;
     private final Color frameColor;
+    private final Color chargedBorderColor;
     private final String iconPath;
     private final TileInput tileInput;
     private PositionAPI cellPosition;
@@ -72,6 +75,7 @@ public final class ItemCell extends BaseCustomUIPanelPlugin {
         CargoIconLook cargoLook = CargoIconLooks.forItem(item);
         this.ownArtLook = cargoLook != null && cargoLook.ownArt() ? cargoLook : null;
         this.frameColor = item.frameColor();
+        this.chargedBorderColor = cargoLook == null ? null : cargoLook.borderColor();
         this.iconPath = item.iconPath();
         this.tileInput = new TileInput(TileInput.Handler.of(cellListener::hovered, cellListener::left, cellListener::clicked,
                 cellListener::rightClicked), true);
@@ -97,8 +101,10 @@ public final class ItemCell extends BaseCustomUIPanelPlugin {
         }
         boolean selected = cellListener.selected();
         float borderAlpha = tileInput.isHovered() || selected ? 1f : look.idleBorderAlpha();
-        TileChrome.draw(cellPosition, new TileChrome.Frame(frameColor, GLOW_WIDTH, glowAlpha, selected ? Misc.getBrightPlayerColor() : frameColor,
-                selected ? SELECTED_BORDER_WIDTH : BORDER_WIDTH, borderAlpha), alphaMult);
+        Color idleBorderColor = chargedBorderColor != null ? chargedBorderColor : frameColor;
+        float idleBorderWidth = chargedBorderColor != null ? CHARGED_BORDER_WIDTH : BORDER_WIDTH;
+        TileChrome.draw(cellPosition, new TileChrome.Frame(frameColor, GLOW_WIDTH, glowAlpha, selected ? Misc.getBrightPlayerColor() : idleBorderColor,
+                selected ? SELECTED_BORDER_WIDTH : idleBorderWidth, borderAlpha), alphaMult);
     }
 
     @Override
@@ -108,7 +114,12 @@ public final class ItemCell extends BaseCustomUIPanelPlugin {
         }
         float iconSize = cellPosition.getWidth() - look.iconInset() * 2f;
         float iconAlpha = (cellListener.dimmed() ? DIMMED_ICON_ALPHA : 1f) * alphaMult;
-        TileChrome.drawIcon(ICONS, iconPath, ownArtLook, cellPosition, iconSize, iconAlpha, 0f, System.identityHashCode(item));
+        int phaseSeed = System.identityHashCode(item);
+        TileChrome.drawIcon(ICONS, iconPath, ownArtLook, cellPosition, iconSize, iconAlpha, 0f, phaseSeed);
+        if (chargedBorderColor != null) {
+            float boxHalf = Math.min(cellPosition.getWidth(), cellPosition.getHeight()) / 2f - CHARGED_BORDER_WIDTH / 2f;
+            CargoIconFx.renderArcs(chargedBorderColor, cellPosition.getCenterX(), cellPosition.getCenterY(), boxHalf, phaseSeed, iconAlpha);
+        }
     }
 
     @Override
