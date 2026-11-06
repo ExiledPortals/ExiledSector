@@ -135,8 +135,26 @@ public final class TextLabel {
         if (current == null) {
             return false;
         }
-        current.draw(x, y);
+        float anchorShiftX = anchorWidthShare(anchor) * current.getWidth();
+        float anchorShiftY = anchorHeightShare(anchor) * current.getHeight();
+        current.draw(Math.round(x - anchorShiftX) + anchorShiftX, Math.round(y + anchorShiftY) - anchorShiftY);
         return true;
+    }
+
+    static float anchorWidthShare(LazyFont.TextAnchor anchor) {
+        return switch (anchor) {
+            case TOP_LEFT, CENTER_LEFT, BOTTOM_LEFT -> 0f;
+            case TOP_CENTER, CENTER, BOTTOM_CENTER -> 0.5f;
+            case TOP_RIGHT, CENTER_RIGHT, BOTTOM_RIGHT -> 1f;
+        };
+    }
+
+    static float anchorHeightShare(LazyFont.TextAnchor anchor) {
+        return switch (anchor) {
+            case TOP_LEFT, TOP_CENTER, TOP_RIGHT -> 0f;
+            case CENTER_LEFT, CENTER, CENTER_RIGHT -> 0.5f;
+            case BOTTOM_LEFT, BOTTOM_CENTER, BOTTOM_RIGHT -> 1f;
+        };
     }
 
     public float width() {

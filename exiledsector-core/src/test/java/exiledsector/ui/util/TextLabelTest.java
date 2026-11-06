@@ -56,6 +56,23 @@ class TextLabelTest {
     }
 
     @Test
+    void textIsDrawnWithItsCornerOnAWholePixel() {
+        new TextLabel(() -> font, FONT_SIZE, Color.WHITE, LazyFont.TextAnchor.TOP_LEFT).set("left").draw(10.3f, 20.6f);
+
+        verify(drawable).draw(10f, 21f);
+    }
+
+    @Test
+    void centredTextIsShiftedSoItsLeftEdgeLandsOnAWholePixel() {
+        when(drawable.getWidth()).thenReturn(31f);
+        when(drawable.getHeight()).thenReturn(15f);
+
+        new TextLabel(() -> font, FONT_SIZE, Color.WHITE, LazyFont.TextAnchor.CENTER).set("centred").draw(10.3f, 20f);
+
+        verify(drawable).draw(10.5f, 20.5f);
+    }
+
+    @Test
     void colourChangesArePlacedOneCharacterLateToCompensateForLazyFontApplyingThemEarly() {
         drawDescription(line("Increases flux capacity by <good>15%</good>.", false));
 

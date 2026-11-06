@@ -64,22 +64,24 @@ public final class SkillTreePanelStyle {
     static final String DEFAULT_FONT_PATH = "graphics/fonts/orbitron20aabold.fnt";
     static final String TOOLTIP_HEADING_FONT_PATH = "graphics/fonts/orbitron12condensed.fnt";
     static final String TOOLTIP_BODY_FONT_PATH = "graphics/fonts/insignia15LTaa.fnt";
+    private static final String LARGE_TOOLTIP_TITLE_FONT_PATH = "graphics/fonts/orbitron24aabold.fnt";
+    private static final String LARGE_TOOLTIP_DETAIL_FONT_PATH = "graphics/fonts/insignia17LTaa.fnt";
     private static final Map<String, Optional<LazyFont>> FONTS_BY_DEFAULT_PATH = new HashMap<>();
     private static final Map<String, Optional<LazyFont>> FONTS_BY_FILE = new HashMap<>();
 
     private static final TooltipText VANILLA_TOOLTIP_TEXT = new TooltipText(
-            new TextFont(SkillTreePanelStyle::font, 18f),
+            new TextFont(SkillTreePanelStyle::font, 20f),
             new TextFont(SkillTreePanelStyle::tooltipBodyFont, 15f),
             new TextFont(SkillTreePanelStyle::tooltipBodyFont, 15f),
             new TooltipText.Table(new TextFont(SkillTreePanelStyle::tooltipHeadingFont, 15f),
                     new TextFont(SkillTreePanelStyle::tooltipBodyFont, 15f), 20f, 20f),
             360f);
     private static final TooltipText LARGE_TOOLTIP_TEXT = new TooltipText(
-            new TextFont(SkillTreePanelStyle::font, 24f),
+            new TextFont(() -> localeFontOr(LARGE_TOOLTIP_TITLE_FONT_PATH), 24f),
             new TextFont(SkillTreePanelStyle::font, 20f),
-            new TextFont(SkillTreePanelStyle::font, 17f),
-            new TooltipText.Table(new TextFont(SkillTreePanelStyle::font, 18f),
-                    new TextFont(SkillTreePanelStyle::font, 16f), 24f, 22f),
+            new TextFont(() -> localeFontOr(LARGE_TOOLTIP_DETAIL_FONT_PATH), 17f),
+            new TooltipText.Table(new TextFont(SkillTreePanelStyle::font, 20f),
+                    new TextFont(() -> localeFontOr(LARGE_TOOLTIP_DETAIL_FONT_PATH), 17f), 26f, 22f),
             480f);
 
     private static final Map<String, Color> ACCENT_COLORS_BY_ICON = new ConcurrentHashMap<>();
@@ -166,11 +168,11 @@ public final class SkillTreePanelStyle {
             contentWidth = Math.max(contentWidth, footer.width());
             footerHeight = TOOLTIP_TABLE_GAP + footer.height();
         }
-        float boxWidth = contentWidth + TOOLTIP_PADDING * 2f + TOOLTIP_WIDTH_SAFETY_MARGIN;
-        float boxHeight = title.height() + TOOLTIP_TITLE_BODY_GAP + flavourHeight + body.height() + tablesHeight + separatedHeight + footerHeight
-                + TOOLTIP_PADDING * 2f;
-        float boxX = tooltipLeft(mouseX, boxWidth, Global.getSettings().getScreenWidth());
-        float boxY = Math.max(TOOLTIP_SCREEN_MARGIN, mouseY - boxHeight - TOOLTIP_CURSOR_OFFSET);
+        float boxWidth = (float) Math.ceil(contentWidth + TOOLTIP_PADDING * 2f + TOOLTIP_WIDTH_SAFETY_MARGIN);
+        float boxHeight = (float) Math.ceil(title.height() + TOOLTIP_TITLE_BODY_GAP + flavourHeight + body.height() + tablesHeight
+                + separatedHeight + footerHeight + TOOLTIP_PADDING * 2f);
+        float boxX = Math.round(tooltipLeft(mouseX, boxWidth, Global.getSettings().getScreenWidth()));
+        float boxY = Math.round(Math.max(TOOLTIP_SCREEN_MARGIN, mouseY - boxHeight - TOOLTIP_CURSOR_OFFSET));
 
         Color accent = getAccentColor();
         drawTooltipBackground(boxX, boxY, boxWidth, boxHeight, alphaMult, accent);
