@@ -1,5 +1,6 @@
 package exiledsector.ui;
 
+import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.ModSettings;
 
@@ -25,6 +26,10 @@ public final class TooltipTextSize {
         if (large) {
             tooltip.setTitleOrbitronVeryLarge();
         }
+    }
+
+    public static void applyNameFont(TooltipMakerAPI tooltip) {
+        tooltip.setParaFont(large ? Fonts.ORBITRON_24AA : Fonts.ORBITRON_20AA);
     }
 
     public static void applyBodyFont(TooltipMakerAPI tooltip) {

@@ -32,6 +32,7 @@ import exiledsector.items.UseVerdict;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.TooltipExpansion;
+import exiledsector.ui.TooltipTextSize;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
@@ -96,6 +97,7 @@ public final class CraftingBenchPanel extends HoloPanel {
     private static final float VIGNETTE_SHARE = 0.06f;
     private static final float PICK_BUTTON_WIDTH = 120f;
     private static final float TOOLTIP_WIDTH = 340f;
+    private static final float LARGE_TEXT_TOOLTIP_WIDTH = 530f;
     private static final float SLOT_TAG_WIDTH = 20f;
     private static final float SCROLLBAR_ROOM = 20f;
     private static final float MIN_OPEN_BUTTON_HEIGHT = 26f;
@@ -1060,14 +1062,14 @@ public final class CraftingBenchPanel extends HoloPanel {
             hoverTooltip.hide();
             return;
         }
-        hoverTooltip.show(inhibitor, TOOLTIP_WIDTH, (element, expanded) -> writeInhibitorTooltip(element, inhibitor), anchor,
+        hoverTooltip.show(inhibitor, itemTooltipWidth(), (element, expanded) -> writeInhibitorTooltip(element, inhibitor), anchor,
                 ItemHoverTooltip.Placement.BELOW, PAD);
     }
 
     private void writeInhibitorTooltip(TooltipMakerAPI element, CraftingInhibitor inhibitor) {
-        element.setParaFont(Fonts.ORBITRON_20AA);
+        TooltipTextSize.applyNameFont(element);
         VanillaText.plainPara(element, MaterialItems.displayName(inhibitor.itemId()), 0f, inhibitor.color());
-        element.setParaFontDefault();
+        TooltipTextSize.applyBodyFont(element);
         VanillaText.addPara(element, Translation.styled(inhibitorDescriptionKey(inhibitor)), GAP, Misc.getTextColor());
         int ownedCount = playerMaterials().count(inhibitor.itemId());
         VanillaText.plainPara(element, Translation.msg("ui.craftingBench.tile.inStorage").arg("count", ownedCount).text(), GAP, Misc.getGrayColor());
@@ -1077,6 +1079,10 @@ public final class CraftingBenchPanel extends HoloPanel {
             VanillaText.plainPara(element, Translation.text("ui.craftingBench.inhibitor.off"), GAP, Misc.getGrayColor());
         }
         VanillaText.plainPara(element, growHint(inhibitor), GAP, Misc.getGrayColor());
+    }
+
+    private static float itemTooltipWidth() {
+        return TooltipTextSize.large() ? LARGE_TEXT_TOOLTIP_WIDTH : TOOLTIP_WIDTH;
     }
 
     static String inhibitorDescriptionKey(CraftingInhibitor inhibitor) {
@@ -1126,14 +1132,14 @@ public final class CraftingBenchPanel extends HoloPanel {
             hoverTooltip.hide();
             return;
         }
-        hoverTooltip.show(craftingItem, TOOLTIP_WIDTH, (element, expanded) -> writeTooltip(element, craftingItem), anchor,
+        hoverTooltip.show(craftingItem, itemTooltipWidth(), (element, expanded) -> writeTooltip(element, craftingItem), anchor,
                 ItemHoverTooltip.Placement.BELOW, PAD);
     }
 
     private void writeTooltip(TooltipMakerAPI element, CraftingMaterialFamily craftingItem) {
-        element.setParaFont(Fonts.ORBITRON_20AA);
+        TooltipTextSize.applyNameFont(element);
         VanillaText.plainPara(element, recipeName(craftingItem), 0f, Misc.getBrightPlayerColor());
-        element.setParaFontDefault();
+        TooltipTextSize.applyBodyFont(element);
         VanillaText.addPara(element, support().craftingItemDescription(craftingItem), GAP, Misc.getTextColor());
         float linePad = GAP;
         for (StyledText line : support().craftingItemLines(craftingItem)) {
@@ -1188,13 +1194,14 @@ public final class CraftingBenchPanel extends HoloPanel {
         float detailsWidth = embeddedLayout != null ? embeddedLayout.details().width() : BenchScene.DETAILS_WIDTH * sceneScale;
         float detailsHeight = embeddedLayout != null ? embeddedLayout.details().height() : detailsArtHeight() * sceneScale;
         TooltipMakerAPI element = panelRoot.createUIElement(detailsWidth, detailsHeight, true);
+        TooltipTextSize.applyBodyFont(element);
         if (loadedItem == null) {
             centred(VanillaText.plainPara(element, Translation.text(support().emptyKey()), 0f, Misc.getGrayColor()));
         } else {
             ItemName displayName = loadedItem.displayName();
-            element.setParaFont(Fonts.ORBITRON_20AA);
+            TooltipTextSize.applyNameFont(element);
             centred(VanillaText.plainPara(element, displayName.title(), 0f, displayName.rarity().color()));
-            element.setParaFontDefault();
+            TooltipTextSize.applyBodyFont(element);
             if (displayName.baseName() != null) {
                 centred(VanillaText.plainPara(element, displayName.baseName(), LINE_PAD, Misc.getTextColor()));
             }
@@ -1243,7 +1250,9 @@ public final class CraftingBenchPanel extends HoloPanel {
         if (!line.hasDetails()) {
             return;
         }
-        element.addTooltipToPrevious(new GameTextTooltip(TOOLTIP_WIDTH, tooltip -> {
+        element.addTooltipToPrevious(new GameTextTooltip(itemTooltipWidth(), tooltip -> {
+            TooltipTextSize.applyTitleFont(tooltip);
+            TooltipTextSize.applyBodyFont(tooltip);
             float detailPad = 0f;
             if (line.detailTitle() != null) {
                 tooltip.addTitle(line.detailTitle());
@@ -1262,7 +1271,7 @@ public final class CraftingBenchPanel extends HoloPanel {
             return;
         }
         element.addSectionHeading(Translation.text(headingKey), Alignment.MID, headingPad);
-        SlottedRows.Layout layout = new SlottedRows.Layout(sectionWidth - SCROLLBAR_ROOM, SLOT_TAG_WIDTH, GAP, TooltipMakerAPI::setParaFontDefault);
+        SlottedRows.Layout layout = new SlottedRows.Layout(sectionWidth - SCROLLBAR_ROOM, SLOT_TAG_WIDTH, GAP, TooltipTextSize::applyBodyFont);
         SlottedRows.add(element, lines, layout, GAP, LINE_PAD, line -> addLineDetailTooltip(element, line));
     }
 
