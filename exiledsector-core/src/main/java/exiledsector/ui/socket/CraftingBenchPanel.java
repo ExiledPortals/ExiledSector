@@ -1196,10 +1196,14 @@ public final class CraftingBenchPanel extends HoloPanel {
             centred(VanillaText.plainPara(element, displayName.title(), 0f, displayName.rarity().color()));
             element.setParaFontDefault();
             if (displayName.baseName() != null) {
-                centred(VanillaText.plainPara(element, displayName.baseName(), LINE_PAD, Misc.getGrayColor()));
+                centred(VanillaText.plainPara(element, displayName.baseName(), LINE_PAD, Misc.getTextColor()));
+            }
+            StyledText flavour = support().flavourLine(loadedItem);
+            if (flavour != null) {
+                centred(VanillaText.addPara(element, flavour, LINE_PAD, Misc.getGrayColor()));
             }
             for (StyledText line : support().headerLines(loadedItem)) {
-                centred(VanillaText.addPara(element, line, LINE_PAD, Misc.getGrayColor()));
+                centred(VanillaText.addPara(element, line, LINE_PAD, Misc.getTextColor()));
             }
             float paraPad = GAP * 2f;
             float linePad = paraPad;

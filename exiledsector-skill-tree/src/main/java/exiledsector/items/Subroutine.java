@@ -195,8 +195,8 @@ public final class Subroutine extends Item implements NodeSocketable {
     }
 
     @Override
-    public List<StyledText> headerLines() {
-        List<StyledText> lines = new ArrayList<>(super.headerLines());
+    public List<StyledText> detailLines() {
+        List<StyledText> lines = new ArrayList<>(super.detailLines());
         lines.addAll(allocationLines(NodeGrantStatus.lastKnown(id())));
         lines.addAll(kindLines());
         return lines;

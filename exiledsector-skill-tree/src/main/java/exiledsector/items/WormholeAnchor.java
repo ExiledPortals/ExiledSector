@@ -200,7 +200,12 @@ public final class WormholeAnchor extends Item implements NodeSocketable {
     }
 
     @Override
-    public List<StyledText> headerLines() {
+    public StyledText flavourLine() {
+        return null;
+    }
+
+    @Override
+    public List<StyledText> detailLines() {
         List<StyledText> lines = new ArrayList<>();
         ItemDefinition definition = definition();
         StyledText description = definition == null ? null : definition.descriptionText();

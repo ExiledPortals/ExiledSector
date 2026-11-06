@@ -141,8 +141,12 @@ public interface BenchModeSupport {
 
     UseVerdict cannotUse();
 
+    default StyledText flavourLine(Item item) {
+        return item.flavourLine();
+    }
+
     default List<StyledText> headerLines(Item item) {
-        return item.headerLines();
+        return item.detailLines();
     }
 
     List<StyledText> detailLines(Item item);

@@ -43,13 +43,17 @@ public final class ItemTooltip {
         ItemName itemName = item.displayName();
         tooltip.addTitle(itemName.title(), itemName.rarity().color());
         if (itemName.baseName() != null) {
-            VanillaText.plainPara(tooltip, itemName.baseName(), 0f, Misc.getGrayColor());
+            VanillaText.plainPara(tooltip, itemName.baseName(), 0f, Misc.getTextColor());
         }
         StyledText limitLine = item.limitLine();
         if (limitLine != null) {
-            VanillaText.addPara(tooltip, limitLine, LINE_PAD, Misc.getGrayColor());
+            VanillaText.addPara(tooltip, limitLine, LINE_PAD, Misc.getTextColor());
         }
-        addLines(tooltip, item.headerLines(), Misc.getGrayColor());
+        StyledText flavour = item.flavourLine();
+        if (flavour != null) {
+            addLines(tooltip, List.of(flavour), Misc.getGrayColor());
+        }
+        addLines(tooltip, item.detailLines(), Misc.getTextColor());
         item.writeTooltipSections(tooltip, hullSize, showRollRanges);
         List<StyledText> implicitLines = item.implicitLines(showRollRanges);
         if (!implicitLines.isEmpty()) {

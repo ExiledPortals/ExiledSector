@@ -240,12 +240,24 @@ public final class StarChart extends Item {
 
     @Override
     public List<StyledText> headerLines() {
+        List<StyledText> lines = new ArrayList<>(chartLines());
+        lines.addAll(super.headerLines());
+        return lines;
+    }
+
+    @Override
+    public List<StyledText> detailLines() {
+        List<StyledText> lines = new ArrayList<>(chartLines());
+        lines.addAll(super.detailLines());
+        return lines;
+    }
+
+    private List<StyledText> chartLines() {
         List<StyledText> lines = new ArrayList<>();
         lines.add(Translation.msg("chart.item.tier").arg("tier", tier()).arg("systemType", systemTypeName(systemType())).styled());
         if (quantity() > 0) {
             lines.add(Translation.msg("chart.item.quantity").arg("quantity", quantity()).styled());
         }
-        lines.addAll(super.headerLines());
         return lines;
     }
 

@@ -339,15 +339,21 @@ public abstract class Item {
 
     public List<StyledText> headerLines() {
         List<StyledText> lines = new ArrayList<>();
-        ItemDefinition definition = definition();
-        if (definition != null) {
-            StyledText description = definition.descriptionText();
-            if (description != null) {
-                lines.add(description);
-            }
+        StyledText flavour = flavourLine();
+        if (flavour != null) {
+            lines.add(flavour);
         }
-        lines.addAll(conditionLines());
+        lines.addAll(detailLines());
         return lines;
+    }
+
+    public StyledText flavourLine() {
+        ItemDefinition definition = definition();
+        return definition == null ? null : definition.descriptionText();
+    }
+
+    public List<StyledText> detailLines() {
+        return conditionLines();
     }
 
     public List<StyledText> conditionLines() {

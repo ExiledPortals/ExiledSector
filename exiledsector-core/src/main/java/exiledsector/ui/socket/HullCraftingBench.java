@@ -165,6 +165,11 @@ public final class HullCraftingBench implements BenchModeSupport {
     }
 
     @Override
+    public StyledText flavourLine(Item item) {
+        return null;
+    }
+
+    @Override
     public List<StyledText> headerLines(Item item) {
         List<StyledText> lines = new ArrayList<>(item.conditionLines());
         lines.addAll(item.kindLines());
