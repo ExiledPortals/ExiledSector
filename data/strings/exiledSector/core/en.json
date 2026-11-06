@@ -644,6 +644,8 @@
 
     "effect.FIGHTER_BAYS_FLAT.warning": "Unallocating it returns any strikecraft wing in the bay it adds to your cargo.",
     "effect.CONVERTED_HANGAR_FIGHTER_BAYS_FLAT": "<good>+{value}</good> to number of strikecraft bays, plus any extra bays from Vast Hangar.",
+    "effect.STRIKECRAFT_OP_DEPLOYMENT_COST_FLAT.more": "<bad>+{value}</bad> to deployment points and supplies to recover for every {op} ordnance points of strikecraft wings, at least <bad>+{value}</bad>. Combat readiness lost per deployment rises with it.",
+    "effect.STRIKECRAFT_OP_DEPLOYMENT_COST_FLAT.less": "<good>-{value}</good> to deployment points and supplies to recover for every {op} ordnance points of strikecraft wings, at least <good>-{value}</good>. Combat readiness lost per deployment falls with it.",
     "effect.FIGHTER_REPLACEMENT_RATE_MULT.slower": "The strikecraft replacement rate both decays and recovers <bad>{value}%</bad> more slowly.",
     "effect.FIGHTER_REPLACEMENT_RATE_MULT.faster": "The strikecraft replacement rate both decays and recovers <good>{value}%</good> more quickly.",
     "fighter.launched": "{role} launched from this ship have",

@@ -6,7 +6,9 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
+import com.fs.starfarer.api.impl.hullmods.ConvertedHangar;
 import com.fs.starfarer.api.loading.WingRole;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
@@ -218,6 +220,35 @@ public enum FighterSkillEffect implements BackedSkillEffect {
             return FIGHTER_BAYS_FLAT.deallocationWarning(magnitude);
         }
     },
+    STRIKECRAFT_OP_DEPLOYMENT_COST_FLAT {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            float addedPoints = magnitude * ConvertedHangar.computeDPModifier(ConvertedHangar.getFighterOPCost(stats));
+            stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyFlat(modId, addedPoints);
+            stats.getSuppliesToRecover().modifyFlat(modId, addedPoints);
+            FleetMemberAPI member = stats.getFleetMember();
+            float suppliesPerDeployment = member == null ? 0f : member.getHullSpec().getSuppliesToRecover();
+            if (suppliesPerDeployment > 0f) {
+                stats.getCRPerDeploymentPercent().modifyMult(modId, 1f + addedPoints / suppliesPerDeployment);
+            }
+        }
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return true;
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.signed(this, magnitude).arg("op", ConvertedHangar.FIGHTER_OP_PER_DP).styled();
+        }
+    },
+    CONVERTED_HANGAR_DEPLOYMENT_COST_FLAT(new WaivedPenalty(STRIKECRAFT_OP_DEPLOYMENT_COST_FLAT, Stats.CONVERTED_HANGAR_NO_DP_INCREASE)),
     CONVERTED_HANGAR_REFIT_TIME_MULT(new WaivedPenalty(FIGHTER_REFIT_TIME_MULT, Stats.CONVERTED_HANGAR_NO_REFIT_PENALTY)),
     CONVERTED_HANGAR_REPLACEMENT_RATE_MULT(new WaivedPenalty(FIGHTER_REPLACEMENT_RATE_MULT, Stats.CONVERTED_HANGAR_NO_REFIT_PENALTY)),
     CONVERTED_HANGAR_RELAUNCH_TIME_FLAT(new WaivedPenalty(FIGHTER_RELAUNCH_TIME_FLAT, Stats.CONVERTED_HANGAR_NO_REARM_INCREASE)),

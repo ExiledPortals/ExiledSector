@@ -282,6 +282,10 @@ mods except pure markers listed in `drone_marker_hullmods.csv` (shared with Refr
 in `split_beam_effect_blocklist.csv`, or ones a drone can't carry, fall back to simulated splits: per-tick
 instant damage plus a MagicLib fake beam, without the weapon's effect code.
 
+### Converted Hangar
+
+The `CONVERTED_HANGAR_*` penalties are vanilla's, applied through `WaivedPenalty`. Each drops to zero when vanilla's matching `converted_hangar_no_*` stat is set (Navarchy of Tania armor plates set all four) or Second-in-Command's Reconfiguration is active. The deployment cost uses vanilla's `ConvertedHangar` formula: +1 deployment point and supplies to recover per 5 strikecraft OP, at least 1.
+
 ### High Scatter Amplifier
 
 `BEAM_WEAPON_HARD_FLUX_PERCENT` converts that share (capped at 100%) of a beam hit's shield flux from soft to

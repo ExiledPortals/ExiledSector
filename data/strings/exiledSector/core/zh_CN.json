@@ -1121,6 +1121,8 @@
 
     "effect.FIGHTER_BAYS_FLAT.warning": "取消分配后，其提供的机库中的战机联队将退回你的货舱。",
     "effect.CONVERTED_HANGAR_FIGHTER_BAYS_FLAT": "机库数量<good>+{value}</good>，另加巨型机库提供的额外机库。",
+    "effect.STRIKECRAFT_OP_DEPLOYMENT_COST_FLAT.more": "战机联队每占用{op}点装配点，部署点与恢复所需补给<bad>+{value}</bad>，至少<bad>+{value}</bad>。每次部署损失的战备值随之增加。",
+    "effect.STRIKECRAFT_OP_DEPLOYMENT_COST_FLAT.less": "战机联队每占用{op}点装配点，部署点与恢复所需补给<good>-{value}</good>，至少<good>-{value}</good>。每次部署损失的战备值随之减少。",
     "effect.FIGHTER_REPLACEMENT_RATE_MULT.slower": "战机补充率的衰减与恢复速度减慢<bad>{value}%</bad>。",
     "effect.FIGHTER_REPLACEMENT_RATE_MULT.faster": "战机补充率的衰减与恢复速度加快<good>{value}%</good>。",
     "fighter.launched": "本舰发射的{role}的",

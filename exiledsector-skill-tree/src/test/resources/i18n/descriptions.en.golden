@@ -520,6 +520,12 @@ effect|COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP|12.5	0	<good>12.5%</good> increased
 effect|COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP|100.0	0	<good>100%</good> increased command point recovery rate while this ship is the flagship.
 effect|COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP|-10.0	0	<bad>10%</bad> reduced command point recovery rate while this ship is the flagship.
 effect|COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP|-12.5	0	<bad>12.5%</bad> reduced command point recovery rate while this ship is the flagship.
+effect|CONVERTED_HANGAR_DEPLOYMENT_COST_FLAT|1.0	1	<bad>+1</bad> to deployment points and supplies to recover for every 5 ordnance points of strikecraft wings, at least <bad>+1</bad>. Combat readiness lost per deployment rises with it.
+effect|CONVERTED_HANGAR_DEPLOYMENT_COST_FLAT|10.0	1	<bad>+10</bad> to deployment points and supplies to recover for every 5 ordnance points of strikecraft wings, at least <bad>+10</bad>. Combat readiness lost per deployment rises with it.
+effect|CONVERTED_HANGAR_DEPLOYMENT_COST_FLAT|12.5	1	<bad>+12.5</bad> to deployment points and supplies to recover for every 5 ordnance points of strikecraft wings, at least <bad>+12.5</bad>. Combat readiness lost per deployment rises with it.
+effect|CONVERTED_HANGAR_DEPLOYMENT_COST_FLAT|100.0	1	<bad>+100</bad> to deployment points and supplies to recover for every 5 ordnance points of strikecraft wings, at least <bad>+100</bad>. Combat readiness lost per deployment rises with it.
+effect|CONVERTED_HANGAR_DEPLOYMENT_COST_FLAT|-10.0	1	<good>-10</good> to deployment points and supplies to recover for every 5 ordnance points of strikecraft wings, at least <good>-10</good>. Combat readiness lost per deployment falls with it.
+effect|CONVERTED_HANGAR_DEPLOYMENT_COST_FLAT|-12.5	1	<good>-12.5</good> to deployment points and supplies to recover for every 5 ordnance points of strikecraft wings, at least <good>-12.5</good>. Combat readiness lost per deployment falls with it.
 effect|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|1.0	0	<good>+1</good> to number of strikecraft bays, plus any extra bays from Vast Hangar.
 warning|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|1.0	0	Unallocating it returns any strikecraft wing in the bay it adds to your cargo.
 effect|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|10.0	0	<good>+10</good> to number of strikecraft bays, plus any extra bays from Vast Hangar.
@@ -2608,6 +2614,12 @@ effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|12.5	0	Strikecraft launched from this s
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|100.0	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|-10.0	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
 effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|-12.5	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
+effect|STRIKECRAFT_OP_DEPLOYMENT_COST_FLAT|1.0	1	<bad>+1</bad> to deployment points and supplies to recover for every 5 ordnance points of strikecraft wings, at least <bad>+1</bad>. Combat readiness lost per deployment rises with it.
+effect|STRIKECRAFT_OP_DEPLOYMENT_COST_FLAT|10.0	1	<bad>+10</bad> to deployment points and supplies to recover for every 5 ordnance points of strikecraft wings, at least <bad>+10</bad>. Combat readiness lost per deployment rises with it.
+effect|STRIKECRAFT_OP_DEPLOYMENT_COST_FLAT|12.5	1	<bad>+12.5</bad> to deployment points and supplies to recover for every 5 ordnance points of strikecraft wings, at least <bad>+12.5</bad>. Combat readiness lost per deployment rises with it.
+effect|STRIKECRAFT_OP_DEPLOYMENT_COST_FLAT|100.0	1	<bad>+100</bad> to deployment points and supplies to recover for every 5 ordnance points of strikecraft wings, at least <bad>+100</bad>. Combat readiness lost per deployment rises with it.
+effect|STRIKECRAFT_OP_DEPLOYMENT_COST_FLAT|-10.0	1	<good>-10</good> to deployment points and supplies to recover for every 5 ordnance points of strikecraft wings, at least <good>-10</good>. Combat readiness lost per deployment falls with it.
+effect|STRIKECRAFT_OP_DEPLOYMENT_COST_FLAT|-12.5	1	<good>-12.5</good> to deployment points and supplies to recover for every 5 ordnance points of strikecraft wings, at least <good>-12.5</good>. Combat readiness lost per deployment falls with it.
 effect|STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT|1.0	0	Strikecraft launched from this ship have <good>1%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
 effect|STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT|10.0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
 effect|STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT|12.5	0	Strikecraft launched from this ship have <good>12.5%</good> increased weapon damage for every allied strikecraft within 500 su, up to 20%.
@@ -3435,6 +3447,7 @@ type|converted_hangar|null|1	1	<good>50%</good> more strikecraft refit time.
 type|converted_hangar|null|2	0	The strikecraft replacement rate both decays and recovers <bad>50%</bad> more slowly.
 type|converted_hangar|null|3	1	<good>+40%</good> of base refit time to strikecraft relaunch time.
 type|converted_hangar|null|4	1	<good>+20</good> to minimum crew required.
+type|converted_hangar|null|5	1	<bad>+1</bad> to deployment points and supplies to recover for every 5 ordnance points of strikecraft wings, at least <bad>+1</bad>. Combat readiness lost per deployment rises with it.
 type-detail|converted_hangar|null|0	0	Unallocating it returns any strikecraft wing in the bay it adds to your cargo.
 type-detail|converted_hangar|null|1	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
 type-detail|converted_hangar|null|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Converted Fighter Bay</hullmod>\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Sentinel Retrofit</hullmod>\n• <hullmod>Trinity Worlds Retrofit</hullmod>\n• <hullmod>Fighter Clamps</hullmod>\n• <hullmod>Converted Hangar</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Converted Fighter Bay</node>
@@ -3443,6 +3456,7 @@ type|converted_hangar|FRIGATE|1	1	<good>50%</good> more strikecraft refit time.
 type|converted_hangar|FRIGATE|2	0	The strikecraft replacement rate both decays and recovers <bad>50%</bad> more slowly.
 type|converted_hangar|FRIGATE|3	1	<good>+40%</good> of base refit time to strikecraft relaunch time.
 type|converted_hangar|FRIGATE|4	1	<good>+20</good> to minimum crew required.
+type|converted_hangar|FRIGATE|5	1	<bad>+1</bad> to deployment points and supplies to recover for every 5 ordnance points of strikecraft wings, at least <bad>+1</bad>. Combat readiness lost per deployment rises with it.
 type-detail|converted_hangar|FRIGATE|0	0	Unallocating it returns any strikecraft wing in the bay it adds to your cargo.
 type-detail|converted_hangar|FRIGATE|1	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
 type-detail|converted_hangar|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Converted Fighter Bay</hullmod>\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Sentinel Retrofit</hullmod>\n• <hullmod>Trinity Worlds Retrofit</hullmod>\n• <hullmod>Fighter Clamps</hullmod>\n• <hullmod>Converted Hangar</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Converted Fighter Bay</node>
@@ -3451,6 +3465,7 @@ type|converted_hangar|DESTROYER|1	1	<good>50%</good> more strikecraft refit time
 type|converted_hangar|DESTROYER|2	0	The strikecraft replacement rate both decays and recovers <bad>50%</bad> more slowly.
 type|converted_hangar|DESTROYER|3	1	<good>+40%</good> of base refit time to strikecraft relaunch time.
 type|converted_hangar|DESTROYER|4	1	<good>+20</good> to minimum crew required.
+type|converted_hangar|DESTROYER|5	1	<bad>+1</bad> to deployment points and supplies to recover for every 5 ordnance points of strikecraft wings, at least <bad>+1</bad>. Combat readiness lost per deployment rises with it.
 type-detail|converted_hangar|DESTROYER|0	0	Unallocating it returns any strikecraft wing in the bay it adds to your cargo.
 type-detail|converted_hangar|DESTROYER|1	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
 type-detail|converted_hangar|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Converted Fighter Bay</hullmod>\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Sentinel Retrofit</hullmod>\n• <hullmod>Trinity Worlds Retrofit</hullmod>\n• <hullmod>Fighter Clamps</hullmod>\n• <hullmod>Converted Hangar</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Converted Fighter Bay</node>
@@ -3459,6 +3474,7 @@ type|converted_hangar|CRUISER|1	1	<good>50%</good> more strikecraft refit time.
 type|converted_hangar|CRUISER|2	0	The strikecraft replacement rate both decays and recovers <bad>50%</bad> more slowly.
 type|converted_hangar|CRUISER|3	1	<good>+40%</good> of base refit time to strikecraft relaunch time.
 type|converted_hangar|CRUISER|4	1	<good>+20</good> to minimum crew required.
+type|converted_hangar|CRUISER|5	1	<bad>+1</bad> to deployment points and supplies to recover for every 5 ordnance points of strikecraft wings, at least <bad>+1</bad>. Combat readiness lost per deployment rises with it.
 type-detail|converted_hangar|CRUISER|0	0	Unallocating it returns any strikecraft wing in the bay it adds to your cargo.
 type-detail|converted_hangar|CRUISER|1	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
 type-detail|converted_hangar|CRUISER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Converted Fighter Bay</hullmod>\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Sentinel Retrofit</hullmod>\n• <hullmod>Trinity Worlds Retrofit</hullmod>\n• <hullmod>Fighter Clamps</hullmod>\n• <hullmod>Converted Hangar</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Converted Fighter Bay</node>
@@ -3467,6 +3483,7 @@ type|converted_hangar|CAPITAL_SHIP|1	1	<good>50%</good> more strikecraft refit t
 type|converted_hangar|CAPITAL_SHIP|2	0	The strikecraft replacement rate both decays and recovers <bad>50%</bad> more slowly.
 type|converted_hangar|CAPITAL_SHIP|3	1	<good>+40%</good> of base refit time to strikecraft relaunch time.
 type|converted_hangar|CAPITAL_SHIP|4	1	<good>+20</good> to minimum crew required.
+type|converted_hangar|CAPITAL_SHIP|5	1	<bad>+1</bad> to deployment points and supplies to recover for every 5 ordnance points of strikecraft wings, at least <bad>+1</bad>. Combat readiness lost per deployment rises with it.
 type-detail|converted_hangar|CAPITAL_SHIP|0	0	Unallocating it returns any strikecraft wing in the bay it adds to your cargo.
 type-detail|converted_hangar|CAPITAL_SHIP|1	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
 type-detail|converted_hangar|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Converted Fighter Bay</hullmod>\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Sentinel Retrofit</hullmod>\n• <hullmod>Trinity Worlds Retrofit</hullmod>\n• <hullmod>Fighter Clamps</hullmod>\n• <hullmod>Converted Hangar</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Converted Fighter Bay</node>
@@ -4322,18 +4339,23 @@ type|high_resolution_sensors|CAPITAL_SHIP|1	0	<good>+70</good> to this ship's se
 type-detail|high_resolution_sensors|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>High Resolution Sensors</hullmod>\n• <hullmod>Oracle Sensor Suite</hullmod>
 type|high_scatter_amplifier|null|0	0	<good>50%</good> of beam weapon damage dealt to shields is dealt as hard flux.
 type|high_scatter_amplifier|null|1	0	<bad>25%</bad> less beam weapon range.
+type|high_scatter_amplifier|null|2	0	<good>10%</good> increased beam weapon damage.
 type-detail|high_scatter_amplifier|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Optics</hullmod>\n• <hullmod>High Scatter Amplifier</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Advanced Optics</node>
 type|high_scatter_amplifier|FRIGATE|0	0	<good>50%</good> of beam weapon damage dealt to shields is dealt as hard flux.
 type|high_scatter_amplifier|FRIGATE|1	0	<bad>25%</bad> less beam weapon range.
+type|high_scatter_amplifier|FRIGATE|2	0	<good>10%</good> increased beam weapon damage.
 type-detail|high_scatter_amplifier|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Optics</hullmod>\n• <hullmod>High Scatter Amplifier</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Advanced Optics</node>
 type|high_scatter_amplifier|DESTROYER|0	0	<good>50%</good> of beam weapon damage dealt to shields is dealt as hard flux.
 type|high_scatter_amplifier|DESTROYER|1	0	<bad>25%</bad> less beam weapon range.
+type|high_scatter_amplifier|DESTROYER|2	0	<good>10%</good> increased beam weapon damage.
 type-detail|high_scatter_amplifier|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Optics</hullmod>\n• <hullmod>High Scatter Amplifier</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Advanced Optics</node>
 type|high_scatter_amplifier|CRUISER|0	0	<good>50%</good> of beam weapon damage dealt to shields is dealt as hard flux.
 type|high_scatter_amplifier|CRUISER|1	0	<bad>25%</bad> less beam weapon range.
+type|high_scatter_amplifier|CRUISER|2	0	<good>10%</good> increased beam weapon damage.
 type-detail|high_scatter_amplifier|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Optics</hullmod>\n• <hullmod>High Scatter Amplifier</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Advanced Optics</node>
 type|high_scatter_amplifier|CAPITAL_SHIP|0	0	<good>50%</good> of beam weapon damage dealt to shields is dealt as hard flux.
 type|high_scatter_amplifier|CAPITAL_SHIP|1	0	<bad>25%</bad> less beam weapon range.
+type|high_scatter_amplifier|CAPITAL_SHIP|2	0	<good>10%</good> increased beam weapon damage.
 type-detail|high_scatter_amplifier|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Optics</hullmod>\n• <hullmod>High Scatter Amplifier</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Advanced Optics</node>
 type|high_tech_affinity|null|0	0	<good>+5</good> to High Tech Affinity.
 type|high_tech_affinity|FRIGATE|0	0	<good>+5</good> to High Tech Affinity.

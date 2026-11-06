@@ -630,7 +630,6 @@
 				}
 			],
 			"flavour": "In a joint League fleet, every member world jams anyone it suspects of listening, which is everyone. Most of the noise comes from allies.",
-			"todo": "Needs an icon.",
 			"tags": [
 				"weapons",
 				"range"
@@ -648,7 +647,6 @@
 				}
 			],
 			"flavour": "Under the League's founding compact, every member world must defend whatever the League holds.",
-			"todo": "Needs an icon.",
 			"tags": [
 				"fleet_support"
 			]
@@ -656,7 +654,7 @@
 		{
 			"id": "joint_strike_package",
 			"name": "Joint Strike Package",
-			"icon": "graphics/icons/fighters2.png",
+			"icon": "graphics/icons/joint_strike_package.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -665,7 +663,6 @@
 				}
 			],
 			"flavour": "No League detachment will launch second, so joint fleets launch every wing at once.",
-			"todo": "Needs an icon.",
 			"tags": [
 				"fighter",
 				"req_fighter_bays"
@@ -683,7 +680,6 @@
 				}
 			],
 			"flavour": "Every League depot stocks spares for its own world's hulls and nothing else. The paperwork for a mixed fleet runs to several volumes, one per world.",
-			"todo": "Needs an icon.",
 			"tags": [
 				"logistics",
 				"campaign_only"
@@ -701,7 +697,6 @@
 				}
 			],
 			"flavour": "Kazeron's orbital yards will not certify a recovered hull until every frame weld has been inspected.",
-			"todo": "Needs an icon.",
 			"tags": [
 				"logistics",
 				"campaign_only"
@@ -724,7 +719,6 @@
 			],
 			"flavour": "Hegemony refit yards still lay armor plate to Domain specifications, unchanged since before the Collapse. A yard foreman on Chicomoztoc sells the crew the pattern on the understanding that it does not exist.",
 			"flavourAutomated": "Hegemony refit yards still lay armor plate to Domain specifications, unchanged since before the Collapse. The ship's core finds the pattern in a Chicomoztoc yard's maintenance logs, and the refit crew lays it to the letter. The logs list the pattern as not existing.",
-			"todo": "Needs an icon.",
 			"tags": [
 				"armour"
 			]
@@ -760,7 +754,6 @@
 			],
 			"flavour": "Hegemony line drill holds that a battle line which keeps station cannot be broken, only worn down. The crew posts damage-control teams behind the forward armor and learns to stop the ship when the shooting starts. Navy instructors call this courage. Navy accountants call it cheaper than engines.",
 			"flavourAutomated": "Hegemony line drill holds that a battle line which keeps station cannot be broken, only worn down. The ship's core studies recordings of Navy lines under fire, and the refit crew braces the forward armor for a ship that stops when the shooting starts. Navy instructors call this courage. Navy accountants call it cheaper than engines.",
-			"todo": "Needs an icon.",
 			"tags": [
 				"armour"
 			]
@@ -783,7 +776,6 @@
 			],
 			"flavour": "Hegemony auxiliary fleets are made of whatever the Navy can requisition, and the battle line is expected to shelter them. A cycle of convoy duty out of Jangala teaches the crew to keep the ship between the enemy and the smaller hulls. The auxiliaries are grateful, in the manner of people who have been told to be.",
 			"flavourAutomated": "Hegemony auxiliary fleets are made of whatever the Navy can requisition, and the battle line is expected to shelter them. The ship's core logs a cycle of convoy duty out of Jangala and learns to keep its hull between the enemy and the smaller ships. The auxiliaries are grateful, in the manner of people who have been told to be.",
-			"todo": "Needs an icon.",
 			"tags": [
 				"fleet_support"
 			]
@@ -801,7 +793,6 @@
 			],
 			"flavour": "Planetary defense batteries on Eventide fire heavy shells with a delayed charge that bursts just inside the plating, shaking loose whatever is mounted nearby. A retired battery sergeant teaches the crew to pack them in exchange for passage off-world. The sergeant asks not to be told where the shells end up.",
 			"flavourAutomated": "Planetary defense batteries on Eventide fire heavy shells with a delayed charge that bursts just inside the plating, shaking loose whatever is mounted nearby. The ship's core copies the fusing tables from a salvaged battery fire-control unit, and the refit crew packs the shells to match. The unit is still listed as in service.",
-			"todo": "Needs an icon.",
 			"tags": [
 				"ballistic",
 				"req_ballistic"
@@ -1091,6 +1082,10 @@
 				{
 					"effect": "CONVERTED_HANGAR_MIN_CREW_FLAT",
 					"magnitude": 20
+				},
+				{
+					"effect": "CONVERTED_HANGAR_DEPLOYMENT_COST_FLAT",
+					"magnitude": 1
 				}
 			],
 			"requiredHullSizes": [
@@ -1108,7 +1103,6 @@
 			"phantomHullMods": [
 				"converted_hangar"
 			],
-			"todo": "Real vanilla effect also increases deployment points and supply cost to recover by 1 per 5 OP spent on fighters (min 1), with a proportional increase in CR lost per deployment - deliberately not implemented yet, so right now this node is a buff with no real downside beyond the 4 modifiers above. This node may need other balance considerations once that's added.",
 			"tags": [
 				"fighter",
 				"req_no_fighter_bays"
@@ -2000,6 +1994,10 @@
 				{
 					"effect": "BEAM_WEAPON_RANGE_MULT",
 					"magnitude": -25
+				},
+				{
+					"effect": "BEAM_WEAPON_DAMAGE_PERCENT",
+					"magnitude": 10
 				}
 			],
 			"unlockConditions": [
@@ -2012,7 +2010,7 @@
 			"phantomHullMods": [
 				"high_scatter_amp"
 			],
-			"todo": "Placeholder magnitudes (50% hard flux, -25% range) pending real balance numbers. Reimplemented as a scalable percentage instead of vanilla's all-or-nothing forced-hard-flux-on-every-beam-hit, and the range reduction is a flat percentage instead of vanilla's reduce-only-the-portion-past-200-units logic - deliberate simplifications, not oversights. The +10% beam damage part (vanilla BEAM_DAMAGE_PERCENT) is not yet added; can reuse the existing BEAM_DAMAGE_PERCENT effect for that later.",
+			"todo": "Placeholder magnitudes (50% hard flux, -25% range) pending real balance numbers. Reimplemented as a scalable percentage instead of vanilla's all-or-nothing forced-hard-flux-on-every-beam-hit, and the range reduction is a flat percentage instead of vanilla's reduce-only-the-portion-past-200-units logic - deliberate simplifications, not oversights.",
 			"tags": [
 				"energy",
 				"beam",
@@ -2729,7 +2727,6 @@
 					"magnitude": 3
 				}
 			],
-			"todo": "Placeholder magnitude (15%) pending real balance numbers.",
 			"tags": [
 				"fighter",
 				"req_fighter_bays"
@@ -2745,7 +2742,6 @@
 					"magnitude": 5
 				}
 			],
-			"todo": "Placeholder magnitude (15%) pending real balance numbers.",
 			"tags": [
 				"fighter",
 				"req_fighter_bays"
@@ -3644,7 +3640,6 @@
 				}
 			],
 			"flavour": "Lion's Guard refits rebuild a hull around its energy mounts. Guard armorers regard missiles as an admission of poor aim.",
-			"todo": "Needs an icon.",
 			"tags": [
 				"energy",
 				"range"
@@ -3662,7 +3657,6 @@
 				}
 			],
 			"flavour": "Diktat burn tables treat every unit of fuel aboard as state property on loan. Repayment is expected in full.",
-			"todo": "Needs an icon.",
 			"tags": [
 				"logistics",
 				"campaign_only"
@@ -3688,7 +3682,6 @@
 				}
 			],
 			"flavour": "A standing decree of the Supreme Executor names retreat as treason. It has no provision for appeal.",
-			"todo": "Needs an icon.",
 			"tags": [
 				"weapons"
 			]
@@ -3705,7 +3698,6 @@
 				}
 			],
 			"flavour": "Diktat warships broadcast the Supreme Executor's addresses on open channels as they close, at a volume the comm filter can't fully block. Sindrian citizens are required to listen to the end.",
-			"todo": "Needs an icon.",
 			"tags": [
 				"fleet_support"
 			]
@@ -3722,7 +3714,6 @@
 				}
 			],
 			"flavour": "The Lion's Guard keeps pace with the Supreme Executor's flagship, never the other way round. Most of its recorded maneuvers are parades.",
-			"todo": "Needs an icon.",
 			"tags": [
 				"speed"
 			]
@@ -3974,7 +3965,6 @@
 			],
 			"flavour": "Tri-Tachyon's phase labs learned to lock the coils of a strike craft wing into one shared state, so a hit on one craft bleeds through p-space into the whole wing. A defector from those labs, smuggled out at no small cost, walks the crew through retuning this carrier's strike craft coils to the same entangled frequency.",
 			"flavourAutomated": "Tri-Tachyon's phase labs learned to lock the coils of a strike craft wing into one shared state, so a hit on one craft bleeds through p-space into the whole wing. A defector from those labs, smuggled out at no small cost, walks the refit crew through retuning this carrier's strike craft coils to the same entangled frequency.",
-			"todo": "Needs an icon.",
 			"tags": [
 				"fighter",
 				"req_fighter_bays"
@@ -4012,7 +4002,7 @@
 			],
 			"flavour": "Every League member world sends its own carrier detachment to a joint fleet, and the League's flight doctrine makes them fly as one: a bomber from one world takes orders from a flight lead from another. Pilots from rival worlds fly together mostly so each can report on the other.",
 			"flavourAutomated": "Every League member world sends its own carrier detachment to a joint fleet, and the League's flight doctrine makes them fly as one. The ship's core records the doctrine from joint fleet comm traffic and flies its own wings by it. It has no rival world to report back to.",
-			"todo": "Prototype: wings never grow beyond their normal size; copies are retrained from the wing's own natives, and a copy lost or sent to rearm comes back when the host bay rebuilds a native that is retrained into it. Still to check in game: rearm cycles of copies and the replacement rate during long fights. Still to build: an icon.",
+			"todo": "Prototype: wings never grow beyond their normal size; copies are retrained from the wing's own natives, and a copy lost or sent to rearm comes back when the host bay rebuilds a native that is retrained into it. Still to check in game: rearm cycles of copies and the replacement rate during long fights.",
 			"tags": [
 				"fighter",
 				"req_fighter_bays"
