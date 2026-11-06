@@ -21,10 +21,7 @@ public final class AllocationPath {
 
     public static List<Step> to(SkillNode target, AllocationCheck gate, SkillTreeTopology topology, Predicate<SkillNode> hidden,
                                 SkillType preferredOption, RandomGenerator random) {
-        if (target == null || gate.data().isAllocated(target.getId()) || hidden.test(target) || !eligible(target, gate)) {
-            return List.of();
-        }
-        List<SkillNode> nodes = shortestPath(target, gate, topology, hidden);
+        List<SkillNode> nodes = route(target, Set.of(), gate, topology, hidden);
         if (nodes.isEmpty()) {
             return List.of();
         }
@@ -37,16 +34,13 @@ public final class AllocationPath {
         return List.copyOf(steps);
     }
 
-    private static List<SkillNode> shortestPath(SkillNode target, AllocationCheck gate, SkillTreeTopology topology, Predicate<SkillNode> hidden) {
-        ShipSkillData data = gate.data();
-        Set<String> seeds = new TreeSet<>(data.getAllocatedNodeIds());
-        seeds.removeAll(gate.grantOnlyNodeIds());
-        if (gate.rootId() != null) {
-            seeds.add(gate.rootId());
+    static List<SkillNode> route(SkillNode target, Set<String> extraSeedIds, AllocationCheck gate, SkillTreeTopology topology,
+                                 Predicate<SkillNode> hidden) {
+        if (target == null || gate.data().isAllocated(target.getId()) || hidden.test(target) || !eligible(target, gate)) {
+            return List.of();
         }
+        TreeSearch search = search(extraSeedIds, gate, topology, hidden);
         String targetId = target.getId();
-        TreeSearch search = TreeSearch.from(topology, seeds, candidate -> passable(candidate, gate, hidden),
-                entered -> unallocatedPartner(entered, data));
         if (!search.reaches(targetId) || search.isSeed(targetId)) {
             return List.of();
         }
@@ -57,6 +51,17 @@ public final class AllocationPath {
             }
         }
         return List.copyOf(path);
+    }
+
+    static TreeSearch search(Set<String> extraSeedIds, AllocationCheck gate, SkillTreeTopology topology, Predicate<SkillNode> hidden) {
+        ShipSkillData data = gate.data();
+        Set<String> seeds = new TreeSet<>(data.getAllocatedNodeIds());
+        seeds.removeAll(gate.grantOnlyNodeIds());
+        if (gate.rootId() != null) {
+            seeds.add(gate.rootId());
+        }
+        seeds.addAll(extraSeedIds);
+        return TreeSearch.from(topology, seeds, candidate -> passable(candidate, gate, hidden), entered -> unallocatedPartner(entered, data));
     }
 
     private static String unallocatedPartner(SkillNode node, ShipSkillData data) {

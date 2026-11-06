@@ -4,6 +4,7 @@ import exiledsector.MockSector;
 import exiledsector.items.Item;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemStore;
+import exiledsector.items.WormholeAnchor;
 import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
@@ -178,6 +179,6 @@ class TemplateAnchorsTest {
         Item spare = storedAnchor();
         shipData.socketItem("socket_a", installed.id());
 
-        assertEquals(List.of(spare), TemplateAnchors.unusedInStorage());
+        assertEquals(List.of(spare), WormholeAnchor.unusedInStorage());
     }
 }

@@ -2,10 +2,8 @@ package exiledsector.skills.template;
 
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
-import exiledsector.items.SocketCustody;
 import exiledsector.items.WormholeAnchor;
 import exiledsector.items.WormholeAnchorSocketLimits;
-import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
@@ -14,7 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -34,7 +31,7 @@ public final class TemplateAnchors {
     }
 
     public static TemplateAnchors fromStorage(SkillTreeTemplate template, BiPredicate<SkillNode, WormholeAnchor> socketer) {
-        return new TemplateAnchors(template, TemplateAnchors::unusedInStorage, socketer);
+        return new TemplateAnchors(template, WormholeAnchor::unusedInStorage, socketer);
     }
 
     public static Map<String, String> socketedOn(ShipSkillData shipData) {
@@ -94,16 +91,5 @@ public final class TemplateAnchors {
             }
         }
         return null;
-    }
-
-    static List<WormholeAnchor> unusedInStorage() {
-        Set<String> installedItemIds = SocketCustody.installations(ShipSkillDataManager.all()).keySet();
-        List<WormholeAnchor> unused = new ArrayList<>();
-        for (Item item : ItemStore.get().owned()) {
-            if (item instanceof WormholeAnchor anchor && !installedItemIds.contains(anchor.id())) {
-                unused.add(anchor);
-            }
-        }
-        return unused;
     }
 }

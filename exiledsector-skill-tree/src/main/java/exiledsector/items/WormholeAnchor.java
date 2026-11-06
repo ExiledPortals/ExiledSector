@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.SkillNode;
@@ -15,6 +16,7 @@ import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public final class WormholeAnchor extends Item implements NodeSocketable {
 
@@ -64,6 +66,17 @@ public final class WormholeAnchor extends Item implements NodeSocketable {
 
     WormholeAnchor(Item source) {
         super(source);
+    }
+
+    public static List<WormholeAnchor> unusedInStorage() {
+        Set<String> installedItemIds = SocketCustody.installations(ShipSkillDataManager.all()).keySet();
+        List<WormholeAnchor> unused = new ArrayList<>();
+        for (Item item : ItemStore.get().owned()) {
+            if (item instanceof WormholeAnchor anchor && !installedItemIds.contains(anchor.id())) {
+                unused.add(anchor);
+            }
+        }
+        return unused;
     }
 
     @Override
