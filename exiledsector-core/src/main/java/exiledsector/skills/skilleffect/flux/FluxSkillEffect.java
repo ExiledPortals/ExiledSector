@@ -71,6 +71,18 @@ public enum FluxSkillEffect implements BackedSkillEffect {
                     .arg("limit", HighFluxMendingListener.MAX_TOTAL_REGEN_PERCENT_OF_HULL).styled();
         }
     },
+    OVERLOAD_HULL_DAMAGE_PERCENT(listener(OverloadHullDamageListener.HULL_DAMAGE_PERCENT_KEY, OverloadHullDamageListener.class,
+            OverloadHullDamageListener::new)) {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
+        public boolean invertsDescriptionColours() {
+            return false;
+        }
+    },
     FLUX_DISSIPATION_WITHOUT_HARD_FLUX_PERCENT(new ConditionalStatEffect(PERCENT, stat(MutableShipStatsAPI::getFluxDissipation),
             "stat.fluxDissipationWithoutHardFlux", ship -> ship.getFluxTracker().getHardFlux() <= 0f)),
     FLUX_DISSIPATION_PER_FLUX_VENT_FLAT {

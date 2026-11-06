@@ -1,14 +1,11 @@
 package exiledsector.skills.skilleffect.fighter;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.combat.ArmorGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
-import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.FighterWingAPI;
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipSystemAPI;
@@ -17,6 +14,7 @@ import com.fs.starfarer.api.combat.listeners.DamageListener;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.HitDamageRestorer;
+import exiledsector.skills.skilleffect.HullLoss;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -27,8 +25,6 @@ final class PhaseEntangledWingsListener implements DamageTakenModifier, DamageLi
     static final String SHARED_PERCENT_KEY = "exiledSector_wingSharedFatePercent";
     static final String SHARE_MOD_ID = "exiledSector_wingSharedFate";
     static final float MAX_SHARED_PERCENT = 100f;
-    static final float KILLING_BLOW_MULTIPLE = 3f;
-    static final float KILLING_BLOW_HULL_LEFT = 1f;
     static final float OVERLOAD_MARGIN = 1f;
     static final String SHIELDSISTER_REDIRECT_SUFFIX = "fighterDamageNullifyer";
     static final String DAMPER_FLOOR_SUFFIX = "DamperFieldFightersScript";
@@ -252,34 +248,12 @@ final class PhaseEntangledWingsListener implements DamageTakenModifier, DamageLi
     }
 
     private static void damageHull(ShipAPI ship, float hullDamage, ShipAPI attacker, CombatEngineAPI engine) {
-        if (ship.getHitpoints() > hullDamage) {
-            ship.setHitpoints(ship.getHitpoints() - hullDamage);
-            return;
-        }
-        if (engine == null) {
-            return;
-        }
-        ship.setHitpoints(Math.min(ship.getHitpoints(), KILLING_BLOW_HULL_LEFT));
         boolean wasApplying = applyingSharedDamage;
         applyingSharedDamage = true;
         try {
-            engine.applyDamage(ship, new Vector2f(ship.getLocation()), killingBlowDamage(ship), DamageType.ENERGY, 0f, true, false, attacker);
+            HullLoss.take(ship, hullDamage, attacker, engine);
         } finally {
             applyingSharedDamage = wasApplying;
         }
-    }
-
-    static float killingBlowDamage(ShipAPI ship) {
-        ArmorGridAPI armor = ship.getArmorGrid();
-        MutableShipStatsAPI stats = ship.getMutableStats();
-        float armorRating = armor == null ? 0f : armor.getArmorRating() / resistanceOnly(stats.getArmorDamageTakenMult().getModifiedValue());
-        float damageTakenMult = resistanceOnly(stats.getHullDamageTakenMult().getModifiedValue())
-                * resistanceOnly(stats.getEnergyDamageTakenMult().getModifiedValue())
-                * resistanceOnly(stats.getProjectileDamageTakenMult().getModifiedValue());
-        return KILLING_BLOW_MULTIPLE * (Math.max(0f, ship.getHitpoints()) + armorRating) / damageTakenMult;
-    }
-
-    private static float resistanceOnly(float damageTakenMult) {
-        return damageTakenMult > 0f && damageTakenMult < 1f ? damageTakenMult : 1f;
     }
 }
