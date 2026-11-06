@@ -17,7 +17,6 @@ public final class PlanetSphere {
                             Color colour, float alpha, float rimAlpha, float rimStep) {
         try (GlScope scope = GlScope.save(GlScope.DRAW_ATTRIBS | GL11.GL_POLYGON_BIT).enable(GL11.GL_TEXTURE_2D).normalBlend()
                 .enable(GL11.GL_CULL_FACE)) {
-            // TODO: if a sphere renders inside-out in-game, swap GL11.GL_CW <-> GL11.GL_CCW here.
             GL11.glFrontFace(GL11.GL_CW);
             GL11.glCullFace(GL11.GL_BACK);
             GL11.glPushMatrix();
