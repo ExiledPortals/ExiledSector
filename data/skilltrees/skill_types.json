@@ -3143,6 +3143,96 @@
 			]
 		},
 		{
+			"id": "increased_mass",
+			"name": "Increased Mass",
+			"icon": "",
+			"effects": [
+				{
+					"effect": "SHIP_MASS_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"todo": "Needs an icon.",
+			"tags": [
+				"hull"
+			]
+		},
+		{
+			"id": "pathers_prow",
+			"name": "Pather's Prow",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "RAM_PROW_COLLISION_DAMAGE_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"flavour": "Pather ships out of Chalcedon go to battle with scrap plate welded over the prow until it is more ram than hull. The Path counts this among the few acceptable uses of technology.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"hull"
+			]
+		},
+		{
+			"id": "litany_of_the_fallen",
+			"name": "Litany of the Fallen",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST",
+					"magnitude": 1
+				}
+			],
+			"flavour": "Luddic Church ships carry a memorial plate for every hand lost aboard, welded over the hull where the loss was taken. The oldest hulls are mostly memorial.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"hull",
+				"req_crewed"
+			]
+		},
+		{
+			"id": "sanctified_scars",
+			"name": "Sanctified Scars",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD",
+					"magnitude": 1
+				}
+			],
+			"flavour": "Church doctrine reads every scar on a hull as a trial endured, so a Luddic fleet forms up around its most battered ship. Repairs are deferred on grounds of piety and of budget.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"fleet_support",
+				"d_mods"
+			]
+		},
+		{
+			"id": "rite_of_mortification",
+			"name": "Rite of Mortification",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "OVERLOAD_HULL_DAMAGE_PERCENT",
+					"magnitude": 10
+				},
+				{
+					"effect": "OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"flavour": "Knights of Ludd refits wire the capacitor breakers straight into the hull frame. The order files the scorching that follows under penance rather than maintenance.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"flux",
+				"req_shields"
+			]
+		},
+		{
 			"id": "crustacean_integration",
 			"name": "Crustacean Integration",
 			"icon": "graphics/icons/crustacean_integration.png",

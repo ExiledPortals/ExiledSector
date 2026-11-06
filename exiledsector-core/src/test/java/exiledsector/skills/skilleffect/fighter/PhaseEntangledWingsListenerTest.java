@@ -18,6 +18,7 @@ import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.CombatListenerManagerAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
+import exiledsector.skills.skilleffect.HullLoss;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.ArgumentCaptor;
@@ -277,43 +278,12 @@ class PhaseEntangledWingsListenerTest {
 
             new Hit(attachedTo(hit, 100f), hit, projectile).lands(0f, 30f);
 
-            verify(wingmate).setHitpoints(PhaseEntangledWingsListener.KILLING_BLOW_HULL_LEFT);
-            verify(engine).applyDamage(eq(wingmate), any(Vector2f.class), about(3f * (PhaseEntangledWingsListener.KILLING_BLOW_HULL_LEFT + 50f), 0.01f),
+            verify(wingmate).setHitpoints(HullLoss.KILLING_BLOW_HULL_LEFT);
+            verify(engine).applyDamage(eq(wingmate), any(Vector2f.class), about(3f * (HullLoss.KILLING_BLOW_HULL_LEFT + 50f), 0.01f),
                     eq(DamageType.ENERGY), eq(0f), eq(true), eq(false), eq(attacker));
         }
         assertTrue(wingNumbersStoodAside.get(), "the wing's damage reduction was already applied to the shared hit");
         assertFalse(PhaseEntangledWingsListener.isApplyingSharedDamage());
-    }
-
-    @Test
-    void theKillingBlowGrowsToBeatTheWingmatesDamageResistance() {
-        ShipAPI wingmate = damagedFighter(40f, 100f);
-        MutableStat halved = stat(0.5f);
-        when(wingmate.getMutableStats().getHullDamageTakenMult()).thenReturn(halved);
-        when(wingmate.getMutableStats().getEnergyDamageTakenMult()).thenReturn(halved);
-
-        assertEquals(3f * 40f / 0.25f, PhaseEntangledWingsListener.killingBlowDamage(wingmate), 0.01f);
-    }
-
-    @Test
-    void theKillingBlowGrowsToCutThroughArmourThatTakesLessDamage() {
-        ShipAPI wingmate = damagedFighter(10f, 100f);
-        ArmorGridAPI armor = mock(ArmorGridAPI.class);
-        when(armor.getArmorRating()).thenReturn(100f);
-        when(wingmate.getArmorGrid()).thenReturn(armor);
-        MutableStat halved = stat(0.5f);
-        when(wingmate.getMutableStats().getArmorDamageTakenMult()).thenReturn(halved);
-
-        assertEquals(3f * (10f + 100f / 0.5f), PhaseEntangledWingsListener.killingBlowDamage(wingmate), 0.01f);
-    }
-
-    @Test
-    void aStatThatMakesTheWingmateImmuneDoesNotTurnTheKillingBlowIntoNothing() {
-        ShipAPI wingmate = damagedFighter(10f, 100f);
-        MutableStat immune = stat(0f);
-        when(wingmate.getMutableStats().getEnergyDamageTakenMult()).thenReturn(immune);
-
-        assertEquals(30f, PhaseEntangledWingsListener.killingBlowDamage(wingmate), 0.01f);
     }
 
     @Test

@@ -28,6 +28,12 @@ effect|AFFINITY_EXCHANGE_TO_MIDLINE_PERCENT|12.5	0	Removes all Low Tech and High
 effect|AFFINITY_EXCHANGE_TO_MIDLINE_PERCENT|100.0	0	Removes all Low Tech and High Tech Affinity and grants <good>100%</good> of it as Midline Affinity.
 effect|AFFINITY_EXCHANGE_TO_MIDLINE_PERCENT|-10.0	0	Removes all Low Tech and High Tech Affinity and grants <good>-10%</good> of it as Midline Affinity.
 effect|AFFINITY_EXCHANGE_TO_MIDLINE_PERCENT|-12.5	0	Removes all Low Tech and High Tech Affinity and grants <good>-12.5%</good> of it as Midline Affinity.
+effect|ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD|1.0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+effect|ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD|10.0	0	Allied ships within 1000 su have <good>10%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+effect|ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD|12.5	0	Allied ships within 1000 su have <good>12.5%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+effect|ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD|100.0	0	Allied ships within 1000 su have <good>100%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+effect|ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD|-10.0	0	Allied ships within 1000 su have <good>-10%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+effect|ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD|-12.5	0	Allied ships within 1000 su have <good>-12.5%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
 effect|AMMO_REGEN_WHILE_PHASED_PERCENT|1.0	0	<good>1%</good> increased ammo regeneration while phased.
 effect|AMMO_REGEN_WHILE_PHASED_PERCENT|10.0	0	<good>10%</good> increased ammo regeneration while phased.
 effect|AMMO_REGEN_WHILE_PHASED_PERCENT|12.5	0	<good>12.5%</good> increased ammo regeneration while phased.
@@ -1474,6 +1480,12 @@ effect|HULL_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased hull damage
 effect|HULL_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased hull damage taken.
 effect|HULL_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced hull damage taken.
 effect|HULL_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced hull damage taken.
+effect|HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST|1.0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+effect|HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST|10.0	0	<good>10%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+effect|HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST|12.5	0	<good>12.5%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+effect|HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST|100.0	0	<good>100%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+effect|HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST|-10.0	0	<good>-10%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+effect|HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST|-12.5	0	<good>-12.5%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
 effect|HULL_DAMAGE_TAKEN_PERCENT_PER_LOW_TECH_AFFINITY|1.0	1	<good>1%</good> increased hull damage taken for every 10 Low Tech Affinity.
 effect|HULL_DAMAGE_TAKEN_PERCENT_PER_LOW_TECH_AFFINITY|10.0	1	<good>10%</good> increased hull damage taken for every 10 Low Tech Affinity.
 effect|HULL_DAMAGE_TAKEN_PERCENT_PER_LOW_TECH_AFFINITY|12.5	1	<good>12.5%</good> increased hull damage taken for every 10 Low Tech Affinity.
@@ -2068,6 +2080,18 @@ effect|OVERLOAD_DURATION_PERCENT|12.5	1	<good>12.5%</good> increased overload du
 effect|OVERLOAD_DURATION_PERCENT|100.0	1	<good>100%</good> increased overload duration.
 effect|OVERLOAD_DURATION_PERCENT|-10.0	1	<bad>10%</bad> reduced overload duration.
 effect|OVERLOAD_DURATION_PERCENT|-12.5	1	<bad>12.5%</bad> reduced overload duration.
+effect|OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT|1.0	0	Replacing an overload dissipates <good>1%</good> of hard flux.
+effect|OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT|10.0	0	Replacing an overload dissipates <good>10%</good> of hard flux.
+effect|OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT|12.5	0	Replacing an overload dissipates <good>12.5%</good> of hard flux.
+effect|OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT|100.0	0	Replacing an overload dissipates <good>100%</good> of hard flux.
+effect|OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT|-10.0	0	Replacing an overload dissipates <good>-10%</good> of hard flux.
+effect|OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT|-12.5	0	Replacing an overload dissipates <good>-12.5%</good> of hard flux.
+effect|OVERLOAD_HULL_DAMAGE_PERCENT|1.0	0	Overloads are replaced by hull damage equal to <bad>1%</bad> of maximum hull.
+effect|OVERLOAD_HULL_DAMAGE_PERCENT|10.0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
+effect|OVERLOAD_HULL_DAMAGE_PERCENT|12.5	0	Overloads are replaced by hull damage equal to <bad>12.5%</bad> of maximum hull.
+effect|OVERLOAD_HULL_DAMAGE_PERCENT|100.0	0	Overloads are replaced by hull damage equal to <bad>100%</bad> of maximum hull.
+effect|OVERLOAD_HULL_DAMAGE_PERCENT|-10.0	0	Overloads are replaced by hull damage equal to <bad>-10%</bad> of maximum hull.
+effect|OVERLOAD_HULL_DAMAGE_PERCENT|-12.5	0	Overloads are replaced by hull damage equal to <bad>-12.5%</bad> of maximum hull.
 effect|PD_BEST_TARGET_LEADING|1.0	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 effect|PD_BEST_TARGET_LEADING|10.0	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 effect|PD_BEST_TARGET_LEADING|12.5	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
@@ -4503,6 +4527,11 @@ type|increased_hull|FRIGATE|0	0	<good>2%</good> more hull points.
 type|increased_hull|DESTROYER|0	0	<good>2%</good> more hull points.
 type|increased_hull|CRUISER|0	0	<good>2%</good> more hull points.
 type|increased_hull|CAPITAL_SHIP|0	0	<good>2%</good> more hull points.
+type|increased_mass|null|0	0	<good>10%</good> increased mass.
+type|increased_mass|FRIGATE|0	0	<good>10%</good> increased mass.
+type|increased_mass|DESTROYER|0	0	<good>10%</good> increased mass.
+type|increased_mass|CRUISER|0	0	<good>10%</good> increased mass.
+type|increased_mass|CAPITAL_SHIP|0	0	<good>10%</good> increased mass.
 type|increased_sensor_strength|null|0	0	<good>5%</good> increased this ship's sensor strength.
 type|increased_sensor_strength|FRIGATE|0	0	<good>5%</good> increased this ship's sensor strength.
 type|increased_sensor_strength|DESTROYER|0	0	<good>5%</good> increased this ship's sensor strength.
@@ -4668,6 +4697,12 @@ type|lions_roar|FRIGATE|0	0	Enemy ships within 1000 su have <good>10%</good> les
 type|lions_roar|DESTROYER|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
 type|lions_roar|CRUISER|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
 type|lions_roar|CAPITAL_SHIP|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+flavour|litany_of_the_fallen	0	Luddic Church ships carry a memorial plate for every hand lost aboard, welded over the hull where the loss was taken. The oldest hulls are mostly memorial.
+type|litany_of_the_fallen|null|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+type|litany_of_the_fallen|FRIGATE|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+type|litany_of_the_fallen|DESTROYER|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+type|litany_of_the_fallen|CRUISER|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+type|litany_of_the_fallen|CAPITAL_SHIP|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
 type|live_munitions|null|0	0	Each Heartless stack has a <bad>9%</bad> chance to sacrifice a crew member for each missile fired.
 type|live_munitions|null|1	0	<good>3%</good> increased missile damage for each Heartless stack while the fleet has crew left to give.
 type|live_munitions|null|2	0	<good>3%</good> increased missile top speed for each Heartless stack while the fleet has crew left to give.
@@ -5011,6 +5046,12 @@ type|packed_capacitors|CRUISER|0	0	<good>15%</good> increased flux capacity.
 type|packed_capacitors|CRUISER|1	0	<good>+600</good> to flux capacity.
 type|packed_capacitors|CAPITAL_SHIP|0	0	<good>15%</good> increased flux capacity.
 type|packed_capacitors|CAPITAL_SHIP|1	0	<good>+600</good> to flux capacity.
+flavour|pathers_prow	0	Pather ships out of Chalcedon go to battle with scrap plate welded over the prow until it is more ram than hull. The Path counts this among the few acceptable uses of technology.
+type|pathers_prow|null|0	0	<good>50%</good> more collision damage dealt to enemy ships and <good>50%</good> less collision damage taken.
+type|pathers_prow|FRIGATE|0	0	<good>50%</good> more collision damage dealt to enemy ships and <good>50%</good> less collision damage taken.
+type|pathers_prow|DESTROYER|0	0	<good>50%</good> more collision damage dealt to enemy ships and <good>50%</good> less collision damage taken.
+type|pathers_prow|CRUISER|0	0	<good>50%</good> more collision damage dealt to enemy ships and <good>50%</good> less collision damage taken.
+type|pathers_prow|CAPITAL_SHIP|0	0	<good>50%</good> more collision damage dealt to enemy ships and <good>50%</good> less collision damage taken.
 type|peak_cr_duration|null|0	0	<good>25%</good> increased peak performance time.
 type|peak_cr_duration|FRIGATE|0	0	<good>25%</good> increased peak performance time.
 type|peak_cr_duration|DESTROYER|0	0	<good>25%</good> increased peak performance time.
@@ -5185,6 +5226,17 @@ type|rift_lightning_damage|FRIGATE|0	0	<good>10%</good> increased Rift Lightning
 type|rift_lightning_damage|DESTROYER|0	0	<good>10%</good> increased Rift Lightning damage.
 type|rift_lightning_damage|CRUISER|0	0	<good>10%</good> increased Rift Lightning damage.
 type|rift_lightning_damage|CAPITAL_SHIP|0	0	<good>10%</good> increased Rift Lightning damage.
+flavour|rite_of_mortification	0	Knights of Ludd refits wire the capacitor breakers straight into the hull frame. The order files the scorching that follows under penance rather than maintenance.
+type|rite_of_mortification|null|0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
+type|rite_of_mortification|null|1	0	Replacing an overload dissipates <good>50%</good> of hard flux.
+type|rite_of_mortification|FRIGATE|0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
+type|rite_of_mortification|FRIGATE|1	0	Replacing an overload dissipates <good>50%</good> of hard flux.
+type|rite_of_mortification|DESTROYER|0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
+type|rite_of_mortification|DESTROYER|1	0	Replacing an overload dissipates <good>50%</good> of hard flux.
+type|rite_of_mortification|CRUISER|0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
+type|rite_of_mortification|CRUISER|1	0	Replacing an overload dissipates <good>50%</good> of hard flux.
+type|rite_of_mortification|CAPITAL_SHIP|0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
+type|rite_of_mortification|CAPITAL_SHIP|1	0	Replacing an overload dissipates <good>50%</good> of hard flux.
 type|root_high_tech|null|0	0	<good>+10</good> to High Tech Affinity.
 type|root_high_tech|FRIGATE|0	0	<good>+10</good> to High Tech Affinity.
 type|root_high_tech|DESTROYER|0	0	<good>+10</good> to High Tech Affinity.
@@ -5287,6 +5339,12 @@ type|salvaged_abyssal_grid|CAPITAL_SHIP|1	0	<good>+100</good> to energy weapon r
 type|salvaged_abyssal_grid|CAPITAL_SHIP|2	1	<bad>25%</bad> reduced EMP damage taken.
 type|salvaged_abyssal_grid|CAPITAL_SHIP|3	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|salvaged_abyssal_grid|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
+flavour|sanctified_scars	0	Church doctrine reads every scar on a hull as a trial endured, so a Luddic fleet forms up around its most battered ship. Repairs are deferred on grounds of piety and of budget.
+type|sanctified_scars|null|0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+type|sanctified_scars|FRIGATE|0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+type|sanctified_scars|DESTROYER|0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+type|sanctified_scars|CRUISER|0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+type|sanctified_scars|CAPITAL_SHIP|0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
 flavour|secondary_fabricator	0	A second Threat fabricator wired in beside the first replaces fragments as fast as the fighting destroys them.
 itemCost|secondary_fabricator	0	Costs 1 fragment_fabricator to allocate, returned when unallocated.
 type|secondary_fabricator|null|0	0	<good>30%</good> increased fragment replacement rate.

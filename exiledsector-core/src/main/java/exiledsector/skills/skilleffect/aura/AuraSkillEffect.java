@@ -4,6 +4,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
+import exiledsector.skills.skilleffect.SkillEffectSupport;
 import exiledsector.skills.skilleffect.weapon.PirateFrenzy;
 
 import static exiledsector.skills.skilleffect.Backings.listener;
@@ -76,6 +77,14 @@ public enum AuraSkillEffect implements BackedSkillEffect {
         @Override
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", magnitude).arg("range", RateOfFireAuraField.RANGE).styled();
+        }
+    },
+    ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD(listener(DModArmorAuraListener.PERCENT_PER_DMOD_KEY, DModArmorAuraListener.class,
+            DModArmorAuraListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", DModArmorAuraField.RANGE)
+                    .arg("max", SkillEffectSupport.MAX_COUNTED_DMODS).styled();
         }
     },
     REPAIR_COORDINATOR_ARMOR_PERCENT(listener(RepairCoordinatorListener.ARMOR_REPAIR_PERCENT_KEY, RepairCoordinatorListener.class,

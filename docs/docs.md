@@ -286,6 +286,34 @@ within its range, checked every 0.25 seconds. Strike craft and station modules d
 1000 su. Strike craft and modules of the same station don't count as allies, and each target is rechecked at most
 every 0.25 seconds (`IsolatedShipDamageListener`).
 
+### Pather's Prow
+
+The node uses Ram-plated's `RAM_PROW_COLLISION_DAMAGE_PERCENT` (see Pirate Badlands modifiers); tree and hull item
+values add up before the multiplier is applied (`CollisionDamageListener`).
+
+### Litany of the Fallen
+
+Vanilla only works out crew losses after a battle, so `HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST` counts them with
+vanilla's formula at its average roll: the ship's crew times the square of the hull damage taken this deployment as a
+share of maximum hull, times 0.75 and the crew loss multiplier. Each hull hit recounts them, and the reduction is a
+percent on hull damage taken (`CrewLossHullDamageListener`).
+
+### Sanctified Scars
+
+`ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD` counts the ship's d-mods once at deployment, up to five, and reduces the
+armor damage taken by allied ships within 1000 su as a percent, rechecked every 0.25 seconds. Strike craft and station
+modules don't count, and only the strongest source applies (`DModArmorAuraField`).
+
+### Rite of Mortification
+
+`OVERLOAD_HULL_DAMAGE_PERCENT` stops any overload at the start of the ship's next frame and takes that share of its
+maximum hull straight off its hitpoints, ignoring damage resistances, with a killing blow if that would empty it
+(`OverloadHullDamageListener`, `HullLoss`). The killing blow is credited to the last enemy ship that damaged it, with
+strike craft counted as their carrier, or to no one if no enemy has.
+
+`OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT` then removes that share of the ship's hard flux, leaving soft flux alone. The
+overload still drops the shield.
+
 ### Range per sensor strength
 
 `ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT` applies after every other tree effect and again once the ship is built,

@@ -8240,13 +8240,14 @@
 			"id": "affinity_114",
 			"type": "affinity",
 			"connectedTo": [
-				"affinity_117",
-				"affinity_115"
+				"affinity_148",
+				"affinity_115",
+				"reduced_d_mod_effect_9"
 			],
-			"x": 7902,
-			"y": 11717,
+			"x": 7792,
+			"y": 12413,
 			"orbitAnchorId": "anchor_89",
-			"orbitAngle": 0,
+			"orbitAngle": 18,
 			"tags": [
 				"luddic"
 			]
@@ -8272,12 +8273,13 @@
 			"type": "affinity",
 			"connectedTo": [
 				"affinity_115",
-				"affinity_117"
+				"affinity_117",
+				"increased_mass_1"
 			],
-			"x": 3396,
-			"y": 11717,
+			"x": 3506,
+			"y": 12413,
 			"orbitAnchorId": "anchor_89",
-			"orbitAngle": 180,
+			"orbitAngle": 162,
 			"tags": [
 				"luddic"
 			]
@@ -8287,12 +8289,13 @@
 			"type": "affinity",
 			"connectedTo": [
 				"affinity_116",
-				"affinity_114"
+				"affinity_148",
+				"armor_15"
 			],
-			"x": 5649,
-			"y": 9464,
+			"x": 4325,
+			"y": 9894,
 			"orbitAnchorId": "anchor_89",
-			"orbitAngle": 270,
+			"orbitAngle": 234,
 			"tags": [
 				"luddic"
 			]
@@ -9045,6 +9048,198 @@
 			"orbitAngle": -60,
 			"tags": [
 				"persean_league"
+			]
+		},
+		{
+			"id": "affinity_148",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_117",
+				"affinity_114",
+				"more_hull_10"
+			],
+			"x": 6973,
+			"y": 9894,
+			"orbitAnchorId": "anchor_89",
+			"orbitAngle": 306,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"id": "increased_mass_1",
+			"type": "increased_mass",
+			"connectedTo": [
+				"affinity_116",
+				"increased_mass_2"
+			],
+			"x": 3769,
+			"y": 12328,
+			"orbitAnchorId": "anchor_114",
+			"orbitAngle": 162,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"id": "increased_mass_2",
+			"type": "increased_mass",
+			"connectedTo": [
+				"increased_mass_1",
+				"pathers_prow_1"
+			],
+			"x": 3996,
+			"y": 12443,
+			"orbitAnchorId": "anchor_114",
+			"orbitAngle": 72,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"id": "pathers_prow_1",
+			"type": "pathers_prow",
+			"connectedTo": [
+				"increased_mass_2"
+			],
+			"x": 4111,
+			"y": 12216,
+			"orbitAnchorId": "anchor_114",
+			"orbitAngle": 342,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"id": "armor_15",
+			"type": "armor",
+			"connectedTo": [
+				"affinity_117",
+				"armor_16"
+			],
+			"x": 4487,
+			"y": 10117,
+			"orbitAnchorId": "anchor_115",
+			"orbitAngle": 234,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"id": "armor_16",
+			"type": "armor",
+			"connectedTo": [
+				"armor_15",
+				"litany_of_the_fallen_1"
+			],
+			"x": 4447,
+			"y": 10369,
+			"orbitAnchorId": "anchor_115",
+			"orbitAngle": 144,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"id": "litany_of_the_fallen_1",
+			"type": "litany_of_the_fallen",
+			"connectedTo": [
+				"armor_16"
+			],
+			"x": 4699,
+			"y": 10409,
+			"orbitAnchorId": "anchor_115",
+			"orbitAngle": 54,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"id": "more_hull_10",
+			"type": "more_hull",
+			"connectedTo": [
+				"affinity_148",
+				"more_hull_11"
+			],
+			"x": 6811,
+			"y": 10117,
+			"orbitAnchorId": "anchor_116",
+			"orbitAngle": 306,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"id": "more_hull_11",
+			"type": "more_hull",
+			"connectedTo": [
+				"more_hull_10",
+				"rite_of_mortification_1"
+			],
+			"x": 6559,
+			"y": 10157,
+			"orbitAnchorId": "anchor_116",
+			"orbitAngle": 216,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"id": "rite_of_mortification_1",
+			"type": "rite_of_mortification",
+			"connectedTo": [
+				"more_hull_11"
+			],
+			"x": 6599,
+			"y": 10409,
+			"orbitAnchorId": "anchor_116",
+			"orbitAngle": 126,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"id": "reduced_d_mod_effect_9",
+			"type": "reduced_d_mod_effect",
+			"connectedTo": [
+				"affinity_114",
+				"reduced_d_mod_effect_10"
+			],
+			"x": 7529,
+			"y": 12328,
+			"orbitAnchorId": "anchor_117",
+			"orbitAngle": 18,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"id": "reduced_d_mod_effect_10",
+			"type": "reduced_d_mod_effect",
+			"connectedTo": [
+				"reduced_d_mod_effect_9",
+				"sanctified_scars_1"
+			],
+			"x": 7414,
+			"y": 12101,
+			"orbitAnchorId": "anchor_117",
+			"orbitAngle": 288,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"id": "sanctified_scars_1",
+			"type": "sanctified_scars",
+			"connectedTo": [
+				"reduced_d_mod_effect_10"
+			],
+			"x": 7187,
+			"y": 12216,
+			"orbitAnchorId": "anchor_117",
+			"orbitAngle": 198,
+			"tags": [
+				"luddic"
 			]
 		},
 		{
@@ -11719,26 +11914,80 @@
 		{
 			"a": "affinity_114",
 			"b": "affinity_115",
-			"controlX": 7242,
-			"controlY": 13310
+			"controlX": 6973,
+			"controlY": 13540
+		},
+		{
+			"a": "increased_mass_1",
+			"b": "increased_mass_2",
+			"controlX": 3858,
+			"controlY": 12432
+		},
+		{
+			"a": "pathers_prow_1",
+			"b": "increased_mass_2",
+			"controlX": 4100,
+			"controlY": 12354
+		},
+		{
+			"a": "armor_15",
+			"b": "armor_16",
+			"controlX": 4415,
+			"controlY": 10235
+		},
+		{
+			"a": "litany_of_the_fallen_1",
+			"b": "armor_16",
+			"controlX": 4565,
+			"controlY": 10441
+		},
+		{
+			"a": "more_hull_10",
+			"b": "more_hull_11",
+			"controlX": 6677,
+			"controlY": 10085
+		},
+		{
+			"a": "rite_of_mortification_1",
+			"b": "more_hull_11",
+			"controlX": 6527,
+			"controlY": 10291
+		},
+		{
+			"a": "reduced_d_mod_effect_9",
+			"b": "reduced_d_mod_effect_10",
+			"controlX": 7518,
+			"controlY": 12190
+		},
+		{
+			"a": "sanctified_scars_1",
+			"b": "reduced_d_mod_effect_10",
+			"controlX": 7276,
+			"controlY": 12112
 		},
 		{
 			"a": "affinity_115",
 			"b": "affinity_116",
-			"controlX": 4056,
-			"controlY": 13310
+			"controlX": 4325,
+			"controlY": 13540
 		},
 		{
 			"a": "affinity_116",
 			"b": "affinity_117",
-			"controlX": 4056,
-			"controlY": 10124
+			"controlX": 3506,
+			"controlY": 11021
 		},
 		{
-			"a": "affinity_114",
-			"b": "affinity_117",
-			"controlX": 7242,
-			"controlY": 10124
+			"a": "affinity_117",
+			"b": "affinity_148",
+			"controlX": 5649,
+			"controlY": 9464
+		},
+		{
+			"a": "affinity_148",
+			"b": "affinity_114",
+			"controlX": 7792,
+			"controlY": 11021
 		},
 		{
 			"a": "affinity_118",
@@ -12932,6 +13181,30 @@
 			"id": "anchor_108",
 			"x": -10698,
 			"y": -6494,
+			"radius": 180
+		},
+		{
+			"id": "anchor_114",
+			"x": 3940,
+			"y": 12272,
+			"radius": 180
+		},
+		{
+			"id": "anchor_115",
+			"x": 4593,
+			"y": 10263,
+			"radius": 180
+		},
+		{
+			"id": "anchor_116",
+			"x": 6705,
+			"y": 10263,
+			"radius": 180
+		},
+		{
+			"id": "anchor_117",
+			"x": 7358,
+			"y": 12272,
 			"radius": 180
 		},
 		{
