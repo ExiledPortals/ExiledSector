@@ -27,7 +27,7 @@ public class MaterialItemPlugin extends AnimatedCargoItemPlugin {
         tooltip.addTitle(getName(), MaterialItems.color(itemId));
         String description = spec == null ? null : spec.getDesc();
         if (description != null && !description.isEmpty()) {
-            VanillaText.plainPara(tooltip, description, TOOLTIP_PAD, Misc.getGrayColor());
+            VanillaText.plainPara(tooltip, description, TOOLTIP_PAD, Misc.getTextColor());
         }
         CraftingMaterialFamily craftingItem = CraftingMaterialFamilies.byItemId(itemId);
         float linePad = TOOLTIP_PAD;
