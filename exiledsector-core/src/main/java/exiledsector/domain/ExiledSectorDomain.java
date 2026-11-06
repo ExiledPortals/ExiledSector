@@ -72,6 +72,9 @@ public interface ExiledSectorDomain {
     default void afterSocketCustody() {
     }
 
+    default void battleLootTaken() {
+    }
+
     default void beforeGameSave() {
     }
 

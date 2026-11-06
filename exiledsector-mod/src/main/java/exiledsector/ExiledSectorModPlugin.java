@@ -20,6 +20,7 @@ import exiledsector.skills.skilleffect.logistics.RecoveryDModAvoidance;
 import exiledsector.charts.StarChartsDomain;
 import exiledsector.compat.CompatChecks;
 import exiledsector.domain.ExiledSectorDomain;
+import exiledsector.effects.BattleLootStorage;
 import exiledsector.effects.ItemLootListener;
 import exiledsector.effects.ItemSalvageListener;
 import exiledsector.effects.MarketItemStock;
@@ -159,6 +160,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         ItemLootListener itemLootListener = new ItemLootListener();
         sector.addTransientListener(itemLootListener);
         sector.getListenerManager().addListener(itemLootListener, true);
+        sector.addTransientListener(new BattleLootStorage());
         sector.addTransientListener(PlayerEngagementPipeline.create(socketLossListener, itemLootListener));
         sector.getListenerManager().addListener(new ItemSalvageListener(), true);
         sector.getListenerManager().addListener(new TechMiningItemListener(), true);

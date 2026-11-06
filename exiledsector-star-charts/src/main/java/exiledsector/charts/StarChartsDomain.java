@@ -163,6 +163,11 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     }
 
     @Override
+    public void battleLootTaken() {
+        StarCharts.absorbCharts(Global.getSector());
+    }
+
+    @Override
     public List<ItemTypeSupport> itemTypes() {
         return List.of(StarChart.SUPPORT);
     }
