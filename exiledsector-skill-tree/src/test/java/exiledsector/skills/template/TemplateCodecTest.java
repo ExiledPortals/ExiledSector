@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,6 +43,15 @@ class TemplateCodecTest {
 
         assertNull(decoded.hullSize());
         assertEquals(List.of(new TemplateStep("unknown_node", null), new TemplateStep("slot", null)), decoded.steps());
+    }
+
+    @Test
+    void theAnchorEachSocketHeldSurvivesARoundTrip() {
+        SkillTreeTemplate withAnchor = new SkillTreeTemplate("id-3", "Abyss", "root_midline_1", null, List.of(new TemplateStep("socket_1", null)),
+                Map.of("socket_1", "wormhole_anchor_abyss"));
+
+        assertEquals(withAnchor, TemplateCodec.decode(TemplateCodec.encode(withAnchor)));
+        assertEquals(Map.of(), TemplateCodec.decode(TemplateCodec.encode(TEMPLATE)).anchorsBySocket());
     }
 
     @Test

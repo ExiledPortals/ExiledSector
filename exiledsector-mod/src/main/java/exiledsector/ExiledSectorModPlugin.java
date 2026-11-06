@@ -33,6 +33,8 @@ import exiledsector.items.ItemDataIntegrity;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;
 import exiledsector.loot.BattleLootRates;
+import exiledsector.loot.BattleLootTrigger;
+import exiledsector.loot.LootScreenTrigger;
 import exiledsector.items.ItemIdAliases;
 import exiledsector.items.ItemImplicits;
 import exiledsector.items.ItemModifiers;
@@ -159,6 +161,8 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         ItemLootListener itemLootListener = new ItemLootListener();
         sector.addTransientListener(itemLootListener);
         sector.getListenerManager().addListener(itemLootListener, true);
+        sector.addTransientListener(new BattleLootTrigger());
+        sector.getListenerManager().addListener(new LootScreenTrigger(), true);
         sector.addTransientListener(PlayerEngagementPipeline.create(socketLossListener, itemLootListener));
         sector.getListenerManager().addListener(new ItemSalvageListener(), true);
         sector.getListenerManager().addListener(new TechMiningItemListener(), true);

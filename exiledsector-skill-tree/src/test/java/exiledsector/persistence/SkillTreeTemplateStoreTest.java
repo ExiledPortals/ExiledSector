@@ -41,7 +41,7 @@ class SkillTreeTemplateStoreTest {
     }
 
     private SkillTreeTemplate save(String name, String root) {
-        return SkillTreeTemplateStore.save(name, root, HullSize.CRUISER, STEPS, ids::next);
+        return SkillTreeTemplateStore.save(name, root, HullSize.CRUISER, STEPS, Map.of("slot_2", "anchor_old"), ids::next);
     }
 
     @Test
@@ -127,15 +127,28 @@ class SkillTreeTemplateStoreTest {
         save("Brawler", "root_low_tech_1");
         List<TemplateStep> newSteps = List.of(new TemplateStep("armor_1", null));
 
-        SkillTreeTemplate edited = SkillTreeTemplateStore.replaceSteps("t1", newSteps);
+        SkillTreeTemplate edited = SkillTreeTemplateStore.replaceSteps("t1", newSteps, Map.of());
         SkillTreeTemplate renamed = SkillTreeTemplateStore.rename("t1", "  Kite ");
 
         assertEquals("Brawler", edited.name());
         assertEquals(newSteps, SkillTreeTemplateStore.find("t1").steps());
         assertEquals("Kite", renamed.name());
         assertEquals("Kite", SkillTreeTemplateStore.find("t1").name());
-        assertNull(SkillTreeTemplateStore.replaceSteps("missing", newSteps));
-        assertNull(SkillTreeTemplateStore.replaceSteps(null, newSteps));
+        assertNull(SkillTreeTemplateStore.replaceSteps("missing", newSteps, Map.of()));
+        assertNull(SkillTreeTemplateStore.replaceSteps(null, newSteps, Map.of()));
+    }
+
+    @Test
+    void editingATemplateKeepsItsAnchorsAndTakesTheShipsSocketedOnes() {
+        save("Brawler", "root_low_tech_1");
+        List<TemplateStep> newSteps = List.of(new TemplateStep("slot_2", null), new TemplateStep("slot_5", null));
+
+        SkillTreeTemplateStore.replaceSteps("t1", newSteps, Map.of("slot_5", "anchor_new", "slot_9", "anchor_elsewhere"));
+        SkillTreeTemplateStore.rename("t1", "Kite");
+
+        assertEquals(Map.of("slot_2", "anchor_old", "slot_5", "anchor_new"), SkillTreeTemplateStore.find("t1").anchorsBySocket());
+        SkillTreeTemplateStore.replaceSteps("t1", List.of(new TemplateStep("slot_5", null)), Map.of());
+        assertEquals(Map.of("slot_5", "anchor_new"), SkillTreeTemplateStore.find("t1").anchorsBySocket());
     }
 
     @Test

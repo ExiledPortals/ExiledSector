@@ -7,6 +7,7 @@ import exiledsector.items.LogisticsSchematic;
 import exiledsector.items.LogisticsSchematicDrops;
 import exiledsector.items.ShipSchematic;
 import exiledsector.loot.BattleEngagement;
+import exiledsector.loot.BattleItemDropSetting;
 import exiledsector.loot.BattleLoot;
 import exiledsector.loot.BattleLootRates;
 import exiledsector.loot.LootSource;
@@ -81,7 +82,7 @@ public final class LogisticsSchematicLootSource implements LootSource {
             List<LogisticsSchematicDrops.SourceLoss> sources = new ArrayList<>();
             losses(battle).forEach((fleet, fleetLosses) -> sources.add(new LogisticsSchematicDrops.SourceLoss(fleetLosses.deploymentPoints,
                     fleetLosses.difficultyWeighted / fleetLosses.deploymentPoints, LootSources.fleetLootRules(fleet))));
-            return Collections.<ShipSchematic>nCopies(LogisticsSchematicDrops.rollBattle(sources, battle.random()), LogisticsSchematic.INSTANCE);
+            return Collections.<ShipSchematic>nCopies(LogisticsSchematicDrops.rollBattle(sources, BattleItemDropSetting.multiplier(), battle.random()), LogisticsSchematic.INSTANCE);
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Rolling Logistics Schematic battle drops failed", e);
             return List.of();

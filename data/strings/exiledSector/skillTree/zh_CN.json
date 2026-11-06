@@ -6,6 +6,8 @@
     "combat.xp.catchUpBonus": "等级低于你舰队中最高等级舰船的舰船获得了额外的追赶经验，最多为<hl>{multiplier}倍</hl>。",
     "combat.xp.levelUp": "{ship}（{hull}）升到了{level}级。",
     "combat.xp.levelUpAutoAllocated.other": "{ship}（{hull}）升到了{level}级，并分配了{count}个模板节点。",
+    "template.dockAllocated.one": "{ship}在停靠期间分配了{count}个模板节点。",
+    "template.dockAllocated.other": "{ship}在停靠期间分配了{count}个模板节点。",
 
     "inspect.close": "关闭",
     "inspect.levelledShips": "<hl>{total}</hl>艘舰船中有<hl>{levelled}</hl>艘拥有 Exiled Sector 技能树。",

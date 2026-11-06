@@ -18,6 +18,7 @@ import exiledsector.ui.node.TreeAllocationSession;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 final class SkillTreeTemplateController {
@@ -271,7 +272,7 @@ final class SkillTreeTemplateController {
             }
             return;
         }
-        SkillTreeTemplateStore.save(name, startingRoot.getId(), hullSize(), treeSession.captureTemplateSteps());
+        SkillTreeTemplateStore.save(name, startingRoot.getId(), hullSize(), treeSession.captureTemplateSteps(), treeSession.captureTemplateAnchors());
         templateBar.showResult(Translation.msg("ui.template.result.saved").arg("name", name).text());
     }
 
@@ -281,11 +282,12 @@ final class SkillTreeTemplateController {
             return;
         }
         List<TemplateStep> steps = treeSession.capturePlanSteps();
-        SkillTreeTemplate saved = SkillTreeTemplateStore.replaceSteps(treeSession.plannedTemplateId(), steps);
+        Map<String, String> socketedAnchors = treeSession.captureTemplateAnchors();
+        SkillTreeTemplate saved = SkillTreeTemplateStore.replaceSteps(treeSession.plannedTemplateId(), steps, socketedAnchors);
         if (saved == null) {
             String defaultName = Translation.msg("ui.template.defaultName").arg("hull", hullName()).text();
             saved = SkillTreeTemplateStore.save(TemplateNames.unique(defaultName, startingRoot.getId(), SkillTreeTemplateStore.all()),
-                    startingRoot.getId(), hullSize(), steps);
+                    startingRoot.getId(), hullSize(), steps, socketedAnchors);
         }
         SkillTreeTemplateStore.assign(member.getId(), saved.id());
         treeSession.planSaved(saved);

@@ -16,6 +16,7 @@ import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.loot.LootTaken;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.ui.CampaignMessages;
@@ -56,6 +57,7 @@ public class HyperNavBeaconGrant implements EconomyTickListener {
             String message = I18n.forGameText(() -> Translation.msg("socketable.anchor.beaconGranted").arg("name", preview.name()).text());
             CampaignMessages.plain(message, Misc.getPositiveHighlightColor());
         }
+        LootTaken.report();
         return true;
     }
 }

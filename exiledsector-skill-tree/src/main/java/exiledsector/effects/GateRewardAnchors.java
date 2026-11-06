@@ -19,6 +19,7 @@ import exiledsector.items.ItemType;
 import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
+import exiledsector.loot.LootTaken;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeSetting;
@@ -107,6 +108,7 @@ public final class GateRewardAnchors implements EconomyTickListener {
         if (playerFleet == null || !SkillTreeSetting.enabled()) {
             return;
         }
+        boolean grantedAny = false;
         for (String gateTag : rewardGateTags()) {
             List<ItemDefinition> volumeAnchors = anchorsBehind(gateTag);
             if (granted(sector, gateTag) || volumeAnchors.isEmpty() || !bossBeaten(gateTag, sector)) {
@@ -119,6 +121,10 @@ public final class GateRewardAnchors implements EconomyTickListener {
             WormholeAnchorDefinitions.recordFound(List.of(reward), sector, "a boss reward");
             LOG.info("[ExiledSector] Gave the player a " + reward.definitionId() + " for opening " + gateTag);
             announce(reward);
+            grantedAny = true;
+        }
+        if (grantedAny) {
+            LootTaken.report();
         }
     }
 

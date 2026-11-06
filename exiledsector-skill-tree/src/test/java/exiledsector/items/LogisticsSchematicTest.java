@@ -66,9 +66,18 @@ class LogisticsSchematicTest {
         List<LogisticsSchematicDrops.SourceLoss> regular = List.of(new LogisticsSchematicDrops.SourceLoss(1000f, 1f, FleetLootRules.REGULAR));
         List<LogisticsSchematicDrops.SourceLoss> chart = List.of(new LogisticsSchematicDrops.SourceLoss(1000f, 1f, FleetLootRules.full(null)));
 
-        assertEquals(0.08f, LogisticsSchematicDrops.expectedBattleDrops(regular, rate), 1e-5f);
-        assertEquals(0.32f, LogisticsSchematicDrops.expectedBattleDrops(chart, rate), 1e-5f);
-        assertEquals(0f, LogisticsSchematicDrops.expectedBattleDrops(regular, null));
-        assertEquals(0, LogisticsSchematicDrops.rollBattle(List.of(), new Random(1)));
+        assertEquals(0.08f, LogisticsSchematicDrops.expectedBattleDrops(regular, rate, 1f), 1e-5f);
+        assertEquals(0.32f, LogisticsSchematicDrops.expectedBattleDrops(chart, rate, 1f), 1e-5f);
+        assertEquals(0f, LogisticsSchematicDrops.expectedBattleDrops(regular, null, 1f));
+        assertEquals(0, LogisticsSchematicDrops.rollBattle(List.of(), 1f, new Random(1)));
+    }
+
+    @Test
+    void theBattleItemDropSliderScalesBattleDrops() {
+        BattleLootRates.Rate rate = new BattleLootRates.Rate(LogisticsSchematicDrops.RATE_ID, 0.032f, LootCurve.LINEAR, 0.25f, 1f);
+        List<LogisticsSchematicDrops.SourceLoss> regular = List.of(new LogisticsSchematicDrops.SourceLoss(1000f, 1f, FleetLootRules.REGULAR));
+
+        assertEquals(0.16f, LogisticsSchematicDrops.expectedBattleDrops(regular, rate, 2f), 1e-5f);
+        assertEquals(0f, LogisticsSchematicDrops.expectedBattleDrops(regular, rate, 0f));
     }
 }

@@ -1,6 +1,5 @@
 package exiledsector.items;
 
-import exiledsector.ModSettings;
 import exiledsector.loot.BattleLootRates;
 import exiledsector.loot.FleetLootRules;
 
@@ -11,9 +10,6 @@ import java.util.function.Predicate;
 
 public final class BattleItemDrops {
 
-    public static final String DROP_PERCENT_FIELD_ID = "exiledSector_battleItemDropPercent";
-    public static final int DEFAULT_DROP_PERCENT = 100;
-    public static final int MAX_DROP_PERCENT = 1000;
     static final String HULL_ITEM_RATE = "hull_item";
     static final float NODES_PER_DOUBLING = 30f;
     static final float BASE_TWO_MODIFIER_SHARE = 1f / 3f;
@@ -89,10 +85,6 @@ public final class BattleItemDrops {
     }
 
     private BattleItemDrops() {
-    }
-
-    public static float settingMultiplier() {
-        return Math.max(0, ModSettings.intOr(DROP_PERCENT_FIELD_ID, DEFAULT_DROP_PERCENT)) / 100f;
     }
 
     public static float levelBoost(int allocatedNodeCount) {

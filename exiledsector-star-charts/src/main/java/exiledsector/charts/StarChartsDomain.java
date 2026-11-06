@@ -10,6 +10,7 @@ import exiledsector.charts.effect.ChartEnemyInflationListener;
 import exiledsector.charts.effect.ChartEnemyShipEffects;
 import exiledsector.charts.effect.ChartPlayerModifierSource;
 import exiledsector.charts.loot.BiomeModifiers;
+import exiledsector.charts.loot.ChartStorageTransfer;
 import exiledsector.charts.loot.StarChartLootSource;
 import exiledsector.charts.objective.ChartRewardLootSource;
 import exiledsector.charts.objective.GatewayUpgradeRewards;
@@ -40,6 +41,7 @@ import exiledsector.items.StarChartItems;
 import exiledsector.items.WormholeTechItems;
 import exiledsector.loot.FleetDifficulty;
 import exiledsector.loot.LootSource;
+import exiledsector.loot.LootTakenListener;
 import exiledsector.ui.cargo.BiomeItemIconLooks;
 import exiledsector.ui.cargo.CatalystIconFx;
 import exiledsector.ui.cargo.ItemIconLooks;
@@ -73,6 +75,11 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     @Override
     public List<LootSource> lootSources() {
         return List.of(StarChartLootSource.INSTANCE, ChartRewardLootSource.INSTANCE);
+    }
+
+    @Override
+    public List<LootTakenListener> lootTakenListeners() {
+        return List.of(new ChartStorageTransfer());
     }
 
     @Override

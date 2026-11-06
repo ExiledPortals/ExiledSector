@@ -18,6 +18,7 @@ import exiledsector.items.ItemTypeSupport;
 import exiledsector.items.ShipCustody;
 import exiledsector.loot.FleetDifficulty;
 import exiledsector.loot.LootSource;
+import exiledsector.loot.LootTakenListener;
 import exiledsector.loot.MarketStock;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillTypeEffect;
@@ -152,6 +153,10 @@ public interface ExiledSectorDomain {
     }
 
     default List<LootSource> lootSources() {
+        return List.of();
+    }
+
+    default List<LootTakenListener> lootTakenListeners() {
         return List.of();
     }
 
