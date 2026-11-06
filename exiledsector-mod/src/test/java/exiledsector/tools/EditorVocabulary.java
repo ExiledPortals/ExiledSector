@@ -52,7 +52,8 @@ final class EditorVocabulary {
         json.append("    \"theme\": ").append(list(SkillTags.THEME)).append(",\n");
         json.append("    \"volume\": ").append(list(SkillTags.VOLUME)).append(",\n");
         json.append("    \"requirement\": ").append(list(SkillTags.REQUIREMENT)).append(",\n");
-        json.append("    \"gate\": ").append(list(SkillTags.GATE)).append("\n");
+        json.append("    \"gate\": ").append(list(SkillTags.GATE)).append(",\n");
+        json.append("    \"rule\": ").append(list(SkillTags.RULE)).append("\n");
         json.append("  },\n");
         json.append("  \"tiers\": ").append(list(Arrays.stream(SkillTier.values()).map(Enum::name).toList())).append(",\n");
         json.append("  \"unlockConditionTypes\": ")

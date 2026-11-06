@@ -488,7 +488,7 @@ public final class NpcSkillTreeBuilder {
             ShipFacts fittedFacts = fittedProfile.facts(fitInstalled::contains, hullId,
                     hullModId -> fitInstalled.contains(hullModId) && hullMods.permanent().contains(hullModId));
             NodeEligibility.Context eligibility = new NodeEligibility.Context(allocatedNodes, shieldType, fittedFacts,
-                    lockedWormhole, fittedProfile);
+                    lockedWormhole, fittedProfile).withLogistics(NodeEligibility.LogisticsRule.forShip(shipData));
             AllocationCheck.Budget budget = new AllocationCheck.Budget(Integer.MAX_VALUE, freedOp.opCostPerNode(), maxNodes + 1);
             return new State(new AllocationCheck(shipData, topology, ShipTrees.resolveStartingRootId(shipData), budget, eligibility), shieldInvested);
         }

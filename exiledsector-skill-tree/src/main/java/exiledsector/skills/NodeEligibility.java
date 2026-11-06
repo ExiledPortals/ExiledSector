@@ -20,7 +20,18 @@ public final class NodeEligibility {
 
     public enum Kind {
         LOCKED, INVALID_OPTION, WRONG_HULL_SIZE, UNMET_HULL_REQUIREMENT, UNMET_SHIP_REQUIREMENT, HULL_MOD_CONFLICT, LEARNED_CONFLICT,
-        TYPE_CONFLICT, EFFECT_BLOCK, ITEM_COST
+        TYPE_CONFLICT, EFFECT_BLOCK, LOGISTICS_CAP, LOGISTICS_UNDOCKED, ITEM_COST
+    }
+
+    public record LogisticsRule(int cap, boolean changesAllowed) {
+
+        public static LogisticsRule forShip(ShipSkillData data) {
+            return new LogisticsRule(LogisticsNodes.cap(data), true);
+        }
+
+        public LogisticsRule withChangesAllowed(boolean allowed) {
+            return allowed == changesAllowed ? this : new LogisticsRule(cap, allowed);
+        }
     }
 
     public enum OptionProblem {
@@ -35,11 +46,19 @@ public final class NodeEligibility {
     }
 
     public record Context(List<AllocatedNode> allocated, ShieldType shieldType, ShipFacts shipFacts, Predicate<SkillType> locked,
-                          ShipProfile profile, ToDoubleFunction<String> heldItems, Predicate<SkillNode> gated) {
+                          ShipProfile profile, ToDoubleFunction<String> heldItems, Predicate<SkillNode> gated, LogisticsRule logistics) {
 
         public Context(List<AllocatedNode> allocated, ShieldType shieldType, ShipFacts shipFacts, Predicate<SkillType> locked,
                        ShipProfile profile) {
-            this(allocated, shieldType, shipFacts, locked, profile, null, null);
+            this(allocated, shieldType, shipFacts, locked, profile, null, null, null);
+        }
+
+        public Context withLogistics(LogisticsRule rule) {
+            return new Context(allocated, shieldType, shipFacts, locked, profile, heldItems, gated, rule);
+        }
+
+        public Context withLogisticsChangesAllowed(boolean allowed) {
+            return logistics == null ? this : withLogistics(logistics.withChangesAllowed(allowed));
         }
 
         public static Context of(ShipSkillData data, ShipFacts shipFacts, Predicate<SkillType> locked) {
@@ -57,7 +76,7 @@ public final class NodeEligibility {
 
         public static Context of(ShipSkillData data, ShipFacts shipFacts, Predicate<SkillType> locked, ToDoubleFunction<String> heldItems) {
             return new Context(AllocatedNode.of(data), currentShieldType(data, shipFacts.hullSize(), shipFacts.hullShieldType()), shipFacts, locked,
-                    null, heldItems, node -> NodeGates.isLocked(node, data));
+                    null, heldItems, node -> NodeGates.isLocked(node, data), LogisticsRule.forShip(data));
         }
 
         public Context excluding(String nodeId, ShipSkillData data) {
@@ -67,7 +86,7 @@ public final class NodeEligibility {
             SkillItemCost refund = ItemCostLedger.paidItemCost(data, nodeId);
             ToDoubleFunction<String> heldAfterRefund = refund == null || heldItems == null ? heldItems
                     : itemId -> heldItems.applyAsDouble(itemId) + (itemId.equals(refund.itemId()) ? refund.quantity() : 0f);
-            return new Context(remaining, remainingShieldType, shipFacts, locked, profile, heldAfterRefund, gated);
+            return new Context(remaining, remainingShieldType, shipFacts, locked, profile, heldAfterRefund, gated, logistics);
         }
     }
 
@@ -138,7 +157,19 @@ public final class NodeEligibility {
                 return new Block(Kind.EFFECT_BLOCK, reason, null);
             }
         }
-        return itemCostBlock(itemCost(node, option), context.heldItems());
+        Block logisticsBlock = logisticsBlock(candidate.effectiveType(), context);
+        return logisticsBlock != null ? logisticsBlock : itemCostBlock(itemCost(node, option), context.heldItems());
+    }
+
+    private static Block logisticsBlock(SkillType effectiveType, Context context) {
+        LogisticsRule rule = context.logistics();
+        if (rule == null || !LogisticsNodes.isLogistics(effectiveType)) {
+            return null;
+        }
+        if (LogisticsNodes.allocated(context.allocated()) >= rule.cap()) {
+            return new Block(Kind.LOGISTICS_CAP, null, null);
+        }
+        return rule.changesAllowed() ? null : new Block(Kind.LOGISTICS_UNDOCKED, null, null);
     }
 
     public static SkillItemCost itemCost(SkillNode node, SkillType option) {

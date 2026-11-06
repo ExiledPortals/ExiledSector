@@ -1,6 +1,8 @@
 package exiledsector.ui;
 
 import exiledsector.skills.skilleffect.render.Fade;
+import exiledsector.skills.skilleffect.render.SpriteCache;
+import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.TextFont;
@@ -20,7 +22,13 @@ final class SkillTreeUiButton {
     private static final float FADE_SECONDS = 0.2f;
     private static final float MAX_FADE_STEP_SECONDS = 0.1f;
 
+    private static final float ICON_SIZE = 30f;
+    private static final float ICON_GAP = 8f;
+    private static final float DISABLED_ICON_ALPHA = 0.5f;
+
     private final TextLabel labelText = new TextLabel(FONT, TEXT_COLOR);
+    private SpriteCache iconSprites;
+    private String iconPath;
     private Color textColor = TEXT_COLOR;
     private ScreenRect buttonBounds = ScreenRect.NONE;
     private boolean buttonEnabled = true;
@@ -37,6 +45,11 @@ final class SkillTreeUiButton {
         labelText.set(value);
     }
 
+    void setIcon(SpriteCache sprites, String path) {
+        iconSprites = sprites;
+        iconPath = path;
+    }
+
     void setEnabled(boolean value) {
         buttonEnabled = value;
     }
@@ -50,7 +63,11 @@ final class SkillTreeUiButton {
     }
 
     float preferredWidth() {
-        return labelText.width() + PADDING_X * 2f;
+        return iconWidth() + labelText.width() + PADDING_X * 2f;
+    }
+
+    private float iconWidth() {
+        return iconPath == null ? 0f : ICON_SIZE + ICON_GAP;
     }
 
     void place(float left, float bottom, float width, float height) {
@@ -104,10 +121,15 @@ final class SkillTreeUiButton {
             GLDraw.fillQuad(buttonBounds.left() + HOVER_INSET, buttonBounds.bottom() + HOVER_INSET, buttonBounds.width() - HOVER_INSET * 2f,
                     buttonBounds.height() - HOVER_INSET * 2f, SkillTreePanelStyle.GLOW_COLOR, fillAlpha * alphaMult);
         }
+        float contentLeft = buttonBounds.left() + (buttonBounds.width() - iconWidth() - labelText.width()) / 2f;
+        float middleY = buttonBounds.bottom() + buttonBounds.height() / 2f;
+        if (iconPath != null) {
+            SpriteDraw.drawAtCenter(iconSprites, iconPath, contentLeft + ICON_SIZE / 2f, middleY, ICON_SIZE, ICON_SIZE, null,
+                    buttonEnabled ? alphaMult : alphaMult * DISABLED_ICON_ALPHA);
+        }
         labelText.setColor(buttonEnabled ? textColor : DISABLED_COLOR);
         labelText.setAlpha(alphaMult);
-        labelText.draw(buttonBounds.left() + (buttonBounds.width() - labelText.width()) / 2f,
-                buttonBounds.bottom() + buttonBounds.height() / 2f + FONT.size() / 2f);
+        labelText.draw(contentLeft + iconWidth(), middleY + FONT.size() / 2f);
     }
 
     private void advanceFade() {

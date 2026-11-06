@@ -22,7 +22,7 @@ const DEFAULT_CHART_TIER_GROUPS: ChartTierGroup[] = [
 
 interface VocabularyFile {
   effects: EffectInfo[];
-  tags: { theme: string[]; volume: string[]; requirement: string[]; gate?: string[] };
+  tags: { theme: string[]; volume: string[]; requirement: string[]; gate?: string[]; rule?: string[] };
   tiers: string[];
   unlockConditionTypes: string[];
   parameterlessUnlockConditionTypes?: string[];
@@ -52,6 +52,7 @@ export interface Vocabulary {
   volumeTags: string[];
   requirementTags: string[];
   gateTags: string[];
+  ruleTags: string[];
   allTags: string[];
   tiers: string[];
   unlockConditionTypes: string[];
@@ -85,7 +86,8 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     volumeTags: file.tags.volume.slice(),
     requirementTags: file.tags.requirement.slice(),
     gateTags: (file.tags.gate ?? []).slice(),
-    allTags: [...file.tags.theme, ...file.tags.volume, ...file.tags.requirement, ...(file.tags.gate ?? [])],
+    ruleTags: (file.tags.rule ?? []).slice(),
+    allTags: [...file.tags.theme, ...file.tags.volume, ...file.tags.requirement, ...(file.tags.gate ?? []), ...(file.tags.rule ?? [])],
     tiers: file.tiers.slice(),
     unlockConditionTypes: file.unlockConditionTypes.slice(),
     parameterlessUnlockConditionTypes: (file.parameterlessUnlockConditionTypes ?? []).slice(),

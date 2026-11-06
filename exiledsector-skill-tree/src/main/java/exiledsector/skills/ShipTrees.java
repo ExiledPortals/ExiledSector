@@ -209,6 +209,7 @@ public final class ShipTrees {
     public static ShipSkillData planningCopy(ShipSkillData data) {
         ShipSkillData copy = new ShipSkillData();
         copy.startingRootId = resolveStartingRootId(data);
+        copy.extraLogisticsSlots = data.extraLogisticsSlots;
         copy.allocatedNodeIds.addAll(data.allocatedNodeIds);
         if (data.choiceSelections != null) {
             copy.choiceSelections.putAll(data.choiceSelections);

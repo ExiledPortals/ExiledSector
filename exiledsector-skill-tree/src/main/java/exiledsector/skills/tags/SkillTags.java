@@ -34,7 +34,9 @@ public final class SkillTags {
             "gate_ancient_prototype_found", "gate_frozen_heart_visited", "gate_threat_fought", "gate_remnant_fought", "gate_dweller_fought",
             "gate_blood_trail_defeated", "gate_frost_fire_defeated", "gate_last_strive_completed");
 
-    public static final List<String> ALL = Stream.of(THEME, VOLUME, REQUIREMENT, GATE).flatMap(List::stream).toList();
+    public static final List<String> RULE = List.of("logistics_cap");
+
+    public static final List<String> ALL = Stream.of(THEME, VOLUME, REQUIREMENT, GATE, RULE).flatMap(List::stream).toList();
 
     private SkillTags() {
     }

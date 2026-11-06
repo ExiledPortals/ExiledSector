@@ -255,7 +255,7 @@ public final class DoctrineOverrides {
         if (facts == null) {
             return context.stream().noneMatch(existing -> existing.isExclusiveWith(candidate));
         }
-        NodeEligibility.Context eligibility = new NodeEligibility.Context(context, shieldType, facts, null, null, null, null);
+        NodeEligibility.Context eligibility = new NodeEligibility.Context(context, shieldType, facts, null, null);
         return NodeEligibility.check(rewrittenNode(node, candidate), null, eligibility) == null;
     }
 

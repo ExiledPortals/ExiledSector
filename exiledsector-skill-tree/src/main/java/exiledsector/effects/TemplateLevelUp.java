@@ -57,8 +57,9 @@ final class TemplateLevelUp {
         }
         ShipFacts shipFacts = PlayerShipFacts.of(member, variant);
         AllocationCheck.Budget budget = new AllocationCheck.Budget(0, opCostPerNode, ShipLevelConfig.maxAllocatedNodes());
+        boolean logisticsChangesAllowed = LogisticsDocking.canChangeNow();
         return AutoAllocateRun.run(template.steps(), step -> {
-            AllocationCheck gate = AllocationCheck.forShip(shipData, shipFacts, rootId, budget, itemId -> 0d);
+            AllocationCheck gate = AllocationCheck.forPlayerShip(shipData, shipFacts, rootId, budget, itemId -> 0d, logisticsChangesAllowed);
             StepVerdict verdict = TemplateStepRules.verdict(step, shipData, rootId, gate::allocation);
             if (verdict == StepVerdict.ALLOCATE) {
                 SkillNode node = SkillTree.get(step.nodeId());

@@ -70,7 +70,7 @@ public final class DoctrineRevertRelease {
     }
 
     private static boolean allowedAsOriginal(ShipSkillData shipData, ShipFacts shipFacts, SkillNode node) {
-        NodeEligibility.Context eligibility = NodeEligibility.Context.forShip(shipData, shipFacts, itemId -> 0d);
+        NodeEligibility.Context eligibility = NodeEligibility.Context.forShip(shipData, shipFacts, itemId -> 0d).withLogistics(null);
         SkillType option = NodeEligibility.validOption(node.getType(), shipData.getChoiceSelection(node.getId()));
         return NodeEligibility.check(node, option, eligibility.excluding(node.getId(), shipData)) == null;
     }

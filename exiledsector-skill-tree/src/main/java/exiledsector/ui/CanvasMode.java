@@ -3,7 +3,7 @@ package exiledsector.ui;
 enum CanvasMode {
     ROOT_CHOICE, MODAL, CRAFTING_BENCH, HYPERSPACE, EXOSHIP_VIEW, TREE;
 
-    enum Chrome { STATS_TOGGLE, READOUTS, SEARCH, TEMPLATE_BAR, STORAGE_BUTTON }
+    enum Chrome { STATS_TOGGLE, READOUTS, SEARCH, TEMPLATE_BAR, STORAGE_BUTTON, LOGISTICS_BUTTON }
 
     static CanvasMode resolve(boolean rootChoiceLocked, boolean modalBlocking, boolean craftingBenchOpen, boolean hyperspaceActive,
                               boolean viewingExoship) {
@@ -31,7 +31,7 @@ enum CanvasMode {
             case SEARCH -> this != HYPERSPACE && this != ROOT_CHOICE && this != EXOSHIP_VIEW;
             case STATS_TOGGLE -> this != HYPERSPACE;
             case TEMPLATE_BAR -> this != HYPERSPACE && this != EXOSHIP_VIEW;
-            case STORAGE_BUTTON -> this != HYPERSPACE && this != ROOT_CHOICE;
+            case STORAGE_BUTTON, LOGISTICS_BUTTON -> this != HYPERSPACE && this != ROOT_CHOICE;
         };
     }
 

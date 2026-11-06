@@ -27,7 +27,7 @@ import {
   snapNodeToAnchor,
 } from './geometry.ts';
 import { serializeUnlockConditions } from './serialization.ts';
-import { replaceGroupTags } from './tags.ts';
+import { replaceGroupTags, tagGroupOf } from './tags.ts';
 import { nameSlug, nodeById, nodeIdStem, type SkillType, type TreeDocument, type TreeNode } from './types.ts';
 import { validateTree } from './validation.ts';
 
@@ -298,5 +298,15 @@ describe('new node ids', () => {
     expect(nodeIdStem(document, 'root_low_tech')).toBe('root_low_tech');
     expect(nodeIdStem(document, 'nskr_volatile')).toBe('nskr_volatile');
     expect(nodeIdStem(document, 'unknown')).toBe('unknown');
+  });
+});
+
+describe('rule tags', () => {
+  it('groups rule tags apart and accepts them as known', () => {
+    const withRules = buildVocabulary({ ...vocabularyFile, tags: { ...vocabularyFile.tags, rule: ['logistics_cap'] } });
+
+    expect(tagGroupOf(withRules, 'logistics_cap')).toBe('rule');
+    expect(withRules.allTags).toContain('logistics_cap');
+    expect(vocabulary.ruleTags).toEqual([]);
   });
 });

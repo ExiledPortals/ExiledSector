@@ -13,11 +13,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class SkillTagsTest {
 
     @Test
-    void allIsThemeThenVolumeThenRequirementThenGate() {
+    void allIsThemeThenVolumeThenRequirementThenGateThenRule() {
         List<String> expected = new ArrayList<>(SkillTags.THEME);
         expected.addAll(SkillTags.VOLUME);
         expected.addAll(SkillTags.REQUIREMENT);
         expected.addAll(SkillTags.GATE);
+        expected.addAll(SkillTags.RULE);
 
         assertEquals(expected, SkillTags.ALL);
     }
