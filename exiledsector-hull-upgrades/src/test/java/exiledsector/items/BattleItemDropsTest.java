@@ -163,9 +163,9 @@ class BattleItemDropsTest {
     void aDiminishingRowSlowsPastTheKneeOfTheWholeBattleAndSharesThatAcrossItsFleets() throws Exception {
         BattleLootRates.register(new JSONArray().put(rateRow("hull_item", "0.6", "diminishing")));
 
-        assertEquals(Map.of(BattleItemDrops.Drop.MODS_1, 24, BattleItemDrops.Drop.MODS_2, 12), counts(plan(battle(source(8000f)), 1f)));
-        assertEquals(Map.of(BattleItemDrops.Drop.MODS_1, 24, BattleItemDrops.Drop.MODS_2, 12),
-                counts(plan(battle(source(4000f), source(4000f)), 1f)));
+        assertEquals(Map.of(BattleItemDrops.Drop.MODS_1, 36, BattleItemDrops.Drop.MODS_2, 18), counts(plan(battle(source(12000f)), 1f)));
+        assertEquals(Map.of(BattleItemDrops.Drop.MODS_1, 36, BattleItemDrops.Drop.MODS_2, 18),
+                counts(plan(battle(source(6000f), source(6000f)), 1f)));
     }
 
     @Test

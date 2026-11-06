@@ -27,8 +27,8 @@ public final class ChartContentPlanner {
     static final long BOSS_SALT = 0x4348424f535354L;
     static final int MAX_POIS = 24;
     public static final int MAX_FLEETS = 20;
-    public static final float FLEET_SIZE_CAP = 300f;
-    public static final float BOSS_SIZE_CAP = 1200f;
+    public static final float FLEET_SIZE_CAP = 450f;
+    public static final float BOSS_SIZE_CAP = 1800f;
     static final float MIN_FLEET_SIZE = 30f;
     static final float SHARE_SPREAD = 0.25f;
     public static final int MAX_OVERFLOW_STRENGTH = 50;

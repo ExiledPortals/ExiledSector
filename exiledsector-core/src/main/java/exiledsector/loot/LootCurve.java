@@ -7,7 +7,7 @@ public enum LootCurve {
     LINEAR,
     DIMINISHING;
 
-    public static final float KNEE_DEPLOYMENT_POINTS = 2000f;
+    public static final float KNEE_DEPLOYMENT_POINTS = 3000f;
 
     public float apply(float deploymentPoints) {
         if (!(deploymentPoints > 0f)) {

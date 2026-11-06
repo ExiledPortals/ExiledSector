@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
+import com.fs.starfarer.api.campaign.FactionDoctrineAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
@@ -148,9 +149,18 @@ final class VanillaChartContentEngine implements ChartContentEngine {
 
     @Override
     public CampaignFleetAPI createFleet(FleetParamsV3 params) {
-        CampaignFleetAPI fleet = ChartThreatFleets.builds(params.factionId) ? ChartThreatFleets.create(params) : FleetFactoryV3.createFleet(params);
+        CampaignFleetAPI fleet = ChartThreatFleets.builds(params.factionId) ? ChartThreatFleets.create(params)
+                : ChartFleetUpscaler.build(params, startingDoctrine(params), FleetFactoryV3::createFleet);
         nameIfUnnamed(fleet, params.fleetType);
         return fleet;
+    }
+
+    static FactionDoctrineAPI startingDoctrine(FleetParamsV3 params) {
+        if (params.doctrineOverride != null) {
+            return params.doctrineOverride;
+        }
+        FactionAPI faction = params.factionId != null ? Global.getSector().getFaction(params.factionId) : null;
+        return faction != null ? faction.getDoctrine() : null;
     }
 
     static void nameIfUnnamed(CampaignFleetAPI fleet, String fleetType) {

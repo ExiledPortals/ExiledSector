@@ -329,7 +329,7 @@ class ChartGenContextTest {
         assertEquals(limit + 2, ChartFleetSpread.of(limit * 2, 50f, 2, limit).fleets(), "crowded fleets still spawn");
         assertEquals(ChartContentPlanner.MAX_FLEETS, ChartFleetSpread.of(limit, 50f, 30, limit).fleets());
         assertEquals(1, ChartFleetSpread.of(2, 50f, -5, limit).fleets());
-        ChartFleetSpread squeezed = ChartFleetSpread.of(7, 275f, 0, 4);
+        ChartFleetSpread squeezed = ChartFleetSpread.of(7, 413f, 0, 4);
         assertEquals(ChartContentPlanner.FLEET_SIZE_CAP, squeezed.cappedFleetSize(), TOLERANCE);
         assertEquals(ChartContentPlanner.MAX_OVERFLOW_STRENGTH, squeezed.totalStrengthBonus(), "size past the cap adds strength too");
 

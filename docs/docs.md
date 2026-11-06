@@ -388,7 +388,8 @@ Fleet Strength %, and bosses roll one higher. Outside charts, a won battle's cha
 battle chance per 100 enemy deployment points defeated, scaled by battle difficulty, at the highest tier whose
 `level_min` the strongest defeated NPC reached (`ChartDrops.forBattle`). With the skill tree switched off, the
 tier instead rises one per `defeated_dp_per_tier` deployment points defeated. Chart fleets are built with
-`doNotPrune`, so vanilla never trades their fleet points past 30 ships for bigger hulls (`ChartContentGenerator.fleetParams`).
+`doNotPrune`, so vanilla never trades their fleet points past 30 ships for bigger hulls. Instead a fleet built with 50 or
+more ships is rebuilt one doctrine ship size larger until it has fewer or reaches the largest size (`ChartFleetUpscaler`).
 
 Node-granting lines such as Freebooting store node ids with the fleet's enemy rules. An enemy ship that gets an NPC tree
 has the node placed first as a free grant; the builder avoids nodes that conflict with it and only paths through it
@@ -429,7 +430,7 @@ the share of NPC ships with trees follows the share of unlocked player ships. Ch
 ### Battle loot
 
 Battle drops come from `battle_loot.csv`: each row expects its rate per 100 deployment points an enemy fleet lost,
-curved over the whole battle (linear, or diminishing past 2000 DP with the square root), then times battle difficulty
+curved over the whole battle (linear, or diminishing past 3000 DP with the square root), then times battle difficulty
 capped at 3x, weighted by the row's `difficulty_scaling` (1 full, 0 ignored; crafting items ignore it), and the
 fleet's `FleetLootRules`. Fleets outside Star Charts get the row's `regular_share`, and core
 rolls their crafting materials per battle (`BattleMaterials`). A chart fleet gets the full rate, its run's loot
