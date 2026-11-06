@@ -270,6 +270,22 @@ and gives it a free search and destroy order instead (`NoRetreatListener`).
 fleet's fuel is at least half its total fuel capacity. A transient script rechecks it every 0.25 seconds
 (`FleetWideEffects.applyHalfFueledFuelUse`, `PlayerFleetConditionScript`).
 
+### Pirate Frenzy
+
+Pirate Frenzy is a stacking buff any effect can grant through `PirateFrenzy.of(ship).gain()`. Each stack runs its own
+10-second timer and gives a fixed 5% increased weapon rate of fire and 5% reduced weapon flux cost. A ship holds up to
+5 stacks, a stack gained at the cap replaces the oldest, and destruction clears them all (`PirateFrenzy`).
+
+Blood in the Water's `PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT` grants a stack for each enemy ship destroyed
+within its range, checked every 0.25 seconds. Strike craft and station modules don't count
+(`FrenzyOnNearbyDestructionListener`).
+
+### Pick Off Stragglers
+
+`DAMAGE_TO_ISOLATED_SHIP_PERCENT` raises damage dealt to an enemy ship with no living ship of its own side within
+1000 su. Strike craft and modules of the same station don't count as allies, and each target is rechecked at most
+every 0.25 seconds (`IsolatedShipDamageListener`).
+
 ### Range per sensor strength
 
 `ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT` applies after every other tree effect and again once the ship is built,
