@@ -896,7 +896,8 @@ player picks a side before the wormhole opens, kept on the `AtlasRunNode`. The d
 attacker matches the defender's ordinary fleets plus a commander that pushes on the station once the rest have fallen
 (`SkirmishPlanner` through `adjustPlan`, `SkirmishBattle`, `ChartSkirmishes`). The joined side is 30% weaker, drops nothing
 and flies as the run-only faction `exiledSector_skirmish_ally`, which is friendly to the player (`RunFactionDress`);
-per-fleet `$cfai_makeHostile_<faction>` flags set the two sides against each other.
+per-fleet `$cfai_makeHostile_<faction>` flags set the two sides against each other. Fighting beside or into allies
+changes no reputation: inside a chart, `ChartAllyReputation` cancels vanilla's ally help and friendly-fire changes.
 
 Siding with the attacker or staying out makes the station the boss, counted whoever destroys it. Siding with the
 defender makes the commander the boss and protects the station: losing it loses the run (`ChartRun.objectiveLost`).

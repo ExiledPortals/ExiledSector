@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.BaseCampaignPlugin;
 import com.fs.starfarer.api.campaign.BattleCreationPlugin;
 import com.fs.starfarer.api.campaign.CampaignPlugin;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
+import com.fs.starfarer.api.campaign.ReputationActionResponsePlugin;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.wormhole.ChartWormholeDialog;
@@ -36,5 +37,11 @@ public class ChartCampaignPlugin extends BaseCampaignPlugin {
     public PluginPick<BattleCreationPlugin> pickBattleCreationPlugin(SectorEntityToken opponent) {
         BattleCreationPlugin anomalyBattle = ChartAnomalies.battleFor(opponent);
         return anomalyBattle == null ? null : new PluginPick<>(anomalyBattle, CampaignPlugin.PickPriority.MOD_SPECIFIC);
+    }
+
+    @Override
+    public PluginPick<ReputationActionResponsePlugin> pickReputationActionResponsePlugin(Object action, String factionId) {
+        return ChartAllyReputation.ignores(action, factionId)
+                ? new PluginPick<>(new ChartAllyReputation(), CampaignPlugin.PickPriority.MOD_SPECIFIC) : null;
     }
 }

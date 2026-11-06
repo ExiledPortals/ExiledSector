@@ -29,6 +29,7 @@ import exiledsector.charts.content.ChartContentPlan.PlannedFleet;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.anomaly.RunFactionDress;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.anomaly.skirmish.SkirmishJoin;
@@ -410,6 +411,26 @@ class ChartContentGeneratorTest {
                 assertTrue(enemy.getMemoryWithoutUpdate().getBoolean("$cfai_makeHostile_hegemony"));
                 assertTrue(enemy.getMemoryWithoutUpdate().getBoolean("$cfai_makeHostile_allies"));
                 verify(enemy, never()).setFaction(anyString(), Mockito.anyBoolean());
+            }
+        } finally {
+            ChartBosses.resetForTests();
+        }
+    }
+
+    @Test
+    void alliesThatCannotBeDressedStillLeaveTheirRealFaction() {
+        useStationBosses();
+        engine.alliesFactionId = null;
+        try {
+            skirmish(SkirmishSide.DEFENDER);
+
+            List<CampaignFleetAPI> allies = new ArrayList<>(engine.fleets.stream().filter(fleet -> factionOf(fleet).equals("hegemony")).toList());
+            allies.add(engine.stations.get(0));
+            for (CampaignFleetAPI ally : allies) {
+                verify(ally).setFaction(RunFactionDress.ALLY_FACTION_ID, true);
+            }
+            for (CampaignFleetAPI enemy : engine.fleets.stream().filter(fleet -> factionOf(fleet).equals("tritachyon")).toList()) {
+                assertTrue(enemy.getMemoryWithoutUpdate().getBoolean("$cfai_makeHostile_" + RunFactionDress.ALLY_FACTION_ID));
             }
         } finally {
             ChartBosses.resetForTests();

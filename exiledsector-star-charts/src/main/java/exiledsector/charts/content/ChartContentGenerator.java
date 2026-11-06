@@ -244,6 +244,11 @@ public final class ChartContentGenerator {
         ChartVanillaLoot.addToFleet(fleet, boss, context, tier);
     }
 
+    static String dressAlliesOf(String factionId) {
+        String dressed = engine.dress(RunFactionDress.ALLY_FACTION_ID, RunFactionDress.alliesOf(factionId));
+        return dressed != null ? dressed : RunFactionDress.ALLY_FACTION_ID;
+    }
+
     static void joinPlayer(CampaignFleetAPI fleet, String allyFactionId) {
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
         memory.unset(MemFlags.MEMORY_KEY_MAKE_HOSTILE);
@@ -473,10 +478,10 @@ public final class ChartContentGenerator {
 
         private String dressAllies(String factionId) {
             try {
-                return engine.dress(RunFactionDress.ALLY_FACTION_ID, RunFactionDress.alliesOf(factionId));
+                return dressAlliesOf(factionId);
             } catch (RuntimeException | LinkageError e) {
                 report("dress the allied fleets", seed, e);
-                return null;
+                return RunFactionDress.ALLY_FACTION_ID;
             }
         }
 

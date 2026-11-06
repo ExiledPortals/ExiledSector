@@ -140,6 +140,10 @@ public final class ChartAnomalyFleets {
         ChartContentGenerator.revealBoss(boss);
     }
 
+    public static String dressAllies(String factionId) {
+        return ChartContentGenerator.dressAlliesOf(factionId);
+    }
+
     public static String dress(String runFactionId, RunFactionDress dress) {
         return ChartContentGenerator.engine().dress(runFactionId, dress);
     }

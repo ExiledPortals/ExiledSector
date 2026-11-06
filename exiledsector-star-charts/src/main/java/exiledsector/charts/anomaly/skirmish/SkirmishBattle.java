@@ -6,7 +6,6 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
-import exiledsector.charts.anomaly.RunFactionDress;
 import exiledsector.charts.content.ChartAnomalyFleets;
 import exiledsector.charts.content.ChartBossType;
 import exiledsector.charts.content.ChartContentGenerator;
@@ -51,7 +50,7 @@ final class SkirmishBattle {
     private void fight() {
         ContentForces defenders = site.forces();
         allyFactionId = plan.side() == SkirmishSide.ATTACKER
-                ? ChartAnomalyFleets.dress(RunFactionDress.ALLY_FACTION_ID, RunFactionDress.alliesOf(plan.attackerFactionId()))
+                ? ChartAnomalyFleets.dressAllies(plan.attackerFactionId())
                 : defenders.allyFactionId();
         for (CampaignFleetAPI defender : defenders.fleets()) {
             takeSide(defender, SkirmishSide.DEFENDER, plan.attackerFactionId());
