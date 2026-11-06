@@ -7,6 +7,7 @@ import exiledsector.effects.ShipEffectSource;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.SocketedItem;
 import exiledsector.skills.skilleffect.special.SlotItemEffect;
+import exiledsector.loot.BattleItemDropSetting;
 import exiledsector.loot.LootSource;
 import exiledsector.loot.MarketStock;
 import exiledsector.skills.ShipSections;
@@ -102,9 +103,9 @@ public final class HullUpgradesDomain implements ExiledSectorDomain {
         SettingsCreator.addBoolean(MOD_ID, HullUpgradesSetting.MASTER_SCHEMATICS_FIELD_ID,
                 Translation.text("settings.hullItems.masterSchematics.name"), Translation.text("settings.hullItems.masterSchematics.tooltip"),
                 HullUpgradesSetting.DEFAULT_MASTER_SCHEMATICS_REQUIRED, itemsTab);
-        SettingsCreator.addInt(MOD_ID, BattleItemDrops.DROP_PERCENT_FIELD_ID,
+        SettingsCreator.addInt(MOD_ID, BattleItemDropSetting.FIELD_ID,
                 Translation.text("settings.hullItems.battleItems.name"), Translation.text("settings.hullItems.battleItems.tooltip"),
-                BattleItemDrops.DEFAULT_DROP_PERCENT, 0, BattleItemDrops.MAX_DROP_PERCENT, itemsTab);
+                BattleItemDropSetting.DEFAULT_PERCENT, 0, BattleItemDropSetting.MAX_PERCENT, itemsTab);
     }
 
     @Override

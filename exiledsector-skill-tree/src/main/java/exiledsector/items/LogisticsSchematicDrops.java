@@ -22,12 +22,12 @@ public final class LogisticsSchematicDrops {
     private LogisticsSchematicDrops() {
     }
 
-    public static int rollBattle(List<SourceLoss> sources, Random random) {
-        return ItemDrops.wholeFeedstock(expectedBattleDrops(sources, BattleLootRates.rate(RATE_ID)), random);
+    public static int rollBattle(List<SourceLoss> sources, float dropMultiplier, Random random) {
+        return ItemDrops.wholeFeedstock(expectedBattleDrops(sources, BattleLootRates.rate(RATE_ID), dropMultiplier), random);
     }
 
-    static float expectedBattleDrops(List<SourceLoss> sources, BattleLootRates.Rate rate) {
-        if (rate == null || sources.isEmpty()) {
+    static float expectedBattleDrops(List<SourceLoss> sources, BattleLootRates.Rate rate, float dropMultiplier) {
+        if (rate == null || sources.isEmpty() || !(dropMultiplier > 0f)) {
             return 0f;
         }
         float battleDeploymentPoints = 0f;
@@ -40,7 +40,7 @@ public final class LogisticsSchematicDrops {
             expected += rate.expected(source.deploymentPoints() * rules.deploymentPointsMult(), battleDeploymentPoints)
                     * rate.difficulty(source.difficultyMultiplier()) * rules.share(rate) * rules.multipliers().itemChances().general();
         }
-        return expected;
+        return expected * dropMultiplier;
     }
 
     public static boolean rollSiteFind(String siteId, Random random, ItemChances chances) {

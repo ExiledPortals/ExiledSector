@@ -197,7 +197,7 @@
     "settings.hullItems.masterSchematics.name": "需要母版图纸",
     "settings.hullItems.masterSchematics.tooltip": "每艘舰船的技能树在使用母版图纸之前保持锁定。NPC技能树只参照技能树已开放的舰船。开启此项时，已分配节点的舰船会自动解锁。需要开启船体升级。",
     "settings.hullItems.battleItems.name": "战斗掉落的船体物品",
-    "settings.hullItems.battleItems.tooltip": "100为正常，0则关闭。",
+    "settings.hullItems.battleItems.tooltip": "包括船体物品和各类图纸（含后勤图纸）。100为正常，0则关闭。",
     "hullItem.target.line": "目标：本舰{section}物品。",
     "hullItem.target.choices": "可选目标：{sections}",
     "hullItem.affinity.current": "本舰当前：{line}",

@@ -7,6 +7,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.MockSector;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
+import exiledsector.skills.LogisticsNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillItemCost;
@@ -60,6 +61,7 @@ class TemplateLevelUpTest {
         node("pricey", type("pricey_type", SkillTier.SMALL).itemCost(new SkillItemCost("alpha_core", 1f)).build(), List.of("first"));
         node("second", type("second_type", SkillTier.SMALL).build(), List.of("first"));
         node("third", type("third_type", SkillTier.SMALL).build(), List.of("second"));
+        node("cargo", type("cargo_type", SkillTier.NOTABLE).tags(List.of(LogisticsNodes.TAG)).build(), List.of("root"));
 
         member = ShipTreeSyncTest.mockMember("planned", true);
         when(member.getHullSpec().getHullSize()).thenReturn(HullSize.FRIGATE);
@@ -170,6 +172,39 @@ class TemplateLevelUpTest {
         Map<FleetMemberAPI, Integer> counts = ShipTreeSync.levelsChanged(null, List.of(member));
 
         assertEquals(Map.of(member, 1), counts);
+        assertTrue(shipData.isAllocated("first"));
+    }
+
+    @Test
+    void aLevelUpWaitingOnlyForDockingKeepsItsFreeAllocationForTheDock() {
+        ShipTrees.allocate(shipData, SkillTree.get("first"), 1);
+        assignTemplate("first", "cargo");
+        shipData.setAutoAllocateTemplate(true);
+
+        levelUp(1);
+        assertEquals(0, TemplateLevelUp.spendFreeAllocations(member));
+
+        assertFalse(shipData.isAllocated("cargo"));
+        assertFalse(shipData.isFreeNode("first"));
+        assertEquals(1, shipData.getBankedFreeAllocations());
+
+        assertEquals(0, TemplateLevelUp.spendBankedWhileDocked(member, false));
+        assertEquals(1, TemplateLevelUp.spendBankedWhileDocked(member, true));
+
+        assertTrue(shipData.isAllocated("cargo"));
+        assertTrue(shipData.isFreeNode("cargo"));
+        assertEquals(0, shipData.getBankedFreeAllocations());
+    }
+
+    @Test
+    void dockingDoesNothingWithAutoAllocateOffOrNoFreeAllocations() {
+        assignTemplate("first");
+        shipData.addFreeAllocation();
+        assertEquals(0, TemplateLevelUp.spendBankedWhileDocked(member, true));
+
+        shipData.setAutoAllocateTemplate(true);
+        assertEquals(1, TemplateLevelUp.spendBankedWhileDocked(member, true));
+        assertEquals(0, TemplateLevelUp.spendBankedWhileDocked(member, true));
         assertTrue(shipData.isAllocated("first"));
     }
 }

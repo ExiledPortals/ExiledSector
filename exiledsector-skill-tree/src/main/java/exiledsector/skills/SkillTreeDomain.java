@@ -44,6 +44,7 @@ import exiledsector.effects.SkillTreeEffectSource;
 import exiledsector.effects.SkillTreeGrantedNodeEffects;
 import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.effects.SkillTreeLootSource;
+import exiledsector.effects.TemplateDockingRetry;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.SpecLocalisation;
 import exiledsector.items.ItemVolumes;
@@ -234,6 +235,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
         sector.getListenerManager().addListener(new NpcTreeInspectInput(), true);
         sector.getListenerManager().addListener(new SkillTreeCodexListener(), true);
         sector.getListenerManager().addListener(new PhantomHullModRefitHider(), true);
+        sector.getListenerManager().addListener(new TemplateDockingRetry(), true);
     }
 
     @Override

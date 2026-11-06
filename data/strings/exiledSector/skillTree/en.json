@@ -7,6 +7,8 @@
     "combat.xp.levelUp": "{ship} ({hull}) reached level {level}.",
     "combat.xp.levelUpAutoAllocated.one": "{ship} ({hull}) reached level {level} and allocated {count} template node.",
     "combat.xp.levelUpAutoAllocated.other": "{ship} ({hull}) reached level {level} and allocated {count} template nodes.",
+    "template.dockAllocated.one": "{ship} allocated {count} template node while docked.",
+    "template.dockAllocated.other": "{ship} allocated {count} template nodes while docked.",
 
     "inspect.close": "Close",
     "inspect.levelledShips": "<hl>{levelled}</hl> of <hl>{total}</hl> ships have Exiled Sector skill trees.",

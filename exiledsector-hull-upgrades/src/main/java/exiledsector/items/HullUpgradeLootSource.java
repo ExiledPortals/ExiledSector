@@ -9,6 +9,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.effects.ItemLootListener;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
+import exiledsector.loot.BattleItemDropSetting;
 import exiledsector.loot.BattleLootRates;
 import exiledsector.loot.LootSource;
 import exiledsector.loot.LootSources;
@@ -110,7 +111,7 @@ public final class HullUpgradeLootSource implements LootSource, MarketStock {
             return HullItemDrops.SectionItemLoot.NONE;
         }
         try {
-            return BattleItemDrops.roll(losses(battle).battleItems(), BattleItemDrops.settingMultiplier(), battle.random(),
+            return BattleItemDrops.roll(losses(battle).battleItems(), BattleItemDropSetting.multiplier(), battle.random(),
                     definition -> ItemUnlock.canDrop(definition, sector), hullItemDropsOpen);
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Rolling battle hull item drops failed", e);

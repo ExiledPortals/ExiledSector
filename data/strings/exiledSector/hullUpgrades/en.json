@@ -73,7 +73,7 @@
     "settings.hullItems.masterSchematics.name": "Require Master Schematics",
     "settings.hullItems.masterSchematics.tooltip": "Each ship's skill tree stays locked until a Master Schematic is used on it. NPC trees only mirror ships with an open tree. Ships that already have nodes are unlocked when this is switched on. Needs Hull Upgrades.",
     "settings.hullItems.battleItems.name": "Hull Item Drops From Battles",
-    "settings.hullItems.battleItems.tooltip": "100 is normal and 0 turns them off.",
+    "settings.hullItems.battleItems.tooltip": "Covers hull items and schematics, including Logistics Schematics. 100 is normal and 0 turns them off.",
     "hullItem.target.line": "Targets this ship's {section} item.",
     "hullItem.target.choices": "Can target: {sections}",
     "hullItem.affinity.current": "Currently on this ship: {line}",
