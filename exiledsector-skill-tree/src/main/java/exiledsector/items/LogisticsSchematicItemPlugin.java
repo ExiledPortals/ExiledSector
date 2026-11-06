@@ -8,11 +8,15 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.LogisticsNodes;
 import exiledsector.skills.SkillTreeSetting;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.VanillaText;
+import exiledsector.ui.util.SpriteDraw;
 
 import java.util.List;
 
 public class LogisticsSchematicItemPlugin extends BaseSpecialItemPlugin {
+
+    private static final SpriteCache SPRITES = new SpriteCache(LogisticsSchematicItemPlugin.class);
 
     @Override
     public String getName() {
@@ -37,5 +41,10 @@ public class LogisticsSchematicItemPlugin extends BaseSpecialItemPlugin {
             }
         }, List::of);
         addCostLabel(tooltip, ItemTooltip.PAD, transferHandler, stackSource);
+    }
+
+    @Override
+    public void render(float x, float y, float w, float h, float alphaMult, float glowMult, SpecialItemRendererAPI renderer) {
+        SpriteDraw.drawAtCenter(SPRITES, LogisticsSchematic.ICON_PATH, x + w / 2f, y + h / 2f, w, h, null, alphaMult);
     }
 }
