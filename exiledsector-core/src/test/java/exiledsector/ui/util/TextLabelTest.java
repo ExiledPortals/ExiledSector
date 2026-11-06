@@ -71,6 +71,17 @@ class TextLabelTest {
     }
 
     @Test
+    void aShadowedLabelDrawsItsShadowOnePixelDownRightBeforeTheText() {
+        label(Color.WHITE).set("title").drawWithShadow(10f, 20f, Color.BLACK);
+
+        InOrder order = inOrder(drawable);
+        order.verify(drawable).setBaseColor(Color.BLACK);
+        order.verify(drawable).draw(11f, 19f);
+        order.verify(drawable).setBaseColor(Color.WHITE);
+        order.verify(drawable).draw(10f, 20f);
+    }
+
+    @Test
     void centredTextIsShiftedSoItsLeftEdgeLandsOnAWholePixel() {
         when(drawable.getWidth()).thenReturn(31f);
         when(drawable.getHeight()).thenReturn(15f);

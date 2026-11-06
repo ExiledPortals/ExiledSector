@@ -18,7 +18,7 @@ class TooltipTextSizeTest {
     void tooltipsDefaultToTheVanillaSizes() {
         TooltipText vanilla = SkillTreePanelStyle.tooltipText();
 
-        assertEquals(UiFonts.HEADING, vanilla.title());
+        assertEquals(UiFonts.TITLE, vanilla.title());
         assertEquals(UiFonts.BODY, vanilla.body());
         assertEquals(UiFonts.HEADING, vanilla.hint());
         assertEquals(360f, vanilla.maxTextWidth());

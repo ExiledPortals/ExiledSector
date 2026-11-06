@@ -40,7 +40,6 @@ import exiledsector.ui.TooltipExpansion;
 import exiledsector.ui.TooltipTable;
 import exiledsector.ui.TooltipText;
 import exiledsector.ui.inspect.ItemCodex;
-import exiledsector.ui.util.ItalicTextLabel;
 import exiledsector.ui.util.TextLabel;
 
 import java.util.ArrayList;
@@ -66,7 +65,7 @@ final class SkillTreeNodeTooltipRenderer {
     private final Map<String, TextLabel> affinitySections = new HashMap<>();
     private final Map<TextLabel, Boolean> expandableBodies = new HashMap<>();
     private final Map<Boolean, TextLabel> footers = new HashMap<>();
-    private final Map<String, ItalicTextLabel> flavours = new HashMap<>();
+    private final Map<String, TextLabel> flavours = new HashMap<>();
     private final Map<String, List<SkillTreeTooltipTable>> tablesByType = new HashMap<>();
     private String hoveredCostKey;
     private float hoveredItemsHeld;
@@ -125,7 +124,7 @@ final class SkillTreeNodeTooltipRenderer {
                 : null;
 
         List<SkillTreeTooltipTable> tables = showChoiceHint || hidden ? List.of() : tablesFor(effectiveType);
-        ItalicTextLabel flavour = hidden || socketed != null ? null : flavourFor(effectiveType);
+        TextLabel flavour = hidden || socketed != null ? null : flavourFor(effectiveType);
         boolean expandable = expandableBodies.getOrDefault(body, false) || affinitySection != null;
         panelStyle.drawTitleBodyTooltip(title, flavour, body, tables, expanded ? affinitySection : null, footer(expandable, expanded),
                 mouseX, mouseY, alphaMult);
@@ -177,12 +176,12 @@ final class SkillTreeNodeTooltipRenderer {
                 List.of(plainLine(Boolean.TRUE.equals(footerExpanded) ? "ui.tooltip.collapseHint" : "ui.tooltip.expandHint"))));
     }
 
-    private ItalicTextLabel flavourFor(SkillType type) {
+    private TextLabel flavourFor(SkillType type) {
         if (flavours.containsKey(type.getId())) {
             return flavours.get(type.getId());
         }
         String flavourText = flavourText(type, fleetMember);
-        ItalicTextLabel flavour = flavourText == null ? null : new ItalicTextLabel(tooltipText.flavour(), Misc.getGrayColor())
+        TextLabel flavour = flavourText == null ? null : new TextLabel(tooltipText.flavour(), Misc.getGrayColor())
                 .setWrapped(flavourText, tooltipText.nodeMaxTextWidth(), TOOLTIP_MAX_TEXT_HEIGHT);
         flavours.put(type.getId(), flavour);
         return flavour;

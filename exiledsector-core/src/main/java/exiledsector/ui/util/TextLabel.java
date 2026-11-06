@@ -20,6 +20,7 @@ public final class TextLabel {
     private static final int OPAQUE = 255;
     // TODO: drop this if LazyLib stops applying DrawableString colour changes one character early
     private static final int LAZYFONT_COLOR_INDEX_OFFSET = 1;
+    private static final float SHADOW_OFFSET = 1f;
     private static final String PARAGRAPH_SEPARATOR = "\n\n";
     private static final String HIGHLIGHT_TAIL = " ";
     private static final Function<Style, Color> STANDARD_HIGHLIGHTS = SkillTreePanelStyle::standardHighlightColor;
@@ -148,6 +149,14 @@ public final class TextLabel {
             case CENTER_LEFT, CENTER, CENTER_RIGHT -> 0.5f;
             case BOTTOM_LEFT, BOTTOM_CENTER, BOTTOM_RIGHT -> 1f;
         };
+    }
+
+    public boolean drawWithShadow(float x, float y, Color shadowColor) {
+        Color textColor = baseColor;
+        setColor(shadowColor);
+        draw(x + SHADOW_OFFSET, y - SHADOW_OFFSET);
+        setColor(textColor);
+        return draw(x, y);
     }
 
     public float width() {

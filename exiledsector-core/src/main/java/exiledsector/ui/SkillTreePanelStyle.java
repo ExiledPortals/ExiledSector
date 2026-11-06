@@ -8,7 +8,6 @@ import exiledsector.i18n.Translation;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.skilleffect.render.FallbackSupport;
 import exiledsector.ui.util.GLDraw;
-import exiledsector.ui.util.ItalicTextLabel;
 import exiledsector.ui.util.TextLabel;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
@@ -56,12 +55,13 @@ public final class SkillTreePanelStyle {
     private static final float TOOLTIP_SEPARATOR_THICKNESS = 1f;
     private static final float TOOLTIP_SCREEN_MARGIN = 4f;
     private static final float TOOLTIP_FLAVOUR_GAP = 8f;
+    private static final Color TOOLTIP_TITLE_SHADOW_COLOR = Color.BLACK;
 
     static final String DEFAULT_FONT_PATH = UiFonts.FONT_FOLDER + UiFonts.ORBITRON_20_BOLD_FILE;
     private static final Map<String, Optional<LazyFont>> FONTS_BY_DEFAULT_PATH = new HashMap<>();
     private static final Map<String, Optional<LazyFont>> FONTS_BY_FILE = new HashMap<>();
 
-    private static final TooltipText VANILLA_TOOLTIP_TEXT = new TooltipText(UiFonts.HEADING, UiFonts.BODY, UiFonts.BODY, UiFonts.HEADING,
+    private static final TooltipText VANILLA_TOOLTIP_TEXT = new TooltipText(UiFonts.TITLE, UiFonts.BODY, UiFonts.BODY, UiFonts.HEADING,
             new TooltipText.Table(UiFonts.HEADING, UiFonts.BODY, 20f, 20f), 360f);
     private static final TooltipText LARGE_TOOLTIP_TEXT = new TooltipText(UiFonts.LARGE_TITLE, UiFonts.TITLE, UiFonts.LARGE_DETAIL, UiFonts.TITLE,
             new TooltipText.Table(UiFonts.TITLE, UiFonts.LARGE_DETAIL, 26f, 22f), 480f);
@@ -119,7 +119,7 @@ public final class SkillTreePanelStyle {
         drawTitleBodyTooltip(title, null, body, List.of(), null, null, mouseX, mouseY, alphaMult);
     }
 
-    public void drawTitleBodyTooltip(TextLabel title, ItalicTextLabel flavour, TextLabel body, List<SkillTreeTooltipTable> tables,
+    public void drawTitleBodyTooltip(TextLabel title, TextLabel flavour, TextLabel body, List<SkillTreeTooltipTable> tables,
                                      TextLabel separatedSection, TextLabel footer, float mouseX, float mouseY, float alphaMult) {
         float contentWidth = Math.max(title.width(), body.width());
         float flavourHeight = 0f;
@@ -155,7 +155,7 @@ public final class SkillTreePanelStyle {
         float flavourY = titleY - title.height() - TOOLTIP_TITLE_BODY_GAP;
         float bodyY = flavourY - flavourHeight;
         float titleX = boxX + (boxWidth - title.width()) / 2f;
-        title.setAlpha(alphaMult).draw(titleX, titleY);
+        title.setColor(Misc.getTooltipTitleAndLightHighlightColor()).setAlpha(alphaMult).drawWithShadow(titleX, titleY, TOOLTIP_TITLE_SHADOW_COLOR);
         if (flavour != null) {
             flavour.setAlpha(alphaMult).draw(boxX + TOOLTIP_PADDING, flavourY);
         }
