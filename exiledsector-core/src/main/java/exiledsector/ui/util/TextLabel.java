@@ -41,14 +41,6 @@ public final class TextLabel {
     private Color drawnColor;
     private int drawnAlpha = -1;
 
-    public TextLabel(float fontSize, Color color) {
-        this(fontSize, color, LazyFont.TextAnchor.TOP_LEFT);
-    }
-
-    public TextLabel(float fontSize, Color color, LazyFont.TextAnchor anchor) {
-        this(SkillTreePanelStyle::font, fontSize, color, anchor);
-    }
-
     public TextLabel(TextFont font, Color color) {
         this(font, color, LazyFont.TextAnchor.TOP_LEFT);
     }

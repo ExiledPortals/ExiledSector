@@ -7,6 +7,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.items.HullUpgradesSetting;
 import exiledsector.ui.refit.RefitScreenLayout;
 import exiledsector.ui.util.GLDraw;
+import exiledsector.ui.util.TextFont;
 import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 
@@ -16,7 +17,8 @@ import java.util.List;
 
 final class HullItemsLevelNotice {
 
-    static final float FONT_SIZE = 40f;
+    static final TextFont FONT = UiFonts.MESSAGE;
+    static final float FONT_SIZE = FONT.size();
     private static final float LINE_GAP = 6f;
     private static final float PARAGRAPH_GAP = 24f;
     private static final float MAX_WIDTH_SHARE = 0.7f;
@@ -86,7 +88,7 @@ final class HullItemsLevelNotice {
         }
         dispose();
         wrappedWidth = maxWidth;
-        LazyFont font = SkillTreePanelStyle.font();
+        LazyFont font = FONT.font();
         for (int index = 0; index < paragraphs.size(); index++) {
             String paragraph = paragraphs.get(index);
             String wrapped = font == null ? paragraph
@@ -94,7 +96,7 @@ final class HullItemsLevelNotice {
             Color color = index == 0 ? LEVEL_COLOR : SETTING_COLOR;
             List<TextLabel> lines = new ArrayList<>();
             for (String line : wrapped.split("\n")) {
-                lines.add(new TextLabel(FONT_SIZE, color, LazyFont.TextAnchor.TOP_CENTER).set(line));
+                lines.add(new TextLabel(FONT, color, LazyFont.TextAnchor.TOP_CENTER).set(line));
             }
             wrappedParagraphs.add(lines);
         }

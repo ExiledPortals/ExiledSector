@@ -21,14 +21,14 @@ class SkillTreeTextFieldTest {
     }
 
     private static SkillTreeTextField focusedField() {
-        SkillTreeTextField field = new SkillTreeTextField(5, 20f, Color.WHITE);
+        SkillTreeTextField field = new SkillTreeTextField(5, UiFonts.DIALOG_TEXT, Color.WHITE);
         field.focus(true);
         return field;
     }
 
     @Test
     void anUnfocusedFieldIgnoresKeysAndAFocusedOneConsumesKeyUps() {
-        SkillTreeTextField field = new SkillTreeTextField(5, 20f, Color.WHITE);
+        SkillTreeTextField field = new SkillTreeTextField(5, UiFonts.DIALOG_TEXT, Color.WHITE);
         assertEquals(SkillTreeTextField.KeyResult.IGNORED, field.handleKey(keyDown(Keyboard.KEY_NONE, 'a')));
 
         field.focus(true);

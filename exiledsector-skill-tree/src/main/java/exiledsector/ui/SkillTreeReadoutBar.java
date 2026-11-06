@@ -12,6 +12,7 @@ import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.LineBatch;
 import exiledsector.ui.util.Rects;
 import exiledsector.ui.util.SpriteDraw;
+import exiledsector.ui.util.TextFont;
 import exiledsector.ui.util.TextLabel;
 import org.apache.log4j.Logger;
 import org.lwjgl.opengl.GL11;
@@ -33,7 +34,7 @@ final class SkillTreeReadoutBar {
     static final float BAR_WIDTH = 297f;
     private static final float BAR_HEIGHT = 30f;
     private static final float ROW_GAP = 8f;
-    private static final float FONT_SIZE = 20f;
+    private static final TextFont FONT = UiFonts.TITLE;
 
     private static final float EDGE_LINE_WIDTH = 2f;
     private static final float CORNER_ACCENT_LENGTH = 15f;
@@ -55,8 +56,8 @@ final class SkillTreeReadoutBar {
     private final String labelKey;
     private final FaderUtil hoverFader = new FaderUtil(HOVER_FADE_IN, HOVER_FADE_OUT);
 
-    private final TextLabel labelText = new TextLabel(FONT_SIZE, TEXT_COLOR);
-    private final TextLabel labelShadowText = new TextLabel(FONT_SIZE, TEXT_SHADOW_COLOR);
+    private final TextLabel labelText = new TextLabel(FONT, TEXT_COLOR);
+    private final TextLabel labelShadowText = new TextLabel(FONT, TEXT_SHADOW_COLOR);
     private final LineBatch bevelShadowLines = new LineBatch(EDGE_LINE_WIDTH);
     private final LineBatch bevelHighlightLines = new LineBatch(EDGE_LINE_WIDTH);
     private final LineBatch cornerAccentLines = new LineBatch(1f);
@@ -246,7 +247,7 @@ final class SkillTreeReadoutBar {
 
     private void drawLabel(String label, float barLeft, float barBottom, float alphaMult) {
         float textWidth = labelText.set(label).width();
-        float textHeight = FONT_SIZE * SkillTreePanelStyle.FONT_LINE_HEIGHT_FACTOR;
+        float textHeight = FONT.size() * SkillTreePanelStyle.FONT_LINE_HEIGHT_FACTOR;
         float textX = barLeft + (BAR_WIDTH - textWidth) / 2f;
         float textY = barBottom + (BAR_HEIGHT + textHeight) / 2f;
 

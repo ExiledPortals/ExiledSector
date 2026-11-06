@@ -45,6 +45,7 @@ import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.TooltipText;
 import exiledsector.ui.TreeViewport;
+import exiledsector.ui.UiFonts;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.chart.StarChartCraftingBench;
 import exiledsector.ui.decoration.StarfieldRenderer;
@@ -113,8 +114,8 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private final StarfieldRenderer starfield = new StarfieldRenderer(panelStyle);
     private final CanvasCamera camera = new CanvasCamera(AtlasMapCanvas.MIN_ZOOM, AtlasMapCanvas.MAX_ZOOM);
     private final PointerGesture<Void> gesture = new PointerGesture<>();
-    private final TextLabel titleLabel = new TextLabel(SkillTreePanelStyle.UI_TITLE_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-    private final TextLabel hintLabel = new TextLabel(SkillTreePanelStyle.UI_HINT_FONT_SIZE, HINT_COLOUR);
+    private final TextLabel titleLabel = new TextLabel(UiFonts.TITLE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
+    private final TextLabel hintLabel = new TextLabel(UiFonts.HEADING, HINT_COLOUR);
     private final TooltipText tooltipText = SkillTreePanelStyle.tooltipText();
     private final TextLabel tooltipTitle = new TextLabel(tooltipText.title(), SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel tooltipBody = new TextLabel(tooltipText.body(), SkillTreePanelStyle.TOOLTIP_BODY_COLOR);

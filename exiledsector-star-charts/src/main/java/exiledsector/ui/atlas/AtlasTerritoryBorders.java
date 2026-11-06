@@ -5,7 +5,9 @@ import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasNoise;
 import exiledsector.ui.TreeViewport;
+import exiledsector.ui.UiFonts;
 import exiledsector.ui.util.GlScope;
+import exiledsector.ui.util.TextFont;
 import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 import org.lwjgl.opengl.GL11;
@@ -46,7 +48,7 @@ final class AtlasTerritoryBorders {
     static final float OUTLINE_WIDTH = 2f;
     static final float OUTLINE_WHITENESS = 0.3f;
     static final float LABEL_ALPHA = 0.55f;
-    static final float LABEL_FONT_SIZE = 30f;
+    static final TextFont LABEL_FONT = UiFonts.MAP_LABEL;
     static final float LABEL_ROOM_SHARE = 1.2f;
     static final float FADE_SECONDS = 0.25f;
     private static final int[][] SIDES = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
@@ -197,7 +199,7 @@ final class AtlasTerritoryBorders {
         }
         TextLabel label = labels.get(index);
         if (label == null) {
-            TextLabel created = new TextLabel(LABEL_FONT_SIZE, outlines.get(index), LazyFont.TextAnchor.CENTER);
+            TextLabel created = new TextLabel(LABEL_FONT, outlines.get(index), LazyFont.TextAnchor.CENTER);
             I18n.forGameText(() -> created.set(names.apply(region.groupId())));
             labels.set(index, created);
             label = created;

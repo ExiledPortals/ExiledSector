@@ -8,6 +8,7 @@ import exiledsector.skills.ShipHullSizes;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.HoloFrame;
+import exiledsector.ui.util.TextFont;
 import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 
@@ -35,7 +36,8 @@ final class SkillTreeTemplateListOverlay {
     private static final float FOOTER_HEIGHT = 36f;
     private static final float ROW_FILL_ALPHA = 0.06f;
     private static final float ROW_HOVER_ALPHA = 0.2f;
-    private static final float FONT_SIZE = SkillTreePanelStyle.UI_FONT_SIZE;
+    private static final TextFont FONT = UiFonts.DIALOG_TEXT;
+    private static final TextFont TITLE_FONT = UiFonts.TITLE;
     private static final Color META_COLOR = new Color(170, 170, 170);
     private static final Color CONFIRM_COLOR = SkillTreePanelStyle.NEGATIVE_STAT_COLOR;
 
@@ -50,9 +52,9 @@ final class SkillTreeTemplateListOverlay {
     private final String confirmText = Translation.text("ui.template.list.confirmDelete");
     private final String emptyRootText = Translation.text("ui.template.list.empty");
     private final String noMatchText = Translation.text("ui.template.list.noMatch");
-    private final TextLabel titleLine = new TextLabel(SkillTreePanelStyle.UI_TITLE_FONT_SIZE,
+    private final TextLabel titleLine = new TextLabel(TITLE_FONT,
             SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-    private final TextLabel emptyLine = new TextLabel(FONT_SIZE, META_COLOR);
+    private final TextLabel emptyLine = new TextLabel(FONT, META_COLOR);
 
     private boolean overlayOpen;
     private TemplateListState templateListState;
@@ -180,11 +182,11 @@ final class SkillTreeTemplateListOverlay {
     }
 
     private void renderContent(float overlayLeft, float overlayBottom, float overlayWidth, float overlayHeight, float mouseX, float mouseY, float alphaMult) {
-        LazyFont font = SkillTreePanelStyle.font();
+        LazyFont font = FONT.font();
 
         float cursorTop = overlayBottom + overlayHeight - PADDING;
         titleLine.setAlpha(alphaMult).draw(overlayLeft + PADDING, cursorTop);
-        cursorTop -= SkillTreePanelStyle.UI_TITLE_FONT_SIZE + 12f;
+        cursorTop -= TITLE_FONT.size() + 12f;
         float chipBottom = cursorTop - CHIP_HEIGHT;
         float chipLeft = overlayLeft + PADDING;
         for (Map.Entry<HullSize, SkillTreeUiButton> chip : hullSizeChips.entrySet()) {
@@ -237,8 +239,8 @@ final class SkillTreeTemplateListOverlay {
         private SkillTreeTemplate template;
         private boolean boundArmed;
         private boolean boundAssigned;
-        private final TextLabel nameLine = new TextLabel(FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
-        private final TextLabel metaLine = new TextLabel(FONT_SIZE, META_COLOR);
+        private final TextLabel nameLine = new TextLabel(FONT, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
+        private final TextLabel metaLine = new TextLabel(FONT, META_COLOR);
         private ScreenRect rowBounds = ScreenRect.NONE;
 
         void bind(LazyFont font, SkillTreeTemplate rowTemplate, float textWidth) {
@@ -252,7 +254,7 @@ final class SkillTreeTemplateListOverlay {
             boundAssigned = assigned;
             metaLine.set(metaText(rowTemplate, assigned)).setColor(assigned ? SkillTreePanelStyle.POSITIVE_STAT_COLOR : META_COLOR);
             float nameWidth = textWidth - metaLine.width() - META_GAP;
-            String fittedName = SkillTreeTextField.fitStart(rowTemplate.name(), nameWidth, text -> font.calcWidth(text, FONT_SIZE));
+            String fittedName = SkillTreeTextField.fitStart(rowTemplate.name(), nameWidth, text -> font.calcWidth(text, FONT.size()));
             nameLine.set(fittedName);
             deleteButton.setLabel(armed ? confirmText : deleteText);
             deleteButton.setTextColor(armed ? CONFIRM_COLOR : null);
@@ -271,7 +273,7 @@ final class SkillTreeTemplateListOverlay {
             if (boundAssigned) {
                 GLDraw.strokeQuad(rowLeft, rowBottom, rowWidth, ROW_HEIGHT, panelStyle.getAccentColor(), 1.5f, alphaMult);
             }
-            float textY = rowBottom + ROW_HEIGHT / 2f + FONT_SIZE / 2f;
+            float textY = rowBottom + ROW_HEIGHT / 2f + FONT.size() / 2f;
             nameLine.setAlpha(alphaMult).draw(rowLeft + 12f, textY);
             metaLine.setAlpha(alphaMult).draw(rowLeft + rowWidth - DELETE_WIDTH - 12f - metaLine.width(), textY);
             deleteButton.place(rowLeft + rowWidth - DELETE_WIDTH, rowBottom + 4f, DELETE_WIDTH, ROW_HEIGHT - 8f);

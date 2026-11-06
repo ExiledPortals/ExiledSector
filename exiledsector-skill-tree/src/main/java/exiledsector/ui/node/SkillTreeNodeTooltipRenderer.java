@@ -173,7 +173,7 @@ final class SkillTreeNodeTooltipRenderer {
         if (!expandable) {
             return null;
         }
-        return footers.computeIfAbsent(expanded, footerExpanded -> writeBodyText(new TextLabel(tooltipText.body(), TOOLTIP_BODY_COLOR),
+        return footers.computeIfAbsent(expanded, footerExpanded -> writeBodyText(new TextLabel(tooltipText.hint(), TOOLTIP_BODY_COLOR),
                 List.of(plainLine(Boolean.TRUE.equals(footerExpanded) ? "ui.tooltip.collapseHint" : "ui.tooltip.expandHint"))));
     }
 

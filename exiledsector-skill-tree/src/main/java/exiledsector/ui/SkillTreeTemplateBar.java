@@ -2,6 +2,7 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.i18n.Translation;
+import exiledsector.ui.util.TextFont;
 import exiledsector.ui.util.TextLabel;
 
 import java.awt.Color;
@@ -15,7 +16,7 @@ final class SkillTreeTemplateBar {
     private static final float MIN_BUTTON_WIDTH = 120f;
     private static final float STATUS_GAP = 8f;
     private static final float STATUS_LINE_HEIGHT = 22f;
-    private static final float FONT_SIZE = SkillTreePanelStyle.UI_FONT_SIZE;
+    private static final TextFont FONT = UiFonts.MESSAGE;
     private static final float RESULT_SECONDS = 4f;
     private static final Color RESULT_COLOR = SkillTreePanelStyle.TOOLTIP_BODY_COLOR;
 
@@ -25,8 +26,8 @@ final class SkillTreeTemplateBar {
     private final SkillTreeUiButton autoAllocateButton = new SkillTreeUiButton(Translation.text("ui.template.button.autoOff"));
     private final SkillTreeInfoTooltipRenderer tooltipRenderer;
     private final Map<String, String> translatedTexts = new HashMap<>();
-    private final TextLabel templateLine = new TextLabel(FONT_SIZE, SkillTreePanelStyle.POSITIVE_STAT_COLOR);
-    private final TextLabel resultLine = new TextLabel(FONT_SIZE, RESULT_COLOR);
+    private final TextLabel templateLine = new TextLabel(FONT, SkillTreePanelStyle.POSITIVE_STAT_COLOR);
+    private final TextLabel resultLine = new TextLabel(FONT, RESULT_COLOR);
 
     private TemplateBarState barState = TemplateBarState.HIDDEN;
     private String statusText;

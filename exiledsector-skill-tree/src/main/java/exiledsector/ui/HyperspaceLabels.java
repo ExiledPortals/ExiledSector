@@ -4,6 +4,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.ui.hyperspace.HyperspaceAnchor;
 import exiledsector.ui.hyperspace.HyperspaceCamera;
 import exiledsector.ui.util.BorderedPanel;
+import exiledsector.ui.util.TextFont;
 import exiledsector.ui.util.TextLabel;
 
 import java.awt.Color;
@@ -13,7 +14,8 @@ import java.util.Map;
 
 final class HyperspaceLabels {
 
-    static final float FONT_SIZE = SkillTreePanelStyle.UI_FONT_SIZE;
+    private static final TextFont FONT = UiFonts.TITLE;
+    static final float FONT_SIZE = FONT.size();
     private static final float PADDING_X = 16f;
     private static final float PADDING_Y = 8f;
     private static final float GAP = 6f;
@@ -56,7 +58,7 @@ final class HyperspaceLabels {
 
     private TextLabel text(HyperspaceAnchor anchor) {
         return volumeTexts.computeIfAbsent(anchor.volume(),
-                volume -> new TextLabel(FONT_SIZE, TEXT_COLOR).set(Translation.text("hyperspace.volume." + volume)));
+                volume -> new TextLabel(FONT, TEXT_COLOR).set(Translation.text("hyperspace.volume." + volume)));
     }
 
     private static ScreenRect box(TreeViewport viewport, HyperspaceAnchor anchor, float mapStarRadius, float mapAmount, float textWidth) {

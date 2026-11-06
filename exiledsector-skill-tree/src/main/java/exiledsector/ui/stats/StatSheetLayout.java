@@ -2,6 +2,7 @@ package exiledsector.ui.stats;
 
 import exiledsector.i18n.StyledText;
 import exiledsector.ui.SkillTreePanelStyle;
+import exiledsector.ui.UiFonts;
 import exiledsector.ui.stats.ShipStatSheet.Breakdown;
 import exiledsector.ui.stats.ShipStatSheet.Cell;
 import exiledsector.ui.stats.ShipStatSheet.EffectRow;
@@ -11,6 +12,7 @@ import exiledsector.ui.stats.ShipStatSheet.Section;
 import exiledsector.ui.stats.ShipStatSheet.Trend;
 import exiledsector.ui.stats.ShipStatSheet.ValueRow;
 import exiledsector.ui.util.GLDraw;
+import exiledsector.ui.util.TextFont;
 import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 
@@ -32,9 +34,12 @@ public final class StatSheetLayout {
     private record Block(List<Placed> labels, List<Bar> bars, List<Region> regions, float height) {
     }
 
-    private static final float HEADER_FONT_SIZE = 18f;
-    private static final float ROW_FONT_SIZE = 15f;
-    private static final float COLUMN_HEADER_FONT_SIZE = 12f;
+    private static final TextFont HEADER_FONT = UiFonts.HEADING;
+    private static final TextFont ROW_FONT = UiFonts.BODY;
+    private static final TextFont COLUMN_HEADER_FONT = UiFonts.HEADING;
+    private static final float HEADER_FONT_SIZE = HEADER_FONT.size();
+    private static final float ROW_FONT_SIZE = ROW_FONT.size();
+    private static final float COLUMN_HEADER_FONT_SIZE = COLUMN_HEADER_FONT.size();
     private static final float ROW_GAP = 3f;
     private static final float HEADER_GAP = 6f;
     private static final float HEADER_RULE_HEIGHT = 1f;
@@ -158,14 +163,14 @@ public final class StatSheetLayout {
         List<Placed> labels = new ArrayList<>();
         List<Bar> bars = new ArrayList<>();
         List<Region> regions = new ArrayList<>();
-        TextLabel header = new TextLabel(HEADER_FONT_SIZE, HEADER_COLOR, LazyFont.TextAnchor.TOP_CENTER).set(section.group().displayName());
+        TextLabel header = new TextLabel(HEADER_FONT, HEADER_COLOR, LazyFont.TextAnchor.TOP_CENTER).set(section.group().displayName());
         labels.add(new Placed(header, columnWidth / 2f, 0f));
         float cursorY = HEADER_FONT_SIZE + HEADER_GAP / 2f;
         bars.add(new Bar(0f, cursorY, columnWidth, HEADER_RULE_HEIGHT, SkillTreePanelStyle.GLOW_COLOR, HEADER_RULE_ALPHA));
         cursorY += HEADER_GAP;
         float rowHeight = ROW_FONT_SIZE + ROW_GAP;
         for (ValueRow row : section.values()) {
-            labels.add(new Placed(new TextLabel(ROW_FONT_SIZE, LABEL_COLOR).set(row.label()), 0f, cursorY));
+            labels.add(new Placed(new TextLabel(ROW_FONT, LABEL_COLOR).set(row.label()), 0f, cursorY));
             float valueRight = row.change().isEmpty() ? columnWidth : columnWidth - CHANGE_WIDTH - VALUE_GAP;
             labels.add(new Placed(rightAligned(row.value() + row.marker(), trendColor(row.trend())), valueRight, cursorY));
             if (!row.change().isEmpty()) {
@@ -182,7 +187,7 @@ public final class StatSheetLayout {
             cursorY += section.values().isEmpty() && section.grids().isEmpty() ? 0f : GRID_GAP;
             for (EffectRow row : section.effects()) {
                 StyledText text = row.marker().isEmpty() ? row.line().display() : row.line().display().append(" " + row.marker());
-                TextLabel label = new TextLabel(ROW_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR)
+                TextLabel label = new TextLabel(ROW_FONT, SkillTreePanelStyle.TOOLTIP_BODY_COLOR)
                         .setParagraphs(List.of(text), columnWidth - BULLET_INDENT, MAX_EFFECT_HEIGHT, SkillTreePanelStyle::standardHighlightColor);
                 float labelHeight = Math.max(ROW_FONT_SIZE, label.height());
                 bars.add(new Bar(BULLET_INDENT / 2f - BULLET_SIZE / 2f, cursorY + ROW_FONT_SIZE / 2f - BULLET_SIZE / 2f, BULLET_SIZE, BULLET_SIZE,
@@ -202,13 +207,13 @@ public final class StatSheetLayout {
         float cursorY = topY;
         for (int column = 0; column < columns; column++) {
             float cellRight = labelWidth + cellWidth * (column + 1);
-            labels.add(new Placed(new TextLabel(COLUMN_HEADER_FONT_SIZE, COLUMN_HEADER_COLOR, LazyFont.TextAnchor.TOP_RIGHT)
+            labels.add(new Placed(new TextLabel(COLUMN_HEADER_FONT, COLUMN_HEADER_COLOR, LazyFont.TextAnchor.TOP_RIGHT)
                     .set(grid.columns().get(column)), cellRight, cursorY));
         }
         cursorY += COLUMN_HEADER_FONT_SIZE + ROW_GAP;
         float rowHeight = ROW_FONT_SIZE + ROW_GAP;
         for (GridRow row : grid.rows()) {
-            labels.add(new Placed(new TextLabel(ROW_FONT_SIZE, LABEL_COLOR).set(row.label()), 0f, cursorY));
+            labels.add(new Placed(new TextLabel(ROW_FONT, LABEL_COLOR).set(row.label()), 0f, cursorY));
             for (int column = 0; column < row.cells().size(); column++) {
                 Cell cell = row.cells().get(column);
                 float cellLeft = labelWidth + cellWidth * column;
@@ -223,7 +228,7 @@ public final class StatSheetLayout {
     }
 
     private static TextLabel rightAligned(String text, Color color) {
-        return new TextLabel(ROW_FONT_SIZE, color, LazyFont.TextAnchor.TOP_RIGHT).set(text);
+        return new TextLabel(ROW_FONT, color, LazyFont.TextAnchor.TOP_RIGHT).set(text);
     }
 
     static Color trendColor(Trend trend) {

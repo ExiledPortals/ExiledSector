@@ -3,6 +3,7 @@ package exiledsector.ui;
 import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.GLDraw;
+import exiledsector.ui.util.TextFont;
 import exiledsector.ui.util.TextLabel;
 
 import java.awt.Color;
@@ -10,7 +11,7 @@ import java.awt.Color;
 final class SkillTreeUiButton {
 
     private static final float PADDING_X = 16f;
-    private static final float FONT_SIZE = SkillTreePanelStyle.UI_FONT_SIZE;
+    private static final TextFont FONT = UiFonts.BUTTON;
     private static final float HOVER_INSET = 3f;
     private static final float HOVER_ALPHA = 0.25f;
     private static final float SELECTED_ALPHA = 0.18f;
@@ -19,7 +20,7 @@ final class SkillTreeUiButton {
     private static final float FADE_SECONDS = 0.2f;
     private static final float MAX_FADE_STEP_SECONDS = 0.1f;
 
-    private final TextLabel labelText = new TextLabel(FONT_SIZE, TEXT_COLOR);
+    private final TextLabel labelText = new TextLabel(FONT, TEXT_COLOR);
     private Color textColor = TEXT_COLOR;
     private ScreenRect buttonBounds = ScreenRect.NONE;
     private boolean buttonEnabled = true;
@@ -106,7 +107,7 @@ final class SkillTreeUiButton {
         labelText.setColor(buttonEnabled ? textColor : DISABLED_COLOR);
         labelText.setAlpha(alphaMult);
         labelText.draw(buttonBounds.left() + (buttonBounds.width() - labelText.width()) / 2f,
-                buttonBounds.bottom() + buttonBounds.height() / 2f + FONT_SIZE / 2f);
+                buttonBounds.bottom() + buttonBounds.height() / 2f + FONT.size() / 2f);
     }
 
     private void advanceFade() {

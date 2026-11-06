@@ -33,12 +33,12 @@ class SkillTreePanelStyleFontTest {
     }
 
     @Test
-    void chineseBodyTextDrawsAtTheAtlasNativeSize() throws IOException {
+    void chineseTitlesDrawAtTheAtlasNativeSize() throws IOException {
         Path fnt = ProjectFiles.projectRoot().resolve(RealCatalogue.of(LocaleChain.SIMPLIFIED_CHINESE).raw("meta.font"));
         Matcher lineHeight = LINE_HEIGHT.matcher(Files.readString(fnt, StandardCharsets.UTF_8));
 
         assertTrue(lineHeight.find(), "line height");
-        assertEquals(String.valueOf((int) SkillTreePanelStyle.UI_FONT_SIZE), lineHeight.group(1),
+        assertEquals(String.valueOf((int) UiFonts.TITLE.size()), lineHeight.group(1),
                 "LazyFont scales text by font size / line height");
     }
 

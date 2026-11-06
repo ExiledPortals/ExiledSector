@@ -1,6 +1,7 @@
 package exiledsector.ui;
 
 import com.fs.starfarer.api.input.InputEventAPI;
+import exiledsector.ui.util.TextFont;
 import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 import org.lwjgl.input.Keyboard;
@@ -19,7 +20,7 @@ final class SkillTreeTextField {
     private static final Color PLACEHOLDER_COLOR = new Color(130, 130, 130);
 
     private final int maxLength;
-    private final float fontSize;
+    private final TextFont font;
     private final Color textColor;
     private final TextLabel displayLine;
 
@@ -33,11 +34,11 @@ final class SkillTreeTextField {
     private String fittedWithCaret;
     private String fittedWithoutCaret;
 
-    SkillTreeTextField(int maxLength, float fontSize, Color textColor) {
+    SkillTreeTextField(int maxLength, TextFont font, Color textColor) {
         this.maxLength = maxLength;
-        this.fontSize = fontSize;
+        this.font = font;
         this.textColor = textColor;
-        this.displayLine = new TextLabel(fontSize, textColor);
+        this.displayLine = new TextLabel(font, textColor);
     }
 
     String text() {
@@ -93,21 +94,21 @@ final class SkillTreeTextField {
     }
 
     void render(float x, float bottom, float width, float height, String placeholder, float alphaMult) {
-        LazyFont font = SkillTreePanelStyle.font();
-        if (font == null) {
+        LazyFont loadedFont = font.font();
+        if (loadedFont == null) {
             return;
         }
-        displayLine.set(displayText(font, width, placeholder));
+        displayLine.set(displayText(loadedFont, width, placeholder));
         displayLine.setColor(enteredText.isEmpty() && !focused ? PLACEHOLDER_COLOR : textColor);
         displayLine.setAlpha(alphaMult);
-        displayLine.draw(x, bottom + height / 2f + fontSize / 2f);
+        displayLine.draw(x, bottom + height / 2f + font.size() / 2f);
     }
 
-    private String displayText(LazyFont font, float width, String placeholder) {
+    private String displayText(LazyFont loadedFont, float width, String placeholder) {
         boolean stale = !enteredText.equals(fittedText) || focused != fittedFocused || width != fittedWidth
                 || !placeholder.equals(fittedPlaceholder);
         if (stale) {
-            refit(width, placeholder, value -> font.calcWidth(value, fontSize));
+            refit(width, placeholder, value -> loadedFont.calcWidth(value, font.size()));
         }
         boolean caretVisible = focused && ((int) (caretSeconds / CARET_BLINK_SECONDS)) % 2 == 0;
         return caretVisible ? fittedWithCaret : fittedWithoutCaret;

@@ -26,6 +26,7 @@ import exiledsector.ui.section.SectionFlair;
 import exiledsector.ui.section.SectionLayout;
 import exiledsector.ui.socket.HullUpgradePanel;
 import exiledsector.ui.socket.ItemHoverTooltip;
+import exiledsector.ui.util.TextFont;
 import exiledsector.ui.util.TextLabel;
 
 import java.awt.Color;
@@ -49,7 +50,8 @@ final class SectionsDisplay {
     static final int MAX_SECTIONS = HullUpgradePoints.MOST_POINTS;
     private static final float HOVER_SECONDS = 0.15f;
     private static final float LABEL_GAP = 8f;
-    private static final float LABEL_FONT_SIZE = SkillTreePanelStyle.UI_FONT_SIZE;
+    private static final TextFont LABEL_FONT = UiFonts.TITLE;
+    private static final float LABEL_FONT_SIZE = LABEL_FONT.size();
     static final float VERTICAL_REACH = SectionLayout.SECTION_RADIUS + LABEL_GAP + LABEL_FONT_SIZE * 2f;
     private static final float OTHER_SECTION_DIM = 0.3f;
 
@@ -79,8 +81,8 @@ final class SectionsDisplay {
         this.sectionEditor = sectionEditor;
         this.hoverTooltip = new ItemHoverTooltip(hostPanel);
         for (int i = 0; i < MAX_SECTIONS; i++) {
-            typeLabels[i] = new TextLabel(LABEL_FONT_SIZE, Color.WHITE);
-            stateLabels[i] = new TextLabel(LABEL_FONT_SIZE, Misc.getGrayColor());
+            typeLabels[i] = new TextLabel(LABEL_FONT, Color.WHITE);
+            stateLabels[i] = new TextLabel(LABEL_FONT, Misc.getGrayColor());
         }
     }
 

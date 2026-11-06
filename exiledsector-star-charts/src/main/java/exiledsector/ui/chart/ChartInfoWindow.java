@@ -9,12 +9,14 @@ import exiledsector.items.SlottedLine;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.TooltipText;
+import exiledsector.ui.UiFonts;
 import exiledsector.ui.socket.AtlasAnomalyPanel.Entry;
 import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.Rects;
 import exiledsector.ui.util.SpriteDraw;
+import exiledsector.ui.util.TextFont;
 import exiledsector.ui.util.TextLabel;
 
 import java.awt.Color;
@@ -30,10 +32,10 @@ final class ChartInfoWindow {
     private static final float ANOMALY_SLOT_EDGE_ALPHA = 0.35f;
     private static final float ANOMALY_HOVER_GLOW_WIDTH = 8f;
     private static final float ANOMALY_HOVER_GLOW_ALPHA = 0.5f;
-    private static final float TITLE_FONT_SIZE = 22f;
-    private static final float HEADING_FONT_SIZE = 18f;
-    private static final float OBJECTIVE_NAME_FONT_SIZE = 16f;
-    private static final float BODY_FONT_SIZE = 15f;
+    private static final TextFont TITLE_FONT = UiFonts.TITLE;
+    private static final TextFont HEADING_FONT = UiFonts.HEADING;
+    private static final TextFont OBJECTIVE_NAME_FONT = UiFonts.BODY;
+    private static final TextFont BODY_FONT = UiFonts.BODY;
     private static final float SECTION_GAP = 16f;
     private static final float ENTRY_GAP = 10f;
     private static final float LINE_GAP = 3f;
@@ -254,7 +256,7 @@ final class ChartInfoWindow {
             subtitle.add(StyledText.of(chartName.baseName()));
         }
         subtitle.add(StyledText.of(summary));
-        TextLabel titleLabel = new TextLabel(TITLE_FONT_SIZE, titleColor).setWrapped(title, fullWidth, WRAP_HEIGHT);
+        TextLabel titleLabel = new TextLabel(TITLE_FONT, titleColor).setWrapped(title, fullWidth, WRAP_HEIGHT);
         blocks.add(new TextBlock(titleLabel, paragraph(StyledText.join(StyledText.of("\n"), subtitle), fullWidth, grayColor), 0f));
     }
 
@@ -276,7 +278,7 @@ final class ChartInfoWindow {
             return;
         }
         blocks.add(heading("chart.panel.objective"));
-        TextLabel name = new TextLabel(OBJECTIVE_NAME_FONT_SIZE, Color.WHITE).setWrapped(objective.name(), fullWidth, WRAP_HEIGHT);
+        TextLabel name = new TextLabel(OBJECTIVE_NAME_FONT, Color.WHITE).setWrapped(objective.name(), fullWidth, WRAP_HEIGHT);
         blocks.add(new TextBlock(name, paragraph(objective.body(), fullWidth, textColor), ENTRY_GAP));
     }
 
@@ -303,11 +305,11 @@ final class ChartInfoWindow {
     }
 
     private TextBlock heading(String key) {
-        return new TextBlock(new TextLabel(HEADING_FONT_SIZE, Misc.getHighlightColor()).set(Translation.text(key)), null, SECTION_GAP);
+        return new TextBlock(new TextLabel(HEADING_FONT, Misc.getHighlightColor()).set(Translation.text(key)), null, SECTION_GAP);
     }
 
     private static TextLabel paragraph(StyledText text, float maxWidth, Color color) {
-        return new TextLabel(BODY_FONT_SIZE, color).setParagraphs(List.of(text), maxWidth, WRAP_HEIGHT, SkillTreePanelStyle::standardHighlightColor);
+        return new TextLabel(BODY_FONT, color).setParagraphs(List.of(text), maxWidth, WRAP_HEIGHT, SkillTreePanelStyle::standardHighlightColor);
     }
 
     private static GlScope clipTo(float left, float bottom, float width, float height) {

@@ -9,7 +9,6 @@ import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.skilleffect.render.FallbackSupport;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.ItalicTextLabel;
-import exiledsector.ui.util.TextFont;
 import exiledsector.ui.util.TextLabel;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
@@ -29,9 +28,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class SkillTreePanelStyle {
 
-    public static final float UI_TITLE_FONT_SIZE = 24f;
-    public static final float UI_FONT_SIZE = 20f;
-    public static final float UI_HINT_FONT_SIZE = 17f;
     public static final Color TOOLTIP_TITLE_COLOR = Color.WHITE;
     public static final Color TOOLTIP_BODY_COLOR = new Color(230, 230, 230);
     public static final float FONT_LINE_HEIGHT_FACTOR = 1f;
@@ -61,28 +57,14 @@ public final class SkillTreePanelStyle {
     private static final float TOOLTIP_SCREEN_MARGIN = 4f;
     private static final float TOOLTIP_FLAVOUR_GAP = 8f;
 
-    static final String DEFAULT_FONT_PATH = "graphics/fonts/orbitron20aabold.fnt";
-    static final String TOOLTIP_HEADING_FONT_PATH = "graphics/fonts/orbitron12condensed.fnt";
-    static final String TOOLTIP_BODY_FONT_PATH = "graphics/fonts/insignia15LTaa.fnt";
-    private static final String LARGE_TOOLTIP_TITLE_FONT_PATH = "graphics/fonts/orbitron24aabold.fnt";
-    private static final String LARGE_TOOLTIP_DETAIL_FONT_PATH = "graphics/fonts/insignia17LTaa.fnt";
+    static final String DEFAULT_FONT_PATH = UiFonts.FONT_FOLDER + UiFonts.ORBITRON_20_BOLD_FILE;
     private static final Map<String, Optional<LazyFont>> FONTS_BY_DEFAULT_PATH = new HashMap<>();
     private static final Map<String, Optional<LazyFont>> FONTS_BY_FILE = new HashMap<>();
 
-    private static final TooltipText VANILLA_TOOLTIP_TEXT = new TooltipText(
-            new TextFont(SkillTreePanelStyle::font, 20f),
-            new TextFont(SkillTreePanelStyle::tooltipBodyFont, 15f),
-            new TextFont(SkillTreePanelStyle::tooltipBodyFont, 15f),
-            new TooltipText.Table(new TextFont(SkillTreePanelStyle::tooltipHeadingFont, 15f),
-                    new TextFont(SkillTreePanelStyle::tooltipBodyFont, 15f), 20f, 20f),
-            360f);
-    private static final TooltipText LARGE_TOOLTIP_TEXT = new TooltipText(
-            new TextFont(() -> localeFontOr(LARGE_TOOLTIP_TITLE_FONT_PATH), 24f),
-            new TextFont(SkillTreePanelStyle::font, 20f),
-            new TextFont(() -> localeFontOr(LARGE_TOOLTIP_DETAIL_FONT_PATH), 17f),
-            new TooltipText.Table(new TextFont(SkillTreePanelStyle::font, 20f),
-                    new TextFont(() -> localeFontOr(LARGE_TOOLTIP_DETAIL_FONT_PATH), 17f), 26f, 22f),
-            480f);
+    private static final TooltipText VANILLA_TOOLTIP_TEXT = new TooltipText(UiFonts.HEADING, UiFonts.BODY, UiFonts.BODY, UiFonts.HEADING,
+            new TooltipText.Table(UiFonts.HEADING, UiFonts.BODY, 20f, 20f), 360f);
+    private static final TooltipText LARGE_TOOLTIP_TEXT = new TooltipText(UiFonts.LARGE_TITLE, UiFonts.TITLE, UiFonts.LARGE_DETAIL, UiFonts.TITLE,
+            new TooltipText.Table(UiFonts.TITLE, UiFonts.LARGE_DETAIL, 26f, 22f), 480f);
 
     private static final Map<String, Color> ACCENT_COLORS_BY_ICON = new ConcurrentHashMap<>();
 
@@ -106,15 +88,7 @@ public final class SkillTreePanelStyle {
         return localeFontOr(DEFAULT_FONT_PATH);
     }
 
-    private static LazyFont tooltipHeadingFont() {
-        return localeFontOr(TOOLTIP_HEADING_FONT_PATH);
-    }
-
-    private static LazyFont tooltipBodyFont() {
-        return localeFontOr(TOOLTIP_BODY_FONT_PATH);
-    }
-
-    private static LazyFont localeFontOr(String path) {
+    static LazyFont localeFontOr(String path) {
         return FONTS_BY_DEFAULT_PATH.computeIfAbsent(path,
                 key -> loadedFont(Translation.has("meta.font") ? Translation.text("meta.font") : key)).orElse(null);
     }

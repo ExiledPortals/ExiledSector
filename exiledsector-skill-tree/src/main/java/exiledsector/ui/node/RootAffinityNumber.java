@@ -8,6 +8,7 @@ import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
+import exiledsector.ui.UiFonts;
 import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 
@@ -34,8 +35,8 @@ final class RootAffinityNumber {
 
         SizedLabel(int fontSize) {
             this.fontSize = fontSize;
-            this.label = new TextLabel(fontSize, NUMBER_COLOUR, LazyFont.TextAnchor.CENTER);
-            this.outline = new TextLabel(fontSize, OUTLINE_COLOUR, LazyFont.TextAnchor.CENTER);
+            this.label = new TextLabel(UiFonts.TITLE.resized(fontSize), NUMBER_COLOUR, LazyFont.TextAnchor.CENTER);
+            this.outline = new TextLabel(UiFonts.TITLE.resized(fontSize), OUTLINE_COLOUR, LazyFont.TextAnchor.CENTER);
         }
     }
 

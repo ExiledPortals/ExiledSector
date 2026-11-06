@@ -5,8 +5,10 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.TreeViewport;
+import exiledsector.ui.UiFonts;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.Rects;
+import exiledsector.ui.util.TextFont;
 import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 
@@ -19,11 +21,11 @@ import java.util.function.Predicate;
 import static exiledsector.ui.SkillTreePanelStyle.FONT_LINE_HEIGHT_FACTOR;
 import static exiledsector.ui.SkillTreePanelStyle.GLOW_COLOR;
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_COLOR;
-import static exiledsector.ui.SkillTreePanelStyle.UI_FONT_SIZE;
 
 final class SkillTreeNodeChoicePickerRenderer {
 
-    private static final float CHOICE_PICKER_FONT_SIZE = UI_FONT_SIZE;
+    private static final TextFont CHOICE_PICKER_FONT = UiFonts.DIALOG_TEXT;
+    private static final float CHOICE_PICKER_FONT_SIZE = CHOICE_PICKER_FONT.size();
     private static final float CHOICE_PICKER_ROW_PADDING = 8f;
     private static final float CHOICE_PICKER_ROW_GAP = 2f;
     private static final float CHOICE_PICKER_TOP_OFFSET = 24f;
@@ -101,7 +103,7 @@ final class SkillTreeNodeChoicePickerRenderer {
         rowsNode = null;
         rowsNodeX = Float.NaN;
         rowsNodeY = Float.NaN;
-        LazyFont font = SkillTreePanelStyle.font();
+        LazyFont font = CHOICE_PICKER_FONT.font();
         if (font == null) return false;
         rowsNode = openNode;
         float widestOption = 0f;
@@ -118,7 +120,7 @@ final class SkillTreeNodeChoicePickerRenderer {
 
     private TextLabel choicePickerRowText(SkillType option) {
         return choicePickerRowText.computeIfAbsent(option.getId(),
-                id -> new TextLabel(CHOICE_PICKER_FONT_SIZE, TOOLTIP_BODY_COLOR).set(option.getDisplayName()));
+                id -> new TextLabel(CHOICE_PICKER_FONT, TOOLTIP_BODY_COLOR).set(option.getDisplayName()));
     }
 
     private final class ChoicePickerRow {

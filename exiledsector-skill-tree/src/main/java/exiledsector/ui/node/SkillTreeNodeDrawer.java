@@ -17,6 +17,7 @@ import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.TreeLayers;
 import exiledsector.ui.TreeViewport;
+import exiledsector.ui.UiFonts;
 import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 
@@ -67,7 +68,7 @@ public final class SkillTreeNodeDrawer {
     private final AllocationAnimation allocationAnimation;
     private final GrantMarkers grantMarkers = GrantMarkers.fromItemStore();
     private final TreeFeedback feedback = new DrawerFeedback();
-    private final TextLabel startingRootPrompt = new TextLabel(SkillTreePanelStyle.UI_TITLE_FONT_SIZE,
+    private final TextLabel startingRootPrompt = new TextLabel(UiFonts.TITLE,
             SkillTreePanelStyle.TOOLTIP_TITLE_COLOR, LazyFont.TextAnchor.BOTTOM_CENTER).set(Translation.text("ui.node.startingRootPrompt"));
 
     private SkillTreeNodeDrawer(TreeAllocationSession session, FleetMemberAPI member, SkillTreePanelStyle panelStyle, NodeSearch nodeSearch) {
