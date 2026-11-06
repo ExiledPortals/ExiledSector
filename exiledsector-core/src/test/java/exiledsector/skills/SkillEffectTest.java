@@ -417,7 +417,7 @@ class SkillEffectTest {
         MovementSkillEffect.TIMEFLOW_PERCENT.apply(stats, "mod_id", 10f);
 
         verify(timeMult).modifyPercent("mod_id", 10f);
-        assertEquals("10% increased timeflow.", MovementSkillEffect.TIMEFLOW_PERCENT.description(10f).plain());
+        assertEquals("10% increased time flow.", MovementSkillEffect.TIMEFLOW_PERCENT.description(10f).plain());
     }
 
     @Test
@@ -711,12 +711,12 @@ class SkillEffectTest {
 
     @Test
     void describeUsesIncreasesForAPositiveBidirectionalMagnitude() {
-        assertEquals("20% increased peak combat readiness duration.", ReadinessSkillEffect.PEAK_CR_DURATION_PERCENT.description(20f).plain());
+        assertEquals("20% increased peak performance time.", ReadinessSkillEffect.PEAK_CR_DURATION_PERCENT.description(20f).plain());
     }
 
     @Test
     void describeUsesDecreasesForANegativeBidirectionalMagnitude() {
-        assertEquals("20% reduced peak combat readiness duration.", ReadinessSkillEffect.PEAK_CR_DURATION_PERCENT.description(-20f).plain());
+        assertEquals("20% reduced peak performance time.", ReadinessSkillEffect.PEAK_CR_DURATION_PERCENT.description(-20f).plain());
     }
 
     @Test

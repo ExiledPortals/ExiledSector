@@ -1166,7 +1166,7 @@
     "effect.SHIELD_DAMAGE_SHARED_PERCENT": "将护盾所受伤害的{value}%分散给{range} su内未过载且未在主动排散的友方舰船，由它们平均承担为硬幅能。",
     "effect.SHIELD_SOFT_FLUX_CONVERSION_PERCENT": "护盾所受伤害的<good>{value}%</good>转为软幅能。",
     "stat.hardFluxDissipationWhileShieldsUp": "护盾开启时的硬幅能耗散",
-    "effect.HARD_FLUX_DISSIPATION_PERCENT": "护盾开启时，<good>{value}%</good>的幅能耗散用于消除硬幅能。",
+    "effect.HARD_FLUX_DISSIPATION_PERCENT": "护盾开启时<good>{value}%</good>硬幅能耗散。",
     "effect.SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT": "护盾所受伤害的<good>{value}%</good>以软幅能形式转移给{range} su内最近的友方舰船。",
     "effect.SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT": "航行速度低于最高速度的{speed}%时，护盾幅能维持消耗降低<good>{value}%</good>。",
     "effect.SHIELD_DEFLECT_CHANCE_PERCENT": "非导弹弹体命中护盾时，有<good>{value}%</good>的几率被偏转，不产生幅能。",
