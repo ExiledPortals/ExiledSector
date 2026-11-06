@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.i18n.Style;
+import exiledsector.i18n.StyledText;
 import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.ModuleShareExtent;
 import exiledsector.skills.NodeEligibility;
@@ -11,6 +12,8 @@ import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -94,5 +97,16 @@ class SkillTreeNodeTooltipRendererTest {
         assertEquals("Not shared with modules.", SkillTreeNodeTooltipRenderer.moduleShareLine(ModuleShareExtent.NONE, 50).plain());
         assertEquals("Not shared with modules.", SkillTreeNodeTooltipRenderer.moduleShareLine(ModuleShareExtent.ALL, 0).plain());
         assertNull(SkillTreeNodeTooltipRenderer.moduleShareLine(null, 50));
+    }
+
+    @Test
+    void aLogisticsNodeShowsItsCountAndAnAllocatedOneWarnsWhenUndocked() {
+        assertEquals(List.of("Logistics node: 1/2 allocated on this ship."),
+                new SkillTreeNodeTooltipRenderer.LogisticsStatus(1, 2, false, false).lines().stream().map(StyledText::plain).toList());
+        assertEquals(1, new SkillTreeNodeTooltipRenderer.LogisticsStatus(2, 2, true, true).lines().size());
+
+        List<StyledText> undocked = new SkillTreeNodeTooltipRenderer.LogisticsStatus(2, 3, true, false).lines();
+        assertEquals("Logistics node: 2/3 allocated on this ship.", undocked.get(0).plain());
+        assertEquals("Can only be unallocated at a colony with a spaceport or an orbital station.", undocked.get(1).plain());
     }
 }

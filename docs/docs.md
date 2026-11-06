@@ -98,6 +98,19 @@ them forever in `exiledSector_learnedHullModConflicts.json` in the common folder
 isn't placed, `NodeEligibility` refuses the node with `LEARNED_CONFLICT`, and player ships get the node and
 its dependants refunded like a respec.
 
+### Logistics node limit
+
+A notable or keystone whose effective type (after choices and doctrine rewrites) carries the `logistics_cap` tag is a
+logistics node (`LogisticsNodes`). The tag is separate from the `logistics` theme, which drives scaling and NPC focus. A ship may hold 2 plus `ShipSkillData.extraLogisticsSlots`; `NodeEligibility`
+refuses more with `LOGISTICS_CAP` for player and NPC builds alike. The limit is the tree's own: vanilla's
+`maxLogisticsHullmods` skips the perma mods our nodes place. A ship already over its limit keeps its nodes, and doctrine
+rewrites, doctrine revert checks, waking dormant nodes and the player fleet's granted nodes ignore the limit.
+
+The player allocates or unallocates one only while docked at a market with a spaceport or station
+(`LogisticsDocking`, vanilla's spaceport test), which covers template auto-allocation on level-up too. Each Logistics
+Schematic raises one ship's limit by 1, with no ceiling. They drop like the Military Refit Schematic:
+`logistics_schematic` in `battle_loot.csv` and site rolls at its tier weight (`LogisticsSchematicDrops`).
+
 </details>
 
 <details>

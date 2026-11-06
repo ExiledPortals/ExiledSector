@@ -1,15 +1,16 @@
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 
-export type TagGroupKey = 'theme' | 'volume' | 'requirement' | 'gate';
+export type TagGroupKey = 'theme' | 'volume' | 'requirement' | 'gate' | 'rule';
 
 export const TAG_GROUPS: { key: TagGroupKey; label: string }[] = [
   { key: 'theme', label: 'Theme' },
   { key: 'volume', label: 'Volume' },
   { key: 'requirement', label: 'Requirement' },
   { key: 'gate', label: 'Gate' },
+  { key: 'rule', label: 'Rule' },
 ];
 
-export const TYPE_TAG_GROUPS: TagGroupKey[] = ['theme', 'requirement'];
+export const TYPE_TAG_GROUPS: TagGroupKey[] = ['theme', 'requirement', 'rule'];
 export const NODE_TAG_GROUPS: TagGroupKey[] = ['volume', 'requirement', 'gate'];
 export const VOLUME_ONLY_TAG_GROUPS: TagGroupKey[] = ['volume'];
 
@@ -23,6 +24,9 @@ export function tagGroupOf(vocabulary: Vocabulary, tag: string): TagGroupKey {
   }
   if (vocabulary.gateTags.includes(tag)) {
     return 'gate';
+  }
+  if (vocabulary.ruleTags.includes(tag)) {
+    return 'rule';
   }
   return vocabulary.requirementTags.includes(tag) ? 'requirement' : 'theme';
 }

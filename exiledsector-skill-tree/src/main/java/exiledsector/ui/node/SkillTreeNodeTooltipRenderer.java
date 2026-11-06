@@ -16,6 +16,7 @@ import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.CostItems;
 import exiledsector.skills.EffectContribution;
 import exiledsector.skills.ItemCostLedger;
+import exiledsector.skills.LogisticsNodes;
 import exiledsector.skills.ModuleShareExtent;
 import exiledsector.skills.NodeDescription;
 import exiledsector.skills.NodeEligibility;
@@ -77,6 +78,25 @@ final class SkillTreeNodeTooltipRenderer {
         }
     }
 
+    record LogisticsStatus(int used, int cap, boolean allocated, boolean changesAllowed) {
+
+        static LogisticsStatus of(SkillType effectiveType, boolean allocated, AllocationCheck gate) {
+            NodeEligibility.LogisticsRule rule = gate.logisticsRule();
+            if (rule == null || !LogisticsNodes.isLogistics(effectiveType)) {
+                return null;
+            }
+            return new LogisticsStatus(gate.allocatedLogisticsNodes(), rule.cap(), allocated, rule.changesAllowed());
+        }
+
+        List<StyledText> lines() {
+            StyledText countLine = Translation.msg("node.logistics.count").arg("used", used).arg("cap", cap).styled();
+            if (!allocated || changesAllowed) {
+                return List.of(countLine);
+            }
+            return List.of(countLine, StyledText.styled(Translation.text("node.logistics.removeUndocked"), Style.BAD));
+        }
+    }
+
     SkillTreeNodeTooltipRenderer(FleetMemberAPI fleetMember, SkillTreePanelStyle panelStyle) {
         this.fleetMember = fleetMember;
         this.panelStyle = panelStyle;
@@ -102,10 +122,12 @@ final class SkillTreeNodeTooltipRenderer {
         int shipStateRevision = shipStateTooltip ? skillData.revision() : 0;
         Item grantingItem = hidden ? null : grantingItem(node, allocation);
         DoctrineRewrite rewrite = hidden ? null : DoctrineOverrides.rewrite(skillData, node.getId());
+        LogisticsStatus logistics = hidden || socketed != null ? null : LogisticsStatus.of(effectiveType, skillData.isAllocated(node.getId()),
+                allocation.gate());
         List<Object> signature = List.of(effectiveType.getId(), hidden, showChoiceHint, expanded, allocatedSocket,
                 socketed == null ? "" : socketed.id(), refusalReason == null ? "" : refusalReason, shipState, shipStateRevision,
                 rewrite == null ? "" : rewrite, tooltipWarning == null ? "" : tooltipWarning,
-                socketGrantStatuses, grantingItem == null ? "" : grantingItem.id(), costLine == null ? "" : costLine);
+                socketGrantStatuses, grantingItem == null ? "" : grantingItem.id(), costLine == null ? "" : costLine, logistics == null ? "" : logistics);
 
         TextLabel title = tooltipTitles.computeIfAbsent(node.getId(), id -> titleLabel()).refresh(signature, label -> {
             if (socketed != null) {
@@ -115,8 +137,8 @@ final class SkillTreeNodeTooltipRenderer {
             }
         });
         TextLabel body = body(tooltipBodies, node.getId(), signature,
-                () -> withCostLine(withGrantLine(withDoctrineLines(describe(node, skillData, effectiveType, hidden, showChoiceHint, socketed,
-                        socketGrantStatuses, expanded), rewrite), grantingItem), costLine),
+                () -> withLeadingLines(withCostLine(withGrantLine(withDoctrineLines(describe(node, skillData, effectiveType, hidden, showChoiceHint,
+                        socketed, socketGrantStatuses, expanded), rewrite), grantingItem), costLine), logistics == null ? List.of() : logistics.lines()),
                 expanded, tooltipWarning != null ? tooltipWarning : refusalReason);
         TextLabel affinitySection = showsAffinity(effectiveType, hidden, showChoiceHint, socketed)
                 ? affinitySections.computeIfAbsent(node.getId(), id -> new TextLabel(tooltipText.body(), TOOLTIP_BODY_COLOR))
@@ -272,6 +294,16 @@ final class SkillTreeNodeTooltipRenderer {
         }
         NodeEligibility.Block block = verdict.get().block();
         return block != null && block.kind() == NodeEligibility.Kind.ITEM_COST ? null : refusalReason;
+    }
+
+    private static NodeDescription withLeadingLines(NodeDescription description, List<StyledText> leadingLines) {
+        if (leadingLines.isEmpty()) {
+            return description;
+        }
+        List<DescriptionLine> effects = new ArrayList<>(description.effects().size() + leadingLines.size());
+        leadingLines.forEach(line -> effects.add(new DescriptionLine(line, false)));
+        effects.addAll(description.effects());
+        return new NodeDescription(effects, description.details());
     }
 
     private static NodeDescription withCostLine(NodeDescription description, ItemCostLine costLine) {

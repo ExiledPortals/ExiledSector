@@ -42,7 +42,7 @@ class EditorVocabularyTest {
             assertTrue(manifest.getJSONArray(key).length() > 0, key);
         }
         JSONObject tags = manifest.getJSONObject("tags");
-        for (String group : new String[]{"theme", "volume", "requirement", "gate"}) {
+        for (String group : new String[]{"theme", "volume", "requirement", "gate", "rule"}) {
             assertTrue(tags.getJSONArray(group).length() > 0, group);
         }
         JSONArray effects = manifest.getJSONArray("effects");

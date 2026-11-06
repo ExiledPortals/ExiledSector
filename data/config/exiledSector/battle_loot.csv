@@ -14,4 +14,5 @@ subroutine,0.24,diminishing,0,1,"Basic subroutines from chart fleets, plus the i
 hull_item,0.264,diminishing,0.455,1,"Basic hull items; enemy tree size raises the share that drop with two modifiers instead of the count"
 unique_hull_item,0.024,diminishing,0.25,1,
 refit_schematic,0.32,diminishing,0.25,1,
+logistics_schematic,0.032,diminishing,0.25,1,"Logistics Schematics from the skill tree domain; matches the Military Refit Schematic (refit_schematic times its 10% tier weight)"
 master_schematic,0.2,diminishing,0.25,1,"Only while the Master Schematic is still needed"

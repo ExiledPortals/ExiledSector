@@ -8,6 +8,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.PlayerFleet;
 import exiledsector.effects.DoctrineRevertConflicts;
 import exiledsector.effects.DoctrineRevertRelease;
+import exiledsector.effects.LogisticsDocking;
 import exiledsector.effects.OpReserveParity;
 import exiledsector.effects.PhantomConflictWatch;
 import exiledsector.effects.PlayerShipFacts;
@@ -233,8 +234,8 @@ final class NodeAllocator {
         OpReserveParity.warnIfOutOfSync(fleetMember, shipVariant, ShipTrees.getSpentOp(skillData, opCostPerNode), reservedOp, "while allocating nodes");
         int totalOpBudget = OpReserveParity.availableOp(opBudget, reservedOp);
         AllocationCheck.Budget budget = new AllocationCheck.Budget(totalOpBudget, opCostPerNode, ShipLevelConfig.maxAllocatedNodes());
-        AllocationCheck gate = AllocationCheck.forShip(skillData, PlayerShipFacts.of(fleetMember, shipVariant), satisfiedRootId(), budget,
-                NodeAllocator::heldInCargo);
+        AllocationCheck gate = AllocationCheck.forPlayerShip(skillData, PlayerShipFacts.of(fleetMember, shipVariant), satisfiedRootId(), budget,
+                NodeAllocator::heldInCargo, LogisticsDocking.canChangeNow());
         return new Snapshot(skillData, opBudget, shipEdit.revision(), hiddenNodeIds(skillData), gate, this::describe);
     }
 
@@ -470,6 +471,8 @@ final class NodeAllocator {
                     : Translation.msg("node.block.learnedConflict").arg("hullmod", HullModNames.displayName(block.detail())).text();
             case TYPE_CONFLICT -> Translation.msg("node.block.typeAllocated").arg("node", block.conflictingType().getDisplayName()).text();
             case EFFECT_BLOCK -> block.detail();
+            case LOGISTICS_CAP -> Translation.text("node.block.logisticsCap");
+            case LOGISTICS_UNDOCKED -> Translation.text("node.block.logisticsUndocked");
             case ITEM_COST -> Translation.msg("node.block.itemCost").arg("quantity", block.itemCost().formattedQuantity())
                     .arg("item", block.itemCost().itemName())
                     .arg("have", SkillItemCost.formatQuantity((float) heldInCargo(block.itemCost().itemId())

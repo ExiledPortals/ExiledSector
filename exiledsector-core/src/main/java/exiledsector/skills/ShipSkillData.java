@@ -37,6 +37,7 @@ public class ShipSkillData {
     List<String> unlockedSections;
     Map<String, String> hullItemsBySection;
     boolean autoAllocateTemplate;
+    int extraLogisticsSlots;
     transient int pendingTemplateFreeAllocations;
     transient LinkCache<AnchorLinkMaps> anchorLinks;
     transient LinkCache<Map<String, List<String>>> grantLinks;
@@ -114,6 +115,15 @@ public class ShipSkillData {
     public void setStoredHullUpgradePoints(int storedPoints) {
         revision++;
         frameworkPoints = Math.max(0, storedPoints);
+    }
+
+    public int getExtraLogisticsSlots() {
+        return extraLogisticsSlots;
+    }
+
+    public void addLogisticsSlot() {
+        revision++;
+        extraLogisticsSlots++;
     }
 
     public boolean isMasterSchematicd() {
@@ -317,7 +327,7 @@ public class ShipSkillData {
 
     public boolean isBlank() {
         return allocatedNodeIds.isEmpty() && getDormantNodeIds().isEmpty() && level == 0 && xp == 0f && bankedFreeAllocations == 0 && frameworkPoints == 0
-                && !skillTreeUnlocked && (unlockedSections == null || unlockedSections.isEmpty())
+                && !skillTreeUnlocked && extraLogisticsSlots == 0 && (unlockedSections == null || unlockedSections.isEmpty())
                 && (hullItemsBySection == null || hullItemsBySection.isEmpty());
     }
 

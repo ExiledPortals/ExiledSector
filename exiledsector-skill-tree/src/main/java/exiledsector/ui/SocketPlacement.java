@@ -76,6 +76,10 @@ final class SocketPlacement {
         return storageButton.contains(x, y);
     }
 
+    ScreenRect buttonBounds() {
+        return storageButton.bounds();
+    }
+
     boolean isButtonClickable(float x, float y) {
         return storageButton.isClickable(x, y);
     }

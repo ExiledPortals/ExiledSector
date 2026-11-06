@@ -25,6 +25,9 @@ public final class HullUpgradeIcons {
     private static final String[] HULL_SIZES = {"frigate", "destroyer", "cruiser", "capital"};
     private static final String[] DEFAULT_SPRITES = {
             "wolf/wolf_base.png", "hammerhead/hammerhead_base.png", "dominator/dominator_base.png", "onslaught/onslaught_base.png"};
+    private static final String LOGISTICS_SPRITE = "atlas/atlas.png";
+    private static final String LOGISTICS_ICON = "logistics_schematic.png";
+    private static final Color STORY_POINT_GREEN = new Color(163, 239, 128);
     private static final Map<String, Color> RARITY_COLORS = new LinkedHashMap<>();
 
     static {
@@ -45,6 +48,10 @@ public final class HullUpgradeIcons {
         File outputDir = new File(options.getOrDefault("out", DEFAULT_OUTPUT_DIR));
         boolean overwrite = options.containsKey("overwrite");
         outputDir.mkdirs();
+        if (options.containsKey("logistics")) {
+            writeLogisticsIcon(shipsDir, outputDir, options, overwrite);
+            return;
+        }
 
         List<BufferedImage> previewIcons = new ArrayList<>();
         for (Map.Entry<String, Color> rarity : RARITY_COLORS.entrySet()) {
@@ -56,7 +63,7 @@ public final class HullUpgradeIcons {
                 if (sprite == null) {
                     throw new IOException("Not a readable image: " + spriteFile);
                 }
-                BufferedImage icon = downsample(generator.render(sprite, sizeIndex + 1), WORK_SIZE / ICON_SIZE);
+                BufferedImage icon = downsample(generator.render(sprite, sizeIndex + 1, HULL_SIZES.length), WORK_SIZE / ICON_SIZE);
                 File iconFile = new File(outputDir, "hull_upgrade_" + hullSize + "_" + rarity.getKey() + ".png");
                 if (iconFile.exists() && !overwrite) {
                     throw new IOException(iconFile + " already exists; pass --overwrite to replace it");
@@ -73,6 +80,21 @@ public final class HullUpgradeIcons {
         }
     }
 
+    private static void writeLogisticsIcon(File shipsDir, File outputDir, Map<String, String> options, boolean overwrite) throws IOException {
+        File spriteFile = resolveSprite(shipsDir, options.getOrDefault("logistics-sprite", LOGISTICS_SPRITE));
+        BufferedImage sprite = ImageIO.read(spriteFile);
+        if (sprite == null) {
+            throw new IOException("Not a readable image: " + spriteFile);
+        }
+        BufferedImage icon = downsample(new HullUpgradeIcons(STORY_POINT_GREEN).render(sprite, 1, 1), WORK_SIZE / ICON_SIZE);
+        File iconFile = new File(outputDir, LOGISTICS_ICON);
+        if (iconFile.exists() && !overwrite) {
+            throw new IOException(iconFile + " already exists; pass --overwrite to replace it");
+        }
+        ImageIO.write(icon, "png", iconFile);
+        System.out.println("Wrote " + iconFile + " from " + spriteFile);
+    }
+
     private static Map<String, String> parseOptions(String[] args) {
         Map<String, String> options = new LinkedHashMap<>();
         for (int i = 0; i < args.length; i++) {
@@ -80,7 +102,7 @@ public final class HullUpgradeIcons {
                 throw new IllegalArgumentException("Unexpected argument " + args[i] + "\n" + usage());
             }
             String name = args[i].substring(2);
-            if (name.equals("overwrite")) {
+            if (name.equals("overwrite") || name.equals("logistics")) {
                 options.put(name, "true");
             } else if (name.equals("help")) {
                 System.out.println(usage());
@@ -97,8 +119,10 @@ public final class HullUpgradeIcons {
     private static String usage() {
         return "java tools/HullUpgradeIcons.java [--ships <dir>] [--out <dir>] [--frigate <sprite>] [--destroyer <sprite>]\n"
                 + "    [--cruiser <sprite>] [--capital <sprite>] [--preview <file.png>] [--overwrite]\n"
+                + "java tools/HullUpgradeIcons.java --logistics [--logistics-sprite <sprite>] [--ships <dir>] [--out <dir>] [--overwrite]\n"
                 + "Sprites are relative to --ships (default " + DEFAULT_SHIPS_DIR + ") or absolute.\n"
-                + "Defaults: " + String.join(", ", DEFAULT_SPRITES) + ". Output: " + DEFAULT_OUTPUT_DIR + ".";
+                + "Defaults: " + String.join(", ", DEFAULT_SPRITES) + ". Output: " + DEFAULT_OUTPUT_DIR + ".\n"
+                + "--logistics writes only " + LOGISTICS_ICON + ": the " + LOGISTICS_SPRITE + " hull in story point green with one pip.";
     }
 
     private static File resolveSprite(File shipsDir, String spritePath) {
@@ -121,7 +145,7 @@ public final class HullUpgradeIcons {
         return sheet;
     }
 
-    private BufferedImage render(BufferedImage sprite, int sizePips) {
+    private BufferedImage render(BufferedImage sprite, int filledPips, int totalPips) {
         BufferedImage hull = placeHull(sprite);
         float[] alpha = new float[WORK_SIZE * WORK_SIZE];
         float[] luminance = new float[WORK_SIZE * WORK_SIZE];
@@ -167,7 +191,7 @@ public final class HullUpgradeIcons {
                 addLight(canvas, x, y, intensity);
             }
         }
-        drawChrome(canvas, panelShape, sizePips);
+        drawChrome(canvas, panelShape, filledPips, totalPips);
         return canvas;
     }
 
@@ -188,7 +212,7 @@ public final class HullUpgradeIcons {
         return hull;
     }
 
-    private void drawChrome(BufferedImage canvas, RoundRectangle2D panelShape, int sizePips) {
+    private void drawChrome(BufferedImage canvas, RoundRectangle2D panelShape, int filledPips, int totalPips) {
         Graphics2D chrome = antialiased(canvas);
         chrome.setColor(tinted(1f, 0f, 120));
         chrome.setStroke(new BasicStroke(4f));
@@ -205,15 +229,15 @@ public final class HullUpgradeIcons {
         float pipRadius = 15f;
         float pipGap = 40f;
         float pipY = 0.905f * WORK_SIZE;
-        for (int pip = 0; pip < HULL_SIZES.length; pip++) {
-            float pipX = WORK_SIZE / 2f - (HULL_SIZES.length - 1) * pipGap / 2f + pip * pipGap;
+        for (int pip = 0; pip < totalPips; pip++) {
+            float pipX = WORK_SIZE / 2f - (totalPips - 1) * pipGap / 2f + pip * pipGap;
             Path2D diamond = new Path2D.Float();
             diamond.moveTo(pipX, pipY - pipRadius);
             diamond.lineTo(pipX + pipRadius, pipY);
             diamond.lineTo(pipX, pipY + pipRadius);
             diamond.lineTo(pipX - pipRadius, pipY);
             diamond.closePath();
-            if (pip < sizePips) {
+            if (pip < filledPips) {
                 chrome.setColor(tinted(1f, 0.45f, 245));
                 chrome.fill(diamond);
             } else {

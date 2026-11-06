@@ -105,8 +105,9 @@ class CanvasModeTest {
     }
 
     @Test
-    void viewingTheExoshipHidesTheTemplateBarAndSearchButKeepsStorage() {
-        assertEquals(EnumSet.of(CanvasMode.Chrome.STATS_TOGGLE, CanvasMode.Chrome.READOUTS, CanvasMode.Chrome.STORAGE_BUTTON),
+    void viewingTheExoshipHidesTheTemplateBarAndSearchButKeepsStorageAndLogistics() {
+        assertEquals(EnumSet.of(CanvasMode.Chrome.STATS_TOGGLE, CanvasMode.Chrome.READOUTS, CanvasMode.Chrome.STORAGE_BUTTON,
+                        CanvasMode.Chrome.LOGISTICS_BUTTON),
                 enabledIn(CanvasMode.EXOSHIP_VIEW));
         assertFalse(CanvasMode.EXOSHIP_VIEW.shows(CanvasMode.Chrome.TEMPLATE_BAR));
         assertFalse(CanvasMode.EXOSHIP_VIEW.shows(CanvasMode.Chrome.SEARCH));

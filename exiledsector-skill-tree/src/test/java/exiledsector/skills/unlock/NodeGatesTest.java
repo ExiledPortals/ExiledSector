@@ -109,7 +109,7 @@ class NodeGatesTest {
         SkillNode gated = node("abyss", GATE_TAG);
         ShipSkillData shipData = new ShipSkillData();
         NodeEligibility.Context context = new NodeEligibility.Context(List.of(), null, null, type -> false, null, null,
-                node -> NodeGates.isLocked(node, shipData));
+                node -> NodeGates.isLocked(node, shipData), null);
 
         assertEquals(NodeEligibility.Kind.LOCKED, NodeEligibility.check(gated, null, context).kind());
     }

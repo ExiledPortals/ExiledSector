@@ -14,7 +14,7 @@ public final class AllocationCheck {
 
     public enum Refusal {
         ALREADY_ALLOCATED, NOT_ALLOCATED, NOT_CONNECTED, NODE_CAP, OUT_OF_OP, INELIGIBLE, STARTING_ROOT, STRANDS_NODES, SAME_OPTION,
-        HELD_BY_SUBROUTINE
+        HELD_BY_SUBROUTINE, LOGISTICS_UNDOCKED
     }
 
     public record Verdict(Refusal refusal, NodeEligibility.Block block) {
@@ -59,6 +59,7 @@ public final class AllocationCheck {
     private final Map<String, Verdict> grantVerdictsByNodeId = new HashMap<>();
     private final Map<List<SkillType>, Optional<AllocatedNode>> conflictsByCandidateTypes = new HashMap<>();
     private Set<String> grantOnlyNodeIds;
+    private int allocatedLogisticsNodes = -1;
 
     public AllocationCheck(ShipSkillData data, SkillTreeTopology topology, String rootId, Budget budget, NodeEligibility.Context eligibility) {
         this.data = data;
@@ -71,6 +72,24 @@ public final class AllocationCheck {
 
     public static AllocationCheck forShip(ShipSkillData data, ShipFacts shipFacts, String rootId, Budget budget, ToDoubleFunction<String> heldItems) {
         return new AllocationCheck(data, SkillTree.topology(), rootId, budget, NodeEligibility.Context.forShip(data, shipFacts, heldItems));
+    }
+
+    public static AllocationCheck forPlayerShip(ShipSkillData data, ShipFacts shipFacts, String rootId, Budget budget,
+                                                ToDoubleFunction<String> heldItems, boolean logisticsChangesAllowed) {
+        NodeEligibility.Context eligibility = NodeEligibility.Context.forShip(data, shipFacts, heldItems)
+                .withLogisticsChangesAllowed(logisticsChangesAllowed);
+        return new AllocationCheck(data, SkillTree.topology(), rootId, budget, eligibility);
+    }
+
+    public NodeEligibility.LogisticsRule logisticsRule() {
+        return eligibility.logistics();
+    }
+
+    public int allocatedLogisticsNodes() {
+        if (allocatedLogisticsNodes < 0) {
+            allocatedLogisticsNodes = LogisticsNodes.allocated(eligibility.allocated());
+        }
+        return allocatedLogisticsNodes;
     }
 
     public ShipSkillData data() {
@@ -250,6 +269,10 @@ public final class AllocationCheck {
         }
         if (grantOnlyNodeIds().contains(node.getId())) {
             return Verdict.refused(Refusal.HELD_BY_SUBROUTINE);
+        }
+        NodeEligibility.LogisticsRule logistics = eligibility.logistics();
+        if (logistics != null && !logistics.changesAllowed() && LogisticsNodes.isLogistics(node, data)) {
+            return Verdict.refused(Refusal.LOGISTICS_UNDOCKED);
         }
         return ShipTrees.canDeallocate(data, node, topology, rootId) ? Verdict.GRANTED : Verdict.refused(Refusal.STRANDS_NODES);
     }

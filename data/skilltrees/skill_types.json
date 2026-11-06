@@ -165,7 +165,8 @@
 			"flavourAutomated": "The ship's core logs every pirate raid it flies beside, down to where the guns point while the marines are on the ground. The refit crew turns its cargo lifts into a drop platform, and the core keeps the guns where the logs say.",
 			"tags": [
 				"logistics",
-				"campaign_only"
+				"campaign_only",
+				"logistics_cap"
 			]
 		},
 		{
@@ -682,7 +683,8 @@
 			"flavour": "Every League depot stocks spares for its own world's hulls and nothing else. The paperwork for a mixed fleet runs to several volumes, one per world.",
 			"tags": [
 				"logistics",
-				"campaign_only"
+				"campaign_only",
+				"logistics_cap"
 			]
 		},
 		{
@@ -699,7 +701,8 @@
 			"flavour": "Kazeron's orbital yards will not certify a recovered hull until every frame weld has been inspected.",
 			"tags": [
 				"logistics",
-				"campaign_only"
+				"campaign_only",
+				"logistics_cap"
 			]
 		},
 		{
@@ -1140,7 +1143,8 @@
 			"tags": [
 				"logistics",
 				"req_fighter_bays",
-				"campaign_only"
+				"campaign_only",
+				"logistics_cap"
 			]
 		},
 		{
@@ -2400,7 +2404,8 @@
 			],
 			"tags": [
 				"logistics",
-				"campaign_only"
+				"campaign_only",
+				"logistics_cap"
 			]
 		},
 		{
@@ -2425,7 +2430,8 @@
 				"augmentedengines"
 			],
 			"tags": [
-				"logistics"
+				"logistics",
+				"logistics_cap"
 			]
 		},
 		{
@@ -2452,7 +2458,8 @@
 				"auxiliary_fuel_tanks"
 			],
 			"tags": [
-				"logistics"
+				"logistics",
+				"logistics_cap"
 			]
 		},
 		{
@@ -2494,7 +2501,8 @@
 			],
 			"tags": [
 				"logistics",
-				"campaign_only"
+				"campaign_only",
+				"logistics_cap"
 			]
 		},
 		{
@@ -2522,7 +2530,8 @@
 			],
 			"tags": [
 				"logistics",
-				"campaign_only"
+				"campaign_only",
+				"logistics_cap"
 			]
 		},
 		{
@@ -2556,7 +2565,8 @@
 				"hiressensors"
 			],
 			"tags": [
-				"logistics"
+				"logistics",
+				"logistics_cap"
 			]
 		},
 		{
@@ -2589,7 +2599,8 @@
 				"insulatedengine"
 			],
 			"tags": [
-				"hull"
+				"hull",
+				"logistics_cap"
 			]
 		},
 		{
@@ -2616,7 +2627,8 @@
 			"tags": [
 				"logistics",
 				"req_civilian_hull",
-				"campaign_only"
+				"campaign_only",
+				"logistics_cap"
 			]
 		},
 		{
@@ -2642,7 +2654,8 @@
 			],
 			"tags": [
 				"logistics",
-				"campaign_only"
+				"campaign_only",
+				"logistics_cap"
 			]
 		},
 		{
@@ -2678,7 +2691,8 @@
 			],
 			"tags": [
 				"logistics",
-				"campaign_only"
+				"campaign_only",
+				"logistics_cap"
 			]
 		},
 		{
@@ -3539,7 +3553,8 @@
 			],
 			"tags": [
 				"logistics",
-				"campaign_only"
+				"campaign_only",
+				"logistics_cap"
 			]
 		},
 		{
@@ -3659,7 +3674,8 @@
 			"flavour": "Diktat burn tables treat every unit of fuel aboard as state property on loan. Repayment is expected in full.",
 			"tags": [
 				"logistics",
-				"campaign_only"
+				"campaign_only",
+				"logistics_cap"
 			]
 		},
 		{
@@ -4845,7 +4861,8 @@
 			"flavourAutomated": "Pilgrim fleets cross the Sector on whatever drives they can keep lit. The ship's core logs their burn profiles between stations and flies the same frugal burn, tanks running low.",
 			"tags": [
 				"logistics",
-				"speed"
+				"speed",
+				"logistics_cap"
 			]
 		},
 		{
@@ -4889,7 +4906,8 @@
 			"flavour": "Church salvage yards on Asher send no ship to the breakers while it can still fly, and keep their scarred hulls flying on patience and very little else.",
 			"tags": [
 				"d_mods",
-				"logistics"
+				"logistics",
+				"logistics_cap"
 			]
 		},
 		{
