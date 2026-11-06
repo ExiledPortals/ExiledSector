@@ -43,6 +43,24 @@ class BitmapFontGeneratorTest {
     }
 
     @Test
+    void storesGlyphsPremultipliedLikeTheGameFonts() {
+        SortedSet<Integer> characters = new TreeSet<>(List.of((int) 'A', (int) 'g'));
+        BitmapFontGenerator.Atlas atlas = BitmapFontGenerator.generate(new Font(Font.DIALOG, Font.PLAIN, 20), 20, 24,
+                64, 64, characters);
+
+        boolean sawPartialAlpha = false;
+        for (int y = 0; y < 64; y++) {
+            for (int x = 0; x < 64; x++) {
+                int argb = atlas.image().getRGB(x, y);
+                int alpha = argb >>> 24;
+                assertEquals(alpha << 24 | alpha << 16 | alpha << 8 | alpha, argb);
+                sawPartialAlpha |= alpha > 0 && alpha < 255;
+            }
+        }
+        assertTrue(sawPartialAlpha);
+    }
+
+    @Test
     void placesGlyphsInsideTheAtlasWithoutOverlap() {
         SortedSet<Integer> characters = new TreeSet<>();
         for (int c = 'A'; c <= 'Z'; c++) {

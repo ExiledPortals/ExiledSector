@@ -161,8 +161,18 @@ public final class BitmapFontGenerator {
             shelfHeight = Math.max(shelfHeight, glyphHeight);
         }
         graphics.dispose();
+        premultiply(image);
         glyphs.sort(Comparator.comparingInt(Glyph::id));
         return new Atlas(font.getFamily(), glyphPx, lineHeight, base, image, glyphs);
+    }
+
+    static void premultiply(BufferedImage image) {
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                int alpha = image.getRGB(x, y) >>> 24;
+                image.setRGB(x, y, alpha << 24 | alpha << 16 | alpha << 8 | alpha);
+            }
+        }
     }
 
     static String toFnt(Atlas atlas, String pngName) {

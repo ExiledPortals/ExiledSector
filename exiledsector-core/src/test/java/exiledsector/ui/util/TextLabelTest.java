@@ -6,6 +6,7 @@ import exiledsector.ui.SkillTreePanelStyle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.lazywizard.lazylib.ui.LazyFont;
+import org.lwjgl.opengl.GL11;
 import org.mockito.InOrder;
 
 import java.awt.Color;
@@ -60,6 +61,13 @@ class TextLabelTest {
         new TextLabel(() -> font, FONT_SIZE, Color.WHITE, LazyFont.TextAnchor.TOP_LEFT).set("left").draw(10.3f, 20.6f);
 
         verify(drawable).draw(10f, 21f);
+    }
+
+    @Test
+    void textBlendsLikeVanillaBecauseGameFontAtlasesArePremultiplied() {
+        label(Color.WHITE).set("text").draw(0f, 0f);
+
+        verify(drawable).setBlendSrc(GL11.GL_ONE);
     }
 
     @Test
@@ -127,7 +135,7 @@ class TextLabelTest {
 
         label.setAlpha(0.5f).draw(0f, 0f);
 
-        verify(drawable).setBaseColor(new Color(255, 255, 255, 128));
+        verify(drawable).setBaseColor(new Color(128, 128, 128, 128));
         verify(drawable, never()).setText(anyString());
     }
 
@@ -143,7 +151,8 @@ class TextLabelTest {
         label.setAlpha(0.5f).draw(0f, 0f);
         verify(drawable, times(1)).setText("");
         int fadedAlpha = TextLabel.quantisedAlpha(TextLabel.toByteAlpha(0.5f));
-        verify(drawable).append("% ", new Color(GREEN.getRed(), GREEN.getGreen(), GREEN.getBlue(), fadedAlpha));
+        verify(drawable).append("% ", new Color(GREEN.getRed() * fadedAlpha / 255, GREEN.getGreen() * fadedAlpha / 255,
+                GREEN.getBlue() * fadedAlpha / 255, fadedAlpha));
     }
 
     @Test

@@ -5,6 +5,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.TextWrapper;
 import exiledsector.ui.SkillTreePanelStyle;
 import org.lazywizard.lazylib.ui.LazyFont;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 import java.util.List;
@@ -177,7 +178,11 @@ public final class TextLabel {
     }
 
     static Color tinted(Color color, int byteAlpha) {
-        return byteAlpha == OPAQUE ? color : new Color(color.getRed(), color.getGreen(), color.getBlue(), byteAlpha * color.getAlpha() / OPAQUE);
+        int shownAlpha = byteAlpha * color.getAlpha() / OPAQUE;
+        if (shownAlpha == OPAQUE) {
+            return color;
+        }
+        return new Color(color.getRed() * shownAlpha / OPAQUE, color.getGreen() * shownAlpha / OPAQUE, color.getBlue() * shownAlpha / OPAQUE, shownAlpha);
     }
 
     static int colourChangeIndex(String text, int boundary) {
@@ -228,6 +233,7 @@ public final class TextLabel {
             }
             drawable = font.createText("", baseColor, fontSize);
             drawable.setAlignment(LazyFont.TextAlignment.LEFT);
+            drawable.setBlendSrc(GL11.GL_ONE);
             drawable.setAnchor(anchor);
             contentDirty = true;
         }
