@@ -9,6 +9,7 @@ import com.fs.starfarer.api.campaign.ReputationActionResponsePlugin;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.wormhole.ChartWormholeDialog;
+import exiledsector.compat.RuthlessSectorCompat;
 
 public class ChartCampaignPlugin extends BaseCampaignPlugin {
 
@@ -26,6 +27,7 @@ public class ChartCampaignPlugin extends BaseCampaignPlugin {
 
     @Override
     public PluginPick<InteractionDialogPlugin> pickInteractionDialogPlugin(SectorEntityToken interactionTarget) {
+        RuthlessSectorCompat.matchVictoryReputationTo(ChartAllyReputation.playerInChart());
         if (ChartWormholeDialog.isChartWormhole(interactionTarget)) {
             return new PluginPick<>(new ChartWormholeDialog(), CampaignPlugin.PickPriority.MOD_SPECIFIC);
         }

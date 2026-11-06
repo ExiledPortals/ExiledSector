@@ -142,7 +142,7 @@ class CompatChecksTest {
         int salvageSites = SalvageSiteCompat.SOURCES.size();
         assertEquals(List.of("Second-in-Command", "Random Assortment of Things volumes", "GraphicsLib", "Exotica Technologies"), names.subList(0, 4));
         List<String> laterNames = new ArrayList<>(List.of("Lost Sector", "MagicLib", "Nightcross Armory volumes", "Navarchy of Tania volume", "Nexerelin",
-                "Ashes of the Domain: Vaults of Knowledge", "Terrain FX", "Hydrofoil", "Unknown Skies"));
+                "Ashes of the Domain: Vaults of Knowledge", "Terrain FX", "Hydrofoil", "Unknown Skies", "Ruthless Sector"));
         if (TaniaCompat.HIDDEN_UNTIL_RELEASE) {
             laterNames.remove("Navarchy of Tania volume");
         }

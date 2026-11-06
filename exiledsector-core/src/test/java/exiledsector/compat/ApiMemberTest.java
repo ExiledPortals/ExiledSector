@@ -15,4 +15,11 @@ class ApiMemberTest {
 
         assertEquals(List.of(missing), ApiMember.missingFrom(List.of(present, missing), ApiMemberTest.class.getClassLoader()));
     }
+
+    @Test
+    void aStaticSetterCountsAFinalFieldAsMissing() {
+        ApiMember finalField = ApiMember.staticSetter("java.lang.Integer", "MAX_VALUE", ApiMember.INT);
+
+        assertEquals(List.of(finalField), ApiMember.missingFrom(List.of(finalField), ApiMemberTest.class.getClassLoader()));
+    }
 }

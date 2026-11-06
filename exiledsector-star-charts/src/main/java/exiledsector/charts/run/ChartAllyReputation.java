@@ -29,7 +29,7 @@ public final class ChartAllyReputation implements ReputationActionResponsePlugin
         return action instanceof RepActions repAction ? repAction : null;
     }
 
-    private static boolean playerInChart() {
+    static boolean playerInChart() {
         CampaignFleetAPI playerFleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
         LocationAPI location = playerFleet == null ? null : playerFleet.getContainingLocation();
         return location != null && location.hasTag(ChartIds.SYSTEM_TAG);
