@@ -52,8 +52,8 @@ public interface CraftingMaterialFamily extends GrowableMaterial {
         return null;
     }
 
-    default String description() {
-        return Translation.text(MaterialItems.descriptionKey(itemId()));
+    default StyledText description() {
+        return Translation.styled(MaterialItems.descriptionKey(itemId()));
     }
 
     default List<StyledText> grantedLines() {

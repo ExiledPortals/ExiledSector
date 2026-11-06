@@ -25,11 +25,11 @@ public class MaterialItemPlugin extends AnimatedCargoItemPlugin {
     @Override
     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, CargoTransferHandlerAPI transferHandler, Object stackSource) {
         tooltip.addTitle(getName(), MaterialItems.color(itemId));
-        String description = spec == null ? null : spec.getDesc();
-        if (description != null && !description.isEmpty()) {
-            VanillaText.plainPara(tooltip, description, TOOLTIP_PAD, Misc.getTextColor());
-        }
         CraftingMaterialFamily craftingItem = CraftingMaterialFamilies.byItemId(itemId);
+        StyledText description = description(craftingItem);
+        if (description != null && !description.isEmpty()) {
+            VanillaText.addPara(tooltip, description, TOOLTIP_PAD, Misc.getTextColor());
+        }
         float linePad = TOOLTIP_PAD;
         for (StyledText line : craftingItem == null ? List.<StyledText>of() : craftingItem.grantedLines()) {
             VanillaText.addPara(tooltip, line, linePad, Misc.getTextColor());
@@ -39,6 +39,18 @@ public class MaterialItemPlugin extends AnimatedCargoItemPlugin {
             VanillaText.plainPara(tooltip, Translation.text("chart.ui.craftingItem.alsoStarCharts"), TOOLTIP_PAD, Misc.getGrayColor());
         }
         addCostLabel(tooltip, TOOLTIP_PAD, transferHandler, stackSource);
+    }
+
+    private StyledText description(CraftingMaterialFamily craftingItem) {
+        if (craftingItem != null) {
+            return craftingItem.description();
+        }
+        String key = MaterialItems.descriptionKey(itemId);
+        if (Translation.has(key)) {
+            return Translation.styled(key);
+        }
+        String specDescription = spec == null ? null : spec.getDesc();
+        return specDescription == null ? null : StyledText.of(specDescription);
     }
 
     static boolean alsoWorksOnStarCharts(String itemId) {

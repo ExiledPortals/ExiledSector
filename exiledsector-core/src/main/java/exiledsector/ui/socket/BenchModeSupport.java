@@ -117,8 +117,8 @@ public interface BenchModeSupport {
 
     String craftingItemDescriptionKey(CraftingMaterialFamily craftingItem);
 
-    default String craftingItemDescription(CraftingMaterialFamily craftingItem) {
-        return Translation.text(craftingItemDescriptionKey(craftingItem));
+    default StyledText craftingItemDescription(CraftingMaterialFamily craftingItem) {
+        return Translation.styled(craftingItemDescriptionKey(craftingItem));
     }
 
     default List<StyledText> craftingItemLines(CraftingMaterialFamily craftingItem) {

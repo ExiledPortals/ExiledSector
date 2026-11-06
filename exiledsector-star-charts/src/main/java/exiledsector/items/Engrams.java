@@ -113,7 +113,7 @@ public final class Engrams {
             if (spec != null) {
                 String englishName = craftingItem.englishName().isEmpty() ? spec.getName() : craftingItem.englishName();
                 spec.setName(Translation.data("material." + craftingItem.itemId() + ".name", englishName));
-                spec.setDesc(craftingItem.description());
+                spec.setDesc(craftingItem.description().plain());
             }
         }
     }

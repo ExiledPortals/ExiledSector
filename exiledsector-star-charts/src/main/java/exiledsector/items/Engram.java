@@ -23,11 +23,9 @@ public record Engram(String itemId, String englishName, String modifierId, Set<I
 
     static final Color DEFAULT_COLOR = new Color(120, 225, 210);
     static final String DESCRIPTION_KEY = "chart.engram.description";
-    static final String ITEMS_KEY_PREFIX = "chart.engram.items.";
     static final String USED_NOTICE_KEY_PREFIX = "ui.craftingBench.notice.used.engram.";
     static final String LOCKED_CLASH_KEY = "chart.engram.lockedClash";
     static final String SLOT_KEY_PREFIX = "chart.engram.slot.";
-    static final String ITEMS_SEPARATOR = " or ";
 
     public Engram {
         itemTypes = Set.copyOf(itemTypes);
@@ -200,12 +198,8 @@ public record Engram(String itemId, String englishName, String modifierId, Set<I
     }
 
     @Override
-    public String description() {
-        return Translation.msg(DESCRIPTION_KEY).arg("items", itemsText()).arg("modifier", modifierName()).arg("slot", slotText()).text();
-    }
-
-    String itemsText() {
-        return itemTypes.stream().sorted().map(type -> Translation.text(ITEMS_KEY_PREFIX + type.id())).collect(Collectors.joining(ITEMS_SEPARATOR));
+    public StyledText description() {
+        return Translation.msg(DESCRIPTION_KEY).arg("modifier", modifierName()).arg("slot", slotText()).styled();
     }
 
     String modifierName() {

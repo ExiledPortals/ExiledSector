@@ -360,7 +360,7 @@ class EngramTest {
 
         assertEquals(1, revenant.grantedLines().size());
         assertTrue(revenant.grantedLines().get(0).plain().contains("15"));
-        assertTrue(revenant.description().contains("Revenant"));
+        assertTrue(revenant.description().plain().contains("Revenant"));
         assertEquals(Engram.DEFAULT_COLOR, revenant.color());
     }
 }

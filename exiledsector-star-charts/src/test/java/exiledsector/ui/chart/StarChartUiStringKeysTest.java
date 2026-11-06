@@ -69,10 +69,9 @@ class StarChartUiStringKeysTest {
         for (StarChartCipher craftingItem : StarChartCipher.values()) {
             require(catalogue, "material." + craftingItem.itemId() + ".name", missing);
             require(catalogue, "material." + craftingItem.itemId() + ".description", missing);
-            require(catalogue, "chart.craftingItem." + craftingItem.key() + ".description", missing);
         }
         for (Nanoswarm kernel : StarChartCipher.KERNELS_ON_CHARTS) {
-            require(catalogue, "chart.craftingItem." + kernel.key() + ".description", missing);
+            require(catalogue, "material." + kernel.itemId() + ".description", missing);
         }
         assertEquals(List.of(), missing);
         for (String key : catalogue.keySet()) {

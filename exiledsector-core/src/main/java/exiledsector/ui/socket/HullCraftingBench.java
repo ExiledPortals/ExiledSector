@@ -114,7 +114,7 @@ public final class HullCraftingBench implements BenchModeSupport {
     }
 
     @Override
-    public String craftingItemDescription(CraftingMaterialFamily craftingItem) {
+    public StyledText craftingItemDescription(CraftingMaterialFamily craftingItem) {
         return craftingItem.description();
     }
 

@@ -42,12 +42,7 @@ public final class StarChartCrafting {
     }
 
     public static String craftingItemDescriptionKey(CraftingMaterialFamily craftingItem) {
-        String chartKey = chartCraftingItemDescriptionKey(craftingItem);
-        return Translation.has(chartKey) ? chartKey : MaterialItems.descriptionKey(craftingItem.itemId());
-    }
-
-    static String chartCraftingItemDescriptionKey(CraftingMaterialFamily craftingItem) {
-        return "chart.craftingItem." + craftingItem.key() + ".description";
+        return MaterialItems.descriptionKey(craftingItem.itemId());
     }
 
     public static List<CraftingMaterialFamily> craftingItems() {

@@ -585,14 +585,14 @@ public final class CraftingBenchPanel extends HoloPanel {
         pendingGrowth = material;
         openConfirm(GROW_CONFIRM_HEIGHT,
                 element -> writeCraftConfirm(element, Translation.msg("ui.craftingBench.confirm.growTitle").arg("name", recipeName(material)).text(),
-                        Translation.msg("ui.craftingBench.confirm.growBody").arg("cost", material.feedstockCost()).arg("feedstock", ItemCrafting.feedstock(playerMaterials())).text(),
+                        StyledText.of(Translation.msg("ui.craftingBench.confirm.growBody").arg("cost", material.feedstockCost()).arg("feedstock", ItemCrafting.feedstock(playerMaterials())).text()),
                         Set.of()),
                 "ui.craftingBench.confirm.grow", Control.CONFIRM_GROW, "ui.craftingBench.confirm.cancel", Control.CANCEL_CONFIRM);
     }
 
-    private void writeCraftConfirm(TooltipMakerAPI element, String title, String body, Set<CraftingInhibitor> spentInhibitors) {
+    private void writeCraftConfirm(TooltipMakerAPI element, String title, StyledText body, Set<CraftingInhibitor> spentInhibitors) {
         VanillaText.plainPara(element, title, 0f, Misc.getBasePlayerColor());
-        VanillaText.plainPara(element, body, LINE_PAD * 2f, Misc.getTextColor());
+        VanillaText.addPara(element, body, LINE_PAD * 2f, Misc.getTextColor());
         for (CraftingInhibitor inhibitor : spentInhibitors) {
             VanillaText.plainPara(element, Translation.msg("ui.craftingBench.confirm.inhibitorSpent").arg("name", MaterialItems.displayName(inhibitor.itemId())).text(),
                     LINE_PAD * 2f, Misc.getHighlightColor());
@@ -1068,7 +1068,7 @@ public final class CraftingBenchPanel extends HoloPanel {
         element.setParaFont(Fonts.ORBITRON_20AA);
         VanillaText.plainPara(element, MaterialItems.displayName(inhibitor.itemId()), 0f, inhibitor.color());
         element.setParaFontDefault();
-        VanillaText.plainPara(element, Translation.text(inhibitorDescriptionKey(inhibitor)), GAP, Misc.getTextColor());
+        VanillaText.addPara(element, Translation.styled(inhibitorDescriptionKey(inhibitor)), GAP, Misc.getTextColor());
         int ownedCount = playerMaterials().count(inhibitor.itemId());
         VanillaText.plainPara(element, Translation.msg("ui.craftingBench.tile.inStorage").arg("count", ownedCount).text(), GAP, Misc.getGrayColor());
         if (activeInhibitors.contains(inhibitor)) {
@@ -1134,7 +1134,7 @@ public final class CraftingBenchPanel extends HoloPanel {
         element.setParaFont(Fonts.ORBITRON_20AA);
         VanillaText.plainPara(element, recipeName(craftingItem), 0f, Misc.getBrightPlayerColor());
         element.setParaFontDefault();
-        VanillaText.plainPara(element, support().craftingItemDescription(craftingItem), GAP, Misc.getTextColor());
+        VanillaText.addPara(element, support().craftingItemDescription(craftingItem), GAP, Misc.getTextColor());
         float linePad = GAP;
         for (StyledText line : support().craftingItemLines(craftingItem)) {
             VanillaText.addPara(element, line, linePad, Misc.getTextColor());

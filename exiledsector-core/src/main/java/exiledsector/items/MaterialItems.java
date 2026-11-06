@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
+import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 
@@ -90,7 +91,8 @@ public final class MaterialItems {
         SpecialItemSpecAPI itemSpec = spec(itemId);
         if (itemSpec != null) {
             itemSpec.setName(Translation.data(keyPrefix + itemId + ".name", itemSpec.getName()));
-            itemSpec.setDesc(Translation.data(keyPrefix + itemId + ".description", itemSpec.getDesc()));
+            StyledText description = Translation.dataStyled(keyPrefix + itemId + ".description", itemSpec.getDesc());
+            itemSpec.setDesc(description == null ? null : description.plain());
         }
     }
 
