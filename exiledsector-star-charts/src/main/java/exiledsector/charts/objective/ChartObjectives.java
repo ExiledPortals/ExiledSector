@@ -12,6 +12,7 @@ import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.atlas.AtlasProgress;
 import exiledsector.effects.ItemLootListener;
 import exiledsector.items.ItemDrops;
+import exiledsector.loot.LootTaken;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -145,6 +146,7 @@ public final class ChartObjectives {
         CampaignFleetAPI playerFleet = sector.getPlayerFleet();
         if (!rewardLoot.isEmpty() && playerFleet != null && playerFleet.getCargo() != null) {
             ItemLootListener.addSiteLoot(playerFleet.getCargo(), rewardLoot);
+            LootTaken.report();
         }
     }
 

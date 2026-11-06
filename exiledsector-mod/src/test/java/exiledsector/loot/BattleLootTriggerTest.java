@@ -1,4 +1,4 @@
-package exiledsector.effects;
+package exiledsector.loot;
 
 import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class BattleLootStorageTest {
+class BattleLootTriggerTest {
 
     private static final String BRIDGE_ID = "military_bridge";
 
@@ -34,7 +34,8 @@ class BattleLootStorageTest {
     void setUp() throws Exception {
         mockSector = new MockSector();
         ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", BRIDGE_ID).put("name", "Military-grade Bridge")
-                .put("icon", "graphics/icons/cargo/chip1.png").put("rarity", "20").put("prefixes", "FLUX_CAPACITY_MULT:4:6").put("suffixes", "ARMOR_PERCENT:6:9").put("section", "bridge")));
+                .put("icon", "graphics/icons/cargo/chip1.png").put("rarity", "20").put("prefixes", "FLUX_CAPACITY_MULT:4:6")
+                .put("suffixes", "ARMOR_PERCENT:6:9").put("section", "bridge")));
         lootedBridge = mock(CargoStackAPI.class);
         when(lootedBridge.getSpecialDataIfSpecial()).thenReturn(new ItemData(BRIDGE_ID, 5L).toSpecialItem());
         when(lootedBridge.getSize()).thenReturn(1f);
@@ -56,7 +57,7 @@ class BattleLootStorageTest {
 
     @Test
     void lootTakenAfterThePlayersBattleMovesFromCargoIntoStorage() {
-        new BattleLootStorage().reportBattleFinished(null, battle(true));
+        new BattleLootTrigger().reportBattleFinished(null, battle(true));
 
         assertEquals(List.of(5L), ItemStore.get().owned().stream().map(Item::seed).toList());
         verify(mockSector.cargo()).removeStack(lootedBridge);
@@ -64,7 +65,7 @@ class BattleLootStorageTest {
 
     @Test
     void aBattleWithoutThePlayerLeavesTheCargoAlone() {
-        new BattleLootStorage().reportBattleFinished(null, battle(false));
+        new BattleLootTrigger().reportBattleFinished(null, battle(false));
 
         assertTrue(ItemStore.get().owned().isEmpty());
         verify(mockSector.cargo(), never()).removeStack(lootedBridge);
