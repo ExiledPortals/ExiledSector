@@ -39,7 +39,6 @@ class EmptyShellsTest {
     private SkillNode nearNotable;
     private SkillNode nearSmall;
     private SkillNode secondNearSmall;
-    private SkillNode farNotable;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -53,9 +52,9 @@ class EmptyShellsTest {
         nearNotable = node("near_notable", "hull_notable", 100f, 0f);
         nearSmall = node("near_small", "hull_small", -100f, 0f);
         secondNearSmall = node("second_near_small", "hull_small", 0f, 100f);
-        farNotable = node("far_notable", "hull_notable", 5000f, 0f);
+        node("far_notable", "hull_notable", 5000f, 0f);
         ItemDefinitions.register(new JSONArray().put(ItemFixtures.subroutineRow(AXION, SubroutineKind.UNIQUE).put("unique", "true")
-                .put("lines", "EVERY_AFFINITY_FLAT_PER_EMPTY_SHELL_NODE:5:5").put("source", "faction:stargazer")));
+                .put("lines", "EVERY_AFFINITY_FLAT_PER_EMPTY_SHELL_NODE:1:1").put("source", "faction:stargazer")));
         UniqueSubroutineRadii.register(new JSONArray().put(new JSONObject().put("id", AXION).put(UniqueSubroutineRadii.RADIUS_COLUMN, "extra_large")));
         NodeGrantLinks.install();
     }
@@ -81,50 +80,47 @@ class EmptyShellsTest {
     }
 
     @Test
-    void anEmptyShellIsBornCorruptedAndGrantsOnlyTheSmallNodesInItsRadius() {
-        Item axion = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(AXION), 1L));
-        ShipSkillData data = new ShipSkillData();
-        ShipTrees.allocate(data, socket, 0);
-        data.socketItem(socket.getId(), axion.id());
-
-        assertTrue(axion.corrupted());
-        assertTrue(EmptyShells.isEmptyShell(axion));
-        assertEquals(Map.of(socket.getId(), List.of(nearSmall.getId(), secondNearSmall.getId())), ShipTreeLinks.grantedNodesBySocket(data));
-    }
-
-    @Test
-    void emptyShellNodesLoseTheirOwnEffectsAndEachAddsFiveToEveryAffinity() {
-        Item axion = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(AXION), 1L));
-        ShipSkillData data = new ShipSkillData();
-        ShipTrees.allocate(data, socket, 0);
-        ShipTrees.allocate(data, farNotable, 0);
-        data.socketItem(socket.getId(), axion.id());
-        ShipTrees.allocateGranted(data, nearSmall);
-        ShipTrees.allocateGranted(data, secondNearSmall);
-
-        List<SkillTypeEffect> effects = AllocatedSkillEffects.treeEffects(data, AllocatedNode.of(data), HullSize.CRUISER);
-
-        assertEquals(Set.of(nearSmall.getId(), secondNearSmall.getId()), EmptyShells.emptyShellNodeIds(data));
-        assertEquals(5f, effects.stream().filter(effect -> effect.effect() == SkillEffect.byName("HULL_MULT"))
-                .map(SkillTypeEffect::magnitude).reduce(0f, Float::sum), 1e-4f);
-        for (SkillEffect affinity : List.of(SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT, SpecialSkillEffect.HIGH_TECH_AFFINITY_FLAT,
-                SpecialSkillEffect.MIDLINE_AFFINITY_FLAT)) {
-            assertEquals(10f, effects.stream().filter(effect -> effect.effect() == affinity).map(SkillTypeEffect::magnitude).reduce(0f, Float::sum), 1e-4f);
-        }
-    }
-
-    @Test
-    void aPaidNodeTheShellTakesOverBecomesFree() {
+    void anEmptyShellIsBornCorruptedAndGrantsNoNodes() {
         Item axion = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(AXION), 1L));
         ShipSkillData data = new ShipSkillData();
         ShipTrees.allocate(data, socket, 0);
         ShipTrees.allocate(data, nearSmall, 0);
         data.socketItem(socket.getId(), axion.id());
 
+        assertTrue(axion.corrupted());
+        assertTrue(EmptyShells.isEmptyShell(axion));
+        assertEquals(List.of(nearSmall.getId(), secondNearSmall.getId()), EmptyShells.radiusNodeIds(axion, socket.getId()));
+        assertEquals(Map.of(), ShipTreeLinks.grantedNodesBySocket(data));
         assertFalse(data.isFreeNode(nearSmall.getId()));
-        ShipTrees.takeOverAsGranted(data, nearSmall.getId());
+    }
 
-        assertTrue(data.isFreeNode(nearSmall.getId()));
-        assertEquals(0, ShipTrees.paidNodeCount(data, List.of(nearSmall.getId())));
+    @Test
+    void allocatedSmallNodesInTheRadiusGrantNothingAndEverySmallNodeThereAddsToEveryAffinity() {
+        Item axion = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(AXION), 1L));
+        ShipSkillData data = new ShipSkillData();
+        ShipTrees.allocate(data, socket, 0);
+        ShipTrees.allocate(data, nearNotable, 0);
+        ShipTrees.allocate(data, nearSmall, 0);
+        data.socketItem(socket.getId(), axion.id());
+
+        List<SkillTypeEffect> effects = AllocatedSkillEffects.treeEffects(data, AllocatedNode.of(data), HullSize.CRUISER);
+
+        assertEquals(Set.of(nearSmall.getId()), EmptyShells.emptyShellNodeIds(data));
+        assertEquals(5f, effects.stream().filter(effect -> effect.effect() == SkillEffect.byName("HULL_MULT"))
+                .map(SkillTypeEffect::magnitude).reduce(0f, Float::sum), 1e-4f);
+        for (SkillEffect affinity : List.of(SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT, SpecialSkillEffect.HIGH_TECH_AFFINITY_FLAT,
+                SpecialSkillEffect.MIDLINE_AFFINITY_FLAT)) {
+            assertEquals(2f, effects.stream().filter(effect -> effect.effect() == affinity).map(SkillTypeEffect::magnitude).reduce(0f, Float::sum), 1e-4f);
+        }
+    }
+
+    @Test
+    void anUnallocatedSocketLeavesItsRadiusAlone() {
+        Item axion = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(AXION), 1L));
+        ShipSkillData data = new ShipSkillData();
+        ShipTrees.allocate(data, nearSmall, 0);
+        data.socketItem(socket.getId(), axion.id());
+
+        assertEquals(Set.of(), EmptyShells.emptyShellNodeIds(data));
     }
 }

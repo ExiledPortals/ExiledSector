@@ -9,10 +9,6 @@ public final class NodeGrants {
 
         List<String> grantedNodeIds(String socketedItemId);
 
-        default List<String> grantedNodeIds(String socketedItemId, String socketId) {
-            return grantedNodeIds(socketedItemId);
-        }
-
         int revision();
     }
 

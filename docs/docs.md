@@ -569,11 +569,10 @@ socket one.
 
 ### Empty shells
 
-A subroutine whose lines hold `EVERY_AFFINITY_FLAT_PER_EMPTY_SHELL_NODE` (Empty Shell Axion) is born corrupted and grants
-every small node in its radius (never notables or keystones) through the socket grant links (`EmptyShells.radiusNodeIds`,
-via `NodeGrantLinks`). `NodeAllocator.grantSocketedNodes` turns paid nodes it covers into free ones, refunding
-their OP and items, and `AllocatedSkillEffects` drops an Empty Shell node's own effects and gives the socket +5 (the line's
-value) to every affinity per Empty Shell node. The Axion uses the `extra_large` radius. Unsocketing releases the granted nodes like a Modspec Cache's.
+A subroutine whose lines hold `EVERY_AFFINITY_FLAT_PER_EMPTY_SHELL_NODE` (Empty Shell Axion) is born corrupted. Small nodes in
+its radius (`EmptyShells.radiusNodeIds`, never notables or keystones) stay allocatable as normal but grant nothing:
+`AllocatedSkillEffects` and `SkillTreeEffectSource` skip the allocated ones. The socket gives the line's value to every
+affinity for each small node in the radius, allocated or not. The Axion uses the `extra_large` radius.
 
 ### Root Conduit
 

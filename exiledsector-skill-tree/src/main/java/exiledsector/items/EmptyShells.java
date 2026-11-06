@@ -3,7 +3,6 @@ package exiledsector.items;
 import exiledsector.skills.skilleffect.special.SpecialSkillEffect;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -46,32 +45,24 @@ public final class EmptyShells {
         List<String> nodeIds = new ArrayList<>();
         for (String nodeId : new TreeSet<>(SkillTree.radii().nodeIdsWithin(footprint.centreNodeId(), footprint.size()))) {
             SkillNode node = SkillTree.get(nodeId);
-            if (node != null && canBeEmptyShell(node)) {
+            if (node != null && node.getType().getTier() == SkillTier.SMALL) {
                 nodeIds.add(nodeId);
             }
         }
         return nodeIds;
     }
 
-    private static boolean canBeEmptyShell(SkillNode node) {
-        return node.getType().getTier() == SkillTier.SMALL;
-    }
-
-    public static boolean holdsEmptyShell(ShipSkillData data, String socketId) {
-        return isEmptyShell(ItemStore.lookup(data.getSocketedItem(socketId)));
-    }
-
     public static Set<String> emptyShellNodeIds(ShipSkillData data) {
         Set<String> emptyShell = new HashSet<>();
-        for (Map.Entry<String, List<String>> grantLink : ShipTreeLinks.grantedNodesBySocket(data).entrySet()) {
-            if (holdsEmptyShell(data, grantLink.getKey())) {
-                grantLink.getValue().stream().filter(data::isAllocated).forEach(emptyShell::add);
+        for (Map.Entry<String, String> socketed : data.getSocketedItems().entrySet()) {
+            if (data.isAllocated(socketed.getKey())) {
+                radiusNodeIds(ItemStore.lookup(socketed.getValue()), socketed.getKey()).stream().filter(data::isAllocated).forEach(emptyShell::add);
             }
         }
         return emptyShell;
     }
 
     public static int emptyShellCount(ShipSkillData data, String socketId) {
-        return (int) ShipTreeLinks.grantedNodesBySocket(data).getOrDefault(socketId, List.of()).stream().filter(data::isAllocated).count();
+        return radiusNodeIds(ItemStore.lookup(data.getSocketedItem(socketId)), socketId).size();
     }
 }

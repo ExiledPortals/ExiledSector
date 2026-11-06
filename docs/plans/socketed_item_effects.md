@@ -39,7 +39,7 @@ On the hull item side, `HullUpgradeEffectSource` gives each section's contributi
 
 ### What counts as a subroutine's effect
 
-A subroutine's effect is every magnitude it carries or adds: its own lines (explicits, implicits, the corruption implicit), the Root Conduit's affinity, the Empty Shell's affinity per hollow node, the lines an augmenting Doctrine Archive adds to nodes in its radius, and a gating line's strength. Nodes it grants or swaps in are not part of it: a Modspec Cache's notables, a transforming Doctrine Archive's replacement nodes, and the nodes a gate covers keep their own values. On a Modspec Cache or a transforming archive only the corruption implicit scales.
+A subroutine's effect is every magnitude it carries or adds: its own lines (explicits, implicits, the corruption implicit), the Root Conduit's affinity, the Empty Shell's affinity per small node in its radius, the lines an augmenting Doctrine Archive adds to nodes in its radius, and a gating line's strength. Nodes it grants or swaps in are not part of it: a Modspec Cache's notables, a transforming Doctrine Archive's replacement nodes, and the nodes a gate covers keep their own values. On a Modspec Cache or a transforming archive only the corruption implicit scales.
 
 A gating line's value is the strength its gated nodes run at, so scaling the line scales them: the Phoenix Ash Archive's 3 becomes 4.5 at 50% increased effect. This is the one place the scaling reaches node effects, and only because the line itself is the multiplier.
 
