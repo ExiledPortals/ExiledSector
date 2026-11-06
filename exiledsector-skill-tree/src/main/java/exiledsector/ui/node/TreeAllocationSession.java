@@ -1,5 +1,6 @@
 package exiledsector.ui.node;
 
+import com.fs.starfarer.api.Global;
 import exiledsector.i18n.Translation;
 import exiledsector.items.NodeSocketable;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
@@ -8,6 +9,7 @@ import exiledsector.effects.PhantomConflictWatch;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.AllocationPath;
+import exiledsector.skills.AnchorRoute;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;
@@ -40,6 +42,7 @@ import exiledsector.items.UseVerdict;
 import exiledsector.ui.SkillTreeSounds;
 import lunalib.lunaRefit.BaseRefitButton;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -469,19 +472,70 @@ public final class TreeAllocationSession {
 
     private void allocateLivePath(SkillNode target, List<AllocationPath.Step> path) {
         Set<String> allocatedBefore = allocatedNodeIds();
-        boolean allocatedAny = false;
+        if (allocateSteps(path) == 0) {
+            SkillTreeSounds.refused();
+            return;
+        }
+        afterAllocationChange(allocatedBefore, target);
+    }
+
+    private int allocateSteps(List<AllocationPath.Step> path) {
+        int allocatedCount = 0;
         for (AllocationPath.Step step : path) {
             if (!allocator.allocate(step.node(), step.option(), snapshot())) {
                 break;
             }
             settleAllocation();
-            allocatedAny = true;
+            allocatedCount++;
         }
-        if (!allocatedAny) {
+        return allocatedCount;
+    }
+
+    private List<AllocationPath.Step> livePathTo(SkillNode target) {
+        NodeAllocator.Snapshot live = snapshot();
+        return AllocationPath.to(target, live.gate(), SkillTree.topology(), live::isHidden, lastChosenOption, pathRandom);
+    }
+
+    public boolean allocateAnchoredPath(SkillNode target) {
+        if (isBusy() || planner.isActive() || getStartingRoot() == null) {
+            return false;
+        }
+        NodeAllocator.Snapshot live = snapshot();
+        AnchorRoute.Route route = AnchorRoute.cheapest(target, openableAnchors(), this::acceptsAnchor, live.gate(), SkillTree.topology(), live::isHidden);
+        if (route == null) {
+            return false;
+        }
+        choicePickerNode = null;
+        Set<String> allocatedBefore = allocatedNodeIds();
+        SkillNode socket = route.socket();
+        allocateSteps(livePathTo(socket));
+        if (isAllocated(socket) && allocator.socketItem(socket, route.anchor().itemId())) {
+            settleAllocation();
+            SkillTreeSounds.socketed();
+            feedback.pulse(socket);
+            allocateSteps(livePathTo(target));
+        } else if (allocatedBefore.equals(allocatedNodeIds())) {
             SkillTreeSounds.refused();
-            return;
+            return true;
         }
         afterAllocationChange(allocatedBefore, target);
+        return true;
+    }
+
+    private static List<AnchorRoute.Anchor> openableAnchors() {
+        List<AnchorRoute.Anchor> anchors = new ArrayList<>();
+        for (WormholeAnchor anchor : WormholeAnchor.unusedInStorage()) {
+            String exitNodeId = anchor.linkedExitNodeId();
+            if (exitNodeId != null && anchor.socketRefusal().allowed() && anchor.canOpen(Global.getSector())) {
+                anchors.add(new AnchorRoute.Anchor(anchor.id(), exitNodeId));
+            }
+        }
+        return anchors;
+    }
+
+    private boolean acceptsAnchor(SkillNode socket, AnchorRoute.Anchor anchor) {
+        Item item = ItemStore.lookup(anchor.itemId());
+        return NodeSocketable.fits(item, socket) && blockingSocketRefusal(socket, item).allowed();
     }
 
     private void planPath(SkillNode target, List<AllocationPath.Step> path) {

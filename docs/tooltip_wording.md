@@ -2,7 +2,7 @@
 
 Every modifier, effect and stat line the player reads follows these rules: skill tree nodes, hull items, subroutines, Star Charts, nanoswarm notices and settings tooltips. They are modelled on Path of Exile's modifier wording, adapted to Starsector. Node and item flavour descriptions follow the flavour rules below and don't carry numbers at all.
 
-Before writing a line, find out how the value is combined in code. The wording is decided by what the value stacks with, not by how the effect is named or what the designer intended.
+Before writing a line, find out how the value is combined in code. The wording is decided by what the value stacks with, not by how the effect is named or what the designer intended. Then check how vanilla words the same stat (skill and hullmod descriptions in `starfarer.api.zip` and `hull_mods.csv`) and use its terms, reshaped only where these rules require.
 
 ## Less is more
 
@@ -54,15 +54,15 @@ Don't use "higher", "lower", "larger", "shorter", "richer" or "bigger" for a per
 
 "N% faster" and "N% slower" are allowed only when the value divides a time, so the thing happens in 1/(1 + N%) of the time, as in Path of Exile's "Buffs expire 50% faster". A value that scales a rate directly uses the rules above: "15% more combat objective capture rate", "15% increased ship system charge regeneration".
 
-A share of one quantity turned into another is "N% of X is Y" or "equal to N% of X": "25% of shield damage taken is converted to soft flux", "raid strength equal to 10% of this ship's maximum crew capacity".
+A share of one quantity turned into another is "N% of X is Y" or "equal to N% of X": "25% of damage taken by shields is converted to soft flux", "raid strength equal to 10% of this ship's maximum crew capacity". Damage added as a share of a hit is "extra": "deal extra EMP damage equal to 10% of each hit's damage".
 
-Per-stack and per-unit bonuses put the scaling after the stat: "5% increased missile damage for each Heartless stack", "1% increased weapon damage for every su/s of current speed".
+Per-stack and per-unit bonuses put the scaling after the stat with "for each" or "for every", never "per": "5% increased missile damage for each Heartless stack", "1% increased weapon damage for every su/s of current speed". Rates such as "per second" and "per deployment" stay.
 
 ## Flat values
 
 A flat amount added to a stat is "+N to stat": "+250 to hull points", "+50 to sensor range". A flat reduction is "-N to stat".
 
-A flat amount of percentage points added to a stat that is already a percentage is "+N% to stat": "+10% to maximum combat readiness", "+10% to enemy fleet quality". Don't write it as "10% increased", which would mean 10% of the current value.
+A flat amount of percentage points added to a stat that is already a percentage is "+N% to stat": "+10% to maximum combat readiness", "+10% to enemy fleet quality". Don't write it as "10% increased", which would mean 10% of the current value. A percentage stat that is 0% until something grants it reads as vanilla writes it, without "+" or "to": "10% hard flux dissipation while shields are active", as on Field Modulation.
 
 A count of extra things is "N additional things": "2 additional enemy fleets", "6 additional points of interest", "1 additional officer". Don't use "more" for counts, because "more" means multiplicative.
 
@@ -107,7 +107,7 @@ A flat chance is "N% chance to X" or "N% chance for X". A change to an existing 
 
 ## Conditions and scaling
 
-Conditions go after the value and stat: "while phased", "while in the system", "for each Heartless stack", "for every su/s of current speed", "up to a maximum of N".
+Conditions go after the value and stat: "while phased", "while in the system", "for each Heartless stack", "for every su/s of current speed", "up to a maximum of N". Never open a line with a state ("While this ship is phased, enemy ships..."); a trigger may open it: "When this ship enters phase", "Whenever an enemy ship is destroyed", "Every 500 damage". A cap on a scaling value is always "up to a maximum of N", while a repair total keeps "up to N% of ... per deployment".
 
 ## Capitalisation
 
@@ -115,7 +115,7 @@ Follow Starsector's own style. Stats and generic nouns are lowercase (flux capac
 
 ## Spelling
 
-Use Starsector's US spelling (armor, maneuver, stabilized, center, mold), and its terms: hullmod, point defense ("point-defense" before a noun), Ctrl-click and Ctrl-Shift-click. The opposite of allocate is unallocate. Lists take no Oxford comma: "top speed, flux dissipation and weapon rate of fire".
+Use Starsector's US spelling (armor, maneuver, stabilized, center, mold), and its terms: hullmod, point defense ("point-defense" before a noun), Ctrl-click and Ctrl-Shift-click, time flow, peak performance time, d-mod, damage taken by shields (not "shield damage taken"), flux level and hard flux level (not "N% flux"), "considered to be moving slowly", and "dissipates" for removing flux ("vent" is only active venting). The fragment swarm is lowercase; Fragment Swarm names only the hullmod. The opposite of allocate is unallocate. Lists take no Oxford comma: "top speed, flux dissipation and weapon rate of fire".
 
 ## Chinese
 
