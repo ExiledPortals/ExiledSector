@@ -3127,6 +3127,10 @@
 				{
 					"effect": "OVERLOAD_HULL_DAMAGE_PERCENT",
 					"magnitude": 10
+				},
+				{
+					"effect": "OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT",
+					"magnitude": 50
 				}
 			],
 			"flavour": "Knights of Ludd refits wire the capacitor breakers straight into the hull frame. The order files the scorching that follows under penance rather than maintenance.",

@@ -349,6 +349,7 @@
     {"name": "OBJECTIVE_CAPTURE_RATE_MULT", "statMode": "MULT", "lowerIsBetter": false},
     {"name": "OPENING_WEAPON_DAMAGE_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
     {"name": "OVERLOAD_DURATION_PERCENT", "statMode": "PERCENT", "lowerIsBetter": true},
+    {"name": "OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "OVERLOAD_HULL_DAMAGE_PERCENT", "statMode": null, "lowerIsBetter": true},
     {"name": "PD_BEST_TARGET_LEADING", "statMode": null, "lowerIsBetter": false},
     {"name": "PD_DAMAGE_TO_MISSILES_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},

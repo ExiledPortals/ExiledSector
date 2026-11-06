@@ -2074,6 +2074,12 @@ effect|OVERLOAD_DURATION_PERCENT|12.5	1	<good>12.5%</good> increased overload du
 effect|OVERLOAD_DURATION_PERCENT|100.0	1	<good>100%</good> increased overload duration.
 effect|OVERLOAD_DURATION_PERCENT|-10.0	1	<bad>10%</bad> reduced overload duration.
 effect|OVERLOAD_DURATION_PERCENT|-12.5	1	<bad>12.5%</bad> reduced overload duration.
+effect|OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT|1.0	0	Replacing an overload dissipates <good>1%</good> of hard flux.
+effect|OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT|10.0	0	Replacing an overload dissipates <good>10%</good> of hard flux.
+effect|OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT|12.5	0	Replacing an overload dissipates <good>12.5%</good> of hard flux.
+effect|OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT|100.0	0	Replacing an overload dissipates <good>100%</good> of hard flux.
+effect|OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT|-10.0	0	Replacing an overload dissipates <good>-10%</good> of hard flux.
+effect|OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT|-12.5	0	Replacing an overload dissipates <good>-12.5%</good> of hard flux.
 effect|OVERLOAD_HULL_DAMAGE_PERCENT|1.0	0	Overloads are replaced by hull damage equal to <bad>1%</bad> of maximum hull.
 effect|OVERLOAD_HULL_DAMAGE_PERCENT|10.0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
 effect|OVERLOAD_HULL_DAMAGE_PERCENT|12.5	0	Overloads are replaced by hull damage equal to <bad>12.5%</bad> of maximum hull.
@@ -5158,10 +5164,15 @@ type|rift_lightning_damage|CRUISER|0	0	<good>10%</good> increased Rift Lightning
 type|rift_lightning_damage|CAPITAL_SHIP|0	0	<good>10%</good> increased Rift Lightning damage.
 flavour|rite_of_mortification	0	Knights of Ludd refits wire the capacitor breakers straight into the hull frame. The order files the scorching that follows under penance rather than maintenance.
 type|rite_of_mortification|null|0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
+type|rite_of_mortification|null|1	0	Replacing an overload dissipates <good>50%</good> of hard flux.
 type|rite_of_mortification|FRIGATE|0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
+type|rite_of_mortification|FRIGATE|1	0	Replacing an overload dissipates <good>50%</good> of hard flux.
 type|rite_of_mortification|DESTROYER|0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
+type|rite_of_mortification|DESTROYER|1	0	Replacing an overload dissipates <good>50%</good> of hard flux.
 type|rite_of_mortification|CRUISER|0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
+type|rite_of_mortification|CRUISER|1	0	Replacing an overload dissipates <good>50%</good> of hard flux.
 type|rite_of_mortification|CAPITAL_SHIP|0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
+type|rite_of_mortification|CAPITAL_SHIP|1	0	Replacing an overload dissipates <good>50%</good> of hard flux.
 type|root_high_tech|null|0	0	<good>+10</good> to High Tech Affinity.
 type|root_high_tech|FRIGATE|0	0	<good>+10</good> to High Tech Affinity.
 type|root_high_tech|DESTROYER|0	0	<good>+10</good> to High Tech Affinity.

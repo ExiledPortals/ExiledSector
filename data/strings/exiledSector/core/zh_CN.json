@@ -1115,6 +1115,7 @@
     "effect.FLUX_DISSIPATION_PERCENT_PER_HARD_FLUX": "每有{step}%硬幅能，幅能耗散提高<good>{value}%</good>。",
     "effect.HIGH_FLUX_HULL_REGEN_PERCENT": "幅能高于{threshold}%时，战斗中每秒修复<good>{value}%</good>的最大结构值，每次出击最多共修复{limit}%的最大结构值。",
     "effect.OVERLOAD_HULL_DAMAGE_PERCENT": "过载改为受到相当于最大结构值<bad>{value}%</bad>的结构伤害。",
+    "effect.OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT": "替代过载时，耗散<good>{value}%</good>的硬幅能。",
     "effect.VOLATILE_FLUX_RATE_OF_FIRE_PERCENT": "武器射速随幅能变化：无幅能时提高<good>{value}%</good>，半幅能时不变，满幅能时降低<bad>{value}%</bad>。主动排散或过载视为满幅能。",
     "effect.FLUX_CAPACITOR_EFFECTIVENESS_PERCENT": "每个幅能电容提供的幅能容量提高<good>{value}%</good>。",
     "effect.AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT": "装有增强系统的舰体，高幅能时最大航速和射速惩罚的效果降低<good>{value}%</good>。",

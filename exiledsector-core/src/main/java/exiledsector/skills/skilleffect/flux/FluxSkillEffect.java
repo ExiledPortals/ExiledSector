@@ -83,6 +83,8 @@ public enum FluxSkillEffect implements BackedSkillEffect {
             return false;
         }
     },
+    OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT(listener(OverloadHullDamageListener.HARD_FLUX_DISSIPATION_PERCENT_KEY,
+            OverloadHullDamageListener.class, OverloadHullDamageListener::new)),
     FLUX_DISSIPATION_WITHOUT_HARD_FLUX_PERCENT(new ConditionalStatEffect(PERCENT, stat(MutableShipStatsAPI::getFluxDissipation),
             "stat.fluxDissipationWithoutHardFlux", ship -> ship.getFluxTracker().getHardFlux() <= 0f)),
     FLUX_DISSIPATION_PER_FLUX_VENT_FLAT {

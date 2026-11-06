@@ -292,7 +292,11 @@ modules don't count, and only the strongest source applies (`DModArmorAuraField`
 
 `OVERLOAD_HULL_DAMAGE_PERCENT` stops any overload at the start of the ship's next frame and takes that share of its
 maximum hull straight off its hitpoints, ignoring damage resistances, with a killing blow if that would empty it
-(`OverloadHullDamageListener`, `HullLoss`). The overload still drops the shield and leaves flux at its maximum.
+(`OverloadHullDamageListener`, `HullLoss`). The killing blow is credited to the last enemy ship that damaged it, with
+strike craft counted as their carrier, or to no one if no enemy has.
+
+`OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT` then removes that share of the ship's hard flux, leaving soft flux alone. The
+overload still drops the shield.
 
 ### Range per sensor strength
 
