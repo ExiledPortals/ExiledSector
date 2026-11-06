@@ -5,6 +5,10 @@ import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.MockSector;
+import exiledsector.items.Item;
+import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemStore;
+import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.LogisticsNodes;
@@ -19,6 +23,8 @@ import exiledsector.skills.progression.ShipLevelSystem;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.TemplateStep;
 import lunalib.lunaSettings.LunaSettings;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -94,6 +100,29 @@ class TemplateLevelUpTest {
 
     private void levelUp(int levels) {
         ShipLevelSystem.raiseToLevel(shipData, shipData.getLevel() + levels, SkillTree.getAllNodes().values());
+    }
+
+    @Test
+    void aTemplateSocketTakesItsAnchorFromStorageOnceTheLevelUpAllocatesIt() throws Exception {
+        node("socket", type("socket_type", SkillTier.SOCKET).build(), List.of("first"));
+        node("abyss_exit", type("abyss_exit_type", SkillTier.WORMHOLE_EXIT).build(), List.of());
+        WormholeAnchorDefinitions.register(new JSONArray().put(new JSONObject().put("id", "wormhole_anchor_abyss").put("volume", "abyss")
+                .put("exit_node", "abyss_exit").put("name", "Abyss Wormhole Anchor").put("description", "Opens a wormhole.")));
+        try {
+            Item anchor = ItemStore.get().add(ItemDefinitions.get("wormhole_anchor_abyss"), 1L);
+            List<TemplateStep> steps = List.of(new TemplateStep("first", null), new TemplateStep("socket", null));
+            SkillTreeTemplate template = SkillTreeTemplateStore.save("plan", "root", HullSize.FRIGATE, steps, Map.of("socket", "wormhole_anchor_abyss"));
+            SkillTreeTemplateStore.assign("planned", template.id());
+            shipData.setAutoAllocateTemplate(true);
+
+            levelUp(2);
+            assertEquals(2, TemplateLevelUp.spendFreeAllocations(member));
+
+            assertEquals(anchor.id(), shipData.getSocketedItem("socket"));
+        } finally {
+            WormholeAnchorDefinitions.clear();
+            ItemDefinitions.clear();
+        }
     }
 
     @Test

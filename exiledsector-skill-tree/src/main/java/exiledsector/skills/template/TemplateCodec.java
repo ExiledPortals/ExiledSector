@@ -8,7 +8,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public final class TemplateCodec {
 
@@ -32,6 +35,9 @@ public final class TemplateCodec {
                 templateJson.put("hull", template.hullSize().name());
             }
             templateJson.put("steps", encodedSteps);
+            if (!template.anchorsBySocket().isEmpty()) {
+                templateJson.put("anchors", new JSONObject(template.anchorsBySocket()));
+            }
             return templateJson.toString();
         } catch (JSONException e) {
             throw new IllegalArgumentException("Template " + template.id() + " could not be encoded", e);
@@ -54,7 +60,24 @@ public final class TemplateCodec {
         if (isBlank(templateId) || isBlank(templateName) || isBlank(rootNodeId)) {
             return null;
         }
-        return new SkillTreeTemplate(templateId, templateName, NodeReplacements.current(rootNodeId), parseHullSize(templateJson.optString("hull", null)), parseSteps(templateJson.optJSONArray("steps")));
+        return new SkillTreeTemplate(templateId, templateName, NodeReplacements.current(rootNodeId), parseHullSize(templateJson.optString("hull", null)), parseSteps(templateJson.optJSONArray("steps")),
+                parseAnchors(templateJson.optJSONObject("anchors")));
+    }
+
+    private static Map<String, String> parseAnchors(JSONObject anchorsJson) {
+        Map<String, String> anchorsBySocket = new HashMap<>();
+        if (anchorsJson == null) {
+            return anchorsBySocket;
+        }
+        Iterator<?> socketIds = anchorsJson.keys();
+        while (socketIds.hasNext()) {
+            String socketId = String.valueOf(socketIds.next());
+            String anchorDefinitionId = anchorsJson.optString(socketId, "").trim();
+            if (!socketId.isBlank() && !anchorDefinitionId.isEmpty()) {
+                anchorsBySocket.put(NodeReplacements.current(socketId), anchorDefinitionId);
+            }
+        }
+        return anchorsBySocket;
     }
 
     private static HullSize parseHullSize(String hullSizeName) {

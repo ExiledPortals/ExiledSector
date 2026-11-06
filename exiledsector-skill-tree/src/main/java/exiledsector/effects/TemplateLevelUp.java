@@ -18,6 +18,7 @@ import exiledsector.skills.progression.SkillNodeOpCost;
 import exiledsector.skills.template.AutoAllocateRun;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.StepVerdict;
+import exiledsector.skills.template.TemplateAnchors;
 import exiledsector.skills.template.TemplateStepRules;
 
 import java.util.HashSet;
@@ -25,8 +26,12 @@ import java.util.Set;
 
 final class TemplateLevelUp {
 
-    record TemplateRun(int allocated, int waitingForDock) {
-        static final TemplateRun NONE = new TemplateRun(0, 0);
+    record TemplateRun(int allocated, int waitingForDock, int anchorsSocketed) {
+        static final TemplateRun NONE = new TemplateRun(0, 0, 0);
+
+        boolean changedTree() {
+            return allocated > 0 || anchorsSocketed > 0;
+        }
     }
 
     private TemplateLevelUp() {
@@ -49,10 +54,10 @@ final class TemplateLevelUp {
         for (int i = 0; i < unspentCredits; i++) {
             ShipTrees.refundBankedFreeAllocationAsOp(shipData, SkillTree.getAllNodes().values());
         }
-        if (allocatedCount > 0 || unspentCredits > 0) {
+        if (run.changedTree() || unspentCredits > 0) {
             member.setStatUpdateNeeded(true);
         }
-        if (allocatedCount > 0) {
+        if (run.changedTree()) {
             returnUnhousedWings(member, variant);
         }
         return allocatedCount;
@@ -64,12 +69,12 @@ final class TemplateLevelUp {
             return 0;
         }
         ShipVariantAPI variant = member.getVariant();
-        int allocatedCount = allocateTemplateSteps(member, variant, shipData, logisticsChangesAllowed).allocated();
-        if (allocatedCount > 0) {
+        TemplateRun run = allocateTemplateSteps(member, variant, shipData, logisticsChangesAllowed);
+        if (run.changedTree()) {
             member.setStatUpdateNeeded(true);
             returnUnhousedWings(member, variant);
         }
-        return allocatedCount;
+        return run.allocated();
     }
 
     private static TemplateRun allocateTemplateSteps(FleetMemberAPI member, ShipVariantAPI variant, ShipSkillData shipData,
@@ -81,9 +86,18 @@ final class TemplateLevelUp {
             return TemplateRun.NONE;
         }
         ShipFacts shipFacts = PlayerShipFacts.of(member, variant);
-        AllocationCheck.Budget budget = new AllocationCheck.Budget(0, opCostPerNode, ShipLevelConfig.maxAllocatedNodes());
+        int maxAllocatedNodes = ShipLevelConfig.maxAllocatedNodes();
+        AllocationCheck.Budget budget = new AllocationCheck.Budget(0, opCostPerNode, maxAllocatedNodes);
         Set<String> waitingForDock = new HashSet<>();
-        int allocatedCount = AutoAllocateRun.run(template.steps(), step -> {
+        TemplateAnchors anchors = TemplateAnchors.fromStorage(template, (socket, anchor) -> {
+            if (!shipData.socketItem(socket.getId(), anchor.id())) {
+                return false;
+            }
+            ShipTrees.openAnchorWormholes(shipData, maxAllocatedNodes);
+            return true;
+        });
+        anchors.fill(shipData);
+        int allocatedCount = AutoAllocateRun.run(template.steps(), anchors.fillingAfter(step -> {
             AllocationCheck gate = AllocationCheck.forPlayerShip(shipData, shipFacts, rootId, budget, itemId -> 0d, logisticsChangesAllowed);
             StepVerdict verdict = TemplateStepRules.verdict(step, shipData, rootId, (node, option) -> {
                 AllocationCheck.Verdict allocation = gate.allocation(node, option);
@@ -97,8 +111,8 @@ final class TemplateLevelUp {
                 ShipTrees.allocate(shipData, node, TemplateStepRules.optionFor(step, node, shipData), opCostPerNode);
             }
             return verdict;
-        }, () -> shipData.getBankedFreeAllocations() > 0).allocated();
-        return new TemplateRun(allocatedCount, waitingForDock.size());
+        }, shipData), () -> shipData.getBankedFreeAllocations() > 0).allocated();
+        return new TemplateRun(allocatedCount, waitingForDock.size(), anchors.socketedCount());
     }
 
     private static void returnUnhousedWings(FleetMemberAPI member, ShipVariantAPI variant) {

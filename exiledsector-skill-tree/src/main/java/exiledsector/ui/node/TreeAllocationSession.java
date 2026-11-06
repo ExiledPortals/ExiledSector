@@ -20,6 +20,7 @@ import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.skills.template.AutoAllocateRun;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.StepVerdict;
+import exiledsector.skills.template.TemplateAnchors;
 import exiledsector.skills.template.TemplateCapture;
 import exiledsector.skills.template.TemplateStep;
 import exiledsector.skills.unlock.NodeGates;
@@ -300,6 +301,10 @@ public final class TreeAllocationSession {
     public List<TemplateStep> captureTemplateSteps() {
         SkillNode root = getStartingRoot();
         return TemplateCapture.capture(snapshot().skillData(), root == null ? null : root.getId(), SkillTree.getAllNodes());
+    }
+
+    public Map<String, String> captureTemplateAnchors() {
+        return TemplateAnchors.socketedOn(snapshot().skillData());
     }
 
     public boolean isBusy() {
@@ -633,7 +638,15 @@ public final class TreeAllocationSession {
         }
         choicePickerNode = null;
         Set<String> allocatedBefore = allocatedNodeIds();
-        lastRunSummary = AutoAllocateRun.run(template.steps(), attemptStep, pointsLeftCheck);
+        TemplateAnchors anchors = TemplateAnchors.fromStorage(template, (socket, anchor) -> {
+            if (!allocator.socketItem(socket, anchor.id())) {
+                return false;
+            }
+            settleAllocation();
+            return true;
+        });
+        anchors.fill(allocator.data());
+        lastRunSummary = AutoAllocateRun.run(template.steps(), anchors.fillingAfter(attemptStep, allocator.data()), pointsLeftCheck);
         afterAllocationChange(allocatedBefore, null);
         return true;
     }
