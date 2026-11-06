@@ -111,6 +111,13 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     },
     DAMAGE_TO_SLOWER_SHIP_PERCENT(targetDamage(SlowerShipDamageListener.DAMAGE_PERCENT_KEY, SlowerShipDamageListener.class,
             SlowerShipDamageListener::new, "stat.damageToSlowerShips")),
+    DAMAGE_TO_ISOLATED_SHIP_PERCENT(listener(IsolatedShipDamageListener.DAMAGE_PERCENT_KEY, IsolatedShipDamageListener.class,
+            IsolatedShipDamageListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.signed(this, magnitude).arg("range", IsolatedShipDamageListener.ALLY_RANGE).styled();
+        }
+    },
     DAMAGE_TO_PRISTINE_SHIP_PERCENT(targetDamage(PristineShipDamageListener.DAMAGE_PERCENT_KEY, PristineShipDamageListener.class,
             PristineShipDamageListener::new, "stat.damageToPristineShips")),
     WEAPON_MALFUNCTION_PERCENT(statEffect(PERCENT, new StatTarget.PercentagePoints(MutableShipStatsAPI::getWeaponMalfunctionChance),

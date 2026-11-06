@@ -706,6 +706,12 @@ effect|DAMAGE_TO_HELPLESS_SHIP_PERCENT|12.5	0	<good>12.5%</good> increased damag
 effect|DAMAGE_TO_HELPLESS_SHIP_PERCENT|100.0	0	<good>100%</good> increased damage to overloaded, venting or flamed-out ships.
 effect|DAMAGE_TO_HELPLESS_SHIP_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to overloaded, venting or flamed-out ships.
 effect|DAMAGE_TO_HELPLESS_SHIP_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to overloaded, venting or flamed-out ships.
+effect|DAMAGE_TO_ISOLATED_SHIP_PERCENT|1.0	0	<good>1%</good> increased damage to ships with no allies within 1000 su.
+effect|DAMAGE_TO_ISOLATED_SHIP_PERCENT|10.0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
+effect|DAMAGE_TO_ISOLATED_SHIP_PERCENT|12.5	0	<good>12.5%</good> increased damage to ships with no allies within 1000 su.
+effect|DAMAGE_TO_ISOLATED_SHIP_PERCENT|100.0	0	<good>100%</good> increased damage to ships with no allies within 1000 su.
+effect|DAMAGE_TO_ISOLATED_SHIP_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to ships with no allies within 1000 su.
+effect|DAMAGE_TO_ISOLATED_SHIP_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to ships with no allies within 1000 su.
 effect|DAMAGE_TO_PRISTINE_SHIP_PERCENT|1.0	0	<good>1%</good> increased damage to ships without d-mods.
 effect|DAMAGE_TO_PRISTINE_SHIP_PERCENT|10.0	0	<good>10%</good> increased damage to ships without d-mods.
 effect|DAMAGE_TO_PRISTINE_SHIP_PERCENT|12.5	0	<good>12.5%</good> increased damage to ships without d-mods.
@@ -2188,6 +2194,12 @@ effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|12.5	0	Fragments from this ship
 effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|100.0	0	Fragments from this ship's fragment swarm, or else the nearest allied one within 1000 su, cover <good>90%</good> of phase cloak flux upkeep while phased, spending 1 fragment for every 50 flux covered.
 effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|-10.0	0	Fragments from this ship's fragment swarm, or else the nearest allied one within 1000 su, cover <good>-10%</good> of phase cloak flux upkeep while phased, spending 1 fragment for every 50 flux covered.
 effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|-12.5	0	Fragments from this ship's fragment swarm, or else the nearest allied one within 1000 su, cover <good>-12.5%</good> of phase cloak flux upkeep while phased, spending 1 fragment for every 50 flux covered.
+effect|PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT|1.0	0	Whenever an enemy ship is destroyed within 1 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+effect|PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT|10.0	0	Whenever an enemy ship is destroyed within 10 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+effect|PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT|12.5	0	Whenever an enemy ship is destroyed within 12.5 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+effect|PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT|100.0	0	Whenever an enemy ship is destroyed within 100 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+effect|PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT|-10.0	0	Whenever an enemy ship is destroyed within -10 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+effect|PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT|-12.5	0	Whenever an enemy ship is destroyed within -12.5 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
 effect|POST_BATTLE_SALVAGE_PERCENT|1.0	0	Your fleet has <good>1%</good> increased post-battle salvage.
 effect|POST_BATTLE_SALVAGE_PERCENT|10.0	0	Your fleet has <good>10%</good> increased post-battle salvage.
 effect|POST_BATTLE_SALVAGE_PERCENT|12.5	0	Your fleet has <good>12.5%</good> increased post-battle salvage.
@@ -2806,6 +2818,12 @@ effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|12.5	0	Additional top speed equal to 
 effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|100.0	0	Additional top speed equal to <good>100%</good> of your flagship's base top speed while your flagship is deployed.
 effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|-10.0	0	Additional top speed equal to <good>-10%</good> of your flagship's base top speed while your flagship is deployed.
 effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|-12.5	0	Additional top speed equal to <good>-12.5%</good> of your flagship's base top speed while your flagship is deployed.
+effect|TOP_SPEED_WHILE_RETREATING_PERCENT|1.0	0	<good>1%</good> increased top speed while retreating.
+effect|TOP_SPEED_WHILE_RETREATING_PERCENT|10.0	0	<good>10%</good> increased top speed while retreating.
+effect|TOP_SPEED_WHILE_RETREATING_PERCENT|12.5	0	<good>12.5%</good> increased top speed while retreating.
+effect|TOP_SPEED_WHILE_RETREATING_PERCENT|100.0	0	<good>100%</good> increased top speed while retreating.
+effect|TOP_SPEED_WHILE_RETREATING_PERCENT|-10.0	0	<bad>10%</bad> reduced top speed while retreating.
+effect|TOP_SPEED_WHILE_RETREATING_PERCENT|-12.5	0	<bad>12.5%</bad> reduced top speed while retreating.
 effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|1.0	0	<good>1%</good> increased top speed while this ship's fragment swarm is at least 90% full.
 effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|10.0	0	<good>10%</good> increased top speed while this ship's fragment swarm is at least 90% full.
 effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|12.5	0	<good>12.5%</good> increased top speed while this ship's fragment swarm is at least 90% full.
@@ -3073,6 +3091,12 @@ type-detail|accelerated_shields|CRUISER|0	0	Mutually exclusive with <hullmod>hul
 type|accelerated_shields|CAPITAL_SHIP|0	0	<good>50%</good> increased shield turn rate.
 type|accelerated_shields|CAPITAL_SHIP|1	0	<good>50%</good> increased shield raise rate.
 type-detail|accelerated_shields|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Constellate Design- Jet Black</hullmod>\n• <hullmod>Knight Refit</hullmod>\n• <hullmod>Primitive Shields</hullmod>\n• <hullmod>Low Arc Shield Emitter</hullmod>\n• <hullmod>Lostech Engineering</hullmod>\n• <hullmod>Accelerated Shields</hullmod>
+flavour|acceleration	0	Drive injectors rebored the pirate way, wide and rough, for a fast start from a standing burn. The tolerances are approximate.
+type|acceleration|null|0	0	<good>10%</good> increased acceleration.
+type|acceleration|FRIGATE|0	0	<good>10%</good> increased acceleration.
+type|acceleration|DESTROYER|0	0	<good>10%</good> increased acceleration.
+type|acceleration|CRUISER|0	0	<good>10%</good> increased acceleration.
+type|acceleration|CAPITAL_SHIP|0	0	<good>10%</good> increased acceleration.
 flavour|adaptive_phase_coils	0	Phase coils lose their grip on normal space as hard flux builds. A crew willing to rewind them by hand can keep that grip a while longer.
 flavourAutomated|adaptive_phase_coils	0	Phase coils lose their grip on normal space as hard flux builds. The ship's core models the slip from its own coil telemetry and corrects for it faster than any hand could rewind them, keeping that grip a while longer.
 type|adaptive_phase_coils|null|0	0	<good>40%</good> increased hard flux level at which phased speed reaches its minimum.
@@ -3325,6 +3349,13 @@ type-detail|blast_doors|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hu
 type|blast_doors|CAPITAL_SHIP|0	0	<good>20%</good> increased hull points.
 type|blast_doors|CAPITAL_SHIP|1	1	<bad>60%</bad> less crew casualties.
 type-detail|blast_doors|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Blast Doors</hullmod>
+flavour|blood_in_the_water	0	Raiders out of Kanta's Den read a nearby kill as the signal to press in with every gun running hot. A cycle flying beside them teaches the crew to strip the fire-rate governors the same way. The governors were Hegemony regulation.
+flavourAutomated|blood_in_the_water	0	Raiders out of Kanta's Den read a nearby kill as the signal to press in with every gun running hot. The ship's core logs the pattern over a cycle flying beside them, and the refit crew strips the fire-rate governors to match. The governors were Hegemony regulation.
+type|blood_in_the_water|null|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+type|blood_in_the_water|FRIGATE|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+type|blood_in_the_water|DESTROYER|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+type|blood_in_the_water|CRUISER|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+type|blood_in_the_water|CAPITAL_SHIP|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
 flavour|borrowed_grace	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the crew rewires the ship to do the same. The shield emitters were never built for that load.
 flavourAutomated|borrowed_grace	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the refit crew rewires the ship to do the same. The shield emitters were never built for that load.
 itemCost|borrowed_grace	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
@@ -3369,6 +3400,13 @@ type|cargo_capacity|FRIGATE|0	0	<good>+5</good> to cargo capacity.
 type|cargo_capacity|DESTROYER|0	0	<good>+15</good> to cargo capacity.
 type|cargo_capacity|CRUISER|0	0	<good>+25</good> to cargo capacity.
 type|cargo_capacity|CAPITAL_SHIP|0	0	<good>+50</good> to cargo capacity.
+flavour|cheap_shots	0	A gunner who signed on at a pirate base retunes the fire control to hold until a target's shields collapse or its drives gutter out. Fair fights are left to the navies.
+flavourAutomated|cheap_shots	0	Pirate wreck logs show their gunners holding fire until a target's shields collapse or its drives gutter out. The ship's core retunes its fire control to wait for the same moment. Fair fights are left to the navies.
+type|cheap_shots|null|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
+type|cheap_shots|FRIGATE|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
+type|cheap_shots|DESTROYER|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
+type|cheap_shots|CRUISER|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
+type|cheap_shots|CAPITAL_SHIP|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
 flavour|chronos_rhythms	0	After long hours with a recovered Chronos core, the crew decodes how it times its own systems and rewrites the ship system's control loop to match, cycling it faster than its makers ever intended.
 flavourAutomated|chronos_rhythms	0	Linked to a recovered Chronos core, the ship's core logs how it times its own systems and rewrites the ship system's control loop to match, cycling it faster than its makers ever intended.
 itemCost|chronos_rhythms	0	Costs 1 rat_chronos_core to allocate, returned when unallocated.
@@ -3515,6 +3553,25 @@ type|crustacean_integration|CRUISER|2	0	<good>30%</good> increased peak performa
 type|crustacean_integration|CAPITAL_SHIP|0	0	<good>15%</good> increased combat readiness recovery rate.
 type|crustacean_integration|CAPITAL_SHIP|1	0	<good>10%</good> increased top speed.
 type|crustacean_integration|CAPITAL_SHIP|2	0	<good>30%</good> increased peak performance time.
+flavour|cut_and_run	0	Pirate captains plan the escape before the ambush. The crew fits a drive overboost pulled from a captured Wolf, wired to cut in only once the ship breaks off. Its last owner did not break off soon enough.
+flavourAutomated|cut_and_run	0	Pirate captains plan the escape before the ambush. The refit crew fits a drive overboost pulled from a captured Wolf, and the ship's core cuts it in only once the ship breaks off. Its last owner did not break off soon enough.
+type|cut_and_run|null|0	0	<good>30%</good> increased top speed while retreating.
+type|cut_and_run|FRIGATE|0	0	<good>30%</good> increased top speed while retreating.
+type|cut_and_run|DESTROYER|0	0	<good>30%</good> increased top speed while retreating.
+type|cut_and_run|CRUISER|0	0	<good>30%</good> increased top speed while retreating.
+type|cut_and_run|CAPITAL_SHIP|0	0	<good>30%</good> increased top speed while retreating.
+flavour|damage_to_helpless_ships	0	Fire-control software lifted from a pirate wreck, written to mark any target with failing shields or dead drives. The rest of its memory is gambling ledgers.
+type|damage_to_helpless_ships|null|0	0	<good>5%</good> increased damage to overloaded, venting or flamed-out ships.
+type|damage_to_helpless_ships|FRIGATE|0	0	<good>5%</good> increased damage to overloaded, venting or flamed-out ships.
+type|damage_to_helpless_ships|DESTROYER|0	0	<good>5%</good> increased damage to overloaded, venting or flamed-out ships.
+type|damage_to_helpless_ships|CRUISER|0	0	<good>5%</good> increased damage to overloaded, venting or flamed-out ships.
+type|damage_to_helpless_ships|CAPITAL_SHIP|0	0	<good>5%</good> increased damage to overloaded, venting or flamed-out ships.
+flavour|damage_to_slower_ships	0	Targeting tables from a raider's fire-control core weight every shot toward whatever can't outrun the ship. Most freighters can't.
+type|damage_to_slower_ships|null|0	0	<good>4%</good> increased damage to ships with a lower top speed than this one.
+type|damage_to_slower_ships|FRIGATE|0	0	<good>4%</good> increased damage to ships with a lower top speed than this one.
+type|damage_to_slower_ships|DESTROYER|0	0	<good>4%</good> increased damage to ships with a lower top speed than this one.
+type|damage_to_slower_ships|CRUISER|0	0	<good>4%</good> increased damage to ships with a lower top speed than this one.
+type|damage_to_slower_ships|CAPITAL_SHIP|0	0	<good>4%</good> increased damage to ships with a lower top speed than this one.
 type-detail|dedicated_targeting_core|null|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
 type-detail|dedicated_targeting_core|null|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Carrier Gunships</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Dedicated Targeting Core</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Integrated Targeting Unit</node>
 type|dedicated_targeting_core|FRIGATE|0	0	<good>0%</good> increased ballistic weapon range.
@@ -5010,6 +5067,13 @@ type|phase_fed_magazines|FRIGATE|0	0	<good>100%</good> increased ammo regenerati
 type|phase_fed_magazines|DESTROYER|0	0	<good>100%</good> increased ammo regeneration while phased.
 type|phase_fed_magazines|CRUISER|0	0	<good>100%</good> increased ammo regeneration while phased.
 type|phase_fed_magazines|CAPITAL_SHIP|0	0	<good>100%</good> increased ammo regeneration while phased.
+flavour|pick_off_stragglers	0	Pirate raiders shadow a convoy for days, waiting for one freighter to fall behind its escorts. The crew patches the targeting suite to flag any hull left on its own. Convoy masters file it as a scheduling problem.
+flavourAutomated|pick_off_stragglers	0	Pirate raiders shadow a convoy for days, waiting for one freighter to fall behind its escorts. The ship's core learns the habit from intercepted raider traffic and flags any hull left on its own. Convoy masters file it as a scheduling problem.
+type|pick_off_stragglers|null|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
+type|pick_off_stragglers|FRIGATE|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
+type|pick_off_stragglers|DESTROYER|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
+type|pick_off_stragglers|CRUISER|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
+type|pick_off_stragglers|CAPITAL_SHIP|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
 type|point_defense_damage_to_missiles_and_fighters|null|0	0	<good>10%</good> increased damage to missiles.
 type|point_defense_damage_to_missiles_and_fighters|null|1	0	<good>10%</good> increased damage to fighters.
 type|point_defense_damage_to_missiles_and_fighters|FRIGATE|0	0	<good>10%</good> increased damage to missiles.
@@ -5136,6 +5200,13 @@ type|root_midline|FRIGATE|0	0	<good>+10</good> to Midline Affinity.
 type|root_midline|DESTROYER|0	0	<good>+10</good> to Midline Affinity.
 type|root_midline|CRUISER|0	0	<good>+10</good> to Midline Affinity.
 type|root_midline|CAPITAL_SHIP|0	0	<good>+10</good> to Midline Affinity.
+flavour|running_dark	0	Pirate captains run with their transponders dark and their drive plumes baffled behind scrap plating. A smuggler paid for passage with the baffle schematics, and the crew fits the baffles to match. Customs never saw either of them.
+flavourAutomated|running_dark	0	Pirate captains run with their transponders dark and their drive plumes baffled behind scrap plating. The ship's core pulls the baffle schematics from a smuggler's discarded nav logs, and the refit crew fits them. Customs never saw the logs.
+type|running_dark|null|0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+type|running_dark|FRIGATE|0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+type|running_dark|DESTROYER|0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+type|running_dark|CRUISER|0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+type|running_dark|CAPITAL_SHIP|0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
 type|safety_overrides|null|0	0	The zero-flux speed boost works at any flux level.
 type|safety_overrides|null|1	0	<good>100%</good> more flux dissipation.
 type|safety_overrides|null|2	0	<bad>67%</bad> less peak performance time.
@@ -5695,6 +5766,12 @@ type|weapon_durability|FRIGATE|0	0	<good>5%</good> increased weapon durability.
 type|weapon_durability|DESTROYER|0	0	<good>5%</good> increased weapon durability.
 type|weapon_durability|CRUISER|0	0	<good>5%</good> increased weapon durability.
 type|weapon_durability|CAPITAL_SHIP|0	0	<good>5%</good> increased weapon durability.
+flavour|weapon_flux_cost	0	Pirate refits run every weapon mount with its capacitor safeties bypassed. The safeties go in a crate, in case of inspection.
+type|weapon_flux_cost|null|0	1	<bad>3%</bad> reduced weapon flux cost.
+type|weapon_flux_cost|FRIGATE|0	1	<bad>3%</bad> reduced weapon flux cost.
+type|weapon_flux_cost|DESTROYER|0	1	<bad>3%</bad> reduced weapon flux cost.
+type|weapon_flux_cost|CRUISER|0	1	<bad>3%</bad> reduced weapon flux cost.
+type|weapon_flux_cost|CAPITAL_SHIP|0	1	<bad>3%</bad> reduced weapon flux cost.
 type|weapon_turn_rate|null|0	0	<good>20%</good> increased weapon turn rate.
 type|weapon_turn_rate|FRIGATE|0	0	<good>20%</good> increased weapon turn rate.
 type|weapon_turn_rate|DESTROYER|0	0	<good>20%</good> increased weapon turn rate.

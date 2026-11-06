@@ -170,6 +170,98 @@
 			]
 		},
 		{
+			"id": "cheap_shots",
+			"name": "Cheap Shots",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "DAMAGE_TO_HELPLESS_SHIP_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"flavour": "A gunner who signed on at a pirate base retunes the fire control to hold until a target's shields collapse or its drives gutter out. Fair fights are left to the navies.",
+			"flavourAutomated": "Pirate wreck logs show their gunners holding fire until a target's shields collapse or its drives gutter out. The ship's core retunes its fire control to wait for the same moment. Fair fights are left to the navies.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons"
+			]
+		},
+		{
+			"id": "running_dark",
+			"name": "Running Dark",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT",
+					"magnitude": -10
+				}
+			],
+			"flavour": "Pirate captains run with their transponders dark and their drive plumes baffled behind scrap plating. A smuggler paid for passage with the baffle schematics, and the crew fits the baffles to match. Customs never saw either of them.",
+			"flavourAutomated": "Pirate captains run with their transponders dark and their drive plumes baffled behind scrap plating. The ship's core pulls the baffle schematics from a smuggler's discarded nav logs, and the refit crew fits them. Customs never saw the logs.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"logistics",
+				"campaign_only",
+				"logistics_cap"
+			]
+		},
+		{
+			"id": "blood_in_the_water",
+			"name": "Blood in the Water",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT",
+					"magnitude": 1000
+				}
+			],
+			"flavour": "Raiders out of Kanta's Den read a nearby kill as the signal to press in with every gun running hot. A cycle flying beside them teaches the crew to strip the fire-rate governors the same way. The governors were Hegemony regulation.",
+			"flavourAutomated": "Raiders out of Kanta's Den read a nearby kill as the signal to press in with every gun running hot. The ship's core logs the pattern over a cycle flying beside them, and the refit crew strips the fire-rate governors to match. The governors were Hegemony regulation.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons"
+			]
+		},
+		{
+			"id": "cut_and_run",
+			"name": "Cut and Run",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "TOP_SPEED_WHILE_RETREATING_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"flavour": "Pirate captains plan the escape before the ambush. The crew fits a drive overboost pulled from a captured Wolf, wired to cut in only once the ship breaks off. Its last owner did not break off soon enough.",
+			"flavourAutomated": "Pirate captains plan the escape before the ambush. The refit crew fits a drive overboost pulled from a captured Wolf, and the ship's core cuts it in only once the ship breaks off. Its last owner did not break off soon enough.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"speed"
+			]
+		},
+		{
+			"id": "pick_off_stragglers",
+			"name": "Pick Off Stragglers",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "DAMAGE_TO_ISOLATED_SHIP_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"flavour": "Pirate raiders shadow a convoy for days, waiting for one freighter to fall behind its escorts. The crew patches the targeting suite to flag any hull left on its own. Convoy masters file it as a scheduling problem.",
+			"flavourAutomated": "Pirate raiders shadow a convoy for days, waiting for one freighter to fall behind its escorts. The ship's core learns the habit from intercepted raider traffic and flags any hull left on its own. Convoy masters file it as a scheduling problem.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons"
+			]
+		},
+		{
 			"id": "tripad_backdoor",
 			"name": "TriPad Backdoor",
 			"icon": "graphics/icons/tactical_superiority.png",
@@ -3486,6 +3578,71 @@
 			],
 			"tags": [
 				"point_defense"
+			]
+		},
+		{
+			"id": "damage_to_helpless_ships",
+			"name": "Damage to Helpless Ships",
+			"icon": "",
+			"effects": [
+				{
+					"effect": "DAMAGE_TO_HELPLESS_SHIP_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"flavour": "Fire-control software lifted from a pirate wreck, written to mark any target with failing shields or dead drives. The rest of its memory is gambling ledgers.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons"
+			]
+		},
+		{
+			"id": "weapon_flux_cost",
+			"name": "Weapon Flux Cost",
+			"icon": "",
+			"effects": [
+				{
+					"effect": "WEAPON_FLUX_COST_PERCENT",
+					"magnitude": -3
+				}
+			],
+			"flavour": "Pirate refits run every weapon mount with its capacitor safeties bypassed. The safeties go in a crate, in case of inspection.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons",
+				"flux"
+			]
+		},
+		{
+			"id": "acceleration",
+			"name": "Acceleration",
+			"icon": "",
+			"effects": [
+				{
+					"effect": "ACCELERATION_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"flavour": "Drive injectors rebored the pirate way, wide and rough, for a fast start from a standing burn. The tolerances are approximate.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"speed"
+			]
+		},
+		{
+			"id": "damage_to_slower_ships",
+			"name": "Damage to Slower Ships",
+			"icon": "",
+			"effects": [
+				{
+					"effect": "DAMAGE_TO_SLOWER_SHIP_PERCENT",
+					"magnitude": 4
+				}
+			],
+			"flavour": "Targeting tables from a raider's fire-control core weight every shot toward whatever can't outrun the ship. Most freighters can't.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons"
 			]
 		},
 		{

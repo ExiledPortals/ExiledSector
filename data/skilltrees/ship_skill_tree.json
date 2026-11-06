@@ -8618,9 +8618,9 @@
 			"id": "affinity_126",
 			"type": "affinity",
 			"connectedTo": [
-				"affinity_129",
 				"affinity_127",
-				"affinity_61"
+				"affinity_61",
+				"affinity_147"
 			],
 			"x": 14835,
 			"y": 2893,
@@ -8635,12 +8635,13 @@
 			"type": "affinity",
 			"connectedTo": [
 				"affinity_126",
-				"affinity_128"
+				"affinity_145",
+				"damage_to_helpless_ships_1"
 			],
-			"x": 12674,
-			"y": 5054,
+			"x": 14021,
+			"y": 4583,
 			"orbitAnchorId": "anchor_92",
-			"orbitAngle": 90,
+			"orbitAngle": 51.43,
 			"tags": [
 				"pirate"
 			]
@@ -8649,13 +8650,14 @@
 			"id": "affinity_128",
 			"type": "affinity",
 			"connectedTo": [
-				"affinity_127",
-				"affinity_129"
+				"affinity_145",
+				"affinity_146",
+				"damage_to_slower_ships_1"
 			],
-			"x": 10513,
-			"y": 2893,
+			"x": 10727,
+			"y": 3830,
 			"orbitAnchorId": "anchor_92",
-			"orbitAngle": 180,
+			"orbitAngle": 154.29,
 			"tags": [
 				"pirate"
 			]
@@ -8664,13 +8666,14 @@
 			"id": "affinity_129",
 			"type": "affinity",
 			"connectedTo": [
-				"affinity_128",
-				"affinity_126"
+				"affinity_146",
+				"affinity_147",
+				"sensor_profile_4"
 			],
-			"x": 12674,
-			"y": 732,
+			"x": 12193,
+			"y": 786,
 			"orbitAnchorId": "anchor_92",
-			"orbitAngle": 270,
+			"orbitAngle": -102.86,
 			"tags": [
 				"pirate"
 			]
@@ -9042,6 +9045,273 @@
 			"orbitAngle": -60,
 			"tags": [
 				"persean_league"
+			]
+		},
+		{
+			"id": "affinity_145",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_127",
+				"affinity_128",
+				"weapon_flux_cost_1"
+			],
+			"x": 12193,
+			"y": 5000,
+			"orbitAnchorId": "anchor_92",
+			"orbitAngle": 102.86,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "affinity_146",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_128",
+				"affinity_129",
+				"acceleration_1"
+			],
+			"x": 10727,
+			"y": 1956,
+			"orbitAnchorId": "anchor_92",
+			"orbitAngle": -154.29,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "affinity_147",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_129",
+				"affinity_126"
+			],
+			"x": 14021,
+			"y": 1203,
+			"orbitAnchorId": "anchor_92",
+			"orbitAngle": -51.43,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "damage_to_helpless_ships_1",
+			"type": "damage_to_helpless_ships",
+			"connectedTo": [
+				"affinity_127",
+				"damage_to_helpless_ships_2"
+			],
+			"x": 13862,
+			"y": 4383,
+			"orbitAnchorId": "anchor_109",
+			"orbitAngle": 51.43,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "damage_to_helpless_ships_2",
+			"type": "damage_to_helpless_ships",
+			"connectedTo": [
+				"damage_to_helpless_ships_1",
+				"cheap_shots_1"
+			],
+			"x": 13891,
+			"y": 4130,
+			"orbitAnchorId": "anchor_109",
+			"orbitAngle": -38.57,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "cheap_shots_1",
+			"type": "cheap_shots",
+			"connectedTo": [
+				"damage_to_helpless_ships_2"
+			],
+			"x": 13638,
+			"y": 4101,
+			"orbitAnchorId": "anchor_109",
+			"orbitAngle": -128.57,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "weapon_flux_cost_1",
+			"type": "weapon_flux_cost",
+			"connectedTo": [
+				"affinity_145",
+				"weapon_flux_cost_2"
+			],
+			"x": 12250,
+			"y": 4751,
+			"orbitAnchorId": "anchor_110",
+			"orbitAngle": 102.86,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "weapon_flux_cost_2",
+			"type": "weapon_flux_cost",
+			"connectedTo": [
+				"weapon_flux_cost_1",
+				"blood_in_the_water_1"
+			],
+			"x": 12465,
+			"y": 4616,
+			"orbitAnchorId": "anchor_110",
+			"orbitAngle": 12.86,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "blood_in_the_water_1",
+			"type": "blood_in_the_water",
+			"connectedTo": [
+				"weapon_flux_cost_2"
+			],
+			"x": 12330,
+			"y": 4401,
+			"orbitAnchorId": "anchor_110",
+			"orbitAngle": -77.14,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "damage_to_slower_ships_1",
+			"type": "damage_to_slower_ships",
+			"connectedTo": [
+				"affinity_128",
+				"damage_to_slower_ships_2"
+			],
+			"x": 10957,
+			"y": 3720,
+			"orbitAnchorId": "anchor_111",
+			"orbitAngle": 154.29,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "damage_to_slower_ships_2",
+			"type": "damage_to_slower_ships",
+			"connectedTo": [
+				"damage_to_slower_ships_1",
+				"pick_off_stragglers_1"
+			],
+			"x": 11197,
+			"y": 3804,
+			"orbitAnchorId": "anchor_111",
+			"orbitAngle": 64.29,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "pick_off_stragglers_1",
+			"type": "pick_off_stragglers",
+			"connectedTo": [
+				"damage_to_slower_ships_2"
+			],
+			"x": 11281,
+			"y": 3564,
+			"orbitAnchorId": "anchor_111",
+			"orbitAngle": -25.71,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "acceleration_1",
+			"type": "acceleration",
+			"connectedTo": [
+				"affinity_146",
+				"acceleration_2"
+			],
+			"x": 10957,
+			"y": 2066,
+			"orbitAnchorId": "anchor_112",
+			"orbitAngle": -154.29,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "acceleration_2",
+			"type": "acceleration",
+			"connectedTo": [
+				"acceleration_1",
+				"cut_and_run_1"
+			],
+			"x": 11041,
+			"y": 2306,
+			"orbitAnchorId": "anchor_112",
+			"orbitAngle": 115.71,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "cut_and_run_1",
+			"type": "cut_and_run",
+			"connectedTo": [
+				"acceleration_2"
+			],
+			"x": 11281,
+			"y": 2222,
+			"orbitAnchorId": "anchor_112",
+			"orbitAngle": 25.71,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "sensor_profile_4",
+			"type": "sensor_profile",
+			"connectedTo": [
+				"affinity_129",
+				"sensor_profile_5"
+			],
+			"x": 12250,
+			"y": 1035,
+			"orbitAnchorId": "anchor_113",
+			"orbitAngle": -102.86,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "sensor_profile_5",
+			"type": "sensor_profile",
+			"connectedTo": [
+				"sensor_profile_4",
+				"running_dark_1"
+			],
+			"x": 12115,
+			"y": 1250,
+			"orbitAnchorId": "anchor_113",
+			"orbitAngle": 167.14,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "running_dark_1",
+			"type": "running_dark",
+			"connectedTo": [
+				"sensor_profile_5"
+			],
+			"x": 12330,
+			"y": 1385,
+			"orbitAnchorId": "anchor_113",
+			"orbitAngle": 77.14,
+			"tags": [
+				"pirate"
 			]
 		}
 	],
@@ -11495,30 +11765,6 @@
 			"controlY": -14591
 		},
 		{
-			"a": "affinity_126",
-			"b": "affinity_127",
-			"controlX": 14202,
-			"controlY": 4421
-		},
-		{
-			"a": "affinity_127",
-			"b": "affinity_128",
-			"controlX": 11146,
-			"controlY": 4421
-		},
-		{
-			"a": "affinity_128",
-			"b": "affinity_129",
-			"controlX": 11146,
-			"controlY": 1365
-		},
-		{
-			"a": "affinity_126",
-			"b": "affinity_129",
-			"controlX": 14202,
-			"controlY": 1365
-		},
-		{
 			"a": "affinity_130",
 			"b": "affinity_131",
 			"controlX": 11751,
@@ -11805,6 +12051,48 @@
 			"b": "reduced_d_mod_effect_8",
 			"controlX": -13350,
 			"controlY": 4320
+		},
+		{
+			"a": "affinity_126",
+			"b": "affinity_127",
+			"controlX": 14621,
+			"controlY": 3831
+		},
+		{
+			"a": "affinity_127",
+			"b": "affinity_145",
+			"controlX": 13155,
+			"controlY": 5000
+		},
+		{
+			"a": "affinity_145",
+			"b": "affinity_128",
+			"controlX": 11327,
+			"controlY": 4583
+		},
+		{
+			"a": "affinity_128",
+			"b": "affinity_146",
+			"controlX": 10513,
+			"controlY": 2893
+		},
+		{
+			"a": "affinity_146",
+			"b": "affinity_129",
+			"controlX": 11327,
+			"controlY": 1203
+		},
+		{
+			"a": "affinity_129",
+			"b": "affinity_147",
+			"controlX": 13155,
+			"controlY": 786
+		},
+		{
+			"a": "affinity_147",
+			"b": "affinity_126",
+			"controlX": 14621,
+			"controlY": 1955
 		}
 	],
 	"hiddenConnectors": [
@@ -12644,6 +12932,36 @@
 			"id": "anchor_108",
 			"x": -10698,
 			"y": -6494,
+			"radius": 180
+		},
+		{
+			"id": "anchor_109",
+			"x": 13750,
+			"y": 4242,
+			"radius": 180
+		},
+		{
+			"id": "anchor_110",
+			"x": 12290,
+			"y": 4576,
+			"radius": 180
+		},
+		{
+			"id": "anchor_111",
+			"x": 11119,
+			"y": 3642,
+			"radius": 180
+		},
+		{
+			"id": "anchor_112",
+			"x": 11119,
+			"y": 2144,
+			"radius": 180
+		},
+		{
+			"id": "anchor_113",
+			"x": 12290,
+			"y": 1210,
 			"radius": 180
 		}
 	],

@@ -4,6 +4,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
+import exiledsector.skills.skilleffect.weapon.PirateFrenzy;
 
 import static exiledsector.skills.skilleffect.Backings.listener;
 
@@ -99,6 +100,14 @@ public enum AuraSkillEffect implements BackedSkillEffect {
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", magnitude).arg("range", WreckPlatingListener.RANGE)
                     .arg("percent", WreckPlatingListener.REPAIR_PERCENT_PER_WRECK).styled();
+        }
+    },
+    PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT(listener(FrenzyOnNearbyDestructionListener.RANGE_KEY,
+            FrenzyOnNearbyDestructionListener.class, FrenzyOnNearbyDestructionListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("seconds", PirateFrenzy.STACK_SECONDS)
+                    .arg("stacks", PirateFrenzy.MAX_STACKS).styled().append("\n").append(PirateFrenzy.describeStackBonuses());
         }
     },
     CREW_STEAL_RANGE_FLAT(listener(CrewStealListener.RANGE_KEY, CrewStealListener.class, CrewStealListener::new)),

@@ -34,6 +34,8 @@ public enum MovementSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("full", SwarmHunt.FULL_PERCENT).styled();
         }
     },
+    TOP_SPEED_WHILE_RETREATING_PERCENT(new ConditionalStatEffect(PERCENT, liveStat(MutableShipStatsAPI::getMaxSpeed),
+            "stat.topSpeedWhileRetreating", ShipAPI::isRetreating)),
     EMP_ARC_STRIKE_SPEED_PERCENT(listener(ArcStrikeSpeedListener.SPEED_PERCENT_KEY, ArcStrikeSpeedListener.class, ArcStrikeSpeedListener::new)) {
         @Override
         public StyledText description(float magnitude) {
