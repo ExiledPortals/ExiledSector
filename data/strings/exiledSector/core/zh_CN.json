@@ -1180,6 +1180,7 @@
     "stat.damageToHelplessShips": "对过载、主动排散或熄火舰船造成的伤害",
     "effect.OPENING_WEAPON_DAMAGE_PERCENT": "本舰部署后的前{seconds}秒内，武器伤害提高<good>{value}%</good>。",
     "effect.SHARED_TARGET_DAMAGE_PERCENT": "对友方舰船已锁定的敌舰造成的伤害提高<good>{value}%</good>。",
+    "effect.EMP_DAMAGE_PERCENT": "EMP伤害提高<good>{value}%</good>。",
     "effect.EMP_DAMAGE_MULT": "EMP伤害提高<good>{value}%</good>（乘算）。",
     "effect.DAMAGE_TO_DISTANT_TARGETS_PERCENT.more": "对{range} su以外的目标造成的伤害提高<good>{value}%</good>。",
     "effect.DAMAGE_TO_DISTANT_TARGETS_PERCENT.less": "对{range} su以外的目标造成的伤害降低<bad>{value}%</bad>。",

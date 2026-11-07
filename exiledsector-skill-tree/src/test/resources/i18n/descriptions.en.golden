@@ -820,6 +820,12 @@ effect|EMP_DAMAGE_MULT|12.5	0	<good>12.5%</good> more EMP damage.
 effect|EMP_DAMAGE_MULT|100.0	0	<good>100%</good> more EMP damage.
 effect|EMP_DAMAGE_MULT|-10.0	0	<good>-10%</good> more EMP damage.
 effect|EMP_DAMAGE_MULT|-12.5	0	<good>-12.5%</good> more EMP damage.
+effect|EMP_DAMAGE_PERCENT|1.0	0	<good>1%</good> increased EMP damage.
+effect|EMP_DAMAGE_PERCENT|10.0	0	<good>10%</good> increased EMP damage.
+effect|EMP_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased EMP damage.
+effect|EMP_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased EMP damage.
+effect|EMP_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> increased EMP damage.
+effect|EMP_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> increased EMP damage.
 effect|EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT|1.0	0	Taking EMP damage dissipates hard flux equal to <good>1%</good> of that EMP damage.
 effect|EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT|10.0	0	Taking EMP damage dissipates hard flux equal to <good>10%</good> of that EMP damage.
 effect|EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT|12.5	0	Taking EMP damage dissipates hard flux equal to <good>12.5%</good> of that EMP damage.
@@ -3297,11 +3303,6 @@ type|all_must_serve|CRUISER|0	0	Enemy ships destroyed within 1500 su of this shi
 type|all_must_serve|CRUISER|1	0	Takes <good>10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
 type|all_must_serve|CAPITAL_SHIP|0	0	Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.
 type|all_must_serve|CAPITAL_SHIP|1	0	Takes <good>10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
-type|all_weapon_damage|null|0	0	<good>5%</good> increased weapon damage.
-type|all_weapon_damage|FRIGATE|0	0	<good>5%</good> increased weapon damage.
-type|all_weapon_damage|DESTROYER|0	0	<good>5%</good> increased weapon damage.
-type|all_weapon_damage|CRUISER|0	0	<good>5%</good> increased weapon damage.
-type|all_weapon_damage|CAPITAL_SHIP|0	0	<good>5%</good> increased weapon damage.
 type|ammo_capacity|null|0	0	<good>20%</good> increased ballistic weapon ammo capacity.
 type|ammo_capacity|null|1	0	<good>20%</good> increased energy weapon ammo capacity.
 type|ammo_capacity|FRIGATE|0	0	<good>20%</good> increased ballistic weapon ammo capacity.
@@ -4145,6 +4146,12 @@ type|efficient_vents|CRUISER|0	0	<good>15%</good> increased flux dissipation.
 type|efficient_vents|CRUISER|1	0	<good>+50</good> to flux dissipation.
 type|efficient_vents|CAPITAL_SHIP|0	0	<good>15%</good> increased flux dissipation.
 type|efficient_vents|CAPITAL_SHIP|1	0	<good>+50</good> to flux dissipation.
+flavour|emp_damage	0	Capacitor banks rewound to Tri-Tachyon specifications put more charge behind every hit. The specifications were not for sale, strictly speaking.
+type|emp_damage|null|0	0	<good>5%</good> increased EMP damage.
+type|emp_damage|FRIGATE|0	0	<good>5%</good> increased EMP damage.
+type|emp_damage|DESTROYER|0	0	<good>5%</good> increased EMP damage.
+type|emp_damage|CRUISER|0	0	<good>5%</good> increased EMP damage.
+type|emp_damage|CAPITAL_SHIP|0	0	<good>5%</good> increased EMP damage.
 type|energy_damage_resistance|null|0	1	<bad>5%</bad> reduced energy damage taken.
 type|energy_damage_resistance|FRIGATE|0	1	<bad>5%</bad> reduced energy damage taken.
 type|energy_damage_resistance|DESTROYER|0	1	<bad>5%</bad> reduced energy damage taken.

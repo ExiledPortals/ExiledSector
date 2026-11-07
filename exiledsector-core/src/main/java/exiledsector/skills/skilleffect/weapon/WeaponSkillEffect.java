@@ -101,7 +101,8 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     },
     SHARED_TARGET_DAMAGE_PERCENT(listener(SharedTargetDamageListener.DAMAGE_PERCENT_KEY, SharedTargetDamageListener.class,
             SharedTargetDamageListener::new)),
-    EMP_DAMAGE_MULT(listener(EmpDamageListener.EMP_PERCENT_KEY, EmpDamageListener.class, EmpDamageListener::new)),
+    EMP_DAMAGE_PERCENT(listener(EmpDamageListener.EMP_INCREASED_PERCENT_KEY, EmpDamageListener.class, EmpDamageListener::new)),
+    EMP_DAMAGE_MULT(listener(EmpDamageListener.EMP_MORE_PERCENT_KEY, EmpDamageListener.class, EmpDamageListener::new)),
     DAMAGE_TO_DISTANT_TARGETS_PERCENT(listener(DistantTargetDamageListener.DAMAGE_PERCENT_KEY, DistantTargetDamageListener.class,
             DistantTargetDamageListener::new)) {
         @Override

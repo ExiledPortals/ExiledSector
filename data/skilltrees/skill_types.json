@@ -493,12 +493,6 @@
 			"id": "all_weapon_damage",
 			"name": "All Weapon Damage",
 			"icon": "graphics/icons/weapon_damage.png",
-			"effects": [
-				{
-					"effect": "WEAPON_DAMAGE_PERCENT",
-					"magnitude": 5
-				}
-			],
 			"tags": [
 				"weapons"
 			]
@@ -5532,6 +5526,22 @@
 			"flavour": "The Merite Class Destroyer is often praised by its ability to assault enemy ships by sheer brute force, thanks to its Jump Jets ship system. By listening to \"sage\" advice from fellow Navarchy of Tania officers, you order your crew to refit the ship with increased weight and improved protection against collateral effects from excessive G-force.",
 			"tags": [
 				"hull"
+			]
+		},
+		{
+			"id": "emp_damage",
+			"name": "EMP Damage",
+			"icon": "graphics/icons/idk_shifted_shifted.png",
+			"effects": [
+				{
+					"effect": "EMP_DAMAGE_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"flavour": "Capacitor banks rewound to Tri-Tachyon specifications put more charge behind every hit. The specifications were not for sale, strictly speaking.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons"
 			]
 		},
 		{

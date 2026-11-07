@@ -701,6 +701,7 @@
     "stat.damageToHelplessShips": "damage to overloaded, venting or flamed-out ships",
     "effect.OPENING_WEAPON_DAMAGE_PERCENT": "<good>{value}%</good> increased weapon damage for the first {seconds} seconds after this ship deploys.",
     "effect.SHARED_TARGET_DAMAGE_PERCENT": "<good>{value}%</good> increased damage to enemy ships an allied ship has targeted.",
+    "effect.EMP_DAMAGE_PERCENT": "<good>{value}%</good> increased EMP damage.",
     "effect.EMP_DAMAGE_MULT": "<good>{value}%</good> more EMP damage.",
     "effect.DAMAGE_TO_DISTANT_TARGETS_PERCENT.more": "<good>{value}%</good> increased damage to targets more than {range} su away.",
     "effect.DAMAGE_TO_DISTANT_TARGETS_PERCENT.less": "<bad>{value}%</bad> reduced damage to targets more than {range} su away.",

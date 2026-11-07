@@ -139,6 +139,7 @@
     {"name": "ELECTRONIC_WARFARE_PENALTY_PERCENT", "statMode": "PERCENT", "lowerIsBetter": true},
     {"name": "EMP_ARC_STRIKE_SPEED_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "EMP_DAMAGE_MULT", "statMode": null, "lowerIsBetter": false},
+    {"name": "EMP_DAMAGE_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "EMP_DAMAGE_TAKEN_MULT", "statMode": "MULT", "lowerIsBetter": true},
     {"name": "EMP_DAMAGE_TAKEN_PERCENT", "statMode": "PERCENT", "lowerIsBetter": true},

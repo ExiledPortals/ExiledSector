@@ -355,6 +355,11 @@ strike craft counted as their carrier, or to no one if no enemy has.
 `OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT` then removes that share of the ship's hard flux, leaving soft flux alone. The
 overload still drops the shield.
 
+### EMP damage
+
+Vanilla has no stat for EMP damage dealt, so `EmpDamageListener` (`weapon`) rescales the EMP of each hit on a ship.
+`EMP_DAMAGE_PERCENT` sources are summed first and `EMP_DAMAGE_MULT` then multiplies that total.
+
 ### Ion Cascade
 
 Vanilla spreads a hull or armor hit's EMP over the weapons and engines within two armor cells of the struck cell, half
