@@ -89,13 +89,13 @@ describe('tree page', () => {
     };
     const socketElement = [...nodeElements(container)].find((element) => tierOfElement(element) === 'SOCKET') as SVGElement;
     const smallElement = [...nodeElements(container)].find((element) => tierOfElement(element) === 'SMALL') as SVGElement;
-    const radii = JSON.parse(readRepositoryFile(NODE_RADII_FILE)) as { small: number; medium: number; large: number };
+    const radii = JSON.parse(readRepositoryFile(NODE_RADII_FILE)) as Record<string, number>;
     const radiusLayer = () => container.querySelector('[data-testid="socket-radius-layer"]');
 
     fireEvent.pointerOver(socketElement);
     await waitFor(() => expect(radiusLayer()).toBeTruthy());
     const rings = [...(radiusLayer() as Element).querySelectorAll('circle')].map((ring) => Number(ring.getAttribute('r')));
-    expect(rings).toEqual([radii.small, radii.medium, radii.large]);
+    expect(rings).toEqual(Object.values(radii));
     expect(radiusLayer()?.textContent).toContain(`small ${radii.small}:`);
 
     fireEvent.pointerOver(smallElement);
