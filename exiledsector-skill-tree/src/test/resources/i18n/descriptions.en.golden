@@ -2908,6 +2908,12 @@ effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|12.5	0	<good>12.5%</good> increased to
 effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|100.0	0	<good>100%</good> increased top speed while this ship's fragment swarm is at least 90% full.
 effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|-10.0	0	<good>-10%</good> increased top speed while this ship's fragment swarm is at least 90% full.
 effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|-12.5	0	<good>-12.5%</good> increased top speed while this ship's fragment swarm is at least 90% full.
+effect|TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT|1.0	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+effect|TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT|10.0	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+10</good> to max burn level, up to this ship's max burn level.
+effect|TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT|12.5	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+12.5</good> to max burn level, up to this ship's max burn level.
+effect|TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT|100.0	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+100</good> to max burn level, up to this ship's max burn level.
+effect|TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT|-10.0	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+-10</good> to max burn level, up to this ship's max burn level.
+effect|TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT|-12.5	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+-12.5</good> to max burn level, up to this ship's max burn level.
 effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|1.0	1	Your fleet has <bad>1%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
 effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|10.0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
 effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|12.5	1	Your fleet has <bad>12.5%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
@@ -4490,6 +4496,18 @@ type|hardlight_marking|CRUISER|0	0	Each hit by a strikecraft launched from this 
 type|hardlight_marking|CRUISER|1	0	Strikecraft marks grant up to a maximum of <good>30%</good> increased damage taken.
 type|hardlight_marking|CAPITAL_SHIP|0	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>2%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
 type|hardlight_marking|CAPITAL_SHIP|1	0	Strikecraft marks grant up to a maximum of <good>30%</good> increased damage taken.
+flavour|haul_the_prize	0	Pirate crews haul captured freighters home on cables welded straight to the drive spine. The crew strips the cable gear from a salvaged Ox, and the drives feel every ton of it. The Ox's owners were not asked.
+flavourAutomated|haul_the_prize	0	Pirate crews haul captured freighters home on cables welded straight to the drive spine. The refit crew strips the cable gear from a salvaged Ox, and the ship's core retunes the drives around the extra mass. The Ox's owners were not asked.
+type|haul_the_prize|null|0	0	<bad>-1</bad> to max burn level.
+type|haul_the_prize|null|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+type|haul_the_prize|FRIGATE|0	0	<bad>-1</bad> to max burn level.
+type|haul_the_prize|FRIGATE|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+type|haul_the_prize|DESTROYER|0	0	<bad>-1</bad> to max burn level.
+type|haul_the_prize|DESTROYER|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+type|haul_the_prize|CRUISER|0	0	<bad>-1</bad> to max burn level.
+type|haul_the_prize|CRUISER|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+type|haul_the_prize|CAPITAL_SHIP|0	0	<bad>-1</bad> to max burn level.
+type|haul_the_prize|CAPITAL_SHIP|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
 type-detail|heavy_armor|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Anti-Beam Plating</hullmod>\n• <hullmod>Amorphous Alloy Armor</hullmod>\n• <hullmod>Vanagloria Ionized Armor</hullmod>\n• <hullmod>Critical Point Protection</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Powered Titanium Plates</hullmod>\n• <hullmod>Heavy Armor</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Critical Point Refit</node>
 type|heavy_armor|FRIGATE|0	0	<good>+150</good> to armor.
 type-detail|heavy_armor|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Anti-Beam Plating</hullmod>\n• <hullmod>Amorphous Alloy Armor</hullmod>\n• <hullmod>Vanagloria Ionized Armor</hullmod>\n• <hullmod>Critical Point Protection</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Powered Titanium Plates</hullmod>\n• <hullmod>Heavy Armor</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Critical Point Refit</node>

@@ -724,6 +724,8 @@
     "effect.RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT": "Your fleet has a <good>{value}%</good> chance for each ship it recovers after a battle to gain no d-mods, up to a maximum of {max}%.",
     "effect.SUPPLY_USE_REDUCTION_PERCENT_PER_HULL_TYPE": "Your fleet has <good>{value}%</good> reduced supply use for maintenance for every different hull type among its ships, up to a maximum of {max}%.",
     "effect.FUEL_USE_REDUCTION_PERCENT_WHILE_HALF_FUELED": "<good>{value}%</good> reduced fuel use while your fleet carries at least half its fuel capacity.",
+    "effect.TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT": "The slowest ship in your fleet of this ship's hull size or smaller has <good>+{value}</good> to max burn level, up to this ship's max burn level.",
+    "fleet.towLine": "Under tow",
     "fleet.moveSlowBurnLevel": "Drives tuned to run slow and quiet",
     "effect.TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT": "Your fleet has <bad>{value}%</bad> reduced sensor profile while its transponder is off, up to a maximum of {max}%.",
     "fleet.transponderOffSensorProfile": "Ships rigged to run dark",

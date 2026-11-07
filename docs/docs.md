@@ -304,6 +304,13 @@ within its range, checked every 0.25 seconds. Strike craft and station modules d
 1000 su. Strike craft and modules of the same station don't count as allies, and each target is rechecked at most
 every 0.25 seconds (`IsolatedShipDamageListener`).
 
+### Haul the Prize
+
+`TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT` works like vanilla's Monofilament Tow Cable with a hull size limit. On every fleet
+sync, each active tug, smallest hull first, adds its value to the max burn level of the currently slowest ship of its
+hull size or smaller, capped at the tug's own burn level. Tows stack, so several tugs can lift one ship up to their
+burn level (`TowLines`, called from `SkillTreeHullMod.onFleetSync`).
+
 ### Pather's Prow
 
 The node uses Ram-plated's `RAM_PROW_COLLISION_DAMAGE_PERCENT` (see Pirate Badlands modifiers); tree and hull item

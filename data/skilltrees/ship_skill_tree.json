@@ -9497,7 +9497,8 @@
 			"type": "affinity",
 			"connectedTo": [
 				"affinity_129",
-				"affinity_126"
+				"affinity_126",
+				"fuel_5"
 			],
 			"x": 14021,
 			"y": 1203,
@@ -10062,6 +10063,50 @@
 			"tags": [
 				"omega",
 				"gate_omega_found"
+			]
+		},
+		{
+			"id": "fuel_5",
+			"type": "fuel",
+			"connectedTo": [
+				"affinity_147",
+				"fuel_6"
+			],
+			"x": 13862,
+			"y": 1403,
+			"orbitAnchorId": "anchor_124",
+			"orbitAngle": -51.43,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "fuel_6",
+			"type": "fuel",
+			"connectedTo": [
+				"fuel_5",
+				"haul_the_prize_1"
+			],
+			"x": 13609,
+			"y": 1432,
+			"orbitAnchorId": "anchor_124",
+			"orbitAngle": -141.43,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "haul_the_prize_1",
+			"type": "haul_the_prize",
+			"connectedTo": [
+				"fuel_6"
+			],
+			"x": 13638,
+			"y": 1685,
+			"orbitAnchorId": "anchor_124",
+			"orbitAngle": 128.57,
+			"tags": [
+				"pirate"
 			]
 		}
 	],
@@ -14019,6 +14064,12 @@
 			"x": 17817,
 			"y": -14924,
 			"radius": 200
+		},
+		{
+			"id": "anchor_124",
+			"x": 13750,
+			"y": 1544,
+			"radius": 180
 		}
 	],
 	"decorations": [

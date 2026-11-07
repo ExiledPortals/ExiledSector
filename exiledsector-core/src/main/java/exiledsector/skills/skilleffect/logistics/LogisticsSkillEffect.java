@@ -49,6 +49,7 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
     CREW_CAPACITY_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getMaxCrewMod), "stat.crewCapacity", false)),
     CREW_CAPACITY_FLAT(statEffect(FLAT, bonus(MutableShipStatsAPI::getMaxCrewMod), "stat.crewCapacity", false)),
     BURN_LEVEL_FLAT(statEffect(FLAT, stat(MutableShipStatsAPI::getMaxBurnLevel), "stat.maxBurnLevel", false)),
+    TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT(anyFleetContribution(TowLines.TOW_BURN_LEVEL_KEY)),
     SENSOR_PROFILE_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getSensorProfile), "stat.sensorProfile", true)),
     SENSOR_PROFILE_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getSensorProfile), "stat.sensorProfile", true)),
     PHASE_HULL_SENSOR_PROFILE_PERCENT {

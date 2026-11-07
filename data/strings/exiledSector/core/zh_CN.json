@@ -1203,6 +1203,8 @@
     "effect.RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT": "你的舰队在战后回收的每艘舰船有<good>{value}%</good>的几率不获得D插，最多{max}%。",
     "effect.SUPPLY_USE_REDUCTION_PERCENT_PER_HULL_TYPE": "你的舰队中每有一种不同的舰体类型，维护补给消耗降低<good>{value}%</good>，最多{max}%。",
     "effect.FUEL_USE_REDUCTION_PERCENT_WHILE_HALF_FUELED": "你的舰队携带的燃料不少于燃料容量的一半时，燃料消耗降低<good>{value}%</good>。",
+    "effect.TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT": "你舰队中舰体规模不大于本舰的最慢舰船最大航速<good>+{value}</good>，最多达到本舰的最大航速。",
+    "fleet.towLine": "被拖曳中",
     "fleet.moveSlowBurnLevel": "为低速静默航行调校的引擎",
     "effect.TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT": "应答器关闭时，你的舰队传感器特征降低<bad>{value}%</bad>，最多降低{max}%。",
     "fleet.transponderOffSensorProfile": "为隐匿航行改装的舰船",

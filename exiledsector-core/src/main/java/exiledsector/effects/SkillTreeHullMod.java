@@ -21,6 +21,7 @@ import exiledsector.skills.StatBaseline;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.fighter.AffinityStrikecraft;
 import exiledsector.skills.skilleffect.logistics.FleetWideEffects;
+import exiledsector.skills.skilleffect.logistics.TowLines;
 import exiledsector.skills.skilleffect.weapon.SlotConversionBacking;
 import exiledsector.skills.skilleffect.weapon.WeaponSlotConversion;
 import exiledsector.ExiledSector;
@@ -241,6 +242,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         FleetWideEffects.applySwarmSensorStrength(fleet);
         FleetWideEffects.applyTerrainMovementPenalty(fleet);
         FleetWideEffects.applySupplyUsePerHullType(fleet);
+        TowLines.apply(fleet);
     }
 
     @Override

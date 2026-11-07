@@ -244,6 +244,30 @@
 			]
 		},
 		{
+			"id": "haul_the_prize",
+			"name": "Haul the Prize",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "BURN_LEVEL_FLAT",
+					"magnitude": -1
+				},
+				{
+					"effect": "TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT",
+					"magnitude": 1
+				}
+			],
+			"flavour": "Pirate crews haul captured freighters home on cables welded straight to the drive spine. The crew strips the cable gear from a salvaged Ox, and the drives feel every ton of it. The Ox's owners were not asked.",
+			"flavourAutomated": "Pirate crews haul captured freighters home on cables welded straight to the drive spine. The refit crew strips the cable gear from a salvaged Ox, and the ship's core retunes the drives around the extra mass. The Ox's owners were not asked.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"logistics",
+				"campaign_only",
+				"logistics_cap"
+			]
+		},
+		{
 			"id": "pick_off_stragglers",
 			"name": "Pick Off Stragglers",
 			"icon": "",

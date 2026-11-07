@@ -491,6 +491,7 @@
     {"name": "TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "TOP_SPEED_WHILE_RETREATING_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
     {"name": "TOP_SPEED_WHILE_SWARM_FULL_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
+    {"name": "TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT", "statMode": null, "lowerIsBetter": false},
     {"name": "TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT", "statMode": "FLAT", "lowerIsBetter": true},
     {"name": "UNHIT_ARMOR_REGEN_LOW_CAP_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "UNHIT_ARMOR_REGEN_PERCENT", "statMode": null, "lowerIsBetter": false},
