@@ -5382,17 +5382,14 @@
 					"effect": "BALLISTIC_SLOTS_HYBRID"
 				},
 				{
-					"effect": "BALLISTIC_WEAPON_FLUX_COST_PERCENT",
-					"magnitude": 25
-				},
-				{
 					"effect": "ENERGY_WEAPON_FLUX_COST_PERCENT",
 					"magnitude": 25
 				}
 			],
 			"flavour": "Desperation leads to innovation, and the pressure of an incoming war brought Farige engineers to the limit, with them bringing up unusual techniques to modernize recently found early epoch Domain designs. Mount plans traded by Navarchy quartermasters had a complete data basis of prototype adaptive weapon mounts, allowing ballistic weapon systems to draw harder from the ship's flux grid in order to field energy based weaponry.",
 			"tags": [
-				"weapons"
+				"weapons",
+				"player_only"
 			]
 		},
 		{
@@ -5496,7 +5493,8 @@
 			],
 			"flavour": "The legendary NTS Endurance, an Aetos Class Destroyer, managed to nail down multiple enemy frigates at once, protecting its fleet from terrific flankers, thanks to its Thermo-Accelerator system. By understanding the tactics employed by its captain and the ship's overengineered ammo feeders, your crew is now able to draw power from hardpoint weapon mounts so its turret weapons fire cooler in a similar fashion.",
 			"tags": [
-				"weapons"
+				"weapons",
+				"player_only"
 			]
 		},
 		{

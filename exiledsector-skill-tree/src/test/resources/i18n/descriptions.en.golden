@@ -5881,20 +5881,15 @@ type|tania_dysis_drive|CRUISER|0	0	Top speed changes with flux, from <good>+30</
 type|tania_dysis_drive|CAPITAL_SHIP|0	0	Top speed changes with flux, from <good>+20</good> su/s at no flux to <bad>-20</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>20%</good> increased acceleration and turn acceleration.
 flavour|tania_fafnir_breeches	0	Desperation leads to innovation, and the pressure of an incoming war brought Farige engineers to the limit, with them bringing up unusual techniques to modernize recently found early epoch Domain designs. Mount plans traded by Navarchy quartermasters had a complete data basis of prototype adaptive weapon mounts, allowing ballistic weapon systems to draw harder from the ship's flux grid in order to field energy based weaponry.
 type|tania_fafnir_breeches|null|0	0	Ballistic weapon mounts become hybrid mounts.
-type|tania_fafnir_breeches|null|1	1	<good>25%</good> increased ballistic weapon flux cost.
-type|tania_fafnir_breeches|null|2	1	<good>25%</good> increased energy weapon flux cost.
+type|tania_fafnir_breeches|null|1	1	<good>25%</good> increased energy weapon flux cost.
 type|tania_fafnir_breeches|FRIGATE|0	0	Ballistic weapon mounts become hybrid mounts.
-type|tania_fafnir_breeches|FRIGATE|1	1	<good>25%</good> increased ballistic weapon flux cost.
-type|tania_fafnir_breeches|FRIGATE|2	1	<good>25%</good> increased energy weapon flux cost.
+type|tania_fafnir_breeches|FRIGATE|1	1	<good>25%</good> increased energy weapon flux cost.
 type|tania_fafnir_breeches|DESTROYER|0	0	Ballistic weapon mounts become hybrid mounts.
-type|tania_fafnir_breeches|DESTROYER|1	1	<good>25%</good> increased ballistic weapon flux cost.
-type|tania_fafnir_breeches|DESTROYER|2	1	<good>25%</good> increased energy weapon flux cost.
+type|tania_fafnir_breeches|DESTROYER|1	1	<good>25%</good> increased energy weapon flux cost.
 type|tania_fafnir_breeches|CRUISER|0	0	Ballistic weapon mounts become hybrid mounts.
-type|tania_fafnir_breeches|CRUISER|1	1	<good>25%</good> increased ballistic weapon flux cost.
-type|tania_fafnir_breeches|CRUISER|2	1	<good>25%</good> increased energy weapon flux cost.
+type|tania_fafnir_breeches|CRUISER|1	1	<good>25%</good> increased energy weapon flux cost.
 type|tania_fafnir_breeches|CAPITAL_SHIP|0	0	Ballistic weapon mounts become hybrid mounts.
-type|tania_fafnir_breeches|CAPITAL_SHIP|1	1	<good>25%</good> increased ballistic weapon flux cost.
-type|tania_fafnir_breeches|CAPITAL_SHIP|2	1	<good>25%</good> increased energy weapon flux cost.
+type|tania_fafnir_breeches|CAPITAL_SHIP|1	1	<good>25%</good> increased energy weapon flux cost.
 flavour|tania_merite_lunge	0	The Merite Class Destroyer is often praised by its ability to assault enemy ships by sheer brute force, thanks to its Jump Jets ship system. By listening to "sage" advice from fellow Navarchy of Tania officers, you order your crew to refit the ship with increased weight and improved protection against collateral effects from excessive G-force.
 type|tania_merite_lunge|null|0	0	<good>50%</good> increased mass.
 type|tania_merite_lunge|null|1	0	<bad>35%</bad> less maneuverability.
