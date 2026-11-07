@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.ChartSites;
+import exiledsector.charts.content.ChartStations;
 
 public final class ChartSkirmishes {
 
@@ -30,7 +31,7 @@ public final class ChartSkirmishes {
                     return false;
                 }
                 commander = fleet;
-            } else if (SkirmishSide.DEFENDER.key().equals(side) && fleet.isStationMode()) {
+            } else if (SkirmishSide.DEFENDER.key().equals(side) && ChartStations.isStation(fleet)) {
                 station = fleet;
             }
         }

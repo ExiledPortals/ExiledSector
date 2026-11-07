@@ -137,6 +137,8 @@ class RefitButtonColumnTest {
         hullUpgradesButtonMock = Mockito.mockStatic(HullItemsRefitButton.class);
         benchButtonMock = Mockito.mockStatic(CraftingBenchRefitButton.class);
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
+        lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", RefitButtonConfig.SKILL_TREE_KEYBIND_FIELD_ID)).thenReturn(null);
+        lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", RefitButtonConfig.HULL_ITEMS_KEYBIND_FIELD_ID)).thenReturn(null);
         buttonUnderHullMods(true);
     }
 
@@ -332,6 +334,17 @@ class RefitButtonColumnTest {
         RefitButtonColumn.attach(widget);
 
         verify(benchButton).setShortcut(Keyboard.KEY_J, true);
+    }
+
+    @Test
+    void reboundSkillTreeAndHullItemsKeysBecomeTheirButtonsShortcuts() {
+        lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", RefitButtonConfig.SKILL_TREE_KEYBIND_FIELD_ID)).thenReturn(Keyboard.KEY_U);
+        lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", RefitButtonConfig.HULL_ITEMS_KEYBIND_FIELD_ID)).thenReturn(Keyboard.KEY_O);
+
+        RefitButtonColumn.attach(widget);
+
+        verify(button).setShortcut(Keyboard.KEY_U, true);
+        verify(hullUpgradesButton).setShortcut(Keyboard.KEY_O, true);
     }
 
     @Test

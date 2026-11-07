@@ -19,6 +19,7 @@ import exiledsector.charts.run.ChartTransverseJump;
 import exiledsector.charts.wormhole.ColonyFreeAtlas;
 import exiledsector.charts.wormhole.LimboBlueprintCache;
 import exiledsector.charts.wormhole.WormholeGateway;
+import exiledsector.compat.DiyPlanetsCompat;
 import exiledsector.compat.FoilerCompat;
 import exiledsector.compat.RuthlessSectorCompat;
 import exiledsector.compat.UnknownSkiesCompat;
@@ -192,6 +193,6 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     @Override
     public List<CompatTarget> compatTargets() {
         return List.of(VaultsOfKnowledgeCompat.TARGET, FoilerCompat.TERRAIN_FX, FoilerCompat.HYDROFOIL, UnknownSkiesCompat.TARGET,
-                RuthlessSectorCompat.TARGET);
+                RuthlessSectorCompat.TARGET, DiyPlanetsCompat.TARGET);
     }
 }

@@ -584,7 +584,8 @@ fleet's `FleetLootRules`. Fleets outside Star Charts get the row's `regular_shar
 rolls their crafting materials per battle (`BattleMaterials`). A chart fleet gets the full rate, its run's loot
 multipliers and, for the boss, its spoils multiplier as extra DP; `ChartFleetLoot` rolls its materials from the DP its
 ledger still owes, so rebuilt salvage defenders can't be farmed. Endlessly launched station fleets
-(`FEEDSTOCK_ONLY_MEMORY_KEY`) drop only base feedstock.
+(`FEEDSTOCK_ONLY_MEMORY_KEY`) drop only base feedstock. Secrets of the Frontier's scripted story fights, which give
+no salvage of their own, drop none of this either (`SecretsOfTheFrontierCompat`).
 
 Hull items read the hull rows (`BattleItemDrops`): an enemy ship's tree raises the share rolled with two modifiers
 (`levelBoost`), never the count. Chart fleets roll subroutines from the `subroutine` row, and star charts and
@@ -1222,7 +1223,10 @@ clear orbit away from the inner wormhole (package `charts.anomaly.landmark`): a 
 one after, or the survey mothership. A system script launches up to two or three fleets of 35% of the tier's fleet
 size, 5% more per fleet lost (at most 60%), that patrol the system, drop no chart items and stop once the station
 dies. `NexusFleetManager` is vanilla's `RemnantStationFleetManager` without its hyperspace encounter point;
-`MothershipFleetManager` does the same on `SourceBasedFleetManager` with derelict drones up to cruisers.
+`MothershipFleetManager` does the same on `SourceBasedFleetManager` with derelict drones up to cruisers. A Remnant chart
+station is in station mode only while the player is in its chart (`ChartStations`), so other mods that launch raids
+from any station-mode Remnant fleet, such as Nexerelin and AoTD: Virtue of Society, can only pick one while the
+player is there.
 
 ### Abyssal Shipyard
 

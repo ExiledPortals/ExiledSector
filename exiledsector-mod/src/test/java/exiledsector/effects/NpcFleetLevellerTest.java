@@ -19,6 +19,8 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
+import com.fs.starfarer.api.impl.campaign.ids.FleetTypes;
+import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import exiledsector.MockSector;
@@ -336,6 +338,10 @@ class NpcFleetLevellerTest {
         CampaignFleetAPI station = fleetOf();
         when(station.isStationMode()).thenReturn(true);
         CampaignFleetAPI temporary = fleet("temp", List.of(), null, new Vector2f());
+        CampaignFleetAPI chartStationOutOfStationMode = fleetOf();
+        MemoryAPI chartStationMemory = mock(MemoryAPI.class);
+        when(chartStationMemory.getString(MemFlags.MEMORY_KEY_FLEET_TYPE)).thenReturn(FleetTypes.BATTLESTATION);
+        when(chartStationOutOfStationMode.getMemoryWithoutUpdate()).thenReturn(chartStationMemory);
 
         assertTrue(NpcFleetLeveller.isLevellable(ordinary));
         assertFalse(NpcFleetLeveller.isLevellable(player));
@@ -345,6 +351,7 @@ class NpcFleetLevellerTest {
 
         lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", NpcTreeConfig.STATIONS_FIELD_ID)).thenReturn(false);
         assertFalse(NpcFleetLeveller.isLevellable(station));
+        assertFalse(NpcFleetLeveller.isLevellable(chartStationOutOfStationMode));
         assertTrue(NpcFleetLeveller.isLevellable(ordinary));
     }
 

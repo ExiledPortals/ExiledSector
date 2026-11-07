@@ -1,6 +1,7 @@
 package exiledsector.charts.run.cleanup;
 
 import com.fs.starfarer.api.impl.campaign.procgen.ProcgenUsedNames;
+import exiledsector.compat.PrivateField;
 import org.apache.log4j.Logger;
 
 import java.util.HashSet;

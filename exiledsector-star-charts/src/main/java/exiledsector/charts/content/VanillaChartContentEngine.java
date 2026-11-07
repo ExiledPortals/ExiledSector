@@ -190,6 +190,7 @@ final class VanillaChartContentEngine implements ChartContentEngine {
         FleetMemberAPI member = Global.getFactory().createFleetMember(FleetMemberType.SHIP, variant);
         station.getFleetData().addFleetMember(member);
         station.setStationMode(true);
+        ChartStations.mark(station);
         RemnantThemeGenerator.addRemnantStationInteractionConfig(station);
         station.clearAbilities();
         station.addAbility(Abilities.TRANSPONDER);

@@ -2,9 +2,12 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.FleetTypes;
+import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import exiledsector.Seeds;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
@@ -97,8 +100,13 @@ public final class NpcFleetLeveller {
     }
 
     static boolean isLevellable(CampaignFleetAPI fleet) {
-        return fleet != null && !fleet.isPlayerFleet() && (!fleet.isStationMode() || NpcTreeConfig.levelsStations())
+        return fleet != null && !fleet.isPlayerFleet() && (!isStation(fleet) || NpcTreeConfig.levelsStations())
                 && fleet.getContainingLocation() != null && fleet.getFleetData() != null;
+    }
+
+    static boolean isStation(CampaignFleetAPI fleet) {
+        MemoryAPI memory = fleet.getMemoryWithoutUpdate();
+        return fleet.isStationMode() || memory != null && FleetTypes.BATTLESTATION.equals(memory.getString(MemFlags.MEMORY_KEY_FLEET_TYPE));
     }
 
     static boolean isPlayerShip(FleetMemberAPI member) {

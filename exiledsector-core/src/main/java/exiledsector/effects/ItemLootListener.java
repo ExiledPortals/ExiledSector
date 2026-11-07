@@ -12,6 +12,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.ExiledSector;
 import exiledsector.PlayerFleet;
+import exiledsector.compat.SecretsOfTheFrontierCompat;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.items.Item;
@@ -70,7 +71,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
 
     void holdLoot(PlayerEngagement engagement) {
         EngagementResultAPI engagementResult = engagement.result();
-        if (engagementResult.getBattle() == null) {
+        if (engagementResult.getBattle() == null || SecretsOfTheFrontierCompat.inFlashbackEncounter()) {
             return;
         }
         Pending pendingLoot = pendingByBattle.computeIfAbsent(engagementResult.getBattle(),
@@ -108,6 +109,9 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
 
     @Override
     public void reportEncounterLootGenerated(FleetEncounterContextPlugin encounterPlugin, CargoAPI loot) {
+        if (SecretsOfTheFrontierCompat.isFlashbackEncounter(encounterPlugin)) {
+            return;
+        }
         SalvagedArmaments.addExtra(PlayerFleet.orNull(), loot, lootRandom);
         Pending pendingLoot = encounterPlugin == null ? null : pendingByBattle.remove(encounterPlugin.getBattle());
         if (pendingLoot != null && loot != null) {

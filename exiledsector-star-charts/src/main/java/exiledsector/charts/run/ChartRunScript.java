@@ -10,11 +10,13 @@ import com.fs.starfarer.api.impl.campaign.ids.Abilities;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.content.ChartStations;
 import exiledsector.charts.effect.ChartPlayerModifiers;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.objective.ChartObjectives;
 import exiledsector.charts.run.cleanup.ChartLoadSweep;
 import exiledsector.charts.run.cleanup.ChartRunCloser;
+import exiledsector.compat.DiyPlanetsCompat;
 import org.apache.log4j.Logger;
 
 public class ChartRunScript implements EveryFrameScript {
@@ -29,6 +31,7 @@ public class ChartRunScript implements EveryFrameScript {
     private float secondsSinceObjectiveCheck;
     private boolean effectsApplied;
     private transient ChartGenContext appliedContext;
+    private transient Boolean stationModeInside;
     private String sensorSourceText;
     private boolean transverseJumpSwapped;
 
@@ -79,6 +82,17 @@ public class ChartRunScript implements EveryFrameScript {
         }
         if (run.runState().isLive() && system != null) {
             ChartAnomalies.checkRun(sector, new AnomalyRun(run, system));
+            DiyPlanetsCompat.keepBarQuestsOut(system);
+            if (stationModeInside != null) {
+                ChartStations.matchStationModeTo(system, stationModeInside);
+            }
+        }
+    }
+
+    private void matchStationModes(StarSystemAPI system, boolean inside) {
+        if (system != null && !Boolean.valueOf(inside).equals(stationModeInside)) {
+            ChartStations.matchStationModeTo(system, inside);
+            stationModeInside = inside;
         }
     }
 
@@ -90,6 +104,7 @@ public class ChartRunScript implements EveryFrameScript {
         StarSystemAPI system = systemFor(sector, run);
         boolean inTransition = playerFleet.isInHyperspaceTransition();
         boolean inside = system != null && playerFleet.getContainingLocation() == system;
+        matchStationModes(system, inside);
         if (inside) {
             transverseJumpSwapped |= ChartTransverseJump.install(playerFleet);
             blockEscapeAbilities(playerFleet);
@@ -153,6 +168,7 @@ public class ChartRunScript implements EveryFrameScript {
             cachedRunId = run.runId();
             cachedSystem = sector.getStarSystem(run.systemId());
             closeArmed = false;
+            stationModeInside = null;
         }
         return cachedSystem;
     }
@@ -191,6 +207,7 @@ public class ChartRunScript implements EveryFrameScript {
         cachedRunId = null;
         cachedSystem = null;
         closeArmed = false;
+        stationModeInside = null;
     }
 
     private void restoreTransverseJump(CampaignFleetAPI playerFleet) {

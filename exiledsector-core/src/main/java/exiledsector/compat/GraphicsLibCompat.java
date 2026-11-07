@@ -15,7 +15,7 @@ import static exiledsector.compat.ApiMember.staticMethod;
 public final class GraphicsLibCompat {
 
     public static final String MOD_ID = "shaderLib";
-    public static final List<String> TESTED_VERSIONS = List.of("1.12.1");
+    public static final List<String> TESTED_VERSIONS = List.of("1.12.1", "1.12.2");
     public static final CompatTarget TARGET = new CompatTarget("GraphicsLib", List.of(MOD_ID), TESTED_VERSIONS,
             GraphicsLibCompat::missingFeatures);
     private static final String LIGHT = "org.dark.shaders.light.";

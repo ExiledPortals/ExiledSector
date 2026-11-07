@@ -20,7 +20,6 @@ import exiledsector.ui.refit.RefitModuleTabs;
 import lunalib.backend.ui.refit.RefitButtonAdder;
 import lunalib.backend.ui.refit.RefitPanelBackgroundPlugin;
 import lunalib.lunaRefit.LunaRefitManager;
-import org.lwjgl.input.Keyboard;
 
 import java.awt.Color;
 import java.util.Collections;
@@ -29,7 +28,7 @@ public class SkillTreeRefitButton extends FullScreenRefitButton {
 
     static final String BUTTON_KEY = "ui.refitButton";
     public static final RefitButtonColumn.ButtonSpec COLUMN_BUTTON = new RefitButtonColumn.ButtonSpec("exiledSector_skillTreeButton",
-            BUTTON_KEY, () -> Keyboard.KEY_K, RefitButtonConfig::buttonUnderHullMods, () -> openPanel(null));
+            BUTTON_KEY, RefitButtonConfig::skillTreeKey, RefitButtonConfig::buttonUnderHullMods, () -> openPanel(null));
     static final float SHIP_CARD_ICON_SIZE = 128f;
     private static final String LOCKED_SOUND = "ui_button_disabled_pressed";
 

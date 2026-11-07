@@ -72,6 +72,12 @@ public final class ExiledSectorSettings {
         SettingsCreator.addKeybind(MOD_ID, RefitButtonConfig.BENCH_KEYBIND_FIELD_ID,
                 Translation.text("settings.refit.craftingBenchKey.name"), Translation.text("settings.refit.craftingBenchKey.tooltip"),
                 RefitButtonConfig.DEFAULT_BENCH_KEY, MAIN_TAB);
+        SettingsCreator.addKeybind(MOD_ID, RefitButtonConfig.SKILL_TREE_KEYBIND_FIELD_ID,
+                Translation.text("settings.refit.skillTreeKey.name"), Translation.text("settings.refit.skillTreeKey.tooltip"),
+                RefitButtonConfig.DEFAULT_SKILL_TREE_KEY, MAIN_TAB);
+        SettingsCreator.addKeybind(MOD_ID, RefitButtonConfig.HULL_ITEMS_KEYBIND_FIELD_ID,
+                Translation.text("settings.refit.hullItemsKey.name"), Translation.text("settings.refit.hullItemsKey.tooltip"),
+                RefitButtonConfig.DEFAULT_HULL_ITEMS_KEY, MAIN_TAB);
         SettingsCreator.addBoolean(MOD_ID, ModSounds.ENABLED_FIELD_ID,
                 Translation.text("settings.sounds.enabled.name"), Translation.text("settings.sounds.enabled.tooltip"),
                 ModSounds.DEFAULT_ENABLED, MAIN_TAB);

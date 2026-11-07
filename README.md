@@ -186,14 +186,16 @@ These mods have dedicated compatibility. The version listed is the one I last te
 
 | Mod | Tested version | What Exiled Sector does with it |
 |---|---|---|
-| [Second-in-Command](https://fractalsoftworks.com/forum/index.php?topic=30407.0) | 2.0.0 | Its skills see the hullmods your nodes stand in for, and Reconfiguration waives the Converted Hangar penalties. |
+| [Second-in-Command](https://fractalsoftworks.com/forum/index.php?topic=30407.0) | 2.1.1 | Its skills see the hullmods your nodes stand in for, and Reconfiguration waives the Converted Hangar penalties. |
 | Lost Sector | 0.6.2d, 1.0.b | REDACTED |
 | [MagicLib](https://fractalsoftworks.com/forum/index.php?topic=25868.0) | 1.5.6 | Required. A hullmod that tries to strip one of your nodes' hullmods through MagicLib is removed instead. |
 | Exotica Technologies | 1.8.7 | The Skill Tree button moves one slot down on the refit screen so it doesn't cover the Exotica button. |
 | Random Assortment of Things | 3.3.1 | REDACTED |
-| Nightcross Armory | 2.1.6 | REDACTED |
+| Nightcross Armory | 2.1.7 | REDACTED |
 | Nexerelin | 0.12.2d | Faction fleets roaming the skill tree count factions in their alliance as allies, so they travel to those volumes too. |
-| [GraphicsLib](https://fractalsoftworks.com/forum/index.php?topic=10982.0) | 1.12.1 | Optional. When its lights and distortion are on, many of Exiled Sector's combat effects gain shockwaves, glows, lighting and distortion. The Exiled Sector settings can switch almost all of it off. |
+| [GraphicsLib](https://fractalsoftworks.com/forum/index.php?topic=10982.0) | 1.12.2 | Optional. When its lights and distortion are on, many of Exiled Sector's combat effects gain shockwaves, glows, lighting and distortion. The Exiled Sector settings can switch almost all of it off. |
+| Secrets of the Frontier | 0.15.1 | Its scripted story fights, which give no salvage of their own, drop none of Exiled Sector's loot either. |
+| DIY Planets | 1.0.30 | Its bar quests never place their stations in a Star Chart, where they'd be lost when it closes. |
 
 Some weapons from other mods misbehave (often hilariously) when their beams are split, their shots are chained or their shells pierce. These are listed in:
 

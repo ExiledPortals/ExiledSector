@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.listeners.CoreDiscoverEntityPlugin.SalvorsTallyAdder;
 import com.fs.starfarer.api.impl.campaign.intel.misc.SalvorsTallyIntel;
+import exiledsector.compat.PrivateField;
 
 import java.util.ArrayList;
 

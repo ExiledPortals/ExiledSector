@@ -26,7 +26,7 @@ public final class SecondInCommandCompat {
     public static final String MOD_ID = "second_in_command";
     public static final String CONTROLLER_HULLMOD_ID = "sc_skill_controller";
     public static final String RECONFIGURATION_SKILL_ID = "sc_strikecraft_reconfiguration";
-    public static final List<String> TESTED_VERSIONS = List.of("2.0.0");
+    public static final List<String> TESTED_VERSIONS = List.of("2.0.0", "2.1.1");
     public static final CompatTarget TARGET = new CompatTarget("Second-in-Command", List.of(MOD_ID), TESTED_VERSIONS,
             SecondInCommandCompat::missingFeatures);
     private static final String INACTIVE_SMOD_TAG_PREFIX = "sc_inactive_smods_";

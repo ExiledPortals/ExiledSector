@@ -3,6 +3,7 @@ package exiledsector.charts.run.cleanup;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.impl.campaign.intel.events.ht.HTFactorTracker;
+import exiledsector.compat.PrivateField;
 
 import java.util.LinkedHashSet;
 import java.util.List;

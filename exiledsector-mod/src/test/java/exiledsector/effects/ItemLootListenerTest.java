@@ -2,8 +2,12 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
+import data.scripts.campaign.plugins.amemory.SotfAMemoryFEContext;
 import exiledsector.MockSector;
 import exiledsector.items.MaterialItems;
 import exiledsector.charts.content.ChartContent;
@@ -264,6 +268,44 @@ class ItemLootListenerTest {
 
         verify(otherLoot, never()).addSpecial(any(), anyFloat());
         assertEquals(1, lootData(loot, 1).size());
+    }
+
+    private SotfAMemoryFEContext showFlashbackFight(BattleAPI battle) {
+        SotfAMemoryFEContext flashback = mock(SotfAMemoryFEContext.class);
+        when(flashback.getBattle()).thenReturn(battle);
+        InteractionDialogPlugin fightPlugin = mock(InteractionDialogPlugin.class);
+        when(fightPlugin.getContext()).thenReturn(flashback);
+        InteractionDialogAPI dialog = mock(InteractionDialogAPI.class);
+        when(dialog.getPlugin()).thenReturn(fightPlugin);
+        CampaignUIAPI campaignUI = mock(CampaignUIAPI.class);
+        when(campaignUI.getCurrentInteractionDialog()).thenReturn(dialog);
+        when(mockSector.sector.getCampaignUI()).thenReturn(campaignUI);
+        return flashback;
+    }
+
+    @Test
+    void aSecretsOfTheFrontierFlashbackFightDropsNothingOnItsLootScreen() {
+        ItemLootListener luckyListener = new ItemLootListener(alwaysLucky());
+        BattleAPI battle = mock(BattleAPI.class);
+        SotfAMemoryFEContext flashback = showFlashbackFight(battle);
+        luckyListener.holdLoot(PlayerEngagement.of(engagement(battle, List.of(factionShip(battle, "wrecked")), List.of()), 1f));
+        CargoAPI loot = mock(CargoAPI.class);
+
+        luckyListener.reportEncounterLootGenerated(flashback, loot);
+
+        verify(loot, never()).addSpecial(any(), anyFloat());
+    }
+
+    @Test
+    void aSecretsOfTheFrontierFlashbackFightWithNoLootScreenPutsNothingInTheCargo() {
+        ItemLootListener luckyListener = new ItemLootListener(alwaysLucky());
+        BattleAPI battle = mock(BattleAPI.class);
+        showFlashbackFight(battle);
+        luckyListener.holdLoot(PlayerEngagement.of(engagement(battle, List.of(factionShip(battle, "wrecked")), List.of()), 1f));
+
+        luckyListener.reportBattleFinished(null, battle);
+
+        verify(playerCargo, never()).addSpecial(any(), anyFloat());
     }
 
     private static FleetMemberAPI warship(String id, float deploymentPoints) {

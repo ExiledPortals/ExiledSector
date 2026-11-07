@@ -12,6 +12,7 @@ import exiledsector.charts.generation.ChartSystemFactory;
 import exiledsector.charts.layout.ChartLayoutRequest;
 import exiledsector.charts.objective.ChartObjectiveIntel;
 import exiledsector.charts.run.cleanup.ChartRunCloser;
+import exiledsector.compat.DiyPlanetsCompat;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemStore;
@@ -136,6 +137,7 @@ public final class ChartRunActions {
             ChartSystemFactory.ChartSystem created = ChartSystemFactory.createSystem(sector, run.runId(), layoutRequest);
             run.recordLayout(created.layout());
             run.recordContent(created.content());
+            DiyPlanetsCompat.keepBarQuestsOut(created.system());
             ChartSystemFactory.addOuterWormhole(origin, playerLocation, anchor, run.runId());
             ChartObjectiveIntel.addFor(sector, run);
             return OpenResult.OPENED;

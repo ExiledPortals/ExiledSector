@@ -8,7 +8,7 @@ import java.util.List;
 public final class NightcrossCompat {
 
     public static final String MOD_ID = "Nightcross";
-    public static final List<String> TESTED_VERSIONS = List.of("2.1.5", "2.1.6");
+    public static final List<String> TESTED_VERSIONS = List.of("2.1.5", "2.1.6", "2.1.7");
     public static final List<String> REQUIRED_HULL_MOD_IDS = List.of("nightcrosstargeting", "na_gravitydrag", "na_tidalgrid",
             "na_hardlightmatrix", "na_hardlightmatrix2", "na_energizedarmor", "na_stargazerstars");
     public static final CompatTarget TARGET = new CompatTarget("Nightcross Armory volumes", List.of(MOD_ID), TESTED_VERSIONS,
