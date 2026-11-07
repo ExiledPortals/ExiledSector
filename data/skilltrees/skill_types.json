@@ -5579,6 +5579,134 @@
 			]
 		},
 		{
+			"id": "relay_protocols",
+			"name": "Relay Protocols",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "HIGH_TECH_AFFINITY_FLAT",
+					"magnitude": 10
+				},
+				{
+					"effect": "NAV_RATING_PER_HIGH_TECH_AFFINITY",
+					"magnitude": 1
+				}
+			],
+			"flavour": "Remnant battlegroups pass position data between hulls through relay protocols that are only dimly understood. A fragment recovered from a drone's comms array now sits in this ship's own, and the fleet's helms keep station by it. The signal officer has asked that nobody reply to it.",
+			"flavourAutomated": "Remnant battlegroups pass position data between hulls through relay protocols that are only dimly understood. The ship's core copied a fragment from a drone's comms array into its own, and the fleet's helms keep station by it. It has not been asked to reply, and does not.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"flux",
+				"fleet_support"
+			]
+		},
+		{
+			"id": "greater_high_tech_affinity",
+			"name": "Greater High Tech Affinity",
+			"icon": "graphics/icons/root_high_tech.png",
+			"effects": [
+				{
+					"effect": "HIGH_TECH_AFFINITY_FLAT",
+					"magnitude": 10
+				}
+			],
+			"flavour": "Flux lattices stripped from Remnant drones are a generation ahead of anything in the Tri-Tachyon catalogue. Tri-Tachyon is said to disagree.",
+			"tags": [
+				"flux"
+			]
+		},
+		{
+			"id": "adaptive_munitions",
+			"name": "Adaptive Munitions",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY",
+					"magnitude": 1
+				}
+			],
+			"flavour": "Remnant drones change munitions in the middle of a volley, matching each round to whatever it is about to hit. Fire-control tables pulled from a wrecked Scintilla let this ship's loaders attempt the same. The loaders are not as fast as the drones and would prefer the comparison stopped.",
+			"flavourAutomated": "Remnant drones change munitions in the middle of a volley, matching each round to whatever it is about to hit. The ship's core read the fire-control tables out of a wrecked Scintilla and rewrote its own feed sequence to match. The refit crew installed the extra feed lines and was not told why.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons",
+				"dmgtypekinetic",
+				"dmgtypehighexplosive"
+			]
+		},
+		{
+			"id": "equilibrium_protocol",
+			"name": "Equilibrium Protocol",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL",
+					"magnitude": 20
+				}
+			],
+			"flavour": "Remnant hulls are rumored to draw on every lineage of Domain design at once, held in a balance their cores never let slip. A ship whose refits stay just as even can borrow the same discipline. The chief engineer calls it balance. The quartermaster calls it a requisition freeze.",
+			"flavourAutomated": "Remnant hulls are rumored to draw on every lineage of Domain design at once, held in a balance their cores never let slip. The ship's core recognizes the pattern in its own refits and holds to it. The refit crew calls it a requisition freeze.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons"
+			]
+		},
+		{
+			"id": "beam_or_non_beam_energy_weapon_damage",
+			"name": "Beam or Non-Beam Energy Weapon Damage",
+			"icon": "graphics/icons/beam_damage.png",
+			"options": [
+				"beam_weapon_damage",
+				"non_beam_energy_weapon_damage"
+			],
+			"flavour": "Emitter coils salvaged from Remnant wrecks can be wound for a steady beam or a hard pulse, but not both. Remnant drones never seem to need the choice.",
+			"tags": [
+				"energy",
+				"beam"
+			]
+		},
+		{
+			"id": "ion_spill",
+			"name": "Ion Spill",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "SHIELD_EMP_TO_ENERGY_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"flavour": "Ion bolts from Remnant drones do not simply splash off a shield. Their emitters run a fraction off their rated frequency, and some of the charge reaches the projector as heat. The crew detuned this ship's emitters to match, which voided a warranty nobody had read.",
+			"flavourAutomated": "Ion bolts from Remnant drones do not simply splash off a shield. Their emitters run a fraction off their rated frequency, and some of the charge reaches the projector as heat. The ship's core detuned its own emitters to match, which voided a warranty it had read in full.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons",
+				"shield"
+			]
+		},
+		{
+			"id": "dormant_repair_cycle",
+			"name": "Dormant Repair Cycle",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "UNHIT_ARMOR_REGEN_LOW_CAP_PERCENT",
+					"magnitude": 0.5
+				}
+			],
+			"flavour": "A Remnant Nexus left dormant for cycles still mends its own plating, a little at a time. A repair loop lifted from one of those stations now runs in this ship's armor. It does not seem to notice the crew.",
+			"flavourAutomated": "A Remnant Nexus left dormant for cycles still mends its own plating, a little at a time. The ship's core lifted the repair loop from one of those stations and runs it beside its own. The loop does not appear to notice.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"armour",
+				"repair"
+			]
+		},
+		{
 			"id": "phase_cloak_activation_cost",
 			"name": "Phase Cloak Activation Cost",
 			"icon": "",

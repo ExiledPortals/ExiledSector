@@ -24,6 +24,7 @@ import org.mockito.Mockito;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -180,6 +181,65 @@ class DamageConversionListenerTest {
         new DamageConversionListener(ownerShip).modifyDamageDealt(shell(droneWeapon), mock(ShipAPI.class), hit, null, false);
 
         verify(hit).setType(DamageType.HIGH_EXPLOSIVE);
+    }
+
+    private static Random rolling(float roll) {
+        Random random = mock(Random.class);
+        when(random.nextFloat()).thenReturn(roll);
+        return random;
+    }
+
+    private DamageListener registeredRestorer() {
+        ArgumentCaptor<Object> restorer = ArgumentCaptor.forClass(Object.class);
+        verify(listeners).addListener(restorer.capture());
+        return (DamageListener) restorer.getValue();
+    }
+
+    @Test
+    void anAdaptedHitDealsKineticDamageToShieldsUntilItLands() {
+        when(dynamic.getValue(DamageConversionListener.ADAPTIVE_CHANCE_PERCENT_KEY, 0f)).thenReturn(10f);
+        ShipAPI target = mock(ShipAPI.class);
+        DamageAPI hit = damage(DamageType.ENERGY, 100f, 0f);
+        DamagingProjectileAPI shot = shell(weapon(mount(WeaponType.ENERGY, WeaponSize.MEDIUM, false), false, DamageType.ENERGY));
+
+        new DamageConversionListener(ownerShip, rolling(0.05f)).modifyDamageDealt(shot, target, hit, null, true);
+        verify(hit).setType(DamageType.KINETIC);
+
+        when(hit.getType()).thenReturn(DamageType.KINETIC);
+        registeredRestorer().reportDamageApplied(ownerShip, target, null);
+        verify(hit).setType(DamageType.ENERGY);
+    }
+
+    @Test
+    void anAdaptedHitDealsHighExplosiveDamageToArmorAfterTheMountConversion() {
+        owns(OnHitSkillEffect.BALLISTIC_HARDPOINT_KINETIC_TO_HIGH_EXPLOSIVE);
+        when(dynamic.getValue(DamageConversionListener.ADAPTIVE_CHANCE_PERCENT_KEY, 0f)).thenReturn(10f);
+        DamageAPI hardpointHit = damage(DamageType.KINETIC, 100f, 0f);
+        DamageAPI energyHit = damage(DamageType.ENERGY, 100f, 0f);
+        DamagingProjectileAPI hardpointShell = shell(weapon(mount(WeaponType.BALLISTIC, WeaponSize.LARGE, true), false, DamageType.KINETIC));
+        DamagingProjectileAPI energyShot = shell(weapon(mount(WeaponType.ENERGY, WeaponSize.MEDIUM, false), false, DamageType.ENERGY));
+        DamageConversionListener listener = new DamageConversionListener(ownerShip, rolling(0.05f));
+
+        when(hardpointHit.getType()).thenReturn(DamageType.KINETIC, DamageType.HIGH_EXPLOSIVE);
+        listener.modifyDamageDealt(hardpointShell, mock(ShipAPI.class), hardpointHit, null, false);
+        listener.modifyDamageDealt(energyShot, mock(ShipAPI.class), energyHit, null, false);
+
+        verify(hardpointHit).setType(DamageType.HIGH_EXPLOSIVE);
+        verify(energyHit).setType(DamageType.HIGH_EXPLOSIVE);
+    }
+
+    @Test
+    void aFailedRollOrAHitOnSomethingOtherThanAShipKeepsItsType() {
+        when(dynamic.getValue(DamageConversionListener.ADAPTIVE_CHANCE_PERCENT_KEY, 0f)).thenReturn(10f);
+        DamageAPI missedRoll = damage(DamageType.ENERGY, 100f, 0f);
+        DamageAPI missileHit = damage(DamageType.ENERGY, 100f, 0f);
+        DamagingProjectileAPI shot = shell(weapon(mount(WeaponType.ENERGY, WeaponSize.MEDIUM, false), false, DamageType.ENERGY));
+
+        new DamageConversionListener(ownerShip, rolling(0.2f)).modifyDamageDealt(shot, mock(ShipAPI.class), missedRoll, null, true);
+        new DamageConversionListener(ownerShip, rolling(0f)).modifyDamageDealt(shot, mock(DamagingProjectileAPI.class), missileHit, null, false);
+
+        verify(missedRoll, never()).setType(any());
+        verify(missileHit, never()).setType(any());
     }
 
     @Test

@@ -165,9 +165,14 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             UnhitArmorRegenListener::new)) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("seconds", UnhitArmorRegenListener.UNHIT_SECONDS).arg("value", magnitude)
-                    .arg("range", UnhitArmorRegenListener.ENEMY_SHIP_RANGE).arg("flux", UnhitArmorRegenListener.HARD_FLUX_PER_ARMOR)
-                    .arg("cap", UnhitArmorRegenListener.DEPLOYMENT_CAP_PERCENT).styled();
+            return unhitArmorRegenLine(magnitude, UnhitArmorRegenListener.DEPLOYMENT_CAP_PERCENT);
+        }
+    },
+    UNHIT_ARMOR_REGEN_LOW_CAP_PERCENT(listener(UnhitArmorRegenListener.LOW_CAP_REGEN_PERCENT_KEY, UnhitArmorRegenListener.class,
+            UnhitArmorRegenListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return unhitArmorRegenLine(magnitude, UnhitArmorRegenListener.LOW_DEPLOYMENT_CAP_PERCENT);
         }
     },
     SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT(listener(SwarmOverflowRepairListener.REPAIR_PERCENT_KEY, SwarmOverflowRepairListener.class,
@@ -289,6 +294,12 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
     @Override
     public EffectBacking backing() {
         return backing;
+    }
+
+    private static StyledText unhitArmorRegenLine(float magnitude, float deploymentCapPercent) {
+        return EffectText.msg(UNHIT_ARMOR_REGEN_PERCENT).arg("seconds", UnhitArmorRegenListener.UNHIT_SECONDS).arg("value", magnitude)
+                .arg("range", UnhitArmorRegenListener.ENEMY_SHIP_RANGE).arg("flux", UnhitArmorRegenListener.HARD_FLUX_PER_ARMOR)
+                .arg("cap", deploymentCapPercent).styled();
     }
 
     private static final class StatNames {

@@ -3,6 +3,7 @@ package exiledsector.skills.skilleffect;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
+import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.CombatListenerManagerAPI;
@@ -17,6 +18,7 @@ import org.mockito.Mockito;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -82,6 +84,21 @@ class HitDamageRestorerTest {
 
         verify(unreported).setDamage(100f);
         verify(next).setDamage(30f);
+    }
+
+    @Test
+    void aRetypedHitGetsItsOriginalTypeBackOnceItLands() {
+        DamageAPI damage = mock(DamageAPI.class);
+        DamageType[] type = {DamageType.FRAGMENTATION};
+        when(damage.getType()).thenAnswer(call -> type[0]);
+        doAnswer(call -> type[0] = call.getArgument(0)).when(damage).setType(any());
+        ShipAPI target = mock(ShipAPI.class);
+
+        HitDamageRestorer.retypeForThisHit(damage, DamageType.HIGH_EXPLOSIVE, target);
+        assertEquals(DamageType.HIGH_EXPLOSIVE, type[0]);
+
+        registeredRestorer().reportDamageApplied(null, target, null);
+        assertEquals(DamageType.FRAGMENTATION, type[0]);
     }
 
     @Test

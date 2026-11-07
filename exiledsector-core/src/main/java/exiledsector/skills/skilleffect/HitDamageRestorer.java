@@ -2,6 +2,7 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
+import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
 
@@ -35,6 +36,11 @@ public final class HitDamageRestorer implements DamageListener {
         damage.setFluxComponent(damage.getFluxComponent() * empMult);
     }
 
+    public static void retypeForThisHit(DamageAPI damage, DamageType type, CombatEntityAPI target) {
+        track(damage, target);
+        damage.setType(type);
+    }
+
     public static float originalHitDamage(DamageAPI damage) {
         HitDamageRestorer restorer = SkillEffectSupport.existingEngineListener(HitDamageRestorer.class);
         PendingRestore entry = restorer == null ? null : restorer.entryFor(damage);
@@ -61,7 +67,7 @@ public final class HitDamageRestorer implements DamageListener {
             }
         }
         if (!tracked) {
-            restorer.pending.add(new PendingRestore(damage, damage.getBaseDamage(), damage.getFluxComponent(), target));
+            restorer.pending.add(new PendingRestore(damage, damage.getBaseDamage(), damage.getFluxComponent(), damage.getType(), target));
         }
     }
 
@@ -82,11 +88,14 @@ public final class HitDamageRestorer implements DamageListener {
         pending.removeIf(restore -> restore.restoreIfFor(target));
     }
 
-    private record PendingRestore(DamageAPI damage, float baseDamage, float empDamage, CombatEntityAPI target) {
+    private record PendingRestore(DamageAPI damage, float baseDamage, float empDamage, DamageType type, CombatEntityAPI target) {
 
         private void restore() {
             damage.setDamage(baseDamage);
             damage.setFluxComponent(empDamage);
+            if (damage.getType() != type) {
+                damage.setType(type);
+            }
         }
 
         private boolean restoreIfFor(CombatEntityAPI hitTarget) {

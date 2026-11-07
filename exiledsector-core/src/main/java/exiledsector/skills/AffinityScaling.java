@@ -15,22 +15,30 @@ public record AffinityScaling(Filter filter, int stepSize, SkillEffect target) i
     public static final int LARGE_STEP = 10;
     public static final int LARGEST_STEP = 15;
     public static final int NAV_RATING_STEP = 50;
+    private static final int NO_STEP = 0;
 
     public enum Filter {
-        LOW_TECH, HIGH_TECH, MIDLINE, ALL;
+        LOW_TECH, HIGH_TECH, MIDLINE, ALL, ALL_EQUAL;
 
         public List<SkillEffect> affinities() {
             return switch (this) {
                 case LOW_TECH -> List.of(SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT);
                 case HIGH_TECH -> List.of(SpecialSkillEffect.HIGH_TECH_AFFINITY_FLAT);
                 case MIDLINE -> List.of(SpecialSkillEffect.MIDLINE_AFFINITY_FLAT);
-                case ALL -> List.of(SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT, SpecialSkillEffect.HIGH_TECH_AFFINITY_FLAT,
+                case ALL, ALL_EQUAL -> List.of(SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT, SpecialSkillEffect.HIGH_TECH_AFFINITY_FLAT,
                         SpecialSkillEffect.MIDLINE_AFFINITY_FLAT);
             };
         }
     }
 
+    public static AffinityScaling whileAllEqual(SkillEffect target) {
+        return new AffinityScaling(Filter.ALL_EQUAL, NO_STEP, target);
+    }
+
     public int stepsReached(Map<SkillEffect, Float> affinityTotals) {
+        if (filter == Filter.ALL_EQUAL) {
+            return AffinitySteps.allEqual(affinityTotals) ? 1 : 0;
+        }
         float affinity = 0f;
         for (SkillEffect counted : filter.affinities()) {
             affinity += affinityTotals.getOrDefault(counted, 0f);
@@ -50,6 +58,9 @@ public record AffinityScaling(Filter filter, int stepSize, SkillEffect target) i
 
     @Override
     public StyledText description(SkillEffect effect, float magnitude) {
+        if (filter == Filter.ALL_EQUAL) {
+            return EffectText.signed(effect, magnitude).styled();
+        }
         return EffectText.signed(effect, magnitude).arg("step", stepSize).styled();
     }
 }

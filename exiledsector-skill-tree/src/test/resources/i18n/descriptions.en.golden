@@ -10,6 +10,18 @@ effect|ACCELERATION_PERCENT|12.5	0	<good>12.5%</good> increased acceleration.
 effect|ACCELERATION_PERCENT|100.0	0	<good>100%</good> increased acceleration.
 effect|ACCELERATION_PERCENT|-10.0	0	<bad>10%</bad> reduced acceleration.
 effect|ACCELERATION_PERCENT|-12.5	0	<bad>12.5%</bad> reduced acceleration.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT|1.0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT|10.0	0	<good>10%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT|12.5	0	<good>12.5%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT|100.0	0	<good>100%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT|-10.0	0	<good>-10%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT|-12.5	0	<good>-12.5%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY|1.0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY|10.0	0	<good>10%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY|12.5	0	<good>12.5%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY|100.0	0	<good>100%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY|-10.0	0	<bad>-10%</bad> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY|-12.5	0	<bad>-12.5%</bad> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
 effect|AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT|1.0	0	Removes all Low Tech and Midline Affinity and grants <good>1%</good> of it as High Tech Affinity.
 effect|AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT|10.0	0	Removes all Low Tech and Midline Affinity and grants <good>10%</good> of it as High Tech Affinity.
 effect|AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT|12.5	0	Removes all Low Tech and Midline Affinity and grants <good>12.5%</good> of it as High Tech Affinity.
@@ -2506,6 +2518,12 @@ effect|SHIELD_DEFLECT_CHANCE_PERCENT|12.5	0	<good>12.5%</good> chance for non-mi
 effect|SHIELD_DEFLECT_CHANCE_PERCENT|100.0	0	<good>100%</good> chance for non-missile projectiles hitting shields to be deflected for no flux.
 effect|SHIELD_DEFLECT_CHANCE_PERCENT|-10.0	0	<good>-10%</good> chance for non-missile projectiles hitting shields to be deflected for no flux.
 effect|SHIELD_DEFLECT_CHANCE_PERCENT|-12.5	0	<good>-12.5%</good> chance for non-missile projectiles hitting shields to be deflected for no flux.
+effect|SHIELD_EMP_TO_ENERGY_PERCENT|1.0	0	<good>1%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+effect|SHIELD_EMP_TO_ENERGY_PERCENT|10.0	0	<good>10%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+effect|SHIELD_EMP_TO_ENERGY_PERCENT|12.5	0	<good>12.5%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+effect|SHIELD_EMP_TO_ENERGY_PERCENT|100.0	0	<good>100%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+effect|SHIELD_EMP_TO_ENERGY_PERCENT|-10.0	0	<good>-10%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+effect|SHIELD_EMP_TO_ENERGY_PERCENT|-12.5	0	<good>-12.5%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
 effect|SHIELD_PIERCE_CHANCE_MULT|1.0	1	<good>1%</good> more chance for shields to be pierced by EMP arcs.
 effect|SHIELD_PIERCE_CHANCE_MULT|10.0	1	<good>10%</good> more chance for shields to be pierced by EMP arcs.
 effect|SHIELD_PIERCE_CHANCE_MULT|12.5	1	<good>12.5%</good> more chance for shields to be pierced by EMP arcs.
@@ -2896,6 +2914,12 @@ effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|12.5	1	Your fleet has <bad>12.5%</
 effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|100.0	1	Your fleet has <bad>100%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
 effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|-10.0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
 effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|-12.5	1	Your fleet has <bad>12.5%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+effect|UNHIT_ARMOR_REGEN_LOW_CAP_PERCENT|1.0	0	Armor cells not hit for 5 seconds repair <good>1%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+effect|UNHIT_ARMOR_REGEN_LOW_CAP_PERCENT|10.0	0	Armor cells not hit for 5 seconds repair <good>10%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+effect|UNHIT_ARMOR_REGEN_LOW_CAP_PERCENT|12.5	0	Armor cells not hit for 5 seconds repair <good>12.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+effect|UNHIT_ARMOR_REGEN_LOW_CAP_PERCENT|100.0	0	Armor cells not hit for 5 seconds repair <good>100%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+effect|UNHIT_ARMOR_REGEN_LOW_CAP_PERCENT|-10.0	0	Armor cells not hit for 5 seconds repair <good>-10%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+effect|UNHIT_ARMOR_REGEN_LOW_CAP_PERCENT|-12.5	0	Armor cells not hit for 5 seconds repair <good>-12.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
 effect|UNHIT_ARMOR_REGEN_PERCENT|1.0	0	Armor cells not hit for 5 seconds repair <good>1%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per deployment.
 effect|UNHIT_ARMOR_REGEN_PERCENT|10.0	0	Armor cells not hit for 5 seconds repair <good>10%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per deployment.
 effect|UNHIT_ARMOR_REGEN_PERCENT|12.5	0	Armor cells not hit for 5 seconds repair <good>12.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per deployment.
@@ -2986,6 +3010,12 @@ effect|WEAPON_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased weapon damage.
 effect|WEAPON_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased weapon damage.
 effect|WEAPON_DAMAGE_PERCENT|-10.0	0	<bad>10%</bad> reduced weapon damage.
 effect|WEAPON_DAMAGE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced weapon damage.
+effect|WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL|1.0	0	<good>1%</good> increased weapon damage while this ship's affinities are all equal.
+effect|WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL|10.0	0	<good>10%</good> increased weapon damage while this ship's affinities are all equal.
+effect|WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL|12.5	0	<good>12.5%</good> increased weapon damage while this ship's affinities are all equal.
+effect|WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL|100.0	0	<good>100%</good> increased weapon damage while this ship's affinities are all equal.
+effect|WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL|-10.0	0	<bad>10%</bad> reduced weapon damage while this ship's affinities are all equal.
+effect|WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL|-12.5	0	<bad>12.5%</bad> reduced weapon damage while this ship's affinities are all equal.
 effect|WEAPON_DURABILITY_MULT|1.0	0	<good>1%</good> more weapon durability.
 effect|WEAPON_DURABILITY_MULT|10.0	0	<good>10%</good> more weapon durability.
 effect|WEAPON_DURABILITY_MULT|12.5	0	<good>12.5%</good> more weapon durability.
@@ -3157,6 +3187,13 @@ type|acceleration|FRIGATE|0	0	<good>10%</good> increased acceleration.
 type|acceleration|DESTROYER|0	0	<good>10%</good> increased acceleration.
 type|acceleration|CRUISER|0	0	<good>10%</good> increased acceleration.
 type|acceleration|CAPITAL_SHIP|0	0	<good>10%</good> increased acceleration.
+flavour|adaptive_munitions	0	Remnant drones change munitions in the middle of a volley, matching each round to whatever it is about to hit. Fire-control tables pulled from a wrecked Scintilla let this ship's loaders attempt the same. The loaders are not as fast as the drones and would prefer the comparison stopped.
+flavourAutomated|adaptive_munitions	0	Remnant drones change munitions in the middle of a volley, matching each round to whatever it is about to hit. The ship's core read the fire-control tables out of a wrecked Scintilla and rewrote its own feed sequence to match. The refit crew installed the extra feed lines and was not told why.
+type|adaptive_munitions|null|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+type|adaptive_munitions|FRIGATE|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+type|adaptive_munitions|DESTROYER|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+type|adaptive_munitions|CRUISER|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+type|adaptive_munitions|CAPITAL_SHIP|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
 flavour|adaptive_phase_coils	0	Phase coils lose their grip on normal space as hard flux builds. A crew willing to rewind them by hand can keep that grip a while longer.
 flavourAutomated|adaptive_phase_coils	0	Phase coils lose their grip on normal space as hard flux builds. The ship's core models the slip from its own coil telemetry and corrects for it faster than any hand could rewind them, keeping that grip a while longer.
 type|adaptive_phase_coils|null|0	0	<good>40%</good> increased hard flux level at which phased speed reaches its minimum.
@@ -3367,6 +3404,7 @@ type|ballistic_weapon_damage|FRIGATE|0	0	<good>3%</good> increased ballistic wea
 type|ballistic_weapon_damage|DESTROYER|0	0	<good>3%</good> increased ballistic weapon damage.
 type|ballistic_weapon_damage|CRUISER|0	0	<good>3%</good> increased ballistic weapon damage.
 type|ballistic_weapon_damage|CAPITAL_SHIP|0	0	<good>3%</good> increased ballistic weapon damage.
+flavour|beam_or_non_beam_energy_weapon_damage	0	Emitter coils salvaged from Remnant wrecks can be wound for a steady beam or a hard pulse, but not both. Remnant drones never seem to need the choice.
 type|beam_weapon_damage|null|0	0	<good>3%</good> increased beam weapon damage.
 type|beam_weapon_damage|FRIGATE|0	0	<good>3%</good> increased beam weapon damage.
 type|beam_weapon_damage|DESTROYER|0	0	<good>3%</good> increased beam weapon damage.
@@ -3936,6 +3974,13 @@ type|domain_pattern_laminate|CRUISER|0	1	<bad>8%</bad> reduced kinetic damage ta
 type|domain_pattern_laminate|CRUISER|1	1	<bad>8%</bad> reduced high-explosive damage taken.
 type|domain_pattern_laminate|CAPITAL_SHIP|0	1	<bad>8%</bad> reduced kinetic damage taken.
 type|domain_pattern_laminate|CAPITAL_SHIP|1	1	<bad>8%</bad> reduced high-explosive damage taken.
+flavour|dormant_repair_cycle	0	A Remnant Nexus left dormant for cycles still mends its own plating, a little at a time. A repair loop lifted from one of those stations now runs in this ship's armor. It does not seem to notice the crew.
+flavourAutomated|dormant_repair_cycle	0	A Remnant Nexus left dormant for cycles still mends its own plating, a little at a time. The ship's core lifted the repair loop from one of those stations and runs it beside its own. The loop does not appear to notice.
+type|dormant_repair_cycle|null|0	0	Armor cells not hit for 5 seconds repair <good>0.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+type|dormant_repair_cycle|FRIGATE|0	0	Armor cells not hit for 5 seconds repair <good>0.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+type|dormant_repair_cycle|DESTROYER|0	0	Armor cells not hit for 5 seconds repair <good>0.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+type|dormant_repair_cycle|CRUISER|0	0	Armor cells not hit for 5 seconds repair <good>0.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+type|dormant_repair_cycle|CAPITAL_SHIP|0	0	Armor cells not hit for 5 seconds repair <good>0.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
 flavour|dynamic_grid	0	Nightcross Armory fits its dynamic coils to almost every hull it builds and never sells them on their own, so the crew pulls a set from a boarded Nightcross wreck. The warranty, naturally, does not cover third-party installation.
 flavourAutomated|dynamic_grid	0	Nightcross Armory fits its dynamic coils to almost every hull it builds and never sells them on their own, so the refit crew pulls a set from a boarded Nightcross wreck. The warranty, naturally, does not cover third-party installation, least of all into a machine.
 type|dynamic_grid|null|0	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
@@ -4088,6 +4133,13 @@ type|engine_durability_and_sensor_profile|CRUISER|0	0	<good>25%</good> increased
 type|engine_durability_and_sensor_profile|CRUISER|1	1	<bad>10%</bad> reduced sensor profile.
 type|engine_durability_and_sensor_profile|CAPITAL_SHIP|0	0	<good>25%</good> increased engine durability.
 type|engine_durability_and_sensor_profile|CAPITAL_SHIP|1	1	<bad>10%</bad> reduced sensor profile.
+flavour|equilibrium_protocol	0	Remnant hulls are rumored to draw on every lineage of Domain design at once, held in a balance their cores never let slip. A ship whose refits stay just as even can borrow the same discipline. The chief engineer calls it balance. The quartermaster calls it a requisition freeze.
+flavourAutomated|equilibrium_protocol	0	Remnant hulls are rumored to draw on every lineage of Domain design at once, held in a balance their cores never let slip. The ship's core recognizes the pattern in its own refits and holds to it. The refit crew calls it a requisition freeze.
+type|equilibrium_protocol|null|0	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
+type|equilibrium_protocol|FRIGATE|0	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
+type|equilibrium_protocol|DESTROYER|0	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
+type|equilibrium_protocol|CRUISER|0	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
+type|equilibrium_protocol|CAPITAL_SHIP|0	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
 type|escort_package|null|0	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type|escort_package|null|1	0	While within 700 su of a larger friendly ship, up to 10% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type|escort_package|null|2	0	While within 700 su of a larger friendly ship, up to 15% increased ballistic and energy weapon range, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
@@ -4383,6 +4435,12 @@ type|furor_machinae|FRIGATE|0	0	Damage dealt to enemy ships builds fury, grantin
 type|furor_machinae|DESTROYER|0	0	Damage dealt to enemy ships builds fury, granting up to <good>15%</good> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
 type|furor_machinae|CRUISER|0	0	Damage dealt to enemy ships builds fury, granting up to <good>15%</good> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
 type|furor_machinae|CAPITAL_SHIP|0	0	Damage dealt to enemy ships builds fury, granting up to <good>15%</good> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
+flavour|greater_high_tech_affinity	0	Flux lattices stripped from Remnant drones are a generation ahead of anything in the Tri-Tachyon catalogue. Tri-Tachyon is said to disagree.
+type|greater_high_tech_affinity|null|0	0	<good>+10</good> to High Tech Affinity.
+type|greater_high_tech_affinity|FRIGATE|0	0	<good>+10</good> to High Tech Affinity.
+type|greater_high_tech_affinity|DESTROYER|0	0	<good>+10</good> to High Tech Affinity.
+type|greater_high_tech_affinity|CRUISER|0	0	<good>+10</good> to High Tech Affinity.
+type|greater_high_tech_affinity|CAPITAL_SHIP|0	0	<good>+10</good> to High Tech Affinity.
 flavour|ground_support	0	Raids flown alongside pirate crews teach the crew to turn spare berths and cargo lifts into a drop platform for the marines, and to keep a few guns pointed at the ground while they work.
 flavourAutomated|ground_support	0	The ship's core logs every pirate raid it flies beside, down to where the guns point while the marines are on the ground. The refit crew turns its cargo lifts into a drop platform, and the core keeps the guns where the logs say.
 type|ground_support|null|0	0	Your fleet gains effective planetary raid strength equal to <good>25%</good> of this ship's maximum crew capacity, up to the total number of marines in the fleet.
@@ -4658,6 +4716,13 @@ type|ion_cascade|FRIGATE|0	0	<good>100%</good> of EMP damage this ship deals to 
 type|ion_cascade|DESTROYER|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
 type|ion_cascade|CRUISER|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
 type|ion_cascade|CAPITAL_SHIP|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+flavour|ion_spill	0	Ion bolts from Remnant drones do not simply splash off a shield. Their emitters run a fraction off their rated frequency, and some of the charge reaches the projector as heat. The crew detuned this ship's emitters to match, which voided a warranty nobody had read.
+flavourAutomated|ion_spill	0	Ion bolts from Remnant drones do not simply splash off a shield. Their emitters run a fraction off their rated frequency, and some of the charge reaches the projector as heat. The ship's core detuned its own emitters to match, which voided a warranty it had read in full.
+type|ion_spill|null|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+type|ion_spill|FRIGATE|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+type|ion_spill|DESTROYER|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+type|ion_spill|CRUISER|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+type|ion_spill|CAPITAL_SHIP|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
 flavour|joint_strike_package	0	No League detachment will launch second, so joint fleets launch every wing at once.
 type|joint_strike_package|null|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
 type|joint_strike_package|FRIGATE|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
@@ -5269,6 +5334,18 @@ type|reinforced_bulkheads|CAPITAL_SHIP|0	0	<good>40%</good> increased hull point
 type|reinforced_bulkheads|CAPITAL_SHIP|1	0	If disabled, this ship is almost always recoverable after the battle.
 type|reinforced_bulkheads|CAPITAL_SHIP|2	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 type-detail|reinforced_bulkheads|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Reinforced Bulkheads</hullmod>
+flavour|relay_protocols	0	Remnant battlegroups pass position data between hulls through relay protocols that are only dimly understood. A fragment recovered from a drone's comms array now sits in this ship's own, and the fleet's helms keep station by it. The signal officer has asked that nobody reply to it.
+flavourAutomated|relay_protocols	0	Remnant battlegroups pass position data between hulls through relay protocols that are only dimly understood. The ship's core copied a fragment from a drone's comms array into its own, and the fleet's helms keep station by it. It has not been asked to reply, and does not.
+type|relay_protocols|null|0	0	<good>+10</good> to High Tech Affinity.
+type|relay_protocols|null|1	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
+type|relay_protocols|FRIGATE|0	0	<good>+10</good> to High Tech Affinity.
+type|relay_protocols|FRIGATE|1	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
+type|relay_protocols|DESTROYER|0	0	<good>+10</good> to High Tech Affinity.
+type|relay_protocols|DESTROYER|1	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
+type|relay_protocols|CRUISER|0	0	<good>+10</good> to High Tech Affinity.
+type|relay_protocols|CRUISER|1	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
+type|relay_protocols|CAPITAL_SHIP|0	0	<good>+10</good> to High Tech Affinity.
+type|relay_protocols|CAPITAL_SHIP|1	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
 flavour|repair_coordinator	0	The wreck of an NCA Occator still holds the delta-level coordinator that once steered its repair drones between damaged hulls. The crew wires it into this ship's damage-control network, teaching it to send work teams and drones across to patch the armor of nearby allies in the middle of a battle.
 flavourAutomated|repair_coordinator	0	The wreck of an NCA Occator still holds the delta-level coordinator that once steered its repair drones between damaged hulls. Wired into this ship's damage-control network, it sends the ship's drones across to patch the armor of nearby allies in the middle of a battle.
 type|repair_coordinator|null|0	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.

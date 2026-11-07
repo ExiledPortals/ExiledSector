@@ -12,6 +12,7 @@ import exiledsector.skills.skilleffect.StatMode;
 import exiledsector.skills.skilleffect.battle.BattleSkillEffect;
 import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.fighter.FighterSkillEffect;
+import exiledsector.skills.skilleffect.onhit.OnHitSkillEffect;
 import exiledsector.skills.skilleffect.shipsystem.ShipSystemSkillEffect;
 import exiledsector.skills.skilleffect.shield.ShieldSkillEffect;
 import exiledsector.skills.skilleffect.weapon.ScopedWeaponEffect;
@@ -93,6 +94,10 @@ public enum SpecialSkillEffect implements BackedSkillEffect {
             FighterSkillEffect.FIGHTER_DAMAGE_TAKEN_MULT)),
     NAV_RATING_PER_HIGH_TECH_AFFINITY(new AffinityScaling(AffinityScaling.Filter.HIGH_TECH, AffinityScaling.NAV_RATING_STEP,
             BattleSkillEffect.NAV_RATING)),
+    ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY(new AffinityScaling(AffinityScaling.Filter.HIGH_TECH, AffinityScaling.SMALL_STEP,
+            OnHitSkillEffect.ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT)),
+    WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL(AffinityScaling.whileAllEqual(
+            ScopedWeaponEffect.find(WeaponStatFamily.DAMAGE, WeaponScope.ALL, StatMode.PERCENT))),
     FRAGMENT_SWARM_SIZE_PERCENT_PER_AFFINITY(new AffinityScaling(AffinityScaling.Filter.ALL, AffinityScaling.SMALL_STEP,
             ShipSystemSkillEffect.FRAGMENT_SWARM_SIZE_PERCENT)),
     FRAGMENT_REPLACEMENT_RATE_PERCENT_PER_AFFINITY(new AffinityScaling(AffinityScaling.Filter.ALL, AffinityScaling.SMALL_STEP,

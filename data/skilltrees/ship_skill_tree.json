@@ -3346,7 +3346,8 @@
 			"type": "wormhole_exit",
 			"connectedTo": [
 				"affinity_49",
-				"affinity_51"
+				"affinity_51",
+				"greater_high_tech_affinity_1"
 			],
 			"x": 10165,
 			"y": -6807,
@@ -8694,7 +8695,8 @@
 			"type": "affinity",
 			"connectedTo": [
 				"affinity_133",
-				"affinity_131"
+				"affinity_131",
+				"affinity_155"
 			],
 			"x": 12408,
 			"y": -8107,
@@ -8710,7 +8712,8 @@
 			"type": "affinity",
 			"connectedTo": [
 				"affinity_130",
-				"affinity_132"
+				"affinity_132",
+				"armor_17"
 			],
 			"x": 10165,
 			"y": -5864,
@@ -8726,7 +8729,8 @@
 			"type": "affinity",
 			"connectedTo": [
 				"affinity_131",
-				"affinity_133"
+				"affinity_133",
+				"emp_damage_3"
 			],
 			"x": 7922,
 			"y": -8107,
@@ -8743,12 +8747,218 @@
 			"connectedTo": [
 				"affinity_132",
 				"affinity_130",
-				"affinity_50"
+				"affinity_50",
+				"beam_or_non_beam_energy_weapon_damage_1"
 			],
 			"x": 10165,
 			"y": -10350,
 			"orbitAnchorId": "anchor_93",
 			"orbitAngle": 270,
+			"tags": [
+				"REDACTED",
+				"gate_remnant_fought"
+			]
+		},
+		{
+			"id": "affinity_155",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_130",
+				"affinity_156"
+			],
+			"x": 12054,
+			"y": -8794,
+			"tags": [
+				"REDACTED",
+				"gate_remnant_fought"
+			]
+		},
+		{
+			"id": "affinity_156",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_155",
+				"adaptive_munitions_1"
+			],
+			"x": 11536,
+			"y": -9258,
+			"tags": [
+				"REDACTED",
+				"gate_remnant_fought"
+			]
+		},
+		{
+			"id": "adaptive_munitions_1",
+			"type": "adaptive_munitions",
+			"connectedTo": [
+				"affinity_156"
+			],
+			"x": 10950,
+			"y": -9467,
+			"tags": [
+				"REDACTED",
+				"gate_remnant_fought"
+			]
+		},
+		{
+			"id": "beam_or_non_beam_energy_weapon_damage_1",
+			"type": "beam_or_non_beam_energy_weapon_damage",
+			"connectedTo": [
+				"affinity_133",
+				"beam_or_non_beam_energy_weapon_damage_2"
+			],
+			"x": 9478,
+			"y": -9996,
+			"tags": [
+				"REDACTED",
+				"gate_remnant_fought"
+			]
+		},
+		{
+			"id": "beam_or_non_beam_energy_weapon_damage_2",
+			"type": "beam_or_non_beam_energy_weapon_damage",
+			"connectedTo": [
+				"beam_or_non_beam_energy_weapon_damage_1",
+				"equilibrium_protocol_1"
+			],
+			"x": 9014,
+			"y": -9478,
+			"tags": [
+				"REDACTED",
+				"gate_remnant_fought"
+			]
+		},
+		{
+			"id": "equilibrium_protocol_1",
+			"type": "equilibrium_protocol",
+			"connectedTo": [
+				"beam_or_non_beam_energy_weapon_damage_2"
+			],
+			"x": 8805,
+			"y": -8892,
+			"tags": [
+				"REDACTED",
+				"gate_remnant_fought"
+			]
+		},
+		{
+			"id": "emp_damage_3",
+			"type": "emp_damage",
+			"connectedTo": [
+				"affinity_132",
+				"emp_damage_4"
+			],
+			"x": 8276,
+			"y": -7420,
+			"tags": [
+				"REDACTED",
+				"gate_remnant_fought"
+			]
+		},
+		{
+			"id": "emp_damage_4",
+			"type": "emp_damage",
+			"connectedTo": [
+				"emp_damage_3",
+				"ion_spill_1"
+			],
+			"x": 8794,
+			"y": -6956,
+			"tags": [
+				"REDACTED",
+				"gate_remnant_fought"
+			]
+		},
+		{
+			"id": "ion_spill_1",
+			"type": "ion_spill",
+			"connectedTo": [
+				"emp_damage_4"
+			],
+			"x": 9380,
+			"y": -6747,
+			"tags": [
+				"REDACTED",
+				"gate_remnant_fought"
+			]
+		},
+		{
+			"id": "armor_17",
+			"type": "armor",
+			"connectedTo": [
+				"affinity_131",
+				"armor_18"
+			],
+			"x": 10852,
+			"y": -6218,
+			"tags": [
+				"REDACTED",
+				"gate_remnant_fought"
+			]
+		},
+		{
+			"id": "armor_18",
+			"type": "armor",
+			"connectedTo": [
+				"armor_17",
+				"dormant_repair_cycle_1"
+			],
+			"x": 11316,
+			"y": -6736,
+			"tags": [
+				"REDACTED",
+				"gate_remnant_fought"
+			]
+		},
+		{
+			"id": "dormant_repair_cycle_1",
+			"type": "dormant_repair_cycle",
+			"connectedTo": [
+				"armor_18"
+			],
+			"x": 11525,
+			"y": -7322,
+			"tags": [
+				"REDACTED",
+				"gate_remnant_fought"
+			]
+		},
+		{
+			"id": "greater_high_tech_affinity_1",
+			"type": "greater_high_tech_affinity",
+			"connectedTo": [
+				"REDACTED_2",
+				"greater_high_tech_affinity_2"
+			],
+			"x": 10574,
+			"y": -7172,
+			"tags": [
+				"REDACTED",
+				"gate_remnant_fought"
+			]
+		},
+		{
+			"id": "greater_high_tech_affinity_2",
+			"type": "greater_high_tech_affinity",
+			"connectedTo": [
+				"greater_high_tech_affinity_1",
+				"relay_protocols_1"
+			],
+			"x": 10676,
+			"y": -7757,
+			"tags": [
+				"REDACTED",
+				"gate_remnant_fought"
+			]
+		},
+		{
+			"id": "relay_protocols_1",
+			"type": "relay_protocols",
+			"connectedTo": [
+				"greater_high_tech_affinity_2"
+			],
+			"x": 10361,
+			"y": -8093,
 			"tags": [
 				"REDACTED",
 				"gate_remnant_fought"
@@ -12783,6 +12993,96 @@
 			"b": "disintegration_1",
 			"controlX": 18010,
 			"controlY": -14872
+		},
+		{
+			"a": "affinity_130",
+			"b": "affinity_155",
+			"controlX": 12259,
+			"controlY": -8476
+		},
+		{
+			"a": "affinity_155",
+			"b": "affinity_156",
+			"controlX": 11811,
+			"controlY": -9057
+		},
+		{
+			"a": "affinity_156",
+			"b": "adaptive_munitions_1",
+			"controlX": 11245,
+			"controlY": -9394
+		},
+		{
+			"a": "affinity_133",
+			"b": "beam_or_non_beam_energy_weapon_damage_1",
+			"controlX": 9796,
+			"controlY": -10201
+		},
+		{
+			"a": "beam_or_non_beam_energy_weapon_damage_1",
+			"b": "beam_or_non_beam_energy_weapon_damage_2",
+			"controlX": 9215,
+			"controlY": -9753
+		},
+		{
+			"a": "beam_or_non_beam_energy_weapon_damage_2",
+			"b": "equilibrium_protocol_1",
+			"controlX": 8878,
+			"controlY": -9187
+		},
+		{
+			"a": "affinity_132",
+			"b": "emp_damage_3",
+			"controlX": 8071,
+			"controlY": -7738
+		},
+		{
+			"a": "emp_damage_3",
+			"b": "emp_damage_4",
+			"controlX": 8519,
+			"controlY": -7157
+		},
+		{
+			"a": "emp_damage_4",
+			"b": "ion_spill_1",
+			"controlX": 9085,
+			"controlY": -6820
+		},
+		{
+			"a": "affinity_131",
+			"b": "armor_17",
+			"controlX": 10534,
+			"controlY": -6013
+		},
+		{
+			"a": "armor_17",
+			"b": "armor_18",
+			"controlX": 11115,
+			"controlY": -6461
+		},
+		{
+			"a": "armor_18",
+			"b": "dormant_repair_cycle_1",
+			"controlX": 11452,
+			"controlY": -7027
+		},
+		{
+			"a": "greater_high_tech_affinity_2",
+			"b": "relay_protocols_1",
+			"controlX": 10580,
+			"controlY": -7994
+		},
+		{
+			"a": "greater_high_tech_affinity_1",
+			"b": "greater_high_tech_affinity_2",
+			"controlX": 10660,
+			"controlY": -7451
+		},
+		{
+			"a": "REDACTED_2",
+			"b": "greater_high_tech_affinity_1",
+			"controlX": 10401,
+			"controlY": -6946
 		}
 	],
 	"hiddenConnectors": [

@@ -1,8 +1,6 @@
 package exiledsector.skills.skilleffect.onhit;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ArmorGridAPI;
-import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
@@ -16,9 +14,6 @@ import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 import org.lwjgl.util.vector.Vector2f;
 
-import java.util.ArrayList;
-import java.util.List;
-
 final class IonCascadeListener extends ShipCombatListener implements DamageDealtModifier, AdvanceableListener {
 
     static final String HIGH_EXPLOSIVE_SHARE_PERCENT_KEY = "exiledSector_ionCascadeHighExplosiveSharePercent";
@@ -26,10 +21,7 @@ final class IonCascadeListener extends ShipCombatListener implements DamageDealt
     static final float OUTER_CELL_EMP_SHARE = 0.25f;
     static final int REACH_CELLS = 2;
 
-    record CascadeHit(ShipAPI target, Vector2f point, float damage) {
-    }
-
-    private final List<CascadeHit> pendingHits = new ArrayList<>();
+    private final DeferredHits pendingHits = new DeferredHits(DamageType.HIGH_EXPLOSIVE, true);
 
     IonCascadeListener(ShipAPI ownerShip) {
         super(ownerShip);
@@ -57,7 +49,7 @@ final class IonCascadeListener extends ShipCombatListener implements DamageDealt
         }
         float wastedEmp = empOnDisabledParts(targetShip, point, emp, damage.getStats());
         if (wastedEmp > 0f) {
-            pendingHits.add(new CascadeHit(targetShip, new Vector2f(point), wastedEmp * sharePercent / 100f));
+            pendingHits.add(targetShip, point, wastedEmp * sharePercent / 100f);
         }
         return null;
     }
@@ -98,19 +90,6 @@ final class IonCascadeListener extends ShipCombatListener implements DamageDealt
 
     @Override
     public void advance(float amount) {
-        if (pendingHits.isEmpty()) {
-            return;
-        }
-        CombatEngineAPI engine = Global.getCombatEngine();
-        List<CascadeHit> hits = new ArrayList<>(pendingHits);
-        pendingHits.clear();
-        if (engine == null) {
-            return;
-        }
-        for (CascadeHit hit : hits) {
-            if (CombatQueries.isAliveNotHulk(hit.target())) {
-                engine.applyDamage(hit.target(), hit.point(), hit.damage(), DamageType.HIGH_EXPLOSIVE, 0f, true, false, ownerShip);
-            }
-        }
+        pendingHits.applyAll(ownerShip);
     }
 }

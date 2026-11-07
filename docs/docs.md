@@ -22,7 +22,8 @@ scaling and the summary see the stat bonuses. `ModuleTreeShare` steps the shared
 
 Effects backed by `AffinityScaling` (`*_PER_*_AFFINITY`, on the affinity hull items) apply nothing themselves:
 `AffinitySteps.scaledBonuses` adds their target stat once per whole step of the affinities they read, summed when
-they read all three, in a contribution of its own so module sharing is unaffected. `AffinitySteps.totals` first
+they read all three, in a contribution of its own so module sharing is unaffected. `AffinityScaling.whileAllEqual`
+(Equilibrium Protocol) adds its target once while the final totals of all three are equal. `AffinitySteps.totals` first
 multiplies the summed Low Tech Affinity by its summed `LOW_TECH_AFFINITY_PERCENT`, then adds
 `HIGHEST_AFFINITY_FLAT_PER_S_MOD` (already multiplied by the ship's s-mods in `HullUpgradeEffectSource`) to the
 highest affinity, then `LOWEST_AFFINITY_AS_HIGHEST` raises the lowest to match it, and last each `AFFINITY_EXCHANGE_TO_*`
@@ -168,7 +169,9 @@ type from the weapon each tick, since their damage object lasts the whole firing
 
 A conversion to EMP moves the hit's whole damage into EMP. `HitDamageRestorer` makes the change and restores the hit
 once it lands; refractions and Phase-Entangled Wings use the same restorer, so their changes stack on one hit, and Lion's
-Gaze cuts its simulated hits from the original damage.
+Gaze cuts its simulated hits from the original damage. After the mount conversion, `ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT`
+(Adaptive Munitions) may retype a weapon hit on a ship to kinetic on shields or high explosive elsewhere, through the
+restorer, which puts the original type back.
 
 ### Refracting Projectiles
 
@@ -333,6 +336,12 @@ Vanilla spreads a hull or armor hit's EMP over the weapons and engines within tw
 to those in the inner ring and a quarter to the outer ring. `DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT` repeats that sum for
 the parts already disabled before the hit, with the same EMP and part damage multipliers, and deals that share as high
 explosive damage at the hit point on the next frame, past shields and through armor as usual (`IonCascadeListener`).
+
+### Ion Spill
+
+`SHIELD_EMP_TO_ENERGY_PERCENT` takes that share of the EMP in each hit an enemy shield takes from this ship and deals it
+as energy damage at the hit point on the next frame, against shields as usual (`IonSpillListener`, queued in
+`DeferredHits` like Ion Cascade).
 
 ### Phase Ambush Doctrine
 
@@ -783,7 +792,8 @@ does, checked every 0.1 seconds (`HoldFireShieldListener`).
 The armor repair works on 0.5-second ticks: a cell whose armor dropped since the last tick restarts its 5-second
 delay, and repair pauses while an enemy ship (not strikecraft) is within 1500 su. Each point restored adds 1 hard
 flux, so repair is also cut to the flux room left and stops at full flux, and it ends for the deployment once it has
-restored 50% of the ship's total armor (`UnhitArmorRegenListener`).
+restored 50% of the ship's total armor (`UnhitArmorRegenListener`). Dormant Repair Cycle's
+`UNHIT_ARMOR_REGEN_LOW_CAP_PERCENT` runs alongside it with its own 20% cap.
 
 ### Furnace modifiers
 
