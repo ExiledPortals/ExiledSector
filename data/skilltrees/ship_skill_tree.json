@@ -9335,7 +9335,7 @@
 			"type": "damage_to_slower_ships",
 			"connectedTo": [
 				"damage_to_slower_ships_1",
-				"pick_off_stragglers_1"
+				"pick_off_the_stragglers_1"
 			],
 			"x": 14224,
 			"y": 4493,
@@ -9344,8 +9344,8 @@
 			]
 		},
 		{
-			"id": "pick_off_stragglers_1",
-			"type": "pick_off_stragglers",
+			"id": "pick_off_the_stragglers_1",
+			"type": "pick_off_the_stragglers",
 			"connectedTo": [
 				"damage_to_slower_ships_2"
 			],

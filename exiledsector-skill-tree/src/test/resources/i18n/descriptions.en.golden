@@ -5289,12 +5289,12 @@ type|phase_fed_magazines|FRIGATE|0	0	<good>100%</good> increased ammo regenerati
 type|phase_fed_magazines|DESTROYER|0	0	<good>100%</good> increased ammo regeneration while phased.
 type|phase_fed_magazines|CRUISER|0	0	<good>100%</good> increased ammo regeneration while phased.
 type|phase_fed_magazines|CAPITAL_SHIP|0	0	<good>100%</good> increased ammo regeneration while phased.
-flavour|pick_off_stragglers	0	A convoy is only as safe as its slowest freighter.
-type|pick_off_stragglers|null|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
-type|pick_off_stragglers|FRIGATE|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
-type|pick_off_stragglers|DESTROYER|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
-type|pick_off_stragglers|CRUISER|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
-type|pick_off_stragglers|CAPITAL_SHIP|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
+flavour|pick_off_the_stragglers	0	A convoy is only as safe as its slowest freighter.
+type|pick_off_the_stragglers|null|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
+type|pick_off_the_stragglers|FRIGATE|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
+type|pick_off_the_stragglers|DESTROYER|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
+type|pick_off_the_stragglers|CRUISER|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
+type|pick_off_the_stragglers|CAPITAL_SHIP|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
 type|point_defense_damage_to_missiles_and_fighters|null|0	0	<good>10%</good> increased damage to missiles.
 type|point_defense_damage_to_missiles_and_fighters|null|1	0	<good>10%</good> increased damage to fighters.
 type|point_defense_damage_to_missiles_and_fighters|FRIGATE|0	0	<good>10%</good> increased damage to missiles.

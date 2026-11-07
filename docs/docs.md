@@ -314,7 +314,7 @@ Blood in the Water's `PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT` grants a s
 within its range, checked every 0.25 seconds. Strike craft and station modules don't count
 (`FrenzyOnNearbyDestructionListener`).
 
-### Pick Off Stragglers
+### Pick Off The Stragglers
 
 `DAMAGE_TO_ISOLATED_SHIP_PERCENT` raises damage dealt to an enemy ship with no living ship of its own side within
 1000 su. Strike craft and modules of the same station don't count as allies, and each target is rechecked at most

@@ -263,8 +263,8 @@
 			]
 		},
 		{
-			"id": "pick_off_stragglers",
-			"name": "Pick Off Stragglers",
+			"id": "pick_off_the_stragglers",
+			"name": "Pick Off The Stragglers",
 			"icon": "",
 			"tier": "NOTABLE",
 			"effects": [
