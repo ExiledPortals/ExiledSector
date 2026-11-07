@@ -13,6 +13,7 @@ import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.WeaponAPI.DerivedWeaponStatsAPI;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
+import exiledsector.skills.skilleffect.weapon.RiftExplosions;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.InOrder;
@@ -125,7 +126,7 @@ class RiftStrikeListenerTest {
             assertNull(new RiftStrikeListener(ship, rolling(0.29f)).modifyDamageDealt(shot(WeaponType.ENERGY, false, 500f), target,
                     mock(DamageAPI.class), point, true));
 
-            verify(engine).spawnProjectile(eq(ship), eq(null), eq(RiftStrikeListener.RIFT_MINE_WEAPON_ID), eq(point), anyFloat(), eq(null));
+            verify(engine).spawnProjectile(eq(ship), eq(null), eq(RiftExplosions.RIFT_MINE_WEAPON_ID), eq(point), anyFloat(), eq(null));
             InOrder damageThenFuse = inOrder(rift.getDamage(), rift.getMissileAI());
             damageThenFuse.verify(rift.getDamage()).setDamage(250f);
             damageThenFuse.verify((ProximityFuseAIAPI) rift.getMissileAI()).updateDamage();

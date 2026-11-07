@@ -55,6 +55,16 @@ class AffinityStepsTest {
     }
 
     @Test
+    void aHighestAffinityScaledEffectCountsOnlyTheHighestAffinity() {
+        EffectContribution notable = EffectContribution.scaledPermanent("notable", "notable_", List.of(
+                new SkillTypeEffect(SpecialSkillEffect.MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY, 1f)));
+
+        assertEquals(Map.of(OnHitSkillEffect.MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT, 4f),
+                scaled(List.of(notable, node(LOW_TECH, 14f), node(HIGH_TECH, 21f), node(MIDLINE, 19f))));
+        assertEquals(Map.of(), scaled(List.of(notable, node(LOW_TECH, 4f), node(MIDLINE, 4f))));
+    }
+
+    @Test
     void navRatingPerHighTechAffinityAddsFleetNavRatingEveryFiftyHighTechAffinity() {
         EffectContribution phaseCoil = EffectContribution.scaledPermanent("item", "item_", List.of(
                 new SkillTypeEffect(SpecialSkillEffect.NAV_RATING_PER_HIGH_TECH_AFFINITY, 1f)));

@@ -1076,5 +1076,14 @@
     "skillType.ion_spill.flavour": "残存者无人舰射出的离子弹丸，并不只是从护盾上溅开。它们的发射器略微偏离额定频率运行，部分电荷会以热量的形式抵达护盾发生器。船员把本舰的发射器也调偏到同样的频率，因此作废了一份从来没人读过的保修协议。",
     "skillType.ion_spill.flavourAutomated": "残存者无人舰射出的离子弹丸，并不只是从护盾上溅开。它们的发射器略微偏离额定频率运行，部分电荷会以热量的形式抵达护盾发生器。舰载核心把自身的发射器也调偏到同样的频率，因此作废了一份它从头到尾读过的保修协议。",
     "skillType.dormant_repair_cycle.flavour": "一座休眠了许多周期的残存者 Nexus，仍会一点一点地修补自己的装甲。从这类空间站中取出的一段修复循环，如今在本舰的装甲中运行。它似乎没有注意到船员的存在。",
-    "skillType.dormant_repair_cycle.flavourAutomated": "一座休眠了许多周期的残存者 Nexus，仍会一点一点地修补自己的装甲。舰载核心从这类空间站中取出这段修复循环，让它与自身的修复程序并行运行。这段循环似乎没有注意到它。"
+    "skillType.dormant_repair_cycle.flavourAutomated": "一座休眠了许多周期的残存者 Nexus，仍会一点一点地修补自己的装甲。舰载核心从这类空间站中取出这段修复循环，让它与自身的修复程序并行运行。这段循环似乎没有注意到它。",
+    "skillType.strikecraft_weapon_range.name": "战机武器射程",
+    "skillType.spark_rift.name": "火花裂隙",
+    "skillType.temporal_exhaust.name": "时序尾焰",
+    "skillType.resonator_payload.name": "谐振载荷",
+    "skillType.spark_rift.flavour": "一架残存者母舰的 Spark 无人机在霸主的机库里被拆开研究了整整一个周期。研究成果被装进了本舰自己的战机发射器。霸主的报告至今仍属机密，主要是出于难堪。",
+    "skillType.temporal_exhaust.flavour": "一艘 Tesseract 尾焰的传感器日志被反复回放，直到时间戳彼此对不上。总工程师按同样的时序重新调校了引擎喷口。如今传感器总会在喷射发生前片刻就记录到尾焰。维修部门把这归为小故障。",
+    "skillType.temporal_exhaust.flavourAutomated": "一艘 Tesseract 尾焰的传感器日志被反复回放，直到时间戳彼此对不上。舰载核心按日志匹配了自身的引擎时序，改装船员在船坞里重新调校了喷口。如今传感器总会在喷射发生前片刻就记录到尾焰。维修部门把这归为小故障。",
+    "skillType.resonator_payload.flavour": "从一艘不属于任何已知设计的残骸中取出的 Resonator MRM 弹头碎片，仍以一种仪器无法确定的频率嗡鸣。船员在本舰装填的每一枚导弹里都嵌入一小片。弹药清单把它们记作压舱物。",
+    "skillType.resonator_payload.flavourAutomated": "从一艘不属于任何已知设计的残骸中取出的 Resonator MRM 弹头碎片，仍以一种仪器无法确定的频率嗡鸣。按照舰载核心的指示，改装船员在本舰弹舱的每一枚导弹里都嵌入一小片。弹药清单把它们记作压舱物。"
 }

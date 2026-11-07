@@ -22,7 +22,7 @@ scaling and the summary see the stat bonuses. `ModuleTreeShare` steps the shared
 
 Effects backed by `AffinityScaling` (`*_PER_*_AFFINITY`, on the affinity hull items) apply nothing themselves:
 `AffinitySteps.scaledBonuses` adds their target stat once per whole step of the affinities they read, summed when
-they read all three, in a contribution of its own so module sharing is unaffected. `AffinityScaling.whileAllEqual`
+they read all three (`*_PER_HIGHEST_AFFINITY` reads only the highest), in a contribution of its own so module sharing is unaffected. `AffinityScaling.whileAllEqual`
 (Equilibrium Protocol) adds its target once while the final totals of all three are equal. `AffinitySteps.totals` first
 multiplies the summed Low Tech Affinity by its summed `LOW_TECH_AFFINITY_PERCENT`, then adds
 `HIGHEST_AFFINITY_FLAT_PER_S_MOD` (already multiplied by the ship's s-mods in `HullUpgradeEffectSource`) to the
@@ -203,15 +203,31 @@ burns on one cell add up.
 ### Rift Harmonics and rift explosion damage
 
 `RIFT_STRIKE_CHANCE_PERCENT` (`RiftStrikeListener`) rolls on each hit an enemy ship takes from this ship's non-beam
-energy weapons, ballistics included while they count as energy. On success it drops vanilla's Rift Beam mine at the hit
-point, which explodes at once with that weapon's rift animation and area. The mine's damage is set from the weapon spec's
-base damage per shot (`RiftStrike`), so the ship's damage bonuses never reach it, and the node tooltip lists every
-fitted weapon with its rift damage (`RiftStrikeTooltipTable`).
+energy weapons, ballistics included while they count as energy, and Spark Rift's `STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT`
+(`StrikecraftRiftStrikeListener`) on each such hit from its launched strike craft. On success it drops vanilla's Rift Beam
+mine at the hit point, sourced by the hitting ship or craft, which explodes at once (`RiftExplosions.spawn`). The mine's
+damage is set from the weapon spec's base damage per shot (`RiftStrike`), so damage bonuses never reach it, and the
+Rift Harmonics tooltip lists every fitted weapon with its rift damage (`RiftStrikeTooltipTable`).
 
 `RIFT_EXPLOSION_DAMAGE_PERCENT` (`RiftExplosionDamageListener`) raises the damage of every rift explosion the ship
-sources: these rifts, vanilla's Rift Beam, Rift Lance, Rift Cascade and Rift Lightning mines, and Rift Torpedo direct
-hits (not their splash).
-`RiftExplosions` picks the mines out by their vanilla sound set and the absence of a drawn explosion of their own.
+sources: these rifts, vanilla's Rift Beam, Lance, Cascade and Lightning mines, and Rift Torpedo direct hits, which
+`RiftExplosions` picks out by their vanilla sound set and the absence of a drawn explosion of their own. The engine asks
+only the source's listeners, so a strike craft's rifts take `STRIKECRAFT_RIFT_EXPLOSION_DAMAGE_PERCENT` instead
+(`StrikecraftRiftExplosionDamageListener`, on each launched craft) and never both.
+
+### Temporal Exhaust
+
+When the ship system turns on, `SYSTEM_ACTIVATION_TIMEFLOW_PERCENT` (`TemporalExhaustListener`) gives its time flow
+bonus, lowered evenly to nothing over 4 seconds, and spawns 8 rifts evenly over the same 4 seconds behind a random main
+engine, then waits 30 seconds before it can trigger again. The rifts are the ship's own, so they hit only enemies and
+rift explosion damage bonuses reach them.
+
+### Resonator Payload
+
+`MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY` grants `MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT` for every
+5 of the highest affinity (`AffinityScaling.Filter.HIGHEST`). Each missile weapon hit on an enemy ship rolls it, and
+`ResonatorPayloadListener` then spawns 4 rifts within 100 su of the impact, 0.1 seconds apart, each dealing 10% of the
+launcher's base damage per shot up to 100.
 
 ### Thermo-Accelerator
 

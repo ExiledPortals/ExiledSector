@@ -18,16 +18,24 @@ public record AffinityScaling(Filter filter, int stepSize, SkillEffect target) i
     private static final int NO_STEP = 0;
 
     public enum Filter {
-        LOW_TECH, HIGH_TECH, MIDLINE, ALL, ALL_EQUAL;
+        LOW_TECH, HIGH_TECH, MIDLINE, ALL, ALL_EQUAL, HIGHEST;
 
         public List<SkillEffect> affinities() {
             return switch (this) {
                 case LOW_TECH -> List.of(SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT);
                 case HIGH_TECH -> List.of(SpecialSkillEffect.HIGH_TECH_AFFINITY_FLAT);
                 case MIDLINE -> List.of(SpecialSkillEffect.MIDLINE_AFFINITY_FLAT);
-                case ALL, ALL_EQUAL -> List.of(SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT, SpecialSkillEffect.HIGH_TECH_AFFINITY_FLAT,
+                case ALL, ALL_EQUAL, HIGHEST -> List.of(SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT, SpecialSkillEffect.HIGH_TECH_AFFINITY_FLAT,
                         SpecialSkillEffect.MIDLINE_AFFINITY_FLAT);
             };
+        }
+
+        public boolean reads(SkillEffect affinity, Map<SkillEffect, Float> affinityTotals) {
+            return this == HIGHEST ? affinity == AffinitySteps.highest(affinityTotals) : affinities().contains(affinity);
+        }
+
+        public boolean readsOneAffinity() {
+            return this != ALL && this != ALL_EQUAL;
         }
     }
 
@@ -38,6 +46,9 @@ public record AffinityScaling(Filter filter, int stepSize, SkillEffect target) i
     public int stepsReached(Map<SkillEffect, Float> affinityTotals) {
         if (filter == Filter.ALL_EQUAL) {
             return AffinitySteps.allEqual(affinityTotals) ? 1 : 0;
+        }
+        if (filter == Filter.HIGHEST) {
+            return AffinitySteps.stepsReached(affinityTotals.getOrDefault(AffinitySteps.highest(affinityTotals), 0f), stepSize);
         }
         float affinity = 0f;
         for (SkillEffect counted : filter.affinities()) {
