@@ -172,7 +172,7 @@
 		{
 			"id": "cheap_shots",
 			"name": "Cheap Shots",
-			"icon": "",
+			"icon": "graphics/icons/evasive_maneuvering_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -189,7 +189,7 @@
 		{
 			"id": "running_dark",
 			"name": "Running Dark",
-			"icon": "",
+			"icon": "graphics/icons/transponder_shifted_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -208,7 +208,7 @@
 		{
 			"id": "blood_in_the_water",
 			"name": "Blood in the Water",
-			"icon": "",
+			"icon": "graphics/icons/pirate_frenzy_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -225,7 +225,7 @@
 		{
 			"id": "cut_and_run",
 			"name": "Cut and Run",
-			"icon": "",
+			"icon": "graphics/icons/officer_training_shifted_shifted_shifted_z.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -242,7 +242,7 @@
 		{
 			"id": "haul_the_prize",
 			"name": "Haul the Prize",
-			"icon": "",
+			"icon": "graphics/icons/carrier_command_shifted_shifted_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -265,7 +265,7 @@
 		{
 			"id": "pick_off_the_stragglers",
 			"name": "Pick Off The Stragglers",
-			"icon": "",
+			"icon": "graphics/icons/wolfpack_circular_shifted_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3162,7 +3162,7 @@
 		{
 			"id": "increased_mass",
 			"name": "Increased Mass",
-			"icon": "",
+			"icon": "graphics/icons/mass_shifted.png",
 			"effects": [
 				{
 					"effect": "SHIP_MASS_PERCENT",
@@ -3177,7 +3177,7 @@
 		{
 			"id": "pathers_prow",
 			"name": "Pather's Prow",
-			"icon": "",
+			"icon": "graphics/icons/bulk_transport_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3194,7 +3194,7 @@
 		{
 			"id": "litany_of_the_fallen",
 			"name": "Litany of the Fallen",
-			"icon": "",
+			"icon": "graphics/icons/luddic_pilgrims_path_gold_circular.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3212,7 +3212,7 @@
 		{
 			"id": "sanctified_scars",
 			"name": "Sanctified Scars",
-			"icon": "",
+			"icon": "graphics/icons/scars_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3230,7 +3230,7 @@
 		{
 			"id": "rite_of_mortification",
 			"name": "Rite of Mortification",
-			"icon": "",
+			"icon": "graphics/icons/shieldsmaybe_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3690,7 +3690,7 @@
 		{
 			"id": "damage_to_helpless_ships",
 			"name": "Damage to Helpless Ships",
-			"icon": "",
+			"icon": "graphics/icons/emergency_burn_shifted.png",
 			"effects": [
 				{
 					"effect": "DAMAGE_TO_HELPLESS_SHIP_PERCENT",
@@ -3706,7 +3706,7 @@
 		{
 			"id": "weapon_flux_cost",
 			"name": "Weapon Flux Cost",
-			"icon": "",
+			"icon": "graphics/icons/energy_weapon_mastery_shifted_shifted.png",
 			"effects": [
 				{
 					"effect": "WEAPON_FLUX_COST_PERCENT",
@@ -3723,7 +3723,7 @@
 		{
 			"id": "acceleration",
 			"name": "Acceleration",
-			"icon": "",
+			"icon": "graphics/icons/engine_shifted_shifted.png",
 			"effects": [
 				{
 					"effect": "ACCELERATION_PERCENT",
@@ -3739,7 +3739,7 @@
 		{
 			"id": "damage_to_slower_ships",
 			"name": "Damage to Slower Ships",
-			"icon": "",
+			"icon": "graphics/icons/coordinated_maneuvers2_shifted_shifted_shifted_shifted.png",
 			"effects": [
 				{
 					"effect": "DAMAGE_TO_SLOWER_SHIP_PERCENT",
@@ -4815,7 +4815,7 @@
 		{
 			"id": "rift_explosion_damage",
 			"name": "Rift Explosion Damage",
-			"icon": "",
+			"icon": "graphics/icons/rift_explosion_starscape_shifted.png",
 			"effects": [
 				{
 					"effect": "RIFT_EXPLOSION_DAMAGE_PERCENT",
@@ -4834,7 +4834,7 @@
 		{
 			"id": "rift_harmonics",
 			"name": "Rift Harmonics",
-			"icon": "",
+			"icon": "graphics/icons/rift_explosion_multiple_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5556,7 +5556,7 @@
 		{
 			"id": "relay_protocols",
 			"name": "Relay Protocols",
-			"icon": "",
+			"icon": "graphics/icons/sensors_circular.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5593,7 +5593,7 @@
 		{
 			"id": "adaptive_munitions",
 			"name": "Adaptive Munitions",
-			"icon": "",
+			"icon": "graphics/icons/advanced_tactics_shifted_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5612,7 +5612,7 @@
 		{
 			"id": "equilibrium_protocol",
 			"name": "Equilibrium Protocol",
-			"icon": "",
+			"icon": "graphics/icons/frozen_heart2_shifted_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5643,7 +5643,7 @@
 		{
 			"id": "ion_spill",
 			"name": "Ion Spill",
-			"icon": "",
+			"icon": "graphics/icons/slipsurge_shifted_shifted_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5661,7 +5661,7 @@
 		{
 			"id": "dormant_repair_cycle",
 			"name": "Dormant Repair Cycle",
-			"icon": "",
+			"icon": "graphics/icons/mechanical_engineering_shifted_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5783,7 +5783,7 @@
 		{
 			"id": "spark_rift",
 			"name": "Spark Rift",
-			"icon": "",
+			"icon": "graphics/icons/wing_commander_rift_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5801,7 +5801,7 @@
 		{
 			"id": "temporal_exhaust",
 			"name": "Temporal Exhaust",
-			"icon": "",
+			"icon": "graphics/icons/rift_engines_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5818,7 +5818,7 @@
 		{
 			"id": "resonator_payload",
 			"name": "Resonator Payload",
-			"icon": "",
+			"icon": "graphics/icons/rift_missile_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
