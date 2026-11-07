@@ -1,4 +1,4 @@
-import { Textarea, TextInput, type TextareaProps, type TextInputProps } from '@mantine/core';
+import { Switch, Textarea, TextInput, type SwitchProps, type TextareaProps, type TextInputProps } from '@mantine/core';
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 
 function useCommittedText(value: string, onCommit: (text: string) => void) {
@@ -74,4 +74,13 @@ interface CommitTextareaProps extends Omit<TextareaProps, 'value' | 'onChange'> 
 export function CommitTextarea({ value, onCommit, ...textareaProps }: CommitTextareaProps) {
   const { text, setText, commit } = useCommittedText(value, onCommit);
   return <Textarea value={text} onChange={(event) => setText(event.currentTarget.value)} onBlur={commit} autosize minRows={2} {...textareaProps} />;
+}
+
+interface CommitSwitchProps extends Omit<SwitchProps, 'checked' | 'onChange'> {
+  checked: boolean;
+  onCommit: (checked: boolean) => void;
+}
+
+export function CommitSwitch({ checked, onCommit, ...switchProps }: CommitSwitchProps) {
+  return <Switch checked={checked} onChange={(event) => onCommit(event.currentTarget.checked)} {...switchProps} />;
 }

@@ -33,6 +33,16 @@ function writePng(relativePath: string, width: number, height: number, rgba: [nu
   return writeProjectFile(relativePath, PNG.sync.write(image));
 }
 
+function writeVanillaPng(relativePath: string, rgba: [number, number, number, number]): void {
+  const fullPath = path.join(paths.vanillaCoreDir, relativePath);
+  fs.mkdirSync(path.dirname(fullPath), { recursive: true });
+  const image = new PNG({ width: 2, height: 2 });
+  for (let offset = 0; offset < image.data.length; offset += 4) {
+    image.data.set(rgba, offset);
+  }
+  fs.writeFileSync(fullPath, PNG.sync.write(image));
+}
+
 function readPixel(fullPath: string, x: number, y: number): number[] {
   const image = PNG.sync.read(fs.readFileSync(fullPath));
   const offset = (y * image.width + x) * 4;
@@ -184,11 +194,10 @@ describe('images', () => {
     const image = new PNG({ width: 1, height: 1 });
     fs.writeFileSync(path.join(paths.vanillaCoreDir, 'graphics/icons/cargo/v.png'), PNG.sync.write(image));
     expect((await app.inject({ method: 'GET', url: '/api/images/static' })).json()).toEqual(['graphics/backgrounds/static_images/s.png']);
-    expect((await app.inject({ method: 'GET', url: '/api/images/all' })).json()).toEqual([
-      'graphics/backgrounds/static_images/s.png',
-      'graphics/icons/b.png',
-      'graphics/icons/cargo/v.png',
-    ]);
+    expect((await app.inject({ method: 'GET', url: '/api/images/all' })).json()).toEqual({
+      projectImages: ['graphics/backgrounds/static_images/s.png', 'graphics/icons/b.png'],
+      vanillaImages: ['graphics/icons/cargo/v.png'],
+    });
     expect((await app.inject({ method: 'GET', url: '/files/graphics/icons/cargo/v.png' })).statusCode).toBe(200);
     expect((await app.inject({ method: 'GET', url: '/files/graphics/icons/b.png' })).headers['content-type']).toBe('image/png');
     expect((await app.inject({ method: 'GET', url: '/files/data/skilltrees/skill_types.json' })).statusCode).toBe(404);
@@ -221,6 +230,35 @@ describe('images', () => {
     const image = PNG.sync.read(fs.readFileSync(path.join(projectRoot, 'graphics/icons/wide_turned.png')));
     expect([image.width, image.height]).toEqual([2, 4]);
     expect((await app.inject({ method: 'POST', url: '/api/images/rotate', headers: EDITOR_HEADERS, payload: { path: 'graphics/icons/wide.png', suffix: 'turned', degrees: 90 } })).statusCode).toBe(409);
+  });
+
+  it('copies listed vanilla icons into the mod but never deletes, moves or overrides them', async () => {
+    writeVanillaPng('graphics/icons/cargo/red.png', [255, 0, 0, 255]);
+    writeVanillaPng('graphics/icons/cargo/red_taken.png', [0, 255, 0, 255]);
+    writeVanillaPng('graphics/icons/cargo/shadowed.png', [0, 0, 255, 255]);
+    writePng('graphics/icons/cargo/shadowed.png', 2, 2, [9, 9, 9, 255]);
+    writeVanillaPng('graphics/ships/unlisted.png', [255, 0, 0, 255]);
+    const listing = (await app.inject({ method: 'GET', url: '/api/images/all' })).json();
+    expect([...listing.vanillaImages].sort()).toEqual(['graphics/icons/cargo/red.png', 'graphics/icons/cargo/red_taken.png']);
+    expect(listing.projectImages).toEqual(['graphics/icons/cargo/shadowed.png']);
+
+    const copy = (payload: Record<string, unknown>) => app.inject({ method: 'POST', url: '/api/images/colorshift', headers: EDITOR_HEADERS, payload });
+    const shifted = await copy({ path: 'graphics/icons/cargo/red.png', suffix: 'green', hueShift: 120 });
+    expect(shifted.json()).toEqual({ ok: true, path: 'graphics/icons/cargo/red_green.png' });
+    expect(readPixel(path.join(projectRoot, 'graphics/icons/cargo/red_green.png'), 0, 0)).toEqual([0, 255, 0, 255]);
+    const shadowed = await copy({ path: 'graphics/icons/cargo/shadowed.png', suffix: 'copy', hueShift: 0 });
+    expect(readPixel(path.join(projectRoot, shadowed.json().path), 0, 0)).toEqual([9, 9, 9, 255]);
+    const overriding = await copy({ path: 'graphics/icons/cargo/red.png', suffix: 'taken', hueShift: 0, overwrite: true });
+    expect(overriding.statusCode).toBe(400);
+    expect(overriding.json().message).toBe('graphics/icons/cargo/red_taken.png is a vanilla image; a copy there would replace it game-wide.');
+    expect(fs.existsSync(path.join(projectRoot, 'graphics/icons/cargo/red_taken.png'))).toBe(false);
+    expect((await copy({ path: 'graphics/ships/unlisted.png', suffix: 'copy' })).statusCode).toBe(400);
+
+    const deleted = await app.inject({ method: 'POST', url: '/api/images/delete', headers: EDITOR_HEADERS, payload: { path: 'graphics/icons/cargo/red.png' } });
+    expect(deleted.json()).toEqual({ ok: false, message: 'Vanilla images are read-only.' });
+    const moved = await app.inject({ method: 'POST', url: '/api/images/move', headers: EDITOR_HEADERS, payload: { from: 'graphics/icons/cargo/red.png', to: 'graphics/icons/red.png' } });
+    expect(moved.json()).toEqual({ ok: false, message: 'Vanilla images are read-only.' });
+    expect(fs.existsSync(path.join(paths.vanillaCoreDir, 'graphics/icons/cargo/red.png'))).toBe(true);
   });
 
   it('only copies png images under graphics', async () => {

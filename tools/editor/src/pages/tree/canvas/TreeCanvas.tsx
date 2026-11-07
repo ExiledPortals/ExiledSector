@@ -458,6 +458,7 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
   const showAnchorHandles = mode === 'select' || mode === 'addAnchor';
   const showDecorationHandles = mode === 'select' || mode === 'addDecoration';
   const rootTransform = `translate(${canvasSize.width / 2 + view.panX},${canvasSize.height / 2 + view.panY}) scale(${view.zoom})`;
+  const worldPerPixel = 1 / view.zoom;
   const marquee = activeDrag?.kind === 'marquee' ? activeDrag : null;
 
   return (
@@ -473,14 +474,15 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
             hiddenConnectors={document.hiddenConnectors}
             showCurveHandles={mode === 'select'}
             activeCurveKey={activeDrag?.kind === 'curve' ? activeDrag.key : null}
+            worldPerPixel={worldPerPixel}
           />
           {hoveredSocket && nodeRadii.data ? (
             <SocketRadiusLayer socket={hoveredSocket} nodes={document.nodes} types={document.types} radii={nodeRadii.data} zoom={view.zoom} />
           ) : null}
           <NodeLayer nodes={document.nodes} types={document.types} selectedIds={selection.nodes} matchIds={matchIds} brokenIds={brokenIds} />
           {showLabels ? <LabelLayer nodes={document.nodes} types={document.types} matchIds={matchIds} /> : null}
-          {showAnchorHandles ? <AnchorHandleLayer items={document.anchors} selectedIds={selection.anchors} activeDrag={activeDrag} /> : null}
-          {showDecorationHandles ? <DecorationHandleLayer decorations={document.decorations} selectedIds={selection.decorations} activeDrag={activeDrag} /> : null}
+          {showAnchorHandles ? <AnchorHandleLayer items={document.anchors} selectedIds={selection.anchors} activeDrag={activeDrag} worldPerPixel={worldPerPixel} /> : null}
+          {showDecorationHandles ? <DecorationHandleLayer decorations={document.decorations} selectedIds={selection.decorations} activeDrag={activeDrag} worldPerPixel={worldPerPixel} /> : null}
         </g>
         {marquee ? (
           <rect

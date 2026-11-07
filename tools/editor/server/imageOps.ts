@@ -83,12 +83,21 @@ export function rgbFromHsl(hue: number, saturation: number, lightness: number): 
   ];
 }
 
-function readPng(filePath: string): PNG {
-  return PNG.sync.read(fs.readFileSync(filePath));
+export interface RgbaImage {
+  data: Buffer;
+  width: number;
+  height: number;
 }
 
-function writePng(filePath: string, image: PNG): void {
-  fs.writeFileSync(filePath, PNG.sync.write(image, { colorType: 6 }));
+export function transformPng(sourcePath: string, destinationPath: string, transform: (image: RgbaImage) => RgbaImage): void {
+  const source = PNG.sync.read(fs.readFileSync(sourcePath));
+  const transformed = transform(source);
+  const output = new PNG();
+  output.width = transformed.width;
+  output.height = transformed.height;
+  output.data = transformed.data;
+  output.gamma = source.gamma;
+  fs.writeFileSync(destinationPath, PNG.sync.write(output, { colorType: 6 }));
 }
 
 export function hueShiftPixels(data: Buffer, hueShift: number): void {
@@ -104,10 +113,10 @@ export function hueShiftPixels(data: Buffer, hueShift: number): void {
   }
 }
 
-export function hueShiftImage(sourcePath: string, destinationPath: string, hueShift: number): void {
-  const image = readPng(sourcePath);
-  hueShiftPixels(image.data, hueShift);
-  writePng(destinationPath, image);
+export function hueShiftImage(source: RgbaImage, hueShift: number): RgbaImage {
+  const data = Buffer.from(source.data);
+  hueShiftPixels(data, hueShift);
+  return { data, width: source.width, height: source.height };
 }
 
 const CIRCLE_SAMPLES_PER_AXIS = 4;
@@ -128,29 +137,20 @@ export function ellipseCoverage(x: number, y: number, width: number, height: num
   return inside / (CIRCLE_SAMPLES_PER_AXIS * CIRCLE_SAMPLES_PER_AXIS);
 }
 
-export function makeCircularImage(sourcePath: string, destinationPath: string): void {
-  const image = readPng(sourcePath);
-  for (let y = 0; y < image.height; y++) {
-    for (let x = 0; x < image.width; x++) {
-      const offset = (y * image.width + x) * 4;
-      const coverage = ellipseCoverage(x, y, image.width, image.height);
+export function makeCircularImage(source: RgbaImage): RgbaImage {
+  const data = Buffer.from(source.data);
+  for (let y = 0; y < source.height; y++) {
+    for (let x = 0; x < source.width; x++) {
+      const offset = (y * source.width + x) * 4;
+      const coverage = ellipseCoverage(x, y, source.width, source.height);
       if (coverage <= 0) {
-        image.data[offset] = 0;
-        image.data[offset + 1] = 0;
-        image.data[offset + 2] = 0;
-        image.data[offset + 3] = 0;
+        data.fill(0, offset, offset + 4);
       } else if (coverage < 1) {
-        image.data[offset + 3] = Math.round(image.data[offset + 3] * coverage);
+        data[offset + 3] = Math.round(data[offset + 3] * coverage);
       }
     }
   }
-  writePng(destinationPath, image);
-}
-
-export interface RgbaImage {
-  data: Buffer;
-  width: number;
-  height: number;
+  return { data, width: source.width, height: source.height };
 }
 
 const RIGHT_ANGLE = 90;
@@ -237,17 +237,10 @@ function rotateByAnyAngle(source: RgbaImage, degrees: number): RgbaImage {
   return { data, width: source.width, height: source.height };
 }
 
-export function rotatePixels(source: RgbaImage, degrees: number): RgbaImage {
+export function rotateImage(source: RgbaImage, degrees: number): RgbaImage {
   const clockwise = normalisedDegrees(degrees);
   if (clockwise % RIGHT_ANGLE === 0) {
     return rotateByRightAngles(source, clockwise / RIGHT_ANGLE);
   }
   return rotateByAnyAngle(source, clockwise);
-}
-
-export function rotateImage(sourcePath: string, destinationPath: string, degrees: number): void {
-  const rotated = rotatePixels(readPng(sourcePath), degrees);
-  const image = new PNG({ width: rotated.width, height: rotated.height });
-  rotated.data.copy(image.data);
-  writePng(destinationPath, image);
 }

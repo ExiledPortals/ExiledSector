@@ -3,7 +3,7 @@ import { notifyInfo } from '../../../shared/dialogs.tsx';
 import { connectNodes, deleteNodes, isLinkedPair, unlinkNodes } from '../model/connectors.ts';
 import { deleteAnchor, detachNodeFromAnchor, syncRingArcCurves } from '../model/geometry.ts';
 import { isVolumeTag } from '../model/tags.ts';
-import { decorationById, decorationSpec, type DecorationKind } from '../model/decorations.ts';
+import { decorationById, decorationReach, decorationSpec, type DecorationKind } from '../model/decorations.ts';
 import { ANCHOR_RECTANGLE_ASPECT, anchorById, nodeById, nodeIdStem, uniqueId, type OrbitAnchor, type TreeDocument, type TreeNode } from '../model/types.ts';
 import {
   editDocument,
@@ -191,12 +191,15 @@ export function centerOnOrigin(): void {
 
 export function fitToScreen(): void {
   const { document, canvasSize } = useTreeStore.getState();
-  if (document.nodes.length === 0) {
+  if (document.nodes.length === 0 && document.decorations.length === 0) {
     return;
   }
   let maxExtent = 100;
   for (const node of document.nodes) {
     maxExtent = Math.max(maxExtent, Math.abs(node.x), Math.abs(node.y));
+  }
+  for (const decoration of document.decorations) {
+    maxExtent = Math.max(maxExtent, Math.max(Math.abs(decoration.x), Math.abs(decoration.y)) + decorationReach(decoration));
   }
   const available = Math.min(canvasSize.width, canvasSize.height) / 2 - 60;
   useTreeStore.setState({ view: { panX: 0, panY: 0, zoom: Math.max(MIN_ZOOM, Math.min(1.5, available / maxExtent)) } });

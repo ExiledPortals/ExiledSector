@@ -7,11 +7,11 @@ import { buildVocabulary } from '../../api/vocabulary.ts';
 import { renderWithProviders } from '../../test/renderWithProviders.tsx';
 import { readRepositoryFile, startTestServer, type TestServer } from '../../test/testServer.ts';
 import { openAddNode, openTypeEditor, openTypePicker } from './dialogs/treeDialogs.tsx';
-import { decorationById, decorationsOfKind } from './model/decorations.ts';
+import { DECORATION_KINDS, decorationById, decorationsOfKind } from './model/decorations.ts';
 import { nodeById, tierOf, typeById } from './model/types.ts';
-import { addNodeOfType, duplicateNode, selectOnly, setMode } from './state/treeActions.ts';
+import { addNodeOfType, duplicateNode, fitToScreen, selectOnly, setMode } from './state/treeActions.ts';
 import { loadTree, saveTree } from './state/treePersistence.ts';
-import { EMPTY_SELECTION, isReservedNodeId, setSelection, useTreeStore } from './state/treeStore.ts';
+import { EMPTY_DOCUMENT, EMPTY_SELECTION, isReservedNodeId, setSelection, useTreeStore } from './state/treeStore.ts';
 import { TreePage } from './TreePage.tsx';
 
 const TYPES_FILE = 'data/skilltrees/skill_types.json';
@@ -197,6 +197,8 @@ describe('tree page', () => {
     act(() => selectOnly('decorations', hypershunt.id));
     commitField('Size', '320');
     expect(decorationById(useTreeStore.getState().document, hypershunt.id)).toMatchObject({ size: 320 });
+    fireEvent.click(screen.getByLabelText('Clockwise'));
+    expect(decorationById(useTreeStore.getState().document, hypershunt.id)).toMatchObject({ clockwise: !hypershunt.clockwise });
 
     act(() => setSelection({ nodes: [document.nodes[0].id, document.nodes[1].id], decorations: [star.id] }));
     expect(await screen.findByText('3 objects selected')).toBeTruthy();
@@ -209,6 +211,50 @@ describe('tree page', () => {
     const decorations = useTreeStore.getState().document.decorations;
     expect(new Set(decorations.map((decoration) => decoration.kind))).toEqual(new Set(['star', 'image', 'ringBelt', 'threatUnit', 'serpent', 'shroudedMaw', 'hypershunt']));
     expect(container.querySelectorAll('[data-decoration-id]').length).toBe(decorations.length);
+  });
+
+  it('outlines a selected hypershunt and gives it separate radius, start and size handles', async () => {
+    const { container } = await renderLoadedTree();
+    const hypershunt = decorationsOfKind(useTreeStore.getState().document.decorations, 'hypershunt')[0];
+    const outline = () => container.querySelector('image[href$="coronal_shunt2.png"]')?.parentElement?.querySelector('ellipse');
+    const unselectedClass = outline()?.getAttribute('class');
+    expect(unselectedClass).toBeTruthy();
+
+    act(() => selectOnly('decorations', hypershunt.id));
+    expect(outline()?.getAttribute('class')).not.toBe(unselectedClass);
+    const handles = [...container.querySelectorAll<SVGCircleElement>(`[data-decoration-handle-of="${hypershunt.id}"]`)];
+    expect(handles.map((handle) => handle.dataset.decorationHandle)).toEqual(['radius', 'start', 'size']);
+    const positions = new Set(handles.map((handle) => `${Math.round(Number(handle.getAttribute('cx')))},${Math.round(Number(handle.getAttribute('cy')))}`));
+    expect(positions.size).toBe(3);
+  });
+
+  it('keeps handles the same size on screen at any zoom', async () => {
+    const { container } = await renderLoadedTree();
+    const decoration = useTreeStore.getState().document.decorations[0];
+    act(() => selectOnly('decorations', decoration.id));
+    const screenRadii = (zoom: number) => {
+      act(() => useTreeStore.setState({ view: { panX: 0, panY: 0, zoom } }));
+      const centre = container.querySelector(`[data-decoration-id="${decoration.id}"]`) as SVGCircleElement;
+      const handle = container.querySelector(`[data-decoration-handle-of="${decoration.id}"]`) as SVGCircleElement;
+      const anchor = container.querySelector('[data-anchor-id]') as SVGCircleElement;
+      const curve = container.querySelector('[data-curve-a]') as SVGCircleElement;
+      return [centre, handle, anchor, curve].map((element) => Number(element.getAttribute('r')) * zoom);
+    };
+    const atDefaultZoom = screenRadii(1);
+    expect(screenRadii(0.02).map((radius) => radius.toFixed(6))).toEqual(atDefaultZoom.map((radius) => radius.toFixed(6)));
+    expect(atDefaultZoom[0]).toBeGreaterThanOrEqual(5);
+  });
+
+  it('fits the view around decorations that lie beyond the nodes', () => {
+    const farStar = DECORATION_KINDS.star.create('far_star', { x: 0, y: 0 }, { imagePath: null, region: undefined });
+    act(() =>
+      useTreeStore.setState({
+        canvasSize: { width: 1060, height: 1060 },
+        document: { ...EMPTY_DOCUMENT, decorations: [{ ...farStar, x: -9000, radius: 1000 }] },
+      }),
+    );
+    act(() => fitToScreen());
+    expect(useTreeStore.getState().view.zoom).toBeCloseTo(470 / 10000);
   });
 
   it('adds a threat unit in the decoration mode, edits it and moves it together with a selected node', async () => {

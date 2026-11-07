@@ -1,9 +1,9 @@
-import { Button, Divider, Group, Select, Stack, Switch, Text, Title } from '@mantine/core';
+import { Button, Divider, Group, Select, Stack, Text, Title } from '@mantine/core';
 import { IconArrowsExchange, IconTrash } from '@tabler/icons-react';
 import type { ReactNode } from 'react';
 import { useStaticImages } from '../../../api/images.ts';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
-import { CommitNumberInput, CommitTextInput } from '../../../shared/CommitInputs.tsx';
+import { CommitNumberInput, CommitSwitch, CommitTextInput } from '../../../shared/CommitInputs.tsx';
 import { notifyError } from '../../../shared/dialogs.tsx';
 import { ImageBrowser } from '../../../shared/ImageBrowser.tsx';
 import {
@@ -20,6 +20,7 @@ import {
   type Decoration,
   type DecorationKind,
   type DecorationOfKind,
+  type OrbitFields as OrbitSettings,
 } from '../model/decorations.ts';
 import { deleteSelection } from '../state/treeActions.ts';
 import { editDocument, setSelection, useTreeStore } from '../state/treeStore.ts';
@@ -100,20 +101,19 @@ function ImageFields({ decoration: image, edit }: FieldsProps<'image'>) {
         <CommitNumberInput size="xs" label="Height" value={image.height} onCommit={(value) => edit((target) => void (target.height = sizeOrMinimum(value)))} />
       </Group>
       <SpinFields rotation={image.rotation} rotationSpeed={image.rotationSpeed} edit={edit} />
-      <Switch
+      <CommitSwitch
         size="xs"
         label="Draw behind the stars"
         checked={Boolean(image.behindStars)}
-        onChange={(event) => {
-          const behindStars = event.currentTarget.checked;
+        onCommit={(behindStars) =>
           edit((target) => {
             if (behindStars) {
               target.behindStars = true;
             } else {
               delete target.behindStars;
             }
-          });
-        }}
+          })
+        }
       />
       {staticImages.data && staticImages.data.length > 0 ? (
         <ImageBrowser paths={staticImages.data} selectedPath={image.imagePath} onSelect={(path) => edit((target) => void (target.imagePath = path))} height={260} />
@@ -185,25 +185,30 @@ function ShroudedMawFields({ decoration: maw, edit }: FieldsProps<'shroudedMaw'>
   );
 }
 
-function SerpentFields({ decoration: serpent, edit }: FieldsProps<'serpent'>) {
+function OrbitFields({ orbit, edit }: { orbit: OrbitSettings; edit: (change: (target: OrbitSettings) => void) => void }) {
   return (
     <>
       <Group grow gap={6}>
-        <CommitNumberInput size="xs" label="Orbit radius" value={serpent.orbitRadius} onCommit={(value) => edit((target) => void (target.orbitRadius = sizeOrMinimum(value)))} />
+        <CommitNumberInput size="xs" label="Orbit radius" value={orbit.orbitRadius} onCommit={(value) => edit((target) => void (target.orbitRadius = sizeOrMinimum(value)))} />
         <CommitNumberInput
           size="xs"
           label="Seconds per orbit"
-          value={serpent.orbitSeconds}
+          value={orbit.orbitSeconds}
           onCommit={(value) => edit((target) => void (target.orbitSeconds = Math.max(1, numberOrZero(value))))}
         />
       </Group>
       <Group grow gap={6} align="flex-end">
-        <CommitNumberInput size="xs" label="Start angle (deg)" value={serpent.startAngle} onCommit={(value) => edit((target) => void (target.startAngle = degreesOrZero(value)))} />
-        <Switch size="xs" label="Clockwise" checked={serpent.clockwise} onChange={(event) => {
-          const clockwise = event.currentTarget.checked;
-          edit((target) => void (target.clockwise = clockwise));
-        }} />
+        <CommitNumberInput size="xs" label="Start angle (deg)" value={orbit.startAngle} onCommit={(value) => edit((target) => void (target.startAngle = degreesOrZero(value)))} />
+        <CommitSwitch size="xs" label="Clockwise" checked={orbit.clockwise} onCommit={(clockwise) => edit((target) => void (target.clockwise = clockwise))} />
       </Group>
+    </>
+  );
+}
+
+function SerpentFields({ decoration: serpent, edit }: FieldsProps<'serpent'>) {
+  return (
+    <>
+      <OrbitFields orbit={serpent} edit={edit} />
       <Group grow gap={6}>
         <CommitNumberInput
           size="xs"
@@ -226,28 +231,8 @@ function SerpentFields({ decoration: serpent, edit }: FieldsProps<'serpent'>) {
 function HypershuntFields({ decoration: hypershunt, edit }: FieldsProps<'hypershunt'>) {
   return (
     <>
-      <Group grow gap={6}>
-        <CommitNumberInput size="xs" label="Orbit radius" value={hypershunt.orbitRadius} onCommit={(value) => edit((target) => void (target.orbitRadius = sizeOrMinimum(value)))} />
-        <CommitNumberInput
-          size="xs"
-          label="Seconds per orbit"
-          value={hypershunt.orbitSeconds}
-          onCommit={(value) => edit((target) => void (target.orbitSeconds = Math.max(1, numberOrZero(value))))}
-        />
-      </Group>
-      <Group grow gap={6} align="flex-end">
-        <CommitNumberInput size="xs" label="Start angle (deg)" value={hypershunt.startAngle} onCommit={(value) => edit((target) => void (target.startAngle = degreesOrZero(value)))} />
-        <CommitNumberInput size="xs" label="Size" value={hypershunt.size} onCommit={(value) => edit((target) => void (target.size = sizeOrMinimum(value)))} />
-      </Group>
-      <Switch
-        size="xs"
-        label="Clockwise"
-        checked={hypershunt.clockwise}
-        onChange={(event) => {
-          const clockwise = event.currentTarget.checked;
-          edit((target) => void (target.clockwise = clockwise));
-        }}
-      />
+      <OrbitFields orbit={hypershunt} edit={edit} />
+      <CommitNumberInput size="xs" label="Size" value={hypershunt.size} onCommit={(value) => edit((target) => void (target.size = sizeOrMinimum(value)))} />
     </>
   );
 }

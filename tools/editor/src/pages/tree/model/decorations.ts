@@ -46,12 +46,15 @@ export interface ThreatUnitDecoration extends DecorationBase {
   rotation: number;
 }
 
-export interface SerpentDecoration extends DecorationBase {
-  kind: 'serpent';
+export interface OrbitFields {
   orbitRadius: number;
   orbitSeconds: number;
   clockwise: boolean;
   startAngle: number;
+}
+
+export interface SerpentDecoration extends DecorationBase, OrbitFields {
+  kind: 'serpent';
   wobble: number;
   wobbleWaves: number;
   wobblePhase: number;
@@ -63,12 +66,8 @@ export interface ShroudedMawDecoration extends DecorationBase {
   rotation: number;
 }
 
-export interface HypershuntDecoration extends DecorationBase {
+export interface HypershuntDecoration extends DecorationBase, OrbitFields {
   kind: 'hypershunt';
-  orbitRadius: number;
-  orbitSeconds: number;
-  clockwise: boolean;
-  startAngle: number;
   size: number;
 }
 
@@ -106,6 +105,7 @@ export interface DecorationKindSpec<TKind extends DecorationKind> {
   serialize: (decoration: DecorationOfKind<TKind>) => JsonRecord;
   handles: (decoration: DecorationOfKind<TKind>) => DecorationHandle[];
   dragHandle: (decoration: DecorationOfKind<TKind>, handle: string, world: Point) => void;
+  reach: (decoration: DecorationOfKind<TKind>) => number;
 }
 
 export const DEFAULT_STAR_COLOR = '#fff2c0';
@@ -193,6 +193,10 @@ function putIf(out: JsonRecord, key: string, value: unknown, keep: boolean): voi
   }
 }
 
+function createBase<TKind extends DecorationKind>(kind: TKind, id: string, at: Point, context: NewDecorationContext): DecorationBase & { kind: TKind } {
+  return { kind, id, x: at.x, y: at.y, tags: context.region ? [context.region] : undefined };
+}
+
 function rotatedHandles(center: Point, halfLength: number, rotation: number, resize: Point): DecorationHandle[] {
   const rotate = rotateAroundOrigin(0, -halfLength - ROTATE_HANDLE_GAP, rotation);
   return [
@@ -201,11 +205,69 @@ function rotatedHandles(center: Point, halfLength: number, rotation: number, res
   ];
 }
 
+interface LengthAndRotation extends Point {
+  length: number;
+  rotation: number;
+}
+
+function lengthAndRotationHandles(decoration: LengthAndRotation, lengthDirection: Point, halfHeight: number): DecorationHandle[] {
+  const halfLength = decoration.length / 2;
+  const resize = rotateAroundOrigin(lengthDirection.x * halfLength, lengthDirection.y * halfLength, decoration.rotation || 0);
+  return rotatedHandles(decoration, halfHeight, decoration.rotation || 0, resize);
+}
+
+function dragLengthOrRotation(decoration: LengthAndRotation, handle: string, world: Point): void {
+  if (handle === 'rotate') {
+    decoration.rotation = rotationTowards(decoration, world);
+  } else {
+    decoration.length = Math.max(MIN_DECORATION_SIZE, Math.round(distance(decoration, world) * 2));
+  }
+}
+
+type CentredOrbit = Point & OrbitFields;
+
+export function pointOnCircle(center: Point, radius: number, angleInDegrees: number): Point {
+  const angle = (angleInDegrees * Math.PI) / 180;
+  return { x: center.x + radius * Math.cos(angle), y: center.y + radius * Math.sin(angle) };
+}
+
+function parseOrbit(json: JsonRecord, clockwiseDefault: boolean): OrbitFields {
+  return {
+    orbitRadius: numberOr(json.orbitRadius, 0),
+    orbitSeconds: numberOr(json.orbitSeconds, 0),
+    clockwise: typeof json.clockwise === 'boolean' ? json.clockwise : clockwiseDefault,
+    startAngle: numberOr(json.startAngle, 0),
+  };
+}
+
+function serializeOrbit(orbit: OrbitFields, writeClockwise: boolean): JsonRecord {
+  const out: JsonRecord = { orbitRadius: orbit.orbitRadius, orbitSeconds: orbit.orbitSeconds };
+  putIf(out, 'clockwise', orbit.clockwise, writeClockwise);
+  putIf(out, 'startAngle', orbit.startAngle, Boolean(orbit.startAngle));
+  return out;
+}
+
+function orbitHandles(orbit: CentredOrbit, startPoint: Point): DecorationHandle[] {
+  const radius = pointOnCircle(orbit, orbit.orbitRadius, orbit.startAngle + 180);
+  return [
+    { name: 'radius', x: radius.x, y: radius.y, rotates: false },
+    { name: 'start', x: startPoint.x, y: startPoint.y, rotates: true },
+  ];
+}
+
+function dragOrbitHandle(orbit: CentredOrbit, handle: string, world: Point): void {
+  if (handle === 'start') {
+    orbit.startAngle = Math.round(normalizeDegrees(angleDegrees(orbit.x, orbit.y, world.x, world.y)));
+  } else {
+    orbit.orbitRadius = Math.max(MIN_DECORATION_SIZE, Math.round(distance(orbit, world)));
+  }
+}
+
 const STAR: DecorationKindSpec<'star'> = {
   kind: 'star',
   label: 'Star',
   idPrefix: 'star',
-  create: (id, at, context) => ({ kind: 'star', id, x: at.x, y: at.y, radius: 850, starType: 'star_yellow', color: null, tags: context.region ? [context.region] : undefined }),
+  create: (id, at, context) => ({ ...createBase('star', id, at, context), radius: 850, starType: 'star_yellow', color: null }),
   parse: (json) => ({
     radius: numberOr(json.radius, 0),
     starType: textOr(json.starType, 'star_yellow'),
@@ -228,6 +290,7 @@ const STAR: DecorationKindSpec<'star'> = {
   dragHandle: (star, _handle, world) => {
     star.radius = Math.max(MIN_DECORATION_SIZE, Math.round(distance(star, world)));
   },
+  reach: (star) => star.radius,
 };
 
 const IMAGE: DecorationKindSpec<'image'> = {
@@ -235,16 +298,12 @@ const IMAGE: DecorationKindSpec<'image'> = {
   label: 'Image',
   idPrefix: 'image',
   create: (id, at, context) => ({
-    kind: 'image',
-    id,
-    x: at.x,
-    y: at.y,
+    ...createBase('image', id, at, context),
     width: 800,
     height: 800,
     imagePath: context.imagePath,
     rotation: 0,
     rotationSpeed: 0,
-    tags: context.region ? [context.region] : undefined,
   }),
   parse: (json) => {
     const parallax = optionalNumber(json.parallax);
@@ -276,6 +335,7 @@ const IMAGE: DecorationKindSpec<'image'> = {
     image.width = Math.max(MIN_DECORATION_SIZE, Math.round(Math.abs(local.x) * 2));
     image.height = Math.max(MIN_DECORATION_SIZE, Math.round(Math.abs(local.y) * 2));
   },
+  reach: (image) => Math.hypot(image.width, image.height) / 2,
 };
 
 const RING_BELT: DecorationKindSpec<'ringBelt'> = {
@@ -283,16 +343,12 @@ const RING_BELT: DecorationKindSpec<'ringBelt'> = {
   label: 'Ring belt',
   idPrefix: 'ring_belt',
   create: (id, at, context) => ({
-    kind: 'ringBelt',
-    id,
-    x: at.x,
-    y: at.y,
+    ...createBase('ringBelt', id, at, context),
     innerRadius: 1400,
     outerRadius: 1700,
     ringArtPath: ringBeltArtPath('asteroids'),
     rotation: 0,
     rotationSpeed: 0,
-    tags: context.region ? [context.region] : undefined,
   }),
   parse: (json) => ({
     innerRadius: numberOr(json.innerRadius, 0),
@@ -319,22 +375,14 @@ const RING_BELT: DecorationKindSpec<'ringBelt'> = {
       belt.outerRadius = Math.max(belt.innerRadius + MIN_DECORATION_SIZE, radius);
     }
   },
+  reach: (belt) => belt.outerRadius,
 };
 
 const THREAT_UNIT: DecorationKindSpec<'threatUnit'> = {
   kind: 'threatUnit',
   label: 'Threat unit',
   idPrefix: 'threat_unit',
-  create: (id, at, context) => ({
-    kind: 'threatUnit',
-    id,
-    x: at.x,
-    y: at.y,
-    unitType: 'fabricator',
-    length: DEFAULT_THREAT_UNIT_LENGTH,
-    rotation: 0,
-    tags: context.region ? [context.region] : undefined,
-  }),
+  create: (id, at, context) => ({ ...createBase('threatUnit', id, at, context), unitType: 'fabricator', length: DEFAULT_THREAT_UNIT_LENGTH, rotation: 0 }),
   parse: (json) => ({
     unitType: textOr(json.unitType, 'fabricator'),
     length: numberOr(json.length, DEFAULT_THREAT_UNIT_LENGTH),
@@ -345,20 +393,15 @@ const THREAT_UNIT: DecorationKindSpec<'threatUnit'> = {
     putIf(out, 'rotation', unit.rotation, Boolean(unit.rotation));
     return out;
   },
-  handles: (unit) => rotatedHandles(unit, unit.length / 2, unit.rotation || 0, rotateAroundOrigin(0, unit.length / 2, unit.rotation || 0)),
-  dragHandle: (unit, handle, world) => {
-    if (handle === 'rotate') {
-      unit.rotation = rotationTowards(unit, world);
-    } else {
-      unit.length = Math.max(MIN_DECORATION_SIZE, Math.round(distance(unit, world) * 2));
-    }
-  },
+  handles: (unit) => lengthAndRotationHandles(unit, { x: 0, y: 1 }, unit.length / 2),
+  dragHandle: dragLengthOrRotation,
+  reach: (unit) => (unit.length * Math.max(1, threatUnitSprite(unit.unitType).widthPerLength)) / 2,
 };
 
 export function serpentPathPoint(serpent: SerpentDecoration, angleInDegrees: number): Point {
   const angle = (angleInDegrees * Math.PI) / 180;
   const radius = serpent.orbitRadius * (1 + serpent.wobble * Math.sin(serpent.wobbleWaves * angle + (serpent.wobblePhase * Math.PI) / 180));
-  return { x: serpent.x + radius * Math.cos(angle), y: serpent.y + radius * Math.sin(angle) };
+  return pointOnCircle(serpent, radius, angleInDegrees);
 }
 
 const SERPENT: DecorationKindSpec<'serpent'> = {
@@ -366,10 +409,7 @@ const SERPENT: DecorationKindSpec<'serpent'> = {
   label: 'Serpent',
   idPrefix: 'serpent',
   create: (id, at, context) => ({
-    kind: 'serpent',
-    id,
-    x: at.x,
-    y: at.y,
+    ...createBase('serpent', id, at, context),
     orbitRadius: 1500,
     orbitSeconds: 150,
     clockwise: true,
@@ -377,54 +417,30 @@ const SERPENT: DecorationKindSpec<'serpent'> = {
     wobble: 0.12,
     wobbleWaves: 9,
     wobblePhase: 0,
-    tags: context.region ? [context.region] : undefined,
   }),
   parse: (json) => ({
-    orbitRadius: numberOr(json.orbitRadius, 0),
-    orbitSeconds: numberOr(json.orbitSeconds, 0),
-    clockwise: json.clockwise !== false,
-    startAngle: numberOr(json.startAngle, 0),
+    ...parseOrbit(json, true),
     wobble: numberOr(json.wobble, 0),
     wobbleWaves: numberOr(json.wobbleWaves, 0),
     wobblePhase: numberOr(json.wobblePhase, 0),
   }),
   serialize: (serpent) => {
-    const out: JsonRecord = { orbitRadius: serpent.orbitRadius, orbitSeconds: serpent.orbitSeconds, clockwise: serpent.clockwise };
-    putIf(out, 'startAngle', serpent.startAngle, Boolean(serpent.startAngle));
+    const out = serializeOrbit(serpent, true);
     putIf(out, 'wobble', serpent.wobble, Boolean(serpent.wobble));
     putIf(out, 'wobbleWaves', serpent.wobbleWaves, Boolean(serpent.wobbleWaves));
     putIf(out, 'wobblePhase', serpent.wobblePhase, Boolean(serpent.wobblePhase));
     return out;
   },
-  handles: (serpent) => {
-    const head = serpentPathPoint(serpent, serpent.startAngle);
-    return [
-      { name: 'radius', x: serpent.x + serpent.orbitRadius, y: serpent.y, rotates: false },
-      { name: 'start', x: head.x, y: head.y, rotates: true },
-    ];
-  },
-  dragHandle: (serpent, handle, world) => {
-    if (handle === 'start') {
-      serpent.startAngle = Math.round(normalizeDegrees(angleDegrees(serpent.x, serpent.y, world.x, world.y)));
-    } else {
-      serpent.orbitRadius = Math.max(MIN_DECORATION_SIZE, Math.round(distance(serpent, world)));
-    }
-  },
+  handles: (serpent) => orbitHandles(serpent, serpentPathPoint(serpent, serpent.startAngle)),
+  dragHandle: dragOrbitHandle,
+  reach: (serpent) => serpent.orbitRadius * (1 + Math.abs(serpent.wobble)),
 };
 
 const SHROUDED_MAW: DecorationKindSpec<'shroudedMaw'> = {
   kind: 'shroudedMaw',
   label: 'Shrouded Maw',
   idPrefix: 'shrouded_maw',
-  create: (id, at, context) => ({
-    kind: 'shroudedMaw',
-    id,
-    x: at.x,
-    y: at.y,
-    length: DEFAULT_SHROUDED_MAW_LENGTH,
-    rotation: 0,
-    tags: context.region ? [context.region] : undefined,
-  }),
+  create: (id, at, context) => ({ ...createBase('shroudedMaw', id, at, context), length: DEFAULT_SHROUDED_MAW_LENGTH, rotation: 0 }),
   parse: (json) => ({
     length: numberOr(json.length, DEFAULT_SHROUDED_MAW_LENGTH),
     rotation: numberOr(json.rotation, 0),
@@ -434,19 +450,13 @@ const SHROUDED_MAW: DecorationKindSpec<'shroudedMaw'> = {
     putIf(out, 'rotation', maw.rotation, Boolean(maw.rotation));
     return out;
   },
-  handles: (maw) => rotatedHandles(maw, (maw.length * SHROUDED_MAW_HEIGHT_PER_LENGTH) / 2, maw.rotation || 0, rotateAroundOrigin(maw.length / 2, 0, maw.rotation || 0)),
-  dragHandle: (maw, handle, world) => {
-    if (handle === 'rotate') {
-      maw.rotation = rotationTowards(maw, world);
-    } else {
-      maw.length = Math.max(MIN_DECORATION_SIZE, Math.round(distance(maw, world) * 2));
-    }
-  },
+  handles: (maw) => lengthAndRotationHandles(maw, { x: 1, y: 0 }, (maw.length * SHROUDED_MAW_HEIGHT_PER_LENGTH) / 2),
+  dragHandle: dragLengthOrRotation,
+  reach: (maw) => maw.length / 2,
 };
 
 export function hypershuntPosition(hypershunt: HypershuntDecoration): Point {
-  const angle = (hypershunt.startAngle * Math.PI) / 180;
-  return { x: hypershunt.x + hypershunt.orbitRadius * Math.cos(angle), y: hypershunt.y + hypershunt.orbitRadius * Math.sin(angle) };
+  return pointOnCircle(hypershunt, hypershunt.orbitRadius, hypershunt.startAngle);
 }
 
 const HYPERSHUNT: DecorationKindSpec<'hypershunt'> = {
@@ -454,45 +464,35 @@ const HYPERSHUNT: DecorationKindSpec<'hypershunt'> = {
   label: 'Coronal hypershunt',
   idPrefix: 'hypershunt',
   create: (id, at, context) => ({
-    kind: 'hypershunt',
-    id,
-    x: at.x,
-    y: at.y,
+    ...createBase('hypershunt', id, at, context),
     orbitRadius: 1100,
     orbitSeconds: 550,
     clockwise: false,
     startAngle: 0,
     size: DEFAULT_HYPERSHUNT_SIZE,
-    tags: context.region ? [context.region] : undefined,
   }),
   parse: (json) => ({
-    orbitRadius: numberOr(json.orbitRadius, 0),
-    orbitSeconds: numberOr(json.orbitSeconds, 0),
-    clockwise: json.clockwise === true,
-    startAngle: numberOr(json.startAngle, 0),
+    ...parseOrbit(json, false),
     size: numberOr(json.size, DEFAULT_HYPERSHUNT_SIZE),
   }),
   serialize: (hypershunt) => {
-    const out: JsonRecord = { orbitRadius: hypershunt.orbitRadius, orbitSeconds: hypershunt.orbitSeconds };
-    putIf(out, 'clockwise', true, hypershunt.clockwise);
-    putIf(out, 'startAngle', hypershunt.startAngle, Boolean(hypershunt.startAngle));
+    const out = serializeOrbit(hypershunt, hypershunt.clockwise);
     out.size = hypershunt.size;
     return out;
   },
   handles: (hypershunt) => {
     const shunt = hypershuntPosition(hypershunt);
-    return [
-      { name: 'radius', x: hypershunt.x + hypershunt.orbitRadius, y: hypershunt.y, rotates: false },
-      { name: 'start', x: shunt.x, y: shunt.y, rotates: true },
-    ];
+    const size = pointOnCircle(hypershunt, hypershunt.orbitRadius + hypershunt.size / 2, hypershunt.startAngle);
+    return [...orbitHandles(hypershunt, shunt), { name: 'size', x: size.x, y: size.y, rotates: false }];
   },
   dragHandle: (hypershunt, handle, world) => {
-    if (handle === 'start') {
-      hypershunt.startAngle = Math.round(normalizeDegrees(angleDegrees(hypershunt.x, hypershunt.y, world.x, world.y)));
+    if (handle === 'size') {
+      hypershunt.size = Math.max(MIN_DECORATION_SIZE, Math.round(distance(hypershuntPosition(hypershunt), world) * 2));
     } else {
-      hypershunt.orbitRadius = Math.max(MIN_DECORATION_SIZE, Math.round(distance(hypershunt, world)));
+      dragOrbitHandle(hypershunt, handle, world);
     }
   },
+  reach: (hypershunt) => hypershunt.orbitRadius + hypershunt.size / 2,
 };
 
 export const DECORATION_KINDS: { [TKind in DecorationKind]: DecorationKindSpec<TKind> } = {
@@ -549,6 +549,10 @@ export function decorationHandles(decoration: Decoration): DecorationHandle[] {
 
 export function dragDecorationHandle(decoration: Decoration, handle: string, world: Point): void {
   (DECORATION_KINDS[decoration.kind] as DecorationKindSpec<DecorationKind>).dragHandle(decoration as never, handle, world);
+}
+
+export function decorationReach(decoration: Decoration): number {
+  return (DECORATION_KINDS[decoration.kind] as DecorationKindSpec<DecorationKind>).reach(decoration as never);
 }
 
 export function decorationById(document: { decorations: Decoration[] }, decorationId: string): Decoration | undefined {

@@ -1,6 +1,7 @@
-import { ActionIcon, Checkbox, Group, Stack, Switch, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Checkbox, Group, Stack, Text, Tooltip } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
 import type { ChartTierGroup, Vocabulary } from '../../../api/vocabulary.ts';
+import { CommitSwitch } from '../../../shared/CommitInputs.tsx';
 import { DecimalInput } from '../../../shared/DecimalInput.tsx';
 import { EffectSelect } from '../../../shared/EffectSelect.tsx';
 import type { ItemFamily } from '../model/itemFamily.ts';
@@ -141,27 +142,21 @@ export function ModifierLineRow({ line, index, perHullSizeAllowed, effectEditabl
         )}
         {(isChart || line.tierGroups) && (
           <Tooltip label={tierGroupTooltip(vocabulary)}>
-            <Switch
+            <CommitSwitch
               label="Per tier group"
               checked={Boolean(line.tierGroups)}
-              onChange={(event) => {
-                const perTierGroup = event.currentTarget.checked;
-                onEdit((draft) => togglePerTierGroup(draft, perTierGroup, tierGroupIds(vocabulary)));
-              }}
+              onCommit={(perTierGroup) => onEdit((draft) => togglePerTierGroup(draft, perTierGroup, tierGroupIds(vocabulary)))}
               mb={8}
             />
           </Tooltip>
         )}
         {(!isChart || line.hullValues) && (
           <Tooltip label="Fixed values per hull size (frigate/destroyer/cruiser/capital) instead of a rolled range">
-            <Switch
+            <CommitSwitch
               label="Per hull size"
               checked={Boolean(line.hullValues)}
               disabled={!perHullSizeAllowed && !line.hullValues}
-              onChange={(event) => {
-                const perHullSize = event.currentTarget.checked;
-                onEdit((draft) => togglePerHullSize(draft, perHullSize));
-              }}
+              onCommit={(perHullSize) => onEdit((draft) => togglePerHullSize(draft, perHullSize))}
               mb={8}
             />
           </Tooltip>

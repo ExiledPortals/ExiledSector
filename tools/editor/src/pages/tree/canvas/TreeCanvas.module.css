@@ -123,6 +123,7 @@
 
 .centerHandle {
   fill: var(--tree-panel);
+  vector-effect: non-scaling-stroke;
   stroke: var(--tree-faint);
   stroke-width: 1.5;
   cursor: move;
@@ -193,7 +194,7 @@
   stroke-opacity: 0.25;
 }
 
-.serpentPath {
+.orbitPath {
   fill: none;
   stroke: #aa3cff;
   stroke-width: 6;
@@ -202,7 +203,7 @@
   pointer-events: none;
 }
 
-.serpentPathSelected {
+.orbitPathSelected {
   opacity: 0.9;
 }
 

@@ -5,8 +5,25 @@ import { imageFileName } from '../shared/imagePaths.ts';
 export const ALL_IMAGES_QUERY_KEY = ['images', 'all'];
 export const STATIC_IMAGES_QUERY_KEY = ['images', 'static'];
 
+export interface ImageListing {
+  projectImages: string[];
+  vanillaImages: string[];
+}
+
+function fetchImageListing(): Promise<ImageListing> {
+  return getJson<ImageListing>('/api/images/all');
+}
+
+export function useImageListing() {
+  return useQuery({ queryKey: ALL_IMAGES_QUERY_KEY, queryFn: fetchImageListing });
+}
+
+function allImagePaths(listing: ImageListing): string[] {
+  return [...listing.projectImages, ...listing.vanillaImages];
+}
+
 export function useAllImages() {
-  return useQuery({ queryKey: ALL_IMAGES_QUERY_KEY, queryFn: () => getJson<string[]>('/api/images/all') });
+  return useQuery({ queryKey: ALL_IMAGES_QUERY_KEY, queryFn: fetchImageListing, select: allImagePaths });
 }
 
 export function useStaticImages() {
@@ -32,18 +49,26 @@ export async function moveImageIfNeeded(path: string, targetFolder: string): Pro
   return { path: result.data.path ?? destination };
 }
 
+export interface ImageCopyParameters {
+  colorshift: { hueShift: number };
+  circular: Record<string, never>;
+  rotate: { degrees: number };
+}
+
+export type ImageCopyOperation = keyof ImageCopyParameters;
+
 export interface ImageCopyRequest {
   path: string;
   suffix: string;
-  hueShift?: number;
-  degrees?: number;
   overwrite?: boolean;
 }
 
-export type ImageCopyUrl = '/api/images/colorshift' | '/api/images/circular' | '/api/images/rotate';
-
-export function postImageCopy(url: ImageCopyUrl, request: ImageCopyRequest): Promise<PostResult<{ path?: string; exists?: boolean }>> {
-  return postJson<{ path?: string; exists?: boolean }>(url, request);
+export function postImageCopy<TOperation extends ImageCopyOperation>(
+  operation: TOperation,
+  request: ImageCopyRequest,
+  parameters: ImageCopyParameters[TOperation],
+): Promise<PostResult<{ path?: string; exists?: boolean }>> {
+  return postJson<{ path?: string; exists?: boolean }>(`/api/images/${operation}`, { ...request, ...parameters });
 }
 
 export function deleteImage(path: string): Promise<PostResult> {
