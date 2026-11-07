@@ -5824,10 +5824,10 @@
 				"maneuverability_4",
 				"affinity_108"
 			],
-			"x": 21118,
-			"y": -5766,
+			"x": 21003,
+			"y": -5898,
 			"orbitAnchorId": "anchor_73",
-			"orbitAngle": 0,
+			"orbitAngle": -45,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -5840,10 +5840,10 @@
 				"maneuverability_3",
 				"maneuverability_4"
 			],
-			"x": 20798,
-			"y": -5766,
+			"x": 20777,
+			"y": -5672,
 			"orbitAnchorId": "anchor_73",
-			"orbitAngle": 180,
+			"orbitAngle": 135,
 			"tags": [
 				"stargazer",
 				"gate_ancient_prototype_found",
@@ -5857,10 +5857,10 @@
 				"top_speed_8",
 				"candles_grace_replica_1"
 			],
-			"x": 20958,
-			"y": -5926,
+			"x": 20777,
+			"y": -5898,
 			"orbitAnchorId": "anchor_73",
-			"orbitAngle": 270,
+			"orbitAngle": -135,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -5905,10 +5905,10 @@
 				"top_speed_8",
 				"candles_grace_replica_1"
 			],
-			"x": 20958,
-			"y": -5606,
+			"x": 21003,
+			"y": -5672,
 			"orbitAnchorId": "anchor_73",
-			"orbitAngle": 90,
+			"orbitAngle": 45,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -5922,10 +5922,10 @@
 				"affinity_108",
 				"ecm_resistance_3"
 			],
-			"x": 20334,
-			"y": -6432,
+			"x": 19489,
+			"y": -6082,
 			"orbitAnchorId": "stargazer_inner",
-			"orbitAngle": 270,
+			"orbitAngle": -135,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -5935,14 +5935,14 @@
 			"id": "affinity_76",
 			"type": "affinity",
 			"connectedTo": [
-				"affinity_108",
 				"stargazer_wormhole_1",
-				"energy_weapon_fire_rate_4"
+				"energy_weapon_fire_rate_4",
+				"affinity_157"
 			],
-			"x": 20334,
-			"y": -4032,
+			"x": 19489,
+			"y": -4384,
 			"orbitAnchorId": "stargazer_inner",
-			"orbitAngle": 90,
+			"orbitAngle": 135,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -5952,15 +5952,14 @@
 			"id": "affinity_108",
 			"type": "affinity",
 			"connectedTo": [
-				"affinity_76",
 				"affinity_75",
 				"top_speed_8",
-				"beam_weapon_damage_2"
+				"affinity_157"
 			],
-			"x": 21534,
-			"y": -5232,
+			"x": 21187,
+			"y": -6082,
 			"orbitAnchorId": "stargazer_inner",
-			"orbitAngle": 0,
+			"orbitAngle": -45,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -5974,8 +5973,8 @@
 				"affinity_75",
 				"beautiful_nightmare_1"
 			],
-			"x": 19134,
-			"y": -5232,
+			"x": 19138,
+			"y": -5233,
 			"orbitAnchorId": "stargazer_inner",
 			"orbitAngle": 180,
 			"tags": [
@@ -5989,12 +5988,12 @@
 			"connectedTo": [
 				"beam_weapon_damage_7",
 				"beam_weapon_damage_8",
-				"affinity_108"
+				"affinity_157"
 			],
-			"x": 21133,
-			"y": -4766,
+			"x": 21003,
+			"y": -4568,
 			"orbitAnchorId": "anchor_74",
-			"orbitAngle": 0,
+			"orbitAngle": 45,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -6007,10 +6006,10 @@
 				"beam_weapon_damage_2",
 				"corrosion_beam_1"
 			],
-			"x": 20973,
-			"y": -4606,
+			"x": 20777,
+			"y": -4568,
 			"orbitAnchorId": "anchor_74",
-			"orbitAngle": 90,
+			"orbitAngle": 135,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -6023,10 +6022,10 @@
 				"beam_weapon_damage_7",
 				"beam_weapon_damage_8"
 			],
-			"x": 20813,
-			"y": -4766,
+			"x": 20777,
+			"y": -4794,
 			"orbitAnchorId": "anchor_74",
-			"orbitAngle": 180,
+			"orbitAngle": -135,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -6040,10 +6039,10 @@
 				"energy_weapon_fire_rate_5",
 				"energy_weapon_fire_rate_6"
 			],
-			"x": 20081,
-			"y": -4308,
+			"x": 19673,
+			"y": -4568,
 			"orbitAnchorId": "anchor_75",
-			"orbitAngle": 90,
+			"orbitAngle": 135,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -6056,10 +6055,10 @@
 				"energy_weapon_fire_rate_4",
 				"furor_machinae_1"
 			],
-			"x": 20241,
-			"y": -4468,
+			"x": 19899,
+			"y": -4568,
 			"orbitAnchorId": "anchor_75",
-			"orbitAngle": 0,
+			"orbitAngle": 45,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -6072,10 +6071,10 @@
 				"energy_weapon_fire_rate_5",
 				"energy_weapon_fire_rate_6"
 			],
-			"x": 20081,
-			"y": -4628,
+			"x": 19899,
+			"y": -4794,
 			"orbitAnchorId": "anchor_75",
-			"orbitAngle": 270,
+			"orbitAngle": -45,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -6090,7 +6089,7 @@
 			"x": 20338,
 			"y": -5233,
 			"orbitAnchorId": "mod_star_ring",
-			"orbitAngle": -14.429381335465548,
+			"orbitAngle": -14.429304149647674,
 			"ringBeltColor": "#840b1d",
 			"tags": [
 				"stargazer",
@@ -6105,10 +6104,10 @@
 				"ecm_resistance_4",
 				"ecm_resistance_5"
 			],
-			"x": 20076,
-			"y": -6162,
+			"x": 19673,
+			"y": -5898,
 			"orbitAnchorId": "anchor_77",
-			"orbitAngle": 270,
+			"orbitAngle": -135,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -6121,10 +6120,10 @@
 				"ecm_resistance_3",
 				"language_of_the_lost_1"
 			],
-			"x": 19916,
-			"y": -6002,
+			"x": 19673,
+			"y": -5672,
 			"orbitAnchorId": "anchor_77",
-			"orbitAngle": 180,
+			"orbitAngle": 135,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -6137,10 +6136,10 @@
 				"ecm_resistance_4",
 				"ecm_resistance_5"
 			],
-			"x": 20076,
-			"y": -5842,
+			"x": 19899,
+			"y": -5672,
 			"orbitAnchorId": "anchor_77",
-			"orbitAngle": 90,
+			"orbitAngle": 45,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -6724,10 +6723,10 @@
 				"corrosion_beam_1",
 				"beam_weapon_damage_2"
 			],
-			"x": 20973,
-			"y": -4926,
+			"x": 21003,
+			"y": -4794,
 			"orbitAnchorId": "anchor_74",
-			"orbitAngle": 270,
+			"orbitAngle": -45,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -6740,10 +6739,10 @@
 				"ecm_resistance_3",
 				"language_of_the_lost_1"
 			],
-			"x": 20236,
-			"y": -6002,
+			"x": 19899,
+			"y": -5898,
 			"orbitAnchorId": "anchor_77",
-			"orbitAngle": 0,
+			"orbitAngle": -45,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -6756,10 +6755,10 @@
 				"energy_weapon_fire_rate_4",
 				"furor_machinae_1"
 			],
-			"x": 19921,
-			"y": -4468,
+			"x": 19673,
+			"y": -4794,
 			"orbitAnchorId": "anchor_75",
-			"orbitAngle": 180,
+			"orbitAngle": -135,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -10236,6 +10235,23 @@
 			"tags": [
 				"core"
 			]
+		},
+		{
+			"id": "affinity_157",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_108",
+				"affinity_76",
+				"beam_weapon_damage_2"
+			],
+			"x": 21187,
+			"y": -4384,
+			"orbitAnchorId": "stargazer_inner",
+			"orbitAngle": 45,
+			"tags": [
+				"stargazer",
+				"gate_existential_threat_defeated"
+			]
 		}
 	],
 	"connectorCurves": [
@@ -11976,14 +11992,14 @@
 		{
 			"a": "maneuverability_3",
 			"b": "top_speed_8",
-			"controlX": 21071,
-			"controlY": -5879
+			"controlX": 20890,
+			"controlY": -5945
 		},
 		{
 			"a": "candles_grace_replica_1",
 			"b": "maneuverability_3",
-			"controlX": 20845,
-			"controlY": -5879
+			"controlX": 20730,
+			"controlY": -5785
 		},
 		{
 			"a": "energy_weapon_fire_rate_1",
@@ -12012,74 +12028,68 @@
 		{
 			"a": "maneuverability_4",
 			"b": "top_speed_8",
-			"controlX": 21071,
-			"controlY": -5653
+			"controlX": 21050,
+			"controlY": -5785
 		},
 		{
 			"a": "candles_grace_replica_1",
 			"b": "maneuverability_4",
-			"controlX": 20845,
-			"controlY": -5653
-		},
-		{
-			"a": "affinity_108",
-			"b": "affinity_76",
-			"controlX": 21183,
-			"controlY": -4383
+			"controlX": 20890,
+			"controlY": -5625
 		},
 		{
 			"a": "affinity_76",
 			"b": "stargazer_wormhole_1",
-			"controlX": 19485,
-			"controlY": -4383
+			"controlX": 19229,
+			"controlY": -4774
 		},
 		{
 			"a": "stargazer_wormhole_1",
 			"b": "affinity_75",
-			"controlX": 19485,
-			"controlY": -6081
+			"controlX": 19229,
+			"controlY": -5692
 		},
 		{
 			"a": "affinity_75",
 			"b": "affinity_108",
-			"controlX": 21183,
-			"controlY": -6081
+			"controlX": 20338,
+			"controlY": -6433
 		},
 		{
 			"a": "beam_weapon_damage_2",
 			"b": "beam_weapon_damage_7",
-			"controlX": 21086,
-			"controlY": -4653
+			"controlX": 20890,
+			"controlY": -4521
 		},
 		{
 			"a": "beam_weapon_damage_7",
 			"b": "corrosion_beam_1",
-			"controlX": 20860,
-			"controlY": -4653
+			"controlX": 20730,
+			"controlY": -4681
 		},
 		{
 			"a": "energy_weapon_fire_rate_4",
 			"b": "energy_weapon_fire_rate_5",
-			"controlX": 20194,
-			"controlY": -4355
+			"controlX": 19786,
+			"controlY": -4521
 		},
 		{
 			"a": "energy_weapon_fire_rate_5",
 			"b": "furor_machinae_1",
-			"controlX": 20194,
-			"controlY": -4581
+			"controlX": 19946,
+			"controlY": -4681
 		},
 		{
 			"a": "ecm_resistance_3",
 			"b": "ecm_resistance_4",
-			"controlX": 19963,
-			"controlY": -6115
+			"controlX": 19626,
+			"controlY": -5785
 		},
 		{
 			"a": "ecm_resistance_4",
 			"b": "language_of_the_lost_1",
-			"controlX": 19963,
-			"controlY": -5889
+			"controlX": 19786,
+			"controlY": -5625
 		},
 		{
 			"a": "energy_weapon_flux_cost_3",
@@ -12288,38 +12298,38 @@
 		{
 			"a": "beam_weapon_damage_8",
 			"b": "corrosion_beam_1",
-			"controlX": 20860,
-			"controlY": -4879
+			"controlX": 20890,
+			"controlY": -4841
 		},
 		{
 			"a": "beam_weapon_damage_2",
 			"b": "beam_weapon_damage_8",
-			"controlX": 21086,
-			"controlY": -4879
+			"controlX": 21050,
+			"controlY": -4681
 		},
 		{
 			"a": "ecm_resistance_3",
 			"b": "ecm_resistance_5",
-			"controlX": 20189,
-			"controlY": -6115
+			"controlX": 19786,
+			"controlY": -5945
 		},
 		{
 			"a": "ecm_resistance_5",
 			"b": "language_of_the_lost_1",
-			"controlX": 20189,
-			"controlY": -5889
+			"controlX": 19946,
+			"controlY": -5785
 		},
 		{
 			"a": "energy_weapon_fire_rate_4",
 			"b": "energy_weapon_fire_rate_6",
-			"controlX": 19968,
-			"controlY": -4355
+			"controlX": 19626,
+			"controlY": -4681
 		},
 		{
 			"a": "energy_weapon_fire_rate_6",
 			"b": "furor_machinae_1",
-			"controlX": 19968,
-			"controlY": -4581
+			"controlX": 19786,
+			"controlY": -4841
 		},
 		{
 			"a": "armor_10",
@@ -13316,6 +13326,18 @@
 			"b": "dedicated_targeting_core_1",
 			"controlX": 3587,
 			"controlY": 299
+		},
+		{
+			"a": "affinity_108",
+			"b": "affinity_157",
+			"controlX": 21538,
+			"controlY": -5233
+		},
+		{
+			"a": "affinity_157",
+			"b": "affinity_76",
+			"controlX": 20338,
+			"controlY": -4033
 		}
 	],
 	"hiddenConnectors": [
@@ -13865,32 +13887,32 @@
 		},
 		{
 			"id": "anchor_73",
-			"x": 20958,
-			"y": -5766,
+			"x": 20890,
+			"y": -5785,
 			"radius": 160
 		},
 		{
 			"id": "stargazer_inner",
-			"x": 20334,
-			"y": -5232,
+			"x": 20338,
+			"y": -5233,
 			"radius": 1200
 		},
 		{
 			"id": "anchor_74",
-			"x": 20973,
-			"y": -4766,
+			"x": 20890,
+			"y": -4681,
 			"radius": 160
 		},
 		{
 			"id": "anchor_75",
-			"x": 20081,
-			"y": -4468,
+			"x": 19786,
+			"y": -4681,
 			"radius": 160
 		},
 		{
 			"id": "anchor_77",
-			"x": 20076,
-			"y": -6002,
+			"x": 19786,
+			"y": -5785,
 			"radius": 160
 		},
 		{
@@ -14423,8 +14445,8 @@
 		{
 			"kind": "star",
 			"id": "stargazer_star",
-			"x": 20334,
-			"y": -5232,
+			"x": 20338,
+			"y": -5233,
 			"radius": 400,
 			"starType": "star_yellow",
 			"color": "#960a1e",
