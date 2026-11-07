@@ -3178,11 +3178,11 @@
 			],
 			"x": 0,
 			"y": -12250,
+			"orbitAnchorId": "tritach_inner",
+			"orbitAngle": 90,
 			"tags": [
 				"tritachyon"
-			],
-			"orbitAnchorId": "tritach_inner",
-			"orbitAngle": 90
+			]
 		},
 		{
 			"id": "affinity_46",
@@ -3194,11 +3194,11 @@
 			],
 			"x": 0,
 			"y": -13750,
+			"orbitAnchorId": "tritach_inner",
+			"orbitAngle": -90,
 			"tags": [
 				"tritachyon"
-			],
-			"orbitAnchorId": "tritach_inner",
-			"orbitAngle": -90
+			]
 		},
 		{
 			"id": "hybrid_p_space_shrouding_1",
@@ -3256,11 +3256,11 @@
 			],
 			"x": -650,
 			"y": -12625,
+			"orbitAnchorId": "tritach_inner",
+			"orbitAngle": 150,
 			"tags": [
 				"tritachyon"
-			],
-			"orbitAnchorId": "tritach_inner",
-			"orbitAngle": 150
+			]
 		},
 		{
 			"id": "refracting_projectiles_1",
@@ -3338,11 +3338,11 @@
 			],
 			"x": -10169,
 			"y": -9322,
+			"orbitAnchorId": "dictat_inner",
+			"orbitAngle": -90,
 			"tags": [
 				"sindrian_dictat"
-			],
-			"orbitAnchorId": "dictat_inner",
-			"orbitAngle": -90
+			]
 		},
 		{
 			"id": "crustacean_integration_1",
@@ -3369,11 +3369,11 @@
 			],
 			"x": -8951,
 			"y": -8104,
+			"orbitAnchorId": "dictat_inner",
+			"orbitAngle": 0,
 			"tags": [
 				"sindrian_dictat"
-			],
-			"orbitAnchorId": "dictat_inner",
-			"orbitAngle": 0
+			]
 		},
 		{
 			"id": "lions_guard_arsenal_1",
@@ -3400,11 +3400,11 @@
 			],
 			"x": -10169,
 			"y": -6886,
+			"orbitAnchorId": "dictat_inner",
+			"orbitAngle": 90,
 			"tags": [
 				"sindrian_dictat"
-			],
-			"orbitAnchorId": "dictat_inner",
-			"orbitAngle": 90
+			]
 		},
 		{
 			"id": "luddic_2",
@@ -3430,11 +3430,11 @@
 			],
 			"x": 8240,
 			"y": 11713,
+			"orbitAnchorId": "anchor_89",
+			"orbitAngle": 0,
 			"tags": [
 				"luddic"
-			],
-			"orbitAnchorId": "anchor_89",
-			"orbitAngle": 0
+			]
 		},
 		{
 			"id": "knights_charge_1",
@@ -3461,11 +3461,11 @@
 			],
 			"x": 3040,
 			"y": 11713,
+			"orbitAnchorId": "anchor_89",
+			"orbitAngle": 180,
 			"tags": [
 				"luddic"
-			],
-			"orbitAnchorId": "anchor_89",
-			"orbitAngle": 180
+			]
 		},
 		{
 			"id": "perseverance_through_faith_1",
@@ -3537,11 +3537,11 @@
 			],
 			"x": -5640,
 			"y": 12413,
+			"orbitAnchorId": "hegemony_inner",
+			"orbitAngle": 90,
 			"tags": [
 				"hegemony"
-			],
-			"orbitAnchorId": "hegemony_inner",
-			"orbitAngle": 90
+			]
 		},
 		{
 			"id": "hullbreacher_rounds_1",
@@ -3566,11 +3566,11 @@
 			],
 			"x": -7478,
 			"y": 9875,
+			"orbitAnchorId": "anchor_88",
+			"orbitAngle": -135,
 			"tags": [
 				"hegemony"
-			],
-			"orbitAnchorId": "anchor_88",
-			"orbitAngle": -135
+			]
 		},
 		{
 			"id": "heavy_ballistics_integration_1",
@@ -3613,11 +3613,11 @@
 			],
 			"x": -3802,
 			"y": 9875,
+			"orbitAnchorId": "anchor_88",
+			"orbitAngle": -45,
 			"tags": [
 				"hegemony"
-			],
-			"orbitAnchorId": "anchor_88",
-			"orbitAngle": -45
+			]
 		},
 		{
 			"id": "xiv_torpedo_doctrine_1",
@@ -3689,11 +3689,11 @@
 			],
 			"x": 11174,
 			"y": 2393,
+			"orbitAnchorId": "anchor_92",
+			"orbitAngle": 180,
 			"tags": [
 				"pirate"
-			],
-			"orbitAnchorId": "anchor_92",
-			"orbitAngle": 180
+			]
 		},
 		{
 			"id": "waste_not_1",
@@ -3765,11 +3765,11 @@
 			],
 			"x": 14174,
 			"y": 2393,
+			"orbitAnchorId": "anchor_92",
+			"orbitAngle": 0,
 			"tags": [
 				"pirate"
-			],
-			"orbitAnchorId": "anchor_92",
-			"orbitAngle": 0
+			]
 		},
 		{
 			"id": "restriction_breeds_creativity_1",
@@ -3812,11 +3812,11 @@
 			],
 			"x": -11174,
 			"y": 2893,
+			"orbitAnchorId": "anchor_29",
+			"orbitAngle": 0,
 			"tags": [
 				"persean_league"
-			],
-			"orbitAnchorId": "anchor_29",
-			"orbitAngle": 0
+			]
 		},
 		{
 			"id": "affinity_63",
@@ -3829,11 +3829,11 @@
 			],
 			"x": -11924,
 			"y": 1594,
+			"orbitAnchorId": "anchor_29",
+			"orbitAngle": -60,
 			"tags": [
 				"persean_league"
-			],
-			"orbitAnchorId": "anchor_29",
-			"orbitAngle": -60
+			]
 		},
 		{
 			"id": "league_picket_targeting_1",
@@ -3862,11 +3862,11 @@
 			],
 			"x": -14174,
 			"y": 2893,
+			"orbitAnchorId": "anchor_29",
+			"orbitAngle": 180,
 			"tags": [
 				"persean_league"
-			],
-			"orbitAnchorId": "anchor_29",
-			"orbitAngle": 180
+			]
 		},
 		{
 			"id": "shared_fate",
@@ -5338,11 +5338,11 @@
 			],
 			"x": 12674,
 			"y": 893,
+			"orbitAnchorId": "anchor_92",
+			"orbitAngle": -90,
 			"tags": [
 				"pirate"
-			],
-			"orbitAnchorId": "anchor_92",
-			"orbitAngle": -90
+			]
 		},
 		{
 			"id": "affinity_50",
@@ -5373,11 +5373,11 @@
 			],
 			"x": 650,
 			"y": -12625,
+			"orbitAnchorId": "tritach_inner",
+			"orbitAngle": 30,
 			"tags": [
 				"tritachyon"
-			],
-			"orbitAnchorId": "tritach_inner",
-			"orbitAngle": 30
+			]
 		},
 		{
 			"id": "affinity_55",
@@ -5388,11 +5388,11 @@
 			],
 			"x": 5640,
 			"y": 14313,
+			"orbitAnchorId": "anchor_89",
+			"orbitAngle": 90,
 			"tags": [
 				"luddic"
-			],
-			"orbitAnchorId": "anchor_89",
-			"orbitAngle": 90
+			]
 		},
 		{
 			"id": "affinity_58",
@@ -5403,11 +5403,11 @@
 			],
 			"x": -5640,
 			"y": 9113,
+			"orbitAnchorId": "anchor_88",
+			"orbitAngle": -90,
 			"tags": [
 				"hegemony"
-			],
-			"orbitAnchorId": "anchor_88",
-			"orbitAngle": -90
+			]
 		},
 		{
 			"id": "affinity_64",
@@ -5421,11 +5421,11 @@
 			],
 			"x": -13424,
 			"y": 1594,
+			"orbitAnchorId": "anchor_29",
+			"orbitAngle": -120,
 			"tags": [
 				"persean_league"
-			],
-			"orbitAnchorId": "anchor_29",
-			"orbitAngle": -120
+			]
 		},
 		{
 			"id": "affinity_69",
@@ -5454,11 +5454,11 @@
 			],
 			"x": -11387,
 			"y": -8104,
+			"orbitAnchorId": "dictat_inner",
+			"orbitAngle": 180,
 			"tags": [
 				"sindrian_dictat"
-			],
-			"orbitAnchorId": "dictat_inner",
-			"orbitAngle": 180
+			]
 		},
 		{
 			"id": "ballistic_projectile_speed_5",
@@ -7895,11 +7895,11 @@
 			],
 			"x": -3802,
 			"y": 13551,
+			"orbitAnchorId": "anchor_88",
+			"orbitAngle": 45,
 			"tags": [
 				"hegemony"
-			],
-			"orbitAnchorId": "anchor_88",
-			"orbitAngle": 45
+			]
 		},
 		{
 			"id": "affinity_111",
@@ -7911,11 +7911,11 @@
 			],
 			"x": -5640,
 			"y": 14313,
+			"orbitAnchorId": "anchor_88",
+			"orbitAngle": 90,
 			"tags": [
 				"hegemony"
-			],
-			"orbitAnchorId": "anchor_88",
-			"orbitAngle": 90
+			]
 		},
 		{
 			"id": "affinity_112",
@@ -7927,11 +7927,11 @@
 			],
 			"x": -7478,
 			"y": 13551,
+			"orbitAnchorId": "anchor_88",
+			"orbitAngle": 135,
 			"tags": [
 				"hegemony"
-			],
-			"orbitAnchorId": "anchor_88",
-			"orbitAngle": 135
+			]
 		},
 		{
 			"id": "affinity_113",
@@ -7944,11 +7944,11 @@
 			],
 			"x": -5034,
 			"y": 11363,
+			"orbitAnchorId": "hegemony_inner",
+			"orbitAngle": -30,
 			"tags": [
 				"hegemony"
-			],
-			"orbitAnchorId": "hegemony_inner",
-			"orbitAngle": -30
+			]
 		},
 		{
 			"id": "concussion_shells_1",
@@ -8217,11 +8217,11 @@
 			],
 			"x": 5640,
 			"y": 9113,
+			"orbitAnchorId": "anchor_89",
+			"orbitAngle": -90,
 			"tags": [
 				"luddic"
-			],
-			"orbitAnchorId": "anchor_89",
-			"orbitAngle": -90
+			]
 		},
 		{
 			"id": "affinity_115",
@@ -8283,11 +8283,11 @@
 			],
 			"x": 0,
 			"y": -16000,
+			"orbitAnchorId": "anchor_90",
+			"orbitAngle": -90,
 			"tags": [
 				"tritachyon"
-			],
-			"orbitAnchorId": "anchor_90",
-			"orbitAngle": -90
+			]
 		},
 		{
 			"id": "affinity_119",
@@ -8301,11 +8301,11 @@
 			],
 			"x": 2598,
 			"y": -11500,
+			"orbitAnchorId": "anchor_90",
+			"orbitAngle": 30,
 			"tags": [
 				"tritachyon"
-			],
-			"orbitAnchorId": "anchor_90",
-			"orbitAngle": 30
+			]
 		},
 		{
 			"id": "affinity_120",
@@ -8317,11 +8317,11 @@
 			],
 			"x": 0,
 			"y": -10000,
+			"orbitAnchorId": "anchor_90",
+			"orbitAngle": 90,
 			"tags": [
 				"tritachyon"
-			],
-			"orbitAnchorId": "anchor_90",
-			"orbitAngle": 90
+			]
 		},
 		{
 			"id": "affinity_121",
@@ -8335,11 +8335,11 @@
 			],
 			"x": -2598,
 			"y": -11500,
+			"orbitAnchorId": "anchor_90",
+			"orbitAngle": 150,
 			"tags": [
 				"tritachyon"
-			],
-			"orbitAnchorId": "anchor_90",
-			"orbitAngle": 150
+			]
 		},
 		{
 			"id": "affinity_122",
@@ -8903,11 +8903,11 @@
 			],
 			"x": -13424,
 			"y": 4192,
+			"orbitAnchorId": "anchor_29",
+			"orbitAngle": 120,
 			"tags": [
 				"persean_league"
-			],
-			"orbitAnchorId": "anchor_29",
-			"orbitAngle": 120
+			]
 		},
 		{
 			"id": "affinity_135",
@@ -8920,11 +8920,11 @@
 			],
 			"x": -11924,
 			"y": 4192,
+			"orbitAnchorId": "anchor_29",
+			"orbitAngle": 60,
 			"tags": [
 				"persean_league"
-			],
-			"orbitAnchorId": "anchor_29",
-			"orbitAngle": 60
+			]
 		},
 		{
 			"id": "affinity_136",
@@ -8964,11 +8964,11 @@
 			],
 			"x": -5640,
 			"y": 11013,
+			"orbitAnchorId": "hegemony_inner",
+			"orbitAngle": -90,
 			"tags": [
 				"hegemony"
-			],
-			"orbitAnchorId": "hegemony_inner",
-			"orbitAngle": -90
+			]
 		},
 		{
 			"id": "affinity_141",
@@ -8981,11 +8981,11 @@
 			],
 			"x": -6246,
 			"y": 11363,
+			"orbitAnchorId": "hegemony_inner",
+			"orbitAngle": -150,
 			"tags": [
 				"hegemony"
-			],
-			"orbitAnchorId": "hegemony_inner",
-			"orbitAngle": -150
+			]
 		},
 		{
 			"id": "affinity_142",

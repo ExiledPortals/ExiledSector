@@ -5547,7 +5547,7 @@
 		{
 			"id": "ion_cascade",
 			"name": "Ion Cascade",
-			"icon": "",
+			"icon": "graphics/icons/mechanical_engineering_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5693,7 +5693,7 @@
 		{
 			"id": "phase_cloak_activation_cost",
 			"name": "Phase Cloak Activation Cost",
-			"icon": "",
+			"icon": "graphics/icons/phase_field_shifted.png",
 			"effects": [
 				{
 					"effect": "PHASE_CLOAK_ACTIVATION_COST_MULT",
@@ -5710,7 +5710,7 @@
 		{
 			"id": "phase_ambush_doctrine",
 			"name": "Phase Ambush Doctrine",
-			"icon": "",
+			"icon": "graphics/icons/EW_shifted_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5729,7 +5729,7 @@
 		{
 			"id": "phase_cloak_cooldown",
 			"name": "Phase Cloak Cooldown",
-			"icon": "",
+			"icon": "graphics/icons/field_repairs_shifted_phase.png",
 			"effects": [
 				{
 					"effect": "PHASE_CLOAK_COOLDOWN_PERCENT",
@@ -5746,7 +5746,7 @@
 		{
 			"id": "phantom_wake",
 			"name": "Phantom Wake",
-			"icon": "",
+			"icon": "graphics/icons/go_dark_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5765,7 +5765,7 @@
 		{
 			"id": "cease_and_desist",
 			"name": "Cease and Desist",
-			"icon": "",
+			"icon": "graphics/icons/systems_expertise_circular_alt1.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
