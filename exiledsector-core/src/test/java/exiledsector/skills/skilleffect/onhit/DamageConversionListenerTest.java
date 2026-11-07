@@ -26,11 +26,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -211,7 +214,7 @@ class DamageConversionListenerTest {
     }
 
     @Test
-    void anAdaptedHitDealsHighExplosiveDamageToArmorAfterTheMountConversion() {
+    void armorHitsAdaptToHighExplosiveUnlessTheMountConversionAlreadyMadeThemHighExplosive() {
         owns(OnHitSkillEffect.BALLISTIC_HARDPOINT_KINETIC_TO_HIGH_EXPLOSIVE);
         when(dynamic.getValue(DamageConversionListener.ADAPTIVE_CHANCE_PERCENT_KEY, 0f)).thenReturn(10f);
         DamageAPI hardpointHit = damage(DamageType.KINETIC, 100f, 0f);
@@ -226,6 +229,41 @@ class DamageConversionListenerTest {
 
         verify(hardpointHit).setType(DamageType.HIGH_EXPLOSIVE);
         verify(energyHit).setType(DamageType.HIGH_EXPLOSIVE);
+    }
+
+    @Test
+    void aBeamIsAdaptedOnlyForTheTickThatRolledAndGetsItsTypeBackOnceThatTickLands() {
+        when(dynamic.getValue(DamageConversionListener.ADAPTIVE_CHANCE_PERCENT_KEY, 0f)).thenReturn(10f);
+        ShipAPI target = mock(ShipAPI.class);
+        DamageType[] type = {DamageType.ENERGY};
+        DamageAPI beamDamage = damage(DamageType.ENERGY, 300f, 0f);
+        when(beamDamage.getType()).thenAnswer(call -> type[0]);
+        doAnswer(call -> type[0] = call.getArgument(0)).when(beamDamage).setType(any());
+        BeamAPI beam = beam(weapon(mount(WeaponType.ENERGY, WeaponSize.MEDIUM, false), true, DamageType.ENERGY));
+        Random random = mock(Random.class);
+        when(random.nextFloat()).thenReturn(0.05f, 0.5f);
+        DamageConversionListener listener = new DamageConversionListener(ownerShip, random);
+
+        listener.modifyDamageDealt(beam, target, beamDamage, null, true);
+        assertEquals(DamageType.KINETIC, type[0]);
+        registeredRestorer().reportDamageApplied(ownerShip, target, null);
+        assertEquals(DamageType.ENERGY, type[0]);
+
+        listener.modifyDamageDealt(beam, target, beamDamage, null, true);
+        assertEquals(DamageType.ENERGY, type[0]);
+        verify(beamDamage, times(1)).setType(DamageType.KINETIC);
+    }
+
+    @Test
+    void aHitMovedIntoEmpByItsMountIsNeverAdapted() {
+        owns(OnHitSkillEffect.SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP);
+        when(dynamic.getValue(DamageConversionListener.ADAPTIVE_CHANCE_PERCENT_KEY, 0f)).thenReturn(100f);
+        DamageAPI hit = damage(DamageType.ENERGY, 100f, 0f);
+        DamagingProjectileAPI smallEnergyShot = shell(weapon(mount(WeaponType.ENERGY, WeaponSize.SMALL, false), false, DamageType.ENERGY));
+
+        new DamageConversionListener(ownerShip, rolling(0f)).modifyDamageDealt(smallEnergyShot, mock(ShipAPI.class), hit, null, true);
+
+        verify(hit, never()).setType(any());
     }
 
     @Test

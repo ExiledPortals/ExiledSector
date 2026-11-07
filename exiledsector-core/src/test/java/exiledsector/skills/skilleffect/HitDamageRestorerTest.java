@@ -169,4 +169,48 @@ class HitDamageRestorerTest {
 
         assertEquals(300f, HitDamageRestorer.originalHitDamage(damage), 0.001f);
     }
+
+    @Test
+    void sideDamageLandingOnTheSameTargetMidHitLeavesTheOuterHitChangedUntilItLands() {
+        DamageAPI damage = mock(DamageAPI.class);
+        DamageType[] type = {DamageType.ENERGY};
+        when(damage.getType()).thenAnswer(call -> type[0]);
+        doAnswer(call -> type[0] = call.getArgument(0)).when(damage).setType(any());
+        ShipAPI target = mock(ShipAPI.class);
+
+        HitDamageRestorer.retypeForThisHit(damage, DamageType.KINETIC, target);
+        HitDamageRestorer restorer = (HitDamageRestorer) registeredRestorer();
+        when(listeners.getListeners(HitDamageRestorer.class)).thenReturn(List.of(restorer));
+        HitDamageRestorer.whileDealingSideDamage(() -> {
+            restorer.reportDamageApplied(null, target, null);
+            return null;
+        });
+        assertEquals(DamageType.KINETIC, type[0]);
+
+        restorer.reportDamageApplied(null, target, null);
+        assertEquals(DamageType.ENERGY, type[0]);
+    }
+
+    @Test
+    void sideDamageTrackedOnTheSameTargetIsRestoredByItsOwnReportWithoutTouchingTheOuterHit() {
+        DamageAPI outer = mock(DamageAPI.class);
+        when(outer.getBaseDamage()).thenReturn(100f);
+        DamageAPI side = mock(DamageAPI.class);
+        when(side.getBaseDamage()).thenReturn(40f);
+        ShipAPI target = mock(ShipAPI.class);
+
+        HitDamageRestorer.reduceForThisHit(outer, 0.5f, target);
+        HitDamageRestorer restorer = (HitDamageRestorer) registeredRestorer();
+        when(listeners.getListeners(HitDamageRestorer.class)).thenReturn(List.of(restorer));
+        HitDamageRestorer.whileDealingSideDamage(() -> {
+            HitDamageRestorer.reduceForThisHit(side, 0.5f, target);
+            restorer.reportDamageApplied(null, target, null);
+            return null;
+        });
+
+        verify(side).setDamage(40f);
+        verify(outer, never()).setDamage(100f);
+        restorer.reportDamageApplied(null, target, null);
+        verify(outer).setDamage(100f);
+    }
 }

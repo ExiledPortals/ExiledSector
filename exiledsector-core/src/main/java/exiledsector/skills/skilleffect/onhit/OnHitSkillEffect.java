@@ -111,8 +111,18 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
                     .arg("max", Motes.MAX_LIVE_MOTES_PER_SOURCE).styled();
         }
     },
-    DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT(listener(IonCascadeListener.HIGH_EXPLOSIVE_SHARE_PERCENT_KEY, IonCascadeListener.class, IonCascadeListener::new)),
-    SHIELD_EMP_TO_ENERGY_PERCENT(listener(IonSpillListener.ENERGY_SHARE_PERCENT_KEY, IonSpillListener.class, IonSpillListener::new)),
+    DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT(listener(IonCascadeListener.HIGH_EXPLOSIVE_SHARE_PERCENT_KEY, IonCascadeListener.class, IonCascadeListener::new)) {
+        @Override
+        public boolean readsFinalDealtDamage() {
+            return true;
+        }
+    },
+    SHIELD_EMP_TO_ENERGY_PERCENT(listener(IonSpillListener.ENERGY_SHARE_PERCENT_KEY, IonSpillListener.class, IonSpillListener::new)) {
+        @Override
+        public boolean readsFinalDealtDamage() {
+            return true;
+        }
+    },
     ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT(listener(DamageConversionListener.ADAPTIVE_CHANCE_PERCENT_KEY, DamageConversionListener.class,
             DamageConversionListener::new)) {
         @Override

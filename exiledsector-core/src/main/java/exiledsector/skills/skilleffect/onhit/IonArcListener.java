@@ -14,6 +14,7 @@ import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import exiledsector.ModSounds;
 import exiledsector.compat.CombatGlow;
 import exiledsector.skills.skilleffect.CombatQueries;
+import exiledsector.skills.skilleffect.HitDamageRestorer;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 import exiledsector.skills.skilleffect.weapon.BallisticAsEnergy;
 import org.lwjgl.util.vector.Vector2f;
@@ -79,8 +80,9 @@ final class IonArcListener extends ShipCombatListener implements DamageDealtModi
         if (engine == null) {
             return;
         }
-        EmpArcEntityAPI arc = engine.spawnEmpArcPierceShields(ownerShip, new Vector2f(point), hitShip, hitShip, DamageType.ENERGY,
-                shotDamage * ARC_DAMAGE_FRACTION, shotDamage * ARC_EMP_FRACTION, ARC_RANGE, ModSounds.orSilent(ARC_SOUND), ARC_THICKNESS, ARC_FRINGE, ARC_CORE);
+        EmpArcEntityAPI arc = HitDamageRestorer.whileDealingSideDamage(() -> engine.spawnEmpArcPierceShields(ownerShip, new Vector2f(point), hitShip,
+                hitShip, DamageType.ENERGY, shotDamage * ARC_DAMAGE_FRACTION, shotDamage * ARC_EMP_FRACTION, ARC_RANGE, ModSounds.orSilent(ARC_SOUND),
+                ARC_THICKNESS, ARC_FRINGE, ARC_CORE));
         Vector2f arcEnd = arc == null ? null : arc.getTargetLocation();
         if (arcEnd != null) {
             CombatGlow.arc(point, arcEnd, ARC_FRINGE, ARC_LIGHT_SIZE, ARC_LIGHT_INTENSITY, ARC_LIGHT_SECONDS);

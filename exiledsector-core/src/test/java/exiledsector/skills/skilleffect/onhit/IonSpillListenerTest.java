@@ -86,4 +86,16 @@ class IonSpillListenerTest {
 
         verifyNoDamageDealt();
     }
+
+    @Test
+    void aTargetDestroyedBeforeTheNextFrameTakesNoSpill() {
+        ShipAPI target = ship(1);
+        IonSpillListener listener = new IonSpillListener(owner(25f));
+
+        listener.modifyDamageDealt(null, target, empHit(200f), new Vector2f(), true);
+        when(target.isAlive()).thenReturn(false);
+        listener.advance(0.016f);
+
+        verifyNoDamageDealt();
+    }
 }

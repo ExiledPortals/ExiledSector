@@ -169,7 +169,9 @@ type from the weapon each tick, since their damage object lasts the whole firing
 
 A conversion to EMP moves the hit's whole damage into EMP. `HitDamageRestorer` makes the change and restores the hit
 once it lands; refractions and Phase-Entangled Wings use the same restorer, so their changes stack on one hit, and Lion's
-Gaze cuts its simulated hits from the original damage. After the mount conversion, `ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT`
+Gaze cuts its simulated hits from the original damage and gives them the beam's own type. Damage dealt in the middle of
+a hit, such as Ion Arc's arc, runs inside `HitDamageRestorer.whileDealingSideDamage`, so it never restores the hit
+early. After the mount conversion, `ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT`
 (Adaptive Munitions) may retype a weapon hit on a ship to kinetic on shields or high explosive elsewhere, through the
 restorer, which puts the original type back.
 
@@ -341,7 +343,8 @@ explosive damage at the hit point on the next frame, past shields and through ar
 
 `SHIELD_EMP_TO_ENERGY_PERCENT` takes that share of the EMP in each hit an enemy shield takes from this ship and deals it
 as energy damage at the hit point on the next frame, against shields as usual (`IonSpillListener`, queued in
-`DeferredHits` like Ion Cascade).
+`DeferredHits` like Ion Cascade). Both register after every other effect (`readsFinalDealtDamage`), so they read the
+hit's final EMP.
 
 ### Phase Ambush Doctrine
 

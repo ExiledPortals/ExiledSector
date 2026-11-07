@@ -139,7 +139,13 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         for (ResolvedTree.Entry entry : resolvedTree.entries()) {
             if (entry instanceof ResolvedTree.VanillaEntry vanillaEntry) {
                 vanillaEntry.effect().applyEffectsAfterShipCreation(ship, vanillaEntry.hullModId());
-            } else if (entry instanceof ResolvedTree.EffectEntry effectEntry && !effectEntry.effect().reshapesDealtDamage()) {
+            } else if (entry instanceof ResolvedTree.EffectEntry effectEntry && !effectEntry.effect().reshapesDealtDamage()
+                    && !effectEntry.effect().readsFinalDealtDamage()) {
+                effectEntry.effect().applyAfterShipCreation(ship, effectEntry.modId(), effectEntry.magnitude());
+            }
+        }
+        for (ResolvedTree.Entry entry : resolvedTree.entries()) {
+            if (entry instanceof ResolvedTree.EffectEntry effectEntry && effectEntry.effect().readsFinalDealtDamage()) {
                 effectEntry.effect().applyAfterShipCreation(ship, effectEntry.modId(), effectEntry.magnitude());
             }
         }
