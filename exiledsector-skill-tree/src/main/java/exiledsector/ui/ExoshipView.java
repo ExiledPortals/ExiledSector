@@ -55,7 +55,8 @@ final class ExoshipView {
         for (SkillNode node : nodes) {
             String volume = node.getVolume();
             if (node.getType().getTier() == SkillTier.NOTABLE && !ExoshipNodes.isCarried(node)
-                    && !(volume != null && SkillTags.ABYSSAL_VOLUMES.contains(volume)) && !SkillTags.REDACTED_VOLUME.equals(volume)) {
+                    && !(volume != null && SkillTags.ABYSSAL_VOLUMES.contains(volume)) && !SkillTags.REDACTED_VOLUME.equals(volume)
+                    && !SkillTags.OMEGA_VOLUME.equals(volume)) {
                 anchors.add(new ExoshipVoyage.Anchor(node.getX(), node.getY(), SkillTags.CORE_VOLUME.equals(volume)));
             }
         }

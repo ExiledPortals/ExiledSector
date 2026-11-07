@@ -1,11 +1,18 @@
 package exiledsector.skills.skilleffect.defense;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ArmorGridAPI;
+import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doAnswer;
@@ -47,6 +54,39 @@ class UnhitArmorRegenListenerTest {
         assertEquals(5f, restored, 0.001f);
         assertArrayEquals(new float[]{2.5f, 2.5f}, cells[0], 0.001f);
         assertEquals(0f, UnhitArmorRegenListener.mend(grid(100f, cells), secondsUnhit, 10f, 0f));
+    }
+
+    private static float repairedOverADeployment(float percent, float lowCapPercent) {
+        CombatEngineAPI engine = mock(CombatEngineAPI.class, Mockito.RETURNS_DEEP_STUBS);
+        when(engine.getShipGrid().getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(call -> Collections.emptyIterator());
+        float[][] cells = {new float[10]};
+        ArmorGridAPI grid = grid(100f, cells);
+        ShipAPI ship = mock(ShipAPI.class, Mockito.RETURNS_DEEP_STUBS);
+        when(ship.isAlive()).thenReturn(true);
+        when(ship.getArmorGrid()).thenReturn(grid);
+        when(ship.getFluxTracker().getMaxFlux()).thenReturn(1_000_000f);
+        when(ship.getMutableStats().getDynamic().getValue(UnhitArmorRegenListener.REGEN_PERCENT_KEY, 0f)).thenReturn(percent);
+        when(ship.getMutableStats().getDynamic().getValue(UnhitArmorRegenListener.LOW_CAP_REGEN_PERCENT_KEY, 0f)).thenReturn(lowCapPercent);
+        try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            global.when(Global::getCombatEngine).thenReturn(engine);
+            UnhitArmorRegenListener listener = new UnhitArmorRegenListener(ship);
+            for (int tick = 0; tick < 40; tick++) {
+                listener.advance(UnhitArmorRegenListener.TICK_SECONDS);
+            }
+        }
+        float repaired = 0f;
+        for (float armor : cells[0]) {
+            repaired += armor;
+        }
+        return repaired;
+    }
+
+    @Test
+    void eachSourceStopsAtItsOwnShareOfTheShipsArmorPerDeployment() {
+        assertEquals(1000f * UnhitArmorRegenListener.LOW_DEPLOYMENT_CAP_PERCENT / 100f, repairedOverADeployment(0f, 50f), 0.01f);
+        assertEquals(1000f * UnhitArmorRegenListener.DEPLOYMENT_CAP_PERCENT / 100f, repairedOverADeployment(50f, 0f), 0.01f);
+        assertEquals(1000f * (UnhitArmorRegenListener.DEPLOYMENT_CAP_PERCENT + UnhitArmorRegenListener.LOW_DEPLOYMENT_CAP_PERCENT) / 100f,
+                repairedOverADeployment(50f, 50f), 0.01f);
     }
 
     @Test

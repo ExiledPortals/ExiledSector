@@ -8,7 +8,7 @@ final class ImageParallax {
     }
 
     static float driftFraction(float distanceFromViewCenter, float parallax, float reach) {
-        if (parallax >= 1f || distanceFromViewCenter <= 0f || reach <= 0f) return 0f;
+        if (Float.compare(parallax, 1f) == 0 || distanceFromViewCenter <= 0f || reach <= 0f) return 0f;
         float drift = distanceFromViewCenter * (1f - parallax);
         return reach * (float) Math.tanh(drift / reach) / distanceFromViewCenter;
     }

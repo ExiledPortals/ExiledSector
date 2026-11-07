@@ -22,7 +22,8 @@ scaling and the summary see the stat bonuses. `ModuleTreeShare` steps the shared
 
 Effects backed by `AffinityScaling` (`*_PER_*_AFFINITY`, on the affinity hull items) apply nothing themselves:
 `AffinitySteps.scaledBonuses` adds their target stat once per whole step of the affinities they read, summed when
-they read all three, in a contribution of its own so module sharing is unaffected. `AffinitySteps.totals` first
+they read all three (`*_PER_HIGHEST_AFFINITY` reads only the highest), in a contribution of its own so module sharing is unaffected. `AffinityScaling.whileAllEqual`
+(Equilibrium Protocol) adds its target once while the final totals of all three are equal. `AffinitySteps.totals` first
 multiplies the summed Low Tech Affinity by its summed `LOW_TECH_AFFINITY_PERCENT`, then adds
 `HIGHEST_AFFINITY_FLAT_PER_S_MOD` (already multiplied by the ship's s-mods in `HullUpgradeEffectSource`) to the
 highest affinity, then `LOWEST_AFFINITY_AS_HIGHEST` raises the lowest to match it, and last each `AFFINITY_EXCHANGE_TO_*`
@@ -168,7 +169,11 @@ type from the weapon each tick, since their damage object lasts the whole firing
 
 A conversion to EMP moves the hit's whole damage into EMP. `HitDamageRestorer` makes the change and restores the hit
 once it lands; refractions and Phase-Entangled Wings use the same restorer, so their changes stack on one hit, and Lion's
-Gaze cuts its simulated hits from the original damage.
+Gaze cuts its simulated hits from the original damage and gives them the beam's own type. Damage dealt in the middle of
+a hit, such as Ion Arc's arc, runs inside `HitDamageRestorer.whileDealingSideDamage`, so it never restores the hit
+early. After the mount conversion, `ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT`
+(Adaptive Munitions) may retype a weapon hit on a ship to kinetic on shields or high explosive elsewhere, through the
+restorer, which puts the original type back.
 
 ### Refracting Projectiles
 
@@ -178,7 +183,7 @@ weapons in `energy_chain_blocklist.csv` never refract. As with Lion's Gaze, a po
 weapon as an instant single shot, then hands the projectile to the firing ship so its on-hit effects and
 kill credit apply.
 
-`NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT` lowers each refraction's base damage and restores it after the
+`NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_MULT` lowers each refraction's base damage and restores it after the
 hit, rather than using a modifier, so EMP and on-hit effects stay at full strength.
 
 ### Projectile echoes
@@ -195,6 +200,35 @@ itself. Each target strips its queued armor evenly over 5 seconds (`ArmorDecay`)
 (`ArmorBurnListener`) queues its share of each weapon hit on an enemy's armor on the struck cell alone, over 3 seconds, so
 burns on one cell add up.
 
+### Rift Harmonics and rift explosion damage
+
+`RIFT_STRIKE_CHANCE_PERCENT` (`RiftStrikeListener`) rolls on each hit an enemy ship takes from this ship's non-beam
+energy weapons, ballistics included while they count as energy, and Spark Rift's `STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT`
+(`StrikecraftRiftStrikeListener`) on each such hit from its launched strike craft. On success it drops vanilla's Rift Beam
+mine at the hit point, sourced by the hitting ship or craft, which explodes at once (`RiftExplosions.spawn`). The mine's
+damage is set from the weapon spec's base damage per shot (`RiftStrike`), so damage bonuses never reach it, and the
+Rift Harmonics tooltip lists every fitted weapon with its rift damage (`RiftStrikeTooltipTable`).
+
+`RIFT_EXPLOSION_DAMAGE_PERCENT` (`RiftExplosionDamageListener`) raises the damage of every rift explosion the ship
+sources: these rifts, vanilla's Rift Beam, Lance, Cascade and Lightning mines, and Rift Torpedo direct hits, which
+`RiftExplosions` picks out by their vanilla sound set and the absence of a drawn explosion of their own. The engine asks
+only the source's listeners, so a strike craft's rifts take `STRIKECRAFT_RIFT_EXPLOSION_DAMAGE_PERCENT` instead
+(`StrikecraftRiftExplosionDamageListener`, on each launched craft) and never both.
+
+### Temporal Exhaust
+
+When the ship system turns on, `SYSTEM_ACTIVATION_TIMEFLOW_PERCENT` (`TemporalExhaustListener`) gives its time flow
+bonus, lowered evenly to nothing over 4 seconds, and spawns 8 rifts evenly over the same 4 seconds behind a random main
+engine, then waits 30 seconds before it can trigger again. The rifts are the ship's own, so they hit only enemies and
+rift explosion damage bonuses reach them.
+
+### Resonator Payload
+
+`MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY` grants `MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT` for every
+5 of the highest affinity (`AffinityScaling.Filter.HIGHEST`). Each missile weapon hit on an enemy ship rolls it, and
+`ResonatorPayloadListener` then spawns 4 rifts within 100 su of the impact, 0.1 seconds apart, each dealing 10% of the
+launcher's base damage per shot up to 100.
+
 ### Thermo-Accelerator
 
 The flux cost reduction is an ordinary ship-wide weapon stat, and `ThermoAcceleratorListener` stops every hardpoint weapon from firing
@@ -209,7 +243,7 @@ share of a Hungering Rift heal the ship receives.
 
 ### Missile snare
 
-`MISSILE_SNARE_TOP_SPEED_PERCENT` multiplies the top speed of an enemy ship hit by this ship's missiles for 2 seconds,
+`MISSILE_SNARE_TOP_SPEED_MULT` multiplies the top speed of an enemy ship hit by this ship's missiles for 2 seconds,
 refreshed by each hit, capped at 90% less. As with shield disruption, the strongest source applies
 (`MissileSnareListener`).
 
@@ -232,7 +266,7 @@ and temporarily disables whichever working weapon or engine sits nearest the imp
 
 ### Auxiliary Screen
 
-`SMALLER_ALLY_DAMAGE_TAKEN_PERCENT` multiplies the hull, armor and shield damage taken by allied ships of a smaller
+`SMALLER_ALLY_DAMAGE_TAKEN_MULT` multiplies the hull, armor and shield damage taken by allied ships of a smaller
 hull size within 800 su, rechecked every 0.25 seconds. Strike craft and station modules don't count, and only the
 strongest source applies (`AuxiliaryScreenField`).
 
@@ -250,7 +284,7 @@ total, capped at 15%, reduces every member's maintenance supply use at each flee
 
 ### Lion's Roar
 
-`RATE_OF_FIRE_AURA_PERCENT` multiplies the ballistic, energy and missile rate of fire of enemy ships within 1000 su,
+`RATE_OF_FIRE_AURA_MULT` multiplies the ballistic, energy and missile rate of fire of enemy ships within 1000 su,
 rechecked every 0.25 seconds. Strike craft don't count, and only the strongest source applies (`RateOfFireAuraField`).
 
 ### Honor Guard
@@ -269,6 +303,96 @@ and gives it a free search and destroy order instead (`NoRetreatListener`).
 `FUEL_USE_REDUCTION_PERCENT_WHILE_HALF_FUELED` reduces only the fuel use of the ship that has it, while the player
 fleet's fuel is at least half its total fuel capacity. A transient script rechecks it every 0.25 seconds
 (`FleetWideEffects.applyHalfFueledFuelUse`, `PlayerFleetConditionScript`).
+
+### Pirate Frenzy
+
+Pirate Frenzy is a stacking buff any effect can grant through `PirateFrenzy.of(ship).gain()`. Each stack runs its own
+10-second timer and gives a fixed 5% increased weapon rate of fire and 5% reduced weapon flux cost. A ship holds up to
+5 stacks, a stack gained at the cap replaces the oldest, and destruction clears them all (`PirateFrenzy`).
+
+Blood in the Water's `PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT` grants a stack for each enemy ship destroyed
+within its range, checked every 0.25 seconds. Strike craft and station modules don't count
+(`FrenzyOnNearbyDestructionListener`).
+
+### Pick Off The Stragglers
+
+`DAMAGE_TO_ISOLATED_SHIP_PERCENT` raises damage dealt to an enemy ship with no living ship of its own side within
+1000 su. Strike craft and modules of the same station don't count as allies, and each target is rechecked at most
+every 0.25 seconds (`IsolatedShipDamageListener`).
+
+### Haul the Prize
+
+`TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT` works like vanilla's Monofilament Tow Cable with a hull size limit. On every fleet
+sync, each active tug, smallest hull first, adds its value to the max burn level of the currently slowest ship of its
+hull size or smaller, capped at the tug's own burn level. Tows stack, so several tugs can lift one ship up to their
+burn level (`TowLines`, called from `SkillTreeHullMod.onFleetSync`).
+
+### Pather's Prow
+
+The node uses Ram-plated's `RAM_PROW_COLLISION_DAMAGE_MULT` (see Pirate Badlands modifiers); tree and hull item
+values add up before the multiplier is applied (`CollisionDamageListener`).
+
+### Litany of the Fallen
+
+Vanilla only works out crew losses after a battle, so `HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST` counts them with
+vanilla's formula at its average roll: the ship's crew times the square of the hull damage taken this deployment as a
+share of maximum hull, times 0.75 and the crew loss multiplier. Each hull hit recounts them, and the reduction is a
+percent on hull damage taken (`CrewLossHullDamageListener`).
+
+### Sanctified Scars
+
+`ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD` counts the ship's d-mods once at deployment, up to five, and reduces the
+armor damage taken by allied ships within 1000 su as a percent, rechecked every 0.25 seconds. Strike craft and station
+modules don't count, and only the strongest source applies (`DModArmorAuraField`).
+
+### Rite of Mortification
+
+`OVERLOAD_HULL_DAMAGE_PERCENT` stops any overload at the start of the ship's next frame and takes that share of its
+maximum hull straight off its hitpoints, ignoring damage resistances, with a killing blow if that would empty it
+(`OverloadHullDamageListener`, `HullLoss`). The killing blow is credited to the last enemy ship that damaged it, with
+strike craft counted as their carrier, or to no one if no enemy has.
+
+`OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT` then removes that share of the ship's hard flux, leaving soft flux alone. The
+overload still drops the shield.
+
+### EMP damage
+
+Vanilla has no stat for EMP damage dealt, so `EmpDamageListener` (`weapon`) rescales the EMP of each hit on a ship.
+`EMP_DAMAGE_PERCENT` sources are summed first and `EMP_DAMAGE_MULT` then multiplies that total.
+
+### Ion Cascade
+
+Vanilla spreads a hull or armor hit's EMP over the weapons and engines within two armor cells of the struck cell, half
+to those in the inner ring and a quarter to the outer ring. `DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT` repeats that sum for
+the parts already disabled before the hit, with the same EMP and part damage multipliers, and deals that share as high
+explosive damage at the hit point on the next frame, past shields and through armor as usual (`IonCascadeListener`).
+
+### Ion Spill
+
+`SHIELD_EMP_TO_ENERGY_PERCENT` takes that share of the EMP in each hit an enemy shield takes from this ship and deals it
+as energy damage at the hit point on the next frame, against shields as usual (`IonSpillListener`, queued in
+`DeferredHits` like Ion Cascade). Both register after every other effect (`readsFinalDealtDamage`), so they read the
+hit's final EMP.
+
+### Phase Ambush Doctrine
+
+`PHASE_EXIT_WEAPON_DAMAGE_PERCENT` gives its full weapon damage bonus as the ship leaves phase and lowers it evenly to
+nothing over 3 seconds. Leaving phase again restarts it at full (`PhaseExitDamageListener`).
+
+### Phantom Wake
+
+`PHASE_ENTRY_AFTERIMAGE_SECONDS_FLAT` spawns an empty variant of the ship's hull where it entered phase: idle, held in
+place, taking no damage and colliding only with projectiles and missiles like a fighter, so enemy weapons waste fire
+on it. It fades over its lifetime and is then removed with its deployment record (`PhaseAfterimage`,
+`DeploymentRecordPruner`). A new entry replaces the last afterimage, and ships with modules or built-in wings leave
+none (`PhantomWakeListener`).
+
+### Cease and Desist
+
+Each hit from this ship's own energy weapons on an enemy ship, strike craft excepted, adds an Injunction stack for 10
+seconds, at most once a second per target, up to 10 stacks with the oldest replaced. The stacks' summed
+`ENERGY_HIT_INJUNCTION_PERCENT` multiplies the target's ship system cooldown and divides its charge regeneration by the
+same factor (`InjunctionListener`, `Injunction`).
 
 ### Range per sensor strength
 
@@ -541,14 +665,16 @@ sources reserve their modifiers for (`ModifierSources`).
 An anchor drops, stocks or shows in showcase salvage only while it is obtainable
 (`WormholeAnchorDefinitions.obtainable`, sharing its checks with `WormholeAnchor.inertness`): the player has the
 Janus Device (`JanusDevice`, `AnchorJanusGate`, lifted by the "Allow Wormhole Anchors Before the Janus Device"
-setting, Hyper-Nav Beacon exempt), its own unlock is met, and no closed `withheld` gate holds its exit. Each gate
+setting, Hyper-Nav Beacon and Omega anchor exempt), its own unlock is met, and no closed `withheld` gate holds its exit. Each gate
 in `node_gates.json` sets `anchors` (`withheld` by default, or `free`) and `rewardAnchor`. Nightcross is `free`
 and opens on `anchorFound` once any of its anchors reaches the player (`AnchorFinds`). The Singularity and Existential
-Threat battles add one volume anchor to their loot once per save (`GateRewardAnchors`). NPC anchors ignore all of
-this, and open wormholes stay open.
+Threat battles add one volume anchor to their loot once per save (`GateRewardAnchors`). Omega opens on the first won
+fight against an Omega fleet (`OmegaEncounter`) or on opening the shielded cache at Alpha Site, whose loot also holds
+one Omega anchor (`AlphaSiteOmegaCache`). NPC anchors ignore all of this, and open wormholes stay open.
 
 An anchor with `guaranteed_drop` in `wormhole_anchors.csv` drops from every won battle that defeats one of its
-factions instead of rolling its chance (`FactionFleetDrops`); the Shrouded anchor does this for Dweller fleets. An anchor whose factions are all missing, or whose playable factions Nexerelin has all eliminated, drops from the
+factions instead of rolling its chance (`FactionFleetDrops`); the Shrouded and Omega anchors do this for Dweller and
+Omega fleets. An anchor whose factions are all missing, or whose playable factions Nexerelin has all eliminated, drops from the
 salvage and tech mining sites in `anchor_salvage.csv` instead (`FactionlessAnchors`).
 
 ### Corruption
@@ -697,7 +823,8 @@ does, checked every 0.1 seconds (`HoldFireShieldListener`).
 The armor repair works on 0.5-second ticks: a cell whose armor dropped since the last tick restarts its 5-second
 delay, and repair pauses while an enemy ship (not strikecraft) is within 1500 su. Each point restored adds 1 hard
 flux, so repair is also cut to the flux room left and stops at full flux, and it ends for the deployment once it has
-restored 50% of the ship's total armor (`UnhitArmorRegenListener`).
+restored 50% of the ship's total armor (`UnhitArmorRegenListener`). Dormant Repair Cycle's
+`UNHIT_ARMOR_REGEN_LOW_CAP_PERCENT` runs alongside it with its own 20% cap.
 
 ### Furnace modifiers
 

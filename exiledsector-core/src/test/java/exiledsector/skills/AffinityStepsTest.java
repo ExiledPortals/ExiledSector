@@ -7,6 +7,7 @@ import exiledsector.skills.skilleffect.fighter.FighterSkillEffect;
 import exiledsector.skills.skilleffect.flux.FluxSkillEffect;
 import exiledsector.skills.skilleffect.logistics.LogisticsSkillEffect;
 import exiledsector.skills.skilleffect.movement.MovementSkillEffect;
+import exiledsector.skills.skilleffect.onhit.OnHitSkillEffect;
 import exiledsector.skills.skilleffect.special.SpecialSkillEffect;
 import org.junit.jupiter.api.Test;
 
@@ -54,12 +55,46 @@ class AffinityStepsTest {
     }
 
     @Test
+    void aHighestAffinityScaledEffectCountsOnlyTheHighestAffinity() {
+        EffectContribution notable = EffectContribution.scaledPermanent("notable", "notable_", List.of(
+                new SkillTypeEffect(SpecialSkillEffect.MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY, 1f)));
+
+        assertEquals(Map.of(OnHitSkillEffect.MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT, 4f),
+                scaled(List.of(notable, node(LOW_TECH, 14f), node(HIGH_TECH, 21f), node(MIDLINE, 19f))));
+        assertEquals(Map.of(), scaled(List.of(notable, node(LOW_TECH, 4f), node(MIDLINE, 4f))));
+    }
+
+    @Test
     void navRatingPerHighTechAffinityAddsFleetNavRatingEveryFiftyHighTechAffinity() {
         EffectContribution phaseCoil = EffectContribution.scaledPermanent("item", "item_", List.of(
                 new SkillTypeEffect(SpecialSkillEffect.NAV_RATING_PER_HIGH_TECH_AFFINITY, 1f)));
 
         assertEquals(Map.of(BattleSkillEffect.NAV_RATING, 2f), scaled(List.of(phaseCoil, node(HIGH_TECH, 35f), node(HIGH_TECH, 70f))));
         assertEquals(Map.of(), scaled(List.of(phaseCoil, node(HIGH_TECH, 49f), node(LOW_TECH, 60f))));
+    }
+
+    @Test
+    void adaptiveDamageTypeChanceGrowsForEveryFiveHighTechAffinity() {
+        EffectContribution notable = EffectContribution.scaledPermanent("notable", "notable_", List.of(
+                new SkillTypeEffect(SpecialSkillEffect.ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY, 1f)));
+
+        assertEquals(Map.of(OnHitSkillEffect.ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT, 4f), scaled(List.of(notable, node(HIGH_TECH, 24f), node(LOW_TECH, 30f))));
+        assertEquals(Map.of(), scaled(List.of(notable, node(HIGH_TECH, 4f))));
+    }
+
+    @Test
+    void theEqualAffinityBonusAppliesOnlyWhileTheFinalTotalsAreAllEqual() {
+        EffectContribution notable = EffectContribution.scaledPermanent("notable", "notable_", List.of(
+                new SkillTypeEffect(SpecialSkillEffect.WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL, 20f)));
+        EffectContribution exchange = EffectContribution.scaledPermanent("exchange", "exchange_", List.of(
+                new SkillTypeEffect(SpecialSkillEffect.AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT, 50f)));
+        SkillEffect weaponDamage = SpecialSkillEffect.WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL.affinityScaling().target();
+
+        assertEquals("WEAPON_DAMAGE_PERCENT", weaponDamage.name());
+        assertEquals(Map.of(weaponDamage, 20f), scaled(List.of(notable, node(LOW_TECH, 15f), node(HIGH_TECH, 15f), node(MIDLINE, 15f))));
+        assertEquals(Map.of(), scaled(List.of(notable, node(LOW_TECH, 15f), node(HIGH_TECH, 10f), node(MIDLINE, 15f))));
+        assertEquals(Map.of(), scaled(List.of(notable, node(LOW_TECH, 15f), node(HIGH_TECH, 15f))));
+        assertEquals(Map.of(), scaled(List.of(notable, exchange, node(LOW_TECH, 15f), node(HIGH_TECH, 15f), node(MIDLINE, 15f))));
     }
 
     @Test

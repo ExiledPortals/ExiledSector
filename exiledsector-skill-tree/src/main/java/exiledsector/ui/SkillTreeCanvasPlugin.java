@@ -90,7 +90,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.nodeSearch = new NodeSearch(member.getHullSpec().getHullSize());
         this.searchBar = new SkillTreeSearchBar(nodeSearch, this::jumpToNextSearchMatch);
         this.treeSession = new TreeAllocationSession(member, variant, refitButton, nodeSearch);
-        this.decorations = TreeDecorations.forActiveTree(treeSession::isLocked);
+        this.decorations = TreeDecorations.forActiveTree(treeSession::isLocked, treeSession::isConcealed);
         this.nodeDrawer = SkillTreeNodeDrawer.attachedTo(treeSession, member, panelStyle, nodeSearch);
         this.templateUi = new SkillTreeTemplateController(member, treeSession, panelStyle);
         this.statPanel = new SkillTreeStatPanel(member, variant, panelStyle);

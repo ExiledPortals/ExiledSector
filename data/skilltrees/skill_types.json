@@ -170,6 +170,116 @@
 			]
 		},
 		{
+			"id": "cheap_shots",
+			"name": "Cheap Shots",
+			"icon": "graphics/icons/evasive_maneuvering_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "DAMAGE_TO_HELPLESS_SHIP_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"flavour": "Pirate fire control holds until a target's shields collapse or its drives gutter out. Fair fights are for the naive.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons"
+			]
+		},
+		{
+			"id": "running_dark",
+			"name": "Running Dark",
+			"icon": "graphics/icons/transponder_shifted_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT",
+					"magnitude": -10
+				}
+			],
+			"flavour": "Pirate captains run with their transponders dark and their drive plumes baffled behind scrap plating.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"logistics",
+				"campaign_only",
+				"logistics_cap"
+			]
+		},
+		{
+			"id": "blood_in_the_water",
+			"name": "Blood in the Water",
+			"icon": "graphics/icons/pirate_frenzy_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT",
+					"magnitude": 1000
+				}
+			],
+			"flavour": "A good pirate doesn't wait for their prey to recover.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons"
+			]
+		},
+		{
+			"id": "cut_and_run",
+			"name": "Cut and Run",
+			"icon": "graphics/icons/officer_training_shifted_shifted_shifted_z.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "TOP_SPEED_WHILE_RETREATING_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"flavour": "Acquiring plunder is sometimes not as important as making it home.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"speed"
+			]
+		},
+		{
+			"id": "haul_the_prize",
+			"name": "Haul the Prize",
+			"icon": "graphics/icons/carrier_command_shifted_shifted_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "BURN_LEVEL_FLAT",
+					"magnitude": -1
+				},
+				{
+					"effect": "TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT",
+					"magnitude": 1
+				}
+			],
+			"flavour": "Pirates tow their prizes home on cables welded straight to the drive spine. It is slow, but nothing gets left behind.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"logistics",
+				"campaign_only",
+				"logistics_cap"
+			]
+		},
+		{
+			"id": "pick_off_the_stragglers",
+			"name": "Pick Off The Stragglers",
+			"icon": "graphics/icons/wolfpack_circular_shifted_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "DAMAGE_TO_ISOLATED_SHIP_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"flavour": "A convoy is only as safe as its slowest freighter.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons"
+			]
+		},
+		{
 			"id": "tripad_backdoor",
 			"name": "TriPad Backdoor",
 			"icon": "graphics/icons/tactical_superiority.png",
@@ -243,8 +353,7 @@
 					"magnitude": 20
 				}
 			],
-			"flavour": "Hulls killed by Remnant energy weapons come apart around every impact in a way no human weapon manages. Salvors who study enough of the wrecks learn to tune this ship's energy weapons to the same pattern, and try not to think about what it resembles.",
-			"flavourAutomated": "Hulls killed by Remnant energy weapons come apart around every impact in a way no human weapon manages. The ship's core scans enough of the wrecks to model the pattern and tunes its energy weapons to match. It has no opinion on what the pattern resembles.",
+			"flavour": "\"And what the defiler builds shall be unmade around its every wound, so that no part remains to be mended.\"\n- Attributed to the Book of Ludd, apocrypha",
 			"tags": [
 				"energy",
 				"armour",
@@ -567,7 +676,7 @@
 					"magnitude": 20
 				},
 				{
-					"effect": "NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT",
+					"effect": "NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_MULT",
 					"magnitude": 20
 				}
 			],
@@ -768,7 +877,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "SMALLER_ALLY_DAMAGE_TAKEN_PERCENT",
+					"effect": "SMALLER_ALLY_DAMAGE_TAKEN_MULT",
 					"magnitude": 10
 				}
 			],
@@ -1158,14 +1267,14 @@
 					"frigate": 0,
 					"destroyer": 0,
 					"cruiser": 35,
-					"capitalShip": 50
+					"capitalShip": 55
 				},
 				{
 					"effect": "ENERGY_WEAPON_RANGE_PERCENT",
 					"frigate": 0,
 					"destroyer": 0,
 					"cruiser": 35,
-					"capitalShip": 50
+					"capitalShip": 55
 				}
 			],
 			"requiredHullSizes": [
@@ -1860,7 +1969,7 @@
 					"magnitude": 5
 				},
 				{
-					"effect": "HEARTLESS_ARMOR_PERCENT_PER_STACK",
+					"effect": "HEARTLESS_ARMOR_MULT_PER_STACK",
 					"magnitude": 2
 				},
 				{
@@ -2059,17 +2168,17 @@
 			"hullSizeEffects": [
 				{
 					"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
-					"frigate": 5,
-					"destroyer": 12,
-					"cruiser": 25,
-					"capitalShip": 40
+					"frigate": 10,
+					"destroyer": 20,
+					"cruiser": 35,
+					"capitalShip": 55
 				},
 				{
 					"effect": "ENERGY_WEAPON_RANGE_PERCENT",
-					"frigate": 5,
-					"destroyer": 12,
-					"cruiser": 25,
-					"capitalShip": 40
+					"frigate": 10,
+					"destroyer": 20,
+					"cruiser": 35,
+					"capitalShip": 55
 				}
 			],
 			"unlockConditions": [
@@ -3051,6 +3160,96 @@
 			]
 		},
 		{
+			"id": "increased_mass",
+			"name": "Increased Mass",
+			"icon": "graphics/icons/mass_shifted.png",
+			"effects": [
+				{
+					"effect": "SHIP_MASS_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"todo": "Needs an icon.",
+			"tags": [
+				"hull"
+			]
+		},
+		{
+			"id": "pathers_prow",
+			"name": "Pather's Prow",
+			"icon": "graphics/icons/bulk_transport_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "RAM_PROW_COLLISION_DAMAGE_MULT",
+					"magnitude": 50
+				}
+			],
+			"flavour": "Pather ships weld scrap plate over the prow until it is more ram than hull. The Path counts this among the few acceptable uses of technology.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"hull"
+			]
+		},
+		{
+			"id": "litany_of_the_fallen",
+			"name": "Litany of the Fallen",
+			"icon": "graphics/icons/luddic_pilgrims_path_gold_circular.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST",
+					"magnitude": 1
+				}
+			],
+			"flavour": "Luddic Church ships carry a memorial plate for every hand lost aboard. The oldest hulls are mostly memorial.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"hull",
+				"req_crewed"
+			]
+		},
+		{
+			"id": "sanctified_scars",
+			"name": "Sanctified Scars",
+			"icon": "graphics/icons/scars_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD",
+					"magnitude": 1
+				}
+			],
+			"flavour": "Church doctrine reads every scar on a hull as a trial endured. A Luddic fleet forms up around its most battered ship.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"fleet_support",
+				"d_mods"
+			]
+		},
+		{
+			"id": "rite_of_mortification",
+			"name": "Rite of Mortification",
+			"icon": "graphics/icons/shieldsmaybe_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "OVERLOAD_HULL_DAMAGE_PERCENT",
+					"magnitude": 10
+				},
+				{
+					"effect": "OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"flavour": "The Knights of Ludd count a scorched hull as penance, not damage.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"flux",
+				"req_shields"
+			]
+		},
+		{
 			"id": "crustacean_integration",
 			"name": "Crustacean Integration",
 			"icon": "graphics/icons/crustacean_integration.png",
@@ -3489,6 +3688,71 @@
 			]
 		},
 		{
+			"id": "damage_to_helpless_ships",
+			"name": "Damage to Helpless Ships",
+			"icon": "graphics/icons/emergency_burn_shifted.png",
+			"effects": [
+				{
+					"effect": "DAMAGE_TO_HELPLESS_SHIP_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"flavour": "Fire-control software lifted from a pirate wreck, written to mark any target with failing shields or dead drives. The rest of its memory is gambling ledgers.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons"
+			]
+		},
+		{
+			"id": "weapon_flux_cost",
+			"name": "Weapon Flux Cost",
+			"icon": "graphics/icons/energy_weapon_mastery_shifted_shifted.png",
+			"effects": [
+				{
+					"effect": "WEAPON_FLUX_COST_PERCENT",
+					"magnitude": -3
+				}
+			],
+			"flavour": "Pirate refits run every weapon mount with its capacitor safeties bypassed. The safeties go in a crate, in case of inspection.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons",
+				"flux"
+			]
+		},
+		{
+			"id": "acceleration",
+			"name": "Acceleration",
+			"icon": "graphics/icons/engine_shifted_shifted.png",
+			"effects": [
+				{
+					"effect": "ACCELERATION_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"flavour": "Drive injectors rebored the pirate way, wide and rough, for a fast start from a standing burn. The tolerances are approximate.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"speed"
+			]
+		},
+		{
+			"id": "damage_to_slower_ships",
+			"name": "Damage to Slower Ships",
+			"icon": "graphics/icons/coordinated_maneuvers2_shifted_shifted_shifted_shifted.png",
+			"effects": [
+				{
+					"effect": "DAMAGE_TO_SLOWER_SHIP_PERCENT",
+					"magnitude": 4
+				}
+			],
+			"flavour": "Targeting tables from a raider's fire-control core weight every shot toward whatever can't outrun the ship. Most freighters can't.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons"
+			]
+		},
+		{
 			"id": "maneuverability",
 			"name": "Maneuverability",
 			"icon": "graphics/icons/maneuverability_percent.png",
@@ -3556,50 +3820,6 @@
 				"campaign_only",
 				"logistics_cap"
 			]
-		},
-		{
-			"id": "combat_vision",
-			"name": "Combat Vision",
-			"icon": "graphics/icons/combat_vision.png",
-			"hullSizeEffects": [
-				{
-					"effect": "COMBAT_VISION",
-					"frigate": 300,
-					"destroyer": 500,
-					"cruiser": 700,
-					"capitalShip": 900
-				}
-			],
-			"tags": [
-				"range"
-			]
-		},
-		{
-			"id": "optimised_lenses",
-			"name": "Optimised Lenses",
-			"icon": "graphics/icons/optimised_lenses.png",
-			"tier": "NOTABLE",
-			"effects": [
-				{
-					"effect": "NON_BEAM_ENERGY_WEAPON_RANGE_FLAT",
-					"magnitude": 100
-				}
-			],
-			"hullSizeEffects": [
-				{
-					"effect": "COMBAT_VISION",
-					"frigate": 400,
-					"destroyer": 600,
-					"cruiser": 800,
-					"capitalShip": 1000
-				}
-			],
-			"tags": [
-				"energy",
-				"range",
-				"req_non_beam_energy"
-			],
-			"moduleShare": "all"
 		},
 		{
 			"id": "additional_beam_splits",
@@ -3709,7 +3929,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "RATE_OF_FIRE_AURA_PERCENT",
+					"effect": "RATE_OF_FIRE_AURA_MULT",
 					"magnitude": 10
 				}
 			],
@@ -3975,7 +4195,7 @@
 					"magnitude": 100
 				},
 				{
-					"effect": "FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER",
+					"effect": "FIGHTER_WING_DAMAGE_TAKEN_MULT_PER_FIGHTER",
 					"magnitude": 10
 				}
 			],
@@ -4031,7 +4251,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "GRAVITY_DRAG_TIMEFLOW_PERCENT",
+					"effect": "GRAVITY_DRAG_TIMEFLOW_MULT",
 					"magnitude": 5
 				}
 			],
@@ -4590,6 +4810,43 @@
 			],
 			"tags": [
 				"weapons"
+			]
+		},
+		{
+			"id": "rift_explosion_damage",
+			"name": "Rift Explosion Damage",
+			"icon": "graphics/icons/rift_explosion_starscape_shifted.png",
+			"effects": [
+				{
+					"effect": "RIFT_EXPLOSION_DAMAGE_PERCENT",
+					"magnitude": 10
+				},
+				{
+					"effect": "STRIKECRAFT_RIFT_EXPLOSION_DAMAGE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons"
+			]
+		},
+		{
+			"id": "rift_harmonics",
+			"name": "Rift Harmonics",
+			"icon": "graphics/icons/rift_explosion_multiple_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "RIFT_STRIKE_CHANCE_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"flavour": "\"The impact site reads as empty for a moment afterwards. Not damaged, not cold. Empty. I have asked for the sensor package to be recalibrated.\"\n- Lab notes recovered from Alpha Site, author unknown",
+			"todo": "Needs an icon.",
+			"tags": [
+				"energy",
+				"req_energy"
 			]
 		},
 		{
@@ -5216,7 +5473,7 @@
 					"magnitude": 50
 				},
 				{
-					"effect": "RISE_FROM_THE_ASHES_DAMAGE_TAKEN_PERCENT",
+					"effect": "RISE_FROM_THE_ASHES_DAMAGE_TAKEN_MULT",
 					"magnitude": -50
 				}
 			],
@@ -5261,6 +5518,319 @@
 			"flavour": "The Merite Class Destroyer is often praised by its ability to assault enemy ships by sheer brute force, thanks to its Jump Jets ship system. By listening to \"sage\" advice from fellow Navarchy of Tania officers, you order your crew to refit the ship with increased weight and improved protection against collateral effects from excessive G-force.",
 			"tags": [
 				"hull"
+			]
+		},
+		{
+			"id": "emp_damage",
+			"name": "EMP Damage",
+			"icon": "graphics/icons/idk_shifted_shifted.png",
+			"effects": [
+				{
+					"effect": "EMP_DAMAGE_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"flavour": "Capacitor banks rewound to Tri-Tachyon specifications put more charge behind every hit. The specifications were not for sale, strictly speaking.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons"
+			]
+		},
+		{
+			"id": "ion_cascade",
+			"name": "Ion Cascade",
+			"icon": "graphics/icons/mechanical_engineering_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT",
+					"magnitude": 100
+				}
+			],
+			"flavour": "Once a target's systems are dead, Tri-Tachyon ion firmware moves on to the hull.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons"
+			]
+		},
+		{
+			"id": "relay_protocols",
+			"name": "Relay Protocols",
+			"icon": "graphics/icons/sensors_circular.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "HIGH_TECH_AFFINITY_FLAT",
+					"magnitude": 10
+				},
+				{
+					"effect": "NAV_RATING_PER_HIGH_TECH_AFFINITY",
+					"magnitude": 1
+				}
+			],
+			"flavour": "Remnant battlegroups keep station through relay protocols that are only dimly understood. The recovered fragment has never stopped transmitting.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"flux",
+				"fleet_support"
+			]
+		},
+		{
+			"id": "greater_high_tech_affinity",
+			"name": "Greater High Tech Affinity",
+			"icon": "graphics/icons/root_high_tech.png",
+			"effects": [
+				{
+					"effect": "HIGH_TECH_AFFINITY_FLAT",
+					"magnitude": 10
+				}
+			],
+			"flavour": "Flux lattices stripped from Remnant drones are a generation ahead of anything in the Tri-Tachyon catalogue. Tri-Tachyon is said to disagree.",
+			"tags": [
+				"flux"
+			]
+		},
+		{
+			"id": "adaptive_munitions",
+			"name": "Adaptive Munitions",
+			"icon": "graphics/icons/advanced_tactics_shifted_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY",
+					"magnitude": 1
+				}
+			],
+			"flavour": "Remnant drones match each round to whatever it is about to hit.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons",
+				"dmgtypekinetic",
+				"dmgtypehighexplosive"
+			]
+		},
+		{
+			"id": "equilibrium_protocol",
+			"name": "Equilibrium Protocol",
+			"icon": "graphics/icons/frozen_heart2_shifted_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL",
+					"magnitude": 20
+				}
+			],
+			"flavour": "Remnant hulls are rumored to hold every lineage of Domain design in a balance their cores never let slip.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons"
+			]
+		},
+		{
+			"id": "beam_or_non_beam_energy_weapon_damage",
+			"name": "Beam or Non-Beam Energy Weapon Damage",
+			"icon": "graphics/icons/beam_damage.png",
+			"options": [
+				"beam_weapon_damage",
+				"non_beam_energy_weapon_damage"
+			],
+			"flavour": "Emitter coils salvaged from Remnant wrecks can be wound for a steady beam or a hard pulse, but not both. Remnant drones never seem to need the choice.",
+			"tags": [
+				"energy",
+				"beam"
+			]
+		},
+		{
+			"id": "ion_spill",
+			"name": "Ion Spill",
+			"icon": "graphics/icons/slipsurge_shifted_shifted_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "SHIELD_EMP_TO_ENERGY_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"flavour": "Remnant ion bolts leave some of their charge in the shield projector as heat.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons",
+				"shield"
+			]
+		},
+		{
+			"id": "dormant_repair_cycle",
+			"name": "Dormant Repair Cycle",
+			"icon": "graphics/icons/mechanical_engineering_shifted_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "UNHIT_ARMOR_REGEN_LOW_CAP_PERCENT",
+					"magnitude": 0.5
+				}
+			],
+			"flavour": "A dormant Nexus still mends its own plating, a little at a time.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"armour",
+				"repair"
+			]
+		},
+		{
+			"id": "phase_cloak_activation_cost",
+			"name": "Phase Cloak Activation Cost",
+			"icon": "graphics/icons/phase_field_shifted.png",
+			"effects": [
+				{
+					"effect": "PHASE_CLOAK_ACTIVATION_COST_MULT",
+					"magnitude": -5
+				}
+			],
+			"flavour": "Phase coil primers trimmed to corporate tolerances draw less flux to engage. Tolerances that tight were never meant for a field refit.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"phase",
+				"req_phase"
+			]
+		},
+		{
+			"id": "phase_ambush_doctrine",
+			"name": "Phase Ambush Doctrine",
+			"icon": "graphics/icons/EW_shifted_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "PHASE_EXIT_WEAPON_DAMAGE_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"flavour": "Tri-Tachyon phase doctrine holds that the first shot out of p-space decides the engagement.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"phase",
+				"req_phase"
+			]
+		},
+		{
+			"id": "phase_cloak_cooldown",
+			"name": "Phase Cloak Cooldown",
+			"icon": "graphics/icons/field_repairs_shifted_phase.png",
+			"effects": [
+				{
+					"effect": "PHASE_CLOAK_COOLDOWN_PERCENT",
+					"magnitude": -5
+				}
+			],
+			"flavour": "Coil discharge cycles shortened to a corporate maintenance bulletin leave the phase cloak ready again sooner. A later issue of the bulletin advises against it.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"phase",
+				"req_phase"
+			]
+		},
+		{
+			"id": "phantom_wake",
+			"name": "Phantom Wake",
+			"icon": "graphics/icons/go_dark_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "PHASE_ENTRY_AFTERIMAGE_SECONDS_FLAT",
+					"magnitude": 3
+				}
+			],
+			"flavour": "A phase coil dropped into p-space too sharply leaves an echo of the hull behind. Enemy gunners rarely tell the difference.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"phase",
+				"req_phase"
+			]
+		},
+		{
+			"id": "cease_and_desist",
+			"name": "Cease and Desist",
+			"icon": "graphics/icons/systems_expertise_circular_alt1.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ENERGY_HIT_INJUNCTION_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"flavour": "Tri-Tachyon does not tolerate unlicensed use of its designs, even mid-battle.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"energy",
+				"req_energy"
+			]
+		},
+		{
+			"id": "strikecraft_weapon_range",
+			"name": "Strikecraft Weapon Range",
+			"icon": "graphics/icons/fighter3_shifted_shifted.png",
+			"effects": [
+				{
+					"effect": "FIGHTER_WEAPON_RANGE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"todo": "Needs an icon.",
+			"tags": [
+				"fighter",
+				"req_fighter_bays"
+			]
+		},
+		{
+			"id": "spark_rift",
+			"name": "Spark Rift",
+			"icon": "graphics/icons/wing_commander_rift_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"flavour": "\"Recovered three of the little ones intact. By the time the bench clamps were on, there were two.\"\n- Hegemony salvage inventory, amended",
+			"todo": "Needs an icon.",
+			"tags": [
+				"fighter",
+				"req_fighter_bays"
+			]
+		},
+		{
+			"id": "temporal_exhaust",
+			"name": "Temporal Exhaust",
+			"icon": "graphics/icons/rift_engines_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "SYSTEM_ACTIVATION_TIMEFLOW_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"flavour": "\"The plume showed up on our scopes before the drive lit. I have checked the clocks. Please stop asking me to check the clocks.\"\n- Sensor officer's log, Tri-Tachyon picket, name withheld",
+			"todo": "Needs an icon.",
+			"tags": [
+				"speed"
+			]
+		},
+		{
+			"id": "resonator_payload",
+			"name": "Resonator Payload",
+			"icon": "graphics/icons/rift_missile_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY",
+					"magnitude": 1
+				}
+			],
+			"flavour": "\"Ordnance asks that it be noted, again, that the ballast is humming.\"\n- Quartermaster's memo, recovered from Alpha Site",
+			"todo": "Needs an icon.",
+			"tags": [
+				"missile",
+				"req_missile"
 			]
 		}
 	]

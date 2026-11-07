@@ -4,6 +4,8 @@ import exiledsector.i18n.StyledText;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
+import exiledsector.skills.skilleffect.SkillEffectSupport;
+import exiledsector.skills.skilleffect.weapon.PirateFrenzy;
 
 import static exiledsector.skills.skilleffect.Backings.listener;
 
@@ -42,14 +44,14 @@ public enum AuraSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("range", TerrifyingPresenceField.RANGE).arg("value", magnitude).styled();
         }
     },
-    GRAVITY_DRAG_TIMEFLOW_PERCENT(listener(GravityDragListener.TIMEFLOW_PERCENT_KEY, GravityDragListener.class, GravityDragListener::new)) {
+    GRAVITY_DRAG_TIMEFLOW_MULT(listener(GravityDragListener.TIMEFLOW_PERCENT_KEY, GravityDragListener.class, GravityDragListener::new)) {
         @Override
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", magnitude).arg("range", GravityDragField.RANGE)
                     .arg("phased", magnitude * GravityDragListener.PHASED_MULT).arg("cap", GravityDragField.MAX_TOTAL_REDUCTION_PERCENT).styled();
         }
     },
-    GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT(listener(GravityDragListener.PHASED_TIMEFLOW_PERCENT_KEY, GravityDragListener.class,
+    GRAVITY_DRAG_PHASED_TIMEFLOW_MULT(listener(GravityDragListener.PHASED_TIMEFLOW_PERCENT_KEY, GravityDragListener.class,
             GravityDragListener::new)) {
         @Override
         public StyledText description(float magnitude) {
@@ -57,7 +59,7 @@ public enum AuraSkillEffect implements BackedSkillEffect {
                     .arg("cap", GravityDragField.MAX_TOTAL_REDUCTION_PERCENT).styled();
         }
     },
-    SMALLER_ALLY_DAMAGE_TAKEN_PERCENT(listener(AuxiliaryScreenListener.DAMAGE_TAKEN_PERCENT_KEY, AuxiliaryScreenListener.class,
+    SMALLER_ALLY_DAMAGE_TAKEN_MULT(listener(AuxiliaryScreenListener.DAMAGE_TAKEN_PERCENT_KEY, AuxiliaryScreenListener.class,
             AuxiliaryScreenListener::new)) {
         @Override
         public StyledText description(float magnitude) {
@@ -70,11 +72,19 @@ public enum AuraSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("range", MalfunctionAuraField.RANGE).styled();
         }
     },
-    RATE_OF_FIRE_AURA_PERCENT(listener(RateOfFireAuraListener.RATE_OF_FIRE_PERCENT_KEY, RateOfFireAuraListener.class,
+    RATE_OF_FIRE_AURA_MULT(listener(RateOfFireAuraListener.RATE_OF_FIRE_PERCENT_KEY, RateOfFireAuraListener.class,
             RateOfFireAuraListener::new)) {
         @Override
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", magnitude).arg("range", RateOfFireAuraField.RANGE).styled();
+        }
+    },
+    ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD(listener(DModArmorAuraListener.PERCENT_PER_DMOD_KEY, DModArmorAuraListener.class,
+            DModArmorAuraListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", DModArmorAuraField.RANGE)
+                    .arg("max", SkillEffectSupport.MAX_COUNTED_DMODS).styled();
         }
     },
     REPAIR_COORDINATOR_ARMOR_PERCENT(listener(RepairCoordinatorListener.ARMOR_REPAIR_PERCENT_KEY, RepairCoordinatorListener.class,
@@ -99,6 +109,14 @@ public enum AuraSkillEffect implements BackedSkillEffect {
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", magnitude).arg("range", WreckPlatingListener.RANGE)
                     .arg("percent", WreckPlatingListener.REPAIR_PERCENT_PER_WRECK).styled();
+        }
+    },
+    PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT(listener(FrenzyOnNearbyDestructionListener.RANGE_KEY,
+            FrenzyOnNearbyDestructionListener.class, FrenzyOnNearbyDestructionListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("seconds", PirateFrenzy.STACK_SECONDS)
+                    .arg("stacks", PirateFrenzy.MAX_STACKS).styled().append("\n").append(PirateFrenzy.describeStackBonuses());
         }
     },
     CREW_STEAL_RANGE_FLAT(listener(CrewStealListener.RANGE_KEY, CrewStealListener.class, CrewStealListener::new)),

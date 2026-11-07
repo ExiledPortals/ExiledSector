@@ -3,6 +3,7 @@ package exiledsector.skills.skilleffect;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
+import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.CombatListenerManagerAPI;
@@ -17,6 +18,7 @@ import org.mockito.Mockito;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -82,6 +84,21 @@ class HitDamageRestorerTest {
 
         verify(unreported).setDamage(100f);
         verify(next).setDamage(30f);
+    }
+
+    @Test
+    void aRetypedHitGetsItsOriginalTypeBackOnceItLands() {
+        DamageAPI damage = mock(DamageAPI.class);
+        DamageType[] type = {DamageType.FRAGMENTATION};
+        when(damage.getType()).thenAnswer(call -> type[0]);
+        doAnswer(call -> type[0] = call.getArgument(0)).when(damage).setType(any());
+        ShipAPI target = mock(ShipAPI.class);
+
+        HitDamageRestorer.retypeForThisHit(damage, DamageType.HIGH_EXPLOSIVE, target);
+        assertEquals(DamageType.HIGH_EXPLOSIVE, type[0]);
+
+        registeredRestorer().reportDamageApplied(null, target, null);
+        assertEquals(DamageType.FRAGMENTATION, type[0]);
     }
 
     @Test
@@ -151,5 +168,49 @@ class HitDamageRestorerTest {
         when(listeners.getListeners(HitDamageRestorer.class)).thenReturn(List.of(restorer));
 
         assertEquals(300f, HitDamageRestorer.originalHitDamage(damage), 0.001f);
+    }
+
+    @Test
+    void sideDamageLandingOnTheSameTargetMidHitLeavesTheOuterHitChangedUntilItLands() {
+        DamageAPI damage = mock(DamageAPI.class);
+        DamageType[] type = {DamageType.ENERGY};
+        when(damage.getType()).thenAnswer(call -> type[0]);
+        doAnswer(call -> type[0] = call.getArgument(0)).when(damage).setType(any());
+        ShipAPI target = mock(ShipAPI.class);
+
+        HitDamageRestorer.retypeForThisHit(damage, DamageType.KINETIC, target);
+        HitDamageRestorer restorer = (HitDamageRestorer) registeredRestorer();
+        when(listeners.getListeners(HitDamageRestorer.class)).thenReturn(List.of(restorer));
+        HitDamageRestorer.whileDealingSideDamage(() -> {
+            restorer.reportDamageApplied(null, target, null);
+            return null;
+        });
+        assertEquals(DamageType.KINETIC, type[0]);
+
+        restorer.reportDamageApplied(null, target, null);
+        assertEquals(DamageType.ENERGY, type[0]);
+    }
+
+    @Test
+    void sideDamageTrackedOnTheSameTargetIsRestoredByItsOwnReportWithoutTouchingTheOuterHit() {
+        DamageAPI outer = mock(DamageAPI.class);
+        when(outer.getBaseDamage()).thenReturn(100f);
+        DamageAPI side = mock(DamageAPI.class);
+        when(side.getBaseDamage()).thenReturn(40f);
+        ShipAPI target = mock(ShipAPI.class);
+
+        HitDamageRestorer.reduceForThisHit(outer, 0.5f, target);
+        HitDamageRestorer restorer = (HitDamageRestorer) registeredRestorer();
+        when(listeners.getListeners(HitDamageRestorer.class)).thenReturn(List.of(restorer));
+        HitDamageRestorer.whileDealingSideDamage(() -> {
+            HitDamageRestorer.reduceForThisHit(side, 0.5f, target);
+            restorer.reportDamageApplied(null, target, null);
+            return null;
+        });
+
+        verify(side).setDamage(40f);
+        verify(outer, never()).setDamage(100f);
+        restorer.reportDamageApplied(null, target, null);
+        verify(outer).setDamage(100f);
     }
 }

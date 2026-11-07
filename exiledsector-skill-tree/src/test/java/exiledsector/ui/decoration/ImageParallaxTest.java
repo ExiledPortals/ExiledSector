@@ -22,6 +22,11 @@ class ImageParallaxTest {
     }
 
     @Test
+    void aNearImageRunsAheadAwayFromTheViewCentre() {
+        assertEquals(-0.2f, ImageParallax.driftFraction(10f, 1.2f, 400f), 1e-3f);
+    }
+
+    @Test
     void farFromTheViewCentreTheDriftLevelsOffAtTheReach() {
         float distance = 100_000f;
 

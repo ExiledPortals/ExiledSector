@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 
 public final class SkillEffectSupport {
 
-    static final int MAX_COUNTED_DMODS = 5;
+    public static final int MAX_COUNTED_DMODS = 5;
     static final String COMBAT_DMOD_EFFECT_MULT = "exiledSector_nonLogisticsDModEffectMult";
     static final String LOGISTICS_DMOD_EFFECT_MULT = "exiledSector_logisticsDModEffectMult";
     static final String LOGISTICS_COPY_PREFIX = "exiledSector_logisticsDModCopy_";
@@ -74,11 +74,11 @@ public final class SkillEffectSupport {
     }
 
     public static float compoundMultPerDMod(MutableShipStatsAPI stats, float magnitudePerDMod) {
-        return (float) Math.pow(multFrom(magnitudePerDMod), Math.min(countDMods(stats), MAX_COUNTED_DMODS));
+        return (float) Math.pow(multFrom(magnitudePerDMod), countedDMods(stats.getVariant()));
     }
 
-    private static int countDMods(MutableShipStatsAPI stats) {
-        return dModSpecs(stats.getVariant()).size();
+    public static int countedDMods(ShipVariantAPI variant) {
+        return Math.min(dModSpecs(variant).size(), MAX_COUNTED_DMODS);
     }
 
     public static boolean hasDMods(ShipVariantAPI variant) {

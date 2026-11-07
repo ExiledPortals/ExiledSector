@@ -4,6 +4,7 @@ import exiledsector.skills.decoration.AbyssSerpent;
 import exiledsector.skills.decoration.Decoration;
 import exiledsector.skills.decoration.DecorationKind;
 import exiledsector.skills.decoration.Decorations;
+import exiledsector.skills.decoration.Hypershunt;
 import exiledsector.skills.decoration.RingBelt;
 import exiledsector.skills.decoration.ShroudedMaw;
 import exiledsector.skills.decoration.Star;
@@ -52,6 +53,19 @@ class DecorationLoaderTest {
         assertEquals(1, decorations.threatUnits().size());
         assertEquals(1, decorations.serpents().size());
         assertEquals(1, decorations.shroudedMaws().size());
+    }
+
+    @Test
+    void parsesAllFieldsOfAHypershuntAndDefaultsToAnAnticlockwiseOrbit() throws Exception {
+        Hypershunt hypershunt = parse("{ \"kind\": \"hypershunt\", \"id\": \"shunt\", \"x\": 100, \"y\": -50, \"orbitRadius\": 1100,"
+                + "\"orbitSeconds\": 550, \"startAngle\": 45, \"size\": 300, \"tags\": [\"omega\"] }").hypershunts().get(0);
+
+        assertEquals(DecorationKind.HYPERSHUNT, hypershunt.kind());
+        assertEquals(100f, hypershunt.getX());
+        assertEquals(-50f, hypershunt.getY());
+        assertEquals(new Hypershunt.Orbit(1100f, 550f, false, 45f), hypershunt.getOrbit());
+        assertEquals(300f, hypershunt.getSize());
+        assertEquals("omega", hypershunt.getVolume());
     }
 
     @Test

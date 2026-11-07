@@ -236,6 +236,10 @@ public final class TreeAllocationSession {
         return node != null && viewSnapshot().isHidden(node);
     }
 
+    public boolean isConcealed(SkillNode node) {
+        return node != null && viewSnapshot().isConcealed(node);
+    }
+
     public boolean isLocked(SkillNode node) {
         ShipSkillData skillData = allocator.data();
         return node != null && (SkillTypeUnlockStatus.isLocked(node.getType(), skillData) || NodeGates.isLocked(node, skillData));

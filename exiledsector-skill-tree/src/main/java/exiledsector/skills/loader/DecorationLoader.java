@@ -4,6 +4,7 @@ import exiledsector.skills.decoration.AbyssSerpent;
 import exiledsector.skills.decoration.Decoration;
 import exiledsector.skills.decoration.DecorationKind;
 import exiledsector.skills.decoration.Decorations;
+import exiledsector.skills.decoration.Hypershunt;
 import exiledsector.skills.decoration.RingBelt;
 import exiledsector.skills.decoration.ShroudedMaw;
 import exiledsector.skills.decoration.Star;
@@ -64,6 +65,7 @@ public final class DecorationLoader {
             case THREAT_UNIT -> parseThreatUnit(decorationJson);
             case SERPENT -> parseSerpent(decorationJson);
             case SHROUDED_MAW -> parseShroudedMaw(decorationJson);
+            case HYPERSHUNT -> parseHypershunt(decorationJson);
         };
     }
 
@@ -140,5 +142,16 @@ public final class DecorationLoader {
                 (float) mawJson.getDouble("length"),
                 (float) mawJson.optDouble("rotation", 0.0),
                 tags(mawJson));
+    }
+
+    static Hypershunt parseHypershunt(JSONObject hypershuntJson) throws JSONException {
+        return new Hypershunt(
+                hypershuntJson.getString("id"),
+                (float) hypershuntJson.getDouble("x"),
+                (float) hypershuntJson.getDouble("y"),
+                new Hypershunt.Orbit((float) hypershuntJson.getDouble("orbitRadius"), (float) hypershuntJson.getDouble("orbitSeconds"),
+                        hypershuntJson.optBoolean("clockwise", false), (float) hypershuntJson.optDouble("startAngle", 0.0)),
+                (float) hypershuntJson.getDouble("size"),
+                tags(hypershuntJson));
     }
 }

@@ -85,7 +85,7 @@ class AtlasNodeTextTest {
 
             assertTrue(AtlasNodeText.markers(generator, state, cell, generator.node(cell))
                     .contains(new AtlasLine(attacker + " attacks " + defender, AtlasLine.Tone.PLAIN)));
-            assertTrue(AtlasNodeText.confirmLines(generator, state, cell).contains("Completing the system ends the fight for good."));
+            assertTrue(AtlasNodeText.confirmLines(generator, state, cell).contains("Completing the system ends the fight permanently."));
             List<BenchModeSupport.OpenChoice> choices = AtlasNodeText.entryChoices(generator, state, cell);
             assertEquals(List.of("Side with " + defender, "Side with " + attacker, "Stay out"),
                     choices.stream().map(BenchModeSupport.OpenChoice::label).toList());

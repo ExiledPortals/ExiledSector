@@ -14,16 +14,25 @@ import org.lwjgl.util.vector.Vector2f;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
 
 final class DamageConversionListener extends ShipCombatListener implements DamageDealtModifier {
 
+    static final String ADAPTIVE_CHANCE_PERCENT_KEY = "exiledSector_adaptiveDamageTypeChancePercent";
+
     private final List<DamageConversion> conversions = OnHitSkillEffect.damageConversions();
     private final Set<DamageAPI> convertedBeamDamage = Collections.newSetFromMap(new WeakHashMap<>());
+    private final Random random;
 
     DamageConversionListener(ShipAPI ownerShip) {
+        this(ownerShip, new Random());
+    }
+
+    DamageConversionListener(ShipAPI ownerShip, Random random) {
         super(ownerShip);
+        this.random = random;
     }
 
     // java:S3516: the engine reads a null return as "leave the damage unchanged"; the damage type is rewritten in place instead
@@ -37,13 +46,15 @@ final class DamageConversionListener extends ShipCombatListener implements Damag
         boolean beam = param instanceof BeamAPI;
         DamageType sourceType = beam ? weapon.getDamageType() : damage.getType();
         DamageConversion conversion = DamageConversion.first(weapon, WeaponDroneFactory.mountOf(weapon), sourceType, conversions, this::magnitude);
+        if (conversion != null && conversion.toEmp()) {
+            if (target instanceof ShipAPI) {
+                HitDamageRestorer.moveToEmpForThisHit(damage, 1f, target);
+            }
+            return null;
+        }
         if (conversion == null) {
             if (beam && convertedBeamDamage.remove(damage)) {
                 damage.setType(sourceType);
-            }
-        } else if (conversion.toEmp()) {
-            if (target instanceof ShipAPI) {
-                HitDamageRestorer.moveToEmpForThisHit(damage, 1f, target);
             }
         } else {
             damage.setType(conversion.toType());
@@ -51,6 +62,15 @@ final class DamageConversionListener extends ShipCombatListener implements Damag
                 convertedBeamDamage.add(damage);
             }
         }
+        adaptDamageType(target, damage, shieldHit);
         return null;
+    }
+
+    private void adaptDamageType(CombatEntityAPI target, DamageAPI damage, boolean shieldHit) {
+        DamageType adapted = shieldHit ? DamageType.KINETIC : DamageType.HIGH_EXPLOSIVE;
+        float chancePercent = magnitude(ADAPTIVE_CHANCE_PERCENT_KEY);
+        if (chancePercent > 0f && target instanceof ShipAPI && damage.getType() != adapted && random.nextFloat() * 100f < chancePercent) {
+            HitDamageRestorer.retypeForThisHit(damage, adapted, target);
+        }
     }
 }

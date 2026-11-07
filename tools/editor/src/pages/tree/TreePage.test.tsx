@@ -89,13 +89,13 @@ describe('tree page', () => {
     };
     const socketElement = [...nodeElements(container)].find((element) => tierOfElement(element) === 'SOCKET') as SVGElement;
     const smallElement = [...nodeElements(container)].find((element) => tierOfElement(element) === 'SMALL') as SVGElement;
-    const radii = JSON.parse(readRepositoryFile(NODE_RADII_FILE)) as { small: number; medium: number; large: number };
+    const radii = JSON.parse(readRepositoryFile(NODE_RADII_FILE)) as Record<string, number>;
     const radiusLayer = () => container.querySelector('[data-testid="socket-radius-layer"]');
 
     fireEvent.pointerOver(socketElement);
     await waitFor(() => expect(radiusLayer()).toBeTruthy());
     const rings = [...(radiusLayer() as Element).querySelectorAll('circle')].map((ring) => Number(ring.getAttribute('r')));
-    expect(rings).toEqual([radii.small, radii.medium, radii.large]);
+    expect(rings).toEqual(Object.values(radii));
     expect(radiusLayer()?.textContent).toContain(`small ${radii.small}:`);
 
     fireEvent.pointerOver(smallElement);
@@ -193,6 +193,11 @@ describe('tree page', () => {
     commitField('Seconds per orbit', '120');
     expect(decorationById(useTreeStore.getState().document, serpent.id)).toMatchObject({ orbitSeconds: 120 });
 
+    const hypershunt = decorationsOfKind(document.decorations, 'hypershunt')[0];
+    act(() => selectOnly('decorations', hypershunt.id));
+    commitField('Size', '320');
+    expect(decorationById(useTreeStore.getState().document, hypershunt.id)).toMatchObject({ size: 320 });
+
     act(() => setSelection({ nodes: [document.nodes[0].id, document.nodes[1].id], decorations: [star.id] }));
     expect(await screen.findByText('3 objects selected')).toBeTruthy();
     fireEvent.click(screen.getByText('Clear selection'));
@@ -202,7 +207,7 @@ describe('tree page', () => {
   it('draws every decoration from the tree file with a selectable centre handle', async () => {
     const { container } = await renderLoadedTree();
     const decorations = useTreeStore.getState().document.decorations;
-    expect(new Set(decorations.map((decoration) => decoration.kind))).toEqual(new Set(['star', 'image', 'ringBelt', 'threatUnit', 'serpent', 'shroudedMaw']));
+    expect(new Set(decorations.map((decoration) => decoration.kind))).toEqual(new Set(['star', 'image', 'ringBelt', 'threatUnit', 'serpent', 'shroudedMaw', 'hypershunt']));
     expect(container.querySelectorAll('[data-decoration-id]').length).toBe(decorations.length);
   });
 

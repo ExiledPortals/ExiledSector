@@ -44,9 +44,14 @@ class EmpDamageListenerTest {
         globalMock.close();
     }
 
-    private static EmpDamageListener listener(float percent) {
+    private static EmpDamageListener listener(float morePercent) {
+        return listener(0f, morePercent);
+    }
+
+    private static EmpDamageListener listener(float increasedPercent, float morePercent) {
         ShipAPI owner = mock(ShipAPI.class, RETURNS_DEEP_STUBS);
-        when(owner.getMutableStats().getDynamic().getValue(EmpDamageListener.EMP_PERCENT_KEY, 0f)).thenReturn(percent);
+        when(owner.getMutableStats().getDynamic().getValue(EmpDamageListener.EMP_INCREASED_PERCENT_KEY, 0f)).thenReturn(increasedPercent);
+        when(owner.getMutableStats().getDynamic().getValue(EmpDamageListener.EMP_MORE_PERCENT_KEY, 0f)).thenReturn(morePercent);
         return new EmpDamageListener(owner);
     }
 
@@ -58,6 +63,16 @@ class EmpDamageListenerTest {
         listener(15f).modifyDamageDealt(null, mock(ShipAPI.class), damage, new Vector2f(), false);
 
         verify(damage).setFluxComponent(AdditionalMatchers.eq(230f, 0.01f));
+    }
+
+    @Test
+    void increasedEmpIsAppliedBeforeTheMoreMultiplier() {
+        DamageAPI damage = mock(DamageAPI.class);
+        when(damage.getFluxComponent()).thenReturn(200f);
+
+        listener(10f, 20f).modifyDamageDealt(null, mock(ShipAPI.class), damage, new Vector2f(), false);
+
+        verify(damage).setFluxComponent(AdditionalMatchers.eq(264f, 0.01f));
     }
 
     @Test
@@ -76,7 +91,8 @@ class EmpDamageListenerTest {
 
     @Test
     void theMultiplierNeverGoesBelowZero() {
-        assertEquals(1.1f, EmpDamageListener.empMult(10f), 0.0001f);
-        assertEquals(0f, EmpDamageListener.empMult(-150f));
+        assertEquals(1.1f, EmpDamageListener.empMult(0f, 10f), 0.0001f);
+        assertEquals(0f, EmpDamageListener.empMult(0f, -150f));
+        assertEquals(0f, EmpDamageListener.empMult(-150f, 10f));
     }
 }

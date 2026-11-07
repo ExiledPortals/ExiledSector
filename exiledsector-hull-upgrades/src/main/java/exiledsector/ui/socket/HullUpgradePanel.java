@@ -183,13 +183,13 @@ public final class HullUpgradePanel extends HoloPanel {
     private void openInstallConfirm(SchematicEntry entry) {
         RefitSchematic schematic = entry.schematic();
         openCraftingItemConfirm(schematic.displayName(), schematic.color(), Translation.msg("framework.confirm.body")
-                .arg("left", entry.inStorage() - 1).arg("points", schematic.points()).arg("max", view.maxPoints()).text(), Control.CONFIRM_INSTALL);
+                .count(entry.inStorage()).arg("points", schematic.points()).arg("max", view.maxPoints()).text(), Control.CONFIRM_INSTALL);
         confirmingSchematic = schematic;
     }
 
     private void openMasterSchematicConfirm(MasterSchematicEntry entry) {
         openCraftingItemConfirm(MasterSchematic.INSTANCE.displayName(), MasterSchematic.COLOR,
-                Translation.msg("masterSchematic.confirm.body").arg("left", entry.inStorage() - 1).text(), Control.CONFIRM_MASTER_SCHEMATIC);
+                Translation.msg("masterSchematic.confirm.body").count(entry.inStorage()).text(), Control.CONFIRM_MASTER_SCHEMATIC);
         confirmingSchematic = null;
     }
 

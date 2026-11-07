@@ -165,9 +165,14 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             UnhitArmorRegenListener::new)) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("seconds", UnhitArmorRegenListener.UNHIT_SECONDS).arg("value", magnitude)
-                    .arg("range", UnhitArmorRegenListener.ENEMY_SHIP_RANGE).arg("flux", UnhitArmorRegenListener.HARD_FLUX_PER_ARMOR)
-                    .arg("cap", UnhitArmorRegenListener.DEPLOYMENT_CAP_PERCENT).styled();
+            return unhitArmorRegenLine(magnitude, UnhitArmorRegenListener.DEPLOYMENT_CAP_PERCENT);
+        }
+    },
+    UNHIT_ARMOR_REGEN_LOW_CAP_PERCENT(listener(UnhitArmorRegenListener.LOW_CAP_REGEN_PERCENT_KEY, UnhitArmorRegenListener.class,
+            UnhitArmorRegenListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return unhitArmorRegenLine(magnitude, UnhitArmorRegenListener.LOW_DEPLOYMENT_CAP_PERCENT);
         }
     },
     SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT(listener(SwarmOverflowRepairListener.REPAIR_PERCENT_KEY, SwarmOverflowRepairListener.class,
@@ -188,7 +193,7 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             RiseFromTheAshesListener::new)),
     RISE_FROM_THE_ASHES_ARMOR_RESTORE_PERCENT(listener(RiseFromTheAshesListener.ARMOR_RESTORE_PERCENT_KEY, RiseFromTheAshesListener.class,
             RiseFromTheAshesListener::new)),
-    RISE_FROM_THE_ASHES_DAMAGE_TAKEN_PERCENT(listener(RiseFromTheAshesListener.DAMAGE_TAKEN_PERCENT_KEY, RiseFromTheAshesListener.class,
+    RISE_FROM_THE_ASHES_DAMAGE_TAKEN_MULT(listener(RiseFromTheAshesListener.DAMAGE_TAKEN_PERCENT_KEY, RiseFromTheAshesListener.class,
             RiseFromTheAshesListener::new)) {
         @Override
         public StyledText description(float magnitude) {
@@ -252,8 +257,16 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", Math.abs(magnitude)).arg("range", HeldObjective.RANGE).styled();
         }
     },
-    RAM_PROW_COLLISION_DAMAGE_PERCENT(listener(CollisionDamageListener.COLLISION_DAMAGE_PERCENT_KEY, CollisionDamageListener.class,
+    RAM_PROW_COLLISION_DAMAGE_MULT(listener(CollisionDamageListener.COLLISION_DAMAGE_PERCENT_KEY, CollisionDamageListener.class,
             CollisionDamageListener::new)),
+    HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST(listener(CrewLossHullDamageListener.PERCENT_PER_STEP_KEY, CrewLossHullDamageListener.class,
+            CrewLossHullDamageListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("step", CrewLossHullDamageListener.CREW_PER_STEP)
+                    .arg("max", CrewLossHullDamageListener.MAX_REDUCTION_PERCENT).styled();
+        }
+    },
     HUNGERING_RIFT_HEALING_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -281,6 +294,12 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
     @Override
     public EffectBacking backing() {
         return backing;
+    }
+
+    private static StyledText unhitArmorRegenLine(float magnitude, float deploymentCapPercent) {
+        return EffectText.msg(UNHIT_ARMOR_REGEN_PERCENT).arg("seconds", UnhitArmorRegenListener.UNHIT_SECONDS).arg("value", magnitude)
+                .arg("range", UnhitArmorRegenListener.ENEMY_SHIP_RANGE).arg("flux", UnhitArmorRegenListener.HARD_FLUX_PER_ARMOR)
+                .arg("cap", deploymentCapPercent).styled();
     }
 
     private static final class StatNames {

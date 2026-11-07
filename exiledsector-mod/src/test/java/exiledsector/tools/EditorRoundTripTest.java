@@ -105,6 +105,7 @@ class EditorRoundTripTest {
             new Pin("ship_skill_tree.json threat unit decoration", DECORATION_LOADER, List.of("parseThreatUnit"), decoration("THREAT_UNIT"), true),
             new Pin("ship_skill_tree.json serpent decoration", DECORATION_LOADER, List.of("parseSerpent"), decoration("SERPENT"), true),
             new Pin("ship_skill_tree.json shrouded maw decoration", DECORATION_LOADER, List.of("parseShroudedMaw"), decoration("SHROUDED_MAW"), true),
+            new Pin("ship_skill_tree.json hypershunt decoration", DECORATION_LOADER, List.of("parseHypershunt"), decoration("HYPERSHUNT"), true),
             new Pin("subroutines.csv and hull_items.csv row key", ITEM_DEFINITIONS, List.of("rows"),
                     List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "SUBROUTINE_COLUMNS"), new EditorSource(ITEM_DEFINITIONS_MODEL, "HULL_ITEM_COLUMNS")), true),
             new Pin("subroutines.csv columns", SUBROUTINE_DEFINITIONS, List.of("parse"),

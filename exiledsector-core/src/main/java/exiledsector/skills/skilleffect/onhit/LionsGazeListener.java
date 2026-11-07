@@ -166,7 +166,7 @@ final class LionsGazeListener extends ShipCombatListener implements DamageDealtM
         float fluxBefore = flux.getCurrFlux();
         beginSimulatedHit();
         try {
-            engine.applyDamage(sourceBeam, splitTarget, impactPoint, damageAmount, hitDamage.getType(), empAmount,
+            engine.applyDamage(sourceBeam, splitTarget, impactPoint, damageAmount, sourceBeam.getWeapon().getDamageType(), empAmount,
                     false, !hitDamage.isForceHardFlux(), ownerShip, false);
         } finally {
             endSimulatedHit();

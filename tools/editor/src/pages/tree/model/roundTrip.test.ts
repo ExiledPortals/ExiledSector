@@ -77,9 +77,11 @@ describe('decoration serialisation', () => {
       { kind: 'serpent', id: 'worm', x: 0, y: 0, orbitRadius: 1663, orbitSeconds: 190, clockwise: false, startAngle: 180, wobble: 0.15, wobbleWaves: 7, wobblePhase: 74.5, tags: ['abyss'] },
       { kind: 'ringBelt', id: 'belt', x: 0, y: 0, innerRadius: 2900, outerRadius: 3250, ringArtPath: 'graphics/planets/ring_band_dust.png', rotationSpeed: 0.6 },
       { kind: 'shroudedMaw', tags: ['shrouded'], rotation: 15, length: 620, y: 6, x: 5, id: 'shrouded_maw' },
+      { kind: 'hypershunt', tags: ['omega'], size: 300, startAngle: 40, clockwise: true, orbitSeconds: 550, orbitRadius: 1100, y: 8, x: 7, id: 'shunt' },
       { kind: 'star', id: 'star_1', x: 0, y: 0, radius: 400, starType: 'star_yellow' },
     ]);
-    expect(out.map((decoration) => decoration.kind)).toEqual(['star', 'ringBelt', 'threatUnit', 'serpent', 'shroudedMaw']);
+    expect(out.map((decoration) => decoration.kind)).toEqual(['star', 'ringBelt', 'threatUnit', 'serpent', 'shroudedMaw', 'hypershunt']);
+    expect(Object.keys(out[5])).toEqual(['kind', 'id', 'x', 'y', 'orbitRadius', 'orbitSeconds', 'clockwise', 'startAngle', 'size', 'tags']);
     expect(Object.keys(out[4])).toEqual(['kind', 'id', 'x', 'y', 'length', 'rotation', 'tags']);
     expect(Object.keys(out[2])).toEqual(['kind', 'id', 'x', 'y', 'unitType', 'length', 'rotation', 'tags']);
     expect(Object.keys(out[1])).toEqual(['kind', 'id', 'x', 'y', 'innerRadius', 'outerRadius', 'ringArtPath', 'rotationSpeed']);
@@ -90,9 +92,11 @@ describe('decoration serialisation', () => {
     const out = serializedDecorations([
       { kind: 'threatUnit', id: 'threat_unit_2', x: 3, y: 4, unitType: 'fabricator', length: 600, rotation: 0, tags: [] },
       { kind: 'serpent', id: 'plain', x: 0, y: 0, orbitRadius: 500, orbitSeconds: 100, clockwise: true, startAngle: 0, wobble: 0 },
+      { kind: 'hypershunt', id: 'still', x: 0, y: 0, orbitRadius: 1100, orbitSeconds: 550, clockwise: false, startAngle: 0, size: 300 },
     ]);
     expect(out[0]).toEqual({ kind: 'threatUnit', id: 'threat_unit_2', x: 3, y: 4, unitType: 'fabricator', length: 600 });
     expect(out[1]).toEqual({ kind: 'serpent', id: 'plain', x: 0, y: 0, orbitRadius: 500, orbitSeconds: 100, clockwise: true });
+    expect(out[2]).toEqual({ kind: 'hypershunt', id: 'still', x: 0, y: 0, orbitRadius: 1100, orbitSeconds: 550, size: 300 });
     const empty = JSON.parse(serializeTreeFiles(parseTreeDocument(typesText, JSON.stringify({ nodes })), { types: '\n', tree: '\n' }).tree) as Record<string, unknown>;
     expect(empty).not.toHaveProperty('decorations');
   });

@@ -31,7 +31,8 @@ public enum UnlockConditionType {
     TANIA_LAST_STRIVE_COMPLETED(ModGate.of(TaniaCompat::isModEnabled, TaniaUnlocks::isLastStriveCompleted)),
     THREAT_FOUGHT(ModGate.of(() -> true, ThreatEncounter::isFought)),
     REMNANT_FOUGHT(ModGate.of(() -> true, RemnantEncounter::isFought)),
-    DWELLER_FOUGHT(ModGate.of(() -> true, DwellerEncounter::isFought));
+    DWELLER_FOUGHT(ModGate.of(() -> true, DwellerEncounter::isFought)),
+    OMEGA_FOUND(ModGate.of(() -> true, OmegaEncounter::isFound));
 
     record ModGate(Predicate<String> modEnabled, BiPredicate<SectorAPI, String> passed) {
 

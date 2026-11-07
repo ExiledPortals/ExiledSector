@@ -20,6 +20,7 @@ public final class AffinitySteps {
     static final int LARGE_STEP = 10;
     static final int LARGER_STEP = 15;
     static final int LARGEST_STEP = 20;
+    private static final float EQUAL_AFFINITY_TOLERANCE = 0.001f;
 
     public record Step(int size, SkillEffect effect, float bonusPerStep) {
     }
@@ -71,6 +72,16 @@ public final class AffinitySteps {
 
     public static int stepsReached(float affinity, int stepSize) {
         return Math.max(0, (int) Math.floor(affinity / stepSize));
+    }
+
+    public static boolean allEqual(Map<SkillEffect, Float> affinityTotals) {
+        float lowTech = affinityTotals.getOrDefault(SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT, 0f);
+        for (SkillEffect affinity : STEPS_BY_AFFINITY.keySet()) {
+            if (Math.abs(affinityTotals.getOrDefault(affinity, 0f) - lowTech) > EQUAL_AFFINITY_TOLERANCE) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public static Map<SkillEffect, Float> totals(List<EffectContribution> contributions) {
@@ -139,7 +150,7 @@ public final class AffinitySteps {
         totals.merge(target, removed * percent / 100f, Float::sum);
     }
 
-    private static SkillEffect highest(Map<SkillEffect, Float> totals) {
+    static SkillEffect highest(Map<SkillEffect, Float> totals) {
         SkillEffect highest = SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT;
         for (SkillEffect affinity : STEPS_BY_AFFINITY.keySet()) {
             if (totals.getOrDefault(affinity, 0f) > totals.getOrDefault(highest, 0f)) {

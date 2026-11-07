@@ -21,6 +21,9 @@ final class SkillTreeNodeIconRenderer {
     private final Map<String, List<SkillType>> optionTypesByTypeId = new HashMap<>();
 
     void drawIcon(String spritePath, float cx, float cy, float iconSize, float alphaMult, Color tint) {
+        if (spritePath == null || spritePath.isBlank()) {
+            return;
+        }
         SpriteDraw.drawAtCenter(spriteCache, spritePath, cx, cy, iconSize, iconSize, tint, alphaMult);
     }
 

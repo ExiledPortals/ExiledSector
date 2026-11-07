@@ -80,6 +80,14 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
                     .arg("range", ArcDischarge.RANGE)).styled();
         }
     },
+    PHASE_EXIT_WEAPON_DAMAGE_PERCENT(listener(PhaseExitDamageListener.DAMAGE_PERCENT_KEY, PhaseExitDamageListener.class,
+            PhaseExitDamageListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("seconds", PhaseExitDamageListener.TAPER_SECONDS).styled();
+        }
+    },
+    PHASE_ENTRY_AFTERIMAGE_SECONDS_FLAT(listener(PhantomWakeListener.SECONDS_KEY, PhantomWakeListener.class, PhantomWakeListener::new)),
     PHASE_ANCHOR_EMERGENCY_DIVE {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

@@ -1,4 +1,4 @@
-package exiledsector.skills.skilleffect.fighter;
+package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.CombatFleetManagerAPI;
 import com.fs.starfarer.api.combat.DeployedFleetMemberAPI;
@@ -10,7 +10,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.List;
 
-final class DeploymentRecordPruner {
+public final class DeploymentRecordPruner {
 
     static final String ALL_EVER_DEPLOYED_GETTER = "getAllEverDeployed";
     private static final MethodType LIST_GETTER = MethodType.methodType(List.class);
@@ -24,7 +24,7 @@ final class DeploymentRecordPruner {
 
     // java:S1181: MethodHandle.invoke declares Throwable, and a changed engine may only cost the pruning, never the battle
     @SuppressWarnings("java:S1181")
-    static boolean forget(CombatFleetManagerAPI fleetManager, FleetMemberAPI temporaryMember) {
+    public static boolean forget(CombatFleetManagerAPI fleetManager, FleetMemberAPI temporaryMember) {
         MethodHandle getter = allEverDeployedGetterFor(fleetManager.getClass());
         if (getter == null) {
             return false;
@@ -68,7 +68,7 @@ final class DeploymentRecordPruner {
             return;
         }
         failureReported = true;
-        LOG.warn("Coalition Flight Doctrine can't tidy the fleet manager (" + reason + "); its copy fighters' temporary wings will stay in memory until the battle ends",
+        LOG.warn("Can't tidy the fleet manager (" + reason + "); temporary fleet members spawned in combat will stay in memory until the battle ends",
                 cause);
     }
 }

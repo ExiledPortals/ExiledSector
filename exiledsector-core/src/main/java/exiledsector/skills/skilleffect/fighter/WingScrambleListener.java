@@ -26,6 +26,7 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import com.fs.starfarer.api.loading.WingRole;
 import exiledsector.ModSounds;
+import exiledsector.skills.skilleffect.DeploymentRecordPruner;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;

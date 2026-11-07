@@ -5,15 +5,26 @@ import exiledsector.skills.skilleffect.phase.PhaseSkillEffect;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SkillEffectStackingTest {
 
     @Test
-    void everyEffectNamedAsAMultiplierDeclaresTheMultiplierMode() {
+    void everyStatEffectNamedAsAMultiplierDeclaresTheMultiplierMode() {
         for (String name : SkillEffectRegistry.names()) {
-            if (name.endsWith("_MULT")) {
-                assertEquals(StatMode.MULT, SkillEffect.byName(name).statMode(), name);
+            StatMode mode = SkillEffect.byName(name).statMode();
+            if (name.endsWith("_MULT") && mode != null) {
+                assertEquals(StatMode.MULT, mode, name);
+            }
+        }
+    }
+
+    @Test
+    void noEffectNamedAsAPercentDeclaresTheMultiplierMode() {
+        for (String name : SkillEffectRegistry.names()) {
+            if (name.endsWith("_PERCENT")) {
+                assertNotEquals(StatMode.MULT, SkillEffect.byName(name).statMode(), name);
             }
         }
     }

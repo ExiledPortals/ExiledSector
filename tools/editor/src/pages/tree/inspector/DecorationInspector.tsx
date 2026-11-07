@@ -223,6 +223,35 @@ function SerpentFields({ decoration: serpent, edit }: FieldsProps<'serpent'>) {
   );
 }
 
+function HypershuntFields({ decoration: hypershunt, edit }: FieldsProps<'hypershunt'>) {
+  return (
+    <>
+      <Group grow gap={6}>
+        <CommitNumberInput size="xs" label="Orbit radius" value={hypershunt.orbitRadius} onCommit={(value) => edit((target) => void (target.orbitRadius = sizeOrMinimum(value)))} />
+        <CommitNumberInput
+          size="xs"
+          label="Seconds per orbit"
+          value={hypershunt.orbitSeconds}
+          onCommit={(value) => edit((target) => void (target.orbitSeconds = Math.max(1, numberOrZero(value))))}
+        />
+      </Group>
+      <Group grow gap={6} align="flex-end">
+        <CommitNumberInput size="xs" label="Start angle (deg)" value={hypershunt.startAngle} onCommit={(value) => edit((target) => void (target.startAngle = degreesOrZero(value)))} />
+        <CommitNumberInput size="xs" label="Size" value={hypershunt.size} onCommit={(value) => edit((target) => void (target.size = sizeOrMinimum(value)))} />
+      </Group>
+      <Switch
+        size="xs"
+        label="Clockwise"
+        checked={hypershunt.clockwise}
+        onChange={(event) => {
+          const clockwise = event.currentTarget.checked;
+          edit((target) => void (target.clockwise = clockwise));
+        }}
+      />
+    </>
+  );
+}
+
 const FIELDS: { [TKind in DecorationKind]: (props: FieldsProps<TKind>) => ReactNode } = {
   star: StarFields,
   image: ImageFields,
@@ -230,6 +259,7 @@ const FIELDS: { [TKind in DecorationKind]: (props: FieldsProps<TKind>) => ReactN
   threatUnit: ThreatUnitFields,
   serpent: SerpentFields,
   shroudedMaw: ShroudedMawFields,
+  hypershunt: HypershuntFields,
 };
 
 function editDecoration(decorationId: string, change: (decoration: Decoration) => void): void {

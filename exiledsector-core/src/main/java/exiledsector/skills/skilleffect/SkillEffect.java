@@ -48,6 +48,10 @@ public interface SkillEffect extends ModifierEffect {
         return false;
     }
 
+    default boolean readsFinalDealtDamage() {
+        return false;
+    }
+
     default void advanceInCombat(ShipAPI ship, String modId, float magnitude) {
     }
 

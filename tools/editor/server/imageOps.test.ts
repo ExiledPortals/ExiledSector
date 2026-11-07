@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dotNetHsl, ellipseCoverage, hueShiftPixels, rgbFromHsl, roundHalfToEven } from './imageOps.ts';
+import { dotNetHsl, ellipseCoverage, hueShiftPixels, rgbFromHsl, rotatePixels, roundHalfToEven, type RgbaImage } from './imageOps.ts';
 
 const POWERSHELL_REFERENCES: [number, number, number, number, [number, number, number]][] = [
   [255, 0, 0, 90, [128, 255, 0]],
@@ -43,5 +43,50 @@ describe('circular mask', () => {
     const edge = ellipseCoverage(0, 2, 10, 10);
     expect(edge).toBeGreaterThan(0);
     expect(edge).toBeLessThan(1);
+  });
+});
+
+function labelledImage(width: number, height: number): RgbaImage {
+  const data = Buffer.alloc(width * height * 4);
+  for (let index = 0; index < width * height; index++) {
+    data.set([index, 0, 0, 255], index * 4);
+  }
+  return { data, width, height };
+}
+
+function labels(image: RgbaImage): number[][] {
+  const rows: number[][] = [];
+  for (let y = 0; y < image.height; y++) {
+    rows.push(Array.from({ length: image.width }, (_, x) => image.data[(y * image.width + x) * 4]));
+  }
+  return rows;
+}
+
+describe('rotation', () => {
+  const source = labelledImage(3, 2);
+
+  it('turns quarter turns clockwise without resampling and swaps the sides', () => {
+    expect(labels(rotatePixels(source, 0))).toEqual([[0, 1, 2], [3, 4, 5]]);
+    expect(labels(rotatePixels(source, 90))).toEqual([[3, 0], [4, 1], [5, 2]]);
+    expect(labels(rotatePixels(source, 180))).toEqual([[5, 4, 3], [2, 1, 0]]);
+    expect(labels(rotatePixels(source, 270))).toEqual([[2, 5], [1, 4], [0, 3]]);
+    expect(labels(rotatePixels(source, -90))).toEqual(labels(rotatePixels(source, 270)));
+    expect(labels(rotatePixels(source, 450))).toEqual(labels(rotatePixels(source, 90)));
+  });
+
+  it('keeps the size for other angles, clears the corners and keeps colour at soft edges', () => {
+    const red: RgbaImage = { data: Buffer.alloc(8 * 8 * 4), width: 8, height: 8 };
+    for (let offset = 0; offset < red.data.length; offset += 4) {
+      red.data.set([255, 0, 0, 255], offset);
+    }
+    const rotated = rotatePixels(red, 45);
+    expect([rotated.width, rotated.height]).toEqual([8, 8]);
+    expect(rotated.data[3]).toBe(0);
+    expect([...rotated.data.subarray((4 * 8 + 4) * 4, (4 * 8 + 4) * 4 + 4)]).toEqual([255, 0, 0, 255]);
+    for (let offset = 0; offset < rotated.data.length; offset += 4) {
+      if (rotated.data[offset + 3] > 0) {
+        expect([rotated.data[offset], rotated.data[offset + 1], rotated.data[offset + 2]]).toEqual([255, 0, 0]);
+      }
+    }
   });
 });

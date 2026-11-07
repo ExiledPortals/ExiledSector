@@ -101,7 +101,8 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     },
     SHARED_TARGET_DAMAGE_PERCENT(listener(SharedTargetDamageListener.DAMAGE_PERCENT_KEY, SharedTargetDamageListener.class,
             SharedTargetDamageListener::new)),
-    EMP_DAMAGE_PERCENT(listener(EmpDamageListener.EMP_PERCENT_KEY, EmpDamageListener.class, EmpDamageListener::new)),
+    EMP_DAMAGE_PERCENT(listener(EmpDamageListener.EMP_INCREASED_PERCENT_KEY, EmpDamageListener.class, EmpDamageListener::new)),
+    EMP_DAMAGE_MULT(listener(EmpDamageListener.EMP_MORE_PERCENT_KEY, EmpDamageListener.class, EmpDamageListener::new)),
     DAMAGE_TO_DISTANT_TARGETS_PERCENT(listener(DistantTargetDamageListener.DAMAGE_PERCENT_KEY, DistantTargetDamageListener.class,
             DistantTargetDamageListener::new)) {
         @Override
@@ -111,6 +112,13 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     },
     DAMAGE_TO_SLOWER_SHIP_PERCENT(targetDamage(SlowerShipDamageListener.DAMAGE_PERCENT_KEY, SlowerShipDamageListener.class,
             SlowerShipDamageListener::new, "stat.damageToSlowerShips")),
+    DAMAGE_TO_ISOLATED_SHIP_PERCENT(listener(IsolatedShipDamageListener.DAMAGE_PERCENT_KEY, IsolatedShipDamageListener.class,
+            IsolatedShipDamageListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.signed(this, magnitude).arg("range", IsolatedShipDamageListener.ALLY_RANGE).styled();
+        }
+    },
     DAMAGE_TO_PRISTINE_SHIP_PERCENT(targetDamage(PristineShipDamageListener.DAMAGE_PERCENT_KEY, PristineShipDamageListener.class,
             PristineShipDamageListener::new, "stat.damageToPristineShips")),
     WEAPON_MALFUNCTION_PERCENT(statEffect(PERCENT, new StatTarget.PercentagePoints(MutableShipStatsAPI::getWeaponMalfunctionChance),
@@ -177,7 +185,9 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     SHROUDED_LENS_DAMAGE_PERCENT(listener(ShroudedDamageListener.LENS_DAMAGE_PERCENT_KEY, ShroudedDamageListener.class,
             ShroudedDamageListener::new)),
     RIFT_LIGHTNING_DAMAGE_PERCENT(listener(ShroudedDamageListener.RIFT_LIGHTNING_DAMAGE_PERCENT_KEY, ShroudedDamageListener.class,
-            ShroudedDamageListener::new));
+            ShroudedDamageListener::new)),
+    RIFT_EXPLOSION_DAMAGE_PERCENT(listener(RiftExplosionDamageListener.DAMAGE_PERCENT_KEY, RiftExplosionDamageListener.class,
+            RiftExplosionDamageListener::new));
 
     private static final String LARGE_BALLISTIC_OP_COST_KEY = "large_ballistic_mod";
     private static final List<String> SMALL_WEAPON_OP_COST_KEYS = List.of(Stats.SMALL_BALLISTIC_MOD, Stats.SMALL_ENERGY_MOD, Stats.SMALL_MISSILE_MOD);

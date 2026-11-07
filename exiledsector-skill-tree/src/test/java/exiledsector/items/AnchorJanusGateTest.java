@@ -50,6 +50,7 @@ class AnchorJanusGateTest {
 
     private static final String HEGEMONY_ANCHOR = "wormhole_anchor_hegemony";
     private static final String BEACON = "wormhole_anchor_exotech";
+    private static final String OMEGA_ANCHOR = "wormhole_anchor_omega";
 
     private final Map<String, Item> itemsById = new HashMap<>();
     private MockedStatic<LunaSettings> lunaSettingsMock;
@@ -158,6 +159,17 @@ class AnchorJanusGateTest {
         assertFalse(AnchorJanusGate.applies(BEACON));
         assertTrue(AnchorJanusGate.applies(HEGEMONY_ANCHOR));
         assertFalse(AnchorJanusGate.withholds(BEACON, Global.getSector()));
+        assertTrue(AnchorJanusGate.withholds(HEGEMONY_ANCHOR, Global.getSector()));
+    }
+
+    @Test
+    void theOmegaAnchorDropsAndWorksBeforeJanusSoBeatingOmegaEarlyIsNeverWasted() throws Exception {
+        WormholeAnchorDefinitions.register(new JSONArray()
+                .put(AnchorRows.row(HEGEMONY_ANCHOR, "hegemony", "hegemony_2"))
+                .put(AnchorRows.row(OMEGA_ANCHOR, SkillTags.OMEGA_VOLUME, "hegemony_2").put("guaranteed_drop", "true")));
+
+        assertFalse(AnchorJanusGate.applies(OMEGA_ANCHOR));
+        assertFalse(AnchorJanusGate.withholds(OMEGA_ANCHOR, Global.getSector()));
         assertTrue(AnchorJanusGate.withholds(HEGEMONY_ANCHOR, Global.getSector()));
     }
 

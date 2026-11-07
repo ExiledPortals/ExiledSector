@@ -74,9 +74,9 @@ class WingNumbersDamageListenerTest {
     void theReductionIsTheCarriersTotalOverEverySourceNotTheFirstSourceAlone() {
         ShipAPI carrier = FighterCarriers.with(WingNumbersDamageListener.REDUCTION_PERCENT_PER_FIGHTER_KEY, 15f);
         ShipAPI fighter = flyingFighter();
-        FighterSkillEffect.FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER.applyToFighterSpawnedByShip(fighter, carrier, "node", 10f);
+        FighterSkillEffect.FIGHTER_WING_DAMAGE_TAKEN_MULT_PER_FIGHTER.applyToFighterSpawnedByShip(fighter, carrier, "node", 10f);
         when(fighter.hasListenerOfClass(WingNumbersDamageListener.class)).thenReturn(true);
-        FighterSkillEffect.FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER.applyToFighterSpawnedByShip(fighter, carrier, "item", 5f);
+        FighterSkillEffect.FIGHTER_WING_DAMAGE_TAKEN_MULT_PER_FIGHTER.applyToFighterSpawnedByShip(fighter, carrier, "item", 5f);
         ArgumentCaptor<Object> listener = ArgumentCaptor.forClass(Object.class);
         verify(fighter).addListener(listener.capture());
         DamageAPI damage = mock(DamageAPI.class, RETURNS_DEEP_STUBS);

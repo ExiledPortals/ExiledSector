@@ -2,16 +2,19 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
+import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Supplier;
 
 public final class HitDamageRestorer implements DamageListener {
 
     private final List<PendingRestore> pending = new ArrayList<>();
+    private int sideDamageDepth;
 
     public static void reduceForThisHit(DamageAPI damage, float dealtMult, CombatEntityAPI target) {
         track(damage, target);
@@ -35,6 +38,24 @@ public final class HitDamageRestorer implements DamageListener {
         damage.setFluxComponent(damage.getFluxComponent() * empMult);
     }
 
+    public static void retypeForThisHit(DamageAPI damage, DamageType type, CombatEntityAPI target) {
+        track(damage, target);
+        damage.setType(type);
+    }
+
+    public static <T> T whileDealingSideDamage(Supplier<T> dealSideDamage) {
+        HitDamageRestorer restorer = SkillEffectSupport.existingEngineListener(HitDamageRestorer.class);
+        if (restorer == null) {
+            return dealSideDamage.get();
+        }
+        restorer.sideDamageDepth++;
+        try {
+            return dealSideDamage.get();
+        } finally {
+            restorer.sideDamageDepth--;
+        }
+    }
+
     public static float originalHitDamage(DamageAPI damage) {
         HitDamageRestorer restorer = SkillEffectSupport.existingEngineListener(HitDamageRestorer.class);
         PendingRestore entry = restorer == null ? null : restorer.entryFor(damage);
@@ -55,13 +76,14 @@ public final class HitDamageRestorer implements DamageListener {
             }
             if (entry.damage() == damage) {
                 tracked = true;
-            } else {
+            } else if (entry.depth() >= restorer.sideDamageDepth) {
                 entry.restore();
                 iterator.remove();
             }
         }
         if (!tracked) {
-            restorer.pending.add(new PendingRestore(damage, damage.getBaseDamage(), damage.getFluxComponent(), target));
+            restorer.pending.add(new PendingRestore(damage, damage.getBaseDamage(), damage.getFluxComponent(), damage.getType(), target,
+                    restorer.sideDamageDepth));
         }
     }
 
@@ -79,18 +101,21 @@ public final class HitDamageRestorer implements DamageListener {
         if (pending.isEmpty()) {
             return;
         }
-        pending.removeIf(restore -> restore.restoreIfFor(target));
+        pending.removeIf(restore -> restore.restoreIfFor(target, sideDamageDepth));
     }
 
-    private record PendingRestore(DamageAPI damage, float baseDamage, float empDamage, CombatEntityAPI target) {
+    private record PendingRestore(DamageAPI damage, float baseDamage, float empDamage, DamageType type, CombatEntityAPI target, int depth) {
 
         private void restore() {
             damage.setDamage(baseDamage);
             damage.setFluxComponent(empDamage);
+            if (damage.getType() != type) {
+                damage.setType(type);
+            }
         }
 
-        private boolean restoreIfFor(CombatEntityAPI hitTarget) {
-            if (hitTarget != target) {
+        private boolean restoreIfFor(CombatEntityAPI hitTarget, int currentDepth) {
+            if (hitTarget != target || depth < currentDepth) {
                 return false;
             }
             restore();

@@ -4,6 +4,8 @@ import {
   DECORATION_KINDS,
   decorationHandles,
   DEFAULT_STAR_COLOR,
+  HYPERSHUNT_SPRITE_PATH,
+  hypershuntPosition,
   serpentPathPoint,
   SHROUDED_MAW_HEIGHT_PER_LENGTH,
   SHROUDED_MAW_SPRITE_PATH,
@@ -114,6 +116,22 @@ function SerpentShape({ decoration: serpent, selected }: ShapeProps<'serpent'>) 
   );
 }
 
+function HypershuntShape({ decoration: hypershunt, selected }: ShapeProps<'hypershunt'>) {
+  const shunt = hypershuntPosition(hypershunt);
+  const half = hypershunt.size / 2;
+  return (
+    <g>
+      <circle cx={hypershunt.x} cy={hypershunt.y} r={hypershunt.orbitRadius} className={`${classes.serpentPath}${selected ? ` ${classes.serpentPathSelected}` : ''}`} />
+      <g transform={`rotate(${hypershunt.startAngle + 90} ${shunt.x} ${shunt.y})`}>
+        <image href={fileUrl(HYPERSHUNT_SPRITE_PATH)} x={shunt.x - half} y={shunt.y - half} width={hypershunt.size} height={hypershunt.size} />
+      </g>
+      <text x={shunt.x} y={shunt.y + half + LABEL_GAP} textAnchor="middle" className={classes.decorationLabel}>
+        {DECORATION_KINDS.hypershunt.label}
+      </text>
+    </g>
+  );
+}
+
 const SHAPES: { [TKind in DecorationKind]: (props: ShapeProps<TKind>) => ReactNode } = {
   star: StarShape,
   image: ImageShape,
@@ -121,6 +139,7 @@ const SHAPES: { [TKind in DecorationKind]: (props: ShapeProps<TKind>) => ReactNo
   threatUnit: ThreatUnitShape,
   serpent: SerpentShape,
   shroudedMaw: ShroudedMawShape,
+  hypershunt: HypershuntShape,
 };
 
 function depthRank(decoration: Decoration): number {
@@ -135,6 +154,7 @@ function depthRank(decoration: Decoration): number {
       return 3;
     case 'threatUnit':
     case 'shroudedMaw':
+    case 'hypershunt':
       return 5;
   }
 }

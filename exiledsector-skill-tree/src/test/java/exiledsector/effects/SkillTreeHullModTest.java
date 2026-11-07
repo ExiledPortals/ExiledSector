@@ -1119,6 +1119,34 @@ class SkillTreeHullModTest {
     }
 
     @Test
+    void finalDamageReadingEffectsAreAppliedAfterEveryOtherEffectWhateverTheAllocationOrder() {
+        exiledsector.skills.skilleffect.SkillEffect finalReader = mock(exiledsector.skills.skilleffect.SkillEffect.class);
+        when(finalReader.name()).thenReturn("FINAL_READER");
+        when(finalReader.readsFinalDealtDamage()).thenReturn(true);
+        exiledsector.skills.skilleffect.SkillEffect modifier = mock(exiledsector.skills.skilleffect.SkillEffect.class);
+        when(modifier.name()).thenReturn("MODIFIER");
+        SkillNode finalReaderNode = new SkillNode("final_reader_1", new SkillType.Builder("final_reader", "Final Reader", "a.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(finalReader, 1f))).build(), List.of(), 0f, 0f);
+        SkillNode modifierNode = new SkillNode("modifier_1", new SkillType.Builder("modifier", "Modifier", "a.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(modifier, 1f))).build(), List.of(), 0f, 0f);
+        SkillTree.register(finalReaderNode);
+        SkillTree.register(modifierNode);
+
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), finalReaderNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), modifierNode, 1);
+        ShipAPI ship = mockShip(member, mock(MutableShipStatsAPI.class));
+
+        new SkillTreeHullMod().applyEffectsAfterShipCreation(ship, "exiledSector_core");
+
+        org.mockito.InOrder order = org.mockito.Mockito.inOrder(modifier, finalReader);
+        order.verify(modifier).applyAfterShipCreation(ship, "exiledSector_skill_modifier_1_MODIFIER", 1f);
+        order.verify(finalReader).applyAfterShipCreation(ship, "exiledSector_skill_final_reader_1_FINAL_READER", 1f);
+        verify(finalReader, times(1)).applyAfterShipCreation(ship, "exiledSector_skill_final_reader_1_FINAL_READER", 1f);
+    }
+
+    @Test
     void afterShipCreationDoesNothingWhenTheShipHasNoFleetMember() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(null);

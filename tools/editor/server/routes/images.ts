@@ -1,7 +1,7 @@
 import type { FastifyInstance, FastifyReply } from 'fastify';
 import fs from 'node:fs';
 import path from 'node:path';
-import { hueShiftImage, makeCircularImage } from '../imageOps.ts';
+import { hueShiftImage, makeCircularImage, rotateImage } from '../imageOps.ts';
 import { existingProjectFile, resolveProjectPath, toProjectRelative, type ProjectPaths } from '../paths.ts';
 
 const STATIC_IMAGES_DIR = 'graphics/backgrounds/static_images';
@@ -14,6 +14,7 @@ interface CopyBody {
   path?: string;
   suffix?: string;
   hueShift?: unknown;
+  degrees?: unknown;
   overwrite?: boolean;
 }
 
@@ -121,6 +122,14 @@ export function registerImageRoutes(app: FastifyInstance, paths: ProjectPaths): 
   registerImageCopy(app, paths, '/api/images/circular', {
     destinationDir: () => path.join(paths.projectRoot, CIRCULAR_OUTPUT_DIR),
     writeCopy: (source, destination) => makeCircularImage(source, destination),
+  });
+
+  registerImageCopy(app, paths, '/api/images/rotate', {
+    destinationDir: (source) => path.dirname(source),
+    writeCopy: (source, destination, body) => {
+      const degrees = Number(body.degrees);
+      rotateImage(source, destination, Number.isFinite(degrees) ? degrees : 0);
+    },
   });
 
   app.post<{ Body: { from?: string; to?: string } }>('/api/images/move', async (request, reply) => {

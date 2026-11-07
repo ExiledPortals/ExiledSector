@@ -10,16 +10,25 @@ import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.DeploymentRepairTally;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 
+import java.util.List;
+
 final class UnhitArmorRegenListener extends ShipCombatListener implements AdvanceableListener {
 
     static final String REGEN_PERCENT_KEY = "exiledSector_unhitArmorRegenPercent";
+    static final String LOW_CAP_REGEN_PERCENT_KEY = "exiledSector_unhitArmorRegenLowCapPercent";
     static final float UNHIT_SECONDS = 5f;
     static final float ENEMY_SHIP_RANGE = 1500f;
     static final float HARD_FLUX_PER_ARMOR = 1f;
     static final float DEPLOYMENT_CAP_PERCENT = 50f;
+    static final float LOW_DEPLOYMENT_CAP_PERCENT = 20f;
     static final float TICK_SECONDS = 0.5f;
 
-    private final DeploymentRepairTally repairTally = new DeploymentRepairTally();
+    private record RegenSource(String percentKey, float deploymentCapPercent, DeploymentRepairTally repairTally) {
+    }
+
+    private final List<RegenSource> regenSources = List.of(
+            new RegenSource(REGEN_PERCENT_KEY, DEPLOYMENT_CAP_PERCENT, new DeploymentRepairTally()),
+            new RegenSource(LOW_CAP_REGEN_PERCENT_KEY, LOW_DEPLOYMENT_CAP_PERCENT, new DeploymentRepairTally()));
     private float[][] lastCellArmor;
     private float[][] cellSecondsUnhit;
     private float secondsSinceTick;
@@ -42,18 +51,42 @@ final class UnhitArmorRegenListener extends ShipCombatListener implements Advanc
             return;
         }
         trackHits(grid, elapsed);
-        float percent = magnitude(REGEN_PERCENT_KEY);
-        if (percent <= 0f || enemyShipNear(engine)) {
+        if (!anySourceActive() || enemyShipNear(engine)) {
             return;
         }
-        float budget = Math.min(repairTally.remainingBelow(ArmorCells.total(grid) * DEPLOYMENT_CAP_PERCENT / 100f), fluxRoom() / HARD_FLUX_PER_ARMOR);
-        float restored = mend(grid, cellSecondsUnhit, grid.getMaxArmorInCell() * percent / 100f * elapsed, budget);
+        float totalArmor = ArmorCells.total(grid);
+        float restored = 0f;
+        for (RegenSource source : regenSources) {
+            restored += mendFrom(source, grid, totalArmor, elapsed);
+        }
         if (restored > 0f) {
-            repairTally.record(restored);
-            ownerShip.getFluxTracker().increaseFlux(restored * HARD_FLUX_PER_ARMOR, true);
             ownerShip.syncWithArmorGridState();
             snapshot(grid);
         }
+    }
+
+    private boolean anySourceActive() {
+        for (RegenSource source : regenSources) {
+            if (magnitude(source.percentKey()) > 0f) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private float mendFrom(RegenSource source, ArmorGridAPI grid, float totalArmor, float elapsed) {
+        float percent = magnitude(source.percentKey());
+        if (percent <= 0f) {
+            return 0f;
+        }
+        float budget = Math.min(source.repairTally().remainingBelow(totalArmor * source.deploymentCapPercent() / 100f),
+                fluxRoom() / HARD_FLUX_PER_ARMOR);
+        float restored = mend(grid, cellSecondsUnhit, grid.getMaxArmorInCell() * percent / 100f * elapsed, budget);
+        if (restored > 0f) {
+            source.repairTally().record(restored);
+            ownerShip.getFluxTracker().increaseFlux(restored * HARD_FLUX_PER_ARMOR, true);
+        }
+        return restored;
     }
 
     void trackHits(ArmorGridAPI grid, float elapsed) {

@@ -41,6 +41,7 @@ class WormholeAnchorDataTest {
             Map.entry("persean_league", "league_wormhole_2"),
             Map.entry("sindrian_dictat", "dictat_wormhole_2"),
             Map.entry("REDACTED", "REDACTED_2"),
+            Map.entry("omega", "omega_wormhole_1"),
             Map.entry("kesteven", "kesteven_wormhole1"),
             Map.entry("enigma", "lost_sector_wormhole1"),
             Map.entry("nightcross", "nightcross_wormhole_1"),
@@ -102,14 +103,18 @@ class WormholeAnchorDataTest {
     }
 
     @Test
-    void onlyTheShroudedAnchorAlwaysDropsAndOnlyFromDwellerFleets() throws Exception {
+    void onlyTheShroudedAndOmegaAnchorsAlwaysDropAndOnlyFromTheirOwnFleets() throws Exception {
         WormholeAnchorDefinitions.register(shippedAnchors());
 
         FactionFleetDrops.Source shrouded = FactionFleetDrops.source("wormhole_anchor_shrouded");
         assertTrue(shrouded.guaranteed());
         assertEquals(Set.of("dweller"), shrouded.extraFactionIds());
+        FactionFleetDrops.Source omega = FactionFleetDrops.source("wormhole_anchor_omega");
+        assertTrue(omega.guaranteed());
+        assertEquals("omega", omega.volume());
+        assertTrue(omega.extraFactionIds().isEmpty());
         for (ItemDefinition anchor : ItemDefinitions.ofType(ItemType.WORMHOLE_ANCHOR)) {
-            if (!anchor.id().equals("wormhole_anchor_shrouded")) {
+            if (!Set.of("wormhole_anchor_shrouded", "wormhole_anchor_omega").contains(anchor.id())) {
                 assertFalse(FactionFleetDrops.source(anchor.id()).guaranteed(), anchor.id());
             }
         }

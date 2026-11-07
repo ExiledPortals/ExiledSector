@@ -105,6 +105,30 @@ class NodeGatesTest {
     }
 
     @Test
+    void onlyAClosedConcealedGateKeepsItsNodesFromBeingDrawnAtAll() throws Exception {
+        NodeGates.register(new JSONObject("{\"" + GATE_TAG + "\": {\"concealed\": true, \"unlockConditions\": [{\"type\": \"memoryFlag\", \"key\": \""
+                + FLAG + "\"}]}, \"gate_ghost\": {\"unlockConditions\": [{\"type\": \"memoryFlag\", \"key\": \"" + FLAG + "\"}]}}"));
+        SkillNode concealed = node("omega", GATE_TAG);
+
+        assertTrue(NodeGates.gate(GATE_TAG).concealed());
+        assertTrue(NodeGates.isConcealed(concealed, null));
+        assertFalse(NodeGates.isConcealed(node("threat", "gate_ghost"), null));
+        assertTrue(NodeGates.isHidden(node("threat", "gate_ghost"), null));
+
+        when(sectorMemory.getBoolean(FLAG)).thenReturn(true);
+        assertFalse(NodeGates.isConcealed(concealed, null));
+    }
+
+    @Test
+    void theShowHiddenNodesSettingAlsoRevealsAConcealedNode() throws Exception {
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", "exiledSector_showHiddenNodesByDefault")).thenReturn(true);
+        NodeGates.register(new JSONObject("{\"" + GATE_TAG + "\": {\"concealed\": true, \"unlockConditions\": [{\"type\": \"memoryFlag\", \"key\": \""
+                + FLAG + "\"}]}}"));
+
+        assertFalse(NodeGates.isConcealed(node("omega", GATE_TAG), null));
+    }
+
+    @Test
     void aGatedNodeCannotBeAllocatedEvenWhenItsTypeIsUnlocked() {
         SkillNode gated = node("abyss", GATE_TAG);
         ShipSkillData shipData = new ShipSkillData();

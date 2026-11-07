@@ -12,6 +12,7 @@ import exiledsector.skills.skilleffect.StatMode;
 import exiledsector.skills.skilleffect.battle.BattleSkillEffect;
 import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.fighter.FighterSkillEffect;
+import exiledsector.skills.skilleffect.onhit.OnHitSkillEffect;
 import exiledsector.skills.skilleffect.shipsystem.ShipSystemSkillEffect;
 import exiledsector.skills.skilleffect.shield.ShieldSkillEffect;
 import exiledsector.skills.skilleffect.weapon.ScopedWeaponEffect;
@@ -40,7 +41,7 @@ public enum SpecialSkillEffect implements BackedSkillEffect {
         }
     },
     HEARTLESS_ARMOR_RESTORE_PERCENT(listener(HeartlessStacks.ARMOR_RESTORE_PERCENT_KEY, HeartlessStacks.class, HeartlessStacks::new)),
-    HEARTLESS_ARMOR_PERCENT_PER_STACK(listener(HeartlessStacks.ARMOR_PERCENT_PER_STACK_KEY, HeartlessStacks.class, HeartlessStacks::new)),
+    HEARTLESS_ARMOR_MULT_PER_STACK(listener(HeartlessStacks.ARMOR_PERCENT_PER_STACK_KEY, HeartlessStacks.class, HeartlessStacks::new)),
     HEARTLESS_MOBILITY_PENALTY_PERCENT_PER_STACK(listener(HeartlessStacks.MOBILITY_PENALTY_PERCENT_PER_STACK_KEY,
             HeartlessStacks.class, HeartlessStacks::new)),
     HEARTLESS_RADIATION_EMP_FLAT(listener(HeartlessStacks.RADIATION_EMP_KEY, HeartlessStacks.class, HeartlessStacks::new)),
@@ -93,10 +94,21 @@ public enum SpecialSkillEffect implements BackedSkillEffect {
             FighterSkillEffect.FIGHTER_DAMAGE_TAKEN_MULT)),
     NAV_RATING_PER_HIGH_TECH_AFFINITY(new AffinityScaling(AffinityScaling.Filter.HIGH_TECH, AffinityScaling.NAV_RATING_STEP,
             BattleSkillEffect.NAV_RATING)),
+    ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY(new AffinityScaling(AffinityScaling.Filter.HIGH_TECH, AffinityScaling.SMALL_STEP,
+            OnHitSkillEffect.ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT)),
+    WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL(AffinityScaling.whileAllEqual(
+            ScopedWeaponEffect.find(WeaponStatFamily.DAMAGE, WeaponScope.ALL, StatMode.PERCENT))),
     FRAGMENT_SWARM_SIZE_PERCENT_PER_AFFINITY(new AffinityScaling(AffinityScaling.Filter.ALL, AffinityScaling.SMALL_STEP,
             ShipSystemSkillEffect.FRAGMENT_SWARM_SIZE_PERCENT)),
     FRAGMENT_REPLACEMENT_RATE_PERCENT_PER_AFFINITY(new AffinityScaling(AffinityScaling.Filter.ALL, AffinityScaling.SMALL_STEP,
             ShipSystemSkillEffect.FRAGMENT_REPLACEMENT_RATE_PERCENT)),
+    MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY(new AffinityScaling(AffinityScaling.Filter.HIGHEST, AffinityScaling.SMALL_STEP,
+            OnHitSkillEffect.MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return OnHitSkillEffect.describeRiftSeries(EffectText.msg(this).arg("value", magnitude).arg("step", affinityScaling().stepSize()));
+        }
+    },
     HIGHEST_AFFINITY_FLAT_PER_S_MOD(new AffinityTally()),
     LOWEST_AFFINITY_AS_HIGHEST(new AffinityTally()) {
         @Override

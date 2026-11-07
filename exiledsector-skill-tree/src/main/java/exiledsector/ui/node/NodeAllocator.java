@@ -61,6 +61,7 @@ final class NodeAllocator {
         private final int statsRevision;
         private final int dataRevision;
         private final Set<String> hiddenNodeIds;
+        private final Set<String> concealedNodeIds;
         private final AllocationCheck gate;
         private final RefusalDescriber describer;
         private final Map<String, String> reasonsByKey = new HashMap<>();
@@ -68,11 +69,17 @@ final class NodeAllocator {
 
         Snapshot(ShipSkillData skillData, ShipOpBudget opBudget, int statsRevision, Set<String> hiddenNodeIds, AllocationCheck gate,
                  RefusalDescriber describer) {
+            this(skillData, opBudget, statsRevision, hiddenNodeIds, Set.of(), gate, describer);
+        }
+
+        Snapshot(ShipSkillData skillData, ShipOpBudget opBudget, int statsRevision, Set<String> hiddenNodeIds, Set<String> concealedNodeIds,
+                 AllocationCheck gate, RefusalDescriber describer) {
             this.skillData = skillData;
             this.opBudget = opBudget;
             this.statsRevision = statsRevision;
             this.dataRevision = skillData.revision();
             this.hiddenNodeIds = hiddenNodeIds;
+            this.concealedNodeIds = concealedNodeIds;
             this.gate = gate;
             this.describer = describer;
         }
@@ -119,6 +126,10 @@ final class NodeAllocator {
 
         boolean isHidden(SkillNode node) {
             return hiddenNodeIds.contains(node.getId());
+        }
+
+        boolean isConcealed(SkillNode node) {
+            return concealedNodeIds.contains(node.getId());
         }
 
         boolean isCurrent(ShipSkillData currentData) {
@@ -236,7 +247,7 @@ final class NodeAllocator {
         AllocationCheck.Budget budget = new AllocationCheck.Budget(totalOpBudget, opCostPerNode, ShipLevelConfig.maxAllocatedNodes());
         AllocationCheck gate = AllocationCheck.forPlayerShip(skillData, PlayerShipFacts.of(fleetMember, shipVariant), satisfiedRootId(), budget,
                 NodeAllocator::heldInCargo, LogisticsDocking.canChangeNow());
-        return new Snapshot(skillData, opBudget, shipEdit.revision(), hiddenNodeIds(skillData), gate, this::describe);
+        return new Snapshot(skillData, opBudget, shipEdit.revision(), hiddenNodeIds(skillData), concealedNodeIds(skillData), gate, this::describe);
     }
 
     Snapshot planningSnapshot(ShipSkillData planData, Snapshot liveSnapshot) {
@@ -247,7 +258,18 @@ final class NodeAllocator {
         NodeEligibility.Context eligibility = NodeEligibility.Context.forShip(planData, shipFacts,
                 SkillTypeUnlockStatus.lockedFor(liveData), itemId -> Double.MAX_VALUE);
         AllocationCheck gate = new AllocationCheck(planData, SkillTree.topology(), satisfiedRootId(), budget, eligibility);
-        return new Snapshot(planData, liveSnapshot.opBudget(), liveSnapshot.statsRevision(), liveSnapshot.hiddenNodeIds, gate, this::describe);
+        return new Snapshot(planData, liveSnapshot.opBudget(), liveSnapshot.statsRevision(), liveSnapshot.hiddenNodeIds,
+                liveSnapshot.concealedNodeIds, gate, this::describe);
+    }
+
+    private static Set<String> concealedNodeIds(ShipSkillData skillData) {
+        Set<String> concealed = new HashSet<>();
+        for (SkillNode node : SkillTree.getAllNodes().values()) {
+            if (NodeGates.isConcealed(node, skillData)) {
+                concealed.add(node.getId());
+            }
+        }
+        return concealed;
     }
 
     private static Set<String> hiddenNodeIds(ShipSkillData skillData) {

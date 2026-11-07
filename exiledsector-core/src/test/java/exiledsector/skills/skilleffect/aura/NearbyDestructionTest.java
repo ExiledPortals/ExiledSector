@@ -9,6 +9,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.MockSector;
+import exiledsector.skills.skilleffect.weapon.PirateFrenzy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -133,6 +135,37 @@ class NearbyDestructionTest {
 
         float repaired = cells[0][0] + cells[0][1] + cells[1][0] + cells[1][1] - 150f;
         assertEquals(40f, repaired, 0.001f);
+    }
+
+    private static ShipAPI frenziedShip(float range) {
+        ShipAPI raider = ship(0f, PLAYER);
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS);
+        when(raider.getMutableStats()).thenReturn(stats);
+        when(raider.getId()).thenReturn("raider");
+        when(stats.getDynamic().getValue(FrenzyOnNearbyDestructionListener.RANGE_KEY, 0f)).thenReturn(range);
+        List<Object> listeners = new ArrayList<>();
+        doAnswer(call -> listeners.add(call.getArgument(0))).when(raider).addListener(any());
+        when(raider.getListeners(any())).thenAnswer(call -> listeners.stream().filter(((Class<?>) call.getArgument(0))::isInstance).toList());
+        return raider;
+    }
+
+    @Test
+    void eachEnemyShipDestroyedInRangeGrantsAPirateFrenzyStack() {
+        ShipAPI raider = frenziedShip(1000f);
+        ShipAPI near = ship(800f, ENEMY);
+        ShipAPI alsoNear = ship(-900f, ENEMY);
+        ShipAPI far = ship(1600f, ENEMY);
+        ShipAPI ally = ship(300f, PLAYER);
+        ShipAPI fighter = ship(200f, ENEMY);
+        when(fighter.isFighter()).thenReturn(true);
+        gridShips.addAll(List.of(raider, near, alsoNear, far, ally, fighter));
+        FrenzyOnNearbyDestructionListener listener = new FrenzyOnNearbyDestructionListener(raider);
+
+        listener.advance(0.3f);
+        List.of(near, alsoNear, far, ally, fighter).forEach(NearbyDestructionTest::destroy);
+        listener.advance(0.3f);
+
+        assertEquals(2, PirateFrenzy.of(raider).stacks());
     }
 
     private static ArmorGridAPI grid(float maxArmorInCell, float[][] cells) {

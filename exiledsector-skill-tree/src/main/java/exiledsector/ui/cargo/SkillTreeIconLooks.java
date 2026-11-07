@@ -52,7 +52,7 @@ public final class SkillTreeIconLooks implements ItemIconLooks {
         List<String> chipIconPaths = new ArrayList<>();
         for (String nodeId : subroutine.currentNodeIds()) {
             SkillNode node = SkillTree.getDeclared(nodeId);
-            if (node != null && node.getIconPath() != null) {
+            if (node != null && node.getIconPath() != null && !node.getIconPath().isBlank()) {
                 chipIconPaths.add(node.getIconPath());
             }
         }

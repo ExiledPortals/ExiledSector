@@ -49,6 +49,7 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
     CREW_CAPACITY_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getMaxCrewMod), "stat.crewCapacity", false)),
     CREW_CAPACITY_FLAT(statEffect(FLAT, bonus(MutableShipStatsAPI::getMaxCrewMod), "stat.crewCapacity", false)),
     BURN_LEVEL_FLAT(statEffect(FLAT, stat(MutableShipStatsAPI::getMaxBurnLevel), "stat.maxBurnLevel", false)),
+    TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT(anyFleetContribution(TowLines.TOW_BURN_LEVEL_KEY)),
     SENSOR_PROFILE_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getSensorProfile), "stat.sensorProfile", true)),
     SENSOR_PROFILE_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getSensorProfile), "stat.sensorProfile", true)),
     PHASE_HULL_SENSOR_PROFILE_PERCENT {
@@ -187,7 +188,7 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
     GROUND_SUPPORT_PER_MAX_CREW_PERCENT(new DerivedStatEffect(LogisticsSkillEffect::applyCrewGroundSupport, null, false)),
     CORONA_RESISTANCE_MULT(statEffect(MULT, dynamicStat(Stats.CORONA_EFFECT_MULT),
             "stat.coronaAndStormCrLoss", true)),
-    FLEET_CORONA_RESISTANCE_PERCENT(anyFleetContribution(FleetWideEffects.CORONA_RESISTANCE_CONTRIBUTION_KEY)),
+    FLEET_CORONA_RESISTANCE_MULT(anyFleetContribution(FleetWideEffects.CORONA_RESISTANCE_CONTRIBUTION_KEY)),
     POST_BATTLE_SALVAGE_PERCENT(playerFleetContribution(FleetWideEffects.POST_BATTLE_SALVAGE_CONTRIBUTION_KEY)) {
         @Override
         public StyledText description(float magnitude) {

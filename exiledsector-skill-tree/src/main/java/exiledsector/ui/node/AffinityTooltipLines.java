@@ -48,9 +48,10 @@ final class AffinityTooltipLines {
         Map<SkillEffect, Float> totals = AffinitySteps.totals(shipContributions);
         float total = totals.getOrDefault(affinity, 0f);
         List<StyledText> ownBonuses = bonusLines(AffinitySteps.bonuses(Map.of(affinity, total)), hullSize);
-        ownBonuses.addAll(bonusLines(scaledBonuses(shipContributions, totals, filter -> filter.affinities().equals(List.of(affinity))), hullSize));
+        ownBonuses.addAll(bonusLines(scaledBonuses(shipContributions, totals,
+                filter -> filter.readsOneAffinity() && filter.reads(affinity, totals)), hullSize));
         List<StyledText> combinedBonuses = bonusLines(scaledBonuses(shipContributions, totals,
-                filter -> filter.affinities().size() > 1 && filter.affinities().contains(affinity)), hullSize);
+                filter -> !filter.readsOneAffinity() && filter.reads(affinity, totals)), hullSize);
 
         List<StyledText> totalBlock = new ArrayList<>();
         totalBlock.add(Translation.msg("ui.node.affinity.total").arg("affinity", affinityName).arg("total", total).styled());
@@ -67,6 +68,7 @@ final class AffinityTooltipLines {
 
     private static List<DescriptionLine> grants(SkillEffect affinity, List<EffectContribution> shipContributions, HullSize hullSize) {
         String affinityName = affinityName(affinity);
+        Map<SkillEffect, Float> totals = AffinitySteps.totals(shipContributions);
         List<StyledText> perStep = new ArrayList<>();
         for (AffinitySteps.Step step : AffinitySteps.stepsFor(affinity)) {
             String statKey = statKeyOf(step.effect());
@@ -76,7 +78,7 @@ final class AffinityTooltipLines {
             }
         }
         perStep.addAll(bonusLines(permanentEffects(shipContributions,
-                effect -> effect.affinityScaling() != null && effect.affinityScaling().filter().affinities().contains(affinity)), hullSize));
+                effect -> effect.affinityScaling() != null && effect.affinityScaling().filter().reads(affinity, totals)), hullSize));
 
         List<DescriptionLine> lines = new ArrayList<>();
         lines.add(new DescriptionLine(bulletList(Translation.msg("ui.node.affinity.grants").arg("affinity", affinityName).styled(), perStep), false));

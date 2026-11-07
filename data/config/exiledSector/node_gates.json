@@ -65,6 +65,15 @@
 			}
 		]
 	},
+	"gate_omega_found": {
+		"anchors": "withheld",
+		"concealed": true,
+		"unlockConditions": [
+			{
+				"type": "omegaFound"
+			}
+		]
+	},
 	"gate_blood_trail_defeated": {
 		"unlockConditions": [
 			{

@@ -10,6 +10,18 @@ effect|ACCELERATION_PERCENT|12.5	0	<good>12.5%</good> increased acceleration.
 effect|ACCELERATION_PERCENT|100.0	0	<good>100%</good> increased acceleration.
 effect|ACCELERATION_PERCENT|-10.0	0	<bad>10%</bad> reduced acceleration.
 effect|ACCELERATION_PERCENT|-12.5	0	<bad>12.5%</bad> reduced acceleration.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT|1.0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT|10.0	0	<good>10%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT|12.5	0	<good>12.5%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT|100.0	0	<good>100%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT|-10.0	0	<good>-10%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT|-12.5	0	<good>-12.5%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY|1.0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY|10.0	0	<good>10%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY|12.5	0	<good>12.5%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY|100.0	0	<good>100%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY|-10.0	0	<bad>-10%</bad> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY|-12.5	0	<bad>-12.5%</bad> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
 effect|AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT|1.0	0	Removes all Low Tech and Midline Affinity and grants <good>1%</good> of it as High Tech Affinity.
 effect|AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT|10.0	0	Removes all Low Tech and Midline Affinity and grants <good>10%</good> of it as High Tech Affinity.
 effect|AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT|12.5	0	Removes all Low Tech and Midline Affinity and grants <good>12.5%</good> of it as High Tech Affinity.
@@ -28,6 +40,12 @@ effect|AFFINITY_EXCHANGE_TO_MIDLINE_PERCENT|12.5	0	Removes all Low Tech and High
 effect|AFFINITY_EXCHANGE_TO_MIDLINE_PERCENT|100.0	0	Removes all Low Tech and High Tech Affinity and grants <good>100%</good> of it as Midline Affinity.
 effect|AFFINITY_EXCHANGE_TO_MIDLINE_PERCENT|-10.0	0	Removes all Low Tech and High Tech Affinity and grants <good>-10%</good> of it as Midline Affinity.
 effect|AFFINITY_EXCHANGE_TO_MIDLINE_PERCENT|-12.5	0	Removes all Low Tech and High Tech Affinity and grants <good>-12.5%</good> of it as Midline Affinity.
+effect|ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD|1.0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+effect|ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD|10.0	0	Allied ships within 1000 su have <good>10%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+effect|ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD|12.5	0	Allied ships within 1000 su have <good>12.5%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+effect|ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD|100.0	0	Allied ships within 1000 su have <good>100%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+effect|ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD|-10.0	0	Allied ships within 1000 su have <good>-10%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+effect|ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD|-12.5	0	Allied ships within 1000 su have <good>-12.5%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
 effect|AMMO_REGEN_WHILE_PHASED_PERCENT|1.0	0	<good>1%</good> increased ammo regeneration while phased.
 effect|AMMO_REGEN_WHILE_PHASED_PERCENT|10.0	0	<good>10%</good> increased ammo regeneration while phased.
 effect|AMMO_REGEN_WHILE_PHASED_PERCENT|12.5	0	<good>12.5%</good> increased ammo regeneration while phased.
@@ -706,6 +724,12 @@ effect|DAMAGE_TO_HELPLESS_SHIP_PERCENT|12.5	0	<good>12.5%</good> increased damag
 effect|DAMAGE_TO_HELPLESS_SHIP_PERCENT|100.0	0	<good>100%</good> increased damage to overloaded, venting or flamed-out ships.
 effect|DAMAGE_TO_HELPLESS_SHIP_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to overloaded, venting or flamed-out ships.
 effect|DAMAGE_TO_HELPLESS_SHIP_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to overloaded, venting or flamed-out ships.
+effect|DAMAGE_TO_ISOLATED_SHIP_PERCENT|1.0	0	<good>1%</good> increased damage to ships with no allies within 1000 su.
+effect|DAMAGE_TO_ISOLATED_SHIP_PERCENT|10.0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
+effect|DAMAGE_TO_ISOLATED_SHIP_PERCENT|12.5	0	<good>12.5%</good> increased damage to ships with no allies within 1000 su.
+effect|DAMAGE_TO_ISOLATED_SHIP_PERCENT|100.0	0	<good>100%</good> increased damage to ships with no allies within 1000 su.
+effect|DAMAGE_TO_ISOLATED_SHIP_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to ships with no allies within 1000 su.
+effect|DAMAGE_TO_ISOLATED_SHIP_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to ships with no allies within 1000 su.
 effect|DAMAGE_TO_PRISTINE_SHIP_PERCENT|1.0	0	<good>1%</good> increased damage to ships without d-mods.
 effect|DAMAGE_TO_PRISTINE_SHIP_PERCENT|10.0	0	<good>10%</good> increased damage to ships without d-mods.
 effect|DAMAGE_TO_PRISTINE_SHIP_PERCENT|12.5	0	<good>12.5%</good> increased damage to ships without d-mods.
@@ -730,6 +754,12 @@ effect|DECELERATION_FLAT|12.5	0	<good>+12.5</good> to deceleration.
 effect|DECELERATION_FLAT|100.0	0	<good>+100</good> to deceleration.
 effect|DECELERATION_FLAT|-10.0	0	<bad>-10</bad> to deceleration.
 effect|DECELERATION_FLAT|-12.5	0	<bad>-12.5</bad> to deceleration.
+effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|1.0	0	<good>1%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|10.0	0	<good>10%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|12.5	0	<good>12.5%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|100.0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|-10.0	0	<good>-10%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|-12.5	0	<good>-12.5%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
 effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|1.0	0	Energy weapon hits on armor strip an additional <good>1%</good> of the hit's damage from the armor around the impact over 5 seconds.
 effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|10.0	0	Energy weapon hits on armor strip an additional <good>10%</good> of the hit's damage from the armor around the impact over 5 seconds.
 effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|12.5	0	Energy weapon hits on armor strip an additional <good>12.5%</good> of the hit's damage from the armor around the impact over 5 seconds.
@@ -784,12 +814,18 @@ effect|EMP_ARC_STRIKE_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased top spee
 effect|EMP_ARC_STRIKE_SPEED_PERCENT|100.0	0	<good>100%</good> increased top speed and maneuverability for 3 seconds after an EMP arc strikes this ship.
 effect|EMP_ARC_STRIKE_SPEED_PERCENT|-10.0	0	<good>-10%</good> increased top speed and maneuverability for 3 seconds after an EMP arc strikes this ship.
 effect|EMP_ARC_STRIKE_SPEED_PERCENT|-12.5	0	<good>-12.5%</good> increased top speed and maneuverability for 3 seconds after an EMP arc strikes this ship.
-effect|EMP_DAMAGE_PERCENT|1.0	0	<good>1%</good> more EMP damage.
-effect|EMP_DAMAGE_PERCENT|10.0	0	<good>10%</good> more EMP damage.
-effect|EMP_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> more EMP damage.
-effect|EMP_DAMAGE_PERCENT|100.0	0	<good>100%</good> more EMP damage.
-effect|EMP_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> more EMP damage.
-effect|EMP_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> more EMP damage.
+effect|EMP_DAMAGE_MULT|1.0	0	<good>1%</good> more EMP damage.
+effect|EMP_DAMAGE_MULT|10.0	0	<good>10%</good> more EMP damage.
+effect|EMP_DAMAGE_MULT|12.5	0	<good>12.5%</good> more EMP damage.
+effect|EMP_DAMAGE_MULT|100.0	0	<good>100%</good> more EMP damage.
+effect|EMP_DAMAGE_MULT|-10.0	0	<good>-10%</good> more EMP damage.
+effect|EMP_DAMAGE_MULT|-12.5	0	<good>-12.5%</good> more EMP damage.
+effect|EMP_DAMAGE_PERCENT|1.0	0	<good>1%</good> increased EMP damage.
+effect|EMP_DAMAGE_PERCENT|10.0	0	<good>10%</good> increased EMP damage.
+effect|EMP_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased EMP damage.
+effect|EMP_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased EMP damage.
+effect|EMP_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> increased EMP damage.
+effect|EMP_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> increased EMP damage.
 effect|EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT|1.0	0	Taking EMP damage dissipates hard flux equal to <good>1%</good> of that EMP damage.
 effect|EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT|10.0	0	Taking EMP damage dissipates hard flux equal to <good>10%</good> of that EMP damage.
 effect|EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT|12.5	0	Taking EMP damage dissipates hard flux equal to <good>12.5%</good> of that EMP damage.
@@ -814,6 +850,12 @@ effect|ENERGY_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased energy da
 effect|ENERGY_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased energy damage taken.
 effect|ENERGY_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced energy damage taken.
 effect|ENERGY_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced energy damage taken.
+effect|ENERGY_HIT_INJUNCTION_PERCENT|1.0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>1%</good> slower for each Injunction stack.
+effect|ENERGY_HIT_INJUNCTION_PERCENT|10.0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>10%</good> slower for each Injunction stack.
+effect|ENERGY_HIT_INJUNCTION_PERCENT|12.5	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>12.5%</good> slower for each Injunction stack.
+effect|ENERGY_HIT_INJUNCTION_PERCENT|100.0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>100%</good> slower for each Injunction stack.
+effect|ENERGY_HIT_INJUNCTION_PERCENT|-10.0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>-10%</good> slower for each Injunction stack.
+effect|ENERGY_HIT_INJUNCTION_PERCENT|-12.5	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>-12.5%</good> slower for each Injunction stack.
 effect|ENERGY_SLOTS_BALLISTIC|1.0	0	Energy weapon mounts become ballistic mounts.
 effect|ENERGY_SLOTS_BALLISTIC|10.0	0	Energy weapon mounts become ballistic mounts.
 effect|ENERGY_SLOTS_BALLISTIC|12.5	0	Energy weapon mounts become ballistic mounts.
@@ -1144,24 +1186,30 @@ effect|FIGHTER_WEAPON_RANGE_FLAT|12.5	0	Strikecraft launched from this ship have
 effect|FIGHTER_WEAPON_RANGE_FLAT|100.0	0	Strikecraft launched from this ship have <good>+100</good> to weapon range.
 effect|FIGHTER_WEAPON_RANGE_FLAT|-10.0	0	Strikecraft launched from this ship have <bad>-10</bad> to weapon range.
 effect|FIGHTER_WEAPON_RANGE_FLAT|-12.5	0	Strikecraft launched from this ship have <bad>-12.5</bad> to weapon range.
-effect|FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER|1.0	0	Strikecraft launched from this ship take <good>1%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
-effect|FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER|10.0	0	Strikecraft launched from this ship take <good>10%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
-effect|FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER|12.5	0	Strikecraft launched from this ship take <good>12.5%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
-effect|FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER|100.0	0	Strikecraft launched from this ship take <good>100%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
-effect|FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER|-10.0	0	Strikecraft launched from this ship take <good>-10%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
-effect|FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER|-12.5	0	Strikecraft launched from this ship take <good>-12.5%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
+effect|FIGHTER_WEAPON_RANGE_PERCENT|1.0	0	Strikecraft launched from this ship have <good>1%</good> increased weapon range.
+effect|FIGHTER_WEAPON_RANGE_PERCENT|10.0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon range.
+effect|FIGHTER_WEAPON_RANGE_PERCENT|12.5	0	Strikecraft launched from this ship have <good>12.5%</good> increased weapon range.
+effect|FIGHTER_WEAPON_RANGE_PERCENT|100.0	0	Strikecraft launched from this ship have <good>100%</good> increased weapon range.
+effect|FIGHTER_WEAPON_RANGE_PERCENT|-10.0	0	Strikecraft launched from this ship have <bad>10%</bad> reduced weapon range.
+effect|FIGHTER_WEAPON_RANGE_PERCENT|-12.5	0	Strikecraft launched from this ship have <bad>12.5%</bad> reduced weapon range.
+effect|FIGHTER_WING_DAMAGE_TAKEN_MULT_PER_FIGHTER|1.0	0	Strikecraft launched from this ship take <good>1%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
+effect|FIGHTER_WING_DAMAGE_TAKEN_MULT_PER_FIGHTER|10.0	0	Strikecraft launched from this ship take <good>10%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
+effect|FIGHTER_WING_DAMAGE_TAKEN_MULT_PER_FIGHTER|12.5	0	Strikecraft launched from this ship take <good>12.5%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
+effect|FIGHTER_WING_DAMAGE_TAKEN_MULT_PER_FIGHTER|100.0	0	Strikecraft launched from this ship take <good>100%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
+effect|FIGHTER_WING_DAMAGE_TAKEN_MULT_PER_FIGHTER|-10.0	0	Strikecraft launched from this ship take <good>-10%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
+effect|FIGHTER_WING_DAMAGE_TAKEN_MULT_PER_FIGHTER|-12.5	0	Strikecraft launched from this ship take <good>-12.5%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
 effect|FIGHTER_WING_SHARED_DAMAGE_PERCENT|1.0	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>1%</good> of that damage is shared across its wing.
 effect|FIGHTER_WING_SHARED_DAMAGE_PERCENT|10.0	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>10%</good> of that damage is shared across its wing.
 effect|FIGHTER_WING_SHARED_DAMAGE_PERCENT|12.5	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>12.5%</good> of that damage is shared across its wing.
 effect|FIGHTER_WING_SHARED_DAMAGE_PERCENT|100.0	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>100%</good> of that damage is shared across its wing.
 effect|FIGHTER_WING_SHARED_DAMAGE_PERCENT|-10.0	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>-10%</good> of that damage is shared across its wing.
 effect|FIGHTER_WING_SHARED_DAMAGE_PERCENT|-12.5	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>-12.5%</good> of that damage is shared across its wing.
-effect|FLEET_CORONA_RESISTANCE_PERCENT|1.0	0	Ships in your fleet have <good>1%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-effect|FLEET_CORONA_RESISTANCE_PERCENT|10.0	0	Ships in your fleet have <good>10%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-effect|FLEET_CORONA_RESISTANCE_PERCENT|12.5	0	Ships in your fleet have <good>12.5%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-effect|FLEET_CORONA_RESISTANCE_PERCENT|100.0	0	Ships in your fleet have <good>100%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-effect|FLEET_CORONA_RESISTANCE_PERCENT|-10.0	0	Ships in your fleet have <good>-10%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-effect|FLEET_CORONA_RESISTANCE_PERCENT|-12.5	0	Ships in your fleet have <good>-12.5%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+effect|FLEET_CORONA_RESISTANCE_MULT|1.0	0	Ships in your fleet have <good>1%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+effect|FLEET_CORONA_RESISTANCE_MULT|10.0	0	Ships in your fleet have <good>10%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+effect|FLEET_CORONA_RESISTANCE_MULT|12.5	0	Ships in your fleet have <good>12.5%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+effect|FLEET_CORONA_RESISTANCE_MULT|100.0	0	Ships in your fleet have <good>100%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+effect|FLEET_CORONA_RESISTANCE_MULT|-10.0	0	Ships in your fleet have <good>-10%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+effect|FLEET_CORONA_RESISTANCE_MULT|-12.5	0	Ships in your fleet have <good>-12.5%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 effect|FLUX_CAPACITOR_EFFECTIVENESS_PERCENT|1.0	0	<good>1%</good> increased flux capacity granted by each flux capacitor.
 effect|FLUX_CAPACITOR_EFFECTIVENESS_PERCENT|10.0	0	<good>10%</good> increased flux capacity granted by each flux capacitor.
 effect|FLUX_CAPACITOR_EFFECTIVENESS_PERCENT|12.5	0	<good>12.5%</good> increased flux capacity granted by each flux capacitor.
@@ -1330,18 +1378,18 @@ effect|GATES_RADIUS_WHILE_SYSTEM_ACTIVE|12.5	0	Allocated nodes in its radius app
 effect|GATES_RADIUS_WHILE_SYSTEM_ACTIVE|100.0	0	Allocated nodes in its radius apply only while the ship system is active, at <good>100</good> times their strength. Their effects that aren't read live in combat are ignored.
 effect|GATES_RADIUS_WHILE_SYSTEM_ACTIVE|-10.0	0	Allocated nodes in its radius apply only while the ship system is active, at <good>-10</good> times their strength. Their effects that aren't read live in combat are ignored.
 effect|GATES_RADIUS_WHILE_SYSTEM_ACTIVE|-12.5	0	Allocated nodes in its radius apply only while the ship system is active, at <good>-12.5</good> times their strength. Their effects that aren't read live in combat are ignored.
-effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|1.0	0	Enemy ships within 1500 su have up to <good>1%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
-effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|10.0	0	Enemy ships within 1500 su have up to <good>10%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
-effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|12.5	0	Enemy ships within 1500 su have up to <good>12.5%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
-effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|100.0	0	Enemy ships within 1500 su have up to <good>100%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
-effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|-10.0	0	Enemy ships within 1500 su have up to <good>-10%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
-effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|-12.5	0	Enemy ships within 1500 su have up to <good>-12.5%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
-effect|GRAVITY_DRAG_TIMEFLOW_PERCENT|1.0	0	Enemy ships within 1500 su have up to <good>1%</good> less time flow, strongest at close range, or up to <good>2%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
-effect|GRAVITY_DRAG_TIMEFLOW_PERCENT|10.0	0	Enemy ships within 1500 su have up to <good>10%</good> less time flow, strongest at close range, or up to <good>20%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
-effect|GRAVITY_DRAG_TIMEFLOW_PERCENT|12.5	0	Enemy ships within 1500 su have up to <good>12.5%</good> less time flow, strongest at close range, or up to <good>25%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
-effect|GRAVITY_DRAG_TIMEFLOW_PERCENT|100.0	0	Enemy ships within 1500 su have up to <good>100%</good> less time flow, strongest at close range, or up to <good>200%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
-effect|GRAVITY_DRAG_TIMEFLOW_PERCENT|-10.0	0	Enemy ships within 1500 su have up to <good>-10%</good> less time flow, strongest at close range, or up to <good>-20%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
-effect|GRAVITY_DRAG_TIMEFLOW_PERCENT|-12.5	0	Enemy ships within 1500 su have up to <good>-12.5%</good> less time flow, strongest at close range, or up to <good>-25%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_MULT|1.0	0	Enemy ships within 1500 su have up to <good>1%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_MULT|10.0	0	Enemy ships within 1500 su have up to <good>10%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_MULT|12.5	0	Enemy ships within 1500 su have up to <good>12.5%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_MULT|100.0	0	Enemy ships within 1500 su have up to <good>100%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_MULT|-10.0	0	Enemy ships within 1500 su have up to <good>-10%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_MULT|-12.5	0	Enemy ships within 1500 su have up to <good>-12.5%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_TIMEFLOW_MULT|1.0	0	Enemy ships within 1500 su have up to <good>1%</good> less time flow, strongest at close range, or up to <good>2%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_TIMEFLOW_MULT|10.0	0	Enemy ships within 1500 su have up to <good>10%</good> less time flow, strongest at close range, or up to <good>20%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_TIMEFLOW_MULT|12.5	0	Enemy ships within 1500 su have up to <good>12.5%</good> less time flow, strongest at close range, or up to <good>25%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_TIMEFLOW_MULT|100.0	0	Enemy ships within 1500 su have up to <good>100%</good> less time flow, strongest at close range, or up to <good>200%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_TIMEFLOW_MULT|-10.0	0	Enemy ships within 1500 su have up to <good>-10%</good> less time flow, strongest at close range, or up to <good>-20%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_TIMEFLOW_MULT|-12.5	0	Enemy ships within 1500 su have up to <good>-12.5%</good> less time flow, strongest at close range, or up to <good>-25%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
 effect|GROUND_SUPPORT_FLAT|1.0	0	Your fleet has <good>+1</good> to effective planetary raid strength, up to the total number of marines in the fleet.
 effect|GROUND_SUPPORT_FLAT|10.0	0	Your fleet has <good>+10</good> to effective planetary raid strength, up to the total number of marines in the fleet.
 effect|GROUND_SUPPORT_FLAT|12.5	0	Your fleet has <good>+12.5</good> to effective planetary raid strength, up to the total number of marines in the fleet.
@@ -1372,12 +1420,12 @@ effect|HARD_FLUX_DISSIPATION_PERCENT|12.5	0	<good>12.5%</good> hard flux dissipa
 effect|HARD_FLUX_DISSIPATION_PERCENT|100.0	0	<good>100%</good> hard flux dissipation while shields are active.
 effect|HARD_FLUX_DISSIPATION_PERCENT|-10.0	0	<good>-10%</good> hard flux dissipation while shields are active.
 effect|HARD_FLUX_DISSIPATION_PERCENT|-12.5	0	<good>-12.5%</good> hard flux dissipation while shields are active.
-effect|HEARTLESS_ARMOR_PERCENT_PER_STACK|1.0	0	Each Heartless stack grants <good>1%</good> more armor in every armor cell, above its normal maximum.
-effect|HEARTLESS_ARMOR_PERCENT_PER_STACK|10.0	0	Each Heartless stack grants <good>10%</good> more armor in every armor cell, above its normal maximum.
-effect|HEARTLESS_ARMOR_PERCENT_PER_STACK|12.5	0	Each Heartless stack grants <good>12.5%</good> more armor in every armor cell, above its normal maximum.
-effect|HEARTLESS_ARMOR_PERCENT_PER_STACK|100.0	0	Each Heartless stack grants <good>100%</good> more armor in every armor cell, above its normal maximum.
-effect|HEARTLESS_ARMOR_PERCENT_PER_STACK|-10.0	0	Each Heartless stack grants <good>-10%</good> more armor in every armor cell, above its normal maximum.
-effect|HEARTLESS_ARMOR_PERCENT_PER_STACK|-12.5	0	Each Heartless stack grants <good>-12.5%</good> more armor in every armor cell, above its normal maximum.
+effect|HEARTLESS_ARMOR_MULT_PER_STACK|1.0	0	Each Heartless stack grants <good>1%</good> more armor in every armor cell, above its normal maximum.
+effect|HEARTLESS_ARMOR_MULT_PER_STACK|10.0	0	Each Heartless stack grants <good>10%</good> more armor in every armor cell, above its normal maximum.
+effect|HEARTLESS_ARMOR_MULT_PER_STACK|12.5	0	Each Heartless stack grants <good>12.5%</good> more armor in every armor cell, above its normal maximum.
+effect|HEARTLESS_ARMOR_MULT_PER_STACK|100.0	0	Each Heartless stack grants <good>100%</good> more armor in every armor cell, above its normal maximum.
+effect|HEARTLESS_ARMOR_MULT_PER_STACK|-10.0	0	Each Heartless stack grants <good>-10%</good> more armor in every armor cell, above its normal maximum.
+effect|HEARTLESS_ARMOR_MULT_PER_STACK|-12.5	0	Each Heartless stack grants <good>-12.5%</good> more armor in every armor cell, above its normal maximum.
 effect|HEARTLESS_ARMOR_RESTORE_PERCENT|1.0	0	Gaining a Heartless stack restores <good>1%</good> of maximum armor to every armor cell.
 effect|HEARTLESS_ARMOR_RESTORE_PERCENT|10.0	0	Gaining a Heartless stack restores <good>10%</good> of maximum armor to every armor cell.
 effect|HEARTLESS_ARMOR_RESTORE_PERCENT|12.5	0	Gaining a Heartless stack restores <good>12.5%</good> of maximum armor to every armor cell.
@@ -1468,6 +1516,12 @@ effect|HULL_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased hull damage
 effect|HULL_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased hull damage taken.
 effect|HULL_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced hull damage taken.
 effect|HULL_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced hull damage taken.
+effect|HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST|1.0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+effect|HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST|10.0	0	<good>10%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+effect|HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST|12.5	0	<good>12.5%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+effect|HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST|100.0	0	<good>100%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+effect|HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST|-10.0	0	<good>-10%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+effect|HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST|-12.5	0	<good>-12.5%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
 effect|HULL_DAMAGE_TAKEN_PERCENT_PER_LOW_TECH_AFFINITY|1.0	1	<good>1%</good> increased hull damage taken for every 10 Low Tech Affinity.
 effect|HULL_DAMAGE_TAKEN_PERCENT_PER_LOW_TECH_AFFINITY|10.0	1	<good>10%</good> increased hull damage taken for every 10 Low Tech Affinity.
 effect|HULL_DAMAGE_TAKEN_PERCENT_PER_LOW_TECH_AFFINITY|12.5	1	<good>12.5%</good> increased hull damage taken for every 10 Low Tech Affinity.
@@ -1654,6 +1708,18 @@ effect|MISSILE_EJECTION_CHANCE_PERCENT|12.5	0	<good>12.5%</good> chance for miss
 effect|MISSILE_EJECTION_CHANCE_PERCENT|100.0	0	<good>100%</good> chance for missiles about to hit armor or hull to be ejected into p-space, dealing no damage.
 effect|MISSILE_EJECTION_CHANCE_PERCENT|-10.0	0	<good>-10%</good> chance for missiles about to hit armor or hull to be ejected into p-space, dealing no damage.
 effect|MISSILE_EJECTION_CHANCE_PERCENT|-12.5	0	<good>-12.5%</good> chance for missiles about to hit armor or hull to be ejected into p-space, dealing no damage.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT|1.0	0	Missile hits have a <good>1%</good> chance to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT|10.0	0	Missile hits have a <good>10%</good> chance to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT|12.5	0	Missile hits have a <good>12.5%</good> chance to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT|100.0	0	Missile hits have a <good>100%</good> chance to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT|-10.0	0	Missile hits have a <good>-10%</good> chance to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT|-12.5	0	Missile hits have a <good>-12.5%</good> chance to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY|1.0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY|10.0	0	Missile hits have a <good>10%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY|12.5	0	Missile hits have a <good>12.5%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY|100.0	0	Missile hits have a <good>100%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY|-10.0	0	Missile hits have a <good>-10%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY|-12.5	0	Missile hits have a <good>-12.5%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
 effect|MISSILE_KILL_FLAK_DAMAGE_FLAT|1.0	0	Enemy missiles destroyed by this ship burst for <good>1</good> fragmentation damage to other enemy missiles and fighters within 100 su.
 effect|MISSILE_KILL_FLAK_DAMAGE_FLAT|10.0	0	Enemy missiles destroyed by this ship burst for <good>10</good> fragmentation damage to other enemy missiles and fighters within 100 su.
 effect|MISSILE_KILL_FLAK_DAMAGE_FLAT|12.5	0	Enemy missiles destroyed by this ship burst for <good>12.5</good> fragmentation damage to other enemy missiles and fighters within 100 su.
@@ -1672,12 +1738,12 @@ effect|MISSILE_SLOTS_ENERGY|12.5	0	Missile weapon mounts become energy mounts.
 effect|MISSILE_SLOTS_ENERGY|100.0	0	Missile weapon mounts become energy mounts.
 effect|MISSILE_SLOTS_ENERGY|-10.0	0	Missile weapon mounts become energy mounts.
 effect|MISSILE_SLOTS_ENERGY|-12.5	0	Missile weapon mounts become energy mounts.
-effect|MISSILE_SNARE_TOP_SPEED_PERCENT|1.0	0	Enemy ships hit by this ship's missiles have <good>1%</good> less top speed for 2 seconds.
-effect|MISSILE_SNARE_TOP_SPEED_PERCENT|10.0	0	Enemy ships hit by this ship's missiles have <good>10%</good> less top speed for 2 seconds.
-effect|MISSILE_SNARE_TOP_SPEED_PERCENT|12.5	0	Enemy ships hit by this ship's missiles have <good>12.5%</good> less top speed for 2 seconds.
-effect|MISSILE_SNARE_TOP_SPEED_PERCENT|100.0	0	Enemy ships hit by this ship's missiles have <good>100%</good> less top speed for 2 seconds.
-effect|MISSILE_SNARE_TOP_SPEED_PERCENT|-10.0	0	Enemy ships hit by this ship's missiles have <good>-10%</good> less top speed for 2 seconds.
-effect|MISSILE_SNARE_TOP_SPEED_PERCENT|-12.5	0	Enemy ships hit by this ship's missiles have <good>-12.5%</good> less top speed for 2 seconds.
+effect|MISSILE_SNARE_TOP_SPEED_MULT|1.0	0	Enemy ships hit by this ship's missiles have <good>1%</good> less top speed for 2 seconds.
+effect|MISSILE_SNARE_TOP_SPEED_MULT|10.0	0	Enemy ships hit by this ship's missiles have <good>10%</good> less top speed for 2 seconds.
+effect|MISSILE_SNARE_TOP_SPEED_MULT|12.5	0	Enemy ships hit by this ship's missiles have <good>12.5%</good> less top speed for 2 seconds.
+effect|MISSILE_SNARE_TOP_SPEED_MULT|100.0	0	Enemy ships hit by this ship's missiles have <good>100%</good> less top speed for 2 seconds.
+effect|MISSILE_SNARE_TOP_SPEED_MULT|-10.0	0	Enemy ships hit by this ship's missiles have <good>-10%</good> less top speed for 2 seconds.
+effect|MISSILE_SNARE_TOP_SPEED_MULT|-12.5	0	Enemy ships hit by this ship's missiles have <good>-12.5%</good> less top speed for 2 seconds.
 effect|MISSILE_WEAPON_AMMO_FLAT|1.0	0	<good>+1</good> to missile weapon ammo capacity.
 effect|MISSILE_WEAPON_AMMO_FLAT|10.0	0	<good>+10</good> to missile weapon ammo capacity.
 effect|MISSILE_WEAPON_AMMO_FLAT|12.5	0	<good>+12.5</good> to missile weapon ammo capacity.
@@ -2002,12 +2068,12 @@ effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|12.5	0	Non-beam energy w
 effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|100.0	0	Non-beam energy weapons have a <good>100%</good> chance to refract when hitting enemy shields.
 effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|-10.0	0	Non-beam energy weapons have a <good>-10%</good> chance to refract when hitting enemy shields.
 effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|-12.5	0	Non-beam energy weapons have a <good>-12.5%</good> chance to refract when hitting enemy shields.
-effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT|1.0	0	Each refraction deals <bad>1%</bad> less damage than the shot before it.
-effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT|10.0	0	Each refraction deals <bad>10%</bad> less damage than the shot before it.
-effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT|12.5	0	Each refraction deals <bad>12.5%</bad> less damage than the shot before it.
-effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT|100.0	0	Each refraction deals <bad>100%</bad> less damage than the shot before it.
-effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT|-10.0	0	Each refraction deals <bad>-10%</bad> less damage than the shot before it.
-effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT|-12.5	0	Each refraction deals <bad>-12.5%</bad> less damage than the shot before it.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_MULT|1.0	0	Each refraction deals <bad>1%</bad> less damage than the shot before it.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_MULT|10.0	0	Each refraction deals <bad>10%</bad> less damage than the shot before it.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_MULT|12.5	0	Each refraction deals <bad>12.5%</bad> less damage than the shot before it.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_MULT|100.0	0	Each refraction deals <bad>100%</bad> less damage than the shot before it.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_MULT|-10.0	0	Each refraction deals <bad>-10%</bad> less damage than the shot before it.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_MULT|-12.5	0	Each refraction deals <bad>-12.5%</bad> less damage than the shot before it.
 effect|NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT|1.0	0	<good>1%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 effect|NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT|10.0	0	<good>10%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 effect|NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
@@ -2062,6 +2128,18 @@ effect|OVERLOAD_DURATION_PERCENT|12.5	1	<good>12.5%</good> increased overload du
 effect|OVERLOAD_DURATION_PERCENT|100.0	1	<good>100%</good> increased overload duration.
 effect|OVERLOAD_DURATION_PERCENT|-10.0	1	<bad>10%</bad> reduced overload duration.
 effect|OVERLOAD_DURATION_PERCENT|-12.5	1	<bad>12.5%</bad> reduced overload duration.
+effect|OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT|1.0	0	Replacing an overload dissipates <good>1%</good> of hard flux.
+effect|OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT|10.0	0	Replacing an overload dissipates <good>10%</good> of hard flux.
+effect|OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT|12.5	0	Replacing an overload dissipates <good>12.5%</good> of hard flux.
+effect|OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT|100.0	0	Replacing an overload dissipates <good>100%</good> of hard flux.
+effect|OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT|-10.0	0	Replacing an overload dissipates <good>-10%</good> of hard flux.
+effect|OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT|-12.5	0	Replacing an overload dissipates <good>-12.5%</good> of hard flux.
+effect|OVERLOAD_HULL_DAMAGE_PERCENT|1.0	0	Overloads are replaced by hull damage equal to <bad>1%</bad> of maximum hull.
+effect|OVERLOAD_HULL_DAMAGE_PERCENT|10.0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
+effect|OVERLOAD_HULL_DAMAGE_PERCENT|12.5	0	Overloads are replaced by hull damage equal to <bad>12.5%</bad> of maximum hull.
+effect|OVERLOAD_HULL_DAMAGE_PERCENT|100.0	0	Overloads are replaced by hull damage equal to <bad>100%</bad> of maximum hull.
+effect|OVERLOAD_HULL_DAMAGE_PERCENT|-10.0	0	Overloads are replaced by hull damage equal to <bad>-10%</bad> of maximum hull.
+effect|OVERLOAD_HULL_DAMAGE_PERCENT|-12.5	0	Overloads are replaced by hull damage equal to <bad>-12.5%</bad> of maximum hull.
 effect|PD_BEST_TARGET_LEADING|1.0	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 effect|PD_BEST_TARGET_LEADING|10.0	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 effect|PD_BEST_TARGET_LEADING|12.5	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
@@ -2140,6 +2218,12 @@ effect|PHASE_CLOAK_UPKEEP_COST_MULT|12.5	1	<good>12.5%</good> more phase cloak f
 effect|PHASE_CLOAK_UPKEEP_COST_MULT|100.0	1	<good>100%</good> more phase cloak flux upkeep.
 effect|PHASE_CLOAK_UPKEEP_COST_MULT|-10.0	1	<bad>10%</bad> less phase cloak flux upkeep.
 effect|PHASE_CLOAK_UPKEEP_COST_MULT|-12.5	1	<bad>12.5%</bad> less phase cloak flux upkeep.
+effect|PHASE_ENTRY_AFTERIMAGE_SECONDS_FLAT|1.0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>1</good> seconds.
+effect|PHASE_ENTRY_AFTERIMAGE_SECONDS_FLAT|10.0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>10</good> seconds.
+effect|PHASE_ENTRY_AFTERIMAGE_SECONDS_FLAT|12.5	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>12.5</good> seconds.
+effect|PHASE_ENTRY_AFTERIMAGE_SECONDS_FLAT|100.0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>100</good> seconds.
+effect|PHASE_ENTRY_AFTERIMAGE_SECONDS_FLAT|-10.0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>-10</good> seconds.
+effect|PHASE_ENTRY_AFTERIMAGE_SECONDS_FLAT|-12.5	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>-12.5</good> seconds.
 effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|1.0	0	When this ship enters phase, every armor cell repairs <good>1%</good> of its maximum armor, up to 50% of this ship's total armor per deployment.
 effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|10.0	0	When this ship enters phase, every armor cell repairs <good>10%</good> of its maximum armor, up to 50% of this ship's total armor per deployment.
 effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|12.5	0	When this ship enters phase, every armor cell repairs <good>12.5%</good> of its maximum armor, up to 50% of this ship's total armor per deployment.
@@ -2158,6 +2242,12 @@ effect|PHASE_EXIT_EMP_ARCS_FLAT|12.5	0	When this ship leaves phase, it discharge
 effect|PHASE_EXIT_EMP_ARCS_FLAT|100.0	0	When this ship leaves phase, it discharges <good>100</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
 effect|PHASE_EXIT_EMP_ARCS_FLAT|-10.0	0	When this ship leaves phase, it discharges <good>-10</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
 effect|PHASE_EXIT_EMP_ARCS_FLAT|-12.5	0	When this ship leaves phase, it discharges <good>-12.5</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
+effect|PHASE_EXIT_WEAPON_DAMAGE_PERCENT|1.0	0	When this ship leaves phase, it deals <good>1%</good> increased weapon damage, tapering off over 3 seconds.
+effect|PHASE_EXIT_WEAPON_DAMAGE_PERCENT|10.0	0	When this ship leaves phase, it deals <good>10%</good> increased weapon damage, tapering off over 3 seconds.
+effect|PHASE_EXIT_WEAPON_DAMAGE_PERCENT|12.5	0	When this ship leaves phase, it deals <good>12.5%</good> increased weapon damage, tapering off over 3 seconds.
+effect|PHASE_EXIT_WEAPON_DAMAGE_PERCENT|100.0	0	When this ship leaves phase, it deals <good>100%</good> increased weapon damage, tapering off over 3 seconds.
+effect|PHASE_EXIT_WEAPON_DAMAGE_PERCENT|-10.0	0	When this ship leaves phase, it deals <good>-10%</good> increased weapon damage, tapering off over 3 seconds.
+effect|PHASE_EXIT_WEAPON_DAMAGE_PERCENT|-12.5	0	When this ship leaves phase, it deals <good>-12.5%</good> increased weapon damage, tapering off over 3 seconds.
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|1.0	0	1% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|10.0	0	10% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|12.5	0	12.5% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
@@ -2188,6 +2278,12 @@ effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|12.5	0	Fragments from this ship
 effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|100.0	0	Fragments from this ship's fragment swarm, or else the nearest allied one within 1000 su, cover <good>90%</good> of phase cloak flux upkeep while phased, spending 1 fragment for every 50 flux covered.
 effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|-10.0	0	Fragments from this ship's fragment swarm, or else the nearest allied one within 1000 su, cover <good>-10%</good> of phase cloak flux upkeep while phased, spending 1 fragment for every 50 flux covered.
 effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|-12.5	0	Fragments from this ship's fragment swarm, or else the nearest allied one within 1000 su, cover <good>-12.5%</good> of phase cloak flux upkeep while phased, spending 1 fragment for every 50 flux covered.
+effect|PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT|1.0	0	Whenever an enemy ship is destroyed within 1 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+effect|PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT|10.0	0	Whenever an enemy ship is destroyed within 10 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+effect|PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT|12.5	0	Whenever an enemy ship is destroyed within 12.5 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+effect|PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT|100.0	0	Whenever an enemy ship is destroyed within 100 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+effect|PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT|-10.0	0	Whenever an enemy ship is destroyed within -10 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+effect|PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT|-12.5	0	Whenever an enemy ship is destroyed within -12.5 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
 effect|POST_BATTLE_SALVAGE_PERCENT|1.0	0	Your fleet has <good>1%</good> increased post-battle salvage.
 effect|POST_BATTLE_SALVAGE_PERCENT|10.0	0	Your fleet has <good>10%</good> increased post-battle salvage.
 effect|POST_BATTLE_SALVAGE_PERCENT|12.5	0	Your fleet has <good>12.5%</good> increased post-battle salvage.
@@ -2206,18 +2302,18 @@ effect|RAM_BIGGEST_ENEMY|12.5	0	When this ship isn't flown by you, it flies stra
 effect|RAM_BIGGEST_ENEMY|100.0	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
 effect|RAM_BIGGEST_ENEMY|-10.0	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
 effect|RAM_BIGGEST_ENEMY|-12.5	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
-effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|1.0	0	<good>1%</good> more collision damage dealt to enemy ships and <good>1%</good> less collision damage taken.
-effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|10.0	0	<good>10%</good> more collision damage dealt to enemy ships and <good>10%</good> less collision damage taken.
-effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> more collision damage dealt to enemy ships and <good>12.5%</good> less collision damage taken.
-effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|100.0	0	<good>100%</good> more collision damage dealt to enemy ships and <good>100%</good> less collision damage taken.
-effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> more collision damage dealt to enemy ships and <good>-10%</good> less collision damage taken.
-effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> more collision damage dealt to enemy ships and <good>-12.5%</good> less collision damage taken.
-effect|RATE_OF_FIRE_AURA_PERCENT|1.0	0	Enemy ships within 1000 su have <good>1%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
-effect|RATE_OF_FIRE_AURA_PERCENT|10.0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
-effect|RATE_OF_FIRE_AURA_PERCENT|12.5	0	Enemy ships within 1000 su have <good>12.5%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
-effect|RATE_OF_FIRE_AURA_PERCENT|100.0	0	Enemy ships within 1000 su have <good>100%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
-effect|RATE_OF_FIRE_AURA_PERCENT|-10.0	0	Enemy ships within 1000 su have <good>-10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
-effect|RATE_OF_FIRE_AURA_PERCENT|-12.5	0	Enemy ships within 1000 su have <good>-12.5%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+effect|RAM_PROW_COLLISION_DAMAGE_MULT|1.0	0	<good>1%</good> more collision damage dealt to enemy ships and <good>1%</good> less collision damage taken.
+effect|RAM_PROW_COLLISION_DAMAGE_MULT|10.0	0	<good>10%</good> more collision damage dealt to enemy ships and <good>10%</good> less collision damage taken.
+effect|RAM_PROW_COLLISION_DAMAGE_MULT|12.5	0	<good>12.5%</good> more collision damage dealt to enemy ships and <good>12.5%</good> less collision damage taken.
+effect|RAM_PROW_COLLISION_DAMAGE_MULT|100.0	0	<good>100%</good> more collision damage dealt to enemy ships and <good>100%</good> less collision damage taken.
+effect|RAM_PROW_COLLISION_DAMAGE_MULT|-10.0	0	<good>-10%</good> more collision damage dealt to enemy ships and <good>-10%</good> less collision damage taken.
+effect|RAM_PROW_COLLISION_DAMAGE_MULT|-12.5	0	<good>-12.5%</good> more collision damage dealt to enemy ships and <good>-12.5%</good> less collision damage taken.
+effect|RATE_OF_FIRE_AURA_MULT|1.0	0	Enemy ships within 1000 su have <good>1%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+effect|RATE_OF_FIRE_AURA_MULT|10.0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+effect|RATE_OF_FIRE_AURA_MULT|12.5	0	Enemy ships within 1000 su have <good>12.5%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+effect|RATE_OF_FIRE_AURA_MULT|100.0	0	Enemy ships within 1000 su have <good>100%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+effect|RATE_OF_FIRE_AURA_MULT|-10.0	0	Enemy ships within 1000 su have <good>-10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+effect|RATE_OF_FIRE_AURA_MULT|-12.5	0	Enemy ships within 1000 su have <good>-12.5%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
 effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|1.0	0	Your fleet has a <good>1%</good> chance for each ship it recovers after a battle to gain no d-mods, up to a maximum of 30%.
 effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|10.0	0	Your fleet has a <good>10%</good> chance for each ship it recovers after a battle to gain no d-mods, up to a maximum of 30%.
 effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|12.5	0	Your fleet has a <good>12.5%</good> chance for each ship it recovers after a battle to gain no d-mods, up to a maximum of 30%.
@@ -2266,24 +2362,36 @@ effect|REPAIR_TIME_PERCENT|12.5	1	<good>12.5%</good> increased weapon and engine
 effect|REPAIR_TIME_PERCENT|100.0	1	<good>100%</good> increased weapon and engine repair time.
 effect|REPAIR_TIME_PERCENT|-10.0	1	<bad>10%</bad> reduced weapon and engine repair time.
 effect|REPAIR_TIME_PERCENT|-12.5	1	<bad>12.5%</bad> reduced weapon and engine repair time.
+effect|RIFT_EXPLOSION_DAMAGE_PERCENT|1.0	0	<good>1%</good> increased rift explosion damage.
+effect|RIFT_EXPLOSION_DAMAGE_PERCENT|10.0	0	<good>10%</good> increased rift explosion damage.
+effect|RIFT_EXPLOSION_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased rift explosion damage.
+effect|RIFT_EXPLOSION_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased rift explosion damage.
+effect|RIFT_EXPLOSION_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> increased rift explosion damage.
+effect|RIFT_EXPLOSION_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> increased rift explosion damage.
 effect|RIFT_LIGHTNING_DAMAGE_PERCENT|1.0	0	<good>1%</good> increased Rift Lightning damage.
 effect|RIFT_LIGHTNING_DAMAGE_PERCENT|10.0	0	<good>10%</good> increased Rift Lightning damage.
 effect|RIFT_LIGHTNING_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased Rift Lightning damage.
 effect|RIFT_LIGHTNING_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased Rift Lightning damage.
 effect|RIFT_LIGHTNING_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> increased Rift Lightning damage.
 effect|RIFT_LIGHTNING_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> increased Rift Lightning damage.
+effect|RIFT_STRIKE_CHANCE_PERCENT|1.0	0	Energy projectile hits have a <good>1%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+effect|RIFT_STRIKE_CHANCE_PERCENT|10.0	0	Energy projectile hits have a <good>10%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+effect|RIFT_STRIKE_CHANCE_PERCENT|12.5	0	Energy projectile hits have a <good>12.5%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+effect|RIFT_STRIKE_CHANCE_PERCENT|100.0	0	Energy projectile hits have a <good>100%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+effect|RIFT_STRIKE_CHANCE_PERCENT|-10.0	0	Energy projectile hits have a <good>-10%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+effect|RIFT_STRIKE_CHANCE_PERCENT|-12.5	0	Energy projectile hits have a <good>-12.5%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
 effect|RISE_FROM_THE_ASHES_ARMOR_RESTORE_PERCENT|1.0	0	Surviving that hit restores <good>1%</good> of maximum armor to every armor cell.
 effect|RISE_FROM_THE_ASHES_ARMOR_RESTORE_PERCENT|10.0	0	Surviving that hit restores <good>10%</good> of maximum armor to every armor cell.
 effect|RISE_FROM_THE_ASHES_ARMOR_RESTORE_PERCENT|12.5	0	Surviving that hit restores <good>12.5%</good> of maximum armor to every armor cell.
 effect|RISE_FROM_THE_ASHES_ARMOR_RESTORE_PERCENT|100.0	0	Surviving that hit restores <good>100%</good> of maximum armor to every armor cell.
 effect|RISE_FROM_THE_ASHES_ARMOR_RESTORE_PERCENT|-10.0	0	Surviving that hit restores <good>-10%</good> of maximum armor to every armor cell.
 effect|RISE_FROM_THE_ASHES_ARMOR_RESTORE_PERCENT|-12.5	0	Surviving that hit restores <good>-12.5%</good> of maximum armor to every armor cell.
-effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_PERCENT|1.0	0	<bad>1%</bad> more damage taken for 6 seconds after surviving that hit.
-effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_PERCENT|10.0	0	<bad>10%</bad> more damage taken for 6 seconds after surviving that hit.
-effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_PERCENT|12.5	0	<bad>12.5%</bad> more damage taken for 6 seconds after surviving that hit.
-effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_PERCENT|100.0	0	<bad>100%</bad> more damage taken for 6 seconds after surviving that hit.
-effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_PERCENT|-10.0	0	<good>10%</good> less damage taken for 6 seconds after surviving that hit.
-effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_PERCENT|-12.5	0	<good>12.5%</good> less damage taken for 6 seconds after surviving that hit.
+effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_MULT|1.0	0	<bad>1%</bad> more damage taken for 6 seconds after surviving that hit.
+effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_MULT|10.0	0	<bad>10%</bad> more damage taken for 6 seconds after surviving that hit.
+effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_MULT|12.5	0	<bad>12.5%</bad> more damage taken for 6 seconds after surviving that hit.
+effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_MULT|100.0	0	<bad>100%</bad> more damage taken for 6 seconds after surviving that hit.
+effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_MULT|-10.0	0	<good>10%</good> less damage taken for 6 seconds after surviving that hit.
+effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_MULT|-12.5	0	<good>12.5%</good> less damage taken for 6 seconds after surviving that hit.
 effect|RISE_FROM_THE_ASHES_HULL_PERCENT|1.0	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>1%</good> of its maximum hull points.
 effect|RISE_FROM_THE_ASHES_HULL_PERCENT|10.0	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>10%</good> of its maximum hull points.
 effect|RISE_FROM_THE_ASHES_HULL_PERCENT|12.5	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>12.5%</good> of its maximum hull points.
@@ -2416,12 +2524,12 @@ effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|12.5	0	<good>12.5%</good> reduced da
 effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|100.0	0	<good>100%</good> reduced damage taken by shields while moving faster than 75% of top speed.
 effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|-10.0	0	<good>10%</good> reduced damage taken by shields while moving faster than 75% of top speed.
 effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|-12.5	0	<good>12.5%</good> reduced damage taken by shields while moving faster than 75% of top speed.
-effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|1.0	0	<good>1%</good> less damage taken by shields from automated ships.
-effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|10.0	0	<good>10%</good> less damage taken by shields from automated ships.
-effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|12.5	0	<good>12.5%</good> less damage taken by shields from automated ships.
-effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|100.0	0	<good>100%</good> less damage taken by shields from automated ships.
-effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|-10.0	0	<good>-10%</good> less damage taken by shields from automated ships.
-effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|-12.5	0	<good>-12.5%</good> less damage taken by shields from automated ships.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_MULT|1.0	0	<good>1%</good> less damage taken by shields from automated ships.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_MULT|10.0	0	<good>10%</good> less damage taken by shields from automated ships.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_MULT|12.5	0	<good>12.5%</good> less damage taken by shields from automated ships.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_MULT|100.0	0	<good>100%</good> less damage taken by shields from automated ships.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_MULT|-10.0	0	<good>-10%</good> less damage taken by shields from automated ships.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_MULT|-12.5	0	<good>-12.5%</good> less damage taken by shields from automated ships.
 effect|SHIELD_DAMAGE_TAKEN_MULT|1.0	1	<good>1%</good> more damage taken by shields.
 effect|SHIELD_DAMAGE_TAKEN_MULT|10.0	1	<good>10%</good> more damage taken by shields.
 effect|SHIELD_DAMAGE_TAKEN_MULT|12.5	1	<good>12.5%</good> more damage taken by shields.
@@ -2434,6 +2542,12 @@ effect|SHIELD_DEFLECT_CHANCE_PERCENT|12.5	0	<good>12.5%</good> chance for non-mi
 effect|SHIELD_DEFLECT_CHANCE_PERCENT|100.0	0	<good>100%</good> chance for non-missile projectiles hitting shields to be deflected for no flux.
 effect|SHIELD_DEFLECT_CHANCE_PERCENT|-10.0	0	<good>-10%</good> chance for non-missile projectiles hitting shields to be deflected for no flux.
 effect|SHIELD_DEFLECT_CHANCE_PERCENT|-12.5	0	<good>-12.5%</good> chance for non-missile projectiles hitting shields to be deflected for no flux.
+effect|SHIELD_EMP_TO_ENERGY_PERCENT|1.0	0	<good>1%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+effect|SHIELD_EMP_TO_ENERGY_PERCENT|10.0	0	<good>10%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+effect|SHIELD_EMP_TO_ENERGY_PERCENT|12.5	0	<good>12.5%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+effect|SHIELD_EMP_TO_ENERGY_PERCENT|100.0	0	<good>100%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+effect|SHIELD_EMP_TO_ENERGY_PERCENT|-10.0	0	<good>-10%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+effect|SHIELD_EMP_TO_ENERGY_PERCENT|-12.5	0	<good>-12.5%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
 effect|SHIELD_PIERCE_CHANCE_MULT|1.0	1	<good>1%</good> more chance for shields to be pierced by EMP arcs.
 effect|SHIELD_PIERCE_CHANCE_MULT|10.0	1	<good>10%</good> more chance for shields to be pierced by EMP arcs.
 effect|SHIELD_PIERCE_CHANCE_MULT|12.5	1	<good>12.5%</good> more chance for shields to be pierced by EMP arcs.
@@ -2506,12 +2620,12 @@ effect|SHROUDED_LENS_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased Shrouded
 effect|SHROUDED_LENS_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased Shrouded Lens damage.
 effect|SHROUDED_LENS_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> increased Shrouded Lens damage.
 effect|SHROUDED_LENS_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> increased Shrouded Lens damage.
-effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|1.0	0	Allied ships of a smaller hull size within 800 su take <good>1%</good> less damage. Only the strongest buff of this effect applies at any one time.
-effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|10.0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
-effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|12.5	0	Allied ships of a smaller hull size within 800 su take <good>12.5%</good> less damage. Only the strongest buff of this effect applies at any one time.
-effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|100.0	0	Allied ships of a smaller hull size within 800 su take <good>100%</good> less damage. Only the strongest buff of this effect applies at any one time.
-effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|-10.0	0	Allied ships of a smaller hull size within 800 su take <good>-10%</good> less damage. Only the strongest buff of this effect applies at any one time.
-effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|-12.5	0	Allied ships of a smaller hull size within 800 su take <good>-12.5%</good> less damage. Only the strongest buff of this effect applies at any one time.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_MULT|1.0	0	Allied ships of a smaller hull size within 800 su take <good>1%</good> less damage. Only the strongest buff of this effect applies at any one time.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_MULT|10.0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_MULT|12.5	0	Allied ships of a smaller hull size within 800 su take <good>12.5%</good> less damage. Only the strongest buff of this effect applies at any one time.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_MULT|100.0	0	Allied ships of a smaller hull size within 800 su take <good>100%</good> less damage. Only the strongest buff of this effect applies at any one time.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_MULT|-10.0	0	Allied ships of a smaller hull size within 800 su take <good>-10%</good> less damage. Only the strongest buff of this effect applies at any one time.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_MULT|-12.5	0	Allied ships of a smaller hull size within 800 su take <good>-12.5%</good> less damage. Only the strongest buff of this effect applies at any one time.
 effect|SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP|1.0	0	All damage from weapons in small energy mounts is converted to EMP damage.
 effect|SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP|10.0	0	All damage from weapons in small energy mounts is converted to EMP damage.
 effect|SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP|12.5	0	All damage from weapons in small energy mounts is converted to EMP damage.
@@ -2620,6 +2734,18 @@ effect|STRIKECRAFT_OP_DEPLOYMENT_COST_FLAT|12.5	1	<good>+12.5</good> to deployme
 effect|STRIKECRAFT_OP_DEPLOYMENT_COST_FLAT|100.0	1	<good>+100</good> to deployment points and supplies to recover for every 5 ordnance points of strikecraft wings, at least <good>+100</good>. Combat readiness lost per deployment rises with it.
 effect|STRIKECRAFT_OP_DEPLOYMENT_COST_FLAT|-10.0	1	<bad>-10</bad> to deployment points and supplies to recover for every 5 ordnance points of strikecraft wings, at least <bad>-10</bad>. Combat readiness lost per deployment falls with it.
 effect|STRIKECRAFT_OP_DEPLOYMENT_COST_FLAT|-12.5	1	<bad>-12.5</bad> to deployment points and supplies to recover for every 5 ordnance points of strikecraft wings, at least <bad>-12.5</bad>. Combat readiness lost per deployment falls with it.
+effect|STRIKECRAFT_RIFT_EXPLOSION_DAMAGE_PERCENT|1.0	0	Strikecraft launched from this ship have <good>1%</good> increased rift explosion damage.
+effect|STRIKECRAFT_RIFT_EXPLOSION_DAMAGE_PERCENT|10.0	0	Strikecraft launched from this ship have <good>10%</good> increased rift explosion damage.
+effect|STRIKECRAFT_RIFT_EXPLOSION_DAMAGE_PERCENT|12.5	0	Strikecraft launched from this ship have <good>12.5%</good> increased rift explosion damage.
+effect|STRIKECRAFT_RIFT_EXPLOSION_DAMAGE_PERCENT|100.0	0	Strikecraft launched from this ship have <good>100%</good> increased rift explosion damage.
+effect|STRIKECRAFT_RIFT_EXPLOSION_DAMAGE_PERCENT|-10.0	0	Strikecraft launched from this ship have <good>-10%</good> increased rift explosion damage.
+effect|STRIKECRAFT_RIFT_EXPLOSION_DAMAGE_PERCENT|-12.5	0	Strikecraft launched from this ship have <good>-12.5%</good> increased rift explosion damage.
+effect|STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT|1.0	0	Strikecraft launched from this ship have a <good>1%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+effect|STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT|10.0	0	Strikecraft launched from this ship have a <good>10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+effect|STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT|12.5	0	Strikecraft launched from this ship have a <good>12.5%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+effect|STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT|100.0	0	Strikecraft launched from this ship have a <good>100%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+effect|STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT|-10.0	0	Strikecraft launched from this ship have a <good>-10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+effect|STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT|-12.5	0	Strikecraft launched from this ship have a <good>-12.5%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
 effect|STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT|1.0	0	Strikecraft launched from this ship have <good>1%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
 effect|STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT|10.0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
 effect|STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT|12.5	0	Strikecraft launched from this ship have <good>12.5%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
@@ -2686,6 +2812,12 @@ effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|12.5	0	Each fragment this ship's frag
 effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|100.0	0	Each fragment this ship's fragment swarm would regrow while full instead repairs <good>100%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per deployment.
 effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|-10.0	0	Each fragment this ship's fragment swarm would regrow while full instead repairs <good>-10%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per deployment.
 effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|-12.5	0	Each fragment this ship's fragment swarm would regrow while full instead repairs <good>-12.5%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per deployment.
+effect|SYSTEM_ACTIVATION_TIMEFLOW_PERCENT|1.0	0	When this ship activates its ship system, it gains <good>1%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+effect|SYSTEM_ACTIVATION_TIMEFLOW_PERCENT|10.0	0	When this ship activates its ship system, it gains <good>10%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+effect|SYSTEM_ACTIVATION_TIMEFLOW_PERCENT|12.5	0	When this ship activates its ship system, it gains <good>12.5%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+effect|SYSTEM_ACTIVATION_TIMEFLOW_PERCENT|100.0	0	When this ship activates its ship system, it gains <good>100%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+effect|SYSTEM_ACTIVATION_TIMEFLOW_PERCENT|-10.0	0	When this ship activates its ship system, it gains <good>-10%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+effect|SYSTEM_ACTIVATION_TIMEFLOW_PERCENT|-12.5	0	When this ship activates its ship system, it gains <good>-12.5%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
 effect|SYSTEM_CHARGES_FLAT|1.0	0	<good>+1</good> to ship system charges.
 effect|SYSTEM_CHARGES_FLAT|10.0	0	<good>+10</good> to ship system charges.
 effect|SYSTEM_CHARGES_FLAT|12.5	0	<good>+12.5</good> to ship system charges.
@@ -2806,18 +2938,36 @@ effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|12.5	0	Additional top speed equal to 
 effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|100.0	0	Additional top speed equal to <good>100%</good> of your flagship's base top speed while your flagship is deployed.
 effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|-10.0	0	Additional top speed equal to <good>-10%</good> of your flagship's base top speed while your flagship is deployed.
 effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|-12.5	0	Additional top speed equal to <good>-12.5%</good> of your flagship's base top speed while your flagship is deployed.
+effect|TOP_SPEED_WHILE_RETREATING_PERCENT|1.0	0	<good>1%</good> increased top speed while retreating.
+effect|TOP_SPEED_WHILE_RETREATING_PERCENT|10.0	0	<good>10%</good> increased top speed while retreating.
+effect|TOP_SPEED_WHILE_RETREATING_PERCENT|12.5	0	<good>12.5%</good> increased top speed while retreating.
+effect|TOP_SPEED_WHILE_RETREATING_PERCENT|100.0	0	<good>100%</good> increased top speed while retreating.
+effect|TOP_SPEED_WHILE_RETREATING_PERCENT|-10.0	0	<bad>10%</bad> reduced top speed while retreating.
+effect|TOP_SPEED_WHILE_RETREATING_PERCENT|-12.5	0	<bad>12.5%</bad> reduced top speed while retreating.
 effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|1.0	0	<good>1%</good> increased top speed while this ship's fragment swarm is at least 90% full.
 effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|10.0	0	<good>10%</good> increased top speed while this ship's fragment swarm is at least 90% full.
 effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|12.5	0	<good>12.5%</good> increased top speed while this ship's fragment swarm is at least 90% full.
 effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|100.0	0	<good>100%</good> increased top speed while this ship's fragment swarm is at least 90% full.
 effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|-10.0	0	<good>-10%</good> increased top speed while this ship's fragment swarm is at least 90% full.
 effect|TOP_SPEED_WHILE_SWARM_FULL_PERCENT|-12.5	0	<good>-12.5%</good> increased top speed while this ship's fragment swarm is at least 90% full.
+effect|TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT|1.0	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+effect|TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT|10.0	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+10</good> to max burn level, up to this ship's max burn level.
+effect|TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT|12.5	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+12.5</good> to max burn level, up to this ship's max burn level.
+effect|TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT|100.0	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+100</good> to max burn level, up to this ship's max burn level.
+effect|TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT|-10.0	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+-10</good> to max burn level, up to this ship's max burn level.
+effect|TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT|-12.5	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+-12.5</good> to max burn level, up to this ship's max burn level.
 effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|1.0	1	Your fleet has <bad>1%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
 effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|10.0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
 effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|12.5	1	Your fleet has <bad>12.5%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
 effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|100.0	1	Your fleet has <bad>100%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
 effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|-10.0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
 effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|-12.5	1	Your fleet has <bad>12.5%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+effect|UNHIT_ARMOR_REGEN_LOW_CAP_PERCENT|1.0	0	Armor cells not hit for 5 seconds repair <good>1%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+effect|UNHIT_ARMOR_REGEN_LOW_CAP_PERCENT|10.0	0	Armor cells not hit for 5 seconds repair <good>10%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+effect|UNHIT_ARMOR_REGEN_LOW_CAP_PERCENT|12.5	0	Armor cells not hit for 5 seconds repair <good>12.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+effect|UNHIT_ARMOR_REGEN_LOW_CAP_PERCENT|100.0	0	Armor cells not hit for 5 seconds repair <good>100%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+effect|UNHIT_ARMOR_REGEN_LOW_CAP_PERCENT|-10.0	0	Armor cells not hit for 5 seconds repair <good>-10%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+effect|UNHIT_ARMOR_REGEN_LOW_CAP_PERCENT|-12.5	0	Armor cells not hit for 5 seconds repair <good>-12.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
 effect|UNHIT_ARMOR_REGEN_PERCENT|1.0	0	Armor cells not hit for 5 seconds repair <good>1%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per deployment.
 effect|UNHIT_ARMOR_REGEN_PERCENT|10.0	0	Armor cells not hit for 5 seconds repair <good>10%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per deployment.
 effect|UNHIT_ARMOR_REGEN_PERCENT|12.5	0	Armor cells not hit for 5 seconds repair <good>12.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 50% of this ship's total armor per deployment.
@@ -2908,6 +3058,12 @@ effect|WEAPON_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased weapon damage.
 effect|WEAPON_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased weapon damage.
 effect|WEAPON_DAMAGE_PERCENT|-10.0	0	<bad>10%</bad> reduced weapon damage.
 effect|WEAPON_DAMAGE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced weapon damage.
+effect|WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL|1.0	0	<good>1%</good> increased weapon damage while this ship's affinities are all equal.
+effect|WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL|10.0	0	<good>10%</good> increased weapon damage while this ship's affinities are all equal.
+effect|WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL|12.5	0	<good>12.5%</good> increased weapon damage while this ship's affinities are all equal.
+effect|WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL|100.0	0	<good>100%</good> increased weapon damage while this ship's affinities are all equal.
+effect|WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL|-10.0	0	<bad>10%</bad> reduced weapon damage while this ship's affinities are all equal.
+effect|WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL|-12.5	0	<bad>12.5%</bad> reduced weapon damage while this ship's affinities are all equal.
 effect|WEAPON_DURABILITY_MULT|1.0	0	<good>1%</good> more weapon durability.
 effect|WEAPON_DURABILITY_MULT|10.0	0	<good>10%</good> more weapon durability.
 effect|WEAPON_DURABILITY_MULT|12.5	0	<good>12.5%</good> more weapon durability.
@@ -3073,6 +3229,18 @@ type-detail|accelerated_shields|CRUISER|0	0	Mutually exclusive with <hullmod>hul
 type|accelerated_shields|CAPITAL_SHIP|0	0	<good>50%</good> increased shield turn rate.
 type|accelerated_shields|CAPITAL_SHIP|1	0	<good>50%</good> increased shield raise rate.
 type-detail|accelerated_shields|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Constellate Design- Jet Black</hullmod>\n• <hullmod>Knight Refit</hullmod>\n• <hullmod>Primitive Shields</hullmod>\n• <hullmod>Low Arc Shield Emitter</hullmod>\n• <hullmod>Lostech Engineering</hullmod>\n• <hullmod>Accelerated Shields</hullmod>
+flavour|acceleration	0	Drive injectors rebored the pirate way, wide and rough, for a fast start from a standing burn. The tolerances are approximate.
+type|acceleration|null|0	0	<good>10%</good> increased acceleration.
+type|acceleration|FRIGATE|0	0	<good>10%</good> increased acceleration.
+type|acceleration|DESTROYER|0	0	<good>10%</good> increased acceleration.
+type|acceleration|CRUISER|0	0	<good>10%</good> increased acceleration.
+type|acceleration|CAPITAL_SHIP|0	0	<good>10%</good> increased acceleration.
+flavour|adaptive_munitions	0	Remnant drones match each round to whatever it is about to hit.
+type|adaptive_munitions|null|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+type|adaptive_munitions|FRIGATE|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+type|adaptive_munitions|DESTROYER|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+type|adaptive_munitions|CRUISER|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+type|adaptive_munitions|CAPITAL_SHIP|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
 flavour|adaptive_phase_coils	0	Phase coils lose their grip on normal space as hard flux builds. A crew willing to rewind them by hand can keep that grip a while longer.
 flavourAutomated|adaptive_phase_coils	0	Phase coils lose their grip on normal space as hard flux builds. The ship's core models the slip from its own coil telemetry and corrects for it faster than any hand could rewind them, keeping that grip a while longer.
 type|adaptive_phase_coils|null|0	0	<good>40%</good> increased hard flux level at which phased speed reaches its minimum.
@@ -3283,6 +3451,7 @@ type|ballistic_weapon_damage|FRIGATE|0	0	<good>3%</good> increased ballistic wea
 type|ballistic_weapon_damage|DESTROYER|0	0	<good>3%</good> increased ballistic weapon damage.
 type|ballistic_weapon_damage|CRUISER|0	0	<good>3%</good> increased ballistic weapon damage.
 type|ballistic_weapon_damage|CAPITAL_SHIP|0	0	<good>3%</good> increased ballistic weapon damage.
+flavour|beam_or_non_beam_energy_weapon_damage	0	Emitter coils salvaged from Remnant wrecks can be wound for a steady beam or a hard pulse, but not both. Remnant drones never seem to need the choice.
 type|beam_weapon_damage|null|0	0	<good>3%</good> increased beam weapon damage.
 type|beam_weapon_damage|FRIGATE|0	0	<good>3%</good> increased beam weapon damage.
 type|beam_weapon_damage|DESTROYER|0	0	<good>3%</good> increased beam weapon damage.
@@ -3325,6 +3494,12 @@ type-detail|blast_doors|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hu
 type|blast_doors|CAPITAL_SHIP|0	0	<good>20%</good> increased hull points.
 type|blast_doors|CAPITAL_SHIP|1	1	<bad>60%</bad> less crew casualties.
 type-detail|blast_doors|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Blast Doors</hullmod>
+flavour|blood_in_the_water	0	A good pirate doesn't wait for their prey to recover.
+type|blood_in_the_water|null|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+type|blood_in_the_water|FRIGATE|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+type|blood_in_the_water|DESTROYER|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+type|blood_in_the_water|CRUISER|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+type|blood_in_the_water|CAPITAL_SHIP|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
 flavour|borrowed_grace	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the crew rewires the ship to do the same. The shield emitters were never built for that load.
 flavourAutomated|borrowed_grace	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the refit crew rewires the ship to do the same. The shield emitters were never built for that load.
 itemCost|borrowed_grace	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
@@ -3369,6 +3544,18 @@ type|cargo_capacity|FRIGATE|0	0	<good>+5</good> to cargo capacity.
 type|cargo_capacity|DESTROYER|0	0	<good>+15</good> to cargo capacity.
 type|cargo_capacity|CRUISER|0	0	<good>+25</good> to cargo capacity.
 type|cargo_capacity|CAPITAL_SHIP|0	0	<good>+50</good> to cargo capacity.
+flavour|cease_and_desist	0	Tri-Tachyon does not tolerate unlicensed use of its designs, even mid-battle.
+type|cease_and_desist|null|0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
+type|cease_and_desist|FRIGATE|0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
+type|cease_and_desist|DESTROYER|0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
+type|cease_and_desist|CRUISER|0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
+type|cease_and_desist|CAPITAL_SHIP|0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
+flavour|cheap_shots	0	Pirate fire control holds until a target's shields collapse or its drives gutter out. Fair fights are for the naive.
+type|cheap_shots|null|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
+type|cheap_shots|FRIGATE|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
+type|cheap_shots|DESTROYER|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
+type|cheap_shots|CRUISER|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
+type|cheap_shots|CAPITAL_SHIP|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
 flavour|chronos_rhythms	0	After long hours with a recovered Chronos core, the crew decodes how it times its own systems and rewrites the ship system's control loop to match, cycling it faster than its makers ever intended.
 flavourAutomated|chronos_rhythms	0	Linked to a recovered Chronos core, the ship's core logs how it times its own systems and rewrites the ship system's control loop to match, cycling it faster than its makers ever intended.
 itemCost|chronos_rhythms	0	Costs 1 rat_chronos_core to allocate, returned when unallocated.
@@ -3399,10 +3586,6 @@ type|combat_readiness|FRIGATE|0	0	<good>2%</good> increased maximum combat readi
 type|combat_readiness|DESTROYER|0	0	<good>2%</good> increased maximum combat readiness.
 type|combat_readiness|CRUISER|0	0	<good>2%</good> increased maximum combat readiness.
 type|combat_readiness|CAPITAL_SHIP|0	0	<good>2%</good> increased maximum combat readiness.
-type|combat_vision|FRIGATE|0	0	<good>+300</good> to in-combat sensor/vision range.
-type|combat_vision|DESTROYER|0	0	<good>+500</good> to in-combat sensor/vision range.
-type|combat_vision|CRUISER|0	0	<good>+700</good> to in-combat sensor/vision range.
-type|combat_vision|CAPITAL_SHIP|0	0	<good>+900</good> to in-combat sensor/vision range.
 flavour|comsec_discipline	0	In a joint League fleet, every member world jams anyone it suspects of listening, which is everyone. Most of the noise comes from allies.
 type|comsec_discipline|null|0	1	<bad>25%</bad> reduced electronic warfare penalty against this ship's weapon range.
 type|comsec_discipline|null|1	0	<good>15%</good> increased this ship's sensor strength.
@@ -3515,6 +3698,24 @@ type|crustacean_integration|CRUISER|2	0	<good>30%</good> increased peak performa
 type|crustacean_integration|CAPITAL_SHIP|0	0	<good>15%</good> increased combat readiness recovery rate.
 type|crustacean_integration|CAPITAL_SHIP|1	0	<good>10%</good> increased top speed.
 type|crustacean_integration|CAPITAL_SHIP|2	0	<good>30%</good> increased peak performance time.
+flavour|cut_and_run	0	Acquiring plunder is sometimes not as important as making it home.
+type|cut_and_run|null|0	0	<good>30%</good> increased top speed while retreating.
+type|cut_and_run|FRIGATE|0	0	<good>30%</good> increased top speed while retreating.
+type|cut_and_run|DESTROYER|0	0	<good>30%</good> increased top speed while retreating.
+type|cut_and_run|CRUISER|0	0	<good>30%</good> increased top speed while retreating.
+type|cut_and_run|CAPITAL_SHIP|0	0	<good>30%</good> increased top speed while retreating.
+flavour|damage_to_helpless_ships	0	Fire-control software lifted from a pirate wreck, written to mark any target with failing shields or dead drives. The rest of its memory is gambling ledgers.
+type|damage_to_helpless_ships|null|0	0	<good>5%</good> increased damage to overloaded, venting or flamed-out ships.
+type|damage_to_helpless_ships|FRIGATE|0	0	<good>5%</good> increased damage to overloaded, venting or flamed-out ships.
+type|damage_to_helpless_ships|DESTROYER|0	0	<good>5%</good> increased damage to overloaded, venting or flamed-out ships.
+type|damage_to_helpless_ships|CRUISER|0	0	<good>5%</good> increased damage to overloaded, venting or flamed-out ships.
+type|damage_to_helpless_ships|CAPITAL_SHIP|0	0	<good>5%</good> increased damage to overloaded, venting or flamed-out ships.
+flavour|damage_to_slower_ships	0	Targeting tables from a raider's fire-control core weight every shot toward whatever can't outrun the ship. Most freighters can't.
+type|damage_to_slower_ships|null|0	0	<good>4%</good> increased damage to ships with a lower top speed than this one.
+type|damage_to_slower_ships|FRIGATE|0	0	<good>4%</good> increased damage to ships with a lower top speed than this one.
+type|damage_to_slower_ships|DESTROYER|0	0	<good>4%</good> increased damage to ships with a lower top speed than this one.
+type|damage_to_slower_ships|CRUISER|0	0	<good>4%</good> increased damage to ships with a lower top speed than this one.
+type|damage_to_slower_ships|CAPITAL_SHIP|0	0	<good>4%</good> increased damage to ships with a lower top speed than this one.
 type-detail|dedicated_targeting_core|null|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
 type-detail|dedicated_targeting_core|null|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Carrier Gunships</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Dedicated Targeting Core</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Integrated Targeting Unit</node>
 type|dedicated_targeting_core|FRIGATE|0	0	<good>0%</good> increased ballistic weapon range.
@@ -3529,8 +3730,8 @@ type|dedicated_targeting_core|CRUISER|0	0	<good>35%</good> increased ballistic w
 type|dedicated_targeting_core|CRUISER|1	0	<good>35%</good> increased energy weapon range.
 type-detail|dedicated_targeting_core|CRUISER|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
 type-detail|dedicated_targeting_core|CRUISER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Carrier Gunships</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Dedicated Targeting Core</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Integrated Targeting Unit</node>
-type|dedicated_targeting_core|CAPITAL_SHIP|0	0	<good>50%</good> increased ballistic weapon range.
-type|dedicated_targeting_core|CAPITAL_SHIP|1	0	<good>50%</good> increased energy weapon range.
+type|dedicated_targeting_core|CAPITAL_SHIP|0	0	<good>55%</good> increased ballistic weapon range.
+type|dedicated_targeting_core|CAPITAL_SHIP|1	0	<good>55%</good> increased energy weapon range.
 type-detail|dedicated_targeting_core|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
 type-detail|dedicated_targeting_core|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Carrier Gunships</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Dedicated Targeting Core</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Integrated Targeting Unit</node>
 flavour|defensive_compact	0	Under the League's founding compact, every member world must defend whatever the League holds.
@@ -3546,8 +3747,7 @@ type-detail|defensive_targeting_array|FRIGATE|0	0	Mutually exclusive with <hullm
 type-detail|defensive_targeting_array|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Defensive Targeting Array</hullmod>
 type-detail|defensive_targeting_array|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Defensive Targeting Array</hullmod>
 type-detail|defensive_targeting_array|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Defensive Targeting Array</hullmod>
-flavour|disintegration	0	Hulls killed by Remnant energy weapons come apart around every impact in a way no human weapon manages. Salvors who study enough of the wrecks learn to tune this ship's energy weapons to the same pattern, and try not to think about what it resembles.
-flavourAutomated|disintegration	0	Hulls killed by Remnant energy weapons come apart around every impact in a way no human weapon manages. The ship's core scans enough of the wrecks to model the pattern and tunes its energy weapons to match. It has no opinion on what the pattern resembles.
+flavour|disintegration	0	"And what the defiler builds shall be unmade around its every wound, so that no part remains to be mended."\n- Attributed to the Book of Ludd, apocrypha
 type|disintegration|null|0	0	Energy weapon hits on armor strip an additional <good>20%</good> of the hit's damage from the armor around the impact over 5 seconds.
 type|disintegration|FRIGATE|0	0	Energy weapon hits on armor strip an additional <good>20%</good> of the hit's damage from the armor around the impact over 5 seconds.
 type|disintegration|DESTROYER|0	0	Energy weapon hits on armor strip an additional <good>20%</good> of the hit's damage from the armor around the impact over 5 seconds.
@@ -3812,6 +4012,12 @@ type|domain_pattern_laminate|CRUISER|0	1	<bad>8%</bad> reduced kinetic damage ta
 type|domain_pattern_laminate|CRUISER|1	1	<bad>8%</bad> reduced high-explosive damage taken.
 type|domain_pattern_laminate|CAPITAL_SHIP|0	1	<bad>8%</bad> reduced kinetic damage taken.
 type|domain_pattern_laminate|CAPITAL_SHIP|1	1	<bad>8%</bad> reduced high-explosive damage taken.
+flavour|dormant_repair_cycle	0	A dormant Nexus still mends its own plating, a little at a time.
+type|dormant_repair_cycle|null|0	0	Armor cells not hit for 5 seconds repair <good>0.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+type|dormant_repair_cycle|FRIGATE|0	0	Armor cells not hit for 5 seconds repair <good>0.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+type|dormant_repair_cycle|DESTROYER|0	0	Armor cells not hit for 5 seconds repair <good>0.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+type|dormant_repair_cycle|CRUISER|0	0	Armor cells not hit for 5 seconds repair <good>0.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+type|dormant_repair_cycle|CAPITAL_SHIP|0	0	Armor cells not hit for 5 seconds repair <good>0.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
 flavour|dynamic_grid	0	Nightcross Armory fits its dynamic coils to almost every hull it builds and never sells them on their own, so the crew pulls a set from a boarded Nightcross wreck. The warranty, naturally, does not cover third-party installation.
 flavourAutomated|dynamic_grid	0	Nightcross Armory fits its dynamic coils to almost every hull it builds and never sells them on their own, so the refit crew pulls a set from a boarded Nightcross wreck. The warranty, naturally, does not cover third-party installation, least of all into a machine.
 type|dynamic_grid|null|0	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
@@ -3933,6 +4139,12 @@ type|efficient_vents|CRUISER|0	0	<good>15%</good> increased flux dissipation.
 type|efficient_vents|CRUISER|1	0	<good>+50</good> to flux dissipation.
 type|efficient_vents|CAPITAL_SHIP|0	0	<good>15%</good> increased flux dissipation.
 type|efficient_vents|CAPITAL_SHIP|1	0	<good>+50</good> to flux dissipation.
+flavour|emp_damage	0	Capacitor banks rewound to Tri-Tachyon specifications put more charge behind every hit. The specifications were not for sale, strictly speaking.
+type|emp_damage|null|0	0	<good>5%</good> increased EMP damage.
+type|emp_damage|FRIGATE|0	0	<good>5%</good> increased EMP damage.
+type|emp_damage|DESTROYER|0	0	<good>5%</good> increased EMP damage.
+type|emp_damage|CRUISER|0	0	<good>5%</good> increased EMP damage.
+type|emp_damage|CAPITAL_SHIP|0	0	<good>5%</good> increased EMP damage.
 type|energy_damage_resistance|null|0	1	<bad>5%</bad> reduced energy damage taken.
 type|energy_damage_resistance|FRIGATE|0	1	<bad>5%</bad> reduced energy damage taken.
 type|energy_damage_resistance|DESTROYER|0	1	<bad>5%</bad> reduced energy damage taken.
@@ -3958,6 +4170,12 @@ type|engine_durability_and_sensor_profile|CRUISER|0	0	<good>25%</good> increased
 type|engine_durability_and_sensor_profile|CRUISER|1	1	<bad>10%</bad> reduced sensor profile.
 type|engine_durability_and_sensor_profile|CAPITAL_SHIP|0	0	<good>25%</good> increased engine durability.
 type|engine_durability_and_sensor_profile|CAPITAL_SHIP|1	1	<bad>10%</bad> reduced sensor profile.
+flavour|equilibrium_protocol	0	Remnant hulls are rumored to hold every lineage of Domain design in a balance their cores never let slip.
+type|equilibrium_protocol|null|0	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
+type|equilibrium_protocol|FRIGATE|0	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
+type|equilibrium_protocol|DESTROYER|0	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
+type|equilibrium_protocol|CRUISER|0	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
+type|equilibrium_protocol|CAPITAL_SHIP|0	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
 type|escort_package|null|0	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type|escort_package|null|1	0	While within 700 su of a larger friendly ship, up to 10% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type|escort_package|null|2	0	While within 700 su of a larger friendly ship, up to 15% increased ballistic and energy weapon range, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
@@ -4253,6 +4471,12 @@ type|furor_machinae|FRIGATE|0	0	Damage dealt to enemy ships builds fury, grantin
 type|furor_machinae|DESTROYER|0	0	Damage dealt to enemy ships builds fury, granting up to <good>15%</good> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
 type|furor_machinae|CRUISER|0	0	Damage dealt to enemy ships builds fury, granting up to <good>15%</good> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
 type|furor_machinae|CAPITAL_SHIP|0	0	Damage dealt to enemy ships builds fury, granting up to <good>15%</good> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
+flavour|greater_high_tech_affinity	0	Flux lattices stripped from Remnant drones are a generation ahead of anything in the Tri-Tachyon catalogue. Tri-Tachyon is said to disagree.
+type|greater_high_tech_affinity|null|0	0	<good>+10</good> to High Tech Affinity.
+type|greater_high_tech_affinity|FRIGATE|0	0	<good>+10</good> to High Tech Affinity.
+type|greater_high_tech_affinity|DESTROYER|0	0	<good>+10</good> to High Tech Affinity.
+type|greater_high_tech_affinity|CRUISER|0	0	<good>+10</good> to High Tech Affinity.
+type|greater_high_tech_affinity|CAPITAL_SHIP|0	0	<good>+10</good> to High Tech Affinity.
 flavour|ground_support	0	Raids flown alongside pirate crews teach the crew to turn spare berths and cargo lifts into a drop platform for the marines, and to keep a few guns pointed at the ground while they work.
 flavourAutomated|ground_support	0	The ship's core logs every pirate raid it flies beside, down to where the guns point while the marines are on the ground. The refit crew turns its cargo lifts into a drop platform, and the core keeps the guns where the logs say.
 type|ground_support|null|0	0	Your fleet gains effective planetary raid strength equal to <good>25%</good> of this ship's maximum crew capacity, up to the total number of marines in the fleet.
@@ -4302,6 +4526,17 @@ type|hardlight_marking|CRUISER|0	0	Each hit by a strikecraft launched from this 
 type|hardlight_marking|CRUISER|1	0	Strikecraft marks grant up to a maximum of <good>30%</good> increased damage taken.
 type|hardlight_marking|CAPITAL_SHIP|0	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>2%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
 type|hardlight_marking|CAPITAL_SHIP|1	0	Strikecraft marks grant up to a maximum of <good>30%</good> increased damage taken.
+flavour|haul_the_prize	0	Pirates tow their prizes home on cables welded straight to the drive spine. It is slow, but nothing gets left behind.
+type|haul_the_prize|null|0	0	<bad>-1</bad> to max burn level.
+type|haul_the_prize|null|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+type|haul_the_prize|FRIGATE|0	0	<bad>-1</bad> to max burn level.
+type|haul_the_prize|FRIGATE|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+type|haul_the_prize|DESTROYER|0	0	<bad>-1</bad> to max burn level.
+type|haul_the_prize|DESTROYER|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+type|haul_the_prize|CRUISER|0	0	<bad>-1</bad> to max burn level.
+type|haul_the_prize|CRUISER|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+type|haul_the_prize|CAPITAL_SHIP|0	0	<bad>-1</bad> to max burn level.
+type|haul_the_prize|CAPITAL_SHIP|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
 type-detail|heavy_armor|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Anti-Beam Plating</hullmod>\n• <hullmod>Amorphous Alloy Armor</hullmod>\n• <hullmod>Vanagloria Ionized Armor</hullmod>\n• <hullmod>Critical Point Protection</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Powered Titanium Plates</hullmod>\n• <hullmod>Heavy Armor</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Critical Point Refit</node>
 type|heavy_armor|FRIGATE|0	0	<good>+150</good> to armor.
 type-detail|heavy_armor|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Anti-Beam Plating</hullmod>\n• <hullmod>Amorphous Alloy Armor</hullmod>\n• <hullmod>Vanagloria Ionized Armor</hullmod>\n• <hullmod>Critical Point Protection</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Powered Titanium Plates</hullmod>\n• <hullmod>Heavy Armor</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Critical Point Refit</node>
@@ -4446,6 +4681,11 @@ type|increased_hull|FRIGATE|0	0	<good>2%</good> more hull points.
 type|increased_hull|DESTROYER|0	0	<good>2%</good> more hull points.
 type|increased_hull|CRUISER|0	0	<good>2%</good> more hull points.
 type|increased_hull|CAPITAL_SHIP|0	0	<good>2%</good> more hull points.
+type|increased_mass|null|0	0	<good>10%</good> increased mass.
+type|increased_mass|FRIGATE|0	0	<good>10%</good> increased mass.
+type|increased_mass|DESTROYER|0	0	<good>10%</good> increased mass.
+type|increased_mass|CRUISER|0	0	<good>10%</good> increased mass.
+type|increased_mass|CAPITAL_SHIP|0	0	<good>10%</good> increased mass.
 type|increased_sensor_strength|null|0	0	<good>5%</good> increased this ship's sensor strength.
 type|increased_sensor_strength|FRIGATE|0	0	<good>5%</good> increased this ship's sensor strength.
 type|increased_sensor_strength|DESTROYER|0	0	<good>5%</good> increased this ship's sensor strength.
@@ -4497,17 +4737,17 @@ type|integrated_point_defense_ai|CAPITAL_SHIP|1	0	Point-defense weapons get the 
 type|integrated_point_defense_ai|CAPITAL_SHIP|2	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.
 type-detail|integrated_point_defense_ai|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>SILVERSWORD [Type A]</hullmod>\n• <hullmod>Sentinel Retrofit</hullmod>\n• <hullmod>Sentinel PD Array - Medium</hullmod>\n• <hullmod>Sentinel PD Array - Small</hullmod>\n• <hullmod>Sentinel PD Array</hullmod>\n• <hullmod>Superior Point Defense</hullmod>\n• <hullmod>Improved Point Defense Core</hullmod>\n• <hullmod>Integrated Point Defense AI</hullmod>
 type-detail|integrated_targeting_unit|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dedicated Targeting Core</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Thermal Calibration</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Integrated Targeting Unit</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Dedicated Targeting Core</node>
-type|integrated_targeting_unit|FRIGATE|0	0	<good>5%</good> increased ballistic weapon range.
-type|integrated_targeting_unit|FRIGATE|1	0	<good>5%</good> increased energy weapon range.
+type|integrated_targeting_unit|FRIGATE|0	0	<good>10%</good> increased ballistic weapon range.
+type|integrated_targeting_unit|FRIGATE|1	0	<good>10%</good> increased energy weapon range.
 type-detail|integrated_targeting_unit|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dedicated Targeting Core</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Thermal Calibration</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Integrated Targeting Unit</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Dedicated Targeting Core</node>
-type|integrated_targeting_unit|DESTROYER|0	0	<good>12%</good> increased ballistic weapon range.
-type|integrated_targeting_unit|DESTROYER|1	0	<good>12%</good> increased energy weapon range.
+type|integrated_targeting_unit|DESTROYER|0	0	<good>20%</good> increased ballistic weapon range.
+type|integrated_targeting_unit|DESTROYER|1	0	<good>20%</good> increased energy weapon range.
 type-detail|integrated_targeting_unit|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dedicated Targeting Core</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Thermal Calibration</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Integrated Targeting Unit</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Dedicated Targeting Core</node>
-type|integrated_targeting_unit|CRUISER|0	0	<good>25%</good> increased ballistic weapon range.
-type|integrated_targeting_unit|CRUISER|1	0	<good>25%</good> increased energy weapon range.
+type|integrated_targeting_unit|CRUISER|0	0	<good>35%</good> increased ballistic weapon range.
+type|integrated_targeting_unit|CRUISER|1	0	<good>35%</good> increased energy weapon range.
 type-detail|integrated_targeting_unit|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dedicated Targeting Core</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Thermal Calibration</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Integrated Targeting Unit</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Dedicated Targeting Core</node>
-type|integrated_targeting_unit|CAPITAL_SHIP|0	0	<good>40%</good> increased ballistic weapon range.
-type|integrated_targeting_unit|CAPITAL_SHIP|1	0	<good>40%</good> increased energy weapon range.
+type|integrated_targeting_unit|CAPITAL_SHIP|0	0	<good>55%</good> increased ballistic weapon range.
+type|integrated_targeting_unit|CAPITAL_SHIP|1	0	<good>55%</good> increased energy weapon range.
 type-detail|integrated_targeting_unit|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dedicated Targeting Core</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Thermal Calibration</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Integrated Targeting Unit</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Dedicated Targeting Core</node>
 flavour|ion_bolter_rounds	0	The NCA Vendor sells Ion Bolters to any well-funded mercenary, and taking one apart shows the crew how to overdrive this ship's energy shots the same way. The terms of sale forbid exactly this, in very small print.
 flavourAutomated|ion_bolter_rounds	0	The NCA Vendor sells Ion Bolters to any well-funded mercenary, and taking one apart shows the refit crew how to overdrive this ship's energy shots the same way. The terms of sale forbid exactly this, in very small print.
@@ -4516,6 +4756,18 @@ type|ion_bolter_rounds|FRIGATE|0	0	Energy shots that hit an enemy shield can arc
 type|ion_bolter_rounds|DESTROYER|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
 type|ion_bolter_rounds|CRUISER|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
 type|ion_bolter_rounds|CAPITAL_SHIP|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
+flavour|ion_cascade	0	Once a target's systems are dead, Tri-Tachyon ion firmware moves on to the hull.
+type|ion_cascade|null|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+type|ion_cascade|FRIGATE|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+type|ion_cascade|DESTROYER|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+type|ion_cascade|CRUISER|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+type|ion_cascade|CAPITAL_SHIP|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+flavour|ion_spill	0	Remnant ion bolts leave some of their charge in the shield projector as heat.
+type|ion_spill|null|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+type|ion_spill|FRIGATE|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+type|ion_spill|DESTROYER|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+type|ion_spill|CRUISER|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+type|ion_spill|CAPITAL_SHIP|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
 flavour|joint_strike_package	0	No League detachment will launch second, so joint fleets launch every wing at once.
 type|joint_strike_package|null|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
 type|joint_strike_package|FRIGATE|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
@@ -4611,6 +4863,12 @@ type|lions_roar|FRIGATE|0	0	Enemy ships within 1000 su have <good>10%</good> les
 type|lions_roar|DESTROYER|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
 type|lions_roar|CRUISER|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
 type|lions_roar|CAPITAL_SHIP|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+flavour|litany_of_the_fallen	0	Luddic Church ships carry a memorial plate for every hand lost aboard. The oldest hulls are mostly memorial.
+type|litany_of_the_fallen|null|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+type|litany_of_the_fallen|FRIGATE|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+type|litany_of_the_fallen|DESTROYER|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+type|litany_of_the_fallen|CRUISER|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+type|litany_of_the_fallen|CAPITAL_SHIP|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
 type|live_munitions|null|0	0	Each Heartless stack has a <bad>9%</bad> chance to sacrifice a crew member for each missile fired.
 type|live_munitions|null|1	0	<good>3%</good> increased missile damage for each Heartless stack while the fleet has crew left to give.
 type|live_munitions|null|2	0	<good>3%</good> increased missile top speed for each Heartless stack while the fleet has crew left to give.
@@ -4935,15 +5193,6 @@ type|operations_center|CRUISER|0	0	<good>250%</good> increased command point rec
 type-detail|operations_center|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Oracle Sensor Suite</hullmod>\n• <hullmod>Operations Center</hullmod>
 type|operations_center|CAPITAL_SHIP|0	0	<good>250%</good> increased command point recovery rate while this ship is the flagship.
 type-detail|operations_center|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Oracle Sensor Suite</hullmod>\n• <hullmod>Operations Center</hullmod>
-type|optimised_lenses|null|0	0	<good>+100</good> to non-beam energy weapon range.
-type|optimised_lenses|FRIGATE|0	0	<good>+100</good> to non-beam energy weapon range.
-type|optimised_lenses|FRIGATE|1	0	<good>+400</good> to in-combat sensor/vision range.
-type|optimised_lenses|DESTROYER|0	0	<good>+100</good> to non-beam energy weapon range.
-type|optimised_lenses|DESTROYER|1	0	<good>+600</good> to in-combat sensor/vision range.
-type|optimised_lenses|CRUISER|0	0	<good>+100</good> to non-beam energy weapon range.
-type|optimised_lenses|CRUISER|1	0	<good>+800</good> to in-combat sensor/vision range.
-type|optimised_lenses|CAPITAL_SHIP|0	0	<good>+100</good> to non-beam energy weapon range.
-type|optimised_lenses|CAPITAL_SHIP|1	0	<good>+1000</good> to in-combat sensor/vision range.
 type|packed_capacitors|null|0	0	<good>15%</good> increased flux capacity.
 type|packed_capacitors|null|1	0	<good>+600</good> to flux capacity.
 type|packed_capacitors|FRIGATE|0	0	<good>15%</good> increased flux capacity.
@@ -4954,6 +5203,12 @@ type|packed_capacitors|CRUISER|0	0	<good>15%</good> increased flux capacity.
 type|packed_capacitors|CRUISER|1	0	<good>+600</good> to flux capacity.
 type|packed_capacitors|CAPITAL_SHIP|0	0	<good>15%</good> increased flux capacity.
 type|packed_capacitors|CAPITAL_SHIP|1	0	<good>+600</good> to flux capacity.
+flavour|pathers_prow	0	Pather ships weld scrap plate over the prow until it is more ram than hull. The Path counts this among the few acceptable uses of technology.
+type|pathers_prow|null|0	0	<good>50%</good> more collision damage dealt to enemy ships and <good>50%</good> less collision damage taken.
+type|pathers_prow|FRIGATE|0	0	<good>50%</good> more collision damage dealt to enemy ships and <good>50%</good> less collision damage taken.
+type|pathers_prow|DESTROYER|0	0	<good>50%</good> more collision damage dealt to enemy ships and <good>50%</good> less collision damage taken.
+type|pathers_prow|CRUISER|0	0	<good>50%</good> more collision damage dealt to enemy ships and <good>50%</good> less collision damage taken.
+type|pathers_prow|CAPITAL_SHIP|0	0	<good>50%</good> more collision damage dealt to enemy ships and <good>50%</good> less collision damage taken.
 type|peak_cr_duration|null|0	0	<good>25%</good> increased peak performance time.
 type|peak_cr_duration|FRIGATE|0	0	<good>25%</good> increased peak performance time.
 type|peak_cr_duration|DESTROYER|0	0	<good>25%</good> increased peak performance time.
@@ -4966,6 +5221,18 @@ type|perseverance_through_faith|FRIGATE|0	0	<good>2%</good> more weapon damage f
 type|perseverance_through_faith|DESTROYER|0	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
 type|perseverance_through_faith|CRUISER|0	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
 type|perseverance_through_faith|CAPITAL_SHIP|0	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
+flavour|phantom_wake	0	A phase coil dropped into p-space too sharply leaves an echo of the hull behind. Enemy gunners rarely tell the difference.
+type|phantom_wake|null|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
+type|phantom_wake|FRIGATE|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
+type|phantom_wake|DESTROYER|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
+type|phantom_wake|CRUISER|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
+type|phantom_wake|CAPITAL_SHIP|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
+flavour|phase_ambush_doctrine	0	Tri-Tachyon phase doctrine holds that the first shot out of p-space decides the engagement.
+type|phase_ambush_doctrine|null|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
+type|phase_ambush_doctrine|FRIGATE|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
+type|phase_ambush_doctrine|DESTROYER|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
+type|phase_ambush_doctrine|CRUISER|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
+type|phase_ambush_doctrine|CAPITAL_SHIP|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
 type|phase_anchor|null|0	1	<bad>100%</bad> less phase cloak activation cost.
 type|phase_anchor|null|1	0	<good>100%</good> more flux dissipation, weapon rate of fire and ammo regeneration while phased.
 type|phase_anchor|null|2	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
@@ -4986,6 +5253,18 @@ type|phase_anchor|CAPITAL_SHIP|0	1	<bad>100%</bad> less phase cloak activation c
 type|phase_anchor|CAPITAL_SHIP|1	0	<good>100%</good> more flux dissipation, weapon rate of fire and ammo regeneration while phased.
 type|phase_anchor|CAPITAL_SHIP|2	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
 type-detail|phase_anchor|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Adaptive Phase Coils</hullmod>\n• <hullmod>Novel Coil Geometry</hullmod>\n• <hullmod>Phase Harmonics</hullmod>\n• <hullmod>Phase Anchor</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Adaptive Phase Coils</node>
+flavour|phase_cloak_activation_cost	0	Phase coil primers trimmed to corporate tolerances draw less flux to engage. Tolerances that tight were never meant for a field refit.
+type|phase_cloak_activation_cost|null|0	1	<bad>5%</bad> less phase cloak activation cost.
+type|phase_cloak_activation_cost|FRIGATE|0	1	<bad>5%</bad> less phase cloak activation cost.
+type|phase_cloak_activation_cost|DESTROYER|0	1	<bad>5%</bad> less phase cloak activation cost.
+type|phase_cloak_activation_cost|CRUISER|0	1	<bad>5%</bad> less phase cloak activation cost.
+type|phase_cloak_activation_cost|CAPITAL_SHIP|0	1	<bad>5%</bad> less phase cloak activation cost.
+flavour|phase_cloak_cooldown	0	Coil discharge cycles shortened to a corporate maintenance bulletin leave the phase cloak ready again sooner. A later issue of the bulletin advises against it.
+type|phase_cloak_cooldown|null|0	1	<bad>5%</bad> reduced phase cloak cooldown.
+type|phase_cloak_cooldown|FRIGATE|0	1	<bad>5%</bad> reduced phase cloak cooldown.
+type|phase_cloak_cooldown|DESTROYER|0	1	<bad>5%</bad> reduced phase cloak cooldown.
+type|phase_cloak_cooldown|CRUISER|0	1	<bad>5%</bad> reduced phase cloak cooldown.
+type|phase_cloak_cooldown|CAPITAL_SHIP|0	1	<bad>5%</bad> reduced phase cloak cooldown.
 type|phase_cloak_flux_threshold|null|0	0	<good>5%</good> increased hard flux level at which phased speed reaches its minimum.
 type|phase_cloak_flux_threshold|FRIGATE|0	0	<good>5%</good> increased hard flux level at which phased speed reaches its minimum.
 type|phase_cloak_flux_threshold|DESTROYER|0	0	<good>5%</good> increased hard flux level at which phased speed reaches its minimum.
@@ -5010,6 +5289,12 @@ type|phase_fed_magazines|FRIGATE|0	0	<good>100%</good> increased ammo regenerati
 type|phase_fed_magazines|DESTROYER|0	0	<good>100%</good> increased ammo regeneration while phased.
 type|phase_fed_magazines|CRUISER|0	0	<good>100%</good> increased ammo regeneration while phased.
 type|phase_fed_magazines|CAPITAL_SHIP|0	0	<good>100%</good> increased ammo regeneration while phased.
+flavour|pick_off_the_stragglers	0	A convoy is only as safe as its slowest freighter.
+type|pick_off_the_stragglers|null|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
+type|pick_off_the_stragglers|FRIGATE|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
+type|pick_off_the_stragglers|DESTROYER|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
+type|pick_off_the_stragglers|CRUISER|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
+type|pick_off_the_stragglers|CAPITAL_SHIP|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
 type|point_defense_damage_to_missiles_and_fighters|null|0	0	<good>10%</good> increased damage to missiles.
 type|point_defense_damage_to_missiles_and_fighters|null|1	0	<good>10%</good> increased damage to fighters.
 type|point_defense_damage_to_missiles_and_fighters|FRIGATE|0	0	<good>10%</good> increased damage to missiles.
@@ -5082,6 +5367,17 @@ type|reinforced_bulkheads|CAPITAL_SHIP|0	0	<good>40%</good> increased hull point
 type|reinforced_bulkheads|CAPITAL_SHIP|1	0	If disabled, this ship is almost always recoverable after the battle.
 type|reinforced_bulkheads|CAPITAL_SHIP|2	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 type-detail|reinforced_bulkheads|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Reinforced Bulkheads</hullmod>
+flavour|relay_protocols	0	Remnant battlegroups keep station through relay protocols that are only dimly understood. The recovered fragment has never stopped transmitting.
+type|relay_protocols|null|0	0	<good>+10</good> to High Tech Affinity.
+type|relay_protocols|null|1	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
+type|relay_protocols|FRIGATE|0	0	<good>+10</good> to High Tech Affinity.
+type|relay_protocols|FRIGATE|1	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
+type|relay_protocols|DESTROYER|0	0	<good>+10</good> to High Tech Affinity.
+type|relay_protocols|DESTROYER|1	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
+type|relay_protocols|CRUISER|0	0	<good>+10</good> to High Tech Affinity.
+type|relay_protocols|CRUISER|1	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
+type|relay_protocols|CAPITAL_SHIP|0	0	<good>+10</good> to High Tech Affinity.
+type|relay_protocols|CAPITAL_SHIP|1	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
 flavour|repair_coordinator	0	The wreck of an NCA Occator still holds the delta-level coordinator that once steered its repair drones between damaged hulls. The crew wires it into this ship's damage-control network, teaching it to send work teams and drones across to patch the armor of nearby allies in the middle of a battle.
 flavourAutomated|repair_coordinator	0	The wreck of an NCA Occator still holds the delta-level coordinator that once steered its repair drones between damaged hulls. Wired into this ship's damage-control network, it sends the ship's drones across to patch the armor of nearby allies in the middle of a battle.
 type|repair_coordinator|null|0	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
@@ -5109,6 +5405,12 @@ type-detail|resistant_flux_conduits|CRUISER|0	0	Mutually exclusive with <hullmod
 type|resistant_flux_conduits|CAPITAL_SHIP|0	1	<bad>30%</bad> less EMP damage taken.
 type|resistant_flux_conduits|CAPITAL_SHIP|1	0	<good>10%</good> increased venting speed.
 type-detail|resistant_flux_conduits|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Lostech Engineering</hullmod>\n• <hullmod>Resistant Flux Conduits</hullmod>
+flavour|resonator_payload	0	"Ordnance asks that it be noted, again, that the ballast is humming."\n- Quartermaster's memo, recovered from Alpha Site
+type|resonator_payload|null|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+type|resonator_payload|FRIGATE|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+type|resonator_payload|DESTROYER|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+type|resonator_payload|CRUISER|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+type|resonator_payload|CAPITAL_SHIP|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
 flavour|restriction_breeds_creativity	0	Captured pirate hulls show the crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Pirates call this maintenance.
 flavourAutomated|restriction_breeds_creativity	0	Captured pirate hulls show the refit crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Pirates call this maintenance.
 type|restriction_breeds_creativity|null|0	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
@@ -5116,11 +5418,38 @@ type|restriction_breeds_creativity|FRIGATE|0	1	<bad>2%</bad> less armor damage t
 type|restriction_breeds_creativity|DESTROYER|0	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
 type|restriction_breeds_creativity|CRUISER|0	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
 type|restriction_breeds_creativity|CAPITAL_SHIP|0	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
+type|rift_explosion_damage|null|0	0	<good>10%</good> increased rift explosion damage.
+type|rift_explosion_damage|null|1	0	Strikecraft launched from this ship have <good>10%</good> increased rift explosion damage.
+type|rift_explosion_damage|FRIGATE|0	0	<good>10%</good> increased rift explosion damage.
+type|rift_explosion_damage|FRIGATE|1	0	Strikecraft launched from this ship have <good>10%</good> increased rift explosion damage.
+type|rift_explosion_damage|DESTROYER|0	0	<good>10%</good> increased rift explosion damage.
+type|rift_explosion_damage|DESTROYER|1	0	Strikecraft launched from this ship have <good>10%</good> increased rift explosion damage.
+type|rift_explosion_damage|CRUISER|0	0	<good>10%</good> increased rift explosion damage.
+type|rift_explosion_damage|CRUISER|1	0	Strikecraft launched from this ship have <good>10%</good> increased rift explosion damage.
+type|rift_explosion_damage|CAPITAL_SHIP|0	0	<good>10%</good> increased rift explosion damage.
+type|rift_explosion_damage|CAPITAL_SHIP|1	0	Strikecraft launched from this ship have <good>10%</good> increased rift explosion damage.
+flavour|rift_harmonics	0	"The impact site reads as empty for a moment afterwards. Not damaged, not cold. Empty. I have asked for the sensor package to be recalibrated."\n- Lab notes recovered from Alpha Site, author unknown
+type|rift_harmonics|null|0	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+type|rift_harmonics|FRIGATE|0	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+type|rift_harmonics|DESTROYER|0	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+type|rift_harmonics|CRUISER|0	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+type|rift_harmonics|CAPITAL_SHIP|0	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
 type|rift_lightning_damage|null|0	0	<good>10%</good> increased Rift Lightning damage.
 type|rift_lightning_damage|FRIGATE|0	0	<good>10%</good> increased Rift Lightning damage.
 type|rift_lightning_damage|DESTROYER|0	0	<good>10%</good> increased Rift Lightning damage.
 type|rift_lightning_damage|CRUISER|0	0	<good>10%</good> increased Rift Lightning damage.
 type|rift_lightning_damage|CAPITAL_SHIP|0	0	<good>10%</good> increased Rift Lightning damage.
+flavour|rite_of_mortification	0	The Knights of Ludd count a scorched hull as penance, not damage.
+type|rite_of_mortification|null|0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
+type|rite_of_mortification|null|1	0	Replacing an overload dissipates <good>50%</good> of hard flux.
+type|rite_of_mortification|FRIGATE|0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
+type|rite_of_mortification|FRIGATE|1	0	Replacing an overload dissipates <good>50%</good> of hard flux.
+type|rite_of_mortification|DESTROYER|0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
+type|rite_of_mortification|DESTROYER|1	0	Replacing an overload dissipates <good>50%</good> of hard flux.
+type|rite_of_mortification|CRUISER|0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
+type|rite_of_mortification|CRUISER|1	0	Replacing an overload dissipates <good>50%</good> of hard flux.
+type|rite_of_mortification|CAPITAL_SHIP|0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
+type|rite_of_mortification|CAPITAL_SHIP|1	0	Replacing an overload dissipates <good>50%</good> of hard flux.
 type|root_high_tech|null|0	0	<good>+10</good> to High Tech Affinity.
 type|root_high_tech|FRIGATE|0	0	<good>+10</good> to High Tech Affinity.
 type|root_high_tech|DESTROYER|0	0	<good>+10</good> to High Tech Affinity.
@@ -5136,6 +5465,12 @@ type|root_midline|FRIGATE|0	0	<good>+10</good> to Midline Affinity.
 type|root_midline|DESTROYER|0	0	<good>+10</good> to Midline Affinity.
 type|root_midline|CRUISER|0	0	<good>+10</good> to Midline Affinity.
 type|root_midline|CAPITAL_SHIP|0	0	<good>+10</good> to Midline Affinity.
+flavour|running_dark	0	Pirate captains run with their transponders dark and their drive plumes baffled behind scrap plating.
+type|running_dark|null|0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+type|running_dark|FRIGATE|0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+type|running_dark|DESTROYER|0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+type|running_dark|CRUISER|0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+type|running_dark|CAPITAL_SHIP|0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
 type|safety_overrides|null|0	0	The zero-flux speed boost works at any flux level.
 type|safety_overrides|null|1	0	<good>100%</good> more flux dissipation.
 type|safety_overrides|null|2	0	<bad>67%</bad> less peak performance time.
@@ -5216,6 +5551,12 @@ type|salvaged_abyssal_grid|CAPITAL_SHIP|1	0	<good>+100</good> to energy weapon r
 type|salvaged_abyssal_grid|CAPITAL_SHIP|2	1	<bad>25%</bad> reduced EMP damage taken.
 type|salvaged_abyssal_grid|CAPITAL_SHIP|3	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|salvaged_abyssal_grid|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
+flavour|sanctified_scars	0	Church doctrine reads every scar on a hull as a trial endured. A Luddic fleet forms up around its most battered ship.
+type|sanctified_scars|null|0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+type|sanctified_scars|FRIGATE|0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+type|sanctified_scars|DESTROYER|0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+type|sanctified_scars|CRUISER|0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+type|sanctified_scars|CAPITAL_SHIP|0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
 flavour|secondary_fabricator	0	A second Threat fabricator wired in beside the first replaces fragments as fast as the fighting destroys them.
 itemCost|secondary_fabricator	0	Costs 1 fragment_fabricator to allocate, returned when unallocated.
 type|secondary_fabricator|null|0	0	<good>30%</good> increased fragment replacement rate.
@@ -5446,6 +5787,12 @@ type|solar_shielding|CRUISER|0	1	<bad>75%</bad> less combat readiness loss from 
 type-detail|solar_shielding|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dawntide</hullmod>\n• <hullmod>Stardust Core Field</hullmod>\n• <hullmod>Solar Shielding</hullmod>
 type|solar_shielding|CAPITAL_SHIP|0	1	<bad>75%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|solar_shielding|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dawntide</hullmod>\n• <hullmod>Stardust Core Field</hullmod>\n• <hullmod>Solar Shielding</hullmod>
+flavour|spark_rift	0	"Recovered three of the little ones intact. By the time the bench clamps were on, there were two."\n- Hegemony salvage inventory, amended
+type|spark_rift|null|0	0	Strikecraft launched from this ship have a <good>10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+type|spark_rift|FRIGATE|0	0	Strikecraft launched from this ship have a <good>10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+type|spark_rift|DESTROYER|0	0	Strikecraft launched from this ship have a <good>10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+type|spark_rift|CRUISER|0	0	Strikecraft launched from this ship have a <good>10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+type|spark_rift|CAPITAL_SHIP|0	0	Strikecraft launched from this ship have a <good>10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
 type|stabilized_shields|null|0	1	<bad>40%</bad> less shield flux upkeep.
 type-detail|stabilized_shields|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Constellate Design- Jet Black</hullmod>\n• <hullmod>Low Arc Shield Emitter</hullmod>\n• <hullmod>Lostech Engineering</hullmod>\n• <hullmod>Stabilized Shields</hullmod>
 type|stabilized_shields|FRIGATE|0	1	<bad>40%</bad> less shield flux upkeep.
@@ -5482,6 +5829,11 @@ type|strikecraft_weapon_damage|FRIGATE|0	0	Strikecraft launched from this ship h
 type|strikecraft_weapon_damage|DESTROYER|0	0	Strikecraft launched from this ship have <good>3%</good> increased weapon damage.
 type|strikecraft_weapon_damage|CRUISER|0	0	Strikecraft launched from this ship have <good>3%</good> increased weapon damage.
 type|strikecraft_weapon_damage|CAPITAL_SHIP|0	0	Strikecraft launched from this ship have <good>3%</good> increased weapon damage.
+type|strikecraft_weapon_range|null|0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon range.
+type|strikecraft_weapon_range|FRIGATE|0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon range.
+type|strikecraft_weapon_range|DESTROYER|0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon range.
+type|strikecraft_weapon_range|CRUISER|0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon range.
+type|strikecraft_weapon_range|CAPITAL_SHIP|0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon range.
 flavour|subroutine_socket	0	A stripped-out compartment wired straight into the ship's computer core. It holds a single subroutine and runs it alongside the ship's own control software.
 type|subroutine_socket|null|0	0	Holds one subroutine.
 type|subroutine_socket|FRIGATE|0	0	Holds one subroutine.
@@ -5603,6 +5955,12 @@ type|tania_weapon_fire_rate|FRIGATE|0	0	<good>3%</good> increased weapon rate of
 type|tania_weapon_fire_rate|DESTROYER|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|tania_weapon_fire_rate|CRUISER|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|tania_weapon_fire_rate|CAPITAL_SHIP|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
+flavour|temporal_exhaust	0	"The plume showed up on our scopes before the drive lit. I have checked the clocks. Please stop asking me to check the clocks."\n- Sensor officer's log, Tri-Tachyon picket, name withheld
+type|temporal_exhaust|null|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+type|temporal_exhaust|FRIGATE|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+type|temporal_exhaust|DESTROYER|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+type|temporal_exhaust|CRUISER|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+type|temporal_exhaust|CAPITAL_SHIP|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
 type|temporary_maneuverability|null|0	0	<good>50%</good> increased maneuverability.
 type|temporary_maneuverability|null|1	0	These effects only last for the first 90 seconds after the ship is deployed.
 type|temporary_maneuverability|FRIGATE|0	0	<good>50%</good> increased maneuverability.
@@ -5695,6 +6053,12 @@ type|weapon_durability|FRIGATE|0	0	<good>5%</good> increased weapon durability.
 type|weapon_durability|DESTROYER|0	0	<good>5%</good> increased weapon durability.
 type|weapon_durability|CRUISER|0	0	<good>5%</good> increased weapon durability.
 type|weapon_durability|CAPITAL_SHIP|0	0	<good>5%</good> increased weapon durability.
+flavour|weapon_flux_cost	0	Pirate refits run every weapon mount with its capacitor safeties bypassed. The safeties go in a crate, in case of inspection.
+type|weapon_flux_cost|null|0	1	<bad>3%</bad> reduced weapon flux cost.
+type|weapon_flux_cost|FRIGATE|0	1	<bad>3%</bad> reduced weapon flux cost.
+type|weapon_flux_cost|DESTROYER|0	1	<bad>3%</bad> reduced weapon flux cost.
+type|weapon_flux_cost|CRUISER|0	1	<bad>3%</bad> reduced weapon flux cost.
+type|weapon_flux_cost|CAPITAL_SHIP|0	1	<bad>3%</bad> reduced weapon flux cost.
 type|weapon_turn_rate|null|0	0	<good>20%</good> increased weapon turn rate.
 type|weapon_turn_rate|FRIGATE|0	0	<good>20%</good> increased weapon turn rate.
 type|weapon_turn_rate|DESTROYER|0	0	<good>20%</good> increased weapon turn rate.

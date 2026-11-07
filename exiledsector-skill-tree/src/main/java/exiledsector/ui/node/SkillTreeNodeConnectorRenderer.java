@@ -157,6 +157,9 @@ final class SkillTreeNodeConnectorRenderer {
         }
         SkillNode node = connector.from();
         SkillNode other = connector.to();
+        if (allocation.isConcealed(node) || allocation.isConcealed(other)) {
+            return;
+        }
         ConnectorCurve curve = connector.curve();
         float nodeX = viewport.screenX(node.getOffsetX());
         float nodeY = viewport.screenY(node.getOffsetY());

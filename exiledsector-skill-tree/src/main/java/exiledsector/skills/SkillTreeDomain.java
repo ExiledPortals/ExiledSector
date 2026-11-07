@@ -23,6 +23,7 @@ import exiledsector.compat.NightcrossUnlocks;
 import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.compat.TaniaCompat;
 import exiledsector.domain.ExiledSectorDomain;
+import exiledsector.effects.AlphaSiteOmegaCache;
 import exiledsector.effects.CombatXpAward;
 import exiledsector.effects.GateRewardAnchors;
 import exiledsector.effects.HyperNavBeaconGrant;
@@ -86,6 +87,7 @@ import exiledsector.skills.npc.NpcLevelCaps;
 import exiledsector.skills.radius.NodeRadii;
 import exiledsector.skills.tags.VolumeToggles;
 import exiledsector.skills.unlock.DwellerEncounter;
+import exiledsector.skills.unlock.OmegaEncounter;
 import exiledsector.skills.unlock.NodeGates;
 import exiledsector.skills.unlock.RemnantEncounter;
 import exiledsector.skills.unlock.ThreatEncounter;
@@ -244,6 +246,10 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
         sector.addTransientListener(new RemnantEncounter.BattleListener());
         sector.addTransientListener(new ThreatEncounter.BattleListener());
         sector.addTransientListener(new DwellerEncounter.BattleListener());
+        sector.addTransientListener(new OmegaEncounter.BattleListener());
+        AlphaSiteOmegaCache alphaSiteOmegaCache = new AlphaSiteOmegaCache();
+        sector.addTransientListener(alphaSiteOmegaCache);
+        sector.getListenerManager().addListener(alphaSiteOmegaCache, true);
         if (LostSectorCompat.isModEnabled()) {
             sector.getListenerManager().addListener(new LostSectorUnlocks.LocationListener(), true);
         }

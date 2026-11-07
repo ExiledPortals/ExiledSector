@@ -3,7 +3,9 @@ package exiledsector.skills.skilleffect.onhit;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponSize;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
+import exiledsector.i18n.Message;
 import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 import exiledsector.motes.Motes;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
@@ -38,7 +40,7 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
             return true;
         }
     },
-    NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT(listener(RefractionListener.FALLOFF_KEY, RefractionListener.class, RefractionListener::new)) {
+    NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_MULT(listener(RefractionListener.FALLOFF_KEY, RefractionListener.class, RefractionListener::new)) {
         @Override
         public boolean reshapesDealtDamage() {
             return true;
@@ -52,6 +54,20 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", magnitude).arg("damage", IonArcListener.ARC_DAMAGE_FRACTION * 100f)
                     .arg("emp", IonArcListener.ARC_EMP_FRACTION * 100f).styled();
+        }
+    },
+    RIFT_STRIKE_CHANCE_PERCENT(listener(RiftStrike.CHANCE_PERCENT_KEY, RiftStrikeListener.class, RiftStrikeListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("share", RiftStrike.DAMAGE_SHARE_PERCENT)
+                    .arg("min", RiftStrike.MIN_DAMAGE).arg("max", RiftStrike.MAX_DAMAGE).styled();
+        }
+    },
+    MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT(listener(ResonatorPayloadListener.CHANCE_PERCENT_KEY, ResonatorPayloadListener.class,
+            ResonatorPayloadListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return describeRiftSeries(EffectText.msg(this).arg("value", magnitude));
         }
     },
     DISINTEGRATION_ARMOR_DAMAGE_PERCENT(listener(DisintegrationListener.ARMOR_DAMAGE_PERCENT_KEY,
@@ -74,7 +90,7 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("seconds", ArmorBurnListener.BURN_SECONDS).styled();
         }
     },
-    MISSILE_SNARE_TOP_SPEED_PERCENT(listener(MissileSnareListener.TOP_SPEED_PERCENT_KEY, MissileSnareListener.class, MissileSnareListener::new)) {
+    MISSILE_SNARE_TOP_SPEED_MULT(listener(MissileSnareListener.TOP_SPEED_PERCENT_KEY, MissileSnareListener.class, MissileSnareListener::new)) {
         @Override
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", magnitude).arg("seconds", MissileSnareListener.SNARE_SECONDS).styled();
@@ -103,6 +119,32 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
                     .arg("max", Motes.MAX_LIVE_MOTES_PER_SOURCE).styled();
         }
     },
+    DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT(listener(IonCascadeListener.HIGH_EXPLOSIVE_SHARE_PERCENT_KEY, IonCascadeListener.class, IonCascadeListener::new)) {
+        @Override
+        public boolean readsFinalDealtDamage() {
+            return true;
+        }
+    },
+    SHIELD_EMP_TO_ENERGY_PERCENT(listener(IonSpillListener.ENERGY_SHARE_PERCENT_KEY, IonSpillListener.class, IonSpillListener::new)) {
+        @Override
+        public boolean readsFinalDealtDamage() {
+            return true;
+        }
+    },
+    ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT(listener(DamageConversionListener.ADAPTIVE_CHANCE_PERCENT_KEY, DamageConversionListener.class,
+            DamageConversionListener::new)) {
+        @Override
+        public boolean reshapesDealtDamage() {
+            return true;
+        }
+    },
+    ENERGY_HIT_INJUNCTION_PERCENT(listener(InjunctionListener.SLOWDOWN_PERCENT_KEY, InjunctionListener.class, InjunctionListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("seconds", Injunction.STACK_SECONDS).arg("stacks", Injunction.MAX_STACKS).styled()
+                    .append("\n").append(Translation.msg("injunction.rechargeSlowdown").arg("value", magnitude).styled());
+        }
+    },
     BALLISTIC_HARDPOINT_KINETIC_TO_HIGH_EXPLOSIVE(new DamageConversion(DamageConversion.KEY_PREFIX + "ballisticHardpointKineticToHighExplosive",
             WeaponType.BALLISTIC, null, DamageConversion.Mounting.HARDPOINT, false, DamageType.KINETIC, DamageType.HIGH_EXPLOSIVE)),
     BEAM_ENERGY_TO_HIGH_EXPLOSIVE(new DamageConversion(DamageConversion.KEY_PREFIX + "beamEnergyToHighExplosive",
@@ -111,6 +153,11 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
             WeaponType.ENERGY, WeaponSize.SMALL, DamageConversion.Mounting.ANY, false, null, null));
 
     private static List<DamageConversion> damageConversions;
+
+    public static StyledText describeRiftSeries(Message line) {
+        return line.arg("count", ResonatorPayloadListener.RIFTS_PER_SERIES).arg("share", ResonatorPayloadListener.DAMAGE_SHARE_PERCENT)
+                .arg("max", ResonatorPayloadListener.MAX_DAMAGE).styled();
+    }
 
     private final EffectBacking backing;
     private final DamageConversion damageConversion;
