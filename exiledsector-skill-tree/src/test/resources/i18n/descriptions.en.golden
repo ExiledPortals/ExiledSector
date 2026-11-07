@@ -4000,8 +4000,7 @@ type|doctrine_unblinking_watch|CRUISER|0	0	<good>50%</good> increased damage to 
 type|doctrine_unblinking_watch|CRUISER|1	0	<good>30%</good> increased weapon turn rate.
 type|doctrine_unblinking_watch|CAPITAL_SHIP|0	0	<good>50%</good> increased damage to missiles.
 type|doctrine_unblinking_watch|CAPITAL_SHIP|1	0	<good>30%</good> increased weapon turn rate.
-flavour|domain_pattern_laminate	0	Hegemony refit yards still lay armor plate to Domain specifications, unchanged since before the Collapse. A yard foreman on Chicomoztoc sells the crew the pattern on the understanding that it does not exist.
-flavourAutomated|domain_pattern_laminate	0	Hegemony refit yards still lay armor plate to Domain specifications, unchanged since before the Collapse. The ship's core finds the pattern in a Chicomoztoc yard's maintenance logs, and the refit crew lays it to the letter. The logs list the pattern as not existing.
+flavour|domain_pattern_laminate	0	Hegemony refit yards still harden hulls to Domain specifications, emitter and plate alike, unchanged since before the Collapse.
 type|domain_pattern_laminate|null|0	1	<bad>8%</bad> reduced kinetic damage taken.
 type|domain_pattern_laminate|null|1	1	<bad>8%</bad> reduced high-explosive damage taken.
 type|domain_pattern_laminate|FRIGATE|0	1	<bad>8%</bad> reduced kinetic damage taken.

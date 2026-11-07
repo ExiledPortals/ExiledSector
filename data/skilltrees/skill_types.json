@@ -829,8 +829,7 @@
 					"magnitude": -8
 				}
 			],
-			"flavour": "Hegemony refit yards still lay armor plate to Domain specifications, unchanged since before the Collapse. A yard foreman on Chicomoztoc sells the crew the pattern on the understanding that it does not exist.",
-			"flavourAutomated": "Hegemony refit yards still lay armor plate to Domain specifications, unchanged since before the Collapse. The ship's core finds the pattern in a Chicomoztoc yard's maintenance logs, and the refit crew lays it to the letter. The logs list the pattern as not existing.",
+			"flavour": "Hegemony refit yards still harden hulls to Domain specifications, emitter and plate alike, unchanged since before the Collapse.",
 			"tags": [
 				"armour"
 			]
