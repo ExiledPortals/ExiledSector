@@ -67,11 +67,6 @@ final class NodeAllocator {
         private final Map<String, String> reasonsByKey = new HashMap<>();
         private final Map<String, List<NodeGrantStatus>> grantStatusesBySocketId = new HashMap<>();
 
-        Snapshot(ShipSkillData skillData, ShipOpBudget opBudget, int statsRevision, Set<String> hiddenNodeIds, AllocationCheck gate,
-                 RefusalDescriber describer) {
-            this(skillData, opBudget, statsRevision, hiddenNodeIds, Set.of(), gate, describer);
-        }
-
         Snapshot(ShipSkillData skillData, ShipOpBudget opBudget, int statsRevision, Set<String> hiddenNodeIds, Set<String> concealedNodeIds,
                  AllocationCheck gate, RefusalDescriber describer) {
             this.skillData = skillData;
@@ -247,7 +242,10 @@ final class NodeAllocator {
         AllocationCheck.Budget budget = new AllocationCheck.Budget(totalOpBudget, opCostPerNode, ShipLevelConfig.maxAllocatedNodes());
         AllocationCheck gate = AllocationCheck.forPlayerShip(skillData, PlayerShipFacts.of(fleetMember, shipVariant), satisfiedRootId(), budget,
                 NodeAllocator::heldInCargo, LogisticsDocking.canChangeNow());
-        return new Snapshot(skillData, opBudget, shipEdit.revision(), hiddenNodeIds(skillData), concealedNodeIds(skillData), gate, this::describe);
+        Set<String> hiddenNodeIds = new HashSet<>();
+        Set<String> concealedNodeIds = new HashSet<>();
+        collectUnseenNodeIds(skillData, hiddenNodeIds, concealedNodeIds);
+        return new Snapshot(skillData, opBudget, shipEdit.revision(), hiddenNodeIds, concealedNodeIds, gate, this::describe);
     }
 
     Snapshot planningSnapshot(ShipSkillData planData, Snapshot liveSnapshot) {
@@ -262,24 +260,15 @@ final class NodeAllocator {
                 liveSnapshot.concealedNodeIds, gate, this::describe);
     }
 
-    private static Set<String> concealedNodeIds(ShipSkillData skillData) {
-        Set<String> concealed = new HashSet<>();
-        for (SkillNode node : SkillTree.getAllNodes().values()) {
-            if (NodeGates.isConcealed(node, skillData)) {
-                concealed.add(node.getId());
-            }
-        }
-        return concealed;
-    }
-
-    private static Set<String> hiddenNodeIds(ShipSkillData skillData) {
-        Set<String> hidden = new HashSet<>();
+    private static void collectUnseenNodeIds(ShipSkillData skillData, Set<String> hiddenNodeIds, Set<String> concealedNodeIds) {
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             if (SkillTypeUnlockStatus.isHidden(node.getType(), skillData) || NodeGates.isHidden(node, skillData)) {
-                hidden.add(node.getId());
+                hiddenNodeIds.add(node.getId());
+                if (NodeGates.isConcealed(node, skillData)) {
+                    concealedNodeIds.add(node.getId());
+                }
             }
         }
-        return hidden;
     }
 
     boolean allocate(SkillNode node, SkillType option, Snapshot snapshot) {

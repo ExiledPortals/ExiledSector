@@ -64,8 +64,7 @@ final class RepairCoordinatorField extends AuraField<RepairCoordinatorListener> 
     private static ShipAPI closestAllyNeedingArmor(RepairCoordinatorListener source, ShipsNear shipsNear,
                                                    Map<ShipAPI, Float> repairedArmorByAlly) {
         ShipAPI sourceShip = source.source();
-        List<ShipAPI> allies = new ArrayList<>(shipsNear.find(sourceShip, RANGE, other -> other != sourceShip && !other.isFighter()
-                && other.getOwner() == sourceShip.getOwner() && CombatQueries.isAliveNotHulk(other) && !other.isPhased()
+        List<ShipAPI> allies = new ArrayList<>(shipsNear.find(sourceShip, RANGE, other -> CombatQueries.isAlliedShip(sourceShip, other) && !other.isPhased()
                 && CombatQueries.withinRadius(other.getLocation(), sourceShip.getLocation(), RANGE)
                 && other.getArmorGrid() != null && remainingAllowance(source, other, repairedArmorByAlly) > 0f
                 && ArmorCells.missing(other.getArmorGrid()) > 0f));

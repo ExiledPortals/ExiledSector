@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import exiledsector.ModSounds;
 import exiledsector.charts.content.ChartSites;
+import exiledsector.skills.skilleffect.CombatQueries;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -75,7 +76,7 @@ public class ChartArcStrikePlugin extends BaseEveryFrameCombatPlugin {
 
     static boolean canBeStruck(ShipAPI ship) {
         return ship != null && ship.getOwner() == ChartBattlePlugin.PLAYER_OWNER && ship.isAlive() && !ship.isHulk() && !ship.isFighter()
-                && !ship.isShuttlePod() && !ship.isPhased() && ship.getParentStation() == null;
+                && !ship.isShuttlePod() && !ship.isPhased() && ship.getParentStation() == null && !CombatQueries.isAfterimage(ship);
     }
 
     private void strike(ShipAPI target) {

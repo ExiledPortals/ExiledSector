@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 
 public final class NodeGates {
 
@@ -99,31 +100,11 @@ public final class NodeGates {
     }
 
     public static String lockingGateTag(SkillNode node, ShipSkillData shipData) {
-        Map<String, Gate> gatesByTag = GATES_BY_TAG.get();
-        if (node == null || gatesByTag.isEmpty()) {
-            return null;
-        }
-        for (String tag : node.getTags()) {
-            Gate gate = gatesByTag.get(tag);
-            if (gate != null && SkillTypeUnlockStatus.isLocked(gate.conditions(), shipData)) {
-                return tag;
-            }
-        }
-        return null;
+        return lockingGateTag(node, shipData, gate -> true);
     }
 
     public static boolean withholdsAnchor(SkillNode exitNode) {
-        Map<String, Gate> gatesByTag = GATES_BY_TAG.get();
-        if (exitNode == null || gatesByTag.isEmpty()) {
-            return false;
-        }
-        for (String tag : exitNode.getTags()) {
-            Gate gate = gatesByTag.get(tag);
-            if (gate != null && gate.anchorRule() == AnchorRule.WITHHELD && SkillTypeUnlockStatus.isLocked(gate.conditions(), null)) {
-                return true;
-            }
-        }
-        return false;
+        return lockingGateTag(exitNode, null, gate -> gate.anchorRule() == AnchorRule.WITHHELD) != null;
     }
 
     public static boolean isHidden(SkillNode node, ShipSkillData shipData) {
@@ -131,16 +112,20 @@ public final class NodeGates {
     }
 
     public static boolean isConcealed(SkillNode node, ShipSkillData shipData) {
+        return lockingGateTag(node, shipData, Gate::concealed) != null && !HiddenNodeDisplayConfig.showHiddenNodesByDefault();
+    }
+
+    private static String lockingGateTag(SkillNode node, ShipSkillData shipData, Predicate<Gate> gateFilter) {
         Map<String, Gate> gatesByTag = GATES_BY_TAG.get();
-        if (node == null || gatesByTag.isEmpty() || HiddenNodeDisplayConfig.showHiddenNodesByDefault()) {
-            return false;
+        if (node == null || gatesByTag.isEmpty()) {
+            return null;
         }
         for (String tag : node.getTags()) {
             Gate gate = gatesByTag.get(tag);
-            if (gate != null && gate.concealed() && SkillTypeUnlockStatus.isLocked(gate.conditions(), shipData)) {
-                return true;
+            if (gate != null && gateFilter.test(gate) && SkillTypeUnlockStatus.isLocked(gate.conditions(), shipData)) {
+                return tag;
             }
         }
-        return false;
+        return null;
     }
 }

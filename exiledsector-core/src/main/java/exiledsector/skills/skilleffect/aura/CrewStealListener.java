@@ -1,43 +1,37 @@
 package exiledsector.skills.skilleffect.aura;
 
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
-import com.fs.starfarer.api.util.IntervalUtil;
 import exiledsector.skills.skilleffect.CombatQueries;
-import exiledsector.skills.skilleffect.NearbyWrecks;
-import exiledsector.skills.skilleffect.ShipCombatListener;
+import exiledsector.skills.skilleffect.NearbyDestructionListener;
 import exiledsector.skills.skilleffect.logistics.FleetCrewLedger;
 
-final class CrewStealListener extends ShipCombatListener implements AdvanceableListener {
+import java.util.List;
+
+final class CrewStealListener extends NearbyDestructionListener {
 
     static final String RANGE_KEY = "exiledSector_crewStealRange";
     static final String SKELETON_CREW_PERCENT_KEY = "exiledSector_crewStealSkeletonCrewPercent";
-    private static final float CHECK_SECONDS = 0.25f;
 
-    private final IntervalUtil checkInterval = new IntervalUtil(CHECK_SECONDS, CHECK_SECONDS);
-    private final NearbyWrecks wrecks;
     private final FleetCrewLedger.Lazy crewLedger = new FleetCrewLedger.Lazy();
 
     CrewStealListener(ShipAPI ownerShip) {
-        super(ownerShip);
-        this.wrecks = new NearbyWrecks(ownerShip, other -> CombatQueries.isHostile(ownerShip, other) && isCrewedHull(other));
+        super(ownerShip, other -> CombatQueries.isHostile(ownerShip, other) && isCrewedHull(other));
     }
 
     @Override
-    public void advance(float amount) {
-        if (!FleetCrewLedger.usesFleetCrew(ownerShip) || !ownerIsAliveNotHulk()) {
-            return;
-        }
-        checkInterval.advance(amount);
-        if (!checkInterval.intervalElapsed()) {
-            return;
-        }
-        float range = magnitude(RANGE_KEY);
+    protected boolean canReact() {
+        return FleetCrewLedger.usesFleetCrew(ownerShip) && super.canReact();
+    }
+
+    @Override
+    protected float activeRange() {
+        return magnitude(SKELETON_CREW_PERCENT_KEY) > 0f ? magnitude(RANGE_KEY) : 0f;
+    }
+
+    @Override
+    protected void onDestroyed(List<ShipAPI> wrecks) {
         float percent = magnitude(SKELETON_CREW_PERCENT_KEY);
-        if (range <= 0f || percent <= 0f) {
-            return;
-        }
-        for (ShipAPI wreck : wrecks.newWithin(range)) {
+        for (ShipAPI wreck : wrecks) {
             crewLedger.get().credit(wreck, skeletonCrew(wreck) * percent / 100f);
         }
     }

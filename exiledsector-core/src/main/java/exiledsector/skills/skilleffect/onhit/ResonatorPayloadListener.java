@@ -8,13 +8,13 @@ import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
+import exiledsector.skills.skilleffect.Chance;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.ShipCombatListener;
-import exiledsector.skills.skilleffect.weapon.RiftExplosions;
+import exiledsector.skills.skilleffect.weapon.RiftSeries;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -28,7 +28,7 @@ final class ResonatorPayloadListener extends ShipCombatListener implements Damag
     static final float SECONDS_BETWEEN_RIFTS = 0.1f;
 
     private final Random random;
-    private final List<PendingRift> pendingRifts = new ArrayList<>();
+    private final List<RiftSeries> activeSeries = new ArrayList<>();
 
     ResonatorPayloadListener(ShipAPI ownerShip) {
         this(ownerShip, new Random());
@@ -47,63 +47,45 @@ final class ResonatorPayloadListener extends ShipCombatListener implements Damag
     @SuppressWarnings("java:S3516")
     @Override
     public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        if (!(param instanceof MissileAPI missile) || !isMissileWeaponShot(missile) || !(target instanceof ShipAPI hitShip) || point == null
-                || !CombatQueries.isHostile(ownerShip, hitShip) || !ownerIsAliveNotHulk()) {
+        if (!(param instanceof MissileAPI missile) || !isOwnMissileWeaponShot(missile) || point == null
+                || CombatQueries.hostileLiveShip(ownerShip, target) == null || !ownerIsAliveNotHulk()) {
             return null;
         }
-        if (random.nextFloat() < magnitude(CHANCE_PERCENT_KEY) / 100f) {
-            queueSeries(point, riftDamage(missile.getWeapon().getSpec()));
+        if (Chance.roll(random, magnitude(CHANCE_PERCENT_KEY))) {
+            Vector2f impactPoint = new Vector2f(point);
+            activeSeries.add(new RiftSeries(ownerShip, RIFTS_PER_SERIES, SECONDS_BETWEEN_RIFTS, riftDamage(missile.getWeapon().getSpec()),
+                    () -> scatteredAround(impactPoint), random));
         }
         return null;
     }
 
     @Override
     public void advance(float amount) {
-        if (pendingRifts.isEmpty()) {
+        if (activeSeries.isEmpty()) {
             return;
         }
         if (!ownerIsAliveNotHulk()) {
-            pendingRifts.clear();
+            activeSeries.clear();
             return;
         }
-        Iterator<PendingRift> pending = pendingRifts.iterator();
-        while (pending.hasNext()) {
-            PendingRift rift = pending.next();
-            rift.secondsLeft -= amount;
-            if (rift.secondsLeft <= 0f) {
-                RiftExplosions.spawn(ownerShip, rift.point, rift.damage, random);
-                pending.remove();
+        for (int index = activeSeries.size() - 1; index >= 0; index--) {
+            RiftSeries series = activeSeries.get(index);
+            series.advance(amount);
+            if (series.isFinished()) {
+                activeSeries.remove(index);
             }
         }
     }
 
-    private static boolean isMissileWeaponShot(MissileAPI missile) {
+    private boolean isOwnMissileWeaponShot(MissileAPI missile) {
         WeaponAPI weapon = missile.getWeapon();
-        return weapon != null && weapon.getType() == WeaponAPI.WeaponType.MISSILE && !missile.isFlare() && !missile.isMine();
-    }
-
-    private void queueSeries(Vector2f impactPoint, float riftDamage) {
-        for (int riftIndex = 0; riftIndex < RIFTS_PER_SERIES; riftIndex++) {
-            pendingRifts.add(new PendingRift(scatteredAround(impactPoint), riftDamage, riftIndex * SECONDS_BETWEEN_RIFTS));
-        }
+        return weapon != null && weapon.getShip() == ownerShip && weapon.getType() == WeaponAPI.WeaponType.MISSILE
+                && !missile.isFlare() && !missile.isMine();
     }
 
     private Vector2f scatteredAround(Vector2f impactPoint) {
         double angleRadians = random.nextFloat() * 2.0 * Math.PI;
         float distance = SCATTER_RADIUS * (float) Math.sqrt(random.nextFloat());
         return new Vector2f(impactPoint.x + distance * (float) Math.cos(angleRadians), impactPoint.y + distance * (float) Math.sin(angleRadians));
-    }
-
-    private static final class PendingRift {
-
-        private final Vector2f point;
-        private final float damage;
-        private float secondsLeft;
-
-        private PendingRift(Vector2f point, float damage, float secondsLeft) {
-            this.point = point;
-            this.damage = damage;
-            this.secondsLeft = secondsLeft;
-        }
     }
 }

@@ -24,6 +24,7 @@ import com.fs.starfarer.api.loading.ShotBehaviorSpecAPI;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import com.fs.starfarer.api.loading.WingRole;
 import exiledsector.compat.CombatGlow;
+import exiledsector.skills.skilleffect.Chance;
 import exiledsector.skills.skilleffect.CombatQueries;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
@@ -127,7 +128,7 @@ final class BomberPayloadDetonation implements AdvanceableListener {
             return;
         }
         secondsSinceCheck -= CHECK_INTERVAL_SECONDS;
-        if (!carriesPayload(bomber) || !mayDetonate() || random.nextFloat() * 100f >= FighterListenerEffect.carrierValue(carrier, CHANCE_PERCENT_KEY)) {
+        if (!carriesPayload(bomber) || !mayDetonate() || !Chance.roll(random, FighterListenerEffect.carrierValue(carrier, CHANCE_PERCENT_KEY))) {
             return;
         }
         detonated = true;

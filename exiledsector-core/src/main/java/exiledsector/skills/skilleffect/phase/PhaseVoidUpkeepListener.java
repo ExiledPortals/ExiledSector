@@ -64,8 +64,7 @@ final class PhaseVoidUpkeepListener extends ShipCombatListener implements Advanc
     }
 
     private boolean lendsFragments(ShipAPI candidate) {
-        return candidate != ownerShip && !candidate.isFighter() && candidate.getOwner() == ownerShip.getOwner()
-                && CombatQueries.isAliveNotHulk(candidate) && FragmentSwarms.hasFragments(FragmentSwarms.swarmOf(candidate), 1);
+        return CombatQueries.isAlliedShip(ownerShip, candidate) && FragmentSwarms.hasFragments(FragmentSwarms.swarmOf(candidate), 1);
     }
 
     private float paidUpkeepPerSecond() {

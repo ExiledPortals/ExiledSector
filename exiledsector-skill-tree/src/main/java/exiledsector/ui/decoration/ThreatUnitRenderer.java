@@ -1,7 +1,6 @@
 package exiledsector.ui.decoration;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
-import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.skills.decoration.ThreatUnit;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.SpriteDraw;
@@ -10,7 +9,7 @@ import exiledsector.ui.util.TexturedQuadBatch;
 import java.awt.Color;
 import java.util.List;
 
-public final class ThreatUnitRenderer implements DecorationRenderer {
+public final class ThreatUnitRenderer extends UnitDecorationRenderer<ThreatUnit> {
 
     static final String FABRICATOR_SPRITE_PATH = "graphics/ships/threat/fabricator.png";
     static final String HIVE_SPRITE_PATH = "graphics/ships/threat/threat_hive.png";
@@ -34,33 +33,10 @@ public final class ThreatUnitRenderer implements DecorationRenderer {
     private static final float GOLDEN_FRACTION = 0.618034f;
     private static final float TWO_PI = (float) (Math.PI * 2);
 
-    private final SpriteCache spriteCache = new SpriteCache(ThreatUnitRenderer.class);
     private final TexturedQuadBatch fragmentQuads = new TexturedQuadBatch();
-    private final List<ThreatUnit> units;
-    private float elapsedSeconds;
 
     ThreatUnitRenderer(List<ThreatUnit> units) {
-        this.units = List.copyOf(units);
-    }
-
-    @Override
-    public void advance(float amount) {
-        if (!units.isEmpty()) {
-            elapsedSeconds += amount;
-        }
-    }
-
-    @Override
-    public void render(DecorationScene scene, DecorationDepth depth) {
-        if (depth != DecorationDepth.UNITS || units.isEmpty() || scene.sceneryAlpha() <= 0f) {
-            return;
-        }
-        for (ThreatUnit unit : units) {
-            float unitAlpha = scene.alphaFor(unit.getId());
-            if (unitAlpha > 0f) {
-                renderUnit(scene.viewport(), unit, unitAlpha);
-            }
-        }
+        super(units);
     }
 
     static String spritePath(ThreatUnit unit) {
@@ -71,7 +47,8 @@ public final class ThreatUnitRenderer implements DecorationRenderer {
         return ThreatUnit.HIVE.equals(unit.getUnitType()) ? HIVE_FRAGMENTS : FABRICATOR_FRAGMENTS;
     }
 
-    private void renderUnit(TreeViewport viewport, ThreatUnit unit, float alphaMult) {
+    @Override
+    void renderUnit(TreeViewport viewport, ThreatUnit unit, float alphaMult) {
         float zoom = viewport.zoom();
         float hullLength = unit.getLength();
         float driftPhase = TWO_PI * elapsedSeconds / DRIFT_SECONDS;

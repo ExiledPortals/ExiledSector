@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.MockSector;
 import exiledsector.items.ItemDataIntegrity.Severity;
 import exiledsector.items.ItemDataIntegrity.Violation;
 import exiledsector.skills.SkillNode;
@@ -8,11 +9,15 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.npc.RealSkillData;
+import exiledsector.skills.unlock.NodeGates;
+import lunalib.lunaSettings.LunaSettings;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -27,14 +32,19 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
 
 class ModspecCachesTest {
 
     private static final String CACHE = "cache";
     private static final String TRIPLE_CACHE = "triple_cache";
 
+    private MockedStatic<LunaSettings> lunaSettings;
+
     @BeforeEach
     void setUp() throws Exception {
+        lunaSettings = Mockito.mockStatic(LunaSettings.class);
+        lunaSettings.when(() -> LunaSettings.getBoolean(anyString(), anyString())).thenReturn(null);
         SkillTree.clearTypes();
         SkillTree.clearNodes();
         for (SkillNode node : List.of(node("core_notable_a", SkillTier.NOTABLE, "core", List.of()), node("core_notable_b", SkillTier.NOTABLE, "core", List.of()),
@@ -56,6 +66,7 @@ class ModspecCachesTest {
 
     @AfterEach
     void tearDown() {
+        lunaSettings.close();
         ModspecCaches.clear();
         ItemDrops.clear();
         ItemDefinitions.clear();
@@ -71,6 +82,11 @@ class ModspecCachesTest {
     private static SkillNode node(String id, SkillTier tier, String volume, List<String> optionIds) {
         SkillType type = new SkillType.Builder(id + "_type", id, "a.png", tier).effects(List.of()).choiceOptionIds(optionIds).build();
         return new SkillNode(id, type, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of(volume));
+    }
+
+    private static SkillNode gatedNotable(String id, String volume, String gateTag) {
+        SkillType type = new SkillType.Builder(id + "_type", id, "a.png", SkillTier.NOTABLE).effects(List.of()).build();
+        return new SkillNode(id, type, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of(volume, gateTag));
     }
 
     @Test
@@ -140,6 +156,19 @@ class ModspecCachesTest {
 
         assertEquals(List.of("core_notable_a", "hegemony_notable"), SubroutineNodePools.candidates(ItemDefinitions.get(CACHE)));
         assertTrue(FactionFleetDrops.available(ItemDefinitions.get(CACHE)));
+    }
+
+    @Test
+    void nodesBehindAClosedGateNeverRollWhetherGhostedOrConcealed() throws Exception {
+        SkillTree.register(gatedNotable("remnant_notable", "REDACTED", "gate_remnant_fought"));
+        SkillTree.register(gatedNotable("omega_notable", "omega", "gate_omega_found"));
+        NodeGates.register(new JSONObject("{\"gate_remnant_fought\": {\"unlockConditions\": [{\"type\": \"remnantFought\"}]},"
+                + " \"gate_omega_found\": {\"concealed\": true, \"unlockConditions\": [{\"type\": \"omegaFound\"}]}}"));
+        try (MockSector mockSector = new MockSector()) {
+            assertEquals(List.of("abyss_notable", "core_notable_a", "hegemony_notable"), SubroutineNodePools.candidates(ItemDefinitions.get(CACHE)));
+        } finally {
+            NodeGates.register(new JSONObject("{}"));
+        }
     }
 
     @Test

@@ -27,6 +27,8 @@ import exiledsector.skills.skilleffect.WaivedPenalty;
 import exiledsector.skills.skilleffect.defense.ArmorCells;
 import exiledsector.skills.skilleffect.logistics.LogisticsSkillEffect;
 import exiledsector.skills.skilleffect.onhit.RiftStrike;
+import exiledsector.skills.skilleffect.onhit.RiftStrikeListener;
+import exiledsector.skills.skilleffect.weapon.RiftExplosionDamageListener;
 import exiledsector.skills.skilleffect.weapon.WeaponScope;
 import exiledsector.skills.skilleffect.weapon.WeaponStatFamily;
 
@@ -305,16 +307,15 @@ public enum FighterSkillEffect implements BackedSkillEffect {
     },
     STRIKECRAFT_EMP_DAMAGE_PERCENT(new FighterListenerEffect<>(StrikecraftEmpListener.EMP_PERCENT_KEY, StrikecraftEmpListener.class,
             StrikecraftEmpListener::new)),
-    STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT(new FighterListenerEffect<>(StrikecraftRiftStrikeListener.CHANCE_PERCENT_KEY,
-            StrikecraftRiftStrikeListener.class, StrikecraftRiftStrikeListener::new)) {
+    STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT(new FighterListenerEffect<>(RiftStrike.STRIKECRAFT_CHANCE_PERCENT_KEY,
+            RiftStrikeListener.class, RiftStrikeListener::forStrikecraft)) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).arg("share", RiftStrike.DAMAGE_SHARE_PERCENT)
-                    .arg("min", RiftStrike.MIN_DAMAGE).arg("max", RiftStrike.MAX_DAMAGE).styled();
+            return RiftStrike.describe(EffectText.msg(this).arg("value", magnitude));
         }
     },
-    STRIKECRAFT_RIFT_EXPLOSION_DAMAGE_PERCENT(new FighterListenerEffect<>(StrikecraftRiftExplosionDamageListener.DAMAGE_PERCENT_KEY,
-            StrikecraftRiftExplosionDamageListener.class, (fighter, carrier) -> new StrikecraftRiftExplosionDamageListener(carrier))),
+    STRIKECRAFT_RIFT_EXPLOSION_DAMAGE_PERCENT(new FighterListenerEffect<>(RiftExplosionDamageListener.STRIKECRAFT_DAMAGE_PERCENT_KEY,
+            RiftExplosionDamageListener.class, RiftExplosionDamageListener::forStrikecraft)),
     FIGHTER_WING_DAMAGE_TAKEN_MULT_PER_FIGHTER(new FighterListenerEffect<>(WingNumbersDamageListener.REDUCTION_PERCENT_PER_FIGHTER_KEY,
             WingNumbersDamageListener.class, WingNumbersDamageListener::new)) {
 

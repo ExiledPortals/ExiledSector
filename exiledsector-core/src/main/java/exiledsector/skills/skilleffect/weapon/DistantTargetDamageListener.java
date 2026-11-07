@@ -14,7 +14,7 @@ final class DistantTargetDamageListener extends TargetDamageBonusListener {
     }
 
     @Override
-    boolean qualifies(ShipAPI target) {
+    protected boolean qualifies(ShipAPI target) {
         return Misc.getDistance(ownerShip.getLocation(), target.getLocation()) > MIN_DISTANCE;
     }
 }

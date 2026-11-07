@@ -20,8 +20,8 @@ final class InjunctionListener extends ShipCombatListener implements DamageDealt
 
     @Override
     public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        if (!(target instanceof ShipAPI targetShip) || targetShip.isFighter() || !CombatQueries.isAliveNotHulk(targetShip)
-                || !CombatQueries.isHostile(ownerShip, targetShip)) {
+        ShipAPI targetShip = CombatQueries.hostileLiveShip(ownerShip, target);
+        if (targetShip == null || targetShip.isFighter()) {
             return null;
         }
         WeaponAPI weapon = CombatQueries.weaponBehind(param);

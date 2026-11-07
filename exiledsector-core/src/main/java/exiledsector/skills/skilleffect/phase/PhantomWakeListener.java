@@ -20,9 +20,10 @@ final class PhantomWakeListener extends PhaseTransitionListener {
         if (engine == null || !ownerIsAliveNotHulk()) {
             return;
         }
-        if (currentAfterimage != null) {
-            currentAfterimage.dismiss(engine);
+        float lifetimeSeconds = magnitude(SECONDS_KEY);
+        if (currentAfterimage != null && currentAfterimage.restartAt(ownerShip, lifetimeSeconds, engine)) {
+            return;
         }
-        currentAfterimage = PhaseAfterimage.leave(ownerShip, magnitude(SECONDS_KEY), engine);
+        currentAfterimage = PhaseAfterimage.leave(ownerShip, lifetimeSeconds, engine);
     }
 }

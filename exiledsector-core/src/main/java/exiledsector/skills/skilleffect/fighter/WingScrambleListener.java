@@ -28,6 +28,7 @@ import com.fs.starfarer.api.loading.WingRole;
 import exiledsector.ModSounds;
 import exiledsector.skills.skilleffect.DeploymentRecordPruner;
 import exiledsector.skills.skilleffect.ShipCombatListener;
+import exiledsector.skills.skilleffect.TemporaryCombatSpawn;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -338,23 +339,19 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
                                             Vector2f launchLocation, float launchFacing) {
         FighterWingSpecAPI spec = Global.getSettings().getFighterWingSpec(wingSpecId);
         int normalWingSize = spec.getNumFighters();
-        boolean wasSuppressed = fleetManager.isSuppressDeploymentMessages();
-        fleetManager.setSuppressDeploymentMessages(true);
         spec.setNumFighters(1);
         ShipAPI spawned;
         try {
-            spawned = fleetManager.spawnFleetMember(wingMember, new Vector2f(launchLocation), launchFacing, 0f);
-        } catch (RuntimeException e) {
-            spawned = fleetManager.getShipFor(wingMember);
-            if (spawned == null) {
-                throw e;
-            }
-            if (REPORTED_SETTLING_ERROR_TYPES.add(wingSpecId)) {
-                LOG.warn("Wing " + wingSpecId + " threw while settling in after spawning; Coalition Flight Doctrine adopts the copy anyway", e);
-            }
+            spawned = TemporaryCombatSpawn.spawnQuietly(fleetManager, wingMember, launchLocation, launchFacing, (error, settledShip) -> {
+                if (settledShip == null) {
+                    throw error;
+                }
+                if (REPORTED_SETTLING_ERROR_TYPES.add(wingSpecId)) {
+                    LOG.warn("Wing " + wingSpecId + " threw while settling in after spawning; Coalition Flight Doctrine adopts the copy anyway", error);
+                }
+            });
         } finally {
             spec.setNumFighters(normalWingSize);
-            fleetManager.setSuppressDeploymentMessages(wasSuppressed);
         }
         if (spawned == null) {
             return null;
@@ -370,9 +367,7 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
             fleetManager.removeDeployed(spawnedWing, false);
         }
         if (!spawned.isFighter()) {
-            fleetManager.removeDeployed(spawned, false);
-            engine.removeEntity(spawned);
-            DeploymentRecordPruner.forget(fleetManager, wingMember);
+            TemporaryCombatSpawn.dismiss(engine, fleetManager, spawned, wingMember);
             if (REPORTED_UNLAUNCHABLE_TYPES.add(wingSpecId)) {
                 LOG.warn("Wing " + wingSpecId + " spawned a " + spawned.getHullSize() + " instead of a fighter; Coalition Flight Doctrine won't copy it");
             }

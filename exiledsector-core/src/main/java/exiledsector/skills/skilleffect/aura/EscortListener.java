@@ -74,8 +74,7 @@ final class EscortListener extends ShipCombatListener implements AdvanceableList
     }
 
     private boolean isLargerFriendly(ShipAPI candidate) {
-        return candidate != ownerShip && candidate.getOwner() == ownerShip.getOwner() && CombatQueries.isAliveNotHulk(candidate)
-                && candidate.getHullSize().ordinal() > ownerShip.getHullSize().ordinal();
+        return CombatQueries.isAlliedShip(ownerShip, candidate) && candidate.getHullSize().ordinal() > ownerShip.getHullSize().ordinal();
     }
 
     private float magnitudeFor(ShipAPI escorted) {

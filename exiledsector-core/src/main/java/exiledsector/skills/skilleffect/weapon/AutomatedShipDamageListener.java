@@ -13,7 +13,7 @@ final class AutomatedShipDamageListener extends TargetDamageBonusListener {
     }
 
     @Override
-    boolean qualifies(ShipAPI target) {
+    protected boolean qualifies(ShipAPI target) {
         return Misc.isAutomated(target);
     }
 }

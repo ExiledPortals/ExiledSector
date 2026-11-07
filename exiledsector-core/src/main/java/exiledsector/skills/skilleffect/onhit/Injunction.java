@@ -3,10 +3,8 @@ package exiledsector.skills.skilleffect.onhit;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
+import exiledsector.skills.skilleffect.ExpiringStacks;
 import exiledsector.skills.skilleffect.SkillEffectSupport;
-
-import java.util.ArrayDeque;
-import java.util.Deque;
 
 final class Injunction implements AdvanceableListener {
 
@@ -15,11 +13,8 @@ final class Injunction implements AdvanceableListener {
     static final float SECONDS_BETWEEN_STACKS = 1f;
     static final String MOD_ID = "exiledSector_injunction";
 
-    private record Stack(float expiresAtSeconds, float slowdownPercent) {
-    }
-
     private final ShipAPI debuffedShip;
-    private final Deque<Stack> stacks = new ArrayDeque<>();
+    private final ExpiringStacks<Float> slowdownStacks = new ExpiringStacks<>(MAX_STACKS, STACK_SECONDS);
     private float clockSeconds;
     private float nextStackAtSeconds;
     private float appliedSlowdownPercent;
@@ -37,15 +32,11 @@ final class Injunction implements AdvanceableListener {
     }
 
     int stacks() {
-        return stacks.size();
+        return slowdownStacks.size();
     }
 
     float slowdownPercent() {
-        float total = 0f;
-        for (Stack stack : stacks) {
-            total += stack.slowdownPercent();
-        }
-        return total;
+        return slowdownStacks.sum(Float::doubleValue);
     }
 
     void gain(float slowdownPercent) {
@@ -53,21 +44,16 @@ final class Injunction implements AdvanceableListener {
             return;
         }
         nextStackAtSeconds = clockSeconds + SECONDS_BETWEEN_STACKS;
-        if (stacks.size() >= MAX_STACKS) {
-            stacks.pollFirst();
-        }
-        stacks.addLast(new Stack(clockSeconds + STACK_SECONDS, slowdownPercent));
+        slowdownStacks.add(clockSeconds, slowdownPercent);
         applyIfChanged();
     }
 
     @Override
     public void advance(float amount) {
         clockSeconds += amount;
-        while (!stacks.isEmpty() && stacks.peekFirst().expiresAtSeconds() <= clockSeconds) {
-            stacks.pollFirst();
-        }
+        slowdownStacks.dropExpired(clockSeconds);
         applyIfChanged();
-        if (stacks.isEmpty()) {
+        if (slowdownStacks.isEmpty()) {
             debuffedShip.removeListener(this);
         }
     }

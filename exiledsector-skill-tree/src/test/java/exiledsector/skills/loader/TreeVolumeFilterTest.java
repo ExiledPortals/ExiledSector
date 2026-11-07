@@ -5,6 +5,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.decoration.AbyssSerpent;
+import exiledsector.skills.decoration.Orbit;
 import exiledsector.skills.decoration.Decoration;
 import exiledsector.skills.decoration.Decorations;
 import exiledsector.skills.decoration.RingBelt;
@@ -57,7 +58,7 @@ class TreeVolumeFilterTest {
                         new Star("frozen", 0f, 0f, 1f, "star_yellow", null, List.of("enigma")),
                         new ThreatUnit("hive", 0f, 0f, ThreatUnit.HIVE, 1f, 0f, List.of("core")),
                         new ThreatUnit("lost_fabricator", 0f, 0f, ThreatUnit.FABRICATOR, 1f, 0f, List.of("enigma")),
-                        new AbyssSerpent("worm", 0f, 0f, new AbyssSerpent.Orbit(1f, 1f, true, 0f), AbyssSerpent.Wobble.NONE, List.of("enigma")))));
+                        new AbyssSerpent("worm", 0f, 0f, new Orbit(1f, 1f, true, 0f), AbyssSerpent.Wobble.NONE, List.of("enigma")))));
     }
 
     @Test

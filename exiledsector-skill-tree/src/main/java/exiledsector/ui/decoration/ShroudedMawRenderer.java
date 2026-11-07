@@ -2,14 +2,13 @@ package exiledsector.ui.decoration;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledsector.skills.decoration.ShroudedMaw;
-import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.TexturedQuadBatch;
 
 import java.awt.Color;
 import java.util.List;
 
-public final class ShroudedMawRenderer implements DecorationRenderer {
+public final class ShroudedMawRenderer extends UnitDecorationRenderer<ShroudedMaw> {
 
     record Puff(float side, float forward, float size, float spinDeg, float alpha, float flash, int cell) {
     }
@@ -85,36 +84,14 @@ public final class ShroudedMawRenderer implements DecorationRenderer {
     private static final Color DARKNESS = new Color(6, 0, 3);
     private static final float TWO_PI = (float) (Math.PI * 2);
 
-    private final SpriteCache spriteCache = new SpriteCache(ShroudedMawRenderer.class);
     private final TexturedQuadBatch quadBatch = new TexturedQuadBatch();
-    private final List<ShroudedMaw> maws;
-    private float elapsedSeconds;
 
     ShroudedMawRenderer(List<ShroudedMaw> maws) {
-        this.maws = List.copyOf(maws);
+        super(maws);
     }
 
     @Override
-    public void advance(float amount) {
-        if (!maws.isEmpty()) {
-            elapsedSeconds += amount;
-        }
-    }
-
-    @Override
-    public void render(DecorationScene scene, DecorationDepth depth) {
-        if (depth != DecorationDepth.UNITS || maws.isEmpty() || scene.sceneryAlpha() <= 0f) {
-            return;
-        }
-        for (ShroudedMaw maw : maws) {
-            float mawAlpha = scene.alphaFor(maw.getId());
-            if (mawAlpha > 0f) {
-                renderMaw(scene.viewport(), maw, mawAlpha);
-            }
-        }
-    }
-
-    private void renderMaw(TreeViewport viewport, ShroudedMaw maw, float alphaMult) {
+    void renderUnit(TreeViewport viewport, ShroudedMaw maw, float alphaMult) {
         float bodyLength = maw.getLength();
         float driftPhase = TWO_PI * elapsedSeconds / DRIFT_SECONDS;
         float screenX = viewport.screenX(maw.getX() + (float) Math.cos(driftPhase) * bodyLength * DRIFT_LENGTHS);

@@ -11,6 +11,7 @@ import exiledsector.ProjectFiles;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.npc.RealSkillData;
 import org.json.CDL;
 import org.junit.jupiter.api.AfterEach;
@@ -29,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -74,7 +74,7 @@ class AlphaSiteOmegaCacheTest {
     }
 
     @Test
-    void theAlphaSiteCacheHoldsOneOmegaAnchorAndOpensTheVolume() {
+    void theAlphaSiteCacheHoldsOneOmegaAnchorButShowingItLeavesTheVolumeShut() {
         SectorEntityToken cache = entity(Entities.ALPHA_SITE_WEAPONS_CACHE);
         CargoAPI loot = mock(CargoAPI.class);
 
@@ -84,7 +84,21 @@ class AlphaSiteOmegaCacheTest {
         ArgumentCaptor<SpecialItemData> anchor = ArgumentCaptor.forClass(SpecialItemData.class);
         verify(loot, times(1)).addSpecial(anchor.capture(), anyFloat());
         assertEquals("wormhole_anchor_omega", ItemData.of(anchor.getValue()).definitionId());
-        verify(playerMemory, atLeastOnce()).set(FOUND_OMEGA_KEY, true);
+        verify(playerMemory, never()).set(FOUND_OMEGA_KEY, true);
+    }
+
+    @Test
+    void theCacheHoldsNoAnchorWhileTheSkillTreeIsSwitchedOff() {
+        SkillTreeSetting.setEnabledForTests(false);
+        try {
+            CargoAPI loot = mock(CargoAPI.class);
+
+            AlphaSiteOmegaCache.addAnchor(sector, entity(Entities.ALPHA_SITE_WEAPONS_CACHE), loot);
+
+            verify(loot, never()).addSpecial(any(), anyFloat());
+        } finally {
+            SkillTreeSetting.setEnabledForTests(SkillTreeSetting.DEFAULT_ENABLED);
+        }
     }
 
     @Test

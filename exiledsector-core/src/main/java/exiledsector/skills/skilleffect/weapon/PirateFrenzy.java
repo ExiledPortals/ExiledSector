@@ -4,13 +4,11 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.skilleffect.ExpiringStacks;
 import exiledsector.skills.skilleffect.ScaledBonus;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 import exiledsector.skills.skilleffect.SkillEffectSupport;
 import exiledsector.skills.skilleffect.StatMode;
-
-import java.util.ArrayDeque;
-import java.util.Deque;
 
 import static exiledsector.skills.skilleffect.ScaledBonus.fixed;
 import static exiledsector.skills.skilleffect.StatTarget.scaled;
@@ -26,7 +24,7 @@ public final class PirateFrenzy extends ShipCombatListener implements Advanceabl
             fixed(WeaponStatFamily.RATE_OF_FIRE.target(WeaponScope.ALL), StatMode.PERCENT, RATE_OF_FIRE_PERCENT_PER_STACK),
             fixed(scaled(WeaponStatFamily.FLUX_COST.target(WeaponScope.ALL), -1f), StatMode.PERCENT, FLUX_COST_REDUCTION_PERCENT_PER_STACK));
 
-    private final Deque<Float> stackExpiryTimes = new ArrayDeque<>();
+    private final ExpiringStacks<Void> frenzyStacks = new ExpiringStacks<>(MAX_STACKS, STACK_SECONDS);
     private final ScaledBonus.Tracker frenzyBonus = FRENZY_BONUS.tracker();
     private float frenzyClockSeconds;
 
@@ -45,34 +43,29 @@ public final class PirateFrenzy extends ShipCombatListener implements Advanceabl
     }
 
     public int stacks() {
-        return stackExpiryTimes.size();
+        return frenzyStacks.size();
     }
 
     public void gain() {
         if (!ownerIsAliveNotHulk()) {
             return;
         }
-        if (stackExpiryTimes.size() >= MAX_STACKS) {
-            stackExpiryTimes.pollFirst();
-        }
-        stackExpiryTimes.addLast(frenzyClockSeconds + STACK_SECONDS);
+        frenzyStacks.add(frenzyClockSeconds);
         applyIfChanged();
     }
 
     @Override
     public void advance(float amount) {
         if (!ownerIsAliveNotHulk()) {
-            stackExpiryTimes.clear();
+            frenzyStacks.clear();
         } else {
             frenzyClockSeconds += amount;
         }
-        while (!stackExpiryTimes.isEmpty() && stackExpiryTimes.peekFirst() <= frenzyClockSeconds) {
-            stackExpiryTimes.pollFirst();
-        }
+        frenzyStacks.dropExpired(frenzyClockSeconds);
         applyIfChanged();
     }
 
     private void applyIfChanged() {
-        frenzyBonus.apply(ownerShip.getMutableStats(), modId, stackExpiryTimes.size());
+        frenzyBonus.apply(ownerShip.getMutableStats(), modId, frenzyStacks.size());
     }
 }

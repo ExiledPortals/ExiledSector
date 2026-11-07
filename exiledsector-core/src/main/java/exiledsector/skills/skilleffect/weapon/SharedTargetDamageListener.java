@@ -60,8 +60,7 @@ final class SharedTargetDamageListener extends ShipCombatListener implements Adv
     }
 
     private boolean isLinkedAlly(ShipAPI ship) {
-        return ship != ownerShip && ship.getOwner() == ownerShip.getOwner() && !ship.isFighter() && CombatQueries.isAliveNotHulk(ship)
-                && !CombatQueries.isSameStation(ownerShip, ship);
+        return CombatQueries.isAlliedShip(ownerShip, ship) && !CombatQueries.isSameStation(ownerShip, ship);
     }
 
     @Override

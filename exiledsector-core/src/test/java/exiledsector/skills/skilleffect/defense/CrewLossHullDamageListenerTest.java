@@ -90,6 +90,29 @@ class CrewLossHullDamageListenerTest {
     }
 
     @Test
+    void aStationModuleCountsItsParentsCrew() {
+        ShipAPI module = shipWithCrew(0f);
+        ShipAPI parent = shipWithCrew(400f);
+        when(module.getParentStation()).thenReturn(parent);
+        CrewLossHullDamageListener listener = new CrewLossHullDamageListener(module);
+
+        listener.reportDamageApplied(null, module, hullHit(400f));
+
+        assertEquals(0.96f, hullDamageTakenMult.getModifiedValue(), EPSILON);
+    }
+
+    @Test
+    void crewIsCountedAtTheFirstHullHitNotAtDeployment() {
+        ShipAPI module = shipWithCrew(0f);
+        CrewLossHullDamageListener listener = new CrewLossHullDamageListener(module);
+        when(module.getParentStation()).thenReturn(ship);
+
+        listener.reportDamageApplied(null, module, hullHit(400f));
+
+        assertEquals(0.96f, hullDamageTakenMult.getModifiedValue(), EPSILON);
+    }
+
+    @Test
     void aShipWithoutCrewGainsNothing() {
         ShipAPI uncrewed = shipWithCrew(0f);
         CrewLossHullDamageListener listener = new CrewLossHullDamageListener(uncrewed);

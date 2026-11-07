@@ -8,12 +8,15 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.loading.ProjectileSpawnType;
+import exiledsector.skills.skilleffect.Chance;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.CsvIdList;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 import exiledsector.skills.skilleffect.weapon.WeaponScope;
 import org.lazywizard.lazylib.VectorUtils;
 import org.lwjgl.util.vector.Vector2f;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 final class BallisticPierceListener extends ShipCombatListener implements DamageDealtModifier, DroneSpawner {
 
@@ -46,8 +49,7 @@ final class BallisticPierceListener extends ShipCombatListener implements Damage
                 || !ownerShip.isAlive() || !CombatQueries.isHostile(ownerShip, hitShip)) {
             return;
         }
-        float chancePercent = magnitude(CHANCE_KEY);
-        if (chancePercent <= 0f || Math.random() >= chancePercent / 100.0 || !WeaponDroneFactory.supportsProjectile(weapon)) {
+        if (!Chance.roll(ThreadLocalRandom.current(), magnitude(CHANCE_KEY)) || !WeaponDroneFactory.supportsProjectile(weapon)) {
             return;
         }
         drones.launch(weapon, hitShip, point, travelFacing(projectile));

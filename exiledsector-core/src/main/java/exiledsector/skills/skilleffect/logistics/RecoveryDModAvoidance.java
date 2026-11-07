@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.plugins.DModAdderPlugin;
 import exiledsector.PlayerFleet;
+import exiledsector.skills.skilleffect.Chance;
 
 import java.util.List;
 
@@ -36,8 +37,7 @@ public final class RecoveryDModAvoidance implements DModAdderPlugin {
         if (playerFleet == null || params.recoverer != playerFleet || params.random == null || playerFleet.getFleetData() == null) {
             return false;
         }
-        float chancePercent = chancePercent(playerFleet.getFleetData().getMembersListCopy());
-        return chancePercent > 0f && params.random.nextFloat() * 100f < chancePercent;
+        return Chance.roll(params.random, chancePercent(playerFleet.getFleetData().getMembersListCopy()));
     }
 
     static float chancePercent(List<FleetMemberAPI> members) {

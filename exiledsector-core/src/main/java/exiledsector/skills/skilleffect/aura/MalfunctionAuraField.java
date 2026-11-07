@@ -1,9 +1,7 @@
 package exiledsector.skills.skilleffect.aura;
 
 import com.fs.starfarer.api.combat.ShipAPI;
-import exiledsector.skills.skilleffect.CombatQueries;
 
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,19 +29,6 @@ final class MalfunctionAuraField extends AuraField<MalfunctionAuraListener> {
     }
 
     static Map<ShipAPI, Float> strongestPerTarget(List<MalfunctionAuraListener> sources, ShipsNear shipsNear) {
-        Map<ShipAPI, Float> strongest = new IdentityHashMap<>();
-        for (MalfunctionAuraListener source : sources) {
-            float percent = source.malfunctionPercent();
-            if (percent <= 0f) {
-                continue;
-            }
-            ShipAPI sourceShip = source.source();
-            for (ShipAPI target : shipsNear.find(sourceShip, RANGE, other -> !other.isFighter() && CombatQueries.isAliveNotHulk(other)
-                    && CombatQueries.isHostile(sourceShip, other)
-                    && CombatQueries.withinRadius(other.getLocation(), sourceShip.getLocation(), RANGE))) {
-                strongest.merge(target, percent, Math::max);
-            }
-        }
-        return strongest;
+        return strongestPerShip(sources, shipsNear, RANGE, MalfunctionAuraListener::malfunctionPercent, AuraField::isHostileShip);
     }
 }

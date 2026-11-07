@@ -2,7 +2,6 @@ package exiledsector.skills.skilleffect.flux;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
-import com.fs.starfarer.api.combat.FighterWingAPI;
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
@@ -18,6 +17,8 @@ final class OverloadHullDamageListener extends ShipCombatListener implements Adv
     static final String HARD_FLUX_DISSIPATION_PERCENT_KEY = "exiledSector_overloadHardFluxDissipationPercent";
 
     private ShipAPI lastEnemyAttacker;
+    private float secondsUntilNextReplacement;
+    private boolean keepingRunningOverload;
 
     OverloadHullDamageListener(ShipAPI ownerShip) {
         super(ownerShip);
@@ -28,16 +29,10 @@ final class OverloadHullDamageListener extends ShipCombatListener implements Adv
         if (target != ownerShip) {
             return;
         }
-        ShipAPI attacker = owningShip(CombatQueries.attackingShip(source, ownerShip.getParamAboutToApplyDamage()));
+        ShipAPI attacker = CombatQueries.owningShip(CombatQueries.attackingShip(source, ownerShip.getParamAboutToApplyDamage()));
         if (attacker != null && CombatQueries.isHostile(ownerShip, attacker)) {
             lastEnemyAttacker = attacker;
         }
-    }
-
-    static ShipAPI owningShip(ShipAPI attacker) {
-        FighterWingAPI wing = attacker != null && attacker.isFighter() ? attacker.getWing() : null;
-        ShipAPI carrier = wing == null ? null : wing.getSourceShip();
-        return carrier != null ? carrier : attacker;
     }
 
     ShipAPI lastEnemyAttacker() {
@@ -46,14 +41,28 @@ final class OverloadHullDamageListener extends ShipCombatListener implements Adv
 
     @Override
     public void advance(float amount) {
+        secondsUntilNextReplacement = Math.max(0f, secondsUntilNextReplacement - amount);
         FluxTrackerAPI fluxTracker = ownerShip.getFluxTracker();
-        if (fluxTracker == null || !fluxTracker.isOverloaded() || !ownerIsAliveNotHulk()) {
+        if (fluxTracker == null || !fluxTracker.isOverloaded()) {
+            keepingRunningOverload = false;
+            return;
+        }
+        if (keepingRunningOverload || !ownerIsAliveNotHulk()) {
             return;
         }
         float hullDamagePercent = magnitude(HULL_DAMAGE_PERCENT_KEY);
         if (hullDamagePercent <= 0f) {
             return;
         }
+        if (secondsUntilNextReplacement > 0f) {
+            keepingRunningOverload = true;
+            return;
+        }
+        replace(fluxTracker, hullDamagePercent);
+    }
+
+    private void replace(FluxTrackerAPI fluxTracker, float hullDamagePercent) {
+        secondsUntilNextReplacement = fluxTracker.getOverloadTimeRemaining();
         fluxTracker.stopOverload();
         float dissipatedPercent = Math.min(100f, magnitude(HARD_FLUX_DISSIPATION_PERCENT_KEY));
         if (dissipatedPercent > 0f) {

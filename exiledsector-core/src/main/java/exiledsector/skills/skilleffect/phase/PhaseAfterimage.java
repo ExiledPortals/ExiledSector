@@ -15,8 +15,13 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.ShipwideAIFlags;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.FleetMemberType;
+import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.input.InputEventAPI;
+import com.fs.starfarer.api.util.Misc;
+import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.DeploymentRecordPruner;
+import exiledsector.skills.skilleffect.Taper;
+import exiledsector.skills.skilleffect.TemporaryCombatSpawn;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -35,16 +40,16 @@ final class PhaseAfterimage extends BaseEveryFrameCombatPlugin {
     private static final Logger LOG = Logger.getLogger(PhaseAfterimage.class);
 
     private final ShipAPI afterimage;
+    private final FleetMemberAPI temporaryMember;
     private final CombatFleetManagerAPI fleetManager;
-    private final float lifetimeSeconds;
-    private float secondsLeft;
+    private final Taper fade = new Taper();
     private boolean dismissed;
 
-    private PhaseAfterimage(ShipAPI afterimage, CombatFleetManagerAPI fleetManager, float lifetimeSeconds) {
+    private PhaseAfterimage(ShipAPI afterimage, FleetMemberAPI temporaryMember, CombatFleetManagerAPI fleetManager, float lifetimeSeconds) {
         this.afterimage = afterimage;
+        this.temporaryMember = temporaryMember;
         this.fleetManager = fleetManager;
-        this.lifetimeSeconds = lifetimeSeconds;
-        this.secondsLeft = lifetimeSeconds;
+        fade.start(lifetimeSeconds);
     }
 
     static boolean canLeaveAfterimage(ShipAPI ship) {
@@ -59,34 +64,24 @@ final class PhaseAfterimage extends BaseEveryFrameCombatPlugin {
         }
         CombatFleetManagerAPI fleetManager = engine.getFleetManager(ownerShip.getOwner());
         ShipVariantAPI variant = Global.getSettings().createEmptyVariant(VARIANT_ID_PREFIX + ownerShip.getId(), ownerShip.getHullSpec());
+        variant.addTag(CombatQueries.AFTERIMAGE_TAG);
         FleetMemberAPI temporaryMember = Global.getFactory().createFleetMember(FleetMemberType.SHIP, variant);
         temporaryMember.setOwner(ownerShip.getOwner());
-        temporaryMember.setAlly(ownerShip.isAlly());
+        temporaryMember.setAlly(ownerShip.isAlly() || ownerShip.getOwner() == Misc.OWNER_PLAYER);
         temporaryMember.getRepairTracker().setCR(AFTERIMAGE_READINESS);
-        ShipAPI afterimage = spawnQuietly(fleetManager, temporaryMember, ownerShip);
+        ShipAPI afterimage = TemporaryCombatSpawn.spawnQuietly(fleetManager, temporaryMember, ownerShip.getLocation(), ownerShip.getFacing(),
+                (error, settledShip) -> LOG.warn("The afterimage of " + ownerShip.getHullSpec().getHullId() + " threw while settling in after spawning"
+                        + (settledShip == null ? "; Phantom Wake leaves none" : "; Phantom Wake keeps it"), error));
         if (afterimage == null) {
             return null;
         }
         DeploymentRecordPruner.forget(fleetManager, temporaryMember);
+        temporaryMember.getStats().getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyMult(STATS_MOD_ID, 0f);
+        afterimage.setInvalidTransferCommandTarget(true);
         makeInert(afterimage, ownerShip.getLocation(), ownerShip.getFacing());
-        PhaseAfterimage plugin = new PhaseAfterimage(afterimage, fleetManager, lifetimeSeconds);
+        PhaseAfterimage plugin = new PhaseAfterimage(afterimage, temporaryMember, fleetManager, lifetimeSeconds);
         engine.addPlugin(plugin);
         return plugin;
-    }
-
-    private static ShipAPI spawnQuietly(CombatFleetManagerAPI fleetManager, FleetMemberAPI temporaryMember, ShipAPI ownerShip) {
-        boolean wasSuppressed = fleetManager.isSuppressDeploymentMessages();
-        fleetManager.setSuppressDeploymentMessages(true);
-        try {
-            return fleetManager.spawnFleetMember(temporaryMember, new Vector2f(ownerShip.getLocation()), ownerShip.getFacing(), 0f);
-        } catch (RuntimeException e) {
-            ShipAPI settling = fleetManager.getShipFor(temporaryMember);
-            LOG.warn("The afterimage of " + ownerShip.getHullSpec().getHullId() + " threw while settling in after spawning"
-                    + (settling == null ? "; Phantom Wake leaves none" : "; Phantom Wake keeps it"), e);
-            return settling;
-        } finally {
-            fleetManager.setSuppressDeploymentMessages(wasSuppressed);
-        }
     }
 
     static void makeInert(ShipAPI afterimage, Vector2f entryLocation, float entryFacing) {
@@ -98,6 +93,10 @@ final class PhaseAfterimage extends BaseEveryFrameCombatPlugin {
         afterimage.setCollisionClass(CollisionClass.FIGHTER);
         afterimage.setShipAI(new IdleAI());
         afterimage.setHoldFire(true);
+        holdAt(afterimage, entryLocation, entryFacing);
+    }
+
+    private static void holdAt(ShipAPI afterimage, Vector2f entryLocation, float entryFacing) {
         afterimage.getLocation().set(entryLocation);
         afterimage.setFacing(entryFacing);
         afterimage.getVelocity().set(0f, 0f);
@@ -105,8 +104,14 @@ final class PhaseAfterimage extends BaseEveryFrameCombatPlugin {
         afterimage.setAlphaMult(START_ALPHA);
     }
 
-    static float fadeShare(float secondsLeft, float lifetimeSeconds) {
-        return lifetimeSeconds <= 0f ? 0f : Math.max(0f, Math.min(1f, secondsLeft / lifetimeSeconds));
+    boolean restartAt(ShipAPI ownerShip, float lifetimeSeconds, CombatEngineAPI engine) {
+        if (dismissed || lifetimeSeconds <= 0f || !engine.isEntityInPlay(afterimage)) {
+            dismiss(engine);
+            return false;
+        }
+        holdAt(afterimage, ownerShip.getLocation(), ownerShip.getFacing());
+        fade.start(lifetimeSeconds);
+        return true;
     }
 
     @Override
@@ -115,12 +120,12 @@ final class PhaseAfterimage extends BaseEveryFrameCombatPlugin {
         if (engine == null || engine.isPaused()) {
             return;
         }
-        secondsLeft -= amount;
-        if (secondsLeft <= 0f || !engine.isEntityInPlay(afterimage)) {
+        fade.advance(amount);
+        if (!fade.isRunning() || !engine.isEntityInPlay(afterimage)) {
             dismiss(engine);
             return;
         }
-        float share = fadeShare(secondsLeft, lifetimeSeconds);
+        float share = fade.share();
         afterimage.getVelocity().set(0f, 0f);
         afterimage.setAngularVelocity(0f);
         afterimage.setAlphaMult(START_ALPHA * share);
@@ -134,8 +139,7 @@ final class PhaseAfterimage extends BaseEveryFrameCombatPlugin {
         dismissed = true;
         engine.removePlugin(this);
         if (engine.isEntityInPlay(afterimage)) {
-            fleetManager.removeDeployed(afterimage, false);
-            engine.removeEntity(afterimage);
+            TemporaryCombatSpawn.dismiss(engine, fleetManager, afterimage, temporaryMember);
         }
     }
 

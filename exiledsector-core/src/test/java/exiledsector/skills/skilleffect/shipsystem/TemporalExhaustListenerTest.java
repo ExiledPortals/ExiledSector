@@ -20,7 +20,6 @@ import org.mockito.Mockito;
 import java.util.List;
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
@@ -82,13 +81,6 @@ class TemporalExhaustListenerTest {
         when(system.isActive()).thenReturn(true);
         listener.advance(0f);
         when(system.isActive()).thenReturn(false);
-    }
-
-    @Test
-    void theTaperShareFallsEvenlyFromFullToNothing() {
-        assertEquals(1f, TemporalExhaustListener.taperShare(TemporalExhaustListener.TAPER_SECONDS));
-        assertEquals(0.5f, TemporalExhaustListener.taperShare(TemporalExhaustListener.TAPER_SECONDS / 2f), 1e-6f);
-        assertEquals(0f, TemporalExhaustListener.taperShare(0f));
     }
 
     @Test

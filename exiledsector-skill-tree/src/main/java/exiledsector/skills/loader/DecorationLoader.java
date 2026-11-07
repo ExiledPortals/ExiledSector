@@ -5,6 +5,7 @@ import exiledsector.skills.decoration.Decoration;
 import exiledsector.skills.decoration.DecorationKind;
 import exiledsector.skills.decoration.Decorations;
 import exiledsector.skills.decoration.Hypershunt;
+import exiledsector.skills.decoration.Orbit;
 import exiledsector.skills.decoration.RingBelt;
 import exiledsector.skills.decoration.ShroudedMaw;
 import exiledsector.skills.decoration.Star;
@@ -127,11 +128,15 @@ public final class DecorationLoader {
                 serpentJson.getString("id"),
                 (float) serpentJson.getDouble("x"),
                 (float) serpentJson.getDouble("y"),
-                new AbyssSerpent.Orbit((float) serpentJson.getDouble("orbitRadius"), (float) serpentJson.getDouble("orbitSeconds"),
-                        serpentJson.optBoolean("clockwise", true), (float) serpentJson.optDouble("startAngle", 0.0)),
+                parseOrbit(serpentJson, true),
                 new AbyssSerpent.Wobble((float) serpentJson.optDouble("wobble", 0.0), serpentJson.optInt("wobbleWaves", 0),
                         (float) serpentJson.optDouble("wobblePhase", 0.0)),
                 tags(serpentJson));
+    }
+
+    static Orbit parseOrbit(JSONObject orbitingJson, boolean defaultClockwise) throws JSONException {
+        return new Orbit((float) orbitingJson.getDouble("orbitRadius"), (float) orbitingJson.getDouble("orbitSeconds"),
+                orbitingJson.optBoolean("clockwise", defaultClockwise), (float) orbitingJson.optDouble("startAngle", 0.0));
     }
 
     static ShroudedMaw parseShroudedMaw(JSONObject mawJson) throws JSONException {
@@ -149,8 +154,7 @@ public final class DecorationLoader {
                 hypershuntJson.getString("id"),
                 (float) hypershuntJson.getDouble("x"),
                 (float) hypershuntJson.getDouble("y"),
-                new Hypershunt.Orbit((float) hypershuntJson.getDouble("orbitRadius"), (float) hypershuntJson.getDouble("orbitSeconds"),
-                        hypershuntJson.optBoolean("clockwise", false), (float) hypershuntJson.optDouble("startAngle", 0.0)),
+                parseOrbit(hypershuntJson, false),
                 (float) hypershuntJson.getDouble("size"),
                 tags(hypershuntJson));
     }

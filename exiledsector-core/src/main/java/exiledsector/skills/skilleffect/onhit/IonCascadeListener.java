@@ -1,30 +1,23 @@
 package exiledsector.skills.skilleffect.onhit;
 
 import com.fs.starfarer.api.combat.ArmorGridAPI;
-import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipEngineControllerAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
-import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
-import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
-import exiledsector.skills.skilleffect.CombatQueries;
-import exiledsector.skills.skilleffect.ShipCombatListener;
 import org.lwjgl.util.vector.Vector2f;
 
-final class IonCascadeListener extends ShipCombatListener implements DamageDealtModifier, AdvanceableListener {
+final class IonCascadeListener extends EmpConversionListener {
 
     static final String HIGH_EXPLOSIVE_SHARE_PERCENT_KEY = "exiledSector_ionCascadeHighExplosiveSharePercent";
     static final float INNER_CELL_EMP_SHARE = 0.5f;
     static final float OUTER_CELL_EMP_SHARE = 0.25f;
     static final int REACH_CELLS = 2;
 
-    private final DeferredHits pendingHits = new DeferredHits(DamageType.HIGH_EXPLOSIVE, true);
-
     IonCascadeListener(ShipAPI ownerShip) {
-        super(ownerShip);
+        super(ownerShip, HIGH_EXPLOSIVE_SHARE_PERCENT_KEY, false, DamageType.HIGH_EXPLOSIVE);
     }
 
     static float empShareAtCellOffset(int cellOffsetX, int cellOffsetY) {
@@ -37,21 +30,8 @@ final class IonCascadeListener extends ShipCombatListener implements DamageDealt
     }
 
     @Override
-    public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        if (shieldHit || point == null || !(target instanceof ShipAPI targetShip) || !CombatQueries.isAliveNotHulk(targetShip)
-                || !CombatQueries.isHostile(ownerShip, targetShip)) {
-            return null;
-        }
-        float sharePercent = magnitude(HIGH_EXPLOSIVE_SHARE_PERCENT_KEY);
-        float emp = damage.computeFluxDealt(damage.getDpsDuration());
-        if (sharePercent <= 0f || emp <= 0f) {
-            return null;
-        }
-        float wastedEmp = empOnDisabledParts(targetShip, point, emp, damage.getStats());
-        if (wastedEmp > 0f) {
-            pendingHits.add(targetShip, point, wastedEmp * sharePercent / 100f);
-        }
-        return null;
+    float convertibleEmp(ShipAPI targetShip, Vector2f point, float emp, DamageAPI damage) {
+        return empOnDisabledParts(targetShip, point, emp, damage.getStats());
     }
 
     static float empOnDisabledParts(ShipAPI targetShip, Vector2f point, float emp, MutableShipStatsAPI attackerStats) {
@@ -86,10 +66,5 @@ final class IonCascadeListener extends ShipCombatListener implements DamageDealt
     private static float shareAt(ArmorGridAPI armorGrid, int[] hitCell, Vector2f partLocation) {
         int[] partCell = partLocation == null ? null : armorGrid.getCellAtLocation(partLocation);
         return partCell == null ? 0f : empShareAtCellOffset(partCell[0] - hitCell[0], partCell[1] - hitCell[1]);
-    }
-
-    @Override
-    public void advance(float amount) {
-        pendingHits.applyAll(ownerShip);
     }
 }

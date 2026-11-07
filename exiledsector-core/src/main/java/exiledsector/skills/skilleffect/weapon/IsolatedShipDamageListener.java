@@ -1,7 +1,6 @@
 package exiledsector.skills.skilleffect.weapon;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import exiledsector.skills.skilleffect.CombatQueries;
 
@@ -28,26 +27,33 @@ final class IsolatedShipDamageListener extends TargetDamageBonusListener {
     }
 
     private static boolean isAllyOf(ShipAPI target, ShipAPI other) {
-        return other != target && other.getOwner() == target.getOwner() && !other.isFighter()
-                && CombatQueries.isAliveNotHulk(other) && !CombatQueries.isSameStation(target, other);
+        return CombatQueries.isAlliedShip(target, other) && !CombatQueries.isSameStation(target, other);
     }
 
     @Override
-    boolean qualifies(ShipAPI target) {
+    protected boolean qualifies(ShipAPI target) {
         return !target.isFighter() && isIsolated(target);
     }
 
     private boolean isIsolated(ShipAPI target) {
-        CombatEngineAPI engine = Global.getCombatEngine();
-        float now = engine.getTotalElapsedTime(false);
+        float now = Global.getCombatEngine().getTotalElapsedTime(false);
         IsolationCheck check = checksByTarget.get(target);
-        if (check == null || now - check.checkedAtSeconds() >= RECHECK_SECONDS) {
+        if (check == null || check.isStaleAt(now)) {
+            checksByTarget.values().removeIf(otherCheck -> otherCheck.isStaleAt(now));
             check = new IsolationCheck(now, !hasAllyNearby(target));
             checksByTarget.put(target, check);
         }
         return check.isolated();
     }
 
+    int cachedChecks() {
+        return checksByTarget.size();
+    }
+
     private record IsolationCheck(float checkedAtSeconds, boolean isolated) {
+
+        private boolean isStaleAt(float nowSeconds) {
+            return nowSeconds - checkedAtSeconds >= RECHECK_SECONDS;
+        }
     }
 }

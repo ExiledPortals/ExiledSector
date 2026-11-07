@@ -2,6 +2,7 @@ package exiledsector.skills.skilleffect.phase;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 import exiledsector.skills.skilleffect.ScaledBonus;
+import exiledsector.skills.skilleffect.TaperedBonus;
 import exiledsector.skills.skilleffect.weapon.WeaponScope;
 import exiledsector.skills.skilleffect.weapon.WeaponStatFamily;
 
@@ -13,31 +14,26 @@ final class PhaseExitDamageListener extends PhaseTransitionListener {
     private static final ScaledBonus AMBUSH_BONUS = new ScaledBonus(
             ScaledBonus.percent(WeaponStatFamily.DAMAGE.target(WeaponScope.ALL), DAMAGE_PERCENT_KEY));
 
-    private final ScaledBonus.Tracker ambushBonus = AMBUSH_BONUS.tracker();
-    private float taperSecondsLeft;
+    private final TaperedBonus ambushBonus;
 
     PhaseExitDamageListener(ShipAPI ownerShip) {
         super(ownerShip, MOD_ID_PREFIX);
-    }
-
-    static float taperShare(float secondsLeft) {
-        return Math.max(0f, Math.min(1f, secondsLeft / TAPER_SECONDS));
+        ambushBonus = new TaperedBonus(AMBUSH_BONUS, TAPER_SECONDS, ownerShip.getMutableStats(), modId);
     }
 
     @Override
     void onPhaseExit() {
         if (ownerIsAliveNotHulk()) {
-            taperSecondsLeft = TAPER_SECONDS;
+            ambushBonus.start();
         }
     }
 
     @Override
     void afterTransitionCheck(float amount) {
-        if (!ownerIsAliveNotHulk()) {
-            taperSecondsLeft = 0f;
-        } else if (taperSecondsLeft > 0f) {
-            taperSecondsLeft = Math.max(0f, taperSecondsLeft - amount);
+        if (ownerIsAliveNotHulk()) {
+            ambushBonus.advance(amount);
+        } else {
+            ambushBonus.stop();
         }
-        ambushBonus.apply(ownerShip.getMutableStats(), modId, taperShare(taperSecondsLeft));
     }
 }

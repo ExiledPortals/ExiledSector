@@ -202,9 +202,10 @@ burns on one cell add up.
 
 ### Rift Harmonics and rift explosion damage
 
-`RIFT_STRIKE_CHANCE_PERCENT` (`RiftStrikeListener`) rolls on each hit an enemy ship takes from this ship's non-beam
+`RIFT_STRIKE_CHANCE_PERCENT` (`RiftStrikeListener`) rolls on each hit an enemy ship takes from this ship's own non-beam
 energy weapons, ballistics included while they count as energy, and Spark Rift's `STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT`
-(`StrikecraftRiftStrikeListener`) on each such hit from its launched strike craft. On success it drops vanilla's Rift Beam
+(the same listener on each launched strike craft, reading the carrier's chance) on each such hit from the craft's own
+weapons, so shots fired by weapon drones or refraction hops never roll. On success it drops vanilla's Rift Beam
 mine at the hit point, sourced by the hitting ship or craft, which explodes at once (`RiftExplosions.spawn`). The mine's
 damage is set from the weapon spec's base damage per shot (`RiftStrike`), so damage bonuses never reach it, and the
 Rift Harmonics tooltip lists every fitted weapon with its rift damage (`RiftStrikeTooltipTable`).
@@ -213,7 +214,7 @@ Rift Harmonics tooltip lists every fitted weapon with its rift damage (`RiftStri
 sources: these rifts, vanilla's Rift Beam, Lance, Cascade and Lightning mines, and Rift Torpedo direct hits, which
 `RiftExplosions` picks out by their vanilla sound set and the absence of a drawn explosion of their own. The engine asks
 only the source's listeners, so a strike craft's rifts take `STRIKECRAFT_RIFT_EXPLOSION_DAMAGE_PERCENT` instead
-(`StrikecraftRiftExplosionDamageListener`, on each launched craft) and never both.
+(the same listener on each launched craft, reading the carrier's bonus) and never both.
 
 ### Temporal Exhaust
 
@@ -225,9 +226,9 @@ rift explosion damage bonuses reach them.
 ### Resonator Payload
 
 `MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY` grants `MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT` for every
-5 of the highest affinity (`AffinityScaling.Filter.HIGHEST`). Each missile weapon hit on an enemy ship rolls it, and
-`ResonatorPayloadListener` then spawns 4 rifts within 100 su of the impact, 0.1 seconds apart, each dealing 10% of the
-launcher's base damage per shot up to 100.
+5 of the highest affinity (`AffinityScaling.Filter.HIGHEST`). Each hit on an enemy ship from this ship's own missile
+weapons rolls it, and `ResonatorPayloadListener` then spawns 4 rifts within 100 su of the impact, 0.1 seconds apart
+(`RiftSeries`), each dealing 10% of the launcher's base damage per shot up to 100.
 
 ### Thermo-Accelerator
 
@@ -336,8 +337,9 @@ values add up before the multiplier is applied (`CollisionDamageListener`).
 
 Vanilla only works out crew losses after a battle, so `HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST` counts them with
 vanilla's formula at its average roll: the ship's crew times the square of the hull damage taken this deployment as a
-share of maximum hull, times 0.75 and the crew loss multiplier. Each hull hit recounts them, and the reduction is a
-percent on hull damage taken (`CrewLossHullDamageListener`).
+share of maximum hull, times 0.75 and the crew loss multiplier. The crew is read at the first hull hit (a station
+module reads its parent's), each hull hit recounts the losses, and the reduction is a percent on hull damage taken
+(`CrewLossHullDamageListener`).
 
 ### Sanctified Scars
 
@@ -353,7 +355,8 @@ maximum hull straight off its hitpoints, ignoring damage resistances, with a kil
 strike craft counted as their carrier, or to no one if no enemy has.
 
 `OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT` then removes that share of the ship's hard flux, leaving soft flux alone. The
-overload still drops the shield.
+overload still drops the shield. Since the ship stays near full flux, an overload that begins within the replaced one's
+duration runs its normal course instead of costing hull again.
 
 ### EMP damage
 
@@ -362,17 +365,19 @@ Vanilla has no stat for EMP damage dealt, so `EmpDamageListener` (`weapon`) resc
 
 ### Ion Cascade
 
-Vanilla spreads a hull or armor hit's EMP over the weapons and engines within two armor cells of the struck cell, half
-to those in the inner ring and a quarter to the outer ring. `DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT` repeats that sum for
-the parts already disabled before the hit, with the same EMP and part damage multipliers, and deals that share as high
-explosive damage at the hit point on the next frame, past shields and through armor as usual (`IonCascadeListener`).
+Vanilla spreads a hull or armor hit's EMP, hull and armor damage together over the weapons and engines within two
+armor cells of the struck cell, half to those in the inner ring and a quarter to the outer ring.
+`DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT` repeats that sum with the hit's EMP alone for the parts already disabled
+before the hit, with the same EMP and part damage multipliers, and deals that share as high explosive damage at the hit
+point on the next frame, past shields and through armor as usual (`IonCascadeListener`).
 
 ### Ion Spill
 
 `SHIELD_EMP_TO_ENERGY_PERCENT` takes that share of the EMP in each hit an enemy shield takes from this ship and deals it
-as energy damage at the hit point on the next frame, against shields as usual (`IonSpillListener`, queued in
-`DeferredHits` like Ion Cascade). Both register after every other effect (`readsFinalDealtDamage`), so they read the
-hit's final EMP.
+as energy damage at the hit point on the next frame, but only if the shield still covers that point (`IonSpillListener`,
+queued in `DeferredHits` like Ion Cascade). Both register after every other effect (`readsFinalDealtDamage`), so they
+read the hit's EMP after this ship's other effects. The engine applies the attacker's damage bonus against the target's
+hull size to the converted hit itself, since this ship is its source (`EmpConversionListener`).
 
 ### Phase Ambush Doctrine
 
@@ -384,8 +389,12 @@ nothing over 3 seconds. Leaving phase again restarts it at full (`PhaseExitDamag
 `PHASE_ENTRY_AFTERIMAGE_SECONDS_FLAT` spawns an empty variant of the ship's hull where it entered phase: idle, held in
 place, taking no damage and colliding only with projectiles and missiles like a fighter, so enemy weapons waste fire
 on it. It fades over its lifetime and is then removed with its deployment record (`PhaseAfterimage`,
-`DeploymentRecordPruner`). A new entry replaces the last afterimage, and ships with modules or built-in wings leave
-none (`PhantomWakeListener`).
+`TemporaryCombatSpawn`). A new entry moves a still fading afterimage to the new spot and restarts its fade instead of
+building another, and ships with modules or built-in wings leave none (`PhantomWakeListener`).
+
+The afterimage costs no deployment points, can't receive transfer of command, shows as an ally on the player's side,
+and its variant tag (`CombatQueries.isAfterimage`) keeps it out of every ally, enemy and target pick, Star Chart strikes
+included.
 
 ### Cease and Desist
 
@@ -669,8 +678,9 @@ setting, Hyper-Nav Beacon and Omega anchor exempt), its own unlock is met, and n
 in `node_gates.json` sets `anchors` (`withheld` by default, or `free`) and `rewardAnchor`. Nightcross is `free`
 and opens on `anchorFound` once any of its anchors reaches the player (`AnchorFinds`). The Singularity and Existential
 Threat battles add one volume anchor to their loot once per save (`GateRewardAnchors`). Omega opens on the first won
-fight against an Omega fleet (`OmegaEncounter`) or on opening the shielded cache at Alpha Site, whose loot also holds
-one Omega anchor (`AlphaSiteOmegaCache`). NPC anchors ignore all of this, and open wormholes stay open.
+fight against an Omega fleet (`FactionEncounterGate`) or once an Omega anchor reaches the player's cargo
+(`OmegaAnchorAcquisition`), such as the one the shielded cache at Alpha Site holds while the tree is on
+(`AlphaSiteOmegaCache`). NPC anchors ignore all of this, and open wormholes stay open.
 
 An anchor with `guaranteed_drop` in `wormhole_anchors.csv` drops from every won battle that defeats one of its
 factions instead of rolling its chance (`FactionFleetDrops`); the Shrouded and Omega anchors do this for Dweller and
@@ -705,7 +715,8 @@ values. `nodeEffects` folds both origins back into their node for module sharing
 ### Modspec caches
 
 The Contraband Modspec Cache (`contraband_modspec_cache`, kind `MODSPEC_CACHE`) is a corrupted unique
-subroutine that rolls one to three notables at creation. In an allocated standard socket they are allocated
+subroutine that rolls one to three notables at creation, never one behind a closed gate or locked type
+(`ModspecCaches.rollableNodeIds`). In an allocated standard socket they are allocated
 with no path and no cost. Its kind keeps it out of generic pools, it has no level gate, and NPCs never
 socket one.
 

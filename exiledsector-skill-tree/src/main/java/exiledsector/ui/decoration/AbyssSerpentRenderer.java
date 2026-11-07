@@ -2,6 +2,7 @@ package exiledsector.ui.decoration;
 
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.skills.decoration.AbyssSerpent;
+import exiledsector.skills.decoration.Orbit;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.WobblyOrbit;
@@ -14,14 +15,17 @@ public final class AbyssSerpentRenderer implements DecorationRenderer {
     record Part(String spritePath, String glowPath, float width, float height, float behindHead, float imageBackOffset) {
     }
 
-    record Serpent(float centerX, float centerY, float orbitRadius, float direction, float secondsPerOrbit, float startAngleRad, WobblyOrbit path) {
+    record Serpent(float centerX, float centerY, float orbitRadius, Orbit orbit, WobblyOrbit path) {
 
         static Serpent of(AbyssSerpent serpent) {
-            AbyssSerpent.Orbit orbit = serpent.getOrbit();
+            Orbit orbit = serpent.getOrbit();
             AbyssSerpent.Wobble wobble = serpent.getWobble();
-            return new Serpent(serpent.getX(), serpent.getY(), Math.max(MIN_ORBIT_RADIUS, orbit.radius()), orbit.clockwise() ? 1f : -1f,
-                    Math.max(MIN_ORBIT_SECONDS, orbit.seconds()), (float) Math.toRadians(orbit.startAngleDegrees()),
+            return new Serpent(serpent.getX(), serpent.getY(), Math.max(MIN_ORBIT_RADIUS, orbit.radius()), orbit,
                     new WobblyOrbit(wobble.share(), wobble.waves(), (float) Math.toRadians(wobble.phaseDegrees()), 1f, 0f));
+        }
+
+        float direction() {
+            return orbit.direction();
         }
     }
 
@@ -39,7 +43,6 @@ public final class AbyssSerpentRenderer implements DecorationRenderer {
     };
     static final float SCALE = 1.4f;
     static final float MIN_ORBIT_RADIUS = 200f;
-    static final float MIN_ORBIT_SECONDS = 1f;
     private static final float BODY_ALPHA = 0.45f;
     private static final float GLOW_ALPHA = 0.25f;
     private static final Color BODY_TINT = new Color(150, 140, 175);
@@ -76,7 +79,7 @@ public final class AbyssSerpentRenderer implements DecorationRenderer {
     Pose[] poses(Serpent serpent, float atSeconds) {
         Pose[] poses = new Pose[PARTS.length];
         float orbitRadius = serpent.orbitRadius();
-        float angle = serpent.startAngleRad() + serpent.direction() * (float) (Math.PI * 2) * atSeconds / serpent.secondsPerOrbit();
+        float angle = (float) Math.toRadians(serpent.orbit().angleDegAt(atSeconds));
         float angleStep = serpent.direction() * WALK_STEP / orbitRadius;
         serpent.path().locate(serpent.centerX(), serpent.centerY(), orbitRadius, angle, pathPoint);
         float x = pathPoint.x();

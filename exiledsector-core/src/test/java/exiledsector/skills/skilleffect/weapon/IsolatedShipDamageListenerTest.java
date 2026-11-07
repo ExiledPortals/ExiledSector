@@ -121,4 +121,17 @@ class IsolatedShipDamageListenerTest {
         elapsedSeconds[0] = IsolatedShipDamageListener.RECHECK_SECONDS;
         assertNull(hit(listener, target, mock(DamageAPI.class, RETURNS_DEEP_STUBS)));
     }
+
+    @Test
+    void checksOnTargetsNoLongerHitAreDroppedOnceStale() {
+        IsolatedShipDamageListener listener = listener(10f);
+        hit(listener, ship("first", ENEMY, 0f), mock(DamageAPI.class, RETURNS_DEEP_STUBS));
+        hit(listener, ship("second", ENEMY, 20000f), mock(DamageAPI.class, RETURNS_DEEP_STUBS));
+        assertEquals(2, listener.cachedChecks());
+
+        elapsedSeconds[0] = IsolatedShipDamageListener.RECHECK_SECONDS;
+        hit(listener, ship("third", ENEMY, 40000f), mock(DamageAPI.class, RETURNS_DEEP_STUBS));
+
+        assertEquals(1, listener.cachedChecks());
+    }
 }

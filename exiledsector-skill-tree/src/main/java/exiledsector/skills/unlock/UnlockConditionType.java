@@ -29,10 +29,10 @@ public enum UnlockConditionType {
     TANIA_BLOOD_TRAIL_DEFEATED(ModGate.of(TaniaCompat::isModEnabled, TaniaUnlocks::isBloodTrailDefeated)),
     TANIA_FROST_FIRE_DEFEATED(ModGate.of(TaniaCompat::isModEnabled, TaniaUnlocks::isFrostFireDefeated)),
     TANIA_LAST_STRIVE_COMPLETED(ModGate.of(TaniaCompat::isModEnabled, TaniaUnlocks::isLastStriveCompleted)),
-    THREAT_FOUGHT(ModGate.of(() -> true, ThreatEncounter::isFought)),
-    REMNANT_FOUGHT(ModGate.of(() -> true, RemnantEncounter::isFought)),
-    DWELLER_FOUGHT(ModGate.of(() -> true, DwellerEncounter::isFought)),
-    OMEGA_FOUND(ModGate.of(() -> true, OmegaEncounter::isFound));
+    THREAT_FOUGHT(ModGate.of(() -> true, sector -> FactionEncounterGate.THREAT.isMet(sector))),
+    REMNANT_FOUGHT(ModGate.of(() -> true, sector -> FactionEncounterGate.REMNANT.isMet(sector))),
+    DWELLER_FOUGHT(ModGate.of(() -> true, sector -> FactionEncounterGate.DWELLER.isMet(sector))),
+    OMEGA_FOUND(ModGate.of(() -> true, sector -> FactionEncounterGate.OMEGA.isMet(sector)));
 
     record ModGate(Predicate<String> modEnabled, BiPredicate<SectorAPI, String> passed) {
 

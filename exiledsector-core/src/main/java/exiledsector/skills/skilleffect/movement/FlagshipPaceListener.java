@@ -56,8 +56,7 @@ final class FlagshipPaceListener extends ShipCombatListener implements Advanceab
             return null;
         }
         for (ShipAPI ship : engine.getShips()) {
-            if (ship != ownerShip && ship.getOwner() == ownerShip.getOwner() && ship.getCaptain() == commander && !ship.isFighter()
-                    && CombatQueries.isAliveNotHulk(ship)) {
+            if (ship.getCaptain() == commander && CombatQueries.isAlliedShip(ownerShip, ship)) {
                 return ship;
             }
         }

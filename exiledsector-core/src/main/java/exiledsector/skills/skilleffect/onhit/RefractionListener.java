@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
+import exiledsector.skills.skilleffect.Chance;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.CsvIdList;
 import exiledsector.skills.skilleffect.HitDamageRestorer;
@@ -14,6 +15,7 @@ import exiledsector.skills.skilleffect.weapon.BallisticAsEnergy;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 final class RefractionListener extends ShipCombatListener implements DamageDealtModifier, DroneSpawner {
 
@@ -58,9 +60,8 @@ final class RefractionListener extends ShipCombatListener implements DamageDealt
     }
 
     private void tryChain(WeaponAPI weapon, ShipAPI hitShip, Vector2f point, RefractionLink link) {
-        float chancePercent = magnitude(CHANCE_KEY);
-        boolean chains = ownerShip.isAlive() && link.chainCount() < MaxRefractionCountConfig.get() && chancePercent > 0f
-                && Math.random() < chancePercent / 100.0;
+        boolean chains = ownerShip.isAlive() && link.chainCount() < MaxRefractionCountConfig.get()
+                && Chance.roll(ThreadLocalRandom.current(), magnitude(CHANCE_KEY));
         if (!chains) {
             return;
         }

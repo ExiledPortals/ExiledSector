@@ -19,13 +19,15 @@ public final class SkillTags {
     public static final String THREAT_VOLUME = "threat";
     public static final String SHROUDED_VOLUME = "shrouded";
     public static final Set<String> ABYSSAL_VOLUMES = Set.of(ABYSS_VOLUME, THREAT_VOLUME, SHROUDED_VOLUME);
+    public static final Set<String> NO_EXOSHIP_ANCHOR_VOLUMES = Set.of(ABYSS_VOLUME, THREAT_VOLUME, SHROUDED_VOLUME, REDACTED_VOLUME, OMEGA_VOLUME);
+    public static final Set<String> JANUS_EXEMPT_VOLUMES = Set.of(EXOTECH_VOLUME, OMEGA_VOLUME);
 
     public static final List<String> FACTION_VOLUMES = List.of(
-            "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", "REDACTED", "omega", "persean_league");
+            "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", REDACTED_VOLUME, OMEGA_VOLUME, "persean_league");
 
     public static final List<String> VOLUME = List.of(
-            "core", "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", "REDACTED", "omega", "persean_league", "enigma", "kesteven", "exotech", "abyss",
-            "nightcross", "stargazer", "threat", "tania", "shrouded");
+            CORE_VOLUME, "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", REDACTED_VOLUME, OMEGA_VOLUME, "persean_league", "enigma", "kesteven",
+            EXOTECH_VOLUME, ABYSS_VOLUME, "nightcross", "stargazer", THREAT_VOLUME, "tania", SHROUDED_VOLUME);
 
     public static final List<String> HULL_REQUIREMENT = NodeRequirements.HULL_TAGS;
 

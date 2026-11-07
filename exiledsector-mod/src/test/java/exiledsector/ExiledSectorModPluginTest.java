@@ -31,8 +31,7 @@ import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.npc.NpcFocus;
 import exiledsector.skills.npc.NpcLevelCaps;
 import exiledsector.skills.npc.NpcLevelCategory;
-import exiledsector.skills.unlock.OmegaEncounter;
-import exiledsector.skills.unlock.RemnantEncounter;
+import exiledsector.skills.unlock.FactionEncounterGate;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.decoration.TreeFleetFactions;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
@@ -352,8 +351,7 @@ class ExiledSectorModPluginTest {
         InOrder order = inOrder(sector);
         order.verify(sector).addTransientListener(any(NpcFleetDialogListener.class));
         order.verify(sector).addTransientListener(any(PlayerEngagementPipeline.class));
-        order.verify(sector).addTransientListener(any(RemnantEncounter.BattleListener.class));
-        order.verify(sector).addTransientListener(any(OmegaEncounter.BattleListener.class));
+        order.verify(sector).addTransientListener(any(FactionEncounterGate.BattleListener.class));
     }
 
     @Test

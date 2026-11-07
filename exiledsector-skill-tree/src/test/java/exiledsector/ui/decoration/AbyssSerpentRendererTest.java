@@ -1,6 +1,7 @@
 package exiledsector.ui.decoration;
 
 import exiledsector.skills.decoration.AbyssSerpent;
+import exiledsector.skills.decoration.Orbit;
 import exiledsector.skills.tags.SkillTags;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +17,7 @@ class AbyssSerpentRendererTest {
     private static final float ORBIT_RADIUS = 1550f;
 
     private static AbyssSerpent serpent(String id, boolean clockwise, float orbitRadius, float seconds, AbyssSerpent.Wobble wobble) {
-        return new AbyssSerpent(id, CENTER_X, CENTER_Y, new AbyssSerpent.Orbit(orbitRadius, seconds, clockwise, 0f), wobble, List.of(SkillTags.ABYSS_VOLUME));
+        return new AbyssSerpent(id, CENTER_X, CENTER_Y, new Orbit(orbitRadius, seconds, clockwise, 0f), wobble, List.of(SkillTags.ABYSS_VOLUME));
     }
 
     private static AbyssSerpentRenderer serpents() {
@@ -78,7 +79,7 @@ class AbyssSerpentRendererTest {
         for (AbyssSerpentRenderer.Serpent serpent : renderer.serpents()) {
             float nearest = Float.MAX_VALUE;
             float farthest = 0f;
-            for (float seconds = 0f; seconds < serpent.secondsPerOrbit(); seconds += 0.5f) {
+            for (float seconds = 0f; seconds < serpent.orbit().secondsPerOrbit(); seconds += 0.5f) {
                 float distance = distanceFromCentre(renderer.poses(serpent, seconds)[AbyssSerpentRenderer.PARTS.length - 1]);
                 nearest = Math.min(nearest, distance);
                 farthest = Math.max(farthest, distance);
@@ -108,7 +109,7 @@ class AbyssSerpentRendererTest {
         AbyssSerpentRenderer.Serpent serpent = renderer.serpents().get(0);
 
         assertEquals(AbyssSerpentRenderer.MIN_ORBIT_RADIUS, serpent.orbitRadius(), 0.01f);
-        assertEquals(AbyssSerpentRenderer.MIN_ORBIT_SECONDS, serpent.secondsPerOrbit(), 0.01f);
+        assertEquals(Orbit.MIN_SECONDS, serpent.orbit().secondsPerOrbit(), 0.01f);
         for (AbyssSerpentRenderer.Pose pose : renderer.poses(serpent, 3f)) {
             assertTrue(Float.isFinite(pose.treeX()) && Float.isFinite(pose.treeY()) && Float.isFinite(pose.facingDeg()));
         }

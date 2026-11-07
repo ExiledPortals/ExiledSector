@@ -114,7 +114,7 @@ class GrantMarkersTest {
         NodeEligibility.Context eligibility = NodeEligibility.Context.of(data,
                 new ShipFacts(HullSize.CRUISER, ShieldType.FRONT, false, 0f, hullModId -> false), null);
         AllocationCheck gate = new AllocationCheck(data, topology, "root", new AllocationCheck.Budget(100, 1, 100), eligibility);
-        return new NodeAllocator.Snapshot(data, null, 0, Set.of(), gate, null);
+        return new NodeAllocator.Snapshot(data, null, 0, Set.of(), Set.of(), gate, null);
     }
 
     @Test

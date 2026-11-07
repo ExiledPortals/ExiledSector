@@ -33,9 +33,9 @@ final class ConcussionShellListener extends ShipCombatListener implements Damage
 
     @Override
     public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        if (!shieldHit && param instanceof DamagingProjectileAPI projectile && target instanceof ShipAPI hitShip
-                && isLargeBallistic(projectile.getWeapon()) && !hitShip.isFighter() && CombatQueries.isAliveNotHulk(hitShip)
-                && CombatQueries.isHostile(ownerShip, hitShip)) {
+        ShipAPI hitShip = CombatQueries.hostileLiveShip(ownerShip, target);
+        if (!shieldHit && param instanceof DamagingProjectileAPI projectile && hitShip != null
+                && isLargeBallistic(projectile.getWeapon()) && !hitShip.isFighter()) {
             float chancePercent = magnitude(CHANCE_PERCENT_KEY);
             if (chancePercent > 0f && roll.getAsDouble() < chancePercent / 100.0) {
                 disableNearest(hitShip, point);

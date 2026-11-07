@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
+import exiledsector.skills.skilleffect.Chance;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.HitDamageRestorer;
 import exiledsector.skills.skilleffect.ShipCombatListener;
@@ -69,7 +70,7 @@ final class DamageConversionListener extends ShipCombatListener implements Damag
     private void adaptDamageType(CombatEntityAPI target, DamageAPI damage, boolean shieldHit) {
         DamageType adapted = shieldHit ? DamageType.KINETIC : DamageType.HIGH_EXPLOSIVE;
         float chancePercent = magnitude(ADAPTIVE_CHANCE_PERCENT_KEY);
-        if (chancePercent > 0f && target instanceof ShipAPI && damage.getType() != adapted && random.nextFloat() * 100f < chancePercent) {
+        if (target instanceof ShipAPI && damage.getType() != adapted && Chance.roll(random, chancePercent)) {
             HitDamageRestorer.retypeForThisHit(damage, adapted, target);
         }
     }

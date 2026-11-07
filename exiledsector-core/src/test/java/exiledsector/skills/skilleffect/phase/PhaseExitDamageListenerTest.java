@@ -4,7 +4,6 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
@@ -25,14 +24,6 @@ class PhaseExitDamageListenerTest {
         when(ship.isAlive()).thenReturn(true);
         when(stats.getDynamic().getValue(PhaseExitDamageListener.DAMAGE_PERCENT_KEY, 0f)).thenReturn(damagePercent);
         return ship;
-    }
-
-    @Test
-    void theTaperShareFallsEvenlyFromFullToNothing() {
-        assertEquals(1f, PhaseExitDamageListener.taperShare(PhaseExitDamageListener.TAPER_SECONDS));
-        assertEquals(0.5f, PhaseExitDamageListener.taperShare(PhaseExitDamageListener.TAPER_SECONDS / 2f), 1e-6f);
-        assertEquals(0f, PhaseExitDamageListener.taperShare(0f));
-        assertEquals(0f, PhaseExitDamageListener.taperShare(-1f));
     }
 
     @Test

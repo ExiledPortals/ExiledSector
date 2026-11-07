@@ -3,7 +3,6 @@ package exiledsector.skills.skilleffect.aura;
 import com.fs.starfarer.api.combat.ShipAPI;
 import exiledsector.skills.skilleffect.CombatQueries;
 
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,24 +28,11 @@ final class DModArmorAuraField extends AuraField<DModArmorAuraListener> {
     }
 
     static Map<ShipAPI, Float> strongestPerAlly(List<DModArmorAuraListener> sources, ShipsNear shipsNear) {
-        Map<ShipAPI, Float> strongest = new IdentityHashMap<>();
-        for (DModArmorAuraListener source : sources) {
-            float reduction = source.armorDamageTakenReductionPercent();
-            if (reduction <= 0f) {
-                continue;
-            }
-            ShipAPI sourceShip = source.source();
-            for (ShipAPI ally : shipsNear.find(sourceShip, RANGE, other -> isCoveredBy(sourceShip, other))) {
-                strongest.merge(ally, reduction, Float::max);
-            }
-        }
-        return strongest;
+        return strongestPerShip(sources, shipsNear, RANGE, DModArmorAuraListener::armorDamageTakenReductionPercent, DModArmorAuraField::isCoveredBy);
     }
 
     static boolean isCoveredBy(ShipAPI sourceShip, ShipAPI other) {
-        return other != sourceShip && other.getOwner() == sourceShip.getOwner() && !other.isFighter() && !other.isDrone()
-                && !other.isStationModule() && CombatQueries.isAliveNotHulk(other)
-                && CombatQueries.withinRadius(other.getLocation(), sourceShip.getLocation(), RANGE);
+        return CombatQueries.isAlliedShip(sourceShip, other) && !other.isStationModule();
     }
 
     static void apply(ShipAPI ally, float reductionPercent) {

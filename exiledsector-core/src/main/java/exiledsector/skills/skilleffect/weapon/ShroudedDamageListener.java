@@ -2,15 +2,12 @@ package exiledsector.skills.skilleffect.weapon;
 
 import com.fs.starfarer.api.combat.CollisionClass;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
-import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.loading.DamagingExplosionSpec;
-import exiledsector.skills.skilleffect.ShipCombatListener;
-import org.lwjgl.util.vector.Vector2f;
+import exiledsector.skills.skilleffect.DamagePercentListener;
 
-final class ShroudedDamageListener extends ShipCombatListener implements DamageDealtModifier {
+final class ShroudedDamageListener extends DamagePercentListener {
 
     static final String LENS_DAMAGE_PERCENT_KEY = "exiledSector_shroudedLensDamagePercent";
     static final String RIFT_LIGHTNING_DAMAGE_PERCENT_KEY = "exiledSector_riftLightningDamagePercent";
@@ -19,21 +16,13 @@ final class ShroudedDamageListener extends ShipCombatListener implements DamageD
     private static final String MOD_ID_PREFIX = "exiledSector_shroudedDamage_";
 
     ShroudedDamageListener(ShipAPI ownerShip) {
-        super(ownerShip, MOD_ID_PREFIX);
+        super(ownerShip, ownerShip, MOD_ID_PREFIX);
     }
 
     @Override
-    public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        if (!(param instanceof DamagingProjectileAPI projectile)) {
-            return null;
-        }
-        String magnitudeKey = magnitudeKeyFor(projectile.getExplosionSpecIfExplosion());
-        float percent = magnitudeKey == null ? 0f : magnitude(magnitudeKey);
-        if (percent == 0f) {
-            return null;
-        }
-        damage.getModifier().modifyPercent(modId, percent);
-        return modId;
+    protected float damagePercent(Object param, CombatEntityAPI target) {
+        String magnitudeKey = param instanceof DamagingProjectileAPI projectile ? magnitudeKeyFor(projectile.getExplosionSpecIfExplosion()) : null;
+        return magnitudeKey == null ? 0f : magnitude(magnitudeKey);
     }
 
     static String magnitudeKeyFor(DamagingExplosionSpec explosion) {

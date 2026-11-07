@@ -118,8 +118,7 @@ final class GravityDragField extends AuraField<GravityDragListener> {
                 continue;
             }
             ShipAPI sourceShip = source.source();
-            for (ShipAPI target : shipsNear.find(sourceShip, RANGE, other -> !other.isFighter()
-                    && CombatQueries.isAliveNotHulk(other) && CombatQueries.isHostile(sourceShip, other))) {
+            for (ShipAPI target : shipsNear.find(sourceShip, RANGE, other -> isHostileShip(sourceShip, other))) {
                 float centreDistance = (float) Math.sqrt(CombatQueries.distanceSquared(sourceShip.getLocation(), target.getLocation()));
                 float distance = Math.max(0f, centreDistance - target.getCollisionRadius());
                 float closeness = Math.max(0f, 1f - distance / RANGE);

@@ -3,6 +3,7 @@ package exiledsector.charts.anomaly.stormfront;
 import com.fs.starfarer.api.combat.ShipAPI;
 import exiledsector.charts.content.ChartSites;
 import exiledsector.items.WeightedPick;
+import exiledsector.skills.skilleffect.CombatQueries;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
@@ -18,7 +19,7 @@ final class StormStrikes {
 
     static boolean canBeStruck(ShipAPI ship) {
         return ship != null && ship.isAlive() && !ship.isHulk() && !ship.isFighter() && !ship.isPhased() && ship.getParentStation() == null
-                && StormRules.hullWeight(ship.getHullSize()) > 0f;
+                && !CombatQueries.isAfterimage(ship) && StormRules.hullWeight(ship.getHullSize()) > 0f;
     }
 
     static ShipAPI pickTarget(List<ShipAPI> ships, Random random) {

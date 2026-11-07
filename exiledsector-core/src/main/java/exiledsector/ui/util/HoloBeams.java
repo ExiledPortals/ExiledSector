@@ -24,27 +24,71 @@ public final class HoloBeams {
     static final float HALO_ALPHA = 0.28f;
     static final float CORE_WHITENING = 0.45f;
     private static final float MAX_ARC_STEP = (float) Math.toRadians(4.0);
+    private static final int CIRCLE_STEPS = Math.max(1, (int) Math.ceil(HoloShapes.TWO_PI / MAX_ARC_STEP));
+    private static final UnitCircle CIRCLE = UnitCircle.of(CIRCLE_STEPS);
     private static final SpriteCache TEXTURES = new SpriteCache(HoloBeams.class);
+    private static final Pen HALO_PEN = new Pen(true);
+    private static final Pen CORE_PEN = new Pen(false);
+    private static final Pen[] PENS = {HALO_PEN, CORE_PEN};
 
-    private interface Shape {
+    static final class Pen {
 
-        void emit(Pen pen);
-    }
+        private final boolean halo;
+        private int red;
+        private int green;
+        private int blue;
+        private int colorAlpha;
+        private float alphaMult;
+        private float halfWidth;
+        private float u;
+        private float vFrom;
+        private float vTo;
 
-    private record Pen(Color color, float alpha, float halfWidth, float u, float vFrom, float vTo) {
+        Pen(boolean halo) {
+            this.halo = halo;
+        }
 
-        static Pen of(Color color, float width, float alpha, boolean halo, SpriteAPI texture) {
+        void load(Color color, float width, float alpha, SpriteAPI texture) {
             float coreWidth = Math.max(MIN_CORE_WIDTH, width);
             float thinning = Math.min(1f, width / MIN_CORE_WIDTH);
-            Color shown = halo ? color : Misc.interpolateColor(color, Color.WHITE, CORE_WHITENING);
-            float shownAlpha = alpha * thinning * (halo ? HALO_ALPHA : 1f);
+            red = halo ? color.getRed() : whitened(color.getRed());
+            green = halo ? color.getGreen() : whitened(color.getGreen());
+            blue = halo ? color.getBlue() : whitened(color.getBlue());
+            colorAlpha = halo ? color.getAlpha() : whitened(color.getAlpha());
+            alphaMult = alpha * thinning * (halo ? HALO_ALPHA : 1f);
             float bandWidth = halo ? coreWidth * HALO_WIDTH_SCALE : coreWidth;
-            return new Pen(shown, shownAlpha, bandWidth / BEAM_BAND_SHARE / 2f, texture.getTextureWidth() / 2f, BEAM_V_FROM * texture.getTextureHeight(),
-                    BEAM_V_TO * texture.getTextureHeight());
+            halfWidth = bandWidth / BEAM_BAND_SHARE / 2f;
+            u = texture.getTextureWidth() / 2f;
+            vFrom = BEAM_V_FROM * texture.getTextureHeight();
+            vTo = BEAM_V_TO * texture.getTextureHeight();
+        }
+
+        static int whitened(int channel) {
+            return Math.round(channel + (255f - channel) * CORE_WHITENING);
+        }
+
+        int red() {
+            return red;
+        }
+
+        int green() {
+            return green;
+        }
+
+        int blue() {
+            return blue;
+        }
+
+        int glAlpha() {
+            return (int) (colorAlpha * alphaMult);
+        }
+
+        float halfWidth() {
+            return halfWidth;
         }
 
         void apply() {
-            Misc.setColor(color, alpha);
+            GL11.glColor4ub((byte) red, (byte) green, (byte) blue, (byte) glAlpha());
         }
     }
 
@@ -84,95 +128,153 @@ public final class HoloBeams {
     }
 
     public static void circle(float cx, float cy, float radius, float width, Color color, float alpha) {
-        arcSegments(cx, cy, radius, 1, 1f, 0f, width, color, alpha);
+        SpriteAPI texture = beamTexture(width, alpha);
+        if (texture == null) {
+            return;
+        }
+        try (GlScope scope = beginStroke(texture, color, width, alpha)) {
+            for (int step = 0; step < CIRCLE_STEPS; step++) {
+                int next = (step + 1) % CIRCLE_STEPS;
+                arcPiece(cx, cy, radius, CIRCLE.cos(step), CIRCLE.sin(step), CIRCLE.cos(next), CIRCLE.sin(next));
+            }
+            GL11.glEnd();
+        }
     }
 
     public static void arcSegments(float cx, float cy, float radius, int segments, float fill, float rotationDeg, float width, Color color,
                                    float alpha) {
+        SpriteAPI texture = beamTexture(width, alpha);
+        if (texture == null) {
+            return;
+        }
         float slot = HoloShapes.TWO_PI / segments;
         float rotation = (float) Math.toRadians(rotationDeg);
         float sweep = slot * fill;
         int steps = Math.max(1, (int) Math.ceil(sweep / MAX_ARC_STEP));
-        stroke(color, width, alpha, pen -> {
+        try (GlScope scope = beginStroke(texture, color, width, alpha)) {
             for (int i = 0; i < segments; i++) {
                 float start = rotation + i * slot;
+                float fromCos = (float) Math.cos(start);
+                float fromSin = (float) Math.sin(start);
                 for (int step = 0; step < steps; step++) {
-                    float from = start + sweep * step / steps;
                     float to = start + sweep * (step + 1) / steps;
-                    arcPiece(pen, cx, cy, radius, from, to);
+                    float toCos = (float) Math.cos(to);
+                    float toSin = (float) Math.sin(to);
+                    arcPiece(cx, cy, radius, fromCos, fromSin, toCos, toSin);
+                    fromCos = toCos;
+                    fromSin = toSin;
                 }
             }
-        });
+            GL11.glEnd();
+        }
     }
 
     public static void ticks(float cx, float cy, float radius, int count, int majorEvery, float majorLength, float minorLength, float rotationDeg,
                              float width, Color color, float alpha) {
+        SpriteAPI texture = beamTexture(width, alpha);
+        if (texture == null) {
+            return;
+        }
         float rotation = (float) Math.toRadians(rotationDeg);
-        stroke(color, width, alpha, pen -> {
+        try (GlScope scope = beginStroke(texture, color, width, alpha)) {
             for (int i = 0; i < count; i++) {
                 float angle = rotation + HoloShapes.TWO_PI * i / count;
                 float length = i % majorEvery == 0 ? majorLength : minorLength;
                 float cos = (float) Math.cos(angle);
                 float sin = (float) Math.sin(angle);
-                segment(pen, cx + cos * radius, cy + sin * radius, cx + cos * (radius - length), cy + sin * (radius - length));
+                segment(cx + cos * radius, cy + sin * radius, cx + cos * (radius - length), cy + sin * (radius - length));
             }
-        });
-    }
-
-    public static void line(float fromX, float fromY, float toX, float toY, float width, Color color, float alpha) {
-        stroke(color, width, alpha, pen -> segment(pen, fromX, fromY, toX, toY));
-    }
-
-    public static void square(float cx, float cy, float half, float width, Color color, float alpha) {
-        stroke(color, width, alpha, pen -> {
-            float reach = half + pen.halfWidth();
-            float side = half - pen.halfWidth();
-            segment(pen, cx - reach, cy - half, cx + reach, cy - half);
-            segment(pen, cx - reach, cy + half, cx + reach, cy + half);
-            segment(pen, cx - half, cy - side, cx - half, cy + side);
-            segment(pen, cx + half, cy - side, cx + half, cy + side);
-        });
-    }
-
-    public static void brackets(float cx, float cy, float half, float arm, float width, Color color, float alpha) {
-        stroke(color, width, alpha, pen -> {
-            for (int corner = 0; corner < 4; corner++) {
-                float sx = corner % 2 == 0 ? -1f : 1f;
-                float sy = corner < 2 ? -1f : 1f;
-                float x = cx + sx * half;
-                float y = cy + sy * half;
-                segment(pen, x + sx * pen.halfWidth(), y, x - sx * arm, y);
-                segment(pen, x, y - sy * pen.halfWidth(), x, y - sy * arm);
-            }
-        });
-    }
-
-    private static void stroke(Color color, float width, float alpha, Shape shape) {
-        SpriteAPI texture = TEXTURES.texture(BEAM_TEXTURE);
-        if (texture == null || alpha <= 0f || width <= 0f) {
-            return;
-        }
-        try (GlScope scope = GlScope.textured(GL11.GL_SRC_ALPHA, GL11.GL_ONE)) {
-            texture.bindTexture();
-            GL11.glBegin(GL11.GL_QUADS);
-            shape.emit(Pen.of(color, width, alpha, true, texture));
-            shape.emit(Pen.of(color, width, alpha, false, texture));
             GL11.glEnd();
         }
     }
 
-    private static void arcPiece(Pen pen, float cx, float cy, float radius, float from, float to) {
-        float fromCos = (float) Math.cos(from);
-        float fromSin = (float) Math.sin(from);
-        float toCos = (float) Math.cos(to);
-        float toSin = (float) Math.sin(to);
-        float outer = radius + pen.halfWidth();
-        float inner = radius - pen.halfWidth();
-        pen.apply();
-        corner(cx + fromCos * outer, cy + fromSin * outer, pen.u(), pen.vFrom());
-        corner(cx + toCos * outer, cy + toSin * outer, pen.u(), pen.vFrom());
-        corner(cx + toCos * inner, cy + toSin * inner, pen.u(), pen.vTo());
-        corner(cx + fromCos * inner, cy + fromSin * inner, pen.u(), pen.vTo());
+    public static void line(float fromX, float fromY, float toX, float toY, float width, Color color, float alpha) {
+        SpriteAPI texture = beamTexture(width, alpha);
+        if (texture == null) {
+            return;
+        }
+        try (GlScope scope = beginStroke(texture, color, width, alpha)) {
+            segment(fromX, fromY, toX, toY);
+            GL11.glEnd();
+        }
+    }
+
+    public static void square(float cx, float cy, float half, float width, Color color, float alpha) {
+        SpriteAPI texture = beamTexture(width, alpha);
+        if (texture == null) {
+            return;
+        }
+        try (GlScope scope = beginStroke(texture, color, width, alpha)) {
+            for (Pen pen : PENS) {
+                float reach = half + pen.halfWidth;
+                float side = half - pen.halfWidth;
+                segment(pen, cx - reach, cy - half, cx + reach, cy - half);
+                segment(pen, cx - reach, cy + half, cx + reach, cy + half);
+                segment(pen, cx - half, cy - side, cx - half, cy + side);
+                segment(pen, cx + half, cy - side, cx + half, cy + side);
+            }
+            GL11.glEnd();
+        }
+    }
+
+    public static void brackets(float cx, float cy, float half, float arm, float width, Color color, float alpha) {
+        SpriteAPI texture = beamTexture(width, alpha);
+        if (texture == null) {
+            return;
+        }
+        try (GlScope scope = beginStroke(texture, color, width, alpha)) {
+            for (Pen pen : PENS) {
+                for (int corner = 0; corner < 4; corner++) {
+                    float sx = corner % 2 == 0 ? -1f : 1f;
+                    float sy = corner < 2 ? -1f : 1f;
+                    float x = cx + sx * half;
+                    float y = cy + sy * half;
+                    segment(pen, x + sx * pen.halfWidth, y, x - sx * arm, y);
+                    segment(pen, x, y - sy * pen.halfWidth, x, y - sy * arm);
+                }
+            }
+            GL11.glEnd();
+        }
+    }
+
+    private static SpriteAPI beamTexture(float width, float alpha) {
+        SpriteAPI texture = TEXTURES.texture(BEAM_TEXTURE);
+        return texture == null || alpha <= 0f || width <= 0f ? null : texture;
+    }
+
+    private static GlScope beginStroke(SpriteAPI texture, Color color, float width, float alpha) {
+        GlScope scope = GlScope.textured(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+        texture.bindTexture();
+        GL11.glBegin(GL11.GL_QUADS);
+        HALO_PEN.load(color, width, alpha, texture);
+        CORE_PEN.load(color, width, alpha, texture);
+        return scope;
+    }
+
+    private static void arcPiece(float cx, float cy, float radius, float fromCos, float fromSin, float toCos, float toSin) {
+        for (Pen pen : PENS) {
+            float outer = radius + pen.halfWidth;
+            float inner = radius - pen.halfWidth;
+            pen.apply();
+            corner(cx + fromCos * outer, cy + fromSin * outer, pen.u, pen.vFrom);
+            corner(cx + toCos * outer, cy + toSin * outer, pen.u, pen.vFrom);
+            corner(cx + toCos * inner, cy + toSin * inner, pen.u, pen.vTo);
+            corner(cx + fromCos * inner, cy + fromSin * inner, pen.u, pen.vTo);
+        }
+    }
+
+    private static void segment(float fromX, float fromY, float toX, float toY) {
+        float dx = toX - fromX;
+        float dy = toY - fromY;
+        float length = (float) Math.sqrt(dx * dx + dy * dy);
+        if (length <= 0f) {
+            return;
+        }
+        float unitNormalX = -dy / length;
+        float unitNormalY = dx / length;
+        for (Pen pen : PENS) {
+            quad(pen, fromX, fromY, toX, toY, unitNormalX * pen.halfWidth, unitNormalY * pen.halfWidth);
+        }
     }
 
     private static void segment(Pen pen, float fromX, float fromY, float toX, float toY) {
@@ -182,13 +284,15 @@ public final class HoloBeams {
         if (length <= 0f) {
             return;
         }
-        float normalX = -dy / length * pen.halfWidth();
-        float normalY = dx / length * pen.halfWidth();
+        quad(pen, fromX, fromY, toX, toY, -dy / length * pen.halfWidth, dx / length * pen.halfWidth);
+    }
+
+    private static void quad(Pen pen, float fromX, float fromY, float toX, float toY, float normalX, float normalY) {
         pen.apply();
-        corner(fromX + normalX, fromY + normalY, pen.u(), pen.vFrom());
-        corner(toX + normalX, toY + normalY, pen.u(), pen.vFrom());
-        corner(toX - normalX, toY - normalY, pen.u(), pen.vTo());
-        corner(fromX - normalX, fromY - normalY, pen.u(), pen.vTo());
+        corner(fromX + normalX, fromY + normalY, pen.u, pen.vFrom);
+        corner(toX + normalX, toY + normalY, pen.u, pen.vFrom);
+        corner(toX - normalX, toY - normalY, pen.u, pen.vTo);
+        corner(fromX - normalX, fromY - normalY, pen.u, pen.vTo);
     }
 
     private static void corner(float x, float y, float u, float v) {

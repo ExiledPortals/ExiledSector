@@ -68,6 +68,8 @@ final class SkillTreeNodeTooltipRenderer {
     private final Map<Boolean, TextLabel> footers = new HashMap<>();
     private final Map<String, TextLabel> flavours = new HashMap<>();
     private final Map<String, List<SkillTreeTooltipTable>> tablesByType = new HashMap<>();
+    private final Map<String, List<SkillTreeTooltipTable>> riftTablesByType = new HashMap<>();
+    private int riftTablesStatsRevision = -1;
     private String hoveredCostKey;
     private float hoveredItemsHeld;
 
@@ -145,7 +147,7 @@ final class SkillTreeNodeTooltipRenderer {
                         .refresh(signature, label -> writeBodyText(label, affinityLines(effectiveType, skillData).details()))
                 : null;
 
-        List<SkillTreeTooltipTable> tables = showChoiceHint || hidden ? List.of() : tablesFor(effectiveType);
+        List<SkillTreeTooltipTable> tables = showChoiceHint || hidden ? List.of() : tablesFor(effectiveType, allocation.statsRevision());
         TextLabel flavour = hidden || socketed != null ? null : flavourFor(effectiveType);
         boolean expandable = expandableBodies.getOrDefault(body, false) || affinitySection != null;
         panelStyle.drawTitleBodyTooltip(title, flavour, body, tables, expanded ? affinitySection : null, footer(expandable, expanded),
@@ -167,7 +169,7 @@ final class SkillTreeNodeTooltipRenderer {
                 () -> withCostLine(withModuleShareLine(SkillNode.describeMechanics(type, fleetMember.getHullSpec().getHullSize()), type), costLine),
                 expanded, refusalReason);
 
-        panelStyle.drawTitleBodyTooltip(title, flavourFor(type), body, tablesFor(type), null,
+        panelStyle.drawTitleBodyTooltip(title, flavourFor(type), body, tablesFor(type, allocation.statsRevision()), null,
                 footer(expandableBodies.getOrDefault(body, false), expanded), mouseX, mouseY, alphaMult);
     }
 
@@ -213,20 +215,26 @@ final class SkillTreeNodeTooltipRenderer {
         return type.getFlavourText(Misc.isAutomated(fleetMember));
     }
 
-    private List<SkillTreeTooltipTable> tablesFor(SkillType type) {
-        boolean riftStrike = RiftStrikeTooltipTable.appliesTo(type);
-        String cacheKey = riftStrike ? type.getId() + "|" + RiftStrikeTooltipTable.cacheState(fleetMember) : type.getId();
-        List<SkillTreeTooltipTable> cached = tablesByType.get(cacheKey);
+    private List<SkillTreeTooltipTable> tablesFor(SkillType type, int statsRevision) {
+        if (statsRevision != riftTablesStatsRevision) {
+            riftTablesByType.clear();
+            riftTablesStatsRevision = statsRevision;
+        }
+        List<SkillTreeTooltipTable> cached = tablesByType.get(type.getId());
+        if (cached == null) {
+            cached = riftTablesByType.get(type.getId());
+        }
         if (cached != null) {
             return cached;
         }
+        boolean riftStrike = RiftStrikeTooltipTable.appliesTo(type);
         List<TooltipTable> tables = riftStrike ? RiftStrikeTooltipTable.forType(type, fleetMember)
                 : HullModTooltipTables.forType(type, fleetMember.getHullSpec());
         List<SkillTreeTooltipTable> measured = new ArrayList<>();
         for (TooltipTable table : tables) {
             measured.add(SkillTreeTooltipTable.measure(tooltipText, table));
         }
-        tablesByType.put(cacheKey, measured);
+        (riftStrike ? riftTablesByType : tablesByType).put(type.getId(), measured);
         return measured;
     }
 

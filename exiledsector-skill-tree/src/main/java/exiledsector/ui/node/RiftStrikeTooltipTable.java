@@ -42,11 +42,6 @@ final class RiftStrikeTooltipTable {
         return stats == null ? 0f : stats.getDynamic().getValue(RiftExplosions.DAMAGE_PERCENT_KEY, 0f);
     }
 
-    static String cacheState(FleetMemberAPI fleetMember) {
-        boolean ballisticCountsAsEnergy = fleetMember != null && BallisticAsEnergy.active(fleetMember.getStats());
-        return increasedRiftDamagePercent(fleetMember) + "|" + ballisticCountsAsEnergy;
-    }
-
     static List<TooltipTable> forType(SkillType type, FleetMemberAPI fleetMember) {
         if (!appliesTo(type) || fleetMember == null || fleetMember.getVariant() == null) {
             return List.of();

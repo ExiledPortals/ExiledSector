@@ -1,6 +1,7 @@
 package exiledsector.skills.loader;
 
 import exiledsector.skills.decoration.AbyssSerpent;
+import exiledsector.skills.decoration.Orbit;
 import exiledsector.skills.decoration.Decoration;
 import exiledsector.skills.decoration.DecorationKind;
 import exiledsector.skills.decoration.Decorations;
@@ -63,7 +64,7 @@ class DecorationLoaderTest {
         assertEquals(DecorationKind.HYPERSHUNT, hypershunt.kind());
         assertEquals(100f, hypershunt.getX());
         assertEquals(-50f, hypershunt.getY());
-        assertEquals(new Hypershunt.Orbit(1100f, 550f, false, 45f), hypershunt.getOrbit());
+        assertEquals(new Orbit(1100f, 550f, false, 45f), hypershunt.getOrbit());
         assertEquals(300f, hypershunt.getSize());
         assertEquals("omega", hypershunt.getVolume());
     }
@@ -163,10 +164,10 @@ class DecorationLoaderTest {
                 + "\"clockwise\": false, \"startAngle\": 180, \"wobble\": 0.15, \"wobbleWaves\": 7, \"wobblePhase\": 74.5, \"tags\": [\"abyss\"] },"
                 + "{ \"kind\": \"serpent\", \"id\": \"plain\", \"x\": 0, \"y\": 0, \"orbitRadius\": 500, \"orbitSeconds\": 100 }").serpents();
 
-        assertEquals(new AbyssSerpent.Orbit(1663f, 190f, false, 180f), serpents.get(0).getOrbit());
+        assertEquals(new Orbit(1663f, 190f, false, 180f), serpents.get(0).getOrbit());
         assertEquals(new AbyssSerpent.Wobble(0.15f, 7, 74.5f), serpents.get(0).getWobble());
         assertEquals("abyss", serpents.get(0).getVolume());
-        assertEquals(new AbyssSerpent.Orbit(500f, 100f, true, 0f), serpents.get(1).getOrbit());
+        assertEquals(new Orbit(500f, 100f, true, 0f), serpents.get(1).getOrbit());
         assertEquals(AbyssSerpent.Wobble.NONE, serpents.get(1).getWobble());
     }
 

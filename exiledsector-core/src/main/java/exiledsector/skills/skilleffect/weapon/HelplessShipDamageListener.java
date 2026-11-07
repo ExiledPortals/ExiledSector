@@ -23,7 +23,7 @@ final class HelplessShipDamageListener extends TargetDamageBonusListener {
     }
 
     @Override
-    boolean qualifies(ShipAPI target) {
+    protected boolean qualifies(ShipAPI target) {
         return isHelpless(target);
     }
 }

@@ -77,6 +77,7 @@ import exiledsector.items.WormholeAnchorLinks;
 import exiledsector.items.WormholeAnchorMigration;
 import exiledsector.loot.FleetDifficulty;
 import exiledsector.loot.LootSource;
+import exiledsector.loot.LootTakenListener;
 import exiledsector.loot.MarketStock;
 import exiledsector.persistence.RetiredReserveIds;
 import exiledsector.persistence.ShipSkillDataManager;
@@ -86,11 +87,9 @@ import exiledsector.skills.npc.NpcFocus;
 import exiledsector.skills.npc.NpcLevelCaps;
 import exiledsector.skills.radius.NodeRadii;
 import exiledsector.skills.tags.VolumeToggles;
-import exiledsector.skills.unlock.DwellerEncounter;
-import exiledsector.skills.unlock.OmegaEncounter;
+import exiledsector.skills.unlock.FactionEncounterGate;
 import exiledsector.skills.unlock.NodeGates;
-import exiledsector.skills.unlock.RemnantEncounter;
-import exiledsector.skills.unlock.ThreatEncounter;
+import exiledsector.skills.unlock.OmegaAnchorAcquisition;
 import exiledsector.skills.unlock.UnlockConditionOverrides;
 import exiledsector.skills.unlock.UnlockConditionType;
 import exiledsector.ui.SkillTreeRefitButton;
@@ -136,6 +135,11 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
     @Override
     public List<LootSource> lootSources() {
         return List.of(SkillTreeLootSource.INSTANCE, LogisticsSchematicLootSource.INSTANCE);
+    }
+
+    @Override
+    public List<LootTakenListener> lootTakenListeners() {
+        return List.of(new OmegaAnchorAcquisition());
     }
 
     @Override
@@ -243,13 +247,8 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
     @Override
     public void afterLootListeners() {
         SectorAPI sector = Global.getSector();
-        sector.addTransientListener(new RemnantEncounter.BattleListener());
-        sector.addTransientListener(new ThreatEncounter.BattleListener());
-        sector.addTransientListener(new DwellerEncounter.BattleListener());
-        sector.addTransientListener(new OmegaEncounter.BattleListener());
-        AlphaSiteOmegaCache alphaSiteOmegaCache = new AlphaSiteOmegaCache();
-        sector.addTransientListener(alphaSiteOmegaCache);
-        sector.getListenerManager().addListener(alphaSiteOmegaCache, true);
+        sector.addTransientListener(new FactionEncounterGate.BattleListener());
+        sector.getListenerManager().addListener(new AlphaSiteOmegaCache(), true);
         if (LostSectorCompat.isModEnabled()) {
             sector.getListenerManager().addListener(new LostSectorUnlocks.LocationListener(), true);
         }

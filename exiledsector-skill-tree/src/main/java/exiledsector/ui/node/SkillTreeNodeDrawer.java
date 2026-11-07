@@ -123,7 +123,7 @@ public final class SkillTreeNodeDrawer {
         grantMarkers.refresh(allocation);
         String tetheredSocketId = hovered ? hoveredGrantSocketId(layers, rootChoice, mouseX, mouseY) : null;
         if (tetheredSocketId != null) {
-            connectorRenderer.drawGrantTethers(shownLayers, SkillTree.get(tetheredSocketId), grantMarkers.grantedBy(tetheredSocketId),
+            connectorRenderer.drawGrantTethers(shownLayers, allocation, SkillTree.get(tetheredSocketId), grantMarkers.grantedBy(tetheredSocketId),
                     grantMarkers.colorForSocket(tetheredSocketId));
             beams.flush();
         }

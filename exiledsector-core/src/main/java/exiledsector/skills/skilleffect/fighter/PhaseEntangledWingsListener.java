@@ -4,7 +4,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
-import com.fs.starfarer.api.combat.FighterWingAPI;
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -146,8 +145,7 @@ final class PhaseEntangledWingsListener implements DamageTakenModifier, DamageLi
     }
 
     private static boolean carrierSystemActive(ShipAPI ship) {
-        FighterWingAPI wing = ship.getWing();
-        ShipAPI carrier = wing == null ? null : wing.getSourceShip();
+        ShipAPI carrier = CombatQueries.carrierOf(ship);
         ShipSystemAPI system = carrier == null ? null : carrier.getSystem();
         return system != null && system.isActive();
     }

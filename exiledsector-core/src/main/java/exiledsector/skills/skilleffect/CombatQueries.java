@@ -8,7 +8,9 @@ import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
+import com.fs.starfarer.api.combat.FighterWingAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -24,6 +26,8 @@ import java.util.function.Predicate;
 
 public final class CombatQueries {
 
+    public static final String AFTERIMAGE_TAG = "exiledSector_phaseAfterimage";
+
     private CombatQueries() {
     }
 
@@ -35,10 +39,34 @@ public final class CombatQueries {
         return other.getOwner() != source.getOwner() && other.getOwner() != Misc.OWNER_NEUTRAL;
     }
 
+    public static ShipAPI hostileLiveShip(ShipAPI source, CombatEntityAPI target) {
+        return target instanceof ShipAPI targetShip && isAliveNotHulk(targetShip) && isHostile(source, targetShip) ? targetShip : null;
+    }
+
     public static boolean isSameStation(ShipAPI ship, ShipAPI other) {
         ShipAPI parent = ship.getParentStation();
         ShipAPI otherParent = other.getParentStation();
         return otherParent == ship || parent == other || (parent != null && parent == otherParent);
+    }
+
+    public static boolean isAfterimage(ShipAPI ship) {
+        ShipVariantAPI variant = ship.getVariant();
+        return variant != null && variant.hasTag(AFTERIMAGE_TAG);
+    }
+
+    public static boolean isAlliedShip(ShipAPI source, ShipAPI other) {
+        return other != source && other.getOwner() == source.getOwner() && !other.isFighter() && !other.isDrone()
+                && isAliveNotHulk(other) && !isAfterimage(other);
+    }
+
+    public static ShipAPI carrierOf(ShipAPI fighter) {
+        FighterWingAPI wing = fighter.getWing();
+        return wing == null ? null : wing.getSourceShip();
+    }
+
+    public static ShipAPI owningShip(ShipAPI ship) {
+        ShipAPI carrier = ship != null && ship.isFighter() ? carrierOf(ship) : null;
+        return carrier != null ? carrier : ship;
     }
 
     public static float distanceSquared(Vector2f a, Vector2f b) {
@@ -82,7 +110,7 @@ public final class CombatQueries {
         Set<ShipAPI> seen = Collections.newSetFromMap(new IdentityHashMap<>(8));
         Iterator<Object> iterator = objectsNear(Global.getCombatEngine().getShipGrid(), loc, radius);
         while (iterator.hasNext()) {
-            if (iterator.next() instanceof ShipAPI other && seen.add(other) && filter.test(other)) {
+            if (iterator.next() instanceof ShipAPI other && seen.add(other) && !isAfterimage(other) && filter.test(other)) {
                 result.add(other);
             }
         }
@@ -98,7 +126,7 @@ public final class CombatQueries {
         float nearestDistanceSquared = radius * radius;
         Iterator<Object> nearby = objectsNear(Global.getCombatEngine().getShipGrid(), point, radius);
         while (nearby.hasNext()) {
-            if (nearby.next() instanceof ShipAPI candidate && filter.test(candidate)) {
+            if (nearby.next() instanceof ShipAPI candidate && !isAfterimage(candidate) && filter.test(candidate)) {
                 float candidateDistanceSquared = distanceSquared(candidate.getLocation(), point);
                 if (candidateDistanceSquared < nearestDistanceSquared) {
                     nearestDistanceSquared = candidateDistanceSquared;
@@ -141,7 +169,8 @@ public final class CombatQueries {
     public static boolean anyNear(CollisionGridAPI grid, Vector2f loc, float radius, Predicate<Object> test) {
         Iterator<Object> iterator = objectsNear(grid, loc, radius);
         while (iterator.hasNext()) {
-            if (test.test(iterator.next())) {
+            Object nearby = iterator.next();
+            if (!(nearby instanceof ShipAPI ship && isAfterimage(ship)) && test.test(nearby)) {
                 return true;
             }
         }
@@ -170,7 +199,7 @@ public final class CombatQueries {
 
     private static boolean isRammable(ShipAPI source, ShipAPI candidate) {
         return candidate != source && isHostile(source, candidate) && isAliveNotHulk(candidate)
-                && !candidate.isFighter() && !candidate.isDrone() && !candidate.isShuttlePod();
+                && !candidate.isFighter() && !candidate.isDrone() && !candidate.isShuttlePod() && !isAfterimage(candidate);
     }
 
     private static ShipAPI bigger(ShipAPI candidate, ShipAPI best, Vector2f from) {

@@ -1,10 +1,13 @@
 package exiledsector.items;
 
+import com.fs.starfarer.api.Global;
 import exiledsector.ModCsv;
 import exiledsector.data.CsvRows;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.unlock.NodeGates;
+import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,6 +24,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.SplittableRandom;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 
 public final class ModspecCaches {
 
@@ -93,7 +97,7 @@ public final class ModspecCaches {
         }
         BASES_BY_ID.set(Collections.unmodifiableMap(bases));
         FactionFleetDrops.register(DROP_SOURCE_GROUP, fleetSources);
-        SubroutineNodePools.use(SubroutineKind.MODSPEC_CACHE, ModspecCaches::candidateNodeIds, ModspecCaches::nodeCount);
+        SubroutineNodePools.use(SubroutineKind.MODSPEC_CACHE, ModspecCaches::rollableNodeIds, ModspecCaches::nodeCount);
     }
 
     static CacheBase parse(String definitionId, JSONObject row) {
@@ -156,18 +160,25 @@ public final class ModspecCaches {
         return base == null ? 1 : base.nodeCount(seed);
     }
 
-    public static List<String> candidateNodeIds(ItemDefinition definition) {
+    public static List<String> rollableNodeIds(ItemDefinition definition) {
         CacheBase base = definition == null ? null : base(definition.id());
         if (base == null) {
             return List.of();
         }
-        return candidateNodeIds(base, SkillTree.getAllNodes().values());
+        if (Global.getSector() == null) {
+            return candidateNodeIds(base, SkillTree.getAllNodes().values());
+        }
+        return candidateNodeIds(base, SkillTree.getAllNodes().values(), ModspecCaches::isIdentified);
     }
 
     static List<String> candidateNodeIds(CacheBase base, Collection<SkillNode> activeNodes) {
+        return candidateNodeIds(base, activeNodes, node -> true);
+    }
+
+    private static List<String> candidateNodeIds(CacheBase base, Collection<SkillNode> activeNodes, Predicate<SkillNode> rollable) {
         List<String> candidates = new ArrayList<>();
         for (SkillNode node : activeNodes) {
-            if (isGrantable(node) && !base.excludedNodeIds().contains(node.getId())) {
+            if (isGrantable(node) && !base.excludedNodeIds().contains(node.getId()) && rollable.test(node)) {
                 candidates.add(node.getId());
             }
         }
@@ -176,6 +187,10 @@ public final class ModspecCaches {
 
     static boolean isGrantable(SkillNode node) {
         return node.getType().getTier() == SkillTier.NOTABLE && !node.getType().isChoice();
+    }
+
+    static boolean isIdentified(SkillNode node) {
+        return !NodeGates.isLocked(node, null) && !SkillTypeUnlockStatus.isLocked(node.getType(), null);
     }
 
     public static List<ItemData> rollSalvage(Random random, float chanceMult) {

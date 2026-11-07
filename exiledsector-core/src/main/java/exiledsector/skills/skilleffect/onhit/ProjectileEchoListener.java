@@ -10,12 +10,14 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
+import exiledsector.skills.skilleffect.Chance;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 import org.lazywizard.lazylib.VectorUtils;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
+import java.util.concurrent.ThreadLocalRandom;
 
 final class ProjectileEchoListener extends ShipCombatListener implements DamageDealtModifier {
 
@@ -43,8 +45,7 @@ final class ProjectileEchoListener extends ShipCombatListener implements DamageD
                 || !hitShip.isAlive() || !CombatQueries.isHostile(ownerShip, hitShip)) {
             return;
         }
-        float chancePercent = magnitude(CHANCE_KEY);
-        if (chancePercent <= 0f || Math.random() >= chancePercent / 100.0) {
+        if (!Chance.roll(ThreadLocalRandom.current(), magnitude(CHANCE_KEY))) {
             return;
         }
         fireEcho(weapon, hitShip);

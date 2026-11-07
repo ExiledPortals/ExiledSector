@@ -7,9 +7,6 @@ public class AbyssSerpent extends Decoration {
     private final Orbit orbit;
     private final Wobble wobble;
 
-    public record Orbit(float radius, float seconds, boolean clockwise, float startAngleDegrees) {
-    }
-
     public record Wobble(float share, int waves, float phaseDegrees) {
         public static final Wobble NONE = new Wobble(0f, 0, 0f);
     }

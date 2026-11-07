@@ -4,7 +4,6 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import exiledsector.skills.skilleffect.CombatQueries;
 
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,25 +30,12 @@ final class AuxiliaryScreenField extends AuraField<AuxiliaryScreenListener> {
     }
 
     static Map<ShipAPI, Float> reductionPerAlly(List<AuxiliaryScreenListener> sources, ShipsNear shipsNear) {
-        Map<ShipAPI, Float> reductions = new IdentityHashMap<>();
-        for (AuxiliaryScreenListener source : sources) {
-            float reduction = source.damageTakenReductionPercent();
-            if (reduction <= 0f) {
-                continue;
-            }
-            ShipAPI sourceShip = source.source();
-            for (ShipAPI ally : shipsNear.find(sourceShip, RANGE, other -> isScreenedBy(sourceShip, other))) {
-                reductions.merge(ally, reduction, Float::max);
-            }
-        }
-        return reductions;
+        return strongestPerShip(sources, shipsNear, RANGE, AuxiliaryScreenListener::damageTakenReductionPercent, AuxiliaryScreenField::isScreenedBy);
     }
 
     static boolean isScreenedBy(ShipAPI sourceShip, ShipAPI other) {
-        return other != sourceShip && other.getOwner() == sourceShip.getOwner() && !other.isFighter() && !other.isDrone()
-                && !other.isStationModule() && CombatQueries.isAliveNotHulk(other)
-                && other.getHullSize().ordinal() < sourceShip.getHullSize().ordinal()
-                && CombatQueries.withinRadius(other.getLocation(), sourceShip.getLocation(), RANGE);
+        return CombatQueries.isAlliedShip(sourceShip, other) && !other.isStationModule()
+                && other.getHullSize().ordinal() < sourceShip.getHullSize().ordinal();
     }
 
     private static void apply(ShipAPI ally, float reductionPercent) {

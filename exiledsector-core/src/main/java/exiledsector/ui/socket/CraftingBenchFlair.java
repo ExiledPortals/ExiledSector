@@ -9,6 +9,7 @@ import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloBeams;
 import exiledsector.ui.util.HoloShapes;
+import exiledsector.ui.util.HoloSocketFrame;
 
 import java.awt.Color;
 
@@ -16,15 +17,15 @@ final class CraftingBenchFlair {
 
     private static final float LOAD_SECONDS = 0.45f;
     private static final float FLASH_SECONDS = 0.7f;
-    private static final float RING_SPEED = 5f;
-    private static final float OUTER_RING_SPEED = 10f;
-    private static final float TICK_RING_SPEED = -6f;
-    private static final float SCANNER_SPEED = -40f;
-    private static final float SCAN_SPEED = 0.55f;
+    private static final HoloSocketFrame.Spec FRAME = new HoloSocketFrame.Spec(1.05f, 5f,
+            new HoloSocketFrame.OuterArcs(5f, 12, 0.62f, 10f, 3f),
+            new HoloSocketFrame.Ticks(0.8f, 90, 9, 9f, 4f, false, -6f),
+            new HoloSocketFrame.Scanner(0.66f, 0.2f, -40f),
+            new Color(0, 0, 0, 170),
+            new HoloSocketFrame.ScanLines(0.55f, 4, 0.9f, 0.35f));
     private static final float PULSE_SPEED = 0.7f;
     private static final float BRACKET_TRAVEL = 14f;
     private static final float ICON_INSET = 0.12f;
-    private static final Color SOCKET_FILL = new Color(0, 0, 0, 170);
     private static final SpriteCache ICONS = new SpriteCache(CraftingBenchFlair.class);
 
     private float elapsedSeconds;
@@ -61,21 +62,18 @@ final class CraftingBenchFlair {
                               CargoIconLook iconLook, float alpha) {
         float easedLoad = 1f - (1f - loadProgress) * (1f - loadProgress);
         float pulse = 0.5f + 0.5f * (float) Math.sin(elapsedSeconds * 2.2f);
-        float half = radius * 0.42f;
+        float half = HoloSocketFrame.socketHalf(radius);
         Color coreColor = subjectColor == null ? accent : subjectColor;
 
         scope.untextured().additive();
-        HoloShapes.radialGlow(cx, cy, half * 0.8f, radius * 1.05f, coreColor, (0.12f + 0.18f * easedLoad) * (0.7f + 0.3f * pulse) * alpha);
-        HoloBeams.ring(cx, cy, radius, -elapsedSeconds * RING_SPEED, accent, 0.5f * alpha);
-        HoloBeams.arcSegments(cx, cy, radius - 5f, 12, 0.62f, elapsedSeconds * OUTER_RING_SPEED, 3f, accent, 0.55f * alpha);
-        HoloBeams.ticks(cx, cy, radius * 0.8f, 90, 9, 9f, 4f, elapsedSeconds * TICK_RING_SPEED, 1f, accent, 0.45f * alpha);
-        HoloBeams.arcSegments(cx, cy, radius * 0.66f, 3, 0.2f, elapsedSeconds * SCANNER_SPEED, 2f, coreColor, (0.35f + 0.5f * easedLoad) * alpha);
+        HoloSocketFrame.drawRings(FRAME, cx, cy, radius, elapsedSeconds, new HoloSocketFrame.RingShading(accent, coreColor,
+                (0.12f + 0.18f * easedLoad) * (0.7f + 0.3f * pulse) * alpha, 0.5f * alpha, 0.55f * alpha, 0.45f * alpha, coreColor,
+                (0.35f + 0.5f * easedLoad) * alpha));
         arms(cx, cy, half, radius * 0.62f, accent, coreColor, easedLoad, alpha);
         scope.normalBlend();
 
-        GLDraw.fillQuad(cx - half, cy - half, half * 2f, half * 2f, SOCKET_FILL, alpha);
-        GLDraw.innerGlow(cx - half, cy - half, half * 2f, half * 2f, half * 0.5f, coreColor, (0.15f + 0.35f * easedLoad * pulse) * alpha);
-        HoloBeams.square(cx, cy, half, 1.5f, coreColor, (0.5f + 0.4f * easedLoad) * alpha);
+        HoloSocketFrame.drawSocket(FRAME, cx, cy, half, coreColor, alpha, (0.15f + 0.35f * easedLoad * pulse) * alpha,
+                (0.5f + 0.4f * easedLoad) * alpha);
         if (iconPath != null) {
             float size = half * 2f * (1f - ICON_INSET * 2f);
             if (iconLook == null) {
@@ -87,9 +85,9 @@ final class CraftingBenchFlair {
             }
         }
         scope.untextured().additive();
-        HoloBeams.brackets(cx, cy, half + 6f + (1f - easedLoad) * BRACKET_TRAVEL, half * 0.35f, 2.5f, accent, (0.6f + 0.4f * easedLoad) * alpha);
+        HoloSocketFrame.drawBrackets(cx, cy, half + 6f + (1f - easedLoad) * BRACKET_TRAVEL, half, accent, (0.6f + 0.4f * easedLoad) * alpha);
         if (iconPath != null) {
-            scanLine(cx, cy, half, coreColor, easedLoad * alpha);
+            HoloSocketFrame.drawScanLines(FRAME, cx, cy, half, coreColor, elapsedSeconds, easedLoad * alpha);
         }
         if (flashProgress > 0f) {
             float spread = 1f - flashProgress;
@@ -112,18 +110,6 @@ final class CraftingBenchFlair {
             float distance = reach - (reach - inner) * travel;
             HoloShapes.diamond(cx + dx * distance, cy + dy * distance, 2.5f, coreColor, (0.3f + 0.7f * easedLoad) * (1f - travel * 0.5f) * alpha);
             HoloShapes.diamond(cx + dx * reach, cy + dy * reach, 3f, accent, 0.8f * alpha);
-        }
-    }
-
-    private void scanLine(float cx, float cy, float half, Color coreColor, float alpha) {
-        float travel = (elapsedSeconds * SCAN_SPEED) % 1f;
-        float y = cy + half - travel * half * 2f;
-        for (int i = 0; i < 4; i++) {
-            float lineY = y + i * 2f;
-            if (lineY > cy + half) {
-                break;
-            }
-            HoloBeams.line(cx - half, lineY, cx + half, lineY, i == 0 ? 2f : 1f, coreColor, (i == 0 ? 0.9f : 0.35f / i) * alpha);
         }
     }
 }

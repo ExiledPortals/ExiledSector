@@ -121,7 +121,7 @@ final class SkillTreeNodeConnectorRenderer {
                 && conduitConnectorKeys.contains(SkillTree.curveKey(node.getId(), other.getId()));
     }
 
-    void drawGrantTethers(TreeLayers layers, SkillNode socket, List<String> grantedNodeIds, Color tetherColor) {
+    void drawGrantTethers(TreeLayers layers, NodeAllocator.Snapshot allocation, SkillNode socket, List<String> grantedNodeIds, Color tetherColor) {
         if (socket == null || tetherColor == null || grantedNodeIds.isEmpty()) {
             return;
         }
@@ -133,7 +133,7 @@ final class SkillTreeNodeConnectorRenderer {
         float widthScale = laneWidthScale(socketViewport.zoom());
         for (int grantedIndex = 0; grantedIndex < grantedNodeIds.size(); grantedIndex++) {
             SkillNode granted = SkillTree.get(grantedNodeIds.get(grantedIndex));
-            if (granted == null) {
+            if (granted == null || allocation.isConcealed(granted)) {
                 continue;
             }
             TreeViewport grantedViewport = layers.viewportFor(granted);

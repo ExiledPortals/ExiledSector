@@ -2,9 +2,7 @@ package exiledsector.skills.skilleffect.aura;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import exiledsector.skills.skilleffect.CombatQueries;
 
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,19 +43,6 @@ final class RateOfFireAuraField extends AuraField<RateOfFireAuraListener> {
     }
 
     static Map<ShipAPI, Float> strongestPerTarget(List<RateOfFireAuraListener> sources, ShipsNear shipsNear) {
-        Map<ShipAPI, Float> strongest = new IdentityHashMap<>();
-        for (RateOfFireAuraListener source : sources) {
-            float percent = source.rateOfFirePenaltyPercent();
-            if (percent <= 0f) {
-                continue;
-            }
-            ShipAPI sourceShip = source.source();
-            for (ShipAPI target : shipsNear.find(sourceShip, RANGE, other -> !other.isFighter() && CombatQueries.isAliveNotHulk(other)
-                    && CombatQueries.isHostile(sourceShip, other)
-                    && CombatQueries.withinRadius(other.getLocation(), sourceShip.getLocation(), RANGE))) {
-                strongest.merge(target, percent, Math::max);
-            }
-        }
-        return strongest;
+        return strongestPerShip(sources, shipsNear, RANGE, RateOfFireAuraListener::rateOfFirePenaltyPercent, AuraField::isHostileShip);
     }
 }

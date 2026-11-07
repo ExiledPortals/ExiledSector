@@ -9,7 +9,8 @@ import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import exiledsector.skills.skilleffect.ScaledBonus;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 import exiledsector.skills.skilleffect.StatTarget;
-import exiledsector.skills.skilleffect.weapon.RiftExplosions;
+import exiledsector.skills.skilleffect.TaperedBonus;
+import exiledsector.skills.skilleffect.weapon.RiftSeries;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
@@ -30,13 +31,11 @@ final class TemporalExhaustListener extends ShipCombatListener implements Advanc
     private static final ScaledBonus TIMEFLOW_BONUS = new ScaledBonus(
             ScaledBonus.percent(StatTarget.liveStat(MutableShipStatsAPI::getTimeMult), TIMEFLOW_PERCENT_KEY));
 
-    private final ScaledBonus.Tracker timeflowBonus = TIMEFLOW_BONUS.tracker();
+    private final TaperedBonus timeflowBonus;
     private final Random random;
     private boolean systemWasActive;
     private float cooldownSecondsLeft;
-    private float taperSecondsLeft;
-    private int riftsLeft;
-    private float secondsToNextRift;
+    private RiftSeries riftTrail;
 
     TemporalExhaustListener(ShipAPI ownerShip) {
         this(ownerShip, new Random());
@@ -45,18 +44,14 @@ final class TemporalExhaustListener extends ShipCombatListener implements Advanc
     TemporalExhaustListener(ShipAPI ownerShip, Random random) {
         super(ownerShip, MOD_ID_PREFIX);
         this.random = random;
-    }
-
-    static float taperShare(float secondsLeft) {
-        return Math.max(0f, Math.min(1f, secondsLeft / TAPER_SECONDS));
+        this.timeflowBonus = new TaperedBonus(TIMEFLOW_BONUS, TAPER_SECONDS, ownerShip.getMutableStats(), modId);
     }
 
     @Override
     public void advance(float amount) {
         if (!ownerIsAliveNotHulk()) {
-            taperSecondsLeft = 0f;
-            riftsLeft = 0;
-            timeflowBonus.apply(ownerShip.getMutableStats(), modId, 0f);
+            riftTrail = null;
+            timeflowBonus.stop();
             return;
         }
         cooldownSecondsLeft = Math.max(0f, cooldownSecondsLeft - amount);
@@ -65,9 +60,10 @@ final class TemporalExhaustListener extends ShipCombatListener implements Advanc
             start();
         }
         systemWasActive = systemActive;
-        taperSecondsLeft = Math.max(0f, taperSecondsLeft - amount);
-        timeflowBonus.apply(ownerShip.getMutableStats(), modId, taperShare(taperSecondsLeft));
-        leaveRifts(amount);
+        timeflowBonus.advance(amount);
+        if (riftTrail != null) {
+            riftTrail.advance(amount);
+        }
     }
 
     private static boolean systemActive(ShipSystemAPI system) {
@@ -76,21 +72,8 @@ final class TemporalExhaustListener extends ShipCombatListener implements Advanc
 
     private void start() {
         cooldownSecondsLeft = COOLDOWN_SECONDS;
-        taperSecondsLeft = TAPER_SECONDS;
-        riftsLeft = RIFT_COUNT;
-        secondsToNextRift = 0f;
-    }
-
-    private void leaveRifts(float amount) {
-        if (riftsLeft <= 0) {
-            return;
-        }
-        secondsToNextRift -= amount;
-        while (riftsLeft > 0 && secondsToNextRift <= 0f) {
-            RiftExplosions.spawn(ownerShip, pointBehindEngines(), RIFT_DAMAGE, random);
-            riftsLeft--;
-            secondsToNextRift += SECONDS_BETWEEN_RIFTS;
-        }
+        timeflowBonus.start();
+        riftTrail = new RiftSeries(ownerShip, RIFT_COUNT, SECONDS_BETWEEN_RIFTS, RIFT_DAMAGE, this::pointBehindEngines, random);
     }
 
     private Vector2f pointBehindEngines() {

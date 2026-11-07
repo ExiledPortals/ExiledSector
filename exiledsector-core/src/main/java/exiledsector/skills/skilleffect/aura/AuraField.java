@@ -9,8 +9,11 @@ import com.fs.starfarer.api.input.InputEventAPI;
 import exiledsector.skills.skilleffect.CombatQueries;
 
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -25,6 +28,10 @@ abstract class AuraField<S extends AuraField.Source> extends BaseEveryFrameComba
 
     interface ShipsNear {
         List<ShipAPI> find(ShipAPI source, float radius, Predicate<ShipAPI> filter);
+    }
+
+    interface SourceStrength<S> {
+        float of(S source);
     }
 
     final List<S> sources = new ArrayList<>();
@@ -74,6 +81,27 @@ abstract class AuraField<S extends AuraField.Source> extends BaseEveryFrameComba
         secondsSinceUpdate = 0f;
         sources.removeIf(source -> !engine.isEntityInPlay(source.source()) || !CombatQueries.isAliveNotHulk(source.source()));
         update(elapsedSeconds);
+    }
+
+    static <S extends Source> Map<ShipAPI, Float> strongestPerShip(List<S> sources, ShipsNear shipsNear, float range,
+                                                                   SourceStrength<S> strength, BiPredicate<ShipAPI, ShipAPI> covers) {
+        Map<ShipAPI, Float> strongest = new IdentityHashMap<>();
+        for (S source : sources) {
+            float sourceStrength = strength.of(source);
+            if (sourceStrength <= 0f) {
+                continue;
+            }
+            ShipAPI sourceShip = source.source();
+            for (ShipAPI covered : shipsNear.find(sourceShip, range, other -> covers.test(sourceShip, other)
+                    && CombatQueries.withinRadius(other.getLocation(), sourceShip.getLocation(), range))) {
+                strongest.merge(covered, sourceStrength, Float::max);
+            }
+        }
+        return strongest;
+    }
+
+    static boolean isHostileShip(ShipAPI sourceShip, ShipAPI other) {
+        return !other.isFighter() && CombatQueries.isAliveNotHulk(other) && CombatQueries.isHostile(sourceShip, other);
     }
 
     void everyFrame(CombatEngineAPI engine) {

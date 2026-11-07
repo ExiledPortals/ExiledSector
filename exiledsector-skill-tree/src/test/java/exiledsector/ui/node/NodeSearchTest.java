@@ -30,7 +30,7 @@ class NodeSearchTest {
     private final NodeAllocator.Snapshot tree = snapshotHiding();
 
     private static NodeAllocator.Snapshot snapshotHiding(String... hiddenNodeIds) {
-        return new NodeAllocator.Snapshot(mock(ShipSkillData.class), null, 0, Set.of(hiddenNodeIds), null, null);
+        return new NodeAllocator.Snapshot(mock(ShipSkillData.class), null, 0, Set.of(hiddenNodeIds), Set.of(), null, null);
     }
 
     private static SkillNode node(String id, String name) {

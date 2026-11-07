@@ -56,11 +56,10 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
                     .arg("emp", IonArcListener.ARC_EMP_FRACTION * 100f).styled();
         }
     },
-    RIFT_STRIKE_CHANCE_PERCENT(listener(RiftStrike.CHANCE_PERCENT_KEY, RiftStrikeListener.class, RiftStrikeListener::new)) {
+    RIFT_STRIKE_CHANCE_PERCENT(listener(RiftStrike.CHANCE_PERCENT_KEY, RiftStrikeListener.class, RiftStrikeListener::forShip)) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).arg("share", RiftStrike.DAMAGE_SHARE_PERCENT)
-                    .arg("min", RiftStrike.MIN_DAMAGE).arg("max", RiftStrike.MAX_DAMAGE).styled();
+            return RiftStrike.describe(EffectText.msg(this).arg("value", magnitude));
         }
     },
     MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT(listener(ResonatorPayloadListener.CHANCE_PERCENT_KEY, ResonatorPayloadListener.class,

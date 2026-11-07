@@ -30,6 +30,7 @@ import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -146,6 +147,49 @@ class OverloadHullDamageListenerTest {
 
         assertEquals(400f, fluxLevels[1], 0.001f);
         assertEquals(1000f, fluxLevels[0], 0.001f);
+    }
+
+    @Test
+    void anotherOverloadWithinTheReplacedOnesDurationRunsItsCourseForFree() {
+        when(flux.isOverloaded()).thenReturn(true);
+        when(flux.getOverloadTimeRemaining()).thenReturn(1f);
+
+        advanceOneFrame();
+        advanceOneFrame();
+        advanceOneFrame();
+
+        verify(flux, times(1)).stopOverload();
+        assertEquals(700f, hitpoints[0], 0.001f);
+    }
+
+    @Test
+    void anOverloadKeptDuringTheLockoutIsNotCutShortWhenTheLockoutEnds() {
+        when(flux.isOverloaded()).thenReturn(true);
+        when(flux.getOverloadTimeRemaining()).thenReturn(0.02f);
+
+        advanceOneFrame();
+        advanceOneFrame();
+        advanceOneFrame();
+        advanceOneFrame();
+
+        verify(flux, times(1)).stopOverload();
+        assertEquals(700f, hitpoints[0], 0.001f);
+    }
+
+    @Test
+    void anOverloadBegunAfterTheLockoutIsReplacedAgain() {
+        when(flux.isOverloaded()).thenReturn(true);
+        when(flux.getOverloadTimeRemaining()).thenReturn(0.02f);
+        advanceOneFrame();
+        when(flux.isOverloaded()).thenReturn(false);
+        advanceOneFrame();
+        advanceOneFrame();
+
+        when(flux.isOverloaded()).thenReturn(true);
+        advanceOneFrame();
+
+        verify(flux, times(2)).stopOverload();
+        assertEquals(600f, hitpoints[0], 0.001f);
     }
 
     @Test

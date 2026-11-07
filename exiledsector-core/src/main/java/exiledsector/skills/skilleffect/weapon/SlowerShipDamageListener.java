@@ -21,7 +21,7 @@ final class SlowerShipDamageListener extends TargetDamageBonusListener {
     }
 
     @Override
-    boolean qualifies(ShipAPI target) {
+    protected boolean qualifies(ShipAPI target) {
         return !target.isFighter() && currentTopSpeed(target) < currentTopSpeed(ownerShip);
     }
 }

@@ -18,7 +18,7 @@ final class PristineShipDamageListener extends TargetDamageBonusListener {
     }
 
     @Override
-    boolean qualifies(ShipAPI target) {
+    protected boolean qualifies(ShipAPI target) {
         return !target.isFighter() && pristineByTarget.computeIfAbsent(target, ship -> !SkillEffectSupport.hasDMods(ship.getVariant()));
     }
 }

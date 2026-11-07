@@ -74,8 +74,9 @@ class ResonatorPayloadListenerTest {
         return spec;
     }
 
-    private static MissileAPI missile(WeaponType type, float damagePerShot) {
+    private static MissileAPI missile(ShipAPI firingShip, WeaponType type, float damagePerShot) {
         WeaponAPI weapon = mock(WeaponAPI.class);
+        when(weapon.getShip()).thenReturn(firingShip);
         WeaponSpecAPI spec = spec(damagePerShot);
         when(weapon.getType()).thenReturn(type);
         when(weapon.getSpec()).thenReturn(spec);
@@ -102,7 +103,7 @@ class ResonatorPayloadListenerTest {
         ResonatorPayloadListener listener = new ResonatorPayloadListener(ship, rolling(0.04f));
         Vector2f impact = new Vector2f(500f, -300f);
 
-        assertNull(listener.modifyDamageDealt(missile(WeaponType.MISSILE, 750f), ship(1, 0f), mock(DamageAPI.class), impact, false));
+        assertNull(listener.modifyDamageDealt(missile(ship, WeaponType.MISSILE, 750f), ship(1, 0f), mock(DamageAPI.class), impact, false));
         verify(engine, never()).spawnProjectile(any(), any(), anyString(), any(), anyFloat(), any());
 
         listener.advance(0f);
@@ -126,7 +127,7 @@ class ResonatorPayloadListenerTest {
         ShipAPI ship = ship(0, 5f);
         ResonatorPayloadListener listener = new ResonatorPayloadListener(ship, rolling(0.04f));
 
-        listener.modifyDamageDealt(missile(WeaponType.MISSILE, 750f), ship(1, 0f), mock(DamageAPI.class), new Vector2f(), false);
+        listener.modifyDamageDealt(missile(ship, WeaponType.MISSILE, 750f), ship(1, 0f), mock(DamageAPI.class), new Vector2f(), false);
         listener.advance(0f);
         when(ship.isAlive()).thenReturn(false);
         listener.advance(1f);
@@ -142,12 +143,23 @@ class ResonatorPayloadListenerTest {
         ResonatorPayloadListener failing = new ResonatorPayloadListener(ship, rolling(0.06f));
         ResonatorPayloadListener passing = new ResonatorPayloadListener(ship, rolling(0f));
 
-        failing.modifyDamageDealt(missile(WeaponType.MISSILE, 750f), ship(1, 0f), mock(DamageAPI.class), new Vector2f(), false);
-        passing.modifyDamageDealt(missile(WeaponType.ENERGY, 750f), ship(1, 0f), mock(DamageAPI.class), new Vector2f(), false);
+        failing.modifyDamageDealt(missile(ship, WeaponType.MISSILE, 750f), ship(1, 0f), mock(DamageAPI.class), new Vector2f(), false);
+        passing.modifyDamageDealt(missile(ship, WeaponType.ENERGY, 750f), ship(1, 0f), mock(DamageAPI.class), new Vector2f(), false);
         passing.modifyDamageDealt(mock(DamagingProjectileAPI.class), ship(1, 0f), mock(DamageAPI.class), new Vector2f(), false);
-        passing.modifyDamageDealt(missile(WeaponType.MISSILE, 750f), ship(0, 0f), mock(DamageAPI.class), new Vector2f(), false);
+        passing.modifyDamageDealt(missile(ship, WeaponType.MISSILE, 750f), ship(0, 0f), mock(DamageAPI.class), new Vector2f(), false);
         failing.advance(1f);
         passing.advance(1f);
+
+        verify(engine, never()).spawnProjectile(any(), any(), anyString(), any(), anyFloat(), any());
+    }
+
+    @Test
+    void missilesFromAnotherShipsWeaponNeverRoll() {
+        ShipAPI ship = ship(0, 100f);
+        ResonatorPayloadListener listener = new ResonatorPayloadListener(ship, rolling(0f));
+
+        listener.modifyDamageDealt(missile(ship(0, 0f), WeaponType.MISSILE, 750f), ship(1, 0f), mock(DamageAPI.class), new Vector2f(), false);
+        listener.advance(1f);
 
         verify(engine, never()).spawnProjectile(any(), any(), anyString(), any(), anyFloat(), any());
     }

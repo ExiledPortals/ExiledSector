@@ -46,7 +46,7 @@ class RiftExplosionsTest {
         when(owner.getId()).thenReturn("rift_ship");
         when(owner.getMutableStats()).thenReturn(stats);
         when(stats.getDynamic().getValue(RiftExplosions.DAMAGE_PERCENT_KEY, 0f)).thenReturn(percent);
-        return new RiftExplosionDamageListener(owner);
+        return RiftExplosionDamageListener.forShip(owner);
     }
 
     private static DamageAPI damage() {
@@ -103,5 +103,21 @@ class RiftExplosionsTest {
         assertNull(listener(20f).modifyDamageDealt(explosion("explosion_flak", 30, Color.WHITE), null, hit, new Vector2f(), false));
         assertNull(listener(0f).modifyDamageDealt(explosion("riftbeam_rift", 0, INVISIBLE), null, hit, new Vector2f(), false));
         verify(hit.getModifier(), never()).modifyPercent(anyString(), anyFloat());
+    }
+
+    @Test
+    void aStrikecraftsRiftExplosionsTakeItsCarriersBonus() {
+        ShipAPI fighter = mock(ShipAPI.class);
+        when(fighter.getId()).thenReturn("fighter");
+        ShipAPI carrier = mock(ShipAPI.class, RETURNS_DEEP_STUBS);
+        when(carrier.getMutableStats().getDynamic().getValue(RiftExplosionDamageListener.STRIKECRAFT_DAMAGE_PERCENT_KEY, 0f)).thenReturn(10f);
+        when(carrier.getMutableStats().getDynamic().getValue(RiftExplosions.DAMAGE_PERCENT_KEY, 0f)).thenReturn(30f);
+        DamageAPI hit = damage();
+
+        String modId = RiftExplosionDamageListener.forStrikecraft(fighter, carrier)
+                .modifyDamageDealt(explosion("riftbeam_rift", 0, INVISIBLE), null, hit, new Vector2f(), false);
+
+        assertEquals("exiledSector_riftExplosionDamage_fighter", modId);
+        verify(hit.getModifier()).modifyPercent(modId, 10f);
     }
 }

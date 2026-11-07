@@ -127,8 +127,7 @@ final class SharedShieldDamageListener extends ShipCombatListener implements Dam
     }
 
     private boolean isAlliedWarship(ShipAPI other) {
-        return other != ownerShip && other.getOwner() == ownerShip.getOwner() && !other.isFighter()
-                && !CombatQueries.isSameStation(ownerShip, other);
+        return CombatQueries.isAlliedShip(ownerShip, other) && !CombatQueries.isSameStation(ownerShip, other);
     }
 
     private boolean canTakeSharedDamageNow(ShipAPI ally) {

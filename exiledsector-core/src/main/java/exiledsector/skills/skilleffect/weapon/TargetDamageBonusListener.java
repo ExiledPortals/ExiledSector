@@ -1,34 +1,31 @@
 package exiledsector.skills.skilleffect.weapon;
 
 import com.fs.starfarer.api.combat.CombatEntityAPI;
-import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import exiledsector.skills.skilleffect.CombatQueries;
-import exiledsector.skills.skilleffect.ShipCombatListener;
-import org.lwjgl.util.vector.Vector2f;
+import exiledsector.skills.skilleffect.DamagePercentListener;
 
-abstract class TargetDamageBonusListener extends ShipCombatListener implements DamageDealtModifier {
+public abstract class TargetDamageBonusListener extends DamagePercentListener {
 
     private final String damagePercentKey;
 
-    TargetDamageBonusListener(ShipAPI ownerShip, String modIdPrefix, String damagePercentKey) {
-        super(ownerShip, modIdPrefix);
+    protected TargetDamageBonusListener(ShipAPI ownerShip, String modIdPrefix, String damagePercentKey) {
+        this(ownerShip, ownerShip, modIdPrefix, damagePercentKey);
+    }
+
+    protected TargetDamageBonusListener(ShipAPI ownerShip, ShipAPI magnitudeHolder, String modIdPrefix, String damagePercentKey) {
+        super(ownerShip, magnitudeHolder, modIdPrefix);
         this.damagePercentKey = damagePercentKey;
     }
 
-    abstract boolean qualifies(ShipAPI target);
+    protected abstract boolean qualifies(ShipAPI target);
 
     @Override
-    public final String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
+    protected final float damagePercent(Object param, CombatEntityAPI target) {
         if (!(target instanceof ShipAPI targetShip) || !CombatQueries.isHostile(ownerShip, targetShip)) {
-            return null;
+            return 0f;
         }
         float percent = magnitude(damagePercentKey);
-        if (percent == 0f || !qualifies(targetShip)) {
-            return null;
-        }
-        damage.getModifier().modifyPercent(modId, percent);
-        return modId;
+        return percent != 0f && qualifies(targetShip) ? percent : 0f;
     }
 }

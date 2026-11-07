@@ -40,7 +40,6 @@ final class FormationSpeedListener extends ShipCombatListener implements Advance
     }
 
     private boolean isFormationAlly(ShipAPI ship) {
-        return ship != ownerShip && ship.getOwner() == ownerShip.getOwner() && !ship.isFighter() && !ship.isDrone()
-                && !ship.isStationModule() && CombatQueries.isAliveNotHulk(ship);
+        return CombatQueries.isAlliedShip(ownerShip, ship) && !ship.isStationModule();
     }
 }

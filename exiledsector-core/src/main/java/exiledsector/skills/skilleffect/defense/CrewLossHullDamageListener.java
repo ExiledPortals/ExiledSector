@@ -17,23 +17,32 @@ final class CrewLossHullDamageListener extends ShipCombatListener implements Dam
     static final float AVERAGE_LOSS_ROLL = 0.75f;
     private static final String MOD_ID_PREFIX = "exiledSector_crewLossHullDamage_";
 
-    private final float crewAboard;
+    private boolean crewCounted;
+    private float crewAboard;
     private float hullDamageTaken;
     private float appliedReductionPercent;
 
     CrewLossHullDamageListener(ShipAPI ownerShip) {
         super(ownerShip, MOD_ID_PREFIX);
-        crewAboard = crewAboard(ownerShip.getFleetMember());
     }
 
-    private static float crewAboard(FleetMemberAPI member) {
+    static float crewAboard(ShipAPI ship) {
+        ShipAPI parentStation = ship.getParentStation();
+        FleetMemberAPI member = (parentStation != null ? parentStation : ship).getFleetMember();
         CrewCompositionAPI crew = member == null ? null : member.getCrewComposition();
         return crew == null ? 0f : crew.getCrew();
     }
 
     @Override
     public void reportDamageApplied(Object source, CombatEntityAPI target, ApplyDamageResultAPI result) {
-        if (target != ownerShip || result == null || result.getDamageToHull() <= 0f || crewAboard <= 0f) {
+        if (target != ownerShip || result == null || result.getDamageToHull() <= 0f) {
+            return;
+        }
+        if (!crewCounted) {
+            crewCounted = true;
+            crewAboard = crewAboard(ownerShip);
+        }
+        if (crewAboard <= 0f) {
             return;
         }
         hullDamageTaken += result.getDamageToHull();
