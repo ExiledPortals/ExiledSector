@@ -5767,7 +5767,7 @@
 		{
 			"id": "strikecraft_weapon_range",
 			"name": "Strikecraft Weapon Range",
-			"icon": "",
+			"icon": "graphics/icons/fighter3_shifted_shifted.png",
 			"effects": [
 				{
 					"effect": "FIGHTER_WEAPON_RANGE_PERCENT",
