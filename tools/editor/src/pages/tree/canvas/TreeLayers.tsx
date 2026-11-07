@@ -16,7 +16,7 @@ import {
   type TreeNode,
 } from '../model/types.ts';
 import type { ActiveDrag } from '../state/treeStore.ts';
-import { centerClass, centreHandleRadius, handleClass, handleRadius, isHandleActive, isMoving, SHAPE_CYCLE_HANDLE_SCREEN_SIZE } from './handleClasses.ts';
+import { centerClass, centreHandleRadius, handleClass, handleRadius, isHandleActive, isMoving, SHAPE_CYCLE_HANDLE_SIZE } from './handleClasses.ts';
 import classes from './TreeCanvas.module.css';
 
 export function IconClipDefinitions() {
@@ -210,10 +210,10 @@ interface EdgeLayerProps {
   hiddenConnectors: NodePair[];
   showCurveHandles: boolean;
   activeCurveKey: string | null;
-  worldPerPixel: number;
+  handleScale: number;
 }
 
-export const EdgeLayer = memo(function EdgeLayer({ nodes, curves, hiddenConnectors, showCurveHandles, activeCurveKey, worldPerPixel }: EdgeLayerProps) {
+export const EdgeLayer = memo(function EdgeLayer({ nodes, curves, hiddenConnectors, showCurveHandles, activeCurveKey, handleScale }: EdgeLayerProps) {
   const edges = useMemo(() => edgeGeometry(nodes, curves, hiddenConnectors), [nodes, curves, hiddenConnectors]);
   return (
     <g>
@@ -229,7 +229,7 @@ export const EdgeLayer = memo(function EdgeLayer({ nodes, curves, hiddenConnecto
                 key={edge.key}
                 cx={edge.controlX}
                 cy={edge.controlY}
-                r={handleRadius(active, worldPerPixel)}
+                r={handleRadius(active, handleScale)}
                 className={handleClass(classes.curveHandle, active)}
                 data-curve-a={edge.a}
                 data-curve-b={edge.b}
@@ -261,10 +261,10 @@ interface HandleLayerProps<TItem> {
   items: TItem[];
   selectedIds: string[];
   activeDrag: ActiveDrag | null;
-  worldPerPixel: number;
+  handleScale: number;
 }
 
-export const AnchorHandleLayer = memo(function AnchorHandleLayer({ items, selectedIds, activeDrag, worldPerPixel }: HandleLayerProps<OrbitAnchor>) {
+export const AnchorHandleLayer = memo(function AnchorHandleLayer({ items, selectedIds, activeDrag, handleScale }: HandleLayerProps<OrbitAnchor>) {
   return (
     <g>
       {items.map((anchor) => {
@@ -272,11 +272,11 @@ export const AnchorHandleLayer = memo(function AnchorHandleLayer({ items, select
         const moving = isMoving(activeDrag, 'anchorIds', anchor.id);
         const resizing = isHandleActive(activeDrag, 'anchorResize', anchor.id);
         const rotating = isHandleActive(activeDrag, 'anchorRotate', anchor.id);
-        const shapeCycleSize = SHAPE_CYCLE_HANDLE_SCREEN_SIZE * worldPerPixel;
+        const shapeCycleSize = SHAPE_CYCLE_HANDLE_SIZE * handleScale;
         const rotatePosition = anchorShapeVertices(anchor) ? positionOnAnchor(anchor, (anchor.rotation || 0) - 90) : null;
         return (
           <g key={anchor.id}>
-            <circle cx={anchor.x} cy={anchor.y} r={centreHandleRadius(moving, worldPerPixel)} className={centerClass(selected || moving)} data-anchor-id={anchor.id} />
+            <circle cx={anchor.x} cy={anchor.y} r={centreHandleRadius(moving, handleScale)} className={centerClass(selected || moving)} data-anchor-id={anchor.id} />
             <rect
               x={anchor.x - anchor.radius / 2 - shapeCycleSize / 2}
               y={anchor.y - shapeCycleSize / 2}
@@ -289,7 +289,7 @@ export const AnchorHandleLayer = memo(function AnchorHandleLayer({ items, select
               <circle
                 cx={anchor.x + anchor.radius / 2}
                 cy={anchor.y}
-                r={handleRadius(resizing, worldPerPixel)}
+                r={handleRadius(resizing, handleScale)}
                 className={handleClass(classes.resizeHandle, resizing)}
                 data-anchor-resize={anchor.id}
               />
@@ -298,7 +298,7 @@ export const AnchorHandleLayer = memo(function AnchorHandleLayer({ items, select
               <circle
                 cx={rotatePosition.x}
                 cy={rotatePosition.y}
-                r={handleRadius(rotating, worldPerPixel)}
+                r={handleRadius(rotating, handleScale)}
                 className={handleClass(classes.rotateHandle, rotating)}
                 data-anchor-rotate={anchor.id}
               />

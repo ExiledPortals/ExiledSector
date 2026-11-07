@@ -228,7 +228,7 @@ describe('tree page', () => {
     expect(positions.size).toBe(3);
   });
 
-  it('keeps handles the same size on screen at any zoom', async () => {
+  it('shrinks handles with the tree when zoomed out but keeps their screen size when zoomed in', async () => {
     const { container } = await renderLoadedTree();
     const decoration = useTreeStore.getState().document.decorations[0];
     act(() => selectOnly('decorations', decoration.id));
@@ -241,7 +241,8 @@ describe('tree page', () => {
       return [centre, handle, anchor, curve].map((element) => Number(element.getAttribute('r')) * zoom);
     };
     const atDefaultZoom = screenRadii(1);
-    expect(screenRadii(0.02).map((radius) => radius.toFixed(6))).toEqual(atDefaultZoom.map((radius) => radius.toFixed(6)));
+    expect(screenRadii(4).map((radius) => radius.toFixed(6))).toEqual(atDefaultZoom.map((radius) => radius.toFixed(6)));
+    expect(screenRadii(0.25).map((radius) => radius.toFixed(6))).toEqual(atDefaultZoom.map((radius) => (radius * 0.25).toFixed(6)));
     expect(atDefaultZoom[0]).toBeGreaterThanOrEqual(5);
   });
 

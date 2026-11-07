@@ -220,10 +220,10 @@ interface DecorationHandleLayerProps {
   decorations: Decoration[];
   selectedIds: string[];
   activeDrag: ActiveDrag | null;
-  worldPerPixel: number;
+  handleScale: number;
 }
 
-export const DecorationHandleLayer = memo(function DecorationHandleLayer({ decorations, selectedIds, activeDrag, worldPerPixel }: DecorationHandleLayerProps) {
+export const DecorationHandleLayer = memo(function DecorationHandleLayer({ decorations, selectedIds, activeDrag, handleScale }: DecorationHandleLayerProps) {
   return (
     <g>
       {decorations.map((decoration) => {
@@ -231,7 +231,7 @@ export const DecorationHandleLayer = memo(function DecorationHandleLayer({ decor
         const moving = isMoving(activeDrag, 'decorationIds', decoration.id);
         return (
           <g key={decoration.id}>
-            <circle cx={decoration.x} cy={decoration.y} r={centreHandleRadius(moving, worldPerPixel)} className={centerClass(selected || moving)} data-decoration-id={decoration.id} />
+            <circle cx={decoration.x} cy={decoration.y} r={centreHandleRadius(moving, handleScale)} className={centerClass(selected || moving)} data-decoration-id={decoration.id} />
             {selected
               ? decorationHandles(decoration).map((handle) => {
                   const active = isActiveHandle(activeDrag, decoration.id, handle.name);
@@ -241,7 +241,7 @@ export const DecorationHandleLayer = memo(function DecorationHandleLayer({ decor
                       <circle
                         cx={handle.x}
                         cy={handle.y}
-                        r={handleRadius(active, worldPerPixel)}
+                        r={handleRadius(active, handleScale)}
                         className={handleClass(handle.rotates ? classes.rotateHandle : classes.resizeHandle, active)}
                         data-decoration-handle={handle.name}
                         data-decoration-handle-of={decoration.id}
