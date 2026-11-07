@@ -180,8 +180,7 @@
 					"magnitude": 20
 				}
 			],
-			"flavour": "A gunner who signed on at a pirate base retunes the fire control to hold until a target's shields collapse or its drives gutter out. Fair fights are left to the navies.",
-			"flavourAutomated": "Pirate wreck logs show their gunners holding fire until a target's shields collapse or its drives gutter out. The ship's core retunes its fire control to wait for the same moment. Fair fights are left to the navies.",
+			"flavour": "Pirate fire control holds until a target's shields collapse or its drives gutter out. Fair fights are for the naive.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"weapons"
@@ -198,8 +197,7 @@
 					"magnitude": -10
 				}
 			],
-			"flavour": "Pirate captains run with their transponders dark and their drive plumes baffled behind scrap plating. A smuggler paid for passage with the baffle schematics, and the crew fits the baffles to match. Customs never saw either of them.",
-			"flavourAutomated": "Pirate captains run with their transponders dark and their drive plumes baffled behind scrap plating. The ship's core pulls the baffle schematics from a smuggler's discarded nav logs, and the refit crew fits them. Customs never saw the logs.",
+			"flavour": "Pirate captains run with their transponders dark and their drive plumes baffled behind scrap plating.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"logistics",
@@ -218,8 +216,7 @@
 					"magnitude": 1000
 				}
 			],
-			"flavour": "Raiders out of Kanta's Den read a nearby kill as the signal to press in with every gun running hot. A cycle flying beside them teaches the crew to strip the fire-rate governors the same way. The governors were Hegemony regulation.",
-			"flavourAutomated": "Raiders out of Kanta's Den read a nearby kill as the signal to press in with every gun running hot. The ship's core logs the pattern over a cycle flying beside them, and the refit crew strips the fire-rate governors to match. The governors were Hegemony regulation.",
+			"flavour": "A good pirate doesn't wait for their prey to recover.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"weapons"
@@ -236,8 +233,7 @@
 					"magnitude": 30
 				}
 			],
-			"flavour": "Pirate captains plan the escape before the ambush. The crew fits a drive overboost pulled from a captured Wolf, wired to cut in only once the ship breaks off. Its last owner did not break off soon enough.",
-			"flavourAutomated": "Pirate captains plan the escape before the ambush. The refit crew fits a drive overboost pulled from a captured Wolf, and the ship's core cuts it in only once the ship breaks off. Its last owner did not break off soon enough.",
+			"flavour": "Acquiring plunder is sometimes not as important as making it home.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"speed"
@@ -258,8 +254,7 @@
 					"magnitude": 1
 				}
 			],
-			"flavour": "Pirate crews haul captured freighters home on cables welded straight to the drive spine. The crew strips the cable gear from a salvaged Ox, and the drives feel every ton of it. The Ox's owners were not asked.",
-			"flavourAutomated": "Pirate crews haul captured freighters home on cables welded straight to the drive spine. The refit crew strips the cable gear from a salvaged Ox, and the ship's core retunes the drives around the extra mass. The Ox's owners were not asked.",
+			"flavour": "Pirates tow their prizes home on cables welded straight to the drive spine. It is slow, but nothing gets left behind.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"logistics",
@@ -278,8 +273,7 @@
 					"magnitude": 10
 				}
 			],
-			"flavour": "Pirate raiders shadow a convoy for days, waiting for one freighter to fall behind its escorts. The crew patches the targeting suite to flag any hull left on its own. Convoy masters file it as a scheduling problem.",
-			"flavourAutomated": "Pirate raiders shadow a convoy for days, waiting for one freighter to fall behind its escorts. The ship's core learns the habit from intercepted raider traffic and flags any hull left on its own. Convoy masters file it as a scheduling problem.",
+			"flavour": "A convoy is only as safe as its slowest freighter.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"weapons"
@@ -359,8 +353,7 @@
 					"magnitude": 20
 				}
 			],
-			"flavour": "Hulls killed by Remnant energy weapons come apart around every impact in a way no human weapon manages. Salvors who study enough of the wrecks learn to tune this ship's energy weapons to the same pattern, and try not to think about what it resembles.",
-			"flavourAutomated": "Hulls killed by Remnant energy weapons come apart around every impact in a way no human weapon manages. The ship's core scans enough of the wrecks to model the pattern and tunes its energy weapons to match. It has no opinion on what the pattern resembles.",
+			"flavour": "\"And what the defiler builds shall be unmade around its every wound, so that no part remains to be mended.\"\n- Attributed to the Book of Ludd, apocrypha",
 			"tags": [
 				"energy",
 				"armour",
@@ -3192,7 +3185,7 @@
 					"magnitude": 50
 				}
 			],
-			"flavour": "Pather ships out of Chalcedon go to battle with scrap plate welded over the prow until it is more ram than hull. The Path counts this among the few acceptable uses of technology.",
+			"flavour": "Pather ships weld scrap plate over the prow until it is more ram than hull. The Path counts this among the few acceptable uses of technology.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"hull"
@@ -3209,7 +3202,7 @@
 					"magnitude": 1
 				}
 			],
-			"flavour": "Luddic Church ships carry a memorial plate for every hand lost aboard, welded over the hull where the loss was taken. The oldest hulls are mostly memorial.",
+			"flavour": "Luddic Church ships carry a memorial plate for every hand lost aboard. The oldest hulls are mostly memorial.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"hull",
@@ -3227,7 +3220,7 @@
 					"magnitude": 1
 				}
 			],
-			"flavour": "Church doctrine reads every scar on a hull as a trial endured, so a Luddic fleet forms up around its most battered ship. Repairs are deferred on grounds of piety and of budget.",
+			"flavour": "Church doctrine reads every scar on a hull as a trial endured. A Luddic fleet forms up around its most battered ship.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"fleet_support",
@@ -3249,7 +3242,7 @@
 					"magnitude": 50
 				}
 			],
-			"flavour": "Knights of Ludd refits wire the capacitor breakers straight into the hull frame. The order files the scorching that follows under penance rather than maintenance.",
+			"flavour": "The Knights of Ludd count a scorched hull as penance, not damage.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"flux",
@@ -4849,8 +4842,7 @@
 					"magnitude": 30
 				}
 			],
-			"flavour": "Tri-Tachyon fire-control logs recovered from Remnant drones describe energy bolts tuned to tear a brief hole in normal space on impact. The crew copied the tuning into this ship's emitters, one dimly understood parameter at a time. The logs still carry a Tri-Tachyon copyright notice.",
-			"flavourAutomated": "Tri-Tachyon fire-control logs recovered from Remnant drones describe energy bolts tuned to tear a brief hole in normal space on impact. The ship's core reads the tuning tables and applies them to its emitters, one dimly understood parameter at a time. The logs still carry a Tri-Tachyon copyright notice.",
+			"flavour": "\"The impact site reads as empty for a moment afterwards. Not damaged, not cold. Empty. I have asked for the sensor package to be recalibrated.\"\n- Lab notes recovered from Alpha Site, author unknown",
 			"todo": "Needs an icon.",
 			"tags": [
 				"energy",
@@ -5555,8 +5547,7 @@
 					"magnitude": 100
 				}
 			],
-			"flavour": "Ion emitter firmware from a Tri-Tachyon proving range keeps discharging into a target's dead systems until the current finds the hull behind them. The crew runs an unlicensed copy. The licence agreement is longer than the firmware.",
-			"flavourAutomated": "Ion emitter firmware from a Tri-Tachyon proving range keeps discharging into a target's dead systems until the current finds the hull behind them. The ship's core extracted a copy from a wrecked Tri-Tachyon picket. The licence agreement is longer than the firmware.",
+			"flavour": "Once a target's systems are dead, Tri-Tachyon ion firmware moves on to the hull.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"weapons"
@@ -5577,8 +5568,7 @@
 					"magnitude": 1
 				}
 			],
-			"flavour": "Remnant battlegroups pass position data between hulls through relay protocols that are only dimly understood. A fragment recovered from a drone's comms array now sits in this ship's own, and the fleet's helms keep station by it. The signal officer has asked that nobody reply to it.",
-			"flavourAutomated": "Remnant battlegroups pass position data between hulls through relay protocols that are only dimly understood. The ship's core copied a fragment from a drone's comms array into its own, and the fleet's helms keep station by it. It has not been asked to reply, and does not.",
+			"flavour": "Remnant battlegroups keep station through relay protocols that are only dimly understood. The recovered fragment has never stopped transmitting.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"flux",
@@ -5611,8 +5601,7 @@
 					"magnitude": 1
 				}
 			],
-			"flavour": "Remnant drones change munitions in the middle of a volley, matching each round to whatever it is about to hit. Fire-control tables pulled from a wrecked Scintilla let this ship's loaders attempt the same. The loaders are not as fast as the drones and would prefer the comparison stopped.",
-			"flavourAutomated": "Remnant drones change munitions in the middle of a volley, matching each round to whatever it is about to hit. The ship's core read the fire-control tables out of a wrecked Scintilla and rewrote its own feed sequence to match. The refit crew installed the extra feed lines and was not told why.",
+			"flavour": "Remnant drones match each round to whatever it is about to hit.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"weapons",
@@ -5631,8 +5620,7 @@
 					"magnitude": 20
 				}
 			],
-			"flavour": "Remnant hulls are rumored to draw on every lineage of Domain design at once, held in a balance their cores never let slip. A ship whose refits stay just as even can borrow the same discipline. The chief engineer calls it balance. The quartermaster calls it a requisition freeze.",
-			"flavourAutomated": "Remnant hulls are rumored to draw on every lineage of Domain design at once, held in a balance their cores never let slip. The ship's core recognizes the pattern in its own refits and holds to it. The refit crew calls it a requisition freeze.",
+			"flavour": "Remnant hulls are rumored to hold every lineage of Domain design in a balance their cores never let slip.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"weapons"
@@ -5663,8 +5651,7 @@
 					"magnitude": 25
 				}
 			],
-			"flavour": "Ion bolts from Remnant drones do not simply splash off a shield. Their emitters run a fraction off their rated frequency, and some of the charge reaches the projector as heat. The crew detuned this ship's emitters to match, which voided a warranty nobody had read.",
-			"flavourAutomated": "Ion bolts from Remnant drones do not simply splash off a shield. Their emitters run a fraction off their rated frequency, and some of the charge reaches the projector as heat. The ship's core detuned its own emitters to match, which voided a warranty it had read in full.",
+			"flavour": "Remnant ion bolts leave some of their charge in the shield projector as heat.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"weapons",
@@ -5682,8 +5669,7 @@
 					"magnitude": 0.5
 				}
 			],
-			"flavour": "A Remnant Nexus left dormant for cycles still mends its own plating, a little at a time. A repair loop lifted from one of those stations now runs in this ship's armor. It does not seem to notice the crew.",
-			"flavourAutomated": "A Remnant Nexus left dormant for cycles still mends its own plating, a little at a time. The ship's core lifted the repair loop from one of those stations and runs it beside its own. The loop does not appear to notice.",
+			"flavour": "A dormant Nexus still mends its own plating, a little at a time.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"armour",
@@ -5718,8 +5704,7 @@
 					"magnitude": 25
 				}
 			],
-			"flavour": "Tri-Tachyon phase doctrine holds that the first shots after leaving p-space decide the engagement. The crew drills the weapon capacitors to discharge the moment the coil disengages. Afflictor captains call it the only meeting worth attending.",
-			"flavourAutomated": "Tri-Tachyon phase doctrine holds that the first shots after leaving p-space decide the engagement. Afflictor combat recordings show the ship's core when to discharge its weapon capacitors: the moment the coil disengages. The recordings carry a corporate watermark.",
+			"flavour": "Tri-Tachyon phase doctrine holds that the first shot out of p-space decides the engagement.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"phase",
@@ -5754,8 +5739,7 @@
 					"magnitude": 3
 				}
 			],
-			"flavour": "A phase coil dropped into p-space too sharply leaves an echo of the hull in normal space for a few moments. Tri-Tachyon engineers filed this as a fault. The crew detunes the coil to leave one on purpose, and enemy gunners have filed complaints.",
-			"flavourAutomated": "A phase coil dropped into p-space too sharply leaves an echo of the hull in normal space for a few moments. Tri-Tachyon research logs file this as a fault. The ship's core detunes its coil to leave one on purpose, and enemy gunners have filed complaints.",
+			"flavour": "A phase coil dropped into p-space too sharply leaves an echo of the hull behind. Enemy gunners rarely tell the difference.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"phase",
@@ -5773,8 +5757,7 @@
 					"magnitude": 5
 				}
 			],
-			"flavour": "Energy weapons built under Tri-Tachyon licence carry a signal that tells a target's system controllers they are running patented designs. The crew leaves the signal in. Compliance is slow, but reliably so.",
-			"flavourAutomated": "Energy weapons built under Tri-Tachyon licence carry a signal that tells a target's system controllers they are running patented designs. The ship's core leaves the signal in. Compliance is slow, but reliably so.",
+			"flavour": "Tri-Tachyon does not tolerate unlicensed use of its designs, even mid-battle.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"energy",
@@ -5808,7 +5791,7 @@
 					"magnitude": 10
 				}
 			],
-			"flavour": "Spark drones from a Remnant carrier were stripped and studied in a Hegemony hangar for a full cycle. The findings went into the ship's own strike craft emitters. The Hegemony report stays classified, mostly out of embarrassment.",
+			"flavour": "\"Recovered three of the little ones intact. By the time the bench clamps were on, there were two.\"\n- Hegemony salvage inventory, amended",
 			"todo": "Needs an icon.",
 			"tags": [
 				"fighter",
@@ -5826,8 +5809,7 @@
 					"magnitude": 20
 				}
 			],
-			"flavour": "Sensor logs of a Tesseract's drive plume were replayed until the timestamps stopped agreeing with each other. The chief engineer retuned the engine nozzles to the same timing. The exhaust now registers on sensors a moment before the burn that made it. Maintenance files this under minor faults.",
-			"flavourAutomated": "Sensor logs of a Tesseract's drive plume were replayed until the timestamps stopped agreeing with each other. The ship's core matched its engine timing to the logs, and the refit crew retuned the nozzles in dock. The exhaust now registers on sensors a moment before the burn that made it. Maintenance files this under minor faults.",
+			"flavour": "\"The plume showed up on our scopes before the drive lit. I have checked the clocks. Please stop asking me to check the clocks.\"\n- Sensor officer's log, Tri-Tachyon picket, name withheld",
 			"todo": "Needs an icon.",
 			"tags": [
 				"speed"
@@ -5844,8 +5826,7 @@
 					"magnitude": 1
 				}
 			],
-			"flavour": "Fragments of a Resonator MRM warhead, pulled from a wreck of no known design, still hum at a frequency the instruments can't settle on. The crew seeds a sliver of one into every missile the ship loads. Ordnance inventory lists them as ballast.",
-			"flavourAutomated": "Fragments of a Resonator MRM warhead, pulled from a wreck of no known design, still hum at a frequency the instruments can't settle on. On the core's instructions, the refit crew seeds a sliver of one into every missile in the ship's magazines. Ordnance inventory lists them as ballast.",
+			"flavour": "\"Ordnance asks that it be noted, again, that the ballast is humming.\"\n- Quartermaster's memo, recovered from Alpha Site",
 			"todo": "Needs an icon.",
 			"tags": [
 				"missile",

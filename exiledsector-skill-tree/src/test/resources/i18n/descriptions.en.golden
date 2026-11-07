@@ -3235,8 +3235,7 @@ type|acceleration|FRIGATE|0	0	<good>10%</good> increased acceleration.
 type|acceleration|DESTROYER|0	0	<good>10%</good> increased acceleration.
 type|acceleration|CRUISER|0	0	<good>10%</good> increased acceleration.
 type|acceleration|CAPITAL_SHIP|0	0	<good>10%</good> increased acceleration.
-flavour|adaptive_munitions	0	Remnant drones change munitions in the middle of a volley, matching each round to whatever it is about to hit. Fire-control tables pulled from a wrecked Scintilla let this ship's loaders attempt the same. The loaders are not as fast as the drones and would prefer the comparison stopped.
-flavourAutomated|adaptive_munitions	0	Remnant drones change munitions in the middle of a volley, matching each round to whatever it is about to hit. The ship's core read the fire-control tables out of a wrecked Scintilla and rewrote its own feed sequence to match. The refit crew installed the extra feed lines and was not told why.
+flavour|adaptive_munitions	0	Remnant drones match each round to whatever it is about to hit.
 type|adaptive_munitions|null|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
 type|adaptive_munitions|FRIGATE|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
 type|adaptive_munitions|DESTROYER|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
@@ -3495,8 +3494,7 @@ type-detail|blast_doors|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hu
 type|blast_doors|CAPITAL_SHIP|0	0	<good>20%</good> increased hull points.
 type|blast_doors|CAPITAL_SHIP|1	1	<bad>60%</bad> less crew casualties.
 type-detail|blast_doors|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Blast Doors</hullmod>
-flavour|blood_in_the_water	0	Raiders out of Kanta's Den read a nearby kill as the signal to press in with every gun running hot. A cycle flying beside them teaches the crew to strip the fire-rate governors the same way. The governors were Hegemony regulation.
-flavourAutomated|blood_in_the_water	0	Raiders out of Kanta's Den read a nearby kill as the signal to press in with every gun running hot. The ship's core logs the pattern over a cycle flying beside them, and the refit crew strips the fire-rate governors to match. The governors were Hegemony regulation.
+flavour|blood_in_the_water	0	A good pirate doesn't wait for their prey to recover.
 type|blood_in_the_water|null|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
 type|blood_in_the_water|FRIGATE|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
 type|blood_in_the_water|DESTROYER|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
@@ -3546,15 +3544,13 @@ type|cargo_capacity|FRIGATE|0	0	<good>+5</good> to cargo capacity.
 type|cargo_capacity|DESTROYER|0	0	<good>+15</good> to cargo capacity.
 type|cargo_capacity|CRUISER|0	0	<good>+25</good> to cargo capacity.
 type|cargo_capacity|CAPITAL_SHIP|0	0	<good>+50</good> to cargo capacity.
-flavour|cease_and_desist	0	Energy weapons built under Tri-Tachyon licence carry a signal that tells a target's system controllers they are running patented designs. The crew leaves the signal in. Compliance is slow, but reliably so.
-flavourAutomated|cease_and_desist	0	Energy weapons built under Tri-Tachyon licence carry a signal that tells a target's system controllers they are running patented designs. The ship's core leaves the signal in. Compliance is slow, but reliably so.
+flavour|cease_and_desist	0	Tri-Tachyon does not tolerate unlicensed use of its designs, even mid-battle.
 type|cease_and_desist|null|0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
 type|cease_and_desist|FRIGATE|0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
 type|cease_and_desist|DESTROYER|0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
 type|cease_and_desist|CRUISER|0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
 type|cease_and_desist|CAPITAL_SHIP|0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
-flavour|cheap_shots	0	A gunner who signed on at a pirate base retunes the fire control to hold until a target's shields collapse or its drives gutter out. Fair fights are left to the navies.
-flavourAutomated|cheap_shots	0	Pirate wreck logs show their gunners holding fire until a target's shields collapse or its drives gutter out. The ship's core retunes its fire control to wait for the same moment. Fair fights are left to the navies.
+flavour|cheap_shots	0	Pirate fire control holds until a target's shields collapse or its drives gutter out. Fair fights are for the naive.
 type|cheap_shots|null|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
 type|cheap_shots|FRIGATE|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
 type|cheap_shots|DESTROYER|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
@@ -3702,8 +3698,7 @@ type|crustacean_integration|CRUISER|2	0	<good>30%</good> increased peak performa
 type|crustacean_integration|CAPITAL_SHIP|0	0	<good>15%</good> increased combat readiness recovery rate.
 type|crustacean_integration|CAPITAL_SHIP|1	0	<good>10%</good> increased top speed.
 type|crustacean_integration|CAPITAL_SHIP|2	0	<good>30%</good> increased peak performance time.
-flavour|cut_and_run	0	Pirate captains plan the escape before the ambush. The crew fits a drive overboost pulled from a captured Wolf, wired to cut in only once the ship breaks off. Its last owner did not break off soon enough.
-flavourAutomated|cut_and_run	0	Pirate captains plan the escape before the ambush. The refit crew fits a drive overboost pulled from a captured Wolf, and the ship's core cuts it in only once the ship breaks off. Its last owner did not break off soon enough.
+flavour|cut_and_run	0	Acquiring plunder is sometimes not as important as making it home.
 type|cut_and_run|null|0	0	<good>30%</good> increased top speed while retreating.
 type|cut_and_run|FRIGATE|0	0	<good>30%</good> increased top speed while retreating.
 type|cut_and_run|DESTROYER|0	0	<good>30%</good> increased top speed while retreating.
@@ -3752,8 +3747,7 @@ type-detail|defensive_targeting_array|FRIGATE|0	0	Mutually exclusive with <hullm
 type-detail|defensive_targeting_array|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Defensive Targeting Array</hullmod>
 type-detail|defensive_targeting_array|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Defensive Targeting Array</hullmod>
 type-detail|defensive_targeting_array|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Defensive Targeting Array</hullmod>
-flavour|disintegration	0	Hulls killed by Remnant energy weapons come apart around every impact in a way no human weapon manages. Salvors who study enough of the wrecks learn to tune this ship's energy weapons to the same pattern, and try not to think about what it resembles.
-flavourAutomated|disintegration	0	Hulls killed by Remnant energy weapons come apart around every impact in a way no human weapon manages. The ship's core scans enough of the wrecks to model the pattern and tunes its energy weapons to match. It has no opinion on what the pattern resembles.
+flavour|disintegration	0	"And what the defiler builds shall be unmade around its every wound, so that no part remains to be mended."\n- Attributed to the Book of Ludd, apocrypha
 type|disintegration|null|0	0	Energy weapon hits on armor strip an additional <good>20%</good> of the hit's damage from the armor around the impact over 5 seconds.
 type|disintegration|FRIGATE|0	0	Energy weapon hits on armor strip an additional <good>20%</good> of the hit's damage from the armor around the impact over 5 seconds.
 type|disintegration|DESTROYER|0	0	Energy weapon hits on armor strip an additional <good>20%</good> of the hit's damage from the armor around the impact over 5 seconds.
@@ -4018,8 +4012,7 @@ type|domain_pattern_laminate|CRUISER|0	1	<bad>8%</bad> reduced kinetic damage ta
 type|domain_pattern_laminate|CRUISER|1	1	<bad>8%</bad> reduced high-explosive damage taken.
 type|domain_pattern_laminate|CAPITAL_SHIP|0	1	<bad>8%</bad> reduced kinetic damage taken.
 type|domain_pattern_laminate|CAPITAL_SHIP|1	1	<bad>8%</bad> reduced high-explosive damage taken.
-flavour|dormant_repair_cycle	0	A Remnant Nexus left dormant for cycles still mends its own plating, a little at a time. A repair loop lifted from one of those stations now runs in this ship's armor. It does not seem to notice the crew.
-flavourAutomated|dormant_repair_cycle	0	A Remnant Nexus left dormant for cycles still mends its own plating, a little at a time. The ship's core lifted the repair loop from one of those stations and runs it beside its own. The loop does not appear to notice.
+flavour|dormant_repair_cycle	0	A dormant Nexus still mends its own plating, a little at a time.
 type|dormant_repair_cycle|null|0	0	Armor cells not hit for 5 seconds repair <good>0.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
 type|dormant_repair_cycle|FRIGATE|0	0	Armor cells not hit for 5 seconds repair <good>0.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
 type|dormant_repair_cycle|DESTROYER|0	0	Armor cells not hit for 5 seconds repair <good>0.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
@@ -4177,8 +4170,7 @@ type|engine_durability_and_sensor_profile|CRUISER|0	0	<good>25%</good> increased
 type|engine_durability_and_sensor_profile|CRUISER|1	1	<bad>10%</bad> reduced sensor profile.
 type|engine_durability_and_sensor_profile|CAPITAL_SHIP|0	0	<good>25%</good> increased engine durability.
 type|engine_durability_and_sensor_profile|CAPITAL_SHIP|1	1	<bad>10%</bad> reduced sensor profile.
-flavour|equilibrium_protocol	0	Remnant hulls are rumored to draw on every lineage of Domain design at once, held in a balance their cores never let slip. A ship whose refits stay just as even can borrow the same discipline. The chief engineer calls it balance. The quartermaster calls it a requisition freeze.
-flavourAutomated|equilibrium_protocol	0	Remnant hulls are rumored to draw on every lineage of Domain design at once, held in a balance their cores never let slip. The ship's core recognizes the pattern in its own refits and holds to it. The refit crew calls it a requisition freeze.
+flavour|equilibrium_protocol	0	Remnant hulls are rumored to hold every lineage of Domain design in a balance their cores never let slip.
 type|equilibrium_protocol|null|0	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
 type|equilibrium_protocol|FRIGATE|0	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
 type|equilibrium_protocol|DESTROYER|0	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
@@ -4534,8 +4526,7 @@ type|hardlight_marking|CRUISER|0	0	Each hit by a strikecraft launched from this 
 type|hardlight_marking|CRUISER|1	0	Strikecraft marks grant up to a maximum of <good>30%</good> increased damage taken.
 type|hardlight_marking|CAPITAL_SHIP|0	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>2%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
 type|hardlight_marking|CAPITAL_SHIP|1	0	Strikecraft marks grant up to a maximum of <good>30%</good> increased damage taken.
-flavour|haul_the_prize	0	Pirate crews haul captured freighters home on cables welded straight to the drive spine. The crew strips the cable gear from a salvaged Ox, and the drives feel every ton of it. The Ox's owners were not asked.
-flavourAutomated|haul_the_prize	0	Pirate crews haul captured freighters home on cables welded straight to the drive spine. The refit crew strips the cable gear from a salvaged Ox, and the ship's core retunes the drives around the extra mass. The Ox's owners were not asked.
+flavour|haul_the_prize	0	Pirates tow their prizes home on cables welded straight to the drive spine. It is slow, but nothing gets left behind.
 type|haul_the_prize|null|0	0	<bad>-1</bad> to max burn level.
 type|haul_the_prize|null|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
 type|haul_the_prize|FRIGATE|0	0	<bad>-1</bad> to max burn level.
@@ -4765,15 +4756,13 @@ type|ion_bolter_rounds|FRIGATE|0	0	Energy shots that hit an enemy shield can arc
 type|ion_bolter_rounds|DESTROYER|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
 type|ion_bolter_rounds|CRUISER|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
 type|ion_bolter_rounds|CAPITAL_SHIP|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
-flavour|ion_cascade	0	Ion emitter firmware from a Tri-Tachyon proving range keeps discharging into a target's dead systems until the current finds the hull behind them. The crew runs an unlicensed copy. The licence agreement is longer than the firmware.
-flavourAutomated|ion_cascade	0	Ion emitter firmware from a Tri-Tachyon proving range keeps discharging into a target's dead systems until the current finds the hull behind them. The ship's core extracted a copy from a wrecked Tri-Tachyon picket. The licence agreement is longer than the firmware.
+flavour|ion_cascade	0	Once a target's systems are dead, Tri-Tachyon ion firmware moves on to the hull.
 type|ion_cascade|null|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
 type|ion_cascade|FRIGATE|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
 type|ion_cascade|DESTROYER|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
 type|ion_cascade|CRUISER|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
 type|ion_cascade|CAPITAL_SHIP|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
-flavour|ion_spill	0	Ion bolts from Remnant drones do not simply splash off a shield. Their emitters run a fraction off their rated frequency, and some of the charge reaches the projector as heat. The crew detuned this ship's emitters to match, which voided a warranty nobody had read.
-flavourAutomated|ion_spill	0	Ion bolts from Remnant drones do not simply splash off a shield. Their emitters run a fraction off their rated frequency, and some of the charge reaches the projector as heat. The ship's core detuned its own emitters to match, which voided a warranty it had read in full.
+flavour|ion_spill	0	Remnant ion bolts leave some of their charge in the shield projector as heat.
 type|ion_spill|null|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
 type|ion_spill|FRIGATE|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
 type|ion_spill|DESTROYER|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
@@ -4874,7 +4863,7 @@ type|lions_roar|FRIGATE|0	0	Enemy ships within 1000 su have <good>10%</good> les
 type|lions_roar|DESTROYER|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
 type|lions_roar|CRUISER|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
 type|lions_roar|CAPITAL_SHIP|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
-flavour|litany_of_the_fallen	0	Luddic Church ships carry a memorial plate for every hand lost aboard, welded over the hull where the loss was taken. The oldest hulls are mostly memorial.
+flavour|litany_of_the_fallen	0	Luddic Church ships carry a memorial plate for every hand lost aboard. The oldest hulls are mostly memorial.
 type|litany_of_the_fallen|null|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
 type|litany_of_the_fallen|FRIGATE|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
 type|litany_of_the_fallen|DESTROYER|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
@@ -5214,7 +5203,7 @@ type|packed_capacitors|CRUISER|0	0	<good>15%</good> increased flux capacity.
 type|packed_capacitors|CRUISER|1	0	<good>+600</good> to flux capacity.
 type|packed_capacitors|CAPITAL_SHIP|0	0	<good>15%</good> increased flux capacity.
 type|packed_capacitors|CAPITAL_SHIP|1	0	<good>+600</good> to flux capacity.
-flavour|pathers_prow	0	Pather ships out of Chalcedon go to battle with scrap plate welded over the prow until it is more ram than hull. The Path counts this among the few acceptable uses of technology.
+flavour|pathers_prow	0	Pather ships weld scrap plate over the prow until it is more ram than hull. The Path counts this among the few acceptable uses of technology.
 type|pathers_prow|null|0	0	<good>50%</good> more collision damage dealt to enemy ships and <good>50%</good> less collision damage taken.
 type|pathers_prow|FRIGATE|0	0	<good>50%</good> more collision damage dealt to enemy ships and <good>50%</good> less collision damage taken.
 type|pathers_prow|DESTROYER|0	0	<good>50%</good> more collision damage dealt to enemy ships and <good>50%</good> less collision damage taken.
@@ -5232,15 +5221,13 @@ type|perseverance_through_faith|FRIGATE|0	0	<good>2%</good> more weapon damage f
 type|perseverance_through_faith|DESTROYER|0	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
 type|perseverance_through_faith|CRUISER|0	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
 type|perseverance_through_faith|CAPITAL_SHIP|0	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
-flavour|phantom_wake	0	A phase coil dropped into p-space too sharply leaves an echo of the hull in normal space for a few moments. Tri-Tachyon engineers filed this as a fault. The crew detunes the coil to leave one on purpose, and enemy gunners have filed complaints.
-flavourAutomated|phantom_wake	0	A phase coil dropped into p-space too sharply leaves an echo of the hull in normal space for a few moments. Tri-Tachyon research logs file this as a fault. The ship's core detunes its coil to leave one on purpose, and enemy gunners have filed complaints.
+flavour|phantom_wake	0	A phase coil dropped into p-space too sharply leaves an echo of the hull behind. Enemy gunners rarely tell the difference.
 type|phantom_wake|null|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
 type|phantom_wake|FRIGATE|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
 type|phantom_wake|DESTROYER|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
 type|phantom_wake|CRUISER|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
 type|phantom_wake|CAPITAL_SHIP|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
-flavour|phase_ambush_doctrine	0	Tri-Tachyon phase doctrine holds that the first shots after leaving p-space decide the engagement. The crew drills the weapon capacitors to discharge the moment the coil disengages. Afflictor captains call it the only meeting worth attending.
-flavourAutomated|phase_ambush_doctrine	0	Tri-Tachyon phase doctrine holds that the first shots after leaving p-space decide the engagement. Afflictor combat recordings show the ship's core when to discharge its weapon capacitors: the moment the coil disengages. The recordings carry a corporate watermark.
+flavour|phase_ambush_doctrine	0	Tri-Tachyon phase doctrine holds that the first shot out of p-space decides the engagement.
 type|phase_ambush_doctrine|null|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
 type|phase_ambush_doctrine|FRIGATE|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
 type|phase_ambush_doctrine|DESTROYER|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
@@ -5302,8 +5289,7 @@ type|phase_fed_magazines|FRIGATE|0	0	<good>100%</good> increased ammo regenerati
 type|phase_fed_magazines|DESTROYER|0	0	<good>100%</good> increased ammo regeneration while phased.
 type|phase_fed_magazines|CRUISER|0	0	<good>100%</good> increased ammo regeneration while phased.
 type|phase_fed_magazines|CAPITAL_SHIP|0	0	<good>100%</good> increased ammo regeneration while phased.
-flavour|pick_off_stragglers	0	Pirate raiders shadow a convoy for days, waiting for one freighter to fall behind its escorts. The crew patches the targeting suite to flag any hull left on its own. Convoy masters file it as a scheduling problem.
-flavourAutomated|pick_off_stragglers	0	Pirate raiders shadow a convoy for days, waiting for one freighter to fall behind its escorts. The ship's core learns the habit from intercepted raider traffic and flags any hull left on its own. Convoy masters file it as a scheduling problem.
+flavour|pick_off_stragglers	0	A convoy is only as safe as its slowest freighter.
 type|pick_off_stragglers|null|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
 type|pick_off_stragglers|FRIGATE|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
 type|pick_off_stragglers|DESTROYER|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
@@ -5381,8 +5367,7 @@ type|reinforced_bulkheads|CAPITAL_SHIP|0	0	<good>40%</good> increased hull point
 type|reinforced_bulkheads|CAPITAL_SHIP|1	0	If disabled, this ship is almost always recoverable after the battle.
 type|reinforced_bulkheads|CAPITAL_SHIP|2	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 type-detail|reinforced_bulkheads|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Reinforced Bulkheads</hullmod>
-flavour|relay_protocols	0	Remnant battlegroups pass position data between hulls through relay protocols that are only dimly understood. A fragment recovered from a drone's comms array now sits in this ship's own, and the fleet's helms keep station by it. The signal officer has asked that nobody reply to it.
-flavourAutomated|relay_protocols	0	Remnant battlegroups pass position data between hulls through relay protocols that are only dimly understood. The ship's core copied a fragment from a drone's comms array into its own, and the fleet's helms keep station by it. It has not been asked to reply, and does not.
+flavour|relay_protocols	0	Remnant battlegroups keep station through relay protocols that are only dimly understood. The recovered fragment has never stopped transmitting.
 type|relay_protocols|null|0	0	<good>+10</good> to High Tech Affinity.
 type|relay_protocols|null|1	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
 type|relay_protocols|FRIGATE|0	0	<good>+10</good> to High Tech Affinity.
@@ -5420,8 +5405,7 @@ type-detail|resistant_flux_conduits|CRUISER|0	0	Mutually exclusive with <hullmod
 type|resistant_flux_conduits|CAPITAL_SHIP|0	1	<bad>30%</bad> less EMP damage taken.
 type|resistant_flux_conduits|CAPITAL_SHIP|1	0	<good>10%</good> increased venting speed.
 type-detail|resistant_flux_conduits|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Lostech Engineering</hullmod>\n• <hullmod>Resistant Flux Conduits</hullmod>
-flavour|resonator_payload	0	Fragments of a Resonator MRM warhead, pulled from a wreck of no known design, still hum at a frequency the instruments can't settle on. The crew seeds a sliver of one into every missile the ship loads. Ordnance inventory lists them as ballast.
-flavourAutomated|resonator_payload	0	Fragments of a Resonator MRM warhead, pulled from a wreck of no known design, still hum at a frequency the instruments can't settle on. On the core's instructions, the refit crew seeds a sliver of one into every missile in the ship's magazines. Ordnance inventory lists them as ballast.
+flavour|resonator_payload	0	"Ordnance asks that it be noted, again, that the ballast is humming."\n- Quartermaster's memo, recovered from Alpha Site
 type|resonator_payload|null|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
 type|resonator_payload|FRIGATE|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
 type|resonator_payload|DESTROYER|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
@@ -5444,8 +5428,7 @@ type|rift_explosion_damage|CRUISER|0	0	<good>10%</good> increased rift explosion
 type|rift_explosion_damage|CRUISER|1	0	Strikecraft launched from this ship have <good>10%</good> increased rift explosion damage.
 type|rift_explosion_damage|CAPITAL_SHIP|0	0	<good>10%</good> increased rift explosion damage.
 type|rift_explosion_damage|CAPITAL_SHIP|1	0	Strikecraft launched from this ship have <good>10%</good> increased rift explosion damage.
-flavour|rift_harmonics	0	Tri-Tachyon fire-control logs recovered from Remnant drones describe energy bolts tuned to tear a brief hole in normal space on impact. The crew copied the tuning into this ship's emitters, one dimly understood parameter at a time. The logs still carry a Tri-Tachyon copyright notice.
-flavourAutomated|rift_harmonics	0	Tri-Tachyon fire-control logs recovered from Remnant drones describe energy bolts tuned to tear a brief hole in normal space on impact. The ship's core reads the tuning tables and applies them to its emitters, one dimly understood parameter at a time. The logs still carry a Tri-Tachyon copyright notice.
+flavour|rift_harmonics	0	"The impact site reads as empty for a moment afterwards. Not damaged, not cold. Empty. I have asked for the sensor package to be recalibrated."\n- Lab notes recovered from Alpha Site, author unknown
 type|rift_harmonics|null|0	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
 type|rift_harmonics|FRIGATE|0	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
 type|rift_harmonics|DESTROYER|0	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
@@ -5456,7 +5439,7 @@ type|rift_lightning_damage|FRIGATE|0	0	<good>10%</good> increased Rift Lightning
 type|rift_lightning_damage|DESTROYER|0	0	<good>10%</good> increased Rift Lightning damage.
 type|rift_lightning_damage|CRUISER|0	0	<good>10%</good> increased Rift Lightning damage.
 type|rift_lightning_damage|CAPITAL_SHIP|0	0	<good>10%</good> increased Rift Lightning damage.
-flavour|rite_of_mortification	0	Knights of Ludd refits wire the capacitor breakers straight into the hull frame. The order files the scorching that follows under penance rather than maintenance.
+flavour|rite_of_mortification	0	The Knights of Ludd count a scorched hull as penance, not damage.
 type|rite_of_mortification|null|0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
 type|rite_of_mortification|null|1	0	Replacing an overload dissipates <good>50%</good> of hard flux.
 type|rite_of_mortification|FRIGATE|0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
@@ -5482,8 +5465,7 @@ type|root_midline|FRIGATE|0	0	<good>+10</good> to Midline Affinity.
 type|root_midline|DESTROYER|0	0	<good>+10</good> to Midline Affinity.
 type|root_midline|CRUISER|0	0	<good>+10</good> to Midline Affinity.
 type|root_midline|CAPITAL_SHIP|0	0	<good>+10</good> to Midline Affinity.
-flavour|running_dark	0	Pirate captains run with their transponders dark and their drive plumes baffled behind scrap plating. A smuggler paid for passage with the baffle schematics, and the crew fits the baffles to match. Customs never saw either of them.
-flavourAutomated|running_dark	0	Pirate captains run with their transponders dark and their drive plumes baffled behind scrap plating. The ship's core pulls the baffle schematics from a smuggler's discarded nav logs, and the refit crew fits them. Customs never saw the logs.
+flavour|running_dark	0	Pirate captains run with their transponders dark and their drive plumes baffled behind scrap plating.
 type|running_dark|null|0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
 type|running_dark|FRIGATE|0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
 type|running_dark|DESTROYER|0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
@@ -5569,7 +5551,7 @@ type|salvaged_abyssal_grid|CAPITAL_SHIP|1	0	<good>+100</good> to energy weapon r
 type|salvaged_abyssal_grid|CAPITAL_SHIP|2	1	<bad>25%</bad> reduced EMP damage taken.
 type|salvaged_abyssal_grid|CAPITAL_SHIP|3	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|salvaged_abyssal_grid|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
-flavour|sanctified_scars	0	Church doctrine reads every scar on a hull as a trial endured, so a Luddic fleet forms up around its most battered ship. Repairs are deferred on grounds of piety and of budget.
+flavour|sanctified_scars	0	Church doctrine reads every scar on a hull as a trial endured. A Luddic fleet forms up around its most battered ship.
 type|sanctified_scars|null|0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
 type|sanctified_scars|FRIGATE|0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
 type|sanctified_scars|DESTROYER|0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
@@ -5805,7 +5787,7 @@ type|solar_shielding|CRUISER|0	1	<bad>75%</bad> less combat readiness loss from 
 type-detail|solar_shielding|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dawntide</hullmod>\n• <hullmod>Stardust Core Field</hullmod>\n• <hullmod>Solar Shielding</hullmod>
 type|solar_shielding|CAPITAL_SHIP|0	1	<bad>75%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|solar_shielding|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dawntide</hullmod>\n• <hullmod>Stardust Core Field</hullmod>\n• <hullmod>Solar Shielding</hullmod>
-flavour|spark_rift	0	Spark drones from a Remnant carrier were stripped and studied in a Hegemony hangar for a full cycle. The findings went into the ship's own strike craft emitters. The Hegemony report stays classified, mostly out of embarrassment.
+flavour|spark_rift	0	"Recovered three of the little ones intact. By the time the bench clamps were on, there were two."\n- Hegemony salvage inventory, amended
 type|spark_rift|null|0	0	Strikecraft launched from this ship have a <good>10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
 type|spark_rift|FRIGATE|0	0	Strikecraft launched from this ship have a <good>10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
 type|spark_rift|DESTROYER|0	0	Strikecraft launched from this ship have a <good>10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
@@ -5973,8 +5955,7 @@ type|tania_weapon_fire_rate|FRIGATE|0	0	<good>3%</good> increased weapon rate of
 type|tania_weapon_fire_rate|DESTROYER|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|tania_weapon_fire_rate|CRUISER|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|tania_weapon_fire_rate|CAPITAL_SHIP|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
-flavour|temporal_exhaust	0	Sensor logs of a Tesseract's drive plume were replayed until the timestamps stopped agreeing with each other. The chief engineer retuned the engine nozzles to the same timing. The exhaust now registers on sensors a moment before the burn that made it. Maintenance files this under minor faults.
-flavourAutomated|temporal_exhaust	0	Sensor logs of a Tesseract's drive plume were replayed until the timestamps stopped agreeing with each other. The ship's core matched its engine timing to the logs, and the refit crew retuned the nozzles in dock. The exhaust now registers on sensors a moment before the burn that made it. Maintenance files this under minor faults.
+flavour|temporal_exhaust	0	"The plume showed up on our scopes before the drive lit. I have checked the clocks. Please stop asking me to check the clocks."\n- Sensor officer's log, Tri-Tachyon picket, name withheld
 type|temporal_exhaust|null|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
 type|temporal_exhaust|FRIGATE|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
 type|temporal_exhaust|DESTROYER|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
