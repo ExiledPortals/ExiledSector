@@ -14,6 +14,7 @@ public final class Decorations {
     private final List<ThreatUnit> threatUnits;
     private final List<AbyssSerpent> serpents;
     private final List<ShroudedMaw> shroudedMaws;
+    private final List<Hypershunt> hypershunts;
 
     public Decorations(List<? extends Decoration> decorations) {
         this.all = List.copyOf(decorations);
@@ -23,6 +24,7 @@ public final class Decorations {
         this.threatUnits = ofType(ThreatUnit.class);
         this.serpents = ofType(AbyssSerpent.class);
         this.shroudedMaws = ofType(ShroudedMaw.class);
+        this.hypershunts = ofType(Hypershunt.class);
     }
 
     private <T extends Decoration> List<T> ofType(Class<T> type) {
@@ -62,5 +64,9 @@ public final class Decorations {
 
     public List<ShroudedMaw> shroudedMaws() {
         return shroudedMaws;
+    }
+
+    public List<Hypershunt> hypershunts() {
+        return hypershunts;
     }
 }

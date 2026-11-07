@@ -45,7 +45,8 @@ class NpcFactionVolumesTest {
         String csv = java.nio.file.Files.readString(ProjectFiles.projectRoot().resolve(NpcFactionVolumes.DATA_PATH));
         NpcFactionVolumes.register(org.json.CDL.toJSONArray(csv.replace("\r\n", "\n")));
 
-        assertEquals("REDACTED", NpcFactionVolumes.volumeFor("omega"));
+        assertEquals("REDACTED", NpcFactionVolumes.volumeFor("remnant"));
+        assertEquals("omega", NpcFactionVolumes.volumeFor("omega"));
         assertEquals("luddic", NpcFactionVolumes.volumeFor("luddic_path"));
         assertEquals("persean_league", NpcFactionVolumes.volumeFor("persean"));
     }

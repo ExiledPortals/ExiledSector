@@ -193,6 +193,11 @@ describe('tree page', () => {
     commitField('Seconds per orbit', '120');
     expect(decorationById(useTreeStore.getState().document, serpent.id)).toMatchObject({ orbitSeconds: 120 });
 
+    const hypershunt = decorationsOfKind(document.decorations, 'hypershunt')[0];
+    act(() => selectOnly('decorations', hypershunt.id));
+    commitField('Size', '320');
+    expect(decorationById(useTreeStore.getState().document, hypershunt.id)).toMatchObject({ size: 320 });
+
     act(() => setSelection({ nodes: [document.nodes[0].id, document.nodes[1].id], decorations: [star.id] }));
     expect(await screen.findByText('3 objects selected')).toBeTruthy();
     fireEvent.click(screen.getByText('Clear selection'));
@@ -202,7 +207,7 @@ describe('tree page', () => {
   it('draws every decoration from the tree file with a selectable centre handle', async () => {
     const { container } = await renderLoadedTree();
     const decorations = useTreeStore.getState().document.decorations;
-    expect(new Set(decorations.map((decoration) => decoration.kind))).toEqual(new Set(['star', 'image', 'ringBelt', 'threatUnit', 'serpent', 'shroudedMaw']));
+    expect(new Set(decorations.map((decoration) => decoration.kind))).toEqual(new Set(['star', 'image', 'ringBelt', 'threatUnit', 'serpent', 'shroudedMaw', 'hypershunt']));
     expect(container.querySelectorAll('[data-decoration-id]').length).toBe(decorations.length);
   });
 

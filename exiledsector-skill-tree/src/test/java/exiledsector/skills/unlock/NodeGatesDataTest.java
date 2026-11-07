@@ -41,6 +41,7 @@ class NodeGatesDataTest {
     private static final String THREAT_GATE = "gate_threat_fought";
     private static final String REMNANT_GATE = "gate_remnant_fought";
     private static final String DWELLER_GATE = "gate_dweller_fought";
+    private static final String OMEGA_GATE = "gate_omega_found";
     private static final String FROZEN_HEART_GATE = "gate_frozen_heart_visited";
     private static final String PROTOTYPE_GATE = "gate_ancient_prototype_found";
     private static final String CANDLES_GRACE_NODE_ID = "candles_grace_replica_1";
@@ -66,7 +67,7 @@ class NodeGatesDataTest {
     @Test
     void eachWormholeGateHandsOutItsAnchorsByItsOwnRule() {
         assertEquals(NodeGates.AnchorRule.FREE, NodeGates.gate(PASCAL_GATE).anchorRule());
-        for (String withheldGate : List.of(ABYSS_GATE, EXISTENTIAL_THREAT_GATE, FROZEN_HEART_GATE, THREAT_GATE, REMNANT_GATE)) {
+        for (String withheldGate : List.of(ABYSS_GATE, EXISTENTIAL_THREAT_GATE, FROZEN_HEART_GATE, THREAT_GATE, REMNANT_GATE, OMEGA_GATE)) {
             assertEquals(NodeGates.AnchorRule.WITHHELD, NodeGates.gate(withheldGate).anchorRule(), withheldGate);
         }
         Set<String> rewardGates = NodeGates.all().keySet().stream().filter(gateTag -> NodeGates.gate(gateTag).rewardAnchor())
@@ -132,6 +133,16 @@ class NodeGatesDataTest {
                 NodeGates.all().get(REMNANT_GATE).stream().map(UnlockCondition::getType).toList());
         assertTrue(ungatedIn(SkillTags.REDACTED_VOLUME, REMNANT_GATE).isEmpty(),
                 "Remnant nodes without the gate: " + ungatedIn(SkillTags.REDACTED_VOLUME, REMNANT_GATE));
+    }
+
+    @Test
+    void everyOmegaNodeAndTheWormholeIntoItWaitUntilOmegaIsFound() {
+        assertEquals(List.of(UnlockConditionType.OMEGA_FOUND),
+                NodeGates.all().get(OMEGA_GATE).stream().map(UnlockCondition::getType).toList());
+        assertTrue(NodeGates.all().keySet().stream().allMatch(gateTag -> NodeGates.gate(gateTag).concealed() == gateTag.equals(OMEGA_GATE)),
+                "Only the Omega gate keeps its area undrawn");
+        assertTrue(ungatedIn(SkillTags.OMEGA_VOLUME, OMEGA_GATE).isEmpty(),
+                "Omega nodes without the gate: " + ungatedIn(SkillTags.OMEGA_VOLUME, OMEGA_GATE));
     }
 
     @Test

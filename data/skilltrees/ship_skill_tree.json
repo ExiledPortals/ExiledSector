@@ -3346,8 +3346,7 @@
 			"type": "wormhole_exit",
 			"connectedTo": [
 				"affinity_49",
-				"affinity_51",
-				"combat_readiness_1"
+				"affinity_51"
 			],
 			"x": 10165,
 			"y": -6807,
@@ -4049,14 +4048,16 @@
 			"id": "combat_readiness_1",
 			"type": "combat_readiness",
 			"connectedTo": [
-				"REDACTED_2",
-				"combat_readiness_2"
+				"combat_readiness_2",
+				"affinity_154"
 			],
-			"x": 10574,
-			"y": -7172,
+			"x": 17644,
+			"y": -14824,
+			"orbitAnchorId": "anchor_123",
+			"orbitAngle": 150,
 			"tags": [
-				"REDACTED",
-				"gate_remnant_fought"
+				"omega",
+				"gate_omega_found"
 			]
 		},
 		{
@@ -4066,11 +4067,13 @@
 				"combat_readiness_1",
 				"disintegration_1"
 			],
-			"x": 10676,
-			"y": -7757,
+			"x": 17917,
+			"y": -14751,
+			"orbitAnchorId": "anchor_123",
+			"orbitAngle": 60,
 			"tags": [
-				"REDACTED",
-				"gate_remnant_fought"
+				"omega",
+				"gate_omega_found"
 			]
 		},
 		{
@@ -4079,11 +4082,13 @@
 			"connectedTo": [
 				"combat_readiness_2"
 			],
-			"x": 10361,
-			"y": -8093,
+			"x": 17990,
+			"y": -15024,
+			"orbitAnchorId": "anchor_123",
+			"orbitAngle": 330,
 			"tags": [
-				"REDACTED",
-				"gate_remnant_fought"
+				"omega",
+				"gate_omega_found"
 			]
 		},
 		{
@@ -8305,12 +8310,13 @@
 			"type": "affinity",
 			"connectedTo": [
 				"affinity_121",
-				"affinity_119"
+				"affinity_119",
+				"emp_damage_1"
 			],
-			"x": 2252,
-			"y": -12998,
+			"x": 2142,
+			"y": -13694,
 			"orbitAnchorId": "anchor_90",
-			"orbitAngle": 0,
+			"orbitAngle": 342,
 			"tags": [
 				"tritachyon"
 			]
@@ -8320,12 +8326,13 @@
 			"type": "affinity",
 			"connectedTo": [
 				"affinity_118",
-				"affinity_120"
+				"affinity_149",
+				"phase_cloak_activation_cost_1"
 			],
-			"x": -1,
-			"y": -10745,
+			"x": 1323,
+			"y": -11175,
 			"orbitAnchorId": "anchor_90",
-			"orbitAngle": 90,
+			"orbitAngle": 54,
 			"tags": [
 				"tritachyon"
 			]
@@ -8334,13 +8341,14 @@
 			"id": "affinity_120",
 			"type": "affinity",
 			"connectedTo": [
-				"affinity_119",
-				"affinity_121"
+				"affinity_121",
+				"affinity_149",
+				"energy_weapon_fire_rate_7"
 			],
-			"x": -2254,
-			"y": -12998,
+			"x": -2144,
+			"y": -13694,
 			"orbitAnchorId": "anchor_90",
-			"orbitAngle": 180,
+			"orbitAngle": 198,
 			"tags": [
 				"tritachyon"
 			]
@@ -9508,6 +9516,343 @@
 			"tags": [
 				"pirate"
 			]
+		},
+		{
+			"id": "rift_explosion_damage_1",
+			"type": "rift_explosion_damage",
+			"connectedTo": [
+				"rift_explosion_damage_2",
+				"affinity_152"
+			],
+			"x": 14006,
+			"y": -14824,
+			"orbitAnchorId": "anchor_118",
+			"orbitAngle": 30,
+			"tags": [
+				"omega",
+				"gate_omega_found"
+			]
+		},
+		{
+			"id": "rift_explosion_damage_2",
+			"type": "rift_explosion_damage",
+			"connectedTo": [
+				"rift_explosion_damage_1",
+				"rift_harmonics_1"
+			],
+			"x": 13733,
+			"y": -14751,
+			"orbitAnchorId": "anchor_118",
+			"orbitAngle": 120,
+			"tags": [
+				"omega",
+				"gate_omega_found"
+			]
+		},
+		{
+			"id": "rift_harmonics_1",
+			"type": "rift_harmonics",
+			"connectedTo": [
+				"rift_explosion_damage_2"
+			],
+			"x": 13660,
+			"y": -15024,
+			"orbitAnchorId": "anchor_118",
+			"orbitAngle": 210,
+			"tags": [
+				"omega",
+				"gate_omega_found"
+			]
+		},
+		{
+			"id": "affinity_149",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_119",
+				"affinity_120",
+				"phase_cloak_cooldown_1"
+			],
+			"x": -1325,
+			"y": -11175,
+			"orbitAnchorId": "anchor_90",
+			"orbitAngle": 126,
+			"tags": [
+				"tritachyon"
+			]
+		},
+		{
+			"id": "emp_damage_1",
+			"type": "emp_damage",
+			"connectedTo": [
+				"affinity_118",
+				"emp_damage_2"
+			],
+			"x": 1879,
+			"y": -13609,
+			"orbitAnchorId": "anchor_119",
+			"orbitAngle": 342,
+			"tags": [
+				"tritachyon"
+			]
+		},
+		{
+			"id": "emp_damage_2",
+			"type": "emp_damage",
+			"connectedTo": [
+				"emp_damage_1",
+				"ion_cascade_1"
+			],
+			"x": 1652,
+			"y": -13724,
+			"orbitAnchorId": "anchor_119",
+			"orbitAngle": 252,
+			"tags": [
+				"tritachyon"
+			]
+		},
+		{
+			"id": "ion_cascade_1",
+			"type": "ion_cascade",
+			"connectedTo": [
+				"emp_damage_2"
+			],
+			"x": 1537,
+			"y": -13497,
+			"orbitAnchorId": "anchor_119",
+			"orbitAngle": 162,
+			"tags": [
+				"tritachyon"
+			]
+		},
+		{
+			"id": "phase_cloak_activation_cost_1",
+			"type": "phase_cloak_activation_cost",
+			"connectedTo": [
+				"affinity_119",
+				"phase_cloak_activation_cost_2"
+			],
+			"x": 1161,
+			"y": -11398,
+			"orbitAnchorId": "anchor_120",
+			"orbitAngle": 54,
+			"tags": [
+				"tritachyon"
+			]
+		},
+		{
+			"id": "phase_cloak_activation_cost_2",
+			"type": "phase_cloak_activation_cost",
+			"connectedTo": [
+				"phase_cloak_activation_cost_1",
+				"phase_ambush_doctrine_1"
+			],
+			"x": 1201,
+			"y": -11650,
+			"orbitAnchorId": "anchor_120",
+			"orbitAngle": 324,
+			"tags": [
+				"tritachyon"
+			]
+		},
+		{
+			"id": "phase_ambush_doctrine_1",
+			"type": "phase_ambush_doctrine",
+			"connectedTo": [
+				"phase_cloak_activation_cost_2"
+			],
+			"x": 949,
+			"y": -11690,
+			"orbitAnchorId": "anchor_120",
+			"orbitAngle": 234,
+			"tags": [
+				"tritachyon"
+			]
+		},
+		{
+			"id": "phase_cloak_cooldown_1",
+			"type": "phase_cloak_cooldown",
+			"connectedTo": [
+				"affinity_149",
+				"phase_cloak_cooldown_2"
+			],
+			"x": -1163,
+			"y": -11398,
+			"orbitAnchorId": "anchor_121",
+			"orbitAngle": 126,
+			"tags": [
+				"tritachyon"
+			]
+		},
+		{
+			"id": "phase_cloak_cooldown_2",
+			"type": "phase_cloak_cooldown",
+			"connectedTo": [
+				"phase_cloak_cooldown_1",
+				"phantom_wake_1"
+			],
+			"x": -911,
+			"y": -11438,
+			"orbitAnchorId": "anchor_121",
+			"orbitAngle": 36,
+			"tags": [
+				"tritachyon"
+			]
+		},
+		{
+			"id": "phantom_wake_1",
+			"type": "phantom_wake",
+			"connectedTo": [
+				"phase_cloak_cooldown_2"
+			],
+			"x": -951,
+			"y": -11690,
+			"orbitAnchorId": "anchor_121",
+			"orbitAngle": 306,
+			"tags": [
+				"tritachyon"
+			]
+		},
+		{
+			"id": "energy_weapon_fire_rate_7",
+			"type": "energy_weapon_fire_rate",
+			"connectedTo": [
+				"affinity_120",
+				"energy_weapon_fire_rate_8"
+			],
+			"x": -1881,
+			"y": -13609,
+			"orbitAnchorId": "anchor_122",
+			"orbitAngle": 198,
+			"tags": [
+				"tritachyon"
+			]
+		},
+		{
+			"id": "energy_weapon_fire_rate_8",
+			"type": "energy_weapon_fire_rate",
+			"connectedTo": [
+				"energy_weapon_fire_rate_7",
+				"cease_and_desist_1"
+			],
+			"x": -1766,
+			"y": -13382,
+			"orbitAnchorId": "anchor_122",
+			"orbitAngle": 108,
+			"tags": [
+				"tritachyon"
+			]
+		},
+		{
+			"id": "cease_and_desist_1",
+			"type": "cease_and_desist",
+			"connectedTo": [
+				"energy_weapon_fire_rate_8"
+			],
+			"x": -1539,
+			"y": -13497,
+			"orbitAnchorId": "anchor_122",
+			"orbitAngle": 18,
+			"tags": [
+				"tritachyon"
+			]
+		},
+		{
+			"id": "omega_wormhole_1",
+			"type": "wormhole_exit",
+			"connectedTo": [
+				"affinity_150",
+				"affinity_151"
+			],
+			"x": 15825,
+			"y": -12024,
+			"orbitAnchorId": "omega_inner",
+			"orbitAngle": 90,
+			"tags": [
+				"omega",
+				"gate_omega_found"
+			]
+		},
+		{
+			"id": "affinity_150",
+			"type": "affinity",
+			"connectedTo": [
+				"omega_wormhole_1",
+				"affinity_154"
+			],
+			"x": 17341,
+			"y": -12899,
+			"orbitAnchorId": "omega_inner",
+			"orbitAngle": 30,
+			"tags": [
+				"omega",
+				"gate_omega_found"
+			]
+		},
+		{
+			"id": "affinity_151",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_152",
+				"omega_wormhole_1"
+			],
+			"x": 14309,
+			"y": -12899,
+			"orbitAnchorId": "omega_inner",
+			"orbitAngle": 150,
+			"tags": [
+				"omega",
+				"gate_omega_found"
+			]
+		},
+		{
+			"id": "affinity_152",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_153",
+				"affinity_151",
+				"rift_explosion_damage_1"
+			],
+			"x": 14309,
+			"y": -14649,
+			"orbitAnchorId": "omega_inner",
+			"orbitAngle": 210,
+			"tags": [
+				"omega",
+				"gate_omega_found"
+			]
+		},
+		{
+			"id": "affinity_153",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_154",
+				"affinity_152"
+			],
+			"x": 15825,
+			"y": -15524,
+			"orbitAnchorId": "omega_inner",
+			"orbitAngle": 270,
+			"tags": [
+				"omega",
+				"gate_omega_found"
+			]
+		},
+		{
+			"id": "affinity_154",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_150",
+				"affinity_153",
+				"combat_readiness_1"
+			],
+			"x": 17341,
+			"y": -14649,
+			"orbitAnchorId": "omega_inner",
+			"orbitAngle": 330,
+			"tags": [
+				"omega",
+				"gate_omega_found"
+			]
 		}
 	],
 	"connectorCurves": [
@@ -10122,24 +10467,6 @@
 			"b": "combat_readiness_3",
 			"controlX": 9555,
 			"controlY": -8662
-		},
-		{
-			"a": "combat_readiness_2",
-			"b": "disintegration_1",
-			"controlX": 10580,
-			"controlY": -7994
-		},
-		{
-			"a": "combat_readiness_1",
-			"b": "combat_readiness_2",
-			"controlX": 10660,
-			"controlY": -7451
-		},
-		{
-			"a": "REDACTED_2",
-			"b": "combat_readiness_1",
-			"controlX": 10401,
-			"controlY": -6946
 		},
 		{
 			"a": "non_beam_energy_weapon_damage_3",
@@ -11990,30 +12317,6 @@
 			"controlY": 11021
 		},
 		{
-			"a": "affinity_118",
-			"b": "affinity_119",
-			"controlX": 1592,
-			"controlY": -11405
-		},
-		{
-			"a": "affinity_119",
-			"b": "affinity_120",
-			"controlX": -1594,
-			"controlY": -11405
-		},
-		{
-			"a": "affinity_120",
-			"b": "affinity_121",
-			"controlX": -1594,
-			"controlY": -14591
-		},
-		{
-			"a": "affinity_118",
-			"b": "affinity_121",
-			"controlX": 1592,
-			"controlY": -14591
-		},
-		{
 			"a": "affinity_130",
 			"b": "affinity_131",
 			"controlX": 11751,
@@ -12342,6 +12645,144 @@
 			"b": "affinity_126",
 			"controlX": 14621,
 			"controlY": 1955
+		},
+		{
+			"a": "affinity_121",
+			"b": "affinity_118",
+			"controlX": 1323,
+			"controlY": -14821
+		},
+		{
+			"a": "affinity_118",
+			"b": "affinity_119",
+			"controlX": 2142,
+			"controlY": -12302
+		},
+		{
+			"a": "affinity_119",
+			"b": "affinity_149",
+			"controlX": -1,
+			"controlY": -10745
+		},
+		{
+			"a": "affinity_149",
+			"b": "affinity_120",
+			"controlX": -2144,
+			"controlY": -12302
+		},
+		{
+			"a": "affinity_120",
+			"b": "affinity_121",
+			"controlX": -1325,
+			"controlY": -14821
+		},
+		{
+			"a": "emp_damage_1",
+			"b": "emp_damage_2",
+			"controlX": 1790,
+			"controlY": -13713
+		},
+		{
+			"a": "ion_cascade_1",
+			"b": "emp_damage_2",
+			"controlX": 1548,
+			"controlY": -13635
+		},
+		{
+			"a": "phase_cloak_activation_cost_1",
+			"b": "phase_cloak_activation_cost_2",
+			"controlX": 1233,
+			"controlY": -11516
+		},
+		{
+			"a": "phase_ambush_doctrine_1",
+			"b": "phase_cloak_activation_cost_2",
+			"controlX": 1083,
+			"controlY": -11722
+		},
+		{
+			"a": "phase_cloak_cooldown_1",
+			"b": "phase_cloak_cooldown_2",
+			"controlX": -1029,
+			"controlY": -11366
+		},
+		{
+			"a": "phantom_wake_1",
+			"b": "phase_cloak_cooldown_2",
+			"controlX": -879,
+			"controlY": -11572
+		},
+		{
+			"a": "energy_weapon_fire_rate_7",
+			"b": "energy_weapon_fire_rate_8",
+			"controlX": -1870,
+			"controlY": -13471
+		},
+		{
+			"a": "cease_and_desist_1",
+			"b": "energy_weapon_fire_rate_8",
+			"controlX": -1628,
+			"controlY": -13393
+		},
+		{
+			"a": "omega_wormhole_1",
+			"b": "affinity_150",
+			"controlX": 16700,
+			"controlY": -12258
+		},
+		{
+			"a": "affinity_150",
+			"b": "affinity_154",
+			"controlX": 17575,
+			"controlY": -13774
+		},
+		{
+			"a": "affinity_154",
+			"b": "affinity_153",
+			"controlX": 16700,
+			"controlY": -15290
+		},
+		{
+			"a": "affinity_153",
+			"b": "affinity_152",
+			"controlX": 14950,
+			"controlY": -15290
+		},
+		{
+			"a": "affinity_152",
+			"b": "affinity_151",
+			"controlX": 14075,
+			"controlY": -13774
+		},
+		{
+			"a": "affinity_151",
+			"b": "omega_wormhole_1",
+			"controlX": 14950,
+			"controlY": -12258
+		},
+		{
+			"a": "rift_explosion_damage_1",
+			"b": "rift_explosion_damage_2",
+			"controlX": 13885,
+			"controlY": -14731
+		},
+		{
+			"a": "rift_explosion_damage_2",
+			"b": "rift_harmonics_1",
+			"controlX": 13640,
+			"controlY": -14872
+		},
+		{
+			"a": "combat_readiness_1",
+			"b": "combat_readiness_2",
+			"controlX": 17765,
+			"controlY": -14731
+		},
+		{
+			"a": "combat_readiness_2",
+			"b": "disintegration_1",
+			"controlX": 18010,
+			"controlY": -14872
 		}
 	],
 	"hiddenConnectors": [
@@ -13236,6 +13677,48 @@
 			"x": 12290,
 			"y": 1210,
 			"radius": 180
+		},
+		{
+			"id": "anchor_118",
+			"x": 13833,
+			"y": -14924,
+			"radius": 200
+		},
+		{
+			"id": "anchor_119",
+			"x": 1708,
+			"y": -13553,
+			"radius": 180
+		},
+		{
+			"id": "anchor_120",
+			"x": 1055,
+			"y": -11544,
+			"radius": 180
+		},
+		{
+			"id": "anchor_121",
+			"x": -1057,
+			"y": -11544,
+			"radius": 180
+		},
+		{
+			"id": "anchor_122",
+			"x": -1710,
+			"y": -13553,
+			"radius": 180
+		},
+		{
+			"id": "omega_inner",
+			"x": 15825,
+			"y": -13774,
+			"radius": 1750
+		},
+		{
+			"id": "anchor_123",
+			"x": 17817,
+			"y": -14924,
+			"radius": 200
 		}
 	],
 	"decorations": [
@@ -13407,6 +13890,17 @@
 			"overlayAlpha": 0.45,
 			"tags": [
 				"tania"
+			]
+		},
+		{
+			"kind": "star",
+			"id": "omega_star",
+			"x": 15825,
+			"y": -13774,
+			"radius": 850,
+			"starType": "star_blue_supergiant",
+			"tags": [
+				"omega"
 			]
 		},
 		{
@@ -13912,6 +14406,19 @@
 			"length": 620,
 			"tags": [
 				"shrouded"
+			]
+		},
+		{
+			"kind": "hypershunt",
+			"id": "omega_hypershunt",
+			"x": 15825,
+			"y": -13774,
+			"orbitRadius": 1100,
+			"orbitSeconds": 550,
+			"startAngle": 45,
+			"size": 300,
+			"tags": [
+				"omega"
 			]
 		}
 	]

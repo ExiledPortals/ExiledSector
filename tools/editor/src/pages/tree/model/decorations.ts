@@ -1,6 +1,6 @@
 import { angleDegrees, normalizeDegrees, rotateAroundOrigin, type Point } from './geometry.ts';
 
-export type DecorationKind = 'star' | 'image' | 'ringBelt' | 'threatUnit' | 'serpent' | 'shroudedMaw';
+export type DecorationKind = 'star' | 'image' | 'ringBelt' | 'threatUnit' | 'serpent' | 'shroudedMaw' | 'hypershunt';
 
 interface DecorationBase {
   id: string;
@@ -63,7 +63,23 @@ export interface ShroudedMawDecoration extends DecorationBase {
   rotation: number;
 }
 
-export type Decoration = StarDecoration | ImageDecoration | RingBeltDecoration | ThreatUnitDecoration | SerpentDecoration | ShroudedMawDecoration;
+export interface HypershuntDecoration extends DecorationBase {
+  kind: 'hypershunt';
+  orbitRadius: number;
+  orbitSeconds: number;
+  clockwise: boolean;
+  startAngle: number;
+  size: number;
+}
+
+export type Decoration =
+  | StarDecoration
+  | ImageDecoration
+  | RingBeltDecoration
+  | ThreatUnitDecoration
+  | SerpentDecoration
+  | ShroudedMawDecoration
+  | HypershuntDecoration;
 
 export type DecorationOfKind<TKind extends DecorationKind> = Extract<Decoration, { kind: TKind }>;
 
@@ -97,6 +113,8 @@ export const DEFAULT_THREAT_UNIT_LENGTH = 600;
 export const DEFAULT_SHROUDED_MAW_LENGTH = 620;
 export const SHROUDED_MAW_SPRITE_PATH = 'graphics/ships/shroud/maw_base.png';
 export const SHROUDED_MAW_HEIGHT_PER_LENGTH = 256 / 384;
+export const HYPERSHUNT_SPRITE_PATH = 'graphics/stations/coronal_shunt2.png';
+export const DEFAULT_HYPERSHUNT_SIZE = 300;
 export const MIN_DECORATION_SIZE = 20;
 const ROTATE_HANDLE_GAP = 24;
 
@@ -426,6 +444,57 @@ const SHROUDED_MAW: DecorationKindSpec<'shroudedMaw'> = {
   },
 };
 
+export function hypershuntPosition(hypershunt: HypershuntDecoration): Point {
+  const angle = (hypershunt.startAngle * Math.PI) / 180;
+  return { x: hypershunt.x + hypershunt.orbitRadius * Math.cos(angle), y: hypershunt.y + hypershunt.orbitRadius * Math.sin(angle) };
+}
+
+const HYPERSHUNT: DecorationKindSpec<'hypershunt'> = {
+  kind: 'hypershunt',
+  label: 'Coronal hypershunt',
+  idPrefix: 'hypershunt',
+  create: (id, at, context) => ({
+    kind: 'hypershunt',
+    id,
+    x: at.x,
+    y: at.y,
+    orbitRadius: 1100,
+    orbitSeconds: 550,
+    clockwise: false,
+    startAngle: 0,
+    size: DEFAULT_HYPERSHUNT_SIZE,
+    tags: context.region ? [context.region] : undefined,
+  }),
+  parse: (json) => ({
+    orbitRadius: numberOr(json.orbitRadius, 0),
+    orbitSeconds: numberOr(json.orbitSeconds, 0),
+    clockwise: json.clockwise === true,
+    startAngle: numberOr(json.startAngle, 0),
+    size: numberOr(json.size, DEFAULT_HYPERSHUNT_SIZE),
+  }),
+  serialize: (hypershunt) => {
+    const out: JsonRecord = { orbitRadius: hypershunt.orbitRadius, orbitSeconds: hypershunt.orbitSeconds };
+    putIf(out, 'clockwise', true, hypershunt.clockwise);
+    putIf(out, 'startAngle', hypershunt.startAngle, Boolean(hypershunt.startAngle));
+    out.size = hypershunt.size;
+    return out;
+  },
+  handles: (hypershunt) => {
+    const shunt = hypershuntPosition(hypershunt);
+    return [
+      { name: 'radius', x: hypershunt.x + hypershunt.orbitRadius, y: hypershunt.y, rotates: false },
+      { name: 'start', x: shunt.x, y: shunt.y, rotates: true },
+    ];
+  },
+  dragHandle: (hypershunt, handle, world) => {
+    if (handle === 'start') {
+      hypershunt.startAngle = Math.round(normalizeDegrees(angleDegrees(hypershunt.x, hypershunt.y, world.x, world.y)));
+    } else {
+      hypershunt.orbitRadius = Math.max(MIN_DECORATION_SIZE, Math.round(distance(hypershunt, world)));
+    }
+  },
+};
+
 export const DECORATION_KINDS: { [TKind in DecorationKind]: DecorationKindSpec<TKind> } = {
   star: STAR,
   image: IMAGE,
@@ -433,9 +502,10 @@ export const DECORATION_KINDS: { [TKind in DecorationKind]: DecorationKindSpec<T
   threatUnit: THREAT_UNIT,
   serpent: SERPENT,
   shroudedMaw: SHROUDED_MAW,
+  hypershunt: HYPERSHUNT,
 };
 
-export const DECORATION_KIND_ORDER: DecorationKind[] = ['star', 'image', 'ringBelt', 'threatUnit', 'serpent', 'shroudedMaw'];
+export const DECORATION_KIND_ORDER: DecorationKind[] = ['star', 'image', 'ringBelt', 'threatUnit', 'serpent', 'shroudedMaw', 'hypershunt'];
 
 export function decorationSpec<TKind extends DecorationKind>(kind: TKind): DecorationKindSpec<TKind> {
   return DECORATION_KINDS[kind];

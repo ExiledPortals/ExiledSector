@@ -6,7 +6,8 @@ public enum DecorationKind {
     RING_BELT("ringBelt"),
     THREAT_UNIT("threatUnit"),
     SERPENT("serpent"),
-    SHROUDED_MAW("shroudedMaw");
+    SHROUDED_MAW("shroudedMaw"),
+    HYPERSHUNT("hypershunt");
 
     private final String dataKey;
 

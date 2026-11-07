@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponSize;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 import exiledsector.motes.Motes;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
@@ -54,6 +55,13 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
                     .arg("emp", IonArcListener.ARC_EMP_FRACTION * 100f).styled();
         }
     },
+    RIFT_STRIKE_CHANCE_PERCENT(listener(RiftStrike.CHANCE_PERCENT_KEY, RiftStrikeListener.class, RiftStrikeListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("share", RiftStrike.DAMAGE_SHARE_PERCENT)
+                    .arg("min", RiftStrike.MIN_DAMAGE).arg("max", RiftStrike.MAX_DAMAGE).styled();
+        }
+    },
     DISINTEGRATION_ARMOR_DAMAGE_PERCENT(listener(DisintegrationListener.ARMOR_DAMAGE_PERCENT_KEY,
             DisintegrationListener.class, DisintegrationListener::new)) {
         @Override
@@ -101,6 +109,14 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", magnitude).arg("seconds", StardustMoteListener.CONTACT_SECONDS_PER_MOTE)
                     .arg("max", Motes.MAX_LIVE_MOTES_PER_SOURCE).styled();
+        }
+    },
+    DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT(listener(IonCascadeListener.HIGH_EXPLOSIVE_SHARE_PERCENT_KEY, IonCascadeListener.class, IonCascadeListener::new)),
+    ENERGY_HIT_INJUNCTION_PERCENT(listener(InjunctionListener.SLOWDOWN_PERCENT_KEY, InjunctionListener.class, InjunctionListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("seconds", Injunction.STACK_SECONDS).arg("stacks", Injunction.MAX_STACKS).styled()
+                    .append("\n").append(Translation.msg("injunction.rechargeSlowdown").arg("value", magnitude).styled());
         }
     },
     BALLISTIC_HARDPOINT_KINETIC_TO_HIGH_EXPLOSIVE(new DamageConversion(DamageConversion.KEY_PREFIX + "ballisticHardpointKineticToHighExplosive",

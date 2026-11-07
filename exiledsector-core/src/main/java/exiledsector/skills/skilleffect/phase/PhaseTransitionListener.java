@@ -12,6 +12,10 @@ abstract class PhaseTransitionListener extends ShipCombatListener implements Adv
         super(ownerShip);
     }
 
+    PhaseTransitionListener(ShipAPI ownerShip, String modIdPrefix) {
+        super(ownerShip, modIdPrefix);
+    }
+
     @Override
     public final void advance(float amount) {
         boolean phased = ownerShip.isPhased();
@@ -21,11 +25,15 @@ abstract class PhaseTransitionListener extends ShipCombatListener implements Adv
             onPhaseExit();
         }
         wasPhased = phased;
+        afterTransitionCheck(amount);
     }
 
     void onPhaseEntry() {
     }
 
     void onPhaseExit() {
+    }
+
+    void afterTransitionCheck(float amount) {
     }
 }

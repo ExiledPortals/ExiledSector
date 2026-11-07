@@ -3,9 +3,11 @@ package exiledsector.ui.decoration;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.decoration.Decorations;
+import exiledsector.ui.hyperspace.HyperspaceAnchor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 public final class TreeDecorations {
@@ -16,8 +18,9 @@ public final class TreeDecorations {
         this.renderers = List.copyOf(renderers);
     }
 
-    public static TreeDecorations forActiveTree(Predicate<SkillNode> nodeHidden) {
-        List<DecorationRenderer> renderers = new ArrayList<>(sceneryOf(SkillTree.getDecorations()));
+    public static TreeDecorations forActiveTree(Predicate<SkillNode> nodeHidden, Predicate<SkillNode> nodeConcealed) {
+        Set<String> concealedVolumes = HyperspaceAnchor.lockedVolumes(SkillTree.getAllNodes().values(), SkillNode::getVolume, nodeConcealed);
+        List<DecorationRenderer> renderers = new ArrayList<>(sceneryOf(SkillTree.getDecorations().outsideVolumes(concealedVolumes)));
         renderers.add(FactionFleetRenderer.forActiveTree(nodeHidden));
         return new TreeDecorations(renderers);
     }
@@ -33,7 +36,8 @@ public final class TreeDecorations {
                 new SkillTreeRingBeltRenderer(decorations.ringBelts()),
                 new AbyssSerpentRenderer(decorations.serpents()),
                 new ThreatUnitRenderer(decorations.threatUnits()),
-                new ShroudedMawRenderer(decorations.shroudedMaws()));
+                new ShroudedMawRenderer(decorations.shroudedMaws()),
+                new HypershuntRenderer(decorations.hypershunts()));
     }
 
     public void advance(float amount) {

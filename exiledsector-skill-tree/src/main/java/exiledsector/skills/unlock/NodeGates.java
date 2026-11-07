@@ -21,6 +21,7 @@ public final class NodeGates {
     public static final String DATA_PATH = "data/config/exiledSector/node_gates.json";
     static final String ANCHORS_FIELD = "anchors";
     static final String REWARD_ANCHOR_FIELD = "rewardAnchor";
+    static final String CONCEALED_FIELD = "concealed";
     private static final Logger LOG = Logger.getLogger(NodeGates.class);
     private static final AtomicReference<Map<String, Gate>> GATES_BY_TAG = new AtomicReference<>(Map.of());
 
@@ -47,7 +48,7 @@ public final class NodeGates {
         }
     }
 
-    public record Gate(List<UnlockCondition> conditions, AnchorRule anchorRule, boolean rewardAnchor) {
+    public record Gate(List<UnlockCondition> conditions, AnchorRule anchorRule, boolean rewardAnchor, boolean concealed) {
 
         public Gate {
             conditions = List.copyOf(conditions);
@@ -74,7 +75,8 @@ public final class NodeGates {
             try {
                 JSONObject gateJson = gatesJson.getJSONObject(gateTag);
                 gatesByTag.put(gateTag, new Gate(SkillTypeLoader.parseUnlockConditions(gateJson.optJSONArray("unlockConditions")),
-                        AnchorRule.parse(gateTag, gateJson.optString(ANCHORS_FIELD, "")), gateJson.optBoolean(REWARD_ANCHOR_FIELD, false)));
+                        AnchorRule.parse(gateTag, gateJson.optString(ANCHORS_FIELD, "")), gateJson.optBoolean(REWARD_ANCHOR_FIELD, false),
+                        gateJson.optBoolean(CONCEALED_FIELD, false)));
             } catch (JSONException | RuntimeException e) {
                 LOG.error("Skipping malformed gate " + gateTag + " in " + DATA_PATH + "; its nodes stay open", e);
             }
@@ -126,5 +128,19 @@ public final class NodeGates {
 
     public static boolean isHidden(SkillNode node, ShipSkillData shipData) {
         return isLocked(node, shipData) && !HiddenNodeDisplayConfig.showHiddenNodesByDefault();
+    }
+
+    public static boolean isConcealed(SkillNode node, ShipSkillData shipData) {
+        Map<String, Gate> gatesByTag = GATES_BY_TAG.get();
+        if (node == null || gatesByTag.isEmpty() || HiddenNodeDisplayConfig.showHiddenNodesByDefault()) {
+            return false;
+        }
+        for (String tag : node.getTags()) {
+            Gate gate = gatesByTag.get(tag);
+            if (gate != null && gate.concealed() && SkillTypeUnlockStatus.isLocked(gate.conditions(), shipData)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

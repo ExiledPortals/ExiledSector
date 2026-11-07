@@ -214,15 +214,19 @@ final class SkillTreeNodeTooltipRenderer {
     }
 
     private List<SkillTreeTooltipTable> tablesFor(SkillType type) {
-        List<SkillTreeTooltipTable> cached = tablesByType.get(type.getId());
+        boolean riftStrike = RiftStrikeTooltipTable.appliesTo(type);
+        String cacheKey = riftStrike ? type.getId() + "|" + RiftStrikeTooltipTable.cacheState(fleetMember) : type.getId();
+        List<SkillTreeTooltipTable> cached = tablesByType.get(cacheKey);
         if (cached != null) {
             return cached;
         }
+        List<TooltipTable> tables = riftStrike ? RiftStrikeTooltipTable.forType(type, fleetMember)
+                : HullModTooltipTables.forType(type, fleetMember.getHullSpec());
         List<SkillTreeTooltipTable> measured = new ArrayList<>();
-        for (TooltipTable table : HullModTooltipTables.forType(type, fleetMember.getHullSpec())) {
+        for (TooltipTable table : tables) {
             measured.add(SkillTreeTooltipTable.measure(tooltipText, table));
         }
-        tablesByType.put(type.getId(), measured);
+        tablesByType.put(cacheKey, measured);
         return measured;
     }
 

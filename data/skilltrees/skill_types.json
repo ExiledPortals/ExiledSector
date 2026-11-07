@@ -4840,6 +4840,40 @@
 			]
 		},
 		{
+			"id": "rift_explosion_damage",
+			"name": "Rift Explosion Damage",
+			"icon": "",
+			"effects": [
+				{
+					"effect": "RIFT_EXPLOSION_DAMAGE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons"
+			]
+		},
+		{
+			"id": "rift_harmonics",
+			"name": "Rift Harmonics",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "RIFT_STRIKE_CHANCE_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"flavour": "Tri-Tachyon fire-control logs recovered from Remnant drones describe energy bolts tuned to tear a brief hole in normal space on impact. The crew copied the tuning into this ship's emitters, one dimly understood parameter at a time. The logs still carry a Tri-Tachyon copyright notice.",
+			"flavourAutomated": "Tri-Tachyon fire-control logs recovered from Remnant drones describe energy bolts tuned to tear a brief hole in normal space on impact. The ship's core reads the tuning tables and applies them to its emitters, one dimly understood parameter at a time. The logs still carry a Tri-Tachyon copyright notice.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"energy",
+				"req_energy"
+			]
+		},
+		{
 			"id": "hungering_rift_healing",
 			"name": "Hungering Rift Healing",
 			"icon": "graphics/icons/hungering_rift_healing.png",
@@ -5508,6 +5542,131 @@
 			"flavour": "The Merite Class Destroyer is often praised by its ability to assault enemy ships by sheer brute force, thanks to its Jump Jets ship system. By listening to \"sage\" advice from fellow Navarchy of Tania officers, you order your crew to refit the ship with increased weight and improved protection against collateral effects from excessive G-force.",
 			"tags": [
 				"hull"
+			]
+		},
+		{
+			"id": "emp_damage",
+			"name": "EMP Damage",
+			"icon": "",
+			"effects": [
+				{
+					"effect": "EMP_DAMAGE_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"flavour": "Capacitor banks rewound to Tri-Tachyon specifications put more charge behind every hit. The specifications were not for sale, strictly speaking.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons"
+			]
+		},
+		{
+			"id": "ion_cascade",
+			"name": "Ion Cascade",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT",
+					"magnitude": 100
+				}
+			],
+			"flavour": "Ion emitter firmware from a Tri-Tachyon proving range keeps discharging into a target's dead systems until the current finds the hull behind them. The crew runs an unlicensed copy. The licence agreement is longer than the firmware.",
+			"flavourAutomated": "Ion emitter firmware from a Tri-Tachyon proving range keeps discharging into a target's dead systems until the current finds the hull behind them. The ship's core extracted a copy from a wrecked Tri-Tachyon picket. The licence agreement is longer than the firmware.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"weapons"
+			]
+		},
+		{
+			"id": "phase_cloak_activation_cost",
+			"name": "Phase Cloak Activation Cost",
+			"icon": "",
+			"effects": [
+				{
+					"effect": "PHASE_CLOAK_ACTIVATION_COST_MULT",
+					"magnitude": -5
+				}
+			],
+			"flavour": "Phase coil primers trimmed to corporate tolerances draw less flux to engage. Tolerances that tight were never meant for a field refit.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"phase",
+				"req_phase"
+			]
+		},
+		{
+			"id": "phase_ambush_doctrine",
+			"name": "Phase Ambush Doctrine",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "PHASE_EXIT_WEAPON_DAMAGE_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"flavour": "Tri-Tachyon phase doctrine holds that the first shots after leaving p-space decide the engagement. The crew drills the weapon capacitors to discharge the moment the coil disengages. Afflictor captains call it the only meeting worth attending.",
+			"flavourAutomated": "Tri-Tachyon phase doctrine holds that the first shots after leaving p-space decide the engagement. Afflictor combat recordings show the ship's core when to discharge its weapon capacitors: the moment the coil disengages. The recordings carry a corporate watermark.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"phase",
+				"req_phase"
+			]
+		},
+		{
+			"id": "phase_cloak_cooldown",
+			"name": "Phase Cloak Cooldown",
+			"icon": "",
+			"effects": [
+				{
+					"effect": "PHASE_CLOAK_COOLDOWN_PERCENT",
+					"magnitude": -5
+				}
+			],
+			"flavour": "Coil discharge cycles shortened to a corporate maintenance bulletin leave the phase cloak ready again sooner. A later issue of the bulletin advises against it.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"phase",
+				"req_phase"
+			]
+		},
+		{
+			"id": "phantom_wake",
+			"name": "Phantom Wake",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "PHASE_ENTRY_AFTERIMAGE_SECONDS_FLAT",
+					"magnitude": 3
+				}
+			],
+			"flavour": "A phase coil dropped into p-space too sharply leaves an echo of the hull in normal space for a few moments. Tri-Tachyon engineers filed this as a fault. The crew detunes the coil to leave one on purpose, and enemy gunners have filed complaints.",
+			"flavourAutomated": "A phase coil dropped into p-space too sharply leaves an echo of the hull in normal space for a few moments. Tri-Tachyon research logs file this as a fault. The ship's core detunes its coil to leave one on purpose, and enemy gunners have filed complaints.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"phase",
+				"req_phase"
+			]
+		},
+		{
+			"id": "cease_and_desist",
+			"name": "Cease and Desist",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ENERGY_HIT_INJUNCTION_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"flavour": "Energy weapons built under Tri-Tachyon licence carry a signal that tells a target's system controllers they are running patented designs. The crew leaves the signal in. Compliance is slow, but reliably so.",
+			"flavourAutomated": "Energy weapons built under Tri-Tachyon licence carry a signal that tells a target's system controllers they are running patented designs. The ship's core leaves the signal in. Compliance is slow, but reliably so.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"energy",
+				"req_energy"
 			]
 		}
 	]

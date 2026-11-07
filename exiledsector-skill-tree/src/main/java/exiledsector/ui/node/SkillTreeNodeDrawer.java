@@ -167,6 +167,9 @@ public final class SkillTreeNodeDrawer {
             return;
         }
 
+        if (allocation.isConcealed(node)) {
+            return;
+        }
         if (allocation.isHidden(node)) {
             ghostRenderer.draw(nodeX, nodeY, footprintSize, alphaMult * nodeSearch.backgroundAlpha(), node.getId());
             return;
@@ -296,7 +299,8 @@ public final class SkillTreeNodeDrawer {
         }
         boolean choosing = rootChoice.phase() == StartingRootChoice.Phase.CHOOSING;
         for (SkillNode node : SkillTree.getAllNodes().values()) {
-            if ((!choosing || node.getType().getTier() == SkillTier.ROOT) && isUnder(layers, rootChoice, node, screenX, screenY)) {
+            if ((!choosing || node.getType().getTier() == SkillTier.ROOT) && !session.isConcealed(node)
+                    && isUnder(layers, rootChoice, node, screenX, screenY)) {
                 return node;
             }
         }

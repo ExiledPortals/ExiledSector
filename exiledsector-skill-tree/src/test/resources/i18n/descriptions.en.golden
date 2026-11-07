@@ -742,6 +742,12 @@ effect|DECELERATION_FLAT|12.5	0	<good>+12.5</good> to deceleration.
 effect|DECELERATION_FLAT|100.0	0	<good>+100</good> to deceleration.
 effect|DECELERATION_FLAT|-10.0	0	<bad>-10</bad> to deceleration.
 effect|DECELERATION_FLAT|-12.5	0	<bad>-12.5</bad> to deceleration.
+effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|1.0	0	<good>1%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|10.0	0	<good>10%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|12.5	0	<good>12.5%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|100.0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|-10.0	0	<good>-10%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|-12.5	0	<good>-12.5%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
 effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|1.0	0	Energy weapon hits on armor strip an additional <good>1%</good> of the hit's damage from the armor around the impact over 5 seconds.
 effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|10.0	0	Energy weapon hits on armor strip an additional <good>10%</good> of the hit's damage from the armor around the impact over 5 seconds.
 effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|12.5	0	Energy weapon hits on armor strip an additional <good>12.5%</good> of the hit's damage from the armor around the impact over 5 seconds.
@@ -826,6 +832,12 @@ effect|ENERGY_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased energy da
 effect|ENERGY_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased energy damage taken.
 effect|ENERGY_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced energy damage taken.
 effect|ENERGY_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced energy damage taken.
+effect|ENERGY_HIT_INJUNCTION_PERCENT|1.0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>1%</good> slower for each Injunction stack.
+effect|ENERGY_HIT_INJUNCTION_PERCENT|10.0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>10%</good> slower for each Injunction stack.
+effect|ENERGY_HIT_INJUNCTION_PERCENT|12.5	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>12.5%</good> slower for each Injunction stack.
+effect|ENERGY_HIT_INJUNCTION_PERCENT|100.0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>100%</good> slower for each Injunction stack.
+effect|ENERGY_HIT_INJUNCTION_PERCENT|-10.0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>-10%</good> slower for each Injunction stack.
+effect|ENERGY_HIT_INJUNCTION_PERCENT|-12.5	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>-12.5%</good> slower for each Injunction stack.
 effect|ENERGY_SLOTS_BALLISTIC|1.0	0	Energy weapon mounts become ballistic mounts.
 effect|ENERGY_SLOTS_BALLISTIC|10.0	0	Energy weapon mounts become ballistic mounts.
 effect|ENERGY_SLOTS_BALLISTIC|12.5	0	Energy weapon mounts become ballistic mounts.
@@ -2170,6 +2182,12 @@ effect|PHASE_CLOAK_UPKEEP_COST_MULT|12.5	1	<good>12.5%</good> more phase cloak f
 effect|PHASE_CLOAK_UPKEEP_COST_MULT|100.0	1	<good>100%</good> more phase cloak flux upkeep.
 effect|PHASE_CLOAK_UPKEEP_COST_MULT|-10.0	1	<bad>10%</bad> less phase cloak flux upkeep.
 effect|PHASE_CLOAK_UPKEEP_COST_MULT|-12.5	1	<bad>12.5%</bad> less phase cloak flux upkeep.
+effect|PHASE_ENTRY_AFTERIMAGE_SECONDS_FLAT|1.0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>1</good> seconds.
+effect|PHASE_ENTRY_AFTERIMAGE_SECONDS_FLAT|10.0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>10</good> seconds.
+effect|PHASE_ENTRY_AFTERIMAGE_SECONDS_FLAT|12.5	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>12.5</good> seconds.
+effect|PHASE_ENTRY_AFTERIMAGE_SECONDS_FLAT|100.0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>100</good> seconds.
+effect|PHASE_ENTRY_AFTERIMAGE_SECONDS_FLAT|-10.0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>-10</good> seconds.
+effect|PHASE_ENTRY_AFTERIMAGE_SECONDS_FLAT|-12.5	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>-12.5</good> seconds.
 effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|1.0	0	When this ship enters phase, every armor cell repairs <good>1%</good> of its maximum armor, up to 50% of this ship's total armor per deployment.
 effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|10.0	0	When this ship enters phase, every armor cell repairs <good>10%</good> of its maximum armor, up to 50% of this ship's total armor per deployment.
 effect|PHASE_ENTRY_ARMOR_REPAIR_PERCENT|12.5	0	When this ship enters phase, every armor cell repairs <good>12.5%</good> of its maximum armor, up to 50% of this ship's total armor per deployment.
@@ -2188,6 +2206,12 @@ effect|PHASE_EXIT_EMP_ARCS_FLAT|12.5	0	When this ship leaves phase, it discharge
 effect|PHASE_EXIT_EMP_ARCS_FLAT|100.0	0	When this ship leaves phase, it discharges <good>100</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
 effect|PHASE_EXIT_EMP_ARCS_FLAT|-10.0	0	When this ship leaves phase, it discharges <good>-10</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
 effect|PHASE_EXIT_EMP_ARCS_FLAT|-12.5	0	When this ship leaves phase, it discharges <good>-12.5</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
+effect|PHASE_EXIT_WEAPON_DAMAGE_PERCENT|1.0	0	When this ship leaves phase, it deals <good>1%</good> increased weapon damage, tapering off over 3 seconds.
+effect|PHASE_EXIT_WEAPON_DAMAGE_PERCENT|10.0	0	When this ship leaves phase, it deals <good>10%</good> increased weapon damage, tapering off over 3 seconds.
+effect|PHASE_EXIT_WEAPON_DAMAGE_PERCENT|12.5	0	When this ship leaves phase, it deals <good>12.5%</good> increased weapon damage, tapering off over 3 seconds.
+effect|PHASE_EXIT_WEAPON_DAMAGE_PERCENT|100.0	0	When this ship leaves phase, it deals <good>100%</good> increased weapon damage, tapering off over 3 seconds.
+effect|PHASE_EXIT_WEAPON_DAMAGE_PERCENT|-10.0	0	When this ship leaves phase, it deals <good>-10%</good> increased weapon damage, tapering off over 3 seconds.
+effect|PHASE_EXIT_WEAPON_DAMAGE_PERCENT|-12.5	0	When this ship leaves phase, it deals <good>-12.5%</good> increased weapon damage, tapering off over 3 seconds.
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|1.0	0	1% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|10.0	0	10% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|12.5	0	12.5% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
@@ -2302,12 +2326,24 @@ effect|REPAIR_TIME_PERCENT|12.5	1	<good>12.5%</good> increased weapon and engine
 effect|REPAIR_TIME_PERCENT|100.0	1	<good>100%</good> increased weapon and engine repair time.
 effect|REPAIR_TIME_PERCENT|-10.0	1	<bad>10%</bad> reduced weapon and engine repair time.
 effect|REPAIR_TIME_PERCENT|-12.5	1	<bad>12.5%</bad> reduced weapon and engine repair time.
+effect|RIFT_EXPLOSION_DAMAGE_PERCENT|1.0	0	<good>1%</good> increased rift explosion damage.
+effect|RIFT_EXPLOSION_DAMAGE_PERCENT|10.0	0	<good>10%</good> increased rift explosion damage.
+effect|RIFT_EXPLOSION_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased rift explosion damage.
+effect|RIFT_EXPLOSION_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased rift explosion damage.
+effect|RIFT_EXPLOSION_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> increased rift explosion damage.
+effect|RIFT_EXPLOSION_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> increased rift explosion damage.
 effect|RIFT_LIGHTNING_DAMAGE_PERCENT|1.0	0	<good>1%</good> increased Rift Lightning damage.
 effect|RIFT_LIGHTNING_DAMAGE_PERCENT|10.0	0	<good>10%</good> increased Rift Lightning damage.
 effect|RIFT_LIGHTNING_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased Rift Lightning damage.
 effect|RIFT_LIGHTNING_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased Rift Lightning damage.
 effect|RIFT_LIGHTNING_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> increased Rift Lightning damage.
 effect|RIFT_LIGHTNING_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> increased Rift Lightning damage.
+effect|RIFT_STRIKE_CHANCE_PERCENT|1.0	0	Energy projectile hits have a <good>1%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+effect|RIFT_STRIKE_CHANCE_PERCENT|10.0	0	Energy projectile hits have a <good>10%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+effect|RIFT_STRIKE_CHANCE_PERCENT|12.5	0	Energy projectile hits have a <good>12.5%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+effect|RIFT_STRIKE_CHANCE_PERCENT|100.0	0	Energy projectile hits have a <good>100%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+effect|RIFT_STRIKE_CHANCE_PERCENT|-10.0	0	Energy projectile hits have a <good>-10%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+effect|RIFT_STRIKE_CHANCE_PERCENT|-12.5	0	Energy projectile hits have a <good>-12.5%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
 effect|RISE_FROM_THE_ASHES_ARMOR_RESTORE_PERCENT|1.0	0	Surviving that hit restores <good>1%</good> of maximum armor to every armor cell.
 effect|RISE_FROM_THE_ASHES_ARMOR_RESTORE_PERCENT|10.0	0	Surviving that hit restores <good>10%</good> of maximum armor to every armor cell.
 effect|RISE_FROM_THE_ASHES_ARMOR_RESTORE_PERCENT|12.5	0	Surviving that hit restores <good>12.5%</good> of maximum armor to every armor cell.
@@ -3424,6 +3460,13 @@ type|cargo_capacity|FRIGATE|0	0	<good>+5</good> to cargo capacity.
 type|cargo_capacity|DESTROYER|0	0	<good>+15</good> to cargo capacity.
 type|cargo_capacity|CRUISER|0	0	<good>+25</good> to cargo capacity.
 type|cargo_capacity|CAPITAL_SHIP|0	0	<good>+50</good> to cargo capacity.
+flavour|cease_and_desist	0	Energy weapons built under Tri-Tachyon licence carry a signal that tells a target's system controllers they are running patented designs. The crew leaves the signal in. Compliance is slow, but reliably so.
+flavourAutomated|cease_and_desist	0	Energy weapons built under Tri-Tachyon licence carry a signal that tells a target's system controllers they are running patented designs. The ship's core leaves the signal in. Compliance is slow, but reliably so.
+type|cease_and_desist|null|0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
+type|cease_and_desist|FRIGATE|0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
+type|cease_and_desist|DESTROYER|0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
+type|cease_and_desist|CRUISER|0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
+type|cease_and_desist|CAPITAL_SHIP|0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
 flavour|cheap_shots	0	A gunner who signed on at a pirate base retunes the fire control to hold until a target's shields collapse or its drives gutter out. Fair fights are left to the navies.
 flavourAutomated|cheap_shots	0	Pirate wreck logs show their gunners holding fire until a target's shields collapse or its drives gutter out. The ship's core retunes its fire control to wait for the same moment. Fair fights are left to the navies.
 type|cheap_shots|null|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
@@ -4014,6 +4057,12 @@ type|efficient_vents|CRUISER|0	0	<good>15%</good> increased flux dissipation.
 type|efficient_vents|CRUISER|1	0	<good>+50</good> to flux dissipation.
 type|efficient_vents|CAPITAL_SHIP|0	0	<good>15%</good> increased flux dissipation.
 type|efficient_vents|CAPITAL_SHIP|1	0	<good>+50</good> to flux dissipation.
+flavour|emp_damage	0	Capacitor banks rewound to Tri-Tachyon specifications put more charge behind every hit. The specifications were not for sale, strictly speaking.
+type|emp_damage|null|0	0	<good>5%</good> more EMP damage.
+type|emp_damage|FRIGATE|0	0	<good>5%</good> more EMP damage.
+type|emp_damage|DESTROYER|0	0	<good>5%</good> more EMP damage.
+type|emp_damage|CRUISER|0	0	<good>5%</good> more EMP damage.
+type|emp_damage|CAPITAL_SHIP|0	0	<good>5%</good> more EMP damage.
 type|energy_damage_resistance|null|0	1	<bad>5%</bad> reduced energy damage taken.
 type|energy_damage_resistance|FRIGATE|0	1	<bad>5%</bad> reduced energy damage taken.
 type|energy_damage_resistance|DESTROYER|0	1	<bad>5%</bad> reduced energy damage taken.
@@ -4602,6 +4651,13 @@ type|ion_bolter_rounds|FRIGATE|0	0	Energy shots that hit an enemy shield can arc
 type|ion_bolter_rounds|DESTROYER|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
 type|ion_bolter_rounds|CRUISER|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
 type|ion_bolter_rounds|CAPITAL_SHIP|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
+flavour|ion_cascade	0	Ion emitter firmware from a Tri-Tachyon proving range keeps discharging into a target's dead systems until the current finds the hull behind them. The crew runs an unlicensed copy. The licence agreement is longer than the firmware.
+flavourAutomated|ion_cascade	0	Ion emitter firmware from a Tri-Tachyon proving range keeps discharging into a target's dead systems until the current finds the hull behind them. The ship's core extracted a copy from a wrecked Tri-Tachyon picket. The licence agreement is longer than the firmware.
+type|ion_cascade|null|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+type|ion_cascade|FRIGATE|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+type|ion_cascade|DESTROYER|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+type|ion_cascade|CRUISER|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+type|ion_cascade|CAPITAL_SHIP|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
 flavour|joint_strike_package	0	No League detachment will launch second, so joint fleets launch every wing at once.
 type|joint_strike_package|null|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
 type|joint_strike_package|FRIGATE|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
@@ -5064,6 +5120,20 @@ type|perseverance_through_faith|FRIGATE|0	0	<good>2%</good> more weapon damage f
 type|perseverance_through_faith|DESTROYER|0	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
 type|perseverance_through_faith|CRUISER|0	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
 type|perseverance_through_faith|CAPITAL_SHIP|0	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
+flavour|phantom_wake	0	A phase coil dropped into p-space too sharply leaves an echo of the hull in normal space for a few moments. Tri-Tachyon engineers filed this as a fault. The crew detunes the coil to leave one on purpose, and enemy gunners have filed complaints.
+flavourAutomated|phantom_wake	0	A phase coil dropped into p-space too sharply leaves an echo of the hull in normal space for a few moments. Tri-Tachyon research logs file this as a fault. The ship's core detunes its coil to leave one on purpose, and enemy gunners have filed complaints.
+type|phantom_wake|null|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
+type|phantom_wake|FRIGATE|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
+type|phantom_wake|DESTROYER|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
+type|phantom_wake|CRUISER|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
+type|phantom_wake|CAPITAL_SHIP|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
+flavour|phase_ambush_doctrine	0	Tri-Tachyon phase doctrine holds that the first shots after leaving p-space decide the engagement. The crew drills the weapon capacitors to discharge the moment the coil disengages. Afflictor captains call it the only meeting worth attending.
+flavourAutomated|phase_ambush_doctrine	0	Tri-Tachyon phase doctrine holds that the first shots after leaving p-space decide the engagement. Afflictor combat recordings show the ship's core when to discharge its weapon capacitors: the moment the coil disengages. The recordings carry a corporate watermark.
+type|phase_ambush_doctrine|null|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
+type|phase_ambush_doctrine|FRIGATE|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
+type|phase_ambush_doctrine|DESTROYER|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
+type|phase_ambush_doctrine|CRUISER|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
+type|phase_ambush_doctrine|CAPITAL_SHIP|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
 type|phase_anchor|null|0	1	<bad>100%</bad> less phase cloak activation cost.
 type|phase_anchor|null|1	0	<good>100%</good> more flux dissipation, weapon rate of fire and ammo regeneration while phased.
 type|phase_anchor|null|2	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
@@ -5084,6 +5154,18 @@ type|phase_anchor|CAPITAL_SHIP|0	1	<bad>100%</bad> less phase cloak activation c
 type|phase_anchor|CAPITAL_SHIP|1	0	<good>100%</good> more flux dissipation, weapon rate of fire and ammo regeneration while phased.
 type|phase_anchor|CAPITAL_SHIP|2	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
 type-detail|phase_anchor|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Adaptive Phase Coils</hullmod>\n• <hullmod>Novel Coil Geometry</hullmod>\n• <hullmod>Phase Harmonics</hullmod>\n• <hullmod>Phase Anchor</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Adaptive Phase Coils</node>
+flavour|phase_cloak_activation_cost	0	Phase coil primers trimmed to corporate tolerances draw less flux to engage. Tolerances that tight were never meant for a field refit.
+type|phase_cloak_activation_cost|null|0	1	<bad>5%</bad> less phase cloak activation cost.
+type|phase_cloak_activation_cost|FRIGATE|0	1	<bad>5%</bad> less phase cloak activation cost.
+type|phase_cloak_activation_cost|DESTROYER|0	1	<bad>5%</bad> less phase cloak activation cost.
+type|phase_cloak_activation_cost|CRUISER|0	1	<bad>5%</bad> less phase cloak activation cost.
+type|phase_cloak_activation_cost|CAPITAL_SHIP|0	1	<bad>5%</bad> less phase cloak activation cost.
+flavour|phase_cloak_cooldown	0	Coil discharge cycles shortened to a corporate maintenance bulletin leave the phase cloak ready again sooner. A later issue of the bulletin advises against it.
+type|phase_cloak_cooldown|null|0	1	<bad>5%</bad> reduced phase cloak cooldown.
+type|phase_cloak_cooldown|FRIGATE|0	1	<bad>5%</bad> reduced phase cloak cooldown.
+type|phase_cloak_cooldown|DESTROYER|0	1	<bad>5%</bad> reduced phase cloak cooldown.
+type|phase_cloak_cooldown|CRUISER|0	1	<bad>5%</bad> reduced phase cloak cooldown.
+type|phase_cloak_cooldown|CAPITAL_SHIP|0	1	<bad>5%</bad> reduced phase cloak cooldown.
 type|phase_cloak_flux_threshold|null|0	0	<good>5%</good> increased hard flux level at which phased speed reaches its minimum.
 type|phase_cloak_flux_threshold|FRIGATE|0	0	<good>5%</good> increased hard flux level at which phased speed reaches its minimum.
 type|phase_cloak_flux_threshold|DESTROYER|0	0	<good>5%</good> increased hard flux level at which phased speed reaches its minimum.
@@ -5221,6 +5303,18 @@ type|restriction_breeds_creativity|FRIGATE|0	1	<bad>2%</bad> less armor damage t
 type|restriction_breeds_creativity|DESTROYER|0	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
 type|restriction_breeds_creativity|CRUISER|0	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
 type|restriction_breeds_creativity|CAPITAL_SHIP|0	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
+type|rift_explosion_damage|null|0	0	<good>10%</good> increased rift explosion damage.
+type|rift_explosion_damage|FRIGATE|0	0	<good>10%</good> increased rift explosion damage.
+type|rift_explosion_damage|DESTROYER|0	0	<good>10%</good> increased rift explosion damage.
+type|rift_explosion_damage|CRUISER|0	0	<good>10%</good> increased rift explosion damage.
+type|rift_explosion_damage|CAPITAL_SHIP|0	0	<good>10%</good> increased rift explosion damage.
+flavour|rift_harmonics	0	Tri-Tachyon fire-control logs recovered from Remnant drones describe energy bolts tuned to tear a brief hole in normal space on impact. The crew copied the tuning into this ship's emitters, one dimly understood parameter at a time. The logs still carry a Tri-Tachyon copyright notice.
+flavourAutomated|rift_harmonics	0	Tri-Tachyon fire-control logs recovered from Remnant drones describe energy bolts tuned to tear a brief hole in normal space on impact. The ship's core reads the tuning tables and applies them to its emitters, one dimly understood parameter at a time. The logs still carry a Tri-Tachyon copyright notice.
+type|rift_harmonics|null|0	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+type|rift_harmonics|FRIGATE|0	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+type|rift_harmonics|DESTROYER|0	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+type|rift_harmonics|CRUISER|0	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+type|rift_harmonics|CAPITAL_SHIP|0	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
 type|rift_lightning_damage|null|0	0	<good>10%</good> increased Rift Lightning damage.
 type|rift_lightning_damage|FRIGATE|0	0	<good>10%</good> increased Rift Lightning damage.
 type|rift_lightning_damage|DESTROYER|0	0	<good>10%</good> increased Rift Lightning damage.

@@ -195,6 +195,19 @@ itself. Each target strips its queued armor evenly over 5 seconds (`ArmorDecay`)
 (`ArmorBurnListener`) queues its share of each weapon hit on an enemy's armor on the struck cell alone, over 3 seconds, so
 burns on one cell add up.
 
+### Rift Harmonics and rift explosion damage
+
+`RIFT_STRIKE_CHANCE_PERCENT` (`RiftStrikeListener`) rolls on each hit an enemy ship takes from this ship's non-beam
+energy weapons, ballistics included while they count as energy. On success it drops vanilla's Rift Beam mine at the hit
+point, which explodes at once with that weapon's rift animation and area. The mine's damage is set from the weapon spec's
+base damage per shot (`RiftStrike`), so the ship's damage bonuses never reach it, and the node tooltip lists every
+fitted weapon with its rift damage (`RiftStrikeTooltipTable`).
+
+`RIFT_EXPLOSION_DAMAGE_PERCENT` (`RiftExplosionDamageListener`) raises the damage of every rift explosion the ship
+sources: these rifts, vanilla's Rift Beam, Rift Lance, Rift Cascade and Rift Lightning mines, and Rift Torpedo direct
+hits (not their splash).
+`RiftExplosions` picks the mines out by their vanilla sound set and the absence of a drawn explosion of their own.
+
 ### Thermo-Accelerator
 
 The flux cost reduction is an ordinary ship-wide weapon stat, and `ThermoAcceleratorListener` stops every hardpoint weapon from firing
@@ -313,6 +326,33 @@ strike craft counted as their carrier, or to no one if no enemy has.
 
 `OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT` then removes that share of the ship's hard flux, leaving soft flux alone. The
 overload still drops the shield.
+
+### Ion Cascade
+
+Vanilla spreads a hull or armor hit's EMP over the weapons and engines within two armor cells of the struck cell, half
+to those in the inner ring and a quarter to the outer ring. `DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT` repeats that sum for
+the parts already disabled before the hit, with the same EMP and part damage multipliers, and deals that share as high
+explosive damage at the hit point on the next frame, past shields and through armor as usual (`IonCascadeListener`).
+
+### Phase Ambush Doctrine
+
+`PHASE_EXIT_WEAPON_DAMAGE_PERCENT` gives its full weapon damage bonus as the ship leaves phase and lowers it evenly to
+nothing over 3 seconds. Leaving phase again restarts it at full (`PhaseExitDamageListener`).
+
+### Phantom Wake
+
+`PHASE_ENTRY_AFTERIMAGE_SECONDS_FLAT` spawns an empty variant of the ship's hull where it entered phase: idle, held in
+place, taking no damage and colliding only with projectiles and missiles like a fighter, so enemy weapons waste fire
+on it. It fades over its lifetime and is then removed with its deployment record (`PhaseAfterimage`,
+`DeploymentRecordPruner`). A new entry replaces the last afterimage, and ships with modules or built-in wings leave
+none (`PhantomWakeListener`).
+
+### Cease and Desist
+
+Each hit from this ship's own energy weapons on an enemy ship, strike craft excepted, adds an Injunction stack for 10
+seconds, at most once a second per target, up to 10 stacks with the oldest replaced. The stacks' summed
+`ENERGY_HIT_INJUNCTION_PERCENT` multiplies the target's ship system cooldown and divides its charge regeneration by the
+same factor (`InjunctionListener`, `Injunction`).
 
 ### Range per sensor strength
 
@@ -585,14 +625,16 @@ sources reserve their modifiers for (`ModifierSources`).
 An anchor drops, stocks or shows in showcase salvage only while it is obtainable
 (`WormholeAnchorDefinitions.obtainable`, sharing its checks with `WormholeAnchor.inertness`): the player has the
 Janus Device (`JanusDevice`, `AnchorJanusGate`, lifted by the "Allow Wormhole Anchors Before the Janus Device"
-setting, Hyper-Nav Beacon exempt), its own unlock is met, and no closed `withheld` gate holds its exit. Each gate
+setting, Hyper-Nav Beacon and Omega anchor exempt), its own unlock is met, and no closed `withheld` gate holds its exit. Each gate
 in `node_gates.json` sets `anchors` (`withheld` by default, or `free`) and `rewardAnchor`. Nightcross is `free`
 and opens on `anchorFound` once any of its anchors reaches the player (`AnchorFinds`). The Singularity and Existential
-Threat battles add one volume anchor to their loot once per save (`GateRewardAnchors`). NPC anchors ignore all of
-this, and open wormholes stay open.
+Threat battles add one volume anchor to their loot once per save (`GateRewardAnchors`). Omega opens on the first won
+fight against an Omega fleet (`OmegaEncounter`) or on opening the shielded cache at Alpha Site, whose loot also holds
+one Omega anchor (`AlphaSiteOmegaCache`). NPC anchors ignore all of this, and open wormholes stay open.
 
 An anchor with `guaranteed_drop` in `wormhole_anchors.csv` drops from every won battle that defeats one of its
-factions instead of rolling its chance (`FactionFleetDrops`); the Shrouded anchor does this for Dweller fleets. An anchor whose factions are all missing, or whose playable factions Nexerelin has all eliminated, drops from the
+factions instead of rolling its chance (`FactionFleetDrops`); the Shrouded and Omega anchors do this for Dweller and
+Omega fleets. An anchor whose factions are all missing, or whose playable factions Nexerelin has all eliminated, drops from the
 salvage and tech mining sites in `anchor_salvage.csv` instead (`FactionlessAnchors`).
 
 ### Corruption

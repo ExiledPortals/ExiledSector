@@ -184,7 +184,9 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     SHROUDED_LENS_DAMAGE_PERCENT(listener(ShroudedDamageListener.LENS_DAMAGE_PERCENT_KEY, ShroudedDamageListener.class,
             ShroudedDamageListener::new)),
     RIFT_LIGHTNING_DAMAGE_PERCENT(listener(ShroudedDamageListener.RIFT_LIGHTNING_DAMAGE_PERCENT_KEY, ShroudedDamageListener.class,
-            ShroudedDamageListener::new));
+            ShroudedDamageListener::new)),
+    RIFT_EXPLOSION_DAMAGE_PERCENT(listener(RiftExplosionDamageListener.DAMAGE_PERCENT_KEY, RiftExplosionDamageListener.class,
+            RiftExplosionDamageListener::new));
 
     private static final String LARGE_BALLISTIC_OP_COST_KEY = "large_ballistic_mod";
     private static final List<String> SMALL_WEAPON_OP_COST_KEYS = List.of(Stats.SMALL_BALLISTIC_MOD, Stats.SMALL_ENERGY_MOD, Stats.SMALL_MISSILE_MOD);
