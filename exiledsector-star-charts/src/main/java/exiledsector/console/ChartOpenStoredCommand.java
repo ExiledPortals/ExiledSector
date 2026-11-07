@@ -46,7 +46,7 @@ public class ChartOpenStoredCommand extends CampaignCommand {
         switch (result) {
             case OPENED -> {
                 ChartRun run = ChartRuns.currentOrNull();
-                Console.showMessage("Opened a Star Chart wormhole beside your fleet from " + chartText + "\nThe chart was used up. "
+                Console.showMessage("Opened a Star Chart wormhole beside your fleet from " + chartText + "\nThe chart was consumed. "
                         + ChartOpenCommand.describeLayout(run) + "\n" + ChartOpenCommand.describeContent(run));
                 return CommandResult.SUCCESS;
             }

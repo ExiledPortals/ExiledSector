@@ -1274,14 +1274,14 @@
 					"frigate": 0,
 					"destroyer": 0,
 					"cruiser": 35,
-					"capitalShip": 50
+					"capitalShip": 55
 				},
 				{
 					"effect": "ENERGY_WEAPON_RANGE_PERCENT",
 					"frigate": 0,
 					"destroyer": 0,
 					"cruiser": 35,
-					"capitalShip": 50
+					"capitalShip": 55
 				}
 			],
 			"requiredHullSizes": [
@@ -2175,17 +2175,17 @@
 			"hullSizeEffects": [
 				{
 					"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
-					"frigate": 5,
-					"destroyer": 12,
-					"cruiser": 25,
-					"capitalShip": 40
+					"frigate": 10,
+					"destroyer": 20,
+					"cruiser": 35,
+					"capitalShip": 55
 				},
 				{
 					"effect": "ENERGY_WEAPON_RANGE_PERCENT",
-					"frigate": 5,
-					"destroyer": 12,
-					"cruiser": 25,
-					"capitalShip": 40
+					"frigate": 10,
+					"destroyer": 20,
+					"cruiser": 35,
+					"capitalShip": 55
 				}
 			],
 			"unlockConditions": [
@@ -3827,50 +3827,6 @@
 				"campaign_only",
 				"logistics_cap"
 			]
-		},
-		{
-			"id": "combat_vision",
-			"name": "Combat Vision",
-			"icon": "graphics/icons/combat_vision.png",
-			"hullSizeEffects": [
-				{
-					"effect": "COMBAT_VISION",
-					"frigate": 300,
-					"destroyer": 500,
-					"cruiser": 700,
-					"capitalShip": 900
-				}
-			],
-			"tags": [
-				"range"
-			]
-		},
-		{
-			"id": "optimised_lenses",
-			"name": "Optimised Lenses",
-			"icon": "graphics/icons/optimised_lenses.png",
-			"tier": "NOTABLE",
-			"effects": [
-				{
-					"effect": "NON_BEAM_ENERGY_WEAPON_RANGE_FLAT",
-					"magnitude": 100
-				}
-			],
-			"hullSizeEffects": [
-				{
-					"effect": "COMBAT_VISION",
-					"frigate": 400,
-					"destroyer": 600,
-					"cruiser": 800,
-					"capitalShip": 1000
-				}
-			],
-			"tags": [
-				"energy",
-				"range",
-				"req_non_beam_energy"
-			],
-			"moduleShare": "all"
 		},
 		{
 			"id": "additional_beam_splits",

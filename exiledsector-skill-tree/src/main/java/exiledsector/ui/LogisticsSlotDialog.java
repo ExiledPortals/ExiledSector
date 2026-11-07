@@ -29,7 +29,7 @@ final class LogisticsSlotDialog {
         modalFrame.open();
         hideButtons();
         titleLine.set(Translation.msg("ui.logisticsSlots.dialog.title").arg("item", LogisticsSchematic.INSTANCE.displayName()).text());
-        bodyText.setWrapped(Translation.msg("ui.logisticsSlots.dialog.body").arg("cap", cap).arg("newCap", cap + 1).arg("left", held - 1).text(),
+        bodyText.setWrapped(Translation.msg("ui.logisticsSlots.dialog.body").count(held).arg("cap", cap).arg("newCap", cap + 1).text(),
                 WIDTH - PADDING * 2f, BODY_MAX_HEIGHT);
     }
 
