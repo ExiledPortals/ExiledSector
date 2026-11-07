@@ -186,7 +186,7 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
     },
     SHIELD_DEFLECT_CHANCE_PERCENT(listener(ShieldDeflectionListener.CHANCE_PERCENT_KEY, ShieldDeflectionListener.class,
             ShieldDeflectionListener::new)),
-    SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT(listener(AutomatedShieldDamageListener.REDUCTION_PERCENT_KEY,
+    SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_MULT(listener(AutomatedShieldDamageListener.REDUCTION_PERCENT_KEY,
             AutomatedShieldDamageListener.class, AutomatedShieldDamageListener::new)),
     SHIELD_ABSORB_RATE_OF_FIRE_PERCENT(listener(AbsorbReserveListener.RATE_OF_FIRE_PERCENT_KEY,
             AbsorbReserveListener.class, AbsorbReserveListener::new)) {

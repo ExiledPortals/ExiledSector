@@ -814,12 +814,12 @@ effect|EMP_ARC_STRIKE_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased top spee
 effect|EMP_ARC_STRIKE_SPEED_PERCENT|100.0	0	<good>100%</good> increased top speed and maneuverability for 3 seconds after an EMP arc strikes this ship.
 effect|EMP_ARC_STRIKE_SPEED_PERCENT|-10.0	0	<good>-10%</good> increased top speed and maneuverability for 3 seconds after an EMP arc strikes this ship.
 effect|EMP_ARC_STRIKE_SPEED_PERCENT|-12.5	0	<good>-12.5%</good> increased top speed and maneuverability for 3 seconds after an EMP arc strikes this ship.
-effect|EMP_DAMAGE_PERCENT|1.0	0	<good>1%</good> more EMP damage.
-effect|EMP_DAMAGE_PERCENT|10.0	0	<good>10%</good> more EMP damage.
-effect|EMP_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> more EMP damage.
-effect|EMP_DAMAGE_PERCENT|100.0	0	<good>100%</good> more EMP damage.
-effect|EMP_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> more EMP damage.
-effect|EMP_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> more EMP damage.
+effect|EMP_DAMAGE_MULT|1.0	0	<good>1%</good> more EMP damage.
+effect|EMP_DAMAGE_MULT|10.0	0	<good>10%</good> more EMP damage.
+effect|EMP_DAMAGE_MULT|12.5	0	<good>12.5%</good> more EMP damage.
+effect|EMP_DAMAGE_MULT|100.0	0	<good>100%</good> more EMP damage.
+effect|EMP_DAMAGE_MULT|-10.0	0	<good>-10%</good> more EMP damage.
+effect|EMP_DAMAGE_MULT|-12.5	0	<good>-12.5%</good> more EMP damage.
 effect|EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT|1.0	0	Taking EMP damage dissipates hard flux equal to <good>1%</good> of that EMP damage.
 effect|EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT|10.0	0	Taking EMP damage dissipates hard flux equal to <good>10%</good> of that EMP damage.
 effect|EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT|12.5	0	Taking EMP damage dissipates hard flux equal to <good>12.5%</good> of that EMP damage.
@@ -1186,24 +1186,24 @@ effect|FIGHTER_WEAPON_RANGE_PERCENT|12.5	0	Strikecraft launched from this ship h
 effect|FIGHTER_WEAPON_RANGE_PERCENT|100.0	0	Strikecraft launched from this ship have <good>100%</good> increased weapon range.
 effect|FIGHTER_WEAPON_RANGE_PERCENT|-10.0	0	Strikecraft launched from this ship have <bad>10%</bad> reduced weapon range.
 effect|FIGHTER_WEAPON_RANGE_PERCENT|-12.5	0	Strikecraft launched from this ship have <bad>12.5%</bad> reduced weapon range.
-effect|FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER|1.0	0	Strikecraft launched from this ship take <good>1%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
-effect|FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER|10.0	0	Strikecraft launched from this ship take <good>10%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
-effect|FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER|12.5	0	Strikecraft launched from this ship take <good>12.5%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
-effect|FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER|100.0	0	Strikecraft launched from this ship take <good>100%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
-effect|FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER|-10.0	0	Strikecraft launched from this ship take <good>-10%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
-effect|FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER|-12.5	0	Strikecraft launched from this ship take <good>-12.5%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
+effect|FIGHTER_WING_DAMAGE_TAKEN_MULT_PER_FIGHTER|1.0	0	Strikecraft launched from this ship take <good>1%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
+effect|FIGHTER_WING_DAMAGE_TAKEN_MULT_PER_FIGHTER|10.0	0	Strikecraft launched from this ship take <good>10%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
+effect|FIGHTER_WING_DAMAGE_TAKEN_MULT_PER_FIGHTER|12.5	0	Strikecraft launched from this ship take <good>12.5%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
+effect|FIGHTER_WING_DAMAGE_TAKEN_MULT_PER_FIGHTER|100.0	0	Strikecraft launched from this ship take <good>100%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
+effect|FIGHTER_WING_DAMAGE_TAKEN_MULT_PER_FIGHTER|-10.0	0	Strikecraft launched from this ship take <good>-10%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
+effect|FIGHTER_WING_DAMAGE_TAKEN_MULT_PER_FIGHTER|-12.5	0	Strikecraft launched from this ship take <good>-12.5%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
 effect|FIGHTER_WING_SHARED_DAMAGE_PERCENT|1.0	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>1%</good> of that damage is shared across its wing.
 effect|FIGHTER_WING_SHARED_DAMAGE_PERCENT|10.0	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>10%</good> of that damage is shared across its wing.
 effect|FIGHTER_WING_SHARED_DAMAGE_PERCENT|12.5	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>12.5%</good> of that damage is shared across its wing.
 effect|FIGHTER_WING_SHARED_DAMAGE_PERCENT|100.0	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>100%</good> of that damage is shared across its wing.
 effect|FIGHTER_WING_SHARED_DAMAGE_PERCENT|-10.0	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>-10%</good> of that damage is shared across its wing.
 effect|FIGHTER_WING_SHARED_DAMAGE_PERCENT|-12.5	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>-12.5%</good> of that damage is shared across its wing.
-effect|FLEET_CORONA_RESISTANCE_PERCENT|1.0	0	Ships in your fleet have <good>1%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-effect|FLEET_CORONA_RESISTANCE_PERCENT|10.0	0	Ships in your fleet have <good>10%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-effect|FLEET_CORONA_RESISTANCE_PERCENT|12.5	0	Ships in your fleet have <good>12.5%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-effect|FLEET_CORONA_RESISTANCE_PERCENT|100.0	0	Ships in your fleet have <good>100%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-effect|FLEET_CORONA_RESISTANCE_PERCENT|-10.0	0	Ships in your fleet have <good>-10%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-effect|FLEET_CORONA_RESISTANCE_PERCENT|-12.5	0	Ships in your fleet have <good>-12.5%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+effect|FLEET_CORONA_RESISTANCE_MULT|1.0	0	Ships in your fleet have <good>1%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+effect|FLEET_CORONA_RESISTANCE_MULT|10.0	0	Ships in your fleet have <good>10%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+effect|FLEET_CORONA_RESISTANCE_MULT|12.5	0	Ships in your fleet have <good>12.5%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+effect|FLEET_CORONA_RESISTANCE_MULT|100.0	0	Ships in your fleet have <good>100%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+effect|FLEET_CORONA_RESISTANCE_MULT|-10.0	0	Ships in your fleet have <good>-10%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+effect|FLEET_CORONA_RESISTANCE_MULT|-12.5	0	Ships in your fleet have <good>-12.5%</good> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 effect|FLUX_CAPACITOR_EFFECTIVENESS_PERCENT|1.0	0	<good>1%</good> increased flux capacity granted by each flux capacitor.
 effect|FLUX_CAPACITOR_EFFECTIVENESS_PERCENT|10.0	0	<good>10%</good> increased flux capacity granted by each flux capacitor.
 effect|FLUX_CAPACITOR_EFFECTIVENESS_PERCENT|12.5	0	<good>12.5%</good> increased flux capacity granted by each flux capacitor.
@@ -1372,18 +1372,18 @@ effect|GATES_RADIUS_WHILE_SYSTEM_ACTIVE|12.5	0	Allocated nodes in its radius app
 effect|GATES_RADIUS_WHILE_SYSTEM_ACTIVE|100.0	0	Allocated nodes in its radius apply only while the ship system is active, at <good>100</good> times their strength. Their effects that aren't read live in combat are ignored.
 effect|GATES_RADIUS_WHILE_SYSTEM_ACTIVE|-10.0	0	Allocated nodes in its radius apply only while the ship system is active, at <good>-10</good> times their strength. Their effects that aren't read live in combat are ignored.
 effect|GATES_RADIUS_WHILE_SYSTEM_ACTIVE|-12.5	0	Allocated nodes in its radius apply only while the ship system is active, at <good>-12.5</good> times their strength. Their effects that aren't read live in combat are ignored.
-effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|1.0	0	Enemy ships within 1500 su have up to <good>1%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
-effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|10.0	0	Enemy ships within 1500 su have up to <good>10%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
-effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|12.5	0	Enemy ships within 1500 su have up to <good>12.5%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
-effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|100.0	0	Enemy ships within 1500 su have up to <good>100%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
-effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|-10.0	0	Enemy ships within 1500 su have up to <good>-10%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
-effect|GRAVITY_DRAG_PHASED_TIMEFLOW_PERCENT|-12.5	0	Enemy ships within 1500 su have up to <good>-12.5%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
-effect|GRAVITY_DRAG_TIMEFLOW_PERCENT|1.0	0	Enemy ships within 1500 su have up to <good>1%</good> less time flow, strongest at close range, or up to <good>2%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
-effect|GRAVITY_DRAG_TIMEFLOW_PERCENT|10.0	0	Enemy ships within 1500 su have up to <good>10%</good> less time flow, strongest at close range, or up to <good>20%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
-effect|GRAVITY_DRAG_TIMEFLOW_PERCENT|12.5	0	Enemy ships within 1500 su have up to <good>12.5%</good> less time flow, strongest at close range, or up to <good>25%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
-effect|GRAVITY_DRAG_TIMEFLOW_PERCENT|100.0	0	Enemy ships within 1500 su have up to <good>100%</good> less time flow, strongest at close range, or up to <good>200%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
-effect|GRAVITY_DRAG_TIMEFLOW_PERCENT|-10.0	0	Enemy ships within 1500 su have up to <good>-10%</good> less time flow, strongest at close range, or up to <good>-20%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
-effect|GRAVITY_DRAG_TIMEFLOW_PERCENT|-12.5	0	Enemy ships within 1500 su have up to <good>-12.5%</good> less time flow, strongest at close range, or up to <good>-25%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_MULT|1.0	0	Enemy ships within 1500 su have up to <good>1%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_MULT|10.0	0	Enemy ships within 1500 su have up to <good>10%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_MULT|12.5	0	Enemy ships within 1500 su have up to <good>12.5%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_MULT|100.0	0	Enemy ships within 1500 su have up to <good>100%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_MULT|-10.0	0	Enemy ships within 1500 su have up to <good>-10%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_PHASED_TIMEFLOW_MULT|-12.5	0	Enemy ships within 1500 su have up to <good>-12.5%</good> less time flow while this ship is phased, strongest at close range. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_TIMEFLOW_MULT|1.0	0	Enemy ships within 1500 su have up to <good>1%</good> less time flow, strongest at close range, or up to <good>2%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_TIMEFLOW_MULT|10.0	0	Enemy ships within 1500 su have up to <good>10%</good> less time flow, strongest at close range, or up to <good>20%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_TIMEFLOW_MULT|12.5	0	Enemy ships within 1500 su have up to <good>12.5%</good> less time flow, strongest at close range, or up to <good>25%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_TIMEFLOW_MULT|100.0	0	Enemy ships within 1500 su have up to <good>100%</good> less time flow, strongest at close range, or up to <good>200%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_TIMEFLOW_MULT|-10.0	0	Enemy ships within 1500 su have up to <good>-10%</good> less time flow, strongest at close range, or up to <good>-20%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
+effect|GRAVITY_DRAG_TIMEFLOW_MULT|-12.5	0	Enemy ships within 1500 su have up to <good>-12.5%</good> less time flow, strongest at close range, or up to <good>-25%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
 effect|GROUND_SUPPORT_FLAT|1.0	0	Your fleet has <good>+1</good> to effective planetary raid strength, up to the total number of marines in the fleet.
 effect|GROUND_SUPPORT_FLAT|10.0	0	Your fleet has <good>+10</good> to effective planetary raid strength, up to the total number of marines in the fleet.
 effect|GROUND_SUPPORT_FLAT|12.5	0	Your fleet has <good>+12.5</good> to effective planetary raid strength, up to the total number of marines in the fleet.
@@ -1414,12 +1414,12 @@ effect|HARD_FLUX_DISSIPATION_PERCENT|12.5	0	<good>12.5%</good> hard flux dissipa
 effect|HARD_FLUX_DISSIPATION_PERCENT|100.0	0	<good>100%</good> hard flux dissipation while shields are active.
 effect|HARD_FLUX_DISSIPATION_PERCENT|-10.0	0	<good>-10%</good> hard flux dissipation while shields are active.
 effect|HARD_FLUX_DISSIPATION_PERCENT|-12.5	0	<good>-12.5%</good> hard flux dissipation while shields are active.
-effect|HEARTLESS_ARMOR_PERCENT_PER_STACK|1.0	0	Each Heartless stack grants <good>1%</good> more armor in every armor cell, above its normal maximum.
-effect|HEARTLESS_ARMOR_PERCENT_PER_STACK|10.0	0	Each Heartless stack grants <good>10%</good> more armor in every armor cell, above its normal maximum.
-effect|HEARTLESS_ARMOR_PERCENT_PER_STACK|12.5	0	Each Heartless stack grants <good>12.5%</good> more armor in every armor cell, above its normal maximum.
-effect|HEARTLESS_ARMOR_PERCENT_PER_STACK|100.0	0	Each Heartless stack grants <good>100%</good> more armor in every armor cell, above its normal maximum.
-effect|HEARTLESS_ARMOR_PERCENT_PER_STACK|-10.0	0	Each Heartless stack grants <good>-10%</good> more armor in every armor cell, above its normal maximum.
-effect|HEARTLESS_ARMOR_PERCENT_PER_STACK|-12.5	0	Each Heartless stack grants <good>-12.5%</good> more armor in every armor cell, above its normal maximum.
+effect|HEARTLESS_ARMOR_MULT_PER_STACK|1.0	0	Each Heartless stack grants <good>1%</good> more armor in every armor cell, above its normal maximum.
+effect|HEARTLESS_ARMOR_MULT_PER_STACK|10.0	0	Each Heartless stack grants <good>10%</good> more armor in every armor cell, above its normal maximum.
+effect|HEARTLESS_ARMOR_MULT_PER_STACK|12.5	0	Each Heartless stack grants <good>12.5%</good> more armor in every armor cell, above its normal maximum.
+effect|HEARTLESS_ARMOR_MULT_PER_STACK|100.0	0	Each Heartless stack grants <good>100%</good> more armor in every armor cell, above its normal maximum.
+effect|HEARTLESS_ARMOR_MULT_PER_STACK|-10.0	0	Each Heartless stack grants <good>-10%</good> more armor in every armor cell, above its normal maximum.
+effect|HEARTLESS_ARMOR_MULT_PER_STACK|-12.5	0	Each Heartless stack grants <good>-12.5%</good> more armor in every armor cell, above its normal maximum.
 effect|HEARTLESS_ARMOR_RESTORE_PERCENT|1.0	0	Gaining a Heartless stack restores <good>1%</good> of maximum armor to every armor cell.
 effect|HEARTLESS_ARMOR_RESTORE_PERCENT|10.0	0	Gaining a Heartless stack restores <good>10%</good> of maximum armor to every armor cell.
 effect|HEARTLESS_ARMOR_RESTORE_PERCENT|12.5	0	Gaining a Heartless stack restores <good>12.5%</good> of maximum armor to every armor cell.
@@ -1732,12 +1732,12 @@ effect|MISSILE_SLOTS_ENERGY|12.5	0	Missile weapon mounts become energy mounts.
 effect|MISSILE_SLOTS_ENERGY|100.0	0	Missile weapon mounts become energy mounts.
 effect|MISSILE_SLOTS_ENERGY|-10.0	0	Missile weapon mounts become energy mounts.
 effect|MISSILE_SLOTS_ENERGY|-12.5	0	Missile weapon mounts become energy mounts.
-effect|MISSILE_SNARE_TOP_SPEED_PERCENT|1.0	0	Enemy ships hit by this ship's missiles have <good>1%</good> less top speed for 2 seconds.
-effect|MISSILE_SNARE_TOP_SPEED_PERCENT|10.0	0	Enemy ships hit by this ship's missiles have <good>10%</good> less top speed for 2 seconds.
-effect|MISSILE_SNARE_TOP_SPEED_PERCENT|12.5	0	Enemy ships hit by this ship's missiles have <good>12.5%</good> less top speed for 2 seconds.
-effect|MISSILE_SNARE_TOP_SPEED_PERCENT|100.0	0	Enemy ships hit by this ship's missiles have <good>100%</good> less top speed for 2 seconds.
-effect|MISSILE_SNARE_TOP_SPEED_PERCENT|-10.0	0	Enemy ships hit by this ship's missiles have <good>-10%</good> less top speed for 2 seconds.
-effect|MISSILE_SNARE_TOP_SPEED_PERCENT|-12.5	0	Enemy ships hit by this ship's missiles have <good>-12.5%</good> less top speed for 2 seconds.
+effect|MISSILE_SNARE_TOP_SPEED_MULT|1.0	0	Enemy ships hit by this ship's missiles have <good>1%</good> less top speed for 2 seconds.
+effect|MISSILE_SNARE_TOP_SPEED_MULT|10.0	0	Enemy ships hit by this ship's missiles have <good>10%</good> less top speed for 2 seconds.
+effect|MISSILE_SNARE_TOP_SPEED_MULT|12.5	0	Enemy ships hit by this ship's missiles have <good>12.5%</good> less top speed for 2 seconds.
+effect|MISSILE_SNARE_TOP_SPEED_MULT|100.0	0	Enemy ships hit by this ship's missiles have <good>100%</good> less top speed for 2 seconds.
+effect|MISSILE_SNARE_TOP_SPEED_MULT|-10.0	0	Enemy ships hit by this ship's missiles have <good>-10%</good> less top speed for 2 seconds.
+effect|MISSILE_SNARE_TOP_SPEED_MULT|-12.5	0	Enemy ships hit by this ship's missiles have <good>-12.5%</good> less top speed for 2 seconds.
 effect|MISSILE_WEAPON_AMMO_FLAT|1.0	0	<good>+1</good> to missile weapon ammo capacity.
 effect|MISSILE_WEAPON_AMMO_FLAT|10.0	0	<good>+10</good> to missile weapon ammo capacity.
 effect|MISSILE_WEAPON_AMMO_FLAT|12.5	0	<good>+12.5</good> to missile weapon ammo capacity.
@@ -2062,12 +2062,12 @@ effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|12.5	0	Non-beam energy w
 effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|100.0	0	Non-beam energy weapons have a <good>100%</good> chance to refract when hitting enemy shields.
 effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|-10.0	0	Non-beam energy weapons have a <good>-10%</good> chance to refract when hitting enemy shields.
 effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT|-12.5	0	Non-beam energy weapons have a <good>-12.5%</good> chance to refract when hitting enemy shields.
-effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT|1.0	0	Each refraction deals <bad>1%</bad> less damage than the shot before it.
-effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT|10.0	0	Each refraction deals <bad>10%</bad> less damage than the shot before it.
-effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT|12.5	0	Each refraction deals <bad>12.5%</bad> less damage than the shot before it.
-effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT|100.0	0	Each refraction deals <bad>100%</bad> less damage than the shot before it.
-effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT|-10.0	0	Each refraction deals <bad>-10%</bad> less damage than the shot before it.
-effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT|-12.5	0	Each refraction deals <bad>-12.5%</bad> less damage than the shot before it.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_MULT|1.0	0	Each refraction deals <bad>1%</bad> less damage than the shot before it.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_MULT|10.0	0	Each refraction deals <bad>10%</bad> less damage than the shot before it.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_MULT|12.5	0	Each refraction deals <bad>12.5%</bad> less damage than the shot before it.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_MULT|100.0	0	Each refraction deals <bad>100%</bad> less damage than the shot before it.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_MULT|-10.0	0	Each refraction deals <bad>-10%</bad> less damage than the shot before it.
+effect|NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_MULT|-12.5	0	Each refraction deals <bad>-12.5%</bad> less damage than the shot before it.
 effect|NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT|1.0	0	<good>1%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 effect|NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT|10.0	0	<good>10%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 effect|NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
@@ -2296,18 +2296,18 @@ effect|RAM_BIGGEST_ENEMY|12.5	0	When this ship isn't flown by you, it flies stra
 effect|RAM_BIGGEST_ENEMY|100.0	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
 effect|RAM_BIGGEST_ENEMY|-10.0	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
 effect|RAM_BIGGEST_ENEMY|-12.5	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
-effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|1.0	0	<good>1%</good> more collision damage dealt to enemy ships and <good>1%</good> less collision damage taken.
-effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|10.0	0	<good>10%</good> more collision damage dealt to enemy ships and <good>10%</good> less collision damage taken.
-effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> more collision damage dealt to enemy ships and <good>12.5%</good> less collision damage taken.
-effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|100.0	0	<good>100%</good> more collision damage dealt to enemy ships and <good>100%</good> less collision damage taken.
-effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> more collision damage dealt to enemy ships and <good>-10%</good> less collision damage taken.
-effect|RAM_PROW_COLLISION_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> more collision damage dealt to enemy ships and <good>-12.5%</good> less collision damage taken.
-effect|RATE_OF_FIRE_AURA_PERCENT|1.0	0	Enemy ships within 1000 su have <good>1%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
-effect|RATE_OF_FIRE_AURA_PERCENT|10.0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
-effect|RATE_OF_FIRE_AURA_PERCENT|12.5	0	Enemy ships within 1000 su have <good>12.5%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
-effect|RATE_OF_FIRE_AURA_PERCENT|100.0	0	Enemy ships within 1000 su have <good>100%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
-effect|RATE_OF_FIRE_AURA_PERCENT|-10.0	0	Enemy ships within 1000 su have <good>-10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
-effect|RATE_OF_FIRE_AURA_PERCENT|-12.5	0	Enemy ships within 1000 su have <good>-12.5%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+effect|RAM_PROW_COLLISION_DAMAGE_MULT|1.0	0	<good>1%</good> more collision damage dealt to enemy ships and <good>1%</good> less collision damage taken.
+effect|RAM_PROW_COLLISION_DAMAGE_MULT|10.0	0	<good>10%</good> more collision damage dealt to enemy ships and <good>10%</good> less collision damage taken.
+effect|RAM_PROW_COLLISION_DAMAGE_MULT|12.5	0	<good>12.5%</good> more collision damage dealt to enemy ships and <good>12.5%</good> less collision damage taken.
+effect|RAM_PROW_COLLISION_DAMAGE_MULT|100.0	0	<good>100%</good> more collision damage dealt to enemy ships and <good>100%</good> less collision damage taken.
+effect|RAM_PROW_COLLISION_DAMAGE_MULT|-10.0	0	<good>-10%</good> more collision damage dealt to enemy ships and <good>-10%</good> less collision damage taken.
+effect|RAM_PROW_COLLISION_DAMAGE_MULT|-12.5	0	<good>-12.5%</good> more collision damage dealt to enemy ships and <good>-12.5%</good> less collision damage taken.
+effect|RATE_OF_FIRE_AURA_MULT|1.0	0	Enemy ships within 1000 su have <good>1%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+effect|RATE_OF_FIRE_AURA_MULT|10.0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+effect|RATE_OF_FIRE_AURA_MULT|12.5	0	Enemy ships within 1000 su have <good>12.5%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+effect|RATE_OF_FIRE_AURA_MULT|100.0	0	Enemy ships within 1000 su have <good>100%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+effect|RATE_OF_FIRE_AURA_MULT|-10.0	0	Enemy ships within 1000 su have <good>-10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+effect|RATE_OF_FIRE_AURA_MULT|-12.5	0	Enemy ships within 1000 su have <good>-12.5%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
 effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|1.0	0	Your fleet has a <good>1%</good> chance for each ship it recovers after a battle to gain no d-mods, up to a maximum of 30%.
 effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|10.0	0	Your fleet has a <good>10%</good> chance for each ship it recovers after a battle to gain no d-mods, up to a maximum of 30%.
 effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|12.5	0	Your fleet has a <good>12.5%</good> chance for each ship it recovers after a battle to gain no d-mods, up to a maximum of 30%.
@@ -2380,12 +2380,12 @@ effect|RISE_FROM_THE_ASHES_ARMOR_RESTORE_PERCENT|12.5	0	Surviving that hit resto
 effect|RISE_FROM_THE_ASHES_ARMOR_RESTORE_PERCENT|100.0	0	Surviving that hit restores <good>100%</good> of maximum armor to every armor cell.
 effect|RISE_FROM_THE_ASHES_ARMOR_RESTORE_PERCENT|-10.0	0	Surviving that hit restores <good>-10%</good> of maximum armor to every armor cell.
 effect|RISE_FROM_THE_ASHES_ARMOR_RESTORE_PERCENT|-12.5	0	Surviving that hit restores <good>-12.5%</good> of maximum armor to every armor cell.
-effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_PERCENT|1.0	0	<bad>1%</bad> more damage taken for 6 seconds after surviving that hit.
-effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_PERCENT|10.0	0	<bad>10%</bad> more damage taken for 6 seconds after surviving that hit.
-effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_PERCENT|12.5	0	<bad>12.5%</bad> more damage taken for 6 seconds after surviving that hit.
-effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_PERCENT|100.0	0	<bad>100%</bad> more damage taken for 6 seconds after surviving that hit.
-effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_PERCENT|-10.0	0	<good>10%</good> less damage taken for 6 seconds after surviving that hit.
-effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_PERCENT|-12.5	0	<good>12.5%</good> less damage taken for 6 seconds after surviving that hit.
+effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_MULT|1.0	0	<bad>1%</bad> more damage taken for 6 seconds after surviving that hit.
+effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_MULT|10.0	0	<bad>10%</bad> more damage taken for 6 seconds after surviving that hit.
+effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_MULT|12.5	0	<bad>12.5%</bad> more damage taken for 6 seconds after surviving that hit.
+effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_MULT|100.0	0	<bad>100%</bad> more damage taken for 6 seconds after surviving that hit.
+effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_MULT|-10.0	0	<good>10%</good> less damage taken for 6 seconds after surviving that hit.
+effect|RISE_FROM_THE_ASHES_DAMAGE_TAKEN_MULT|-12.5	0	<good>12.5%</good> less damage taken for 6 seconds after surviving that hit.
 effect|RISE_FROM_THE_ASHES_HULL_PERCENT|1.0	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>1%</good> of its maximum hull points.
 effect|RISE_FROM_THE_ASHES_HULL_PERCENT|10.0	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>10%</good> of its maximum hull points.
 effect|RISE_FROM_THE_ASHES_HULL_PERCENT|12.5	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>12.5%</good> of its maximum hull points.
@@ -2518,12 +2518,12 @@ effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|12.5	0	<good>12.5%</good> reduced da
 effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|100.0	0	<good>100%</good> reduced damage taken by shields while moving faster than 75% of top speed.
 effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|-10.0	0	<good>10%</good> reduced damage taken by shields while moving faster than 75% of top speed.
 effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|-12.5	0	<good>12.5%</good> reduced damage taken by shields while moving faster than 75% of top speed.
-effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|1.0	0	<good>1%</good> less damage taken by shields from automated ships.
-effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|10.0	0	<good>10%</good> less damage taken by shields from automated ships.
-effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|12.5	0	<good>12.5%</good> less damage taken by shields from automated ships.
-effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|100.0	0	<good>100%</good> less damage taken by shields from automated ships.
-effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|-10.0	0	<good>-10%</good> less damage taken by shields from automated ships.
-effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_PERCENT|-12.5	0	<good>-12.5%</good> less damage taken by shields from automated ships.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_MULT|1.0	0	<good>1%</good> less damage taken by shields from automated ships.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_MULT|10.0	0	<good>10%</good> less damage taken by shields from automated ships.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_MULT|12.5	0	<good>12.5%</good> less damage taken by shields from automated ships.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_MULT|100.0	0	<good>100%</good> less damage taken by shields from automated ships.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_MULT|-10.0	0	<good>-10%</good> less damage taken by shields from automated ships.
+effect|SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_MULT|-12.5	0	<good>-12.5%</good> less damage taken by shields from automated ships.
 effect|SHIELD_DAMAGE_TAKEN_MULT|1.0	1	<good>1%</good> more damage taken by shields.
 effect|SHIELD_DAMAGE_TAKEN_MULT|10.0	1	<good>10%</good> more damage taken by shields.
 effect|SHIELD_DAMAGE_TAKEN_MULT|12.5	1	<good>12.5%</good> more damage taken by shields.
@@ -2614,12 +2614,12 @@ effect|SHROUDED_LENS_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased Shrouded
 effect|SHROUDED_LENS_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased Shrouded Lens damage.
 effect|SHROUDED_LENS_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> increased Shrouded Lens damage.
 effect|SHROUDED_LENS_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> increased Shrouded Lens damage.
-effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|1.0	0	Allied ships of a smaller hull size within 800 su take <good>1%</good> less damage. Only the strongest buff of this effect applies at any one time.
-effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|10.0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
-effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|12.5	0	Allied ships of a smaller hull size within 800 su take <good>12.5%</good> less damage. Only the strongest buff of this effect applies at any one time.
-effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|100.0	0	Allied ships of a smaller hull size within 800 su take <good>100%</good> less damage. Only the strongest buff of this effect applies at any one time.
-effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|-10.0	0	Allied ships of a smaller hull size within 800 su take <good>-10%</good> less damage. Only the strongest buff of this effect applies at any one time.
-effect|SMALLER_ALLY_DAMAGE_TAKEN_PERCENT|-12.5	0	Allied ships of a smaller hull size within 800 su take <good>-12.5%</good> less damage. Only the strongest buff of this effect applies at any one time.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_MULT|1.0	0	Allied ships of a smaller hull size within 800 su take <good>1%</good> less damage. Only the strongest buff of this effect applies at any one time.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_MULT|10.0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_MULT|12.5	0	Allied ships of a smaller hull size within 800 su take <good>12.5%</good> less damage. Only the strongest buff of this effect applies at any one time.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_MULT|100.0	0	Allied ships of a smaller hull size within 800 su take <good>100%</good> less damage. Only the strongest buff of this effect applies at any one time.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_MULT|-10.0	0	Allied ships of a smaller hull size within 800 su take <good>-10%</good> less damage. Only the strongest buff of this effect applies at any one time.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_MULT|-12.5	0	Allied ships of a smaller hull size within 800 su take <good>-12.5%</good> less damage. Only the strongest buff of this effect applies at any one time.
 effect|SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP|1.0	0	All damage from weapons in small energy mounts is converted to EMP damage.
 effect|SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP|10.0	0	All damage from weapons in small energy mounts is converted to EMP damage.
 effect|SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP|12.5	0	All damage from weapons in small energy mounts is converted to EMP damage.
@@ -3297,6 +3297,11 @@ type|all_must_serve|CRUISER|0	0	Enemy ships destroyed within 1500 su of this shi
 type|all_must_serve|CRUISER|1	0	Takes <good>10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
 type|all_must_serve|CAPITAL_SHIP|0	0	Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.
 type|all_must_serve|CAPITAL_SHIP|1	0	Takes <good>10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
+type|all_weapon_damage|null|0	0	<good>5%</good> increased weapon damage.
+type|all_weapon_damage|FRIGATE|0	0	<good>5%</good> increased weapon damage.
+type|all_weapon_damage|DESTROYER|0	0	<good>5%</good> increased weapon damage.
+type|all_weapon_damage|CRUISER|0	0	<good>5%</good> increased weapon damage.
+type|all_weapon_damage|CAPITAL_SHIP|0	0	<good>5%</good> increased weapon damage.
 type|ammo_capacity|null|0	0	<good>20%</good> increased ballistic weapon ammo capacity.
 type|ammo_capacity|null|1	0	<good>20%</good> increased energy weapon ammo capacity.
 type|ammo_capacity|FRIGATE|0	0	<good>20%</good> increased ballistic weapon ammo capacity.
@@ -4140,12 +4145,6 @@ type|efficient_vents|CRUISER|0	0	<good>15%</good> increased flux dissipation.
 type|efficient_vents|CRUISER|1	0	<good>+50</good> to flux dissipation.
 type|efficient_vents|CAPITAL_SHIP|0	0	<good>15%</good> increased flux dissipation.
 type|efficient_vents|CAPITAL_SHIP|1	0	<good>+50</good> to flux dissipation.
-flavour|emp_damage	0	Capacitor banks rewound to Tri-Tachyon specifications put more charge behind every hit. The specifications were not for sale, strictly speaking.
-type|emp_damage|null|0	0	<good>5%</good> more EMP damage.
-type|emp_damage|FRIGATE|0	0	<good>5%</good> more EMP damage.
-type|emp_damage|DESTROYER|0	0	<good>5%</good> more EMP damage.
-type|emp_damage|CRUISER|0	0	<good>5%</good> more EMP damage.
-type|emp_damage|CAPITAL_SHIP|0	0	<good>5%</good> more EMP damage.
 type|energy_damage_resistance|null|0	1	<bad>5%</bad> reduced energy damage taken.
 type|energy_damage_resistance|FRIGATE|0	1	<bad>5%</bad> reduced energy damage taken.
 type|energy_damage_resistance|DESTROYER|0	1	<bad>5%</bad> reduced energy damage taken.

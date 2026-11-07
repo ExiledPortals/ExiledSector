@@ -493,6 +493,12 @@
 			"id": "all_weapon_damage",
 			"name": "All Weapon Damage",
 			"icon": "graphics/icons/weapon_damage.png",
+			"effects": [
+				{
+					"effect": "WEAPON_DAMAGE_PERCENT",
+					"magnitude": 5
+				}
+			],
 			"tags": [
 				"weapons"
 			]
@@ -683,7 +689,7 @@
 					"magnitude": 20
 				},
 				{
-					"effect": "NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT",
+					"effect": "NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_MULT",
 					"magnitude": 20
 				}
 			],
@@ -884,7 +890,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "SMALLER_ALLY_DAMAGE_TAKEN_PERCENT",
+					"effect": "SMALLER_ALLY_DAMAGE_TAKEN_MULT",
 					"magnitude": 10
 				}
 			],
@@ -1976,7 +1982,7 @@
 					"magnitude": 5
 				},
 				{
-					"effect": "HEARTLESS_ARMOR_PERCENT_PER_STACK",
+					"effect": "HEARTLESS_ARMOR_MULT_PER_STACK",
 					"magnitude": 2
 				},
 				{
@@ -3188,7 +3194,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "RAM_PROW_COLLISION_DAMAGE_PERCENT",
+					"effect": "RAM_PROW_COLLISION_DAMAGE_MULT",
 					"magnitude": 50
 				}
 			],
@@ -3936,7 +3942,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "RATE_OF_FIRE_AURA_PERCENT",
+					"effect": "RATE_OF_FIRE_AURA_MULT",
 					"magnitude": 10
 				}
 			],
@@ -4202,7 +4208,7 @@
 					"magnitude": 100
 				},
 				{
-					"effect": "FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER",
+					"effect": "FIGHTER_WING_DAMAGE_TAKEN_MULT_PER_FIGHTER",
 					"magnitude": 10
 				}
 			],
@@ -4258,7 +4264,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "GRAVITY_DRAG_TIMEFLOW_PERCENT",
+					"effect": "GRAVITY_DRAG_TIMEFLOW_MULT",
 					"magnitude": 5
 				}
 			],
@@ -5481,7 +5487,7 @@
 					"magnitude": 50
 				},
 				{
-					"effect": "RISE_FROM_THE_ASHES_DAMAGE_TAKEN_PERCENT",
+					"effect": "RISE_FROM_THE_ASHES_DAMAGE_TAKEN_MULT",
 					"magnitude": -50
 				}
 			],
@@ -5526,22 +5532,6 @@
 			"flavour": "The Merite Class Destroyer is often praised by its ability to assault enemy ships by sheer brute force, thanks to its Jump Jets ship system. By listening to \"sage\" advice from fellow Navarchy of Tania officers, you order your crew to refit the ship with increased weight and improved protection against collateral effects from excessive G-force.",
 			"tags": [
 				"hull"
-			]
-		},
-		{
-			"id": "emp_damage",
-			"name": "EMP Damage",
-			"icon": "",
-			"effects": [
-				{
-					"effect": "EMP_DAMAGE_PERCENT",
-					"magnitude": 5
-				}
-			],
-			"flavour": "Capacitor banks rewound to Tri-Tachyon specifications put more charge behind every hit. The specifications were not for sale, strictly speaking.",
-			"todo": "Needs an icon.",
-			"tags": [
-				"weapons"
 			]
 		},
 		{

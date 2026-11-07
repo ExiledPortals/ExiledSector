@@ -193,7 +193,7 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             RiseFromTheAshesListener::new)),
     RISE_FROM_THE_ASHES_ARMOR_RESTORE_PERCENT(listener(RiseFromTheAshesListener.ARMOR_RESTORE_PERCENT_KEY, RiseFromTheAshesListener.class,
             RiseFromTheAshesListener::new)),
-    RISE_FROM_THE_ASHES_DAMAGE_TAKEN_PERCENT(listener(RiseFromTheAshesListener.DAMAGE_TAKEN_PERCENT_KEY, RiseFromTheAshesListener.class,
+    RISE_FROM_THE_ASHES_DAMAGE_TAKEN_MULT(listener(RiseFromTheAshesListener.DAMAGE_TAKEN_PERCENT_KEY, RiseFromTheAshesListener.class,
             RiseFromTheAshesListener::new)) {
         @Override
         public StyledText description(float magnitude) {
@@ -257,7 +257,7 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", Math.abs(magnitude)).arg("range", HeldObjective.RANGE).styled();
         }
     },
-    RAM_PROW_COLLISION_DAMAGE_PERCENT(listener(CollisionDamageListener.COLLISION_DAMAGE_PERCENT_KEY, CollisionDamageListener.class,
+    RAM_PROW_COLLISION_DAMAGE_MULT(listener(CollisionDamageListener.COLLISION_DAMAGE_PERCENT_KEY, CollisionDamageListener.class,
             CollisionDamageListener::new)),
     HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST(listener(CrewLossHullDamageListener.PERCENT_PER_STEP_KEY, CrewLossHullDamageListener.class,
             CrewLossHullDamageListener::new)) {

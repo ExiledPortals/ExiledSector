@@ -46,6 +46,8 @@ When several of our own sources of one effect are summed with each other first a
 | summed with the stat's other sources | 15% increased flux capacity | 15% reduced flux capacity |
 | its own multiplier | 15% more flux capacity | 15% less flux capacity |
 
+An effect's name follows the same split: `_PERCENT` for increased/reduced, `_MULT` for more/less (`FLUX_CAPACITY_PERCENT`, `FLUX_CAPACITY_MULT`), whether it goes through `StatMode` or its own listener. `EffectNamingTest` fails when a name and its tooltip disagree.
+
 Never print a negative "increased" or "more". Flip the word instead: "10% reduced", not "-10% increased".
 
 "Increased" and "reduced" describe the stat, not whether the change is good. A penalty to damage taken is "15% increased damage taken" in `<bad>` colour.

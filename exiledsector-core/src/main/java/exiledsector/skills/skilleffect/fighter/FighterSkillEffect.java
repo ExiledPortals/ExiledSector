@@ -315,7 +315,7 @@ public enum FighterSkillEffect implements BackedSkillEffect {
     },
     STRIKECRAFT_RIFT_EXPLOSION_DAMAGE_PERCENT(new FighterListenerEffect<>(StrikecraftRiftExplosionDamageListener.DAMAGE_PERCENT_KEY,
             StrikecraftRiftExplosionDamageListener.class, (fighter, carrier) -> new StrikecraftRiftExplosionDamageListener(carrier))),
-    FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER(new FighterListenerEffect<>(WingNumbersDamageListener.REDUCTION_PERCENT_PER_FIGHTER_KEY,
+    FIGHTER_WING_DAMAGE_TAKEN_MULT_PER_FIGHTER(new FighterListenerEffect<>(WingNumbersDamageListener.REDUCTION_PERCENT_PER_FIGHTER_KEY,
             WingNumbersDamageListener.class, WingNumbersDamageListener::new)) {
 
         @Override

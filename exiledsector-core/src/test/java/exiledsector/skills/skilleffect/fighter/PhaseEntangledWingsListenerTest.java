@@ -258,7 +258,7 @@ class PhaseEntangledWingsListenerTest {
         when(armor.getArmorRating()).thenReturn(50f);
         when(wingmate.getArmorGrid()).thenReturn(armor);
         wingOf(hit, wingmate);
-        FighterSkillEffect.FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER.applyToFighterSpawnedByShip(wingmate,
+        FighterSkillEffect.FIGHTER_WING_DAMAGE_TAKEN_MULT_PER_FIGHTER.applyToFighterSpawnedByShip(wingmate,
                 FighterCarriers.with(WingNumbersDamageListener.REDUCTION_PERCENT_PER_FIGHTER_KEY, 10f), "mod_id", 10f);
         ArgumentCaptor<Object> wingNumbers = ArgumentCaptor.forClass(Object.class);
         verify(wingmate).addListener(wingNumbers.capture());

@@ -8278,7 +8278,7 @@
 				"affinity_119",
 				"affinity_121",
 				"energy_weapon_fire_rate_7",
-				"emp_damage_1",
+				"all_weapon_damage_1",
 				"affinity_46"
 			],
 			"x": 0,
@@ -8657,7 +8657,7 @@
 			"connectedTo": [
 				"affinity_131",
 				"affinity_133",
-				"emp_damage_3"
+				"all_weapon_damage_3"
 			],
 			"x": 7922,
 			"y": -8107,
@@ -8769,11 +8769,11 @@
 			]
 		},
 		{
-			"id": "emp_damage_3",
-			"type": "emp_damage",
+			"id": "all_weapon_damage_3",
+			"type": "all_weapon_damage",
 			"connectedTo": [
 				"affinity_132",
-				"emp_damage_4"
+				"all_weapon_damage_4"
 			],
 			"x": 8276,
 			"y": -7420,
@@ -8783,10 +8783,10 @@
 			]
 		},
 		{
-			"id": "emp_damage_4",
-			"type": "emp_damage",
+			"id": "all_weapon_damage_4",
+			"type": "all_weapon_damage",
 			"connectedTo": [
-				"emp_damage_3",
+				"all_weapon_damage_3",
 				"ion_spill_1"
 			],
 			"x": 8794,
@@ -8800,7 +8800,7 @@
 			"id": "ion_spill_1",
 			"type": "ion_spill",
 			"connectedTo": [
-				"emp_damage_4"
+				"all_weapon_damage_4"
 			],
 			"x": 9380,
 			"y": -6747,
@@ -9587,10 +9587,10 @@
 			]
 		},
 		{
-			"id": "emp_damage_1",
-			"type": "emp_damage",
+			"id": "all_weapon_damage_1",
+			"type": "all_weapon_damage",
 			"connectedTo": [
-				"emp_damage_2",
+				"all_weapon_damage_2",
 				"affinity_118"
 			],
 			"x": 776,
@@ -9602,10 +9602,10 @@
 			]
 		},
 		{
-			"id": "emp_damage_2",
-			"type": "emp_damage",
+			"id": "all_weapon_damage_2",
+			"type": "all_weapon_damage",
 			"connectedTo": [
-				"emp_damage_1",
+				"all_weapon_damage_1",
 				"ion_cascade_1"
 			],
 			"x": 1590,
@@ -9620,7 +9620,7 @@
 			"id": "ion_cascade_1",
 			"type": "ion_cascade",
 			"connectedTo": [
-				"emp_damage_2"
+				"all_weapon_damage_2"
 			],
 			"x": 2298,
 			"y": -14928,
@@ -12466,18 +12466,18 @@
 		},
 		{
 			"a": "affinity_132",
-			"b": "emp_damage_3",
+			"b": "all_weapon_damage_3",
 			"controlX": 8071,
 			"controlY": -7738
 		},
 		{
-			"a": "emp_damage_3",
-			"b": "emp_damage_4",
+			"a": "all_weapon_damage_3",
+			"b": "all_weapon_damage_4",
 			"controlX": 8519,
 			"controlY": -7157
 		},
 		{
-			"a": "emp_damage_4",
+			"a": "all_weapon_damage_4",
 			"b": "ion_spill_1",
 			"controlX": 9085,
 			"controlY": -6820
@@ -12663,20 +12663,20 @@
 			"controlY": -15974
 		},
 		{
-			"a": "emp_damage_1",
-			"b": "emp_damage_2",
+			"a": "all_weapon_damage_1",
+			"b": "all_weapon_damage_2",
 			"controlX": 1196,
 			"controlY": -15751
 		},
 		{
-			"a": "emp_damage_2",
+			"a": "all_weapon_damage_2",
 			"b": "ion_cascade_1",
 			"controlX": 1968,
 			"controlY": -15264
 		},
 		{
 			"a": "affinity_118",
-			"b": "emp_damage_1",
+			"b": "all_weapon_damage_1",
 			"controlX": 391,
 			"controlY": -15974
 		},

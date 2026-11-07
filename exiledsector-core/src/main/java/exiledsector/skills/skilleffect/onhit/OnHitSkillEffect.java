@@ -40,7 +40,7 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
             return true;
         }
     },
-    NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT(listener(RefractionListener.FALLOFF_KEY, RefractionListener.class, RefractionListener::new)) {
+    NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_MULT(listener(RefractionListener.FALLOFF_KEY, RefractionListener.class, RefractionListener::new)) {
         @Override
         public boolean reshapesDealtDamage() {
             return true;
@@ -90,7 +90,7 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("seconds", ArmorBurnListener.BURN_SECONDS).styled();
         }
     },
-    MISSILE_SNARE_TOP_SPEED_PERCENT(listener(MissileSnareListener.TOP_SPEED_PERCENT_KEY, MissileSnareListener.class, MissileSnareListener::new)) {
+    MISSILE_SNARE_TOP_SPEED_MULT(listener(MissileSnareListener.TOP_SPEED_PERCENT_KEY, MissileSnareListener.class, MissileSnareListener::new)) {
         @Override
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", magnitude).arg("seconds", MissileSnareListener.SNARE_SECONDS).styled();

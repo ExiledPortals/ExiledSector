@@ -35,8 +35,8 @@ class FleetContributionsTest {
     void contributionEffectsReportTheirModeAndWhetherNpcShipsCarryThem() {
         assertFalse(LogisticsSkillEffect.POST_BATTLE_WEAPON_SALVAGE_PERCENT.appliesToNpcShips());
         assertFalse(LogisticsSkillEffect.RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT.appliesToNpcShips());
-        assertTrue(LogisticsSkillEffect.FLEET_CORONA_RESISTANCE_PERCENT.appliesToNpcShips());
-        assertNull(LogisticsSkillEffect.FLEET_CORONA_RESISTANCE_PERCENT.statMode());
+        assertTrue(LogisticsSkillEffect.FLEET_CORONA_RESISTANCE_MULT.appliesToNpcShips());
+        assertNull(LogisticsSkillEffect.FLEET_CORONA_RESISTANCE_MULT.statMode());
         assertNull(LogisticsSkillEffect.BLACK_HOLE_HULL_ITEM_PERCENT.statMode());
         assertEquals(StatMode.MULT, LogisticsSkillEffect.MOVE_SLOW_SUPPLY_USE_MULT.statMode());
         assertTrue(LogisticsSkillEffect.MOVE_SLOW_SUPPLY_USE_MULT.isMultiplicative());

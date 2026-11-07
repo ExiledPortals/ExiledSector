@@ -183,7 +183,7 @@ weapons in `energy_chain_blocklist.csv` never refract. As with Lion's Gaze, a po
 weapon as an instant single shot, then hands the projectile to the firing ship so its on-hit effects and
 kill credit apply.
 
-`NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_PERCENT` lowers each refraction's base damage and restores it after the
+`NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_MULT` lowers each refraction's base damage and restores it after the
 hit, rather than using a modifier, so EMP and on-hit effects stay at full strength.
 
 ### Projectile echoes
@@ -243,7 +243,7 @@ share of a Hungering Rift heal the ship receives.
 
 ### Missile snare
 
-`MISSILE_SNARE_TOP_SPEED_PERCENT` multiplies the top speed of an enemy ship hit by this ship's missiles for 2 seconds,
+`MISSILE_SNARE_TOP_SPEED_MULT` multiplies the top speed of an enemy ship hit by this ship's missiles for 2 seconds,
 refreshed by each hit, capped at 90% less. As with shield disruption, the strongest source applies
 (`MissileSnareListener`).
 
@@ -266,7 +266,7 @@ and temporarily disables whichever working weapon or engine sits nearest the imp
 
 ### Auxiliary Screen
 
-`SMALLER_ALLY_DAMAGE_TAKEN_PERCENT` multiplies the hull, armor and shield damage taken by allied ships of a smaller
+`SMALLER_ALLY_DAMAGE_TAKEN_MULT` multiplies the hull, armor and shield damage taken by allied ships of a smaller
 hull size within 800 su, rechecked every 0.25 seconds. Strike craft and station modules don't count, and only the
 strongest source applies (`AuxiliaryScreenField`).
 
@@ -284,7 +284,7 @@ total, capped at 15%, reduces every member's maintenance supply use at each flee
 
 ### Lion's Roar
 
-`RATE_OF_FIRE_AURA_PERCENT` multiplies the ballistic, energy and missile rate of fire of enemy ships within 1000 su,
+`RATE_OF_FIRE_AURA_MULT` multiplies the ballistic, energy and missile rate of fire of enemy ships within 1000 su,
 rechecked every 0.25 seconds. Strike craft don't count, and only the strongest source applies (`RateOfFireAuraField`).
 
 ### Honor Guard
@@ -329,7 +329,7 @@ burn level (`TowLines`, called from `SkillTreeHullMod.onFleetSync`).
 
 ### Pather's Prow
 
-The node uses Ram-plated's `RAM_PROW_COLLISION_DAMAGE_PERCENT` (see Pirate Badlands modifiers); tree and hull item
+The node uses Ram-plated's `RAM_PROW_COLLISION_DAMAGE_MULT` (see Pirate Badlands modifiers); tree and hull item
 values add up before the multiplier is applied (`CollisionDamageListener`).
 
 ### Litany of the Fallen
