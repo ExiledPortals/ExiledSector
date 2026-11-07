@@ -13718,6 +13718,76 @@
 		},
 		{
 			"kind": "image",
+			"id": "luddic_nebula_back_1",
+			"x": 8493,
+			"y": 17640,
+			"width": 1700,
+			"height": 1700,
+			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_back_1.png",
+			"rotation": 285,
+			"parallax": 0.9,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "luddic_nebula_back_2",
+			"x": 7396,
+			"y": 18043,
+			"width": 1700,
+			"height": 1700,
+			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_back_2.png",
+			"rotation": 285,
+			"parallax": 0.9,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "luddic_nebula_back_3",
+			"x": 8285,
+			"y": 17871,
+			"width": 1700,
+			"height": 1700,
+			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_back_3.png",
+			"rotation": 285,
+			"parallax": 0.9,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "luddic_nebula_back_4",
+			"x": 7830,
+			"y": 16666,
+			"width": 1700,
+			"height": 1700,
+			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_back_4.png",
+			"rotation": 285,
+			"parallax": 0.9,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "luddic_nebula_back_5",
+			"x": 9078,
+			"y": 16541,
+			"width": 1700,
+			"height": 1700,
+			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_back_5.png",
+			"rotation": 285,
+			"parallax": 0.9,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"kind": "image",
 			"id": "luddic_nebula",
 			"x": 8243,
 			"y": 17119,
@@ -13731,6 +13801,132 @@
 		},
 		{
 			"kind": "image",
+			"id": "luddic_nebula_front_1",
+			"x": 8172,
+			"y": 16881,
+			"width": 1700,
+			"height": 1700,
+			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_front_1.png",
+			"rotation": 285,
+			"parallax": 1.1,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "luddic_nebula_front_2",
+			"x": 7895,
+			"y": 17538,
+			"width": 1700,
+			"height": 1700,
+			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_front_2.png",
+			"rotation": 285,
+			"parallax": 1.1,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "luddic_nebula_front_3",
+			"x": 7759,
+			"y": 17969,
+			"width": 1700,
+			"height": 1700,
+			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_front_3.png",
+			"rotation": 285,
+			"parallax": 1.1,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "luddic_nebula_front_4",
+			"x": 8791,
+			"y": 17593,
+			"width": 1700,
+			"height": 1700,
+			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_front_4.png",
+			"rotation": 285,
+			"parallax": 1.1,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "luddic_nebula_front_5",
+			"x": 7488,
+			"y": 17889,
+			"width": 1700,
+			"height": 1700,
+			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_front_5.png",
+			"rotation": 285,
+			"parallax": 1.1,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "tania_nebula_back_1",
+			"x": 4953,
+			"y": 29877,
+			"width": 6400,
+			"height": 6400,
+			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_back_1.png",
+			"behindStars": true,
+			"parallax": 0.85,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "tania_nebula_back_2",
+			"x": -5232,
+			"y": 28635,
+			"width": 6400,
+			"height": 6400,
+			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_back_2.png",
+			"behindStars": true,
+			"parallax": 0.85,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "tania_nebula_back_3",
+			"x": -1019,
+			"y": 35203,
+			"width": 6400,
+			"height": 6400,
+			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_back_3.png",
+			"behindStars": true,
+			"parallax": 0.85,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "tania_nebula_back_4",
+			"x": -2118,
+			"y": 26293,
+			"width": 6400,
+			"height": 6400,
+			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_back_4.png",
+			"behindStars": true,
+			"parallax": 0.85,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"kind": "image",
 			"id": "tania_nebula",
 			"x": 0,
 			"y": 30750,
@@ -13738,6 +13934,76 @@
 			"height": 12800,
 			"imagePath": "graphics/backgrounds/static_images/tania_nebula.png",
 			"behindStars": true,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "tania_nebula_front_1",
+			"x": 1944,
+			"y": 29172,
+			"width": 6400,
+			"height": 6400,
+			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_front_1.png",
+			"behindStars": true,
+			"parallax": 1.15,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "tania_nebula_front_2",
+			"x": -2852,
+			"y": 32441,
+			"width": 6400,
+			"height": 6400,
+			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_front_2.png",
+			"behindStars": true,
+			"parallax": 1.15,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "tania_nebula_front_3",
+			"x": 1675,
+			"y": 32806,
+			"width": 6400,
+			"height": 6400,
+			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_front_3.png",
+			"behindStars": true,
+			"parallax": 1.15,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "tania_nebula_front_4",
+			"x": -3046,
+			"y": 29108,
+			"width": 6400,
+			"height": 6400,
+			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_front_4.png",
+			"behindStars": true,
+			"parallax": 1.15,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "tania_nebula_front_5",
+			"x": -4785,
+			"y": 30995,
+			"width": 6400,
+			"height": 6400,
+			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_front_5.png",
+			"behindStars": true,
+			"parallax": 1.15,
 			"tags": [
 				"tania"
 			]
