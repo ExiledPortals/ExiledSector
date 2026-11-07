@@ -139,7 +139,7 @@ public final class AffinitySteps {
         totals.merge(target, removed * percent / 100f, Float::sum);
     }
 
-    private static SkillEffect highest(Map<SkillEffect, Float> totals) {
+    static SkillEffect highest(Map<SkillEffect, Float> totals) {
         SkillEffect highest = SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT;
         for (SkillEffect affinity : STEPS_BY_AFFINITY.keySet()) {
             if (totals.getOrDefault(affinity, 0f) > totals.getOrDefault(highest, 0f)) {

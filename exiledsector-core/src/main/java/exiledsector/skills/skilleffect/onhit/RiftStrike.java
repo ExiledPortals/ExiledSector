@@ -1,7 +1,9 @@
 package exiledsector.skills.skilleffect.onhit;
 
+import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
+import exiledsector.skills.skilleffect.weapon.BallisticAsEnergy;
 
 public final class RiftStrike {
 
@@ -19,6 +21,10 @@ public final class RiftStrike {
         }
         WeaponType type = weaponSpec.getType();
         return type == WeaponType.ENERGY || ballisticCountsAsEnergy && type == WeaponType.BALLISTIC;
+    }
+
+    public static boolean firesRifts(WeaponAPI weapon) {
+        return weapon != null && !weapon.isBeam() && BallisticAsEnergy.countsAsEnergy(weapon);
     }
 
     public static float baseRiftDamage(WeaponSpecAPI weaponSpec) {

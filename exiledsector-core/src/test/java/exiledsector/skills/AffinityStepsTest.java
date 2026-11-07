@@ -7,6 +7,7 @@ import exiledsector.skills.skilleffect.fighter.FighterSkillEffect;
 import exiledsector.skills.skilleffect.flux.FluxSkillEffect;
 import exiledsector.skills.skilleffect.logistics.LogisticsSkillEffect;
 import exiledsector.skills.skilleffect.movement.MovementSkillEffect;
+import exiledsector.skills.skilleffect.onhit.OnHitSkillEffect;
 import exiledsector.skills.skilleffect.special.SpecialSkillEffect;
 import org.junit.jupiter.api.Test;
 
@@ -51,6 +52,16 @@ class AffinityStepsTest {
                 scaled(List.of(item, node(LOW_TECH, 25f), node(HIGH_TECH, 9f))));
         assertEquals(Map.of(FighterSkillEffect.FIGHTER_DAMAGE_TAKEN_MULT, -1f), scaled(List.of(item, node(HIGH_TECH, 9f), node(MIDLINE, 6f))));
         assertEquals(Map.of(), scaled(List.of(item, node(LOW_TECH, 9f))));
+    }
+
+    @Test
+    void aHighestAffinityScaledEffectCountsOnlyTheHighestAffinity() {
+        EffectContribution notable = EffectContribution.scaledPermanent("notable", "notable_", List.of(
+                new SkillTypeEffect(SpecialSkillEffect.MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY, 1f)));
+
+        assertEquals(Map.of(OnHitSkillEffect.MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT, 4f),
+                scaled(List.of(notable, node(LOW_TECH, 14f), node(HIGH_TECH, 21f), node(MIDLINE, 19f))));
+        assertEquals(Map.of(), scaled(List.of(notable, node(LOW_TECH, 4f), node(MIDLINE, 4f))));
     }
 
     @Test

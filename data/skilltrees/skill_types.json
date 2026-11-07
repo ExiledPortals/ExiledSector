@@ -4847,6 +4847,10 @@
 				{
 					"effect": "RIFT_EXPLOSION_DAMAGE_PERCENT",
 					"magnitude": 10
+				},
+				{
+					"effect": "STRIKECRAFT_RIFT_EXPLOSION_DAMAGE_PERCENT",
+					"magnitude": 10
 				}
 			],
 			"todo": "Needs an icon.",
@@ -5667,6 +5671,77 @@
 			"tags": [
 				"energy",
 				"req_energy"
+			]
+		},
+		{
+			"id": "strikecraft_weapon_range",
+			"name": "Strikecraft Weapon Range",
+			"icon": "",
+			"effects": [
+				{
+					"effect": "FIGHTER_WEAPON_RANGE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"todo": "Needs an icon.",
+			"tags": [
+				"fighter",
+				"req_fighter_bays"
+			]
+		},
+		{
+			"id": "spark_rift",
+			"name": "Spark Rift",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"flavour": "Spark drones from a Remnant carrier were stripped and studied in a Hegemony hangar for a full cycle. The findings went into the ship's own strike craft emitters. The Hegemony report stays classified, mostly out of embarrassment.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"fighter",
+				"req_fighter_bays"
+			]
+		},
+		{
+			"id": "temporal_exhaust",
+			"name": "Temporal Exhaust",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "SYSTEM_ACTIVATION_TIMEFLOW_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"flavour": "Sensor logs of a Tesseract's drive plume were replayed until the timestamps stopped agreeing with each other. The chief engineer retuned the engine nozzles to the same timing. The exhaust now registers on sensors a moment before the burn that made it. Maintenance files this under minor faults.",
+			"flavourAutomated": "Sensor logs of a Tesseract's drive plume were replayed until the timestamps stopped agreeing with each other. The ship's core matched its engine timing to the logs, and the refit crew retuned the nozzles in dock. The exhaust now registers on sensors a moment before the burn that made it. Maintenance files this under minor faults.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"speed"
+			]
+		},
+		{
+			"id": "resonator_payload",
+			"name": "Resonator Payload",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY",
+					"magnitude": 1
+				}
+			],
+			"flavour": "Fragments of a Resonator MRM warhead, pulled from a wreck of no known design, still hum at a frequency the instruments can't settle on. The crew seeds a sliver of one into every missile the ship loads. Ordnance inventory lists them as ballast.",
+			"flavourAutomated": "Fragments of a Resonator MRM warhead, pulled from a wreck of no known design, still hum at a frequency the instruments can't settle on. On the core's instructions, the refit crew seeds a sliver of one into every missile in the ship's magazines. Ordnance inventory lists them as ballast.",
+			"todo": "Needs an icon.",
+			"tags": [
+				"missile",
+				"req_missile"
 			]
 		}
 	]

@@ -1054,5 +1054,14 @@
     "skillType.phantom_wake.flavour": "相位线圈过猛地切入相位空间时，会在常规空间留下舰体的回声，持续片刻。Tri-Tachyon 的工程师曾将其归档为故障。船员故意调偏线圈，好留下一道回声，敌方炮手已为此提交投诉。",
     "skillType.phantom_wake.flavourAutomated": "相位线圈过猛地切入相位空间时，会在常规空间留下舰体的回声，持续片刻。Tri-Tachyon 的研究日志将其归档为故障。舰载核心故意调偏自身线圈，好留下一道回声，敌方炮手已为此提交投诉。",
     "skillType.cease_and_desist.flavour": "按 Tri-Tachyon 授权制造的能量武器带有一段信号，告诉目标的系统控制器它们正在运行专利设计。船员保留了这段信号。对方的配合很慢，但慢得非常可靠。",
-    "skillType.cease_and_desist.flavourAutomated": "按 Tri-Tachyon 授权制造的能量武器带有一段信号，告诉目标的系统控制器它们正在运行专利设计。舰载核心保留了这段信号。对方的配合很慢，但慢得非常可靠。"
+    "skillType.cease_and_desist.flavourAutomated": "按 Tri-Tachyon 授权制造的能量武器带有一段信号，告诉目标的系统控制器它们正在运行专利设计。舰载核心保留了这段信号。对方的配合很慢，但慢得非常可靠。",
+    "skillType.strikecraft_weapon_range.name": "战机武器射程",
+    "skillType.spark_rift.name": "火花裂隙",
+    "skillType.temporal_exhaust.name": "时序尾焰",
+    "skillType.resonator_payload.name": "谐振载荷",
+    "skillType.spark_rift.flavour": "一架残存者母舰的 Spark 无人机在霸主的机库里被拆开研究了整整一个周期。研究成果被装进了本舰自己的战机发射器。霸主的报告至今仍属机密，主要是出于难堪。",
+    "skillType.temporal_exhaust.flavour": "一艘 Tesseract 尾焰的传感器日志被反复回放，直到时间戳彼此对不上。总工程师按同样的时序重新调校了引擎喷口。如今传感器总会在喷射发生前片刻就记录到尾焰。维修部门把这归为小故障。",
+    "skillType.temporal_exhaust.flavourAutomated": "一艘 Tesseract 尾焰的传感器日志被反复回放，直到时间戳彼此对不上。舰载核心按日志匹配了自身的引擎时序，改装船员在船坞里重新调校了喷口。如今传感器总会在喷射发生前片刻就记录到尾焰。维修部门把这归为小故障。",
+    "skillType.resonator_payload.flavour": "从一艘不属于任何已知设计的残骸中取出的 Resonator MRM 弹头碎片，仍以一种仪器无法确定的频率嗡鸣。船员在本舰装填的每一枚导弹里都嵌入一小片。弹药清单把它们记作压舱物。",
+    "skillType.resonator_payload.flavourAutomated": "从一艘不属于任何已知设计的残骸中取出的 Resonator MRM 弹头碎片，仍以一种仪器无法确定的频率嗡鸣。按照舰载核心的指示，改装船员在本舰弹舱的每一枚导弹里都嵌入一小片。弹药清单把它们记作压舱物。"
 }

@@ -1168,6 +1168,12 @@ effect|FIGHTER_WEAPON_RANGE_FLAT|12.5	0	Strikecraft launched from this ship have
 effect|FIGHTER_WEAPON_RANGE_FLAT|100.0	0	Strikecraft launched from this ship have <good>+100</good> to weapon range.
 effect|FIGHTER_WEAPON_RANGE_FLAT|-10.0	0	Strikecraft launched from this ship have <bad>-10</bad> to weapon range.
 effect|FIGHTER_WEAPON_RANGE_FLAT|-12.5	0	Strikecraft launched from this ship have <bad>-12.5</bad> to weapon range.
+effect|FIGHTER_WEAPON_RANGE_PERCENT|1.0	0	Strikecraft launched from this ship have <good>1%</good> increased weapon range.
+effect|FIGHTER_WEAPON_RANGE_PERCENT|10.0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon range.
+effect|FIGHTER_WEAPON_RANGE_PERCENT|12.5	0	Strikecraft launched from this ship have <good>12.5%</good> increased weapon range.
+effect|FIGHTER_WEAPON_RANGE_PERCENT|100.0	0	Strikecraft launched from this ship have <good>100%</good> increased weapon range.
+effect|FIGHTER_WEAPON_RANGE_PERCENT|-10.0	0	Strikecraft launched from this ship have <bad>10%</bad> reduced weapon range.
+effect|FIGHTER_WEAPON_RANGE_PERCENT|-12.5	0	Strikecraft launched from this ship have <bad>12.5%</bad> reduced weapon range.
 effect|FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER|1.0	0	Strikecraft launched from this ship take <good>1%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
 effect|FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER|10.0	0	Strikecraft launched from this ship take <good>10%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
 effect|FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER|12.5	0	Strikecraft launched from this ship take <good>12.5%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
@@ -1684,6 +1690,18 @@ effect|MISSILE_EJECTION_CHANCE_PERCENT|12.5	0	<good>12.5%</good> chance for miss
 effect|MISSILE_EJECTION_CHANCE_PERCENT|100.0	0	<good>100%</good> chance for missiles about to hit armor or hull to be ejected into p-space, dealing no damage.
 effect|MISSILE_EJECTION_CHANCE_PERCENT|-10.0	0	<good>-10%</good> chance for missiles about to hit armor or hull to be ejected into p-space, dealing no damage.
 effect|MISSILE_EJECTION_CHANCE_PERCENT|-12.5	0	<good>-12.5%</good> chance for missiles about to hit armor or hull to be ejected into p-space, dealing no damage.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT|1.0	0	Missile hits have a <good>1%</good> chance to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT|10.0	0	Missile hits have a <good>10%</good> chance to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT|12.5	0	Missile hits have a <good>12.5%</good> chance to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT|100.0	0	Missile hits have a <good>100%</good> chance to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT|-10.0	0	Missile hits have a <good>-10%</good> chance to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT|-12.5	0	Missile hits have a <good>-12.5%</good> chance to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY|1.0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY|10.0	0	Missile hits have a <good>10%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY|12.5	0	Missile hits have a <good>12.5%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY|100.0	0	Missile hits have a <good>100%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY|-10.0	0	Missile hits have a <good>-10%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY|-12.5	0	Missile hits have a <good>-12.5%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
 effect|MISSILE_KILL_FLAK_DAMAGE_FLAT|1.0	0	Enemy missiles destroyed by this ship burst for <good>1</good> fragmentation damage to other enemy missiles and fighters within 100 su.
 effect|MISSILE_KILL_FLAK_DAMAGE_FLAT|10.0	0	Enemy missiles destroyed by this ship burst for <good>10</good> fragmentation damage to other enemy missiles and fighters within 100 su.
 effect|MISSILE_KILL_FLAK_DAMAGE_FLAT|12.5	0	Enemy missiles destroyed by this ship burst for <good>12.5</good> fragmentation damage to other enemy missiles and fighters within 100 su.
@@ -2692,6 +2710,18 @@ effect|STRIKECRAFT_OP_DEPLOYMENT_COST_FLAT|12.5	1	<good>+12.5</good> to deployme
 effect|STRIKECRAFT_OP_DEPLOYMENT_COST_FLAT|100.0	1	<good>+100</good> to deployment points and supplies to recover for every 5 ordnance points of strikecraft wings, at least <good>+100</good>. Combat readiness lost per deployment rises with it.
 effect|STRIKECRAFT_OP_DEPLOYMENT_COST_FLAT|-10.0	1	<bad>-10</bad> to deployment points and supplies to recover for every 5 ordnance points of strikecraft wings, at least <bad>-10</bad>. Combat readiness lost per deployment falls with it.
 effect|STRIKECRAFT_OP_DEPLOYMENT_COST_FLAT|-12.5	1	<bad>-12.5</bad> to deployment points and supplies to recover for every 5 ordnance points of strikecraft wings, at least <bad>-12.5</bad>. Combat readiness lost per deployment falls with it.
+effect|STRIKECRAFT_RIFT_EXPLOSION_DAMAGE_PERCENT|1.0	0	Strikecraft launched from this ship have <good>1%</good> increased rift explosion damage.
+effect|STRIKECRAFT_RIFT_EXPLOSION_DAMAGE_PERCENT|10.0	0	Strikecraft launched from this ship have <good>10%</good> increased rift explosion damage.
+effect|STRIKECRAFT_RIFT_EXPLOSION_DAMAGE_PERCENT|12.5	0	Strikecraft launched from this ship have <good>12.5%</good> increased rift explosion damage.
+effect|STRIKECRAFT_RIFT_EXPLOSION_DAMAGE_PERCENT|100.0	0	Strikecraft launched from this ship have <good>100%</good> increased rift explosion damage.
+effect|STRIKECRAFT_RIFT_EXPLOSION_DAMAGE_PERCENT|-10.0	0	Strikecraft launched from this ship have <good>-10%</good> increased rift explosion damage.
+effect|STRIKECRAFT_RIFT_EXPLOSION_DAMAGE_PERCENT|-12.5	0	Strikecraft launched from this ship have <good>-12.5%</good> increased rift explosion damage.
+effect|STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT|1.0	0	Strikecraft launched from this ship have a <good>1%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+effect|STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT|10.0	0	Strikecraft launched from this ship have a <good>10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+effect|STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT|12.5	0	Strikecraft launched from this ship have a <good>12.5%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+effect|STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT|100.0	0	Strikecraft launched from this ship have a <good>100%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+effect|STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT|-10.0	0	Strikecraft launched from this ship have a <good>-10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+effect|STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT|-12.5	0	Strikecraft launched from this ship have a <good>-12.5%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
 effect|STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT|1.0	0	Strikecraft launched from this ship have <good>1%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
 effect|STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT|10.0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
 effect|STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT|12.5	0	Strikecraft launched from this ship have <good>12.5%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
@@ -2758,6 +2788,12 @@ effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|12.5	0	Each fragment this ship's frag
 effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|100.0	0	Each fragment this ship's fragment swarm would regrow while full instead repairs <good>100%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per deployment.
 effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|-10.0	0	Each fragment this ship's fragment swarm would regrow while full instead repairs <good>-10%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per deployment.
 effect|SWARM_OVERFLOW_ARMOR_REPAIR_PERCENT|-12.5	0	Each fragment this ship's fragment swarm would regrow while full instead repairs <good>-12.5%</good> of this ship's total armor on its most damaged armor cell, up to 10% of its total armor per deployment.
+effect|SYSTEM_ACTIVATION_TIMEFLOW_PERCENT|1.0	0	When this ship activates its ship system, it gains <good>1%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+effect|SYSTEM_ACTIVATION_TIMEFLOW_PERCENT|10.0	0	When this ship activates its ship system, it gains <good>10%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+effect|SYSTEM_ACTIVATION_TIMEFLOW_PERCENT|12.5	0	When this ship activates its ship system, it gains <good>12.5%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+effect|SYSTEM_ACTIVATION_TIMEFLOW_PERCENT|100.0	0	When this ship activates its ship system, it gains <good>100%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+effect|SYSTEM_ACTIVATION_TIMEFLOW_PERCENT|-10.0	0	When this ship activates its ship system, it gains <good>-10%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+effect|SYSTEM_ACTIVATION_TIMEFLOW_PERCENT|-12.5	0	When this ship activates its ship system, it gains <good>-12.5%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
 effect|SYSTEM_CHARGES_FLAT|1.0	0	<good>+1</good> to ship system charges.
 effect|SYSTEM_CHARGES_FLAT|10.0	0	<good>+10</good> to ship system charges.
 effect|SYSTEM_CHARGES_FLAT|12.5	0	<good>+12.5</good> to ship system charges.
@@ -5296,6 +5332,13 @@ type-detail|resistant_flux_conduits|CRUISER|0	0	Mutually exclusive with <hullmod
 type|resistant_flux_conduits|CAPITAL_SHIP|0	1	<bad>30%</bad> less EMP damage taken.
 type|resistant_flux_conduits|CAPITAL_SHIP|1	0	<good>10%</good> increased venting speed.
 type-detail|resistant_flux_conduits|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Lostech Engineering</hullmod>\n• <hullmod>Resistant Flux Conduits</hullmod>
+flavour|resonator_payload	0	Fragments of a Resonator MRM warhead, pulled from a wreck of no known design, still hum at a frequency the instruments can't settle on. The crew seeds a sliver of one into every missile the ship loads. Ordnance inventory lists them as ballast.
+flavourAutomated|resonator_payload	0	Fragments of a Resonator MRM warhead, pulled from a wreck of no known design, still hum at a frequency the instruments can't settle on. On the core's instructions, the refit crew seeds a sliver of one into every missile in the ship's magazines. Ordnance inventory lists them as ballast.
+type|resonator_payload|null|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+type|resonator_payload|FRIGATE|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+type|resonator_payload|DESTROYER|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+type|resonator_payload|CRUISER|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+type|resonator_payload|CAPITAL_SHIP|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
 flavour|restriction_breeds_creativity	0	Captured pirate hulls show the crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Pirates call this maintenance.
 flavourAutomated|restriction_breeds_creativity	0	Captured pirate hulls show the refit crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Pirates call this maintenance.
 type|restriction_breeds_creativity|null|0	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
@@ -5304,10 +5347,15 @@ type|restriction_breeds_creativity|DESTROYER|0	1	<bad>2%</bad> less armor damage
 type|restriction_breeds_creativity|CRUISER|0	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
 type|restriction_breeds_creativity|CAPITAL_SHIP|0	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
 type|rift_explosion_damage|null|0	0	<good>10%</good> increased rift explosion damage.
+type|rift_explosion_damage|null|1	0	Strikecraft launched from this ship have <good>10%</good> increased rift explosion damage.
 type|rift_explosion_damage|FRIGATE|0	0	<good>10%</good> increased rift explosion damage.
+type|rift_explosion_damage|FRIGATE|1	0	Strikecraft launched from this ship have <good>10%</good> increased rift explosion damage.
 type|rift_explosion_damage|DESTROYER|0	0	<good>10%</good> increased rift explosion damage.
+type|rift_explosion_damage|DESTROYER|1	0	Strikecraft launched from this ship have <good>10%</good> increased rift explosion damage.
 type|rift_explosion_damage|CRUISER|0	0	<good>10%</good> increased rift explosion damage.
+type|rift_explosion_damage|CRUISER|1	0	Strikecraft launched from this ship have <good>10%</good> increased rift explosion damage.
 type|rift_explosion_damage|CAPITAL_SHIP|0	0	<good>10%</good> increased rift explosion damage.
+type|rift_explosion_damage|CAPITAL_SHIP|1	0	Strikecraft launched from this ship have <good>10%</good> increased rift explosion damage.
 flavour|rift_harmonics	0	Tri-Tachyon fire-control logs recovered from Remnant drones describe energy bolts tuned to tear a brief hole in normal space on impact. The crew copied the tuning into this ship's emitters, one dimly understood parameter at a time. The logs still carry a Tri-Tachyon copyright notice.
 flavourAutomated|rift_harmonics	0	Tri-Tachyon fire-control logs recovered from Remnant drones describe energy bolts tuned to tear a brief hole in normal space on impact. The ship's core reads the tuning tables and applies them to its emitters, one dimly understood parameter at a time. The logs still carry a Tri-Tachyon copyright notice.
 type|rift_harmonics|null|0	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
@@ -5669,6 +5717,12 @@ type|solar_shielding|CRUISER|0	1	<bad>75%</bad> less combat readiness loss from 
 type-detail|solar_shielding|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dawntide</hullmod>\n• <hullmod>Stardust Core Field</hullmod>\n• <hullmod>Solar Shielding</hullmod>
 type|solar_shielding|CAPITAL_SHIP|0	1	<bad>75%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|solar_shielding|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dawntide</hullmod>\n• <hullmod>Stardust Core Field</hullmod>\n• <hullmod>Solar Shielding</hullmod>
+flavour|spark_rift	0	Spark drones from a Remnant carrier were stripped and studied in a Hegemony hangar for a full cycle. The findings went into the ship's own strike craft emitters. The Hegemony report stays classified, mostly out of embarrassment.
+type|spark_rift|null|0	0	Strikecraft launched from this ship have a <good>10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+type|spark_rift|FRIGATE|0	0	Strikecraft launched from this ship have a <good>10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+type|spark_rift|DESTROYER|0	0	Strikecraft launched from this ship have a <good>10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+type|spark_rift|CRUISER|0	0	Strikecraft launched from this ship have a <good>10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+type|spark_rift|CAPITAL_SHIP|0	0	Strikecraft launched from this ship have a <good>10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
 type|stabilized_shields|null|0	1	<bad>40%</bad> less shield flux upkeep.
 type-detail|stabilized_shields|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Constellate Design- Jet Black</hullmod>\n• <hullmod>Low Arc Shield Emitter</hullmod>\n• <hullmod>Lostech Engineering</hullmod>\n• <hullmod>Stabilized Shields</hullmod>
 type|stabilized_shields|FRIGATE|0	1	<bad>40%</bad> less shield flux upkeep.
@@ -5705,6 +5759,11 @@ type|strikecraft_weapon_damage|FRIGATE|0	0	Strikecraft launched from this ship h
 type|strikecraft_weapon_damage|DESTROYER|0	0	Strikecraft launched from this ship have <good>3%</good> increased weapon damage.
 type|strikecraft_weapon_damage|CRUISER|0	0	Strikecraft launched from this ship have <good>3%</good> increased weapon damage.
 type|strikecraft_weapon_damage|CAPITAL_SHIP|0	0	Strikecraft launched from this ship have <good>3%</good> increased weapon damage.
+type|strikecraft_weapon_range|null|0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon range.
+type|strikecraft_weapon_range|FRIGATE|0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon range.
+type|strikecraft_weapon_range|DESTROYER|0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon range.
+type|strikecraft_weapon_range|CRUISER|0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon range.
+type|strikecraft_weapon_range|CAPITAL_SHIP|0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon range.
 flavour|subroutine_socket	0	A stripped-out compartment wired straight into the ship's computer core. It holds a single subroutine and runs it alongside the ship's own control software.
 type|subroutine_socket|null|0	0	Holds one subroutine.
 type|subroutine_socket|FRIGATE|0	0	Holds one subroutine.
@@ -5826,6 +5885,13 @@ type|tania_weapon_fire_rate|FRIGATE|0	0	<good>3%</good> increased weapon rate of
 type|tania_weapon_fire_rate|DESTROYER|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|tania_weapon_fire_rate|CRUISER|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|tania_weapon_fire_rate|CAPITAL_SHIP|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
+flavour|temporal_exhaust	0	Sensor logs of a Tesseract's drive plume were replayed until the timestamps stopped agreeing with each other. The chief engineer retuned the engine nozzles to the same timing. The exhaust now registers on sensors a moment before the burn that made it. Maintenance files this under minor faults.
+flavourAutomated|temporal_exhaust	0	Sensor logs of a Tesseract's drive plume were replayed until the timestamps stopped agreeing with each other. The ship's core matched its engine timing to the logs, and the refit crew retuned the nozzles in dock. The exhaust now registers on sensors a moment before the burn that made it. Maintenance files this under minor faults.
+type|temporal_exhaust|null|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+type|temporal_exhaust|FRIGATE|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+type|temporal_exhaust|DESTROYER|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+type|temporal_exhaust|CRUISER|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+type|temporal_exhaust|CAPITAL_SHIP|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
 type|temporary_maneuverability|null|0	0	<good>50%</good> increased maneuverability.
 type|temporary_maneuverability|null|1	0	These effects only last for the first 90 seconds after the ship is deployed.
 type|temporary_maneuverability|FRIGATE|0	0	<good>50%</good> increased maneuverability.

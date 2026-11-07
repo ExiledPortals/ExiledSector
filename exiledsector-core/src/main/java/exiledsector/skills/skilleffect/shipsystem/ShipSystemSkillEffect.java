@@ -7,6 +7,7 @@ import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
 
+import static exiledsector.skills.skilleffect.Backings.listener;
 import static exiledsector.skills.skilleffect.Backings.statEffect;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
@@ -19,6 +20,14 @@ public enum ShipSystemSkillEffect implements BackedSkillEffect {
     SYSTEM_CHARGES_FLAT(statEffect(FLAT, bonus(MutableShipStatsAPI::getSystemUsesBonus), "stat.systemCharges", false)),
     SYSTEM_COOLDOWN_PERCENT(statEffect(PERCENT, bonus(MutableShipStatsAPI::getSystemCooldownBonus), "stat.shipSystemCooldown", true)),
     SYSTEM_CHARGE_REGEN_PERCENT(statEffect(PERCENT, bonus(MutableShipStatsAPI::getSystemRegenBonus), "stat.shipSystemChargeRegeneration", false)),
+    SYSTEM_ACTIVATION_TIMEFLOW_PERCENT(listener(TemporalExhaustListener.TIMEFLOW_PERCENT_KEY, TemporalExhaustListener.class,
+            TemporalExhaustListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("seconds", TemporalExhaustListener.TAPER_SECONDS)
+                    .arg("damage", TemporalExhaustListener.RIFT_DAMAGE).arg("cooldown", TemporalExhaustListener.COOLDOWN_SECONDS).styled();
+        }
+    },
     AUGMENTED_SYSTEM_REGEN_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

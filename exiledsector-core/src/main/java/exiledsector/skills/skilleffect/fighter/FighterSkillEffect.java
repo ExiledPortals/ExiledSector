@@ -26,6 +26,7 @@ import exiledsector.skills.skilleffect.StatTarget;
 import exiledsector.skills.skilleffect.WaivedPenalty;
 import exiledsector.skills.skilleffect.defense.ArmorCells;
 import exiledsector.skills.skilleffect.logistics.LogisticsSkillEffect;
+import exiledsector.skills.skilleffect.onhit.RiftStrike;
 import exiledsector.skills.skilleffect.weapon.WeaponScope;
 import exiledsector.skills.skilleffect.weapon.WeaponStatFamily;
 
@@ -139,6 +140,7 @@ public enum FighterSkillEffect implements BackedSkillEffect {
     FIGHTER_ENGAGEMENT_RANGE_PERCENT(statEffect(PERCENT, bonus(MutableShipStatsAPI::getFighterWingRange), "stat.fighterEngagementRange", false)),
     FIGHTER_ENGAGEMENT_RANGE_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getFighterWingRange), "stat.fighterEngagementRange", false)),
     FIGHTER_WEAPON_RANGE_FLAT(RoleStat.WEAPON_RANGE),
+    FIGHTER_WEAPON_RANGE_PERCENT(RoleStat.WEAPON_RANGE_PERCENT),
     FIGHTER_ROLE_DAMAGE_PERCENT(WingRole.FIGHTER, RoleStat.WEAPON_DAMAGE),
     FIGHTER_ROLE_TOP_SPEED_PERCENT(WingRole.FIGHTER, RoleStat.TOP_SPEED),
     FIGHTER_ROLE_ARMOR_PERCENT(WingRole.FIGHTER, RoleStat.ARMOR),
@@ -303,6 +305,16 @@ public enum FighterSkillEffect implements BackedSkillEffect {
     },
     STRIKECRAFT_EMP_DAMAGE_PERCENT(new FighterListenerEffect<>(StrikecraftEmpListener.EMP_PERCENT_KEY, StrikecraftEmpListener.class,
             StrikecraftEmpListener::new)),
+    STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT(new FighterListenerEffect<>(StrikecraftRiftStrikeListener.CHANCE_PERCENT_KEY,
+            StrikecraftRiftStrikeListener.class, StrikecraftRiftStrikeListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("share", RiftStrike.DAMAGE_SHARE_PERCENT)
+                    .arg("min", RiftStrike.MIN_DAMAGE).arg("max", RiftStrike.MAX_DAMAGE).styled();
+        }
+    },
+    STRIKECRAFT_RIFT_EXPLOSION_DAMAGE_PERCENT(new FighterListenerEffect<>(StrikecraftRiftExplosionDamageListener.DAMAGE_PERCENT_KEY,
+            StrikecraftRiftExplosionDamageListener.class, (fighter, carrier) -> new StrikecraftRiftExplosionDamageListener(carrier))),
     FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER(new FighterListenerEffect<>(WingNumbersDamageListener.REDUCTION_PERCENT_PER_FIGHTER_KEY,
             WingNumbersDamageListener.class, WingNumbersDamageListener::new)) {
 
@@ -423,7 +435,8 @@ public enum FighterSkillEffect implements BackedSkillEffect {
                 stat(MutableShipStatsAPI::getShieldDamageTakenMult)), "stat.damageTaken", true)),
         RATE_OF_FIRE(PERCENT, WeaponStatFamily.RATE_OF_FIRE.target(WeaponScope.ALL), "weapon.stat.RATE_OF_FIRE"),
         WEAPON_RANGE(FLAT, all(bonus(MutableShipStatsAPI::getBallisticWeaponRangeBonus), bonus(MutableShipStatsAPI::getEnergyWeaponRangeBonus)),
-                "weapon.stat.RANGE");
+                "weapon.stat.RANGE"),
+        WEAPON_RANGE_PERCENT(PERCENT, WeaponStatFamily.RANGE.target(WeaponScope.ALL), "weapon.stat.RANGE");
 
         private final SimpleStatEffect stat;
 

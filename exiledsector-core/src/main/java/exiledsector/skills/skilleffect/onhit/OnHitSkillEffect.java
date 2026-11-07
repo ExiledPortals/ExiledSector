@@ -3,6 +3,7 @@ package exiledsector.skills.skilleffect.onhit;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponSize;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
+import exiledsector.i18n.Message;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.motes.Motes;
@@ -60,6 +61,13 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", magnitude).arg("share", RiftStrike.DAMAGE_SHARE_PERCENT)
                     .arg("min", RiftStrike.MIN_DAMAGE).arg("max", RiftStrike.MAX_DAMAGE).styled();
+        }
+    },
+    MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT(listener(ResonatorPayloadListener.CHANCE_PERCENT_KEY, ResonatorPayloadListener.class,
+            ResonatorPayloadListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return describeRiftSeries(EffectText.msg(this).arg("value", magnitude));
         }
     },
     DISINTEGRATION_ARMOR_DAMAGE_PERCENT(listener(DisintegrationListener.ARMOR_DAMAGE_PERCENT_KEY,
@@ -127,6 +135,11 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
             WeaponType.ENERGY, WeaponSize.SMALL, DamageConversion.Mounting.ANY, false, null, null));
 
     private static List<DamageConversion> damageConversions;
+
+    public static StyledText describeRiftSeries(Message line) {
+        return line.arg("count", ResonatorPayloadListener.RIFTS_PER_SERIES).arg("share", ResonatorPayloadListener.DAMAGE_SHARE_PERCENT)
+                .arg("max", ResonatorPayloadListener.MAX_DAMAGE).styled();
+    }
 
     private final EffectBacking backing;
     private final DamageConversion damageConversion;

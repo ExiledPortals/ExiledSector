@@ -15,6 +15,7 @@ import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.SocketedItemScaling;
 import exiledsector.skills.npc.RealSkillData;
 import exiledsector.skills.skilleffect.fighter.FighterSkillEffect;
+import exiledsector.skills.skilleffect.onhit.OnHitSkillEffect;
 import exiledsector.skills.skilleffect.special.SpecialSkillEffect;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AffinityTooltipLinesTest {
 
@@ -114,6 +117,25 @@ class AffinityTooltipLinesTest {
     }
 
     @Test
+    void anEffectReadingTheHighestAffinityShowsOnlyOnTheRootOfTheHighestAffinity() {
+        List<EffectContribution> contributions = new ArrayList<>(contributions(lowTechShip()));
+        contributions.add(hullItem(new SkillTypeEffect(SpecialSkillEffect.MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY, 1f)));
+        String currentLine = plain(List.of(new DescriptionLine(OnHitSkillEffect.MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT.description(2f, HULL_SIZE),
+                false))).get(0);
+        String perStepLine = plain(List.of(new DescriptionLine(
+                SpecialSkillEffect.MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY.description(1f, HULL_SIZE), false))).get(0);
+
+        NodeDescription lowTech = AffinityTooltipLines.forType(root("root_low_tech").getType(), contributions, HULL_SIZE);
+        NodeDescription highTech = AffinityTooltipLines.forType(root("root_high_tech").getType(), contributions, HULL_SIZE);
+
+        assertTrue(plain(lowTech.effects()).get(0).contains("Your Low Tech Affinity currently grants:"));
+        assertTrue(joined(lowTech.effects()).contains(currentLine));
+        assertTrue(plain(lowTech.details()).get(0).contains(perStepLine));
+        assertFalse(joined(highTech.effects()).contains(currentLine));
+        assertFalse(joined(highTech.details()).contains(perStepLine));
+    }
+
+    @Test
     void otherAffinityEffectsOnTheShipFollowThePerStepLines() {
         List<EffectContribution> contributions = new ArrayList<>(contributions(lowTechShip()));
         contributions.add(hullItem(new SkillTypeEffect(SpecialSkillEffect.HIGHEST_AFFINITY_FLAT_PER_S_MOD, 6f),
@@ -164,5 +186,9 @@ class AffinityTooltipLinesTest {
 
     private static List<String> plain(List<DescriptionLine> lines) {
         return lines.stream().map(DescriptionLine::plain).toList();
+    }
+
+    private static String joined(List<DescriptionLine> lines) {
+        return String.join("\n", plain(lines));
     }
 }

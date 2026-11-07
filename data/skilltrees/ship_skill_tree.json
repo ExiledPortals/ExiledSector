@@ -9777,7 +9777,8 @@
 			"type": "affinity",
 			"connectedTo": [
 				"omega_wormhole_1",
-				"affinity_154"
+				"affinity_154",
+				"rift_explosion_damage_5"
 			],
 			"x": 17341,
 			"y": -12899,
@@ -9793,7 +9794,8 @@
 			"type": "affinity",
 			"connectedTo": [
 				"affinity_152",
-				"omega_wormhole_1"
+				"omega_wormhole_1",
+				"strikecraft_weapon_range_1"
 			],
 			"x": 14309,
 			"y": -12899,
@@ -9826,7 +9828,8 @@
 			"type": "affinity",
 			"connectedTo": [
 				"affinity_154",
-				"affinity_152"
+				"affinity_152",
+				"ship_system_cooldown_4"
 			],
 			"x": 15825,
 			"y": -15524,
@@ -9849,6 +9852,147 @@
 			"y": -14649,
 			"orbitAnchorId": "omega_inner",
 			"orbitAngle": 330,
+			"tags": [
+				"omega",
+				"gate_omega_found"
+			]
+		},
+		{
+			"id": "strikecraft_weapon_range_1",
+			"type": "strikecraft_weapon_range",
+			"connectedTo": [
+				"rift_explosion_damage_3",
+				"affinity_151"
+			],
+			"x": 14006,
+			"y": -12724,
+			"orbitAnchorId": "omega_spark_rift",
+			"orbitAngle": 330,
+			"tags": [
+				"omega",
+				"gate_omega_found"
+			]
+		},
+		{
+			"id": "rift_explosion_damage_3",
+			"type": "rift_explosion_damage",
+			"connectedTo": [
+				"strikecraft_weapon_range_1",
+				"spark_rift_1"
+			],
+			"x": 13933,
+			"y": -12451,
+			"orbitAnchorId": "omega_spark_rift",
+			"orbitAngle": 60,
+			"tags": [
+				"omega",
+				"gate_omega_found"
+			]
+		},
+		{
+			"id": "spark_rift_1",
+			"type": "spark_rift",
+			"connectedTo": [
+				"rift_explosion_damage_3"
+			],
+			"x": 13660,
+			"y": -12524,
+			"orbitAnchorId": "omega_spark_rift",
+			"orbitAngle": 150,
+			"tags": [
+				"omega",
+				"gate_omega_found"
+			]
+		},
+		{
+			"id": "ship_system_cooldown_4",
+			"type": "ship_system_cooldown",
+			"connectedTo": [
+				"rift_explosion_damage_4",
+				"affinity_153"
+			],
+			"x": 15825,
+			"y": -15874,
+			"orbitAnchorId": "omega_temporal_exhaust",
+			"orbitAngle": 90,
+			"tags": [
+				"omega",
+				"gate_omega_found"
+			]
+		},
+		{
+			"id": "rift_explosion_damage_4",
+			"type": "rift_explosion_damage",
+			"connectedTo": [
+				"ship_system_cooldown_4",
+				"temporal_exhaust_1"
+			],
+			"x": 15625,
+			"y": -16074,
+			"orbitAnchorId": "omega_temporal_exhaust",
+			"orbitAngle": 180,
+			"tags": [
+				"omega",
+				"gate_omega_found"
+			]
+		},
+		{
+			"id": "temporal_exhaust_1",
+			"type": "temporal_exhaust",
+			"connectedTo": [
+				"rift_explosion_damage_4"
+			],
+			"x": 15825,
+			"y": -16274,
+			"orbitAnchorId": "omega_temporal_exhaust",
+			"orbitAngle": 270,
+			"tags": [
+				"omega",
+				"gate_omega_found"
+			]
+		},
+		{
+			"id": "rift_explosion_damage_5",
+			"type": "rift_explosion_damage",
+			"connectedTo": [
+				"rift_explosion_damage_6",
+				"affinity_150"
+			],
+			"x": 17644,
+			"y": -12724,
+			"orbitAnchorId": "omega_resonator_payload",
+			"orbitAngle": 210,
+			"tags": [
+				"omega",
+				"gate_omega_found"
+			]
+		},
+		{
+			"id": "rift_explosion_damage_6",
+			"type": "rift_explosion_damage",
+			"connectedTo": [
+				"rift_explosion_damage_5",
+				"resonator_payload_1"
+			],
+			"x": 17717,
+			"y": -12451,
+			"orbitAnchorId": "omega_resonator_payload",
+			"orbitAngle": 120,
+			"tags": [
+				"omega",
+				"gate_omega_found"
+			]
+		},
+		{
+			"id": "resonator_payload_1",
+			"type": "resonator_payload",
+			"connectedTo": [
+				"rift_explosion_damage_6"
+			],
+			"x": 17990,
+			"y": -12524,
+			"orbitAnchorId": "omega_resonator_payload",
+			"orbitAngle": 30,
 			"tags": [
 				"omega",
 				"gate_omega_found"
@@ -12783,6 +12927,42 @@
 			"b": "disintegration_1",
 			"controlX": 18010,
 			"controlY": -14872
+		},
+		{
+			"a": "strikecraft_weapon_range_1",
+			"b": "rift_explosion_damage_3",
+			"controlX": 14026,
+			"controlY": -12572
+		},
+		{
+			"a": "rift_explosion_damage_3",
+			"b": "spark_rift_1",
+			"controlX": 13781,
+			"controlY": -12431
+		},
+		{
+			"a": "ship_system_cooldown_4",
+			"b": "rift_explosion_damage_4",
+			"controlX": 15684,
+			"controlY": -15933
+		},
+		{
+			"a": "rift_explosion_damage_4",
+			"b": "temporal_exhaust_1",
+			"controlX": 15684,
+			"controlY": -16215
+		},
+		{
+			"a": "rift_explosion_damage_5",
+			"b": "rift_explosion_damage_6",
+			"controlX": 17624,
+			"controlY": -12572
+		},
+		{
+			"a": "rift_explosion_damage_6",
+			"b": "resonator_payload_1",
+			"controlX": 17869,
+			"controlY": -12431
 		}
 	],
 	"hiddenConnectors": [
@@ -13718,6 +13898,24 @@
 			"id": "anchor_123",
 			"x": 17817,
 			"y": -14924,
+			"radius": 200
+		},
+		{
+			"id": "omega_spark_rift",
+			"x": 13833,
+			"y": -12624,
+			"radius": 200
+		},
+		{
+			"id": "omega_temporal_exhaust",
+			"x": 15825,
+			"y": -16074,
+			"radius": 200
+		},
+		{
+			"id": "omega_resonator_payload",
+			"x": 17817,
+			"y": -12624,
 			"radius": 200
 		}
 	],

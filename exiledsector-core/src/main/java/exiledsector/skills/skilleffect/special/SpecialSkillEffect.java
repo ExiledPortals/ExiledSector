@@ -12,6 +12,7 @@ import exiledsector.skills.skilleffect.StatMode;
 import exiledsector.skills.skilleffect.battle.BattleSkillEffect;
 import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.fighter.FighterSkillEffect;
+import exiledsector.skills.skilleffect.onhit.OnHitSkillEffect;
 import exiledsector.skills.skilleffect.shipsystem.ShipSystemSkillEffect;
 import exiledsector.skills.skilleffect.shield.ShieldSkillEffect;
 import exiledsector.skills.skilleffect.weapon.ScopedWeaponEffect;
@@ -97,6 +98,13 @@ public enum SpecialSkillEffect implements BackedSkillEffect {
             ShipSystemSkillEffect.FRAGMENT_SWARM_SIZE_PERCENT)),
     FRAGMENT_REPLACEMENT_RATE_PERCENT_PER_AFFINITY(new AffinityScaling(AffinityScaling.Filter.ALL, AffinityScaling.SMALL_STEP,
             ShipSystemSkillEffect.FRAGMENT_REPLACEMENT_RATE_PERCENT)),
+    MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY(new AffinityScaling(AffinityScaling.Filter.HIGHEST, AffinityScaling.SMALL_STEP,
+            OnHitSkillEffect.MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return OnHitSkillEffect.describeRiftSeries(EffectText.msg(this).arg("value", magnitude).arg("step", affinityScaling().stepSize()));
+        }
+    },
     HIGHEST_AFFINITY_FLAT_PER_S_MOD(new AffinityTally()),
     LOWEST_AFFINITY_AS_HIGHEST(new AffinityTally()) {
         @Override
