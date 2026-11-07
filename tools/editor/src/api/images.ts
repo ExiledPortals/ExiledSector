@@ -36,10 +36,13 @@ export interface ImageCopyRequest {
   path: string;
   suffix: string;
   hueShift?: number;
+  degrees?: number;
   overwrite?: boolean;
 }
 
-export function postImageCopy(url: '/api/images/colorshift' | '/api/images/circular', request: ImageCopyRequest): Promise<PostResult<{ path?: string; exists?: boolean }>> {
+export type ImageCopyUrl = '/api/images/colorshift' | '/api/images/circular' | '/api/images/rotate';
+
+export function postImageCopy(url: ImageCopyUrl, request: ImageCopyRequest): Promise<PostResult<{ path?: string; exists?: boolean }>> {
   return postJson<{ path?: string; exists?: boolean }>(url, request);
 }
 

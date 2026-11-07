@@ -1,7 +1,7 @@
 import { Alert, Box, Button, Center, Divider, Group, Image, Loader, NumberInput, Paper, ScrollArea, Stack, Text, TextInput, Title } from '@mantine/core';
-import { IconAlertTriangle, IconCircle, IconColorSwatch, IconTrash } from '@tabler/icons-react';
+import { IconAlertTriangle, IconCircle, IconColorSwatch, IconRotateClockwise, IconTrash } from '@tabler/icons-react';
 import { useState } from 'react';
-import { deleteImage, postImageCopy, useAllImages, useRefreshImages, type ImageCopyRequest } from '../../api/images.ts';
+import { deleteImage, postImageCopy, useAllImages, useRefreshImages, type ImageCopyRequest, type ImageCopyUrl } from '../../api/images.ts';
 import { confirmAction, notifyError, notifySuccess } from '../../shared/dialogs.tsx';
 import { ImageBrowser } from '../../shared/ImageBrowser.tsx';
 import { fileUrl, isUnshippedImagePath } from '../../shared/imagePaths.ts';
@@ -9,10 +9,10 @@ import { fileUrl, isUnshippedImagePath } from '../../shared/imagePaths.ts';
 const DETAIL_WIDTH = 320;
 const DEFAULT_HUE_SHIFT = 240;
 const DEFAULT_SUFFIX = 'shifted';
+const DEFAULT_ROTATION = 90;
+const ROTATION_STEP = 90;
 
-type CopyUrl = '/api/images/colorshift' | '/api/images/circular';
-
-async function createCopy(url: CopyUrl, request: ImageCopyRequest): Promise<string | null> {
+async function createCopy(url: ImageCopyUrl, request: ImageCopyRequest): Promise<string | null> {
   const result = await postImageCopy(url, request);
   if (result.ok) {
     return result.data.path ?? null;
@@ -38,17 +38,23 @@ interface ImageDetailProps {
 
 function ImageDetail({ path, onCreated, onDeleted }: ImageDetailProps) {
   const [hueShift, setHueShift] = useState<number>(DEFAULT_HUE_SHIFT);
+  const [degrees, setDegrees] = useState<number>(DEFAULT_ROTATION);
   const [suffix, setSuffix] = useState(DEFAULT_SUFFIX);
   const [busy, setBusy] = useState(false);
 
-  const runCopy = async (url: CopyUrl) => {
+  const runCopy = async (url: ImageCopyUrl) => {
     if (!suffix.trim()) {
       notifyError('Suffix is required.');
       return;
     }
     setBusy(true);
     try {
-      const created = await createCopy(url, { path, suffix: suffix.trim(), hueShift: url === '/api/images/colorshift' ? hueShift : undefined });
+      const created = await createCopy(url, {
+        path,
+        suffix: suffix.trim(),
+        hueShift: url === '/api/images/colorshift' ? hueShift : undefined,
+        degrees: url === '/api/images/rotate' ? degrees : undefined,
+      });
       if (created) {
         notifySuccess(`Saved ${created}`);
         onCreated(created);
@@ -79,9 +85,9 @@ function ImageDetail({ path, onCreated, onDeleted }: ImageDetailProps) {
 
   return (
     <Stack gap="sm">
-      <Paper withBorder p="xs" bg="dark.8">
+      <Paper withBorder p="xs" bg="dark.8" style={{ overflow: 'hidden' }}>
         <Center>
-          <Image src={fileUrl(path)} alt={path} mah={240} w="auto" fit="contain" style={{ filter: `hue-rotate(${hueShift}deg)` }} />
+          <Image src={fileUrl(path)} alt={path} mah={240} w="auto" fit="contain" style={{ filter: `hue-rotate(${hueShift}deg)`, transform: `rotate(${degrees}deg)` }} />
         </Center>
       </Paper>
       <Text size="xs" ff="monospace" style={{ wordBreak: 'break-all' }}>
@@ -93,6 +99,7 @@ function ImageDetail({ path, onCreated, onDeleted }: ImageDetailProps) {
         </Text>
       )}
       <NumberInput label="Hue shift (degrees)" value={hueShift} onChange={(value) => setHueShift(typeof value === 'number' ? value : Number(value) || 0)} />
+      <NumberInput label="Rotation (degrees clockwise)" step={ROTATION_STEP} value={degrees} onChange={(value) => setDegrees(typeof value === 'number' ? value : Number(value) || 0)} />
       <TextInput label="New file suffix" value={suffix} onChange={(event) => setSuffix(event.currentTarget.value)} />
       <Button leftSection={<IconColorSwatch size={16} />} loading={busy} onClick={() => void runCopy('/api/images/colorshift')}>
         Create colour-shifted copy
@@ -100,8 +107,11 @@ function ImageDetail({ path, onCreated, onDeleted }: ImageDetailProps) {
       <Button variant="default" leftSection={<IconCircle size={16} />} loading={busy} onClick={() => void runCopy('/api/images/circular')}>
         Make circular copy
       </Button>
+      <Button variant="default" leftSection={<IconRotateClockwise size={16} />} loading={busy} onClick={() => void runCopy('/api/images/rotate')}>
+        Create rotated copy
+      </Button>
       <Text size="xs" c="dimmed">
-        The colour-shifted copy is saved next to the original as name_suffix.png. Circular copies go to graphics/unused/circular/.
+        Colour-shifted and rotated copies are saved next to the original as name_suffix.png. Circular copies go to graphics/unused/circular/. Quarter turns are lossless; other angles keep the image size and clip the corners.
       </Text>
       <Divider />
       <Button color="red" variant="light" leftSection={<IconTrash size={16} />} onClick={() => void remove()}>
@@ -157,7 +167,7 @@ export function ImagesPage() {
             />
           ) : (
             <Text c="dimmed" size="sm">
-              Select an image to recolour it, make a circular copy or delete it.
+              Select an image to recolour, rotate, make a circular copy of or delete it.
             </Text>
           )}
         </Box>

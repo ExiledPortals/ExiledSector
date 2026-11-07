@@ -214,10 +214,19 @@ describe('images', () => {
     expect(readPixel(circularPath, 4, 4)).toEqual([255, 0, 0, 255]);
   });
 
+  it('makes rotated copies next to the original', async () => {
+    writePng('graphics/icons/wide.png', 4, 2, [0, 0, 255, 255]);
+    const rotated = await app.inject({ method: 'POST', url: '/api/images/rotate', headers: EDITOR_HEADERS, payload: { path: 'graphics/icons/wide.png', suffix: 'turned', degrees: 90 } });
+    expect(rotated.json()).toEqual({ ok: true, path: 'graphics/icons/wide_turned.png' });
+    const image = PNG.sync.read(fs.readFileSync(path.join(projectRoot, 'graphics/icons/wide_turned.png')));
+    expect([image.width, image.height]).toEqual([2, 4]);
+    expect((await app.inject({ method: 'POST', url: '/api/images/rotate', headers: EDITOR_HEADERS, payload: { path: 'graphics/icons/wide.png', suffix: 'turned', degrees: 90 } })).statusCode).toBe(409);
+  });
+
   it('only copies png images under graphics', async () => {
     writePng('data/config/outside.png', 2, 2, [255, 0, 0, 255]);
     writeProjectFile('graphics/icons/notes.txt', 'not an image');
-    for (const url of ['/api/images/colorshift', '/api/images/circular']) {
+    for (const url of ['/api/images/colorshift', '/api/images/circular', '/api/images/rotate']) {
       for (const source of ['data/config/outside.png', 'graphics/icons/notes.txt', 'graphics/../data/config/outside.png', '../outside.png']) {
         const refused = await app.inject({ method: 'POST', url, headers: EDITOR_HEADERS, payload: { path: source, suffix: 'copy' } });
         expect(refused.statusCode).toBe(400);

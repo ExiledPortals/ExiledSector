@@ -146,3 +146,108 @@ export function makeCircularImage(sourcePath: string, destinationPath: string): 
   }
   writePng(destinationPath, image);
 }
+
+export interface RgbaImage {
+  data: Buffer;
+  width: number;
+  height: number;
+}
+
+const RIGHT_ANGLE = 90;
+
+function normalisedDegrees(degrees: number): number {
+  return ((degrees % 360) + 360) % 360;
+}
+
+function rotateByRightAngles(source: RgbaImage, quarterTurns: number): RgbaImage {
+  const swapsSides = quarterTurns % 2 === 1;
+  const width = swapsSides ? source.height : source.width;
+  const height = swapsSides ? source.width : source.height;
+  const data = Buffer.alloc(width * height * 4);
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      let sourceX = x;
+      let sourceY = y;
+      if (quarterTurns === 1) {
+        sourceX = y;
+        sourceY = source.height - 1 - x;
+      } else if (quarterTurns === 2) {
+        sourceX = source.width - 1 - x;
+        sourceY = source.height - 1 - y;
+      } else if (quarterTurns === 3) {
+        sourceX = source.width - 1 - y;
+        sourceY = x;
+      }
+      source.data.copy(data, (y * width + x) * 4, (sourceY * source.width + sourceX) * 4, (sourceY * source.width + sourceX) * 4 + 4);
+    }
+  }
+  return { data, width, height };
+}
+
+function premultipliedPixel(source: RgbaImage, x: number, y: number): [number, number, number, number] {
+  if (x < 0 || y < 0 || x >= source.width || y >= source.height) {
+    return [0, 0, 0, 0];
+  }
+  const offset = (y * source.width + x) * 4;
+  const alpha = source.data[offset + 3] / 255;
+  return [source.data[offset] * alpha, source.data[offset + 1] * alpha, source.data[offset + 2] * alpha, source.data[offset + 3]];
+}
+
+function bilinearSample(source: RgbaImage, x: number, y: number): [number, number, number, number] {
+  const left = Math.floor(x);
+  const top = Math.floor(y);
+  const fractionX = x - left;
+  const fractionY = y - top;
+  const corners = [
+    [premultipliedPixel(source, left, top), (1 - fractionX) * (1 - fractionY)],
+    [premultipliedPixel(source, left + 1, top), fractionX * (1 - fractionY)],
+    [premultipliedPixel(source, left, top + 1), (1 - fractionX) * fractionY],
+    [premultipliedPixel(source, left + 1, top + 1), fractionX * fractionY],
+  ] as const;
+  const sum = [0, 0, 0, 0];
+  for (const [pixel, weight] of corners) {
+    for (let channel = 0; channel < 4; channel++) {
+      sum[channel] += pixel[channel] * weight;
+    }
+  }
+  const alpha = sum[3];
+  if (alpha <= 0) {
+    return [0, 0, 0, 0];
+  }
+  const unpremultiply = 255 / alpha;
+  return [Math.round(sum[0] * unpremultiply), Math.round(sum[1] * unpremultiply), Math.round(sum[2] * unpremultiply), Math.round(alpha)];
+}
+
+function rotateByAnyAngle(source: RgbaImage, degrees: number): RgbaImage {
+  const radians = (degrees * Math.PI) / 180;
+  const cos = Math.cos(radians);
+  const sin = Math.sin(radians);
+  const centreX = source.width / 2;
+  const centreY = source.height / 2;
+  const data = Buffer.alloc(source.data.length);
+  for (let y = 0; y < source.height; y++) {
+    for (let x = 0; x < source.width; x++) {
+      const offsetX = x + 0.5 - centreX;
+      const offsetY = y + 0.5 - centreY;
+      const sourceX = offsetX * cos + offsetY * sin + centreX - 0.5;
+      const sourceY = -offsetX * sin + offsetY * cos + centreY - 0.5;
+      data.set(bilinearSample(source, sourceX, sourceY), (y * source.width + x) * 4);
+    }
+  }
+  return { data, width: source.width, height: source.height };
+}
+
+export function rotatePixels(source: RgbaImage, degrees: number): RgbaImage {
+  const clockwise = normalisedDegrees(degrees);
+  if (clockwise % RIGHT_ANGLE === 0) {
+    return rotateByRightAngles(source, clockwise / RIGHT_ANGLE);
+  }
+  return rotateByAnyAngle(source, clockwise);
+}
+
+export function rotateImage(sourcePath: string, destinationPath: string, degrees: number): void {
+  const rotated = rotatePixels(readPng(sourcePath), degrees);
+  const image = new PNG({ width: rotated.width, height: rotated.height });
+  rotated.data.copy(image.data);
+  writePng(destinationPath, image);
+}
