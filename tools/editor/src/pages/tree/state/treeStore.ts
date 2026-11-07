@@ -54,7 +54,7 @@ export const EMPTY_SELECTION: Selection = { nodes: [], anchors: [], decorations:
 
 export const EMPTY_DOCUMENT: TreeDocument = { types: [], nodes: [], curves: [], hiddenConnectors: [], anchors: [], decorations: [] };
 
-export const MIN_ZOOM = 0.08;
+export const MIN_ZOOM = 0.02;
 export const MAX_ZOOM = 3;
 
 export const useTreeStore = create<TreeStoreState>(() => ({
