@@ -60,7 +60,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final TreeCamera camera = new TreeCamera();
     private final HyperspaceMode hyperspaceMode;
     private final SocketPlacement socketPlacement;
-    private final LogisticsSlots logisticsSlots;
+    private final SchematicButtons schematicButtons;
     private final SkillTreeChrome chrome;
     private final PointerGesture<CanvasMode> gesture = new PointerGesture<>();
     private final TreeCameraMemory.View cameraMemory;
@@ -96,8 +96,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.statPanel = new SkillTreeStatPanel(member, variant, panelStyle);
         this.hyperspaceMode = new HyperspaceMode(camera, statPanel, treeSession::isHidden, treeSession::wormholePairs);
         this.socketPlacement = new SocketPlacement(hostPanel, treeSession, nodeSearch, searchBar);
-        this.logisticsSlots = new LogisticsSlots(member.getId());
-        this.chrome = new SkillTreeChrome(member, panelStyle, statPanel, searchBar, templateUi, socketPlacement, logisticsSlots, shipCardHeight);
+        this.schematicButtons = new SchematicButtons(new LogisticsSlots(member.getId()),
+                new IntegrationResetButton(member.getId(), treeSession::refreshAfterIntegrationReset));
+        this.chrome = new SkillTreeChrome(member, panelStyle, statPanel, searchBar, templateUi, socketPlacement, schematicButtons, shipCardHeight);
         this.shipList = new FleetShipList(hostPanel, shipCardHeight, shipSwitcher);
         this.refitButton = refitButton;
 
@@ -161,7 +162,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private CanvasMode mode() {
-        return CanvasMode.resolve(treeSession.isStartingRootInputLocked(), templateUi.isModalOpen() || logisticsSlots.isDialogBlocking(),
+        return CanvasMode.resolve(treeSession.isStartingRootInputLocked(), templateUi.isModalOpen() || schematicButtons.isDialogBlocking(),
                 socketPlacement.isCraftingBenchOpen(),
                 hyperspaceMode.isActive(), exoshipView.isActive());
     }
@@ -201,7 +202,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             shipList.close();
         }
         templateUi.advance(amount, canvasPosition, mode.enables(CanvasMode.Chrome.TEMPLATE_BAR));
-        logisticsSlots.advance(amount);
+        schematicButtons.advance(amount);
         socketPlacement.advance(mode.closesStorage());
         statPanel.refresh(treeSession.budget(), treeSession.statsRevision());
         statPanel.advance(amount);
@@ -360,8 +361,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void handleModalEvent(InputEventAPI event) {
-        if (logisticsSlots.isDialogBlocking()) {
-            logisticsSlots.handleModalEvent(event);
+        if (schematicButtons.isDialogBlocking()) {
+            schematicButtons.handleModalEvent(event);
         } else if (event.isLMBDownEvent()) {
             templateUi.handleLmbDown(event.getX(), event.getY());
         } else if (event.isLMBUpEvent()) {
@@ -611,7 +612,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             chrome.renderTooltips(canvasPosition, mode, mouseX, mouseY, alphaMult);
         }
         templateUi.renderModals(canvasPosition, mouseX, mouseY, alphaMult);
-        logisticsSlots.renderDialog(canvasPosition, mouseX, mouseY, alphaMult);
+        schematicButtons.renderDialogs(canvasPosition, mouseX, mouseY, alphaMult);
     }
 
     private void refreshRadiusRing(TreeLayers layers, boolean treeHovered) {

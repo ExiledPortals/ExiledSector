@@ -76,10 +76,12 @@ copies, where it does nothing, can't be removed and is hidden from refit and Cod
 ### Integrated nodes
 
 A type with an `integrated` block in `skill_types.json` (`IntegratedEffects`) can be integrated on one ship by
-holding a click on its allocated node. The ship's nth integration costs n story points plus vanilla's s-mod bonus XP
-for its hull size (`NodeIntegration`). An integrated node applies its integrated effects instead of its normal ones
+holding a click on its allocated node. The ship's nth integration costs n story points and, unlike an s-mod, grants
+no bonus XP (`NodeIntegration`). An integrated node applies its integrated effects instead of its normal ones
 (`IntegratedNodes.effectsFor`) and stays in `ShipSkillData.integratedNodeIds` when unallocated. Save repair forgets
-integrations whose node is gone or no longer integrable and refunds the costliest ones first.
+integrations whose node is gone or no longer integrable and refunds the costliest ones first. A Deintegration
+Schematic clears every integration on one ship and refunds all their story points
+(`DeintegrationSchematic`). It drops like the Logistics Schematic, at the Tuning Nanoswarm's `battle_loot.csv` rate.
 
 An NPC ship integrates as many of its allocated integrable nodes as it has s-mods; a fleet not yet inflated rolls
 the count from its average s-mods the way vanilla does (`NpcIntegratedNodes`). They go in the `integrated:` field
@@ -131,7 +133,7 @@ The player allocates or unallocates one only while docked at a market with a spa
 only on docking keeps that free allocation banked instead of refunding OP, and opening any market reruns auto-allocation
 on banked allocations (`TemplateDockingRetry`). Each Logistics Schematic raises one ship's limit by 1, with no ceiling.
 They drop like the Military Refit Schematic: `logistics_schematic` in `battle_loot.csv`, scaled by the battle item drop
-slider (`BattleItemDropSetting`), and site rolls at its tier weight (`LogisticsSchematicDrops`).
+slider (`BattleItemDropSetting`), and site rolls at its tier weight (`SkillTreeSchematicDrops`).
 
 ### Skill tree templates
 

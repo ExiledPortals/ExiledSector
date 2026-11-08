@@ -3,9 +3,8 @@ package exiledsector.effects;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledsector.items.LogisticsSchematic;
-import exiledsector.items.LogisticsSchematicDrops;
 import exiledsector.items.ShipSchematic;
+import exiledsector.items.SkillTreeSchematicDrops;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleItemDropSetting;
 import exiledsector.loot.BattleLoot;
@@ -21,17 +20,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class LogisticsSchematicLootSource implements LootSource {
+public final class SkillTreeSchematicLootSource implements LootSource {
 
-    public static final LogisticsSchematicLootSource INSTANCE = new LogisticsSchematicLootSource();
-    private static final Logger LOG = Logger.getLogger(LogisticsSchematicLootSource.class);
+    public static final SkillTreeSchematicLootSource INSTANCE = new SkillTreeSchematicLootSource();
+    private static final Logger LOG = Logger.getLogger(SkillTreeSchematicLootSource.class);
 
     private static final class FleetLosses {
         private float deploymentPoints;
         private float difficultyWeighted;
     }
 
-    private LogisticsSchematicLootSource() {
+    private SkillTreeSchematicLootSource() {
     }
 
     private Map<CampaignFleetAPI, FleetLosses> losses(BattleLoot battle) {
@@ -69,8 +68,10 @@ public final class LogisticsSchematicLootSource implements LootSource {
 
     @Override
     public void addSiteFinds(SiteFind find) {
-        if (LogisticsSchematicDrops.rollSiteFind(find.dropSite(), find.random(), find.chances())) {
-            find.upgrades().add(LogisticsSchematic.INSTANCE);
+        for (SkillTreeSchematicDrops drop : SkillTreeSchematicDrops.values()) {
+            if (SkillTreeSchematicDrops.rollSiteFind(find.dropSite(), find.random(), find.chances())) {
+                find.upgrades().add(drop.schematic());
+            }
         }
     }
 
@@ -78,14 +79,17 @@ public final class LogisticsSchematicLootSource implements LootSource {
         if (!battle.playerWon()) {
             return List.of();
         }
+        List<ShipSchematic> drops = new ArrayList<>();
         try {
-            List<LogisticsSchematicDrops.SourceLoss> sources = new ArrayList<>();
-            losses(battle).forEach((fleet, fleetLosses) -> sources.add(new LogisticsSchematicDrops.SourceLoss(fleetLosses.deploymentPoints,
+            List<SkillTreeSchematicDrops.SourceLoss> sources = new ArrayList<>();
+            losses(battle).forEach((fleet, fleetLosses) -> sources.add(new SkillTreeSchematicDrops.SourceLoss(fleetLosses.deploymentPoints,
                     fleetLosses.difficultyWeighted / fleetLosses.deploymentPoints, LootSources.fleetLootRules(fleet))));
-            return Collections.<ShipSchematic>nCopies(LogisticsSchematicDrops.rollBattle(sources, BattleItemDropSetting.multiplier(), battle.random()), LogisticsSchematic.INSTANCE);
+            for (SkillTreeSchematicDrops drop : SkillTreeSchematicDrops.values()) {
+                drops.addAll(Collections.nCopies(drop.rollBattle(sources, BattleItemDropSetting.multiplier(), battle.random()), drop.schematic()));
+            }
         } catch (RuntimeException e) {
-            LOG.error("[ExiledSector] Rolling Logistics Schematic battle drops failed", e);
-            return List.of();
+            LOG.error("[ExiledSector] Rolling skill tree schematic battle drops failed", e);
         }
+        return drops;
     }
 }

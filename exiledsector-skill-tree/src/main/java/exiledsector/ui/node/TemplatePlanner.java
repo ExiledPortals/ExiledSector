@@ -62,6 +62,12 @@ final class TemplatePlanner {
         carriedSteps = List.copyOf(unplacedSteps);
     }
 
+    void clearIntegrations() {
+        if (planData != null) {
+            planData.clearIntegrations();
+        }
+    }
+
     void stop() {
         planData = null;
         editedTemplateId = null;

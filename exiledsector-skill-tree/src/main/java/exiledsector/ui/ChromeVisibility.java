@@ -29,7 +29,7 @@ final class ChromeVisibility {
         float transitionAlpha = switch (chrome) {
             case READOUTS -> 1f;
             case SEARCH -> transitionTreeAlpha;
-            case STATS_TOGGLE, TEMPLATE_BAR, STORAGE_BUTTON, LOGISTICS_BUTTON -> transitionChromeAlpha;
+            case STATS_TOGGLE, TEMPLATE_BAR, STORAGE_BUTTON, SCHEMATIC_BUTTONS -> transitionChromeAlpha;
         };
         return modeFadeByChrome[chrome.ordinal()] * transitionAlpha;
     }

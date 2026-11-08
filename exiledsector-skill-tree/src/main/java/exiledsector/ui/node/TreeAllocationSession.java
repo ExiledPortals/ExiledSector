@@ -830,13 +830,19 @@ public final class TreeAllocationSession {
     private void integrate(SkillNode node) {
         ShipSkillData skillData = allocator.data();
         FleetMemberAPI member = allocator.member();
-        if (!canIntegrate(node) || !NodeIntegration.integrate(skillData, node, member.getHullSpec().getHullSize(), member.getShipName())) {
+        if (!canIntegrate(node) || !NodeIntegration.integrate(skillData, node, member.getShipName())) {
             SkillTreeSounds.refused();
             return;
         }
         refreshAfterAllocation();
         SkillTreeSounds.integrated();
         feedback.integrated(node);
+    }
+
+    public void refreshAfterIntegrationReset() {
+        integrationHold.cancel();
+        planner.clearIntegrations();
+        refreshAfterAllocation();
     }
 
     public String releaseWarning(SkillNode node) {

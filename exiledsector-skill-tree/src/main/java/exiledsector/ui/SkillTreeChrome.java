@@ -21,7 +21,7 @@ final class SkillTreeChrome {
     private final SkillTreeSearchBar searchBar;
     private final SkillTreeTemplateController templateUi;
     private final SocketPlacement socketPlacement;
-    private final LogisticsSlots logisticsSlots;
+    private final SchematicButtons schematicButtons;
     private final FleetMemberAPI member;
     private final SkillTreeReadoutBar ordnancePointsBar = new SkillTreeReadoutBar(SkillTreeChrome.class, 0, "ui.readout.opBar");
     private final SkillTreeLevelBar levelBar;
@@ -41,13 +41,13 @@ final class SkillTreeChrome {
     private boolean shipCardHidden;
 
     SkillTreeChrome(FleetMemberAPI member, SkillTreePanelStyle panelStyle, SkillTreeStatPanel statPanel, SkillTreeSearchBar searchBar,
-                    SkillTreeTemplateController templateUi, SocketPlacement socketPlacement, LogisticsSlots logisticsSlots, float shipCardHeight) {
+                    SkillTreeTemplateController templateUi, SocketPlacement socketPlacement, SchematicButtons schematicButtons, float shipCardHeight) {
         this.member = member;
         this.statPanel = statPanel;
         this.searchBar = searchBar;
         this.templateUi = templateUi;
         this.socketPlacement = socketPlacement;
-        this.logisticsSlots = logisticsSlots;
+        this.schematicButtons = schematicButtons;
         this.levelBar = new SkillTreeLevelBar(member, 1);
         this.infoTooltipRenderer = new SkillTreeInfoTooltipRenderer(panelStyle);
         this.readoutTooltipBody = buildReadoutTooltipBody(member);
@@ -67,7 +67,7 @@ final class SkillTreeChrome {
                  boolean mouseKnown) {
         boolean storageButtonShown = visibility.alpha(CanvasMode.Chrome.STORAGE_BUTTON) > 0f;
         socketPlacement.layoutButton(canvasPosition, shipCardFrame(canvasPosition), storageButtonShown);
-        logisticsSlots.layout(socketPlacement.buttonBounds(), visibility.alpha(CanvasMode.Chrome.LOGISTICS_BUTTON) > 0f, mouseX, mouseY);
+        schematicButtons.layout(socketPlacement.buttonBounds(), visibility.alpha(CanvasMode.Chrome.SCHEMATIC_BUTTONS) > 0f, mouseX, mouseY);
         if (!mode.enables(CanvasMode.Chrome.SEARCH)) {
             searchBar.unfocus();
         }
@@ -94,7 +94,7 @@ final class SkillTreeChrome {
                 || (mode.shows(CanvasMode.Chrome.SEARCH) && SkillTreeSearchBar.contains(canvasPosition, x, y))
                 || (mode.shows(CanvasMode.Chrome.TEMPLATE_BAR) && templateUi.barContains(x, y))
                 || (mode.shows(CanvasMode.Chrome.STORAGE_BUTTON) && socketPlacement.buttonContains(x, y))
-                || (mode.shows(CanvasMode.Chrome.LOGISTICS_BUTTON) && logisticsSlots.contains(x, y))
+                || (mode.shows(CanvasMode.Chrome.SCHEMATIC_BUTTONS) && schematicButtons.contains(x, y))
                 || socketPlacement.panelContains(x, y)
                 || shipCardFrame(canvasPosition).contains(x, y);
     }
@@ -115,7 +115,7 @@ final class SkillTreeChrome {
             socketPlacement.toggle(canvasPosition, shipCardFrame(canvasPosition));
             return true;
         }
-        if (mode.enables(CanvasMode.Chrome.LOGISTICS_BUTTON) && logisticsSlots.press(x, y)) {
+        if (mode.enables(CanvasMode.Chrome.SCHEMATIC_BUTTONS) && schematicButtons.press(x, y)) {
             return true;
         }
         if (mode.enables(CanvasMode.Chrome.TEMPLATE_BAR) && templateUi.handleLmbDown(x, y)) {
@@ -153,8 +153,8 @@ final class SkillTreeChrome {
         }
         socketPlacement.renderButton(mouseX, mouseY, alphaMult * visibility.alpha(CanvasMode.Chrome.STORAGE_BUTTON),
                 mode.enables(CanvasMode.Chrome.STORAGE_BUTTON));
-        logisticsSlots.renderButton(mouseX, mouseY, alphaMult * visibility.alpha(CanvasMode.Chrome.LOGISTICS_BUTTON),
-                mode.enables(CanvasMode.Chrome.LOGISTICS_BUTTON));
+        schematicButtons.renderButtons(mouseX, mouseY, alphaMult * visibility.alpha(CanvasMode.Chrome.SCHEMATIC_BUTTONS),
+                mode.enables(CanvasMode.Chrome.SCHEMATIC_BUTTONS));
         ScreenRect frame = shipCardFrame(canvasPosition);
         BorderedPanel.draw(frame.left(), frame.bottom(), frame.width(), frame.height(), alphaMult);
         statPanel.renderSheet(canvasPosition, mouseX, mouseY, alphaMult * visibility.alpha(CanvasMode.Chrome.STATS_TOGGLE) * (1f - craftingBenchDim),
@@ -176,8 +176,9 @@ final class SkillTreeChrome {
         if (mode.enables(CanvasMode.Chrome.STORAGE_BUTTON) && socketPlacement.buttonContains(mouseX, mouseY)) {
             infoTooltipRenderer.render(storageTooltipTitle, storageTooltipHint, mouseX, mouseY, alphaMult);
         }
-        if (mode.enables(CanvasMode.Chrome.LOGISTICS_BUTTON) && logisticsSlots.contains(mouseX, mouseY)) {
-            infoTooltipRenderer.render(logisticsSlots.tooltipTitle(), logisticsSlots.tooltipBody(), mouseX, mouseY, alphaMult);
+        SchematicButton hoveredSchematic = mode.enables(CanvasMode.Chrome.SCHEMATIC_BUTTONS) ? schematicButtons.hovered(mouseX, mouseY) : null;
+        if (hoveredSchematic != null) {
+            infoTooltipRenderer.render(hoveredSchematic.tooltipTitle(), hoveredSchematic.tooltipBody(), mouseX, mouseY, alphaMult);
         }
         if (mode.enables(CanvasMode.Chrome.TEMPLATE_BAR)) {
             templateUi.renderBarTooltip(mouseX, mouseY, alphaMult);

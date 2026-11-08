@@ -6,9 +6,11 @@ import exiledsector.loot.FleetLootRules;
 import java.util.List;
 import java.util.Random;
 
-public final class LogisticsSchematicDrops {
+public enum SkillTreeSchematicDrops {
 
-    public static final String RATE_ID = "logistics_schematic";
+    LOGISTICS(LogisticsSchematic.INSTANCE, "logistics_schematic"),
+    DEINTEGRATION(DeintegrationSchematic.INSTANCE, "deintegration_schematic");
+
     static final RefitSchematic MATCHED_TIER = RefitSchematic.MILITARY;
 
     public record SourceLoss(float deploymentPoints, float difficultyMultiplier, FleetLootRules rules) {
@@ -19,11 +21,24 @@ public final class LogisticsSchematicDrops {
         }
     }
 
-    private LogisticsSchematicDrops() {
+    private final ShipSchematic schematic;
+    private final String rateId;
+
+    SkillTreeSchematicDrops(ShipSchematic schematic, String rateId) {
+        this.schematic = schematic;
+        this.rateId = rateId;
     }
 
-    public static int rollBattle(List<SourceLoss> sources, float dropMultiplier, Random random) {
-        return ItemDrops.wholeFeedstock(expectedBattleDrops(sources, BattleLootRates.rate(RATE_ID), dropMultiplier), random);
+    public ShipSchematic schematic() {
+        return schematic;
+    }
+
+    public String rateId() {
+        return rateId;
+    }
+
+    public int rollBattle(List<SourceLoss> sources, float dropMultiplier, Random random) {
+        return ItemDrops.wholeFeedstock(expectedBattleDrops(sources, BattleLootRates.rate(rateId), dropMultiplier), random);
     }
 
     static float expectedBattleDrops(List<SourceLoss> sources, BattleLootRates.Rate rate, float dropMultiplier) {

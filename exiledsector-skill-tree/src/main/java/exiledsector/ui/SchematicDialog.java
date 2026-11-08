@@ -2,11 +2,10 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.i18n.Translation;
-import exiledsector.items.LogisticsSchematic;
 import exiledsector.ui.util.HoloFrame;
 import exiledsector.ui.util.TextLabel;
 
-final class LogisticsSlotDialog {
+final class SchematicDialog {
 
     enum Choice { NONE, CONFIRM, CANCEL }
 
@@ -18,19 +17,18 @@ final class LogisticsSlotDialog {
     private static final float BODY_MAX_HEIGHT = 80f;
 
     private final HoloFrame modalFrame = new HoloFrame(HoloFrame.Look.MODAL);
-    private final SkillTreeUiButton confirmButton = new SkillTreeUiButton(Translation.text("ui.logisticsSlots.dialog.confirm"));
-    private final SkillTreeUiButton cancelButton = new SkillTreeUiButton(Translation.text("ui.logisticsSlots.dialog.cancel"));
+    private final SkillTreeUiButton confirmButton = new SkillTreeUiButton(Translation.text("ui.schematicDialog.confirm"));
+    private final SkillTreeUiButton cancelButton = new SkillTreeUiButton(Translation.text("ui.schematicDialog.cancel"));
     private final TextLabel titleLine = new TextLabel(UiFonts.TITLE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel bodyText = new TextLabel(UiFonts.DIALOG_TEXT, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
     private boolean dialogOpen;
 
-    void open(int cap, int held) {
+    void open(String title, String body) {
         dialogOpen = true;
         modalFrame.open();
         hideButtons();
-        titleLine.set(Translation.msg("ui.logisticsSlots.dialog.title").arg("item", LogisticsSchematic.INSTANCE.displayName()).text());
-        bodyText.setWrapped(Translation.msg("ui.logisticsSlots.dialog.body").count(held).arg("cap", cap).arg("newCap", cap + 1).text(),
-                WIDTH - PADDING * 2f, BODY_MAX_HEIGHT);
+        titleLine.set(title);
+        bodyText.setWrapped(body, WIDTH - PADDING * 2f, BODY_MAX_HEIGHT);
     }
 
     void close() {
