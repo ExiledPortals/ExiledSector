@@ -87,7 +87,7 @@
     "socketable.anchor.locked": "<bad>Inert</bad> until its unlock condition is met.",
     "socketable.anchor.volumeOffRefusal": "{name} can't be installed: it is inert while the {volume} is turned off.",
     "socketable.anchor.volumeLimit": "{name} can't be installed: this ship already has an anchor for the {volume}.",
-    "socketable.anchor.open": "The wormhole to the {volume} is <good>open</good>. Ctrl-click the socket to travel through it.",
+    "socketable.anchor.open": "The wormhole to the {volume} is <good>open</good>. Right-click the socket to travel through it.",
     "socketable.anchor.noFreeSlot": "<bad>Closed</bad>: opening the wormhole to the {volume} needs a free node slot.",
     "socketable.anchor.duplicate": "<bad>Inert</bad>: another anchor on this ship already opens the {volume}.",
     "socketable.anchor.exitLocked": "<bad>Inert</bad> until the way into the {volume} is unlocked.",

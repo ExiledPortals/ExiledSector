@@ -369,8 +369,8 @@ public final class TreeAllocationSession {
         }
     }
 
-    public SkillNode wormholeJumpTarget(SkillNode node, boolean ctrlDown) {
-        if (!ctrlDown) {
+    public SkillNode wormholeJumpTarget(SkillNode node) {
+        if (node == null) {
             return null;
         }
         ShipSkillData liveData = allocator.data();

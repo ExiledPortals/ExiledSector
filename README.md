@@ -289,7 +289,7 @@ Hidden nodes show up as sensor ghosts until you unlock them.
 
 Wormholes unlock when you get access to the Gate network, which is when you use the Janus Device at the end of the Galatia Academy story.
 
-Wormholes come in pairs. Take one end and you get the other end for free, though it still counts toward your node limit. Removing either end removes both. Ctrl-click any identified wormhole to jump the camera to the other end.
+Wormholes come in pairs. Take one end and you get the other end for free, though it still counts toward your node limit. Removing either end removes both. Right-click any identified wormhole to jump the camera to the other end.
 
 Hullmod nodes unlock when you learn the matching hullmod blueprint. Neural Interface also unlocks if you have the relevant Neural Link skill.
 

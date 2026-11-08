@@ -406,7 +406,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void handleTreeEvent(InputEventAPI event, CanvasMode mode) {
-        if (event.isRMBDownEvent() && canvasPosition.containsEvent(event) && emptySocketAt(mode, event.getX(), event.getY())) {
+        if (event.isRMBDownEvent() && canvasPosition.containsEvent(event) && travelledThroughWormholeAt(mode, event.getX(), event.getY())) {
+            event.consume();
+        } else if (event.isRMBDownEvent() && canvasPosition.containsEvent(event) && emptySocketAt(mode, event.getX(), event.getY())) {
             event.consume();
         } else if (event.isLMBDownEvent() && canvasPosition.containsEvent(event)) {
             handleTreePress(event, mode);
@@ -426,6 +428,13 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             swallowEscapeUp = true;
         }
         event.consume();
+    }
+
+    private boolean travelledThroughWormholeAt(CanvasMode mode, float x, float y) {
+        if (gesture.isActive() || treeSession.isChoicePickerOpen() || chrome.contains(canvasPosition, mode, x, y)) {
+            return false;
+        }
+        return treeTargetAt(x, y) instanceof SkillNode node && travelThroughWormhole(node);
     }
 
     private boolean emptySocketAt(CanvasMode mode, float x, float y) {
@@ -505,7 +514,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void commitNodeClick(SkillNode node, boolean ctrlDown, boolean shiftDown) {
-        SkillNode jumpTarget = treeSession.wormholeJumpTarget(node, ctrlDown);
         if (socketPlacement.placeInto(node)) {
             return;
         }
@@ -516,22 +524,28 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (ctrlDown && shiftDown && (treeSession.allocatePath(node) || treeSession.allocateAnchoredPath(node))) {
             return;
         }
-        if (jumpTarget == null && socketPlacement.handleSocketClick(node, ctrlDown, canvasPosition, chrome.shipCardFrame(canvasPosition))) {
+        if (socketPlacement.handleSocketClick(node, ctrlDown, canvasPosition, chrome.shipCardFrame(canvasPosition))) {
             return;
         }
-        if (jumpTarget != null && ExoshipNodes.isExoship(jumpTarget)) {
+        treeSession.clickNode(node, ctrlDown);
+    }
+
+    private boolean travelThroughWormhole(SkillNode node) {
+        SkillNode jumpTarget = treeSession.wormholeJumpTarget(node);
+        if (jumpTarget == null) {
+            return false;
+        }
+        if (ExoshipNodes.isExoship(jumpTarget)) {
             boardExoship();
-            SkillTreeSounds.wormholeJumped();
-        } else if (jumpTarget != null) {
+        } else {
             stopFollowing();
             camera.panTo(jumpTarget.getOffsetX(), jumpTarget.getOffsetY());
             if (!ExoshipNodes.isExoship(node)) {
                 nodeDrawer.launchWormholeGhosts(node, jumpTarget);
             }
-            SkillTreeSounds.wormholeJumped();
-        } else {
-            treeSession.clickNode(node, ctrlDown);
         }
+        SkillTreeSounds.wormholeJumped();
+        return true;
     }
 
     private void jumpToNextSearchMatch() {
