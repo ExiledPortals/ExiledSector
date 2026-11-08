@@ -3721,36 +3721,46 @@ integrable|advanced_optics|null|1	0	<bad>30%</bad> less beam weapon turn rate.
 integrable|advanced_optics|null|2	0	Click and hold to integrate.
 integrable|advanced_optics|null|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|advanced_optics|null|4	0	<muted>+200 to beam weapon range.</muted>
+integrable|advanced_optics|null|5	0	<builtIn>No longer: 30% less beam weapon turn rate.</builtIn>
 integrable|advanced_optics|FRIGATE|0	0	<good>+200</good> to beam weapon range.
 integrable|advanced_optics|FRIGATE|1	0	<bad>30%</bad> less beam weapon turn rate.
 integrable|advanced_optics|FRIGATE|2	0	Click and hold to integrate.
 integrable|advanced_optics|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|advanced_optics|FRIGATE|4	0	<muted>+200 to beam weapon range.</muted>
+integrable|advanced_optics|FRIGATE|5	0	<builtIn>No longer: 30% less beam weapon turn rate.</builtIn>
 integrable|advanced_optics|DESTROYER|0	0	<good>+200</good> to beam weapon range.
 integrable|advanced_optics|DESTROYER|1	0	<bad>30%</bad> less beam weapon turn rate.
 integrable|advanced_optics|DESTROYER|2	0	Click and hold to integrate.
 integrable|advanced_optics|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|advanced_optics|DESTROYER|4	0	<muted>+200 to beam weapon range.</muted>
+integrable|advanced_optics|DESTROYER|5	0	<builtIn>No longer: 30% less beam weapon turn rate.</builtIn>
 integrable|advanced_optics|CRUISER|0	0	<good>+200</good> to beam weapon range.
 integrable|advanced_optics|CRUISER|1	0	<bad>30%</bad> less beam weapon turn rate.
 integrable|advanced_optics|CRUISER|2	0	Click and hold to integrate.
 integrable|advanced_optics|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|advanced_optics|CRUISER|4	0	<muted>+200 to beam weapon range.</muted>
+integrable|advanced_optics|CRUISER|5	0	<builtIn>No longer: 30% less beam weapon turn rate.</builtIn>
 integrable|advanced_optics|CAPITAL_SHIP|0	0	<good>+200</good> to beam weapon range.
 integrable|advanced_optics|CAPITAL_SHIP|1	0	<bad>30%</bad> less beam weapon turn rate.
 integrable|advanced_optics|CAPITAL_SHIP|2	0	Click and hold to integrate.
 integrable|advanced_optics|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|advanced_optics|CAPITAL_SHIP|4	0	<muted>+200 to beam weapon range.</muted>
+integrable|advanced_optics|CAPITAL_SHIP|5	0	<builtIn>No longer: 30% less beam weapon turn rate.</builtIn>
 integrated|advanced_optics|null|0	0	<builtIn>Integrated</builtIn>
 integrated|advanced_optics|null|1	0	<good>+200</good> to beam weapon range.
+integrated|advanced_optics|null|2	0	<builtIn>No longer: 30% less beam weapon turn rate.</builtIn>
 integrated|advanced_optics|FRIGATE|0	0	<builtIn>Integrated</builtIn>
 integrated|advanced_optics|FRIGATE|1	0	<good>+200</good> to beam weapon range.
+integrated|advanced_optics|FRIGATE|2	0	<builtIn>No longer: 30% less beam weapon turn rate.</builtIn>
 integrated|advanced_optics|DESTROYER|0	0	<builtIn>Integrated</builtIn>
 integrated|advanced_optics|DESTROYER|1	0	<good>+200</good> to beam weapon range.
+integrated|advanced_optics|DESTROYER|2	0	<builtIn>No longer: 30% less beam weapon turn rate.</builtIn>
 integrated|advanced_optics|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|advanced_optics|CRUISER|1	0	<good>+200</good> to beam weapon range.
+integrated|advanced_optics|CRUISER|2	0	<builtIn>No longer: 30% less beam weapon turn rate.</builtIn>
 integrated|advanced_optics|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|advanced_optics|CAPITAL_SHIP|1	0	<good>+200</good> to beam weapon range.
+integrated|advanced_optics|CAPITAL_SHIP|2	0	<builtIn>No longer: 30% less beam weapon turn rate.</builtIn>
 type|advanced_turret_gyros|null|0	0	<good>40%</good> increased weapon turn rate.
 type-detail|advanced_turret_gyros|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Advanced Turret Gyros</hullmod>
 type|advanced_turret_gyros|FRIGATE|0	0	<good>40%</good> increased weapon turn rate.
@@ -4451,6 +4461,7 @@ integrable|beautiful_nightmare|null|5	0	<muted>When integrated, for 2 story poin
 integrable|beautiful_nightmare|null|6	0	<muted>When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, 25% reduced hull damage taken, but peak performance time stops and venting is blocked.</muted>
 integrable|beautiful_nightmare|null|7	0	<muted>15% increased flux dissipation during Terminal Descent.</muted>
 integrable|beautiful_nightmare|null|8	0	<muted>15% increased ship system charge regeneration during Terminal Descent.</muted>
+integrable|beautiful_nightmare|null|9	0	<builtIn>No longer: 10% increased damage taken by shields during Terminal Descent.</builtIn>
 integrable|beautiful_nightmare|FRIGATE|0	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, <good>25%</good> reduced hull damage taken, but peak performance time stops and venting is blocked.
 integrable|beautiful_nightmare|FRIGATE|1	0	<good>15%</good> increased flux dissipation during Terminal Descent.
 integrable|beautiful_nightmare|FRIGATE|2	0	<good>15%</good> increased ship system charge regeneration during Terminal Descent.
@@ -4460,6 +4471,7 @@ integrable|beautiful_nightmare|FRIGATE|5	0	<muted>When integrated, for 2 story p
 integrable|beautiful_nightmare|FRIGATE|6	0	<muted>When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, 25% reduced hull damage taken, but peak performance time stops and venting is blocked.</muted>
 integrable|beautiful_nightmare|FRIGATE|7	0	<muted>15% increased flux dissipation during Terminal Descent.</muted>
 integrable|beautiful_nightmare|FRIGATE|8	0	<muted>15% increased ship system charge regeneration during Terminal Descent.</muted>
+integrable|beautiful_nightmare|FRIGATE|9	0	<builtIn>No longer: 10% increased damage taken by shields during Terminal Descent.</builtIn>
 integrable|beautiful_nightmare|DESTROYER|0	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, <good>25%</good> reduced hull damage taken, but peak performance time stops and venting is blocked.
 integrable|beautiful_nightmare|DESTROYER|1	0	<good>15%</good> increased flux dissipation during Terminal Descent.
 integrable|beautiful_nightmare|DESTROYER|2	0	<good>15%</good> increased ship system charge regeneration during Terminal Descent.
@@ -4469,6 +4481,7 @@ integrable|beautiful_nightmare|DESTROYER|5	0	<muted>When integrated, for 2 story
 integrable|beautiful_nightmare|DESTROYER|6	0	<muted>When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, 25% reduced hull damage taken, but peak performance time stops and venting is blocked.</muted>
 integrable|beautiful_nightmare|DESTROYER|7	0	<muted>15% increased flux dissipation during Terminal Descent.</muted>
 integrable|beautiful_nightmare|DESTROYER|8	0	<muted>15% increased ship system charge regeneration during Terminal Descent.</muted>
+integrable|beautiful_nightmare|DESTROYER|9	0	<builtIn>No longer: 10% increased damage taken by shields during Terminal Descent.</builtIn>
 integrable|beautiful_nightmare|CRUISER|0	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, <good>25%</good> reduced hull damage taken, but peak performance time stops and venting is blocked.
 integrable|beautiful_nightmare|CRUISER|1	0	<good>15%</good> increased flux dissipation during Terminal Descent.
 integrable|beautiful_nightmare|CRUISER|2	0	<good>15%</good> increased ship system charge regeneration during Terminal Descent.
@@ -4478,6 +4491,7 @@ integrable|beautiful_nightmare|CRUISER|5	0	<muted>When integrated, for 2 story p
 integrable|beautiful_nightmare|CRUISER|6	0	<muted>When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, 25% reduced hull damage taken, but peak performance time stops and venting is blocked.</muted>
 integrable|beautiful_nightmare|CRUISER|7	0	<muted>15% increased flux dissipation during Terminal Descent.</muted>
 integrable|beautiful_nightmare|CRUISER|8	0	<muted>15% increased ship system charge regeneration during Terminal Descent.</muted>
+integrable|beautiful_nightmare|CRUISER|9	0	<builtIn>No longer: 10% increased damage taken by shields during Terminal Descent.</builtIn>
 integrable|beautiful_nightmare|CAPITAL_SHIP|0	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, <good>25%</good> reduced hull damage taken, but peak performance time stops and venting is blocked.
 integrable|beautiful_nightmare|CAPITAL_SHIP|1	0	<good>15%</good> increased flux dissipation during Terminal Descent.
 integrable|beautiful_nightmare|CAPITAL_SHIP|2	0	<good>15%</good> increased ship system charge regeneration during Terminal Descent.
@@ -4487,26 +4501,32 @@ integrable|beautiful_nightmare|CAPITAL_SHIP|5	0	<muted>When integrated, for 2 st
 integrable|beautiful_nightmare|CAPITAL_SHIP|6	0	<muted>When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, 25% reduced hull damage taken, but peak performance time stops and venting is blocked.</muted>
 integrable|beautiful_nightmare|CAPITAL_SHIP|7	0	<muted>15% increased flux dissipation during Terminal Descent.</muted>
 integrable|beautiful_nightmare|CAPITAL_SHIP|8	0	<muted>15% increased ship system charge regeneration during Terminal Descent.</muted>
+integrable|beautiful_nightmare|CAPITAL_SHIP|9	0	<builtIn>No longer: 10% increased damage taken by shields during Terminal Descent.</builtIn>
 integrated|beautiful_nightmare|null|0	0	<builtIn>Integrated</builtIn>
 integrated|beautiful_nightmare|null|1	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, <good>25%</good> reduced hull damage taken, but peak performance time stops and venting is blocked.
 integrated|beautiful_nightmare|null|2	0	<good>15%</good> increased flux dissipation during Terminal Descent.
 integrated|beautiful_nightmare|null|3	0	<good>15%</good> increased ship system charge regeneration during Terminal Descent.
+integrated|beautiful_nightmare|null|4	0	<builtIn>No longer: 10% increased damage taken by shields during Terminal Descent.</builtIn>
 integrated|beautiful_nightmare|FRIGATE|0	0	<builtIn>Integrated</builtIn>
 integrated|beautiful_nightmare|FRIGATE|1	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, <good>25%</good> reduced hull damage taken, but peak performance time stops and venting is blocked.
 integrated|beautiful_nightmare|FRIGATE|2	0	<good>15%</good> increased flux dissipation during Terminal Descent.
 integrated|beautiful_nightmare|FRIGATE|3	0	<good>15%</good> increased ship system charge regeneration during Terminal Descent.
+integrated|beautiful_nightmare|FRIGATE|4	0	<builtIn>No longer: 10% increased damage taken by shields during Terminal Descent.</builtIn>
 integrated|beautiful_nightmare|DESTROYER|0	0	<builtIn>Integrated</builtIn>
 integrated|beautiful_nightmare|DESTROYER|1	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, <good>25%</good> reduced hull damage taken, but peak performance time stops and venting is blocked.
 integrated|beautiful_nightmare|DESTROYER|2	0	<good>15%</good> increased flux dissipation during Terminal Descent.
 integrated|beautiful_nightmare|DESTROYER|3	0	<good>15%</good> increased ship system charge regeneration during Terminal Descent.
+integrated|beautiful_nightmare|DESTROYER|4	0	<builtIn>No longer: 10% increased damage taken by shields during Terminal Descent.</builtIn>
 integrated|beautiful_nightmare|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|beautiful_nightmare|CRUISER|1	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, <good>25%</good> reduced hull damage taken, but peak performance time stops and venting is blocked.
 integrated|beautiful_nightmare|CRUISER|2	0	<good>15%</good> increased flux dissipation during Terminal Descent.
 integrated|beautiful_nightmare|CRUISER|3	0	<good>15%</good> increased ship system charge regeneration during Terminal Descent.
+integrated|beautiful_nightmare|CRUISER|4	0	<builtIn>No longer: 10% increased damage taken by shields during Terminal Descent.</builtIn>
 integrated|beautiful_nightmare|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|beautiful_nightmare|CAPITAL_SHIP|1	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, <good>25%</good> reduced hull damage taken, but peak performance time stops and venting is blocked.
 integrated|beautiful_nightmare|CAPITAL_SHIP|2	0	<good>15%</good> increased flux dissipation during Terminal Descent.
 integrated|beautiful_nightmare|CAPITAL_SHIP|3	0	<good>15%</good> increased ship system charge regeneration during Terminal Descent.
+integrated|beautiful_nightmare|CAPITAL_SHIP|4	0	<builtIn>No longer: 10% increased damage taken by shields during Terminal Descent.</builtIn>
 type|blast_doors|null|0	0	<good>20%</good> increased hull points.
 type|blast_doors|null|1	1	<bad>60%</bad> less crew casualties.
 type-detail|blast_doors|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Blast Doors</hullmod>
@@ -4660,6 +4680,7 @@ integrable|borrowed_grace|null|5	0	<muted>When integrated, for 2 story points:</
 integrable|borrowed_grace|null|6	0	<muted>Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to 20 stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.</muted>
 integrable|borrowed_grace|null|7	0	<muted>20% increased weapon durability.</muted>
 integrable|borrowed_grace|null|8	0	<muted>20% reduced weapon and engine repair time.</muted>
+integrable|borrowed_grace|null|9	0	<builtIn>No longer: 20% more damage taken by shields.</builtIn>
 integrable|borrowed_grace|FRIGATE|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
 integrable|borrowed_grace|FRIGATE|1	0	<good>20%</good> increased weapon durability.
 integrable|borrowed_grace|FRIGATE|2	1	<bad>20%</bad> reduced weapon and engine repair time.
@@ -4669,6 +4690,7 @@ integrable|borrowed_grace|FRIGATE|5	0	<muted>When integrated, for 2 story points
 integrable|borrowed_grace|FRIGATE|6	0	<muted>Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to 20 stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.</muted>
 integrable|borrowed_grace|FRIGATE|7	0	<muted>20% increased weapon durability.</muted>
 integrable|borrowed_grace|FRIGATE|8	0	<muted>20% reduced weapon and engine repair time.</muted>
+integrable|borrowed_grace|FRIGATE|9	0	<builtIn>No longer: 20% more damage taken by shields.</builtIn>
 integrable|borrowed_grace|DESTROYER|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
 integrable|borrowed_grace|DESTROYER|1	0	<good>20%</good> increased weapon durability.
 integrable|borrowed_grace|DESTROYER|2	1	<bad>20%</bad> reduced weapon and engine repair time.
@@ -4678,6 +4700,7 @@ integrable|borrowed_grace|DESTROYER|5	0	<muted>When integrated, for 2 story poin
 integrable|borrowed_grace|DESTROYER|6	0	<muted>Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to 20 stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.</muted>
 integrable|borrowed_grace|DESTROYER|7	0	<muted>20% increased weapon durability.</muted>
 integrable|borrowed_grace|DESTROYER|8	0	<muted>20% reduced weapon and engine repair time.</muted>
+integrable|borrowed_grace|DESTROYER|9	0	<builtIn>No longer: 20% more damage taken by shields.</builtIn>
 integrable|borrowed_grace|CRUISER|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
 integrable|borrowed_grace|CRUISER|1	0	<good>20%</good> increased weapon durability.
 integrable|borrowed_grace|CRUISER|2	1	<bad>20%</bad> reduced weapon and engine repair time.
@@ -4687,6 +4710,7 @@ integrable|borrowed_grace|CRUISER|5	0	<muted>When integrated, for 2 story points
 integrable|borrowed_grace|CRUISER|6	0	<muted>Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to 20 stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.</muted>
 integrable|borrowed_grace|CRUISER|7	0	<muted>20% increased weapon durability.</muted>
 integrable|borrowed_grace|CRUISER|8	0	<muted>20% reduced weapon and engine repair time.</muted>
+integrable|borrowed_grace|CRUISER|9	0	<builtIn>No longer: 20% more damage taken by shields.</builtIn>
 integrable|borrowed_grace|CAPITAL_SHIP|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
 integrable|borrowed_grace|CAPITAL_SHIP|1	0	<good>20%</good> increased weapon durability.
 integrable|borrowed_grace|CAPITAL_SHIP|2	1	<bad>20%</bad> reduced weapon and engine repair time.
@@ -4696,26 +4720,32 @@ integrable|borrowed_grace|CAPITAL_SHIP|5	0	<muted>When integrated, for 2 story p
 integrable|borrowed_grace|CAPITAL_SHIP|6	0	<muted>Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to 20 stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.</muted>
 integrable|borrowed_grace|CAPITAL_SHIP|7	0	<muted>20% increased weapon durability.</muted>
 integrable|borrowed_grace|CAPITAL_SHIP|8	0	<muted>20% reduced weapon and engine repair time.</muted>
+integrable|borrowed_grace|CAPITAL_SHIP|9	0	<builtIn>No longer: 20% more damage taken by shields.</builtIn>
 integrated|borrowed_grace|null|0	0	<builtIn>Integrated</builtIn>
 integrated|borrowed_grace|null|1	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
 integrated|borrowed_grace|null|2	0	<good>20%</good> increased weapon durability.
 integrated|borrowed_grace|null|3	1	<bad>20%</bad> reduced weapon and engine repair time.
+integrated|borrowed_grace|null|4	0	<builtIn>No longer: 20% more damage taken by shields.</builtIn>
 integrated|borrowed_grace|FRIGATE|0	0	<builtIn>Integrated</builtIn>
 integrated|borrowed_grace|FRIGATE|1	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
 integrated|borrowed_grace|FRIGATE|2	0	<good>20%</good> increased weapon durability.
 integrated|borrowed_grace|FRIGATE|3	1	<bad>20%</bad> reduced weapon and engine repair time.
+integrated|borrowed_grace|FRIGATE|4	0	<builtIn>No longer: 20% more damage taken by shields.</builtIn>
 integrated|borrowed_grace|DESTROYER|0	0	<builtIn>Integrated</builtIn>
 integrated|borrowed_grace|DESTROYER|1	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
 integrated|borrowed_grace|DESTROYER|2	0	<good>20%</good> increased weapon durability.
 integrated|borrowed_grace|DESTROYER|3	1	<bad>20%</bad> reduced weapon and engine repair time.
+integrated|borrowed_grace|DESTROYER|4	0	<builtIn>No longer: 20% more damage taken by shields.</builtIn>
 integrated|borrowed_grace|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|borrowed_grace|CRUISER|1	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
 integrated|borrowed_grace|CRUISER|2	0	<good>20%</good> increased weapon durability.
 integrated|borrowed_grace|CRUISER|3	1	<bad>20%</bad> reduced weapon and engine repair time.
+integrated|borrowed_grace|CRUISER|4	0	<builtIn>No longer: 20% more damage taken by shields.</builtIn>
 integrated|borrowed_grace|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|borrowed_grace|CAPITAL_SHIP|1	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
 integrated|borrowed_grace|CAPITAL_SHIP|2	0	<good>20%</good> increased weapon durability.
 integrated|borrowed_grace|CAPITAL_SHIP|3	1	<bad>20%</bad> reduced weapon and engine repair time.
+integrated|borrowed_grace|CAPITAL_SHIP|4	0	<builtIn>No longer: 20% more damage taken by shields.</builtIn>
 flavour|candles_grace_replica	0	Inside a recovered Ancient Prototype, where every conduit converges on a perfectly spherical void, the crew finds the Candle's Grace device that drags at the timeflow of anything near it. Who or what Candle's Grace was is not recorded, and the replica is mostly guesswork.
 flavourAutomated|candles_grace_replica	0	Inside a recovered Ancient Prototype, where every conduit converges on a perfectly spherical void, the refit crew finds the Candle's Grace device that drags at the timeflow of anything near it. Who or what Candle's Grace was is not recorded, and the replica is mostly guesswork.
 type|candles_grace_replica|null|0	0	Enemy ships within 1500 su have up to <good>5%</good> less time flow, strongest at close range, or up to <good>10%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
@@ -7009,6 +7039,7 @@ integrable|dynamic_grid|null|3	0	Click and hold to integrate.
 integrable|dynamic_grid|null|4	0	<muted>When integrated, for 2 story points:</muted>
 integrable|dynamic_grid|null|5	0	<muted>Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, 15% increased energy weapon rate of fire and 15% reduced energy weapon flux cost.</muted>
 integrable|dynamic_grid|null|6	0	<muted>25% increased shield raise rate.</muted>
+integrable|dynamic_grid|null|7	0	<builtIn>No longer: 10% more damage taken by shields.</builtIn>
 integrable|dynamic_grid|FRIGATE|0	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 integrable|dynamic_grid|FRIGATE|1	0	<good>25%</good> increased shield raise rate.
 integrable|dynamic_grid|FRIGATE|2	1	<good>10%</good> more damage taken by shields.
@@ -7018,6 +7049,7 @@ integrable|dynamic_grid|FRIGATE|5	0	<muted>When integrated, for 2 story points:<
 integrable|dynamic_grid|FRIGATE|6	0	<muted>Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, 15% increased energy weapon rate of fire and 15% reduced energy weapon flux cost.</muted>
 integrable|dynamic_grid|FRIGATE|7	0	<muted>25% increased shield raise rate.</muted>
 integrable|dynamic_grid|FRIGATE|8	0	<muted>12% increased venting speed.</muted>
+integrable|dynamic_grid|FRIGATE|9	0	<builtIn>No longer: 10% more damage taken by shields.</builtIn>
 integrable|dynamic_grid|DESTROYER|0	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 integrable|dynamic_grid|DESTROYER|1	0	<good>25%</good> increased shield raise rate.
 integrable|dynamic_grid|DESTROYER|2	1	<good>10%</good> more damage taken by shields.
@@ -7027,6 +7059,7 @@ integrable|dynamic_grid|DESTROYER|5	0	<muted>When integrated, for 2 story points
 integrable|dynamic_grid|DESTROYER|6	0	<muted>Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, 15% increased energy weapon rate of fire and 15% reduced energy weapon flux cost.</muted>
 integrable|dynamic_grid|DESTROYER|7	0	<muted>25% increased shield raise rate.</muted>
 integrable|dynamic_grid|DESTROYER|8	0	<muted>10% increased venting speed.</muted>
+integrable|dynamic_grid|DESTROYER|9	0	<builtIn>No longer: 10% more damage taken by shields.</builtIn>
 integrable|dynamic_grid|CRUISER|0	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 integrable|dynamic_grid|CRUISER|1	0	<good>25%</good> increased shield raise rate.
 integrable|dynamic_grid|CRUISER|2	1	<good>10%</good> more damage taken by shields.
@@ -7036,6 +7069,7 @@ integrable|dynamic_grid|CRUISER|5	0	<muted>When integrated, for 2 story points:<
 integrable|dynamic_grid|CRUISER|6	0	<muted>Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, 15% increased energy weapon rate of fire and 15% reduced energy weapon flux cost.</muted>
 integrable|dynamic_grid|CRUISER|7	0	<muted>25% increased shield raise rate.</muted>
 integrable|dynamic_grid|CRUISER|8	0	<muted>8% increased venting speed.</muted>
+integrable|dynamic_grid|CRUISER|9	0	<builtIn>No longer: 10% more damage taken by shields.</builtIn>
 integrable|dynamic_grid|CAPITAL_SHIP|0	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 integrable|dynamic_grid|CAPITAL_SHIP|1	0	<good>25%</good> increased shield raise rate.
 integrable|dynamic_grid|CAPITAL_SHIP|2	1	<good>10%</good> more damage taken by shields.
@@ -7045,25 +7079,31 @@ integrable|dynamic_grid|CAPITAL_SHIP|5	0	<muted>When integrated, for 2 story poi
 integrable|dynamic_grid|CAPITAL_SHIP|6	0	<muted>Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, 15% increased energy weapon rate of fire and 15% reduced energy weapon flux cost.</muted>
 integrable|dynamic_grid|CAPITAL_SHIP|7	0	<muted>25% increased shield raise rate.</muted>
 integrable|dynamic_grid|CAPITAL_SHIP|8	0	<muted>6% increased venting speed.</muted>
+integrable|dynamic_grid|CAPITAL_SHIP|9	0	<builtIn>No longer: 10% more damage taken by shields.</builtIn>
 integrated|dynamic_grid|null|0	0	<builtIn>Integrated</builtIn>
 integrated|dynamic_grid|null|1	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 integrated|dynamic_grid|null|2	0	<good>25%</good> increased shield raise rate.
+integrated|dynamic_grid|null|3	0	<builtIn>No longer: 10% more damage taken by shields.</builtIn>
 integrated|dynamic_grid|FRIGATE|0	0	<builtIn>Integrated</builtIn>
 integrated|dynamic_grid|FRIGATE|1	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 integrated|dynamic_grid|FRIGATE|2	0	<good>25%</good> increased shield raise rate.
 integrated|dynamic_grid|FRIGATE|3	0	<good>12%</good> increased venting speed.
+integrated|dynamic_grid|FRIGATE|4	0	<builtIn>No longer: 10% more damage taken by shields.</builtIn>
 integrated|dynamic_grid|DESTROYER|0	0	<builtIn>Integrated</builtIn>
 integrated|dynamic_grid|DESTROYER|1	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 integrated|dynamic_grid|DESTROYER|2	0	<good>25%</good> increased shield raise rate.
 integrated|dynamic_grid|DESTROYER|3	0	<good>10%</good> increased venting speed.
+integrated|dynamic_grid|DESTROYER|4	0	<builtIn>No longer: 10% more damage taken by shields.</builtIn>
 integrated|dynamic_grid|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|dynamic_grid|CRUISER|1	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 integrated|dynamic_grid|CRUISER|2	0	<good>25%</good> increased shield raise rate.
 integrated|dynamic_grid|CRUISER|3	0	<good>8%</good> increased venting speed.
+integrated|dynamic_grid|CRUISER|4	0	<builtIn>No longer: 10% more damage taken by shields.</builtIn>
 integrated|dynamic_grid|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|dynamic_grid|CAPITAL_SHIP|1	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 integrated|dynamic_grid|CAPITAL_SHIP|2	0	<good>25%</good> increased shield raise rate.
 integrated|dynamic_grid|CAPITAL_SHIP|3	0	<good>6%</good> increased venting speed.
+integrated|dynamic_grid|CAPITAL_SHIP|4	0	<builtIn>No longer: 10% more damage taken by shields.</builtIn>
 type|eccm_package|null|0	0	<good>50%</good> increased chance for missiles to resist enemy ECM and flares.
 type|eccm_package|null|1	0	Significantly improved missile guidance algorithm.
 type|eccm_package|null|2	0	<good>25%</good> increased missile weapon projectile speed.
@@ -7791,6 +7831,7 @@ integrable|exo_tech_grid_splice|null|9	0	<muted>25% reduced sensor profile.</mut
 integrable|exo_tech_grid_splice|null|10	0	<muted>25% reduced sensor profile on phase hulls.</muted>
 integrable|exo_tech_grid_splice|null|11	0	<muted>25% reduced EMP damage taken.</muted>
 integrable|exo_tech_grid_splice|null|12	0	<muted>-5 to flux dissipation per flux vent.</muted>
+integrable|exo_tech_grid_splice|null|13	0	<builtIn>No longer: 25% reduced venting speed.</builtIn>
 integrable|exo_tech_grid_splice|FRIGATE|0	0	<good>10%</good> increased time flow.
 integrable|exo_tech_grid_splice|FRIGATE|1	1	<bad>25%</bad> reduced sensor profile.
 integrable|exo_tech_grid_splice|FRIGATE|2	1	<bad>25%</bad> reduced sensor profile on phase hulls.
@@ -7804,6 +7845,7 @@ integrable|exo_tech_grid_splice|FRIGATE|9	0	<muted>25% reduced sensor profile.</
 integrable|exo_tech_grid_splice|FRIGATE|10	0	<muted>25% reduced sensor profile on phase hulls.</muted>
 integrable|exo_tech_grid_splice|FRIGATE|11	0	<muted>25% reduced EMP damage taken.</muted>
 integrable|exo_tech_grid_splice|FRIGATE|12	0	<muted>-5 to flux dissipation per flux vent.</muted>
+integrable|exo_tech_grid_splice|FRIGATE|13	0	<builtIn>No longer: 25% reduced venting speed.</builtIn>
 integrable|exo_tech_grid_splice|DESTROYER|0	0	<good>10%</good> increased time flow.
 integrable|exo_tech_grid_splice|DESTROYER|1	1	<bad>25%</bad> reduced sensor profile.
 integrable|exo_tech_grid_splice|DESTROYER|2	1	<bad>25%</bad> reduced sensor profile on phase hulls.
@@ -7817,6 +7859,7 @@ integrable|exo_tech_grid_splice|DESTROYER|9	0	<muted>25% reduced sensor profile.
 integrable|exo_tech_grid_splice|DESTROYER|10	0	<muted>25% reduced sensor profile on phase hulls.</muted>
 integrable|exo_tech_grid_splice|DESTROYER|11	0	<muted>25% reduced EMP damage taken.</muted>
 integrable|exo_tech_grid_splice|DESTROYER|12	0	<muted>-5 to flux dissipation per flux vent.</muted>
+integrable|exo_tech_grid_splice|DESTROYER|13	0	<builtIn>No longer: 25% reduced venting speed.</builtIn>
 integrable|exo_tech_grid_splice|CRUISER|0	0	<good>10%</good> increased time flow.
 integrable|exo_tech_grid_splice|CRUISER|1	1	<bad>25%</bad> reduced sensor profile.
 integrable|exo_tech_grid_splice|CRUISER|2	1	<bad>25%</bad> reduced sensor profile on phase hulls.
@@ -7830,6 +7873,7 @@ integrable|exo_tech_grid_splice|CRUISER|9	0	<muted>25% reduced sensor profile.</
 integrable|exo_tech_grid_splice|CRUISER|10	0	<muted>25% reduced sensor profile on phase hulls.</muted>
 integrable|exo_tech_grid_splice|CRUISER|11	0	<muted>25% reduced EMP damage taken.</muted>
 integrable|exo_tech_grid_splice|CRUISER|12	0	<muted>-5 to flux dissipation per flux vent.</muted>
+integrable|exo_tech_grid_splice|CRUISER|13	0	<builtIn>No longer: 25% reduced venting speed.</builtIn>
 integrable|exo_tech_grid_splice|CAPITAL_SHIP|0	0	<good>10%</good> increased time flow.
 integrable|exo_tech_grid_splice|CAPITAL_SHIP|1	1	<bad>25%</bad> reduced sensor profile.
 integrable|exo_tech_grid_splice|CAPITAL_SHIP|2	1	<bad>25%</bad> reduced sensor profile on phase hulls.
@@ -7843,36 +7887,42 @@ integrable|exo_tech_grid_splice|CAPITAL_SHIP|9	0	<muted>25% reduced sensor profi
 integrable|exo_tech_grid_splice|CAPITAL_SHIP|10	0	<muted>25% reduced sensor profile on phase hulls.</muted>
 integrable|exo_tech_grid_splice|CAPITAL_SHIP|11	0	<muted>25% reduced EMP damage taken.</muted>
 integrable|exo_tech_grid_splice|CAPITAL_SHIP|12	0	<muted>-5 to flux dissipation per flux vent.</muted>
+integrable|exo_tech_grid_splice|CAPITAL_SHIP|13	0	<builtIn>No longer: 25% reduced venting speed.</builtIn>
 integrated|exo_tech_grid_splice|null|0	0	<builtIn>Integrated</builtIn>
 integrated|exo_tech_grid_splice|null|1	0	<good>10%</good> increased time flow.
 integrated|exo_tech_grid_splice|null|2	1	<bad>25%</bad> reduced sensor profile.
 integrated|exo_tech_grid_splice|null|3	1	<bad>25%</bad> reduced sensor profile on phase hulls.
 integrated|exo_tech_grid_splice|null|4	1	<bad>25%</bad> reduced EMP damage taken.
 integrated|exo_tech_grid_splice|null|5	0	<bad>-5</bad> to flux dissipation per flux vent.
+integrated|exo_tech_grid_splice|null|6	0	<builtIn>No longer: 25% reduced venting speed.</builtIn>
 integrated|exo_tech_grid_splice|FRIGATE|0	0	<builtIn>Integrated</builtIn>
 integrated|exo_tech_grid_splice|FRIGATE|1	0	<good>10%</good> increased time flow.
 integrated|exo_tech_grid_splice|FRIGATE|2	1	<bad>25%</bad> reduced sensor profile.
 integrated|exo_tech_grid_splice|FRIGATE|3	1	<bad>25%</bad> reduced sensor profile on phase hulls.
 integrated|exo_tech_grid_splice|FRIGATE|4	1	<bad>25%</bad> reduced EMP damage taken.
 integrated|exo_tech_grid_splice|FRIGATE|5	0	<bad>-5</bad> to flux dissipation per flux vent.
+integrated|exo_tech_grid_splice|FRIGATE|6	0	<builtIn>No longer: 25% reduced venting speed.</builtIn>
 integrated|exo_tech_grid_splice|DESTROYER|0	0	<builtIn>Integrated</builtIn>
 integrated|exo_tech_grid_splice|DESTROYER|1	0	<good>10%</good> increased time flow.
 integrated|exo_tech_grid_splice|DESTROYER|2	1	<bad>25%</bad> reduced sensor profile.
 integrated|exo_tech_grid_splice|DESTROYER|3	1	<bad>25%</bad> reduced sensor profile on phase hulls.
 integrated|exo_tech_grid_splice|DESTROYER|4	1	<bad>25%</bad> reduced EMP damage taken.
 integrated|exo_tech_grid_splice|DESTROYER|5	0	<bad>-5</bad> to flux dissipation per flux vent.
+integrated|exo_tech_grid_splice|DESTROYER|6	0	<builtIn>No longer: 25% reduced venting speed.</builtIn>
 integrated|exo_tech_grid_splice|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|exo_tech_grid_splice|CRUISER|1	0	<good>10%</good> increased time flow.
 integrated|exo_tech_grid_splice|CRUISER|2	1	<bad>25%</bad> reduced sensor profile.
 integrated|exo_tech_grid_splice|CRUISER|3	1	<bad>25%</bad> reduced sensor profile on phase hulls.
 integrated|exo_tech_grid_splice|CRUISER|4	1	<bad>25%</bad> reduced EMP damage taken.
 integrated|exo_tech_grid_splice|CRUISER|5	0	<bad>-5</bad> to flux dissipation per flux vent.
+integrated|exo_tech_grid_splice|CRUISER|6	0	<builtIn>No longer: 25% reduced venting speed.</builtIn>
 integrated|exo_tech_grid_splice|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|exo_tech_grid_splice|CAPITAL_SHIP|1	0	<good>10%</good> increased time flow.
 integrated|exo_tech_grid_splice|CAPITAL_SHIP|2	1	<bad>25%</bad> reduced sensor profile.
 integrated|exo_tech_grid_splice|CAPITAL_SHIP|3	1	<bad>25%</bad> reduced sensor profile on phase hulls.
 integrated|exo_tech_grid_splice|CAPITAL_SHIP|4	1	<bad>25%</bad> reduced EMP damage taken.
 integrated|exo_tech_grid_splice|CAPITAL_SHIP|5	0	<bad>-5</bad> to flux dissipation per flux vent.
+integrated|exo_tech_grid_splice|CAPITAL_SHIP|6	0	<builtIn>No longer: 25% reduced venting speed.</builtIn>
 flavour|exoship	0	The last Exoship of Exo-Tech, warping from system to system across the Sector. It keeps its own schedule and answers only to its own beacon.
 type|exoship|null|0	0	Docks while a Hyper-Nav Beacon is in an allocated Subroutine Socket. Docking allocates it at no cost.
 type|exoship|null|1	0	Undocking releases every node reached through it.
@@ -8125,36 +8175,46 @@ integrable|expanded_missile_racks|null|1	0	<bad>15%</bad> reduced missile weapon
 integrable|expanded_missile_racks|null|2	0	Click and hold to integrate.
 integrable|expanded_missile_racks|null|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|expanded_missile_racks|null|4	0	<muted>100% increased missile weapon ammo capacity.</muted>
+integrable|expanded_missile_racks|null|5	0	<builtIn>No longer: 15% reduced missile weapon rate of fire.</builtIn>
 integrable|expanded_missile_racks|FRIGATE|0	0	<good>100%</good> increased missile weapon ammo capacity.
 integrable|expanded_missile_racks|FRIGATE|1	0	<bad>15%</bad> reduced missile weapon rate of fire.
 integrable|expanded_missile_racks|FRIGATE|2	0	Click and hold to integrate.
 integrable|expanded_missile_racks|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|expanded_missile_racks|FRIGATE|4	0	<muted>100% increased missile weapon ammo capacity.</muted>
+integrable|expanded_missile_racks|FRIGATE|5	0	<builtIn>No longer: 15% reduced missile weapon rate of fire.</builtIn>
 integrable|expanded_missile_racks|DESTROYER|0	0	<good>100%</good> increased missile weapon ammo capacity.
 integrable|expanded_missile_racks|DESTROYER|1	0	<bad>15%</bad> reduced missile weapon rate of fire.
 integrable|expanded_missile_racks|DESTROYER|2	0	Click and hold to integrate.
 integrable|expanded_missile_racks|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|expanded_missile_racks|DESTROYER|4	0	<muted>100% increased missile weapon ammo capacity.</muted>
+integrable|expanded_missile_racks|DESTROYER|5	0	<builtIn>No longer: 15% reduced missile weapon rate of fire.</builtIn>
 integrable|expanded_missile_racks|CRUISER|0	0	<good>100%</good> increased missile weapon ammo capacity.
 integrable|expanded_missile_racks|CRUISER|1	0	<bad>15%</bad> reduced missile weapon rate of fire.
 integrable|expanded_missile_racks|CRUISER|2	0	Click and hold to integrate.
 integrable|expanded_missile_racks|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|expanded_missile_racks|CRUISER|4	0	<muted>100% increased missile weapon ammo capacity.</muted>
+integrable|expanded_missile_racks|CRUISER|5	0	<builtIn>No longer: 15% reduced missile weapon rate of fire.</builtIn>
 integrable|expanded_missile_racks|CAPITAL_SHIP|0	0	<good>100%</good> increased missile weapon ammo capacity.
 integrable|expanded_missile_racks|CAPITAL_SHIP|1	0	<bad>15%</bad> reduced missile weapon rate of fire.
 integrable|expanded_missile_racks|CAPITAL_SHIP|2	0	Click and hold to integrate.
 integrable|expanded_missile_racks|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|expanded_missile_racks|CAPITAL_SHIP|4	0	<muted>100% increased missile weapon ammo capacity.</muted>
+integrable|expanded_missile_racks|CAPITAL_SHIP|5	0	<builtIn>No longer: 15% reduced missile weapon rate of fire.</builtIn>
 integrated|expanded_missile_racks|null|0	0	<builtIn>Integrated</builtIn>
 integrated|expanded_missile_racks|null|1	0	<good>100%</good> increased missile weapon ammo capacity.
+integrated|expanded_missile_racks|null|2	0	<builtIn>No longer: 15% reduced missile weapon rate of fire.</builtIn>
 integrated|expanded_missile_racks|FRIGATE|0	0	<builtIn>Integrated</builtIn>
 integrated|expanded_missile_racks|FRIGATE|1	0	<good>100%</good> increased missile weapon ammo capacity.
+integrated|expanded_missile_racks|FRIGATE|2	0	<builtIn>No longer: 15% reduced missile weapon rate of fire.</builtIn>
 integrated|expanded_missile_racks|DESTROYER|0	0	<builtIn>Integrated</builtIn>
 integrated|expanded_missile_racks|DESTROYER|1	0	<good>100%</good> increased missile weapon ammo capacity.
+integrated|expanded_missile_racks|DESTROYER|2	0	<builtIn>No longer: 15% reduced missile weapon rate of fire.</builtIn>
 integrated|expanded_missile_racks|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|expanded_missile_racks|CRUISER|1	0	<good>100%</good> increased missile weapon ammo capacity.
+integrated|expanded_missile_racks|CRUISER|2	0	<builtIn>No longer: 15% reduced missile weapon rate of fire.</builtIn>
 integrated|expanded_missile_racks|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|expanded_missile_racks|CAPITAL_SHIP|1	0	<good>100%</good> increased missile weapon ammo capacity.
+integrated|expanded_missile_racks|CAPITAL_SHIP|2	0	<builtIn>No longer: 15% reduced missile weapon rate of fire.</builtIn>
 type|extended_shields|null|0	0	<good>+40</good> to shield arc.
 type-detail|extended_shields|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Knight Refit</hullmod>\n• <hullmod>Primitive Shields</hullmod>\n• <hullmod>Low Arc Shield Emitter</hullmod>\n• <hullmod>Hardlight Matrix</hullmod>\n• <hullmod>Aegis Deflectors</hullmod>\n• <hullmod>Lostech Engineering</hullmod>\n• <hullmod>Extended Shields</hullmod>
 type|extended_shields|FRIGATE|0	0	<good>+40</good> to shield arc.
@@ -8501,6 +8561,7 @@ integrable|freebooters_charge|null|5	0	<muted>When integrated, for 2 story point
 integrable|freebooters_charge|null|6	0	<muted>50% increased crew casualties.</muted>
 integrable|freebooters_charge|null|7	0	<muted>30% increased weapon damage.</muted>
 integrable|freebooters_charge|null|8	0	<muted>10% more damage taken by shields.</muted>
+integrable|freebooters_charge|null|9	0	<builtIn>No longer: 10% reduced armor.</builtIn>
 integrable|freebooters_charge|FRIGATE|0	1	<good>50%</good> increased crew casualties.
 integrable|freebooters_charge|FRIGATE|1	0	<good>30%</good> increased weapon damage.
 integrable|freebooters_charge|FRIGATE|2	1	<good>10%</good> more damage taken by shields.
@@ -8510,6 +8571,7 @@ integrable|freebooters_charge|FRIGATE|5	0	<muted>When integrated, for 2 story po
 integrable|freebooters_charge|FRIGATE|6	0	<muted>50% increased crew casualties.</muted>
 integrable|freebooters_charge|FRIGATE|7	0	<muted>30% increased weapon damage.</muted>
 integrable|freebooters_charge|FRIGATE|8	0	<muted>10% more damage taken by shields.</muted>
+integrable|freebooters_charge|FRIGATE|9	0	<builtIn>No longer: 10% reduced armor.</builtIn>
 integrable|freebooters_charge|DESTROYER|0	1	<good>50%</good> increased crew casualties.
 integrable|freebooters_charge|DESTROYER|1	0	<good>30%</good> increased weapon damage.
 integrable|freebooters_charge|DESTROYER|2	1	<good>10%</good> more damage taken by shields.
@@ -8519,6 +8581,7 @@ integrable|freebooters_charge|DESTROYER|5	0	<muted>When integrated, for 2 story 
 integrable|freebooters_charge|DESTROYER|6	0	<muted>50% increased crew casualties.</muted>
 integrable|freebooters_charge|DESTROYER|7	0	<muted>30% increased weapon damage.</muted>
 integrable|freebooters_charge|DESTROYER|8	0	<muted>10% more damage taken by shields.</muted>
+integrable|freebooters_charge|DESTROYER|9	0	<builtIn>No longer: 10% reduced armor.</builtIn>
 integrable|freebooters_charge|CRUISER|0	1	<good>50%</good> increased crew casualties.
 integrable|freebooters_charge|CRUISER|1	0	<good>30%</good> increased weapon damage.
 integrable|freebooters_charge|CRUISER|2	1	<good>10%</good> more damage taken by shields.
@@ -8528,6 +8591,7 @@ integrable|freebooters_charge|CRUISER|5	0	<muted>When integrated, for 2 story po
 integrable|freebooters_charge|CRUISER|6	0	<muted>50% increased crew casualties.</muted>
 integrable|freebooters_charge|CRUISER|7	0	<muted>30% increased weapon damage.</muted>
 integrable|freebooters_charge|CRUISER|8	0	<muted>10% more damage taken by shields.</muted>
+integrable|freebooters_charge|CRUISER|9	0	<builtIn>No longer: 10% reduced armor.</builtIn>
 integrable|freebooters_charge|CAPITAL_SHIP|0	1	<good>50%</good> increased crew casualties.
 integrable|freebooters_charge|CAPITAL_SHIP|1	0	<good>30%</good> increased weapon damage.
 integrable|freebooters_charge|CAPITAL_SHIP|2	1	<good>10%</good> more damage taken by shields.
@@ -8537,26 +8601,32 @@ integrable|freebooters_charge|CAPITAL_SHIP|5	0	<muted>When integrated, for 2 sto
 integrable|freebooters_charge|CAPITAL_SHIP|6	0	<muted>50% increased crew casualties.</muted>
 integrable|freebooters_charge|CAPITAL_SHIP|7	0	<muted>30% increased weapon damage.</muted>
 integrable|freebooters_charge|CAPITAL_SHIP|8	0	<muted>10% more damage taken by shields.</muted>
+integrable|freebooters_charge|CAPITAL_SHIP|9	0	<builtIn>No longer: 10% reduced armor.</builtIn>
 integrated|freebooters_charge|null|0	0	<builtIn>Integrated</builtIn>
 integrated|freebooters_charge|null|1	1	<good>50%</good> increased crew casualties.
 integrated|freebooters_charge|null|2	0	<good>30%</good> increased weapon damage.
 integrated|freebooters_charge|null|3	1	<good>10%</good> more damage taken by shields.
+integrated|freebooters_charge|null|4	0	<builtIn>No longer: 10% reduced armor.</builtIn>
 integrated|freebooters_charge|FRIGATE|0	0	<builtIn>Integrated</builtIn>
 integrated|freebooters_charge|FRIGATE|1	1	<good>50%</good> increased crew casualties.
 integrated|freebooters_charge|FRIGATE|2	0	<good>30%</good> increased weapon damage.
 integrated|freebooters_charge|FRIGATE|3	1	<good>10%</good> more damage taken by shields.
+integrated|freebooters_charge|FRIGATE|4	0	<builtIn>No longer: 10% reduced armor.</builtIn>
 integrated|freebooters_charge|DESTROYER|0	0	<builtIn>Integrated</builtIn>
 integrated|freebooters_charge|DESTROYER|1	1	<good>50%</good> increased crew casualties.
 integrated|freebooters_charge|DESTROYER|2	0	<good>30%</good> increased weapon damage.
 integrated|freebooters_charge|DESTROYER|3	1	<good>10%</good> more damage taken by shields.
+integrated|freebooters_charge|DESTROYER|4	0	<builtIn>No longer: 10% reduced armor.</builtIn>
 integrated|freebooters_charge|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|freebooters_charge|CRUISER|1	1	<good>50%</good> increased crew casualties.
 integrated|freebooters_charge|CRUISER|2	0	<good>30%</good> increased weapon damage.
 integrated|freebooters_charge|CRUISER|3	1	<good>10%</good> more damage taken by shields.
+integrated|freebooters_charge|CRUISER|4	0	<builtIn>No longer: 10% reduced armor.</builtIn>
 integrated|freebooters_charge|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|freebooters_charge|CAPITAL_SHIP|1	1	<good>50%</good> increased crew casualties.
 integrated|freebooters_charge|CAPITAL_SHIP|2	0	<good>30%</good> increased weapon damage.
 integrated|freebooters_charge|CAPITAL_SHIP|3	1	<good>10%</good> more damage taken by shields.
+integrated|freebooters_charge|CAPITAL_SHIP|4	0	<builtIn>No longer: 10% reduced armor.</builtIn>
 flavour|frozen_heart	0	query. hull?. scanning. [HULL] collect, amass, gather, fuse, keep. The core does not stop. Neither does anything it holds.
 type|frozen_heart|null|0	0	Whenever a non-strikecraft ship is destroyed within 1500 su, this ship gains a Heartless stack until the end of combat. Ships can hold up to 5 Heartless stacks.
 type|frozen_heart|null|1	0	Each new Heartless stack sets off a radiation surge that deals <bad>400</bad> EMP damage to a random weapon and to a random engine on this ship.
@@ -8935,36 +9005,46 @@ integrable|haul_the_prize|null|1	0	The slowest ship in your fleet of this ship's
 integrable|haul_the_prize|null|2	0	Click and hold to integrate.
 integrable|haul_the_prize|null|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|haul_the_prize|null|4	0	<muted>The slowest ship in your fleet of this ship's hull size or smaller has +1 to max burn level, up to this ship's max burn level.</muted>
+integrable|haul_the_prize|null|5	0	<builtIn>No longer: -1 to max burn level.</builtIn>
 integrable|haul_the_prize|FRIGATE|0	0	<bad>-1</bad> to max burn level.
 integrable|haul_the_prize|FRIGATE|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
 integrable|haul_the_prize|FRIGATE|2	0	Click and hold to integrate.
 integrable|haul_the_prize|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|haul_the_prize|FRIGATE|4	0	<muted>The slowest ship in your fleet of this ship's hull size or smaller has +1 to max burn level, up to this ship's max burn level.</muted>
+integrable|haul_the_prize|FRIGATE|5	0	<builtIn>No longer: -1 to max burn level.</builtIn>
 integrable|haul_the_prize|DESTROYER|0	0	<bad>-1</bad> to max burn level.
 integrable|haul_the_prize|DESTROYER|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
 integrable|haul_the_prize|DESTROYER|2	0	Click and hold to integrate.
 integrable|haul_the_prize|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|haul_the_prize|DESTROYER|4	0	<muted>The slowest ship in your fleet of this ship's hull size or smaller has +1 to max burn level, up to this ship's max burn level.</muted>
+integrable|haul_the_prize|DESTROYER|5	0	<builtIn>No longer: -1 to max burn level.</builtIn>
 integrable|haul_the_prize|CRUISER|0	0	<bad>-1</bad> to max burn level.
 integrable|haul_the_prize|CRUISER|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
 integrable|haul_the_prize|CRUISER|2	0	Click and hold to integrate.
 integrable|haul_the_prize|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|haul_the_prize|CRUISER|4	0	<muted>The slowest ship in your fleet of this ship's hull size or smaller has +1 to max burn level, up to this ship's max burn level.</muted>
+integrable|haul_the_prize|CRUISER|5	0	<builtIn>No longer: -1 to max burn level.</builtIn>
 integrable|haul_the_prize|CAPITAL_SHIP|0	0	<bad>-1</bad> to max burn level.
 integrable|haul_the_prize|CAPITAL_SHIP|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
 integrable|haul_the_prize|CAPITAL_SHIP|2	0	Click and hold to integrate.
 integrable|haul_the_prize|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|haul_the_prize|CAPITAL_SHIP|4	0	<muted>The slowest ship in your fleet of this ship's hull size or smaller has +1 to max burn level, up to this ship's max burn level.</muted>
+integrable|haul_the_prize|CAPITAL_SHIP|5	0	<builtIn>No longer: -1 to max burn level.</builtIn>
 integrated|haul_the_prize|null|0	0	<builtIn>Integrated</builtIn>
 integrated|haul_the_prize|null|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+integrated|haul_the_prize|null|2	0	<builtIn>No longer: -1 to max burn level.</builtIn>
 integrated|haul_the_prize|FRIGATE|0	0	<builtIn>Integrated</builtIn>
 integrated|haul_the_prize|FRIGATE|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+integrated|haul_the_prize|FRIGATE|2	0	<builtIn>No longer: -1 to max burn level.</builtIn>
 integrated|haul_the_prize|DESTROYER|0	0	<builtIn>Integrated</builtIn>
 integrated|haul_the_prize|DESTROYER|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+integrated|haul_the_prize|DESTROYER|2	0	<builtIn>No longer: -1 to max burn level.</builtIn>
 integrated|haul_the_prize|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|haul_the_prize|CRUISER|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+integrated|haul_the_prize|CRUISER|2	0	<builtIn>No longer: -1 to max burn level.</builtIn>
 integrated|haul_the_prize|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|haul_the_prize|CAPITAL_SHIP|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+integrated|haul_the_prize|CAPITAL_SHIP|2	0	<builtIn>No longer: -1 to max burn level.</builtIn>
 type|heavy_armor|null|0	0	<bad>20%</bad> less maneuverability.
 type-detail|heavy_armor|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Anti-Beam Plating</hullmod>\n• <hullmod>Amorphous Alloy Armor</hullmod>\n• <hullmod>Vanagloria Ionized Armor</hullmod>\n• <hullmod>Critical Point Protection</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Powered Titanium Plates</hullmod>\n• <hullmod>Heavy Armor</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Critical Point Refit</node>
 type|heavy_armor|FRIGATE|0	0	<bad>20%</bad> less maneuverability.
@@ -8982,35 +9062,45 @@ type-detail|heavy_armor|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmo
 integrable|heavy_armor|null|0	0	<bad>20%</bad> less maneuverability.
 integrable|heavy_armor|null|1	0	Click and hold to integrate.
 integrable|heavy_armor|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|heavy_armor|null|3	0	<builtIn>No longer: 20% less maneuverability.</builtIn>
 integrable|heavy_armor|FRIGATE|0	0	<bad>20%</bad> less maneuverability.
 integrable|heavy_armor|FRIGATE|1	0	<good>+150</good> to armor.
 integrable|heavy_armor|FRIGATE|2	0	Click and hold to integrate.
 integrable|heavy_armor|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|heavy_armor|FRIGATE|4	0	<muted>+150 to armor.</muted>
+integrable|heavy_armor|FRIGATE|5	0	<builtIn>No longer: 20% less maneuverability.</builtIn>
 integrable|heavy_armor|DESTROYER|0	0	<bad>20%</bad> less maneuverability.
 integrable|heavy_armor|DESTROYER|1	0	<good>+300</good> to armor.
 integrable|heavy_armor|DESTROYER|2	0	Click and hold to integrate.
 integrable|heavy_armor|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|heavy_armor|DESTROYER|4	0	<muted>+300 to armor.</muted>
+integrable|heavy_armor|DESTROYER|5	0	<builtIn>No longer: 20% less maneuverability.</builtIn>
 integrable|heavy_armor|CRUISER|0	0	<bad>20%</bad> less maneuverability.
 integrable|heavy_armor|CRUISER|1	0	<good>+400</good> to armor.
 integrable|heavy_armor|CRUISER|2	0	Click and hold to integrate.
 integrable|heavy_armor|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|heavy_armor|CRUISER|4	0	<muted>+400 to armor.</muted>
+integrable|heavy_armor|CRUISER|5	0	<builtIn>No longer: 20% less maneuverability.</builtIn>
 integrable|heavy_armor|CAPITAL_SHIP|0	0	<bad>20%</bad> less maneuverability.
 integrable|heavy_armor|CAPITAL_SHIP|1	0	<good>+500</good> to armor.
 integrable|heavy_armor|CAPITAL_SHIP|2	0	Click and hold to integrate.
 integrable|heavy_armor|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|heavy_armor|CAPITAL_SHIP|4	0	<muted>+500 to armor.</muted>
+integrable|heavy_armor|CAPITAL_SHIP|5	0	<builtIn>No longer: 20% less maneuverability.</builtIn>
 integrated|heavy_armor|null|0	0	<builtIn>Integrated</builtIn>
+integrated|heavy_armor|null|1	0	<builtIn>No longer: 20% less maneuverability.</builtIn>
 integrated|heavy_armor|FRIGATE|0	0	<builtIn>Integrated</builtIn>
 integrated|heavy_armor|FRIGATE|1	0	<good>+150</good> to armor.
+integrated|heavy_armor|FRIGATE|2	0	<builtIn>No longer: 20% less maneuverability.</builtIn>
 integrated|heavy_armor|DESTROYER|0	0	<builtIn>Integrated</builtIn>
 integrated|heavy_armor|DESTROYER|1	0	<good>+300</good> to armor.
+integrated|heavy_armor|DESTROYER|2	0	<builtIn>No longer: 20% less maneuverability.</builtIn>
 integrated|heavy_armor|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|heavy_armor|CRUISER|1	0	<good>+400</good> to armor.
+integrated|heavy_armor|CRUISER|2	0	<builtIn>No longer: 20% less maneuverability.</builtIn>
 integrated|heavy_armor|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|heavy_armor|CAPITAL_SHIP|1	0	<good>+500</good> to armor.
+integrated|heavy_armor|CAPITAL_SHIP|2	0	<builtIn>No longer: 20% less maneuverability.</builtIn>
 flavour|heavy_ballistics_integration	0	Stripping decommissioned Onslaughts at the Agreus shipbreaking yards shows the crew how the Navy seats its heaviest guns directly into the frame.
 flavourAutomated|heavy_ballistics_integration	0	Stripping decommissioned Onslaughts at the Agreus shipbreaking yards shows the refit crew how the Navy seats its heaviest guns directly into the frame.
 type|heavy_ballistics_integration|null|0	1	<bad>-5</bad> to ordnance point cost of large ballistic weapons.
@@ -10755,36 +10845,46 @@ integrable|makeshift_shield_generator|null|1	0	Installs a makeshift, front-facin
 integrable|makeshift_shield_generator|null|2	0	Click and hold to integrate.
 integrable|makeshift_shield_generator|null|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|makeshift_shield_generator|null|4	0	<muted>Installs a makeshift, front-facing shield if this ship has none.</muted>
+integrable|makeshift_shield_generator|null|5	0	<builtIn>No longer: 20% less top speed.</builtIn>
 integrable|makeshift_shield_generator|FRIGATE|0	0	<bad>20%</bad> less top speed.
 integrable|makeshift_shield_generator|FRIGATE|1	0	Installs a makeshift, front-facing shield if this ship has none.
 integrable|makeshift_shield_generator|FRIGATE|2	0	Click and hold to integrate.
 integrable|makeshift_shield_generator|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|makeshift_shield_generator|FRIGATE|4	0	<muted>Installs a makeshift, front-facing shield if this ship has none.</muted>
+integrable|makeshift_shield_generator|FRIGATE|5	0	<builtIn>No longer: 20% less top speed.</builtIn>
 integrable|makeshift_shield_generator|DESTROYER|0	0	<bad>20%</bad> less top speed.
 integrable|makeshift_shield_generator|DESTROYER|1	0	Installs a makeshift, front-facing shield if this ship has none.
 integrable|makeshift_shield_generator|DESTROYER|2	0	Click and hold to integrate.
 integrable|makeshift_shield_generator|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|makeshift_shield_generator|DESTROYER|4	0	<muted>Installs a makeshift, front-facing shield if this ship has none.</muted>
+integrable|makeshift_shield_generator|DESTROYER|5	0	<builtIn>No longer: 20% less top speed.</builtIn>
 integrable|makeshift_shield_generator|CRUISER|0	0	<bad>20%</bad> less top speed.
 integrable|makeshift_shield_generator|CRUISER|1	0	Installs a makeshift, front-facing shield if this ship has none.
 integrable|makeshift_shield_generator|CRUISER|2	0	Click and hold to integrate.
 integrable|makeshift_shield_generator|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|makeshift_shield_generator|CRUISER|4	0	<muted>Installs a makeshift, front-facing shield if this ship has none.</muted>
+integrable|makeshift_shield_generator|CRUISER|5	0	<builtIn>No longer: 20% less top speed.</builtIn>
 integrable|makeshift_shield_generator|CAPITAL_SHIP|0	0	<bad>20%</bad> less top speed.
 integrable|makeshift_shield_generator|CAPITAL_SHIP|1	0	Installs a makeshift, front-facing shield if this ship has none.
 integrable|makeshift_shield_generator|CAPITAL_SHIP|2	0	Click and hold to integrate.
 integrable|makeshift_shield_generator|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|makeshift_shield_generator|CAPITAL_SHIP|4	0	<muted>Installs a makeshift, front-facing shield if this ship has none.</muted>
+integrable|makeshift_shield_generator|CAPITAL_SHIP|5	0	<builtIn>No longer: 20% less top speed.</builtIn>
 integrated|makeshift_shield_generator|null|0	0	<builtIn>Integrated</builtIn>
 integrated|makeshift_shield_generator|null|1	0	Installs a makeshift, front-facing shield if this ship has none.
+integrated|makeshift_shield_generator|null|2	0	<builtIn>No longer: 20% less top speed.</builtIn>
 integrated|makeshift_shield_generator|FRIGATE|0	0	<builtIn>Integrated</builtIn>
 integrated|makeshift_shield_generator|FRIGATE|1	0	Installs a makeshift, front-facing shield if this ship has none.
+integrated|makeshift_shield_generator|FRIGATE|2	0	<builtIn>No longer: 20% less top speed.</builtIn>
 integrated|makeshift_shield_generator|DESTROYER|0	0	<builtIn>Integrated</builtIn>
 integrated|makeshift_shield_generator|DESTROYER|1	0	Installs a makeshift, front-facing shield if this ship has none.
+integrated|makeshift_shield_generator|DESTROYER|2	0	<builtIn>No longer: 20% less top speed.</builtIn>
 integrated|makeshift_shield_generator|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|makeshift_shield_generator|CRUISER|1	0	Installs a makeshift, front-facing shield if this ship has none.
+integrated|makeshift_shield_generator|CRUISER|2	0	<builtIn>No longer: 20% less top speed.</builtIn>
 integrated|makeshift_shield_generator|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|makeshift_shield_generator|CAPITAL_SHIP|1	0	Installs a makeshift, front-facing shield if this ship has none.
+integrated|makeshift_shield_generator|CAPITAL_SHIP|2	0	<builtIn>No longer: 20% less top speed.</builtIn>
 type|maneuverability|null|0	0	<good>25%</good> increased maneuverability.
 type|maneuverability|FRIGATE|0	0	<good>25%</good> increased maneuverability.
 type|maneuverability|DESTROYER|0	0	<good>25%</good> increased maneuverability.
@@ -10914,6 +11014,7 @@ integrable|militarized_subsystems|null|3	0	Click and hold to integrate.
 integrable|militarized_subsystems|null|4	0	<muted>When integrated, for 2 story points:</muted>
 integrable|militarized_subsystems|null|5	0	<muted>Removes the penalties of a civilian-grade hull.</muted>
 integrable|militarized_subsystems|null|6	0	<muted>+1 to max burn level.</muted>
+integrable|militarized_subsystems|null|7	0	<builtIn>No longer: 100% increased minimum crew required.</builtIn>
 integrable|militarized_subsystems|FRIGATE|0	0	Removes the penalties of a civilian-grade hull.
 integrable|militarized_subsystems|FRIGATE|1	0	<good>+1</good> to max burn level.
 integrable|militarized_subsystems|FRIGATE|2	1	<good>100%</good> increased minimum crew required.
@@ -10921,6 +11022,7 @@ integrable|militarized_subsystems|FRIGATE|3	0	Click and hold to integrate.
 integrable|militarized_subsystems|FRIGATE|4	0	<muted>When integrated, for 2 story points:</muted>
 integrable|militarized_subsystems|FRIGATE|5	0	<muted>Removes the penalties of a civilian-grade hull.</muted>
 integrable|militarized_subsystems|FRIGATE|6	0	<muted>+1 to max burn level.</muted>
+integrable|militarized_subsystems|FRIGATE|7	0	<builtIn>No longer: 100% increased minimum crew required.</builtIn>
 integrable|militarized_subsystems|DESTROYER|0	0	Removes the penalties of a civilian-grade hull.
 integrable|militarized_subsystems|DESTROYER|1	0	<good>+1</good> to max burn level.
 integrable|militarized_subsystems|DESTROYER|2	1	<good>100%</good> increased minimum crew required.
@@ -10928,6 +11030,7 @@ integrable|militarized_subsystems|DESTROYER|3	0	Click and hold to integrate.
 integrable|militarized_subsystems|DESTROYER|4	0	<muted>When integrated, for 2 story points:</muted>
 integrable|militarized_subsystems|DESTROYER|5	0	<muted>Removes the penalties of a civilian-grade hull.</muted>
 integrable|militarized_subsystems|DESTROYER|6	0	<muted>+1 to max burn level.</muted>
+integrable|militarized_subsystems|DESTROYER|7	0	<builtIn>No longer: 100% increased minimum crew required.</builtIn>
 integrable|militarized_subsystems|CRUISER|0	0	Removes the penalties of a civilian-grade hull.
 integrable|militarized_subsystems|CRUISER|1	0	<good>+1</good> to max burn level.
 integrable|militarized_subsystems|CRUISER|2	1	<good>100%</good> increased minimum crew required.
@@ -10935,6 +11038,7 @@ integrable|militarized_subsystems|CRUISER|3	0	Click and hold to integrate.
 integrable|militarized_subsystems|CRUISER|4	0	<muted>When integrated, for 2 story points:</muted>
 integrable|militarized_subsystems|CRUISER|5	0	<muted>Removes the penalties of a civilian-grade hull.</muted>
 integrable|militarized_subsystems|CRUISER|6	0	<muted>+1 to max burn level.</muted>
+integrable|militarized_subsystems|CRUISER|7	0	<builtIn>No longer: 100% increased minimum crew required.</builtIn>
 integrable|militarized_subsystems|CAPITAL_SHIP|0	0	Removes the penalties of a civilian-grade hull.
 integrable|militarized_subsystems|CAPITAL_SHIP|1	0	<good>+1</good> to max burn level.
 integrable|militarized_subsystems|CAPITAL_SHIP|2	1	<good>100%</good> increased minimum crew required.
@@ -10942,21 +11046,27 @@ integrable|militarized_subsystems|CAPITAL_SHIP|3	0	Click and hold to integrate.
 integrable|militarized_subsystems|CAPITAL_SHIP|4	0	<muted>When integrated, for 2 story points:</muted>
 integrable|militarized_subsystems|CAPITAL_SHIP|5	0	<muted>Removes the penalties of a civilian-grade hull.</muted>
 integrable|militarized_subsystems|CAPITAL_SHIP|6	0	<muted>+1 to max burn level.</muted>
+integrable|militarized_subsystems|CAPITAL_SHIP|7	0	<builtIn>No longer: 100% increased minimum crew required.</builtIn>
 integrated|militarized_subsystems|null|0	0	<builtIn>Integrated</builtIn>
 integrated|militarized_subsystems|null|1	0	Removes the penalties of a civilian-grade hull.
 integrated|militarized_subsystems|null|2	0	<good>+1</good> to max burn level.
+integrated|militarized_subsystems|null|3	0	<builtIn>No longer: 100% increased minimum crew required.</builtIn>
 integrated|militarized_subsystems|FRIGATE|0	0	<builtIn>Integrated</builtIn>
 integrated|militarized_subsystems|FRIGATE|1	0	Removes the penalties of a civilian-grade hull.
 integrated|militarized_subsystems|FRIGATE|2	0	<good>+1</good> to max burn level.
+integrated|militarized_subsystems|FRIGATE|3	0	<builtIn>No longer: 100% increased minimum crew required.</builtIn>
 integrated|militarized_subsystems|DESTROYER|0	0	<builtIn>Integrated</builtIn>
 integrated|militarized_subsystems|DESTROYER|1	0	Removes the penalties of a civilian-grade hull.
 integrated|militarized_subsystems|DESTROYER|2	0	<good>+1</good> to max burn level.
+integrated|militarized_subsystems|DESTROYER|3	0	<builtIn>No longer: 100% increased minimum crew required.</builtIn>
 integrated|militarized_subsystems|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|militarized_subsystems|CRUISER|1	0	Removes the penalties of a civilian-grade hull.
 integrated|militarized_subsystems|CRUISER|2	0	<good>+1</good> to max burn level.
+integrated|militarized_subsystems|CRUISER|3	0	<builtIn>No longer: 100% increased minimum crew required.</builtIn>
 integrated|militarized_subsystems|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|militarized_subsystems|CAPITAL_SHIP|1	0	Removes the penalties of a civilian-grade hull.
 integrated|militarized_subsystems|CAPITAL_SHIP|2	0	<good>+1</good> to max burn level.
+integrated|militarized_subsystems|CAPITAL_SHIP|3	0	<builtIn>No longer: 100% increased minimum crew required.</builtIn>
 flavour|missile_autoloader	0	Rack-side autoloaders that refill the small launchers from a common magazine, for as long as the magazine lasts.
 type|missile_autoloader|null|0	0	Small missile weapons in small missile mounts reload when they run out of ammo, drawing on <good>100%</good> of Missile Autoloader's shared reload capacity.
 type|missile_autoloader|null|1	1	Reloaded weapons can't fire for <bad>10</bad> seconds.
@@ -11420,36 +11530,46 @@ integrable|nskr_criticalArmor|null|1	0	<bad>30%</bad> less maneuverability.
 integrable|nskr_criticalArmor|null|2	0	Click and hold to integrate.
 integrable|nskr_criticalArmor|null|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|nskr_criticalArmor|null|4	0	<muted>Up to +400/700/900/1200 to armor. The bonus is highest on hulls with the least base armor and falls to +150/300/400/500 at 400/700/900/1200 base armor. Can't be allocated on phase ships or on hulls with more base armor than that.</muted>
+integrable|nskr_criticalArmor|null|5	0	<builtIn>No longer: 30% less maneuverability.</builtIn>
 integrable|nskr_criticalArmor|FRIGATE|0	0	Up to <good>+400</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+150</good> at <hl>400</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
 integrable|nskr_criticalArmor|FRIGATE|1	0	<bad>30%</bad> less maneuverability.
 integrable|nskr_criticalArmor|FRIGATE|2	0	Click and hold to integrate.
 integrable|nskr_criticalArmor|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|nskr_criticalArmor|FRIGATE|4	0	<muted>Up to +400 to armor. The bonus is highest on hulls with the least base armor and falls to +150 at 400 base armor. Can't be allocated on phase ships or on hulls with more base armor than that.</muted>
+integrable|nskr_criticalArmor|FRIGATE|5	0	<builtIn>No longer: 30% less maneuverability.</builtIn>
 integrable|nskr_criticalArmor|DESTROYER|0	0	Up to <good>+700</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+300</good> at <hl>700</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
 integrable|nskr_criticalArmor|DESTROYER|1	0	<bad>30%</bad> less maneuverability.
 integrable|nskr_criticalArmor|DESTROYER|2	0	Click and hold to integrate.
 integrable|nskr_criticalArmor|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|nskr_criticalArmor|DESTROYER|4	0	<muted>Up to +700 to armor. The bonus is highest on hulls with the least base armor and falls to +300 at 700 base armor. Can't be allocated on phase ships or on hulls with more base armor than that.</muted>
+integrable|nskr_criticalArmor|DESTROYER|5	0	<builtIn>No longer: 30% less maneuverability.</builtIn>
 integrable|nskr_criticalArmor|CRUISER|0	0	Up to <good>+900</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+400</good> at <hl>900</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
 integrable|nskr_criticalArmor|CRUISER|1	0	<bad>30%</bad> less maneuverability.
 integrable|nskr_criticalArmor|CRUISER|2	0	Click and hold to integrate.
 integrable|nskr_criticalArmor|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|nskr_criticalArmor|CRUISER|4	0	<muted>Up to +900 to armor. The bonus is highest on hulls with the least base armor and falls to +400 at 900 base armor. Can't be allocated on phase ships or on hulls with more base armor than that.</muted>
+integrable|nskr_criticalArmor|CRUISER|5	0	<builtIn>No longer: 30% less maneuverability.</builtIn>
 integrable|nskr_criticalArmor|CAPITAL_SHIP|0	0	Up to <good>+1200</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+500</good> at <hl>1200</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
 integrable|nskr_criticalArmor|CAPITAL_SHIP|1	0	<bad>30%</bad> less maneuverability.
 integrable|nskr_criticalArmor|CAPITAL_SHIP|2	0	Click and hold to integrate.
 integrable|nskr_criticalArmor|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|nskr_criticalArmor|CAPITAL_SHIP|4	0	<muted>Up to +1200 to armor. The bonus is highest on hulls with the least base armor and falls to +500 at 1200 base armor. Can't be allocated on phase ships or on hulls with more base armor than that.</muted>
+integrable|nskr_criticalArmor|CAPITAL_SHIP|5	0	<builtIn>No longer: 30% less maneuverability.</builtIn>
 integrated|nskr_criticalArmor|null|0	0	<builtIn>Integrated</builtIn>
 integrated|nskr_criticalArmor|null|1	0	Up to <good>+400/700/900/1200</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
+integrated|nskr_criticalArmor|null|2	0	<builtIn>No longer: 30% less maneuverability.</builtIn>
 integrated|nskr_criticalArmor|FRIGATE|0	0	<builtIn>Integrated</builtIn>
 integrated|nskr_criticalArmor|FRIGATE|1	0	Up to <good>+400</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+150</good> at <hl>400</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
+integrated|nskr_criticalArmor|FRIGATE|2	0	<builtIn>No longer: 30% less maneuverability.</builtIn>
 integrated|nskr_criticalArmor|DESTROYER|0	0	<builtIn>Integrated</builtIn>
 integrated|nskr_criticalArmor|DESTROYER|1	0	Up to <good>+700</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+300</good> at <hl>700</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
+integrated|nskr_criticalArmor|DESTROYER|2	0	<builtIn>No longer: 30% less maneuverability.</builtIn>
 integrated|nskr_criticalArmor|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|nskr_criticalArmor|CRUISER|1	0	Up to <good>+900</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+400</good> at <hl>900</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
+integrated|nskr_criticalArmor|CRUISER|2	0	<builtIn>No longer: 30% less maneuverability.</builtIn>
 integrated|nskr_criticalArmor|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|nskr_criticalArmor|CAPITAL_SHIP|1	0	Up to <good>+1200</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+500</good> at <hl>1200</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
+integrated|nskr_criticalArmor|CAPITAL_SHIP|2	0	<builtIn>No longer: 30% less maneuverability.</builtIn>
 flavour|nskr_inertial	0	A Kesteven R&D modspec lets the crew feed the ship's own momentum into its guns. Kesteven's notes recommend never slowing down.
 flavourAutomated|nskr_inertial	0	A Kesteven R&D modspec lets the refit crew feed the ship's own momentum into its guns. Kesteven's notes recommend never slowing down.
 type|nskr_inertial|null|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
@@ -11481,6 +11601,7 @@ integrable|nskr_inertial|FRIGATE|3	0	Click and hold to integrate.
 integrable|nskr_inertial|FRIGATE|4	0	<muted>When integrated, for 2 story points:</muted>
 integrable|nskr_inertial|FRIGATE|5	0	<muted>0.08% increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.</muted>
 integrable|nskr_inertial|FRIGATE|6	0	<muted>On hulls with Augmented Systems, also grants increased projectile speed equal to 100% of the speed-based damage bonus.</muted>
+integrable|nskr_inertial|FRIGATE|7	0	<builtIn>No longer: 50% increased damage taken by weapons.</builtIn>
 integrable|nskr_inertial|DESTROYER|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 integrable|nskr_inertial|DESTROYER|1	0	On hulls with Augmented Systems, also grants increased projectile speed equal to <good>100%</good> of the speed-based damage bonus.
 integrable|nskr_inertial|DESTROYER|2	0	Click and hold to integrate.
@@ -11505,6 +11626,7 @@ integrated|nskr_inertial|null|2	0	On hulls with Augmented Systems, also grants i
 integrated|nskr_inertial|FRIGATE|0	0	<builtIn>Integrated</builtIn>
 integrated|nskr_inertial|FRIGATE|1	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 integrated|nskr_inertial|FRIGATE|2	0	On hulls with Augmented Systems, also grants increased projectile speed equal to <good>100%</good> of the speed-based damage bonus.
+integrated|nskr_inertial|FRIGATE|3	0	<builtIn>No longer: 50% increased damage taken by weapons.</builtIn>
 integrated|nskr_inertial|DESTROYER|0	0	<builtIn>Integrated</builtIn>
 integrated|nskr_inertial|DESTROYER|1	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 integrated|nskr_inertial|DESTROYER|2	0	On hulls with Augmented Systems, also grants increased projectile speed equal to <good>100%</good> of the speed-based damage bonus.
@@ -11587,6 +11709,7 @@ integrable|nskr_volatile|null|13	0	<muted>+800 to range before falloff effective
 integrable|nskr_volatile|null|14	0	<muted>50% less weapon range beyond the range threshold.</muted>
 integrable|nskr_volatile|null|15	0	<muted>75% less strikecraft engagement range.</muted>
 integrable|nskr_volatile|null|16	0	<muted>On hulls with Augmented Systems, 50% reduced effect of the high-flux top speed and rate of fire penalties.</muted>
+integrable|nskr_volatile|null|17	0	<builtIn>No longer: 33% increased EMP damage taken.</builtIn>
 integrable|nskr_volatile|FRIGATE|0	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
 integrable|nskr_volatile|FRIGATE|1	0	<good>67%</good> increased flux capacity.
 integrable|nskr_volatile|FRIGATE|2	0	<good>67%</good> increased flux capacity granted by each flux capacitor.
@@ -11606,6 +11729,7 @@ integrable|nskr_volatile|FRIGATE|15	0	<muted>50% less weapon range beyond the ra
 integrable|nskr_volatile|FRIGATE|16	0	<muted>75% less strikecraft engagement range.</muted>
 integrable|nskr_volatile|FRIGATE|17	0	<muted>On hulls with Augmented Systems, 50% reduced effect of the high-flux top speed and rate of fire penalties.</muted>
 integrable|nskr_volatile|FRIGATE|18	0	<muted>Top speed changes with flux, from +50 su/s at no flux to -50 su/s at full flux, with no change at half flux. Below half flux, also up to 50% increased acceleration and turn acceleration.</muted>
+integrable|nskr_volatile|FRIGATE|19	0	<builtIn>No longer: 33% increased EMP damage taken.</builtIn>
 integrable|nskr_volatile|DESTROYER|0	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
 integrable|nskr_volatile|DESTROYER|1	0	<good>67%</good> increased flux capacity.
 integrable|nskr_volatile|DESTROYER|2	0	<good>67%</good> increased flux capacity granted by each flux capacitor.
@@ -11625,6 +11749,7 @@ integrable|nskr_volatile|DESTROYER|15	0	<muted>50% less weapon range beyond the 
 integrable|nskr_volatile|DESTROYER|16	0	<muted>75% less strikecraft engagement range.</muted>
 integrable|nskr_volatile|DESTROYER|17	0	<muted>On hulls with Augmented Systems, 50% reduced effect of the high-flux top speed and rate of fire penalties.</muted>
 integrable|nskr_volatile|DESTROYER|18	0	<muted>Top speed changes with flux, from +40 su/s at no flux to -40 su/s at full flux, with no change at half flux. Below half flux, also up to 40% increased acceleration and turn acceleration.</muted>
+integrable|nskr_volatile|DESTROYER|19	0	<builtIn>No longer: 33% increased EMP damage taken.</builtIn>
 integrable|nskr_volatile|CRUISER|0	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
 integrable|nskr_volatile|CRUISER|1	0	<good>67%</good> increased flux capacity.
 integrable|nskr_volatile|CRUISER|2	0	<good>67%</good> increased flux capacity granted by each flux capacitor.
@@ -11644,6 +11769,7 @@ integrable|nskr_volatile|CRUISER|15	0	<muted>50% less weapon range beyond the ra
 integrable|nskr_volatile|CRUISER|16	0	<muted>75% less strikecraft engagement range.</muted>
 integrable|nskr_volatile|CRUISER|17	0	<muted>On hulls with Augmented Systems, 50% reduced effect of the high-flux top speed and rate of fire penalties.</muted>
 integrable|nskr_volatile|CRUISER|18	0	<muted>Top speed changes with flux, from +30 su/s at no flux to -30 su/s at full flux, with no change at half flux. Below half flux, also up to 30% increased acceleration and turn acceleration.</muted>
+integrable|nskr_volatile|CRUISER|19	0	<builtIn>No longer: 33% increased EMP damage taken.</builtIn>
 integrable|nskr_volatile|CAPITAL_SHIP|0	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
 integrable|nskr_volatile|CAPITAL_SHIP|1	0	<good>67%</good> increased flux capacity.
 integrable|nskr_volatile|CAPITAL_SHIP|2	0	<good>67%</good> increased flux capacity granted by each flux capacitor.
@@ -11663,6 +11789,7 @@ integrable|nskr_volatile|CAPITAL_SHIP|15	0	<muted>50% less weapon range beyond t
 integrable|nskr_volatile|CAPITAL_SHIP|16	0	<muted>75% less strikecraft engagement range.</muted>
 integrable|nskr_volatile|CAPITAL_SHIP|17	0	<muted>On hulls with Augmented Systems, 50% reduced effect of the high-flux top speed and rate of fire penalties.</muted>
 integrable|nskr_volatile|CAPITAL_SHIP|18	0	<muted>Top speed changes with flux, from +20 su/s at no flux to -20 su/s at full flux, with no change at half flux. Below half flux, also up to 20% increased acceleration and turn acceleration.</muted>
+integrable|nskr_volatile|CAPITAL_SHIP|19	0	<builtIn>No longer: 33% increased EMP damage taken.</builtIn>
 integrated|nskr_volatile|null|0	0	<builtIn>Integrated</builtIn>
 integrated|nskr_volatile|null|1	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
 integrated|nskr_volatile|null|2	0	<good>67%</good> increased flux capacity.
@@ -11671,6 +11798,7 @@ integrated|nskr_volatile|null|4	0	<good>+800</good> to range before falloff effe
 integrated|nskr_volatile|null|5	0	<bad>50%</bad> less weapon range beyond the range threshold.
 integrated|nskr_volatile|null|6	0	<bad>75%</bad> less strikecraft engagement range.
 integrated|nskr_volatile|null|7	0	On hulls with Augmented Systems, <good>50%</good> reduced effect of the high-flux top speed and rate of fire penalties.
+integrated|nskr_volatile|null|8	0	<builtIn>No longer: 33% increased EMP damage taken.</builtIn>
 integrated|nskr_volatile|FRIGATE|0	0	<builtIn>Integrated</builtIn>
 integrated|nskr_volatile|FRIGATE|1	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
 integrated|nskr_volatile|FRIGATE|2	0	<good>67%</good> increased flux capacity.
@@ -11680,6 +11808,7 @@ integrated|nskr_volatile|FRIGATE|5	0	<bad>50%</bad> less weapon range beyond the
 integrated|nskr_volatile|FRIGATE|6	0	<bad>75%</bad> less strikecraft engagement range.
 integrated|nskr_volatile|FRIGATE|7	0	On hulls with Augmented Systems, <good>50%</good> reduced effect of the high-flux top speed and rate of fire penalties.
 integrated|nskr_volatile|FRIGATE|8	0	Top speed changes with flux, from <good>+50</good> su/s at no flux to <bad>-50</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>50%</good> increased acceleration and turn acceleration.
+integrated|nskr_volatile|FRIGATE|9	0	<builtIn>No longer: 33% increased EMP damage taken.</builtIn>
 integrated|nskr_volatile|DESTROYER|0	0	<builtIn>Integrated</builtIn>
 integrated|nskr_volatile|DESTROYER|1	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
 integrated|nskr_volatile|DESTROYER|2	0	<good>67%</good> increased flux capacity.
@@ -11689,6 +11818,7 @@ integrated|nskr_volatile|DESTROYER|5	0	<bad>50%</bad> less weapon range beyond t
 integrated|nskr_volatile|DESTROYER|6	0	<bad>75%</bad> less strikecraft engagement range.
 integrated|nskr_volatile|DESTROYER|7	0	On hulls with Augmented Systems, <good>50%</good> reduced effect of the high-flux top speed and rate of fire penalties.
 integrated|nskr_volatile|DESTROYER|8	0	Top speed changes with flux, from <good>+40</good> su/s at no flux to <bad>-40</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>40%</good> increased acceleration and turn acceleration.
+integrated|nskr_volatile|DESTROYER|9	0	<builtIn>No longer: 33% increased EMP damage taken.</builtIn>
 integrated|nskr_volatile|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|nskr_volatile|CRUISER|1	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
 integrated|nskr_volatile|CRUISER|2	0	<good>67%</good> increased flux capacity.
@@ -11698,6 +11828,7 @@ integrated|nskr_volatile|CRUISER|5	0	<bad>50%</bad> less weapon range beyond the
 integrated|nskr_volatile|CRUISER|6	0	<bad>75%</bad> less strikecraft engagement range.
 integrated|nskr_volatile|CRUISER|7	0	On hulls with Augmented Systems, <good>50%</good> reduced effect of the high-flux top speed and rate of fire penalties.
 integrated|nskr_volatile|CRUISER|8	0	Top speed changes with flux, from <good>+30</good> su/s at no flux to <bad>-30</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>30%</good> increased acceleration and turn acceleration.
+integrated|nskr_volatile|CRUISER|9	0	<builtIn>No longer: 33% increased EMP damage taken.</builtIn>
 integrated|nskr_volatile|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|nskr_volatile|CAPITAL_SHIP|1	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
 integrated|nskr_volatile|CAPITAL_SHIP|2	0	<good>67%</good> increased flux capacity.
@@ -11707,6 +11838,7 @@ integrated|nskr_volatile|CAPITAL_SHIP|5	0	<bad>50%</bad> less weapon range beyon
 integrated|nskr_volatile|CAPITAL_SHIP|6	0	<bad>75%</bad> less strikecraft engagement range.
 integrated|nskr_volatile|CAPITAL_SHIP|7	0	On hulls with Augmented Systems, <good>50%</good> reduced effect of the high-flux top speed and rate of fire penalties.
 integrated|nskr_volatile|CAPITAL_SHIP|8	0	Top speed changes with flux, from <good>+20</good> su/s at no flux to <bad>-20</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>20%</good> increased acceleration and turn acceleration.
+integrated|nskr_volatile|CAPITAL_SHIP|9	0	<builtIn>No longer: 33% increased EMP damage taken.</builtIn>
 type|objective_capture_range|null|0	0	<good>+35</good> to range from which combat objectives can be captured.
 type|objective_capture_range|FRIGATE|0	0	<good>+35</good> to range from which combat objectives can be captured.
 type|objective_capture_range|DESTROYER|0	0	<good>+35</good> to range from which combat objectives can be captured.
@@ -13423,36 +13555,46 @@ integrable|shield_conversion_omni|null|1	0	Converts this ship's shield to omni-d
 integrable|shield_conversion_omni|null|2	0	Click and hold to integrate.
 integrable|shield_conversion_omni|null|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|shield_conversion_omni|null|4	0	<muted>Converts this ship's shield to omni-directional.</muted>
+integrable|shield_conversion_omni|null|5	0	<builtIn>No longer: 30% less shield arc.</builtIn>
 integrable|shield_conversion_omni|FRIGATE|0	0	<bad>30%</bad> less shield arc.
 integrable|shield_conversion_omni|FRIGATE|1	0	Converts this ship's shield to omni-directional.
 integrable|shield_conversion_omni|FRIGATE|2	0	Click and hold to integrate.
 integrable|shield_conversion_omni|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|shield_conversion_omni|FRIGATE|4	0	<muted>Converts this ship's shield to omni-directional.</muted>
+integrable|shield_conversion_omni|FRIGATE|5	0	<builtIn>No longer: 30% less shield arc.</builtIn>
 integrable|shield_conversion_omni|DESTROYER|0	0	<bad>30%</bad> less shield arc.
 integrable|shield_conversion_omni|DESTROYER|1	0	Converts this ship's shield to omni-directional.
 integrable|shield_conversion_omni|DESTROYER|2	0	Click and hold to integrate.
 integrable|shield_conversion_omni|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|shield_conversion_omni|DESTROYER|4	0	<muted>Converts this ship's shield to omni-directional.</muted>
+integrable|shield_conversion_omni|DESTROYER|5	0	<builtIn>No longer: 30% less shield arc.</builtIn>
 integrable|shield_conversion_omni|CRUISER|0	0	<bad>30%</bad> less shield arc.
 integrable|shield_conversion_omni|CRUISER|1	0	Converts this ship's shield to omni-directional.
 integrable|shield_conversion_omni|CRUISER|2	0	Click and hold to integrate.
 integrable|shield_conversion_omni|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|shield_conversion_omni|CRUISER|4	0	<muted>Converts this ship's shield to omni-directional.</muted>
+integrable|shield_conversion_omni|CRUISER|5	0	<builtIn>No longer: 30% less shield arc.</builtIn>
 integrable|shield_conversion_omni|CAPITAL_SHIP|0	0	<bad>30%</bad> less shield arc.
 integrable|shield_conversion_omni|CAPITAL_SHIP|1	0	Converts this ship's shield to omni-directional.
 integrable|shield_conversion_omni|CAPITAL_SHIP|2	0	Click and hold to integrate.
 integrable|shield_conversion_omni|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
 integrable|shield_conversion_omni|CAPITAL_SHIP|4	0	<muted>Converts this ship's shield to omni-directional.</muted>
+integrable|shield_conversion_omni|CAPITAL_SHIP|5	0	<builtIn>No longer: 30% less shield arc.</builtIn>
 integrated|shield_conversion_omni|null|0	0	<builtIn>Integrated</builtIn>
 integrated|shield_conversion_omni|null|1	0	Converts this ship's shield to omni-directional.
+integrated|shield_conversion_omni|null|2	0	<builtIn>No longer: 30% less shield arc.</builtIn>
 integrated|shield_conversion_omni|FRIGATE|0	0	<builtIn>Integrated</builtIn>
 integrated|shield_conversion_omni|FRIGATE|1	0	Converts this ship's shield to omni-directional.
+integrated|shield_conversion_omni|FRIGATE|2	0	<builtIn>No longer: 30% less shield arc.</builtIn>
 integrated|shield_conversion_omni|DESTROYER|0	0	<builtIn>Integrated</builtIn>
 integrated|shield_conversion_omni|DESTROYER|1	0	Converts this ship's shield to omni-directional.
+integrated|shield_conversion_omni|DESTROYER|2	0	<builtIn>No longer: 30% less shield arc.</builtIn>
 integrated|shield_conversion_omni|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|shield_conversion_omni|CRUISER|1	0	Converts this ship's shield to omni-directional.
+integrated|shield_conversion_omni|CRUISER|2	0	<builtIn>No longer: 30% less shield arc.</builtIn>
 integrated|shield_conversion_omni|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|shield_conversion_omni|CAPITAL_SHIP|1	0	Converts this ship's shield to omni-directional.
+integrated|shield_conversion_omni|CAPITAL_SHIP|2	0	<builtIn>No longer: 30% less shield arc.</builtIn>
 type|shield_flux_damage_reduction|null|0	1	<bad>5%</bad> less damage taken by shields.
 type|shield_flux_damage_reduction|FRIGATE|0	1	<bad>5%</bad> less damage taken by shields.
 type|shield_flux_damage_reduction|DESTROYER|0	1	<bad>5%</bad> less damage taken by shields.

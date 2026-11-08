@@ -217,6 +217,7 @@
     "node.hullSizes.other": "仅限<hl>船体尺寸</hl>：{hullSizes}。",
     "node.integration.integrated": "<builtIn>已整合</builtIn>",
     "node.integration.preview.other": "整合后（消耗{count}故事点）：",
+    "node.integration.removes": "不再：{line}",
     "node.integration.hint": "长按以整合。",
     "node.integration.confirm.other": "整合需要消耗{count}故事点。继续按住以确认。",
     "node.integration.notEnough.other": "整合需要{count}故事点。",
