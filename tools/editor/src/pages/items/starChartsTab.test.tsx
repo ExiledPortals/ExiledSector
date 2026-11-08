@@ -19,12 +19,12 @@ describe('star charts', () => {
     const charts = await openItems('Star Charts');
 
     fireEvent.click(await findLabelled('Select CHART_FLEET_SIZE_PERCENT', charts));
-    expect(within(charts).getAllByText('low 15 to 20, mid 50 to 70, high 150 to 200').length).toBeGreaterThan(0);
-    fireEvent.change(await findLabelled('CHART_FLEET_SIZE_PERCENT low max', charts), { target: { value: '25' } });
+    expect(within(charts).getAllByText('low 4 to 5, mid 12 to 18, high 38 to 50').length).toBeGreaterThan(0);
+    fireEvent.change(await findLabelled('CHART_FLEET_SIZE_PERCENT low max', charts), { target: { value: '6' } });
     fireEvent.change(await findLabelled('star_chart weight', charts), { target: { value: '12' } });
     await save('Saved star_charts.csv and star_chart_modifiers.csv');
 
-    expect(readProjectFile(CHART_MODIFIERS_FILE)).toBe(before[CHART_MODIFIERS_FILE].replace('CHART_FLEET_SIZE_PERCENT:low=15-20/', 'CHART_FLEET_SIZE_PERCENT:low=15-25/'));
+    expect(readProjectFile(CHART_MODIFIERS_FILE)).toBe(before[CHART_MODIFIERS_FILE].replace('CHART_FLEET_SIZE_PERCENT:low=4-5/', 'CHART_FLEET_SIZE_PERCENT:low=4-6/'));
     expect(readProjectFile(STAR_CHARTS_FILE)).toBe(before[STAR_CHARTS_FILE].replace('@CHART_FLEET_SIZE_PERCENT:10;', '@CHART_FLEET_SIZE_PERCENT:12;'));
   }, 90000);
 
