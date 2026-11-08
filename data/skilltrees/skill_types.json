@@ -5556,6 +5556,14 @@
 			"name": "Shrouded Lens",
 			"icon": "graphics/icons/shrouded_lens.png",
 			"tier": "NOTABLE",
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CREW_LOSS_PERCENT",
+						"magnitude": -50
+					}
+				]
+			},
 			"vanillaHullMod": "shrouded_lens",
 			"itemCost": {
 				"itemId": "shrouded_lens",
@@ -5579,6 +5587,14 @@
 			"name": "Shrouded Mantle",
 			"icon": "graphics/icons/shrouded_mantle.png",
 			"tier": "NOTABLE",
+			"integrated": {
+				"effects": [
+					{
+						"effect": "HUNGERING_RIFT_HEALING_PERCENT",
+						"magnitude": 50
+					}
+				]
+			},
 			"vanillaHullMod": "shrouded_mantle",
 			"itemCost": {
 				"itemId": "shrouded_mantle",
@@ -5597,6 +5613,14 @@
 			"name": "Shrouded Thunderhead",
 			"icon": "graphics/icons/shrouded_thunderhead.png",
 			"tier": "NOTABLE",
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CREW_LOSS_PERCENT",
+						"magnitude": -50
+					}
+				]
+			},
 			"vanillaHullMod": "shrouded_thunderhead",
 			"itemCost": {
 				"itemId": "shrouded_thunderhead",

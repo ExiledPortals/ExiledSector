@@ -8279,6 +8279,76 @@ type|shrouded_lens|CAPITAL_SHIP|1	0	Each strike generates <hl>75</hl> flux. Keep
 type|shrouded_lens|CAPITAL_SHIP|2	0	<bad>50%</bad> increased crew casualties.
 type-detail|shrouded_lens|CAPITAL_SHIP|0	0	Can't be allocated on phase ships.
 type-detail|shrouded_lens|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Fragment Swarm</hullmod>\n• <hullmod>Navarchy Armor Plate</hullmod>\n• <hullmod>Symbiosis</hullmod>\n• <hullmod>Phase Platform</hullmod>\n• <hullmod>Shrouded Lens</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Fragment Swarm</node>
+integrable|shrouded_lens|null|0	0	Strikes a random target within <hl>400</hl> su <hl>1</hl> to <hl>4</hl> times a second, depending on hull size, dealing <hl>75</hl> energy damage in an area.
+integrable|shrouded_lens|null|1	0	Each strike generates <hl>75</hl> flux. Keeps striking while venting or overloaded and can't be turned off.
+integrable|shrouded_lens|null|2	0	<bad>50%</bad> increased crew casualties.
+integrable|shrouded_lens|null|3	0	Click and hold to integrate.
+integrable|shrouded_lens|null|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|shrouded_lens|null|5	0	<muted>50% reduced crew casualties.</muted>
+integrable|shrouded_lens|null|6	0	<muted>Strikes a random target within 400 su 1 to 4 times a second, depending on hull size, dealing 75 energy damage in an area.</muted>
+integrable|shrouded_lens|null|7	0	<muted>Each strike generates 75 flux. Keeps striking while venting or overloaded and can't be turned off.</muted>
+integrable|shrouded_lens|null|8	0	<muted>50% increased crew casualties.</muted>
+integrable|shrouded_lens|FRIGATE|0	0	Strikes a random target within <hl>400</hl> su <hl>1</hl> to <hl>4</hl> times a second, depending on hull size, dealing <hl>75</hl> energy damage in an area.
+integrable|shrouded_lens|FRIGATE|1	0	Each strike generates <hl>75</hl> flux. Keeps striking while venting or overloaded and can't be turned off.
+integrable|shrouded_lens|FRIGATE|2	0	<bad>50%</bad> increased crew casualties.
+integrable|shrouded_lens|FRIGATE|3	0	Click and hold to integrate.
+integrable|shrouded_lens|FRIGATE|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|shrouded_lens|FRIGATE|5	0	<muted>50% reduced crew casualties.</muted>
+integrable|shrouded_lens|FRIGATE|6	0	<muted>Strikes a random target within 400 su 1 to 4 times a second, depending on hull size, dealing 75 energy damage in an area.</muted>
+integrable|shrouded_lens|FRIGATE|7	0	<muted>Each strike generates 75 flux. Keeps striking while venting or overloaded and can't be turned off.</muted>
+integrable|shrouded_lens|FRIGATE|8	0	<muted>50% increased crew casualties.</muted>
+integrable|shrouded_lens|DESTROYER|0	0	Strikes a random target within <hl>400</hl> su <hl>1</hl> to <hl>4</hl> times a second, depending on hull size, dealing <hl>75</hl> energy damage in an area.
+integrable|shrouded_lens|DESTROYER|1	0	Each strike generates <hl>75</hl> flux. Keeps striking while venting or overloaded and can't be turned off.
+integrable|shrouded_lens|DESTROYER|2	0	<bad>50%</bad> increased crew casualties.
+integrable|shrouded_lens|DESTROYER|3	0	Click and hold to integrate.
+integrable|shrouded_lens|DESTROYER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|shrouded_lens|DESTROYER|5	0	<muted>50% reduced crew casualties.</muted>
+integrable|shrouded_lens|DESTROYER|6	0	<muted>Strikes a random target within 400 su 1 to 4 times a second, depending on hull size, dealing 75 energy damage in an area.</muted>
+integrable|shrouded_lens|DESTROYER|7	0	<muted>Each strike generates 75 flux. Keeps striking while venting or overloaded and can't be turned off.</muted>
+integrable|shrouded_lens|DESTROYER|8	0	<muted>50% increased crew casualties.</muted>
+integrable|shrouded_lens|CRUISER|0	0	Strikes a random target within <hl>400</hl> su <hl>1</hl> to <hl>4</hl> times a second, depending on hull size, dealing <hl>75</hl> energy damage in an area.
+integrable|shrouded_lens|CRUISER|1	0	Each strike generates <hl>75</hl> flux. Keeps striking while venting or overloaded and can't be turned off.
+integrable|shrouded_lens|CRUISER|2	0	<bad>50%</bad> increased crew casualties.
+integrable|shrouded_lens|CRUISER|3	0	Click and hold to integrate.
+integrable|shrouded_lens|CRUISER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|shrouded_lens|CRUISER|5	0	<muted>50% reduced crew casualties.</muted>
+integrable|shrouded_lens|CRUISER|6	0	<muted>Strikes a random target within 400 su 1 to 4 times a second, depending on hull size, dealing 75 energy damage in an area.</muted>
+integrable|shrouded_lens|CRUISER|7	0	<muted>Each strike generates 75 flux. Keeps striking while venting or overloaded and can't be turned off.</muted>
+integrable|shrouded_lens|CRUISER|8	0	<muted>50% increased crew casualties.</muted>
+integrable|shrouded_lens|CAPITAL_SHIP|0	0	Strikes a random target within <hl>400</hl> su <hl>1</hl> to <hl>4</hl> times a second, depending on hull size, dealing <hl>75</hl> energy damage in an area.
+integrable|shrouded_lens|CAPITAL_SHIP|1	0	Each strike generates <hl>75</hl> flux. Keeps striking while venting or overloaded and can't be turned off.
+integrable|shrouded_lens|CAPITAL_SHIP|2	0	<bad>50%</bad> increased crew casualties.
+integrable|shrouded_lens|CAPITAL_SHIP|3	0	Click and hold to integrate.
+integrable|shrouded_lens|CAPITAL_SHIP|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|shrouded_lens|CAPITAL_SHIP|5	0	<muted>50% reduced crew casualties.</muted>
+integrable|shrouded_lens|CAPITAL_SHIP|6	0	<muted>Strikes a random target within 400 su 1 to 4 times a second, depending on hull size, dealing 75 energy damage in an area.</muted>
+integrable|shrouded_lens|CAPITAL_SHIP|7	0	<muted>Each strike generates 75 flux. Keeps striking while venting or overloaded and can't be turned off.</muted>
+integrable|shrouded_lens|CAPITAL_SHIP|8	0	<muted>50% increased crew casualties.</muted>
+integrated|shrouded_lens|null|0	0	<builtIn>Integrated</builtIn>
+integrated|shrouded_lens|null|1	1	<bad>50%</bad><builtIn> reduced crew casualties.</builtIn>
+integrated|shrouded_lens|null|2	0	Strikes a random target within <hl>400</hl> su <hl>1</hl> to <hl>4</hl> times a second, depending on hull size, dealing <hl>75</hl> energy damage in an area.
+integrated|shrouded_lens|null|3	0	Each strike generates <hl>75</hl> flux. Keeps striking while venting or overloaded and can't be turned off.
+integrated|shrouded_lens|null|4	0	<bad>50%</bad> increased crew casualties.
+integrated|shrouded_lens|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|shrouded_lens|FRIGATE|1	1	<bad>50%</bad><builtIn> reduced crew casualties.</builtIn>
+integrated|shrouded_lens|FRIGATE|2	0	Strikes a random target within <hl>400</hl> su <hl>1</hl> to <hl>4</hl> times a second, depending on hull size, dealing <hl>75</hl> energy damage in an area.
+integrated|shrouded_lens|FRIGATE|3	0	Each strike generates <hl>75</hl> flux. Keeps striking while venting or overloaded and can't be turned off.
+integrated|shrouded_lens|FRIGATE|4	0	<bad>50%</bad> increased crew casualties.
+integrated|shrouded_lens|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|shrouded_lens|DESTROYER|1	1	<bad>50%</bad><builtIn> reduced crew casualties.</builtIn>
+integrated|shrouded_lens|DESTROYER|2	0	Strikes a random target within <hl>400</hl> su <hl>1</hl> to <hl>4</hl> times a second, depending on hull size, dealing <hl>75</hl> energy damage in an area.
+integrated|shrouded_lens|DESTROYER|3	0	Each strike generates <hl>75</hl> flux. Keeps striking while venting or overloaded and can't be turned off.
+integrated|shrouded_lens|DESTROYER|4	0	<bad>50%</bad> increased crew casualties.
+integrated|shrouded_lens|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|shrouded_lens|CRUISER|1	1	<bad>50%</bad><builtIn> reduced crew casualties.</builtIn>
+integrated|shrouded_lens|CRUISER|2	0	Strikes a random target within <hl>400</hl> su <hl>1</hl> to <hl>4</hl> times a second, depending on hull size, dealing <hl>75</hl> energy damage in an area.
+integrated|shrouded_lens|CRUISER|3	0	Each strike generates <hl>75</hl> flux. Keeps striking while venting or overloaded and can't be turned off.
+integrated|shrouded_lens|CRUISER|4	0	<bad>50%</bad> increased crew casualties.
+integrated|shrouded_lens|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|shrouded_lens|CAPITAL_SHIP|1	1	<bad>50%</bad><builtIn> reduced crew casualties.</builtIn>
+integrated|shrouded_lens|CAPITAL_SHIP|2	0	Strikes a random target within <hl>400</hl> su <hl>1</hl> to <hl>4</hl> times a second, depending on hull size, dealing <hl>75</hl> energy damage in an area.
+integrated|shrouded_lens|CAPITAL_SHIP|3	0	Each strike generates <hl>75</hl> flux. Keeps striking while venting or overloaded and can't be turned off.
+integrated|shrouded_lens|CAPITAL_SHIP|4	0	<bad>50%</bad> increased crew casualties.
 type|shrouded_lens_damage|null|0	0	<good>10%</good> increased Shrouded Lens damage.
 type|shrouded_lens_damage|FRIGATE|0	0	<good>10%</good> increased Shrouded Lens damage.
 type|shrouded_lens_damage|DESTROYER|0	0	<good>10%</good> increased Shrouded Lens damage.
@@ -8295,6 +8365,31 @@ type-detail|shrouded_mantle|CRUISER|0	0	Can't be allocated on phase ships.
 type-detail|shrouded_mantle|CRUISER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Fragment Swarm</hullmod>\n• <hullmod>Navarchy Armor Plate</hullmod>\n• <hullmod>Symbiosis</hullmod>\n• <hullmod>Phase Platform</hullmod>\n• <hullmod>Shrouded Mantle</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Fragment Swarm</node>
 type-detail|shrouded_mantle|CAPITAL_SHIP|0	0	Can't be allocated on phase ships.
 type-detail|shrouded_mantle|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Fragment Swarm</hullmod>\n• <hullmod>Navarchy Armor Plate</hullmod>\n• <hullmod>Symbiosis</hullmod>\n• <hullmod>Phase Platform</hullmod>\n• <hullmod>Shrouded Mantle</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Fragment Swarm</node>
+integrable|shrouded_mantle|null|0	0	Click and hold to integrate.
+integrable|shrouded_mantle|null|1	0	<muted>When integrated, for 2 story points:</muted>
+integrable|shrouded_mantle|null|2	0	<muted>+50% to Hungering Rift healing received.</muted>
+integrable|shrouded_mantle|FRIGATE|0	0	Click and hold to integrate.
+integrable|shrouded_mantle|FRIGATE|1	0	<muted>When integrated, for 2 story points:</muted>
+integrable|shrouded_mantle|FRIGATE|2	0	<muted>+50% to Hungering Rift healing received.</muted>
+integrable|shrouded_mantle|DESTROYER|0	0	Click and hold to integrate.
+integrable|shrouded_mantle|DESTROYER|1	0	<muted>When integrated, for 2 story points:</muted>
+integrable|shrouded_mantle|DESTROYER|2	0	<muted>+50% to Hungering Rift healing received.</muted>
+integrable|shrouded_mantle|CRUISER|0	0	Click and hold to integrate.
+integrable|shrouded_mantle|CRUISER|1	0	<muted>When integrated, for 2 story points:</muted>
+integrable|shrouded_mantle|CRUISER|2	0	<muted>+50% to Hungering Rift healing received.</muted>
+integrable|shrouded_mantle|CAPITAL_SHIP|0	0	Click and hold to integrate.
+integrable|shrouded_mantle|CAPITAL_SHIP|1	0	<muted>When integrated, for 2 story points:</muted>
+integrable|shrouded_mantle|CAPITAL_SHIP|2	0	<muted>+50% to Hungering Rift healing received.</muted>
+integrated|shrouded_mantle|null|0	0	<builtIn>Integrated</builtIn>
+integrated|shrouded_mantle|null|1	0	<good>+50%</good><builtIn> to Hungering Rift healing received.</builtIn>
+integrated|shrouded_mantle|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|shrouded_mantle|FRIGATE|1	0	<good>+50%</good><builtIn> to Hungering Rift healing received.</builtIn>
+integrated|shrouded_mantle|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|shrouded_mantle|DESTROYER|1	0	<good>+50%</good><builtIn> to Hungering Rift healing received.</builtIn>
+integrated|shrouded_mantle|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|shrouded_mantle|CRUISER|1	0	<good>+50%</good><builtIn> to Hungering Rift healing received.</builtIn>
+integrated|shrouded_mantle|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|shrouded_mantle|CAPITAL_SHIP|1	0	<good>+50%</good><builtIn> to Hungering Rift healing received.</builtIn>
 itemCost|shrouded_thunderhead	0	Costs 1 shrouded_thunderhead to allocate, returned when unallocated.
 type|shrouded_thunderhead|null|0	0	Fires Rift Lightning at points this ship's weapons hit, more often the more hits landed in the last <hl>5</hl> seconds. Beams and other soft flux hits don't count.
 type|shrouded_thunderhead|null|1	0	Each bolt deals <hl>200</hl> to <hl>500</hl> energy damage and <hl>400</hl> to <hl>1000</hl> EMP damage, depending on hull size, and generates flux equal to its energy damage.
@@ -8321,6 +8416,76 @@ type|shrouded_thunderhead|CAPITAL_SHIP|1	0	Each bolt deals <hl>200</hl> to <hl>5
 type|shrouded_thunderhead|CAPITAL_SHIP|2	0	<bad>50%</bad> increased crew casualties.
 type-detail|shrouded_thunderhead|CAPITAL_SHIP|0	0	Can't be allocated on phase ships.
 type-detail|shrouded_thunderhead|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Fragment Swarm</hullmod>\n• <hullmod>Navarchy Armor Plate</hullmod>\n• <hullmod>Symbiosis</hullmod>\n• <hullmod>Phase Platform</hullmod>\n• <hullmod>Shrouded Thunderhead</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Fragment Swarm</node>
+integrable|shrouded_thunderhead|null|0	0	Fires Rift Lightning at points this ship's weapons hit, more often the more hits landed in the last <hl>5</hl> seconds. Beams and other soft flux hits don't count.
+integrable|shrouded_thunderhead|null|1	0	Each bolt deals <hl>200</hl> to <hl>500</hl> energy damage and <hl>400</hl> to <hl>1000</hl> EMP damage, depending on hull size, and generates flux equal to its energy damage.
+integrable|shrouded_thunderhead|null|2	0	<bad>50%</bad> increased crew casualties.
+integrable|shrouded_thunderhead|null|3	0	Click and hold to integrate.
+integrable|shrouded_thunderhead|null|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|shrouded_thunderhead|null|5	0	<muted>50% reduced crew casualties.</muted>
+integrable|shrouded_thunderhead|null|6	0	<muted>Fires Rift Lightning at points this ship's weapons hit, more often the more hits landed in the last 5 seconds. Beams and other soft flux hits don't count.</muted>
+integrable|shrouded_thunderhead|null|7	0	<muted>Each bolt deals 200 to 500 energy damage and 400 to 1000 EMP damage, depending on hull size, and generates flux equal to its energy damage.</muted>
+integrable|shrouded_thunderhead|null|8	0	<muted>50% increased crew casualties.</muted>
+integrable|shrouded_thunderhead|FRIGATE|0	0	Fires Rift Lightning at points this ship's weapons hit, more often the more hits landed in the last <hl>5</hl> seconds. Beams and other soft flux hits don't count.
+integrable|shrouded_thunderhead|FRIGATE|1	0	Each bolt deals <hl>200</hl> to <hl>500</hl> energy damage and <hl>400</hl> to <hl>1000</hl> EMP damage, depending on hull size, and generates flux equal to its energy damage.
+integrable|shrouded_thunderhead|FRIGATE|2	0	<bad>50%</bad> increased crew casualties.
+integrable|shrouded_thunderhead|FRIGATE|3	0	Click and hold to integrate.
+integrable|shrouded_thunderhead|FRIGATE|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|shrouded_thunderhead|FRIGATE|5	0	<muted>50% reduced crew casualties.</muted>
+integrable|shrouded_thunderhead|FRIGATE|6	0	<muted>Fires Rift Lightning at points this ship's weapons hit, more often the more hits landed in the last 5 seconds. Beams and other soft flux hits don't count.</muted>
+integrable|shrouded_thunderhead|FRIGATE|7	0	<muted>Each bolt deals 200 to 500 energy damage and 400 to 1000 EMP damage, depending on hull size, and generates flux equal to its energy damage.</muted>
+integrable|shrouded_thunderhead|FRIGATE|8	0	<muted>50% increased crew casualties.</muted>
+integrable|shrouded_thunderhead|DESTROYER|0	0	Fires Rift Lightning at points this ship's weapons hit, more often the more hits landed in the last <hl>5</hl> seconds. Beams and other soft flux hits don't count.
+integrable|shrouded_thunderhead|DESTROYER|1	0	Each bolt deals <hl>200</hl> to <hl>500</hl> energy damage and <hl>400</hl> to <hl>1000</hl> EMP damage, depending on hull size, and generates flux equal to its energy damage.
+integrable|shrouded_thunderhead|DESTROYER|2	0	<bad>50%</bad> increased crew casualties.
+integrable|shrouded_thunderhead|DESTROYER|3	0	Click and hold to integrate.
+integrable|shrouded_thunderhead|DESTROYER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|shrouded_thunderhead|DESTROYER|5	0	<muted>50% reduced crew casualties.</muted>
+integrable|shrouded_thunderhead|DESTROYER|6	0	<muted>Fires Rift Lightning at points this ship's weapons hit, more often the more hits landed in the last 5 seconds. Beams and other soft flux hits don't count.</muted>
+integrable|shrouded_thunderhead|DESTROYER|7	0	<muted>Each bolt deals 200 to 500 energy damage and 400 to 1000 EMP damage, depending on hull size, and generates flux equal to its energy damage.</muted>
+integrable|shrouded_thunderhead|DESTROYER|8	0	<muted>50% increased crew casualties.</muted>
+integrable|shrouded_thunderhead|CRUISER|0	0	Fires Rift Lightning at points this ship's weapons hit, more often the more hits landed in the last <hl>5</hl> seconds. Beams and other soft flux hits don't count.
+integrable|shrouded_thunderhead|CRUISER|1	0	Each bolt deals <hl>200</hl> to <hl>500</hl> energy damage and <hl>400</hl> to <hl>1000</hl> EMP damage, depending on hull size, and generates flux equal to its energy damage.
+integrable|shrouded_thunderhead|CRUISER|2	0	<bad>50%</bad> increased crew casualties.
+integrable|shrouded_thunderhead|CRUISER|3	0	Click and hold to integrate.
+integrable|shrouded_thunderhead|CRUISER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|shrouded_thunderhead|CRUISER|5	0	<muted>50% reduced crew casualties.</muted>
+integrable|shrouded_thunderhead|CRUISER|6	0	<muted>Fires Rift Lightning at points this ship's weapons hit, more often the more hits landed in the last 5 seconds. Beams and other soft flux hits don't count.</muted>
+integrable|shrouded_thunderhead|CRUISER|7	0	<muted>Each bolt deals 200 to 500 energy damage and 400 to 1000 EMP damage, depending on hull size, and generates flux equal to its energy damage.</muted>
+integrable|shrouded_thunderhead|CRUISER|8	0	<muted>50% increased crew casualties.</muted>
+integrable|shrouded_thunderhead|CAPITAL_SHIP|0	0	Fires Rift Lightning at points this ship's weapons hit, more often the more hits landed in the last <hl>5</hl> seconds. Beams and other soft flux hits don't count.
+integrable|shrouded_thunderhead|CAPITAL_SHIP|1	0	Each bolt deals <hl>200</hl> to <hl>500</hl> energy damage and <hl>400</hl> to <hl>1000</hl> EMP damage, depending on hull size, and generates flux equal to its energy damage.
+integrable|shrouded_thunderhead|CAPITAL_SHIP|2	0	<bad>50%</bad> increased crew casualties.
+integrable|shrouded_thunderhead|CAPITAL_SHIP|3	0	Click and hold to integrate.
+integrable|shrouded_thunderhead|CAPITAL_SHIP|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|shrouded_thunderhead|CAPITAL_SHIP|5	0	<muted>50% reduced crew casualties.</muted>
+integrable|shrouded_thunderhead|CAPITAL_SHIP|6	0	<muted>Fires Rift Lightning at points this ship's weapons hit, more often the more hits landed in the last 5 seconds. Beams and other soft flux hits don't count.</muted>
+integrable|shrouded_thunderhead|CAPITAL_SHIP|7	0	<muted>Each bolt deals 200 to 500 energy damage and 400 to 1000 EMP damage, depending on hull size, and generates flux equal to its energy damage.</muted>
+integrable|shrouded_thunderhead|CAPITAL_SHIP|8	0	<muted>50% increased crew casualties.</muted>
+integrated|shrouded_thunderhead|null|0	0	<builtIn>Integrated</builtIn>
+integrated|shrouded_thunderhead|null|1	1	<bad>50%</bad><builtIn> reduced crew casualties.</builtIn>
+integrated|shrouded_thunderhead|null|2	0	Fires Rift Lightning at points this ship's weapons hit, more often the more hits landed in the last <hl>5</hl> seconds. Beams and other soft flux hits don't count.
+integrated|shrouded_thunderhead|null|3	0	Each bolt deals <hl>200</hl> to <hl>500</hl> energy damage and <hl>400</hl> to <hl>1000</hl> EMP damage, depending on hull size, and generates flux equal to its energy damage.
+integrated|shrouded_thunderhead|null|4	0	<bad>50%</bad> increased crew casualties.
+integrated|shrouded_thunderhead|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|shrouded_thunderhead|FRIGATE|1	1	<bad>50%</bad><builtIn> reduced crew casualties.</builtIn>
+integrated|shrouded_thunderhead|FRIGATE|2	0	Fires Rift Lightning at points this ship's weapons hit, more often the more hits landed in the last <hl>5</hl> seconds. Beams and other soft flux hits don't count.
+integrated|shrouded_thunderhead|FRIGATE|3	0	Each bolt deals <hl>200</hl> to <hl>500</hl> energy damage and <hl>400</hl> to <hl>1000</hl> EMP damage, depending on hull size, and generates flux equal to its energy damage.
+integrated|shrouded_thunderhead|FRIGATE|4	0	<bad>50%</bad> increased crew casualties.
+integrated|shrouded_thunderhead|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|shrouded_thunderhead|DESTROYER|1	1	<bad>50%</bad><builtIn> reduced crew casualties.</builtIn>
+integrated|shrouded_thunderhead|DESTROYER|2	0	Fires Rift Lightning at points this ship's weapons hit, more often the more hits landed in the last <hl>5</hl> seconds. Beams and other soft flux hits don't count.
+integrated|shrouded_thunderhead|DESTROYER|3	0	Each bolt deals <hl>200</hl> to <hl>500</hl> energy damage and <hl>400</hl> to <hl>1000</hl> EMP damage, depending on hull size, and generates flux equal to its energy damage.
+integrated|shrouded_thunderhead|DESTROYER|4	0	<bad>50%</bad> increased crew casualties.
+integrated|shrouded_thunderhead|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|shrouded_thunderhead|CRUISER|1	1	<bad>50%</bad><builtIn> reduced crew casualties.</builtIn>
+integrated|shrouded_thunderhead|CRUISER|2	0	Fires Rift Lightning at points this ship's weapons hit, more often the more hits landed in the last <hl>5</hl> seconds. Beams and other soft flux hits don't count.
+integrated|shrouded_thunderhead|CRUISER|3	0	Each bolt deals <hl>200</hl> to <hl>500</hl> energy damage and <hl>400</hl> to <hl>1000</hl> EMP damage, depending on hull size, and generates flux equal to its energy damage.
+integrated|shrouded_thunderhead|CRUISER|4	0	<bad>50%</bad> increased crew casualties.
+integrated|shrouded_thunderhead|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|shrouded_thunderhead|CAPITAL_SHIP|1	1	<bad>50%</bad><builtIn> reduced crew casualties.</builtIn>
+integrated|shrouded_thunderhead|CAPITAL_SHIP|2	0	Fires Rift Lightning at points this ship's weapons hit, more often the more hits landed in the last <hl>5</hl> seconds. Beams and other soft flux hits don't count.
+integrated|shrouded_thunderhead|CAPITAL_SHIP|3	0	Each bolt deals <hl>200</hl> to <hl>500</hl> energy damage and <hl>400</hl> to <hl>1000</hl> EMP damage, depending on hull size, and generates flux equal to its energy damage.
+integrated|shrouded_thunderhead|CAPITAL_SHIP|4	0	<bad>50%</bad> increased crew casualties.
 flavour|sindrian_shielding	0	Sindria's day side is scoured by radiation, and array workers who fled the Askonia Crisis to sign on with this crew know how to harden an emitter against it. They learned the hard way, as most Sindrians learn most things.
 flavourAutomated|sindrian_shielding	0	Sindria's day side is scoured by radiation, and the emitters on its orbital arrays are hardened against it. The refit crew copies the shielding pattern from a derelict Askonian array onto this ship's emitters. Whoever designed it learned the hard way, as most Sindrians learn most things.
 type|sindrian_shielding|null|0	1	<bad>10%</bad> less damage taken by shields.
