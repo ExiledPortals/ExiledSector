@@ -6246,6 +6246,36 @@ type|fragment_coordinator|CRUISER|0	0	<good>60%</good> increased fragment swarm 
 type-detail|fragment_coordinator|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Symbiosis</hullmod>\n• <hullmod>Phase Platform</hullmod>\n• <hullmod>Fragment Coordinator</hullmod>
 type|fragment_coordinator|CAPITAL_SHIP|0	0	<good>60%</good> increased fragment swarm size.
 type-detail|fragment_coordinator|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Symbiosis</hullmod>\n• <hullmod>Phase Platform</hullmod>\n• <hullmod>Fragment Coordinator</hullmod>
+integrable|fragment_coordinator|null|0	0	<good>60%</good> increased fragment swarm size.
+integrable|fragment_coordinator|null|1	0	Click and hold to integrate.
+integrable|fragment_coordinator|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|fragment_coordinator|null|3	0	<muted>100% increased fragment swarm size.</muted>
+integrable|fragment_coordinator|FRIGATE|0	0	<good>60%</good> increased fragment swarm size.
+integrable|fragment_coordinator|FRIGATE|1	0	Click and hold to integrate.
+integrable|fragment_coordinator|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|fragment_coordinator|FRIGATE|3	0	<muted>100% increased fragment swarm size.</muted>
+integrable|fragment_coordinator|DESTROYER|0	0	<good>60%</good> increased fragment swarm size.
+integrable|fragment_coordinator|DESTROYER|1	0	Click and hold to integrate.
+integrable|fragment_coordinator|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|fragment_coordinator|DESTROYER|3	0	<muted>100% increased fragment swarm size.</muted>
+integrable|fragment_coordinator|CRUISER|0	0	<good>60%</good> increased fragment swarm size.
+integrable|fragment_coordinator|CRUISER|1	0	Click and hold to integrate.
+integrable|fragment_coordinator|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|fragment_coordinator|CRUISER|3	0	<muted>100% increased fragment swarm size.</muted>
+integrable|fragment_coordinator|CAPITAL_SHIP|0	0	<good>60%</good> increased fragment swarm size.
+integrable|fragment_coordinator|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|fragment_coordinator|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|fragment_coordinator|CAPITAL_SHIP|3	0	<muted>100% increased fragment swarm size.</muted>
+integrated|fragment_coordinator|null|0	0	<builtIn>Integrated</builtIn>
+integrated|fragment_coordinator|null|1	0	<good>100%</good><builtIn> increased fragment swarm size.</builtIn>
+integrated|fragment_coordinator|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|fragment_coordinator|FRIGATE|1	0	<good>100%</good><builtIn> increased fragment swarm size.</builtIn>
+integrated|fragment_coordinator|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|fragment_coordinator|DESTROYER|1	0	<good>100%</good><builtIn> increased fragment swarm size.</builtIn>
+integrated|fragment_coordinator|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|fragment_coordinator|CRUISER|1	0	<good>100%</good><builtIn> increased fragment swarm size.</builtIn>
+integrated|fragment_coordinator|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|fragment_coordinator|CAPITAL_SHIP|1	0	<good>100%</good><builtIn> increased fragment swarm size.</builtIn>
 type|fragment_replacement_rate|null|0	0	<good>5%</good> increased fragment replacement rate.
 type|fragment_replacement_rate|FRIGATE|0	0	<good>5%</good> increased fragment replacement rate.
 type|fragment_replacement_rate|DESTROYER|0	0	<good>5%</good> increased fragment replacement rate.
@@ -6263,6 +6293,31 @@ type-detail|fragment_swarm|CRUISER|0	0	Can't be allocated on phase ships.
 type-detail|fragment_swarm|CRUISER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Shrouded Lens</hullmod>\n• <hullmod>Shrouded Mantle</hullmod>\n• <hullmod>Shrouded Thunderhead</hullmod>\n• <hullmod>Navarchy Armor Plate</hullmod>\n• <hullmod>Stardust Nebula</hullmod>\n• <hullmod>Symbiosis</hullmod>\n• <hullmod>Phase Platform</hullmod>\n• <hullmod>Fragment Swarm</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Shrouded Lens</node>\n• <node>Shrouded Mantle</node>\n• <node>Shrouded Thunderhead</node>
 type-detail|fragment_swarm|CAPITAL_SHIP|0	0	Can't be allocated on phase ships.
 type-detail|fragment_swarm|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Shrouded Lens</hullmod>\n• <hullmod>Shrouded Mantle</hullmod>\n• <hullmod>Shrouded Thunderhead</hullmod>\n• <hullmod>Navarchy Armor Plate</hullmod>\n• <hullmod>Stardust Nebula</hullmod>\n• <hullmod>Symbiosis</hullmod>\n• <hullmod>Phase Platform</hullmod>\n• <hullmod>Fragment Swarm</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Shrouded Lens</node>\n• <node>Shrouded Mantle</node>\n• <node>Shrouded Thunderhead</node>
+integrable|fragment_swarm|null|0	0	Click and hold to integrate.
+integrable|fragment_swarm|null|1	0	<muted>When integrated, for 2 story points:</muted>
+integrable|fragment_swarm|null|2	0	<muted>10% reduced damage taken by shields while this ship's fragment swarm has fragments, spending 1 fragment for every 30 damage absorbed.</muted>
+integrable|fragment_swarm|FRIGATE|0	0	Click and hold to integrate.
+integrable|fragment_swarm|FRIGATE|1	0	<muted>When integrated, for 2 story points:</muted>
+integrable|fragment_swarm|FRIGATE|2	0	<muted>10% reduced damage taken by shields while this ship's fragment swarm has fragments, spending 1 fragment for every 30 damage absorbed.</muted>
+integrable|fragment_swarm|DESTROYER|0	0	Click and hold to integrate.
+integrable|fragment_swarm|DESTROYER|1	0	<muted>When integrated, for 2 story points:</muted>
+integrable|fragment_swarm|DESTROYER|2	0	<muted>10% reduced damage taken by shields while this ship's fragment swarm has fragments, spending 1 fragment for every 30 damage absorbed.</muted>
+integrable|fragment_swarm|CRUISER|0	0	Click and hold to integrate.
+integrable|fragment_swarm|CRUISER|1	0	<muted>When integrated, for 2 story points:</muted>
+integrable|fragment_swarm|CRUISER|2	0	<muted>10% reduced damage taken by shields while this ship's fragment swarm has fragments, spending 1 fragment for every 30 damage absorbed.</muted>
+integrable|fragment_swarm|CAPITAL_SHIP|0	0	Click and hold to integrate.
+integrable|fragment_swarm|CAPITAL_SHIP|1	0	<muted>When integrated, for 2 story points:</muted>
+integrable|fragment_swarm|CAPITAL_SHIP|2	0	<muted>10% reduced damage taken by shields while this ship's fragment swarm has fragments, spending 1 fragment for every 30 damage absorbed.</muted>
+integrated|fragment_swarm|null|0	0	<builtIn>Integrated</builtIn>
+integrated|fragment_swarm|null|1	0	<good>10%</good><builtIn> reduced damage taken by shields while this ship's fragment swarm has fragments, spending 1 fragment for every 30 damage absorbed.</builtIn>
+integrated|fragment_swarm|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|fragment_swarm|FRIGATE|1	0	<good>10%</good><builtIn> reduced damage taken by shields while this ship's fragment swarm has fragments, spending 1 fragment for every 30 damage absorbed.</builtIn>
+integrated|fragment_swarm|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|fragment_swarm|DESTROYER|1	0	<good>10%</good><builtIn> reduced damage taken by shields while this ship's fragment swarm has fragments, spending 1 fragment for every 30 damage absorbed.</builtIn>
+integrated|fragment_swarm|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|fragment_swarm|CRUISER|1	0	<good>10%</good><builtIn> reduced damage taken by shields while this ship's fragment swarm has fragments, spending 1 fragment for every 30 damage absorbed.</builtIn>
+integrated|fragment_swarm|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|fragment_swarm|CAPITAL_SHIP|1	0	<good>10%</good><builtIn> reduced damage taken by shields while this ship's fragment swarm has fragments, spending 1 fragment for every 30 damage absorbed.</builtIn>
 type|fragment_swarm_size|null|0	0	<good>10%</good> increased fragment swarm size.
 type|fragment_swarm_size|FRIGATE|0	0	<good>10%</good> increased fragment swarm size.
 type|fragment_swarm_size|DESTROYER|0	0	<good>10%</good> increased fragment swarm size.
@@ -9046,6 +9101,36 @@ type|secondary_fabricator|CRUISER|0	0	<good>30%</good> increased fragment replac
 type-detail|secondary_fabricator|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Symbiosis</hullmod>\n• <hullmod>Phase Platform</hullmod>\n• <hullmod>Secondary Fabricator</hullmod>
 type|secondary_fabricator|CAPITAL_SHIP|0	0	<good>30%</good> increased fragment replacement rate.
 type-detail|secondary_fabricator|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Symbiosis</hullmod>\n• <hullmod>Phase Platform</hullmod>\n• <hullmod>Secondary Fabricator</hullmod>
+integrable|secondary_fabricator|null|0	0	<good>30%</good> increased fragment replacement rate.
+integrable|secondary_fabricator|null|1	0	Click and hold to integrate.
+integrable|secondary_fabricator|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|secondary_fabricator|null|3	0	<muted>50% increased fragment replacement rate.</muted>
+integrable|secondary_fabricator|FRIGATE|0	0	<good>30%</good> increased fragment replacement rate.
+integrable|secondary_fabricator|FRIGATE|1	0	Click and hold to integrate.
+integrable|secondary_fabricator|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|secondary_fabricator|FRIGATE|3	0	<muted>50% increased fragment replacement rate.</muted>
+integrable|secondary_fabricator|DESTROYER|0	0	<good>30%</good> increased fragment replacement rate.
+integrable|secondary_fabricator|DESTROYER|1	0	Click and hold to integrate.
+integrable|secondary_fabricator|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|secondary_fabricator|DESTROYER|3	0	<muted>50% increased fragment replacement rate.</muted>
+integrable|secondary_fabricator|CRUISER|0	0	<good>30%</good> increased fragment replacement rate.
+integrable|secondary_fabricator|CRUISER|1	0	Click and hold to integrate.
+integrable|secondary_fabricator|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|secondary_fabricator|CRUISER|3	0	<muted>50% increased fragment replacement rate.</muted>
+integrable|secondary_fabricator|CAPITAL_SHIP|0	0	<good>30%</good> increased fragment replacement rate.
+integrable|secondary_fabricator|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|secondary_fabricator|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|secondary_fabricator|CAPITAL_SHIP|3	0	<muted>50% increased fragment replacement rate.</muted>
+integrated|secondary_fabricator|null|0	0	<builtIn>Integrated</builtIn>
+integrated|secondary_fabricator|null|1	0	<good>50%</good><builtIn> increased fragment replacement rate.</builtIn>
+integrated|secondary_fabricator|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|secondary_fabricator|FRIGATE|1	0	<good>50%</good><builtIn> increased fragment replacement rate.</builtIn>
+integrated|secondary_fabricator|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|secondary_fabricator|DESTROYER|1	0	<good>50%</good><builtIn> increased fragment replacement rate.</builtIn>
+integrated|secondary_fabricator|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|secondary_fabricator|CRUISER|1	0	<good>50%</good><builtIn> increased fragment replacement rate.</builtIn>
+integrated|secondary_fabricator|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|secondary_fabricator|CAPITAL_SHIP|1	0	<good>50%</good><builtIn> increased fragment replacement rate.</builtIn>
 type|sensor_profile|null|0	1	<bad>10%</bad> reduced sensor profile.
 type|sensor_profile|FRIGATE|0	1	<bad>10%</bad> reduced sensor profile.
 type|sensor_profile|DESTROYER|0	1	<bad>10%</bad> reduced sensor profile.

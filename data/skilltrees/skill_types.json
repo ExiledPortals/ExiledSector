@@ -5753,6 +5753,14 @@
 			"name": "Fragment Swarm",
 			"icon": "graphics/icons/fragment_swarm.png",
 			"tier": "NOTABLE",
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_DAMAGE_ABSORBED_BY_FRAGMENTS_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
 			"vanillaHullMod": "fragment_swarm",
 			"itemCost": {
 				"itemId": "fragment_fabricator",
@@ -5785,6 +5793,14 @@
 					"magnitude": 30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FRAGMENT_REPLACEMENT_RATE_PERCENT",
+						"magnitude": 50
+					}
+				]
+			},
 			"itemCost": {
 				"itemId": "fragment_fabricator",
 				"quantity": 1
@@ -5815,6 +5831,14 @@
 					"magnitude": 60
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FRAGMENT_SWARM_SIZE_PERCENT",
+						"magnitude": 100
+					}
+				]
+			},
 			"itemCost": {
 				"itemId": "threat_processing_unit",
 				"quantity": 1
