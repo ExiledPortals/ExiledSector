@@ -5414,6 +5414,22 @@
 					"magnitude": 20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BORROWED_GRACE_MAX_STACKS_FLAT",
+						"magnitude": 20
+					},
+					{
+						"effect": "WEAPON_DURABILITY_PERCENT",
+						"magnitude": 20
+					},
+					{
+						"effect": "REPAIR_TIME_PERCENT",
+						"magnitude": -20
+					}
+				]
+			},
 			"itemCost": {
 				"itemId": "rat_abyssal_matter",
 				"quantity": 25
@@ -5453,6 +5469,26 @@
 					"magnitude": -25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ENERGY_WEAPON_FLUX_COST_PERCENT",
+						"magnitude": -10
+					},
+					{
+						"effect": "ENERGY_WEAPON_RANGE_FLAT",
+						"magnitude": 150
+					},
+					{
+						"effect": "EMP_DAMAGE_TAKEN_PERCENT",
+						"magnitude": -25
+					},
+					{
+						"effect": "CORONA_RESISTANCE_MULT",
+						"magnitude": -25
+					}
+				]
+			},
 			"itemCost": {
 				"itemId": "rat_abyssal_matter",
 				"quantity": 25
@@ -5495,6 +5531,31 @@
 					"capitalShip": 225000
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SERAPH_HUNTING_HEAL_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "SERAPH_HUNTING_HEAL_CAP_PERCENT",
+						"magnitude": 30
+					},
+					{
+						"effect": "SERAPH_HUNTING_DAMAGE_BONUS_PERCENT",
+						"magnitude": 30
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "SERAPH_HUNTING_FULL_BONUS_DAMAGE_FLAT",
+						"frigate": 75000,
+						"destroyer": 125000,
+						"cruiser": 175000,
+						"capitalShip": 225000
+					}
+				]
+			},
 			"itemCost": {
 				"itemId": "rat_abyssal_matter",
 				"quantity": 25
@@ -5777,6 +5838,18 @@
 					"magnitude": 20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SYSTEM_COOLDOWN_PERCENT",
+						"magnitude": -30
+					},
+					{
+						"effect": "SYSTEM_CHARGE_REGEN_PERCENT",
+						"magnitude": 30
+					}
+				]
+			},
 			"itemCost": {
 				"itemId": "rat_chronos_core",
 				"quantity": 1

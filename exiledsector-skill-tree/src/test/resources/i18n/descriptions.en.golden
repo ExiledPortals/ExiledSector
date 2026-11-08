@@ -4191,6 +4191,71 @@ type|borrowed_grace|CAPITAL_SHIP|1	0	<good>20%</good> increased weapon durabilit
 type|borrowed_grace|CAPITAL_SHIP|2	1	<bad>20%</bad> reduced weapon and engine repair time.
 type|borrowed_grace|CAPITAL_SHIP|3	1	<good>20%</good> more damage taken by shields.
 type-detail|borrowed_grace|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
+integrable|borrowed_grace|null|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+integrable|borrowed_grace|null|1	0	<good>20%</good> increased weapon durability.
+integrable|borrowed_grace|null|2	1	<bad>20%</bad> reduced weapon and engine repair time.
+integrable|borrowed_grace|null|3	1	<good>20%</good> more damage taken by shields.
+integrable|borrowed_grace|null|4	0	Click and hold to integrate.
+integrable|borrowed_grace|null|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|borrowed_grace|null|6	0	<muted>Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to 20 stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.</muted>
+integrable|borrowed_grace|null|7	0	<muted>20% increased weapon durability.</muted>
+integrable|borrowed_grace|null|8	0	<muted>20% reduced weapon and engine repair time.</muted>
+integrable|borrowed_grace|FRIGATE|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+integrable|borrowed_grace|FRIGATE|1	0	<good>20%</good> increased weapon durability.
+integrable|borrowed_grace|FRIGATE|2	1	<bad>20%</bad> reduced weapon and engine repair time.
+integrable|borrowed_grace|FRIGATE|3	1	<good>20%</good> more damage taken by shields.
+integrable|borrowed_grace|FRIGATE|4	0	Click and hold to integrate.
+integrable|borrowed_grace|FRIGATE|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|borrowed_grace|FRIGATE|6	0	<muted>Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to 20 stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.</muted>
+integrable|borrowed_grace|FRIGATE|7	0	<muted>20% increased weapon durability.</muted>
+integrable|borrowed_grace|FRIGATE|8	0	<muted>20% reduced weapon and engine repair time.</muted>
+integrable|borrowed_grace|DESTROYER|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+integrable|borrowed_grace|DESTROYER|1	0	<good>20%</good> increased weapon durability.
+integrable|borrowed_grace|DESTROYER|2	1	<bad>20%</bad> reduced weapon and engine repair time.
+integrable|borrowed_grace|DESTROYER|3	1	<good>20%</good> more damage taken by shields.
+integrable|borrowed_grace|DESTROYER|4	0	Click and hold to integrate.
+integrable|borrowed_grace|DESTROYER|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|borrowed_grace|DESTROYER|6	0	<muted>Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to 20 stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.</muted>
+integrable|borrowed_grace|DESTROYER|7	0	<muted>20% increased weapon durability.</muted>
+integrable|borrowed_grace|DESTROYER|8	0	<muted>20% reduced weapon and engine repair time.</muted>
+integrable|borrowed_grace|CRUISER|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+integrable|borrowed_grace|CRUISER|1	0	<good>20%</good> increased weapon durability.
+integrable|borrowed_grace|CRUISER|2	1	<bad>20%</bad> reduced weapon and engine repair time.
+integrable|borrowed_grace|CRUISER|3	1	<good>20%</good> more damage taken by shields.
+integrable|borrowed_grace|CRUISER|4	0	Click and hold to integrate.
+integrable|borrowed_grace|CRUISER|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|borrowed_grace|CRUISER|6	0	<muted>Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to 20 stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.</muted>
+integrable|borrowed_grace|CRUISER|7	0	<muted>20% increased weapon durability.</muted>
+integrable|borrowed_grace|CRUISER|8	0	<muted>20% reduced weapon and engine repair time.</muted>
+integrable|borrowed_grace|CAPITAL_SHIP|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+integrable|borrowed_grace|CAPITAL_SHIP|1	0	<good>20%</good> increased weapon durability.
+integrable|borrowed_grace|CAPITAL_SHIP|2	1	<bad>20%</bad> reduced weapon and engine repair time.
+integrable|borrowed_grace|CAPITAL_SHIP|3	1	<good>20%</good> more damage taken by shields.
+integrable|borrowed_grace|CAPITAL_SHIP|4	0	Click and hold to integrate.
+integrable|borrowed_grace|CAPITAL_SHIP|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|borrowed_grace|CAPITAL_SHIP|6	0	<muted>Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to 20 stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.</muted>
+integrable|borrowed_grace|CAPITAL_SHIP|7	0	<muted>20% increased weapon durability.</muted>
+integrable|borrowed_grace|CAPITAL_SHIP|8	0	<muted>20% reduced weapon and engine repair time.</muted>
+integrated|borrowed_grace|null|0	0	<builtIn>Integrated</builtIn>
+integrated|borrowed_grace|null|1	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+integrated|borrowed_grace|null|2	0	<good>20%</good> increased weapon durability.
+integrated|borrowed_grace|null|3	1	<bad>20%</bad> reduced weapon and engine repair time.
+integrated|borrowed_grace|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|borrowed_grace|FRIGATE|1	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+integrated|borrowed_grace|FRIGATE|2	0	<good>20%</good> increased weapon durability.
+integrated|borrowed_grace|FRIGATE|3	1	<bad>20%</bad> reduced weapon and engine repair time.
+integrated|borrowed_grace|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|borrowed_grace|DESTROYER|1	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+integrated|borrowed_grace|DESTROYER|2	0	<good>20%</good> increased weapon durability.
+integrated|borrowed_grace|DESTROYER|3	1	<bad>20%</bad> reduced weapon and engine repair time.
+integrated|borrowed_grace|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|borrowed_grace|CRUISER|1	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+integrated|borrowed_grace|CRUISER|2	0	<good>20%</good> increased weapon durability.
+integrated|borrowed_grace|CRUISER|3	1	<bad>20%</bad> reduced weapon and engine repair time.
+integrated|borrowed_grace|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|borrowed_grace|CAPITAL_SHIP|1	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Each stack grants 1% increased top speed, flux dissipation and weapon rate of fire, and 1% reduced weapon flux cost and damage taken. Stack timers pause while the ship is phased.
+integrated|borrowed_grace|CAPITAL_SHIP|2	0	<good>20%</good> increased weapon durability.
+integrated|borrowed_grace|CAPITAL_SHIP|3	1	<bad>20%</bad> reduced weapon and engine repair time.
 flavour|candles_grace_replica	0	Inside a recovered Ancient Prototype, where every conduit converges on a perfectly spherical void, the crew finds the Candle's Grace device that drags at the timeflow of anything near it. Who or what Candle's Grace was is not recorded, and the replica is mostly guesswork.
 flavourAutomated|candles_grace_replica	0	Inside a recovered Ancient Prototype, where every conduit converges on a perfectly spherical void, the refit crew finds the Candle's Grace device that drags at the timeflow of anything near it. Who or what Candle's Grace was is not recorded, and the replica is mostly guesswork.
 type|candles_grace_replica|null|0	0	Enemy ships within 1500 su have up to <good>5%</good> less time flow, strongest at close range, or up to <good>10%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
@@ -4237,6 +4302,51 @@ type-detail|chronos_rhythms|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod
 type|chronos_rhythms|CAPITAL_SHIP|0	1	<bad>20%</bad> reduced ship system cooldown.
 type|chronos_rhythms|CAPITAL_SHIP|1	0	<good>20%</good> increased ship system charge regeneration.
 type-detail|chronos_rhythms|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Adaptability</hullmod>
+integrable|chronos_rhythms|null|0	1	<bad>20%</bad> reduced ship system cooldown.
+integrable|chronos_rhythms|null|1	0	<good>20%</good> increased ship system charge regeneration.
+integrable|chronos_rhythms|null|2	0	Click and hold to integrate.
+integrable|chronos_rhythms|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|chronos_rhythms|null|4	0	<muted>30% reduced ship system cooldown.</muted>
+integrable|chronos_rhythms|null|5	0	<muted>30% increased ship system charge regeneration.</muted>
+integrable|chronos_rhythms|FRIGATE|0	1	<bad>20%</bad> reduced ship system cooldown.
+integrable|chronos_rhythms|FRIGATE|1	0	<good>20%</good> increased ship system charge regeneration.
+integrable|chronos_rhythms|FRIGATE|2	0	Click and hold to integrate.
+integrable|chronos_rhythms|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|chronos_rhythms|FRIGATE|4	0	<muted>30% reduced ship system cooldown.</muted>
+integrable|chronos_rhythms|FRIGATE|5	0	<muted>30% increased ship system charge regeneration.</muted>
+integrable|chronos_rhythms|DESTROYER|0	1	<bad>20%</bad> reduced ship system cooldown.
+integrable|chronos_rhythms|DESTROYER|1	0	<good>20%</good> increased ship system charge regeneration.
+integrable|chronos_rhythms|DESTROYER|2	0	Click and hold to integrate.
+integrable|chronos_rhythms|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|chronos_rhythms|DESTROYER|4	0	<muted>30% reduced ship system cooldown.</muted>
+integrable|chronos_rhythms|DESTROYER|5	0	<muted>30% increased ship system charge regeneration.</muted>
+integrable|chronos_rhythms|CRUISER|0	1	<bad>20%</bad> reduced ship system cooldown.
+integrable|chronos_rhythms|CRUISER|1	0	<good>20%</good> increased ship system charge regeneration.
+integrable|chronos_rhythms|CRUISER|2	0	Click and hold to integrate.
+integrable|chronos_rhythms|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|chronos_rhythms|CRUISER|4	0	<muted>30% reduced ship system cooldown.</muted>
+integrable|chronos_rhythms|CRUISER|5	0	<muted>30% increased ship system charge regeneration.</muted>
+integrable|chronos_rhythms|CAPITAL_SHIP|0	1	<bad>20%</bad> reduced ship system cooldown.
+integrable|chronos_rhythms|CAPITAL_SHIP|1	0	<good>20%</good> increased ship system charge regeneration.
+integrable|chronos_rhythms|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|chronos_rhythms|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|chronos_rhythms|CAPITAL_SHIP|4	0	<muted>30% reduced ship system cooldown.</muted>
+integrable|chronos_rhythms|CAPITAL_SHIP|5	0	<muted>30% increased ship system charge regeneration.</muted>
+integrated|chronos_rhythms|null|0	0	<builtIn>Integrated</builtIn>
+integrated|chronos_rhythms|null|1	1	<bad>30%</bad><builtIn> reduced ship system cooldown.</builtIn>
+integrated|chronos_rhythms|null|2	0	<good>30%</good><builtIn> increased ship system charge regeneration.</builtIn>
+integrated|chronos_rhythms|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|chronos_rhythms|FRIGATE|1	1	<bad>30%</bad><builtIn> reduced ship system cooldown.</builtIn>
+integrated|chronos_rhythms|FRIGATE|2	0	<good>30%</good><builtIn> increased ship system charge regeneration.</builtIn>
+integrated|chronos_rhythms|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|chronos_rhythms|DESTROYER|1	1	<bad>30%</bad><builtIn> reduced ship system cooldown.</builtIn>
+integrated|chronos_rhythms|DESTROYER|2	0	<good>30%</good><builtIn> increased ship system charge regeneration.</builtIn>
+integrated|chronos_rhythms|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|chronos_rhythms|CRUISER|1	1	<bad>30%</bad><builtIn> reduced ship system cooldown.</builtIn>
+integrated|chronos_rhythms|CRUISER|2	0	<good>30%</good><builtIn> increased ship system charge regeneration.</builtIn>
+integrated|chronos_rhythms|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|chronos_rhythms|CAPITAL_SHIP|1	1	<bad>30%</bad><builtIn> reduced ship system cooldown.</builtIn>
+integrated|chronos_rhythms|CAPITAL_SHIP|2	0	<good>30%</good><builtIn> increased ship system charge regeneration.</builtIn>
 flavour|coalition_flight_doctrine	0	Every League member world sends its own carrier detachment to a joint fleet, and the League's flight doctrine makes them fly as one: a bomber from one world takes orders from a flight lead from another. Pilots from rival worlds fly together mostly so each can report on the other.
 flavourAutomated|coalition_flight_doctrine	0	Every League member world sends its own carrier detachment to a joint fleet, and the League's flight doctrine makes them fly as one. The ship's core records the doctrine from joint fleet comm traffic and flies its own wings by it. It has no rival world to report back to.
 type|coalition_flight_doctrine|null|0	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
@@ -8222,6 +8332,81 @@ type|salvaged_abyssal_grid|CAPITAL_SHIP|1	0	<good>+100</good> to energy weapon r
 type|salvaged_abyssal_grid|CAPITAL_SHIP|2	1	<bad>25%</bad> reduced EMP damage taken.
 type|salvaged_abyssal_grid|CAPITAL_SHIP|3	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|salvaged_abyssal_grid|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
+integrable|salvaged_abyssal_grid|null|0	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrable|salvaged_abyssal_grid|null|1	0	<good>+100</good> to energy weapon range.
+integrable|salvaged_abyssal_grid|null|2	1	<bad>25%</bad> reduced EMP damage taken.
+integrable|salvaged_abyssal_grid|null|3	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrable|salvaged_abyssal_grid|null|4	0	Click and hold to integrate.
+integrable|salvaged_abyssal_grid|null|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|salvaged_abyssal_grid|null|6	0	<muted>10% reduced energy weapon flux cost.</muted>
+integrable|salvaged_abyssal_grid|null|7	0	<muted>+150 to energy weapon range.</muted>
+integrable|salvaged_abyssal_grid|null|8	0	<muted>25% reduced EMP damage taken.</muted>
+integrable|salvaged_abyssal_grid|null|9	0	<muted>25% less combat readiness loss from being in a solar corona or a deep hyperspace storm.</muted>
+integrable|salvaged_abyssal_grid|FRIGATE|0	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrable|salvaged_abyssal_grid|FRIGATE|1	0	<good>+100</good> to energy weapon range.
+integrable|salvaged_abyssal_grid|FRIGATE|2	1	<bad>25%</bad> reduced EMP damage taken.
+integrable|salvaged_abyssal_grid|FRIGATE|3	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrable|salvaged_abyssal_grid|FRIGATE|4	0	Click and hold to integrate.
+integrable|salvaged_abyssal_grid|FRIGATE|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|salvaged_abyssal_grid|FRIGATE|6	0	<muted>10% reduced energy weapon flux cost.</muted>
+integrable|salvaged_abyssal_grid|FRIGATE|7	0	<muted>+150 to energy weapon range.</muted>
+integrable|salvaged_abyssal_grid|FRIGATE|8	0	<muted>25% reduced EMP damage taken.</muted>
+integrable|salvaged_abyssal_grid|FRIGATE|9	0	<muted>25% less combat readiness loss from being in a solar corona or a deep hyperspace storm.</muted>
+integrable|salvaged_abyssal_grid|DESTROYER|0	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrable|salvaged_abyssal_grid|DESTROYER|1	0	<good>+100</good> to energy weapon range.
+integrable|salvaged_abyssal_grid|DESTROYER|2	1	<bad>25%</bad> reduced EMP damage taken.
+integrable|salvaged_abyssal_grid|DESTROYER|3	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrable|salvaged_abyssal_grid|DESTROYER|4	0	Click and hold to integrate.
+integrable|salvaged_abyssal_grid|DESTROYER|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|salvaged_abyssal_grid|DESTROYER|6	0	<muted>10% reduced energy weapon flux cost.</muted>
+integrable|salvaged_abyssal_grid|DESTROYER|7	0	<muted>+150 to energy weapon range.</muted>
+integrable|salvaged_abyssal_grid|DESTROYER|8	0	<muted>25% reduced EMP damage taken.</muted>
+integrable|salvaged_abyssal_grid|DESTROYER|9	0	<muted>25% less combat readiness loss from being in a solar corona or a deep hyperspace storm.</muted>
+integrable|salvaged_abyssal_grid|CRUISER|0	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrable|salvaged_abyssal_grid|CRUISER|1	0	<good>+100</good> to energy weapon range.
+integrable|salvaged_abyssal_grid|CRUISER|2	1	<bad>25%</bad> reduced EMP damage taken.
+integrable|salvaged_abyssal_grid|CRUISER|3	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrable|salvaged_abyssal_grid|CRUISER|4	0	Click and hold to integrate.
+integrable|salvaged_abyssal_grid|CRUISER|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|salvaged_abyssal_grid|CRUISER|6	0	<muted>10% reduced energy weapon flux cost.</muted>
+integrable|salvaged_abyssal_grid|CRUISER|7	0	<muted>+150 to energy weapon range.</muted>
+integrable|salvaged_abyssal_grid|CRUISER|8	0	<muted>25% reduced EMP damage taken.</muted>
+integrable|salvaged_abyssal_grid|CRUISER|9	0	<muted>25% less combat readiness loss from being in a solar corona or a deep hyperspace storm.</muted>
+integrable|salvaged_abyssal_grid|CAPITAL_SHIP|0	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrable|salvaged_abyssal_grid|CAPITAL_SHIP|1	0	<good>+100</good> to energy weapon range.
+integrable|salvaged_abyssal_grid|CAPITAL_SHIP|2	1	<bad>25%</bad> reduced EMP damage taken.
+integrable|salvaged_abyssal_grid|CAPITAL_SHIP|3	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrable|salvaged_abyssal_grid|CAPITAL_SHIP|4	0	Click and hold to integrate.
+integrable|salvaged_abyssal_grid|CAPITAL_SHIP|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|salvaged_abyssal_grid|CAPITAL_SHIP|6	0	<muted>10% reduced energy weapon flux cost.</muted>
+integrable|salvaged_abyssal_grid|CAPITAL_SHIP|7	0	<muted>+150 to energy weapon range.</muted>
+integrable|salvaged_abyssal_grid|CAPITAL_SHIP|8	0	<muted>25% reduced EMP damage taken.</muted>
+integrable|salvaged_abyssal_grid|CAPITAL_SHIP|9	0	<muted>25% less combat readiness loss from being in a solar corona or a deep hyperspace storm.</muted>
+integrated|salvaged_abyssal_grid|null|0	0	<builtIn>Integrated</builtIn>
+integrated|salvaged_abyssal_grid|null|1	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrated|salvaged_abyssal_grid|null|2	0	<good>+150</good><builtIn> to energy weapon range.</builtIn>
+integrated|salvaged_abyssal_grid|null|3	1	<bad>25%</bad> reduced EMP damage taken.
+integrated|salvaged_abyssal_grid|null|4	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrated|salvaged_abyssal_grid|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|salvaged_abyssal_grid|FRIGATE|1	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrated|salvaged_abyssal_grid|FRIGATE|2	0	<good>+150</good><builtIn> to energy weapon range.</builtIn>
+integrated|salvaged_abyssal_grid|FRIGATE|3	1	<bad>25%</bad> reduced EMP damage taken.
+integrated|salvaged_abyssal_grid|FRIGATE|4	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrated|salvaged_abyssal_grid|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|salvaged_abyssal_grid|DESTROYER|1	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrated|salvaged_abyssal_grid|DESTROYER|2	0	<good>+150</good><builtIn> to energy weapon range.</builtIn>
+integrated|salvaged_abyssal_grid|DESTROYER|3	1	<bad>25%</bad> reduced EMP damage taken.
+integrated|salvaged_abyssal_grid|DESTROYER|4	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrated|salvaged_abyssal_grid|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|salvaged_abyssal_grid|CRUISER|1	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrated|salvaged_abyssal_grid|CRUISER|2	0	<good>+150</good><builtIn> to energy weapon range.</builtIn>
+integrated|salvaged_abyssal_grid|CRUISER|3	1	<bad>25%</bad> reduced EMP damage taken.
+integrated|salvaged_abyssal_grid|CRUISER|4	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrated|salvaged_abyssal_grid|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|salvaged_abyssal_grid|CAPITAL_SHIP|1	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrated|salvaged_abyssal_grid|CAPITAL_SHIP|2	0	<good>+150</good><builtIn> to energy weapon range.</builtIn>
+integrated|salvaged_abyssal_grid|CAPITAL_SHIP|3	1	<bad>25%</bad> reduced EMP damage taken.
+integrated|salvaged_abyssal_grid|CAPITAL_SHIP|4	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 flavour|sanctified_scars	0	Church doctrine reads every scar on a hull as a trial endured. A Luddic fleet forms up around its most battered ship.
 type|sanctified_scars|null|0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
 type|sanctified_scars|FRIGATE|0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
@@ -8270,6 +8455,78 @@ type|seraph_hunting_routines|CAPITAL_SHIP|0	0	Repairs hull equal to <good>10%</g
 type|seraph_hunting_routines|CAPITAL_SHIP|1	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 type|seraph_hunting_routines|CAPITAL_SHIP|2	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 type|seraph_hunting_routines|CAPITAL_SHIP|3	0	The full Seraph Hunting Routines damage bonus is reached after dealing 225000 armor and hull damage.
+integrable|seraph_hunting_routines|null|0	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
+integrable|seraph_hunting_routines|null|1	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
+integrable|seraph_hunting_routines|null|2	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+integrable|seraph_hunting_routines|null|3	0	Click and hold to integrate.
+integrable|seraph_hunting_routines|null|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|seraph_hunting_routines|null|5	0	<muted>Repairs hull equal to 10% of the armor and hull damage this ship deals to enemy ships.</muted>
+integrable|seraph_hunting_routines|null|6	0	<muted>Seraph Hunting Routines repair at most 30% of this ship's maximum hull per battle.</muted>
+integrable|seraph_hunting_routines|null|7	0	<muted>Up to 30% increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.</muted>
+integrable|seraph_hunting_routines|FRIGATE|0	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
+integrable|seraph_hunting_routines|FRIGATE|1	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
+integrable|seraph_hunting_routines|FRIGATE|2	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+integrable|seraph_hunting_routines|FRIGATE|3	0	The full Seraph Hunting Routines damage bonus is reached after dealing 75000 armor and hull damage.
+integrable|seraph_hunting_routines|FRIGATE|4	0	Click and hold to integrate.
+integrable|seraph_hunting_routines|FRIGATE|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|seraph_hunting_routines|FRIGATE|6	0	<muted>Repairs hull equal to 10% of the armor and hull damage this ship deals to enemy ships.</muted>
+integrable|seraph_hunting_routines|FRIGATE|7	0	<muted>Seraph Hunting Routines repair at most 30% of this ship's maximum hull per battle.</muted>
+integrable|seraph_hunting_routines|FRIGATE|8	0	<muted>Up to 30% increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.</muted>
+integrable|seraph_hunting_routines|FRIGATE|9	0	<muted>The full Seraph Hunting Routines damage bonus is reached after dealing 75000 armor and hull damage.</muted>
+integrable|seraph_hunting_routines|DESTROYER|0	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
+integrable|seraph_hunting_routines|DESTROYER|1	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
+integrable|seraph_hunting_routines|DESTROYER|2	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+integrable|seraph_hunting_routines|DESTROYER|3	0	The full Seraph Hunting Routines damage bonus is reached after dealing 125000 armor and hull damage.
+integrable|seraph_hunting_routines|DESTROYER|4	0	Click and hold to integrate.
+integrable|seraph_hunting_routines|DESTROYER|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|seraph_hunting_routines|DESTROYER|6	0	<muted>Repairs hull equal to 10% of the armor and hull damage this ship deals to enemy ships.</muted>
+integrable|seraph_hunting_routines|DESTROYER|7	0	<muted>Seraph Hunting Routines repair at most 30% of this ship's maximum hull per battle.</muted>
+integrable|seraph_hunting_routines|DESTROYER|8	0	<muted>Up to 30% increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.</muted>
+integrable|seraph_hunting_routines|DESTROYER|9	0	<muted>The full Seraph Hunting Routines damage bonus is reached after dealing 125000 armor and hull damage.</muted>
+integrable|seraph_hunting_routines|CRUISER|0	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
+integrable|seraph_hunting_routines|CRUISER|1	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
+integrable|seraph_hunting_routines|CRUISER|2	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+integrable|seraph_hunting_routines|CRUISER|3	0	The full Seraph Hunting Routines damage bonus is reached after dealing 175000 armor and hull damage.
+integrable|seraph_hunting_routines|CRUISER|4	0	Click and hold to integrate.
+integrable|seraph_hunting_routines|CRUISER|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|seraph_hunting_routines|CRUISER|6	0	<muted>Repairs hull equal to 10% of the armor and hull damage this ship deals to enemy ships.</muted>
+integrable|seraph_hunting_routines|CRUISER|7	0	<muted>Seraph Hunting Routines repair at most 30% of this ship's maximum hull per battle.</muted>
+integrable|seraph_hunting_routines|CRUISER|8	0	<muted>Up to 30% increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.</muted>
+integrable|seraph_hunting_routines|CRUISER|9	0	<muted>The full Seraph Hunting Routines damage bonus is reached after dealing 175000 armor and hull damage.</muted>
+integrable|seraph_hunting_routines|CAPITAL_SHIP|0	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
+integrable|seraph_hunting_routines|CAPITAL_SHIP|1	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
+integrable|seraph_hunting_routines|CAPITAL_SHIP|2	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+integrable|seraph_hunting_routines|CAPITAL_SHIP|3	0	The full Seraph Hunting Routines damage bonus is reached after dealing 225000 armor and hull damage.
+integrable|seraph_hunting_routines|CAPITAL_SHIP|4	0	Click and hold to integrate.
+integrable|seraph_hunting_routines|CAPITAL_SHIP|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|seraph_hunting_routines|CAPITAL_SHIP|6	0	<muted>Repairs hull equal to 10% of the armor and hull damage this ship deals to enemy ships.</muted>
+integrable|seraph_hunting_routines|CAPITAL_SHIP|7	0	<muted>Seraph Hunting Routines repair at most 30% of this ship's maximum hull per battle.</muted>
+integrable|seraph_hunting_routines|CAPITAL_SHIP|8	0	<muted>Up to 30% increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.</muted>
+integrable|seraph_hunting_routines|CAPITAL_SHIP|9	0	<muted>The full Seraph Hunting Routines damage bonus is reached after dealing 225000 armor and hull damage.</muted>
+integrated|seraph_hunting_routines|null|0	0	<builtIn>Integrated</builtIn>
+integrated|seraph_hunting_routines|null|1	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
+integrated|seraph_hunting_routines|null|2	0	<builtIn>Seraph Hunting Routines repair at most </builtIn><good>30%</good><builtIn> of this ship's maximum hull per battle.</builtIn>
+integrated|seraph_hunting_routines|null|3	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+integrated|seraph_hunting_routines|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|seraph_hunting_routines|FRIGATE|1	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
+integrated|seraph_hunting_routines|FRIGATE|2	0	<builtIn>Seraph Hunting Routines repair at most </builtIn><good>30%</good><builtIn> of this ship's maximum hull per battle.</builtIn>
+integrated|seraph_hunting_routines|FRIGATE|3	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+integrated|seraph_hunting_routines|FRIGATE|4	0	The full Seraph Hunting Routines damage bonus is reached after dealing 75000 armor and hull damage.
+integrated|seraph_hunting_routines|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|seraph_hunting_routines|DESTROYER|1	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
+integrated|seraph_hunting_routines|DESTROYER|2	0	<builtIn>Seraph Hunting Routines repair at most </builtIn><good>30%</good><builtIn> of this ship's maximum hull per battle.</builtIn>
+integrated|seraph_hunting_routines|DESTROYER|3	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+integrated|seraph_hunting_routines|DESTROYER|4	0	The full Seraph Hunting Routines damage bonus is reached after dealing 125000 armor and hull damage.
+integrated|seraph_hunting_routines|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|seraph_hunting_routines|CRUISER|1	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
+integrated|seraph_hunting_routines|CRUISER|2	0	<builtIn>Seraph Hunting Routines repair at most </builtIn><good>30%</good><builtIn> of this ship's maximum hull per battle.</builtIn>
+integrated|seraph_hunting_routines|CRUISER|3	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+integrated|seraph_hunting_routines|CRUISER|4	0	The full Seraph Hunting Routines damage bonus is reached after dealing 175000 armor and hull damage.
+integrated|seraph_hunting_routines|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|seraph_hunting_routines|CAPITAL_SHIP|1	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
+integrated|seraph_hunting_routines|CAPITAL_SHIP|2	0	<builtIn>Seraph Hunting Routines repair at most </builtIn><good>30%</good><builtIn> of this ship's maximum hull per battle.</builtIn>
+integrated|seraph_hunting_routines|CAPITAL_SHIP|3	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+integrated|seraph_hunting_routines|CAPITAL_SHIP|4	0	The full Seraph Hunting Routines damage bonus is reached after dealing 225000 armor and hull damage.
 type|shared_damage_taken|null|0	0	Disperses 5% of damage taken by shields to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 type|shared_damage_taken|FRIGATE|0	0	Disperses 5% of damage taken by shields to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 type|shared_damage_taken|DESTROYER|0	0	Disperses 5% of damage taken by shields to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
