@@ -326,7 +326,10 @@ rechecked every 0.25 seconds. Strike craft don't count, and only the strongest s
 
 `TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT` adds a flat share of the flagship's hull top speed, before any modifiers, while
 that flagship is alive on the field, rechecked every second. The flagship is the ship captained by this ship's fleet
-commander, so the flagship itself gains nothing (`FlagshipPaceListener`).
+commander, so the flagship itself gains nothing (`FlagshipPaceListener`, flagship lookup in `Flagships`).
+
+`DAMAGE_TAKEN_NEAR_FLAGSHIP_PERCENT` (integrated Honor Guard) changes hull, armor and shield damage taken while
+within 1500 su of that same flagship, rechecked every 0.25 seconds (`FlagshipGuardListener`).
 
 ### Executor's Decree
 
@@ -453,9 +456,9 @@ so sensor strength from the tree, such as COMSEC Discipline's, and from hull mod
 A beam hit on an enemy ship splits to up to N more targets (`BEAM_WEAPON_SPLIT_TARGETS_FLAT`): the nearest
 hittable hostile non-fighters within half the beam's range of the impact, picked again every 0.2 s or when one
 dies. Modules of the hit ship, or the ship its hit module belongs to, are skipped unless it's a station. Damage is
-shared evenly. The
-original target's share is a damage modifier (so it also scales that hit's EMP), and the split runs before
-every other damage-dealt effect, so they all see the shared amount.
+shared evenly, except that the nearest `BEAM_WEAPON_FULL_DAMAGE_SPLIT_TARGETS_FLAT` (integrated Lion's Gaze) splits
+take full damage outside the share. The original target's share is a damage modifier (so it also scales that hit's
+EMP), and the split runs before every other damage-dealt effect, so they all see the shared amount.
 
 Each split target is hit by a real beam from an invisible, invulnerable drone placed just outside the
 original target's shield or hull. The drone copies the ship's captain, weapon stat modifiers and damage-dealt

@@ -258,6 +258,23 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", Math.abs(magnitude)).arg("range", HeldObjective.RANGE).styled();
         }
     },
+    DAMAGE_TAKEN_NEAR_FLAGSHIP_PERCENT(listener(FlagshipGuardListener.DAMAGE_TAKEN_PERCENT_KEY, FlagshipGuardListener.class,
+            FlagshipGuardListener::new)) {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
+        public boolean invertsDescriptionColours() {
+            return false;
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", Math.abs(magnitude)).arg("range", FlagshipGuardListener.RANGE).styled();
+        }
+    },
     RAM_PROW_COLLISION_DAMAGE_MULT(listener(CollisionDamageListener.COLLISION_DAMAGE_PERCENT_KEY, CollisionDamageListener.class,
             CollisionDamageListener::new)),
     HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST(listener(CrewLossHullDamageListener.PERCENT_PER_STEP_KEY, CrewLossHullDamageListener.class,

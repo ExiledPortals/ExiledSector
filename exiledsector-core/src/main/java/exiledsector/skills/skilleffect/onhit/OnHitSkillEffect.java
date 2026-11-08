@@ -34,6 +34,17 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).count(Math.round(magnitude)).arg("value", magnitude).styled();
         }
     },
+    BEAM_WEAPON_FULL_DAMAGE_SPLIT_TARGETS_FLAT(listener(LionsGazeListener.FULL_DAMAGE_TARGETS_KEY, LionsGazeListener.class, LionsGazeListener::new)) {
+        @Override
+        public boolean reshapesDealtDamage() {
+            return true;
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).count(Math.round(magnitude)).arg("value", magnitude).styled();
+        }
+    },
     NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT(listener(RefractionListener.CHANCE_KEY, RefractionListener.class, RefractionListener::new)) {
         @Override
         public boolean reshapesDealtDamage() {

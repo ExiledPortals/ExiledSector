@@ -170,6 +170,17 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
         }
     },
     SUPPLIES_PER_MONTH_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getSuppliesPerMonth), "stat.supplyUseForMaintenance", true)),
+    CRUSTACEAN_SUPPLIES_PER_MONTH_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getSuppliesPerMonth), "stat.supplyUseForMaintenance", true)) {
+        @Override
+        public boolean invertsDescriptionColours() {
+            return false;
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", Math.abs(magnitude)).styled();
+        }
+    },
     FUEL_USE_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getFuelUseMod), "stat.fuelConsumptionRate", true)),
     FUEL_AND_SUPPLY_USE_MULT_PER_DMOD(new PerDModMultEffect(all(bonus(MutableShipStatsAPI::getFuelUseMod), stat(MutableShipStatsAPI::getSuppliesPerMonth)),
             "stat.fuelAndSupplyUsePerDMod", true)),

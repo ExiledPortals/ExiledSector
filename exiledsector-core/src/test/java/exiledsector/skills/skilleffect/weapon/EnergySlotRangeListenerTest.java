@@ -25,7 +25,7 @@ import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class MediumEnergySlotRangeListenerTest {
+class EnergySlotRangeListenerTest {
 
     private final List<Object> gridShips = new ArrayList<>();
 
@@ -74,12 +74,24 @@ class MediumEnergySlotRangeListenerTest {
 
     @Test
     void onlyWeaponsInMediumEnergySlotsGainTheFlatRange() {
-        ShipAPI ship = ship("a", 0f, Map.of(MediumEnergySlotRangeListener.RANGE_FLAT_KEY, 100f));
-        MediumEnergySlotRangeListener listener = new MediumEnergySlotRangeListener();
+        ShipAPI ship = ship("a", 0f, Map.of(EnergySlotRangeListener.MEDIUM_SLOT_RANGE_FLAT_KEY, 100f));
+        EnergySlotRangeListener listener = new EnergySlotRangeListener();
 
         assertEquals(100f, listener.getWeaponBaseRangeFlatMod(ship, weaponIn(WeaponAPI.WeaponType.ENERGY, WeaponAPI.WeaponSize.MEDIUM)));
         assertEquals(0f, listener.getWeaponBaseRangeFlatMod(ship, weaponIn(WeaponAPI.WeaponType.ENERGY, WeaponAPI.WeaponSize.SMALL)));
         assertEquals(0f, listener.getWeaponBaseRangeFlatMod(ship, weaponIn(WeaponAPI.WeaponType.BALLISTIC, WeaponAPI.WeaponSize.MEDIUM)));
         assertEquals(0f, listener.getWeaponBaseRangeFlatMod(ship, mock(WeaponAPI.class)));
+    }
+
+    @Test
+    void theAnySizeRangeReachesEveryEnergySlotAndStacksWithTheMediumOne() {
+        ShipAPI ship = ship("a", 0f, Map.of(EnergySlotRangeListener.MEDIUM_SLOT_RANGE_FLAT_KEY, 100f,
+                EnergySlotRangeListener.ANY_SLOT_RANGE_FLAT_KEY, 50f));
+        EnergySlotRangeListener listener = new EnergySlotRangeListener();
+
+        assertEquals(50f, listener.getWeaponBaseRangeFlatMod(ship, weaponIn(WeaponAPI.WeaponType.ENERGY, WeaponAPI.WeaponSize.SMALL)));
+        assertEquals(150f, listener.getWeaponBaseRangeFlatMod(ship, weaponIn(WeaponAPI.WeaponType.ENERGY, WeaponAPI.WeaponSize.MEDIUM)));
+        assertEquals(50f, listener.getWeaponBaseRangeFlatMod(ship, weaponIn(WeaponAPI.WeaponType.ENERGY, WeaponAPI.WeaponSize.LARGE)));
+        assertEquals(0f, listener.getWeaponBaseRangeFlatMod(ship, weaponIn(WeaponAPI.WeaponType.HYBRID, WeaponAPI.WeaponSize.LARGE)));
     }
 }
