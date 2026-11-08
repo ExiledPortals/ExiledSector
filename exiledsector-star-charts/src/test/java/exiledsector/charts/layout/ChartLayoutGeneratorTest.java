@@ -5,6 +5,8 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.StarSystemAPI;
+import com.fs.starfarer.api.campaign.PlanetSpecAPI;
 import com.fs.starfarer.api.campaign.econ.EconomyAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI.SurveyLevel;
@@ -341,5 +343,34 @@ class ChartLayoutGeneratorTest {
         FakeChartLayoutEngine.install(FakeChartLayoutEngine.doingNothing());
 
         assertFalse(ChartLayoutGenerator.generate(sector, fake.system, RUN_ID, new ChartLayoutRequest(4L, null)).generated());
+    }
+
+    @Test
+    void aNebulaSystemDropsItsHiddenCentreStar() {
+        StarSystemAPI system = systemWithStar(StarSystemType.NEBULA, true);
+
+        ChartLayoutGenerator.dropHiddenNebulaStar(system);
+
+        verify(system).setStar(null);
+    }
+
+    @Test
+    void aSystemWithARealStarKeepsIt() {
+        StarSystemAPI system = systemWithStar(StarSystemType.SINGLE, false);
+
+        ChartLayoutGenerator.dropHiddenNebulaStar(system);
+
+        verify(system, never()).setStar(Mockito.any());
+    }
+
+    private static StarSystemAPI systemWithStar(StarSystemType type, boolean nebulaCentre) {
+        PlanetSpecAPI spec = mock(PlanetSpecAPI.class);
+        when(spec.isNebulaCenter()).thenReturn(nebulaCentre);
+        PlanetAPI star = mock(PlanetAPI.class);
+        when(star.getSpec()).thenReturn(spec);
+        StarSystemAPI system = mock(StarSystemAPI.class);
+        when(system.getType()).thenReturn(type);
+        when(system.getStar()).thenReturn(star);
+        return system;
     }
 }

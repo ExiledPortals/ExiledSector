@@ -197,6 +197,7 @@ public final class ChartLayoutGenerator {
 
     static void removeHyperspacePresence(StarSystemAPI system) {
         system.setHasSystemwideNebula(false);
+        dropHiddenNebulaStar(system);
         SectorEntityToken anchor = system.getHyperspaceAnchor();
         if (anchor == null) {
             return;
@@ -206,6 +207,13 @@ public final class ChartLayoutGenerator {
             anchorLocation.removeEntity(anchor);
         }
         system.setHyperspaceAnchor(null);
+    }
+
+    public static void dropHiddenNebulaStar(StarSystemAPI system) {
+        PlanetAPI star = system.getStar();
+        if (system.getType() == StarSystemType.NEBULA && star != null && star.getSpec() != null && star.getSpec().isNebulaCenter()) {
+            system.setStar(null);
+        }
     }
 
     static void prepareMarkets(StarSystemAPI system, EconomyAPI economy, boolean keepRuins) {

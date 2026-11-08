@@ -13,6 +13,7 @@ import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRunState;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.generation.ChartSystemFactory;
+import exiledsector.charts.layout.ChartLayoutGenerator;
 import exiledsector.charts.wormhole.ChartWormholePlacement;
 import exiledsector.charts.objective.ChartObjectives;
 import org.apache.log4j.Logger;
@@ -104,6 +105,7 @@ public final class ChartLoadSweep {
             ChartRun run = ChartRuns.currentOrNull();
             SystemDecision decision = decide(system, run, playerLocation == system);
             String runId = ChartIds.runIdOf(system);
+            ChartLayoutGenerator.dropHiddenNebulaStar(system);
             switch (decision) {
                 case PURGE -> {
                     LOG.info("[ExiledSector] Purging Star Chart system " + system.getOptionalUniqueId() + " with no live run");
