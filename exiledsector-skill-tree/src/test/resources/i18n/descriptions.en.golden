@@ -1570,6 +1570,12 @@ effect|HUNGERING_RIFT_HEALING_PERCENT|12.5	0	<good>+12.5%</good> to Hungering Ri
 effect|HUNGERING_RIFT_HEALING_PERCENT|100.0	0	<good>+100%</good> to Hungering Rift healing received.
 effect|HUNGERING_RIFT_HEALING_PERCENT|-10.0	0	<good>+-10%</good> to Hungering Rift healing received.
 effect|HUNGERING_RIFT_HEALING_PERCENT|-12.5	0	<good>+-12.5%</good> to Hungering Rift healing received.
+effect|INSTANT_NEURAL_TRANSFER_FROM|1.0	0	Neural transfers from this ship are always instant, regardless of the deployment point total.
+effect|INSTANT_NEURAL_TRANSFER_FROM|10.0	0	Neural transfers from this ship are always instant, regardless of the deployment point total.
+effect|INSTANT_NEURAL_TRANSFER_FROM|12.5	0	Neural transfers from this ship are always instant, regardless of the deployment point total.
+effect|INSTANT_NEURAL_TRANSFER_FROM|100.0	0	Neural transfers from this ship are always instant, regardless of the deployment point total.
+effect|INSTANT_NEURAL_TRANSFER_FROM|-10.0	0	Neural transfers from this ship are always instant, regardless of the deployment point total.
+effect|INSTANT_NEURAL_TRANSFER_FROM|-12.5	0	Neural transfers from this ship are always instant, regardless of the deployment point total.
 effect|INTERCEPTOR_ROLE_ARMOR_PERCENT|1.0	0	Interceptors launched from this ship have <good>1%</good> increased armor.
 effect|INTERCEPTOR_ROLE_ARMOR_PERCENT|10.0	0	Interceptors launched from this ship have <good>10%</good> increased armor.
 effect|INTERCEPTOR_ROLE_ARMOR_PERCENT|12.5	0	Interceptors launched from this ship have <good>12.5%</good> increased armor.
@@ -7171,6 +7177,46 @@ type|neural_interface|CRUISER|0	0	Transferring to either linked ship resets its 
 type-detail|neural_interface|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Neural Interface</hullmod>
 type|neural_interface|CAPITAL_SHIP|0	0	Transferring to either linked ship resets its ship system cooldown and adds a charge.
 type-detail|neural_interface|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Neural Interface</hullmod>
+integrable|neural_interface|null|0	0	Transferring to either linked ship resets its ship system cooldown and adds a charge.
+integrable|neural_interface|null|1	0	Click and hold to integrate.
+integrable|neural_interface|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|neural_interface|null|3	0	<muted>Neural transfers from this ship are always instant, regardless of the deployment point total.</muted>
+integrable|neural_interface|null|4	0	<muted>Transferring to either linked ship resets its ship system cooldown and adds a charge.</muted>
+integrable|neural_interface|FRIGATE|0	0	Transferring to either linked ship resets its ship system cooldown and adds a charge.
+integrable|neural_interface|FRIGATE|1	0	Click and hold to integrate.
+integrable|neural_interface|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|neural_interface|FRIGATE|3	0	<muted>Neural transfers from this ship are always instant, regardless of the deployment point total.</muted>
+integrable|neural_interface|FRIGATE|4	0	<muted>Transferring to either linked ship resets its ship system cooldown and adds a charge.</muted>
+integrable|neural_interface|DESTROYER|0	0	Transferring to either linked ship resets its ship system cooldown and adds a charge.
+integrable|neural_interface|DESTROYER|1	0	Click and hold to integrate.
+integrable|neural_interface|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|neural_interface|DESTROYER|3	0	<muted>Neural transfers from this ship are always instant, regardless of the deployment point total.</muted>
+integrable|neural_interface|DESTROYER|4	0	<muted>Transferring to either linked ship resets its ship system cooldown and adds a charge.</muted>
+integrable|neural_interface|CRUISER|0	0	Transferring to either linked ship resets its ship system cooldown and adds a charge.
+integrable|neural_interface|CRUISER|1	0	Click and hold to integrate.
+integrable|neural_interface|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|neural_interface|CRUISER|3	0	<muted>Neural transfers from this ship are always instant, regardless of the deployment point total.</muted>
+integrable|neural_interface|CRUISER|4	0	<muted>Transferring to either linked ship resets its ship system cooldown and adds a charge.</muted>
+integrable|neural_interface|CAPITAL_SHIP|0	0	Transferring to either linked ship resets its ship system cooldown and adds a charge.
+integrable|neural_interface|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|neural_interface|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|neural_interface|CAPITAL_SHIP|3	0	<muted>Neural transfers from this ship are always instant, regardless of the deployment point total.</muted>
+integrable|neural_interface|CAPITAL_SHIP|4	0	<muted>Transferring to either linked ship resets its ship system cooldown and adds a charge.</muted>
+integrated|neural_interface|null|0	0	<builtIn>Integrated</builtIn>
+integrated|neural_interface|null|1	0	<builtIn>Neural transfers from this ship are always instant, regardless of the deployment point total.</builtIn>
+integrated|neural_interface|null|2	0	Transferring to either linked ship resets its ship system cooldown and adds a charge.
+integrated|neural_interface|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|neural_interface|FRIGATE|1	0	<builtIn>Neural transfers from this ship are always instant, regardless of the deployment point total.</builtIn>
+integrated|neural_interface|FRIGATE|2	0	Transferring to either linked ship resets its ship system cooldown and adds a charge.
+integrated|neural_interface|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|neural_interface|DESTROYER|1	0	<builtIn>Neural transfers from this ship are always instant, regardless of the deployment point total.</builtIn>
+integrated|neural_interface|DESTROYER|2	0	Transferring to either linked ship resets its ship system cooldown and adds a charge.
+integrated|neural_interface|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|neural_interface|CRUISER|1	0	<builtIn>Neural transfers from this ship are always instant, regardless of the deployment point total.</builtIn>
+integrated|neural_interface|CRUISER|2	0	Transferring to either linked ship resets its ship system cooldown and adds a charge.
+integrated|neural_interface|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|neural_interface|CAPITAL_SHIP|1	0	<builtIn>Neural transfers from this ship are always instant, regardless of the deployment point total.</builtIn>
+integrated|neural_interface|CAPITAL_SHIP|2	0	Transferring to either linked ship resets its ship system cooldown and adds a charge.
 type|non_beam_energy_weapon_damage|null|0	0	<good>3%</good> increased non-beam energy weapon damage.
 type|non_beam_energy_weapon_damage|FRIGATE|0	0	<good>3%</good> increased non-beam energy weapon damage.
 type|non_beam_energy_weapon_damage|DESTROYER|0	0	<good>3%</good> increased non-beam energy weapon damage.

@@ -471,6 +471,7 @@
     "effect.OBJECTIVE_CAPTURE_RATE_MULT.more": "<good>{value}%</good> more combat objective capture rate.",
     "effect.OBJECTIVE_CAPTURE_RATE_MULT.less": "<bad>{value}%</bad> less combat objective capture rate.",
     "stat.commandPointRecoveryWhileFlagship": "command point recovery rate while this ship is the flagship",
+    "effect.INSTANT_NEURAL_TRANSFER_FROM": "Neural transfers from this ship are always instant, regardless of the deployment point total.",
     "stat.phasedTimeFlowStats": "flux dissipation, weapon rate of fire and ammo regeneration while phased",
     "effect.PHASE_EXIT_EMP_ARCS_FLAT.one": "When this ship leaves phase, it discharges <good>{value}</good> EMP arc at the nearest enemy ship within {range} su, dealing {frigate}/{destroyer}/{cruiser}/{capital} energy and EMP damage.",
     "effect.PHASE_EXIT_EMP_ARCS_FLAT.other": "When this ship leaves phase, it discharges <good>{value}</good> EMP arcs at the nearest enemy ships within {range} su, each dealing {frigate}/{destroyer}/{cruiser}/{capital} energy and EMP damage.",

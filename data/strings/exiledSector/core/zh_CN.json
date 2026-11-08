@@ -951,6 +951,7 @@
     "effect.OBJECTIVE_CAPTURE_RATE_MULT.more": "战场目标占领速度提高<good>{value}%</good>（乘算）。",
     "effect.OBJECTIVE_CAPTURE_RATE_MULT.less": "战场目标占领速度降低<bad>{value}%</bad>（乘算）。",
     "stat.commandPointRecoveryWhileFlagship": "本舰担任旗舰时的指挥点恢复速度",
+    "effect.INSTANT_NEURAL_TRANSFER_FROM": "无论部署点总数是多少，从本舰发起的神经转移总是瞬间完成。",
     "stat.phasedTimeFlowStats": "相位状态下的幅能耗散、武器射速和弹药恢复速度",
     "effect.PHASE_EXIT_EMP_ARCS_FLAT.other": "本舰脱离相位时，向{range} su内最近的敌舰释放<good>{value}</good>道EMP电弧，每道造成{frigate}/{destroyer}/{cruiser}/{capital}点能量伤害和等量EMP伤害。",
     "effect.PHASE_ANCHOR_EMERGENCY_DIVE": "在即将被摧毁或瘫痪时，本舰可以改为紧急潜入相位空间并撤离战斗，同时承受相当于其部署消耗{value}%的额外战备值惩罚。本舰必须有足够的战备值来承担这一消耗。每场战斗中，无论属于哪一方，只有一艘舰船能进行这种潜入。",
