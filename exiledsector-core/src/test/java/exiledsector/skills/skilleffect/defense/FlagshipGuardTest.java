@@ -19,9 +19,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
-class FlagshipGuardListenerTest {
+class FlagshipGuardTest {
 
     private static final float EPSILON = 1e-4f;
+    private static final String MOD_ID = "guard";
 
     private final MutableStat hullDamageTaken = new MutableStat(1f);
     private final MutableStat armorDamageTaken = new MutableStat(1f);
@@ -43,11 +44,14 @@ class FlagshipGuardListenerTest {
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getFleetCommanderForStats()).thenReturn(commander);
         when(guard.getMutableStats().getFleetMember()).thenReturn(member);
-        when(guard.getMutableStats().getDynamic().getValue(FlagshipGuardListener.DAMAGE_TAKEN_PERCENT_KEY, 0f)).thenReturn(-10f);
         when(guard.getMutableStats().getHullDamageTakenMult()).thenReturn(hullDamageTaken);
         when(guard.getMutableStats().getArmorDamageTakenMult()).thenReturn(armorDamageTaken);
         when(guard.getMutableStats().getShieldDamageTakenMult()).thenReturn(shieldDamageTaken);
         return guard;
+    }
+
+    private static void guardFor(ShipAPI guard) {
+        DefenseSkillEffect.DAMAGE_TAKEN_NEAR_FLAGSHIP_PERCENT.advanceInCombat(guard, MOD_ID, -10f);
     }
 
     private void assertDamageTaken(float expected) {
@@ -60,25 +64,24 @@ class FlagshipGuardListenerTest {
     void reducesDamageTakenOnlyWhileWithinRangeOfTheDeployedFlagship() {
         PersonAPI commander = mock(PersonAPI.class);
         ShipAPI guard = guard(commander);
-        ShipAPI flagship = ship(0, commander, FlagshipGuardListener.RANGE - 100f);
+        ShipAPI flagship = ship(0, commander, FlagshipGuard.RANGE - 100f);
         List<ShipAPI> ships = new ArrayList<>(List.of(guard, flagship, ship(1, commander, 50f)));
         CombatEngineAPI engine = mock(CombatEngineAPI.class);
         when(engine.getShips()).thenReturn(ships);
-        FlagshipGuardListener listener = new FlagshipGuardListener(guard);
 
         try (MockedStatic<Global> global = mockStatic(Global.class)) {
             global.when(Global::getCombatEngine).thenReturn(engine);
 
-            listener.advance(FlagshipGuardListener.SCAN_INTERVAL_SECONDS);
+            guardFor(guard);
             assertDamageTaken(0.9f);
 
-            when(flagship.getLocation()).thenReturn(new Vector2f(FlagshipGuardListener.RANGE + 100f, 0f));
-            listener.advance(FlagshipGuardListener.SCAN_INTERVAL_SECONDS);
+            when(flagship.getLocation()).thenReturn(new Vector2f(FlagshipGuard.RANGE + 100f, 0f));
+            guardFor(guard);
             assertDamageTaken(1f);
 
             when(flagship.getLocation()).thenReturn(new Vector2f(0f, 0f));
             ships.remove(flagship);
-            listener.advance(FlagshipGuardListener.SCAN_INTERVAL_SECONDS);
+            guardFor(guard);
             assertDamageTaken(1f);
         }
     }
@@ -94,7 +97,7 @@ class FlagshipGuardListenerTest {
         try (MockedStatic<Global> global = mockStatic(Global.class)) {
             global.when(Global::getCombatEngine).thenReturn(engine);
 
-            new FlagshipGuardListener(flagship).advance(FlagshipGuardListener.SCAN_INTERVAL_SECONDS);
+            guardFor(flagship);
             assertDamageTaken(1f);
         }
     }

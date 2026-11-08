@@ -171,6 +171,7 @@
     "node.integration.integrated": "<builtIn>Integrated</builtIn>",
     "node.integration.preview.one": "When integrated, for {count} story point:",
     "node.integration.preview.other": "When integrated, for {count} story points:",
+    "node.integration.removes": "No longer: {line}",
     "node.integration.hint": "Click and hold to integrate.",
     "node.integration.confirm.one": "Integrating spends {count} story point. Keep holding to confirm.",
     "node.integration.confirm.other": "Integrating spends {count} story points. Keep holding to confirm.",

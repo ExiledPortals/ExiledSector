@@ -28,6 +28,11 @@ record TargetDamageBonusEffect(ListenerEffect<? extends TargetDamageBonusListene
     }
 
     @Override
+    public Class<?> listenerType() {
+        return listener.listenerType();
+    }
+
+    @Override
     public boolean supportsTemporaryGating() {
         return listener.supportsTemporaryGating();
     }

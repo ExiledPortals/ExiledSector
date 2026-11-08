@@ -4,7 +4,6 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.skills.skilleffect.weapon.WeaponEffectTooltipAggregator;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.layout.SkillTreeObject;
@@ -100,8 +99,8 @@ public class SkillNode extends SkillTreeObject {
 
     static List<DescriptionLine> effectLines(List<SkillTypeEffect> described, HullSize hullSize) {
         List<DescriptionLine> lines = new ArrayList<>();
-        for (SkillTypeEffect effect : WeaponEffectTooltipAggregator.collapse(described)) {
-            addLine(lines, effect.effect().description(effect.magnitude(), hullSize), effect.effect().invertsDescriptionColours());
+        for (DescribedEffects.Line line : DescribedEffects.of(described, hullSize)) {
+            addLine(lines, line.text(), line.effect().effect().invertsDescriptionColours());
         }
         return lines;
     }

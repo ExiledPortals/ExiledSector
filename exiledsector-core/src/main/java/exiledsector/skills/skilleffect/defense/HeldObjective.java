@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.BattleObjectiveAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.skills.skilleffect.ParameterBonus;
 
 final class HeldObjective {
 
@@ -19,7 +20,11 @@ final class HeldObjective {
     }
 
     static float range(ShipAPI ship) {
-        return RANGE + ship.getMutableStats().getDynamic().getValue(RANGE_BONUS_KEY, 0f);
+        return range(ship.getMutableStats().getDynamic().getValue(RANGE_BONUS_KEY, 0f));
+    }
+
+    static float range(float rangeBonus) {
+        return ParameterBonus.plusFlat(RANGE, rangeBonus);
     }
 
     static boolean isNearby(ShipAPI ship, CombatEngineAPI engine) {

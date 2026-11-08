@@ -1065,7 +1065,7 @@
 						"magnitude": 4
 					},
 					{
-						"effect": "STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_PERCENT",
+						"effect": "STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_FLAT",
 						"magnitude": 10
 					}
 				]
@@ -4716,7 +4716,7 @@
 						"magnitude": 1
 					},
 					{
-						"effect": "HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_PERCENT",
+						"effect": "HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_FLAT",
 						"magnitude": 10
 					}
 				]
@@ -4826,7 +4826,7 @@
 						"magnitude": 30
 					},
 					{
-						"effect": "CRUSTACEAN_SUPPLIES_PER_MONTH_MULT",
+						"effect": "SUPPLIES_PER_MONTH_MULT",
 						"magnitude": -10
 					}
 				]
@@ -4836,6 +4836,9 @@
 				"quantity": 1000
 			},
 			"flavour": "You control the speed at which these lobsters die.",
+			"effectText": [
+				"The crabs eat what the crew won't."
+			],
 			"tags": [
 				"combat_readiness",
 				"speed",

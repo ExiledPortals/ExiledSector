@@ -9,8 +9,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 public final class IntegrationLines {
+
+    private static final Pattern NUMBER = Pattern.compile("[+-]?\\d+(?:[.,]\\d+)*");
 
     public record State(boolean integrated, int nextCost, boolean showsHint) {
 
@@ -36,22 +39,49 @@ public final class IntegrationLines {
         }
         List<DescriptionLine> lines = new ArrayList<>();
         lines.add(muted(Translation.msg("node.integration.preview").count(state.nextCost()).text()));
-        for (DescriptionLine line : SkillNode.describeEffects(type, hullSize, true)) {
+        List<DescriptionLine> integratedEffects = SkillNode.describeEffects(type, hullSize, true);
+        for (DescriptionLine line : integratedEffects) {
             lines.add(muted(line.plain()));
         }
+        lines.addAll(removedLines(SkillNode.describeEffects(type, hullSize, false), integratedEffects));
         return lines;
     }
 
     static NodeDescription integrated(SkillType type, HullSize hullSize) {
         NodeDescription integratedDescription = SkillNode.describeMechanics(type, hullSize, true);
+        List<DescriptionLine> normalEffects = SkillNode.describeEffects(type, hullSize, false);
         Set<String> normalLines = new HashSet<>();
-        SkillNode.describeEffects(type, hullSize, false).forEach(line -> normalLines.add(line.plain()));
+        normalEffects.forEach(line -> normalLines.add(line.plain()));
         List<DescriptionLine> effects = new ArrayList<>();
         effects.add(new DescriptionLine(Translation.styled("node.integration.integrated"), false));
         for (DescriptionLine line : integratedDescription.effects()) {
             effects.add(normalLines.contains(line.plain()) ? line : new DescriptionLine(line.text().withUnstyledAs(Style.BUILT_IN), line.lowerIsBetter()));
         }
+        effects.addAll(removedLines(normalEffects, integratedDescription.effects()));
         return new NodeDescription(effects, integratedDescription.details());
+    }
+
+    private static List<DescriptionLine> removedLines(List<DescriptionLine> normalEffects, List<DescriptionLine> integratedEffects) {
+        int rewordedLineCount = linesWithoutCounterpart(integratedEffects, normalEffects).size();
+        return linesWithoutCounterpart(normalEffects, integratedEffects).stream()
+                .skip(rewordedLineCount)
+                .map(IntegrationLines::removedLine)
+                .toList();
+    }
+
+    private static List<DescriptionLine> linesWithoutCounterpart(List<DescriptionLine> lines, List<DescriptionLine> otherLines) {
+        Set<String> otherWordings = new HashSet<>();
+        otherLines.forEach(line -> otherWordings.add(wordingWithoutValues(line)));
+        return lines.stream().filter(line -> !otherWordings.contains(wordingWithoutValues(line))).toList();
+    }
+
+    private static DescriptionLine removedLine(DescriptionLine normalLine) {
+        StyledText removedText = Translation.msg("node.integration.removes").arg("line", normalLine.plain()).styled();
+        return new DescriptionLine(removedText.withUnstyledAs(Style.BUILT_IN), false);
+    }
+
+    private static String wordingWithoutValues(DescriptionLine line) {
+        return NUMBER.matcher(line.plain()).replaceAll("#");
     }
 
     static NodeDescription withHint(SkillType type, HullSize hullSize, State state) {

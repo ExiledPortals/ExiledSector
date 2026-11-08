@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
+import exiledsector.skills.skilleffect.ParameterBonus;
 import exiledsector.skills.skilleffect.ScaledBonus;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 import exiledsector.skills.skilleffect.StatMode;
@@ -42,7 +43,11 @@ final class AbsorbReserveListener extends ShipCombatListener implements DamageLi
     }
 
     private float maxReserve() {
-        return MAX_RESERVE * (1f + magnitude(MAX_RESERVE_PERCENT_KEY) / 100f);
+        return maxReserve(magnitude(MAX_RESERVE_PERCENT_KEY));
+    }
+
+    static float maxReserve(float maxReserveIncreasePercent) {
+        return ParameterBonus.increasedBy(MAX_RESERVE, maxReserveIncreasePercent);
     }
 
     @Override

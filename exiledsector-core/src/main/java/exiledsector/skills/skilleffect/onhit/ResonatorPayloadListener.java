@@ -10,6 +10,7 @@ import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import exiledsector.skills.skilleffect.Chance;
 import exiledsector.skills.skilleffect.CombatQueries;
+import exiledsector.skills.skilleffect.ParameterBonus;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 import exiledsector.skills.skilleffect.weapon.RiftSeries;
 import org.lwjgl.util.vector.Vector2f;
@@ -79,7 +80,11 @@ final class ResonatorPayloadListener extends ShipCombatListener implements Damag
     }
 
     private int riftsPerSeries() {
-        return RIFTS_PER_SERIES + Math.max(0, Math.round(magnitude(ADDITIONAL_RIFTS_KEY)));
+        return riftsPerSeries(magnitude(ADDITIONAL_RIFTS_KEY));
+    }
+
+    static int riftsPerSeries(float additionalRifts) {
+        return Math.round(ParameterBonus.plusFlat(RIFTS_PER_SERIES, additionalRifts));
     }
 
     private boolean isOwnMissileWeaponShot(MissileAPI missile) {

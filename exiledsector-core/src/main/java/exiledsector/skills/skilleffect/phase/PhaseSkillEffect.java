@@ -11,11 +11,15 @@ import exiledsector.skills.ShipFacts;
 import exiledsector.skills.skilleffect.ArcDischarge;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.ConditionalStatEffect;
+import exiledsector.skills.skilleffect.DescribeContext;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
+import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.SkillEffectSupport;
 import exiledsector.skills.skilleffect.weapon.WeaponScope;
 import exiledsector.skills.skilleffect.weapon.WeaponStatFamily;
+
+import java.util.Set;
 
 import static exiledsector.skills.skilleffect.Backings.listener;
 import static exiledsector.skills.skilleffect.Backings.statEffect;
@@ -84,11 +88,22 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
             PhaseExitDamageListener::new)) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).arg("seconds", PhaseExitDamageListener.TAPER_SECONDS).styled();
+            return description(magnitude, DescribeContext.NONE);
+        }
+
+        @Override
+        public StyledText description(float magnitude, DescribeContext context) {
+            return EffectText.msg(this).arg("value", magnitude)
+                    .arg("seconds", PhaseExitDamageListener.taperSeconds(context.magnitudeOf(PHASE_EXIT_WEAPON_DAMAGE_DURATION_PERCENT))).styled();
         }
     },
     PHASE_EXIT_WEAPON_DAMAGE_DURATION_PERCENT(listener(PhaseExitDamageListener.DURATION_PERCENT_KEY, PhaseExitDamageListener.class,
-            PhaseExitDamageListener::new)),
+            PhaseExitDamageListener::new)) {
+        @Override
+        public Set<SkillEffect> refines() {
+            return Set.of(PHASE_EXIT_WEAPON_DAMAGE_PERCENT);
+        }
+    },
     PHASE_ENTRY_AFTERIMAGE_SECONDS_FLAT(listener(PhantomWakeListener.SECONDS_KEY, PhantomWakeListener.class, PhantomWakeListener::new)),
     PHASE_AFTERIMAGE_FADE_EMP_FLAT(listener(PhantomWakeListener.FADE_EMP_KEY, PhantomWakeListener.class, PhantomWakeListener::new)) {
         @Override
