@@ -231,6 +231,8 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
     public void afterSaveRepair() {
         AffinityOptions.migrateAll(ShipSkillDataManager.all().values());
         forgetUnknownNodes();
+        SkillTreeTemplateStore.reload();
+        SkillTreeTemplateStore.moveSavedTemplatesToFile();
         SkillTreeTemplateStore.pruneAssignments(ShipSkillDataManager::hasProgress);
         SectorAPI sector = Global.getSector();
         sector.removeScriptsOfClass(SkillTreeInstaller.class);

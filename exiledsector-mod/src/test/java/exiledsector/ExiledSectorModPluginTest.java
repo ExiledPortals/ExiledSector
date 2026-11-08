@@ -20,6 +20,7 @@ import exiledsector.items.SocketLossListener;
 import exiledsector.items.StarChartCipher;
 import exiledsector.items.StarChartFixtures;
 import exiledsector.items.SubroutineKind;
+import exiledsector.persistence.InMemoryTemplateFile;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.ShipSkillData;
@@ -86,6 +87,7 @@ class ExiledSectorModPluginTest {
         mockSector = new MockSector();
         sector = mockSector.sector;
         persistentData = mockSector.persistentData;
+        InMemoryTemplateFile.install();
         listenerManager = mock(ListenerManagerAPI.class);
         when(sector.getListenerManager()).thenReturn(listenerManager);
 
@@ -146,6 +148,7 @@ class ExiledSectorModPluginTest {
 
     @AfterEach
     void tearDown() throws Exception {
+        SkillTreeTemplateStore.useCommonFolder();
         loadTree("");
         SkillTree.clearTypes();
         NpcFactionVolumes.clear();

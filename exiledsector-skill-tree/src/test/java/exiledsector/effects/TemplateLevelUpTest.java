@@ -9,6 +9,7 @@ import exiledsector.items.Item;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemStore;
 import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.persistence.InMemoryTemplateFile;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.LogisticsNodes;
@@ -60,6 +61,7 @@ class TemplateLevelUpTest {
         lunaSettingsMock.when(() -> LunaSettings.getInt(anyString(), anyString())).thenReturn(null);
         lunaSettingsMock.when(() -> LunaSettings.getFloat(anyString(), anyString())).thenReturn(null);
         lunaSettingsMock.when(() -> LunaSettings.getBoolean(anyString(), anyString())).thenReturn(null);
+        InMemoryTemplateFile.install();
 
         SkillTree.clearNodes();
         SkillNode root = node("root", type("root_type", SkillTier.ROOT).build(), List.of());
@@ -77,6 +79,7 @@ class TemplateLevelUpTest {
 
     @AfterEach
     void tearDown() {
+        SkillTreeTemplateStore.useCommonFolder();
         mockSector.close();
         lunaSettingsMock.close();
         SkillTree.clearNodes();

@@ -21,6 +21,10 @@ public final class TemplateCodec {
     }
 
     public static String encode(SkillTreeTemplate template) {
+        return toJson(template).toString();
+    }
+
+    public static JSONObject toJson(SkillTreeTemplate template) {
         JSONArray encodedSteps = new JSONArray();
         for (TemplateStep step : template.steps()) {
             encodedSteps.put(new NodeEntry(step.nodeId(), step.optionTypeId()).format());
@@ -38,7 +42,7 @@ public final class TemplateCodec {
             if (!template.anchorsBySocket().isEmpty()) {
                 templateJson.put("anchors", new JSONObject(template.anchorsBySocket()));
             }
-            return templateJson.toString();
+            return templateJson;
         } catch (JSONException e) {
             throw new IllegalArgumentException("Template " + template.id() + " could not be encoded", e);
         }
@@ -48,10 +52,15 @@ public final class TemplateCodec {
         if (encodedTemplate == null) {
             return null;
         }
-        JSONObject templateJson;
         try {
-            templateJson = new JSONObject(encodedTemplate);
+            return fromJson(new JSONObject(encodedTemplate));
         } catch (JSONException e) {
+            return null;
+        }
+    }
+
+    public static SkillTreeTemplate fromJson(JSONObject templateJson) {
+        if (templateJson == null) {
             return null;
         }
         String templateId = templateJson.optString("id", null);

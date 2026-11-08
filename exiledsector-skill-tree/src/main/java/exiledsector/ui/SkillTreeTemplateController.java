@@ -42,6 +42,7 @@ final class SkillTreeTemplateController {
         this.templateBar = new SkillTreeTemplateBar(style);
         this.listOverlay = new SkillTreeTemplateListOverlay(style);
         treeSession.onPlanChange(this::savePlan);
+        SkillTreeTemplateStore.reload();
         loadAssignedTemplateOnRootChange();
     }
 
@@ -255,6 +256,7 @@ final class SkillTreeTemplateController {
         }
         treeSession.closeChoicePicker();
         SkillTreeSounds.panelOpened();
+        SkillTreeTemplateStore.reload();
         listOverlay.open(startingRoot.getId(), startingRoot.getType().getDisplayName(), hullSize(), SkillTreeTemplateStore.all(), assignedTemplateId());
     }
 

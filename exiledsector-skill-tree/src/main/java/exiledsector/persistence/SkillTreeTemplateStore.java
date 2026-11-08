@@ -1,12 +1,17 @@
 package exiledsector.persistence;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.TemplateCodec;
 import exiledsector.skills.template.TemplateNames;
 import exiledsector.skills.template.TemplateStep;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,33 +25,92 @@ import java.util.function.Supplier;
 
 public final class SkillTreeTemplateStore {
 
-    private static final String TEMPLATES_KEY = "exiledSector_skillTreeTemplates";
+    public static final String COMMON_FILE = "exiledSector_skillTreeTemplates.json";
+    static final String UNREADABLE_BACKUP_FILE = "exiledSector_skillTreeTemplates.unreadable.json";
+    private static final String TEMPLATES_FIELD = "templates";
+    private static final String VERSION_FIELD = "v";
+    private static final int FILE_VERSION = 1;
+    private static final String SAVED_TEMPLATES_KEY = "exiledSector_skillTreeTemplates";
     private static final String ASSIGNMENTS_KEY = "exiledSector_skillTreeTemplateAssignments";
-    private static final Set<String> REPORTED_MALFORMED = new HashSet<>();
+    private static final Logger LOG = Logger.getLogger(SkillTreeTemplateStore.class);
+    private static final Map<String, SkillTreeTemplate> TEMPLATES_BY_ID = new LinkedHashMap<>();
+    private static final List<Object> UNREADABLE_ENTRIES = new ArrayList<>();
+    private static final Set<String> REPORTED_UNREADABLE = new HashSet<>();
+    private static TemplateFile file = new CommonFolderFile();
+    private static String unreadableFileContents;
+
+    public interface TemplateFile {
+        String read() throws IOException;
+
+        void write(String fileName, String contents) throws IOException;
+    }
 
     private SkillTreeTemplateStore() {
     }
 
-    public static List<SkillTreeTemplate> all() {
-        Map<String, String> encodedTemplatesById = storedTemplates(false);
-        if (encodedTemplatesById == null) {
-            return List.of();
+    public static void reload() {
+        String contents;
+        try {
+            contents = file.read();
+        } catch (IOException e) {
+            LOG.warn("[ExiledSector] Could not read skill tree templates from " + COMMON_FILE + "; keeping the ones already loaded.", e);
+            return;
         }
-        List<SkillTreeTemplate> templates = new ArrayList<>();
-        for (Map.Entry<String, String> entry : encodedTemplatesById.entrySet()) {
-            SkillTreeTemplate template = TemplateCodec.decode(entry.getValue());
+        if (contents == null || contents.isBlank()) {
+            TEMPLATES_BY_ID.clear();
+            UNREADABLE_ENTRIES.clear();
+            unreadableFileContents = null;
+            return;
+        }
+        JSONArray templateEntries = templateEntries(contents.strip());
+        if (templateEntries == null) {
+            if (REPORTED_UNREADABLE.add(contents)) {
+                LOG.warn("[ExiledSector] " + COMMON_FILE + " is not valid JSON; keeping the templates already loaded. The next template change"
+                        + " backs it up to " + UNREADABLE_BACKUP_FILE + " and rewrites it.");
+            }
+            unreadableFileContents = contents;
+            return;
+        }
+        unreadableFileContents = null;
+        TEMPLATES_BY_ID.clear();
+        UNREADABLE_ENTRIES.clear();
+        for (int i = 0; i < templateEntries.length(); i++) {
+            Object entry = templateEntries.opt(i);
+            SkillTreeTemplate template = entry instanceof JSONObject templateJson ? TemplateCodec.fromJson(templateJson) : null;
             if (template != null) {
-                templates.add(template);
+                TEMPLATES_BY_ID.put(template.id(), template);
             } else {
-                reportMalformed(entry.getKey());
+                UNREADABLE_ENTRIES.add(entry);
+                if (REPORTED_UNREADABLE.add(String.valueOf(entry))) {
+                    LOG.warn("[ExiledSector] Skill tree template " + (i + 1) + " in " + COMMON_FILE + " could not be read and is ignored.");
+                }
             }
         }
-        return templates;
+    }
+
+    public static void moveSavedTemplatesToFile() {
+        Map<String, String> savedTemplatesById = SaveData.findOrNull(SAVED_TEMPLATES_KEY, Map.class);
+        if (savedTemplatesById == null) {
+            return;
+        }
+        reload();
+        for (String encodedTemplate : savedTemplatesById.values()) {
+            SkillTreeTemplate template = TemplateCodec.decode(encodedTemplate);
+            if (template != null) {
+                TEMPLATES_BY_ID.putIfAbsent(template.id(), template);
+            }
+        }
+        if (writeFile()) {
+            SaveData.remove(SAVED_TEMPLATES_KEY);
+        }
+    }
+
+    public static List<SkillTreeTemplate> all() {
+        return List.copyOf(TEMPLATES_BY_ID.values());
     }
 
     public static SkillTreeTemplate find(String templateId) {
-        Map<String, String> encodedTemplatesById = storedTemplates(false);
-        return encodedTemplatesById == null || templateId == null ? null : TemplateCodec.decode(encodedTemplatesById.get(templateId));
+        return templateId == null ? null : TEMPLATES_BY_ID.get(templateId);
     }
 
     public static SkillTreeTemplate save(String templateName, String rootNodeId, HullSize hullSize, List<TemplateStep> steps) {
@@ -60,10 +124,12 @@ public final class SkillTreeTemplateStore {
 
     static SkillTreeTemplate save(String templateName, String rootNodeId, HullSize hullSize, List<TemplateStep> steps,
                                   Map<String, String> anchorsBySocket, Supplier<String> templateIdSupplier) {
+        reload();
         return store(new SkillTreeTemplate(templateIdSupplier.get(), TemplateNames.normalise(templateName), rootNodeId, hullSize, steps, anchorsBySocket));
     }
 
     public static SkillTreeTemplate replaceSteps(String templateId, List<TemplateStep> steps, Map<String, String> socketedAnchors) {
+        reload();
         SkillTreeTemplate template = find(templateId);
         if (template == null) {
             return null;
@@ -74,6 +140,7 @@ public final class SkillTreeTemplateStore {
     }
 
     public static SkillTreeTemplate rename(String templateId, String templateName) {
+        reload();
         SkillTreeTemplate template = find(templateId);
         return template == null ? null
                 : store(new SkillTreeTemplate(template.id(), TemplateNames.normalise(templateName), template.rootNodeId(), template.hullSize(), template.steps(),
@@ -81,7 +148,8 @@ public final class SkillTreeTemplateStore {
     }
 
     private static SkillTreeTemplate store(SkillTreeTemplate template) {
-        storedTemplates(true).put(template.id(), TemplateCodec.encode(template));
+        TEMPLATES_BY_ID.put(template.id(), template);
+        writeFile();
         return template;
     }
 
@@ -104,10 +172,11 @@ public final class SkillTreeTemplateStore {
     }
 
     public static boolean delete(String templateId) {
-        Map<String, String> encodedTemplatesById = storedTemplates(false);
-        if (encodedTemplatesById == null || encodedTemplatesById.remove(templateId) == null) {
+        reload();
+        if (templateId == null || TEMPLATES_BY_ID.remove(templateId) == null) {
             return false;
         }
+        writeFile();
         Map<String, String> assignments = storedAssignments(false);
         if (assignments != null) {
             assignments.values().removeIf(templateId::equals);
@@ -137,25 +206,69 @@ public final class SkillTreeTemplateStore {
 
     public static void pruneAssignments(Predicate<String> shipStillNeeded) {
         Map<String, String> assignments = storedAssignments(false);
-        if (assignments == null) {
-            return;
-        }
-        Map<String, String> encodedTemplatesById = storedTemplates(false);
-        assignments.entrySet().removeIf(entry -> encodedTemplatesById == null || !encodedTemplatesById.containsKey(entry.getValue())
-                || !shipStillNeeded.test(entry.getKey()));
-    }
-
-    private static void reportMalformed(String templateId) {
-        if (REPORTED_MALFORMED.add(templateId)) {
-            Logger.getLogger(SkillTreeTemplateStore.class).warn("[ExiledSector] Skill tree template " + templateId + " could not be read and is ignored.");
+        if (assignments != null) {
+            assignments.entrySet().removeIf(entry -> !TEMPLATES_BY_ID.containsKey(entry.getValue()) || !shipStillNeeded.test(entry.getKey()));
         }
     }
 
-    private static Map<String, String> storedTemplates(boolean createIfMissing) {
-        return createIfMissing ? SaveData.getOrCreate(TEMPLATES_KEY, LinkedHashMap::new) : SaveData.findOrNull(TEMPLATES_KEY, Map.class);
+    public static void useFile(TemplateFile replacement) {
+        file = replacement;
+        TEMPLATES_BY_ID.clear();
+        UNREADABLE_ENTRIES.clear();
+        unreadableFileContents = null;
+    }
+
+    public static void useCommonFolder() {
+        useFile(new CommonFolderFile());
+    }
+
+    private static JSONArray templateEntries(String contents) {
+        try {
+            if (contents.startsWith("[")) {
+                return new JSONArray(contents);
+            }
+            return new JSONObject(contents).getJSONArray(TEMPLATES_FIELD);
+        } catch (JSONException e) {
+            return null;
+        }
+    }
+
+    private static boolean writeFile() {
+        try {
+            if (unreadableFileContents != null) {
+                file.write(UNREADABLE_BACKUP_FILE, unreadableFileContents);
+                unreadableFileContents = null;
+            }
+            JSONArray templateEntries = new JSONArray();
+            for (SkillTreeTemplate template : TEMPLATES_BY_ID.values()) {
+                templateEntries.put(TemplateCodec.toJson(template));
+            }
+            UNREADABLE_ENTRIES.forEach(templateEntries::put);
+            JSONObject root = new JSONObject();
+            root.put(VERSION_FIELD, FILE_VERSION);
+            root.put(TEMPLATES_FIELD, templateEntries);
+            file.write(COMMON_FILE, root.toString(2));
+            return true;
+        } catch (IOException | JSONException e) {
+            LOG.warn("[ExiledSector] Could not write skill tree templates to " + COMMON_FILE, e);
+            return false;
+        }
     }
 
     private static Map<String, String> storedAssignments(boolean createIfMissing) {
         return createIfMissing ? SaveData.getOrCreate(ASSIGNMENTS_KEY, HashMap::new) : SaveData.findOrNull(ASSIGNMENTS_KEY, Map.class);
+    }
+
+    private static final class CommonFolderFile implements TemplateFile {
+
+        @Override
+        public String read() throws IOException {
+            return Global.getSettings().fileExistsInCommon(COMMON_FILE) ? Global.getSettings().readTextFileFromCommon(COMMON_FILE) : null;
+        }
+
+        @Override
+        public void write(String fileName, String contents) throws IOException {
+            Global.getSettings().writeTextFileToCommon(fileName, contents);
+        }
     }
 }

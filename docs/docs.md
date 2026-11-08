@@ -114,6 +114,19 @@ on banked allocations (`TemplateDockingRetry`). Each Logistics Schematic raises 
 They drop like the Military Refit Schematic: `logistics_schematic` in `battle_loot.csv`, scaled by the battle item drop
 slider (`BattleItemDropSetting`), and site rolls at its tier weight (`LogisticsSchematicDrops`).
 
+### Skill tree templates
+
+Templates live outside the save, in `saves/common/exiledSector_skillTreeTemplates.json.data`, so every save shares them
+(`SkillTreeTemplateStore`). The file is `{"v":1,"templates":[...]}` (a bare array also reads), each entry in
+`TemplateCodec`'s shape. It is re-read on game load, when the skill tree or template list opens and before every template
+change, which then rewrites the whole file. Only which template each ship uses stays in the save, and templates an older
+save still holds move into the file on load.
+
+Retired or renamed node, option and socket ids load through `node_replacements.csv`, `node_id_renames.csv` and
+`AffinityOptions`, and the next write stores the current ids. Unknown nodes stay in the template and are skipped
+(`StepVerdict.UNKNOWN_NODE`); unreadable entries are skipped but written back unchanged, and a file that is not JSON keeps
+the loaded templates and is backed up to `exiledSector_skillTreeTemplates.unreadable.json.data` before the next write.
+
 </details>
 
 <details>
