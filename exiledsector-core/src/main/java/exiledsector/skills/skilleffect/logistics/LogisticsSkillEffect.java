@@ -101,6 +101,13 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
                     .arg("max", FleetWideEffects.MAX_TRANSPONDER_OFF_SENSOR_PROFILE_REDUCTION).styled();
         }
     },
+    TRANSPONDER_OFF_BURN_LEVEL_FLAT(statEffect(FLAT, dynamicMod(FleetWideEffects.TRANSPONDER_OFF_BURN_LEVEL_KEY),
+            "stat.maxBurnLevel", false)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.templated(this, magnitude);
+        }
+    },
     MOVE_SLOW_SUPPLY_USE_MULT(playerFleetContribution(FleetWideEffects.MOVE_SLOW_SUPPLY_USE_KEY).reportedAs(MULT)) {
         @Override
         public boolean lowerIsBetter() {

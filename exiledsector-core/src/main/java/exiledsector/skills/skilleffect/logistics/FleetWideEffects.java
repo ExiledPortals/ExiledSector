@@ -32,6 +32,8 @@ public final class FleetWideEffects {
     static final String TRANSPONDER_OFF_SENSOR_PROFILE_KEY = "exiledSector_transponderOffSensorProfileContribution";
     static final float MAX_TRANSPONDER_OFF_SENSOR_PROFILE_REDUCTION = 30f;
     private static final String TRANSPONDER_OFF_SENSOR_PROFILE_FLEET_MOD = "transponderOffSensorProfile";
+    static final String TRANSPONDER_OFF_BURN_LEVEL_KEY = "exiledSector_transponderOffBurnLevelContribution";
+    private static final String TRANSPONDER_OFF_BURN_LEVEL_FLEET_MOD = "transponderOffBurnLevel";
     static final String CORONA_RESISTANCE_CONTRIBUTION_KEY = "exiledSector_fleetCoronaResistanceContribution";
     static final float MAX_CORONA_RESISTANCE_PERCENT = 100f;
     private static final String CORONA_RESISTANCE_FLEET_MOD = "fleetCoronaResistance";
@@ -124,6 +126,29 @@ public final class FleetWideEffects {
     static float transponderOffSensorProfilePercent(List<FleetMemberAPI> members) {
         float percent = FleetContributions.sum(members, TRANSPONDER_OFF_SENSOR_PROFILE_KEY);
         return Math.max(-MAX_TRANSPONDER_OFF_SENSOR_PROFILE_REDUCTION, Math.min(0f, percent));
+    }
+
+    public static void applyTransponderOffBurnLevel(CampaignFleetAPI fleet) {
+        StatBonus fleetBurnMod = fleet == null || fleet.getStats() == null ? null : fleet.getStats().getFleetwideMaxBurnMod();
+        if (fleetBurnMod == null || fleet.getFleetData() == null) {
+            return;
+        }
+        float bonus = fleet.isTransponderOn() ? 0f : transponderOffBurnLevelBonus(fleet.getFleetData().getMembersListCopy());
+        if (bonus > 0f) {
+            fleetBurnMod.modifyFlat(ExiledSector.key(TRANSPONDER_OFF_BURN_LEVEL_FLEET_MOD), bonus, Translation.gameText("fleet.transponderOffBurnLevel"));
+        } else {
+            fleetBurnMod.unmodifyFlat(ExiledSector.key(TRANSPONDER_OFF_BURN_LEVEL_FLEET_MOD));
+        }
+    }
+
+    static float transponderOffBurnLevelBonus(List<FleetMemberAPI> members) {
+        float strongest = 0f;
+        for (FleetMemberAPI member : members) {
+            if (!member.isMothballed()) {
+                strongest = Math.max(strongest, member.getStats().getDynamic().getValue(TRANSPONDER_OFF_BURN_LEVEL_KEY, 0f));
+            }
+        }
+        return strongest;
     }
 
     public static void applyCoronaResistance(CampaignFleetAPI fleet) {
@@ -379,6 +404,7 @@ public final class FleetWideEffects {
         lastTransponderOn = transponderOn;
         recomputeExtendedPhaseField(playerFleet);
         applyTransponderOffSensorProfile(playerFleet);
+        applyTransponderOffBurnLevel(playerFleet);
     }
 
     private static void recomputeExtendedPhaseField(CampaignFleetAPI playerFleet) {

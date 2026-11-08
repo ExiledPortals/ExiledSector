@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.KillWatch;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.ArgumentCaptor;
@@ -115,10 +116,12 @@ class EngramHitListenersTest {
         when(flux.getMaxFlux()).thenReturn(5000f);
         when(killer.getFluxTracker()).thenReturn(flux);
         ShipAPI victim = ship(1, null, 0f);
-        when(victim.getListeners(KillFluxVentListener.KillWatch.class)).thenReturn(List.of());
+        when(victim.getListeners(KillWatch.class)).thenReturn(List.of());
+        KillFluxVentListener vent = new KillFluxVentListener(killer);
+        when(killer.getListeners(KillWatch.KillReaction.class)).thenReturn(List.of(vent));
 
-        new KillFluxVentListener(killer).modifyDamageDealt(mock(MissileAPI.class), victim, mock(DamageAPI.class), new Vector2f(), false);
-        KillFluxVentListener.KillWatch watch = addedListener(victim, KillFluxVentListener.KillWatch.class);
+        vent.modifyDamageDealt(mock(MissileAPI.class), victim, mock(DamageAPI.class), new Vector2f(), false);
+        KillWatch watch = addedListener(victim, KillWatch.class);
 
         watch.reportDamageApplied(killer, victim, null);
         verify(flux, never()).decreaseFlux(anyFloat());
@@ -137,8 +140,8 @@ class EngramHitListenersTest {
         ShipAPI station = ship(1, null, 0f);
         when(module.getParentStation()).thenReturn(station);
 
-        assertEquals(false, KillFluxVentListener.countsAsKill(killer, fighter));
-        assertEquals(false, KillFluxVentListener.countsAsKill(killer, module));
-        assertEquals(true, KillFluxVentListener.countsAsKill(killer, ship(1, null, 0f)));
+        assertEquals(false, KillWatch.countsAsKill(killer, fighter));
+        assertEquals(false, KillWatch.countsAsKill(killer, module));
+        assertEquals(true, KillWatch.countsAsKill(killer, ship(1, null, 0f)));
     }
 }

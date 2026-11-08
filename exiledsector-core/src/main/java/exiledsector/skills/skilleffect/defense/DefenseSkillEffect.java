@@ -53,6 +53,8 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
     ARMOR_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getArmorBonus), "stat.armor", false)),
     ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD(new PerDModMultEffect(liveStat(MutableShipStatsAPI::getArmorDamageTakenMult),
             "stat.armorDamageTakenPerDMod", true)),
+    HULL_DAMAGE_TAKEN_MULT_PER_DMOD(new PerDModMultEffect(liveStat(MutableShipStatsAPI::getHullDamageTakenMult),
+            "stat.hullDamageTakenPerDMod", true)),
     ARMOR_FLAT_FOR_LOW_BASE_ARMOR {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -284,6 +286,24 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
         }
     },
     DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_RANGE_FLAT(statEffect(FLAT, dynamicMod(HeldObjective.RANGE_BONUS_KEY), "stat.heldObjectiveDamageTakenRange", false)),
+    DAMAGE_TAKEN_WHILE_RETREATING_PERCENT(new ConditionalStatEffect(PERCENT, all(liveStat(MutableShipStatsAPI::getHullDamageTakenMult),
+            liveStat(MutableShipStatsAPI::getArmorDamageTakenMult), liveStat(MutableShipStatsAPI::getShieldDamageTakenMult)),
+            "stat.damageTaken", ShipAPI::isRetreating)) {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
+        public boolean invertsDescriptionColours() {
+            return false;
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", Math.abs(magnitude)).styled();
+        }
+    },
     RAM_PROW_COLLISION_DAMAGE_MULT(listener(CollisionDamageListener.COLLISION_DAMAGE_PERCENT_KEY, CollisionDamageListener.class,
             CollisionDamageListener::new)),
     HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST(listener(CrewLossHullDamageListener.PERCENT_PER_STEP_KEY, CrewLossHullDamageListener.class,

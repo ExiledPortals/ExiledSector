@@ -295,7 +295,8 @@ refreshed by each hit, capped at 90% less. As with shield disruption, the strong
 
 `KILL_FLUX_VENT_PERCENT` watches every enemy ship this ship damages and, when one's hull reaches zero, removes that
 share of maximum flux from whichever ship dealt the killing blow, if it has the effect. Strikecraft and station
-modules don't count (`KillFluxVentListener`).
+modules don't count. The watch is the shared `KillWatch`, which calls every `KillWatch.KillReaction` listener on the
+killer (`KillFluxVentListener`).
 
 ### Flak bursts
 
@@ -356,12 +357,19 @@ fleet's fuel is at least half its total fuel capacity. A transient script rechec
 ### Pirate Frenzy
 
 Pirate Frenzy is a stacking buff any effect can grant through `PirateFrenzy.of(ship).gain()`. Each stack runs its own
-10-second timer and gives a fixed 5% increased weapon rate of fire and 5% reduced weapon flux cost. A ship holds up to
-5 stacks, a stack gained at the cap replaces the oldest, and destruction clears them all (`PirateFrenzy`).
+10-second timer, lengthened by `PIRATE_FRENZY_SECONDS_FLAT`, and gives a fixed 5% increased weapon rate of fire and 5%
+reduced weapon flux cost. A ship holds up to 5 stacks, a stack gained at the cap replaces the oldest, and destruction
+clears them all (`PirateFrenzy`).
 
 Blood in the Water's `PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT` grants a stack for each enemy ship destroyed
 within its range, checked every 0.25 seconds. Strike craft and station modules don't count
-(`FrenzyOnNearbyDestructionListener`).
+(`FrenzyOnNearbyDestructionListener`). `HELPLESS_KILL_PIRATE_FRENZY_STACKS_FLAT` grants its stacks when this ship deals
+the killing blow to an overloaded, venting or flamed-out enemy ship, through `KillWatch` (`HelplessKillFrenzyListener`).
+
+### Running Dark
+
+`TRANSPONDER_OFF_BURN_LEVEL_FLAT` adds the strongest active ship's value to the fleet's max burn level while the
+transponder is off, reapplied like the transponder-off sensor profile (`FleetWideEffects.applyTransponderOffBurnLevel`).
 
 ### Pick Off The Stragglers
 
