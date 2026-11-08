@@ -222,9 +222,9 @@ class PhantomWakeListenerTest {
 
         plugin.advance(LIFETIME_SECONDS, List.of());
 
-        verify(engine).spawnEmpArc(eq(ownerShip), any(Vector2f.class), isNull(), eq(enemy), eq(DamageType.ENERGY), eq(0f), eq(500f),
+        verify(engine).spawnEmpArcPierceShields(eq(ownerShip), any(Vector2f.class), isNull(), eq(enemy), eq(DamageType.ENERGY), eq(0f), eq(500f),
                 anyFloat(), any(), anyFloat(), any(), any());
-        verify(engine, times(1)).spawnEmpArc(any(), any(), any(), any(), any(), anyFloat(), anyFloat(), anyFloat(), any(), anyFloat(), any(),
+        verify(engine, times(1)).spawnEmpArcPierceShields(any(), any(), any(), any(), any(), anyFloat(), anyFloat(), anyFloat(), any(), anyFloat(), any(),
                 any());
         verify(engine).removeEntity(afterimage);
     }
@@ -240,7 +240,7 @@ class PhantomWakeListenerTest {
         when(engine.isEntityInPlay(afterimage)).thenReturn(false);
         plugin.advance(LIFETIME_SECONDS / 2f, List.of());
 
-        verify(engine, never()).spawnEmpArc(any(), any(), any(), any(), any(), anyFloat(), anyFloat(), anyFloat(), any(), anyFloat(), any(),
+        verify(engine, never()).spawnEmpArcPierceShields(any(), any(), any(), any(), any(), anyFloat(), anyFloat(), anyFloat(), any(), anyFloat(), any(),
                 any());
     }
 

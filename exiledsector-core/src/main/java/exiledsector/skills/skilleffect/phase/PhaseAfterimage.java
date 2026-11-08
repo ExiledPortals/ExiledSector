@@ -156,7 +156,7 @@ final class PhaseAfterimage extends BaseEveryFrameCombatPlugin {
         }
         Vector2f burstPoint = new Vector2f(afterimage.getLocation());
         for (ShipAPI target : CombatQueries.hostilesNear(ownerShip, burstPoint, FADE_BURST_RANGE, candidate -> !candidate.isFighter())) {
-            engine.spawnEmpArc(ownerShip, new Vector2f(burstPoint), null, target, DamageType.ENERGY, 0f, fadeEmp, FADE_ARC_MAX_RANGE,
+            engine.spawnEmpArcPierceShields(ownerShip, new Vector2f(burstPoint), null, target, DamageType.ENERGY, 0f, fadeEmp, FADE_ARC_MAX_RANGE,
                     ModSounds.orSilent(FADE_ARC_SOUND), FADE_ARC_THICKNESS, FADE_ARC_FRINGE, FADE_ARC_CORE);
         }
     }
