@@ -2,21 +2,16 @@ package exiledsector.skills.skilleffect.stationmodule;
 
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
-import exiledsector.skills.skilleffect.ListenerEffect;
 
 public enum StationModuleSkillEffect implements BackedSkillEffect {
 
-    MODULE_HULL_PERCENT(ModuleBoost.HULL_PERCENT_KEY),
-    MODULE_ARMOR_PERCENT(ModuleBoost.ARMOR_PERCENT_KEY);
+    MODULE_HULL_PERCENT,
+    MODULE_ARMOR_PERCENT;
 
-    private final EffectBacking backing;
-
-    StationModuleSkillEffect(String magnitudeKey) {
-        this.backing = new ListenerEffect<>(magnitudeKey, null, null);
-    }
+    private static final EffectBacking READ_BY_MODULES = new ModuleBonusBacking();
 
     @Override
     public EffectBacking backing() {
-        return backing;
+        return READ_BY_MODULES;
     }
 }

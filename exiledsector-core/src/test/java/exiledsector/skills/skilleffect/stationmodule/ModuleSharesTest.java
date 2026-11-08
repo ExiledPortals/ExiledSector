@@ -73,24 +73,14 @@ class ModuleSharesTest {
     }
 
     @Test
-    void nothingIsSharedWithoutARebuildWhenItsStatIsFixedAtBuild() {
-        Set<String> sharedLive = new TreeSet<>();
-        for (String name : SkillEffectNames.all()) {
-            if (fixedAtBuild(name) && SkillEffect.byName(name).moduleShare() == ModuleShare.SHARE) {
-                sharedLive.add(name);
-            }
-        }
-
-        assertTrue(sharedLive.isEmpty(), "These effects change stats fixed at ship build; make them SHARE_REBUILD or exclude them: " + sharedLive);
-    }
-
-    private static boolean fixedAtBuild(String name) {
-        return name.startsWith("ARMOR_") || name.startsWith("HULL_") || name.startsWith("SHIELD_ARC_") || name.endsWith("_AMMO_PERCENT")
-                || name.contains("FIGHTER_BAYS") || name.contains("DURABILITY");
+    void statsFixedAtBuildAreSharedLikeAnyOtherBecauseTheShareLandsBeforeTheModuleIsBuilt() {
+        assertEquals(ModuleShare.SHARE, SkillEffect.byName("HULL_PERCENT").moduleShare());
+        assertEquals(ModuleShare.SHARE, SkillEffect.byName("ARMOR_FLAT_FOR_LOW_BASE_ARMOR").moduleShare());
+        assertEquals(ModuleShare.SHARE, SkillEffect.byName("SHIP_MASS_PERCENT").moduleShare());
     }
 
     @Test
-    void sharedEffectsNeedNoCombatTickBecauseTheShareOnlyCallsApply() {
+    void sharedEffectsNeedNoCombatTickBecauseTheShareNeverAdvancesThem() {
         Set<String> advancing = new TreeSet<>();
         for (String name : SkillEffectNames.all()) {
             SkillEffect effect = SkillEffect.byName(name);

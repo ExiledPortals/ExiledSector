@@ -305,6 +305,10 @@ public final class ResolvedTree {
         return totals.contributions();
     }
 
+    public Map<SkillEffect, Float> permanentTotals() {
+        return permanentTotals(totals);
+    }
+
     // each key is only ever stored with the one type its supplier returns
     @SuppressWarnings("unchecked")
     public <T> T derived(Object key, Supplier<T> derivation) {

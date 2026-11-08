@@ -1,18 +1,15 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import exiledsector.skills.AffinitySteps;
 import exiledsector.skills.DamageTakenCaps;
 import exiledsector.skills.EffectContribution;
 import exiledsector.skills.EffectTotals;
-import exiledsector.skills.ShipFacts;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
-import exiledsector.skills.skilleffect.stationmodule.ModuleBoost;
-import exiledsector.persistence.ShipRecords;
+import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
+import exiledsector.skills.skilleffect.stationmodule.StationModuleSkillEffect;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.InstalledHullMods;
 
@@ -22,36 +19,40 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-final class ModuleTreeShare implements AdvanceableListener {
+final class ModuleTreeShare {
 
-    static final String MOD_ID_PREFIX = "exiledSector_moduleShare_";
+    private static final Object AFFINITY_BONUS_RATIOS_KEY = new Object();
+    private static final Map<StationModuleSkillEffect, SkillEffect> MODULE_BONUS_TARGETS = Map.of(
+            StationModuleSkillEffect.MODULE_HULL_PERCENT, DefenseSkillEffect.HULL_PERCENT,
+            StationModuleSkillEffect.MODULE_ARMOR_PERCENT, DefenseSkillEffect.ARMOR_PERCENT);
 
-    private final ShipAPI parentShip;
-    private final List<SkillTreeEffectSource.NodeEffects> parentNodeEffects;
-    private final Map<SkillEffect, Float> affinityBonusRatios;
-    private final HullSize parentHullSize;
-    private final Set<String> integratedNodeIds;
-    private boolean shared;
-
-    ModuleTreeShare(ShipAPI parentShip, List<SkillTreeEffectSource.NodeEffects> parentNodeEffects, Map<SkillEffect, Float> affinityBonusRatios,
-                    HullSize parentHullSize, Set<String> integratedNodeIds) {
-        this.parentShip = parentShip;
-        this.parentNodeEffects = parentNodeEffects;
-        this.affinityBonusRatios = affinityBonusRatios;
-        this.parentHullSize = parentHullSize;
-        this.integratedNodeIds = integratedNodeIds;
+    private ModuleTreeShare() {
     }
 
-    static void attach(ShipAPI ship, ResolvedTree resolvedTree, Set<String> integratedNodeIds) {
-        if (ship.isStationModule() || ship.getHullSpec() == null || !ShipFacts.hasModuleSlots(ship.getHullSpec())
-                || (share(ship) <= 0f && !ModuleBoost.hasModuleBonus(ship.getMutableStats()))) {
-            return;
+    static Map<SkillEffect, Float> moduleTotals(ShipEffectContext parentContext, ResolvedTree parentTree, ShipVariantAPI moduleVariant) {
+        Map<SkillEffect, Float> totals = new LinkedHashMap<>();
+        float share = share(parentContext);
+        if (share > 0f) {
+            totals.putAll(sharedTotals(SkillTreeEffectSource.nodeEffects(parentTree), integratedNodeIds(parentContext),
+                    parentTree.derived(AFFINITY_BONUS_RATIOS_KEY, () -> affinityBonusRatios(parentTree.contributions())),
+                    parentTree.hullSize(), moduleVariant, share));
         }
-        List<ModuleTreeShare> existing = ship.getListeners(ModuleTreeShare.class);
-        if (existing == null || existing.isEmpty()) {
-            ship.addListener(new ModuleTreeShare(ship, SkillTreeEffectSource.nodeEffects(resolvedTree),
-                    affinityBonusRatios(resolvedTree.contributions()), resolvedTree.hullSize(), integratedNodeIds));
-        }
+        Map<SkillEffect, Float> parentTotals = parentTree.permanentTotals();
+        MODULE_BONUS_TARGETS.forEach((moduleBonus, moduleStat) -> {
+            float moduleBonusTotal = parentTotals.getOrDefault(moduleBonus, 0f);
+            if (moduleBonusTotal != 0f) {
+                totals.merge(moduleStat, moduleBonusTotal, Float::sum);
+            }
+        });
+        return totals;
+    }
+
+    static float share(ShipEffectContext parentContext) {
+        return ModuleShareSetting.shareFor(parentContext.member() != null && parentContext.member().isStation());
+    }
+
+    private static Set<String> integratedNodeIds(ShipEffectContext parentContext) {
+        return parentContext.shipData() == null ? Set.of() : Set.copyOf(parentContext.shipData().getIntegratedNodeIds());
     }
 
     static Map<SkillEffect, Float> affinityBonusRatios(List<EffectContribution> resolvedContributions) {
@@ -71,27 +72,6 @@ final class ModuleTreeShare implements AdvanceableListener {
             AffinitySteps.stepsFor(affinity).forEach(step -> ratios.putIfAbsent(step.effect(), 0f));
         }
         return ratios;
-    }
-
-    static float share(ShipAPI parentShip) {
-        return ModuleShareSetting.shareFor(parentShip.isStation());
-    }
-
-    @Override
-    public void advance(float amount) {
-        if (shared) return;
-        shared = true;
-        List<ShipAPI> modules = parentShip.getChildModulesCopy();
-        if (modules == null) return;
-        float share = share(parentShip);
-        String modIdPrefix = MOD_ID_PREFIX + parentShip.getId() + "_";
-        for (ShipAPI module : modules) {
-            if (module.isAlive() && !module.isHulk() && module.getVariant() != null && module.getHullSpec() != null) {
-                Map<SkillEffect, Float> totals = share > 0f && ShipRecords.taggedTree(module.getVariant()) == null
-                        ? sharedTotals(parentNodeEffects, integratedNodeIds, affinityBonusRatios, parentHullSize, module.getVariant(), share) : Map.of();
-                ModuleBoost.boost(parentShip, module, totals, modIdPrefix);
-            }
-        }
     }
 
     static Map<SkillEffect, Float> sharedTotals(List<SkillTreeEffectSource.NodeEffects> nodeEffects, Set<String> integratedNodeIds,

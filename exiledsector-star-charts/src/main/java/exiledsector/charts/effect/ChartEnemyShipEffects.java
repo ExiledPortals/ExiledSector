@@ -17,13 +17,14 @@ import exiledsector.effects.ShipEffectContext;
 import exiledsector.effects.ShipEffectSource;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.skills.EffectContribution;
-import exiledsector.skills.ShipFacts;
+import exiledsector.skills.EffectTotals;
 import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -168,9 +169,32 @@ public final class ChartEnemyShipEffects implements ShipEffectSource {
             return;
         }
         addDamageListener(ship, granted);
-        if (ship.getHullSpec() != null && ShipFacts.hasModuleSlots(ship.getHullSpec())) {
-            ship.addListener(new ChartEnemyModuleGrant(ship, granted, nodeIdsGrantedWithoutTree(resolvedTree)));
+    }
+
+    @Override
+    public Map<SkillEffect, Float> moduleContributions(ShipEffectContext parentContext, ResolvedTree parentTree, ShipVariantAPI moduleVariant) {
+        List<String> nodeIds = nodeIdsGrantedWithoutTree(parentTree);
+        if (nodeIds.isEmpty()) {
+            return Map.of();
         }
+        ShipEffectContext moduleContext = new ShipEffectContext(new ShipSkillData(), null, moduleVariant, moduleVariant.getHullSize());
+        Map<SkillEffect, Float> sums = new LinkedHashMap<>();
+        for (EffectContribution contribution : GrantedNodes.withoutTree(nodeIds, moduleContext, NODE_MOD_ID_PREFIX)) {
+            if (contribution.permanent()) {
+                contribution.effects().forEach(effect -> sums.merge(effect.effect(), effect.magnitude(), Float::sum));
+            }
+        }
+        return EffectTotals.permanentTotals(sums);
+    }
+
+    @Override
+    public void applyToModule(ShipEffectContext parentContext, MutableShipStatsAPI moduleStats) {
+        grantedTo(parentContext.member()).statMults().forEach((stat, mult) -> stat.applyToShip(moduleStats, MOD_ID_PREFIX, mult));
+    }
+
+    @Override
+    public void afterModuleCreation(ShipEffectContext parentContext, ShipAPI module) {
+        addDamageListener(module, grantedTo(parentContext.member()));
     }
 
     static List<String> nodeIdsGrantedWithoutTree(ResolvedTree resolvedTree) {
@@ -184,21 +208,6 @@ public final class ChartEnemyShipEffects implements ShipEffectSource {
             }
         }
         return nodeIds;
-    }
-
-    static void applyToModule(ShipAPI module, Granted granted, List<String> nodeIdsGrantedWithoutTree) {
-        MutableShipStatsAPI stats = module.getMutableStats();
-        granted.statMults().forEach((stat, mult) -> stat.applyToShip(stats, MOD_ID_PREFIX, mult));
-        ShipEffectContext moduleContext = new ShipEffectContext(new ShipSkillData(), null, module.getVariant(), module.getHullSize());
-        for (EffectContribution contribution : GrantedNodes.withoutTree(nodeIdsGrantedWithoutTree, moduleContext, NODE_MOD_ID_PREFIX)) {
-            if (contribution.permanent()) {
-                for (SkillTypeEffect effect : contribution.effects()) {
-                    effect.effect().apply(stats, contribution.modIdPrefix(), effect.magnitude());
-                    effect.effect().applyAfterShipCreation(module, contribution.modIdPrefix(), effect.magnitude());
-                }
-            }
-        }
-        addDamageListener(module, granted);
     }
 
     @Override

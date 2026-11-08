@@ -2,9 +2,12 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import exiledsector.skills.EffectContribution;
+import exiledsector.skills.skilleffect.SkillEffect;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ShipEffectSource {
 
@@ -33,5 +36,15 @@ public interface ShipEffectSource {
     }
 
     default void applyToFighter(ShipAPI fighter, ShipAPI ship) {
+    }
+
+    default Map<SkillEffect, Float> moduleContributions(ShipEffectContext parentContext, ResolvedTree parentTree, ShipVariantAPI moduleVariant) {
+        return Map.of();
+    }
+
+    default void applyToModule(ShipEffectContext parentContext, MutableShipStatsAPI moduleStats) {
+    }
+
+    default void afterModuleCreation(ShipEffectContext parentContext, ShipAPI module) {
     }
 }
