@@ -432,9 +432,10 @@ Vanilla has no stat for EMP damage dealt, so `EmpDamageListener` (`weapon`) resc
 
 Vanilla spreads a hull or armor hit's EMP, hull and armor damage together over the weapons and engines within two
 armor cells of the struck cell, half to those in the inner ring and a quarter to the outer ring.
-`DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT` repeats that sum with the hit's EMP alone for the parts already disabled
-before the hit, with the same EMP and part damage multipliers, and deals that share as high explosive damage at the hit
-point on the next frame, past shields and through armor as usual (`IonCascadeListener`).
+`DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT` takes the EMP the nearest part already disabled before the hit would get
+(half or a quarter of the hit's EMP, after the same EMP and part damage multipliers), and deals its percentage of that
+as high explosive damage at the hit point on the next frame, past shields and through armor as usual. Only that one
+part counts, however many disabled parts are in reach (`IonCascadeListener`).
 
 ### Ion Spill
 

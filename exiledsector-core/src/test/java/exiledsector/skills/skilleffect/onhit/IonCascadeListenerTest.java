@@ -122,14 +122,31 @@ class IonCascadeListenerTest {
     }
 
     @Test
-    void onlyDisabledPartsInReachTurnTheirEmpIntoHullDamage() {
+    void onlyTheClosestDisabledPartInReachCounts() {
         ShipAPI target = target(
-                List.of(weaponAt(new Vector2f(0f, 0f), true), weaponAt(new Vector2f(1f, 0f), false), weaponAt(new Vector2f(5f, 0f), true)),
+                List.of(weaponAt(new Vector2f(0f, 0f), true), weaponAt(new Vector2f(1f, 0f), false), weaponAt(new Vector2f(1f, 1f), true),
+                        weaponAt(new Vector2f(5f, 0f), true)),
                 List.of(engineAt(new Vector2f(0f, 2f), true)));
 
-        float wasted = IonCascadeListener.empOnDisabledParts(target, new Vector2f(), 100f, null);
+        float convertible = IonCascadeListener.empOnClosestDisabledPart(target, new Vector2f(), 100f, null);
 
-        assertEquals(100f * IonCascadeListener.INNER_CELL_EMP_SHARE + 100f * IonCascadeListener.OUTER_CELL_EMP_SHARE, wasted, 1e-4f);
+        assertEquals(100f * IonCascadeListener.INNER_CELL_EMP_SHARE, convertible, 1e-4f);
+    }
+
+    @Test
+    void anOuterRingPartAloneGivesTheOuterShare() {
+        ShipAPI target = target(List.of(weaponAt(new Vector2f(5f, 0f), true)), List.of(engineAt(new Vector2f(0f, 2f), true)));
+
+        float convertible = IonCascadeListener.empOnClosestDisabledPart(target, new Vector2f(), 100f, null);
+
+        assertEquals(100f * IonCascadeListener.OUTER_CELL_EMP_SHARE, convertible, 1e-4f);
+    }
+
+    @Test
+    void noDisabledPartInReachConvertsNothing() {
+        ShipAPI target = target(List.of(weaponAt(new Vector2f(0f, 0f), false), weaponAt(new Vector2f(3f, 0f), true)), List.of());
+
+        assertEquals(0f, IonCascadeListener.empOnClosestDisabledPart(target, new Vector2f(), 100f, null));
     }
 
     @Test

@@ -7863,14 +7863,14 @@
 			"effects": [
 				{
 					"effect": "DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT",
-					"magnitude": 100
+					"magnitude": 30
 				}
 			],
 			"integrated": {
 				"effects": [
 					{
 						"effect": "DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT",
-						"magnitude": 100
+						"magnitude": 40
 					},
 					{
 						"effect": "EMP_DAMAGE_PERCENT",

@@ -558,7 +558,7 @@
     "effect.PHASE_EXIT_WEAPON_DAMAGE_DURATION_PERCENT": "The weapon damage bonus on leaving phase has <good>{value}%</good> increased duration.",
     "effect.PHASE_ENTRY_AFTERIMAGE_SECONDS_FLAT": "When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>{value}</good> seconds.",
     "effect.PHASE_AFTERIMAGE_FADE_EMP_FLAT": "When the afterimage fades, it bursts for <good>{value}</good> EMP damage to enemy ships within {range} su.",
-    "effect.DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT": "<good>{value}%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.",
+    "effect.DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT": "<good>{value}%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.",
     "effect.SHIELD_EMP_TO_ENERGY_PERCENT": "<good>{value}%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.",
     "effect.ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT": "<good>{value}%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead.",
     "effect.ENERGY_HIT_INJUNCTION_PERCENT": "Energy weapon hits give enemy ships an Injunction stack for {seconds} seconds, at most once a second. Ships can hold up to {stacks} Injunction stacks.",
