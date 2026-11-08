@@ -188,6 +188,22 @@ class WeaponSkillEffectTest {
     }
 
     @Test
+    void ballisticRangeGrowsWithSensorStrengthAlongsideTheEnergyBonus() {
+        StatBonus energyRange = new StatBonus();
+        StatBonus ballisticRange = new StatBonus();
+        when(stats.getSensorStrength()).thenReturn(new MutableStat(120f));
+        when(stats.getEnergyWeaponRangeBonus()).thenReturn(energyRange);
+        when(stats.getBallisticWeaponRangeBonus()).thenReturn(ballisticRange);
+
+        WeaponSkillEffect.BALLISTIC_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT.applyAfterShipCreation(ship, "picket_ballistic", 0.5f);
+        WeaponSkillEffect.ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT.applyAfterShipCreation(ship, "picket_energy", 0.5f);
+
+        assertTrue(WeaponSkillEffect.BALLISTIC_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT.appliesAfterOtherEffects());
+        assertEquals(60f, energyRange.getFlatBonus(), EPSILON);
+        assertEquals(60f, ballisticRange.getFlatBonus(), EPSILON);
+    }
+
+    @Test
     void ballisticCountsAsEnergySetsItsFlagWhateverTheMagnitude() {
         WeaponSkillEffect.BALLISTIC_COUNTS_AS_ENERGY.apply(stats, "fafnir", 0f);
 

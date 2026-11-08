@@ -290,6 +290,8 @@ public enum FighterSkillEffect implements BackedSkillEffect {
                     .arg("max", SwarmLinkListener.MAX_DAMAGE_PERCENT).styled();
         }
     },
+    STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_PERCENT(new FighterListenerEffect<>(SwarmLinkListener.MAX_DAMAGE_BONUS_PERCENT_KEY,
+            SwarmLinkListener.class, SwarmLinkListener::new)),
     STRIKECRAFT_DEATH_BURST_DAMAGE_FLAT(new FighterListenerEffect<>(CinderBurstListener.DAMAGE_KEY, CinderBurstListener.class,
             CinderBurstListener::new)) {
         @Override

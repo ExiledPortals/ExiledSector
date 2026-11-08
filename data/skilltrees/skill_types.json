@@ -817,6 +817,22 @@
 					"magnitude": 15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ELECTRONIC_WARFARE_PENALTY_PERCENT",
+						"magnitude": -25
+					},
+					{
+						"effect": "SENSOR_STRENGTH_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "ELECTRONIC_WARFARE",
+						"magnitude": 1
+					}
+				]
+			},
 			"flavour": "In a joint League fleet, every member world jams anyone it suspects of listening, which is everyone. Most of the noise comes from allies.",
 			"tags": [
 				"weapons",
@@ -834,6 +850,18 @@
 					"magnitude": -20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT",
+						"magnitude": -20
+					},
+					{
+						"effect": "DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_RANGE_FLAT",
+						"magnitude": 1000
+					}
+				]
+			},
 			"flavour": "Under the League's founding compact, every member world must defend whatever the League holds.",
 			"tags": [
 				"fleet_support"
@@ -850,6 +878,18 @@
 					"magnitude": 4
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT",
+						"magnitude": 4
+					},
+					{
+						"effect": "STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
 			"flavour": "No League detachment will launch second, so joint fleets launch every wing at once.",
 			"tags": [
 				"fighter",
@@ -867,6 +907,18 @@
 					"magnitude": 3
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SUPPLY_USE_REDUCTION_PERCENT_PER_HULL_TYPE",
+						"magnitude": 3
+					},
+					{
+						"effect": "FUEL_USE_REDUCTION_PERCENT_PER_HULL_TYPE",
+						"magnitude": 1
+					}
+				]
+			},
 			"flavour": "Every League depot stocks spares for its own world's hulls and nothing else. The paperwork for a mixed fleet runs to several volumes, one per world.",
 			"tags": [
 				"logistics",
@@ -885,6 +937,14 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT",
+						"magnitude": 20
+					}
+				]
+			},
 			"flavour": "Kazeron's orbital yards will not certify a recovered hull until every frame weld has been inspected.",
 			"tags": [
 				"logistics",
@@ -998,6 +1058,18 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT",
+						"magnitude": 1
+					},
+					{
+						"effect": "BALLISTIC_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT",
+						"magnitude": 1
+					}
+				]
+			},
 			"flavour": "Studying the sensor pickets the League posts along its Hegemony border shows the crew how to slave energy weapon targeting to the ship's own sensors. The pickets are the one League institution every member world agrees to fund.",
 			"flavourAutomated": "The ship's core logs the sweeps of the sensor pickets the League posts along its Hegemony border and slaves its energy weapon targeting to its own sensors on the same pattern. The pickets are the one League institution every member world agrees to fund.",
 			"tags": [
@@ -1910,6 +1982,22 @@
 					"magnitude": 50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ENERGY_WEAPON_AMMO_REGEN_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "BALLISTIC_WEAPON_AMMO_REGEN_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "BALLISTIC_AND_ENERGY_WEAPON_AMMO_SAVE_CHANCE_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
 			"flavour": "League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other. Serving under a League commission drills it into the crew.",
 			"flavourAutomated": "League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other. The ship's core records it from the League ships it serves beside and runs it perfectly every time, a feat no League crew has ever managed.",
 			"tags": [
@@ -4038,6 +4126,18 @@
 					"magnitude": -20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_DAMAGE_SHARED_PERCENT",
+						"magnitude": 20
+					},
+					{
+						"effect": "WEAPON_DAMAGE_PERCENT",
+						"magnitude": -10
+					}
+				]
+			},
 			"flavour": "League battle lines drawn from rival polities learned to stand or fall together, if only because none would let another take the credit for retreating first.",
 			"tags": [
 				"shield",
@@ -5389,6 +5489,18 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "WING_SCRAMBLE_COPIES",
+						"magnitude": 1
+					},
+					{
+						"effect": "FIGHTER_DAMAGE_TAKEN_MULT",
+						"magnitude": -15
+					}
+				]
+			},
 			"flavour": "Every League member world sends its own carrier detachment to a joint fleet, and the League's flight doctrine makes them fly as one: a bomber from one world takes orders from a flight lead from another. Pilots from rival worlds fly together mostly so each can report on the other.",
 			"flavourAutomated": "Every League member world sends its own carrier detachment to a joint fleet, and the League's flight doctrine makes them fly as one. The ship's core records the doctrine from joint fleet comm traffic and flies its own wings by it. It has no rival world to report back to.",
 			"todo": "Prototype: wings never grow beyond their normal size; copies are retrained from the wing's own natives, and a copy lost or sent to rearm comes back when the host bay rebuilds a native that is retrained into it. Still to check in game: rearm cycles of copies and the replacement rate during long fights.",

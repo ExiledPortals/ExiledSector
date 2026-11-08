@@ -243,6 +243,12 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("max", FleetWideEffects.MAX_SUPPLY_USE_PER_HULL_TYPE_REDUCTION).styled();
         }
     },
+    FUEL_USE_REDUCTION_PERCENT_PER_HULL_TYPE(playerFleetContribution(FleetWideEffects.FUEL_USE_PER_HULL_TYPE_KEY)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("max", FleetWideEffects.MAX_FUEL_USE_PER_HULL_TYPE_REDUCTION).styled();
+        }
+    },
     RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT(playerFleetContribution(RecoveryDModAvoidance.CHANCE_PERCENT_KEY)) {
         @Override
         public StyledText description(float magnitude) {

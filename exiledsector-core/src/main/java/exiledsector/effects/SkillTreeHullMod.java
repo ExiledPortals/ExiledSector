@@ -242,6 +242,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         FleetWideEffects.applySwarmSensorStrength(fleet);
         FleetWideEffects.applyTerrainMovementPenalty(fleet);
         FleetWideEffects.applySupplyUsePerHullType(fleet);
+        FleetWideEffects.applyFuelUsePerHullType(fleet);
         TowLines.apply(fleet);
     }
 

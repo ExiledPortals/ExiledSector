@@ -33,6 +33,9 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     WEAPON_DAMAGE_MULT_PER_DMOD(new PerDModMultEffect(WeaponStatFamily.DAMAGE.target(WeaponScope.ALL), "stat.weaponDamagePerDMod", false)),
     BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT(new DerivedStatEffect(WeaponSkillEffect::applyBurnDamage, StatMode.MULT, true)),
     ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT(new DerivedStatEffect(WeaponSkillEffect::applySensorRange, null, true)),
+    BALLISTIC_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT(new DerivedStatEffect(WeaponSkillEffect::applyBallisticSensorRange, null, true)),
+    BALLISTIC_AND_ENERGY_WEAPON_AMMO_SAVE_CHANCE_PERCENT(listener(AmmoSaveListener.CHANCE_PERCENT_KEY, AmmoSaveListener.class,
+            AmmoSaveListener::new)),
     MISSILE_RELOAD_PERCENT_PER_MINUTE {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -229,6 +232,10 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
         MutableStat burnLevel = stats.getMaxBurnLevel();
         float burnOverDefault = Math.max(0f, burnLevel.getModifiedValue() - burnLevel.getBaseValue());
         WeaponStatFamily.DAMAGE.target(WeaponScope.BALLISTIC).apply(stats, modId, StatMode.MULT, burnOverDefault * magnitude);
+    }
+
+    private static void applyBallisticSensorRange(MutableShipStatsAPI stats, String modId, float magnitude) {
+        WeaponStatFamily.RANGE.target(WeaponScope.BALLISTIC).apply(stats, modId, StatMode.FLAT, stats.getSensorStrength().getModifiedValue() * magnitude);
     }
 
     private static void applySensorRange(MutableShipStatsAPI stats, String modId, float magnitude) {
