@@ -16,6 +16,7 @@ import exiledsector.skills.skilleffect.DerivedStatEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
 import exiledsector.skills.skilleffect.PerDModMultEffect;
+import exiledsector.skills.skilleffect.PerDModPercentEffect;
 import exiledsector.skills.skilleffect.StatMode;
 import exiledsector.skills.skilleffect.StatTarget;
 
@@ -33,6 +34,10 @@ import static exiledsector.skills.skilleffect.weapon.TargetDamageBonusEffect.tar
 public enum WeaponSkillEffect implements BackedSkillEffect {
 
     WEAPON_DAMAGE_MULT_PER_DMOD(new PerDModMultEffect(WeaponStatFamily.DAMAGE.target(WeaponScope.ALL), "stat.weaponDamagePerDMod", false)),
+    WEAPON_RATE_OF_FIRE_PERCENT_PER_DMOD(new PerDModPercentEffect(WeaponStatFamily.RATE_OF_FIRE.target(WeaponScope.ALL),
+            "stat.weaponRateOfFirePerDMod", false)),
+    WEAPON_FLUX_COST_PERCENT_PER_DMOD(new PerDModPercentEffect(WeaponStatFamily.FLUX_COST.target(WeaponScope.ALL),
+            "stat.weaponFluxCostPerDMod", true)),
     BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT(new DerivedStatEffect(WeaponSkillEffect::applyBurnDamage, StatMode.MULT, true)),
     ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT(new DerivedStatEffect(WeaponSkillEffect::applySensorRange, null, true)),
     BALLISTIC_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT(new DerivedStatEffect(WeaponSkillEffect::applyBallisticSensorRange, null, true)),

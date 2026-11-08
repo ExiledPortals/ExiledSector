@@ -841,7 +841,19 @@
 					"effect": "EXPLODE_ON_DEATH",
 					"magnitude": 2000
 				}
-			]
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "EXPLODE_ON_DEATH",
+						"magnitude": 2000
+					},
+					{
+						"effect": "EXPLODE_ON_DEATH_AREA_PERCENT",
+						"magnitude": 100
+					}
+				]
+			}
 		},
 		{
 			"id": "at_any_cost",
@@ -857,7 +869,19 @@
 					"effect": "RAM_BIGGEST_ENEMY",
 					"magnitude": 0
 				}
-			]
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "DEATH_ON_COLLISION_WITH_LARGE_ENEMY",
+						"magnitude": 0
+					},
+					{
+						"effect": "RAM_BIGGEST_ENEMY",
+						"magnitude": 0
+					}
+				]
+			}
 		},
 		{
 			"id": "refracting_projectiles",
@@ -4505,6 +4529,18 @@
 					"magnitude": 25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MANEUVERABILITY_PERCENT",
+						"magnitude": 20
+					},
+					{
+						"effect": "TOP_SPEED_PERCENT",
+						"magnitude": 35
+					}
+				]
+			},
 			"temporaryAfterDeploymentSeconds": 60,
 			"flavour": "The Knights of Ludd hold that a righteous ship meets its enemy at full burn, and drilling alongside them at Ceyx teaches the crew to trim the engines and controls for the charge.",
 			"flavourAutomated": "The Knights of Ludd hold that a righteous ship meets its enemy at full burn. The ship's core logs their charges at Ceyx and trims its engines and controls to match. The Knights would not call the result righteous.",
@@ -4531,6 +4567,26 @@
 					"magnitude": 5
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BOMBER_ROLE_TOP_SPEED_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "BOMBER_ROLE_ACCELERATION_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT",
+						"magnitude": 5
+					},
+					{
+						"effect": "BOMBER_PAYLOAD_DETONATION_SPARES_ALLIES",
+						"magnitude": 0
+					}
+				]
+			},
 			"flavour": "Picking through the wrecks of Luddic Path carriers showed the crew how the Path tears the engine governors out of its bombers and arms their warheads the moment they leave the deck. The faithful accept that some payloads go off before they ever reach the enemy.",
 			"flavourAutomated": "Flight recorders from wrecked Luddic Path carriers show how the Path tears the engine governors out of its bombers and arms their warheads the moment they leave the deck. The ship's core applies the same settings to its own bombers, and logs the ones that go off early without comment.",
 			"tags": [
@@ -4579,6 +4635,22 @@
 					"magnitude": 2
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "WEAPON_DAMAGE_MULT_PER_DMOD",
+						"magnitude": 2
+					},
+					{
+						"effect": "WEAPON_RATE_OF_FIRE_PERCENT_PER_DMOD",
+						"magnitude": 2
+					},
+					{
+						"effect": "WEAPON_FLUX_COST_PERCENT_PER_DMOD",
+						"magnitude": -2
+					}
+				]
+			},
 			"flavour": "Luddic faithful among the crew hold that a scarred ship, like a penitent, finds its strength in hardship. They keep its battered guns fighting with patient hands.",
 			"flavourAutomated": "Luddic faithful hold that a scarred ship, like a penitent, finds its strength in hardship. The ship's core holds no faith, only damage logs showing the battered guns of Luddic ships firing long past the point they should have failed. It keeps its own guns fighting the same way.",
 			"tags": [
@@ -4612,6 +4684,14 @@
 					"magnitude": 50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "RAM_PROW_COLLISION_DAMAGE_MULT",
+						"magnitude": 75
+					}
+				]
+			},
 			"flavour": "Pather ships weld scrap plate over the prow until it is more ram than hull. The Path counts this among the few acceptable uses of technology.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -4629,6 +4709,18 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST",
+						"magnitude": 1
+					},
+					{
+						"effect": "HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
 			"flavour": "Luddic Church ships carry a memorial plate for every hand lost aboard. The oldest hulls are mostly memorial.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -4647,6 +4739,18 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD",
+						"magnitude": 1
+					},
+					{
+						"effect": "ALLY_TOP_SPEED_PERCENT_PER_DMOD",
+						"magnitude": 2
+					}
+				]
+			},
 			"flavour": "Church doctrine reads every scar on a hull as a trial endured. A Luddic fleet forms up around its most battered ship.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -4669,6 +4773,18 @@
 					"magnitude": 50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "OVERLOAD_HULL_DAMAGE_PERCENT",
+						"magnitude": 5
+					},
+					{
+						"effect": "OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT",
+						"magnitude": 50
+					}
+				]
+			},
 			"flavour": "The Knights of Ludd count a scorched hull as penance, not damage.",
 			"todo": "Needs an icon.",
 			"tags": [

@@ -399,13 +399,14 @@ Vanilla only works out crew losses after a battle, so `HULL_DAMAGE_TAKEN_PERCENT
 vanilla's formula at its average roll: the ship's crew times the square of the hull damage taken this deployment as a
 share of maximum hull, times 0.75 and the crew loss multiplier. The crew is read at the first hull hit (a station
 module reads its parent's), each hull hit recounts the losses, and the reduction is a percent on hull damage taken
-(`CrewLossHullDamageListener`).
+(`CrewLossHullDamageListener`). `HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_PERCENT` adds percentage points to its cap.
 
 ### Sanctified Scars
 
 `ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD` counts the ship's d-mods once at deployment, up to five, and reduces the
 armor damage taken by allied ships within 1000 su as a percent, rechecked every 0.25 seconds. Strike craft and station
-modules don't count, and only the strongest source applies (`DModArmorAuraField`).
+modules don't count, and only the strongest source applies (`DModAuraField`). The integrated
+`ALLY_TOP_SPEED_PERCENT_PER_DMOD` raises their top speed the same way, its strongest source picked separately.
 
 ### Rite of Mortification
 

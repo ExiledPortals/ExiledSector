@@ -23,11 +23,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.floatThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -37,6 +39,7 @@ import static org.mockito.Mockito.when;
 class DeathExplosionListenerTest {
 
     private static final String FUEL_DAMAGE_PERCENT_KEY = "exiledSector_explodeOnDeathFuelDamagePercent";
+    private static final String AREA_PERCENT_KEY = DeathExplosionListener.AREA_PERCENT_KEY;
 
     private final List<ShipAPI> ships = new ArrayList<>();
 
@@ -114,6 +117,34 @@ class DeathExplosionListenerTest {
         verify(engine, never()).applyDamage(eq(hulk), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any());
         verify(engine, never()).applyDamage(eq(ship), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any());
         verify(engine, times(2)).spawnExplosion(any(), any(), any(), anyFloat(), anyFloat());
+    }
+
+    @Test
+    void anIncreasedAreaWidensTheRadiusByTheSquareRootOfTheAreaGained() {
+        assertEquals(300f, DeathExplosionListener.blastRadius(50f, 0f), 1e-3f);
+        assertEquals(300f * (float) Math.sqrt(2d), DeathExplosionListener.blastRadius(50f, 100f), 1e-3f);
+        assertEquals(400f * (float) Math.sqrt(2d), DeathExplosionListener.blastRadius(100f, 100f), 1e-3f);
+    }
+
+    @Test
+    void aWiderBlastStillReachesAlliesFurtherOut() {
+        ShipAPI ship = ship(0f, 0f, Map.of(FUEL_DAMAGE_PERCENT_KEY, 50f, AREA_PERCENT_KEY, 100f));
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getFuelCapacity()).thenReturn(200f);
+        when(ship.getMutableStats().getFleetMember()).thenReturn(member);
+        when(ship.getCollisionRadius()).thenReturn(50f);
+        when(ship.getHitpoints()).thenReturn(100f);
+        ShipAPI ally = ship(400f, 0f, Map.of());
+        gridShips.addAll(List.of(ship, ally));
+        HullDamageAboutToBeTakenListener listener = attachedListener(SpecialSkillEffect.EXPLODE_ON_DEATH, ship,
+                HullDamageAboutToBeTakenListener.class);
+
+        listener.notifyAboutToTakeHullDamage(null, ship, new Vector2f(), 150f);
+
+        float radius = 300f * (float) Math.sqrt(2d);
+        Vector2f allyLocation = ally.getLocation();
+        verify(engine).applyDamage(eq(ally), eq(allyLocation), floatThat(dealt -> Math.abs(dealt - 100f * (radius - 400f) / radius) < 1e-3f),
+                eq(DamageType.HIGH_EXPLOSIVE), eq(0f), eq(true), eq(false), eq(ship));
     }
 
     @Test

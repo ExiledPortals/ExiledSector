@@ -314,6 +314,8 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
                     .arg("max", CrewLossHullDamageListener.MAX_REDUCTION_PERCENT).styled();
         }
     },
+    HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_PERCENT(listener(CrewLossHullDamageListener.MAX_REDUCTION_BONUS_PERCENT_KEY,
+            CrewLossHullDamageListener.class, CrewLossHullDamageListener::new)),
     HUNGERING_RIFT_HEALING_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
