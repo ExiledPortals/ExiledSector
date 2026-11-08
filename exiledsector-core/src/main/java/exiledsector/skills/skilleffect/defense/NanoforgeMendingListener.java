@@ -7,6 +7,7 @@ import exiledsector.skills.skilleffect.ShipCombatListener;
 final class NanoforgeMendingListener extends ShipCombatListener implements AdvanceableListener {
 
     static final String REGEN_PERCENT_KEY = "exiledSector_nanoforgeMendingRegenPercent";
+    static final String REGEN_LIMIT_BONUS_KEY = "exiledSector_nanoforgeMendingRegenLimitBonus";
     static final float UNDAMAGED_SECONDS = 5f;
     static final float MAX_TOTAL_REGEN_PERCENT_OF_HULL = 100f;
 
@@ -24,7 +25,8 @@ final class NanoforgeMendingListener extends ShipCombatListener implements Advan
             return;
         }
         if (remainingRegen < 0f) {
-            remainingRegen = ownerShip.getMaxHitpoints() * MAX_TOTAL_REGEN_PERCENT_OF_HULL / 100f;
+            float limitPercentOfHull = Math.max(0f, MAX_TOTAL_REGEN_PERCENT_OF_HULL + magnitude(REGEN_LIMIT_BONUS_KEY));
+            remainingRegen = ownerShip.getMaxHitpoints() * limitPercentOfHull / 100f;
         }
         float hitpoints = ownerShip.getHitpoints();
         if (hitpoints < lastHitpoints) {

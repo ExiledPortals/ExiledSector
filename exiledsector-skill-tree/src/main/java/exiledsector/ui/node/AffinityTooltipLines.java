@@ -28,7 +28,8 @@ final class AffinityTooltipLines {
     private static final Set<SkillEffect> OTHER_AFFINITY_EFFECTS = Set.of(SpecialSkillEffect.HIGHEST_AFFINITY_FLAT_PER_S_MOD,
             SpecialSkillEffect.LOWEST_AFFINITY_AS_HIGHEST, SpecialSkillEffect.AFFINITY_EXCHANGE_TO_LOW_TECH_PERCENT,
             SpecialSkillEffect.AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT, SpecialSkillEffect.AFFINITY_EXCHANGE_TO_MIDLINE_PERCENT,
-            FighterSkillEffect.STRIKECRAFT_GAIN_AFFINITY_BONUSES, SpecialSkillEffect.LOW_TECH_AFFINITY_PERCENT);
+            FighterSkillEffect.STRIKECRAFT_GAIN_AFFINITY_BONUSES, SpecialSkillEffect.LOW_TECH_AFFINITY_PERCENT,
+            SpecialSkillEffect.AFFINITY_EQUALITY_TOLERANCE_FLAT);
     private static final StyledText LINE_BREAK = StyledText.of("\n");
 
     private AffinityTooltipLines() {
@@ -92,10 +93,11 @@ final class AffinityTooltipLines {
     private static List<SkillTypeEffect> scaledBonuses(List<EffectContribution> shipContributions, Map<SkillEffect, Float> totals,
                                                        Predicate<AffinityScaling.Filter> reads) {
         Map<SkillEffect, Float> bonuses = new LinkedHashMap<>();
+        float equalTolerance = AffinitySteps.equalTolerance(shipContributions);
         for (SkillTypeEffect effect : permanentEffects(shipContributions, effect -> effect.affinityScaling() != null
                 && reads.test(effect.affinityScaling().filter()))) {
             AffinityScaling scaling = effect.effect().affinityScaling();
-            int steps = scaling.stepsReached(totals);
+            int steps = scaling.stepsReached(totals, equalTolerance);
             if (steps > 0) {
                 bonuses.merge(scaling.target(), steps * effect.magnitude(), Float::sum);
             }

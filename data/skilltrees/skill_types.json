@@ -335,6 +335,18 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "NANOFORGE_HULL_REGEN_PERCENT",
+						"magnitude": 1
+					},
+					{
+						"effect": "NANOFORGE_HULL_REGEN_LIMIT_FLAT",
+						"magnitude": 50
+					}
+				]
+			},
 			"flavour": "Stripping the repair nanoforge out of a gutted Nexus shows the crew how the Remnant keep their hulls whole long after a fight should have broken them.",
 			"flavourAutomated": "Stripping the repair nanoforge out of a gutted Nexus shows the refit crew how the Remnant keep their hulls whole long after a fight should have broken them. Wired into an automated hull, it needs no hand to tell it where to work.",
 			"tags": [
@@ -383,6 +395,26 @@
 					"magnitude": 5
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "WEAPON_AUTOFIRE_ACCURACY_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "ENERGY_WEAPON_RANGE_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "BEAM_WEAPON_RANGE_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
 			"flavour": "A recovered gamma core, kept powered just long enough to be questioned, gives up the targeting routines Remnant drones use to lead a target.",
 			"flavourAutomated": "A recovered gamma core holds the targeting routines Remnant drones use to lead a target. The ship's core copies them across in a fraction of a second.",
 			"tags": [
@@ -401,6 +433,18 @@
 					"magnitude": 25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT",
+						"magnitude": 25
+					},
+					{
+						"effect": "TERRIFYING_PRESENCE_RANGE_PERCENT",
+						"magnitude": 50
+					}
+				]
+			},
 			"flavour": "Sensor logs from fights with Remnant fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.",
 			"tags": [
 				"fleet_support"
@@ -6919,6 +6963,22 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "HIGH_TECH_AFFINITY_FLAT",
+						"magnitude": 10
+					},
+					{
+						"effect": "NAV_RATING_PER_HIGH_TECH_AFFINITY",
+						"magnitude": 1
+					},
+					{
+						"effect": "TOP_SPEED_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
 			"flavour": "Remnant battlegroups keep station through relay protocols that are only dimly understood. The recovered fragment has never stopped transmitting.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -6952,6 +7012,14 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY",
+						"magnitude": 1.5
+					}
+				]
+			},
 			"flavour": "Remnant drones match each round to whatever it is about to hit.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -6971,6 +7039,18 @@
 					"magnitude": 20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL",
+						"magnitude": 20
+					},
+					{
+						"effect": "AFFINITY_EQUALITY_TOLERANCE_FLAT",
+						"magnitude": 5
+					}
+				]
+			},
 			"flavour": "Remnant hulls are rumored to hold every lineage of Domain design in a balance their cores never let slip.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -7002,6 +7082,14 @@
 					"magnitude": 25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_EMP_TO_ENERGY_PERCENT",
+						"magnitude": 35
+					}
+				]
+			},
 			"flavour": "Remnant ion bolts leave some of their charge in the shield projector as heat.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -7020,6 +7108,14 @@
 					"magnitude": 0.5
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "UNHIT_ARMOR_REGEN_LOW_CAP_PERCENT",
+						"magnitude": 0.7
+					}
+				]
+			},
 			"flavour": "A dormant Nexus still mends its own plating, a little at a time.",
 			"todo": "Needs an icon.",
 			"tags": [

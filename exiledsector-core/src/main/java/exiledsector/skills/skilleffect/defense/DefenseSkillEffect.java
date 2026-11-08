@@ -162,6 +162,13 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
                     .arg("limit", NanoforgeMendingListener.MAX_TOTAL_REGEN_PERCENT_OF_HULL).styled();
         }
     },
+    NANOFORGE_HULL_REGEN_LIMIT_FLAT(listener(NanoforgeMendingListener.REGEN_LIMIT_BONUS_KEY, NanoforgeMendingListener.class,
+            NanoforgeMendingListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.signed(this, magnitude).arg("seconds", NanoforgeMendingListener.UNDAMAGED_SECONDS).styled();
+        }
+    },
     UNHIT_ARMOR_REGEN_PERCENT(listener(UnhitArmorRegenListener.REGEN_PERCENT_KEY, UnhitArmorRegenListener.class,
             UnhitArmorRegenListener::new)) {
         @Override

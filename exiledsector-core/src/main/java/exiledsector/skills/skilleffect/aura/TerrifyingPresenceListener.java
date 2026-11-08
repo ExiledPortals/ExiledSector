@@ -6,6 +6,7 @@ import exiledsector.skills.skilleffect.ShipCombatListener;
 final class TerrifyingPresenceListener extends ShipCombatListener implements AuraField.Source {
 
     static final String ACCURACY_PENALTY_PERCENT_KEY = "exiledSector_terrifyingPresenceAccuracyPenaltyPercent";
+    static final String RANGE_PERCENT_KEY = "exiledSector_terrifyingPresenceRangePercent";
 
     TerrifyingPresenceListener(ShipAPI ownerShip) {
         super(ownerShip);
@@ -19,5 +20,9 @@ final class TerrifyingPresenceListener extends ShipCombatListener implements Aur
 
     float accuracyPenalty() {
         return ownerShip.isRetreating() ? 0f : magnitude(ACCURACY_PENALTY_PERCENT_KEY) / 100f;
+    }
+
+    float range() {
+        return TerrifyingPresenceField.RANGE * Math.max(0f, 1f + magnitude(RANGE_PERCENT_KEY) / 100f);
     }
 }
