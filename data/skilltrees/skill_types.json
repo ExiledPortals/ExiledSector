@@ -6568,6 +6568,18 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "WEAPON_AUTOFIRE_ACCURACY_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "ENERGY_WEAPON_RANGE_PERCENT",
+						"magnitude": 15
+					}
+				]
+			},
 			"flavour": "Fire-control routines lifted from a Tri-Tachyon line ship, written by an alpha core that never meant to share them.",
 			"tags": [
 				"weapons",
@@ -6590,6 +6602,18 @@
 					"magnitude": 25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FLUX_DISSIPATION_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "VENT_RATE_PERCENT",
+						"magnitude": 25
+					}
+				]
+			},
 			"flavour": "Corporate engineers treat flux like capital: borrow hard and repay fast. Their venting schedules carry a confidentiality notice longer than the schedules themselves.",
 			"tags": [
 				"flux"
@@ -6611,6 +6635,18 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "DAMAGE_TO_CRUISER_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "DAMAGE_TO_CAPITAL_PERCENT",
+						"magnitude": 15
+					}
+				]
+			},
 			"flavour": "Tri-Tachyon fleet doctrine ranks every target by the value it carries, and its threat tables push gunners toward the largest hulls on the field. Frigates, the tables note, are rarely worth the ammunition.",
 			"flavourAutomated": "Tri-Tachyon fleet doctrine ranks every target by the value it carries, and its threat tables push fire control toward the largest hulls on the field. The ship's core loads the tables unedited. Frigates, the tables note, are rarely worth the ammunition.",
 			"tags": [
@@ -6632,6 +6668,18 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BEAM_WEAPON_DAMAGE_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "BEAM_WEAPON_RANGE_PERCENT",
+						"magnitude": 15
+					}
+				]
+			},
 			"flavour": "A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked and every one of them copied by a crew that never planned to renew.",
 			"flavourAutomated": "A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked. The ship's core scans every page once.",
 			"tags": [
@@ -6656,6 +6704,18 @@
 					"magnitude": 25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "PHASE_CLOAK_ACTIVATION_COST_MULT",
+						"magnitude": -40
+					},
+					{
+						"effect": "FLUX_DISSIPATION_WHILE_PHASED_PERCENT",
+						"magnitude": 25
+					}
+				]
+			},
 			"flavour": "Maintenance notes recovered from a Tri-Tachyon phase frigate's wreck, filed under a cost center that officially does not exist, show the crew how to slip this ship's coils into p-space cheaply and shed heat while it waits there.",
 			"flavourAutomated": "Maintenance notes recovered from a Tri-Tachyon phase frigate's wreck, filed under a cost center that officially does not exist, show the refit crew how to slip this ship's coils into p-space cheaply and shed heat while it waits there.",
 			"tags": [
@@ -6678,6 +6738,18 @@
 					"magnitude": -25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_DAMAGE_TAKEN_MULT",
+						"magnitude": -15
+					},
+					{
+						"effect": "SHIELD_UPKEEP_MULT",
+						"magnitude": -25
+					}
+				]
+			},
 			"flavour": "Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. A crew that cracks the lock on a salvaged emitter finds the full rated performance sitting under it.",
 			"flavourAutomated": "Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. The ship's core breaks the lock on a salvaged emitter by brute force and finds the full rated performance sitting under it.",
 			"tags": [
@@ -6704,6 +6776,22 @@
 					"magnitude": -30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ENERGY_WEAPON_DAMAGE_PERCENT",
+						"magnitude": 20
+					},
+					{
+						"effect": "TIMEFLOW_PERCENT",
+						"magnitude": 5
+					},
+					{
+						"effect": "PEAK_CR_DURATION_PERCENT",
+						"magnitude": -15
+					}
+				]
+			},
 			"flavour": "Tri-Tachyon's boardroom answer to every fight: commit everything and win before the bill arrives. The bill always arrives.",
 			"tags": [
 				"energy",
@@ -6725,6 +6813,18 @@
 					"magnitude": 15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ARMOR_PERCENT",
+						"magnitude": 30
+					},
+					{
+						"effect": "HULL_PERCENT",
+						"magnitude": 15
+					}
+				]
+			},
 			"flavour": "Luddic shipwrights bless every plate they hang, and they hang far more of them than any yard would allow. Their slow, devout layering takes cycles to learn and longer to finish.",
 			"tags": [
 				"armour",
@@ -6746,6 +6846,18 @@
 					"magnitude": 25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "REPAIR_TIME_MULT",
+						"magnitude": -35
+					},
+					{
+						"effect": "CR_RECOVERY_RATE_PERCENT",
+						"magnitude": 25
+					}
+				]
+			},
 			"flavour": "The faithful do not trust machines to mend machines. Hand-repair crews drilled in the Church's way keep a ship's systems fighting through damage, slowly and without complaint.",
 			"flavourAutomated": "The faithful do not trust machines to mend machines, which is exactly what this ship does. Its repair drones copy the Church's hand-repair procedures from logged footage, slowly and without complaint. Nobody tells the Church.",
 			"tags": [
@@ -6768,6 +6880,18 @@
 					"magnitude": -15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BURN_LEVEL_FLAT",
+						"magnitude": 1
+					},
+					{
+						"effect": "FUEL_USE_MULT",
+						"magnitude": -25
+					}
+				]
+			},
 			"flavour": "Pilgrim fleets cross the Sector on whatever drives they can keep lit. Their frugal burn discipline is learned between stations, with the tanks running low.",
 			"flavourAutomated": "Pilgrim fleets cross the Sector on whatever drives they can keep lit. The ship's core logs their burn profiles between stations and flies the same frugal burn, tanks running low.",
 			"tags": [
@@ -6791,6 +6915,18 @@
 					"magnitude": 15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BALLISTIC_WEAPON_DAMAGE_PERCENT",
+						"magnitude": 20
+					},
+					{
+						"effect": "MISSILE_WEAPON_DAMAGE_PERCENT",
+						"magnitude": 20
+					}
+				]
+			},
 			"flavour": "Knights of Ludd gunners load each round as if it were a verdict. Their gunnery is crude, patient and difficult to argue with.",
 			"flavourAutomated": "Knights of Ludd gunners load each round as if it were a verdict. The ship's core logs their gunnery round by round and reproduces it exactly.",
 			"tags": [
@@ -6814,6 +6950,18 @@
 					"magnitude": -10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "DMOD_EFFECT_MULT",
+						"magnitude": -40
+					},
+					{
+						"effect": "SUPPLIES_PER_MONTH_MULT",
+						"magnitude": -10
+					}
+				]
+			},
 			"flavour": "Church salvage yards on Asher send no ship to the breakers while it can still fly, and keep their scarred hulls flying on patience and very little else.",
 			"tags": [
 				"d_mods",
@@ -6836,6 +6984,18 @@
 					"magnitude": -25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "PEAK_CR_DURATION_PERCENT",
+						"magnitude": 30
+					},
+					{
+						"effect": "CREW_LOSS_PERCENT",
+						"magnitude": -25
+					}
+				]
+			},
 			"flavour": "Pilgrims who sign on at Hesperus count it a blessing to stand their stations through the worst of a fight and keep vigil without complaint.",
 			"flavourAutomated": "Pilgrims who sign on at Hesperus stand their stations through the worst of a fight and keep vigil without complaint. This ship has no stations to stand, so its core logs their watch rotations and runs its systems on the same unbroken vigil.",
 			"tags": [
@@ -6863,6 +7023,18 @@
 					"magnitude": 15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FIGHTER_REPLACEMENT_RECOVERY_PERCENT",
+						"magnitude": 25
+					},
+					{
+						"effect": "FIGHTER_WEAPON_DAMAGE_PERCENT",
+						"magnitude": 25
+					}
+				]
+			},
 			"flavour": "Remnant carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.",
 			"tags": [
 				"fighter",
@@ -6884,6 +7056,18 @@
 					"magnitude": 30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "PD_DAMAGE_TO_MISSILES_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "WEAPON_TURN_RATE_PERCENT",
+						"magnitude": 50
+					}
+				]
+			},
 			"flavour": "Remnant point defense never tires and never flinches. Its tracking routines, recovered from a gutted drone, carry none of the hesitation a human gunner would add.",
 			"tags": [
 				"point_defense",
@@ -6906,6 +7090,18 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CR_LOSS_PER_SECOND_MULT",
+						"magnitude": -25
+					},
+					{
+						"effect": "MAX_COMBAT_READINESS_PERCENT",
+						"magnitude": 15
+					}
+				]
+			},
 			"flavour": "Machines do not tire. The duty cycles Remnant cores run on their own systems were never meant for a human crew, but they work.",
 			"flavourAutomated": "Machines do not tire. The duty cycles Remnant cores run on their own systems load into this ship's core without modification.",
 			"tags": [
@@ -6931,6 +7127,22 @@
 					"magnitude": -25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_TURN_RATE_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "SHIELD_RAISE_RATE_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "EMP_DAMAGE_TAKEN_PERCENT",
+						"magnitude": -25
+					}
+				]
+			},
 			"flavour": "Remnant warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.",
 			"flavourAutomated": "Remnant warships throw their shields up and around faster than any human crew can react. The projector timings, copied from a wrecked one, run in this ship's core at the same speed and harden its emitters against ion fire.",
 			"tags": [
@@ -6954,6 +7166,18 @@
 					"magnitude": -10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ENERGY_WEAPON_RATE_OF_FIRE_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "ENERGY_WEAPON_FLUX_COST_PERCENT",
+						"magnitude": -10
+					}
+				]
+			},
 			"flavour": "Energy mounts pulled from Remnant wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.",
 			"tags": [
 				"energy",
@@ -6981,6 +7205,23 @@
 					"capitalShip": 30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ELECTRONIC_WARFARE",
+						"magnitude": 2
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "SENSOR_STRENGTH_FLAT",
+						"frigate": 10,
+						"destroyer": 15,
+						"cruiser": 20,
+						"capitalShip": 30
+					}
+				]
+			},
 			"flavour": "A Remnant ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.",
 			"flavourAutomated": "A Remnant ordo moves as one mind, its ships murmuring to each other across a constant web of signals. The ship's core listens long enough to parse the chatter, tunes its sensors to it and turns it against enemy targeting.",
 			"tags": [
@@ -7006,6 +7247,22 @@
 					"magnitude": -50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "TIMEFLOW_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "FLUX_DISSIPATION_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "CR_RECOVERY_RATE_PERCENT",
+						"magnitude": -25
+					}
+				]
+			},
 			"flavour": "Remnant warships never stand down, their systems cycling at a tempo built for machines that never tire. Copied into this ship's reactor and fire control, that tempo is easy to keep in battle and hard to recover from afterwards.",
 			"tags": [
 				"flux",

@@ -3,6 +3,9 @@ package exiledsector.items;
 import exiledsector.ModCsv;
 import exiledsector.data.CsvRows;
 import exiledsector.modifiers.ModifierSlot;
+import exiledsector.skills.SkillTier;
+import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillType;
 import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.radius.RadiusSize;
 import org.apache.log4j.Logger;
@@ -177,6 +180,21 @@ public final class DoctrineArchives {
 
     public static Collection<DoctrineArchive> all() {
         return BY_ID.get().values();
+    }
+
+    public static boolean rewritesIntoIntegrable(SkillTier tier) {
+        for (DoctrineArchive archive : all()) {
+            if (!archive.rewritesNodes()) {
+                continue;
+            }
+            for (String typeId : archive.replacementPool(tier)) {
+                SkillType replacement = SkillTree.getType(typeId);
+                if (replacement != null && replacement.isIntegrable()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static ItemData rollForBoss(int chartTier, String bossFactionId, float chanceMult, Random random,

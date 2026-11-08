@@ -83,8 +83,11 @@ vanilla's s-mod bonus carries it as its own effect: Neural Interface sets vanill
 A type with an `integrated` block in `skill_types.json` (`IntegratedEffects`) can be integrated on one ship by
 holding a click on its allocated node. The ship's nth integration costs n story points and, unlike an s-mod, grants
 no bonus XP (`NodeIntegration`). An integrated node applies its integrated effects instead of its normal ones
-(`IntegratedNodes.effectsFor`) and stays in `ShipSkillData.integratedNodeIds` when unallocated. Save repair forgets
-integrations whose node is gone or no longer integrable and refunds the costliest ones first. A Deintegration
+(`IntegratedNodes.effectsFor`) and stays in `ShipSkillData.integratedNodeIds` when unallocated. Integration follows
+the effective type, so a node a Doctrine Archive rewrites into an integrable type can be integrated, and an
+integration only applies while the effective type is integrable. Save repair forgets integrations whose node is gone
+or can no longer take an integrable type (its own, an option or a doctrine replacement for its tier) and refunds the
+costliest ones first. A Deintegration
 Schematic clears every integration on one ship and refunds all their story points
 (`DeintegrationSchematic`). It drops like the Logistics Schematic, at the Tuning Nanoswarm's `battle_loot.csv` rate.
 
