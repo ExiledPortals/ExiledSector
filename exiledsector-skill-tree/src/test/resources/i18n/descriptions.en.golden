@@ -4617,6 +4617,51 @@ type|doctrine_alpha_grade_fire_control|CRUISER|0	0	<good>50%</good> increased ta
 type|doctrine_alpha_grade_fire_control|CRUISER|1	0	<good>10%</good> increased energy weapon range.
 type|doctrine_alpha_grade_fire_control|CAPITAL_SHIP|0	0	<good>50%</good> increased target leading accuracy of autofiring weapons.
 type|doctrine_alpha_grade_fire_control|CAPITAL_SHIP|1	0	<good>10%</good> increased energy weapon range.
+integrable|doctrine_alpha_grade_fire_control|null|0	0	<good>50%</good> increased target leading accuracy of autofiring weapons.
+integrable|doctrine_alpha_grade_fire_control|null|1	0	<good>10%</good> increased energy weapon range.
+integrable|doctrine_alpha_grade_fire_control|null|2	0	Click and hold to integrate.
+integrable|doctrine_alpha_grade_fire_control|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_alpha_grade_fire_control|null|4	0	<muted>50% increased target leading accuracy of autofiring weapons.</muted>
+integrable|doctrine_alpha_grade_fire_control|null|5	0	<muted>15% increased energy weapon range.</muted>
+integrable|doctrine_alpha_grade_fire_control|FRIGATE|0	0	<good>50%</good> increased target leading accuracy of autofiring weapons.
+integrable|doctrine_alpha_grade_fire_control|FRIGATE|1	0	<good>10%</good> increased energy weapon range.
+integrable|doctrine_alpha_grade_fire_control|FRIGATE|2	0	Click and hold to integrate.
+integrable|doctrine_alpha_grade_fire_control|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_alpha_grade_fire_control|FRIGATE|4	0	<muted>50% increased target leading accuracy of autofiring weapons.</muted>
+integrable|doctrine_alpha_grade_fire_control|FRIGATE|5	0	<muted>15% increased energy weapon range.</muted>
+integrable|doctrine_alpha_grade_fire_control|DESTROYER|0	0	<good>50%</good> increased target leading accuracy of autofiring weapons.
+integrable|doctrine_alpha_grade_fire_control|DESTROYER|1	0	<good>10%</good> increased energy weapon range.
+integrable|doctrine_alpha_grade_fire_control|DESTROYER|2	0	Click and hold to integrate.
+integrable|doctrine_alpha_grade_fire_control|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_alpha_grade_fire_control|DESTROYER|4	0	<muted>50% increased target leading accuracy of autofiring weapons.</muted>
+integrable|doctrine_alpha_grade_fire_control|DESTROYER|5	0	<muted>15% increased energy weapon range.</muted>
+integrable|doctrine_alpha_grade_fire_control|CRUISER|0	0	<good>50%</good> increased target leading accuracy of autofiring weapons.
+integrable|doctrine_alpha_grade_fire_control|CRUISER|1	0	<good>10%</good> increased energy weapon range.
+integrable|doctrine_alpha_grade_fire_control|CRUISER|2	0	Click and hold to integrate.
+integrable|doctrine_alpha_grade_fire_control|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_alpha_grade_fire_control|CRUISER|4	0	<muted>50% increased target leading accuracy of autofiring weapons.</muted>
+integrable|doctrine_alpha_grade_fire_control|CRUISER|5	0	<muted>15% increased energy weapon range.</muted>
+integrable|doctrine_alpha_grade_fire_control|CAPITAL_SHIP|0	0	<good>50%</good> increased target leading accuracy of autofiring weapons.
+integrable|doctrine_alpha_grade_fire_control|CAPITAL_SHIP|1	0	<good>10%</good> increased energy weapon range.
+integrable|doctrine_alpha_grade_fire_control|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|doctrine_alpha_grade_fire_control|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_alpha_grade_fire_control|CAPITAL_SHIP|4	0	<muted>50% increased target leading accuracy of autofiring weapons.</muted>
+integrable|doctrine_alpha_grade_fire_control|CAPITAL_SHIP|5	0	<muted>15% increased energy weapon range.</muted>
+integrated|doctrine_alpha_grade_fire_control|null|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_alpha_grade_fire_control|null|1	0	<good>50%</good> increased target leading accuracy of autofiring weapons.
+integrated|doctrine_alpha_grade_fire_control|null|2	0	<good>15%</good><builtIn> increased energy weapon range.</builtIn>
+integrated|doctrine_alpha_grade_fire_control|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_alpha_grade_fire_control|FRIGATE|1	0	<good>50%</good> increased target leading accuracy of autofiring weapons.
+integrated|doctrine_alpha_grade_fire_control|FRIGATE|2	0	<good>15%</good><builtIn> increased energy weapon range.</builtIn>
+integrated|doctrine_alpha_grade_fire_control|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_alpha_grade_fire_control|DESTROYER|1	0	<good>50%</good> increased target leading accuracy of autofiring weapons.
+integrated|doctrine_alpha_grade_fire_control|DESTROYER|2	0	<good>15%</good><builtIn> increased energy weapon range.</builtIn>
+integrated|doctrine_alpha_grade_fire_control|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_alpha_grade_fire_control|CRUISER|1	0	<good>50%</good> increased target leading accuracy of autofiring weapons.
+integrated|doctrine_alpha_grade_fire_control|CRUISER|2	0	<good>15%</good><builtIn> increased energy weapon range.</builtIn>
+integrated|doctrine_alpha_grade_fire_control|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_alpha_grade_fire_control|CAPITAL_SHIP|1	0	<good>50%</good> increased target leading accuracy of autofiring weapons.
+integrated|doctrine_alpha_grade_fire_control|CAPITAL_SHIP|2	0	<good>15%</good><builtIn> increased energy weapon range.</builtIn>
 flavour|doctrine_black_ledger_coil_tuning	0	Maintenance notes recovered from a Tri-Tachyon phase frigate's wreck, filed under a cost center that officially does not exist, show the crew how to slip this ship's coils into p-space cheaply and shed heat while it waits there.
 flavourAutomated|doctrine_black_ledger_coil_tuning	0	Maintenance notes recovered from a Tri-Tachyon phase frigate's wreck, filed under a cost center that officially does not exist, show the refit crew how to slip this ship's coils into p-space cheaply and shed heat while it waits there.
 type|doctrine_black_ledger_coil_tuning|null|0	1	<bad>25%</bad> less phase cloak activation cost.
@@ -4629,6 +4674,51 @@ type|doctrine_black_ledger_coil_tuning|CRUISER|0	1	<bad>25%</bad> less phase clo
 type|doctrine_black_ledger_coil_tuning|CRUISER|1	0	<good>25%</good> increased flux dissipation while phased.
 type|doctrine_black_ledger_coil_tuning|CAPITAL_SHIP|0	1	<bad>25%</bad> less phase cloak activation cost.
 type|doctrine_black_ledger_coil_tuning|CAPITAL_SHIP|1	0	<good>25%</good> increased flux dissipation while phased.
+integrable|doctrine_black_ledger_coil_tuning|null|0	1	<bad>25%</bad> less phase cloak activation cost.
+integrable|doctrine_black_ledger_coil_tuning|null|1	0	<good>25%</good> increased flux dissipation while phased.
+integrable|doctrine_black_ledger_coil_tuning|null|2	0	Click and hold to integrate.
+integrable|doctrine_black_ledger_coil_tuning|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_black_ledger_coil_tuning|null|4	0	<muted>40% less phase cloak activation cost.</muted>
+integrable|doctrine_black_ledger_coil_tuning|null|5	0	<muted>25% increased flux dissipation while phased.</muted>
+integrable|doctrine_black_ledger_coil_tuning|FRIGATE|0	1	<bad>25%</bad> less phase cloak activation cost.
+integrable|doctrine_black_ledger_coil_tuning|FRIGATE|1	0	<good>25%</good> increased flux dissipation while phased.
+integrable|doctrine_black_ledger_coil_tuning|FRIGATE|2	0	Click and hold to integrate.
+integrable|doctrine_black_ledger_coil_tuning|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_black_ledger_coil_tuning|FRIGATE|4	0	<muted>40% less phase cloak activation cost.</muted>
+integrable|doctrine_black_ledger_coil_tuning|FRIGATE|5	0	<muted>25% increased flux dissipation while phased.</muted>
+integrable|doctrine_black_ledger_coil_tuning|DESTROYER|0	1	<bad>25%</bad> less phase cloak activation cost.
+integrable|doctrine_black_ledger_coil_tuning|DESTROYER|1	0	<good>25%</good> increased flux dissipation while phased.
+integrable|doctrine_black_ledger_coil_tuning|DESTROYER|2	0	Click and hold to integrate.
+integrable|doctrine_black_ledger_coil_tuning|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_black_ledger_coil_tuning|DESTROYER|4	0	<muted>40% less phase cloak activation cost.</muted>
+integrable|doctrine_black_ledger_coil_tuning|DESTROYER|5	0	<muted>25% increased flux dissipation while phased.</muted>
+integrable|doctrine_black_ledger_coil_tuning|CRUISER|0	1	<bad>25%</bad> less phase cloak activation cost.
+integrable|doctrine_black_ledger_coil_tuning|CRUISER|1	0	<good>25%</good> increased flux dissipation while phased.
+integrable|doctrine_black_ledger_coil_tuning|CRUISER|2	0	Click and hold to integrate.
+integrable|doctrine_black_ledger_coil_tuning|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_black_ledger_coil_tuning|CRUISER|4	0	<muted>40% less phase cloak activation cost.</muted>
+integrable|doctrine_black_ledger_coil_tuning|CRUISER|5	0	<muted>25% increased flux dissipation while phased.</muted>
+integrable|doctrine_black_ledger_coil_tuning|CAPITAL_SHIP|0	1	<bad>25%</bad> less phase cloak activation cost.
+integrable|doctrine_black_ledger_coil_tuning|CAPITAL_SHIP|1	0	<good>25%</good> increased flux dissipation while phased.
+integrable|doctrine_black_ledger_coil_tuning|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|doctrine_black_ledger_coil_tuning|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_black_ledger_coil_tuning|CAPITAL_SHIP|4	0	<muted>40% less phase cloak activation cost.</muted>
+integrable|doctrine_black_ledger_coil_tuning|CAPITAL_SHIP|5	0	<muted>25% increased flux dissipation while phased.</muted>
+integrated|doctrine_black_ledger_coil_tuning|null|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_black_ledger_coil_tuning|null|1	1	<bad>40%</bad><builtIn> less phase cloak activation cost.</builtIn>
+integrated|doctrine_black_ledger_coil_tuning|null|2	0	<good>25%</good> increased flux dissipation while phased.
+integrated|doctrine_black_ledger_coil_tuning|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_black_ledger_coil_tuning|FRIGATE|1	1	<bad>40%</bad><builtIn> less phase cloak activation cost.</builtIn>
+integrated|doctrine_black_ledger_coil_tuning|FRIGATE|2	0	<good>25%</good> increased flux dissipation while phased.
+integrated|doctrine_black_ledger_coil_tuning|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_black_ledger_coil_tuning|DESTROYER|1	1	<bad>40%</bad><builtIn> less phase cloak activation cost.</builtIn>
+integrated|doctrine_black_ledger_coil_tuning|DESTROYER|2	0	<good>25%</good> increased flux dissipation while phased.
+integrated|doctrine_black_ledger_coil_tuning|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_black_ledger_coil_tuning|CRUISER|1	1	<bad>40%</bad><builtIn> less phase cloak activation cost.</builtIn>
+integrated|doctrine_black_ledger_coil_tuning|CRUISER|2	0	<good>25%</good> increased flux dissipation while phased.
+integrated|doctrine_black_ledger_coil_tuning|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_black_ledger_coil_tuning|CAPITAL_SHIP|1	1	<bad>40%</bad><builtIn> less phase cloak activation cost.</builtIn>
+integrated|doctrine_black_ledger_coil_tuning|CAPITAL_SHIP|2	0	<good>25%</good> increased flux dissipation while phased.
 flavour|doctrine_blessed_plating	0	Luddic shipwrights bless every plate they hang, and they hang far more of them than any yard would allow. Their slow, devout layering takes cycles to learn and longer to finish.
 type|doctrine_blessed_plating|null|0	0	<good>20%</good> increased armor.
 type|doctrine_blessed_plating|null|1	0	<good>15%</good> increased hull points.
@@ -4640,6 +4730,51 @@ type|doctrine_blessed_plating|CRUISER|0	0	<good>20%</good> increased armor.
 type|doctrine_blessed_plating|CRUISER|1	0	<good>15%</good> increased hull points.
 type|doctrine_blessed_plating|CAPITAL_SHIP|0	0	<good>20%</good> increased armor.
 type|doctrine_blessed_plating|CAPITAL_SHIP|1	0	<good>15%</good> increased hull points.
+integrable|doctrine_blessed_plating|null|0	0	<good>20%</good> increased armor.
+integrable|doctrine_blessed_plating|null|1	0	<good>15%</good> increased hull points.
+integrable|doctrine_blessed_plating|null|2	0	Click and hold to integrate.
+integrable|doctrine_blessed_plating|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_blessed_plating|null|4	0	<muted>30% increased armor.</muted>
+integrable|doctrine_blessed_plating|null|5	0	<muted>15% increased hull points.</muted>
+integrable|doctrine_blessed_plating|FRIGATE|0	0	<good>20%</good> increased armor.
+integrable|doctrine_blessed_plating|FRIGATE|1	0	<good>15%</good> increased hull points.
+integrable|doctrine_blessed_plating|FRIGATE|2	0	Click and hold to integrate.
+integrable|doctrine_blessed_plating|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_blessed_plating|FRIGATE|4	0	<muted>30% increased armor.</muted>
+integrable|doctrine_blessed_plating|FRIGATE|5	0	<muted>15% increased hull points.</muted>
+integrable|doctrine_blessed_plating|DESTROYER|0	0	<good>20%</good> increased armor.
+integrable|doctrine_blessed_plating|DESTROYER|1	0	<good>15%</good> increased hull points.
+integrable|doctrine_blessed_plating|DESTROYER|2	0	Click and hold to integrate.
+integrable|doctrine_blessed_plating|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_blessed_plating|DESTROYER|4	0	<muted>30% increased armor.</muted>
+integrable|doctrine_blessed_plating|DESTROYER|5	0	<muted>15% increased hull points.</muted>
+integrable|doctrine_blessed_plating|CRUISER|0	0	<good>20%</good> increased armor.
+integrable|doctrine_blessed_plating|CRUISER|1	0	<good>15%</good> increased hull points.
+integrable|doctrine_blessed_plating|CRUISER|2	0	Click and hold to integrate.
+integrable|doctrine_blessed_plating|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_blessed_plating|CRUISER|4	0	<muted>30% increased armor.</muted>
+integrable|doctrine_blessed_plating|CRUISER|5	0	<muted>15% increased hull points.</muted>
+integrable|doctrine_blessed_plating|CAPITAL_SHIP|0	0	<good>20%</good> increased armor.
+integrable|doctrine_blessed_plating|CAPITAL_SHIP|1	0	<good>15%</good> increased hull points.
+integrable|doctrine_blessed_plating|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|doctrine_blessed_plating|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_blessed_plating|CAPITAL_SHIP|4	0	<muted>30% increased armor.</muted>
+integrable|doctrine_blessed_plating|CAPITAL_SHIP|5	0	<muted>15% increased hull points.</muted>
+integrated|doctrine_blessed_plating|null|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_blessed_plating|null|1	0	<good>30%</good><builtIn> increased armor.</builtIn>
+integrated|doctrine_blessed_plating|null|2	0	<good>15%</good> increased hull points.
+integrated|doctrine_blessed_plating|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_blessed_plating|FRIGATE|1	0	<good>30%</good><builtIn> increased armor.</builtIn>
+integrated|doctrine_blessed_plating|FRIGATE|2	0	<good>15%</good> increased hull points.
+integrated|doctrine_blessed_plating|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_blessed_plating|DESTROYER|1	0	<good>30%</good><builtIn> increased armor.</builtIn>
+integrated|doctrine_blessed_plating|DESTROYER|2	0	<good>15%</good> increased hull points.
+integrated|doctrine_blessed_plating|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_blessed_plating|CRUISER|1	0	<good>30%</good><builtIn> increased armor.</builtIn>
+integrated|doctrine_blessed_plating|CRUISER|2	0	<good>15%</good> increased hull points.
+integrated|doctrine_blessed_plating|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_blessed_plating|CAPITAL_SHIP|1	0	<good>30%</good><builtIn> increased armor.</builtIn>
+integrated|doctrine_blessed_plating|CAPITAL_SHIP|2	0	<good>15%</good> increased hull points.
 flavour|doctrine_cold_logic	0	Machines do not tire. The duty cycles Remnant cores run on their own systems were never meant for a human crew, but they work.
 flavourAutomated|doctrine_cold_logic	0	Machines do not tire. The duty cycles Remnant cores run on their own systems load into this ship's core without modification.
 type|doctrine_cold_logic|null|0	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
@@ -4652,6 +4787,51 @@ type|doctrine_cold_logic|CRUISER|0	1	<bad>25%</bad> less rate of combat readines
 type|doctrine_cold_logic|CRUISER|1	0	<good>10%</good> increased maximum combat readiness.
 type|doctrine_cold_logic|CAPITAL_SHIP|0	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
 type|doctrine_cold_logic|CAPITAL_SHIP|1	0	<good>10%</good> increased maximum combat readiness.
+integrable|doctrine_cold_logic|null|0	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
+integrable|doctrine_cold_logic|null|1	0	<good>10%</good> increased maximum combat readiness.
+integrable|doctrine_cold_logic|null|2	0	Click and hold to integrate.
+integrable|doctrine_cold_logic|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_cold_logic|null|4	0	<muted>25% less rate of combat readiness loss from extended deployment.</muted>
+integrable|doctrine_cold_logic|null|5	0	<muted>15% increased maximum combat readiness.</muted>
+integrable|doctrine_cold_logic|FRIGATE|0	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
+integrable|doctrine_cold_logic|FRIGATE|1	0	<good>10%</good> increased maximum combat readiness.
+integrable|doctrine_cold_logic|FRIGATE|2	0	Click and hold to integrate.
+integrable|doctrine_cold_logic|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_cold_logic|FRIGATE|4	0	<muted>25% less rate of combat readiness loss from extended deployment.</muted>
+integrable|doctrine_cold_logic|FRIGATE|5	0	<muted>15% increased maximum combat readiness.</muted>
+integrable|doctrine_cold_logic|DESTROYER|0	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
+integrable|doctrine_cold_logic|DESTROYER|1	0	<good>10%</good> increased maximum combat readiness.
+integrable|doctrine_cold_logic|DESTROYER|2	0	Click and hold to integrate.
+integrable|doctrine_cold_logic|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_cold_logic|DESTROYER|4	0	<muted>25% less rate of combat readiness loss from extended deployment.</muted>
+integrable|doctrine_cold_logic|DESTROYER|5	0	<muted>15% increased maximum combat readiness.</muted>
+integrable|doctrine_cold_logic|CRUISER|0	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
+integrable|doctrine_cold_logic|CRUISER|1	0	<good>10%</good> increased maximum combat readiness.
+integrable|doctrine_cold_logic|CRUISER|2	0	Click and hold to integrate.
+integrable|doctrine_cold_logic|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_cold_logic|CRUISER|4	0	<muted>25% less rate of combat readiness loss from extended deployment.</muted>
+integrable|doctrine_cold_logic|CRUISER|5	0	<muted>15% increased maximum combat readiness.</muted>
+integrable|doctrine_cold_logic|CAPITAL_SHIP|0	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
+integrable|doctrine_cold_logic|CAPITAL_SHIP|1	0	<good>10%</good> increased maximum combat readiness.
+integrable|doctrine_cold_logic|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|doctrine_cold_logic|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_cold_logic|CAPITAL_SHIP|4	0	<muted>25% less rate of combat readiness loss from extended deployment.</muted>
+integrable|doctrine_cold_logic|CAPITAL_SHIP|5	0	<muted>15% increased maximum combat readiness.</muted>
+integrated|doctrine_cold_logic|null|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_cold_logic|null|1	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
+integrated|doctrine_cold_logic|null|2	0	<good>15%</good><builtIn> increased maximum combat readiness.</builtIn>
+integrated|doctrine_cold_logic|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_cold_logic|FRIGATE|1	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
+integrated|doctrine_cold_logic|FRIGATE|2	0	<good>15%</good><builtIn> increased maximum combat readiness.</builtIn>
+integrated|doctrine_cold_logic|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_cold_logic|DESTROYER|1	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
+integrated|doctrine_cold_logic|DESTROYER|2	0	<good>15%</good><builtIn> increased maximum combat readiness.</builtIn>
+integrated|doctrine_cold_logic|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_cold_logic|CRUISER|1	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
+integrated|doctrine_cold_logic|CRUISER|2	0	<good>15%</good><builtIn> increased maximum combat readiness.</builtIn>
+integrated|doctrine_cold_logic|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_cold_logic|CAPITAL_SHIP|1	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
+integrated|doctrine_cold_logic|CAPITAL_SHIP|2	0	<good>15%</good><builtIn> increased maximum combat readiness.</builtIn>
 flavour|doctrine_escrowed_emitters	0	Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. A crew that cracks the lock on a salvaged emitter finds the full rated performance sitting under it.
 flavourAutomated|doctrine_escrowed_emitters	0	Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. The ship's core breaks the lock on a salvaged emitter by brute force and finds the full rated performance sitting under it.
 type|doctrine_escrowed_emitters|null|0	1	<bad>10%</bad> less damage taken by shields.
@@ -4664,6 +4844,51 @@ type|doctrine_escrowed_emitters|CRUISER|0	1	<bad>10%</bad> less damage taken by 
 type|doctrine_escrowed_emitters|CRUISER|1	1	<bad>25%</bad> less shield flux upkeep.
 type|doctrine_escrowed_emitters|CAPITAL_SHIP|0	1	<bad>10%</bad> less damage taken by shields.
 type|doctrine_escrowed_emitters|CAPITAL_SHIP|1	1	<bad>25%</bad> less shield flux upkeep.
+integrable|doctrine_escrowed_emitters|null|0	1	<bad>10%</bad> less damage taken by shields.
+integrable|doctrine_escrowed_emitters|null|1	1	<bad>25%</bad> less shield flux upkeep.
+integrable|doctrine_escrowed_emitters|null|2	0	Click and hold to integrate.
+integrable|doctrine_escrowed_emitters|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_escrowed_emitters|null|4	0	<muted>15% less damage taken by shields.</muted>
+integrable|doctrine_escrowed_emitters|null|5	0	<muted>25% less shield flux upkeep.</muted>
+integrable|doctrine_escrowed_emitters|FRIGATE|0	1	<bad>10%</bad> less damage taken by shields.
+integrable|doctrine_escrowed_emitters|FRIGATE|1	1	<bad>25%</bad> less shield flux upkeep.
+integrable|doctrine_escrowed_emitters|FRIGATE|2	0	Click and hold to integrate.
+integrable|doctrine_escrowed_emitters|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_escrowed_emitters|FRIGATE|4	0	<muted>15% less damage taken by shields.</muted>
+integrable|doctrine_escrowed_emitters|FRIGATE|5	0	<muted>25% less shield flux upkeep.</muted>
+integrable|doctrine_escrowed_emitters|DESTROYER|0	1	<bad>10%</bad> less damage taken by shields.
+integrable|doctrine_escrowed_emitters|DESTROYER|1	1	<bad>25%</bad> less shield flux upkeep.
+integrable|doctrine_escrowed_emitters|DESTROYER|2	0	Click and hold to integrate.
+integrable|doctrine_escrowed_emitters|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_escrowed_emitters|DESTROYER|4	0	<muted>15% less damage taken by shields.</muted>
+integrable|doctrine_escrowed_emitters|DESTROYER|5	0	<muted>25% less shield flux upkeep.</muted>
+integrable|doctrine_escrowed_emitters|CRUISER|0	1	<bad>10%</bad> less damage taken by shields.
+integrable|doctrine_escrowed_emitters|CRUISER|1	1	<bad>25%</bad> less shield flux upkeep.
+integrable|doctrine_escrowed_emitters|CRUISER|2	0	Click and hold to integrate.
+integrable|doctrine_escrowed_emitters|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_escrowed_emitters|CRUISER|4	0	<muted>15% less damage taken by shields.</muted>
+integrable|doctrine_escrowed_emitters|CRUISER|5	0	<muted>25% less shield flux upkeep.</muted>
+integrable|doctrine_escrowed_emitters|CAPITAL_SHIP|0	1	<bad>10%</bad> less damage taken by shields.
+integrable|doctrine_escrowed_emitters|CAPITAL_SHIP|1	1	<bad>25%</bad> less shield flux upkeep.
+integrable|doctrine_escrowed_emitters|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|doctrine_escrowed_emitters|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_escrowed_emitters|CAPITAL_SHIP|4	0	<muted>15% less damage taken by shields.</muted>
+integrable|doctrine_escrowed_emitters|CAPITAL_SHIP|5	0	<muted>25% less shield flux upkeep.</muted>
+integrated|doctrine_escrowed_emitters|null|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_escrowed_emitters|null|1	1	<bad>15%</bad><builtIn> less damage taken by shields.</builtIn>
+integrated|doctrine_escrowed_emitters|null|2	1	<bad>25%</bad> less shield flux upkeep.
+integrated|doctrine_escrowed_emitters|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_escrowed_emitters|FRIGATE|1	1	<bad>15%</bad><builtIn> less damage taken by shields.</builtIn>
+integrated|doctrine_escrowed_emitters|FRIGATE|2	1	<bad>25%</bad> less shield flux upkeep.
+integrated|doctrine_escrowed_emitters|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_escrowed_emitters|DESTROYER|1	1	<bad>15%</bad><builtIn> less damage taken by shields.</builtIn>
+integrated|doctrine_escrowed_emitters|DESTROYER|2	1	<bad>25%</bad> less shield flux upkeep.
+integrated|doctrine_escrowed_emitters|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_escrowed_emitters|CRUISER|1	1	<bad>15%</bad><builtIn> less damage taken by shields.</builtIn>
+integrated|doctrine_escrowed_emitters|CRUISER|2	1	<bad>25%</bad> less shield flux upkeep.
+integrated|doctrine_escrowed_emitters|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_escrowed_emitters|CAPITAL_SHIP|1	1	<bad>15%</bad><builtIn> less damage taken by shields.</builtIn>
+integrated|doctrine_escrowed_emitters|CAPITAL_SHIP|2	1	<bad>25%</bad> less shield flux upkeep.
 flavour|doctrine_faithful_hands	0	The faithful do not trust machines to mend machines. Hand-repair crews drilled in the Church's way keep a ship's systems fighting through damage, slowly and without complaint.
 flavourAutomated|doctrine_faithful_hands	0	The faithful do not trust machines to mend machines, which is exactly what this ship does. Its repair drones copy the Church's hand-repair procedures from logged footage, slowly and without complaint. Nobody tells the Church.
 type|doctrine_faithful_hands|null|0	0	<good>25%</good> less weapon and engine repair time.
@@ -4676,6 +4901,51 @@ type|doctrine_faithful_hands|CRUISER|0	0	<good>25%</good> less weapon and engine
 type|doctrine_faithful_hands|CRUISER|1	0	<good>25%</good> increased combat readiness recovery rate.
 type|doctrine_faithful_hands|CAPITAL_SHIP|0	0	<good>25%</good> less weapon and engine repair time.
 type|doctrine_faithful_hands|CAPITAL_SHIP|1	0	<good>25%</good> increased combat readiness recovery rate.
+integrable|doctrine_faithful_hands|null|0	0	<good>25%</good> less weapon and engine repair time.
+integrable|doctrine_faithful_hands|null|1	0	<good>25%</good> increased combat readiness recovery rate.
+integrable|doctrine_faithful_hands|null|2	0	Click and hold to integrate.
+integrable|doctrine_faithful_hands|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_faithful_hands|null|4	0	<muted>35% less weapon and engine repair time.</muted>
+integrable|doctrine_faithful_hands|null|5	0	<muted>25% increased combat readiness recovery rate.</muted>
+integrable|doctrine_faithful_hands|FRIGATE|0	0	<good>25%</good> less weapon and engine repair time.
+integrable|doctrine_faithful_hands|FRIGATE|1	0	<good>25%</good> increased combat readiness recovery rate.
+integrable|doctrine_faithful_hands|FRIGATE|2	0	Click and hold to integrate.
+integrable|doctrine_faithful_hands|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_faithful_hands|FRIGATE|4	0	<muted>35% less weapon and engine repair time.</muted>
+integrable|doctrine_faithful_hands|FRIGATE|5	0	<muted>25% increased combat readiness recovery rate.</muted>
+integrable|doctrine_faithful_hands|DESTROYER|0	0	<good>25%</good> less weapon and engine repair time.
+integrable|doctrine_faithful_hands|DESTROYER|1	0	<good>25%</good> increased combat readiness recovery rate.
+integrable|doctrine_faithful_hands|DESTROYER|2	0	Click and hold to integrate.
+integrable|doctrine_faithful_hands|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_faithful_hands|DESTROYER|4	0	<muted>35% less weapon and engine repair time.</muted>
+integrable|doctrine_faithful_hands|DESTROYER|5	0	<muted>25% increased combat readiness recovery rate.</muted>
+integrable|doctrine_faithful_hands|CRUISER|0	0	<good>25%</good> less weapon and engine repair time.
+integrable|doctrine_faithful_hands|CRUISER|1	0	<good>25%</good> increased combat readiness recovery rate.
+integrable|doctrine_faithful_hands|CRUISER|2	0	Click and hold to integrate.
+integrable|doctrine_faithful_hands|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_faithful_hands|CRUISER|4	0	<muted>35% less weapon and engine repair time.</muted>
+integrable|doctrine_faithful_hands|CRUISER|5	0	<muted>25% increased combat readiness recovery rate.</muted>
+integrable|doctrine_faithful_hands|CAPITAL_SHIP|0	0	<good>25%</good> less weapon and engine repair time.
+integrable|doctrine_faithful_hands|CAPITAL_SHIP|1	0	<good>25%</good> increased combat readiness recovery rate.
+integrable|doctrine_faithful_hands|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|doctrine_faithful_hands|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_faithful_hands|CAPITAL_SHIP|4	0	<muted>35% less weapon and engine repair time.</muted>
+integrable|doctrine_faithful_hands|CAPITAL_SHIP|5	0	<muted>25% increased combat readiness recovery rate.</muted>
+integrated|doctrine_faithful_hands|null|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_faithful_hands|null|1	0	<good>35%</good><builtIn> less weapon and engine repair time.</builtIn>
+integrated|doctrine_faithful_hands|null|2	0	<good>25%</good> increased combat readiness recovery rate.
+integrated|doctrine_faithful_hands|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_faithful_hands|FRIGATE|1	0	<good>35%</good><builtIn> less weapon and engine repair time.</builtIn>
+integrated|doctrine_faithful_hands|FRIGATE|2	0	<good>25%</good> increased combat readiness recovery rate.
+integrated|doctrine_faithful_hands|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_faithful_hands|DESTROYER|1	0	<good>35%</good><builtIn> less weapon and engine repair time.</builtIn>
+integrated|doctrine_faithful_hands|DESTROYER|2	0	<good>25%</good> increased combat readiness recovery rate.
+integrated|doctrine_faithful_hands|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_faithful_hands|CRUISER|1	0	<good>35%</good><builtIn> less weapon and engine repair time.</builtIn>
+integrated|doctrine_faithful_hands|CRUISER|2	0	<good>25%</good> increased combat readiness recovery rate.
+integrated|doctrine_faithful_hands|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_faithful_hands|CAPITAL_SHIP|1	0	<good>35%</good><builtIn> less weapon and engine repair time.</builtIn>
+integrated|doctrine_faithful_hands|CAPITAL_SHIP|2	0	<good>25%</good> increased combat readiness recovery rate.
 flavour|doctrine_flux_arbitrage	0	Corporate engineers treat flux like capital: borrow hard and repay fast. Their venting schedules carry a confidentiality notice longer than the schedules themselves.
 type|doctrine_flux_arbitrage|null|0	0	<good>10%</good> increased flux dissipation.
 type|doctrine_flux_arbitrage|null|1	0	<good>25%</good> increased venting speed.
@@ -4687,6 +4957,51 @@ type|doctrine_flux_arbitrage|CRUISER|0	0	<good>10%</good> increased flux dissipa
 type|doctrine_flux_arbitrage|CRUISER|1	0	<good>25%</good> increased venting speed.
 type|doctrine_flux_arbitrage|CAPITAL_SHIP|0	0	<good>10%</good> increased flux dissipation.
 type|doctrine_flux_arbitrage|CAPITAL_SHIP|1	0	<good>25%</good> increased venting speed.
+integrable|doctrine_flux_arbitrage|null|0	0	<good>10%</good> increased flux dissipation.
+integrable|doctrine_flux_arbitrage|null|1	0	<good>25%</good> increased venting speed.
+integrable|doctrine_flux_arbitrage|null|2	0	Click and hold to integrate.
+integrable|doctrine_flux_arbitrage|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_flux_arbitrage|null|4	0	<muted>15% increased flux dissipation.</muted>
+integrable|doctrine_flux_arbitrage|null|5	0	<muted>25% increased venting speed.</muted>
+integrable|doctrine_flux_arbitrage|FRIGATE|0	0	<good>10%</good> increased flux dissipation.
+integrable|doctrine_flux_arbitrage|FRIGATE|1	0	<good>25%</good> increased venting speed.
+integrable|doctrine_flux_arbitrage|FRIGATE|2	0	Click and hold to integrate.
+integrable|doctrine_flux_arbitrage|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_flux_arbitrage|FRIGATE|4	0	<muted>15% increased flux dissipation.</muted>
+integrable|doctrine_flux_arbitrage|FRIGATE|5	0	<muted>25% increased venting speed.</muted>
+integrable|doctrine_flux_arbitrage|DESTROYER|0	0	<good>10%</good> increased flux dissipation.
+integrable|doctrine_flux_arbitrage|DESTROYER|1	0	<good>25%</good> increased venting speed.
+integrable|doctrine_flux_arbitrage|DESTROYER|2	0	Click and hold to integrate.
+integrable|doctrine_flux_arbitrage|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_flux_arbitrage|DESTROYER|4	0	<muted>15% increased flux dissipation.</muted>
+integrable|doctrine_flux_arbitrage|DESTROYER|5	0	<muted>25% increased venting speed.</muted>
+integrable|doctrine_flux_arbitrage|CRUISER|0	0	<good>10%</good> increased flux dissipation.
+integrable|doctrine_flux_arbitrage|CRUISER|1	0	<good>25%</good> increased venting speed.
+integrable|doctrine_flux_arbitrage|CRUISER|2	0	Click and hold to integrate.
+integrable|doctrine_flux_arbitrage|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_flux_arbitrage|CRUISER|4	0	<muted>15% increased flux dissipation.</muted>
+integrable|doctrine_flux_arbitrage|CRUISER|5	0	<muted>25% increased venting speed.</muted>
+integrable|doctrine_flux_arbitrage|CAPITAL_SHIP|0	0	<good>10%</good> increased flux dissipation.
+integrable|doctrine_flux_arbitrage|CAPITAL_SHIP|1	0	<good>25%</good> increased venting speed.
+integrable|doctrine_flux_arbitrage|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|doctrine_flux_arbitrage|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_flux_arbitrage|CAPITAL_SHIP|4	0	<muted>15% increased flux dissipation.</muted>
+integrable|doctrine_flux_arbitrage|CAPITAL_SHIP|5	0	<muted>25% increased venting speed.</muted>
+integrated|doctrine_flux_arbitrage|null|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_flux_arbitrage|null|1	0	<good>15%</good><builtIn> increased flux dissipation.</builtIn>
+integrated|doctrine_flux_arbitrage|null|2	0	<good>25%</good> increased venting speed.
+integrated|doctrine_flux_arbitrage|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_flux_arbitrage|FRIGATE|1	0	<good>15%</good><builtIn> increased flux dissipation.</builtIn>
+integrated|doctrine_flux_arbitrage|FRIGATE|2	0	<good>25%</good> increased venting speed.
+integrated|doctrine_flux_arbitrage|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_flux_arbitrage|DESTROYER|1	0	<good>15%</good><builtIn> increased flux dissipation.</builtIn>
+integrated|doctrine_flux_arbitrage|DESTROYER|2	0	<good>25%</good> increased venting speed.
+integrated|doctrine_flux_arbitrage|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_flux_arbitrage|CRUISER|1	0	<good>15%</good><builtIn> increased flux dissipation.</builtIn>
+integrated|doctrine_flux_arbitrage|CRUISER|2	0	<good>25%</good> increased venting speed.
+integrated|doctrine_flux_arbitrage|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_flux_arbitrage|CAPITAL_SHIP|1	0	<good>15%</good><builtIn> increased flux dissipation.</builtIn>
+integrated|doctrine_flux_arbitrage|CAPITAL_SHIP|2	0	<good>25%</good> increased venting speed.
 flavour|doctrine_fortress_lattice	0	Remnant warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.
 flavourAutomated|doctrine_fortress_lattice	0	Remnant warships throw their shields up and around faster than any human crew can react. The projector timings, copied from a wrecked one, run in this ship's core at the same speed and harden its emitters against ion fire.
 type|doctrine_fortress_lattice|null|0	0	<good>50%</good> increased shield turn rate.
@@ -4704,6 +5019,66 @@ type|doctrine_fortress_lattice|CRUISER|2	1	<bad>25%</bad> reduced EMP damage tak
 type|doctrine_fortress_lattice|CAPITAL_SHIP|0	0	<good>50%</good> increased shield turn rate.
 type|doctrine_fortress_lattice|CAPITAL_SHIP|1	0	<good>50%</good> increased shield raise rate.
 type|doctrine_fortress_lattice|CAPITAL_SHIP|2	1	<bad>25%</bad> reduced EMP damage taken.
+integrable|doctrine_fortress_lattice|null|0	0	<good>50%</good> increased shield turn rate.
+integrable|doctrine_fortress_lattice|null|1	0	<good>50%</good> increased shield raise rate.
+integrable|doctrine_fortress_lattice|null|2	1	<bad>25%</bad> reduced EMP damage taken.
+integrable|doctrine_fortress_lattice|null|3	0	Click and hold to integrate.
+integrable|doctrine_fortress_lattice|null|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_fortress_lattice|null|5	0	<muted>100% increased shield turn rate.</muted>
+integrable|doctrine_fortress_lattice|null|6	0	<muted>100% increased shield raise rate.</muted>
+integrable|doctrine_fortress_lattice|null|7	0	<muted>25% reduced EMP damage taken.</muted>
+integrable|doctrine_fortress_lattice|FRIGATE|0	0	<good>50%</good> increased shield turn rate.
+integrable|doctrine_fortress_lattice|FRIGATE|1	0	<good>50%</good> increased shield raise rate.
+integrable|doctrine_fortress_lattice|FRIGATE|2	1	<bad>25%</bad> reduced EMP damage taken.
+integrable|doctrine_fortress_lattice|FRIGATE|3	0	Click and hold to integrate.
+integrable|doctrine_fortress_lattice|FRIGATE|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_fortress_lattice|FRIGATE|5	0	<muted>100% increased shield turn rate.</muted>
+integrable|doctrine_fortress_lattice|FRIGATE|6	0	<muted>100% increased shield raise rate.</muted>
+integrable|doctrine_fortress_lattice|FRIGATE|7	0	<muted>25% reduced EMP damage taken.</muted>
+integrable|doctrine_fortress_lattice|DESTROYER|0	0	<good>50%</good> increased shield turn rate.
+integrable|doctrine_fortress_lattice|DESTROYER|1	0	<good>50%</good> increased shield raise rate.
+integrable|doctrine_fortress_lattice|DESTROYER|2	1	<bad>25%</bad> reduced EMP damage taken.
+integrable|doctrine_fortress_lattice|DESTROYER|3	0	Click and hold to integrate.
+integrable|doctrine_fortress_lattice|DESTROYER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_fortress_lattice|DESTROYER|5	0	<muted>100% increased shield turn rate.</muted>
+integrable|doctrine_fortress_lattice|DESTROYER|6	0	<muted>100% increased shield raise rate.</muted>
+integrable|doctrine_fortress_lattice|DESTROYER|7	0	<muted>25% reduced EMP damage taken.</muted>
+integrable|doctrine_fortress_lattice|CRUISER|0	0	<good>50%</good> increased shield turn rate.
+integrable|doctrine_fortress_lattice|CRUISER|1	0	<good>50%</good> increased shield raise rate.
+integrable|doctrine_fortress_lattice|CRUISER|2	1	<bad>25%</bad> reduced EMP damage taken.
+integrable|doctrine_fortress_lattice|CRUISER|3	0	Click and hold to integrate.
+integrable|doctrine_fortress_lattice|CRUISER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_fortress_lattice|CRUISER|5	0	<muted>100% increased shield turn rate.</muted>
+integrable|doctrine_fortress_lattice|CRUISER|6	0	<muted>100% increased shield raise rate.</muted>
+integrable|doctrine_fortress_lattice|CRUISER|7	0	<muted>25% reduced EMP damage taken.</muted>
+integrable|doctrine_fortress_lattice|CAPITAL_SHIP|0	0	<good>50%</good> increased shield turn rate.
+integrable|doctrine_fortress_lattice|CAPITAL_SHIP|1	0	<good>50%</good> increased shield raise rate.
+integrable|doctrine_fortress_lattice|CAPITAL_SHIP|2	1	<bad>25%</bad> reduced EMP damage taken.
+integrable|doctrine_fortress_lattice|CAPITAL_SHIP|3	0	Click and hold to integrate.
+integrable|doctrine_fortress_lattice|CAPITAL_SHIP|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_fortress_lattice|CAPITAL_SHIP|5	0	<muted>100% increased shield turn rate.</muted>
+integrable|doctrine_fortress_lattice|CAPITAL_SHIP|6	0	<muted>100% increased shield raise rate.</muted>
+integrable|doctrine_fortress_lattice|CAPITAL_SHIP|7	0	<muted>25% reduced EMP damage taken.</muted>
+integrated|doctrine_fortress_lattice|null|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_fortress_lattice|null|1	0	<good>100%</good><builtIn> increased shield turn rate.</builtIn>
+integrated|doctrine_fortress_lattice|null|2	0	<good>100%</good><builtIn> increased shield raise rate.</builtIn>
+integrated|doctrine_fortress_lattice|null|3	1	<bad>25%</bad> reduced EMP damage taken.
+integrated|doctrine_fortress_lattice|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_fortress_lattice|FRIGATE|1	0	<good>100%</good><builtIn> increased shield turn rate.</builtIn>
+integrated|doctrine_fortress_lattice|FRIGATE|2	0	<good>100%</good><builtIn> increased shield raise rate.</builtIn>
+integrated|doctrine_fortress_lattice|FRIGATE|3	1	<bad>25%</bad> reduced EMP damage taken.
+integrated|doctrine_fortress_lattice|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_fortress_lattice|DESTROYER|1	0	<good>100%</good><builtIn> increased shield turn rate.</builtIn>
+integrated|doctrine_fortress_lattice|DESTROYER|2	0	<good>100%</good><builtIn> increased shield raise rate.</builtIn>
+integrated|doctrine_fortress_lattice|DESTROYER|3	1	<bad>25%</bad> reduced EMP damage taken.
+integrated|doctrine_fortress_lattice|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_fortress_lattice|CRUISER|1	0	<good>100%</good><builtIn> increased shield turn rate.</builtIn>
+integrated|doctrine_fortress_lattice|CRUISER|2	0	<good>100%</good><builtIn> increased shield raise rate.</builtIn>
+integrated|doctrine_fortress_lattice|CRUISER|3	1	<bad>25%</bad> reduced EMP damage taken.
+integrated|doctrine_fortress_lattice|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_fortress_lattice|CAPITAL_SHIP|1	0	<good>100%</good><builtIn> increased shield turn rate.</builtIn>
+integrated|doctrine_fortress_lattice|CAPITAL_SHIP|2	0	<good>100%</good><builtIn> increased shield raise rate.</builtIn>
+integrated|doctrine_fortress_lattice|CAPITAL_SHIP|3	1	<bad>25%</bad> reduced EMP damage taken.
 flavour|doctrine_hostile_takeover	0	Tri-Tachyon's boardroom answer to every fight: commit everything and win before the bill arrives. The bill always arrives.
 type|doctrine_hostile_takeover|null|0	0	<good>20%</good> increased energy weapon damage.
 type|doctrine_hostile_takeover|null|1	0	<good>5%</good> increased time flow.
@@ -4720,6 +5095,66 @@ type|doctrine_hostile_takeover|CRUISER|2	0	<bad>30%</bad> reduced peak performan
 type|doctrine_hostile_takeover|CAPITAL_SHIP|0	0	<good>20%</good> increased energy weapon damage.
 type|doctrine_hostile_takeover|CAPITAL_SHIP|1	0	<good>5%</good> increased time flow.
 type|doctrine_hostile_takeover|CAPITAL_SHIP|2	0	<bad>30%</bad> reduced peak performance time.
+integrable|doctrine_hostile_takeover|null|0	0	<good>20%</good> increased energy weapon damage.
+integrable|doctrine_hostile_takeover|null|1	0	<good>5%</good> increased time flow.
+integrable|doctrine_hostile_takeover|null|2	0	<bad>30%</bad> reduced peak performance time.
+integrable|doctrine_hostile_takeover|null|3	0	Click and hold to integrate.
+integrable|doctrine_hostile_takeover|null|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_hostile_takeover|null|5	0	<muted>20% increased energy weapon damage.</muted>
+integrable|doctrine_hostile_takeover|null|6	0	<muted>5% increased time flow.</muted>
+integrable|doctrine_hostile_takeover|null|7	0	<muted>15% reduced peak performance time.</muted>
+integrable|doctrine_hostile_takeover|FRIGATE|0	0	<good>20%</good> increased energy weapon damage.
+integrable|doctrine_hostile_takeover|FRIGATE|1	0	<good>5%</good> increased time flow.
+integrable|doctrine_hostile_takeover|FRIGATE|2	0	<bad>30%</bad> reduced peak performance time.
+integrable|doctrine_hostile_takeover|FRIGATE|3	0	Click and hold to integrate.
+integrable|doctrine_hostile_takeover|FRIGATE|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_hostile_takeover|FRIGATE|5	0	<muted>20% increased energy weapon damage.</muted>
+integrable|doctrine_hostile_takeover|FRIGATE|6	0	<muted>5% increased time flow.</muted>
+integrable|doctrine_hostile_takeover|FRIGATE|7	0	<muted>15% reduced peak performance time.</muted>
+integrable|doctrine_hostile_takeover|DESTROYER|0	0	<good>20%</good> increased energy weapon damage.
+integrable|doctrine_hostile_takeover|DESTROYER|1	0	<good>5%</good> increased time flow.
+integrable|doctrine_hostile_takeover|DESTROYER|2	0	<bad>30%</bad> reduced peak performance time.
+integrable|doctrine_hostile_takeover|DESTROYER|3	0	Click and hold to integrate.
+integrable|doctrine_hostile_takeover|DESTROYER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_hostile_takeover|DESTROYER|5	0	<muted>20% increased energy weapon damage.</muted>
+integrable|doctrine_hostile_takeover|DESTROYER|6	0	<muted>5% increased time flow.</muted>
+integrable|doctrine_hostile_takeover|DESTROYER|7	0	<muted>15% reduced peak performance time.</muted>
+integrable|doctrine_hostile_takeover|CRUISER|0	0	<good>20%</good> increased energy weapon damage.
+integrable|doctrine_hostile_takeover|CRUISER|1	0	<good>5%</good> increased time flow.
+integrable|doctrine_hostile_takeover|CRUISER|2	0	<bad>30%</bad> reduced peak performance time.
+integrable|doctrine_hostile_takeover|CRUISER|3	0	Click and hold to integrate.
+integrable|doctrine_hostile_takeover|CRUISER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_hostile_takeover|CRUISER|5	0	<muted>20% increased energy weapon damage.</muted>
+integrable|doctrine_hostile_takeover|CRUISER|6	0	<muted>5% increased time flow.</muted>
+integrable|doctrine_hostile_takeover|CRUISER|7	0	<muted>15% reduced peak performance time.</muted>
+integrable|doctrine_hostile_takeover|CAPITAL_SHIP|0	0	<good>20%</good> increased energy weapon damage.
+integrable|doctrine_hostile_takeover|CAPITAL_SHIP|1	0	<good>5%</good> increased time flow.
+integrable|doctrine_hostile_takeover|CAPITAL_SHIP|2	0	<bad>30%</bad> reduced peak performance time.
+integrable|doctrine_hostile_takeover|CAPITAL_SHIP|3	0	Click and hold to integrate.
+integrable|doctrine_hostile_takeover|CAPITAL_SHIP|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_hostile_takeover|CAPITAL_SHIP|5	0	<muted>20% increased energy weapon damage.</muted>
+integrable|doctrine_hostile_takeover|CAPITAL_SHIP|6	0	<muted>5% increased time flow.</muted>
+integrable|doctrine_hostile_takeover|CAPITAL_SHIP|7	0	<muted>15% reduced peak performance time.</muted>
+integrated|doctrine_hostile_takeover|null|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_hostile_takeover|null|1	0	<good>20%</good> increased energy weapon damage.
+integrated|doctrine_hostile_takeover|null|2	0	<good>5%</good> increased time flow.
+integrated|doctrine_hostile_takeover|null|3	0	<bad>15%</bad><builtIn> reduced peak performance time.</builtIn>
+integrated|doctrine_hostile_takeover|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_hostile_takeover|FRIGATE|1	0	<good>20%</good> increased energy weapon damage.
+integrated|doctrine_hostile_takeover|FRIGATE|2	0	<good>5%</good> increased time flow.
+integrated|doctrine_hostile_takeover|FRIGATE|3	0	<bad>15%</bad><builtIn> reduced peak performance time.</builtIn>
+integrated|doctrine_hostile_takeover|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_hostile_takeover|DESTROYER|1	0	<good>20%</good> increased energy weapon damage.
+integrated|doctrine_hostile_takeover|DESTROYER|2	0	<good>5%</good> increased time flow.
+integrated|doctrine_hostile_takeover|DESTROYER|3	0	<bad>15%</bad><builtIn> reduced peak performance time.</builtIn>
+integrated|doctrine_hostile_takeover|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_hostile_takeover|CRUISER|1	0	<good>20%</good> increased energy weapon damage.
+integrated|doctrine_hostile_takeover|CRUISER|2	0	<good>5%</good> increased time flow.
+integrated|doctrine_hostile_takeover|CRUISER|3	0	<bad>15%</bad><builtIn> reduced peak performance time.</builtIn>
+integrated|doctrine_hostile_takeover|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_hostile_takeover|CAPITAL_SHIP|1	0	<good>20%</good> increased energy weapon damage.
+integrated|doctrine_hostile_takeover|CAPITAL_SHIP|2	0	<good>5%</good> increased time flow.
+integrated|doctrine_hostile_takeover|CAPITAL_SHIP|3	0	<bad>15%</bad><builtIn> reduced peak performance time.</builtIn>
 flavour|doctrine_lumen_harmonics	0	Energy mounts pulled from Remnant wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.
 type|doctrine_lumen_harmonics|null|0	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|doctrine_lumen_harmonics|null|1	1	<bad>10%</bad> reduced energy weapon flux cost.
@@ -4731,6 +5166,51 @@ type|doctrine_lumen_harmonics|CRUISER|0	0	<good>10%</good> increased energy weap
 type|doctrine_lumen_harmonics|CRUISER|1	1	<bad>10%</bad> reduced energy weapon flux cost.
 type|doctrine_lumen_harmonics|CAPITAL_SHIP|0	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|doctrine_lumen_harmonics|CAPITAL_SHIP|1	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrable|doctrine_lumen_harmonics|null|0	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+integrable|doctrine_lumen_harmonics|null|1	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrable|doctrine_lumen_harmonics|null|2	0	Click and hold to integrate.
+integrable|doctrine_lumen_harmonics|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_lumen_harmonics|null|4	0	<muted>15% increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.</muted>
+integrable|doctrine_lumen_harmonics|null|5	0	<muted>10% reduced energy weapon flux cost.</muted>
+integrable|doctrine_lumen_harmonics|FRIGATE|0	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+integrable|doctrine_lumen_harmonics|FRIGATE|1	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrable|doctrine_lumen_harmonics|FRIGATE|2	0	Click and hold to integrate.
+integrable|doctrine_lumen_harmonics|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_lumen_harmonics|FRIGATE|4	0	<muted>15% increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.</muted>
+integrable|doctrine_lumen_harmonics|FRIGATE|5	0	<muted>10% reduced energy weapon flux cost.</muted>
+integrable|doctrine_lumen_harmonics|DESTROYER|0	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+integrable|doctrine_lumen_harmonics|DESTROYER|1	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrable|doctrine_lumen_harmonics|DESTROYER|2	0	Click and hold to integrate.
+integrable|doctrine_lumen_harmonics|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_lumen_harmonics|DESTROYER|4	0	<muted>15% increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.</muted>
+integrable|doctrine_lumen_harmonics|DESTROYER|5	0	<muted>10% reduced energy weapon flux cost.</muted>
+integrable|doctrine_lumen_harmonics|CRUISER|0	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+integrable|doctrine_lumen_harmonics|CRUISER|1	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrable|doctrine_lumen_harmonics|CRUISER|2	0	Click and hold to integrate.
+integrable|doctrine_lumen_harmonics|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_lumen_harmonics|CRUISER|4	0	<muted>15% increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.</muted>
+integrable|doctrine_lumen_harmonics|CRUISER|5	0	<muted>10% reduced energy weapon flux cost.</muted>
+integrable|doctrine_lumen_harmonics|CAPITAL_SHIP|0	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+integrable|doctrine_lumen_harmonics|CAPITAL_SHIP|1	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrable|doctrine_lumen_harmonics|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|doctrine_lumen_harmonics|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_lumen_harmonics|CAPITAL_SHIP|4	0	<muted>15% increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.</muted>
+integrable|doctrine_lumen_harmonics|CAPITAL_SHIP|5	0	<muted>10% reduced energy weapon flux cost.</muted>
+integrated|doctrine_lumen_harmonics|null|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_lumen_harmonics|null|1	0	<good>15%</good><builtIn> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.</builtIn>
+integrated|doctrine_lumen_harmonics|null|2	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrated|doctrine_lumen_harmonics|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_lumen_harmonics|FRIGATE|1	0	<good>15%</good><builtIn> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.</builtIn>
+integrated|doctrine_lumen_harmonics|FRIGATE|2	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrated|doctrine_lumen_harmonics|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_lumen_harmonics|DESTROYER|1	0	<good>15%</good><builtIn> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.</builtIn>
+integrated|doctrine_lumen_harmonics|DESTROYER|2	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrated|doctrine_lumen_harmonics|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_lumen_harmonics|CRUISER|1	0	<good>15%</good><builtIn> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.</builtIn>
+integrated|doctrine_lumen_harmonics|CRUISER|2	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrated|doctrine_lumen_harmonics|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_lumen_harmonics|CAPITAL_SHIP|1	0	<good>15%</good><builtIn> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.</builtIn>
+integrated|doctrine_lumen_harmonics|CAPITAL_SHIP|2	1	<bad>10%</bad> reduced energy weapon flux cost.
 flavour|doctrine_ordo_signal_mesh	0	A Remnant ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.
 flavourAutomated|doctrine_ordo_signal_mesh	0	A Remnant ordo moves as one mind, its ships murmuring to each other across a constant web of signals. The ship's core listens long enough to parse the chatter, tunes its sensors to it and turns it against enemy targeting.
 type|doctrine_ordo_signal_mesh|null|0	0	<good>+1</good> to ECM rating.
@@ -4742,6 +5222,48 @@ type|doctrine_ordo_signal_mesh|CRUISER|0	0	<good>+1</good> to ECM rating.
 type|doctrine_ordo_signal_mesh|CRUISER|1	0	<good>+20</good> to this ship's sensor strength.
 type|doctrine_ordo_signal_mesh|CAPITAL_SHIP|0	0	<good>+1</good> to ECM rating.
 type|doctrine_ordo_signal_mesh|CAPITAL_SHIP|1	0	<good>+30</good> to this ship's sensor strength.
+integrable|doctrine_ordo_signal_mesh|null|0	0	<good>+1</good> to ECM rating.
+integrable|doctrine_ordo_signal_mesh|null|1	0	Click and hold to integrate.
+integrable|doctrine_ordo_signal_mesh|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_ordo_signal_mesh|null|3	0	<muted>+2 to ECM rating.</muted>
+integrable|doctrine_ordo_signal_mesh|FRIGATE|0	0	<good>+1</good> to ECM rating.
+integrable|doctrine_ordo_signal_mesh|FRIGATE|1	0	<good>+10</good> to this ship's sensor strength.
+integrable|doctrine_ordo_signal_mesh|FRIGATE|2	0	Click and hold to integrate.
+integrable|doctrine_ordo_signal_mesh|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_ordo_signal_mesh|FRIGATE|4	0	<muted>+2 to ECM rating.</muted>
+integrable|doctrine_ordo_signal_mesh|FRIGATE|5	0	<muted>+10 to this ship's sensor strength.</muted>
+integrable|doctrine_ordo_signal_mesh|DESTROYER|0	0	<good>+1</good> to ECM rating.
+integrable|doctrine_ordo_signal_mesh|DESTROYER|1	0	<good>+15</good> to this ship's sensor strength.
+integrable|doctrine_ordo_signal_mesh|DESTROYER|2	0	Click and hold to integrate.
+integrable|doctrine_ordo_signal_mesh|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_ordo_signal_mesh|DESTROYER|4	0	<muted>+2 to ECM rating.</muted>
+integrable|doctrine_ordo_signal_mesh|DESTROYER|5	0	<muted>+15 to this ship's sensor strength.</muted>
+integrable|doctrine_ordo_signal_mesh|CRUISER|0	0	<good>+1</good> to ECM rating.
+integrable|doctrine_ordo_signal_mesh|CRUISER|1	0	<good>+20</good> to this ship's sensor strength.
+integrable|doctrine_ordo_signal_mesh|CRUISER|2	0	Click and hold to integrate.
+integrable|doctrine_ordo_signal_mesh|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_ordo_signal_mesh|CRUISER|4	0	<muted>+2 to ECM rating.</muted>
+integrable|doctrine_ordo_signal_mesh|CRUISER|5	0	<muted>+20 to this ship's sensor strength.</muted>
+integrable|doctrine_ordo_signal_mesh|CAPITAL_SHIP|0	0	<good>+1</good> to ECM rating.
+integrable|doctrine_ordo_signal_mesh|CAPITAL_SHIP|1	0	<good>+30</good> to this ship's sensor strength.
+integrable|doctrine_ordo_signal_mesh|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|doctrine_ordo_signal_mesh|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_ordo_signal_mesh|CAPITAL_SHIP|4	0	<muted>+2 to ECM rating.</muted>
+integrable|doctrine_ordo_signal_mesh|CAPITAL_SHIP|5	0	<muted>+30 to this ship's sensor strength.</muted>
+integrated|doctrine_ordo_signal_mesh|null|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_ordo_signal_mesh|null|1	0	<good>+2</good><builtIn> to ECM rating.</builtIn>
+integrated|doctrine_ordo_signal_mesh|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_ordo_signal_mesh|FRIGATE|1	0	<good>+2</good><builtIn> to ECM rating.</builtIn>
+integrated|doctrine_ordo_signal_mesh|FRIGATE|2	0	<good>+10</good> to this ship's sensor strength.
+integrated|doctrine_ordo_signal_mesh|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_ordo_signal_mesh|DESTROYER|1	0	<good>+2</good><builtIn> to ECM rating.</builtIn>
+integrated|doctrine_ordo_signal_mesh|DESTROYER|2	0	<good>+15</good> to this ship's sensor strength.
+integrated|doctrine_ordo_signal_mesh|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_ordo_signal_mesh|CRUISER|1	0	<good>+2</good><builtIn> to ECM rating.</builtIn>
+integrated|doctrine_ordo_signal_mesh|CRUISER|2	0	<good>+20</good> to this ship's sensor strength.
+integrated|doctrine_ordo_signal_mesh|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_ordo_signal_mesh|CAPITAL_SHIP|1	0	<good>+2</good><builtIn> to ECM rating.</builtIn>
+integrated|doctrine_ordo_signal_mesh|CAPITAL_SHIP|2	0	<good>+30</good> to this ship's sensor strength.
 flavour|doctrine_penitent_hulls	0	Church salvage yards on Asher send no ship to the breakers while it can still fly, and keep their scarred hulls flying on patience and very little else.
 type|doctrine_penitent_hulls|null|0	1	<bad>25%</bad> less negative effects from d-mods.
 type|doctrine_penitent_hulls|null|1	1	<bad>10%</bad> less supply use for maintenance.
@@ -4753,6 +5275,51 @@ type|doctrine_penitent_hulls|CRUISER|0	1	<bad>25%</bad> less negative effects fr
 type|doctrine_penitent_hulls|CRUISER|1	1	<bad>10%</bad> less supply use for maintenance.
 type|doctrine_penitent_hulls|CAPITAL_SHIP|0	1	<bad>25%</bad> less negative effects from d-mods.
 type|doctrine_penitent_hulls|CAPITAL_SHIP|1	1	<bad>10%</bad> less supply use for maintenance.
+integrable|doctrine_penitent_hulls|null|0	1	<bad>25%</bad> less negative effects from d-mods.
+integrable|doctrine_penitent_hulls|null|1	1	<bad>10%</bad> less supply use for maintenance.
+integrable|doctrine_penitent_hulls|null|2	0	Click and hold to integrate.
+integrable|doctrine_penitent_hulls|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_penitent_hulls|null|4	0	<muted>40% less negative effects from d-mods.</muted>
+integrable|doctrine_penitent_hulls|null|5	0	<muted>10% less supply use for maintenance.</muted>
+integrable|doctrine_penitent_hulls|FRIGATE|0	1	<bad>25%</bad> less negative effects from d-mods.
+integrable|doctrine_penitent_hulls|FRIGATE|1	1	<bad>10%</bad> less supply use for maintenance.
+integrable|doctrine_penitent_hulls|FRIGATE|2	0	Click and hold to integrate.
+integrable|doctrine_penitent_hulls|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_penitent_hulls|FRIGATE|4	0	<muted>40% less negative effects from d-mods.</muted>
+integrable|doctrine_penitent_hulls|FRIGATE|5	0	<muted>10% less supply use for maintenance.</muted>
+integrable|doctrine_penitent_hulls|DESTROYER|0	1	<bad>25%</bad> less negative effects from d-mods.
+integrable|doctrine_penitent_hulls|DESTROYER|1	1	<bad>10%</bad> less supply use for maintenance.
+integrable|doctrine_penitent_hulls|DESTROYER|2	0	Click and hold to integrate.
+integrable|doctrine_penitent_hulls|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_penitent_hulls|DESTROYER|4	0	<muted>40% less negative effects from d-mods.</muted>
+integrable|doctrine_penitent_hulls|DESTROYER|5	0	<muted>10% less supply use for maintenance.</muted>
+integrable|doctrine_penitent_hulls|CRUISER|0	1	<bad>25%</bad> less negative effects from d-mods.
+integrable|doctrine_penitent_hulls|CRUISER|1	1	<bad>10%</bad> less supply use for maintenance.
+integrable|doctrine_penitent_hulls|CRUISER|2	0	Click and hold to integrate.
+integrable|doctrine_penitent_hulls|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_penitent_hulls|CRUISER|4	0	<muted>40% less negative effects from d-mods.</muted>
+integrable|doctrine_penitent_hulls|CRUISER|5	0	<muted>10% less supply use for maintenance.</muted>
+integrable|doctrine_penitent_hulls|CAPITAL_SHIP|0	1	<bad>25%</bad> less negative effects from d-mods.
+integrable|doctrine_penitent_hulls|CAPITAL_SHIP|1	1	<bad>10%</bad> less supply use for maintenance.
+integrable|doctrine_penitent_hulls|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|doctrine_penitent_hulls|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_penitent_hulls|CAPITAL_SHIP|4	0	<muted>40% less negative effects from d-mods.</muted>
+integrable|doctrine_penitent_hulls|CAPITAL_SHIP|5	0	<muted>10% less supply use for maintenance.</muted>
+integrated|doctrine_penitent_hulls|null|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_penitent_hulls|null|1	1	<bad>40%</bad><builtIn> less negative effects from d-mods.</builtIn>
+integrated|doctrine_penitent_hulls|null|2	1	<bad>10%</bad> less supply use for maintenance.
+integrated|doctrine_penitent_hulls|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_penitent_hulls|FRIGATE|1	1	<bad>40%</bad><builtIn> less negative effects from d-mods.</builtIn>
+integrated|doctrine_penitent_hulls|FRIGATE|2	1	<bad>10%</bad> less supply use for maintenance.
+integrated|doctrine_penitent_hulls|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_penitent_hulls|DESTROYER|1	1	<bad>40%</bad><builtIn> less negative effects from d-mods.</builtIn>
+integrated|doctrine_penitent_hulls|DESTROYER|2	1	<bad>10%</bad> less supply use for maintenance.
+integrated|doctrine_penitent_hulls|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_penitent_hulls|CRUISER|1	1	<bad>40%</bad><builtIn> less negative effects from d-mods.</builtIn>
+integrated|doctrine_penitent_hulls|CRUISER|2	1	<bad>10%</bad> less supply use for maintenance.
+integrated|doctrine_penitent_hulls|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_penitent_hulls|CAPITAL_SHIP|1	1	<bad>40%</bad><builtIn> less negative effects from d-mods.</builtIn>
+integrated|doctrine_penitent_hulls|CAPITAL_SHIP|2	1	<bad>10%</bad> less supply use for maintenance.
 flavour|doctrine_pilgrim_volunteers	0	Pilgrims who sign on at Hesperus count it a blessing to stand their stations through the worst of a fight and keep vigil without complaint.
 flavourAutomated|doctrine_pilgrim_volunteers	0	Pilgrims who sign on at Hesperus stand their stations through the worst of a fight and keep vigil without complaint. This ship has no stations to stand, so its core logs their watch rotations and runs its systems on the same unbroken vigil.
 type|doctrine_pilgrim_volunteers|null|0	0	<good>20%</good> increased peak performance time.
@@ -4765,6 +5332,51 @@ type|doctrine_pilgrim_volunteers|CRUISER|0	0	<good>20%</good> increased peak per
 type|doctrine_pilgrim_volunteers|CRUISER|1	1	<bad>25%</bad> reduced crew casualties.
 type|doctrine_pilgrim_volunteers|CAPITAL_SHIP|0	0	<good>20%</good> increased peak performance time.
 type|doctrine_pilgrim_volunteers|CAPITAL_SHIP|1	1	<bad>25%</bad> reduced crew casualties.
+integrable|doctrine_pilgrim_volunteers|null|0	0	<good>20%</good> increased peak performance time.
+integrable|doctrine_pilgrim_volunteers|null|1	1	<bad>25%</bad> reduced crew casualties.
+integrable|doctrine_pilgrim_volunteers|null|2	0	Click and hold to integrate.
+integrable|doctrine_pilgrim_volunteers|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_pilgrim_volunteers|null|4	0	<muted>30% increased peak performance time.</muted>
+integrable|doctrine_pilgrim_volunteers|null|5	0	<muted>25% reduced crew casualties.</muted>
+integrable|doctrine_pilgrim_volunteers|FRIGATE|0	0	<good>20%</good> increased peak performance time.
+integrable|doctrine_pilgrim_volunteers|FRIGATE|1	1	<bad>25%</bad> reduced crew casualties.
+integrable|doctrine_pilgrim_volunteers|FRIGATE|2	0	Click and hold to integrate.
+integrable|doctrine_pilgrim_volunteers|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_pilgrim_volunteers|FRIGATE|4	0	<muted>30% increased peak performance time.</muted>
+integrable|doctrine_pilgrim_volunteers|FRIGATE|5	0	<muted>25% reduced crew casualties.</muted>
+integrable|doctrine_pilgrim_volunteers|DESTROYER|0	0	<good>20%</good> increased peak performance time.
+integrable|doctrine_pilgrim_volunteers|DESTROYER|1	1	<bad>25%</bad> reduced crew casualties.
+integrable|doctrine_pilgrim_volunteers|DESTROYER|2	0	Click and hold to integrate.
+integrable|doctrine_pilgrim_volunteers|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_pilgrim_volunteers|DESTROYER|4	0	<muted>30% increased peak performance time.</muted>
+integrable|doctrine_pilgrim_volunteers|DESTROYER|5	0	<muted>25% reduced crew casualties.</muted>
+integrable|doctrine_pilgrim_volunteers|CRUISER|0	0	<good>20%</good> increased peak performance time.
+integrable|doctrine_pilgrim_volunteers|CRUISER|1	1	<bad>25%</bad> reduced crew casualties.
+integrable|doctrine_pilgrim_volunteers|CRUISER|2	0	Click and hold to integrate.
+integrable|doctrine_pilgrim_volunteers|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_pilgrim_volunteers|CRUISER|4	0	<muted>30% increased peak performance time.</muted>
+integrable|doctrine_pilgrim_volunteers|CRUISER|5	0	<muted>25% reduced crew casualties.</muted>
+integrable|doctrine_pilgrim_volunteers|CAPITAL_SHIP|0	0	<good>20%</good> increased peak performance time.
+integrable|doctrine_pilgrim_volunteers|CAPITAL_SHIP|1	1	<bad>25%</bad> reduced crew casualties.
+integrable|doctrine_pilgrim_volunteers|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|doctrine_pilgrim_volunteers|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_pilgrim_volunteers|CAPITAL_SHIP|4	0	<muted>30% increased peak performance time.</muted>
+integrable|doctrine_pilgrim_volunteers|CAPITAL_SHIP|5	0	<muted>25% reduced crew casualties.</muted>
+integrated|doctrine_pilgrim_volunteers|null|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_pilgrim_volunteers|null|1	0	<good>30%</good><builtIn> increased peak performance time.</builtIn>
+integrated|doctrine_pilgrim_volunteers|null|2	1	<bad>25%</bad> reduced crew casualties.
+integrated|doctrine_pilgrim_volunteers|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_pilgrim_volunteers|FRIGATE|1	0	<good>30%</good><builtIn> increased peak performance time.</builtIn>
+integrated|doctrine_pilgrim_volunteers|FRIGATE|2	1	<bad>25%</bad> reduced crew casualties.
+integrated|doctrine_pilgrim_volunteers|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_pilgrim_volunteers|DESTROYER|1	0	<good>30%</good><builtIn> increased peak performance time.</builtIn>
+integrated|doctrine_pilgrim_volunteers|DESTROYER|2	1	<bad>25%</bad> reduced crew casualties.
+integrated|doctrine_pilgrim_volunteers|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_pilgrim_volunteers|CRUISER|1	0	<good>30%</good><builtIn> increased peak performance time.</builtIn>
+integrated|doctrine_pilgrim_volunteers|CRUISER|2	1	<bad>25%</bad> reduced crew casualties.
+integrated|doctrine_pilgrim_volunteers|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_pilgrim_volunteers|CAPITAL_SHIP|1	0	<good>30%</good><builtIn> increased peak performance time.</builtIn>
+integrated|doctrine_pilgrim_volunteers|CAPITAL_SHIP|2	1	<bad>25%</bad> reduced crew casualties.
 flavour|doctrine_pilgrims_burn	0	Pilgrim fleets cross the Sector on whatever drives they can keep lit. Their frugal burn discipline is learned between stations, with the tanks running low.
 flavourAutomated|doctrine_pilgrims_burn	0	Pilgrim fleets cross the Sector on whatever drives they can keep lit. The ship's core logs their burn profiles between stations and flies the same frugal burn, tanks running low.
 type|doctrine_pilgrims_burn|null|0	0	<good>+1</good> to max burn level.
@@ -4777,6 +5389,51 @@ type|doctrine_pilgrims_burn|CRUISER|0	0	<good>+1</good> to max burn level.
 type|doctrine_pilgrims_burn|CRUISER|1	1	<bad>15%</bad> less fuel consumption rate.
 type|doctrine_pilgrims_burn|CAPITAL_SHIP|0	0	<good>+1</good> to max burn level.
 type|doctrine_pilgrims_burn|CAPITAL_SHIP|1	1	<bad>15%</bad> less fuel consumption rate.
+integrable|doctrine_pilgrims_burn|null|0	0	<good>+1</good> to max burn level.
+integrable|doctrine_pilgrims_burn|null|1	1	<bad>15%</bad> less fuel consumption rate.
+integrable|doctrine_pilgrims_burn|null|2	0	Click and hold to integrate.
+integrable|doctrine_pilgrims_burn|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_pilgrims_burn|null|4	0	<muted>+1 to max burn level.</muted>
+integrable|doctrine_pilgrims_burn|null|5	0	<muted>25% less fuel consumption rate.</muted>
+integrable|doctrine_pilgrims_burn|FRIGATE|0	0	<good>+1</good> to max burn level.
+integrable|doctrine_pilgrims_burn|FRIGATE|1	1	<bad>15%</bad> less fuel consumption rate.
+integrable|doctrine_pilgrims_burn|FRIGATE|2	0	Click and hold to integrate.
+integrable|doctrine_pilgrims_burn|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_pilgrims_burn|FRIGATE|4	0	<muted>+1 to max burn level.</muted>
+integrable|doctrine_pilgrims_burn|FRIGATE|5	0	<muted>25% less fuel consumption rate.</muted>
+integrable|doctrine_pilgrims_burn|DESTROYER|0	0	<good>+1</good> to max burn level.
+integrable|doctrine_pilgrims_burn|DESTROYER|1	1	<bad>15%</bad> less fuel consumption rate.
+integrable|doctrine_pilgrims_burn|DESTROYER|2	0	Click and hold to integrate.
+integrable|doctrine_pilgrims_burn|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_pilgrims_burn|DESTROYER|4	0	<muted>+1 to max burn level.</muted>
+integrable|doctrine_pilgrims_burn|DESTROYER|5	0	<muted>25% less fuel consumption rate.</muted>
+integrable|doctrine_pilgrims_burn|CRUISER|0	0	<good>+1</good> to max burn level.
+integrable|doctrine_pilgrims_burn|CRUISER|1	1	<bad>15%</bad> less fuel consumption rate.
+integrable|doctrine_pilgrims_burn|CRUISER|2	0	Click and hold to integrate.
+integrable|doctrine_pilgrims_burn|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_pilgrims_burn|CRUISER|4	0	<muted>+1 to max burn level.</muted>
+integrable|doctrine_pilgrims_burn|CRUISER|5	0	<muted>25% less fuel consumption rate.</muted>
+integrable|doctrine_pilgrims_burn|CAPITAL_SHIP|0	0	<good>+1</good> to max burn level.
+integrable|doctrine_pilgrims_burn|CAPITAL_SHIP|1	1	<bad>15%</bad> less fuel consumption rate.
+integrable|doctrine_pilgrims_burn|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|doctrine_pilgrims_burn|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_pilgrims_burn|CAPITAL_SHIP|4	0	<muted>+1 to max burn level.</muted>
+integrable|doctrine_pilgrims_burn|CAPITAL_SHIP|5	0	<muted>25% less fuel consumption rate.</muted>
+integrated|doctrine_pilgrims_burn|null|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_pilgrims_burn|null|1	0	<good>+1</good> to max burn level.
+integrated|doctrine_pilgrims_burn|null|2	1	<bad>25%</bad><builtIn> less fuel consumption rate.</builtIn>
+integrated|doctrine_pilgrims_burn|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_pilgrims_burn|FRIGATE|1	0	<good>+1</good> to max burn level.
+integrated|doctrine_pilgrims_burn|FRIGATE|2	1	<bad>25%</bad><builtIn> less fuel consumption rate.</builtIn>
+integrated|doctrine_pilgrims_burn|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_pilgrims_burn|DESTROYER|1	0	<good>+1</good> to max burn level.
+integrated|doctrine_pilgrims_burn|DESTROYER|2	1	<bad>25%</bad><builtIn> less fuel consumption rate.</builtIn>
+integrated|doctrine_pilgrims_burn|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_pilgrims_burn|CRUISER|1	0	<good>+1</good> to max burn level.
+integrated|doctrine_pilgrims_burn|CRUISER|2	1	<bad>25%</bad><builtIn> less fuel consumption rate.</builtIn>
+integrated|doctrine_pilgrims_burn|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_pilgrims_burn|CAPITAL_SHIP|1	0	<good>+1</good> to max burn level.
+integrated|doctrine_pilgrims_burn|CAPITAL_SHIP|2	1	<bad>25%</bad><builtIn> less fuel consumption rate.</builtIn>
 flavour|doctrine_plain_rites	0	Luddic doctrine calls a ship system's refinements vanity. Stripped back to plain, honest machinery, it does what it was built to do and nothing more.
 flavour|doctrine_quarterly_targets	0	Tri-Tachyon fleet doctrine ranks every target by the value it carries, and its threat tables push gunners toward the largest hulls on the field. Frigates, the tables note, are rarely worth the ammunition.
 flavourAutomated|doctrine_quarterly_targets	0	Tri-Tachyon fleet doctrine ranks every target by the value it carries, and its threat tables push fire control toward the largest hulls on the field. The ship's core loads the tables unedited. Frigates, the tables note, are rarely worth the ammunition.
@@ -4790,6 +5447,51 @@ type|doctrine_quarterly_targets|CRUISER|0	0	<good>10%</good> increased damage to
 type|doctrine_quarterly_targets|CRUISER|1	0	<good>10%</good> increased damage to capital ships and stations.
 type|doctrine_quarterly_targets|CAPITAL_SHIP|0	0	<good>10%</good> increased damage to cruisers.
 type|doctrine_quarterly_targets|CAPITAL_SHIP|1	0	<good>10%</good> increased damage to capital ships and stations.
+integrable|doctrine_quarterly_targets|null|0	0	<good>10%</good> increased damage to cruisers.
+integrable|doctrine_quarterly_targets|null|1	0	<good>10%</good> increased damage to capital ships and stations.
+integrable|doctrine_quarterly_targets|null|2	0	Click and hold to integrate.
+integrable|doctrine_quarterly_targets|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_quarterly_targets|null|4	0	<muted>15% increased damage to cruisers.</muted>
+integrable|doctrine_quarterly_targets|null|5	0	<muted>15% increased damage to capital ships and stations.</muted>
+integrable|doctrine_quarterly_targets|FRIGATE|0	0	<good>10%</good> increased damage to cruisers.
+integrable|doctrine_quarterly_targets|FRIGATE|1	0	<good>10%</good> increased damage to capital ships and stations.
+integrable|doctrine_quarterly_targets|FRIGATE|2	0	Click and hold to integrate.
+integrable|doctrine_quarterly_targets|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_quarterly_targets|FRIGATE|4	0	<muted>15% increased damage to cruisers.</muted>
+integrable|doctrine_quarterly_targets|FRIGATE|5	0	<muted>15% increased damage to capital ships and stations.</muted>
+integrable|doctrine_quarterly_targets|DESTROYER|0	0	<good>10%</good> increased damage to cruisers.
+integrable|doctrine_quarterly_targets|DESTROYER|1	0	<good>10%</good> increased damage to capital ships and stations.
+integrable|doctrine_quarterly_targets|DESTROYER|2	0	Click and hold to integrate.
+integrable|doctrine_quarterly_targets|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_quarterly_targets|DESTROYER|4	0	<muted>15% increased damage to cruisers.</muted>
+integrable|doctrine_quarterly_targets|DESTROYER|5	0	<muted>15% increased damage to capital ships and stations.</muted>
+integrable|doctrine_quarterly_targets|CRUISER|0	0	<good>10%</good> increased damage to cruisers.
+integrable|doctrine_quarterly_targets|CRUISER|1	0	<good>10%</good> increased damage to capital ships and stations.
+integrable|doctrine_quarterly_targets|CRUISER|2	0	Click and hold to integrate.
+integrable|doctrine_quarterly_targets|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_quarterly_targets|CRUISER|4	0	<muted>15% increased damage to cruisers.</muted>
+integrable|doctrine_quarterly_targets|CRUISER|5	0	<muted>15% increased damage to capital ships and stations.</muted>
+integrable|doctrine_quarterly_targets|CAPITAL_SHIP|0	0	<good>10%</good> increased damage to cruisers.
+integrable|doctrine_quarterly_targets|CAPITAL_SHIP|1	0	<good>10%</good> increased damage to capital ships and stations.
+integrable|doctrine_quarterly_targets|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|doctrine_quarterly_targets|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_quarterly_targets|CAPITAL_SHIP|4	0	<muted>15% increased damage to cruisers.</muted>
+integrable|doctrine_quarterly_targets|CAPITAL_SHIP|5	0	<muted>15% increased damage to capital ships and stations.</muted>
+integrated|doctrine_quarterly_targets|null|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_quarterly_targets|null|1	0	<good>15%</good><builtIn> increased damage to cruisers.</builtIn>
+integrated|doctrine_quarterly_targets|null|2	0	<good>15%</good><builtIn> increased damage to capital ships and stations.</builtIn>
+integrated|doctrine_quarterly_targets|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_quarterly_targets|FRIGATE|1	0	<good>15%</good><builtIn> increased damage to cruisers.</builtIn>
+integrated|doctrine_quarterly_targets|FRIGATE|2	0	<good>15%</good><builtIn> increased damage to capital ships and stations.</builtIn>
+integrated|doctrine_quarterly_targets|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_quarterly_targets|DESTROYER|1	0	<good>15%</good><builtIn> increased damage to cruisers.</builtIn>
+integrated|doctrine_quarterly_targets|DESTROYER|2	0	<good>15%</good><builtIn> increased damage to capital ships and stations.</builtIn>
+integrated|doctrine_quarterly_targets|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_quarterly_targets|CRUISER|1	0	<good>15%</good><builtIn> increased damage to cruisers.</builtIn>
+integrated|doctrine_quarterly_targets|CRUISER|2	0	<good>15%</good><builtIn> increased damage to capital ships and stations.</builtIn>
+integrated|doctrine_quarterly_targets|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_quarterly_targets|CAPITAL_SHIP|1	0	<good>15%</good><builtIn> increased damage to cruisers.</builtIn>
+integrated|doctrine_quarterly_targets|CAPITAL_SHIP|2	0	<good>15%</good><builtIn> increased damage to capital ships and stations.</builtIn>
 flavour|doctrine_righteous_fury	0	Knights of Ludd gunners load each round as if it were a verdict. Their gunnery is crude, patient and difficult to argue with.
 flavourAutomated|doctrine_righteous_fury	0	Knights of Ludd gunners load each round as if it were a verdict. The ship's core logs their gunnery round by round and reproduces it exactly.
 type|doctrine_righteous_fury|null|0	0	<good>15%</good> increased ballistic weapon damage.
@@ -4802,6 +5504,51 @@ type|doctrine_righteous_fury|CRUISER|0	0	<good>15%</good> increased ballistic we
 type|doctrine_righteous_fury|CRUISER|1	0	<good>15%</good> increased missile weapon damage.
 type|doctrine_righteous_fury|CAPITAL_SHIP|0	0	<good>15%</good> increased ballistic weapon damage.
 type|doctrine_righteous_fury|CAPITAL_SHIP|1	0	<good>15%</good> increased missile weapon damage.
+integrable|doctrine_righteous_fury|null|0	0	<good>15%</good> increased ballistic weapon damage.
+integrable|doctrine_righteous_fury|null|1	0	<good>15%</good> increased missile weapon damage.
+integrable|doctrine_righteous_fury|null|2	0	Click and hold to integrate.
+integrable|doctrine_righteous_fury|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_righteous_fury|null|4	0	<muted>20% increased ballistic weapon damage.</muted>
+integrable|doctrine_righteous_fury|null|5	0	<muted>20% increased missile weapon damage.</muted>
+integrable|doctrine_righteous_fury|FRIGATE|0	0	<good>15%</good> increased ballistic weapon damage.
+integrable|doctrine_righteous_fury|FRIGATE|1	0	<good>15%</good> increased missile weapon damage.
+integrable|doctrine_righteous_fury|FRIGATE|2	0	Click and hold to integrate.
+integrable|doctrine_righteous_fury|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_righteous_fury|FRIGATE|4	0	<muted>20% increased ballistic weapon damage.</muted>
+integrable|doctrine_righteous_fury|FRIGATE|5	0	<muted>20% increased missile weapon damage.</muted>
+integrable|doctrine_righteous_fury|DESTROYER|0	0	<good>15%</good> increased ballistic weapon damage.
+integrable|doctrine_righteous_fury|DESTROYER|1	0	<good>15%</good> increased missile weapon damage.
+integrable|doctrine_righteous_fury|DESTROYER|2	0	Click and hold to integrate.
+integrable|doctrine_righteous_fury|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_righteous_fury|DESTROYER|4	0	<muted>20% increased ballistic weapon damage.</muted>
+integrable|doctrine_righteous_fury|DESTROYER|5	0	<muted>20% increased missile weapon damage.</muted>
+integrable|doctrine_righteous_fury|CRUISER|0	0	<good>15%</good> increased ballistic weapon damage.
+integrable|doctrine_righteous_fury|CRUISER|1	0	<good>15%</good> increased missile weapon damage.
+integrable|doctrine_righteous_fury|CRUISER|2	0	Click and hold to integrate.
+integrable|doctrine_righteous_fury|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_righteous_fury|CRUISER|4	0	<muted>20% increased ballistic weapon damage.</muted>
+integrable|doctrine_righteous_fury|CRUISER|5	0	<muted>20% increased missile weapon damage.</muted>
+integrable|doctrine_righteous_fury|CAPITAL_SHIP|0	0	<good>15%</good> increased ballistic weapon damage.
+integrable|doctrine_righteous_fury|CAPITAL_SHIP|1	0	<good>15%</good> increased missile weapon damage.
+integrable|doctrine_righteous_fury|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|doctrine_righteous_fury|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_righteous_fury|CAPITAL_SHIP|4	0	<muted>20% increased ballistic weapon damage.</muted>
+integrable|doctrine_righteous_fury|CAPITAL_SHIP|5	0	<muted>20% increased missile weapon damage.</muted>
+integrated|doctrine_righteous_fury|null|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_righteous_fury|null|1	0	<good>20%</good><builtIn> increased ballistic weapon damage.</builtIn>
+integrated|doctrine_righteous_fury|null|2	0	<good>20%</good><builtIn> increased missile weapon damage.</builtIn>
+integrated|doctrine_righteous_fury|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_righteous_fury|FRIGATE|1	0	<good>20%</good><builtIn> increased ballistic weapon damage.</builtIn>
+integrated|doctrine_righteous_fury|FRIGATE|2	0	<good>20%</good><builtIn> increased missile weapon damage.</builtIn>
+integrated|doctrine_righteous_fury|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_righteous_fury|DESTROYER|1	0	<good>20%</good><builtIn> increased ballistic weapon damage.</builtIn>
+integrated|doctrine_righteous_fury|DESTROYER|2	0	<good>20%</good><builtIn> increased missile weapon damage.</builtIn>
+integrated|doctrine_righteous_fury|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_righteous_fury|CRUISER|1	0	<good>20%</good><builtIn> increased ballistic weapon damage.</builtIn>
+integrated|doctrine_righteous_fury|CRUISER|2	0	<good>20%</good><builtIn> increased missile weapon damage.</builtIn>
+integrated|doctrine_righteous_fury|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_righteous_fury|CAPITAL_SHIP|1	0	<good>20%</good><builtIn> increased ballistic weapon damage.</builtIn>
+integrated|doctrine_righteous_fury|CAPITAL_SHIP|2	0	<good>20%</good><builtIn> increased missile weapon damage.</builtIn>
 flavour|doctrine_swarm_logic	0	Remnant carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.
 type|doctrine_swarm_logic|null|0	0	<good>25%</good> increased rate at which the strikecraft replacement rate recovers.
 type|doctrine_swarm_logic|null|1	0	Strikecraft launched from this ship have <good>15%</good> increased weapon damage.
@@ -4813,6 +5560,51 @@ type|doctrine_swarm_logic|CRUISER|0	0	<good>25%</good> increased rate at which t
 type|doctrine_swarm_logic|CRUISER|1	0	Strikecraft launched from this ship have <good>15%</good> increased weapon damage.
 type|doctrine_swarm_logic|CAPITAL_SHIP|0	0	<good>25%</good> increased rate at which the strikecraft replacement rate recovers.
 type|doctrine_swarm_logic|CAPITAL_SHIP|1	0	Strikecraft launched from this ship have <good>15%</good> increased weapon damage.
+integrable|doctrine_swarm_logic|null|0	0	<good>25%</good> increased rate at which the strikecraft replacement rate recovers.
+integrable|doctrine_swarm_logic|null|1	0	Strikecraft launched from this ship have <good>15%</good> increased weapon damage.
+integrable|doctrine_swarm_logic|null|2	0	Click and hold to integrate.
+integrable|doctrine_swarm_logic|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_swarm_logic|null|4	0	<muted>25% increased rate at which the strikecraft replacement rate recovers.</muted>
+integrable|doctrine_swarm_logic|null|5	0	<muted>Strikecraft launched from this ship have 25% increased weapon damage.</muted>
+integrable|doctrine_swarm_logic|FRIGATE|0	0	<good>25%</good> increased rate at which the strikecraft replacement rate recovers.
+integrable|doctrine_swarm_logic|FRIGATE|1	0	Strikecraft launched from this ship have <good>15%</good> increased weapon damage.
+integrable|doctrine_swarm_logic|FRIGATE|2	0	Click and hold to integrate.
+integrable|doctrine_swarm_logic|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_swarm_logic|FRIGATE|4	0	<muted>25% increased rate at which the strikecraft replacement rate recovers.</muted>
+integrable|doctrine_swarm_logic|FRIGATE|5	0	<muted>Strikecraft launched from this ship have 25% increased weapon damage.</muted>
+integrable|doctrine_swarm_logic|DESTROYER|0	0	<good>25%</good> increased rate at which the strikecraft replacement rate recovers.
+integrable|doctrine_swarm_logic|DESTROYER|1	0	Strikecraft launched from this ship have <good>15%</good> increased weapon damage.
+integrable|doctrine_swarm_logic|DESTROYER|2	0	Click and hold to integrate.
+integrable|doctrine_swarm_logic|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_swarm_logic|DESTROYER|4	0	<muted>25% increased rate at which the strikecraft replacement rate recovers.</muted>
+integrable|doctrine_swarm_logic|DESTROYER|5	0	<muted>Strikecraft launched from this ship have 25% increased weapon damage.</muted>
+integrable|doctrine_swarm_logic|CRUISER|0	0	<good>25%</good> increased rate at which the strikecraft replacement rate recovers.
+integrable|doctrine_swarm_logic|CRUISER|1	0	Strikecraft launched from this ship have <good>15%</good> increased weapon damage.
+integrable|doctrine_swarm_logic|CRUISER|2	0	Click and hold to integrate.
+integrable|doctrine_swarm_logic|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_swarm_logic|CRUISER|4	0	<muted>25% increased rate at which the strikecraft replacement rate recovers.</muted>
+integrable|doctrine_swarm_logic|CRUISER|5	0	<muted>Strikecraft launched from this ship have 25% increased weapon damage.</muted>
+integrable|doctrine_swarm_logic|CAPITAL_SHIP|0	0	<good>25%</good> increased rate at which the strikecraft replacement rate recovers.
+integrable|doctrine_swarm_logic|CAPITAL_SHIP|1	0	Strikecraft launched from this ship have <good>15%</good> increased weapon damage.
+integrable|doctrine_swarm_logic|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|doctrine_swarm_logic|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_swarm_logic|CAPITAL_SHIP|4	0	<muted>25% increased rate at which the strikecraft replacement rate recovers.</muted>
+integrable|doctrine_swarm_logic|CAPITAL_SHIP|5	0	<muted>Strikecraft launched from this ship have 25% increased weapon damage.</muted>
+integrated|doctrine_swarm_logic|null|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_swarm_logic|null|1	0	<good>25%</good> increased rate at which the strikecraft replacement rate recovers.
+integrated|doctrine_swarm_logic|null|2	0	<builtIn>Strikecraft launched from this ship have </builtIn><good>25%</good><builtIn> increased weapon damage.</builtIn>
+integrated|doctrine_swarm_logic|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_swarm_logic|FRIGATE|1	0	<good>25%</good> increased rate at which the strikecraft replacement rate recovers.
+integrated|doctrine_swarm_logic|FRIGATE|2	0	<builtIn>Strikecraft launched from this ship have </builtIn><good>25%</good><builtIn> increased weapon damage.</builtIn>
+integrated|doctrine_swarm_logic|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_swarm_logic|DESTROYER|1	0	<good>25%</good> increased rate at which the strikecraft replacement rate recovers.
+integrated|doctrine_swarm_logic|DESTROYER|2	0	<builtIn>Strikecraft launched from this ship have </builtIn><good>25%</good><builtIn> increased weapon damage.</builtIn>
+integrated|doctrine_swarm_logic|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_swarm_logic|CRUISER|1	0	<good>25%</good> increased rate at which the strikecraft replacement rate recovers.
+integrated|doctrine_swarm_logic|CRUISER|2	0	<builtIn>Strikecraft launched from this ship have </builtIn><good>25%</good><builtIn> increased weapon damage.</builtIn>
+integrated|doctrine_swarm_logic|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_swarm_logic|CAPITAL_SHIP|1	0	<good>25%</good> increased rate at which the strikecraft replacement rate recovers.
+integrated|doctrine_swarm_logic|CAPITAL_SHIP|2	0	<builtIn>Strikecraft launched from this ship have </builtIn><good>25%</good><builtIn> increased weapon damage.</builtIn>
 flavour|doctrine_tachyon_lance_licensing	0	A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked and every one of them copied by a crew that never planned to renew.
 flavourAutomated|doctrine_tachyon_lance_licensing	0	A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked. The ship's core scans every page once.
 type|doctrine_tachyon_lance_licensing|null|0	0	<good>15%</good> increased beam weapon damage.
@@ -4825,6 +5617,51 @@ type|doctrine_tachyon_lance_licensing|CRUISER|0	0	<good>15%</good> increased bea
 type|doctrine_tachyon_lance_licensing|CRUISER|1	0	<good>10%</good> increased beam weapon range.
 type|doctrine_tachyon_lance_licensing|CAPITAL_SHIP|0	0	<good>15%</good> increased beam weapon damage.
 type|doctrine_tachyon_lance_licensing|CAPITAL_SHIP|1	0	<good>10%</good> increased beam weapon range.
+integrable|doctrine_tachyon_lance_licensing|null|0	0	<good>15%</good> increased beam weapon damage.
+integrable|doctrine_tachyon_lance_licensing|null|1	0	<good>10%</good> increased beam weapon range.
+integrable|doctrine_tachyon_lance_licensing|null|2	0	Click and hold to integrate.
+integrable|doctrine_tachyon_lance_licensing|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_tachyon_lance_licensing|null|4	0	<muted>15% increased beam weapon damage.</muted>
+integrable|doctrine_tachyon_lance_licensing|null|5	0	<muted>15% increased beam weapon range.</muted>
+integrable|doctrine_tachyon_lance_licensing|FRIGATE|0	0	<good>15%</good> increased beam weapon damage.
+integrable|doctrine_tachyon_lance_licensing|FRIGATE|1	0	<good>10%</good> increased beam weapon range.
+integrable|doctrine_tachyon_lance_licensing|FRIGATE|2	0	Click and hold to integrate.
+integrable|doctrine_tachyon_lance_licensing|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_tachyon_lance_licensing|FRIGATE|4	0	<muted>15% increased beam weapon damage.</muted>
+integrable|doctrine_tachyon_lance_licensing|FRIGATE|5	0	<muted>15% increased beam weapon range.</muted>
+integrable|doctrine_tachyon_lance_licensing|DESTROYER|0	0	<good>15%</good> increased beam weapon damage.
+integrable|doctrine_tachyon_lance_licensing|DESTROYER|1	0	<good>10%</good> increased beam weapon range.
+integrable|doctrine_tachyon_lance_licensing|DESTROYER|2	0	Click and hold to integrate.
+integrable|doctrine_tachyon_lance_licensing|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_tachyon_lance_licensing|DESTROYER|4	0	<muted>15% increased beam weapon damage.</muted>
+integrable|doctrine_tachyon_lance_licensing|DESTROYER|5	0	<muted>15% increased beam weapon range.</muted>
+integrable|doctrine_tachyon_lance_licensing|CRUISER|0	0	<good>15%</good> increased beam weapon damage.
+integrable|doctrine_tachyon_lance_licensing|CRUISER|1	0	<good>10%</good> increased beam weapon range.
+integrable|doctrine_tachyon_lance_licensing|CRUISER|2	0	Click and hold to integrate.
+integrable|doctrine_tachyon_lance_licensing|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_tachyon_lance_licensing|CRUISER|4	0	<muted>15% increased beam weapon damage.</muted>
+integrable|doctrine_tachyon_lance_licensing|CRUISER|5	0	<muted>15% increased beam weapon range.</muted>
+integrable|doctrine_tachyon_lance_licensing|CAPITAL_SHIP|0	0	<good>15%</good> increased beam weapon damage.
+integrable|doctrine_tachyon_lance_licensing|CAPITAL_SHIP|1	0	<good>10%</good> increased beam weapon range.
+integrable|doctrine_tachyon_lance_licensing|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|doctrine_tachyon_lance_licensing|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_tachyon_lance_licensing|CAPITAL_SHIP|4	0	<muted>15% increased beam weapon damage.</muted>
+integrable|doctrine_tachyon_lance_licensing|CAPITAL_SHIP|5	0	<muted>15% increased beam weapon range.</muted>
+integrated|doctrine_tachyon_lance_licensing|null|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_tachyon_lance_licensing|null|1	0	<good>15%</good> increased beam weapon damage.
+integrated|doctrine_tachyon_lance_licensing|null|2	0	<good>15%</good><builtIn> increased beam weapon range.</builtIn>
+integrated|doctrine_tachyon_lance_licensing|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_tachyon_lance_licensing|FRIGATE|1	0	<good>15%</good> increased beam weapon damage.
+integrated|doctrine_tachyon_lance_licensing|FRIGATE|2	0	<good>15%</good><builtIn> increased beam weapon range.</builtIn>
+integrated|doctrine_tachyon_lance_licensing|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_tachyon_lance_licensing|DESTROYER|1	0	<good>15%</good> increased beam weapon damage.
+integrated|doctrine_tachyon_lance_licensing|DESTROYER|2	0	<good>15%</good><builtIn> increased beam weapon range.</builtIn>
+integrated|doctrine_tachyon_lance_licensing|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_tachyon_lance_licensing|CRUISER|1	0	<good>15%</good> increased beam weapon damage.
+integrated|doctrine_tachyon_lance_licensing|CRUISER|2	0	<good>15%</good><builtIn> increased beam weapon range.</builtIn>
+integrated|doctrine_tachyon_lance_licensing|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_tachyon_lance_licensing|CAPITAL_SHIP|1	0	<good>15%</good> increased beam weapon damage.
+integrated|doctrine_tachyon_lance_licensing|CAPITAL_SHIP|2	0	<good>15%</good><builtIn> increased beam weapon range.</builtIn>
 flavour|doctrine_tireless_cadence	0	Remnant warships never stand down, their systems cycling at a tempo built for machines that never tire. Copied into this ship's reactor and fire control, that tempo is easy to keep in battle and hard to recover from afterwards.
 type|doctrine_tireless_cadence|null|0	0	<good>10%</good> increased time flow.
 type|doctrine_tireless_cadence|null|1	0	<good>15%</good> increased flux dissipation.
@@ -4841,6 +5678,66 @@ type|doctrine_tireless_cadence|CRUISER|2	0	<bad>50%</bad> reduced combat readine
 type|doctrine_tireless_cadence|CAPITAL_SHIP|0	0	<good>10%</good> increased time flow.
 type|doctrine_tireless_cadence|CAPITAL_SHIP|1	0	<good>15%</good> increased flux dissipation.
 type|doctrine_tireless_cadence|CAPITAL_SHIP|2	0	<bad>50%</bad> reduced combat readiness recovery rate.
+integrable|doctrine_tireless_cadence|null|0	0	<good>10%</good> increased time flow.
+integrable|doctrine_tireless_cadence|null|1	0	<good>15%</good> increased flux dissipation.
+integrable|doctrine_tireless_cadence|null|2	0	<bad>50%</bad> reduced combat readiness recovery rate.
+integrable|doctrine_tireless_cadence|null|3	0	Click and hold to integrate.
+integrable|doctrine_tireless_cadence|null|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_tireless_cadence|null|5	0	<muted>10% increased time flow.</muted>
+integrable|doctrine_tireless_cadence|null|6	0	<muted>15% increased flux dissipation.</muted>
+integrable|doctrine_tireless_cadence|null|7	0	<muted>25% reduced combat readiness recovery rate.</muted>
+integrable|doctrine_tireless_cadence|FRIGATE|0	0	<good>10%</good> increased time flow.
+integrable|doctrine_tireless_cadence|FRIGATE|1	0	<good>15%</good> increased flux dissipation.
+integrable|doctrine_tireless_cadence|FRIGATE|2	0	<bad>50%</bad> reduced combat readiness recovery rate.
+integrable|doctrine_tireless_cadence|FRIGATE|3	0	Click and hold to integrate.
+integrable|doctrine_tireless_cadence|FRIGATE|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_tireless_cadence|FRIGATE|5	0	<muted>10% increased time flow.</muted>
+integrable|doctrine_tireless_cadence|FRIGATE|6	0	<muted>15% increased flux dissipation.</muted>
+integrable|doctrine_tireless_cadence|FRIGATE|7	0	<muted>25% reduced combat readiness recovery rate.</muted>
+integrable|doctrine_tireless_cadence|DESTROYER|0	0	<good>10%</good> increased time flow.
+integrable|doctrine_tireless_cadence|DESTROYER|1	0	<good>15%</good> increased flux dissipation.
+integrable|doctrine_tireless_cadence|DESTROYER|2	0	<bad>50%</bad> reduced combat readiness recovery rate.
+integrable|doctrine_tireless_cadence|DESTROYER|3	0	Click and hold to integrate.
+integrable|doctrine_tireless_cadence|DESTROYER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_tireless_cadence|DESTROYER|5	0	<muted>10% increased time flow.</muted>
+integrable|doctrine_tireless_cadence|DESTROYER|6	0	<muted>15% increased flux dissipation.</muted>
+integrable|doctrine_tireless_cadence|DESTROYER|7	0	<muted>25% reduced combat readiness recovery rate.</muted>
+integrable|doctrine_tireless_cadence|CRUISER|0	0	<good>10%</good> increased time flow.
+integrable|doctrine_tireless_cadence|CRUISER|1	0	<good>15%</good> increased flux dissipation.
+integrable|doctrine_tireless_cadence|CRUISER|2	0	<bad>50%</bad> reduced combat readiness recovery rate.
+integrable|doctrine_tireless_cadence|CRUISER|3	0	Click and hold to integrate.
+integrable|doctrine_tireless_cadence|CRUISER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_tireless_cadence|CRUISER|5	0	<muted>10% increased time flow.</muted>
+integrable|doctrine_tireless_cadence|CRUISER|6	0	<muted>15% increased flux dissipation.</muted>
+integrable|doctrine_tireless_cadence|CRUISER|7	0	<muted>25% reduced combat readiness recovery rate.</muted>
+integrable|doctrine_tireless_cadence|CAPITAL_SHIP|0	0	<good>10%</good> increased time flow.
+integrable|doctrine_tireless_cadence|CAPITAL_SHIP|1	0	<good>15%</good> increased flux dissipation.
+integrable|doctrine_tireless_cadence|CAPITAL_SHIP|2	0	<bad>50%</bad> reduced combat readiness recovery rate.
+integrable|doctrine_tireless_cadence|CAPITAL_SHIP|3	0	Click and hold to integrate.
+integrable|doctrine_tireless_cadence|CAPITAL_SHIP|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_tireless_cadence|CAPITAL_SHIP|5	0	<muted>10% increased time flow.</muted>
+integrable|doctrine_tireless_cadence|CAPITAL_SHIP|6	0	<muted>15% increased flux dissipation.</muted>
+integrable|doctrine_tireless_cadence|CAPITAL_SHIP|7	0	<muted>25% reduced combat readiness recovery rate.</muted>
+integrated|doctrine_tireless_cadence|null|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_tireless_cadence|null|1	0	<good>10%</good> increased time flow.
+integrated|doctrine_tireless_cadence|null|2	0	<good>15%</good> increased flux dissipation.
+integrated|doctrine_tireless_cadence|null|3	0	<bad>25%</bad><builtIn> reduced combat readiness recovery rate.</builtIn>
+integrated|doctrine_tireless_cadence|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_tireless_cadence|FRIGATE|1	0	<good>10%</good> increased time flow.
+integrated|doctrine_tireless_cadence|FRIGATE|2	0	<good>15%</good> increased flux dissipation.
+integrated|doctrine_tireless_cadence|FRIGATE|3	0	<bad>25%</bad><builtIn> reduced combat readiness recovery rate.</builtIn>
+integrated|doctrine_tireless_cadence|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_tireless_cadence|DESTROYER|1	0	<good>10%</good> increased time flow.
+integrated|doctrine_tireless_cadence|DESTROYER|2	0	<good>15%</good> increased flux dissipation.
+integrated|doctrine_tireless_cadence|DESTROYER|3	0	<bad>25%</bad><builtIn> reduced combat readiness recovery rate.</builtIn>
+integrated|doctrine_tireless_cadence|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_tireless_cadence|CRUISER|1	0	<good>10%</good> increased time flow.
+integrated|doctrine_tireless_cadence|CRUISER|2	0	<good>15%</good> increased flux dissipation.
+integrated|doctrine_tireless_cadence|CRUISER|3	0	<bad>25%</bad><builtIn> reduced combat readiness recovery rate.</builtIn>
+integrated|doctrine_tireless_cadence|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_tireless_cadence|CAPITAL_SHIP|1	0	<good>10%</good> increased time flow.
+integrated|doctrine_tireless_cadence|CAPITAL_SHIP|2	0	<good>15%</good> increased flux dissipation.
+integrated|doctrine_tireless_cadence|CAPITAL_SHIP|3	0	<bad>25%</bad><builtIn> reduced combat readiness recovery rate.</builtIn>
 flavour|doctrine_unblinking_watch	0	Remnant point defense never tires and never flinches. Its tracking routines, recovered from a gutted drone, carry none of the hesitation a human gunner would add.
 type|doctrine_unblinking_watch|null|0	0	<good>50%</good> increased damage to missiles.
 type|doctrine_unblinking_watch|null|1	0	<good>30%</good> increased weapon turn rate.
@@ -4852,6 +5749,51 @@ type|doctrine_unblinking_watch|CRUISER|0	0	<good>50%</good> increased damage to 
 type|doctrine_unblinking_watch|CRUISER|1	0	<good>30%</good> increased weapon turn rate.
 type|doctrine_unblinking_watch|CAPITAL_SHIP|0	0	<good>50%</good> increased damage to missiles.
 type|doctrine_unblinking_watch|CAPITAL_SHIP|1	0	<good>30%</good> increased weapon turn rate.
+integrable|doctrine_unblinking_watch|null|0	0	<good>50%</good> increased damage to missiles.
+integrable|doctrine_unblinking_watch|null|1	0	<good>30%</good> increased weapon turn rate.
+integrable|doctrine_unblinking_watch|null|2	0	Click and hold to integrate.
+integrable|doctrine_unblinking_watch|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_unblinking_watch|null|4	0	<muted>50% increased damage to missiles.</muted>
+integrable|doctrine_unblinking_watch|null|5	0	<muted>50% increased weapon turn rate.</muted>
+integrable|doctrine_unblinking_watch|FRIGATE|0	0	<good>50%</good> increased damage to missiles.
+integrable|doctrine_unblinking_watch|FRIGATE|1	0	<good>30%</good> increased weapon turn rate.
+integrable|doctrine_unblinking_watch|FRIGATE|2	0	Click and hold to integrate.
+integrable|doctrine_unblinking_watch|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_unblinking_watch|FRIGATE|4	0	<muted>50% increased damage to missiles.</muted>
+integrable|doctrine_unblinking_watch|FRIGATE|5	0	<muted>50% increased weapon turn rate.</muted>
+integrable|doctrine_unblinking_watch|DESTROYER|0	0	<good>50%</good> increased damage to missiles.
+integrable|doctrine_unblinking_watch|DESTROYER|1	0	<good>30%</good> increased weapon turn rate.
+integrable|doctrine_unblinking_watch|DESTROYER|2	0	Click and hold to integrate.
+integrable|doctrine_unblinking_watch|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_unblinking_watch|DESTROYER|4	0	<muted>50% increased damage to missiles.</muted>
+integrable|doctrine_unblinking_watch|DESTROYER|5	0	<muted>50% increased weapon turn rate.</muted>
+integrable|doctrine_unblinking_watch|CRUISER|0	0	<good>50%</good> increased damage to missiles.
+integrable|doctrine_unblinking_watch|CRUISER|1	0	<good>30%</good> increased weapon turn rate.
+integrable|doctrine_unblinking_watch|CRUISER|2	0	Click and hold to integrate.
+integrable|doctrine_unblinking_watch|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_unblinking_watch|CRUISER|4	0	<muted>50% increased damage to missiles.</muted>
+integrable|doctrine_unblinking_watch|CRUISER|5	0	<muted>50% increased weapon turn rate.</muted>
+integrable|doctrine_unblinking_watch|CAPITAL_SHIP|0	0	<good>50%</good> increased damage to missiles.
+integrable|doctrine_unblinking_watch|CAPITAL_SHIP|1	0	<good>30%</good> increased weapon turn rate.
+integrable|doctrine_unblinking_watch|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|doctrine_unblinking_watch|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|doctrine_unblinking_watch|CAPITAL_SHIP|4	0	<muted>50% increased damage to missiles.</muted>
+integrable|doctrine_unblinking_watch|CAPITAL_SHIP|5	0	<muted>50% increased weapon turn rate.</muted>
+integrated|doctrine_unblinking_watch|null|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_unblinking_watch|null|1	0	<good>50%</good> increased damage to missiles.
+integrated|doctrine_unblinking_watch|null|2	0	<good>50%</good><builtIn> increased weapon turn rate.</builtIn>
+integrated|doctrine_unblinking_watch|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_unblinking_watch|FRIGATE|1	0	<good>50%</good> increased damage to missiles.
+integrated|doctrine_unblinking_watch|FRIGATE|2	0	<good>50%</good><builtIn> increased weapon turn rate.</builtIn>
+integrated|doctrine_unblinking_watch|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_unblinking_watch|DESTROYER|1	0	<good>50%</good> increased damage to missiles.
+integrated|doctrine_unblinking_watch|DESTROYER|2	0	<good>50%</good><builtIn> increased weapon turn rate.</builtIn>
+integrated|doctrine_unblinking_watch|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_unblinking_watch|CRUISER|1	0	<good>50%</good> increased damage to missiles.
+integrated|doctrine_unblinking_watch|CRUISER|2	0	<good>50%</good><builtIn> increased weapon turn rate.</builtIn>
+integrated|doctrine_unblinking_watch|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|doctrine_unblinking_watch|CAPITAL_SHIP|1	0	<good>50%</good> increased damage to missiles.
+integrated|doctrine_unblinking_watch|CAPITAL_SHIP|2	0	<good>50%</good><builtIn> increased weapon turn rate.</builtIn>
 flavour|domain_pattern_laminate	0	Hegemony refit yards still harden hulls to Domain specifications, emitter and plate alike, unchanged since before the Collapse.
 type|domain_pattern_laminate|null|0	1	<bad>8%</bad> reduced kinetic damage taken.
 type|domain_pattern_laminate|null|1	1	<bad>8%</bad> reduced high-explosive damage taken.

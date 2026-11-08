@@ -1,6 +1,7 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.items.DoctrineArchives;
 
 import java.util.List;
 import java.util.Map;
@@ -47,16 +48,20 @@ public final class IntegratedNodes {
         return refund;
     }
 
-    static int forgetInapplicable(ShipSkillData data, Map<String, SkillNode> declaredNodesById) {
+    public static int forgetInapplicable(ShipSkillData data, Map<String, SkillNode> declaredNodesById) {
         int integratedCount = data.getIntegratedNodeIds().size();
         int removedCount = 0;
         for (String nodeId : List.copyOf(data.getIntegratedNodeIds())) {
             SkillNode node = declaredNodesById.get(nodeId);
-            boolean applicable = node != null && node.getType() != null && (node.getType().isIntegrable() || node.getType().isChoice());
+            boolean applicable = node != null && node.getType() != null && canBecomeIntegrable(node.getType());
             if (!applicable && data.forgetIntegration(nodeId)) {
                 removedCount++;
             }
         }
         return costOfLast(integratedCount, removedCount);
+    }
+
+    private static boolean canBecomeIntegrable(SkillType declaredType) {
+        return declaredType.isIntegrable() || declaredType.isChoice() || DoctrineArchives.rewritesIntoIntegrable(declaredType.getTier());
     }
 }
