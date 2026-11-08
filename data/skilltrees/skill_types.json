@@ -5213,6 +5213,30 @@
 					"magnitude": -5
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "TIMEFLOW_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "SENSOR_PROFILE_PERCENT",
+						"magnitude": -25
+					},
+					{
+						"effect": "PHASE_HULL_SENSOR_PROFILE_PERCENT",
+						"magnitude": -25
+					},
+					{
+						"effect": "EMP_DAMAGE_TAKEN_PERCENT",
+						"magnitude": -25
+					},
+					{
+						"effect": "FLUX_DISSIPATION_PER_FLUX_VENT_FLAT",
+						"magnitude": -5
+					}
+				]
+			},
 			"exclusiveHullMods": [
 				"rat_exogrid"
 			],
@@ -5239,6 +5263,18 @@
 					"magnitude": 25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "PHASE_CLOAK_FLUX_THRESHOLD_PERCENT",
+						"magnitude": 30
+					},
+					{
+						"effect": "FLUX_DISSIPATION_WHILE_PHASED_PERCENT",
+						"magnitude": 25
+					}
+				]
+			},
 			"flavour": "Exo-Tech technicians teach the crew to retune the phase coils to their own tolerances, which are tighter than anything the coils were built for.",
 			"flavourAutomated": "Exo-Tech technicians teach the refit crew to retune the phase coils to their own tolerances, which are tighter than anything the coils were built for.",
 			"tags": [
@@ -5258,6 +5294,22 @@
 					"magnitude": 100
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "AMMO_REGEN_WHILE_PHASED_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "BALLISTIC_WEAPON_AMMO_PERCENT",
+						"magnitude": 25
+					},
+					{
+						"effect": "ENERGY_WEAPON_AMMO_PERCENT",
+						"magnitude": 25
+					}
+				]
+			},
 			"flavour": "An Exo-Tech armorer shows the crew how to route the ammunition feeders through the phase coils, so the magazines keep filling while the ship is out of normal space.",
 			"flavourAutomated": "An Exo-Tech armorer shows the refit crew how to route the ammunition feeders through the phase coils, so the magazines keep filling while the ship is out of normal space.",
 			"tags": [
@@ -5285,6 +5337,22 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ENERGY_WEAPON_DAMAGE_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "ENERGY_WEAPON_RATE_OF_FIRE_PERCENT",
+						"magnitude": 20
+					},
+					{
+						"effect": "ZERO_FLUX_BOOST_FLUX_LEVEL_PERCENT",
+						"magnitude": 15
+					}
+				]
+			},
 			"exclusiveHullMods": [
 				"rat_hypatia_hullmod"
 			],

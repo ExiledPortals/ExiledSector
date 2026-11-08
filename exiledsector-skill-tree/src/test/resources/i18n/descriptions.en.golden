@@ -5427,6 +5427,51 @@ type|exo_tech_coil_tuning|CRUISER|0	0	<good>20%</good> increased hard flux level
 type|exo_tech_coil_tuning|CRUISER|1	0	<good>25%</good> increased flux dissipation while phased.
 type|exo_tech_coil_tuning|CAPITAL_SHIP|0	0	<good>20%</good> increased hard flux level at which phased speed reaches its minimum.
 type|exo_tech_coil_tuning|CAPITAL_SHIP|1	0	<good>25%</good> increased flux dissipation while phased.
+integrable|exo_tech_coil_tuning|null|0	0	<good>20%</good> increased hard flux level at which phased speed reaches its minimum.
+integrable|exo_tech_coil_tuning|null|1	0	<good>25%</good> increased flux dissipation while phased.
+integrable|exo_tech_coil_tuning|null|2	0	Click and hold to integrate.
+integrable|exo_tech_coil_tuning|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|exo_tech_coil_tuning|null|4	0	<muted>30% increased hard flux level at which phased speed reaches its minimum.</muted>
+integrable|exo_tech_coil_tuning|null|5	0	<muted>25% increased flux dissipation while phased.</muted>
+integrable|exo_tech_coil_tuning|FRIGATE|0	0	<good>20%</good> increased hard flux level at which phased speed reaches its minimum.
+integrable|exo_tech_coil_tuning|FRIGATE|1	0	<good>25%</good> increased flux dissipation while phased.
+integrable|exo_tech_coil_tuning|FRIGATE|2	0	Click and hold to integrate.
+integrable|exo_tech_coil_tuning|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|exo_tech_coil_tuning|FRIGATE|4	0	<muted>30% increased hard flux level at which phased speed reaches its minimum.</muted>
+integrable|exo_tech_coil_tuning|FRIGATE|5	0	<muted>25% increased flux dissipation while phased.</muted>
+integrable|exo_tech_coil_tuning|DESTROYER|0	0	<good>20%</good> increased hard flux level at which phased speed reaches its minimum.
+integrable|exo_tech_coil_tuning|DESTROYER|1	0	<good>25%</good> increased flux dissipation while phased.
+integrable|exo_tech_coil_tuning|DESTROYER|2	0	Click and hold to integrate.
+integrable|exo_tech_coil_tuning|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|exo_tech_coil_tuning|DESTROYER|4	0	<muted>30% increased hard flux level at which phased speed reaches its minimum.</muted>
+integrable|exo_tech_coil_tuning|DESTROYER|5	0	<muted>25% increased flux dissipation while phased.</muted>
+integrable|exo_tech_coil_tuning|CRUISER|0	0	<good>20%</good> increased hard flux level at which phased speed reaches its minimum.
+integrable|exo_tech_coil_tuning|CRUISER|1	0	<good>25%</good> increased flux dissipation while phased.
+integrable|exo_tech_coil_tuning|CRUISER|2	0	Click and hold to integrate.
+integrable|exo_tech_coil_tuning|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|exo_tech_coil_tuning|CRUISER|4	0	<muted>30% increased hard flux level at which phased speed reaches its minimum.</muted>
+integrable|exo_tech_coil_tuning|CRUISER|5	0	<muted>25% increased flux dissipation while phased.</muted>
+integrable|exo_tech_coil_tuning|CAPITAL_SHIP|0	0	<good>20%</good> increased hard flux level at which phased speed reaches its minimum.
+integrable|exo_tech_coil_tuning|CAPITAL_SHIP|1	0	<good>25%</good> increased flux dissipation while phased.
+integrable|exo_tech_coil_tuning|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|exo_tech_coil_tuning|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|exo_tech_coil_tuning|CAPITAL_SHIP|4	0	<muted>30% increased hard flux level at which phased speed reaches its minimum.</muted>
+integrable|exo_tech_coil_tuning|CAPITAL_SHIP|5	0	<muted>25% increased flux dissipation while phased.</muted>
+integrated|exo_tech_coil_tuning|null|0	0	<builtIn>Integrated</builtIn>
+integrated|exo_tech_coil_tuning|null|1	0	<good>30%</good><builtIn> increased hard flux level at which phased speed reaches its minimum.</builtIn>
+integrated|exo_tech_coil_tuning|null|2	0	<good>25%</good> increased flux dissipation while phased.
+integrated|exo_tech_coil_tuning|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|exo_tech_coil_tuning|FRIGATE|1	0	<good>30%</good><builtIn> increased hard flux level at which phased speed reaches its minimum.</builtIn>
+integrated|exo_tech_coil_tuning|FRIGATE|2	0	<good>25%</good> increased flux dissipation while phased.
+integrated|exo_tech_coil_tuning|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|exo_tech_coil_tuning|DESTROYER|1	0	<good>30%</good><builtIn> increased hard flux level at which phased speed reaches its minimum.</builtIn>
+integrated|exo_tech_coil_tuning|DESTROYER|2	0	<good>25%</good> increased flux dissipation while phased.
+integrated|exo_tech_coil_tuning|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|exo_tech_coil_tuning|CRUISER|1	0	<good>30%</good><builtIn> increased hard flux level at which phased speed reaches its minimum.</builtIn>
+integrated|exo_tech_coil_tuning|CRUISER|2	0	<good>25%</good> increased flux dissipation while phased.
+integrated|exo_tech_coil_tuning|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|exo_tech_coil_tuning|CAPITAL_SHIP|1	0	<good>30%</good><builtIn> increased hard flux level at which phased speed reaches its minimum.</builtIn>
+integrated|exo_tech_coil_tuning|CAPITAL_SHIP|2	0	<good>25%</good> increased flux dissipation while phased.
 flavour|exo_tech_grid_splice	0	Under Exo-Tech instruction, the crew splices phase-coil components into the ship's power lattice, fusing it with the flux grid the way Exo-Tech builds its own hulls.
 flavourAutomated|exo_tech_grid_splice	0	Under Exo-Tech instruction, the refit crew splices phase-coil components into the ship's power lattice, fusing it with the flux grid the way Exo-Tech builds its own hulls.
 type|exo_tech_grid_splice|null|0	0	<good>10%</good> increased time flow.
@@ -5464,6 +5509,101 @@ type|exo_tech_grid_splice|CAPITAL_SHIP|3	1	<bad>25%</bad> reduced EMP damage tak
 type|exo_tech_grid_splice|CAPITAL_SHIP|4	0	<bad>25%</bad> reduced venting speed.
 type|exo_tech_grid_splice|CAPITAL_SHIP|5	0	<bad>-5</bad> to flux dissipation per flux vent.
 type-detail|exo_tech_grid_splice|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Exogrid</hullmod>
+integrable|exo_tech_grid_splice|null|0	0	<good>10%</good> increased time flow.
+integrable|exo_tech_grid_splice|null|1	1	<bad>25%</bad> reduced sensor profile.
+integrable|exo_tech_grid_splice|null|2	1	<bad>25%</bad> reduced sensor profile on phase hulls.
+integrable|exo_tech_grid_splice|null|3	1	<bad>25%</bad> reduced EMP damage taken.
+integrable|exo_tech_grid_splice|null|4	0	<bad>25%</bad> reduced venting speed.
+integrable|exo_tech_grid_splice|null|5	0	<bad>-5</bad> to flux dissipation per flux vent.
+integrable|exo_tech_grid_splice|null|6	0	Click and hold to integrate.
+integrable|exo_tech_grid_splice|null|7	0	<muted>When integrated, for 2 story points:</muted>
+integrable|exo_tech_grid_splice|null|8	0	<muted>10% increased time flow.</muted>
+integrable|exo_tech_grid_splice|null|9	0	<muted>25% reduced sensor profile.</muted>
+integrable|exo_tech_grid_splice|null|10	0	<muted>25% reduced sensor profile on phase hulls.</muted>
+integrable|exo_tech_grid_splice|null|11	0	<muted>25% reduced EMP damage taken.</muted>
+integrable|exo_tech_grid_splice|null|12	0	<muted>-5 to flux dissipation per flux vent.</muted>
+integrable|exo_tech_grid_splice|FRIGATE|0	0	<good>10%</good> increased time flow.
+integrable|exo_tech_grid_splice|FRIGATE|1	1	<bad>25%</bad> reduced sensor profile.
+integrable|exo_tech_grid_splice|FRIGATE|2	1	<bad>25%</bad> reduced sensor profile on phase hulls.
+integrable|exo_tech_grid_splice|FRIGATE|3	1	<bad>25%</bad> reduced EMP damage taken.
+integrable|exo_tech_grid_splice|FRIGATE|4	0	<bad>25%</bad> reduced venting speed.
+integrable|exo_tech_grid_splice|FRIGATE|5	0	<bad>-5</bad> to flux dissipation per flux vent.
+integrable|exo_tech_grid_splice|FRIGATE|6	0	Click and hold to integrate.
+integrable|exo_tech_grid_splice|FRIGATE|7	0	<muted>When integrated, for 2 story points:</muted>
+integrable|exo_tech_grid_splice|FRIGATE|8	0	<muted>10% increased time flow.</muted>
+integrable|exo_tech_grid_splice|FRIGATE|9	0	<muted>25% reduced sensor profile.</muted>
+integrable|exo_tech_grid_splice|FRIGATE|10	0	<muted>25% reduced sensor profile on phase hulls.</muted>
+integrable|exo_tech_grid_splice|FRIGATE|11	0	<muted>25% reduced EMP damage taken.</muted>
+integrable|exo_tech_grid_splice|FRIGATE|12	0	<muted>-5 to flux dissipation per flux vent.</muted>
+integrable|exo_tech_grid_splice|DESTROYER|0	0	<good>10%</good> increased time flow.
+integrable|exo_tech_grid_splice|DESTROYER|1	1	<bad>25%</bad> reduced sensor profile.
+integrable|exo_tech_grid_splice|DESTROYER|2	1	<bad>25%</bad> reduced sensor profile on phase hulls.
+integrable|exo_tech_grid_splice|DESTROYER|3	1	<bad>25%</bad> reduced EMP damage taken.
+integrable|exo_tech_grid_splice|DESTROYER|4	0	<bad>25%</bad> reduced venting speed.
+integrable|exo_tech_grid_splice|DESTROYER|5	0	<bad>-5</bad> to flux dissipation per flux vent.
+integrable|exo_tech_grid_splice|DESTROYER|6	0	Click and hold to integrate.
+integrable|exo_tech_grid_splice|DESTROYER|7	0	<muted>When integrated, for 2 story points:</muted>
+integrable|exo_tech_grid_splice|DESTROYER|8	0	<muted>10% increased time flow.</muted>
+integrable|exo_tech_grid_splice|DESTROYER|9	0	<muted>25% reduced sensor profile.</muted>
+integrable|exo_tech_grid_splice|DESTROYER|10	0	<muted>25% reduced sensor profile on phase hulls.</muted>
+integrable|exo_tech_grid_splice|DESTROYER|11	0	<muted>25% reduced EMP damage taken.</muted>
+integrable|exo_tech_grid_splice|DESTROYER|12	0	<muted>-5 to flux dissipation per flux vent.</muted>
+integrable|exo_tech_grid_splice|CRUISER|0	0	<good>10%</good> increased time flow.
+integrable|exo_tech_grid_splice|CRUISER|1	1	<bad>25%</bad> reduced sensor profile.
+integrable|exo_tech_grid_splice|CRUISER|2	1	<bad>25%</bad> reduced sensor profile on phase hulls.
+integrable|exo_tech_grid_splice|CRUISER|3	1	<bad>25%</bad> reduced EMP damage taken.
+integrable|exo_tech_grid_splice|CRUISER|4	0	<bad>25%</bad> reduced venting speed.
+integrable|exo_tech_grid_splice|CRUISER|5	0	<bad>-5</bad> to flux dissipation per flux vent.
+integrable|exo_tech_grid_splice|CRUISER|6	0	Click and hold to integrate.
+integrable|exo_tech_grid_splice|CRUISER|7	0	<muted>When integrated, for 2 story points:</muted>
+integrable|exo_tech_grid_splice|CRUISER|8	0	<muted>10% increased time flow.</muted>
+integrable|exo_tech_grid_splice|CRUISER|9	0	<muted>25% reduced sensor profile.</muted>
+integrable|exo_tech_grid_splice|CRUISER|10	0	<muted>25% reduced sensor profile on phase hulls.</muted>
+integrable|exo_tech_grid_splice|CRUISER|11	0	<muted>25% reduced EMP damage taken.</muted>
+integrable|exo_tech_grid_splice|CRUISER|12	0	<muted>-5 to flux dissipation per flux vent.</muted>
+integrable|exo_tech_grid_splice|CAPITAL_SHIP|0	0	<good>10%</good> increased time flow.
+integrable|exo_tech_grid_splice|CAPITAL_SHIP|1	1	<bad>25%</bad> reduced sensor profile.
+integrable|exo_tech_grid_splice|CAPITAL_SHIP|2	1	<bad>25%</bad> reduced sensor profile on phase hulls.
+integrable|exo_tech_grid_splice|CAPITAL_SHIP|3	1	<bad>25%</bad> reduced EMP damage taken.
+integrable|exo_tech_grid_splice|CAPITAL_SHIP|4	0	<bad>25%</bad> reduced venting speed.
+integrable|exo_tech_grid_splice|CAPITAL_SHIP|5	0	<bad>-5</bad> to flux dissipation per flux vent.
+integrable|exo_tech_grid_splice|CAPITAL_SHIP|6	0	Click and hold to integrate.
+integrable|exo_tech_grid_splice|CAPITAL_SHIP|7	0	<muted>When integrated, for 2 story points:</muted>
+integrable|exo_tech_grid_splice|CAPITAL_SHIP|8	0	<muted>10% increased time flow.</muted>
+integrable|exo_tech_grid_splice|CAPITAL_SHIP|9	0	<muted>25% reduced sensor profile.</muted>
+integrable|exo_tech_grid_splice|CAPITAL_SHIP|10	0	<muted>25% reduced sensor profile on phase hulls.</muted>
+integrable|exo_tech_grid_splice|CAPITAL_SHIP|11	0	<muted>25% reduced EMP damage taken.</muted>
+integrable|exo_tech_grid_splice|CAPITAL_SHIP|12	0	<muted>-5 to flux dissipation per flux vent.</muted>
+integrated|exo_tech_grid_splice|null|0	0	<builtIn>Integrated</builtIn>
+integrated|exo_tech_grid_splice|null|1	0	<good>10%</good> increased time flow.
+integrated|exo_tech_grid_splice|null|2	1	<bad>25%</bad> reduced sensor profile.
+integrated|exo_tech_grid_splice|null|3	1	<bad>25%</bad> reduced sensor profile on phase hulls.
+integrated|exo_tech_grid_splice|null|4	1	<bad>25%</bad> reduced EMP damage taken.
+integrated|exo_tech_grid_splice|null|5	0	<bad>-5</bad> to flux dissipation per flux vent.
+integrated|exo_tech_grid_splice|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|exo_tech_grid_splice|FRIGATE|1	0	<good>10%</good> increased time flow.
+integrated|exo_tech_grid_splice|FRIGATE|2	1	<bad>25%</bad> reduced sensor profile.
+integrated|exo_tech_grid_splice|FRIGATE|3	1	<bad>25%</bad> reduced sensor profile on phase hulls.
+integrated|exo_tech_grid_splice|FRIGATE|4	1	<bad>25%</bad> reduced EMP damage taken.
+integrated|exo_tech_grid_splice|FRIGATE|5	0	<bad>-5</bad> to flux dissipation per flux vent.
+integrated|exo_tech_grid_splice|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|exo_tech_grid_splice|DESTROYER|1	0	<good>10%</good> increased time flow.
+integrated|exo_tech_grid_splice|DESTROYER|2	1	<bad>25%</bad> reduced sensor profile.
+integrated|exo_tech_grid_splice|DESTROYER|3	1	<bad>25%</bad> reduced sensor profile on phase hulls.
+integrated|exo_tech_grid_splice|DESTROYER|4	1	<bad>25%</bad> reduced EMP damage taken.
+integrated|exo_tech_grid_splice|DESTROYER|5	0	<bad>-5</bad> to flux dissipation per flux vent.
+integrated|exo_tech_grid_splice|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|exo_tech_grid_splice|CRUISER|1	0	<good>10%</good> increased time flow.
+integrated|exo_tech_grid_splice|CRUISER|2	1	<bad>25%</bad> reduced sensor profile.
+integrated|exo_tech_grid_splice|CRUISER|3	1	<bad>25%</bad> reduced sensor profile on phase hulls.
+integrated|exo_tech_grid_splice|CRUISER|4	1	<bad>25%</bad> reduced EMP damage taken.
+integrated|exo_tech_grid_splice|CRUISER|5	0	<bad>-5</bad> to flux dissipation per flux vent.
+integrated|exo_tech_grid_splice|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|exo_tech_grid_splice|CAPITAL_SHIP|1	0	<good>10%</good> increased time flow.
+integrated|exo_tech_grid_splice|CAPITAL_SHIP|2	1	<bad>25%</bad> reduced sensor profile.
+integrated|exo_tech_grid_splice|CAPITAL_SHIP|3	1	<bad>25%</bad> reduced sensor profile on phase hulls.
+integrated|exo_tech_grid_splice|CAPITAL_SHIP|4	1	<bad>25%</bad> reduced EMP damage taken.
+integrated|exo_tech_grid_splice|CAPITAL_SHIP|5	0	<bad>-5</bad> to flux dissipation per flux vent.
 flavour|exoship	0	The last Exoship of Exo-Tech, warping from system to system across the Sector. It keeps its own schedule and answers only to its own beacon.
 type|exoship|null|0	0	Docks while a Hyper-Nav Beacon is in an allocated Subroutine Socket. Docking allocates it at no cost.
 type|exoship|null|1	0	Undocking releases every node reached through it.
@@ -6462,6 +6602,66 @@ type|hypatia_pattern_warpfield|CAPITAL_SHIP|0	0	<good>15%</good> increased energ
 type|hypatia_pattern_warpfield|CAPITAL_SHIP|1	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|hypatia_pattern_warpfield|CAPITAL_SHIP|2	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 type-detail|hypatia_pattern_warpfield|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Warpfield</hullmod>
+integrable|hypatia_pattern_warpfield|null|0	0	<good>15%</good> increased energy weapon damage.
+integrable|hypatia_pattern_warpfield|null|1	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+integrable|hypatia_pattern_warpfield|null|2	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+integrable|hypatia_pattern_warpfield|null|3	0	Click and hold to integrate.
+integrable|hypatia_pattern_warpfield|null|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hypatia_pattern_warpfield|null|5	0	<muted>15% increased energy weapon damage.</muted>
+integrable|hypatia_pattern_warpfield|null|6	0	<muted>20% increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.</muted>
+integrable|hypatia_pattern_warpfield|null|7	0	<muted>The zero-flux speed boost also works while flux is at or below 15%.</muted>
+integrable|hypatia_pattern_warpfield|FRIGATE|0	0	<good>15%</good> increased energy weapon damage.
+integrable|hypatia_pattern_warpfield|FRIGATE|1	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+integrable|hypatia_pattern_warpfield|FRIGATE|2	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+integrable|hypatia_pattern_warpfield|FRIGATE|3	0	Click and hold to integrate.
+integrable|hypatia_pattern_warpfield|FRIGATE|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hypatia_pattern_warpfield|FRIGATE|5	0	<muted>15% increased energy weapon damage.</muted>
+integrable|hypatia_pattern_warpfield|FRIGATE|6	0	<muted>20% increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.</muted>
+integrable|hypatia_pattern_warpfield|FRIGATE|7	0	<muted>The zero-flux speed boost also works while flux is at or below 15%.</muted>
+integrable|hypatia_pattern_warpfield|DESTROYER|0	0	<good>15%</good> increased energy weapon damage.
+integrable|hypatia_pattern_warpfield|DESTROYER|1	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+integrable|hypatia_pattern_warpfield|DESTROYER|2	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+integrable|hypatia_pattern_warpfield|DESTROYER|3	0	Click and hold to integrate.
+integrable|hypatia_pattern_warpfield|DESTROYER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hypatia_pattern_warpfield|DESTROYER|5	0	<muted>15% increased energy weapon damage.</muted>
+integrable|hypatia_pattern_warpfield|DESTROYER|6	0	<muted>20% increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.</muted>
+integrable|hypatia_pattern_warpfield|DESTROYER|7	0	<muted>The zero-flux speed boost also works while flux is at or below 15%.</muted>
+integrable|hypatia_pattern_warpfield|CRUISER|0	0	<good>15%</good> increased energy weapon damage.
+integrable|hypatia_pattern_warpfield|CRUISER|1	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+integrable|hypatia_pattern_warpfield|CRUISER|2	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+integrable|hypatia_pattern_warpfield|CRUISER|3	0	Click and hold to integrate.
+integrable|hypatia_pattern_warpfield|CRUISER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hypatia_pattern_warpfield|CRUISER|5	0	<muted>15% increased energy weapon damage.</muted>
+integrable|hypatia_pattern_warpfield|CRUISER|6	0	<muted>20% increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.</muted>
+integrable|hypatia_pattern_warpfield|CRUISER|7	0	<muted>The zero-flux speed boost also works while flux is at or below 15%.</muted>
+integrable|hypatia_pattern_warpfield|CAPITAL_SHIP|0	0	<good>15%</good> increased energy weapon damage.
+integrable|hypatia_pattern_warpfield|CAPITAL_SHIP|1	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+integrable|hypatia_pattern_warpfield|CAPITAL_SHIP|2	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+integrable|hypatia_pattern_warpfield|CAPITAL_SHIP|3	0	Click and hold to integrate.
+integrable|hypatia_pattern_warpfield|CAPITAL_SHIP|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hypatia_pattern_warpfield|CAPITAL_SHIP|5	0	<muted>15% increased energy weapon damage.</muted>
+integrable|hypatia_pattern_warpfield|CAPITAL_SHIP|6	0	<muted>20% increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.</muted>
+integrable|hypatia_pattern_warpfield|CAPITAL_SHIP|7	0	<muted>The zero-flux speed boost also works while flux is at or below 15%.</muted>
+integrated|hypatia_pattern_warpfield|null|0	0	<builtIn>Integrated</builtIn>
+integrated|hypatia_pattern_warpfield|null|1	0	<good>15%</good> increased energy weapon damage.
+integrated|hypatia_pattern_warpfield|null|2	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+integrated|hypatia_pattern_warpfield|null|3	0	<builtIn>The zero-flux speed boost also works while flux is at or below </builtIn><good>15%</good><builtIn>.</builtIn>
+integrated|hypatia_pattern_warpfield|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|hypatia_pattern_warpfield|FRIGATE|1	0	<good>15%</good> increased energy weapon damage.
+integrated|hypatia_pattern_warpfield|FRIGATE|2	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+integrated|hypatia_pattern_warpfield|FRIGATE|3	0	<builtIn>The zero-flux speed boost also works while flux is at or below </builtIn><good>15%</good><builtIn>.</builtIn>
+integrated|hypatia_pattern_warpfield|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|hypatia_pattern_warpfield|DESTROYER|1	0	<good>15%</good> increased energy weapon damage.
+integrated|hypatia_pattern_warpfield|DESTROYER|2	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+integrated|hypatia_pattern_warpfield|DESTROYER|3	0	<builtIn>The zero-flux speed boost also works while flux is at or below </builtIn><good>15%</good><builtIn>.</builtIn>
+integrated|hypatia_pattern_warpfield|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|hypatia_pattern_warpfield|CRUISER|1	0	<good>15%</good> increased energy weapon damage.
+integrated|hypatia_pattern_warpfield|CRUISER|2	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+integrated|hypatia_pattern_warpfield|CRUISER|3	0	<builtIn>The zero-flux speed boost also works while flux is at or below </builtIn><good>15%</good><builtIn>.</builtIn>
+integrated|hypatia_pattern_warpfield|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|hypatia_pattern_warpfield|CAPITAL_SHIP|1	0	<good>15%</good> increased energy weapon damage.
+integrated|hypatia_pattern_warpfield|CAPITAL_SHIP|2	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+integrated|hypatia_pattern_warpfield|CAPITAL_SHIP|3	0	<builtIn>The zero-flux speed boost also works while flux is at or below </builtIn><good>15%</good><builtIn>.</builtIn>
 type|increased_hull|null|0	0	<good>2%</good> more hull points.
 type|increased_hull|FRIGATE|0	0	<good>2%</good> more hull points.
 type|increased_hull|DESTROYER|0	0	<good>2%</good> more hull points.
@@ -7505,6 +7705,56 @@ type|phase_fed_magazines|FRIGATE|0	0	<good>100%</good> increased ammo regenerati
 type|phase_fed_magazines|DESTROYER|0	0	<good>100%</good> increased ammo regeneration while phased.
 type|phase_fed_magazines|CRUISER|0	0	<good>100%</good> increased ammo regeneration while phased.
 type|phase_fed_magazines|CAPITAL_SHIP|0	0	<good>100%</good> increased ammo regeneration while phased.
+integrable|phase_fed_magazines|null|0	0	<good>100%</good> increased ammo regeneration while phased.
+integrable|phase_fed_magazines|null|1	0	Click and hold to integrate.
+integrable|phase_fed_magazines|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|phase_fed_magazines|null|3	0	<muted>100% increased ammo regeneration while phased.</muted>
+integrable|phase_fed_magazines|null|4	0	<muted>25% increased ballistic weapon ammo capacity.</muted>
+integrable|phase_fed_magazines|null|5	0	<muted>25% increased energy weapon ammo capacity.</muted>
+integrable|phase_fed_magazines|FRIGATE|0	0	<good>100%</good> increased ammo regeneration while phased.
+integrable|phase_fed_magazines|FRIGATE|1	0	Click and hold to integrate.
+integrable|phase_fed_magazines|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|phase_fed_magazines|FRIGATE|3	0	<muted>100% increased ammo regeneration while phased.</muted>
+integrable|phase_fed_magazines|FRIGATE|4	0	<muted>25% increased ballistic weapon ammo capacity.</muted>
+integrable|phase_fed_magazines|FRIGATE|5	0	<muted>25% increased energy weapon ammo capacity.</muted>
+integrable|phase_fed_magazines|DESTROYER|0	0	<good>100%</good> increased ammo regeneration while phased.
+integrable|phase_fed_magazines|DESTROYER|1	0	Click and hold to integrate.
+integrable|phase_fed_magazines|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|phase_fed_magazines|DESTROYER|3	0	<muted>100% increased ammo regeneration while phased.</muted>
+integrable|phase_fed_magazines|DESTROYER|4	0	<muted>25% increased ballistic weapon ammo capacity.</muted>
+integrable|phase_fed_magazines|DESTROYER|5	0	<muted>25% increased energy weapon ammo capacity.</muted>
+integrable|phase_fed_magazines|CRUISER|0	0	<good>100%</good> increased ammo regeneration while phased.
+integrable|phase_fed_magazines|CRUISER|1	0	Click and hold to integrate.
+integrable|phase_fed_magazines|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|phase_fed_magazines|CRUISER|3	0	<muted>100% increased ammo regeneration while phased.</muted>
+integrable|phase_fed_magazines|CRUISER|4	0	<muted>25% increased ballistic weapon ammo capacity.</muted>
+integrable|phase_fed_magazines|CRUISER|5	0	<muted>25% increased energy weapon ammo capacity.</muted>
+integrable|phase_fed_magazines|CAPITAL_SHIP|0	0	<good>100%</good> increased ammo regeneration while phased.
+integrable|phase_fed_magazines|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|phase_fed_magazines|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|phase_fed_magazines|CAPITAL_SHIP|3	0	<muted>100% increased ammo regeneration while phased.</muted>
+integrable|phase_fed_magazines|CAPITAL_SHIP|4	0	<muted>25% increased ballistic weapon ammo capacity.</muted>
+integrable|phase_fed_magazines|CAPITAL_SHIP|5	0	<muted>25% increased energy weapon ammo capacity.</muted>
+integrated|phase_fed_magazines|null|0	0	<builtIn>Integrated</builtIn>
+integrated|phase_fed_magazines|null|1	0	<good>100%</good> increased ammo regeneration while phased.
+integrated|phase_fed_magazines|null|2	0	<good>25%</good><builtIn> increased ballistic weapon ammo capacity.</builtIn>
+integrated|phase_fed_magazines|null|3	0	<good>25%</good><builtIn> increased energy weapon ammo capacity.</builtIn>
+integrated|phase_fed_magazines|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|phase_fed_magazines|FRIGATE|1	0	<good>100%</good> increased ammo regeneration while phased.
+integrated|phase_fed_magazines|FRIGATE|2	0	<good>25%</good><builtIn> increased ballistic weapon ammo capacity.</builtIn>
+integrated|phase_fed_magazines|FRIGATE|3	0	<good>25%</good><builtIn> increased energy weapon ammo capacity.</builtIn>
+integrated|phase_fed_magazines|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|phase_fed_magazines|DESTROYER|1	0	<good>100%</good> increased ammo regeneration while phased.
+integrated|phase_fed_magazines|DESTROYER|2	0	<good>25%</good><builtIn> increased ballistic weapon ammo capacity.</builtIn>
+integrated|phase_fed_magazines|DESTROYER|3	0	<good>25%</good><builtIn> increased energy weapon ammo capacity.</builtIn>
+integrated|phase_fed_magazines|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|phase_fed_magazines|CRUISER|1	0	<good>100%</good> increased ammo regeneration while phased.
+integrated|phase_fed_magazines|CRUISER|2	0	<good>25%</good><builtIn> increased ballistic weapon ammo capacity.</builtIn>
+integrated|phase_fed_magazines|CRUISER|3	0	<good>25%</good><builtIn> increased energy weapon ammo capacity.</builtIn>
+integrated|phase_fed_magazines|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|phase_fed_magazines|CAPITAL_SHIP|1	0	<good>100%</good> increased ammo regeneration while phased.
+integrated|phase_fed_magazines|CAPITAL_SHIP|2	0	<good>25%</good><builtIn> increased ballistic weapon ammo capacity.</builtIn>
+integrated|phase_fed_magazines|CAPITAL_SHIP|3	0	<good>25%</good><builtIn> increased energy weapon ammo capacity.</builtIn>
 flavour|pick_off_the_stragglers	0	A convoy is only as safe as its slowest freighter.
 type|pick_off_the_stragglers|null|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
 type|pick_off_the_stragglers|FRIGATE|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
