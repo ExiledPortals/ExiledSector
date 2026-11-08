@@ -682,6 +682,12 @@ effect|DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased damage taken.
 effect|DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased damage taken.
 effect|DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced damage taken.
 effect|DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced damage taken.
+effect|DAMAGE_TAKEN_WHILE_RETREATING_PERCENT|1.0	0	<good>1%</good> reduced damage taken while retreating.
+effect|DAMAGE_TAKEN_WHILE_RETREATING_PERCENT|10.0	0	<good>10%</good> reduced damage taken while retreating.
+effect|DAMAGE_TAKEN_WHILE_RETREATING_PERCENT|12.5	0	<good>12.5%</good> reduced damage taken while retreating.
+effect|DAMAGE_TAKEN_WHILE_RETREATING_PERCENT|100.0	0	<good>100%</good> reduced damage taken while retreating.
+effect|DAMAGE_TAKEN_WHILE_RETREATING_PERCENT|-10.0	0	<good>10%</good> reduced damage taken while retreating.
+effect|DAMAGE_TAKEN_WHILE_RETREATING_PERCENT|-12.5	0	<good>12.5%</good> reduced damage taken while retreating.
 effect|DAMAGE_TO_AUTOMATED_SHIP_PERCENT|1.0	0	<good>1%</good> increased damage to automated ships.
 effect|DAMAGE_TO_AUTOMATED_SHIP_PERCENT|10.0	0	<good>10%</good> increased damage to automated ships.
 effect|DAMAGE_TO_AUTOMATED_SHIP_PERCENT|12.5	0	<good>12.5%</good> increased damage to automated ships.
@@ -1492,6 +1498,12 @@ effect|HEARTLESS_RADIATION_EMP_FLAT|12.5	0	Each new Heartless stack sets off a r
 effect|HEARTLESS_RADIATION_EMP_FLAT|100.0	0	Each new Heartless stack sets off a radiation surge that deals <bad>100</bad> EMP damage to a random weapon and to a random engine on this ship.
 effect|HEARTLESS_RADIATION_EMP_FLAT|-10.0	0	Each new Heartless stack sets off a radiation surge that deals <bad>-10</bad> EMP damage to a random weapon and to a random engine on this ship.
 effect|HEARTLESS_RADIATION_EMP_FLAT|-12.5	0	Each new Heartless stack sets off a radiation surge that deals <bad>-12.5</bad> EMP damage to a random weapon and to a random engine on this ship.
+effect|HELPLESS_KILL_PIRATE_FRENZY_STACKS_FLAT|1.0	0	Whenever this ship destroys an overloaded, venting or flamed-out ship, it gains 1 Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+effect|HELPLESS_KILL_PIRATE_FRENZY_STACKS_FLAT|10.0	0	Whenever this ship destroys an overloaded, venting or flamed-out ship, it gains 10 Pirate Frenzy stacks for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+effect|HELPLESS_KILL_PIRATE_FRENZY_STACKS_FLAT|12.5	0	Whenever this ship destroys an overloaded, venting or flamed-out ship, it gains 13 Pirate Frenzy stacks for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+effect|HELPLESS_KILL_PIRATE_FRENZY_STACKS_FLAT|100.0	0	Whenever this ship destroys an overloaded, venting or flamed-out ship, it gains 100 Pirate Frenzy stacks for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+effect|HELPLESS_KILL_PIRATE_FRENZY_STACKS_FLAT|-10.0	0	Whenever this ship destroys an overloaded, venting or flamed-out ship, it gains -10 Pirate Frenzy stacks for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+effect|HELPLESS_KILL_PIRATE_FRENZY_STACKS_FLAT|-12.5	0	Whenever this ship destroys an overloaded, venting or flamed-out ship, it gains -12 Pirate Frenzy stacks for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
 effect|HIGHEST_AFFINITY_FLAT_PER_S_MOD|1.0	0	<good>+1</good> to your highest affinity for each s-mod on this ship.
 effect|HIGHEST_AFFINITY_FLAT_PER_S_MOD|10.0	0	<good>+10</good> to your highest affinity for each s-mod on this ship.
 effect|HIGHEST_AFFINITY_FLAT_PER_S_MOD|12.5	0	<good>+12.5</good> to your highest affinity for each s-mod on this ship.
@@ -1528,6 +1540,12 @@ effect|HULL_DAMAGE_FRAGMENT_REGROWTH_FLAT|12.5	0	Every 300 hull damage this ship
 effect|HULL_DAMAGE_FRAGMENT_REGROWTH_FLAT|100.0	0	Every 300 hull damage this ship deals to enemy ships regrows <good>100</good> of its fragment swarm's fragments, up to the swarm's full size.
 effect|HULL_DAMAGE_FRAGMENT_REGROWTH_FLAT|-10.0	0	Every 300 hull damage this ship deals to enemy ships regrows <good>-10</good> of its fragment swarm's fragments, up to the swarm's full size.
 effect|HULL_DAMAGE_FRAGMENT_REGROWTH_FLAT|-12.5	0	Every 300 hull damage this ship deals to enemy ships regrows <good>-12.5</good> of its fragment swarm's fragments, up to the swarm's full size.
+effect|HULL_DAMAGE_TAKEN_MULT_PER_DMOD|1.0	1	<good>1%</good> more hull damage taken for each d-mod, up to a maximum of 5 d-mods.
+effect|HULL_DAMAGE_TAKEN_MULT_PER_DMOD|10.0	1	<good>10%</good> more hull damage taken for each d-mod, up to a maximum of 5 d-mods.
+effect|HULL_DAMAGE_TAKEN_MULT_PER_DMOD|12.5	1	<good>12.5%</good> more hull damage taken for each d-mod, up to a maximum of 5 d-mods.
+effect|HULL_DAMAGE_TAKEN_MULT_PER_DMOD|100.0	1	<good>100%</good> more hull damage taken for each d-mod, up to a maximum of 5 d-mods.
+effect|HULL_DAMAGE_TAKEN_MULT_PER_DMOD|-10.0	1	<bad>10%</bad> less hull damage taken for each d-mod, up to a maximum of 5 d-mods.
+effect|HULL_DAMAGE_TAKEN_MULT_PER_DMOD|-12.5	1	<bad>12.5%</bad> less hull damage taken for each d-mod, up to a maximum of 5 d-mods.
 effect|HULL_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased hull damage taken.
 effect|HULL_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased hull damage taken.
 effect|HULL_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased hull damage taken.
@@ -2314,6 +2332,12 @@ effect|PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT|12.5	0	Whenever an enemy s
 effect|PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT|100.0	0	Whenever an enemy ship is destroyed within 100 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
 effect|PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT|-10.0	0	Whenever an enemy ship is destroyed within -10 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
 effect|PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT|-12.5	0	Whenever an enemy ship is destroyed within -12.5 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+effect|PIRATE_FRENZY_SECONDS_FLAT|1.0	0	<good>+1</good> seconds to Pirate Frenzy duration.
+effect|PIRATE_FRENZY_SECONDS_FLAT|10.0	0	<good>+10</good> seconds to Pirate Frenzy duration.
+effect|PIRATE_FRENZY_SECONDS_FLAT|12.5	0	<good>+12.5</good> seconds to Pirate Frenzy duration.
+effect|PIRATE_FRENZY_SECONDS_FLAT|100.0	0	<good>+100</good> seconds to Pirate Frenzy duration.
+effect|PIRATE_FRENZY_SECONDS_FLAT|-10.0	0	<good>+-10</good> seconds to Pirate Frenzy duration.
+effect|PIRATE_FRENZY_SECONDS_FLAT|-12.5	0	<good>+-12.5</good> seconds to Pirate Frenzy duration.
 effect|POST_BATTLE_SALVAGE_PERCENT|1.0	0	Your fleet has <good>1%</good> increased post-battle salvage.
 effect|POST_BATTLE_SALVAGE_PERCENT|10.0	0	Your fleet has <good>10%</good> increased post-battle salvage.
 effect|POST_BATTLE_SALVAGE_PERCENT|12.5	0	Your fleet has <good>12.5%</good> increased post-battle salvage.
@@ -2992,6 +3016,12 @@ effect|TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT|12.5	0	The slowest ship in your fleet of
 effect|TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT|100.0	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+100</good> to max burn level, up to this ship's max burn level.
 effect|TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT|-10.0	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+-10</good> to max burn level, up to this ship's max burn level.
 effect|TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT|-12.5	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+-12.5</good> to max burn level, up to this ship's max burn level.
+effect|TRANSPONDER_OFF_BURN_LEVEL_FLAT|1.0	0	Your fleet has <good>+1</good> to max burn level while its transponder is off. Only the strongest applies.
+effect|TRANSPONDER_OFF_BURN_LEVEL_FLAT|10.0	0	Your fleet has <good>+10</good> to max burn level while its transponder is off. Only the strongest applies.
+effect|TRANSPONDER_OFF_BURN_LEVEL_FLAT|12.5	0	Your fleet has <good>+12.5</good> to max burn level while its transponder is off. Only the strongest applies.
+effect|TRANSPONDER_OFF_BURN_LEVEL_FLAT|100.0	0	Your fleet has <good>+100</good> to max burn level while its transponder is off. Only the strongest applies.
+effect|TRANSPONDER_OFF_BURN_LEVEL_FLAT|-10.0	0	Your fleet has <good>+-10</good> to max burn level while its transponder is off. Only the strongest applies.
+effect|TRANSPONDER_OFF_BURN_LEVEL_FLAT|-12.5	0	Your fleet has <good>+-12.5</good> to max burn level while its transponder is off. Only the strongest applies.
 effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|1.0	1	Your fleet has <bad>1%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
 effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|10.0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
 effect|TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT|12.5	1	Your fleet has <bad>12.5%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
@@ -4118,6 +4148,46 @@ type|blood_in_the_water|FRIGATE|0	0	Whenever an enemy ship is destroyed within 1
 type|blood_in_the_water|DESTROYER|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
 type|blood_in_the_water|CRUISER|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
 type|blood_in_the_water|CAPITAL_SHIP|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+integrable|blood_in_the_water|null|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+integrable|blood_in_the_water|null|1	0	Click and hold to integrate.
+integrable|blood_in_the_water|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|blood_in_the_water|null|3	0	<muted>Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</muted>
+integrable|blood_in_the_water|null|4	0	<muted>+5 seconds to Pirate Frenzy duration.</muted>
+integrable|blood_in_the_water|FRIGATE|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+integrable|blood_in_the_water|FRIGATE|1	0	Click and hold to integrate.
+integrable|blood_in_the_water|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|blood_in_the_water|FRIGATE|3	0	<muted>Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</muted>
+integrable|blood_in_the_water|FRIGATE|4	0	<muted>+5 seconds to Pirate Frenzy duration.</muted>
+integrable|blood_in_the_water|DESTROYER|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+integrable|blood_in_the_water|DESTROYER|1	0	Click and hold to integrate.
+integrable|blood_in_the_water|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|blood_in_the_water|DESTROYER|3	0	<muted>Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</muted>
+integrable|blood_in_the_water|DESTROYER|4	0	<muted>+5 seconds to Pirate Frenzy duration.</muted>
+integrable|blood_in_the_water|CRUISER|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+integrable|blood_in_the_water|CRUISER|1	0	Click and hold to integrate.
+integrable|blood_in_the_water|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|blood_in_the_water|CRUISER|3	0	<muted>Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</muted>
+integrable|blood_in_the_water|CRUISER|4	0	<muted>+5 seconds to Pirate Frenzy duration.</muted>
+integrable|blood_in_the_water|CAPITAL_SHIP|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+integrable|blood_in_the_water|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|blood_in_the_water|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|blood_in_the_water|CAPITAL_SHIP|3	0	<muted>Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</muted>
+integrable|blood_in_the_water|CAPITAL_SHIP|4	0	<muted>+5 seconds to Pirate Frenzy duration.</muted>
+integrated|blood_in_the_water|null|0	0	<builtIn>Integrated</builtIn>
+integrated|blood_in_the_water|null|1	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+integrated|blood_in_the_water|null|2	0	<good>+5</good><builtIn> seconds to Pirate Frenzy duration.</builtIn>
+integrated|blood_in_the_water|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|blood_in_the_water|FRIGATE|1	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+integrated|blood_in_the_water|FRIGATE|2	0	<good>+5</good><builtIn> seconds to Pirate Frenzy duration.</builtIn>
+integrated|blood_in_the_water|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|blood_in_the_water|DESTROYER|1	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+integrated|blood_in_the_water|DESTROYER|2	0	<good>+5</good><builtIn> seconds to Pirate Frenzy duration.</builtIn>
+integrated|blood_in_the_water|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|blood_in_the_water|CRUISER|1	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+integrated|blood_in_the_water|CRUISER|2	0	<good>+5</good><builtIn> seconds to Pirate Frenzy duration.</builtIn>
+integrated|blood_in_the_water|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|blood_in_the_water|CAPITAL_SHIP|1	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
+integrated|blood_in_the_water|CAPITAL_SHIP|2	0	<good>+5</good><builtIn> seconds to Pirate Frenzy duration.</builtIn>
 flavour|borrowed_grace	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the crew rewires the ship to do the same. The shield emitters were never built for that load.
 flavourAutomated|borrowed_grace	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the refit crew rewires the ship to do the same. The shield emitters were never built for that load.
 itemCost|borrowed_grace	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
@@ -4174,6 +4244,46 @@ type|cheap_shots|FRIGATE|0	0	<good>20%</good> increased damage to overloaded, ve
 type|cheap_shots|DESTROYER|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
 type|cheap_shots|CRUISER|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
 type|cheap_shots|CAPITAL_SHIP|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
+integrable|cheap_shots|null|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
+integrable|cheap_shots|null|1	0	Click and hold to integrate.
+integrable|cheap_shots|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|cheap_shots|null|3	0	<muted>20% increased damage to overloaded, venting or flamed-out ships.</muted>
+integrable|cheap_shots|null|4	0	<muted>Whenever this ship destroys an overloaded, venting or flamed-out ship, it gains 1 Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</muted>
+integrable|cheap_shots|FRIGATE|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
+integrable|cheap_shots|FRIGATE|1	0	Click and hold to integrate.
+integrable|cheap_shots|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|cheap_shots|FRIGATE|3	0	<muted>20% increased damage to overloaded, venting or flamed-out ships.</muted>
+integrable|cheap_shots|FRIGATE|4	0	<muted>Whenever this ship destroys an overloaded, venting or flamed-out ship, it gains 1 Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</muted>
+integrable|cheap_shots|DESTROYER|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
+integrable|cheap_shots|DESTROYER|1	0	Click and hold to integrate.
+integrable|cheap_shots|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|cheap_shots|DESTROYER|3	0	<muted>20% increased damage to overloaded, venting or flamed-out ships.</muted>
+integrable|cheap_shots|DESTROYER|4	0	<muted>Whenever this ship destroys an overloaded, venting or flamed-out ship, it gains 1 Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</muted>
+integrable|cheap_shots|CRUISER|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
+integrable|cheap_shots|CRUISER|1	0	Click and hold to integrate.
+integrable|cheap_shots|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|cheap_shots|CRUISER|3	0	<muted>20% increased damage to overloaded, venting or flamed-out ships.</muted>
+integrable|cheap_shots|CRUISER|4	0	<muted>Whenever this ship destroys an overloaded, venting or flamed-out ship, it gains 1 Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</muted>
+integrable|cheap_shots|CAPITAL_SHIP|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
+integrable|cheap_shots|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|cheap_shots|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|cheap_shots|CAPITAL_SHIP|3	0	<muted>20% increased damage to overloaded, venting or flamed-out ships.</muted>
+integrable|cheap_shots|CAPITAL_SHIP|4	0	<muted>Whenever this ship destroys an overloaded, venting or flamed-out ship, it gains 1 Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</muted>
+integrated|cheap_shots|null|0	0	<builtIn>Integrated</builtIn>
+integrated|cheap_shots|null|1	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
+integrated|cheap_shots|null|2	0	<builtIn>Whenever this ship destroys an overloaded, venting or flamed-out ship, it gains 1 Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</builtIn>
+integrated|cheap_shots|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|cheap_shots|FRIGATE|1	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
+integrated|cheap_shots|FRIGATE|2	0	<builtIn>Whenever this ship destroys an overloaded, venting or flamed-out ship, it gains 1 Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</builtIn>
+integrated|cheap_shots|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|cheap_shots|DESTROYER|1	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
+integrated|cheap_shots|DESTROYER|2	0	<builtIn>Whenever this ship destroys an overloaded, venting or flamed-out ship, it gains 1 Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</builtIn>
+integrated|cheap_shots|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|cheap_shots|CRUISER|1	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
+integrated|cheap_shots|CRUISER|2	0	<builtIn>Whenever this ship destroys an overloaded, venting or flamed-out ship, it gains 1 Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</builtIn>
+integrated|cheap_shots|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|cheap_shots|CAPITAL_SHIP|1	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
+integrated|cheap_shots|CAPITAL_SHIP|2	0	<builtIn>Whenever this ship destroys an overloaded, venting or flamed-out ship, it gains 1 Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</builtIn>
 flavour|chronos_rhythms	0	After long hours with a recovered Chronos core, the crew decodes how it times its own systems and rewrites the ship system's control loop to match, cycling it faster than its makers ever intended.
 flavourAutomated|chronos_rhythms	0	Linked to a recovered Chronos core, the ship's core logs how it times its own systems and rewrites the ship system's control loop to match, cycling it faster than its makers ever intended.
 itemCost|chronos_rhythms	0	Costs 1 rat_chronos_core to allocate, returned when unallocated.
@@ -4501,6 +4611,46 @@ type|cut_and_run|FRIGATE|0	0	<good>30%</good> increased top speed while retreati
 type|cut_and_run|DESTROYER|0	0	<good>30%</good> increased top speed while retreating.
 type|cut_and_run|CRUISER|0	0	<good>30%</good> increased top speed while retreating.
 type|cut_and_run|CAPITAL_SHIP|0	0	<good>30%</good> increased top speed while retreating.
+integrable|cut_and_run|null|0	0	<good>30%</good> increased top speed while retreating.
+integrable|cut_and_run|null|1	0	Click and hold to integrate.
+integrable|cut_and_run|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|cut_and_run|null|3	0	<muted>30% increased top speed while retreating.</muted>
+integrable|cut_and_run|null|4	0	<muted>30% reduced damage taken while retreating.</muted>
+integrable|cut_and_run|FRIGATE|0	0	<good>30%</good> increased top speed while retreating.
+integrable|cut_and_run|FRIGATE|1	0	Click and hold to integrate.
+integrable|cut_and_run|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|cut_and_run|FRIGATE|3	0	<muted>30% increased top speed while retreating.</muted>
+integrable|cut_and_run|FRIGATE|4	0	<muted>30% reduced damage taken while retreating.</muted>
+integrable|cut_and_run|DESTROYER|0	0	<good>30%</good> increased top speed while retreating.
+integrable|cut_and_run|DESTROYER|1	0	Click and hold to integrate.
+integrable|cut_and_run|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|cut_and_run|DESTROYER|3	0	<muted>30% increased top speed while retreating.</muted>
+integrable|cut_and_run|DESTROYER|4	0	<muted>30% reduced damage taken while retreating.</muted>
+integrable|cut_and_run|CRUISER|0	0	<good>30%</good> increased top speed while retreating.
+integrable|cut_and_run|CRUISER|1	0	Click and hold to integrate.
+integrable|cut_and_run|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|cut_and_run|CRUISER|3	0	<muted>30% increased top speed while retreating.</muted>
+integrable|cut_and_run|CRUISER|4	0	<muted>30% reduced damage taken while retreating.</muted>
+integrable|cut_and_run|CAPITAL_SHIP|0	0	<good>30%</good> increased top speed while retreating.
+integrable|cut_and_run|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|cut_and_run|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|cut_and_run|CAPITAL_SHIP|3	0	<muted>30% increased top speed while retreating.</muted>
+integrable|cut_and_run|CAPITAL_SHIP|4	0	<muted>30% reduced damage taken while retreating.</muted>
+integrated|cut_and_run|null|0	0	<builtIn>Integrated</builtIn>
+integrated|cut_and_run|null|1	0	<good>30%</good> increased top speed while retreating.
+integrated|cut_and_run|null|2	0	<good>30%</good><builtIn> reduced damage taken while retreating.</builtIn>
+integrated|cut_and_run|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|cut_and_run|FRIGATE|1	0	<good>30%</good> increased top speed while retreating.
+integrated|cut_and_run|FRIGATE|2	0	<good>30%</good><builtIn> reduced damage taken while retreating.</builtIn>
+integrated|cut_and_run|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|cut_and_run|DESTROYER|1	0	<good>30%</good> increased top speed while retreating.
+integrated|cut_and_run|DESTROYER|2	0	<good>30%</good><builtIn> reduced damage taken while retreating.</builtIn>
+integrated|cut_and_run|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|cut_and_run|CRUISER|1	0	<good>30%</good> increased top speed while retreating.
+integrated|cut_and_run|CRUISER|2	0	<good>30%</good><builtIn> reduced damage taken while retreating.</builtIn>
+integrated|cut_and_run|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|cut_and_run|CAPITAL_SHIP|1	0	<good>30%</good> increased top speed while retreating.
+integrated|cut_and_run|CAPITAL_SHIP|2	0	<good>30%</good><builtIn> reduced damage taken while retreating.</builtIn>
 flavour|damage_to_helpless_ships	0	Fire-control software lifted from a pirate wreck, written to mark any target with failing shields or dead drives. The rest of its memory is gambling ledgers.
 type|damage_to_helpless_ships|null|0	0	<good>5%</good> increased damage to overloaded, venting or flamed-out ships.
 type|damage_to_helpless_ships|FRIGATE|0	0	<good>5%</good> increased damage to overloaded, venting or flamed-out ships.
@@ -5988,6 +6138,71 @@ type|freebooters_charge|CAPITAL_SHIP|0	1	<good>50%</good> increased crew casualt
 type|freebooters_charge|CAPITAL_SHIP|1	0	<good>30%</good> increased weapon damage.
 type|freebooters_charge|CAPITAL_SHIP|2	1	<good>10%</good> more damage taken by shields.
 type|freebooters_charge|CAPITAL_SHIP|3	0	<bad>10%</bad> reduced armor.
+integrable|freebooters_charge|null|0	1	<good>50%</good> increased crew casualties.
+integrable|freebooters_charge|null|1	0	<good>30%</good> increased weapon damage.
+integrable|freebooters_charge|null|2	1	<good>10%</good> more damage taken by shields.
+integrable|freebooters_charge|null|3	0	<bad>10%</bad> reduced armor.
+integrable|freebooters_charge|null|4	0	Click and hold to integrate.
+integrable|freebooters_charge|null|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|freebooters_charge|null|6	0	<muted>50% increased crew casualties.</muted>
+integrable|freebooters_charge|null|7	0	<muted>30% increased weapon damage.</muted>
+integrable|freebooters_charge|null|8	0	<muted>10% more damage taken by shields.</muted>
+integrable|freebooters_charge|FRIGATE|0	1	<good>50%</good> increased crew casualties.
+integrable|freebooters_charge|FRIGATE|1	0	<good>30%</good> increased weapon damage.
+integrable|freebooters_charge|FRIGATE|2	1	<good>10%</good> more damage taken by shields.
+integrable|freebooters_charge|FRIGATE|3	0	<bad>10%</bad> reduced armor.
+integrable|freebooters_charge|FRIGATE|4	0	Click and hold to integrate.
+integrable|freebooters_charge|FRIGATE|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|freebooters_charge|FRIGATE|6	0	<muted>50% increased crew casualties.</muted>
+integrable|freebooters_charge|FRIGATE|7	0	<muted>30% increased weapon damage.</muted>
+integrable|freebooters_charge|FRIGATE|8	0	<muted>10% more damage taken by shields.</muted>
+integrable|freebooters_charge|DESTROYER|0	1	<good>50%</good> increased crew casualties.
+integrable|freebooters_charge|DESTROYER|1	0	<good>30%</good> increased weapon damage.
+integrable|freebooters_charge|DESTROYER|2	1	<good>10%</good> more damage taken by shields.
+integrable|freebooters_charge|DESTROYER|3	0	<bad>10%</bad> reduced armor.
+integrable|freebooters_charge|DESTROYER|4	0	Click and hold to integrate.
+integrable|freebooters_charge|DESTROYER|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|freebooters_charge|DESTROYER|6	0	<muted>50% increased crew casualties.</muted>
+integrable|freebooters_charge|DESTROYER|7	0	<muted>30% increased weapon damage.</muted>
+integrable|freebooters_charge|DESTROYER|8	0	<muted>10% more damage taken by shields.</muted>
+integrable|freebooters_charge|CRUISER|0	1	<good>50%</good> increased crew casualties.
+integrable|freebooters_charge|CRUISER|1	0	<good>30%</good> increased weapon damage.
+integrable|freebooters_charge|CRUISER|2	1	<good>10%</good> more damage taken by shields.
+integrable|freebooters_charge|CRUISER|3	0	<bad>10%</bad> reduced armor.
+integrable|freebooters_charge|CRUISER|4	0	Click and hold to integrate.
+integrable|freebooters_charge|CRUISER|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|freebooters_charge|CRUISER|6	0	<muted>50% increased crew casualties.</muted>
+integrable|freebooters_charge|CRUISER|7	0	<muted>30% increased weapon damage.</muted>
+integrable|freebooters_charge|CRUISER|8	0	<muted>10% more damage taken by shields.</muted>
+integrable|freebooters_charge|CAPITAL_SHIP|0	1	<good>50%</good> increased crew casualties.
+integrable|freebooters_charge|CAPITAL_SHIP|1	0	<good>30%</good> increased weapon damage.
+integrable|freebooters_charge|CAPITAL_SHIP|2	1	<good>10%</good> more damage taken by shields.
+integrable|freebooters_charge|CAPITAL_SHIP|3	0	<bad>10%</bad> reduced armor.
+integrable|freebooters_charge|CAPITAL_SHIP|4	0	Click and hold to integrate.
+integrable|freebooters_charge|CAPITAL_SHIP|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|freebooters_charge|CAPITAL_SHIP|6	0	<muted>50% increased crew casualties.</muted>
+integrable|freebooters_charge|CAPITAL_SHIP|7	0	<muted>30% increased weapon damage.</muted>
+integrable|freebooters_charge|CAPITAL_SHIP|8	0	<muted>10% more damage taken by shields.</muted>
+integrated|freebooters_charge|null|0	0	<builtIn>Integrated</builtIn>
+integrated|freebooters_charge|null|1	1	<good>50%</good> increased crew casualties.
+integrated|freebooters_charge|null|2	0	<good>30%</good> increased weapon damage.
+integrated|freebooters_charge|null|3	1	<good>10%</good> more damage taken by shields.
+integrated|freebooters_charge|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|freebooters_charge|FRIGATE|1	1	<good>50%</good> increased crew casualties.
+integrated|freebooters_charge|FRIGATE|2	0	<good>30%</good> increased weapon damage.
+integrated|freebooters_charge|FRIGATE|3	1	<good>10%</good> more damage taken by shields.
+integrated|freebooters_charge|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|freebooters_charge|DESTROYER|1	1	<good>50%</good> increased crew casualties.
+integrated|freebooters_charge|DESTROYER|2	0	<good>30%</good> increased weapon damage.
+integrated|freebooters_charge|DESTROYER|3	1	<good>10%</good> more damage taken by shields.
+integrated|freebooters_charge|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|freebooters_charge|CRUISER|1	1	<good>50%</good> increased crew casualties.
+integrated|freebooters_charge|CRUISER|2	0	<good>30%</good> increased weapon damage.
+integrated|freebooters_charge|CRUISER|3	1	<good>10%</good> more damage taken by shields.
+integrated|freebooters_charge|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|freebooters_charge|CAPITAL_SHIP|1	1	<good>50%</good> increased crew casualties.
+integrated|freebooters_charge|CAPITAL_SHIP|2	0	<good>30%</good> increased weapon damage.
+integrated|freebooters_charge|CAPITAL_SHIP|3	1	<good>10%</good> more damage taken by shields.
 flavour|frozen_heart	0	query. hull?. scanning. [HULL] collect, amass, gather, fuse, keep. The core does not stop. Neither does anything it holds.
 type|frozen_heart|null|0	0	Whenever a non-strikecraft ship is destroyed within 1500 su, this ship gains a Heartless stack until the end of combat. Ships can hold up to 5 Heartless stacks.
 type|frozen_heart|null|1	0	Each new Heartless stack sets off a radiation surge that deals <bad>400</bad> EMP damage to a random weapon and to a random engine on this ship.
@@ -6043,6 +6258,36 @@ type|ground_support|CRUISER|0	0	Your fleet gains effective planetary raid streng
 type-detail|ground_support|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Ground Support</hullmod>\n• <hullmod>Ground Support Package</hullmod>
 type|ground_support|CAPITAL_SHIP|0	0	Your fleet gains effective planetary raid strength equal to <good>25%</good> of this ship's maximum crew capacity, up to the total number of marines in the fleet.
 type-detail|ground_support|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Ground Support</hullmod>\n• <hullmod>Ground Support Package</hullmod>
+integrable|ground_support|null|0	0	Your fleet gains effective planetary raid strength equal to <good>25%</good> of this ship's maximum crew capacity, up to the total number of marines in the fleet.
+integrable|ground_support|null|1	0	Click and hold to integrate.
+integrable|ground_support|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ground_support|null|3	0	<muted>Your fleet gains effective planetary raid strength equal to 50% of this ship's maximum crew capacity, up to the total number of marines in the fleet.</muted>
+integrable|ground_support|FRIGATE|0	0	Your fleet gains effective planetary raid strength equal to <good>25%</good> of this ship's maximum crew capacity, up to the total number of marines in the fleet.
+integrable|ground_support|FRIGATE|1	0	Click and hold to integrate.
+integrable|ground_support|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ground_support|FRIGATE|3	0	<muted>Your fleet gains effective planetary raid strength equal to 50% of this ship's maximum crew capacity, up to the total number of marines in the fleet.</muted>
+integrable|ground_support|DESTROYER|0	0	Your fleet gains effective planetary raid strength equal to <good>25%</good> of this ship's maximum crew capacity, up to the total number of marines in the fleet.
+integrable|ground_support|DESTROYER|1	0	Click and hold to integrate.
+integrable|ground_support|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ground_support|DESTROYER|3	0	<muted>Your fleet gains effective planetary raid strength equal to 50% of this ship's maximum crew capacity, up to the total number of marines in the fleet.</muted>
+integrable|ground_support|CRUISER|0	0	Your fleet gains effective planetary raid strength equal to <good>25%</good> of this ship's maximum crew capacity, up to the total number of marines in the fleet.
+integrable|ground_support|CRUISER|1	0	Click and hold to integrate.
+integrable|ground_support|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ground_support|CRUISER|3	0	<muted>Your fleet gains effective planetary raid strength equal to 50% of this ship's maximum crew capacity, up to the total number of marines in the fleet.</muted>
+integrable|ground_support|CAPITAL_SHIP|0	0	Your fleet gains effective planetary raid strength equal to <good>25%</good> of this ship's maximum crew capacity, up to the total number of marines in the fleet.
+integrable|ground_support|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|ground_support|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ground_support|CAPITAL_SHIP|3	0	<muted>Your fleet gains effective planetary raid strength equal to 50% of this ship's maximum crew capacity, up to the total number of marines in the fleet.</muted>
+integrated|ground_support|null|0	0	<builtIn>Integrated</builtIn>
+integrated|ground_support|null|1	0	<builtIn>Your fleet gains effective planetary raid strength equal to </builtIn><good>50%</good><builtIn> of this ship's maximum crew capacity, up to the total number of marines in the fleet.</builtIn>
+integrated|ground_support|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|ground_support|FRIGATE|1	0	<builtIn>Your fleet gains effective planetary raid strength equal to </builtIn><good>50%</good><builtIn> of this ship's maximum crew capacity, up to the total number of marines in the fleet.</builtIn>
+integrated|ground_support|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|ground_support|DESTROYER|1	0	<builtIn>Your fleet gains effective planetary raid strength equal to </builtIn><good>50%</good><builtIn> of this ship's maximum crew capacity, up to the total number of marines in the fleet.</builtIn>
+integrated|ground_support|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|ground_support|CRUISER|1	0	<builtIn>Your fleet gains effective planetary raid strength equal to </builtIn><good>50%</good><builtIn> of this ship's maximum crew capacity, up to the total number of marines in the fleet.</builtIn>
+integrated|ground_support|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|ground_support|CAPITAL_SHIP|1	0	<builtIn>Your fleet gains effective planetary raid strength equal to </builtIn><good>50%</good><builtIn> of this ship's maximum crew capacity, up to the total number of marines in the fleet.</builtIn>
 type|hardened_shields|null|0	1	<bad>10%</bad> less damage taken by shields.
 type|hardened_shields|null|1	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 type-detail|hardened_shields|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Reactive Combat Shields</hullmod>\n• <hullmod>Low Arc Shield Emitter</hullmod>\n• <hullmod>Lostech Engineering</hullmod>\n• <hullmod>Hardened Shields</hullmod>
@@ -6166,6 +6411,41 @@ type|haul_the_prize|CRUISER|0	0	<bad>-1</bad> to max burn level.
 type|haul_the_prize|CRUISER|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
 type|haul_the_prize|CAPITAL_SHIP|0	0	<bad>-1</bad> to max burn level.
 type|haul_the_prize|CAPITAL_SHIP|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+integrable|haul_the_prize|null|0	0	<bad>-1</bad> to max burn level.
+integrable|haul_the_prize|null|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+integrable|haul_the_prize|null|2	0	Click and hold to integrate.
+integrable|haul_the_prize|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|haul_the_prize|null|4	0	<muted>The slowest ship in your fleet of this ship's hull size or smaller has +1 to max burn level, up to this ship's max burn level.</muted>
+integrable|haul_the_prize|FRIGATE|0	0	<bad>-1</bad> to max burn level.
+integrable|haul_the_prize|FRIGATE|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+integrable|haul_the_prize|FRIGATE|2	0	Click and hold to integrate.
+integrable|haul_the_prize|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|haul_the_prize|FRIGATE|4	0	<muted>The slowest ship in your fleet of this ship's hull size or smaller has +1 to max burn level, up to this ship's max burn level.</muted>
+integrable|haul_the_prize|DESTROYER|0	0	<bad>-1</bad> to max burn level.
+integrable|haul_the_prize|DESTROYER|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+integrable|haul_the_prize|DESTROYER|2	0	Click and hold to integrate.
+integrable|haul_the_prize|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|haul_the_prize|DESTROYER|4	0	<muted>The slowest ship in your fleet of this ship's hull size or smaller has +1 to max burn level, up to this ship's max burn level.</muted>
+integrable|haul_the_prize|CRUISER|0	0	<bad>-1</bad> to max burn level.
+integrable|haul_the_prize|CRUISER|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+integrable|haul_the_prize|CRUISER|2	0	Click and hold to integrate.
+integrable|haul_the_prize|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|haul_the_prize|CRUISER|4	0	<muted>The slowest ship in your fleet of this ship's hull size or smaller has +1 to max burn level, up to this ship's max burn level.</muted>
+integrable|haul_the_prize|CAPITAL_SHIP|0	0	<bad>-1</bad> to max burn level.
+integrable|haul_the_prize|CAPITAL_SHIP|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+integrable|haul_the_prize|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|haul_the_prize|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|haul_the_prize|CAPITAL_SHIP|4	0	<muted>The slowest ship in your fleet of this ship's hull size or smaller has +1 to max burn level, up to this ship's max burn level.</muted>
+integrated|haul_the_prize|null|0	0	<builtIn>Integrated</builtIn>
+integrated|haul_the_prize|null|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+integrated|haul_the_prize|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|haul_the_prize|FRIGATE|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+integrated|haul_the_prize|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|haul_the_prize|DESTROYER|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+integrated|haul_the_prize|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|haul_the_prize|CRUISER|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
+integrated|haul_the_prize|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|haul_the_prize|CAPITAL_SHIP|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
 type|heavy_armor|null|0	0	<bad>20%</bad> less maneuverability.
 type-detail|heavy_armor|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Anti-Beam Plating</hullmod>\n• <hullmod>Amorphous Alloy Armor</hullmod>\n• <hullmod>Vanagloria Ionized Armor</hullmod>\n• <hullmod>Critical Point Protection</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Powered Titanium Plates</hullmod>\n• <hullmod>Heavy Armor</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Critical Point Refit</node>
 type|heavy_armor|FRIGATE|0	0	<bad>20%</bad> less maneuverability.
@@ -7511,6 +7791,36 @@ type|pick_off_the_stragglers|FRIGATE|0	0	<good>10%</good> increased damage to sh
 type|pick_off_the_stragglers|DESTROYER|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
 type|pick_off_the_stragglers|CRUISER|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
 type|pick_off_the_stragglers|CAPITAL_SHIP|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
+integrable|pick_off_the_stragglers|null|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
+integrable|pick_off_the_stragglers|null|1	0	Click and hold to integrate.
+integrable|pick_off_the_stragglers|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|pick_off_the_stragglers|null|3	0	<muted>20% increased damage to ships with no allies within 1000 su.</muted>
+integrable|pick_off_the_stragglers|FRIGATE|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
+integrable|pick_off_the_stragglers|FRIGATE|1	0	Click and hold to integrate.
+integrable|pick_off_the_stragglers|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|pick_off_the_stragglers|FRIGATE|3	0	<muted>20% increased damage to ships with no allies within 1000 su.</muted>
+integrable|pick_off_the_stragglers|DESTROYER|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
+integrable|pick_off_the_stragglers|DESTROYER|1	0	Click and hold to integrate.
+integrable|pick_off_the_stragglers|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|pick_off_the_stragglers|DESTROYER|3	0	<muted>20% increased damage to ships with no allies within 1000 su.</muted>
+integrable|pick_off_the_stragglers|CRUISER|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
+integrable|pick_off_the_stragglers|CRUISER|1	0	Click and hold to integrate.
+integrable|pick_off_the_stragglers|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|pick_off_the_stragglers|CRUISER|3	0	<muted>20% increased damage to ships with no allies within 1000 su.</muted>
+integrable|pick_off_the_stragglers|CAPITAL_SHIP|0	0	<good>10%</good> increased damage to ships with no allies within 1000 su.
+integrable|pick_off_the_stragglers|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|pick_off_the_stragglers|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|pick_off_the_stragglers|CAPITAL_SHIP|3	0	<muted>20% increased damage to ships with no allies within 1000 su.</muted>
+integrated|pick_off_the_stragglers|null|0	0	<builtIn>Integrated</builtIn>
+integrated|pick_off_the_stragglers|null|1	0	<good>20%</good><builtIn> increased damage to ships with no allies within 1000 su.</builtIn>
+integrated|pick_off_the_stragglers|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|pick_off_the_stragglers|FRIGATE|1	0	<good>20%</good><builtIn> increased damage to ships with no allies within 1000 su.</builtIn>
+integrated|pick_off_the_stragglers|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|pick_off_the_stragglers|DESTROYER|1	0	<good>20%</good><builtIn> increased damage to ships with no allies within 1000 su.</builtIn>
+integrated|pick_off_the_stragglers|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|pick_off_the_stragglers|CRUISER|1	0	<good>20%</good><builtIn> increased damage to ships with no allies within 1000 su.</builtIn>
+integrated|pick_off_the_stragglers|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|pick_off_the_stragglers|CAPITAL_SHIP|1	0	<good>20%</good><builtIn> increased damage to ships with no allies within 1000 su.</builtIn>
 type|point_defense_damage_to_missiles_and_fighters|null|0	0	<good>10%</good> increased damage to missiles.
 type|point_defense_damage_to_missiles_and_fighters|null|1	0	<good>10%</good> increased damage to fighters.
 type|point_defense_damage_to_missiles_and_fighters|FRIGATE|0	0	<good>10%</good> increased damage to missiles.
@@ -7834,6 +8144,46 @@ type|restriction_breeds_creativity|FRIGATE|0	1	<bad>2%</bad> less armor damage t
 type|restriction_breeds_creativity|DESTROYER|0	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
 type|restriction_breeds_creativity|CRUISER|0	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
 type|restriction_breeds_creativity|CAPITAL_SHIP|0	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
+integrable|restriction_breeds_creativity|null|0	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
+integrable|restriction_breeds_creativity|null|1	0	Click and hold to integrate.
+integrable|restriction_breeds_creativity|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|restriction_breeds_creativity|null|3	0	<muted>2% less armor damage taken for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrable|restriction_breeds_creativity|null|4	0	<muted>2% less hull damage taken for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrable|restriction_breeds_creativity|FRIGATE|0	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
+integrable|restriction_breeds_creativity|FRIGATE|1	0	Click and hold to integrate.
+integrable|restriction_breeds_creativity|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|restriction_breeds_creativity|FRIGATE|3	0	<muted>2% less armor damage taken for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrable|restriction_breeds_creativity|FRIGATE|4	0	<muted>2% less hull damage taken for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrable|restriction_breeds_creativity|DESTROYER|0	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
+integrable|restriction_breeds_creativity|DESTROYER|1	0	Click and hold to integrate.
+integrable|restriction_breeds_creativity|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|restriction_breeds_creativity|DESTROYER|3	0	<muted>2% less armor damage taken for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrable|restriction_breeds_creativity|DESTROYER|4	0	<muted>2% less hull damage taken for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrable|restriction_breeds_creativity|CRUISER|0	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
+integrable|restriction_breeds_creativity|CRUISER|1	0	Click and hold to integrate.
+integrable|restriction_breeds_creativity|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|restriction_breeds_creativity|CRUISER|3	0	<muted>2% less armor damage taken for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrable|restriction_breeds_creativity|CRUISER|4	0	<muted>2% less hull damage taken for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrable|restriction_breeds_creativity|CAPITAL_SHIP|0	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
+integrable|restriction_breeds_creativity|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|restriction_breeds_creativity|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|restriction_breeds_creativity|CAPITAL_SHIP|3	0	<muted>2% less armor damage taken for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrable|restriction_breeds_creativity|CAPITAL_SHIP|4	0	<muted>2% less hull damage taken for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrated|restriction_breeds_creativity|null|0	0	<builtIn>Integrated</builtIn>
+integrated|restriction_breeds_creativity|null|1	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
+integrated|restriction_breeds_creativity|null|2	1	<bad>2%</bad><builtIn> less hull damage taken for each d-mod, up to a maximum of 5 d-mods.</builtIn>
+integrated|restriction_breeds_creativity|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|restriction_breeds_creativity|FRIGATE|1	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
+integrated|restriction_breeds_creativity|FRIGATE|2	1	<bad>2%</bad><builtIn> less hull damage taken for each d-mod, up to a maximum of 5 d-mods.</builtIn>
+integrated|restriction_breeds_creativity|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|restriction_breeds_creativity|DESTROYER|1	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
+integrated|restriction_breeds_creativity|DESTROYER|2	1	<bad>2%</bad><builtIn> less hull damage taken for each d-mod, up to a maximum of 5 d-mods.</builtIn>
+integrated|restriction_breeds_creativity|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|restriction_breeds_creativity|CRUISER|1	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
+integrated|restriction_breeds_creativity|CRUISER|2	1	<bad>2%</bad><builtIn> less hull damage taken for each d-mod, up to a maximum of 5 d-mods.</builtIn>
+integrated|restriction_breeds_creativity|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|restriction_breeds_creativity|CAPITAL_SHIP|1	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
+integrated|restriction_breeds_creativity|CAPITAL_SHIP|2	1	<bad>2%</bad><builtIn> less hull damage taken for each d-mod, up to a maximum of 5 d-mods.</builtIn>
 type|rift_explosion_damage|null|0	0	<good>10%</good> increased rift explosion damage.
 type|rift_explosion_damage|null|1	0	Strikecraft launched from this ship have <good>10%</good> increased rift explosion damage.
 type|rift_explosion_damage|FRIGATE|0	0	<good>10%</good> increased rift explosion damage.
@@ -7887,6 +8237,46 @@ type|running_dark|FRIGATE|0	1	Your fleet has <bad>10%</bad> reduced sensor profi
 type|running_dark|DESTROYER|0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
 type|running_dark|CRUISER|0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
 type|running_dark|CAPITAL_SHIP|0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+integrable|running_dark|null|0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+integrable|running_dark|null|1	0	Click and hold to integrate.
+integrable|running_dark|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|running_dark|null|3	0	<muted>Your fleet has 10% reduced sensor profile while its transponder is off, up to a maximum of 30%.</muted>
+integrable|running_dark|null|4	0	<muted>Your fleet has +1 to max burn level while its transponder is off. Only the strongest applies.</muted>
+integrable|running_dark|FRIGATE|0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+integrable|running_dark|FRIGATE|1	0	Click and hold to integrate.
+integrable|running_dark|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|running_dark|FRIGATE|3	0	<muted>Your fleet has 10% reduced sensor profile while its transponder is off, up to a maximum of 30%.</muted>
+integrable|running_dark|FRIGATE|4	0	<muted>Your fleet has +1 to max burn level while its transponder is off. Only the strongest applies.</muted>
+integrable|running_dark|DESTROYER|0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+integrable|running_dark|DESTROYER|1	0	Click and hold to integrate.
+integrable|running_dark|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|running_dark|DESTROYER|3	0	<muted>Your fleet has 10% reduced sensor profile while its transponder is off, up to a maximum of 30%.</muted>
+integrable|running_dark|DESTROYER|4	0	<muted>Your fleet has +1 to max burn level while its transponder is off. Only the strongest applies.</muted>
+integrable|running_dark|CRUISER|0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+integrable|running_dark|CRUISER|1	0	Click and hold to integrate.
+integrable|running_dark|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|running_dark|CRUISER|3	0	<muted>Your fleet has 10% reduced sensor profile while its transponder is off, up to a maximum of 30%.</muted>
+integrable|running_dark|CRUISER|4	0	<muted>Your fleet has +1 to max burn level while its transponder is off. Only the strongest applies.</muted>
+integrable|running_dark|CAPITAL_SHIP|0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+integrable|running_dark|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|running_dark|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|running_dark|CAPITAL_SHIP|3	0	<muted>Your fleet has 10% reduced sensor profile while its transponder is off, up to a maximum of 30%.</muted>
+integrable|running_dark|CAPITAL_SHIP|4	0	<muted>Your fleet has +1 to max burn level while its transponder is off. Only the strongest applies.</muted>
+integrated|running_dark|null|0	0	<builtIn>Integrated</builtIn>
+integrated|running_dark|null|1	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+integrated|running_dark|null|2	0	<builtIn>Your fleet has </builtIn><good>+1</good><builtIn> to max burn level while its transponder is off. Only the strongest applies.</builtIn>
+integrated|running_dark|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|running_dark|FRIGATE|1	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+integrated|running_dark|FRIGATE|2	0	<builtIn>Your fleet has </builtIn><good>+1</good><builtIn> to max burn level while its transponder is off. Only the strongest applies.</builtIn>
+integrated|running_dark|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|running_dark|DESTROYER|1	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+integrated|running_dark|DESTROYER|2	0	<builtIn>Your fleet has </builtIn><good>+1</good><builtIn> to max burn level while its transponder is off. Only the strongest applies.</builtIn>
+integrated|running_dark|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|running_dark|CRUISER|1	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+integrated|running_dark|CRUISER|2	0	<builtIn>Your fleet has </builtIn><good>+1</good><builtIn> to max burn level while its transponder is off. Only the strongest applies.</builtIn>
+integrated|running_dark|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|running_dark|CAPITAL_SHIP|1	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of 30%.
+integrated|running_dark|CAPITAL_SHIP|2	0	<builtIn>Your fleet has </builtIn><good>+1</good><builtIn> to max burn level while its transponder is off. Only the strongest applies.</builtIn>
 type|safety_overrides|null|0	0	The zero-flux speed boost works at any flux level.
 type|safety_overrides|null|1	0	<good>100%</good> more flux dissipation.
 type|safety_overrides|null|2	0	<bad>67%</bad> less peak performance time.
@@ -8708,6 +9098,48 @@ type|waste_not|CRUISER|0	0	<good>10%</good> increased combat readiness recovery 
 type|waste_not|CRUISER|1	0	Your fleet has <good>10%</good> increased post-battle salvage.
 type|waste_not|CAPITAL_SHIP|0	0	<good>10%</good> increased combat readiness recovery rate.
 type|waste_not|CAPITAL_SHIP|1	0	Your fleet has <good>15%</good> increased post-battle salvage.
+integrable|waste_not|null|0	0	<good>10%</good> increased combat readiness recovery rate.
+integrable|waste_not|null|1	0	Click and hold to integrate.
+integrable|waste_not|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|waste_not|null|3	0	<muted>10% increased combat readiness recovery rate.</muted>
+integrable|waste_not|FRIGATE|0	0	<good>10%</good> increased combat readiness recovery rate.
+integrable|waste_not|FRIGATE|1	0	Your fleet has <good>3%</good> increased post-battle salvage.
+integrable|waste_not|FRIGATE|2	0	Click and hold to integrate.
+integrable|waste_not|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|waste_not|FRIGATE|4	0	<muted>10% increased combat readiness recovery rate.</muted>
+integrable|waste_not|FRIGATE|5	0	<muted>Your fleet has 5% increased post-battle salvage.</muted>
+integrable|waste_not|DESTROYER|0	0	<good>10%</good> increased combat readiness recovery rate.
+integrable|waste_not|DESTROYER|1	0	Your fleet has <good>6%</good> increased post-battle salvage.
+integrable|waste_not|DESTROYER|2	0	Click and hold to integrate.
+integrable|waste_not|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|waste_not|DESTROYER|4	0	<muted>10% increased combat readiness recovery rate.</muted>
+integrable|waste_not|DESTROYER|5	0	<muted>Your fleet has 10% increased post-battle salvage.</muted>
+integrable|waste_not|CRUISER|0	0	<good>10%</good> increased combat readiness recovery rate.
+integrable|waste_not|CRUISER|1	0	Your fleet has <good>10%</good> increased post-battle salvage.
+integrable|waste_not|CRUISER|2	0	Click and hold to integrate.
+integrable|waste_not|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|waste_not|CRUISER|4	0	<muted>10% increased combat readiness recovery rate.</muted>
+integrable|waste_not|CRUISER|5	0	<muted>Your fleet has 15% increased post-battle salvage.</muted>
+integrable|waste_not|CAPITAL_SHIP|0	0	<good>10%</good> increased combat readiness recovery rate.
+integrable|waste_not|CAPITAL_SHIP|1	0	Your fleet has <good>15%</good> increased post-battle salvage.
+integrable|waste_not|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|waste_not|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|waste_not|CAPITAL_SHIP|4	0	<muted>10% increased combat readiness recovery rate.</muted>
+integrable|waste_not|CAPITAL_SHIP|5	0	<muted>Your fleet has 25% increased post-battle salvage.</muted>
+integrated|waste_not|null|0	0	<builtIn>Integrated</builtIn>
+integrated|waste_not|null|1	0	<good>10%</good> increased combat readiness recovery rate.
+integrated|waste_not|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|waste_not|FRIGATE|1	0	<good>10%</good> increased combat readiness recovery rate.
+integrated|waste_not|FRIGATE|2	0	<builtIn>Your fleet has </builtIn><good>5%</good><builtIn> increased post-battle salvage.</builtIn>
+integrated|waste_not|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|waste_not|DESTROYER|1	0	<good>10%</good> increased combat readiness recovery rate.
+integrated|waste_not|DESTROYER|2	0	<builtIn>Your fleet has </builtIn><good>10%</good><builtIn> increased post-battle salvage.</builtIn>
+integrated|waste_not|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|waste_not|CRUISER|1	0	<good>10%</good> increased combat readiness recovery rate.
+integrated|waste_not|CRUISER|2	0	<builtIn>Your fleet has </builtIn><good>15%</good><builtIn> increased post-battle salvage.</builtIn>
+integrated|waste_not|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|waste_not|CAPITAL_SHIP|1	0	<good>10%</good> increased combat readiness recovery rate.
+integrated|waste_not|CAPITAL_SHIP|2	0	<builtIn>Your fleet has </builtIn><good>25%</good><builtIn> increased post-battle salvage.</builtIn>
 type|weapon_durability|null|0	0	<good>5%</good> increased weapon durability.
 type|weapon_durability|FRIGATE|0	0	<good>5%</good> increased weapon durability.
 type|weapon_durability|DESTROYER|0	0	<good>5%</good> increased weapon durability.

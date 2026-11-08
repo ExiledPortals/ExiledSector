@@ -17,6 +17,7 @@ public final class PirateFrenzy extends ShipCombatListener implements Advanceabl
 
     public static final int MAX_STACKS = 5;
     public static final float STACK_SECONDS = 10f;
+    public static final String EXTRA_SECONDS_KEY = "exiledSector_pirateFrenzyExtraSeconds";
     static final float RATE_OF_FIRE_PERCENT_PER_STACK = 5f;
     static final float FLUX_COST_REDUCTION_PERCENT_PER_STACK = 5f;
     private static final String MOD_ID_PREFIX = "exiledSector_pirateFrenzy_";
@@ -50,8 +51,12 @@ public final class PirateFrenzy extends ShipCombatListener implements Advanceabl
         if (!ownerIsAliveNotHulk()) {
             return;
         }
-        frenzyStacks.add(frenzyClockSeconds);
+        frenzyStacks.addLasting(frenzyClockSeconds, stackSeconds(), null);
         applyIfChanged();
+    }
+
+    float stackSeconds() {
+        return STACK_SECONDS + ownerShip.getMutableStats().getDynamic().getValue(EXTRA_SECONDS_KEY, 0f);
     }
 
     @Override

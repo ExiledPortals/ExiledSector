@@ -82,6 +82,18 @@ class DefenseSkillEffectTest {
     }
 
     @Test
+    void perDModHullDamageTakenReductionCompoundsWithEachDMod() {
+        giveDMods(2);
+        MutableStat hullDamageTaken = new MutableStat(1f);
+        when(stats.getHullDamageTakenMult()).thenReturn(hullDamageTaken);
+
+        DefenseSkillEffect.HULL_DAMAGE_TAKEN_MULT_PER_DMOD.apply(stats, "mod_id", -10f);
+
+        assertEquals(0.81f, hullDamageTaken.getModifiedValue(), EPSILON);
+        assertTrue(DefenseSkillEffect.HULL_DAMAGE_TAKEN_MULT_PER_DMOD.lowerIsBetter());
+    }
+
+    @Test
     void hungeringRiftHealingAddsPercentagePointsOfTheRiftsHeal() {
         StatBonus healShare = new StatBonus();
         when(dynamic.getMod(AssayingRiftEffect.HUNGERING_RIFT_HEAL_MOD_HUMAN_SHIPS)).thenReturn(healShare);

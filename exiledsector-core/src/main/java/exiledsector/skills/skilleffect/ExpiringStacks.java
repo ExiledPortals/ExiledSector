@@ -23,11 +23,15 @@ public final class ExpiringStacks<V> {
     }
 
     public void add(float nowSeconds, V value) {
+        addLasting(nowSeconds, stackSeconds, value);
+    }
+
+    public void addLasting(float nowSeconds, float lastingSeconds, V value) {
         dropExpired(nowSeconds);
         if (stacks.size() >= maxStacks) {
             stacks.pollFirst();
         }
-        stacks.addLast(new Stack<>(nowSeconds + stackSeconds, value));
+        stacks.addLast(new Stack<>(nowSeconds + lastingSeconds, value));
     }
 
     public void dropExpired(float nowSeconds) {

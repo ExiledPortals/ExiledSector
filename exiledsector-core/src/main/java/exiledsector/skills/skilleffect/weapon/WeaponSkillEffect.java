@@ -24,7 +24,9 @@ import java.util.List;
 import static exiledsector.skills.skilleffect.Backings.flag;
 import static exiledsector.skills.skilleffect.Backings.listener;
 import static exiledsector.skills.skilleffect.Backings.statEffect;
+import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
+import static exiledsector.skills.skilleffect.StatTarget.dynamicMod;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
 import static exiledsector.skills.skilleffect.weapon.TargetDamageBonusEffect.targetDamage;
 
@@ -93,6 +95,20 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
             AutomatedShipDamageListener::new, "stat.damageToAutomatedShips")),
     DAMAGE_TO_HELPLESS_SHIP_PERCENT(targetDamage(HelplessShipDamageListener.DAMAGE_PERCENT_KEY, HelplessShipDamageListener.class,
             HelplessShipDamageListener::new, "stat.damageToHelplessShips")),
+    HELPLESS_KILL_PIRATE_FRENZY_STACKS_FLAT(listener(HelplessKillFrenzyListener.STACKS_KEY, HelplessKillFrenzyListener.class,
+            HelplessKillFrenzyListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).count(Math.round(magnitude)).arg("seconds", PirateFrenzy.STACK_SECONDS)
+                    .arg("stacks", PirateFrenzy.MAX_STACKS).styled().append("\n").append(PirateFrenzy.describeStackBonuses());
+        }
+    },
+    PIRATE_FRENZY_SECONDS_FLAT(statEffect(FLAT, dynamicMod(PirateFrenzy.EXTRA_SECONDS_KEY), "stat.pirateFrenzySeconds", false)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.templated(this, magnitude);
+        }
+    },
     OPENING_WEAPON_DAMAGE_PERCENT(new ConditionalStatEffect(PERCENT, WeaponStatFamily.DAMAGE.target(WeaponScope.ALL), "weapon.stat.DAMAGE",
             OpeningVolley::isUnderway)) {
         @Override

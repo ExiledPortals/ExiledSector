@@ -158,6 +158,14 @@
 					"magnitude": 25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "GROUND_SUPPORT_PER_MAX_CREW_PERCENT",
+						"magnitude": 50
+					}
+				]
+			},
 			"phantomHullMods": [
 				"ground_support"
 			],
@@ -180,6 +188,18 @@
 					"magnitude": 20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "DAMAGE_TO_HELPLESS_SHIP_PERCENT",
+						"magnitude": 20
+					},
+					{
+						"effect": "HELPLESS_KILL_PIRATE_FRENZY_STACKS_FLAT",
+						"magnitude": 1
+					}
+				]
+			},
 			"flavour": "Pirate fire control holds until a target's shields collapse or its drives gutter out. Fair fights are for the naive.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -197,6 +217,18 @@
 					"magnitude": -10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT",
+						"magnitude": -10
+					},
+					{
+						"effect": "TRANSPONDER_OFF_BURN_LEVEL_FLAT",
+						"magnitude": 1
+					}
+				]
+			},
 			"flavour": "Pirate captains run with their transponders dark and their drive plumes baffled behind scrap plating.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -216,6 +248,18 @@
 					"magnitude": 1000
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT",
+						"magnitude": 1000
+					},
+					{
+						"effect": "PIRATE_FRENZY_SECONDS_FLAT",
+						"magnitude": 5
+					}
+				]
+			},
 			"flavour": "A good pirate doesn't wait for their prey to recover.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -233,6 +277,18 @@
 					"magnitude": 30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "TOP_SPEED_WHILE_RETREATING_PERCENT",
+						"magnitude": 30
+					},
+					{
+						"effect": "DAMAGE_TAKEN_WHILE_RETREATING_PERCENT",
+						"magnitude": -30
+					}
+				]
+			},
 			"flavour": "Acquiring plunder is sometimes not as important as making it home.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -254,6 +310,14 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT",
+						"magnitude": 1
+					}
+				]
+			},
 			"flavour": "Pirates tow their prizes home on cables welded straight to the drive spine. It is slow, but nothing gets left behind.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -273,6 +337,14 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "DAMAGE_TO_ISOLATED_SHIP_PERCENT",
+						"magnitude": 20
+					}
+				]
+			},
 			"flavour": "A convoy is only as safe as its slowest freighter.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -3976,6 +4048,18 @@
 					"magnitude": -2
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD",
+						"magnitude": -2
+					},
+					{
+						"effect": "HULL_DAMAGE_TAKEN_MULT_PER_DMOD",
+						"magnitude": -2
+					}
+				]
+			},
 			"flavour": "Captured pirate hulls show the crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Pirates call this maintenance.",
 			"flavourAutomated": "Captured pirate hulls show the refit crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Pirates call this maintenance.",
 			"tags": [
@@ -4141,6 +4225,23 @@
 					"capitalShip": 15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CR_RECOVERY_RATE_PERCENT",
+						"magnitude": 10
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "POST_BATTLE_SALVAGE_PERCENT",
+						"frigate": 5,
+						"destroyer": 10,
+						"cruiser": 15,
+						"capitalShip": 25
+					}
+				]
+			},
 			"flavour": "Freebooters who signed on at a pirate base taught the crew to strip every wreck to the frame and to patch the ship back to fighting trim from whatever a battle leaves behind. Nothing is wasted, least of all the dead.",
 			"flavourAutomated": "The ship's core logs how freebooters strip every wreck to the frame and patch their ships back to fighting trim from whatever a battle leaves behind. Its repair drones do the same. Nothing is wasted, least of all the dead.",
 			"tags": [
@@ -4883,6 +4984,22 @@
 					"magnitude": -10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CREW_LOSS_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "WEAPON_DAMAGE_PERCENT",
+						"magnitude": 30
+					},
+					{
+						"effect": "SHIELD_DAMAGE_TAKEN_MULT",
+						"magnitude": 10
+					}
+				]
+			},
 			"flavour": "Pirate captains who joined the crew drill the habits that make freebooters so dangerous up close: charge in, fire everything and count the casualties later. They rarely do the counting.",
 			"flavourAutomated": "The ship's core logs every fight it sees freebooters win up close: charge in, fire everything and count the casualties later. It copies the first two steps exactly. It always does the counting.",
 			"tags": [
