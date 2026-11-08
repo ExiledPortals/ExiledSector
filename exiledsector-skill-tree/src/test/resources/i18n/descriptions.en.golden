@@ -3597,8 +3597,8 @@ type|comsec_discipline|CRUISER|0	1	<bad>25%</bad> reduced electronic warfare pen
 type|comsec_discipline|CRUISER|1	0	<good>15%</good> increased this ship's sensor strength.
 type|comsec_discipline|CAPITAL_SHIP|0	1	<bad>25%</bad> reduced electronic warfare penalty against this ship's weapon range.
 type|comsec_discipline|CAPITAL_SHIP|1	0	<good>15%</good> increased this ship's sensor strength.
-flavour|concussion_shells	0	Planetary defense batteries on Eventide fire heavy shells with a delayed charge that bursts just inside the plating, shaking loose whatever is mounted nearby. A retired battery sergeant teaches the crew to pack them in exchange for passage off-world. The sergeant asks not to be told where the shells end up.
-flavourAutomated|concussion_shells	0	Planetary defense batteries on Eventide fire heavy shells with a delayed charge that bursts just inside the plating, shaking loose whatever is mounted nearby. The ship's core copies the fusing tables from a salvaged battery fire-control unit, and the refit crew packs the shells to match. The unit is still listed as in service.
+flavour|concussion_shells	0	Planetary defense batteries on Eventide fire heavy shells with a delayed charge that bursts just inside the plating, shaking loose whatever is mounted nearby. A retired battery sergeant teaches the crew to pack them in exchange for passage off-world.
+flavourAutomated|concussion_shells	0	Planetary defense batteries on Eventide fire heavy shells with a delayed charge that bursts just inside the plating, shaking loose whatever is mounted nearby. The ship's core copies the fusing tables from a salvaged battery fire-control unit, and the refit crew packs the shells to match.
 type|concussion_shells|null|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
 type|concussion_shells|FRIGATE|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
 type|concussion_shells|DESTROYER|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
@@ -3710,7 +3710,7 @@ type|damage_to_helpless_ships|FRIGATE|0	0	<good>5%</good> increased damage to ov
 type|damage_to_helpless_ships|DESTROYER|0	0	<good>5%</good> increased damage to overloaded, venting or flamed-out ships.
 type|damage_to_helpless_ships|CRUISER|0	0	<good>5%</good> increased damage to overloaded, venting or flamed-out ships.
 type|damage_to_helpless_ships|CAPITAL_SHIP|0	0	<good>5%</good> increased damage to overloaded, venting or flamed-out ships.
-flavour|damage_to_slower_ships	0	Targeting tables from a raider's fire-control core weight every shot toward whatever can't outrun the ship. Most freighters can't.
+flavour|damage_to_slower_ships	0	Targeting tables from a raider's fire-control core weight every shot toward whatever can't outrun the ship.
 type|damage_to_slower_ships|null|0	0	<good>4%</good> increased damage to ships with a lower top speed than this one.
 type|damage_to_slower_ships|FRIGATE|0	0	<good>4%</good> increased damage to ships with a lower top speed than this one.
 type|damage_to_slower_ships|DESTROYER|0	0	<good>4%</good> increased damage to ships with a lower top speed than this one.
@@ -3799,8 +3799,8 @@ type|doctrine_cold_logic|CRUISER|0	1	<bad>25%</bad> less rate of combat readines
 type|doctrine_cold_logic|CRUISER|1	0	<good>10%</good> increased maximum combat readiness.
 type|doctrine_cold_logic|CAPITAL_SHIP|0	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
 type|doctrine_cold_logic|CAPITAL_SHIP|1	0	<good>10%</good> increased maximum combat readiness.
-flavour|doctrine_escrowed_emitters	0	Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. A crew that cracks the lock on a salvaged emitter finds the full rated performance sitting under it, and the subscription reminders keep arriving regardless.
-flavourAutomated|doctrine_escrowed_emitters	0	Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. The ship's core breaks the lock on a salvaged emitter by brute force and finds the full rated performance sitting under it. The subscription reminders keep arriving, and the core files them unread.
+flavour|doctrine_escrowed_emitters	0	Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. A crew that cracks the lock on a salvaged emitter finds the full rated performance sitting under it.
+flavourAutomated|doctrine_escrowed_emitters	0	Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. The ship's core breaks the lock on a salvaged emitter by brute force and finds the full rated performance sitting under it.
 type|doctrine_escrowed_emitters|null|0	1	<bad>10%</bad> less damage taken by shields.
 type|doctrine_escrowed_emitters|null|1	1	<bad>25%</bad> less shield flux upkeep.
 type|doctrine_escrowed_emitters|FRIGATE|0	1	<bad>10%</bad> less damage taken by shields.
@@ -3823,7 +3823,7 @@ type|doctrine_faithful_hands|CRUISER|0	0	<good>25%</good> less weapon and engine
 type|doctrine_faithful_hands|CRUISER|1	0	<good>25%</good> increased combat readiness recovery rate.
 type|doctrine_faithful_hands|CAPITAL_SHIP|0	0	<good>25%</good> less weapon and engine repair time.
 type|doctrine_faithful_hands|CAPITAL_SHIP|1	0	<good>25%</good> increased combat readiness recovery rate.
-flavour|doctrine_flux_arbitrage	0	Corporate engineers treat flux like capital: borrow hard and repay fast. Their venting schedules, copied from a captured Aurora's maintenance logs, carry a confidentiality notice longer than the schedules themselves.
+flavour|doctrine_flux_arbitrage	0	Corporate engineers treat flux like capital: borrow hard and repay fast. Their venting schedules carry a confidentiality notice longer than the schedules themselves.
 type|doctrine_flux_arbitrage|null|0	0	<good>10%</good> increased flux dissipation.
 type|doctrine_flux_arbitrage|null|1	0	<good>25%</good> increased venting speed.
 type|doctrine_flux_arbitrage|FRIGATE|0	0	<good>10%</good> increased flux dissipation.
@@ -3938,7 +3938,7 @@ type|doctrine_quarterly_targets|CRUISER|1	0	<good>10%</good> increased damage to
 type|doctrine_quarterly_targets|CAPITAL_SHIP|0	0	<good>10%</good> increased damage to cruisers.
 type|doctrine_quarterly_targets|CAPITAL_SHIP|1	0	<good>10%</good> increased damage to capital ships and stations.
 flavour|doctrine_righteous_fury	0	Knights of Ludd gunners load each round as if it were a verdict. Their gunnery is crude, patient and difficult to argue with.
-flavourAutomated|doctrine_righteous_fury	0	Knights of Ludd gunners load each round as if it were a verdict. The ship's core logs their gunnery round by round and reproduces it exactly, verdicts excluded. It remains crude, patient and difficult to argue with.
+flavourAutomated|doctrine_righteous_fury	0	Knights of Ludd gunners load each round as if it were a verdict. The ship's core logs their gunnery round by round and reproduces it exactly.
 type|doctrine_righteous_fury|null|0	0	<good>15%</good> increased ballistic weapon damage.
 type|doctrine_righteous_fury|null|1	0	<good>15%</good> increased missile weapon damage.
 type|doctrine_righteous_fury|FRIGATE|0	0	<good>15%</good> increased ballistic weapon damage.
@@ -3961,7 +3961,7 @@ type|doctrine_swarm_logic|CRUISER|1	0	Strikecraft launched from this ship have <
 type|doctrine_swarm_logic|CAPITAL_SHIP|0	0	<good>25%</good> increased rate at which the strikecraft replacement rate recovers.
 type|doctrine_swarm_logic|CAPITAL_SHIP|1	0	Strikecraft launched from this ship have <good>15%</good> increased weapon damage.
 flavour|doctrine_tachyon_lance_licensing	0	A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked and every one of them copied by a crew that never planned to renew.
-flavourAutomated|doctrine_tachyon_lance_licensing	0	A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked. The ship's core scans every page once, and the license lapses unrenewed.
+flavourAutomated|doctrine_tachyon_lance_licensing	0	A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked. The ship's core scans every page once.
 type|doctrine_tachyon_lance_licensing|null|0	0	<good>15%</good> increased beam weapon damage.
 type|doctrine_tachyon_lance_licensing|null|1	0	<good>10%</good> increased beam weapon range.
 type|doctrine_tachyon_lance_licensing|FRIGATE|0	0	<good>15%</good> increased beam weapon damage.
@@ -3989,7 +3989,6 @@ type|doctrine_tireless_cadence|CAPITAL_SHIP|0	0	<good>10%</good> increased time 
 type|doctrine_tireless_cadence|CAPITAL_SHIP|1	0	<good>15%</good> increased flux dissipation.
 type|doctrine_tireless_cadence|CAPITAL_SHIP|2	0	<bad>50%</bad> reduced combat readiness recovery rate.
 flavour|doctrine_unblinking_watch	0	Remnant point defense never tires and never flinches. Its tracking routines, recovered from a gutted drone, carry none of the hesitation a human gunner would add.
-flavourAutomated|doctrine_unblinking_watch	0	Remnant point defense never tires and never flinches. Its tracking routines, recovered from a gutted drone, carry none of the hesitation a human gunner would add, and this ship has no gunner to add any.
 type|doctrine_unblinking_watch|null|0	0	<good>50%</good> increased damage to missiles.
 type|doctrine_unblinking_watch|null|1	0	<good>30%</good> increased weapon turn rate.
 type|doctrine_unblinking_watch|FRIGATE|0	0	<good>50%</good> increased damage to missiles.
@@ -4228,8 +4227,8 @@ type|exo_tech_coil_tuning|CRUISER|0	0	<good>20%</good> increased hard flux level
 type|exo_tech_coil_tuning|CRUISER|1	0	<good>25%</good> increased flux dissipation while phased.
 type|exo_tech_coil_tuning|CAPITAL_SHIP|0	0	<good>20%</good> increased hard flux level at which phased speed reaches its minimum.
 type|exo_tech_coil_tuning|CAPITAL_SHIP|1	0	<good>25%</good> increased flux dissipation while phased.
-flavour|exo_tech_grid_splice	0	Under Exo-Tech instruction, the crew splices phase-coil components into the ship's power lattice, fusing it with the flux grid the way Exo-Tech builds its own hulls. Exo-Tech insists the sluggish vents are a feature.
-flavourAutomated|exo_tech_grid_splice	0	Under Exo-Tech instruction, the refit crew splices phase-coil components into the ship's power lattice, fusing it with the flux grid the way Exo-Tech builds its own hulls. Exo-Tech insists the sluggish vents are a feature.
+flavour|exo_tech_grid_splice	0	Under Exo-Tech instruction, the crew splices phase-coil components into the ship's power lattice, fusing it with the flux grid the way Exo-Tech builds its own hulls.
+flavourAutomated|exo_tech_grid_splice	0	Under Exo-Tech instruction, the refit crew splices phase-coil components into the ship's power lattice, fusing it with the flux grid the way Exo-Tech builds its own hulls.
 type|exo_tech_grid_splice|null|0	0	<good>10%</good> increased time flow.
 type|exo_tech_grid_splice|null|1	1	<bad>25%</bad> reduced sensor profile.
 type|exo_tech_grid_splice|null|2	1	<bad>25%</bad> reduced sensor profile on phase hulls.
@@ -4356,7 +4355,7 @@ type-detail|extended_shields|CRUISER|0	0	Mutually exclusive with <hullmod>hullmo
 type|extended_shields|CAPITAL_SHIP|0	0	<good>+40</good> to shield arc.
 type-detail|extended_shields|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Knight Refit</hullmod>\n• <hullmod>Primitive Shields</hullmod>\n• <hullmod>Low Arc Shield Emitter</hullmod>\n• <hullmod>Hardlight Matrix</hullmod>\n• <hullmod>Aegis Deflectors</hullmod>\n• <hullmod>Lostech Engineering</hullmod>\n• <hullmod>Extended Shields</hullmod>
 flavour|flak_screen_doctrine	0	Hegemony point defense crews pack their flak loads for a wide burst, on the theory that a missile is rarely alone. The crew learns the trick escorting a Dominator through a missile strike. Its captain bills them for the ammunition.
-flavourAutomated|flak_screen_doctrine	0	Hegemony point defense crews pack their flak loads for a wide burst, on the theory that a missile is rarely alone. The ship's core records the pattern while escorting a Dominator through a missile strike, and the refit crew repacks the magazines to match. The Dominator's captain bills for the ammunition.
+flavourAutomated|flak_screen_doctrine	0	Hegemony point defense crews pack their flak loads for a wide burst, on the theory that a missile is rarely alone. The ship's core records the pattern while escorting a Dominator through a missile strike, and the refit crew repacks the magazines to match.
 type|flak_screen_doctrine|null|0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
 type|flak_screen_doctrine|FRIGATE|0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
 type|flak_screen_doctrine|DESTROYER|0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
@@ -4545,8 +4544,8 @@ type|heavy_armor|CRUISER|0	0	<good>+400</good> to armor.
 type-detail|heavy_armor|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Anti-Beam Plating</hullmod>\n• <hullmod>Amorphous Alloy Armor</hullmod>\n• <hullmod>Vanagloria Ionized Armor</hullmod>\n• <hullmod>Critical Point Protection</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Powered Titanium Plates</hullmod>\n• <hullmod>Heavy Armor</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Critical Point Refit</node>
 type|heavy_armor|CAPITAL_SHIP|0	0	<good>+500</good> to armor.
 type-detail|heavy_armor|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Anti-Beam Plating</hullmod>\n• <hullmod>Amorphous Alloy Armor</hullmod>\n• <hullmod>Vanagloria Ionized Armor</hullmod>\n• <hullmod>Critical Point Protection</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Powered Titanium Plates</hullmod>\n• <hullmod>Heavy Armor</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Critical Point Refit</node>
-flavour|heavy_ballistics_integration	0	Stripping decommissioned Onslaughts at the Agreus shipbreaking yards shows the crew how the Navy seats its heaviest guns directly into the frame. The Ko Combine bills for the scrap, not the lesson.
-flavourAutomated|heavy_ballistics_integration	0	Stripping decommissioned Onslaughts at the Agreus shipbreaking yards shows the refit crew how the Navy seats its heaviest guns directly into the frame. The Ko Combine bills for the scrap, not the lesson.
+flavour|heavy_ballistics_integration	0	Stripping decommissioned Onslaughts at the Agreus shipbreaking yards shows the crew how the Navy seats its heaviest guns directly into the frame.
+flavourAutomated|heavy_ballistics_integration	0	Stripping decommissioned Onslaughts at the Agreus shipbreaking yards shows the refit crew how the Navy seats its heaviest guns directly into the frame.
 type|heavy_ballistics_integration|null|0	1	<bad>-5</bad> to ordnance point cost of large ballistic weapons.
 type-detail|heavy_ballistics_integration|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Supreme Modifications</hullmod>\n• <hullmod>Heavy Ballistics Integration</hullmod>
 type|heavy_ballistics_integration|FRIGATE|0	1	<bad>-5</bad> to ordnance point cost of large ballistic weapons.
@@ -4610,7 +4609,7 @@ type|honor_guard|DESTROYER|0	0	Additional top speed equal to <good>50%</good> of
 type|honor_guard|CRUISER|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
 type|honor_guard|CAPITAL_SHIP|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
 flavour|hullbreacher_rounds	0	Former Hegemony Navy gunners in the crew remember the breacher loads the Navy keeps for boarding actions, shells hardened to punch through plating instead of bursting on it. The crew sees no reason to save them for boarding.
-flavourAutomated|hullbreacher_rounds	0	The Hegemony Navy keeps breacher loads for boarding actions, shells hardened to punch through plating instead of bursting on it. The ship's core finds their specifications in a seized Navy ordnance manifest and loads them for every fight. It has no boarding actions to save them for.
+flavourAutomated|hullbreacher_rounds	0	The Hegemony Navy keeps breacher loads for boarding actions, shells hardened to punch through plating instead of bursting on it. The ship's core finds their specifications in a seized Navy ordnance manifest and loads them for every fight.
 type|hullbreacher_rounds|null|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
 type|hullbreacher_rounds|FRIGATE|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
 type|hullbreacher_rounds|DESTROYER|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
@@ -4637,7 +4636,7 @@ type|husk_plating|CAPITAL_SHIP|0	0	Gaining a Heartless stack restores <good>5%</
 type|husk_plating|CAPITAL_SHIP|1	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
 type|husk_plating|CAPITAL_SHIP|2	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
 flavour|hybrid_p_space_shrouding	0	Leaked papers from Tri-Tachyon's Hybrid Physics Division (on phase work the corporation swears it abandoned under the Treaty of Thule) show the crew how to bleed this ship's sensor emissions into the masking field phase ships throw over a fleet. Tri-Tachyon maintains the papers are forgeries.
-flavourAutomated|hybrid_p_space_shrouding	0	Leaked papers from Tri-Tachyon's Hybrid Physics Division (on phase work the corporation swears it abandoned under the Treaty of Thule) describe how to bleed a ship's sensor emissions into the masking field phase ships throw over a fleet. The ship's core parses them in full, footnotes included. Tri-Tachyon maintains the papers are forgeries.
+flavourAutomated|hybrid_p_space_shrouding	0	Leaked papers from Tri-Tachyon's Hybrid Physics Division (on phase work the corporation swears it abandoned under the Treaty of Thule) describe how to bleed a ship's sensor emissions into the masking field phase ships throw over a fleet. Tri-Tachyon maintains the papers are forgeries.
 type|hybrid_p_space_shrouding|null|0	0	50% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
 type|hybrid_p_space_shrouding|null|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|hybrid_p_space_shrouding|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Phase Field</hullmod>
@@ -4653,8 +4652,8 @@ type-detail|hybrid_p_space_shrouding|CRUISER|0	0	Mutually exclusive with <hullmo
 type|hybrid_p_space_shrouding|CAPITAL_SHIP|0	0	50% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
 type|hybrid_p_space_shrouding|CAPITAL_SHIP|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|hybrid_p_space_shrouding|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Phase Field</hullmod>
-flavour|hypatia_pattern_warpfield	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. It was not designed to be scaled down, and makes this known.
-flavourAutomated|hypatia_pattern_warpfield	0	Exo-Tech engineers walk the refit crew through scaling down the Hypatia's warp field to wrap the energy mounts. It was not designed to be scaled down, and makes this known.
+flavour|hypatia_pattern_warpfield	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. It was not designed to be scaled down.
+flavourAutomated|hypatia_pattern_warpfield	0	Exo-Tech engineers walk the refit crew through scaling down the Hypatia's warp field to wrap the energy mounts. It was not designed to be scaled down.
 type|hypatia_pattern_warpfield|null|0	0	<good>15%</good> increased energy weapon damage.
 type|hypatia_pattern_warpfield|null|1	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|hypatia_pattern_warpfield|null|2	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
@@ -4815,8 +4814,8 @@ type|league_picket_targeting|FRIGATE|0	0	<good>+1</good> to energy weapon range 
 type|league_picket_targeting|DESTROYER|0	0	<good>+1</good> to energy weapon range for every point of this ship's sensor strength.
 type|league_picket_targeting|CRUISER|0	0	<good>+1</good> to energy weapon range for every point of this ship's sensor strength.
 type|league_picket_targeting|CAPITAL_SHIP|0	0	<good>+1</good> to energy weapon range for every point of this ship's sensor strength.
-flavour|league_reload_drill	0	League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other. It is the one thing the member worlds have never argued over, and serving under a League commission drills it into the crew.
-flavourAutomated|league_reload_drill	0	League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other. The ship's core records it from the League ships it serves beside and runs it the same way every time, which no League crew has ever managed.
+flavour|league_reload_drill	0	League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other. Serving under a League commission drills it into the crew.
+flavourAutomated|league_reload_drill	0	League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other. The ship's core records it from the League ships it serves beside and runs it perfectly every time, a feat no League crew has ever managed.
 type|league_reload_drill|null|0	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 type|league_reload_drill|null|1	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 type|league_reload_drill|FRIGATE|0	0	<good>50%</good> increased energy weapon ammo regeneration rate.
@@ -4893,8 +4892,8 @@ type|ludds_light|FRIGATE|0	0	When this ship is destroyed, it detonates violently
 type|ludds_light|DESTROYER|0	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
 type|ludds_light|CRUISER|0	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
 type|ludds_light|CAPITAL_SHIP|0	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
-flavour|machine_precision	0	A recovered gamma core, kept powered just long enough to be questioned, gives up the targeting routines Remnant drones use to lead a target. Afterwards it is disposed of, in accordance with Hegemony regulations and the crew's nerves.
-flavourAutomated|machine_precision	0	A recovered gamma core holds the targeting routines Remnant drones use to lead a target. The ship's core copies them across in a fraction of a second. The refit crew disposes of the gamma core afterwards, in accordance with Hegemony regulations and their own nerves.
+flavour|machine_precision	0	A recovered gamma core, kept powered just long enough to be questioned, gives up the targeting routines Remnant drones use to lead a target.
+flavourAutomated|machine_precision	0	A recovered gamma core holds the targeting routines Remnant drones use to lead a target. The ship's core copies them across in a fraction of a second.
 type|machine_precision|null|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 type|machine_precision|null|1	0	<good>5%</good> increased energy weapon range.
 type|machine_precision|null|2	0	<good>5%</good> increased ballistic weapon range.
@@ -5075,8 +5074,7 @@ type-detail|nskr_acoils|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hu
 type|nskr_acoils|CAPITAL_SHIP|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
 type|nskr_acoils|CAPITAL_SHIP|1	1	<bad>10%</bad> reduced energy weapon flux cost.
 type-detail|nskr_acoils|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>High-Energy Weapon Systems</hullmod>
-flavour|nskr_bigBats	0	A Kesteven R&D modspec for capacitor banks far larger than any sane design would carry. The ship's systems rarely run dry, and the crew has learned not to stand near the banks.
-flavourAutomated|nskr_bigBats	0	A Kesteven R&D modspec for capacitor banks far larger than any sane design would carry. The ship's systems rarely run dry, and with nobody aboard, nobody has to learn not to stand near the banks.
+flavour|nskr_bigBats	0	A Kesteven R&D modspec for capacitor banks far larger than any sane design would carry. The ship's systems rarely run dry.
 type|nskr_bigBats|null|0	0	<good>+1</good> to ship system charges.
 type|nskr_bigBats|null|1	0	On hulls with Augmented Systems, <good>10%</good> increased ship system charge regeneration.
 type-detail|nskr_bigBats|null|0	0	Can only be allocated on ships whose ship system or defense system uses charges.
@@ -5110,7 +5108,7 @@ type-detail|nskr_criticalArmor|CRUISER|0	0	Mutually exclusive with <hullmod>hull
 type|nskr_criticalArmor|CAPITAL_SHIP|0	0	Up to <good>+1200</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+500</good> at <hl>1200</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
 type-detail|nskr_criticalArmor|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Heavy Armor</hullmod>\n• <hullmod>Hel Carapace</hullmod>\n• <hullmod>Hel Plating</hullmod>\n• <hullmod>Critical Point Protection</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Heavy Armor</node>
 flavour|nskr_inertial	0	A Kesteven R&D modspec lets the crew feed the ship's own momentum into its guns. Kesteven's notes recommend never slowing down.
-flavourAutomated|nskr_inertial	0	A Kesteven R&D modspec lets the refit crew feed the ship's own momentum into its guns. Kesteven's notes recommend never slowing down, and the ship's core treats the recommendation as a parameter.
+flavourAutomated|nskr_inertial	0	A Kesteven R&D modspec lets the refit crew feed the ship's own momentum into its guns. Kesteven's notes recommend never slowing down.
 type|nskr_inertial|null|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 type|nskr_inertial|null|1	0	On hulls with Augmented Systems, also grants increased projectile speed equal to <good>100%</good> of the speed-based damage bonus.
 type-detail|nskr_inertial|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Inertial Supercharger</hullmod>
@@ -5126,8 +5124,8 @@ type-detail|nskr_inertial|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</
 type|nskr_inertial|CAPITAL_SHIP|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 type|nskr_inertial|CAPITAL_SHIP|1	0	On hulls with Augmented Systems, also grants increased projectile speed equal to <good>100%</good> of the speed-based damage bonus.
 type-detail|nskr_inertial|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Inertial Supercharger</hullmod>
-flavour|nskr_volatile	0	A prototype flux injector from Kesteven R&D lets the crew trade staying power for tempo. The modspec describes the side effects as manageable.
-flavourAutomated|nskr_volatile	0	A prototype flux injector from Kesteven R&D lets the refit crew trade staying power for tempo. The modspec describes the side effects as manageable. With nobody aboard, nobody has to manage them.
+flavour|nskr_volatile	0	A prototype flux injector from Kesteven R&D lets the crew trade staying power for tempo. The modspec describes the side effects as "manageable".
+flavourAutomated|nskr_volatile	0	A prototype flux injector from Kesteven R&D lets the refit crew trade staying power for tempo. The modspec describes the side effects as manageable. With nobody aboard, there's nothing living to manage.
 type|nskr_volatile|null|0	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
 type|nskr_volatile|null|1	0	<good>67%</good> increased flux capacity.
 type|nskr_volatile|null|2	0	<good>67%</good> increased flux capacity granted by each flux capacitor.
@@ -5213,7 +5211,7 @@ type|peak_cr_duration|FRIGATE|0	0	<good>25%</good> increased peak performance ti
 type|peak_cr_duration|DESTROYER|0	0	<good>25%</good> increased peak performance time.
 type|peak_cr_duration|CRUISER|0	0	<good>25%</good> increased peak performance time.
 type|peak_cr_duration|CAPITAL_SHIP|0	0	<good>25%</good> increased peak performance time.
-flavour|perseverance_through_faith	0	Luddic faithful among the crew hold that a scarred ship, like a penitent, finds its strength in hardship. They keep its battered guns fighting with patient hands, and refuse every offer to have them properly repaired.
+flavour|perseverance_through_faith	0	Luddic faithful among the crew hold that a scarred ship, like a penitent, finds its strength in hardship. They keep its battered guns fighting with patient hands.
 flavourAutomated|perseverance_through_faith	0	Luddic faithful hold that a scarred ship, like a penitent, finds its strength in hardship. The ship's core holds no faith, only damage logs showing the battered guns of Luddic ships firing long past the point they should have failed. It keeps its own guns fighting the same way.
 type|perseverance_through_faith|null|0	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
 type|perseverance_through_faith|FRIGATE|0	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
@@ -5990,8 +5988,8 @@ type|top_speed_while_escorting|CRUISER|0	0	While within 700 su of a larger frien
 type-detail|top_speed_while_escorting|CRUISER|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
 type|top_speed_while_escorting|CAPITAL_SHIP|0	0	While within 700 su of a larger friendly ship, up to 5% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type-detail|top_speed_while_escorting|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
-flavour|tripad_backdoor	0	Every TriPad in the Sector ships with backdoors Tri-Tachyon officially denies, and a crew that learns them can talk a nav buoy or comm relay into changing sides mid-battle. Company support declines to comment, but will gladly sell an upgrade.
-flavourAutomated|tripad_backdoor	0	Every TriPad in the Sector ships with backdoors Tri-Tachyon officially denies. The ship's core maps them from intercepted TriPad traffic and talks a nav buoy or comm relay into changing sides mid-battle. Company support declines to comment, but will gladly sell an upgrade.
+flavour|tripad_backdoor	0	Every TriPad in the Sector ships with backdoors Tri-Tachyon officially denies, and a crew that learns them can talk a nav buoy or comm relay into changing sides mid-battle.
+flavourAutomated|tripad_backdoor	0	Every TriPad in the Sector ships with backdoors Tri-Tachyon officially denies. The ship's core maps them from intercepted TriPad traffic and talks a nav buoy or comm relay into changing sides mid-battle.
 type|tripad_backdoor|null|0	0	<good>100%</good> more combat objective capture rate.
 type|tripad_backdoor|FRIGATE|0	0	<good>100%</good> more combat objective capture rate.
 type|tripad_backdoor|DESTROYER|0	0	<good>100%</good> more combat objective capture rate.
