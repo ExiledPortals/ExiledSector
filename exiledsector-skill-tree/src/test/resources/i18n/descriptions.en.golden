@@ -22,6 +22,12 @@ effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY|12.5	0	<good>1
 effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY|100.0	0	<good>100%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
 effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY|-10.0	0	<bad>-10%</bad> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
 effect|ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY|-12.5	0	<bad>-12.5%</bad> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+effect|AFFINITY_EQUALITY_TOLERANCE_FLAT|1.0	0	This ship's affinities count as equal while they are all within <good>1</good> of each other.
+effect|AFFINITY_EQUALITY_TOLERANCE_FLAT|10.0	0	This ship's affinities count as equal while they are all within <good>10</good> of each other.
+effect|AFFINITY_EQUALITY_TOLERANCE_FLAT|12.5	0	This ship's affinities count as equal while they are all within <good>12.5</good> of each other.
+effect|AFFINITY_EQUALITY_TOLERANCE_FLAT|100.0	0	This ship's affinities count as equal while they are all within <good>100</good> of each other.
+effect|AFFINITY_EQUALITY_TOLERANCE_FLAT|-10.0	0	This ship's affinities count as equal while they are all within <good>-10</good> of each other.
+effect|AFFINITY_EQUALITY_TOLERANCE_FLAT|-12.5	0	This ship's affinities count as equal while they are all within <good>-12.5</good> of each other.
 effect|AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT|1.0	0	Removes all Low Tech and Midline Affinity and grants <good>1%</good> of it as High Tech Affinity.
 effect|AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT|10.0	0	Removes all Low Tech and Midline Affinity and grants <good>10%</good> of it as High Tech Affinity.
 effect|AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT|12.5	0	Removes all Low Tech and Midline Affinity and grants <good>12.5%</good> of it as High Tech Affinity.
@@ -1978,6 +1984,12 @@ effect|MOVE_SLOW_SUPPLY_USE_MULT|12.5	1	Your fleet has <good>12.5%</good> more s
 effect|MOVE_SLOW_SUPPLY_USE_MULT|100.0	1	Your fleet has <good>100%</good> more supply use for maintenance while moving slowly. Only the strongest applies.
 effect|MOVE_SLOW_SUPPLY_USE_MULT|-10.0	1	Your fleet has <bad>10%</bad> less supply use for maintenance while moving slowly. Only the strongest applies.
 effect|MOVE_SLOW_SUPPLY_USE_MULT|-12.5	1	Your fleet has <bad>12.5%</bad> less supply use for maintenance while moving slowly. Only the strongest applies.
+effect|NANOFORGE_HULL_REGEN_LIMIT_FLAT|1.0	0	<good>+1%</good> to the limit on hull repaired per deployment after 5 seconds without taking hull damage.
+effect|NANOFORGE_HULL_REGEN_LIMIT_FLAT|10.0	0	<good>+10%</good> to the limit on hull repaired per deployment after 5 seconds without taking hull damage.
+effect|NANOFORGE_HULL_REGEN_LIMIT_FLAT|12.5	0	<good>+12.5%</good> to the limit on hull repaired per deployment after 5 seconds without taking hull damage.
+effect|NANOFORGE_HULL_REGEN_LIMIT_FLAT|100.0	0	<good>+100%</good> to the limit on hull repaired per deployment after 5 seconds without taking hull damage.
+effect|NANOFORGE_HULL_REGEN_LIMIT_FLAT|-10.0	0	<bad>-10%</bad> to the limit on hull repaired per deployment after 5 seconds without taking hull damage.
+effect|NANOFORGE_HULL_REGEN_LIMIT_FLAT|-12.5	0	<bad>-12.5%</bad> to the limit on hull repaired per deployment after 5 seconds without taking hull damage.
 effect|NANOFORGE_HULL_REGEN_PERCENT|1.0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 effect|NANOFORGE_HULL_REGEN_PERCENT|10.0	0	After 5 seconds without taking hull damage, repairs 10% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 effect|NANOFORGE_HULL_REGEN_PERCENT|12.5	0	After 5 seconds without taking hull damage, repairs 12.5% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
@@ -2914,6 +2926,12 @@ effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|12.5	0	Enemy ships within 10
 effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|100.0	0	Enemy ships within 1000 su have <good>-100%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|-10.0	0	Enemy ships within 1000 su have <good>--10%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|-12.5	0	Enemy ships within 1000 su have <good>--12.5%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+effect|TERRIFYING_PRESENCE_RANGE_PERCENT|1.0	0	<good>1%</good> increased range of the target leading accuracy penalty on enemy autofiring weapons.
+effect|TERRIFYING_PRESENCE_RANGE_PERCENT|10.0	0	<good>10%</good> increased range of the target leading accuracy penalty on enemy autofiring weapons.
+effect|TERRIFYING_PRESENCE_RANGE_PERCENT|12.5	0	<good>12.5%</good> increased range of the target leading accuracy penalty on enemy autofiring weapons.
+effect|TERRIFYING_PRESENCE_RANGE_PERCENT|100.0	0	<good>100%</good> increased range of the target leading accuracy penalty on enemy autofiring weapons.
+effect|TERRIFYING_PRESENCE_RANGE_PERCENT|-10.0	0	<bad>10%</bad> reduced range of the target leading accuracy penalty on enemy autofiring weapons.
+effect|TERRIFYING_PRESENCE_RANGE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced range of the target leading accuracy penalty on enemy autofiring weapons.
 effect|THERMO_ACCELERATOR_FLUX_COST_REDUCTION_PERCENT|1.0	0	Turret weapons have <good>1%</good> reduced flux cost. Hardpoint weapons can't fire.
 effect|THERMO_ACCELERATOR_FLUX_COST_REDUCTION_PERCENT|10.0	0	Turret weapons have <good>10%</good> reduced flux cost. Hardpoint weapons can't fire.
 effect|THERMO_ACCELERATOR_FLUX_COST_REDUCTION_PERCENT|12.5	0	Turret weapons have <good>12.5%</good> reduced flux cost. Hardpoint weapons can't fire.
@@ -3348,6 +3366,36 @@ type|adaptive_munitions|FRIGATE|0	0	<good>1%</good> chance for each weapon hit t
 type|adaptive_munitions|DESTROYER|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
 type|adaptive_munitions|CRUISER|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
 type|adaptive_munitions|CAPITAL_SHIP|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+integrable|adaptive_munitions|null|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+integrable|adaptive_munitions|null|1	0	Click and hold to integrate.
+integrable|adaptive_munitions|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|adaptive_munitions|null|3	0	<muted>1.5% chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.</muted>
+integrable|adaptive_munitions|FRIGATE|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+integrable|adaptive_munitions|FRIGATE|1	0	Click and hold to integrate.
+integrable|adaptive_munitions|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|adaptive_munitions|FRIGATE|3	0	<muted>1.5% chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.</muted>
+integrable|adaptive_munitions|DESTROYER|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+integrable|adaptive_munitions|DESTROYER|1	0	Click and hold to integrate.
+integrable|adaptive_munitions|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|adaptive_munitions|DESTROYER|3	0	<muted>1.5% chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.</muted>
+integrable|adaptive_munitions|CRUISER|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+integrable|adaptive_munitions|CRUISER|1	0	Click and hold to integrate.
+integrable|adaptive_munitions|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|adaptive_munitions|CRUISER|3	0	<muted>1.5% chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.</muted>
+integrable|adaptive_munitions|CAPITAL_SHIP|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.
+integrable|adaptive_munitions|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|adaptive_munitions|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|adaptive_munitions|CAPITAL_SHIP|3	0	<muted>1.5% chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.</muted>
+integrated|adaptive_munitions|null|0	0	<builtIn>Integrated</builtIn>
+integrated|adaptive_munitions|null|1	0	<good>1.5%</good><builtIn> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.</builtIn>
+integrated|adaptive_munitions|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|adaptive_munitions|FRIGATE|1	0	<good>1.5%</good><builtIn> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.</builtIn>
+integrated|adaptive_munitions|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|adaptive_munitions|DESTROYER|1	0	<good>1.5%</good><builtIn> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.</builtIn>
+integrated|adaptive_munitions|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|adaptive_munitions|CRUISER|1	0	<good>1.5%</good><builtIn> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.</builtIn>
+integrated|adaptive_munitions|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|adaptive_munitions|CAPITAL_SHIP|1	0	<good>1.5%</good><builtIn> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every 5 High Tech Affinity.</builtIn>
 flavour|adaptive_phase_coils	0	Phase coils lose their grip on normal space as hard flux builds. A crew willing to rewind them by hand can keep that grip a while longer.
 flavourAutomated|adaptive_phase_coils	0	Phase coils lose their grip on normal space as hard flux builds. The ship's core models the slip from its own coil telemetry and corrects for it faster than any hand could rewind them, keeping that grip a while longer.
 type|adaptive_phase_coils|null|0	0	<good>40%</good> increased hard flux level at which phased speed reaches its minimum.
@@ -4869,6 +4917,36 @@ type|dormant_repair_cycle|FRIGATE|0	0	Armor cells not hit for 5 seconds repair <
 type|dormant_repair_cycle|DESTROYER|0	0	Armor cells not hit for 5 seconds repair <good>0.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
 type|dormant_repair_cycle|CRUISER|0	0	Armor cells not hit for 5 seconds repair <good>0.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
 type|dormant_repair_cycle|CAPITAL_SHIP|0	0	Armor cells not hit for 5 seconds repair <good>0.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+integrable|dormant_repair_cycle|null|0	0	Armor cells not hit for 5 seconds repair <good>0.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+integrable|dormant_repair_cycle|null|1	0	Click and hold to integrate.
+integrable|dormant_repair_cycle|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|dormant_repair_cycle|null|3	0	<muted>Armor cells not hit for 5 seconds repair 0.7% of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.</muted>
+integrable|dormant_repair_cycle|FRIGATE|0	0	Armor cells not hit for 5 seconds repair <good>0.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+integrable|dormant_repair_cycle|FRIGATE|1	0	Click and hold to integrate.
+integrable|dormant_repair_cycle|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|dormant_repair_cycle|FRIGATE|3	0	<muted>Armor cells not hit for 5 seconds repair 0.7% of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.</muted>
+integrable|dormant_repair_cycle|DESTROYER|0	0	Armor cells not hit for 5 seconds repair <good>0.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+integrable|dormant_repair_cycle|DESTROYER|1	0	Click and hold to integrate.
+integrable|dormant_repair_cycle|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|dormant_repair_cycle|DESTROYER|3	0	<muted>Armor cells not hit for 5 seconds repair 0.7% of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.</muted>
+integrable|dormant_repair_cycle|CRUISER|0	0	Armor cells not hit for 5 seconds repair <good>0.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+integrable|dormant_repair_cycle|CRUISER|1	0	Click and hold to integrate.
+integrable|dormant_repair_cycle|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|dormant_repair_cycle|CRUISER|3	0	<muted>Armor cells not hit for 5 seconds repair 0.7% of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.</muted>
+integrable|dormant_repair_cycle|CAPITAL_SHIP|0	0	Armor cells not hit for 5 seconds repair <good>0.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
+integrable|dormant_repair_cycle|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|dormant_repair_cycle|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|dormant_repair_cycle|CAPITAL_SHIP|3	0	<muted>Armor cells not hit for 5 seconds repair 0.7% of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.</muted>
+integrated|dormant_repair_cycle|null|0	0	<builtIn>Integrated</builtIn>
+integrated|dormant_repair_cycle|null|1	0	<builtIn>Armor cells not hit for 5 seconds repair </builtIn><good>0.7%</good><builtIn> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.</builtIn>
+integrated|dormant_repair_cycle|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|dormant_repair_cycle|FRIGATE|1	0	<builtIn>Armor cells not hit for 5 seconds repair </builtIn><good>0.7%</good><builtIn> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.</builtIn>
+integrated|dormant_repair_cycle|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|dormant_repair_cycle|DESTROYER|1	0	<builtIn>Armor cells not hit for 5 seconds repair </builtIn><good>0.7%</good><builtIn> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.</builtIn>
+integrated|dormant_repair_cycle|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|dormant_repair_cycle|CRUISER|1	0	<builtIn>Armor cells not hit for 5 seconds repair </builtIn><good>0.7%</good><builtIn> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.</builtIn>
+integrated|dormant_repair_cycle|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|dormant_repair_cycle|CAPITAL_SHIP|1	0	<builtIn>Armor cells not hit for 5 seconds repair </builtIn><good>0.7%</good><builtIn> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.</builtIn>
 flavour|dynamic_grid	0	Nightcross Armory fits its dynamic coils to almost every hull it builds and never sells them on their own, so the crew pulls a set from a boarded Nightcross wreck. The warranty, naturally, does not cover third-party installation.
 flavourAutomated|dynamic_grid	0	Nightcross Armory fits its dynamic coils to almost every hull it builds and never sells them on their own, so the refit crew pulls a set from a boarded Nightcross wreck. The warranty, naturally, does not cover third-party installation, least of all into a machine.
 type|dynamic_grid|null|0	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
@@ -5304,6 +5382,46 @@ type|equilibrium_protocol|FRIGATE|0	0	<good>20%</good> increased weapon damage w
 type|equilibrium_protocol|DESTROYER|0	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
 type|equilibrium_protocol|CRUISER|0	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
 type|equilibrium_protocol|CAPITAL_SHIP|0	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
+integrable|equilibrium_protocol|null|0	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
+integrable|equilibrium_protocol|null|1	0	Click and hold to integrate.
+integrable|equilibrium_protocol|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|equilibrium_protocol|null|3	0	<muted>20% increased weapon damage while this ship's affinities are all equal.</muted>
+integrable|equilibrium_protocol|null|4	0	<muted>This ship's affinities count as equal while they are all within 5 of each other.</muted>
+integrable|equilibrium_protocol|FRIGATE|0	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
+integrable|equilibrium_protocol|FRIGATE|1	0	Click and hold to integrate.
+integrable|equilibrium_protocol|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|equilibrium_protocol|FRIGATE|3	0	<muted>20% increased weapon damage while this ship's affinities are all equal.</muted>
+integrable|equilibrium_protocol|FRIGATE|4	0	<muted>This ship's affinities count as equal while they are all within 5 of each other.</muted>
+integrable|equilibrium_protocol|DESTROYER|0	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
+integrable|equilibrium_protocol|DESTROYER|1	0	Click and hold to integrate.
+integrable|equilibrium_protocol|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|equilibrium_protocol|DESTROYER|3	0	<muted>20% increased weapon damage while this ship's affinities are all equal.</muted>
+integrable|equilibrium_protocol|DESTROYER|4	0	<muted>This ship's affinities count as equal while they are all within 5 of each other.</muted>
+integrable|equilibrium_protocol|CRUISER|0	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
+integrable|equilibrium_protocol|CRUISER|1	0	Click and hold to integrate.
+integrable|equilibrium_protocol|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|equilibrium_protocol|CRUISER|3	0	<muted>20% increased weapon damage while this ship's affinities are all equal.</muted>
+integrable|equilibrium_protocol|CRUISER|4	0	<muted>This ship's affinities count as equal while they are all within 5 of each other.</muted>
+integrable|equilibrium_protocol|CAPITAL_SHIP|0	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
+integrable|equilibrium_protocol|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|equilibrium_protocol|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|equilibrium_protocol|CAPITAL_SHIP|3	0	<muted>20% increased weapon damage while this ship's affinities are all equal.</muted>
+integrable|equilibrium_protocol|CAPITAL_SHIP|4	0	<muted>This ship's affinities count as equal while they are all within 5 of each other.</muted>
+integrated|equilibrium_protocol|null|0	0	<builtIn>Integrated</builtIn>
+integrated|equilibrium_protocol|null|1	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
+integrated|equilibrium_protocol|null|2	0	<builtIn>This ship's affinities count as equal while they are all within </builtIn><good>5</good><builtIn> of each other.</builtIn>
+integrated|equilibrium_protocol|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|equilibrium_protocol|FRIGATE|1	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
+integrated|equilibrium_protocol|FRIGATE|2	0	<builtIn>This ship's affinities count as equal while they are all within </builtIn><good>5</good><builtIn> of each other.</builtIn>
+integrated|equilibrium_protocol|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|equilibrium_protocol|DESTROYER|1	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
+integrated|equilibrium_protocol|DESTROYER|2	0	<builtIn>This ship's affinities count as equal while they are all within </builtIn><good>5</good><builtIn> of each other.</builtIn>
+integrated|equilibrium_protocol|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|equilibrium_protocol|CRUISER|1	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
+integrated|equilibrium_protocol|CRUISER|2	0	<builtIn>This ship's affinities count as equal while they are all within </builtIn><good>5</good><builtIn> of each other.</builtIn>
+integrated|equilibrium_protocol|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|equilibrium_protocol|CAPITAL_SHIP|1	0	<good>20%</good> increased weapon damage while this ship's affinities are all equal.
+integrated|equilibrium_protocol|CAPITAL_SHIP|2	0	<builtIn>This ship's affinities count as equal while they are all within </builtIn><good>5</good><builtIn> of each other.</builtIn>
 type|escort_package|null|0	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type|escort_package|null|1	0	While within 700 su of a larger friendly ship, up to 10% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type|escort_package|null|2	0	While within 700 su of a larger friendly ship, up to 15% increased ballistic and energy weapon range, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
@@ -6733,6 +6851,36 @@ type|ion_spill|FRIGATE|0	0	<good>25%</good> of EMP damage this ship deals to shi
 type|ion_spill|DESTROYER|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
 type|ion_spill|CRUISER|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
 type|ion_spill|CAPITAL_SHIP|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+integrable|ion_spill|null|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+integrable|ion_spill|null|1	0	Click and hold to integrate.
+integrable|ion_spill|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ion_spill|null|3	0	<muted>35% of EMP damage this ship deals to shields is dealt as energy damage instead.</muted>
+integrable|ion_spill|FRIGATE|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+integrable|ion_spill|FRIGATE|1	0	Click and hold to integrate.
+integrable|ion_spill|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ion_spill|FRIGATE|3	0	<muted>35% of EMP damage this ship deals to shields is dealt as energy damage instead.</muted>
+integrable|ion_spill|DESTROYER|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+integrable|ion_spill|DESTROYER|1	0	Click and hold to integrate.
+integrable|ion_spill|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ion_spill|DESTROYER|3	0	<muted>35% of EMP damage this ship deals to shields is dealt as energy damage instead.</muted>
+integrable|ion_spill|CRUISER|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+integrable|ion_spill|CRUISER|1	0	Click and hold to integrate.
+integrable|ion_spill|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ion_spill|CRUISER|3	0	<muted>35% of EMP damage this ship deals to shields is dealt as energy damage instead.</muted>
+integrable|ion_spill|CAPITAL_SHIP|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+integrable|ion_spill|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|ion_spill|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ion_spill|CAPITAL_SHIP|3	0	<muted>35% of EMP damage this ship deals to shields is dealt as energy damage instead.</muted>
+integrated|ion_spill|null|0	0	<builtIn>Integrated</builtIn>
+integrated|ion_spill|null|1	0	<good>35%</good><builtIn> of EMP damage this ship deals to shields is dealt as energy damage instead.</builtIn>
+integrated|ion_spill|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|ion_spill|FRIGATE|1	0	<good>35%</good><builtIn> of EMP damage this ship deals to shields is dealt as energy damage instead.</builtIn>
+integrated|ion_spill|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|ion_spill|DESTROYER|1	0	<good>35%</good><builtIn> of EMP damage this ship deals to shields is dealt as energy damage instead.</builtIn>
+integrated|ion_spill|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|ion_spill|CRUISER|1	0	<good>35%</good><builtIn> of EMP damage this ship deals to shields is dealt as energy damage instead.</builtIn>
+integrated|ion_spill|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|ion_spill|CAPITAL_SHIP|1	0	<good>35%</good><builtIn> of EMP damage this ship deals to shields is dealt as energy damage instead.</builtIn>
 flavour|joint_strike_package	0	No League detachment will launch second, so joint fleets launch every wing at once.
 type|joint_strike_package|null|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
 type|joint_strike_package|FRIGATE|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
@@ -6881,6 +7029,81 @@ type|machine_precision|CAPITAL_SHIP|0	0	<good>100%</good> increased target leadi
 type|machine_precision|CAPITAL_SHIP|1	0	<good>5%</good> increased energy weapon range.
 type|machine_precision|CAPITAL_SHIP|2	0	<good>5%</good> increased ballistic weapon range.
 type|machine_precision|CAPITAL_SHIP|3	0	<good>5%</good> increased beam weapon range.
+integrable|machine_precision|null|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
+integrable|machine_precision|null|1	0	<good>5%</good> increased energy weapon range.
+integrable|machine_precision|null|2	0	<good>5%</good> increased ballistic weapon range.
+integrable|machine_precision|null|3	0	<good>5%</good> increased beam weapon range.
+integrable|machine_precision|null|4	0	Click and hold to integrate.
+integrable|machine_precision|null|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|machine_precision|null|6	0	<muted>100% increased target leading accuracy of autofiring weapons.</muted>
+integrable|machine_precision|null|7	0	<muted>10% increased energy weapon range.</muted>
+integrable|machine_precision|null|8	0	<muted>10% increased ballistic weapon range.</muted>
+integrable|machine_precision|null|9	0	<muted>10% increased beam weapon range.</muted>
+integrable|machine_precision|FRIGATE|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
+integrable|machine_precision|FRIGATE|1	0	<good>5%</good> increased energy weapon range.
+integrable|machine_precision|FRIGATE|2	0	<good>5%</good> increased ballistic weapon range.
+integrable|machine_precision|FRIGATE|3	0	<good>5%</good> increased beam weapon range.
+integrable|machine_precision|FRIGATE|4	0	Click and hold to integrate.
+integrable|machine_precision|FRIGATE|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|machine_precision|FRIGATE|6	0	<muted>100% increased target leading accuracy of autofiring weapons.</muted>
+integrable|machine_precision|FRIGATE|7	0	<muted>10% increased energy weapon range.</muted>
+integrable|machine_precision|FRIGATE|8	0	<muted>10% increased ballistic weapon range.</muted>
+integrable|machine_precision|FRIGATE|9	0	<muted>10% increased beam weapon range.</muted>
+integrable|machine_precision|DESTROYER|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
+integrable|machine_precision|DESTROYER|1	0	<good>5%</good> increased energy weapon range.
+integrable|machine_precision|DESTROYER|2	0	<good>5%</good> increased ballistic weapon range.
+integrable|machine_precision|DESTROYER|3	0	<good>5%</good> increased beam weapon range.
+integrable|machine_precision|DESTROYER|4	0	Click and hold to integrate.
+integrable|machine_precision|DESTROYER|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|machine_precision|DESTROYER|6	0	<muted>100% increased target leading accuracy of autofiring weapons.</muted>
+integrable|machine_precision|DESTROYER|7	0	<muted>10% increased energy weapon range.</muted>
+integrable|machine_precision|DESTROYER|8	0	<muted>10% increased ballistic weapon range.</muted>
+integrable|machine_precision|DESTROYER|9	0	<muted>10% increased beam weapon range.</muted>
+integrable|machine_precision|CRUISER|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
+integrable|machine_precision|CRUISER|1	0	<good>5%</good> increased energy weapon range.
+integrable|machine_precision|CRUISER|2	0	<good>5%</good> increased ballistic weapon range.
+integrable|machine_precision|CRUISER|3	0	<good>5%</good> increased beam weapon range.
+integrable|machine_precision|CRUISER|4	0	Click and hold to integrate.
+integrable|machine_precision|CRUISER|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|machine_precision|CRUISER|6	0	<muted>100% increased target leading accuracy of autofiring weapons.</muted>
+integrable|machine_precision|CRUISER|7	0	<muted>10% increased energy weapon range.</muted>
+integrable|machine_precision|CRUISER|8	0	<muted>10% increased ballistic weapon range.</muted>
+integrable|machine_precision|CRUISER|9	0	<muted>10% increased beam weapon range.</muted>
+integrable|machine_precision|CAPITAL_SHIP|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
+integrable|machine_precision|CAPITAL_SHIP|1	0	<good>5%</good> increased energy weapon range.
+integrable|machine_precision|CAPITAL_SHIP|2	0	<good>5%</good> increased ballistic weapon range.
+integrable|machine_precision|CAPITAL_SHIP|3	0	<good>5%</good> increased beam weapon range.
+integrable|machine_precision|CAPITAL_SHIP|4	0	Click and hold to integrate.
+integrable|machine_precision|CAPITAL_SHIP|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|machine_precision|CAPITAL_SHIP|6	0	<muted>100% increased target leading accuracy of autofiring weapons.</muted>
+integrable|machine_precision|CAPITAL_SHIP|7	0	<muted>10% increased energy weapon range.</muted>
+integrable|machine_precision|CAPITAL_SHIP|8	0	<muted>10% increased ballistic weapon range.</muted>
+integrable|machine_precision|CAPITAL_SHIP|9	0	<muted>10% increased beam weapon range.</muted>
+integrated|machine_precision|null|0	0	<builtIn>Integrated</builtIn>
+integrated|machine_precision|null|1	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
+integrated|machine_precision|null|2	0	<good>10%</good><builtIn> increased energy weapon range.</builtIn>
+integrated|machine_precision|null|3	0	<good>10%</good><builtIn> increased ballistic weapon range.</builtIn>
+integrated|machine_precision|null|4	0	<good>10%</good><builtIn> increased beam weapon range.</builtIn>
+integrated|machine_precision|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|machine_precision|FRIGATE|1	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
+integrated|machine_precision|FRIGATE|2	0	<good>10%</good><builtIn> increased energy weapon range.</builtIn>
+integrated|machine_precision|FRIGATE|3	0	<good>10%</good><builtIn> increased ballistic weapon range.</builtIn>
+integrated|machine_precision|FRIGATE|4	0	<good>10%</good><builtIn> increased beam weapon range.</builtIn>
+integrated|machine_precision|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|machine_precision|DESTROYER|1	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
+integrated|machine_precision|DESTROYER|2	0	<good>10%</good><builtIn> increased energy weapon range.</builtIn>
+integrated|machine_precision|DESTROYER|3	0	<good>10%</good><builtIn> increased ballistic weapon range.</builtIn>
+integrated|machine_precision|DESTROYER|4	0	<good>10%</good><builtIn> increased beam weapon range.</builtIn>
+integrated|machine_precision|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|machine_precision|CRUISER|1	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
+integrated|machine_precision|CRUISER|2	0	<good>10%</good><builtIn> increased energy weapon range.</builtIn>
+integrated|machine_precision|CRUISER|3	0	<good>10%</good><builtIn> increased ballistic weapon range.</builtIn>
+integrated|machine_precision|CRUISER|4	0	<good>10%</good><builtIn> increased beam weapon range.</builtIn>
+integrated|machine_precision|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|machine_precision|CAPITAL_SHIP|1	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
+integrated|machine_precision|CAPITAL_SHIP|2	0	<good>10%</good><builtIn> increased energy weapon range.</builtIn>
+integrated|machine_precision|CAPITAL_SHIP|3	0	<good>10%</good><builtIn> increased ballistic weapon range.</builtIn>
+integrated|machine_precision|CAPITAL_SHIP|4	0	<good>10%</good><builtIn> increased beam weapon range.</builtIn>
 type|makeshift_shield_generator|null|0	0	<bad>20%</bad> less top speed.
 type|makeshift_shield_generator|null|1	0	Installs a makeshift, front-facing shield if this ship has none.
 type-detail|makeshift_shield_generator|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Shield Shunt</hullmod>\n• <hullmod>Amorphous Alloy Armor</hullmod>\n• <hullmod>Blessed Halo</hullmod>\n• <hullmod>Navarchy Armor Plate</hullmod>\n• <hullmod>Lostech Engineering</hullmod>\n• <hullmod>Makeshift Shield Generator</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Shield Shunt</node>
@@ -7116,6 +7339,46 @@ type|nanoforge_mending|FRIGATE|0	0	After 5 seconds without taking hull damage, r
 type|nanoforge_mending|DESTROYER|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 type|nanoforge_mending|CRUISER|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 type|nanoforge_mending|CAPITAL_SHIP|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+integrable|nanoforge_mending|null|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+integrable|nanoforge_mending|null|1	0	Click and hold to integrate.
+integrable|nanoforge_mending|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nanoforge_mending|null|3	0	<muted>After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.</muted>
+integrable|nanoforge_mending|null|4	0	<muted>+50% to the limit on hull repaired per deployment after 5 seconds without taking hull damage.</muted>
+integrable|nanoforge_mending|FRIGATE|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+integrable|nanoforge_mending|FRIGATE|1	0	Click and hold to integrate.
+integrable|nanoforge_mending|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nanoforge_mending|FRIGATE|3	0	<muted>After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.</muted>
+integrable|nanoforge_mending|FRIGATE|4	0	<muted>+50% to the limit on hull repaired per deployment after 5 seconds without taking hull damage.</muted>
+integrable|nanoforge_mending|DESTROYER|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+integrable|nanoforge_mending|DESTROYER|1	0	Click and hold to integrate.
+integrable|nanoforge_mending|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nanoforge_mending|DESTROYER|3	0	<muted>After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.</muted>
+integrable|nanoforge_mending|DESTROYER|4	0	<muted>+50% to the limit on hull repaired per deployment after 5 seconds without taking hull damage.</muted>
+integrable|nanoforge_mending|CRUISER|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+integrable|nanoforge_mending|CRUISER|1	0	Click and hold to integrate.
+integrable|nanoforge_mending|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nanoforge_mending|CRUISER|3	0	<muted>After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.</muted>
+integrable|nanoforge_mending|CRUISER|4	0	<muted>+50% to the limit on hull repaired per deployment after 5 seconds without taking hull damage.</muted>
+integrable|nanoforge_mending|CAPITAL_SHIP|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+integrable|nanoforge_mending|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|nanoforge_mending|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nanoforge_mending|CAPITAL_SHIP|3	0	<muted>After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.</muted>
+integrable|nanoforge_mending|CAPITAL_SHIP|4	0	<muted>+50% to the limit on hull repaired per deployment after 5 seconds without taking hull damage.</muted>
+integrated|nanoforge_mending|null|0	0	<builtIn>Integrated</builtIn>
+integrated|nanoforge_mending|null|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+integrated|nanoforge_mending|null|2	0	<good>+50%</good><builtIn> to the limit on hull repaired per deployment after 5 seconds without taking hull damage.</builtIn>
+integrated|nanoforge_mending|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|nanoforge_mending|FRIGATE|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+integrated|nanoforge_mending|FRIGATE|2	0	<good>+50%</good><builtIn> to the limit on hull repaired per deployment after 5 seconds without taking hull damage.</builtIn>
+integrated|nanoforge_mending|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|nanoforge_mending|DESTROYER|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+integrated|nanoforge_mending|DESTROYER|2	0	<good>+50%</good><builtIn> to the limit on hull repaired per deployment after 5 seconds without taking hull damage.</builtIn>
+integrated|nanoforge_mending|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|nanoforge_mending|CRUISER|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+integrated|nanoforge_mending|CRUISER|2	0	<good>+50%</good><builtIn> to the limit on hull repaired per deployment after 5 seconds without taking hull damage.</builtIn>
+integrated|nanoforge_mending|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|nanoforge_mending|CAPITAL_SHIP|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+integrated|nanoforge_mending|CAPITAL_SHIP|2	0	<good>+50%</good><builtIn> to the limit on hull repaired per deployment after 5 seconds without taking hull damage.</builtIn>
 type-detail|nav_relay|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Oracle Sensor Suite</hullmod>\n• <hullmod>Nav Relay</hullmod>
 type|nav_relay|FRIGATE|0	0	Your fleet has <good>+2</good> to nav rating.
 type-detail|nav_relay|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Oracle Sensor Suite</hullmod>\n• <hullmod>Nav Relay</hullmod>
@@ -7739,6 +8002,61 @@ type|relay_protocols|CRUISER|0	0	<good>+10</good> to High Tech Affinity.
 type|relay_protocols|CRUISER|1	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
 type|relay_protocols|CAPITAL_SHIP|0	0	<good>+10</good> to High Tech Affinity.
 type|relay_protocols|CAPITAL_SHIP|1	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
+integrable|relay_protocols|null|0	0	<good>+10</good> to High Tech Affinity.
+integrable|relay_protocols|null|1	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
+integrable|relay_protocols|null|2	0	Click and hold to integrate.
+integrable|relay_protocols|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|relay_protocols|null|4	0	<muted>+10 to High Tech Affinity.</muted>
+integrable|relay_protocols|null|5	0	<muted>Your fleet has +1 to nav rating for every 50 High Tech Affinity.</muted>
+integrable|relay_protocols|null|6	0	<muted>10% increased top speed.</muted>
+integrable|relay_protocols|FRIGATE|0	0	<good>+10</good> to High Tech Affinity.
+integrable|relay_protocols|FRIGATE|1	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
+integrable|relay_protocols|FRIGATE|2	0	Click and hold to integrate.
+integrable|relay_protocols|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|relay_protocols|FRIGATE|4	0	<muted>+10 to High Tech Affinity.</muted>
+integrable|relay_protocols|FRIGATE|5	0	<muted>Your fleet has +1 to nav rating for every 50 High Tech Affinity.</muted>
+integrable|relay_protocols|FRIGATE|6	0	<muted>10% increased top speed.</muted>
+integrable|relay_protocols|DESTROYER|0	0	<good>+10</good> to High Tech Affinity.
+integrable|relay_protocols|DESTROYER|1	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
+integrable|relay_protocols|DESTROYER|2	0	Click and hold to integrate.
+integrable|relay_protocols|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|relay_protocols|DESTROYER|4	0	<muted>+10 to High Tech Affinity.</muted>
+integrable|relay_protocols|DESTROYER|5	0	<muted>Your fleet has +1 to nav rating for every 50 High Tech Affinity.</muted>
+integrable|relay_protocols|DESTROYER|6	0	<muted>10% increased top speed.</muted>
+integrable|relay_protocols|CRUISER|0	0	<good>+10</good> to High Tech Affinity.
+integrable|relay_protocols|CRUISER|1	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
+integrable|relay_protocols|CRUISER|2	0	Click and hold to integrate.
+integrable|relay_protocols|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|relay_protocols|CRUISER|4	0	<muted>+10 to High Tech Affinity.</muted>
+integrable|relay_protocols|CRUISER|5	0	<muted>Your fleet has +1 to nav rating for every 50 High Tech Affinity.</muted>
+integrable|relay_protocols|CRUISER|6	0	<muted>10% increased top speed.</muted>
+integrable|relay_protocols|CAPITAL_SHIP|0	0	<good>+10</good> to High Tech Affinity.
+integrable|relay_protocols|CAPITAL_SHIP|1	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
+integrable|relay_protocols|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|relay_protocols|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|relay_protocols|CAPITAL_SHIP|4	0	<muted>+10 to High Tech Affinity.</muted>
+integrable|relay_protocols|CAPITAL_SHIP|5	0	<muted>Your fleet has +1 to nav rating for every 50 High Tech Affinity.</muted>
+integrable|relay_protocols|CAPITAL_SHIP|6	0	<muted>10% increased top speed.</muted>
+integrated|relay_protocols|null|0	0	<builtIn>Integrated</builtIn>
+integrated|relay_protocols|null|1	0	<good>+10</good> to High Tech Affinity.
+integrated|relay_protocols|null|2	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
+integrated|relay_protocols|null|3	0	<good>10%</good><builtIn> increased top speed.</builtIn>
+integrated|relay_protocols|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|relay_protocols|FRIGATE|1	0	<good>+10</good> to High Tech Affinity.
+integrated|relay_protocols|FRIGATE|2	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
+integrated|relay_protocols|FRIGATE|3	0	<good>10%</good><builtIn> increased top speed.</builtIn>
+integrated|relay_protocols|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|relay_protocols|DESTROYER|1	0	<good>+10</good> to High Tech Affinity.
+integrated|relay_protocols|DESTROYER|2	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
+integrated|relay_protocols|DESTROYER|3	0	<good>10%</good><builtIn> increased top speed.</builtIn>
+integrated|relay_protocols|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|relay_protocols|CRUISER|1	0	<good>+10</good> to High Tech Affinity.
+integrated|relay_protocols|CRUISER|2	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
+integrated|relay_protocols|CRUISER|3	0	<good>10%</good><builtIn> increased top speed.</builtIn>
+integrated|relay_protocols|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|relay_protocols|CAPITAL_SHIP|1	0	<good>+10</good> to High Tech Affinity.
+integrated|relay_protocols|CAPITAL_SHIP|2	0	Your fleet has <good>+1</good> to nav rating for every 50 High Tech Affinity.
+integrated|relay_protocols|CAPITAL_SHIP|3	0	<good>10%</good><builtIn> increased top speed.</builtIn>
 flavour|repair_coordinator	0	The wreck of an NCA Occator still holds the delta-level coordinator that once steered its repair drones between damaged hulls. The crew wires it into this ship's damage-control network, teaching it to send work teams and drones across to patch the armor of nearby allies in the middle of a battle.
 flavourAutomated|repair_coordinator	0	The wreck of an NCA Occator still holds the delta-level coordinator that once steered its repair drones between damaged hulls. Wired into this ship's damage-control network, it sends the ship's drones across to patch the armor of nearby allies in the middle of a battle.
 type|repair_coordinator|null|0	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
@@ -8637,6 +8955,46 @@ type|terrifying_presence|FRIGATE|0	0	Enemy ships within 1000 su have <good>-25%<
 type|terrifying_presence|DESTROYER|0	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 type|terrifying_presence|CRUISER|0	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 type|terrifying_presence|CAPITAL_SHIP|0	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+integrable|terrifying_presence|null|0	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+integrable|terrifying_presence|null|1	0	Click and hold to integrate.
+integrable|terrifying_presence|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|terrifying_presence|null|3	0	<muted>Enemy ships within 1000 su have -25% to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.</muted>
+integrable|terrifying_presence|null|4	0	<muted>50% increased range of the target leading accuracy penalty on enemy autofiring weapons.</muted>
+integrable|terrifying_presence|FRIGATE|0	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+integrable|terrifying_presence|FRIGATE|1	0	Click and hold to integrate.
+integrable|terrifying_presence|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|terrifying_presence|FRIGATE|3	0	<muted>Enemy ships within 1000 su have -25% to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.</muted>
+integrable|terrifying_presence|FRIGATE|4	0	<muted>50% increased range of the target leading accuracy penalty on enemy autofiring weapons.</muted>
+integrable|terrifying_presence|DESTROYER|0	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+integrable|terrifying_presence|DESTROYER|1	0	Click and hold to integrate.
+integrable|terrifying_presence|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|terrifying_presence|DESTROYER|3	0	<muted>Enemy ships within 1000 su have -25% to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.</muted>
+integrable|terrifying_presence|DESTROYER|4	0	<muted>50% increased range of the target leading accuracy penalty on enemy autofiring weapons.</muted>
+integrable|terrifying_presence|CRUISER|0	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+integrable|terrifying_presence|CRUISER|1	0	Click and hold to integrate.
+integrable|terrifying_presence|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|terrifying_presence|CRUISER|3	0	<muted>Enemy ships within 1000 su have -25% to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.</muted>
+integrable|terrifying_presence|CRUISER|4	0	<muted>50% increased range of the target leading accuracy penalty on enemy autofiring weapons.</muted>
+integrable|terrifying_presence|CAPITAL_SHIP|0	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+integrable|terrifying_presence|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|terrifying_presence|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|terrifying_presence|CAPITAL_SHIP|3	0	<muted>Enemy ships within 1000 su have -25% to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.</muted>
+integrable|terrifying_presence|CAPITAL_SHIP|4	0	<muted>50% increased range of the target leading accuracy penalty on enemy autofiring weapons.</muted>
+integrated|terrifying_presence|null|0	0	<builtIn>Integrated</builtIn>
+integrated|terrifying_presence|null|1	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+integrated|terrifying_presence|null|2	0	<good>50%</good><builtIn> increased range of the target leading accuracy penalty on enemy autofiring weapons.</builtIn>
+integrated|terrifying_presence|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|terrifying_presence|FRIGATE|1	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+integrated|terrifying_presence|FRIGATE|2	0	<good>50%</good><builtIn> increased range of the target leading accuracy penalty on enemy autofiring weapons.</builtIn>
+integrated|terrifying_presence|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|terrifying_presence|DESTROYER|1	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+integrated|terrifying_presence|DESTROYER|2	0	<good>50%</good><builtIn> increased range of the target leading accuracy penalty on enemy autofiring weapons.</builtIn>
+integrated|terrifying_presence|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|terrifying_presence|CRUISER|1	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+integrated|terrifying_presence|CRUISER|2	0	<good>50%</good><builtIn> increased range of the target leading accuracy penalty on enemy autofiring weapons.</builtIn>
+integrated|terrifying_presence|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|terrifying_presence|CAPITAL_SHIP|1	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+integrated|terrifying_presence|CAPITAL_SHIP|2	0	<good>50%</good><builtIn> increased range of the target leading accuracy penalty on enemy autofiring weapons.</builtIn>
 type|timeflow|null|0	0	<good>2%</good> increased time flow.
 type|timeflow|FRIGATE|0	0	<good>2%</good> increased time flow.
 type|timeflow|DESTROYER|0	0	<good>2%</good> increased time flow.

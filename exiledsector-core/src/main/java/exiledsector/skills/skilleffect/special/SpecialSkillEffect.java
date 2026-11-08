@@ -98,6 +98,12 @@ public enum SpecialSkillEffect implements BackedSkillEffect {
             OnHitSkillEffect.ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT)),
     WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL(AffinityScaling.whileAllEqual(
             ScopedWeaponEffect.find(WeaponStatFamily.DAMAGE, WeaponScope.ALL, StatMode.PERCENT))),
+    AFFINITY_EQUALITY_TOLERANCE_FLAT(new AffinityTally()) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.templated(this, magnitude);
+        }
+    },
     FRAGMENT_SWARM_SIZE_PERCENT_PER_AFFINITY(new AffinityScaling(AffinityScaling.Filter.ALL, AffinityScaling.SMALL_STEP,
             ShipSystemSkillEffect.FRAGMENT_SWARM_SIZE_PERCENT)),
     FRAGMENT_REPLACEMENT_RATE_PERCENT_PER_AFFINITY(new AffinityScaling(AffinityScaling.Filter.ALL, AffinityScaling.SMALL_STEP,

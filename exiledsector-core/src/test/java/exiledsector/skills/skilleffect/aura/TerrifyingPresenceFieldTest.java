@@ -69,6 +69,20 @@ class TerrifyingPresenceFieldTest {
     }
 
     @Test
+    void aRangeBonusWidensTheSourcesReach() {
+        TerrifyingPresenceListener widened = source(25f);
+        when(widened.source().getMutableStats().getDynamic().getValue(TerrifyingPresenceListener.RANGE_PERCENT_KEY, 0f)).thenReturn(50f);
+        ShipAPI enemy = shipAt(new Vector2f(TerrifyingPresenceField.RANGE * 1.4f, 0f), 1, mock(MutableStat.class));
+        ShipAPI farEnemy = shipAt(new Vector2f(TerrifyingPresenceField.RANGE * 1.6f, 0f), 1, mock(MutableStat.class));
+
+        Map<ShipAPI, Float> penalties = TerrifyingPresenceField.penaltyPerTarget(List.of(widened), among(List.of(enemy, farEnemy)));
+
+        assertEquals(0.25f, penalties.get(enemy), 0.0001f);
+        assertFalse(penalties.containsKey(farEnemy));
+        assertTrue(TerrifyingPresenceField.penaltyPerTarget(List.of(source(25f)), among(List.of(enemy))).isEmpty());
+    }
+
+    @Test
     void aRetreatingSourceTerrifiesNoOne() {
         TerrifyingPresenceListener retreating = source(25f);
         when(retreating.source().isRetreating()).thenReturn(true);

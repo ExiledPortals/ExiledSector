@@ -44,8 +44,12 @@ public record AffinityScaling(Filter filter, int stepSize, SkillEffect target) i
     }
 
     public int stepsReached(Map<SkillEffect, Float> affinityTotals) {
+        return stepsReached(affinityTotals, 0f);
+    }
+
+    public int stepsReached(Map<SkillEffect, Float> affinityTotals, float equalTolerance) {
         if (filter == Filter.ALL_EQUAL) {
-            return AffinitySteps.allEqual(affinityTotals) ? 1 : 0;
+            return AffinitySteps.allWithin(affinityTotals, equalTolerance) ? 1 : 0;
         }
         if (filter == Filter.HIGHEST) {
             return AffinitySteps.stepsReached(affinityTotals.getOrDefault(AffinitySteps.highest(affinityTotals), 0f), stepSize);

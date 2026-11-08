@@ -74,14 +74,29 @@ public final class AffinitySteps {
         return Math.max(0, (int) Math.floor(affinity / stepSize));
     }
 
-    public static boolean allEqual(Map<SkillEffect, Float> affinityTotals) {
-        float lowTech = affinityTotals.getOrDefault(SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT, 0f);
+    public static boolean allWithin(Map<SkillEffect, Float> affinityTotals, float equalTolerance) {
+        float lowestTotal = Float.MAX_VALUE;
+        float highestTotal = -Float.MAX_VALUE;
         for (SkillEffect affinity : STEPS_BY_AFFINITY.keySet()) {
-            if (Math.abs(affinityTotals.getOrDefault(affinity, 0f) - lowTech) > EQUAL_AFFINITY_TOLERANCE) {
-                return false;
+            float total = affinityTotals.getOrDefault(affinity, 0f);
+            lowestTotal = Math.min(lowestTotal, total);
+            highestTotal = Math.max(highestTotal, total);
+        }
+        return highestTotal - lowestTotal <= Math.max(0f, equalTolerance) + EQUAL_AFFINITY_TOLERANCE;
+    }
+
+    public static float equalTolerance(List<EffectContribution> contributions) {
+        float equalTolerance = 0f;
+        for (EffectContribution contribution : contributions) {
+            if (contribution.permanent()) {
+                for (SkillTypeEffect effect : contribution.effects()) {
+                    if (effect.effect() == SpecialSkillEffect.AFFINITY_EQUALITY_TOLERANCE_FLAT) {
+                        equalTolerance += effect.magnitude();
+                    }
+                }
             }
         }
-        return true;
+        return equalTolerance;
     }
 
     public static Map<SkillEffect, Float> totals(List<EffectContribution> contributions) {
@@ -187,13 +202,14 @@ public final class AffinitySteps {
 
     public static List<SkillTypeEffect> scaledBonuses(List<EffectContribution> contributions, Map<SkillEffect, Float> affinityTotals) {
         Map<SkillEffect, Float> bonusTotals = new LinkedHashMap<>();
+        float equalTolerance = equalTolerance(contributions);
         for (EffectContribution contribution : contributions) {
             if (!contribution.permanent()) {
                 continue;
             }
             for (SkillTypeEffect effect : contribution.effects()) {
                 AffinityScaling scaling = effect.effect().affinityScaling();
-                int steps = scaling == null ? 0 : scaling.stepsReached(affinityTotals);
+                int steps = scaling == null ? 0 : scaling.stepsReached(affinityTotals, equalTolerance);
                 if (steps > 0) {
                     bonusTotals.merge(scaling.target(), steps * effect.magnitude(), Float::sum);
                 }
