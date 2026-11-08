@@ -16,7 +16,7 @@ Write the shortest line that tells the player what happens. Don't over-explain a
 
 ## Flavour and effect lines
 
-A skill type's `flavour` (grey text under the title) and a hull item's `description` are flavour and never state a mechanic. Every mechanic is a plain effect line. Most are generated from the type's skill effects. A vanilla hullmod node (`vanillaHullMod`) also shows that hullmod's own description with its values filled in. Anything else goes in the type's `effectText` list, one line each, written to these rules.
+A skill type's `flavour` (grey text under the title) and a hull item's `description` are flavour and never state a mechanic. Every mechanic is a plain effect line. Most are generated from the type's skill effects. A vanilla hullmod node (`vanillaHullMod`) also shows that hullmod's own description with its values filled in. Anything else goes in the type's `effectText` list, one line each, written to these rules. An `integrated` block can have its own `effectText`, which replaces the type's on an integrated node.
 
 ## Flavour
 

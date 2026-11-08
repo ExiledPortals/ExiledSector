@@ -50,6 +50,23 @@ class IntegrationLinesTest {
     }
 
     @Test
+    void integratedEffectTextShowsOnlyOnTheIntegratedNodeInStoryPointGreen() {
+        String jokeLine = "The crabs eat what the crew won't.";
+        SkillType crabs = new SkillType.Builder("crabs", "Crabs", "a.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
+                .integratedEffects(new IntegratedEffects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)), List.of(), List.of(jokeLine)))
+                .build();
+
+        List<DescriptionLine> normal = IntegrationLines.describe(crabs, HullSize.CRUISER, NOT_INTEGRATED).effects();
+        List<DescriptionLine> integrated = IntegrationLines.integrated(crabs, HullSize.CRUISER).effects();
+
+        assertTrue(normal.stream().noneMatch(line -> line.plain().equals(jokeLine)), normal.toString());
+        DescriptionLine integratedJoke = integrated.stream().filter(line -> line.plain().equals(jokeLine)).findFirst().orElseThrow();
+        assertTrue(isAllStoryPointGreen(integratedJoke.text()), integratedJoke.text().toMarkup());
+        assertEquals(List.of(), removedTexts(integrated));
+    }
+
+    @Test
     void aLineWhoseValueChangedIsNotListedAsDropped() {
         List<DescriptionLine> effects = IntegrationLines.integrated(PENALTY_DROPPING, HullSize.CRUISER).effects();
 

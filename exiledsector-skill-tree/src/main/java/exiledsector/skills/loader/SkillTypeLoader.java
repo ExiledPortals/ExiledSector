@@ -120,7 +120,8 @@ public final class SkillTypeLoader {
             return null;
         }
         return new IntegratedEffects(parseEffects(integratedJson.optJSONArray("effects")),
-                parseHullSizeEffects(integratedJson.optJSONArray("hullSizeEffects")));
+                parseHullSizeEffects(integratedJson.optJSONArray("hullSizeEffects")),
+                parseStringArray(integratedJson.optJSONArray("effectText")));
     }
 
     private static ModuleShareOverride parseModuleShareOverride(String typeId, String moduleShare) {

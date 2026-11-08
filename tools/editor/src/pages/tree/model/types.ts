@@ -31,6 +31,7 @@ export interface ItemCost {
 export interface IntegratedEffects {
   effects?: EffectEntry[];
   hullSizeEffects?: HullSizeEffectEntry[];
+  effectText?: string[];
 }
 
 export interface SkillType {

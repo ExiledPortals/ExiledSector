@@ -98,6 +98,9 @@ function serializeIntegrated(integrated: IntegratedEffects): Record<string, unkn
   if (integrated.hullSizeEffects?.length) {
     out.hullSizeEffects = serializeHullSizeEffects(integrated.hullSizeEffects);
   }
+  if (integrated.effectText?.length) {
+    out.effectText = integrated.effectText;
+  }
   return out;
 }
 

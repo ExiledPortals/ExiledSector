@@ -9,6 +9,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.aura.AuraSkillEffect;
 import exiledsector.skills.skilleffect.flux.FluxSkillEffect;
 import exiledsector.skills.skilleffect.weapon.WeaponSkillEffect;
 import exiledsector.effects.ResolvedTree;
@@ -257,6 +258,29 @@ class ShipStatSheetsTest {
 
         assertTrue(maxFlux.breakdown().sources().contains(new SourceLine("Opening Surge", Combine.FLAT, "+100", true)));
         assertTrue(maxFlux.breakdown().nodeIds().contains("surge_1"));
+    }
+
+    @Test
+    void aParentEffectsBreakdownNamesTheNodesBehindTheEffectsShownInItsLine() {
+        SkillNode frenzy = new SkillNode("frenzy_1", new SkillType.Builder("frenzy", "Blood in the Water", "a.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(AuraSkillEffect.PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT, 1000f))).build(),
+                List.of("root_1"), 0f, 0f);
+        SkillNode frenzyTraining = new SkillNode("frenzy_training_1", new SkillType.Builder("frenzy_training", "Frenzy Drills", "a.png", SkillTier.SMALL)
+                .effects(List.of(new SkillTypeEffect(WeaponSkillEffect.PIRATE_FRENZY_SECONDS_FLAT, 5f))).build(), List.of("root_1"), 0f, 0f);
+        SkillTree.register(frenzy);
+        SkillTree.register(frenzyTraining);
+        ShipTrees.allocate(data, frenzy, 0);
+        ShipTrees.allocate(data, frenzyTraining, 0);
+
+        ShipStatSheet.Breakdown breakdown = build(StatSheetTreeFixture.resolve(data, HullSize.CRUISER), Detail.STANDARD).sections().stream()
+                .flatMap(section -> section.effects().stream())
+                .map(ShipStatSheet.EffectRow::breakdown)
+                .filter(rowBreakdown -> rowBreakdown.nodeIds().contains("frenzy_1"))
+                .findFirst().orElseThrow();
+
+        assertEquals(List.of(new SourceLine("Blood in the Water", Combine.OTHER, "+1000", true),
+                new SourceLine("Frenzy Drills", Combine.FLAT, "+5", true)), breakdown.sources());
+        assertTrue(breakdown.nodeIds().contains("frenzy_training_1"));
     }
 
     @Test

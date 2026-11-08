@@ -45,6 +45,15 @@ describe('integrated effects serialisation', () => {
     expect(serializeType({ ...base, integrated: {} }).integrated).toEqual({});
     expect(serializeType(base)).not.toHaveProperty('integrated');
   });
+
+  it('writes the integrated effect text after the integrated effects and leaves an empty list out', () => {
+    const base = { id: 'a', name: 'A', icon: '', tags: ['armor'], effectText: ['Smells of the sea.'] };
+    const integrated = serializeType({ ...base, integrated: { effects: [{ effect: 'HULL_PERCENT', magnitude: 10 }], effectText: ["The crabs eat what the crew won't."] } });
+    expect(integrated.integrated).toEqual({ effects: [{ effect: 'HULL_PERCENT', magnitude: 10 }], effectText: ["The crabs eat what the crew won't."] });
+    expect(Object.keys(integrated.integrated as Record<string, unknown>)).toEqual(['effects', 'effectText']);
+    expect(integrated.effectText).toEqual(['Smells of the sea.']);
+    expect(serializeType({ ...base, integrated: { effectText: [] } }).integrated).toEqual({});
+  });
 });
 
 describe('module share serialisation', () => {

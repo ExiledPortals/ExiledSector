@@ -19,7 +19,17 @@ final class FleetContributions {
         return total;
     }
 
-    static float strongest(List<FleetMemberAPI> members, String contributionKey) {
+    static float largestPositive(List<FleetMemberAPI> members, String contributionKey) {
+        float largest = 0f;
+        for (FleetMemberAPI member : members) {
+            if (!member.isMothballed()) {
+                largest = Math.max(largest, member.getStats().getDynamic().getValue(contributionKey, 0f));
+            }
+        }
+        return largest;
+    }
+
+    static float largestMagnitude(List<FleetMemberAPI> members, String contributionKey) {
         float strongest = 0f;
         for (FleetMemberAPI member : members) {
             float value = member.isMothballed() ? 0f : member.getStats().getDynamic().getValue(contributionKey, 0f);

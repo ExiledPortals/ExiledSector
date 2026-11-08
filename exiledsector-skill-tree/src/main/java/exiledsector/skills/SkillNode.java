@@ -90,7 +90,7 @@ public class SkillNode extends SkillTreeObject {
                 addLine(effects, line, false);
             }
         }
-        for (StyledText line : type.getEffectTextLines()) {
+        for (StyledText line : type.getEffectTextLines(integrated)) {
             addLine(effects, line, false);
         }
         addLine(effects, describeTemporaryDuration(type), false);

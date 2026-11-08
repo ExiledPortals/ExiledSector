@@ -29,8 +29,9 @@ public final class AmmoSpentTracker {
         int ammo = weapon.getAmmo();
         float reload = reloadProgress(weapon);
         int expected = lastAmmo[index];
-        if (ammo > expected && reload < lastReloadProgress[index]) {
-            expected = Math.min(weapon.getMaxAmmo(), expected + Math.round(weapon.getAmmoTracker().getReloadSize()));
+        boolean reloadLanded = reload < lastReloadProgress[index] && expected < weapon.getMaxAmmo();
+        if (reloadLanded) {
+            expected = Math.min(weapon.getMaxAmmo(), (int) (expected + weapon.getAmmoTracker().getReloadSize()));
         }
         lastAmmo[index] = ammo;
         lastReloadProgress[index] = reload;

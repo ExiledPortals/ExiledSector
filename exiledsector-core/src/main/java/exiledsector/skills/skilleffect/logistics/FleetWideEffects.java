@@ -143,7 +143,7 @@ public final class FleetWideEffects {
     }
 
     static float transponderOffBurnLevelBonus(List<FleetMemberAPI> members) {
-        return FleetContributions.strongest(members, TRANSPONDER_OFF_BURN_LEVEL_KEY);
+        return FleetContributions.largestPositive(members, TRANSPONDER_OFF_BURN_LEVEL_KEY);
     }
 
     public static void applyCoronaResistance(CampaignFleetAPI fleet) {
@@ -188,7 +188,7 @@ public final class FleetWideEffects {
     }
 
     static float strongestMoveSlowSupplyUse(List<FleetMemberAPI> members) {
-        return SkillEffect.addedMultiplier(FleetContributions.strongest(members, MOVE_SLOW_SUPPLY_USE_KEY));
+        return SkillEffect.addedMultiplier(FleetContributions.largestMagnitude(members, MOVE_SLOW_SUPPLY_USE_KEY));
     }
 
     public static void applySupplyUsePerHullType(CampaignFleetAPI fleet) {
@@ -300,7 +300,7 @@ public final class FleetWideEffects {
                 swarms++;
             }
         }
-        return swarms == 0 ? 0f : FleetContributions.strongest(members, SWARM_SENSOR_STRENGTH_KEY) * swarms;
+        return swarms == 0 ? 0f : FleetContributions.largestPositive(members, SWARM_SENSOR_STRENGTH_KEY) * swarms;
     }
 
     public static void applyTerrainMovementPenalty(CampaignFleetAPI fleet) {

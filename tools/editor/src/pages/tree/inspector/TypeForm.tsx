@@ -229,6 +229,14 @@ function IntegratedRows({ type, onEdit, vocabulary, note }: Pick<TypeFormProps, 
         <>
           <EffectRows holder={integrated} onEditHolder={onEditIntegrated} vocabulary={vocabulary} label="Integrated effects" />
           <HullSizeEffectRows holder={integrated} onEditHolder={onEditIntegrated} vocabulary={vocabulary} label="Integrated hull-size effects" />
+          <CommitTextarea
+            size="xs"
+            label={`Integrated effect text (optional, replaces the effect text when integrated)${note ?? ''}`}
+            value={(integrated.effectText ?? []).join('\n')}
+            onCommit={(text) => onEditIntegrated((holder) => {
+              holder.effectText = effectTextLines(text);
+            })}
+          />
         </>
       ) : null}
     </Stack>

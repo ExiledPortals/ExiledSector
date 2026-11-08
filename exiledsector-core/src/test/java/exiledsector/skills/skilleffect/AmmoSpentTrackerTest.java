@@ -46,6 +46,48 @@ class AmmoSpentTrackerTest {
     }
 
     @Test
+    void firingAsManyShotsAsTheReloadInItsFrameCountsEveryShot() {
+        AmmoTrackerAPI ammoTracker = mock(AmmoTrackerAPI.class);
+        when(ammoTracker.getReloadProgress()).thenReturn(0.9f);
+        when(ammoTracker.getReloadSize()).thenReturn(3f);
+        WeaponAPI weapon = weapon(5, 10, ammoTracker);
+        AmmoSpentTracker tracker = new AmmoSpentTracker(List.of(weapon));
+
+        when(ammoTracker.getReloadProgress()).thenReturn(0.1f);
+        when(weapon.getAmmo()).thenReturn(5);
+
+        assertEquals(3, tracker.spentSinceLastCheck(0));
+    }
+
+    @Test
+    void aFractionalReloadAddsOnlyTheWholeRoundsTheEngineAdds() {
+        AmmoTrackerAPI ammoTracker = mock(AmmoTrackerAPI.class);
+        when(ammoTracker.getReloadProgress()).thenReturn(0.9f);
+        when(ammoTracker.getReloadSize()).thenReturn(2.6f);
+        WeaponAPI weapon = weapon(5, 10, ammoTracker);
+        AmmoSpentTracker tracker = new AmmoSpentTracker(List.of(weapon));
+
+        when(ammoTracker.getReloadProgress()).thenReturn(0.1f);
+        when(weapon.getAmmo()).thenReturn(7);
+
+        assertEquals(0, tracker.spentSinceLastCheck(0));
+    }
+
+    @Test
+    void reloadProgressResettingAtFullAmmoIsNotAReload() {
+        AmmoTrackerAPI ammoTracker = mock(AmmoTrackerAPI.class);
+        when(ammoTracker.getReloadProgress()).thenReturn(0.4f);
+        when(ammoTracker.getReloadSize()).thenReturn(3f);
+        WeaponAPI weapon = weapon(10, 10, ammoTracker);
+        AmmoSpentTracker tracker = new AmmoSpentTracker(List.of(weapon));
+
+        when(ammoTracker.getReloadProgress()).thenReturn(0f);
+        when(weapon.getAmmo()).thenReturn(9);
+
+        assertEquals(1, tracker.spentSinceLastCheck(0));
+    }
+
+    @Test
     void aRefundPutsAmmoBackUpToTheMaximumWithoutCountingAsSpent() {
         WeaponAPI weapon = weapon(10, 10, null);
         AmmoSpentTracker tracker = new AmmoSpentTracker(List.of(weapon));

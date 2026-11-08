@@ -70,4 +70,15 @@ describe('type form integrated effects', () => {
     expect(state.current.integrated).toBeUndefined();
     expect(screen.queryByText('Integrated effects')).toBeNull();
   });
+
+  it('edits the integrated effect text separately from the normal effect text', () => {
+    const state = renderForm({ ...shieldType, integrated: { effects: shieldType.effects } });
+    const integratedText = screen.getByLabelText(/^Integrated effect text/) as HTMLTextAreaElement;
+
+    fireEvent.change(integratedText, { target: { value: "The crabs eat what the crew won't.\n\n" } });
+    fireEvent.blur(integratedText);
+
+    expect(state.current.integrated?.effectText).toEqual(["The crabs eat what the crew won't."]);
+    expect(state.current.effectText).toBeUndefined();
+  });
 });

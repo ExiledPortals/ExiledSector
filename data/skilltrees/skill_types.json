@@ -4829,6 +4829,9 @@
 						"effect": "SUPPLIES_PER_MONTH_MULT",
 						"magnitude": -10
 					}
+				],
+				"effectText": [
+					"The crabs eat what the crew won't."
 				]
 			},
 			"itemCost": {
@@ -4836,9 +4839,6 @@
 				"quantity": 1000
 			},
 			"flavour": "You control the speed at which these lobsters die.",
-			"effectText": [
-				"The crabs eat what the crew won't."
-			],
 			"tags": [
 				"combat_readiness",
 				"speed",

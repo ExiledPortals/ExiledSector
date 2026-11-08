@@ -239,9 +239,20 @@ public class SkillType {
     }
 
     public List<StyledText> getEffectTextLines() {
-        List<StyledText> lines = new ArrayList<>(effectText.size());
-        for (int index = 0; index < effectText.size(); index++) {
-            lines.add(Translation.dataStyled(KEY_PREFIX + id + ".effectText." + index, effectText.get(index)));
+        return effectTextLines(KEY_PREFIX + id + ".effectText.", effectText);
+    }
+
+    public List<StyledText> getEffectTextLines(boolean integrated) {
+        if (integrated && integratedEffects != null && integratedEffects.replacesEffectText()) {
+            return effectTextLines(KEY_PREFIX + id + ".integrated.effectText.", integratedEffects.effectText());
+        }
+        return getEffectTextLines();
+    }
+
+    private static List<StyledText> effectTextLines(String keyPrefix, List<String> sourceLines) {
+        List<StyledText> lines = new ArrayList<>(sourceLines.size());
+        for (int index = 0; index < sourceLines.size(); index++) {
+            lines.add(Translation.dataStyled(keyPrefix + index, sourceLines.get(index)));
         }
         return lines;
     }
