@@ -220,7 +220,8 @@ restorer, which puts the original type back.
 ### Refracting Projectiles
 
 `NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT` gives a non-beam energy shot that hits a shield a chance to
-refract to the nearest unhit enemy within weapon range, up to Max Refractions (default 5). Missiles and
+refract to the nearest unhit enemy within weapon range, up to Max Refractions (default 5);
+`NON_BEAM_ENERGY_WEAPON_HULL_REFRACTION_CHANCE_PERCENT` is the chance for armor or hull hits. Missiles and
 weapons in `energy_chain_blocklist.csv` never refract. As with Lion's Gaze, a pooled drone fires the real
 weapon as an instant single shot, then hands the projectile to the firing ship so its on-hit effects and
 kill credit apply.
@@ -441,7 +442,8 @@ hull size to the converted hit itself, since this ship is its source (`EmpConver
 ### Phase Ambush Doctrine
 
 `PHASE_EXIT_WEAPON_DAMAGE_PERCENT` gives its full weapon damage bonus as the ship leaves phase and lowers it evenly to
-nothing over 3 seconds. Leaving phase again restarts it at full (`PhaseExitDamageListener`).
+nothing over 3 seconds, lengthened by `PHASE_EXIT_WEAPON_DAMAGE_DURATION_PERCENT`. Leaving phase again restarts it at
+full (`PhaseExitDamageListener`).
 
 ### Phantom Wake
 
@@ -449,7 +451,9 @@ nothing over 3 seconds. Leaving phase again restarts it at full (`PhaseExitDamag
 place, taking no damage and colliding only with projectiles and missiles like a fighter, so enemy weapons waste fire
 on it. It fades over its lifetime and is then removed with its deployment record (`PhaseAfterimage`,
 `TemporaryCombatSpawn`). A new entry moves a still fading afterimage to the new spot and restarts its fade instead of
-building another, and ships with modules or built-in wings leave none (`PhantomWakeListener`).
+building another, and ships with modules or built-in wings leave none (`PhantomWakeListener`). With
+`PHASE_AFTERIMAGE_FADE_EMP_FLAT`, an afterimage that fades out on its own arcs that much EMP into each enemy ship
+within 600 su.
 
 The afterimage costs no deployment points, can't receive transfer of command, shows as an ally on the player's side,
 and its variant tag (`CombatQueries.isAfterimage`) keeps it out of every ally, enemy and target pick, Star Chart strikes
@@ -460,7 +464,8 @@ included.
 Each hit from this ship's own energy weapons on an enemy ship, strike craft excepted, adds an Injunction stack for 10
 seconds, at most once a second per target, up to 10 stacks with the oldest replaced. The stacks' summed
 `ENERGY_HIT_INJUNCTION_PERCENT` multiplies the target's ship system cooldown and divides its charge regeneration by the
-same factor (`InjunctionListener`, `Injunction`).
+same factor (`InjunctionListener`, `Injunction`). Stacks from `ENERGY_HIT_INJUNCTION_VENT_PERCENT` also divide the
+target's vent rate the same way.
 
 ### Range per sensor strength
 

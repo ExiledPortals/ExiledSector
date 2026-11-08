@@ -9,6 +9,7 @@ import exiledsector.skills.skilleffect.weapon.WeaponStatFamily;
 final class PhaseExitDamageListener extends PhaseTransitionListener {
 
     static final String DAMAGE_PERCENT_KEY = "exiledSector_phaseExitWeaponDamagePercent";
+    static final String DURATION_PERCENT_KEY = "exiledSector_phaseExitWeaponDamageDurationPercent";
     static final float TAPER_SECONDS = 3f;
     private static final String MOD_ID_PREFIX = "exiledSector_phaseExitWeaponDamage_";
     private static final ScaledBonus AMBUSH_BONUS = new ScaledBonus(
@@ -24,7 +25,7 @@ final class PhaseExitDamageListener extends PhaseTransitionListener {
     @Override
     void onPhaseExit() {
         if (ownerIsAliveNotHulk()) {
-            ambushBonus.start();
+            ambushBonus.startWithIncreasedDuration(magnitude(DURATION_PERCENT_KEY));
         }
     }
 

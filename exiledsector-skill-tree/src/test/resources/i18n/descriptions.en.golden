@@ -934,6 +934,12 @@ effect|ENERGY_HIT_INJUNCTION_PERCENT|12.5	0	Energy weapon hits give enemy ships 
 effect|ENERGY_HIT_INJUNCTION_PERCENT|100.0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>100%</good> slower for each Injunction stack.
 effect|ENERGY_HIT_INJUNCTION_PERCENT|-10.0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>-10%</good> slower for each Injunction stack.
 effect|ENERGY_HIT_INJUNCTION_PERCENT|-12.5	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>-12.5%</good> slower for each Injunction stack.
+effect|ENERGY_HIT_INJUNCTION_VENT_PERCENT|1.0	0	Enemy ships vent <good>1%</good> slower for each Injunction stack.
+effect|ENERGY_HIT_INJUNCTION_VENT_PERCENT|10.0	0	Enemy ships vent <good>10%</good> slower for each Injunction stack.
+effect|ENERGY_HIT_INJUNCTION_VENT_PERCENT|12.5	0	Enemy ships vent <good>12.5%</good> slower for each Injunction stack.
+effect|ENERGY_HIT_INJUNCTION_VENT_PERCENT|100.0	0	Enemy ships vent <good>100%</good> slower for each Injunction stack.
+effect|ENERGY_HIT_INJUNCTION_VENT_PERCENT|-10.0	0	Enemy ships vent <good>-10%</good> slower for each Injunction stack.
+effect|ENERGY_HIT_INJUNCTION_VENT_PERCENT|-12.5	0	Enemy ships vent <good>-12.5%</good> slower for each Injunction stack.
 effect|ENERGY_SLOTS_BALLISTIC|1.0	0	Energy weapon mounts become ballistic mounts.
 effect|ENERGY_SLOTS_BALLISTIC|10.0	0	Energy weapon mounts become ballistic mounts.
 effect|ENERGY_SLOTS_BALLISTIC|12.5	0	Energy weapon mounts become ballistic mounts.
@@ -2182,6 +2188,12 @@ effect|NON_BEAM_ENERGY_WEAPON_FLUX_COST_MULT|12.5	1	<good>12.5%</good> more non-
 effect|NON_BEAM_ENERGY_WEAPON_FLUX_COST_MULT|100.0	1	<good>100%</good> more non-beam energy weapon flux cost.
 effect|NON_BEAM_ENERGY_WEAPON_FLUX_COST_MULT|-10.0	1	<bad>10%</bad> less non-beam energy weapon flux cost.
 effect|NON_BEAM_ENERGY_WEAPON_FLUX_COST_MULT|-12.5	1	<bad>12.5%</bad> less non-beam energy weapon flux cost.
+effect|NON_BEAM_ENERGY_WEAPON_HULL_REFRACTION_CHANCE_PERCENT|1.0	0	Non-beam energy weapons have a <good>1%</good> chance to refract when hitting enemy armor or hull.
+effect|NON_BEAM_ENERGY_WEAPON_HULL_REFRACTION_CHANCE_PERCENT|10.0	0	Non-beam energy weapons have a <good>10%</good> chance to refract when hitting enemy armor or hull.
+effect|NON_BEAM_ENERGY_WEAPON_HULL_REFRACTION_CHANCE_PERCENT|12.5	0	Non-beam energy weapons have a <good>12.5%</good> chance to refract when hitting enemy armor or hull.
+effect|NON_BEAM_ENERGY_WEAPON_HULL_REFRACTION_CHANCE_PERCENT|100.0	0	Non-beam energy weapons have a <good>100%</good> chance to refract when hitting enemy armor or hull.
+effect|NON_BEAM_ENERGY_WEAPON_HULL_REFRACTION_CHANCE_PERCENT|-10.0	0	Non-beam energy weapons have a <good>-10%</good> chance to refract when hitting enemy armor or hull.
+effect|NON_BEAM_ENERGY_WEAPON_HULL_REFRACTION_CHANCE_PERCENT|-12.5	0	Non-beam energy weapons have a <good>-12.5%</good> chance to refract when hitting enemy armor or hull.
 effect|NON_BEAM_ENERGY_WEAPON_PROJECTILE_SPEED_MULT|1.0	0	<good>1%</good> more non-beam energy weapon projectile speed.
 effect|NON_BEAM_ENERGY_WEAPON_PROJECTILE_SPEED_MULT|10.0	0	<good>10%</good> more non-beam energy weapon projectile speed.
 effect|NON_BEAM_ENERGY_WEAPON_PROJECTILE_SPEED_MULT|12.5	0	<good>12.5%</good> more non-beam energy weapon projectile speed.
@@ -2332,6 +2344,12 @@ effect|PEAK_TIME_PAUSED_WHILE_PHASED|12.5	0	The peak performance timer pauses wh
 effect|PEAK_TIME_PAUSED_WHILE_PHASED|100.0	0	The peak performance timer pauses while phased.
 effect|PEAK_TIME_PAUSED_WHILE_PHASED|-10.0	0	The peak performance timer pauses while phased.
 effect|PEAK_TIME_PAUSED_WHILE_PHASED|-12.5	0	The peak performance timer pauses while phased.
+effect|PHASE_AFTERIMAGE_FADE_EMP_FLAT|1.0	0	When the afterimage fades, it bursts for <good>1</good> EMP damage to enemy ships within 600 su.
+effect|PHASE_AFTERIMAGE_FADE_EMP_FLAT|10.0	0	When the afterimage fades, it bursts for <good>10</good> EMP damage to enemy ships within 600 su.
+effect|PHASE_AFTERIMAGE_FADE_EMP_FLAT|12.5	0	When the afterimage fades, it bursts for <good>12.5</good> EMP damage to enemy ships within 600 su.
+effect|PHASE_AFTERIMAGE_FADE_EMP_FLAT|100.0	0	When the afterimage fades, it bursts for <good>100</good> EMP damage to enemy ships within 600 su.
+effect|PHASE_AFTERIMAGE_FADE_EMP_FLAT|-10.0	0	When the afterimage fades, it bursts for <good>-10</good> EMP damage to enemy ships within 600 su.
+effect|PHASE_AFTERIMAGE_FADE_EMP_FLAT|-12.5	0	When the afterimage fades, it bursts for <good>-12.5</good> EMP damage to enemy ships within 600 su.
 effect|PHASE_ANCHOR_EMERGENCY_DIVE|1.0	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 1% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
 effect|PHASE_ANCHOR_EMERGENCY_DIVE|10.0	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 10% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
 effect|PHASE_ANCHOR_EMERGENCY_DIVE|12.5	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 12.5% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
@@ -2392,6 +2410,12 @@ effect|PHASE_EXIT_EMP_ARCS_FLAT|12.5	0	When this ship leaves phase, it discharge
 effect|PHASE_EXIT_EMP_ARCS_FLAT|100.0	0	When this ship leaves phase, it discharges <good>100</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
 effect|PHASE_EXIT_EMP_ARCS_FLAT|-10.0	0	When this ship leaves phase, it discharges <good>-10</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
 effect|PHASE_EXIT_EMP_ARCS_FLAT|-12.5	0	When this ship leaves phase, it discharges <good>-12.5</good> EMP arcs at the nearest enemy ships within 600 su, each dealing 100/150/200/300 energy and EMP damage.
+effect|PHASE_EXIT_WEAPON_DAMAGE_DURATION_PERCENT|1.0	0	The weapon damage bonus on leaving phase has <good>1%</good> increased duration.
+effect|PHASE_EXIT_WEAPON_DAMAGE_DURATION_PERCENT|10.0	0	The weapon damage bonus on leaving phase has <good>10%</good> increased duration.
+effect|PHASE_EXIT_WEAPON_DAMAGE_DURATION_PERCENT|12.5	0	The weapon damage bonus on leaving phase has <good>12.5%</good> increased duration.
+effect|PHASE_EXIT_WEAPON_DAMAGE_DURATION_PERCENT|100.0	0	The weapon damage bonus on leaving phase has <good>100%</good> increased duration.
+effect|PHASE_EXIT_WEAPON_DAMAGE_DURATION_PERCENT|-10.0	0	The weapon damage bonus on leaving phase has <good>-10%</good> increased duration.
+effect|PHASE_EXIT_WEAPON_DAMAGE_DURATION_PERCENT|-12.5	0	The weapon damage bonus on leaving phase has <good>-12.5%</good> increased duration.
 effect|PHASE_EXIT_WEAPON_DAMAGE_PERCENT|1.0	0	When this ship leaves phase, it deals <good>1%</good> increased weapon damage, tapering off over 3 seconds.
 effect|PHASE_EXIT_WEAPON_DAMAGE_PERCENT|10.0	0	When this ship leaves phase, it deals <good>10%</good> increased weapon damage, tapering off over 3 seconds.
 effect|PHASE_EXIT_WEAPON_DAMAGE_PERCENT|12.5	0	When this ship leaves phase, it deals <good>12.5%</good> increased weapon damage, tapering off over 3 seconds.
@@ -4657,6 +4681,46 @@ type|cease_and_desist|FRIGATE|0	0	Energy weapon hits give enemy ships an Injunct
 type|cease_and_desist|DESTROYER|0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
 type|cease_and_desist|CRUISER|0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
 type|cease_and_desist|CAPITAL_SHIP|0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
+integrable|cease_and_desist|null|0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
+integrable|cease_and_desist|null|1	0	Click and hold to integrate.
+integrable|cease_and_desist|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|cease_and_desist|null|3	0	<muted>Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems 5% slower for each Injunction stack.</muted>
+integrable|cease_and_desist|null|4	0	<muted>Enemy ships vent 5% slower for each Injunction stack.</muted>
+integrable|cease_and_desist|FRIGATE|0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
+integrable|cease_and_desist|FRIGATE|1	0	Click and hold to integrate.
+integrable|cease_and_desist|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|cease_and_desist|FRIGATE|3	0	<muted>Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems 5% slower for each Injunction stack.</muted>
+integrable|cease_and_desist|FRIGATE|4	0	<muted>Enemy ships vent 5% slower for each Injunction stack.</muted>
+integrable|cease_and_desist|DESTROYER|0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
+integrable|cease_and_desist|DESTROYER|1	0	Click and hold to integrate.
+integrable|cease_and_desist|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|cease_and_desist|DESTROYER|3	0	<muted>Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems 5% slower for each Injunction stack.</muted>
+integrable|cease_and_desist|DESTROYER|4	0	<muted>Enemy ships vent 5% slower for each Injunction stack.</muted>
+integrable|cease_and_desist|CRUISER|0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
+integrable|cease_and_desist|CRUISER|1	0	Click and hold to integrate.
+integrable|cease_and_desist|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|cease_and_desist|CRUISER|3	0	<muted>Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems 5% slower for each Injunction stack.</muted>
+integrable|cease_and_desist|CRUISER|4	0	<muted>Enemy ships vent 5% slower for each Injunction stack.</muted>
+integrable|cease_and_desist|CAPITAL_SHIP|0	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
+integrable|cease_and_desist|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|cease_and_desist|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|cease_and_desist|CAPITAL_SHIP|3	0	<muted>Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems 5% slower for each Injunction stack.</muted>
+integrable|cease_and_desist|CAPITAL_SHIP|4	0	<muted>Enemy ships vent 5% slower for each Injunction stack.</muted>
+integrated|cease_and_desist|null|0	0	<builtIn>Integrated</builtIn>
+integrated|cease_and_desist|null|1	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
+integrated|cease_and_desist|null|2	0	<builtIn>Enemy ships vent </builtIn><good>5%</good><builtIn> slower for each Injunction stack.</builtIn>
+integrated|cease_and_desist|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|cease_and_desist|FRIGATE|1	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
+integrated|cease_and_desist|FRIGATE|2	0	<builtIn>Enemy ships vent </builtIn><good>5%</good><builtIn> slower for each Injunction stack.</builtIn>
+integrated|cease_and_desist|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|cease_and_desist|DESTROYER|1	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
+integrated|cease_and_desist|DESTROYER|2	0	<builtIn>Enemy ships vent </builtIn><good>5%</good><builtIn> slower for each Injunction stack.</builtIn>
+integrated|cease_and_desist|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|cease_and_desist|CRUISER|1	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
+integrated|cease_and_desist|CRUISER|2	0	<builtIn>Enemy ships vent </builtIn><good>5%</good><builtIn> slower for each Injunction stack.</builtIn>
+integrated|cease_and_desist|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|cease_and_desist|CAPITAL_SHIP|1	0	Energy weapon hits give enemy ships an Injunction stack for 10 seconds, at most once a second. Ships can hold up to 10 Injunction stacks.\nEnemy ships recharge their ship systems <good>5%</good> slower for each Injunction stack.
+integrated|cease_and_desist|CAPITAL_SHIP|2	0	<builtIn>Enemy ships vent </builtIn><good>5%</good><builtIn> slower for each Injunction stack.</builtIn>
 flavour|cheap_shots	0	Pirate fire control holds until a target's shields collapse or its drives gutter out. Fair fights are for the naive.
 type|cheap_shots|null|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
 type|cheap_shots|FRIGATE|0	0	<good>20%</good> increased damage to overloaded, venting or flamed-out ships.
@@ -9201,6 +9265,51 @@ type-detail|hybrid_p_space_shrouding|CRUISER|0	0	Mutually exclusive with <hullmo
 type|hybrid_p_space_shrouding|CAPITAL_SHIP|0	0	50% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
 type|hybrid_p_space_shrouding|CAPITAL_SHIP|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|hybrid_p_space_shrouding|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Phase Field</hullmod>
+integrable|hybrid_p_space_shrouding|null|0	0	50% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
+integrable|hybrid_p_space_shrouding|null|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrable|hybrid_p_space_shrouding|null|2	0	Click and hold to integrate.
+integrable|hybrid_p_space_shrouding|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hybrid_p_space_shrouding|null|4	0	<muted>100% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.</muted>
+integrable|hybrid_p_space_shrouding|null|5	0	<muted>25% less combat readiness loss from being in a solar corona or a deep hyperspace storm.</muted>
+integrable|hybrid_p_space_shrouding|FRIGATE|0	0	50% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
+integrable|hybrid_p_space_shrouding|FRIGATE|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrable|hybrid_p_space_shrouding|FRIGATE|2	0	Click and hold to integrate.
+integrable|hybrid_p_space_shrouding|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hybrid_p_space_shrouding|FRIGATE|4	0	<muted>100% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.</muted>
+integrable|hybrid_p_space_shrouding|FRIGATE|5	0	<muted>25% less combat readiness loss from being in a solar corona or a deep hyperspace storm.</muted>
+integrable|hybrid_p_space_shrouding|DESTROYER|0	0	50% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
+integrable|hybrid_p_space_shrouding|DESTROYER|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrable|hybrid_p_space_shrouding|DESTROYER|2	0	Click and hold to integrate.
+integrable|hybrid_p_space_shrouding|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hybrid_p_space_shrouding|DESTROYER|4	0	<muted>100% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.</muted>
+integrable|hybrid_p_space_shrouding|DESTROYER|5	0	<muted>25% less combat readiness loss from being in a solar corona or a deep hyperspace storm.</muted>
+integrable|hybrid_p_space_shrouding|CRUISER|0	0	50% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
+integrable|hybrid_p_space_shrouding|CRUISER|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrable|hybrid_p_space_shrouding|CRUISER|2	0	Click and hold to integrate.
+integrable|hybrid_p_space_shrouding|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hybrid_p_space_shrouding|CRUISER|4	0	<muted>100% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.</muted>
+integrable|hybrid_p_space_shrouding|CRUISER|5	0	<muted>25% less combat readiness loss from being in a solar corona or a deep hyperspace storm.</muted>
+integrable|hybrid_p_space_shrouding|CAPITAL_SHIP|0	0	50% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
+integrable|hybrid_p_space_shrouding|CAPITAL_SHIP|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrable|hybrid_p_space_shrouding|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|hybrid_p_space_shrouding|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hybrid_p_space_shrouding|CAPITAL_SHIP|4	0	<muted>100% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.</muted>
+integrable|hybrid_p_space_shrouding|CAPITAL_SHIP|5	0	<muted>25% less combat readiness loss from being in a solar corona or a deep hyperspace storm.</muted>
+integrated|hybrid_p_space_shrouding|null|0	0	<builtIn>Integrated</builtIn>
+integrated|hybrid_p_space_shrouding|null|1	0	<builtIn>100% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.</builtIn>
+integrated|hybrid_p_space_shrouding|null|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrated|hybrid_p_space_shrouding|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|hybrid_p_space_shrouding|FRIGATE|1	0	<builtIn>100% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.</builtIn>
+integrated|hybrid_p_space_shrouding|FRIGATE|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrated|hybrid_p_space_shrouding|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|hybrid_p_space_shrouding|DESTROYER|1	0	<builtIn>100% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.</builtIn>
+integrated|hybrid_p_space_shrouding|DESTROYER|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrated|hybrid_p_space_shrouding|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|hybrid_p_space_shrouding|CRUISER|1	0	<builtIn>100% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.</builtIn>
+integrated|hybrid_p_space_shrouding|CRUISER|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrated|hybrid_p_space_shrouding|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|hybrid_p_space_shrouding|CAPITAL_SHIP|1	0	<builtIn>100% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.</builtIn>
+integrated|hybrid_p_space_shrouding|CAPITAL_SHIP|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 flavour|hypatia_pattern_warpfield	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. It was not designed to be scaled down.
 flavourAutomated|hypatia_pattern_warpfield	0	Exo-Tech engineers walk the refit crew through scaling down the Hypatia's warp field to wrap the energy mounts. It was not designed to be scaled down.
 type|hypatia_pattern_warpfield|null|0	0	<good>15%</good> increased energy weapon damage.
@@ -9548,6 +9657,46 @@ type|ion_cascade|FRIGATE|0	0	<good>100%</good> of EMP damage this ship deals to 
 type|ion_cascade|DESTROYER|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
 type|ion_cascade|CRUISER|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
 type|ion_cascade|CAPITAL_SHIP|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+integrable|ion_cascade|null|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+integrable|ion_cascade|null|1	0	Click and hold to integrate.
+integrable|ion_cascade|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ion_cascade|null|3	0	<muted>100% of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.</muted>
+integrable|ion_cascade|null|4	0	<muted>15% increased EMP damage.</muted>
+integrable|ion_cascade|FRIGATE|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+integrable|ion_cascade|FRIGATE|1	0	Click and hold to integrate.
+integrable|ion_cascade|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ion_cascade|FRIGATE|3	0	<muted>100% of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.</muted>
+integrable|ion_cascade|FRIGATE|4	0	<muted>15% increased EMP damage.</muted>
+integrable|ion_cascade|DESTROYER|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+integrable|ion_cascade|DESTROYER|1	0	Click and hold to integrate.
+integrable|ion_cascade|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ion_cascade|DESTROYER|3	0	<muted>100% of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.</muted>
+integrable|ion_cascade|DESTROYER|4	0	<muted>15% increased EMP damage.</muted>
+integrable|ion_cascade|CRUISER|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+integrable|ion_cascade|CRUISER|1	0	Click and hold to integrate.
+integrable|ion_cascade|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ion_cascade|CRUISER|3	0	<muted>100% of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.</muted>
+integrable|ion_cascade|CRUISER|4	0	<muted>15% increased EMP damage.</muted>
+integrable|ion_cascade|CAPITAL_SHIP|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+integrable|ion_cascade|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|ion_cascade|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ion_cascade|CAPITAL_SHIP|3	0	<muted>100% of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.</muted>
+integrable|ion_cascade|CAPITAL_SHIP|4	0	<muted>15% increased EMP damage.</muted>
+integrated|ion_cascade|null|0	0	<builtIn>Integrated</builtIn>
+integrated|ion_cascade|null|1	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+integrated|ion_cascade|null|2	0	<good>15%</good><builtIn> increased EMP damage.</builtIn>
+integrated|ion_cascade|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|ion_cascade|FRIGATE|1	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+integrated|ion_cascade|FRIGATE|2	0	<good>15%</good><builtIn> increased EMP damage.</builtIn>
+integrated|ion_cascade|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|ion_cascade|DESTROYER|1	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+integrated|ion_cascade|DESTROYER|2	0	<good>15%</good><builtIn> increased EMP damage.</builtIn>
+integrated|ion_cascade|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|ion_cascade|CRUISER|1	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+integrated|ion_cascade|CRUISER|2	0	<good>15%</good><builtIn> increased EMP damage.</builtIn>
+integrated|ion_cascade|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|ion_cascade|CAPITAL_SHIP|1	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
+integrated|ion_cascade|CAPITAL_SHIP|2	0	<good>15%</good><builtIn> increased EMP damage.</builtIn>
 flavour|ion_spill	0	Remnant ion bolts leave some of their charge in the shield projector as heat.
 type|ion_spill|null|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
 type|ion_spill|FRIGATE|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
@@ -11193,12 +11342,92 @@ type|phantom_wake|FRIGATE|0	0	When this ship enters phase, it leaves an afterima
 type|phantom_wake|DESTROYER|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
 type|phantom_wake|CRUISER|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
 type|phantom_wake|CAPITAL_SHIP|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
+integrable|phantom_wake|null|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
+integrable|phantom_wake|null|1	0	Click and hold to integrate.
+integrable|phantom_wake|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|phantom_wake|null|3	0	<muted>When this ship enters phase, it leaves an afterimage that draws enemy fire for 3 seconds.</muted>
+integrable|phantom_wake|null|4	0	<muted>When the afterimage fades, it bursts for 500 EMP damage to enemy ships within 600 su.</muted>
+integrable|phantom_wake|FRIGATE|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
+integrable|phantom_wake|FRIGATE|1	0	Click and hold to integrate.
+integrable|phantom_wake|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|phantom_wake|FRIGATE|3	0	<muted>When this ship enters phase, it leaves an afterimage that draws enemy fire for 3 seconds.</muted>
+integrable|phantom_wake|FRIGATE|4	0	<muted>When the afterimage fades, it bursts for 500 EMP damage to enemy ships within 600 su.</muted>
+integrable|phantom_wake|DESTROYER|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
+integrable|phantom_wake|DESTROYER|1	0	Click and hold to integrate.
+integrable|phantom_wake|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|phantom_wake|DESTROYER|3	0	<muted>When this ship enters phase, it leaves an afterimage that draws enemy fire for 3 seconds.</muted>
+integrable|phantom_wake|DESTROYER|4	0	<muted>When the afterimage fades, it bursts for 500 EMP damage to enemy ships within 600 su.</muted>
+integrable|phantom_wake|CRUISER|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
+integrable|phantom_wake|CRUISER|1	0	Click and hold to integrate.
+integrable|phantom_wake|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|phantom_wake|CRUISER|3	0	<muted>When this ship enters phase, it leaves an afterimage that draws enemy fire for 3 seconds.</muted>
+integrable|phantom_wake|CRUISER|4	0	<muted>When the afterimage fades, it bursts for 500 EMP damage to enemy ships within 600 su.</muted>
+integrable|phantom_wake|CAPITAL_SHIP|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
+integrable|phantom_wake|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|phantom_wake|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|phantom_wake|CAPITAL_SHIP|3	0	<muted>When this ship enters phase, it leaves an afterimage that draws enemy fire for 3 seconds.</muted>
+integrable|phantom_wake|CAPITAL_SHIP|4	0	<muted>When the afterimage fades, it bursts for 500 EMP damage to enemy ships within 600 su.</muted>
+integrated|phantom_wake|null|0	0	<builtIn>Integrated</builtIn>
+integrated|phantom_wake|null|1	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
+integrated|phantom_wake|null|2	0	<builtIn>When the afterimage fades, it bursts for </builtIn><good>500</good><builtIn> EMP damage to enemy ships within 600 su.</builtIn>
+integrated|phantom_wake|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|phantom_wake|FRIGATE|1	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
+integrated|phantom_wake|FRIGATE|2	0	<builtIn>When the afterimage fades, it bursts for </builtIn><good>500</good><builtIn> EMP damage to enemy ships within 600 su.</builtIn>
+integrated|phantom_wake|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|phantom_wake|DESTROYER|1	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
+integrated|phantom_wake|DESTROYER|2	0	<builtIn>When the afterimage fades, it bursts for </builtIn><good>500</good><builtIn> EMP damage to enemy ships within 600 su.</builtIn>
+integrated|phantom_wake|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|phantom_wake|CRUISER|1	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
+integrated|phantom_wake|CRUISER|2	0	<builtIn>When the afterimage fades, it bursts for </builtIn><good>500</good><builtIn> EMP damage to enemy ships within 600 su.</builtIn>
+integrated|phantom_wake|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|phantom_wake|CAPITAL_SHIP|1	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
+integrated|phantom_wake|CAPITAL_SHIP|2	0	<builtIn>When the afterimage fades, it bursts for </builtIn><good>500</good><builtIn> EMP damage to enemy ships within 600 su.</builtIn>
 flavour|phase_ambush_doctrine	0	Tri-Tachyon phase doctrine holds that the first shot out of p-space decides the engagement.
 type|phase_ambush_doctrine|null|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
 type|phase_ambush_doctrine|FRIGATE|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
 type|phase_ambush_doctrine|DESTROYER|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
 type|phase_ambush_doctrine|CRUISER|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
 type|phase_ambush_doctrine|CAPITAL_SHIP|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
+integrable|phase_ambush_doctrine|null|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
+integrable|phase_ambush_doctrine|null|1	0	Click and hold to integrate.
+integrable|phase_ambush_doctrine|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|phase_ambush_doctrine|null|3	0	<muted>When this ship leaves phase, it deals 25% increased weapon damage, tapering off over 3 seconds.</muted>
+integrable|phase_ambush_doctrine|null|4	0	<muted>The weapon damage bonus on leaving phase has 100% increased duration.</muted>
+integrable|phase_ambush_doctrine|FRIGATE|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
+integrable|phase_ambush_doctrine|FRIGATE|1	0	Click and hold to integrate.
+integrable|phase_ambush_doctrine|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|phase_ambush_doctrine|FRIGATE|3	0	<muted>When this ship leaves phase, it deals 25% increased weapon damage, tapering off over 3 seconds.</muted>
+integrable|phase_ambush_doctrine|FRIGATE|4	0	<muted>The weapon damage bonus on leaving phase has 100% increased duration.</muted>
+integrable|phase_ambush_doctrine|DESTROYER|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
+integrable|phase_ambush_doctrine|DESTROYER|1	0	Click and hold to integrate.
+integrable|phase_ambush_doctrine|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|phase_ambush_doctrine|DESTROYER|3	0	<muted>When this ship leaves phase, it deals 25% increased weapon damage, tapering off over 3 seconds.</muted>
+integrable|phase_ambush_doctrine|DESTROYER|4	0	<muted>The weapon damage bonus on leaving phase has 100% increased duration.</muted>
+integrable|phase_ambush_doctrine|CRUISER|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
+integrable|phase_ambush_doctrine|CRUISER|1	0	Click and hold to integrate.
+integrable|phase_ambush_doctrine|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|phase_ambush_doctrine|CRUISER|3	0	<muted>When this ship leaves phase, it deals 25% increased weapon damage, tapering off over 3 seconds.</muted>
+integrable|phase_ambush_doctrine|CRUISER|4	0	<muted>The weapon damage bonus on leaving phase has 100% increased duration.</muted>
+integrable|phase_ambush_doctrine|CAPITAL_SHIP|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
+integrable|phase_ambush_doctrine|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|phase_ambush_doctrine|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|phase_ambush_doctrine|CAPITAL_SHIP|3	0	<muted>When this ship leaves phase, it deals 25% increased weapon damage, tapering off over 3 seconds.</muted>
+integrable|phase_ambush_doctrine|CAPITAL_SHIP|4	0	<muted>The weapon damage bonus on leaving phase has 100% increased duration.</muted>
+integrated|phase_ambush_doctrine|null|0	0	<builtIn>Integrated</builtIn>
+integrated|phase_ambush_doctrine|null|1	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
+integrated|phase_ambush_doctrine|null|2	0	<builtIn>The weapon damage bonus on leaving phase has </builtIn><good>100%</good><builtIn> increased duration.</builtIn>
+integrated|phase_ambush_doctrine|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|phase_ambush_doctrine|FRIGATE|1	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
+integrated|phase_ambush_doctrine|FRIGATE|2	0	<builtIn>The weapon damage bonus on leaving phase has </builtIn><good>100%</good><builtIn> increased duration.</builtIn>
+integrated|phase_ambush_doctrine|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|phase_ambush_doctrine|DESTROYER|1	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
+integrated|phase_ambush_doctrine|DESTROYER|2	0	<builtIn>The weapon damage bonus on leaving phase has </builtIn><good>100%</good><builtIn> increased duration.</builtIn>
+integrated|phase_ambush_doctrine|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|phase_ambush_doctrine|CRUISER|1	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
+integrated|phase_ambush_doctrine|CRUISER|2	0	<builtIn>The weapon damage bonus on leaving phase has </builtIn><good>100%</good><builtIn> increased duration.</builtIn>
+integrated|phase_ambush_doctrine|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|phase_ambush_doctrine|CAPITAL_SHIP|1	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
+integrated|phase_ambush_doctrine|CAPITAL_SHIP|2	0	<builtIn>The weapon damage bonus on leaving phase has </builtIn><good>100%</good><builtIn> increased duration.</builtIn>
 type|phase_anchor|null|0	1	<bad>100%</bad> less phase cloak activation cost.
 type|phase_anchor|null|1	0	<good>100%</good> more flux dissipation, weapon rate of fire and ammo regeneration while phased.
 type|phase_anchor|null|2	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
@@ -11318,6 +11547,51 @@ type|phase_entangled_wings|CRUISER|0	0	When a strikecraft launched from this shi
 type|phase_entangled_wings|CRUISER|1	0	Strikecraft launched from this ship take <good>10%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
 type|phase_entangled_wings|CAPITAL_SHIP|0	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>100%</good> of that damage is shared across its wing.
 type|phase_entangled_wings|CAPITAL_SHIP|1	0	Strikecraft launched from this ship take <good>10%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
+integrable|phase_entangled_wings|null|0	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>100%</good> of that damage is shared across its wing.
+integrable|phase_entangled_wings|null|1	0	Strikecraft launched from this ship take <good>10%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
+integrable|phase_entangled_wings|null|2	0	Click and hold to integrate.
+integrable|phase_entangled_wings|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|phase_entangled_wings|null|4	0	<muted>When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, 100% of that damage is shared across its wing.</muted>
+integrable|phase_entangled_wings|null|5	0	<muted>Strikecraft launched from this ship take 15% less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.</muted>
+integrable|phase_entangled_wings|FRIGATE|0	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>100%</good> of that damage is shared across its wing.
+integrable|phase_entangled_wings|FRIGATE|1	0	Strikecraft launched from this ship take <good>10%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
+integrable|phase_entangled_wings|FRIGATE|2	0	Click and hold to integrate.
+integrable|phase_entangled_wings|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|phase_entangled_wings|FRIGATE|4	0	<muted>When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, 100% of that damage is shared across its wing.</muted>
+integrable|phase_entangled_wings|FRIGATE|5	0	<muted>Strikecraft launched from this ship take 15% less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.</muted>
+integrable|phase_entangled_wings|DESTROYER|0	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>100%</good> of that damage is shared across its wing.
+integrable|phase_entangled_wings|DESTROYER|1	0	Strikecraft launched from this ship take <good>10%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
+integrable|phase_entangled_wings|DESTROYER|2	0	Click and hold to integrate.
+integrable|phase_entangled_wings|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|phase_entangled_wings|DESTROYER|4	0	<muted>When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, 100% of that damage is shared across its wing.</muted>
+integrable|phase_entangled_wings|DESTROYER|5	0	<muted>Strikecraft launched from this ship take 15% less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.</muted>
+integrable|phase_entangled_wings|CRUISER|0	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>100%</good> of that damage is shared across its wing.
+integrable|phase_entangled_wings|CRUISER|1	0	Strikecraft launched from this ship take <good>10%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
+integrable|phase_entangled_wings|CRUISER|2	0	Click and hold to integrate.
+integrable|phase_entangled_wings|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|phase_entangled_wings|CRUISER|4	0	<muted>When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, 100% of that damage is shared across its wing.</muted>
+integrable|phase_entangled_wings|CRUISER|5	0	<muted>Strikecraft launched from this ship take 15% less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.</muted>
+integrable|phase_entangled_wings|CAPITAL_SHIP|0	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>100%</good> of that damage is shared across its wing.
+integrable|phase_entangled_wings|CAPITAL_SHIP|1	0	Strikecraft launched from this ship take <good>10%</good> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.
+integrable|phase_entangled_wings|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|phase_entangled_wings|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|phase_entangled_wings|CAPITAL_SHIP|4	0	<muted>When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, 100% of that damage is shared across its wing.</muted>
+integrable|phase_entangled_wings|CAPITAL_SHIP|5	0	<muted>Strikecraft launched from this ship take 15% less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.</muted>
+integrated|phase_entangled_wings|null|0	0	<builtIn>Integrated</builtIn>
+integrated|phase_entangled_wings|null|1	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>100%</good> of that damage is shared across its wing.
+integrated|phase_entangled_wings|null|2	0	<builtIn>Strikecraft launched from this ship take </builtIn><good>15%</good><builtIn> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.</builtIn>
+integrated|phase_entangled_wings|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|phase_entangled_wings|FRIGATE|1	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>100%</good> of that damage is shared across its wing.
+integrated|phase_entangled_wings|FRIGATE|2	0	<builtIn>Strikecraft launched from this ship take </builtIn><good>15%</good><builtIn> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.</builtIn>
+integrated|phase_entangled_wings|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|phase_entangled_wings|DESTROYER|1	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>100%</good> of that damage is shared across its wing.
+integrated|phase_entangled_wings|DESTROYER|2	0	<builtIn>Strikecraft launched from this ship take </builtIn><good>15%</good><builtIn> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.</builtIn>
+integrated|phase_entangled_wings|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|phase_entangled_wings|CRUISER|1	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>100%</good> of that damage is shared across its wing.
+integrated|phase_entangled_wings|CRUISER|2	0	<builtIn>Strikecraft launched from this ship take </builtIn><good>15%</good><builtIn> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.</builtIn>
+integrated|phase_entangled_wings|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|phase_entangled_wings|CAPITAL_SHIP|1	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>100%</good> of that damage is shared across its wing.
+integrated|phase_entangled_wings|CAPITAL_SHIP|2	0	<builtIn>Strikecraft launched from this ship take </builtIn><good>15%</good><builtIn> less damage for every living strikecraft of their wing out in space, up to a maximum of 80% less.</builtIn>
 flavour|phase_fed_magazines	0	An Exo-Tech armorer shows the crew how to route the ammunition feeders through the phase coils, so the magazines keep filling while the ship is out of normal space.
 flavourAutomated|phase_fed_magazines	0	An Exo-Tech armorer shows the refit crew how to route the ammunition feeders through the phase coils, so the magazines keep filling while the ship is out of normal space.
 type|phase_fed_magazines|null|0	0	<good>100%</good> increased ammo regeneration while phased.
@@ -11538,6 +11812,61 @@ type|refracting_projectiles|CRUISER|0	0	Non-beam energy weapons have a <good>20%
 type|refracting_projectiles|CRUISER|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 type|refracting_projectiles|CAPITAL_SHIP|0	0	Non-beam energy weapons have a <good>20%</good> chance to refract when hitting enemy shields.
 type|refracting_projectiles|CAPITAL_SHIP|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
+integrable|refracting_projectiles|null|0	0	Non-beam energy weapons have a <good>20%</good> chance to refract when hitting enemy shields.
+integrable|refracting_projectiles|null|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
+integrable|refracting_projectiles|null|2	0	Click and hold to integrate.
+integrable|refracting_projectiles|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|refracting_projectiles|null|4	0	<muted>Non-beam energy weapons have a 20% chance to refract when hitting enemy shields.</muted>
+integrable|refracting_projectiles|null|5	0	<muted>Non-beam energy weapons have a 10% chance to refract when hitting enemy armor or hull.</muted>
+integrable|refracting_projectiles|null|6	0	<muted>Each refraction deals 20% less damage than the shot before it.</muted>
+integrable|refracting_projectiles|FRIGATE|0	0	Non-beam energy weapons have a <good>20%</good> chance to refract when hitting enemy shields.
+integrable|refracting_projectiles|FRIGATE|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
+integrable|refracting_projectiles|FRIGATE|2	0	Click and hold to integrate.
+integrable|refracting_projectiles|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|refracting_projectiles|FRIGATE|4	0	<muted>Non-beam energy weapons have a 20% chance to refract when hitting enemy shields.</muted>
+integrable|refracting_projectiles|FRIGATE|5	0	<muted>Non-beam energy weapons have a 10% chance to refract when hitting enemy armor or hull.</muted>
+integrable|refracting_projectiles|FRIGATE|6	0	<muted>Each refraction deals 20% less damage than the shot before it.</muted>
+integrable|refracting_projectiles|DESTROYER|0	0	Non-beam energy weapons have a <good>20%</good> chance to refract when hitting enemy shields.
+integrable|refracting_projectiles|DESTROYER|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
+integrable|refracting_projectiles|DESTROYER|2	0	Click and hold to integrate.
+integrable|refracting_projectiles|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|refracting_projectiles|DESTROYER|4	0	<muted>Non-beam energy weapons have a 20% chance to refract when hitting enemy shields.</muted>
+integrable|refracting_projectiles|DESTROYER|5	0	<muted>Non-beam energy weapons have a 10% chance to refract when hitting enemy armor or hull.</muted>
+integrable|refracting_projectiles|DESTROYER|6	0	<muted>Each refraction deals 20% less damage than the shot before it.</muted>
+integrable|refracting_projectiles|CRUISER|0	0	Non-beam energy weapons have a <good>20%</good> chance to refract when hitting enemy shields.
+integrable|refracting_projectiles|CRUISER|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
+integrable|refracting_projectiles|CRUISER|2	0	Click and hold to integrate.
+integrable|refracting_projectiles|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|refracting_projectiles|CRUISER|4	0	<muted>Non-beam energy weapons have a 20% chance to refract when hitting enemy shields.</muted>
+integrable|refracting_projectiles|CRUISER|5	0	<muted>Non-beam energy weapons have a 10% chance to refract when hitting enemy armor or hull.</muted>
+integrable|refracting_projectiles|CRUISER|6	0	<muted>Each refraction deals 20% less damage than the shot before it.</muted>
+integrable|refracting_projectiles|CAPITAL_SHIP|0	0	Non-beam energy weapons have a <good>20%</good> chance to refract when hitting enemy shields.
+integrable|refracting_projectiles|CAPITAL_SHIP|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
+integrable|refracting_projectiles|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|refracting_projectiles|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|refracting_projectiles|CAPITAL_SHIP|4	0	<muted>Non-beam energy weapons have a 20% chance to refract when hitting enemy shields.</muted>
+integrable|refracting_projectiles|CAPITAL_SHIP|5	0	<muted>Non-beam energy weapons have a 10% chance to refract when hitting enemy armor or hull.</muted>
+integrable|refracting_projectiles|CAPITAL_SHIP|6	0	<muted>Each refraction deals 20% less damage than the shot before it.</muted>
+integrated|refracting_projectiles|null|0	0	<builtIn>Integrated</builtIn>
+integrated|refracting_projectiles|null|1	0	Non-beam energy weapons have a <good>20%</good> chance to refract when hitting enemy shields.
+integrated|refracting_projectiles|null|2	0	<builtIn>Non-beam energy weapons have a </builtIn><good>10%</good><builtIn> chance to refract when hitting enemy armor or hull.</builtIn>
+integrated|refracting_projectiles|null|3	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
+integrated|refracting_projectiles|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|refracting_projectiles|FRIGATE|1	0	Non-beam energy weapons have a <good>20%</good> chance to refract when hitting enemy shields.
+integrated|refracting_projectiles|FRIGATE|2	0	<builtIn>Non-beam energy weapons have a </builtIn><good>10%</good><builtIn> chance to refract when hitting enemy armor or hull.</builtIn>
+integrated|refracting_projectiles|FRIGATE|3	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
+integrated|refracting_projectiles|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|refracting_projectiles|DESTROYER|1	0	Non-beam energy weapons have a <good>20%</good> chance to refract when hitting enemy shields.
+integrated|refracting_projectiles|DESTROYER|2	0	<builtIn>Non-beam energy weapons have a </builtIn><good>10%</good><builtIn> chance to refract when hitting enemy armor or hull.</builtIn>
+integrated|refracting_projectiles|DESTROYER|3	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
+integrated|refracting_projectiles|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|refracting_projectiles|CRUISER|1	0	Non-beam energy weapons have a <good>20%</good> chance to refract when hitting enemy shields.
+integrated|refracting_projectiles|CRUISER|2	0	<builtIn>Non-beam energy weapons have a </builtIn><good>10%</good><builtIn> chance to refract when hitting enemy armor or hull.</builtIn>
+integrated|refracting_projectiles|CRUISER|3	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
+integrated|refracting_projectiles|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|refracting_projectiles|CAPITAL_SHIP|1	0	Non-beam energy weapons have a <good>20%</good> chance to refract when hitting enemy shields.
+integrated|refracting_projectiles|CAPITAL_SHIP|2	0	<builtIn>Non-beam energy weapons have a </builtIn><good>10%</good><builtIn> chance to refract when hitting enemy armor or hull.</builtIn>
+integrated|refracting_projectiles|CAPITAL_SHIP|3	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 type|reinforced_bulkheads|null|0	0	<good>40%</good> increased hull points.
 type|reinforced_bulkheads|null|1	0	If disabled, this ship is almost always recoverable after the battle.
 type|reinforced_bulkheads|null|2	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
@@ -13647,6 +13976,36 @@ type|tripad_backdoor|FRIGATE|0	0	<good>100%</good> more combat objective capture
 type|tripad_backdoor|DESTROYER|0	0	<good>100%</good> more combat objective capture rate.
 type|tripad_backdoor|CRUISER|0	0	<good>100%</good> more combat objective capture rate.
 type|tripad_backdoor|CAPITAL_SHIP|0	0	<good>100%</good> more combat objective capture rate.
+integrable|tripad_backdoor|null|0	0	<good>100%</good> more combat objective capture rate.
+integrable|tripad_backdoor|null|1	0	Click and hold to integrate.
+integrable|tripad_backdoor|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tripad_backdoor|null|3	0	<muted>200% more combat objective capture rate.</muted>
+integrable|tripad_backdoor|FRIGATE|0	0	<good>100%</good> more combat objective capture rate.
+integrable|tripad_backdoor|FRIGATE|1	0	Click and hold to integrate.
+integrable|tripad_backdoor|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tripad_backdoor|FRIGATE|3	0	<muted>200% more combat objective capture rate.</muted>
+integrable|tripad_backdoor|DESTROYER|0	0	<good>100%</good> more combat objective capture rate.
+integrable|tripad_backdoor|DESTROYER|1	0	Click and hold to integrate.
+integrable|tripad_backdoor|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tripad_backdoor|DESTROYER|3	0	<muted>200% more combat objective capture rate.</muted>
+integrable|tripad_backdoor|CRUISER|0	0	<good>100%</good> more combat objective capture rate.
+integrable|tripad_backdoor|CRUISER|1	0	Click and hold to integrate.
+integrable|tripad_backdoor|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tripad_backdoor|CRUISER|3	0	<muted>200% more combat objective capture rate.</muted>
+integrable|tripad_backdoor|CAPITAL_SHIP|0	0	<good>100%</good> more combat objective capture rate.
+integrable|tripad_backdoor|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|tripad_backdoor|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tripad_backdoor|CAPITAL_SHIP|3	0	<muted>200% more combat objective capture rate.</muted>
+integrated|tripad_backdoor|null|0	0	<builtIn>Integrated</builtIn>
+integrated|tripad_backdoor|null|1	0	<good>200%</good><builtIn> more combat objective capture rate.</builtIn>
+integrated|tripad_backdoor|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|tripad_backdoor|FRIGATE|1	0	<good>200%</good><builtIn> more combat objective capture rate.</builtIn>
+integrated|tripad_backdoor|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|tripad_backdoor|DESTROYER|1	0	<good>200%</good><builtIn> more combat objective capture rate.</builtIn>
+integrated|tripad_backdoor|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|tripad_backdoor|CRUISER|1	0	<good>200%</good><builtIn> more combat objective capture rate.</builtIn>
+integrated|tripad_backdoor|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|tripad_backdoor|CAPITAL_SHIP|1	0	<good>200%</good><builtIn> more combat objective capture rate.</builtIn>
 type|unstable_injector|null|0	0	<bad>15%</bad> less ballistic weapon range.
 type|unstable_injector|null|1	0	<bad>15%</bad> less energy weapon range.
 type|unstable_injector|null|2	1	<good>25%</good> increased strikecraft refit time.
