@@ -6915,6 +6915,68 @@ type|dynamic_grid|CAPITAL_SHIP|1	0	<good>25%</good> increased shield raise rate.
 type|dynamic_grid|CAPITAL_SHIP|2	1	<good>10%</good> more damage taken by shields.
 type|dynamic_grid|CAPITAL_SHIP|3	0	<good>6%</good> increased venting speed.
 type-detail|dynamic_grid|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Dynamic Grid</hullmod>
+integrable|dynamic_grid|null|0	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
+integrable|dynamic_grid|null|1	0	<good>25%</good> increased shield raise rate.
+integrable|dynamic_grid|null|2	1	<good>10%</good> more damage taken by shields.
+integrable|dynamic_grid|null|3	0	Click and hold to integrate.
+integrable|dynamic_grid|null|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|dynamic_grid|null|5	0	<muted>Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, 15% increased energy weapon rate of fire and 15% reduced energy weapon flux cost.</muted>
+integrable|dynamic_grid|null|6	0	<muted>25% increased shield raise rate.</muted>
+integrable|dynamic_grid|FRIGATE|0	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
+integrable|dynamic_grid|FRIGATE|1	0	<good>25%</good> increased shield raise rate.
+integrable|dynamic_grid|FRIGATE|2	1	<good>10%</good> more damage taken by shields.
+integrable|dynamic_grid|FRIGATE|3	0	<good>12%</good> increased venting speed.
+integrable|dynamic_grid|FRIGATE|4	0	Click and hold to integrate.
+integrable|dynamic_grid|FRIGATE|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|dynamic_grid|FRIGATE|6	0	<muted>Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, 15% increased energy weapon rate of fire and 15% reduced energy weapon flux cost.</muted>
+integrable|dynamic_grid|FRIGATE|7	0	<muted>25% increased shield raise rate.</muted>
+integrable|dynamic_grid|FRIGATE|8	0	<muted>12% increased venting speed.</muted>
+integrable|dynamic_grid|DESTROYER|0	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
+integrable|dynamic_grid|DESTROYER|1	0	<good>25%</good> increased shield raise rate.
+integrable|dynamic_grid|DESTROYER|2	1	<good>10%</good> more damage taken by shields.
+integrable|dynamic_grid|DESTROYER|3	0	<good>10%</good> increased venting speed.
+integrable|dynamic_grid|DESTROYER|4	0	Click and hold to integrate.
+integrable|dynamic_grid|DESTROYER|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|dynamic_grid|DESTROYER|6	0	<muted>Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, 15% increased energy weapon rate of fire and 15% reduced energy weapon flux cost.</muted>
+integrable|dynamic_grid|DESTROYER|7	0	<muted>25% increased shield raise rate.</muted>
+integrable|dynamic_grid|DESTROYER|8	0	<muted>10% increased venting speed.</muted>
+integrable|dynamic_grid|CRUISER|0	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
+integrable|dynamic_grid|CRUISER|1	0	<good>25%</good> increased shield raise rate.
+integrable|dynamic_grid|CRUISER|2	1	<good>10%</good> more damage taken by shields.
+integrable|dynamic_grid|CRUISER|3	0	<good>8%</good> increased venting speed.
+integrable|dynamic_grid|CRUISER|4	0	Click and hold to integrate.
+integrable|dynamic_grid|CRUISER|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|dynamic_grid|CRUISER|6	0	<muted>Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, 15% increased energy weapon rate of fire and 15% reduced energy weapon flux cost.</muted>
+integrable|dynamic_grid|CRUISER|7	0	<muted>25% increased shield raise rate.</muted>
+integrable|dynamic_grid|CRUISER|8	0	<muted>8% increased venting speed.</muted>
+integrable|dynamic_grid|CAPITAL_SHIP|0	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
+integrable|dynamic_grid|CAPITAL_SHIP|1	0	<good>25%</good> increased shield raise rate.
+integrable|dynamic_grid|CAPITAL_SHIP|2	1	<good>10%</good> more damage taken by shields.
+integrable|dynamic_grid|CAPITAL_SHIP|3	0	<good>6%</good> increased venting speed.
+integrable|dynamic_grid|CAPITAL_SHIP|4	0	Click and hold to integrate.
+integrable|dynamic_grid|CAPITAL_SHIP|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|dynamic_grid|CAPITAL_SHIP|6	0	<muted>Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, 15% increased energy weapon rate of fire and 15% reduced energy weapon flux cost.</muted>
+integrable|dynamic_grid|CAPITAL_SHIP|7	0	<muted>25% increased shield raise rate.</muted>
+integrable|dynamic_grid|CAPITAL_SHIP|8	0	<muted>6% increased venting speed.</muted>
+integrated|dynamic_grid|null|0	0	<builtIn>Integrated</builtIn>
+integrated|dynamic_grid|null|1	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
+integrated|dynamic_grid|null|2	0	<good>25%</good> increased shield raise rate.
+integrated|dynamic_grid|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|dynamic_grid|FRIGATE|1	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
+integrated|dynamic_grid|FRIGATE|2	0	<good>25%</good> increased shield raise rate.
+integrated|dynamic_grid|FRIGATE|3	0	<good>12%</good> increased venting speed.
+integrated|dynamic_grid|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|dynamic_grid|DESTROYER|1	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
+integrated|dynamic_grid|DESTROYER|2	0	<good>25%</good> increased shield raise rate.
+integrated|dynamic_grid|DESTROYER|3	0	<good>10%</good> increased venting speed.
+integrated|dynamic_grid|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|dynamic_grid|CRUISER|1	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
+integrated|dynamic_grid|CRUISER|2	0	<good>25%</good> increased shield raise rate.
+integrated|dynamic_grid|CRUISER|3	0	<good>8%</good> increased venting speed.
+integrated|dynamic_grid|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|dynamic_grid|CAPITAL_SHIP|1	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
+integrated|dynamic_grid|CAPITAL_SHIP|2	0	<good>25%</good> increased shield raise rate.
+integrated|dynamic_grid|CAPITAL_SHIP|3	0	<good>6%</good> increased venting speed.
 type|eccm_package|null|0	0	<good>50%</good> increased chance for missiles to resist enemy ECM and flares.
 type|eccm_package|null|1	0	Significantly improved missile guidance algorithm.
 type|eccm_package|null|2	0	<good>25%</good> increased missile weapon projectile speed.
@@ -8725,6 +8787,51 @@ type|hardlight_marking|CRUISER|0	0	Each hit by a strikecraft launched from this 
 type|hardlight_marking|CRUISER|1	0	Strikecraft marks grant up to a maximum of <good>30%</good> increased damage taken.
 type|hardlight_marking|CAPITAL_SHIP|0	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>2%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
 type|hardlight_marking|CAPITAL_SHIP|1	0	Strikecraft marks grant up to a maximum of <good>30%</good> increased damage taken.
+integrable|hardlight_marking|null|0	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>2%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
+integrable|hardlight_marking|null|1	0	Strikecraft marks grant up to a maximum of <good>30%</good> increased damage taken.
+integrable|hardlight_marking|null|2	0	Click and hold to integrate.
+integrable|hardlight_marking|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hardlight_marking|null|4	0	<muted>Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes 2% increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.</muted>
+integrable|hardlight_marking|null|5	0	<muted>Strikecraft marks grant up to a maximum of 35% increased damage taken.</muted>
+integrable|hardlight_marking|FRIGATE|0	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>2%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
+integrable|hardlight_marking|FRIGATE|1	0	Strikecraft marks grant up to a maximum of <good>30%</good> increased damage taken.
+integrable|hardlight_marking|FRIGATE|2	0	Click and hold to integrate.
+integrable|hardlight_marking|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hardlight_marking|FRIGATE|4	0	<muted>Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes 2% increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.</muted>
+integrable|hardlight_marking|FRIGATE|5	0	<muted>Strikecraft marks grant up to a maximum of 35% increased damage taken.</muted>
+integrable|hardlight_marking|DESTROYER|0	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>2%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
+integrable|hardlight_marking|DESTROYER|1	0	Strikecraft marks grant up to a maximum of <good>30%</good> increased damage taken.
+integrable|hardlight_marking|DESTROYER|2	0	Click and hold to integrate.
+integrable|hardlight_marking|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hardlight_marking|DESTROYER|4	0	<muted>Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes 2% increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.</muted>
+integrable|hardlight_marking|DESTROYER|5	0	<muted>Strikecraft marks grant up to a maximum of 35% increased damage taken.</muted>
+integrable|hardlight_marking|CRUISER|0	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>2%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
+integrable|hardlight_marking|CRUISER|1	0	Strikecraft marks grant up to a maximum of <good>30%</good> increased damage taken.
+integrable|hardlight_marking|CRUISER|2	0	Click and hold to integrate.
+integrable|hardlight_marking|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hardlight_marking|CRUISER|4	0	<muted>Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes 2% increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.</muted>
+integrable|hardlight_marking|CRUISER|5	0	<muted>Strikecraft marks grant up to a maximum of 35% increased damage taken.</muted>
+integrable|hardlight_marking|CAPITAL_SHIP|0	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>2%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
+integrable|hardlight_marking|CAPITAL_SHIP|1	0	Strikecraft marks grant up to a maximum of <good>30%</good> increased damage taken.
+integrable|hardlight_marking|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|hardlight_marking|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hardlight_marking|CAPITAL_SHIP|4	0	<muted>Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes 2% increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.</muted>
+integrable|hardlight_marking|CAPITAL_SHIP|5	0	<muted>Strikecraft marks grant up to a maximum of 35% increased damage taken.</muted>
+integrated|hardlight_marking|null|0	0	<builtIn>Integrated</builtIn>
+integrated|hardlight_marking|null|1	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>2%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
+integrated|hardlight_marking|null|2	0	<builtIn>Strikecraft marks grant up to a maximum of </builtIn><good>35%</good><builtIn> increased damage taken.</builtIn>
+integrated|hardlight_marking|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|hardlight_marking|FRIGATE|1	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>2%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
+integrated|hardlight_marking|FRIGATE|2	0	<builtIn>Strikecraft marks grant up to a maximum of </builtIn><good>35%</good><builtIn> increased damage taken.</builtIn>
+integrated|hardlight_marking|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|hardlight_marking|DESTROYER|1	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>2%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
+integrated|hardlight_marking|DESTROYER|2	0	<builtIn>Strikecraft marks grant up to a maximum of </builtIn><good>35%</good><builtIn> increased damage taken.</builtIn>
+integrated|hardlight_marking|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|hardlight_marking|CRUISER|1	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>2%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
+integrated|hardlight_marking|CRUISER|2	0	<builtIn>Strikecraft marks grant up to a maximum of </builtIn><good>35%</good><builtIn> increased damage taken.</builtIn>
+integrated|hardlight_marking|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|hardlight_marking|CAPITAL_SHIP|1	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>2%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
+integrated|hardlight_marking|CAPITAL_SHIP|2	0	<builtIn>Strikecraft marks grant up to a maximum of </builtIn><good>35%</good><builtIn> increased damage taken.</builtIn>
 flavour|haul_the_prize	0	Pirates tow their prizes home on cables welded straight to the drive spine. It is slow, but nothing gets left behind.
 type|haul_the_prize|null|0	0	<bad>-1</bad> to max burn level.
 type|haul_the_prize|null|1	0	The slowest ship in your fleet of this ship's hull size or smaller has <good>+1</good> to max burn level, up to this ship's max burn level.
@@ -9651,6 +9758,36 @@ type|ion_bolter_rounds|FRIGATE|0	0	Energy shots that hit an enemy shield can arc
 type|ion_bolter_rounds|DESTROYER|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
 type|ion_bolter_rounds|CRUISER|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
 type|ion_bolter_rounds|CAPITAL_SHIP|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
+integrable|ion_bolter_rounds|null|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
+integrable|ion_bolter_rounds|null|1	0	Click and hold to integrate.
+integrable|ion_bolter_rounds|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ion_bolter_rounds|null|3	0	<muted>Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is 20% when the target is at full hard flux and falls with its hard flux.</muted>
+integrable|ion_bolter_rounds|FRIGATE|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
+integrable|ion_bolter_rounds|FRIGATE|1	0	Click and hold to integrate.
+integrable|ion_bolter_rounds|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ion_bolter_rounds|FRIGATE|3	0	<muted>Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is 20% when the target is at full hard flux and falls with its hard flux.</muted>
+integrable|ion_bolter_rounds|DESTROYER|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
+integrable|ion_bolter_rounds|DESTROYER|1	0	Click and hold to integrate.
+integrable|ion_bolter_rounds|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ion_bolter_rounds|DESTROYER|3	0	<muted>Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is 20% when the target is at full hard flux and falls with its hard flux.</muted>
+integrable|ion_bolter_rounds|CRUISER|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
+integrable|ion_bolter_rounds|CRUISER|1	0	Click and hold to integrate.
+integrable|ion_bolter_rounds|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ion_bolter_rounds|CRUISER|3	0	<muted>Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is 20% when the target is at full hard flux and falls with its hard flux.</muted>
+integrable|ion_bolter_rounds|CAPITAL_SHIP|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
+integrable|ion_bolter_rounds|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|ion_bolter_rounds|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ion_bolter_rounds|CAPITAL_SHIP|3	0	<muted>Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is 20% when the target is at full hard flux and falls with its hard flux.</muted>
+integrated|ion_bolter_rounds|null|0	0	<builtIn>Integrated</builtIn>
+integrated|ion_bolter_rounds|null|1	0	<builtIn>Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is </builtIn><good>20%</good><builtIn> when the target is at full hard flux and falls with its hard flux.</builtIn>
+integrated|ion_bolter_rounds|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|ion_bolter_rounds|FRIGATE|1	0	<builtIn>Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is </builtIn><good>20%</good><builtIn> when the target is at full hard flux and falls with its hard flux.</builtIn>
+integrated|ion_bolter_rounds|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|ion_bolter_rounds|DESTROYER|1	0	<builtIn>Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is </builtIn><good>20%</good><builtIn> when the target is at full hard flux and falls with its hard flux.</builtIn>
+integrated|ion_bolter_rounds|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|ion_bolter_rounds|CRUISER|1	0	<builtIn>Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is </builtIn><good>20%</good><builtIn> when the target is at full hard flux and falls with its hard flux.</builtIn>
+integrated|ion_bolter_rounds|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|ion_bolter_rounds|CAPITAL_SHIP|1	0	<builtIn>Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is </builtIn><good>20%</good><builtIn> when the target is at full hard flux and falls with its hard flux.</builtIn>
 flavour|ion_cascade	0	Once a target's systems are dead, Tri-Tachyon ion firmware moves on to the hull.
 type|ion_cascade|null|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
 type|ion_cascade|FRIGATE|0	0	<good>100%</good> of EMP damage this ship deals to disabled weapons and engines is dealt as high explosive damage instead.
@@ -12030,6 +12167,36 @@ type|repair_coordinator|FRIGATE|0	0	Repairs the armor of the closest damaged all
 type|repair_coordinator|DESTROYER|0	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 type|repair_coordinator|CRUISER|0	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 type|repair_coordinator|CAPITAL_SHIP|0	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
+integrable|repair_coordinator|null|0	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
+integrable|repair_coordinator|null|1	0	Click and hold to integrate.
+integrable|repair_coordinator|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|repair_coordinator|null|3	0	<muted>Repairs the armor of the closest damaged allied ship within 1000 su by 1.5% of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.</muted>
+integrable|repair_coordinator|FRIGATE|0	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
+integrable|repair_coordinator|FRIGATE|1	0	Click and hold to integrate.
+integrable|repair_coordinator|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|repair_coordinator|FRIGATE|3	0	<muted>Repairs the armor of the closest damaged allied ship within 1000 su by 1.5% of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.</muted>
+integrable|repair_coordinator|DESTROYER|0	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
+integrable|repair_coordinator|DESTROYER|1	0	Click and hold to integrate.
+integrable|repair_coordinator|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|repair_coordinator|DESTROYER|3	0	<muted>Repairs the armor of the closest damaged allied ship within 1000 su by 1.5% of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.</muted>
+integrable|repair_coordinator|CRUISER|0	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
+integrable|repair_coordinator|CRUISER|1	0	Click and hold to integrate.
+integrable|repair_coordinator|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|repair_coordinator|CRUISER|3	0	<muted>Repairs the armor of the closest damaged allied ship within 1000 su by 1.5% of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.</muted>
+integrable|repair_coordinator|CAPITAL_SHIP|0	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
+integrable|repair_coordinator|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|repair_coordinator|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|repair_coordinator|CAPITAL_SHIP|3	0	<muted>Repairs the armor of the closest damaged allied ship within 1000 su by 1.5% of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.</muted>
+integrated|repair_coordinator|null|0	0	<builtIn>Integrated</builtIn>
+integrated|repair_coordinator|null|1	0	<builtIn>Repairs the armor of the closest damaged allied ship within 1000 su by </builtIn><good>1.5%</good><builtIn> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.</builtIn>
+integrated|repair_coordinator|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|repair_coordinator|FRIGATE|1	0	<builtIn>Repairs the armor of the closest damaged allied ship within 1000 su by </builtIn><good>1.5%</good><builtIn> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.</builtIn>
+integrated|repair_coordinator|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|repair_coordinator|DESTROYER|1	0	<builtIn>Repairs the armor of the closest damaged allied ship within 1000 su by </builtIn><good>1.5%</good><builtIn> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.</builtIn>
+integrated|repair_coordinator|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|repair_coordinator|CRUISER|1	0	<builtIn>Repairs the armor of the closest damaged allied ship within 1000 su by </builtIn><good>1.5%</good><builtIn> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.</builtIn>
+integrated|repair_coordinator|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|repair_coordinator|CAPITAL_SHIP|1	0	<builtIn>Repairs the armor of the closest damaged allied ship within 1000 su by </builtIn><good>1.5%</good><builtIn> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.</builtIn>
 type|repair_time|null|0	0	<good>15%</good> less weapon and engine repair time.
 type|repair_time|FRIGATE|0	0	<good>15%</good> less weapon and engine repair time.
 type|repair_time|DESTROYER|0	0	<good>15%</good> less weapon and engine repair time.
