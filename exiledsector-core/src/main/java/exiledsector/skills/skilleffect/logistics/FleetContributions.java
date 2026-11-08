@@ -18,4 +18,15 @@ final class FleetContributions {
         }
         return total;
     }
+
+    static float strongest(List<FleetMemberAPI> members, String contributionKey) {
+        float strongest = 0f;
+        for (FleetMemberAPI member : members) {
+            float value = member.isMothballed() ? 0f : member.getStats().getDynamic().getValue(contributionKey, 0f);
+            if (Math.abs(value) > Math.abs(strongest)) {
+                strongest = value;
+            }
+        }
+        return strongest;
+    }
 }

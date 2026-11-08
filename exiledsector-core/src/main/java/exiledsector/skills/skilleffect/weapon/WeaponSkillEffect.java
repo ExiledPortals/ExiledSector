@@ -23,7 +23,6 @@ import exiledsector.skills.skilleffect.StatMode;
 import exiledsector.skills.skilleffect.StatTarget;
 import exiledsector.skills.skilleffect.aura.AuraSkillEffect;
 
-import java.util.List;
 import java.util.Set;
 
 import static exiledsector.skills.skilleffect.Backings.flag;
@@ -43,7 +42,7 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     WEAPON_FLUX_COST_PERCENT_PER_DMOD(new PerDModPercentEffect(WeaponStatFamily.FLUX_COST.target(WeaponScope.ALL),
             "stat.weaponFluxCostPerDMod", true)),
     BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT(new DerivedStatEffect(WeaponSkillEffect::applyBurnDamage, StatMode.MULT, true)),
-    ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT(new DerivedStatEffect(WeaponSkillEffect::applySensorRange, null, true)),
+    ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT(new DerivedStatEffect(WeaponSkillEffect::applyEnergySensorRange, null, true)),
     BALLISTIC_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT(new DerivedStatEffect(WeaponSkillEffect::applyBallisticSensorRange, null, true)),
     BALLISTIC_AND_ENERGY_WEAPON_AMMO_SAVE_CHANCE_PERCENT(listener(AmmoSaveListener.CHANCE_PERCENT_KEY, AmmoSaveListener.class,
             AmmoSaveListener::new)),
@@ -62,56 +61,10 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
             MissileReloader.advance(ship, modId, magnitude, amount);
         }
     },
-    BALLISTIC_WEAPON_LARGE_OP_COST_FLAT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(LARGE_BALLISTIC_OP_COST_KEY).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return StatMode.FLAT.describeStat(magnitude, "stat.largeBallisticOpCost");
-        }
-    },
-    BALLISTIC_WEAPON_MEDIUM_OP_COST_FLAT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(Stats.MEDIUM_BALLISTIC_MOD).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return StatMode.FLAT.describeStat(magnitude, "stat.mediumBallisticOpCost");
-        }
-    },
-    SMALL_WEAPON_OP_COST_FLAT {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            for (String smallWeaponCostKey : SMALL_WEAPON_OP_COST_KEYS) {
-                stats.getDynamic().getMod(smallWeaponCostKey).modifyFlat(modId, magnitude);
-            }
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return StatMode.FLAT.describeStat(magnitude, "stat.ordnancePointCostOfSmallWeapons");
-        }
-    },
+    BALLISTIC_WEAPON_LARGE_OP_COST_FLAT(statEffect(FLAT, dynamicMod(Stats.LARGE_BALLISTIC_MOD), "stat.largeBallisticOpCost", true)),
+    BALLISTIC_WEAPON_MEDIUM_OP_COST_FLAT(statEffect(FLAT, dynamicMod(Stats.MEDIUM_BALLISTIC_MOD), "stat.mediumBallisticOpCost", true)),
+    SMALL_WEAPON_OP_COST_FLAT(statEffect(FLAT, StatTarget.all(dynamicMod(Stats.SMALL_BALLISTIC_MOD), dynamicMod(Stats.SMALL_ENERGY_MOD),
+            dynamicMod(Stats.SMALL_MISSILE_MOD)), "stat.ordnancePointCostOfSmallWeapons", true)),
     NON_MISSILE_WEAPON_RANGE_CAP_FLAT(new DerivedStatEffect(WeaponSkillEffect::capRange, null, true)),
     DAMAGE_TO_FIGHTERS_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToFighters), "stat.damageToFighters", false)),
     DAMAGE_TO_MISSILES_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToMissiles), "stat.damageToMissiles", false)),
@@ -257,8 +210,6 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     RIFT_EXPLOSION_DAMAGE_PERCENT(listener(RiftExplosionDamageListener.DAMAGE_PERCENT_KEY, RiftExplosionDamageListener.class,
             RiftExplosionDamageListener::forShip));
 
-    private static final String LARGE_BALLISTIC_OP_COST_KEY = "large_ballistic_mod";
-    private static final List<String> SMALL_WEAPON_OP_COST_KEYS = List.of(Stats.SMALL_BALLISTIC_MOD, Stats.SMALL_ENERGY_MOD, Stats.SMALL_MISSILE_MOD);
 
     private final EffectBacking backing;
 
@@ -285,18 +236,21 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
         WeaponStatFamily.DAMAGE.target(WeaponScope.BALLISTIC).apply(stats, modId, StatMode.MULT, burnOverDefault * magnitude);
     }
 
-    private static void applyBallisticSensorRange(MutableShipStatsAPI stats, String modId, float magnitude) {
-        WeaponStatFamily.RANGE.target(WeaponScope.BALLISTIC).apply(stats, modId, StatMode.FLAT, stats.getSensorStrength().getModifiedValue() * magnitude);
-    }
-
-    private static void applySensorRange(MutableShipStatsAPI stats, String modId, float magnitude) {
-        float rangeBonus = stats.getSensorStrength().getModifiedValue() * magnitude;
-        WeaponStatFamily.RANGE.target(WeaponScope.ENERGY).apply(stats, modId, StatMode.FLAT, rangeBonus);
+    private static void applyEnergySensorRange(MutableShipStatsAPI stats, String modId, float magnitude) {
+        applySensorRange(stats, modId, magnitude, WeaponScope.ENERGY);
         if (BallisticAsEnergy.active(stats)) {
-            WeaponStatFamily.RANGE.target(WeaponScope.BALLISTIC).apply(stats, modId, StatMode.FLAT, rangeBonus);
+            applySensorRange(stats, modId, magnitude, WeaponScope.BALLISTIC);
         } else {
             WeaponStatFamily.RANGE.target(WeaponScope.BALLISTIC).remove(stats, modId);
         }
+    }
+
+    private static void applyBallisticSensorRange(MutableShipStatsAPI stats, String modId, float magnitude) {
+        applySensorRange(stats, modId, magnitude, WeaponScope.BALLISTIC);
+    }
+
+    private static void applySensorRange(MutableShipStatsAPI stats, String modId, float magnitude, WeaponScope scope) {
+        WeaponStatFamily.RANGE.target(scope).apply(stats, modId, StatMode.FLAT, stats.getSensorStrength().getModifiedValue() * magnitude);
     }
 
     @Override

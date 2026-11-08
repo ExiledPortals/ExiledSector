@@ -322,7 +322,7 @@ strongest source applies (`AuxiliaryScreenField`).
 ### Defensive Compact
 
 `DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT` reduces hull, armor and shield damage taken while any combat objective
-owned by the ship's side is within 1500 su, checked every frame (`HeldObjective`).
+owned by the ship's side is within 1500 su, checked every frame (`HeldObjective`, `DamageTakenWhile`).
 `DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_RANGE_FLAT` adds to that range.
 
 ### League Requisitions
@@ -345,7 +345,8 @@ that flagship is alive on the field, rechecked every second. The flagship is the
 commander, so the flagship itself gains nothing (`FlagshipPaceListener`, flagship lookup in `Flagships`).
 
 `DAMAGE_TAKEN_NEAR_FLAGSHIP_PERCENT` (integrated Honor Guard) changes hull, armor and shield damage taken while
-within 1500 su of that same flagship, rechecked every 0.25 seconds (`FlagshipGuardListener`).
+within 1500 su of that same flagship, checked every frame like Defensive Compact (`FlagshipGuard`, `DamageTakenWhile`).
+`Flagships` finds the flagship from a captain lookup it builds once per frame.
 
 ### Executor's Decree
 
@@ -479,6 +480,7 @@ weapons.
 
 `BALLISTIC_AND_ENERGY_WEAPON_AMMO_SAVE_CHANCE_PERCENT` watches the ammo of the ship's ballistic and energy weapons that
 use it and rolls each shot spent in a frame, putting the saved rounds back up to the weapon's maximum (`AmmoSaveListener`).
+Shots are counted by `AmmoSpentTracker`, which also counts shots fired in the frame a reload lands.
 
 </details>
 

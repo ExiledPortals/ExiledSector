@@ -4,9 +4,9 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
+import exiledsector.skills.skilleffect.AmmoSpentTracker;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 
-import java.util.List;
 import java.util.Random;
 
 final class AmmoSaveListener extends ShipCombatListener implements AdvanceableListener {
@@ -14,8 +14,7 @@ final class AmmoSaveListener extends ShipCombatListener implements AdvanceableLi
     static final String CHANCE_PERCENT_KEY = "exiledSector_ammoSaveChancePercent";
 
     private final Random random;
-    private List<WeaponAPI> ammoWeapons;
-    private int[] lastAmmo;
+    private AmmoSpentTracker ammo;
 
     AmmoSaveListener(ShipAPI ownerShip) {
         this(ownerShip, new Random());
@@ -36,26 +35,16 @@ final class AmmoSaveListener extends ShipCombatListener implements AdvanceableLi
         if (!ownerIsAliveNotHulk()) {
             return;
         }
-        if (ammoWeapons == null) {
-            ammoWeapons = ownerShip.getAllWeapons().stream().filter(AmmoSaveListener::savesAmmo).toList();
-            lastAmmo = new int[ammoWeapons.size()];
-            for (int i = 0; i < lastAmmo.length; i++) {
-                lastAmmo[i] = ammoWeapons.get(i).getAmmo();
-            }
+        if (ammo == null) {
+            ammo = new AmmoSpentTracker(ownerShip.getAllWeapons().stream().filter(AmmoSaveListener::savesAmmo).toList());
         }
         float chance = magnitude(CHANCE_PERCENT_KEY) / 100f;
-        for (int i = 0; i < lastAmmo.length; i++) {
-            WeaponAPI weapon = ammoWeapons.get(i);
-            int ammo = weapon.getAmmo();
-            int spent = lastAmmo[i] - ammo;
-            if (spent > 0 && chance > 0f) {
-                int saved = savedShots(spent, chance);
-                if (saved > 0) {
-                    ammo = Math.min(weapon.getMaxAmmo(), ammo + saved);
-                    weapon.setAmmo(ammo);
-                }
+        for (int index = 0; index < ammo.weaponCount(); index++) {
+            int spent = ammo.spentSinceLastCheck(index);
+            int saved = spent > 0 && chance > 0f ? savedShots(spent, chance) : 0;
+            if (saved > 0) {
+                ammo.refund(index, saved);
             }
-            lastAmmo[i] = ammo;
         }
     }
 

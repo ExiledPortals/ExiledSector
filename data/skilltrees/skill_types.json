@@ -4826,7 +4826,7 @@
 						"magnitude": 30
 					},
 					{
-						"effect": "CRUSTACEAN_SUPPLIES_PER_MONTH_MULT",
+						"effect": "SUPPLIES_PER_MONTH_MULT",
 						"magnitude": -10
 					}
 				]
@@ -4836,6 +4836,9 @@
 				"quantity": 1000
 			},
 			"flavour": "You control the speed at which these lobsters die.",
+			"effectText": [
+				"The crabs eat what the crew won't."
+			],
 			"tags": [
 				"combat_readiness",
 				"speed",

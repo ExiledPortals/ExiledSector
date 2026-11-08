@@ -706,12 +706,6 @@ effect|CREW_STEAL_SKELETON_CREW_PERCENT|12.5	0	Takes <good>12.5%</good> of each 
 effect|CREW_STEAL_SKELETON_CREW_PERCENT|100.0	0	Takes <good>100%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
 effect|CREW_STEAL_SKELETON_CREW_PERCENT|-10.0	0	Takes <good>-10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
 effect|CREW_STEAL_SKELETON_CREW_PERCENT|-12.5	0	Takes <good>-12.5%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
-effect|CRUSTACEAN_SUPPLIES_PER_MONTH_MULT|1.0	0	<good>1%</good> less supply use for maintenance. The crabs eat what the crew won't.
-effect|CRUSTACEAN_SUPPLIES_PER_MONTH_MULT|10.0	0	<good>10%</good> less supply use for maintenance. The crabs eat what the crew won't.
-effect|CRUSTACEAN_SUPPLIES_PER_MONTH_MULT|12.5	0	<good>12.5%</good> less supply use for maintenance. The crabs eat what the crew won't.
-effect|CRUSTACEAN_SUPPLIES_PER_MONTH_MULT|100.0	0	<good>100%</good> less supply use for maintenance. The crabs eat what the crew won't.
-effect|CRUSTACEAN_SUPPLIES_PER_MONTH_MULT|-10.0	0	<good>10%</good> less supply use for maintenance. The crabs eat what the crew won't.
-effect|CRUSTACEAN_SUPPLIES_PER_MONTH_MULT|-12.5	0	<good>12.5%</good> less supply use for maintenance. The crabs eat what the crew won't.
 effect|CR_LOSS_PER_SECOND_MULT|1.0	1	<good>1%</good> more rate of combat readiness loss from extended deployment.
 effect|CR_LOSS_PER_SECOND_MULT|10.0	1	<good>10%</good> more rate of combat readiness loss from extended deployment.
 effect|CR_LOSS_PER_SECOND_MULT|12.5	1	<good>12.5%</good> more rate of combat readiness loss from extended deployment.
@@ -5353,88 +5347,108 @@ itemCost|crustacean_integration	0	Costs 1000 lobster to allocate, returned when 
 type|crustacean_integration|null|0	0	<good>15%</good> increased combat readiness recovery rate.
 type|crustacean_integration|null|1	0	<good>10%</good> increased top speed.
 type|crustacean_integration|null|2	0	<good>30%</good> increased peak performance time.
+type|crustacean_integration|null|3	0	The crabs eat what the crew won't.
 type|crustacean_integration|FRIGATE|0	0	<good>15%</good> increased combat readiness recovery rate.
 type|crustacean_integration|FRIGATE|1	0	<good>10%</good> increased top speed.
 type|crustacean_integration|FRIGATE|2	0	<good>30%</good> increased peak performance time.
+type|crustacean_integration|FRIGATE|3	0	The crabs eat what the crew won't.
 type|crustacean_integration|DESTROYER|0	0	<good>15%</good> increased combat readiness recovery rate.
 type|crustacean_integration|DESTROYER|1	0	<good>10%</good> increased top speed.
 type|crustacean_integration|DESTROYER|2	0	<good>30%</good> increased peak performance time.
+type|crustacean_integration|DESTROYER|3	0	The crabs eat what the crew won't.
 type|crustacean_integration|CRUISER|0	0	<good>15%</good> increased combat readiness recovery rate.
 type|crustacean_integration|CRUISER|1	0	<good>10%</good> increased top speed.
 type|crustacean_integration|CRUISER|2	0	<good>30%</good> increased peak performance time.
+type|crustacean_integration|CRUISER|3	0	The crabs eat what the crew won't.
 type|crustacean_integration|CAPITAL_SHIP|0	0	<good>15%</good> increased combat readiness recovery rate.
 type|crustacean_integration|CAPITAL_SHIP|1	0	<good>10%</good> increased top speed.
 type|crustacean_integration|CAPITAL_SHIP|2	0	<good>30%</good> increased peak performance time.
+type|crustacean_integration|CAPITAL_SHIP|3	0	The crabs eat what the crew won't.
 integrable|crustacean_integration|null|0	0	<good>15%</good> increased combat readiness recovery rate.
 integrable|crustacean_integration|null|1	0	<good>10%</good> increased top speed.
 integrable|crustacean_integration|null|2	0	<good>30%</good> increased peak performance time.
-integrable|crustacean_integration|null|3	0	Click and hold to integrate.
-integrable|crustacean_integration|null|4	0	<muted>When integrated, for 2 story points:</muted>
-integrable|crustacean_integration|null|5	0	<muted>15% increased combat readiness recovery rate.</muted>
-integrable|crustacean_integration|null|6	0	<muted>10% increased top speed.</muted>
-integrable|crustacean_integration|null|7	0	<muted>30% increased peak performance time.</muted>
-integrable|crustacean_integration|null|8	0	<muted>10% less supply use for maintenance. The crabs eat what the crew won't.</muted>
+integrable|crustacean_integration|null|3	0	The crabs eat what the crew won't.
+integrable|crustacean_integration|null|4	0	Click and hold to integrate.
+integrable|crustacean_integration|null|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|crustacean_integration|null|6	0	<muted>15% increased combat readiness recovery rate.</muted>
+integrable|crustacean_integration|null|7	0	<muted>10% increased top speed.</muted>
+integrable|crustacean_integration|null|8	0	<muted>30% increased peak performance time.</muted>
+integrable|crustacean_integration|null|9	0	<muted>10% less supply use for maintenance.</muted>
+integrable|crustacean_integration|null|10	0	<muted>The crabs eat what the crew won't.</muted>
 integrable|crustacean_integration|FRIGATE|0	0	<good>15%</good> increased combat readiness recovery rate.
 integrable|crustacean_integration|FRIGATE|1	0	<good>10%</good> increased top speed.
 integrable|crustacean_integration|FRIGATE|2	0	<good>30%</good> increased peak performance time.
-integrable|crustacean_integration|FRIGATE|3	0	Click and hold to integrate.
-integrable|crustacean_integration|FRIGATE|4	0	<muted>When integrated, for 2 story points:</muted>
-integrable|crustacean_integration|FRIGATE|5	0	<muted>15% increased combat readiness recovery rate.</muted>
-integrable|crustacean_integration|FRIGATE|6	0	<muted>10% increased top speed.</muted>
-integrable|crustacean_integration|FRIGATE|7	0	<muted>30% increased peak performance time.</muted>
-integrable|crustacean_integration|FRIGATE|8	0	<muted>10% less supply use for maintenance. The crabs eat what the crew won't.</muted>
+integrable|crustacean_integration|FRIGATE|3	0	The crabs eat what the crew won't.
+integrable|crustacean_integration|FRIGATE|4	0	Click and hold to integrate.
+integrable|crustacean_integration|FRIGATE|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|crustacean_integration|FRIGATE|6	0	<muted>15% increased combat readiness recovery rate.</muted>
+integrable|crustacean_integration|FRIGATE|7	0	<muted>10% increased top speed.</muted>
+integrable|crustacean_integration|FRIGATE|8	0	<muted>30% increased peak performance time.</muted>
+integrable|crustacean_integration|FRIGATE|9	0	<muted>10% less supply use for maintenance.</muted>
+integrable|crustacean_integration|FRIGATE|10	0	<muted>The crabs eat what the crew won't.</muted>
 integrable|crustacean_integration|DESTROYER|0	0	<good>15%</good> increased combat readiness recovery rate.
 integrable|crustacean_integration|DESTROYER|1	0	<good>10%</good> increased top speed.
 integrable|crustacean_integration|DESTROYER|2	0	<good>30%</good> increased peak performance time.
-integrable|crustacean_integration|DESTROYER|3	0	Click and hold to integrate.
-integrable|crustacean_integration|DESTROYER|4	0	<muted>When integrated, for 2 story points:</muted>
-integrable|crustacean_integration|DESTROYER|5	0	<muted>15% increased combat readiness recovery rate.</muted>
-integrable|crustacean_integration|DESTROYER|6	0	<muted>10% increased top speed.</muted>
-integrable|crustacean_integration|DESTROYER|7	0	<muted>30% increased peak performance time.</muted>
-integrable|crustacean_integration|DESTROYER|8	0	<muted>10% less supply use for maintenance. The crabs eat what the crew won't.</muted>
+integrable|crustacean_integration|DESTROYER|3	0	The crabs eat what the crew won't.
+integrable|crustacean_integration|DESTROYER|4	0	Click and hold to integrate.
+integrable|crustacean_integration|DESTROYER|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|crustacean_integration|DESTROYER|6	0	<muted>15% increased combat readiness recovery rate.</muted>
+integrable|crustacean_integration|DESTROYER|7	0	<muted>10% increased top speed.</muted>
+integrable|crustacean_integration|DESTROYER|8	0	<muted>30% increased peak performance time.</muted>
+integrable|crustacean_integration|DESTROYER|9	0	<muted>10% less supply use for maintenance.</muted>
+integrable|crustacean_integration|DESTROYER|10	0	<muted>The crabs eat what the crew won't.</muted>
 integrable|crustacean_integration|CRUISER|0	0	<good>15%</good> increased combat readiness recovery rate.
 integrable|crustacean_integration|CRUISER|1	0	<good>10%</good> increased top speed.
 integrable|crustacean_integration|CRUISER|2	0	<good>30%</good> increased peak performance time.
-integrable|crustacean_integration|CRUISER|3	0	Click and hold to integrate.
-integrable|crustacean_integration|CRUISER|4	0	<muted>When integrated, for 2 story points:</muted>
-integrable|crustacean_integration|CRUISER|5	0	<muted>15% increased combat readiness recovery rate.</muted>
-integrable|crustacean_integration|CRUISER|6	0	<muted>10% increased top speed.</muted>
-integrable|crustacean_integration|CRUISER|7	0	<muted>30% increased peak performance time.</muted>
-integrable|crustacean_integration|CRUISER|8	0	<muted>10% less supply use for maintenance. The crabs eat what the crew won't.</muted>
+integrable|crustacean_integration|CRUISER|3	0	The crabs eat what the crew won't.
+integrable|crustacean_integration|CRUISER|4	0	Click and hold to integrate.
+integrable|crustacean_integration|CRUISER|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|crustacean_integration|CRUISER|6	0	<muted>15% increased combat readiness recovery rate.</muted>
+integrable|crustacean_integration|CRUISER|7	0	<muted>10% increased top speed.</muted>
+integrable|crustacean_integration|CRUISER|8	0	<muted>30% increased peak performance time.</muted>
+integrable|crustacean_integration|CRUISER|9	0	<muted>10% less supply use for maintenance.</muted>
+integrable|crustacean_integration|CRUISER|10	0	<muted>The crabs eat what the crew won't.</muted>
 integrable|crustacean_integration|CAPITAL_SHIP|0	0	<good>15%</good> increased combat readiness recovery rate.
 integrable|crustacean_integration|CAPITAL_SHIP|1	0	<good>10%</good> increased top speed.
 integrable|crustacean_integration|CAPITAL_SHIP|2	0	<good>30%</good> increased peak performance time.
-integrable|crustacean_integration|CAPITAL_SHIP|3	0	Click and hold to integrate.
-integrable|crustacean_integration|CAPITAL_SHIP|4	0	<muted>When integrated, for 2 story points:</muted>
-integrable|crustacean_integration|CAPITAL_SHIP|5	0	<muted>15% increased combat readiness recovery rate.</muted>
-integrable|crustacean_integration|CAPITAL_SHIP|6	0	<muted>10% increased top speed.</muted>
-integrable|crustacean_integration|CAPITAL_SHIP|7	0	<muted>30% increased peak performance time.</muted>
-integrable|crustacean_integration|CAPITAL_SHIP|8	0	<muted>10% less supply use for maintenance. The crabs eat what the crew won't.</muted>
+integrable|crustacean_integration|CAPITAL_SHIP|3	0	The crabs eat what the crew won't.
+integrable|crustacean_integration|CAPITAL_SHIP|4	0	Click and hold to integrate.
+integrable|crustacean_integration|CAPITAL_SHIP|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|crustacean_integration|CAPITAL_SHIP|6	0	<muted>15% increased combat readiness recovery rate.</muted>
+integrable|crustacean_integration|CAPITAL_SHIP|7	0	<muted>10% increased top speed.</muted>
+integrable|crustacean_integration|CAPITAL_SHIP|8	0	<muted>30% increased peak performance time.</muted>
+integrable|crustacean_integration|CAPITAL_SHIP|9	0	<muted>10% less supply use for maintenance.</muted>
+integrable|crustacean_integration|CAPITAL_SHIP|10	0	<muted>The crabs eat what the crew won't.</muted>
 integrated|crustacean_integration|null|0	0	<builtIn>Integrated</builtIn>
 integrated|crustacean_integration|null|1	0	<good>15%</good> increased combat readiness recovery rate.
 integrated|crustacean_integration|null|2	0	<good>10%</good> increased top speed.
 integrated|crustacean_integration|null|3	0	<good>30%</good> increased peak performance time.
-integrated|crustacean_integration|null|4	0	<good>10%</good><builtIn> less supply use for maintenance. The crabs eat what the crew won't.</builtIn>
+integrated|crustacean_integration|null|4	1	<bad>10%</bad><builtIn> less supply use for maintenance.</builtIn>
+integrated|crustacean_integration|null|5	0	The crabs eat what the crew won't.
 integrated|crustacean_integration|FRIGATE|0	0	<builtIn>Integrated</builtIn>
 integrated|crustacean_integration|FRIGATE|1	0	<good>15%</good> increased combat readiness recovery rate.
 integrated|crustacean_integration|FRIGATE|2	0	<good>10%</good> increased top speed.
 integrated|crustacean_integration|FRIGATE|3	0	<good>30%</good> increased peak performance time.
-integrated|crustacean_integration|FRIGATE|4	0	<good>10%</good><builtIn> less supply use for maintenance. The crabs eat what the crew won't.</builtIn>
+integrated|crustacean_integration|FRIGATE|4	1	<bad>10%</bad><builtIn> less supply use for maintenance.</builtIn>
+integrated|crustacean_integration|FRIGATE|5	0	The crabs eat what the crew won't.
 integrated|crustacean_integration|DESTROYER|0	0	<builtIn>Integrated</builtIn>
 integrated|crustacean_integration|DESTROYER|1	0	<good>15%</good> increased combat readiness recovery rate.
 integrated|crustacean_integration|DESTROYER|2	0	<good>10%</good> increased top speed.
 integrated|crustacean_integration|DESTROYER|3	0	<good>30%</good> increased peak performance time.
-integrated|crustacean_integration|DESTROYER|4	0	<good>10%</good><builtIn> less supply use for maintenance. The crabs eat what the crew won't.</builtIn>
+integrated|crustacean_integration|DESTROYER|4	1	<bad>10%</bad><builtIn> less supply use for maintenance.</builtIn>
+integrated|crustacean_integration|DESTROYER|5	0	The crabs eat what the crew won't.
 integrated|crustacean_integration|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|crustacean_integration|CRUISER|1	0	<good>15%</good> increased combat readiness recovery rate.
 integrated|crustacean_integration|CRUISER|2	0	<good>10%</good> increased top speed.
 integrated|crustacean_integration|CRUISER|3	0	<good>30%</good> increased peak performance time.
-integrated|crustacean_integration|CRUISER|4	0	<good>10%</good><builtIn> less supply use for maintenance. The crabs eat what the crew won't.</builtIn>
+integrated|crustacean_integration|CRUISER|4	1	<bad>10%</bad><builtIn> less supply use for maintenance.</builtIn>
+integrated|crustacean_integration|CRUISER|5	0	The crabs eat what the crew won't.
 integrated|crustacean_integration|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|crustacean_integration|CAPITAL_SHIP|1	0	<good>15%</good> increased combat readiness recovery rate.
 integrated|crustacean_integration|CAPITAL_SHIP|2	0	<good>10%</good> increased top speed.
 integrated|crustacean_integration|CAPITAL_SHIP|3	0	<good>30%</good> increased peak performance time.
-integrated|crustacean_integration|CAPITAL_SHIP|4	0	<good>10%</good><builtIn> less supply use for maintenance. The crabs eat what the crew won't.</builtIn>
+integrated|crustacean_integration|CAPITAL_SHIP|4	1	<bad>10%</bad><builtIn> less supply use for maintenance.</builtIn>
+integrated|crustacean_integration|CAPITAL_SHIP|5	0	The crabs eat what the crew won't.
 flavour|cut_and_run	0	Acquiring plunder is sometimes not as important as making it home.
 type|cut_and_run|null|0	0	<good>30%</good> increased top speed while retreating.
 type|cut_and_run|FRIGATE|0	0	<good>30%</good> increased top speed while retreating.

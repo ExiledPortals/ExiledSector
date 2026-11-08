@@ -264,71 +264,15 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", Math.abs(magnitude)).arg("speed", HoldingStation.TOP_SPEED_FRACTION * 100f).styled();
         }
     },
-    DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT(new ConditionalStatEffect(PERCENT, all(liveStat(MutableShipStatsAPI::getHullDamageTakenMult),
-            liveStat(MutableShipStatsAPI::getArmorDamageTakenMult), liveStat(MutableShipStatsAPI::getShieldDamageTakenMult)),
-            "stat.damageTaken", HeldObjective::isNearby)) {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public boolean invertsDescriptionColours() {
-            return false;
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return description(magnitude, DescribeContext.NONE);
-        }
-
-        @Override
-        public StyledText description(float magnitude, DescribeContext context) {
-            return EffectText.msg(this).arg("value", Math.abs(magnitude))
-                    .arg("range", HeldObjective.range(context.magnitudeOf(DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_RANGE_FLAT))).styled();
-        }
-    },
-    DAMAGE_TAKEN_NEAR_FLAGSHIP_PERCENT(listener(FlagshipGuardListener.DAMAGE_TAKEN_PERCENT_KEY, FlagshipGuardListener.class,
-            FlagshipGuardListener::new)) {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public boolean invertsDescriptionColours() {
-            return false;
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", Math.abs(magnitude)).arg("range", FlagshipGuardListener.RANGE).styled();
-        }
-    },
+    DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT(DamageTakenWhile.within(HeldObjective::isNearby, DefenseSkillEffect::describedHeldObjectiveRange)),
+    DAMAGE_TAKEN_NEAR_FLAGSHIP_PERCENT(DamageTakenWhile.within(FlagshipGuard::isGuarding, context -> FlagshipGuard.RANGE)),
     DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_RANGE_FLAT(statEffect(FLAT, dynamicMod(HeldObjective.RANGE_BONUS_KEY), "stat.heldObjectiveDamageTakenRange", false)) {
         @Override
         public Set<SkillEffect> refines() {
             return Set.of(DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT);
         }
     },
-    DAMAGE_TAKEN_WHILE_RETREATING_PERCENT(new ConditionalStatEffect(PERCENT, all(liveStat(MutableShipStatsAPI::getHullDamageTakenMult),
-            liveStat(MutableShipStatsAPI::getArmorDamageTakenMult), liveStat(MutableShipStatsAPI::getShieldDamageTakenMult)),
-            "stat.damageTaken", ShipAPI::isRetreating)) {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public boolean invertsDescriptionColours() {
-            return false;
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", Math.abs(magnitude)).styled();
-        }
-    },
+    DAMAGE_TAKEN_WHILE_RETREATING_PERCENT(DamageTakenWhile.of(ShipAPI::isRetreating)),
     RAM_PROW_COLLISION_DAMAGE_MULT(listener(CollisionDamageListener.COLLISION_DAMAGE_PERCENT_KEY, CollisionDamageListener.class,
             CollisionDamageListener::new)),
     HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST(listener(CrewLossHullDamageListener.PERCENT_PER_STEP_KEY, CrewLossHullDamageListener.class,
@@ -373,6 +317,21 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
 
     DefenseSkillEffect(EffectBacking backing) {
         this.backing = backing;
+    }
+
+    @Override
+    public boolean invertsDescriptionColours() {
+        return !(backing instanceof DamageTakenWhile) && lowerIsBetter();
+    }
+
+    @Override
+    public StyledText description(float magnitude, DescribeContext context) {
+        return backing instanceof DamageTakenWhile damageTaken ? damageTaken.describe(this, magnitude, context)
+                : BackedSkillEffect.super.description(magnitude, context);
+    }
+
+    private static float describedHeldObjectiveRange(DescribeContext context) {
+        return HeldObjective.range(context.magnitudeOf(DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_RANGE_FLAT));
     }
 
     @Override

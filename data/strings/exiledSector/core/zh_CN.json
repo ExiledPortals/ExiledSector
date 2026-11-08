@@ -1255,7 +1255,6 @@
     "effect.SUPPLY_USE_REDUCTION_PERCENT_PER_HULL_TYPE": "你的舰队中每有一种不同的舰体类型，维护补给消耗降低<good>{value}%</good>，最多{max}%。",
     "effect.FUEL_USE_REDUCTION_PERCENT_PER_HULL_TYPE": "你的舰队中每有一种不同的舰体类型，燃料消耗降低<good>{value}%</good>，最多{max}%。",
     "effect.FUEL_USE_REDUCTION_PERCENT_WHILE_HALF_FUELED": "你的舰队携带的燃料不少于燃料容量的一半时，燃料消耗降低<good>{value}%</good>。",
-    "effect.CRUSTACEAN_SUPPLIES_PER_MONTH_MULT": "维护所需补给降低<good>{value}%</good>（乘算）。船员不吃的，甲壳类都吃了。",
     "effect.TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT": "你舰队中舰体规模不大于本舰的最慢舰船最大航速<good>+{value}</good>，最多达到本舰的最大航速。",
     "fleet.towLine": "被拖曳中",
     "fleet.moveSlowBurnLevel": "为低速静默航行调校的引擎",

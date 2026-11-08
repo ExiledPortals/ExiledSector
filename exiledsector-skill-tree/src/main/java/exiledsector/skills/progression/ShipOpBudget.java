@@ -4,6 +4,7 @@ import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.skills.skilleffect.Flagships;
 
 public final class ShipOpBudget {
 
@@ -23,8 +24,7 @@ public final class ShipOpBudget {
     }
 
     private static MutableCharacterStatsAPI commanderStats(FleetMemberAPI member) {
-        PersonAPI commander = member.getFleetCommanderForStats();
-        if (commander == null) commander = member.getFleetCommander();
+        PersonAPI commander = Flagships.fleetCommanderOf(member);
         if (commander == null) commander = member.getCaptain();
         return commander != null ? commander.getStats() : null;
     }

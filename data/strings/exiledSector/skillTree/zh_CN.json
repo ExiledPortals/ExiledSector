@@ -858,6 +858,7 @@
     "skillType.nskr_bigBats.flavour": "一份凯斯特文研发部的改装规格，用于安装远超任何理智设计会搭载的电容组。舰船系统很少枯竭。",
     "skillType.frozen_heart.flavour": "query. hull?. scanning. [HULL] collect, amass, gather, fuse, keep. 核心从未停歇。它所容纳的一切也是如此。",
     "skillType.crustacean_integration.flavour": "你来决定这些龙虾死得多快。",
+    "skillType.crustacean_integration.effectText.0": "船员不吃的，甲壳类都吃了。",
     "skillType.wormhole.flavour": "贯穿舰船系统的同一条通道的两端，以任何造船匠都未曾设想的方式缝合在一起。",
     "skillType.wormhole.effectText.0": "分配此虫洞时会免费分配与其配对的虫洞。取消分配任意一端会同时取消两端。",
     "skillType.wormhole.effectText.1": "按住Ctrl点击即可穿越。",

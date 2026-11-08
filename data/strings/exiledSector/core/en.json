@@ -781,7 +781,6 @@
     "effect.SUPPLY_USE_REDUCTION_PERCENT_PER_HULL_TYPE": "Your fleet has <good>{value}%</good> reduced supply use for maintenance for every different hull type among its ships, up to a maximum of {max}%.",
     "effect.FUEL_USE_REDUCTION_PERCENT_PER_HULL_TYPE": "Your fleet has <good>{value}%</good> reduced fuel use for every different hull type among its ships, up to a maximum of {max}%.",
     "effect.FUEL_USE_REDUCTION_PERCENT_WHILE_HALF_FUELED": "<good>{value}%</good> reduced fuel use while your fleet carries at least half its fuel capacity.",
-    "effect.CRUSTACEAN_SUPPLIES_PER_MONTH_MULT": "<good>{value}%</good> less supply use for maintenance. The crabs eat what the crew won't.",
     "effect.TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT": "The slowest ship in your fleet of this ship's hull size or smaller has <good>+{value}</good> to max burn level, up to this ship's max burn level.",
     "fleet.towLine": "Under tow",
     "fleet.moveSlowBurnLevel": "Drives tuned to run slow and quiet",
