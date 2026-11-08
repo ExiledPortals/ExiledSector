@@ -3554,15 +3554,60 @@ integrated|advanced_turret_gyros|CAPITAL_SHIP|4	0	<good>15%</good><builtIn> incr
 integrated|advanced_turret_gyros|CAPITAL_SHIP|5	0	<good>10%</good><builtIn> increased damage to destroyers.</builtIn>
 integrated|advanced_turret_gyros|CAPITAL_SHIP|6	0	<good>5%</good><builtIn> increased damage to cruisers.</builtIn>
 type|all_must_serve|null|0	0	Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.
-type|all_must_serve|null|1	0	Takes <good>10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
+type|all_must_serve|null|1	0	Takes <good>5%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
 type|all_must_serve|FRIGATE|0	0	Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.
-type|all_must_serve|FRIGATE|1	0	Takes <good>10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
+type|all_must_serve|FRIGATE|1	0	Takes <good>5%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
 type|all_must_serve|DESTROYER|0	0	Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.
-type|all_must_serve|DESTROYER|1	0	Takes <good>10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
+type|all_must_serve|DESTROYER|1	0	Takes <good>5%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
 type|all_must_serve|CRUISER|0	0	Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.
-type|all_must_serve|CRUISER|1	0	Takes <good>10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
+type|all_must_serve|CRUISER|1	0	Takes <good>5%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
 type|all_must_serve|CAPITAL_SHIP|0	0	Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.
-type|all_must_serve|CAPITAL_SHIP|1	0	Takes <good>10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
+type|all_must_serve|CAPITAL_SHIP|1	0	Takes <good>5%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
+integrable|all_must_serve|null|0	0	Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.
+integrable|all_must_serve|null|1	0	Takes <good>5%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
+integrable|all_must_serve|null|2	0	Click and hold to integrate.
+integrable|all_must_serve|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|all_must_serve|null|4	0	<muted>Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.</muted>
+integrable|all_must_serve|null|5	0	<muted>Takes 10% of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.</muted>
+integrable|all_must_serve|FRIGATE|0	0	Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.
+integrable|all_must_serve|FRIGATE|1	0	Takes <good>5%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
+integrable|all_must_serve|FRIGATE|2	0	Click and hold to integrate.
+integrable|all_must_serve|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|all_must_serve|FRIGATE|4	0	<muted>Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.</muted>
+integrable|all_must_serve|FRIGATE|5	0	<muted>Takes 10% of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.</muted>
+integrable|all_must_serve|DESTROYER|0	0	Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.
+integrable|all_must_serve|DESTROYER|1	0	Takes <good>5%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
+integrable|all_must_serve|DESTROYER|2	0	Click and hold to integrate.
+integrable|all_must_serve|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|all_must_serve|DESTROYER|4	0	<muted>Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.</muted>
+integrable|all_must_serve|DESTROYER|5	0	<muted>Takes 10% of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.</muted>
+integrable|all_must_serve|CRUISER|0	0	Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.
+integrable|all_must_serve|CRUISER|1	0	Takes <good>5%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
+integrable|all_must_serve|CRUISER|2	0	Click and hold to integrate.
+integrable|all_must_serve|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|all_must_serve|CRUISER|4	0	<muted>Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.</muted>
+integrable|all_must_serve|CRUISER|5	0	<muted>Takes 10% of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.</muted>
+integrable|all_must_serve|CAPITAL_SHIP|0	0	Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.
+integrable|all_must_serve|CAPITAL_SHIP|1	0	Takes <good>5%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
+integrable|all_must_serve|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|all_must_serve|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|all_must_serve|CAPITAL_SHIP|4	0	<muted>Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.</muted>
+integrable|all_must_serve|CAPITAL_SHIP|5	0	<muted>Takes 10% of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.</muted>
+integrated|all_must_serve|null|0	0	<builtIn>Integrated</builtIn>
+integrated|all_must_serve|null|1	0	Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.
+integrated|all_must_serve|null|2	0	<builtIn>Takes </builtIn><good>10%</good><builtIn> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.</builtIn>
+integrated|all_must_serve|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|all_must_serve|FRIGATE|1	0	Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.
+integrated|all_must_serve|FRIGATE|2	0	<builtIn>Takes </builtIn><good>10%</good><builtIn> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.</builtIn>
+integrated|all_must_serve|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|all_must_serve|DESTROYER|1	0	Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.
+integrated|all_must_serve|DESTROYER|2	0	<builtIn>Takes </builtIn><good>10%</good><builtIn> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.</builtIn>
+integrated|all_must_serve|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|all_must_serve|CRUISER|1	0	Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.
+integrated|all_must_serve|CRUISER|2	0	<builtIn>Takes </builtIn><good>10%</good><builtIn> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.</builtIn>
+integrated|all_must_serve|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|all_must_serve|CAPITAL_SHIP|1	0	Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.
+integrated|all_must_serve|CAPITAL_SHIP|2	0	<builtIn>Takes </builtIn><good>10%</good><builtIn> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.</builtIn>
 type|ammo_capacity|null|0	0	<good>20%</good> increased ballistic weapon ammo capacity.
 type|ammo_capacity|null|1	0	<good>20%</good> increased energy weapon ammo capacity.
 type|ammo_capacity|FRIGATE|0	0	<good>20%</good> increased ballistic weapon ammo capacity.
@@ -6014,6 +6059,96 @@ type|frozen_heart|CAPITAL_SHIP|1	0	Each new Heartless stack sets off a radiation
 type|frozen_heart|CAPITAL_SHIP|2	0	<good>15%</good> increased maximum combat readiness.
 type|frozen_heart|CAPITAL_SHIP|3	0	<bad>10%</bad> reduced top speed.
 type|frozen_heart|CAPITAL_SHIP|4	0	<bad>10%</bad> reduced maneuverability.
+integrable|frozen_heart|null|0	0	Whenever a non-strikecraft ship is destroyed within 1500 su, this ship gains a Heartless stack until the end of combat. Ships can hold up to 5 Heartless stacks.
+integrable|frozen_heart|null|1	0	Each new Heartless stack sets off a radiation surge that deals <bad>400</bad> EMP damage to a random weapon and to a random engine on this ship.
+integrable|frozen_heart|null|2	0	<good>15%</good> increased maximum combat readiness.
+integrable|frozen_heart|null|3	0	<bad>10%</bad> reduced top speed.
+integrable|frozen_heart|null|4	0	<bad>10%</bad> reduced maneuverability.
+integrable|frozen_heart|null|5	0	Click and hold to integrate.
+integrable|frozen_heart|null|6	0	<muted>When integrated, for 2 story points:</muted>
+integrable|frozen_heart|null|7	0	<muted>Whenever a non-strikecraft ship is destroyed within 1500 su, this ship gains a Heartless stack until the end of combat. Ships can hold up to 5 Heartless stacks.</muted>
+integrable|frozen_heart|null|8	0	<muted>Each new Heartless stack sets off a radiation surge that deals 300 EMP damage to a random weapon and to a random engine on this ship.</muted>
+integrable|frozen_heart|null|9	0	<muted>15% increased maximum combat readiness.</muted>
+integrable|frozen_heart|null|10	0	<muted>8% reduced top speed.</muted>
+integrable|frozen_heart|null|11	0	<muted>8% reduced maneuverability.</muted>
+integrable|frozen_heart|FRIGATE|0	0	Whenever a non-strikecraft ship is destroyed within 1500 su, this ship gains a Heartless stack until the end of combat. Ships can hold up to 5 Heartless stacks.
+integrable|frozen_heart|FRIGATE|1	0	Each new Heartless stack sets off a radiation surge that deals <bad>400</bad> EMP damage to a random weapon and to a random engine on this ship.
+integrable|frozen_heart|FRIGATE|2	0	<good>15%</good> increased maximum combat readiness.
+integrable|frozen_heart|FRIGATE|3	0	<bad>10%</bad> reduced top speed.
+integrable|frozen_heart|FRIGATE|4	0	<bad>10%</bad> reduced maneuverability.
+integrable|frozen_heart|FRIGATE|5	0	Click and hold to integrate.
+integrable|frozen_heart|FRIGATE|6	0	<muted>When integrated, for 2 story points:</muted>
+integrable|frozen_heart|FRIGATE|7	0	<muted>Whenever a non-strikecraft ship is destroyed within 1500 su, this ship gains a Heartless stack until the end of combat. Ships can hold up to 5 Heartless stacks.</muted>
+integrable|frozen_heart|FRIGATE|8	0	<muted>Each new Heartless stack sets off a radiation surge that deals 300 EMP damage to a random weapon and to a random engine on this ship.</muted>
+integrable|frozen_heart|FRIGATE|9	0	<muted>15% increased maximum combat readiness.</muted>
+integrable|frozen_heart|FRIGATE|10	0	<muted>8% reduced top speed.</muted>
+integrable|frozen_heart|FRIGATE|11	0	<muted>8% reduced maneuverability.</muted>
+integrable|frozen_heart|DESTROYER|0	0	Whenever a non-strikecraft ship is destroyed within 1500 su, this ship gains a Heartless stack until the end of combat. Ships can hold up to 5 Heartless stacks.
+integrable|frozen_heart|DESTROYER|1	0	Each new Heartless stack sets off a radiation surge that deals <bad>400</bad> EMP damage to a random weapon and to a random engine on this ship.
+integrable|frozen_heart|DESTROYER|2	0	<good>15%</good> increased maximum combat readiness.
+integrable|frozen_heart|DESTROYER|3	0	<bad>10%</bad> reduced top speed.
+integrable|frozen_heart|DESTROYER|4	0	<bad>10%</bad> reduced maneuverability.
+integrable|frozen_heart|DESTROYER|5	0	Click and hold to integrate.
+integrable|frozen_heart|DESTROYER|6	0	<muted>When integrated, for 2 story points:</muted>
+integrable|frozen_heart|DESTROYER|7	0	<muted>Whenever a non-strikecraft ship is destroyed within 1500 su, this ship gains a Heartless stack until the end of combat. Ships can hold up to 5 Heartless stacks.</muted>
+integrable|frozen_heart|DESTROYER|8	0	<muted>Each new Heartless stack sets off a radiation surge that deals 300 EMP damage to a random weapon and to a random engine on this ship.</muted>
+integrable|frozen_heart|DESTROYER|9	0	<muted>15% increased maximum combat readiness.</muted>
+integrable|frozen_heart|DESTROYER|10	0	<muted>8% reduced top speed.</muted>
+integrable|frozen_heart|DESTROYER|11	0	<muted>8% reduced maneuverability.</muted>
+integrable|frozen_heart|CRUISER|0	0	Whenever a non-strikecraft ship is destroyed within 1500 su, this ship gains a Heartless stack until the end of combat. Ships can hold up to 5 Heartless stacks.
+integrable|frozen_heart|CRUISER|1	0	Each new Heartless stack sets off a radiation surge that deals <bad>400</bad> EMP damage to a random weapon and to a random engine on this ship.
+integrable|frozen_heart|CRUISER|2	0	<good>15%</good> increased maximum combat readiness.
+integrable|frozen_heart|CRUISER|3	0	<bad>10%</bad> reduced top speed.
+integrable|frozen_heart|CRUISER|4	0	<bad>10%</bad> reduced maneuverability.
+integrable|frozen_heart|CRUISER|5	0	Click and hold to integrate.
+integrable|frozen_heart|CRUISER|6	0	<muted>When integrated, for 2 story points:</muted>
+integrable|frozen_heart|CRUISER|7	0	<muted>Whenever a non-strikecraft ship is destroyed within 1500 su, this ship gains a Heartless stack until the end of combat. Ships can hold up to 5 Heartless stacks.</muted>
+integrable|frozen_heart|CRUISER|8	0	<muted>Each new Heartless stack sets off a radiation surge that deals 300 EMP damage to a random weapon and to a random engine on this ship.</muted>
+integrable|frozen_heart|CRUISER|9	0	<muted>15% increased maximum combat readiness.</muted>
+integrable|frozen_heart|CRUISER|10	0	<muted>8% reduced top speed.</muted>
+integrable|frozen_heart|CRUISER|11	0	<muted>8% reduced maneuverability.</muted>
+integrable|frozen_heart|CAPITAL_SHIP|0	0	Whenever a non-strikecraft ship is destroyed within 1500 su, this ship gains a Heartless stack until the end of combat. Ships can hold up to 5 Heartless stacks.
+integrable|frozen_heart|CAPITAL_SHIP|1	0	Each new Heartless stack sets off a radiation surge that deals <bad>400</bad> EMP damage to a random weapon and to a random engine on this ship.
+integrable|frozen_heart|CAPITAL_SHIP|2	0	<good>15%</good> increased maximum combat readiness.
+integrable|frozen_heart|CAPITAL_SHIP|3	0	<bad>10%</bad> reduced top speed.
+integrable|frozen_heart|CAPITAL_SHIP|4	0	<bad>10%</bad> reduced maneuverability.
+integrable|frozen_heart|CAPITAL_SHIP|5	0	Click and hold to integrate.
+integrable|frozen_heart|CAPITAL_SHIP|6	0	<muted>When integrated, for 2 story points:</muted>
+integrable|frozen_heart|CAPITAL_SHIP|7	0	<muted>Whenever a non-strikecraft ship is destroyed within 1500 su, this ship gains a Heartless stack until the end of combat. Ships can hold up to 5 Heartless stacks.</muted>
+integrable|frozen_heart|CAPITAL_SHIP|8	0	<muted>Each new Heartless stack sets off a radiation surge that deals 300 EMP damage to a random weapon and to a random engine on this ship.</muted>
+integrable|frozen_heart|CAPITAL_SHIP|9	0	<muted>15% increased maximum combat readiness.</muted>
+integrable|frozen_heart|CAPITAL_SHIP|10	0	<muted>8% reduced top speed.</muted>
+integrable|frozen_heart|CAPITAL_SHIP|11	0	<muted>8% reduced maneuverability.</muted>
+integrated|frozen_heart|null|0	0	<builtIn>Integrated</builtIn>
+integrated|frozen_heart|null|1	0	Whenever a non-strikecraft ship is destroyed within 1500 su, this ship gains a Heartless stack until the end of combat. Ships can hold up to 5 Heartless stacks.
+integrated|frozen_heart|null|2	0	<builtIn>Each new Heartless stack sets off a radiation surge that deals </builtIn><bad>300</bad><builtIn> EMP damage to a random weapon and to a random engine on this ship.</builtIn>
+integrated|frozen_heart|null|3	0	<good>15%</good> increased maximum combat readiness.
+integrated|frozen_heart|null|4	0	<bad>8%</bad><builtIn> reduced top speed.</builtIn>
+integrated|frozen_heart|null|5	0	<bad>8%</bad><builtIn> reduced maneuverability.</builtIn>
+integrated|frozen_heart|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|frozen_heart|FRIGATE|1	0	Whenever a non-strikecraft ship is destroyed within 1500 su, this ship gains a Heartless stack until the end of combat. Ships can hold up to 5 Heartless stacks.
+integrated|frozen_heart|FRIGATE|2	0	<builtIn>Each new Heartless stack sets off a radiation surge that deals </builtIn><bad>300</bad><builtIn> EMP damage to a random weapon and to a random engine on this ship.</builtIn>
+integrated|frozen_heart|FRIGATE|3	0	<good>15%</good> increased maximum combat readiness.
+integrated|frozen_heart|FRIGATE|4	0	<bad>8%</bad><builtIn> reduced top speed.</builtIn>
+integrated|frozen_heart|FRIGATE|5	0	<bad>8%</bad><builtIn> reduced maneuverability.</builtIn>
+integrated|frozen_heart|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|frozen_heart|DESTROYER|1	0	Whenever a non-strikecraft ship is destroyed within 1500 su, this ship gains a Heartless stack until the end of combat. Ships can hold up to 5 Heartless stacks.
+integrated|frozen_heart|DESTROYER|2	0	<builtIn>Each new Heartless stack sets off a radiation surge that deals </builtIn><bad>300</bad><builtIn> EMP damage to a random weapon and to a random engine on this ship.</builtIn>
+integrated|frozen_heart|DESTROYER|3	0	<good>15%</good> increased maximum combat readiness.
+integrated|frozen_heart|DESTROYER|4	0	<bad>8%</bad><builtIn> reduced top speed.</builtIn>
+integrated|frozen_heart|DESTROYER|5	0	<bad>8%</bad><builtIn> reduced maneuverability.</builtIn>
+integrated|frozen_heart|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|frozen_heart|CRUISER|1	0	Whenever a non-strikecraft ship is destroyed within 1500 su, this ship gains a Heartless stack until the end of combat. Ships can hold up to 5 Heartless stacks.
+integrated|frozen_heart|CRUISER|2	0	<builtIn>Each new Heartless stack sets off a radiation surge that deals </builtIn><bad>300</bad><builtIn> EMP damage to a random weapon and to a random engine on this ship.</builtIn>
+integrated|frozen_heart|CRUISER|3	0	<good>15%</good> increased maximum combat readiness.
+integrated|frozen_heart|CRUISER|4	0	<bad>8%</bad><builtIn> reduced top speed.</builtIn>
+integrated|frozen_heart|CRUISER|5	0	<bad>8%</bad><builtIn> reduced maneuverability.</builtIn>
+integrated|frozen_heart|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|frozen_heart|CAPITAL_SHIP|1	0	Whenever a non-strikecraft ship is destroyed within 1500 su, this ship gains a Heartless stack until the end of combat. Ships can hold up to 5 Heartless stacks.
+integrated|frozen_heart|CAPITAL_SHIP|2	0	<builtIn>Each new Heartless stack sets off a radiation surge that deals </builtIn><bad>300</bad><builtIn> EMP damage to a random weapon and to a random engine on this ship.</builtIn>
+integrated|frozen_heart|CAPITAL_SHIP|3	0	<good>15%</good> increased maximum combat readiness.
+integrated|frozen_heart|CAPITAL_SHIP|4	0	<bad>8%</bad><builtIn> reduced top speed.</builtIn>
+integrated|frozen_heart|CAPITAL_SHIP|5	0	<bad>8%</bad><builtIn> reduced maneuverability.</builtIn>
 type|fuel|FRIGATE|0	0	<good>+5</good> to fuel capacity.
 type|fuel|DESTROYER|0	0	<good>+15</good> to fuel capacity.
 type|fuel|CRUISER|0	0	<good>+25</good> to fuel capacity.
@@ -6423,6 +6558,66 @@ type|husk_plating|CRUISER|2	0	<bad>3%</bad> reduced top speed and maneuverabilit
 type|husk_plating|CAPITAL_SHIP|0	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 type|husk_plating|CAPITAL_SHIP|1	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
 type|husk_plating|CAPITAL_SHIP|2	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
+integrable|husk_plating|null|0	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
+integrable|husk_plating|null|1	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
+integrable|husk_plating|null|2	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
+integrable|husk_plating|null|3	0	Click and hold to integrate.
+integrable|husk_plating|null|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|husk_plating|null|5	0	<muted>Gaining a Heartless stack restores 5% of maximum armor to every armor cell.</muted>
+integrable|husk_plating|null|6	0	<muted>Each Heartless stack grants 2% more armor in every armor cell, above its normal maximum.</muted>
+integrable|husk_plating|null|7	0	<muted>2% reduced top speed and maneuverability for each Heartless stack.</muted>
+integrable|husk_plating|FRIGATE|0	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
+integrable|husk_plating|FRIGATE|1	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
+integrable|husk_plating|FRIGATE|2	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
+integrable|husk_plating|FRIGATE|3	0	Click and hold to integrate.
+integrable|husk_plating|FRIGATE|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|husk_plating|FRIGATE|5	0	<muted>Gaining a Heartless stack restores 5% of maximum armor to every armor cell.</muted>
+integrable|husk_plating|FRIGATE|6	0	<muted>Each Heartless stack grants 2% more armor in every armor cell, above its normal maximum.</muted>
+integrable|husk_plating|FRIGATE|7	0	<muted>2% reduced top speed and maneuverability for each Heartless stack.</muted>
+integrable|husk_plating|DESTROYER|0	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
+integrable|husk_plating|DESTROYER|1	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
+integrable|husk_plating|DESTROYER|2	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
+integrable|husk_plating|DESTROYER|3	0	Click and hold to integrate.
+integrable|husk_plating|DESTROYER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|husk_plating|DESTROYER|5	0	<muted>Gaining a Heartless stack restores 5% of maximum armor to every armor cell.</muted>
+integrable|husk_plating|DESTROYER|6	0	<muted>Each Heartless stack grants 2% more armor in every armor cell, above its normal maximum.</muted>
+integrable|husk_plating|DESTROYER|7	0	<muted>2% reduced top speed and maneuverability for each Heartless stack.</muted>
+integrable|husk_plating|CRUISER|0	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
+integrable|husk_plating|CRUISER|1	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
+integrable|husk_plating|CRUISER|2	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
+integrable|husk_plating|CRUISER|3	0	Click and hold to integrate.
+integrable|husk_plating|CRUISER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|husk_plating|CRUISER|5	0	<muted>Gaining a Heartless stack restores 5% of maximum armor to every armor cell.</muted>
+integrable|husk_plating|CRUISER|6	0	<muted>Each Heartless stack grants 2% more armor in every armor cell, above its normal maximum.</muted>
+integrable|husk_plating|CRUISER|7	0	<muted>2% reduced top speed and maneuverability for each Heartless stack.</muted>
+integrable|husk_plating|CAPITAL_SHIP|0	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
+integrable|husk_plating|CAPITAL_SHIP|1	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
+integrable|husk_plating|CAPITAL_SHIP|2	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
+integrable|husk_plating|CAPITAL_SHIP|3	0	Click and hold to integrate.
+integrable|husk_plating|CAPITAL_SHIP|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|husk_plating|CAPITAL_SHIP|5	0	<muted>Gaining a Heartless stack restores 5% of maximum armor to every armor cell.</muted>
+integrable|husk_plating|CAPITAL_SHIP|6	0	<muted>Each Heartless stack grants 2% more armor in every armor cell, above its normal maximum.</muted>
+integrable|husk_plating|CAPITAL_SHIP|7	0	<muted>2% reduced top speed and maneuverability for each Heartless stack.</muted>
+integrated|husk_plating|null|0	0	<builtIn>Integrated</builtIn>
+integrated|husk_plating|null|1	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
+integrated|husk_plating|null|2	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
+integrated|husk_plating|null|3	0	<bad>2%</bad><builtIn> reduced top speed and maneuverability for each Heartless stack.</builtIn>
+integrated|husk_plating|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|husk_plating|FRIGATE|1	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
+integrated|husk_plating|FRIGATE|2	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
+integrated|husk_plating|FRIGATE|3	0	<bad>2%</bad><builtIn> reduced top speed and maneuverability for each Heartless stack.</builtIn>
+integrated|husk_plating|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|husk_plating|DESTROYER|1	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
+integrated|husk_plating|DESTROYER|2	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
+integrated|husk_plating|DESTROYER|3	0	<bad>2%</bad><builtIn> reduced top speed and maneuverability for each Heartless stack.</builtIn>
+integrated|husk_plating|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|husk_plating|CRUISER|1	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
+integrated|husk_plating|CRUISER|2	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
+integrated|husk_plating|CRUISER|3	0	<bad>2%</bad><builtIn> reduced top speed and maneuverability for each Heartless stack.</builtIn>
+integrated|husk_plating|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|husk_plating|CAPITAL_SHIP|1	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
+integrated|husk_plating|CAPITAL_SHIP|2	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
+integrated|husk_plating|CAPITAL_SHIP|3	0	<bad>2%</bad><builtIn> reduced top speed and maneuverability for each Heartless stack.</builtIn>
 flavour|hybrid_p_space_shrouding	0	Leaked papers from Tri-Tachyon's Hybrid Physics Division (on phase work the corporation swears it abandoned under the Treaty of Thule) show the crew how to bleed this ship's sensor emissions into the masking field phase ships throw over a fleet. Tri-Tachyon maintains the papers are forgeries.
 flavourAutomated|hybrid_p_space_shrouding	0	Leaked papers from Tri-Tachyon's Hybrid Physics Division (on phase work the corporation swears it abandoned under the Treaty of Thule) describe how to bleed a ship's sensor emissions into the masking field phase ships throw over a fleet. Tri-Tachyon maintains the papers are forgeries.
 type|hybrid_p_space_shrouding|null|0	0	50% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
@@ -6834,21 +7029,81 @@ type|litany_of_the_fallen|FRIGATE|0	0	<good>1%</good> reduced hull damage taken 
 type|litany_of_the_fallen|DESTROYER|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
 type|litany_of_the_fallen|CRUISER|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
 type|litany_of_the_fallen|CAPITAL_SHIP|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
-type|live_munitions|null|0	0	Each Heartless stack has a <bad>9%</bad> chance to sacrifice a crew member for each missile fired.
+type|live_munitions|null|0	0	Each Heartless stack has a <bad>15%</bad> chance to sacrifice a crew member for each missile fired.
 type|live_munitions|null|1	0	<good>3%</good> increased missile damage for each Heartless stack while the fleet has crew left to give.
 type|live_munitions|null|2	0	<good>3%</good> increased missile top speed for each Heartless stack while the fleet has crew left to give.
-type|live_munitions|FRIGATE|0	0	Each Heartless stack has a <bad>9%</bad> chance to sacrifice a crew member for each missile fired.
+type|live_munitions|FRIGATE|0	0	Each Heartless stack has a <bad>15%</bad> chance to sacrifice a crew member for each missile fired.
 type|live_munitions|FRIGATE|1	0	<good>3%</good> increased missile damage for each Heartless stack while the fleet has crew left to give.
 type|live_munitions|FRIGATE|2	0	<good>3%</good> increased missile top speed for each Heartless stack while the fleet has crew left to give.
-type|live_munitions|DESTROYER|0	0	Each Heartless stack has a <bad>9%</bad> chance to sacrifice a crew member for each missile fired.
+type|live_munitions|DESTROYER|0	0	Each Heartless stack has a <bad>15%</bad> chance to sacrifice a crew member for each missile fired.
 type|live_munitions|DESTROYER|1	0	<good>3%</good> increased missile damage for each Heartless stack while the fleet has crew left to give.
 type|live_munitions|DESTROYER|2	0	<good>3%</good> increased missile top speed for each Heartless stack while the fleet has crew left to give.
-type|live_munitions|CRUISER|0	0	Each Heartless stack has a <bad>9%</bad> chance to sacrifice a crew member for each missile fired.
+type|live_munitions|CRUISER|0	0	Each Heartless stack has a <bad>15%</bad> chance to sacrifice a crew member for each missile fired.
 type|live_munitions|CRUISER|1	0	<good>3%</good> increased missile damage for each Heartless stack while the fleet has crew left to give.
 type|live_munitions|CRUISER|2	0	<good>3%</good> increased missile top speed for each Heartless stack while the fleet has crew left to give.
-type|live_munitions|CAPITAL_SHIP|0	0	Each Heartless stack has a <bad>9%</bad> chance to sacrifice a crew member for each missile fired.
+type|live_munitions|CAPITAL_SHIP|0	0	Each Heartless stack has a <bad>15%</bad> chance to sacrifice a crew member for each missile fired.
 type|live_munitions|CAPITAL_SHIP|1	0	<good>3%</good> increased missile damage for each Heartless stack while the fleet has crew left to give.
 type|live_munitions|CAPITAL_SHIP|2	0	<good>3%</good> increased missile top speed for each Heartless stack while the fleet has crew left to give.
+integrable|live_munitions|null|0	0	Each Heartless stack has a <bad>15%</bad> chance to sacrifice a crew member for each missile fired.
+integrable|live_munitions|null|1	0	<good>3%</good> increased missile damage for each Heartless stack while the fleet has crew left to give.
+integrable|live_munitions|null|2	0	<good>3%</good> increased missile top speed for each Heartless stack while the fleet has crew left to give.
+integrable|live_munitions|null|3	0	Click and hold to integrate.
+integrable|live_munitions|null|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|live_munitions|null|5	0	<muted>Each Heartless stack has a 20% chance to sacrifice a crew member for each missile fired.</muted>
+integrable|live_munitions|null|6	0	<muted>4% increased missile damage for each Heartless stack while the fleet has crew left to give.</muted>
+integrable|live_munitions|null|7	0	<muted>4% increased missile top speed for each Heartless stack while the fleet has crew left to give.</muted>
+integrable|live_munitions|FRIGATE|0	0	Each Heartless stack has a <bad>15%</bad> chance to sacrifice a crew member for each missile fired.
+integrable|live_munitions|FRIGATE|1	0	<good>3%</good> increased missile damage for each Heartless stack while the fleet has crew left to give.
+integrable|live_munitions|FRIGATE|2	0	<good>3%</good> increased missile top speed for each Heartless stack while the fleet has crew left to give.
+integrable|live_munitions|FRIGATE|3	0	Click and hold to integrate.
+integrable|live_munitions|FRIGATE|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|live_munitions|FRIGATE|5	0	<muted>Each Heartless stack has a 20% chance to sacrifice a crew member for each missile fired.</muted>
+integrable|live_munitions|FRIGATE|6	0	<muted>4% increased missile damage for each Heartless stack while the fleet has crew left to give.</muted>
+integrable|live_munitions|FRIGATE|7	0	<muted>4% increased missile top speed for each Heartless stack while the fleet has crew left to give.</muted>
+integrable|live_munitions|DESTROYER|0	0	Each Heartless stack has a <bad>15%</bad> chance to sacrifice a crew member for each missile fired.
+integrable|live_munitions|DESTROYER|1	0	<good>3%</good> increased missile damage for each Heartless stack while the fleet has crew left to give.
+integrable|live_munitions|DESTROYER|2	0	<good>3%</good> increased missile top speed for each Heartless stack while the fleet has crew left to give.
+integrable|live_munitions|DESTROYER|3	0	Click and hold to integrate.
+integrable|live_munitions|DESTROYER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|live_munitions|DESTROYER|5	0	<muted>Each Heartless stack has a 20% chance to sacrifice a crew member for each missile fired.</muted>
+integrable|live_munitions|DESTROYER|6	0	<muted>4% increased missile damage for each Heartless stack while the fleet has crew left to give.</muted>
+integrable|live_munitions|DESTROYER|7	0	<muted>4% increased missile top speed for each Heartless stack while the fleet has crew left to give.</muted>
+integrable|live_munitions|CRUISER|0	0	Each Heartless stack has a <bad>15%</bad> chance to sacrifice a crew member for each missile fired.
+integrable|live_munitions|CRUISER|1	0	<good>3%</good> increased missile damage for each Heartless stack while the fleet has crew left to give.
+integrable|live_munitions|CRUISER|2	0	<good>3%</good> increased missile top speed for each Heartless stack while the fleet has crew left to give.
+integrable|live_munitions|CRUISER|3	0	Click and hold to integrate.
+integrable|live_munitions|CRUISER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|live_munitions|CRUISER|5	0	<muted>Each Heartless stack has a 20% chance to sacrifice a crew member for each missile fired.</muted>
+integrable|live_munitions|CRUISER|6	0	<muted>4% increased missile damage for each Heartless stack while the fleet has crew left to give.</muted>
+integrable|live_munitions|CRUISER|7	0	<muted>4% increased missile top speed for each Heartless stack while the fleet has crew left to give.</muted>
+integrable|live_munitions|CAPITAL_SHIP|0	0	Each Heartless stack has a <bad>15%</bad> chance to sacrifice a crew member for each missile fired.
+integrable|live_munitions|CAPITAL_SHIP|1	0	<good>3%</good> increased missile damage for each Heartless stack while the fleet has crew left to give.
+integrable|live_munitions|CAPITAL_SHIP|2	0	<good>3%</good> increased missile top speed for each Heartless stack while the fleet has crew left to give.
+integrable|live_munitions|CAPITAL_SHIP|3	0	Click and hold to integrate.
+integrable|live_munitions|CAPITAL_SHIP|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|live_munitions|CAPITAL_SHIP|5	0	<muted>Each Heartless stack has a 20% chance to sacrifice a crew member for each missile fired.</muted>
+integrable|live_munitions|CAPITAL_SHIP|6	0	<muted>4% increased missile damage for each Heartless stack while the fleet has crew left to give.</muted>
+integrable|live_munitions|CAPITAL_SHIP|7	0	<muted>4% increased missile top speed for each Heartless stack while the fleet has crew left to give.</muted>
+integrated|live_munitions|null|0	0	<builtIn>Integrated</builtIn>
+integrated|live_munitions|null|1	0	<builtIn>Each Heartless stack has a </builtIn><bad>20%</bad><builtIn> chance to sacrifice a crew member for each missile fired.</builtIn>
+integrated|live_munitions|null|2	0	<good>4%</good><builtIn> increased missile damage for each Heartless stack while the fleet has crew left to give.</builtIn>
+integrated|live_munitions|null|3	0	<good>4%</good><builtIn> increased missile top speed for each Heartless stack while the fleet has crew left to give.</builtIn>
+integrated|live_munitions|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|live_munitions|FRIGATE|1	0	<builtIn>Each Heartless stack has a </builtIn><bad>20%</bad><builtIn> chance to sacrifice a crew member for each missile fired.</builtIn>
+integrated|live_munitions|FRIGATE|2	0	<good>4%</good><builtIn> increased missile damage for each Heartless stack while the fleet has crew left to give.</builtIn>
+integrated|live_munitions|FRIGATE|3	0	<good>4%</good><builtIn> increased missile top speed for each Heartless stack while the fleet has crew left to give.</builtIn>
+integrated|live_munitions|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|live_munitions|DESTROYER|1	0	<builtIn>Each Heartless stack has a </builtIn><bad>20%</bad><builtIn> chance to sacrifice a crew member for each missile fired.</builtIn>
+integrated|live_munitions|DESTROYER|2	0	<good>4%</good><builtIn> increased missile damage for each Heartless stack while the fleet has crew left to give.</builtIn>
+integrated|live_munitions|DESTROYER|3	0	<good>4%</good><builtIn> increased missile top speed for each Heartless stack while the fleet has crew left to give.</builtIn>
+integrated|live_munitions|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|live_munitions|CRUISER|1	0	<builtIn>Each Heartless stack has a </builtIn><bad>20%</bad><builtIn> chance to sacrifice a crew member for each missile fired.</builtIn>
+integrated|live_munitions|CRUISER|2	0	<good>4%</good><builtIn> increased missile damage for each Heartless stack while the fleet has crew left to give.</builtIn>
+integrated|live_munitions|CRUISER|3	0	<good>4%</good><builtIn> increased missile top speed for each Heartless stack while the fleet has crew left to give.</builtIn>
+integrated|live_munitions|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|live_munitions|CAPITAL_SHIP|1	0	<builtIn>Each Heartless stack has a </builtIn><bad>20%</bad><builtIn> chance to sacrifice a crew member for each missile fired.</builtIn>
+integrated|live_munitions|CAPITAL_SHIP|2	0	<good>4%</good><builtIn> increased missile damage for each Heartless stack while the fleet has crew left to give.</builtIn>
+integrated|live_munitions|CAPITAL_SHIP|3	0	<good>4%</good><builtIn> increased missile top speed for each Heartless stack while the fleet has crew left to give.</builtIn>
 type|low_tech_affinity|null|0	0	<good>+5</good> to Low Tech Affinity.
 type|low_tech_affinity|FRIGATE|0	0	<good>+5</good> to Low Tech Affinity.
 type|low_tech_affinity|DESTROYER|0	0	<good>+5</good> to Low Tech Affinity.
