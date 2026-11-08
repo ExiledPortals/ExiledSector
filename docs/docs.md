@@ -74,6 +74,10 @@ each such hull mod's effect in `PhantomHullModEffect`, which forwards to the ori
 copies, where it does nothing, can't be removed and is hidden from refit and Codex. Fleet-wide hull mods
 (High Resolution Sensors, Phase Field) are never phantoms.
 
+The tree applies a node's vanilla effect as a plain hull mod, never an s-mod, so an integrated node that takes
+vanilla's s-mod bonus carries it as its own effect: Neural Interface sets vanilla's instant transfer flag through
+`INSTANT_NEURAL_TRANSFER_FROM` (`BattleSkillEffect`).
+
 ### Integrated nodes
 
 A type with an `integrated` block in `skill_types.json` (`IntegratedEffects`) can be integrated on one ship by
