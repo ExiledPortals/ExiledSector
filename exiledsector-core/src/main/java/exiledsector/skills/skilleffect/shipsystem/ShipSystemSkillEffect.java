@@ -28,6 +28,13 @@ public enum ShipSystemSkillEffect implements BackedSkillEffect {
                     .arg("damage", TemporalExhaustListener.RIFT_DAMAGE).arg("cooldown", TemporalExhaustListener.COOLDOWN_SECONDS).styled();
         }
     },
+    SYSTEM_ACTIVATION_TIMEFLOW_TAPER_SECONDS_FLAT(listener(TemporalExhaustListener.ADDITIONAL_TAPER_SECONDS_KEY, TemporalExhaustListener.class,
+            TemporalExhaustListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).count(Math.round(magnitude)).arg("value", magnitude).styled();
+        }
+    },
     AUGMENTED_SYSTEM_REGEN_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

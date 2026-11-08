@@ -21,6 +21,7 @@ import java.util.Random;
 final class ResonatorPayloadListener extends ShipCombatListener implements DamageDealtModifier, AdvanceableListener {
 
     static final String CHANCE_PERCENT_KEY = "exiledSector_resonatorPayloadChancePercent";
+    static final String ADDITIONAL_RIFTS_KEY = "exiledSector_resonatorPayloadAdditionalRifts";
     static final int RIFTS_PER_SERIES = 4;
     static final float DAMAGE_SHARE_PERCENT = 10f;
     static final float MAX_DAMAGE = 100f;
@@ -53,7 +54,7 @@ final class ResonatorPayloadListener extends ShipCombatListener implements Damag
         }
         if (Chance.roll(random, magnitude(CHANCE_PERCENT_KEY))) {
             Vector2f impactPoint = new Vector2f(point);
-            activeSeries.add(new RiftSeries(ownerShip, RIFTS_PER_SERIES, SECONDS_BETWEEN_RIFTS, riftDamage(missile.getWeapon().getSpec()),
+            activeSeries.add(new RiftSeries(ownerShip, riftsPerSeries(), SECONDS_BETWEEN_RIFTS, riftDamage(missile.getWeapon().getSpec()),
                     () -> scatteredAround(impactPoint), random));
         }
         return null;
@@ -75,6 +76,10 @@ final class ResonatorPayloadListener extends ShipCombatListener implements Damag
                 activeSeries.remove(index);
             }
         }
+    }
+
+    private int riftsPerSeries() {
+        return RIFTS_PER_SERIES + Math.max(0, Math.round(magnitude(ADDITIONAL_RIFTS_KEY)));
     }
 
     private boolean isOwnMissileWeaponShot(MissileAPI missile) {

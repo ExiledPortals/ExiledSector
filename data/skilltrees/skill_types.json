@@ -353,6 +353,14 @@
 					"magnitude": 20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "DISINTEGRATION_ARMOR_DAMAGE_PERCENT",
+						"magnitude": 30
+					}
+				]
+			},
 			"flavour": "\"And what the defiler builds shall be unmade around its every wound, so that no part remains to be mended.\"\n- Attributed to the Book of Ludd, apocrypha",
 			"tags": [
 				"energy",
@@ -5673,6 +5681,18 @@
 					"magnitude": 30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "RIFT_STRIKE_CHANCE_PERCENT",
+						"magnitude": 30
+					},
+					{
+						"effect": "BEAM_RIFT_STRIKE_CHANCE_PERCENT",
+						"magnitude": 30
+					}
+				]
+			},
 			"flavour": "\"The impact site reads as empty for a moment afterwards. Not damaged, not cold. Empty. I have asked for the sensor package to be recalibrated.\"\n- Lab notes recovered from Alpha Site, author unknown",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -6619,6 +6639,14 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT",
+						"magnitude": 20
+					}
+				]
+			},
 			"flavour": "\"Recovered three of the little ones intact. By the time the bench clamps were on, there were two.\"\n- Hegemony salvage inventory, amended",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -6637,6 +6665,18 @@
 					"magnitude": 20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SYSTEM_ACTIVATION_TIMEFLOW_PERCENT",
+						"magnitude": 20
+					},
+					{
+						"effect": "SYSTEM_ACTIVATION_TIMEFLOW_TAPER_SECONDS_FLAT",
+						"magnitude": 2
+					}
+				]
+			},
 			"flavour": "\"The plume showed up on our scopes before the drive lit. I have checked the clocks. Please stop asking me to check the clocks.\"\n- Sensor officer's log, Tri-Tachyon picket, name withheld",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -6654,6 +6694,18 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY",
+						"magnitude": 1
+					},
+					{
+						"effect": "MISSILE_HIT_RIFT_SERIES_EXPLOSIONS_FLAT",
+						"magnitude": 1
+					}
+				]
+			},
 			"flavour": "\"Ordnance asks that it be noted, again, that the ballast is humming.\"\n- Quartermaster's memo, recovered from Alpha Site",
 			"todo": "Needs an icon.",
 			"tags": [

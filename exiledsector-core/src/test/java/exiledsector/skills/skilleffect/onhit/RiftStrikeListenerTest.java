@@ -1,6 +1,7 @@
 package exiledsector.skills.skilleffect.onhit;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.combat.BeamAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
@@ -34,6 +35,7 @@ import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
@@ -73,8 +75,21 @@ class RiftStrikeListenerTest {
         return shot;
     }
 
+    private static BeamAPI beam(ShipAPI firingShip, float damagePerSecond) {
+        WeaponAPI weapon = mock(WeaponAPI.class);
+        when(weapon.getShip()).thenReturn(firingShip);
+        WeaponSpecAPI spec = spec(WeaponType.ENERGY, true, 0f);
+        when(spec.getDerivedStats().getDps()).thenReturn(damagePerSecond);
+        when(weapon.getType()).thenReturn(WeaponType.ENERGY);
+        when(weapon.isBeam()).thenReturn(true);
+        when(weapon.getSpec()).thenReturn(spec);
+        BeamAPI beam = mock(BeamAPI.class);
+        when(beam.getWeapon()).thenReturn(weapon);
+        return beam;
+    }
+
     private static RiftStrikeListener listener(ShipAPI ship, Random random) {
-        return new RiftStrikeListener(ship, ship, RiftStrike.CHANCE_PERCENT_KEY, random);
+        return new RiftStrikeListener(ship, ship, RiftStrike.CHANCE_PERCENT_KEY, RiftStrike.BEAM_CHANCE_PERCENT_KEY, random);
     }
 
     private static Random rolling(float roll) {
@@ -162,6 +177,64 @@ class RiftStrikeListenerTest {
     }
 
     @Test
+    void beamRiftDamageIsHalfTheBeamsBaseDamagePerSecond() {
+        WeaponSpecAPI beamSpec = spec(WeaponType.ENERGY, true, 0f);
+        when(beamSpec.getDerivedStats().getDps()).thenReturn(400f);
+
+        assertEquals(200f, RiftStrike.baseRiftDamage(beamSpec), 0.001f);
+        assertTrue(RiftStrike.beamFiresRifts(beamSpec, false));
+        assertFalse(RiftStrike.beamFiresRifts(spec(WeaponType.ENERGY, false, 100f), false));
+        assertFalse(RiftStrike.beamFiresRifts(spec(WeaponType.BALLISTIC, true, 100f), false));
+        assertTrue(RiftStrike.beamFiresRifts(spec(WeaponType.BALLISTIC, true, 100f), true));
+    }
+
+    @Test
+    void eachBeamWeaponRollsTheBeamChanceAtMostOnceASecond() {
+        ShipAPI ship = ship("rifter", 0, 0f);
+        when(ship.getMutableStats().getDynamic().getValue(RiftStrike.BEAM_CHANCE_PERCENT_KEY, 0f)).thenReturn(30f);
+        ShipAPI enemy = ship("enemy", 1, 0f);
+        MissileAPI rift = rift();
+        CombatEngineAPI engine = engineSpawning(rift);
+        BeamAPI firstBeam = beam(ship, 400f);
+        BeamAPI secondBeam = beam(ship, 400f);
+        RiftStrikeListener listener = listener(ship, rolling(0.29f));
+        try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            global.when(Global::getCombatEngine).thenReturn(engine);
+
+            when(engine.getTotalElapsedTime(false)).thenReturn(10f);
+            listener.modifyDamageDealt(firstBeam, enemy, mock(DamageAPI.class), new Vector2f(), false);
+            when(engine.getTotalElapsedTime(false)).thenReturn(10.5f);
+            listener.modifyDamageDealt(firstBeam, enemy, mock(DamageAPI.class), new Vector2f(), false);
+            listener.modifyDamageDealt(secondBeam, enemy, mock(DamageAPI.class), new Vector2f(), false);
+            verify(engine, times(2)).spawnProjectile(any(), any(), anyString(), any(), anyFloat(), any());
+            verify(rift.getDamage(), times(2)).setDamage(200f);
+
+            when(engine.getTotalElapsedTime(false)).thenReturn(11f);
+            listener.modifyDamageDealt(firstBeam, enemy, mock(DamageAPI.class), new Vector2f(), false);
+            verify(engine, times(3)).spawnProjectile(any(), any(), anyString(), any(), anyFloat(), any());
+        }
+    }
+
+    @Test
+    void beamsNeverRollWithoutTheBeamChanceOrFromStrikecraft() {
+        ShipAPI ship = ship("rifter", 0, 100f);
+        ShipAPI fighter = ship("fighter", 0, 0f);
+        ShipAPI carrier = ship("carrier", 0, 0f);
+        when(carrier.getMutableStats().getDynamic().getValue(RiftStrike.STRIKECRAFT_CHANCE_PERCENT_KEY, 0f)).thenReturn(100f);
+        when(carrier.getMutableStats().getDynamic().getValue(RiftStrike.BEAM_CHANCE_PERCENT_KEY, 0f)).thenReturn(100f);
+        CombatEngineAPI engine = engineSpawning(rift());
+        try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            global.when(Global::getCombatEngine).thenReturn(engine);
+
+            listener(ship, rolling(0f)).modifyDamageDealt(beam(ship, 400f), ship("enemy", 1, 0f), mock(DamageAPI.class), new Vector2f(), false);
+            new RiftStrikeListener(fighter, carrier, RiftStrike.STRIKECRAFT_CHANCE_PERCENT_KEY, null, rolling(0f))
+                    .modifyDamageDealt(beam(fighter, 400f), ship("enemy", 1, 0f), mock(DamageAPI.class), new Vector2f(), false);
+
+            verify(engine, never()).spawnProjectile(any(), any(), anyString(), any(), anyFloat(), any());
+        }
+    }
+
+    @Test
     void shotsFromAnotherShipsWeaponNeverRoll() {
         ShipAPI ship = ship("rifter", 0, 100f);
         ShipAPI weaponDrone = ship("drone", 0, 0f);
@@ -187,11 +260,11 @@ class RiftStrikeListenerTest {
         try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
             global.when(Global::getCombatEngine).thenReturn(engine);
 
-            new RiftStrikeListener(fighter, carrier, RiftStrike.STRIKECRAFT_CHANCE_PERCENT_KEY, rolling(0.11f))
+            new RiftStrikeListener(fighter, carrier, RiftStrike.STRIKECRAFT_CHANCE_PERCENT_KEY, null, rolling(0.11f))
                     .modifyDamageDealt(shot(fighter, WeaponType.ENERGY, false, 200f), ship("enemy", 1, 0f), mock(DamageAPI.class), point, false);
             verify(engine, never()).spawnProjectile(any(), any(), anyString(), any(), anyFloat(), any());
 
-            new RiftStrikeListener(fighter, carrier, RiftStrike.STRIKECRAFT_CHANCE_PERCENT_KEY, rolling(0.09f))
+            new RiftStrikeListener(fighter, carrier, RiftStrike.STRIKECRAFT_CHANCE_PERCENT_KEY, null, rolling(0.09f))
                     .modifyDamageDealt(shot(fighter, WeaponType.ENERGY, false, 200f), ship("enemy", 1, 0f), mock(DamageAPI.class), point, false);
 
             verify(engine).spawnProjectile(eq(fighter), eq(null), eq(RiftExplosions.RIFT_MINE_WEAPON_ID), eq(point), anyFloat(), eq(null));
