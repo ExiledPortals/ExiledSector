@@ -11,7 +11,7 @@ Status: built 2026-11-08; not yet checked in game. All magnitudes are placeholde
 - Integration is per ship and per node. A ship's first integration costs 1 story point, its second 2, its third 3 and so on. Unlike building in an s-mod, it grants no bonus XP, so a refund can't be farmed for XP.
 - Deallocating or respeccing an integrated node keeps it integrated, so allocating it again restores the integrated effects for free. Integrated nodes still count toward the next cost.
 - An integrated node draws the root node's circuit animation in miniature, in story point green, dimmed while unallocated. It grows in while the click is held.
-- The tooltip shows the node's current effects. Integrated effects that differ from the normal ones are story point green. A node that isn't integrated shows its integrated effects and cost only in the F1 details, in their own section with dividers between the current effects and the other details.
+- The tooltip shows the node's current effects. Integrated effects that differ from the normal ones are story point green, and so is a "No longer:" line for each normal line they drop. A node that isn't integrated shows its integrated effects and cost only in the F1 details, in their own section with dividers between the current effects and the other details.
 - The Deintegration Schematic resets a ship's integrated nodes and refunds all their story points. It is used from a skill tree button beside the Logistics Schematic's and drops the same way, at the Tuning Nanoswarm's battle rate.
 
 ## NPCs
