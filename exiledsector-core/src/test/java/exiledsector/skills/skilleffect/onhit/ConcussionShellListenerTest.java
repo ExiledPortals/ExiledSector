@@ -3,6 +3,7 @@ package exiledsector.skills.skilleffect.onhit;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipEngineControllerAPI;
 import com.fs.starfarer.api.combat.ShipEngineControllerAPI.ShipEngineAPI;
@@ -25,6 +26,7 @@ class ConcussionShellListenerTest {
 
     private ShipAPI ship;
     private DynamicStatsAPI dynamic;
+    private MutableStat ballisticRateOfFire;
     private ShipAPI enemy;
     private WeaponAPI nearWeapon;
     private WeaponAPI farWeapon;
@@ -38,6 +40,8 @@ class ConcussionShellListenerTest {
         dynamic = mock(DynamicStatsAPI.class);
         when(ship.getMutableStats()).thenReturn(stats);
         when(stats.getDynamic()).thenReturn(dynamic);
+        ballisticRateOfFire = new MutableStat(1f);
+        when(stats.getBallisticRoFMult()).thenReturn(ballisticRateOfFire);
         when(dynamic.getValue(ConcussionShellListener.CHANCE_PERCENT_KEY, 0f)).thenReturn(10f);
 
         enemy = mock(ShipAPI.class);
@@ -60,7 +64,14 @@ class ConcussionShellListenerTest {
     }
 
     private static DamagingProjectileAPI shotFrom(WeaponSize size, WeaponType type) {
+        return shotFrom(size, type, 1f);
+    }
+
+    private static DamagingProjectileAPI shotFrom(WeaponSize size, WeaponType type, float shotsPerSecond) {
+        WeaponAPI.DerivedWeaponStatsAPI derivedStats = mock(WeaponAPI.DerivedWeaponStatsAPI.class);
+        when(derivedStats.getRoF()).thenReturn(shotsPerSecond);
         WeaponAPI weapon = mock(WeaponAPI.class);
+        when(weapon.getDerivedStats()).thenReturn(derivedStats);
         when(weapon.getSize()).thenReturn(size);
         when(weapon.getType()).thenReturn(type);
         DamagingProjectileAPI projectile = mock(DamagingProjectileAPI.class);
@@ -119,6 +130,26 @@ class ConcussionShellListenerTest {
         verify(nearWeapon, never()).disable();
 
         hit(0.05, shotFrom(WeaponSize.MEDIUM, WeaponType.BALLISTIC), new Vector2f(), false);
+        verify(nearWeapon).disable();
+    }
+
+    @Test
+    void theChanceScalesWithTheSecondsBetweenShots() {
+        hit(0.05, shotFrom(WeaponSize.LARGE, WeaponType.BALLISTIC, 4f), new Vector2f(), false);
+        verify(nearWeapon, never()).disable();
+
+        hit(0.29, shotFrom(WeaponSize.LARGE, WeaponType.BALLISTIC, 1f / 3f), new Vector2f(), false);
+        verify(nearWeapon).disable();
+    }
+
+    @Test
+    void rateOfFireBonusesShortenTheSecondsBetweenShots() {
+        ballisticRateOfFire.modifyPercent("test", 100f);
+
+        hit(0.07, shotFrom(WeaponSize.LARGE, WeaponType.BALLISTIC), new Vector2f(), false);
+        verify(nearWeapon, never()).disable();
+
+        hit(0.04, shotFrom(WeaponSize.LARGE, WeaponType.BALLISTIC), new Vector2f(), false);
         verify(nearWeapon).disable();
     }
 

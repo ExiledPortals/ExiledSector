@@ -313,6 +313,10 @@ within 100 su plus `MISSILE_KILL_FLAK_RADIUS_FLAT`, and missiles it destroys don
 A large ballistic projectile hit on an enemy ship's armor or hull rolls `LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT`,
 a medium one `MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT`, and a success temporarily disables whichever working weapon or engine sits nearest the impact (`ConcussionShellListener`).
 
+The chance is multiplied by the seconds between the weapon's shots: its average shots per second over a whole burst cycle
+(`DerivedWeaponStatsAPI.getRoF()`) times this ship's ballistic rate of fire. Each weapon then disables at the same average
+rate however fast it fires, so rapid-fire guns such as the Storm Needler can no longer chain disables.
+
 ### Auxiliary Screen
 
 `SMALLER_ALLY_DAMAGE_TAKEN_MULT` multiplies the hull, armor and shield damage taken by allied ships of a smaller

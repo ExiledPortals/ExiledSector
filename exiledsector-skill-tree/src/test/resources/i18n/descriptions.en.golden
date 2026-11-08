@@ -1750,12 +1750,12 @@ effect|KINETIC_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased kinetic 
 effect|KINETIC_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased kinetic damage taken.
 effect|KINETIC_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced kinetic damage taken.
 effect|KINETIC_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced kinetic damage taken.
-effect|LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|1.0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>1%</good> chance to disable the weapon or engine nearest the impact.
-effect|LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|10.0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
-effect|LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|12.5	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>12.5%</good> chance to disable the weapon or engine nearest the impact.
-effect|LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|100.0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>100%</good> chance to disable the weapon or engine nearest the impact.
-effect|LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|-10.0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>-10%</good> chance to disable the weapon or engine nearest the impact.
-effect|LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|-12.5	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>-12.5%</good> chance to disable the weapon or engine nearest the impact.
+effect|LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|1.0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>1%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
+effect|LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|10.0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
+effect|LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|12.5	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>12.5%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
+effect|LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|100.0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>100%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
+effect|LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|-10.0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>-10%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
+effect|LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|-12.5	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>-12.5%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
 effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|1.0	1	<good>1%</good> more negative effects from logistics d-mods for each d-mod, up to a maximum of 5 d-mods.
 effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|10.0	1	<good>10%</good> more negative effects from logistics d-mods for each d-mod, up to a maximum of 5 d-mods.
 effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|12.5	1	<good>12.5%</good> more negative effects from logistics d-mods for each d-mod, up to a maximum of 5 d-mods.
@@ -1810,12 +1810,12 @@ effect|MAX_COMBAT_READINESS_PERCENT|12.5	0	<good>12.5%</good> increased maximum 
 effect|MAX_COMBAT_READINESS_PERCENT|100.0	0	<good>100%</good> increased maximum combat readiness.
 effect|MAX_COMBAT_READINESS_PERCENT|-10.0	0	<bad>10%</bad> reduced maximum combat readiness.
 effect|MAX_COMBAT_READINESS_PERCENT|-12.5	0	<bad>12.5%</bad> reduced maximum combat readiness.
-effect|MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|1.0	0	Medium ballistic weapon hits on an enemy ship's armor or hull have a <good>1%</good> chance to disable the weapon or engine nearest the impact.
-effect|MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|10.0	0	Medium ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
-effect|MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|12.5	0	Medium ballistic weapon hits on an enemy ship's armor or hull have a <good>12.5%</good> chance to disable the weapon or engine nearest the impact.
-effect|MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|100.0	0	Medium ballistic weapon hits on an enemy ship's armor or hull have a <good>100%</good> chance to disable the weapon or engine nearest the impact.
-effect|MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|-10.0	0	Medium ballistic weapon hits on an enemy ship's armor or hull have a <good>-10%</good> chance to disable the weapon or engine nearest the impact.
-effect|MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|-12.5	0	Medium ballistic weapon hits on an enemy ship's armor or hull have a <good>-12.5%</good> chance to disable the weapon or engine nearest the impact.
+effect|MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|1.0	0	Medium ballistic weapon hits on an enemy ship's armor or hull have a <good>1%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
+effect|MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|10.0	0	Medium ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
+effect|MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|12.5	0	Medium ballistic weapon hits on an enemy ship's armor or hull have a <good>12.5%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
+effect|MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|100.0	0	Medium ballistic weapon hits on an enemy ship's armor or hull have a <good>100%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
+effect|MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|-10.0	0	Medium ballistic weapon hits on an enemy ship's armor or hull have a <good>-10%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
+effect|MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|-12.5	0	Medium ballistic weapon hits on an enemy ship's armor or hull have a <good>-12.5%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
 effect|MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT|1.0	0	<good>+1</good> to the base range of weapons in medium energy slots.
 effect|MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT|10.0	0	<good>+10</good> to the base range of weapons in medium energy slots.
 effect|MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT|12.5	0	<good>+12.5</good> to the base range of weapons in medium energy slots.
@@ -5037,51 +5037,51 @@ integrated|comsec_discipline|CAPITAL_SHIP|2	0	<good>15%</good> increased this sh
 integrated|comsec_discipline|CAPITAL_SHIP|3	0	<good>+1</good><builtIn> to ECM rating.</builtIn>
 flavour|concussion_shells	0	Planetary defense batteries on Eventide fire heavy shells with a delayed charge that bursts just inside the plating, shaking loose whatever is mounted nearby. A retired battery sergeant teaches the crew to pack them in exchange for passage off-world.
 flavourAutomated|concussion_shells	0	Planetary defense batteries on Eventide fire heavy shells with a delayed charge that bursts just inside the plating, shaking loose whatever is mounted nearby. The ship's core copies the fusing tables from a salvaged battery fire-control unit, and the refit crew packs the shells to match.
-type|concussion_shells|null|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
-type|concussion_shells|FRIGATE|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
-type|concussion_shells|DESTROYER|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
-type|concussion_shells|CRUISER|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
-type|concussion_shells|CAPITAL_SHIP|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
-integrable|concussion_shells|null|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
+type|concussion_shells|null|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
+type|concussion_shells|FRIGATE|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
+type|concussion_shells|DESTROYER|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
+type|concussion_shells|CRUISER|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
+type|concussion_shells|CAPITAL_SHIP|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
+integrable|concussion_shells|null|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
 integrable|concussion_shells|null|1	0	Click and hold to integrate.
 integrable|concussion_shells|null|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|concussion_shells|null|3	0	<muted>Large ballistic weapon hits on an enemy ship's armor or hull have a 10% chance to disable the weapon or engine nearest the impact.</muted>
-integrable|concussion_shells|null|4	0	<muted>Medium ballistic weapon hits on an enemy ship's armor or hull have a 10% chance to disable the weapon or engine nearest the impact.</muted>
-integrable|concussion_shells|FRIGATE|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
+integrable|concussion_shells|null|3	0	<muted>Large ballistic weapon hits on an enemy ship's armor or hull have a 10% chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.</muted>
+integrable|concussion_shells|null|4	0	<muted>Medium ballistic weapon hits on an enemy ship's armor or hull have a 10% chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.</muted>
+integrable|concussion_shells|FRIGATE|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
 integrable|concussion_shells|FRIGATE|1	0	Click and hold to integrate.
 integrable|concussion_shells|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|concussion_shells|FRIGATE|3	0	<muted>Large ballistic weapon hits on an enemy ship's armor or hull have a 10% chance to disable the weapon or engine nearest the impact.</muted>
-integrable|concussion_shells|FRIGATE|4	0	<muted>Medium ballistic weapon hits on an enemy ship's armor or hull have a 10% chance to disable the weapon or engine nearest the impact.</muted>
-integrable|concussion_shells|DESTROYER|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
+integrable|concussion_shells|FRIGATE|3	0	<muted>Large ballistic weapon hits on an enemy ship's armor or hull have a 10% chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.</muted>
+integrable|concussion_shells|FRIGATE|4	0	<muted>Medium ballistic weapon hits on an enemy ship's armor or hull have a 10% chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.</muted>
+integrable|concussion_shells|DESTROYER|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
 integrable|concussion_shells|DESTROYER|1	0	Click and hold to integrate.
 integrable|concussion_shells|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|concussion_shells|DESTROYER|3	0	<muted>Large ballistic weapon hits on an enemy ship's armor or hull have a 10% chance to disable the weapon or engine nearest the impact.</muted>
-integrable|concussion_shells|DESTROYER|4	0	<muted>Medium ballistic weapon hits on an enemy ship's armor or hull have a 10% chance to disable the weapon or engine nearest the impact.</muted>
-integrable|concussion_shells|CRUISER|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
+integrable|concussion_shells|DESTROYER|3	0	<muted>Large ballistic weapon hits on an enemy ship's armor or hull have a 10% chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.</muted>
+integrable|concussion_shells|DESTROYER|4	0	<muted>Medium ballistic weapon hits on an enemy ship's armor or hull have a 10% chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.</muted>
+integrable|concussion_shells|CRUISER|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
 integrable|concussion_shells|CRUISER|1	0	Click and hold to integrate.
 integrable|concussion_shells|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|concussion_shells|CRUISER|3	0	<muted>Large ballistic weapon hits on an enemy ship's armor or hull have a 10% chance to disable the weapon or engine nearest the impact.</muted>
-integrable|concussion_shells|CRUISER|4	0	<muted>Medium ballistic weapon hits on an enemy ship's armor or hull have a 10% chance to disable the weapon or engine nearest the impact.</muted>
-integrable|concussion_shells|CAPITAL_SHIP|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
+integrable|concussion_shells|CRUISER|3	0	<muted>Large ballistic weapon hits on an enemy ship's armor or hull have a 10% chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.</muted>
+integrable|concussion_shells|CRUISER|4	0	<muted>Medium ballistic weapon hits on an enemy ship's armor or hull have a 10% chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.</muted>
+integrable|concussion_shells|CAPITAL_SHIP|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
 integrable|concussion_shells|CAPITAL_SHIP|1	0	Click and hold to integrate.
 integrable|concussion_shells|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|concussion_shells|CAPITAL_SHIP|3	0	<muted>Large ballistic weapon hits on an enemy ship's armor or hull have a 10% chance to disable the weapon or engine nearest the impact.</muted>
-integrable|concussion_shells|CAPITAL_SHIP|4	0	<muted>Medium ballistic weapon hits on an enemy ship's armor or hull have a 10% chance to disable the weapon or engine nearest the impact.</muted>
+integrable|concussion_shells|CAPITAL_SHIP|3	0	<muted>Large ballistic weapon hits on an enemy ship's armor or hull have a 10% chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.</muted>
+integrable|concussion_shells|CAPITAL_SHIP|4	0	<muted>Medium ballistic weapon hits on an enemy ship's armor or hull have a 10% chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.</muted>
 integrated|concussion_shells|null|0	0	<builtIn>Integrated</builtIn>
-integrated|concussion_shells|null|1	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
-integrated|concussion_shells|null|2	0	<builtIn>Medium ballistic weapon hits on an enemy ship's armor or hull have a </builtIn><good>10%</good><builtIn> chance to disable the weapon or engine nearest the impact.</builtIn>
+integrated|concussion_shells|null|1	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
+integrated|concussion_shells|null|2	0	<builtIn>Medium ballistic weapon hits on an enemy ship's armor or hull have a </builtIn><good>10%</good><builtIn> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.</builtIn>
 integrated|concussion_shells|FRIGATE|0	0	<builtIn>Integrated</builtIn>
-integrated|concussion_shells|FRIGATE|1	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
-integrated|concussion_shells|FRIGATE|2	0	<builtIn>Medium ballistic weapon hits on an enemy ship's armor or hull have a </builtIn><good>10%</good><builtIn> chance to disable the weapon or engine nearest the impact.</builtIn>
+integrated|concussion_shells|FRIGATE|1	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
+integrated|concussion_shells|FRIGATE|2	0	<builtIn>Medium ballistic weapon hits on an enemy ship's armor or hull have a </builtIn><good>10%</good><builtIn> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.</builtIn>
 integrated|concussion_shells|DESTROYER|0	0	<builtIn>Integrated</builtIn>
-integrated|concussion_shells|DESTROYER|1	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
-integrated|concussion_shells|DESTROYER|2	0	<builtIn>Medium ballistic weapon hits on an enemy ship's armor or hull have a </builtIn><good>10%</good><builtIn> chance to disable the weapon or engine nearest the impact.</builtIn>
+integrated|concussion_shells|DESTROYER|1	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
+integrated|concussion_shells|DESTROYER|2	0	<builtIn>Medium ballistic weapon hits on an enemy ship's armor or hull have a </builtIn><good>10%</good><builtIn> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.</builtIn>
 integrated|concussion_shells|CRUISER|0	0	<builtIn>Integrated</builtIn>
-integrated|concussion_shells|CRUISER|1	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
-integrated|concussion_shells|CRUISER|2	0	<builtIn>Medium ballistic weapon hits on an enemy ship's armor or hull have a </builtIn><good>10%</good><builtIn> chance to disable the weapon or engine nearest the impact.</builtIn>
+integrated|concussion_shells|CRUISER|1	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
+integrated|concussion_shells|CRUISER|2	0	<builtIn>Medium ballistic weapon hits on an enemy ship's armor or hull have a </builtIn><good>10%</good><builtIn> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.</builtIn>
 integrated|concussion_shells|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
-integrated|concussion_shells|CAPITAL_SHIP|1	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
-integrated|concussion_shells|CAPITAL_SHIP|2	0	<builtIn>Medium ballistic weapon hits on an enemy ship's armor or hull have a </builtIn><good>10%</good><builtIn> chance to disable the weapon or engine nearest the impact.</builtIn>
+integrated|concussion_shells|CAPITAL_SHIP|1	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.
+integrated|concussion_shells|CAPITAL_SHIP|2	0	<builtIn>Medium ballistic weapon hits on an enemy ship's armor or hull have a </builtIn><good>10%</good><builtIn> chance for every second between the weapon's shots to disable the weapon or engine nearest the impact.</builtIn>
 flavour|converted_fighter_bay	0	The built-in bays are stripped of launch rails and chassis forges, leaving a great deal of oddly shaped cargo space.
 type|converted_fighter_bay|null|0	0	Removes all of this ship's strikecraft bays.
 type|converted_fighter_bay|null|1	1	<bad>20%</bad> reduced minimum crew required per strikecraft bay, up to 80% in total.

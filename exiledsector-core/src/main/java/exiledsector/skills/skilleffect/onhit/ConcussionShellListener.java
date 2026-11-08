@@ -47,11 +47,21 @@ final class ConcussionShellListener extends ShipCombatListener implements Damage
         if (weapon == null || weapon.isBeam() || !WeaponScope.BALLISTIC.matches(weapon)) {
             return 0f;
         }
-        return switch (weapon.getSize()) {
+        float chancePercentPerSecond = switch (weapon.getSize()) {
             case LARGE -> magnitude(CHANCE_PERCENT_KEY);
             case MEDIUM -> magnitude(MEDIUM_CHANCE_PERCENT_KEY);
             default -> 0f;
         };
+        return chancePercentPerSecond * secondsBetweenShots(weapon);
+    }
+
+    private float secondsBetweenShots(WeaponAPI weapon) {
+        WeaponAPI.DerivedWeaponStatsAPI derivedStats = weapon.getDerivedStats();
+        if (derivedStats == null) {
+            return 0f;
+        }
+        float shotsPerSecond = derivedStats.getRoF() * ownerShip.getMutableStats().getBallisticRoFMult().getModifiedValue();
+        return shotsPerSecond > 0f ? 1f / shotsPerSecond : 0f;
     }
 
     static void disableNearest(ShipAPI hitShip, Vector2f point) {
