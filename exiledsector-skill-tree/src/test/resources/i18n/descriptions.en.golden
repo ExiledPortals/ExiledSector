@@ -5901,7 +5901,7 @@ type|tania_merite_lunge|CRUISER|0	0	<good>50%</good> increased mass.
 type|tania_merite_lunge|CRUISER|1	0	<bad>35%</bad> less maneuverability.
 type|tania_merite_lunge|CAPITAL_SHIP|0	0	<good>50%</good> increased mass.
 type|tania_merite_lunge|CAPITAL_SHIP|1	0	<bad>35%</bad> less maneuverability.
-flavour|tania_rise_from_the_ashes	0	The last stand at the Battle of Vela allowed Navarchy of Tania to be born from the ashes of bloodshed, surviving the rampage provoked by Joseph Baumgart. By watching the sacrifice of NTS Agulha Negra, a Sandgrouse class frigate, your crew understood the value of fighting for a cause, and are inspired to fight for yours.
+flavour|tania_rise_from_the_ashes	0	The last stand at the Battle of Vela allowed Navarchy of Tania to born from the ashes of Carina, surviving the rampage of Joseph Baumgart. By watching the sacrifice of NTS Agulha Negra, a Sandgrouse class frigate, your crew understood the value of fighting for a cause, and is inspired to fight for yours.
 type|tania_rise_from_the_ashes|null|0	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
 type|tania_rise_from_the_ashes|null|1	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
 type|tania_rise_from_the_ashes|null|2	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
