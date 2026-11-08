@@ -16,6 +16,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.SkillEffectSupport;
 import exiledsector.skills.skilleffect.logistics.LogisticsSkillEffect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -103,6 +104,36 @@ class WeaponSkillEffectTest {
         assertEquals(1.21f, missile.getModifiedValue(), EPSILON);
         assertEquals(1.21f, energy.getModifiedValue(), EPSILON);
         assertEquals(1f, beam.getModifiedValue(), EPSILON);
+    }
+
+    @Test
+    void perDModRateOfFireAndFluxCostAddToTheirOtherPercentsForEachCountedDMod() {
+        giveDMods(SkillEffectSupport.MAX_COUNTED_DMODS + 2);
+        MutableStat ballisticRateOfFire = new MutableStat(1f);
+        ballisticRateOfFire.modifyPercent("other", 10f);
+        MutableStat missileRateOfFire = new MutableStat(1f);
+        MutableStat energyRateOfFire = new MutableStat(1f);
+        StatBonus ballisticFluxCost = new StatBonus();
+        StatBonus missileFluxCost = new StatBonus();
+        StatBonus energyFluxCost = new StatBonus();
+        energyFluxCost.modifyPercent("other", -10f);
+        when(stats.getBallisticRoFMult()).thenReturn(ballisticRateOfFire);
+        when(stats.getMissileRoFMult()).thenReturn(missileRateOfFire);
+        when(stats.getEnergyRoFMult()).thenReturn(energyRateOfFire);
+        when(stats.getBallisticWeaponFluxCostMod()).thenReturn(ballisticFluxCost);
+        when(stats.getMissileWeaponFluxCostMod()).thenReturn(missileFluxCost);
+        when(stats.getEnergyWeaponFluxCostMod()).thenReturn(energyFluxCost);
+
+        WeaponSkillEffect.WEAPON_RATE_OF_FIRE_PERCENT_PER_DMOD.apply(stats, "mod_id", 2f);
+        WeaponSkillEffect.WEAPON_FLUX_COST_PERCENT_PER_DMOD.apply(stats, "mod_id", -2f);
+
+        assertEquals(1.2f, ballisticRateOfFire.getModifiedValue(), EPSILON);
+        assertEquals(1.1f, missileRateOfFire.getModifiedValue(), EPSILON);
+        assertEquals(1.1f, energyRateOfFire.getModifiedValue(), EPSILON);
+        assertEquals(90f, ballisticFluxCost.computeEffective(100f), EPSILON);
+        assertEquals(90f, missileFluxCost.computeEffective(100f), EPSILON);
+        assertEquals(80f, energyFluxCost.computeEffective(100f), EPSILON);
+        assertTrue(WeaponSkillEffect.WEAPON_FLUX_COST_PERCENT_PER_DMOD.lowerIsBetter());
     }
 
     private MutableStat ballisticDamageWithBurnLevel(float baseBurn, float burnChange) {

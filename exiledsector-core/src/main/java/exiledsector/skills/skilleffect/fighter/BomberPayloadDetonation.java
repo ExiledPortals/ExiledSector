@@ -42,6 +42,7 @@ import java.util.Random;
 final class BomberPayloadDetonation implements AdvanceableListener {
 
     static final String CHANCE_PERCENT_KEY = "exiledSector_bomberPayloadDetonationChancePercent";
+    static final String SPARES_ALLIES_KEY = "exiledSector_bomberPayloadDetonationSparesAllies";
     static final float CHECK_INTERVAL_SECONDS = 3f;
     static final float SAFE_DISTANCE_FROM_CARRIER = 600f;
     static final float MIN_BLAST_RADIUS = 75f;
@@ -351,10 +352,15 @@ final class BomberPayloadDetonation implements AdvanceableListener {
         engine.applyDamage(bomber, at, SELF_DESTRUCT_DAMAGE, DamageType.ENERGY, 0f, true, false, bomber, false);
     }
 
+    private boolean sparesAllies() {
+        return FighterListenerEffect.carrierValue(carrier, SPARES_ALLIES_KEY) > 0f;
+    }
+
     private void blowUp(CombatEngineAPI engine, List<Payload> payloads, Vector2f at) {
         payloads.sort(Comparator.comparingDouble(Payload::damagePerShot).reversed());
         Map<DamageType, BlastShare> foldedBlasts = new EnumMap<>(DamageType.class);
-        int spawnBudget = MAX_SPAWNED_PAYLOADS;
+        boolean sparesAllies = sparesAllies();
+        int spawnBudget = sparesAllies ? 0 : MAX_SPAWNED_PAYLOADS;
         for (Payload payload : payloads) {
             int shotsToFold = payload.shots();
             while (payload.kind() != PayloadKind.FOLDED && shotsToFold > 0 && spawnBudget > 0) {
@@ -375,7 +381,7 @@ final class BomberPayloadDetonation implements AdvanceableListener {
         for (Map.Entry<DamageType, BlastShare> folded : foldedBlasts.entrySet()) {
             BlastShare share = folded.getValue();
             Color shareColor = share.color != null ? share.color : DEFAULT_BLAST_COLOR;
-            engine.spawnDamagingExplosion(blast(share.damage, share.emp, folded.getKey(), share.radius, shareColor), bomber, at);
+            engine.spawnDamagingExplosion(blast(share.damage, share.emp, folded.getKey(), share.radius, shareColor, sparesAllies), bomber, at);
         }
     }
 
@@ -428,9 +434,13 @@ final class BomberPayloadDetonation implements AdvanceableListener {
     }
 
     static DamagingExplosionSpec blast(float damage, float emp, DamageType damageType, float radius, Color color) {
+        return blast(damage, emp, damageType, radius, color, false);
+    }
+
+    static DamagingExplosionSpec blast(float damage, float emp, DamageType damageType, float radius, Color color, boolean sparesAllies) {
+        CollisionClass hits = sparesAllies ? CollisionClass.PROJECTILE_NO_FF : CollisionClass.HITS_SHIPS_AND_ASTEROIDS;
         DamagingExplosionSpec spec = new DamagingExplosionSpec(BLAST_SECONDS, radius, radius * BLAST_CORE_SHARE, damage,
-                damage * BLAST_EDGE_DAMAGE_SHARE, CollisionClass.HITS_SHIPS_AND_ASTEROIDS, CollisionClass.HITS_SHIPS_AND_ASTEROIDS, 3f, 3f, 0.5f, 0,
-                color, color);
+                damage * BLAST_EDGE_DAMAGE_SHARE, hits, hits, 3f, 3f, 0.5f, 0, color, color);
         spec.setDamageType(damageTypeOr(damageType));
         spec.setMaxEMPDamage(emp);
         spec.setMinEMPDamage(emp * BLAST_EDGE_DAMAGE_SHARE);

@@ -99,11 +99,19 @@ public enum AuraSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("range", RateOfFireAuraField.RANGE).styled();
         }
     },
-    ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD(listener(DModArmorAuraListener.PERCENT_PER_DMOD_KEY, DModArmorAuraListener.class,
-            DModArmorAuraListener::new)) {
+    ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD(listener(DModAuraListener.ARMOR_PERCENT_PER_DMOD_KEY, DModAuraListener.class,
+            DModAuraListener::new)) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).arg("range", DModArmorAuraField.RANGE)
+            return EffectText.msg(this).arg("value", magnitude).arg("range", DModAuraField.RANGE)
+                    .arg("max", SkillEffectSupport.MAX_COUNTED_DMODS).styled();
+        }
+    },
+    ALLY_TOP_SPEED_PERCENT_PER_DMOD(listener(DModAuraListener.TOP_SPEED_PERCENT_PER_DMOD_KEY, DModAuraListener.class,
+            DModAuraListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", DModAuraField.RANGE)
                     .arg("max", SkillEffectSupport.MAX_COUNTED_DMODS).styled();
         }
     },

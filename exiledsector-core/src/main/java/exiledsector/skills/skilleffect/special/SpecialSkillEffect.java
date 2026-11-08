@@ -1,5 +1,6 @@
 package exiledsector.skills.skilleffect.special;
 
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import exiledsector.i18n.StyledText;
 import exiledsector.skills.AffinityScaling;
 import exiledsector.skills.CombatGate;
@@ -19,12 +20,20 @@ import exiledsector.skills.skilleffect.weapon.ScopedWeaponEffect;
 import exiledsector.skills.skilleffect.weapon.WeaponScope;
 import exiledsector.skills.skilleffect.weapon.WeaponStatFamily;
 
+import static exiledsector.skills.skilleffect.Backings.flag;
 import static exiledsector.skills.skilleffect.Backings.listener;
 
 public enum SpecialSkillEffect implements BackedSkillEffect {
 
     EXPLODE_ON_DEATH(listener(DeathExplosionListener.FUEL_DAMAGE_PERCENT_KEY, DeathExplosionListener.class, DeathExplosionListener::new)),
+    EXPLODE_ON_DEATH_AREA_PERCENT(listener(DeathExplosionListener.AREA_PERCENT_KEY, DeathExplosionListener.class, DeathExplosionListener::new)),
     DEATH_ON_COLLISION(listener(CollisionDeathListener.class, CollisionDeathListener::new)),
+    DEATH_ON_COLLISION_WITH_LARGE_ENEMY(listener(CollisionDeathListener.class, CollisionDeathListener::new)) {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            flag(CollisionDeathListener.LARGE_ENEMIES_ONLY_KEY).apply(stats, modId, magnitude);
+        }
+    },
     RAM_BIGGEST_ENEMY(listener(RamPilotListener.class, RamPilotListener::new)),
     NO_RETREAT(listener(NoRetreatListener.class, NoRetreatListener::new)),
     HEARTLESS_ON_NEARBY_DESTRUCTION_RANGE_FLAT(listener(NearbyDestructionHeartless.RANGE_KEY,
