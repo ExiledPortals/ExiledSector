@@ -18,7 +18,11 @@ public final class TaperedBonus {
     }
 
     public void start() {
-        taper.start(taperSeconds);
+        start(taperSeconds);
+    }
+
+    public void start(float taperSecondsThisTime) {
+        taper.start(taperSecondsThisTime);
     }
 
     public void advance(float amount) {

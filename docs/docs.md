@@ -247,7 +247,9 @@ energy weapons, ballistics included while they count as energy, and Spark Rift's
 weapons, so shots fired by weapon drones or refraction hops never roll. On success it drops vanilla's Rift Beam
 mine at the hit point, sourced by the hitting ship or craft, which explodes at once (`RiftExplosions.spawn`). The mine's
 damage is set from the weapon spec's base damage per shot (`RiftStrike`), so damage bonuses never reach it, and the
-Rift Harmonics tooltip lists every fitted weapon with its rift damage (`RiftStrikeTooltipTable`).
+Rift Harmonics tooltip lists every fitted weapon with its rift damage (`RiftStrikeTooltipTable`). Integrated Rift
+Harmonics adds `BEAM_RIFT_STRIKE_CHANCE_PERCENT`: the same listener rolls it for each of the ship's own energy beam
+weapons at most once a second while the beam hits, with rift damage from the beam's base damage per second.
 
 `RIFT_EXPLOSION_DAMAGE_PERCENT` (`RiftExplosionDamageListener`) raises the damage of every rift explosion the ship
 sources: these rifts, vanilla's Rift Beam, Lance, Cascade and Lightning mines, and Rift Torpedo direct hits, which
@@ -260,14 +262,16 @@ only the source's listeners, so a strike craft's rifts take `STRIKECRAFT_RIFT_EX
 When the ship system turns on, `SYSTEM_ACTIVATION_TIMEFLOW_PERCENT` (`TemporalExhaustListener`) gives its time flow
 bonus, lowered evenly to nothing over 4 seconds, and spawns 8 rifts evenly over the same 4 seconds behind a random main
 engine, then waits 30 seconds before it can trigger again. The rifts are the ship's own, so they hit only enemies and
-rift explosion damage bonuses reach them.
+rift explosion damage bonuses reach them. Integrated, `SYSTEM_ACTIVATION_TIMEFLOW_TAPER_SECONDS_FLAT` adds its seconds
+to the time flow taper only; the rift trail keeps its 4 seconds.
 
 ### Resonator Payload
 
 `MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY` grants `MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT` for every
 5 of the highest affinity (`AffinityScaling.Filter.HIGHEST`). Each hit on an enemy ship from this ship's own missile
 weapons rolls it, and `ResonatorPayloadListener` then spawns 4 rifts within 100 su of the impact, 0.1 seconds apart
-(`RiftSeries`), each dealing 10% of the launcher's base damage per shot up to 100.
+(`RiftSeries`), each dealing 10% of the launcher's base damage per shot up to 100. Integrated,
+`MISSILE_HIT_RIFT_SERIES_EXPLOSIONS_FLAT` adds that many rifts to each series.
 
 ### Thermo-Accelerator
 

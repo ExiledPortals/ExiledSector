@@ -316,6 +316,12 @@ effect|BEAM_ENERGY_TO_HIGH_EXPLOSIVE|12.5	0	Energy damage from beam weapons is c
 effect|BEAM_ENERGY_TO_HIGH_EXPLOSIVE|100.0	0	Energy damage from beam weapons is converted to high explosive damage.
 effect|BEAM_ENERGY_TO_HIGH_EXPLOSIVE|-10.0	0	Energy damage from beam weapons is converted to high explosive damage.
 effect|BEAM_ENERGY_TO_HIGH_EXPLOSIVE|-12.5	0	Energy damage from beam weapons is converted to high explosive damage.
+effect|BEAM_RIFT_STRIKE_CHANCE_PERCENT|1.0	0	Energy beam hits have a <good>1%</good> chance to trigger a rift explosion, rolled at most once a second for each weapon, dealing energy damage equal to 50% of the weapon's base damage per second, at least 30 and up to a maximum of 500.
+effect|BEAM_RIFT_STRIKE_CHANCE_PERCENT|10.0	0	Energy beam hits have a <good>10%</good> chance to trigger a rift explosion, rolled at most once a second for each weapon, dealing energy damage equal to 50% of the weapon's base damage per second, at least 30 and up to a maximum of 500.
+effect|BEAM_RIFT_STRIKE_CHANCE_PERCENT|12.5	0	Energy beam hits have a <good>12.5%</good> chance to trigger a rift explosion, rolled at most once a second for each weapon, dealing energy damage equal to 50% of the weapon's base damage per second, at least 30 and up to a maximum of 500.
+effect|BEAM_RIFT_STRIKE_CHANCE_PERCENT|100.0	0	Energy beam hits have a <good>100%</good> chance to trigger a rift explosion, rolled at most once a second for each weapon, dealing energy damage equal to 50% of the weapon's base damage per second, at least 30 and up to a maximum of 500.
+effect|BEAM_RIFT_STRIKE_CHANCE_PERCENT|-10.0	0	Energy beam hits have a <good>-10%</good> chance to trigger a rift explosion, rolled at most once a second for each weapon, dealing energy damage equal to 50% of the weapon's base damage per second, at least 30 and up to a maximum of 500.
+effect|BEAM_RIFT_STRIKE_CHANCE_PERCENT|-12.5	0	Energy beam hits have a <good>-12.5%</good> chance to trigger a rift explosion, rolled at most once a second for each weapon, dealing energy damage equal to 50% of the weapon's base damage per second, at least 30 and up to a maximum of 500.
 effect|BEAM_WEAPON_AMMO_FLAT|1.0	0	<good>+1</good> to beam weapon ammo capacity. The refit screen's weapon tooltips don't show this.
 effect|BEAM_WEAPON_AMMO_FLAT|10.0	0	<good>+10</good> to beam weapon ammo capacity. The refit screen's weapon tooltips don't show this.
 effect|BEAM_WEAPON_AMMO_FLAT|12.5	0	<good>+12.5</good> to beam weapon ammo capacity. The refit screen's weapon tooltips don't show this.
@@ -1810,6 +1816,12 @@ effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY|12.5	0	Missil
 effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY|100.0	0	Missile hits have a <good>100%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
 effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY|-10.0	0	Missile hits have a <good>-10%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
 effect|MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY|-12.5	0	Missile hits have a <good>-12.5%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+effect|MISSILE_HIT_RIFT_SERIES_EXPLOSIONS_FLAT|1.0	0	Each rift series from missile hits has <good>1</good> additional rift explosion.
+effect|MISSILE_HIT_RIFT_SERIES_EXPLOSIONS_FLAT|10.0	0	Each rift series from missile hits has <good>10</good> additional rift explosions.
+effect|MISSILE_HIT_RIFT_SERIES_EXPLOSIONS_FLAT|12.5	0	Each rift series from missile hits has <good>12.5</good> additional rift explosions.
+effect|MISSILE_HIT_RIFT_SERIES_EXPLOSIONS_FLAT|100.0	0	Each rift series from missile hits has <good>100</good> additional rift explosions.
+effect|MISSILE_HIT_RIFT_SERIES_EXPLOSIONS_FLAT|-10.0	0	Each rift series from missile hits has <good>-10</good> additional rift explosions.
+effect|MISSILE_HIT_RIFT_SERIES_EXPLOSIONS_FLAT|-12.5	0	Each rift series from missile hits has <good>-12.5</good> additional rift explosions.
 effect|MISSILE_KILL_FLAK_DAMAGE_FLAT|1.0	0	Enemy missiles destroyed by this ship burst for <good>1</good> fragmentation damage to other enemy missiles and fighters within 100 su.
 effect|MISSILE_KILL_FLAK_DAMAGE_FLAT|10.0	0	Enemy missiles destroyed by this ship burst for <good>10</good> fragmentation damage to other enemy missiles and fighters within 100 su.
 effect|MISSILE_KILL_FLAK_DAMAGE_FLAT|12.5	0	Enemy missiles destroyed by this ship burst for <good>12.5</good> fragmentation damage to other enemy missiles and fighters within 100 su.
@@ -2938,6 +2950,12 @@ effect|SYSTEM_ACTIVATION_TIMEFLOW_PERCENT|12.5	0	When this ship activates its sh
 effect|SYSTEM_ACTIVATION_TIMEFLOW_PERCENT|100.0	0	When this ship activates its ship system, it gains <good>100%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
 effect|SYSTEM_ACTIVATION_TIMEFLOW_PERCENT|-10.0	0	When this ship activates its ship system, it gains <good>-10%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
 effect|SYSTEM_ACTIVATION_TIMEFLOW_PERCENT|-12.5	0	When this ship activates its ship system, it gains <good>-12.5%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+effect|SYSTEM_ACTIVATION_TIMEFLOW_TAPER_SECONDS_FLAT|1.0	0	That time flow bonus tapers off over <good>1</good> additional second.
+effect|SYSTEM_ACTIVATION_TIMEFLOW_TAPER_SECONDS_FLAT|10.0	0	That time flow bonus tapers off over <good>10</good> additional seconds.
+effect|SYSTEM_ACTIVATION_TIMEFLOW_TAPER_SECONDS_FLAT|12.5	0	That time flow bonus tapers off over <good>12.5</good> additional seconds.
+effect|SYSTEM_ACTIVATION_TIMEFLOW_TAPER_SECONDS_FLAT|100.0	0	That time flow bonus tapers off over <good>100</good> additional seconds.
+effect|SYSTEM_ACTIVATION_TIMEFLOW_TAPER_SECONDS_FLAT|-10.0	0	That time flow bonus tapers off over <good>-10</good> additional seconds.
+effect|SYSTEM_ACTIVATION_TIMEFLOW_TAPER_SECONDS_FLAT|-12.5	0	That time flow bonus tapers off over <good>-12.5</good> additional seconds.
 effect|SYSTEM_CHARGES_FLAT|1.0	0	<good>+1</good> to ship system charges.
 effect|SYSTEM_CHARGES_FLAT|10.0	0	<good>+10</good> to ship system charges.
 effect|SYSTEM_CHARGES_FLAT|12.5	0	<good>+12.5</good> to ship system charges.
@@ -5227,6 +5245,36 @@ type|disintegration|FRIGATE|0	0	Energy weapon hits on armor strip an additional 
 type|disintegration|DESTROYER|0	0	Energy weapon hits on armor strip an additional <good>20%</good> of the hit's damage from the armor around the impact over 5 seconds.
 type|disintegration|CRUISER|0	0	Energy weapon hits on armor strip an additional <good>20%</good> of the hit's damage from the armor around the impact over 5 seconds.
 type|disintegration|CAPITAL_SHIP|0	0	Energy weapon hits on armor strip an additional <good>20%</good> of the hit's damage from the armor around the impact over 5 seconds.
+integrable|disintegration|null|0	0	Energy weapon hits on armor strip an additional <good>20%</good> of the hit's damage from the armor around the impact over 5 seconds.
+integrable|disintegration|null|1	0	Click and hold to integrate.
+integrable|disintegration|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|disintegration|null|3	0	<muted>Energy weapon hits on armor strip an additional 30% of the hit's damage from the armor around the impact over 5 seconds.</muted>
+integrable|disintegration|FRIGATE|0	0	Energy weapon hits on armor strip an additional <good>20%</good> of the hit's damage from the armor around the impact over 5 seconds.
+integrable|disintegration|FRIGATE|1	0	Click and hold to integrate.
+integrable|disintegration|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|disintegration|FRIGATE|3	0	<muted>Energy weapon hits on armor strip an additional 30% of the hit's damage from the armor around the impact over 5 seconds.</muted>
+integrable|disintegration|DESTROYER|0	0	Energy weapon hits on armor strip an additional <good>20%</good> of the hit's damage from the armor around the impact over 5 seconds.
+integrable|disintegration|DESTROYER|1	0	Click and hold to integrate.
+integrable|disintegration|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|disintegration|DESTROYER|3	0	<muted>Energy weapon hits on armor strip an additional 30% of the hit's damage from the armor around the impact over 5 seconds.</muted>
+integrable|disintegration|CRUISER|0	0	Energy weapon hits on armor strip an additional <good>20%</good> of the hit's damage from the armor around the impact over 5 seconds.
+integrable|disintegration|CRUISER|1	0	Click and hold to integrate.
+integrable|disintegration|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|disintegration|CRUISER|3	0	<muted>Energy weapon hits on armor strip an additional 30% of the hit's damage from the armor around the impact over 5 seconds.</muted>
+integrable|disintegration|CAPITAL_SHIP|0	0	Energy weapon hits on armor strip an additional <good>20%</good> of the hit's damage from the armor around the impact over 5 seconds.
+integrable|disintegration|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|disintegration|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|disintegration|CAPITAL_SHIP|3	0	<muted>Energy weapon hits on armor strip an additional 30% of the hit's damage from the armor around the impact over 5 seconds.</muted>
+integrated|disintegration|null|0	0	<builtIn>Integrated</builtIn>
+integrated|disintegration|null|1	0	<builtIn>Energy weapon hits on armor strip an additional </builtIn><good>30%</good><builtIn> of the hit's damage from the armor around the impact over 5 seconds.</builtIn>
+integrated|disintegration|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|disintegration|FRIGATE|1	0	<builtIn>Energy weapon hits on armor strip an additional </builtIn><good>30%</good><builtIn> of the hit's damage from the armor around the impact over 5 seconds.</builtIn>
+integrated|disintegration|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|disintegration|DESTROYER|1	0	<builtIn>Energy weapon hits on armor strip an additional </builtIn><good>30%</good><builtIn> of the hit's damage from the armor around the impact over 5 seconds.</builtIn>
+integrated|disintegration|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|disintegration|CRUISER|1	0	<builtIn>Energy weapon hits on armor strip an additional </builtIn><good>30%</good><builtIn> of the hit's damage from the armor around the impact over 5 seconds.</builtIn>
+integrated|disintegration|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|disintegration|CAPITAL_SHIP|1	0	<builtIn>Energy weapon hits on armor strip an additional </builtIn><good>30%</good><builtIn> of the hit's damage from the armor around the impact over 5 seconds.</builtIn>
 flavour|doctrine_alpha_grade_fire_control	0	Fire-control routines lifted from a Tri-Tachyon line ship, written by an alpha core that never meant to share them.
 type|doctrine_alpha_grade_fire_control|null|0	0	<good>50%</good> increased target leading accuracy of autofiring weapons.
 type|doctrine_alpha_grade_fire_control|null|1	0	<good>10%</good> increased energy weapon range.
@@ -10117,6 +10165,46 @@ type|resonator_payload|FRIGATE|0	0	Missile hits have a <good>1%</good> chance fo
 type|resonator_payload|DESTROYER|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
 type|resonator_payload|CRUISER|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
 type|resonator_payload|CAPITAL_SHIP|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+integrable|resonator_payload|null|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+integrable|resonator_payload|null|1	0	Click and hold to integrate.
+integrable|resonator_payload|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|resonator_payload|null|3	0	<muted>Missile hits have a 1% chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.</muted>
+integrable|resonator_payload|null|4	0	<muted>Each rift series from missile hits has 1 additional rift explosion.</muted>
+integrable|resonator_payload|FRIGATE|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+integrable|resonator_payload|FRIGATE|1	0	Click and hold to integrate.
+integrable|resonator_payload|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|resonator_payload|FRIGATE|3	0	<muted>Missile hits have a 1% chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.</muted>
+integrable|resonator_payload|FRIGATE|4	0	<muted>Each rift series from missile hits has 1 additional rift explosion.</muted>
+integrable|resonator_payload|DESTROYER|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+integrable|resonator_payload|DESTROYER|1	0	Click and hold to integrate.
+integrable|resonator_payload|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|resonator_payload|DESTROYER|3	0	<muted>Missile hits have a 1% chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.</muted>
+integrable|resonator_payload|DESTROYER|4	0	<muted>Each rift series from missile hits has 1 additional rift explosion.</muted>
+integrable|resonator_payload|CRUISER|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+integrable|resonator_payload|CRUISER|1	0	Click and hold to integrate.
+integrable|resonator_payload|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|resonator_payload|CRUISER|3	0	<muted>Missile hits have a 1% chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.</muted>
+integrable|resonator_payload|CRUISER|4	0	<muted>Each rift series from missile hits has 1 additional rift explosion.</muted>
+integrable|resonator_payload|CAPITAL_SHIP|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+integrable|resonator_payload|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|resonator_payload|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|resonator_payload|CAPITAL_SHIP|3	0	<muted>Missile hits have a 1% chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.</muted>
+integrable|resonator_payload|CAPITAL_SHIP|4	0	<muted>Each rift series from missile hits has 1 additional rift explosion.</muted>
+integrated|resonator_payload|null|0	0	<builtIn>Integrated</builtIn>
+integrated|resonator_payload|null|1	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+integrated|resonator_payload|null|2	0	<builtIn>Each rift series from missile hits has </builtIn><good>1</good><builtIn> additional rift explosion.</builtIn>
+integrated|resonator_payload|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|resonator_payload|FRIGATE|1	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+integrated|resonator_payload|FRIGATE|2	0	<builtIn>Each rift series from missile hits has </builtIn><good>1</good><builtIn> additional rift explosion.</builtIn>
+integrated|resonator_payload|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|resonator_payload|DESTROYER|1	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+integrated|resonator_payload|DESTROYER|2	0	<builtIn>Each rift series from missile hits has </builtIn><good>1</good><builtIn> additional rift explosion.</builtIn>
+integrated|resonator_payload|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|resonator_payload|CRUISER|1	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+integrated|resonator_payload|CRUISER|2	0	<builtIn>Each rift series from missile hits has </builtIn><good>1</good><builtIn> additional rift explosion.</builtIn>
+integrated|resonator_payload|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|resonator_payload|CAPITAL_SHIP|1	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
+integrated|resonator_payload|CAPITAL_SHIP|2	0	<builtIn>Each rift series from missile hits has </builtIn><good>1</good><builtIn> additional rift explosion.</builtIn>
 flavour|restriction_breeds_creativity	0	Captured pirate hulls show the crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Pirates call this maintenance.
 flavourAutomated|restriction_breeds_creativity	0	Captured pirate hulls show the refit crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Pirates call this maintenance.
 type|restriction_breeds_creativity|null|0	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
@@ -10140,6 +10228,46 @@ type|rift_harmonics|FRIGATE|0	0	Energy projectile hits have a <good>30%</good> c
 type|rift_harmonics|DESTROYER|0	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
 type|rift_harmonics|CRUISER|0	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
 type|rift_harmonics|CAPITAL_SHIP|0	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+integrable|rift_harmonics|null|0	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+integrable|rift_harmonics|null|1	0	Click and hold to integrate.
+integrable|rift_harmonics|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|rift_harmonics|null|3	0	<muted>Energy projectile hits have a 30% chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.</muted>
+integrable|rift_harmonics|null|4	0	<muted>Energy beam hits have a 30% chance to trigger a rift explosion, rolled at most once a second for each weapon, dealing energy damage equal to 50% of the weapon's base damage per second, at least 30 and up to a maximum of 500.</muted>
+integrable|rift_harmonics|FRIGATE|0	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+integrable|rift_harmonics|FRIGATE|1	0	Click and hold to integrate.
+integrable|rift_harmonics|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|rift_harmonics|FRIGATE|3	0	<muted>Energy projectile hits have a 30% chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.</muted>
+integrable|rift_harmonics|FRIGATE|4	0	<muted>Energy beam hits have a 30% chance to trigger a rift explosion, rolled at most once a second for each weapon, dealing energy damage equal to 50% of the weapon's base damage per second, at least 30 and up to a maximum of 500.</muted>
+integrable|rift_harmonics|DESTROYER|0	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+integrable|rift_harmonics|DESTROYER|1	0	Click and hold to integrate.
+integrable|rift_harmonics|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|rift_harmonics|DESTROYER|3	0	<muted>Energy projectile hits have a 30% chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.</muted>
+integrable|rift_harmonics|DESTROYER|4	0	<muted>Energy beam hits have a 30% chance to trigger a rift explosion, rolled at most once a second for each weapon, dealing energy damage equal to 50% of the weapon's base damage per second, at least 30 and up to a maximum of 500.</muted>
+integrable|rift_harmonics|CRUISER|0	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+integrable|rift_harmonics|CRUISER|1	0	Click and hold to integrate.
+integrable|rift_harmonics|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|rift_harmonics|CRUISER|3	0	<muted>Energy projectile hits have a 30% chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.</muted>
+integrable|rift_harmonics|CRUISER|4	0	<muted>Energy beam hits have a 30% chance to trigger a rift explosion, rolled at most once a second for each weapon, dealing energy damage equal to 50% of the weapon's base damage per second, at least 30 and up to a maximum of 500.</muted>
+integrable|rift_harmonics|CAPITAL_SHIP|0	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+integrable|rift_harmonics|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|rift_harmonics|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|rift_harmonics|CAPITAL_SHIP|3	0	<muted>Energy projectile hits have a 30% chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.</muted>
+integrable|rift_harmonics|CAPITAL_SHIP|4	0	<muted>Energy beam hits have a 30% chance to trigger a rift explosion, rolled at most once a second for each weapon, dealing energy damage equal to 50% of the weapon's base damage per second, at least 30 and up to a maximum of 500.</muted>
+integrated|rift_harmonics|null|0	0	<builtIn>Integrated</builtIn>
+integrated|rift_harmonics|null|1	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+integrated|rift_harmonics|null|2	0	<builtIn>Energy beam hits have a </builtIn><good>30%</good><builtIn> chance to trigger a rift explosion, rolled at most once a second for each weapon, dealing energy damage equal to 50% of the weapon's base damage per second, at least 30 and up to a maximum of 500.</builtIn>
+integrated|rift_harmonics|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|rift_harmonics|FRIGATE|1	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+integrated|rift_harmonics|FRIGATE|2	0	<builtIn>Energy beam hits have a </builtIn><good>30%</good><builtIn> chance to trigger a rift explosion, rolled at most once a second for each weapon, dealing energy damage equal to 50% of the weapon's base damage per second, at least 30 and up to a maximum of 500.</builtIn>
+integrated|rift_harmonics|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|rift_harmonics|DESTROYER|1	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+integrated|rift_harmonics|DESTROYER|2	0	<builtIn>Energy beam hits have a </builtIn><good>30%</good><builtIn> chance to trigger a rift explosion, rolled at most once a second for each weapon, dealing energy damage equal to 50% of the weapon's base damage per second, at least 30 and up to a maximum of 500.</builtIn>
+integrated|rift_harmonics|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|rift_harmonics|CRUISER|1	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+integrated|rift_harmonics|CRUISER|2	0	<builtIn>Energy beam hits have a </builtIn><good>30%</good><builtIn> chance to trigger a rift explosion, rolled at most once a second for each weapon, dealing energy damage equal to 50% of the weapon's base damage per second, at least 30 and up to a maximum of 500.</builtIn>
+integrated|rift_harmonics|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|rift_harmonics|CAPITAL_SHIP|1	0	Energy projectile hits have a <good>30%</good> chance to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+integrated|rift_harmonics|CAPITAL_SHIP|2	0	<builtIn>Energy beam hits have a </builtIn><good>30%</good><builtIn> chance to trigger a rift explosion, rolled at most once a second for each weapon, dealing energy damage equal to 50% of the weapon's base damage per second, at least 30 and up to a maximum of 500.</builtIn>
 type|rift_lightning_damage|null|0	0	<good>10%</good> increased Rift Lightning damage.
 type|rift_lightning_damage|FRIGATE|0	0	<good>10%</good> increased Rift Lightning damage.
 type|rift_lightning_damage|DESTROYER|0	0	<good>10%</good> increased Rift Lightning damage.
@@ -11101,6 +11229,36 @@ type|spark_rift|FRIGATE|0	0	Strikecraft launched from this ship have a <good>10%
 type|spark_rift|DESTROYER|0	0	Strikecraft launched from this ship have a <good>10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
 type|spark_rift|CRUISER|0	0	Strikecraft launched from this ship have a <good>10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
 type|spark_rift|CAPITAL_SHIP|0	0	Strikecraft launched from this ship have a <good>10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+integrable|spark_rift|null|0	0	Strikecraft launched from this ship have a <good>10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+integrable|spark_rift|null|1	0	Click and hold to integrate.
+integrable|spark_rift|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|spark_rift|null|3	0	<muted>Strikecraft launched from this ship have a 20% chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.</muted>
+integrable|spark_rift|FRIGATE|0	0	Strikecraft launched from this ship have a <good>10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+integrable|spark_rift|FRIGATE|1	0	Click and hold to integrate.
+integrable|spark_rift|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|spark_rift|FRIGATE|3	0	<muted>Strikecraft launched from this ship have a 20% chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.</muted>
+integrable|spark_rift|DESTROYER|0	0	Strikecraft launched from this ship have a <good>10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+integrable|spark_rift|DESTROYER|1	0	Click and hold to integrate.
+integrable|spark_rift|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|spark_rift|DESTROYER|3	0	<muted>Strikecraft launched from this ship have a 20% chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.</muted>
+integrable|spark_rift|CRUISER|0	0	Strikecraft launched from this ship have a <good>10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+integrable|spark_rift|CRUISER|1	0	Click and hold to integrate.
+integrable|spark_rift|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|spark_rift|CRUISER|3	0	<muted>Strikecraft launched from this ship have a 20% chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.</muted>
+integrable|spark_rift|CAPITAL_SHIP|0	0	Strikecraft launched from this ship have a <good>10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.
+integrable|spark_rift|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|spark_rift|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|spark_rift|CAPITAL_SHIP|3	0	<muted>Strikecraft launched from this ship have a 20% chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.</muted>
+integrated|spark_rift|null|0	0	<builtIn>Integrated</builtIn>
+integrated|spark_rift|null|1	0	<builtIn>Strikecraft launched from this ship have a </builtIn><good>20%</good><builtIn> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.</builtIn>
+integrated|spark_rift|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|spark_rift|FRIGATE|1	0	<builtIn>Strikecraft launched from this ship have a </builtIn><good>20%</good><builtIn> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.</builtIn>
+integrated|spark_rift|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|spark_rift|DESTROYER|1	0	<builtIn>Strikecraft launched from this ship have a </builtIn><good>20%</good><builtIn> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.</builtIn>
+integrated|spark_rift|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|spark_rift|CRUISER|1	0	<builtIn>Strikecraft launched from this ship have a </builtIn><good>20%</good><builtIn> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.</builtIn>
+integrated|spark_rift|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|spark_rift|CAPITAL_SHIP|1	0	<builtIn>Strikecraft launched from this ship have a </builtIn><good>20%</good><builtIn> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to 50% of the weapon's base damage per shot, at least 30 and up to a maximum of 500.</builtIn>
 type|stabilized_shields|null|0	1	<bad>40%</bad> less shield flux upkeep.
 type-detail|stabilized_shields|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Constellate Design- Jet Black</hullmod>\n• <hullmod>Low Arc Shield Emitter</hullmod>\n• <hullmod>Lostech Engineering</hullmod>\n• <hullmod>Stabilized Shields</hullmod>
 type|stabilized_shields|FRIGATE|0	1	<bad>40%</bad> less shield flux upkeep.
@@ -11670,6 +11828,46 @@ type|temporal_exhaust|FRIGATE|0	0	When this ship activates its ship system, it g
 type|temporal_exhaust|DESTROYER|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
 type|temporal_exhaust|CRUISER|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
 type|temporal_exhaust|CAPITAL_SHIP|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+integrable|temporal_exhaust|null|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+integrable|temporal_exhaust|null|1	0	Click and hold to integrate.
+integrable|temporal_exhaust|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|temporal_exhaust|null|3	0	<muted>When this ship activates its ship system, it gains 20% increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.</muted>
+integrable|temporal_exhaust|null|4	0	<muted>That time flow bonus tapers off over 2 additional seconds.</muted>
+integrable|temporal_exhaust|FRIGATE|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+integrable|temporal_exhaust|FRIGATE|1	0	Click and hold to integrate.
+integrable|temporal_exhaust|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|temporal_exhaust|FRIGATE|3	0	<muted>When this ship activates its ship system, it gains 20% increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.</muted>
+integrable|temporal_exhaust|FRIGATE|4	0	<muted>That time flow bonus tapers off over 2 additional seconds.</muted>
+integrable|temporal_exhaust|DESTROYER|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+integrable|temporal_exhaust|DESTROYER|1	0	Click and hold to integrate.
+integrable|temporal_exhaust|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|temporal_exhaust|DESTROYER|3	0	<muted>When this ship activates its ship system, it gains 20% increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.</muted>
+integrable|temporal_exhaust|DESTROYER|4	0	<muted>That time flow bonus tapers off over 2 additional seconds.</muted>
+integrable|temporal_exhaust|CRUISER|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+integrable|temporal_exhaust|CRUISER|1	0	Click and hold to integrate.
+integrable|temporal_exhaust|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|temporal_exhaust|CRUISER|3	0	<muted>When this ship activates its ship system, it gains 20% increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.</muted>
+integrable|temporal_exhaust|CRUISER|4	0	<muted>That time flow bonus tapers off over 2 additional seconds.</muted>
+integrable|temporal_exhaust|CAPITAL_SHIP|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+integrable|temporal_exhaust|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|temporal_exhaust|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|temporal_exhaust|CAPITAL_SHIP|3	0	<muted>When this ship activates its ship system, it gains 20% increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.</muted>
+integrable|temporal_exhaust|CAPITAL_SHIP|4	0	<muted>That time flow bonus tapers off over 2 additional seconds.</muted>
+integrated|temporal_exhaust|null|0	0	<builtIn>Integrated</builtIn>
+integrated|temporal_exhaust|null|1	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+integrated|temporal_exhaust|null|2	0	<builtIn>That time flow bonus tapers off over </builtIn><good>2</good><builtIn> additional seconds.</builtIn>
+integrated|temporal_exhaust|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|temporal_exhaust|FRIGATE|1	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+integrated|temporal_exhaust|FRIGATE|2	0	<builtIn>That time flow bonus tapers off over </builtIn><good>2</good><builtIn> additional seconds.</builtIn>
+integrated|temporal_exhaust|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|temporal_exhaust|DESTROYER|1	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+integrated|temporal_exhaust|DESTROYER|2	0	<builtIn>That time flow bonus tapers off over </builtIn><good>2</good><builtIn> additional seconds.</builtIn>
+integrated|temporal_exhaust|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|temporal_exhaust|CRUISER|1	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+integrated|temporal_exhaust|CRUISER|2	0	<builtIn>That time flow bonus tapers off over </builtIn><good>2</good><builtIn> additional seconds.</builtIn>
+integrated|temporal_exhaust|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|temporal_exhaust|CAPITAL_SHIP|1	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
+integrated|temporal_exhaust|CAPITAL_SHIP|2	0	<builtIn>That time flow bonus tapers off over </builtIn><good>2</good><builtIn> additional seconds.</builtIn>
 type|temporary_maneuverability|null|0	0	<good>50%</good> increased maneuverability.
 type|temporary_maneuverability|null|1	0	These effects only last for the first 90 seconds after the ship is deployed.
 type|temporary_maneuverability|FRIGATE|0	0	<good>50%</good> increased maneuverability.

@@ -19,6 +19,7 @@ import java.util.Random;
 final class TemporalExhaustListener extends ShipCombatListener implements AdvanceableListener {
 
     static final String TIMEFLOW_PERCENT_KEY = "exiledSector_temporalExhaustTimeflowPercent";
+    static final String ADDITIONAL_TAPER_SECONDS_KEY = "exiledSector_temporalExhaustAdditionalTaperSeconds";
     static final float TAPER_SECONDS = 4f;
     static final float COOLDOWN_SECONDS = 30f;
     static final int RIFT_COUNT = 8;
@@ -72,7 +73,7 @@ final class TemporalExhaustListener extends ShipCombatListener implements Advanc
 
     private void start() {
         cooldownSecondsLeft = COOLDOWN_SECONDS;
-        timeflowBonus.start();
+        timeflowBonus.start(TAPER_SECONDS + Math.max(0f, magnitude(ADDITIONAL_TAPER_SECONDS_KEY)));
         riftTrail = new RiftSeries(ownerShip, RIFT_COUNT, SECONDS_BETWEEN_RIFTS, RIFT_DAMAGE, this::pointBehindEngines, random);
     }
 
