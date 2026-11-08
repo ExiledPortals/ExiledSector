@@ -20,7 +20,7 @@ Every ship in your fleet gets its own skill tree: over 400 nodes of questionable
 
 You can spend ship OP on nodes, or you can level your ships up in combat. Each ship level grants you one point to spend on the tree. 
 
-Modules on Ships and Stations share part of their parent tree's effects.
+Modules on ships and stations share part of their parent tree's effects.
 
 <details>
 <summary>The skill tree</summary>
@@ -66,7 +66,7 @@ Nobody has designed a new hull since the Collapse, and the Domain's blueprints a
 
 Every ship starts with one Hull Upgrade point. Spend it on a section of the ship.
 
-Find Refit Schematics (which start dropping from once you reach level 15) that can increase the number of sections on your ship.
+Find Refit Schematics (which start dropping once you reach level 15) that can increase the number of sections on your ship.
 
 <details>
 <summary>Unlocking a section</summary>
@@ -222,7 +222,7 @@ Open a ship's refit screen and click the **Skill Tree** button under the hullmod
 
 The first time you open a ship's tree you pick its starting point: Low Tech, Midline or High Tech.
 
-Nodes initially cost the 1/2/3/5 unused ordnance points based on hull size (by default).
+Nodes initially cost 1/2/3/5 unused ordnance points based on hull size (by default).
 
 After each battle, every ship in your fleet gets XP based on the deployment points of the enemy ships destroyed or disabled, whether it was deployed or not. Harder fights give more XP. If you lose, you get half.
 
@@ -328,7 +328,7 @@ Battles outside charts drop charts up to tier 6, based on the strongest NPC ship
 <details>
 <summary><b>Does it work with faction mods?</b></summary>
 
-Most of it should just work. Nodes that copy a hullmod put the real hullmod on the ship (see Compatibility), so mods that check for it, like Second-in-Command, still see it. Nexerelin fleets get skill trees like any other NPC fleet. Random Assortment of Things, Nightcross Armory and LOST_SECTOR each have their own volume on the tree, unlocked by playing their content. Exiled Sector loot also shows up in other mods' loot pools, such as Industrial.evolution and RAT's Abyss. Mods I haven't tested will probably work, but if one doesn't, please report it.
+Most of it should just work. Nodes that copy a hullmod put the real hullmod on the ship (see Compatibility), so mods that check for it, like Second-in-Command, still see it. Nexerelin fleets get skill trees like any other NPC fleet. Random Assortment of Things, Nightcross Armory, Navarchy of Tania and LOST_SECTOR each have their own volume on the tree, unlocked by playing their content. Exiled Sector loot also shows up in other mods' loot pools, such as Industrial.evolution and RAT's Abyss. Mods I haven't tested will probably work, but if one doesn't, please report it.
 
 </details>
 
@@ -395,7 +395,7 @@ You can find me on various Starsector Discords or by direct message @portals_
 
 ## Credits
 
-A big thank you to Spectros for his help and permission to create the Navarchy of Tania volume, Lukas04 for letting me build the Exo-Tech and Abyss volumes from Random Assortment of Things, to YukiM for the same in Nightcross Armory and to Kissa Mies and SirHartley for LOST_SECTOR. The loot alert sounds are from Path of Exile and are copyright Grinding Gear Games. [CREDITS.md](CREDITS.md) lists every borrowed file, who made it and the terms it's used under.
+A big thank you to Spectros for his help and permission to create the Navarchy of Tania volume, to Lukas04 for letting me build the Exo-Tech and Abyss volumes from Random Assortment of Things, to YukiM for the same in Nightcross Armory and to Kissa Mies and SirHartley for LOST_SECTOR. The loot alert sounds are from Path of Exile and are copyright Grinding Gear Games. [CREDITS.md](CREDITS.md) lists every borrowed file, who made it and the terms it's used under.
 
 ## License
 
