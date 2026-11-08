@@ -13,6 +13,7 @@ import org.lwjgl.util.vector.Vector2f;
 final class InjunctionListener extends ShipCombatListener implements DamageDealtModifier {
 
     static final String SLOWDOWN_PERCENT_KEY = "exiledSector_injunctionSlowdownPercent";
+    static final String VENT_SLOWDOWN_PERCENT_KEY = "exiledSector_injunctionVentSlowdownPercent";
 
     InjunctionListener(ShipAPI ownerShip) {
         super(ownerShip);
@@ -28,9 +29,9 @@ final class InjunctionListener extends ShipCombatListener implements DamageDealt
         if (weapon == null || weapon.getShip() != ownerShip || !WeaponScope.ENERGY.matches(weapon)) {
             return null;
         }
-        float slowdownPercent = magnitude(SLOWDOWN_PERCENT_KEY);
-        if (slowdownPercent > 0f) {
-            Injunction.inflict(targetShip, slowdownPercent);
+        Injunction.Slowdown slowdown = new Injunction.Slowdown(magnitude(SLOWDOWN_PERCENT_KEY), magnitude(VENT_SLOWDOWN_PERCENT_KEY));
+        if (slowdown.slowsAnything()) {
+            Injunction.inflict(targetShip, slowdown);
         }
         return null;
     }

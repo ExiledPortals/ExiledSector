@@ -49,6 +49,25 @@ class PhaseExitDamageListenerTest {
     }
 
     @Test
+    void increasedDurationStretchesTheTaper() {
+        ShipAPI ship = phaseShip(25f);
+        MutableShipStatsAPI stats = ship.getMutableStats();
+        when(stats.getDynamic().getValue(PhaseExitDamageListener.DURATION_PERCENT_KEY, 0f)).thenReturn(100f);
+        PhaseExitDamageListener listener = new PhaseExitDamageListener(ship);
+        when(ship.isPhased()).thenReturn(true);
+        listener.advance(0.1f);
+        when(ship.isPhased()).thenReturn(false);
+        listener.advance(0f);
+
+        listener.advance(PhaseExitDamageListener.TAPER_SECONDS);
+        verify(stats.getEnergyWeaponDamageMult()).modifyPercent(AMBUSH_MOD_ID, 12.5f);
+        verify(stats.getEnergyWeaponDamageMult(), never()).unmodify(AMBUSH_MOD_ID);
+
+        listener.advance(PhaseExitDamageListener.TAPER_SECONDS);
+        verify(stats.getEnergyWeaponDamageMult()).unmodify(AMBUSH_MOD_ID);
+    }
+
+    @Test
     void aDestroyedShipLosesTheBonusAtOnce() {
         ShipAPI ship = phaseShip(25f);
         PhaseExitDamageListener listener = new PhaseExitDamageListener(ship);

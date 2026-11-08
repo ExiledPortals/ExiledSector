@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.BaseEveryFrameCombatPlugin;
 import com.fs.starfarer.api.combat.CollisionClass;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatFleetManagerAPI;
+import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAIConfig;
@@ -18,6 +19,7 @@ import com.fs.starfarer.api.fleet.FleetMemberType;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.ModSounds;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.DeploymentRecordPruner;
 import exiledsector.skills.skilleffect.Taper;
@@ -37,18 +39,29 @@ final class PhaseAfterimage extends BaseEveryFrameCombatPlugin {
     static final Color JITTER_COLOR = new Color(170, 120, 255, 140);
     static final int JITTER_COPIES = 3;
     static final float JITTER_RANGE = 6f;
+    static final float FADE_BURST_RANGE = 600f;
+    private static final float FADE_ARC_MAX_RANGE = 100000f;
+    private static final float FADE_ARC_THICKNESS = 10f;
+    private static final Color FADE_ARC_FRINGE = new Color(170, 120, 255, 255);
+    private static final Color FADE_ARC_CORE = new Color(235, 225, 255, 255);
+    private static final String FADE_ARC_SOUND = "tachyon_lance_emp_impact";
     private static final Logger LOG = Logger.getLogger(PhaseAfterimage.class);
 
+    private final ShipAPI ownerShip;
     private final ShipAPI afterimage;
     private final FleetMemberAPI temporaryMember;
     private final CombatFleetManagerAPI fleetManager;
     private final Taper fade = new Taper();
+    private float fadeEmp;
     private boolean dismissed;
 
-    private PhaseAfterimage(ShipAPI afterimage, FleetMemberAPI temporaryMember, CombatFleetManagerAPI fleetManager, float lifetimeSeconds) {
+    private PhaseAfterimage(ShipAPI ownerShip, ShipAPI afterimage, FleetMemberAPI temporaryMember, CombatFleetManagerAPI fleetManager,
+                            float lifetimeSeconds, float fadeEmp) {
+        this.ownerShip = ownerShip;
         this.afterimage = afterimage;
         this.temporaryMember = temporaryMember;
         this.fleetManager = fleetManager;
+        this.fadeEmp = fadeEmp;
         fade.start(lifetimeSeconds);
     }
 
@@ -58,7 +71,7 @@ final class PhaseAfterimage extends BaseEveryFrameCombatPlugin {
                 && hullSpec.getBuiltInWings().isEmpty();
     }
 
-    static PhaseAfterimage leave(ShipAPI ownerShip, float lifetimeSeconds, CombatEngineAPI engine) {
+    static PhaseAfterimage leave(ShipAPI ownerShip, float lifetimeSeconds, float fadeEmp, CombatEngineAPI engine) {
         if (lifetimeSeconds <= 0f || !canLeaveAfterimage(ownerShip)) {
             return null;
         }
@@ -79,7 +92,7 @@ final class PhaseAfterimage extends BaseEveryFrameCombatPlugin {
         temporaryMember.getStats().getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyMult(STATS_MOD_ID, 0f);
         afterimage.setInvalidTransferCommandTarget(true);
         makeInert(afterimage, ownerShip.getLocation(), ownerShip.getFacing());
-        PhaseAfterimage plugin = new PhaseAfterimage(afterimage, temporaryMember, fleetManager, lifetimeSeconds);
+        PhaseAfterimage plugin = new PhaseAfterimage(ownerShip, afterimage, temporaryMember, fleetManager, lifetimeSeconds, fadeEmp);
         engine.addPlugin(plugin);
         return plugin;
     }
@@ -104,12 +117,13 @@ final class PhaseAfterimage extends BaseEveryFrameCombatPlugin {
         afterimage.setAlphaMult(START_ALPHA);
     }
 
-    boolean restartAt(ShipAPI ownerShip, float lifetimeSeconds, CombatEngineAPI engine) {
+    boolean restartAt(ShipAPI ownerShip, float lifetimeSeconds, float fadeEmp, CombatEngineAPI engine) {
         if (dismissed || lifetimeSeconds <= 0f || !engine.isEntityInPlay(afterimage)) {
             dismiss(engine);
             return false;
         }
         holdAt(afterimage, ownerShip.getLocation(), ownerShip.getFacing());
+        this.fadeEmp = fadeEmp;
         fade.start(lifetimeSeconds);
         return true;
     }
@@ -121,7 +135,11 @@ final class PhaseAfterimage extends BaseEveryFrameCombatPlugin {
             return;
         }
         fade.advance(amount);
-        if (!fade.isRunning() || !engine.isEntityInPlay(afterimage)) {
+        boolean inPlay = engine.isEntityInPlay(afterimage);
+        if (!fade.isRunning() || !inPlay) {
+            if (inPlay) {
+                burstOnFade(engine);
+            }
             dismiss(engine);
             return;
         }
@@ -130,6 +148,17 @@ final class PhaseAfterimage extends BaseEveryFrameCombatPlugin {
         afterimage.setAngularVelocity(0f);
         afterimage.setAlphaMult(START_ALPHA * share);
         afterimage.setJitter(this, JITTER_COLOR, share, JITTER_COPIES, JITTER_RANGE);
+    }
+
+    private void burstOnFade(CombatEngineAPI engine) {
+        if (fadeEmp <= 0f) {
+            return;
+        }
+        Vector2f burstPoint = new Vector2f(afterimage.getLocation());
+        for (ShipAPI target : CombatQueries.hostilesNear(ownerShip, burstPoint, FADE_BURST_RANGE, candidate -> !candidate.isFighter())) {
+            engine.spawnEmpArc(ownerShip, new Vector2f(burstPoint), null, target, DamageType.ENERGY, 0f, fadeEmp, FADE_ARC_MAX_RANGE,
+                    ModSounds.orSilent(FADE_ARC_SOUND), FADE_ARC_THICKNESS, FADE_ARC_FRINGE, FADE_ARC_CORE);
+        }
     }
 
     void dismiss(CombatEngineAPI engine) {

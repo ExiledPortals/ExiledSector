@@ -290,6 +290,14 @@
 					"magnitude": 100
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "OBJECTIVE_CAPTURE_RATE_MULT",
+						"magnitude": 200
+					}
+				]
+			},
 			"flavour": "Every TriPad in the Sector ships with backdoors Tri-Tachyon officially denies, and a crew that learns them can talk a nav buoy or comm relay into changing sides mid-battle.",
 			"flavourAutomated": "Every TriPad in the Sector ships with backdoors Tri-Tachyon officially denies. The ship's core maps them from intercepted TriPad traffic and talks a nav buoy or comm relay into changing sides mid-battle.",
 			"tags": [
@@ -706,6 +714,22 @@
 					"magnitude": 20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT",
+						"magnitude": 20
+					},
+					{
+						"effect": "NON_BEAM_ENERGY_WEAPON_HULL_REFRACTION_CHANCE_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_MULT",
+						"magnitude": 20
+					}
+				]
+			},
 			"flavour": "Pulling apart the energy converters of wrecked Tri-Tachyon warships shows the crew how to tune this ship's energy bolts to glance off an enemy shield and carry on to another target. Tri-Tachyon sales literature calls this efficiency.",
 			"flavourAutomated": "Pulling apart the energy converters of wrecked Tri-Tachyon warships shows the refit crew how to tune this ship's energy bolts to glance off an enemy shield and carry on to another target. Tri-Tachyon sales literature calls this efficiency.",
 			"tags": [
@@ -1832,6 +1856,18 @@
 					"magnitude": -25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "PHASE_FIELD_CONTRIBUTION_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "CORONA_RESISTANCE_MULT",
+						"magnitude": -25
+					}
+				]
+			},
 			"exclusiveHullMods": [
 				"phasefield"
 			],
@@ -5030,6 +5066,18 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FIGHTER_WING_SHARED_DAMAGE_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "FIGHTER_WING_DAMAGE_TAKEN_MULT_PER_FIGHTER",
+						"magnitude": 15
+					}
+				]
+			},
 			"flavour": "Tri-Tachyon's phase labs learned to lock the coils of a strike craft wing into one shared state, so a hit on one craft bleeds through p-space into the whole wing. A defector from those labs, smuggled out at no small cost, walks the crew through retuning this carrier's strike craft coils to the same entangled frequency.",
 			"flavourAutomated": "Tri-Tachyon's phase labs learned to lock the coils of a strike craft wing into one shared state, so a hit on one craft bleeds through p-space into the whole wing. A defector from those labs, smuggled out at no small cost, walks the refit crew through retuning this carrier's strike craft coils to the same entangled frequency.",
 			"tags": [
@@ -6375,6 +6423,18 @@
 					"magnitude": 100
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "EMP_DAMAGE_PERCENT",
+						"magnitude": 15
+					}
+				]
+			},
 			"flavour": "Once a target's systems are dead, Tri-Tachyon ion firmware moves on to the hull.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -6532,6 +6592,18 @@
 					"magnitude": 25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "PHASE_EXIT_WEAPON_DAMAGE_PERCENT",
+						"magnitude": 25
+					},
+					{
+						"effect": "PHASE_EXIT_WEAPON_DAMAGE_DURATION_PERCENT",
+						"magnitude": 100
+					}
+				]
+			},
 			"flavour": "Tri-Tachyon phase doctrine holds that the first shot out of p-space decides the engagement.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -6567,6 +6639,18 @@
 					"magnitude": 3
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "PHASE_ENTRY_AFTERIMAGE_SECONDS_FLAT",
+						"magnitude": 3
+					},
+					{
+						"effect": "PHASE_AFTERIMAGE_FADE_EMP_FLAT",
+						"magnitude": 500
+					}
+				]
+			},
 			"flavour": "A phase coil dropped into p-space too sharply leaves an echo of the hull behind. Enemy gunners rarely tell the difference.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -6585,6 +6669,18 @@
 					"magnitude": 5
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ENERGY_HIT_INJUNCTION_PERCENT",
+						"magnitude": 5
+					},
+					{
+						"effect": "ENERGY_HIT_INJUNCTION_VENT_PERCENT",
+						"magnitude": 5
+					}
+				]
+			},
 			"flavour": "Tri-Tachyon does not tolerate unlicensed use of its designs, even mid-battle.",
 			"todo": "Needs an icon.",
 			"tags": [

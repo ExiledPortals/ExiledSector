@@ -40,7 +40,14 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
             return true;
         }
     },
-    NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_MULT(listener(RefractionListener.FALLOFF_KEY, RefractionListener.class, RefractionListener::new)) {
+    NON_BEAM_ENERGY_WEAPON_HULL_REFRACTION_CHANCE_PERCENT(listener(RefractionListener.HULL_CHANCE_KEY, RefractionListener.class,
+            RefractionListener::new)) {
+        @Override
+        public boolean reshapesDealtDamage() {
+            return true;
+        }
+    },
+    NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_MULT(listener(RefractionListener.FALLOFF_KEY,RefractionListener.class, RefractionListener::new)) {
         @Override
         public boolean reshapesDealtDamage() {
             return true;
@@ -144,6 +151,7 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
                     .append("\n").append(Translation.msg("injunction.rechargeSlowdown").arg("value", magnitude).styled());
         }
     },
+    ENERGY_HIT_INJUNCTION_VENT_PERCENT(listener(InjunctionListener.VENT_SLOWDOWN_PERCENT_KEY, InjunctionListener.class, InjunctionListener::new)),
     BALLISTIC_HARDPOINT_KINETIC_TO_HIGH_EXPLOSIVE(new DamageConversion(DamageConversion.KEY_PREFIX + "ballisticHardpointKineticToHighExplosive",
             WeaponType.BALLISTIC, null, DamageConversion.Mounting.HARDPOINT, false, DamageType.KINETIC, DamageType.HIGH_EXPLOSIVE)),
     BEAM_ENERGY_TO_HIGH_EXPLOSIVE(new DamageConversion(DamageConversion.KEY_PREFIX + "beamEnergyToHighExplosive",

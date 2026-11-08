@@ -185,6 +185,19 @@ class RefractionListenerTest {
     }
 
     @Test
+    void anArmorOrHullHitRefractsWithTheHullChance() {
+        when(ship.getMutableStats().getDynamic().getValue(RefractionListener.HULL_CHANCE_KEY, 0f)).thenReturn(100f);
+        WeaponAPI weapon = energyGun();
+        ShipAPI hit = enemy(new Vector2f(0f, 0f));
+        ShipAPI near = enemy(new Vector2f(100f, 0f));
+        stubShips(ship, hit, near);
+
+        listener.modifyDamageDealt(shot(weapon, null), hit, damage(100f), new Vector2f(), false);
+
+        assertEquals(1, launchedLink(weapon, hit, near).chainCount());
+    }
+
+    @Test
     void aShotAtTheMaxRefractionCountNeverRefractsAgain() {
         ShipAPI current = enemy(new Vector2f(100f, 0f));
         stubShips(ship, current, enemy(new Vector2f(200f, 0f)));

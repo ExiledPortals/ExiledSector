@@ -20,6 +20,7 @@ import java.util.concurrent.ThreadLocalRandom;
 final class RefractionListener extends ShipCombatListener implements DamageDealtModifier, DroneSpawner {
 
     static final String CHANCE_KEY = "exiledSector_energyChainChance";
+    static final String HULL_CHANCE_KEY = "exiledSector_energyChainHullChance";
     static final String FALLOFF_KEY = "exiledSector_energyChainFalloff";
 
     private final RefractionDrones drones;
@@ -49,8 +50,8 @@ final class RefractionListener extends ShipCombatListener implements DamageDealt
         if (link.dealtMult() < 1f) {
             HitDamageRestorer.reduceForThisHit(damage, link.dealtMult(), hitShip);
         }
-        if (shieldHit && CombatQueries.isHostile(ownerShip, hitShip)) {
-            tryChain(projectile.getWeapon(), hitShip, point, link);
+        if (CombatQueries.isHostile(ownerShip, hitShip)) {
+            tryChain(projectile.getWeapon(), hitShip, point, link, magnitude(shieldHit ? CHANCE_KEY : HULL_CHANCE_KEY));
         }
     }
 
@@ -59,9 +60,9 @@ final class RefractionListener extends ShipCombatListener implements DamageDealt
                 && !CsvIdList.REFRACTION_WEAPON_BLOCKLIST.contains(weapon.getId());
     }
 
-    private void tryChain(WeaponAPI weapon, ShipAPI hitShip, Vector2f point, RefractionLink link) {
+    private void tryChain(WeaponAPI weapon, ShipAPI hitShip, Vector2f point, RefractionLink link, float chancePercent) {
         boolean chains = ownerShip.isAlive() && link.chainCount() < MaxRefractionCountConfig.get()
-                && Chance.roll(ThreadLocalRandom.current(), magnitude(CHANCE_KEY));
+                && Chance.roll(ThreadLocalRandom.current(), chancePercent);
         if (!chains) {
             return;
         }

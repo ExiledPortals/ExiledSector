@@ -3,8 +3,11 @@ package exiledsector.skills.skilleffect.phase;
 import com.fs.starfarer.api.FactoryAPI;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.combat.CollisionClass;
+import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatFleetManagerAPI;
+import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
@@ -31,6 +34,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -182,12 +186,62 @@ class PhantomWakeListenerTest {
     @Test
     void anAfterimageFadesWhileItLasts() {
         spawnsAs(afterimage);
-        PhaseAfterimage plugin = PhaseAfterimage.leave(ownerShip, LIFETIME_SECONDS, engine);
+        PhaseAfterimage plugin = PhaseAfterimage.leave(ownerShip, LIFETIME_SECONDS, 0f, engine);
 
         plugin.advance(LIFETIME_SECONDS / 2f, List.of());
 
         verify(afterimage).setAlphaMult(PhaseAfterimage.START_ALPHA / 2f);
         verify(engine, never()).removePlugin(plugin);
+    }
+
+    private void stubShipsNearTheAfterimage(ShipAPI... ships) {
+        CollisionGridAPI grid = mock(CollisionGridAPI.class);
+        when(engine.getShipGrid()).thenReturn(grid);
+        when(grid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(invocation -> List.<Object>of(ships).iterator());
+    }
+
+    private static ShipAPI shipAt(int owner, Vector2f location) {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getOwner()).thenReturn(owner);
+        when(ship.isAlive()).thenReturn(true);
+        when(ship.getCollisionClass()).thenReturn(CollisionClass.SHIP);
+        when(ship.getLocation()).thenReturn(location);
+        return ship;
+    }
+
+    @Test
+    void aFadingAfterimageArcsItsEmpIntoEveryNearbyEnemyShip() {
+        spawnsAs(afterimage);
+        ShipAPI enemy = shipAt(1, new Vector2f(100f, 0f));
+        ShipAPI enemyFighter = shipAt(1, new Vector2f(50f, 0f));
+        when(enemyFighter.isFighter()).thenReturn(true);
+        ShipAPI ally = shipAt(PLAYER_SIDE, new Vector2f(80f, 0f));
+        ShipAPI farEnemy = shipAt(1, new Vector2f(PhaseAfterimage.FADE_BURST_RANGE + 100f, 0f));
+        stubShipsNearTheAfterimage(enemy, enemyFighter, ally, farEnemy);
+        PhaseAfterimage plugin = PhaseAfterimage.leave(ownerShip, LIFETIME_SECONDS, 500f, engine);
+
+        plugin.advance(LIFETIME_SECONDS, List.of());
+
+        verify(engine).spawnEmpArc(eq(ownerShip), any(Vector2f.class), isNull(), eq(enemy), eq(DamageType.ENERGY), eq(0f), eq(500f),
+                anyFloat(), any(), anyFloat(), any(), any());
+        verify(engine, times(1)).spawnEmpArc(any(), any(), any(), any(), any(), anyFloat(), anyFloat(), anyFloat(), any(), anyFloat(), any(),
+                any());
+        verify(engine).removeEntity(afterimage);
+    }
+
+    @Test
+    void anAfterimageMovedByANewEntryOrAlreadyGoneNeverBursts() {
+        spawnsAs(afterimage);
+        stubShipsNearTheAfterimage(shipAt(1, new Vector2f(100f, 0f)));
+        PhaseAfterimage plugin = PhaseAfterimage.leave(ownerShip, LIFETIME_SECONDS, 500f, engine);
+
+        plugin.advance(LIFETIME_SECONDS / 2f, List.of());
+        plugin.restartAt(ownerShip, LIFETIME_SECONDS, 500f, engine);
+        when(engine.isEntityInPlay(afterimage)).thenReturn(false);
+        plugin.advance(LIFETIME_SECONDS / 2f, List.of());
+
+        verify(engine, never()).spawnEmpArc(any(), any(), any(), any(), any(), anyFloat(), anyFloat(), anyFloat(), any(), anyFloat(), any(),
+                any());
     }
 
     @Test
@@ -196,7 +250,7 @@ class PhantomWakeListenerTest {
         when(stationCore.getHullSpec()).thenReturn(mock(ShipHullSpecAPI.class));
         when(stationCore.getChildModulesCopy()).thenReturn(List.of(mock(ShipAPI.class)));
 
-        assertNull(PhaseAfterimage.leave(stationCore, LIFETIME_SECONDS, engine));
+        assertNull(PhaseAfterimage.leave(stationCore, LIFETIME_SECONDS, 0f, engine));
         verify(engine, never()).addPlugin(any());
     }
 }
