@@ -258,6 +258,42 @@ class LionsGazeListenerTest {
     }
 
     @Test
+    void aFullDamageSplitHitsAtTheBeamsFullDamageAndLeavesThePrimaryHitWhole() {
+        ShipAPI firing = shipAt(0f, 0);
+        when(firing.getMutableStats().getDynamic().getValue(LionsGazeListener.FULL_DAMAGE_TARGETS_KEY, 0f)).thenReturn(1f);
+        ShipAPI primary = shipAt(100f, 1);
+        ShipAPI splitTarget = shipAt(200f, 1);
+        ships.addAll(List.of(firing, primary, splitTarget));
+        splitTargetFlux(splitTarget, 100f, 150f, new boolean[1]);
+        DamageAPI damage = tick(false);
+
+        assertNull(new LionsGazeListener(firing).modifyDamageDealt(beamFrom(simulatedWeapon()), primary, damage, new Vector2f(100f, 0f), true));
+
+        assertEquals(1f, damage.getModifier().getModifiedValue(), 1e-6f);
+        verify(engine).applyDamage(any(), eq(splitTarget), any(), eq(100f), any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
+    }
+
+    @Test
+    void fullDamageSplitsTakeTheNearestTargetsWhileSharedSplitsDivideTheRest() {
+        ShipAPI firing = shipAt(0f, 0);
+        when(firing.getMutableStats().getDynamic().getValue(LionsGazeListener.TARGETS_KEY, 0f)).thenReturn(1f);
+        when(firing.getMutableStats().getDynamic().getValue(LionsGazeListener.FULL_DAMAGE_TARGETS_KEY, 0f)).thenReturn(1f);
+        ShipAPI primary = shipAt(100f, 1);
+        ShipAPI nearTarget = shipAt(200f, 1);
+        ShipAPI farTarget = shipAt(300f, 1);
+        ships.addAll(List.of(firing, primary, farTarget, nearTarget));
+        splitTargetFlux(nearTarget, 100f, 100f, new boolean[1]);
+        splitTargetFlux(farTarget, 100f, 100f, new boolean[1]);
+        DamageAPI damage = tick(true);
+
+        new LionsGazeListener(firing).modifyDamageDealt(beamFrom(simulatedWeapon()), primary, damage, new Vector2f(100f, 0f), true);
+
+        assertEquals(0.5f, damage.getModifier().getModifiedValue(), 1e-6f);
+        verify(engine).applyDamage(any(), eq(nearTarget), any(), eq(100f), any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
+        verify(engine).applyDamage(any(), eq(farTarget), any(), eq(50f), any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
+    }
+
+    @Test
     void aBeamHitThatNoLongerSplitsStopsThatWeaponsDronesFromAddingDamageOnTopOfTheFullPrimaryHit() {
         ShipAPI firing = shipAt(0f, 0);
         when(firing.getMutableStats().getDynamic().getValue(LionsGazeListener.TARGETS_KEY, 0f)).thenReturn(1f);

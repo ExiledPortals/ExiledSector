@@ -13,13 +13,17 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class InjunctionTest {
+
+    private static final Injunction.Slowdown RECHARGE_ONLY = new Injunction.Slowdown(5f, 0f);
 
     private static ShipAPI ship(int owner) {
         ShipAPI ship = mock(ShipAPI.class);
@@ -36,27 +40,46 @@ class InjunctionTest {
         Injunction injunction = new Injunction(target);
         MutableShipStatsAPI stats = target.getMutableStats();
 
-        injunction.gain(5f);
+        injunction.gain(RECHARGE_ONLY);
         verify(stats.getSystemCooldownBonus()).modifyMult(Injunction.MOD_ID, 1.05f);
         verify(stats.getSystemRegenBonus()).modifyMult(Injunction.MOD_ID, 1f / 1.05f);
 
         injunction.advance(Injunction.SECONDS_BETWEEN_STACKS);
-        injunction.gain(5f);
+        injunction.gain(RECHARGE_ONLY);
         assertEquals(2, injunction.stacks());
         verify(stats.getSystemCooldownBonus()).modifyMult(Injunction.MOD_ID, 1.1f);
+    }
+
+    @Test
+    void stacksWithAVentSlowdownAlsoSlowVentingAndLiftItWhenTheyExpire() {
+        ShipAPI target = ship(1);
+        Injunction injunction = new Injunction(target);
+        MutableShipStatsAPI stats = target.getMutableStats();
+
+        injunction.gain(new Injunction.Slowdown(5f, 5f));
+        verify(stats.getVentRateMult()).modifyMult(Injunction.MOD_ID, 1f / 1.05f);
+
+        injunction.advance(Injunction.SECONDS_BETWEEN_STACKS);
+        injunction.gain(RECHARGE_ONLY);
+        assertEquals(5f, injunction.ventSlowdownPercent(), 1e-4f);
+        assertEquals(10f, injunction.rechargeSlowdownPercent(), 1e-4f);
+
+        injunction.advance(Injunction.STACK_SECONDS - Injunction.SECONDS_BETWEEN_STACKS);
+        verify(stats.getVentRateMult()).unmodify(Injunction.MOD_ID);
+        verify(stats.getSystemCooldownBonus(), times(2)).modifyMult(Injunction.MOD_ID, 1.05f);
     }
 
     @Test
     void aShipGainsAtMostOneStackEachSecond() {
         Injunction injunction = new Injunction(ship(1));
 
-        injunction.gain(5f);
+        injunction.gain(RECHARGE_ONLY);
         injunction.advance(Injunction.SECONDS_BETWEEN_STACKS / 2f);
-        injunction.gain(5f);
+        injunction.gain(RECHARGE_ONLY);
         assertEquals(1, injunction.stacks());
 
         injunction.advance(Injunction.SECONDS_BETWEEN_STACKS / 2f);
-        injunction.gain(5f);
+        injunction.gain(RECHARGE_ONLY);
         assertEquals(2, injunction.stacks());
     }
 
@@ -64,13 +87,13 @@ class InjunctionTest {
     void steadyHitsBuildUpToTheMaximumStacks() {
         Injunction injunction = new Injunction(ship(1));
         for (int stack = 0; stack < Injunction.MAX_STACKS + 3; stack++) {
-            injunction.gain(5f);
+            injunction.gain(RECHARGE_ONLY);
             injunction.advance(Injunction.SECONDS_BETWEEN_STACKS);
         }
         assertEquals(Injunction.MAX_STACKS - 1, injunction.stacks());
-        injunction.gain(5f);
+        injunction.gain(RECHARGE_ONLY);
         assertEquals(Injunction.MAX_STACKS, injunction.stacks());
-        assertEquals(5f * Injunction.MAX_STACKS, injunction.slowdownPercent(), 1e-4f);
+        assertEquals(5f * Injunction.MAX_STACKS, injunction.rechargeSlowdownPercent(), 1e-4f);
     }
 
     @Test
@@ -78,7 +101,7 @@ class InjunctionTest {
         ShipAPI target = ship(1);
         Injunction injunction = new Injunction(target);
 
-        injunction.gain(5f);
+        injunction.gain(RECHARGE_ONLY);
         injunction.advance(Injunction.STACK_SECONDS);
         assertEquals(0, injunction.stacks());
         verify(target.getMutableStats().getSystemCooldownBonus()).unmodify(Injunction.MOD_ID);
@@ -102,6 +125,25 @@ class InjunctionTest {
 
         verify(enemy).addListener(any(Injunction.class));
         verify(enemy.getMutableStats().getSystemCooldownBonus()).modifyMult(Injunction.MOD_ID, 1.05f);
+        verify(enemy.getMutableStats().getVentRateMult(), never()).modifyMult(any(), anyFloat());
+    }
+
+    @Test
+    void anOwnerWithTheVentSlowdownAlsoSlowsTheTargetsVenting() {
+        ShipAPI owner = ship(0);
+        when(owner.getMutableStats().getDynamic().getValue(InjunctionListener.SLOWDOWN_PERCENT_KEY, 0f)).thenReturn(5f);
+        when(owner.getMutableStats().getDynamic().getValue(InjunctionListener.VENT_SLOWDOWN_PERCENT_KEY, 0f)).thenReturn(5f);
+        ShipAPI enemy = ship(1);
+        when(enemy.getListeners(Injunction.class)).thenReturn(List.of());
+        WeaponAPI weapon = mock(WeaponAPI.class);
+        when(weapon.getType()).thenReturn(WeaponAPI.WeaponType.ENERGY);
+        when(weapon.getShip()).thenReturn(owner);
+        DamagingProjectileAPI bolt = mock(DamagingProjectileAPI.class);
+        when(bolt.getWeapon()).thenReturn(weapon);
+
+        new InjunctionListener(owner).modifyDamageDealt(bolt, enemy, mock(DamageAPI.class), new Vector2f(), false);
+
+        verify(enemy.getMutableStats().getVentRateMult()).modifyMult(Injunction.MOD_ID, 1f / 1.05f);
     }
 
     @Test

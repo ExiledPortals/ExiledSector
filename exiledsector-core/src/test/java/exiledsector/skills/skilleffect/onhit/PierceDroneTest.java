@@ -113,7 +113,7 @@ class PierceDroneTest {
     }
 
     private void launchThroughTheHitShip() {
-        drone.launch(hitShip, new Vector2f(-100f, 0f), 0f, 600f);
+        drone.launch(hitShip, new Vector2f(-100f, 0f), 0f, 600f, 2);
     }
 
     @Test
@@ -154,6 +154,7 @@ class PierceDroneTest {
         drone.advance(FRAME);
 
         assertTrue(BallisticPierceListener.isPierced(own));
+        assertEquals(2, BallisticPierceListener.piercesOf(own));
         verify(own).setSource(firingShip);
         assertFalse(BallisticPierceListener.isPierced(other));
         assertTrue(drone.isReady());

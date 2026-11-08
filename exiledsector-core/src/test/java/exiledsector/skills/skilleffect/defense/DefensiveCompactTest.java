@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.BattleObjectiveAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.StatBonus;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.MockedStatic;
@@ -62,6 +63,24 @@ class DefensiveCompactTest {
         assertTrue(HeldObjective.isNearby(ship, engine(objective(ENEMY_SIDE, 100f), objective(PLAYER_SIDE, 900f))));
         assertFalse(HeldObjective.isNearby(ship, engine()));
         assertFalse(HeldObjective.isNearby(ship, null));
+    }
+
+    @Test
+    void theRangeBonusEffectExtendsTheRangeOfAHeldObjective() {
+        ShipAPI ship = ship();
+        StatBonus rangeBonus = new StatBonus();
+        when(ship.getMutableStats().getDynamic().getMod(HeldObjective.RANGE_BONUS_KEY)).thenReturn(rangeBonus);
+        when(ship.getMutableStats().getDynamic().getValue(HeldObjective.RANGE_BONUS_KEY, 0f))
+                .thenAnswer(invocation -> rangeBonus.computeEffective(0f));
+        CombatEngineAPI farObjective = engine(objective(PLAYER_SIDE, 2500f));
+
+        assertFalse(HeldObjective.isNearby(ship, farObjective));
+
+        DefenseSkillEffect.DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_RANGE_FLAT.apply(ship.getMutableStats(), "mod_id", 1000f);
+
+        assertEquals(2500f, HeldObjective.range(ship), EPSILON);
+        assertTrue(HeldObjective.isNearby(ship, farObjective));
+        assertFalse(HeldObjective.isNearby(ship, engine(objective(PLAYER_SIDE, 2501f))));
     }
 
     @Test

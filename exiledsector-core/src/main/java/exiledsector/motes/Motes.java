@@ -30,7 +30,7 @@ public final class Motes {
     }
 
     public record Launch(MoteKind kind, ShipAPI source, Vector2f from, float facing, CombatEntityAPI target,
-                         float damage, float emp, float flightSeconds) {
+                         float damage, float emp, float flightSeconds, int maxLiveMotes) {
     }
 
     public static MissileAPI launch(Launch launch) {
@@ -40,7 +40,7 @@ public final class Motes {
         }
         List<MissileAPI> liveMotes = liveMotesOf(engine, launch.source());
         liveMotes.removeIf(mote -> !engine.isMissileAlive(mote));
-        if (liveMotes.size() >= MAX_LIVE_MOTES_PER_SOURCE) {
+        if (liveMotes.size() >= launch.maxLiveMotes()) {
             return null;
         }
         String weaponId = launch.kind().launcherWeaponId();

@@ -1,8 +1,8 @@
 # Integrated bonuses
 
-Integrated effects for every notable and keystone that has none yet, extending `docs/plans/completed/integrated_nodes.md`. Proposed 2026-11-08.
+Integrated effects for every notable and keystone that has none yet, extending `integrated_nodes.md`. Proposed 2026-11-08.
 
-Status: every bonus below approved 2026-11-08, Tania's included. Not built yet. All magnitudes are placeholders.
+Status: every bonus below approved and built 2026-11-08, Tania's included; not yet checked in game. All magnitudes are placeholders.
 
 An integrated node keeps its normal effects and gains the bonus listed here, the way an s-mod adds a line to its hull mod. "X instead of Y" changes one of the normal values. The `integrated` block in `skill_types.json` is a full replacement, so each block repeats the normal effects with the bonus applied. "(new)" marks a bonus that needs a new effect or a new parameter on an existing effect; everything else uses an effect that already exists.
 
@@ -10,9 +10,13 @@ Where vanilla or the source mod has an s-mod bonus, that bonus is used. Where it
 
 Integration opens to every faction volume, not only the core notables and keystones `integrated_nodes.md` started with. Ludd's Light, At Any Cost and Crustacean Integration are joke nodes, so their bonuses stay jokey.
 
-## Open question
+## Built differently from the tables
 
-- The Doctrine Archives notables aren't placed on the tree. They can only be integrated if integration reaches nodes granted outside it.
+- Doctrine notables integrate through the rewritten node: integration already used the effective type, and load repair (`IntegratedNodes.forgetInapplicable`, `DoctrineArchives.rewritesIntoIntegrable`) now keeps an integration while a rewriting archive can give the node an integrable type.
+- Shrouded Lens and Thunderhead use `CREW_LOSS_PERCENT` -50, which cancels vanilla's +50% exactly; Shrouded Mantle reuses `HUNGERING_RIFT_HEALING_PERCENT`.
+- Rise From the Ashes reduces damage taken (50% less), so the integrated bonus is 75% less.
+- Honor Guard's 1500 su and Phantom Wake's 600 su burst range are constants.
+- Rift Harmonics' beams roll at most once a second per weapon.
 
 ## Hegemony
 
@@ -247,6 +251,6 @@ Plain stat notables, so each raises one line.
 ## Steps
 
 1. Done. Bonuses agreed with the user, 2026-11-08.
-2. Apply the nerfs to the normal nodes, marked "(nerf)" above: Lion's Gaze, Critical Point Refit, Inertial Supercharging, Volatile Flux Tuning, Live Munitions and All Must Serve.
-3. Build the "(new)" effects and parameters, each in its part's package, with tooltip lines per `docs/tooltip_wording.md`.
-4. Add the `integrated` blocks to `skill_types.json` after Dev 3's integration work lands.
+2. Done. The nerfs to the normal nodes in `skill_types.json`: Lion's Gaze, Critical Point Refit, Inertial Supercharging, Volatile Flux Tuning, Live Munitions and All Must Serve.
+3. Done. The new effects, each in its part's `skilleffect` package with tests and en/zh_CN lines. Shared pieces: `KillWatch`, `PerDModPercentEffect`, `Flagships`, `TaperedBonus`, `DModAuraField`, `EnergySlotRangeListener`, `FleetWideEffects.perHullTypeReduction`.
+4. Done. The `integrated` blocks for every type above, 127 in all, in `skill_types.json`, built on one branch per volume and merged on `integrated-bonuses`.

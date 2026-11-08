@@ -27,6 +27,7 @@ import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
 import static exiledsector.skills.skilleffect.StatTarget.all;
 import static exiledsector.skills.skilleffect.StatTarget.bonus;
+import static exiledsector.skills.skilleffect.StatTarget.dynamicMod;
 import static exiledsector.skills.skilleffect.StatTarget.liveStat;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
 
@@ -52,6 +53,8 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
     ARMOR_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getArmorBonus), "stat.armor", false)),
     ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD(new PerDModMultEffect(liveStat(MutableShipStatsAPI::getArmorDamageTakenMult),
             "stat.armorDamageTakenPerDMod", true)),
+    HULL_DAMAGE_TAKEN_MULT_PER_DMOD(new PerDModMultEffect(liveStat(MutableShipStatsAPI::getHullDamageTakenMult),
+            "stat.hullDamageTakenPerDMod", true)),
     ARMOR_FLAT_FOR_LOW_BASE_ARMOR {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -151,6 +154,7 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             liveStat(MutableShipStatsAPI::getArmorDamageTakenMult), liveStat(MutableShipStatsAPI::getShieldDamageTakenMult)),
             "stat.damageTaken", true)),
     HULL_DAMAGE_TAKEN_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getHullDamageTakenMult), "stat.hullDamageTaken", true)),
+    WEAPON_DAMAGE_TAKEN_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getWeaponDamageTakenMult), "stat.damageTakenByWeapons", true)),
     MISSILE_EJECTION_CHANCE_PERCENT(listener(MissileEjectionListener.CHANCE_PERCENT_KEY, MissileEjectionListener.class,
             MissileEjectionListener::new)),
     NANOFORGE_HULL_REGEN_PERCENT(listener(NanoforgeMendingListener.REGEN_PERCENT_KEY, NanoforgeMendingListener.class,
@@ -159,6 +163,13 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("seconds", NanoforgeMendingListener.UNDAMAGED_SECONDS).arg("value", magnitude)
                     .arg("limit", NanoforgeMendingListener.MAX_TOTAL_REGEN_PERCENT_OF_HULL).styled();
+        }
+    },
+    NANOFORGE_HULL_REGEN_LIMIT_FLAT(listener(NanoforgeMendingListener.REGEN_LIMIT_BONUS_KEY, NanoforgeMendingListener.class,
+            NanoforgeMendingListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.signed(this, magnitude).arg("seconds", NanoforgeMendingListener.UNDAMAGED_SECONDS).styled();
         }
     },
     UNHIT_ARMOR_REGEN_PERCENT(listener(UnhitArmorRegenListener.REGEN_PERCENT_KEY, UnhitArmorRegenListener.class,
@@ -257,6 +268,42 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", Math.abs(magnitude)).arg("range", HeldObjective.RANGE).styled();
         }
     },
+    DAMAGE_TAKEN_NEAR_FLAGSHIP_PERCENT(listener(FlagshipGuardListener.DAMAGE_TAKEN_PERCENT_KEY, FlagshipGuardListener.class,
+            FlagshipGuardListener::new)) {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
+        public boolean invertsDescriptionColours() {
+            return false;
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", Math.abs(magnitude)).arg("range", FlagshipGuardListener.RANGE).styled();
+        }
+    },
+    DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_RANGE_FLAT(statEffect(FLAT, dynamicMod(HeldObjective.RANGE_BONUS_KEY), "stat.heldObjectiveDamageTakenRange", false)),
+    DAMAGE_TAKEN_WHILE_RETREATING_PERCENT(new ConditionalStatEffect(PERCENT, all(liveStat(MutableShipStatsAPI::getHullDamageTakenMult),
+            liveStat(MutableShipStatsAPI::getArmorDamageTakenMult), liveStat(MutableShipStatsAPI::getShieldDamageTakenMult)),
+            "stat.damageTaken", ShipAPI::isRetreating)) {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
+        public boolean invertsDescriptionColours() {
+            return false;
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", Math.abs(magnitude)).styled();
+        }
+    },
     RAM_PROW_COLLISION_DAMAGE_MULT(listener(CollisionDamageListener.COLLISION_DAMAGE_PERCENT_KEY, CollisionDamageListener.class,
             CollisionDamageListener::new)),
     HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST(listener(CrewLossHullDamageListener.PERCENT_PER_STEP_KEY, CrewLossHullDamageListener.class,
@@ -267,6 +314,8 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
                     .arg("max", CrewLossHullDamageListener.MAX_REDUCTION_PERCENT).styled();
         }
     },
+    HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_PERCENT(listener(CrewLossHullDamageListener.MAX_REDUCTION_BONUS_PERCENT_KEY,
+            CrewLossHullDamageListener.class, CrewLossHullDamageListener::new)),
     HUNGERING_RIFT_HEALING_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

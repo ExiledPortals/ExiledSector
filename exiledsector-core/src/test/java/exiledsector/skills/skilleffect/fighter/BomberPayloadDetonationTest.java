@@ -407,6 +407,25 @@ class BomberPayloadDetonationTest {
     }
 
     @Test
+    void anAllySparingCarrierFoldsEveryPayloadIntoABlastWithoutFriendlyFire() {
+        MissileSpecAPI atropos = missileSpec(1000f, DamageType.HIGH_EXPLOSIVE, 250f, BomberPayloadDetonation.blast(1000f, 0f, DamageType.HIGH_EXPLOSIVE, 250f, null), null);
+        WeaponAPI torpedo = armedWith(WeaponAPI.WeaponType.MISSILE, 1, 1, atropos);
+        ShipAPI bomber = bomber(2000f, torpedo);
+        ShipAPI sparingCarrier = withChance(100f);
+        when(sparingCarrier.getMutableStats().getDynamic().getValue(BomberPayloadDetonation.SPARES_ALLIES_KEY, 0f)).thenReturn(1f);
+
+        fly(new BomberPayloadDetonation(bomber, sparingCarrier, new AlwaysRolls()), DETONATION_SECONDS);
+
+        verify(engine, never()).spawnProjectile(any(), any(), anyString(), any(), anyFloat(), any());
+        DamagingExplosionSpec blast = foldedBlasts(bomber, 1).get(DamageType.HIGH_EXPLOSIVE);
+        assertEquals(1000f, blast.getMaxDamage(), 1e-3f);
+        assertEquals(250f, blast.getRadius(), 1e-3f);
+        assertEquals(CollisionClass.PROJECTILE_NO_FF, blast.getCollisionClass());
+        assertEquals(CollisionClass.PROJECTILE_NO_FF, blast.getCollisionClassIfByFighter());
+        verifyKilled(bomber, 1);
+    }
+
+    @Test
     void anUnsupportedSpawnFallsBackToTheBlast() {
         MissileSpecAPI atropos = missileSpec(1000f, DamageType.HIGH_EXPLOSIVE, 250f, BomberPayloadDetonation.blast(1000f, 0f, DamageType.HIGH_EXPLOSIVE, 250f, null), null);
         WeaponAPI torpedo = armedWith(WeaponAPI.WeaponType.MISSILE, 1, 1, atropos);

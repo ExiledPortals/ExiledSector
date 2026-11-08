@@ -32,6 +32,7 @@ import exiledsector.skills.skilleffect.weapon.RiftExplosionDamageListener;
 import exiledsector.skills.skilleffect.weapon.WeaponScope;
 import exiledsector.skills.skilleffect.weapon.WeaponStatFamily;
 
+import static exiledsector.skills.skilleffect.Backings.flag;
 import static exiledsector.skills.skilleffect.Backings.listener;
 import static exiledsector.skills.skilleffect.Backings.statEffect;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
@@ -174,6 +175,7 @@ public enum FighterSkillEffect implements BackedSkillEffect {
                     .arg("distance", BomberPayloadDetonation.SAFE_DISTANCE_FROM_CARRIER).styled();
         }
     },
+    BOMBER_PAYLOAD_DETONATION_SPARES_ALLIES(flag(BomberPayloadDetonation.SPARES_ALLIES_KEY)),
 
     SUPPORT_ROLE_DAMAGE_PERCENT(WingRole.SUPPORT, RoleStat.WEAPON_DAMAGE),
     SUPPORT_ROLE_TOP_SPEED_PERCENT(WingRole.SUPPORT, RoleStat.TOP_SPEED),
@@ -290,6 +292,8 @@ public enum FighterSkillEffect implements BackedSkillEffect {
                     .arg("max", SwarmLinkListener.MAX_DAMAGE_PERCENT).styled();
         }
     },
+    STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_PERCENT(new FighterListenerEffect<>(SwarmLinkListener.MAX_DAMAGE_BONUS_PERCENT_KEY,
+            SwarmLinkListener.class, SwarmLinkListener::new)),
     STRIKECRAFT_DEATH_BURST_DAMAGE_FLAT(new FighterListenerEffect<>(CinderBurstListener.DAMAGE_KEY, CinderBurstListener.class,
             CinderBurstListener::new)) {
         @Override

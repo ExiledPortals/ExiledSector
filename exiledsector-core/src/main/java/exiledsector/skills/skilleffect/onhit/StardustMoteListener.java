@@ -22,6 +22,7 @@ import java.util.Random;
 final class StardustMoteListener extends ShipCombatListener implements DamageDealtModifier {
 
     static final String MOTE_DAMAGE_KEY = "exiledSector_corrosionMoteDamage";
+    static final String EXTRA_MOTES_IN_FLIGHT_KEY = "exiledSector_stardustMoteExtraInFlight";
     static final float CONTACT_SECONDS_PER_MOTE = 2f;
     static final float MOTE_FLIGHT_SECONDS = 8f;
     private static final float LAUNCH_SPREAD_DEGREES = 15f;
@@ -91,6 +92,11 @@ final class StardustMoteListener extends ShipCombatListener implements DamageDea
         }
         Vector2f from = weapon.getLocation();
         float facing = Misc.getAngleInDegreesStrict(from, targetShip.getLocation()) + (random.nextFloat() * 2f - 1f) * LAUNCH_SPREAD_DEGREES;
-        Motes.launch(new Motes.Launch(MoteKind.STARDUST, ownerShip, from, facing, targetShip, moteDamage, moteDamage, MOTE_FLIGHT_SECONDS));
+        Motes.launch(new Motes.Launch(MoteKind.STARDUST, ownerShip, from, facing, targetShip, moteDamage, moteDamage, MOTE_FLIGHT_SECONDS,
+                maxMotesInFlight()));
+    }
+
+    int maxMotesInFlight() {
+        return Motes.MAX_LIVE_MOTES_PER_SOURCE + Math.round(magnitude(EXTRA_MOTES_IN_FLIGHT_KEY));
     }
 }

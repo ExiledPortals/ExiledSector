@@ -64,6 +64,13 @@ public enum AuraSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("range", TerrifyingPresenceField.RANGE).arg("value", magnitude).styled();
         }
     },
+    TERRIFYING_PRESENCE_RANGE_PERCENT(listener(TerrifyingPresenceListener.RANGE_PERCENT_KEY,
+            TerrifyingPresenceListener.class, TerrifyingPresenceListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.signed(this, magnitude).styled();
+        }
+    },
     GRAVITY_DRAG_TIMEFLOW_MULT(listener(GravityDragListener.TIMEFLOW_PERCENT_KEY, GravityDragListener.class, GravityDragListener::new)) {
         @Override
         public StyledText description(float magnitude) {
@@ -86,6 +93,8 @@ public enum AuraSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("range", AuxiliaryScreenField.RANGE).styled();
         }
     },
+    SMALLER_ALLY_DAMAGE_TAKEN_RANGE_FLAT(listener(AuxiliaryScreenListener.RANGE_BONUS_KEY, AuxiliaryScreenListener.class,
+            AuxiliaryScreenListener::new)),
     MALFUNCTION_AURA_PERCENT(listener(MalfunctionAuraListener.MALFUNCTION_PERCENT_KEY, MalfunctionAuraListener.class, MalfunctionAuraListener::new)) {
         @Override
         public StyledText description(float magnitude) {
@@ -99,11 +108,19 @@ public enum AuraSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("range", RateOfFireAuraField.RANGE).styled();
         }
     },
-    ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD(listener(DModArmorAuraListener.PERCENT_PER_DMOD_KEY, DModArmorAuraListener.class,
-            DModArmorAuraListener::new)) {
+    ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD(listener(DModAuraListener.ARMOR_PERCENT_PER_DMOD_KEY, DModAuraListener.class,
+            DModAuraListener::new)) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).arg("range", DModArmorAuraField.RANGE)
+            return EffectText.msg(this).arg("value", magnitude).arg("range", DModAuraField.RANGE)
+                    .arg("max", SkillEffectSupport.MAX_COUNTED_DMODS).styled();
+        }
+    },
+    ALLY_TOP_SPEED_PERCENT_PER_DMOD(listener(DModAuraListener.TOP_SPEED_PERCENT_PER_DMOD_KEY, DModAuraListener.class,
+            DModAuraListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", DModAuraField.RANGE)
                     .arg("max", SkillEffectSupport.MAX_COUNTED_DMODS).styled();
         }
     },

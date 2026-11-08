@@ -56,6 +56,20 @@ class PirateFrenzyTest {
     }
 
     @Test
+    void extraSecondsLengthenEveryStack() {
+        ShipAPI ship = ship();
+        when(ship.getMutableStats().getDynamic().getValue(PirateFrenzy.EXTRA_SECONDS_KEY, 0f)).thenReturn(5f);
+        PirateFrenzy frenzy = new PirateFrenzy(ship);
+
+        frenzy.gain();
+        frenzy.advance(PirateFrenzy.STACK_SECONDS + 4f);
+        assertEquals(1, frenzy.stacks());
+
+        frenzy.advance(1f);
+        assertEquals(0, frenzy.stacks());
+    }
+
+    @Test
     void aStackGainedAtTheCapReplacesTheOldest() {
         ShipAPI ship = ship();
         PirateFrenzy frenzy = new PirateFrenzy(ship);

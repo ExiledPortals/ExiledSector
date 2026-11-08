@@ -23,7 +23,8 @@ scaling and the summary see the stat bonuses. `ModuleTreeShare` steps the shared
 Effects backed by `AffinityScaling` (`*_PER_*_AFFINITY`, on the affinity hull items) apply nothing themselves:
 `AffinitySteps.scaledBonuses` adds their target stat once per whole step of the affinities they read, summed when
 they read all three (`*_PER_HIGHEST_AFFINITY` reads only the highest), in a contribution of its own so module sharing is unaffected. `AffinityScaling.whileAllEqual`
-(Equilibrium Protocol) adds its target once while the final totals of all three are equal. `AffinitySteps.totals` first
+(Equilibrium Protocol) adds its target once while the final totals of all three are equal, or no further apart than the
+summed `AFFINITY_EQUALITY_TOLERANCE_FLAT` (`AffinitySteps.allWithin`). `AffinitySteps.totals` first
 multiplies the summed Low Tech Affinity by its summed `LOW_TECH_AFFINITY_PERCENT`, then adds
 `HIGHEST_AFFINITY_FLAT_PER_S_MOD` (already multiplied by the ship's s-mods in `HullUpgradeEffectSource`) to the
 highest affinity, then `LOWEST_AFFINITY_AS_HIGHEST` raises the lowest to match it, and last each `AFFINITY_EXCHANGE_TO_*`
@@ -73,13 +74,20 @@ each such hull mod's effect in `PhantomHullModEffect`, which forwards to the ori
 copies, where it does nothing, can't be removed and is hidden from refit and Codex. Fleet-wide hull mods
 (High Resolution Sensors, Phase Field) are never phantoms.
 
+The tree applies a node's vanilla effect as a plain hull mod, never an s-mod, so an integrated node that takes
+vanilla's s-mod bonus carries it as its own effect: Neural Interface sets vanilla's instant transfer flag through
+`INSTANT_NEURAL_TRANSFER_FROM` (`BattleSkillEffect`).
+
 ### Integrated nodes
 
 A type with an `integrated` block in `skill_types.json` (`IntegratedEffects`) can be integrated on one ship by
 holding a click on its allocated node. The ship's nth integration costs n story points and, unlike an s-mod, grants
 no bonus XP (`NodeIntegration`). An integrated node applies its integrated effects instead of its normal ones
-(`IntegratedNodes.effectsFor`) and stays in `ShipSkillData.integratedNodeIds` when unallocated. Save repair forgets
-integrations whose node is gone or no longer integrable and refunds the costliest ones first. A Deintegration
+(`IntegratedNodes.effectsFor`) and stays in `ShipSkillData.integratedNodeIds` when unallocated. Integration follows
+the effective type, so a node a Doctrine Archive rewrites into an integrable type can be integrated, and an
+integration only applies while the effective type is integrable. Save repair forgets integrations whose node is gone
+or can no longer take an integrable type (its own, an option or a doctrine replacement for its tier) and refunds the
+costliest ones first. A Deintegration
 Schematic clears every integration on one ship and refunds all their story points
 (`DeintegrationSchematic`). It drops like the Logistics Schematic, at the Tuning Nanoswarm's `battle_loot.csv` rate.
 
@@ -212,7 +220,8 @@ restorer, which puts the original type back.
 ### Refracting Projectiles
 
 `NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT` gives a non-beam energy shot that hits a shield a chance to
-refract to the nearest unhit enemy within weapon range, up to Max Refractions (default 5). Missiles and
+refract to the nearest unhit enemy within weapon range, up to Max Refractions (default 5);
+`NON_BEAM_ENERGY_WEAPON_HULL_REFRACTION_CHANCE_PERCENT` is the chance for armor or hull hits. Missiles and
 weapons in `energy_chain_blocklist.csv` never refract. As with Lion's Gaze, a pooled drone fires the real
 weapon as an instant single shot, then hands the projectile to the firing ship so its on-hit effects and
 kill credit apply.
@@ -242,7 +251,9 @@ energy weapons, ballistics included while they count as energy, and Spark Rift's
 weapons, so shots fired by weapon drones or refraction hops never roll. On success it drops vanilla's Rift Beam
 mine at the hit point, sourced by the hitting ship or craft, which explodes at once (`RiftExplosions.spawn`). The mine's
 damage is set from the weapon spec's base damage per shot (`RiftStrike`), so damage bonuses never reach it, and the
-Rift Harmonics tooltip lists every fitted weapon with its rift damage (`RiftStrikeTooltipTable`).
+Rift Harmonics tooltip lists every fitted weapon with its rift damage (`RiftStrikeTooltipTable`). Integrated Rift
+Harmonics adds `BEAM_RIFT_STRIKE_CHANCE_PERCENT`: the same listener rolls it for each of the ship's own energy beam
+weapons at most once a second while the beam hits, with rift damage from the beam's base damage per second.
 
 `RIFT_EXPLOSION_DAMAGE_PERCENT` (`RiftExplosionDamageListener`) raises the damage of every rift explosion the ship
 sources: these rifts, vanilla's Rift Beam, Lance, Cascade and Lightning mines, and Rift Torpedo direct hits, which
@@ -255,14 +266,16 @@ only the source's listeners, so a strike craft's rifts take `STRIKECRAFT_RIFT_EX
 When the ship system turns on, `SYSTEM_ACTIVATION_TIMEFLOW_PERCENT` (`TemporalExhaustListener`) gives its time flow
 bonus, lowered evenly to nothing over 4 seconds, and spawns 8 rifts evenly over the same 4 seconds behind a random main
 engine, then waits 30 seconds before it can trigger again. The rifts are the ship's own, so they hit only enemies and
-rift explosion damage bonuses reach them.
+rift explosion damage bonuses reach them. Integrated, `SYSTEM_ACTIVATION_TIMEFLOW_TAPER_SECONDS_FLAT` adds its seconds
+to the time flow taper only; the rift trail keeps its 4 seconds.
 
 ### Resonator Payload
 
 `MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY` grants `MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT` for every
 5 of the highest affinity (`AffinityScaling.Filter.HIGHEST`). Each hit on an enemy ship from this ship's own missile
 weapons rolls it, and `ResonatorPayloadListener` then spawns 4 rifts within 100 su of the impact, 0.1 seconds apart
-(`RiftSeries`), each dealing 10% of the launcher's base damage per shot up to 100.
+(`RiftSeries`), each dealing 10% of the launcher's base damage per shot up to 100. Integrated,
+`MISSILE_HIT_RIFT_SERIES_EXPLOSIONS_FLAT` adds that many rifts to each series.
 
 ### Thermo-Accelerator
 
@@ -286,36 +299,39 @@ refreshed by each hit, capped at 90% less. As with shield disruption, the strong
 
 `KILL_FLUX_VENT_PERCENT` watches every enemy ship this ship damages and, when one's hull reaches zero, removes that
 share of maximum flux from whichever ship dealt the killing blow, if it has the effect. Strikecraft and station
-modules don't count (`KillFluxVentListener`).
+modules don't count. The watch is the shared `KillWatch`, which calls every `KillWatch.KillReaction` listener on the
+killer (`KillFluxVentListener`).
 
 ### Flak bursts
 
 `MISSILE_KILL_FLAK_DAMAGE_FLAT` remembers each enemy missile this ship's weapons hit and, on the next frame, bursts
 at any whose hitpoints reached zero. The burst deals flat fragmentation damage to enemy missiles and strike craft
-within 100 su, and missiles it destroys don't burst again (`FlakBurstListener`).
+within 100 su plus `MISSILE_KILL_FLAK_RADIUS_FLAT`, and missiles it destroys don't burst again (`FlakBurstListener`).
 
 ### Concussion Shells
 
-A large ballistic projectile hit on an enemy ship's armor or hull rolls `LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT`
-and temporarily disables whichever working weapon or engine sits nearest the impact (`ConcussionShellListener`).
+A large ballistic projectile hit on an enemy ship's armor or hull rolls `LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT`,
+a medium one `MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT`, and a success temporarily disables whichever working weapon or engine sits nearest the impact (`ConcussionShellListener`).
 
 ### Auxiliary Screen
 
 `SMALLER_ALLY_DAMAGE_TAKEN_MULT` multiplies the hull, armor and shield damage taken by allied ships of a smaller
-hull size within 800 su, rechecked every 0.25 seconds. Strike craft and station modules don't count, and only the
+hull size within 800 su plus `SMALLER_ALLY_DAMAGE_TAKEN_RANGE_FLAT`, rechecked every 0.25 seconds. Strike craft and station modules don't count, and only the
 strongest source applies (`AuxiliaryScreenField`).
 
 ### Defensive Compact
 
 `DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT` reduces hull, armor and shield damage taken while any combat objective
 owned by the ship's side is within 1500 su, checked every frame (`HeldObjective`).
+`DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_RANGE_FLAT` adds to that range.
 
 ### League Requisitions
 
 `SUPPLY_USE_REDUCTION_PERCENT_PER_HULL_TYPE` adds up over the player fleet's active ships and is multiplied by the
 number of different base hulls among them, so skins count as their base hull and mothballed ships don't count. The
 total, capped at 15%, reduces every member's maintenance supply use at each fleet sync
-(`FleetWideEffects.applySupplyUsePerHullType`).
+(`FleetWideEffects.applySupplyUsePerHullType`). `FUEL_USE_REDUCTION_PERCENT_PER_HULL_TYPE` counts hull types the same way
+and reduces fuel use, capped at 5% (`FleetWideEffects.applyFuelUsePerHullType`).
 
 ### Lion's Roar
 
@@ -326,7 +342,10 @@ rechecked every 0.25 seconds. Strike craft don't count, and only the strongest s
 
 `TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT` adds a flat share of the flagship's hull top speed, before any modifiers, while
 that flagship is alive on the field, rechecked every second. The flagship is the ship captained by this ship's fleet
-commander, so the flagship itself gains nothing (`FlagshipPaceListener`).
+commander, so the flagship itself gains nothing (`FlagshipPaceListener`, flagship lookup in `Flagships`).
+
+`DAMAGE_TAKEN_NEAR_FLAGSHIP_PERCENT` (integrated Honor Guard) changes hull, armor and shield damage taken while
+within 1500 su of that same flagship, rechecked every 0.25 seconds (`FlagshipGuardListener`).
 
 ### Executor's Decree
 
@@ -342,12 +361,19 @@ fleet's fuel is at least half its total fuel capacity. A transient script rechec
 ### Pirate Frenzy
 
 Pirate Frenzy is a stacking buff any effect can grant through `PirateFrenzy.of(ship).gain()`. Each stack runs its own
-10-second timer and gives a fixed 5% increased weapon rate of fire and 5% reduced weapon flux cost. A ship holds up to
-5 stacks, a stack gained at the cap replaces the oldest, and destruction clears them all (`PirateFrenzy`).
+10-second timer, lengthened by `PIRATE_FRENZY_SECONDS_FLAT`, and gives a fixed 5% increased weapon rate of fire and 5%
+reduced weapon flux cost. A ship holds up to 5 stacks, a stack gained at the cap replaces the oldest, and destruction
+clears them all (`PirateFrenzy`).
 
 Blood in the Water's `PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT` grants a stack for each enemy ship destroyed
 within its range, checked every 0.25 seconds. Strike craft and station modules don't count
-(`FrenzyOnNearbyDestructionListener`).
+(`FrenzyOnNearbyDestructionListener`). `HELPLESS_KILL_PIRATE_FRENZY_STACKS_FLAT` grants its stacks when this ship deals
+the killing blow to an overloaded, venting or flamed-out enemy ship, through `KillWatch` (`HelplessKillFrenzyListener`).
+
+### Running Dark
+
+`TRANSPONDER_OFF_BURN_LEVEL_FLAT` adds the strongest active ship's value to the fleet's max burn level while the
+transponder is off, reapplied like the transponder-off sensor profile (`FleetWideEffects.applyTransponderOffBurnLevel`).
 
 ### Pick Off The Stragglers
 
@@ -373,13 +399,14 @@ Vanilla only works out crew losses after a battle, so `HULL_DAMAGE_TAKEN_PERCENT
 vanilla's formula at its average roll: the ship's crew times the square of the hull damage taken this deployment as a
 share of maximum hull, times 0.75 and the crew loss multiplier. The crew is read at the first hull hit (a station
 module reads its parent's), each hull hit recounts the losses, and the reduction is a percent on hull damage taken
-(`CrewLossHullDamageListener`).
+(`CrewLossHullDamageListener`). `HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_PERCENT` adds percentage points to its cap.
 
 ### Sanctified Scars
 
 `ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD` counts the ship's d-mods once at deployment, up to five, and reduces the
 armor damage taken by allied ships within 1000 su as a percent, rechecked every 0.25 seconds. Strike craft and station
-modules don't count, and only the strongest source applies (`DModArmorAuraField`).
+modules don't count, and only the strongest source applies (`DModAuraField`). The integrated
+`ALLY_TOP_SPEED_PERCENT_PER_DMOD` raises their top speed the same way, its strongest source picked separately.
 
 ### Rite of Mortification
 
@@ -416,7 +443,8 @@ hull size to the converted hit itself, since this ship is its source (`EmpConver
 ### Phase Ambush Doctrine
 
 `PHASE_EXIT_WEAPON_DAMAGE_PERCENT` gives its full weapon damage bonus as the ship leaves phase and lowers it evenly to
-nothing over 3 seconds. Leaving phase again restarts it at full (`PhaseExitDamageListener`).
+nothing over 3 seconds, lengthened by `PHASE_EXIT_WEAPON_DAMAGE_DURATION_PERCENT`. Leaving phase again restarts it at
+full (`PhaseExitDamageListener`).
 
 ### Phantom Wake
 
@@ -424,7 +452,9 @@ nothing over 3 seconds. Leaving phase again restarts it at full (`PhaseExitDamag
 place, taking no damage and colliding only with projectiles and missiles like a fighter, so enemy weapons waste fire
 on it. It fades over its lifetime and is then removed with its deployment record (`PhaseAfterimage`,
 `TemporaryCombatSpawn`). A new entry moves a still fading afterimage to the new spot and restarts its fade instead of
-building another, and ships with modules or built-in wings leave none (`PhantomWakeListener`).
+building another, and ships with modules or built-in wings leave none (`PhantomWakeListener`). With
+`PHASE_AFTERIMAGE_FADE_EMP_FLAT`, an afterimage that fades out on its own arcs that much EMP into each enemy ship
+within 600 su.
 
 The afterimage costs no deployment points, can't receive transfer of command, shows as an ally on the player's side,
 and its variant tag (`CombatQueries.isAfterimage`) keeps it out of every ally, enemy and target pick, Star Chart strikes
@@ -435,13 +465,20 @@ included.
 Each hit from this ship's own energy weapons on an enemy ship, strike craft excepted, adds an Injunction stack for 10
 seconds, at most once a second per target, up to 10 stacks with the oldest replaced. The stacks' summed
 `ENERGY_HIT_INJUNCTION_PERCENT` multiplies the target's ship system cooldown and divides its charge regeneration by the
-same factor (`InjunctionListener`, `Injunction`).
+same factor (`InjunctionListener`, `Injunction`). Stacks from `ENERGY_HIT_INJUNCTION_VENT_PERCENT` also divide the
+target's vent rate the same way.
 
 ### Range per sensor strength
 
 `ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT` applies after every other tree effect and again once the ship is built,
 so sensor strength from the tree, such as COMSEC Discipline's, and from hull mods counts toward it
-(`WeaponSkillEffect.applySensorRange`).
+(`WeaponSkillEffect.applySensorRange`). `BALLISTIC_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT` does the same for ballistic
+weapons.
+
+### Ammo saving
+
+`BALLISTIC_AND_ENERGY_WEAPON_AMMO_SAVE_CHANCE_PERCENT` watches the ammo of the ship's ballistic and energy weapons that
+use it and rolls each shot spent in a frame, putting the saved rounds back up to the weapon's maximum (`AmmoSaveListener`).
 
 </details>
 
@@ -453,9 +490,9 @@ so sensor strength from the tree, such as COMSEC Discipline's, and from hull mod
 A beam hit on an enemy ship splits to up to N more targets (`BEAM_WEAPON_SPLIT_TARGETS_FLAT`): the nearest
 hittable hostile non-fighters within half the beam's range of the impact, picked again every 0.2 s or when one
 dies. Modules of the hit ship, or the ship its hit module belongs to, are skipped unless it's a station. Damage is
-shared evenly. The
-original target's share is a damage modifier (so it also scales that hit's EMP), and the split runs before
-every other damage-dealt effect, so they all see the shared amount.
+shared evenly, except that the nearest `BEAM_WEAPON_FULL_DAMAGE_SPLIT_TARGETS_FLAT` (integrated Lion's Gaze) splits
+take full damage outside the share. The original target's share is a damage modifier (so it also scales that hit's
+EMP), and the split runs before every other damage-dealt effect, so they all see the shared amount.
 
 Each split target is hit by a real beam from an invisible, invulnerable drone placed just outside the
 original target's shield or hull. The drone copies the ship's captain, weapon stat modifiers and damage-dealt

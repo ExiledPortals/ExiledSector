@@ -11,6 +11,8 @@ import exiledsector.effects.DoctrineRevertRelease;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.AllocationCheck;
+import exiledsector.skills.IntegratedEffects;
+import exiledsector.skills.IntegratedNodes;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
@@ -181,6 +183,60 @@ class DoctrineOverridesTest {
 
         assertEquals("original", nearNotable.resolveEffectiveType(data).getId());
         assertTrue(data.isAllocated(nearNotable.getId()));
+    }
+
+    @Test
+    void aNodeRewrittenIntoAnIntegrableReplacementCanBeIntegratedAndKeepsItThroughRevertAndLoad() {
+        for (String typeId : NOTABLE_POOL) {
+            registerType(integrable(typeId, "ARMOR_PERCENT", 10f, 15f));
+        }
+        ShipSkillData data = shipWith(REWRITE, 9L, nearNotable, nearSmall);
+        String doctrineItemId = data.getSocketedItems().get(socket.getId());
+        String replacementId = nearNotable.resolveEffectiveType(data).getId();
+
+        assertTrue(IntegratedNodes.canIntegrate(data, nearNotable));
+        data.integrate(nearNotable.getId());
+        data.integrate(nearSmall.getId());
+        assertEquals(List.of(effect("ARMOR_PERCENT", 15f)), currentEffects(data, nearNotable));
+        assertEquals(2, IntegratedNodes.forgetInapplicable(data, SkillTree.getDeclaredNodes()));
+        assertEquals(Set.of(nearNotable.getId()), data.getIntegratedNodeIds());
+
+        data.unsocketItem(socket.getId());
+        assertEquals(List.of(effect("HULL_MULT", 5f)), currentEffects(data, nearNotable));
+        assertEquals(0, IntegratedNodes.forgetInapplicable(data, SkillTree.getDeclaredNodes()));
+
+        data.socketItem(socket.getId(), doctrineItemId);
+        assertEquals(replacementId, nearNotable.resolveEffectiveType(data).getId());
+        assertEquals(List.of(effect("ARMOR_PERCENT", 15f)), currentEffects(data, nearNotable));
+    }
+
+    @Test
+    void anIntegratedNodeRewrittenIntoAReplacementWithoutIntegratedEffectsGetsThemBackWhenItReverts() {
+        registerType(integrable("integrable_original", "HULL_MULT", 5f, 8f));
+        SkillNode integrableNotable = node("integrable_notable", "integrable_original", 100f, 100f);
+        ShipSkillData data = shipWith(REWRITE, 9L, integrableNotable);
+        data.integrate(integrableNotable.getId());
+
+        assertFalse(IntegratedNodes.canIntegrate(data, integrableNotable));
+        assertEquals(integrableNotable.resolveEffectiveType(data).getEffects(), currentEffects(data, integrableNotable));
+        assertEquals(0, IntegratedNodes.forgetInapplicable(data, SkillTree.getDeclaredNodes()));
+
+        data.unsocketItem(socket.getId());
+        assertEquals(List.of(effect("HULL_MULT", 8f)), currentEffects(data, integrableNotable));
+    }
+
+    private static SkillType integrable(String id, String effectName, float normalMagnitude, float integratedMagnitude) {
+        return type(id, SkillTier.NOTABLE, effectName, normalMagnitude)
+                .integratedEffects(new IntegratedEffects(List.of(effect(effectName, integratedMagnitude)), List.of()))
+                .build();
+    }
+
+    private static SkillTypeEffect effect(String effectName, float magnitude) {
+        return new SkillTypeEffect(SkillEffect.byName(effectName), magnitude);
+    }
+
+    private static List<SkillTypeEffect> currentEffects(ShipSkillData data, SkillNode node) {
+        return IntegratedNodes.effectsFor(data, node.getId(), node.resolveEffectiveType(data), HullSize.CRUISER);
     }
 
     @Test

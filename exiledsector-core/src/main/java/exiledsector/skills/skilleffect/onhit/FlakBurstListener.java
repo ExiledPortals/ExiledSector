@@ -26,6 +26,7 @@ import java.util.Set;
 final class FlakBurstListener extends ShipCombatListener implements DamageDealtModifier, AdvanceableListener {
 
     static final String DAMAGE_KEY = "exiledSector_flakBurstDamage";
+    static final String RADIUS_BONUS_KEY = "exiledSector_flakBurstRadiusBonus";
     static final float BURST_RADIUS = 100f;
     private static final Color BURST_COLOR = new Color(255, 200, 120, 160);
     private static final float BURST_VISUAL_SECONDS = 0.4f;
@@ -64,30 +65,31 @@ final class FlakBurstListener extends ShipCombatListener implements DamageDealtM
         if (damage <= 0f || engine == null) {
             return;
         }
+        float burstRadius = BURST_RADIUS + magnitude(RADIUS_BONUS_KEY);
         for (Vector2f burstPoint : burstPoints) {
-            burst(engine, burstPoint, damage);
+            burst(engine, burstPoint, damage, burstRadius);
         }
     }
 
-    private void burst(CombatEngineAPI engine, Vector2f burstPoint, float damage) {
+    private void burst(CombatEngineAPI engine, Vector2f burstPoint, float damage, float burstRadius) {
         bursting = true;
-        for (MissileAPI caught : missilesCaughtInBurst(engine, burstPoint)) {
+        for (MissileAPI caught : missilesCaughtInBurst(engine, burstPoint, burstRadius)) {
             engine.applyDamage(caught, caught.getLocation(), damage, DamageType.FRAGMENTATION, 0f, false, false, ownerShip);
         }
-        for (ShipAPI caught : CombatQueries.shipsNear(burstPoint, BURST_RADIUS, other -> isFighterCaughtInBurst(other, burstPoint))) {
+        for (ShipAPI caught : CombatQueries.shipsNear(burstPoint, burstRadius, other -> isFighterCaughtInBurst(other, burstPoint, burstRadius))) {
             engine.applyDamage(caught, caught.getLocation(), damage, DamageType.FRAGMENTATION, 0f, false, false, ownerShip);
         }
         bursting = false;
-        engine.spawnExplosion(burstPoint, new Vector2f(), BURST_COLOR, BURST_RADIUS, BURST_VISUAL_SECONDS);
+        engine.spawnExplosion(burstPoint, new Vector2f(), BURST_COLOR, burstRadius, BURST_VISUAL_SECONDS);
     }
 
-    private List<MissileAPI> missilesCaughtInBurst(CombatEngineAPI engine, Vector2f burstPoint) {
+    private List<MissileAPI> missilesCaughtInBurst(CombatEngineAPI engine, Vector2f burstPoint, float burstRadius) {
         List<MissileAPI> caught = new ArrayList<>();
-        Iterator<Object> nearby = CombatQueries.objectsNear(engine.getMissileGrid(), burstPoint, BURST_RADIUS);
+        Iterator<Object> nearby = CombatQueries.objectsNear(engine.getMissileGrid(), burstPoint, burstRadius);
         while (nearby.hasNext()) {
             if (nearby.next() instanceof MissileAPI missile && !caught.contains(missile) && isHostileMissile(missile)
                     && missile.getHitpoints() > 0f
-                    && CombatQueries.withinRadius(missile.getLocation(), burstPoint, BURST_RADIUS + missile.getCollisionRadius())) {
+                    && CombatQueries.withinRadius(missile.getLocation(), burstPoint, burstRadius + missile.getCollisionRadius())) {
                 caught.add(missile);
             }
         }
@@ -98,9 +100,9 @@ final class FlakBurstListener extends ShipCombatListener implements DamageDealtM
         return missile.getOwner() != ownerShip.getOwner() && missile.getOwner() != Misc.OWNER_NEUTRAL;
     }
 
-    private boolean isFighterCaughtInBurst(ShipAPI other, Vector2f burstPoint) {
+    private boolean isFighterCaughtInBurst(ShipAPI other, Vector2f burstPoint, float burstRadius) {
         return other.isFighter() && CombatQueries.isAliveNotHulk(other) && other.getCollisionClass() != CollisionClass.NONE
                 && CombatQueries.isHostile(ownerShip, other)
-                && CombatQueries.withinRadius(other.getLocation(), burstPoint, BURST_RADIUS + other.getCollisionRadius());
+                && CombatQueries.withinRadius(other.getLocation(), burstPoint, burstRadius + other.getCollisionRadius());
     }
 }

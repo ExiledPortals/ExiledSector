@@ -9,6 +9,8 @@ import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.skills.skilleffect.SkillEffect;
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.mock;
@@ -92,7 +95,11 @@ class CollisionDeathListenerTest {
     }
 
     private ShipAPI collidingShip() {
-        ShipAPI ship = ship(0f, 0f, Map.of());
+        return collidingShip(Map.of());
+    }
+
+    private ShipAPI collidingShip(Map<String, Float> dynamicValues) {
+        ShipAPI ship = ship(0f, 0f, dynamicValues);
         when(ship.getCollisionRadius()).thenReturn(50f);
         when(ship.getCollisionClass()).thenReturn(CollisionClass.SHIP);
         BoundsAPI bounds = boundsWithSegment(-10f, 0f, 10f, 0f);
@@ -124,6 +131,42 @@ class CollisionDeathListenerTest {
         listener.advance(1f);
         listener.advance(1f);
         assertDestroyedByCollision(ship, 1);
+    }
+
+    @Test
+    void withTheLargeEnemyRuleOnlyAnEnemyCruiserOrCapitalIsFatal() {
+        ShipAPI ship = collidingShip(Map.of(CollisionDeathListener.LARGE_ENEMIES_ONLY_KEY, 1f));
+        ShipAPI alliedCapital = otherShipAt(5f, boundsWithSegment(0f, -10f, 0f, 10f));
+        when(alliedCapital.getHullSize()).thenReturn(HullSize.CAPITAL_SHIP);
+        ShipAPI enemyDestroyer = otherShipAt(5f, boundsWithSegment(0f, -10f, 0f, 10f));
+        when(enemyDestroyer.getHullSize()).thenReturn(HullSize.DESTROYER);
+        when(enemyDestroyer.getOwner()).thenReturn(1);
+        gridShips.addAll(List.of(ship, alliedCapital, enemyDestroyer));
+        AdvanceableListener listener = attachedListener(SpecialSkillEffect.DEATH_ON_COLLISION_WITH_LARGE_ENEMY, ship, AdvanceableListener.class);
+
+        listener.advance(2f);
+        assertDestroyedByCollision(ship, 0);
+
+        ShipAPI enemyCruiser = otherShipAt(5f, boundsWithSegment(0f, -10f, 0f, 10f));
+        when(enemyCruiser.getHullSize()).thenReturn(HullSize.CRUISER);
+        when(enemyCruiser.getOwner()).thenReturn(1);
+        gridShips.add(enemyCruiser);
+
+        listener.advance(0.1f);
+        assertDestroyedByCollision(ship, 1);
+    }
+
+    @Test
+    void theLargeEnemyRuleSwitchesItselfOnWhateverItsMagnitude() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
+        StatBonus largeEnemiesOnly = new StatBonus();
+        when(stats.getDynamic()).thenReturn(dynamic);
+        when(dynamic.getMod(CollisionDeathListener.LARGE_ENEMIES_ONLY_KEY)).thenReturn(largeEnemiesOnly);
+
+        SpecialSkillEffect.DEATH_ON_COLLISION_WITH_LARGE_ENEMY.apply(stats, "mod_id", 0f);
+
+        assertEquals(1f, largeEnemiesOnly.getFlatBonus(), 1e-4f);
     }
 
     @Test

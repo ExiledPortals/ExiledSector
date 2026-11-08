@@ -98,6 +98,19 @@ class AffinityStepsTest {
     }
 
     @Test
+    void anEqualityToleranceLetsTheEqualAffinityBonusApplyWhileAllTotalsAreWithinItOfEachOther() {
+        EffectContribution integratedNotable = EffectContribution.scaledPermanent("notable", "notable_", List.of(
+                new SkillTypeEffect(SpecialSkillEffect.WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL, 20f),
+                new SkillTypeEffect(SpecialSkillEffect.AFFINITY_EQUALITY_TOLERANCE_FLAT, 5f)));
+        SkillEffect weaponDamage = SpecialSkillEffect.WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL.affinityScaling().target();
+
+        assertEquals(5f, AffinitySteps.equalTolerance(List.of(integratedNotable, node(LOW_TECH, 15f))));
+        assertEquals(Map.of(weaponDamage, 20f), scaled(List.of(integratedNotable, node(LOW_TECH, 15f), node(HIGH_TECH, 10f), node(MIDLINE, 12f))));
+        assertEquals(Map.of(), scaled(List.of(integratedNotable, node(LOW_TECH, 15f), node(HIGH_TECH, 9f), node(MIDLINE, 12f))));
+        assertEquals(Map.of(), scaled(List.of(integratedNotable, node(LOW_TECH, 10f), node(HIGH_TECH, 5f), node(MIDLINE, 15f))));
+    }
+
+    @Test
     void highTechArmorScalingCountsOnlyHighTechAffinity() {
         EffectContribution item = EffectContribution.scaledPermanent("item", "item_", List.of(
                 new SkillTypeEffect(SpecialSkillEffect.ARMOR_PERCENT_PER_HIGH_TECH_AFFINITY, 1f)));

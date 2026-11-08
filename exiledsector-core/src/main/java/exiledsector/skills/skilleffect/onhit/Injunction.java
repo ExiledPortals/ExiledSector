@@ -13,21 +13,29 @@ final class Injunction implements AdvanceableListener {
     static final float SECONDS_BETWEEN_STACKS = 1f;
     static final String MOD_ID = "exiledSector_injunction";
 
+    record Slowdown(float rechargePercent, float ventPercent) {
+
+        boolean slowsAnything() {
+            return rechargePercent > 0f || ventPercent > 0f;
+        }
+    }
+
     private final ShipAPI debuffedShip;
-    private final ExpiringStacks<Float> slowdownStacks = new ExpiringStacks<>(MAX_STACKS, STACK_SECONDS);
+    private final ExpiringStacks<Slowdown> slowdownStacks = new ExpiringStacks<>(MAX_STACKS, STACK_SECONDS);
     private float clockSeconds;
     private float nextStackAtSeconds;
-    private float appliedSlowdownPercent;
+    private float appliedRechargeSlowdownPercent;
+    private float appliedVentSlowdownPercent;
 
     Injunction(ShipAPI debuffedShip) {
         this.debuffedShip = debuffedShip;
     }
 
-    static void inflict(ShipAPI target, float slowdownPercent) {
-        SkillEffectSupport.ensureListener(target, Injunction.class, Injunction::new).gain(slowdownPercent);
+    static void inflict(ShipAPI target, Slowdown slowdown) {
+        SkillEffectSupport.ensureListener(target, Injunction.class, Injunction::new).gain(slowdown);
     }
 
-    static float rechargeTimeMult(float slowdownPercent) {
+    static float slowdownTimeMult(float slowdownPercent) {
         return 1f + slowdownPercent / 100f;
     }
 
@@ -35,16 +43,20 @@ final class Injunction implements AdvanceableListener {
         return slowdownStacks.size();
     }
 
-    float slowdownPercent() {
-        return slowdownStacks.sum(Float::doubleValue);
+    float rechargeSlowdownPercent() {
+        return slowdownStacks.sum(Slowdown::rechargePercent);
     }
 
-    void gain(float slowdownPercent) {
-        if (slowdownPercent <= 0f || clockSeconds < nextStackAtSeconds) {
+    float ventSlowdownPercent() {
+        return slowdownStacks.sum(Slowdown::ventPercent);
+    }
+
+    void gain(Slowdown slowdown) {
+        if (!slowdown.slowsAnything() || clockSeconds < nextStackAtSeconds) {
             return;
         }
         nextStackAtSeconds = clockSeconds + SECONDS_BETWEEN_STACKS;
-        slowdownStacks.add(clockSeconds, slowdownPercent);
+        slowdownStacks.add(clockSeconds, slowdown);
         applyIfChanged();
     }
 
@@ -59,19 +71,35 @@ final class Injunction implements AdvanceableListener {
     }
 
     private void applyIfChanged() {
-        float slowdownPercent = slowdownPercent();
-        if (slowdownPercent == appliedSlowdownPercent) {
-            return;
-        }
-        appliedSlowdownPercent = slowdownPercent;
         MutableShipStatsAPI stats = debuffedShip.getMutableStats();
+        float rechargeSlowdownPercent = rechargeSlowdownPercent();
+        if (rechargeSlowdownPercent != appliedRechargeSlowdownPercent) {
+            appliedRechargeSlowdownPercent = rechargeSlowdownPercent;
+            applyRechargeSlowdown(stats, rechargeSlowdownPercent);
+        }
+        float ventSlowdownPercent = ventSlowdownPercent();
+        if (ventSlowdownPercent != appliedVentSlowdownPercent) {
+            appliedVentSlowdownPercent = ventSlowdownPercent;
+            applyVentSlowdown(stats, ventSlowdownPercent);
+        }
+    }
+
+    private static void applyRechargeSlowdown(MutableShipStatsAPI stats, float slowdownPercent) {
         if (slowdownPercent <= 0f) {
             stats.getSystemCooldownBonus().unmodify(MOD_ID);
             stats.getSystemRegenBonus().unmodify(MOD_ID);
             return;
         }
-        float timeMult = rechargeTimeMult(slowdownPercent);
+        float timeMult = slowdownTimeMult(slowdownPercent);
         stats.getSystemCooldownBonus().modifyMult(MOD_ID, timeMult);
         stats.getSystemRegenBonus().modifyMult(MOD_ID, 1f / timeMult);
+    }
+
+    private static void applyVentSlowdown(MutableShipStatsAPI stats, float slowdownPercent) {
+        if (slowdownPercent <= 0f) {
+            stats.getVentRateMult().unmodify(MOD_ID);
+            return;
+        }
+        stats.getVentRateMult().modifyMult(MOD_ID, 1f / slowdownTimeMult(slowdownPercent));
     }
 }

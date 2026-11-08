@@ -32,6 +32,8 @@ public final class FleetWideEffects {
     static final String TRANSPONDER_OFF_SENSOR_PROFILE_KEY = "exiledSector_transponderOffSensorProfileContribution";
     static final float MAX_TRANSPONDER_OFF_SENSOR_PROFILE_REDUCTION = 30f;
     private static final String TRANSPONDER_OFF_SENSOR_PROFILE_FLEET_MOD = "transponderOffSensorProfile";
+    static final String TRANSPONDER_OFF_BURN_LEVEL_KEY = "exiledSector_transponderOffBurnLevelContribution";
+    private static final String TRANSPONDER_OFF_BURN_LEVEL_FLEET_MOD = "transponderOffBurnLevel";
     static final String CORONA_RESISTANCE_CONTRIBUTION_KEY = "exiledSector_fleetCoronaResistanceContribution";
     static final float MAX_CORONA_RESISTANCE_PERCENT = 100f;
     private static final String CORONA_RESISTANCE_FLEET_MOD = "fleetCoronaResistance";
@@ -40,6 +42,9 @@ public final class FleetWideEffects {
     static final String SUPPLY_USE_PER_HULL_TYPE_KEY = "exiledSector_supplyUsePerHullTypeContribution";
     static final float MAX_SUPPLY_USE_PER_HULL_TYPE_REDUCTION = 15f;
     private static final String SUPPLY_USE_PER_HULL_TYPE_MEMBER_MOD = "supplyUsePerHullType";
+    static final String FUEL_USE_PER_HULL_TYPE_KEY = "exiledSector_fuelUsePerHullTypeContribution";
+    static final float MAX_FUEL_USE_PER_HULL_TYPE_REDUCTION = 5f;
+    private static final String FUEL_USE_PER_HULL_TYPE_MEMBER_MOD = "fuelUsePerHullType";
     static final String HALF_FUELED_FUEL_USE_KEY = "exiledSector_halfFueledFuelUseContribution";
     static final float HALF_FUELED_SHARE = 0.5f;
     private static final String HALF_FUELED_FUEL_USE_MEMBER_MOD = "halfFueledFuelUse";
@@ -123,6 +128,29 @@ public final class FleetWideEffects {
         return Math.max(-MAX_TRANSPONDER_OFF_SENSOR_PROFILE_REDUCTION, Math.min(0f, percent));
     }
 
+    public static void applyTransponderOffBurnLevel(CampaignFleetAPI fleet) {
+        StatBonus fleetBurnMod = fleet == null || fleet.getStats() == null ? null : fleet.getStats().getFleetwideMaxBurnMod();
+        if (fleetBurnMod == null || fleet.getFleetData() == null) {
+            return;
+        }
+        float bonus = fleet.isTransponderOn() ? 0f : transponderOffBurnLevelBonus(fleet.getFleetData().getMembersListCopy());
+        if (bonus > 0f) {
+            fleetBurnMod.modifyFlat(ExiledSector.key(TRANSPONDER_OFF_BURN_LEVEL_FLEET_MOD), bonus, Translation.gameText("fleet.transponderOffBurnLevel"));
+        } else {
+            fleetBurnMod.unmodifyFlat(ExiledSector.key(TRANSPONDER_OFF_BURN_LEVEL_FLEET_MOD));
+        }
+    }
+
+    static float transponderOffBurnLevelBonus(List<FleetMemberAPI> members) {
+        float strongest = 0f;
+        for (FleetMemberAPI member : members) {
+            if (!member.isMothballed()) {
+                strongest = Math.max(strongest, member.getStats().getDynamic().getValue(TRANSPONDER_OFF_BURN_LEVEL_KEY, 0f));
+            }
+        }
+        return strongest;
+    }
+
     public static void applyCoronaResistance(CampaignFleetAPI fleet) {
         if (fleet == null || fleet.getFleetData() == null) {
             return;
@@ -194,11 +222,37 @@ public final class FleetWideEffects {
     }
 
     static float supplyUsePerHullTypeReduction(List<FleetMemberAPI> members) {
-        float percentPerHullType = FleetContributions.sum(members, SUPPLY_USE_PER_HULL_TYPE_KEY);
+        return perHullTypeReduction(members, SUPPLY_USE_PER_HULL_TYPE_KEY, MAX_SUPPLY_USE_PER_HULL_TYPE_REDUCTION);
+    }
+
+    public static void applyFuelUsePerHullType(CampaignFleetAPI fleet) {
+        if (fleet == null || !fleet.isPlayerFleet() || fleet.getFleetData() == null) {
+            return;
+        }
+        List<FleetMemberAPI> members = fleet.getFleetData().getMembersListCopy();
+        float percent = fuelUsePerHullTypeReduction(members);
+        String modId = ExiledSector.key(FUEL_USE_PER_HULL_TYPE_MEMBER_MOD);
+        String source = percent > 0f ? Translation.gameText("fleet.fuelUsePerHullType") : null;
+        for (FleetMemberAPI member : members) {
+            StatBonus fuelUse = member.getStats().getFuelUseMod();
+            if (percent > 0f) {
+                fuelUse.modifyPercent(modId, -percent, source);
+            } else {
+                fuelUse.unmodifyPercent(modId);
+            }
+        }
+    }
+
+    static float fuelUsePerHullTypeReduction(List<FleetMemberAPI> members) {
+        return perHullTypeReduction(members, FUEL_USE_PER_HULL_TYPE_KEY, MAX_FUEL_USE_PER_HULL_TYPE_REDUCTION);
+    }
+
+    private static float perHullTypeReduction(List<FleetMemberAPI> members, String contributionKey, float maxReduction) {
+        float percentPerHullType = FleetContributions.sum(members, contributionKey);
         if (percentPerHullType <= 0f) {
             return 0f;
         }
-        return Math.min(MAX_SUPPLY_USE_PER_HULL_TYPE_REDUCTION, percentPerHullType * activeHullTypes(members));
+        return Math.min(maxReduction, percentPerHullType * activeHullTypes(members));
     }
 
     private static int activeHullTypes(List<FleetMemberAPI> members) {
@@ -350,6 +404,7 @@ public final class FleetWideEffects {
         lastTransponderOn = transponderOn;
         recomputeExtendedPhaseField(playerFleet);
         applyTransponderOffSensorProfile(playerFleet);
+        applyTransponderOffBurnLevel(playerFleet);
     }
 
     private static void recomputeExtendedPhaseField(CampaignFleetAPI playerFleet) {

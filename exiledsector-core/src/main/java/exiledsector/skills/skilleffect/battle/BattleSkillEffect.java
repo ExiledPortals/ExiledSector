@@ -15,6 +15,7 @@ import exiledsector.skills.skilleffect.SkillEffectSupport;
 import exiledsector.skills.skilleffect.StatMode;
 import exiledsector.skills.skilleffect.StatTarget;
 
+import static exiledsector.skills.skilleffect.Backings.flag;
 import static exiledsector.skills.skilleffect.Backings.statEffect;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
@@ -54,7 +55,8 @@ public enum BattleSkillEffect implements BackedSkillEffect {
             "stat.objectiveCaptureRange", false)),
     COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP(new ConditionalStatEffect(PERCENT,
             new StatTarget.BonusPercentagePoints(stats -> stats.getDynamic().getMod("command_point_rate_flat")),
-            "stat.commandPointRecoveryWhileFlagship", BattleSkillEffect::isFlagship));
+            "stat.commandPointRecoveryWhileFlagship", BattleSkillEffect::isFlagship)),
+    INSTANT_NEURAL_TRANSFER_FROM(flag(Stats.INSTANT_NEURAL_TRANSFER_FROM));
 
     private static boolean isFlagship(ShipAPI ship) {
         if (ship == Global.getCombatEngine().getPlayerShip()) {

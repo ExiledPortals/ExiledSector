@@ -16,6 +16,7 @@ class TemporaryGatingSupportTest {
     @ValueSource(strings = {
             "BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT",
             "ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT",
+            "BALLISTIC_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT",
             "FIGHTER_BAYS_FLAT",
             "CONVERTED_HANGAR_FIGHTER_BAYS_FLAT",
             "ARMOR_FLAT_FOR_LOW_BASE_ARMOR",

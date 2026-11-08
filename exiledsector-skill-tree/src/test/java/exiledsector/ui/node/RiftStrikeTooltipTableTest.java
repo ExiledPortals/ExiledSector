@@ -10,6 +10,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.onhit.OnHitSkillEffect;
+import exiledsector.skills.skilleffect.onhit.RiftStrike;
 import exiledsector.skills.skilleffect.weapon.BallisticAsEnergy;
 import exiledsector.skills.skilleffect.weapon.RiftExplosions;
 import exiledsector.ui.TooltipTable;
@@ -81,6 +82,17 @@ class RiftStrikeTooltipTableTest {
         FleetMemberAPI member = member(0f, true, weapon("heavymauler", "Heavy Mauler", WeaponType.BALLISTIC, false, 200f));
 
         assertEquals(List.of(List.of("Heavy Mauler", "100")), cells(RiftStrikeTooltipTable.forType(RIFT_HARMONICS, member).get(0)));
+    }
+
+    @Test
+    void beamWeaponsAreListedWithTheirDamagePerSecondWhileBeamsTriggerRifts() {
+        WeaponSpecAPI lance = weapon("tachyonlance", "Tachyon Lance", WeaponType.ENERGY, true, 0f);
+        when(lance.getDerivedStats().getDps()).thenReturn(400f);
+        FleetMemberAPI member = member(0f, false, lance, weapon("pulselaser", "Pulse Laser", WeaponType.ENERGY, false, 100f));
+        when(member.getStats().getDynamic().getValue(RiftStrike.BEAM_CHANCE_PERCENT_KEY, 0f)).thenReturn(30f);
+
+        assertEquals(List.of(List.of("Tachyon Lance", "200"), List.of("Pulse Laser", "50")),
+                cells(RiftStrikeTooltipTable.forType(RIFT_HARMONICS, member).get(0)));
     }
 
     @Test

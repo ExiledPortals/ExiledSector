@@ -18,6 +18,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -68,6 +69,16 @@ class BattleSkillEffectTest {
         BattleSkillEffect.OBJECTIVE_CAPTURE_RATE_MULT.apply(stats, "mod_id", 50f);
 
         assertEquals(1.5f, captureRate.getModifiedValue(), EPSILON);
+    }
+
+    @Test
+    void instantNeuralTransferSetsVanillasSModFlagWhateverTheMagnitude() {
+        StatBonus instantTransfer = realDynamicMod(Stats.INSTANT_NEURAL_TRANSFER_FROM);
+
+        BattleSkillEffect.INSTANT_NEURAL_TRANSFER_FROM.apply(stats, "mod_id", 0f);
+
+        assertEquals(1f, instantTransfer.getFlatBonus(), EPSILON);
+        assertFalse(BattleSkillEffect.INSTANT_NEURAL_TRANSFER_FROM.supportsTemporaryGating());
     }
 
     private float commandPointRecoveryFor(FleetMemberAPI member, PersonAPI captain) {
