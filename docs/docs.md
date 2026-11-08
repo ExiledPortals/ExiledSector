@@ -549,19 +549,20 @@ phase, ship system, or fighter without bays.
 ### NPC levels
 
 An NPC's level is its node count besides the root. Open-world ships roll 80% to 120% of a random player combat
-ship's tree power (`NpcTreeSize.roll`), capped by category in `NpcLevelCaps`: `npc_levels.csv` first, then
-AI-core commander (35), pirate flag (15), otherwise faction (25). The cap is stored per ship as a variant tag,
-because battles merge fleets. Chart fleets are uncapped.
+ship's tree power (`NpcTreeSize.roll`). The LunaLib "NPC Level Caps" switch (off by default) caps them by
+category in `NpcLevelCaps`: `npc_levels.csv` first, then AI-core commander, pirate flag, otherwise faction, each
+cap from LunaLib (35, 15, 25). The cap is stored per ship as a variant tag, because battles merge fleets. Chart
+fleets are uncapped.
 
 In fixed mode (`mode` column, else the LunaLib "NPC Level Mode") a ship instead rolls between `min` (else the
-LunaLib percent of its cap) and its cap (`NpcLevelLimit.rollFixed`). Faction rows win over category rows. A
+LunaLib percent of its cap) and its cap (`NpcLevelLimit.rollFixed`), whether or not the switch is on. Faction rows win over category rows. A
 `keep_tree` of `wipe` is tagged on the ship and `ShipTreeSync.adoptNpcTree` then leaves a recovered ship blank;
 without the column the LunaLib "Recovered Ships Start Blank" decides.
 
 #### Bounties
 
 `NpcBounties` turns a bounty fleet into a 0 to 1 difficulty that raises the cap from the category cap towards
-25, and the flagship gets 3 more levels. Person bounties always use the pirate category.
+25 while caps are on, and the flagship gets 3 more levels either way. Person bounties always use the pirate category.
 
 #### Chart fleets
 

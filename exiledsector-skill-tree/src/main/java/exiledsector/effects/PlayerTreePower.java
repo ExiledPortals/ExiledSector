@@ -10,6 +10,7 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.npc.NpcLevelCaps;
 import exiledsector.skills.npc.NpcLevelCategory;
+import exiledsector.skills.npc.NpcTreeConfig;
 import exiledsector.skills.npc.NpcTreeSize;
 import exiledsector.skills.progression.SkillNodeOpCost;
 import org.apache.log4j.Logger;
@@ -62,8 +63,8 @@ public final class PlayerTreePower {
         int fewestNodes = NpcTreeSize.nodesFor(shipPowers.get(0), percentRange.min());
         int mostNodes = NpcTreeSize.nodesFor(shipPowers.get(shipPowers.size() - 1), percentRange.max());
         LOG.info("[ExiledSector] Your combat ships' tree power is " + shipPowers + ", so new NPC trees get " + fewestNodes + " to " + mostNodes
-                + " nodes (" + percentRange.min() + " to " + percentRange.max() + " percent of a random ship's tree power), capped at "
-                + categoryCaps() + ".");
+                + " nodes (" + percentRange.min() + " to " + percentRange.max() + " percent of a random ship's tree power), "
+                + (NpcTreeConfig.levelCaps() ? "capped at " + categoryCaps() : "with level caps off") + ".");
     }
 
     private static String categoryCaps() {

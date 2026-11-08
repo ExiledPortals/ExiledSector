@@ -15,6 +15,7 @@ public final class NpcTreeConfig {
     public static final String LEVEL_MODE_FIELD_ID = "exiledSector_npcLevelMode";
     public static final String FIXED_MIN_PERCENT_FIELD_ID = "exiledSector_npcFixedMinPercent";
     public static final String RECOVERED_START_BLANK_FIELD_ID = "exiledSector_npcRecoveredStartBlank";
+    public static final String LEVEL_CAPS_FIELD_ID = "exiledSector_npcLevelCaps";
 
     public static final String YOUR_SHIPS = "Your Ships";
     public static final String FIXED_RANGE = "Fixed Range";
@@ -27,6 +28,7 @@ public final class NpcTreeConfig {
     public static final boolean DEFAULT_STATIONS = true;
     public static final int DEFAULT_FIXED_MIN_PERCENT = 50;
     public static final boolean DEFAULT_RECOVERED_START_BLANK = false;
+    public static final boolean DEFAULT_LEVEL_CAPS = false;
 
     private NpcTreeConfig() {
     }
@@ -63,6 +65,10 @@ public final class NpcTreeConfig {
 
     public static boolean recoveredShipsStartBlank() {
         return bool(RECOVERED_START_BLANK_FIELD_ID, DEFAULT_RECOVERED_START_BLANK);
+    }
+
+    public static boolean levelCaps() {
+        return bool(LEVEL_CAPS_FIELD_ID, DEFAULT_LEVEL_CAPS);
     }
 
     private static boolean bool(String fieldId, boolean defaultValue) {
