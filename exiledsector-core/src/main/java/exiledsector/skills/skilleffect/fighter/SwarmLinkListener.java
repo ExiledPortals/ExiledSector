@@ -10,6 +10,7 @@ import exiledsector.skills.skilleffect.weapon.WeaponStatFamily;
 final class SwarmLinkListener implements AdvanceableListener {
 
     static final String DAMAGE_PERCENT_PER_STRIKECRAFT_KEY = "exiledSector_swarmLinkDamagePercentPerStrikecraft";
+    static final String MAX_DAMAGE_BONUS_PERCENT_KEY = "exiledSector_swarmLinkMaxDamageBonusPercent";
     static final String DAMAGE_MOD_ID = "exiledSector_swarmLinkDamage";
     static final float RANGE = 500f;
     static final float MAX_DAMAGE_PERCENT = 20f;
@@ -26,8 +27,8 @@ final class SwarmLinkListener implements AdvanceableListener {
         this.carrier = carrier;
     }
 
-    static float damagePercent(float percentPerStrikecraft, int nearbyStrikecraft) {
-        return Math.min(MAX_DAMAGE_PERCENT, Math.max(0f, percentPerStrikecraft) * nearbyStrikecraft);
+    static float damagePercent(float percentPerStrikecraft, int nearbyStrikecraft, float maxDamageBonusPercent) {
+        return Math.min(MAX_DAMAGE_PERCENT + Math.max(0f, maxDamageBonusPercent), Math.max(0f, percentPerStrikecraft) * nearbyStrikecraft);
     }
 
     @Override
@@ -40,7 +41,8 @@ final class SwarmLinkListener implements AdvanceableListener {
         int nearbyStrikecraft = CombatQueries.isAliveNotHulk(fighter)
                 ? CombatQueries.shipsWithin(fighter.getLocation(), RANGE, this::isSwarmMate).size() : 0;
         float percentPerStrikecraft = FighterListenerEffect.carrierValue(carrier, DAMAGE_PERCENT_PER_STRIKECRAFT_KEY);
-        swarmDamage.apply(fighter.getMutableStats(), DAMAGE_MOD_ID, damagePercent(percentPerStrikecraft, nearbyStrikecraft));
+        float maxDamageBonusPercent = FighterListenerEffect.carrierValue(carrier, MAX_DAMAGE_BONUS_PERCENT_KEY);
+        swarmDamage.apply(fighter.getMutableStats(), DAMAGE_MOD_ID, damagePercent(percentPerStrikecraft, nearbyStrikecraft, maxDamageBonusPercent));
     }
 
     private boolean isSwarmMate(ShipAPI ship) {

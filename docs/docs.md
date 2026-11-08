@@ -309,13 +309,15 @@ strongest source applies (`AuxiliaryScreenField`).
 
 `DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT` reduces hull, armor and shield damage taken while any combat objective
 owned by the ship's side is within 1500 su, checked every frame (`HeldObjective`).
+`DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_RANGE_FLAT` adds to that range.
 
 ### League Requisitions
 
 `SUPPLY_USE_REDUCTION_PERCENT_PER_HULL_TYPE` adds up over the player fleet's active ships and is multiplied by the
 number of different base hulls among them, so skins count as their base hull and mothballed ships don't count. The
 total, capped at 15%, reduces every member's maintenance supply use at each fleet sync
-(`FleetWideEffects.applySupplyUsePerHullType`).
+(`FleetWideEffects.applySupplyUsePerHullType`). `FUEL_USE_REDUCTION_PERCENT_PER_HULL_TYPE` counts hull types the same way
+and reduces fuel use, capped at 5% (`FleetWideEffects.applyFuelUsePerHullType`).
 
 ### Lion's Roar
 
@@ -441,7 +443,13 @@ same factor (`InjunctionListener`, `Injunction`).
 
 `ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT` applies after every other tree effect and again once the ship is built,
 so sensor strength from the tree, such as COMSEC Discipline's, and from hull mods counts toward it
-(`WeaponSkillEffect.applySensorRange`).
+(`WeaponSkillEffect.applySensorRange`). `BALLISTIC_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT` does the same for ballistic
+weapons.
+
+### Ammo saving
+
+`BALLISTIC_AND_ENERGY_WEAPON_AMMO_SAVE_CHANCE_PERCENT` watches the ammo of the ship's ballistic and energy weapons that
+use it and rolls each shot spent in a frame, putting the saved rounds back up to the weapon's maximum (`AmmoSaveListener`).
 
 </details>
 
