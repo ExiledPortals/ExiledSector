@@ -8,8 +8,6 @@ public final class TaniaCompat {
 
     public static final String MOD_ID = "navarchy_of_tania";
     public static final String FACTION_ID = "navarchy_of_tania";
-    // TODO: delete this flag and every check on it once the Tania volume ships
-    public static final boolean HIDDEN_UNTIL_RELEASE = true;
     public static final List<String> TESTED_VERSIONS = List.of("1.3.0", "1.3.1");
     public static final CompatTarget TARGET = new CompatTarget("Navarchy of Tania volume", List.of(MOD_ID), TESTED_VERSIONS, TaniaCompat::missingFeatures);
 
@@ -17,7 +15,7 @@ public final class TaniaCompat {
     }
 
     public static boolean isModEnabled() {
-        return !HIDDEN_UNTIL_RELEASE && TARGET.isEnabled();
+        return TARGET.isEnabled();
     }
 
     static List<String> missingFeatures() {
