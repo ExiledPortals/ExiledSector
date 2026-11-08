@@ -151,6 +151,7 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             liveStat(MutableShipStatsAPI::getArmorDamageTakenMult), liveStat(MutableShipStatsAPI::getShieldDamageTakenMult)),
             "stat.damageTaken", true)),
     HULL_DAMAGE_TAKEN_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getHullDamageTakenMult), "stat.hullDamageTaken", true)),
+    WEAPON_DAMAGE_TAKEN_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getWeaponDamageTakenMult), "stat.damageTakenByWeapons", true)),
     MISSILE_EJECTION_CHANCE_PERCENT(listener(MissileEjectionListener.CHANCE_PERCENT_KEY, MissileEjectionListener.class,
             MissileEjectionListener::new)),
     NANOFORGE_HULL_REGEN_PERCENT(listener(NanoforgeMendingListener.REGEN_PERCENT_KEY, NanoforgeMendingListener.class,
