@@ -4964,6 +4964,27 @@
 					"capitalShip": 6
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "DYNAMIC_GRID_ENERGY_WEAPON_BONUS_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "SHIELD_RAISE_RATE_PERCENT",
+						"magnitude": 25
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "VENT_RATE_PERCENT",
+						"frigate": 12,
+						"destroyer": 10,
+						"cruiser": 8,
+						"capitalShip": 6
+					}
+				]
+			},
 			"exclusiveHullMods": [
 				"nightcrosstargeting"
 			],
@@ -4986,6 +5007,14 @@
 					"magnitude": 15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ION_ARC_CHANCE_PERCENT",
+						"magnitude": 20
+					}
+				]
+			},
 			"flavour": "The NCA Vendor sells Ion Bolters to any well-funded mercenary, and taking one apart shows the crew how to overdrive this ship's energy shots the same way. The terms of sale forbid exactly this, in very small print.",
 			"flavourAutomated": "The NCA Vendor sells Ion Bolters to any well-funded mercenary, and taking one apart shows the refit crew how to overdrive this ship's energy shots the same way. The terms of sale forbid exactly this, in very small print.",
 			"tags": [
@@ -5008,6 +5037,18 @@
 					"magnitude": 30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "HARDLIGHT_MARKING_DAMAGE_PERCENT_PER_HIT",
+						"magnitude": 2
+					},
+					{
+						"effect": "HARDLIGHT_MARKING_MAX_DAMAGE_PERCENT",
+						"magnitude": 35
+					}
+				]
+			},
 			"flavour": "Nightcross Restricted Hardlight Rifles, looted from a hidden NCA research outpost, keep count of every hit they land on a target, and the crew learns to port that counter into this carrier's wing datalink.",
 			"flavourAutomated": "Nightcross Restricted Hardlight Rifles, looted from a hidden NCA research outpost, keep count of every hit they land on a target. The ship's core reads the counter's firmware and ports it into its own wing datalink.",
 			"tags": [
@@ -5048,6 +5089,14 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "REPAIR_COORDINATOR_ARMOR_PERCENT",
+						"magnitude": 1.5
+					}
+				]
+			},
 			"flavour": "The wreck of an NCA Occator still holds the delta-level coordinator that once steered its repair drones between damaged hulls. The crew wires it into this ship's damage-control network, teaching it to send work teams and drones across to patch the armor of nearby allies in the middle of a battle.",
 			"flavourAutomated": "The wreck of an NCA Occator still holds the delta-level coordinator that once steered its repair drones between damaged hulls. Wired into this ship's damage-control network, it sends the ship's drones across to patch the armor of nearby allies in the middle of a battle.",
 			"tags": [
