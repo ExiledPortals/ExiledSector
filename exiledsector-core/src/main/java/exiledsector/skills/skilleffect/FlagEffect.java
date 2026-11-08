@@ -19,6 +19,11 @@ public record FlagEffect(String flagKey, ListenerEffect<?> listener) implements 
     }
 
     @Override
+    public Class<?> listenerType() {
+        return listener == null ? null : listener.listenerType();
+    }
+
+    @Override
     public boolean supportsTemporaryGating() {
         return false;
     }
