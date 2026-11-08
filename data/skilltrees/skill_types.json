@@ -5268,6 +5268,14 @@
 					"magnitude": 5
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "GRAVITY_DRAG_TIMEFLOW_MULT",
+						"magnitude": 8
+					}
+				]
+			},
 			"exclusiveHullMods": [
 				"na_gravitydrag"
 			],
@@ -5300,6 +5308,22 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "TERMINAL_DESCENT_HULL_DAMAGE_TAKEN_PERCENT",
+						"magnitude": -25
+					},
+					{
+						"effect": "TERMINAL_DESCENT_FLUX_DISSIPATION_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "TERMINAL_DESCENT_SYSTEM_REGEN_PERCENT",
+						"magnitude": 15
+					}
+				]
+			},
 			"flavour": "Stargazers fight hardest when they are dying, and the Stardust Core recovered from one, the remains of what was once a person, shows the crew how to strip the ship's safeties the moment its hull starts to fail.",
 			"flavourAutomated": "Stargazers fight hardest when they are dying. The Stardust Core recovered from one, the remains of what was once a person, holds the routine that strips a ship's safeties the moment its hull starts to fail. The ship's core runs it without hesitation.",
 			"tags": [
@@ -5318,6 +5342,14 @@
 					"magnitude": 15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FUROR_RATE_OF_FIRE_PERCENT",
+						"magnitude": 20
+					}
+				]
+			},
 			"flavour": "Combat recordings pulled from a Stargazer's data core show its fire rate climbing with every hit, as if something inside it were growing angrier. The crew rewires this ship's fire control to chase the same rhythm, and tries not to wonder what it is chasing.",
 			"flavourAutomated": "Combat recordings pulled from a Stargazer's data core show its fire rate climbing with every hit, as if something inside it were growing angrier. The ship's core matches the rhythm exactly. It does not wonder what it is matching.",
 			"tags": [
@@ -5339,6 +5371,18 @@
 					"magnitude": 5
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ELECTRONIC_WARFARE",
+						"magnitude": 2
+					},
+					{
+						"effect": "MALFUNCTION_AURA_PERCENT",
+						"magnitude": 5
+					}
+				]
+			},
 			"flavour": "The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code. The crew learns to strip that code out and fire it back.",
 			"flavourAutomated": "The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code. The ship's core strips that code out and fires it back.",
 			"tags": [
@@ -5356,6 +5400,18 @@
 					"magnitude": 200
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "STARDUST_MOTE_DAMAGE_FLAT",
+						"magnitude": 200
+					},
+					{
+						"effect": "STARDUST_MOTE_MAX_IN_FLIGHT_FLAT",
+						"magnitude": 1
+					}
+				]
+			},
 			"flavour": "A corrosion emitter salvaged from a Stargazer wreck still drags stardust through whatever it touches, and the crew tunes this ship's beams to do the same.",
 			"flavourAutomated": "A corrosion emitter salvaged from a Stargazer wreck still drags stardust through whatever it touches, and the refit crew tunes this ship's beams to do the same.",
 			"tags": [

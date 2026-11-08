@@ -461,6 +461,7 @@
     {"name": "SOLARIS_OVERDRIVE_RATE_OF_FIRE_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "SOLARIS_OVERDRIVE_SECONDS_FLAT", "statMode": null, "lowerIsBetter": false},
     {"name": "STARDUST_MOTE_DAMAGE_FLAT", "statMode": null, "lowerIsBetter": false},
+    {"name": "STARDUST_MOTE_MAX_IN_FLIGHT_FLAT", "statMode": null, "lowerIsBetter": false},
     {"name": "STRIKECRAFT_DAMAGE_PER_LOST_STRIKECRAFT_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "STRIKECRAFT_DAMAGE_TO_DAMAGED_SHIPS_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT", "statMode": null, "lowerIsBetter": false},

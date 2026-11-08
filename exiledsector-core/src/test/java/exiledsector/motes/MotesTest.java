@@ -72,7 +72,7 @@ class MotesTest {
     }
 
     private static Motes.Launch launchFrom(ShipAPI source, ShipAPI target) {
-        return new Motes.Launch(MoteKind.STARDUST, source, new Vector2f(), 0f, target, 200f, 150f, 8f);
+        return new Motes.Launch(MoteKind.STARDUST, source, new Vector2f(), 0f, target, 200f, 150f, 8f, Motes.MAX_LIVE_MOTES_PER_SOURCE);
     }
 
     @Test
@@ -108,6 +108,21 @@ class MotesTest {
 
         when(engine.isMissileAlive(any())).thenReturn(false);
         assertTrue(Motes.launch(launchFrom(source, ship(1))) != null);
+    }
+
+    @Test
+    void aLaunchWithARaisedCapLetsMoreMotesFly() {
+        ShipAPI source = ship(0);
+        spawnedMote();
+        int raisedCap = Motes.MAX_LIVE_MOTES_PER_SOURCE + 1;
+        Motes.Launch raised = new Motes.Launch(MoteKind.STARDUST, source, new Vector2f(), 0f, ship(1), 200f, 150f, 8f, raisedCap);
+        for (int launched = 0; launched < Motes.MAX_LIVE_MOTES_PER_SOURCE; launched++) {
+            Motes.launch(raised);
+        }
+
+        assertNull(Motes.launch(launchFrom(source, ship(1))));
+        assertTrue(Motes.launch(raised) != null);
+        assertNull(Motes.launch(raised));
     }
 
     @Test

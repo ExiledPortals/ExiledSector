@@ -118,6 +118,12 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
                     .arg("max", Motes.MAX_LIVE_MOTES_PER_SOURCE).styled();
         }
     },
+    STARDUST_MOTE_MAX_IN_FLIGHT_FLAT(listener(StardustMoteListener.EXTRA_MOTES_IN_FLIGHT_KEY, StardustMoteListener.class, StardustMoteListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.signed(this, magnitude).styled();
+        }
+    },
     DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT(listener(IonCascadeListener.HIGH_EXPLOSIVE_SHARE_PERCENT_KEY, IonCascadeListener.class, IonCascadeListener::new)) {
         @Override
         public boolean readsFinalDealtDamage() {

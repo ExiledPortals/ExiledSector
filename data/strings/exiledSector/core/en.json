@@ -660,6 +660,8 @@
     "effect.STRIKECRAFT_DAMAGE_PER_LOST_STRIKECRAFT_PERCENT": "Strikecraft launched from this ship deal <good>{value}%</good> increased damage for each strikecraft this ship lost in the last {seconds} seconds, up to a maximum of {max} strikecraft.",
     "effect.FIGHTER_REPLACEMENT_RATE_RESTORED_BY_FRAGMENTS_PERCENT": "Each time a strikecraft is replaced, this ship's fragment swarm spends {fragments} fragments, if it has them, to restore <good>{value}%</good> of the strikecraft replacement rate lost.",
     "effect.STARDUST_MOTE_DAMAGE_FLAT": "Every {seconds} seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>{value}</good> energy damage and <good>{value}</good> EMP. At most {max} of this ship's motes fly at once.",
+    "effect.STARDUST_MOTE_MAX_IN_FLIGHT_FLAT.more": "<good>+{value}</good> to maximum stardust motes in flight at once.",
+    "effect.STARDUST_MOTE_MAX_IN_FLIGHT_FLAT.less": "<bad>-{value}</bad> to maximum stardust motes in flight at once.",
     "effect.CREW_STEAL_SKELETON_CREW_PERCENT": "Takes <good>{value}%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.",
     "effect.TOP_SPEED_WHILE_SWARM_FULL_PERCENT": "<good>{value}%</good> increased top speed while this ship's fragment swarm is at least {full}% full.",
     "effect.NEARBY_DESTRUCTION_REPLACEMENT_RATE_PERCENT": "<good>+{value}%</good> to strikecraft replacement rate whenever an enemy ship is destroyed within {range} su.",

@@ -2728,6 +2728,12 @@ effect|STARDUST_MOTE_DAMAGE_FLAT|12.5	0	Every 2 seconds a beam weapon spends on 
 effect|STARDUST_MOTE_DAMAGE_FLAT|100.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>100</good> energy damage and <good>100</good> EMP. At most 20 of this ship's motes fly at once.
 effect|STARDUST_MOTE_DAMAGE_FLAT|-10.0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>-10</good> energy damage and <good>-10</good> EMP. At most 20 of this ship's motes fly at once.
 effect|STARDUST_MOTE_DAMAGE_FLAT|-12.5	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>-12.5</good> energy damage and <good>-12.5</good> EMP. At most 20 of this ship's motes fly at once.
+effect|STARDUST_MOTE_MAX_IN_FLIGHT_FLAT|1.0	0	<good>+1</good> to maximum stardust motes in flight at once.
+effect|STARDUST_MOTE_MAX_IN_FLIGHT_FLAT|10.0	0	<good>+10</good> to maximum stardust motes in flight at once.
+effect|STARDUST_MOTE_MAX_IN_FLIGHT_FLAT|12.5	0	<good>+12.5</good> to maximum stardust motes in flight at once.
+effect|STARDUST_MOTE_MAX_IN_FLIGHT_FLAT|100.0	0	<good>+100</good> to maximum stardust motes in flight at once.
+effect|STARDUST_MOTE_MAX_IN_FLIGHT_FLAT|-10.0	0	<bad>-10</bad> to maximum stardust motes in flight at once.
+effect|STARDUST_MOTE_MAX_IN_FLIGHT_FLAT|-12.5	0	<bad>-12.5</bad> to maximum stardust motes in flight at once.
 effect|STRIKECRAFT_DAMAGE_PER_LOST_STRIKECRAFT_PERCENT|1.0	0	Strikecraft launched from this ship deal <good>1%</good> increased damage for each strikecraft this ship lost in the last 20 seconds, up to a maximum of 20 strikecraft.
 effect|STRIKECRAFT_DAMAGE_PER_LOST_STRIKECRAFT_PERCENT|10.0	0	Strikecraft launched from this ship deal <good>10%</good> increased damage for each strikecraft this ship lost in the last 20 seconds, up to a maximum of 20 strikecraft.
 effect|STRIKECRAFT_DAMAGE_PER_LOST_STRIKECRAFT_PERCENT|12.5	0	Strikecraft launched from this ship deal <good>12.5%</good> increased damage for each strikecraft this ship lost in the last 20 seconds, up to a maximum of 20 strikecraft.
@@ -4099,6 +4105,71 @@ type|beautiful_nightmare|CAPITAL_SHIP|0	0	When its hull drops below 25% during a
 type|beautiful_nightmare|CAPITAL_SHIP|1	0	<good>15%</good> increased flux dissipation during Terminal Descent.
 type|beautiful_nightmare|CAPITAL_SHIP|2	0	<good>15%</good> increased ship system charge regeneration during Terminal Descent.
 type|beautiful_nightmare|CAPITAL_SHIP|3	0	<bad>10%</bad> increased damage taken by shields during Terminal Descent.
+integrable|beautiful_nightmare|null|0	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, <good>25%</good> reduced hull damage taken, but peak performance time stops and venting is blocked.
+integrable|beautiful_nightmare|null|1	0	<good>15%</good> increased flux dissipation during Terminal Descent.
+integrable|beautiful_nightmare|null|2	0	<good>15%</good> increased ship system charge regeneration during Terminal Descent.
+integrable|beautiful_nightmare|null|3	0	<bad>10%</bad> increased damage taken by shields during Terminal Descent.
+integrable|beautiful_nightmare|null|4	0	Click and hold to integrate.
+integrable|beautiful_nightmare|null|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|beautiful_nightmare|null|6	0	<muted>When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, 25% reduced hull damage taken, but peak performance time stops and venting is blocked.</muted>
+integrable|beautiful_nightmare|null|7	0	<muted>15% increased flux dissipation during Terminal Descent.</muted>
+integrable|beautiful_nightmare|null|8	0	<muted>15% increased ship system charge regeneration during Terminal Descent.</muted>
+integrable|beautiful_nightmare|FRIGATE|0	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, <good>25%</good> reduced hull damage taken, but peak performance time stops and venting is blocked.
+integrable|beautiful_nightmare|FRIGATE|1	0	<good>15%</good> increased flux dissipation during Terminal Descent.
+integrable|beautiful_nightmare|FRIGATE|2	0	<good>15%</good> increased ship system charge regeneration during Terminal Descent.
+integrable|beautiful_nightmare|FRIGATE|3	0	<bad>10%</bad> increased damage taken by shields during Terminal Descent.
+integrable|beautiful_nightmare|FRIGATE|4	0	Click and hold to integrate.
+integrable|beautiful_nightmare|FRIGATE|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|beautiful_nightmare|FRIGATE|6	0	<muted>When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, 25% reduced hull damage taken, but peak performance time stops and venting is blocked.</muted>
+integrable|beautiful_nightmare|FRIGATE|7	0	<muted>15% increased flux dissipation during Terminal Descent.</muted>
+integrable|beautiful_nightmare|FRIGATE|8	0	<muted>15% increased ship system charge regeneration during Terminal Descent.</muted>
+integrable|beautiful_nightmare|DESTROYER|0	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, <good>25%</good> reduced hull damage taken, but peak performance time stops and venting is blocked.
+integrable|beautiful_nightmare|DESTROYER|1	0	<good>15%</good> increased flux dissipation during Terminal Descent.
+integrable|beautiful_nightmare|DESTROYER|2	0	<good>15%</good> increased ship system charge regeneration during Terminal Descent.
+integrable|beautiful_nightmare|DESTROYER|3	0	<bad>10%</bad> increased damage taken by shields during Terminal Descent.
+integrable|beautiful_nightmare|DESTROYER|4	0	Click and hold to integrate.
+integrable|beautiful_nightmare|DESTROYER|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|beautiful_nightmare|DESTROYER|6	0	<muted>When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, 25% reduced hull damage taken, but peak performance time stops and venting is blocked.</muted>
+integrable|beautiful_nightmare|DESTROYER|7	0	<muted>15% increased flux dissipation during Terminal Descent.</muted>
+integrable|beautiful_nightmare|DESTROYER|8	0	<muted>15% increased ship system charge regeneration during Terminal Descent.</muted>
+integrable|beautiful_nightmare|CRUISER|0	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, <good>25%</good> reduced hull damage taken, but peak performance time stops and venting is blocked.
+integrable|beautiful_nightmare|CRUISER|1	0	<good>15%</good> increased flux dissipation during Terminal Descent.
+integrable|beautiful_nightmare|CRUISER|2	0	<good>15%</good> increased ship system charge regeneration during Terminal Descent.
+integrable|beautiful_nightmare|CRUISER|3	0	<bad>10%</bad> increased damage taken by shields during Terminal Descent.
+integrable|beautiful_nightmare|CRUISER|4	0	Click and hold to integrate.
+integrable|beautiful_nightmare|CRUISER|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|beautiful_nightmare|CRUISER|6	0	<muted>When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, 25% reduced hull damage taken, but peak performance time stops and venting is blocked.</muted>
+integrable|beautiful_nightmare|CRUISER|7	0	<muted>15% increased flux dissipation during Terminal Descent.</muted>
+integrable|beautiful_nightmare|CRUISER|8	0	<muted>15% increased ship system charge regeneration during Terminal Descent.</muted>
+integrable|beautiful_nightmare|CAPITAL_SHIP|0	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, <good>25%</good> reduced hull damage taken, but peak performance time stops and venting is blocked.
+integrable|beautiful_nightmare|CAPITAL_SHIP|1	0	<good>15%</good> increased flux dissipation during Terminal Descent.
+integrable|beautiful_nightmare|CAPITAL_SHIP|2	0	<good>15%</good> increased ship system charge regeneration during Terminal Descent.
+integrable|beautiful_nightmare|CAPITAL_SHIP|3	0	<bad>10%</bad> increased damage taken by shields during Terminal Descent.
+integrable|beautiful_nightmare|CAPITAL_SHIP|4	0	Click and hold to integrate.
+integrable|beautiful_nightmare|CAPITAL_SHIP|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|beautiful_nightmare|CAPITAL_SHIP|6	0	<muted>When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, 25% reduced hull damage taken, but peak performance time stops and venting is blocked.</muted>
+integrable|beautiful_nightmare|CAPITAL_SHIP|7	0	<muted>15% increased flux dissipation during Terminal Descent.</muted>
+integrable|beautiful_nightmare|CAPITAL_SHIP|8	0	<muted>15% increased ship system charge regeneration during Terminal Descent.</muted>
+integrated|beautiful_nightmare|null|0	0	<builtIn>Integrated</builtIn>
+integrated|beautiful_nightmare|null|1	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, <good>25%</good> reduced hull damage taken, but peak performance time stops and venting is blocked.
+integrated|beautiful_nightmare|null|2	0	<good>15%</good> increased flux dissipation during Terminal Descent.
+integrated|beautiful_nightmare|null|3	0	<good>15%</good> increased ship system charge regeneration during Terminal Descent.
+integrated|beautiful_nightmare|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|beautiful_nightmare|FRIGATE|1	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, <good>25%</good> reduced hull damage taken, but peak performance time stops and venting is blocked.
+integrated|beautiful_nightmare|FRIGATE|2	0	<good>15%</good> increased flux dissipation during Terminal Descent.
+integrated|beautiful_nightmare|FRIGATE|3	0	<good>15%</good> increased ship system charge regeneration during Terminal Descent.
+integrated|beautiful_nightmare|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|beautiful_nightmare|DESTROYER|1	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, <good>25%</good> reduced hull damage taken, but peak performance time stops and venting is blocked.
+integrated|beautiful_nightmare|DESTROYER|2	0	<good>15%</good> increased flux dissipation during Terminal Descent.
+integrated|beautiful_nightmare|DESTROYER|3	0	<good>15%</good> increased ship system charge regeneration during Terminal Descent.
+integrated|beautiful_nightmare|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|beautiful_nightmare|CRUISER|1	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, <good>25%</good> reduced hull damage taken, but peak performance time stops and venting is blocked.
+integrated|beautiful_nightmare|CRUISER|2	0	<good>15%</good> increased flux dissipation during Terminal Descent.
+integrated|beautiful_nightmare|CRUISER|3	0	<good>15%</good> increased ship system charge regeneration during Terminal Descent.
+integrated|beautiful_nightmare|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|beautiful_nightmare|CAPITAL_SHIP|1	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, <good>25%</good> reduced hull damage taken, but peak performance time stops and venting is blocked.
+integrated|beautiful_nightmare|CAPITAL_SHIP|2	0	<good>15%</good> increased flux dissipation during Terminal Descent.
+integrated|beautiful_nightmare|CAPITAL_SHIP|3	0	<good>15%</good> increased ship system charge regeneration during Terminal Descent.
 type|blast_doors|null|0	0	<good>20%</good> increased hull points.
 type|blast_doors|null|1	1	<bad>60%</bad> less crew casualties.
 type-detail|blast_doors|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Blast Doors</hullmod>
@@ -4280,6 +4351,36 @@ type|candles_grace_replica|CRUISER|0	0	Enemy ships within 1500 su have up to <go
 type-detail|candles_grace_replica|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Gravitational Drag</hullmod>
 type|candles_grace_replica|CAPITAL_SHIP|0	0	Enemy ships within 1500 su have up to <good>5%</good> less time flow, strongest at close range, or up to <good>10%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
 type-detail|candles_grace_replica|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Gravitational Drag</hullmod>
+integrable|candles_grace_replica|null|0	0	Enemy ships within 1500 su have up to <good>5%</good> less time flow, strongest at close range, or up to <good>10%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
+integrable|candles_grace_replica|null|1	0	Click and hold to integrate.
+integrable|candles_grace_replica|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|candles_grace_replica|null|3	0	<muted>Enemy ships within 1500 su have up to 8% less time flow, strongest at close range, or up to 16% less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.</muted>
+integrable|candles_grace_replica|FRIGATE|0	0	Enemy ships within 1500 su have up to <good>5%</good> less time flow, strongest at close range, or up to <good>10%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
+integrable|candles_grace_replica|FRIGATE|1	0	Click and hold to integrate.
+integrable|candles_grace_replica|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|candles_grace_replica|FRIGATE|3	0	<muted>Enemy ships within 1500 su have up to 8% less time flow, strongest at close range, or up to 16% less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.</muted>
+integrable|candles_grace_replica|DESTROYER|0	0	Enemy ships within 1500 su have up to <good>5%</good> less time flow, strongest at close range, or up to <good>10%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
+integrable|candles_grace_replica|DESTROYER|1	0	Click and hold to integrate.
+integrable|candles_grace_replica|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|candles_grace_replica|DESTROYER|3	0	<muted>Enemy ships within 1500 su have up to 8% less time flow, strongest at close range, or up to 16% less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.</muted>
+integrable|candles_grace_replica|CRUISER|0	0	Enemy ships within 1500 su have up to <good>5%</good> less time flow, strongest at close range, or up to <good>10%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
+integrable|candles_grace_replica|CRUISER|1	0	Click and hold to integrate.
+integrable|candles_grace_replica|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|candles_grace_replica|CRUISER|3	0	<muted>Enemy ships within 1500 su have up to 8% less time flow, strongest at close range, or up to 16% less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.</muted>
+integrable|candles_grace_replica|CAPITAL_SHIP|0	0	Enemy ships within 1500 su have up to <good>5%</good> less time flow, strongest at close range, or up to <good>10%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
+integrable|candles_grace_replica|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|candles_grace_replica|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|candles_grace_replica|CAPITAL_SHIP|3	0	<muted>Enemy ships within 1500 su have up to 8% less time flow, strongest at close range, or up to 16% less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.</muted>
+integrated|candles_grace_replica|null|0	0	<builtIn>Integrated</builtIn>
+integrated|candles_grace_replica|null|1	0	<builtIn>Enemy ships within 1500 su have up to </builtIn><good>8%</good><builtIn> less time flow, strongest at close range, or up to </builtIn><good>16%</good><builtIn> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.</builtIn>
+integrated|candles_grace_replica|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|candles_grace_replica|FRIGATE|1	0	<builtIn>Enemy ships within 1500 su have up to </builtIn><good>8%</good><builtIn> less time flow, strongest at close range, or up to </builtIn><good>16%</good><builtIn> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.</builtIn>
+integrated|candles_grace_replica|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|candles_grace_replica|DESTROYER|1	0	<builtIn>Enemy ships within 1500 su have up to </builtIn><good>8%</good><builtIn> less time flow, strongest at close range, or up to </builtIn><good>16%</good><builtIn> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.</builtIn>
+integrated|candles_grace_replica|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|candles_grace_replica|CRUISER|1	0	<builtIn>Enemy ships within 1500 su have up to </builtIn><good>8%</good><builtIn> less time flow, strongest at close range, or up to </builtIn><good>16%</good><builtIn> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.</builtIn>
+integrated|candles_grace_replica|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|candles_grace_replica|CAPITAL_SHIP|1	0	<builtIn>Enemy ships within 1500 su have up to </builtIn><good>8%</good><builtIn> less time flow, strongest at close range, or up to </builtIn><good>16%</good><builtIn> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.</builtIn>
 type|cargo_capacity|FRIGATE|0	0	<good>+5</good> to cargo capacity.
 type|cargo_capacity|DESTROYER|0	0	<good>+15</good> to cargo capacity.
 type|cargo_capacity|CRUISER|0	0	<good>+25</good> to cargo capacity.
@@ -4641,6 +4742,46 @@ type|corrosion_beam|FRIGATE|0	0	Every 2 seconds a beam weapon spends on an enemy
 type|corrosion_beam|DESTROYER|0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
 type|corrosion_beam|CRUISER|0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
 type|corrosion_beam|CAPITAL_SHIP|0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
+integrable|corrosion_beam|null|0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
+integrable|corrosion_beam|null|1	0	Click and hold to integrate.
+integrable|corrosion_beam|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|corrosion_beam|null|3	0	<muted>Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing 200 energy damage and 200 EMP. At most 20 of this ship's motes fly at once.</muted>
+integrable|corrosion_beam|null|4	0	<muted>+1 to maximum stardust motes in flight at once.</muted>
+integrable|corrosion_beam|FRIGATE|0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
+integrable|corrosion_beam|FRIGATE|1	0	Click and hold to integrate.
+integrable|corrosion_beam|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|corrosion_beam|FRIGATE|3	0	<muted>Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing 200 energy damage and 200 EMP. At most 20 of this ship's motes fly at once.</muted>
+integrable|corrosion_beam|FRIGATE|4	0	<muted>+1 to maximum stardust motes in flight at once.</muted>
+integrable|corrosion_beam|DESTROYER|0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
+integrable|corrosion_beam|DESTROYER|1	0	Click and hold to integrate.
+integrable|corrosion_beam|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|corrosion_beam|DESTROYER|3	0	<muted>Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing 200 energy damage and 200 EMP. At most 20 of this ship's motes fly at once.</muted>
+integrable|corrosion_beam|DESTROYER|4	0	<muted>+1 to maximum stardust motes in flight at once.</muted>
+integrable|corrosion_beam|CRUISER|0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
+integrable|corrosion_beam|CRUISER|1	0	Click and hold to integrate.
+integrable|corrosion_beam|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|corrosion_beam|CRUISER|3	0	<muted>Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing 200 energy damage and 200 EMP. At most 20 of this ship's motes fly at once.</muted>
+integrable|corrosion_beam|CRUISER|4	0	<muted>+1 to maximum stardust motes in flight at once.</muted>
+integrable|corrosion_beam|CAPITAL_SHIP|0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
+integrable|corrosion_beam|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|corrosion_beam|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|corrosion_beam|CAPITAL_SHIP|3	0	<muted>Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing 200 energy damage and 200 EMP. At most 20 of this ship's motes fly at once.</muted>
+integrable|corrosion_beam|CAPITAL_SHIP|4	0	<muted>+1 to maximum stardust motes in flight at once.</muted>
+integrated|corrosion_beam|null|0	0	<builtIn>Integrated</builtIn>
+integrated|corrosion_beam|null|1	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
+integrated|corrosion_beam|null|2	0	<good>+1</good><builtIn> to maximum stardust motes in flight at once.</builtIn>
+integrated|corrosion_beam|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|corrosion_beam|FRIGATE|1	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
+integrated|corrosion_beam|FRIGATE|2	0	<good>+1</good><builtIn> to maximum stardust motes in flight at once.</builtIn>
+integrated|corrosion_beam|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|corrosion_beam|DESTROYER|1	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
+integrated|corrosion_beam|DESTROYER|2	0	<good>+1</good><builtIn> to maximum stardust motes in flight at once.</builtIn>
+integrated|corrosion_beam|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|corrosion_beam|CRUISER|1	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
+integrated|corrosion_beam|CRUISER|2	0	<good>+1</good><builtIn> to maximum stardust motes in flight at once.</builtIn>
+integrated|corrosion_beam|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|corrosion_beam|CAPITAL_SHIP|1	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
+integrated|corrosion_beam|CAPITAL_SHIP|2	0	<good>+1</good><builtIn> to maximum stardust motes in flight at once.</builtIn>
 type|crew_capacity|FRIGATE|0	0	<good>+5</good> to crew capacity.
 type|crew_capacity|DESTROYER|0	0	<good>+15</good> to crew capacity.
 type|crew_capacity|CRUISER|0	0	<good>+25</good> to crew capacity.
@@ -6477,6 +6618,36 @@ type|furor_machinae|FRIGATE|0	0	Damage dealt to enemy ships builds fury, grantin
 type|furor_machinae|DESTROYER|0	0	Damage dealt to enemy ships builds fury, granting up to <good>15%</good> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
 type|furor_machinae|CRUISER|0	0	Damage dealt to enemy ships builds fury, granting up to <good>15%</good> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
 type|furor_machinae|CAPITAL_SHIP|0	0	Damage dealt to enemy ships builds fury, granting up to <good>15%</good> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
+integrable|furor_machinae|null|0	0	Damage dealt to enemy ships builds fury, granting up to <good>15%</good> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
+integrable|furor_machinae|null|1	0	Click and hold to integrate.
+integrable|furor_machinae|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|furor_machinae|null|3	0	<muted>Damage dealt to enemy ships builds fury, granting up to 20% increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.</muted>
+integrable|furor_machinae|FRIGATE|0	0	Damage dealt to enemy ships builds fury, granting up to <good>15%</good> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
+integrable|furor_machinae|FRIGATE|1	0	Click and hold to integrate.
+integrable|furor_machinae|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|furor_machinae|FRIGATE|3	0	<muted>Damage dealt to enemy ships builds fury, granting up to 20% increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.</muted>
+integrable|furor_machinae|DESTROYER|0	0	Damage dealt to enemy ships builds fury, granting up to <good>15%</good> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
+integrable|furor_machinae|DESTROYER|1	0	Click and hold to integrate.
+integrable|furor_machinae|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|furor_machinae|DESTROYER|3	0	<muted>Damage dealt to enemy ships builds fury, granting up to 20% increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.</muted>
+integrable|furor_machinae|CRUISER|0	0	Damage dealt to enemy ships builds fury, granting up to <good>15%</good> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
+integrable|furor_machinae|CRUISER|1	0	Click and hold to integrate.
+integrable|furor_machinae|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|furor_machinae|CRUISER|3	0	<muted>Damage dealt to enemy ships builds fury, granting up to 20% increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.</muted>
+integrable|furor_machinae|CAPITAL_SHIP|0	0	Damage dealt to enemy ships builds fury, granting up to <good>15%</good> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
+integrable|furor_machinae|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|furor_machinae|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|furor_machinae|CAPITAL_SHIP|3	0	<muted>Damage dealt to enemy ships builds fury, granting up to 20% increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.</muted>
+integrated|furor_machinae|null|0	0	<builtIn>Integrated</builtIn>
+integrated|furor_machinae|null|1	0	<builtIn>Damage dealt to enemy ships builds fury, granting up to </builtIn><good>20%</good><builtIn> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.</builtIn>
+integrated|furor_machinae|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|furor_machinae|FRIGATE|1	0	<builtIn>Damage dealt to enemy ships builds fury, granting up to </builtIn><good>20%</good><builtIn> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.</builtIn>
+integrated|furor_machinae|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|furor_machinae|DESTROYER|1	0	<builtIn>Damage dealt to enemy ships builds fury, granting up to </builtIn><good>20%</good><builtIn> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.</builtIn>
+integrated|furor_machinae|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|furor_machinae|CRUISER|1	0	<builtIn>Damage dealt to enemy ships builds fury, granting up to </builtIn><good>20%</good><builtIn> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.</builtIn>
+integrated|furor_machinae|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|furor_machinae|CAPITAL_SHIP|1	0	<builtIn>Damage dealt to enemy ships builds fury, granting up to </builtIn><good>20%</good><builtIn> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.</builtIn>
 flavour|greater_high_tech_affinity	0	Flux lattices stripped from Remnant drones are a generation ahead of anything in the Tri-Tachyon catalogue. Tri-Tachyon is said to disagree.
 type|greater_high_tech_affinity|null|0	0	<good>+10</good> to High Tech Affinity.
 type|greater_high_tech_affinity|FRIGATE|0	0	<good>+10</good> to High Tech Affinity.
@@ -7346,6 +7517,51 @@ type|language_of_the_lost|CRUISER|0	0	<good>+1</good> to ECM rating.
 type|language_of_the_lost|CRUISER|1	0	Enemy ships within 1000 su have <good>5%</good> chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.
 type|language_of_the_lost|CAPITAL_SHIP|0	0	<good>+1</good> to ECM rating.
 type|language_of_the_lost|CAPITAL_SHIP|1	0	Enemy ships within 1000 su have <good>5%</good> chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.
+integrable|language_of_the_lost|null|0	0	<good>+1</good> to ECM rating.
+integrable|language_of_the_lost|null|1	0	Enemy ships within 1000 su have <good>5%</good> chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.
+integrable|language_of_the_lost|null|2	0	Click and hold to integrate.
+integrable|language_of_the_lost|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|language_of_the_lost|null|4	0	<muted>+2 to ECM rating.</muted>
+integrable|language_of_the_lost|null|5	0	<muted>Enemy ships within 1000 su have 5% chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.</muted>
+integrable|language_of_the_lost|FRIGATE|0	0	<good>+1</good> to ECM rating.
+integrable|language_of_the_lost|FRIGATE|1	0	Enemy ships within 1000 su have <good>5%</good> chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.
+integrable|language_of_the_lost|FRIGATE|2	0	Click and hold to integrate.
+integrable|language_of_the_lost|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|language_of_the_lost|FRIGATE|4	0	<muted>+2 to ECM rating.</muted>
+integrable|language_of_the_lost|FRIGATE|5	0	<muted>Enemy ships within 1000 su have 5% chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.</muted>
+integrable|language_of_the_lost|DESTROYER|0	0	<good>+1</good> to ECM rating.
+integrable|language_of_the_lost|DESTROYER|1	0	Enemy ships within 1000 su have <good>5%</good> chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.
+integrable|language_of_the_lost|DESTROYER|2	0	Click and hold to integrate.
+integrable|language_of_the_lost|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|language_of_the_lost|DESTROYER|4	0	<muted>+2 to ECM rating.</muted>
+integrable|language_of_the_lost|DESTROYER|5	0	<muted>Enemy ships within 1000 su have 5% chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.</muted>
+integrable|language_of_the_lost|CRUISER|0	0	<good>+1</good> to ECM rating.
+integrable|language_of_the_lost|CRUISER|1	0	Enemy ships within 1000 su have <good>5%</good> chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.
+integrable|language_of_the_lost|CRUISER|2	0	Click and hold to integrate.
+integrable|language_of_the_lost|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|language_of_the_lost|CRUISER|4	0	<muted>+2 to ECM rating.</muted>
+integrable|language_of_the_lost|CRUISER|5	0	<muted>Enemy ships within 1000 su have 5% chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.</muted>
+integrable|language_of_the_lost|CAPITAL_SHIP|0	0	<good>+1</good> to ECM rating.
+integrable|language_of_the_lost|CAPITAL_SHIP|1	0	Enemy ships within 1000 su have <good>5%</good> chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.
+integrable|language_of_the_lost|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|language_of_the_lost|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|language_of_the_lost|CAPITAL_SHIP|4	0	<muted>+2 to ECM rating.</muted>
+integrable|language_of_the_lost|CAPITAL_SHIP|5	0	<muted>Enemy ships within 1000 su have 5% chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.</muted>
+integrated|language_of_the_lost|null|0	0	<builtIn>Integrated</builtIn>
+integrated|language_of_the_lost|null|1	0	<good>+2</good><builtIn> to ECM rating.</builtIn>
+integrated|language_of_the_lost|null|2	0	Enemy ships within 1000 su have <good>5%</good> chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.
+integrated|language_of_the_lost|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|language_of_the_lost|FRIGATE|1	0	<good>+2</good><builtIn> to ECM rating.</builtIn>
+integrated|language_of_the_lost|FRIGATE|2	0	Enemy ships within 1000 su have <good>5%</good> chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.
+integrated|language_of_the_lost|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|language_of_the_lost|DESTROYER|1	0	<good>+2</good><builtIn> to ECM rating.</builtIn>
+integrated|language_of_the_lost|DESTROYER|2	0	Enemy ships within 1000 su have <good>5%</good> chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.
+integrated|language_of_the_lost|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|language_of_the_lost|CRUISER|1	0	<good>+2</good><builtIn> to ECM rating.</builtIn>
+integrated|language_of_the_lost|CRUISER|2	0	Enemy ships within 1000 su have <good>5%</good> chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.
+integrated|language_of_the_lost|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|language_of_the_lost|CAPITAL_SHIP|1	0	<good>+2</good><builtIn> to ECM rating.</builtIn>
+integrated|language_of_the_lost|CAPITAL_SHIP|2	0	Enemy ships within 1000 su have <good>5%</good> chance for their weapons to malfunction. Only the strongest debuff of this effect applies at any one time.
 flavour|league_picket_targeting	0	Studying the sensor pickets the League posts along its Hegemony border shows the crew how to slave energy weapon targeting to the ship's own sensors. The pickets are the one League institution every member world agrees to fund.
 flavourAutomated|league_picket_targeting	0	The ship's core logs the sweeps of the sensor pickets the League posts along its Hegemony border and slaves its energy weapon targeting to its own sensors on the same pattern. The pickets are the one League institution every member world agrees to fund.
 type|league_picket_targeting|null|0	0	<good>+1</good> to energy weapon range for every point of this ship's sensor strength.

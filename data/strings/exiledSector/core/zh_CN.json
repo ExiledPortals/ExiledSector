@@ -1137,6 +1137,8 @@
     "effect.STRIKECRAFT_DAMAGE_PER_LOST_STRIKECRAFT_PERCENT": "本舰在过去{seconds}秒内每损失一架战机，本舰放出的战机造成的伤害便提高<good>{value}%</good>，最多计{max}架。",
     "effect.FIGHTER_REPLACEMENT_RATE_RESTORED_BY_FRAGMENTS_PERCENT": "每补充一架战机时，若本舰碎片集群有足够碎片，便消耗{fragments}个碎片，恢复因此损失的战机补充率的<good>{value}%</good>。",
     "effect.STARDUST_MOTE_DAMAGE_FLAT": "光束武器每在敌舰装甲或船体上持续命中{seconds}秒，就向目标发射一枚追踪星尘微粒，造成<good>{value}</good>点能量伤害和<good>{value}</good>点EMP伤害。本舰同时最多存在{max}枚微粒。",
+    "effect.STARDUST_MOTE_MAX_IN_FLIGHT_FLAT.more": "星尘微粒同时存在上限<good>+{value}</good>。",
+    "effect.STARDUST_MOTE_MAX_IN_FLIGHT_FLAT.less": "星尘微粒同时存在上限<bad>-{value}</bad>。",
     "effect.CREW_STEAL_SKELETON_CREW_PERCENT": "强征每具此类残骸<good>{value}%</good>的最低船员。他们可立即供活体弹药使用；战斗结束后，剩余的人会在舱位允许时加入你的舰队。",
     "effect.TOP_SPEED_WHILE_SWARM_FULL_PERCENT": "本舰碎片集群的碎片数量不低于满额的{full}%时，最高速度提高<good>{value}%</good>。",
     "effect.NEARBY_DESTRUCTION_REPLACEMENT_RATE_PERCENT": "每当有敌舰在{range} su内被摧毁，战机补充率<good>+{value}%</good>。",
