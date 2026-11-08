@@ -305,17 +305,17 @@ killer (`KillFluxVentListener`).
 
 `MISSILE_KILL_FLAK_DAMAGE_FLAT` remembers each enemy missile this ship's weapons hit and, on the next frame, bursts
 at any whose hitpoints reached zero. The burst deals flat fragmentation damage to enemy missiles and strike craft
-within 100 su, and missiles it destroys don't burst again (`FlakBurstListener`).
+within 100 su plus `MISSILE_KILL_FLAK_RADIUS_FLAT`, and missiles it destroys don't burst again (`FlakBurstListener`).
 
 ### Concussion Shells
 
-A large ballistic projectile hit on an enemy ship's armor or hull rolls `LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT`
-and temporarily disables whichever working weapon or engine sits nearest the impact (`ConcussionShellListener`).
+A large ballistic projectile hit on an enemy ship's armor or hull rolls `LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT`,
+a medium one `MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT`, and a success temporarily disables whichever working weapon or engine sits nearest the impact (`ConcussionShellListener`).
 
 ### Auxiliary Screen
 
 `SMALLER_ALLY_DAMAGE_TAKEN_MULT` multiplies the hull, armor and shield damage taken by allied ships of a smaller
-hull size within 800 su, rechecked every 0.25 seconds. Strike craft and station modules don't count, and only the
+hull size within 800 su plus `SMALLER_ALLY_DAMAGE_TAKEN_RANGE_FLAT`, rechecked every 0.25 seconds. Strike craft and station modules don't count, and only the
 strongest source applies (`AuxiliaryScreenField`).
 
 ### Defensive Compact

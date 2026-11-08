@@ -21,6 +21,7 @@ import java.util.concurrent.ThreadLocalRandom;
 final class BallisticPierceListener extends ShipCombatListener implements DamageDealtModifier, DroneSpawner {
 
     static final String CHANCE_KEY = "exiledSector_ballisticPierceChance";
+    static final String ADDITIONAL_PIERCES_KEY = "exiledSector_ballisticAdditionalPierces";
     static final String PIERCED_KEY = "exiledSector_ballisticPierced";
 
     private final PierceDrones drones;
@@ -44,7 +45,9 @@ final class BallisticPierceListener extends ShipCombatListener implements Damage
 
     void handleHit(DamagingProjectileAPI projectile, ShipAPI hitShip, Vector2f point) {
         WeaponAPI weapon = projectile.getWeapon();
-        if (!canPierce(weapon) || isPierced(projectile) || projectile.getAI() instanceof ProximityFuseAIAPI
+        int earlierPierces = piercesOf(projectile);
+        if (!canPierce(weapon) || earlierPierces > Math.round(magnitude(ADDITIONAL_PIERCES_KEY))
+                || projectile.getAI() instanceof ProximityFuseAIAPI
                 || hitShip.isFighter() || !hitShip.isAlive()
                 || !ownerShip.isAlive() || !CombatQueries.isHostile(ownerShip, hitShip)) {
             return;
@@ -52,7 +55,7 @@ final class BallisticPierceListener extends ShipCombatListener implements Damage
         if (!Chance.roll(ThreadLocalRandom.current(), magnitude(CHANCE_KEY)) || !WeaponDroneFactory.supportsProjectile(weapon)) {
             return;
         }
-        drones.launch(weapon, hitShip, point, travelFacing(projectile));
+        drones.launch(weapon, hitShip, point, travelFacing(projectile), earlierPierces + 1);
     }
 
     static float travelFacing(DamagingProjectileAPI projectile) {
@@ -72,7 +75,11 @@ final class BallisticPierceListener extends ShipCombatListener implements Damage
         return projectile.getCustomData().containsKey(PIERCED_KEY);
     }
 
-    static void markPierced(DamagingProjectileAPI projectile) {
-        projectile.setCustomData(PIERCED_KEY, Boolean.TRUE);
+    static int piercesOf(DamagingProjectileAPI projectile) {
+        return projectile.getCustomData().get(PIERCED_KEY) instanceof Integer pierces ? pierces : 0;
+    }
+
+    static void markPierced(DamagingProjectileAPI projectile, int pierces) {
+        projectile.setCustomData(PIERCED_KEY, pierces);
     }
 }

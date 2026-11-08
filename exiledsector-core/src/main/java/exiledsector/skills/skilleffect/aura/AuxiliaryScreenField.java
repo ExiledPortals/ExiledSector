@@ -30,7 +30,7 @@ final class AuxiliaryScreenField extends AuraField<AuxiliaryScreenListener> {
     }
 
     static Map<ShipAPI, Float> reductionPerAlly(List<AuxiliaryScreenListener> sources, ShipsNear shipsNear) {
-        return strongestPerShip(sources, shipsNear, RANGE, AuxiliaryScreenListener::damageTakenReductionPercent, AuxiliaryScreenField::isScreenedBy);
+        return strongestPerShip(sources, shipsNear, AuxiliaryScreenListener::range, AuxiliaryScreenListener::damageTakenReductionPercent, AuxiliaryScreenField::isScreenedBy);
     }
 
     static boolean isScreenedBy(ShipAPI sourceShip, ShipAPI other) {

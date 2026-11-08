@@ -38,6 +38,7 @@ class FlakBurstListenerTest {
     private MockedStatic<Global> global;
     private CombatEngineAPI engine;
     private ShipAPI ship;
+    private DynamicStatsAPI dynamic;
     private FlakBurstListener listener;
     private final List<Object> missilesNearby = new ArrayList<>();
     private final List<Object> shipsNearby = new ArrayList<>();
@@ -57,7 +58,7 @@ class FlakBurstListenerTest {
         ship = mock(ShipAPI.class);
         when(ship.getOwner()).thenReturn(0);
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
+        dynamic = mock(DynamicStatsAPI.class);
         when(ship.getMutableStats()).thenReturn(stats);
         when(stats.getDynamic()).thenReturn(dynamic);
         when(dynamic.getValue(FlakBurstListener.DAMAGE_KEY, 0f)).thenReturn(DAMAGE);
@@ -110,6 +111,21 @@ class FlakBurstListenerTest {
         verify(engine, never()).applyDamage(eq(farMissile), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any());
         verify(engine, never()).applyDamage(eq(ownMissile), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any());
         verify(engine, never()).applyDamage(eq(alliedFighter), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any());
+    }
+
+    @Test
+    void aRadiusBonusWidensTheBurst() {
+        when(dynamic.getValue(FlakBurstListener.RADIUS_BONUS_KEY, 0f)).thenReturn(50f);
+        MissileAPI shotDown = missileAt(new Vector2f(), 1, 0f);
+        MissileAPI widerMissile = missileAt(new Vector2f(FlakBurstListener.BURST_RADIUS + 30f, 0f), 1, 200f);
+        MissileAPI farMissile = missileAt(new Vector2f(FlakBurstListener.BURST_RADIUS + 80f, 0f), 1, 200f);
+        missilesNearby.addAll(List.of(shotDown, widerMissile, farMissile));
+
+        hit(shotDown);
+        listener.advance(0.016f);
+
+        verify(engine).applyDamage(eq(widerMissile), any(), eq(DAMAGE), eq(DamageType.FRAGMENTATION), eq(0f), anyBoolean(), anyBoolean(), eq(ship));
+        verify(engine, never()).applyDamage(eq(farMissile), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any());
     }
 
     @Test

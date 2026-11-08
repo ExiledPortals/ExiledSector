@@ -69,6 +69,22 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
             return StatMode.FLAT.describeStat(magnitude, "stat.largeBallisticOpCost");
         }
     },
+    BALLISTIC_WEAPON_MEDIUM_OP_COST_FLAT {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(Stats.MEDIUM_BALLISTIC_MOD).modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return StatMode.FLAT.describeStat(magnitude, "stat.mediumBallisticOpCost");
+        }
+    },
     SMALL_WEAPON_OP_COST_FLAT {
         @Override
         public boolean lowerIsBetter() {

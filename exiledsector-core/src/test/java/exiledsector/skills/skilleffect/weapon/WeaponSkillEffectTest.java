@@ -234,6 +234,16 @@ class WeaponSkillEffectTest {
     }
 
     @Test
+    void mediumBallisticOpCostUsesTheEnginesMediumBallisticKey() {
+        StatBonus mediumBallistic = realDynamicMod(Stats.MEDIUM_BALLISTIC_MOD);
+
+        WeaponSkillEffect.BALLISTIC_WEAPON_MEDIUM_OP_COST_FLAT.apply(stats, "mod_id", -2f);
+
+        assertEquals(-2f, mediumBallistic.getFlatBonus(), EPSILON);
+        assertTrue(WeaponSkillEffect.BALLISTIC_WEAPON_MEDIUM_OP_COST_FLAT.lowerIsBetter());
+    }
+
+    @Test
     void pdFlagsSwitchTheVanillaBehaviourOnWhateverTheMagnitude() {
         StatBonus ignoresFlares = realDynamicMod(Stats.PD_IGNORES_FLARES);
         StatBonus bestTargetLeading = realDynamicMod(Stats.PD_BEST_TARGET_LEADING);

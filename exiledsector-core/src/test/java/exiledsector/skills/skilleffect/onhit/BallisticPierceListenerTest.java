@@ -21,6 +21,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -92,7 +93,7 @@ class BallisticPierceListenerTest {
 
         hit(shot(gun), enemy, false);
 
-        verify(drones).launch(Mockito.eq(gun), Mockito.eq(enemy), Mockito.eq(new Vector2f(5f, 6f)), Mockito.eq(30f));
+        verify(drones).launch(Mockito.eq(gun), Mockito.eq(enemy), Mockito.eq(new Vector2f(5f, 6f)), Mockito.eq(30f), Mockito.eq(1));
     }
 
     @Test
@@ -101,11 +102,27 @@ class BallisticPierceListenerTest {
         hit(shot(weapon(WeaponAPI.WeaponType.ENERGY, false)), enemy, false);
         hit(shot(weapon(WeaponAPI.WeaponType.BALLISTIC, true)), enemy, false);
         DamagingProjectileAPI copy = shot(weapon(WeaponAPI.WeaponType.BALLISTIC, false));
-        BallisticPierceListener.markPierced(copy);
+        BallisticPierceListener.markPierced(copy, 1);
         hit(copy, enemy, false);
 
         assertTrue(BallisticPierceListener.isPierced(copy));
-        verify(drones, never()).launch(any(), any(), any(), anyFloat());
+        verify(drones, never()).launch(any(), any(), any(), anyFloat(), anyInt());
+    }
+
+    @Test
+    void additionalPiercesLetAPiercedShotPierceAgainUpToTheLimit() {
+        when(dynamic.getValue(BallisticPierceListener.ADDITIONAL_PIERCES_KEY, 0f)).thenReturn(1f);
+        WeaponAPI gun = weapon(WeaponAPI.WeaponType.BALLISTIC, false);
+        DamagingProjectileAPI piercedOnce = shot(gun);
+        BallisticPierceListener.markPierced(piercedOnce, 1);
+        DamagingProjectileAPI piercedTwice = shot(gun);
+        BallisticPierceListener.markPierced(piercedTwice, 2);
+
+        hit(piercedOnce, enemy, false);
+        hit(piercedTwice, enemy, false);
+
+        verify(drones).launch(Mockito.eq(gun), Mockito.eq(enemy), any(), anyFloat(), Mockito.eq(2));
+        verify(drones, never()).launch(any(), any(), any(), anyFloat(), Mockito.eq(3));
     }
 
     @Test
@@ -115,7 +132,7 @@ class BallisticPierceListenerTest {
 
         hit(flak, enemy, false);
 
-        verify(drones, never()).launch(any(), any(), any(), anyFloat());
+        verify(drones, never()).launch(any(), any(), any(), anyFloat(), anyInt());
     }
 
     @Test
@@ -147,6 +164,6 @@ class BallisticPierceListenerTest {
         when(dynamic.getValue(BallisticPierceListener.CHANCE_KEY, 0f)).thenReturn(0f);
         hit(shot(gun), enemy, false);
 
-        verify(drones, never()).launch(any(), any(), any(), anyFloat());
+        verify(drones, never()).launch(any(), any(), any(), anyFloat(), anyInt());
     }
 }

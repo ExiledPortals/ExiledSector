@@ -7,7 +7,6 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipEngineControllerAPI;
 import com.fs.starfarer.api.combat.ShipEngineControllerAPI.ShipEngineAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
-import com.fs.starfarer.api.combat.WeaponAPI.WeaponSize;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.ShipCombatListener;
@@ -19,6 +18,7 @@ import java.util.function.DoubleSupplier;
 final class ConcussionShellListener extends ShipCombatListener implements DamageDealtModifier {
 
     static final String CHANCE_PERCENT_KEY = "exiledSector_concussionShellChancePercent";
+    static final String MEDIUM_CHANCE_PERCENT_KEY = "exiledSector_concussionShellMediumChancePercent";
 
     private final DoubleSupplier roll;
 
@@ -34,9 +34,8 @@ final class ConcussionShellListener extends ShipCombatListener implements Damage
     @Override
     public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
         ShipAPI hitShip = CombatQueries.hostileLiveShip(ownerShip, target);
-        if (!shieldHit && param instanceof DamagingProjectileAPI projectile && hitShip != null
-                && isLargeBallistic(projectile.getWeapon()) && !hitShip.isFighter()) {
-            float chancePercent = magnitude(CHANCE_PERCENT_KEY);
+        if (!shieldHit && param instanceof DamagingProjectileAPI projectile && hitShip != null && !hitShip.isFighter()) {
+            float chancePercent = chancePercentFor(projectile.getWeapon());
             if (chancePercent > 0f && roll.getAsDouble() < chancePercent / 100.0) {
                 disableNearest(hitShip, point);
             }
@@ -44,8 +43,15 @@ final class ConcussionShellListener extends ShipCombatListener implements Damage
         return null;
     }
 
-    static boolean isLargeBallistic(WeaponAPI weapon) {
-        return weapon != null && !weapon.isBeam() && weapon.getSize() == WeaponSize.LARGE && WeaponScope.BALLISTIC.matches(weapon);
+    private float chancePercentFor(WeaponAPI weapon) {
+        if (weapon == null || weapon.isBeam() || !WeaponScope.BALLISTIC.matches(weapon)) {
+            return 0f;
+        }
+        return switch (weapon.getSize()) {
+            case LARGE -> magnitude(CHANCE_PERCENT_KEY);
+            case MEDIUM -> magnitude(MEDIUM_CHANCE_PERCENT_KEY);
+            default -> 0f;
+        };
     }
 
     static void disableNearest(ShipAPI hitShip, Vector2f point) {
