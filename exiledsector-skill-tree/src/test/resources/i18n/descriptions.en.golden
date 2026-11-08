@@ -8540,11 +8540,68 @@ type|tania_carina_charge|FRIGATE|0	0	<good>0.08%</good> increased ballistic and 
 type|tania_carina_charge|DESTROYER|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 type|tania_carina_charge|CRUISER|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 type|tania_carina_charge|CAPITAL_SHIP|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
+integrable|tania_carina_charge|null|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
+integrable|tania_carina_charge|null|1	0	Click and hold to integrate.
+integrable|tania_carina_charge|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_carina_charge|null|3	0	<muted>0.1% increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.</muted>
+integrable|tania_carina_charge|FRIGATE|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
+integrable|tania_carina_charge|FRIGATE|1	0	Click and hold to integrate.
+integrable|tania_carina_charge|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_carina_charge|FRIGATE|3	0	<muted>0.1% increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.</muted>
+integrable|tania_carina_charge|DESTROYER|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
+integrable|tania_carina_charge|DESTROYER|1	0	Click and hold to integrate.
+integrable|tania_carina_charge|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_carina_charge|DESTROYER|3	0	<muted>0.1% increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.</muted>
+integrable|tania_carina_charge|CRUISER|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
+integrable|tania_carina_charge|CRUISER|1	0	Click and hold to integrate.
+integrable|tania_carina_charge|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_carina_charge|CRUISER|3	0	<muted>0.1% increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.</muted>
+integrable|tania_carina_charge|CAPITAL_SHIP|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
+integrable|tania_carina_charge|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|tania_carina_charge|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_carina_charge|CAPITAL_SHIP|3	0	<muted>0.1% increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.</muted>
+integrated|tania_carina_charge|null|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_carina_charge|null|1	0	<good>0.1%</good><builtIn> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.</builtIn>
+integrated|tania_carina_charge|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_carina_charge|FRIGATE|1	0	<good>0.1%</good><builtIn> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.</builtIn>
+integrated|tania_carina_charge|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_carina_charge|DESTROYER|1	0	<good>0.1%</good><builtIn> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.</builtIn>
+integrated|tania_carina_charge|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_carina_charge|CRUISER|1	0	<good>0.1%</good><builtIn> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.</builtIn>
+integrated|tania_carina_charge|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_carina_charge|CAPITAL_SHIP|1	0	<good>0.1%</good><builtIn> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.</builtIn>
 flavour|tania_dysis_drive	0	The Black Hawk's Dysis Drive throws the ship forward hardest while its flux grid runs cold. Analysis over its ancient design allowed the crew to tune this ship's engines the same way, so it is able to fly bright at low flux and drags once the grid fills.
 type|tania_dysis_drive|FRIGATE|0	0	Top speed changes with flux, from <good>+50</good> su/s at no flux to <bad>-50</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>50%</good> increased acceleration and turn acceleration.
 type|tania_dysis_drive|DESTROYER|0	0	Top speed changes with flux, from <good>+40</good> su/s at no flux to <bad>-40</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>40%</good> increased acceleration and turn acceleration.
 type|tania_dysis_drive|CRUISER|0	0	Top speed changes with flux, from <good>+30</good> su/s at no flux to <bad>-30</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>30%</good> increased acceleration and turn acceleration.
 type|tania_dysis_drive|CAPITAL_SHIP|0	0	Top speed changes with flux, from <good>+20</good> su/s at no flux to <bad>-20</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>20%</good> increased acceleration and turn acceleration.
+integrable|tania_dysis_drive|null|0	0	Click and hold to integrate.
+integrable|tania_dysis_drive|null|1	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_dysis_drive|FRIGATE|0	0	Top speed changes with flux, from <good>+50</good> su/s at no flux to <bad>-50</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>50%</good> increased acceleration and turn acceleration.
+integrable|tania_dysis_drive|FRIGATE|1	0	Click and hold to integrate.
+integrable|tania_dysis_drive|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_dysis_drive|FRIGATE|3	0	<muted>Top speed changes with flux, from +60 su/s at no flux to -60 su/s at full flux, with no change at half flux. Below half flux, also up to 60% increased acceleration and turn acceleration.</muted>
+integrable|tania_dysis_drive|DESTROYER|0	0	Top speed changes with flux, from <good>+40</good> su/s at no flux to <bad>-40</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>40%</good> increased acceleration and turn acceleration.
+integrable|tania_dysis_drive|DESTROYER|1	0	Click and hold to integrate.
+integrable|tania_dysis_drive|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_dysis_drive|DESTROYER|3	0	<muted>Top speed changes with flux, from +50 su/s at no flux to -50 su/s at full flux, with no change at half flux. Below half flux, also up to 50% increased acceleration and turn acceleration.</muted>
+integrable|tania_dysis_drive|CRUISER|0	0	Top speed changes with flux, from <good>+30</good> su/s at no flux to <bad>-30</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>30%</good> increased acceleration and turn acceleration.
+integrable|tania_dysis_drive|CRUISER|1	0	Click and hold to integrate.
+integrable|tania_dysis_drive|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_dysis_drive|CRUISER|3	0	<muted>Top speed changes with flux, from +40 su/s at no flux to -40 su/s at full flux, with no change at half flux. Below half flux, also up to 40% increased acceleration and turn acceleration.</muted>
+integrable|tania_dysis_drive|CAPITAL_SHIP|0	0	Top speed changes with flux, from <good>+20</good> su/s at no flux to <bad>-20</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>20%</good> increased acceleration and turn acceleration.
+integrable|tania_dysis_drive|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|tania_dysis_drive|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_dysis_drive|CAPITAL_SHIP|3	0	<muted>Top speed changes with flux, from +25 su/s at no flux to -25 su/s at full flux, with no change at half flux. Below half flux, also up to 25% increased acceleration and turn acceleration.</muted>
+integrated|tania_dysis_drive|null|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_dysis_drive|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_dysis_drive|FRIGATE|1	0	<builtIn>Top speed changes with flux, from </builtIn><good>+60</good><builtIn> su/s at no flux to </builtIn><bad>-60</bad><builtIn> su/s at full flux, with no change at half flux. Below half flux, also up to </builtIn><good>60%</good><builtIn> increased acceleration and turn acceleration.</builtIn>
+integrated|tania_dysis_drive|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_dysis_drive|DESTROYER|1	0	<builtIn>Top speed changes with flux, from </builtIn><good>+50</good><builtIn> su/s at no flux to </builtIn><bad>-50</bad><builtIn> su/s at full flux, with no change at half flux. Below half flux, also up to </builtIn><good>50%</good><builtIn> increased acceleration and turn acceleration.</builtIn>
+integrated|tania_dysis_drive|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_dysis_drive|CRUISER|1	0	<builtIn>Top speed changes with flux, from </builtIn><good>+40</good><builtIn> su/s at no flux to </builtIn><bad>-40</bad><builtIn> su/s at full flux, with no change at half flux. Below half flux, also up to </builtIn><good>40%</good><builtIn> increased acceleration and turn acceleration.</builtIn>
+integrated|tania_dysis_drive|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_dysis_drive|CAPITAL_SHIP|1	0	<builtIn>Top speed changes with flux, from </builtIn><good>+25</good><builtIn> su/s at no flux to </builtIn><bad>-25</bad><builtIn> su/s at full flux, with no change at half flux. Below half flux, also up to </builtIn><good>25%</good><builtIn> increased acceleration and turn acceleration.</builtIn>
 flavour|tania_fafnir_breeches	0	Desperation leads to innovation, and the pressure of an incoming war brought Farige engineers to the limit, with them bringing up unusual techniques to modernize recently found early epoch Domain designs. Mount plans traded by Navarchy quartermasters had a complete data basis of prototype adaptive weapon mounts, allowing ballistic weapon systems to draw harder from the ship's flux grid in order to field energy based weaponry.
 type|tania_fafnir_breeches|null|0	0	Ballistic weapon mounts become hybrid mounts.
 type|tania_fafnir_breeches|null|1	1	<good>25%</good> increased energy weapon flux cost.
@@ -8556,6 +8613,51 @@ type|tania_fafnir_breeches|CRUISER|0	0	Ballistic weapon mounts become hybrid mou
 type|tania_fafnir_breeches|CRUISER|1	1	<good>25%</good> increased energy weapon flux cost.
 type|tania_fafnir_breeches|CAPITAL_SHIP|0	0	Ballistic weapon mounts become hybrid mounts.
 type|tania_fafnir_breeches|CAPITAL_SHIP|1	1	<good>25%</good> increased energy weapon flux cost.
+integrable|tania_fafnir_breeches|null|0	0	Ballistic weapon mounts become hybrid mounts.
+integrable|tania_fafnir_breeches|null|1	1	<good>25%</good> increased energy weapon flux cost.
+integrable|tania_fafnir_breeches|null|2	0	Click and hold to integrate.
+integrable|tania_fafnir_breeches|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_fafnir_breeches|null|4	0	<muted>Ballistic weapon mounts become hybrid mounts.</muted>
+integrable|tania_fafnir_breeches|null|5	0	<muted>10% increased energy weapon flux cost.</muted>
+integrable|tania_fafnir_breeches|FRIGATE|0	0	Ballistic weapon mounts become hybrid mounts.
+integrable|tania_fafnir_breeches|FRIGATE|1	1	<good>25%</good> increased energy weapon flux cost.
+integrable|tania_fafnir_breeches|FRIGATE|2	0	Click and hold to integrate.
+integrable|tania_fafnir_breeches|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_fafnir_breeches|FRIGATE|4	0	<muted>Ballistic weapon mounts become hybrid mounts.</muted>
+integrable|tania_fafnir_breeches|FRIGATE|5	0	<muted>10% increased energy weapon flux cost.</muted>
+integrable|tania_fafnir_breeches|DESTROYER|0	0	Ballistic weapon mounts become hybrid mounts.
+integrable|tania_fafnir_breeches|DESTROYER|1	1	<good>25%</good> increased energy weapon flux cost.
+integrable|tania_fafnir_breeches|DESTROYER|2	0	Click and hold to integrate.
+integrable|tania_fafnir_breeches|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_fafnir_breeches|DESTROYER|4	0	<muted>Ballistic weapon mounts become hybrid mounts.</muted>
+integrable|tania_fafnir_breeches|DESTROYER|5	0	<muted>10% increased energy weapon flux cost.</muted>
+integrable|tania_fafnir_breeches|CRUISER|0	0	Ballistic weapon mounts become hybrid mounts.
+integrable|tania_fafnir_breeches|CRUISER|1	1	<good>25%</good> increased energy weapon flux cost.
+integrable|tania_fafnir_breeches|CRUISER|2	0	Click and hold to integrate.
+integrable|tania_fafnir_breeches|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_fafnir_breeches|CRUISER|4	0	<muted>Ballistic weapon mounts become hybrid mounts.</muted>
+integrable|tania_fafnir_breeches|CRUISER|5	0	<muted>10% increased energy weapon flux cost.</muted>
+integrable|tania_fafnir_breeches|CAPITAL_SHIP|0	0	Ballistic weapon mounts become hybrid mounts.
+integrable|tania_fafnir_breeches|CAPITAL_SHIP|1	1	<good>25%</good> increased energy weapon flux cost.
+integrable|tania_fafnir_breeches|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|tania_fafnir_breeches|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_fafnir_breeches|CAPITAL_SHIP|4	0	<muted>Ballistic weapon mounts become hybrid mounts.</muted>
+integrable|tania_fafnir_breeches|CAPITAL_SHIP|5	0	<muted>10% increased energy weapon flux cost.</muted>
+integrated|tania_fafnir_breeches|null|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_fafnir_breeches|null|1	0	Ballistic weapon mounts become hybrid mounts.
+integrated|tania_fafnir_breeches|null|2	1	<good>10%</good><builtIn> increased energy weapon flux cost.</builtIn>
+integrated|tania_fafnir_breeches|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_fafnir_breeches|FRIGATE|1	0	Ballistic weapon mounts become hybrid mounts.
+integrated|tania_fafnir_breeches|FRIGATE|2	1	<good>10%</good><builtIn> increased energy weapon flux cost.</builtIn>
+integrated|tania_fafnir_breeches|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_fafnir_breeches|DESTROYER|1	0	Ballistic weapon mounts become hybrid mounts.
+integrated|tania_fafnir_breeches|DESTROYER|2	1	<good>10%</good><builtIn> increased energy weapon flux cost.</builtIn>
+integrated|tania_fafnir_breeches|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_fafnir_breeches|CRUISER|1	0	Ballistic weapon mounts become hybrid mounts.
+integrated|tania_fafnir_breeches|CRUISER|2	1	<good>10%</good><builtIn> increased energy weapon flux cost.</builtIn>
+integrated|tania_fafnir_breeches|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_fafnir_breeches|CAPITAL_SHIP|1	0	Ballistic weapon mounts become hybrid mounts.
+integrated|tania_fafnir_breeches|CAPITAL_SHIP|2	1	<good>10%</good><builtIn> increased energy weapon flux cost.</builtIn>
 flavour|tania_merite_lunge	0	The Merite Class Destroyer is often praised by its ability to assault enemy ships by sheer brute force, thanks to its Jump Jets ship system. By listening to "sage" advice from fellow Navarchy of Tania officers, you order your crew to refit the ship with increased weight and improved protection against collateral effects from excessive G-force.
 type|tania_merite_lunge|null|0	0	<good>50%</good> increased mass.
 type|tania_merite_lunge|null|1	0	<bad>35%</bad> less maneuverability.
@@ -8567,6 +8669,51 @@ type|tania_merite_lunge|CRUISER|0	0	<good>50%</good> increased mass.
 type|tania_merite_lunge|CRUISER|1	0	<bad>35%</bad> less maneuverability.
 type|tania_merite_lunge|CAPITAL_SHIP|0	0	<good>50%</good> increased mass.
 type|tania_merite_lunge|CAPITAL_SHIP|1	0	<bad>35%</bad> less maneuverability.
+integrable|tania_merite_lunge|null|0	0	<good>50%</good> increased mass.
+integrable|tania_merite_lunge|null|1	0	<bad>35%</bad> less maneuverability.
+integrable|tania_merite_lunge|null|2	0	Click and hold to integrate.
+integrable|tania_merite_lunge|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_merite_lunge|null|4	0	<muted>50% increased mass.</muted>
+integrable|tania_merite_lunge|null|5	0	<muted>20% less maneuverability.</muted>
+integrable|tania_merite_lunge|FRIGATE|0	0	<good>50%</good> increased mass.
+integrable|tania_merite_lunge|FRIGATE|1	0	<bad>35%</bad> less maneuverability.
+integrable|tania_merite_lunge|FRIGATE|2	0	Click and hold to integrate.
+integrable|tania_merite_lunge|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_merite_lunge|FRIGATE|4	0	<muted>50% increased mass.</muted>
+integrable|tania_merite_lunge|FRIGATE|5	0	<muted>20% less maneuverability.</muted>
+integrable|tania_merite_lunge|DESTROYER|0	0	<good>50%</good> increased mass.
+integrable|tania_merite_lunge|DESTROYER|1	0	<bad>35%</bad> less maneuverability.
+integrable|tania_merite_lunge|DESTROYER|2	0	Click and hold to integrate.
+integrable|tania_merite_lunge|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_merite_lunge|DESTROYER|4	0	<muted>50% increased mass.</muted>
+integrable|tania_merite_lunge|DESTROYER|5	0	<muted>20% less maneuverability.</muted>
+integrable|tania_merite_lunge|CRUISER|0	0	<good>50%</good> increased mass.
+integrable|tania_merite_lunge|CRUISER|1	0	<bad>35%</bad> less maneuverability.
+integrable|tania_merite_lunge|CRUISER|2	0	Click and hold to integrate.
+integrable|tania_merite_lunge|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_merite_lunge|CRUISER|4	0	<muted>50% increased mass.</muted>
+integrable|tania_merite_lunge|CRUISER|5	0	<muted>20% less maneuverability.</muted>
+integrable|tania_merite_lunge|CAPITAL_SHIP|0	0	<good>50%</good> increased mass.
+integrable|tania_merite_lunge|CAPITAL_SHIP|1	0	<bad>35%</bad> less maneuverability.
+integrable|tania_merite_lunge|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|tania_merite_lunge|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_merite_lunge|CAPITAL_SHIP|4	0	<muted>50% increased mass.</muted>
+integrable|tania_merite_lunge|CAPITAL_SHIP|5	0	<muted>20% less maneuverability.</muted>
+integrated|tania_merite_lunge|null|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_merite_lunge|null|1	0	<good>50%</good> increased mass.
+integrated|tania_merite_lunge|null|2	0	<bad>20%</bad><builtIn> less maneuverability.</builtIn>
+integrated|tania_merite_lunge|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_merite_lunge|FRIGATE|1	0	<good>50%</good> increased mass.
+integrated|tania_merite_lunge|FRIGATE|2	0	<bad>20%</bad><builtIn> less maneuverability.</builtIn>
+integrated|tania_merite_lunge|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_merite_lunge|DESTROYER|1	0	<good>50%</good> increased mass.
+integrated|tania_merite_lunge|DESTROYER|2	0	<bad>20%</bad><builtIn> less maneuverability.</builtIn>
+integrated|tania_merite_lunge|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_merite_lunge|CRUISER|1	0	<good>50%</good> increased mass.
+integrated|tania_merite_lunge|CRUISER|2	0	<bad>20%</bad><builtIn> less maneuverability.</builtIn>
+integrated|tania_merite_lunge|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_merite_lunge|CAPITAL_SHIP|1	0	<good>50%</good> increased mass.
+integrated|tania_merite_lunge|CAPITAL_SHIP|2	0	<bad>20%</bad><builtIn> less maneuverability.</builtIn>
 flavour|tania_rise_from_the_ashes	0	The last stand at the Battle of Vela allowed Navarchy of Tania to born from the ashes of Carina, surviving the rampage of Joseph Baumgart. By watching the sacrifice of NTS Agulha Negra, a Sandgrouse class frigate, your crew understood the value of fighting for a cause, and is inspired to fight for yours.
 type|tania_rise_from_the_ashes|null|0	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
 type|tania_rise_from_the_ashes|null|1	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
@@ -8588,6 +8735,66 @@ type|tania_rise_from_the_ashes|CAPITAL_SHIP|0	0	Once per battle, the hit that wo
 type|tania_rise_from_the_ashes|CAPITAL_SHIP|1	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
 type|tania_rise_from_the_ashes|CAPITAL_SHIP|2	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
 type-detail|tania_rise_from_the_ashes|CAPITAL_SHIP|0	0	Can't be allocated on phase ships.
+integrable|tania_rise_from_the_ashes|null|0	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
+integrable|tania_rise_from_the_ashes|null|1	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
+integrable|tania_rise_from_the_ashes|null|2	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
+integrable|tania_rise_from_the_ashes|null|3	0	Click and hold to integrate.
+integrable|tania_rise_from_the_ashes|null|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_rise_from_the_ashes|null|5	0	<muted>Once per battle, the hit that would destroy this ship instead leaves it with 25% of its maximum hull points.</muted>
+integrable|tania_rise_from_the_ashes|null|6	0	<muted>Surviving that hit restores 50% of maximum armor to every armor cell.</muted>
+integrable|tania_rise_from_the_ashes|null|7	0	<muted>75% less damage taken for 6 seconds after surviving that hit.</muted>
+integrable|tania_rise_from_the_ashes|FRIGATE|0	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
+integrable|tania_rise_from_the_ashes|FRIGATE|1	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
+integrable|tania_rise_from_the_ashes|FRIGATE|2	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
+integrable|tania_rise_from_the_ashes|FRIGATE|3	0	Click and hold to integrate.
+integrable|tania_rise_from_the_ashes|FRIGATE|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_rise_from_the_ashes|FRIGATE|5	0	<muted>Once per battle, the hit that would destroy this ship instead leaves it with 25% of its maximum hull points.</muted>
+integrable|tania_rise_from_the_ashes|FRIGATE|6	0	<muted>Surviving that hit restores 50% of maximum armor to every armor cell.</muted>
+integrable|tania_rise_from_the_ashes|FRIGATE|7	0	<muted>75% less damage taken for 6 seconds after surviving that hit.</muted>
+integrable|tania_rise_from_the_ashes|DESTROYER|0	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
+integrable|tania_rise_from_the_ashes|DESTROYER|1	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
+integrable|tania_rise_from_the_ashes|DESTROYER|2	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
+integrable|tania_rise_from_the_ashes|DESTROYER|3	0	Click and hold to integrate.
+integrable|tania_rise_from_the_ashes|DESTROYER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_rise_from_the_ashes|DESTROYER|5	0	<muted>Once per battle, the hit that would destroy this ship instead leaves it with 25% of its maximum hull points.</muted>
+integrable|tania_rise_from_the_ashes|DESTROYER|6	0	<muted>Surviving that hit restores 50% of maximum armor to every armor cell.</muted>
+integrable|tania_rise_from_the_ashes|DESTROYER|7	0	<muted>75% less damage taken for 6 seconds after surviving that hit.</muted>
+integrable|tania_rise_from_the_ashes|CRUISER|0	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
+integrable|tania_rise_from_the_ashes|CRUISER|1	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
+integrable|tania_rise_from_the_ashes|CRUISER|2	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
+integrable|tania_rise_from_the_ashes|CRUISER|3	0	Click and hold to integrate.
+integrable|tania_rise_from_the_ashes|CRUISER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_rise_from_the_ashes|CRUISER|5	0	<muted>Once per battle, the hit that would destroy this ship instead leaves it with 25% of its maximum hull points.</muted>
+integrable|tania_rise_from_the_ashes|CRUISER|6	0	<muted>Surviving that hit restores 50% of maximum armor to every armor cell.</muted>
+integrable|tania_rise_from_the_ashes|CRUISER|7	0	<muted>75% less damage taken for 6 seconds after surviving that hit.</muted>
+integrable|tania_rise_from_the_ashes|CAPITAL_SHIP|0	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
+integrable|tania_rise_from_the_ashes|CAPITAL_SHIP|1	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
+integrable|tania_rise_from_the_ashes|CAPITAL_SHIP|2	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
+integrable|tania_rise_from_the_ashes|CAPITAL_SHIP|3	0	Click and hold to integrate.
+integrable|tania_rise_from_the_ashes|CAPITAL_SHIP|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_rise_from_the_ashes|CAPITAL_SHIP|5	0	<muted>Once per battle, the hit that would destroy this ship instead leaves it with 25% of its maximum hull points.</muted>
+integrable|tania_rise_from_the_ashes|CAPITAL_SHIP|6	0	<muted>Surviving that hit restores 50% of maximum armor to every armor cell.</muted>
+integrable|tania_rise_from_the_ashes|CAPITAL_SHIP|7	0	<muted>75% less damage taken for 6 seconds after surviving that hit.</muted>
+integrated|tania_rise_from_the_ashes|null|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_rise_from_the_ashes|null|1	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
+integrated|tania_rise_from_the_ashes|null|2	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
+integrated|tania_rise_from_the_ashes|null|3	0	<good>75%</good><builtIn> less damage taken for 6 seconds after surviving that hit.</builtIn>
+integrated|tania_rise_from_the_ashes|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_rise_from_the_ashes|FRIGATE|1	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
+integrated|tania_rise_from_the_ashes|FRIGATE|2	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
+integrated|tania_rise_from_the_ashes|FRIGATE|3	0	<good>75%</good><builtIn> less damage taken for 6 seconds after surviving that hit.</builtIn>
+integrated|tania_rise_from_the_ashes|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_rise_from_the_ashes|DESTROYER|1	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
+integrated|tania_rise_from_the_ashes|DESTROYER|2	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
+integrated|tania_rise_from_the_ashes|DESTROYER|3	0	<good>75%</good><builtIn> less damage taken for 6 seconds after surviving that hit.</builtIn>
+integrated|tania_rise_from_the_ashes|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_rise_from_the_ashes|CRUISER|1	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
+integrated|tania_rise_from_the_ashes|CRUISER|2	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
+integrated|tania_rise_from_the_ashes|CRUISER|3	0	<good>75%</good><builtIn> less damage taken for 6 seconds after surviving that hit.</builtIn>
+integrated|tania_rise_from_the_ashes|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_rise_from_the_ashes|CAPITAL_SHIP|1	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
+integrated|tania_rise_from_the_ashes|CAPITAL_SHIP|2	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
+integrated|tania_rise_from_the_ashes|CAPITAL_SHIP|3	0	<good>75%</good><builtIn> less damage taken for 6 seconds after surviving that hit.</builtIn>
 flavour|tania_solaris_overdrive	0	The Aracari is a prime example of antique thermo-dynamic engineering, with its Solaris Phalanx system allowing weapons to fire without directly drawing from the main flux grid. By analyzing old Farige databanks, your crew is now able to mimic its functionality in a small scale basis.
 type|tania_solaris_overdrive|null|0	0	Weapons cost no flux to fire for <good>4</good> seconds after this ship's system activates, at most once every 60 seconds.
 type|tania_solaris_overdrive|null|1	0	<good>50%</good> increased weapon projectile speed for those seconds.
@@ -8604,12 +8811,102 @@ type|tania_solaris_overdrive|CRUISER|2	0	<good>25%</good> increased weapon rate 
 type|tania_solaris_overdrive|CAPITAL_SHIP|0	0	Weapons cost no flux to fire for <good>4</good> seconds after this ship's system activates, at most once every 60 seconds.
 type|tania_solaris_overdrive|CAPITAL_SHIP|1	0	<good>50%</good> increased weapon projectile speed for those seconds.
 type|tania_solaris_overdrive|CAPITAL_SHIP|2	0	<good>25%</good> increased weapon rate of fire for those seconds.
+integrable|tania_solaris_overdrive|null|0	0	Weapons cost no flux to fire for <good>4</good> seconds after this ship's system activates, at most once every 60 seconds.
+integrable|tania_solaris_overdrive|null|1	0	<good>50%</good> increased weapon projectile speed for those seconds.
+integrable|tania_solaris_overdrive|null|2	0	<good>25%</good> increased weapon rate of fire for those seconds.
+integrable|tania_solaris_overdrive|null|3	0	Click and hold to integrate.
+integrable|tania_solaris_overdrive|null|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_solaris_overdrive|null|5	0	<muted>Weapons cost no flux to fire for 6 seconds after this ship's system activates, at most once every 60 seconds.</muted>
+integrable|tania_solaris_overdrive|null|6	0	<muted>50% increased weapon projectile speed for those seconds.</muted>
+integrable|tania_solaris_overdrive|null|7	0	<muted>25% increased weapon rate of fire for those seconds.</muted>
+integrable|tania_solaris_overdrive|FRIGATE|0	0	Weapons cost no flux to fire for <good>4</good> seconds after this ship's system activates, at most once every 60 seconds.
+integrable|tania_solaris_overdrive|FRIGATE|1	0	<good>50%</good> increased weapon projectile speed for those seconds.
+integrable|tania_solaris_overdrive|FRIGATE|2	0	<good>25%</good> increased weapon rate of fire for those seconds.
+integrable|tania_solaris_overdrive|FRIGATE|3	0	Click and hold to integrate.
+integrable|tania_solaris_overdrive|FRIGATE|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_solaris_overdrive|FRIGATE|5	0	<muted>Weapons cost no flux to fire for 6 seconds after this ship's system activates, at most once every 60 seconds.</muted>
+integrable|tania_solaris_overdrive|FRIGATE|6	0	<muted>50% increased weapon projectile speed for those seconds.</muted>
+integrable|tania_solaris_overdrive|FRIGATE|7	0	<muted>25% increased weapon rate of fire for those seconds.</muted>
+integrable|tania_solaris_overdrive|DESTROYER|0	0	Weapons cost no flux to fire for <good>4</good> seconds after this ship's system activates, at most once every 60 seconds.
+integrable|tania_solaris_overdrive|DESTROYER|1	0	<good>50%</good> increased weapon projectile speed for those seconds.
+integrable|tania_solaris_overdrive|DESTROYER|2	0	<good>25%</good> increased weapon rate of fire for those seconds.
+integrable|tania_solaris_overdrive|DESTROYER|3	0	Click and hold to integrate.
+integrable|tania_solaris_overdrive|DESTROYER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_solaris_overdrive|DESTROYER|5	0	<muted>Weapons cost no flux to fire for 6 seconds after this ship's system activates, at most once every 60 seconds.</muted>
+integrable|tania_solaris_overdrive|DESTROYER|6	0	<muted>50% increased weapon projectile speed for those seconds.</muted>
+integrable|tania_solaris_overdrive|DESTROYER|7	0	<muted>25% increased weapon rate of fire for those seconds.</muted>
+integrable|tania_solaris_overdrive|CRUISER|0	0	Weapons cost no flux to fire for <good>4</good> seconds after this ship's system activates, at most once every 60 seconds.
+integrable|tania_solaris_overdrive|CRUISER|1	0	<good>50%</good> increased weapon projectile speed for those seconds.
+integrable|tania_solaris_overdrive|CRUISER|2	0	<good>25%</good> increased weapon rate of fire for those seconds.
+integrable|tania_solaris_overdrive|CRUISER|3	0	Click and hold to integrate.
+integrable|tania_solaris_overdrive|CRUISER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_solaris_overdrive|CRUISER|5	0	<muted>Weapons cost no flux to fire for 6 seconds after this ship's system activates, at most once every 60 seconds.</muted>
+integrable|tania_solaris_overdrive|CRUISER|6	0	<muted>50% increased weapon projectile speed for those seconds.</muted>
+integrable|tania_solaris_overdrive|CRUISER|7	0	<muted>25% increased weapon rate of fire for those seconds.</muted>
+integrable|tania_solaris_overdrive|CAPITAL_SHIP|0	0	Weapons cost no flux to fire for <good>4</good> seconds after this ship's system activates, at most once every 60 seconds.
+integrable|tania_solaris_overdrive|CAPITAL_SHIP|1	0	<good>50%</good> increased weapon projectile speed for those seconds.
+integrable|tania_solaris_overdrive|CAPITAL_SHIP|2	0	<good>25%</good> increased weapon rate of fire for those seconds.
+integrable|tania_solaris_overdrive|CAPITAL_SHIP|3	0	Click and hold to integrate.
+integrable|tania_solaris_overdrive|CAPITAL_SHIP|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_solaris_overdrive|CAPITAL_SHIP|5	0	<muted>Weapons cost no flux to fire for 6 seconds after this ship's system activates, at most once every 60 seconds.</muted>
+integrable|tania_solaris_overdrive|CAPITAL_SHIP|6	0	<muted>50% increased weapon projectile speed for those seconds.</muted>
+integrable|tania_solaris_overdrive|CAPITAL_SHIP|7	0	<muted>25% increased weapon rate of fire for those seconds.</muted>
+integrated|tania_solaris_overdrive|null|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_solaris_overdrive|null|1	0	<builtIn>Weapons cost no flux to fire for </builtIn><good>6</good><builtIn> seconds after this ship's system activates, at most once every 60 seconds.</builtIn>
+integrated|tania_solaris_overdrive|null|2	0	<good>50%</good> increased weapon projectile speed for those seconds.
+integrated|tania_solaris_overdrive|null|3	0	<good>25%</good> increased weapon rate of fire for those seconds.
+integrated|tania_solaris_overdrive|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_solaris_overdrive|FRIGATE|1	0	<builtIn>Weapons cost no flux to fire for </builtIn><good>6</good><builtIn> seconds after this ship's system activates, at most once every 60 seconds.</builtIn>
+integrated|tania_solaris_overdrive|FRIGATE|2	0	<good>50%</good> increased weapon projectile speed for those seconds.
+integrated|tania_solaris_overdrive|FRIGATE|3	0	<good>25%</good> increased weapon rate of fire for those seconds.
+integrated|tania_solaris_overdrive|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_solaris_overdrive|DESTROYER|1	0	<builtIn>Weapons cost no flux to fire for </builtIn><good>6</good><builtIn> seconds after this ship's system activates, at most once every 60 seconds.</builtIn>
+integrated|tania_solaris_overdrive|DESTROYER|2	0	<good>50%</good> increased weapon projectile speed for those seconds.
+integrated|tania_solaris_overdrive|DESTROYER|3	0	<good>25%</good> increased weapon rate of fire for those seconds.
+integrated|tania_solaris_overdrive|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_solaris_overdrive|CRUISER|1	0	<builtIn>Weapons cost no flux to fire for </builtIn><good>6</good><builtIn> seconds after this ship's system activates, at most once every 60 seconds.</builtIn>
+integrated|tania_solaris_overdrive|CRUISER|2	0	<good>50%</good> increased weapon projectile speed for those seconds.
+integrated|tania_solaris_overdrive|CRUISER|3	0	<good>25%</good> increased weapon rate of fire for those seconds.
+integrated|tania_solaris_overdrive|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_solaris_overdrive|CAPITAL_SHIP|1	0	<builtIn>Weapons cost no flux to fire for </builtIn><good>6</good><builtIn> seconds after this ship's system activates, at most once every 60 seconds.</builtIn>
+integrated|tania_solaris_overdrive|CAPITAL_SHIP|2	0	<good>50%</good> increased weapon projectile speed for those seconds.
+integrated|tania_solaris_overdrive|CAPITAL_SHIP|3	0	<good>25%</good> increased weapon rate of fire for those seconds.
 flavour|tania_thermo_accelerator	0	The legendary NTS Endurance, an Aetos Class Destroyer, managed to nail down multiple enemy frigates at once, protecting its fleet from terrific flankers, thanks to its Thermo-Accelerator system. By understanding the tactics employed by its captain and the ship's overengineered ammo feeders, your crew is now able to draw power from hardpoint weapon mounts so its turret weapons fire cooler in a similar fashion.
 type|tania_thermo_accelerator|null|0	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
 type|tania_thermo_accelerator|FRIGATE|0	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
 type|tania_thermo_accelerator|DESTROYER|0	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
 type|tania_thermo_accelerator|CRUISER|0	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
 type|tania_thermo_accelerator|CAPITAL_SHIP|0	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
+integrable|tania_thermo_accelerator|null|0	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
+integrable|tania_thermo_accelerator|null|1	0	Click and hold to integrate.
+integrable|tania_thermo_accelerator|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_thermo_accelerator|null|3	0	<muted>Turret weapons have 60% reduced flux cost. Hardpoint weapons can't fire.</muted>
+integrable|tania_thermo_accelerator|FRIGATE|0	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
+integrable|tania_thermo_accelerator|FRIGATE|1	0	Click and hold to integrate.
+integrable|tania_thermo_accelerator|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_thermo_accelerator|FRIGATE|3	0	<muted>Turret weapons have 60% reduced flux cost. Hardpoint weapons can't fire.</muted>
+integrable|tania_thermo_accelerator|DESTROYER|0	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
+integrable|tania_thermo_accelerator|DESTROYER|1	0	Click and hold to integrate.
+integrable|tania_thermo_accelerator|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_thermo_accelerator|DESTROYER|3	0	<muted>Turret weapons have 60% reduced flux cost. Hardpoint weapons can't fire.</muted>
+integrable|tania_thermo_accelerator|CRUISER|0	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
+integrable|tania_thermo_accelerator|CRUISER|1	0	Click and hold to integrate.
+integrable|tania_thermo_accelerator|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_thermo_accelerator|CRUISER|3	0	<muted>Turret weapons have 60% reduced flux cost. Hardpoint weapons can't fire.</muted>
+integrable|tania_thermo_accelerator|CAPITAL_SHIP|0	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
+integrable|tania_thermo_accelerator|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|tania_thermo_accelerator|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|tania_thermo_accelerator|CAPITAL_SHIP|3	0	<muted>Turret weapons have 60% reduced flux cost. Hardpoint weapons can't fire.</muted>
+integrated|tania_thermo_accelerator|null|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_thermo_accelerator|null|1	0	<builtIn>Turret weapons have </builtIn><good>60%</good><builtIn> reduced flux cost. Hardpoint weapons can't fire.</builtIn>
+integrated|tania_thermo_accelerator|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_thermo_accelerator|FRIGATE|1	0	<builtIn>Turret weapons have </builtIn><good>60%</good><builtIn> reduced flux cost. Hardpoint weapons can't fire.</builtIn>
+integrated|tania_thermo_accelerator|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_thermo_accelerator|DESTROYER|1	0	<builtIn>Turret weapons have </builtIn><good>60%</good><builtIn> reduced flux cost. Hardpoint weapons can't fire.</builtIn>
+integrated|tania_thermo_accelerator|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_thermo_accelerator|CRUISER|1	0	<builtIn>Turret weapons have </builtIn><good>60%</good><builtIn> reduced flux cost. Hardpoint weapons can't fire.</builtIn>
+integrated|tania_thermo_accelerator|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|tania_thermo_accelerator|CAPITAL_SHIP|1	0	<builtIn>Turret weapons have </builtIn><good>60%</good><builtIn> reduced flux cost. Hardpoint weapons can't fire.</builtIn>
 type|tania_weapon_fire_rate|null|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|tania_weapon_fire_rate|FRIGATE|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|tania_weapon_fire_rate|DESTROYER|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
