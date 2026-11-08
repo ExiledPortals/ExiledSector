@@ -52,6 +52,12 @@ effect|ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD|12.5	0	Allied ships within 1000 
 effect|ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD|100.0	0	Allied ships within 1000 su have <good>100%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
 effect|ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD|-10.0	0	Allied ships within 1000 su have <good>-10%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
 effect|ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD|-12.5	0	Allied ships within 1000 su have <good>-12.5%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+effect|ALLY_TOP_SPEED_PERCENT_PER_DMOD|1.0	0	Allied ships within 1000 su have <good>1%</good> increased top speed for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+effect|ALLY_TOP_SPEED_PERCENT_PER_DMOD|10.0	0	Allied ships within 1000 su have <good>10%</good> increased top speed for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+effect|ALLY_TOP_SPEED_PERCENT_PER_DMOD|12.5	0	Allied ships within 1000 su have <good>12.5%</good> increased top speed for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+effect|ALLY_TOP_SPEED_PERCENT_PER_DMOD|100.0	0	Allied ships within 1000 su have <good>100%</good> increased top speed for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+effect|ALLY_TOP_SPEED_PERCENT_PER_DMOD|-10.0	0	Allied ships within 1000 su have <good>-10%</good> increased top speed for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+effect|ALLY_TOP_SPEED_PERCENT_PER_DMOD|-12.5	0	Allied ships within 1000 su have <good>-12.5%</good> increased top speed for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
 effect|AMMO_REGEN_WHILE_PHASED_PERCENT|1.0	0	<good>1%</good> increased ammo regeneration while phased.
 effect|AMMO_REGEN_WHILE_PHASED_PERCENT|10.0	0	<good>10%</good> increased ammo regeneration while phased.
 effect|AMMO_REGEN_WHILE_PHASED_PERCENT|12.5	0	<good>12.5%</good> increased ammo regeneration while phased.
@@ -478,6 +484,12 @@ effect|BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT|12.5	1	Every 3 seconds, each bom
 effect|BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT|100.0	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>100%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.
 effect|BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT|-10.0	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>-10%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.
 effect|BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT|-12.5	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>-12.5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.
+effect|BOMBER_PAYLOAD_DETONATION_SPARES_ALLIES|1.0	0	Payload detonations of bombers launched from this ship don't damage allied ships.
+effect|BOMBER_PAYLOAD_DETONATION_SPARES_ALLIES|10.0	0	Payload detonations of bombers launched from this ship don't damage allied ships.
+effect|BOMBER_PAYLOAD_DETONATION_SPARES_ALLIES|12.5	0	Payload detonations of bombers launched from this ship don't damage allied ships.
+effect|BOMBER_PAYLOAD_DETONATION_SPARES_ALLIES|100.0	0	Payload detonations of bombers launched from this ship don't damage allied ships.
+effect|BOMBER_PAYLOAD_DETONATION_SPARES_ALLIES|-10.0	0	Payload detonations of bombers launched from this ship don't damage allied ships.
+effect|BOMBER_PAYLOAD_DETONATION_SPARES_ALLIES|-12.5	0	Payload detonations of bombers launched from this ship don't damage allied ships.
 effect|BOMBER_ROLE_ACCELERATION_PERCENT|1.0	0	Bombers launched from this ship have <good>1%</good> increased acceleration.
 effect|BOMBER_ROLE_ACCELERATION_PERCENT|10.0	0	Bombers launched from this ship have <good>10%</good> increased acceleration.
 effect|BOMBER_ROLE_ACCELERATION_PERCENT|12.5	0	Bombers launched from this ship have <good>12.5%</good> increased acceleration.
@@ -826,6 +838,12 @@ effect|DEATH_ON_COLLISION|12.5	0	Touching another ship's hull, however slightly,
 effect|DEATH_ON_COLLISION|100.0	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
 effect|DEATH_ON_COLLISION|-10.0	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
 effect|DEATH_ON_COLLISION|-12.5	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
+effect|DEATH_ON_COLLISION_WITH_LARGE_ENEMY|1.0	0	Touching the hull of an enemy cruiser or capital ship, however slightly, is instantly fatal to this ship.
+effect|DEATH_ON_COLLISION_WITH_LARGE_ENEMY|10.0	0	Touching the hull of an enemy cruiser or capital ship, however slightly, is instantly fatal to this ship.
+effect|DEATH_ON_COLLISION_WITH_LARGE_ENEMY|12.5	0	Touching the hull of an enemy cruiser or capital ship, however slightly, is instantly fatal to this ship.
+effect|DEATH_ON_COLLISION_WITH_LARGE_ENEMY|100.0	0	Touching the hull of an enemy cruiser or capital ship, however slightly, is instantly fatal to this ship.
+effect|DEATH_ON_COLLISION_WITH_LARGE_ENEMY|-10.0	0	Touching the hull of an enemy cruiser or capital ship, however slightly, is instantly fatal to this ship.
+effect|DEATH_ON_COLLISION_WITH_LARGE_ENEMY|-12.5	0	Touching the hull of an enemy cruiser or capital ship, however slightly, is instantly fatal to this ship.
 effect|DECELERATION_FLAT|1.0	0	<good>+1</good> to deceleration.
 effect|DECELERATION_FLAT|10.0	0	<good>+10</good> to deceleration.
 effect|DECELERATION_FLAT|12.5	0	<good>+12.5</good> to deceleration.
@@ -1108,6 +1126,12 @@ effect|EXPLODE_ON_DEATH|12.5	0	When this ship is destroyed, it detonates violent
 effect|EXPLODE_ON_DEATH|100.0	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 100% of its maximum fuel capacity to nearby ships, tapering off with distance.
 effect|EXPLODE_ON_DEATH|-10.0	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to -10% of its maximum fuel capacity to nearby ships, tapering off with distance.
 effect|EXPLODE_ON_DEATH|-12.5	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to -12.5% of its maximum fuel capacity to nearby ships, tapering off with distance.
+effect|EXPLODE_ON_DEATH_AREA_PERCENT|1.0	0	<good>1%</good> increased area of this ship's death detonation. Allied ships are still not spared.
+effect|EXPLODE_ON_DEATH_AREA_PERCENT|10.0	0	<good>10%</good> increased area of this ship's death detonation. Allied ships are still not spared.
+effect|EXPLODE_ON_DEATH_AREA_PERCENT|12.5	0	<good>12.5%</good> increased area of this ship's death detonation. Allied ships are still not spared.
+effect|EXPLODE_ON_DEATH_AREA_PERCENT|100.0	0	<good>100%</good> increased area of this ship's death detonation. Allied ships are still not spared.
+effect|EXPLODE_ON_DEATH_AREA_PERCENT|-10.0	0	<good>-10%</good> increased area of this ship's death detonation. Allied ships are still not spared.
+effect|EXPLODE_ON_DEATH_AREA_PERCENT|-12.5	0	<good>-12.5%</good> increased area of this ship's death detonation. Allied ships are still not spared.
 effect|FIGHTER_ARMOR_PERCENT|1.0	0	Strikecraft launched from this ship have <good>1%</good> increased armor.
 effect|FIGHTER_ARMOR_PERCENT|10.0	0	Strikecraft launched from this ship have <good>10%</good> increased armor.
 effect|FIGHTER_ARMOR_PERCENT|12.5	0	Strikecraft launched from this ship have <good>12.5%</good> increased armor.
@@ -1642,6 +1666,12 @@ effect|HULL_DAMAGE_TAKEN_PERCENT_PER_LOW_TECH_AFFINITY|12.5	1	<good>12.5%</good>
 effect|HULL_DAMAGE_TAKEN_PERCENT_PER_LOW_TECH_AFFINITY|100.0	1	<good>100%</good> increased hull damage taken for every 10 Low Tech Affinity.
 effect|HULL_DAMAGE_TAKEN_PERCENT_PER_LOW_TECH_AFFINITY|-10.0	1	<bad>10%</bad> reduced hull damage taken for every 10 Low Tech Affinity.
 effect|HULL_DAMAGE_TAKEN_PERCENT_PER_LOW_TECH_AFFINITY|-12.5	1	<bad>12.5%</bad> reduced hull damage taken for every 10 Low Tech Affinity.
+effect|HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_PERCENT|1.0	0	<good>+1%</good> to the maximum reduced hull damage taken from crew lost.
+effect|HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_PERCENT|10.0	0	<good>+10%</good> to the maximum reduced hull damage taken from crew lost.
+effect|HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_PERCENT|12.5	0	<good>+12.5%</good> to the maximum reduced hull damage taken from crew lost.
+effect|HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_PERCENT|100.0	0	<good>+100%</good> to the maximum reduced hull damage taken from crew lost.
+effect|HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_PERCENT|-10.0	0	<good>+-10%</good> to the maximum reduced hull damage taken from crew lost.
+effect|HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_PERCENT|-12.5	0	<good>+-12.5%</good> to the maximum reduced hull damage taken from crew lost.
 effect|HULL_FLAT|1.0	0	<good>+1</good> to hull points.
 effect|HULL_FLAT|10.0	0	<good>+10</good> to hull points.
 effect|HULL_FLAT|12.5	0	<good>+12.5</good> to hull points.
@@ -3322,6 +3352,12 @@ effect|WEAPON_FLUX_COST_PERCENT|12.5	1	<good>12.5%</good> increased weapon flux 
 effect|WEAPON_FLUX_COST_PERCENT|100.0	1	<good>100%</good> increased weapon flux cost.
 effect|WEAPON_FLUX_COST_PERCENT|-10.0	1	<bad>10%</bad> reduced weapon flux cost.
 effect|WEAPON_FLUX_COST_PERCENT|-12.5	1	<bad>12.5%</bad> reduced weapon flux cost.
+effect|WEAPON_FLUX_COST_PERCENT_PER_DMOD|1.0	1	<good>1%</good> increased weapon flux cost for each d-mod, up to a maximum of 5 d-mods.
+effect|WEAPON_FLUX_COST_PERCENT_PER_DMOD|10.0	1	<good>10%</good> increased weapon flux cost for each d-mod, up to a maximum of 5 d-mods.
+effect|WEAPON_FLUX_COST_PERCENT_PER_DMOD|12.5	1	<good>12.5%</good> increased weapon flux cost for each d-mod, up to a maximum of 5 d-mods.
+effect|WEAPON_FLUX_COST_PERCENT_PER_DMOD|100.0	1	<good>100%</good> increased weapon flux cost for each d-mod, up to a maximum of 5 d-mods.
+effect|WEAPON_FLUX_COST_PERCENT_PER_DMOD|-10.0	1	<bad>10%</bad> reduced weapon flux cost for each d-mod, up to a maximum of 5 d-mods.
+effect|WEAPON_FLUX_COST_PERCENT_PER_DMOD|-12.5	1	<bad>12.5%</bad> reduced weapon flux cost for each d-mod, up to a maximum of 5 d-mods.
 effect|WEAPON_MALFUNCTION_PERCENT|1.0	1	<good>1%</good> increased weapon malfunction chance.
 effect|WEAPON_MALFUNCTION_PERCENT|10.0	1	<good>10%</good> increased weapon malfunction chance.
 effect|WEAPON_MALFUNCTION_PERCENT|12.5	1	<good>12.5%</good> increased weapon malfunction chance.
@@ -3394,6 +3430,12 @@ effect|WEAPON_RATE_OF_FIRE_PERCENT|12.5	0	<good>12.5%</good> increased weapon ra
 effect|WEAPON_RATE_OF_FIRE_PERCENT|100.0	0	<good>100%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
 effect|WEAPON_RATE_OF_FIRE_PERCENT|-10.0	0	<bad>10%</bad> reduced weapon rate of fire. Burst beams instead recharge faster between bursts.
 effect|WEAPON_RATE_OF_FIRE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced weapon rate of fire. Burst beams instead recharge faster between bursts.
+effect|WEAPON_RATE_OF_FIRE_PERCENT_PER_DMOD|1.0	0	<good>1%</good> increased weapon rate of fire for each d-mod, up to a maximum of 5 d-mods.
+effect|WEAPON_RATE_OF_FIRE_PERCENT_PER_DMOD|10.0	0	<good>10%</good> increased weapon rate of fire for each d-mod, up to a maximum of 5 d-mods.
+effect|WEAPON_RATE_OF_FIRE_PERCENT_PER_DMOD|12.5	0	<good>12.5%</good> increased weapon rate of fire for each d-mod, up to a maximum of 5 d-mods.
+effect|WEAPON_RATE_OF_FIRE_PERCENT_PER_DMOD|100.0	0	<good>100%</good> increased weapon rate of fire for each d-mod, up to a maximum of 5 d-mods.
+effect|WEAPON_RATE_OF_FIRE_PERCENT_PER_DMOD|-10.0	0	<bad>10%</bad> reduced weapon rate of fire for each d-mod, up to a maximum of 5 d-mods.
+effect|WEAPON_RATE_OF_FIRE_PERCENT_PER_DMOD|-12.5	0	<bad>12.5%</bad> reduced weapon rate of fire for each d-mod, up to a maximum of 5 d-mods.
 effect|WEAPON_RATE_OF_FIRE_PERCENT_PER_MIDLINE_AFFINITY|1.0	0	<good>1%</good> increased weapon rate of fire for every 10 Midline Affinity.
 effect|WEAPON_RATE_OF_FIRE_PERCENT_PER_MIDLINE_AFFINITY|10.0	0	<good>10%</good> increased weapon rate of fire for every 10 Midline Affinity.
 effect|WEAPON_RATE_OF_FIRE_PERCENT_PER_MIDLINE_AFFINITY|12.5	0	<good>12.5%</good> increased weapon rate of fire for every 10 Midline Affinity.
@@ -3980,6 +4022,51 @@ type|at_any_cost|CRUISER|0	0	Touching another ship's hull, however slightly, is 
 type|at_any_cost|CRUISER|1	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
 type|at_any_cost|CAPITAL_SHIP|0	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
 type|at_any_cost|CAPITAL_SHIP|1	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
+integrable|at_any_cost|null|0	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
+integrable|at_any_cost|null|1	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
+integrable|at_any_cost|null|2	0	Click and hold to integrate.
+integrable|at_any_cost|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|at_any_cost|null|4	0	<muted>Touching the hull of an enemy cruiser or capital ship, however slightly, is instantly fatal to this ship.</muted>
+integrable|at_any_cost|null|5	0	<muted>When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.</muted>
+integrable|at_any_cost|FRIGATE|0	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
+integrable|at_any_cost|FRIGATE|1	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
+integrable|at_any_cost|FRIGATE|2	0	Click and hold to integrate.
+integrable|at_any_cost|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|at_any_cost|FRIGATE|4	0	<muted>Touching the hull of an enemy cruiser or capital ship, however slightly, is instantly fatal to this ship.</muted>
+integrable|at_any_cost|FRIGATE|5	0	<muted>When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.</muted>
+integrable|at_any_cost|DESTROYER|0	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
+integrable|at_any_cost|DESTROYER|1	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
+integrable|at_any_cost|DESTROYER|2	0	Click and hold to integrate.
+integrable|at_any_cost|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|at_any_cost|DESTROYER|4	0	<muted>Touching the hull of an enemy cruiser or capital ship, however slightly, is instantly fatal to this ship.</muted>
+integrable|at_any_cost|DESTROYER|5	0	<muted>When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.</muted>
+integrable|at_any_cost|CRUISER|0	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
+integrable|at_any_cost|CRUISER|1	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
+integrable|at_any_cost|CRUISER|2	0	Click and hold to integrate.
+integrable|at_any_cost|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|at_any_cost|CRUISER|4	0	<muted>Touching the hull of an enemy cruiser or capital ship, however slightly, is instantly fatal to this ship.</muted>
+integrable|at_any_cost|CRUISER|5	0	<muted>When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.</muted>
+integrable|at_any_cost|CAPITAL_SHIP|0	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.
+integrable|at_any_cost|CAPITAL_SHIP|1	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
+integrable|at_any_cost|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|at_any_cost|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|at_any_cost|CAPITAL_SHIP|4	0	<muted>Touching the hull of an enemy cruiser or capital ship, however slightly, is instantly fatal to this ship.</muted>
+integrable|at_any_cost|CAPITAL_SHIP|5	0	<muted>When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.</muted>
+integrated|at_any_cost|null|0	0	<builtIn>Integrated</builtIn>
+integrated|at_any_cost|null|1	0	<builtIn>Touching the hull of an enemy cruiser or capital ship, however slightly, is instantly fatal to this ship.</builtIn>
+integrated|at_any_cost|null|2	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
+integrated|at_any_cost|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|at_any_cost|FRIGATE|1	0	<builtIn>Touching the hull of an enemy cruiser or capital ship, however slightly, is instantly fatal to this ship.</builtIn>
+integrated|at_any_cost|FRIGATE|2	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
+integrated|at_any_cost|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|at_any_cost|DESTROYER|1	0	<builtIn>Touching the hull of an enemy cruiser or capital ship, however slightly, is instantly fatal to this ship.</builtIn>
+integrated|at_any_cost|DESTROYER|2	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
+integrated|at_any_cost|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|at_any_cost|CRUISER|1	0	<builtIn>Touching the hull of an enemy cruiser or capital ship, however slightly, is instantly fatal to this ship.</builtIn>
+integrated|at_any_cost|CRUISER|2	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
+integrated|at_any_cost|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|at_any_cost|CAPITAL_SHIP|1	0	<builtIn>Touching the hull of an enemy cruiser or capital ship, however slightly, is instantly fatal to this ship.</builtIn>
+integrated|at_any_cost|CAPITAL_SHIP|2	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
 type|augmented_drive_field|null|0	0	<good>+1</good> to max burn level.
 type-detail|augmented_drive_field|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Stardust Engine Enhancements</hullmod>\n• <hullmod>Augmented Drive Field</hullmod>
 type|augmented_drive_field|FRIGATE|0	0	<good>+1</good> to max burn level.
@@ -9969,6 +10056,66 @@ type|knights_charge|CRUISER|2	0	These effects only last for the first 60 seconds
 type|knights_charge|CAPITAL_SHIP|0	0	<good>20%</good> increased maneuverability.
 type|knights_charge|CAPITAL_SHIP|1	0	<good>25%</good> increased top speed.
 type|knights_charge|CAPITAL_SHIP|2	0	These effects only last for the first 60 seconds after the ship is deployed.
+integrable|knights_charge|null|0	0	<good>20%</good> increased maneuverability.
+integrable|knights_charge|null|1	0	<good>25%</good> increased top speed.
+integrable|knights_charge|null|2	0	These effects only last for the first 60 seconds after the ship is deployed.
+integrable|knights_charge|null|3	0	Click and hold to integrate.
+integrable|knights_charge|null|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|knights_charge|null|5	0	<muted>20% increased maneuverability.</muted>
+integrable|knights_charge|null|6	0	<muted>35% increased top speed.</muted>
+integrable|knights_charge|null|7	0	<muted>These effects only last for the first 60 seconds after the ship is deployed.</muted>
+integrable|knights_charge|FRIGATE|0	0	<good>20%</good> increased maneuverability.
+integrable|knights_charge|FRIGATE|1	0	<good>25%</good> increased top speed.
+integrable|knights_charge|FRIGATE|2	0	These effects only last for the first 60 seconds after the ship is deployed.
+integrable|knights_charge|FRIGATE|3	0	Click and hold to integrate.
+integrable|knights_charge|FRIGATE|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|knights_charge|FRIGATE|5	0	<muted>20% increased maneuverability.</muted>
+integrable|knights_charge|FRIGATE|6	0	<muted>35% increased top speed.</muted>
+integrable|knights_charge|FRIGATE|7	0	<muted>These effects only last for the first 60 seconds after the ship is deployed.</muted>
+integrable|knights_charge|DESTROYER|0	0	<good>20%</good> increased maneuverability.
+integrable|knights_charge|DESTROYER|1	0	<good>25%</good> increased top speed.
+integrable|knights_charge|DESTROYER|2	0	These effects only last for the first 60 seconds after the ship is deployed.
+integrable|knights_charge|DESTROYER|3	0	Click and hold to integrate.
+integrable|knights_charge|DESTROYER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|knights_charge|DESTROYER|5	0	<muted>20% increased maneuverability.</muted>
+integrable|knights_charge|DESTROYER|6	0	<muted>35% increased top speed.</muted>
+integrable|knights_charge|DESTROYER|7	0	<muted>These effects only last for the first 60 seconds after the ship is deployed.</muted>
+integrable|knights_charge|CRUISER|0	0	<good>20%</good> increased maneuverability.
+integrable|knights_charge|CRUISER|1	0	<good>25%</good> increased top speed.
+integrable|knights_charge|CRUISER|2	0	These effects only last for the first 60 seconds after the ship is deployed.
+integrable|knights_charge|CRUISER|3	0	Click and hold to integrate.
+integrable|knights_charge|CRUISER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|knights_charge|CRUISER|5	0	<muted>20% increased maneuverability.</muted>
+integrable|knights_charge|CRUISER|6	0	<muted>35% increased top speed.</muted>
+integrable|knights_charge|CRUISER|7	0	<muted>These effects only last for the first 60 seconds after the ship is deployed.</muted>
+integrable|knights_charge|CAPITAL_SHIP|0	0	<good>20%</good> increased maneuverability.
+integrable|knights_charge|CAPITAL_SHIP|1	0	<good>25%</good> increased top speed.
+integrable|knights_charge|CAPITAL_SHIP|2	0	These effects only last for the first 60 seconds after the ship is deployed.
+integrable|knights_charge|CAPITAL_SHIP|3	0	Click and hold to integrate.
+integrable|knights_charge|CAPITAL_SHIP|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|knights_charge|CAPITAL_SHIP|5	0	<muted>20% increased maneuverability.</muted>
+integrable|knights_charge|CAPITAL_SHIP|6	0	<muted>35% increased top speed.</muted>
+integrable|knights_charge|CAPITAL_SHIP|7	0	<muted>These effects only last for the first 60 seconds after the ship is deployed.</muted>
+integrated|knights_charge|null|0	0	<builtIn>Integrated</builtIn>
+integrated|knights_charge|null|1	0	<good>20%</good> increased maneuverability.
+integrated|knights_charge|null|2	0	<good>35%</good><builtIn> increased top speed.</builtIn>
+integrated|knights_charge|null|3	0	These effects only last for the first 60 seconds after the ship is deployed.
+integrated|knights_charge|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|knights_charge|FRIGATE|1	0	<good>20%</good> increased maneuverability.
+integrated|knights_charge|FRIGATE|2	0	<good>35%</good><builtIn> increased top speed.</builtIn>
+integrated|knights_charge|FRIGATE|3	0	These effects only last for the first 60 seconds after the ship is deployed.
+integrated|knights_charge|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|knights_charge|DESTROYER|1	0	<good>20%</good> increased maneuverability.
+integrated|knights_charge|DESTROYER|2	0	<good>35%</good><builtIn> increased top speed.</builtIn>
+integrated|knights_charge|DESTROYER|3	0	These effects only last for the first 60 seconds after the ship is deployed.
+integrated|knights_charge|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|knights_charge|CRUISER|1	0	<good>20%</good> increased maneuverability.
+integrated|knights_charge|CRUISER|2	0	<good>35%</good><builtIn> increased top speed.</builtIn>
+integrated|knights_charge|CRUISER|3	0	These effects only last for the first 60 seconds after the ship is deployed.
+integrated|knights_charge|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|knights_charge|CAPITAL_SHIP|1	0	<good>20%</good> increased maneuverability.
+integrated|knights_charge|CAPITAL_SHIP|2	0	<good>35%</good><builtIn> increased top speed.</builtIn>
+integrated|knights_charge|CAPITAL_SHIP|3	0	These effects only last for the first 60 seconds after the ship is deployed.
 flavour|language_of_the_lost	0	The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code. The crew learns to strip that code out and fire it back.
 flavourAutomated|language_of_the_lost	0	The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code. The ship's core strips that code out and fires it back.
 type|language_of_the_lost|null|0	0	<good>+1</good> to ECM rating.
@@ -10326,6 +10473,46 @@ type|litany_of_the_fallen|FRIGATE|0	0	<good>1%</good> reduced hull damage taken 
 type|litany_of_the_fallen|DESTROYER|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
 type|litany_of_the_fallen|CRUISER|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
 type|litany_of_the_fallen|CAPITAL_SHIP|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+integrable|litany_of_the_fallen|null|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+integrable|litany_of_the_fallen|null|1	0	Click and hold to integrate.
+integrable|litany_of_the_fallen|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|litany_of_the_fallen|null|3	0	<muted>1% reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.</muted>
+integrable|litany_of_the_fallen|null|4	0	<muted>+10% to the maximum reduced hull damage taken from crew lost.</muted>
+integrable|litany_of_the_fallen|FRIGATE|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+integrable|litany_of_the_fallen|FRIGATE|1	0	Click and hold to integrate.
+integrable|litany_of_the_fallen|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|litany_of_the_fallen|FRIGATE|3	0	<muted>1% reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.</muted>
+integrable|litany_of_the_fallen|FRIGATE|4	0	<muted>+10% to the maximum reduced hull damage taken from crew lost.</muted>
+integrable|litany_of_the_fallen|DESTROYER|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+integrable|litany_of_the_fallen|DESTROYER|1	0	Click and hold to integrate.
+integrable|litany_of_the_fallen|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|litany_of_the_fallen|DESTROYER|3	0	<muted>1% reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.</muted>
+integrable|litany_of_the_fallen|DESTROYER|4	0	<muted>+10% to the maximum reduced hull damage taken from crew lost.</muted>
+integrable|litany_of_the_fallen|CRUISER|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+integrable|litany_of_the_fallen|CRUISER|1	0	Click and hold to integrate.
+integrable|litany_of_the_fallen|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|litany_of_the_fallen|CRUISER|3	0	<muted>1% reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.</muted>
+integrable|litany_of_the_fallen|CRUISER|4	0	<muted>+10% to the maximum reduced hull damage taken from crew lost.</muted>
+integrable|litany_of_the_fallen|CAPITAL_SHIP|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+integrable|litany_of_the_fallen|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|litany_of_the_fallen|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|litany_of_the_fallen|CAPITAL_SHIP|3	0	<muted>1% reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.</muted>
+integrable|litany_of_the_fallen|CAPITAL_SHIP|4	0	<muted>+10% to the maximum reduced hull damage taken from crew lost.</muted>
+integrated|litany_of_the_fallen|null|0	0	<builtIn>Integrated</builtIn>
+integrated|litany_of_the_fallen|null|1	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+integrated|litany_of_the_fallen|null|2	0	<good>+10%</good><builtIn> to the maximum reduced hull damage taken from crew lost.</builtIn>
+integrated|litany_of_the_fallen|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|litany_of_the_fallen|FRIGATE|1	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+integrated|litany_of_the_fallen|FRIGATE|2	0	<good>+10%</good><builtIn> to the maximum reduced hull damage taken from crew lost.</builtIn>
+integrated|litany_of_the_fallen|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|litany_of_the_fallen|DESTROYER|1	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+integrated|litany_of_the_fallen|DESTROYER|2	0	<good>+10%</good><builtIn> to the maximum reduced hull damage taken from crew lost.</builtIn>
+integrated|litany_of_the_fallen|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|litany_of_the_fallen|CRUISER|1	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+integrated|litany_of_the_fallen|CRUISER|2	0	<good>+10%</good><builtIn> to the maximum reduced hull damage taken from crew lost.</builtIn>
+integrated|litany_of_the_fallen|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|litany_of_the_fallen|CAPITAL_SHIP|1	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
+integrated|litany_of_the_fallen|CAPITAL_SHIP|2	0	<good>+10%</good><builtIn> to the maximum reduced hull damage taken from crew lost.</builtIn>
 type|live_munitions|null|0	0	Each Heartless stack has a <bad>15%</bad> chance to sacrifice a crew member for each missile fired.
 type|live_munitions|null|1	0	<good>3%</good> increased missile damage for each Heartless stack while the fleet has crew left to give.
 type|live_munitions|null|2	0	<good>3%</good> increased missile top speed for each Heartless stack while the fleet has crew left to give.
@@ -10411,6 +10598,46 @@ type|ludds_light|FRIGATE|0	0	When this ship is destroyed, it detonates violently
 type|ludds_light|DESTROYER|0	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
 type|ludds_light|CRUISER|0	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
 type|ludds_light|CAPITAL_SHIP|0	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
+integrable|ludds_light|null|0	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
+integrable|ludds_light|null|1	0	Click and hold to integrate.
+integrable|ludds_light|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ludds_light|null|3	0	<muted>When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.</muted>
+integrable|ludds_light|null|4	0	<muted>100% increased area of this ship's death detonation. Allied ships are still not spared.</muted>
+integrable|ludds_light|FRIGATE|0	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
+integrable|ludds_light|FRIGATE|1	0	Click and hold to integrate.
+integrable|ludds_light|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ludds_light|FRIGATE|3	0	<muted>When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.</muted>
+integrable|ludds_light|FRIGATE|4	0	<muted>100% increased area of this ship's death detonation. Allied ships are still not spared.</muted>
+integrable|ludds_light|DESTROYER|0	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
+integrable|ludds_light|DESTROYER|1	0	Click and hold to integrate.
+integrable|ludds_light|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ludds_light|DESTROYER|3	0	<muted>When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.</muted>
+integrable|ludds_light|DESTROYER|4	0	<muted>100% increased area of this ship's death detonation. Allied ships are still not spared.</muted>
+integrable|ludds_light|CRUISER|0	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
+integrable|ludds_light|CRUISER|1	0	Click and hold to integrate.
+integrable|ludds_light|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ludds_light|CRUISER|3	0	<muted>When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.</muted>
+integrable|ludds_light|CRUISER|4	0	<muted>100% increased area of this ship's death detonation. Allied ships are still not spared.</muted>
+integrable|ludds_light|CAPITAL_SHIP|0	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
+integrable|ludds_light|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|ludds_light|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|ludds_light|CAPITAL_SHIP|3	0	<muted>When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.</muted>
+integrable|ludds_light|CAPITAL_SHIP|4	0	<muted>100% increased area of this ship's death detonation. Allied ships are still not spared.</muted>
+integrated|ludds_light|null|0	0	<builtIn>Integrated</builtIn>
+integrated|ludds_light|null|1	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
+integrated|ludds_light|null|2	0	<good>100%</good><builtIn> increased area of this ship's death detonation. Allied ships are still not spared.</builtIn>
+integrated|ludds_light|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|ludds_light|FRIGATE|1	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
+integrated|ludds_light|FRIGATE|2	0	<good>100%</good><builtIn> increased area of this ship's death detonation. Allied ships are still not spared.</builtIn>
+integrated|ludds_light|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|ludds_light|DESTROYER|1	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
+integrated|ludds_light|DESTROYER|2	0	<good>100%</good><builtIn> increased area of this ship's death detonation. Allied ships are still not spared.</builtIn>
+integrated|ludds_light|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|ludds_light|CRUISER|1	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
+integrated|ludds_light|CRUISER|2	0	<good>100%</good><builtIn> increased area of this ship's death detonation. Allied ships are still not spared.</builtIn>
+integrated|ludds_light|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|ludds_light|CAPITAL_SHIP|1	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
+integrated|ludds_light|CAPITAL_SHIP|2	0	<good>100%</good><builtIn> increased area of this ship's death detonation. Allied ships are still not spared.</builtIn>
 flavour|machine_precision	0	A recovered gamma core, kept powered just long enough to be questioned, gives up the targeting routines Remnant drones use to lead a target.
 flavourAutomated|machine_precision	0	A recovered gamma core holds the targeting routines Remnant drones use to lead a target. The ship's core copies them across in a fraction of a second.
 type|machine_precision|null|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
@@ -10580,6 +10807,76 @@ type|martyrs_payload|CRUISER|2	1	Every 3 seconds, each bomber launched from this
 type|martyrs_payload|CAPITAL_SHIP|0	0	Bombers launched from this ship have <good>50%</good> increased top speed.
 type|martyrs_payload|CAPITAL_SHIP|1	0	Bombers launched from this ship have <good>50%</good> increased acceleration.
 type|martyrs_payload|CAPITAL_SHIP|2	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.
+integrable|martyrs_payload|null|0	0	Bombers launched from this ship have <good>50%</good> increased top speed.
+integrable|martyrs_payload|null|1	0	Bombers launched from this ship have <good>50%</good> increased acceleration.
+integrable|martyrs_payload|null|2	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.
+integrable|martyrs_payload|null|3	0	Click and hold to integrate.
+integrable|martyrs_payload|null|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|martyrs_payload|null|5	0	<muted>Bombers launched from this ship have 50% increased top speed.</muted>
+integrable|martyrs_payload|null|6	0	<muted>Bombers launched from this ship have 50% increased acceleration.</muted>
+integrable|martyrs_payload|null|7	0	<muted>Every 3 seconds, each bomber launched from this ship that still carries any payload has a 5% chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.</muted>
+integrable|martyrs_payload|null|8	0	<muted>Payload detonations of bombers launched from this ship don't damage allied ships.</muted>
+integrable|martyrs_payload|FRIGATE|0	0	Bombers launched from this ship have <good>50%</good> increased top speed.
+integrable|martyrs_payload|FRIGATE|1	0	Bombers launched from this ship have <good>50%</good> increased acceleration.
+integrable|martyrs_payload|FRIGATE|2	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.
+integrable|martyrs_payload|FRIGATE|3	0	Click and hold to integrate.
+integrable|martyrs_payload|FRIGATE|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|martyrs_payload|FRIGATE|5	0	<muted>Bombers launched from this ship have 50% increased top speed.</muted>
+integrable|martyrs_payload|FRIGATE|6	0	<muted>Bombers launched from this ship have 50% increased acceleration.</muted>
+integrable|martyrs_payload|FRIGATE|7	0	<muted>Every 3 seconds, each bomber launched from this ship that still carries any payload has a 5% chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.</muted>
+integrable|martyrs_payload|FRIGATE|8	0	<muted>Payload detonations of bombers launched from this ship don't damage allied ships.</muted>
+integrable|martyrs_payload|DESTROYER|0	0	Bombers launched from this ship have <good>50%</good> increased top speed.
+integrable|martyrs_payload|DESTROYER|1	0	Bombers launched from this ship have <good>50%</good> increased acceleration.
+integrable|martyrs_payload|DESTROYER|2	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.
+integrable|martyrs_payload|DESTROYER|3	0	Click and hold to integrate.
+integrable|martyrs_payload|DESTROYER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|martyrs_payload|DESTROYER|5	0	<muted>Bombers launched from this ship have 50% increased top speed.</muted>
+integrable|martyrs_payload|DESTROYER|6	0	<muted>Bombers launched from this ship have 50% increased acceleration.</muted>
+integrable|martyrs_payload|DESTROYER|7	0	<muted>Every 3 seconds, each bomber launched from this ship that still carries any payload has a 5% chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.</muted>
+integrable|martyrs_payload|DESTROYER|8	0	<muted>Payload detonations of bombers launched from this ship don't damage allied ships.</muted>
+integrable|martyrs_payload|CRUISER|0	0	Bombers launched from this ship have <good>50%</good> increased top speed.
+integrable|martyrs_payload|CRUISER|1	0	Bombers launched from this ship have <good>50%</good> increased acceleration.
+integrable|martyrs_payload|CRUISER|2	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.
+integrable|martyrs_payload|CRUISER|3	0	Click and hold to integrate.
+integrable|martyrs_payload|CRUISER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|martyrs_payload|CRUISER|5	0	<muted>Bombers launched from this ship have 50% increased top speed.</muted>
+integrable|martyrs_payload|CRUISER|6	0	<muted>Bombers launched from this ship have 50% increased acceleration.</muted>
+integrable|martyrs_payload|CRUISER|7	0	<muted>Every 3 seconds, each bomber launched from this ship that still carries any payload has a 5% chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.</muted>
+integrable|martyrs_payload|CRUISER|8	0	<muted>Payload detonations of bombers launched from this ship don't damage allied ships.</muted>
+integrable|martyrs_payload|CAPITAL_SHIP|0	0	Bombers launched from this ship have <good>50%</good> increased top speed.
+integrable|martyrs_payload|CAPITAL_SHIP|1	0	Bombers launched from this ship have <good>50%</good> increased acceleration.
+integrable|martyrs_payload|CAPITAL_SHIP|2	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.
+integrable|martyrs_payload|CAPITAL_SHIP|3	0	Click and hold to integrate.
+integrable|martyrs_payload|CAPITAL_SHIP|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|martyrs_payload|CAPITAL_SHIP|5	0	<muted>Bombers launched from this ship have 50% increased top speed.</muted>
+integrable|martyrs_payload|CAPITAL_SHIP|6	0	<muted>Bombers launched from this ship have 50% increased acceleration.</muted>
+integrable|martyrs_payload|CAPITAL_SHIP|7	0	<muted>Every 3 seconds, each bomber launched from this ship that still carries any payload has a 5% chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.</muted>
+integrable|martyrs_payload|CAPITAL_SHIP|8	0	<muted>Payload detonations of bombers launched from this ship don't damage allied ships.</muted>
+integrated|martyrs_payload|null|0	0	<builtIn>Integrated</builtIn>
+integrated|martyrs_payload|null|1	0	Bombers launched from this ship have <good>50%</good> increased top speed.
+integrated|martyrs_payload|null|2	0	Bombers launched from this ship have <good>50%</good> increased acceleration.
+integrated|martyrs_payload|null|3	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.
+integrated|martyrs_payload|null|4	0	<builtIn>Payload detonations of bombers launched from this ship don't damage allied ships.</builtIn>
+integrated|martyrs_payload|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|martyrs_payload|FRIGATE|1	0	Bombers launched from this ship have <good>50%</good> increased top speed.
+integrated|martyrs_payload|FRIGATE|2	0	Bombers launched from this ship have <good>50%</good> increased acceleration.
+integrated|martyrs_payload|FRIGATE|3	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.
+integrated|martyrs_payload|FRIGATE|4	0	<builtIn>Payload detonations of bombers launched from this ship don't damage allied ships.</builtIn>
+integrated|martyrs_payload|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|martyrs_payload|DESTROYER|1	0	Bombers launched from this ship have <good>50%</good> increased top speed.
+integrated|martyrs_payload|DESTROYER|2	0	Bombers launched from this ship have <good>50%</good> increased acceleration.
+integrated|martyrs_payload|DESTROYER|3	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.
+integrated|martyrs_payload|DESTROYER|4	0	<builtIn>Payload detonations of bombers launched from this ship don't damage allied ships.</builtIn>
+integrated|martyrs_payload|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|martyrs_payload|CRUISER|1	0	Bombers launched from this ship have <good>50%</good> increased top speed.
+integrated|martyrs_payload|CRUISER|2	0	Bombers launched from this ship have <good>50%</good> increased acceleration.
+integrated|martyrs_payload|CRUISER|3	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.
+integrated|martyrs_payload|CRUISER|4	0	<builtIn>Payload detonations of bombers launched from this ship don't damage allied ships.</builtIn>
+integrated|martyrs_payload|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|martyrs_payload|CAPITAL_SHIP|1	0	Bombers launched from this ship have <good>50%</good> increased top speed.
+integrated|martyrs_payload|CAPITAL_SHIP|2	0	Bombers launched from this ship have <good>50%</good> increased acceleration.
+integrated|martyrs_payload|CAPITAL_SHIP|3	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.
+integrated|martyrs_payload|CAPITAL_SHIP|4	0	<builtIn>Payload detonations of bombers launched from this ship don't damage allied ships.</builtIn>
 type|midline_affinity|null|0	0	<good>+5</good> to Midline Affinity.
 type|midline_affinity|FRIGATE|0	0	<good>+5</good> to Midline Affinity.
 type|midline_affinity|DESTROYER|0	0	<good>+5</good> to Midline Affinity.
@@ -11461,6 +11758,36 @@ type|pathers_prow|FRIGATE|0	0	<good>50%</good> more collision damage dealt to en
 type|pathers_prow|DESTROYER|0	0	<good>50%</good> more collision damage dealt to enemy ships and <good>50%</good> less collision damage taken.
 type|pathers_prow|CRUISER|0	0	<good>50%</good> more collision damage dealt to enemy ships and <good>50%</good> less collision damage taken.
 type|pathers_prow|CAPITAL_SHIP|0	0	<good>50%</good> more collision damage dealt to enemy ships and <good>50%</good> less collision damage taken.
+integrable|pathers_prow|null|0	0	<good>50%</good> more collision damage dealt to enemy ships and <good>50%</good> less collision damage taken.
+integrable|pathers_prow|null|1	0	Click and hold to integrate.
+integrable|pathers_prow|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|pathers_prow|null|3	0	<muted>75% more collision damage dealt to enemy ships and 75% less collision damage taken.</muted>
+integrable|pathers_prow|FRIGATE|0	0	<good>50%</good> more collision damage dealt to enemy ships and <good>50%</good> less collision damage taken.
+integrable|pathers_prow|FRIGATE|1	0	Click and hold to integrate.
+integrable|pathers_prow|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|pathers_prow|FRIGATE|3	0	<muted>75% more collision damage dealt to enemy ships and 75% less collision damage taken.</muted>
+integrable|pathers_prow|DESTROYER|0	0	<good>50%</good> more collision damage dealt to enemy ships and <good>50%</good> less collision damage taken.
+integrable|pathers_prow|DESTROYER|1	0	Click and hold to integrate.
+integrable|pathers_prow|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|pathers_prow|DESTROYER|3	0	<muted>75% more collision damage dealt to enemy ships and 75% less collision damage taken.</muted>
+integrable|pathers_prow|CRUISER|0	0	<good>50%</good> more collision damage dealt to enemy ships and <good>50%</good> less collision damage taken.
+integrable|pathers_prow|CRUISER|1	0	Click and hold to integrate.
+integrable|pathers_prow|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|pathers_prow|CRUISER|3	0	<muted>75% more collision damage dealt to enemy ships and 75% less collision damage taken.</muted>
+integrable|pathers_prow|CAPITAL_SHIP|0	0	<good>50%</good> more collision damage dealt to enemy ships and <good>50%</good> less collision damage taken.
+integrable|pathers_prow|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|pathers_prow|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|pathers_prow|CAPITAL_SHIP|3	0	<muted>75% more collision damage dealt to enemy ships and 75% less collision damage taken.</muted>
+integrated|pathers_prow|null|0	0	<builtIn>Integrated</builtIn>
+integrated|pathers_prow|null|1	0	<good>75%</good><builtIn> more collision damage dealt to enemy ships and </builtIn><good>75%</good><builtIn> less collision damage taken.</builtIn>
+integrated|pathers_prow|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|pathers_prow|FRIGATE|1	0	<good>75%</good><builtIn> more collision damage dealt to enemy ships and </builtIn><good>75%</good><builtIn> less collision damage taken.</builtIn>
+integrated|pathers_prow|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|pathers_prow|DESTROYER|1	0	<good>75%</good><builtIn> more collision damage dealt to enemy ships and </builtIn><good>75%</good><builtIn> less collision damage taken.</builtIn>
+integrated|pathers_prow|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|pathers_prow|CRUISER|1	0	<good>75%</good><builtIn> more collision damage dealt to enemy ships and </builtIn><good>75%</good><builtIn> less collision damage taken.</builtIn>
+integrated|pathers_prow|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|pathers_prow|CAPITAL_SHIP|1	0	<good>75%</good><builtIn> more collision damage dealt to enemy ships and </builtIn><good>75%</good><builtIn> less collision damage taken.</builtIn>
 type|peak_cr_duration|null|0	0	<good>25%</good> increased peak performance time.
 type|peak_cr_duration|FRIGATE|0	0	<good>25%</good> increased peak performance time.
 type|peak_cr_duration|DESTROYER|0	0	<good>25%</good> increased peak performance time.
@@ -11473,6 +11800,56 @@ type|perseverance_through_faith|FRIGATE|0	0	<good>2%</good> more weapon damage f
 type|perseverance_through_faith|DESTROYER|0	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
 type|perseverance_through_faith|CRUISER|0	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
 type|perseverance_through_faith|CAPITAL_SHIP|0	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
+integrable|perseverance_through_faith|null|0	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
+integrable|perseverance_through_faith|null|1	0	Click and hold to integrate.
+integrable|perseverance_through_faith|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|perseverance_through_faith|null|3	0	<muted>2% more weapon damage for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrable|perseverance_through_faith|null|4	0	<muted>2% increased weapon rate of fire for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrable|perseverance_through_faith|null|5	0	<muted>2% reduced weapon flux cost for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrable|perseverance_through_faith|FRIGATE|0	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
+integrable|perseverance_through_faith|FRIGATE|1	0	Click and hold to integrate.
+integrable|perseverance_through_faith|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|perseverance_through_faith|FRIGATE|3	0	<muted>2% more weapon damage for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrable|perseverance_through_faith|FRIGATE|4	0	<muted>2% increased weapon rate of fire for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrable|perseverance_through_faith|FRIGATE|5	0	<muted>2% reduced weapon flux cost for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrable|perseverance_through_faith|DESTROYER|0	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
+integrable|perseverance_through_faith|DESTROYER|1	0	Click and hold to integrate.
+integrable|perseverance_through_faith|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|perseverance_through_faith|DESTROYER|3	0	<muted>2% more weapon damage for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrable|perseverance_through_faith|DESTROYER|4	0	<muted>2% increased weapon rate of fire for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrable|perseverance_through_faith|DESTROYER|5	0	<muted>2% reduced weapon flux cost for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrable|perseverance_through_faith|CRUISER|0	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
+integrable|perseverance_through_faith|CRUISER|1	0	Click and hold to integrate.
+integrable|perseverance_through_faith|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|perseverance_through_faith|CRUISER|3	0	<muted>2% more weapon damage for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrable|perseverance_through_faith|CRUISER|4	0	<muted>2% increased weapon rate of fire for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrable|perseverance_through_faith|CRUISER|5	0	<muted>2% reduced weapon flux cost for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrable|perseverance_through_faith|CAPITAL_SHIP|0	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
+integrable|perseverance_through_faith|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|perseverance_through_faith|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|perseverance_through_faith|CAPITAL_SHIP|3	0	<muted>2% more weapon damage for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrable|perseverance_through_faith|CAPITAL_SHIP|4	0	<muted>2% increased weapon rate of fire for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrable|perseverance_through_faith|CAPITAL_SHIP|5	0	<muted>2% reduced weapon flux cost for each d-mod, up to a maximum of 5 d-mods.</muted>
+integrated|perseverance_through_faith|null|0	0	<builtIn>Integrated</builtIn>
+integrated|perseverance_through_faith|null|1	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
+integrated|perseverance_through_faith|null|2	0	<good>2%</good><builtIn> increased weapon rate of fire for each d-mod, up to a maximum of 5 d-mods.</builtIn>
+integrated|perseverance_through_faith|null|3	1	<bad>2%</bad><builtIn> reduced weapon flux cost for each d-mod, up to a maximum of 5 d-mods.</builtIn>
+integrated|perseverance_through_faith|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|perseverance_through_faith|FRIGATE|1	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
+integrated|perseverance_through_faith|FRIGATE|2	0	<good>2%</good><builtIn> increased weapon rate of fire for each d-mod, up to a maximum of 5 d-mods.</builtIn>
+integrated|perseverance_through_faith|FRIGATE|3	1	<bad>2%</bad><builtIn> reduced weapon flux cost for each d-mod, up to a maximum of 5 d-mods.</builtIn>
+integrated|perseverance_through_faith|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|perseverance_through_faith|DESTROYER|1	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
+integrated|perseverance_through_faith|DESTROYER|2	0	<good>2%</good><builtIn> increased weapon rate of fire for each d-mod, up to a maximum of 5 d-mods.</builtIn>
+integrated|perseverance_through_faith|DESTROYER|3	1	<bad>2%</bad><builtIn> reduced weapon flux cost for each d-mod, up to a maximum of 5 d-mods.</builtIn>
+integrated|perseverance_through_faith|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|perseverance_through_faith|CRUISER|1	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
+integrated|perseverance_through_faith|CRUISER|2	0	<good>2%</good><builtIn> increased weapon rate of fire for each d-mod, up to a maximum of 5 d-mods.</builtIn>
+integrated|perseverance_through_faith|CRUISER|3	1	<bad>2%</bad><builtIn> reduced weapon flux cost for each d-mod, up to a maximum of 5 d-mods.</builtIn>
+integrated|perseverance_through_faith|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|perseverance_through_faith|CAPITAL_SHIP|1	0	<good>2%</good> more weapon damage for each d-mod, up to a maximum of 5 d-mods.
+integrated|perseverance_through_faith|CAPITAL_SHIP|2	0	<good>2%</good><builtIn> increased weapon rate of fire for each d-mod, up to a maximum of 5 d-mods.</builtIn>
+integrated|perseverance_through_faith|CAPITAL_SHIP|3	1	<bad>2%</bad><builtIn> reduced weapon flux cost for each d-mod, up to a maximum of 5 d-mods.</builtIn>
 flavour|phantom_wake	0	A phase coil dropped into p-space too sharply leaves an echo of the hull behind. Enemy gunners rarely tell the difference.
 type|phantom_wake|null|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
 type|phantom_wake|FRIGATE|0	0	When this ship enters phase, it leaves an afterimage that draws enemy fire for <good>3</good> seconds.
@@ -12437,6 +12814,51 @@ type|rite_of_mortification|CRUISER|0	0	Overloads are replaced by hull damage equ
 type|rite_of_mortification|CRUISER|1	0	Replacing an overload dissipates <good>50%</good> of hard flux.
 type|rite_of_mortification|CAPITAL_SHIP|0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
 type|rite_of_mortification|CAPITAL_SHIP|1	0	Replacing an overload dissipates <good>50%</good> of hard flux.
+integrable|rite_of_mortification|null|0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
+integrable|rite_of_mortification|null|1	0	Replacing an overload dissipates <good>50%</good> of hard flux.
+integrable|rite_of_mortification|null|2	0	Click and hold to integrate.
+integrable|rite_of_mortification|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|rite_of_mortification|null|4	0	<muted>Overloads are replaced by hull damage equal to 5% of maximum hull.</muted>
+integrable|rite_of_mortification|null|5	0	<muted>Replacing an overload dissipates 50% of hard flux.</muted>
+integrable|rite_of_mortification|FRIGATE|0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
+integrable|rite_of_mortification|FRIGATE|1	0	Replacing an overload dissipates <good>50%</good> of hard flux.
+integrable|rite_of_mortification|FRIGATE|2	0	Click and hold to integrate.
+integrable|rite_of_mortification|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|rite_of_mortification|FRIGATE|4	0	<muted>Overloads are replaced by hull damage equal to 5% of maximum hull.</muted>
+integrable|rite_of_mortification|FRIGATE|5	0	<muted>Replacing an overload dissipates 50% of hard flux.</muted>
+integrable|rite_of_mortification|DESTROYER|0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
+integrable|rite_of_mortification|DESTROYER|1	0	Replacing an overload dissipates <good>50%</good> of hard flux.
+integrable|rite_of_mortification|DESTROYER|2	0	Click and hold to integrate.
+integrable|rite_of_mortification|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|rite_of_mortification|DESTROYER|4	0	<muted>Overloads are replaced by hull damage equal to 5% of maximum hull.</muted>
+integrable|rite_of_mortification|DESTROYER|5	0	<muted>Replacing an overload dissipates 50% of hard flux.</muted>
+integrable|rite_of_mortification|CRUISER|0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
+integrable|rite_of_mortification|CRUISER|1	0	Replacing an overload dissipates <good>50%</good> of hard flux.
+integrable|rite_of_mortification|CRUISER|2	0	Click and hold to integrate.
+integrable|rite_of_mortification|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|rite_of_mortification|CRUISER|4	0	<muted>Overloads are replaced by hull damage equal to 5% of maximum hull.</muted>
+integrable|rite_of_mortification|CRUISER|5	0	<muted>Replacing an overload dissipates 50% of hard flux.</muted>
+integrable|rite_of_mortification|CAPITAL_SHIP|0	0	Overloads are replaced by hull damage equal to <bad>10%</bad> of maximum hull.
+integrable|rite_of_mortification|CAPITAL_SHIP|1	0	Replacing an overload dissipates <good>50%</good> of hard flux.
+integrable|rite_of_mortification|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|rite_of_mortification|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|rite_of_mortification|CAPITAL_SHIP|4	0	<muted>Overloads are replaced by hull damage equal to 5% of maximum hull.</muted>
+integrable|rite_of_mortification|CAPITAL_SHIP|5	0	<muted>Replacing an overload dissipates 50% of hard flux.</muted>
+integrated|rite_of_mortification|null|0	0	<builtIn>Integrated</builtIn>
+integrated|rite_of_mortification|null|1	0	<builtIn>Overloads are replaced by hull damage equal to </builtIn><bad>5%</bad><builtIn> of maximum hull.</builtIn>
+integrated|rite_of_mortification|null|2	0	Replacing an overload dissipates <good>50%</good> of hard flux.
+integrated|rite_of_mortification|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|rite_of_mortification|FRIGATE|1	0	<builtIn>Overloads are replaced by hull damage equal to </builtIn><bad>5%</bad><builtIn> of maximum hull.</builtIn>
+integrated|rite_of_mortification|FRIGATE|2	0	Replacing an overload dissipates <good>50%</good> of hard flux.
+integrated|rite_of_mortification|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|rite_of_mortification|DESTROYER|1	0	<builtIn>Overloads are replaced by hull damage equal to </builtIn><bad>5%</bad><builtIn> of maximum hull.</builtIn>
+integrated|rite_of_mortification|DESTROYER|2	0	Replacing an overload dissipates <good>50%</good> of hard flux.
+integrated|rite_of_mortification|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|rite_of_mortification|CRUISER|1	0	<builtIn>Overloads are replaced by hull damage equal to </builtIn><bad>5%</bad><builtIn> of maximum hull.</builtIn>
+integrated|rite_of_mortification|CRUISER|2	0	Replacing an overload dissipates <good>50%</good> of hard flux.
+integrated|rite_of_mortification|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|rite_of_mortification|CAPITAL_SHIP|1	0	<builtIn>Overloads are replaced by hull damage equal to </builtIn><bad>5%</bad><builtIn> of maximum hull.</builtIn>
+integrated|rite_of_mortification|CAPITAL_SHIP|2	0	Replacing an overload dissipates <good>50%</good> of hard flux.
 type|root_high_tech|null|0	0	<good>+10</good> to High Tech Affinity.
 type|root_high_tech|FRIGATE|0	0	<good>+10</good> to High Tech Affinity.
 type|root_high_tech|DESTROYER|0	0	<good>+10</good> to High Tech Affinity.
@@ -12659,6 +13081,46 @@ type|sanctified_scars|FRIGATE|0	0	Allied ships within 1000 su have <good>1%</goo
 type|sanctified_scars|DESTROYER|0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
 type|sanctified_scars|CRUISER|0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
 type|sanctified_scars|CAPITAL_SHIP|0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+integrable|sanctified_scars|null|0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+integrable|sanctified_scars|null|1	0	Click and hold to integrate.
+integrable|sanctified_scars|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|sanctified_scars|null|3	0	<muted>Allied ships within 1000 su have 1% reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.</muted>
+integrable|sanctified_scars|null|4	0	<muted>Allied ships within 1000 su have 2% increased top speed for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.</muted>
+integrable|sanctified_scars|FRIGATE|0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+integrable|sanctified_scars|FRIGATE|1	0	Click and hold to integrate.
+integrable|sanctified_scars|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|sanctified_scars|FRIGATE|3	0	<muted>Allied ships within 1000 su have 1% reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.</muted>
+integrable|sanctified_scars|FRIGATE|4	0	<muted>Allied ships within 1000 su have 2% increased top speed for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.</muted>
+integrable|sanctified_scars|DESTROYER|0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+integrable|sanctified_scars|DESTROYER|1	0	Click and hold to integrate.
+integrable|sanctified_scars|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|sanctified_scars|DESTROYER|3	0	<muted>Allied ships within 1000 su have 1% reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.</muted>
+integrable|sanctified_scars|DESTROYER|4	0	<muted>Allied ships within 1000 su have 2% increased top speed for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.</muted>
+integrable|sanctified_scars|CRUISER|0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+integrable|sanctified_scars|CRUISER|1	0	Click and hold to integrate.
+integrable|sanctified_scars|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|sanctified_scars|CRUISER|3	0	<muted>Allied ships within 1000 su have 1% reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.</muted>
+integrable|sanctified_scars|CRUISER|4	0	<muted>Allied ships within 1000 su have 2% increased top speed for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.</muted>
+integrable|sanctified_scars|CAPITAL_SHIP|0	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+integrable|sanctified_scars|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|sanctified_scars|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|sanctified_scars|CAPITAL_SHIP|3	0	<muted>Allied ships within 1000 su have 1% reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.</muted>
+integrable|sanctified_scars|CAPITAL_SHIP|4	0	<muted>Allied ships within 1000 su have 2% increased top speed for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.</muted>
+integrated|sanctified_scars|null|0	0	<builtIn>Integrated</builtIn>
+integrated|sanctified_scars|null|1	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+integrated|sanctified_scars|null|2	0	<builtIn>Allied ships within 1000 su have </builtIn><good>2%</good><builtIn> increased top speed for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.</builtIn>
+integrated|sanctified_scars|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|sanctified_scars|FRIGATE|1	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+integrated|sanctified_scars|FRIGATE|2	0	<builtIn>Allied ships within 1000 su have </builtIn><good>2%</good><builtIn> increased top speed for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.</builtIn>
+integrated|sanctified_scars|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|sanctified_scars|DESTROYER|1	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+integrated|sanctified_scars|DESTROYER|2	0	<builtIn>Allied ships within 1000 su have </builtIn><good>2%</good><builtIn> increased top speed for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.</builtIn>
+integrated|sanctified_scars|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|sanctified_scars|CRUISER|1	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+integrated|sanctified_scars|CRUISER|2	0	<builtIn>Allied ships within 1000 su have </builtIn><good>2%</good><builtIn> increased top speed for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.</builtIn>
+integrated|sanctified_scars|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|sanctified_scars|CAPITAL_SHIP|1	0	Allied ships within 1000 su have <good>1%</good> reduced armor damage taken for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.
+integrated|sanctified_scars|CAPITAL_SHIP|2	0	<builtIn>Allied ships within 1000 su have </builtIn><good>2%</good><builtIn> increased top speed for each d-mod on this ship, up to a maximum of 5 d-mods. Only the strongest buff of this effect applies at any one time.</builtIn>
 flavour|secondary_fabricator	0	A second Threat fabricator wired in beside the first replaces fragments as fast as the fighting destroys them.
 itemCost|secondary_fabricator	0	Costs 1 fragment_fabricator to allocate, returned when unallocated.
 type|secondary_fabricator|null|0	0	<good>30%</good> increased fragment replacement rate.
