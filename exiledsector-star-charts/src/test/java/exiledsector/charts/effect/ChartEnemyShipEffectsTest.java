@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -17,9 +18,18 @@ import exiledsector.charts.ChartIds;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
 import exiledsector.charts.loot.StarChartLootSource;
+import exiledsector.effects.GrantedNodeOrigin;
+import exiledsector.effects.GrantedNodes;
+import exiledsector.effects.ResolvedTree;
 import exiledsector.effects.ShipEffectContext;
 import exiledsector.effects.SkillTreeHullMod;
+import exiledsector.skills.EffectContribution;
+import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +43,8 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -194,6 +206,51 @@ class ChartEnemyShipEffectsTest {
         ChartEnemyDamageListener listener = ChartEnemyShipEffects.grantedTo(member).damageListener();
         verify(ship).addListener(listener);
         verify(fighter).addListener(listener);
+    }
+
+    @Test
+    void aGrantedShipsModulesGetItsShipRulesAndDamageListener() {
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(variant.getSource()).thenReturn(VariantSource.REFIT);
+        FleetMemberAPI member = memberWith(variant);
+        ChartEnemyShipEffects.grant(fleetWith(member), enemyRules());
+        ShipEffectContext parentContext = new ShipEffectContext(new ShipSkillData(), member, variant, HullSize.CAPITAL_SHIP);
+        MutableShipStatsAPI moduleStats = mock(MutableShipStatsAPI.class);
+        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
+        MutableStat captureRate = new MutableStat(1f);
+        when(moduleStats.getDynamic()).thenReturn(dynamic);
+        when(dynamic.getStat(Stats.SHIP_OBJECTIVE_CAP_RATE_MULT)).thenReturn(captureRate);
+        ShipAPI module = mock(ShipAPI.class);
+
+        ChartEnemyShipEffects.INSTANCE.applyToModule(parentContext, moduleStats);
+        ChartEnemyShipEffects.INSTANCE.afterModuleCreation(parentContext, module);
+
+        assertEquals(1.5f, captureRate.getModifiedValue(), TOLERANCE);
+        verify(module).addListener(ChartEnemyShipEffects.grantedTo(member).damageListener());
+    }
+
+    @Test
+    void nodesGrantedWithoutATreeReachTheModulesAsPermanentTotals() {
+        ShipVariantAPI moduleVariant = mock(ShipVariantAPI.class);
+        when(moduleVariant.getHullSize()).thenReturn(HullSize.CRUISER);
+        SkillTypeEffect fluxCapacity = new SkillTypeEffect(SkillEffect.byName("FLUX_CAPACITY_PERCENT"), 10f);
+        ResolvedTree parentTree = mock(ResolvedTree.class);
+        when(parentTree.contributions()).thenReturn(List.of(
+                EffectContribution.scaledPermanent(new GrantedNodeOrigin("hullbreacher_rounds_1"), "granted_", List.of(fluxCapacity)),
+                EffectContribution.scaledPermanent("tree node", "tree_", List.of(fluxCapacity))));
+        List<EffectContribution> moduleNodes = List.of(EffectContribution.scaledPermanent("granted", "granted_", List.of(fluxCapacity, fluxCapacity)),
+                new EffectContribution("burst", "burst_", List.of(fluxCapacity), 30f, null, true, true));
+        ShipEffectContext parentContext = new ShipEffectContext(new ShipSkillData(), memberWith(mock(ShipVariantAPI.class)), null, HullSize.CAPITAL_SHIP);
+
+        Map<SkillEffect, Float> moduleTotals;
+        try (MockedStatic<GrantedNodes> grantedNodes = Mockito.mockStatic(GrantedNodes.class)) {
+            grantedNodes.when(() -> GrantedNodes.withoutTree(eq(List.of("hullbreacher_rounds_1")),
+                    argThat(context -> context.variant() == moduleVariant), eq(ChartEnemyShipEffects.NODE_MOD_ID_PREFIX))).thenReturn(moduleNodes);
+            moduleTotals = ChartEnemyShipEffects.INSTANCE.moduleContributions(parentContext, parentTree, moduleVariant);
+        }
+
+        assertEquals(Map.of(SkillEffect.byName("FLUX_CAPACITY_PERCENT"), 20f), moduleTotals);
+        assertTrue(ChartEnemyShipEffects.INSTANCE.moduleContributions(parentContext, mock(ResolvedTree.class), moduleVariant).isEmpty());
     }
 
     @Test

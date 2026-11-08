@@ -82,6 +82,8 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
             }
         }
         if (isOpCostPass(stats)) return;
+        ModuleLinks.sync(member, variant);
+        ModuleParents.register(context, resolvedTree);
         sources.forEach(source -> source.afterStatsApplied(context, resolvedTree));
     }
 
@@ -112,8 +114,11 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     }
 
     private static ResolvedTree resolve(ShipSkillData shipData, FleetMemberAPI member, ShipVariantAPI variant) {
-        return shipData == null ? null : ResolvedTree.of(new ShipEffectContext(shipData, member, variant, variant.getHullSize()),
-                StatBaseline.of(variant), DiminishingReturns.current());
+        return resolve(new ShipEffectContext(shipData, member, variant, variant.getHullSize()));
+    }
+
+    static ResolvedTree resolve(ShipEffectContext context) {
+        return context.shipData() == null ? null : ResolvedTree.of(context, StatBaseline.of(context.variant()), DiminishingReturns.current());
     }
 
     static List<WeaponSlotConversion.Rule> slotRules(ResolvedTree resolvedTree) {

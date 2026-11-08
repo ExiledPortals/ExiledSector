@@ -50,12 +50,14 @@ conditional effects) makes the loader log an error and ignore the duration.
 
 ### Module effects
 
-The tree applies only to the parent ship. On the parent's first combat frame `ModuleTreeShare` gives each
-living child module a share of the parent's shareable tree effects (`ModuleShareSetting`, 50% by default, 100% for stations), plus
-the `MODULE_*` effects at full strength.
-`ModuleBoost` applies both, then rescales the module's maximum hull, armor cells, shield arc (up to 360) and
-each weapon's maximum ammo once; cells above their maximum are clamped first so armor carried from an earlier
-engagement isn't raised again.
+The tree applies only to the parent ship. `SkillTreeHullMod` links each module variant to its parent through
+`ModuleLinks` (the hidden perma hull mod `exiledSector_module` and an `exiledSector_moduleOf_<parentMemberId>` tag), and
+`ModuleHullMod` applies the domains' `ShipEffectSource.moduleContributions` before the module is built, so its hull, armor,
+shield arc and ammo come out boosted. `ModuleParents` finds the parent from the tag: a registry in the combat engine's custom
+data in combat, the stand-in member's fleet data in refit module tabs. The skill tree gives a share of the parent's shareable
+effects (`ModuleTreeShare`, `ModuleShareSetting`: 50% by default, 100% for stations) plus the `MODULE_*` effects at full
+strength; Star Charts give a chart enemy's modules its granted rules and nodes.
+
 A ship docked into another's module slot (Arma Armatura's core units) keeps its own tree through the ship tag its variant carries:
 `ShipRecords.resolve` lends it to any member outside its fleet's list, refit module tabs included, it gets no share of the
 parent's tree, and `SocketCustody.addDockedShips` counts it as owned so its items stay socketed.
