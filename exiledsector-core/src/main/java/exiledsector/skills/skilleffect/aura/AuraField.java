@@ -85,12 +85,18 @@ abstract class AuraField<S extends AuraField.Source> extends BaseEveryFrameComba
 
     static <S extends Source> Map<ShipAPI, Float> strongestPerShip(List<S> sources, ShipsNear shipsNear, float range,
                                                                    SourceStrength<S> strength, BiPredicate<ShipAPI, ShipAPI> covers) {
+        return strongestPerShip(sources, shipsNear, source -> range, strength, covers);
+    }
+
+    static <S extends Source> Map<ShipAPI, Float> strongestPerShip(List<S> sources, ShipsNear shipsNear, SourceStrength<S> rangeOfSource,
+                                                                   SourceStrength<S> strength, BiPredicate<ShipAPI, ShipAPI> covers) {
         Map<ShipAPI, Float> strongest = new IdentityHashMap<>();
         for (S source : sources) {
             float sourceStrength = strength.of(source);
             if (sourceStrength <= 0f) {
                 continue;
             }
+            float range = rangeOfSource.of(source);
             ShipAPI sourceShip = source.source();
             for (ShipAPI covered : shipsNear.find(sourceShip, range, other -> covers.test(sourceShip, other)
                     && CombatQueries.withinRadius(other.getLocation(), sourceShip.getLocation(), range))) {

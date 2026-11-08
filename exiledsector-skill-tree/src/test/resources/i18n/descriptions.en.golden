@@ -166,6 +166,12 @@ effect|BALLISTIC_SLOTS_HYBRID|12.5	0	Ballistic weapon mounts become hybrid mount
 effect|BALLISTIC_SLOTS_HYBRID|100.0	0	Ballistic weapon mounts become hybrid mounts.
 effect|BALLISTIC_SLOTS_HYBRID|-10.0	0	Ballistic weapon mounts become hybrid mounts.
 effect|BALLISTIC_SLOTS_HYBRID|-12.5	0	Ballistic weapon mounts become hybrid mounts.
+effect|BALLISTIC_WEAPON_ADDITIONAL_PIERCES_FLAT|1.0	0	Pierced ballistic shots can pierce <good>1</good> additional time.
+effect|BALLISTIC_WEAPON_ADDITIONAL_PIERCES_FLAT|10.0	0	Pierced ballistic shots can pierce <good>10</good> additional times.
+effect|BALLISTIC_WEAPON_ADDITIONAL_PIERCES_FLAT|12.5	0	Pierced ballistic shots can pierce <good>12.5</good> additional times.
+effect|BALLISTIC_WEAPON_ADDITIONAL_PIERCES_FLAT|100.0	0	Pierced ballistic shots can pierce <good>100</good> additional times.
+effect|BALLISTIC_WEAPON_ADDITIONAL_PIERCES_FLAT|-10.0	0	Pierced ballistic shots can pierce <good>-10</good> additional times.
+effect|BALLISTIC_WEAPON_ADDITIONAL_PIERCES_FLAT|-12.5	0	Pierced ballistic shots can pierce <good>-12.5</good> additional times.
 effect|BALLISTIC_WEAPON_AMMO_FLAT|1.0	0	<good>+1</good> to ballistic weapon ammo capacity.
 effect|BALLISTIC_WEAPON_AMMO_FLAT|10.0	0	<good>+10</good> to ballistic weapon ammo capacity.
 effect|BALLISTIC_WEAPON_AMMO_FLAT|12.5	0	<good>+12.5</good> to ballistic weapon ammo capacity.
@@ -244,12 +250,18 @@ effect|BALLISTIC_WEAPON_LARGE_OP_COST_FLAT|12.5	1	<good>+12.5</good> to ordnance
 effect|BALLISTIC_WEAPON_LARGE_OP_COST_FLAT|100.0	1	<good>+100</good> to ordnance point cost of large ballistic weapons.
 effect|BALLISTIC_WEAPON_LARGE_OP_COST_FLAT|-10.0	1	<bad>-10</bad> to ordnance point cost of large ballistic weapons.
 effect|BALLISTIC_WEAPON_LARGE_OP_COST_FLAT|-12.5	1	<bad>-12.5</bad> to ordnance point cost of large ballistic weapons.
-effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|1.0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>1%</good> chance to pierce. A pierced shot cannot pierce again.
-effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|10.0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>10%</good> chance to pierce. A pierced shot cannot pierce again.
-effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|12.5	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>12.5%</good> chance to pierce. A pierced shot cannot pierce again.
-effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|100.0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>100%</good> chance to pierce. A pierced shot cannot pierce again.
-effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|-10.0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>-10%</good> chance to pierce. A pierced shot cannot pierce again.
-effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|-12.5	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>-12.5%</good> chance to pierce. A pierced shot cannot pierce again.
+effect|BALLISTIC_WEAPON_MEDIUM_OP_COST_FLAT|1.0	1	<good>+1</good> to ordnance point cost of medium ballistic weapons.
+effect|BALLISTIC_WEAPON_MEDIUM_OP_COST_FLAT|10.0	1	<good>+10</good> to ordnance point cost of medium ballistic weapons.
+effect|BALLISTIC_WEAPON_MEDIUM_OP_COST_FLAT|12.5	1	<good>+12.5</good> to ordnance point cost of medium ballistic weapons.
+effect|BALLISTIC_WEAPON_MEDIUM_OP_COST_FLAT|100.0	1	<good>+100</good> to ordnance point cost of medium ballistic weapons.
+effect|BALLISTIC_WEAPON_MEDIUM_OP_COST_FLAT|-10.0	1	<bad>-10</bad> to ordnance point cost of medium ballistic weapons.
+effect|BALLISTIC_WEAPON_MEDIUM_OP_COST_FLAT|-12.5	1	<bad>-12.5</bad> to ordnance point cost of medium ballistic weapons.
+effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|1.0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>1%</good> chance to pierce.
+effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|10.0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>10%</good> chance to pierce.
+effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|12.5	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>12.5%</good> chance to pierce.
+effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|100.0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>100%</good> chance to pierce.
+effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|-10.0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>-10%</good> chance to pierce.
+effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|-12.5	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>-12.5%</good> chance to pierce.
 effect|BALLISTIC_WEAPON_PROJECTILE_SPEED_MULT|1.0	0	<good>1%</good> more ballistic weapon projectile speed.
 effect|BALLISTIC_WEAPON_PROJECTILE_SPEED_MULT|10.0	0	<good>10%</good> more ballistic weapon projectile speed.
 effect|BALLISTIC_WEAPON_PROJECTILE_SPEED_MULT|12.5	0	<good>12.5%</good> more ballistic weapon projectile speed.
@@ -1678,6 +1690,12 @@ effect|MAX_COMBAT_READINESS_PERCENT|12.5	0	<good>12.5%</good> increased maximum 
 effect|MAX_COMBAT_READINESS_PERCENT|100.0	0	<good>100%</good> increased maximum combat readiness.
 effect|MAX_COMBAT_READINESS_PERCENT|-10.0	0	<bad>10%</bad> reduced maximum combat readiness.
 effect|MAX_COMBAT_READINESS_PERCENT|-12.5	0	<bad>12.5%</bad> reduced maximum combat readiness.
+effect|MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|1.0	0	Medium ballistic weapon hits on an enemy ship's armor or hull have a <good>1%</good> chance to disable the weapon or engine nearest the impact.
+effect|MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|10.0	0	Medium ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
+effect|MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|12.5	0	Medium ballistic weapon hits on an enemy ship's armor or hull have a <good>12.5%</good> chance to disable the weapon or engine nearest the impact.
+effect|MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|100.0	0	Medium ballistic weapon hits on an enemy ship's armor or hull have a <good>100%</good> chance to disable the weapon or engine nearest the impact.
+effect|MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|-10.0	0	Medium ballistic weapon hits on an enemy ship's armor or hull have a <good>-10%</good> chance to disable the weapon or engine nearest the impact.
+effect|MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT|-12.5	0	Medium ballistic weapon hits on an enemy ship's armor or hull have a <good>-12.5%</good> chance to disable the weapon or engine nearest the impact.
 effect|MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT|1.0	0	<good>+1</good> to the base range of weapons in medium energy slots.
 effect|MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT|10.0	0	<good>+10</good> to the base range of weapons in medium energy slots.
 effect|MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT|12.5	0	<good>+12.5</good> to the base range of weapons in medium energy slots.
@@ -1756,6 +1774,12 @@ effect|MISSILE_KILL_FLAK_DAMAGE_FLAT|12.5	0	Enemy missiles destroyed by this shi
 effect|MISSILE_KILL_FLAK_DAMAGE_FLAT|100.0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
 effect|MISSILE_KILL_FLAK_DAMAGE_FLAT|-10.0	0	Enemy missiles destroyed by this ship burst for <good>-10</good> fragmentation damage to other enemy missiles and fighters within 100 su.
 effect|MISSILE_KILL_FLAK_DAMAGE_FLAT|-12.5	0	Enemy missiles destroyed by this ship burst for <good>-12.5</good> fragmentation damage to other enemy missiles and fighters within 100 su.
+effect|MISSILE_KILL_FLAK_RADIUS_FLAT|1.0	0	<good>+1</good> to flak burst radius.
+effect|MISSILE_KILL_FLAK_RADIUS_FLAT|10.0	0	<good>+10</good> to flak burst radius.
+effect|MISSILE_KILL_FLAK_RADIUS_FLAT|12.5	0	<good>+12.5</good> to flak burst radius.
+effect|MISSILE_KILL_FLAK_RADIUS_FLAT|100.0	0	<good>+100</good> to flak burst radius.
+effect|MISSILE_KILL_FLAK_RADIUS_FLAT|-10.0	0	<good>+-10</good> to flak burst radius.
+effect|MISSILE_KILL_FLAK_RADIUS_FLAT|-12.5	0	<good>+-12.5</good> to flak burst radius.
 effect|MISSILE_RELOAD_PERCENT_PER_MINUTE|1.0	0	Missile weapons that cannot regenerate ammo reload <good>1%</good> of their base ammo every minute in combat.
 effect|MISSILE_RELOAD_PERCENT_PER_MINUTE|10.0	0	Missile weapons that cannot regenerate ammo reload <good>10%</good> of their base ammo every minute in combat.
 effect|MISSILE_RELOAD_PERCENT_PER_MINUTE|12.5	0	Missile weapons that cannot regenerate ammo reload <good>12.5%</good> of their base ammo every minute in combat.
@@ -2656,6 +2680,12 @@ effect|SMALLER_ALLY_DAMAGE_TAKEN_MULT|12.5	0	Allied ships of a smaller hull size
 effect|SMALLER_ALLY_DAMAGE_TAKEN_MULT|100.0	0	Allied ships of a smaller hull size within 800 su take <good>100%</good> less damage. Only the strongest buff of this effect applies at any one time.
 effect|SMALLER_ALLY_DAMAGE_TAKEN_MULT|-10.0	0	Allied ships of a smaller hull size within 800 su take <good>-10%</good> less damage. Only the strongest buff of this effect applies at any one time.
 effect|SMALLER_ALLY_DAMAGE_TAKEN_MULT|-12.5	0	Allied ships of a smaller hull size within 800 su take <good>-12.5%</good> less damage. Only the strongest buff of this effect applies at any one time.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_RANGE_FLAT|1.0	0	<good>+1</good> to the range of the damage reduction for smaller allied ships.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_RANGE_FLAT|10.0	0	<good>+10</good> to the range of the damage reduction for smaller allied ships.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_RANGE_FLAT|12.5	0	<good>+12.5</good> to the range of the damage reduction for smaller allied ships.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_RANGE_FLAT|100.0	0	<good>+100</good> to the range of the damage reduction for smaller allied ships.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_RANGE_FLAT|-10.0	0	<good>+-10</good> to the range of the damage reduction for smaller allied ships.
+effect|SMALLER_ALLY_DAMAGE_TAKEN_RANGE_FLAT|-12.5	0	<good>+-12.5</good> to the range of the damage reduction for smaller allied ships.
 effect|SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP|1.0	0	All damage from weapons in small energy mounts is converted to EMP damage.
 effect|SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP|10.0	0	All damage from weapons in small energy mounts is converted to EMP damage.
 effect|SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP|12.5	0	All damage from weapons in small energy mounts is converted to EMP damage.
@@ -3885,6 +3915,46 @@ type|auxiliary_screen|CRUISER|0	0	Allied ships of a smaller hull size within 800
 type-detail|auxiliary_screen|CRUISER|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
 type|auxiliary_screen|CAPITAL_SHIP|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
 type-detail|auxiliary_screen|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
+integrable|auxiliary_screen|null|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
+integrable|auxiliary_screen|null|1	0	Click and hold to integrate.
+integrable|auxiliary_screen|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|auxiliary_screen|null|3	0	<muted>Allied ships of a smaller hull size within 800 su take 10% less damage. Only the strongest buff of this effect applies at any one time.</muted>
+integrable|auxiliary_screen|null|4	0	<muted>+400 to the range of the damage reduction for smaller allied ships.</muted>
+integrable|auxiliary_screen|FRIGATE|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
+integrable|auxiliary_screen|FRIGATE|1	0	Click and hold to integrate.
+integrable|auxiliary_screen|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|auxiliary_screen|FRIGATE|3	0	<muted>Allied ships of a smaller hull size within 800 su take 10% less damage. Only the strongest buff of this effect applies at any one time.</muted>
+integrable|auxiliary_screen|FRIGATE|4	0	<muted>+400 to the range of the damage reduction for smaller allied ships.</muted>
+integrable|auxiliary_screen|DESTROYER|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
+integrable|auxiliary_screen|DESTROYER|1	0	Click and hold to integrate.
+integrable|auxiliary_screen|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|auxiliary_screen|DESTROYER|3	0	<muted>Allied ships of a smaller hull size within 800 su take 10% less damage. Only the strongest buff of this effect applies at any one time.</muted>
+integrable|auxiliary_screen|DESTROYER|4	0	<muted>+400 to the range of the damage reduction for smaller allied ships.</muted>
+integrable|auxiliary_screen|CRUISER|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
+integrable|auxiliary_screen|CRUISER|1	0	Click and hold to integrate.
+integrable|auxiliary_screen|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|auxiliary_screen|CRUISER|3	0	<muted>Allied ships of a smaller hull size within 800 su take 10% less damage. Only the strongest buff of this effect applies at any one time.</muted>
+integrable|auxiliary_screen|CRUISER|4	0	<muted>+400 to the range of the damage reduction for smaller allied ships.</muted>
+integrable|auxiliary_screen|CAPITAL_SHIP|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
+integrable|auxiliary_screen|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|auxiliary_screen|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|auxiliary_screen|CAPITAL_SHIP|3	0	<muted>Allied ships of a smaller hull size within 800 su take 10% less damage. Only the strongest buff of this effect applies at any one time.</muted>
+integrable|auxiliary_screen|CAPITAL_SHIP|4	0	<muted>+400 to the range of the damage reduction for smaller allied ships.</muted>
+integrated|auxiliary_screen|null|0	0	<builtIn>Integrated</builtIn>
+integrated|auxiliary_screen|null|1	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
+integrated|auxiliary_screen|null|2	0	<good>+400</good><builtIn> to the range of the damage reduction for smaller allied ships.</builtIn>
+integrated|auxiliary_screen|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|auxiliary_screen|FRIGATE|1	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
+integrated|auxiliary_screen|FRIGATE|2	0	<good>+400</good><builtIn> to the range of the damage reduction for smaller allied ships.</builtIn>
+integrated|auxiliary_screen|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|auxiliary_screen|DESTROYER|1	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
+integrated|auxiliary_screen|DESTROYER|2	0	<good>+400</good><builtIn> to the range of the damage reduction for smaller allied ships.</builtIn>
+integrated|auxiliary_screen|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|auxiliary_screen|CRUISER|1	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
+integrated|auxiliary_screen|CRUISER|2	0	<good>+400</good><builtIn> to the range of the damage reduction for smaller allied ships.</builtIn>
+integrated|auxiliary_screen|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|auxiliary_screen|CAPITAL_SHIP|1	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
+integrated|auxiliary_screen|CAPITAL_SHIP|2	0	<good>+400</good><builtIn> to the range of the damage reduction for smaller allied ships.</builtIn>
 type|auxiliary_thrusters|null|0	0	<good>50%</good> increased maneuverability.
 type-detail|auxiliary_thrusters|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Auxiliary Thrusters</hullmod>
 type|auxiliary_thrusters|FRIGATE|0	0	<good>50%</good> increased maneuverability.
@@ -4222,6 +4292,46 @@ type|concussion_shells|FRIGATE|0	0	Large ballistic weapon hits on an enemy ship'
 type|concussion_shells|DESTROYER|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
 type|concussion_shells|CRUISER|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
 type|concussion_shells|CAPITAL_SHIP|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
+integrable|concussion_shells|null|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
+integrable|concussion_shells|null|1	0	Click and hold to integrate.
+integrable|concussion_shells|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|concussion_shells|null|3	0	<muted>Large ballistic weapon hits on an enemy ship's armor or hull have a 10% chance to disable the weapon or engine nearest the impact.</muted>
+integrable|concussion_shells|null|4	0	<muted>Medium ballistic weapon hits on an enemy ship's armor or hull have a 10% chance to disable the weapon or engine nearest the impact.</muted>
+integrable|concussion_shells|FRIGATE|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
+integrable|concussion_shells|FRIGATE|1	0	Click and hold to integrate.
+integrable|concussion_shells|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|concussion_shells|FRIGATE|3	0	<muted>Large ballistic weapon hits on an enemy ship's armor or hull have a 10% chance to disable the weapon or engine nearest the impact.</muted>
+integrable|concussion_shells|FRIGATE|4	0	<muted>Medium ballistic weapon hits on an enemy ship's armor or hull have a 10% chance to disable the weapon or engine nearest the impact.</muted>
+integrable|concussion_shells|DESTROYER|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
+integrable|concussion_shells|DESTROYER|1	0	Click and hold to integrate.
+integrable|concussion_shells|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|concussion_shells|DESTROYER|3	0	<muted>Large ballistic weapon hits on an enemy ship's armor or hull have a 10% chance to disable the weapon or engine nearest the impact.</muted>
+integrable|concussion_shells|DESTROYER|4	0	<muted>Medium ballistic weapon hits on an enemy ship's armor or hull have a 10% chance to disable the weapon or engine nearest the impact.</muted>
+integrable|concussion_shells|CRUISER|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
+integrable|concussion_shells|CRUISER|1	0	Click and hold to integrate.
+integrable|concussion_shells|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|concussion_shells|CRUISER|3	0	<muted>Large ballistic weapon hits on an enemy ship's armor or hull have a 10% chance to disable the weapon or engine nearest the impact.</muted>
+integrable|concussion_shells|CRUISER|4	0	<muted>Medium ballistic weapon hits on an enemy ship's armor or hull have a 10% chance to disable the weapon or engine nearest the impact.</muted>
+integrable|concussion_shells|CAPITAL_SHIP|0	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
+integrable|concussion_shells|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|concussion_shells|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|concussion_shells|CAPITAL_SHIP|3	0	<muted>Large ballistic weapon hits on an enemy ship's armor or hull have a 10% chance to disable the weapon or engine nearest the impact.</muted>
+integrable|concussion_shells|CAPITAL_SHIP|4	0	<muted>Medium ballistic weapon hits on an enemy ship's armor or hull have a 10% chance to disable the weapon or engine nearest the impact.</muted>
+integrated|concussion_shells|null|0	0	<builtIn>Integrated</builtIn>
+integrated|concussion_shells|null|1	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
+integrated|concussion_shells|null|2	0	<builtIn>Medium ballistic weapon hits on an enemy ship's armor or hull have a </builtIn><good>10%</good><builtIn> chance to disable the weapon or engine nearest the impact.</builtIn>
+integrated|concussion_shells|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|concussion_shells|FRIGATE|1	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
+integrated|concussion_shells|FRIGATE|2	0	<builtIn>Medium ballistic weapon hits on an enemy ship's armor or hull have a </builtIn><good>10%</good><builtIn> chance to disable the weapon or engine nearest the impact.</builtIn>
+integrated|concussion_shells|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|concussion_shells|DESTROYER|1	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
+integrated|concussion_shells|DESTROYER|2	0	<builtIn>Medium ballistic weapon hits on an enemy ship's armor or hull have a </builtIn><good>10%</good><builtIn> chance to disable the weapon or engine nearest the impact.</builtIn>
+integrated|concussion_shells|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|concussion_shells|CRUISER|1	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
+integrated|concussion_shells|CRUISER|2	0	<builtIn>Medium ballistic weapon hits on an enemy ship's armor or hull have a </builtIn><good>10%</good><builtIn> chance to disable the weapon or engine nearest the impact.</builtIn>
+integrated|concussion_shells|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|concussion_shells|CAPITAL_SHIP|1	0	Large ballistic weapon hits on an enemy ship's armor or hull have a <good>10%</good> chance to disable the weapon or engine nearest the impact.
+integrated|concussion_shells|CAPITAL_SHIP|2	0	<builtIn>Medium ballistic weapon hits on an enemy ship's armor or hull have a </builtIn><good>10%</good><builtIn> chance to disable the weapon or engine nearest the impact.</builtIn>
 flavour|converted_fighter_bay	0	The built-in bays are stripped of launch rails and chassis forges, leaving a great deal of oddly shaped cargo space.
 type|converted_fighter_bay|null|0	0	Removes all of this ship's strikecraft bays.
 type|converted_fighter_bay|null|1	1	<bad>20%</bad> reduced minimum crew required per strikecraft bay, up to 80% in total.
@@ -4863,6 +4973,61 @@ type|domain_pattern_laminate|CRUISER|0	1	<bad>8%</bad> reduced kinetic damage ta
 type|domain_pattern_laminate|CRUISER|1	1	<bad>8%</bad> reduced high-explosive damage taken.
 type|domain_pattern_laminate|CAPITAL_SHIP|0	1	<bad>8%</bad> reduced kinetic damage taken.
 type|domain_pattern_laminate|CAPITAL_SHIP|1	1	<bad>8%</bad> reduced high-explosive damage taken.
+integrable|domain_pattern_laminate|null|0	1	<bad>8%</bad> reduced kinetic damage taken.
+integrable|domain_pattern_laminate|null|1	1	<bad>8%</bad> reduced high-explosive damage taken.
+integrable|domain_pattern_laminate|null|2	0	Click and hold to integrate.
+integrable|domain_pattern_laminate|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|domain_pattern_laminate|null|4	0	<muted>8% reduced kinetic damage taken.</muted>
+integrable|domain_pattern_laminate|null|5	0	<muted>8% reduced high-explosive damage taken.</muted>
+integrable|domain_pattern_laminate|null|6	0	<muted>8% reduced energy damage taken.</muted>
+integrable|domain_pattern_laminate|FRIGATE|0	1	<bad>8%</bad> reduced kinetic damage taken.
+integrable|domain_pattern_laminate|FRIGATE|1	1	<bad>8%</bad> reduced high-explosive damage taken.
+integrable|domain_pattern_laminate|FRIGATE|2	0	Click and hold to integrate.
+integrable|domain_pattern_laminate|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|domain_pattern_laminate|FRIGATE|4	0	<muted>8% reduced kinetic damage taken.</muted>
+integrable|domain_pattern_laminate|FRIGATE|5	0	<muted>8% reduced high-explosive damage taken.</muted>
+integrable|domain_pattern_laminate|FRIGATE|6	0	<muted>8% reduced energy damage taken.</muted>
+integrable|domain_pattern_laminate|DESTROYER|0	1	<bad>8%</bad> reduced kinetic damage taken.
+integrable|domain_pattern_laminate|DESTROYER|1	1	<bad>8%</bad> reduced high-explosive damage taken.
+integrable|domain_pattern_laminate|DESTROYER|2	0	Click and hold to integrate.
+integrable|domain_pattern_laminate|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|domain_pattern_laminate|DESTROYER|4	0	<muted>8% reduced kinetic damage taken.</muted>
+integrable|domain_pattern_laminate|DESTROYER|5	0	<muted>8% reduced high-explosive damage taken.</muted>
+integrable|domain_pattern_laminate|DESTROYER|6	0	<muted>8% reduced energy damage taken.</muted>
+integrable|domain_pattern_laminate|CRUISER|0	1	<bad>8%</bad> reduced kinetic damage taken.
+integrable|domain_pattern_laminate|CRUISER|1	1	<bad>8%</bad> reduced high-explosive damage taken.
+integrable|domain_pattern_laminate|CRUISER|2	0	Click and hold to integrate.
+integrable|domain_pattern_laminate|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|domain_pattern_laminate|CRUISER|4	0	<muted>8% reduced kinetic damage taken.</muted>
+integrable|domain_pattern_laminate|CRUISER|5	0	<muted>8% reduced high-explosive damage taken.</muted>
+integrable|domain_pattern_laminate|CRUISER|6	0	<muted>8% reduced energy damage taken.</muted>
+integrable|domain_pattern_laminate|CAPITAL_SHIP|0	1	<bad>8%</bad> reduced kinetic damage taken.
+integrable|domain_pattern_laminate|CAPITAL_SHIP|1	1	<bad>8%</bad> reduced high-explosive damage taken.
+integrable|domain_pattern_laminate|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|domain_pattern_laminate|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|domain_pattern_laminate|CAPITAL_SHIP|4	0	<muted>8% reduced kinetic damage taken.</muted>
+integrable|domain_pattern_laminate|CAPITAL_SHIP|5	0	<muted>8% reduced high-explosive damage taken.</muted>
+integrable|domain_pattern_laminate|CAPITAL_SHIP|6	0	<muted>8% reduced energy damage taken.</muted>
+integrated|domain_pattern_laminate|null|0	0	<builtIn>Integrated</builtIn>
+integrated|domain_pattern_laminate|null|1	1	<bad>8%</bad> reduced kinetic damage taken.
+integrated|domain_pattern_laminate|null|2	1	<bad>8%</bad> reduced high-explosive damage taken.
+integrated|domain_pattern_laminate|null|3	1	<bad>8%</bad><builtIn> reduced energy damage taken.</builtIn>
+integrated|domain_pattern_laminate|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|domain_pattern_laminate|FRIGATE|1	1	<bad>8%</bad> reduced kinetic damage taken.
+integrated|domain_pattern_laminate|FRIGATE|2	1	<bad>8%</bad> reduced high-explosive damage taken.
+integrated|domain_pattern_laminate|FRIGATE|3	1	<bad>8%</bad><builtIn> reduced energy damage taken.</builtIn>
+integrated|domain_pattern_laminate|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|domain_pattern_laminate|DESTROYER|1	1	<bad>8%</bad> reduced kinetic damage taken.
+integrated|domain_pattern_laminate|DESTROYER|2	1	<bad>8%</bad> reduced high-explosive damage taken.
+integrated|domain_pattern_laminate|DESTROYER|3	1	<bad>8%</bad><builtIn> reduced energy damage taken.</builtIn>
+integrated|domain_pattern_laminate|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|domain_pattern_laminate|CRUISER|1	1	<bad>8%</bad> reduced kinetic damage taken.
+integrated|domain_pattern_laminate|CRUISER|2	1	<bad>8%</bad> reduced high-explosive damage taken.
+integrated|domain_pattern_laminate|CRUISER|3	1	<bad>8%</bad><builtIn> reduced energy damage taken.</builtIn>
+integrated|domain_pattern_laminate|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|domain_pattern_laminate|CAPITAL_SHIP|1	1	<bad>8%</bad> reduced kinetic damage taken.
+integrated|domain_pattern_laminate|CAPITAL_SHIP|2	1	<bad>8%</bad> reduced high-explosive damage taken.
+integrated|domain_pattern_laminate|CAPITAL_SHIP|3	1	<bad>8%</bad><builtIn> reduced energy damage taken.</builtIn>
 flavour|dormant_repair_cycle	0	A dormant Nexus still mends its own plating, a little at a time.
 type|dormant_repair_cycle|null|0	0	Armor cells not hit for 5 seconds repair <good>0.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
 type|dormant_repair_cycle|FRIGATE|0	0	Armor cells not hit for 5 seconds repair <good>0.5%</good> of their maximum armor per second while no enemy ship is within 1500 su, adding 1 hard flux per point repaired, up to 20% of this ship's total armor per deployment.
@@ -5803,6 +5968,46 @@ type|flak_screen_doctrine|FRIGATE|0	0	Enemy missiles destroyed by this ship burs
 type|flak_screen_doctrine|DESTROYER|0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
 type|flak_screen_doctrine|CRUISER|0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
 type|flak_screen_doctrine|CAPITAL_SHIP|0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
+integrable|flak_screen_doctrine|null|0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
+integrable|flak_screen_doctrine|null|1	0	Click and hold to integrate.
+integrable|flak_screen_doctrine|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|flak_screen_doctrine|null|3	0	<muted>Enemy missiles destroyed by this ship burst for 100 fragmentation damage to other enemy missiles and fighters within 100 su.</muted>
+integrable|flak_screen_doctrine|null|4	0	<muted>+50 to flak burst radius.</muted>
+integrable|flak_screen_doctrine|FRIGATE|0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
+integrable|flak_screen_doctrine|FRIGATE|1	0	Click and hold to integrate.
+integrable|flak_screen_doctrine|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|flak_screen_doctrine|FRIGATE|3	0	<muted>Enemy missiles destroyed by this ship burst for 100 fragmentation damage to other enemy missiles and fighters within 100 su.</muted>
+integrable|flak_screen_doctrine|FRIGATE|4	0	<muted>+50 to flak burst radius.</muted>
+integrable|flak_screen_doctrine|DESTROYER|0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
+integrable|flak_screen_doctrine|DESTROYER|1	0	Click and hold to integrate.
+integrable|flak_screen_doctrine|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|flak_screen_doctrine|DESTROYER|3	0	<muted>Enemy missiles destroyed by this ship burst for 100 fragmentation damage to other enemy missiles and fighters within 100 su.</muted>
+integrable|flak_screen_doctrine|DESTROYER|4	0	<muted>+50 to flak burst radius.</muted>
+integrable|flak_screen_doctrine|CRUISER|0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
+integrable|flak_screen_doctrine|CRUISER|1	0	Click and hold to integrate.
+integrable|flak_screen_doctrine|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|flak_screen_doctrine|CRUISER|3	0	<muted>Enemy missiles destroyed by this ship burst for 100 fragmentation damage to other enemy missiles and fighters within 100 su.</muted>
+integrable|flak_screen_doctrine|CRUISER|4	0	<muted>+50 to flak burst radius.</muted>
+integrable|flak_screen_doctrine|CAPITAL_SHIP|0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
+integrable|flak_screen_doctrine|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|flak_screen_doctrine|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|flak_screen_doctrine|CAPITAL_SHIP|3	0	<muted>Enemy missiles destroyed by this ship burst for 100 fragmentation damage to other enemy missiles and fighters within 100 su.</muted>
+integrable|flak_screen_doctrine|CAPITAL_SHIP|4	0	<muted>+50 to flak burst radius.</muted>
+integrated|flak_screen_doctrine|null|0	0	<builtIn>Integrated</builtIn>
+integrated|flak_screen_doctrine|null|1	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
+integrated|flak_screen_doctrine|null|2	0	<good>+50</good><builtIn> to flak burst radius.</builtIn>
+integrated|flak_screen_doctrine|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|flak_screen_doctrine|FRIGATE|1	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
+integrated|flak_screen_doctrine|FRIGATE|2	0	<good>+50</good><builtIn> to flak burst radius.</builtIn>
+integrated|flak_screen_doctrine|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|flak_screen_doctrine|DESTROYER|1	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
+integrated|flak_screen_doctrine|DESTROYER|2	0	<good>+50</good><builtIn> to flak burst radius.</builtIn>
+integrated|flak_screen_doctrine|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|flak_screen_doctrine|CRUISER|1	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
+integrated|flak_screen_doctrine|CRUISER|2	0	<good>+50</good><builtIn> to flak burst radius.</builtIn>
+integrated|flak_screen_doctrine|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|flak_screen_doctrine|CAPITAL_SHIP|1	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
+integrated|flak_screen_doctrine|CAPITAL_SHIP|2	0	<good>+50</good><builtIn> to flak burst radius.</builtIn>
 type|flux_capacity|null|0	0	<good>2%</good> more flux capacity.
 type|flux_capacity|FRIGATE|0	0	<good>2%</good> more flux capacity.
 type|flux_capacity|DESTROYER|0	0	<good>2%</good> more flux capacity.
@@ -6224,6 +6429,46 @@ type|heavy_ballistics_integration|CRUISER|0	1	<bad>-5</bad> to ordnance point co
 type-detail|heavy_ballistics_integration|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Supreme Modifications</hullmod>\n• <hullmod>Heavy Ballistics Integration</hullmod>
 type|heavy_ballistics_integration|CAPITAL_SHIP|0	1	<bad>-5</bad> to ordnance point cost of large ballistic weapons.
 type-detail|heavy_ballistics_integration|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Supreme Modifications</hullmod>\n• <hullmod>Heavy Ballistics Integration</hullmod>
+integrable|heavy_ballistics_integration|null|0	1	<bad>-5</bad> to ordnance point cost of large ballistic weapons.
+integrable|heavy_ballistics_integration|null|1	0	Click and hold to integrate.
+integrable|heavy_ballistics_integration|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|heavy_ballistics_integration|null|3	0	<muted>-5 to ordnance point cost of large ballistic weapons.</muted>
+integrable|heavy_ballistics_integration|null|4	0	<muted>-2 to ordnance point cost of medium ballistic weapons.</muted>
+integrable|heavy_ballistics_integration|FRIGATE|0	1	<bad>-5</bad> to ordnance point cost of large ballistic weapons.
+integrable|heavy_ballistics_integration|FRIGATE|1	0	Click and hold to integrate.
+integrable|heavy_ballistics_integration|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|heavy_ballistics_integration|FRIGATE|3	0	<muted>-5 to ordnance point cost of large ballistic weapons.</muted>
+integrable|heavy_ballistics_integration|FRIGATE|4	0	<muted>-2 to ordnance point cost of medium ballistic weapons.</muted>
+integrable|heavy_ballistics_integration|DESTROYER|0	1	<bad>-5</bad> to ordnance point cost of large ballistic weapons.
+integrable|heavy_ballistics_integration|DESTROYER|1	0	Click and hold to integrate.
+integrable|heavy_ballistics_integration|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|heavy_ballistics_integration|DESTROYER|3	0	<muted>-5 to ordnance point cost of large ballistic weapons.</muted>
+integrable|heavy_ballistics_integration|DESTROYER|4	0	<muted>-2 to ordnance point cost of medium ballistic weapons.</muted>
+integrable|heavy_ballistics_integration|CRUISER|0	1	<bad>-5</bad> to ordnance point cost of large ballistic weapons.
+integrable|heavy_ballistics_integration|CRUISER|1	0	Click and hold to integrate.
+integrable|heavy_ballistics_integration|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|heavy_ballistics_integration|CRUISER|3	0	<muted>-5 to ordnance point cost of large ballistic weapons.</muted>
+integrable|heavy_ballistics_integration|CRUISER|4	0	<muted>-2 to ordnance point cost of medium ballistic weapons.</muted>
+integrable|heavy_ballistics_integration|CAPITAL_SHIP|0	1	<bad>-5</bad> to ordnance point cost of large ballistic weapons.
+integrable|heavy_ballistics_integration|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|heavy_ballistics_integration|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|heavy_ballistics_integration|CAPITAL_SHIP|3	0	<muted>-5 to ordnance point cost of large ballistic weapons.</muted>
+integrable|heavy_ballistics_integration|CAPITAL_SHIP|4	0	<muted>-2 to ordnance point cost of medium ballistic weapons.</muted>
+integrated|heavy_ballistics_integration|null|0	0	<builtIn>Integrated</builtIn>
+integrated|heavy_ballistics_integration|null|1	1	<bad>-5</bad> to ordnance point cost of large ballistic weapons.
+integrated|heavy_ballistics_integration|null|2	1	<bad>-2</bad><builtIn> to ordnance point cost of medium ballistic weapons.</builtIn>
+integrated|heavy_ballistics_integration|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|heavy_ballistics_integration|FRIGATE|1	1	<bad>-5</bad> to ordnance point cost of large ballistic weapons.
+integrated|heavy_ballistics_integration|FRIGATE|2	1	<bad>-2</bad><builtIn> to ordnance point cost of medium ballistic weapons.</builtIn>
+integrated|heavy_ballistics_integration|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|heavy_ballistics_integration|DESTROYER|1	1	<bad>-5</bad> to ordnance point cost of large ballistic weapons.
+integrated|heavy_ballistics_integration|DESTROYER|2	1	<bad>-2</bad><builtIn> to ordnance point cost of medium ballistic weapons.</builtIn>
+integrated|heavy_ballistics_integration|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|heavy_ballistics_integration|CRUISER|1	1	<bad>-5</bad> to ordnance point cost of large ballistic weapons.
+integrated|heavy_ballistics_integration|CRUISER|2	1	<bad>-2</bad><builtIn> to ordnance point cost of medium ballistic weapons.</builtIn>
+integrated|heavy_ballistics_integration|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|heavy_ballistics_integration|CAPITAL_SHIP|1	1	<bad>-5</bad> to ordnance point cost of large ballistic weapons.
+integrated|heavy_ballistics_integration|CAPITAL_SHIP|2	1	<bad>-2</bad><builtIn> to ordnance point cost of medium ballistic weapons.</builtIn>
 type|high_resolution_sensors|null|0	0	This ship's sensor strength always contributes to fleet-wide sensor strength.
 type-detail|high_resolution_sensors|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>High Resolution Sensors</hullmod>\n• <hullmod>Oracle Sensor Suite</hullmod>
 type|high_resolution_sensors|FRIGATE|0	0	This ship's sensor strength always contributes to fleet-wide sensor strength.
@@ -6390,6 +6635,46 @@ type|hold_the_line|FRIGATE|0	0	<good>15%</good> reduced armor damage taken while
 type|hold_the_line|DESTROYER|0	0	<good>15%</good> reduced armor damage taken while moving slower than 25% of top speed.
 type|hold_the_line|CRUISER|0	0	<good>15%</good> reduced armor damage taken while moving slower than 25% of top speed.
 type|hold_the_line|CAPITAL_SHIP|0	0	<good>15%</good> reduced armor damage taken while moving slower than 25% of top speed.
+integrable|hold_the_line|null|0	0	<good>15%</good> reduced armor damage taken while moving slower than 25% of top speed.
+integrable|hold_the_line|null|1	0	Click and hold to integrate.
+integrable|hold_the_line|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hold_the_line|null|3	0	<muted>15% reduced armor damage taken while moving slower than 25% of top speed.</muted>
+integrable|hold_the_line|null|4	0	<muted>15% reduced shield flux upkeep while moving slower than 10% of top speed.</muted>
+integrable|hold_the_line|FRIGATE|0	0	<good>15%</good> reduced armor damage taken while moving slower than 25% of top speed.
+integrable|hold_the_line|FRIGATE|1	0	Click and hold to integrate.
+integrable|hold_the_line|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hold_the_line|FRIGATE|3	0	<muted>15% reduced armor damage taken while moving slower than 25% of top speed.</muted>
+integrable|hold_the_line|FRIGATE|4	0	<muted>15% reduced shield flux upkeep while moving slower than 10% of top speed.</muted>
+integrable|hold_the_line|DESTROYER|0	0	<good>15%</good> reduced armor damage taken while moving slower than 25% of top speed.
+integrable|hold_the_line|DESTROYER|1	0	Click and hold to integrate.
+integrable|hold_the_line|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hold_the_line|DESTROYER|3	0	<muted>15% reduced armor damage taken while moving slower than 25% of top speed.</muted>
+integrable|hold_the_line|DESTROYER|4	0	<muted>15% reduced shield flux upkeep while moving slower than 10% of top speed.</muted>
+integrable|hold_the_line|CRUISER|0	0	<good>15%</good> reduced armor damage taken while moving slower than 25% of top speed.
+integrable|hold_the_line|CRUISER|1	0	Click and hold to integrate.
+integrable|hold_the_line|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hold_the_line|CRUISER|3	0	<muted>15% reduced armor damage taken while moving slower than 25% of top speed.</muted>
+integrable|hold_the_line|CRUISER|4	0	<muted>15% reduced shield flux upkeep while moving slower than 10% of top speed.</muted>
+integrable|hold_the_line|CAPITAL_SHIP|0	0	<good>15%</good> reduced armor damage taken while moving slower than 25% of top speed.
+integrable|hold_the_line|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|hold_the_line|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hold_the_line|CAPITAL_SHIP|3	0	<muted>15% reduced armor damage taken while moving slower than 25% of top speed.</muted>
+integrable|hold_the_line|CAPITAL_SHIP|4	0	<muted>15% reduced shield flux upkeep while moving slower than 10% of top speed.</muted>
+integrated|hold_the_line|null|0	0	<builtIn>Integrated</builtIn>
+integrated|hold_the_line|null|1	0	<good>15%</good> reduced armor damage taken while moving slower than 25% of top speed.
+integrated|hold_the_line|null|2	0	<good>15%</good><builtIn> reduced shield flux upkeep while moving slower than 10% of top speed.</builtIn>
+integrated|hold_the_line|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|hold_the_line|FRIGATE|1	0	<good>15%</good> reduced armor damage taken while moving slower than 25% of top speed.
+integrated|hold_the_line|FRIGATE|2	0	<good>15%</good><builtIn> reduced shield flux upkeep while moving slower than 10% of top speed.</builtIn>
+integrated|hold_the_line|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|hold_the_line|DESTROYER|1	0	<good>15%</good> reduced armor damage taken while moving slower than 25% of top speed.
+integrated|hold_the_line|DESTROYER|2	0	<good>15%</good><builtIn> reduced shield flux upkeep while moving slower than 10% of top speed.</builtIn>
+integrated|hold_the_line|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|hold_the_line|CRUISER|1	0	<good>15%</good> reduced armor damage taken while moving slower than 25% of top speed.
+integrated|hold_the_line|CRUISER|2	0	<good>15%</good><builtIn> reduced shield flux upkeep while moving slower than 10% of top speed.</builtIn>
+integrated|hold_the_line|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|hold_the_line|CAPITAL_SHIP|1	0	<good>15%</good> reduced armor damage taken while moving slower than 25% of top speed.
+integrated|hold_the_line|CAPITAL_SHIP|2	0	<good>15%</good><builtIn> reduced shield flux upkeep while moving slower than 10% of top speed.</builtIn>
 flavour|honor_guard	0	The Lion's Guard keeps pace with the Supreme Executor's flagship, never the other way round. Most of its recorded maneuvers are parades.
 type|honor_guard|null|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
 type|honor_guard|FRIGATE|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
@@ -6398,11 +6683,51 @@ type|honor_guard|CRUISER|0	0	Additional top speed equal to <good>50%</good> of y
 type|honor_guard|CAPITAL_SHIP|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
 flavour|hullbreacher_rounds	0	Former Hegemony Navy gunners in the crew remember the breacher loads the Navy keeps for boarding actions, shells hardened to punch through plating instead of bursting on it. The crew sees no reason to save them for boarding.
 flavourAutomated|hullbreacher_rounds	0	The Hegemony Navy keeps breacher loads for boarding actions, shells hardened to punch through plating instead of bursting on it. The ship's core finds their specifications in a seized Navy ordnance manifest and loads them for every fight.
-type|hullbreacher_rounds|null|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-type|hullbreacher_rounds|FRIGATE|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-type|hullbreacher_rounds|DESTROYER|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-type|hullbreacher_rounds|CRUISER|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-type|hullbreacher_rounds|CAPITAL_SHIP|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
+type|hullbreacher_rounds|null|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce.
+type|hullbreacher_rounds|FRIGATE|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce.
+type|hullbreacher_rounds|DESTROYER|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce.
+type|hullbreacher_rounds|CRUISER|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce.
+type|hullbreacher_rounds|CAPITAL_SHIP|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce.
+integrable|hullbreacher_rounds|null|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce.
+integrable|hullbreacher_rounds|null|1	0	Click and hold to integrate.
+integrable|hullbreacher_rounds|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hullbreacher_rounds|null|3	0	<muted>Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce.</muted>
+integrable|hullbreacher_rounds|null|4	0	<muted>Pierced ballistic shots can pierce 1 additional time.</muted>
+integrable|hullbreacher_rounds|FRIGATE|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce.
+integrable|hullbreacher_rounds|FRIGATE|1	0	Click and hold to integrate.
+integrable|hullbreacher_rounds|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hullbreacher_rounds|FRIGATE|3	0	<muted>Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce.</muted>
+integrable|hullbreacher_rounds|FRIGATE|4	0	<muted>Pierced ballistic shots can pierce 1 additional time.</muted>
+integrable|hullbreacher_rounds|DESTROYER|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce.
+integrable|hullbreacher_rounds|DESTROYER|1	0	Click and hold to integrate.
+integrable|hullbreacher_rounds|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hullbreacher_rounds|DESTROYER|3	0	<muted>Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce.</muted>
+integrable|hullbreacher_rounds|DESTROYER|4	0	<muted>Pierced ballistic shots can pierce 1 additional time.</muted>
+integrable|hullbreacher_rounds|CRUISER|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce.
+integrable|hullbreacher_rounds|CRUISER|1	0	Click and hold to integrate.
+integrable|hullbreacher_rounds|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hullbreacher_rounds|CRUISER|3	0	<muted>Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce.</muted>
+integrable|hullbreacher_rounds|CRUISER|4	0	<muted>Pierced ballistic shots can pierce 1 additional time.</muted>
+integrable|hullbreacher_rounds|CAPITAL_SHIP|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce.
+integrable|hullbreacher_rounds|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|hullbreacher_rounds|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|hullbreacher_rounds|CAPITAL_SHIP|3	0	<muted>Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce.</muted>
+integrable|hullbreacher_rounds|CAPITAL_SHIP|4	0	<muted>Pierced ballistic shots can pierce 1 additional time.</muted>
+integrated|hullbreacher_rounds|null|0	0	<builtIn>Integrated</builtIn>
+integrated|hullbreacher_rounds|null|1	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce.
+integrated|hullbreacher_rounds|null|2	0	<builtIn>Pierced ballistic shots can pierce </builtIn><good>1</good><builtIn> additional time.</builtIn>
+integrated|hullbreacher_rounds|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|hullbreacher_rounds|FRIGATE|1	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce.
+integrated|hullbreacher_rounds|FRIGATE|2	0	<builtIn>Pierced ballistic shots can pierce </builtIn><good>1</good><builtIn> additional time.</builtIn>
+integrated|hullbreacher_rounds|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|hullbreacher_rounds|DESTROYER|1	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce.
+integrated|hullbreacher_rounds|DESTROYER|2	0	<builtIn>Pierced ballistic shots can pierce </builtIn><good>1</good><builtIn> additional time.</builtIn>
+integrated|hullbreacher_rounds|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|hullbreacher_rounds|CRUISER|1	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce.
+integrated|hullbreacher_rounds|CRUISER|2	0	<builtIn>Pierced ballistic shots can pierce </builtIn><good>1</good><builtIn> additional time.</builtIn>
+integrated|hullbreacher_rounds|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|hullbreacher_rounds|CAPITAL_SHIP|1	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce.
+integrated|hullbreacher_rounds|CAPITAL_SHIP|2	0	<builtIn>Pierced ballistic shots can pierce </builtIn><good>1</good><builtIn> additional time.</builtIn>
 type|hungering_rift_healing|null|0	0	<good>+10%</good> to Hungering Rift healing received.
 type|hungering_rift_healing|FRIGATE|0	0	<good>+10%</good> to Hungering Rift healing received.
 type|hungering_rift_healing|DESTROYER|0	0	<good>+10%</good> to Hungering Rift healing received.
@@ -7159,6 +7484,46 @@ type|navy_heartbeat|FRIGATE|0	0	<good>3%</good> more ballistic weapon damage for
 type|navy_heartbeat|DESTROYER|0	0	<good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
 type|navy_heartbeat|CRUISER|0	0	<good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
 type|navy_heartbeat|CAPITAL_SHIP|0	0	<good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
+integrable|navy_heartbeat|null|0	0	<good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
+integrable|navy_heartbeat|null|1	0	Click and hold to integrate.
+integrable|navy_heartbeat|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|navy_heartbeat|null|3	0	<muted>3% more ballistic weapon damage for every burn level this ship has above its hull's default.</muted>
+integrable|navy_heartbeat|null|4	0	<muted>+1 to max burn level.</muted>
+integrable|navy_heartbeat|FRIGATE|0	0	<good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
+integrable|navy_heartbeat|FRIGATE|1	0	Click and hold to integrate.
+integrable|navy_heartbeat|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|navy_heartbeat|FRIGATE|3	0	<muted>3% more ballistic weapon damage for every burn level this ship has above its hull's default.</muted>
+integrable|navy_heartbeat|FRIGATE|4	0	<muted>+1 to max burn level.</muted>
+integrable|navy_heartbeat|DESTROYER|0	0	<good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
+integrable|navy_heartbeat|DESTROYER|1	0	Click and hold to integrate.
+integrable|navy_heartbeat|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|navy_heartbeat|DESTROYER|3	0	<muted>3% more ballistic weapon damage for every burn level this ship has above its hull's default.</muted>
+integrable|navy_heartbeat|DESTROYER|4	0	<muted>+1 to max burn level.</muted>
+integrable|navy_heartbeat|CRUISER|0	0	<good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
+integrable|navy_heartbeat|CRUISER|1	0	Click and hold to integrate.
+integrable|navy_heartbeat|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|navy_heartbeat|CRUISER|3	0	<muted>3% more ballistic weapon damage for every burn level this ship has above its hull's default.</muted>
+integrable|navy_heartbeat|CRUISER|4	0	<muted>+1 to max burn level.</muted>
+integrable|navy_heartbeat|CAPITAL_SHIP|0	0	<good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
+integrable|navy_heartbeat|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|navy_heartbeat|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|navy_heartbeat|CAPITAL_SHIP|3	0	<muted>3% more ballistic weapon damage for every burn level this ship has above its hull's default.</muted>
+integrable|navy_heartbeat|CAPITAL_SHIP|4	0	<muted>+1 to max burn level.</muted>
+integrated|navy_heartbeat|null|0	0	<builtIn>Integrated</builtIn>
+integrated|navy_heartbeat|null|1	0	<good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
+integrated|navy_heartbeat|null|2	0	<good>+1</good><builtIn> to max burn level.</builtIn>
+integrated|navy_heartbeat|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|navy_heartbeat|FRIGATE|1	0	<good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
+integrated|navy_heartbeat|FRIGATE|2	0	<good>+1</good><builtIn> to max burn level.</builtIn>
+integrated|navy_heartbeat|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|navy_heartbeat|DESTROYER|1	0	<good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
+integrated|navy_heartbeat|DESTROYER|2	0	<good>+1</good><builtIn> to max burn level.</builtIn>
+integrated|navy_heartbeat|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|navy_heartbeat|CRUISER|1	0	<good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
+integrated|navy_heartbeat|CRUISER|2	0	<good>+1</good><builtIn> to max burn level.</builtIn>
+integrated|navy_heartbeat|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|navy_heartbeat|CAPITAL_SHIP|1	0	<good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
+integrated|navy_heartbeat|CAPITAL_SHIP|2	0	<good>+1</good><builtIn> to max burn level.</builtIn>
 flavour|neural_interface	0	A direct neural link between this ship and the flagship. Captains who use one describe it as standing on two bridges at once, and are sometimes vague afterwards about which one they were on.
 flavourAutomated|neural_interface	0	A direct neural link between this ship and the flagship. Captains who link to an automated hull describe a second bridge with nobody else on it, and are not always certain of that afterwards.
 type|neural_interface|null|0	0	Transferring to either linked ship resets its ship system cooldown and adds a charge.
@@ -8763,3 +9128,58 @@ type|xiv_torpedo_doctrine|CRUISER|0	0	<good>30%</good> increased missile weapon 
 type|xiv_torpedo_doctrine|CRUISER|1	0	<bad>30%</bad> reduced missile maneuverability.
 type|xiv_torpedo_doctrine|CAPITAL_SHIP|0	0	<good>30%</good> increased missile weapon projectile speed.
 type|xiv_torpedo_doctrine|CAPITAL_SHIP|1	0	<bad>30%</bad> reduced missile maneuverability.
+integrable|xiv_torpedo_doctrine|null|0	0	<good>30%</good> increased missile weapon projectile speed.
+integrable|xiv_torpedo_doctrine|null|1	0	<bad>30%</bad> reduced missile maneuverability.
+integrable|xiv_torpedo_doctrine|null|2	0	Click and hold to integrate.
+integrable|xiv_torpedo_doctrine|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|xiv_torpedo_doctrine|null|4	0	<muted>30% increased missile weapon projectile speed.</muted>
+integrable|xiv_torpedo_doctrine|null|5	0	<muted>30% reduced missile maneuverability.</muted>
+integrable|xiv_torpedo_doctrine|null|6	0	<muted>10% increased missile weapon damage.</muted>
+integrable|xiv_torpedo_doctrine|FRIGATE|0	0	<good>30%</good> increased missile weapon projectile speed.
+integrable|xiv_torpedo_doctrine|FRIGATE|1	0	<bad>30%</bad> reduced missile maneuverability.
+integrable|xiv_torpedo_doctrine|FRIGATE|2	0	Click and hold to integrate.
+integrable|xiv_torpedo_doctrine|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|xiv_torpedo_doctrine|FRIGATE|4	0	<muted>30% increased missile weapon projectile speed.</muted>
+integrable|xiv_torpedo_doctrine|FRIGATE|5	0	<muted>30% reduced missile maneuverability.</muted>
+integrable|xiv_torpedo_doctrine|FRIGATE|6	0	<muted>10% increased missile weapon damage.</muted>
+integrable|xiv_torpedo_doctrine|DESTROYER|0	0	<good>30%</good> increased missile weapon projectile speed.
+integrable|xiv_torpedo_doctrine|DESTROYER|1	0	<bad>30%</bad> reduced missile maneuverability.
+integrable|xiv_torpedo_doctrine|DESTROYER|2	0	Click and hold to integrate.
+integrable|xiv_torpedo_doctrine|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|xiv_torpedo_doctrine|DESTROYER|4	0	<muted>30% increased missile weapon projectile speed.</muted>
+integrable|xiv_torpedo_doctrine|DESTROYER|5	0	<muted>30% reduced missile maneuverability.</muted>
+integrable|xiv_torpedo_doctrine|DESTROYER|6	0	<muted>10% increased missile weapon damage.</muted>
+integrable|xiv_torpedo_doctrine|CRUISER|0	0	<good>30%</good> increased missile weapon projectile speed.
+integrable|xiv_torpedo_doctrine|CRUISER|1	0	<bad>30%</bad> reduced missile maneuverability.
+integrable|xiv_torpedo_doctrine|CRUISER|2	0	Click and hold to integrate.
+integrable|xiv_torpedo_doctrine|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|xiv_torpedo_doctrine|CRUISER|4	0	<muted>30% increased missile weapon projectile speed.</muted>
+integrable|xiv_torpedo_doctrine|CRUISER|5	0	<muted>30% reduced missile maneuverability.</muted>
+integrable|xiv_torpedo_doctrine|CRUISER|6	0	<muted>10% increased missile weapon damage.</muted>
+integrable|xiv_torpedo_doctrine|CAPITAL_SHIP|0	0	<good>30%</good> increased missile weapon projectile speed.
+integrable|xiv_torpedo_doctrine|CAPITAL_SHIP|1	0	<bad>30%</bad> reduced missile maneuverability.
+integrable|xiv_torpedo_doctrine|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|xiv_torpedo_doctrine|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|xiv_torpedo_doctrine|CAPITAL_SHIP|4	0	<muted>30% increased missile weapon projectile speed.</muted>
+integrable|xiv_torpedo_doctrine|CAPITAL_SHIP|5	0	<muted>30% reduced missile maneuverability.</muted>
+integrable|xiv_torpedo_doctrine|CAPITAL_SHIP|6	0	<muted>10% increased missile weapon damage.</muted>
+integrated|xiv_torpedo_doctrine|null|0	0	<builtIn>Integrated</builtIn>
+integrated|xiv_torpedo_doctrine|null|1	0	<good>30%</good> increased missile weapon projectile speed.
+integrated|xiv_torpedo_doctrine|null|2	0	<bad>30%</bad> reduced missile maneuverability.
+integrated|xiv_torpedo_doctrine|null|3	0	<good>10%</good><builtIn> increased missile weapon damage.</builtIn>
+integrated|xiv_torpedo_doctrine|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|xiv_torpedo_doctrine|FRIGATE|1	0	<good>30%</good> increased missile weapon projectile speed.
+integrated|xiv_torpedo_doctrine|FRIGATE|2	0	<bad>30%</bad> reduced missile maneuverability.
+integrated|xiv_torpedo_doctrine|FRIGATE|3	0	<good>10%</good><builtIn> increased missile weapon damage.</builtIn>
+integrated|xiv_torpedo_doctrine|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|xiv_torpedo_doctrine|DESTROYER|1	0	<good>30%</good> increased missile weapon projectile speed.
+integrated|xiv_torpedo_doctrine|DESTROYER|2	0	<bad>30%</bad> reduced missile maneuverability.
+integrated|xiv_torpedo_doctrine|DESTROYER|3	0	<good>10%</good><builtIn> increased missile weapon damage.</builtIn>
+integrated|xiv_torpedo_doctrine|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|xiv_torpedo_doctrine|CRUISER|1	0	<good>30%</good> increased missile weapon projectile speed.
+integrated|xiv_torpedo_doctrine|CRUISER|2	0	<bad>30%</bad> reduced missile maneuverability.
+integrated|xiv_torpedo_doctrine|CRUISER|3	0	<good>10%</good><builtIn> increased missile weapon damage.</builtIn>
+integrated|xiv_torpedo_doctrine|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|xiv_torpedo_doctrine|CAPITAL_SHIP|1	0	<good>30%</good> increased missile weapon projectile speed.
+integrated|xiv_torpedo_doctrine|CAPITAL_SHIP|2	0	<bad>30%</bad> reduced missile maneuverability.
+integrated|xiv_torpedo_doctrine|CAPITAL_SHIP|3	0	<good>10%</good><builtIn> increased missile weapon damage.</builtIn>

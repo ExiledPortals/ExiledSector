@@ -24,6 +24,7 @@ import static org.mockito.Mockito.when;
 class ConcussionShellListenerTest {
 
     private ShipAPI ship;
+    private DynamicStatsAPI dynamic;
     private ShipAPI enemy;
     private WeaponAPI nearWeapon;
     private WeaponAPI farWeapon;
@@ -34,7 +35,7 @@ class ConcussionShellListenerTest {
         ship = mock(ShipAPI.class);
         when(ship.getOwner()).thenReturn(0);
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
+        dynamic = mock(DynamicStatsAPI.class);
         when(ship.getMutableStats()).thenReturn(stats);
         when(stats.getDynamic()).thenReturn(dynamic);
         when(dynamic.getValue(ConcussionShellListener.CHANCE_PERCENT_KEY, 0f)).thenReturn(10f);
@@ -107,6 +108,18 @@ class ConcussionShellListenerTest {
 
         verify(nearWeapon, never()).disable();
         verify(engine, never()).disable();
+    }
+
+    @Test
+    void mediumBallisticHitsRollTheirOwnChance() {
+        when(dynamic.getValue(ConcussionShellListener.MEDIUM_CHANCE_PERCENT_KEY, 0f)).thenReturn(10f);
+
+        hit(0.5, shotFrom(WeaponSize.MEDIUM, WeaponType.BALLISTIC), new Vector2f(), false);
+        hit(0.05, shotFrom(WeaponSize.SMALL, WeaponType.BALLISTIC), new Vector2f(), false);
+        verify(nearWeapon, never()).disable();
+
+        hit(0.05, shotFrom(WeaponSize.MEDIUM, WeaponType.BALLISTIC), new Vector2f(), false);
+        verify(nearWeapon).disable();
     }
 
     @Test

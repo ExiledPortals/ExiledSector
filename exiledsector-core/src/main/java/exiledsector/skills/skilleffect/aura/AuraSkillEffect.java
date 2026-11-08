@@ -86,6 +86,8 @@ public enum AuraSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("range", AuxiliaryScreenField.RANGE).styled();
         }
     },
+    SMALLER_ALLY_DAMAGE_TAKEN_RANGE_FLAT(listener(AuxiliaryScreenListener.RANGE_BONUS_KEY, AuxiliaryScreenListener.class,
+            AuxiliaryScreenListener::new)),
     MALFUNCTION_AURA_PERCENT(listener(MalfunctionAuraListener.MALFUNCTION_PERCENT_KEY, MalfunctionAuraListener.class, MalfunctionAuraListener::new)) {
         @Override
         public StyledText description(float magnitude) {

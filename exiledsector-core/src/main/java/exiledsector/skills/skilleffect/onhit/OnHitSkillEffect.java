@@ -47,6 +47,13 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
         }
     },
     BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT(listener(BallisticPierceListener.CHANCE_KEY, BallisticPierceListener.class, BallisticPierceListener::new)),
+    BALLISTIC_WEAPON_ADDITIONAL_PIERCES_FLAT(listener(BallisticPierceListener.ADDITIONAL_PIERCES_KEY, BallisticPierceListener.class,
+            BallisticPierceListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).count(Math.round(magnitude)).arg("value", magnitude).styled();
+        }
+    },
     NON_MISSILE_PROJECTILE_ECHO_CHANCE_PERCENT(listener(ProjectileEchoListener.CHANCE_KEY, ProjectileEchoListener.class,
             ProjectileEchoListener::new)),
     ION_ARC_CHANCE_PERCENT(listener(IonArcListener.CHANCE_AT_FULL_HARD_FLUX_KEY, IonArcListener.class, IonArcListener::new)) {
@@ -102,7 +109,10 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("range", FlakBurstListener.BURST_RADIUS).styled();
         }
     },
+    MISSILE_KILL_FLAK_RADIUS_FLAT(listener(FlakBurstListener.RADIUS_BONUS_KEY, FlakBurstListener.class, FlakBurstListener::new)),
     LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT(listener(ConcussionShellListener.CHANCE_PERCENT_KEY, ConcussionShellListener.class,
+            ConcussionShellListener::new)),
+    MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT(listener(ConcussionShellListener.MEDIUM_CHANCE_PERCENT_KEY, ConcussionShellListener.class,
             ConcussionShellListener::new)),
     HULL_DAMAGE_FRAGMENT_REGROWTH_FLAT(listener(HullDamageRegrowthListener.FRAGMENTS_PER_STEP_KEY, HullDamageRegrowthListener.class,
             HullDamageRegrowthListener::new)) {

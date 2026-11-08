@@ -13,10 +13,10 @@ final class PierceDrones extends SingleShotDrones<PierceDrone> {
         super(firingShip, LOG, "Piercing Rounds", "pierce");
     }
 
-    void launch(WeaponAPI weapon, ShipAPI hitShip, Vector2f impactPoint, float travelFacing) {
+    void launch(WeaponAPI weapon, ShipAPI hitShip, Vector2f impactPoint, float travelFacing, int shotPierces) {
         PierceDrone drone = acquire(weapon);
         if (drone != null) {
-            drone.launch(hitShip, impactPoint, travelFacing, weapon.getRange());
+            drone.launch(hitShip, impactPoint, travelFacing, weapon.getRange(), shotPierces);
         }
     }
 

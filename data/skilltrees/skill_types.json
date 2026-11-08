@@ -137,6 +137,18 @@
 					"magnitude": -5
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BALLISTIC_WEAPON_LARGE_OP_COST_FLAT",
+						"magnitude": -5
+					},
+					{
+						"effect": "BALLISTIC_WEAPON_MEDIUM_OP_COST_FLAT",
+						"magnitude": -2
+					}
+				]
+			},
 			"phantomHullMods": [
 				"hbi"
 			],
@@ -421,6 +433,22 @@
 					"magnitude": -30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MISSILE_WEAPON_PROJECTILE_SPEED_PERCENT",
+						"magnitude": 30
+					},
+					{
+						"effect": "MISSILE_WEAPON_FLIGHT_MANEUVERABILITY_PERCENT",
+						"magnitude": -30
+					},
+					{
+						"effect": "MISSILE_WEAPON_DAMAGE_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
 			"flavour": "XIV Battlegroup strike manuals, kept by the Hegemony since the Domain, teach that a torpedo should close fast and fly straight. Following them, the crew rewires each missile's maneuvering thrusters to push it forward instead, on the principle that a missile which cannot turn must not miss.",
 			"flavourAutomated": "XIV Battlegroup strike manuals, kept by the Hegemony since the Domain, hold that a torpedo should close fast and fly straight. The refit crew rewires each missile's maneuvering thrusters to push it forward instead, on the principle that a missile which cannot turn must not miss.",
 			"tags": [
@@ -724,6 +752,18 @@
 					"magnitude": 20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT",
+						"magnitude": 20
+					},
+					{
+						"effect": "BALLISTIC_WEAPON_ADDITIONAL_PIERCES_FLAT",
+						"magnitude": 1
+					}
+				]
+			},
 			"flavour": "Former Hegemony Navy gunners in the crew remember the breacher loads the Navy keeps for boarding actions, shells hardened to punch through plating instead of bursting on it. The crew sees no reason to save them for boarding.",
 			"flavourAutomated": "The Hegemony Navy keeps breacher loads for boarding actions, shells hardened to punch through plating instead of bursting on it. The ship's core finds their specifications in a seized Navy ordnance manifest and loads them for every fight.",
 			"tags": [
@@ -742,6 +782,18 @@
 					"magnitude": 3
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT",
+						"magnitude": 3
+					},
+					{
+						"effect": "BURN_LEVEL_FLAT",
+						"magnitude": 1
+					}
+				]
+			},
 			"flavour": "Sailing alongside Hegemony battle lines teaches the crew the Navy's habit of arriving at speed and firing before the enemy has settled, guns thumping out what the Navy calls its heartbeat.",
 			"flavourAutomated": "The ship's core logs hours of Hegemony line engagements and reproduces the Navy's habit of arriving at speed and firing before the enemy has settled, guns thumping out what the Navy calls its heartbeat. The core keeps time more evenly than any Navy gunner.",
 			"tags": [
@@ -855,6 +907,22 @@
 					"magnitude": -8
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "KINETIC_DAMAGE_TAKEN_PERCENT",
+						"magnitude": -8
+					},
+					{
+						"effect": "HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT",
+						"magnitude": -8
+					},
+					{
+						"effect": "ENERGY_DAMAGE_TAKEN_PERCENT",
+						"magnitude": -8
+					}
+				]
+			},
 			"flavour": "Hegemony refit yards still harden hulls to Domain specifications, emitter and plate alike, unchanged since before the Collapse.",
 			"tags": [
 				"armour"
@@ -871,6 +939,18 @@
 					"magnitude": 100
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MISSILE_KILL_FLAK_DAMAGE_FLAT",
+						"magnitude": 100
+					},
+					{
+						"effect": "MISSILE_KILL_FLAK_RADIUS_FLAT",
+						"magnitude": 50
+					}
+				]
+			},
 			"flavour": "Hegemony point defense crews pack their flak loads for a wide burst, on the theory that a missile is rarely alone. The crew learns the trick escorting a Dominator through a missile strike. Its captain bills them for the ammunition.",
 			"flavourAutomated": "Hegemony point defense crews pack their flak loads for a wide burst, on the theory that a missile is rarely alone. The ship's core records the pattern while escorting a Dominator through a missile strike, and the refit crew repacks the magazines to match.",
 			"tags": [
@@ -889,6 +969,18 @@
 					"magnitude": -15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ARMOR_DAMAGE_TAKEN_AT_LOW_SPEED_PERCENT",
+						"magnitude": -15
+					},
+					{
+						"effect": "SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT",
+						"magnitude": -15
+					}
+				]
+			},
 			"flavour": "Hegemony line drill holds that a battle line which keeps station cannot be broken, only worn down. The crew posts damage-control teams behind the forward armor and learns to stop the ship when the shooting starts. Navy instructors call this courage. Navy accountants call it cheaper than engines.",
 			"flavourAutomated": "Hegemony line drill holds that a battle line which keeps station cannot be broken, only worn down. The ship's core studies recordings of Navy lines under fire, and the refit crew braces the forward armor for a ship that stops when the shooting starts. Navy instructors call this courage. Navy accountants call it cheaper than engines.",
 			"tags": [
@@ -906,6 +998,18 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SMALLER_ALLY_DAMAGE_TAKEN_MULT",
+						"magnitude": 10
+					},
+					{
+						"effect": "SMALLER_ALLY_DAMAGE_TAKEN_RANGE_FLAT",
+						"magnitude": 400
+					}
+				]
+			},
 			"requiredHullSizes": [
 				"DESTROYER",
 				"CRUISER",
@@ -928,6 +1032,18 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
 			"flavour": "Planetary defense batteries on Eventide fire heavy shells with a delayed charge that bursts just inside the plating, shaking loose whatever is mounted nearby. A retired battery sergeant teaches the crew to pack them in exchange for passage off-world.",
 			"flavourAutomated": "Planetary defense batteries on Eventide fire heavy shells with a delayed charge that bursts just inside the plating, shaking loose whatever is mounted nearby. The ship's core copies the fusing tables from a salvaged battery fire-control unit, and the refit crew packs the shells to match.",
 			"tags": [
