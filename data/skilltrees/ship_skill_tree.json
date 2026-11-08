@@ -92,8 +92,8 @@
 			]
 		},
 		{
-			"id": "packed_capacitors_1",
-			"type": "packed_capacitors",
+			"id": "flux_coil_adjunct_1",
+			"type": "flux_coil_adjunct",
 			"connectedTo": [
 				"flux_capacity_3",
 				"flux_capacity_2"
@@ -618,8 +618,6 @@
 			"id": "shield_conversion_omni_1",
 			"type": "shield_conversion_omni",
 			"connectedTo": [
-				"shield_arc_multiplier_1",
-				"shield_arc_multiplier_2",
 				"affinity_43"
 			],
 			"x": -1495,
@@ -1232,7 +1230,7 @@
 			"id": "flux_capacity_3",
 			"type": "flux_capacity",
 			"connectedTo": [
-				"packed_capacitors_1",
+				"flux_coil_adjunct_1",
 				"flux_capacity_1"
 			],
 			"x": 1284,
@@ -1244,8 +1242,8 @@
 			]
 		},
 		{
-			"id": "efficient_vents_1",
-			"type": "efficient_vents",
+			"id": "flux_distributor_1",
+			"type": "flux_distributor",
 			"connectedTo": [
 				"flux_dissipation_2"
 			],
@@ -1261,7 +1259,7 @@
 			"id": "flux_dissipation_2",
 			"type": "flux_dissipation",
 			"connectedTo": [
-				"efficient_vents_1",
+				"flux_distributor_1",
 				"flux_dissipation_1"
 			],
 			"x": -712,
@@ -2503,36 +2501,6 @@
 			"y": -1966,
 			"orbitAnchorId": "anchor_11",
 			"orbitAngle": 0,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "shield_arc_multiplier_1",
-			"type": "shield_arc_multiplier",
-			"connectedTo": [
-				"shield_conversion_omni_1",
-				"shield_arc_multiplier_2"
-			],
-			"x": -1431,
-			"y": -1883,
-			"orbitAnchorId": "anchor_12",
-			"orbitAngle": 108.1,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "shield_arc_multiplier_2",
-			"type": "shield_arc_multiplier",
-			"connectedTo": [
-				"shield_conversion_omni_1",
-				"shield_arc_multiplier_1"
-			],
-			"x": -1199,
-			"y": -2091,
-			"orbitAnchorId": "anchor_12",
-			"orbitAngle": -11.899999999999963,
 			"tags": [
 				"core"
 			]
@@ -9915,7 +9883,7 @@
 			"type": "flux_capacity",
 			"connectedTo": [
 				"flux_capacity_1",
-				"packed_capacitors_1"
+				"flux_coil_adjunct_1"
 			],
 			"x": 1644,
 			"y": -3816,
@@ -10202,7 +10170,7 @@
 		},
 		{
 			"a": "flux_capacity_3",
-			"b": "packed_capacitors_1",
+			"b": "flux_coil_adjunct_1",
 			"controlX": 1337,
 			"controlY": -3689
 		},
@@ -10235,18 +10203,6 @@
 			"b": "shield_arc_3",
 			"controlX": 1177,
 			"controlY": -1839
-		},
-		{
-			"a": "shield_conversion_omni_1",
-			"b": "shield_arc_multiplier_1",
-			"controlX": -1463,
-			"controlY": -2035
-		},
-		{
-			"a": "shield_conversion_omni_1",
-			"b": "shield_arc_multiplier_2",
-			"controlX": -1347,
-			"controlY": -2140
 		},
 		{
 			"a": "shield_flux_damage_reduction_1",
@@ -10355,12 +10311,6 @@
 			"b": "blast_doors_1",
 			"controlX": 1626,
 			"controlY": 1688
-		},
-		{
-			"a": "shield_arc_multiplier_1",
-			"b": "shield_arc_multiplier_2",
-			"controlX": -1315,
-			"controlY": -1987
 		},
 		{
 			"a": "more_hull_1",
@@ -11251,7 +11201,7 @@
 			"controlY": 418
 		},
 		{
-			"a": "efficient_vents_1",
+			"a": "flux_distributor_1",
 			"b": "flux_dissipation_2",
 			"controlX": -839,
 			"controlY": -3437
@@ -12050,7 +12000,7 @@
 		},
 		{
 			"a": "flux_capacity_2",
-			"b": "packed_capacitors_1",
+			"b": "flux_coil_adjunct_1",
 			"controlX": 1591,
 			"controlY": -3689
 		},

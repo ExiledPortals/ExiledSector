@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 final class ModuleTreeShare implements AdvanceableListener {
 
@@ -29,17 +30,19 @@ final class ModuleTreeShare implements AdvanceableListener {
     private final List<SkillTreeEffectSource.NodeEffects> parentNodeEffects;
     private final Map<SkillEffect, Float> affinityBonusRatios;
     private final HullSize parentHullSize;
+    private final Set<String> integratedNodeIds;
     private boolean shared;
 
     ModuleTreeShare(ShipAPI parentShip, List<SkillTreeEffectSource.NodeEffects> parentNodeEffects, Map<SkillEffect, Float> affinityBonusRatios,
-                    HullSize parentHullSize) {
+                    HullSize parentHullSize, Set<String> integratedNodeIds) {
         this.parentShip = parentShip;
         this.parentNodeEffects = parentNodeEffects;
         this.affinityBonusRatios = affinityBonusRatios;
         this.parentHullSize = parentHullSize;
+        this.integratedNodeIds = integratedNodeIds;
     }
 
-    static void attach(ShipAPI ship, ResolvedTree resolvedTree) {
+    static void attach(ShipAPI ship, ResolvedTree resolvedTree, Set<String> integratedNodeIds) {
         if (ship.isStationModule() || ship.getHullSpec() == null || !ShipFacts.hasModuleSlots(ship.getHullSpec())
                 || (share(ship) <= 0f && !ModuleBoost.hasModuleBonus(ship.getMutableStats()))) {
             return;
@@ -47,7 +50,7 @@ final class ModuleTreeShare implements AdvanceableListener {
         List<ModuleTreeShare> existing = ship.getListeners(ModuleTreeShare.class);
         if (existing == null || existing.isEmpty()) {
             ship.addListener(new ModuleTreeShare(ship, SkillTreeEffectSource.nodeEffects(resolvedTree),
-                    affinityBonusRatios(resolvedTree.contributions()), resolvedTree.hullSize()));
+                    affinityBonusRatios(resolvedTree.contributions()), resolvedTree.hullSize(), integratedNodeIds));
         }
     }
 
@@ -85,18 +88,20 @@ final class ModuleTreeShare implements AdvanceableListener {
         for (ShipAPI module : modules) {
             if (module.isAlive() && !module.isHulk() && module.getVariant() != null && module.getHullSpec() != null) {
                 Map<SkillEffect, Float> totals = share > 0f && ShipRecords.taggedTree(module.getVariant()) == null
-                        ? sharedTotals(parentNodeEffects, affinityBonusRatios, parentHullSize, module.getVariant(), share) : Map.of();
+                        ? sharedTotals(parentNodeEffects, integratedNodeIds, affinityBonusRatios, parentHullSize, module.getVariant(), share) : Map.of();
                 ModuleBoost.boost(parentShip, module, totals, modIdPrefix);
             }
         }
     }
 
-    static Map<SkillEffect, Float> sharedTotals(List<SkillTreeEffectSource.NodeEffects> nodeEffects, Map<SkillEffect, Float> affinityBonusRatios,
+    static Map<SkillEffect, Float> sharedTotals(List<SkillTreeEffectSource.NodeEffects> nodeEffects, Set<String> integratedNodeIds,
+                                                Map<SkillEffect, Float> affinityBonusRatios,
                                                 HullSize hullSize, ShipVariantAPI moduleVariant, float share) {
         Map<SkillEffect, Float> sums = new LinkedHashMap<>();
         Map<SkillEffect, Float> affinityTotals = new LinkedHashMap<>();
         for (SkillTreeEffectSource.NodeEffects node : nodeEffects) {
-            if (!node.node().effectiveType().sharesWithModules(hullSize) || hasOwnCopy(moduleVariant, node.node())) {
+            boolean integrated = integratedNodeIds.contains(node.node().node().getId());
+            if (!node.node().effectiveType().sharesWithModules(hullSize, integrated) || hasOwnCopy(moduleVariant, node.node())) {
                 continue;
             }
             for (SkillTypeEffect effect : node.effects()) {

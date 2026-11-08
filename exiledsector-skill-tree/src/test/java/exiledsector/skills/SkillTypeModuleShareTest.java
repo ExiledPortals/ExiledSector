@@ -88,6 +88,17 @@ class SkillTypeModuleShareTest {
     }
 
     @Test
+    void anExcludedIntegratedEffectOnlyStopsSharingOnceIntegrated() {
+        SkillTypeEffect armor = new SkillTypeEffect(DefenseSkillEffect.ARMOR_PERCENT, 10f);
+        SkillTypeEffect sharedShieldDamage = new SkillTypeEffect(ShieldSkillEffect.SHIELD_DAMAGE_SHARED_PERCENT, 20f);
+        SkillType type = builder(armor).integratedEffects(new IntegratedEffects(List.of(armor, sharedShieldDamage), List.of())).build();
+
+        assertTrue(type.sharesWithModules(HullSize.CRUISER, false));
+        assertEquals(List.of(armor), type.moduleSharedEffects(HullSize.CRUISER));
+        assertEquals(ModuleShareExtent.NONE, type.moduleShareExtent(HullSize.CRUISER, true));
+    }
+
+    @Test
     void temporaryNodesAndVanillaPassthroughsShareNothing() {
         SkillTypeEffect armor = new SkillTypeEffect(DefenseSkillEffect.ARMOR_PERCENT, 10f);
 

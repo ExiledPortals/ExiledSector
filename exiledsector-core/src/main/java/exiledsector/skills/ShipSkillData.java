@@ -27,6 +27,7 @@ public class ShipSkillData {
     Set<String> replacementAllocatedNodeIds;
     String startingRootId;
     boolean npcBuild;
+    Set<String> integratedNodeIds;
     transient int revision;
     Map<String, String> socketedItems;
     Map<String, String> paidItemCostIds;
@@ -325,10 +326,42 @@ public class ShipSkillData {
         npcBuild = false;
     }
 
+    public boolean isIntegrated(String nodeId) {
+        return integratedNodeIds != null && integratedNodeIds.contains(nodeId);
+    }
+
+    public Set<String> getIntegratedNodeIds() {
+        return integratedNodeIds == null ? Set.of() : Collections.unmodifiableSet(integratedNodeIds);
+    }
+
+    public boolean integrate(String nodeId) {
+        if (integratedNodeIds == null) integratedNodeIds = new LinkedHashSet<>();
+        if (!integratedNodeIds.add(nodeId)) {
+            return false;
+        }
+        revision++;
+        return true;
+    }
+
+    public boolean forgetIntegration(String nodeId) {
+        if (integratedNodeIds == null || !integratedNodeIds.remove(nodeId)) {
+            return false;
+        }
+        revision++;
+        return true;
+    }
+
+    public void clearIntegrations() {
+        if (integratedNodeIds != null && !integratedNodeIds.isEmpty()) {
+            revision++;
+        }
+        integratedNodeIds = null;
+    }
+
     public boolean isBlank() {
         return allocatedNodeIds.isEmpty() && getDormantNodeIds().isEmpty() && level == 0 && xp == 0f && bankedFreeAllocations == 0 && frameworkPoints == 0
                 && !skillTreeUnlocked && extraLogisticsSlots == 0 && (unlockedSections == null || unlockedSections.isEmpty())
-                && (hullItemsBySection == null || hullItemsBySection.isEmpty());
+                && (hullItemsBySection == null || hullItemsBySection.isEmpty()) && (integratedNodeIds == null || integratedNodeIds.isEmpty());
     }
 
     public Set<String> getDormantNodeIds() {

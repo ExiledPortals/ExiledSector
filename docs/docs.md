@@ -73,6 +73,25 @@ each such hull mod's effect in `PhantomHullModEffect`, which forwards to the ori
 copies, where it does nothing, can't be removed and is hidden from refit and Codex. Fleet-wide hull mods
 (High Resolution Sensors, Phase Field) are never phantoms.
 
+### Integrated nodes
+
+A type with an `integrated` block in `skill_types.json` (`IntegratedEffects`) can be integrated on one ship by
+holding a click on its allocated node. The ship's nth integration costs n story points plus vanilla's s-mod bonus XP
+for its hull size (`NodeIntegration`). An integrated node applies its integrated effects instead of its normal ones
+(`IntegratedNodes.effectsFor`) and stays in `ShipSkillData.integratedNodeIds` when unallocated. Save repair forgets
+integrations whose node is gone or no longer integrable and refunds the costliest ones first.
+
+An NPC ship integrates as many of its allocated integrable nodes as it has s-mods; a fleet not yet inflated rolls
+the count from its average s-mods the way vanilla does (`NpcIntegratedNodes`). They go in the `integrated:` field
+of `NpcTreeTag`, and a recovered hull loses them (`ShipTreeSync.adoptNpcTree`).
+
+### Missile Autoloader and Ballistic Rangefinder
+
+Both nodes copy their vanilla hull mod so integration can scale it. `MissileAutoloaderListener` runs vanilla's
+reload loop with the capacity scaled by `MISSILE_AUTOLOADER_CAPACITY_PERCENT` and the post-reload cooldown set by
+`MISSILE_AUTOLOADER_COOLDOWN_FLAT`. `BallisticRangefinderListener` scales vanilla's base range bonus by
+`BALLISTIC_RANGEFINDER_BONUS_PERCENT`, still capped at vanilla's maximum base range for the largest ballistic slot.
+
 ### Hull mod conflicts
 
 `data/config/exiledSector/hullmod_conflicts.csv` lists hull mods that can't share a ship: each row names a hull

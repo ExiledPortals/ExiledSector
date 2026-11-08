@@ -7,7 +7,8 @@ public enum Style {
     HULLMOD("hullmod"),
     NODE("node"),
     IMMUTABLE("immutable"),
-    MUTED("muted");
+    MUTED("muted"),
+    BUILT_IN("builtIn");
 
     private final String tag;
 

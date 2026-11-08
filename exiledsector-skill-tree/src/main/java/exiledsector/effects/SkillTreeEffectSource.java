@@ -148,9 +148,10 @@ public final class SkillTreeEffectSource implements ShipEffectSource {
 
     @Override
     public void afterShipCreation(ShipAPI ship, ResolvedTree resolvedTree) {
-        ModuleTreeShare.attach(ship, resolvedTree);
-        boolean playerTree = !SkillDataResolver.isNpcTree(ship.getVariant());
         FleetMemberAPI member = SkillTreeHullMod.memberOf(ship);
+        ShipSkillData shipData = SkillDataResolver.resolve(member, ship.getVariant());
+        ModuleTreeShare.attach(ship, resolvedTree, shipData == null ? Set.of() : Set.copyOf(shipData.getIntegratedNodeIds()));
+        boolean playerTree = !SkillDataResolver.isNpcTree(ship.getVariant());
         PhantomConflictWatch.inspect(member, ship.getVariant(), phantomHullModIds(resolvedTree), playerTree);
         HullModConflictResolver.removeHullModsThatTriedToStripAPhantom(allocated(resolvedTree), ship.getVariant(), playerTree);
     }

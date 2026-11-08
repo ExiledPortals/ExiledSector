@@ -7,7 +7,15 @@ import { EffectSelect } from '../../../shared/EffectSelect.tsx';
 import { ImagePickButton } from '../../../shared/ImagePickButton.tsx';
 import { RowButtons } from '../../../shared/MoveButtons.tsx';
 import { TYPE_TAG_GROUPS } from '../model/tags.ts';
-import { HULL_SIZE_OPTIONS, MODULE_SHARE_OPTIONS, tierOf, UNLOCK_CONDITION_LABELS, type SkillType, type UnlockCondition } from '../model/types.ts';
+import {
+  HULL_SIZE_OPTIONS,
+  MODULE_SHARE_OPTIONS,
+  tierOf,
+  UNLOCK_CONDITION_LABELS,
+  type IntegratedEffects,
+  type SkillType,
+  type UnlockCondition,
+} from '../model/types.ts';
 import { TagGroupsField } from './TagGroupsField.tsx';
 import type { TypeFormSection } from './typeFormSections.ts';
 
@@ -50,10 +58,19 @@ function defaultEffectName(vocabulary: Vocabulary): string {
   return vocabulary.effectInfo.has('HULL_PERCENT') ? 'HULL_PERCENT' : (vocabulary.effectNames[0] ?? '');
 }
 
-function EffectRows({ type, onEdit, vocabulary, note }: Pick<TypeFormProps, 'type' | 'onEdit' | 'vocabulary' | 'note'>) {
-  const effects = type.effects ?? [];
+type EffectHolder = IntegratedEffects;
+
+interface EffectHolderProps {
+  holder: EffectHolder;
+  onEditHolder: (recipe: (holder: EffectHolder) => void) => void;
+  vocabulary: Vocabulary;
+  label: string;
+}
+
+function EffectRows({ holder, onEditHolder, vocabulary, label }: EffectHolderProps) {
+  const effects = holder.effects ?? [];
   return (
-    <Input.Wrapper label={`Effects${note ?? ''}`}>
+    <Input.Wrapper label={label}>
       <Stack gap={6} mt={4}>
         {effects.length === 0 ? (
           <Text size="xs" c="dimmed">
@@ -68,7 +85,7 @@ function EffectRows({ type, onEdit, vocabulary, note }: Pick<TypeFormProps, 'typ
               vocabulary={vocabulary}
               value={entry.effect}
               onChange={(effect) =>
-                onEdit((draft) => {
+                onEditHolder((draft) => {
                   draft.effects![index].effect = effect;
                 })
               }
@@ -79,7 +96,7 @@ function EffectRows({ type, onEdit, vocabulary, note }: Pick<TypeFormProps, 'typ
               aria-label="Magnitude"
               value={entry.magnitude}
               onCommit={(value) =>
-                onEdit((draft) => {
+                onEditHolder((draft) => {
                   draft.effects![index].magnitude = numberOrZero(value);
                 })
               }
@@ -87,8 +104,8 @@ function EffectRows({ type, onEdit, vocabulary, note }: Pick<TypeFormProps, 'typ
             <RowButtons
               index={index}
               count={effects.length}
-              onMove={(from, to) => onEdit((draft) => moveItem(draft.effects!, from, to))}
-              onRemove={() => onEdit((draft) => {
+              onMove={(from, to) => onEditHolder((draft) => moveItem(draft.effects!, from, to))}
+              onRemove={() => onEditHolder((draft) => {
                 draft.effects!.splice(index, 1);
               })}
             />
@@ -99,7 +116,7 @@ function EffectRows({ type, onEdit, vocabulary, note }: Pick<TypeFormProps, 'typ
           variant="default"
           w="fit-content"
           leftSection={<IconPlus size={14} />}
-          onClick={() => onEdit((draft) => {
+          onClick={() => onEditHolder((draft) => {
             (draft.effects ??= []).push({ effect: defaultEffectName(vocabulary), magnitude: 10 });
           })}
         >
@@ -117,10 +134,10 @@ const HULL_SIZE_FIELDS = [
   { key: 'capitalShip', label: 'Capital' },
 ] as const;
 
-function HullSizeEffectRows({ type, onEdit, vocabulary, note }: Pick<TypeFormProps, 'type' | 'onEdit' | 'vocabulary' | 'note'>) {
-  const entries = type.hullSizeEffects ?? [];
+function HullSizeEffectRows({ holder, onEditHolder, vocabulary, label }: EffectHolderProps) {
+  const entries = holder.hullSizeEffects ?? [];
   return (
-    <Input.Wrapper label={`Hull-size effects${note ?? ''}`}>
+    <Input.Wrapper label={label}>
       <Stack gap={6} mt={4}>
         {entries.length === 0 ? (
           <Text size="xs" c="dimmed">
@@ -136,7 +153,7 @@ function HullSizeEffectRows({ type, onEdit, vocabulary, note }: Pick<TypeFormPro
                 vocabulary={vocabulary}
                 value={entry.effect}
                 onChange={(effect) =>
-                  onEdit((draft) => {
+                  onEditHolder((draft) => {
                     draft.hullSizeEffects![index].effect = effect;
                   })
                 }
@@ -144,8 +161,8 @@ function HullSizeEffectRows({ type, onEdit, vocabulary, note }: Pick<TypeFormPro
               <RowButtons
                 index={index}
                 count={entries.length}
-                onMove={(from, to) => onEdit((draft) => moveItem(draft.hullSizeEffects!, from, to))}
-                onRemove={() => onEdit((draft) => {
+                onMove={(from, to) => onEditHolder((draft) => moveItem(draft.hullSizeEffects!, from, to))}
+                onRemove={() => onEditHolder((draft) => {
                   draft.hullSizeEffects!.splice(index, 1);
                 })}
               />
@@ -158,7 +175,7 @@ function HullSizeEffectRows({ type, onEdit, vocabulary, note }: Pick<TypeFormPro
                   label={field.label}
                   value={entry[field.key]}
                   onCommit={(value) =>
-                    onEdit((draft) => {
+                    onEditHolder((draft) => {
                       draft.hullSizeEffects![index][field.key] = numberOrZero(value);
                     })
                   }
@@ -173,7 +190,7 @@ function HullSizeEffectRows({ type, onEdit, vocabulary, note }: Pick<TypeFormPro
           w="fit-content"
           leftSection={<IconPlus size={14} />}
           onClick={() =>
-            onEdit((draft) => {
+            onEditHolder((draft) => {
               (draft.hullSizeEffects ??= []).push({ effect: defaultEffectName(vocabulary), frigate: 0, destroyer: 0, cruiser: 0, capitalShip: 0 });
             })
           }
@@ -182,6 +199,39 @@ function HullSizeEffectRows({ type, onEdit, vocabulary, note }: Pick<TypeFormPro
         </Button>
       </Stack>
     </Input.Wrapper>
+  );
+}
+
+function IntegratedRows({ type, onEdit, vocabulary, note }: Pick<TypeFormProps, 'type' | 'onEdit' | 'vocabulary' | 'note'>) {
+  const integrated = type.integrated;
+  const onEditIntegrated = (recipe: (holder: EffectHolder) => void) => onEdit((draft) => recipe((draft.integrated ??= {})));
+  return (
+    <Stack gap={6}>
+      <Checkbox
+        size="xs"
+        label={`Can be integrated with story points${note ?? ''}`}
+        checked={integrated !== undefined}
+        onChange={(event) => {
+          const checked = event.currentTarget.checked;
+          onEdit((draft) => {
+            if (!checked) {
+              delete draft.integrated;
+            } else {
+              draft.integrated = {
+                effects: (draft.effects ?? []).map((entry) => ({ ...entry })),
+                hullSizeEffects: (draft.hullSizeEffects ?? []).map((entry) => ({ ...entry })),
+              };
+            }
+          });
+        }}
+      />
+      {integrated ? (
+        <>
+          <EffectRows holder={integrated} onEditHolder={onEditIntegrated} vocabulary={vocabulary} label="Integrated effects" />
+          <HullSizeEffectRows holder={integrated} onEditHolder={onEditIntegrated} vocabulary={vocabulary} label="Integrated hull-size effects" />
+        </>
+      ) : null}
+    </Stack>
   );
 }
 
@@ -376,9 +426,11 @@ export function TypeForm(props: TypeFormProps) {
           />
         );
       case 'effects':
-        return <EffectRows key={section} type={type} onEdit={onEdit} vocabulary={vocabulary} note={note} />;
+        return <EffectRows key={section} holder={type} onEditHolder={onEdit} vocabulary={vocabulary} label={`Effects${note}`} />;
       case 'hullSizeEffects':
-        return <HullSizeEffectRows key={section} type={type} onEdit={onEdit} vocabulary={vocabulary} note={note} />;
+        return <HullSizeEffectRows key={section} holder={type} onEditHolder={onEdit} vocabulary={vocabulary} label={`Hull-size effects${note}`} />;
+      case 'integrated':
+        return <IntegratedRows key={section} type={type} onEdit={onEdit} vocabulary={vocabulary} note={note} />;
       case 'vanillaHullMod':
         return (
           <CommitTextInput

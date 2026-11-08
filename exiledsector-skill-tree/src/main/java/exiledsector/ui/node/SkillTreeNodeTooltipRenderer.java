@@ -9,6 +9,7 @@ import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.DescriptionLine;
+import exiledsector.skills.IntegrationLines;
 import exiledsector.skills.ShipFacts;
 import exiledsector.effects.ModuleShareSetting;
 import exiledsector.effects.SkillTreeHullMod;
@@ -47,6 +48,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_COLOR;
@@ -58,12 +60,16 @@ final class SkillTreeNodeTooltipRenderer {
 
     private final FleetMemberAPI fleetMember;
     private final SkillTreePanelStyle panelStyle;
+    private final BooleanSupplier planning;
     private final TooltipText tooltipText = SkillTreePanelStyle.tooltipText();
     private final Map<String, TextLabel> tooltipTitles = new HashMap<>();
     private final Map<String, TextLabel> tooltipBodies = new HashMap<>();
     private final Map<String, TextLabel> typeTooltipTitles = new HashMap<>();
     private final Map<String, TextLabel> typeTooltipBodies = new HashMap<>();
     private final Map<String, TextLabel> affinitySections = new HashMap<>();
+    private final Map<String, TextLabel> integrationSections = new HashMap<>();
+    private final Map<String, TextLabel> detailSections = new HashMap<>();
+    private final Map<TextLabel, List<TextLabel>> bodySections = new HashMap<>();
     private final Map<TextLabel, Boolean> expandableBodies = new HashMap<>();
     private final Map<Boolean, TextLabel> footers = new HashMap<>();
     private final Map<String, TextLabel> flavours = new HashMap<>();
@@ -99,9 +105,10 @@ final class SkillTreeNodeTooltipRenderer {
         }
     }
 
-    SkillTreeNodeTooltipRenderer(FleetMemberAPI fleetMember, SkillTreePanelStyle panelStyle) {
+    SkillTreeNodeTooltipRenderer(FleetMemberAPI fleetMember, SkillTreePanelStyle panelStyle, BooleanSupplier planning) {
         this.fleetMember = fleetMember;
         this.panelStyle = panelStyle;
+        this.planning = planning;
     }
 
     void renderTooltip(SkillNode node, NodeAllocator.Snapshot allocation, String tooltipWarning, float mouseX, float mouseY, float alphaMult) {
@@ -126,10 +133,13 @@ final class SkillTreeNodeTooltipRenderer {
         DoctrineRewrite rewrite = hidden ? null : DoctrineOverrides.rewrite(skillData, node.getId());
         LogisticsStatus logistics = hidden || socketed != null ? null : LogisticsStatus.of(effectiveType, skillData.isAllocated(node.getId()),
                 allocation.gate());
+        IntegrationLines.State integration = IntegrationLines.State.of(skillData, node, !planning.getAsBoolean());
+        boolean previewsIntegration = !hidden && !showChoiceHint && socketed == null;
         List<Object> signature = List.of(effectiveType.getId(), hidden, showChoiceHint, expanded, allocatedSocket,
                 socketed == null ? "" : socketed.id(), refusalReason == null ? "" : refusalReason, shipState, shipStateRevision,
                 rewrite == null ? "" : rewrite, tooltipWarning == null ? "" : tooltipWarning,
-                socketGrantStatuses, grantingItem == null ? "" : grantingItem.id(), costLine == null ? "" : costLine, logistics == null ? "" : logistics);
+                socketGrantStatuses, grantingItem == null ? "" : grantingItem.id(), costLine == null ? "" : costLine, logistics == null ? "" : logistics,
+                integration);
 
         TextLabel title = tooltipTitles.computeIfAbsent(node.getId(), id -> titleLabel()).refresh(signature, label -> {
             if (socketed != null) {
@@ -141,6 +151,7 @@ final class SkillTreeNodeTooltipRenderer {
         TextLabel body = body(tooltipBodies, node.getId(), signature,
                 () -> withLeadingLines(withCostLine(withGrantLine(withDoctrineLines(describe(node, skillData, effectiveType, hidden, showChoiceHint,
                         socketed, socketGrantStatuses, expanded), rewrite), grantingItem), costLine), logistics == null ? List.of() : logistics.lines()),
+                () -> previewsIntegration ? IntegrationLines.preview(effectiveType, fleetMember.getHullSpec().getHullSize(), integration) : List.of(),
                 expanded, tooltipWarning != null ? tooltipWarning : refusalReason);
         TextLabel affinitySection = showsAffinity(effectiveType, hidden, showChoiceHint, socketed)
                 ? affinitySections.computeIfAbsent(node.getId(), id -> new TextLabel(tooltipText.body(), TOOLTIP_BODY_COLOR))
@@ -150,7 +161,8 @@ final class SkillTreeNodeTooltipRenderer {
         List<SkillTreeTooltipTable> tables = showChoiceHint || hidden ? List.of() : tablesFor(effectiveType, allocation.statsRevision());
         TextLabel flavour = hidden || socketed != null ? null : flavourFor(effectiveType);
         boolean expandable = expandableBodies.getOrDefault(body, false) || affinitySection != null;
-        panelStyle.drawTitleBodyTooltip(title, flavour, body, tables, expanded ? affinitySection : null, footer(expandable, expanded),
+        panelStyle.drawTitleBodyTooltip(title, flavour, body, bodySections.getOrDefault(body, List.of()), tables, expanded ? affinitySection : null,
+                footer(expandable, expanded),
                 mouseX, mouseY, alphaMult);
     }
 
@@ -167,9 +179,9 @@ final class SkillTreeNodeTooltipRenderer {
         TextLabel body = body(typeTooltipBodies, type.getId(), List.of(type.getId(), expanded, refusalReason == null ? "" : refusalReason,
                         costLine == null ? "" : costLine),
                 () -> withCostLine(withModuleShareLine(SkillNode.describeMechanics(type, fleetMember.getHullSpec().getHullSize()), type), costLine),
-                expanded, refusalReason);
+                List::of, expanded, refusalReason);
 
-        panelStyle.drawTitleBodyTooltip(title, flavourFor(type), body, tablesFor(type, allocation.statsRevision()), null,
+        panelStyle.drawTitleBodyTooltip(title, flavourFor(type), body, List.of(), tablesFor(type, allocation.statsRevision()), null,
                 footer(expandableBodies.getOrDefault(body, false), expanded), mouseX, mouseY, alphaMult);
     }
 
@@ -177,19 +189,34 @@ final class SkillTreeNodeTooltipRenderer {
         return new TextLabel(tooltipText.title(), TOOLTIP_TITLE_COLOR);
     }
 
-    private TextLabel body(Map<String, TextLabel> bodies, String key, Object signature, Supplier<NodeDescription> description, boolean expanded,
-                           String refusalReason) {
-        TextLabel bodyLabel = bodies.computeIfAbsent(key, id -> new TextLabel(tooltipText.body(), TOOLTIP_BODY_COLOR));
+    private TextLabel body(Map<String, TextLabel> bodies, String key, Object signature, Supplier<NodeDescription> description,
+                           Supplier<List<DescriptionLine>> integrationPreview, boolean expanded, String refusalReason) {
+        TextLabel bodyLabel = bodies.computeIfAbsent(key, id -> sectionLabel());
         bodyLabel.refresh(signature, label -> {
             NodeDescription described = description.get();
-            List<DescriptionLine> lines = new ArrayList<>(expanded ? described.all() : described.effects());
+            List<DescriptionLine> preview = integrationPreview.get();
+            boolean sectioned = expanded && !preview.isEmpty();
+            List<DescriptionLine> lines = new ArrayList<>(expanded && !sectioned ? described.all() : described.effects());
             if (refusalReason != null) {
                 lines.add(new DescriptionLine(StyledText.styled(refusalReason, Style.BAD), false));
             }
             writeBodyText(label, lines);
-            expandableBodies.put(label, !described.details().isEmpty());
+            expandableBodies.put(label, !described.details().isEmpty() || !preview.isEmpty());
+            bodySections.put(label, sectioned ? sections(key, preview, described.details()) : List.of());
         });
         return bodyLabel;
+    }
+
+    private List<TextLabel> sections(String key, List<DescriptionLine> integrationPreview, List<DescriptionLine> details) {
+        TextLabel integrationSection = writeBodyText(integrationSections.computeIfAbsent(key, id -> sectionLabel()), integrationPreview);
+        if (details.isEmpty()) {
+            return List.of(integrationSection);
+        }
+        return List.of(integrationSection, writeBodyText(detailSections.computeIfAbsent(key, id -> sectionLabel()), details));
+    }
+
+    private TextLabel sectionLabel() {
+        return new TextLabel(tooltipText.body(), TOOLTIP_BODY_COLOR);
     }
 
     private TextLabel footer(boolean expandable, boolean expanded) {
@@ -329,7 +356,7 @@ final class SkillTreeNodeTooltipRenderer {
     }
 
     private NodeDescription withModuleShareLine(NodeDescription description, SkillType type) {
-        StyledText moduleShareLine = moduleShareLine(type);
+        StyledText moduleShareLine = moduleShareLine(type, false);
         if (moduleShareLine == null) {
             return description;
         }
@@ -338,12 +365,12 @@ final class SkillTreeNodeTooltipRenderer {
         return new NodeDescription(description.effects(), details);
     }
 
-    private StyledText moduleShareLine(SkillType type) {
+    private StyledText moduleShareLine(SkillType type, boolean integrated) {
         ShipHullSpecAPI hullSpec = fleetMember.getHullSpec();
         if (!ShipFacts.hasModuleSlots(hullSpec)) {
             return null;
         }
-        return moduleShareLine(type.moduleShareExtent(hullSpec.getHullSize()), ModuleShareSetting.percentFor(fleetMember.isStation()));
+        return moduleShareLine(type.moduleShareExtent(hullSpec.getHullSize(), integrated), ModuleShareSetting.percentFor(fleetMember.isStation()));
     }
 
     static StyledText moduleShareLine(ModuleShareExtent extent, int sharePercent) {
@@ -389,13 +416,14 @@ final class SkillTreeNodeTooltipRenderer {
         if (showChoiceHint) {
             effects.add(plainLine("ui.node.choiceHint"));
         } else {
-            NodeDescription description = SkillNode.describeMechanics(effectiveType, fleetMember.getHullSpec().getHullSize());
+            IntegrationLines.State integration = IntegrationLines.State.of(skillData, node, !planning.getAsBoolean());
+            NodeDescription description = IntegrationLines.describe(effectiveType, fleetMember.getHullSpec().getHullSize(), integration);
             effects.addAll(description.effects());
             details.addAll(description.details());
             if (showsAffinity(effectiveType, false, false, null)) {
                 effects.addAll(affinityLines(effectiveType, skillData).effects());
             }
-            StyledText moduleShareLine = moduleShareLine(effectiveType);
+            StyledText moduleShareLine = moduleShareLine(effectiveType, integration.integrated());
             if (moduleShareLine != null) {
                 details.add(new DescriptionLine(moduleShareLine, false));
             }

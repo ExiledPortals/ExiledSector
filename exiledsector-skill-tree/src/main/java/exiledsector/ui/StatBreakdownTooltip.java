@@ -36,7 +36,7 @@ final class StatBreakdownTooltip {
         if (breakdown != shownBreakdown) {
             show(breakdown);
         }
-        panelStyle.drawTitleBodyTooltip(titleLabel, null, bodyLabel, tables, resultLabel.isEmpty() ? null : resultLabel,
+        panelStyle.drawTitleBodyTooltip(titleLabel, null, bodyLabel, List.of(), tables, resultLabel.isEmpty() ? null : resultLabel,
                 notesLabel.isEmpty() ? null : notesLabel, mouseX, mouseY, alphaMult);
     }
 

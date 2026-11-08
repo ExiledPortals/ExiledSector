@@ -44,6 +44,7 @@ public class SkillType {
     private final List<UnlockCondition> unlockConditions;
     private final List<String> tags;
     private final ModuleShareOverride moduleShareOverride;
+    private final IntegratedEffects integratedEffects;
 
     private SkillType(Builder builder) {
         this.id = builder.id;
@@ -73,6 +74,7 @@ public class SkillType {
         this.unlockConditions = builder.unlockConditions == null ? Collections.emptyList() : builder.unlockConditions;
         this.tags = builder.tags == null ? Collections.emptyList() : builder.tags;
         this.moduleShareOverride = builder.moduleShareOverride == null ? ModuleShareOverride.AUTO : builder.moduleShareOverride;
+        this.integratedEffects = builder.integratedEffects;
     }
 
     public static final class Builder {
@@ -98,6 +100,7 @@ public class SkillType {
         private List<UnlockCondition> unlockConditions = Collections.emptyList();
         private List<String> tags = Collections.emptyList();
         private ModuleShareOverride moduleShareOverride = ModuleShareOverride.AUTO;
+        private IntegratedEffects integratedEffects;
 
         public Builder(String id, String displayName, String iconPath, SkillTier tier) {
             this.id = id;
@@ -113,6 +116,11 @@ public class SkillType {
 
         public Builder hullSizeEffects(List<HullSizeSkillEffect> hullSizeEffects) {
             this.hullSizeEffects = hullSizeEffects;
+            return this;
+        }
+
+        public Builder integratedEffects(IntegratedEffects integratedEffects) {
+            this.integratedEffects = integratedEffects;
             return this;
         }
 
@@ -367,11 +375,15 @@ public class SkillType {
     }
 
     public boolean sharesWithModules(HullSize hullSize) {
+        return sharesWithModules(hullSize, false);
+    }
+
+    public boolean sharesWithModules(HullSize hullSize, boolean integrated) {
         if (moduleShareOverride == ModuleShareOverride.NONE || vanillaHullModId != null || temporaryAfterDeploymentSeconds != null) {
             return false;
         }
         return moduleShareOverride == ModuleShareOverride.ALL
-                || effectsFor(hullSize).stream().noneMatch(effect -> effect.effect().moduleShare() == ModuleShare.EXCLUDE);
+                || effectsFor(hullSize, integrated).stream().noneMatch(effect -> effect.effect().moduleShare() == ModuleShare.EXCLUDE);
     }
 
     public List<SkillTypeEffect> moduleSharedEffects(HullSize hullSize) {
@@ -382,10 +394,14 @@ public class SkillType {
     }
 
     public ModuleShareExtent moduleShareExtent(HullSize hullSize) {
-        boolean shares = sharesWithModules(hullSize);
+        return moduleShareExtent(hullSize, false);
+    }
+
+    public ModuleShareExtent moduleShareExtent(HullSize hullSize, boolean integrated) {
+        boolean shares = sharesWithModules(hullSize, integrated);
         int consideredCount = 0;
         int sharedCount = 0;
-        for (SkillTypeEffect effect : effectsFor(hullSize)) {
+        for (SkillTypeEffect effect : effectsFor(hullSize, integrated)) {
             if (effect.effect() instanceof StationModuleSkillEffect) {
                 continue;
             }
@@ -403,14 +419,24 @@ public class SkillType {
         return sharedCount == consideredCount ? ModuleShareExtent.ALL : ModuleShareExtent.SOME;
     }
 
+    public boolean isIntegrable() {
+        return integratedEffects != null;
+    }
+
+    public IntegratedEffects getIntegratedEffects() {
+        return integratedEffects;
+    }
+
+    public List<SkillTypeEffect> effectsFor(HullSize hullSize, boolean integrated) {
+        return integrated && integratedEffects != null ? integratedEffects.effectsFor(hullSize) : effectsFor(hullSize);
+    }
+
     public List<SkillTypeEffect> effectsFor(HullSize hullSize) {
         if (hullSizeEffects.isEmpty()) {
             return effects;
         }
         List<SkillTypeEffect> combined = new ArrayList<>(effects);
-        for (HullSizeSkillEffect effect : hullSizeEffects) {
-            combined.add(new SkillTypeEffect(effect.effect(), effect.valueFor(hullSize)));
-        }
+        HullSizeSkillEffect.addNonZero(combined, hullSizeEffects, hullSize);
         return combined;
     }
 }

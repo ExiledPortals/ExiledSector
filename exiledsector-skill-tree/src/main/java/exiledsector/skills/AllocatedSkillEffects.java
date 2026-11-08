@@ -73,10 +73,11 @@ public final class AllocatedSkillEffects {
 
     public static NodeParts nodeParts(ShipSkillData data, AllocatedNode allocated, HullSize hullSize) {
         List<SkillTypeEffect> doctrine = doctrineEffects(data, allocated, hullSize);
+        List<SkillTypeEffect> own = ownEffects(data, allocated, hullSize);
         if (isVanillaPassthrough(allocated)) {
-            return new NodeParts(List.of(), List.of(), doctrine);
+            return new NodeParts(own, List.of(), doctrine);
         }
-        return new NodeParts(appliedEffects(data, allocated.effectiveType(), hullSize), subroutineEffects(data, allocated, hullSize), doctrine);
+        return new NodeParts(own, subroutineEffects(data, allocated, hullSize), doctrine);
     }
 
     private static List<SkillTypeEffect> doctrineEffects(ShipSkillData data, AllocatedNode allocated, HullSize hullSize) {
@@ -94,7 +95,7 @@ public final class AllocatedSkillEffects {
     }
 
     public static List<SkillTypeEffect> appliedEffects(ShipSkillData data, AllocatedNode allocated, HullSize hullSize) {
-        List<SkillTypeEffect> applied = appliedEffects(data, allocated.effectiveType(), hullSize);
+        List<SkillTypeEffect> applied = ownEffects(data, allocated, hullSize);
         applied.addAll(subroutineEffects(data, allocated, hullSize));
         applied.addAll(doctrineEffects(data, allocated, hullSize));
         return applied;
@@ -120,9 +121,9 @@ public final class AllocatedSkillEffects {
         return applied;
     }
 
-    public static List<SkillTypeEffect> appliedEffects(ShipSkillData data, SkillType type, HullSize hullSize) {
+    private static List<SkillTypeEffect> ownEffects(ShipSkillData data, AllocatedNode allocated, HullSize hullSize) {
         List<SkillTypeEffect> applied = new ArrayList<>();
-        for (SkillTypeEffect effect : type.effectsFor(hullSize)) {
+        for (SkillTypeEffect effect : IntegratedNodes.effectsFor(data, allocated.node().getId(), allocated.effectiveType(), hullSize)) {
             if (appliesTo(data, effect.effect())) {
                 applied.add(effect);
             }

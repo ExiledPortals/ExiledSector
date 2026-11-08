@@ -552,20 +552,46 @@
 			]
 		},
 		{
-			"id": "packed_capacitors",
-			"name": "Packed Capacitors",
-			"icon": "graphics/icons/packed_capacitors.png",
+			"id": "flux_coil_adjunct",
+			"name": "Flux Coil Adjunct",
+			"icon": "graphics/icons/flux_coil_adjunct.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
 					"effect": "FLUX_CAPACITY_PERCENT",
 					"magnitude": 15
-				},
-				{
-					"effect": "FLUX_CAPACITY_FLAT",
-					"magnitude": 600
 				}
 			],
+			"hullSizeEffects": [
+				{
+					"effect": "FLUX_CAPACITY_FLAT",
+					"frigate": 600,
+					"destroyer": 1200,
+					"cruiser": 1800,
+					"capitalShip": 3000
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FLUX_CAPACITY_PERCENT",
+						"magnitude": 15
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "FLUX_CAPACITY_FLAT",
+						"frigate": 800,
+						"destroyer": 1600,
+						"cruiser": 2400,
+						"capitalShip": 4000
+					}
+				]
+			},
+			"phantomHullMods": [
+				"fluxcoil"
+			],
+			"flavour": "Spare coils wound around the main capacitor banks wherever the frame leaves room. The engineers stopped asking where the room came from.",
 			"tags": [
 				"flux"
 			]
@@ -943,6 +969,26 @@
 					"magnitude": 50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_TURN_RATE_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "SHIELD_RAISE_RATE_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "SHIELD_TURN_RATE_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "SHIELD_RAISE_RATE_PERCENT",
+						"magnitude": 100
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -969,6 +1015,14 @@
 					"magnitude": 40
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "PHASE_CLOAK_FLUX_THRESHOLD_PERCENT",
+						"magnitude": 60
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1002,6 +1056,14 @@
 					"magnitude": -30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BEAM_WEAPON_RANGE_FLAT",
+						"magnitude": 200
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1029,6 +1091,45 @@
 					"magnitude": 40
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "WEAPON_TURN_RATE_PERCENT",
+						"magnitude": 40
+					},
+					{
+						"effect": "DAMAGE_TO_MISSILES_PERCENT",
+						"magnitude": 25
+					},
+					{
+						"effect": "DAMAGE_TO_FIGHTERS_PERCENT",
+						"magnitude": 25
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "DAMAGE_TO_FRIGATE_PERCENT",
+						"frigate": 0,
+						"destroyer": 5,
+						"cruiser": 10,
+						"capitalShip": 15
+					},
+					{
+						"effect": "DAMAGE_TO_DESTROYER_PERCENT",
+						"frigate": 0,
+						"destroyer": 0,
+						"cruiser": 5,
+						"capitalShip": 10
+					},
+					{
+						"effect": "DAMAGE_TO_CRUISER_PERCENT",
+						"frigate": 0,
+						"destroyer": 0,
+						"cruiser": 0,
+						"capitalShip": 5
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1066,6 +1167,34 @@
 					"magnitude": -25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ARMOR_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "WEAPON_DURABILITY_PERCENT",
+						"magnitude": 80
+					},
+					{
+						"effect": "WEAPON_TURN_RATE_MULT",
+						"magnitude": -25
+					},
+					{
+						"effect": "WEAPON_RECOIL_MULT",
+						"magnitude": -25
+					},
+					{
+						"effect": "BALLISTIC_WEAPON_RATE_OF_FIRE_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "ENERGY_WEAPON_RATE_OF_FIRE_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
 			"phantomHullMods": [
 				"armoredweapons"
 			],
@@ -1086,6 +1215,22 @@
 					"magnitude": -25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "REPAIR_TIME_MULT",
+						"magnitude": -25
+					},
+					{
+						"effect": "REPAIR_TIME_MULT",
+						"magnitude": -25
+					},
+					{
+						"effect": "OVERLOAD_DURATION_PERCENT",
+						"magnitude": -33
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1111,6 +1256,22 @@
 					"magnitude": 50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MANEUVERABILITY_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "ZERO_FLUX_SPEED_FLAT",
+						"magnitude": 10
+					},
+					{
+						"effect": "ZERO_FLUX_TURN_RATE_MULT",
+						"magnitude": 100
+					}
+				]
+			},
 			"phantomHullMods": [
 				"auxiliarythrusters"
 			],
@@ -1123,7 +1284,20 @@
 			"name": "Ballistic Rangefinder",
 			"icon": "graphics/icons/ballistic_rangefinder.png",
 			"tier": "KEYSTONE",
-			"vanillaHullMod": "ballistic_rangefinder",
+			"effects": [
+				{
+					"effect": "BALLISTIC_RANGEFINDER_BONUS_PERCENT",
+					"magnitude": 100
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BALLISTIC_RANGEFINDER_BONUS_PERCENT",
+						"magnitude": 150
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1135,11 +1309,6 @@
 				"ballistic_rangefinder"
 			],
 			"flavour": "A rangefinder slaved to the ship's largest ballistic mount, feeding its solution to every smaller gun aboard.",
-			"effectText": [
-				"Small and medium ballistic weapons gain base range, depending on the size of this ship's largest ballistic slot.",
-				"Hybrid weapons of every size gain base range too."
-			],
-			"todo": "Real vanilla effect is a per-weapon-slot range bonus (WeaponBaseRangeModifier) that varies by the ship's largest ballistic slot size and is capped per weapon, with a separate larger bonus for hybrid mounts - not a fixed magnitude on a single MutableShipStatsAPI stat. Deliberately left on vanillaHullMod passthrough rather than approximate it with a flat/percent BALLISTIC_WEAPON_RANGE_PERCENT effect, since that would only be correct for one specific loadout.",
 			"tags": [
 				"ballistic",
 				"range",
@@ -1161,6 +1330,22 @@
 					"magnitude": -60
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "HULL_PERCENT",
+						"magnitude": 20
+					},
+					{
+						"effect": "CREW_LOSS_MULT",
+						"magnitude": -60
+					},
+					{
+						"effect": "CREW_LOSS_MULT",
+						"magnitude": -25
+					}
+				]
+			},
 			"phantomHullMods": [
 				"blast_doors"
 			],
@@ -1199,6 +1384,43 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CONVERTED_HANGAR_FIGHTER_BAYS_FLAT",
+						"magnitude": 1
+					},
+					{
+						"effect": "CONVERTED_HANGAR_REFIT_TIME_MULT",
+						"magnitude": 50
+					},
+					{
+						"effect": "CONVERTED_HANGAR_REPLACEMENT_RATE_MULT",
+						"magnitude": 50
+					},
+					{
+						"effect": "CONVERTED_HANGAR_RELAUNCH_TIME_FLAT",
+						"magnitude": 40
+					},
+					{
+						"effect": "CONVERTED_HANGAR_MIN_CREW_FLAT",
+						"magnitude": 20
+					},
+					{
+						"effect": "CONVERTED_HANGAR_DEPLOYMENT_COST_FLAT",
+						"magnitude": 1
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "FIGHTER_REPLACEMENT_RECOVERY_PERCENT",
+						"frigate": 0,
+						"destroyer": 0,
+						"cruiser": 10,
+						"capitalShip": 25
+					}
+				]
+			},
 			"requiredHullSizes": [
 				"DESTROYER",
 				"CRUISER",
@@ -1237,6 +1459,25 @@
 					"magnitude": 50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "REMOVE_ALL_FIGHTER_BAYS"
+					},
+					{
+						"effect": "MIN_CREW_PERCENT_PER_FIGHTER_BAY",
+						"magnitude": -20
+					},
+					{
+						"effect": "CARGO_CAPACITY_PER_FIGHTER_BAY",
+						"magnitude": 50
+					},
+					{
+						"effect": "SUPPLIES_PER_MONTH_PERCENT_PER_FIGHTER_BAY",
+						"magnitude": -15
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1276,6 +1517,24 @@
 					"capitalShip": 55
 				}
 			],
+			"integrated": {
+				"hullSizeEffects": [
+					{
+						"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
+						"frigate": 15,
+						"destroyer": 25,
+						"cruiser": 45,
+						"capitalShip": 65
+					},
+					{
+						"effect": "ENERGY_WEAPON_RANGE_PERCENT",
+						"frigate": 15,
+						"destroyer": 25,
+						"cruiser": 45,
+						"capitalShip": 65
+					}
+				]
+			},
 			"requiredHullSizes": [
 				"CRUISER",
 				"CAPITAL_SHIP"
@@ -1292,6 +1551,14 @@
 			"name": "Defensive Targeting Array",
 			"icon": "graphics/icons/defensive_targeting_array.png",
 			"tier": "KEYSTONE",
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FIGHTER_WEAPON_RANGE_FLAT",
+						"magnitude": 100
+					}
+				]
+			},
 			"vanillaHullMod": "defensive_targeting_array",
 			"unlockConditions": [
 				{
@@ -1347,6 +1614,46 @@
 					"magnitude": -50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MISSILE_WEAPON_ECCM_CHANCE_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "MISSILE_WEAPON_GUIDANCE_FLAT",
+						"magnitude": 1
+					},
+					{
+						"effect": "MISSILE_WEAPON_PROJECTILE_SPEED_PERCENT",
+						"magnitude": 25
+					},
+					{
+						"effect": "MISSILE_WEAPON_FLIGHT_ACCELERATION_PERCENT",
+						"magnitude": 150
+					},
+					{
+						"effect": "MISSILE_WEAPON_FLIGHT_TURN_RATE_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "MISSILE_WEAPON_FLIGHT_TURN_ACCELERATION_PERCENT",
+						"magnitude": 150
+					},
+					{
+						"effect": "ELECTRONIC_WARFARE_PENALTY_MULT",
+						"magnitude": -50
+					},
+					{
+						"effect": "MISSILE_WEAPON_ECCM_CHANCE_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "ELECTRONIC_WARFARE_PENALTY_MULT",
+						"magnitude": -50
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1376,6 +1683,17 @@
 					"capitalShip": 4
 				}
 			],
+			"integrated": {
+				"hullSizeEffects": [
+					{
+						"effect": "ELECTRONIC_WARFARE",
+						"frigate": 2,
+						"destroyer": 3,
+						"cruiser": 4,
+						"capitalShip": 5
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1410,6 +1728,26 @@
 					"magnitude": 15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ESCORT_MANEUVER_BONUS_PERCENT",
+						"magnitude": 25
+					},
+					{
+						"effect": "ESCORT_SPEED_BONUS_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "ESCORT_WEAPON_RANGE_BONUS_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "ESCORT_DESTROYER_SHIELD_DAMAGE_TAKEN_PERCENT",
+						"magnitude": -10
+					}
+				]
+			},
 			"requiredHullSizes": [
 				"DESTROYER",
 				"CRUISER"
@@ -1448,6 +1786,22 @@
 					"magnitude": 20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FIGHTER_REPLACEMENT_DECAY_PERCENT",
+						"magnitude": -20
+					},
+					{
+						"effect": "FIGHTER_REPLACEMENT_RECOVERY_PERCENT",
+						"magnitude": 30
+					},
+					{
+						"effect": "MIN_CREW_PER_FIGHTER_BAY",
+						"magnitude": 40
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1527,6 +1881,26 @@
 					"magnitude": 50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BALLISTIC_WEAPON_AMMO_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "ENERGY_WEAPON_AMMO_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "BALLISTIC_WEAPON_AMMO_REGEN_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "ENERGY_WEAPON_AMMO_REGEN_PERCENT",
+						"magnitude": 50
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1558,6 +1932,14 @@
 					"magnitude": -15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MISSILE_WEAPON_AMMO_PERCENT",
+						"magnitude": 100
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1584,6 +1966,18 @@
 					"magnitude": 40
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_ARC_FLAT",
+						"magnitude": 40
+					},
+					{
+						"effect": "SHIELD_ARC_FLAT",
+						"magnitude": 60
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1613,6 +2007,21 @@
 					"effect": "REMOVE_SHIELD"
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ARMOR_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "REMOVE_SHIELD"
+					},
+					{
+						"effect": "ARMOR_PERCENT",
+						"magnitude": 15
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1643,6 +2052,13 @@
 					"effect": "CREATE_FRONT_SHIELD_IF_NONE"
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CREATE_FRONT_SHIELD_IF_NONE"
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1664,7 +2080,28 @@
 			"name": "Missile Autoloader",
 			"icon": "graphics/icons/missile_autoloader.png",
 			"tier": "KEYSTONE",
-			"vanillaHullMod": "missile_autoloader",
+			"effects": [
+				{
+					"effect": "MISSILE_AUTOLOADER_CAPACITY_PERCENT",
+					"magnitude": 100
+				},
+				{
+					"effect": "MISSILE_AUTOLOADER_COOLDOWN_FLAT",
+					"magnitude": 10
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MISSILE_AUTOLOADER_CAPACITY_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "MISSILE_AUTOLOADER_COOLDOWN_FLAT",
+						"magnitude": 5
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1676,10 +2113,6 @@
 				"missile_autoloader"
 			],
 			"flavour": "Rack-side autoloaders that refill the small launchers from a common magazine, for as long as the magazine lasts.",
-			"effectText": [
-				"Missile weapons in small missile mounts reload when they run out of ammo, drawing on a shared reload capacity."
-			],
-			"todo": "Real vanilla effect is a stateful per-weapon reload simulation (advanceInCombat tracks a shared reload-capacity pool by hull size/small-missile-mount count, per-weapon cooldowns, partial reloads) - not a stat modifier at all, and not expressible as a SkillEffect magnitude. Deliberately left on vanillaHullMod passthrough.",
 			"tags": [
 				"missile",
 				"req_missile"
@@ -1729,6 +2162,18 @@
 					"magnitude": -50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_DAMAGE_TAKEN_MULT",
+						"magnitude": -15
+					},
+					{
+						"effect": "SHIELD_PIERCE_CHANCE_MULT",
+						"magnitude": -75
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1755,6 +2200,14 @@
 					"magnitude": -30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CR_LOSS_PER_SECOND_MULT",
+						"magnitude": -45
+					}
+				]
+			},
 			"phantomHullMods": [
 				"hardened_subsystems"
 			],
@@ -1767,6 +2220,12 @@
 			"name": "Heavy Armor",
 			"icon": "graphics/icons/heavyarmor.png",
 			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "MANEUVERABILITY_MULT",
+					"magnitude": -20
+				}
+			],
 			"hullSizeEffects": [
 				{
 					"effect": "ARMOR_FLAT",
@@ -1776,6 +2235,17 @@
 					"capitalShip": 500
 				}
 			],
+			"integrated": {
+				"hullSizeEffects": [
+					{
+						"effect": "ARMOR_FLAT",
+						"frigate": 150,
+						"destroyer": 300,
+						"cruiser": 400,
+						"capitalShip": 500
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2111,6 +2581,26 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BEAM_WEAPON_HARD_FLUX_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "BEAM_WEAPON_RANGE_MULT",
+						"magnitude": -25
+					},
+					{
+						"effect": "BEAM_WEAPON_DAMAGE_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "BEAM_WEAPON_DAMAGE_PERCENT",
+						"magnitude": 5
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2144,6 +2634,23 @@
 					"effect": "PD_RECLASSIFY_SMALL_WEAPONS"
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "PD_IGNORES_DECOY_FLARES"
+					},
+					{
+						"effect": "PD_BEST_TARGET_LEADING"
+					},
+					{
+						"effect": "PD_RECLASSIFY_SMALL_WEAPONS"
+					},
+					{
+						"effect": "PD_DAMAGE_TO_MISSILES_PERCENT",
+						"magnitude": 25
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2179,6 +2686,24 @@
 					"capitalShip": 55
 				}
 			],
+			"integrated": {
+				"hullSizeEffects": [
+					{
+						"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
+						"frigate": 15,
+						"destroyer": 25,
+						"cruiser": 45,
+						"capitalShip": 65
+					},
+					{
+						"effect": "ENERGY_WEAPON_RANGE_PERCENT",
+						"frigate": 15,
+						"destroyer": 25,
+						"cruiser": 45,
+						"capitalShip": 65
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2207,6 +2732,17 @@
 					"capitalShip": 5
 				}
 			],
+			"integrated": {
+				"hullSizeEffects": [
+					{
+						"effect": "NAV_RATING",
+						"frigate": 3,
+						"destroyer": 4,
+						"cruiser": 5,
+						"capitalShip": 6
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2237,6 +2773,22 @@
 					"magnitude": 0
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_ARC_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "CONVERT_SHIELD_TO_FRONT",
+						"magnitude": 0
+					},
+					{
+						"effect": "SHIELD_DAMAGE_TAKEN_MULT",
+						"magnitude": -5
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2268,6 +2820,14 @@
 					"magnitude": 0
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CONVERT_SHIELD_TO_OMNI",
+						"magnitude": 0
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2295,6 +2855,14 @@
 					"magnitude": 250
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP",
+						"magnitude": 400
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2329,6 +2897,26 @@
 					"magnitude": 100
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "PHASE_CLOAK_ACTIVATION_COST_MULT",
+						"magnitude": -100
+					},
+					{
+						"effect": "COMBAT_BOOST_WHILE_PHASED",
+						"magnitude": 100
+					},
+					{
+						"effect": "PHASE_ANCHOR_EMERGENCY_DIVE",
+						"magnitude": 100
+					},
+					{
+						"effect": "PHASE_CLOAK_COOLDOWN_PERCENT",
+						"magnitude": -25
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2357,6 +2945,14 @@
 					"magnitude": -75
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FIGHTER_CREW_LOSS_MULT",
+						"magnitude": -95
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2392,6 +2988,26 @@
 					"magnitude": -100
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "HULL_PERCENT",
+						"magnitude": 40
+					},
+					{
+						"effect": "SHIP_RECOVERY_CHANCE_BONUS",
+						"magnitude": 1000
+					},
+					{
+						"effect": "BREAK_PROBABILITY_PERCENT",
+						"magnitude": -100
+					},
+					{
+						"effect": "ARMOR_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
 			"phantomHullMods": [
 				"reinforcedhull"
 			],
@@ -2414,6 +3030,22 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "EMP_DAMAGE_TAKEN_MULT",
+						"magnitude": -30
+					},
+					{
+						"effect": "VENT_RATE_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "VENT_RATE_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2440,6 +3072,18 @@
 					"magnitude": -40
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_UPKEEP_MULT",
+						"magnitude": -40
+					},
+					{
+						"effect": "SHIELD_SOFT_FLUX_CONVERSION_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2506,6 +3150,17 @@
 					"capitalShip": 125
 				}
 			],
+			"integrated": {
+				"hullSizeEffects": [
+					{
+						"effect": "CREW_CAPACITY_FLAT",
+						"frigate": 50,
+						"destroyer": 70,
+						"cruiser": 120,
+						"capitalShip": 250
+					}
+				]
+			},
 			"phantomHullMods": [
 				"additional_berthing"
 			],
@@ -2526,6 +3181,18 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BURN_LEVEL_FLAT",
+						"magnitude": 1
+					},
+					{
+						"effect": "FUEL_USE_MULT",
+						"magnitude": -15
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2561,6 +3228,23 @@
 					"capitalShip": 125
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FUEL_CAPACITY_PERCENT",
+						"magnitude": 40
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "FUEL_CAPACITY_FLAT",
+						"frigate": 50,
+						"destroyer": 70,
+						"cruiser": 120,
+						"capitalShip": 250
+					}
+				]
+			},
 			"phantomHullMods": [
 				"auxiliary_fuel_tanks"
 			],
@@ -2596,6 +3280,42 @@
 					"magnitude": 50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MIN_CREW_MULT",
+						"magnitude": -20
+					},
+					{
+						"effect": "SUPPLIES_PER_MONTH_MULT",
+						"magnitude": -20
+					},
+					{
+						"effect": "FUEL_USE_MULT",
+						"magnitude": -20
+					},
+					{
+						"effect": "CR_RECOVERY_RATE_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "REPAIR_RATE_PER_DAY_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "MIN_CREW_MULT",
+						"magnitude": -10
+					},
+					{
+						"effect": "SUPPLIES_PER_MONTH_MULT",
+						"magnitude": -10
+					},
+					{
+						"effect": "FUEL_USE_MULT",
+						"magnitude": -10
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2632,6 +3352,23 @@
 					"capitalShip": 125
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CARGO_CAPACITY_PERCENT",
+						"magnitude": 40
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "CARGO_CAPACITY_FLAT",
+						"frigate": 50,
+						"destroyer": 70,
+						"cruiser": 120,
+						"capitalShip": 250
+					}
+				]
+			},
 			"phantomHullMods": [
 				"expanded_cargo_holds"
 			],
@@ -2661,6 +3398,30 @@
 					"capitalShip": 70
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SENSOR_STRENGTH_ALWAYS_COUNTS",
+						"magnitude": 0
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "SENSOR_STRENGTH_FLAT",
+						"frigate": 40,
+						"destroyer": 50,
+						"cruiser": 60,
+						"capitalShip": 70
+					},
+					{
+						"effect": "COMBAT_VISION",
+						"frigate": 1000,
+						"destroyer": 1500,
+						"cruiser": 2000,
+						"capitalShip": 2500
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2695,6 +3456,26 @@
 					"magnitude": -50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ENGINE_DURABILITY_PERCENT",
+						"magnitude": 60
+					},
+					{
+						"effect": "HULL_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "SENSOR_PROFILE_MULT",
+						"magnitude": -90
+					},
+					{
+						"effect": "ENGINE_DURABILITY_PERCENT",
+						"magnitude": 100
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2728,6 +3509,17 @@
 					"magnitude": 100
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "REMOVE_CIVILIAN_HULL_PENALTY"
+					},
+					{
+						"effect": "BURN_LEVEL_FLAT",
+						"magnitude": 1
+					}
+				]
+			},
 			"phantomHullMods": [
 				"militarized_subsystems"
 			],
@@ -2749,6 +3541,14 @@
 					"magnitude": -75
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CORONA_RESISTANCE_MULT",
+						"magnitude": -100
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2786,6 +3586,24 @@
 					"capitalShip": 20
 				}
 			],
+			"integrated": {
+				"hullSizeEffects": [
+					{
+						"effect": "SURVEY_COST_REDUCTION_HEAVY_MACHINERY",
+						"frigate": 10,
+						"destroyer": 14,
+						"cruiser": 24,
+						"capitalShip": 44
+					},
+					{
+						"effect": "SURVEY_COST_REDUCTION_SUPPLIES",
+						"frigate": 6,
+						"destroyer": 10,
+						"cruiser": 20,
+						"capitalShip": 40
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2927,20 +3745,46 @@
 			]
 		},
 		{
-			"id": "efficient_vents",
-			"name": "Efficient Vents",
-			"icon": "graphics/icons/efficient_vents.png",
+			"id": "flux_distributor",
+			"name": "Flux Distributor",
+			"icon": "graphics/icons/flux_distributor.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
 					"effect": "FLUX_DISSIPATION_PERCENT",
 					"magnitude": 15
-				},
-				{
-					"effect": "FLUX_DISSIPATION_FLAT",
-					"magnitude": 50
 				}
 			],
+			"hullSizeEffects": [
+				{
+					"effect": "FLUX_DISSIPATION_FLAT",
+					"frigate": 30,
+					"destroyer": 60,
+					"cruiser": 90,
+					"capitalShip": 150
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FLUX_DISSIPATION_PERCENT",
+						"magnitude": 15
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "FLUX_DISSIPATION_FLAT",
+						"frigate": 40,
+						"destroyer": 80,
+						"cruiser": 120,
+						"capitalShip": 200
+					}
+				]
+			},
+			"phantomHullMods": [
+				"fluxdistributor"
+			],
+			"flavour": "A distribution grid that spreads waste heat across every vent at once instead of the nearest three. Nobody aboard misses the old hot spots.",
 			"tags": [
 				"flux"
 			]
@@ -3471,29 +4315,6 @@
 			]
 		},
 		{
-			"id": "shield_arc_multiplier",
-			"name": "Shield Arc Multiplier",
-			"icon": "graphics/icons/shield_arc_mult.png",
-			"tier": "NOTABLE",
-			"effects": [
-				{
-					"effect": "SHIELD_ARC_MULT",
-					"magnitude": 15
-				}
-			],
-			"unlockConditions": [
-				{
-					"type": "blueprint",
-					"category": "hullmod",
-					"id": "adaptiveshields"
-				}
-			],
-			"tags": [
-				"shield",
-				"req_shields"
-			]
-		},
-		{
 			"id": "shield_flux_damage_reduction",
 			"name": "Shield Flux/Damage Reduction",
 			"icon": "graphics/icons/shield_damage_taken_multi.png",
@@ -3813,6 +4634,18 @@
 					"magnitude": -10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SUPPLIES_PER_MONTH_MULT",
+						"magnitude": -15
+					},
+					{
+						"effect": "FUEL_USE_MULT",
+						"magnitude": -15
+					}
+				]
+			},
 			"tags": [
 				"logistics",
 				"campaign_only",

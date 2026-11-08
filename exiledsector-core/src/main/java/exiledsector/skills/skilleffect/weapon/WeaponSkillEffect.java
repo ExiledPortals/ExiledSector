@@ -84,6 +84,7 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     },
     NON_MISSILE_WEAPON_RANGE_CAP_FLAT(new DerivedStatEffect(WeaponSkillEffect::capRange, null, true)),
     DAMAGE_TO_FIGHTERS_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToFighters), "stat.damageToFighters", false)),
+    DAMAGE_TO_MISSILES_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToMissiles), "stat.damageToMissiles", false)),
     DAMAGE_TO_FRIGATE_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToFrigates), "stat.damageToFrigates", false)),
     DAMAGE_TO_DESTROYER_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToDestroyers), "stat.damageToDestroyers", false)),
     DAMAGE_TO_CRUISER_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToCruisers), "stat.damageToCruisers", false)),
@@ -150,6 +151,17 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     SMALL_SLOTS_UNIVERSAL(new SlotConversionBacking(null, WeaponSize.SMALL, WeaponType.UNIVERSAL)),
     MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT(listener(MediumEnergySlotRangeListener.RANGE_FLAT_KEY,
             MediumEnergySlotRangeListener.class, ship -> new MediumEnergySlotRangeListener())),
+    BALLISTIC_RANGEFINDER_BONUS_PERCENT(listener(BallisticRangefinderListener.BONUS_PERCENT_KEY,
+            BallisticRangefinderListener.class, BallisticRangefinderListener::new)),
+    MISSILE_AUTOLOADER_CAPACITY_PERCENT(listener(MissileAutoloaderListener.CAPACITY_PERCENT_KEY,
+            MissileAutoloaderListener.class, MissileAutoloaderListener::new)),
+    MISSILE_AUTOLOADER_COOLDOWN_FLAT(listener(MissileAutoloaderListener.COOLDOWN_SECONDS_KEY,
+            MissileAutoloaderListener.class, MissileAutoloaderListener::new)) {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+    },
     NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT(listener(InertialSuperchargerListener.DAMAGE_PERCENT_PER_SPEED_KEY,
             InertialSuperchargerListener.class, InertialSuperchargerListener::new)),
     AUGMENTED_INERTIAL_PROJECTILE_SPEED_PERCENT(listener(InertialSuperchargerListener.AUGMENTED_PROJECTILE_SPEED_KEY,

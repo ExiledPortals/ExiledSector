@@ -96,10 +96,10 @@ public final class SkillTreeGrantedNodeEffects implements GrantedNodeEffects {
         SkillType type = granted.effectiveType();
         GrantedNodeOrigin origin = new GrantedNodeOrigin(granted.node().getId());
         Float temporarySeconds = type.getTemporaryAfterDeploymentSeconds();
-        if (AllocatedSkillEffects.isVanillaPassthrough(granted)) {
-            return new EffectContribution(origin, modIdPrefix, List.of(), temporarySeconds, type.getVanillaHullModId(), false, false);
-        }
         List<SkillTypeEffect> effects = type.effectsFor(context.hullSize()).stream().filter(effect -> effect.effect().appliesToNpcShips()).toList();
+        if (AllocatedSkillEffects.isVanillaPassthrough(granted)) {
+            return new EffectContribution(origin, modIdPrefix, effects, temporarySeconds, type.getVanillaHullModId(), false, false);
+        }
         return effects.isEmpty() ? null : new EffectContribution(origin, modIdPrefix, effects, temporarySeconds, null, false, false);
     }
 }

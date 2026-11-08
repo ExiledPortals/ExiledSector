@@ -17,6 +17,7 @@ import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.DiminishedStat;
 import exiledsector.skills.DiminishingReturns;
 import exiledsector.skills.EffectContribution;
+import exiledsector.skills.IntegratedNodes;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.SkillTreeBonusSummary;
 import exiledsector.skills.SkillTreeBonusSummary.Summary;
@@ -100,7 +101,8 @@ public final class ShipTreeSummaryRenderer {
         } else {
             List<StyledText> notableNames = new ArrayList<>();
             for (SkillType notable : bonusSummary.notables()) {
-                notableNames.add(StyledText.styled(notable.getDisplayName(), Style.HIGHLIGHT));
+                boolean integrated = IntegratedNodes.holdsIntegrated(shipTree.skillData(), notable);
+                notableNames.add(StyledText.styled(notable.getDisplayName(), integrated ? Style.BUILT_IN : Style.HIGHLIGHT));
             }
             VanillaText.addPara(info, Translation.msg("summary.notables").arg("names", Translation.list(notableNames)).styled(), LINE_PAD,
                     Misc.getTextColor());

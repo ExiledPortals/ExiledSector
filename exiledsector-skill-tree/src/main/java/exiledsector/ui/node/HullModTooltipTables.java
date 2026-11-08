@@ -28,11 +28,13 @@ final class HullModTooltipTables {
     }
 
     static List<TooltipTable> forType(SkillType type, ShipHullSpecAPI hullSpec) {
-        String hullModId = type == null ? null : type.getVanillaHullModId();
-        if (BALLISTIC_RANGEFINDER.equals(hullModId)) {
+        if (type == null) {
+            return List.of();
+        }
+        if (type.getPhantomHullModIds().contains(BALLISTIC_RANGEFINDER)) {
             return rangefinderTables(largestBallisticSlot(hullSpec));
         }
-        if (MISSILE_AUTOLOADER.equals(hullModId)) {
+        if (type.getPhantomHullModIds().contains(MISSILE_AUTOLOADER)) {
             return List.of(autoloaderTable(hullSpec));
         }
         return List.of();

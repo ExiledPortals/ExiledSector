@@ -108,6 +108,7 @@ class EscortListenerTest {
         when(stats.getMaxSpeed()).thenReturn(escort.maxSpeed());
         when(stats.getBallisticWeaponRangeBonus()).thenReturn(escort.ballisticRange());
         when(stats.getEnergyWeaponRangeBonus()).thenReturn(escort.energyRange());
+        when(stats.getShieldDamageTakenMult()).thenReturn(mock(MutableStat.class));
         return escort;
     }
 

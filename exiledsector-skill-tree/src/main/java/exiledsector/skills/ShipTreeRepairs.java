@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 import java.util.function.Predicate;
 
 public final class ShipTreeRepairs {
@@ -45,11 +46,24 @@ public final class ShipTreeRepairs {
     public static void forgetUnknownNodes(Map<String, SkillNode> nodesById, Map<String, SkillNode> declaredNodesById,
                                           Map<String, SkillType> typesById, Predicate<String> isOwnedShip,
                                           Consumer<SkillItemCost> refund) {
+        forgetUnknownNodes(nodesById, declaredNodesById, typesById, isOwnedShip, refund, storyPoints -> {
+        });
+    }
+
+    public static void forgetUnknownNodes(Map<String, SkillNode> nodesById, Map<String, SkillNode> declaredNodesById,
+                                          Map<String, SkillType> typesById, Predicate<String> isOwnedShip,
+                                          Consumer<SkillItemCost> refund, IntConsumer refundStoryPoints) {
         Logger logger = Logger.getLogger(ShipTreeRepairs.class);
         SkillTreeTopology topology = null;
         for (Map.Entry<String, ShipSkillData> entry : ShipSkillDataManager.all().entrySet()) {
             ShipSkillData shipData = entry.getValue();
             BooleanSupplier ownedShip = () -> isOwnedShip.test(entry.getKey());
+            int refundedStoryPoints = IntegratedNodes.forgetInapplicable(shipData, declaredNodesById);
+            if (refundedStoryPoints > 0 && ownedShip.getAsBoolean()) {
+                refundStoryPoints.accept(refundedStoryPoints);
+                logger.info("[ExiledSector] Refunded " + refundedStoryPoints + " story points for integrated nodes that no longer apply on ship "
+                        + entry.getKey());
+            }
             List<String> forgottenNodeIds = ShipTrees.forgetUnknownNodes(shipData, nodesById, declaredNodesById, typesById);
             refundCharges(shipData, forgottenNodeIds, ownedShip, refund);
             if (ShipTrees.hasLostStartingRoot(shipData, nodesById)) {

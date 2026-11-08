@@ -17,6 +17,7 @@ import exiledsector.skills.npc.NpcBuildRequest;
 import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.npc.NpcFocus;
 import exiledsector.skills.npc.NpcFreedOp;
+import exiledsector.skills.npc.NpcIntegratedNodes;
 import exiledsector.skills.npc.NpcHullMods;
 import exiledsector.skills.npc.NpcLevelCaps;
 import exiledsector.skills.npc.NpcLevelLimit;
@@ -83,7 +84,7 @@ public final class NpcFleetLeveller {
                 }
                 String memberSeedKey = chartSeed != null ? String.valueOf(memberIndex) : member.getId();
                 memberRecord = decide(member, playerShipPowers, chartLevels, chartTreeShare, levelLimit, fleetFactionId, factionVolume,
-                        grantedNodeIds, Seeds.random(seedPrefix + memberSeedKey));
+                        grantedNodeIds, NpcIntegratedNodes.averageSModsBeforeInflation(npcFleet), Seeds.random(seedPrefix + memberSeedKey));
                 recordsByMemberId.put(member.getId(), memberRecord);
             }
             if (NpcTreeRecords.isLevelled(memberRecord)) {
@@ -114,7 +115,8 @@ public final class NpcFleetLeveller {
     }
 
     static String decide(FleetMemberAPI member, List<Integer> playerShipPowers, NpcNodeRange chartLevels, float chartTreeShare,
-                         NpcLevelLimit levelLimit, String fleetFactionId, String factionVolume, List<String> grantedNodeIds, Random random) {
+                         NpcLevelLimit levelLimit, String fleetFactionId, String factionVolume, List<String> grantedNodeIds,
+                         int averageSModsBeforeInflation, Random random) {
         if (!NpcShipSelector.isCandidate(member) || !NpcShipSelector.isChosen(member, random)) {
             return NpcTreeRecords.NOT_LEVELLED;
         }
@@ -134,6 +136,7 @@ public final class NpcFleetLeveller {
                 NpcFreedOp.of(member, hullMods), nodeCount, NpcItems.anchorFor(factionVolume), SkillTypeUnlockStatus.lockedFor(null),
                 member.getHullSpec().getHullId(), NpcFocus.of(fleetFactionId, member.getHullSpec().getShipSystemId(),
                 member.getHullSpec().getShipDefenseId()), grantedNodeIds), random);
+        NpcIntegratedNodes.mark(treeBuild.shipData(), NpcIntegratedNodes.count(member, averageSModsBeforeInflation, random), random);
         return NpcTreeTag.encode(treeBuild.shipData());
     }
 

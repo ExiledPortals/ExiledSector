@@ -36,6 +36,17 @@ describe('tree files round-trip', () => {
   });
 });
 
+describe('integrated effects serialisation', () => {
+  it('writes the integrated block after the hull-size effects, keeping an empty one', () => {
+    const base = { id: 'a', name: 'A', icon: '', tags: ['armor'], hullSizeEffects: [{ effect: 'ARMOR_FLAT', frigate: 1, destroyer: 2, cruiser: 3, capitalShip: 4 }] };
+    const integrated = serializeType({ ...base, integrated: { effects: [{ effect: 'HULL_PERCENT', magnitude: 10 }], hullSizeEffects: [] } });
+    expect(Object.keys(integrated)).toEqual(['id', 'name', 'icon', 'hullSizeEffects', 'integrated', 'tags']);
+    expect(integrated.integrated).toEqual({ effects: [{ effect: 'HULL_PERCENT', magnitude: 10 }] });
+    expect(serializeType({ ...base, integrated: {} }).integrated).toEqual({});
+    expect(serializeType(base)).not.toHaveProperty('integrated');
+  });
+});
+
 describe('module share serialisation', () => {
   it('writes moduleShare last and leaves it out when the type has none', () => {
     const base = { id: 'a', name: 'A', icon: '', tags: ['armor'] };

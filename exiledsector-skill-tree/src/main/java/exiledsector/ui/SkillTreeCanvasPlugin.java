@@ -236,6 +236,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 camera.stopDrag();
             }
             gesture.clear();
+            treeSession.cancelIntegrationHold();
         }
     }
 
@@ -330,6 +331,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         mouseY = event.getY();
         mouseKnown = true;
         if (gesture.moveTo(mouseX, mouseY)) {
+            treeSession.cancelIntegrationHold();
             camera.startDrag();
             camera.dragBy(mouseX - gesture.pressX(), mouseY - gesture.pressY());
             event.consume();
@@ -432,6 +434,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private void handleTreePress(InputEventAPI event, CanvasMode mode) {
         float x = event.getX();
         float y = event.getY();
+        treeSession.cancelIntegrationHold();
         if (chrome.press(canvasPosition, mode, x, y)) {
             event.consume();
             return;
@@ -444,9 +447,14 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             } else {
                 treeSession.closeChoicePicker();
             }
-        } else if (!pressTarget(mode, treeTargetAt(x, y), event, true)) {
-            gesture.pressPan(mode, x, y);
-            camera.startDrag();
+        } else {
+            Object target = treeTargetAt(x, y);
+            if (!pressTarget(mode, target, event, true)) {
+                gesture.pressPan(mode, x, y);
+                camera.startDrag();
+            } else if (target instanceof SkillNode pressedNode && !event.isCtrlDown() && !event.isShiftDown()) {
+                treeSession.beginIntegrationHold(pressedNode);
+            }
         }
         event.consume();
     }
@@ -467,6 +475,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void handleTreeRelease(InputEventAPI event) {
+        boolean integrationHeld = treeSession.releaseIntegrationHold();
         boolean panning = gesture.isPanning() || camera.isDragging();
         if (!gesture.isActive() && !panning) {
             if (chrome.release(event.getX(), event.getY())) {
@@ -486,7 +495,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             if (gesture.releasedOn(released) && released == exoshipView) {
                 boardExoship();
                 SkillTreeSounds.wormholeJumped();
-            } else if (gesture.releasedOn(released) && released instanceof SkillNode releasedNode) {
+            } else if (gesture.releasedOn(released) && released instanceof SkillNode releasedNode && !integrationHeld) {
                 commitNodeClick(releasedNode, gesture.ctrlDown(), gesture.shiftDown());
             }
         }

@@ -151,6 +151,24 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
             return StatMode.PERCENT.describeStat(magnitude, "stat.minimumCrewPerBay");
         }
     },
+    SUPPLIES_PER_MONTH_PERCENT_PER_FIGHTER_BAY {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            float bays = stats.getNumFighterBays().getBaseValue();
+            float total = Math.max(bays * magnitude, -80f);
+            stats.getSuppliesPerMonth().modifyPercent(modId, total);
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return StatMode.PERCENT.describeStat(magnitude, "stat.supplyUseForMaintenancePerBay");
+        }
+    },
     SUPPLIES_PER_MONTH_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getSuppliesPerMonth), "stat.supplyUseForMaintenance", true)),
     FUEL_USE_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getFuelUseMod), "stat.fuelConsumptionRate", true)),
     FUEL_AND_SUPPLY_USE_MULT_PER_DMOD(new PerDModMultEffect(all(bonus(MutableShipStatsAPI::getFuelUseMod), stat(MutableShipStatsAPI::getSuppliesPerMonth)),

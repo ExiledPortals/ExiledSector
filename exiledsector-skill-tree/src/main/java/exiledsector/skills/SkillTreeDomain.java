@@ -380,7 +380,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
         }
         ShipTreeRepairs.replaceRemovedNodes(SkillTree.getDeclaredNodes(), NodeReplacements.all());
         ShipTreeRepairs.forgetUnknownNodes(SkillTree.getAllNodes(), SkillTree.getDeclaredNodes(), SkillTree.getAllTypes(),
-                new OwnedShips(), charged -> charged.refundTo(PlayerFleet.cargoOrNull()));
+                new OwnedShips(), charged -> charged.refundTo(PlayerFleet.cargoOrNull()), NodeIntegration::refundStoryPoints);
     }
 
     private static final class OwnedShips implements Predicate<String> {

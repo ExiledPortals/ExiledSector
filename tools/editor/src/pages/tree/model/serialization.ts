@@ -5,6 +5,9 @@ import {
   ANCHOR_RECTANGLE_ASPECT,
   PARAMETERISED_UNLOCK_CONDITIONS,
   tierOf,
+  type EffectEntry,
+  type HullSizeEffectEntry,
+  type IntegratedEffects,
   type OrbitAnchor,
   type SkillType,
   type TreeDocument,
@@ -73,22 +76,44 @@ export function serializeUnlockConditions(conditions: UnlockCondition[] | undefi
   return out;
 }
 
+function serializeEffects(entries: EffectEntry[]): Record<string, unknown>[] {
+  return entries.map((entry) => ({ effect: entry.effect, magnitude: entry.magnitude }));
+}
+
+function serializeHullSizeEffects(entries: HullSizeEffectEntry[]): Record<string, unknown>[] {
+  return entries.map((entry) => ({
+    effect: entry.effect,
+    frigate: entry.frigate,
+    destroyer: entry.destroyer,
+    cruiser: entry.cruiser,
+    capitalShip: entry.capitalShip,
+  }));
+}
+
+function serializeIntegrated(integrated: IntegratedEffects): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  if (integrated.effects?.length) {
+    out.effects = serializeEffects(integrated.effects);
+  }
+  if (integrated.hullSizeEffects?.length) {
+    out.hullSizeEffects = serializeHullSizeEffects(integrated.hullSizeEffects);
+  }
+  return out;
+}
+
 export function serializeType(type: SkillType): Record<string, unknown> {
   const out: Record<string, unknown> = { id: type.id, name: type.name, icon: type.icon };
   if (tierOf(type) !== 'SMALL') {
     out.tier = tierOf(type);
   }
   if (type.effects?.length) {
-    out.effects = type.effects.map((entry) => ({ effect: entry.effect, magnitude: entry.magnitude }));
+    out.effects = serializeEffects(type.effects);
   }
   if (type.hullSizeEffects?.length) {
-    out.hullSizeEffects = type.hullSizeEffects.map((entry) => ({
-      effect: entry.effect,
-      frigate: entry.frigate,
-      destroyer: entry.destroyer,
-      cruiser: entry.cruiser,
-      capitalShip: entry.capitalShip,
-    }));
+    out.hullSizeEffects = serializeHullSizeEffects(type.hullSizeEffects);
+  }
+  if (type.integrated) {
+    out.integrated = serializeIntegrated(type.integrated);
   }
   if (type.vanillaHullMod) {
     out.vanillaHullMod = type.vanillaHullMod;

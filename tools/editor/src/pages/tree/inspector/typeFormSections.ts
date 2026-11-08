@@ -3,6 +3,7 @@ export type TypeFormSection =
   | 'tags'
   | 'effects'
   | 'hullSizeEffects'
+  | 'integrated'
   | 'vanillaHullMod'
   | 'unlockConditions'
   | 'exclusivity'
@@ -14,12 +15,13 @@ export type TypeFormSection =
   | 'texts'
   | 'todo';
 
-export const INSPECTOR_TYPE_SECTIONS: TypeFormSection[] = ['texts', 'effects', 'hullSizeEffects', 'itemCost', 'temporary'];
+export const INSPECTOR_TYPE_SECTIONS: TypeFormSection[] = ['texts', 'effects', 'hullSizeEffects', 'integrated', 'itemCost', 'temporary'];
 export const DIALOG_TYPE_SECTIONS: TypeFormSection[] = [
   'identity',
   'tags',
   'effects',
   'hullSizeEffects',
+  'integrated',
   'vanillaHullMod',
   'unlockConditions',
   'exclusivity',

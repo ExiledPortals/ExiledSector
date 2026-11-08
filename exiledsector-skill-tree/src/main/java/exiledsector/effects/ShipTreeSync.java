@@ -235,6 +235,7 @@ public final class ShipTreeSync {
         ShipSkillData npcTree = NpcTreeTag.decode(npcTreeTag);
         if (npcTree != null && ShipSkillDataManager.get(member.getId()).isBlank() && NpcLevelCaps.keepsTreeOnRecovery(member.getVariant())) {
             npcTree.clearNpcBuild();
+            npcTree.clearIntegrations();
             ShipTrees.dropFleetGrants(npcTree);
             dropNpcAnchors(npcTree);
             npcTree.capLevel(ShipLevelConfig.maxLevel());

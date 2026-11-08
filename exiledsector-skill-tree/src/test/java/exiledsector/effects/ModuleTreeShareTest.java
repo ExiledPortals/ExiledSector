@@ -30,6 +30,7 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -83,7 +84,7 @@ class ModuleTreeShareTest {
     }
 
     private static Map<SkillEffect, Float> totals(ShipVariantAPI moduleVariant, SkillTreeEffectSource.NodeEffects... nodes) {
-        return ModuleTreeShare.sharedTotals(List.of(nodes), Map.of(), HullSize.CRUISER, moduleVariant, SHARE);
+        return ModuleTreeShare.sharedTotals(List.of(nodes), Set.of(), Map.of(), HullSize.CRUISER, moduleVariant, SHARE);
     }
 
     private static Map<SkillEffect, Float> totals(SkillTreeEffectSource.NodeEffects... nodes) {
@@ -155,7 +156,7 @@ class ModuleTreeShareTest {
         float parentHull = parentTotals.pooledMultipliers().get(SkillEffect.byName("HULL_MULT"));
 
         assertTrue(ratios.get(SkillEffect.byName("HULL_MULT")) < 1f);
-        Map<SkillEffect, Float> moduleTotals = ModuleTreeShare.sharedTotals(List.of(node(lowTech)), ratios, HullSize.CRUISER,
+        Map<SkillEffect, Float> moduleTotals = ModuleTreeShare.sharedTotals(List.of(node(lowTech)), Set.of(), ratios, HullSize.CRUISER,
                 mock(ShipVariantAPI.class), SHARE);
         assertEquals(parentHull * SHARE, total(moduleTotals, "HULL_MULT"), 1e-4f);
     }
@@ -167,7 +168,7 @@ class ModuleTreeShareTest {
                 EffectContribution.scaledPermanent("item", "item_", List.of(effect("AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT", 50f)))), 1f);
         Map<SkillEffect, Float> ratios = ModuleTreeShare.affinityBonusRatios(parentTotals.contributions());
 
-        Map<SkillEffect, Float> moduleTotals = ModuleTreeShare.sharedTotals(List.of(node(lowTech)), ratios, HullSize.CRUISER,
+        Map<SkillEffect, Float> moduleTotals = ModuleTreeShare.sharedTotals(List.of(node(lowTech)), Set.of(), ratios, HullSize.CRUISER,
                 mock(ShipVariantAPI.class), SHARE);
         assertEquals(0f, moduleTotals.getOrDefault(SkillEffect.byName("HULL_MULT"), 0f), 1e-4f);
     }
@@ -186,7 +187,7 @@ class ModuleTreeShareTest {
         ShipAPI wreck = module(false);
         when(parent.getChildModulesCopy()).thenReturn(new ArrayList<>(List.of(module, wreck)));
         ModuleTreeShare share = new ModuleTreeShare(parent, List.of(node(effect("FLUX_CAPACITY_PERCENT", 20f), effect("ARMOR_PERCENT", 10f))),
-                Map.of(), HullSize.CRUISER);
+                Map.of(), HullSize.CRUISER, Set.of());
 
         share.advance(0.1f);
         share.advance(0.1f);
@@ -209,7 +210,7 @@ class ModuleTreeShareTest {
 
         try (MockedStatic<ShipSkillDataManager> records = Mockito.mockStatic(ShipSkillDataManager.class)) {
             records.when(() -> ShipSkillDataManager.find("docked-core")).thenReturn(new ShipSkillData());
-            new ModuleTreeShare(parent, List.of(node(effect("FLUX_CAPACITY_PERCENT", 20f))), Map.of(), HullSize.CRUISER).advance(0.1f);
+            new ModuleTreeShare(parent, List.of(node(effect("FLUX_CAPACITY_PERCENT", 20f))), Map.of(), HullSize.CRUISER, Set.of()).advance(0.1f);
         }
 
         verify(dockedCore.getMutableStats().getFluxCapacity(), never()).modifyPercent(anyString(), anyFloat());
@@ -224,11 +225,11 @@ class ModuleTreeShareTest {
         when(station.isStation()).thenReturn(true);
         ResolvedTree tree = mock(ResolvedTree.class);
 
-        ModuleTreeShare.attach(modular, tree);
+        ModuleTreeShare.attach(modular, tree, Set.of());
         when(modular.getListeners(ModuleTreeShare.class)).thenReturn(List.of(mock(ModuleTreeShare.class)));
-        ModuleTreeShare.attach(modular, tree);
-        ModuleTreeShare.attach(plain, tree);
-        ModuleTreeShare.attach(station, tree);
+        ModuleTreeShare.attach(modular, tree, Set.of());
+        ModuleTreeShare.attach(plain, tree, Set.of());
+        ModuleTreeShare.attach(station, tree, Set.of());
 
         ArgumentCaptor<Object> added = ArgumentCaptor.forClass(Object.class);
         verify(modular, times(1)).addListener(added.capture());
@@ -245,14 +246,14 @@ class ModuleTreeShareTest {
         when(station.getMutableStats()).thenReturn(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS));
         ShipAPI module = module(true);
         when(station.getChildModulesCopy()).thenReturn(new ArrayList<>(List.of(module)));
-        new ModuleTreeShare(station, List.of(node(effect("FLUX_CAPACITY_PERCENT", 20f))), Map.of(), HullSize.CAPITAL_SHIP).advance(0.1f);
+        new ModuleTreeShare(station, List.of(node(effect("FLUX_CAPACITY_PERCENT", 20f))), Map.of(), HullSize.CAPITAL_SHIP, Set.of()).advance(0.1f);
 
         verify(module.getMutableStats().getFluxCapacity()).modifyPercent("exiledSector_moduleShare_station_FLUX_CAPACITY_PERCENT", 20f);
 
         lunaSettings.when(() -> LunaSettings.getInt("exiledSector", ModuleShareSetting.STATION_FIELD_ID)).thenReturn(25);
         ShipAPI quarterModule = module(true);
         when(station.getChildModulesCopy()).thenReturn(new ArrayList<>(List.of(quarterModule)));
-        new ModuleTreeShare(station, List.of(node(effect("FLUX_CAPACITY_PERCENT", 20f))), Map.of(), HullSize.CAPITAL_SHIP).advance(0.1f);
+        new ModuleTreeShare(station, List.of(node(effect("FLUX_CAPACITY_PERCENT", 20f))), Map.of(), HullSize.CAPITAL_SHIP, Set.of()).advance(0.1f);
 
         verify(quarterModule.getMutableStats().getFluxCapacity()).modifyPercent("exiledSector_moduleShare_station_FLUX_CAPACITY_PERCENT", 5f);
     }
@@ -267,8 +268,8 @@ class ModuleTreeShareTest {
         when(tania.getMutableStats()).thenReturn(taniaStats);
 
         lunaSettings.when(() -> LunaSettings.getInt("exiledSector", ModuleShareSetting.FIELD_ID)).thenReturn(0);
-        ModuleTreeShare.attach(plain, mock(ResolvedTree.class));
-        ModuleTreeShare.attach(tania, mock(ResolvedTree.class));
+        ModuleTreeShare.attach(plain, mock(ResolvedTree.class), Set.of());
+        ModuleTreeShare.attach(tania, mock(ResolvedTree.class), Set.of());
 
         verify(plain, never()).addListener(any());
         verify(tania, times(1)).addListener(any());
