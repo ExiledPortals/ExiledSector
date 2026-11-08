@@ -196,6 +196,8 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
                     .arg("drain", AbsorbReserveListener.DRAIN_PER_SECOND).arg("max", AbsorbReserveListener.MAX_RESERVE).styled();
         }
     },
+    SHIELD_ABSORB_MAX_RESERVE_PERCENT(listener(AbsorbReserveListener.MAX_RESERVE_PERCENT_KEY,
+            AbsorbReserveListener.class, AbsorbReserveListener::new)),
     SHIELD_DAMAGE_ABSORBED_BY_FRAGMENTS_PERCENT(listener(FractalShieldListener.ABSORBED_PERCENT_KEY, FractalShieldListener.class,
             FractalShieldListener::new)) {
         @Override

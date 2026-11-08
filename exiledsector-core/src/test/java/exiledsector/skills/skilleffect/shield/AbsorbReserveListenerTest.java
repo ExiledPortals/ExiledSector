@@ -105,4 +105,23 @@ class AbsorbReserveListenerTest {
         verify(energyFlux).unmodify("exiledSector_absorbReserve_a");
         verify(beamFlux).unmodify("exiledSector_absorbReserve_a");
     }
+
+    @Test
+    void maxReservePercentRaisesHowMuchFluxTheReserveHolds() {
+        ShipAPI ship = ship("a", 0f, Map.of(AbsorbReserveListener.RATE_OF_FIRE_PERCENT_KEY, 50f,
+                AbsorbReserveListener.MAX_RESERVE_PERCENT_KEY, 50f));
+        MutableShipStatsAPI stats = ship.getMutableStats();
+        MutableStat ballisticRof = mock(MutableStat.class);
+        when(stats.getBallisticRoFMult()).thenReturn(ballisticRof);
+        when(stats.getEnergyRoFMult()).thenReturn(mock(MutableStat.class));
+        when(stats.getBallisticWeaponFluxCostMod()).thenReturn(mock(StatBonus.class));
+        when(stats.getEnergyWeaponFluxCostMod()).thenReturn(mock(StatBonus.class));
+        when(stats.getBeamWeaponFluxCostMult()).thenReturn(mock(MutableStat.class));
+        AbsorbReserveListener listener = new AbsorbReserveListener(ship);
+
+        listener.reportDamageApplied(null, ship, shieldHit(5000f));
+        listener.advance(12.5f);
+
+        verify(ballisticRof).modifyPercent("exiledSector_absorbReserve_a", 25f);
+    }
 }

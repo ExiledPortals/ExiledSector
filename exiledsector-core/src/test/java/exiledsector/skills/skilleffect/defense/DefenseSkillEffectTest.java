@@ -82,6 +82,18 @@ class DefenseSkillEffectTest {
     }
 
     @Test
+    void weaponDamageTakenPoolsWithTheStatsOtherPercentSources() {
+        MutableStat weaponDamageTaken = new MutableStat(1f);
+        weaponDamageTaken.modifyPercent("other_source", 20f);
+        when(stats.getWeaponDamageTakenMult()).thenReturn(weaponDamageTaken);
+
+        DefenseSkillEffect.WEAPON_DAMAGE_TAKEN_PERCENT.apply(stats, "mod_id", 50f);
+
+        assertEquals(1.7f, weaponDamageTaken.getModifiedValue(), EPSILON);
+        assertTrue(DefenseSkillEffect.WEAPON_DAMAGE_TAKEN_PERCENT.lowerIsBetter());
+    }
+
+    @Test
     void hungeringRiftHealingAddsPercentagePointsOfTheRiftsHeal() {
         StatBonus healShare = new StatBonus();
         when(dynamic.getMod(AssayingRiftEffect.HUNGERING_RIFT_HEAL_MOD_HUMAN_SHIPS)).thenReturn(healShare);

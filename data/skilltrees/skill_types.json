@@ -2269,8 +2269,20 @@
 				{
 					"effect": "ARMOR_FLAT_FOR_LOW_BASE_ARMOR",
 					"magnitude": 1
+				},
+				{
+					"effect": "MANEUVERABILITY_MULT",
+					"magnitude": -30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ARMOR_FLAT_FOR_LOW_BASE_ARMOR",
+						"magnitude": 1
+					}
+				]
+			},
 			"phantomHullMods": [
 				"nskr_criticalArmor"
 			],
@@ -2295,6 +2307,27 @@
 					"magnitude": 100
 				}
 			],
+			"hullSizeEffects": [
+				{
+					"effect": "WEAPON_DAMAGE_TAKEN_PERCENT",
+					"frigate": 50,
+					"destroyer": 0,
+					"cruiser": 0,
+					"capitalShip": 0
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT",
+						"magnitude": 0.08
+					},
+					{
+						"effect": "AUGMENTED_INERTIAL_PROJECTILE_SPEED_PERCENT",
+						"magnitude": 100
+					}
+				]
+			},
 			"phantomHullMods": [
 				"nskr_inertial"
 			],
@@ -2320,6 +2353,18 @@
 					"magnitude": -10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT",
+						"magnitude": 100
+					},
+					{
+						"effect": "ENERGY_WEAPON_FLUX_COST_PERCENT",
+						"magnitude": -20
+					}
+				]
+			},
 			"phantomHullMods": [
 				"nskr_acoils"
 			],
@@ -2372,6 +2417,18 @@
 					"magnitude": 50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_ABSORB_RATE_OF_FIRE_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "SHIELD_ABSORB_MAX_RESERVE_PERCENT",
+						"magnitude": 50
+					}
+				]
+			},
 			"phantomHullMods": [
 				"nskr_absorption"
 			],
@@ -2527,6 +2584,10 @@
 				{
 					"effect": "AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT",
 					"magnitude": 50
+				},
+				{
+					"effect": "EMP_DAMAGE_TAKEN_PERCENT",
+					"magnitude": 33
 				}
 			],
 			"hullSizeEffects": [
@@ -2538,6 +2599,47 @@
 					"capitalShip": 20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "VOLATILE_FLUX_RATE_OF_FIRE_PERCENT",
+						"magnitude": 40
+					},
+					{
+						"effect": "FLUX_CAPACITY_PERCENT",
+						"magnitude": 67
+					},
+					{
+						"effect": "FLUX_CAPACITOR_EFFECTIVENESS_PERCENT",
+						"magnitude": 67
+					},
+					{
+						"effect": "WEAPON_RANGE_THRESHOLD_FLAT",
+						"magnitude": 800
+					},
+					{
+						"effect": "WEAPON_RANGE_FALLOFF_MULT",
+						"magnitude": -50
+					},
+					{
+						"effect": "FIGHTER_ENGAGEMENT_RANGE_MULT",
+						"magnitude": -75
+					},
+					{
+						"effect": "AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT",
+						"magnitude": 50
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "VOLATILE_FLUX_TOP_SPEED_FLAT",
+						"frigate": 50,
+						"destroyer": 40,
+						"cruiser": 30,
+						"capitalShip": 20
+					}
+				]
+			},
 			"phantomHullMods": [
 				"nskr_volatile"
 			],
@@ -2565,6 +2667,18 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SYSTEM_CHARGES_FLAT",
+						"magnitude": 1
+					},
+					{
+						"effect": "AUGMENTED_SYSTEM_REGEN_PERCENT",
+						"magnitude": 20
+					}
+				]
+			},
 			"phantomHullMods": [
 				"nskr_bigBats"
 			],

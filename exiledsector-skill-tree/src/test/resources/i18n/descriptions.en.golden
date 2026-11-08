@@ -2494,6 +2494,12 @@ effect|SHARED_TARGET_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased damage t
 effect|SHARED_TARGET_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased damage to enemy ships an allied ship has targeted.
 effect|SHARED_TARGET_DAMAGE_PERCENT|-10.0	0	<good>-10%</good> increased damage to enemy ships an allied ship has targeted.
 effect|SHARED_TARGET_DAMAGE_PERCENT|-12.5	0	<good>-12.5%</good> increased damage to enemy ships an allied ship has targeted.
+effect|SHIELD_ABSORB_MAX_RESERVE_PERCENT|1.0	0	<good>1%</good> increased maximum reserve charged by the shield.
+effect|SHIELD_ABSORB_MAX_RESERVE_PERCENT|10.0	0	<good>10%</good> increased maximum reserve charged by the shield.
+effect|SHIELD_ABSORB_MAX_RESERVE_PERCENT|12.5	0	<good>12.5%</good> increased maximum reserve charged by the shield.
+effect|SHIELD_ABSORB_MAX_RESERVE_PERCENT|100.0	0	<good>100%</good> increased maximum reserve charged by the shield.
+effect|SHIELD_ABSORB_MAX_RESERVE_PERCENT|-10.0	0	<good>-10%</good> increased maximum reserve charged by the shield.
+effect|SHIELD_ABSORB_MAX_RESERVE_PERCENT|-12.5	0	<good>-12.5%</good> increased maximum reserve charged by the shield.
 effect|SHIELD_ABSORB_RATE_OF_FIRE_PERCENT|1.0	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>1%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
 effect|SHIELD_ABSORB_RATE_OF_FIRE_PERCENT|10.0	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>10%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
 effect|SHIELD_ABSORB_RATE_OF_FIRE_PERCENT|12.5	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>12.5%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
@@ -3100,6 +3106,12 @@ effect|WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL|12.5	0	<good>12.5%</good> in
 effect|WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL|100.0	0	<good>100%</good> increased weapon damage while this ship's affinities are all equal.
 effect|WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL|-10.0	0	<bad>10%</bad> reduced weapon damage while this ship's affinities are all equal.
 effect|WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL|-12.5	0	<bad>12.5%</bad> reduced weapon damage while this ship's affinities are all equal.
+effect|WEAPON_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased damage taken by weapons.
+effect|WEAPON_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased damage taken by weapons.
+effect|WEAPON_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased damage taken by weapons.
+effect|WEAPON_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased damage taken by weapons.
+effect|WEAPON_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced damage taken by weapons.
+effect|WEAPON_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced damage taken by weapons.
 effect|WEAPON_DURABILITY_MULT|1.0	0	<good>1%</good> more weapon durability.
 effect|WEAPON_DURABILITY_MULT|10.0	0	<good>10%</good> more weapon durability.
 effect|WEAPON_DURABILITY_MULT|12.5	0	<good>12.5%</good> more weapon durability.
@@ -7753,6 +7765,46 @@ type|nskr_absorption|CRUISER|0	0	Flux taken by the shield charges a reserve of u
 type-detail|nskr_absorption|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>ABSORB System</hullmod>
 type|nskr_absorption|CAPITAL_SHIP|0	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>50%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
 type-detail|nskr_absorption|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>ABSORB System</hullmod>
+integrable|nskr_absorption|null|0	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>50%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
+integrable|nskr_absorption|null|1	0	Click and hold to integrate.
+integrable|nskr_absorption|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_absorption|null|3	0	<muted>Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to 50% increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.</muted>
+integrable|nskr_absorption|null|4	0	<muted>50% increased maximum reserve charged by the shield.</muted>
+integrable|nskr_absorption|FRIGATE|0	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>50%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
+integrable|nskr_absorption|FRIGATE|1	0	Click and hold to integrate.
+integrable|nskr_absorption|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_absorption|FRIGATE|3	0	<muted>Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to 50% increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.</muted>
+integrable|nskr_absorption|FRIGATE|4	0	<muted>50% increased maximum reserve charged by the shield.</muted>
+integrable|nskr_absorption|DESTROYER|0	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>50%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
+integrable|nskr_absorption|DESTROYER|1	0	Click and hold to integrate.
+integrable|nskr_absorption|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_absorption|DESTROYER|3	0	<muted>Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to 50% increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.</muted>
+integrable|nskr_absorption|DESTROYER|4	0	<muted>50% increased maximum reserve charged by the shield.</muted>
+integrable|nskr_absorption|CRUISER|0	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>50%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
+integrable|nskr_absorption|CRUISER|1	0	Click and hold to integrate.
+integrable|nskr_absorption|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_absorption|CRUISER|3	0	<muted>Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to 50% increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.</muted>
+integrable|nskr_absorption|CRUISER|4	0	<muted>50% increased maximum reserve charged by the shield.</muted>
+integrable|nskr_absorption|CAPITAL_SHIP|0	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>50%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
+integrable|nskr_absorption|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|nskr_absorption|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_absorption|CAPITAL_SHIP|3	0	<muted>Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to 50% increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.</muted>
+integrable|nskr_absorption|CAPITAL_SHIP|4	0	<muted>50% increased maximum reserve charged by the shield.</muted>
+integrated|nskr_absorption|null|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_absorption|null|1	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>50%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
+integrated|nskr_absorption|null|2	0	<good>50%</good><builtIn> increased maximum reserve charged by the shield.</builtIn>
+integrated|nskr_absorption|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_absorption|FRIGATE|1	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>50%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
+integrated|nskr_absorption|FRIGATE|2	0	<good>50%</good><builtIn> increased maximum reserve charged by the shield.</builtIn>
+integrated|nskr_absorption|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_absorption|DESTROYER|1	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>50%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
+integrated|nskr_absorption|DESTROYER|2	0	<good>50%</good><builtIn> increased maximum reserve charged by the shield.</builtIn>
+integrated|nskr_absorption|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_absorption|CRUISER|1	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>50%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
+integrated|nskr_absorption|CRUISER|2	0	<good>50%</good><builtIn> increased maximum reserve charged by the shield.</builtIn>
+integrated|nskr_absorption|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_absorption|CAPITAL_SHIP|1	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>50%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
+integrated|nskr_absorption|CAPITAL_SHIP|2	0	<good>50%</good><builtIn> increased maximum reserve charged by the shield.</builtIn>
 type|nskr_acoils|null|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
 type|nskr_acoils|null|1	1	<bad>10%</bad> reduced energy weapon flux cost.
 type-detail|nskr_acoils|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>High-Energy Weapon Systems</hullmod>
@@ -7768,6 +7820,51 @@ type-detail|nskr_acoils|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hu
 type|nskr_acoils|CAPITAL_SHIP|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
 type|nskr_acoils|CAPITAL_SHIP|1	1	<bad>10%</bad> reduced energy weapon flux cost.
 type-detail|nskr_acoils|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>High-Energy Weapon Systems</hullmod>
+integrable|nskr_acoils|null|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
+integrable|nskr_acoils|null|1	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrable|nskr_acoils|null|2	0	Click and hold to integrate.
+integrable|nskr_acoils|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_acoils|null|4	0	<muted>+100 to the base range of weapons in medium energy slots.</muted>
+integrable|nskr_acoils|null|5	0	<muted>20% reduced energy weapon flux cost.</muted>
+integrable|nskr_acoils|FRIGATE|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
+integrable|nskr_acoils|FRIGATE|1	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrable|nskr_acoils|FRIGATE|2	0	Click and hold to integrate.
+integrable|nskr_acoils|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_acoils|FRIGATE|4	0	<muted>+100 to the base range of weapons in medium energy slots.</muted>
+integrable|nskr_acoils|FRIGATE|5	0	<muted>20% reduced energy weapon flux cost.</muted>
+integrable|nskr_acoils|DESTROYER|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
+integrable|nskr_acoils|DESTROYER|1	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrable|nskr_acoils|DESTROYER|2	0	Click and hold to integrate.
+integrable|nskr_acoils|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_acoils|DESTROYER|4	0	<muted>+100 to the base range of weapons in medium energy slots.</muted>
+integrable|nskr_acoils|DESTROYER|5	0	<muted>20% reduced energy weapon flux cost.</muted>
+integrable|nskr_acoils|CRUISER|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
+integrable|nskr_acoils|CRUISER|1	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrable|nskr_acoils|CRUISER|2	0	Click and hold to integrate.
+integrable|nskr_acoils|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_acoils|CRUISER|4	0	<muted>+100 to the base range of weapons in medium energy slots.</muted>
+integrable|nskr_acoils|CRUISER|5	0	<muted>20% reduced energy weapon flux cost.</muted>
+integrable|nskr_acoils|CAPITAL_SHIP|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
+integrable|nskr_acoils|CAPITAL_SHIP|1	1	<bad>10%</bad> reduced energy weapon flux cost.
+integrable|nskr_acoils|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|nskr_acoils|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_acoils|CAPITAL_SHIP|4	0	<muted>+100 to the base range of weapons in medium energy slots.</muted>
+integrable|nskr_acoils|CAPITAL_SHIP|5	0	<muted>20% reduced energy weapon flux cost.</muted>
+integrated|nskr_acoils|null|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_acoils|null|1	0	<good>+100</good> to the base range of weapons in medium energy slots.
+integrated|nskr_acoils|null|2	1	<bad>20%</bad><builtIn> reduced energy weapon flux cost.</builtIn>
+integrated|nskr_acoils|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_acoils|FRIGATE|1	0	<good>+100</good> to the base range of weapons in medium energy slots.
+integrated|nskr_acoils|FRIGATE|2	1	<bad>20%</bad><builtIn> reduced energy weapon flux cost.</builtIn>
+integrated|nskr_acoils|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_acoils|DESTROYER|1	0	<good>+100</good> to the base range of weapons in medium energy slots.
+integrated|nskr_acoils|DESTROYER|2	1	<bad>20%</bad><builtIn> reduced energy weapon flux cost.</builtIn>
+integrated|nskr_acoils|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_acoils|CRUISER|1	0	<good>+100</good> to the base range of weapons in medium energy slots.
+integrated|nskr_acoils|CRUISER|2	1	<bad>20%</bad><builtIn> reduced energy weapon flux cost.</builtIn>
+integrated|nskr_acoils|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_acoils|CAPITAL_SHIP|1	0	<good>+100</good> to the base range of weapons in medium energy slots.
+integrated|nskr_acoils|CAPITAL_SHIP|2	1	<bad>20%</bad><builtIn> reduced energy weapon flux cost.</builtIn>
 flavour|nskr_bigBats	0	A Kesteven R&D modspec for capacitor banks far larger than any sane design would carry. The ship's systems rarely run dry.
 type|nskr_bigBats|null|0	0	<good>+1</good> to ship system charges.
 type|nskr_bigBats|null|1	0	On hulls with Augmented Systems, <good>10%</good> increased ship system charge regeneration.
@@ -7789,18 +7886,103 @@ type|nskr_bigBats|CAPITAL_SHIP|0	0	<good>+1</good> to ship system charges.
 type|nskr_bigBats|CAPITAL_SHIP|1	0	On hulls with Augmented Systems, <good>10%</good> increased ship system charge regeneration.
 type-detail|nskr_bigBats|CAPITAL_SHIP|0	0	Can only be allocated on ships whose ship system or defense system uses charges.
 type-detail|nskr_bigBats|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>High Capacitance Banks</hullmod>
+integrable|nskr_bigBats|null|0	0	<good>+1</good> to ship system charges.
+integrable|nskr_bigBats|null|1	0	On hulls with Augmented Systems, <good>10%</good> increased ship system charge regeneration.
+integrable|nskr_bigBats|null|2	0	Click and hold to integrate.
+integrable|nskr_bigBats|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_bigBats|null|4	0	<muted>+1 to ship system charges.</muted>
+integrable|nskr_bigBats|null|5	0	<muted>On hulls with Augmented Systems, 20% increased ship system charge regeneration.</muted>
+integrable|nskr_bigBats|FRIGATE|0	0	<good>+1</good> to ship system charges.
+integrable|nskr_bigBats|FRIGATE|1	0	On hulls with Augmented Systems, <good>10%</good> increased ship system charge regeneration.
+integrable|nskr_bigBats|FRIGATE|2	0	Click and hold to integrate.
+integrable|nskr_bigBats|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_bigBats|FRIGATE|4	0	<muted>+1 to ship system charges.</muted>
+integrable|nskr_bigBats|FRIGATE|5	0	<muted>On hulls with Augmented Systems, 20% increased ship system charge regeneration.</muted>
+integrable|nskr_bigBats|DESTROYER|0	0	<good>+1</good> to ship system charges.
+integrable|nskr_bigBats|DESTROYER|1	0	On hulls with Augmented Systems, <good>10%</good> increased ship system charge regeneration.
+integrable|nskr_bigBats|DESTROYER|2	0	Click and hold to integrate.
+integrable|nskr_bigBats|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_bigBats|DESTROYER|4	0	<muted>+1 to ship system charges.</muted>
+integrable|nskr_bigBats|DESTROYER|5	0	<muted>On hulls with Augmented Systems, 20% increased ship system charge regeneration.</muted>
+integrable|nskr_bigBats|CRUISER|0	0	<good>+1</good> to ship system charges.
+integrable|nskr_bigBats|CRUISER|1	0	On hulls with Augmented Systems, <good>10%</good> increased ship system charge regeneration.
+integrable|nskr_bigBats|CRUISER|2	0	Click and hold to integrate.
+integrable|nskr_bigBats|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_bigBats|CRUISER|4	0	<muted>+1 to ship system charges.</muted>
+integrable|nskr_bigBats|CRUISER|5	0	<muted>On hulls with Augmented Systems, 20% increased ship system charge regeneration.</muted>
+integrable|nskr_bigBats|CAPITAL_SHIP|0	0	<good>+1</good> to ship system charges.
+integrable|nskr_bigBats|CAPITAL_SHIP|1	0	On hulls with Augmented Systems, <good>10%</good> increased ship system charge regeneration.
+integrable|nskr_bigBats|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|nskr_bigBats|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_bigBats|CAPITAL_SHIP|4	0	<muted>+1 to ship system charges.</muted>
+integrable|nskr_bigBats|CAPITAL_SHIP|5	0	<muted>On hulls with Augmented Systems, 20% increased ship system charge regeneration.</muted>
+integrated|nskr_bigBats|null|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_bigBats|null|1	0	<good>+1</good> to ship system charges.
+integrated|nskr_bigBats|null|2	0	<builtIn>On hulls with Augmented Systems, </builtIn><good>20%</good><builtIn> increased ship system charge regeneration.</builtIn>
+integrated|nskr_bigBats|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_bigBats|FRIGATE|1	0	<good>+1</good> to ship system charges.
+integrated|nskr_bigBats|FRIGATE|2	0	<builtIn>On hulls with Augmented Systems, </builtIn><good>20%</good><builtIn> increased ship system charge regeneration.</builtIn>
+integrated|nskr_bigBats|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_bigBats|DESTROYER|1	0	<good>+1</good> to ship system charges.
+integrated|nskr_bigBats|DESTROYER|2	0	<builtIn>On hulls with Augmented Systems, </builtIn><good>20%</good><builtIn> increased ship system charge regeneration.</builtIn>
+integrated|nskr_bigBats|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_bigBats|CRUISER|1	0	<good>+1</good> to ship system charges.
+integrated|nskr_bigBats|CRUISER|2	0	<builtIn>On hulls with Augmented Systems, </builtIn><good>20%</good><builtIn> increased ship system charge regeneration.</builtIn>
+integrated|nskr_bigBats|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_bigBats|CAPITAL_SHIP|1	0	<good>+1</good> to ship system charges.
+integrated|nskr_bigBats|CAPITAL_SHIP|2	0	<builtIn>On hulls with Augmented Systems, </builtIn><good>20%</good><builtIn> increased ship system charge regeneration.</builtIn>
 flavour|nskr_criticalArmor	0	A prototype modspec from Kesteven R&D shows the crew how to reinforce a light hull's critical structural points, where thin plating fails first.
 flavourAutomated|nskr_criticalArmor	0	A prototype modspec from Kesteven R&D shows the refit crew how to reinforce a light hull's critical structural points, where thin plating fails first.
 type|nskr_criticalArmor|null|0	0	Up to <good>+400/700/900/1200</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
+type|nskr_criticalArmor|null|1	0	<bad>30%</bad> less maneuverability.
 type-detail|nskr_criticalArmor|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Heavy Armor</hullmod>\n• <hullmod>Hel Carapace</hullmod>\n• <hullmod>Hel Plating</hullmod>\n• <hullmod>Critical Point Protection</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Heavy Armor</node>
 type|nskr_criticalArmor|FRIGATE|0	0	Up to <good>+400</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+150</good> at <hl>400</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
+type|nskr_criticalArmor|FRIGATE|1	0	<bad>30%</bad> less maneuverability.
 type-detail|nskr_criticalArmor|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Heavy Armor</hullmod>\n• <hullmod>Hel Carapace</hullmod>\n• <hullmod>Hel Plating</hullmod>\n• <hullmod>Critical Point Protection</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Heavy Armor</node>
 type|nskr_criticalArmor|DESTROYER|0	0	Up to <good>+700</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+300</good> at <hl>700</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
+type|nskr_criticalArmor|DESTROYER|1	0	<bad>30%</bad> less maneuverability.
 type-detail|nskr_criticalArmor|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Heavy Armor</hullmod>\n• <hullmod>Hel Carapace</hullmod>\n• <hullmod>Hel Plating</hullmod>\n• <hullmod>Critical Point Protection</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Heavy Armor</node>
 type|nskr_criticalArmor|CRUISER|0	0	Up to <good>+900</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+400</good> at <hl>900</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
+type|nskr_criticalArmor|CRUISER|1	0	<bad>30%</bad> less maneuverability.
 type-detail|nskr_criticalArmor|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Heavy Armor</hullmod>\n• <hullmod>Hel Carapace</hullmod>\n• <hullmod>Hel Plating</hullmod>\n• <hullmod>Critical Point Protection</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Heavy Armor</node>
 type|nskr_criticalArmor|CAPITAL_SHIP|0	0	Up to <good>+1200</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+500</good> at <hl>1200</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
+type|nskr_criticalArmor|CAPITAL_SHIP|1	0	<bad>30%</bad> less maneuverability.
 type-detail|nskr_criticalArmor|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Heavy Armor</hullmod>\n• <hullmod>Hel Carapace</hullmod>\n• <hullmod>Hel Plating</hullmod>\n• <hullmod>Critical Point Protection</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Heavy Armor</node>
+integrable|nskr_criticalArmor|null|0	0	Up to <good>+400/700/900/1200</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
+integrable|nskr_criticalArmor|null|1	0	<bad>30%</bad> less maneuverability.
+integrable|nskr_criticalArmor|null|2	0	Click and hold to integrate.
+integrable|nskr_criticalArmor|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_criticalArmor|null|4	0	<muted>Up to +400/700/900/1200 to armor. The bonus is highest on hulls with the least base armor and falls to +150/300/400/500 at 400/700/900/1200 base armor. Can't be allocated on phase ships or on hulls with more base armor than that.</muted>
+integrable|nskr_criticalArmor|FRIGATE|0	0	Up to <good>+400</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+150</good> at <hl>400</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
+integrable|nskr_criticalArmor|FRIGATE|1	0	<bad>30%</bad> less maneuverability.
+integrable|nskr_criticalArmor|FRIGATE|2	0	Click and hold to integrate.
+integrable|nskr_criticalArmor|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_criticalArmor|FRIGATE|4	0	<muted>Up to +400 to armor. The bonus is highest on hulls with the least base armor and falls to +150 at 400 base armor. Can't be allocated on phase ships or on hulls with more base armor than that.</muted>
+integrable|nskr_criticalArmor|DESTROYER|0	0	Up to <good>+700</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+300</good> at <hl>700</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
+integrable|nskr_criticalArmor|DESTROYER|1	0	<bad>30%</bad> less maneuverability.
+integrable|nskr_criticalArmor|DESTROYER|2	0	Click and hold to integrate.
+integrable|nskr_criticalArmor|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_criticalArmor|DESTROYER|4	0	<muted>Up to +700 to armor. The bonus is highest on hulls with the least base armor and falls to +300 at 700 base armor. Can't be allocated on phase ships or on hulls with more base armor than that.</muted>
+integrable|nskr_criticalArmor|CRUISER|0	0	Up to <good>+900</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+400</good> at <hl>900</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
+integrable|nskr_criticalArmor|CRUISER|1	0	<bad>30%</bad> less maneuverability.
+integrable|nskr_criticalArmor|CRUISER|2	0	Click and hold to integrate.
+integrable|nskr_criticalArmor|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_criticalArmor|CRUISER|4	0	<muted>Up to +900 to armor. The bonus is highest on hulls with the least base armor and falls to +400 at 900 base armor. Can't be allocated on phase ships or on hulls with more base armor than that.</muted>
+integrable|nskr_criticalArmor|CAPITAL_SHIP|0	0	Up to <good>+1200</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+500</good> at <hl>1200</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
+integrable|nskr_criticalArmor|CAPITAL_SHIP|1	0	<bad>30%</bad> less maneuverability.
+integrable|nskr_criticalArmor|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|nskr_criticalArmor|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_criticalArmor|CAPITAL_SHIP|4	0	<muted>Up to +1200 to armor. The bonus is highest on hulls with the least base armor and falls to +500 at 1200 base armor. Can't be allocated on phase ships or on hulls with more base armor than that.</muted>
+integrated|nskr_criticalArmor|null|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_criticalArmor|null|1	0	Up to <good>+400/700/900/1200</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
+integrated|nskr_criticalArmor|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_criticalArmor|FRIGATE|1	0	Up to <good>+400</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+150</good> at <hl>400</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
+integrated|nskr_criticalArmor|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_criticalArmor|DESTROYER|1	0	Up to <good>+700</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+300</good> at <hl>700</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
+integrated|nskr_criticalArmor|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_criticalArmor|CRUISER|1	0	Up to <good>+900</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+400</good> at <hl>900</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
+integrated|nskr_criticalArmor|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_criticalArmor|CAPITAL_SHIP|1	0	Up to <good>+1200</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+500</good> at <hl>1200</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
 flavour|nskr_inertial	0	A Kesteven R&D modspec lets the crew feed the ship's own momentum into its guns. Kesteven's notes recommend never slowing down.
 flavourAutomated|nskr_inertial	0	A Kesteven R&D modspec lets the refit crew feed the ship's own momentum into its guns. Kesteven's notes recommend never slowing down.
 type|nskr_inertial|null|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
@@ -7808,6 +7990,7 @@ type|nskr_inertial|null|1	0	On hulls with Augmented Systems, also grants increas
 type-detail|nskr_inertial|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Inertial Supercharger</hullmod>
 type|nskr_inertial|FRIGATE|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 type|nskr_inertial|FRIGATE|1	0	On hulls with Augmented Systems, also grants increased projectile speed equal to <good>100%</good> of the speed-based damage bonus.
+type|nskr_inertial|FRIGATE|2	1	<good>50%</good> increased damage taken by weapons.
 type-detail|nskr_inertial|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Inertial Supercharger</hullmod>
 type|nskr_inertial|DESTROYER|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 type|nskr_inertial|DESTROYER|1	0	On hulls with Augmented Systems, also grants increased projectile speed equal to <good>100%</good> of the speed-based damage bonus.
@@ -7818,6 +8001,52 @@ type-detail|nskr_inertial|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</
 type|nskr_inertial|CAPITAL_SHIP|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 type|nskr_inertial|CAPITAL_SHIP|1	0	On hulls with Augmented Systems, also grants increased projectile speed equal to <good>100%</good> of the speed-based damage bonus.
 type-detail|nskr_inertial|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Inertial Supercharger</hullmod>
+integrable|nskr_inertial|null|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
+integrable|nskr_inertial|null|1	0	On hulls with Augmented Systems, also grants increased projectile speed equal to <good>100%</good> of the speed-based damage bonus.
+integrable|nskr_inertial|null|2	0	Click and hold to integrate.
+integrable|nskr_inertial|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_inertial|null|4	0	<muted>0.08% increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.</muted>
+integrable|nskr_inertial|null|5	0	<muted>On hulls with Augmented Systems, also grants increased projectile speed equal to 100% of the speed-based damage bonus.</muted>
+integrable|nskr_inertial|FRIGATE|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
+integrable|nskr_inertial|FRIGATE|1	0	On hulls with Augmented Systems, also grants increased projectile speed equal to <good>100%</good> of the speed-based damage bonus.
+integrable|nskr_inertial|FRIGATE|2	1	<good>50%</good> increased damage taken by weapons.
+integrable|nskr_inertial|FRIGATE|3	0	Click and hold to integrate.
+integrable|nskr_inertial|FRIGATE|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_inertial|FRIGATE|5	0	<muted>0.08% increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.</muted>
+integrable|nskr_inertial|FRIGATE|6	0	<muted>On hulls with Augmented Systems, also grants increased projectile speed equal to 100% of the speed-based damage bonus.</muted>
+integrable|nskr_inertial|DESTROYER|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
+integrable|nskr_inertial|DESTROYER|1	0	On hulls with Augmented Systems, also grants increased projectile speed equal to <good>100%</good> of the speed-based damage bonus.
+integrable|nskr_inertial|DESTROYER|2	0	Click and hold to integrate.
+integrable|nskr_inertial|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_inertial|DESTROYER|4	0	<muted>0.08% increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.</muted>
+integrable|nskr_inertial|DESTROYER|5	0	<muted>On hulls with Augmented Systems, also grants increased projectile speed equal to 100% of the speed-based damage bonus.</muted>
+integrable|nskr_inertial|CRUISER|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
+integrable|nskr_inertial|CRUISER|1	0	On hulls with Augmented Systems, also grants increased projectile speed equal to <good>100%</good> of the speed-based damage bonus.
+integrable|nskr_inertial|CRUISER|2	0	Click and hold to integrate.
+integrable|nskr_inertial|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_inertial|CRUISER|4	0	<muted>0.08% increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.</muted>
+integrable|nskr_inertial|CRUISER|5	0	<muted>On hulls with Augmented Systems, also grants increased projectile speed equal to 100% of the speed-based damage bonus.</muted>
+integrable|nskr_inertial|CAPITAL_SHIP|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
+integrable|nskr_inertial|CAPITAL_SHIP|1	0	On hulls with Augmented Systems, also grants increased projectile speed equal to <good>100%</good> of the speed-based damage bonus.
+integrable|nskr_inertial|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|nskr_inertial|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_inertial|CAPITAL_SHIP|4	0	<muted>0.08% increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.</muted>
+integrable|nskr_inertial|CAPITAL_SHIP|5	0	<muted>On hulls with Augmented Systems, also grants increased projectile speed equal to 100% of the speed-based damage bonus.</muted>
+integrated|nskr_inertial|null|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_inertial|null|1	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
+integrated|nskr_inertial|null|2	0	On hulls with Augmented Systems, also grants increased projectile speed equal to <good>100%</good> of the speed-based damage bonus.
+integrated|nskr_inertial|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_inertial|FRIGATE|1	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
+integrated|nskr_inertial|FRIGATE|2	0	On hulls with Augmented Systems, also grants increased projectile speed equal to <good>100%</good> of the speed-based damage bonus.
+integrated|nskr_inertial|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_inertial|DESTROYER|1	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
+integrated|nskr_inertial|DESTROYER|2	0	On hulls with Augmented Systems, also grants increased projectile speed equal to <good>100%</good> of the speed-based damage bonus.
+integrated|nskr_inertial|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_inertial|CRUISER|1	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
+integrated|nskr_inertial|CRUISER|2	0	On hulls with Augmented Systems, also grants increased projectile speed equal to <good>100%</good> of the speed-based damage bonus.
+integrated|nskr_inertial|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_inertial|CAPITAL_SHIP|1	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
+integrated|nskr_inertial|CAPITAL_SHIP|2	0	On hulls with Augmented Systems, also grants increased projectile speed equal to <good>100%</good> of the speed-based damage bonus.
 flavour|nskr_volatile	0	A prototype flux injector from Kesteven R&D lets the crew trade staying power for tempo. The modspec describes the side effects as "manageable".
 flavourAutomated|nskr_volatile	0	A prototype flux injector from Kesteven R&D lets the refit crew trade staying power for tempo. The modspec describes the side effects as manageable. With nobody aboard, there's nothing living to manage.
 type|nskr_volatile|null|0	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
@@ -7827,6 +8056,7 @@ type|nskr_volatile|null|3	0	<good>+800</good> to range before falloff effectiven
 type|nskr_volatile|null|4	0	<bad>50%</bad> less weapon range beyond the range threshold.
 type|nskr_volatile|null|5	0	<bad>75%</bad> less strikecraft engagement range.
 type|nskr_volatile|null|6	0	On hulls with Augmented Systems, <good>50%</good> reduced effect of the high-flux top speed and rate of fire penalties.
+type|nskr_volatile|null|7	1	<good>33%</good> increased EMP damage taken.
 type-detail|nskr_volatile|null|0	0	Can't be allocated on phase ships.
 type-detail|nskr_volatile|null|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Safety Overrides</hullmod>\n• <hullmod>Volatile Flux Injector</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Safety Overrides</node>
 type|nskr_volatile|FRIGATE|0	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
@@ -7836,7 +8066,8 @@ type|nskr_volatile|FRIGATE|3	0	<good>+800</good> to range before falloff effecti
 type|nskr_volatile|FRIGATE|4	0	<bad>50%</bad> less weapon range beyond the range threshold.
 type|nskr_volatile|FRIGATE|5	0	<bad>75%</bad> less strikecraft engagement range.
 type|nskr_volatile|FRIGATE|6	0	On hulls with Augmented Systems, <good>50%</good> reduced effect of the high-flux top speed and rate of fire penalties.
-type|nskr_volatile|FRIGATE|7	0	Top speed changes with flux, from <good>+50</good> su/s at no flux to <bad>-50</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>50%</good> increased acceleration and turn acceleration.
+type|nskr_volatile|FRIGATE|7	1	<good>33%</good> increased EMP damage taken.
+type|nskr_volatile|FRIGATE|8	0	Top speed changes with flux, from <good>+50</good> su/s at no flux to <bad>-50</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>50%</good> increased acceleration and turn acceleration.
 type-detail|nskr_volatile|FRIGATE|0	0	Can't be allocated on phase ships.
 type-detail|nskr_volatile|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Safety Overrides</hullmod>\n• <hullmod>Volatile Flux Injector</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Safety Overrides</node>
 type|nskr_volatile|DESTROYER|0	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
@@ -7846,7 +8077,8 @@ type|nskr_volatile|DESTROYER|3	0	<good>+800</good> to range before falloff effec
 type|nskr_volatile|DESTROYER|4	0	<bad>50%</bad> less weapon range beyond the range threshold.
 type|nskr_volatile|DESTROYER|5	0	<bad>75%</bad> less strikecraft engagement range.
 type|nskr_volatile|DESTROYER|6	0	On hulls with Augmented Systems, <good>50%</good> reduced effect of the high-flux top speed and rate of fire penalties.
-type|nskr_volatile|DESTROYER|7	0	Top speed changes with flux, from <good>+40</good> su/s at no flux to <bad>-40</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>40%</good> increased acceleration and turn acceleration.
+type|nskr_volatile|DESTROYER|7	1	<good>33%</good> increased EMP damage taken.
+type|nskr_volatile|DESTROYER|8	0	Top speed changes with flux, from <good>+40</good> su/s at no flux to <bad>-40</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>40%</good> increased acceleration and turn acceleration.
 type-detail|nskr_volatile|DESTROYER|0	0	Can't be allocated on phase ships.
 type-detail|nskr_volatile|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Safety Overrides</hullmod>\n• <hullmod>Volatile Flux Injector</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Safety Overrides</node>
 type|nskr_volatile|CRUISER|0	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
@@ -7856,7 +8088,8 @@ type|nskr_volatile|CRUISER|3	0	<good>+800</good> to range before falloff effecti
 type|nskr_volatile|CRUISER|4	0	<bad>50%</bad> less weapon range beyond the range threshold.
 type|nskr_volatile|CRUISER|5	0	<bad>75%</bad> less strikecraft engagement range.
 type|nskr_volatile|CRUISER|6	0	On hulls with Augmented Systems, <good>50%</good> reduced effect of the high-flux top speed and rate of fire penalties.
-type|nskr_volatile|CRUISER|7	0	Top speed changes with flux, from <good>+30</good> su/s at no flux to <bad>-30</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>30%</good> increased acceleration and turn acceleration.
+type|nskr_volatile|CRUISER|7	1	<good>33%</good> increased EMP damage taken.
+type|nskr_volatile|CRUISER|8	0	Top speed changes with flux, from <good>+30</good> su/s at no flux to <bad>-30</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>30%</good> increased acceleration and turn acceleration.
 type-detail|nskr_volatile|CRUISER|0	0	Can't be allocated on phase ships.
 type-detail|nskr_volatile|CRUISER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Safety Overrides</hullmod>\n• <hullmod>Volatile Flux Injector</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Safety Overrides</node>
 type|nskr_volatile|CAPITAL_SHIP|0	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
@@ -7866,9 +8099,147 @@ type|nskr_volatile|CAPITAL_SHIP|3	0	<good>+800</good> to range before falloff ef
 type|nskr_volatile|CAPITAL_SHIP|4	0	<bad>50%</bad> less weapon range beyond the range threshold.
 type|nskr_volatile|CAPITAL_SHIP|5	0	<bad>75%</bad> less strikecraft engagement range.
 type|nskr_volatile|CAPITAL_SHIP|6	0	On hulls with Augmented Systems, <good>50%</good> reduced effect of the high-flux top speed and rate of fire penalties.
-type|nskr_volatile|CAPITAL_SHIP|7	0	Top speed changes with flux, from <good>+20</good> su/s at no flux to <bad>-20</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>20%</good> increased acceleration and turn acceleration.
+type|nskr_volatile|CAPITAL_SHIP|7	1	<good>33%</good> increased EMP damage taken.
+type|nskr_volatile|CAPITAL_SHIP|8	0	Top speed changes with flux, from <good>+20</good> su/s at no flux to <bad>-20</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>20%</good> increased acceleration and turn acceleration.
 type-detail|nskr_volatile|CAPITAL_SHIP|0	0	Can't be allocated on phase ships.
 type-detail|nskr_volatile|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Safety Overrides</hullmod>\n• <hullmod>Volatile Flux Injector</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Safety Overrides</node>
+integrable|nskr_volatile|null|0	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
+integrable|nskr_volatile|null|1	0	<good>67%</good> increased flux capacity.
+integrable|nskr_volatile|null|2	0	<good>67%</good> increased flux capacity granted by each flux capacitor.
+integrable|nskr_volatile|null|3	0	<good>+800</good> to range before falloff effectiveness applies.
+integrable|nskr_volatile|null|4	0	<bad>50%</bad> less weapon range beyond the range threshold.
+integrable|nskr_volatile|null|5	0	<bad>75%</bad> less strikecraft engagement range.
+integrable|nskr_volatile|null|6	0	On hulls with Augmented Systems, <good>50%</good> reduced effect of the high-flux top speed and rate of fire penalties.
+integrable|nskr_volatile|null|7	1	<good>33%</good> increased EMP damage taken.
+integrable|nskr_volatile|null|8	0	Click and hold to integrate.
+integrable|nskr_volatile|null|9	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_volatile|null|10	0	<muted>Weapon rate of fire changes with flux, from 40% increased at no flux to 40% reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.</muted>
+integrable|nskr_volatile|null|11	0	<muted>67% increased flux capacity.</muted>
+integrable|nskr_volatile|null|12	0	<muted>67% increased flux capacity granted by each flux capacitor.</muted>
+integrable|nskr_volatile|null|13	0	<muted>+800 to range before falloff effectiveness applies.</muted>
+integrable|nskr_volatile|null|14	0	<muted>50% less weapon range beyond the range threshold.</muted>
+integrable|nskr_volatile|null|15	0	<muted>75% less strikecraft engagement range.</muted>
+integrable|nskr_volatile|null|16	0	<muted>On hulls with Augmented Systems, 50% reduced effect of the high-flux top speed and rate of fire penalties.</muted>
+integrable|nskr_volatile|FRIGATE|0	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
+integrable|nskr_volatile|FRIGATE|1	0	<good>67%</good> increased flux capacity.
+integrable|nskr_volatile|FRIGATE|2	0	<good>67%</good> increased flux capacity granted by each flux capacitor.
+integrable|nskr_volatile|FRIGATE|3	0	<good>+800</good> to range before falloff effectiveness applies.
+integrable|nskr_volatile|FRIGATE|4	0	<bad>50%</bad> less weapon range beyond the range threshold.
+integrable|nskr_volatile|FRIGATE|5	0	<bad>75%</bad> less strikecraft engagement range.
+integrable|nskr_volatile|FRIGATE|6	0	On hulls with Augmented Systems, <good>50%</good> reduced effect of the high-flux top speed and rate of fire penalties.
+integrable|nskr_volatile|FRIGATE|7	1	<good>33%</good> increased EMP damage taken.
+integrable|nskr_volatile|FRIGATE|8	0	Top speed changes with flux, from <good>+50</good> su/s at no flux to <bad>-50</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>50%</good> increased acceleration and turn acceleration.
+integrable|nskr_volatile|FRIGATE|9	0	Click and hold to integrate.
+integrable|nskr_volatile|FRIGATE|10	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_volatile|FRIGATE|11	0	<muted>Weapon rate of fire changes with flux, from 40% increased at no flux to 40% reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.</muted>
+integrable|nskr_volatile|FRIGATE|12	0	<muted>67% increased flux capacity.</muted>
+integrable|nskr_volatile|FRIGATE|13	0	<muted>67% increased flux capacity granted by each flux capacitor.</muted>
+integrable|nskr_volatile|FRIGATE|14	0	<muted>+800 to range before falloff effectiveness applies.</muted>
+integrable|nskr_volatile|FRIGATE|15	0	<muted>50% less weapon range beyond the range threshold.</muted>
+integrable|nskr_volatile|FRIGATE|16	0	<muted>75% less strikecraft engagement range.</muted>
+integrable|nskr_volatile|FRIGATE|17	0	<muted>On hulls with Augmented Systems, 50% reduced effect of the high-flux top speed and rate of fire penalties.</muted>
+integrable|nskr_volatile|FRIGATE|18	0	<muted>Top speed changes with flux, from +50 su/s at no flux to -50 su/s at full flux, with no change at half flux. Below half flux, also up to 50% increased acceleration and turn acceleration.</muted>
+integrable|nskr_volatile|DESTROYER|0	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
+integrable|nskr_volatile|DESTROYER|1	0	<good>67%</good> increased flux capacity.
+integrable|nskr_volatile|DESTROYER|2	0	<good>67%</good> increased flux capacity granted by each flux capacitor.
+integrable|nskr_volatile|DESTROYER|3	0	<good>+800</good> to range before falloff effectiveness applies.
+integrable|nskr_volatile|DESTROYER|4	0	<bad>50%</bad> less weapon range beyond the range threshold.
+integrable|nskr_volatile|DESTROYER|5	0	<bad>75%</bad> less strikecraft engagement range.
+integrable|nskr_volatile|DESTROYER|6	0	On hulls with Augmented Systems, <good>50%</good> reduced effect of the high-flux top speed and rate of fire penalties.
+integrable|nskr_volatile|DESTROYER|7	1	<good>33%</good> increased EMP damage taken.
+integrable|nskr_volatile|DESTROYER|8	0	Top speed changes with flux, from <good>+40</good> su/s at no flux to <bad>-40</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>40%</good> increased acceleration and turn acceleration.
+integrable|nskr_volatile|DESTROYER|9	0	Click and hold to integrate.
+integrable|nskr_volatile|DESTROYER|10	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_volatile|DESTROYER|11	0	<muted>Weapon rate of fire changes with flux, from 40% increased at no flux to 40% reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.</muted>
+integrable|nskr_volatile|DESTROYER|12	0	<muted>67% increased flux capacity.</muted>
+integrable|nskr_volatile|DESTROYER|13	0	<muted>67% increased flux capacity granted by each flux capacitor.</muted>
+integrable|nskr_volatile|DESTROYER|14	0	<muted>+800 to range before falloff effectiveness applies.</muted>
+integrable|nskr_volatile|DESTROYER|15	0	<muted>50% less weapon range beyond the range threshold.</muted>
+integrable|nskr_volatile|DESTROYER|16	0	<muted>75% less strikecraft engagement range.</muted>
+integrable|nskr_volatile|DESTROYER|17	0	<muted>On hulls with Augmented Systems, 50% reduced effect of the high-flux top speed and rate of fire penalties.</muted>
+integrable|nskr_volatile|DESTROYER|18	0	<muted>Top speed changes with flux, from +40 su/s at no flux to -40 su/s at full flux, with no change at half flux. Below half flux, also up to 40% increased acceleration and turn acceleration.</muted>
+integrable|nskr_volatile|CRUISER|0	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
+integrable|nskr_volatile|CRUISER|1	0	<good>67%</good> increased flux capacity.
+integrable|nskr_volatile|CRUISER|2	0	<good>67%</good> increased flux capacity granted by each flux capacitor.
+integrable|nskr_volatile|CRUISER|3	0	<good>+800</good> to range before falloff effectiveness applies.
+integrable|nskr_volatile|CRUISER|4	0	<bad>50%</bad> less weapon range beyond the range threshold.
+integrable|nskr_volatile|CRUISER|5	0	<bad>75%</bad> less strikecraft engagement range.
+integrable|nskr_volatile|CRUISER|6	0	On hulls with Augmented Systems, <good>50%</good> reduced effect of the high-flux top speed and rate of fire penalties.
+integrable|nskr_volatile|CRUISER|7	1	<good>33%</good> increased EMP damage taken.
+integrable|nskr_volatile|CRUISER|8	0	Top speed changes with flux, from <good>+30</good> su/s at no flux to <bad>-30</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>30%</good> increased acceleration and turn acceleration.
+integrable|nskr_volatile|CRUISER|9	0	Click and hold to integrate.
+integrable|nskr_volatile|CRUISER|10	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_volatile|CRUISER|11	0	<muted>Weapon rate of fire changes with flux, from 40% increased at no flux to 40% reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.</muted>
+integrable|nskr_volatile|CRUISER|12	0	<muted>67% increased flux capacity.</muted>
+integrable|nskr_volatile|CRUISER|13	0	<muted>67% increased flux capacity granted by each flux capacitor.</muted>
+integrable|nskr_volatile|CRUISER|14	0	<muted>+800 to range before falloff effectiveness applies.</muted>
+integrable|nskr_volatile|CRUISER|15	0	<muted>50% less weapon range beyond the range threshold.</muted>
+integrable|nskr_volatile|CRUISER|16	0	<muted>75% less strikecraft engagement range.</muted>
+integrable|nskr_volatile|CRUISER|17	0	<muted>On hulls with Augmented Systems, 50% reduced effect of the high-flux top speed and rate of fire penalties.</muted>
+integrable|nskr_volatile|CRUISER|18	0	<muted>Top speed changes with flux, from +30 su/s at no flux to -30 su/s at full flux, with no change at half flux. Below half flux, also up to 30% increased acceleration and turn acceleration.</muted>
+integrable|nskr_volatile|CAPITAL_SHIP|0	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
+integrable|nskr_volatile|CAPITAL_SHIP|1	0	<good>67%</good> increased flux capacity.
+integrable|nskr_volatile|CAPITAL_SHIP|2	0	<good>67%</good> increased flux capacity granted by each flux capacitor.
+integrable|nskr_volatile|CAPITAL_SHIP|3	0	<good>+800</good> to range before falloff effectiveness applies.
+integrable|nskr_volatile|CAPITAL_SHIP|4	0	<bad>50%</bad> less weapon range beyond the range threshold.
+integrable|nskr_volatile|CAPITAL_SHIP|5	0	<bad>75%</bad> less strikecraft engagement range.
+integrable|nskr_volatile|CAPITAL_SHIP|6	0	On hulls with Augmented Systems, <good>50%</good> reduced effect of the high-flux top speed and rate of fire penalties.
+integrable|nskr_volatile|CAPITAL_SHIP|7	1	<good>33%</good> increased EMP damage taken.
+integrable|nskr_volatile|CAPITAL_SHIP|8	0	Top speed changes with flux, from <good>+20</good> su/s at no flux to <bad>-20</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>20%</good> increased acceleration and turn acceleration.
+integrable|nskr_volatile|CAPITAL_SHIP|9	0	Click and hold to integrate.
+integrable|nskr_volatile|CAPITAL_SHIP|10	0	<muted>When integrated, for 2 story points:</muted>
+integrable|nskr_volatile|CAPITAL_SHIP|11	0	<muted>Weapon rate of fire changes with flux, from 40% increased at no flux to 40% reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.</muted>
+integrable|nskr_volatile|CAPITAL_SHIP|12	0	<muted>67% increased flux capacity.</muted>
+integrable|nskr_volatile|CAPITAL_SHIP|13	0	<muted>67% increased flux capacity granted by each flux capacitor.</muted>
+integrable|nskr_volatile|CAPITAL_SHIP|14	0	<muted>+800 to range before falloff effectiveness applies.</muted>
+integrable|nskr_volatile|CAPITAL_SHIP|15	0	<muted>50% less weapon range beyond the range threshold.</muted>
+integrable|nskr_volatile|CAPITAL_SHIP|16	0	<muted>75% less strikecraft engagement range.</muted>
+integrable|nskr_volatile|CAPITAL_SHIP|17	0	<muted>On hulls with Augmented Systems, 50% reduced effect of the high-flux top speed and rate of fire penalties.</muted>
+integrable|nskr_volatile|CAPITAL_SHIP|18	0	<muted>Top speed changes with flux, from +20 su/s at no flux to -20 su/s at full flux, with no change at half flux. Below half flux, also up to 20% increased acceleration and turn acceleration.</muted>
+integrated|nskr_volatile|null|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_volatile|null|1	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
+integrated|nskr_volatile|null|2	0	<good>67%</good> increased flux capacity.
+integrated|nskr_volatile|null|3	0	<good>67%</good> increased flux capacity granted by each flux capacitor.
+integrated|nskr_volatile|null|4	0	<good>+800</good> to range before falloff effectiveness applies.
+integrated|nskr_volatile|null|5	0	<bad>50%</bad> less weapon range beyond the range threshold.
+integrated|nskr_volatile|null|6	0	<bad>75%</bad> less strikecraft engagement range.
+integrated|nskr_volatile|null|7	0	On hulls with Augmented Systems, <good>50%</good> reduced effect of the high-flux top speed and rate of fire penalties.
+integrated|nskr_volatile|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_volatile|FRIGATE|1	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
+integrated|nskr_volatile|FRIGATE|2	0	<good>67%</good> increased flux capacity.
+integrated|nskr_volatile|FRIGATE|3	0	<good>67%</good> increased flux capacity granted by each flux capacitor.
+integrated|nskr_volatile|FRIGATE|4	0	<good>+800</good> to range before falloff effectiveness applies.
+integrated|nskr_volatile|FRIGATE|5	0	<bad>50%</bad> less weapon range beyond the range threshold.
+integrated|nskr_volatile|FRIGATE|6	0	<bad>75%</bad> less strikecraft engagement range.
+integrated|nskr_volatile|FRIGATE|7	0	On hulls with Augmented Systems, <good>50%</good> reduced effect of the high-flux top speed and rate of fire penalties.
+integrated|nskr_volatile|FRIGATE|8	0	Top speed changes with flux, from <good>+50</good> su/s at no flux to <bad>-50</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>50%</good> increased acceleration and turn acceleration.
+integrated|nskr_volatile|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_volatile|DESTROYER|1	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
+integrated|nskr_volatile|DESTROYER|2	0	<good>67%</good> increased flux capacity.
+integrated|nskr_volatile|DESTROYER|3	0	<good>67%</good> increased flux capacity granted by each flux capacitor.
+integrated|nskr_volatile|DESTROYER|4	0	<good>+800</good> to range before falloff effectiveness applies.
+integrated|nskr_volatile|DESTROYER|5	0	<bad>50%</bad> less weapon range beyond the range threshold.
+integrated|nskr_volatile|DESTROYER|6	0	<bad>75%</bad> less strikecraft engagement range.
+integrated|nskr_volatile|DESTROYER|7	0	On hulls with Augmented Systems, <good>50%</good> reduced effect of the high-flux top speed and rate of fire penalties.
+integrated|nskr_volatile|DESTROYER|8	0	Top speed changes with flux, from <good>+40</good> su/s at no flux to <bad>-40</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>40%</good> increased acceleration and turn acceleration.
+integrated|nskr_volatile|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_volatile|CRUISER|1	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
+integrated|nskr_volatile|CRUISER|2	0	<good>67%</good> increased flux capacity.
+integrated|nskr_volatile|CRUISER|3	0	<good>67%</good> increased flux capacity granted by each flux capacitor.
+integrated|nskr_volatile|CRUISER|4	0	<good>+800</good> to range before falloff effectiveness applies.
+integrated|nskr_volatile|CRUISER|5	0	<bad>50%</bad> less weapon range beyond the range threshold.
+integrated|nskr_volatile|CRUISER|6	0	<bad>75%</bad> less strikecraft engagement range.
+integrated|nskr_volatile|CRUISER|7	0	On hulls with Augmented Systems, <good>50%</good> reduced effect of the high-flux top speed and rate of fire penalties.
+integrated|nskr_volatile|CRUISER|8	0	Top speed changes with flux, from <good>+30</good> su/s at no flux to <bad>-30</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>30%</good> increased acceleration and turn acceleration.
+integrated|nskr_volatile|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|nskr_volatile|CAPITAL_SHIP|1	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
+integrated|nskr_volatile|CAPITAL_SHIP|2	0	<good>67%</good> increased flux capacity.
+integrated|nskr_volatile|CAPITAL_SHIP|3	0	<good>67%</good> increased flux capacity granted by each flux capacitor.
+integrated|nskr_volatile|CAPITAL_SHIP|4	0	<good>+800</good> to range before falloff effectiveness applies.
+integrated|nskr_volatile|CAPITAL_SHIP|5	0	<bad>50%</bad> less weapon range beyond the range threshold.
+integrated|nskr_volatile|CAPITAL_SHIP|6	0	<bad>75%</bad> less strikecraft engagement range.
+integrated|nskr_volatile|CAPITAL_SHIP|7	0	On hulls with Augmented Systems, <good>50%</good> reduced effect of the high-flux top speed and rate of fire penalties.
+integrated|nskr_volatile|CAPITAL_SHIP|8	0	Top speed changes with flux, from <good>+20</good> su/s at no flux to <bad>-20</bad> su/s at full flux, with no change at half flux. Below half flux, also up to <good>20%</good> increased acceleration and turn acceleration.
 type|objective_capture_range|null|0	0	<good>+35</good> to range from which combat objectives can be captured.
 type|objective_capture_range|FRIGATE|0	0	<good>+35</good> to range from which combat objectives can be captured.
 type|objective_capture_range|DESTROYER|0	0	<good>+35</good> to range from which combat objectives can be captured.
