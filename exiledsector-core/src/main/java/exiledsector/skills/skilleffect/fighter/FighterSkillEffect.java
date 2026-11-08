@@ -297,11 +297,11 @@ public enum FighterSkillEffect implements BackedSkillEffect {
         @Override
         public StyledText description(float magnitude, DescribeContext context) {
             return EffectText.msg(this).arg("value", magnitude).arg("range", SwarmLinkListener.RANGE)
-                    .arg("max", SwarmLinkListener.maxDamagePercent(context.magnitudeOf(STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_PERCENT)))
+                    .arg("max", SwarmLinkListener.maxDamagePercent(context.magnitudeOf(STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_FLAT)))
                     .styled();
         }
     },
-    STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_PERCENT(new FighterListenerEffect<>(SwarmLinkListener.MAX_DAMAGE_FLAT_KEY,
+    STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_FLAT(new FighterListenerEffect<>(SwarmLinkListener.MAX_DAMAGE_FLAT_KEY,
             SwarmLinkListener.class, SwarmLinkListener::new)) {
         @Override
         public Set<SkillEffect> refines() {

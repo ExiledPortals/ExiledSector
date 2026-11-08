@@ -27,12 +27,13 @@ public final class PirateFrenzy extends ShipCombatListener implements Advanceabl
             fixed(WeaponStatFamily.RATE_OF_FIRE.target(WeaponScope.ALL), StatMode.PERCENT, RATE_OF_FIRE_PERCENT_PER_STACK),
             fixed(scaled(WeaponStatFamily.FLUX_COST.target(WeaponScope.ALL), -1f), StatMode.PERCENT, FLUX_COST_REDUCTION_PERCENT_PER_STACK));
 
-    private final ExpiringStacks<Void> frenzyStacks = new ExpiringStacks<>(MAX_STACKS, STACK_SECONDS);
+    private final ExpiringStacks<Void> frenzyStacks;
     private final ScaledBonus.Tracker frenzyBonus = FRENZY_BONUS.tracker();
     private float frenzyClockSeconds;
 
     PirateFrenzy(ShipAPI ownerShip) {
         super(ownerShip, MOD_ID_PREFIX);
+        frenzyStacks = new ExpiringStacks<>(MAX_STACKS, stackSeconds(magnitude(EXTRA_SECONDS_KEY)));
     }
 
     public static PirateFrenzy of(ShipAPI ship) {
@@ -53,12 +54,8 @@ public final class PirateFrenzy extends ShipCombatListener implements Advanceabl
         if (!ownerIsAliveNotHulk()) {
             return;
         }
-        frenzyStacks.addLasting(frenzyClockSeconds, stackSeconds(), null);
+        frenzyStacks.add(frenzyClockSeconds);
         applyIfChanged();
-    }
-
-    float stackSeconds() {
-        return stackSeconds(magnitude(EXTRA_SECONDS_KEY));
     }
 
     static float stackSeconds(float secondsBonus) {

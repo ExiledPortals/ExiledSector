@@ -341,10 +341,10 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
         @Override
         public StyledText description(float magnitude, DescribeContext context) {
             return EffectText.msg(this).arg("value", magnitude).arg("step", CrewLossHullDamageListener.CREW_PER_STEP)
-                    .arg("max", CrewLossHullDamageListener.maxReductionPercent(context.magnitudeOf(HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_PERCENT))).styled();
+                    .arg("max", CrewLossHullDamageListener.maxReductionPercent(context.magnitudeOf(HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_FLAT))).styled();
         }
     },
-    HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_PERCENT(listener(CrewLossHullDamageListener.MAX_REDUCTION_FLAT_KEY,
+    HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_FLAT(listener(CrewLossHullDamageListener.MAX_REDUCTION_FLAT_KEY,
             CrewLossHullDamageListener.class, CrewLossHullDamageListener::new)) {
         @Override
         public Set<SkillEffect> refines() {

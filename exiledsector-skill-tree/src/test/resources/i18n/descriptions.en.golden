@@ -1666,12 +1666,12 @@ effect|HULL_DAMAGE_TAKEN_PERCENT_PER_LOW_TECH_AFFINITY|12.5	1	<good>12.5%</good>
 effect|HULL_DAMAGE_TAKEN_PERCENT_PER_LOW_TECH_AFFINITY|100.0	1	<good>100%</good> increased hull damage taken for every 10 Low Tech Affinity.
 effect|HULL_DAMAGE_TAKEN_PERCENT_PER_LOW_TECH_AFFINITY|-10.0	1	<bad>10%</bad> reduced hull damage taken for every 10 Low Tech Affinity.
 effect|HULL_DAMAGE_TAKEN_PERCENT_PER_LOW_TECH_AFFINITY|-12.5	1	<bad>12.5%</bad> reduced hull damage taken for every 10 Low Tech Affinity.
-effect|HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_PERCENT|1.0	0	<good>+1%</good> to the maximum reduced hull damage taken from crew lost.
-effect|HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_PERCENT|10.0	0	<good>+10%</good> to the maximum reduced hull damage taken from crew lost.
-effect|HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_PERCENT|12.5	0	<good>+12.5%</good> to the maximum reduced hull damage taken from crew lost.
-effect|HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_PERCENT|100.0	0	<good>+100%</good> to the maximum reduced hull damage taken from crew lost.
-effect|HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_PERCENT|-10.0	0	<good>+-10%</good> to the maximum reduced hull damage taken from crew lost.
-effect|HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_PERCENT|-12.5	0	<good>+-12.5%</good> to the maximum reduced hull damage taken from crew lost.
+effect|HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_FLAT|1.0	0	<good>+1%</good> to the maximum reduced hull damage taken from crew lost.
+effect|HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_FLAT|10.0	0	<good>+10%</good> to the maximum reduced hull damage taken from crew lost.
+effect|HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_FLAT|12.5	0	<good>+12.5%</good> to the maximum reduced hull damage taken from crew lost.
+effect|HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_FLAT|100.0	0	<good>+100%</good> to the maximum reduced hull damage taken from crew lost.
+effect|HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_FLAT|-10.0	0	<good>+-10%</good> to the maximum reduced hull damage taken from crew lost.
+effect|HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_FLAT|-12.5	0	<good>+-12.5%</good> to the maximum reduced hull damage taken from crew lost.
 effect|HULL_FLAT|1.0	0	<good>+1</good> to hull points.
 effect|HULL_FLAT|10.0	0	<good>+10</good> to hull points.
 effect|HULL_FLAT|12.5	0	<good>+12.5</good> to hull points.
@@ -2980,12 +2980,12 @@ effect|STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT|12.5	0	Strikecra
 effect|STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT|100.0	0	Strikecraft launched from this ship have <good>100%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
 effect|STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT|-10.0	0	Strikecraft launched from this ship have <good>-10%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
 effect|STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT|-12.5	0	Strikecraft launched from this ship have <good>-12.5%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
-effect|STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_PERCENT|1.0	0	<good>+1%</good> to the maximum weapon damage strikecraft launched from this ship gain from nearby allied strikecraft.
-effect|STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_PERCENT|10.0	0	<good>+10%</good> to the maximum weapon damage strikecraft launched from this ship gain from nearby allied strikecraft.
-effect|STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_PERCENT|12.5	0	<good>+12.5%</good> to the maximum weapon damage strikecraft launched from this ship gain from nearby allied strikecraft.
-effect|STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_PERCENT|100.0	0	<good>+100%</good> to the maximum weapon damage strikecraft launched from this ship gain from nearby allied strikecraft.
-effect|STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_PERCENT|-10.0	0	<good>+-10%</good> to the maximum weapon damage strikecraft launched from this ship gain from nearby allied strikecraft.
-effect|STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_PERCENT|-12.5	0	<good>+-12.5%</good> to the maximum weapon damage strikecraft launched from this ship gain from nearby allied strikecraft.
+effect|STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_FLAT|1.0	0	<good>+1%</good> to the maximum weapon damage strikecraft launched from this ship gain from nearby allied strikecraft.
+effect|STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_FLAT|10.0	0	<good>+10%</good> to the maximum weapon damage strikecraft launched from this ship gain from nearby allied strikecraft.
+effect|STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_FLAT|12.5	0	<good>+12.5%</good> to the maximum weapon damage strikecraft launched from this ship gain from nearby allied strikecraft.
+effect|STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_FLAT|100.0	0	<good>+100%</good> to the maximum weapon damage strikecraft launched from this ship gain from nearby allied strikecraft.
+effect|STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_FLAT|-10.0	0	<good>+-10%</good> to the maximum weapon damage strikecraft launched from this ship gain from nearby allied strikecraft.
+effect|STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_FLAT|-12.5	0	<good>+-12.5%</good> to the maximum weapon damage strikecraft launched from this ship gain from nearby allied strikecraft.
 effect|SUPPLIES_PER_MONTH_MULT|1.0	1	<good>1%</good> more supply use for maintenance.
 effect|SUPPLIES_PER_MONTH_MULT|10.0	1	<good>10%</good> more supply use for maintenance.
 effect|SUPPLIES_PER_MONTH_MULT|12.5	1	<good>12.5%</good> more supply use for maintenance.
