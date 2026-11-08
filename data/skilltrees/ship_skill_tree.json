@@ -14273,8 +14273,8 @@
 			"id": "tritach_asteroids",
 			"x": -1,
 			"y": -18999,
-			"innerRadius": 1386,
-			"outerRadius": 1694,
+			"innerRadius": 2900,
+			"outerRadius": 3100,
 			"ringArtPath": "graphics/planets/ring_band_ice.png",
 			"rotationSpeed": -0.8,
 			"tags": [
