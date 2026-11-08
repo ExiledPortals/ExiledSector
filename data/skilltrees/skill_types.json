@@ -543,6 +543,14 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BEAM_WEAPON_FULL_DAMAGE_SPLIT_TARGETS_FLAT",
+						"magnitude": 1
+					}
+				]
+			},
 			"flavour": "Diktat propaganda insists that the Lion's gaze falls on every citizen at once, and the engineer-technicians of the Lion's Guard took the slogan literally. Studying the Executors they refit teaches the crew to split this ship's beams across the target and the enemy ships around it.",
 			"flavourAutomated": "Diktat propaganda insists that the Lion's gaze falls on every citizen at once, and the engineer-technicians of the Lion's Guard took the slogan literally. The ship's core records how a Lion's Guard Executor divides its beams across a target and the ships around it, and splits its own the same way. It does not record the slogan.",
 			"tags": [
@@ -4110,6 +4118,26 @@
 					"magnitude": 30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CR_RECOVERY_RATE_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "TOP_SPEED_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "PEAK_CR_DURATION_PERCENT",
+						"magnitude": 30
+					},
+					{
+						"effect": "CRUSTACEAN_SUPPLIES_PER_MONTH_MULT",
+						"magnitude": -10
+					}
+				]
+			},
 			"itemCost": {
 				"itemId": "lobster",
 				"quantity": 1000
@@ -4683,6 +4711,18 @@
 					"magnitude": -25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_DAMAGE_TAKEN_MULT",
+						"magnitude": -15
+					},
+					{
+						"effect": "CORONA_RESISTANCE_MULT",
+						"magnitude": -25
+					}
+				]
+			},
 			"flavour": "Sindria's day side is scoured by radiation, and array workers who fled the Askonia Crisis to sign on with this crew know how to harden an emitter against it. They learned the hard way, as most Sindrians learn most things.",
 			"flavourAutomated": "Sindria's day side is scoured by radiation, and the emitters on its orbital arrays are hardened against it. The refit crew copies the shielding pattern from a derelict Askonian array onto this ship's emitters. Whoever designed it learned the hard way, as most Sindrians learn most things.",
 			"tags": [
@@ -4705,6 +4745,18 @@
 					"magnitude": -15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ENERGY_SLOT_WEAPON_RANGE_FLAT",
+						"magnitude": 100
+					},
+					{
+						"effect": "MISSILE_WEAPON_DAMAGE_MULT",
+						"magnitude": -15
+					}
+				]
+			},
 			"flavour": "Lion's Guard refits rebuild a hull around its energy mounts. Guard armorers regard missiles as an admission of poor aim.",
 			"tags": [
 				"energy",
@@ -4722,6 +4774,14 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FUEL_USE_REDUCTION_PERCENT_WHILE_HALF_FUELED",
+						"magnitude": 20
+					}
+				]
+			},
 			"flavour": "Diktat burn tables treat every unit of fuel aboard as state property on loan. Repayment is expected in full.",
 			"tags": [
 				"logistics",
@@ -4748,6 +4808,22 @@
 					"magnitude": -5
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "NO_RETREAT",
+						"magnitude": 0
+					},
+					{
+						"effect": "WEAPON_DAMAGE_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "DAMAGE_TAKEN_PERCENT",
+						"magnitude": -10
+					}
+				]
+			},
 			"flavour": "A standing decree of the Supreme Executor names retreat as treason. It has no provision for appeal.",
 			"tags": [
 				"weapons"
@@ -4764,6 +4840,14 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "RATE_OF_FIRE_AURA_MULT",
+						"magnitude": 15
+					}
+				]
+			},
 			"flavour": "Diktat warships broadcast the Supreme Executor's addresses on open channels as they close, at a volume the comm filter can't fully block. Sindrian citizens are required to listen to the end.",
 			"tags": [
 				"fleet_support"
@@ -4780,6 +4864,18 @@
 					"magnitude": 50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "DAMAGE_TAKEN_NEAR_FLAGSHIP_PERCENT",
+						"magnitude": -10
+					}
+				]
+			},
 			"flavour": "The Lion's Guard keeps pace with the Supreme Executor's flagship, never the other way round. Most of its recorded maneuvers are parades.",
 			"tags": [
 				"speed"

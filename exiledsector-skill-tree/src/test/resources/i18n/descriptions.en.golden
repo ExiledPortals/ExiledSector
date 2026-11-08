@@ -364,6 +364,12 @@ effect|BEAM_WEAPON_FLUX_COST_PERCENT|12.5	1	<good>12.5%</good> increased beam we
 effect|BEAM_WEAPON_FLUX_COST_PERCENT|100.0	1	<good>100%</good> increased beam weapon flux cost.
 effect|BEAM_WEAPON_FLUX_COST_PERCENT|-10.0	1	<bad>10%</bad> reduced beam weapon flux cost.
 effect|BEAM_WEAPON_FLUX_COST_PERCENT|-12.5	1	<bad>12.5%</bad> reduced beam weapon flux cost.
+effect|BEAM_WEAPON_FULL_DAMAGE_SPLIT_TARGETS_FLAT|1.0	0	Beam weapon hits split to up to 1 additional nearby enemy ship at full damage. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
+effect|BEAM_WEAPON_FULL_DAMAGE_SPLIT_TARGETS_FLAT|10.0	0	Beam weapon hits split to up to 10 additional nearby enemy ships at full damage. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
+effect|BEAM_WEAPON_FULL_DAMAGE_SPLIT_TARGETS_FLAT|12.5	0	Beam weapon hits split to up to 12.5 additional nearby enemy ships at full damage. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
+effect|BEAM_WEAPON_FULL_DAMAGE_SPLIT_TARGETS_FLAT|100.0	0	Beam weapon hits split to up to 100 additional nearby enemy ships at full damage. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
+effect|BEAM_WEAPON_FULL_DAMAGE_SPLIT_TARGETS_FLAT|-10.0	0	Beam weapon hits split to up to -10 additional nearby enemy ships at full damage. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
+effect|BEAM_WEAPON_FULL_DAMAGE_SPLIT_TARGETS_FLAT|-12.5	0	Beam weapon hits split to up to -12.5 additional nearby enemy ships at full damage. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
 effect|BEAM_WEAPON_HARD_FLUX_PERCENT|1.0	0	<good>1%</good> of beam weapon damage to shields is dealt as hard flux.
 effect|BEAM_WEAPON_HARD_FLUX_PERCENT|10.0	0	<good>10%</good> of beam weapon damage to shields is dealt as hard flux.
 effect|BEAM_WEAPON_HARD_FLUX_PERCENT|12.5	0	<good>12.5%</good> of beam weapon damage to shields is dealt as hard flux.
@@ -652,6 +658,12 @@ effect|CREW_STEAL_SKELETON_CREW_PERCENT|12.5	0	Takes <good>12.5%</good> of each 
 effect|CREW_STEAL_SKELETON_CREW_PERCENT|100.0	0	Takes <good>100%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
 effect|CREW_STEAL_SKELETON_CREW_PERCENT|-10.0	0	Takes <good>-10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
 effect|CREW_STEAL_SKELETON_CREW_PERCENT|-12.5	0	Takes <good>-12.5%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
+effect|CRUSTACEAN_SUPPLIES_PER_MONTH_MULT|1.0	0	<good>1%</good> less supply use for maintenance. The crabs eat what the crew won't.
+effect|CRUSTACEAN_SUPPLIES_PER_MONTH_MULT|10.0	0	<good>10%</good> less supply use for maintenance. The crabs eat what the crew won't.
+effect|CRUSTACEAN_SUPPLIES_PER_MONTH_MULT|12.5	0	<good>12.5%</good> less supply use for maintenance. The crabs eat what the crew won't.
+effect|CRUSTACEAN_SUPPLIES_PER_MONTH_MULT|100.0	0	<good>100%</good> less supply use for maintenance. The crabs eat what the crew won't.
+effect|CRUSTACEAN_SUPPLIES_PER_MONTH_MULT|-10.0	0	<good>10%</good> less supply use for maintenance. The crabs eat what the crew won't.
+effect|CRUSTACEAN_SUPPLIES_PER_MONTH_MULT|-12.5	0	<good>12.5%</good> less supply use for maintenance. The crabs eat what the crew won't.
 effect|CR_LOSS_PER_SECOND_MULT|1.0	1	<good>1%</good> more rate of combat readiness loss from extended deployment.
 effect|CR_LOSS_PER_SECOND_MULT|10.0	1	<good>10%</good> more rate of combat readiness loss from extended deployment.
 effect|CR_LOSS_PER_SECOND_MULT|12.5	1	<good>12.5%</good> more rate of combat readiness loss from extended deployment.
@@ -670,6 +682,12 @@ effect|CR_RECOVERY_RATE_PERCENT|12.5	0	<good>12.5%</good> increased combat readi
 effect|CR_RECOVERY_RATE_PERCENT|100.0	0	<good>100%</good> increased combat readiness recovery rate.
 effect|CR_RECOVERY_RATE_PERCENT|-10.0	0	<bad>10%</bad> reduced combat readiness recovery rate.
 effect|CR_RECOVERY_RATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced combat readiness recovery rate.
+effect|DAMAGE_TAKEN_NEAR_FLAGSHIP_PERCENT|1.0	0	<good>1%</good> reduced damage taken while within 1500 su of your flagship.
+effect|DAMAGE_TAKEN_NEAR_FLAGSHIP_PERCENT|10.0	0	<good>10%</good> reduced damage taken while within 1500 su of your flagship.
+effect|DAMAGE_TAKEN_NEAR_FLAGSHIP_PERCENT|12.5	0	<good>12.5%</good> reduced damage taken while within 1500 su of your flagship.
+effect|DAMAGE_TAKEN_NEAR_FLAGSHIP_PERCENT|100.0	0	<good>100%</good> reduced damage taken while within 1500 su of your flagship.
+effect|DAMAGE_TAKEN_NEAR_FLAGSHIP_PERCENT|-10.0	0	<good>10%</good> reduced damage taken while within 1500 su of your flagship.
+effect|DAMAGE_TAKEN_NEAR_FLAGSHIP_PERCENT|-12.5	0	<good>12.5%</good> reduced damage taken while within 1500 su of your flagship.
 effect|DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT|1.0	0	<good>1%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
 effect|DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT|10.0	0	<good>10%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
 effect|DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT|12.5	0	<good>12.5%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
@@ -874,6 +892,12 @@ effect|ENERGY_SLOTS_BALLISTIC|12.5	0	Energy weapon mounts become ballistic mount
 effect|ENERGY_SLOTS_BALLISTIC|100.0	0	Energy weapon mounts become ballistic mounts.
 effect|ENERGY_SLOTS_BALLISTIC|-10.0	0	Energy weapon mounts become ballistic mounts.
 effect|ENERGY_SLOTS_BALLISTIC|-12.5	0	Energy weapon mounts become ballistic mounts.
+effect|ENERGY_SLOT_WEAPON_RANGE_FLAT|1.0	0	<good>+1</good> to the base range of weapons in energy slots.
+effect|ENERGY_SLOT_WEAPON_RANGE_FLAT|10.0	0	<good>+10</good> to the base range of weapons in energy slots.
+effect|ENERGY_SLOT_WEAPON_RANGE_FLAT|12.5	0	<good>+12.5</good> to the base range of weapons in energy slots.
+effect|ENERGY_SLOT_WEAPON_RANGE_FLAT|100.0	0	<good>+100</good> to the base range of weapons in energy slots.
+effect|ENERGY_SLOT_WEAPON_RANGE_FLAT|-10.0	0	<good>+-10</good> to the base range of weapons in energy slots.
+effect|ENERGY_SLOT_WEAPON_RANGE_FLAT|-12.5	0	<good>+-12.5</good> to the base range of weapons in energy slots.
 effect|ENERGY_WEAPON_AMMO_FLAT|1.0	0	<good>+1</good> to energy weapon ammo capacity.
 effect|ENERGY_WEAPON_AMMO_FLAT|10.0	0	<good>+10</good> to energy weapon ammo capacity.
 effect|ENERGY_WEAPON_AMMO_FLAT|12.5	0	<good>+12.5</good> to energy weapon ammo capacity.
@@ -4495,6 +4519,76 @@ type|crustacean_integration|CRUISER|2	0	<good>30%</good> increased peak performa
 type|crustacean_integration|CAPITAL_SHIP|0	0	<good>15%</good> increased combat readiness recovery rate.
 type|crustacean_integration|CAPITAL_SHIP|1	0	<good>10%</good> increased top speed.
 type|crustacean_integration|CAPITAL_SHIP|2	0	<good>30%</good> increased peak performance time.
+integrable|crustacean_integration|null|0	0	<good>15%</good> increased combat readiness recovery rate.
+integrable|crustacean_integration|null|1	0	<good>10%</good> increased top speed.
+integrable|crustacean_integration|null|2	0	<good>30%</good> increased peak performance time.
+integrable|crustacean_integration|null|3	0	Click and hold to integrate.
+integrable|crustacean_integration|null|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|crustacean_integration|null|5	0	<muted>15% increased combat readiness recovery rate.</muted>
+integrable|crustacean_integration|null|6	0	<muted>10% increased top speed.</muted>
+integrable|crustacean_integration|null|7	0	<muted>30% increased peak performance time.</muted>
+integrable|crustacean_integration|null|8	0	<muted>10% less supply use for maintenance. The crabs eat what the crew won't.</muted>
+integrable|crustacean_integration|FRIGATE|0	0	<good>15%</good> increased combat readiness recovery rate.
+integrable|crustacean_integration|FRIGATE|1	0	<good>10%</good> increased top speed.
+integrable|crustacean_integration|FRIGATE|2	0	<good>30%</good> increased peak performance time.
+integrable|crustacean_integration|FRIGATE|3	0	Click and hold to integrate.
+integrable|crustacean_integration|FRIGATE|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|crustacean_integration|FRIGATE|5	0	<muted>15% increased combat readiness recovery rate.</muted>
+integrable|crustacean_integration|FRIGATE|6	0	<muted>10% increased top speed.</muted>
+integrable|crustacean_integration|FRIGATE|7	0	<muted>30% increased peak performance time.</muted>
+integrable|crustacean_integration|FRIGATE|8	0	<muted>10% less supply use for maintenance. The crabs eat what the crew won't.</muted>
+integrable|crustacean_integration|DESTROYER|0	0	<good>15%</good> increased combat readiness recovery rate.
+integrable|crustacean_integration|DESTROYER|1	0	<good>10%</good> increased top speed.
+integrable|crustacean_integration|DESTROYER|2	0	<good>30%</good> increased peak performance time.
+integrable|crustacean_integration|DESTROYER|3	0	Click and hold to integrate.
+integrable|crustacean_integration|DESTROYER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|crustacean_integration|DESTROYER|5	0	<muted>15% increased combat readiness recovery rate.</muted>
+integrable|crustacean_integration|DESTROYER|6	0	<muted>10% increased top speed.</muted>
+integrable|crustacean_integration|DESTROYER|7	0	<muted>30% increased peak performance time.</muted>
+integrable|crustacean_integration|DESTROYER|8	0	<muted>10% less supply use for maintenance. The crabs eat what the crew won't.</muted>
+integrable|crustacean_integration|CRUISER|0	0	<good>15%</good> increased combat readiness recovery rate.
+integrable|crustacean_integration|CRUISER|1	0	<good>10%</good> increased top speed.
+integrable|crustacean_integration|CRUISER|2	0	<good>30%</good> increased peak performance time.
+integrable|crustacean_integration|CRUISER|3	0	Click and hold to integrate.
+integrable|crustacean_integration|CRUISER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|crustacean_integration|CRUISER|5	0	<muted>15% increased combat readiness recovery rate.</muted>
+integrable|crustacean_integration|CRUISER|6	0	<muted>10% increased top speed.</muted>
+integrable|crustacean_integration|CRUISER|7	0	<muted>30% increased peak performance time.</muted>
+integrable|crustacean_integration|CRUISER|8	0	<muted>10% less supply use for maintenance. The crabs eat what the crew won't.</muted>
+integrable|crustacean_integration|CAPITAL_SHIP|0	0	<good>15%</good> increased combat readiness recovery rate.
+integrable|crustacean_integration|CAPITAL_SHIP|1	0	<good>10%</good> increased top speed.
+integrable|crustacean_integration|CAPITAL_SHIP|2	0	<good>30%</good> increased peak performance time.
+integrable|crustacean_integration|CAPITAL_SHIP|3	0	Click and hold to integrate.
+integrable|crustacean_integration|CAPITAL_SHIP|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|crustacean_integration|CAPITAL_SHIP|5	0	<muted>15% increased combat readiness recovery rate.</muted>
+integrable|crustacean_integration|CAPITAL_SHIP|6	0	<muted>10% increased top speed.</muted>
+integrable|crustacean_integration|CAPITAL_SHIP|7	0	<muted>30% increased peak performance time.</muted>
+integrable|crustacean_integration|CAPITAL_SHIP|8	0	<muted>10% less supply use for maintenance. The crabs eat what the crew won't.</muted>
+integrated|crustacean_integration|null|0	0	<builtIn>Integrated</builtIn>
+integrated|crustacean_integration|null|1	0	<good>15%</good> increased combat readiness recovery rate.
+integrated|crustacean_integration|null|2	0	<good>10%</good> increased top speed.
+integrated|crustacean_integration|null|3	0	<good>30%</good> increased peak performance time.
+integrated|crustacean_integration|null|4	0	<good>10%</good><builtIn> less supply use for maintenance. The crabs eat what the crew won't.</builtIn>
+integrated|crustacean_integration|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|crustacean_integration|FRIGATE|1	0	<good>15%</good> increased combat readiness recovery rate.
+integrated|crustacean_integration|FRIGATE|2	0	<good>10%</good> increased top speed.
+integrated|crustacean_integration|FRIGATE|3	0	<good>30%</good> increased peak performance time.
+integrated|crustacean_integration|FRIGATE|4	0	<good>10%</good><builtIn> less supply use for maintenance. The crabs eat what the crew won't.</builtIn>
+integrated|crustacean_integration|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|crustacean_integration|DESTROYER|1	0	<good>15%</good> increased combat readiness recovery rate.
+integrated|crustacean_integration|DESTROYER|2	0	<good>10%</good> increased top speed.
+integrated|crustacean_integration|DESTROYER|3	0	<good>30%</good> increased peak performance time.
+integrated|crustacean_integration|DESTROYER|4	0	<good>10%</good><builtIn> less supply use for maintenance. The crabs eat what the crew won't.</builtIn>
+integrated|crustacean_integration|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|crustacean_integration|CRUISER|1	0	<good>15%</good> increased combat readiness recovery rate.
+integrated|crustacean_integration|CRUISER|2	0	<good>10%</good> increased top speed.
+integrated|crustacean_integration|CRUISER|3	0	<good>30%</good> increased peak performance time.
+integrated|crustacean_integration|CRUISER|4	0	<good>10%</good><builtIn> less supply use for maintenance. The crabs eat what the crew won't.</builtIn>
+integrated|crustacean_integration|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|crustacean_integration|CAPITAL_SHIP|1	0	<good>15%</good> increased combat readiness recovery rate.
+integrated|crustacean_integration|CAPITAL_SHIP|2	0	<good>10%</good> increased top speed.
+integrated|crustacean_integration|CAPITAL_SHIP|3	0	<good>30%</good> increased peak performance time.
+integrated|crustacean_integration|CAPITAL_SHIP|4	0	<good>10%</good><builtIn> less supply use for maintenance. The crabs eat what the crew won't.</builtIn>
 flavour|cut_and_run	0	Acquiring plunder is sometimes not as important as making it home.
 type|cut_and_run|null|0	0	<good>30%</good> increased top speed while retreating.
 type|cut_and_run|FRIGATE|0	0	<good>30%</good> increased top speed while retreating.
@@ -5415,6 +5509,66 @@ type|executors_decree|CRUISER|2	1	<bad>5%</bad> reduced damage taken.
 type|executors_decree|CAPITAL_SHIP|0	0	This ship can't retreat.
 type|executors_decree|CAPITAL_SHIP|1	0	<good>15%</good> increased weapon damage.
 type|executors_decree|CAPITAL_SHIP|2	1	<bad>5%</bad> reduced damage taken.
+integrable|executors_decree|null|0	0	This ship can't retreat.
+integrable|executors_decree|null|1	0	<good>15%</good> increased weapon damage.
+integrable|executors_decree|null|2	1	<bad>5%</bad> reduced damage taken.
+integrable|executors_decree|null|3	0	Click and hold to integrate.
+integrable|executors_decree|null|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|executors_decree|null|5	0	<muted>This ship can't retreat.</muted>
+integrable|executors_decree|null|6	0	<muted>15% increased weapon damage.</muted>
+integrable|executors_decree|null|7	0	<muted>10% reduced damage taken.</muted>
+integrable|executors_decree|FRIGATE|0	0	This ship can't retreat.
+integrable|executors_decree|FRIGATE|1	0	<good>15%</good> increased weapon damage.
+integrable|executors_decree|FRIGATE|2	1	<bad>5%</bad> reduced damage taken.
+integrable|executors_decree|FRIGATE|3	0	Click and hold to integrate.
+integrable|executors_decree|FRIGATE|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|executors_decree|FRIGATE|5	0	<muted>This ship can't retreat.</muted>
+integrable|executors_decree|FRIGATE|6	0	<muted>15% increased weapon damage.</muted>
+integrable|executors_decree|FRIGATE|7	0	<muted>10% reduced damage taken.</muted>
+integrable|executors_decree|DESTROYER|0	0	This ship can't retreat.
+integrable|executors_decree|DESTROYER|1	0	<good>15%</good> increased weapon damage.
+integrable|executors_decree|DESTROYER|2	1	<bad>5%</bad> reduced damage taken.
+integrable|executors_decree|DESTROYER|3	0	Click and hold to integrate.
+integrable|executors_decree|DESTROYER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|executors_decree|DESTROYER|5	0	<muted>This ship can't retreat.</muted>
+integrable|executors_decree|DESTROYER|6	0	<muted>15% increased weapon damage.</muted>
+integrable|executors_decree|DESTROYER|7	0	<muted>10% reduced damage taken.</muted>
+integrable|executors_decree|CRUISER|0	0	This ship can't retreat.
+integrable|executors_decree|CRUISER|1	0	<good>15%</good> increased weapon damage.
+integrable|executors_decree|CRUISER|2	1	<bad>5%</bad> reduced damage taken.
+integrable|executors_decree|CRUISER|3	0	Click and hold to integrate.
+integrable|executors_decree|CRUISER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|executors_decree|CRUISER|5	0	<muted>This ship can't retreat.</muted>
+integrable|executors_decree|CRUISER|6	0	<muted>15% increased weapon damage.</muted>
+integrable|executors_decree|CRUISER|7	0	<muted>10% reduced damage taken.</muted>
+integrable|executors_decree|CAPITAL_SHIP|0	0	This ship can't retreat.
+integrable|executors_decree|CAPITAL_SHIP|1	0	<good>15%</good> increased weapon damage.
+integrable|executors_decree|CAPITAL_SHIP|2	1	<bad>5%</bad> reduced damage taken.
+integrable|executors_decree|CAPITAL_SHIP|3	0	Click and hold to integrate.
+integrable|executors_decree|CAPITAL_SHIP|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|executors_decree|CAPITAL_SHIP|5	0	<muted>This ship can't retreat.</muted>
+integrable|executors_decree|CAPITAL_SHIP|6	0	<muted>15% increased weapon damage.</muted>
+integrable|executors_decree|CAPITAL_SHIP|7	0	<muted>10% reduced damage taken.</muted>
+integrated|executors_decree|null|0	0	<builtIn>Integrated</builtIn>
+integrated|executors_decree|null|1	0	This ship can't retreat.
+integrated|executors_decree|null|2	0	<good>15%</good> increased weapon damage.
+integrated|executors_decree|null|3	1	<bad>10%</bad><builtIn> reduced damage taken.</builtIn>
+integrated|executors_decree|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|executors_decree|FRIGATE|1	0	This ship can't retreat.
+integrated|executors_decree|FRIGATE|2	0	<good>15%</good> increased weapon damage.
+integrated|executors_decree|FRIGATE|3	1	<bad>10%</bad><builtIn> reduced damage taken.</builtIn>
+integrated|executors_decree|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|executors_decree|DESTROYER|1	0	This ship can't retreat.
+integrated|executors_decree|DESTROYER|2	0	<good>15%</good> increased weapon damage.
+integrated|executors_decree|DESTROYER|3	1	<bad>10%</bad><builtIn> reduced damage taken.</builtIn>
+integrated|executors_decree|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|executors_decree|CRUISER|1	0	This ship can't retreat.
+integrated|executors_decree|CRUISER|2	0	<good>15%</good> increased weapon damage.
+integrated|executors_decree|CRUISER|3	1	<bad>10%</bad><builtIn> reduced damage taken.</builtIn>
+integrated|executors_decree|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|executors_decree|CAPITAL_SHIP|1	0	This ship can't retreat.
+integrated|executors_decree|CAPITAL_SHIP|2	0	<good>15%</good> increased weapon damage.
+integrated|executors_decree|CAPITAL_SHIP|3	1	<bad>10%</bad><builtIn> reduced damage taken.</builtIn>
 flavour|exo_tech_coil_tuning	0	Exo-Tech technicians teach the crew to retune the phase coils to their own tolerances, which are tighter than anything the coils were built for.
 flavourAutomated|exo_tech_coil_tuning	0	Exo-Tech technicians teach the refit crew to retune the phase coils to their own tolerances, which are tighter than anything the coils were built for.
 type|exo_tech_coil_tuning|null|0	0	<good>20%</good> increased hard flux level at which phased speed reaches its minimum.
@@ -6396,6 +6550,46 @@ type|honor_guard|FRIGATE|0	0	Additional top speed equal to <good>50%</good> of y
 type|honor_guard|DESTROYER|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
 type|honor_guard|CRUISER|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
 type|honor_guard|CAPITAL_SHIP|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+integrable|honor_guard|null|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+integrable|honor_guard|null|1	0	Click and hold to integrate.
+integrable|honor_guard|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|honor_guard|null|3	0	<muted>Additional top speed equal to 50% of your flagship's base top speed while your flagship is deployed.</muted>
+integrable|honor_guard|null|4	0	<muted>10% reduced damage taken while within 1500 su of your flagship.</muted>
+integrable|honor_guard|FRIGATE|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+integrable|honor_guard|FRIGATE|1	0	Click and hold to integrate.
+integrable|honor_guard|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|honor_guard|FRIGATE|3	0	<muted>Additional top speed equal to 50% of your flagship's base top speed while your flagship is deployed.</muted>
+integrable|honor_guard|FRIGATE|4	0	<muted>10% reduced damage taken while within 1500 su of your flagship.</muted>
+integrable|honor_guard|DESTROYER|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+integrable|honor_guard|DESTROYER|1	0	Click and hold to integrate.
+integrable|honor_guard|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|honor_guard|DESTROYER|3	0	<muted>Additional top speed equal to 50% of your flagship's base top speed while your flagship is deployed.</muted>
+integrable|honor_guard|DESTROYER|4	0	<muted>10% reduced damage taken while within 1500 su of your flagship.</muted>
+integrable|honor_guard|CRUISER|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+integrable|honor_guard|CRUISER|1	0	Click and hold to integrate.
+integrable|honor_guard|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|honor_guard|CRUISER|3	0	<muted>Additional top speed equal to 50% of your flagship's base top speed while your flagship is deployed.</muted>
+integrable|honor_guard|CRUISER|4	0	<muted>10% reduced damage taken while within 1500 su of your flagship.</muted>
+integrable|honor_guard|CAPITAL_SHIP|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+integrable|honor_guard|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|honor_guard|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|honor_guard|CAPITAL_SHIP|3	0	<muted>Additional top speed equal to 50% of your flagship's base top speed while your flagship is deployed.</muted>
+integrable|honor_guard|CAPITAL_SHIP|4	0	<muted>10% reduced damage taken while within 1500 su of your flagship.</muted>
+integrated|honor_guard|null|0	0	<builtIn>Integrated</builtIn>
+integrated|honor_guard|null|1	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+integrated|honor_guard|null|2	0	<good>10%</good><builtIn> reduced damage taken while within 1500 su of your flagship.</builtIn>
+integrated|honor_guard|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|honor_guard|FRIGATE|1	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+integrated|honor_guard|FRIGATE|2	0	<good>10%</good><builtIn> reduced damage taken while within 1500 su of your flagship.</builtIn>
+integrated|honor_guard|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|honor_guard|DESTROYER|1	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+integrated|honor_guard|DESTROYER|2	0	<good>10%</good><builtIn> reduced damage taken while within 1500 su of your flagship.</builtIn>
+integrated|honor_guard|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|honor_guard|CRUISER|1	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+integrated|honor_guard|CRUISER|2	0	<good>10%</good><builtIn> reduced damage taken while within 1500 su of your flagship.</builtIn>
+integrated|honor_guard|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|honor_guard|CAPITAL_SHIP|1	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+integrated|honor_guard|CAPITAL_SHIP|2	0	<good>10%</good><builtIn> reduced damage taken while within 1500 su of your flagship.</builtIn>
 flavour|hullbreacher_rounds	0	Former Hegemony Navy gunners in the crew remember the breacher loads the Navy keeps for boarding actions, shells hardened to punch through plating instead of bursting on it. The crew sees no reason to save them for boarding.
 flavourAutomated|hullbreacher_rounds	0	The Hegemony Navy keeps breacher loads for boarding actions, shells hardened to punch through plating instead of bursting on it. The ship's core finds their specifications in a seized Navy ordnance manifest and loads them for every fight.
 type|hullbreacher_rounds|null|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
@@ -6811,6 +7005,36 @@ type|lions_gaze|FRIGATE|0	0	Beam weapon hits split their damage evenly across th
 type|lions_gaze|DESTROYER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
 type|lions_gaze|CRUISER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
 type|lions_gaze|CAPITAL_SHIP|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
+integrable|lions_gaze|null|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
+integrable|lions_gaze|null|1	0	Click and hold to integrate.
+integrable|lions_gaze|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|lions_gaze|null|3	0	<muted>Beam weapon hits split to up to 1 additional nearby enemy ship at full damage. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.</muted>
+integrable|lions_gaze|FRIGATE|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
+integrable|lions_gaze|FRIGATE|1	0	Click and hold to integrate.
+integrable|lions_gaze|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|lions_gaze|FRIGATE|3	0	<muted>Beam weapon hits split to up to 1 additional nearby enemy ship at full damage. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.</muted>
+integrable|lions_gaze|DESTROYER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
+integrable|lions_gaze|DESTROYER|1	0	Click and hold to integrate.
+integrable|lions_gaze|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|lions_gaze|DESTROYER|3	0	<muted>Beam weapon hits split to up to 1 additional nearby enemy ship at full damage. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.</muted>
+integrable|lions_gaze|CRUISER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
+integrable|lions_gaze|CRUISER|1	0	Click and hold to integrate.
+integrable|lions_gaze|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|lions_gaze|CRUISER|3	0	<muted>Beam weapon hits split to up to 1 additional nearby enemy ship at full damage. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.</muted>
+integrable|lions_gaze|CAPITAL_SHIP|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
+integrable|lions_gaze|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|lions_gaze|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|lions_gaze|CAPITAL_SHIP|3	0	<muted>Beam weapon hits split to up to 1 additional nearby enemy ship at full damage. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.</muted>
+integrated|lions_gaze|null|0	0	<builtIn>Integrated</builtIn>
+integrated|lions_gaze|null|1	0	<builtIn>Beam weapon hits split to up to 1 additional nearby enemy ship at full damage. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.</builtIn>
+integrated|lions_gaze|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|lions_gaze|FRIGATE|1	0	<builtIn>Beam weapon hits split to up to 1 additional nearby enemy ship at full damage. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.</builtIn>
+integrated|lions_gaze|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|lions_gaze|DESTROYER|1	0	<builtIn>Beam weapon hits split to up to 1 additional nearby enemy ship at full damage. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.</builtIn>
+integrated|lions_gaze|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|lions_gaze|CRUISER|1	0	<builtIn>Beam weapon hits split to up to 1 additional nearby enemy ship at full damage. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.</builtIn>
+integrated|lions_gaze|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|lions_gaze|CAPITAL_SHIP|1	0	<builtIn>Beam weapon hits split to up to 1 additional nearby enemy ship at full damage. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.</builtIn>
 flavour|lions_guard_arsenal	0	Lion's Guard refits rebuild a hull around its energy mounts. Guard armorers regard missiles as an admission of poor aim.
 type|lions_guard_arsenal|null|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
 type|lions_guard_arsenal|null|1	0	<bad>15%</bad> less missile weapon damage.
@@ -6822,12 +7046,87 @@ type|lions_guard_arsenal|CRUISER|0	0	<good>+100</good> to the base range of weap
 type|lions_guard_arsenal|CRUISER|1	0	<bad>15%</bad> less missile weapon damage.
 type|lions_guard_arsenal|CAPITAL_SHIP|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
 type|lions_guard_arsenal|CAPITAL_SHIP|1	0	<bad>15%</bad> less missile weapon damage.
+integrable|lions_guard_arsenal|null|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
+integrable|lions_guard_arsenal|null|1	0	<bad>15%</bad> less missile weapon damage.
+integrable|lions_guard_arsenal|null|2	0	Click and hold to integrate.
+integrable|lions_guard_arsenal|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|lions_guard_arsenal|null|4	0	<muted>+100 to the base range of weapons in energy slots.</muted>
+integrable|lions_guard_arsenal|null|5	0	<muted>15% less missile weapon damage.</muted>
+integrable|lions_guard_arsenal|FRIGATE|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
+integrable|lions_guard_arsenal|FRIGATE|1	0	<bad>15%</bad> less missile weapon damage.
+integrable|lions_guard_arsenal|FRIGATE|2	0	Click and hold to integrate.
+integrable|lions_guard_arsenal|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|lions_guard_arsenal|FRIGATE|4	0	<muted>+100 to the base range of weapons in energy slots.</muted>
+integrable|lions_guard_arsenal|FRIGATE|5	0	<muted>15% less missile weapon damage.</muted>
+integrable|lions_guard_arsenal|DESTROYER|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
+integrable|lions_guard_arsenal|DESTROYER|1	0	<bad>15%</bad> less missile weapon damage.
+integrable|lions_guard_arsenal|DESTROYER|2	0	Click and hold to integrate.
+integrable|lions_guard_arsenal|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|lions_guard_arsenal|DESTROYER|4	0	<muted>+100 to the base range of weapons in energy slots.</muted>
+integrable|lions_guard_arsenal|DESTROYER|5	0	<muted>15% less missile weapon damage.</muted>
+integrable|lions_guard_arsenal|CRUISER|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
+integrable|lions_guard_arsenal|CRUISER|1	0	<bad>15%</bad> less missile weapon damage.
+integrable|lions_guard_arsenal|CRUISER|2	0	Click and hold to integrate.
+integrable|lions_guard_arsenal|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|lions_guard_arsenal|CRUISER|4	0	<muted>+100 to the base range of weapons in energy slots.</muted>
+integrable|lions_guard_arsenal|CRUISER|5	0	<muted>15% less missile weapon damage.</muted>
+integrable|lions_guard_arsenal|CAPITAL_SHIP|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
+integrable|lions_guard_arsenal|CAPITAL_SHIP|1	0	<bad>15%</bad> less missile weapon damage.
+integrable|lions_guard_arsenal|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|lions_guard_arsenal|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|lions_guard_arsenal|CAPITAL_SHIP|4	0	<muted>+100 to the base range of weapons in energy slots.</muted>
+integrable|lions_guard_arsenal|CAPITAL_SHIP|5	0	<muted>15% less missile weapon damage.</muted>
+integrated|lions_guard_arsenal|null|0	0	<builtIn>Integrated</builtIn>
+integrated|lions_guard_arsenal|null|1	0	<good>+100</good><builtIn> to the base range of weapons in energy slots.</builtIn>
+integrated|lions_guard_arsenal|null|2	0	<bad>15%</bad> less missile weapon damage.
+integrated|lions_guard_arsenal|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|lions_guard_arsenal|FRIGATE|1	0	<good>+100</good><builtIn> to the base range of weapons in energy slots.</builtIn>
+integrated|lions_guard_arsenal|FRIGATE|2	0	<bad>15%</bad> less missile weapon damage.
+integrated|lions_guard_arsenal|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|lions_guard_arsenal|DESTROYER|1	0	<good>+100</good><builtIn> to the base range of weapons in energy slots.</builtIn>
+integrated|lions_guard_arsenal|DESTROYER|2	0	<bad>15%</bad> less missile weapon damage.
+integrated|lions_guard_arsenal|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|lions_guard_arsenal|CRUISER|1	0	<good>+100</good><builtIn> to the base range of weapons in energy slots.</builtIn>
+integrated|lions_guard_arsenal|CRUISER|2	0	<bad>15%</bad> less missile weapon damage.
+integrated|lions_guard_arsenal|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|lions_guard_arsenal|CAPITAL_SHIP|1	0	<good>+100</good><builtIn> to the base range of weapons in energy slots.</builtIn>
+integrated|lions_guard_arsenal|CAPITAL_SHIP|2	0	<bad>15%</bad> less missile weapon damage.
 flavour|lions_roar	0	Diktat warships broadcast the Supreme Executor's addresses on open channels as they close, at a volume the comm filter can't fully block. Sindrian citizens are required to listen to the end.
 type|lions_roar|null|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
 type|lions_roar|FRIGATE|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
 type|lions_roar|DESTROYER|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
 type|lions_roar|CRUISER|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
 type|lions_roar|CAPITAL_SHIP|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+integrable|lions_roar|null|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+integrable|lions_roar|null|1	0	Click and hold to integrate.
+integrable|lions_roar|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|lions_roar|null|3	0	<muted>Enemy ships within 1000 su have 15% less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.</muted>
+integrable|lions_roar|FRIGATE|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+integrable|lions_roar|FRIGATE|1	0	Click and hold to integrate.
+integrable|lions_roar|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|lions_roar|FRIGATE|3	0	<muted>Enemy ships within 1000 su have 15% less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.</muted>
+integrable|lions_roar|DESTROYER|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+integrable|lions_roar|DESTROYER|1	0	Click and hold to integrate.
+integrable|lions_roar|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|lions_roar|DESTROYER|3	0	<muted>Enemy ships within 1000 su have 15% less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.</muted>
+integrable|lions_roar|CRUISER|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+integrable|lions_roar|CRUISER|1	0	Click and hold to integrate.
+integrable|lions_roar|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|lions_roar|CRUISER|3	0	<muted>Enemy ships within 1000 su have 15% less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.</muted>
+integrable|lions_roar|CAPITAL_SHIP|0	0	Enemy ships within 1000 su have <good>10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+integrable|lions_roar|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|lions_roar|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|lions_roar|CAPITAL_SHIP|3	0	<muted>Enemy ships within 1000 su have 15% less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.</muted>
+integrated|lions_roar|null|0	0	<builtIn>Integrated</builtIn>
+integrated|lions_roar|null|1	0	<builtIn>Enemy ships within 1000 su have </builtIn><good>15%</good><builtIn> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.</builtIn>
+integrated|lions_roar|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|lions_roar|FRIGATE|1	0	<builtIn>Enemy ships within 1000 su have </builtIn><good>15%</good><builtIn> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.</builtIn>
+integrated|lions_roar|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|lions_roar|DESTROYER|1	0	<builtIn>Enemy ships within 1000 su have </builtIn><good>15%</good><builtIn> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.</builtIn>
+integrated|lions_roar|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|lions_roar|CRUISER|1	0	<builtIn>Enemy ships within 1000 su have </builtIn><good>15%</good><builtIn> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.</builtIn>
+integrated|lions_roar|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|lions_roar|CAPITAL_SHIP|1	0	<builtIn>Enemy ships within 1000 su have </builtIn><good>15%</good><builtIn> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.</builtIn>
 flavour|litany_of_the_fallen	0	Luddic Church ships carry a memorial plate for every hand lost aboard. The oldest hulls are mostly memorial.
 type|litany_of_the_fallen|null|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
 type|litany_of_the_fallen|FRIGATE|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
@@ -8333,6 +8632,51 @@ type|sindrian_shielding|CRUISER|0	1	<bad>10%</bad> less damage taken by shields.
 type|sindrian_shielding|CRUISER|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type|sindrian_shielding|CAPITAL_SHIP|0	1	<bad>10%</bad> less damage taken by shields.
 type|sindrian_shielding|CAPITAL_SHIP|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrable|sindrian_shielding|null|0	1	<bad>10%</bad> less damage taken by shields.
+integrable|sindrian_shielding|null|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrable|sindrian_shielding|null|2	0	Click and hold to integrate.
+integrable|sindrian_shielding|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|sindrian_shielding|null|4	0	<muted>15% less damage taken by shields.</muted>
+integrable|sindrian_shielding|null|5	0	<muted>25% less combat readiness loss from being in a solar corona or a deep hyperspace storm.</muted>
+integrable|sindrian_shielding|FRIGATE|0	1	<bad>10%</bad> less damage taken by shields.
+integrable|sindrian_shielding|FRIGATE|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrable|sindrian_shielding|FRIGATE|2	0	Click and hold to integrate.
+integrable|sindrian_shielding|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|sindrian_shielding|FRIGATE|4	0	<muted>15% less damage taken by shields.</muted>
+integrable|sindrian_shielding|FRIGATE|5	0	<muted>25% less combat readiness loss from being in a solar corona or a deep hyperspace storm.</muted>
+integrable|sindrian_shielding|DESTROYER|0	1	<bad>10%</bad> less damage taken by shields.
+integrable|sindrian_shielding|DESTROYER|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrable|sindrian_shielding|DESTROYER|2	0	Click and hold to integrate.
+integrable|sindrian_shielding|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|sindrian_shielding|DESTROYER|4	0	<muted>15% less damage taken by shields.</muted>
+integrable|sindrian_shielding|DESTROYER|5	0	<muted>25% less combat readiness loss from being in a solar corona or a deep hyperspace storm.</muted>
+integrable|sindrian_shielding|CRUISER|0	1	<bad>10%</bad> less damage taken by shields.
+integrable|sindrian_shielding|CRUISER|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrable|sindrian_shielding|CRUISER|2	0	Click and hold to integrate.
+integrable|sindrian_shielding|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|sindrian_shielding|CRUISER|4	0	<muted>15% less damage taken by shields.</muted>
+integrable|sindrian_shielding|CRUISER|5	0	<muted>25% less combat readiness loss from being in a solar corona or a deep hyperspace storm.</muted>
+integrable|sindrian_shielding|CAPITAL_SHIP|0	1	<bad>10%</bad> less damage taken by shields.
+integrable|sindrian_shielding|CAPITAL_SHIP|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrable|sindrian_shielding|CAPITAL_SHIP|2	0	Click and hold to integrate.
+integrable|sindrian_shielding|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|sindrian_shielding|CAPITAL_SHIP|4	0	<muted>15% less damage taken by shields.</muted>
+integrable|sindrian_shielding|CAPITAL_SHIP|5	0	<muted>25% less combat readiness loss from being in a solar corona or a deep hyperspace storm.</muted>
+integrated|sindrian_shielding|null|0	0	<builtIn>Integrated</builtIn>
+integrated|sindrian_shielding|null|1	1	<bad>15%</bad><builtIn> less damage taken by shields.</builtIn>
+integrated|sindrian_shielding|null|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrated|sindrian_shielding|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|sindrian_shielding|FRIGATE|1	1	<bad>15%</bad><builtIn> less damage taken by shields.</builtIn>
+integrated|sindrian_shielding|FRIGATE|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrated|sindrian_shielding|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|sindrian_shielding|DESTROYER|1	1	<bad>15%</bad><builtIn> less damage taken by shields.</builtIn>
+integrated|sindrian_shielding|DESTROYER|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrated|sindrian_shielding|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|sindrian_shielding|CRUISER|1	1	<bad>15%</bad><builtIn> less damage taken by shields.</builtIn>
+integrated|sindrian_shielding|CRUISER|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+integrated|sindrian_shielding|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|sindrian_shielding|CAPITAL_SHIP|1	1	<bad>15%</bad><builtIn> less damage taken by shields.</builtIn>
+integrated|sindrian_shielding|CAPITAL_SHIP|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type|solar_shielding|null|0	1	<bad>75%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|solar_shielding|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dawntide</hullmod>\n• <hullmod>Stardust Core Field</hullmod>\n• <hullmod>Solar Shielding</hullmod>
 type|solar_shielding|FRIGATE|0	1	<bad>75%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -8435,6 +8779,36 @@ type|strategic_fuel_reserve|FRIGATE|0	0	<good>10%</good> reduced fuel use while 
 type|strategic_fuel_reserve|DESTROYER|0	0	<good>10%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
 type|strategic_fuel_reserve|CRUISER|0	0	<good>10%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
 type|strategic_fuel_reserve|CAPITAL_SHIP|0	0	<good>10%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
+integrable|strategic_fuel_reserve|null|0	0	<good>10%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
+integrable|strategic_fuel_reserve|null|1	0	Click and hold to integrate.
+integrable|strategic_fuel_reserve|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|strategic_fuel_reserve|null|3	0	<muted>20% reduced fuel use while your fleet carries at least half its fuel capacity.</muted>
+integrable|strategic_fuel_reserve|FRIGATE|0	0	<good>10%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
+integrable|strategic_fuel_reserve|FRIGATE|1	0	Click and hold to integrate.
+integrable|strategic_fuel_reserve|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|strategic_fuel_reserve|FRIGATE|3	0	<muted>20% reduced fuel use while your fleet carries at least half its fuel capacity.</muted>
+integrable|strategic_fuel_reserve|DESTROYER|0	0	<good>10%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
+integrable|strategic_fuel_reserve|DESTROYER|1	0	Click and hold to integrate.
+integrable|strategic_fuel_reserve|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|strategic_fuel_reserve|DESTROYER|3	0	<muted>20% reduced fuel use while your fleet carries at least half its fuel capacity.</muted>
+integrable|strategic_fuel_reserve|CRUISER|0	0	<good>10%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
+integrable|strategic_fuel_reserve|CRUISER|1	0	Click and hold to integrate.
+integrable|strategic_fuel_reserve|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|strategic_fuel_reserve|CRUISER|3	0	<muted>20% reduced fuel use while your fleet carries at least half its fuel capacity.</muted>
+integrable|strategic_fuel_reserve|CAPITAL_SHIP|0	0	<good>10%</good> reduced fuel use while your fleet carries at least half its fuel capacity.
+integrable|strategic_fuel_reserve|CAPITAL_SHIP|1	0	Click and hold to integrate.
+integrable|strategic_fuel_reserve|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|strategic_fuel_reserve|CAPITAL_SHIP|3	0	<muted>20% reduced fuel use while your fleet carries at least half its fuel capacity.</muted>
+integrated|strategic_fuel_reserve|null|0	0	<builtIn>Integrated</builtIn>
+integrated|strategic_fuel_reserve|null|1	0	<good>20%</good><builtIn> reduced fuel use while your fleet carries at least half its fuel capacity.</builtIn>
+integrated|strategic_fuel_reserve|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|strategic_fuel_reserve|FRIGATE|1	0	<good>20%</good><builtIn> reduced fuel use while your fleet carries at least half its fuel capacity.</builtIn>
+integrated|strategic_fuel_reserve|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|strategic_fuel_reserve|DESTROYER|1	0	<good>20%</good><builtIn> reduced fuel use while your fleet carries at least half its fuel capacity.</builtIn>
+integrated|strategic_fuel_reserve|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|strategic_fuel_reserve|CRUISER|1	0	<good>20%</good><builtIn> reduced fuel use while your fleet carries at least half its fuel capacity.</builtIn>
+integrated|strategic_fuel_reserve|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|strategic_fuel_reserve|CAPITAL_SHIP|1	0	<good>20%</good><builtIn> reduced fuel use while your fleet carries at least half its fuel capacity.</builtIn>
 type|strikecraft_replacement|null|0	0	<good>5%</good> increased rate at which the strikecraft replacement rate recovers.
 type|strikecraft_replacement|null|1	1	<bad>5%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
 type|strikecraft_replacement|FRIGATE|0	0	<good>5%</good> increased rate at which the strikecraft replacement rate recovers.

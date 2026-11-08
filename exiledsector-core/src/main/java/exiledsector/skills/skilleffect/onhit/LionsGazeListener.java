@@ -25,6 +25,7 @@ import java.util.Map;
 final class LionsGazeListener extends ShipCombatListener implements DamageDealtModifier, DroneSpawner {
 
     static final String TARGETS_KEY = "exiledSector_beamSplitTargets";
+    static final String FULL_DAMAGE_TARGETS_KEY = "exiledSector_beamFullDamageSplitTargets";
 
     private static final String DAMAGE_SHARE_MOD_ID = "exiledSector_beamSplitShare";
     private static final float SPLIT_RADIUS_MULT_OF_BEAM_RANGE = 0.5f;
@@ -44,6 +45,18 @@ final class LionsGazeListener extends ShipCombatListener implements DamageDealtM
         private int count;
         private float foundAt;
         private List<ShipAPI> ships = List.of();
+    }
+
+    record DamageShares(int fullDamageSplits, float sharedDamage) {
+
+        static DamageShares of(int splitTargetCount, int fullDamageSplitCount) {
+            int fullDamageSplits = Math.min(fullDamageSplitCount, splitTargetCount);
+            return new DamageShares(fullDamageSplits, 1f / (1 + splitTargetCount - fullDamageSplits));
+        }
+
+        float ofSplit(int splitIndex) {
+            return splitIndex < fullDamageSplits ? 1f : sharedDamage;
+        }
     }
 
     static boolean isApplyingSimulatedHit() {
@@ -73,7 +86,9 @@ final class LionsGazeListener extends ShipCombatListener implements DamageDealtM
             drones.claim(beam, List.of());
             return null;
         }
-        int splitCount = Math.round(magnitude(TARGETS_KEY));
+        int sharedSplitCount = Math.max(0, Math.round(magnitude(TARGETS_KEY)));
+        int fullDamageSplitCount = Math.max(0, Math.round(magnitude(FULL_DAMAGE_TARGETS_KEY)));
+        int splitCount = sharedSplitCount + fullDamageSplitCount;
         List<ShipAPI> splitTargets = splitCount <= 0 ? List.of()
                 : splitTargets(beam, primaryTarget, point, splitCount);
         if (splitTargets.isEmpty()) {
@@ -81,27 +96,31 @@ final class LionsGazeListener extends ShipCombatListener implements DamageDealtM
             return null;
         }
 
-        float share = 1f / (1 + splitTargets.size());
+        DamageShares shares = DamageShares.of(splitTargets.size(), fullDamageSplitCount);
         if (WeaponDroneFactory.supportsBeam(weapon)) {
             drones.claim(beam, splitTargets);
-            for (ShipAPI splitTarget : splitTargets) {
-                drones.refresh(weapon, primaryTarget, splitTarget, point, share);
+            for (int index = 0; index < splitTargets.size(); index++) {
+                drones.refresh(weapon, primaryTarget, splitTargets.get(index), point, shares.ofSplit(index));
             }
         } else {
-            simulateSplit(beam, damage, point, splitTargets, share);
+            simulateSplit(beam, damage, point, splitTargets, shares);
         }
-        damage.getModifier().modifyMult(DAMAGE_SHARE_MOD_ID, share);
+        if (shares.sharedDamage() >= 1f) {
+            return null;
+        }
+        damage.getModifier().modifyMult(DAMAGE_SHARE_MOD_ID, shares.sharedDamage());
         return DAMAGE_SHARE_MOD_ID;
     }
 
-    private void simulateSplit(BeamAPI beam, DamageAPI damage, Vector2f point, List<ShipAPI> splitTargets, float share) {
-        float perTargetDamage = HitDamageRestorer.originalHitDamage(damage) * share;
-        float perTargetEmp = perTargetDamage * empToDamageRatio(beam.getWeapon());
+    private void simulateSplit(BeamAPI beam, DamageAPI damage, Vector2f point, List<ShipAPI> splitTargets, DamageShares shares) {
+        float originalDamage = HitDamageRestorer.originalHitDamage(damage);
+        float empToDamageRatio = empToDamageRatio(beam.getWeapon());
         CombatEngineAPI engine = Global.getCombatEngine();
         processingSplit = true;
         try {
-            for (ShipAPI splitTarget : splitTargets) {
-                spawnSimulatedBeam(engine, point, splitTarget, beam, perTargetDamage, perTargetEmp, damage);
+            for (int index = 0; index < splitTargets.size(); index++) {
+                float perTargetDamage = originalDamage * shares.ofSplit(index);
+                spawnSimulatedBeam(engine, point, splitTargets.get(index), beam, perTargetDamage, perTargetDamage * empToDamageRatio, damage);
             }
         } finally {
             processingSplit = false;
