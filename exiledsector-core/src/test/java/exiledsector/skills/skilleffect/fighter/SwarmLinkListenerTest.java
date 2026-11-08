@@ -59,14 +59,14 @@ class SwarmLinkListenerTest {
 
     @Test
     void everyNearbyAlliedStrikecraftAddsDamageUpToTheCap() {
-        assertEquals(6f, SwarmLinkListener.damagePercent(2f, 3, 0f));
-        assertEquals(SwarmLinkListener.MAX_DAMAGE_PERCENT, SwarmLinkListener.damagePercent(2f, 15, 0f));
+        float cap = SwarmLinkListener.maxDamagePercent(0f);
+        assertEquals(6f, SwarmLinkListener.damagePercent(2f, 3, cap));
+        assertEquals(SwarmLinkListener.MAX_DAMAGE_PERCENT, SwarmLinkListener.damagePercent(2f, 15, cap));
     }
 
     @Test
     void aMaximumBonusRaisesTheCap() {
-        assertEquals(SwarmLinkListener.MAX_DAMAGE_PERCENT + 10f, SwarmLinkListener.damagePercent(2f, 25, 10f));
-        assertEquals(SwarmLinkListener.MAX_DAMAGE_PERCENT, SwarmLinkListener.damagePercent(2f, 25, -10f));
+        assertEquals(SwarmLinkListener.MAX_DAMAGE_PERCENT + 10f, SwarmLinkListener.damagePercent(2f, 25, SwarmLinkListener.maxDamagePercent(10f)));
     }
 
     @Test
@@ -77,7 +77,7 @@ class SwarmLinkListenerTest {
             gridShips.add(craft(0, 100f));
         }
         ShipAPI carrier = carrier(2f);
-        when(carrier.getMutableStats().getDynamic().getValue(SwarmLinkListener.MAX_DAMAGE_BONUS_PERCENT_KEY, 0f)).thenReturn(10f);
+        when(carrier.getMutableStats().getDynamic().getValue(SwarmLinkListener.MAX_DAMAGE_FLAT_KEY, 0f)).thenReturn(10f);
         SwarmLinkListener listener = new SwarmLinkListener(fighter, carrier);
 
         listener.advance(SwarmLinkListener.SCAN_INTERVAL_SECONDS);

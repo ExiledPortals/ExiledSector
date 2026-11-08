@@ -7,6 +7,7 @@ import exiledsector.skills.CombatGate;
 import exiledsector.skills.SocketedItem;
 import exiledsector.skills.SocketedItemScaling;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
+import exiledsector.skills.skilleffect.DescribeContext;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
 import exiledsector.skills.skilleffect.StatMode;
@@ -121,7 +122,13 @@ public enum SpecialSkillEffect implements BackedSkillEffect {
             OnHitSkillEffect.MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT)) {
         @Override
         public StyledText description(float magnitude) {
-            return OnHitSkillEffect.describeRiftSeries(EffectText.msg(this).arg("value", magnitude).arg("step", affinityScaling().stepSize()));
+            return description(magnitude, DescribeContext.NONE);
+        }
+
+        @Override
+        public StyledText description(float magnitude, DescribeContext context) {
+            return OnHitSkillEffect.describeRiftSeries(EffectText.msg(this).arg("value", magnitude).arg("step", affinityScaling().stepSize()),
+                    context);
         }
     },
     HIGHEST_AFFINITY_FLAT_PER_S_MOD(new AffinityTally()),

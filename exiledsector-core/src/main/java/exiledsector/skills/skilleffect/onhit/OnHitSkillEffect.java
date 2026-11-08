@@ -6,14 +6,17 @@ import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import exiledsector.i18n.Message;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.motes.Motes;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
+import exiledsector.skills.skilleffect.DescribeContext;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
+import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.special.SpecialSkillEffect;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import static exiledsector.skills.skilleffect.Backings.listener;
 
@@ -97,7 +100,12 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
             ResonatorPayloadListener::new)) {
         @Override
         public StyledText description(float magnitude) {
-            return describeRiftSeries(EffectText.msg(this).arg("value", magnitude));
+            return description(magnitude, DescribeContext.NONE);
+        }
+
+        @Override
+        public StyledText description(float magnitude, DescribeContext context) {
+            return describeRiftSeries(EffectText.msg(this).arg("value", magnitude), context);
         }
     },
     MISSILE_HIT_RIFT_SERIES_EXPLOSIONS_FLAT(listener(ResonatorPayloadListener.ADDITIONAL_RIFTS_KEY, ResonatorPayloadListener.class,
@@ -105,6 +113,11 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
         @Override
         public StyledText description(float magnitude) {
             return EffectText.msg(this).count(Math.round(magnitude)).arg("value", magnitude).styled();
+        }
+
+        @Override
+        public Set<SkillEffect> refines() {
+            return Set.of(MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT, SpecialSkillEffect.MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY);
         }
     },
     DISINTEGRATION_ARMOR_DAMAGE_PERCENT(listener(DisintegrationListener.ARMOR_DAMAGE_PERCENT_KEY,
@@ -137,10 +150,21 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
     MISSILE_KILL_FLAK_DAMAGE_FLAT(listener(FlakBurstListener.DAMAGE_KEY, FlakBurstListener.class, FlakBurstListener::new)) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).arg("range", FlakBurstListener.BURST_RADIUS).styled();
+            return description(magnitude, DescribeContext.NONE);
+        }
+
+        @Override
+        public StyledText description(float magnitude, DescribeContext context) {
+            return EffectText.msg(this).arg("value", magnitude)
+                    .arg("range", FlakBurstListener.burstRadius(context.magnitudeOf(MISSILE_KILL_FLAK_RADIUS_FLAT))).styled();
         }
     },
-    MISSILE_KILL_FLAK_RADIUS_FLAT(listener(FlakBurstListener.RADIUS_BONUS_KEY, FlakBurstListener.class, FlakBurstListener::new)),
+    MISSILE_KILL_FLAK_RADIUS_FLAT(listener(FlakBurstListener.RADIUS_BONUS_KEY, FlakBurstListener.class, FlakBurstListener::new)) {
+        @Override
+        public Set<SkillEffect> refines() {
+            return Set.of(MISSILE_KILL_FLAK_DAMAGE_FLAT);
+        }
+    },
     LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT(listener(ConcussionShellListener.CHANCE_PERCENT_KEY, ConcussionShellListener.class,
             ConcussionShellListener::new)),
     MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT(listener(ConcussionShellListener.MEDIUM_CHANCE_PERCENT_KEY, ConcussionShellListener.class,
@@ -155,14 +179,24 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
     STARDUST_MOTE_DAMAGE_FLAT(listener(StardustMoteListener.MOTE_DAMAGE_KEY, StardustMoteListener.class, StardustMoteListener::new)) {
         @Override
         public StyledText description(float magnitude) {
+            return description(magnitude, DescribeContext.NONE);
+        }
+
+        @Override
+        public StyledText description(float magnitude, DescribeContext context) {
             return EffectText.msg(this).arg("value", magnitude).arg("seconds", StardustMoteListener.CONTACT_SECONDS_PER_MOTE)
-                    .arg("max", Motes.MAX_LIVE_MOTES_PER_SOURCE).styled();
+                    .arg("max", StardustMoteListener.maxMotesInFlight(context.magnitudeOf(STARDUST_MOTE_MAX_IN_FLIGHT_FLAT))).styled();
         }
     },
     STARDUST_MOTE_MAX_IN_FLIGHT_FLAT(listener(StardustMoteListener.EXTRA_MOTES_IN_FLIGHT_KEY, StardustMoteListener.class, StardustMoteListener::new)) {
         @Override
         public StyledText description(float magnitude) {
             return EffectText.signed(this, magnitude).styled();
+        }
+
+        @Override
+        public Set<SkillEffect> refines() {
+            return Set.of(STARDUST_MOTE_DAMAGE_FLAT);
         }
     },
     DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT(listener(IonCascadeListener.HIGH_EXPLOSIVE_SHARE_PERCENT_KEY, IonCascadeListener.class, IonCascadeListener::new)) {
@@ -201,8 +235,9 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
 
     private static List<DamageConversion> damageConversions;
 
-    public static StyledText describeRiftSeries(Message line) {
-        return line.arg("count", ResonatorPayloadListener.RIFTS_PER_SERIES).arg("share", ResonatorPayloadListener.DAMAGE_SHARE_PERCENT)
+    public static StyledText describeRiftSeries(Message line, DescribeContext context) {
+        int riftsPerSeries = ResonatorPayloadListener.riftsPerSeries(context.magnitudeOf(MISSILE_HIT_RIFT_SERIES_EXPLOSIONS_FLAT));
+        return line.arg("count", riftsPerSeries).arg("share", ResonatorPayloadListener.DAMAGE_SHARE_PERCENT)
                 .arg("max", ResonatorPayloadListener.MAX_DAMAGE).styled();
     }
 

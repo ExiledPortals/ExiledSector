@@ -2,6 +2,7 @@ package exiledsector.skills.skilleffect.defense;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
+import exiledsector.skills.skilleffect.ParameterBonus;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 
 final class NanoforgeMendingListener extends ShipCombatListener implements AdvanceableListener {
@@ -19,14 +20,17 @@ final class NanoforgeMendingListener extends ShipCombatListener implements Advan
         super(ownerShip);
     }
 
+    static float regenLimitPercentOfHull(float limitBonus) {
+        return ParameterBonus.plusFlat(MAX_TOTAL_REGEN_PERCENT_OF_HULL, limitBonus);
+    }
+
     @Override
     public void advance(float amount) {
         if (amount <= 0f || !ownerIsAliveNotHulk()) {
             return;
         }
         if (remainingRegen < 0f) {
-            float limitPercentOfHull = Math.max(0f, MAX_TOTAL_REGEN_PERCENT_OF_HULL + magnitude(REGEN_LIMIT_BONUS_KEY));
-            remainingRegen = ownerShip.getMaxHitpoints() * limitPercentOfHull / 100f;
+            remainingRegen = ownerShip.getMaxHitpoints() * regenLimitPercentOfHull(magnitude(REGEN_LIMIT_BONUS_KEY)) / 100f;
         }
         float hitpoints = ownerShip.getHitpoints();
         if (hitpoints < lastHitpoints) {

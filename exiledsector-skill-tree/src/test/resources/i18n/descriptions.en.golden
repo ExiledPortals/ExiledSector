@@ -4248,43 +4248,33 @@ type-detail|auxiliary_screen|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>:
 integrable|auxiliary_screen|null|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
 integrable|auxiliary_screen|null|1	0	Click and hold to integrate.
 integrable|auxiliary_screen|null|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|auxiliary_screen|null|3	0	<muted>Allied ships of a smaller hull size within 800 su take 10% less damage. Only the strongest buff of this effect applies at any one time.</muted>
-integrable|auxiliary_screen|null|4	0	<muted>+400 to the range of the damage reduction for smaller allied ships.</muted>
+integrable|auxiliary_screen|null|3	0	<muted>Allied ships of a smaller hull size within 1200 su take 10% less damage. Only the strongest buff of this effect applies at any one time.</muted>
 integrable|auxiliary_screen|FRIGATE|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
 integrable|auxiliary_screen|FRIGATE|1	0	Click and hold to integrate.
 integrable|auxiliary_screen|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|auxiliary_screen|FRIGATE|3	0	<muted>Allied ships of a smaller hull size within 800 su take 10% less damage. Only the strongest buff of this effect applies at any one time.</muted>
-integrable|auxiliary_screen|FRIGATE|4	0	<muted>+400 to the range of the damage reduction for smaller allied ships.</muted>
+integrable|auxiliary_screen|FRIGATE|3	0	<muted>Allied ships of a smaller hull size within 1200 su take 10% less damage. Only the strongest buff of this effect applies at any one time.</muted>
 integrable|auxiliary_screen|DESTROYER|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
 integrable|auxiliary_screen|DESTROYER|1	0	Click and hold to integrate.
 integrable|auxiliary_screen|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|auxiliary_screen|DESTROYER|3	0	<muted>Allied ships of a smaller hull size within 800 su take 10% less damage. Only the strongest buff of this effect applies at any one time.</muted>
-integrable|auxiliary_screen|DESTROYER|4	0	<muted>+400 to the range of the damage reduction for smaller allied ships.</muted>
+integrable|auxiliary_screen|DESTROYER|3	0	<muted>Allied ships of a smaller hull size within 1200 su take 10% less damage. Only the strongest buff of this effect applies at any one time.</muted>
 integrable|auxiliary_screen|CRUISER|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
 integrable|auxiliary_screen|CRUISER|1	0	Click and hold to integrate.
 integrable|auxiliary_screen|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|auxiliary_screen|CRUISER|3	0	<muted>Allied ships of a smaller hull size within 800 su take 10% less damage. Only the strongest buff of this effect applies at any one time.</muted>
-integrable|auxiliary_screen|CRUISER|4	0	<muted>+400 to the range of the damage reduction for smaller allied ships.</muted>
+integrable|auxiliary_screen|CRUISER|3	0	<muted>Allied ships of a smaller hull size within 1200 su take 10% less damage. Only the strongest buff of this effect applies at any one time.</muted>
 integrable|auxiliary_screen|CAPITAL_SHIP|0	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
 integrable|auxiliary_screen|CAPITAL_SHIP|1	0	Click and hold to integrate.
 integrable|auxiliary_screen|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|auxiliary_screen|CAPITAL_SHIP|3	0	<muted>Allied ships of a smaller hull size within 800 su take 10% less damage. Only the strongest buff of this effect applies at any one time.</muted>
-integrable|auxiliary_screen|CAPITAL_SHIP|4	0	<muted>+400 to the range of the damage reduction for smaller allied ships.</muted>
+integrable|auxiliary_screen|CAPITAL_SHIP|3	0	<muted>Allied ships of a smaller hull size within 1200 su take 10% less damage. Only the strongest buff of this effect applies at any one time.</muted>
 integrated|auxiliary_screen|null|0	0	<builtIn>Integrated</builtIn>
-integrated|auxiliary_screen|null|1	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
-integrated|auxiliary_screen|null|2	0	<good>+400</good><builtIn> to the range of the damage reduction for smaller allied ships.</builtIn>
+integrated|auxiliary_screen|null|1	0	<builtIn>Allied ships of a smaller hull size within 1200 su take </builtIn><good>10%</good><builtIn> less damage. Only the strongest buff of this effect applies at any one time.</builtIn>
 integrated|auxiliary_screen|FRIGATE|0	0	<builtIn>Integrated</builtIn>
-integrated|auxiliary_screen|FRIGATE|1	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
-integrated|auxiliary_screen|FRIGATE|2	0	<good>+400</good><builtIn> to the range of the damage reduction for smaller allied ships.</builtIn>
+integrated|auxiliary_screen|FRIGATE|1	0	<builtIn>Allied ships of a smaller hull size within 1200 su take </builtIn><good>10%</good><builtIn> less damage. Only the strongest buff of this effect applies at any one time.</builtIn>
 integrated|auxiliary_screen|DESTROYER|0	0	<builtIn>Integrated</builtIn>
-integrated|auxiliary_screen|DESTROYER|1	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
-integrated|auxiliary_screen|DESTROYER|2	0	<good>+400</good><builtIn> to the range of the damage reduction for smaller allied ships.</builtIn>
+integrated|auxiliary_screen|DESTROYER|1	0	<builtIn>Allied ships of a smaller hull size within 1200 su take </builtIn><good>10%</good><builtIn> less damage. Only the strongest buff of this effect applies at any one time.</builtIn>
 integrated|auxiliary_screen|CRUISER|0	0	<builtIn>Integrated</builtIn>
-integrated|auxiliary_screen|CRUISER|1	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
-integrated|auxiliary_screen|CRUISER|2	0	<good>+400</good><builtIn> to the range of the damage reduction for smaller allied ships.</builtIn>
+integrated|auxiliary_screen|CRUISER|1	0	<builtIn>Allied ships of a smaller hull size within 1200 su take </builtIn><good>10%</good><builtIn> less damage. Only the strongest buff of this effect applies at any one time.</builtIn>
 integrated|auxiliary_screen|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
-integrated|auxiliary_screen|CAPITAL_SHIP|1	0	Allied ships of a smaller hull size within 800 su take <good>10%</good> less damage. Only the strongest buff of this effect applies at any one time.
-integrated|auxiliary_screen|CAPITAL_SHIP|2	0	<good>+400</good><builtIn> to the range of the damage reduction for smaller allied ships.</builtIn>
+integrated|auxiliary_screen|CAPITAL_SHIP|1	0	<builtIn>Allied ships of a smaller hull size within 1200 su take </builtIn><good>10%</good><builtIn> less damage. Only the strongest buff of this effect applies at any one time.</builtIn>
 type|auxiliary_thrusters|null|0	0	<good>50%</good> increased maneuverability.
 type-detail|auxiliary_thrusters|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Auxiliary Thrusters</hullmod>
 type|auxiliary_thrusters|FRIGATE|0	0	<good>50%</good> increased maneuverability.
@@ -4586,43 +4576,33 @@ type|blood_in_the_water|CAPITAL_SHIP|0	0	Whenever an enemy ship is destroyed wit
 integrable|blood_in_the_water|null|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
 integrable|blood_in_the_water|null|1	0	Click and hold to integrate.
 integrable|blood_in_the_water|null|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|blood_in_the_water|null|3	0	<muted>Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</muted>
-integrable|blood_in_the_water|null|4	0	<muted>+5 seconds to Pirate Frenzy duration.</muted>
+integrable|blood_in_the_water|null|3	0	<muted>Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 15 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</muted>
 integrable|blood_in_the_water|FRIGATE|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
 integrable|blood_in_the_water|FRIGATE|1	0	Click and hold to integrate.
 integrable|blood_in_the_water|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|blood_in_the_water|FRIGATE|3	0	<muted>Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</muted>
-integrable|blood_in_the_water|FRIGATE|4	0	<muted>+5 seconds to Pirate Frenzy duration.</muted>
+integrable|blood_in_the_water|FRIGATE|3	0	<muted>Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 15 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</muted>
 integrable|blood_in_the_water|DESTROYER|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
 integrable|blood_in_the_water|DESTROYER|1	0	Click and hold to integrate.
 integrable|blood_in_the_water|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|blood_in_the_water|DESTROYER|3	0	<muted>Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</muted>
-integrable|blood_in_the_water|DESTROYER|4	0	<muted>+5 seconds to Pirate Frenzy duration.</muted>
+integrable|blood_in_the_water|DESTROYER|3	0	<muted>Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 15 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</muted>
 integrable|blood_in_the_water|CRUISER|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
 integrable|blood_in_the_water|CRUISER|1	0	Click and hold to integrate.
 integrable|blood_in_the_water|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|blood_in_the_water|CRUISER|3	0	<muted>Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</muted>
-integrable|blood_in_the_water|CRUISER|4	0	<muted>+5 seconds to Pirate Frenzy duration.</muted>
+integrable|blood_in_the_water|CRUISER|3	0	<muted>Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 15 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</muted>
 integrable|blood_in_the_water|CAPITAL_SHIP|0	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
 integrable|blood_in_the_water|CAPITAL_SHIP|1	0	Click and hold to integrate.
 integrable|blood_in_the_water|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|blood_in_the_water|CAPITAL_SHIP|3	0	<muted>Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</muted>
-integrable|blood_in_the_water|CAPITAL_SHIP|4	0	<muted>+5 seconds to Pirate Frenzy duration.</muted>
+integrable|blood_in_the_water|CAPITAL_SHIP|3	0	<muted>Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 15 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</muted>
 integrated|blood_in_the_water|null|0	0	<builtIn>Integrated</builtIn>
-integrated|blood_in_the_water|null|1	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
-integrated|blood_in_the_water|null|2	0	<good>+5</good><builtIn> seconds to Pirate Frenzy duration.</builtIn>
+integrated|blood_in_the_water|null|1	0	<builtIn>Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 15 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</builtIn>
 integrated|blood_in_the_water|FRIGATE|0	0	<builtIn>Integrated</builtIn>
-integrated|blood_in_the_water|FRIGATE|1	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
-integrated|blood_in_the_water|FRIGATE|2	0	<good>+5</good><builtIn> seconds to Pirate Frenzy duration.</builtIn>
+integrated|blood_in_the_water|FRIGATE|1	0	<builtIn>Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 15 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</builtIn>
 integrated|blood_in_the_water|DESTROYER|0	0	<builtIn>Integrated</builtIn>
-integrated|blood_in_the_water|DESTROYER|1	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
-integrated|blood_in_the_water|DESTROYER|2	0	<good>+5</good><builtIn> seconds to Pirate Frenzy duration.</builtIn>
+integrated|blood_in_the_water|DESTROYER|1	0	<builtIn>Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 15 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</builtIn>
 integrated|blood_in_the_water|CRUISER|0	0	<builtIn>Integrated</builtIn>
-integrated|blood_in_the_water|CRUISER|1	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
-integrated|blood_in_the_water|CRUISER|2	0	<good>+5</good><builtIn> seconds to Pirate Frenzy duration.</builtIn>
+integrated|blood_in_the_water|CRUISER|1	0	<builtIn>Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 15 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</builtIn>
 integrated|blood_in_the_water|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
-integrated|blood_in_the_water|CAPITAL_SHIP|1	0	Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 10 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.
-integrated|blood_in_the_water|CAPITAL_SHIP|2	0	<good>+5</good><builtIn> seconds to Pirate Frenzy duration.</builtIn>
+integrated|blood_in_the_water|CAPITAL_SHIP|1	0	<builtIn>Whenever an enemy ship is destroyed within 1000 su, this ship gains a Pirate Frenzy stack for 15 seconds. Ships can hold up to 5 Pirate Frenzy stacks.\n5% increased weapon rate of fire for each Pirate Frenzy stack.\n5% reduced weapon flux cost for each Pirate Frenzy stack.</builtIn>
 flavour|borrowed_grace	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the crew rewires the ship to do the same. The shield emitters were never built for that load.
 flavourAutomated|borrowed_grace	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the refit crew rewires the ship to do the same. The shield emitters were never built for that load.
 itemCost|borrowed_grace	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
@@ -5337,43 +5317,33 @@ type|corrosion_beam|CAPITAL_SHIP|0	0	Every 2 seconds a beam weapon spends on an 
 integrable|corrosion_beam|null|0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
 integrable|corrosion_beam|null|1	0	Click and hold to integrate.
 integrable|corrosion_beam|null|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|corrosion_beam|null|3	0	<muted>Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing 200 energy damage and 200 EMP. At most 20 of this ship's motes fly at once.</muted>
-integrable|corrosion_beam|null|4	0	<muted>+1 to maximum stardust motes in flight at once.</muted>
+integrable|corrosion_beam|null|3	0	<muted>Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing 200 energy damage and 200 EMP. At most 21 of this ship's motes fly at once.</muted>
 integrable|corrosion_beam|FRIGATE|0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
 integrable|corrosion_beam|FRIGATE|1	0	Click and hold to integrate.
 integrable|corrosion_beam|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|corrosion_beam|FRIGATE|3	0	<muted>Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing 200 energy damage and 200 EMP. At most 20 of this ship's motes fly at once.</muted>
-integrable|corrosion_beam|FRIGATE|4	0	<muted>+1 to maximum stardust motes in flight at once.</muted>
+integrable|corrosion_beam|FRIGATE|3	0	<muted>Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing 200 energy damage and 200 EMP. At most 21 of this ship's motes fly at once.</muted>
 integrable|corrosion_beam|DESTROYER|0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
 integrable|corrosion_beam|DESTROYER|1	0	Click and hold to integrate.
 integrable|corrosion_beam|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|corrosion_beam|DESTROYER|3	0	<muted>Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing 200 energy damage and 200 EMP. At most 20 of this ship's motes fly at once.</muted>
-integrable|corrosion_beam|DESTROYER|4	0	<muted>+1 to maximum stardust motes in flight at once.</muted>
+integrable|corrosion_beam|DESTROYER|3	0	<muted>Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing 200 energy damage and 200 EMP. At most 21 of this ship's motes fly at once.</muted>
 integrable|corrosion_beam|CRUISER|0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
 integrable|corrosion_beam|CRUISER|1	0	Click and hold to integrate.
 integrable|corrosion_beam|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|corrosion_beam|CRUISER|3	0	<muted>Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing 200 energy damage and 200 EMP. At most 20 of this ship's motes fly at once.</muted>
-integrable|corrosion_beam|CRUISER|4	0	<muted>+1 to maximum stardust motes in flight at once.</muted>
+integrable|corrosion_beam|CRUISER|3	0	<muted>Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing 200 energy damage and 200 EMP. At most 21 of this ship's motes fly at once.</muted>
 integrable|corrosion_beam|CAPITAL_SHIP|0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
 integrable|corrosion_beam|CAPITAL_SHIP|1	0	Click and hold to integrate.
 integrable|corrosion_beam|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|corrosion_beam|CAPITAL_SHIP|3	0	<muted>Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing 200 energy damage and 200 EMP. At most 20 of this ship's motes fly at once.</muted>
-integrable|corrosion_beam|CAPITAL_SHIP|4	0	<muted>+1 to maximum stardust motes in flight at once.</muted>
+integrable|corrosion_beam|CAPITAL_SHIP|3	0	<muted>Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing 200 energy damage and 200 EMP. At most 21 of this ship's motes fly at once.</muted>
 integrated|corrosion_beam|null|0	0	<builtIn>Integrated</builtIn>
-integrated|corrosion_beam|null|1	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
-integrated|corrosion_beam|null|2	0	<good>+1</good><builtIn> to maximum stardust motes in flight at once.</builtIn>
+integrated|corrosion_beam|null|1	0	<builtIn>Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing </builtIn><good>200</good><builtIn> energy damage and </builtIn><good>200</good><builtIn> EMP. At most 21 of this ship's motes fly at once.</builtIn>
 integrated|corrosion_beam|FRIGATE|0	0	<builtIn>Integrated</builtIn>
-integrated|corrosion_beam|FRIGATE|1	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
-integrated|corrosion_beam|FRIGATE|2	0	<good>+1</good><builtIn> to maximum stardust motes in flight at once.</builtIn>
+integrated|corrosion_beam|FRIGATE|1	0	<builtIn>Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing </builtIn><good>200</good><builtIn> energy damage and </builtIn><good>200</good><builtIn> EMP. At most 21 of this ship's motes fly at once.</builtIn>
 integrated|corrosion_beam|DESTROYER|0	0	<builtIn>Integrated</builtIn>
-integrated|corrosion_beam|DESTROYER|1	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
-integrated|corrosion_beam|DESTROYER|2	0	<good>+1</good><builtIn> to maximum stardust motes in flight at once.</builtIn>
+integrated|corrosion_beam|DESTROYER|1	0	<builtIn>Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing </builtIn><good>200</good><builtIn> energy damage and </builtIn><good>200</good><builtIn> EMP. At most 21 of this ship's motes fly at once.</builtIn>
 integrated|corrosion_beam|CRUISER|0	0	<builtIn>Integrated</builtIn>
-integrated|corrosion_beam|CRUISER|1	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
-integrated|corrosion_beam|CRUISER|2	0	<good>+1</good><builtIn> to maximum stardust motes in flight at once.</builtIn>
+integrated|corrosion_beam|CRUISER|1	0	<builtIn>Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing </builtIn><good>200</good><builtIn> energy damage and </builtIn><good>200</good><builtIn> EMP. At most 21 of this ship's motes fly at once.</builtIn>
 integrated|corrosion_beam|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
-integrated|corrosion_beam|CAPITAL_SHIP|1	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
-integrated|corrosion_beam|CAPITAL_SHIP|2	0	<good>+1</good><builtIn> to maximum stardust motes in flight at once.</builtIn>
+integrated|corrosion_beam|CAPITAL_SHIP|1	0	<builtIn>Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing </builtIn><good>200</good><builtIn> energy damage and </builtIn><good>200</good><builtIn> EMP. At most 21 of this ship's motes fly at once.</builtIn>
 type|crew_capacity|FRIGATE|0	0	<good>+5</good> to crew capacity.
 type|crew_capacity|DESTROYER|0	0	<good>+15</good> to crew capacity.
 type|crew_capacity|CRUISER|0	0	<good>+25</good> to crew capacity.
@@ -5581,43 +5551,33 @@ type|defensive_compact|CAPITAL_SHIP|0	0	<good>20%</good> reduced damage taken wh
 integrable|defensive_compact|null|0	0	<good>20%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
 integrable|defensive_compact|null|1	0	Click and hold to integrate.
 integrable|defensive_compact|null|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|defensive_compact|null|3	0	<muted>20% reduced damage taken while within 1500 su of a combat objective your side holds.</muted>
-integrable|defensive_compact|null|4	0	<muted>+1000 to the range within which a combat objective your side holds reduces damage taken.</muted>
+integrable|defensive_compact|null|3	0	<muted>20% reduced damage taken while within 2500 su of a combat objective your side holds.</muted>
 integrable|defensive_compact|FRIGATE|0	0	<good>20%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
 integrable|defensive_compact|FRIGATE|1	0	Click and hold to integrate.
 integrable|defensive_compact|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|defensive_compact|FRIGATE|3	0	<muted>20% reduced damage taken while within 1500 su of a combat objective your side holds.</muted>
-integrable|defensive_compact|FRIGATE|4	0	<muted>+1000 to the range within which a combat objective your side holds reduces damage taken.</muted>
+integrable|defensive_compact|FRIGATE|3	0	<muted>20% reduced damage taken while within 2500 su of a combat objective your side holds.</muted>
 integrable|defensive_compact|DESTROYER|0	0	<good>20%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
 integrable|defensive_compact|DESTROYER|1	0	Click and hold to integrate.
 integrable|defensive_compact|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|defensive_compact|DESTROYER|3	0	<muted>20% reduced damage taken while within 1500 su of a combat objective your side holds.</muted>
-integrable|defensive_compact|DESTROYER|4	0	<muted>+1000 to the range within which a combat objective your side holds reduces damage taken.</muted>
+integrable|defensive_compact|DESTROYER|3	0	<muted>20% reduced damage taken while within 2500 su of a combat objective your side holds.</muted>
 integrable|defensive_compact|CRUISER|0	0	<good>20%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
 integrable|defensive_compact|CRUISER|1	0	Click and hold to integrate.
 integrable|defensive_compact|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|defensive_compact|CRUISER|3	0	<muted>20% reduced damage taken while within 1500 su of a combat objective your side holds.</muted>
-integrable|defensive_compact|CRUISER|4	0	<muted>+1000 to the range within which a combat objective your side holds reduces damage taken.</muted>
+integrable|defensive_compact|CRUISER|3	0	<muted>20% reduced damage taken while within 2500 su of a combat objective your side holds.</muted>
 integrable|defensive_compact|CAPITAL_SHIP|0	0	<good>20%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
 integrable|defensive_compact|CAPITAL_SHIP|1	0	Click and hold to integrate.
 integrable|defensive_compact|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|defensive_compact|CAPITAL_SHIP|3	0	<muted>20% reduced damage taken while within 1500 su of a combat objective your side holds.</muted>
-integrable|defensive_compact|CAPITAL_SHIP|4	0	<muted>+1000 to the range within which a combat objective your side holds reduces damage taken.</muted>
+integrable|defensive_compact|CAPITAL_SHIP|3	0	<muted>20% reduced damage taken while within 2500 su of a combat objective your side holds.</muted>
 integrated|defensive_compact|null|0	0	<builtIn>Integrated</builtIn>
-integrated|defensive_compact|null|1	0	<good>20%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
-integrated|defensive_compact|null|2	0	<good>+1000</good><builtIn> to the range within which a combat objective your side holds reduces damage taken.</builtIn>
+integrated|defensive_compact|null|1	0	<good>20%</good><builtIn> reduced damage taken while within 2500 su of a combat objective your side holds.</builtIn>
 integrated|defensive_compact|FRIGATE|0	0	<builtIn>Integrated</builtIn>
-integrated|defensive_compact|FRIGATE|1	0	<good>20%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
-integrated|defensive_compact|FRIGATE|2	0	<good>+1000</good><builtIn> to the range within which a combat objective your side holds reduces damage taken.</builtIn>
+integrated|defensive_compact|FRIGATE|1	0	<good>20%</good><builtIn> reduced damage taken while within 2500 su of a combat objective your side holds.</builtIn>
 integrated|defensive_compact|DESTROYER|0	0	<builtIn>Integrated</builtIn>
-integrated|defensive_compact|DESTROYER|1	0	<good>20%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
-integrated|defensive_compact|DESTROYER|2	0	<good>+1000</good><builtIn> to the range within which a combat objective your side holds reduces damage taken.</builtIn>
+integrated|defensive_compact|DESTROYER|1	0	<good>20%</good><builtIn> reduced damage taken while within 2500 su of a combat objective your side holds.</builtIn>
 integrated|defensive_compact|CRUISER|0	0	<builtIn>Integrated</builtIn>
-integrated|defensive_compact|CRUISER|1	0	<good>20%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
-integrated|defensive_compact|CRUISER|2	0	<good>+1000</good><builtIn> to the range within which a combat objective your side holds reduces damage taken.</builtIn>
+integrated|defensive_compact|CRUISER|1	0	<good>20%</good><builtIn> reduced damage taken while within 2500 su of a combat objective your side holds.</builtIn>
 integrated|defensive_compact|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
-integrated|defensive_compact|CAPITAL_SHIP|1	0	<good>20%</good> reduced damage taken while within 1500 su of a combat objective your side holds.
-integrated|defensive_compact|CAPITAL_SHIP|2	0	<good>+1000</good><builtIn> to the range within which a combat objective your side holds reduces damage taken.</builtIn>
+integrated|defensive_compact|CAPITAL_SHIP|1	0	<good>20%</good><builtIn> reduced damage taken while within 2500 su of a combat objective your side holds.</builtIn>
 flavour|defensive_targeting_array	0	Wing datalinks rewired to carry the ship's own point-defense solutions. The pilots complain about the short leash. The gunners do not.
 flavourAutomated|defensive_targeting_array	0	Wing datalinks rewired to carry the ship's own point-defense solutions. If the pilots complain about the short leash, nobody aboard hears it.
 type-detail|defensive_targeting_array|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Defensive Targeting Array</hullmod>
@@ -8215,43 +8175,33 @@ type|flak_screen_doctrine|CAPITAL_SHIP|0	0	Enemy missiles destroyed by this ship
 integrable|flak_screen_doctrine|null|0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
 integrable|flak_screen_doctrine|null|1	0	Click and hold to integrate.
 integrable|flak_screen_doctrine|null|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|flak_screen_doctrine|null|3	0	<muted>Enemy missiles destroyed by this ship burst for 100 fragmentation damage to other enemy missiles and fighters within 100 su.</muted>
-integrable|flak_screen_doctrine|null|4	0	<muted>+50 to flak burst radius.</muted>
+integrable|flak_screen_doctrine|null|3	0	<muted>Enemy missiles destroyed by this ship burst for 100 fragmentation damage to other enemy missiles and fighters within 150 su.</muted>
 integrable|flak_screen_doctrine|FRIGATE|0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
 integrable|flak_screen_doctrine|FRIGATE|1	0	Click and hold to integrate.
 integrable|flak_screen_doctrine|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|flak_screen_doctrine|FRIGATE|3	0	<muted>Enemy missiles destroyed by this ship burst for 100 fragmentation damage to other enemy missiles and fighters within 100 su.</muted>
-integrable|flak_screen_doctrine|FRIGATE|4	0	<muted>+50 to flak burst radius.</muted>
+integrable|flak_screen_doctrine|FRIGATE|3	0	<muted>Enemy missiles destroyed by this ship burst for 100 fragmentation damage to other enemy missiles and fighters within 150 su.</muted>
 integrable|flak_screen_doctrine|DESTROYER|0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
 integrable|flak_screen_doctrine|DESTROYER|1	0	Click and hold to integrate.
 integrable|flak_screen_doctrine|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|flak_screen_doctrine|DESTROYER|3	0	<muted>Enemy missiles destroyed by this ship burst for 100 fragmentation damage to other enemy missiles and fighters within 100 su.</muted>
-integrable|flak_screen_doctrine|DESTROYER|4	0	<muted>+50 to flak burst radius.</muted>
+integrable|flak_screen_doctrine|DESTROYER|3	0	<muted>Enemy missiles destroyed by this ship burst for 100 fragmentation damage to other enemy missiles and fighters within 150 su.</muted>
 integrable|flak_screen_doctrine|CRUISER|0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
 integrable|flak_screen_doctrine|CRUISER|1	0	Click and hold to integrate.
 integrable|flak_screen_doctrine|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|flak_screen_doctrine|CRUISER|3	0	<muted>Enemy missiles destroyed by this ship burst for 100 fragmentation damage to other enemy missiles and fighters within 100 su.</muted>
-integrable|flak_screen_doctrine|CRUISER|4	0	<muted>+50 to flak burst radius.</muted>
+integrable|flak_screen_doctrine|CRUISER|3	0	<muted>Enemy missiles destroyed by this ship burst for 100 fragmentation damage to other enemy missiles and fighters within 150 su.</muted>
 integrable|flak_screen_doctrine|CAPITAL_SHIP|0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
 integrable|flak_screen_doctrine|CAPITAL_SHIP|1	0	Click and hold to integrate.
 integrable|flak_screen_doctrine|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|flak_screen_doctrine|CAPITAL_SHIP|3	0	<muted>Enemy missiles destroyed by this ship burst for 100 fragmentation damage to other enemy missiles and fighters within 100 su.</muted>
-integrable|flak_screen_doctrine|CAPITAL_SHIP|4	0	<muted>+50 to flak burst radius.</muted>
+integrable|flak_screen_doctrine|CAPITAL_SHIP|3	0	<muted>Enemy missiles destroyed by this ship burst for 100 fragmentation damage to other enemy missiles and fighters within 150 su.</muted>
 integrated|flak_screen_doctrine|null|0	0	<builtIn>Integrated</builtIn>
-integrated|flak_screen_doctrine|null|1	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
-integrated|flak_screen_doctrine|null|2	0	<good>+50</good><builtIn> to flak burst radius.</builtIn>
+integrated|flak_screen_doctrine|null|1	0	<builtIn>Enemy missiles destroyed by this ship burst for </builtIn><good>100</good><builtIn> fragmentation damage to other enemy missiles and fighters within 150 su.</builtIn>
 integrated|flak_screen_doctrine|FRIGATE|0	0	<builtIn>Integrated</builtIn>
-integrated|flak_screen_doctrine|FRIGATE|1	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
-integrated|flak_screen_doctrine|FRIGATE|2	0	<good>+50</good><builtIn> to flak burst radius.</builtIn>
+integrated|flak_screen_doctrine|FRIGATE|1	0	<builtIn>Enemy missiles destroyed by this ship burst for </builtIn><good>100</good><builtIn> fragmentation damage to other enemy missiles and fighters within 150 su.</builtIn>
 integrated|flak_screen_doctrine|DESTROYER|0	0	<builtIn>Integrated</builtIn>
-integrated|flak_screen_doctrine|DESTROYER|1	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
-integrated|flak_screen_doctrine|DESTROYER|2	0	<good>+50</good><builtIn> to flak burst radius.</builtIn>
+integrated|flak_screen_doctrine|DESTROYER|1	0	<builtIn>Enemy missiles destroyed by this ship burst for </builtIn><good>100</good><builtIn> fragmentation damage to other enemy missiles and fighters within 150 su.</builtIn>
 integrated|flak_screen_doctrine|CRUISER|0	0	<builtIn>Integrated</builtIn>
-integrated|flak_screen_doctrine|CRUISER|1	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
-integrated|flak_screen_doctrine|CRUISER|2	0	<good>+50</good><builtIn> to flak burst radius.</builtIn>
+integrated|flak_screen_doctrine|CRUISER|1	0	<builtIn>Enemy missiles destroyed by this ship burst for </builtIn><good>100</good><builtIn> fragmentation damage to other enemy missiles and fighters within 150 su.</builtIn>
 integrated|flak_screen_doctrine|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
-integrated|flak_screen_doctrine|CAPITAL_SHIP|1	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within 100 su.
-integrated|flak_screen_doctrine|CAPITAL_SHIP|2	0	<good>+50</good><builtIn> to flak burst radius.</builtIn>
+integrated|flak_screen_doctrine|CAPITAL_SHIP|1	0	<builtIn>Enemy missiles destroyed by this ship burst for </builtIn><good>100</good><builtIn> fragmentation damage to other enemy missiles and fighters within 150 su.</builtIn>
 type|flux_capacity|null|0	0	<good>2%</good> more flux capacity.
 type|flux_capacity|FRIGATE|0	0	<good>2%</good> more flux capacity.
 type|flux_capacity|DESTROYER|0	0	<good>2%</good> more flux capacity.
@@ -9966,43 +9916,33 @@ type|joint_strike_package|CAPITAL_SHIP|0	0	Strikecraft launched from this ship h
 integrable|joint_strike_package|null|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
 integrable|joint_strike_package|null|1	0	Click and hold to integrate.
 integrable|joint_strike_package|null|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|joint_strike_package|null|3	0	<muted>Strikecraft launched from this ship have 4% increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.</muted>
-integrable|joint_strike_package|null|4	0	<muted>+10% to the maximum weapon damage strikecraft launched from this ship gain from nearby allied strikecraft.</muted>
+integrable|joint_strike_package|null|3	0	<muted>Strikecraft launched from this ship have 4% increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 30%.</muted>
 integrable|joint_strike_package|FRIGATE|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
 integrable|joint_strike_package|FRIGATE|1	0	Click and hold to integrate.
 integrable|joint_strike_package|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|joint_strike_package|FRIGATE|3	0	<muted>Strikecraft launched from this ship have 4% increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.</muted>
-integrable|joint_strike_package|FRIGATE|4	0	<muted>+10% to the maximum weapon damage strikecraft launched from this ship gain from nearby allied strikecraft.</muted>
+integrable|joint_strike_package|FRIGATE|3	0	<muted>Strikecraft launched from this ship have 4% increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 30%.</muted>
 integrable|joint_strike_package|DESTROYER|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
 integrable|joint_strike_package|DESTROYER|1	0	Click and hold to integrate.
 integrable|joint_strike_package|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|joint_strike_package|DESTROYER|3	0	<muted>Strikecraft launched from this ship have 4% increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.</muted>
-integrable|joint_strike_package|DESTROYER|4	0	<muted>+10% to the maximum weapon damage strikecraft launched from this ship gain from nearby allied strikecraft.</muted>
+integrable|joint_strike_package|DESTROYER|3	0	<muted>Strikecraft launched from this ship have 4% increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 30%.</muted>
 integrable|joint_strike_package|CRUISER|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
 integrable|joint_strike_package|CRUISER|1	0	Click and hold to integrate.
 integrable|joint_strike_package|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|joint_strike_package|CRUISER|3	0	<muted>Strikecraft launched from this ship have 4% increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.</muted>
-integrable|joint_strike_package|CRUISER|4	0	<muted>+10% to the maximum weapon damage strikecraft launched from this ship gain from nearby allied strikecraft.</muted>
+integrable|joint_strike_package|CRUISER|3	0	<muted>Strikecraft launched from this ship have 4% increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 30%.</muted>
 integrable|joint_strike_package|CAPITAL_SHIP|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
 integrable|joint_strike_package|CAPITAL_SHIP|1	0	Click and hold to integrate.
 integrable|joint_strike_package|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|joint_strike_package|CAPITAL_SHIP|3	0	<muted>Strikecraft launched from this ship have 4% increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.</muted>
-integrable|joint_strike_package|CAPITAL_SHIP|4	0	<muted>+10% to the maximum weapon damage strikecraft launched from this ship gain from nearby allied strikecraft.</muted>
+integrable|joint_strike_package|CAPITAL_SHIP|3	0	<muted>Strikecraft launched from this ship have 4% increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 30%.</muted>
 integrated|joint_strike_package|null|0	0	<builtIn>Integrated</builtIn>
-integrated|joint_strike_package|null|1	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
-integrated|joint_strike_package|null|2	0	<good>+10%</good><builtIn> to the maximum weapon damage strikecraft launched from this ship gain from nearby allied strikecraft.</builtIn>
+integrated|joint_strike_package|null|1	0	<builtIn>Strikecraft launched from this ship have </builtIn><good>4%</good><builtIn> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 30%.</builtIn>
 integrated|joint_strike_package|FRIGATE|0	0	<builtIn>Integrated</builtIn>
-integrated|joint_strike_package|FRIGATE|1	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
-integrated|joint_strike_package|FRIGATE|2	0	<good>+10%</good><builtIn> to the maximum weapon damage strikecraft launched from this ship gain from nearby allied strikecraft.</builtIn>
+integrated|joint_strike_package|FRIGATE|1	0	<builtIn>Strikecraft launched from this ship have </builtIn><good>4%</good><builtIn> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 30%.</builtIn>
 integrated|joint_strike_package|DESTROYER|0	0	<builtIn>Integrated</builtIn>
-integrated|joint_strike_package|DESTROYER|1	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
-integrated|joint_strike_package|DESTROYER|2	0	<good>+10%</good><builtIn> to the maximum weapon damage strikecraft launched from this ship gain from nearby allied strikecraft.</builtIn>
+integrated|joint_strike_package|DESTROYER|1	0	<builtIn>Strikecraft launched from this ship have </builtIn><good>4%</good><builtIn> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 30%.</builtIn>
 integrated|joint_strike_package|CRUISER|0	0	<builtIn>Integrated</builtIn>
-integrated|joint_strike_package|CRUISER|1	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
-integrated|joint_strike_package|CRUISER|2	0	<good>+10%</good><builtIn> to the maximum weapon damage strikecraft launched from this ship gain from nearby allied strikecraft.</builtIn>
+integrated|joint_strike_package|CRUISER|1	0	<builtIn>Strikecraft launched from this ship have </builtIn><good>4%</good><builtIn> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 30%.</builtIn>
 integrated|joint_strike_package|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
-integrated|joint_strike_package|CAPITAL_SHIP|1	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 20%.
-integrated|joint_strike_package|CAPITAL_SHIP|2	0	<good>+10%</good><builtIn> to the maximum weapon damage strikecraft launched from this ship gain from nearby allied strikecraft.</builtIn>
+integrated|joint_strike_package|CAPITAL_SHIP|1	0	<builtIn>Strikecraft launched from this ship have </builtIn><good>4%</good><builtIn> increased weapon damage for every allied strikecraft within 500 su, up to a maximum of 30%.</builtIn>
 flavour|kazeron_recovery_standards	0	Kazeron's orbital yards will not certify a recovered hull until every frame weld has been inspected.
 type|kazeron_recovery_standards|null|0	0	Your fleet has a <good>10%</good> chance for each ship it recovers after a battle to gain no d-mods, up to a maximum of 30%.
 type|kazeron_recovery_standards|FRIGATE|0	0	Your fleet has a <good>10%</good> chance for each ship it recovers after a battle to gain no d-mods, up to a maximum of 30%.
@@ -10476,43 +10416,33 @@ type|litany_of_the_fallen|CAPITAL_SHIP|0	0	<good>1%</good> reduced hull damage t
 integrable|litany_of_the_fallen|null|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
 integrable|litany_of_the_fallen|null|1	0	Click and hold to integrate.
 integrable|litany_of_the_fallen|null|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|litany_of_the_fallen|null|3	0	<muted>1% reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.</muted>
-integrable|litany_of_the_fallen|null|4	0	<muted>+10% to the maximum reduced hull damage taken from crew lost.</muted>
+integrable|litany_of_the_fallen|null|3	0	<muted>1% reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 30%.</muted>
 integrable|litany_of_the_fallen|FRIGATE|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
 integrable|litany_of_the_fallen|FRIGATE|1	0	Click and hold to integrate.
 integrable|litany_of_the_fallen|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|litany_of_the_fallen|FRIGATE|3	0	<muted>1% reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.</muted>
-integrable|litany_of_the_fallen|FRIGATE|4	0	<muted>+10% to the maximum reduced hull damage taken from crew lost.</muted>
+integrable|litany_of_the_fallen|FRIGATE|3	0	<muted>1% reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 30%.</muted>
 integrable|litany_of_the_fallen|DESTROYER|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
 integrable|litany_of_the_fallen|DESTROYER|1	0	Click and hold to integrate.
 integrable|litany_of_the_fallen|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|litany_of_the_fallen|DESTROYER|3	0	<muted>1% reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.</muted>
-integrable|litany_of_the_fallen|DESTROYER|4	0	<muted>+10% to the maximum reduced hull damage taken from crew lost.</muted>
+integrable|litany_of_the_fallen|DESTROYER|3	0	<muted>1% reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 30%.</muted>
 integrable|litany_of_the_fallen|CRUISER|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
 integrable|litany_of_the_fallen|CRUISER|1	0	Click and hold to integrate.
 integrable|litany_of_the_fallen|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|litany_of_the_fallen|CRUISER|3	0	<muted>1% reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.</muted>
-integrable|litany_of_the_fallen|CRUISER|4	0	<muted>+10% to the maximum reduced hull damage taken from crew lost.</muted>
+integrable|litany_of_the_fallen|CRUISER|3	0	<muted>1% reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 30%.</muted>
 integrable|litany_of_the_fallen|CAPITAL_SHIP|0	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
 integrable|litany_of_the_fallen|CAPITAL_SHIP|1	0	Click and hold to integrate.
 integrable|litany_of_the_fallen|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|litany_of_the_fallen|CAPITAL_SHIP|3	0	<muted>1% reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.</muted>
-integrable|litany_of_the_fallen|CAPITAL_SHIP|4	0	<muted>+10% to the maximum reduced hull damage taken from crew lost.</muted>
+integrable|litany_of_the_fallen|CAPITAL_SHIP|3	0	<muted>1% reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 30%.</muted>
 integrated|litany_of_the_fallen|null|0	0	<builtIn>Integrated</builtIn>
-integrated|litany_of_the_fallen|null|1	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
-integrated|litany_of_the_fallen|null|2	0	<good>+10%</good><builtIn> to the maximum reduced hull damage taken from crew lost.</builtIn>
+integrated|litany_of_the_fallen|null|1	0	<good>1%</good><builtIn> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 30%.</builtIn>
 integrated|litany_of_the_fallen|FRIGATE|0	0	<builtIn>Integrated</builtIn>
-integrated|litany_of_the_fallen|FRIGATE|1	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
-integrated|litany_of_the_fallen|FRIGATE|2	0	<good>+10%</good><builtIn> to the maximum reduced hull damage taken from crew lost.</builtIn>
+integrated|litany_of_the_fallen|FRIGATE|1	0	<good>1%</good><builtIn> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 30%.</builtIn>
 integrated|litany_of_the_fallen|DESTROYER|0	0	<builtIn>Integrated</builtIn>
-integrated|litany_of_the_fallen|DESTROYER|1	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
-integrated|litany_of_the_fallen|DESTROYER|2	0	<good>+10%</good><builtIn> to the maximum reduced hull damage taken from crew lost.</builtIn>
+integrated|litany_of_the_fallen|DESTROYER|1	0	<good>1%</good><builtIn> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 30%.</builtIn>
 integrated|litany_of_the_fallen|CRUISER|0	0	<builtIn>Integrated</builtIn>
-integrated|litany_of_the_fallen|CRUISER|1	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
-integrated|litany_of_the_fallen|CRUISER|2	0	<good>+10%</good><builtIn> to the maximum reduced hull damage taken from crew lost.</builtIn>
+integrated|litany_of_the_fallen|CRUISER|1	0	<good>1%</good><builtIn> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 30%.</builtIn>
 integrated|litany_of_the_fallen|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
-integrated|litany_of_the_fallen|CAPITAL_SHIP|1	0	<good>1%</good> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 20%.
-integrated|litany_of_the_fallen|CAPITAL_SHIP|2	0	<good>+10%</good><builtIn> to the maximum reduced hull damage taken from crew lost.</builtIn>
+integrated|litany_of_the_fallen|CAPITAL_SHIP|1	0	<good>1%</good><builtIn> reduced hull damage taken for every 10 crew lost this deployment, up to a maximum of 30%.</builtIn>
 type|live_munitions|null|0	0	Each Heartless stack has a <bad>15%</bad> chance to sacrifice a crew member for each missile fired.
 type|live_munitions|null|1	0	<good>3%</good> increased missile damage for each Heartless stack while the fleet has crew left to give.
 type|live_munitions|null|2	0	<good>3%</good> increased missile top speed for each Heartless stack while the fleet has crew left to give.
@@ -11043,43 +10973,33 @@ type|nanoforge_mending|CAPITAL_SHIP|0	0	After 5 seconds without taking hull dama
 integrable|nanoforge_mending|null|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 integrable|nanoforge_mending|null|1	0	Click and hold to integrate.
 integrable|nanoforge_mending|null|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|nanoforge_mending|null|3	0	<muted>After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.</muted>
-integrable|nanoforge_mending|null|4	0	<muted>+50% to the limit on hull repaired per deployment after 5 seconds without taking hull damage.</muted>
+integrable|nanoforge_mending|null|3	0	<muted>After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 150% of maximum hull in total per deployment.</muted>
 integrable|nanoforge_mending|FRIGATE|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 integrable|nanoforge_mending|FRIGATE|1	0	Click and hold to integrate.
 integrable|nanoforge_mending|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|nanoforge_mending|FRIGATE|3	0	<muted>After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.</muted>
-integrable|nanoforge_mending|FRIGATE|4	0	<muted>+50% to the limit on hull repaired per deployment after 5 seconds without taking hull damage.</muted>
+integrable|nanoforge_mending|FRIGATE|3	0	<muted>After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 150% of maximum hull in total per deployment.</muted>
 integrable|nanoforge_mending|DESTROYER|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 integrable|nanoforge_mending|DESTROYER|1	0	Click and hold to integrate.
 integrable|nanoforge_mending|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|nanoforge_mending|DESTROYER|3	0	<muted>After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.</muted>
-integrable|nanoforge_mending|DESTROYER|4	0	<muted>+50% to the limit on hull repaired per deployment after 5 seconds without taking hull damage.</muted>
+integrable|nanoforge_mending|DESTROYER|3	0	<muted>After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 150% of maximum hull in total per deployment.</muted>
 integrable|nanoforge_mending|CRUISER|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 integrable|nanoforge_mending|CRUISER|1	0	Click and hold to integrate.
 integrable|nanoforge_mending|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|nanoforge_mending|CRUISER|3	0	<muted>After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.</muted>
-integrable|nanoforge_mending|CRUISER|4	0	<muted>+50% to the limit on hull repaired per deployment after 5 seconds without taking hull damage.</muted>
+integrable|nanoforge_mending|CRUISER|3	0	<muted>After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 150% of maximum hull in total per deployment.</muted>
 integrable|nanoforge_mending|CAPITAL_SHIP|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 integrable|nanoforge_mending|CAPITAL_SHIP|1	0	Click and hold to integrate.
 integrable|nanoforge_mending|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|nanoforge_mending|CAPITAL_SHIP|3	0	<muted>After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.</muted>
-integrable|nanoforge_mending|CAPITAL_SHIP|4	0	<muted>+50% to the limit on hull repaired per deployment after 5 seconds without taking hull damage.</muted>
+integrable|nanoforge_mending|CAPITAL_SHIP|3	0	<muted>After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 150% of maximum hull in total per deployment.</muted>
 integrated|nanoforge_mending|null|0	0	<builtIn>Integrated</builtIn>
-integrated|nanoforge_mending|null|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-integrated|nanoforge_mending|null|2	0	<good>+50%</good><builtIn> to the limit on hull repaired per deployment after 5 seconds without taking hull damage.</builtIn>
+integrated|nanoforge_mending|null|1	0	<builtIn>After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 150% of maximum hull in total per deployment.</builtIn>
 integrated|nanoforge_mending|FRIGATE|0	0	<builtIn>Integrated</builtIn>
-integrated|nanoforge_mending|FRIGATE|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-integrated|nanoforge_mending|FRIGATE|2	0	<good>+50%</good><builtIn> to the limit on hull repaired per deployment after 5 seconds without taking hull damage.</builtIn>
+integrated|nanoforge_mending|FRIGATE|1	0	<builtIn>After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 150% of maximum hull in total per deployment.</builtIn>
 integrated|nanoforge_mending|DESTROYER|0	0	<builtIn>Integrated</builtIn>
-integrated|nanoforge_mending|DESTROYER|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-integrated|nanoforge_mending|DESTROYER|2	0	<good>+50%</good><builtIn> to the limit on hull repaired per deployment after 5 seconds without taking hull damage.</builtIn>
+integrated|nanoforge_mending|DESTROYER|1	0	<builtIn>After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 150% of maximum hull in total per deployment.</builtIn>
 integrated|nanoforge_mending|CRUISER|0	0	<builtIn>Integrated</builtIn>
-integrated|nanoforge_mending|CRUISER|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-integrated|nanoforge_mending|CRUISER|2	0	<good>+50%</good><builtIn> to the limit on hull repaired per deployment after 5 seconds without taking hull damage.</builtIn>
+integrated|nanoforge_mending|CRUISER|1	0	<builtIn>After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 150% of maximum hull in total per deployment.</builtIn>
 integrated|nanoforge_mending|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
-integrated|nanoforge_mending|CAPITAL_SHIP|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-integrated|nanoforge_mending|CAPITAL_SHIP|2	0	<good>+50%</good><builtIn> to the limit on hull repaired per deployment after 5 seconds without taking hull damage.</builtIn>
+integrated|nanoforge_mending|CAPITAL_SHIP|1	0	<builtIn>After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 150% of maximum hull in total per deployment.</builtIn>
 type-detail|nav_relay|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Oracle Sensor Suite</hullmod>\n• <hullmod>Nav Relay</hullmod>
 type|nav_relay|FRIGATE|0	0	Your fleet has <good>+2</good> to nav rating.
 type-detail|nav_relay|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Oracle Sensor Suite</hullmod>\n• <hullmod>Nav Relay</hullmod>
@@ -11235,43 +11155,33 @@ type-detail|nskr_absorption|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hu
 integrable|nskr_absorption|null|0	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>50%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
 integrable|nskr_absorption|null|1	0	Click and hold to integrate.
 integrable|nskr_absorption|null|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|nskr_absorption|null|3	0	<muted>Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to 50% increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.</muted>
-integrable|nskr_absorption|null|4	0	<muted>50% increased maximum reserve charged by the shield.</muted>
+integrable|nskr_absorption|null|3	0	<muted>Flux taken by the shield charges a reserve of up to 1500, which drains by 100 per second. While charged, up to 50% increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.</muted>
 integrable|nskr_absorption|FRIGATE|0	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>50%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
 integrable|nskr_absorption|FRIGATE|1	0	Click and hold to integrate.
 integrable|nskr_absorption|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|nskr_absorption|FRIGATE|3	0	<muted>Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to 50% increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.</muted>
-integrable|nskr_absorption|FRIGATE|4	0	<muted>50% increased maximum reserve charged by the shield.</muted>
+integrable|nskr_absorption|FRIGATE|3	0	<muted>Flux taken by the shield charges a reserve of up to 1500, which drains by 100 per second. While charged, up to 50% increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.</muted>
 integrable|nskr_absorption|DESTROYER|0	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>50%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
 integrable|nskr_absorption|DESTROYER|1	0	Click and hold to integrate.
 integrable|nskr_absorption|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|nskr_absorption|DESTROYER|3	0	<muted>Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to 50% increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.</muted>
-integrable|nskr_absorption|DESTROYER|4	0	<muted>50% increased maximum reserve charged by the shield.</muted>
+integrable|nskr_absorption|DESTROYER|3	0	<muted>Flux taken by the shield charges a reserve of up to 1500, which drains by 100 per second. While charged, up to 50% increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.</muted>
 integrable|nskr_absorption|CRUISER|0	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>50%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
 integrable|nskr_absorption|CRUISER|1	0	Click and hold to integrate.
 integrable|nskr_absorption|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|nskr_absorption|CRUISER|3	0	<muted>Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to 50% increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.</muted>
-integrable|nskr_absorption|CRUISER|4	0	<muted>50% increased maximum reserve charged by the shield.</muted>
+integrable|nskr_absorption|CRUISER|3	0	<muted>Flux taken by the shield charges a reserve of up to 1500, which drains by 100 per second. While charged, up to 50% increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.</muted>
 integrable|nskr_absorption|CAPITAL_SHIP|0	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>50%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
 integrable|nskr_absorption|CAPITAL_SHIP|1	0	Click and hold to integrate.
 integrable|nskr_absorption|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|nskr_absorption|CAPITAL_SHIP|3	0	<muted>Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to 50% increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.</muted>
-integrable|nskr_absorption|CAPITAL_SHIP|4	0	<muted>50% increased maximum reserve charged by the shield.</muted>
+integrable|nskr_absorption|CAPITAL_SHIP|3	0	<muted>Flux taken by the shield charges a reserve of up to 1500, which drains by 100 per second. While charged, up to 50% increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.</muted>
 integrated|nskr_absorption|null|0	0	<builtIn>Integrated</builtIn>
-integrated|nskr_absorption|null|1	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>50%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
-integrated|nskr_absorption|null|2	0	<good>50%</good><builtIn> increased maximum reserve charged by the shield.</builtIn>
+integrated|nskr_absorption|null|1	0	<builtIn>Flux taken by the shield charges a reserve of up to 1500, which drains by 100 per second. While charged, up to </builtIn><good>50%</good><builtIn> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.</builtIn>
 integrated|nskr_absorption|FRIGATE|0	0	<builtIn>Integrated</builtIn>
-integrated|nskr_absorption|FRIGATE|1	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>50%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
-integrated|nskr_absorption|FRIGATE|2	0	<good>50%</good><builtIn> increased maximum reserve charged by the shield.</builtIn>
+integrated|nskr_absorption|FRIGATE|1	0	<builtIn>Flux taken by the shield charges a reserve of up to 1500, which drains by 100 per second. While charged, up to </builtIn><good>50%</good><builtIn> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.</builtIn>
 integrated|nskr_absorption|DESTROYER|0	0	<builtIn>Integrated</builtIn>
-integrated|nskr_absorption|DESTROYER|1	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>50%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
-integrated|nskr_absorption|DESTROYER|2	0	<good>50%</good><builtIn> increased maximum reserve charged by the shield.</builtIn>
+integrated|nskr_absorption|DESTROYER|1	0	<builtIn>Flux taken by the shield charges a reserve of up to 1500, which drains by 100 per second. While charged, up to </builtIn><good>50%</good><builtIn> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.</builtIn>
 integrated|nskr_absorption|CRUISER|0	0	<builtIn>Integrated</builtIn>
-integrated|nskr_absorption|CRUISER|1	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>50%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
-integrated|nskr_absorption|CRUISER|2	0	<good>50%</good><builtIn> increased maximum reserve charged by the shield.</builtIn>
+integrated|nskr_absorption|CRUISER|1	0	<builtIn>Flux taken by the shield charges a reserve of up to 1500, which drains by 100 per second. While charged, up to </builtIn><good>50%</good><builtIn> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.</builtIn>
 integrated|nskr_absorption|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
-integrated|nskr_absorption|CAPITAL_SHIP|1	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>50%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
-integrated|nskr_absorption|CAPITAL_SHIP|2	0	<good>50%</good><builtIn> increased maximum reserve charged by the shield.</builtIn>
+integrated|nskr_absorption|CAPITAL_SHIP|1	0	<builtIn>Flux taken by the shield charges a reserve of up to 1500, which drains by 100 per second. While charged, up to </builtIn><good>50%</good><builtIn> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.</builtIn>
 type|nskr_acoils|null|0	0	<good>+100</good> to the base range of weapons in medium energy slots.
 type|nskr_acoils|null|1	1	<bad>10%</bad> reduced energy weapon flux cost.
 type-detail|nskr_acoils|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>High-Energy Weapon Systems</hullmod>
@@ -11905,43 +11815,33 @@ type|phase_ambush_doctrine|CAPITAL_SHIP|0	0	When this ship leaves phase, it deal
 integrable|phase_ambush_doctrine|null|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
 integrable|phase_ambush_doctrine|null|1	0	Click and hold to integrate.
 integrable|phase_ambush_doctrine|null|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|phase_ambush_doctrine|null|3	0	<muted>When this ship leaves phase, it deals 25% increased weapon damage, tapering off over 3 seconds.</muted>
-integrable|phase_ambush_doctrine|null|4	0	<muted>The weapon damage bonus on leaving phase has 100% increased duration.</muted>
+integrable|phase_ambush_doctrine|null|3	0	<muted>When this ship leaves phase, it deals 25% increased weapon damage, tapering off over 6 seconds.</muted>
 integrable|phase_ambush_doctrine|FRIGATE|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
 integrable|phase_ambush_doctrine|FRIGATE|1	0	Click and hold to integrate.
 integrable|phase_ambush_doctrine|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|phase_ambush_doctrine|FRIGATE|3	0	<muted>When this ship leaves phase, it deals 25% increased weapon damage, tapering off over 3 seconds.</muted>
-integrable|phase_ambush_doctrine|FRIGATE|4	0	<muted>The weapon damage bonus on leaving phase has 100% increased duration.</muted>
+integrable|phase_ambush_doctrine|FRIGATE|3	0	<muted>When this ship leaves phase, it deals 25% increased weapon damage, tapering off over 6 seconds.</muted>
 integrable|phase_ambush_doctrine|DESTROYER|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
 integrable|phase_ambush_doctrine|DESTROYER|1	0	Click and hold to integrate.
 integrable|phase_ambush_doctrine|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|phase_ambush_doctrine|DESTROYER|3	0	<muted>When this ship leaves phase, it deals 25% increased weapon damage, tapering off over 3 seconds.</muted>
-integrable|phase_ambush_doctrine|DESTROYER|4	0	<muted>The weapon damage bonus on leaving phase has 100% increased duration.</muted>
+integrable|phase_ambush_doctrine|DESTROYER|3	0	<muted>When this ship leaves phase, it deals 25% increased weapon damage, tapering off over 6 seconds.</muted>
 integrable|phase_ambush_doctrine|CRUISER|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
 integrable|phase_ambush_doctrine|CRUISER|1	0	Click and hold to integrate.
 integrable|phase_ambush_doctrine|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|phase_ambush_doctrine|CRUISER|3	0	<muted>When this ship leaves phase, it deals 25% increased weapon damage, tapering off over 3 seconds.</muted>
-integrable|phase_ambush_doctrine|CRUISER|4	0	<muted>The weapon damage bonus on leaving phase has 100% increased duration.</muted>
+integrable|phase_ambush_doctrine|CRUISER|3	0	<muted>When this ship leaves phase, it deals 25% increased weapon damage, tapering off over 6 seconds.</muted>
 integrable|phase_ambush_doctrine|CAPITAL_SHIP|0	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
 integrable|phase_ambush_doctrine|CAPITAL_SHIP|1	0	Click and hold to integrate.
 integrable|phase_ambush_doctrine|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|phase_ambush_doctrine|CAPITAL_SHIP|3	0	<muted>When this ship leaves phase, it deals 25% increased weapon damage, tapering off over 3 seconds.</muted>
-integrable|phase_ambush_doctrine|CAPITAL_SHIP|4	0	<muted>The weapon damage bonus on leaving phase has 100% increased duration.</muted>
+integrable|phase_ambush_doctrine|CAPITAL_SHIP|3	0	<muted>When this ship leaves phase, it deals 25% increased weapon damage, tapering off over 6 seconds.</muted>
 integrated|phase_ambush_doctrine|null|0	0	<builtIn>Integrated</builtIn>
-integrated|phase_ambush_doctrine|null|1	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
-integrated|phase_ambush_doctrine|null|2	0	<builtIn>The weapon damage bonus on leaving phase has </builtIn><good>100%</good><builtIn> increased duration.</builtIn>
+integrated|phase_ambush_doctrine|null|1	0	<builtIn>When this ship leaves phase, it deals </builtIn><good>25%</good><builtIn> increased weapon damage, tapering off over 6 seconds.</builtIn>
 integrated|phase_ambush_doctrine|FRIGATE|0	0	<builtIn>Integrated</builtIn>
-integrated|phase_ambush_doctrine|FRIGATE|1	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
-integrated|phase_ambush_doctrine|FRIGATE|2	0	<builtIn>The weapon damage bonus on leaving phase has </builtIn><good>100%</good><builtIn> increased duration.</builtIn>
+integrated|phase_ambush_doctrine|FRIGATE|1	0	<builtIn>When this ship leaves phase, it deals </builtIn><good>25%</good><builtIn> increased weapon damage, tapering off over 6 seconds.</builtIn>
 integrated|phase_ambush_doctrine|DESTROYER|0	0	<builtIn>Integrated</builtIn>
-integrated|phase_ambush_doctrine|DESTROYER|1	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
-integrated|phase_ambush_doctrine|DESTROYER|2	0	<builtIn>The weapon damage bonus on leaving phase has </builtIn><good>100%</good><builtIn> increased duration.</builtIn>
+integrated|phase_ambush_doctrine|DESTROYER|1	0	<builtIn>When this ship leaves phase, it deals </builtIn><good>25%</good><builtIn> increased weapon damage, tapering off over 6 seconds.</builtIn>
 integrated|phase_ambush_doctrine|CRUISER|0	0	<builtIn>Integrated</builtIn>
-integrated|phase_ambush_doctrine|CRUISER|1	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
-integrated|phase_ambush_doctrine|CRUISER|2	0	<builtIn>The weapon damage bonus on leaving phase has </builtIn><good>100%</good><builtIn> increased duration.</builtIn>
+integrated|phase_ambush_doctrine|CRUISER|1	0	<builtIn>When this ship leaves phase, it deals </builtIn><good>25%</good><builtIn> increased weapon damage, tapering off over 6 seconds.</builtIn>
 integrated|phase_ambush_doctrine|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
-integrated|phase_ambush_doctrine|CAPITAL_SHIP|1	0	When this ship leaves phase, it deals <good>25%</good> increased weapon damage, tapering off over 3 seconds.
-integrated|phase_ambush_doctrine|CAPITAL_SHIP|2	0	<builtIn>The weapon damage bonus on leaving phase has </builtIn><good>100%</good><builtIn> increased duration.</builtIn>
+integrated|phase_ambush_doctrine|CAPITAL_SHIP|1	0	<builtIn>When this ship leaves phase, it deals </builtIn><good>25%</good><builtIn> increased weapon damage, tapering off over 6 seconds.</builtIn>
 type|phase_anchor|null|0	1	<bad>100%</bad> less phase cloak activation cost.
 type|phase_anchor|null|1	0	<good>100%</good> more flux dissipation, weapon rate of fire and ammo regeneration while phased.
 type|phase_anchor|null|2	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
@@ -12658,43 +12558,33 @@ type|resonator_payload|CAPITAL_SHIP|0	0	Missile hits have a <good>1%</good> chan
 integrable|resonator_payload|null|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
 integrable|resonator_payload|null|1	0	Click and hold to integrate.
 integrable|resonator_payload|null|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|resonator_payload|null|3	0	<muted>Missile hits have a 1% chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.</muted>
-integrable|resonator_payload|null|4	0	<muted>Each rift series from missile hits has 1 additional rift explosion.</muted>
+integrable|resonator_payload|null|3	0	<muted>Missile hits have a 1% chance for every 5 of your highest affinity to trigger a series of 5 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.</muted>
 integrable|resonator_payload|FRIGATE|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
 integrable|resonator_payload|FRIGATE|1	0	Click and hold to integrate.
 integrable|resonator_payload|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|resonator_payload|FRIGATE|3	0	<muted>Missile hits have a 1% chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.</muted>
-integrable|resonator_payload|FRIGATE|4	0	<muted>Each rift series from missile hits has 1 additional rift explosion.</muted>
+integrable|resonator_payload|FRIGATE|3	0	<muted>Missile hits have a 1% chance for every 5 of your highest affinity to trigger a series of 5 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.</muted>
 integrable|resonator_payload|DESTROYER|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
 integrable|resonator_payload|DESTROYER|1	0	Click and hold to integrate.
 integrable|resonator_payload|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|resonator_payload|DESTROYER|3	0	<muted>Missile hits have a 1% chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.</muted>
-integrable|resonator_payload|DESTROYER|4	0	<muted>Each rift series from missile hits has 1 additional rift explosion.</muted>
+integrable|resonator_payload|DESTROYER|3	0	<muted>Missile hits have a 1% chance for every 5 of your highest affinity to trigger a series of 5 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.</muted>
 integrable|resonator_payload|CRUISER|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
 integrable|resonator_payload|CRUISER|1	0	Click and hold to integrate.
 integrable|resonator_payload|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|resonator_payload|CRUISER|3	0	<muted>Missile hits have a 1% chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.</muted>
-integrable|resonator_payload|CRUISER|4	0	<muted>Each rift series from missile hits has 1 additional rift explosion.</muted>
+integrable|resonator_payload|CRUISER|3	0	<muted>Missile hits have a 1% chance for every 5 of your highest affinity to trigger a series of 5 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.</muted>
 integrable|resonator_payload|CAPITAL_SHIP|0	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
 integrable|resonator_payload|CAPITAL_SHIP|1	0	Click and hold to integrate.
 integrable|resonator_payload|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|resonator_payload|CAPITAL_SHIP|3	0	<muted>Missile hits have a 1% chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.</muted>
-integrable|resonator_payload|CAPITAL_SHIP|4	0	<muted>Each rift series from missile hits has 1 additional rift explosion.</muted>
+integrable|resonator_payload|CAPITAL_SHIP|3	0	<muted>Missile hits have a 1% chance for every 5 of your highest affinity to trigger a series of 5 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.</muted>
 integrated|resonator_payload|null|0	0	<builtIn>Integrated</builtIn>
-integrated|resonator_payload|null|1	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
-integrated|resonator_payload|null|2	0	<builtIn>Each rift series from missile hits has </builtIn><good>1</good><builtIn> additional rift explosion.</builtIn>
+integrated|resonator_payload|null|1	0	<builtIn>Missile hits have a </builtIn><good>1%</good><builtIn> chance for every 5 of your highest affinity to trigger a series of 5 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.</builtIn>
 integrated|resonator_payload|FRIGATE|0	0	<builtIn>Integrated</builtIn>
-integrated|resonator_payload|FRIGATE|1	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
-integrated|resonator_payload|FRIGATE|2	0	<builtIn>Each rift series from missile hits has </builtIn><good>1</good><builtIn> additional rift explosion.</builtIn>
+integrated|resonator_payload|FRIGATE|1	0	<builtIn>Missile hits have a </builtIn><good>1%</good><builtIn> chance for every 5 of your highest affinity to trigger a series of 5 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.</builtIn>
 integrated|resonator_payload|DESTROYER|0	0	<builtIn>Integrated</builtIn>
-integrated|resonator_payload|DESTROYER|1	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
-integrated|resonator_payload|DESTROYER|2	0	<builtIn>Each rift series from missile hits has </builtIn><good>1</good><builtIn> additional rift explosion.</builtIn>
+integrated|resonator_payload|DESTROYER|1	0	<builtIn>Missile hits have a </builtIn><good>1%</good><builtIn> chance for every 5 of your highest affinity to trigger a series of 5 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.</builtIn>
 integrated|resonator_payload|CRUISER|0	0	<builtIn>Integrated</builtIn>
-integrated|resonator_payload|CRUISER|1	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
-integrated|resonator_payload|CRUISER|2	0	<builtIn>Each rift series from missile hits has </builtIn><good>1</good><builtIn> additional rift explosion.</builtIn>
+integrated|resonator_payload|CRUISER|1	0	<builtIn>Missile hits have a </builtIn><good>1%</good><builtIn> chance for every 5 of your highest affinity to trigger a series of 5 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.</builtIn>
 integrated|resonator_payload|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
-integrated|resonator_payload|CAPITAL_SHIP|1	0	Missile hits have a <good>1%</good> chance for every 5 of your highest affinity to trigger a series of 4 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.
-integrated|resonator_payload|CAPITAL_SHIP|2	0	<builtIn>Each rift series from missile hits has </builtIn><good>1</good><builtIn> additional rift explosion.</builtIn>
+integrated|resonator_payload|CAPITAL_SHIP|1	0	<builtIn>Missile hits have a </builtIn><good>1%</good><builtIn> chance for every 5 of your highest affinity to trigger a series of 5 rift explosions, each dealing energy damage equal to 10% of the missile's base damage, up to a maximum of 100.</builtIn>
 flavour|restriction_breeds_creativity	0	Captured pirate hulls show the crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Pirates call this maintenance.
 flavourAutomated|restriction_breeds_creativity	0	Captured pirate hulls show the refit crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Pirates call this maintenance.
 type|restriction_breeds_creativity|null|0	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of 5 d-mods.
@@ -14486,43 +14376,33 @@ type|temporal_exhaust|CAPITAL_SHIP|0	0	When this ship activates its ship system,
 integrable|temporal_exhaust|null|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
 integrable|temporal_exhaust|null|1	0	Click and hold to integrate.
 integrable|temporal_exhaust|null|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|temporal_exhaust|null|3	0	<muted>When this ship activates its ship system, it gains 20% increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.</muted>
-integrable|temporal_exhaust|null|4	0	<muted>That time flow bonus tapers off over 2 additional seconds.</muted>
+integrable|temporal_exhaust|null|3	0	<muted>When this ship activates its ship system, it gains 20% increased time flow, tapering off over 6 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.</muted>
 integrable|temporal_exhaust|FRIGATE|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
 integrable|temporal_exhaust|FRIGATE|1	0	Click and hold to integrate.
 integrable|temporal_exhaust|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|temporal_exhaust|FRIGATE|3	0	<muted>When this ship activates its ship system, it gains 20% increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.</muted>
-integrable|temporal_exhaust|FRIGATE|4	0	<muted>That time flow bonus tapers off over 2 additional seconds.</muted>
+integrable|temporal_exhaust|FRIGATE|3	0	<muted>When this ship activates its ship system, it gains 20% increased time flow, tapering off over 6 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.</muted>
 integrable|temporal_exhaust|DESTROYER|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
 integrable|temporal_exhaust|DESTROYER|1	0	Click and hold to integrate.
 integrable|temporal_exhaust|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|temporal_exhaust|DESTROYER|3	0	<muted>When this ship activates its ship system, it gains 20% increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.</muted>
-integrable|temporal_exhaust|DESTROYER|4	0	<muted>That time flow bonus tapers off over 2 additional seconds.</muted>
+integrable|temporal_exhaust|DESTROYER|3	0	<muted>When this ship activates its ship system, it gains 20% increased time flow, tapering off over 6 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.</muted>
 integrable|temporal_exhaust|CRUISER|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
 integrable|temporal_exhaust|CRUISER|1	0	Click and hold to integrate.
 integrable|temporal_exhaust|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|temporal_exhaust|CRUISER|3	0	<muted>When this ship activates its ship system, it gains 20% increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.</muted>
-integrable|temporal_exhaust|CRUISER|4	0	<muted>That time flow bonus tapers off over 2 additional seconds.</muted>
+integrable|temporal_exhaust|CRUISER|3	0	<muted>When this ship activates its ship system, it gains 20% increased time flow, tapering off over 6 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.</muted>
 integrable|temporal_exhaust|CAPITAL_SHIP|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
 integrable|temporal_exhaust|CAPITAL_SHIP|1	0	Click and hold to integrate.
 integrable|temporal_exhaust|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|temporal_exhaust|CAPITAL_SHIP|3	0	<muted>When this ship activates its ship system, it gains 20% increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.</muted>
-integrable|temporal_exhaust|CAPITAL_SHIP|4	0	<muted>That time flow bonus tapers off over 2 additional seconds.</muted>
+integrable|temporal_exhaust|CAPITAL_SHIP|3	0	<muted>When this ship activates its ship system, it gains 20% increased time flow, tapering off over 6 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.</muted>
 integrated|temporal_exhaust|null|0	0	<builtIn>Integrated</builtIn>
-integrated|temporal_exhaust|null|1	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
-integrated|temporal_exhaust|null|2	0	<builtIn>That time flow bonus tapers off over </builtIn><good>2</good><builtIn> additional seconds.</builtIn>
+integrated|temporal_exhaust|null|1	0	<builtIn>When this ship activates its ship system, it gains </builtIn><good>20%</good><builtIn> increased time flow, tapering off over 6 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.</builtIn>
 integrated|temporal_exhaust|FRIGATE|0	0	<builtIn>Integrated</builtIn>
-integrated|temporal_exhaust|FRIGATE|1	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
-integrated|temporal_exhaust|FRIGATE|2	0	<builtIn>That time flow bonus tapers off over </builtIn><good>2</good><builtIn> additional seconds.</builtIn>
+integrated|temporal_exhaust|FRIGATE|1	0	<builtIn>When this ship activates its ship system, it gains </builtIn><good>20%</good><builtIn> increased time flow, tapering off over 6 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.</builtIn>
 integrated|temporal_exhaust|DESTROYER|0	0	<builtIn>Integrated</builtIn>
-integrated|temporal_exhaust|DESTROYER|1	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
-integrated|temporal_exhaust|DESTROYER|2	0	<builtIn>That time flow bonus tapers off over </builtIn><good>2</good><builtIn> additional seconds.</builtIn>
+integrated|temporal_exhaust|DESTROYER|1	0	<builtIn>When this ship activates its ship system, it gains </builtIn><good>20%</good><builtIn> increased time flow, tapering off over 6 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.</builtIn>
 integrated|temporal_exhaust|CRUISER|0	0	<builtIn>Integrated</builtIn>
-integrated|temporal_exhaust|CRUISER|1	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
-integrated|temporal_exhaust|CRUISER|2	0	<builtIn>That time flow bonus tapers off over </builtIn><good>2</good><builtIn> additional seconds.</builtIn>
+integrated|temporal_exhaust|CRUISER|1	0	<builtIn>When this ship activates its ship system, it gains </builtIn><good>20%</good><builtIn> increased time flow, tapering off over 6 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.</builtIn>
 integrated|temporal_exhaust|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
-integrated|temporal_exhaust|CAPITAL_SHIP|1	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over 4 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.
-integrated|temporal_exhaust|CAPITAL_SHIP|2	0	<builtIn>That time flow bonus tapers off over </builtIn><good>2</good><builtIn> additional seconds.</builtIn>
+integrated|temporal_exhaust|CAPITAL_SHIP|1	0	<builtIn>When this ship activates its ship system, it gains </builtIn><good>20%</good><builtIn> increased time flow, tapering off over 6 seconds, and leaves a trail of rift explosions behind its engines, each dealing 100 energy damage, at most once every 30 seconds.</builtIn>
 type|temporary_maneuverability|null|0	0	<good>50%</good> increased maneuverability.
 type|temporary_maneuverability|null|1	0	These effects only last for the first 90 seconds after the ship is deployed.
 type|temporary_maneuverability|FRIGATE|0	0	<good>50%</good> increased maneuverability.
@@ -14542,43 +14422,33 @@ type|terrifying_presence|CAPITAL_SHIP|0	0	Enemy ships within 1000 su have <good>
 integrable|terrifying_presence|null|0	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 integrable|terrifying_presence|null|1	0	Click and hold to integrate.
 integrable|terrifying_presence|null|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|terrifying_presence|null|3	0	<muted>Enemy ships within 1000 su have -25% to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.</muted>
-integrable|terrifying_presence|null|4	0	<muted>50% increased range of the target leading accuracy penalty on enemy autofiring weapons.</muted>
+integrable|terrifying_presence|null|3	0	<muted>Enemy ships within 1500 su have -25% to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.</muted>
 integrable|terrifying_presence|FRIGATE|0	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 integrable|terrifying_presence|FRIGATE|1	0	Click and hold to integrate.
 integrable|terrifying_presence|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|terrifying_presence|FRIGATE|3	0	<muted>Enemy ships within 1000 su have -25% to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.</muted>
-integrable|terrifying_presence|FRIGATE|4	0	<muted>50% increased range of the target leading accuracy penalty on enemy autofiring weapons.</muted>
+integrable|terrifying_presence|FRIGATE|3	0	<muted>Enemy ships within 1500 su have -25% to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.</muted>
 integrable|terrifying_presence|DESTROYER|0	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 integrable|terrifying_presence|DESTROYER|1	0	Click and hold to integrate.
 integrable|terrifying_presence|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|terrifying_presence|DESTROYER|3	0	<muted>Enemy ships within 1000 su have -25% to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.</muted>
-integrable|terrifying_presence|DESTROYER|4	0	<muted>50% increased range of the target leading accuracy penalty on enemy autofiring weapons.</muted>
+integrable|terrifying_presence|DESTROYER|3	0	<muted>Enemy ships within 1500 su have -25% to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.</muted>
 integrable|terrifying_presence|CRUISER|0	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 integrable|terrifying_presence|CRUISER|1	0	Click and hold to integrate.
 integrable|terrifying_presence|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|terrifying_presence|CRUISER|3	0	<muted>Enemy ships within 1000 su have -25% to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.</muted>
-integrable|terrifying_presence|CRUISER|4	0	<muted>50% increased range of the target leading accuracy penalty on enemy autofiring weapons.</muted>
+integrable|terrifying_presence|CRUISER|3	0	<muted>Enemy ships within 1500 su have -25% to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.</muted>
 integrable|terrifying_presence|CAPITAL_SHIP|0	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 integrable|terrifying_presence|CAPITAL_SHIP|1	0	Click and hold to integrate.
 integrable|terrifying_presence|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|terrifying_presence|CAPITAL_SHIP|3	0	<muted>Enemy ships within 1000 su have -25% to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.</muted>
-integrable|terrifying_presence|CAPITAL_SHIP|4	0	<muted>50% increased range of the target leading accuracy penalty on enemy autofiring weapons.</muted>
+integrable|terrifying_presence|CAPITAL_SHIP|3	0	<muted>Enemy ships within 1500 su have -25% to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.</muted>
 integrated|terrifying_presence|null|0	0	<builtIn>Integrated</builtIn>
-integrated|terrifying_presence|null|1	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-integrated|terrifying_presence|null|2	0	<good>50%</good><builtIn> increased range of the target leading accuracy penalty on enemy autofiring weapons.</builtIn>
+integrated|terrifying_presence|null|1	0	<builtIn>Enemy ships within 1500 su have </builtIn><good>-25%</good><builtIn> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.</builtIn>
 integrated|terrifying_presence|FRIGATE|0	0	<builtIn>Integrated</builtIn>
-integrated|terrifying_presence|FRIGATE|1	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-integrated|terrifying_presence|FRIGATE|2	0	<good>50%</good><builtIn> increased range of the target leading accuracy penalty on enemy autofiring weapons.</builtIn>
+integrated|terrifying_presence|FRIGATE|1	0	<builtIn>Enemy ships within 1500 su have </builtIn><good>-25%</good><builtIn> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.</builtIn>
 integrated|terrifying_presence|DESTROYER|0	0	<builtIn>Integrated</builtIn>
-integrated|terrifying_presence|DESTROYER|1	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-integrated|terrifying_presence|DESTROYER|2	0	<good>50%</good><builtIn> increased range of the target leading accuracy penalty on enemy autofiring weapons.</builtIn>
+integrated|terrifying_presence|DESTROYER|1	0	<builtIn>Enemy ships within 1500 su have </builtIn><good>-25%</good><builtIn> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.</builtIn>
 integrated|terrifying_presence|CRUISER|0	0	<builtIn>Integrated</builtIn>
-integrated|terrifying_presence|CRUISER|1	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-integrated|terrifying_presence|CRUISER|2	0	<good>50%</good><builtIn> increased range of the target leading accuracy penalty on enemy autofiring weapons.</builtIn>
+integrated|terrifying_presence|CRUISER|1	0	<builtIn>Enemy ships within 1500 su have </builtIn><good>-25%</good><builtIn> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.</builtIn>
 integrated|terrifying_presence|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
-integrated|terrifying_presence|CAPITAL_SHIP|1	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-integrated|terrifying_presence|CAPITAL_SHIP|2	0	<good>50%</good><builtIn> increased range of the target leading accuracy penalty on enemy autofiring weapons.</builtIn>
+integrated|terrifying_presence|CAPITAL_SHIP|1	0	<builtIn>Enemy ships within 1500 su have </builtIn><good>-25%</good><builtIn> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.</builtIn>
 type|timeflow|null|0	0	<good>2%</good> increased time flow.
 type|timeflow|FRIGATE|0	0	<good>2%</good> increased time flow.
 type|timeflow|DESTROYER|0	0	<good>2%</good> increased time flow.

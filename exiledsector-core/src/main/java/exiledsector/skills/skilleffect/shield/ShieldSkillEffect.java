@@ -9,6 +9,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.ConditionalStatEffect;
+import exiledsector.skills.skilleffect.DescribeContext;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
 import exiledsector.skills.skilleffect.SkillEffect;
@@ -16,6 +17,7 @@ import exiledsector.skills.skilleffect.StatTarget;
 import exiledsector.skills.skilleffect.TopSpeedShare;
 
 import java.util.List;
+import java.util.Set;
 
 import static exiledsector.skills.skilleffect.Backings.listener;
 import static exiledsector.skills.skilleffect.Backings.statEffect;
@@ -192,12 +194,23 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
             AbsorbReserveListener.class, AbsorbReserveListener::new)) {
         @Override
         public StyledText description(float magnitude) {
+            return description(magnitude, DescribeContext.NONE);
+        }
+
+        @Override
+        public StyledText description(float magnitude, DescribeContext context) {
             return EffectText.msg(this).arg("value", magnitude).arg("full", AbsorbReserveListener.FULL_RESERVE)
-                    .arg("drain", AbsorbReserveListener.DRAIN_PER_SECOND).arg("max", AbsorbReserveListener.MAX_RESERVE).styled();
+                    .arg("drain", AbsorbReserveListener.DRAIN_PER_SECOND)
+                    .arg("max", AbsorbReserveListener.maxReserve(context.magnitudeOf(SHIELD_ABSORB_MAX_RESERVE_PERCENT))).styled();
         }
     },
     SHIELD_ABSORB_MAX_RESERVE_PERCENT(listener(AbsorbReserveListener.MAX_RESERVE_PERCENT_KEY,
-            AbsorbReserveListener.class, AbsorbReserveListener::new)),
+            AbsorbReserveListener.class, AbsorbReserveListener::new)) {
+        @Override
+        public Set<SkillEffect> refines() {
+            return Set.of(SHIELD_ABSORB_RATE_OF_FIRE_PERCENT);
+        }
+    },
     SHIELD_DAMAGE_ABSORBED_BY_FRAGMENTS_PERCENT(listener(FractalShieldListener.ABSORBED_PERCENT_KEY, FractalShieldListener.class,
             FractalShieldListener::new)) {
         @Override

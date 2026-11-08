@@ -14,11 +14,15 @@ import exiledsector.skills.ShipFacts;
 import exiledsector.skills.skilleffect.ArcDischarge;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.ConditionalStatEffect;
+import exiledsector.skills.skilleffect.DescribeContext;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
 import exiledsector.skills.skilleffect.PerDModMultEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.SkillEffectSupport;
 import exiledsector.skills.skilleffect.StatMode;
+
+import java.util.Set;
 
 import static exiledsector.skills.skilleffect.Backings.listener;
 import static exiledsector.skills.skilleffect.Backings.statEffect;
@@ -161,8 +165,13 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             NanoforgeMendingListener::new)) {
         @Override
         public StyledText description(float magnitude) {
+            return description(magnitude, DescribeContext.NONE);
+        }
+
+        @Override
+        public StyledText description(float magnitude, DescribeContext context) {
             return EffectText.msg(this).arg("seconds", NanoforgeMendingListener.UNDAMAGED_SECONDS).arg("value", magnitude)
-                    .arg("limit", NanoforgeMendingListener.MAX_TOTAL_REGEN_PERCENT_OF_HULL).styled();
+                    .arg("limit", NanoforgeMendingListener.regenLimitPercentOfHull(context.magnitudeOf(NANOFORGE_HULL_REGEN_LIMIT_FLAT))).styled();
         }
     },
     NANOFORGE_HULL_REGEN_LIMIT_FLAT(listener(NanoforgeMendingListener.REGEN_LIMIT_BONUS_KEY, NanoforgeMendingListener.class,
@@ -170,6 +179,11 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
         @Override
         public StyledText description(float magnitude) {
             return EffectText.signed(this, magnitude).arg("seconds", NanoforgeMendingListener.UNDAMAGED_SECONDS).styled();
+        }
+
+        @Override
+        public Set<SkillEffect> refines() {
+            return Set.of(NANOFORGE_HULL_REGEN_PERCENT);
         }
     },
     UNHIT_ARMOR_REGEN_PERCENT(listener(UnhitArmorRegenListener.REGEN_PERCENT_KEY, UnhitArmorRegenListener.class,
@@ -265,7 +279,13 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", Math.abs(magnitude)).arg("range", HeldObjective.RANGE).styled();
+            return description(magnitude, DescribeContext.NONE);
+        }
+
+        @Override
+        public StyledText description(float magnitude, DescribeContext context) {
+            return EffectText.msg(this).arg("value", Math.abs(magnitude))
+                    .arg("range", HeldObjective.range(context.magnitudeOf(DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_RANGE_FLAT))).styled();
         }
     },
     DAMAGE_TAKEN_NEAR_FLAGSHIP_PERCENT(listener(FlagshipGuardListener.DAMAGE_TAKEN_PERCENT_KEY, FlagshipGuardListener.class,
@@ -285,7 +305,12 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", Math.abs(magnitude)).arg("range", FlagshipGuardListener.RANGE).styled();
         }
     },
-    DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_RANGE_FLAT(statEffect(FLAT, dynamicMod(HeldObjective.RANGE_BONUS_KEY), "stat.heldObjectiveDamageTakenRange", false)),
+    DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_RANGE_FLAT(statEffect(FLAT, dynamicMod(HeldObjective.RANGE_BONUS_KEY), "stat.heldObjectiveDamageTakenRange", false)) {
+        @Override
+        public Set<SkillEffect> refines() {
+            return Set.of(DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT);
+        }
+    },
     DAMAGE_TAKEN_WHILE_RETREATING_PERCENT(new ConditionalStatEffect(PERCENT, all(liveStat(MutableShipStatsAPI::getHullDamageTakenMult),
             liveStat(MutableShipStatsAPI::getArmorDamageTakenMult), liveStat(MutableShipStatsAPI::getShieldDamageTakenMult)),
             "stat.damageTaken", ShipAPI::isRetreating)) {
@@ -310,12 +335,22 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             CrewLossHullDamageListener::new)) {
         @Override
         public StyledText description(float magnitude) {
+            return description(magnitude, DescribeContext.NONE);
+        }
+
+        @Override
+        public StyledText description(float magnitude, DescribeContext context) {
             return EffectText.msg(this).arg("value", magnitude).arg("step", CrewLossHullDamageListener.CREW_PER_STEP)
-                    .arg("max", CrewLossHullDamageListener.MAX_REDUCTION_PERCENT).styled();
+                    .arg("max", CrewLossHullDamageListener.maxReductionPercent(context.magnitudeOf(HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_PERCENT))).styled();
         }
     },
-    HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_PERCENT(listener(CrewLossHullDamageListener.MAX_REDUCTION_BONUS_PERCENT_KEY,
-            CrewLossHullDamageListener.class, CrewLossHullDamageListener::new)),
+    HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_PERCENT(listener(CrewLossHullDamageListener.MAX_REDUCTION_FLAT_KEY,
+            CrewLossHullDamageListener.class, CrewLossHullDamageListener::new)) {
+        @Override
+        public Set<SkillEffect> refines() {
+            return Set.of(HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST);
+        }
+    },
     HUNGERING_RIFT_HEALING_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

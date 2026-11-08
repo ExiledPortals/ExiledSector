@@ -4,8 +4,12 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import exiledsector.compat.LostSectorCompat;
 import exiledsector.i18n.StyledText;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
+import exiledsector.skills.skilleffect.DescribeContext;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
+import exiledsector.skills.skilleffect.SkillEffect;
+
+import java.util.Set;
 
 import static exiledsector.skills.skilleffect.Backings.listener;
 import static exiledsector.skills.skilleffect.Backings.statEffect;
@@ -24,7 +28,13 @@ public enum ShipSystemSkillEffect implements BackedSkillEffect {
             TemporalExhaustListener::new)) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).arg("seconds", TemporalExhaustListener.TAPER_SECONDS)
+            return description(magnitude, DescribeContext.NONE);
+        }
+
+        @Override
+        public StyledText description(float magnitude, DescribeContext context) {
+            return EffectText.msg(this).arg("value", magnitude)
+                    .arg("seconds", TemporalExhaustListener.taperSeconds(context.magnitudeOf(SYSTEM_ACTIVATION_TIMEFLOW_TAPER_SECONDS_FLAT)))
                     .arg("damage", TemporalExhaustListener.RIFT_DAMAGE).arg("cooldown", TemporalExhaustListener.COOLDOWN_SECONDS).styled();
         }
     },
@@ -33,6 +43,11 @@ public enum ShipSystemSkillEffect implements BackedSkillEffect {
         @Override
         public StyledText description(float magnitude) {
             return EffectText.msg(this).count(Math.round(magnitude)).arg("value", magnitude).styled();
+        }
+
+        @Override
+        public Set<SkillEffect> refines() {
+            return Set.of(SYSTEM_ACTIVATION_TIMEFLOW_PERCENT);
         }
     },
     AUGMENTED_SYSTEM_REGEN_PERCENT {

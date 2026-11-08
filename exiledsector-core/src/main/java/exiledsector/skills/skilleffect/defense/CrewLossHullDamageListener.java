@@ -7,12 +7,13 @@ import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
 import com.fs.starfarer.api.fleet.CrewCompositionAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.skills.skilleffect.ParameterBonus;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 
 final class CrewLossHullDamageListener extends ShipCombatListener implements DamageListener {
 
     static final String PERCENT_PER_STEP_KEY = "exiledSector_crewLossHullDamageTakenPercent";
-    static final String MAX_REDUCTION_BONUS_PERCENT_KEY = "exiledSector_crewLossHullDamageTakenMaxPercent";
+    static final String MAX_REDUCTION_FLAT_KEY = "exiledSector_crewLossHullDamageTakenMaxFlat";
     static final float CREW_PER_STEP = 10f;
     static final float MAX_REDUCTION_PERCENT = 20f;
     static final float AVERAGE_LOSS_ROLL = 0.75f;
@@ -51,8 +52,7 @@ final class CrewLossHullDamageListener extends ShipCombatListener implements Dam
         float maxHull = ownerShip.getMaxHitpoints();
         float hullDamageFraction = maxHull <= 0f ? 0f : hullDamageTaken / maxHull;
         float crewLost = crewLost(crewAboard, hullDamageFraction, stats.getCrewLossMult().getModifiedValue());
-        float maxReductionPercent = MAX_REDUCTION_PERCENT + magnitude(MAX_REDUCTION_BONUS_PERCENT_KEY);
-        float reductionPercent = reductionPercent(magnitude(PERCENT_PER_STEP_KEY), crewLost, maxReductionPercent);
+        float reductionPercent = reductionPercent(magnitude(PERCENT_PER_STEP_KEY), crewLost, maxReductionPercent(magnitude(MAX_REDUCTION_FLAT_KEY)));
         if (Float.compare(reductionPercent, appliedReductionPercent) == 0) {
             return;
         }
@@ -67,6 +67,10 @@ final class CrewLossHullDamageListener extends ShipCombatListener implements Dam
     static float crewLost(float crewAboard, float hullDamageFraction, float crewLossMult) {
         float lossFraction = hullDamageFraction * hullDamageFraction * AVERAGE_LOSS_ROLL * crewLossMult;
         return crewAboard * Math.min(1f, Math.max(0f, lossFraction));
+    }
+
+    static float maxReductionPercent(float maxReductionBonus) {
+        return ParameterBonus.plusFlat(MAX_REDUCTION_PERCENT, maxReductionBonus);
     }
 
     static float reductionPercent(float percentPerStep, float crewLost, float maxReductionPercent) {

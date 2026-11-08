@@ -70,7 +70,7 @@ class CrewLossHullDamageListenerTest {
 
     @Test
     void aRaisedCapLetsTheReductionGrowFurther() {
-        when(ship.getMutableStats().getDynamic().getValue(CrewLossHullDamageListener.MAX_REDUCTION_BONUS_PERCENT_KEY, 0f)).thenReturn(10f);
+        when(ship.getMutableStats().getDynamic().getValue(CrewLossHullDamageListener.MAX_REDUCTION_FLAT_KEY, 0f)).thenReturn(10f);
         when(ship.getFleetMember().getCrewComposition().getCrew()).thenReturn(10000f);
         CrewLossHullDamageListener listener = new CrewLossHullDamageListener(ship);
 

@@ -4,7 +4,6 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.skilleffect.SkillEffect;
-import exiledsector.skills.skilleffect.weapon.WeaponEffectTooltipAggregator;
 import exiledsector.effects.SkillTreeEffectSource;
 
 import java.util.ArrayList;
@@ -75,13 +74,11 @@ public final class SkillTreeBonusSummary {
                     effects.add(new SkillTypeEffect(effect, shownTotal));
                 }
             });
-            for (SkillTypeEffect effect : WeaponEffectTooltipAggregator.collapse(effects)) {
-                StyledText text = effect.effect().description(effect.magnitude());
-                if (text != null) {
-                    lines.add(new EffectLine(effect.effect(), effect.magnitude(), group.temporarySeconds(), group.gate(),
-                            new DescriptionLine(withGate(withDuration(text, group.temporarySeconds()), group.gate()),
-                                    effect.effect().invertsDescriptionColours())));
-                }
+            for (DescribedEffects.Line described : DescribedEffects.of(effects, null)) {
+                SkillTypeEffect effect = described.effect();
+                lines.add(new EffectLine(effect.effect(), effect.magnitude(), group.temporarySeconds(), group.gate(),
+                        new DescriptionLine(withGate(withDuration(described.text(), group.temporarySeconds()), group.gate()),
+                                effect.effect().invertsDescriptionColours())));
             }
         }
         return lines;

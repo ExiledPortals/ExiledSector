@@ -38,7 +38,7 @@ class AuxiliaryScreenFieldTest {
         DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
         when(ship.getMutableStats().getDynamic()).thenReturn(dynamic);
         when(dynamic.getValue(AuxiliaryScreenListener.DAMAGE_TAKEN_PERCENT_KEY, 0f)).thenReturn(reductionPercent);
-        when(dynamic.getValue(AuxiliaryScreenListener.RANGE_BONUS_KEY, 0f)).thenReturn(rangeBonus);
+        when(dynamic.getValue(AuxiliaryScreenListener.RANGE_FLAT_KEY, 0f)).thenReturn(rangeBonus);
         return new AuxiliaryScreenListener(ship);
     }
 

@@ -10,6 +10,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.motes.MoteKind;
 import exiledsector.motes.Motes;
 import exiledsector.skills.skilleffect.CombatQueries;
+import exiledsector.skills.skilleffect.ParameterBonus;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -97,6 +98,10 @@ final class StardustMoteListener extends ShipCombatListener implements DamageDea
     }
 
     int maxMotesInFlight() {
-        return Motes.MAX_LIVE_MOTES_PER_SOURCE + Math.round(magnitude(EXTRA_MOTES_IN_FLIGHT_KEY));
+        return maxMotesInFlight(magnitude(EXTRA_MOTES_IN_FLIGHT_KEY));
+    }
+
+    static int maxMotesInFlight(float extraMotes) {
+        return Math.round(ParameterBonus.plusFlat(Motes.MAX_LIVE_MOTES_PER_SOURCE, extraMotes));
     }
 }

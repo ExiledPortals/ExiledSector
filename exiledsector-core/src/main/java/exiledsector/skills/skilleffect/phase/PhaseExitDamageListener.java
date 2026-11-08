@@ -1,6 +1,7 @@
 package exiledsector.skills.skilleffect.phase;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import exiledsector.skills.skilleffect.ParameterBonus;
 import exiledsector.skills.skilleffect.ScaledBonus;
 import exiledsector.skills.skilleffect.TaperedBonus;
 import exiledsector.skills.skilleffect.weapon.WeaponScope;
@@ -19,13 +20,17 @@ final class PhaseExitDamageListener extends PhaseTransitionListener {
 
     PhaseExitDamageListener(ShipAPI ownerShip) {
         super(ownerShip, MOD_ID_PREFIX);
-        ambushBonus = new TaperedBonus(AMBUSH_BONUS, TAPER_SECONDS, ownerShip.getMutableStats(), modId);
+        ambushBonus = new TaperedBonus(AMBUSH_BONUS, ownerShip.getMutableStats(), modId);
+    }
+
+    static float taperSeconds(float durationIncreasePercent) {
+        return ParameterBonus.increasedBy(TAPER_SECONDS, durationIncreasePercent);
     }
 
     @Override
     void onPhaseExit() {
         if (ownerIsAliveNotHulk()) {
-            ambushBonus.startWithIncreasedDuration(magnitude(DURATION_PERCENT_KEY));
+            ambushBonus.start(taperSeconds(magnitude(DURATION_PERCENT_KEY)));
         }
     }
 

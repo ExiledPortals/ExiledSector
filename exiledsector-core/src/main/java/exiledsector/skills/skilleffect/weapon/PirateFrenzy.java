@@ -4,7 +4,9 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.skilleffect.DescribeContext;
 import exiledsector.skills.skilleffect.ExpiringStacks;
+import exiledsector.skills.skilleffect.ParameterBonus;
 import exiledsector.skills.skilleffect.ScaledBonus;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 import exiledsector.skills.skilleffect.SkillEffectSupport;
@@ -56,7 +58,15 @@ public final class PirateFrenzy extends ShipCombatListener implements Advanceabl
     }
 
     float stackSeconds() {
-        return STACK_SECONDS + ownerShip.getMutableStats().getDynamic().getValue(EXTRA_SECONDS_KEY, 0f);
+        return stackSeconds(magnitude(EXTRA_SECONDS_KEY));
+    }
+
+    static float stackSeconds(float secondsBonus) {
+        return ParameterBonus.plusFlat(STACK_SECONDS, secondsBonus);
+    }
+
+    public static float stackSeconds(DescribeContext context) {
+        return stackSeconds(context.magnitudeOf(WeaponSkillEffect.PIRATE_FRENZY_SECONDS_FLAT));
     }
 
     @Override

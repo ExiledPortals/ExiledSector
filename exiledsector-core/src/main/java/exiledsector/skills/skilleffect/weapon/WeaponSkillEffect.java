@@ -13,14 +13,18 @@ import exiledsector.i18n.StyledText;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.ConditionalStatEffect;
 import exiledsector.skills.skilleffect.DerivedStatEffect;
+import exiledsector.skills.skilleffect.DescribeContext;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
 import exiledsector.skills.skilleffect.PerDModMultEffect;
 import exiledsector.skills.skilleffect.PerDModPercentEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.StatMode;
 import exiledsector.skills.skilleffect.StatTarget;
+import exiledsector.skills.skilleffect.aura.AuraSkillEffect;
 
 import java.util.List;
+import java.util.Set;
 
 import static exiledsector.skills.skilleffect.Backings.flag;
 import static exiledsector.skills.skilleffect.Backings.listener;
@@ -123,7 +127,12 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
             HelplessKillFrenzyListener::new)) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).count(Math.round(magnitude)).arg("seconds", PirateFrenzy.STACK_SECONDS)
+            return description(magnitude, DescribeContext.NONE);
+        }
+
+        @Override
+        public StyledText description(float magnitude, DescribeContext context) {
+            return EffectText.msg(this).count(Math.round(magnitude)).arg("seconds", PirateFrenzy.stackSeconds(context))
                     .arg("stacks", PirateFrenzy.MAX_STACKS).styled().append("\n").append(PirateFrenzy.describeStackBonuses());
         }
     },
@@ -131,6 +140,11 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
         @Override
         public StyledText description(float magnitude) {
             return EffectText.templated(this, magnitude);
+        }
+
+        @Override
+        public Set<SkillEffect> refines() {
+            return Set.of(AuraSkillEffect.PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT, HELPLESS_KILL_PIRATE_FRENZY_STACKS_FLAT);
         }
     },
     OPENING_WEAPON_DAMAGE_PERCENT(new ConditionalStatEffect(PERCENT, WeaponStatFamily.DAMAGE.target(WeaponScope.ALL), "weapon.stat.DAMAGE",

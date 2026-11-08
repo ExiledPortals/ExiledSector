@@ -12,6 +12,7 @@ import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.skilleffect.CombatQueries;
+import exiledsector.skills.skilleffect.ParameterBonus;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -65,10 +66,14 @@ final class FlakBurstListener extends ShipCombatListener implements DamageDealtM
         if (damage <= 0f || engine == null) {
             return;
         }
-        float burstRadius = BURST_RADIUS + magnitude(RADIUS_BONUS_KEY);
+        float burstRadius = burstRadius(magnitude(RADIUS_BONUS_KEY));
         for (Vector2f burstPoint : burstPoints) {
             burst(engine, burstPoint, damage, burstRadius);
         }
+    }
+
+    static float burstRadius(float radiusBonus) {
+        return ParameterBonus.plusFlat(BURST_RADIUS, radiusBonus);
     }
 
     private void burst(CombatEngineAPI engine, Vector2f burstPoint, float damage, float burstRadius) {
