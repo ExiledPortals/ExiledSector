@@ -111,6 +111,10 @@ A flat chance is "N% chance to X" or "N% chance for X". A change to an existing 
 
 Conditions go after the value and stat: "while phased", "while in the system", "for each Heartless stack", "for every su/s of current speed", "up to a maximum of N". Never open a line with a state ("While this ship is phased, enemy ships..."); a trigger may open it: "When this ship enters phase", "Whenever an enemy ship is destroyed", "Every 500 damage". A cap on a scaling value is always "up to a maximum of N", while a repair total keeps "up to N% of ... per deployment".
 
+## Highlighting
+
+The effect's own value is `<good>` or `<bad>`, by whether it helps the ship. Every other number in the line, such as a range, duration, cap, stack limit or threshold, is `<hl>`, as in vanilla hullmod descriptions. A line without a value may colour its key phrase instead: "split to 1 additional nearby enemy ship <good>at full damage</good>". On an integrated node only what integration changes turns story point green.
+
 ## Capitalisation
 
 Follow Starsector's own style. Stats and generic nouns are lowercase (flux capacity, sensor range, items, crafting items, points of interest). Proper names keep their capitals: Star Charts, Star Chart Bosses, Nanite Feedstock, Bridge items, Domain, hullmod and faction names.

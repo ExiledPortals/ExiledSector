@@ -2,6 +2,8 @@ package exiledsector.skills;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.campaign.CharacterDataAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
@@ -248,6 +250,44 @@ class SkillNodeTest {
         SkillNode node = new SkillNode("heavy_armor_1", type, List.of(), 0f, 0f);
 
         assertEquals("15% increased armor.\n\nMutually exclusive with hullmod:\n• Armored Cladding", description(node.getType()));
+    }
+
+    private static SkillType safetyOverridesWithConflicts(SettingsAPI settings) {
+        for (String[] hullMod : new String[][]{{"safetyoverrides", "Safety Overrides"}, {"armoredcladding", "Armored Cladding"}, {"secret_mod", "Secret Mod"}}) {
+            HullModSpecAPI spec = mock(HullModSpecAPI.class);
+            when(spec.getDisplayName()).thenReturn(hullMod[1]);
+            when(settings.getHullModSpec(hullMod[0])).thenReturn(spec);
+        }
+        return new SkillType.Builder("safety_overrides", "Safety Overrides", "a.png", SkillTier.NOTABLE)
+                .effects(List.of())
+                .vanillaHullModId("safetyoverrides")
+                .exclusiveHullModIds(List.of("armoredcladding", "secret_mod"))
+                .build();
+    }
+
+    @Test
+    void theExclusivityLineListsOnlyConflictingHullModsThePlayerKnowsButAlwaysItsOwnHullMod() {
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        SectorAPI sector = mock(SectorAPI.class);
+        CharacterDataAPI playerCharacter = mock(CharacterDataAPI.class);
+        globalMock.when(Global::getSector).thenReturn(sector);
+        when(sector.getCharacterData()).thenReturn(playerCharacter);
+        when(playerCharacter.knowsHullMod("armoredcladding")).thenReturn(true);
+
+        assertEquals("Mutually exclusive with hullmods:\n• Armored Cladding\n• Safety Overrides", description(safetyOverridesWithConflicts(settings)));
+    }
+
+    @Test
+    void aShipAwareFilterAlsoListsAConflictingHullModTheShipHas() {
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        SkillType type = safetyOverridesWithConflicts(settings);
+
+        String description = SkillNode.describeMechanics(type, null, false, "secret_mod"::equals).all().stream()
+                .map(DescriptionLine::plain).collect(Collectors.joining("\n\n"));
+
+        assertEquals("Mutually exclusive with hullmods:\n• Secret Mod\n• Safety Overrides", description);
     }
 
     @Test

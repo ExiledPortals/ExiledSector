@@ -63,21 +63,29 @@ public enum StatMode {
     }
 
     public StyledText description(float magnitude, String statName) {
+        return description(magnitude, StyledText.of(statName));
+    }
+
+    private StyledText description(float magnitude, StyledText statName) {
         return Translation.msg(descriptionKey + (magnitude >= 0 ? ".up" : ".down")).arg("stat", statName)
                 .arg("value", Math.abs(magnitude)).styled();
     }
 
     public StyledText describeStat(float magnitude, String statKey) {
-        return description(magnitude, Translation.text(statKey));
+        return description(magnitude, Translation.styled(statKey));
     }
 
     public StyledText description(float magnitude, String subject, String statName) {
+        return description(magnitude, subject, StyledText.of(statName));
+    }
+
+    private StyledText description(float magnitude, String subject, StyledText statName) {
         return Translation.msg(descriptionKey + (magnitude >= 0 ? ".up" : ".down") + ".subject").arg("subject", subject)
                 .arg("stat", statName).arg("value", Math.abs(magnitude)).styled();
     }
 
     public StyledText describeStat(float magnitude, String subjectKey, String statKey) {
-        return description(magnitude, Translation.text(subjectKey), Translation.text(statKey));
+        return description(magnitude, Translation.text(subjectKey), Translation.styled(statKey));
     }
 
     abstract void apply(MutableStat stat, String modId, float magnitude);

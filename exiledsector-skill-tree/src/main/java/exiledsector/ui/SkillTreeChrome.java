@@ -25,7 +25,8 @@ final class SkillTreeChrome {
     private final FleetMemberAPI member;
     private final SkillTreeReadoutBar ordnancePointsBar = new SkillTreeReadoutBar(SkillTreeChrome.class, 0, "ui.readout.opBar");
     private final SkillTreeLevelBar levelBar;
-    private final SkillTreeReadoutBar nodesBar = new SkillTreeReadoutBar(SkillTreeChrome.class, 2, "ui.readout.nodesBar");
+    private final SkillTreeReadoutBar nodesBar = new SkillTreeReadoutBar(SkillTreeChrome.class, 2, "ui.readout.nodesBar",
+            "ui.readout.nodesBarPlanned");
     private final int maxAllocatedNodes = ShipLevelConfig.maxAllocatedNodes();
     private final SkillTreeInfoTooltipRenderer infoTooltipRenderer;
     private final String readoutTooltipTitle = Translation.text("ui.readout.title");
@@ -75,6 +76,7 @@ final class SkillTreeChrome {
         boolean readoutsLive = mouseKnown && mode.enables(CanvasMode.Chrome.READOUTS);
         ordnancePointsBar.advance(amount, canvasPosition, budget.usedOp, budget.totalOp, mouseX, mouseY, readoutsLive);
         levelBar.advance(amount, canvasPosition, mouseX, mouseY, readoutsLive);
+        nodesBar.setPlanned(templateUi.plannedNodeSlots());
         nodesBar.advance(amount, canvasPosition, ShipSkillDataManager.get(member.getId()).usedNodeSlots(), maxAllocatedNodes, mouseX,
                 mouseY, readoutsLive);
     }

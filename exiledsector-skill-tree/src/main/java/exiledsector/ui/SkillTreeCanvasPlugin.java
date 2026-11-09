@@ -211,6 +211,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         nodeSearch.setStatFocus(statPanel.hoveredNodeIds());
         chrome.advanceVisibility(amount, mode, hyperspaceMode.chromeAlpha(), hyperspaceMode.treeAlpha());
         chrome.advance(amount, canvasPosition, mode, treeSession.budget(), mouseX, mouseY, mouseKnown);
+        nodeSearch.setLogisticsFocus(mouseKnown && schematicButtons.hovered(mouseX, mouseY) instanceof LogisticsSlots);
         float dimStep = amount / CRAFTING_BENCH_DIM_SECONDS;
         craftingBenchDimProgress = Fade.step(craftingBenchDimProgress, socketPlacement.isCraftingBenchOpen(), dimStep);
         rememberCamera(mode);

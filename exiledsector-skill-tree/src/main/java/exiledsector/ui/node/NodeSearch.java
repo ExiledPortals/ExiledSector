@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.StyledText;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.skills.DescriptionLine;
+import exiledsector.skills.LogisticsNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -31,6 +32,7 @@ public final class NodeSearch {
     private NodeAllocator.Snapshot matchedSnapshot;
     private boolean socketFocus;
     private boolean treeSocketFocus;
+    private boolean logisticsFocus;
     private Set<String> statFocusNodeIds = Set.of();
     private int nextMatchIndex;
 
@@ -67,11 +69,15 @@ public final class NodeSearch {
     }
 
     public boolean isActive() {
-        return !statFocusNodeIds.isEmpty() || socketFocus || !query.isEmpty();
+        return !statFocusNodeIds.isEmpty() || logisticsFocus || socketFocus || !query.isEmpty();
     }
 
     public void setStatFocus(Set<String> nodeIds) {
         statFocusNodeIds = nodeIds == null ? Set.of() : nodeIds;
+    }
+
+    public void setLogisticsFocus(boolean focus) {
+        logisticsFocus = focus;
     }
 
     public void setSocketFocus(boolean focus) {
@@ -95,6 +101,9 @@ public final class NodeSearch {
         if (!statFocusNodeIds.isEmpty()) {
             return statFocusNodeIds.contains(node.getId());
         }
+        if (logisticsFocus) {
+            return isLogistics(node, allocation.skillData());
+        }
         if (socketFocus) {
             return treeSocketFocus && node.getType().getTier() == SkillTier.SOCKET && allocation.skillData().isAllocated(node.getId());
         }
@@ -116,6 +125,19 @@ public final class NodeSearch {
         }
         for (String optionId : node.getType().getChoiceOptionIds()) {
             if (typeMatches(SkillTree.getType(optionId))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isLogistics(SkillNode node, ShipSkillData skillData) {
+        SkillType effectiveType = node.resolveEffectiveType(skillData);
+        if (effectiveType != node.getType() || LogisticsNodes.isLogistics(effectiveType)) {
+            return LogisticsNodes.isLogistics(effectiveType);
+        }
+        for (String optionId : node.getType().getChoiceOptionIds()) {
+            if (LogisticsNodes.isLogistics(SkillTree.getType(optionId))) {
                 return true;
             }
         }

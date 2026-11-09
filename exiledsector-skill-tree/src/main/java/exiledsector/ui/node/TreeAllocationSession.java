@@ -315,6 +315,17 @@ public final class TreeAllocationSession {
         return snapshot().skillData().usedNodeSlots();
     }
 
+    public int plannedNodeSlots() {
+        ShipSkillData data = snapshot().skillData();
+        int planned = data.usedNodeSlots();
+        for (String nodeId : templateNodeIds()) {
+            if (!data.isAllocated(nodeId) && SkillTree.get(nodeId) != null) {
+                planned++;
+            }
+        }
+        return planned;
+    }
+
     public List<TemplateStep> captureTemplateSteps() {
         SkillNode root = getStartingRoot();
         return TemplateCapture.capture(snapshot().skillData(), root == null ? null : root.getId(), SkillTree.getAllNodes());

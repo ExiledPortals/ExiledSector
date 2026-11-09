@@ -12,11 +12,13 @@ import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.IntegrationLines;
 import exiledsector.skills.ShipFacts;
 import exiledsector.effects.ModuleShareSetting;
+import exiledsector.effects.PlayerShipFacts;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.CostItems;
 import exiledsector.skills.EffectContribution;
 import exiledsector.skills.ItemCostLedger;
+import exiledsector.skills.KnownHullMods;
 import exiledsector.skills.LogisticsNodes;
 import exiledsector.skills.ModuleShareExtent;
 import exiledsector.skills.NodeDescription;
@@ -183,7 +185,8 @@ final class SkillTreeNodeTooltipRenderer {
                 label -> label.setWrapped(type.getDisplayName(), tooltipText.nodeMaxTextWidth(), TOOLTIP_MAX_TEXT_HEIGHT));
         TextLabel body = body(typeTooltipBodies, type.getId(), List.of(type.getId(), expanded, refusalReason == null ? "" : refusalReason,
                         costLine == null ? "" : costLine),
-                () -> withCostLine(withModuleShareLine(SkillNode.describeMechanics(type, fleetMember.getHullSpec().getHullSize()), type), costLine),
+                () -> withCostLine(withModuleShareLine(SkillNode.describeMechanics(type, fleetMember.getHullSpec().getHullSize(), false,
+                        this::listsConflictingHullMod), type), costLine),
                 List::of, expanded, refusalReason);
 
         panelStyle.drawTitleBodyTooltip(title, flavourFor(type), body, List.of(), tablesFor(type, allocation.statsRevision()), null,
@@ -426,7 +429,8 @@ final class SkillTreeNodeTooltipRenderer {
             effects.add(plainLine("ui.node.choiceHint"));
         } else {
             IntegrationLines.State integration = integrationState(skillData, node);
-            NodeDescription description = IntegrationLines.describe(effectiveType, fleetMember.getHullSpec().getHullSize(), integration);
+            NodeDescription description = IntegrationLines.describe(effectiveType, fleetMember.getHullSpec().getHullSize(), integration,
+                    this::listsConflictingHullMod);
             effects.addAll(description.effects());
             details.addAll(description.details());
             if (showsAffinity(effectiveType, false, false, null)) {
@@ -441,6 +445,10 @@ final class SkillTreeNodeTooltipRenderer {
             effects.add(plainLine("ui.node.socket.installHint"));
         }
         return new NodeDescription(effects, details);
+    }
+
+    private boolean listsConflictingHullMod(String hullModId) {
+        return KnownHullMods.knownByPlayer(hullModId) || PlayerShipFacts.hasHullMod(fleetMember.getVariant(), hullModId);
     }
 
     private static boolean showsAffinity(SkillType effectiveType, boolean hidden, boolean showChoiceHint, Item socketed) {

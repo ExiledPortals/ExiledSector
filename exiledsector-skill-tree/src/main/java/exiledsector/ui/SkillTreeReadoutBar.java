@@ -54,6 +54,7 @@ final class SkillTreeReadoutBar {
     private final SpriteCache spriteCache;
     private final int row;
     private final String labelKey;
+    private final String plannedLabelKey;
     private final FaderUtil hoverFader = new FaderUtil(HOVER_FADE_IN, HOVER_FADE_OUT);
 
     private final TextLabel labelText = new TextLabel(FONT, TEXT_COLOR);
@@ -72,6 +73,8 @@ final class SkillTreeReadoutBar {
     private float displayedTotal;
     private int labelledSpent = -1;
     private int labelledTotal = -1;
+    private int targetPlanned = -1;
+    private int labelledPlanned = -1;
     private String spentOfTotalLabel;
 
     SkillTreeReadoutBar(Class<?> owner, int row) {
@@ -79,9 +82,18 @@ final class SkillTreeReadoutBar {
     }
 
     SkillTreeReadoutBar(Class<?> owner, int row, String labelKey) {
+        this(owner, row, labelKey, null);
+    }
+
+    SkillTreeReadoutBar(Class<?> owner, int row, String labelKey, String plannedLabelKey) {
         this.spriteCache = new SpriteCache(owner);
         this.row = row;
         this.labelKey = labelKey;
+        this.plannedLabelKey = plannedLabelKey;
+    }
+
+    void setPlanned(int plannedSpent) {
+        targetPlanned = plannedSpent;
     }
 
     static float stackHeight(int rowCount) {
@@ -159,11 +171,17 @@ final class SkillTreeReadoutBar {
     private String spentOfTotalLabel() {
         int shownSpent = Math.round(displayedSpent);
         int shownTotal = Math.round(displayedTotal);
-        if (shownSpent != labelledSpent || shownTotal != labelledTotal) {
+        int shownPlanned = plannedLabelKey != null && targetPlanned > shownSpent ? targetPlanned : -1;
+        if (shownSpent != labelledSpent || shownTotal != labelledTotal || shownPlanned != labelledPlanned) {
             labelledSpent = shownSpent;
             labelledTotal = shownTotal;
-            spentOfTotalLabel = labelKey == null ? shownSpent + " / " + shownTotal
-                    : Translation.msg(labelKey).arg("spent", shownSpent).arg("total", shownTotal).text();
+            labelledPlanned = shownPlanned;
+            if (shownPlanned >= 0) {
+                spentOfTotalLabel = Translation.msg(plannedLabelKey).arg("spent", shownSpent).arg("planned", shownPlanned).arg("total", shownTotal).text();
+            } else {
+                spentOfTotalLabel = labelKey == null ? shownSpent + " / " + shownTotal
+                        : Translation.msg(labelKey).arg("spent", shownSpent).arg("total", shownTotal).text();
+            }
         }
         return spentOfTotalLabel;
     }

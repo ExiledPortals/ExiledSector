@@ -4829,9 +4829,6 @@
 						"effect": "SUPPLIES_PER_MONTH_MULT",
 						"magnitude": -10
 					}
-				],
-				"effectText": [
-					"The crabs eat what the crew won't."
 				]
 			},
 			"itemCost": {
@@ -6295,11 +6292,11 @@
 				"effects": [
 					{
 						"effect": "ENERGY_WEAPON_DAMAGE_PERCENT",
-						"magnitude": 15
+						"magnitude": 20
 					},
 					{
 						"effect": "ENERGY_WEAPON_RATE_OF_FIRE_PERCENT",
-						"magnitude": 20
+						"magnitude": 25
 					},
 					{
 						"effect": "ZERO_FLUX_BOOST_FLUX_LEVEL_PERCENT",
