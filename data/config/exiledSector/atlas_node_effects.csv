@@ -1,7 +1,7 @@
 id,effects,note
 infested,CHART_FLEET_SIZE_PERCENT:6; CHART_FLEET_QUALITY_PERCENT:25; CHART_QUANTITY_PERCENT:30,"Systems near an uncleared Infestation; the infestation faction holds them"
 cleansed,CHART_ITEM_RARITY_PERCENT:50; CHART_ITEM_PERCENT:25; CHART_REWARD_PERCENT:50,"Systems whose Infestation has been cleared"
-sensor_array,CHART_FLEET_SIZE_PERCENT:-8; CHART_POI_BUDGET_PERCENT:-50,"A short run with a boss"
+sensor_array,CHART_FLEET_SIZE_PERCENT:-8; CHART_POI_BUDGET_PERCENT:-50; CHART_CATALYST_PERCENT:200,"A short run with a boss that finds more Atlas Catalysts"
 infestation,CHART_BOSS_SIZE_PERCENT:25; CHART_FLEET_SIZE_PERCENT:10; CHART_REWARD_PERCENT:100,"The Infestation itself"
 bastion,CHART_BOSS_SIZE_PERCENT:38; CHART_FLEET_SIZE_PERCENT:12; CHART_REWARD_PERCENT:150,"One of the three Bastions"
 relay_stage,CHART_FLEET_SIZE_PERCENT:5; CHART_BOSS_SIZE_PERCENT:5; CHART_QUANTITY_PERCENT:25,"Relay Network lines, added once for each chain stage past the first (placeholders)"

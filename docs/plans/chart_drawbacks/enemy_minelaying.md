@@ -21,12 +21,11 @@ A battle plugin like Ionized: `ChartMinelayerPlugin` in `charts.effect`, registe
 ## Checks before building
 
 1. Whether a `minelayer2` explosion hurts ships of its own side. Doom's mines don't harm allies in vanilla play; confirm by decompiling the mine's on-hit and explosion path. If they do, enemy-laid mines catching enemy ships is acceptable and maybe fun, but should be known.
-2. Whether AI avoidance holds up with dozens of mines on the field (path planning cost and AI freezing in place). Test a large fleet at 1% and at 3%.
-3. Mine sprite and sound load: `minelayer2` belongs to the Doom's system; check it is loaded in every game (it is a vanilla projectile, so it should be).
+2. Mine sprite and sound load: `minelayer2` belongs to the Doom's system; check it is loaded in every game (it is a vanilla projectile, so it should be).
 
 ## Build order
 
 1. [ ] `CHART_ENEMY_MINE_CHANCE_PERCENT` in `ChartModifier`, `star_chart_modifiers.csv` row, the chance through `ChartGenContext`, `ChartPlayerModifiers` (set, clear) and `ChartRunScript`.
 2. [ ] `ChartMinelayerPlugin` with the spawn rules above; spawn point picking in a static helper so it can be tested without an engine.
 3. [ ] Strings (en and zh_CN draft) following `docs/tooltip_wording.md`, for example "Every second in the system, each enemy ship has a <bad>{value}%</bad> chance to lay a mine nearby".
-4. [ ] Tests for the spawn point rules and eligibility; `docs/docs.md` "Chart system rules" sentence; in-game pass on the checks above.
+4. [ ] Tests for the spawn point rules and eligibility; `docs/docs.md` "Chart system rules" sentence.

@@ -4,7 +4,7 @@ A modular ship's tree reaches its modules only on the parent's first combat fram
 
 This plan applies the share the way the parent gets its own tree: through a hull mod on the module variant, before the module is created. The engine then builds hull, armor, arc and ammo from the boosted stats, and every view of the module, refit tabs included, shows them. It was the intended design for modules from the start.
 
-Status: built and tested (2026-11-09). In-game checks pending: refit module tabs show the share, and a modular ship's modules in combat and in the simulator.
+Status: built and tested (2026-11-09).
 
 ## Engine facts
 

@@ -4,7 +4,7 @@ A Contraband Modspec Cache in an allocated socket allocates one to three notable
 
 This plan gives granted nodes a marker on the tree and ties them visibly to their socket.
 
-Status: steps 1 to 4 built, uncommitted on the granted marker worktree. Not yet checked in game.
+Status: steps 1 to 4 built, uncommitted on the granted marker worktree.
 
 ## Where the code lives
 
@@ -57,4 +57,4 @@ These were built with the recommended option for each. The owner hasn't confirme
 
 - The granted-node map holds exactly the `ACTIVE` grants, takes each colour from its item, and drops a node that's also reached by path.
 - It's rebuilt after a socket change and reused when nothing changed (same instance between two frames with no revision change).
-- Rendering itself isn't unit tested; check it in game.
+- Rendering itself isn't unit tested.

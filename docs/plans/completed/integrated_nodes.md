@@ -2,7 +2,7 @@
 
 Integration replaces the node upgrade tiers and blueprints (removed; the old work is on the `node-tiers-backup` branch). The player spends story points to integrate a node on one ship, the way vanilla builds in an s-mod. An integrated node uses its integrated effects instead of its normal ones.
 
-Status: built 2026-11-08; not yet checked in game. All magnitudes are placeholders.
+Status: built 2026-11-08. All magnitudes are placeholders.
 
 ## Rules
 

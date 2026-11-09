@@ -6,7 +6,7 @@ The Neutron Star anomaly (`StarAnomalies.NEUTRON_STAR`) forces a single `star_ne
 2. Enemy fleets get blown to the edge of the map and drained of CR, so the player can't find them or finish the chart. Every non-player fleet in a chart system must ignore the push and the CR loss.
 3. Getting back to the inner wormhole against the beam is slow. The player should be able to Transverse Jump out of a chart, with the same result as choosing to leave at the inner wormhole.
 
-Status: built and unit tested 2026-10-26 on parallel-work (uncommitted). Not yet checked in game. See `docs/plans/anomalies/overview.md` for the shared framework.
+Status: built and unit tested 2026-10-26 on parallel-work (uncommitted). See `docs/plans/anomalies/overview.md` for the shared framework.
 
 ## Engine facts
 

@@ -2,7 +2,7 @@
 
 A fortified listening post sits in the system behind a ring of sensor pickets, with a vault full of intercepted data. Reach it unseen and the vault is yours whole. Get spotted and the alarm goes up: the vault starts purging and the pickets close in on the post. It's a heist played with Starsector's own sensor game.
 
-Status: built and tested 2026-10-29 (package `exiledsector.charts.anomaly.heist`). Not yet checked in game. Proposed 2026-10-28. See `docs/plans/anomalies/overview.md` for the shared framework.
+Status: built and tested 2026-10-29 (package `exiledsector.charts.anomaly.heist`). Proposed 2026-10-28. See `docs/plans/anomalies/overview.md` for the shared framework.
 
 ## Lore
 

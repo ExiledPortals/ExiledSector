@@ -856,7 +856,7 @@ shared one. Powerful Boss (`PowerfulBoss`) does, and its run's boss always drops
 inside a run never fall below its tier.
 
 Killing the boss is the only way to complete a system, and it grants an atlas point for the first clear of each tier (`AtlasProgress`).
-A Sensor Array also reveals 6 lanes, an Infestation cleanses the systems it infested, and a Bastion gives a key fragment and
+A Sensor Array also reveals 6 lanes and finds more Atlas Catalysts, an Infestation cleanses the systems it infested, and a Bastion gives a key fragment and
 allows one attempt. A system's anomalies are its rolled ones plus records inserted into `AtlasState`, which
 `AtlasAnomalies.canInsert` gates and any run there spends, at most 9 in all (`MAX_PER_SYSTEM`), unless a Relay Network chain moves on. A run that closes without killing its boss spends the system's
 rolled anomalies, all but star ones. Biomes tile the map from sites about five cells apart, and each sets how many of its cells hold a

@@ -1,6 +1,6 @@
 # Hull item advanced search
 
-Status: built on branch `advanced-search` (2026-11-04), not yet merged. Not yet tried in game.
+Status: built on branch `advanced-search` (2026-11-04), not yet merged.
 
 The storage panel's text search matches words and one "20+" minimum per term. Players with large stashes want a Path of Exile style trade search instead: pick stats from a list, give each a min and max, and combine them in AND and COUNT groups.
 

@@ -2,7 +2,7 @@
 
 Two biome landmarks: a Remnant Nexus in every Remnant Expanse pocket and a Domain-era survey mothership in every Derelict Graveyard pocket. Each is a station that launches and rebuilds fleets of its faction for as long as it stands, the way a vanilla Nexus does.
 
-Status: built 2026-10-29 apart from the in-game checks (package `exiledsector.charts.anomaly.station`), which are still open. Requested 2026-10-29. See `docs/plans/anomalies/overview.md` for the shared framework.
+Status: built 2026-10-29 (package `exiledsector.charts.anomaly.station`). Requested 2026-10-29. See `docs/plans/anomalies/overview.md` for the shared framework.
 
 ## Placement
 
@@ -36,7 +36,6 @@ The managers are system scripts that implement `ChartRunBound`. `ChartRunCloser`
 2. [x] Boss rows removed and `excluded_factions` on `chart_bosses.csv` (`ChartBosses.Definition.excludes`). Tests: `ChartBossesTest`.
 3. [x] The anomalies and their managers: `LaunchingStation`, `RemnantNexusStation`, `DomainMothership`, `NexusFleetManager`, `MothershipFleetManager`, `StationFleets`, `StationRules`; system-script cleanup in `ChartRunCloser`. Tests: `LaunchingStationTest`, `ChartRunCloserTest`.
 4. [x] Strings (en and zh_CN draft), `docs/docs.md` section, placeholder atlas icons: `graphics/icons/anomalies/remnant_nexus_station.png` (vanilla's Remnant crest scaled to 40 px) and `graphics/icons/anomalies/domain_mothership.png` (a copy of vanilla's `log_to_domain_derelict` intel icon).
-5. [ ] In-game checks: the Nexus and mothership launch, fleets patrol and return, the station loot drops, and nothing is left after the run closes.
 
 ## Open questions
 

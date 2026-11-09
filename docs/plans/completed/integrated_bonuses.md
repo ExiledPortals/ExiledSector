@@ -2,7 +2,7 @@
 
 Integrated effects for every notable and keystone that has none yet, extending `integrated_nodes.md`. Proposed 2026-11-08.
 
-Status: every bonus below approved and built 2026-11-08, Tania's included; not yet checked in game. All magnitudes are placeholders.
+Status: every bonus below approved and built 2026-11-08, Tania's included. All magnitudes are placeholders.
 
 An integrated node keeps its normal effects and gains the bonus listed here, the way an s-mod adds a line to its hull mod. "X instead of Y" changes one of the normal values. The `integrated` block in `skill_types.json` is a full replacement, so each block repeats the normal effects with the bonus applied. "(new)" marks a bonus that needs a new effect or a new parameter on an existing effect; everything else uses an effect that already exists.
 

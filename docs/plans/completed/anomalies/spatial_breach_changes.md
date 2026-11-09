@@ -6,7 +6,7 @@ There are three changes to the Spatial Breach (built in `spatial_breach.md`):
 2. The core item modifier line becomes a cache item line.
 3. Star Charts no longer roll any anomaly content, whether breach, storm or flare. Anomalies only come from the atlas: a cell rolls one, or has one inserted.
 
-Status: built 2026-10-26 on parallel-work. Not yet checked in game.
+Status: built 2026-10-26 on parallel-work.
 
 ## Part 1: no core interaction, no core loot
 

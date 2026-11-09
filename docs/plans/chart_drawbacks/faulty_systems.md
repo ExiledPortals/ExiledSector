@@ -18,7 +18,7 @@ One prefix line, `CHART_SHIP_SYSTEM_FAILURE_CHANCE_PERCENT` (name Faulty), place
 
 ## Fragility
 
-The roll has to land before the system's script applies anything. Most scripts act as the effect level ramps up through `IN`, so stopping on the first `IN` frame is clean; instant systems that act in their first frame may already have fired by the time the plugin sees them, depending on plugin and ship advance order. Before building, test at least: Burn Drive, Plasma Jets, Phase Skimmer, Phase Teleporter (Hyperion), Mine Strike (Doom), Temporal Shell, Fortress Shield, Damper Field, Recall Device, Entropy Amplifier, Lidar Array, Reality Disruptor and Targeting Feed, plus a toggled system. Any system the deactivate path can't stop cleanly is excluded from the roll (listed by id in the plugin), rather than half-failing.
+The roll has to land before the system's script applies anything. Most scripts act as the effect level ramps up through `IN`, so stopping on the first `IN` frame is clean; instant systems that act in their first frame may already have fired by the time the plugin sees them, depending on plugin and ship advance order. Before building, check against their scripts at least: Burn Drive, Plasma Jets, Phase Skimmer, Phase Teleporter (Hyperion), Mine Strike (Doom), Temporal Shell, Fortress Shield, Damper Field, Recall Device, Entropy Amplifier, Lidar Array, Reality Disruptor and Targeting Feed, plus a toggled system. Any system the deactivate path can't stop cleanly is excluded from the roll (listed by id in the plugin), rather than half-failing.
 
 ## Open questions
 
@@ -27,7 +27,7 @@ The roll has to land before the system's script applies anything. Most scripts a
 
 ## Build order
 
-1. [ ] Spike: the activation watcher and deactivate path tested against the system list above in the simulator; settle the exclusion list.
+1. [ ] Settle the exclusion list from the system list above.
 2. [ ] `CHART_SHIP_SYSTEM_FAILURE_CHANCE_PERCENT` in `ChartModifier`, `star_chart_modifiers.csv` row with the `ship_systems` group (also added to Inert's row), the chance through `ChartGenContext`, `ChartPlayerModifiers` (set, clear) and `ChartRunScript`.
 3. [ ] `ChartSystemFailurePlugin`, with the state-step detection in a static helper for tests.
 4. [ ] Strings (en and zh_CN draft) following `docs/tooltip_wording.md`, for example "Ship systems on your side have a <bad>{value}%</bad> chance to fail when activated in the system", and the floating text key.

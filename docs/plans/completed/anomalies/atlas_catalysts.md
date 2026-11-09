@@ -2,7 +2,7 @@
 
 Atlas Catalysts are one category of consumable item: each adds one anomaly to a system on the Outer Reach Atlas. You pick a catalyst on the atlas, click a system, and the anomaly is there until a run spends it. Catalysts come in themed families with their own names and art, but every one works and drops the same way.
 
-Status: built 2026-10-28 apart from the in-game checks of steps 3 to 8, which are still open. Proposed 2026-10-28. This is the player's way of inserting anomalies that `docs/plans/atlas.md` (Anomalies, step 17) leaves for later. See `docs/plans/anomalies/overview.md` for the shared framework.
+Status: built 2026-10-28. Proposed 2026-10-28. This is the player's way of inserting anomalies that `docs/plans/atlas.md` (Anomalies, step 17) leaves for later. See `docs/plans/anomalies/overview.md` for the shared framework.
 
 ## Lore
 
