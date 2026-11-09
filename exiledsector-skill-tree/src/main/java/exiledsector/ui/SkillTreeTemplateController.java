@@ -20,6 +20,7 @@ import org.lwjgl.input.Keyboard;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 final class SkillTreeTemplateController {
 
@@ -274,7 +275,8 @@ final class SkillTreeTemplateController {
             }
             return;
         }
-        SkillTreeTemplateStore.save(name, startingRoot.getId(), hullSize(), treeSession.captureTemplateSteps(), treeSession.captureTemplateAnchors());
+        SkillTreeTemplateStore.save(name, startingRoot.getId(), hullSize(), treeSession.captureTemplateSteps(), treeSession.captureTemplateAnchors(),
+                treeSession.captureTemplateIntegrationMarks());
         templateBar.showResult(Translation.msg("ui.template.result.saved").arg("name", name).text());
     }
 
@@ -285,11 +287,12 @@ final class SkillTreeTemplateController {
         }
         List<TemplateStep> steps = treeSession.capturePlanSteps();
         Map<String, String> socketedAnchors = treeSession.captureTemplateAnchors();
-        SkillTreeTemplate saved = SkillTreeTemplateStore.replaceSteps(treeSession.plannedTemplateId(), steps, socketedAnchors);
+        Set<String> integrationMarks = treeSession.capturePlanIntegrationMarks();
+        SkillTreeTemplate saved = SkillTreeTemplateStore.replaceSteps(treeSession.plannedTemplateId(), steps, socketedAnchors, integrationMarks);
         if (saved == null) {
             String defaultName = Translation.msg("ui.template.defaultName").arg("hull", hullName()).text();
             saved = SkillTreeTemplateStore.save(TemplateNames.unique(defaultName, startingRoot.getId(), SkillTreeTemplateStore.all()),
-                    startingRoot.getId(), hullSize(), steps, socketedAnchors);
+                    startingRoot.getId(), hullSize(), steps, socketedAnchors, integrationMarks);
         }
         SkillTreeTemplateStore.assign(member.getId(), saved.id());
         treeSession.planSaved(saved);

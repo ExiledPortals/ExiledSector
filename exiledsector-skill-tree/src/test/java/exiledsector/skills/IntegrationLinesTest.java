@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class IntegrationLinesTest {
 
     private static final String REMOVED_PREFIX = "No longer: ";
-    private static final IntegrationLines.State NOT_INTEGRATED = new IntegrationLines.State(false, 1, true);
+    private static final IntegrationLines.State NOT_INTEGRATED = new IntegrationLines.State(false, 1, true, IntegrationLines.TemplateMark.NONE);
 
     private static final SkillType PENALTY_DROPPING = new SkillType.Builder("bulkheads", "Bulkheads", "a.png", SkillTier.NOTABLE)
             .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f), new SkillTypeEffect(FluxSkillEffect.FLUX_CAPACITY_MULT, -10f)))
@@ -64,6 +64,20 @@ class IntegrationLinesTest {
         DescriptionLine integratedJoke = integrated.stream().filter(line -> line.plain().equals(jokeLine)).findFirst().orElseThrow();
         assertTrue(isAllStoryPointGreen(integratedJoke.text()), integratedJoke.text().toMarkup());
         assertEquals(List.of(), removedTexts(integrated));
+    }
+
+    @Test
+    void aTemplateMarkAddsItsLineToANodeNotYetIntegrated() {
+        IntegrationLines.State marked = new IntegrationLines.State(false, 1, false, IntegrationLines.TemplateMark.MARKED);
+        IntegrationLines.State integratedAndMarked = new IntegrationLines.State(true, 1, false, IntegrationLines.TemplateMark.MARKED);
+
+        List<String> markedLines = IntegrationLines.describe(PENALTY_DROPPING, HullSize.CRUISER, marked).effects().stream()
+                .map(DescriptionLine::plain).toList();
+        List<String> integratedLines = IntegrationLines.describe(PENALTY_DROPPING, HullSize.CRUISER, integratedAndMarked).effects().stream()
+                .map(DescriptionLine::plain).toList();
+
+        assertTrue(markedLines.contains("The template marks this node for integration."), markedLines.toString());
+        assertFalse(integratedLines.contains("The template marks this node for integration."), integratedLines.toString());
     }
 
     @Test

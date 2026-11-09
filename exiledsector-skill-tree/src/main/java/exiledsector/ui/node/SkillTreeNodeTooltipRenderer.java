@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BooleanSupplier;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_COLOR;
@@ -61,6 +62,7 @@ final class SkillTreeNodeTooltipRenderer {
     private final FleetMemberAPI fleetMember;
     private final SkillTreePanelStyle panelStyle;
     private final BooleanSupplier planning;
+    private final Function<SkillNode, IntegrationLines.TemplateMark> templateMark;
     private final TooltipText tooltipText = SkillTreePanelStyle.tooltipText();
     private final Map<String, TextLabel> tooltipTitles = new HashMap<>();
     private final Map<String, TextLabel> tooltipBodies = new HashMap<>();
@@ -105,10 +107,12 @@ final class SkillTreeNodeTooltipRenderer {
         }
     }
 
-    SkillTreeNodeTooltipRenderer(FleetMemberAPI fleetMember, SkillTreePanelStyle panelStyle, BooleanSupplier planning) {
+    SkillTreeNodeTooltipRenderer(FleetMemberAPI fleetMember, SkillTreePanelStyle panelStyle, BooleanSupplier planning,
+                                 Function<SkillNode, IntegrationLines.TemplateMark> templateMark) {
         this.fleetMember = fleetMember;
         this.panelStyle = panelStyle;
         this.planning = planning;
+        this.templateMark = templateMark;
     }
 
     void renderTooltip(SkillNode node, NodeAllocator.Snapshot allocation, String tooltipWarning, float mouseX, float mouseY, float alphaMult) {
@@ -133,7 +137,7 @@ final class SkillTreeNodeTooltipRenderer {
         DoctrineRewrite rewrite = hidden ? null : DoctrineOverrides.rewrite(skillData, node.getId());
         LogisticsStatus logistics = hidden || socketed != null ? null : LogisticsStatus.of(effectiveType, skillData.isAllocated(node.getId()),
                 allocation.gate());
-        IntegrationLines.State integration = IntegrationLines.State.of(skillData, node, !planning.getAsBoolean());
+        IntegrationLines.State integration = integrationState(skillData, node);
         boolean previewsIntegration = !hidden && !showChoiceHint && socketed == null;
         List<Object> signature = List.of(effectiveType.getId(), hidden, showChoiceHint, expanded, allocatedSocket,
                 socketed == null ? "" : socketed.id(), refusalReason == null ? "" : refusalReason, shipState, shipStateRevision,
@@ -365,6 +369,10 @@ final class SkillTreeNodeTooltipRenderer {
         return new NodeDescription(description.effects(), details);
     }
 
+    private IntegrationLines.State integrationState(ShipSkillData skillData, SkillNode node) {
+        return IntegrationLines.State.of(skillData, node, !planning.getAsBoolean(), templateMark.apply(node));
+    }
+
     private StyledText moduleShareLine(SkillType type, boolean integrated) {
         ShipHullSpecAPI hullSpec = fleetMember.getHullSpec();
         if (!ShipFacts.hasModuleSlots(hullSpec)) {
@@ -416,7 +424,7 @@ final class SkillTreeNodeTooltipRenderer {
         if (showChoiceHint) {
             effects.add(plainLine("ui.node.choiceHint"));
         } else {
-            IntegrationLines.State integration = IntegrationLines.State.of(skillData, node, !planning.getAsBoolean());
+            IntegrationLines.State integration = integrationState(skillData, node);
             NodeDescription description = IntegrationLines.describe(effectiveType, fleetMember.getHullSpec().getHullSize(), integration);
             effects.addAll(description.effects());
             details.addAll(description.details());

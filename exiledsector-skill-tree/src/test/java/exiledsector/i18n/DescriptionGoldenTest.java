@@ -130,7 +130,7 @@ class DescriptionGoldenTest {
         }
         for (boolean integrated : new boolean[]{false, true}) {
             for (HullSize hullSize : HULL_SIZES) {
-                IntegrationLines.State state = new IntegrationLines.State(integrated, 2, true);
+                IntegrationLines.State state = new IntegrationLines.State(integrated, 2, true, IntegrationLines.TemplateMark.NONE);
                 List<DescriptionLine> effects = new ArrayList<>(IntegrationLines.describe(type, hullSize, state).effects());
                 effects.addAll(IntegrationLines.preview(type, hullSize, state));
                 for (int i = 0; i < effects.size(); i++) {

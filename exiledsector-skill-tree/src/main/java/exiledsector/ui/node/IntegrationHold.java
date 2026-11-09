@@ -3,11 +3,13 @@ package exiledsector.ui.node;
 final class IntegrationHold {
 
     static final float HOLD_SECONDS = 3f;
+    static final float MARK_HOLD_SECONDS = 1f;
     static final float CLICK_SECONDS = 0.25f;
     static final float RETRACT_SECONDS = 0.4f;
 
     enum Step { NONE, CLAIMED, COMPLETED }
 
+    private final float holdSeconds;
     private String heldNodeId;
     private boolean affordable;
     private boolean holding;
@@ -15,6 +17,14 @@ final class IntegrationHold {
     private float heldSeconds;
     private float progress;
     private String warning;
+
+    IntegrationHold() {
+        this(HOLD_SECONDS);
+    }
+
+    IntegrationHold(float holdSeconds) {
+        this.holdSeconds = holdSeconds;
+    }
 
     void begin(String nodeId, boolean affordable) {
         heldNodeId = nodeId;
@@ -39,9 +49,9 @@ final class IntegrationHold {
         }
         heldSeconds += amount;
         if (affordable) {
-            progress = Math.min(1f, heldSeconds / HOLD_SECONDS);
+            progress = Math.min(1f, heldSeconds / holdSeconds);
         }
-        if (affordable && heldSeconds >= HOLD_SECONDS) {
+        if (affordable && heldSeconds >= holdSeconds) {
             clear();
             claimed = true;
             return Step.COMPLETED;

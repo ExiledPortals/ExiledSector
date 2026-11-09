@@ -10,8 +10,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public final class TemplateCodec {
 
@@ -42,6 +44,9 @@ public final class TemplateCodec {
             if (!template.anchorsBySocket().isEmpty()) {
                 templateJson.put("anchors", new JSONObject(template.anchorsBySocket()));
             }
+            if (!template.integrationMarks().isEmpty()) {
+                templateJson.put("integrate", new JSONArray(template.integrationMarks()));
+            }
             return templateJson;
         } catch (JSONException e) {
             throw new IllegalArgumentException("Template " + template.id() + " could not be encoded", e);
@@ -70,7 +75,21 @@ public final class TemplateCodec {
             return null;
         }
         return new SkillTreeTemplate(templateId, templateName, NodeReplacements.current(rootNodeId), parseHullSize(templateJson.optString("hull", null)), parseSteps(templateJson.optJSONArray("steps")),
-                parseAnchors(templateJson.optJSONObject("anchors")));
+                parseAnchors(templateJson.optJSONObject("anchors")), parseIntegrationMarks(templateJson.optJSONArray("integrate")));
+    }
+
+    private static Set<String> parseIntegrationMarks(JSONArray marksArray) {
+        Set<String> integrationMarks = new LinkedHashSet<>();
+        if (marksArray == null) {
+            return integrationMarks;
+        }
+        for (int i = 0; i < marksArray.length(); i++) {
+            String nodeId = marksArray.optString(i, "").trim();
+            if (!nodeId.isEmpty()) {
+                integrationMarks.add(NodeReplacements.current(nodeId));
+            }
+        }
+        return integrationMarks;
     }
 
     private static Map<String, String> parseAnchors(JSONObject anchorsJson) {

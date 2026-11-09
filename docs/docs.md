@@ -151,7 +151,9 @@ Templates live outside the save, in `saves/common/exiledSector_skillTreeTemplate
 (`SkillTreeTemplateStore`). The file is `{"v":1,"templates":[...]}` (a bare array also reads), each entry in
 `TemplateCodec`'s shape. It is re-read on game load, when the skill tree or template list opens and before every template
 change, which then rewrites the whole file. Only which template each ship uses stays in the save, and templates an older
-save still holds move into the file on load.
+save still holds move into the file on load. A template's `integrate` list marks nodes to integrate by hand later
+(`SkillTreeTemplate.integrationMarks`, kept only for nodes on its steps); auto-allocation never integrates, and saving a
+template also marks whatever the ship has integrated.
 
 Retired or renamed node, option and socket ids load through `node_replacements.csv`, `node_id_renames.csv` and
 `AffinityOptions`, and the next write stores the current ids. Unknown nodes stay in the template and are skipped

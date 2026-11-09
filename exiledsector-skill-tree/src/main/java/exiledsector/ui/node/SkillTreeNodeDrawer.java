@@ -83,7 +83,7 @@ public final class SkillTreeNodeDrawer {
         this.beams = ringRenderer.beams();
         this.allocationAnimation = new AllocationAnimation(new AnimatedTree(), new AnimationSounds());
         this.connectorRenderer = new SkillTreeNodeConnectorRenderer(panelStyle, nodeSearch, wormholeOpenness, socketWormholes, beams);
-        this.tooltipRenderer = new SkillTreeNodeTooltipRenderer(member, panelStyle, session::isPlanning);
+        this.tooltipRenderer = new SkillTreeNodeTooltipRenderer(member, panelStyle, session::isPlanning, session::templateMark);
         this.rootAffinityNumber = new RootAffinityNumber(member);
         this.choicePickerRenderer = new SkillTreeNodeChoicePickerRenderer(panelStyle);
     }
@@ -169,8 +169,9 @@ public final class SkillTreeNodeDrawer {
         float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
         boolean integrated = skillData.isIntegrated(node.getId());
         float integrationHoldProgress = session.integrationHoldProgress(node);
+        float blueprintRadii = integrated ? 0f : blueprintRadii(node);
         float reach = ringRenderer.reach(footprintSize, node);
-        if (integrated || integrationHoldProgress > 0f) {
+        if (integrated || integrationHoldProgress > 0f || blueprintRadii > 0f) {
             reach = Math.max(reach, rootCircuitRenderer.reachRadius(donutRadius(footprintSize)));
         }
         if (!viewport.isVisible(nodeX, nodeY, reach)) {
@@ -218,6 +219,8 @@ public final class SkillTreeNodeDrawer {
         } else if (integrationHoldProgress > 0f) {
             rootCircuitRenderer.draw(nodeX, nodeY, donutRadius(footprintSize), nodeAlpha, integratedCircuitColour,
                     integrationHoldProgress * RootCircuit.get().longestTraceRadii());
+        } else if (blueprintRadii > 0f) {
+            rootCircuitRenderer.drawBlueprint(nodeX, nodeY, donutRadius(footprintSize), nodeAlpha, integratedCircuitColour, blueprintRadii);
         }
         Color notableDoctrineColor = rewrite != null && tier == SkillTier.NOTABLE ? DoctrineColors.forDoctrine(rewrite.doctrineDefinitionId()) : null;
         Color grantColor = allocated ? grantMarkers.colorFor(node.getId()) : null;
@@ -236,6 +239,12 @@ public final class SkillTreeNodeDrawer {
                 iconRenderer.drawIcon(effectiveType.getIconPath(), nodeX, nodeY, iconSize, nodeAlpha, tint);
             }
         }
+    }
+
+    private float blueprintRadii(SkillNode node) {
+        float markHoldProgress = session.integrationMarkHoldProgress(node);
+        float shownShare = session.integrationMarks().contains(node.getId()) ? 1f - markHoldProgress : markHoldProgress;
+        return shownShare * RootCircuit.get().longestTraceRadii();
     }
 
     private void renderRootNode(SkillNode node, TreeViewport viewport, float alphaMult, NodeAllocator.Snapshot allocation,

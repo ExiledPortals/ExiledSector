@@ -119,16 +119,23 @@ public final class SkillTreeTemplateStore {
 
     public static SkillTreeTemplate save(String templateName, String rootNodeId, HullSize hullSize, List<TemplateStep> steps,
                                          Map<String, String> anchorsBySocket) {
-        return save(templateName, rootNodeId, hullSize, steps, anchorsBySocket, () -> UUID.randomUUID().toString());
+        return save(templateName, rootNodeId, hullSize, steps, anchorsBySocket, Set.of());
+    }
+
+    public static SkillTreeTemplate save(String templateName, String rootNodeId, HullSize hullSize, List<TemplateStep> steps,
+                                         Map<String, String> anchorsBySocket, Set<String> integrationMarks) {
+        return save(templateName, rootNodeId, hullSize, steps, anchorsBySocket, integrationMarks, () -> UUID.randomUUID().toString());
     }
 
     static SkillTreeTemplate save(String templateName, String rootNodeId, HullSize hullSize, List<TemplateStep> steps,
-                                  Map<String, String> anchorsBySocket, Supplier<String> templateIdSupplier) {
+                                  Map<String, String> anchorsBySocket, Set<String> integrationMarks, Supplier<String> templateIdSupplier) {
         reload();
-        return store(new SkillTreeTemplate(templateIdSupplier.get(), TemplateNames.normalise(templateName), rootNodeId, hullSize, steps, anchorsBySocket));
+        return store(new SkillTreeTemplate(templateIdSupplier.get(), TemplateNames.normalise(templateName), rootNodeId, hullSize, steps, anchorsBySocket,
+                integrationMarks));
     }
 
-    public static SkillTreeTemplate replaceSteps(String templateId, List<TemplateStep> steps, Map<String, String> socketedAnchors) {
+    public static SkillTreeTemplate replaceSteps(String templateId, List<TemplateStep> steps, Map<String, String> socketedAnchors,
+                                                 Set<String> integrationMarks) {
         reload();
         SkillTreeTemplate template = find(templateId);
         if (template == null) {
@@ -136,7 +143,8 @@ public final class SkillTreeTemplateStore {
         }
         Map<String, String> anchorsBySocket = new HashMap<>(template.anchorsBySocket());
         anchorsBySocket.putAll(socketedAnchors);
-        return store(new SkillTreeTemplate(template.id(), template.name(), template.rootNodeId(), template.hullSize(), steps, anchorsBySocket));
+        return store(new SkillTreeTemplate(template.id(), template.name(), template.rootNodeId(), template.hullSize(), steps, anchorsBySocket,
+                integrationMarks));
     }
 
     public static SkillTreeTemplate rename(String templateId, String templateName) {
@@ -144,7 +152,7 @@ public final class SkillTreeTemplateStore {
         SkillTreeTemplate template = find(templateId);
         return template == null ? null
                 : store(new SkillTreeTemplate(template.id(), TemplateNames.normalise(templateName), template.rootNodeId(), template.hullSize(), template.steps(),
-                        template.anchorsBySocket()));
+                        template.anchorsBySocket(), template.integrationMarks()));
     }
 
     private static SkillTreeTemplate store(SkillTreeTemplate template) {

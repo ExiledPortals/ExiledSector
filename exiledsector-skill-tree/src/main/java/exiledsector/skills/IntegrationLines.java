@@ -15,11 +15,22 @@ public final class IntegrationLines {
 
     private static final Pattern NUMBER = Pattern.compile("[+-]?\\d+(?:[.,]\\d+)*");
 
-    public record State(boolean integrated, int nextCost, boolean showsHint) {
+    public enum TemplateMark {
+        NONE(null), MARKED("node.integration.marked"), MARKABLE("node.integration.markHint"), UNMARKABLE("node.integration.unmarkHint");
 
-        public static State of(ShipSkillData data, SkillNode node, boolean integrationAvailable) {
+        private final String lineKey;
+
+        TemplateMark(String lineKey) {
+            this.lineKey = lineKey;
+        }
+    }
+
+    public record State(boolean integrated, int nextCost, boolean showsHint, TemplateMark templateMark) {
+
+        public static State of(ShipSkillData data, SkillNode node, boolean integrationAvailable, TemplateMark templateMark) {
             boolean integrated = data.isIntegrated(node.getId());
-            return new State(integrated, IntegratedNodes.nextCost(data), integrationAvailable && !data.isNpcBuild() && data.isAllocated(node.getId()));
+            return new State(integrated, IntegratedNodes.nextCost(data), integrationAvailable && !data.isNpcBuild() && data.isAllocated(node.getId()),
+                    templateMark);
         }
     }
 
@@ -87,6 +98,9 @@ public final class IntegrationLines {
     static NodeDescription withHint(SkillType type, HullSize hullSize, State state) {
         NodeDescription normal = SkillNode.describeMechanics(type, hullSize, false);
         List<DescriptionLine> effects = new ArrayList<>(normal.effects());
+        if (state.templateMark().lineKey != null) {
+            effects.add(new DescriptionLine(Translation.styled(state.templateMark().lineKey), false));
+        }
         if (state.showsHint()) {
             effects.add(new DescriptionLine(Translation.msg("node.integration.hint").count(state.nextCost()).styled(), false));
         }
