@@ -266,7 +266,7 @@ final class NodeAllocator {
 
     private static void collectUnseenNodeIds(ShipSkillData skillData, Set<String> hiddenNodeIds, Set<String> concealedNodeIds) {
         for (SkillNode node : SkillTree.getAllNodes().values()) {
-            if (SkillTypeUnlockStatus.isHidden(node.getType(), skillData) || NodeGates.isHidden(node, skillData)) {
+            if (NodeGates.isUnseen(node, skillData)) {
                 hiddenNodeIds.add(node.getId());
                 if (NodeGates.isConcealed(node, skillData)) {
                     concealedNodeIds.add(node.getId());

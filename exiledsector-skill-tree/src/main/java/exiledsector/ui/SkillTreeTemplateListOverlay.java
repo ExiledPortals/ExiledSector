@@ -5,9 +5,13 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipHullSizes;
+import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTree;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.HoloFrame;
+import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.TextFont;
 import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
@@ -32,6 +36,9 @@ final class SkillTreeTemplateListOverlay {
     private static final float ROW_GAP = 4f;
     private static final float DELETE_WIDTH = 110f;
     private static final float META_GAP = 16f;
+    private static final float ROW_TEXT_INSET = 12f;
+    private static final float ROOT_ICON_SIZE = 32f;
+    private static final float ROOT_ICON_GAP = 10f;
     private static final float FOOTER_BUTTON_WIDTH = 170f;
     private static final float FOOTER_HEIGHT = 36f;
     private static final float ROW_FILL_ALPHA = 0.06f;
@@ -50,11 +57,12 @@ final class SkillTreeTemplateListOverlay {
     private final DeleteConfirmation deleteConfirmation = new DeleteConfirmation();
     private final String deleteText = Translation.text("ui.template.list.delete");
     private final String confirmText = Translation.text("ui.template.list.confirmDelete");
-    private final String emptyRootText = Translation.text("ui.template.list.empty");
+    private final String emptyText = Translation.text("ui.template.list.empty");
     private final String noMatchText = Translation.text("ui.template.list.noMatch");
     private final TextLabel titleLine = new TextLabel(TITLE_FONT,
-            SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
+            SkillTreePanelStyle.TOOLTIP_TITLE_COLOR).set(Translation.text("ui.template.list.title"));
     private final TextLabel emptyLine = new TextLabel(FONT, META_COLOR);
+    private final SpriteCache rootIcons = new SpriteCache(SkillTreeTemplateListOverlay.class);
 
     private boolean overlayOpen;
     private TemplateListState templateListState;
@@ -70,14 +78,13 @@ final class SkillTreeTemplateListOverlay {
         }
     }
 
-    void open(String rootNodeId, String rootName, HullSize currentHullSize, Collection<SkillTreeTemplate> templates, String assignedTemplateId) {
-        this.templateListState = new TemplateListState(templates, rootNodeId, currentHullSize);
+    void open(HullSize currentHullSize, Collection<SkillTreeTemplate> templates, String assignedTemplateId) {
+        this.templateListState = new TemplateListState(templates, currentHullSize);
         this.assignedTemplateId = assignedTemplateId;
         this.overlayOpen = true;
         modalFrame.open();
         hideButtons();
         deleteConfirmation.disarm();
-        titleLine.set(Translation.msg("ui.template.list.title").arg("root", rootName).text());
     }
 
     void setTemplates(Collection<SkillTreeTemplate> templates, String assignedTemplateId) {
@@ -225,11 +232,11 @@ final class SkillTreeTemplateListOverlay {
                 continue;
             }
             float rowBottom = listTop - (i + 1) * ROW_HEIGHT - i * ROW_GAP;
-            slot.bind(font, visibleTemplates.get(i), listArea.width() - DELETE_WIDTH - 24f);
+            slot.bind(font, visibleTemplates.get(i), listArea.width() - DELETE_WIDTH - 24f - ROOT_ICON_SIZE - ROOT_ICON_GAP);
             slot.render(listArea.left(), rowBottom, listArea.width(), mouseX, mouseY, alphaMult);
         }
         if (visibleTemplates.isEmpty()) {
-            emptyLine.set(templateListState.hasAnyForRoot() ? noMatchText : emptyRootText).setAlpha(alphaMult).draw(listArea.left(), listTop - 8f);
+            emptyLine.set(templateListState.hasAny() ? noMatchText : emptyText).setAlpha(alphaMult).draw(listArea.left(), listTop - 8f);
         }
     }
 
@@ -237,6 +244,7 @@ final class SkillTreeTemplateListOverlay {
 
         private final SkillTreeUiButton deleteButton = new SkillTreeUiButton(deleteText);
         private SkillTreeTemplate template;
+        private String rootIconPath;
         private boolean boundArmed;
         private boolean boundAssigned;
         private final TextLabel nameLine = new TextLabel(FONT, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
@@ -250,6 +258,8 @@ final class SkillTreeTemplateListOverlay {
                 return;
             }
             template = rowTemplate;
+            SkillNode root = SkillTree.get(rowTemplate.rootNodeId());
+            rootIconPath = root == null ? null : root.getIconPath();
             boundArmed = armed;
             boundAssigned = assigned;
             metaLine.set(metaText(rowTemplate, assigned)).setColor(assigned ? SkillTreePanelStyle.POSITIVE_STAT_COLOR : META_COLOR);
@@ -273,9 +283,14 @@ final class SkillTreeTemplateListOverlay {
             if (boundAssigned) {
                 GLDraw.strokeQuad(rowLeft, rowBottom, rowWidth, ROW_HEIGHT, panelStyle.getAccentColor(), 1.5f, alphaMult);
             }
-            float textY = rowBottom + ROW_HEIGHT / 2f + FONT.size() / 2f;
-            nameLine.setAlpha(alphaMult).draw(rowLeft + 12f, textY);
-            metaLine.setAlpha(alphaMult).draw(rowLeft + rowWidth - DELETE_WIDTH - 12f - metaLine.width(), textY);
+            float rowMiddleY = rowBottom + ROW_HEIGHT / 2f;
+            float iconLeft = rowLeft + ROW_TEXT_INSET;
+            if (rootIconPath != null) {
+                SpriteDraw.drawAtCenter(rootIcons, rootIconPath, iconLeft + ROOT_ICON_SIZE / 2f, rowMiddleY, ROOT_ICON_SIZE, ROOT_ICON_SIZE, null, alphaMult);
+            }
+            float textY = rowMiddleY + FONT.size() / 2f;
+            nameLine.setAlpha(alphaMult).draw(iconLeft + ROOT_ICON_SIZE + ROOT_ICON_GAP, textY);
+            metaLine.setAlpha(alphaMult).draw(rowLeft + rowWidth - DELETE_WIDTH - ROW_TEXT_INSET - metaLine.width(), textY);
             deleteButton.place(rowLeft + rowWidth - DELETE_WIDTH, rowBottom + 4f, DELETE_WIDTH, ROW_HEIGHT - 8f);
             deleteButton.render(mouseX, mouseY, alphaMult);
         }

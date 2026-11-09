@@ -74,7 +74,7 @@ final class SkillTreeTemplateController {
         }
         templateRootId = startingRootId;
         if (startingRootId != null) {
-            treeSession.setTemplate(SkillTreeTemplateStore.assignedTo(member.getId(), startingRootId));
+            treeSession.setTemplate(SkillTreeTemplateStore.assignedTo(member.getId()));
         }
     }
 
@@ -258,7 +258,7 @@ final class SkillTreeTemplateController {
         treeSession.closeChoicePicker();
         SkillTreeSounds.panelOpened();
         SkillTreeTemplateStore.reload();
-        listOverlay.open(startingRoot.getId(), startingRoot.getType().getDisplayName(), hullSize(), SkillTreeTemplateStore.all(), assignedTemplateId());
+        listOverlay.open(hullSize(), SkillTreeTemplateStore.all(), assignedTemplateId());
     }
 
     private void saveFromDialog(SkillNode startingRoot) {
@@ -288,7 +288,8 @@ final class SkillTreeTemplateController {
         List<TemplateStep> steps = treeSession.capturePlanSteps();
         Map<String, String> socketedAnchors = treeSession.captureTemplateAnchors();
         Set<String> integrationMarks = treeSession.capturePlanIntegrationMarks();
-        SkillTreeTemplate saved = SkillTreeTemplateStore.replaceSteps(treeSession.plannedTemplateId(), steps, socketedAnchors, integrationMarks);
+        SkillTreeTemplate saved = SkillTreeTemplateStore.replaceSteps(treeSession.plannedTemplateId(), startingRoot.getId(), steps, socketedAnchors,
+                integrationMarks);
         if (saved == null) {
             String defaultName = Translation.msg("ui.template.defaultName").arg("hull", hullName()).text();
             saved = SkillTreeTemplateStore.save(TemplateNames.unique(defaultName, startingRoot.getId(), SkillTreeTemplateStore.all()),

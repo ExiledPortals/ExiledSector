@@ -28,6 +28,7 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.TypeAffinity;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.items.DoctrineRewrite;
 import exiledsector.items.DoctrineText;
@@ -129,7 +130,7 @@ final class SkillTreeNodeTooltipRenderer {
         ItemCostLine costLine = hidden || socketed != null ? null : itemCostLine(node, null, allocation);
         String refusalReason = withoutItemCostRefusal(allocation.refusalReason(node), costLine, () -> allocation.gate().allocation(node));
         List<NodeGrantStatus> socketGrantStatuses = socketed instanceof Subroutine ? allocation.nodeGrantStatuses(node.getId()) : List.of();
-        boolean affinityTooltip = RootAffinityNumber.affinityOf(effectiveType) != null;
+        boolean affinityTooltip = TypeAffinity.of(effectiveType) != null;
         boolean shipStateTooltip = socketed instanceof WormholeAnchor || affinityTooltip;
         Object shipState = shipStateTooltip ? skillData : "";
         int shipStateRevision = shipStateTooltip ? skillData.revision() : 0;
@@ -443,7 +444,7 @@ final class SkillTreeNodeTooltipRenderer {
     }
 
     private static boolean showsAffinity(SkillType effectiveType, boolean hidden, boolean showChoiceHint, Item socketed) {
-        return !hidden && !showChoiceHint && socketed == null && RootAffinityNumber.affinityOf(effectiveType) != null;
+        return !hidden && !showChoiceHint && socketed == null && TypeAffinity.of(effectiveType) != null;
     }
 
     private NodeDescription affinityLines(SkillType effectiveType, ShipSkillData skillData) {

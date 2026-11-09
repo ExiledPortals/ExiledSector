@@ -1,33 +1,27 @@
 package exiledsector.ui;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.skills.ShipHullSizes;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.TemplateFilter;
 
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
 final class TemplateListState {
 
-    private final String rootNodeId;
     private final Set<HullSize> selectedHullSizes;
     private Collection<SkillTreeTemplate> allTemplates;
     private List<SkillTreeTemplate> shownTemplates;
-    private boolean anyTemplateForRoot;
     private int scrollOffset;
 
-    TemplateListState(Collection<SkillTreeTemplate> templates, String rootNodeId, HullSize currentHullSize) {
-        this.rootNodeId = rootNodeId;
+    TemplateListState(Collection<SkillTreeTemplate> templates, HullSize currentHullSize) {
         this.selectedHullSizes = TemplateFilter.defaultFilter(currentHullSize);
         setTemplates(templates);
     }
 
     void setTemplates(Collection<SkillTreeTemplate> templates) {
         this.allTemplates = templates;
-        this.anyTemplateForRoot = !TemplateFilter.matching(templates, rootNodeId, EnumSet.copyOf(ShipHullSizes.ORDER)).isEmpty();
         refilter();
     }
 
@@ -42,8 +36,8 @@ final class TemplateListState {
         return selectedHullSizes.contains(hullSize);
     }
 
-    boolean hasAnyForRoot() {
-        return anyTemplateForRoot;
+    boolean hasAny() {
+        return !allTemplates.isEmpty();
     }
 
     List<SkillTreeTemplate> shown() {
@@ -64,7 +58,7 @@ final class TemplateListState {
     }
 
     private void refilter() {
-        shownTemplates = TemplateFilter.matching(allTemplates, rootNodeId, selectedHullSizes);
+        shownTemplates = TemplateFilter.matching(allTemplates, selectedHullSizes);
     }
 
     private int clamp(int offset, int visibleRows) {

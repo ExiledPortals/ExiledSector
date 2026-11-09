@@ -10,6 +10,7 @@ import exiledsector.skills.EffectContribution;
 import exiledsector.skills.NodeDescription;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.TypeAffinity;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.SimpleStatEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
@@ -36,7 +37,7 @@ final class AffinityTooltipLines {
     }
 
     static NodeDescription forType(SkillType type, List<EffectContribution> shipContributions, HullSize hullSize) {
-        SkillTypeEffect typeAffinity = RootAffinityNumber.affinityOf(type);
+        SkillTypeEffect typeAffinity = TypeAffinity.of(type);
         if (typeAffinity == null) {
             return new NodeDescription(List.of(), List.of());
         }

@@ -134,7 +134,7 @@ public final class SkillTreeTemplateStore {
                 integrationMarks));
     }
 
-    public static SkillTreeTemplate replaceSteps(String templateId, List<TemplateStep> steps, Map<String, String> socketedAnchors,
+    public static SkillTreeTemplate replaceSteps(String templateId, String rootNodeId, List<TemplateStep> steps, Map<String, String> socketedAnchors,
                                                  Set<String> integrationMarks) {
         reload();
         SkillTreeTemplate template = find(templateId);
@@ -143,7 +143,7 @@ public final class SkillTreeTemplateStore {
         }
         Map<String, String> anchorsBySocket = new HashMap<>(template.anchorsBySocket());
         anchorsBySocket.putAll(socketedAnchors);
-        return store(new SkillTreeTemplate(template.id(), template.name(), template.rootNodeId(), template.hullSize(), steps, anchorsBySocket,
+        return store(new SkillTreeTemplate(template.id(), template.name(), rootNodeId, template.hullSize(), steps, anchorsBySocket,
                 integrationMarks));
     }
 
@@ -203,13 +203,9 @@ public final class SkillTreeTemplateStore {
         }
     }
 
-    public static SkillTreeTemplate assignedTo(String memberId, String rootNodeId) {
+    public static SkillTreeTemplate assignedTo(String memberId) {
         Map<String, String> assignments = storedAssignments(false);
-        if (assignments == null || rootNodeId == null) {
-            return null;
-        }
-        SkillTreeTemplate template = find(assignments.get(memberId));
-        return template != null && template.rootNodeId().equals(rootNodeId) ? template : null;
+        return assignments == null ? null : find(assignments.get(memberId));
     }
 
     public static void pruneAssignments(Predicate<String> shipStillNeeded) {

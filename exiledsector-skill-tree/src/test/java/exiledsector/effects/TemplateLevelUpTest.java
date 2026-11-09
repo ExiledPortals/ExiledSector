@@ -144,6 +144,45 @@ class TemplateLevelUpTest {
     }
 
     @Test
+    void aTemplateFromAnotherRootIsReachedByTheShortestRouteFirst() {
+        List<TemplateStep> steps = List.of(new TemplateStep("second", null), new TemplateStep("third", null));
+        SkillTreeTemplateStore.assign("planned", SkillTreeTemplateStore.save("plan", "other_root", HullSize.FRIGATE, steps).id());
+        shipData.setAutoAllocateTemplate(true);
+
+        levelUp(3);
+        assertEquals(3, TemplateLevelUp.spendFreeAllocations(member));
+
+        assertEquals(Set.of("root", "first", "second", "third"), shipData.getAllocatedNodeIds());
+        assertEquals(0, shipData.getBankedFreeAllocations());
+    }
+
+    @Test
+    void noRouteIsBuiltTowardAStepWhoseChosenOptionThisShipCannotTake() {
+        SkillTree.registerType(type("capital_option", SkillTier.SMALL).requiredHullSizes(List.of(HullSize.CAPITAL_SHIP)).build());
+        SkillTree.registerType(type("frigate_option", SkillTier.SMALL).build());
+        node("choice", type("choice_type", SkillTier.SMALL).choiceOptionIds(List.of("capital_option", "frigate_option")).build(), List.of("second"));
+        List<TemplateStep> steps = List.of(new TemplateStep("choice", "capital_option"));
+        SkillTreeTemplateStore.assign("planned", SkillTreeTemplateStore.save("plan", "other_root", HullSize.FRIGATE, steps).id());
+        shipData.setAutoAllocateTemplate(true);
+
+        levelUp(2);
+        TemplateLevelUp.spendFreeAllocations(member);
+
+        assertEquals(Set.of("root"), shipData.getAllocatedNodeIds());
+    }
+
+    @Test
+    void aTemplateFromItsOwnRootNeverAllocatesNodesOutsideIt() {
+        assignTemplate("second", "third");
+        shipData.setAutoAllocateTemplate(true);
+
+        levelUp(2);
+        TemplateLevelUp.spendFreeAllocations(member);
+
+        assertEquals(Set.of("root"), shipData.getAllocatedNodeIds());
+    }
+
+    @Test
     void itemCostNodesAreLeftForThePlayerAndUnusableLevelsStayBanked() {
         assignTemplate("first", "pricey", "second");
         shipData.setAutoAllocateTemplate(true);

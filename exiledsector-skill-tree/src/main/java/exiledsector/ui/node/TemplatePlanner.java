@@ -1,5 +1,6 @@
 package exiledsector.ui.node;
 
+import exiledsector.skills.AllocationPath;
 import exiledsector.skills.IntegratedNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeLinks;
@@ -8,6 +9,7 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.template.SkillTreeTemplate;
+import exiledsector.skills.template.TemplateBridge;
 import exiledsector.skills.template.TemplateCapture;
 import exiledsector.skills.template.TemplateStep;
 import exiledsector.skills.template.TemplateStepRules;
@@ -20,6 +22,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -27,6 +30,7 @@ final class TemplatePlanner {
 
     private final NodeAllocator allocator;
     private final Supplier<NodeAllocator.Snapshot> liveSnapshotSupplier;
+    private final Random bridgeRandom = new Random();
 
     private ShipSkillData planData;
     private String editedTemplateId;
@@ -61,7 +65,7 @@ final class TemplatePlanner {
         }
         planSnapshot = null;
         nodeIdsRevision = -1;
-        planSteps(templateSteps);
+        planSteps(templateSteps, TemplateBridge.crossesRoots(template, allocator.satisfiedRootId()));
         List<TemplateStep> unplacedSteps = new ArrayList<>();
         for (TemplateStep step : templateSteps) {
             if (!planData.isAllocated(step.nodeId())) {
@@ -227,23 +231,38 @@ final class TemplatePlanner {
         return steps;
     }
 
-    private void planSteps(List<TemplateStep> steps) {
+    private void planSteps(List<TemplateStep> steps, boolean bridgeRoots) {
         List<TemplateStep> pendingSteps = new ArrayList<>(steps);
+        TemplateBridge templateBridge = new TemplateBridge(steps);
         boolean progressed = true;
         while (progressed) {
-            progressed = false;
-            for (Iterator<TemplateStep> stepIterator = pendingSteps.iterator(); stepIterator.hasNext(); ) {
-                TemplateStep step = stepIterator.next();
-                SkillNode node = SkillTree.get(step.nodeId());
-                boolean offersOptions = node != null && node.offersOptions(planData);
-                SkillType option = offersOptions ? TemplateStepRules.optionFor(step, node.getType()) : null;
-                if (node == null || planData.isAllocated(node.getId()) || offersOptions && option == null) {
-                    stepIterator.remove();
-                } else if (add(node, option)) {
-                    stepIterator.remove();
-                    progressed = true;
-                }
+            progressed = planReachableSteps(pendingSteps) || bridgeRoots && planBridgeNode(pendingSteps, templateBridge);
+        }
+    }
+
+    private boolean planReachableSteps(List<TemplateStep> pendingSteps) {
+        boolean progressed = false;
+        for (Iterator<TemplateStep> stepIterator = pendingSteps.iterator(); stepIterator.hasNext(); ) {
+            TemplateStep step = stepIterator.next();
+            SkillNode node = SkillTree.get(step.nodeId());
+            boolean offersOptions = node != null && node.offersOptions(planData);
+            SkillType option = offersOptions ? TemplateStepRules.optionFor(step, node.getType()) : null;
+            if (node == null || planData.isAllocated(node.getId()) || offersOptions && option == null) {
+                stepIterator.remove();
+            } else if (add(node, option)) {
+                stepIterator.remove();
+                progressed = true;
             }
         }
+        return progressed;
+    }
+
+    private boolean planBridgeNode(List<TemplateStep> pendingSteps, TemplateBridge templateBridge) {
+        if (pendingSteps.isEmpty()) {
+            return false;
+        }
+        NodeAllocator.Snapshot plan = snapshot();
+        AllocationPath.Step step = templateBridge.nextStep(pendingSteps, plan.gate(), SkillTree.topology(), plan::isHidden, bridgeRandom);
+        return step != null && add(step.node(), step.option());
     }
 }

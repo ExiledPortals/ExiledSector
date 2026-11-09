@@ -148,17 +148,17 @@ slider (`BattleItemDropSetting`), and site rolls at its tier weight (`SkillTreeS
 ### Skill tree templates
 
 Templates live outside the save, in `saves/common/exiledSector_skillTreeTemplates.json.data`, so every save shares them
-(`SkillTreeTemplateStore`). The file is `{"v":1,"templates":[...]}` (a bare array also reads), each entry in
-`TemplateCodec`'s shape. It is re-read on game load, when the skill tree or template list opens and before every template
-change, which then rewrites the whole file. Only which template each ship uses stays in the save, and templates an older
-save still holds move into the file on load. A template's `integrate` list marks nodes to integrate by hand later
-(`SkillTreeTemplate.integrationMarks`, kept only for nodes on its steps); auto-allocation never integrates, and saving a
-template also marks whatever the ship has integrated.
+(`SkillTreeTemplateStore`, entries in `TemplateCodec`'s shape). The file is re-read on game load, when the tree or template
+list opens and before every change, which rewrites it; only each ship's assignment stays in the save. A template's
+`integrate` list marks nodes to integrate by hand later; auto-allocation never integrates. Retired or renamed ids load
+through `node_replacements.csv`, `node_id_renames.csv` and `AffinityOptions`, unknown nodes are skipped, and a file that is
+not JSON is backed up to `exiledSector_skillTreeTemplates.unreadable.json.data` before the next write.
 
-Retired or renamed node, option and socket ids load through `node_replacements.csv`, `node_id_renames.csv` and
-`AffinityOptions`, and the next write stores the current ids. Unknown nodes stay in the template and are skipped
-(`StepVerdict.UNKNOWN_NODE`); unreadable entries are skipped but written back unchanged, and a file that is not JSON keeps
-the loaded templates and is backed up to `exiledSector_skillTreeTemplates.unreadable.json.data` before the next write.
+A template works from any root. On another root, when no step touches the tree, `AutoAllocateRun` has `TemplateBridge`
+allocate one node along the shortest route to the nearest unreached template node (`AllocationPath.towardNearest`, never
+through item-cost nodes), then retries the steps. Path-picked choice nodes take the player's last pick, then the ship's
+own picks, then the option the template chose most (affinity options count by affinity), then the root's affinity.
+Editing a template from another root overwrites it and moves it to that root.
 
 </details>
 

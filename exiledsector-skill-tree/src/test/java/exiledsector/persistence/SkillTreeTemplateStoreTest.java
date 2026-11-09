@@ -70,7 +70,7 @@ class SkillTreeTemplateStoreTest {
 
         assertTrue(SkillTreeTemplateStore.all().isEmpty());
         assertNull(SkillTreeTemplateStore.find("t1"));
-        assertNull(SkillTreeTemplateStore.assignedTo("ship-a", "root_low_tech_1"));
+        assertNull(SkillTreeTemplateStore.assignedTo("ship-a"));
         SkillTreeTemplateStore.clearAssignment("ship-a");
         SkillTreeTemplateStore.pruneAssignments(id -> true);
 
@@ -192,16 +192,17 @@ class SkillTreeTemplateStoreTest {
     }
 
     @Test
-    void aShipsAssignmentOnlyCountsWhileTheTemplateExistsAndMatchesItsRoot() {
+    void aShipsAssignmentOnlyCountsWhileTheTemplateExists() {
         save("Brawler", "root_low_tech_1");
         SkillTreeTemplateStore.assign("ship-a", "t1");
+        SkillTreeTemplateStore.assign("ship-c", "deleted-template");
 
-        assertEquals("t1", SkillTreeTemplateStore.assignedTo("ship-a", "root_low_tech_1").id());
-        assertNull(SkillTreeTemplateStore.assignedTo("ship-a", "root_high_tech_1"));
-        assertNull(SkillTreeTemplateStore.assignedTo("ship-b", "root_low_tech_1"));
+        assertEquals("t1", SkillTreeTemplateStore.assignedTo("ship-a").id());
+        assertNull(SkillTreeTemplateStore.assignedTo("ship-b"));
+        assertNull(SkillTreeTemplateStore.assignedTo("ship-c"));
 
         SkillTreeTemplateStore.clearAssignment("ship-a");
-        assertNull(SkillTreeTemplateStore.assignedTo("ship-a", "root_low_tech_1"));
+        assertNull(SkillTreeTemplateStore.assignedTo("ship-a"));
     }
 
     @Test
@@ -237,15 +238,24 @@ class SkillTreeTemplateStoreTest {
         save("Brawler", "root_low_tech_1");
         List<TemplateStep> newSteps = List.of(new TemplateStep("armor_1", null));
 
-        SkillTreeTemplate edited = SkillTreeTemplateStore.replaceSteps("t1", newSteps, Map.of(), Set.of());
+        SkillTreeTemplate edited = SkillTreeTemplateStore.replaceSteps("t1", "root_low_tech_1", newSteps, Map.of(), Set.of());
         SkillTreeTemplate renamed = SkillTreeTemplateStore.rename("t1", "  Kite ");
 
         assertEquals("Brawler", edited.name());
         assertEquals(newSteps, SkillTreeTemplateStore.find("t1").steps());
         assertEquals("Kite", renamed.name());
         assertEquals("Kite", SkillTreeTemplateStore.find("t1").name());
-        assertNull(SkillTreeTemplateStore.replaceSteps("missing", newSteps, Map.of(), Set.of()));
-        assertNull(SkillTreeTemplateStore.replaceSteps(null, newSteps, Map.of(), Set.of()));
+        assertNull(SkillTreeTemplateStore.replaceSteps("missing", "root_low_tech_1", newSteps, Map.of(), Set.of()));
+        assertNull(SkillTreeTemplateStore.replaceSteps(null, "root_low_tech_1", newSteps, Map.of(), Set.of()));
+    }
+
+    @Test
+    void editingATemplateFromAnotherRootMovesItToThatRoot() {
+        save("Brawler", "root_low_tech_1");
+
+        SkillTreeTemplateStore.replaceSteps("t1", "root_high_tech_1", List.of(new TemplateStep("armor_1", null)), Map.of(), Set.of());
+
+        assertEquals("root_high_tech_1", SkillTreeTemplateStore.find("t1").rootNodeId());
     }
 
     @Test
@@ -253,11 +263,11 @@ class SkillTreeTemplateStoreTest {
         save("Brawler", "root_low_tech_1");
         List<TemplateStep> newSteps = List.of(new TemplateStep("slot_2", null), new TemplateStep("slot_5", null));
 
-        SkillTreeTemplateStore.replaceSteps("t1", newSteps, Map.of("slot_5", "anchor_new", "slot_9", "anchor_elsewhere"), Set.of());
+        SkillTreeTemplateStore.replaceSteps("t1", "root_low_tech_1", newSteps, Map.of("slot_5", "anchor_new", "slot_9", "anchor_elsewhere"), Set.of());
         SkillTreeTemplateStore.rename("t1", "Kite");
 
         assertEquals(Map.of("slot_2", "anchor_old", "slot_5", "anchor_new"), SkillTreeTemplateStore.find("t1").anchorsBySocket());
-        SkillTreeTemplateStore.replaceSteps("t1", List.of(new TemplateStep("slot_5", null)), Map.of(), Set.of());
+        SkillTreeTemplateStore.replaceSteps("t1", "root_low_tech_1", List.of(new TemplateStep("slot_5", null)), Map.of(), Set.of());
         assertEquals(Map.of("slot_5", "anchor_new"), SkillTreeTemplateStore.find("t1").anchorsBySocket());
     }
 

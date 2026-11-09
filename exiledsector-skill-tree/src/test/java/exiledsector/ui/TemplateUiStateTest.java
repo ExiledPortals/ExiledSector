@@ -90,15 +90,15 @@ class TemplateUiStateTest {
     void theListStartsOnTheShipsHullSizeAndChipsToggleOtherSizes() {
         List<SkillTreeTemplate> all = new ArrayList<>(templates(2, HullSize.FRIGATE));
         all.add(new SkillTreeTemplate("cruiser", "c", "root", HullSize.CRUISER, List.of()));
-        TemplateListState state = new TemplateListState(all, "root", HullSize.CRUISER);
+        TemplateListState state = new TemplateListState(all, HullSize.CRUISER);
 
         assertEquals(List.of("cruiser"), state.shown().stream().map(SkillTreeTemplate::id).toList());
         state.toggle(HullSize.FRIGATE);
         assertEquals(3, state.shown().size());
         state.toggle(HullSize.CRUISER);
         assertEquals(2, state.shown().size());
-        assertTrue(state.hasAnyForRoot());
-        assertFalse(new TemplateListState(all, "other_root", HullSize.CRUISER).hasAnyForRoot());
+        assertTrue(state.hasAny());
+        assertFalse(new TemplateListState(List.of(), HullSize.CRUISER).hasAny());
     }
 
     @Test
@@ -118,7 +118,7 @@ class TemplateUiStateTest {
 
     @Test
     void scrollingIsClampedToTheRowsThatExist() {
-        TemplateListState state = new TemplateListState(templates(10, HullSize.CRUISER), "root", HullSize.CRUISER);
+        TemplateListState state = new TemplateListState(templates(10, HullSize.CRUISER), HullSize.CRUISER);
 
         state.scroll(-3, 4);
         assertEquals(0, state.scrollOffset());

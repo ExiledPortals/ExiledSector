@@ -2,6 +2,7 @@ package exiledsector.skills;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
@@ -16,11 +17,20 @@ public final class AllocationPath {
     public record Step(SkillNode node, SkillType option) {
     }
 
+    public record Choices(SkillType preferredOption, List<SkillType> templateSelections) {
+
+        public static final Choices NONE = new Choices(null, List.of());
+
+        public Choices {
+            templateSelections = List.copyOf(templateSelections);
+        }
+    }
+
     private AllocationPath() {
     }
 
     public static List<Step> to(SkillNode target, AllocationCheck gate, SkillTreeTopology topology, Predicate<SkillNode> hidden,
-                                SkillType preferredOption, RandomGenerator random) {
+                                Choices choices, RandomGenerator random) {
         List<SkillNode> nodes = route(target, Set.of(), gate, topology, hidden);
         if (nodes.isEmpty()) {
             return List.of();
@@ -28,10 +38,26 @@ public final class AllocationPath {
         Map<String, SkillType> pickedByChoiceTypeId = new HashMap<>();
         List<Step> steps = new ArrayList<>(nodes.size());
         for (SkillNode node : nodes) {
-            SkillType option = gate.offersOptions(node) ? option(node, gate, topology, preferredOption, pickedByChoiceTypeId, random) : null;
-            steps.add(new Step(node, option));
+            steps.add(step(node, gate, topology, choices, pickedByChoiceTypeId, random));
         }
         return List.copyOf(steps);
+    }
+
+    public static Step towardNearest(Collection<SkillNode> targets, AllocationCheck gate, SkillTreeTopology topology, Predicate<SkillNode> hidden,
+                                     Choices choices, RandomGenerator random) {
+        TreeSearch search = search(Set.of(), gate, topology, hidden);
+        List<SkillNode> nearestPath = List.of();
+        for (SkillNode target : targets) {
+            String targetId = target.getId();
+            boolean reachable = search.reaches(targetId) && !search.isSeed(targetId) && !hidden.test(target) && eligible(target, gate);
+            if (reachable && (nearestPath.isEmpty() || search.distance(targetId) < nearestPath.size())) {
+                List<SkillNode> path = pathFrom(search, targetId, topology);
+                if (!path.get(0).getId().equals(targetId)) {
+                    nearestPath = path;
+                }
+            }
+        }
+        return nearestPath.isEmpty() ? null : step(nearestPath.get(0), gate, topology, choices, new HashMap<>(), random);
     }
 
     static List<SkillNode> route(SkillNode target, Set<String> extraSeedIds, AllocationCheck gate, SkillTreeTopology topology,
@@ -44,6 +70,10 @@ public final class AllocationPath {
         if (!search.reaches(targetId) || search.isSeed(targetId)) {
             return List.of();
         }
+        return pathFrom(search, targetId, topology);
+    }
+
+    private static List<SkillNode> pathFrom(TreeSearch search, String targetId, SkillTreeTopology topology) {
         Deque<SkillNode> path = new ArrayDeque<>();
         for (String id = targetId; !search.isSeed(id); id = search.parent(id)) {
             if (!search.isJump(id)) {
@@ -92,14 +122,22 @@ public final class AllocationPath {
         return usable;
     }
 
-    private static SkillType option(SkillNode node, AllocationCheck gate, SkillTreeTopology topology, SkillType preferredOption,
+    private static Step step(SkillNode node, AllocationCheck gate, SkillTreeTopology topology, Choices choices,
+                             Map<String, SkillType> pickedByChoiceTypeId, RandomGenerator random) {
+        SkillType option = gate.offersOptions(node) ? option(node, gate, topology, choices, pickedByChoiceTypeId, random) : null;
+        return new Step(node, option);
+    }
+
+    private static SkillType option(SkillNode node, AllocationCheck gate, SkillTreeTopology topology, Choices choices,
                                     Map<String, SkillType> pickedByChoiceTypeId, RandomGenerator random) {
         List<SkillType> usable = usableOptions(node, gate);
         String choiceTypeId = node.getType().getId();
         List<SkillType> candidates = new ArrayList<>();
-        candidates.add(preferredOption);
+        candidates.add(choices.preferredOption());
         candidates.add(pickedByChoiceTypeId.get(choiceTypeId));
         candidates.addAll(allocatedSelections(choiceTypeId, gate.data(), topology));
+        candidates.add(templateFavourite(usable, choices.templateSelections()));
+        candidates.add(rootAffinityOption(usable, gate, topology));
         SkillType picked = firstUsable(candidates, usable);
         if (picked == null) {
             picked = usable.get(random.nextInt(usable.size()));
@@ -118,6 +156,45 @@ public final class AllocationPath {
             }
         }
         return selections;
+    }
+
+    private static SkillType templateFavourite(List<SkillType> usable, List<SkillType> templateSelections) {
+        SkillType favourite = null;
+        int mostVotes = 0;
+        boolean tied = false;
+        for (SkillType option : usable) {
+            int votes = 0;
+            for (SkillType selection : templateSelections) {
+                if (sameChoice(option, selection)) {
+                    votes++;
+                }
+            }
+            if (votes > mostVotes) {
+                favourite = option;
+                mostVotes = votes;
+                tied = false;
+            } else if (votes > 0 && votes == mostVotes) {
+                tied = true;
+            }
+        }
+        return tied ? null : favourite;
+    }
+
+    private static boolean sameChoice(SkillType option, SkillType selection) {
+        return TypeAffinity.of(option) == null ? option.getId().equals(selection.getId()) : TypeAffinity.same(option, selection);
+    }
+
+    private static SkillType rootAffinityOption(List<SkillType> usable, AllocationCheck gate, SkillTreeTopology topology) {
+        SkillNode root = gate.rootId() == null ? null : topology.node(gate.rootId());
+        if (root == null) {
+            return null;
+        }
+        for (SkillType option : usable) {
+            if (TypeAffinity.same(option, root.getType())) {
+                return option;
+            }
+        }
+        return null;
     }
 
     private static SkillType firstUsable(List<SkillType> candidates, List<SkillType> usable) {

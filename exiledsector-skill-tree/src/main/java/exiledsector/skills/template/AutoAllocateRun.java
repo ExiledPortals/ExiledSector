@@ -14,10 +14,21 @@ public final class AutoAllocateRun {
     public record Summary(Status status, int allocated, int skipped) {
     }
 
+    @FunctionalInterface
+    public interface Bridge {
+        Bridge NONE = unreachedSteps -> false;
+
+        boolean allocateToward(List<TemplateStep> unreachedSteps);
+    }
+
     private AutoAllocateRun() {
     }
 
     public static Summary run(List<TemplateStep> steps, Function<TemplateStep, StepVerdict> attempt, BooleanSupplier pointsLeft) {
+        return run(steps, attempt, Bridge.NONE, pointsLeft);
+    }
+
+    public static Summary run(List<TemplateStep> steps, Function<TemplateStep, StepVerdict> attempt, Bridge bridge, BooleanSupplier pointsLeft) {
         List<TemplateStep> passSteps = List.copyOf(steps);
         int allocatedCount = 0;
         int skippedCount = 0;
@@ -44,8 +55,12 @@ public final class AutoAllocateRun {
             if (!pointsLeft.getAsBoolean()) {
                 return new Summary(Status.OUT_OF_POINTS, allocatedCount, skippedCount + deferredSteps.size());
             }
-            if (!progressed || deferredSteps.isEmpty()) {
+            boolean bridged = !progressed && !deferredSteps.isEmpty() && bridge.allocateToward(deferredSteps);
+            if (deferredSteps.isEmpty() || !progressed && !bridged) {
                 return new Summary(Status.PATH_END, allocatedCount, skippedCount + deferredSteps.size());
+            }
+            if (bridged) {
+                allocatedCount++;
             }
             passSteps = deferredSteps;
             retrying = true;

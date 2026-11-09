@@ -59,9 +59,9 @@ public record SkillTreeTemplate(String id, String name, String rootNodeId, HullS
         return Map.copyOf(kept);
     }
 
-    public Set<String> nodeIds() {
+    public Set<String> nodeIds(String startingRootId) {
         Set<String> templateNodeIds = new LinkedHashSet<>();
-        templateNodeIds.add(rootNodeId);
+        templateNodeIds.add(startingRootId == null ? rootNodeId : startingRootId);
         for (TemplateStep step : steps) {
             templateNodeIds.add(step.nodeId());
         }

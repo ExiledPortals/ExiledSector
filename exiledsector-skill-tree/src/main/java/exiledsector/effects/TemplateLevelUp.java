@@ -7,6 +7,7 @@ import exiledsector.PlayerFleet;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.AllocationCheck;
+import exiledsector.skills.AllocationPath;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
@@ -19,10 +20,14 @@ import exiledsector.skills.template.AutoAllocateRun;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.StepVerdict;
 import exiledsector.skills.template.TemplateAnchors;
+import exiledsector.skills.template.TemplateBridge;
 import exiledsector.skills.template.TemplateStepRules;
+import exiledsector.skills.unlock.NodeGates;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Supplier;
 
 final class TemplateLevelUp {
 
@@ -80,7 +85,7 @@ final class TemplateLevelUp {
     private static TemplateRun allocateTemplateSteps(FleetMemberAPI member, ShipVariantAPI variant, ShipSkillData shipData,
                                                      boolean logisticsChangesAllowed) {
         String rootId = ShipTrees.resolveStartingRootId(shipData);
-        SkillTreeTemplate template = SkillTreeTemplateStore.assignedTo(member.getId(), rootId);
+        SkillTreeTemplate template = rootId == null ? null : SkillTreeTemplateStore.assignedTo(member.getId());
         int opCostPerNode = SkillNodeOpCost.perNode(member.getHullSpec());
         if (template == null || opCostPerNode <= 0) {
             return TemplateRun.NONE;
@@ -97,8 +102,12 @@ final class TemplateLevelUp {
             return true;
         });
         anchors.fill(shipData);
+        Supplier<AllocationCheck> gateSupplier = () -> AllocationCheck.forPlayerShip(shipData, shipFacts, rootId, budget, itemId -> 0d,
+                logisticsChangesAllowed);
+        AutoAllocateRun.Bridge bridge = TemplateBridge.crossesRoots(template, rootId)
+                ? rootBridge(shipData, gateSupplier, new TemplateBridge(template.steps()), opCostPerNode) : AutoAllocateRun.Bridge.NONE;
         int allocatedCount = AutoAllocateRun.run(template.steps(), anchors.fillingAfter(step -> {
-            AllocationCheck gate = AllocationCheck.forPlayerShip(shipData, shipFacts, rootId, budget, itemId -> 0d, logisticsChangesAllowed);
+            AllocationCheck gate = gateSupplier.get();
             StepVerdict verdict = TemplateStepRules.verdict(step, shipData, rootId, (node, option) -> {
                 AllocationCheck.Verdict allocation = gate.allocation(node, option);
                 if (allocation.block() != null && allocation.block().kind() == NodeEligibility.Kind.LOGISTICS_UNDOCKED) {
@@ -111,8 +120,22 @@ final class TemplateLevelUp {
                 ShipTrees.allocate(shipData, node, TemplateStepRules.optionFor(step, node, shipData), opCostPerNode);
             }
             return verdict;
-        }, shipData), () -> shipData.getBankedFreeAllocations() > 0).allocated();
+        }, shipData), bridge, () -> shipData.getBankedFreeAllocations() > 0).allocated();
         return new TemplateRun(allocatedCount, waitingForDock.size(), anchors.socketedCount());
+    }
+
+    private static AutoAllocateRun.Bridge rootBridge(ShipSkillData shipData, Supplier<AllocationCheck> gateSupplier, TemplateBridge templateBridge,
+                                                     int opCostPerNode) {
+        return unreachedSteps -> {
+            AllocationCheck gate = gateSupplier.get();
+            AllocationPath.Step step = templateBridge.nextStep(unreachedSteps, gate, SkillTree.topology(), node -> NodeGates.isUnseen(node, shipData),
+                    ThreadLocalRandom.current());
+            if (step == null || !gate.allocation(step.node(), step.option()).allowed()) {
+                return false;
+            }
+            ShipTrees.allocate(shipData, step.node(), step.option(), opCostPerNode);
+            return true;
+        };
     }
 
     private static void returnUnhousedWings(FleetMemberAPI member, ShipVariantAPI variant) {

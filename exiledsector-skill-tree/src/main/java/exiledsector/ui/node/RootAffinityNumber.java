@@ -2,12 +2,11 @@ package exiledsector.ui.node;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.effects.SkillTreeHullMod;
-import exiledsector.skills.AffinitySteps;
 import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.TypeAffinity;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
-import exiledsector.skills.SkillType;
 import exiledsector.ui.UiFonts;
 import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
@@ -51,7 +50,7 @@ final class RootAffinityNumber {
     }
 
     void draw(SkillNode root, ShipSkillData shipData, boolean rootPending, float centerX, float centerY, float rootRadius, float alphaMult) {
-        SkillTypeEffect rootAffinity = affinityOf(root.getType());
+        SkillTypeEffect rootAffinity = TypeAffinity.of(root.getType());
         if (rootAffinity == null) {
             return;
         }
@@ -88,14 +87,5 @@ final class RootAffinityNumber {
             totalsRevision = shipData.revision();
         }
         return totals;
-    }
-
-    static SkillTypeEffect affinityOf(SkillType type) {
-        for (SkillTypeEffect effect : type.getEffects()) {
-            if (AffinitySteps.isAffinity(effect.effect())) {
-                return effect;
-            }
-        }
-        return null;
     }
 }

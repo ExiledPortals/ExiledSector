@@ -101,6 +101,38 @@ class AutoAllocateRunTest {
     }
 
     @Test
+    void whenNoStepIsReachableTheBridgeAllocatesTowardThemOneNodeAtATime() {
+        List<List<String>> bridgedToward = new ArrayList<>();
+        Function<TemplateStep, StepVerdict> attempt = step -> bridgedToward.size() < 2 ? StepVerdict.NOT_ALLOCATABLE : StepVerdict.ALLOCATE;
+        AutoAllocateRun.Bridge bridge = unreachedSteps -> bridgedToward.add(unreachedSteps.stream().map(TemplateStep::nodeId).toList());
+
+        AutoAllocateRun.Summary summary = AutoAllocateRun.run(steps(2), attempt, bridge, () -> true);
+
+        assertEquals(List.of(List.of("node_0", "node_1"), List.of("node_0", "node_1")), bridgedToward);
+        assertEquals(new AutoAllocateRun.Summary(AutoAllocateRun.Status.PATH_END, 4, 0), summary);
+    }
+
+    @Test
+    void aBridgeWithNoRouteEndsTheRun() {
+        AutoAllocateRun.Summary summary = AutoAllocateRun.run(steps(2), step -> StepVerdict.NOT_ALLOCATABLE, unreachedSteps -> false, () -> true);
+
+        assertEquals(new AutoAllocateRun.Summary(AutoAllocateRun.Status.PATH_END, 0, 2), summary);
+    }
+
+    @Test
+    void theBridgeWaitsWhileAPassStillAllocates() {
+        List<String> attempted = new ArrayList<>();
+        int[] bridgeCalls = {0};
+
+        AutoAllocateRun.run(steps(3), needsParent(new HashSet<>(), attempted, "node_0", "node_2"), unreachedSteps -> {
+            bridgeCalls[0]++;
+            return false;
+        }, () -> true);
+
+        assertEquals(0, bridgeCalls[0]);
+    }
+
+    @Test
     void runningOutOfPointsDuringARetryPassCountsEveryStepStillWaitingAsSkipped() {
         Set<String> allocated = new HashSet<>();
         List<String> attempted = new ArrayList<>();

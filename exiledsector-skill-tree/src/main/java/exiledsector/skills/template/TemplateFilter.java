@@ -23,10 +23,10 @@ public final class TemplateFilter {
         return ShipHullSizes.isShipSize(currentHullSize) ? EnumSet.of(currentHullSize) : EnumSet.copyOf(ShipHullSizes.ORDER);
     }
 
-    public static List<SkillTreeTemplate> matching(Collection<SkillTreeTemplate> templates, String rootNodeId, Set<HullSize> hullSizes) {
+    public static List<SkillTreeTemplate> matching(Collection<SkillTreeTemplate> templates, Set<HullSize> hullSizes) {
         List<SkillTreeTemplate> matches = new ArrayList<>();
         for (SkillTreeTemplate template : templates) {
-            if (template.rootNodeId().equals(rootNodeId) && shownFor(template.hullSize(), hullSizes)) {
+            if (shownFor(template.hullSize(), hullSizes)) {
                 matches.add(template);
             }
         }

@@ -111,6 +111,10 @@ public final class NodeGates {
         return isLocked(node, shipData) && !HiddenNodeDisplayConfig.showHiddenNodesByDefault();
     }
 
+    public static boolean isUnseen(SkillNode node, ShipSkillData shipData) {
+        return SkillTypeUnlockStatus.isHidden(node.getType(), shipData) || isHidden(node, shipData);
+    }
+
     public static boolean isConcealed(SkillNode node, ShipSkillData shipData) {
         return lockingGateTag(node, shipData, Gate::concealed) != null && !HiddenNodeDisplayConfig.showHiddenNodesByDefault();
     }

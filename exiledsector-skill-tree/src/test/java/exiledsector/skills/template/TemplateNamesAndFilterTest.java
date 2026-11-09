@@ -53,12 +53,19 @@ class TemplateNamesAndFilterTest {
     }
 
     @Test
-    void matchingKeepsTheRootAndSelectedHullSizesSortedByNameAndAlwaysShowsUnknownHulls() {
-        List<SkillTreeTemplate> matches = TemplateFilter.matching(EXISTING, "root_low_tech_1", EnumSet.of(HullSize.FRIGATE, HullSize.CRUISER));
+    void matchingKeepsTheSelectedHullSizesSortedByNameAndAlwaysShowsUnknownHulls() {
+        List<SkillTreeTemplate> matches = TemplateFilter.matching(EXISTING, EnumSet.of(HullSize.FRIGATE, HullSize.CRUISER));
 
         assertEquals(List.of("4", "1", "2"), matches.stream().map(SkillTreeTemplate::id).toList());
-        assertEquals(List.of("4"), TemplateFilter.matching(EXISTING, "root_low_tech_1", EnumSet.noneOf(HullSize.class))
+        assertEquals(List.of("4"), TemplateFilter.matching(EXISTING, EnumSet.noneOf(HullSize.class))
                 .stream().map(SkillTreeTemplate::id).toList());
+    }
+
+    @Test
+    void matchingMixesTemplatesFromEveryRoot() {
+        List<SkillTreeTemplate> matches = TemplateFilter.matching(EXISTING, EnumSet.of(HullSize.CRUISER, HullSize.CAPITAL_SHIP));
+
+        assertEquals(List.of("4", "1", "3"), matches.stream().map(SkillTreeTemplate::id).toList());
     }
 
     @Test

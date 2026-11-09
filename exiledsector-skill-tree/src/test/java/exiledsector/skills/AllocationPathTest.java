@@ -4,6 +4,8 @@ import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.npc.RealSkillData;
+import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.special.SpecialSkillEffect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -82,7 +84,19 @@ class AllocationPathTest {
     }
 
     private List<AllocationPath.Step> pathTo(SkillNode target, SkillType preferredOption) {
-        return AllocationPath.to(target, gate(), SkillTree.topology(), node -> false, preferredOption, LAST_OPTION);
+        return AllocationPath.to(target, gate(), SkillTree.topology(), node -> false, new AllocationPath.Choices(preferredOption, List.of()), LAST_OPTION);
+    }
+
+    private List<AllocationPath.Step> pathWithTemplate(SkillNode target, List<SkillType> templateSelections) {
+        return AllocationPath.to(target, gate(), SkillTree.topology(), node -> false, new AllocationPath.Choices(null, templateSelections), LAST_OPTION);
+    }
+
+    private AllocationPath.Step towardNearest(SkillNode... targets) {
+        return AllocationPath.towardNearest(List.of(targets), gate(), SkillTree.topology(), node -> false, AllocationPath.Choices.NONE, LAST_OPTION);
+    }
+
+    private static SkillType affinity(String id, SkillEffect effect) {
+        return registered(type(id, SkillTier.SMALL).effects(List.of(new SkillTypeEffect(effect, 5f))).build());
     }
 
     private static List<String> ids(List<AllocationPath.Step> path) {
@@ -206,7 +220,7 @@ class AllocationPathTest {
             }
         };
 
-        List<AllocationPath.Step> path = AllocationPath.to(target, gate(), SkillTree.topology(), node -> false, null, countingUp);
+        List<AllocationPath.Step> path = AllocationPath.to(target, gate(), SkillTree.topology(), node -> false, AllocationPath.Choices.NONE, countingUp);
 
         assertEquals(List.of(first, first), path.stream().map(AllocationPath.Step::option).toList());
     }
@@ -216,5 +230,47 @@ class AllocationPathTest {
         SkillNode target = small("target", "root");
 
         assertNull(pathTo(target, null).get(0).option());
+    }
+
+    @Test
+    void withNoEarlierChoiceTheTemplatesMostChosenAffinityIsTaken() {
+        SkillType lowTech = affinity("low", SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT);
+        SkillType highTech = affinity("high", SpecialSkillEffect.HIGH_TECH_AFFINITY_FLAT);
+        SkillType greaterLowTech = affinity("greater_low", SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT);
+        SkillNode choice = node("choice", choiceType("affinity_type", lowTech, highTech), "root");
+
+        assertEquals(lowTech, pathWithTemplate(choice, List.of(highTech, lowTech, greaterLowTech)).get(0).option());
+    }
+
+    @Test
+    void aTiedTemplateFallsBackToTheRootsAffinity() {
+        node("root", type("root_type", SkillTier.ROOT).effects(List.of(new SkillTypeEffect(SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT, 5f))).build());
+        SkillType lowTech = affinity("low", SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT);
+        SkillType highTech = affinity("high", SpecialSkillEffect.HIGH_TECH_AFFINITY_FLAT);
+        SkillType midline = affinity("mid", SpecialSkillEffect.MIDLINE_AFFINITY_FLAT);
+        SkillNode choice = node("choice", choiceType("affinity_type", highTech, lowTech, midline), "root");
+
+        assertEquals(lowTech, pathWithTemplate(choice, List.of(highTech, midline)).get(0).option());
+        assertEquals(lowTech, pathWithTemplate(choice, List.of()).get(0).option());
+    }
+
+    @Test
+    void theStepTowardTheNearestTargetIsTheFirstNodeOfItsShortestRoute() {
+        small("a", "root");
+        small("b", "a");
+        SkillNode far = small("far", "b");
+        small("c", "root");
+        SkillNode near = small("near", "c");
+
+        assertEquals("c", towardNearest(far, near).node().getId());
+        assertEquals("a", towardNearest(far).node().getId());
+    }
+
+    @Test
+    void anAdjacentOrUnreachableTargetGivesNoStep() {
+        SkillNode adjacent = small("adjacent", "root");
+        SkillNode island = small("island", "nowhere");
+
+        assertNull(towardNearest(adjacent, island));
     }
 }

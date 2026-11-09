@@ -26,6 +26,7 @@ import exiledsector.skills.template.AutoAllocateRun;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.StepVerdict;
 import exiledsector.skills.template.TemplateAnchors;
+import exiledsector.skills.template.TemplateBridge;
 import exiledsector.skills.template.TemplateCapture;
 import exiledsector.skills.template.TemplateStep;
 import exiledsector.skills.unlock.NodeGates;
@@ -83,6 +84,7 @@ public final class TreeAllocationSession {
     private String targetedSocketId;
     private SkillTreeTemplate template;
     private Set<String> templateNodeIds = Set.of();
+    private List<SkillType> templateSelections = List.of();
     private AutoAllocateRun.Summary lastRunSummary;
     private Runnable planChangeListener = () -> {
     };
@@ -472,7 +474,7 @@ public final class TreeAllocationSession {
             return false;
         }
         NodeAllocator.Snapshot view = viewSnapshot();
-        List<AllocationPath.Step> path = AllocationPath.to(target, view.gate(), SkillTree.topology(), view::isHidden, lastChosenOption, pathRandom);
+        List<AllocationPath.Step> path = AllocationPath.to(target, view.gate(), SkillTree.topology(), view::isHidden, pathChoices(), pathRandom);
         if (path.isEmpty()) {
             return false;
         }
@@ -508,7 +510,11 @@ public final class TreeAllocationSession {
 
     private List<AllocationPath.Step> livePathTo(SkillNode target) {
         NodeAllocator.Snapshot live = snapshot();
-        return AllocationPath.to(target, live.gate(), SkillTree.topology(), live::isHidden, lastChosenOption, pathRandom);
+        return AllocationPath.to(target, live.gate(), SkillTree.topology(), live::isHidden, pathChoices(), pathRandom);
+    }
+
+    private AllocationPath.Choices pathChoices() {
+        return new AllocationPath.Choices(lastChosenOption, templateSelections);
     }
 
     public boolean allocateAnchoredPath(SkillNode target) {
@@ -602,8 +608,7 @@ public final class TreeAllocationSession {
     }
 
     public void setTemplate(SkillTreeTemplate newTemplate) {
-        this.template = newTemplate;
-        this.templateNodeIds = newTemplate == null ? Set.of() : newTemplate.nodeIds();
+        useTemplate(newTemplate);
         if (planner.isActive()) {
             choicePickerNode = null;
             planner.start(newTemplate);
@@ -644,9 +649,14 @@ public final class TreeAllocationSession {
     }
 
     public void planSaved(SkillTreeTemplate savedTemplate) {
-        this.template = savedTemplate;
-        this.templateNodeIds = savedTemplate == null ? Set.of() : savedTemplate.nodeIds();
+        useTemplate(savedTemplate);
         planner.templateSaved(savedTemplate);
+    }
+
+    private void useTemplate(SkillTreeTemplate newTemplate) {
+        this.template = newTemplate;
+        this.templateNodeIds = newTemplate == null ? Set.of() : newTemplate.nodeIds(allocator.satisfiedRootId());
+        this.templateSelections = newTemplate == null ? List.of() : TemplateBridge.selections(newTemplate.steps());
     }
 
     private void clickPlannedNode(SkillNode node, boolean ctrlDown) {
@@ -715,9 +725,25 @@ public final class TreeAllocationSession {
             return true;
         });
         anchors.fill(allocator.data());
-        lastRunSummary = AutoAllocateRun.run(template.steps(), anchors.fillingAfter(attemptStep, allocator.data()), pointsLeftCheck);
+        lastRunSummary = AutoAllocateRun.run(template.steps(), anchors.fillingAfter(attemptStep, allocator.data()), rootBridge(), pointsLeftCheck);
         afterAllocationChange(allocatedBefore, null);
         return true;
+    }
+
+    private AutoAllocateRun.Bridge rootBridge() {
+        if (!TemplateBridge.crossesRoots(template, allocator.satisfiedRootId())) {
+            return AutoAllocateRun.Bridge.NONE;
+        }
+        TemplateBridge templateBridge = new TemplateBridge(template.steps());
+        return unreachedSteps -> {
+            NodeAllocator.Snapshot live = snapshot();
+            AllocationPath.Step step = templateBridge.nextStep(unreachedSteps, live.gate(), SkillTree.topology(), live::isHidden, pathRandom);
+            if (step == null || !allocator.allocate(step.node(), step.option(), live)) {
+                return false;
+            }
+            settleAllocation();
+            return true;
+        };
     }
 
     public boolean isAutoAllocateOn() {

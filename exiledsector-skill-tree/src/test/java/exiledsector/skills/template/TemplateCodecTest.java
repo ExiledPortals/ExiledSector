@@ -66,6 +66,11 @@ class TemplateCodecTest {
 
     @Test
     void nodeIdsAreTheRootPlusEveryStep() {
-        assertEquals(Set.of("root_low_tech_1", "armor_1", "slot_3", "flux_2"), TEMPLATE.nodeIds());
+        assertEquals(Set.of("root_low_tech_1", "armor_1", "slot_3", "flux_2"), TEMPLATE.nodeIds(null));
+    }
+
+    @Test
+    void nodeIdsUseTheShipsRootInPlaceOfTheTemplatesOwn() {
+        assertEquals(Set.of("root_high_tech_1", "armor_1", "slot_3", "flux_2"), TEMPLATE.nodeIds("root_high_tech_1"));
     }
 }
