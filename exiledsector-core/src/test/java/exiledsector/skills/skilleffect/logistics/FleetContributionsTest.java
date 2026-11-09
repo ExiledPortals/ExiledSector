@@ -32,6 +32,18 @@ class FleetContributionsTest {
     }
 
     @Test
+    void theLargestPositiveContributionIgnoresNegativesAndMothballedShips() {
+        assertEquals(4f, FleetContributions.largestPositive(List.of(member(4f, false), member(-7f, false), member(100f, true)), KEY), 0.001f);
+        assertEquals(0f, FleetContributions.largestPositive(List.of(member(-7f, false)), KEY));
+    }
+
+    @Test
+    void theLargestMagnitudeContributionKeepsItsSign() {
+        assertEquals(-7f, FleetContributions.largestMagnitude(List.of(member(4f, false), member(-7f, false), member(-100f, true)), KEY), 0.001f);
+        assertEquals(0f, FleetContributions.largestMagnitude(List.of(), KEY));
+    }
+
+    @Test
     void contributionEffectsReportTheirModeAndWhetherNpcShipsCarryThem() {
         assertFalse(LogisticsSkillEffect.POST_BATTLE_WEAPON_SALVAGE_PERCENT.appliesToNpcShips());
         assertFalse(LogisticsSkillEffect.RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT.appliesToNpcShips());

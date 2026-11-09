@@ -30,9 +30,10 @@ public final class NpcTreeTag {
     static final String GENERATED = "generated";
     static final String SOCKETS_MARKER = "sockets:";
     static final String GRANTED_MARKER = "granted:";
+    static final String INTEGRATED_MARKER = "integrated:";
     static final String LEGACY_ANCHORS_MARKER = "anchors:";
     private static final int MIN_FIELDS = 3;
-    private static final int MAX_FIELDS = 7;
+    private static final int MAX_FIELDS = 8;
     private static final String[] NO_FIELDS = new String[0];
 
     private NpcTreeTag() {
@@ -57,7 +58,11 @@ public final class NpcTreeTag {
             tag += FIELD_SEPARATOR + SOCKETS_MARKER + String.join(NODE_SEPARATOR, socketEntries);
         }
         Set<String> grantedNodeIds = shipData.getFleetGrantNodeIds();
-        return grantedNodeIds.isEmpty() ? tag : tag + FIELD_SEPARATOR + GRANTED_MARKER + String.join(NODE_SEPARATOR, grantedNodeIds);
+        if (!grantedNodeIds.isEmpty()) {
+            tag += FIELD_SEPARATOR + GRANTED_MARKER + String.join(NODE_SEPARATOR, grantedNodeIds);
+        }
+        Set<String> integratedNodeIds = shipData.getIntegratedNodeIds();
+        return integratedNodeIds.isEmpty() ? tag : tag + FIELD_SEPARATOR + INTEGRATED_MARKER + String.join(NODE_SEPARATOR, integratedNodeIds);
     }
 
     public static String find(ShipVariantAPI variant) {
@@ -105,8 +110,13 @@ public final class NpcTreeTag {
             return NpcSkillTreeBuilder.emptyTree();
         }
         Map<String, String> anchorsBySocketId = new LinkedHashMap<>();
+        List<String> integratedNodeIds = new ArrayList<>();
         for (int fieldIndex = MIN_FIELDS; fieldIndex < tagFields.length; fieldIndex++) {
-            if (tagFields[fieldIndex].startsWith(GRANTED_MARKER)) {
+            if (tagFields[fieldIndex].startsWith(INTEGRATED_MARKER)) {
+                for (String integratedEntry : tagFields[fieldIndex].substring(INTEGRATED_MARKER.length()).split(NODE_SEPARATOR)) {
+                    integratedNodeIds.add(NodeReplacements.current(integratedEntry));
+                }
+            } else if (tagFields[fieldIndex].startsWith(GRANTED_MARKER)) {
                 restoreGrants(shipData, tagFields[fieldIndex].substring(GRANTED_MARKER.length()));
             } else if (tagFields[fieldIndex].startsWith(SOCKETS_MARKER)) {
                 readAnchors(anchorsBySocketId, tagFields[fieldIndex].substring(SOCKETS_MARKER.length()));
@@ -121,6 +131,7 @@ public final class NpcTreeTag {
             }
         }
         ShipTrees.releaseUnreachable(shipData, SkillTree.topology(), rootNode.getId());
+        NpcIntegratedNodes.restore(shipData, integratedNodeIds);
         return shipData;
     }
 

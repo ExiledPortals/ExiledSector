@@ -37,15 +37,15 @@ class HullModTooltipTablesTest {
         return hull;
     }
 
-    private static SkillType passthrough(String hullModId) {
-        return new SkillType.Builder(hullModId, hullModId, "", SkillTier.KEYSTONE).vanillaHullModId(hullModId).build();
+    private static SkillType placingHullMod(String hullModId) {
+        return new SkillType.Builder(hullModId, hullModId, "", SkillTier.KEYSTONE).phantomHullModIds(List.of(hullModId)).build();
     }
 
     @Test
     void typesWithoutATableHullModGetNoTables() {
         ShipHullSpecAPI hull = hull(HullSize.FRIGATE);
 
-        assertTrue(HullModTooltipTables.forType(passthrough("heavyarmor"), hull).isEmpty());
+        assertTrue(HullModTooltipTables.forType(placingHullMod("heavyarmor"), hull).isEmpty());
         assertTrue(HullModTooltipTables.forType(null, hull).isEmpty());
     }
 
@@ -54,7 +54,7 @@ class HullModTooltipTablesTest {
         ShipHullSpecAPI hull = hull(HullSize.CRUISER, slot(WeaponType.BALLISTIC, WeaponSize.MEDIUM),
                 slot(WeaponType.BALLISTIC, WeaponSize.LARGE), slot(WeaponType.ENERGY, WeaponSize.LARGE));
 
-        List<TooltipTable> tables = HullModTooltipTables.forType(passthrough("ballistic_rangefinder"), hull);
+        List<TooltipTable> tables = HullModTooltipTables.forType(placingHullMod("ballistic_rangefinder"), hull);
 
         assertEquals(2, tables.size());
         TooltipTable ballistic = tables.get(0);
@@ -89,7 +89,7 @@ class HullModTooltipTablesTest {
                 slot(WeaponType.MISSILE, WeaponSize.SMALL), slot(WeaponType.MISSILE, WeaponSize.SMALL),
                 slot(WeaponType.MISSILE, WeaponSize.MEDIUM));
 
-        List<TooltipTable> tables = HullModTooltipTables.forType(passthrough("missile_autoloader"), hull);
+        List<TooltipTable> tables = HullModTooltipTables.forType(placingHullMod("missile_autoloader"), hull);
 
         TooltipTable table = tables.get(0);
         assertEquals("Reload capacity", table.heading());

@@ -4,7 +4,6 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.skills.skilleffect.weapon.WeaponEffectTooltipAggregator;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.layout.SkillTreeObject;
@@ -59,9 +58,13 @@ public class SkillNode extends SkillTreeObject {
     }
 
     public static NodeDescription describeMechanics(SkillType type, HullSize hullSize) {
-        List<DescriptionLine> effects = describeEffects(type, hullSize);
+        return describeMechanics(type, hullSize, false);
+    }
 
-        List<SkillTypeEffect> described = describedEffects(type, hullSize);
+    public static NodeDescription describeMechanics(SkillType type, HullSize hullSize, boolean integrated) {
+        List<DescriptionLine> effects = describeEffects(type, hullSize, integrated);
+
+        List<SkillTypeEffect> described = describedEffects(type, hullSize, integrated);
         List<DescriptionLine> details = new ArrayList<>();
         for (SkillTypeEffect effect : described) {
             addLine(details, effect.effect().deallocationWarning(effect.magnitude()), false);
@@ -77,24 +80,37 @@ public class SkillNode extends SkillTreeObject {
     }
 
     public static List<DescriptionLine> describeEffects(SkillType type, HullSize hullSize) {
-        List<DescriptionLine> effects = new ArrayList<>();
-        for (SkillTypeEffect effect : WeaponEffectTooltipAggregator.collapse(describedEffects(type, hullSize))) {
-            addLine(effects, effect.effect().description(effect.magnitude(), hullSize), effect.effect().invertsDescriptionColours());
-        }
+        return describeEffects(type, hullSize, false);
+    }
+
+    public static List<DescriptionLine> describeEffects(SkillType type, HullSize hullSize, boolean integrated) {
+        List<DescriptionLine> effects = effectLines(describedEffects(type, hullSize, integrated), hullSize);
         if (type.getVanillaHullModId() != null) {
             for (StyledText line : VanillaHullModLines.describe(type.getVanillaHullModId(), hullSize)) {
                 addLine(effects, line, false);
             }
         }
-        for (StyledText line : type.getEffectTextLines()) {
+        for (StyledText line : type.getEffectTextLines(integrated)) {
             addLine(effects, line, false);
         }
         addLine(effects, describeTemporaryDuration(type), false);
         return effects;
     }
 
-    private static List<SkillTypeEffect> describedEffects(SkillType type, HullSize hullSize) {
-        return hullSize == null ? type.getEffects() : type.effectsFor(hullSize);
+    static List<DescriptionLine> effectLines(List<SkillTypeEffect> described, HullSize hullSize) {
+        List<DescriptionLine> lines = new ArrayList<>();
+        for (DescribedEffects.Line line : DescribedEffects.of(described, hullSize)) {
+            addLine(lines, line.text(), line.effect().effect().invertsDescriptionColours());
+        }
+        return lines;
+    }
+
+    private static List<SkillTypeEffect> describedEffects(SkillType type, HullSize hullSize, boolean integrated) {
+        boolean showIntegrated = integrated && type.isIntegrable();
+        if (hullSize == null) {
+            return showIntegrated ? type.getIntegratedEffects().effects() : type.getEffects();
+        }
+        return type.effectsFor(hullSize, showIntegrated);
     }
 
     private static void addLine(List<DescriptionLine> lines, StyledText text, boolean lowerIsBetter) {

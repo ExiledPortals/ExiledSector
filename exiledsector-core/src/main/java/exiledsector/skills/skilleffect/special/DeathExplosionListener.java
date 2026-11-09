@@ -16,6 +16,7 @@ import java.util.List;
 final class DeathExplosionListener extends ShipCombatListener implements LethalHitArbiter.Reactor {
 
     static final String FUEL_DAMAGE_PERCENT_KEY = "exiledSector_explodeOnDeathFuelDamagePercent";
+    static final String AREA_PERCENT_KEY = "exiledSector_explodeOnDeathAreaPercent";
 
     private static final float RADIUS_MULT = 4f;
     private static final float MIN_RADIUS = 300f;
@@ -43,7 +44,7 @@ final class DeathExplosionListener extends ShipCombatListener implements LethalH
     private void detonate() {
         CombatEngineAPI engine = Global.getCombatEngine();
         Vector2f loc = ownerShip.getLocation();
-        float radius = Math.max(MIN_RADIUS, ownerShip.getCollisionRadius() * RADIUS_MULT);
+        float radius = blastRadius(ownerShip.getCollisionRadius(), magnitude(AREA_PERCENT_KEY));
         float damage = fuelDamage();
 
         // Intended: the blast hits every nearby ship, friendlies included.
@@ -60,6 +61,11 @@ final class DeathExplosionListener extends ShipCombatListener implements LethalH
         engine.spawnExplosion(loc, new Vector2f(), BLAST_COLOR, radius, 1.2f);
         engine.spawnExplosion(loc, new Vector2f(), CORE_COLOR, radius * 0.5f, 0.6f);
         BLAST_GLOW.play(loc, null, new Vector2f(), radius);
+    }
+
+    static float blastRadius(float collisionRadius, float areaPercent) {
+        float baseRadius = Math.max(MIN_RADIUS, collisionRadius * RADIUS_MULT);
+        return baseRadius * (float) Math.sqrt(Math.max(0f, 1f + areaPercent / 100f));
     }
 
     private float fuelDamage() {

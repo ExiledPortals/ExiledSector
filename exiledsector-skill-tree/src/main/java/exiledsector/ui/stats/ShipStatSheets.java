@@ -366,25 +366,30 @@ public final class ShipStatSheets {
     }
 
     private Breakdown effectBreakdown(SkillTreeBonusSummary.EffectLine line) {
-        Map<String, Float> amountsBySource = new LinkedHashMap<>();
+        Map<SkillEffect, Map<String, Float>> amountsBySourceByEffect = new LinkedHashMap<>();
+        amountsBySourceByEffect.put(line.effect(), new LinkedHashMap<>());
         Set<String> nodeIds = new LinkedHashSet<>();
         for (EffectContribution contribution : totals.contributions()) {
             if (!Objects.equals(contribution.gate(), line.gate()) || !Objects.equals(contribution.temporarySeconds(), line.temporarySeconds())) {
                 continue;
             }
-            float amount = 0f;
-            boolean contributes = false;
+            Map<SkillEffect, Float> amountsByEffect = new LinkedHashMap<>();
             for (SkillTypeEffect effect : contribution.effects()) {
-                if (matches(line.effect(), effect.effect())) {
-                    amount += effect.magnitude();
-                    contributes = true;
+                SkillEffect breakdownEffect = breakdownEffect(line.effect(), effect.effect());
+                if (breakdownEffect != null) {
+                    amountsByEffect.merge(breakdownEffect, effect.magnitude(), Float::sum);
                 }
             }
-            if (contributes) {
-                amountsBySource.merge(sources.originName(contribution.origin()), amount, Float::sum);
+            if (!amountsByEffect.isEmpty()) {
+                String sourceName = sources.originName(contribution.origin());
+                amountsByEffect.forEach((effect, amount) -> amountsBySourceByEffect
+                        .computeIfAbsent(effect, shownEffect -> new LinkedHashMap<>()).merge(sourceName, amount, Float::sum));
                 nodeIds.addAll(StatSources.nodeIds(contribution.origin()));
             }
         }
+        List<SourceLine> sourceLines = new ArrayList<>();
+        amountsBySourceByEffect.forEach((effect, amountsBySource) ->
+                sourceLines.addAll(effectLines(effect, line.temporarySeconds(), amountsBySource)));
         List<String> notes = new ArrayList<>();
         boolean permanent = line.gate() == null && line.temporarySeconds() == null;
         if (permanent && diminished(line.effect())) {
@@ -393,13 +398,19 @@ public final class ShipStatSheets {
         if (permanent && capped(line.effect())) {
             notes.add(cappedNote());
         }
-        return new Breakdown(line.line().plain(), null, effectLines(line, amountsBySource), null, List.copyOf(notes), Set.copyOf(nodeIds));
+        return new Breakdown(line.line().plain(), null, List.copyOf(sourceLines), null, List.copyOf(notes), Set.copyOf(nodeIds));
     }
 
-    private static List<SourceLine> effectLines(SkillTreeBonusSummary.EffectLine line, Map<String, Float> amountsBySource) {
-        SkillEffect effect = line.effect();
+    private static SkillEffect breakdownEffect(SkillEffect lineEffect, SkillEffect contributed) {
+        if (matches(lineEffect, contributed)) {
+            return lineEffect;
+        }
+        return contributed.refines().contains(lineEffect) ? contributed : null;
+    }
+
+    private static List<SourceLine> effectLines(SkillEffect effect, Float temporarySeconds, Map<String, Float> amountsBySource) {
         Combine combine = effectCombine(effect);
-        if (combine == Combine.MULTI && line.temporarySeconds() == null && amountsBySource.size() > 1) {
+        if (combine == Combine.MULTI && temporarySeconds == null && amountsBySource.size() > 1) {
             float totalAmount = 0f;
             for (float amount : amountsBySource.values()) {
                 totalAmount += amount;

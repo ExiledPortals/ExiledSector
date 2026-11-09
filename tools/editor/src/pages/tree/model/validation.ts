@@ -101,9 +101,15 @@ export function validateTree(document: TreeDocument, vocabulary: Vocabulary | nu
     if (!vocabulary) {
       continue;
     }
-    for (const entry of [...(type.effects ?? []), ...(type.hullSizeEffects ?? [])]) {
-      if (!vocabulary.effectInfo.has(entry.effect)) {
-        issues.push(`Type "${type.id}" uses unknown effect "${entry.effect}"`);
+    const integrated = type.integrated ?? {};
+    const effectNames = new Set(
+      [...(type.effects ?? []), ...(type.hullSizeEffects ?? []), ...(integrated.effects ?? []), ...(integrated.hullSizeEffects ?? [])].map(
+        (entry) => entry.effect,
+      ),
+    );
+    for (const effect of effectNames) {
+      if (!vocabulary.effectInfo.has(effect)) {
+        issues.push(`Type "${type.id}" uses unknown effect "${effect}"`);
       }
     }
   }

@@ -1,6 +1,6 @@
 # Modifier parts
 
-Status: built on branch `modifier-parts` (2026-11-04), not yet merged, except design point 4 (see its note). Two orphan modifiers still await a decision. Not yet tried in game.
+Status: built on branch `modifier-parts` (2026-11-04), not yet merged, except design point 4 (see its note). Two orphan modifiers still await a decision.
 
 The advanced search's stat picker narrows its list to the stats a chosen ship part can roll. Core can only see part data for the base drop pools, so every biome, anomaly and corruption stat lands on every part's list. This plan gives core one index of which parts each hull item modifier can appear on, whatever its source.
 

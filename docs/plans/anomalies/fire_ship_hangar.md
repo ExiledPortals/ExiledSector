@@ -34,14 +34,12 @@ Battles in the system drop increased item quantity (placeholder +25%) through th
 1. How to read SotF's `enableTacticalExpansion` (its `sotf_settings.ini` through `Global.getSettings().loadJSON` with SotF's mod id, or a LunaLib setting if it has one).
 2. That spawned Drams stay out of the post-battle report, losses and recovery; SotF's reinforcers are spawned the same way, so their handling is the reference.
 3. Whether Ludd's Light's explosion hurts the holder's own ships nearby (it should).
-4. How the ram AI copes with collisions against allies, asteroids and shields.
 
 ## Build order
 
-1. [ ] Spike with SotF enabled: our row in `objective_spawns.csv` showing up in a tagged system's battles, the objective spawning Drams for its holder, Ludd's Light on them, the battle result check.
-2. [ ] The anomaly class (`exiledsector.charts.anomaly.firehangar`), its insertable `chart_anomalies.csv` row with `requires_mod`, the system tag, `fitsAt`, atlas marker icon (placeholder); the SotF `CompatTarget`.
-3. [ ] `battle_objectives.json` row and icon, `FireShipHangarEffect` and `FireShipRamAI`.
-4. [ ] The loot hook; strings (en and zh_CN draft) including the objective's long description; the `docs/docs.md` section; tests for the ram target picking and spawn pacing; README compatibility line and `docs/forum_post.bbcode`.
+1. [ ] The anomaly class (`exiledsector.charts.anomaly.firehangar`), its insertable `chart_anomalies.csv` row with `requires_mod`, the system tag, `fitsAt`, atlas marker icon (placeholder); the SotF `CompatTarget`.
+2. [ ] `battle_objectives.json` row and icon, `FireShipHangarEffect` and `FireShipRamAI`.
+3. [ ] The loot hook; strings (en and zh_CN draft) including the objective's long description; the `docs/docs.md` section; tests for the ram target picking and spawn pacing; README compatibility line and `docs/forum_post.bbcode`.
 
 ## Open questions
 

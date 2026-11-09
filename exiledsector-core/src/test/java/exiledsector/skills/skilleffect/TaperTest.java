@@ -60,9 +60,9 @@ class TaperTest {
         MutableStat timeMult = new MutableStat(1f);
         when(stats.getTimeMult()).thenReturn(timeMult);
         ScaledBonus bonus = new ScaledBonus(ScaledBonus.fixed(StatTarget.liveStat(MutableShipStatsAPI::getTimeMult), StatMode.PERCENT, 40f));
-        TaperedBonus tapered = new TaperedBonus(bonus, 4f, stats, "taper");
+        TaperedBonus tapered = new TaperedBonus(bonus, stats, "taper");
 
-        tapered.start();
+        tapered.start(4f);
         tapered.advance(1f);
         assertEquals(1.3f, timeMult.getModifiedValue(), EPSILON);
 

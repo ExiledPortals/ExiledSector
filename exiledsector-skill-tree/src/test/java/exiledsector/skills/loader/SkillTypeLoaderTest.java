@@ -127,6 +127,29 @@ class SkillTypeLoaderTest {
     }
 
     @Test
+    void integratedEffectTextReplacesTheTypesOnlyWhenIntegrated() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
+                + "\"id\": \"crabs\", \"name\": \"Crabs\", \"icon\": \"a.png\","
+                + "\"effectText\": [\"Smells of the sea.\"],"
+                + "\"integrated\": { \"effectText\": [\"The crabs eat what the crew won't.\"] }"
+                + "}, {"
+                + "\"id\": \"plain\", \"name\": \"Plain\", \"icon\": \"a.png\","
+                + "\"effectText\": [\"Smells of the sea.\"],"
+                + "\"integrated\": {}"
+                + "} ] }");
+
+        Map<String, SkillType> types = SkillTypeLoader.parseSkillTypes(root);
+
+        assertEquals(List.of("Smells of the sea."), plainLines(types.get("crabs").getEffectTextLines(false)));
+        assertEquals(List.of("The crabs eat what the crew won't."), plainLines(types.get("crabs").getEffectTextLines(true)));
+        assertEquals(List.of("Smells of the sea."), plainLines(types.get("plain").getEffectTextLines(true)));
+    }
+
+    private static List<String> plainLines(List<StyledText> lines) {
+        return lines.stream().map(StyledText::plain).toList();
+    }
+
+    @Test
     void parsesBothFlavourTextsAndTreatsBlankAsNone() throws Exception {
         JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
                 + "\"id\": \"hull\","

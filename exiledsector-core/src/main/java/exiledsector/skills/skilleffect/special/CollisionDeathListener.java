@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.ShipCombatListener;
@@ -13,15 +14,19 @@ import org.lwjgl.util.vector.Vector2f;
 
 final class CollisionDeathListener extends ShipCombatListener implements AdvanceableListener {
 
+    static final String LARGE_ENEMIES_ONLY_KEY = "exiledSector_deathOnCollisionLargeEnemiesOnly";
+
     private static final float COLLISION_CHECK_GRACE_PERIOD = 1.5f;
     private static final float BROAD_PHASE_MARGIN = 1.1f;
     private static final float LETHAL_DAMAGE = 999999f;
 
+    private final boolean largeEnemiesOnly;
     private boolean triggered;
     private float aliveTime;
 
     CollisionDeathListener(ShipAPI ownerShip) {
         super(ownerShip);
+        largeEnemiesOnly = magnitude(LARGE_ENEMIES_ONLY_KEY) > 0f;
     }
 
     @Override
@@ -51,7 +56,13 @@ final class CollisionDeathListener extends ShipCombatListener implements Advance
     private boolean isCollidableShip(ShipAPI other) {
         return other != ownerShip && !other.isFighter() && !other.isHulk() && !other.isShuttlePod()
                 && other.getCollisionClass() != CollisionClass.NONE
-                && !CombatQueries.isSameStation(ownerShip, other);
+                && !CombatQueries.isSameStation(ownerShip, other)
+                && (!largeEnemiesOnly || isLargeEnemy(other));
+    }
+
+    private boolean isLargeEnemy(ShipAPI other) {
+        HullSize hullSize = other.getHullSize();
+        return CombatQueries.isHostile(ownerShip, other) && (hullSize == HullSize.CRUISER || hullSize == HullSize.CAPITAL_SHIP);
     }
 
     private boolean isTouching(CombatEntityAPI other) {

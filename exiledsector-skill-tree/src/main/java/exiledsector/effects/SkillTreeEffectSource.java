@@ -18,6 +18,7 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -148,11 +149,15 @@ public final class SkillTreeEffectSource implements ShipEffectSource {
 
     @Override
     public void afterShipCreation(ShipAPI ship, ResolvedTree resolvedTree) {
-        ModuleTreeShare.attach(ship, resolvedTree);
-        boolean playerTree = !SkillDataResolver.isNpcTree(ship.getVariant());
         FleetMemberAPI member = SkillTreeHullMod.memberOf(ship);
+        boolean playerTree = !SkillDataResolver.isNpcTree(ship.getVariant());
         PhantomConflictWatch.inspect(member, ship.getVariant(), phantomHullModIds(resolvedTree), playerTree);
         HullModConflictResolver.removeHullModsThatTriedToStripAPhantom(allocated(resolvedTree), ship.getVariant(), playerTree);
+    }
+
+    @Override
+    public Map<SkillEffect, Float> moduleContributions(ShipEffectContext parentContext, ResolvedTree parentTree, ShipVariantAPI moduleVariant) {
+        return ModuleTreeShare.moduleTotals(parentContext, parentTree, moduleVariant);
     }
 
     static List<NodeEffects> nodeEffects(ResolvedTree resolvedTree) {

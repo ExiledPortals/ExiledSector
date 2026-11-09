@@ -60,7 +60,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final TreeCamera camera = new TreeCamera();
     private final HyperspaceMode hyperspaceMode;
     private final SocketPlacement socketPlacement;
-    private final LogisticsSlots logisticsSlots;
+    private final SchematicButtons schematicButtons;
     private final SkillTreeChrome chrome;
     private final PointerGesture<CanvasMode> gesture = new PointerGesture<>();
     private final TreeCameraMemory.View cameraMemory;
@@ -96,8 +96,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.statPanel = new SkillTreeStatPanel(member, variant, panelStyle);
         this.hyperspaceMode = new HyperspaceMode(camera, statPanel, treeSession::isHidden, treeSession::wormholePairs);
         this.socketPlacement = new SocketPlacement(hostPanel, treeSession, nodeSearch, searchBar);
-        this.logisticsSlots = new LogisticsSlots(member.getId());
-        this.chrome = new SkillTreeChrome(member, panelStyle, statPanel, searchBar, templateUi, socketPlacement, logisticsSlots, shipCardHeight);
+        this.schematicButtons = new SchematicButtons(new LogisticsSlots(member.getId()),
+                new IntegrationResetButton(member.getId(), treeSession::refreshAfterIntegrationReset));
+        this.chrome = new SkillTreeChrome(member, panelStyle, statPanel, searchBar, templateUi, socketPlacement, schematicButtons, shipCardHeight);
         this.shipList = new FleetShipList(hostPanel, shipCardHeight, shipSwitcher);
         this.refitButton = refitButton;
 
@@ -161,7 +162,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private CanvasMode mode() {
-        return CanvasMode.resolve(treeSession.isStartingRootInputLocked(), templateUi.isModalOpen() || logisticsSlots.isDialogBlocking(),
+        return CanvasMode.resolve(treeSession.isStartingRootInputLocked(), templateUi.isModalOpen() || schematicButtons.isDialogBlocking(),
                 socketPlacement.isCraftingBenchOpen(),
                 hyperspaceMode.isActive(), exoshipView.isActive());
     }
@@ -201,7 +202,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             shipList.close();
         }
         templateUi.advance(amount, canvasPosition, mode.enables(CanvasMode.Chrome.TEMPLATE_BAR));
-        logisticsSlots.advance(amount);
+        schematicButtons.advance(amount);
         socketPlacement.advance(mode.closesStorage());
         statPanel.refresh(treeSession.budget(), treeSession.statsRevision());
         statPanel.advance(amount);
@@ -236,6 +237,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 camera.stopDrag();
             }
             gesture.clear();
+            treeSession.cancelIntegrationHold();
         }
     }
 
@@ -330,6 +332,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         mouseY = event.getY();
         mouseKnown = true;
         if (gesture.moveTo(mouseX, mouseY)) {
+            treeSession.cancelIntegrationHold();
             camera.startDrag();
             camera.dragBy(mouseX - gesture.pressX(), mouseY - gesture.pressY());
             event.consume();
@@ -358,8 +361,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void handleModalEvent(InputEventAPI event) {
-        if (logisticsSlots.isDialogBlocking()) {
-            logisticsSlots.handleModalEvent(event);
+        if (schematicButtons.isDialogBlocking()) {
+            schematicButtons.handleModalEvent(event);
         } else if (event.isLMBDownEvent()) {
             templateUi.handleLmbDown(event.getX(), event.getY());
         } else if (event.isLMBUpEvent()) {
@@ -403,7 +406,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void handleTreeEvent(InputEventAPI event, CanvasMode mode) {
-        if (event.isRMBDownEvent() && canvasPosition.containsEvent(event) && emptySocketAt(mode, event.getX(), event.getY())) {
+        if (event.isRMBDownEvent() && canvasPosition.containsEvent(event) && travelledThroughWormholeAt(mode, event.getX(), event.getY())) {
+            event.consume();
+        } else if (event.isRMBDownEvent() && canvasPosition.containsEvent(event) && emptySocketAt(mode, event.getX(), event.getY())) {
             event.consume();
         } else if (event.isLMBDownEvent() && canvasPosition.containsEvent(event)) {
             handleTreePress(event, mode);
@@ -425,6 +430,13 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         event.consume();
     }
 
+    private boolean travelledThroughWormholeAt(CanvasMode mode, float x, float y) {
+        if (gesture.isActive() || treeSession.isChoicePickerOpen() || chrome.contains(canvasPosition, mode, x, y)) {
+            return false;
+        }
+        return treeTargetAt(x, y) instanceof SkillNode node && travelThroughWormhole(node);
+    }
+
     private boolean emptySocketAt(CanvasMode mode, float x, float y) {
         return !chrome.contains(canvasPosition, mode, x, y) && socketPlacement.emptySocket(nodeDrawer.findNodeAt(layers(), x, y));
     }
@@ -432,6 +444,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private void handleTreePress(InputEventAPI event, CanvasMode mode) {
         float x = event.getX();
         float y = event.getY();
+        treeSession.cancelIntegrationHold();
         if (chrome.press(canvasPosition, mode, x, y)) {
             event.consume();
             return;
@@ -444,9 +457,14 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             } else {
                 treeSession.closeChoicePicker();
             }
-        } else if (!pressTarget(mode, treeTargetAt(x, y), event, true)) {
-            gesture.pressPan(mode, x, y);
-            camera.startDrag();
+        } else {
+            Object target = treeTargetAt(x, y);
+            if (!pressTarget(mode, target, event, true)) {
+                gesture.pressPan(mode, x, y);
+                camera.startDrag();
+            } else if (target instanceof SkillNode pressedNode && !event.isCtrlDown() && !event.isShiftDown()) {
+                treeSession.beginIntegrationHold(pressedNode);
+            }
         }
         event.consume();
     }
@@ -467,6 +485,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void handleTreeRelease(InputEventAPI event) {
+        boolean integrationHeld = treeSession.releaseIntegrationHold();
         boolean panning = gesture.isPanning() || camera.isDragging();
         if (!gesture.isActive() && !panning) {
             if (chrome.release(event.getX(), event.getY())) {
@@ -486,7 +505,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             if (gesture.releasedOn(released) && released == exoshipView) {
                 boardExoship();
                 SkillTreeSounds.wormholeJumped();
-            } else if (gesture.releasedOn(released) && released instanceof SkillNode releasedNode) {
+            } else if (gesture.releasedOn(released) && released instanceof SkillNode releasedNode && !integrationHeld) {
                 commitNodeClick(releasedNode, gesture.ctrlDown(), gesture.shiftDown());
             }
         }
@@ -495,7 +514,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void commitNodeClick(SkillNode node, boolean ctrlDown, boolean shiftDown) {
-        SkillNode jumpTarget = treeSession.wormholeJumpTarget(node, ctrlDown);
         if (socketPlacement.placeInto(node)) {
             return;
         }
@@ -506,22 +524,28 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (ctrlDown && shiftDown && (treeSession.allocatePath(node) || treeSession.allocateAnchoredPath(node))) {
             return;
         }
-        if (jumpTarget == null && socketPlacement.handleSocketClick(node, ctrlDown, canvasPosition, chrome.shipCardFrame(canvasPosition))) {
+        if (socketPlacement.handleSocketClick(node, ctrlDown, canvasPosition, chrome.shipCardFrame(canvasPosition))) {
             return;
         }
-        if (jumpTarget != null && ExoshipNodes.isExoship(jumpTarget)) {
+        treeSession.clickNode(node, ctrlDown);
+    }
+
+    private boolean travelThroughWormhole(SkillNode node) {
+        SkillNode jumpTarget = treeSession.wormholeJumpTarget(node);
+        if (jumpTarget == null) {
+            return false;
+        }
+        if (ExoshipNodes.isExoship(jumpTarget)) {
             boardExoship();
-            SkillTreeSounds.wormholeJumped();
-        } else if (jumpTarget != null) {
+        } else {
             stopFollowing();
             camera.panTo(jumpTarget.getOffsetX(), jumpTarget.getOffsetY());
             if (!ExoshipNodes.isExoship(node)) {
                 nodeDrawer.launchWormholeGhosts(node, jumpTarget);
             }
-            SkillTreeSounds.wormholeJumped();
-        } else {
-            treeSession.clickNode(node, ctrlDown);
         }
+        SkillTreeSounds.wormholeJumped();
+        return true;
     }
 
     private void jumpToNextSearchMatch() {
@@ -602,7 +626,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             chrome.renderTooltips(canvasPosition, mode, mouseX, mouseY, alphaMult);
         }
         templateUi.renderModals(canvasPosition, mouseX, mouseY, alphaMult);
-        logisticsSlots.renderDialog(canvasPosition, mouseX, mouseY, alphaMult);
+        schematicButtons.renderDialogs(canvasPosition, mouseX, mouseY, alphaMult);
     }
 
     private void refreshRadiusRing(TreeLayers layers, boolean treeHovered) {

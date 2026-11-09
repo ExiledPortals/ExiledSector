@@ -48,6 +48,17 @@ final class RootCircuitRenderer {
     private static final float TAIL_FADE_PER_COPY = 0.22f;
     private static final float END_FADE_RADII = 0.15f;
     private static final float CLOCK_WRAP_SECONDS = RootCircuit.SPARK_INTERVAL_SECONDS * 1000f;
+    private static final float BLUEPRINT_ALPHA = 0.65f;
+    private static final float BLUEPRINT_THICKNESS_RADII = 0.09f;
+    private static final float BLUEPRINT_MIN_THICKNESS_PX = 1f;
+    private static final float BLUEPRINT_DASH_RADII = 0.16f;
+    private static final float BLUEPRINT_DASH_PERIOD_RADII = 0.27f;
+    private static final float BLUEPRINT_RIM_RADIUS_RADII = RIM_SIZE_RADII / 2f;
+    private static final int BLUEPRINT_RIM_DASHES = 20;
+    private static final float BLUEPRINT_RIM_DASH_SHARE = 0.55f;
+    private static final float BLUEPRINT_RIM_FADE_IN_SHARE = 0.25f;
+    private static final float BLUEPRINT_PAD_RADIUS_RADII = 0.16f;
+    private static final int BLUEPRINT_PAD_SIDES = 6;
 
     private final SpriteCache sprites = new SpriteCache(RootCircuitRenderer.class);
     private final TexturedQuadBatch batch = new TexturedQuadBatch();
@@ -92,6 +103,59 @@ final class RootCircuitRenderer {
             } else {
                 drawSparks(circuit, centerX, centerY, rootRadius, alphaMult, rootColour, whitened);
             }
+        }
+    }
+
+    void drawBlueprint(float centerX, float centerY, float rootRadius, float alphaMult, Color colour, float grownRadii) {
+        RootCircuit circuit = RootCircuit.get();
+        if (circuit.traces().isEmpty() || grownRadii <= 0f || !texturesLoaded()) {
+            return;
+        }
+        float alpha = alphaMult * BLUEPRINT_ALPHA;
+        float thickness = Math.max(BLUEPRINT_MIN_THICKNESS_PX, BLUEPRINT_THICKNESS_RADII * rootRadius);
+        float rimAlpha = alpha * Math.min(1f, grownRadii / (circuit.longestTraceRadii() * BLUEPRINT_RIM_FADE_IN_SHARE));
+        try (TexturedQuadBatch quads = batch.beginAdditive(texture(TRACE_CORE))) {
+            polygon(quads, centerX, centerY, BLUEPRINT_RIM_RADIUS_RADII * rootRadius, BLUEPRINT_RIM_DASHES, BLUEPRINT_RIM_DASH_SHARE, thickness, colour,
+                    rimAlpha);
+            for (RootCircuit.Trace trace : circuit.traces()) {
+                drawDashedTrace(quads, trace, centerX, centerY, rootRadius, grownRadii, thickness, colour, alpha);
+                if (grownRadii >= trace.length()) {
+                    int last = trace.xs().length - 1;
+                    polygon(quads, centerX + trace.xs()[last] * rootRadius, centerY + trace.ys()[last] * rootRadius,
+                            BLUEPRINT_PAD_RADIUS_RADII * rootRadius, BLUEPRINT_PAD_SIDES, 1f, thickness, colour, alpha);
+                }
+            }
+        }
+    }
+
+    private void drawDashedTrace(TexturedQuadBatch quads, RootCircuit.Trace trace, float centerX, float centerY, float rootRadius, float grownRadii,
+                                 float thickness, Color colour, float alpha) {
+        float[] distances = trace.distances();
+        for (int segment = 0; segment < trace.segmentAngles().length && distances[segment] < grownRadii; segment++) {
+            float segmentStart = distances[segment];
+            float segmentEnd = Math.min(distances[segment + 1], grownRadii);
+            for (int dash = (int) (segmentStart / BLUEPRINT_DASH_PERIOD_RADII); dash * BLUEPRINT_DASH_PERIOD_RADII < segmentEnd; dash++) {
+                float dashStart = Math.max(segmentStart, dash * BLUEPRINT_DASH_PERIOD_RADII);
+                float dashEnd = Math.min(segmentEnd, dash * BLUEPRINT_DASH_PERIOD_RADII + BLUEPRINT_DASH_RADII);
+                if (dashEnd <= dashStart) {
+                    continue;
+                }
+                trace.pointAt((dashStart + dashEnd) / 2f, point);
+                quads.quadAtCenter(centerX + point[0] * rootRadius, centerY + point[1] * rootRadius, (dashEnd - dashStart) * rootRadius, thickness,
+                        trace.segmentAngles()[segment], colour, alpha);
+            }
+        }
+    }
+
+    private static void polygon(TexturedQuadBatch quads, float centerX, float centerY, float radius, int sides, float sideShare, float thickness,
+                                Color colour, float alpha) {
+        double sideRadians = 2.0 * Math.PI / sides;
+        float sideLength = (float) (2.0 * radius * Math.sin(sideRadians / 2.0)) * sideShare;
+        float sideCentreRadius = (float) (radius * Math.cos(sideRadians / 2.0));
+        for (int side = 0; side < sides; side++) {
+            double angle = (side + 0.5) * sideRadians;
+            quads.quadAtCenter(centerX + (float) Math.cos(angle) * sideCentreRadius, centerY + (float) Math.sin(angle) * sideCentreRadius, sideLength,
+                    thickness, (float) Math.toDegrees(angle) + 90f, colour, alpha);
         }
     }
 

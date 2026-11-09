@@ -2,7 +2,7 @@
 
 A rare star anomaly found only far out in the Outer Reaches: the system's star is a blue supergiant with a Domain coronal hypershunt in its corona, guarded by an Omega fleet. Beating the fleet earns its loot, but the hypershunt itself can never be restored.
 
-Status: built 2026-10-31 apart from the in-game checks, which are still open. Requested 2026-10-31. See `docs/plans/anomalies/overview.md` for the shared framework.
+Status: built 2026-10-31. Requested 2026-10-31. See `docs/plans/anomalies/overview.md` for the shared framework.
 
 ## Design
 
@@ -19,7 +19,6 @@ Status: built 2026-10-31 apart from the in-game checks, which are still open. Re
 2. [x] The Omega guards and the dialog. Built: `HypershuntGuards`, `HypershuntDialog`; `ChartAnomalyFleets.Spec.atLeast` now shared with the Pre-Collapse Facility's guards. Tests: `HypershuntGuardsTest`.
 3. [x] The star catalyst. Built: `AtlasCatalysts.Effect.STAR`, `AtlasAnomalies.canInsertStar` and `insertStar`, `AnomalyCatalystUse` choosing between them; the `exiledSector_hypershunt_survey` rows in `atlas_catalysts.csv` and `special_items.csv`. Tests: `AtlasCatalystsTest`, `AtlasCatalystUseTest`, refusal key in `StarChartUiStringKeysTest`.
 4. [x] Strings (en and zh_CN draft) and the `docs/docs.md` section.
-5. [ ] In-game checks: reach a system 15 or more cells out (`ExiledSectorAtlasReach`), grant the survey (`ExiledSectorGrantAtlasCatalysts 1 hypershunt_survey`), insert it, see the blue supergiant on the atlas, open the run, fight the Omega fleet, and confirm the hypershunt never offers repair.
 
 ## Open questions
 

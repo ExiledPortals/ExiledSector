@@ -6,7 +6,7 @@ A wormhole anchor can drop, be stocked or be salvaged while its area is still lo
 
 The opposite also happens: an area can be open while its anchor can never be found, because the factions that drop and sell it aren't in the game. Those anchors move to salvage and ruins (see "Factionless volumes").
 
-Status: built and tested 2026-10-23, uncommitted on parallel-work. Not yet checked in game.
+Status: built and tested 2026-10-23, uncommitted on parallel-work.
 
 ## Where the code lives
 

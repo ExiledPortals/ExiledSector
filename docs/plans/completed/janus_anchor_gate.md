@@ -4,7 +4,7 @@ Wormhole anchors are the only way into a faction volume, and nothing stops them 
 
 This plan puts it back on the anchors. By default no anchor drops, stocks or opens a wormhole until the player has the Janus Device. A LunaLib toggle lets players use anchors from the start. The Exoship's Hyper-Nav Beacon is exempt, because Random Assortment of Things' own story already gates it.
 
-Status: built and tested 2026-10-23, uncommitted on parallel-work. Not yet checked in game.
+Status: built and tested 2026-10-23, uncommitted on parallel-work.
 
 ## Where the code lives
 

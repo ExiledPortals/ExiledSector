@@ -26,6 +26,6 @@ Turrets kick along wherever they point, so a broadside turns into sideways drift
 ## Build order
 
 1. [ ] `CHART_WEAPON_RECOIL_FLAT` in `ChartModifier`, `star_chart_modifiers.csv` row, the strength through `ChartGenContext`, `ChartPlayerModifiers` (set, clear) and `ChartRunScript`.
-2. [ ] `ChartRecoilPlugin` with shot detection and the kick formula; in-game tuning pass on the placeholders.
+2. [ ] `ChartRecoilPlugin` with shot detection and the kick formula.
 3. [ ] Strings (en and zh_CN draft) following `docs/tooltip_wording.md`, for example "Weapons on your side <bad>shove their ship backwards</bad> when fired in the system, harder on smaller hulls".
 4. [ ] Tests for the helpers; `docs/docs.md` "Chart system rules" sentence.

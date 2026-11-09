@@ -1,5 +1,6 @@
 package exiledsector.ui.node;
 
+import exiledsector.skills.IntegratedNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;
@@ -12,6 +13,7 @@ import exiledsector.skills.template.TemplateStep;
 import exiledsector.skills.template.TemplateStepRules;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,10 +32,13 @@ final class TemplatePlanner {
     private String editedTemplateId;
     private List<TemplateStep> templateSteps = List.of();
     private List<TemplateStep> carriedSteps = List.of();
+    private final Set<String> integrationMarks = new LinkedHashSet<>();
+    private final Set<String> integrationMarksView = Collections.unmodifiableSet(integrationMarks);
     private NodeAllocator.Snapshot planSnapshot;
     private NodeAllocator.Snapshot planSnapshotLive;
     private Set<String> planNodeIds = Set.of();
     private Set<String> plannedOnlyNodeIds = Set.of();
+    private Set<String> grantOnlyNodeIds = Set.of();
     private int nodeIdsRevision = -1;
     private NodeAllocator.Snapshot nodeIdsLive;
 
@@ -50,6 +55,10 @@ final class TemplatePlanner {
         planData = ShipTrees.planningCopy(liveSnapshotSupplier.get().skillData());
         editedTemplateId = template == null ? null : template.id();
         templateSteps = template == null ? List.of() : template.steps();
+        integrationMarks.clear();
+        if (template != null) {
+            integrationMarks.addAll(template.integrationMarks());
+        }
         planSnapshot = null;
         nodeIdsRevision = -1;
         planSteps(templateSteps);
@@ -62,16 +71,24 @@ final class TemplatePlanner {
         carriedSteps = List.copyOf(unplacedSteps);
     }
 
+    void clearIntegrations() {
+        if (planData != null) {
+            planData.clearIntegrations();
+        }
+    }
+
     void stop() {
         planData = null;
         editedTemplateId = null;
         templateSteps = List.of();
         carriedSteps = List.of();
+        integrationMarks.clear();
         planSnapshot = null;
         planSnapshotLive = null;
         nodeIdsLive = null;
         planNodeIds = Set.of();
         plannedOnlyNodeIds = Set.of();
+        grantOnlyNodeIds = Set.of();
     }
 
     String editedTemplateId() {
@@ -127,6 +144,7 @@ final class TemplatePlanner {
         Set<String> plannedOnly = new HashSet<>(planNodeIds);
         plannedOnly.removeAll(liveSnapshot.skillData().getAllocatedNodeIds());
         plannedOnlyNodeIds = Set.copyOf(plannedOnly);
+        grantOnlyNodeIds = ShipTrees.grantOnlyNodeIds(planData, SkillTree.topology(), allocator.satisfiedRootId());
     }
 
     boolean add(SkillNode node, SkillType option) {
@@ -143,7 +161,39 @@ final class TemplatePlanner {
             return false;
         }
         ShipTrees.deallocate(planData, node);
+        integrationMarks.remove(node.getId());
         return true;
+    }
+
+    boolean canToggleIntegrationMark(SkillNode node) {
+        if (planData == null) {
+            return false;
+        }
+        if (integrationMarks.contains(node.getId())) {
+            return !planData.isIntegrated(node.getId());
+        }
+        refreshNodeIds();
+        return !grantOnlyNodeIds.contains(node.getId()) && IntegratedNodes.canIntegrate(planData, node);
+    }
+
+    boolean toggleIntegrationMark(SkillNode node) {
+        if (!canToggleIntegrationMark(node)) {
+            return false;
+        }
+        if (!integrationMarks.remove(node.getId())) {
+            integrationMarks.add(node.getId());
+        }
+        return true;
+    }
+
+    Set<String> integrationMarks() {
+        return integrationMarksView;
+    }
+
+    Set<String> captureIntegrationMarks() {
+        Set<String> captured = new LinkedHashSet<>(integrationMarks);
+        captured.addAll(liveSnapshotSupplier.get().skillData().getIntegratedNodeIds());
+        return captured;
     }
 
     boolean switchOption(SkillNode node, SkillType option) {

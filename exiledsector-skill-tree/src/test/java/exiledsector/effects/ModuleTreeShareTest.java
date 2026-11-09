@@ -1,15 +1,18 @@
 package exiledsector.effects;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
-import com.fs.starfarer.api.loading.WeaponSlotAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.loading.VariantSource;
+import exiledsector.skills.DiminishingReturns;
 import exiledsector.skills.EffectContribution;
 import exiledsector.skills.EffectTotals;
+import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.StatBaseline;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.persistence.ShipRecords;
 import exiledsector.persistence.ShipSkillDataManager;
@@ -23,30 +26,30 @@ import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ModuleTreeShareTest {
 
     private static final float SHARE = 0.5f;
+    private static final String PREFIX = "exiledSector_moduleShare_parent_";
 
     private MockedStatic<LunaSettings> lunaSettings;
 
@@ -55,11 +58,16 @@ class ModuleTreeShareTest {
         lunaSettings = Mockito.mockStatic(LunaSettings.class);
         lunaSettings.when(() -> LunaSettings.getInt("exiledSector", ModuleShareSetting.FIELD_ID)).thenReturn(null);
         lunaSettings.when(() -> LunaSettings.getInt("exiledSector", ModuleShareSetting.STATION_FIELD_ID)).thenReturn(null);
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        when(engine.getCustomData()).thenReturn(new HashMap<>());
+        Global.setCombatEngine(engine);
     }
 
     @AfterEach
     void closeSettings() {
         lunaSettings.close();
+        Global.setCombatEngine(null);
+        SkillTreeSetting.setEnabledForTests(SkillTreeSetting.DEFAULT_ENABLED);
     }
 
     private static SkillTypeEffect effect(String name, float magnitude) {
@@ -83,7 +91,7 @@ class ModuleTreeShareTest {
     }
 
     private static Map<SkillEffect, Float> totals(ShipVariantAPI moduleVariant, SkillTreeEffectSource.NodeEffects... nodes) {
-        return ModuleTreeShare.sharedTotals(List.of(nodes), Map.of(), HullSize.CRUISER, moduleVariant, SHARE);
+        return ModuleTreeShare.sharedTotals(List.of(nodes), Set.of(), Map.of(), HullSize.CRUISER, moduleVariant, SHARE);
     }
 
     private static Map<SkillEffect, Float> totals(SkillTreeEffectSource.NodeEffects... nodes) {
@@ -155,7 +163,7 @@ class ModuleTreeShareTest {
         float parentHull = parentTotals.pooledMultipliers().get(SkillEffect.byName("HULL_MULT"));
 
         assertTrue(ratios.get(SkillEffect.byName("HULL_MULT")) < 1f);
-        Map<SkillEffect, Float> moduleTotals = ModuleTreeShare.sharedTotals(List.of(node(lowTech)), ratios, HullSize.CRUISER,
+        Map<SkillEffect, Float> moduleTotals = ModuleTreeShare.sharedTotals(List.of(node(lowTech)), Set.of(), ratios, HullSize.CRUISER,
                 mock(ShipVariantAPI.class), SHARE);
         assertEquals(parentHull * SHARE, total(moduleTotals, "HULL_MULT"), 1e-4f);
     }
@@ -167,7 +175,7 @@ class ModuleTreeShareTest {
                 EffectContribution.scaledPermanent("item", "item_", List.of(effect("AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT", 50f)))), 1f);
         Map<SkillEffect, Float> ratios = ModuleTreeShare.affinityBonusRatios(parentTotals.contributions());
 
-        Map<SkillEffect, Float> moduleTotals = ModuleTreeShare.sharedTotals(List.of(node(lowTech)), ratios, HullSize.CRUISER,
+        Map<SkillEffect, Float> moduleTotals = ModuleTreeShare.sharedTotals(List.of(node(lowTech)), Set.of(), ratios, HullSize.CRUISER,
                 mock(ShipVariantAPI.class), SHARE);
         assertEquals(0f, moduleTotals.getOrDefault(SkillEffect.byName("HULL_MULT"), 0f), 1e-4f);
     }
@@ -177,121 +185,95 @@ class ModuleTreeShareTest {
         assertEquals(6f, total(totals(node(effect("LOW_TECH_AFFINITY_FLAT", 30f))), "HULL_MULT"), 1e-4f);
     }
 
-    @Test
-    void theFirstTickPushesTheShareOntoLivingModulesOnceUnderTheParentsModId() {
-        ShipAPI parent = mock(ShipAPI.class);
-        when(parent.getId()).thenReturn("parent");
-        when(parent.getMutableStats()).thenReturn(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS));
-        ShipAPI module = module(true);
-        ShipAPI wreck = module(false);
-        when(parent.getChildModulesCopy()).thenReturn(new ArrayList<>(List.of(module, wreck)));
-        ModuleTreeShare share = new ModuleTreeShare(parent, List.of(node(effect("FLUX_CAPACITY_PERCENT", 20f), effect("ARMOR_PERCENT", 10f))),
-                Map.of(), HullSize.CRUISER);
-
-        share.advance(0.1f);
-        share.advance(0.1f);
-
-        MutableShipStatsAPI stats = module.getMutableStats();
-        verify(stats.getFluxCapacity(), times(1)).modifyPercent("exiledSector_moduleShare_parent_FLUX_CAPACITY_PERCENT", 10f);
-        verify(stats.getArmorBonus(), times(1)).modifyPercent("exiledSector_moduleShare_parent_ARMOR_PERCENT", 5f);
-        verify(wreck.getMutableStats().getFluxCapacity(), never()).modifyPercent(anyString(), anyFloat());
-    }
-
-    @Test
-    void aDockedShipWithATreeOfItsOwnGetsNoShareOfTheParentsTree() {
-        ShipAPI parent = mock(ShipAPI.class);
-        when(parent.getId()).thenReturn("parent");
-        when(parent.getMutableStats()).thenReturn(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS));
-        ShipAPI dockedCore = module(true);
-        when(dockedCore.getVariant().getTags()).thenReturn(List.of(ShipRecords.SHIP_TAG_PREFIX + "docked-core"));
-        ShipAPI plate = module(true);
-        when(parent.getChildModulesCopy()).thenReturn(new ArrayList<>(List.of(dockedCore, plate)));
-
-        try (MockedStatic<ShipSkillDataManager> records = Mockito.mockStatic(ShipSkillDataManager.class)) {
-            records.when(() -> ShipSkillDataManager.find("docked-core")).thenReturn(new ShipSkillData());
-            new ModuleTreeShare(parent, List.of(node(effect("FLUX_CAPACITY_PERCENT", 20f))), Map.of(), HullSize.CRUISER).advance(0.1f);
+    private static void registerParent(boolean station, SkillTreeEffectSource.NodeEffects... nodes) {
+        ShipVariantAPI parentVariant = ModuleVariants.parent(VariantSource.REFIT, Map.of("WS0001", ModuleVariants.variant(VariantSource.REFIT)));
+        FleetMemberAPI parentMember = mock(FleetMemberAPI.class);
+        when(parentMember.getId()).thenReturn("parent");
+        when(parentMember.isStation()).thenReturn(station);
+        ShipEffectContext parentContext = new ShipEffectContext(new ShipSkillData(), parentMember, parentVariant, HullSize.CRUISER);
+        List<EffectContribution> contributions = new ArrayList<>();
+        for (SkillTreeEffectSource.NodeEffects node : nodes) {
+            contributions.add(new EffectContribution(node.node(), "exiledSector_skill_" + node.node().node().getId() + "_", node.effects(),
+                    null, null, true, true));
         }
+        ShipEffectSource parentTree = new ShipEffectSource() {
+            @Override
+            public List<EffectContribution> contributions(ShipEffectContext context) {
+                return contributions;
+            }
+        };
+        ModuleParents.register(parentContext, ResolvedTree.of(parentContext, 1f, StatBaseline.NONE, DiminishingReturns.OFF, List.of(parentTree)));
+    }
 
-        verify(dockedCore.getMutableStats().getFluxCapacity(), never()).modifyPercent(anyString(), anyFloat());
-        verify(plate.getMutableStats().getFluxCapacity()).modifyPercent("exiledSector_moduleShare_parent_FLUX_CAPACITY_PERCENT", 10f);
+    private static MutableShipStatsAPI buildModule(ShipVariantAPI moduleVariant) {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS);
+        when(stats.getFleetMember()).thenReturn(mock(FleetMemberAPI.class));
+        when(stats.getVariant()).thenReturn(moduleVariant);
+        new ModuleHullMod().applyEffectsBeforeShipCreation(HullSize.CRUISER, stats, ModuleHullMod.ID);
+        return stats;
+    }
+
+    private static MutableShipStatsAPI buildModule() {
+        return buildModule(ModuleVariants.linkedModule("parent"));
     }
 
     @Test
-    void attachesOnceAndOnlyToShipsAndStationsWithModuleSlots() {
-        ShipAPI modular = ship(true);
-        ShipAPI plain = ship(false);
-        ShipAPI station = ship(true);
-        when(station.isStation()).thenReturn(true);
-        ResolvedTree tree = mock(ResolvedTree.class);
+    void aModuleBuildsWithTheShareOfTheParentsTreeAndTheModuleBonusesAtFullStrength() {
+        registerParent(false, node(type("caps"), effect("FLUX_CAPACITY_PERCENT", 20f), effect("HULL_PERCENT", 10f)),
+                node(type("bulkheads"), effect("MODULE_HULL_PERCENT", 20f), effect("MODULE_ARMOR_PERCENT", 10f)));
 
-        ModuleTreeShare.attach(modular, tree);
-        when(modular.getListeners(ModuleTreeShare.class)).thenReturn(List.of(mock(ModuleTreeShare.class)));
-        ModuleTreeShare.attach(modular, tree);
-        ModuleTreeShare.attach(plain, tree);
-        ModuleTreeShare.attach(station, tree);
+        MutableShipStatsAPI stats = buildModule();
 
-        ArgumentCaptor<Object> added = ArgumentCaptor.forClass(Object.class);
-        verify(modular, times(1)).addListener(added.capture());
-        assertTrue(added.getValue() instanceof AdvanceableListener);
-        verify(plain, never()).addListener(any());
-        verify(station, times(1)).addListener(any());
+        verify(stats.getFluxCapacity()).modifyPercent(PREFIX + "FLUX_CAPACITY_PERCENT", 10f);
+        verify(stats.getHullBonus()).modifyPercent(PREFIX + "HULL_PERCENT", 25f);
+        verify(stats.getArmorBonus()).modifyPercent(PREFIX + "ARMOR_PERCENT", 10f);
     }
 
     @Test
     void aStationsModulesGetTheStationShare() {
-        ShipAPI station = mock(ShipAPI.class);
-        when(station.getId()).thenReturn("station");
-        when(station.isStation()).thenReturn(true);
-        when(station.getMutableStats()).thenReturn(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS));
-        ShipAPI module = module(true);
-        when(station.getChildModulesCopy()).thenReturn(new ArrayList<>(List.of(module)));
-        new ModuleTreeShare(station, List.of(node(effect("FLUX_CAPACITY_PERCENT", 20f))), Map.of(), HullSize.CAPITAL_SHIP).advance(0.1f);
+        registerParent(true, node(effect("FLUX_CAPACITY_PERCENT", 20f)));
 
-        verify(module.getMutableStats().getFluxCapacity()).modifyPercent("exiledSector_moduleShare_station_FLUX_CAPACITY_PERCENT", 20f);
+        verify(buildModule().getFluxCapacity()).modifyPercent(PREFIX + "FLUX_CAPACITY_PERCENT", 20f);
 
         lunaSettings.when(() -> LunaSettings.getInt("exiledSector", ModuleShareSetting.STATION_FIELD_ID)).thenReturn(25);
-        ShipAPI quarterModule = module(true);
-        when(station.getChildModulesCopy()).thenReturn(new ArrayList<>(List.of(quarterModule)));
-        new ModuleTreeShare(station, List.of(node(effect("FLUX_CAPACITY_PERCENT", 20f))), Map.of(), HullSize.CAPITAL_SHIP).advance(0.1f);
-
-        verify(quarterModule.getMutableStats().getFluxCapacity()).modifyPercent("exiledSector_moduleShare_station_FLUX_CAPACITY_PERCENT", 5f);
+        verify(buildModule().getFluxCapacity()).modifyPercent(PREFIX + "FLUX_CAPACITY_PERCENT", 5f);
     }
 
     @Test
-    void withTheShareOffOnlyShipsWithTaniaModuleNodesAttach() {
-        ShipAPI plain = ship(true);
-        when(plain.getMutableStats()).thenReturn(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS));
-        ShipAPI tania = ship(true);
-        MutableShipStatsAPI taniaStats = mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS);
-        when(taniaStats.getDynamic().getValue("exiledSector_moduleArmorPercent", 0f)).thenReturn(20f);
-        when(tania.getMutableStats()).thenReturn(taniaStats);
-
+    void withTheShareOffModulesStillGetTheModuleBonuses() {
         lunaSettings.when(() -> LunaSettings.getInt("exiledSector", ModuleShareSetting.FIELD_ID)).thenReturn(0);
-        ModuleTreeShare.attach(plain, mock(ResolvedTree.class));
-        ModuleTreeShare.attach(tania, mock(ResolvedTree.class));
+        registerParent(false, node(effect("FLUX_CAPACITY_PERCENT", 20f), effect("MODULE_ARMOR_PERCENT", 20f)));
 
-        verify(plain, never()).addListener(any());
-        verify(tania, times(1)).addListener(any());
+        MutableShipStatsAPI stats = buildModule();
+
+        verify(stats.getFluxCapacity(), never()).modifyPercent(anyString(), anyFloat());
+        verify(stats.getArmorBonus()).modifyPercent(PREFIX + "ARMOR_PERCENT", 20f);
     }
 
-    private static ShipAPI module(boolean alive) {
-        ShipAPI module = mock(ShipAPI.class);
-        when(module.isAlive()).thenReturn(alive);
-        when(module.getVariant()).thenReturn(mock(ShipVariantAPI.class));
-        when(module.getHullSpec()).thenReturn(mock(ShipHullSpecAPI.class));
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS);
-        when(module.getMutableStats()).thenReturn(stats);
-        return module;
+    @Test
+    void withTheSkillTreeSwitchedOffModulesBuildAtTheirPlainStats() {
+        registerParent(false, node(effect("FLUX_CAPACITY_PERCENT", 20f), effect("MODULE_HULL_PERCENT", 20f)));
+        SkillTreeSetting.setEnabledForTests(false);
+
+        MutableShipStatsAPI stats = buildModule();
+
+        verify(stats.getFluxCapacity(), never()).modifyPercent(anyString(), anyFloat());
+        verify(stats.getHullBonus(), never()).modifyPercent(anyString(), anyFloat());
     }
 
-    private static ShipAPI ship(boolean withModuleSlot) {
-        ShipAPI ship = mock(ShipAPI.class);
-        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
-        WeaponSlotAPI slot = mock(WeaponSlotAPI.class);
-        when(slot.isStationModule()).thenReturn(withModuleSlot);
-        when(hullSpec.getAllWeaponSlotsCopy()).thenReturn(List.of(slot));
-        when(ship.getHullSpec()).thenReturn(hullSpec);
-        when(ship.getListeners(ModuleTreeShare.class)).thenReturn(List.of());
-        return ship;
+    @Test
+    void aDockedShipWithATreeOfItsOwnGetsNoShareOfTheParentsTree() {
+        registerParent(false, node(effect("FLUX_CAPACITY_PERCENT", 20f), effect("MODULE_HULL_PERCENT", 20f)));
+        ShipVariantAPI dockedCore = ModuleVariants.linkedModule("parent");
+        dockedCore.addTag(ShipRecords.SHIP_TAG_PREFIX + "docked-core");
+
+        MutableShipStatsAPI stats;
+        try (MockedStatic<ShipSkillDataManager> records = Mockito.mockStatic(ShipSkillDataManager.class)) {
+            records.when(() -> ShipSkillDataManager.find("docked-core")).thenReturn(new ShipSkillData());
+            stats = buildModule(dockedCore);
+        }
+
+        verify(stats.getFluxCapacity(), never()).modifyPercent(anyString(), anyFloat());
+        verify(stats.getHullBonus(), never()).modifyPercent(anyString(), anyFloat());
     }
 }

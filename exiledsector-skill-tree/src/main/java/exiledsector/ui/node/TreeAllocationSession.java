@@ -10,6 +10,9 @@ import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.AllocationPath;
 import exiledsector.skills.AnchorRoute;
+import exiledsector.skills.IntegratedNodes;
+import exiledsector.skills.IntegrationLines;
+import exiledsector.skills.NodeIntegration;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;
@@ -68,6 +71,8 @@ public final class TreeAllocationSession {
     private final Predicate<SkillType> choicePickerOptionUsable = this::isChoicePickerOptionUsable;
     private final TemplatePlanner planner;
     private final ReleaseConfirmation releaseConfirmation = new ReleaseConfirmation();
+    private final IntegrationHold integrationHold = new IntegrationHold();
+    private final IntegrationHold integrationMarkHold = new IntegrationHold(IntegrationHold.MARK_HOLD_SECONDS);
     private final Random pathRandom = new Random();
 
     private TreeFeedback feedback = TreeFeedback.NONE;
@@ -167,6 +172,8 @@ public final class TreeAllocationSession {
         }
         rootChoice.advance(amount);
         releaseConfirmation.advance(amount);
+        advanceIntegrationHold(amount);
+        advanceIntegrationMarkHold(amount);
     }
 
     public SkillNode getStartingRoot() {
@@ -314,6 +321,10 @@ public final class TreeAllocationSession {
         return TemplateAnchors.socketedOn(snapshot().skillData());
     }
 
+    public Set<String> captureTemplateIntegrationMarks() {
+        return snapshot().skillData().getIntegratedNodeIds();
+    }
+
     public boolean isBusy() {
         return isStartingRootInputLocked();
     }
@@ -365,8 +376,8 @@ public final class TreeAllocationSession {
         }
     }
 
-    public SkillNode wormholeJumpTarget(SkillNode node, boolean ctrlDown) {
-        if (!ctrlDown) {
+    public SkillNode wormholeJumpTarget(SkillNode node) {
+        if (node == null) {
             return null;
         }
         ShipSkillData liveData = allocator.data();
@@ -777,8 +788,129 @@ public final class TreeAllocationSession {
         return apply(node, () -> allocator.unsocketItem(node));
     }
 
+    public void beginIntegrationHold(SkillNode node) {
+        if (canIntegrate(node)) {
+            integrationHold.begin(node.getId(), NodeIntegration.availableStoryPoints() >= IntegratedNodes.nextCost(allocator.data()));
+        } else if (canToggleIntegrationMark(node)) {
+            integrationMarkHold.begin(node.getId(), true);
+        }
+    }
+
+    public boolean releaseIntegrationHold() {
+        boolean integrationClaimed = integrationHold.release();
+        boolean markClaimed = integrationMarkHold.release();
+        return integrationClaimed || markClaimed;
+    }
+
+    public void cancelIntegrationHold() {
+        integrationHold.cancel();
+        integrationMarkHold.cancel();
+    }
+
+    public float integrationHoldProgress(SkillNode node) {
+        return integrationHold.progressFor(node.getId());
+    }
+
+    float integrationMarkHoldProgress(SkillNode node) {
+        return integrationMarkHold.progressFor(node.getId());
+    }
+
+    Set<String> integrationMarks() {
+        if (planner.isActive()) {
+            return planner.integrationMarks();
+        }
+        return template == null ? Set.of() : template.integrationMarks();
+    }
+
+    public Set<String> capturePlanIntegrationMarks() {
+        return planner.captureIntegrationMarks();
+    }
+
+    IntegrationLines.TemplateMark templateMark(SkillNode node) {
+        boolean marked = integrationMarks().contains(node.getId());
+        if (!planner.isActive()) {
+            return marked ? IntegrationLines.TemplateMark.MARKED : IntegrationLines.TemplateMark.NONE;
+        }
+        if (!planner.canToggleIntegrationMark(node)) {
+            return IntegrationLines.TemplateMark.NONE;
+        }
+        return marked ? IntegrationLines.TemplateMark.UNMARKABLE : IntegrationLines.TemplateMark.MARKABLE;
+    }
+
+    private boolean canToggleIntegrationMark(SkillNode node) {
+        return planner.isActive() && !isBusy() && planner.canToggleIntegrationMark(node);
+    }
+
+    private void advanceIntegrationMarkHold(float amount) {
+        SkillNode heldNode = SkillTree.get(integrationMarkHold.heldNodeId());
+        if (integrationMarkHold.advance(amount) != IntegrationHold.Step.COMPLETED || heldNode == null) {
+            return;
+        }
+        if (!canToggleIntegrationMark(heldNode) || !planner.toggleIntegrationMark(heldNode)) {
+            SkillTreeSounds.refused();
+            return;
+        }
+        if (planner.integrationMarks().contains(heldNode.getId())) {
+            SkillTreeSounds.allocated(allocationSound(heldNode.getType().getTier()));
+            feedback.pulse(heldNode);
+        } else {
+            SkillTreeSounds.deallocated();
+        }
+        planChangeListener.run();
+    }
+
+    private boolean canIntegrate(SkillNode node) {
+        return !planner.isActive() && !isBusy() && IntegratedNodes.canIntegrate(allocator.data(), node);
+    }
+
+    private void advanceIntegrationHold(float amount) {
+        SkillNode heldNode = SkillTree.get(integrationHold.heldNodeId());
+        IntegrationHold.Step step = integrationHold.advance(amount);
+        if (heldNode == null) {
+            return;
+        }
+        if (step == IntegrationHold.Step.CLAIMED) {
+            warnIntegration(heldNode);
+        } else if (step == IntegrationHold.Step.COMPLETED) {
+            integrate(heldNode);
+        }
+    }
+
+    private void warnIntegration(SkillNode node) {
+        int cost = IntegratedNodes.nextCost(allocator.data());
+        if (integrationHold.isAffordable()) {
+            integrationHold.warn(Translation.msg("node.integration.confirm").count(cost).text());
+        } else {
+            integrationHold.warn(Translation.msg("node.integration.notEnough").count(cost).text());
+            SkillTreeSounds.refused();
+        }
+        feedback.pulse(node);
+    }
+
+    private void integrate(SkillNode node) {
+        ShipSkillData skillData = allocator.data();
+        FleetMemberAPI member = allocator.member();
+        if (!canIntegrate(node) || !NodeIntegration.integrate(skillData, node, member.getShipName())) {
+            SkillTreeSounds.refused();
+            return;
+        }
+        refreshAfterAllocation();
+        SkillTreeSounds.integrated();
+        feedback.integrated(node);
+    }
+
+    public void refreshAfterIntegrationReset() {
+        cancelIntegrationHold();
+        planner.clearIntegrations();
+        refreshAfterAllocation();
+    }
+
     public String releaseWarning(SkillNode node) {
-        return node == null ? null : releaseConfirmation.warningFor(node.getId());
+        if (node == null) {
+            return null;
+        }
+        String integrationWarning = integrationHold.warningFor(node.getId());
+        return integrationWarning != null ? integrationWarning : releaseConfirmation.warningFor(node.getId());
     }
 
     private boolean confirmRelease(String action, SkillNode node, Consumer<ShipSkillData> change) {

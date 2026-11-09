@@ -2,7 +2,7 @@
 
 The Abyssal Rift (Random Assortment of Things only) gets its own content built from RAT's Abyss: abyssal salvage sites, the Abyssal Shipyard, the Abyssal Research Complex and the Abyssal Storm. Hull items dropped in a Rift system can carry an abyssal modifier, the first case of biome modifiers, which every atlas biome will get.
 
-Status: built 2026-11-04, apart from in-game checks. See `../../anomalies/overview.md` for the shared anomaly framework. RAT's Abyss assets are approved for use.
+Status: built 2026-11-04. See `../../anomalies/overview.md` for the shared anomaly framework. RAT's Abyss assets are approved for use.
 
 ## Rebuild, don't spawn RAT's entities
 

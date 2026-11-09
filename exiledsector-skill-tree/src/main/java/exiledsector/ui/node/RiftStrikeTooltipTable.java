@@ -42,11 +42,17 @@ final class RiftStrikeTooltipTable {
         return stats == null ? 0f : stats.getDynamic().getValue(RiftExplosions.DAMAGE_PERCENT_KEY, 0f);
     }
 
+    static boolean beamsFireRifts(FleetMemberAPI fleetMember) {
+        MutableShipStatsAPI stats = fleetMember.getStats();
+        return stats != null && stats.getDynamic().getValue(RiftStrike.BEAM_CHANCE_PERCENT_KEY, 0f) > 0f;
+    }
+
     static List<TooltipTable> forType(SkillType type, FleetMemberAPI fleetMember) {
         if (!appliesTo(type) || fleetMember == null || fleetMember.getVariant() == null) {
             return List.of();
         }
-        List<WeaponSpecAPI> weapons = riftWeapons(fleetMember.getVariant(), BallisticAsEnergy.active(fleetMember.getStats()));
+        List<WeaponSpecAPI> weapons = riftWeapons(fleetMember.getVariant(), BallisticAsEnergy.active(fleetMember.getStats()),
+                beamsFireRifts(fleetMember));
         if (weapons.isEmpty()) {
             return List.of();
         }
@@ -60,11 +66,11 @@ final class RiftStrikeTooltipTable {
                 List.of(Translation.text("ui.tables.weapon"), Translation.text("ui.tables.riftDamage")), rows));
     }
 
-    static List<WeaponSpecAPI> riftWeapons(ShipVariantAPI variant, boolean ballisticCountsAsEnergy) {
+    static List<WeaponSpecAPI> riftWeapons(ShipVariantAPI variant, boolean ballisticCountsAsEnergy, boolean includeBeams) {
         Map<String, WeaponSpecAPI> byId = new LinkedHashMap<>();
         for (String slotId : variant.getFittedWeaponSlots()) {
             WeaponSpecAPI weapon = variant.getWeaponSpec(slotId);
-            if (RiftStrike.firesRifts(weapon, ballisticCountsAsEnergy)) {
+            if (RiftStrike.firesRifts(weapon, ballisticCountsAsEnergy) || includeBeams && RiftStrike.beamFiresRifts(weapon, ballisticCountsAsEnergy)) {
                 byId.putIfAbsent(weapon.getWeaponId(), weapon);
             }
         }

@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import exiledsector.compat.LostSectorCompat;
 import exiledsector.i18n.StyledText;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
@@ -19,6 +20,7 @@ import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
 import static exiledsector.skills.skilleffect.StatTarget.bonus;
+import static exiledsector.skills.skilleffect.StatTarget.dynamicStat;
 import static exiledsector.skills.skilleffect.StatTarget.liveStat;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
 
@@ -42,6 +44,7 @@ public enum FluxSkillEffect implements BackedSkillEffect {
     VENT_RATE_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getVentRateMult), "stat.ventingSpeed", false)),
     OVERLOAD_DURATION_PERCENT(statEffect(PERCENT, bonus(MutableShipStatsAPI::getOverloadTimeMod), "stat.overloadDuration", true)),
     ZERO_FLUX_SPEED_FLAT(statEffect(FLAT, liveStat(MutableShipStatsAPI::getZeroFluxSpeedBoost), "stat.zeroFluxSpeedBoost", false)),
+    ZERO_FLUX_TURN_RATE_MULT(statEffect(MULT, dynamicStat(Stats.ZERO_FLUX_BOOST_TURN_RATE_BONUS_MULT), "stat.zeroFluxTurnRateBonus", false)),
     ZERO_FLUX_ALWAYS_ON {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

@@ -106,6 +106,24 @@ class TemporalExhaustListenerTest {
     }
 
     @Test
+    void additionalTaperSecondsStretchTheTimeFlowBonusButNotTheRiftTrail() {
+        when(ship.getMutableStats().getDynamic().getValue(TemporalExhaustListener.ADDITIONAL_TAPER_SECONDS_KEY, 0f)).thenReturn(2f);
+        float taperSeconds = TemporalExhaustListener.TAPER_SECONDS + 2f;
+        TemporalExhaustListener listener = listener();
+
+        activateSystem(listener);
+        verify(ship.getMutableStats().getTimeMult()).modifyPercent(MOD_ID, 20f);
+        listener.advance(taperSeconds / 2f);
+        verify(ship.getMutableStats().getTimeMult()).modifyPercent(MOD_ID, 10f);
+        listener.advance(TemporalExhaustListener.TAPER_SECONDS - taperSeconds / 2f);
+        verify(engine, times(TemporalExhaustListener.RIFT_COUNT)).spawnProjectile(any(), any(), anyString(), any(), anyFloat(), any());
+        verify(ship.getMutableStats().getTimeMult(), never()).unmodify(MOD_ID);
+        listener.advance(taperSeconds - TemporalExhaustListener.TAPER_SECONDS);
+        verify(ship.getMutableStats().getTimeMult()).unmodify(MOD_ID);
+        verify(engine, times(TemporalExhaustListener.RIFT_COUNT)).spawnProjectile(any(), any(), anyString(), any(), anyFloat(), any());
+    }
+
+    @Test
     void itTriggersAtMostOncePerCooldown() {
         TemporalExhaustListener listener = listener();
         activateSystem(listener);

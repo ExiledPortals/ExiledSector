@@ -1,11 +1,17 @@
 package exiledsector.skills.skilleffect.aura;
 
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.StyledText;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
+import exiledsector.skills.skilleffect.DescribeContext;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
+import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.SkillEffectSupport;
 import exiledsector.skills.skilleffect.weapon.PirateFrenzy;
+
+import java.util.Set;
 
 import static exiledsector.skills.skilleffect.Backings.listener;
 
@@ -29,6 +35,24 @@ public enum AuraSkillEffect implements BackedSkillEffect {
             return escortDescription(this, magnitude);
         }
     },
+    ESCORT_DESTROYER_SHIELD_DAMAGE_TAKEN_PERCENT(listener(EscortListener.SHIELD_DAMAGE_TAKEN_KEY, EscortListener.class, EscortListener::new)) {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            if (stats.getVariant() != null && stats.getVariant().getHullSize() == HullSize.DESTROYER) {
+                backing().apply(stats, modId, magnitude);
+            }
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return escortDescription(this, -magnitude);
+        }
+    },
     TOP_SPEED_PERCENT_PER_NEARBY_ALLY(listener(FormationSpeedListener.SPEED_PERCENT_PER_ALLY_KEY, FormationSpeedListener.class,
             FormationSpeedListener::new)) {
         @Override
@@ -41,7 +65,25 @@ public enum AuraSkillEffect implements BackedSkillEffect {
             TerrifyingPresenceListener.class, TerrifyingPresenceListener::new)) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("range", TerrifyingPresenceField.RANGE).arg("value", magnitude).styled();
+            return description(magnitude, DescribeContext.NONE);
+        }
+
+        @Override
+        public StyledText description(float magnitude, DescribeContext context) {
+            return EffectText.msg(this).arg("range", TerrifyingPresenceListener.range(context.magnitudeOf(TERRIFYING_PRESENCE_RANGE_PERCENT)))
+                    .arg("value", magnitude).styled();
+        }
+    },
+    TERRIFYING_PRESENCE_RANGE_PERCENT(listener(TerrifyingPresenceListener.RANGE_PERCENT_KEY,
+            TerrifyingPresenceListener.class, TerrifyingPresenceListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.signed(this, magnitude).styled();
+        }
+
+        @Override
+        public Set<SkillEffect> refines() {
+            return Set.of(TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT);
         }
     },
     GRAVITY_DRAG_TIMEFLOW_MULT(listener(GravityDragListener.TIMEFLOW_PERCENT_KEY, GravityDragListener.class, GravityDragListener::new)) {
@@ -63,7 +105,20 @@ public enum AuraSkillEffect implements BackedSkillEffect {
             AuxiliaryScreenListener::new)) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).arg("range", AuxiliaryScreenField.RANGE).styled();
+            return description(magnitude, DescribeContext.NONE);
+        }
+
+        @Override
+        public StyledText description(float magnitude, DescribeContext context) {
+            return EffectText.msg(this).arg("value", magnitude)
+                    .arg("range", AuxiliaryScreenListener.range(context.magnitudeOf(SMALLER_ALLY_DAMAGE_TAKEN_RANGE_FLAT))).styled();
+        }
+    },
+    SMALLER_ALLY_DAMAGE_TAKEN_RANGE_FLAT(listener(AuxiliaryScreenListener.RANGE_FLAT_KEY, AuxiliaryScreenListener.class,
+            AuxiliaryScreenListener::new)) {
+        @Override
+        public Set<SkillEffect> refines() {
+            return Set.of(SMALLER_ALLY_DAMAGE_TAKEN_MULT);
         }
     },
     MALFUNCTION_AURA_PERCENT(listener(MalfunctionAuraListener.MALFUNCTION_PERCENT_KEY, MalfunctionAuraListener.class, MalfunctionAuraListener::new)) {
@@ -79,11 +134,19 @@ public enum AuraSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("range", RateOfFireAuraField.RANGE).styled();
         }
     },
-    ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD(listener(DModArmorAuraListener.PERCENT_PER_DMOD_KEY, DModArmorAuraListener.class,
-            DModArmorAuraListener::new)) {
+    ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD(listener(DModAuraListener.ARMOR_PERCENT_PER_DMOD_KEY, DModAuraListener.class,
+            DModAuraListener::new)) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).arg("range", DModArmorAuraField.RANGE)
+            return EffectText.msg(this).arg("value", magnitude).arg("range", DModAuraField.RANGE)
+                    .arg("max", SkillEffectSupport.MAX_COUNTED_DMODS).styled();
+        }
+    },
+    ALLY_TOP_SPEED_PERCENT_PER_DMOD(listener(DModAuraListener.TOP_SPEED_PERCENT_PER_DMOD_KEY, DModAuraListener.class,
+            DModAuraListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", DModAuraField.RANGE)
                     .arg("max", SkillEffectSupport.MAX_COUNTED_DMODS).styled();
         }
     },
@@ -115,7 +178,12 @@ public enum AuraSkillEffect implements BackedSkillEffect {
             FrenzyOnNearbyDestructionListener.class, FrenzyOnNearbyDestructionListener::new)) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).arg("seconds", PirateFrenzy.STACK_SECONDS)
+            return description(magnitude, DescribeContext.NONE);
+        }
+
+        @Override
+        public StyledText description(float magnitude, DescribeContext context) {
+            return EffectText.msg(this).arg("value", magnitude).arg("seconds", PirateFrenzy.stackSeconds(context))
                     .arg("stacks", PirateFrenzy.MAX_STACKS).styled().append("\n").append(PirateFrenzy.describeStackBonuses());
         }
     },

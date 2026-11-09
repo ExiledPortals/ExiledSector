@@ -123,6 +123,20 @@ class ResonatorPayloadListenerTest {
     }
 
     @Test
+    void additionalRiftsLengthenEverySeries() {
+        ShipAPI ship = ship(0, 5f);
+        when(ship.getMutableStats().getDynamic().getValue(ResonatorPayloadListener.ADDITIONAL_RIFTS_KEY, 0f)).thenReturn(1f);
+        ResonatorPayloadListener listener = new ResonatorPayloadListener(ship, rolling(0.04f));
+
+        listener.modifyDamageDealt(missile(ship, WeaponType.MISSILE, 750f), ship(1, 0f), mock(DamageAPI.class), new Vector2f(), false);
+        listener.advance(0f);
+        listener.advance(ResonatorPayloadListener.SECONDS_BETWEEN_RIFTS * ResonatorPayloadListener.RIFTS_PER_SERIES);
+        listener.advance(1f);
+
+        verify(engine, times(ResonatorPayloadListener.RIFTS_PER_SERIES + 1)).spawnProjectile(any(), any(), anyString(), any(), anyFloat(), any());
+    }
+
+    @Test
     void theRestOfASeriesIsDroppedWhenTheShipDies() {
         ShipAPI ship = ship(0, 5f);
         ResonatorPayloadListener listener = new ResonatorPayloadListener(ship, rolling(0.04f));

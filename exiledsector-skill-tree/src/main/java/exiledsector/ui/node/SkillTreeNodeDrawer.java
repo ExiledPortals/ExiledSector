@@ -1,8 +1,10 @@
 package exiledsector.ui.node;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.ExoshipNodes;
+import exiledsector.skills.IntegratedNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -45,6 +47,7 @@ public final class SkillTreeNodeDrawer {
     private static final float ROOT_ICON_SHARE = 0.68f;
     private static final float ROOT_ICON_ALPHA = 0.3f;
     private static final float SOCKET_WORMHOLE_START_SCALE = 0.3f;
+    private static final float UNALLOCATED_CIRCUIT_ALPHA = 0.35f;
 
     private final TreeAllocationSession session;
     private final SkillTreePanelStyle panelStyle;
@@ -54,6 +57,7 @@ public final class SkillTreeNodeDrawer {
     private final SkillTreeNodeIconRenderer iconRenderer = new SkillTreeNodeIconRenderer();
     private final RootCircuitRenderer rootCircuitRenderer = new RootCircuitRenderer();
     private final RootCircuitGrowth rootCircuitGrowth = new RootCircuitGrowth();
+    private final Color integratedCircuitColour = Misc.getStoryOptionColor();
     private final RootAffinityNumber rootAffinityNumber;
     private final SkillTreeSocketRenderer socketRenderer = new SkillTreeSocketRenderer();
     private SkillTreeTopology socketTopology;
@@ -79,7 +83,7 @@ public final class SkillTreeNodeDrawer {
         this.beams = ringRenderer.beams();
         this.allocationAnimation = new AllocationAnimation(new AnimatedTree(), new AnimationSounds());
         this.connectorRenderer = new SkillTreeNodeConnectorRenderer(panelStyle, nodeSearch, wormholeOpenness, socketWormholes, beams);
-        this.tooltipRenderer = new SkillTreeNodeTooltipRenderer(member, panelStyle);
+        this.tooltipRenderer = new SkillTreeNodeTooltipRenderer(member, panelStyle, session::isPlanning, session::templateMark);
         this.rootAffinityNumber = new RootAffinityNumber(member);
         this.choicePickerRenderer = new SkillTreeNodeChoicePickerRenderer(panelStyle);
     }
@@ -163,7 +167,14 @@ public final class SkillTreeNodeDrawer {
         float nodeX = viewport.screenX(node.getOffsetX());
         float nodeY = viewport.screenY(node.getOffsetY());
         float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
-        if (!viewport.isVisible(nodeX, nodeY, ringRenderer.reach(footprintSize, node))) {
+        boolean integrated = skillData.isIntegrated(node.getId());
+        float integrationHoldProgress = session.integrationHoldProgress(node);
+        float blueprintRadii = integrated ? 0f : blueprintRadii(node);
+        float reach = ringRenderer.reach(footprintSize, node);
+        if (integrated || integrationHoldProgress > 0f || blueprintRadii > 0f) {
+            reach = Math.max(reach, rootCircuitRenderer.reachRadius(donutRadius(footprintSize)));
+        }
+        if (!viewport.isVisible(nodeX, nodeY, reach)) {
             return;
         }
 
@@ -202,6 +213,15 @@ public final class SkillTreeNodeDrawer {
             socketRenderer.drawContent(nodeX, nodeY, socketSize, socketed == null ? null : socketed.iconPath(),
                     iconTint(node, allocation, allocated), socketAlpha);
         }
+        if (integrated && IntegratedNodes.isIntegrated(skillData, node.getId(), effectiveType)) {
+            float circuitAlpha = nodeAlpha * (allocated ? 1f : UNALLOCATED_CIRCUIT_ALPHA);
+            rootCircuitRenderer.draw(nodeX, nodeY, donutRadius(footprintSize), circuitAlpha, integratedCircuitColour, RootCircuitGrowth.FULLY_GROWN);
+        } else if (integrationHoldProgress > 0f) {
+            rootCircuitRenderer.draw(nodeX, nodeY, donutRadius(footprintSize), nodeAlpha, integratedCircuitColour,
+                    integrationHoldProgress * RootCircuit.get().longestTraceRadii());
+        } else if (blueprintRadii > 0f) {
+            rootCircuitRenderer.drawBlueprint(nodeX, nodeY, donutRadius(footprintSize), nodeAlpha, integratedCircuitColour, blueprintRadii);
+        }
         Color notableDoctrineColor = rewrite != null && tier == SkillTier.NOTABLE ? DoctrineColors.forDoctrine(rewrite.doctrineDefinitionId()) : null;
         Color grantColor = allocated ? grantMarkers.colorFor(node.getId()) : null;
         ringRenderer.draw(nodeX, nodeY, footprintSize, nodeAlpha, SkillTreeNodeRingRenderer.RingState.of(live, breathing), zoom, node,
@@ -219,6 +239,12 @@ public final class SkillTreeNodeDrawer {
                 iconRenderer.drawIcon(effectiveType.getIconPath(), nodeX, nodeY, iconSize, nodeAlpha, tint);
             }
         }
+    }
+
+    private float blueprintRadii(SkillNode node) {
+        float markHoldProgress = session.integrationMarkHoldProgress(node);
+        float shownShare = session.integrationMarks().contains(node.getId()) ? 1f - markHoldProgress : markHoldProgress;
+        return shownShare * RootCircuit.get().longestTraceRadii();
     }
 
     private void renderRootNode(SkillNode node, TreeViewport viewport, float alphaMult, NodeAllocator.Snapshot allocation,
@@ -392,6 +418,11 @@ public final class SkillTreeNodeDrawer {
         @Override
         public void rootChanged(SkillNode chosenRoot) {
             panelStyle.setAccentIconPath(chosenRoot != null ? chosenRoot.getType().getIconPath() : null);
+        }
+
+        @Override
+        public void integrated(SkillNode node) {
+            ringRenderer.startPulse(node.getId());
         }
     }
 

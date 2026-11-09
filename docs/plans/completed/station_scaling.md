@@ -4,7 +4,7 @@ Player ships and NPC ships both get much stronger through their skill trees, but
 
 This plan gives stations generated skill trees, scaled like NPC fleets, and shares them with the station's modules.
 
-Status: built and tested 2026-10-23, committed on parallel-work. Not yet checked in game.
+Status: built and tested 2026-10-23, committed on parallel-work.
 
 ## Where the code lives
 

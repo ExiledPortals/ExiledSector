@@ -31,14 +31,16 @@ final class PierceDrone extends SingleShotDrone {
     private float crossedSeconds;
     private float travelFacing;
     private float fireFacing;
+    private int shotPierces = 1;
 
     PierceDrone(ShipAPI drone, PierceDrones pool) {
         super(drone, pool, RANGE_MATCH_MOD_ID);
     }
 
-    void launch(ShipAPI hitShip, Vector2f impactPoint, float travelFacing, float sourceRange) {
+    void launch(ShipAPI hitShip, Vector2f impactPoint, float travelFacing, float sourceRange, int shotPierces) {
         prepare(sourceRange);
         this.hitShip = hitShip;
+        this.shotPierces = shotPierces;
         direction.set(Misc.getUnitVectorAtDegreeAngle(travelFacing));
         toShipFrame(hitShip, impactPoint, localImpact);
         updateOrigin();
@@ -83,7 +85,7 @@ final class PierceDrone extends SingleShotDrone {
 
     @Override
     void tag(DamagingProjectileAPI projectile) {
-        BallisticPierceListener.markPierced(projectile);
+        BallisticPierceListener.markPierced(projectile, shotPierces);
     }
 
     @Override

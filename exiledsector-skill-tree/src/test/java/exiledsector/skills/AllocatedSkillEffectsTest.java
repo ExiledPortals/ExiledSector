@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -67,7 +66,7 @@ class AllocatedSkillEffectsTest {
     }
 
     @Test
-    void skipsNodesBackedByAVanillaHullMod() {
+    void appliesTheOwnEffectsOfANodeBackedByAVanillaHullMod() {
         SkillType type = new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL)
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
                 .vanillaHullModId("some_vanilla_hullmod")
@@ -80,7 +79,7 @@ class AllocatedSkillEffectsTest {
 
         List<SkillEffect> effects = AllocatedSkillEffects.forMember(member);
 
-        assertFalse(effects.contains(DefenseSkillEffect.HULL_PERCENT));
+        assertTrue(effects.contains(DefenseSkillEffect.HULL_PERCENT));
     }
 
     @Test

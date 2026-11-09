@@ -64,7 +64,7 @@ public final class NpcLevelCaps {
         static CapData defaults() {
             Map<NpcLevelCategory, LevelRule> ruleByCategory = new EnumMap<>(NpcLevelCategory.class);
             for (NpcLevelCategory category : NpcLevelCategory.values()) {
-                ruleByCategory.put(category, new LevelRule(category.defaultCap(), null, null, null));
+                ruleByCategory.put(category, LevelRule.EMPTY);
             }
             return new CapData(ruleByCategory, Map.of());
         }
@@ -171,7 +171,11 @@ public final class NpcLevelCaps {
     private static NpcLevelLimit withMode(String factionId, NpcLevelCategory category, NpcLevelLimit limit) {
         Boolean fixed = resolve(factionId, category, LevelRule::fixed);
         if (fixed == null ? !NpcTreeConfig.fixedLevels() : !fixed) {
-            return limit;
+            if (NpcTreeConfig.levelCaps()) {
+                return limit;
+            }
+            int maxLevelCap = clampToMaxLevel(UNCAPPED);
+            return new NpcLevelLimit(maxLevelCap, maxLevelCap, limit.flagshipLevels());
         }
         Integer min = resolve(factionId, category, LevelRule::min);
         return limit.fixedFrom(min != null ? min : Math.round(capFor(factionId, category) * NpcTreeConfig.fixedMinPercent() / 100f));
@@ -281,11 +285,12 @@ public final class NpcLevelCaps {
     }
 
     private static int capFor(String factionId, NpcLevelCategory category) {
-        return clampToMaxLevel(resolve(factionId, category, LevelRule::cap));
+        Integer csvCap = resolve(factionId, category, LevelRule::cap);
+        return clampToMaxLevel(csvCap != null ? csvCap : category.settingCap());
     }
 
     public static int capOf(NpcLevelCategory category) {
-        return clampToMaxLevel(CAP_DATA.get().ruleByCategory().get(category).cap());
+        return capFor(null, category);
     }
 
     private static <T> T resolve(String factionId, NpcLevelCategory category, Function<LevelRule, T> field) {

@@ -15,4 +15,5 @@ hull_item,0.176,diminishing,0.6825,1,"Basic hull items; enemy tree size raises t
 unique_hull_item,0.016,diminishing,0.375,1,
 refit_schematic,0.2133,diminishing,0.375,1,
 logistics_schematic,0.0213,diminishing,0.375,1,"Logistics Schematics from the skill tree domain; matches the Military Refit Schematic (refit_schematic times its 10% tier weight)"
+deintegration_schematic,0.0252,diminishing,0.125,0,"Deintegration Schematics from the skill tree domain; same rate as the Tuning Nanoswarm"
 master_schematic,0.1333,diminishing,0.375,1,"Only while the Master Schematic is still needed"

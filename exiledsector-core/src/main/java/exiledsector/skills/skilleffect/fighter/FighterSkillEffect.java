@@ -16,6 +16,7 @@ import exiledsector.skills.CombatGate;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.ConditionalStatEffect;
+import exiledsector.skills.skilleffect.DescribeContext;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
 import exiledsector.skills.skilleffect.SimpleStatEffect;
@@ -32,6 +33,9 @@ import exiledsector.skills.skilleffect.weapon.RiftExplosionDamageListener;
 import exiledsector.skills.skilleffect.weapon.WeaponScope;
 import exiledsector.skills.skilleffect.weapon.WeaponStatFamily;
 
+import java.util.Set;
+
+import static exiledsector.skills.skilleffect.Backings.flag;
 import static exiledsector.skills.skilleffect.Backings.listener;
 import static exiledsector.skills.skilleffect.Backings.statEffect;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
@@ -174,6 +178,7 @@ public enum FighterSkillEffect implements BackedSkillEffect {
                     .arg("distance", BomberPayloadDetonation.SAFE_DISTANCE_FROM_CARRIER).styled();
         }
     },
+    BOMBER_PAYLOAD_DETONATION_SPARES_ALLIES(flag(BomberPayloadDetonation.SPARES_ALLIES_KEY)),
 
     SUPPORT_ROLE_DAMAGE_PERCENT(WingRole.SUPPORT, RoleStat.WEAPON_DAMAGE),
     SUPPORT_ROLE_TOP_SPEED_PERCENT(WingRole.SUPPORT, RoleStat.TOP_SPEED),
@@ -286,8 +291,21 @@ public enum FighterSkillEffect implements BackedSkillEffect {
             SwarmLinkListener.class, SwarmLinkListener::new)) {
         @Override
         public StyledText description(float magnitude) {
+            return description(magnitude, DescribeContext.NONE);
+        }
+
+        @Override
+        public StyledText description(float magnitude, DescribeContext context) {
             return EffectText.msg(this).arg("value", magnitude).arg("range", SwarmLinkListener.RANGE)
-                    .arg("max", SwarmLinkListener.MAX_DAMAGE_PERCENT).styled();
+                    .arg("max", SwarmLinkListener.maxDamagePercent(context.magnitudeOf(STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_FLAT)))
+                    .styled();
+        }
+    },
+    STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_FLAT(new FighterListenerEffect<>(SwarmLinkListener.MAX_DAMAGE_FLAT_KEY,
+            SwarmLinkListener.class, SwarmLinkListener::new)) {
+        @Override
+        public Set<SkillEffect> refines() {
+            return Set.of(STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT);
         }
     },
     STRIKECRAFT_DEATH_BURST_DAMAGE_FLAT(new FighterListenerEffect<>(CinderBurstListener.DAMAGE_KEY, CinderBurstListener.class,

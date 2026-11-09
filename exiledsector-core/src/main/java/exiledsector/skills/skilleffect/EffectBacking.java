@@ -44,5 +44,9 @@ public interface EffectBacking {
         return true;
     }
 
+    default Class<?> listenerType() {
+        return null;
+    }
+
     StyledText description(SkillEffect effect, float magnitude);
 }

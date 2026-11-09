@@ -103,6 +103,7 @@ class NpcFleetLevellerTest {
         when(mockSector.sector.getPlayerStats()).thenReturn(playerStats);
         when(mockSector.sector.getSeedString()).thenReturn("SEED-1");
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class, invocation -> null);
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", NpcTreeConfig.LEVEL_CAPS_FIELD_ID)).thenReturn(true);
     }
 
     @AfterEach
@@ -648,6 +649,16 @@ class NpcFleetLevellerTest {
         assertEquals(15, nodesBesidesRoot(treeForFaction(true, false)));
         assertEquals(25, nodesBesidesRoot(treeForFaction(false, false)));
         assertEquals(35, nodesBesidesRoot(treeForFaction(true, true)));
+    }
+
+    @Test
+    void withLevelCapsSwitchedOffOpenWorldTreesFollowYourFleetPastTheCategoryCaps() {
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", NpcTreeConfig.LEVEL_CAPS_FIELD_ID)).thenReturn(false);
+        registerLongChain();
+        when(playerStats.getLevel()).thenReturn(45);
+
+        assertTrue(nodesBesidesRoot(treeForFaction(true, false)) > 15);
+        assertTrue(nodesBesidesRoot(treeForFaction(false, false)) > 25);
     }
 
     @Test

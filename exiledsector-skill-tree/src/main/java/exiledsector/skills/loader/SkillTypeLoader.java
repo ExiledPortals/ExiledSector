@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.HullModConflicts;
 import exiledsector.skills.HullSizeSkillEffect;
+import exiledsector.skills.IntegratedEffects;
 import exiledsector.skills.ShipHullSizes;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
@@ -110,7 +111,17 @@ public final class SkillTypeLoader {
                 .unlockConditions(unlockConditions)
                 .tags(tags)
                 .moduleShareOverride(parseModuleShareOverride(typeId, typeJson.optString("moduleShare", null)))
+                .integratedEffects(parseIntegratedEffects(typeJson.optJSONObject("integrated")))
                 .build();
+    }
+
+    private static IntegratedEffects parseIntegratedEffects(JSONObject integratedJson) throws JSONException {
+        if (integratedJson == null) {
+            return null;
+        }
+        return new IntegratedEffects(parseEffects(integratedJson.optJSONArray("effects")),
+                parseHullSizeEffects(integratedJson.optJSONArray("hullSizeEffects")),
+                parseStringArray(integratedJson.optJSONArray("effectText")));
     }
 
     private static ModuleShareOverride parseModuleShareOverride(String typeId, String moduleShare) {

@@ -2,7 +2,7 @@
 
 The 108 "Caps, Vents, Hull or Logistics" nodes become affinity nodes. Each one offers 5 Low Tech, 5 High Tech or 5 Midline affinity. Affinity adds up across the ship and grants stat bonuses in steps. The three roots grant 10 affinity of their own type instead of their current bonuses. Each root becomes a glowing processor core around its existing icon whose circuit traces pulse outward, with the root's affinity total written in its centre.
 
-Status: built and tested 2026-10-23, committed on parallel-work. Not yet checked in game.
+Status: built and tested 2026-10-23, committed on parallel-work.
 
 Reference image for the root art: `docs/plans/completed/images/attributes_root_circuit_reference.jpg`.
 

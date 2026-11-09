@@ -12,6 +12,8 @@ import exiledsector.skills.SocketedItemScaling;
 import exiledsector.skills.skilleffect.stationmodule.ModuleShare;
 import exiledsector.skills.skilleffect.stationmodule.ModuleShares;
 
+import java.util.Set;
+
 public interface SkillEffect extends ModifierEffect {
 
     void apply(MutableShipStatsAPI stats, String modId, float magnitude);
@@ -21,6 +23,14 @@ public interface SkillEffect extends ModifierEffect {
 
     default StyledText description(float magnitude, ShipAPI.HullSize hullSize) {
         return description(magnitude);
+    }
+
+    default StyledText description(float magnitude, DescribeContext context) {
+        return description(magnitude, context.hullSize());
+    }
+
+    default Set<SkillEffect> refines() {
+        return Set.of();
     }
 
     default boolean advancesInCombat() {

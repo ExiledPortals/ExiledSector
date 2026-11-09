@@ -36,6 +36,26 @@ describe('tree files round-trip', () => {
   });
 });
 
+describe('integrated effects serialisation', () => {
+  it('writes the integrated block after the hull-size effects, keeping an empty one', () => {
+    const base = { id: 'a', name: 'A', icon: '', tags: ['armor'], hullSizeEffects: [{ effect: 'ARMOR_FLAT', frigate: 1, destroyer: 2, cruiser: 3, capitalShip: 4 }] };
+    const integrated = serializeType({ ...base, integrated: { effects: [{ effect: 'HULL_PERCENT', magnitude: 10 }], hullSizeEffects: [] } });
+    expect(Object.keys(integrated)).toEqual(['id', 'name', 'icon', 'hullSizeEffects', 'integrated', 'tags']);
+    expect(integrated.integrated).toEqual({ effects: [{ effect: 'HULL_PERCENT', magnitude: 10 }] });
+    expect(serializeType({ ...base, integrated: {} }).integrated).toEqual({});
+    expect(serializeType(base)).not.toHaveProperty('integrated');
+  });
+
+  it('writes the integrated effect text after the integrated effects and leaves an empty list out', () => {
+    const base = { id: 'a', name: 'A', icon: '', tags: ['armor'], effectText: ['Smells of the sea.'] };
+    const integrated = serializeType({ ...base, integrated: { effects: [{ effect: 'HULL_PERCENT', magnitude: 10 }], effectText: ["The crabs eat what the crew won't."] } });
+    expect(integrated.integrated).toEqual({ effects: [{ effect: 'HULL_PERCENT', magnitude: 10 }], effectText: ["The crabs eat what the crew won't."] });
+    expect(Object.keys(integrated.integrated as Record<string, unknown>)).toEqual(['effects', 'effectText']);
+    expect(integrated.effectText).toEqual(['Smells of the sea.']);
+    expect(serializeType({ ...base, integrated: { effectText: [] } }).integrated).toEqual({});
+  });
+});
+
 describe('module share serialisation', () => {
   it('writes moduleShare last and leaves it out when the type has none', () => {
     const base = { id: 'a', name: 'A', icon: '', tags: ['armor'] };

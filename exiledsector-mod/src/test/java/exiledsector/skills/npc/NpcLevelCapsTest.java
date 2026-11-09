@@ -36,9 +36,9 @@ import static org.mockito.Mockito.when;
 
 class NpcLevelCapsTest {
 
-    private static final String VANILLA_ROWS = "[{\"id\": \"pirate\", \"category\": \"pirate\", \"cap\": \"15\"},"
-            + "{\"id\": \"faction\", \"category\": \"faction\", \"cap\": \"25\"},"
-            + "{\"id\": \"ai\", \"category\": \"ai\", \"cap\": \"35\"},"
+    private static final String VANILLA_ROWS = "[{\"id\": \"pirate\", \"category\": \"pirate\", \"cap\": \"\"},"
+            + "{\"id\": \"faction\", \"category\": \"faction\", \"cap\": \"\"},"
+            + "{\"id\": \"ai\", \"category\": \"ai\", \"cap\": \"\"},"
             + "{\"id\": \"remnant\", \"category\": \"ai\", \"cap\": \"\"}]";
 
     private MockedStatic<LunaSettings> lunaSettingsMock;
@@ -46,6 +46,11 @@ class NpcLevelCapsTest {
     @BeforeEach
     void setUp() {
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class, invocation -> null);
+        capsSwitchedOn(true);
+    }
+
+    private void capsSwitchedOn(boolean on) {
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", NpcTreeConfig.LEVEL_CAPS_FIELD_ID)).thenReturn(on);
     }
 
     @AfterEach
@@ -66,6 +71,33 @@ class NpcLevelCapsTest {
         assertEquals(15, NpcLevelCaps.capFor("modded_raiders", true, false));
         assertEquals(25, NpcLevelCaps.capFor("hegemony", false, false));
         assertEquals(35, NpcLevelCaps.capFor("remnant", false, false));
+    }
+
+    @Test
+    void categoryCapsComeFromLunaLibUnlessACsvRowSetsOne() throws Exception {
+        NpcLevelCaps.register(new JSONArray("[{\"id\": \"ai\", \"category\": \"ai\", \"cap\": \"40\"}]"));
+        lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", NpcLevelCategory.PIRATE.capFieldId())).thenReturn(10);
+        lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", NpcLevelCategory.AI.capFieldId())).thenReturn(20);
+
+        assertEquals(10, NpcLevelCaps.capOf(NpcLevelCategory.PIRATE));
+        assertEquals(25, NpcLevelCaps.capOf(NpcLevelCategory.FACTION));
+        assertEquals(40, NpcLevelCaps.capOf(NpcLevelCategory.AI));
+    }
+
+    @Test
+    void withCapsSwitchedOffShipsFollowYourFleetUpToTheMaxLevelButFixedRangesKeepTheirCaps() throws Exception {
+        NpcLevelCaps.register(new JSONArray(VANILLA_ROWS
+                .replace("]", ",{\"id\": \"elite_guard\", \"category\": \"\", \"cap\": \"30\", \"min\": \"20\", \"mode\": \"fixed\"}]")));
+        capsSwitchedOn(false);
+        int maxLevelCap = Math.min(ShipLevelConfig.maxLevel(), ShipLevelConfig.maxAllocatedNodesBesidesRoot());
+        CampaignFleetAPI pirateBounty = fleet("pirates", true, false);
+        when(pirateBounty.hasTag(NpcBounties.MAGICLIB_TARGET_TAG)).thenReturn(true);
+
+        assertEquals(NpcLevelLimit.of(maxLevelCap), NpcLevelCaps.limitFor(fleet("pirates", true, false)));
+        assertEquals(NpcLevelLimit.of(maxLevelCap), NpcLevelCaps.limitFor(fleet("remnant", false, false)));
+        assertEquals(NpcLevelLimit.of(maxLevelCap), NpcLevelCaps.limitFor((CampaignFleetAPI) null));
+        assertEquals(new NpcLevelLimit(maxLevelCap, maxLevelCap, 3), NpcLevelCaps.limitFor(pirateBounty));
+        assertEquals(new NpcLevelLimit(30, 30, 0, 20), NpcLevelCaps.limitFor(fleet("elite_guard", false, false)));
     }
 
     @Test

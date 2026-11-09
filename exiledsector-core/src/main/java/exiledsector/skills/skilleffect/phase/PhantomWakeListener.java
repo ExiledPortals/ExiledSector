@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 final class PhantomWakeListener extends PhaseTransitionListener {
 
     static final String SECONDS_KEY = "exiledSector_phaseEntryAfterimageSeconds";
+    static final String FADE_EMP_KEY = "exiledSector_phaseAfterimageFadeEmp";
 
     private PhaseAfterimage currentAfterimage;
 
@@ -21,9 +22,10 @@ final class PhantomWakeListener extends PhaseTransitionListener {
             return;
         }
         float lifetimeSeconds = magnitude(SECONDS_KEY);
-        if (currentAfterimage != null && currentAfterimage.restartAt(ownerShip, lifetimeSeconds, engine)) {
+        float fadeEmp = magnitude(FADE_EMP_KEY);
+        if (currentAfterimage != null && currentAfterimage.restartAt(ownerShip, lifetimeSeconds, fadeEmp, engine)) {
             return;
         }
-        currentAfterimage = PhaseAfterimage.leave(ownerShip, lifetimeSeconds, engine);
+        currentAfterimage = PhaseAfterimage.leave(ownerShip, lifetimeSeconds, fadeEmp, engine);
     }
 }

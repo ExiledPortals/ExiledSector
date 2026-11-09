@@ -2,7 +2,7 @@
 
 A Domain nanoforge the lockdown missed is still running on a derelict station in the system. It can do precise work the crew's nanoswarms can't: add a modifier of a chosen kind, remove a chosen modifier, perfect one. Each forge offers a few programs, and running one costs metals, rare metals and Nanite Feedstock, which the system itself helps you gather. Like a vanilla cryosleeper, it is guarded by Domain-era automated defenses led by a Guardian, which the player has to beat first.
 
-Status: built 2026-10-29 apart from the in-game checks (package `exiledsector.charts.anomaly.forge`, programs in core `ItemForging`), which are still open. Proposed 2026-10-28. See `docs/plans/anomalies/overview.md` for the shared framework.
+Status: built 2026-10-29 (package `exiledsector.charts.anomaly.forge`, programs in core `ItemForging`). Proposed 2026-10-28. See `docs/plans/anomalies/overview.md` for the shared framework.
 
 ## Lore
 

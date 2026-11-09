@@ -3,6 +3,7 @@ package exiledsector.skills.npc;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import exiledsector.skills.NodeReplacements;
 import exiledsector.skills.AnchorLinks;
+import exiledsector.skills.IntegratedEffects;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;
@@ -10,7 +11,9 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.layout.SkillNodeDecoration;
+import exiledsector.skills.skilleffect.shield.ShieldSkillEffect;
 import exiledsector.items.HullUpgradePoints;
 import exiledsector.items.NpcItems;
 import exiledsector.items.WormholeAnchorDefinitions;
@@ -24,6 +27,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -347,5 +352,54 @@ class NpcTreeTagTest {
         } finally {
             NodeReplacements.clear();
         }
+    }
+
+    private static SkillType integrableType(String id) {
+        return new SkillType.Builder(id, id, "a.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(ShieldSkillEffect.SHIELD_UPKEEP_MULT, -10f)))
+                .integratedEffects(new IntegratedEffects(List.of(new SkillTypeEffect(ShieldSkillEffect.SHIELD_UPKEEP_MULT, -20f)), List.of()))
+                .build();
+    }
+
+    private static ShipSkillData withIntegrableNodes() {
+        register("shields_1", integrableType("shields"), "a");
+        register("armor_1", integrableType("armor"), "a");
+        ShipSkillData data = NpcSkillTreeBuilder.rootedTree(SkillTree.get("root"), 2);
+        ShipTrees.allocate(data, SkillTree.get("a"), 1);
+        ShipTrees.allocate(data, SkillTree.get("shields_1"), 1);
+        return data;
+    }
+
+    @Test
+    void integratedNodesSurviveEncodingAndDecodingAfterTheGrants() {
+        ShipSkillData data = withIntegrableNodes();
+        ShipTrees.allocateFleetGrant(data, SkillTree.get("armor_1"));
+        data.integrate("shields_1");
+
+        String tag = NpcTreeTag.encode(data);
+        ShipSkillData decoded = NpcTreeTag.decode(tag);
+
+        assertEquals("exiledSector_npcTree|generated|2|root,a,shields_1|granted:armor_1|integrated:shields_1", tag);
+        assertEquals(Set.of("shields_1"), decoded.getIntegratedNodeIds());
+        assertEquals(tag, NpcTreeTag.encode(decoded));
+    }
+
+    @Test
+    void decodingDropsIntegrationsOfNodesTheTreeNoLongerHolds() {
+        withIntegrableNodes();
+
+        ShipSkillData decoded = NpcTreeTag.decode("exiledSector_npcTree|generated|2|root,a|integrated:shields_1,armor_1");
+
+        assertEquals(Set.of(), decoded.getIntegratedNodeIds());
+    }
+
+    @Test
+    void marksAsManyAllocatedIntegrableNodesAsTheCountAllows() {
+        ShipSkillData data = withIntegrableNodes();
+        ShipTrees.allocateFleetGrant(data, SkillTree.get("armor_1"));
+
+        NpcIntegratedNodes.mark(data, 3, new Random(1));
+
+        assertEquals(Set.of("shields_1"), data.getIntegratedNodeIds());
     }
 }

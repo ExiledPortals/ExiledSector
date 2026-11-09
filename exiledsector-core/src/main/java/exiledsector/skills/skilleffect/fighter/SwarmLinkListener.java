@@ -3,6 +3,7 @@ package exiledsector.skills.skilleffect.fighter;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import exiledsector.skills.skilleffect.CombatQueries;
+import exiledsector.skills.skilleffect.ParameterBonus;
 import exiledsector.skills.skilleffect.ScaledBonus;
 import exiledsector.skills.skilleffect.weapon.WeaponScope;
 import exiledsector.skills.skilleffect.weapon.WeaponStatFamily;
@@ -10,6 +11,7 @@ import exiledsector.skills.skilleffect.weapon.WeaponStatFamily;
 final class SwarmLinkListener implements AdvanceableListener {
 
     static final String DAMAGE_PERCENT_PER_STRIKECRAFT_KEY = "exiledSector_swarmLinkDamagePercentPerStrikecraft";
+    static final String MAX_DAMAGE_FLAT_KEY = "exiledSector_swarmLinkMaxDamageFlat";
     static final String DAMAGE_MOD_ID = "exiledSector_swarmLinkDamage";
     static final float RANGE = 500f;
     static final float MAX_DAMAGE_PERCENT = 20f;
@@ -26,8 +28,12 @@ final class SwarmLinkListener implements AdvanceableListener {
         this.carrier = carrier;
     }
 
-    static float damagePercent(float percentPerStrikecraft, int nearbyStrikecraft) {
-        return Math.min(MAX_DAMAGE_PERCENT, Math.max(0f, percentPerStrikecraft) * nearbyStrikecraft);
+    static float maxDamagePercent(float maxDamageBonus) {
+        return ParameterBonus.plusFlat(MAX_DAMAGE_PERCENT, maxDamageBonus);
+    }
+
+    static float damagePercent(float percentPerStrikecraft, int nearbyStrikecraft, float maxDamagePercent) {
+        return Math.min(maxDamagePercent, Math.max(0f, percentPerStrikecraft) * nearbyStrikecraft);
     }
 
     @Override
@@ -40,7 +46,8 @@ final class SwarmLinkListener implements AdvanceableListener {
         int nearbyStrikecraft = CombatQueries.isAliveNotHulk(fighter)
                 ? CombatQueries.shipsWithin(fighter.getLocation(), RANGE, this::isSwarmMate).size() : 0;
         float percentPerStrikecraft = FighterListenerEffect.carrierValue(carrier, DAMAGE_PERCENT_PER_STRIKECRAFT_KEY);
-        swarmDamage.apply(fighter.getMutableStats(), DAMAGE_MOD_ID, damagePercent(percentPerStrikecraft, nearbyStrikecraft));
+        float maxDamagePercent = maxDamagePercent(FighterListenerEffect.carrierValue(carrier, MAX_DAMAGE_FLAT_KEY));
+        swarmDamage.apply(fighter.getMutableStats(), DAMAGE_MOD_ID, damagePercent(percentPerStrikecraft, nearbyStrikecraft, maxDamagePercent));
     }
 
     private boolean isSwarmMate(ShipAPI ship) {

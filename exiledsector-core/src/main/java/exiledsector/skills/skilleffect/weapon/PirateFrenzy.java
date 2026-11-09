@@ -4,7 +4,9 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.skilleffect.DescribeContext;
 import exiledsector.skills.skilleffect.ExpiringStacks;
+import exiledsector.skills.skilleffect.ParameterBonus;
 import exiledsector.skills.skilleffect.ScaledBonus;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 import exiledsector.skills.skilleffect.SkillEffectSupport;
@@ -17,6 +19,7 @@ public final class PirateFrenzy extends ShipCombatListener implements Advanceabl
 
     public static final int MAX_STACKS = 5;
     public static final float STACK_SECONDS = 10f;
+    public static final String EXTRA_SECONDS_KEY = "exiledSector_pirateFrenzyExtraSeconds";
     static final float RATE_OF_FIRE_PERCENT_PER_STACK = 5f;
     static final float FLUX_COST_REDUCTION_PERCENT_PER_STACK = 5f;
     private static final String MOD_ID_PREFIX = "exiledSector_pirateFrenzy_";
@@ -24,12 +27,13 @@ public final class PirateFrenzy extends ShipCombatListener implements Advanceabl
             fixed(WeaponStatFamily.RATE_OF_FIRE.target(WeaponScope.ALL), StatMode.PERCENT, RATE_OF_FIRE_PERCENT_PER_STACK),
             fixed(scaled(WeaponStatFamily.FLUX_COST.target(WeaponScope.ALL), -1f), StatMode.PERCENT, FLUX_COST_REDUCTION_PERCENT_PER_STACK));
 
-    private final ExpiringStacks<Void> frenzyStacks = new ExpiringStacks<>(MAX_STACKS, STACK_SECONDS);
+    private final ExpiringStacks<Void> frenzyStacks;
     private final ScaledBonus.Tracker frenzyBonus = FRENZY_BONUS.tracker();
     private float frenzyClockSeconds;
 
     PirateFrenzy(ShipAPI ownerShip) {
         super(ownerShip, MOD_ID_PREFIX);
+        frenzyStacks = new ExpiringStacks<>(MAX_STACKS, stackSeconds(magnitude(EXTRA_SECONDS_KEY)));
     }
 
     public static PirateFrenzy of(ShipAPI ship) {
@@ -52,6 +56,14 @@ public final class PirateFrenzy extends ShipCombatListener implements Advanceabl
         }
         frenzyStacks.add(frenzyClockSeconds);
         applyIfChanged();
+    }
+
+    static float stackSeconds(float secondsBonus) {
+        return ParameterBonus.plusFlat(STACK_SECONDS, secondsBonus);
+    }
+
+    public static float stackSeconds(DescribeContext context) {
+        return stackSeconds(context.magnitudeOf(WeaponSkillEffect.PIRATE_FRENZY_SECONDS_FLAT));
     }
 
     @Override

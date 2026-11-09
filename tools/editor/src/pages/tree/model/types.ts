@@ -28,6 +28,12 @@ export interface ItemCost {
   quantity: number;
 }
 
+export interface IntegratedEffects {
+  effects?: EffectEntry[];
+  hullSizeEffects?: HullSizeEffectEntry[];
+  effectText?: string[];
+}
+
 export interface SkillType {
   id: string;
   name: string;
@@ -35,6 +41,7 @@ export interface SkillType {
   tier?: string;
   effects?: EffectEntry[];
   hullSizeEffects?: HullSizeEffectEntry[];
+  integrated?: IntegratedEffects;
   vanillaHullMod?: string;
   itemCost?: ItemCost;
   temporaryAfterDeploymentSeconds?: number;

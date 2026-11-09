@@ -101,6 +101,13 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
                     .arg("max", FleetWideEffects.MAX_TRANSPONDER_OFF_SENSOR_PROFILE_REDUCTION).styled();
         }
     },
+    TRANSPONDER_OFF_BURN_LEVEL_FLAT(statEffect(FLAT, dynamicMod(FleetWideEffects.TRANSPONDER_OFF_BURN_LEVEL_KEY),
+            "stat.maxBurnLevel", false)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.templated(this, magnitude);
+        }
+    },
     MOVE_SLOW_SUPPLY_USE_MULT(playerFleetContribution(FleetWideEffects.MOVE_SLOW_SUPPLY_USE_KEY).reportedAs(MULT)) {
         @Override
         public boolean lowerIsBetter() {
@@ -149,6 +156,24 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
         @Override
         public StyledText description(float magnitude) {
             return StatMode.PERCENT.describeStat(magnitude, "stat.minimumCrewPerBay");
+        }
+    },
+    SUPPLIES_PER_MONTH_PERCENT_PER_FIGHTER_BAY {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            float bays = stats.getNumFighterBays().getBaseValue();
+            float total = Math.max(bays * magnitude, -80f);
+            stats.getSuppliesPerMonth().modifyPercent(modId, total);
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return StatMode.PERCENT.describeStat(magnitude, "stat.supplyUseForMaintenancePerBay");
         }
     },
     SUPPLIES_PER_MONTH_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getSuppliesPerMonth), "stat.supplyUseForMaintenance", true)),
@@ -212,6 +237,12 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
         @Override
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", magnitude).arg("max", FleetWideEffects.MAX_SUPPLY_USE_PER_HULL_TYPE_REDUCTION).styled();
+        }
+    },
+    FUEL_USE_REDUCTION_PERCENT_PER_HULL_TYPE(playerFleetContribution(FleetWideEffects.FUEL_USE_PER_HULL_TYPE_KEY)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("max", FleetWideEffects.MAX_FUEL_USE_PER_HULL_TYPE_REDUCTION).styled();
         }
     },
     RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT(playerFleetContribution(RecoveryDModAvoidance.CHANCE_PERCENT_KEY)) {

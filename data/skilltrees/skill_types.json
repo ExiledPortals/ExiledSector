@@ -137,11 +137,23 @@
 					"magnitude": -5
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BALLISTIC_WEAPON_LARGE_OP_COST_FLAT",
+						"magnitude": -5
+					},
+					{
+						"effect": "BALLISTIC_WEAPON_MEDIUM_OP_COST_FLAT",
+						"magnitude": -2
+					}
+				]
+			},
 			"phantomHullMods": [
 				"hbi"
 			],
-			"flavour": "Stripping decommissioned Onslaughts at the Agreus shipbreaking yards shows the crew how the Navy seats its heaviest guns directly into the frame. The Ko Combine bills for the scrap, not the lesson.",
-			"flavourAutomated": "Stripping decommissioned Onslaughts at the Agreus shipbreaking yards shows the refit crew how the Navy seats its heaviest guns directly into the frame. The Ko Combine bills for the scrap, not the lesson.",
+			"flavour": "Stripping decommissioned Onslaughts at the Agreus shipbreaking yards shows the crew how the Navy seats its heaviest guns directly into the frame.",
+			"flavourAutomated": "Stripping decommissioned Onslaughts at the Agreus shipbreaking yards shows the refit crew how the Navy seats its heaviest guns directly into the frame.",
 			"tags": [
 				"ballistic",
 				"req_ballistic"
@@ -158,6 +170,14 @@
 					"magnitude": 25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "GROUND_SUPPORT_PER_MAX_CREW_PERCENT",
+						"magnitude": 50
+					}
+				]
+			},
 			"phantomHullMods": [
 				"ground_support"
 			],
@@ -180,6 +200,18 @@
 					"magnitude": 20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "DAMAGE_TO_HELPLESS_SHIP_PERCENT",
+						"magnitude": 20
+					},
+					{
+						"effect": "HELPLESS_KILL_PIRATE_FRENZY_STACKS_FLAT",
+						"magnitude": 1
+					}
+				]
+			},
 			"flavour": "Pirate fire control holds until a target's shields collapse or its drives gutter out. Fair fights are for the naive.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -197,6 +229,18 @@
 					"magnitude": -10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "TRANSPONDER_OFF_SENSOR_PROFILE_PERCENT",
+						"magnitude": -10
+					},
+					{
+						"effect": "TRANSPONDER_OFF_BURN_LEVEL_FLAT",
+						"magnitude": 1
+					}
+				]
+			},
 			"flavour": "Pirate captains run with their transponders dark and their drive plumes baffled behind scrap plating.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -216,6 +260,18 @@
 					"magnitude": 1000
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT",
+						"magnitude": 1000
+					},
+					{
+						"effect": "PIRATE_FRENZY_SECONDS_FLAT",
+						"magnitude": 5
+					}
+				]
+			},
 			"flavour": "A good pirate doesn't wait for their prey to recover.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -233,6 +289,18 @@
 					"magnitude": 30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "TOP_SPEED_WHILE_RETREATING_PERCENT",
+						"magnitude": 30
+					},
+					{
+						"effect": "DAMAGE_TAKEN_WHILE_RETREATING_PERCENT",
+						"magnitude": -30
+					}
+				]
+			},
 			"flavour": "Acquiring plunder is sometimes not as important as making it home.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -254,6 +322,14 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT",
+						"magnitude": 1
+					}
+				]
+			},
 			"flavour": "Pirates tow their prizes home on cables welded straight to the drive spine. It is slow, but nothing gets left behind.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -273,6 +349,14 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "DAMAGE_TO_ISOLATED_SHIP_PERCENT",
+						"magnitude": 20
+					}
+				]
+			},
 			"flavour": "A convoy is only as safe as its slowest freighter.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -290,8 +374,16 @@
 					"magnitude": 100
 				}
 			],
-			"flavour": "Every TriPad in the Sector ships with backdoors Tri-Tachyon officially denies, and a crew that learns them can talk a nav buoy or comm relay into changing sides mid-battle. Company support declines to comment, but will gladly sell an upgrade.",
-			"flavourAutomated": "Every TriPad in the Sector ships with backdoors Tri-Tachyon officially denies. The ship's core maps them from intercepted TriPad traffic and talks a nav buoy or comm relay into changing sides mid-battle. Company support declines to comment, but will gladly sell an upgrade.",
+			"integrated": {
+				"effects": [
+					{
+						"effect": "OBJECTIVE_CAPTURE_RATE_MULT",
+						"magnitude": 200
+					}
+				]
+			},
+			"flavour": "Every TriPad in the Sector ships with backdoors Tri-Tachyon officially denies, and a crew that learns them can talk a nav buoy or comm relay into changing sides mid-battle.",
+			"flavourAutomated": "Every TriPad in the Sector ships with backdoors Tri-Tachyon officially denies. The ship's core maps them from intercepted TriPad traffic and talks a nav buoy or comm relay into changing sides mid-battle.",
 			"tags": [
 				"fleet_support"
 			]
@@ -335,6 +427,18 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "NANOFORGE_HULL_REGEN_PERCENT",
+						"magnitude": 1
+					},
+					{
+						"effect": "NANOFORGE_HULL_REGEN_LIMIT_FLAT",
+						"magnitude": 50
+					}
+				]
+			},
 			"flavour": "Stripping the repair nanoforge out of a gutted Nexus shows the crew how the Remnant keep their hulls whole long after a fight should have broken them.",
 			"flavourAutomated": "Stripping the repair nanoforge out of a gutted Nexus shows the refit crew how the Remnant keep their hulls whole long after a fight should have broken them. Wired into an automated hull, it needs no hand to tell it where to work.",
 			"tags": [
@@ -353,6 +457,14 @@
 					"magnitude": 20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "DISINTEGRATION_ARMOR_DAMAGE_PERCENT",
+						"magnitude": 30
+					}
+				]
+			},
 			"flavour": "\"And what the defiler builds shall be unmade around its every wound, so that no part remains to be mended.\"\n- Attributed to the Book of Ludd, apocrypha",
 			"tags": [
 				"energy",
@@ -383,8 +495,28 @@
 					"magnitude": 5
 				}
 			],
-			"flavour": "A recovered gamma core, kept powered just long enough to be questioned, gives up the targeting routines Remnant drones use to lead a target. Afterwards it is disposed of, in accordance with Hegemony regulations and the crew's nerves.",
-			"flavourAutomated": "A recovered gamma core holds the targeting routines Remnant drones use to lead a target. The ship's core copies them across in a fraction of a second. The refit crew disposes of the gamma core afterwards, in accordance with Hegemony regulations and their own nerves.",
+			"integrated": {
+				"effects": [
+					{
+						"effect": "WEAPON_AUTOFIRE_ACCURACY_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "ENERGY_WEAPON_RANGE_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "BEAM_WEAPON_RANGE_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
+			"flavour": "A recovered gamma core, kept powered just long enough to be questioned, gives up the targeting routines Remnant drones use to lead a target.",
+			"flavourAutomated": "A recovered gamma core holds the targeting routines Remnant drones use to lead a target. The ship's core copies them across in a fraction of a second.",
 			"tags": [
 				"weapons",
 				"range"
@@ -401,6 +533,18 @@
 					"magnitude": 25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT",
+						"magnitude": 25
+					},
+					{
+						"effect": "TERRIFYING_PRESENCE_RANGE_PERCENT",
+						"magnitude": 50
+					}
+				]
+			},
 			"flavour": "Sensor logs from fights with Remnant fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.",
 			"tags": [
 				"fleet_support"
@@ -421,6 +565,22 @@
 					"magnitude": -30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MISSILE_WEAPON_PROJECTILE_SPEED_PERCENT",
+						"magnitude": 30
+					},
+					{
+						"effect": "MISSILE_WEAPON_FLIGHT_MANEUVERABILITY_PERCENT",
+						"magnitude": -30
+					},
+					{
+						"effect": "MISSILE_WEAPON_DAMAGE_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
 			"flavour": "XIV Battlegroup strike manuals, kept by the Hegemony since the Domain, teach that a torpedo should close fast and fly straight. Following them, the crew rewires each missile's maneuvering thrusters to push it forward instead, on the principle that a missile which cannot turn must not miss.",
 			"flavourAutomated": "XIV Battlegroup strike manuals, kept by the Hegemony since the Domain, hold that a torpedo should close fast and fly straight. The refit crew rewires each missile's maneuvering thrusters to push it forward instead, on the principle that a missile which cannot turn must not miss.",
 			"tags": [
@@ -543,6 +703,14 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BEAM_WEAPON_FULL_DAMAGE_SPLIT_TARGETS_FLAT",
+						"magnitude": 1
+					}
+				]
+			},
 			"flavour": "Diktat propaganda insists that the Lion's gaze falls on every citizen at once, and the engineer-technicians of the Lion's Guard took the slogan literally. Studying the Executors they refit teaches the crew to split this ship's beams across the target and the enemy ships around it.",
 			"flavourAutomated": "Diktat propaganda insists that the Lion's gaze falls on every citizen at once, and the engineer-technicians of the Lion's Guard took the slogan literally. The ship's core records how a Lion's Guard Executor divides its beams across a target and the ships around it, and splits its own the same way. It does not record the slogan.",
 			"tags": [
@@ -552,20 +720,46 @@
 			]
 		},
 		{
-			"id": "packed_capacitors",
-			"name": "Packed Capacitors",
-			"icon": "graphics/icons/packed_capacitors.png",
+			"id": "flux_coil_adjunct",
+			"name": "Flux Coil Adjunct",
+			"icon": "graphics/icons/flux_coil_adjunct.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
 					"effect": "FLUX_CAPACITY_PERCENT",
 					"magnitude": 15
-				},
-				{
-					"effect": "FLUX_CAPACITY_FLAT",
-					"magnitude": 600
 				}
 			],
+			"hullSizeEffects": [
+				{
+					"effect": "FLUX_CAPACITY_FLAT",
+					"frigate": 600,
+					"destroyer": 1200,
+					"cruiser": 1800,
+					"capitalShip": 3000
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FLUX_CAPACITY_PERCENT",
+						"magnitude": 15
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "FLUX_CAPACITY_FLAT",
+						"frigate": 800,
+						"destroyer": 1600,
+						"cruiser": 2400,
+						"capitalShip": 4000
+					}
+				]
+			},
+			"phantomHullMods": [
+				"fluxcoil"
+			],
+			"flavour": "Spare coils wound around the main capacitor banks wherever the frame leaves room. The engineers stopped asking where the room came from.",
 			"tags": [
 				"flux"
 			]
@@ -647,7 +841,19 @@
 					"effect": "EXPLODE_ON_DEATH",
 					"magnitude": 2000
 				}
-			]
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "EXPLODE_ON_DEATH",
+						"magnitude": 2000
+					},
+					{
+						"effect": "EXPLODE_ON_DEATH_AREA_PERCENT",
+						"magnitude": 100
+					}
+				]
+			}
 		},
 		{
 			"id": "at_any_cost",
@@ -663,7 +869,19 @@
 					"effect": "RAM_BIGGEST_ENEMY",
 					"magnitude": 0
 				}
-			]
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "DEATH_ON_COLLISION_WITH_LARGE_ENEMY",
+						"magnitude": 0
+					},
+					{
+						"effect": "RAM_BIGGEST_ENEMY",
+						"magnitude": 0
+					}
+				]
+			}
 		},
 		{
 			"id": "refracting_projectiles",
@@ -680,6 +898,22 @@
 					"magnitude": 20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT",
+						"magnitude": 20
+					},
+					{
+						"effect": "NON_BEAM_ENERGY_WEAPON_HULL_REFRACTION_CHANCE_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "NON_BEAM_ENERGY_WEAPON_REFRACTION_FALLOFF_MULT",
+						"magnitude": 20
+					}
+				]
+			},
 			"flavour": "Pulling apart the energy converters of wrecked Tri-Tachyon warships shows the crew how to tune this ship's energy bolts to glance off an enemy shield and carry on to another target. Tri-Tachyon sales literature calls this efficiency.",
 			"flavourAutomated": "Pulling apart the energy converters of wrecked Tri-Tachyon warships shows the refit crew how to tune this ship's energy bolts to glance off an enemy shield and carry on to another target. Tri-Tachyon sales literature calls this efficiency.",
 			"tags": [
@@ -698,8 +932,20 @@
 					"magnitude": 20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT",
+						"magnitude": 20
+					},
+					{
+						"effect": "BALLISTIC_WEAPON_ADDITIONAL_PIERCES_FLAT",
+						"magnitude": 1
+					}
+				]
+			},
 			"flavour": "Former Hegemony Navy gunners in the crew remember the breacher loads the Navy keeps for boarding actions, shells hardened to punch through plating instead of bursting on it. The crew sees no reason to save them for boarding.",
-			"flavourAutomated": "The Hegemony Navy keeps breacher loads for boarding actions, shells hardened to punch through plating instead of bursting on it. The ship's core finds their specifications in a seized Navy ordnance manifest and loads them for every fight. It has no boarding actions to save them for.",
+			"flavourAutomated": "The Hegemony Navy keeps breacher loads for boarding actions, shells hardened to punch through plating instead of bursting on it. The ship's core finds their specifications in a seized Navy ordnance manifest and loads them for every fight.",
 			"tags": [
 				"ballistic",
 				"req_ballistic"
@@ -716,6 +962,18 @@
 					"magnitude": 3
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT",
+						"magnitude": 3
+					},
+					{
+						"effect": "BURN_LEVEL_FLAT",
+						"magnitude": 1
+					}
+				]
+			},
 			"flavour": "Sailing alongside Hegemony battle lines teaches the crew the Navy's habit of arriving at speed and firing before the enemy has settled, guns thumping out what the Navy calls its heartbeat.",
 			"flavourAutomated": "The ship's core logs hours of Hegemony line engagements and reproduces the Navy's habit of arriving at speed and firing before the enemy has settled, guns thumping out what the Navy calls its heartbeat. The core keeps time more evenly than any Navy gunner.",
 			"tags": [
@@ -739,6 +997,22 @@
 					"magnitude": 15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ELECTRONIC_WARFARE_PENALTY_PERCENT",
+						"magnitude": -25
+					},
+					{
+						"effect": "SENSOR_STRENGTH_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "ELECTRONIC_WARFARE",
+						"magnitude": 1
+					}
+				]
+			},
 			"flavour": "In a joint League fleet, every member world jams anyone it suspects of listening, which is everyone. Most of the noise comes from allies.",
 			"tags": [
 				"weapons",
@@ -756,6 +1030,18 @@
 					"magnitude": -20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT",
+						"magnitude": -20
+					},
+					{
+						"effect": "DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_RANGE_FLAT",
+						"magnitude": 1000
+					}
+				]
+			},
 			"flavour": "Under the League's founding compact, every member world must defend whatever the League holds.",
 			"tags": [
 				"fleet_support"
@@ -772,6 +1058,18 @@
 					"magnitude": 4
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT",
+						"magnitude": 4
+					},
+					{
+						"effect": "STRIKECRAFT_WEAPON_DAMAGE_PER_NEARBY_STRIKECRAFT_MAX_FLAT",
+						"magnitude": 10
+					}
+				]
+			},
 			"flavour": "No League detachment will launch second, so joint fleets launch every wing at once.",
 			"tags": [
 				"fighter",
@@ -789,6 +1087,18 @@
 					"magnitude": 3
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SUPPLY_USE_REDUCTION_PERCENT_PER_HULL_TYPE",
+						"magnitude": 3
+					},
+					{
+						"effect": "FUEL_USE_REDUCTION_PERCENT_PER_HULL_TYPE",
+						"magnitude": 1
+					}
+				]
+			},
 			"flavour": "Every League depot stocks spares for its own world's hulls and nothing else. The paperwork for a mixed fleet runs to several volumes, one per world.",
 			"tags": [
 				"logistics",
@@ -807,6 +1117,14 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT",
+						"magnitude": 20
+					}
+				]
+			},
 			"flavour": "Kazeron's orbital yards will not certify a recovered hull until every frame weld has been inspected.",
 			"tags": [
 				"logistics",
@@ -829,6 +1147,22 @@
 					"magnitude": -8
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "KINETIC_DAMAGE_TAKEN_PERCENT",
+						"magnitude": -8
+					},
+					{
+						"effect": "HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT",
+						"magnitude": -8
+					},
+					{
+						"effect": "ENERGY_DAMAGE_TAKEN_PERCENT",
+						"magnitude": -8
+					}
+				]
+			},
 			"flavour": "Hegemony refit yards still harden hulls to Domain specifications, emitter and plate alike, unchanged since before the Collapse.",
 			"tags": [
 				"armour"
@@ -845,8 +1179,20 @@
 					"magnitude": 100
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MISSILE_KILL_FLAK_DAMAGE_FLAT",
+						"magnitude": 100
+					},
+					{
+						"effect": "MISSILE_KILL_FLAK_RADIUS_FLAT",
+						"magnitude": 50
+					}
+				]
+			},
 			"flavour": "Hegemony point defense crews pack their flak loads for a wide burst, on the theory that a missile is rarely alone. The crew learns the trick escorting a Dominator through a missile strike. Its captain bills them for the ammunition.",
-			"flavourAutomated": "Hegemony point defense crews pack their flak loads for a wide burst, on the theory that a missile is rarely alone. The ship's core records the pattern while escorting a Dominator through a missile strike, and the refit crew repacks the magazines to match. The Dominator's captain bills for the ammunition.",
+			"flavourAutomated": "Hegemony point defense crews pack their flak loads for a wide burst, on the theory that a missile is rarely alone. The ship's core records the pattern while escorting a Dominator through a missile strike, and the refit crew repacks the magazines to match.",
 			"tags": [
 				"point_defense",
 				"weapons"
@@ -863,6 +1209,18 @@
 					"magnitude": -15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ARMOR_DAMAGE_TAKEN_AT_LOW_SPEED_PERCENT",
+						"magnitude": -15
+					},
+					{
+						"effect": "SHIELD_UPKEEP_AT_LOW_SPEED_PERCENT",
+						"magnitude": -15
+					}
+				]
+			},
 			"flavour": "Hegemony line drill holds that a battle line which keeps station cannot be broken, only worn down. The crew posts damage-control teams behind the forward armor and learns to stop the ship when the shooting starts. Navy instructors call this courage. Navy accountants call it cheaper than engines.",
 			"flavourAutomated": "Hegemony line drill holds that a battle line which keeps station cannot be broken, only worn down. The ship's core studies recordings of Navy lines under fire, and the refit crew braces the forward armor for a ship that stops when the shooting starts. Navy instructors call this courage. Navy accountants call it cheaper than engines.",
 			"tags": [
@@ -880,6 +1238,18 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SMALLER_ALLY_DAMAGE_TAKEN_MULT",
+						"magnitude": 10
+					},
+					{
+						"effect": "SMALLER_ALLY_DAMAGE_TAKEN_RANGE_FLAT",
+						"magnitude": 400
+					}
+				]
+			},
 			"requiredHullSizes": [
 				"DESTROYER",
 				"CRUISER",
@@ -902,8 +1272,20 @@
 					"magnitude": 10
 				}
 			],
-			"flavour": "Planetary defense batteries on Eventide fire heavy shells with a delayed charge that bursts just inside the plating, shaking loose whatever is mounted nearby. A retired battery sergeant teaches the crew to pack them in exchange for passage off-world. The sergeant asks not to be told where the shells end up.",
-			"flavourAutomated": "Planetary defense batteries on Eventide fire heavy shells with a delayed charge that bursts just inside the plating, shaking loose whatever is mounted nearby. The ship's core copies the fusing tables from a salvaged battery fire-control unit, and the refit crew packs the shells to match. The unit is still listed as in service.",
+			"integrated": {
+				"effects": [
+					{
+						"effect": "LARGE_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "MEDIUM_BALLISTIC_HIT_DISABLE_CHANCE_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
+			"flavour": "Planetary defense batteries on Eventide fire heavy shells with a delayed charge that bursts just inside the plating, shaking loose whatever is mounted nearby. A retired battery sergeant teaches the crew to pack them in exchange for passage off-world.",
+			"flavourAutomated": "Planetary defense batteries on Eventide fire heavy shells with a delayed charge that bursts just inside the plating, shaking loose whatever is mounted nearby. The ship's core copies the fusing tables from a salvaged battery fire-control unit, and the refit crew packs the shells to match.",
 			"tags": [
 				"ballistic",
 				"req_ballistic"
@@ -920,6 +1302,18 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT",
+						"magnitude": 1
+					},
+					{
+						"effect": "BALLISTIC_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT",
+						"magnitude": 1
+					}
+				]
+			},
 			"flavour": "Studying the sensor pickets the League posts along its Hegemony border shows the crew how to slave energy weapon targeting to the ship's own sensors. The pickets are the one League institution every member world agrees to fund.",
 			"flavourAutomated": "The ship's core logs the sweeps of the sensor pickets the League posts along its Hegemony border and slaves its energy weapon targeting to its own sensors on the same pattern. The pickets are the one League institution every member world agrees to fund.",
 			"tags": [
@@ -943,6 +1337,26 @@
 					"magnitude": 50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_TURN_RATE_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "SHIELD_RAISE_RATE_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "SHIELD_TURN_RATE_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "SHIELD_RAISE_RATE_PERCENT",
+						"magnitude": 100
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -969,6 +1383,14 @@
 					"magnitude": 40
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "PHASE_CLOAK_FLUX_THRESHOLD_PERCENT",
+						"magnitude": 60
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1002,6 +1424,14 @@
 					"magnitude": -30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BEAM_WEAPON_RANGE_FLAT",
+						"magnitude": 200
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1029,6 +1459,45 @@
 					"magnitude": 40
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "WEAPON_TURN_RATE_PERCENT",
+						"magnitude": 40
+					},
+					{
+						"effect": "DAMAGE_TO_MISSILES_PERCENT",
+						"magnitude": 25
+					},
+					{
+						"effect": "DAMAGE_TO_FIGHTERS_PERCENT",
+						"magnitude": 25
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "DAMAGE_TO_FRIGATE_PERCENT",
+						"frigate": 0,
+						"destroyer": 5,
+						"cruiser": 10,
+						"capitalShip": 15
+					},
+					{
+						"effect": "DAMAGE_TO_DESTROYER_PERCENT",
+						"frigate": 0,
+						"destroyer": 0,
+						"cruiser": 5,
+						"capitalShip": 10
+					},
+					{
+						"effect": "DAMAGE_TO_CRUISER_PERCENT",
+						"frigate": 0,
+						"destroyer": 0,
+						"cruiser": 0,
+						"capitalShip": 5
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1066,6 +1535,34 @@
 					"magnitude": -25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ARMOR_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "WEAPON_DURABILITY_PERCENT",
+						"magnitude": 80
+					},
+					{
+						"effect": "WEAPON_TURN_RATE_MULT",
+						"magnitude": -25
+					},
+					{
+						"effect": "WEAPON_RECOIL_MULT",
+						"magnitude": -25
+					},
+					{
+						"effect": "BALLISTIC_WEAPON_RATE_OF_FIRE_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "ENERGY_WEAPON_RATE_OF_FIRE_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
 			"phantomHullMods": [
 				"armoredweapons"
 			],
@@ -1086,6 +1583,22 @@
 					"magnitude": -25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "REPAIR_TIME_MULT",
+						"magnitude": -25
+					},
+					{
+						"effect": "REPAIR_TIME_MULT",
+						"magnitude": -25
+					},
+					{
+						"effect": "OVERLOAD_DURATION_PERCENT",
+						"magnitude": -33
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1111,6 +1624,22 @@
 					"magnitude": 50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MANEUVERABILITY_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "ZERO_FLUX_SPEED_FLAT",
+						"magnitude": 10
+					},
+					{
+						"effect": "ZERO_FLUX_TURN_RATE_MULT",
+						"magnitude": 100
+					}
+				]
+			},
 			"phantomHullMods": [
 				"auxiliarythrusters"
 			],
@@ -1123,7 +1652,20 @@
 			"name": "Ballistic Rangefinder",
 			"icon": "graphics/icons/ballistic_rangefinder.png",
 			"tier": "KEYSTONE",
-			"vanillaHullMod": "ballistic_rangefinder",
+			"effects": [
+				{
+					"effect": "BALLISTIC_RANGEFINDER_BONUS_PERCENT",
+					"magnitude": 100
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BALLISTIC_RANGEFINDER_BONUS_PERCENT",
+						"magnitude": 150
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1135,11 +1677,6 @@
 				"ballistic_rangefinder"
 			],
 			"flavour": "A rangefinder slaved to the ship's largest ballistic mount, feeding its solution to every smaller gun aboard.",
-			"effectText": [
-				"Small and medium ballistic weapons gain base range, depending on the size of this ship's largest ballistic slot.",
-				"Hybrid weapons of every size gain base range too."
-			],
-			"todo": "Real vanilla effect is a per-weapon-slot range bonus (WeaponBaseRangeModifier) that varies by the ship's largest ballistic slot size and is capped per weapon, with a separate larger bonus for hybrid mounts - not a fixed magnitude on a single MutableShipStatsAPI stat. Deliberately left on vanillaHullMod passthrough rather than approximate it with a flat/percent BALLISTIC_WEAPON_RANGE_PERCENT effect, since that would only be correct for one specific loadout.",
 			"tags": [
 				"ballistic",
 				"range",
@@ -1161,6 +1698,22 @@
 					"magnitude": -60
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "HULL_PERCENT",
+						"magnitude": 20
+					},
+					{
+						"effect": "CREW_LOSS_MULT",
+						"magnitude": -60
+					},
+					{
+						"effect": "CREW_LOSS_MULT",
+						"magnitude": -25
+					}
+				]
+			},
 			"phantomHullMods": [
 				"blast_doors"
 			],
@@ -1199,6 +1752,43 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CONVERTED_HANGAR_FIGHTER_BAYS_FLAT",
+						"magnitude": 1
+					},
+					{
+						"effect": "CONVERTED_HANGAR_REFIT_TIME_MULT",
+						"magnitude": 50
+					},
+					{
+						"effect": "CONVERTED_HANGAR_REPLACEMENT_RATE_MULT",
+						"magnitude": 50
+					},
+					{
+						"effect": "CONVERTED_HANGAR_RELAUNCH_TIME_FLAT",
+						"magnitude": 40
+					},
+					{
+						"effect": "CONVERTED_HANGAR_MIN_CREW_FLAT",
+						"magnitude": 20
+					},
+					{
+						"effect": "CONVERTED_HANGAR_DEPLOYMENT_COST_FLAT",
+						"magnitude": 1
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "FIGHTER_REPLACEMENT_RECOVERY_PERCENT",
+						"frigate": 0,
+						"destroyer": 0,
+						"cruiser": 10,
+						"capitalShip": 25
+					}
+				]
+			},
 			"requiredHullSizes": [
 				"DESTROYER",
 				"CRUISER",
@@ -1237,6 +1827,25 @@
 					"magnitude": 50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "REMOVE_ALL_FIGHTER_BAYS"
+					},
+					{
+						"effect": "MIN_CREW_PERCENT_PER_FIGHTER_BAY",
+						"magnitude": -20
+					},
+					{
+						"effect": "CARGO_CAPACITY_PER_FIGHTER_BAY",
+						"magnitude": 50
+					},
+					{
+						"effect": "SUPPLIES_PER_MONTH_PERCENT_PER_FIGHTER_BAY",
+						"magnitude": -15
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1276,6 +1885,24 @@
 					"capitalShip": 55
 				}
 			],
+			"integrated": {
+				"hullSizeEffects": [
+					{
+						"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
+						"frigate": 15,
+						"destroyer": 25,
+						"cruiser": 45,
+						"capitalShip": 65
+					},
+					{
+						"effect": "ENERGY_WEAPON_RANGE_PERCENT",
+						"frigate": 15,
+						"destroyer": 25,
+						"cruiser": 45,
+						"capitalShip": 65
+					}
+				]
+			},
 			"requiredHullSizes": [
 				"CRUISER",
 				"CAPITAL_SHIP"
@@ -1292,6 +1919,14 @@
 			"name": "Defensive Targeting Array",
 			"icon": "graphics/icons/defensive_targeting_array.png",
 			"tier": "KEYSTONE",
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FIGHTER_WEAPON_RANGE_FLAT",
+						"magnitude": 100
+					}
+				]
+			},
 			"vanillaHullMod": "defensive_targeting_array",
 			"unlockConditions": [
 				{
@@ -1347,6 +1982,46 @@
 					"magnitude": -50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MISSILE_WEAPON_ECCM_CHANCE_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "MISSILE_WEAPON_GUIDANCE_FLAT",
+						"magnitude": 1
+					},
+					{
+						"effect": "MISSILE_WEAPON_PROJECTILE_SPEED_PERCENT",
+						"magnitude": 25
+					},
+					{
+						"effect": "MISSILE_WEAPON_FLIGHT_ACCELERATION_PERCENT",
+						"magnitude": 150
+					},
+					{
+						"effect": "MISSILE_WEAPON_FLIGHT_TURN_RATE_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "MISSILE_WEAPON_FLIGHT_TURN_ACCELERATION_PERCENT",
+						"magnitude": 150
+					},
+					{
+						"effect": "ELECTRONIC_WARFARE_PENALTY_MULT",
+						"magnitude": -50
+					},
+					{
+						"effect": "MISSILE_WEAPON_ECCM_CHANCE_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "ELECTRONIC_WARFARE_PENALTY_MULT",
+						"magnitude": -50
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1376,6 +2051,17 @@
 					"capitalShip": 4
 				}
 			],
+			"integrated": {
+				"hullSizeEffects": [
+					{
+						"effect": "ELECTRONIC_WARFARE",
+						"frigate": 2,
+						"destroyer": 3,
+						"cruiser": 4,
+						"capitalShip": 5
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1410,6 +2096,26 @@
 					"magnitude": 15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ESCORT_MANEUVER_BONUS_PERCENT",
+						"magnitude": 25
+					},
+					{
+						"effect": "ESCORT_SPEED_BONUS_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "ESCORT_WEAPON_RANGE_BONUS_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "ESCORT_DESTROYER_SHIELD_DAMAGE_TAKEN_PERCENT",
+						"magnitude": -10
+					}
+				]
+			},
 			"requiredHullSizes": [
 				"DESTROYER",
 				"CRUISER"
@@ -1448,6 +2154,22 @@
 					"magnitude": 20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FIGHTER_REPLACEMENT_DECAY_PERCENT",
+						"magnitude": -20
+					},
+					{
+						"effect": "FIGHTER_REPLACEMENT_RECOVERY_PERCENT",
+						"magnitude": 30
+					},
+					{
+						"effect": "MIN_CREW_PER_FIGHTER_BAY",
+						"magnitude": 40
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1478,11 +2200,23 @@
 					"magnitude": -25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "PHASE_FIELD_CONTRIBUTION_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "CORONA_RESISTANCE_MULT",
+						"magnitude": -25
+					}
+				]
+			},
 			"exclusiveHullMods": [
 				"phasefield"
 			],
 			"flavour": "Leaked papers from Tri-Tachyon's Hybrid Physics Division (on phase work the corporation swears it abandoned under the Treaty of Thule) show the crew how to bleed this ship's sensor emissions into the masking field phase ships throw over a fleet. Tri-Tachyon maintains the papers are forgeries.",
-			"flavourAutomated": "Leaked papers from Tri-Tachyon's Hybrid Physics Division (on phase work the corporation swears it abandoned under the Treaty of Thule) describe how to bleed a ship's sensor emissions into the masking field phase ships throw over a fleet. The ship's core parses them in full, footnotes included. Tri-Tachyon maintains the papers are forgeries.",
+			"flavourAutomated": "Leaked papers from Tri-Tachyon's Hybrid Physics Division (on phase work the corporation swears it abandoned under the Treaty of Thule) describe how to bleed a ship's sensor emissions into the masking field phase ships throw over a fleet. Tri-Tachyon maintains the papers are forgeries.",
 			"tags": [
 				"phase",
 				"req_phase",
@@ -1504,8 +2238,24 @@
 					"magnitude": 50
 				}
 			],
-			"flavour": "League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other. It is the one thing the member worlds have never argued over, and serving under a League commission drills it into the crew.",
-			"flavourAutomated": "League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other. The ship's core records it from the League ships it serves beside and runs it the same way every time, which no League crew has ever managed.",
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ENERGY_WEAPON_AMMO_REGEN_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "BALLISTIC_WEAPON_AMMO_REGEN_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "BALLISTIC_AND_ENERGY_WEAPON_AMMO_SAVE_CHANCE_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
+			"flavour": "League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other. Serving under a League commission drills it into the crew.",
+			"flavourAutomated": "League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other. The ship's core records it from the League ships it serves beside and runs it perfectly every time, a feat no League crew has ever managed.",
 			"tags": [
 				"ballistic",
 				"energy",
@@ -1527,6 +2277,26 @@
 					"magnitude": 50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BALLISTIC_WEAPON_AMMO_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "ENERGY_WEAPON_AMMO_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "BALLISTIC_WEAPON_AMMO_REGEN_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "ENERGY_WEAPON_AMMO_REGEN_PERCENT",
+						"magnitude": 50
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1558,6 +2328,14 @@
 					"magnitude": -15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MISSILE_WEAPON_AMMO_PERCENT",
+						"magnitude": 100
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1584,6 +2362,18 @@
 					"magnitude": 40
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_ARC_FLAT",
+						"magnitude": 40
+					},
+					{
+						"effect": "SHIELD_ARC_FLAT",
+						"magnitude": 60
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1613,6 +2403,21 @@
 					"effect": "REMOVE_SHIELD"
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ARMOR_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "REMOVE_SHIELD"
+					},
+					{
+						"effect": "ARMOR_PERCENT",
+						"magnitude": 15
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1643,6 +2448,13 @@
 					"effect": "CREATE_FRONT_SHIELD_IF_NONE"
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CREATE_FRONT_SHIELD_IF_NONE"
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1664,7 +2476,28 @@
 			"name": "Missile Autoloader",
 			"icon": "graphics/icons/missile_autoloader.png",
 			"tier": "KEYSTONE",
-			"vanillaHullMod": "missile_autoloader",
+			"effects": [
+				{
+					"effect": "MISSILE_AUTOLOADER_CAPACITY_PERCENT",
+					"magnitude": 100
+				},
+				{
+					"effect": "MISSILE_AUTOLOADER_COOLDOWN_FLAT",
+					"magnitude": 10
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MISSILE_AUTOLOADER_CAPACITY_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "MISSILE_AUTOLOADER_COOLDOWN_FLAT",
+						"magnitude": 5
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1676,10 +2509,6 @@
 				"missile_autoloader"
 			],
 			"flavour": "Rack-side autoloaders that refill the small launchers from a common magazine, for as long as the magazine lasts.",
-			"effectText": [
-				"Missile weapons in small missile mounts reload when they run out of ammo, drawing on a shared reload capacity."
-			],
-			"todo": "Real vanilla effect is a stateful per-weapon reload simulation (advanceInCombat tracks a shared reload-capacity pool by hull size/small-missile-mount count, per-weapon cooldowns, partial reloads) - not a stat modifier at all, and not expressible as a SkillEffect magnitude. Deliberately left on vanillaHullMod passthrough.",
 			"tags": [
 				"missile",
 				"req_missile"
@@ -1690,6 +2519,13 @@
 			"name": "Neural Interface",
 			"icon": "graphics/icons/neural_interface.png",
 			"tier": "KEYSTONE",
+			"integrated": {
+				"effects": [
+					{
+						"effect": "INSTANT_NEURAL_TRANSFER_FROM"
+					}
+				]
+			},
 			"vanillaHullMod": "neural_interface",
 			"unlockConditions": [
 				{
@@ -1729,6 +2565,18 @@
 					"magnitude": -50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_DAMAGE_TAKEN_MULT",
+						"magnitude": -15
+					},
+					{
+						"effect": "SHIELD_PIERCE_CHANCE_MULT",
+						"magnitude": -75
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1755,6 +2603,14 @@
 					"magnitude": -30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CR_LOSS_PER_SECOND_MULT",
+						"magnitude": -45
+					}
+				]
+			},
 			"phantomHullMods": [
 				"hardened_subsystems"
 			],
@@ -1767,6 +2623,12 @@
 			"name": "Heavy Armor",
 			"icon": "graphics/icons/heavyarmor.png",
 			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "MANEUVERABILITY_MULT",
+					"magnitude": -20
+				}
+			],
 			"hullSizeEffects": [
 				{
 					"effect": "ARMOR_FLAT",
@@ -1776,6 +2638,17 @@
 					"capitalShip": 500
 				}
 			],
+			"integrated": {
+				"hullSizeEffects": [
+					{
+						"effect": "ARMOR_FLAT",
+						"frigate": 150,
+						"destroyer": 300,
+						"cruiser": 400,
+						"capitalShip": 500
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -1799,8 +2672,20 @@
 				{
 					"effect": "ARMOR_FLAT_FOR_LOW_BASE_ARMOR",
 					"magnitude": 1
+				},
+				{
+					"effect": "MANEUVERABILITY_MULT",
+					"magnitude": -30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ARMOR_FLAT_FOR_LOW_BASE_ARMOR",
+						"magnitude": 1
+					}
+				]
+			},
 			"phantomHullMods": [
 				"nskr_criticalArmor"
 			],
@@ -1825,11 +2710,32 @@
 					"magnitude": 100
 				}
 			],
+			"hullSizeEffects": [
+				{
+					"effect": "WEAPON_DAMAGE_TAKEN_PERCENT",
+					"frigate": 50,
+					"destroyer": 0,
+					"cruiser": 0,
+					"capitalShip": 0
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT",
+						"magnitude": 0.08
+					},
+					{
+						"effect": "AUGMENTED_INERTIAL_PROJECTILE_SPEED_PERCENT",
+						"magnitude": 100
+					}
+				]
+			},
 			"phantomHullMods": [
 				"nskr_inertial"
 			],
 			"flavour": "A Kesteven R&D modspec lets the crew feed the ship's own momentum into its guns. Kesteven's notes recommend never slowing down.",
-			"flavourAutomated": "A Kesteven R&D modspec lets the refit crew feed the ship's own momentum into its guns. Kesteven's notes recommend never slowing down, and the ship's core treats the recommendation as a parameter.",
+			"flavourAutomated": "A Kesteven R&D modspec lets the refit crew feed the ship's own momentum into its guns. Kesteven's notes recommend never slowing down.",
 			"tags": [
 				"weapons",
 				"speed"
@@ -1850,6 +2756,18 @@
 					"magnitude": -10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT",
+						"magnitude": 100
+					},
+					{
+						"effect": "ENERGY_WEAPON_FLUX_COST_PERCENT",
+						"magnitude": -20
+					}
+				]
+			},
 			"phantomHullMods": [
 				"nskr_acoils"
 			],
@@ -1902,6 +2820,18 @@
 					"magnitude": 50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_ABSORB_RATE_OF_FIRE_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "SHIELD_ABSORB_MAX_RESERVE_PERCENT",
+						"magnitude": 50
+					}
+				]
+			},
 			"phantomHullMods": [
 				"nskr_absorption"
 			],
@@ -1921,7 +2851,7 @@
 			"effects": [
 				{
 					"effect": "HEARTLESS_CREW_DEATH_CHANCE_PERCENT_PER_STACK",
-					"magnitude": 9
+					"magnitude": 15
 				},
 				{
 					"effect": "HEARTLESS_MISSILE_DAMAGE_PERCENT_PER_STACK",
@@ -1932,6 +2862,22 @@
 					"magnitude": 3
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "HEARTLESS_CREW_DEATH_CHANCE_PERCENT_PER_STACK",
+						"magnitude": 20
+					},
+					{
+						"effect": "HEARTLESS_MISSILE_DAMAGE_PERCENT_PER_STACK",
+						"magnitude": 4
+					},
+					{
+						"effect": "HEARTLESS_MISSILE_SPEED_PERCENT_PER_STACK",
+						"magnitude": 4
+					}
+				]
+			},
 			"tags": [
 				"missile",
 				"req_missile"
@@ -1949,9 +2895,21 @@
 				},
 				{
 					"effect": "CREW_STEAL_SKELETON_CREW_PERCENT",
-					"magnitude": 10
+					"magnitude": 5
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CREW_STEAL_RANGE_FLAT",
+						"magnitude": 1500
+					},
+					{
+						"effect": "CREW_STEAL_SKELETON_CREW_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
 			"tags": [
 				"logistics",
 				"player_only"
@@ -1976,6 +2934,22 @@
 					"magnitude": 3
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "HEARTLESS_ARMOR_RESTORE_PERCENT",
+						"magnitude": 5
+					},
+					{
+						"effect": "HEARTLESS_ARMOR_MULT_PER_STACK",
+						"magnitude": 2
+					},
+					{
+						"effect": "HEARTLESS_MOBILITY_PENALTY_PERCENT_PER_STACK",
+						"magnitude": 2
+					}
+				]
+			},
 			"tags": [
 				"armour"
 			]
@@ -2013,6 +2987,10 @@
 				{
 					"effect": "AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT",
 					"magnitude": 50
+				},
+				{
+					"effect": "EMP_DAMAGE_TAKEN_PERCENT",
+					"magnitude": 33
 				}
 			],
 			"hullSizeEffects": [
@@ -2024,11 +3002,52 @@
 					"capitalShip": 20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "VOLATILE_FLUX_RATE_OF_FIRE_PERCENT",
+						"magnitude": 40
+					},
+					{
+						"effect": "FLUX_CAPACITY_PERCENT",
+						"magnitude": 67
+					},
+					{
+						"effect": "FLUX_CAPACITOR_EFFECTIVENESS_PERCENT",
+						"magnitude": 67
+					},
+					{
+						"effect": "WEAPON_RANGE_THRESHOLD_FLAT",
+						"magnitude": 800
+					},
+					{
+						"effect": "WEAPON_RANGE_FALLOFF_MULT",
+						"magnitude": -50
+					},
+					{
+						"effect": "FIGHTER_ENGAGEMENT_RANGE_MULT",
+						"magnitude": -75
+					},
+					{
+						"effect": "AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT",
+						"magnitude": 50
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "VOLATILE_FLUX_TOP_SPEED_FLAT",
+						"frigate": 50,
+						"destroyer": 40,
+						"cruiser": 30,
+						"capitalShip": 20
+					}
+				]
+			},
 			"phantomHullMods": [
 				"nskr_volatile"
 			],
-			"flavour": "A prototype flux injector from Kesteven R&D lets the crew trade staying power for tempo. The modspec describes the side effects as manageable.",
-			"flavourAutomated": "A prototype flux injector from Kesteven R&D lets the refit crew trade staying power for tempo. The modspec describes the side effects as manageable. With nobody aboard, nobody has to manage them.",
+			"flavour": "A prototype flux injector from Kesteven R&D lets the crew trade staying power for tempo. The modspec describes the side effects as \"manageable\".",
+			"flavourAutomated": "A prototype flux injector from Kesteven R&D lets the refit crew trade staying power for tempo. The modspec describes the side effects as manageable. With nobody aboard, there's nothing living to manage.",
 			"tags": [
 				"flux",
 				"speed",
@@ -2051,11 +3070,22 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SYSTEM_CHARGES_FLAT",
+						"magnitude": 1
+					},
+					{
+						"effect": "AUGMENTED_SYSTEM_REGEN_PERCENT",
+						"magnitude": 20
+					}
+				]
+			},
 			"phantomHullMods": [
 				"nskr_bigBats"
 			],
-			"flavour": "A Kesteven R&D modspec for capacitor banks far larger than any sane design would carry. The ship's systems rarely run dry, and the crew has learned not to stand near the banks.",
-			"flavourAutomated": "A Kesteven R&D modspec for capacitor banks far larger than any sane design would carry. The ship's systems rarely run dry, and with nobody aboard, nobody has to learn not to stand near the banks.",
+			"flavour": "A Kesteven R&D modspec for capacitor banks far larger than any sane design would carry. The ship's systems rarely run dry.",
 			"tags": [
 				"req_system_charges"
 			]
@@ -2087,6 +3117,30 @@
 					"magnitude": -10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "HEARTLESS_ON_NEARBY_DESTRUCTION_RANGE_FLAT",
+						"magnitude": 1500
+					},
+					{
+						"effect": "HEARTLESS_RADIATION_EMP_FLAT",
+						"magnitude": 300
+					},
+					{
+						"effect": "MAX_COMBAT_READINESS_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "TOP_SPEED_PERCENT",
+						"magnitude": -8
+					},
+					{
+						"effect": "MANEUVERABILITY_PERCENT",
+						"magnitude": -8
+					}
+				]
+			},
 			"flavour": "query. hull?. scanning. [HULL] collect, amass, gather, fuse, keep. The core does not stop. Neither does anything it holds.",
 			"tags": [
 				"armour",
@@ -2112,6 +3166,26 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BEAM_WEAPON_HARD_FLUX_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "BEAM_WEAPON_RANGE_MULT",
+						"magnitude": -25
+					},
+					{
+						"effect": "BEAM_WEAPON_DAMAGE_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "BEAM_WEAPON_DAMAGE_PERCENT",
+						"magnitude": 5
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2145,6 +3219,23 @@
 					"effect": "PD_RECLASSIFY_SMALL_WEAPONS"
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "PD_IGNORES_DECOY_FLARES"
+					},
+					{
+						"effect": "PD_BEST_TARGET_LEADING"
+					},
+					{
+						"effect": "PD_RECLASSIFY_SMALL_WEAPONS"
+					},
+					{
+						"effect": "PD_DAMAGE_TO_MISSILES_PERCENT",
+						"magnitude": 25
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2180,6 +3271,24 @@
 					"capitalShip": 55
 				}
 			],
+			"integrated": {
+				"hullSizeEffects": [
+					{
+						"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
+						"frigate": 15,
+						"destroyer": 25,
+						"cruiser": 45,
+						"capitalShip": 65
+					},
+					{
+						"effect": "ENERGY_WEAPON_RANGE_PERCENT",
+						"frigate": 15,
+						"destroyer": 25,
+						"cruiser": 45,
+						"capitalShip": 65
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2208,6 +3317,17 @@
 					"capitalShip": 5
 				}
 			],
+			"integrated": {
+				"hullSizeEffects": [
+					{
+						"effect": "NAV_RATING",
+						"frigate": 3,
+						"destroyer": 4,
+						"cruiser": 5,
+						"capitalShip": 6
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2238,6 +3358,22 @@
 					"magnitude": 0
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_ARC_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "CONVERT_SHIELD_TO_FRONT",
+						"magnitude": 0
+					},
+					{
+						"effect": "SHIELD_DAMAGE_TAKEN_MULT",
+						"magnitude": -5
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2269,6 +3405,14 @@
 					"magnitude": 0
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CONVERT_SHIELD_TO_OMNI",
+						"magnitude": 0
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2296,6 +3440,14 @@
 					"magnitude": 250
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP",
+						"magnitude": 400
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2330,6 +3482,26 @@
 					"magnitude": 100
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "PHASE_CLOAK_ACTIVATION_COST_MULT",
+						"magnitude": -100
+					},
+					{
+						"effect": "COMBAT_BOOST_WHILE_PHASED",
+						"magnitude": 100
+					},
+					{
+						"effect": "PHASE_ANCHOR_EMERGENCY_DIVE",
+						"magnitude": 100
+					},
+					{
+						"effect": "PHASE_CLOAK_COOLDOWN_PERCENT",
+						"magnitude": -25
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2358,6 +3530,14 @@
 					"magnitude": -75
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FIGHTER_CREW_LOSS_MULT",
+						"magnitude": -95
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2393,6 +3573,26 @@
 					"magnitude": -100
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "HULL_PERCENT",
+						"magnitude": 40
+					},
+					{
+						"effect": "SHIP_RECOVERY_CHANCE_BONUS",
+						"magnitude": 1000
+					},
+					{
+						"effect": "BREAK_PROBABILITY_PERCENT",
+						"magnitude": -100
+					},
+					{
+						"effect": "ARMOR_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
 			"phantomHullMods": [
 				"reinforcedhull"
 			],
@@ -2415,6 +3615,22 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "EMP_DAMAGE_TAKEN_MULT",
+						"magnitude": -30
+					},
+					{
+						"effect": "VENT_RATE_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "VENT_RATE_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2441,6 +3657,18 @@
 					"magnitude": -40
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_UPKEEP_MULT",
+						"magnitude": -40
+					},
+					{
+						"effect": "SHIELD_SOFT_FLUX_CONVERSION_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2507,6 +3735,17 @@
 					"capitalShip": 125
 				}
 			],
+			"integrated": {
+				"hullSizeEffects": [
+					{
+						"effect": "CREW_CAPACITY_FLAT",
+						"frigate": 50,
+						"destroyer": 70,
+						"cruiser": 120,
+						"capitalShip": 250
+					}
+				]
+			},
 			"phantomHullMods": [
 				"additional_berthing"
 			],
@@ -2527,6 +3766,18 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BURN_LEVEL_FLAT",
+						"magnitude": 1
+					},
+					{
+						"effect": "FUEL_USE_MULT",
+						"magnitude": -15
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2562,6 +3813,23 @@
 					"capitalShip": 125
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FUEL_CAPACITY_PERCENT",
+						"magnitude": 40
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "FUEL_CAPACITY_FLAT",
+						"frigate": 50,
+						"destroyer": 70,
+						"cruiser": 120,
+						"capitalShip": 250
+					}
+				]
+			},
 			"phantomHullMods": [
 				"auxiliary_fuel_tanks"
 			],
@@ -2597,6 +3865,42 @@
 					"magnitude": 50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MIN_CREW_MULT",
+						"magnitude": -20
+					},
+					{
+						"effect": "SUPPLIES_PER_MONTH_MULT",
+						"magnitude": -20
+					},
+					{
+						"effect": "FUEL_USE_MULT",
+						"magnitude": -20
+					},
+					{
+						"effect": "CR_RECOVERY_RATE_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "REPAIR_RATE_PER_DAY_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "MIN_CREW_MULT",
+						"magnitude": -10
+					},
+					{
+						"effect": "SUPPLIES_PER_MONTH_MULT",
+						"magnitude": -10
+					},
+					{
+						"effect": "FUEL_USE_MULT",
+						"magnitude": -10
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2633,6 +3937,23 @@
 					"capitalShip": 125
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CARGO_CAPACITY_PERCENT",
+						"magnitude": 40
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "CARGO_CAPACITY_FLAT",
+						"frigate": 50,
+						"destroyer": 70,
+						"cruiser": 120,
+						"capitalShip": 250
+					}
+				]
+			},
 			"phantomHullMods": [
 				"expanded_cargo_holds"
 			],
@@ -2662,6 +3983,30 @@
 					"capitalShip": 70
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SENSOR_STRENGTH_ALWAYS_COUNTS",
+						"magnitude": 0
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "SENSOR_STRENGTH_FLAT",
+						"frigate": 40,
+						"destroyer": 50,
+						"cruiser": 60,
+						"capitalShip": 70
+					},
+					{
+						"effect": "COMBAT_VISION",
+						"frigate": 1000,
+						"destroyer": 1500,
+						"cruiser": 2000,
+						"capitalShip": 2500
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2696,6 +4041,26 @@
 					"magnitude": -50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ENGINE_DURABILITY_PERCENT",
+						"magnitude": 60
+					},
+					{
+						"effect": "HULL_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "SENSOR_PROFILE_MULT",
+						"magnitude": -90
+					},
+					{
+						"effect": "ENGINE_DURABILITY_PERCENT",
+						"magnitude": 100
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2729,6 +4094,17 @@
 					"magnitude": 100
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "REMOVE_CIVILIAN_HULL_PENALTY"
+					},
+					{
+						"effect": "BURN_LEVEL_FLAT",
+						"magnitude": 1
+					}
+				]
+			},
 			"phantomHullMods": [
 				"militarized_subsystems"
 			],
@@ -2750,6 +4126,14 @@
 					"magnitude": -75
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CORONA_RESISTANCE_MULT",
+						"magnitude": -100
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2787,6 +4171,24 @@
 					"capitalShip": 20
 				}
 			],
+			"integrated": {
+				"hullSizeEffects": [
+					{
+						"effect": "SURVEY_COST_REDUCTION_HEAVY_MACHINERY",
+						"frigate": 10,
+						"destroyer": 14,
+						"cruiser": 24,
+						"capitalShip": 44
+					},
+					{
+						"effect": "SURVEY_COST_REDUCTION_SUPPLIES",
+						"frigate": 6,
+						"destroyer": 10,
+						"cruiser": 20,
+						"capitalShip": 40
+					}
+				]
+			},
 			"unlockConditions": [
 				{
 					"type": "blueprint",
@@ -2928,20 +4330,46 @@
 			]
 		},
 		{
-			"id": "efficient_vents",
-			"name": "Efficient Vents",
-			"icon": "graphics/icons/efficient_vents.png",
+			"id": "flux_distributor",
+			"name": "Flux Distributor",
+			"icon": "graphics/icons/flux_distributor.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
 					"effect": "FLUX_DISSIPATION_PERCENT",
 					"magnitude": 15
-				},
-				{
-					"effect": "FLUX_DISSIPATION_FLAT",
-					"magnitude": 50
 				}
 			],
+			"hullSizeEffects": [
+				{
+					"effect": "FLUX_DISSIPATION_FLAT",
+					"frigate": 30,
+					"destroyer": 60,
+					"cruiser": 90,
+					"capitalShip": 150
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FLUX_DISSIPATION_PERCENT",
+						"magnitude": 15
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "FLUX_DISSIPATION_FLAT",
+						"frigate": 40,
+						"destroyer": 80,
+						"cruiser": 120,
+						"capitalShip": 200
+					}
+				]
+			},
+			"phantomHullMods": [
+				"fluxdistributor"
+			],
+			"flavour": "A distribution grid that spreads waste heat across every vent at once instead of the nearest three. Nobody aboard misses the old hot spots.",
 			"tags": [
 				"flux"
 			]
@@ -2961,6 +4389,18 @@
 					"magnitude": -20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_DAMAGE_SHARED_PERCENT",
+						"magnitude": 20
+					},
+					{
+						"effect": "WEAPON_DAMAGE_PERCENT",
+						"magnitude": -10
+					}
+				]
+			},
 			"flavour": "League battle lines drawn from rival polities learned to stand or fall together, if only because none would let another take the credit for retreating first.",
 			"tags": [
 				"shield",
@@ -3089,6 +4529,18 @@
 					"magnitude": 25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MANEUVERABILITY_PERCENT",
+						"magnitude": 20
+					},
+					{
+						"effect": "TOP_SPEED_PERCENT",
+						"magnitude": 35
+					}
+				]
+			},
 			"temporaryAfterDeploymentSeconds": 60,
 			"flavour": "The Knights of Ludd hold that a righteous ship meets its enemy at full burn, and drilling alongside them at Ceyx teaches the crew to trim the engines and controls for the charge.",
 			"flavourAutomated": "The Knights of Ludd hold that a righteous ship meets its enemy at full burn. The ship's core logs their charges at Ceyx and trims its engines and controls to match. The Knights would not call the result righteous.",
@@ -3115,6 +4567,26 @@
 					"magnitude": 5
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BOMBER_ROLE_TOP_SPEED_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "BOMBER_ROLE_ACCELERATION_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT",
+						"magnitude": 5
+					},
+					{
+						"effect": "BOMBER_PAYLOAD_DETONATION_SPARES_ALLIES",
+						"magnitude": 0
+					}
+				]
+			},
 			"flavour": "Picking through the wrecks of Luddic Path carriers showed the crew how the Path tears the engine governors out of its bombers and arms their warheads the moment they leave the deck. The faithful accept that some payloads go off before they ever reach the enemy.",
 			"flavourAutomated": "Flight recorders from wrecked Luddic Path carriers show how the Path tears the engine governors out of its bombers and arms their warheads the moment they leave the deck. The ship's core applies the same settings to its own bombers, and logs the ones that go off early without comment.",
 			"tags": [
@@ -3133,6 +4605,18 @@
 					"magnitude": -2
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD",
+						"magnitude": -2
+					},
+					{
+						"effect": "HULL_DAMAGE_TAKEN_MULT_PER_DMOD",
+						"magnitude": -2
+					}
+				]
+			},
 			"flavour": "Captured pirate hulls show the crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Pirates call this maintenance.",
 			"flavourAutomated": "Captured pirate hulls show the refit crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Pirates call this maintenance.",
 			"tags": [
@@ -3151,7 +4635,23 @@
 					"magnitude": 2
 				}
 			],
-			"flavour": "Luddic faithful among the crew hold that a scarred ship, like a penitent, finds its strength in hardship. They keep its battered guns fighting with patient hands, and refuse every offer to have them properly repaired.",
+			"integrated": {
+				"effects": [
+					{
+						"effect": "WEAPON_DAMAGE_MULT_PER_DMOD",
+						"magnitude": 2
+					},
+					{
+						"effect": "WEAPON_RATE_OF_FIRE_PERCENT_PER_DMOD",
+						"magnitude": 2
+					},
+					{
+						"effect": "WEAPON_FLUX_COST_PERCENT_PER_DMOD",
+						"magnitude": -2
+					}
+				]
+			},
+			"flavour": "Luddic faithful among the crew hold that a scarred ship, like a penitent, finds its strength in hardship. They keep its battered guns fighting with patient hands.",
 			"flavourAutomated": "Luddic faithful hold that a scarred ship, like a penitent, finds its strength in hardship. The ship's core holds no faith, only damage logs showing the battered guns of Luddic ships firing long past the point they should have failed. It keeps its own guns fighting the same way.",
 			"tags": [
 				"d_mods",
@@ -3184,6 +4684,14 @@
 					"magnitude": 50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "RAM_PROW_COLLISION_DAMAGE_MULT",
+						"magnitude": 75
+					}
+				]
+			},
 			"flavour": "Pather ships weld scrap plate over the prow until it is more ram than hull. The Path counts this among the few acceptable uses of technology.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -3201,6 +4709,18 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST",
+						"magnitude": 1
+					},
+					{
+						"effect": "HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_FLAT",
+						"magnitude": 10
+					}
+				]
+			},
 			"flavour": "Luddic Church ships carry a memorial plate for every hand lost aboard. The oldest hulls are mostly memorial.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -3219,6 +4739,18 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ALLY_ARMOR_DAMAGE_TAKEN_PERCENT_PER_DMOD",
+						"magnitude": 1
+					},
+					{
+						"effect": "ALLY_TOP_SPEED_PERCENT_PER_DMOD",
+						"magnitude": 2
+					}
+				]
+			},
 			"flavour": "Church doctrine reads every scar on a hull as a trial endured. A Luddic fleet forms up around its most battered ship.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -3241,6 +4773,18 @@
 					"magnitude": 50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "OVERLOAD_HULL_DAMAGE_PERCENT",
+						"magnitude": 5
+					},
+					{
+						"effect": "OVERLOAD_HARD_FLUX_DISSIPATION_PERCENT",
+						"magnitude": 50
+					}
+				]
+			},
 			"flavour": "The Knights of Ludd count a scorched hull as penance, not damage.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -3267,6 +4811,29 @@
 					"magnitude": 30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CR_RECOVERY_RATE_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "TOP_SPEED_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "PEAK_CR_DURATION_PERCENT",
+						"magnitude": 30
+					},
+					{
+						"effect": "SUPPLIES_PER_MONTH_MULT",
+						"magnitude": -10
+					}
+				],
+				"effectText": [
+					"The crabs eat what the crew won't."
+				]
+			},
 			"itemCost": {
 				"itemId": "lobster",
 				"quantity": 1000
@@ -3298,6 +4865,23 @@
 					"capitalShip": 15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CR_RECOVERY_RATE_PERCENT",
+						"magnitude": 10
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "POST_BATTLE_SALVAGE_PERCENT",
+						"frigate": 5,
+						"destroyer": 10,
+						"cruiser": 15,
+						"capitalShip": 25
+					}
+				]
+			},
 			"flavour": "Freebooters who signed on at a pirate base taught the crew to strip every wreck to the frame and to patch the ship back to fighting trim from whatever a battle leaves behind. Nothing is wasted, least of all the dead.",
 			"flavourAutomated": "The ship's core logs how freebooters strip every wreck to the frame and patch their ships back to fighting trim from whatever a battle leaves behind. Its repair drones do the same. Nothing is wasted, least of all the dead.",
 			"tags": [
@@ -3469,29 +5053,6 @@
 			],
 			"tags": [
 				"range"
-			]
-		},
-		{
-			"id": "shield_arc_multiplier",
-			"name": "Shield Arc Multiplier",
-			"icon": "graphics/icons/shield_arc_mult.png",
-			"tier": "NOTABLE",
-			"effects": [
-				{
-					"effect": "SHIELD_ARC_MULT",
-					"magnitude": 15
-				}
-			],
-			"unlockConditions": [
-				{
-					"type": "blueprint",
-					"category": "hullmod",
-					"id": "adaptiveshields"
-				}
-			],
-			"tags": [
-				"shield",
-				"req_shields"
 			]
 		},
 		{
@@ -3745,7 +5306,7 @@
 					"magnitude": 4
 				}
 			],
-			"flavour": "Targeting tables from a raider's fire-control core weight every shot toward whatever can't outrun the ship. Most freighters can't.",
+			"flavour": "Targeting tables from a raider's fire-control core weight every shot toward whatever can't outrun the ship.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"weapons"
@@ -3814,6 +5375,18 @@
 					"magnitude": -10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SUPPLIES_PER_MONTH_MULT",
+						"magnitude": -15
+					},
+					{
+						"effect": "FUEL_USE_MULT",
+						"magnitude": -15
+					}
+				]
+			},
 			"tags": [
 				"logistics",
 				"campaign_only",
@@ -3851,6 +5424,18 @@
 					"magnitude": -25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_DAMAGE_TAKEN_MULT",
+						"magnitude": -15
+					},
+					{
+						"effect": "CORONA_RESISTANCE_MULT",
+						"magnitude": -25
+					}
+				]
+			},
 			"flavour": "Sindria's day side is scoured by radiation, and array workers who fled the Askonia Crisis to sign on with this crew know how to harden an emitter against it. They learned the hard way, as most Sindrians learn most things.",
 			"flavourAutomated": "Sindria's day side is scoured by radiation, and the emitters on its orbital arrays are hardened against it. The refit crew copies the shielding pattern from a derelict Askonian array onto this ship's emitters. Whoever designed it learned the hard way, as most Sindrians learn most things.",
 			"tags": [
@@ -3873,6 +5458,18 @@
 					"magnitude": -15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ENERGY_SLOT_WEAPON_RANGE_FLAT",
+						"magnitude": 100
+					},
+					{
+						"effect": "MISSILE_WEAPON_DAMAGE_MULT",
+						"magnitude": -15
+					}
+				]
+			},
 			"flavour": "Lion's Guard refits rebuild a hull around its energy mounts. Guard armorers regard missiles as an admission of poor aim.",
 			"tags": [
 				"energy",
@@ -3890,6 +5487,14 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FUEL_USE_REDUCTION_PERCENT_WHILE_HALF_FUELED",
+						"magnitude": 20
+					}
+				]
+			},
 			"flavour": "Diktat burn tables treat every unit of fuel aboard as state property on loan. Repayment is expected in full.",
 			"tags": [
 				"logistics",
@@ -3916,6 +5521,22 @@
 					"magnitude": -5
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "NO_RETREAT",
+						"magnitude": 0
+					},
+					{
+						"effect": "WEAPON_DAMAGE_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "DAMAGE_TAKEN_PERCENT",
+						"magnitude": -10
+					}
+				]
+			},
 			"flavour": "A standing decree of the Supreme Executor names retreat as treason. It has no provision for appeal.",
 			"tags": [
 				"weapons"
@@ -3932,6 +5553,14 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "RATE_OF_FIRE_AURA_MULT",
+						"magnitude": 15
+					}
+				]
+			},
 			"flavour": "Diktat warships broadcast the Supreme Executor's addresses on open channels as they close, at a volume the comm filter can't fully block. Sindrian citizens are required to listen to the end.",
 			"tags": [
 				"fleet_support"
@@ -3948,6 +5577,18 @@
 					"magnitude": 50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "DAMAGE_TAKEN_NEAR_FLAGSHIP_PERCENT",
+						"magnitude": -10
+					}
+				]
+			},
 			"flavour": "The Lion's Guard keeps pace with the Supreme Executor's flagship, never the other way round. Most of its recorded maneuvers are parades.",
 			"tags": [
 				"speed"
@@ -4051,6 +5692,22 @@
 					"magnitude": -10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CREW_LOSS_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "WEAPON_DAMAGE_PERCENT",
+						"magnitude": 30
+					},
+					{
+						"effect": "SHIELD_DAMAGE_TAKEN_MULT",
+						"magnitude": 10
+					}
+				]
+			},
 			"flavour": "Pirate captains who joined the crew drill the habits that make freebooters so dangerous up close: charge in, fire everything and count the casualties later. They rarely do the counting.",
 			"flavourAutomated": "The ship's core logs every fight it sees freebooters win up close: charge in, fire everything and count the casualties later. It copies the first two steps exactly. It always does the counting.",
 			"tags": [
@@ -4132,6 +5789,27 @@
 					"capitalShip": 6
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "DYNAMIC_GRID_ENERGY_WEAPON_BONUS_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "SHIELD_RAISE_RATE_PERCENT",
+						"magnitude": 25
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "VENT_RATE_PERCENT",
+						"frigate": 12,
+						"destroyer": 10,
+						"cruiser": 8,
+						"capitalShip": 6
+					}
+				]
+			},
 			"exclusiveHullMods": [
 				"nightcrosstargeting"
 			],
@@ -4154,6 +5832,14 @@
 					"magnitude": 15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ION_ARC_CHANCE_PERCENT",
+						"magnitude": 20
+					}
+				]
+			},
 			"flavour": "The NCA Vendor sells Ion Bolters to any well-funded mercenary, and taking one apart shows the crew how to overdrive this ship's energy shots the same way. The terms of sale forbid exactly this, in very small print.",
 			"flavourAutomated": "The NCA Vendor sells Ion Bolters to any well-funded mercenary, and taking one apart shows the refit crew how to overdrive this ship's energy shots the same way. The terms of sale forbid exactly this, in very small print.",
 			"tags": [
@@ -4176,6 +5862,18 @@
 					"magnitude": 30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "HARDLIGHT_MARKING_DAMAGE_PERCENT_PER_HIT",
+						"magnitude": 2
+					},
+					{
+						"effect": "HARDLIGHT_MARKING_MAX_DAMAGE_PERCENT",
+						"magnitude": 35
+					}
+				]
+			},
 			"flavour": "Nightcross Restricted Hardlight Rifles, looted from a hidden NCA research outpost, keep count of every hit they land on a target, and the crew learns to port that counter into this carrier's wing datalink.",
 			"flavourAutomated": "Nightcross Restricted Hardlight Rifles, looted from a hidden NCA research outpost, keep count of every hit they land on a target. The ship's core reads the counter's firmware and ports it into its own wing datalink.",
 			"tags": [
@@ -4198,6 +5896,18 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FIGHTER_WING_SHARED_DAMAGE_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "FIGHTER_WING_DAMAGE_TAKEN_MULT_PER_FIGHTER",
+						"magnitude": 15
+					}
+				]
+			},
 			"flavour": "Tri-Tachyon's phase labs learned to lock the coils of a strike craft wing into one shared state, so a hit on one craft bleeds through p-space into the whole wing. A defector from those labs, smuggled out at no small cost, walks the crew through retuning this carrier's strike craft coils to the same entangled frequency.",
 			"flavourAutomated": "Tri-Tachyon's phase labs learned to lock the coils of a strike craft wing into one shared state, so a hit on one craft bleeds through p-space into the whole wing. A defector from those labs, smuggled out at no small cost, walks the refit crew through retuning this carrier's strike craft coils to the same entangled frequency.",
 			"tags": [
@@ -4216,6 +5926,14 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "REPAIR_COORDINATOR_ARMOR_PERCENT",
+						"magnitude": 1.5
+					}
+				]
+			},
 			"flavour": "The wreck of an NCA Occator still holds the delta-level coordinator that once steered its repair drones between damaged hulls. The crew wires it into this ship's damage-control network, teaching it to send work teams and drones across to patch the armor of nearby allies in the middle of a battle.",
 			"flavourAutomated": "The wreck of an NCA Occator still holds the delta-level coordinator that once steered its repair drones between damaged hulls. Wired into this ship's damage-control network, it sends the ship's drones across to patch the armor of nearby allies in the middle of a battle.",
 			"tags": [
@@ -4235,6 +5953,18 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "WING_SCRAMBLE_COPIES",
+						"magnitude": 1
+					},
+					{
+						"effect": "FIGHTER_DAMAGE_TAKEN_MULT",
+						"magnitude": -15
+					}
+				]
+			},
 			"flavour": "Every League member world sends its own carrier detachment to a joint fleet, and the League's flight doctrine makes them fly as one: a bomber from one world takes orders from a flight lead from another. Pilots from rival worlds fly together mostly so each can report on the other.",
 			"flavourAutomated": "Every League member world sends its own carrier detachment to a joint fleet, and the League's flight doctrine makes them fly as one. The ship's core records the doctrine from joint fleet comm traffic and flies its own wings by it. It has no rival world to report back to.",
 			"todo": "Prototype: wings never grow beyond their normal size; copies are retrained from the wing's own natives, and a copy lost or sent to rearm comes back when the host bay rebuilds a native that is retrained into it. Still to check in game: rearm cycles of copies and the replacement rate during long fights.",
@@ -4254,6 +5984,14 @@
 					"magnitude": 5
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "GRAVITY_DRAG_TIMEFLOW_MULT",
+						"magnitude": 8
+					}
+				]
+			},
 			"exclusiveHullMods": [
 				"na_gravitydrag"
 			],
@@ -4286,6 +6024,22 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "TERMINAL_DESCENT_HULL_DAMAGE_TAKEN_PERCENT",
+						"magnitude": -25
+					},
+					{
+						"effect": "TERMINAL_DESCENT_FLUX_DISSIPATION_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "TERMINAL_DESCENT_SYSTEM_REGEN_PERCENT",
+						"magnitude": 15
+					}
+				]
+			},
 			"flavour": "Stargazers fight hardest when they are dying, and the Stardust Core recovered from one, the remains of what was once a person, shows the crew how to strip the ship's safeties the moment its hull starts to fail.",
 			"flavourAutomated": "Stargazers fight hardest when they are dying. The Stardust Core recovered from one, the remains of what was once a person, holds the routine that strips a ship's safeties the moment its hull starts to fail. The ship's core runs it without hesitation.",
 			"tags": [
@@ -4304,6 +6058,14 @@
 					"magnitude": 15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FUROR_RATE_OF_FIRE_PERCENT",
+						"magnitude": 20
+					}
+				]
+			},
 			"flavour": "Combat recordings pulled from a Stargazer's data core show its fire rate climbing with every hit, as if something inside it were growing angrier. The crew rewires this ship's fire control to chase the same rhythm, and tries not to wonder what it is chasing.",
 			"flavourAutomated": "Combat recordings pulled from a Stargazer's data core show its fire rate climbing with every hit, as if something inside it were growing angrier. The ship's core matches the rhythm exactly. It does not wonder what it is matching.",
 			"tags": [
@@ -4325,6 +6087,18 @@
 					"magnitude": 5
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ELECTRONIC_WARFARE",
+						"magnitude": 2
+					},
+					{
+						"effect": "MALFUNCTION_AURA_PERCENT",
+						"magnitude": 5
+					}
+				]
+			},
 			"flavour": "The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code. The crew learns to strip that code out and fire it back.",
 			"flavourAutomated": "The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code. The ship's core strips that code out and fires it back.",
 			"tags": [
@@ -4342,6 +6116,18 @@
 					"magnitude": 200
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "STARDUST_MOTE_DAMAGE_FLAT",
+						"magnitude": 200
+					},
+					{
+						"effect": "STARDUST_MOTE_MAX_IN_FLIGHT_FLAT",
+						"magnitude": 1
+					}
+				]
+			},
 			"flavour": "A corrosion emitter salvaged from a Stargazer wreck still drags stardust through whatever it touches, and the crew tunes this ship's beams to do the same.",
 			"flavourAutomated": "A corrosion emitter salvaged from a Stargazer wreck still drags stardust through whatever it touches, and the refit crew tunes this ship's beams to do the same.",
 			"tags": [
@@ -4381,11 +6167,35 @@
 					"magnitude": -5
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "TIMEFLOW_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "SENSOR_PROFILE_PERCENT",
+						"magnitude": -25
+					},
+					{
+						"effect": "PHASE_HULL_SENSOR_PROFILE_PERCENT",
+						"magnitude": -25
+					},
+					{
+						"effect": "EMP_DAMAGE_TAKEN_PERCENT",
+						"magnitude": -25
+					},
+					{
+						"effect": "FLUX_DISSIPATION_PER_FLUX_VENT_FLAT",
+						"magnitude": -5
+					}
+				]
+			},
 			"exclusiveHullMods": [
 				"rat_exogrid"
 			],
-			"flavour": "Under Exo-Tech instruction, the crew splices phase-coil components into the ship's power lattice, fusing it with the flux grid the way Exo-Tech builds its own hulls. Exo-Tech insists the sluggish vents are a feature.",
-			"flavourAutomated": "Under Exo-Tech instruction, the refit crew splices phase-coil components into the ship's power lattice, fusing it with the flux grid the way Exo-Tech builds its own hulls. Exo-Tech insists the sluggish vents are a feature.",
+			"flavour": "Under Exo-Tech instruction, the crew splices phase-coil components into the ship's power lattice, fusing it with the flux grid the way Exo-Tech builds its own hulls.",
+			"flavourAutomated": "Under Exo-Tech instruction, the refit crew splices phase-coil components into the ship's power lattice, fusing it with the flux grid the way Exo-Tech builds its own hulls.",
 			"tags": [
 				"flux",
 				"speed"
@@ -4407,6 +6217,18 @@
 					"magnitude": 25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "PHASE_CLOAK_FLUX_THRESHOLD_PERCENT",
+						"magnitude": 30
+					},
+					{
+						"effect": "FLUX_DISSIPATION_WHILE_PHASED_PERCENT",
+						"magnitude": 25
+					}
+				]
+			},
 			"flavour": "Exo-Tech technicians teach the crew to retune the phase coils to their own tolerances, which are tighter than anything the coils were built for.",
 			"flavourAutomated": "Exo-Tech technicians teach the refit crew to retune the phase coils to their own tolerances, which are tighter than anything the coils were built for.",
 			"tags": [
@@ -4426,6 +6248,22 @@
 					"magnitude": 100
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "AMMO_REGEN_WHILE_PHASED_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "BALLISTIC_WEAPON_AMMO_PERCENT",
+						"magnitude": 25
+					},
+					{
+						"effect": "ENERGY_WEAPON_AMMO_PERCENT",
+						"magnitude": 25
+					}
+				]
+			},
 			"flavour": "An Exo-Tech armorer shows the crew how to route the ammunition feeders through the phase coils, so the magazines keep filling while the ship is out of normal space.",
 			"flavourAutomated": "An Exo-Tech armorer shows the refit crew how to route the ammunition feeders through the phase coils, so the magazines keep filling while the ship is out of normal space.",
 			"tags": [
@@ -4453,11 +6291,27 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ENERGY_WEAPON_DAMAGE_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "ENERGY_WEAPON_RATE_OF_FIRE_PERCENT",
+						"magnitude": 20
+					},
+					{
+						"effect": "ZERO_FLUX_BOOST_FLUX_LEVEL_PERCENT",
+						"magnitude": 15
+					}
+				]
+			},
 			"exclusiveHullMods": [
 				"rat_hypatia_hullmod"
 			],
-			"flavour": "Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. It was not designed to be scaled down, and makes this known.",
-			"flavourAutomated": "Exo-Tech engineers walk the refit crew through scaling down the Hypatia's warp field to wrap the energy mounts. It was not designed to be scaled down, and makes this known.",
+			"flavour": "Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. It was not designed to be scaled down.",
+			"flavourAutomated": "Exo-Tech engineers walk the refit crew through scaling down the Hypatia's warp field to wrap the energy mounts. It was not designed to be scaled down.",
 			"tags": [
 				"energy",
 				"req_energy"
@@ -4514,6 +6368,22 @@
 					"magnitude": 20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BORROWED_GRACE_MAX_STACKS_FLAT",
+						"magnitude": 20
+					},
+					{
+						"effect": "WEAPON_DURABILITY_PERCENT",
+						"magnitude": 20
+					},
+					{
+						"effect": "REPAIR_TIME_PERCENT",
+						"magnitude": -20
+					}
+				]
+			},
 			"itemCost": {
 				"itemId": "rat_abyssal_matter",
 				"quantity": 25
@@ -4553,6 +6423,26 @@
 					"magnitude": -25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ENERGY_WEAPON_FLUX_COST_PERCENT",
+						"magnitude": -10
+					},
+					{
+						"effect": "ENERGY_WEAPON_RANGE_FLAT",
+						"magnitude": 150
+					},
+					{
+						"effect": "EMP_DAMAGE_TAKEN_PERCENT",
+						"magnitude": -25
+					},
+					{
+						"effect": "CORONA_RESISTANCE_MULT",
+						"magnitude": -25
+					}
+				]
+			},
 			"itemCost": {
 				"itemId": "rat_abyssal_matter",
 				"quantity": 25
@@ -4595,6 +6485,31 @@
 					"capitalShip": 225000
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SERAPH_HUNTING_HEAL_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "SERAPH_HUNTING_HEAL_CAP_PERCENT",
+						"magnitude": 30
+					},
+					{
+						"effect": "SERAPH_HUNTING_DAMAGE_BONUS_PERCENT",
+						"magnitude": 30
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "SERAPH_HUNTING_FULL_BONUS_DAMAGE_FLAT",
+						"frigate": 75000,
+						"destroyer": 125000,
+						"cruiser": 175000,
+						"capitalShip": 225000
+					}
+				]
+			},
 			"itemCost": {
 				"itemId": "rat_abyssal_matter",
 				"quantity": 25
@@ -4610,6 +6525,14 @@
 			"name": "Fragment Swarm",
 			"icon": "graphics/icons/fragment_swarm.png",
 			"tier": "NOTABLE",
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_DAMAGE_ABSORBED_BY_FRAGMENTS_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
 			"vanillaHullMod": "fragment_swarm",
 			"itemCost": {
 				"itemId": "fragment_fabricator",
@@ -4642,6 +6565,14 @@
 					"magnitude": 30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FRAGMENT_REPLACEMENT_RATE_PERCENT",
+						"magnitude": 50
+					}
+				]
+			},
 			"itemCost": {
 				"itemId": "fragment_fabricator",
 				"quantity": 1
@@ -4672,6 +6603,14 @@
 					"magnitude": 60
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FRAGMENT_SWARM_SIZE_PERCENT",
+						"magnitude": 100
+					}
+				]
+			},
 			"itemCost": {
 				"itemId": "threat_processing_unit",
 				"quantity": 1
@@ -4724,6 +6663,14 @@
 			"name": "Shrouded Lens",
 			"icon": "graphics/icons/shrouded_lens.png",
 			"tier": "NOTABLE",
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CREW_LOSS_PERCENT",
+						"magnitude": -50
+					}
+				]
+			},
 			"vanillaHullMod": "shrouded_lens",
 			"itemCost": {
 				"itemId": "shrouded_lens",
@@ -4747,6 +6694,14 @@
 			"name": "Shrouded Mantle",
 			"icon": "graphics/icons/shrouded_mantle.png",
 			"tier": "NOTABLE",
+			"integrated": {
+				"effects": [
+					{
+						"effect": "HUNGERING_RIFT_HEALING_PERCENT",
+						"magnitude": 50
+					}
+				]
+			},
 			"vanillaHullMod": "shrouded_mantle",
 			"itemCost": {
 				"itemId": "shrouded_mantle",
@@ -4765,6 +6720,14 @@
 			"name": "Shrouded Thunderhead",
 			"icon": "graphics/icons/shrouded_thunderhead.png",
 			"tier": "NOTABLE",
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CREW_LOSS_PERCENT",
+						"magnitude": -50
+					}
+				]
+			},
 			"vanillaHullMod": "shrouded_thunderhead",
 			"itemCost": {
 				"itemId": "shrouded_thunderhead",
@@ -4841,6 +6804,18 @@
 					"magnitude": 30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "RIFT_STRIKE_CHANCE_PERCENT",
+						"magnitude": 30
+					},
+					{
+						"effect": "BEAM_RIFT_STRIKE_CHANCE_PERCENT",
+						"magnitude": 30
+					}
+				]
+			},
 			"flavour": "\"The impact site reads as empty for a moment afterwards. Not damaged, not cold. Empty. I have asked for the sensor package to be recalibrated.\"\n- Lab notes recovered from Alpha Site, author unknown",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -4877,6 +6852,18 @@
 					"magnitude": 20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SYSTEM_COOLDOWN_PERCENT",
+						"magnitude": -30
+					},
+					{
+						"effect": "SYSTEM_CHARGE_REGEN_PERCENT",
+						"magnitude": 30
+					}
+				]
+			},
 			"itemCost": {
 				"itemId": "rat_chronos_core",
 				"quantity": 1
@@ -4913,6 +6900,18 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "WEAPON_AUTOFIRE_ACCURACY_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "ENERGY_WEAPON_RANGE_PERCENT",
+						"magnitude": 15
+					}
+				]
+			},
 			"flavour": "Fire-control routines lifted from a Tri-Tachyon line ship, written by an alpha core that never meant to share them.",
 			"tags": [
 				"weapons",
@@ -4935,7 +6934,19 @@
 					"magnitude": 25
 				}
 			],
-			"flavour": "Corporate engineers treat flux like capital: borrow hard and repay fast. Their venting schedules, copied from a captured Aurora's maintenance logs, carry a confidentiality notice longer than the schedules themselves.",
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FLUX_DISSIPATION_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "VENT_RATE_PERCENT",
+						"magnitude": 25
+					}
+				]
+			},
+			"flavour": "Corporate engineers treat flux like capital: borrow hard and repay fast. Their venting schedules carry a confidentiality notice longer than the schedules themselves.",
 			"tags": [
 				"flux"
 			],
@@ -4956,6 +6967,18 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "DAMAGE_TO_CRUISER_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "DAMAGE_TO_CAPITAL_PERCENT",
+						"magnitude": 15
+					}
+				]
+			},
 			"flavour": "Tri-Tachyon fleet doctrine ranks every target by the value it carries, and its threat tables push gunners toward the largest hulls on the field. Frigates, the tables note, are rarely worth the ammunition.",
 			"flavourAutomated": "Tri-Tachyon fleet doctrine ranks every target by the value it carries, and its threat tables push fire control toward the largest hulls on the field. The ship's core loads the tables unedited. Frigates, the tables note, are rarely worth the ammunition.",
 			"tags": [
@@ -4977,8 +7000,20 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BEAM_WEAPON_DAMAGE_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "BEAM_WEAPON_RANGE_PERCENT",
+						"magnitude": 15
+					}
+				]
+			},
 			"flavour": "A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked and every one of them copied by a crew that never planned to renew.",
-			"flavourAutomated": "A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked. The ship's core scans every page once, and the license lapses unrenewed.",
+			"flavourAutomated": "A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked. The ship's core scans every page once.",
 			"tags": [
 				"energy",
 				"weapons",
@@ -5001,6 +7036,18 @@
 					"magnitude": 25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "PHASE_CLOAK_ACTIVATION_COST_MULT",
+						"magnitude": -40
+					},
+					{
+						"effect": "FLUX_DISSIPATION_WHILE_PHASED_PERCENT",
+						"magnitude": 25
+					}
+				]
+			},
 			"flavour": "Maintenance notes recovered from a Tri-Tachyon phase frigate's wreck, filed under a cost center that officially does not exist, show the crew how to slip this ship's coils into p-space cheaply and shed heat while it waits there.",
 			"flavourAutomated": "Maintenance notes recovered from a Tri-Tachyon phase frigate's wreck, filed under a cost center that officially does not exist, show the refit crew how to slip this ship's coils into p-space cheaply and shed heat while it waits there.",
 			"tags": [
@@ -5023,8 +7070,20 @@
 					"magnitude": -25
 				}
 			],
-			"flavour": "Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. A crew that cracks the lock on a salvaged emitter finds the full rated performance sitting under it, and the subscription reminders keep arriving regardless.",
-			"flavourAutomated": "Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. The ship's core breaks the lock on a salvaged emitter by brute force and finds the full rated performance sitting under it. The subscription reminders keep arriving, and the core files them unread.",
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_DAMAGE_TAKEN_MULT",
+						"magnitude": -15
+					},
+					{
+						"effect": "SHIELD_UPKEEP_MULT",
+						"magnitude": -25
+					}
+				]
+			},
+			"flavour": "Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. A crew that cracks the lock on a salvaged emitter finds the full rated performance sitting under it.",
+			"flavourAutomated": "Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. The ship's core breaks the lock on a salvaged emitter by brute force and finds the full rated performance sitting under it.",
 			"tags": [
 				"shield",
 				"req_shields"
@@ -5049,6 +7108,22 @@
 					"magnitude": -30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ENERGY_WEAPON_DAMAGE_PERCENT",
+						"magnitude": 20
+					},
+					{
+						"effect": "TIMEFLOW_PERCENT",
+						"magnitude": 5
+					},
+					{
+						"effect": "PEAK_CR_DURATION_PERCENT",
+						"magnitude": -15
+					}
+				]
+			},
 			"flavour": "Tri-Tachyon's boardroom answer to every fight: commit everything and win before the bill arrives. The bill always arrives.",
 			"tags": [
 				"energy",
@@ -5070,6 +7145,18 @@
 					"magnitude": 15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ARMOR_PERCENT",
+						"magnitude": 30
+					},
+					{
+						"effect": "HULL_PERCENT",
+						"magnitude": 15
+					}
+				]
+			},
 			"flavour": "Luddic shipwrights bless every plate they hang, and they hang far more of them than any yard would allow. Their slow, devout layering takes cycles to learn and longer to finish.",
 			"tags": [
 				"armour",
@@ -5091,6 +7178,18 @@
 					"magnitude": 25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "REPAIR_TIME_MULT",
+						"magnitude": -35
+					},
+					{
+						"effect": "CR_RECOVERY_RATE_PERCENT",
+						"magnitude": 25
+					}
+				]
+			},
 			"flavour": "The faithful do not trust machines to mend machines. Hand-repair crews drilled in the Church's way keep a ship's systems fighting through damage, slowly and without complaint.",
 			"flavourAutomated": "The faithful do not trust machines to mend machines, which is exactly what this ship does. Its repair drones copy the Church's hand-repair procedures from logged footage, slowly and without complaint. Nobody tells the Church.",
 			"tags": [
@@ -5113,6 +7212,18 @@
 					"magnitude": -15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BURN_LEVEL_FLAT",
+						"magnitude": 1
+					},
+					{
+						"effect": "FUEL_USE_MULT",
+						"magnitude": -25
+					}
+				]
+			},
 			"flavour": "Pilgrim fleets cross the Sector on whatever drives they can keep lit. Their frugal burn discipline is learned between stations, with the tanks running low.",
 			"flavourAutomated": "Pilgrim fleets cross the Sector on whatever drives they can keep lit. The ship's core logs their burn profiles between stations and flies the same frugal burn, tanks running low.",
 			"tags": [
@@ -5136,8 +7247,20 @@
 					"magnitude": 15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BALLISTIC_WEAPON_DAMAGE_PERCENT",
+						"magnitude": 20
+					},
+					{
+						"effect": "MISSILE_WEAPON_DAMAGE_PERCENT",
+						"magnitude": 20
+					}
+				]
+			},
 			"flavour": "Knights of Ludd gunners load each round as if it were a verdict. Their gunnery is crude, patient and difficult to argue with.",
-			"flavourAutomated": "Knights of Ludd gunners load each round as if it were a verdict. The ship's core logs their gunnery round by round and reproduces it exactly, verdicts excluded. It remains crude, patient and difficult to argue with.",
+			"flavourAutomated": "Knights of Ludd gunners load each round as if it were a verdict. The ship's core logs their gunnery round by round and reproduces it exactly.",
 			"tags": [
 				"ballistic",
 				"missile",
@@ -5159,6 +7282,18 @@
 					"magnitude": -10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "DMOD_EFFECT_MULT",
+						"magnitude": -40
+					},
+					{
+						"effect": "SUPPLIES_PER_MONTH_MULT",
+						"magnitude": -10
+					}
+				]
+			},
 			"flavour": "Church salvage yards on Asher send no ship to the breakers while it can still fly, and keep their scarred hulls flying on patience and very little else.",
 			"tags": [
 				"d_mods",
@@ -5181,6 +7316,18 @@
 					"magnitude": -25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "PEAK_CR_DURATION_PERCENT",
+						"magnitude": 30
+					},
+					{
+						"effect": "CREW_LOSS_PERCENT",
+						"magnitude": -25
+					}
+				]
+			},
 			"flavour": "Pilgrims who sign on at Hesperus count it a blessing to stand their stations through the worst of a fight and keep vigil without complaint.",
 			"flavourAutomated": "Pilgrims who sign on at Hesperus stand their stations through the worst of a fight and keep vigil without complaint. This ship has no stations to stand, so its core logs their watch rotations and runs its systems on the same unbroken vigil.",
 			"tags": [
@@ -5208,6 +7355,18 @@
 					"magnitude": 15
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FIGHTER_REPLACEMENT_RECOVERY_PERCENT",
+						"magnitude": 25
+					},
+					{
+						"effect": "FIGHTER_WEAPON_DAMAGE_PERCENT",
+						"magnitude": 25
+					}
+				]
+			},
 			"flavour": "Remnant carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.",
 			"tags": [
 				"fighter",
@@ -5229,8 +7388,19 @@
 					"magnitude": 30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "PD_DAMAGE_TO_MISSILES_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "WEAPON_TURN_RATE_PERCENT",
+						"magnitude": 50
+					}
+				]
+			},
 			"flavour": "Remnant point defense never tires and never flinches. Its tracking routines, recovered from a gutted drone, carry none of the hesitation a human gunner would add.",
-			"flavourAutomated": "Remnant point defense never tires and never flinches. Its tracking routines, recovered from a gutted drone, carry none of the hesitation a human gunner would add, and this ship has no gunner to add any.",
 			"tags": [
 				"point_defense",
 				"weapons"
@@ -5252,6 +7422,18 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "CR_LOSS_PER_SECOND_MULT",
+						"magnitude": -25
+					},
+					{
+						"effect": "MAX_COMBAT_READINESS_PERCENT",
+						"magnitude": 15
+					}
+				]
+			},
 			"flavour": "Machines do not tire. The duty cycles Remnant cores run on their own systems were never meant for a human crew, but they work.",
 			"flavourAutomated": "Machines do not tire. The duty cycles Remnant cores run on their own systems load into this ship's core without modification.",
 			"tags": [
@@ -5277,6 +7459,22 @@
 					"magnitude": -25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_TURN_RATE_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "SHIELD_RAISE_RATE_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "EMP_DAMAGE_TAKEN_PERCENT",
+						"magnitude": -25
+					}
+				]
+			},
 			"flavour": "Remnant warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.",
 			"flavourAutomated": "Remnant warships throw their shields up and around faster than any human crew can react. The projector timings, copied from a wrecked one, run in this ship's core at the same speed and harden its emitters against ion fire.",
 			"tags": [
@@ -5300,6 +7498,18 @@
 					"magnitude": -10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ENERGY_WEAPON_RATE_OF_FIRE_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "ENERGY_WEAPON_FLUX_COST_PERCENT",
+						"magnitude": -10
+					}
+				]
+			},
 			"flavour": "Energy mounts pulled from Remnant wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.",
 			"tags": [
 				"energy",
@@ -5327,6 +7537,23 @@
 					"capitalShip": 30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ELECTRONIC_WARFARE",
+						"magnitude": 2
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "SENSOR_STRENGTH_FLAT",
+						"frigate": 10,
+						"destroyer": 15,
+						"cruiser": 20,
+						"capitalShip": 30
+					}
+				]
+			},
 			"flavour": "A Remnant ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.",
 			"flavourAutomated": "A Remnant ordo moves as one mind, its ships murmuring to each other across a constant web of signals. The ship's core listens long enough to parse the chatter, tunes its sensors to it and turns it against enemy targeting.",
 			"tags": [
@@ -5352,6 +7579,22 @@
 					"magnitude": -50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "TIMEFLOW_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "FLUX_DISSIPATION_PERCENT",
+						"magnitude": 15
+					},
+					{
+						"effect": "CR_RECOVERY_RATE_PERCENT",
+						"magnitude": -25
+					}
+				]
+			},
 			"flavour": "Remnant warships never stand down, their systems cycling at a tempo built for machines that never tire. Copied into this ship's reactor and fire control, that tempo is easy to keep in battle and hard to recover from afterwards.",
 			"tags": [
 				"flux",
@@ -5386,6 +7629,17 @@
 					"magnitude": 25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BALLISTIC_SLOTS_HYBRID"
+					},
+					{
+						"effect": "ENERGY_WEAPON_FLUX_COST_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
 			"flavour": "Desperation leads to innovation, and the pressure of an incoming war brought Farige engineers to the limit, with them bringing up unusual techniques to modernize recently found early epoch Domain designs. Mount plans traded by Navarchy quartermasters had a complete data basis of prototype adaptive weapon mounts, allowing ballistic weapon systems to draw harder from the ship's flux grid in order to field energy based weaponry.",
 			"tags": [
 				"weapons",
@@ -5406,6 +7660,17 @@
 					"capitalShip": 20
 				}
 			],
+			"integrated": {
+				"hullSizeEffects": [
+					{
+						"effect": "VOLATILE_FLUX_TOP_SPEED_FLAT",
+						"frigate": 60,
+						"destroyer": 50,
+						"cruiser": 40,
+						"capitalShip": 25
+					}
+				]
+			},
 			"flavour": "The Black Hawk's Dysis Drive throws the ship forward hardest while its flux grid runs cold. Analysis over its ancient design allowed the crew to tune this ship's engines the same way, so it is able to fly bright at low flux and drags once the grid fills.",
 			"tags": [
 				"speed",
@@ -5423,6 +7688,14 @@
 					"magnitude": 0.08
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT",
+						"magnitude": 0.1
+					}
+				]
+			},
 			"flavour": "War, war never changes. In order to survive the Luddic Path mayhem, Carina Forces had to act fast, or expire. Your crew learns from these hit and run tactics, and by executing them at high speeds, they exploit enemy weaknesses.",
 			"tags": [
 				"weapons",
@@ -5448,6 +7721,22 @@
 					"magnitude": 25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SOLARIS_OVERDRIVE_SECONDS_FLAT",
+						"magnitude": 6
+					},
+					{
+						"effect": "SOLARIS_OVERDRIVE_PROJECTILE_SPEED_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "SOLARIS_OVERDRIVE_RATE_OF_FIRE_PERCENT",
+						"magnitude": 25
+					}
+				]
+			},
 			"flavour": "The Aracari is a prime example of antique thermo-dynamic engineering, with its Solaris Phalanx system allowing weapons to fire without directly drawing from the main flux grid. By analyzing old Farige databanks, your crew is now able to mimic its functionality in a small scale basis.",
 			"tags": [
 				"weapons",
@@ -5473,6 +7762,22 @@
 					"magnitude": -50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "RISE_FROM_THE_ASHES_HULL_PERCENT",
+						"magnitude": 25
+					},
+					{
+						"effect": "RISE_FROM_THE_ASHES_ARMOR_RESTORE_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "RISE_FROM_THE_ASHES_DAMAGE_TAKEN_MULT",
+						"magnitude": -75
+					}
+				]
+			},
 			"flavour": "The last stand at the Battle of Vela allowed Navarchy of Tania to born from the ashes of Carina, surviving the rampage of Joseph Baumgart. By watching the sacrifice of NTS Agulha Negra, a Sandgrouse class frigate, your crew understood the value of fighting for a cause, and is inspired to fight for yours.",
 			"tags": [
 				"hull",
@@ -5491,6 +7796,14 @@
 					"magnitude": 50
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "THERMO_ACCELERATOR_FLUX_COST_REDUCTION_PERCENT",
+						"magnitude": 60
+					}
+				]
+			},
 			"flavour": "The legendary NTS Endurance, an Aetos Class Destroyer, managed to nail down multiple enemy frigates at once, protecting its fleet from terrific flankers, thanks to its Thermo-Accelerator system. By understanding the tactics employed by its captain and the ship's overengineered ammo feeders, your crew is now able to draw power from hardpoint weapon mounts so its turret weapons fire cooler in a similar fashion.",
 			"tags": [
 				"weapons",
@@ -5512,6 +7825,18 @@
 					"magnitude": -35
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIP_MASS_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "MANEUVERABILITY_MULT",
+						"magnitude": -20
+					}
+				]
+			},
 			"flavour": "The Merite Class Destroyer is often praised by its ability to assault enemy ships by sheer brute force, thanks to its Jump Jets ship system. By listening to \"sage\" advice from fellow Navarchy of Tania officers, you order your crew to refit the ship with increased weight and improved protection against collateral effects from excessive G-force.",
 			"tags": [
 				"hull"
@@ -5541,9 +7866,21 @@
 			"effects": [
 				{
 					"effect": "DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT",
-					"magnitude": 100
+					"magnitude": 30
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT",
+						"magnitude": 40
+					},
+					{
+						"effect": "EMP_DAMAGE_PERCENT",
+						"magnitude": 15
+					}
+				]
+			},
 			"flavour": "Once a target's systems are dead, Tri-Tachyon ion firmware moves on to the hull.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -5565,6 +7902,22 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "HIGH_TECH_AFFINITY_FLAT",
+						"magnitude": 10
+					},
+					{
+						"effect": "NAV_RATING_PER_HIGH_TECH_AFFINITY",
+						"magnitude": 1
+					},
+					{
+						"effect": "TOP_SPEED_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
 			"flavour": "Remnant battlegroups keep station through relay protocols that are only dimly understood. The recovered fragment has never stopped transmitting.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -5598,6 +7951,14 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY",
+						"magnitude": 1.5
+					}
+				]
+			},
 			"flavour": "Remnant drones match each round to whatever it is about to hit.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -5617,6 +7978,18 @@
 					"magnitude": 20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "WEAPON_DAMAGE_PERCENT_WHILE_AFFINITIES_EQUAL",
+						"magnitude": 20
+					},
+					{
+						"effect": "AFFINITY_EQUALITY_TOLERANCE_FLAT",
+						"magnitude": 5
+					}
+				]
+			},
 			"flavour": "Remnant hulls are rumored to hold every lineage of Domain design in a balance their cores never let slip.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -5648,6 +8021,14 @@
 					"magnitude": 25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SHIELD_EMP_TO_ENERGY_PERCENT",
+						"magnitude": 35
+					}
+				]
+			},
 			"flavour": "Remnant ion bolts leave some of their charge in the shield projector as heat.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -5666,6 +8047,14 @@
 					"magnitude": 0.5
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "UNHIT_ARMOR_REGEN_LOW_CAP_PERCENT",
+						"magnitude": 0.7
+					}
+				]
+			},
 			"flavour": "A dormant Nexus still mends its own plating, a little at a time.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -5701,6 +8090,18 @@
 					"magnitude": 25
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "PHASE_EXIT_WEAPON_DAMAGE_PERCENT",
+						"magnitude": 25
+					},
+					{
+						"effect": "PHASE_EXIT_WEAPON_DAMAGE_DURATION_PERCENT",
+						"magnitude": 100
+					}
+				]
+			},
 			"flavour": "Tri-Tachyon phase doctrine holds that the first shot out of p-space decides the engagement.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -5736,6 +8137,18 @@
 					"magnitude": 3
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "PHASE_ENTRY_AFTERIMAGE_SECONDS_FLAT",
+						"magnitude": 3
+					},
+					{
+						"effect": "PHASE_AFTERIMAGE_FADE_EMP_FLAT",
+						"magnitude": 500
+					}
+				]
+			},
 			"flavour": "A phase coil dropped into p-space too sharply leaves an echo of the hull behind. Enemy gunners rarely tell the difference.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -5754,6 +8167,18 @@
 					"magnitude": 5
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "ENERGY_HIT_INJUNCTION_PERCENT",
+						"magnitude": 5
+					},
+					{
+						"effect": "ENERGY_HIT_INJUNCTION_VENT_PERCENT",
+						"magnitude": 5
+					}
+				]
+			},
 			"flavour": "Tri-Tachyon does not tolerate unlicensed use of its designs, even mid-battle.",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -5788,6 +8213,14 @@
 					"magnitude": 10
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT",
+						"magnitude": 20
+					}
+				]
+			},
 			"flavour": "\"Recovered three of the little ones intact. By the time the bench clamps were on, there were two.\"\n- Hegemony salvage inventory, amended",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -5806,6 +8239,18 @@
 					"magnitude": 20
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "SYSTEM_ACTIVATION_TIMEFLOW_PERCENT",
+						"magnitude": 20
+					},
+					{
+						"effect": "SYSTEM_ACTIVATION_TIMEFLOW_TAPER_SECONDS_FLAT",
+						"magnitude": 2
+					}
+				]
+			},
 			"flavour": "\"The plume showed up on our scopes before the drive lit. I have checked the clocks. Please stop asking me to check the clocks.\"\n- Sensor officer's log, Tri-Tachyon picket, name withheld",
 			"todo": "Needs an icon.",
 			"tags": [
@@ -5823,6 +8268,18 @@
 					"magnitude": 1
 				}
 			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MISSILE_HIT_RIFT_SERIES_CHANCE_PERCENT_PER_HIGHEST_AFFINITY",
+						"magnitude": 1
+					},
+					{
+						"effect": "MISSILE_HIT_RIFT_SERIES_EXPLOSIONS_FLAT",
+						"magnitude": 1
+					}
+				]
+			},
 			"flavour": "\"Ordnance asks that it be noted, again, that the ballast is humming.\"\n- Quartermaster's memo, recovered from Alpha Site",
 			"todo": "Needs an icon.",
 			"tags": [

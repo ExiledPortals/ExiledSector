@@ -21,7 +21,7 @@ public final class AtlasState implements AtlasMemory {
     public static final int COMPLETED = 1;
     public static final int FAILED = 2;
     public static final int ANOMALIES_SPENT = 4;
-    public static final int CLEANSED = 8;
+    public static final int INFESTATION_CLEARED = 8;
     public static final int ATTEMPTED = 16;
     public static final int LANES_REVEALED = 32;
     static final String FLAG_SEPARATOR = ",";

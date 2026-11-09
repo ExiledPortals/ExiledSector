@@ -242,7 +242,8 @@ class ExiledSectorSettingsTest {
         assertEquals(List.of("exiledSector_skillTreeHeader", "exiledSector_levelHeader", "exiledSector_opCostHeader", "exiledSector_modulesHeader",
                 "exiledSector_unlockConditionsHeader", "exiledSector_treeItemsHeader", "exiledSector_areasHeader"),
                 headersByTab.get(SkillTreeSettings.skillTreeTab()));
-        assertEquals(List.of("exiledSector_npcTreesHeader", "exiledSector_npcTreeSizeHeader", "exiledSector_npcBonusScaleHeader"),
+        assertEquals(List.of("exiledSector_npcTreesHeader", "exiledSector_npcTreeSizeHeader", "exiledSector_npcLevelCapsHeader",
+                "exiledSector_npcBonusScaleHeader"),
                 headersByTab.get(SkillTreeSettings.npcTab()));
         assertEquals(List.of("exiledSector_hullUpgradesHeader", "exiledSector_socketStorageHeader", "exiledSector_craftingHeader"),
                 headersByTab.get(ExiledSectorSettings.itemsTab()));

@@ -22,6 +22,10 @@ public final class Backings {
     }
 
     public static FlagEffect flag(String flagKey) {
-        return new FlagEffect(flagKey);
+        return new FlagEffect(flagKey, null);
+    }
+
+    public static <T> FlagEffect flagListener(String flagKey, Class<T> listenerType, Function<ShipAPI, ? extends T> listenerFactory) {
+        return new FlagEffect(flagKey, listener(listenerType, listenerFactory));
     }
 }

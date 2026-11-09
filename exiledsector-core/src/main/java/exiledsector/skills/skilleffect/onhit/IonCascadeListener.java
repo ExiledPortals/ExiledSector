@@ -31,10 +31,10 @@ final class IonCascadeListener extends EmpConversionListener {
 
     @Override
     float convertibleEmp(ShipAPI targetShip, Vector2f point, float emp, DamageAPI damage) {
-        return empOnDisabledParts(targetShip, point, emp, damage.getStats());
+        return empOnClosestDisabledPart(targetShip, point, emp, damage.getStats());
     }
 
-    static float empOnDisabledParts(ShipAPI targetShip, Vector2f point, float emp, MutableShipStatsAPI attackerStats) {
+    static float empOnClosestDisabledPart(ShipAPI targetShip, Vector2f point, float emp, MutableShipStatsAPI attackerStats) {
         ArmorGridAPI armorGrid = targetShip.getArmorGrid();
         int[] hitCell = armorGrid == null ? null : armorGrid.getCellAtLocation(point);
         if (hitCell == null) {
@@ -46,21 +46,21 @@ final class IonCascadeListener extends EmpConversionListener {
                 * (attackerStats == null ? 1f : attackerStats.getDamageToTargetWeaponsMult().getModifiedValue());
         float engineMult = targetStats.getEngineDamageTakenMult().getModifiedValue()
                 * (attackerStats == null ? 1f : attackerStats.getDamageToTargetEnginesMult().getModifiedValue());
-        float wasted = 0f;
+        float closestPartEmp = 0f;
         for (WeaponAPI weapon : targetShip.getAllWeapons()) {
             if (weapon.isDisabled()) {
-                wasted += empTaken * weaponMult * shareAt(armorGrid, hitCell, weapon.getLocation());
+                closestPartEmp = Math.max(closestPartEmp, empTaken * weaponMult * shareAt(armorGrid, hitCell, weapon.getLocation()));
             }
         }
         ShipEngineControllerAPI engines = targetShip.getEngineController();
         if (engines != null) {
             for (ShipEngineControllerAPI.ShipEngineAPI shipEngine : engines.getShipEngines()) {
                 if (shipEngine.isDisabled()) {
-                    wasted += empTaken * engineMult * shareAt(armorGrid, hitCell, shipEngine.getLocation());
+                    closestPartEmp = Math.max(closestPartEmp, empTaken * engineMult * shareAt(armorGrid, hitCell, shipEngine.getLocation()));
                 }
             }
         }
-        return wasted;
+        return closestPartEmp;
     }
 
     private static float shareAt(ArmorGridAPI armorGrid, int[] hitCell, Vector2f partLocation) {

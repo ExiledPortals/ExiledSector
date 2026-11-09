@@ -40,7 +40,7 @@ public record AtlasSpecial(String id, Kind kind, Placement placement, float chan
 
         void onCompleted(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasSpecial special) {
             switch (this) {
-                case INFESTATION -> AtlasProgress.cleanse(generator, state, cell, special);
+                case INFESTATION -> AtlasProgress.clearInfestation(generator, state, cell, special);
                 case BASTION -> state.addKeyFragment();
                 default -> {
                 }

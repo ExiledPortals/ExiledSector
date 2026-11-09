@@ -35,12 +35,11 @@ Tuning lines are chart effects carried by an atlas source, per `overview.md`:
 
 1. Neutral ownership: whether a mine spawned with a null source can be given owner 100 (neutral) and still arm and hit both sides, or whether it needs a source ship and per-side mines instead.
 2. Keeping mines alive: whether resetting flight time on `minelayer2` keeps it armed and fuse-ready, or whether a longer-lived custom projectile in `data/weapons/proj/` (copying `minelayer2`) is cleaner.
-3. AI behaviour with 40 or more mines on the field: path planning cost, ships freezing, the escort and retreat AI.
-4. Foiler mods: no combat nebula tiles, terrain on `BaseTerrain`, textures preloaded (`../atlas.md`).
+3. Foiler mods: no combat nebula tiles, terrain on `BaseTerrain`, textures preloaded (`../atlas.md`).
 
 ## Build order
 
-1. [ ] Spike: the checks above in the simulator.
+1. [ ] Settle the checks above.
 2. [ ] The anomaly class (`exiledsector.charts.anomaly.minefield`), its insertable `chart_anomalies.csv` row, the terrain plugin placed around the guarded spot, intel text, atlas marker icon (placeholder), save alias.
 3. [ ] The in-minefield battle flag and `MinefieldBattlePlugin` (placement, keep-alive, replacement), placement in a static helper for tests.
 4. [ ] The loot bonus in `ChartFleetLoot`; the chart modifier lines; strings (en and zh_CN draft); the `overview.md` table row; the `docs/docs.md` section; tests.

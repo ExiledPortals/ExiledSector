@@ -20,4 +20,7 @@ interface TreeFeedback {
 
     default void rootChanged(SkillNode chosenRoot) {
     }
+
+    default void integrated(SkillNode node) {
+    }
 }

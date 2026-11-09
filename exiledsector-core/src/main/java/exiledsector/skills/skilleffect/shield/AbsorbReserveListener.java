@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
+import exiledsector.skills.skilleffect.ParameterBonus;
 import exiledsector.skills.skilleffect.ScaledBonus;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 import exiledsector.skills.skilleffect.StatMode;
@@ -18,6 +19,7 @@ import static exiledsector.skills.skilleffect.StatTarget.stat;
 final class AbsorbReserveListener extends ShipCombatListener implements DamageListener, AdvanceableListener {
 
     static final String RATE_OF_FIRE_PERCENT_KEY = "exiledSector_absorbRateOfFirePercent";
+    static final String MAX_RESERVE_PERCENT_KEY = "exiledSector_absorbMaxReservePercent";
     static final float FULL_RESERVE = 500f;
     static final float MAX_RESERVE = 1000f;
     static final float DRAIN_PER_SECOND = 100f;
@@ -36,8 +38,16 @@ final class AbsorbReserveListener extends ShipCombatListener implements DamageLi
     @Override
     public void reportDamageApplied(Object source, CombatEntityAPI target, ApplyDamageResultAPI result) {
         if (target == ownerShip && result.getDamageToShields() > 0f) {
-            reserve = Math.min(MAX_RESERVE, reserve + result.getDamageToShields());
+            reserve = Math.min(maxReserve(), reserve + result.getDamageToShields());
         }
+    }
+
+    private float maxReserve() {
+        return maxReserve(magnitude(MAX_RESERVE_PERCENT_KEY));
+    }
+
+    static float maxReserve(float maxReserveIncreasePercent) {
+        return ParameterBonus.increasedBy(MAX_RESERVE, maxReserveIncreasePercent);
     }
 
     @Override

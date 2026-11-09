@@ -276,7 +276,7 @@ Numbers are green when they help your ship and orange when they hurt it.
 
 All fleets, enemies or allies, can have skill trees on their ships. Flagships, ships with officers and stations always get one, and other combat ships sometimes do.
 
-Outside Star Charts, NPC trees grow with your fleet up to a cap: 15 nodes for pirates, 25 for faction fleets and 35 for AI fleets. Star Chart fleets go by tier instead, from 26 nodes at tier 1 to 50 at tier 15. Each faction builds towards its own style, so the Hegemony goes for armor and Tri-Tachyon for flux.
+Outside Star Charts, NPC trees grow with your fleet. LunaLib can cap them by fleet type (15 nodes for pirates, 25 for faction fleets and 35 for AI fleets), off by default. Star Chart fleets go by tier instead, from 26 nodes at tier 1 to 50 at tier 15. Each faction builds towards its own style, so the Hegemony goes for armor and Tri-Tachyon for flux.
 
 You can tune all of this, or turn it off, on the **NPC Fleets** tab in LunaLib settings.
 
@@ -289,7 +289,7 @@ Hidden nodes show up as sensor ghosts until you unlock them.
 
 Wormholes unlock when you get access to the Gate network, which is when you use the Janus Device at the end of the Galatia Academy story.
 
-Wormholes come in pairs. Take one end and you get the other end for free, though it still counts toward your node limit. Removing either end removes both. Ctrl-click any identified wormhole to jump the camera to the other end.
+Wormholes come in pairs. Take one end and you get the other end for free, though it still counts toward your node limit. Removing either end removes both. Right-click any identified wormhole to jump the camera to the other end.
 
 Hullmod nodes unlock when you learn the matching hullmod blueprint. Neural Interface also unlocks if you have the relevant Neural Link skill.
 

@@ -38,9 +38,10 @@ final class TerrifyingPresenceField extends AuraField<TerrifyingPresenceListener
                 continue;
             }
             ShipAPI sourceShip = source.source();
-            for (ShipAPI target : shipsNear.find(sourceShip, RANGE, other -> CombatQueries.isAliveNotHulk(other)
+            float range = source.range();
+            for (ShipAPI target : shipsNear.find(sourceShip, range, other -> CombatQueries.isAliveNotHulk(other)
                     && CombatQueries.isHostile(sourceShip, other)
-                    && CombatQueries.withinRadius(other.getLocation(), sourceShip.getLocation(), RANGE))) {
+                    && CombatQueries.withinRadius(other.getLocation(), sourceShip.getLocation(), range))) {
                 penalties.merge(target, penalty, Float::sum);
             }
         }

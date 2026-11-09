@@ -3,6 +3,7 @@ package exiledsector.i18n;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.ProjectFiles;
 import exiledsector.skills.DescriptionLine;
+import exiledsector.skills.IntegrationLines;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.SkillEffectNames;
 import exiledsector.skills.skilleffect.shipsystem.ShipSystemSkillEffect;
@@ -118,8 +119,26 @@ class DescriptionGoldenTest {
                     addLine(lines, "type-detail|" + type.getId() + "|" + hullSize + "|" + i, line.text(), line.lowerIsBetter());
                 }
             }
+            addIntegrationLines(lines, type);
         }
         return lines;
+    }
+
+    private static void addIntegrationLines(List<String> lines, SkillType type) {
+        if (!type.isIntegrable()) {
+            return;
+        }
+        for (boolean integrated : new boolean[]{false, true}) {
+            for (HullSize hullSize : HULL_SIZES) {
+                IntegrationLines.State state = new IntegrationLines.State(integrated, 2, true, IntegrationLines.TemplateMark.NONE);
+                List<DescriptionLine> effects = new ArrayList<>(IntegrationLines.describe(type, hullSize, state).effects());
+                effects.addAll(IntegrationLines.preview(type, hullSize, state));
+                for (int i = 0; i < effects.size(); i++) {
+                    DescriptionLine line = effects.get(i);
+                    addLine(lines, (integrated ? "integrated|" : "integrable|") + type.getId() + "|" + hullSize + "|" + i, line.text(), line.lowerIsBetter());
+                }
+            }
+        }
     }
 
     private static List<String> treeSummaryLines() {

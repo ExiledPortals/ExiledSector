@@ -55,6 +55,16 @@ class TemplateCodecTest {
     }
 
     @Test
+    void integrationMarksSurviveARoundTripAndOnlyMarksOnStepsAreKept() {
+        SkillTreeTemplate marked = new SkillTreeTemplate("id-4", "Marked", "root_midline_1", null,
+                List.of(new TemplateStep("armor_1", null), new TemplateStep("flux_2", null)), Map.of(), Set.of("flux_2", "not_a_step"));
+
+        assertEquals(Set.of("flux_2"), marked.integrationMarks());
+        assertEquals(marked, TemplateCodec.decode(TemplateCodec.encode(marked)));
+        assertEquals(Set.of(), TemplateCodec.decode(TemplateCodec.encode(TEMPLATE)).integrationMarks());
+    }
+
+    @Test
     void nodeIdsAreTheRootPlusEveryStep() {
         assertEquals(Set.of("root_low_tech_1", "armor_1", "slot_3", "flux_2"), TEMPLATE.nodeIds());
     }

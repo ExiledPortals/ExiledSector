@@ -7,11 +7,13 @@ import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
 import com.fs.starfarer.api.fleet.CrewCompositionAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.skills.skilleffect.ParameterBonus;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 
 final class CrewLossHullDamageListener extends ShipCombatListener implements DamageListener {
 
     static final String PERCENT_PER_STEP_KEY = "exiledSector_crewLossHullDamageTakenPercent";
+    static final String MAX_REDUCTION_FLAT_KEY = "exiledSector_crewLossHullDamageTakenMaxFlat";
     static final float CREW_PER_STEP = 10f;
     static final float MAX_REDUCTION_PERCENT = 20f;
     static final float AVERAGE_LOSS_ROLL = 0.75f;
@@ -50,7 +52,7 @@ final class CrewLossHullDamageListener extends ShipCombatListener implements Dam
         float maxHull = ownerShip.getMaxHitpoints();
         float hullDamageFraction = maxHull <= 0f ? 0f : hullDamageTaken / maxHull;
         float crewLost = crewLost(crewAboard, hullDamageFraction, stats.getCrewLossMult().getModifiedValue());
-        float reductionPercent = reductionPercent(magnitude(PERCENT_PER_STEP_KEY), crewLost);
+        float reductionPercent = reductionPercent(magnitude(PERCENT_PER_STEP_KEY), crewLost, maxReductionPercent(magnitude(MAX_REDUCTION_FLAT_KEY)));
         if (Float.compare(reductionPercent, appliedReductionPercent) == 0) {
             return;
         }
@@ -67,10 +69,14 @@ final class CrewLossHullDamageListener extends ShipCombatListener implements Dam
         return crewAboard * Math.min(1f, Math.max(0f, lossFraction));
     }
 
-    static float reductionPercent(float percentPerStep, float crewLost) {
+    static float maxReductionPercent(float maxReductionBonus) {
+        return ParameterBonus.plusFlat(MAX_REDUCTION_PERCENT, maxReductionBonus);
+    }
+
+    static float reductionPercent(float percentPerStep, float crewLost, float maxReductionPercent) {
         if (percentPerStep <= 0f) {
             return 0f;
         }
-        return Math.min(MAX_REDUCTION_PERCENT, percentPerStep * (float) Math.floor(crewLost / CREW_PER_STEP));
+        return Math.min(maxReductionPercent, percentPerStep * (float) Math.floor(crewLost / CREW_PER_STEP));
     }
 }

@@ -64,9 +64,10 @@ class CatalogueLintTest {
             if (!flavourAutomated.isEmpty()) {
                 sources.put("skillType." + id + ".flavourAutomated", flavourAutomated);
             }
-            JSONArray effectText = type.optJSONArray("effectText");
-            for (int line = 0; effectText != null && line < effectText.length(); line++) {
-                sources.put("skillType." + id + ".effectText." + line, effectText.getString(line));
+            putEffectText(sources, "skillType." + id + ".effectText.", type.optJSONArray("effectText"));
+            JSONObject integrated = type.optJSONObject("integrated");
+            if (integrated != null) {
+                putEffectText(sources, "skillType." + id + ".integrated.effectText.", integrated.optJSONArray("effectText"));
             }
         }
         for (String definitionFile : ITEM_DEFINITION_FILES) {
@@ -108,6 +109,12 @@ class CatalogueLintTest {
             }
         }
         return sources;
+    }
+
+    private static void putEffectText(Map<String, String> sources, String keyPrefix, JSONArray effectText) throws JSONException {
+        for (int line = 0; effectText != null && line < effectText.length(); line++) {
+            sources.put(keyPrefix + line, effectText.getString(line));
+        }
     }
 
     private static Set<String> localesOnDisk() throws IOException {

@@ -1,20 +1,18 @@
 package exiledsector.skills.skilleffect.battle;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import exiledsector.i18n.StyledText;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.ConditionalStatEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
+import exiledsector.skills.skilleffect.Flagships;
 import exiledsector.skills.skilleffect.SkillEffectSupport;
 import exiledsector.skills.skilleffect.StatMode;
 import exiledsector.skills.skilleffect.StatTarget;
 
+import static exiledsector.skills.skilleffect.Backings.flag;
 import static exiledsector.skills.skilleffect.Backings.statEffect;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
@@ -54,20 +52,8 @@ public enum BattleSkillEffect implements BackedSkillEffect {
             "stat.objectiveCaptureRange", false)),
     COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP(new ConditionalStatEffect(PERCENT,
             new StatTarget.BonusPercentagePoints(stats -> stats.getDynamic().getMod("command_point_rate_flat")),
-            "stat.commandPointRecoveryWhileFlagship", BattleSkillEffect::isFlagship));
-
-    private static boolean isFlagship(ShipAPI ship) {
-        if (ship == Global.getCombatEngine().getPlayerShip()) {
-            return true;
-        }
-        FleetMemberAPI member = ship.getMutableStats().getFleetMember();
-        if (member == null) {
-            return false;
-        }
-        PersonAPI commander = member.getFleetCommanderForStats();
-        if (commander == null) commander = member.getFleetCommander();
-        return commander != null && commander == ship.getCaptain();
-    }
+            "stat.commandPointRecoveryWhileFlagship", Flagships::isFlagship)),
+    INSTANT_NEURAL_TRANSFER_FROM(flag(Stats.INSTANT_NEURAL_TRANSFER_FROM));
 
     private final EffectBacking backing;
 

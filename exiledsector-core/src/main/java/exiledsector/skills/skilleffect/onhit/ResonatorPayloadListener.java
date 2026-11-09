@@ -10,6 +10,7 @@ import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import exiledsector.skills.skilleffect.Chance;
 import exiledsector.skills.skilleffect.CombatQueries;
+import exiledsector.skills.skilleffect.ParameterBonus;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 import exiledsector.skills.skilleffect.weapon.RiftSeries;
 import org.lwjgl.util.vector.Vector2f;
@@ -21,6 +22,7 @@ import java.util.Random;
 final class ResonatorPayloadListener extends ShipCombatListener implements DamageDealtModifier, AdvanceableListener {
 
     static final String CHANCE_PERCENT_KEY = "exiledSector_resonatorPayloadChancePercent";
+    static final String ADDITIONAL_RIFTS_KEY = "exiledSector_resonatorPayloadAdditionalRifts";
     static final int RIFTS_PER_SERIES = 4;
     static final float DAMAGE_SHARE_PERCENT = 10f;
     static final float MAX_DAMAGE = 100f;
@@ -53,7 +55,7 @@ final class ResonatorPayloadListener extends ShipCombatListener implements Damag
         }
         if (Chance.roll(random, magnitude(CHANCE_PERCENT_KEY))) {
             Vector2f impactPoint = new Vector2f(point);
-            activeSeries.add(new RiftSeries(ownerShip, RIFTS_PER_SERIES, SECONDS_BETWEEN_RIFTS, riftDamage(missile.getWeapon().getSpec()),
+            activeSeries.add(new RiftSeries(ownerShip, riftsPerSeries(), SECONDS_BETWEEN_RIFTS, riftDamage(missile.getWeapon().getSpec()),
                     () -> scatteredAround(impactPoint), random));
         }
         return null;
@@ -75,6 +77,14 @@ final class ResonatorPayloadListener extends ShipCombatListener implements Damag
                 activeSeries.remove(index);
             }
         }
+    }
+
+    private int riftsPerSeries() {
+        return riftsPerSeries(magnitude(ADDITIONAL_RIFTS_KEY));
+    }
+
+    static int riftsPerSeries(float additionalRifts) {
+        return Math.round(ParameterBonus.plusFlat(RIFTS_PER_SERIES, additionalRifts));
     }
 
     private boolean isOwnMissileWeaponShot(MissileAPI missile) {

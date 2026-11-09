@@ -8,7 +8,7 @@ game merges every folder into one catalogue, so a key lives in exactly one of th
 A few kinds of text keep their English source in the data files instead: skill type names, flavour, automated-hull flavour and
 effect text in `data/skilltrees/skill_types.json`, and our hullmods' names and descriptions in
 `data/hullmods/hull_mods.csv`. Translations refer to these by id, using the keys
-`skillType.<id>.name`, `skillType.<id>.flavour`, `skillType.<id>.flavourAutomated`, `skillType.<id>.effectText.<line>`, `hullmod.<id>.name` and
+`skillType.<id>.name`, `skillType.<id>.flavour`, `skillType.<id>.flavourAutomated`, `skillType.<id>.effectText.<line>`, `skillType.<id>.integrated.effectText.<line>`, `hullmod.<id>.name` and
 `hullmod.<id>.description`.
 
 ## Choosing the language

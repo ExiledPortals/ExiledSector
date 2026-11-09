@@ -217,6 +217,7 @@ public final class ShipTrees {
         copy.subroutineGrantedNodeIds = data.subroutineGrantedNodeIds == null ? null : new LinkedHashSet<>(data.subroutineGrantedNodeIds);
         copy.fleetGrantNodeIds = data.fleetGrantNodeIds == null ? null : new LinkedHashSet<>(data.fleetGrantNodeIds);
         copy.replacementAllocatedNodeIds = data.replacementAllocatedNodeIds == null ? null : new LinkedHashSet<>(data.replacementAllocatedNodeIds);
+        copy.integratedNodeIds = data.integratedNodeIds == null ? null : new LinkedHashSet<>(data.integratedNodeIds);
         copy.mirrorSocketedItems(data);
         return copy;
     }
@@ -476,6 +477,7 @@ public final class ShipTrees {
         if (data.replacementAllocatedNodeIds != null && data.replacementAllocatedNodeIds.remove(oldId)) {
             data.replacementAllocatedNodeIds.add(newId);
         }
+        renameIn(data.integratedNodeIds, oldId, newId);
         if (oldId.equals(data.startingRootId)) {
             data.startingRootId = newId;
         }
@@ -501,6 +503,7 @@ public final class ShipTrees {
         renameIn(data.subroutineGrantedNodeIds, oldId, newId);
         renameIn(data.fleetGrantNodeIds, oldId, newId);
         renameIn(data.replacementAllocatedNodeIds, oldId, newId);
+        renameIn(data.integratedNodeIds, oldId, newId);
         if (oldId.equals(data.startingRootId)) {
             data.startingRootId = newId;
         }
@@ -518,7 +521,7 @@ public final class ShipTrees {
         return data.allocatedNodeIds.contains(nodeId) || data.getDormantNodeIds().contains(nodeId) || data.isFreeNode(nodeId)
                 || data.isFleetGranted(nodeId) || nodeId.equals(data.startingRootId) || data.getChoiceSelection(nodeId) != null
                 || data.getSocketedItem(nodeId) != null || (data.paidItemCostIds != null && data.paidItemCostIds.containsKey(nodeId))
-                || (data.replacementAllocatedNodeIds != null && data.replacementAllocatedNodeIds.contains(nodeId));
+                || (data.replacementAllocatedNodeIds != null && data.replacementAllocatedNodeIds.contains(nodeId)) || data.isIntegrated(nodeId);
     }
 
     private static void renameIn(Set<String> nodeIds, String oldId, String newId) {

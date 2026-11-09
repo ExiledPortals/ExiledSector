@@ -61,10 +61,22 @@ class CrewLossHullDamageListenerTest {
 
     @Test
     void theReductionGrowsForEveryWholeStepOfCrewLostUpToTheCap() {
-        assertEquals(0f, CrewLossHullDamageListener.reductionPercent(1f, 9.9f), EPSILON);
-        assertEquals(3f, CrewLossHullDamageListener.reductionPercent(1f, 35f), EPSILON);
-        assertEquals(CrewLossHullDamageListener.MAX_REDUCTION_PERCENT, CrewLossHullDamageListener.reductionPercent(1f, 500f), EPSILON);
-        assertEquals(0f, CrewLossHullDamageListener.reductionPercent(0f, 500f), EPSILON);
+        float cap = CrewLossHullDamageListener.MAX_REDUCTION_PERCENT;
+        assertEquals(0f, CrewLossHullDamageListener.reductionPercent(1f, 9.9f, cap), EPSILON);
+        assertEquals(3f, CrewLossHullDamageListener.reductionPercent(1f, 35f, cap), EPSILON);
+        assertEquals(cap, CrewLossHullDamageListener.reductionPercent(1f, 500f, cap), EPSILON);
+        assertEquals(0f, CrewLossHullDamageListener.reductionPercent(0f, 500f, cap), EPSILON);
+    }
+
+    @Test
+    void aRaisedCapLetsTheReductionGrowFurther() {
+        when(ship.getMutableStats().getDynamic().getValue(CrewLossHullDamageListener.MAX_REDUCTION_FLAT_KEY, 0f)).thenReturn(10f);
+        when(ship.getFleetMember().getCrewComposition().getCrew()).thenReturn(10000f);
+        CrewLossHullDamageListener listener = new CrewLossHullDamageListener(ship);
+
+        listener.reportDamageApplied(null, ship, hullHit(MAX_HULL));
+
+        assertEquals(1f - (CrewLossHullDamageListener.MAX_REDUCTION_PERCENT + 10f) / 100f, hullDamageTakenMult.getModifiedValue(), EPSILON);
     }
 
     @Test

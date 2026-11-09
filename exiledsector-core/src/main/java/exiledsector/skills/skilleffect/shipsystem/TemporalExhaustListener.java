@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipEngineControllerAPI;
 import com.fs.starfarer.api.combat.ShipEngineControllerAPI.ShipEngineAPI;
 import com.fs.starfarer.api.combat.ShipSystemAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
+import exiledsector.skills.skilleffect.ParameterBonus;
 import exiledsector.skills.skilleffect.ScaledBonus;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 import exiledsector.skills.skilleffect.StatTarget;
@@ -19,6 +20,7 @@ import java.util.Random;
 final class TemporalExhaustListener extends ShipCombatListener implements AdvanceableListener {
 
     static final String TIMEFLOW_PERCENT_KEY = "exiledSector_temporalExhaustTimeflowPercent";
+    static final String ADDITIONAL_TAPER_SECONDS_KEY = "exiledSector_temporalExhaustAdditionalTaperSeconds";
     static final float TAPER_SECONDS = 4f;
     static final float COOLDOWN_SECONDS = 30f;
     static final int RIFT_COUNT = 8;
@@ -44,7 +46,11 @@ final class TemporalExhaustListener extends ShipCombatListener implements Advanc
     TemporalExhaustListener(ShipAPI ownerShip, Random random) {
         super(ownerShip, MOD_ID_PREFIX);
         this.random = random;
-        this.timeflowBonus = new TaperedBonus(TIMEFLOW_BONUS, TAPER_SECONDS, ownerShip.getMutableStats(), modId);
+        this.timeflowBonus = new TaperedBonus(TIMEFLOW_BONUS, ownerShip.getMutableStats(), modId);
+    }
+
+    static float taperSeconds(float additionalTaperSeconds) {
+        return ParameterBonus.plusFlat(TAPER_SECONDS, additionalTaperSeconds);
     }
 
     @Override
@@ -72,7 +78,7 @@ final class TemporalExhaustListener extends ShipCombatListener implements Advanc
 
     private void start() {
         cooldownSecondsLeft = COOLDOWN_SECONDS;
-        timeflowBonus.start();
+        timeflowBonus.start(taperSeconds(magnitude(ADDITIONAL_TAPER_SECONDS_KEY)));
         riftTrail = new RiftSeries(ownerShip, RIFT_COUNT, SECONDS_BETWEEN_RIFTS, RIFT_DAMAGE, this::pointBehindEngines, random);
     }
 

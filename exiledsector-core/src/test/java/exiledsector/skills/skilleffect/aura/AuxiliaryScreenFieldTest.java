@@ -30,10 +30,15 @@ class AuxiliaryScreenFieldTest {
     private static final float EPSILON = 1e-4f;
 
     private static AuxiliaryScreenListener source(HullSize hullSize, float reductionPercent) {
+        return source(hullSize, reductionPercent, 0f);
+    }
+
+    private static AuxiliaryScreenListener source(HullSize hullSize, float reductionPercent, float rangeBonus) {
         ShipAPI ship = shipAt(new Vector2f(), 0, hullSize);
         DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
         when(ship.getMutableStats().getDynamic()).thenReturn(dynamic);
         when(dynamic.getValue(AuxiliaryScreenListener.DAMAGE_TAKEN_PERCENT_KEY, 0f)).thenReturn(reductionPercent);
+        when(dynamic.getValue(AuxiliaryScreenListener.RANGE_FLAT_KEY, 0f)).thenReturn(rangeBonus);
         return new AuxiliaryScreenListener(ship);
     }
 
@@ -75,6 +80,16 @@ class AuxiliaryScreenFieldTest {
         assertEquals(15f, reductions.get(cruiserAlly), EPSILON);
         assertFalse(reductions.containsKey(enemyFrigate));
         assertFalse(reductions.containsKey(fighter));
+    }
+
+    @Test
+    void aRangeBonusReachesAlliesOnlyForThatSource() {
+        ShipAPI farFrigate = shipAt(new Vector2f(AuxiliaryScreenField.RANGE + 100f, 0f), 0, HullSize.FRIGATE);
+
+        Map<ShipAPI, Float> reductions = AuxiliaryScreenField.reductionPerAlly(
+                List.of(source(HullSize.CRUISER, 10f, 400f), source(HullSize.CAPITAL_SHIP, 15f)), among(List.of(farFrigate)));
+
+        assertEquals(10f, reductions.get(farFrigate), EPSILON);
     }
 
     @Test

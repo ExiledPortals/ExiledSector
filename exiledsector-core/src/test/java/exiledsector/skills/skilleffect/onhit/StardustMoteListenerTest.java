@@ -10,6 +10,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import exiledsector.motes.MoteKind;
+import exiledsector.motes.Motes;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.MockedStatic;
@@ -86,6 +87,16 @@ class StardustMoteListenerTest {
             assertEquals(contactBefore, corrosion.contactSeconds(weapon, 0), 0.0001f);
         }
         assertTrue(corrosion.contactSeconds(weapon, 0) < StardustMoteListener.CONTACT_SECONDS_PER_MOTE);
+    }
+
+    @Test
+    void extraMotesInFlightRaiseTheCapOnTopOfTheBase() {
+        ShipAPI normal = ship("normal", 0, Map.of(StardustMoteListener.MOTE_DAMAGE_KEY, 200f));
+        ShipAPI integrated = ship("integrated", 0, Map.of(StardustMoteListener.MOTE_DAMAGE_KEY, 200f,
+                StardustMoteListener.EXTRA_MOTES_IN_FLIGHT_KEY, 1f));
+
+        assertEquals(Motes.MAX_LIVE_MOTES_PER_SOURCE, new StardustMoteListener(normal).maxMotesInFlight());
+        assertEquals(Motes.MAX_LIVE_MOTES_PER_SOURCE + 1, new StardustMoteListener(integrated).maxMotesInFlight());
     }
 
     @Test

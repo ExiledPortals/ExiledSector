@@ -217,6 +217,10 @@ final class NodeAllocator {
         return ShipSkillDataManager.get(fleetMember.getId());
     }
 
+    FleetMemberAPI member() {
+        return fleetMember;
+    }
+
     String satisfiedRootId() {
         SkillNode root = startingRootSupplier.get();
         return root == null ? null : root.getId();

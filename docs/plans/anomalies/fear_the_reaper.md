@@ -29,15 +29,14 @@ Combines with everything. With Minelaying (`../chart_drawbacks/enemy_minelaying.
 ## Checks before building
 
 1. Whether a refit after inflation survives later reinflation and campaign autofit (vanilla can re-autofit NPC variants; our listener already handles re-adding the hidden hull mod, so the same point should work).
-2. Whether NPC AI fires a guided Reaper well, or needs different AI hints than the unguided original.
-3. The tag names that keep the custom weapons out of loot, markets, codex and autofit.
+2. The tag names that keep the custom weapons out of loot, markets, codex and autofit.
 
 ## Build order
 
 1. [ ] The anomaly class (`exiledsector.charts.anomaly`, single class, so in the root) and its insertable `chart_anomalies.csv` row with the loot line in `effects`; atlas marker icon (placeholder).
 2. [ ] The two custom weapons with their `.wpn` files, the shared `.proj` and `weapon_data.csv` rows.
 3. [ ] The refit in the chart fleet generation and inflation path, with slot picking in a static helper for tests.
-4. [ ] Strings (en and zh_CN draft), the `docs/docs.md` section, tests; in-game pass on the AI check.
+4. [ ] Strings (en and zh_CN draft), the `docs/docs.md` section, tests.
 
 ## Open questions
 

@@ -84,4 +84,24 @@ class NanoforgeMendingListenerTest {
         listener.advance(10f);
         verify(ship, times(2)).setHitpoints(anyFloat());
     }
+
+    @Test
+    void aLimitBonusRaisesTheTotalRepairedPerDeployment() {
+        ShipAPI ship = shipWithDynamicValue(NanoforgeMendingListener.REGEN_PERCENT_KEY, 100f);
+        when(ship.getMutableStats().getDynamic().getValue(NanoforgeMendingListener.REGEN_LIMIT_BONUS_KEY, 0f)).thenReturn(50f);
+        when(ship.getMaxHitpoints()).thenReturn(1000f);
+        when(ship.getHitpoints()).thenReturn(100f);
+        NanoforgeMendingListener listener = new NanoforgeMendingListener(ship);
+        listener.advance(5f);
+        verify(ship).setHitpoints(1000f);
+
+        when(ship.getHitpoints()).thenReturn(200f);
+        listener.advance(1f);
+        listener.advance(5f);
+        verify(ship).setHitpoints(800f);
+
+        when(ship.getHitpoints()).thenReturn(800f);
+        listener.advance(10f);
+        verify(ship, times(2)).setHitpoints(anyFloat());
+    }
 }

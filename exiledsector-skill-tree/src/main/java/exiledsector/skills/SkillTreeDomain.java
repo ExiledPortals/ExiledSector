@@ -27,7 +27,7 @@ import exiledsector.effects.AlphaSiteOmegaCache;
 import exiledsector.effects.CombatXpAward;
 import exiledsector.effects.GateRewardAnchors;
 import exiledsector.effects.HyperNavBeaconGrant;
-import exiledsector.effects.LogisticsSchematicLootSource;
+import exiledsector.effects.SkillTreeSchematicLootSource;
 import exiledsector.effects.NpcBonusScale;
 import exiledsector.effects.NpcFleetDialogListener;
 import exiledsector.effects.NpcFleetInflationListener;
@@ -134,7 +134,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
 
     @Override
     public List<LootSource> lootSources() {
-        return List.of(SkillTreeLootSource.INSTANCE, LogisticsSchematicLootSource.INSTANCE);
+        return List.of(SkillTreeLootSource.INSTANCE, SkillTreeSchematicLootSource.INSTANCE);
     }
 
     @Override
@@ -380,7 +380,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
         }
         ShipTreeRepairs.replaceRemovedNodes(SkillTree.getDeclaredNodes(), NodeReplacements.all());
         ShipTreeRepairs.forgetUnknownNodes(SkillTree.getAllNodes(), SkillTree.getDeclaredNodes(), SkillTree.getAllTypes(),
-                new OwnedShips(), charged -> charged.refundTo(PlayerFleet.cargoOrNull()));
+                new OwnedShips(), charged -> charged.refundTo(PlayerFleet.cargoOrNull()), NodeIntegration::refundStoryPoints);
     }
 
     private static final class OwnedShips implements Predicate<String> {

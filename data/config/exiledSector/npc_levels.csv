@@ -1,7 +1,7 @@
 id,category,cap,min,mode,keep_tree
-pirate,pirate,15,,,
-faction,faction,25,,,
-ai,ai,35,,,
+pirate,pirate,,,,
+faction,faction,,,,
+ai,ai,,,,
 remnant,ai,,,,
 omega,ai,,,,
 derelict,ai,,,,

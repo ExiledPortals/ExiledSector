@@ -38,7 +38,7 @@ final class AtlasCommandText {
             parts.add("anomalies " + String.join(" ", anomalyIds));
         }
         if (node.infestationId() != null) {
-            parts.add(state.has(node.cell(), AtlasState.CLEANSED) ? "cleansed" : "infested from " + node.infestationId());
+            parts.add(state.has(node.cell(), AtlasState.INFESTATION_CLEARED) ? "infestation cleared" : "infested from " + node.infestationId());
         }
         parts.add(stateOf(node.cell(), state));
         return cell(node.cell()) + " " + String.join(", ", parts);

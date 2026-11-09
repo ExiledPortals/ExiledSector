@@ -2,7 +2,7 @@
 
 An optional mode, off by default, in which a ship's skill tree stays shut until a Master Schematic is used on it. A Master Schematic is consumed on the Hull Upgrades panel of the Hull Items screen and opens the tree for that one ship for good. It's a rare crafting item, so the player picks which ships get trees.
 
-Status: built, uncommitted on `parallel-work` (2026-10-29). Not yet tried in game.
+Status: built, uncommitted on `parallel-work` (2026-10-29).
 
 ## Name
 

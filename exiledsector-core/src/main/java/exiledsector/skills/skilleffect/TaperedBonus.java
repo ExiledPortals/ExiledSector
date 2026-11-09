@@ -5,19 +5,17 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 public final class TaperedBonus {
 
     private final ScaledBonus.Tracker bonus;
-    private final float taperSeconds;
     private final MutableShipStatsAPI stats;
     private final String modId;
     private final Taper taper = new Taper();
 
-    public TaperedBonus(ScaledBonus bonus, float taperSeconds, MutableShipStatsAPI stats, String modId) {
+    public TaperedBonus(ScaledBonus bonus, MutableShipStatsAPI stats, String modId) {
         this.bonus = bonus.tracker();
-        this.taperSeconds = taperSeconds;
         this.stats = stats;
         this.modId = modId;
     }
 
-    public void start() {
+    public void start(float taperSeconds) {
         taper.start(taperSeconds);
     }
 

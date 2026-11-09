@@ -11,6 +11,8 @@ public final class RiftStrike {
 
     public static final String CHANCE_PERCENT_KEY = "exiledSector_riftStrikeChancePercent";
     public static final String STRIKECRAFT_CHANCE_PERCENT_KEY = "exiledSector_strikecraftRiftStrikeChancePercent";
+    public static final String BEAM_CHANCE_PERCENT_KEY = "exiledSector_beamRiftStrikeChancePercent";
+    public static final float BEAM_ROLL_INTERVAL_SECONDS = 1f;
     public static final float DAMAGE_SHARE_PERCENT = 50f;
     public static final float MIN_DAMAGE = 30f;
     public static final float MAX_DAMAGE = 500f;
@@ -34,9 +36,21 @@ public final class RiftStrike {
         return weapon != null && !weapon.isBeam() && BallisticAsEnergy.countsAsEnergy(weapon);
     }
 
+    public static boolean beamFiresRifts(WeaponSpecAPI weaponSpec, boolean ballisticCountsAsEnergy) {
+        if (weaponSpec == null || !weaponSpec.isBeam()) {
+            return false;
+        }
+        WeaponType type = weaponSpec.getType();
+        return type == WeaponType.ENERGY || ballisticCountsAsEnergy && type == WeaponType.BALLISTIC;
+    }
+
+    public static boolean beamFiresRifts(WeaponAPI weapon) {
+        return weapon != null && weapon.isBeam() && BallisticAsEnergy.countsAsEnergy(weapon);
+    }
+
     public static float baseRiftDamage(WeaponSpecAPI weaponSpec) {
-        float baseShotDamage = weaponSpec.getDerivedStats().getDamagePerShot();
-        return Math.max(MIN_DAMAGE, Math.min(MAX_DAMAGE, baseShotDamage * DAMAGE_SHARE_PERCENT / 100f));
+        float baseDamage = weaponSpec.isBeam() ? weaponSpec.getDerivedStats().getDps() : weaponSpec.getDerivedStats().getDamagePerShot();
+        return Math.max(MIN_DAMAGE, Math.min(MAX_DAMAGE, baseDamage * DAMAGE_SHARE_PERCENT / 100f));
     }
 
     public static float riftDamage(WeaponSpecAPI weaponSpec, float increasedRiftDamagePercent) {

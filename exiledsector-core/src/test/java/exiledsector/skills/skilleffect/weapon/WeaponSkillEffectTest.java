@@ -16,6 +16,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.SkillEffectSupport;
 import exiledsector.skills.skilleffect.logistics.LogisticsSkillEffect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -105,6 +106,36 @@ class WeaponSkillEffectTest {
         assertEquals(1f, beam.getModifiedValue(), EPSILON);
     }
 
+    @Test
+    void perDModRateOfFireAndFluxCostAddToTheirOtherPercentsForEachCountedDMod() {
+        giveDMods(SkillEffectSupport.MAX_COUNTED_DMODS + 2);
+        MutableStat ballisticRateOfFire = new MutableStat(1f);
+        ballisticRateOfFire.modifyPercent("other", 10f);
+        MutableStat missileRateOfFire = new MutableStat(1f);
+        MutableStat energyRateOfFire = new MutableStat(1f);
+        StatBonus ballisticFluxCost = new StatBonus();
+        StatBonus missileFluxCost = new StatBonus();
+        StatBonus energyFluxCost = new StatBonus();
+        energyFluxCost.modifyPercent("other", -10f);
+        when(stats.getBallisticRoFMult()).thenReturn(ballisticRateOfFire);
+        when(stats.getMissileRoFMult()).thenReturn(missileRateOfFire);
+        when(stats.getEnergyRoFMult()).thenReturn(energyRateOfFire);
+        when(stats.getBallisticWeaponFluxCostMod()).thenReturn(ballisticFluxCost);
+        when(stats.getMissileWeaponFluxCostMod()).thenReturn(missileFluxCost);
+        when(stats.getEnergyWeaponFluxCostMod()).thenReturn(energyFluxCost);
+
+        WeaponSkillEffect.WEAPON_RATE_OF_FIRE_PERCENT_PER_DMOD.apply(stats, "mod_id", 2f);
+        WeaponSkillEffect.WEAPON_FLUX_COST_PERCENT_PER_DMOD.apply(stats, "mod_id", -2f);
+
+        assertEquals(1.2f, ballisticRateOfFire.getModifiedValue(), EPSILON);
+        assertEquals(1.1f, missileRateOfFire.getModifiedValue(), EPSILON);
+        assertEquals(1.1f, energyRateOfFire.getModifiedValue(), EPSILON);
+        assertEquals(90f, ballisticFluxCost.computeEffective(100f), EPSILON);
+        assertEquals(90f, missileFluxCost.computeEffective(100f), EPSILON);
+        assertEquals(80f, energyFluxCost.computeEffective(100f), EPSILON);
+        assertTrue(WeaponSkillEffect.WEAPON_FLUX_COST_PERCENT_PER_DMOD.lowerIsBetter());
+    }
+
     private MutableStat ballisticDamageWithBurnLevel(float baseBurn, float burnChange) {
         MutableStat burn = new MutableStat(baseBurn);
         burn.modifyFlat("other", burnChange);
@@ -188,6 +219,22 @@ class WeaponSkillEffectTest {
     }
 
     @Test
+    void ballisticRangeGrowsWithSensorStrengthAlongsideTheEnergyBonus() {
+        StatBonus energyRange = new StatBonus();
+        StatBonus ballisticRange = new StatBonus();
+        when(stats.getSensorStrength()).thenReturn(new MutableStat(120f));
+        when(stats.getEnergyWeaponRangeBonus()).thenReturn(energyRange);
+        when(stats.getBallisticWeaponRangeBonus()).thenReturn(ballisticRange);
+
+        WeaponSkillEffect.BALLISTIC_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT.applyAfterShipCreation(ship, "picket_ballistic", 0.5f);
+        WeaponSkillEffect.ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT.applyAfterShipCreation(ship, "picket_energy", 0.5f);
+
+        assertTrue(WeaponSkillEffect.BALLISTIC_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT.appliesAfterOtherEffects());
+        assertEquals(60f, energyRange.getFlatBonus(), EPSILON);
+        assertEquals(60f, ballisticRange.getFlatBonus(), EPSILON);
+    }
+
+    @Test
     void ballisticCountsAsEnergySetsItsFlagWhateverTheMagnitude() {
         WeaponSkillEffect.BALLISTIC_COUNTS_AS_ENERGY.apply(stats, "fafnir", 0f);
 
@@ -215,6 +262,16 @@ class WeaponSkillEffectTest {
 
         assertEquals(-5f, largeBallistic.getFlatBonus(), EPSILON);
         assertTrue(WeaponSkillEffect.BALLISTIC_WEAPON_LARGE_OP_COST_FLAT.lowerIsBetter());
+    }
+
+    @Test
+    void mediumBallisticOpCostUsesTheEnginesMediumBallisticKey() {
+        StatBonus mediumBallistic = realDynamicMod(Stats.MEDIUM_BALLISTIC_MOD);
+
+        WeaponSkillEffect.BALLISTIC_WEAPON_MEDIUM_OP_COST_FLAT.apply(stats, "mod_id", -2f);
+
+        assertEquals(-2f, mediumBallistic.getFlatBonus(), EPSILON);
+        assertTrue(WeaponSkillEffect.BALLISTIC_WEAPON_MEDIUM_OP_COST_FLAT.lowerIsBetter());
     }
 
     @Test

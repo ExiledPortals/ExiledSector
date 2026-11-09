@@ -7,6 +7,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.items.AnchorJanusGate;
 import exiledsector.items.UniqueSubroutinesSetting;
 import exiledsector.skills.SkillTreeSetting;
+import exiledsector.skills.npc.NpcLevelCategory;
 import exiledsector.skills.npc.NpcTreeConfig;
 import exiledsector.skills.npc.NpcTreeSize;
 import exiledsector.skills.progression.ShipLevelConfig;
@@ -171,6 +172,15 @@ public final class SkillTreeSettings {
         SettingsCreator.addBoolean(MOD_ID, NpcTreeConfig.RECOVERED_START_BLANK_FIELD_ID,
                 Translation.text("settings.npcTreeSize.startBlank.name"), Translation.text("settings.npcTreeSize.startBlank.tooltip"),
                 NpcTreeConfig.DEFAULT_RECOVERED_START_BLANK, npcTab);
+
+        SettingsCreator.addHeader(MOD_ID, "exiledSector_npcLevelCapsHeader", Translation.text("settings.npcLevelCaps.header"), npcTab);
+        SettingsCreator.addText(MOD_ID, "exiledSector_npcLevelCapsAbout", Translation.text("settings.npcLevelCaps.about"), npcTab);
+        SettingsCreator.addBoolean(MOD_ID, NpcTreeConfig.LEVEL_CAPS_FIELD_ID,
+                Translation.text("settings.npcLevelCaps.enabled.name"), "", NpcTreeConfig.DEFAULT_LEVEL_CAPS, npcTab);
+        for (NpcLevelCategory category : NpcLevelCategory.values()) {
+            SettingsCreator.addInt(MOD_ID, category.capFieldId(), Translation.text("settings.npcLevelCaps." + category.csvId() + ".name"), "",
+                    category.defaultCap(), 0, 200, npcTab);
+        }
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_npcBonusScaleHeader", Translation.text("settings.npcBonusScale.header"), npcTab);
         SettingsCreator.addText(MOD_ID, "exiledSector_npcBonusScaleAbout", Translation.text("settings.npcBonusScale.about"), npcTab);

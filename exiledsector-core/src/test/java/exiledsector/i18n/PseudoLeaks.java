@@ -6,7 +6,7 @@ public final class PseudoLeaks {
     }
 
     public static String unbracketed(String text) {
-        String remaining = text.replaceAll("</?(?:good|bad|hl|hullmod|node)>", "");
+        String remaining = text.replaceAll("</?(?:good|bad|hl|hullmod|node|immutable|muted|builtIn)>", "");
         String previous;
         do {
             previous = remaining;
