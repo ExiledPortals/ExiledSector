@@ -7890,19 +7890,19 @@ integrated|exo_tech_grid_splice|CAPITAL_SHIP|6	0	<builtIn>No longer: 25% reduced
 flavour|exoship	0	The last Exoship of Exo-Tech, warping from system to system across the Sector. It keeps its own schedule and answers only to its own beacon.
 type|exoship|null|0	0	Docks while a Hyper-Nav Beacon is in an allocated Subroutine Socket. Docking allocates it at no cost.
 type|exoship|null|1	0	Undocking releases every node reached through it.
-type|exoship|null|2	0	Ctrl-click to return to the beacon's socket.
+type|exoship|null|2	0	Right-click to return to the beacon's socket.
 type|exoship|FRIGATE|0	0	Docks while a Hyper-Nav Beacon is in an allocated Subroutine Socket. Docking allocates it at no cost.
 type|exoship|FRIGATE|1	0	Undocking releases every node reached through it.
-type|exoship|FRIGATE|2	0	Ctrl-click to return to the beacon's socket.
+type|exoship|FRIGATE|2	0	Right-click to return to the beacon's socket.
 type|exoship|DESTROYER|0	0	Docks while a Hyper-Nav Beacon is in an allocated Subroutine Socket. Docking allocates it at no cost.
 type|exoship|DESTROYER|1	0	Undocking releases every node reached through it.
-type|exoship|DESTROYER|2	0	Ctrl-click to return to the beacon's socket.
+type|exoship|DESTROYER|2	0	Right-click to return to the beacon's socket.
 type|exoship|CRUISER|0	0	Docks while a Hyper-Nav Beacon is in an allocated Subroutine Socket. Docking allocates it at no cost.
 type|exoship|CRUISER|1	0	Undocking releases every node reached through it.
-type|exoship|CRUISER|2	0	Ctrl-click to return to the beacon's socket.
+type|exoship|CRUISER|2	0	Right-click to return to the beacon's socket.
 type|exoship|CAPITAL_SHIP|0	0	Docks while a Hyper-Nav Beacon is in an allocated Subroutine Socket. Docking allocates it at no cost.
 type|exoship|CAPITAL_SHIP|1	0	Undocking releases every node reached through it.
-type|exoship|CAPITAL_SHIP|2	0	Ctrl-click to return to the beacon's socket.
+type|exoship|CAPITAL_SHIP|2	0	Right-click to return to the beacon's socket.
 type|expanded_cargo_holds|null|0	0	<good>20%</good> increased cargo capacity.
 type-detail|expanded_cargo_holds|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Converted Missile Holds</hullmod>\n• <hullmod>Expanded Cargo Holds</hullmod>
 type|expanded_cargo_holds|FRIGATE|0	0	<good>20%</good> increased cargo capacity.
@@ -14756,31 +14756,31 @@ type|weapon_turn_rate|CRUISER|0	0	<good>20%</good> increased weapon turn rate.
 type|weapon_turn_rate|CAPITAL_SHIP|0	0	<good>20%</good> increased weapon turn rate.
 flavour|wormhole	0	Two ends of one passage through the ship's systems, stitched together in a way no shipwright intended.
 type|wormhole|null|0	0	Allocating this wormhole also allocates its paired wormhole at no cost. Unallocating either end unallocates both.
-type|wormhole|null|1	0	Ctrl-click to travel through it.
+type|wormhole|null|1	0	Right-click to travel through it.
 type|wormhole|FRIGATE|0	0	Allocating this wormhole also allocates its paired wormhole at no cost. Unallocating either end unallocates both.
-type|wormhole|FRIGATE|1	0	Ctrl-click to travel through it.
+type|wormhole|FRIGATE|1	0	Right-click to travel through it.
 type|wormhole|DESTROYER|0	0	Allocating this wormhole also allocates its paired wormhole at no cost. Unallocating either end unallocates both.
-type|wormhole|DESTROYER|1	0	Ctrl-click to travel through it.
+type|wormhole|DESTROYER|1	0	Right-click to travel through it.
 type|wormhole|CRUISER|0	0	Allocating this wormhole also allocates its paired wormhole at no cost. Unallocating either end unallocates both.
-type|wormhole|CRUISER|1	0	Ctrl-click to travel through it.
+type|wormhole|CRUISER|1	0	Right-click to travel through it.
 type|wormhole|CAPITAL_SHIP|0	0	Allocating this wormhole also allocates its paired wormhole at no cost. Unallocating either end unallocates both.
-type|wormhole|CAPITAL_SHIP|1	0	Ctrl-click to travel through it.
+type|wormhole|CAPITAL_SHIP|1	0	Right-click to travel through it.
 flavour|wormhole_exit	0	The far end of a faction's wormhole. Nothing on this side leads back to it.
 type|wormhole_exit|null|0	0	Opens while a wormhole anchor for this volume is in an allocated Subroutine Socket. Opening allocates it at no cost.
 type|wormhole_exit|null|1	0	Closing the wormhole releases every node reached through it.
-type|wormhole_exit|null|2	0	Ctrl-click to travel back to the anchor's socket.
+type|wormhole_exit|null|2	0	Right-click to travel back to the anchor's socket.
 type|wormhole_exit|FRIGATE|0	0	Opens while a wormhole anchor for this volume is in an allocated Subroutine Socket. Opening allocates it at no cost.
 type|wormhole_exit|FRIGATE|1	0	Closing the wormhole releases every node reached through it.
-type|wormhole_exit|FRIGATE|2	0	Ctrl-click to travel back to the anchor's socket.
+type|wormhole_exit|FRIGATE|2	0	Right-click to travel back to the anchor's socket.
 type|wormhole_exit|DESTROYER|0	0	Opens while a wormhole anchor for this volume is in an allocated Subroutine Socket. Opening allocates it at no cost.
 type|wormhole_exit|DESTROYER|1	0	Closing the wormhole releases every node reached through it.
-type|wormhole_exit|DESTROYER|2	0	Ctrl-click to travel back to the anchor's socket.
+type|wormhole_exit|DESTROYER|2	0	Right-click to travel back to the anchor's socket.
 type|wormhole_exit|CRUISER|0	0	Opens while a wormhole anchor for this volume is in an allocated Subroutine Socket. Opening allocates it at no cost.
 type|wormhole_exit|CRUISER|1	0	Closing the wormhole releases every node reached through it.
-type|wormhole_exit|CRUISER|2	0	Ctrl-click to travel back to the anchor's socket.
+type|wormhole_exit|CRUISER|2	0	Right-click to travel back to the anchor's socket.
 type|wormhole_exit|CAPITAL_SHIP|0	0	Opens while a wormhole anchor for this volume is in an allocated Subroutine Socket. Opening allocates it at no cost.
 type|wormhole_exit|CAPITAL_SHIP|1	0	Closing the wormhole releases every node reached through it.
-type|wormhole_exit|CAPITAL_SHIP|2	0	Ctrl-click to travel back to the anchor's socket.
+type|wormhole_exit|CAPITAL_SHIP|2	0	Right-click to travel back to the anchor's socket.
 flavour|xiv_torpedo_doctrine	0	XIV Battlegroup strike manuals, kept by the Hegemony since the Domain, teach that a torpedo should close fast and fly straight. Following them, the crew rewires each missile's maneuvering thrusters to push it forward instead, on the principle that a missile which cannot turn must not miss.
 flavourAutomated|xiv_torpedo_doctrine	0	XIV Battlegroup strike manuals, kept by the Hegemony since the Domain, hold that a torpedo should close fast and fly straight. The refit crew rewires each missile's maneuvering thrusters to push it forward instead, on the principle that a missile which cannot turn must not miss.
 type|xiv_torpedo_doctrine|null|0	0	<good>30%</good> increased missile weapon projectile speed.

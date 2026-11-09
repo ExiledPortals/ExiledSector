@@ -5192,7 +5192,7 @@
 			"flavour": "Two ends of one passage through the ship's systems, stitched together in a way no shipwright intended.",
 			"effectText": [
 				"Allocating this wormhole also allocates its paired wormhole at no cost. Unallocating either end unallocates both.",
-				"Ctrl-click to travel through it."
+				"Right-click to travel through it."
 			]
 		},
 		{
@@ -5204,7 +5204,7 @@
 			"effectText": [
 				"Opens while a wormhole anchor for this volume is in an allocated Subroutine Socket. Opening allocates it at no cost.",
 				"Closing the wormhole releases every node reached through it.",
-				"Ctrl-click to travel back to the anchor's socket."
+				"Right-click to travel back to the anchor's socket."
 			]
 		},
 		{
@@ -5216,7 +5216,7 @@
 			"effectText": [
 				"Docks while a Hyper-Nav Beacon is in an allocated Subroutine Socket. Docking allocates it at no cost.",
 				"Undocking releases every node reached through it.",
-				"Ctrl-click to return to the beacon's socket."
+				"Right-click to return to the beacon's socket."
 			]
 		},
 		{
