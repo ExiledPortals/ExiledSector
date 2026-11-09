@@ -6,6 +6,7 @@ import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeTopology;
+import exiledsector.skills.layout.TreeTopology;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.decoration.GhostFlight;
 import exiledsector.ui.decoration.GhostFlightPool;
@@ -25,7 +26,7 @@ final class SkillTreeWormholeGhostFlights {
     private final Random random;
     private final Map<String, GhostFlightPool.LaunchTimer> launchTimers = new HashMap<>();
     private final GhostFlightPool flights = new GhostFlightPool();
-    private List<SkillTreeTopology.WormholePair> pairs = List.of();
+    private List<TreeTopology.WormholePair<SkillNode>> pairs = List.of();
     private ShipSkillData pairsShip;
     private SkillTreeTopology pairsTopology;
     private int pairsRevision = -1;
@@ -36,7 +37,7 @@ final class SkillTreeWormholeGhostFlights {
 
     void advance(float amount, ShipSkillData skillData) {
         flights.advance(amount);
-        for (SkillTreeTopology.WormholePair pair : pairsFor(skillData)) {
+        for (TreeTopology.WormholePair<SkillNode> pair : pairsFor(skillData)) {
             if (skillData.isAllocated(pair.first().getId()) && skillData.isAllocated(pair.second().getId())
                     && !ExoshipNodes.isCarried(pair.first()) && !ExoshipNodes.isCarried(pair.second())) {
                 scheduleFlights(pair, amount);
@@ -44,7 +45,7 @@ final class SkillTreeWormholeGhostFlights {
         }
     }
 
-    private List<SkillTreeTopology.WormholePair> pairsFor(ShipSkillData skillData) {
+    private List<TreeTopology.WormholePair<SkillNode>> pairsFor(ShipSkillData skillData) {
         SkillTreeTopology topology = SkillTree.topology();
         if (skillData != pairsShip || skillData.revision() != pairsRevision || topology != pairsTopology) {
             pairs = ShipTreeLinks.wormholePairs(skillData, topology);
@@ -59,7 +60,7 @@ final class SkillTreeWormholeGhostFlights {
         return flights.size();
     }
 
-    private void scheduleFlights(SkillTreeTopology.WormholePair pair, float amount) {
+    private void scheduleFlights(TreeTopology.WormholePair<SkillNode> pair, float amount) {
         GhostFlightPool.LaunchTimer timer = launchTimers.get(pair.first().getId());
         if (timer == null) {
             timer = new GhostFlightPool.LaunchTimer(MIN_SECONDS_BETWEEN_FLIGHTS, MAX_SECONDS_BETWEEN_FLIGHTS, random);

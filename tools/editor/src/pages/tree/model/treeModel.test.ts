@@ -30,6 +30,8 @@ import { serializeUnlockConditions } from './serialization.ts';
 import { replaceGroupTags, tagGroupOf } from './tags.ts';
 import { nameSlug, nodeById, nodeIdStem, type SkillType, type TreeDocument, type TreeNode } from './types.ts';
 import { validateTree } from './validation.ts';
+import { renameVolume, volumeIdProblem, volumeUseCount } from './volumes.ts';
+import { ATLAS_TREE_KIND } from '../treeKinds.ts';
 
 const vocabularyFile = {
   effects: [{ name: 'HULL_PERCENT', statMode: 'PERCENT', lowerIsBetter: false }],
@@ -54,6 +56,7 @@ function makeDocument(nodes: TreeNode[], extra: Partial<TreeDocument> = {}): Tre
       { id: 'hole', name: 'Hole', icon: '', tier: 'WORMHOLE' },
       { id: 'exit', name: 'Exit', icon: '', tier: 'WORMHOLE_EXIT' },
     ],
+    volumes: [],
     nodes,
     curves: [],
     hiddenConnectors: [],
@@ -217,6 +220,30 @@ describe('validation and tags', () => {
     expect(validateTree(document, vocabulary, new Set(['old_1']))).toEqual([
       'Node id "old_1" was retired in node_replacements.csv; give the node a new id',
     ]);
+  });
+
+  it('checks atlas nodes against the declared volumes, chart effects and atlas tiers', () => {
+    const atlasVocabulary = ATLAS_TREE_KIND.editorVocabulary({ ...vocabulary, chartEffectNames: ['CHART_EXTRA_FLEETS'] }, ['crafting', 'crafting']);
+    const document = makeDocument([node('a', 0, 0, [], { tags: ['crafting'] }), node('b', 1, 0, [], { tags: ['north'] })], { volumes: ['crafting', 'crafting'] });
+    document.types[0].effects = [{ effect: 'CHART_EXTRA_FLEETS', magnitude: 1 }, { effect: 'HULL_PERCENT', magnitude: 5 }];
+    expect(validateTree(document, atlasVocabulary)).toEqual([
+      'Type "small" uses unknown effect "HULL_PERCENT"',
+      'Volume "crafting" is declared more than once',
+      'Type "exit" has tier "WORMHOLE_EXIT", which this tree does not use',
+      'Node "b" has no volume tag',
+      'Node "b" has unknown tag "north"',
+    ]);
+  });
+
+  it('renames a volume on every node and decoration that carries it', () => {
+    const star = { kind: 'star' as const, id: 'star', x: 0, y: 0, radius: 100, starType: 'star_yellow', color: null, tags: ['crafting'] };
+    const document = makeDocument([node('a', 0, 0, [], { tags: ['crafting'] }), node('b', 1, 0, [], { tags: ['charts'] })], { volumes: ['crafting', 'charts'], decorations: [star] });
+    expect(volumeUseCount(document, 'crafting')).toBe(2);
+    expect(volumeIdProblem(document, 'charts')).toBe('Volume "charts" already exists');
+    const renamed = produce(document, (draft) => renameVolume(draft, 'crafting', 'crafting_items'));
+    expect(renamed.volumes).toEqual(['crafting_items', 'charts']);
+    expect(renamed.nodes.map((each) => each.tags)).toEqual([['crafting_items'], ['charts']]);
+    expect(renamed.decorations[0].tags).toEqual(['crafting_items']);
   });
 
   it('replaces only the tags of one group and keeps the rest in order', () => {

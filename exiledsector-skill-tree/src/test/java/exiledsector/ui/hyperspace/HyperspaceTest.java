@@ -12,6 +12,8 @@ import exiledsector.skills.decoration.StaticImage;
 import exiledsector.skills.decoration.ThreatUnit;
 import exiledsector.skills.layout.Rotation;
 import exiledsector.skills.layout.SkillNodeDecoration;
+import exiledsector.skills.layout.TreeTopology;
+import exiledsector.skills.tags.SkillTags;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -24,11 +26,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class HyperspaceTest {
 
     private static Star star(String id, float x, float y, String volume) {
-        return new Star(id, x, y, 400f, "star_yellow", null, volume == null ? List.of() : List.of(volume));
+        return new Star(id, x, y, 400f, "star_yellow", null, SkillTags.treeTags(volume == null ? List.of() : List.of(volume)));
     }
 
     private static StaticImage image(String id, String volume) {
-        return new StaticImage(id, 3000f, 7000f, new StaticImage.Shape(3400f, 2000f, "a.png", new Rotation(0f, 0f)), List.of(volume));
+        return new StaticImage(id, 3000f, 7000f, new StaticImage.Shape(3400f, 2000f, "a.png", new Rotation(0f, 0f)), SkillTags.treeTags(List.of(volume)));
     }
 
     private static List<HyperspaceAnchor> anchorsOf(Decoration... decorations) {
@@ -55,7 +57,7 @@ class HyperspaceTest {
     @Test
     void aStarlessVolumeIsAnchoredOnItsThreatUnitBeforeAnyImage() {
         List<HyperspaceAnchor> anchors = anchorsOf(star("sun", 0f, 0f, "core"),
-                new ThreatUnit("fabricator", 100f, 200f, ThreatUnit.FABRICATOR, 600f, 0f, List.of("threat")), image("threat_cloud", "threat"));
+                new ThreatUnit("fabricator", 100f, 200f, ThreatUnit.FABRICATOR, 600f, 0f, SkillTags.treeTags(List.of("threat"))), image("threat_cloud", "threat"));
 
         assertEquals(List.of("sun", "fabricator"), anchors.stream().map(HyperspaceAnchor::id).toList());
         assertEquals(300f, anchors.get(1).radius());
@@ -64,7 +66,7 @@ class HyperspaceTest {
 
     @Test
     void aStarlessVolumeIsAnchoredOnItsShroudedMawBeforeAnyImage() {
-        List<HyperspaceAnchor> anchors = anchorsOf(image("shroud_cloud", "shrouded"), new ShroudedMaw("maw", 100f, 200f, 620f, 0f, List.of("shrouded")));
+        List<HyperspaceAnchor> anchors = anchorsOf(image("shroud_cloud", "shrouded"), new ShroudedMaw("maw", 100f, 200f, 620f, 0f, SkillTags.treeTags(List.of("shrouded"))));
 
         assertEquals(List.of("maw"), anchors.stream().map(HyperspaceAnchor::id).toList());
         assertEquals(310f, anchors.get(0).radius());
@@ -210,11 +212,11 @@ class HyperspaceTest {
         List<HyperspaceAnchor> anchors = List.of(core, league, kesteven);
 
         List<HyperspaceRoute> routes = HyperspaceRoute.between(anchors, List.of(
-                new SkillTreeTopology.WormholePair(wormhole("league_1", "core"), wormhole("league_2", "persean_league")),
-                new SkillTreeTopology.WormholePair(wormhole("league_2b", "persean_league"), wormhole("league_1b", "core")),
-                new SkillTreeTopology.WormholePair(wormhole("kesteven_1", "kesteven"), wormhole("kesteven_2", "persean_league")),
-                new SkillTreeTopology.WormholePair(wormhole("inner_a", "core"), wormhole("inner_b", "core")),
-                new SkillTreeTopology.WormholePair(wormhole("lost_a", "core"), wormhole("lost_b", "luddic"))));
+                new TreeTopology.WormholePair<>(wormhole("league_1", "core"), wormhole("league_2", "persean_league")),
+                new TreeTopology.WormholePair<>(wormhole("league_2b", "persean_league"), wormhole("league_1b", "core")),
+                new TreeTopology.WormholePair<>(wormhole("kesteven_1", "kesteven"), wormhole("kesteven_2", "persean_league")),
+                new TreeTopology.WormholePair<>(wormhole("inner_a", "core"), wormhole("inner_b", "core")),
+                new TreeTopology.WormholePair<>(wormhole("lost_a", "core"), wormhole("lost_b", "luddic"))));
 
         assertEquals(List.of(new HyperspaceRoute(core, league), new HyperspaceRoute(kesteven, league)), routes);
     }

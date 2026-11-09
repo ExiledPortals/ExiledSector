@@ -22,8 +22,8 @@ import {
   type DecorationOfKind,
   type OrbitFields as OrbitSettings,
 } from '../model/decorations.ts';
-import { deleteSelection } from '../state/treeActions.ts';
-import { editDocument, setSelection, useTreeStore } from '../state/treeStore.ts';
+import type { TreeActions } from '../state/treeActions.ts';
+import { useTreeEditor, useTreeState } from '../state/treeEditorContext.ts';
 import { CommitColorInput } from './CommitColorInput.tsx';
 import { degreesOrZero, numberOrZero, setTags } from './inspectorEdits.ts';
 import { VolumeField } from './VolumeField.tsx';
@@ -247,8 +247,8 @@ const FIELDS: { [TKind in DecorationKind]: (props: FieldsProps<TKind>) => ReactN
   hypershunt: HypershuntFields,
 };
 
-function editDecoration(decorationId: string, change: (decoration: Decoration) => void): void {
-  editDocument((document) => {
+function editDecoration(actions: TreeActions, decorationId: string, change: (decoration: Decoration) => void): void {
+  actions.editDocument((document) => {
     const decoration = decorationById(document, decorationId);
     if (decoration) {
       change(decoration);
@@ -257,13 +257,14 @@ function editDecoration(decorationId: string, change: (decoration: Decoration) =
 }
 
 export function DecorationInspector({ decorationId, vocabulary }: { decorationId: string; vocabulary: Vocabulary }) {
-  const document = useTreeStore((state) => state.document);
+  const { actions } = useTreeEditor();
+  const document = useTreeState((state) => state.document);
   const decoration = decorationById(document, decorationId);
   if (!decoration) {
     return null;
   }
   const spec = DECORATION_KINDS[decoration.kind];
-  const edit = (change: (target: Decoration) => void) => editDecoration(decorationId, change);
+  const edit = (change: (target: Decoration) => void) => editDecoration(actions, decorationId, change);
   const rename = (text: string) => {
     const newId = text.trim();
     if (!newId || decorationById(document, newId)) {
@@ -271,7 +272,7 @@ export function DecorationInspector({ decorationId, vocabulary }: { decorationId
       return;
     }
     edit((target) => void (target.id = newId));
-    setSelection({ decorations: [newId] });
+    actions.setSelection({ decorations: [newId] });
   };
   const Fields = FIELDS[decoration.kind] as (props: FieldsProps<DecorationKind>) => ReactNode;
 
@@ -286,7 +287,7 @@ export function DecorationInspector({ decorationId, vocabulary }: { decorationId
       <Fields decoration={decoration as never} edit={edit as Edit<DecorationKind>} />
       <VolumeField vocabulary={vocabulary} tags={decoration.tags} onChange={(tags) => edit((target) => setTags(target, tags))} />
       <Divider />
-      <Button size="xs" color="red" variant="light" leftSection={<IconTrash size={14} />} onClick={deleteSelection}>
+      <Button size="xs" color="red" variant="light" leftSection={<IconTrash size={14} />} onClick={actions.deleteSelection}>
         Delete this {spec.label.toLowerCase()} (Q)
       </Button>
     </Stack>

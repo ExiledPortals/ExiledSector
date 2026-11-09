@@ -5,9 +5,9 @@ import { useRef, useState } from 'react';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { notifyError } from '../../../shared/dialogs.tsx';
 import { TypeForm, type TypeRecipe } from '../inspector/TypeForm.tsx';
-import { DIALOG_TYPE_SECTIONS } from '../inspector/typeFormSections.ts';
 import { typeById, type SkillType } from '../model/types.ts';
-import { editDocument, useTreeStore } from '../state/treeStore.ts';
+import { useTreeEditor, useTreeState } from '../state/treeEditorContext.ts';
+import type { TreeStore } from '../state/treeStore.ts';
 
 interface TypeEditorDialogProps {
   modalId: string;
@@ -17,8 +17,8 @@ interface TypeEditorDialogProps {
   onEditOptionType: (typeId: string) => void;
 }
 
-function initialDraft(existingTypeId: string | null): SkillType {
-  const existing = existingTypeId ? typeById(useTreeStore.getState().document, existingTypeId) : undefined;
+function initialDraft(store: TreeStore, existingTypeId: string | null): SkillType {
+  const existing = existingTypeId ? typeById(store.getState().document, existingTypeId) : undefined;
   const draft: SkillType = existing ? structuredClone(existing) : { id: '', name: '', icon: '', tier: 'NOTABLE' };
   draft.effects ??= [];
   draft.hullSizeEffects ??= [];
@@ -28,10 +28,11 @@ function initialDraft(existingTypeId: string | null): SkillType {
 }
 
 export function TypeEditorDialog({ modalId, existingTypeId, vocabulary, onSaved, onEditOptionType }: TypeEditorDialogProps) {
-  const [draft, setDraft] = useState(() => initialDraft(existingTypeId));
+  const { kind, store, actions } = useTreeEditor();
+  const [draft, setDraft] = useState(() => initialDraft(store, existingTypeId));
   const draftRef = useRef(draft);
   draftRef.current = draft;
-  const allTypes = useTreeStore((state) => state.document.types);
+  const allTypes = useTreeState((state) => state.document.types);
 
   const edit = (recipe: TypeRecipe) => setDraft((current) => produce(current, recipe));
 
@@ -42,12 +43,12 @@ export function TypeEditorDialog({ modalId, existingTypeId, vocabulary, onSaved,
       return;
     }
     const isNew = existingTypeId === null;
-    if (isNew && typeById(useTreeStore.getState().document, current.id)) {
+    if (isNew && typeById(store.getState().document, current.id)) {
       notifyError('A type with that id already exists');
       return;
     }
     const saved = structuredClone({ ...current, name: current.name || current.id });
-    editDocument((document) => {
+    actions.editDocument((document) => {
       if (isNew) {
         document.types.push(saved);
         return;
@@ -67,7 +68,7 @@ export function TypeEditorDialog({ modalId, existingTypeId, vocabulary, onSaved,
         <TypeForm
           type={draft}
           onEdit={edit}
-          sections={DIALOG_TYPE_SECTIONS}
+          sections={kind.typeSections.dialog}
           vocabulary={vocabulary}
           allTypes={allTypes}
           idEditable={existingTypeId === null}

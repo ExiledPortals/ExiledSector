@@ -62,7 +62,7 @@ public final class SkillTypeLoader {
             try {
                 skillType = parseSkillType(typeArray.getJSONObject(i), hullModConflicts);
             } catch (JSONException | IllegalArgumentException e) {
-                Logger.getLogger(SkillTypeLoader.class).error("Skipping skill type " + entryLabel(typeArray, i)
+                Logger.getLogger(SkillTypeLoader.class).error("Skipping skill type " + TreeJson.entryLabel(typeArray, i)
                         + " in " + DATA_PATH + ": " + e.getMessage());
                 continue;
             }
@@ -79,12 +79,12 @@ public final class SkillTypeLoader {
         SkillTier tier = SkillTier.valueOf(typeJson.optString("tier", "SMALL"));
         List<SkillTypeEffect> effects = parseEffects(typeJson.optJSONArray("effects"));
         List<HullSizeSkillEffect> hullSizeEffects = parseHullSizeEffects(typeJson.optJSONArray("hullSizeEffects"));
-        List<String> choiceOptionIds = parseStringArray(typeJson.optJSONArray("options"));
-        List<String> exclusiveHullModIds = parseStringArray(typeJson.optJSONArray("exclusiveHullMods"));
-        List<String> phantomHullModIds = parseStringArray(typeJson.optJSONArray("phantomHullMods"));
-        List<String> exclusiveSkillTypeIds = parseStringArray(typeJson.optJSONArray("exclusiveSkillTypes"));
+        List<String> choiceOptionIds = TreeJson.stringList(typeJson.optJSONArray("options"));
+        List<String> exclusiveHullModIds = TreeJson.stringList(typeJson.optJSONArray("exclusiveHullMods"));
+        List<String> phantomHullModIds = TreeJson.stringList(typeJson.optJSONArray("phantomHullMods"));
+        List<String> exclusiveSkillTypeIds = TreeJson.stringList(typeJson.optJSONArray("exclusiveSkillTypes"));
         List<UnlockCondition> unlockConditions = parseUnlockConditions(typeJson.optJSONArray("unlockConditions"));
-        List<String> tags = parseStringArray(typeJson.optJSONArray("tags"));
+        List<String> tags = TreeJson.stringList(typeJson.optJSONArray("tags"));
         SkillItemCost itemCost = parseItemCost(typeJson.optJSONObject("itemCost"));
         String typeId = typeJson.getString("id");
         Float temporaryAfterDeploymentSeconds = validateTemporaryGating(typeId,
@@ -101,7 +101,7 @@ public final class SkillTypeLoader {
                 .requiredHullSizes(requiredHullSizes)
                 .flavour(typeJson.optString("flavour", null))
                 .flavourAutomated(typeJson.optString("flavourAutomated", null))
-                .effectText(parseStringArray(typeJson.optJSONArray("effectText")))
+                .effectText(TreeJson.stringList(typeJson.optJSONArray("effectText")))
                 .todo(typeJson.optString("todo", null))
                 .choiceOptionIds(choiceOptionIds)
                 .exclusiveHullModIds(exclusiveHullModIds)
@@ -121,7 +121,7 @@ public final class SkillTypeLoader {
         }
         return new IntegratedEffects(parseEffects(integratedJson.optJSONArray("effects")),
                 parseHullSizeEffects(integratedJson.optJSONArray("hullSizeEffects")),
-                parseStringArray(integratedJson.optJSONArray("effectText")));
+                TreeJson.stringList(integratedJson.optJSONArray("effectText")));
     }
 
     private static ModuleShareOverride parseModuleShareOverride(String typeId, String moduleShare) {
@@ -151,7 +151,7 @@ public final class SkillTypeLoader {
 
     private static Set<HullSize> parseRequiredHullSizes(String typeId, JSONArray hullSizesArray) throws JSONException {
         Set<HullSize> hullSizes = EnumSet.noneOf(HullSize.class);
-        for (String hullSizeName : parseStringArray(hullSizesArray)) {
+        for (String hullSizeName : TreeJson.stringList(hullSizesArray)) {
             HullSize hullSize = ShipHullSizes.byName(hullSizeName);
             if (hullSize == null) {
                 logTypeError(typeId, "lists unknown hull size \"" + hullSizeName + "\" in requiredHullSizes - ignoring it.");
@@ -247,23 +247,6 @@ public final class SkillTypeLoader {
             enumName.append(Character.toUpperCase(c));
         }
         return enumName.toString();
-    }
-
-    static String entryLabel(JSONArray entries, int entryIndex) {
-        JSONObject entry = entries.optJSONObject(entryIndex);
-        String entryId = entry == null ? null : entry.optString("id", null);
-        return entryId != null ? "\"" + entryId + "\"" : "#" + entryIndex;
-    }
-
-    static List<String> parseStringArray(JSONArray stringArray) throws JSONException {
-        List<String> values = new ArrayList<>();
-        if (stringArray == null) {
-            return values;
-        }
-        for (int i = 0; i < stringArray.length(); i++) {
-            values.add(stringArray.getString(i));
-        }
-        return values;
     }
 
     private static List<SkillTypeEffect> parseEffects(JSONArray effectsArray) throws JSONException {

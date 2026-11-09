@@ -1,0 +1,10 @@
+{
+	"skillTypes": [
+		{
+			"id": "atlas_root",
+			"name": "Wormhole Gateway",
+			"icon": "graphics/icons/abilities/exiledSector_outer_reach_atlas.png",
+			"tier": "ROOT"
+		}
+	]
+}

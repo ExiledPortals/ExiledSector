@@ -8,7 +8,7 @@ import { mergeDescriptions, type LabelledDescription, type TooltipContent } from
 import { TOOLTIP_PANEL_CLASS } from '../../shared/tooltipMarkup.ts';
 import { skillTypesFileObject } from '../tree/model/serialization.ts';
 import { HULL_SIZE_OPTIONS } from '../tree/model/types.ts';
-import { useTreeStore } from '../tree/state/treeStore.ts';
+import { shipTreeEditor } from '../tree/state/treeEditor.ts';
 import classes from './TextPage.module.css';
 
 const DEBOUNCE_MS = 300;
@@ -32,7 +32,7 @@ function typeOptions(types: { id: string; name?: string }[]): { value: string; l
 }
 
 function usePreviewTypes(): PreviewTypes | null {
-  const treeTypes = useTreeStore((state) => (state.load.status === 'ready' ? state.document.types : null));
+  const treeTypes = shipTreeEditor.store((state) => (state.load.status === 'ready' ? state.document.types : null));
   const diskTypes = useQuery({
     queryKey: ['text-preview-types'],
     queryFn: async () => (await fetchDataFiles(['types'])).types.content,

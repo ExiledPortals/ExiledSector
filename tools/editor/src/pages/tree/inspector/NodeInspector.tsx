@@ -19,15 +19,15 @@ import {
   type TreeDocument,
   type TreeNode,
 } from '../model/types.ts';
-import { deleteSelection, duplicateNode } from '../state/treeActions.ts';
-import { editDocument, isReservedNodeId, setSelection, useTreeStore } from '../state/treeStore.ts';
+import type { TreeActions } from '../state/treeActions.ts';
+import { useTreeEditor, useTreeState } from '../state/treeEditorContext.ts';
+import { isReservedNodeId } from '../state/treeStore.ts';
 import { CommitColorInput } from './CommitColorInput.tsx';
 import { TagGroupsField } from './TagGroupsField.tsx';
 import { TypeForm, type TypeRecipe } from './TypeForm.tsx';
-import { INSPECTOR_TYPE_SECTIONS } from './typeFormSections.ts';
 
-function editNode(nodeId: string, change: (node: TreeNode, document: TreeDocument) => void): void {
-  editDocument((document) => {
+function editNode(actions: TreeActions, nodeId: string, change: (node: TreeNode, document: TreeDocument) => void): void {
+  actions.editDocument((document) => {
     const node = nodeById(document, nodeId);
     if (node) {
       change(node, document);
@@ -51,6 +51,7 @@ function typeHint(node: TreeNode, document: TreeDocument): string {
 }
 
 function ConnectionList({ node, document }: { node: TreeNode; document: TreeDocument }) {
+  const { actions } = useTreeEditor();
   const nodeIds = useMemo(() => new Set(document.nodes.map((other) => other.id)), [document.nodes]);
   const otherOptions = useMemo(() => document.nodes.filter((other) => other.id !== node.id).map((other) => other.id), [document.nodes, node.id]);
   return (
@@ -71,7 +72,7 @@ function ConnectionList({ node, document }: { node: TreeNode; document: TreeDocu
                 {connectedId}
                 {nodeIds.has(connectedId) ? '' : ' (missing!)'}
               </Text>
-              <ActionIcon size="xs" variant="subtle" color="gray" aria-label="Remove connection" onClick={() => editNode(node.id, (draft, doc) => unlinkNodes(doc, draft, connectedId))}>
+              <ActionIcon size="xs" variant="subtle" color="gray" aria-label="Remove connection" onClick={() => editNode(actions, node.id, (draft, doc) => unlinkNodes(doc, draft, connectedId))}>
                 <IconX size={12} />
               </ActionIcon>
             </Group>
@@ -81,7 +82,7 @@ function ConnectionList({ node, document }: { node: TreeNode; document: TreeDocu
               size="xs"
               aria-label="Hide connector"
               checked={isConnectorHidden(document, node.id, connectedId)}
-              onChange={() => editDocument((doc) => toggleConnectorHidden(doc, node.id, connectedId))}
+              onChange={() => actions.editDocument((doc) => toggleConnectorHidden(doc, node.id, connectedId))}
             />
           </Tooltip>
         </Group>
@@ -95,7 +96,7 @@ function ConnectionList({ node, document }: { node: TreeNode; document: TreeDocu
         limit={60}
         onChange={(otherId) => {
           if (otherId) {
-            editNode(node.id, (draft, doc) => connectNodes(doc, draft, otherId));
+            editNode(actions, node.id, (draft, doc) => connectNodes(doc, draft, otherId));
           }
         }}
       />
@@ -104,6 +105,7 @@ function ConnectionList({ node, document }: { node: TreeNode; document: TreeDocu
 }
 
 function KeystoneFields({ node }: { node: TreeNode }) {
+  const { actions } = useTreeEditor();
   return (
     <Stack gap={6}>
       <Group gap={6} align="flex-end" wrap="nowrap">
@@ -114,7 +116,7 @@ function KeystoneFields({ node }: { node: TreeNode }) {
           placeholder={AURORA_RING_BELT_PATH}
           value={node.ringBeltPath ?? ''}
           onCommit={(text) =>
-            editNode(node.id, (draft) => {
+            editNode(actions, node.id, (draft) => {
               if (text.trim()) {
                 draft.ringBeltPath = text.trim();
               } else {
@@ -127,7 +129,7 @@ function KeystoneFields({ node }: { node: TreeNode }) {
           size="xs"
           targetFolder={null}
           onPicked={(path) => {
-            editNode(node.id, (draft) => {
+            editNode(actions, node.id, (draft) => {
               draft.ringBeltPath = path;
             });
             notifyInfo(`Ring belt art set to "${path}"`);
@@ -140,7 +142,7 @@ function KeystoneFields({ node }: { node: TreeNode }) {
           label="Aurora colour"
           value={node.ringBeltColor || '#8c78ff'}
           onCommit={(colour) =>
-            editNode(node.id, (draft) => {
+            editNode(actions, node.id, (draft) => {
               draft.ringBeltColor = colour;
             })
           }
@@ -152,7 +154,7 @@ function KeystoneFields({ node }: { node: TreeNode }) {
         placeholder={String(KEYSTONE_BELT_DEFAULT_WIDTH)}
         value={node.ringBeltWidth || null}
         onCommit={(width) =>
-          editNode(node.id, (draft) => {
+          editNode(actions, node.id, (draft) => {
             if (width > 0) {
               draft.ringBeltWidth = width;
             } else {
@@ -166,6 +168,7 @@ function KeystoneFields({ node }: { node: TreeNode }) {
 }
 
 function WormholeFields({ node, document }: { node: TreeNode; document: TreeDocument }) {
+  const { actions } = useTreeEditor();
   const partners = document.nodes.filter((other) => other.id !== node.id && tierOf(typeById(document, other.type)) === 'WORMHOLE').map((other) => other.id);
   return (
     <Stack gap={6}>
@@ -174,7 +177,7 @@ function WormholeFields({ node, document }: { node: TreeNode; document: TreeDocu
         label="Wormhole colour"
         value={node.wormholeColor || '#ffffff'}
         onCommit={(colour) =>
-          editNode(node.id, (draft) => {
+          editNode(actions, node.id, (draft) => {
             draft.wormholeColor = colour;
           })
         }
@@ -185,14 +188,16 @@ function WormholeFields({ node, document }: { node: TreeNode; document: TreeDocu
         data={[{ value: '', label: 'None (invalid)' }, ...partners.map((id) => ({ value: id, label: id }))]}
         value={node.pairedWith ?? ''}
         allowDeselect={false}
-        onChange={(partnerId) => editNode(node.id, (draft, doc) => pairWormholes(doc, draft, partnerId ?? ''))}
+        onChange={(partnerId) => editNode(actions, node.id, (draft, doc) => pairWormholes(doc, draft, partnerId ?? ''))}
       />
     </Stack>
   );
 }
 
 export function NodeInspector({ nodeId, vocabulary }: { nodeId: string; vocabulary: Vocabulary }) {
-  const document = useTreeStore((state) => state.document);
+  const editor = useTreeEditor();
+  const { kind, store, actions } = editor;
+  const document = useTreeState((state) => state.document);
   const node = nodeById(document, nodeId);
   const typeOptions = useMemo(() => document.types.map((type) => ({ value: type.id, label: `${type.name} (${type.id})` })), [document.types]);
   if (!node) {
@@ -202,7 +207,7 @@ export function NodeInspector({ nodeId, vocabulary }: { nodeId: string; vocabula
   const tier = tierOf(type);
   const sharedNote = type ? ` - shared by every "${type.id}" node` : '';
   const editType = (recipe: TypeRecipe) =>
-    editDocument((doc) => {
+    actions.editDocument((doc) => {
       const target = typeById(doc, node.type);
       if (target) {
         recipe(target);
@@ -215,12 +220,12 @@ export function NodeInspector({ nodeId, vocabulary }: { nodeId: string; vocabula
       notifyError('Id must be unique and non-empty');
       return;
     }
-    if (isReservedNodeId(useTreeStore.getState(), newId)) {
+    if (isReservedNodeId(store.getState(), newId)) {
       notifyError(`${newId} belonged to a released or retired node. Old saves may still point at it, so pick another id.`);
       return;
     }
-    editNode(node.id, (draft, doc) => renameNode(doc, draft, newId));
-    setSelection({ nodes: [newId] });
+    editNode(actions, node.id, (draft, doc) => renameNode(doc, draft, newId));
+    actions.setSelection({ nodes: [newId] });
   };
 
   return (
@@ -233,14 +238,14 @@ export function NodeInspector({ nodeId, vocabulary }: { nodeId: string; vocabula
           {tier}
         </Badge>
       </Group>
-      {type ? <TypeForm type={type} onEdit={editType} sections={['tags']} vocabulary={vocabulary} allTypes={document.types} note={sharedNote} /> : null}
+      {type && kind.typeSections.nodeHeader.length > 0 ? <TypeForm type={type} onEdit={editType} sections={kind.typeSections.nodeHeader} vocabulary={vocabulary} allTypes={document.types} note={sharedNote} /> : null}
       <TagGroupsField
         label="Node tags (this node only)"
         vocabulary={vocabulary}
         tags={node.tags ?? []}
         groups={NODE_TAG_GROUPS}
         onChange={(tags) =>
-          editNode(node.id, (draft) => {
+          editNode(actions, node.id, (draft) => {
             if (tags.length) {
               draft.tags = tags;
             } else {
@@ -259,7 +264,7 @@ export function NodeInspector({ nodeId, vocabulary }: { nodeId: string; vocabula
         allowDeselect={false}
         onChange={(typeId) => {
           if (typeId) {
-            editNode(node.id, (draft) => {
+            editNode(actions, node.id, (draft) => {
               draft.type = typeId;
             });
           }
@@ -271,7 +276,7 @@ export function NodeInspector({ nodeId, vocabulary }: { nodeId: string; vocabula
           label="X"
           value={node.x}
           onCommit={(value) =>
-            editNode(node.id, (draft) => {
+            editNode(actions, node.id, (draft) => {
               draft.x = value || 0;
             })
           }
@@ -281,7 +286,7 @@ export function NodeInspector({ nodeId, vocabulary }: { nodeId: string; vocabula
           label="Y"
           value={node.y}
           onCommit={(value) =>
-            editNode(node.id, (draft) => {
+            editNode(actions, node.id, (draft) => {
               draft.y = value || 0;
             })
           }
@@ -292,7 +297,7 @@ export function NodeInspector({ nodeId, vocabulary }: { nodeId: string; vocabula
       <Divider />
       {type ? (
         <>
-          <TypeForm type={type} onEdit={editType} sections={INSPECTOR_TYPE_SECTIONS} vocabulary={vocabulary} allTypes={document.types} note={sharedNote} />
+          <TypeForm type={type} onEdit={editType} sections={kind.typeSections.inspector} vocabulary={vocabulary} allTypes={document.types} note={sharedNote} />
           <Divider />
         </>
       ) : null}
@@ -307,8 +312,8 @@ export function NodeInspector({ nodeId, vocabulary }: { nodeId: string; vocabula
           variant="default"
           leftSection={<IconExchange size={14} />}
           onClick={() =>
-            openTypePicker(node.type, (typeId) => {
-              editNode(node.id, (draft) => {
+            openTypePicker(editor, node.type, (typeId) => {
+              editNode(actions, node.id, (draft) => {
                 draft.type = typeId;
               });
               notifyInfo(`Type changed to "${typeId}"`);
@@ -317,7 +322,7 @@ export function NodeInspector({ nodeId, vocabulary }: { nodeId: string; vocabula
         >
           Change type
         </Button>
-        <Button size="xs" variant="default" leftSection={<IconEdit size={14} />} disabled={!type} onClick={() => openTypeEditor(vocabulary, node.type)}>
+        <Button size="xs" variant="default" leftSection={<IconEdit size={14} />} disabled={!type} onClick={() => openTypeEditor(editor, vocabulary, node.type)}>
           Edit type
         </Button>
         {type ? (
@@ -332,11 +337,11 @@ export function NodeInspector({ nodeId, vocabulary }: { nodeId: string; vocabula
             }}
           />
         ) : null}
-        <Button size="xs" variant="default" leftSection={<IconCopy size={14} />} onClick={() => duplicateNode(node.id)}>
+        <Button size="xs" variant="default" leftSection={<IconCopy size={14} />} onClick={() => actions.duplicateNode(node.id)}>
           Duplicate (Ctrl+D)
         </Button>
       </Group>
-      <Button size="xs" color="red" variant="light" leftSection={<IconTrash size={14} />} onClick={deleteSelection}>
+      <Button size="xs" color="red" variant="light" leftSection={<IconTrash size={14} />} onClick={actions.deleteSelection}>
         Delete this node (Q)
       </Button>
     </Stack>

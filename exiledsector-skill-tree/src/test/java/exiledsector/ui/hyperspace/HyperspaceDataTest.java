@@ -9,6 +9,7 @@ import exiledsector.skills.loader.DecorationLoader;
 import exiledsector.skills.loader.SkillTreeLoader;
 import exiledsector.skills.loader.SkillTypeLoader;
 import exiledsector.skills.npc.RealSkillData;
+import exiledsector.skills.tags.SkillTags;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ class HyperspaceDataTest {
         Map<String, SkillType> types = SkillTypeLoader.parseSkillTypes(
                 ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(RealSkillData.TYPES_FILE)));
         nodes = SkillTreeLoader.parseNodes(root, types);
-        Decorations decorations = DecorationLoader.parse(root, RealSkillData.TREE_FILE.toString());
+        Decorations decorations = DecorationLoader.parse(root, RealSkillData.TREE_FILE.toString(), SkillTags::isVolume);
         anchors = HyperspaceAnchor.collect(decorations);
     }
 

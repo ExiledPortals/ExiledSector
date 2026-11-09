@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent } from 'react';
 import { useStaticImages } from '../../../api/images.ts';
 import { useNodeRadii } from '../../../api/nodeRadii.ts';
-import { useVocabulary } from '../../../api/vocabulary.ts';
 import { curveKey, findCurve, setCurveControl, snapCurveToStraightIfClose } from '../model/connectors.ts';
 import {
   angleDegrees,
@@ -28,8 +27,9 @@ import {
 } from '../model/types.ts';
 import { decorationById, dragDecorationHandle } from '../model/decorations.ts';
 import { brokenNodeIds } from '../model/validation.ts';
-import { addAnchorAt, addDecorationAt, clearSelection, fitToScreen, selectOnly, toggleLink, toggleSelected, zoomAtPoint } from '../state/treeActions.ts';
-import { editDocument, setSelection, useTreeStore, type HandleKind, type SelectionKind } from '../state/treeStore.ts';
+import type { DocumentRecipe } from '../state/treeActions.ts';
+import { useTreeEditor, useTreeState, useTreeVocabulary } from '../state/treeEditorContext.ts';
+import type { HandleKind, SelectionKind } from '../state/treeStore.ts';
 import { CanvasOverlays } from './CanvasOverlays.tsx';
 import { DecorationHandleLayer, DecorationLayer } from './DecorationLayers.tsx';
 import classes from './TreeCanvas.module.css';
@@ -58,6 +58,8 @@ interface MoveDrag {
   curves: ConnectorCurve[];
   moved: boolean;
 }
+
+type DocumentEditor = (recipe: DocumentRecipe) => void;
 
 type DragState =
   | { kind: 'pan'; startClientX: number; startClientY: number; startPanX: number; startPanY: number }
@@ -97,7 +99,7 @@ function matchingNodeIds(document: TreeDocument, search: string): Set<string> | 
   return matches;
 }
 
-function applyMove(drag: MoveDrag, world: Point): void {
+function applyMove(editDocument: DocumentEditor, drag: MoveDrag, world: Point): void {
   const deltaX = world.x - drag.startWorld.x;
   const deltaY = world.y - drag.startWorld.y;
   if (Math.abs(deltaX) > 0.5 || Math.abs(deltaY) > 0.5) {
@@ -154,7 +156,7 @@ function applyMove(drag: MoveDrag, world: Point): void {
   });
 }
 
-function applyDecorationHandleDrag(id: string, handle: string, world: Point): void {
+function applyDecorationHandleDrag(editDocument: DocumentEditor, id: string, handle: string, world: Point): void {
   editDocument((document) => {
     const decoration = decorationById(document, id);
     if (decoration) {
@@ -163,7 +165,7 @@ function applyDecorationHandleDrag(id: string, handle: string, world: Point): vo
   });
 }
 
-function applyAnchorHandleDrag(kind: HandleKind, id: string, world: Point): void {
+function applyAnchorHandleDrag(editDocument: DocumentEditor, kind: HandleKind, id: string, world: Point): void {
   editDocument((document) => {
     const anchor = anchorById(document, id);
     if (!anchor) {
@@ -179,7 +181,7 @@ function applyAnchorHandleDrag(kind: HandleKind, id: string, world: Point): void
   });
 }
 
-function cycleAnchorShape(anchorId: string): void {
+function cycleAnchorShape(editDocument: DocumentEditor, anchorId: string): void {
   editDocument((document) => {
     const anchor = anchorById(document, anchorId);
     if (!anchor) {
@@ -203,20 +205,22 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const dragRef = useRef<DragState | null>(null);
   const measuredRef = useRef(false);
+  const { store, actions } = useTreeEditor();
+  const { editDocument, setSelection } = actions;
   const staticImages = useStaticImages();
-  const vocabulary = useVocabulary();
+  const vocabulary = useTreeVocabulary();
   const nodeRadii = useNodeRadii(vocabulary.data?.radiusSizes);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
 
-  const document = useTreeStore((state) => state.document);
-  const view = useTreeStore((state) => state.view);
-  const canvasSize = useTreeStore((state) => state.canvasSize);
-  const mode = useTreeStore((state) => state.mode);
-  const selection = useTreeStore((state) => state.selection);
-  const showLabels = useTreeStore((state) => state.showLabels);
-  const search = useTreeStore((state) => state.search);
-  const activeDrag = useTreeStore((state) => state.activeDrag);
-  const fitRequested = useTreeStore((state) => state.fitRequested);
+  const document = useTreeState((state) => state.document);
+  const view = useTreeState((state) => state.view);
+  const canvasSize = useTreeState((state) => state.canvasSize);
+  const mode = useTreeState((state) => state.mode);
+  const selection = useTreeState((state) => state.selection);
+  const showLabels = useTreeState((state) => state.showLabels);
+  const search = useTreeState((state) => state.search);
+  const activeDrag = useTreeState((state) => state.activeDrag);
+  const fitRequested = useTreeState((state) => state.fitRequested);
 
   const matchIds = useMemo(() => matchingNodeIds(document, search), [document, search]);
   const brokenIds = useMemo(() => brokenNodeIds(document), [document]);
@@ -231,37 +235,37 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
       return;
     }
     const observer = new ResizeObserver(() => {
-      useTreeStore.setState({ canvasSize: { width: frame.clientWidth, height: frame.clientHeight } });
+      store.setState({ canvasSize: { width: frame.clientWidth, height: frame.clientHeight } });
       measuredRef.current = true;
-      if (useTreeStore.getState().fitRequested) {
-        fitToScreen();
-        useTreeStore.setState({ fitRequested: false });
+      if (store.getState().fitRequested) {
+        actions.fitToScreen();
+        store.setState({ fitRequested: false });
       }
     });
     observer.observe(frame);
     const zoomWithWheel = (event: WheelEvent) => {
       event.preventDefault();
       const rect = frame.getBoundingClientRect();
-      zoomAtPoint(event.deltaY < 0 ? 1.1 : 0.9, event.clientX - rect.left, event.clientY - rect.top);
+      actions.zoomAtPoint(event.deltaY < 0 ? 1.1 : 0.9, event.clientX - rect.left, event.clientY - rect.top);
     };
     frame.addEventListener('wheel', zoomWithWheel, { passive: false });
     return () => {
       observer.disconnect();
       frame.removeEventListener('wheel', zoomWithWheel);
     };
-  }, []);
+  }, [store, actions]);
 
   useEffect(() => {
     if (fitRequested && measuredRef.current) {
-      fitToScreen();
-      useTreeStore.setState({ fitRequested: false });
+      actions.fitToScreen();
+      store.setState({ fitRequested: false });
     }
-  }, [fitRequested]);
+  }, [fitRequested, store, actions]);
 
   useEffect(() => {
     const screenToWorld = (clientX: number, clientY: number): Point => {
       const rect = frameRef.current?.getBoundingClientRect();
-      const { view: currentView } = useTreeStore.getState();
+      const { view: currentView } = store.getState();
       const left = rect?.left ?? 0;
       const top = rect?.top ?? 0;
       const centerX = (rect?.width ?? 0) / 2 + currentView.panX;
@@ -276,7 +280,7 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
       }
       if (drag.kind === 'marquee') {
         const rect = frameRef.current?.getBoundingClientRect();
-        useTreeStore.setState({
+        store.setState({
           activeDrag: {
             kind: 'marquee',
             startX: drag.startClientX - (rect?.left ?? 0),
@@ -288,7 +292,7 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
         return;
       }
       if (drag.kind === 'pan') {
-        useTreeStore.setState((state) => ({
+        store.setState((state) => ({
           view: { ...state.view, panX: drag.startPanX + (event.clientX - drag.startClientX), panY: drag.startPanY + (event.clientY - drag.startClientY) },
         }));
         return;
@@ -297,11 +301,11 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
       if (drag.kind === 'curve') {
         editDocument((draft) => setCurveControl(draft, drag.a, drag.b, Math.round(world.x), Math.round(world.y)));
       } else if (drag.kind === 'move') {
-        applyMove(drag, world);
+        applyMove(editDocument, drag, world);
       } else if (drag.kind === 'decorationHandle') {
-        applyDecorationHandleDrag(drag.id, drag.handle, world);
+        applyDecorationHandleDrag(editDocument, drag.id, drag.handle, world);
       } else {
-        applyAnchorHandleDrag(drag.kind, drag.id, world);
+        applyAnchorHandleDrag(editDocument, drag.kind, drag.id, world);
       }
     };
 
@@ -310,7 +314,7 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
       const end = screenToWorld(event.clientX, event.clientY);
       const inside = (item: { x: number; y: number }) =>
         item.x >= Math.min(start.x, end.x) && item.x <= Math.max(start.x, end.x) && item.y >= Math.min(start.y, end.y) && item.y <= Math.max(start.y, end.y);
-      const current = useTreeStore.getState().document;
+      const current = store.getState().document;
       setSelection({
         nodes: current.nodes.filter(inside).map((node) => node.id),
         anchors: current.anchors.filter(inside).map((anchor) => anchor.id),
@@ -329,7 +333,7 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
       } else if (drag.kind === 'curve') {
         editDocument((draft) => snapCurveToStraightIfClose(draft, drag.a, drag.b));
       }
-      useTreeStore.setState({ activeDrag: null });
+      store.setState({ activeDrag: null });
     };
 
     window.addEventListener('pointermove', onPointerMove);
@@ -340,7 +344,7 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
       window.removeEventListener('pointerup', onPointerUp);
       window.removeEventListener('pointercancel', onPointerUp);
     };
-  }, []);
+  }, [store, editDocument, setSelection]);
 
   const worldPoint = (clientX: number, clientY: number): Point => {
     const rect = frameRef.current?.getBoundingClientRect();
@@ -355,7 +359,7 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
   };
 
   const beginMove = (event: ReactPointerEvent) => {
-    const { selection: current, document: currentDocument } = useTreeStore.getState();
+    const { selection: current, document: currentDocument } = store.getState();
     const nodeIds = new Set(current.nodes);
     beginDrag(
       {
@@ -369,23 +373,23 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
       },
       event,
     );
-    useTreeStore.setState({ activeDrag: { kind: 'move', anchorIds: current.anchors, decorationIds: current.decorations } });
+    store.setState({ activeDrag: { kind: 'move', anchorIds: current.anchors, decorationIds: current.decorations } });
   };
 
   const pressSelectable = (kind: SelectionKind, id: string, event: ReactPointerEvent) => {
     if (event.shiftKey) {
-      toggleSelected(kind, id);
+      actions.toggleSelected(kind, id);
       return;
     }
-    if (!useTreeStore.getState().selection[kind].includes(id)) {
-      selectOnly(kind, id);
+    if (!store.getState().selection[kind].includes(id)) {
+      actions.selectOnly(kind, id);
     }
     beginMove(event);
   };
 
   const pressHandle = (kind: HandleKind, id: string, event: ReactPointerEvent) => {
     beginDrag({ kind, id }, event);
-    useTreeStore.setState({ activeDrag: { kind, id } });
+    store.setState({ activeDrag: { kind, id } });
   };
 
   const pressBackground = (event: ReactPointerEvent) => {
@@ -395,13 +399,13 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
     if (mode === 'add') {
       onRequestAddNode(x, y);
     } else if (mode === 'addAnchor') {
-      addAnchorAt(x, y);
+      actions.addAnchorAt(x, y);
     } else if (mode === 'addDecoration') {
-      addDecorationAt(useTreeStore.getState().pendingDecorationKind, x, y, vocabulary.data, staticImages.data?.[0] ?? null);
+      actions.addDecorationAt(store.getState().pendingDecorationKind, x, y, vocabulary.data, staticImages.data?.[0] ?? null);
     } else if (event.shiftKey) {
       beginDrag({ kind: 'marquee', startClientX: event.clientX, startClientY: event.clientY }, event);
     } else {
-      clearSelection();
+      actions.clearSelection();
       beginDrag({ kind: 'pan', startClientX: event.clientX, startClientY: event.clientY, startPanX: view.panX, startPanY: view.panY }, event);
     }
   };
@@ -416,15 +420,15 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
       if (mode === 'add') {
         return;
       }
-      const selectedNodes = useTreeStore.getState().selection.nodes;
+      const selectedNodes = store.getState().selection.nodes;
       if ((event.ctrlKey || event.metaKey) && selectedNodes.length === 1 && selectedNodes[0] !== data.nodeId) {
-        toggleLink(selectedNodes[0], data.nodeId);
+        actions.toggleLink(selectedNodes[0], data.nodeId);
         return;
       }
       pressSelectable('nodes', data.nodeId, event);
     } else if (data.curveA && data.curveB) {
       beginDrag({ kind: 'curve', a: data.curveA, b: data.curveB }, event);
-      useTreeStore.setState({ activeDrag: { kind: 'curve', key: curveKey(data.curveA, data.curveB) } });
+      store.setState({ activeDrag: { kind: 'curve', key: curveKey(data.curveA, data.curveB) } });
     } else if (data.anchorId) {
       pressSelectable('anchors', data.anchorId, event);
     } else if (data.decorationId) {
@@ -432,7 +436,7 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
     } else if (data.decorationHandle && data.decorationHandleOf) {
       const drag = { kind: 'decorationHandle' as const, id: data.decorationHandleOf, handle: data.decorationHandle };
       beginDrag(drag, event);
-      useTreeStore.setState({ activeDrag: drag });
+      store.setState({ activeDrag: drag });
     } else if (data.anchorResize) {
       pressHandle('anchorResize', data.anchorResize, event);
     } else if (data.anchorRotate) {
@@ -451,7 +455,7 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
   const onClick = (event: ReactMouseEvent<SVGSVGElement>) => {
     const anchorId = (event.target as SVGElement).dataset.anchorShapeCycle;
     if (anchorId) {
-      cycleAnchorShape(anchorId);
+      cycleAnchorShape(editDocument, anchorId);
     }
   };
 

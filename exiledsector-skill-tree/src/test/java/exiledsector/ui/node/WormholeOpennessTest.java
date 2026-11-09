@@ -55,25 +55,25 @@ class WormholeOpennessTest {
         when(data.isAllocated("wormhole_a")).thenReturn(true);
 
         assertEquals(0f, openness.of("wormhole_a"), EPSILON);
-        openness.advance(0.01f, data);
+        openness.advance(0.01f, SkillTree.topology().wormholes(), data::isAllocated);
 
         assertEquals(1f, openness.of("wormhole_a"), EPSILON);
     }
 
     @Test
     void allocatingOpensAndDeallocatingClosesOverOneSecond() {
-        openness.advance(0.01f, data);
+        openness.advance(0.01f, SkillTree.topology().wormholes(), data::isAllocated);
         when(data.isAllocated("wormhole_a")).thenReturn(true);
 
-        openness.advance(0.25f * WormholeOpenness.OPEN_SECONDS, data);
+        openness.advance(0.25f * WormholeOpenness.OPEN_SECONDS, SkillTree.topology().wormholes(), data::isAllocated);
         assertEquals(0.25f, openness.of("wormhole_a"), EPSILON);
-        openness.advance(5f, data);
+        openness.advance(5f, SkillTree.topology().wormholes(), data::isAllocated);
         assertEquals(1f, openness.of("wormhole_a"), EPSILON);
 
         when(data.isAllocated("wormhole_a")).thenReturn(false);
-        openness.advance(0.5f * WormholeOpenness.OPEN_SECONDS, data);
+        openness.advance(0.5f * WormholeOpenness.OPEN_SECONDS, SkillTree.topology().wormholes(), data::isAllocated);
         assertEquals(0.5f, openness.of("wormhole_a"), EPSILON);
-        openness.advance(5f, data);
+        openness.advance(5f, SkillTree.topology().wormholes(), data::isAllocated);
         assertEquals(0f, openness.of("wormhole_a"), EPSILON);
     }
 
@@ -81,8 +81,8 @@ class WormholeOpennessTest {
     void onlyWormholeNodesAreTracked() {
         when(data.isAllocated("regular")).thenReturn(true);
 
-        openness.advance(1f, data);
-        openness.advance(1f, data);
+        openness.advance(1f, SkillTree.topology().wormholes(), data::isAllocated);
+        openness.advance(1f, SkillTree.topology().wormholes(), data::isAllocated);
 
         assertEquals(0f, openness.of("regular"), EPSILON);
     }

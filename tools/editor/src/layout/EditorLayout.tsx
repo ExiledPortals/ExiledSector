@@ -1,5 +1,5 @@
 import { ActionIcon, AppShell, Group, NavLink, Stack, Text, Tooltip, useMantineColorScheme } from '@mantine/core';
-import { IconBinaryTree, IconCpu, IconLanguage, IconMoon, IconPhoto, IconSun } from '@tabler/icons-react';
+import { IconBinaryTree, IconCpu, IconLanguage, IconMoon, IconPhoto, IconPlanet, IconSun } from '@tabler/icons-react';
 import { useEffect, type ComponentType } from 'react';
 import { NavLink as RouterNavLink, Outlet, useBlocker } from 'react-router';
 import { confirmAction } from '../shared/dialogs.tsx';
@@ -15,6 +15,7 @@ interface EditorPageLink {
 
 const PAGE_LINKS: EditorPageLink[] = [
   { path: '/tree', label: 'Skill tree', description: 'Nodes, types and layout', icon: IconBinaryTree },
+  { path: '/atlas-tree', label: 'Atlas Tree', description: 'Atlas nodes, types and volumes', icon: IconPlanet },
   { path: '/images', label: 'Images', description: 'Browse, recolour and crop', icon: IconPhoto },
   { path: '/items', label: 'Items', description: 'Hull items, star charts, socketables', icon: IconCpu },
   { path: '/text', label: 'Text', description: 'English wording and tooltips', icon: IconLanguage },

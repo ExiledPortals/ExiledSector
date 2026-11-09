@@ -517,14 +517,14 @@ function isDecorationKind(value: unknown): value is DecorationKind {
 
 export const RETIRED_DECORATION_LISTS = ['stars', 'staticImages', 'ringBelts', 'threatUnits'];
 
-export function parseDecorations(entries: unknown): Decoration[] {
+export function parseDecorations(entries: unknown, fileName: string): Decoration[] {
   if (!Array.isArray(entries)) {
     return [];
   }
   return entries.flatMap((entry): Decoration[] => {
     const json = (entry ?? {}) as JsonRecord;
     if (!isDecorationKind(json.kind)) {
-      throw new Error(`ship_skill_tree.json has decoration "${String(json.id)}" of unknown kind "${String(json.kind)}"; the editor would drop it on save`);
+      throw new Error(`${fileName} has decoration "${String(json.id)}" of unknown kind "${String(json.kind)}"; the editor would drop it on save`);
     }
     const base = {
       id: typeof json.id === 'string' ? json.id : '',

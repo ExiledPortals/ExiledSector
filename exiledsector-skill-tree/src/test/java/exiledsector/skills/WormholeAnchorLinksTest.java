@@ -3,6 +3,7 @@ package exiledsector.skills;
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.layout.SkillNodeDecoration;
+import exiledsector.skills.layout.TreeTopology;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -258,7 +259,7 @@ class WormholeAnchorLinksTest {
 
         ShipTrees.openAnchorWormholes(data, 100);
 
-        assertEquals(List.of(new SkillTreeTopology.WormholePair(socket, exit)), ShipTreeLinks.wormholePairs(data, topology));
+        assertEquals(List.of(new TreeTopology.WormholePair<>(socket, exit)), ShipTreeLinks.wormholePairs(data, topology));
     }
 
     @Test

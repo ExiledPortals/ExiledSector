@@ -1,6 +1,6 @@
 # The Outer Reaches (atlas)
 
-Status: in progress. Steps 1 to 5, 7 to 10, 12, 15, 16 and 18 to 20 are built; 6, 11 and 17 are partly built (see the build order). New anomalies have their own plans in `anomalies/`; atlas points and passives will get their own.
+Status: in progress. Steps 1 to 5, 7 to 10, 12, 15, 16 and 18 to 20 are built; 6, 11 and 17 are partly built (see the build order). New anomalies have their own plans in `anomalies/`; atlas points and passives are planned in `atlas_skill_tree.md`.
 
 In game the atlas is called The Outer Reaches: the uncharted space beyond the Persean Sector that the Wormhole Gateway reaches. Its button is "Outer Reach Atlas". Code and this plan keep the short word atlas.
 

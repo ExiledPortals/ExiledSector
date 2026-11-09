@@ -74,7 +74,7 @@ describe('orbit decorations', () => {
     const [serpent, hypershunt] = parseDecorations([
       { kind: 'serpent', id: 's', x: 1, y: 2, orbitRadius: 10, orbitSeconds: 20 },
       { kind: 'hypershunt', id: 'h', x: 1, y: 2, orbitRadius: 10, orbitSeconds: 20, size: 300 },
-    ]);
+    ], 'ship_skill_tree.json');
     expect(serpent).toMatchObject({ clockwise: true, startAngle: 0 });
     expect(hypershunt).toMatchObject({ clockwise: false, startAngle: 0 });
 

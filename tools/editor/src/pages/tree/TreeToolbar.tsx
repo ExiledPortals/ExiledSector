@@ -1,11 +1,11 @@
-import { Button, Group, Kbd, SegmentedControl, Select, Switch, Text, TextInput, Tooltip } from '@mantine/core';
+import { Button, Group, Kbd, SegmentedControl, Switch, Text, TextInput, Tooltip } from '@mantine/core';
 import { IconDeviceFloppy, IconRefresh, IconSearch } from '@tabler/icons-react';
+import type { ReactNode } from 'react';
 import type { Vocabulary } from '../../api/vocabulary.ts';
 import { DECORATION_KIND_ORDER, DECORATION_KINDS, type DecorationKind } from './model/decorations.ts';
-import { ANCHOR_SHAPE_LABELS, ANCHOR_SHAPES, HULL_SIZE_OPTIONS, type AnchorShape } from './model/types.ts';
-import { setMode } from './state/treeActions.ts';
-import { reloadTreeFromDisk, saveTree } from './state/treePersistence.ts';
-import { useTreeStore, type EditorMode } from './state/treeStore.ts';
+import { ANCHOR_SHAPE_LABELS, ANCHOR_SHAPES, type AnchorShape } from './model/types.ts';
+import { useTreeEditor, useTreeState } from './state/treeEditorContext.ts';
+import type { EditorMode } from './state/treeStore.ts';
 
 const MODES: { value: EditorMode; label: string; key: string }[] = [
   { value: 'select', label: 'Select / Move', key: 'A' },
@@ -14,33 +14,31 @@ const MODES: { value: EditorMode; label: string; key: string }[] = [
   { value: 'addDecoration', label: 'Add decoration', key: 'F' },
 ];
 
-const TOOLTIP_HULL_SIZES = [{ value: '', label: 'All sizes' }, ...HULL_SIZE_OPTIONS.map((option) => ({ value: option.value, label: option.value === 'CAPITAL_SHIP' ? 'Capital ship' : option.label }))];
-
 interface TreeToolbarProps {
   vocabulary: Vocabulary | undefined;
-  tooltipHullSize: string;
-  onTooltipHullSize: (hullSize: string) => void;
+  children?: ReactNode;
 }
 
-export function TreeToolbar({ vocabulary, tooltipHullSize, onTooltipHullSize }: TreeToolbarProps) {
-  const mode = useTreeStore((state) => state.mode);
-  const pendingAnchorShape = useTreeStore((state) => state.pendingAnchorShape);
-  const pendingDecorationKind = useTreeStore((state) => state.pendingDecorationKind);
-  const search = useTreeStore((state) => state.search);
-  const showLabels = useTreeStore((state) => state.showLabels);
-  const nodeCount = useTreeStore((state) => state.document.nodes.length);
-  const typeCount = useTreeStore((state) => state.document.types.length);
-  const zoom = useTreeStore((state) => state.view.zoom);
-  const dirty = useTreeStore((state) => state.dirty);
-  const saving = useTreeStore((state) => state.saving);
-  const ready = useTreeStore((state) => state.load.status === 'ready');
+export function TreeToolbar({ vocabulary, children }: TreeToolbarProps) {
+  const { store, actions, persistence } = useTreeEditor();
+  const mode = useTreeState((state) => state.mode);
+  const pendingAnchorShape = useTreeState((state) => state.pendingAnchorShape);
+  const pendingDecorationKind = useTreeState((state) => state.pendingDecorationKind);
+  const search = useTreeState((state) => state.search);
+  const showLabels = useTreeState((state) => state.showLabels);
+  const nodeCount = useTreeState((state) => state.document.nodes.length);
+  const typeCount = useTreeState((state) => state.document.types.length);
+  const zoom = useTreeState((state) => state.view.zoom);
+  const dirty = useTreeState((state) => state.dirty);
+  const saving = useTreeState((state) => state.saving);
+  const ready = useTreeState((state) => state.load.status === 'ready');
 
   return (
     <Group px="md" py={6} gap="sm" wrap="wrap">
       <SegmentedControl
         size="xs"
         value={mode}
-        onChange={(value) => setMode(value as EditorMode)}
+        onChange={(value) => actions.setMode(value as EditorMode)}
         data={MODES.map((entry) => ({
           value: entry.value,
           label: (
@@ -55,7 +53,7 @@ export function TreeToolbar({ vocabulary, tooltipHullSize, onTooltipHullSize }: 
         <SegmentedControl
           size="xs"
           value={pendingAnchorShape}
-          onChange={(value) => useTreeStore.setState({ pendingAnchorShape: value as AnchorShape })}
+          onChange={(value) => store.setState({ pendingAnchorShape: value as AnchorShape })}
           data={ANCHOR_SHAPES.map((shape) => ({ value: shape, label: ANCHOR_SHAPE_LABELS[shape] }))}
         />
       ) : null}
@@ -63,7 +61,7 @@ export function TreeToolbar({ vocabulary, tooltipHullSize, onTooltipHullSize }: 
         <SegmentedControl
           size="xs"
           value={pendingDecorationKind}
-          onChange={(value) => useTreeStore.setState({ pendingDecorationKind: value as DecorationKind })}
+          onChange={(value) => store.setState({ pendingDecorationKind: value as DecorationKind })}
           data={DECORATION_KIND_ORDER.map((kind) => ({ value: kind, label: DECORATION_KINDS[kind].label }))}
           aria-label="Decoration kind"
         />
@@ -74,23 +72,21 @@ export function TreeToolbar({ vocabulary, tooltipHullSize, onTooltipHullSize }: 
         placeholder="Search node, type name or tag..."
         leftSection={<IconSearch size={14} />}
         value={search}
-        onChange={(event) => useTreeStore.setState({ search: event.currentTarget.value })}
+        onChange={(event) => store.setState({ search: event.currentTarget.value })}
       />
-      <Switch size="xs" label="Labels" checked={showLabels} onChange={(event) => useTreeStore.setState({ showLabels: event.currentTarget.checked })} />
-      <Tooltip label="Hull size used by the in-game tooltip preview (hover a node, F1 for details)">
-        <Select size="xs" w={130} data={TOOLTIP_HULL_SIZES} value={tooltipHullSize} onChange={(value) => onTooltipHullSize(value ?? '')} allowDeselect={false} />
-      </Tooltip>
+      <Switch size="xs" label="Labels" checked={showLabels} onChange={(event) => store.setState({ showLabels: event.currentTarget.checked })} />
+      {children}
       <Text size="xs" c="dimmed" ff="monospace" ml="auto">
         {nodeCount} nodes - {typeCount} types - zoom {zoom.toFixed(2)}x
       </Text>
       <Text size="xs" c={dirty ? 'yellow' : 'dimmed'}>
         {dirty ? 'Unsaved changes' : ready ? 'Saved' : ''}
       </Text>
-      <Button size="xs" variant="default" leftSection={<IconRefresh size={14} />} disabled={saving} onClick={() => void reloadTreeFromDisk()}>
+      <Button size="xs" variant="default" leftSection={<IconRefresh size={14} />} disabled={saving} onClick={() => void persistence.reloadTreeFromDisk()}>
         Reload from disk
       </Button>
       <Tooltip label="Disabled until the tree files and the editor vocabulary have loaded" disabled={ready && Boolean(vocabulary)}>
-        <Button size="xs" leftSection={<IconDeviceFloppy size={14} />} loading={saving} disabled={!ready || !vocabulary} onClick={() => void saveTree(vocabulary)}>
+        <Button size="xs" leftSection={<IconDeviceFloppy size={14} />} loading={saving} disabled={!ready || !vocabulary} onClick={() => void persistence.saveTree(vocabulary)}>
           Save to project
         </Button>
       </Tooltip>

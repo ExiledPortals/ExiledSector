@@ -38,6 +38,24 @@ function validateWormholes(document: TreeDocument, issues: string[]): void {
   }
 }
 
+function validateVolumes(document: TreeDocument, issues: string[]): void {
+  const seen = new Set<string>();
+  for (const volume of document.volumes) {
+    if (seen.has(volume)) {
+      issues.push(`Volume "${volume}" is declared more than once`);
+    }
+    seen.add(volume);
+  }
+}
+
+function validateTiers(document: TreeDocument, vocabulary: Vocabulary, issues: string[]): void {
+  for (const type of document.types) {
+    if (type.tier && !vocabulary.tiers.includes(type.tier)) {
+      issues.push(`Type "${type.id}" has tier "${type.tier}", which this tree does not use`);
+    }
+  }
+}
+
 function validateTags(document: TreeDocument, vocabulary: Vocabulary, issues: string[]): void {
   for (const node of document.nodes) {
     const nodeTags = node.tags ?? [];
@@ -113,7 +131,9 @@ export function validateTree(document: TreeDocument, vocabulary: Vocabulary | nu
       }
     }
   }
+  validateVolumes(document, issues);
   if (vocabulary) {
+    validateTiers(document, vocabulary, issues);
     validateTags(document, vocabulary, issues);
   }
   return issues;

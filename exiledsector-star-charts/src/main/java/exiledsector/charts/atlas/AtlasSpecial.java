@@ -45,9 +45,6 @@ public record AtlasSpecial(String id, Kind kind, Placement placement, float chan
                 default -> {
                 }
             }
-            if (this != UNIQUE) {
-                state.addAtlasPoints(1);
-            }
         }
 
         public static Kind parse(String text) {

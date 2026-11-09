@@ -3,6 +3,7 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { lineEndingOf, withLineEnding } from '../../../shared/lineEndings.ts';
 import { parseTreeDocument, serializeTreeFiles, serializeType } from './serialization.ts';
+import { SHIP_TREE_FILES } from './treeFiles.ts';
 
 const BYTE_ORDER_MARK = String.fromCharCode(0xfeff);
 const PROJECT_ROOT = path.resolve(import.meta.dirname, '../../../../../..');
@@ -16,8 +17,8 @@ describe('tree files round-trip', () => {
   it('serialises skill_types.json and ship_skill_tree.json back to the same bytes', () => {
     const typesText = readProjectFile('data/skilltrees/skill_types.json');
     const treeText = readProjectFile('data/skilltrees/ship_skill_tree.json');
-    const document = parseTreeDocument(typesText, treeText);
-    const texts = serializeTreeFiles(document, { types: lineEndingOf(typesText), tree: lineEndingOf(treeText) });
+    const document = parseTreeDocument(SHIP_TREE_FILES, typesText, treeText);
+    const texts = serializeTreeFiles(SHIP_TREE_FILES, document, { types: lineEndingOf(typesText), tree: lineEndingOf(treeText) });
     expect(texts.types).toBe(typesText);
     expect(texts.tree).toBe(treeText);
   });
@@ -30,7 +31,7 @@ describe('tree files round-trip', () => {
     const withoutDecorations = Object.fromEntries(Object.entries(treeJson).filter(([key]) => key !== 'decorations'));
     for (const json of [treeJson, withoutDecorations]) {
       const text = withLineEnding(JSON.stringify(json, null, '\t'), lineEnding);
-      const texts = serializeTreeFiles(parseTreeDocument(typesText, text), { types: lineEndingOf(typesText), tree: lineEnding });
+      const texts = serializeTreeFiles(SHIP_TREE_FILES, parseTreeDocument(SHIP_TREE_FILES, typesText, text), { types: lineEndingOf(typesText), tree: lineEnding });
       expect(texts.tree).toBe(text);
     }
   });
@@ -86,8 +87,8 @@ describe('decoration serialisation', () => {
   const nodes = [{ id: 'a', type: 'small', connectedTo: [], x: 0, y: 0 }];
 
   function serializedDecorations(decorations: Record<string, unknown>[]): Record<string, unknown>[] {
-    const document = parseTreeDocument(typesText, JSON.stringify({ nodes, decorations }));
-    const tree = JSON.parse(serializeTreeFiles(document, { types: '\n', tree: '\n' }).tree) as Record<string, unknown>;
+    const document = parseTreeDocument(SHIP_TREE_FILES, typesText, JSON.stringify({ nodes, decorations }));
+    const tree = JSON.parse(serializeTreeFiles(SHIP_TREE_FILES, document, { types: '\n', tree: '\n' }).tree) as Record<string, unknown>;
     return (tree.decorations ?? []) as Record<string, unknown>[];
   }
 
@@ -117,7 +118,7 @@ describe('decoration serialisation', () => {
     expect(out[0]).toEqual({ kind: 'threatUnit', id: 'threat_unit_2', x: 3, y: 4, unitType: 'fabricator', length: 600 });
     expect(out[1]).toEqual({ kind: 'serpent', id: 'plain', x: 0, y: 0, orbitRadius: 500, orbitSeconds: 100, clockwise: true });
     expect(out[2]).toEqual({ kind: 'hypershunt', id: 'still', x: 0, y: 0, orbitRadius: 1100, orbitSeconds: 550, size: 300 });
-    const empty = JSON.parse(serializeTreeFiles(parseTreeDocument(typesText, JSON.stringify({ nodes })), { types: '\n', tree: '\n' }).tree) as Record<string, unknown>;
+    const empty = JSON.parse(serializeTreeFiles(SHIP_TREE_FILES, parseTreeDocument(SHIP_TREE_FILES, typesText, JSON.stringify({ nodes })), { types: '\n', tree: '\n' }).tree) as Record<string, unknown>;
     expect(empty).not.toHaveProperty('decorations');
   });
 
@@ -140,7 +141,7 @@ describe('decoration serialisation', () => {
   });
 
   it('refuses to load an unknown kind or a retired per-kind list rather than dropping them on save', () => {
-    expect(() => parseTreeDocument(typesText, JSON.stringify({ nodes, decorations: [{ kind: 'comet', id: 'c', x: 0, y: 0 }] }))).toThrow(/unknown kind "comet"/);
-    expect(() => parseTreeDocument(typesText, JSON.stringify({ nodes, stars: [{ id: 's', x: 0, y: 0, radius: 100 }] }))).toThrow(/still has stars/);
+    expect(() => parseTreeDocument(SHIP_TREE_FILES, typesText, JSON.stringify({ nodes, decorations: [{ kind: 'comet', id: 'c', x: 0, y: 0 }] }))).toThrow(/unknown kind "comet"/);
+    expect(() => parseTreeDocument(SHIP_TREE_FILES, typesText, JSON.stringify({ nodes, stars: [{ id: 's', x: 0, y: 0, radius: 100 }] }))).toThrow(/still has stars/);
   });
 });

@@ -1,5 +1,7 @@
 package exiledsector.skills.tags;
 
+import exiledsector.skills.layout.TreeTags;
+
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -42,6 +44,10 @@ public final class SkillTags {
     public static final List<String> ALL = Stream.of(THEME, VOLUME, REQUIREMENT, GATE, RULE).flatMap(List::stream).toList();
 
     private SkillTags() {
+    }
+
+    public static TreeTags treeTags(List<String> tags) {
+        return TreeTags.of(tags, SkillTags::isVolume);
     }
 
     public static boolean isVolume(String tag) {

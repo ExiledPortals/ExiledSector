@@ -32,9 +32,8 @@ class VolumeToggleDataTest {
                 ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(RealSkillData.TYPES_FILE)));
         List<SkillNode> nodes = SkillTreeLoader.parseNodes(root, types);
         return new SkillTreeLoader.ParsedTree(nodes, nodes.size(), SkillTreeLoader.parseConnectorCurves(root),
-                SkillTreeLoader.parseHiddenConnectors(root), DecorationLoader.parse(root, RealSkillData.TREE_FILE.toString()));
+                SkillTreeLoader.parseHiddenConnectors(root), DecorationLoader.parse(root, RealSkillData.TREE_FILE.toString(), SkillTags::isVolume));
     }
-
 
     @Test
     void everyDecorationCarriesExactlyOneVolumeTag() throws Exception {

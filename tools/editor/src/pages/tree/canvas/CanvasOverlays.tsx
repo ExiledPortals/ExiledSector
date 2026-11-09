@@ -1,17 +1,17 @@
 import { ActionIcon, Badge, Stack, Tooltip } from '@mantine/core';
 import { IconAlertTriangle, IconFocusCentered, IconMaximize, IconMinus, IconPlus } from '@tabler/icons-react';
 import { useMemo } from 'react';
-import { useVocabulary } from '../../../api/vocabulary.ts';
 import { showIssues } from '../../../shared/dialogs.tsx';
 import { validateTree } from '../model/validation.ts';
-import { centerOnOrigin, fitToScreen, zoomBy } from '../state/treeActions.ts';
-import { useTreeStore } from '../state/treeStore.ts';
+import { useTreeEditor, useTreeState, useTreeVocabulary } from '../state/treeEditorContext.ts';
+import { capitalisedLabel } from '../treeKinds.ts';
 import classes from './TreeCanvas.module.css';
 
 function IssuesBadge() {
-  const document = useTreeStore((state) => state.document);
-  const replacedNodeIds = useTreeStore((state) => state.replacedNodeIds);
-  const vocabulary = useVocabulary();
+  const { kind } = useTreeEditor();
+  const document = useTreeState((state) => state.document);
+  const replacedNodeIds = useTreeState((state) => state.replacedNodeIds);
+  const vocabulary = useTreeVocabulary();
   const issues = useMemo(
     () => validateTree(document, vocabulary.data ?? null, replacedNodeIds),
     [document, vocabulary.data, replacedNodeIds],
@@ -27,7 +27,7 @@ function IssuesBadge() {
       size="lg"
       leftSection={<IconAlertTriangle size={14} />}
       style={{ cursor: 'pointer', textTransform: 'none' }}
-      onClick={() => showIssues('Skill tree issues', issues)}
+      onClick={() => showIssues(`${capitalisedLabel(kind)} issues`, issues)}
     >
       {issues.length} issue{issues.length > 1 ? 's' : ''} - click to view
     </Badge>
@@ -35,6 +35,7 @@ function IssuesBadge() {
 }
 
 function ZoomControls() {
+  const { zoomBy, fitToScreen, centerOnOrigin } = useTreeEditor().actions;
   return (
     <Stack className={classes.overlayBottomRight} gap={6}>
       <Tooltip label="Zoom in" position="left">

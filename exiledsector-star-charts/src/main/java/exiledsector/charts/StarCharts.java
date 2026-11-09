@@ -24,6 +24,7 @@ import exiledsector.charts.run.ChartRunScript;
 import exiledsector.charts.run.cleanup.ChartDefenderTallies;
 import exiledsector.charts.run.cleanup.ChartLoadSweep;
 import exiledsector.charts.run.diagnostics.ChartSoakScript;
+import exiledsector.charts.tree.AtlasTreeData;
 import exiledsector.items.ItemStore;
 import exiledsector.items.RetiredUniqueCharts;
 import exiledsector.ui.chart.ChartInfoTab;
@@ -85,5 +86,6 @@ public final class StarCharts {
         ChartAnomalies.all().forEach(ChartAnomaly::loadData);
         ChartFeatures.load();
         AtlasData.load();
+        AtlasTreeData.load();
     }
 }

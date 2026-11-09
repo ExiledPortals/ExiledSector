@@ -101,6 +101,7 @@ export interface OrbitAnchor {
 
 export interface TreeDocument {
   types: SkillType[];
+  volumes: string[];
   nodes: TreeNode[];
   curves: ConnectorCurve[];
   hiddenConnectors: NodePair[];

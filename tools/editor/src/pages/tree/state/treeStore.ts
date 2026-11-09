@@ -1,5 +1,4 @@
-import { produce, type Draft } from 'immer';
-import { create } from 'zustand';
+import { create, type StoreApi, type UseBoundStore } from 'zustand';
 import { registerUnloadCheck } from '../../../shared/unsavedChanges.ts';
 import type { DecorationKind } from '../model/decorations.ts';
 import type { TreeLineEndings } from '../model/serialization.ts';
@@ -52,49 +51,45 @@ export interface TreeStoreState {
 
 export const EMPTY_SELECTION: Selection = { nodes: [], anchors: [], decorations: [] };
 
-export const EMPTY_DOCUMENT: TreeDocument = { types: [], nodes: [], curves: [], hiddenConnectors: [], anchors: [], decorations: [] };
+export const EMPTY_DOCUMENT: TreeDocument = { types: [], volumes: [], nodes: [], curves: [], hiddenConnectors: [], anchors: [], decorations: [] };
 
 export const MIN_ZOOM = 0.02;
 export const MAX_ZOOM = 3;
 
-export const useTreeStore = create<TreeStoreState>(() => ({
-  load: { status: 'idle' },
-  document: EMPTY_DOCUMENT,
-  baseHashes: {},
-  lineEndings: { types: '\n', tree: '\n' },
-  dirty: false,
-  revision: 0,
-  saving: false,
-  view: { panX: 0, panY: 0, zoom: 0.55 },
-  canvasSize: { width: 800, height: 600 },
-  mode: 'select',
-  pendingAnchorShape: 'circle',
-  pendingDecorationKind: 'star',
-  selection: EMPTY_SELECTION,
-  showLabels: true,
-  search: '',
-  activeDrag: null,
-  fitRequested: false,
-  replacedNodeIds: new Set<string>(),
-  releasedNodeIds: new Set<string>(),
-}));
+export type TreeStore = UseBoundStore<StoreApi<TreeStoreState>>;
+
+function initialTreeState(): TreeStoreState {
+  return {
+    load: { status: 'idle' },
+    document: EMPTY_DOCUMENT,
+    baseHashes: {},
+    lineEndings: { types: '\n', tree: '\n' },
+    dirty: false,
+    revision: 0,
+    saving: false,
+    view: { panX: 0, panY: 0, zoom: 0.55 },
+    canvasSize: { width: 800, height: 600 },
+    mode: 'select',
+    pendingAnchorShape: 'circle',
+    pendingDecorationKind: 'star',
+    selection: EMPTY_SELECTION,
+    showLabels: true,
+    search: '',
+    activeDrag: null,
+    fitRequested: false,
+    replacedNodeIds: new Set<string>(),
+    releasedNodeIds: new Set<string>(),
+  };
+}
+
+export function createTreeStore(): TreeStore {
+  const store = create<TreeStoreState>(initialTreeState);
+  registerUnloadCheck(() => store.getState().dirty);
+  return store;
+}
 
 export function isReservedNodeId(state: Pick<TreeStoreState, 'replacedNodeIds' | 'releasedNodeIds'>, nodeId: string): boolean {
   return state.replacedNodeIds.has(nodeId) || state.releasedNodeIds.has(nodeId);
-}
-
-registerUnloadCheck(() => useTreeStore.getState().dirty);
-
-export function editDocument(recipe: (document: Draft<TreeDocument>) => void): void {
-  const state = useTreeStore.getState();
-  const next = produce(state.document, recipe);
-  if (next !== state.document) {
-    useTreeStore.setState({ document: next, dirty: true, revision: state.revision + 1 });
-  }
-}
-
-export function setSelection(selection: Partial<Selection>): void {
-  useTreeStore.setState({ selection: { ...EMPTY_SELECTION, ...selection } });
 }
 
 export function selectionCount(selection: Selection): number {

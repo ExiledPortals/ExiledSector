@@ -6,7 +6,7 @@ import { TOOLTIP_PANEL_CLASS } from '../../shared/tooltipMarkup.ts';
 import { mergeDescriptions, type Described, type LabelledDescription, type TooltipContent } from '../../shared/tooltipContent.ts';
 import { skillTypesFileObject } from './model/serialization.ts';
 import { HULL_SIZE_OPTIONS, nodeById } from './model/types.ts';
-import { useTreeStore } from './state/treeStore.ts';
+import { shipTreeEditor } from './state/treeEditor.ts';
 import classes from './GameTooltip.module.css';
 
 const SHOW_DELAY_MS = 250;
@@ -30,7 +30,7 @@ function hoveredTypeId(target: EventTarget | null): string | null {
   if (element.dataset.typeId) {
     return element.dataset.typeId;
   }
-  return nodeById(useTreeStore.getState().document, element.dataset.nodeId ?? '')?.type ?? null;
+  return nodeById(shipTreeEditor.store.getState().document, element.dataset.nodeId ?? '')?.type ?? null;
 }
 
 export function GameTooltip({ hullSize }: { hullSize: string }) {
@@ -77,7 +77,7 @@ export function GameTooltip({ hullSize }: { hullSize: string }) {
       }
       state.serial++;
       const serial = state.serial;
-      const typesJson = JSON.stringify(skillTypesFileObject(useTreeStore.getState().document.types));
+      const typesJson = JSON.stringify(skillTypesFileObject(shipTreeEditor.store.getState().document.types));
       const typesKey = `${typesJson.length}|${hashText(typesJson)}|${stringsRevision()}`;
       const sizes = hullSizeRef.current ? HULL_SIZE_OPTIONS.filter((option) => option.value === hullSizeRef.current) : HULL_SIZE_OPTIONS;
       const entries: LabelledDescription[] = [];

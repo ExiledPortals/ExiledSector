@@ -21,6 +21,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeTopology;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.layout.TreeTopology;
 import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.skills.template.AutoAllocateRun;
 import exiledsector.skills.template.SkillTreeTemplate;
@@ -262,7 +263,7 @@ public final class TreeAllocationSession {
         return ShipTreeLinks.wormholePartner(allocator.data(), node);
     }
 
-    public List<SkillTreeTopology.WormholePair> wormholePairs() {
+    public List<TreeTopology.WormholePair<SkillNode>> wormholePairs() {
         return ShipTreeLinks.wormholePairs(viewSnapshot().skillData(), SkillTree.topology());
     }
 

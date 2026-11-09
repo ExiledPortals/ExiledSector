@@ -9,9 +9,8 @@ import { readRepositoryFile, startTestServer, type TestServer } from '../../test
 import { openAddNode, openTypeEditor, openTypePicker } from './dialogs/treeDialogs.tsx';
 import { DECORATION_KINDS, decorationById, decorationsOfKind } from './model/decorations.ts';
 import { nodeById, tierOf, typeById } from './model/types.ts';
-import { addNodeOfType, duplicateNode, fitToScreen, selectOnly, setMode } from './state/treeActions.ts';
-import { loadTree, saveTree } from './state/treePersistence.ts';
-import { EMPTY_DOCUMENT, EMPTY_SELECTION, isReservedNodeId, setSelection, useTreeStore } from './state/treeStore.ts';
+import { shipTreeEditor } from './state/treeEditor.ts';
+import { EMPTY_DOCUMENT, EMPTY_SELECTION, isReservedNodeId } from './state/treeStore.ts';
 import { TreePage } from './TreePage.tsx';
 
 const TYPES_FILE = 'data/skilltrees/skill_types.json';
@@ -21,6 +20,9 @@ const REPLACEMENTS_FILE = 'data/config/exiledSector/node_replacements.csv';
 const RELEASED_NODES_FILE = 'exiledsector-skill-tree/src/test/resources/released_skill_nodes.json';
 const NODE_RADII_FILE = 'data/config/exiledSector/node_radii.json';
 const vocabulary = buildVocabulary(JSON.parse(readRepositoryFile(VOCABULARY_FILE)));
+const shipTreeStore = shipTreeEditor.store;
+const { addNodeOfType, duplicateNode, fitToScreen, selectOnly, setMode, setSelection } = shipTreeEditor.actions;
+const { loadTree, saveTree } = shipTreeEditor.persistence;
 
 let server: TestServer;
 
@@ -30,7 +32,7 @@ function nodeElements(container: HTMLElement): NodeListOf<SVGElement> {
 
 async function renderLoadedTree() {
   const view = renderWithProviders(<TreePage />);
-  await waitFor(() => expect(nodeElements(view.container).length).toBe(useTreeStore.getState().document.nodes.length), { timeout: 15000 });
+  await waitFor(() => expect(nodeElements(view.container).length).toBe(shipTreeStore.getState().document.nodes.length), { timeout: 15000 });
   return view;
 }
 
@@ -46,7 +48,7 @@ beforeAll(() => {
 
 beforeEach(() => {
   localStorage.clear();
-  useTreeStore.setState({ load: { status: 'idle' }, dirty: false, mode: 'select', search: '', selection: EMPTY_SELECTION });
+  shipTreeStore.setState({ load: { status: 'idle' }, dirty: false, mode: 'select', search: '', selection: EMPTY_SELECTION });
 });
 
 afterAll(async () => {
@@ -56,33 +58,33 @@ afterAll(async () => {
 describe('tree page', () => {
   it('loads both tree files and draws every node, edge handle and anchor', async () => {
     const { container } = await renderLoadedTree();
-    const document = useTreeStore.getState().document;
+    const document = shipTreeStore.getState().document;
     expect(document.nodes.length).toBeGreaterThan(100);
     expect(container.querySelectorAll('[data-curve-a]').length).toBeGreaterThan(0);
     expect(container.querySelectorAll('[data-anchor-id]').length).toBe(document.anchors.length);
-    expect(useTreeStore.getState().dirty).toBe(false);
+    expect(shipTreeStore.getState().dirty).toBe(false);
   });
 
   it('never gives a new or duplicated node an id that was retired or released', async () => {
     await renderLoadedTree();
-    const state = useTreeStore.getState();
+    const state = shipTreeStore.getState();
     expect(state.replacedNodeIds.has('modular_hull_socket_2')).toBe(true);
     expect(state.releasedNodeIds.size).toBeGreaterThan(100);
 
     act(() => addNodeOfType('affinity', 0, 0, vocabulary));
-    const addedId = useTreeStore.getState().selection.nodes[0];
+    const addedId = shipTreeStore.getState().selection.nodes[0];
     act(() => duplicateNode(addedId));
-    const duplicatedId = useTreeStore.getState().selection.nodes[0];
+    const duplicatedId = shipTreeStore.getState().selection.nodes[0];
 
     for (const newId of [addedId, duplicatedId]) {
       expect(newId.startsWith('affinity_')).toBe(true);
-      expect(isReservedNodeId(useTreeStore.getState(), newId)).toBe(false);
+      expect(isReservedNodeId(shipTreeStore.getState(), newId)).toBe(false);
     }
   });
 
   it('rings a hovered socket with each subroutine radius and counts the nodes inside', async () => {
     const { container } = await renderLoadedTree();
-    const document = useTreeStore.getState().document;
+    const document = shipTreeStore.getState().document;
     const tierOfElement = (element: SVGElement) => {
       const node = nodeById(document, element.dataset.nodeId ?? '');
       return node ? tierOf(typeById(document, node.type)) : null;
@@ -108,23 +110,23 @@ describe('tree page', () => {
     const nodeId = target.dataset.nodeId ?? '';
     fireEvent.pointerDown(target, { button: 0, clientX: 0, clientY: 0 });
     window.dispatchEvent(new MouseEvent('pointerup'));
-    expect(useTreeStore.getState().selection.nodes).toEqual([nodeId]);
+    expect(shipTreeStore.getState().selection.nodes).toEqual([nodeId]);
     expect(await screen.findByText('Connected to')).toBeTruthy();
 
     commitField('X', '1234');
-    expect(nodeById(useTreeStore.getState().document, nodeId)?.x).toBe(1234);
-    expect(useTreeStore.getState().dirty).toBe(true);
+    expect(nodeById(shipTreeStore.getState().document, nodeId)?.x).toBe(1234);
+    expect(shipTreeStore.getState().dirty).toBe(true);
 
-    const typeId = nodeById(useTreeStore.getState().document, nodeId)?.type ?? '';
+    const typeId = nodeById(shipTreeStore.getState().document, nodeId)?.type ?? '';
     const automatedFlavour = screen.getByLabelText(/^Automated flavour text/);
     fireEvent.change(automatedFlavour, { target: { value: ' The core logs the plating. ' } });
     fireEvent.blur(automatedFlavour);
-    expect(typeById(useTreeStore.getState().document, typeId)?.flavourAutomated).toBe('The core logs the plating.');
+    expect(typeById(shipTreeStore.getState().document, typeId)?.flavourAutomated).toBe('The core logs the plating.');
 
     const shown = vi.spyOn(notifications, 'show');
     commitField('Node id', 'renamed_test_node');
-    expect(useTreeStore.getState().selection.nodes).toEqual(['renamed_test_node']);
-    expect(nodeById(useTreeStore.getState().document, nodeId)).toBeUndefined();
+    expect(shipTreeStore.getState().selection.nodes).toEqual(['renamed_test_node']);
+    expect(nodeById(shipTreeStore.getState().document, nodeId)).toBeUndefined();
     expect(shown).not.toHaveBeenCalled();
     shown.mockRestore();
   });
@@ -132,28 +134,28 @@ describe('tree page', () => {
   it('drags a selected node and pans the empty canvas', async () => {
     const { container } = await renderLoadedTree();
     const target = [...nodeElements(container)].find((element) => {
-      const node = nodeById(useTreeStore.getState().document, element.dataset.nodeId ?? '');
+      const node = nodeById(shipTreeStore.getState().document, element.dataset.nodeId ?? '');
       return node && !node.orbitAnchorId;
     });
     const nodeId = target?.dataset.nodeId ?? '';
-    const before = nodeById(useTreeStore.getState().document, nodeId);
+    const before = nodeById(shipTreeStore.getState().document, nodeId);
     fireEvent.pointerDown(target as Element, { button: 0, clientX: 0, clientY: 0 });
     act(() => {
       window.dispatchEvent(new MouseEvent('pointermove', { clientX: 40, clientY: 25 }));
       window.dispatchEvent(new MouseEvent('pointerup', { clientX: 40, clientY: 25 }));
     });
-    const after = nodeById(useTreeStore.getState().document, nodeId);
+    const after = nodeById(shipTreeStore.getState().document, nodeId);
     expect(after?.x === before?.x && after?.y === before?.y).toBe(false);
 
     const svg = nodeElements(container)[0].closest('svg') as SVGSVGElement;
-    const panBefore = useTreeStore.getState().view.panX;
+    const panBefore = shipTreeStore.getState().view.panX;
     fireEvent.pointerDown(svg, { button: 0, clientX: 10, clientY: 10 });
     act(() => {
       window.dispatchEvent(new MouseEvent('pointermove', { clientX: 70, clientY: 10 }));
       window.dispatchEvent(new MouseEvent('pointerup', { clientX: 70, clientY: 10 }));
     });
-    expect(useTreeStore.getState().view.panX).toBe(panBefore + 60);
-    expect(useTreeStore.getState().selection.nodes).toEqual([]);
+    expect(shipTreeStore.getState().view.panX).toBe(panBefore + 60);
+    expect(shipTreeStore.getState().selection.nodes).toEqual([]);
   });
 
   it('shows the in-game tooltip next to a hovered node without needing the mouse to move', async () => {
@@ -166,18 +168,18 @@ describe('tree page', () => {
 
   it('shows the anchor, decoration and multi-selection inspectors', async () => {
     await renderLoadedTree();
-    const document = useTreeStore.getState().document;
+    const document = shipTreeStore.getState().document;
     act(() => selectOnly('anchors', document.anchors[0].id));
     expect(await screen.findByLabelText('Anchor id')).toBeTruthy();
     commitField('Radius', '321');
-    expect(useTreeStore.getState().document.anchors[0].radius).toBe(321);
+    expect(shipTreeStore.getState().document.anchors[0].radius).toBe(321);
 
     const image = decorationsOfKind(document.decorations, 'image')[0];
     act(() => selectOnly('decorations', image.id));
     expect(await screen.findByLabelText('Image id')).toBeTruthy();
     commitField('Spin (deg/sec)', '2');
     fireEvent.click(screen.getByText('Reverse spin'));
-    expect(decorationById(useTreeStore.getState().document, image.id)).toMatchObject({ rotationSpeed: -2 });
+    expect(decorationById(shipTreeStore.getState().document, image.id)).toMatchObject({ rotationSpeed: -2 });
 
     const star = decorationsOfKind(document.decorations, 'star')[0];
     act(() => selectOnly('decorations', star.id));
@@ -186,36 +188,36 @@ describe('tree page', () => {
     const belt = decorationsOfKind(document.decorations, 'ringBelt')[0];
     act(() => selectOnly('decorations', belt.id));
     commitField('Outer radius', String(belt.outerRadius + 100));
-    expect(decorationById(useTreeStore.getState().document, belt.id)).toMatchObject({ outerRadius: belt.outerRadius + 100 });
+    expect(decorationById(shipTreeStore.getState().document, belt.id)).toMatchObject({ outerRadius: belt.outerRadius + 100 });
 
     const serpent = decorationsOfKind(document.decorations, 'serpent')[0];
     act(() => selectOnly('decorations', serpent.id));
     commitField('Seconds per orbit', '120');
-    expect(decorationById(useTreeStore.getState().document, serpent.id)).toMatchObject({ orbitSeconds: 120 });
+    expect(decorationById(shipTreeStore.getState().document, serpent.id)).toMatchObject({ orbitSeconds: 120 });
 
     const hypershunt = decorationsOfKind(document.decorations, 'hypershunt')[0];
     act(() => selectOnly('decorations', hypershunt.id));
     commitField('Size', '320');
-    expect(decorationById(useTreeStore.getState().document, hypershunt.id)).toMatchObject({ size: 320 });
+    expect(decorationById(shipTreeStore.getState().document, hypershunt.id)).toMatchObject({ size: 320 });
     fireEvent.click(screen.getByLabelText('Clockwise'));
-    expect(decorationById(useTreeStore.getState().document, hypershunt.id)).toMatchObject({ clockwise: !hypershunt.clockwise });
+    expect(decorationById(shipTreeStore.getState().document, hypershunt.id)).toMatchObject({ clockwise: !hypershunt.clockwise });
 
     act(() => setSelection({ nodes: [document.nodes[0].id, document.nodes[1].id], decorations: [star.id] }));
     expect(await screen.findByText('3 objects selected')).toBeTruthy();
     fireEvent.click(screen.getByText('Clear selection'));
-    expect(useTreeStore.getState().selection.nodes).toEqual([]);
+    expect(shipTreeStore.getState().selection.nodes).toEqual([]);
   });
 
   it('draws every decoration from the tree file with a selectable centre handle', async () => {
     const { container } = await renderLoadedTree();
-    const decorations = useTreeStore.getState().document.decorations;
+    const decorations = shipTreeStore.getState().document.decorations;
     expect(new Set(decorations.map((decoration) => decoration.kind))).toEqual(new Set(['star', 'image', 'ringBelt', 'threatUnit', 'serpent', 'shroudedMaw', 'hypershunt']));
     expect(container.querySelectorAll('[data-decoration-id]').length).toBe(decorations.length);
   });
 
   it('outlines a selected hypershunt and gives it separate radius, start and size handles', async () => {
     const { container } = await renderLoadedTree();
-    const hypershunt = decorationsOfKind(useTreeStore.getState().document.decorations, 'hypershunt')[0];
+    const hypershunt = decorationsOfKind(shipTreeStore.getState().document.decorations, 'hypershunt')[0];
     const outline = () => container.querySelector('image[href$="coronal_shunt2.png"]')?.parentElement?.querySelector('ellipse');
     const unselectedClass = outline()?.getAttribute('class');
     expect(unselectedClass).toBeTruthy();
@@ -230,10 +232,10 @@ describe('tree page', () => {
 
   it('shrinks handles with the tree when zoomed out but keeps their screen size when zoomed in', async () => {
     const { container } = await renderLoadedTree();
-    const decoration = useTreeStore.getState().document.decorations[0];
+    const decoration = shipTreeStore.getState().document.decorations[0];
     act(() => selectOnly('decorations', decoration.id));
     const screenRadii = (zoom: number) => {
-      act(() => useTreeStore.setState({ view: { panX: 0, panY: 0, zoom } }));
+      act(() => shipTreeStore.setState({ view: { panX: 0, panY: 0, zoom } }));
       const centre = container.querySelector(`[data-decoration-id="${decoration.id}"]`) as SVGCircleElement;
       const handle = container.querySelector(`[data-decoration-handle-of="${decoration.id}"]`) as SVGCircleElement;
       const anchor = container.querySelector('[data-anchor-id]') as SVGCircleElement;
@@ -249,42 +251,42 @@ describe('tree page', () => {
   it('fits the view around decorations that lie beyond the nodes', () => {
     const farStar = DECORATION_KINDS.star.create('far_star', { x: 0, y: 0 }, { imagePath: null, region: undefined });
     act(() =>
-      useTreeStore.setState({
+      shipTreeStore.setState({
         canvasSize: { width: 1060, height: 1060 },
         document: { ...EMPTY_DOCUMENT, decorations: [{ ...farStar, x: -9000, radius: 1000 }] },
       }),
     );
     act(() => fitToScreen());
-    expect(useTreeStore.getState().view.zoom).toBeCloseTo(470 / 10000);
+    expect(shipTreeStore.getState().view.zoom).toBeCloseTo(470 / 10000);
   });
 
   it('adds a threat unit in the decoration mode, edits it and moves it together with a selected node', async () => {
     const { container } = await renderLoadedTree();
     fireEvent.keyDown(window, { key: 'f' });
-    expect(useTreeStore.getState().mode).toBe('addDecoration');
+    expect(shipTreeStore.getState().mode).toBe('addDecoration');
     fireEvent.click(screen.getByText('Threat unit'));
-    expect(useTreeStore.getState().pendingDecorationKind).toBe('threatUnit');
-    act(() => useTreeStore.setState({ view: { panX: 0, panY: 0, zoom: 1 } }));
+    expect(shipTreeStore.getState().pendingDecorationKind).toBe('threatUnit');
+    act(() => shipTreeStore.setState({ view: { panX: 0, panY: 0, zoom: 1 } }));
     const svg = nodeElements(container)[0].closest('svg') as SVGSVGElement;
     fireEvent.pointerDown(svg, { button: 0, clientX: 77123, clientY: 66456 });
     window.dispatchEvent(new MouseEvent('pointerup'));
 
-    const threatUnitId = useTreeStore.getState().selection.decorations[0];
+    const threatUnitId = shipTreeStore.getState().selection.decorations[0];
     expect(threatUnitId).toMatch(/^threat_unit_\d+$/);
-    expect(useTreeStore.getState().mode).toBe('select');
-    const added = decorationById(useTreeStore.getState().document, threatUnitId);
+    expect(shipTreeStore.getState().mode).toBe('select');
+    const added = decorationById(shipTreeStore.getState().document, threatUnitId);
     expect(added).toMatchObject({ x: 77123, y: 66456, unitType: 'fabricator', length: 600, rotation: 0 });
     expect(await screen.findByLabelText('Threat unit id')).toBeTruthy();
     commitField('Length', '480');
-    expect(decorationById(useTreeStore.getState().document, threatUnitId)).toMatchObject({ length: 480 });
+    expect(decorationById(shipTreeStore.getState().document, threatUnitId)).toMatchObject({ length: 480 });
     expect(container.querySelector(`image[href$="fabricator.png"]`)).toBeTruthy();
 
     act(() => setSelection({}));
     fireEvent.pointerDown(svg, { button: 0, shiftKey: true, clientX: 77100, clientY: 66400 });
     act(() => window.dispatchEvent(new MouseEvent('pointerup', { clientX: 77150, clientY: 66500 })));
-    expect(useTreeStore.getState().selection.decorations).toEqual([threatUnitId]);
+    expect(shipTreeStore.getState().selection.decorations).toEqual([threatUnitId]);
 
-    const freeNode = useTreeStore.getState().document.nodes.find((node) => !node.orbitAnchorId);
+    const freeNode = shipTreeStore.getState().document.nodes.find((node) => !node.orbitAnchorId);
     const nodeBefore = { ...freeNode! };
     act(() => setSelection({ nodes: [nodeBefore.id], decorations: [threatUnitId] }));
     const handle = container.querySelector(`[data-decoration-id="${threatUnitId}"]`) as SVGElement;
@@ -293,89 +295,89 @@ describe('tree page', () => {
       window.dispatchEvent(new MouseEvent('pointermove', { clientX: 40, clientY: 25 }));
       window.dispatchEvent(new MouseEvent('pointerup', { clientX: 40, clientY: 25 }));
     });
-    const moved = useTreeStore.getState().document;
+    const moved = shipTreeStore.getState().document;
     expect(decorationById(moved, threatUnitId)).toMatchObject({ x: 77163, y: 66481 });
     expect(nodeById(moved, nodeBefore.id)).toMatchObject({ x: nodeBefore.x + 40, y: nodeBefore.y + 25 });
 
     act(() => selectOnly('decorations', threatUnitId));
     fireEvent.keyDown(window, { key: 'q' });
-    expect(decorationById(useTreeStore.getState().document, threatUnitId)).toBeUndefined();
+    expect(decorationById(shipTreeStore.getState().document, threatUnitId)).toBeUndefined();
     expect(container.querySelector(`[data-decoration-id="${threatUnitId}"]`)).toBeNull();
   });
 
   it('switches modes and deletes the selection from the keyboard', async () => {
     await renderLoadedTree();
     fireEvent.keyDown(window, { key: 's' });
-    expect(useTreeStore.getState().mode).toBe('add');
+    expect(shipTreeStore.getState().mode).toBe('add');
     fireEvent.keyDown(window, { key: 'a' });
-    expect(useTreeStore.getState().mode).toBe('select');
+    expect(shipTreeStore.getState().mode).toBe('select');
 
-    const victim = useTreeStore.getState().document.nodes[5].id;
+    const victim = shipTreeStore.getState().document.nodes[5].id;
     act(() => selectOnly('nodes', victim));
     fireEvent.keyDown(window, { key: 'd', ctrlKey: true });
-    const copyId = useTreeStore.getState().selection.nodes[0];
+    const copyId = shipTreeStore.getState().selection.nodes[0];
     expect(copyId).not.toBe(victim);
-    expect(nodeById(useTreeStore.getState().document, copyId)?.connectedTo).toEqual([victim]);
+    expect(nodeById(shipTreeStore.getState().document, copyId)?.connectedTo).toEqual([victim]);
     fireEvent.keyDown(window, { key: 'q' });
-    expect(nodeById(useTreeStore.getState().document, copyId)).toBeUndefined();
+    expect(nodeById(shipTreeStore.getState().document, copyId)).toBeUndefined();
     fireEvent.keyDown(window, { key: 'Escape' });
   });
 
   it('opens the type editor, type picker and add-node dialogs', async () => {
     await renderLoadedTree();
-    const document = useTreeStore.getState().document;
+    const document = shipTreeStore.getState().document;
     const typeId = document.types[0].id;
 
-    act(() => openTypeEditor(vocabulary, typeId));
+    act(() => openTypeEditor(shipTreeEditor, vocabulary, typeId));
     const editor = await screen.findByRole('dialog');
     expect(within(editor).getByText('Unlock conditions')).toBeTruthy();
     fireEvent.click(within(editor).getByText('Add effect'));
     fireEvent.click(within(editor).getByText('Save type'));
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
-    expect(useTreeStore.getState().document.types[0].effects?.length).toBe((document.types[0].effects?.length ?? 0) + 1);
+    expect(shipTreeStore.getState().document.types[0].effects?.length).toBe((document.types[0].effects?.length ?? 0) + 1);
 
     const nodeId = document.nodes[2].id;
-    act(() => openTypePicker(document.nodes[2].type, (picked) => useTreeStore.setState({ search: picked })));
+    act(() => openTypePicker(shipTreeEditor, document.nodes[2].type, (picked) => shipTreeStore.setState({ search: picked })));
     const picker = await screen.findByRole('dialog');
     fireEvent.click(within(picker).getAllByRole('button')[1]);
-    await waitFor(() => expect(useTreeStore.getState().search).not.toBe(''));
-    expect(nodeById(useTreeStore.getState().document, nodeId)).toBeDefined();
+    await waitFor(() => expect(shipTreeStore.getState().search).not.toBe(''));
+    expect(nodeById(shipTreeStore.getState().document, nodeId)).toBeDefined();
 
-    const nodeCount = useTreeStore.getState().document.nodes.length;
-    act(() => openAddNode(vocabulary, 5, 6));
+    const nodeCount = shipTreeStore.getState().document.nodes.length;
+    act(() => openAddNode(shipTreeEditor, vocabulary, 5, 6));
     const adder = await screen.findByRole('dialog');
     fireEvent.click(within(adder).getByText('Add node'));
-    await waitFor(() => expect(useTreeStore.getState().document.nodes.length).toBe(nodeCount + 1));
+    await waitFor(() => expect(shipTreeStore.getState().document.nodes.length).toBe(nodeCount + 1));
     act(() => setMode('select'));
   });
 
   it('offers to restore an unsaved browser draft when the tree loads', async () => {
     const first = await renderLoadedTree();
-    const { baseHashes, document } = useTreeStore.getState();
+    const { baseHashes, document } = shipTreeStore.getState();
     const draftDocument = { ...document, nodes: document.nodes.map((node, index) => (index === 0 ? { ...node, x: 999999 } : node)) };
     localStorage.setItem('exiledSectorEditor.treeDraft', JSON.stringify({ basedOn: baseHashes, savedAt: 1, data: draftDocument }));
     first.unmount();
-    useTreeStore.setState({ load: { status: 'idle' } });
+    shipTreeStore.setState({ load: { status: 'idle' } });
     renderWithProviders(<TreePage />);
     fireEvent.click(await screen.findByText('Restore draft', {}, { timeout: 15000 }));
-    await waitFor(() => expect(useTreeStore.getState().load.status).toBe('ready'));
-    expect(useTreeStore.getState().document.nodes[0].x).toBe(999999);
-    expect(useTreeStore.getState().dirty).toBe(true);
+    await waitFor(() => expect(shipTreeStore.getState().load.status).toBe('ready'));
+    expect(shipTreeStore.getState().document.nodes[0].x).toBe(999999);
+    expect(shipTreeStore.getState().dirty).toBe(true);
     localStorage.clear();
   });
 
   it('saves byte-identical files and then writes edits through the server', async () => {
     await renderLoadedTree();
-    expect(useTreeStore.getState().dirty).toBe(false);
+    expect(shipTreeStore.getState().dirty).toBe(false);
     await act(async () => saveTree(vocabulary));
     expect(server.readProjectFile(TYPES_FILE)).toBe(readRepositoryFile(TYPES_FILE));
     expect(server.readProjectFile(TREE_FILE)).toBe(readRepositoryFile(TREE_FILE));
 
-    const document = useTreeStore.getState().document;
+    const document = shipTreeStore.getState().document;
     act(() => selectOnly('nodes', document.nodes[0].id));
     commitField('X', '4321');
     await act(async () => saveTree(vocabulary));
-    expect(useTreeStore.getState().dirty).toBe(false);
+    expect(shipTreeStore.getState().dirty).toBe(false);
     expect(JSON.parse(server.readProjectFile(TREE_FILE)).nodes[0].x).toBe(4321);
   });
 
@@ -385,7 +387,7 @@ describe('tree page', () => {
     const diskText = server.readProjectFile(TREE_FILE);
     try {
       fs.writeFileSync(treePath, `${diskText}\n`);
-      const document = useTreeStore.getState().document;
+      const document = shipTreeStore.getState().document;
       act(() => selectOnly('nodes', document.nodes[0].id));
       commitField('X', '1234');
       let saving: Promise<void> = Promise.resolve();
@@ -396,9 +398,9 @@ describe('tree page', () => {
       expect(within(conflict).getByText('Files changed on disk')).toBeTruthy();
       fireEvent.click(within(conflict).getByRole('button', { name: 'Reload from disk' }));
       await act(async () => saving);
-      await waitFor(() => expect(useTreeStore.getState().load.status).toBe('ready'));
-      expect(useTreeStore.getState().dirty).toBe(false);
-      expect(useTreeStore.getState().document.nodes[0].x).toBe(JSON.parse(diskText).nodes[0].x);
+      await waitFor(() => expect(shipTreeStore.getState().load.status).toBe('ready'));
+      expect(shipTreeStore.getState().dirty).toBe(false);
+      expect(shipTreeStore.getState().document.nodes[0].x).toBe(JSON.parse(diskText).nodes[0].x);
       expect(server.readProjectFile(TREE_FILE)).toBe(`${diskText}\n`);
     } finally {
       fs.writeFileSync(treePath, diskText);
@@ -425,7 +427,7 @@ describe('tree page', () => {
       return serverFetch(input, init);
     });
     try {
-      const document = useTreeStore.getState().document;
+      const document = shipTreeStore.getState().document;
       act(() => selectOnly('nodes', document.nodes[0].id));
       commitField('X', '2468');
       let saving: Promise<void> = Promise.resolve();
@@ -436,11 +438,11 @@ describe('tree page', () => {
       expect((screen.getByRole('button', { name: 'Reload from disk' }) as HTMLButtonElement).disabled).toBe(true);
       localStorage.clear();
       await act(async () => loadTree());
-      const reloadedHashes = useTreeStore.getState().baseHashes;
+      const reloadedHashes = shipTreeStore.getState().baseHashes;
       releaseSave();
       await act(async () => saving);
       expect(JSON.parse(server.readProjectFile(TREE_FILE)).nodes[0].x).toBe(2468);
-      expect(useTreeStore.getState().baseHashes).toEqual(reloadedHashes);
+      expect(shipTreeStore.getState().baseHashes).toEqual(reloadedHashes);
     } finally {
       vi.stubGlobal('fetch', serverFetch);
       fs.writeFileSync(treePath, diskTree);
@@ -460,7 +462,7 @@ describe('tree page', () => {
       vi.stubGlobal('fetch', serverFetch);
     }
     fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
-    await waitFor(() => expect(useTreeStore.getState().load.status).toBe('ready'), { timeout: 15000 });
+    await waitFor(() => expect(shipTreeStore.getState().load.status).toBe('ready'), { timeout: 15000 });
     expect(screen.queryByText('Could not load')).toBeNull();
   });
 });

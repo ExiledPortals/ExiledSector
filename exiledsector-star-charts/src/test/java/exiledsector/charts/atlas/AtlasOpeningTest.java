@@ -133,9 +133,9 @@ class AtlasOpeningTest {
 
         assertTrue(state.isCompleted(nexus));
         assertTrue(state.has(infested, AtlasState.INFESTATION_CLEARED));
-        assertEquals(2, state.atlasPoints());
+        assertEquals(1, state.atlasPoints());
         AtlasProgress.complete(generator, state, nexus, 7);
-        assertEquals(2, state.atlasPoints());
+        assertEquals(1, state.atlasPoints());
     }
 
     @Test

@@ -162,7 +162,8 @@ class AtlasReachTest {
         assertTrue(state.clearTier(3));
         assertFalse(state.clearTier(3));
         assertTrue(state.clearTier(4));
-        assertEquals(2, state.atlasPoints());
+        assertEquals(Set.of(3, 4), state.clearedTiers());
+        assertEquals(0, state.atlasPoints());
         assertTrue(state.isCompleted(AtlasCell.ORIGIN));
     }
 }

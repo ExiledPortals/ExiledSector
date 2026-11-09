@@ -2,6 +2,7 @@ package exiledsector.skills;
 
 import exiledsector.skills.layout.ConnectorCurve;
 import exiledsector.skills.layout.SkillNodeDecoration;
+import exiledsector.skills.layout.TreeTopology;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -99,7 +100,7 @@ class SkillTreeTopologyTest {
         SkillNode from = node("a", SkillTier.SMALL, 0f, 0f);
         SkillNode to = node("b", SkillTier.SMALL, 100f, 0f);
 
-        SkillTreeTopology.Connector curved = SkillTreeTopology.connector(from, to, new ConnectorCurve(50f, 40f));
+        TreeTopology.Connector<SkillNode> curved = TreeTopology.connector(from, to, new ConnectorCurve(50f, 40f));
 
         assertEquals(0f, curved.minX());
         assertEquals(100f, curved.maxX());

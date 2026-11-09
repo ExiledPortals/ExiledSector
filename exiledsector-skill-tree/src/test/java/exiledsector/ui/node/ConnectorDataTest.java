@@ -26,8 +26,8 @@ class ConnectorDataTest {
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             for (String connectedId : node.getConnectedNodeIds()) {
                 SkillNode other = SkillTree.get(connectedId);
-                if (other != null && !SkillTreeTopology.drawsEdge(node, other)
-                        && !SkillTreeTopology.drawsEdge(other, node)) {
+                if (other != null && !SkillTree.topology().drawsEdge(node, other)
+                        && !SkillTree.topology().drawsEdge(other, node)) {
                     undrawn.add(node.getId() + " -> " + connectedId);
                 }
             }

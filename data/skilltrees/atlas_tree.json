@@ -1,0 +1,16 @@
+{
+	"volumes": [],
+	"nodes": [
+		{
+			"id": "atlas_root",
+			"type": "atlas_root",
+			"connectedTo": [],
+			"x": 0,
+			"y": 0
+		}
+	],
+	"connectorCurves": [],
+	"hiddenConnectors": [],
+	"orbitAnchors": [],
+	"decorations": []
+}

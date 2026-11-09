@@ -87,7 +87,7 @@ class AtlasDevToolsTest {
         AtlasDevTools.complete(generator, state, nexus, 4);
 
         assertTrue(state.isCompleted(nexus));
-        assertEquals(2, state.atlasPoints());
+        assertEquals(1, state.atlasPoints());
         assertEquals(List.of(4), List.copyOf(state.clearedTiers()));
 
         AtlasCell other = generator.lanes(AtlasCell.ORIGIN).get(0);

@@ -858,7 +858,7 @@ shared one. Powerful Boss (`PowerfulBoss`) does, and its run's boss always drops
 (`LootShaper.guaranteesBossTierUp`); anomaly effects reach the content plan, so its line sizes the boss. Chart drops
 inside a run never fall below its tier.
 
-Killing the boss is the only way to complete a system, and it grants an atlas point for the first clear of each tier (`AtlasProgress`).
+Killing the boss is the only way to complete a system, and each completed system grants an Atlas Skill Point, up to 100 (`AtlasProgress`, `AtlasState.MAX_ATLAS_SKILL_POINTS`).
 A Sensor Array also reveals 6 lanes and finds more Atlas Catalysts, clearing an Infestation ends it in the systems it infested, and a Bastion gives a key fragment and
 allows one attempt. A system's anomalies are its rolled ones plus records inserted into `AtlasState`, which
 `AtlasAnomalies.canInsert` gates and any run there spends, at most 9 in all (`MAX_PER_SYSTEM`), unless a Relay Network chain moves on. A run that closes without killing its boss spends the system's
@@ -1016,6 +1016,13 @@ A won chart battle also adds vanilla's own battle salvage for the same extra sha
 wings from the lost chart ships' fittings on vanilla's recovery chances, scrap for their fleet points, and the cargo
 vanilla took from their fleets. Fittings and cargo are snapshotted at the engagement, ships the player recovers add
 nothing, and all of it is scaled by vanilla's player share of the damage (core `EncounterSalvage`).
+
+### Atlas Tree
+
+The Atlas Tree is one save-wide tree, laid out in `data/skilltrees/atlas_tree.json` with its node types in `atlas_tree_types.json` (the
+ship tree's formats, with chart effects as effects and its volumes declared in a `volumes` list). `AtlasState` keeps the allocated node ids;
+the root is free, a node needs an allocated neighbour, and a refund never strands another node (`charts.tree.AtlasTreeAllocation`, built
+on the shared `TreeSearch`). Each allocated node costs one Atlas Skill Point.
 
 ### Atlas Catalysts
 

@@ -5,12 +5,13 @@ import { notifyError } from '../../../shared/dialogs.tsx';
 import { DECORATION_KINDS, decorationById } from '../model/decorations.ts';
 import { resyncNodesOnAnchor, setAnchorShape } from '../model/geometry.ts';
 import { ANCHOR_RECTANGLE_ASPECT, ANCHOR_SHAPE_LABELS, ANCHOR_SHAPES, anchorById, typeById, type AnchorShape, type OrbitAnchor, type TreeDocument } from '../model/types.ts';
-import { clearSelection, deleteSelection, selectOnly } from '../state/treeActions.ts';
-import { editDocument, selectionCount, setSelection, useTreeStore } from '../state/treeStore.ts';
+import type { TreeActions } from '../state/treeActions.ts';
+import { useTreeEditor, useTreeState } from '../state/treeEditorContext.ts';
+import { selectionCount } from '../state/treeStore.ts';
 import { degreesOrZero } from './inspectorEdits.ts';
 
-function editAnchor(anchorId: string, change: (anchor: OrbitAnchor, document: TreeDocument) => void): void {
-  editDocument((document) => {
+function editAnchor(actions: TreeActions, anchorId: string, change: (anchor: OrbitAnchor, document: TreeDocument) => void): void {
+  actions.editDocument((document) => {
     const anchor = anchorById(document, anchorId);
     if (anchor) {
       change(anchor, document);
@@ -20,7 +21,9 @@ function editAnchor(anchorId: string, change: (anchor: OrbitAnchor, document: Tr
 }
 
 export function AnchorInspector({ anchorId }: { anchorId: string }) {
-  const document = useTreeStore((state) => state.document);
+  const { actions } = useTreeEditor();
+  const { editDocument, setSelection, deleteSelection } = actions;
+  const document = useTreeState((state) => state.document);
   const anchor = anchorById(document, anchorId);
   if (!anchor) {
     return null;
@@ -52,10 +55,10 @@ export function AnchorInspector({ anchorId }: { anchorId: string }) {
       <Title order={4}>Anchor</Title>
       <CommitTextInput size="xs" label="Anchor id" value={anchor.id} onCommit={rename} />
       <Group grow gap={6}>
-        <CommitNumberInput size="xs" label="X" value={anchor.x} onCommit={(value) => editAnchor(anchorId, (target) => {
+        <CommitNumberInput size="xs" label="X" value={anchor.x} onCommit={(value) => editAnchor(actions, anchorId, (target) => {
           target.x = value || 0;
         })} />
-        <CommitNumberInput size="xs" label="Y" value={anchor.y} onCommit={(value) => editAnchor(anchorId, (target) => {
+        <CommitNumberInput size="xs" label="Y" value={anchor.y} onCommit={(value) => editAnchor(actions, anchorId, (target) => {
           target.y = value || 0;
         })} />
       </Group>
@@ -64,7 +67,7 @@ export function AnchorInspector({ anchorId }: { anchorId: string }) {
           size="xs"
           label="Radius"
           value={anchor.radius}
-          onCommit={(value) => editAnchor(anchorId, (target) => {
+          onCommit={(value) => editAnchor(actions, anchorId, (target) => {
             target.radius = Math.max(10, Math.trunc(value) || 10);
           })}
         />
@@ -74,7 +77,7 @@ export function AnchorInspector({ anchorId }: { anchorId: string }) {
           data={ANCHOR_SHAPES.map((value) => ({ value, label: ANCHOR_SHAPE_LABELS[value] }))}
           value={shape}
           allowDeselect={false}
-          onChange={(value) => editAnchor(anchorId, (target) => setAnchorShape(target, (value ?? 'circle') as AnchorShape))}
+          onChange={(value) => editAnchor(actions, anchorId, (target) => setAnchorShape(target, (value ?? 'circle') as AnchorShape))}
         />
       </Group>
       {shape === 'rectangle' ? (
@@ -82,7 +85,7 @@ export function AnchorInspector({ anchorId }: { anchorId: string }) {
           size="xs"
           label="Aspect ratio (width/height)"
           value={anchor.aspectRatio || ANCHOR_RECTANGLE_ASPECT}
-          onCommit={(value) => editAnchor(anchorId, (target) => {
+          onCommit={(value) => editAnchor(actions, anchorId, (target) => {
             target.aspectRatio = Math.max(0.1, value || ANCHOR_RECTANGLE_ASPECT);
           })}
         />
@@ -92,7 +95,7 @@ export function AnchorInspector({ anchorId }: { anchorId: string }) {
           size="xs"
           label="Rotation (degrees)"
           value={anchor.rotation || 0}
-          onCommit={(value) => editAnchor(anchorId, (target) => {
+          onCommit={(value) => editAnchor(actions, anchorId, (target) => {
             target.rotation = degreesOrZero(value);
           })}
         />
@@ -106,8 +109,9 @@ export function AnchorInspector({ anchorId }: { anchorId: string }) {
 }
 
 export function MultiSelectionInspector() {
-  const selection = useTreeStore((state) => state.selection);
-  const document = useTreeStore((state) => state.document);
+  const { selectOnly, clearSelection, deleteSelection } = useTreeEditor().actions;
+  const selection = useTreeState((state) => state.selection);
+  const document = useTreeState((state) => state.document);
   const total = selectionCount(selection);
   const rows = [
     ...selection.nodes.map((id) => {

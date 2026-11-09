@@ -151,7 +151,7 @@ class AbyssDarknessRendererTest {
                 assertEquals(0f, darkness, node::getId);
             }
         }
-        List<StaticImage> images = DecorationLoader.parse(ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(RealSkillData.TREE_FILE)), RealSkillData.TREE_FILE.toString()).images();
+        List<StaticImage> images = DecorationLoader.parse(ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(RealSkillData.TREE_FILE)), RealSkillData.TREE_FILE.toString(), SkillTags::isVolume).images();
         images.stream().filter(image -> image.getTags().contains(SkillTags.ABYSS_VOLUME)).forEach(image -> {
             float cloudReach = (float) Math.hypot(image.getWidth(), image.getHeight()) / 2f;
             float nearestX = image.getX() - abyssalDepth.directionX() * cloudReach;

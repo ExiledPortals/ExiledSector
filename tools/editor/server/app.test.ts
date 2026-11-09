@@ -148,6 +148,30 @@ describe('data files', () => {
     expect(refused.json().message).toContain('must start with the id column');
   });
 
+  it('loads and saves the atlas tree files, refusing ones without types or nodes', async () => {
+    const atlasTypes = '{\n\t"skillTypes": [\n\t\t{ "id": "atlas_root", "tier": "ROOT" }\n\t]\n}';
+    const atlasTree = '{\r\n\t"volumes": [],\r\n\t"nodes": [{ "id": "atlas_root" }]\r\n}';
+    writeProjectFile('data/skilltrees/atlas_tree_types.json', atlasTypes);
+    writeProjectFile('data/skilltrees/atlas_tree.json', atlasTree);
+    const loaded = (await app.inject({ method: 'GET', url: '/api/files?names=atlas-types,atlas-tree' })).json().files;
+    expect(loaded['atlas-types'].content).toBe(atlasTypes);
+    expect(loaded['atlas-tree'].content).toBe(atlasTree);
+    const save = (files: Record<string, string>) =>
+      app.inject({
+        method: 'POST',
+        url: '/api/files',
+        headers: EDITOR_HEADERS,
+        payload: { files: Object.fromEntries(Object.entries(files).map(([name, content]) => [name, { content, baseHash: loaded[name].hash }])) },
+      });
+
+    expect((await save({ 'atlas-tree': '{"volumes":[],"nodes":[]}' })).json().message).toContain('data/skilltrees/atlas_tree.json was refused because its nodes array is empty');
+    expect((await save({ 'atlas-types': '{"types":[]}' })).json().message).toContain('it has no skillTypes array');
+    const retagged = atlasTree.replace('"volumes": []', '"volumes": ["crafting"]');
+    expect((await save({ 'atlas-tree': retagged })).statusCode).toBe(200);
+    expect(fs.readFileSync(path.join(projectRoot, 'data/skilltrees/atlas_tree.json'), 'utf8')).toBe(retagged);
+    expect(fs.readFileSync(path.join(projectRoot, 'data/skilltrees/ship_skill_tree.json'), 'utf8')).toBe(TREE_TEXT);
+  });
+
   it('saves an English catalogue only when every value is text and none contains a hash', async () => {
     const original = '{\r\n    "stat.armor": "armor"\r\n}\r\n';
     writeProjectFile('data/strings/exiledSector/core/en.json', original);

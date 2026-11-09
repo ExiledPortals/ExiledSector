@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { notifyError } from '../../../shared/dialogs.tsx';
 import { TIER_LABELS, tierOf } from '../model/types.ts';
-import { useTreeStore } from '../state/treeStore.ts';
+import { useTreeState } from '../state/treeEditorContext.ts';
 
 interface AddNodeDialogProps {
   vocabulary: Vocabulary;
@@ -15,7 +15,7 @@ interface AddNodeDialogProps {
 const ALL_SIZES = 'ALL';
 
 export function AddNodeDialog({ vocabulary, onAdd, onDefineNewType, onCancel }: AddNodeDialogProps) {
-  const types = useTreeStore((state) => state.document.types);
+  const types = useTreeState((state) => state.document.types);
   const [sizeFilter, setSizeFilter] = useState(ALL_SIZES);
   const [typeId, setTypeId] = useState<string | null>(null);
   const typeOptions = useMemo(

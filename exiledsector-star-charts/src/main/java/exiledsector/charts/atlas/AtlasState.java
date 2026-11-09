@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -24,6 +25,7 @@ public final class AtlasState implements AtlasMemory {
     public static final int INFESTATION_CLEARED = 8;
     public static final int ATTEMPTED = 16;
     public static final int LANES_REVEALED = 32;
+    public static final int MAX_ATLAS_SKILL_POINTS = 100;
     static final String FLAG_SEPARATOR = ",";
     private static final Random SEEDS = new Random();
 
@@ -38,6 +40,7 @@ public final class AtlasState implements AtlasMemory {
     private int nextAnomalyRecord;
     private Map<Long, String> capturedSystems = new HashMap<>();
     private int atlasPoints;
+    private Set<String> atlasTreeNodeIds = new TreeSet<>();
     private int keyFragments;
 
     public AtlasState(long seed) {
@@ -81,6 +84,10 @@ public final class AtlasState implements AtlasMemory {
         if (capturedSystems == null) {
             capturedSystems = new HashMap<>();
         }
+        if (atlasTreeNodeIds == null) {
+            atlasTreeNodeIds = new TreeSet<>();
+        }
+        atlasPoints = Math.min(MAX_ATLAS_SKILL_POINTS, atlasPoints);
         return this;
     }
 
@@ -176,11 +183,7 @@ public final class AtlasState implements AtlasMemory {
     }
 
     public boolean clearTier(int tier) {
-        if (!clearedTiers.add(tier)) {
-            return false;
-        }
-        atlasPoints++;
-        return true;
+        return clearedTiers.add(tier);
     }
 
     public Set<Integer> clearedTiers() {
@@ -188,11 +191,19 @@ public final class AtlasState implements AtlasMemory {
     }
 
     public void addAtlasPoints(int points) {
-        atlasPoints += Math.max(0, points);
+        atlasPoints = Math.min(MAX_ATLAS_SKILL_POINTS, atlasPoints + Math.max(0, points));
     }
 
     public int atlasPoints() {
         return atlasPoints;
+    }
+
+    public Set<String> atlasTreeNodeIds() {
+        return Collections.unmodifiableSet(atlasTreeNodeIds);
+    }
+
+    public void setAtlasTreeNodeIds(Collection<String> nodeIds) {
+        atlasTreeNodeIds = new TreeSet<>(nodeIds);
     }
 
     public void addKeyFragment() {

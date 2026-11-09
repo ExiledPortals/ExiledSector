@@ -394,6 +394,20 @@ function OptionalOptions({ type, onEdit, allTypes, onEditOptionType }: Pick<Type
   );
 }
 
+function FlavourField({ type, onEdit, note }: Pick<TypeFormProps, 'type' | 'onEdit' | 'note'>) {
+  return (
+    <CommitTextarea
+      size="xs"
+      label={`Flavour text (optional, italic text under the title)${note ?? ''}`}
+      minRows={3}
+      value={type.flavour ?? ''}
+      onCommit={(text) => onEdit((draft) => {
+        draft.flavour = text.trim();
+      })}
+    />
+  );
+}
+
 export function TypeForm(props: TypeFormProps) {
   const { type, onEdit, sections, vocabulary, note = '', idEditable = false } = props;
   const renderSection = (section: TypeFormSection) => {
@@ -563,18 +577,12 @@ export function TypeForm(props: TypeFormProps) {
         );
       case 'options':
         return <OptionalOptions key={section} type={type} onEdit={onEdit} allTypes={props.allTypes} onEditOptionType={props.onEditOptionType} />;
+      case 'flavour':
+        return <FlavourField key={section} type={type} onEdit={onEdit} note={note} />;
       case 'texts':
         return (
           <Stack gap={6} key={section}>
-            <CommitTextarea
-              size="xs"
-              label={`Flavour text (optional, italic text under the title)${note}`}
-              minRows={3}
-              value={type.flavour ?? ''}
-              onCommit={(text) => onEdit((draft) => {
-                draft.flavour = text.trim();
-              })}
-            />
+            <FlavourField type={type} onEdit={onEdit} note={note} />
             <CommitTextarea
               size="xs"
               label={`Automated flavour text (optional, replaces the flavour on automated ships)${note}`}

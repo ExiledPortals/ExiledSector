@@ -1,5 +1,7 @@
 package exiledsector.skills;
 
+import exiledsector.skills.layout.TreeTopology;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -41,17 +43,17 @@ public final class ShipTreeLinks {
         return Collections.unmodifiableMap(anchorLinks(data).exitBySocketId());
     }
 
-    public static List<SkillTreeTopology.WormholePair> wormholePairs(ShipSkillData data, SkillTreeTopology topology) {
+    public static List<TreeTopology.WormholePair<SkillNode>> wormholePairs(ShipSkillData data, SkillTreeTopology topology) {
         Map<String, String> exitBySocketId = anchorLinks(data).exitBySocketId();
         if (exitBySocketId.isEmpty()) {
             return topology.wormholePairs();
         }
-        List<SkillTreeTopology.WormholePair> pairs = new ArrayList<>(topology.wormholePairs());
+        List<TreeTopology.WormholePair<SkillNode>> pairs = new ArrayList<>(topology.wormholePairs());
         exitBySocketId.forEach((socketId, exitId) -> {
             SkillNode socket = topology.node(socketId);
             SkillNode exit = topology.node(exitId);
             if (socket != null && exit != null && data.isAllocated(exitId)) {
-                pairs.add(new SkillTreeTopology.WormholePair(socket, exit));
+                pairs.add(new TreeTopology.WormholePair<>(socket, exit));
             }
         });
         return pairs;

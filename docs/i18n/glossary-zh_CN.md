@@ -57,6 +57,7 @@ The zh_CN catalogue was drafted by Claude and still needs review by a native spe
 |---|---|---|
 | Exiled Sector | Exiled Sector | The mod name is kept in English |
 | Skill tree | 技能树 | |
+| Atlas Tree / Atlas Skill Point | 星图册技能树 / 星图册技能点 | The save-wide tree on the Outer Reach Atlas (外缘星图册) |
 | Node | 节点 | |
 | Notable / keystone | 重要节点 / 基石节点 | |
 | Root (where a ship's tree starts) | 起点 | |

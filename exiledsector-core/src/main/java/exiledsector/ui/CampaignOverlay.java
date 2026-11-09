@@ -19,6 +19,10 @@ public final class CampaignOverlay {
         void close();
 
         void leave(String wormholeMessage);
+
+        default void switchTo(Function<Host, Screen> nextScreen) {
+            close();
+        }
     }
 
     public interface Screen extends CustomUIPanelPlugin {
@@ -98,6 +102,19 @@ public final class CampaignOverlay {
         @Override
         public void leave(String wormholeMessage) {
             TransientScripts.nextFrame(Global.getSector(), () -> remove(wormholeMessage));
+        }
+
+        @Override
+        public void switchTo(Function<Host, Screen> nextScreen) {
+            TransientScripts.nextFrame(Global.getSector(), () -> {
+                if (overlayPanel != null) {
+                    hostPanel.removeComponent(overlayPanel);
+                    overlayPanel = null;
+                }
+                if (!openOver(hostPanel, nextScreen, afterClose) && afterClose != null) {
+                    afterClose.run();
+                }
+            });
         }
 
         private void remove(String wormholeMessage) {

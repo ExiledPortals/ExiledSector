@@ -26,8 +26,6 @@ final class SkillTreeSocketRenderer {
     private static final String BOTTOM_RIGHT = FRAME_PREFIX + "bot_right.png";
     private static final float CORNER_RATIO = 0.25f;
     private static final float CONTENT_RATIO = 0.7f;
-    private static final float EDGE_MARGIN_RATIO = 10f / 31f;
-    private static final float BEVEL_RATIO = 30f / 31f;
 
     private static final Color UNALLOCATED_TINT = new Color(120, 120, 120);
     private static final float UNALLOCATED_ALPHA = 0.6f;
@@ -51,10 +49,7 @@ final class SkillTreeSocketRenderer {
     }
 
     static float visibleEdgeDistance(float frameSize, float towardX, float towardY) {
-        float halfSize = frameSize / 2f;
-        float corner = frameSize * CORNER_RATIO;
-        return SkillTreeNodeGeometry.octagonEdgeDistance(halfSize - corner * EDGE_MARGIN_RATIO, 2f * halfSize - corner * BEVEL_RATIO,
-                towardX, towardY);
+        return SkillTreeNodeGeometry.socketEdgeDistance(frameSize, towardX, towardY);
     }
 
     void drawFrame(float cx, float cy, float frameSize, boolean allocated, Color accent, float alphaMult) {

@@ -37,7 +37,9 @@ class EditorRoundTripTest {
 
     private static final String TYPE_LOADER = "exiledsector/skills/loader/SkillTypeLoader.java";
     private static final String TREE_LOADER = "exiledsector/skills/loader/SkillTreeLoader.java";
+    private static final String TREE_LAYOUT_READER = "exiledsector/skills/loader/TreeLayoutReader.java";
     private static final String DECORATION_LOADER = "exiledsector/skills/loader/DecorationLoader.java";
+    private static final String ATLAS_TREE_DATA = "exiledsector/charts/tree/AtlasTreeData.java";
     private static final String ITEM_DEFINITIONS = "exiledsector/items/ItemDefinitions.java";
     private static final String ITEM_DEFINITION = "exiledsector/items/ItemDefinition.java";
     private static final String SUBROUTINE_DEFINITIONS = "exiledsector/items/SubroutineDefinitions.java";
@@ -54,12 +56,12 @@ class EditorRoundTripTest {
     private static final String MODSPEC_CACHES = "exiledsector/items/ModspecCaches.java";
     private static final String UNIQUE_SUBROUTINE_RADII = "exiledsector/items/UniqueSubroutineRadii.java";
 
-    private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, DECORATION_LOADER, ITEM_DEFINITIONS, ITEM_DEFINITION, SUBROUTINE_DEFINITIONS,
+    private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, TREE_LAYOUT_READER, DECORATION_LOADER, ATLAS_TREE_DATA, ITEM_DEFINITIONS, ITEM_DEFINITION, SUBROUTINE_DEFINITIONS,
             HULL_ITEM, HULL_ITEM_IMPLICITS, ITEM_MODIFIERS, STAR_CHART_DEFINITIONS, STAR_CHART_IMPLICITS, STAR_CHART_ITEMS,
             WORMHOLE_ANCHOR_DEFINITIONS, DOCTRINE_ARCHIVES, MODSPEC_CACHES, UNIQUE_SUBROUTINE_RADII, SUBROUTINE_IMPLICITS,
             CORRUPTION_IMPLICIT_POOL);
 
-    private static final List<String> EDITED_DATA_PATHS = List.of("data/skilltrees/skill_types.json", "data/skilltrees/ship_skill_tree.json",
+    private static final List<String> EDITED_DATA_PATHS = List.of("data/skilltrees/skill_types.json", "data/skilltrees/ship_skill_tree.json", "data/skilltrees/atlas_tree",
             "data/config/exiledSector/item_modifiers", "data/config/exiledSector/hull_item", "data/config/exiledSector/subroutines",
             "data/config/exiledSector/star_charts", "data/config/exiledSector/star_chart_modifiers", "data/config/exiledSector/star_chart_implicits",
             "data/config/exiledSector/wormhole_anchors", "data/config/exiledSector/doctrine_archives", "data/config/exiledSector/subroutine_corruption_implicits");
@@ -87,7 +89,7 @@ class EditorRoundTripTest {
     private static final List<Pin> PINS = List.of(
             new Pin("skill_types.json root", TYPE_LOADER, List.of("loadAll", "parseSkillTypes"),
                     List.of(tree("skillTypesFileObject")), false),
-            new Pin("skill_types.json skill type", TYPE_LOADER, List.of("parseSkillType", "parseTemporaryAfterDeploymentSeconds", "entryLabel"),
+            new Pin("skill_types.json skill type", TYPE_LOADER, List.of("parseSkillType", "parseTemporaryAfterDeploymentSeconds"),
                     List.of(tree("serializeType")), false),
             new Pin("skill_types.json itemCost", TYPE_LOADER, List.of("parseItemCost"), List.of(tree("serializeType")), false),
             new Pin("skill_types.json effects and hullSizeEffects", TYPE_LOADER, List.of("parseEffects", "parseHullSizeEffects"),
@@ -95,9 +97,12 @@ class EditorRoundTripTest {
             new Pin("skill_types.json integrated", TYPE_LOADER, List.of("parseIntegratedEffects"), List.of(tree("serializeIntegrated")), false),
             new Pin("skill_types.json unlockConditions", TYPE_LOADER, List.of("parseUnlockCondition"),
                     List.of(tree("serializeUnlockConditions")), false),
-            new Pin("ship_skill_tree.json root, connectorCurves and hiddenConnectors", TREE_LOADER,
-                    List.of("loadAll", "parseNodes", "parseConnectorCurves", "parseHiddenConnectors"), List.of(tree("treeFileObject")), false),
-            new Pin("ship_skill_tree.json node", TREE_LOADER, List.of("parseNode"), List.of(tree("serializeTreeNode")), false),
+            new Pin("ship_skill_tree.json and atlas_tree.json root, volumes, connectorCurves and hiddenConnectors", TREE_LAYOUT_READER,
+                    List.of("read", "parseVolumes", "parseNodes", "parseConnectorCurves", "parseHiddenConnectors"), List.of(tree("treeFileObject")), false),
+            new Pin("ship_skill_tree.json and atlas_tree.json node", TREE_LAYOUT_READER, List.of("parseNode"), List.of(tree("serializeTreeNode")), false),
+            new Pin("atlas_tree_types.json root", ATLAS_TREE_DATA, List.of("parseTypes"), List.of(tree("skillTypesFileObject")), false),
+            new Pin("atlas_tree_types.json type", ATLAS_TREE_DATA, List.of("parseType"), List.of(tree("serializeType")), false),
+            new Pin("atlas_tree_types.json effects", ATLAS_TREE_DATA, List.of("parseEffects"), List.of(tree("serializeEffects")), false),
             new Pin("ship_skill_tree.json decorations list", DECORATION_LOADER, List.of("parse", "parseDecoration", "tags"),
                     List.of(tree("treeFileObject"), new EditorSource(TREE_DECORATIONS, "serializeDecoration")), true),
             new Pin("ship_skill_tree.json star decoration", DECORATION_LOADER, List.of("parseStar"), decoration("STAR"), true),

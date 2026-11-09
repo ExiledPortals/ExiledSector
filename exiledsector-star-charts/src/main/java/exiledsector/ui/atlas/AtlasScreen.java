@@ -77,6 +77,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     static final float BORDERS_WIDTH = 160f;
     static final float BIOMES_WIDTH = 120f;
     static final float CATALYSTS_WIDTH = 150f;
+    static final float TREE_WIDTH = 140f;
     static final float BUTTON_GAP = 10f;
     static final float OPEN_SECONDS = 0.2f;
     static final float BACKDROP_ALPHA = 0.8f;
@@ -103,7 +104,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     static final float TOOLTIP_MAX_TEXT_HEIGHT = 800f;
     static final Color HINT_COLOUR = new Color(150, 150, 150);
 
-    private enum Control { CLOSE, BORDERS, BIOMES, CATALYSTS, FOCUS_SWITCH, DEBUG_COMPLETE }
+    private enum Control { CLOSE, BORDERS, BIOMES, CATALYSTS, TREE, FOCUS_SWITCH, DEBUG_COMPLETE }
 
     enum Overlay { NONE, FACTIONS, BIOMES }
 
@@ -155,6 +156,10 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         this.host = host;
     }
 
+    static AtlasScreen create(CampaignOverlay.Host host) {
+        return new AtlasScreen(host);
+    }
+
     public static boolean open(CampaignUIAPI campaignUI) {
         return open(campaignUI, null);
     }
@@ -204,6 +209,11 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         biomesButton.setChecked(OVERLAY_SHOWN.get() == Overlay.BIOMES);
         panelRoot.addUIElement(biomeToggle).inTL(bordersLeft - BUTTON_GAP - BIOMES_WIDTH, PANEL_MARGIN + CHROME_PAD);
         addCatalystToggle();
+        TooltipMakerAPI treeElement = panelRoot.createUIElement(TREE_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
+        treeElement.addButton(Translation.text("chart.atlas.tree"), Control.TREE, TREE_WIDTH, ChromeMetrics.CONTROL_HEIGHT, 0f);
+        float treeLeft = position.getWidth() - PANEL_MARGIN - CHROME_PAD - CLOSE_WIDTH - BORDERS_WIDTH - BIOMES_WIDTH - CATALYSTS_WIDTH - TREE_WIDTH
+                - BUTTON_GAP * 4f;
+        panelRoot.addUIElement(treeElement).inTL(treeLeft, PANEL_MARGIN + CHROME_PAD);
     }
 
     private void addCatalystToggle() {
@@ -701,6 +711,8 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         } else if (buttonId == Control.CATALYSTS && catalystsButton != null) {
             toggleCatalysts();
             catalystsButton.setChecked(catalystPanel != null);
+        } else if (buttonId == Control.TREE && !focusing && !fade.closing()) {
+            openAtlasTree();
         } else if (buttonId == Control.FOCUS_SWITCH && focusing) {
             if (chartMode) {
                 leaveChartMode();
@@ -710,6 +722,14 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         } else if (buttonId == Control.DEBUG_COMPLETE && chartBench != null) {
             chartBench.runDebugAction();
         }
+    }
+
+    private void openAtlasTree() {
+        if (catalystPanel != null) {
+            catalystPanel.close();
+        }
+        AtlasCameraMemory.remember(Global.getSector(), camera.centreTreeX(), camera.centreTreeY());
+        host.switchTo(AtlasTreeScreen::new);
     }
 
     private void close() {

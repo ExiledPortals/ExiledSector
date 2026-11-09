@@ -1,6 +1,7 @@
 package exiledsector.ui.decoration;
 
 import exiledsector.skills.decoration.Star;
+import exiledsector.skills.tags.SkillTags;
 import org.junit.jupiter.api.Test;
 
 import java.awt.Color;
@@ -14,8 +15,8 @@ class TreeFactionColoursTest {
 
     @Test
     void factionsTakeTheColourOfTheirVolumesStar() {
-        List<Star> stars = List.of(new Star("tritach_star", 0f, 0f, 400f, "star_blue_giant", "#00479e", List.of("tritachyon")),
-                new Star("pirate_star", 0f, 0f, 300f, "star_red_dwarf", null, List.of("pirate")));
+        List<Star> stars = List.of(new Star("tritach_star", 0f, 0f, 400f, "star_blue_giant", "#00479e", SkillTags.treeTags(List.of("tritachyon"))),
+                new Star("pirate_star", 0f, 0f, 300f, "star_red_dwarf", null, SkillTags.treeTags(List.of("pirate"))));
         Map<String, List<String>> factions = Map.of("tritachyon", List.of("tritachyon"), "pirate", List.of("pirates", "pirate_raiders"),
                 "hegemony", List.of("hegemony"));
         Map<String, Color> colours = TreeFactionColours.colours(stars, List.of("tritachyon", "pirate", "hegemony"), factions::get,

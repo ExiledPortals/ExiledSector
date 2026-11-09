@@ -14,8 +14,10 @@ import {
   type TreeNode,
   type UnlockCondition,
 } from './types.ts';
+import type { TreeFiles } from './treeFiles.ts';
 
 interface TreeFileJson {
+  volumes?: unknown;
   nodes?: TreeNode[];
   connectorCurves?: TreeDocument['curves'];
   hiddenConnectors?: TreeDocument['hiddenConnectors'];
@@ -31,26 +33,43 @@ function parseJson<TValue>(text: string, fileName: string): TValue {
   }
 }
 
-export function parseTreeDocument(typesText: string, treeText: string): TreeDocument {
-  const typesJson = parseJson<{ skillTypes?: SkillType[] }>(typesText, 'skill_types.json');
-  const treeJson = parseJson<TreeFileJson>(treeText, 'ship_skill_tree.json');
+function parseVolumes(files: TreeFiles, treeJson: TreeFileJson): string[] {
+  if (!('volumes' in treeJson)) {
+    return [];
+  }
+  if (!files.declaresVolumes) {
+    throw new Error(`${files.layoutFileName} has a volumes list, but this tree takes its volumes from the editor vocabulary, so a save would drop it`);
+  }
+  const volumes = treeJson.volumes;
+  if (!Array.isArray(volumes) || volumes.some((volume) => typeof volume !== 'string')) {
+    throw new Error(`${files.layoutFileName} has a volumes entry that is not a list of volume ids`);
+  }
+  return volumes.slice() as string[];
+}
+
+export function parseTreeDocument(files: TreeFiles, typesText: string, treeText: string): TreeDocument {
+  const typesJson = parseJson<{ skillTypes?: SkillType[] }>(typesText, files.typesFileName);
+  const treeJson = parseJson<TreeFileJson>(treeText, files.layoutFileName);
   if (!Array.isArray(typesJson.skillTypes) || typesJson.skillTypes.length === 0) {
-    throw new Error('skill_types.json has no skill types');
+    throw new Error(`${files.typesFileName} has no skill types`);
   }
   if (!Array.isArray(treeJson.nodes) || treeJson.nodes.length === 0) {
-    throw new Error('ship_skill_tree.json has no nodes');
+    throw new Error(`${files.layoutFileName} has no nodes`);
   }
   const retiredLists = RETIRED_DECORATION_LISTS.filter((key) => key in treeJson);
   if (retiredLists.length > 0) {
-    throw new Error(`ship_skill_tree.json still has ${retiredLists.join(', ')}; move those entries into "decorations" with a kind before editing, or a save would drop them`);
+    throw new Error(
+      `${files.layoutFileName} still has ${retiredLists.join(', ')}; move those entries into "decorations" with a kind before editing, or a save would drop them`,
+    );
   }
   const document: TreeDocument = {
     types: typesJson.skillTypes,
+    volumes: parseVolumes(files, treeJson),
     nodes: treeJson.nodes.map((node) => ({ ...node, connectedTo: node.connectedTo ?? [] })),
     curves: treeJson.connectorCurves ?? [],
     hiddenConnectors: treeJson.hiddenConnectors ?? [],
     anchors: treeJson.orbitAnchors ?? [],
-    decorations: parseDecorations(treeJson.decorations),
+    decorations: parseDecorations(treeJson.decorations, files.layoutFileName),
   };
   pruneConnectorEntries(document);
   return document;
@@ -216,8 +235,9 @@ export function skillTypesFileObject(types: SkillType[]): SkillTypesFile {
   return { skillTypes: types.map(serializeType) };
 }
 
-function treeFileObject(document: TreeDocument): Record<string, unknown> {
-  const out: Record<string, unknown> = { nodes: document.nodes.map(serializeTreeNode) };
+function treeFileObject(files: TreeFiles, document: TreeDocument): Record<string, unknown> {
+  const out: Record<string, unknown> = files.declaresVolumes ? { volumes: document.volumes.slice() } : {};
+  out.nodes = document.nodes.map(serializeTreeNode);
   const curves = linkedEntries(document, document.curves);
   const hiddenConnectors = linkedEntries(document, document.hiddenConnectors);
   if (curves.length) {
@@ -249,9 +269,9 @@ export function serializeSkillTypesText(types: SkillType[], lineEnding: LineEndi
   return withLineEnding(JSON.stringify(skillTypesFileObject(types), null, '\t'), lineEnding);
 }
 
-export function serializeTreeFiles(document: TreeDocument, lineEndings: TreeLineEndings): TreeFileTexts {
+export function serializeTreeFiles(files: TreeFiles, document: TreeDocument, lineEndings: TreeLineEndings): TreeFileTexts {
   return {
     types: serializeSkillTypesText(document.types, lineEndings.types),
-    tree: withLineEnding(JSON.stringify(treeFileObject(document), null, '\t'), lineEndings.tree),
+    tree: withLineEnding(JSON.stringify(treeFileObject(files, document), null, '\t'), lineEndings.tree),
   };
 }

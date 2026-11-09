@@ -21,10 +21,12 @@ import exiledsector.skills.SkillType;
 import exiledsector.skills.radius.RadiusSize;
 import exiledsector.ui.decoration.AbyssDarknessRenderer;
 import exiledsector.ui.decoration.DecorationScene;
+import exiledsector.ui.decoration.ShipTreeDecorations;
 import exiledsector.ui.decoration.SkillTreeFleetRenderer;
 import exiledsector.ui.decoration.StarfieldRenderer;
 import exiledsector.ui.decoration.TreeDecorations;
 import exiledsector.ui.hyperspace.HyperspaceCamera;
+import exiledsector.ui.hyperspace.HyperspaceMode;
 import exiledsector.ui.inspect.ItemCodex;
 import exiledsector.ui.node.DoctrineColors;
 import exiledsector.ui.node.NodeRadiusRingRenderer;
@@ -90,11 +92,11 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.nodeSearch = new NodeSearch(member.getHullSpec().getHullSize());
         this.searchBar = new SkillTreeSearchBar(nodeSearch, this::jumpToNextSearchMatch);
         this.treeSession = new TreeAllocationSession(member, variant, refitButton, nodeSearch);
-        this.decorations = TreeDecorations.forActiveTree(treeSession::isLocked, treeSession::isConcealed);
+        this.decorations = ShipTreeDecorations.forActiveTree(treeSession::isLocked, treeSession::isConcealed);
         this.nodeDrawer = SkillTreeNodeDrawer.attachedTo(treeSession, member, panelStyle, nodeSearch);
         this.templateUi = new SkillTreeTemplateController(member, treeSession, panelStyle);
         this.statPanel = new SkillTreeStatPanel(member, variant, panelStyle);
-        this.hyperspaceMode = new HyperspaceMode(camera, statPanel, treeSession::isHidden, treeSession::wormholePairs);
+        this.hyperspaceMode = ShipHyperspace.mode(camera, statPanel, treeSession);
         this.socketPlacement = new SocketPlacement(hostPanel, treeSession, nodeSearch, searchBar);
         this.schematicButtons = new SchematicButtons(new LogisticsSlots(member.getId()),
                 new IntegrationResetButton(member.getId(), treeSession::refreshAfterIntegrationReset));

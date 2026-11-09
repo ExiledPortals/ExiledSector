@@ -36,6 +36,7 @@ public final class AtlasProgress {
         state.add(cell, AtlasState.COMPLETED);
         state.spendUnchainedAnomalies(cell);
         state.clearTier(tier);
+        state.addAtlasPoints(1);
         AtlasSpecial special = generator.specialAt(cell);
         if (special != null) {
             special.kind().onCompleted(generator, state, cell, special);

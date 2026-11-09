@@ -3,7 +3,7 @@ import { IconSearch } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { fileUrl } from '../../../shared/imagePaths.ts';
 import { tierOf } from '../model/types.ts';
-import { useTreeStore } from '../state/treeStore.ts';
+import { useTreeState } from '../state/treeEditorContext.ts';
 
 interface TypePickerDialogProps {
   currentTypeId: string;
@@ -11,7 +11,7 @@ interface TypePickerDialogProps {
 }
 
 export function TypePickerDialog({ currentTypeId, onPick }: TypePickerDialogProps) {
-  const types = useTreeStore((state) => state.document.types);
+  const types = useTreeState((state) => state.document.types);
   const [filterText, setFilterText] = useState('');
   const shown = useMemo(() => {
     const needle = filterText.trim().toLowerCase();

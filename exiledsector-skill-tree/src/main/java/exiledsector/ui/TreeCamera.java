@@ -1,6 +1,5 @@
 package exiledsector.ui;
 
-import exiledsector.ui.hyperspace.HyperspaceCamera;
 import exiledsector.ui.node.TreeAllocationSession;
 
 final class TreeCamera extends CanvasCamera {
@@ -26,14 +25,5 @@ final class TreeCamera extends CanvasCamera {
         if (!treeSession.isStartingRootMoving()) {
             startingRootFollow = null;
         }
-    }
-
-    void jumpTo(HyperspaceCamera hyperspaceCamera) {
-        jumpZoomTo(hyperspaceCamera.zoom());
-        centreOn(hyperspaceCamera.x(), hyperspaceCamera.y());
-    }
-
-    HyperspaceCamera current() {
-        return new HyperspaceCamera(centreTreeX(), centreTreeY(), zoom());
     }
 }

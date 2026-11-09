@@ -6,7 +6,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.skills.layout.SkillNodeDecoration;
-import exiledsector.skills.layout.SkillTreeObject;
+import exiledsector.skills.layout.TreeNode;
 import exiledsector.skills.tags.SkillTags;
 
 import java.util.ArrayList;
@@ -15,15 +15,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class SkillNode extends SkillTreeObject {
+public class SkillNode extends TreeNode {
 
     private final SkillType type;
-    private final List<String> connectedNodeIds;
-    private final String ringBeltPath;
-    private final String ringBeltColor;
-    private final Float ringBeltWidth;
-    private final String wormholeColor;
-    private final String pairedNodeId;
 
     public SkillNode(String id, SkillType type, List<String> connectedNodeIds, float offsetX, float offsetY) {
         this(id, type, connectedNodeIds, offsetX, offsetY, SkillNodeDecoration.NONE);
@@ -35,24 +29,25 @@ public class SkillNode extends SkillTreeObject {
 
     public SkillNode(String id, SkillType type, List<String> connectedNodeIds, float offsetX, float offsetY,
                      SkillNodeDecoration decoration, List<String> tags) {
-        super(id, offsetX, offsetY, tags);
+        super(id, connectedNodeIds == null ? Collections.emptyList() : connectedNodeIds, offsetX, offsetY, decoration, SkillTags.treeTags(tags));
         this.type = type;
-        this.connectedNodeIds = connectedNodeIds == null ? Collections.emptyList() : connectedNodeIds;
-        this.ringBeltPath = decoration.ringBeltPath();
-        this.ringBeltColor = decoration.ringBeltColor();
-        this.ringBeltWidth = decoration.ringBeltWidth();
-        this.wormholeColor = decoration.wormholeColor();
-        this.pairedNodeId = decoration.pairedNodeId();
+    }
+
+    @Override
+    public SkillTier getTier() {
+        return type.getTier();
     }
 
     public SkillType getType() {
         return type;
     }
 
+    @Override
     public String getDisplayName() {
         return type.getDisplayName();
     }
 
+    @Override
     public String getIconPath() {
         return type.getIconPath();
     }
@@ -214,44 +209,11 @@ public class SkillNode extends SkillTreeObject {
         return Collections.unmodifiableSet(combined);
     }
 
-    public List<String> getConnectedNodeIds() {
-        return connectedNodeIds;
-    }
-
     public SkillNode withoutConnectionsTo(Set<String> removedNodeIds) {
-        List<String> kept = connectedNodeIds.stream().filter(id -> !removedNodeIds.contains(id)).toList();
-        if (kept.size() == connectedNodeIds.size()) {
+        List<String> kept = getConnectedNodeIds().stream().filter(id -> !removedNodeIds.contains(id)).toList();
+        if (kept.size() == getConnectedNodeIds().size()) {
             return this;
         }
-        return new SkillNode(getId(), type, kept, getX(), getY(),
-                new SkillNodeDecoration(ringBeltPath, ringBeltColor, ringBeltWidth, wormholeColor, pairedNodeId), getTags());
-    }
-
-    public float getOffsetX() {
-        return getX();
-    }
-
-    public float getOffsetY() {
-        return getY();
-    }
-
-    public String getRingBeltPath() {
-        return ringBeltPath;
-    }
-
-    public String getRingBeltColor() {
-        return ringBeltColor;
-    }
-
-    public Float getRingBeltWidth() {
-        return ringBeltWidth;
-    }
-
-    public String getWormholeColor() {
-        return wormholeColor;
-    }
-
-    public String getPairedNodeId() {
-        return pairedNodeId;
+        return new SkillNode(getId(), type, kept, getX(), getY(), getDecoration(), getTags());
     }
 }

@@ -110,7 +110,7 @@ public final class SkillTreeNodeDrawer {
         socketRenderer.advance(amount);
         ShipSkillData drawnData = session.viewSnapshot().skillData();
         wormholeGhostFlights.advance(amount, drawnData);
-        wormholeOpenness.advance(amount, drawnData);
+        wormholeOpenness.advance(amount, SkillTree.topology().wormholes(), drawnData::isAllocated);
         socketWormholes.advance(amount, drawnData);
     }
 

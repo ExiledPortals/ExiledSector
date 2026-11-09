@@ -1,22 +1,14 @@
 package exiledsector.skills.loader;
 
-import com.fs.starfarer.api.Global;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
-import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.decoration.Decorations;
 import exiledsector.skills.layout.ConnectorCurve;
-import exiledsector.skills.layout.SkillNodeDecoration;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
+import exiledsector.skills.tags.SkillTags;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,47 +21,12 @@ public final class SkillTreeLoader {
     }
 
     public static JSONObject loadRoot() {
-        try {
-            return Global.getSettings().loadJSON(DATA_PATH);
-        } catch (IOException | JSONException e) {
-            Logger.getLogger(SkillTreeLoader.class).error("Failed to load " + DATA_PATH, e);
-            return null;
-        }
+        return TreeLayoutReader.load(DATA_PATH);
     }
 
     public static ParsedTree loadAll(Map<String, SkillType> skillTypes) {
-        JSONObject treeJson = loadRoot();
-        if (treeJson == null) {
-            return new ParsedTree(new ArrayList<>(), 0, new LinkedHashMap<>(), new HashSet<>(), Decorations.NONE);
-        }
-        JSONArray declaredNodes = treeJson.optJSONArray("nodes");
-        List<SkillNode> nodes;
-        try {
-            nodes = parseNodes(treeJson, skillTypes);
-        } catch (JSONException e) {
-            Logger.getLogger(SkillTreeLoader.class).error("Failed to parse nodes from " + DATA_PATH, e);
-            nodes = new ArrayList<>();
-        }
-        return new ParsedTree(nodes, declaredNodes == null ? 0 : declaredNodes.length(), parseConnectorCurves(treeJson),
-                parseHiddenConnectors(treeJson), DecorationLoader.parse(treeJson, DATA_PATH));
-    }
-
-    private static void forEachEntry(JSONArray entries, String sectionName, EntryParser parser) {
-        if (entries == null) {
-            return;
-        }
-        for (int i = 0; i < entries.length(); i++) {
-            try {
-                parser.parse(entries.getJSONObject(i));
-            } catch (JSONException e) {
-                Logger.getLogger(SkillTreeLoader.class).error("Skipping " + sectionName + " " + SkillTypeLoader.entryLabel(entries, i)
-                        + " in " + DATA_PATH + ": " + e.getMessage());
-            }
-        }
-    }
-
-    private interface EntryParser {
-        void parse(JSONObject entryJson) throws JSONException;
+        TreeLayoutReader.Layout<SkillNode> layout = TreeLayoutReader.read(loadRoot(), DATA_PATH, SkillTags::isVolume, nodeFactory(skillTypes));
+        return new ParsedTree(layout.nodes(), layout.declaredNodeCount(), layout.connectorCurves(), layout.hiddenConnectors(), layout.decorations());
     }
 
     public static final class ParsedTree {
@@ -90,58 +47,30 @@ public final class SkillTreeLoader {
     }
 
     public static Map<String, ConnectorCurve> parseConnectorCurves(JSONObject treeJson) {
-        Map<String, ConnectorCurve> curves = new LinkedHashMap<>();
-        forEachEntry(treeJson.optJSONArray("connectorCurves"), "connector curve", curveJson -> {
-            String firstNodeId = curveJson.getString("a");
-            String secondNodeId = curveJson.getString("b");
-            float controlX = (float) curveJson.getDouble("controlX");
-            float controlY = (float) curveJson.getDouble("controlY");
-            curves.put(SkillTree.curveKey(firstNodeId, secondNodeId), new ConnectorCurve(controlX, controlY));
-        });
-        return curves;
+        return TreeLayoutReader.parseConnectorCurves(treeJson, DATA_PATH);
     }
 
     public static Set<String> parseHiddenConnectors(JSONObject treeJson) {
-        Set<String> hiddenKeys = new HashSet<>();
-        forEachEntry(treeJson.optJSONArray("hiddenConnectors"), "hidden connector",
-                hiddenJson -> hiddenKeys.add(SkillTree.curveKey(hiddenJson.getString("a"), hiddenJson.getString("b"))));
-        return hiddenKeys;
+        return TreeLayoutReader.parseHiddenConnectors(treeJson, DATA_PATH);
     }
 
     public static List<SkillNode> parseNodes(JSONObject treeJson, Map<String, SkillType> skillTypes) throws JSONException {
-        List<SkillNode> nodes = new ArrayList<>();
-        forEachEntry(treeJson.getJSONArray("nodes"), "skill node", nodeJson -> nodes.add(parseNode(nodeJson, skillTypes)));
-        return nodes;
+        return TreeLayoutReader.parseNodes(treeJson, DATA_PATH, SkillTags::isVolume, nodeFactory(skillTypes));
     }
 
-    private static SkillNode parseNode(JSONObject nodeJson, Map<String, SkillType> skillTypes) throws JSONException {
-        List<String> connectedTo = SkillTypeLoader.parseStringArray(nodeJson.optJSONArray("connectedTo"));
-        List<String> tags = SkillTypeLoader.parseStringArray(nodeJson.optJSONArray("tags"));
+    private static TreeLayoutReader.NodeFactory<SkillNode> nodeFactory(Map<String, SkillType> skillTypes) {
+        return new TreeLayoutReader.NodeFactory<>() {
+            @Override
+            public SkillTier tierOf(String typeId) {
+                SkillType skillType = skillTypes.get(typeId);
+                return skillType == null ? null : skillType.getTier();
+            }
 
-        String typeId = nodeJson.getString("type");
-        SkillType skillType = skillTypes.get(typeId);
-        if (skillType == null) {
-            throw new JSONException("Unknown skill type \"" + typeId + "\"");
-        }
-
-        String pairedWith = nodeJson.optString("pairedWith", null);
-        if (pairedWith != null && skillType.getTier() != SkillTier.WORMHOLE) {
-            Logger.getLogger(SkillTreeLoader.class).error("Ignoring pairedWith on skill node \"" + nodeJson.getString("id")
-                    + "\" in " + DATA_PATH + ": only wormhole-tier nodes can be paired");
-            pairedWith = null;
-        }
-        return new SkillNode(
-                nodeJson.getString("id"),
-                skillType,
-                connectedTo,
-                (float) nodeJson.optDouble("x", 0),
-                (float) nodeJson.optDouble("y", 0),
-                new SkillNodeDecoration(
-                        nodeJson.optString("ringBeltPath", null),
-                        nodeJson.optString("ringBeltColor", null),
-                        nodeJson.has("ringBeltWidth") ? (float) nodeJson.getDouble("ringBeltWidth") : null,
-                        nodeJson.optString("wormholeColor", null),
-                        pairedWith),
-                tags);
+            @Override
+            public SkillNode create(TreeLayoutReader.NodeEntry entry) {
+                return new SkillNode(entry.id(), skillTypes.get(entry.typeId()), entry.connectedTo(), entry.x(), entry.y(), entry.decoration(),
+                        entry.treeTags().tags());
+            }
+        };
     }
 }
