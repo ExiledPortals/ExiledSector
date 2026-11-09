@@ -138,9 +138,9 @@ refuses more with `LOGISTICS_CAP` for player and NPC builds alike. The limit is 
 `maxLogisticsHullmods` skips the perma mods our nodes place. A ship already over its limit keeps its nodes, and doctrine
 rewrites, doctrine revert checks, waking dormant nodes and the player fleet's granted nodes ignore the limit.
 
-The player allocates or unallocates one only while docked at a market with a spaceport or station
-(`LogisticsDocking`, vanilla's spaceport test), template auto-allocation included. A level-up whose template step waits
-only on docking keeps that free allocation banked instead of refunding OP, and opening any market reruns auto-allocation
+The player allocates or unallocates one only while docked at, or within battle join range of, a market with a spaceport
+or station (`LogisticsDocking`, measured from the fleet's edge to the market entity's edge), template auto-allocation
+included. A level-up whose template step waits only on that keeps that free allocation banked instead of refunding OP, and opening any market reruns auto-allocation
 on banked allocations (`TemplateDockingRetry`). Each Logistics Schematic raises one ship's limit by 1, with no ceiling.
 They drop like the Military Refit Schematic: `logistics_schematic` in `battle_loot.csv`, scaled by the battle item drop
 slider (`BattleItemDropSetting`), and site rolls at its tier weight (`SkillTreeSchematicDrops`).

@@ -107,6 +107,6 @@ class SkillTreeNodeTooltipRendererTest {
 
         List<StyledText> undocked = new SkillTreeNodeTooltipRenderer.LogisticsStatus(2, 3, true, false).lines();
         assertEquals("Logistics node: 2/3 allocated on this ship.", undocked.get(0).plain());
-        assertEquals("Can only be unallocated at a colony with a spaceport or an orbital station.", undocked.get(1).plain());
+        assertEquals("Can only be unallocated near a colony with a spaceport or an orbital station.", undocked.get(1).plain());
     }
 }
