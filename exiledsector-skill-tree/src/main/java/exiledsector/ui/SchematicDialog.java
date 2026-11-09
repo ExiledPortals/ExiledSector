@@ -10,11 +10,13 @@ final class SchematicDialog {
     enum Choice { NONE, CONFIRM, CANCEL }
 
     private static final float WIDTH = 520f;
-    private static final float HEIGHT = 200f;
+    private static final float MIN_HEIGHT = 200f;
     private static final float PADDING = 24f;
+    private static final float TITLE_BODY_GAP = 12f;
+    private static final float BODY_BUTTON_GAP = 20f;
     private static final float BUTTON_WIDTH = 140f;
     private static final float BUTTON_HEIGHT = 36f;
-    private static final float BODY_MAX_HEIGHT = 80f;
+    private static final float BODY_MAX_HEIGHT = 300f;
 
     private final HoloFrame modalFrame = new HoloFrame(HoloFrame.Look.MODAL);
     private final SkillTreeUiButton confirmButton = new SkillTreeUiButton(Translation.text("ui.schematicDialog.confirm"));
@@ -22,6 +24,7 @@ final class SchematicDialog {
     private final TextLabel titleLine = new TextLabel(UiFonts.TITLE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel bodyText = new TextLabel(UiFonts.DIALOG_TEXT, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
     private boolean dialogOpen;
+    private float dialogHeight = MIN_HEIGHT;
 
     void open(String title, String body) {
         dialogOpen = true;
@@ -29,6 +32,8 @@ final class SchematicDialog {
         hideButtons();
         titleLine.set(title);
         bodyText.setWrapped(body, WIDTH - PADDING * 2f, BODY_MAX_HEIGHT);
+        float contentHeight = PADDING + UiFonts.TITLE.size() + TITLE_BODY_GAP + bodyText.height() + BODY_BUTTON_GAP + BUTTON_HEIGHT + PADDING;
+        dialogHeight = Math.max(MIN_HEIGHT, contentHeight);
     }
 
     void close() {
@@ -60,16 +65,16 @@ final class SchematicDialog {
         if (!modalFrame.isVisible()) {
             return;
         }
-        ScreenRect dialogBox = ScreenRect.centeredIn(canvasPosition, WIDTH, HEIGHT);
+        ScreenRect dialogBox = ScreenRect.centeredIn(canvasPosition, WIDTH, dialogHeight);
         modalFrame.renderBackdrop(canvasPosition, alphaMult);
-        modalFrame.render(dialogBox.left(), dialogBox.bottom(), WIDTH, HEIGHT, SkillTreePanelStyle.GLOW_COLOR, alphaMult,
+        modalFrame.render(dialogBox.left(), dialogBox.bottom(), WIDTH, dialogHeight, SkillTreePanelStyle.GLOW_COLOR, alphaMult,
                 (frameLeft, frameBottom, frameWidth, frameHeight, frameAlpha) -> renderContent(frameLeft, frameBottom, mouseX, mouseY, frameAlpha));
     }
 
     private void renderContent(float dialogLeft, float dialogBottom, float mouseX, float mouseY, float alphaMult) {
-        float cursorTop = dialogBottom + HEIGHT - PADDING;
+        float cursorTop = dialogBottom + dialogHeight - PADDING;
         titleLine.setAlpha(alphaMult).draw(dialogLeft + PADDING, cursorTop);
-        cursorTop -= UiFonts.TITLE.size() + 12f;
+        cursorTop -= UiFonts.TITLE.size() + TITLE_BODY_GAP;
         bodyText.setAlpha(alphaMult).draw(dialogLeft + PADDING, cursorTop);
 
         float buttonBottom = dialogBottom + PADDING;
