@@ -1,6 +1,6 @@
 # The Outer Reaches (atlas)
 
-Status: in progress. Steps 1, 3, 3b, 3c, 4, 5, 7 to 9, 12, 15, 16 and 18 to 20 are built; 2, 6, 10, 11 and 17 are partly built; 13 and 14 are not started (see the build order).
+Status: in progress. Steps 1, 3, 3b, 3c, 4, 5, 7 to 9, 12, 15, 16 and 18 to 20 are built; 2, 6, 10, 11, 13 and 17 are partly built; 14 is not started (see the build order).
 
 In game the atlas is called The Outer Reaches: the uncharted space beyond the Persean Sector that the Wormhole Gateway reaches. Its button is "Outer Reach Atlas". Code and this plan keep the short word atlas.
 
@@ -164,7 +164,7 @@ Decided 2026-10-26: chart expansions and phenomena are one concept, anomalies (`
 10. [~] Infestations, Nexus and Cleansed nodes. Built: infested systems take the infestation faction and stronger lines, a Nexus needs four modifiers and cleanses on completion, cleansed systems get better loot lines. Not built: exclusive Cleansed drops (better rarity and reward stand in).
 11. [~] Bastions and key fragments (pinnacle in its own plan). Built: tier 15 requirement, one attempt, key fragments. Not built: the pinnacle encounter.
 12. [x] First new anomaly (Relay Network, per the overview's order; `completed/anomalies/relay_network.md`). The intel item was dropped 2026-11-09 in favour of Atlas Catalysts.
-13. [ ] The other anomalies, one at a time, each to its own plan.
+13. [~] The other anomalies, one at a time, each to its own plan. Built: those listed in step 2 of `anomalies/overview.md`, plus the Abyssal Rift's three (`completed/anomalies/abyssal_rift.md`). Not built: Minefield, Fear the Reaper, Mirrored Space, Scrap Armada and Fire Ship Hangar, each with its plan in `anomalies/`.
 14. [ ] Atlas points and passives (own plan).
 15. [x] Unknown Skies support: backgrounds and star variants read from the installed mod, CompatTarget self-check. Built: `UnknownSkiesCompat` (its background map joins every region's pool by star age; its star variants are applied with the chart's seeded random and follow its Star Variants setting).
 16. [x] Anomaly merge: `ChartAnomaly` (package `charts.anomaly`) with star, shape and content hooks, `fitsAt` and `atlasWeight`; `ChartAnomalies` loading `chart_anomalies.csv` (with `insertable` and `excludes`, star anomalies refused as insertable); one `anomaly` row in `atlas_anomaly_chances.csv` and a list of rolled anomalies on `AtlasNode`, conflicts resolved by lowest hash; `ChartAnomalies.planned` deciding a run's list once before layout; `AtlasRunNode`, `ChartGenContext`, `ChartContentPlan`, `ChartContent` and `ChartRun` carrying lists; the console's `anomaly=ID`; one tooltip line per anomaly; strings, docs and tests renamed. Built: `charts.anomaly` (`ChartAnomaly`, `AnomalyLayoutSite`, `AnomalyContentSite`, `StarAnomalies` and the moved overlay and breach classes), `ChartAnomalies`, `AtlasAnomalyCandidate`, `ChartLayout.anomalyIds` carrying the planned list from layout to content, `AtlasRunNode` reading its old two-field form, and tests in the matching packages. The `anomaly` marker row is a placeholder: 0.05 per anomaly near the Gateway, rising to 0.15.
