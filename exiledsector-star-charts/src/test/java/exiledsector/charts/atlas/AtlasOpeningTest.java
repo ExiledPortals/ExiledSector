@@ -45,7 +45,6 @@ class AtlasOpeningTest {
         ChartTables.loadAnomalies();
         AtlasData.registerNodeEffects(new JSONArray()
                 .put(new JSONObject().put("id", AtlasOpening.INFESTED).put("effects", "CHART_FLEET_SIZE_PERCENT:25"))
-                .put(new JSONObject().put("id", AtlasOpening.CLEANSED).put("effects", "CHART_REWARD_PERCENT:50"))
                 .put(new JSONObject().put("id", AtlasOpening.INFESTATION_EFFECTS_ID).put("effects", "CHART_BOSS_SIZE_PERCENT:100; CHART_FLEET_SIZE_PERCENT:-10")));
     }
 
@@ -83,17 +82,17 @@ class AtlasOpeningTest {
         assertEquals(ChartAnomalies.definition(PowerfulBoss.ANOMALY_ID).effects().get(0).value(), context.bossSizePercent());
         assertTrue(context.bossSpoilsMult() > 1f);
 
-        state.add(cell, AtlasState.ANOMALIES_SPENT | AtlasState.CLEANSED);
+        state.add(cell, AtlasState.ANOMALIES_SPENT | AtlasState.INFESTATION_CLEARED);
         AtlasRunNode spent = AtlasOpening.runNode(generator, state, cell);
 
         assertEquals(List.of(), spent.anomalyIds());
         assertFalse(spent.guaranteedBossTierUp());
         assertEquals(generator.node(cell).factionId(), spent.factionId());
-        assertEquals(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_REWARD_PERCENT, 50f)), spent.effects());
+        assertEquals(List.of(), spent.effects());
     }
 
     @Test
-    void aCaptureHandsTheSystemToItsCaptorButAnInfestationHoldsItUntilCleansed() {
+    void aCaptureHandsTheSystemToItsCaptorButAnInfestationHoldsItUntilCleared() {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = new AtlasGenerator(SEED, rules(), AtlasUnlocks.NONE, state);
         AtlasCell infested = findInfested(generator, false);
@@ -103,7 +102,7 @@ class AtlasOpeningTest {
         assertEquals(Map.of(infested, "hegemony"), state.captures());
         assertEquals("hegemony", AtlasOpening.territoryOwnerOf(generator, state, infested));
         assertEquals("remnant", AtlasOpening.ownerOf(generator, state, infested));
-        state.add(infested, AtlasState.CLEANSED);
+        state.add(infested, AtlasState.INFESTATION_CLEARED);
         assertEquals("hegemony", AtlasOpening.ownerOf(generator, state, infested));
         assertEquals("hegemony", AtlasOpening.runNode(generator, state, infested).factionId());
 
@@ -118,7 +117,7 @@ class AtlasOpeningTest {
     }
 
     @Test
-    void clearingANexusCleansesItsInfestationAndGrantsAPoint() {
+    void clearingANexusEndsItsInfestationAndGrantsAPoint() {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = new AtlasGenerator(SEED, rules(), AtlasUnlocks.NONE, state);
         AtlasCell nexus = findInfested(generator, true);
@@ -133,7 +132,7 @@ class AtlasOpeningTest {
         AtlasProgress.complete(generator, state, nexus, 7);
 
         assertTrue(state.isCompleted(nexus));
-        assertTrue(state.has(infested, AtlasState.CLEANSED));
+        assertTrue(state.has(infested, AtlasState.INFESTATION_CLEARED));
         assertEquals(2, state.atlasPoints());
         AtlasProgress.complete(generator, state, nexus, 7);
         assertEquals(2, state.atlasPoints());
@@ -162,10 +161,10 @@ class AtlasOpeningTest {
 
         AtlasProgress.complete(generator, state, nexus, 7);
 
-        assertFalse(state.has(neighbourZone, AtlasState.CLEANSED));
+        assertFalse(state.has(neighbourZone, AtlasState.INFESTATION_CLEARED));
         for (AtlasCell cell : nexus.around(4)) {
             boolean ownZone = !generator.isVoid(cell) && nexus.equals(generator.infestationSource(cell));
-            assertEquals(ownZone, state.has(cell, AtlasState.CLEANSED), cell.toString());
+            assertEquals(ownZone, state.has(cell, AtlasState.INFESTATION_CLEARED), cell.toString());
         }
     }
 

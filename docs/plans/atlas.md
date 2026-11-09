@@ -1,6 +1,6 @@
 # The Outer Reaches (atlas)
 
-Status: in progress. Steps 1 to 5, 7 to 9, 12, 15, 16 and 18 to 20 are built; 6, 10, 11, 13 and 17 are partly built; 14 is not started (see the build order).
+Status: in progress. Steps 1 to 5, 7 to 10, 12, 15, 16 and 18 to 20 are built; 6, 11 and 17 are partly built (see the build order). New anomalies have their own plans in `anomalies/`; atlas points and passives will get their own.
 
 In game the atlas is called The Outer Reaches: the uncharted space beyond the Persean Sector that the Wormhole Gateway reaches. Its button is "Outer Reach Atlas". Code and this plan keep the short word atlas.
 
@@ -85,25 +85,21 @@ The generator stays a pure function of the seed: it only knows rolled anomalies.
 
 `AtlasAnomalies.canInsert` is the one rule for inserting, used by every source, and returns the reason it refuses: unknown anomaly, not `insertable` (star anomalies never are), missing mod, empty space or the Gateway, completed system, the system of the open run, already present, a conflict with an anomaly already there, or the anomaly's `fitsAt` hook. Whether a source may insert into fogged or unreachable systems is up to that source. A run takes the system's anomalies at opening, and closing it, with or without the objective, spends the system's inserted anomalies; a failed run also spends the rolled ones except a star anomaly.
 
-One place decides a run's anomalies. When a run opens, `ChartAnomalies.planned` takes the atlas's anomalies (rolled and inserted) and any added through the console (later atlas passives). Star Charts roll no anomaly lines (since 2026-10-26, `completed/anomalies/spatial_breach_changes.md`). Atlas anomalies ignore the tier range, so an anomaly on the map is never silently dropped by the chart that opens it. The same anomaly from several sources is one instance. Conflicts keep the anomaly already accepted. The planned list is decided once, before layout, and both the layout and the content stages use it.
+One place decides a run's anomalies. When a run opens, `ChartAnomalies.planned` takes the atlas's anomalies (rolled and inserted) and any added through the console. Star Charts roll no anomaly lines (since 2026-10-26, `completed/anomalies/spatial_breach_changes.md`). Atlas anomalies ignore the tier range, so an anomaly on the map is never silently dropped by the chart that opens it. The same anomaly from several sources is one instance. Conflicts keep the anomaly already accepted. The planned list is decided once, before layout, and both the layout and the content stages use it.
 
 Marker icons and tooltip lines come from `chart_anomalies.csv` columns, so the node drawer needs nothing per anomaly. There is no Tablet equivalent: decided 2026-11-09, Atlas Catalysts (`completed/anomalies/atlas_catalysts.md`) replace the planned Outer Reach Intel item, since inserting an anomaly into a system covers the same ground.
 
-Anomaly tuning, region effects and later atlas passives all reach a run as `ChartModifier` lines through `ChartGenContext`, next to the chart's own lines, so none of them needs a new pipeline.
+Anomaly tuning and region effects reach a run as `ChartModifier` lines through `ChartGenContext`, next to the chart's own lines, so none of them needs a new pipeline.
 
 ## Special sites
 
-A Sensor Array is a short run with a boss. Completing it reveals 6 lanes around it and grants an atlas point, and the run finds more Atlas Catalysts (a Catalyst % line on its `atlas_node_effects.csv` row).
+A Sensor Array is a short run with a boss. Completing it reveals 6 lanes around it, and the run finds more Atlas Catalysts (a Catalyst % line on its `atlas_node_effects.csv` row).
 
-An infestation is a cluster of infested nodes around an Infestation. There are two kinds: Remnant infestations, and Threat infestations, which appear only once the player has met the Threat (vanilla's `$encounteredThreat`). Infested nodes have stronger fleets and a better loot multiplier. The Nexus needs a chart with at least four modifiers. Infested nodes are those within a radius of the Nexus (2.5 cells to start). Clearing it turns every infested node into a Cleansed node with exclusive drops, and grants an atlas point. Infestations never spread, because charts have no timers. Like biomes, a Threat infestation is decided when its chunk is revealed, so one never appears in space the player has already seen.
+An infestation is a cluster of infested nodes around an Infestation. There are two kinds: Remnant infestations, and Threat infestations, which appear only once the player has met the Threat (vanilla's `$encounteredThreat`). Infested nodes have stronger fleets and a better loot multiplier. The Nexus needs a chart with at least four modifiers. Infested nodes are those within a radius of the Nexus (2.5 cells to start). Clearing it ends the infestation. Infestations never spread, because charts have no timers. Like biomes, a Threat infestation is decided when its chunk is revealed, so one never appears in space the player has already seen.
 
 Bastions are three nodes at fixed bearings 25 cells out, so every save has the same long-range goals. Each needs a tier 15 chart and allows one attempt. Each drops a key fragment, and three fragments open a pinnacle encounter at the Gateway. The pinnacle gets its own plan.
 
 Unique systems are new content (the old unique charts were removed 2026-10-23). Each one bends a single rule hard: all loot and no fleets, a huge boss, or every POI a cache.
-
-## Atlas points and passives
-
-Points come from milestones: the first boss kill at each tier (15), each Sensor Array, each Nexus and each Bastion. Respecs are free. What the passives are, and whether they form a small tree on the atlas canvas or Masters-style choice slots, gets its own plan. They are how players specialise in regions, expansions and boss farming.
 
 ## UI
 
@@ -134,7 +130,7 @@ Star Chart Progress for hull upgrade points (highest cleared tier), the entries 
 
 ## Decisions
 
-Decided 2026-10-23: failed nodes can be attempted again. The infestation design stands as written, with both Remnant and Threat infestations. Atlas passives get their own plan. The in-game name is The Outer Reaches, with the Outer Reach Atlas button. There is one atlas per save, and every Gateway the player owns opens it. Distance from the origin never gates the tier.
+Decided 2026-10-23: failed nodes can be attempted again. The infestation design stands as written, with both Remnant and Threat infestations. The in-game name is The Outer Reaches, with the Outer Reach Atlas button. There is one atlas per save, and every Gateway the player owns opens it. Distance from the origin never gates the tier.
 
 Decided 2026-10-24: gameplay-changing terrain (black holes, neutron stars and pulsar beams, dense nebulae, asteroid impacts, magnetic fields, stellar flares) is a phenomenon marker rolled like an expansion, not bound to a region; regions only lean on it. A node's star, planets and terrain are fixed per cell. Regions carry no implicit effect lines or loot leanings. Unknown Skies gets optional support. Locked biomes are decided when first revealed.
 
@@ -161,11 +157,9 @@ Decided 2026-10-26: chart expansions and phenomena are one concept, anomalies (`
 7. [x] Completion and failure wired through the objectives and `ChartRunCloser`. CompatTarget self-checks for `foilerTerrain` and `foilerHydro`. Built: `AtlasProgress`, `FoilerCompat`.
 8. [x] Chart supply: tier floor, three-into-one combine, Gateway vendor. Built: inside-system drops never fall below the run tier (`ChartDrops`), Combine three in Star Chart storage and the Gateway's Buy option (`ChartSupply`, placeholder price 15000 credits).
 9. [x] Sensor Arrays and reveal. Built: the 6-lane reveal, atlas point and short-run node effects, and extra Atlas Catalysts in place of the dropped intel item (`CHART_CATALYST_PERCENT` on the `sensor_array` row of `atlas_node_effects.csv`, placeholder).
-10. [~] Infestations, Nexus and Cleansed nodes. Built: infested systems take the infestation faction and stronger lines, a Nexus needs four modifiers and cleanses on completion, cleansed systems get better loot lines. Not built: exclusive Cleansed drops (better rarity and reward stand in).
+10. [x] Infestations and Nexus. Built: infested systems take the infestation faction and stronger lines, and a Nexus needs four modifiers and ends its infestation on completion. Cleansed systems were dropped 2026-11-09: a cleared system is marked `AtlasState.INFESTATION_CLEARED` and simply stops being infested.
 11. [~] Bastions and key fragments (pinnacle in its own plan). Built: tier 15 requirement, one attempt, key fragments. Not built: the pinnacle encounter.
 12. [x] First new anomaly (Relay Network, per the overview's order; `completed/anomalies/relay_network.md`). The intel item was dropped 2026-11-09 in favour of Atlas Catalysts.
-13. [~] The other anomalies, one at a time, each to its own plan. Built: those listed in step 2 of `anomalies/overview.md`, plus the Abyssal Rift's three (`completed/anomalies/abyssal_rift.md`). Not built: Minefield, Fear the Reaper, Mirrored Space, Scrap Armada and Fire Ship Hangar, each with its plan in `anomalies/`.
-14. [ ] Atlas points and passives (own plan).
 15. [x] Unknown Skies support: backgrounds and star variants read from the installed mod, CompatTarget self-check. Built: `UnknownSkiesCompat` (its background map joins every region's pool by star age; its star variants are applied with the chart's seeded random and follow its Star Variants setting).
 16. [x] Anomaly merge: `ChartAnomaly` (package `charts.anomaly`) with star, shape and content hooks, `fitsAt` and `atlasWeight`; `ChartAnomalies` loading `chart_anomalies.csv` (with `insertable` and `excludes`, star anomalies refused as insertable); one `anomaly` row in `atlas_anomaly_chances.csv` and a list of rolled anomalies on `AtlasNode`, conflicts resolved by lowest hash; `ChartAnomalies.planned` deciding a run's list once before layout; `AtlasRunNode`, `ChartGenContext`, `ChartContentPlan`, `ChartContent` and `ChartRun` carrying lists; the console's `anomaly=ID`; one tooltip line per anomaly; strings, docs and tests renamed. Built: `charts.anomaly` (`ChartAnomaly`, `AnomalyLayoutSite`, `AnomalyContentSite`, `StarAnomalies` and the moved overlay and breach classes), `ChartAnomalies`, `AtlasAnomalyCandidate`, `ChartLayout.anomalyIds` carrying the planned list from layout to content, `AtlasRunNode` reading its old two-field form, and tests in the matching packages. The `anomaly` marker row is a placeholder: 0.05 per anomaly near the Gateway, rising to 0.15.
 17. [~] Inserted anomalies: encoded records in `AtlasState` (insert, move, remove, spend at run close), `AtlasAnomalies.effective` as the only reader of a node's anomalies, `AtlasAnomalies.canInsert` with its refusal reasons, and a dev console command to insert, move and remove them. The player's and the world's ways of inserting come later, each in its own plan. Built: `AtlasAnomalyRecord`, the records in `AtlasState`, `AtlasAnomalies` (`effective`, `canInsert`, `insert`, `move`, `openRunCell`), spending in `AtlasProgress.complete` and `fail`, and `ExiledSectorAtlasAnomaly` (`AtlasAnomalyCommand`). Only `spatial_breach` and `relay_network` are insertable so far, and the Relay Network chain is the first world source (`RelayChain`, chained records in `AtlasAnomalyRecord`). The player inserts anomalies with Atlas Catalysts (`AnomalyCatalystUse`, `completed/anomalies/atlas_catalysts.md`). Not built: other world sources.

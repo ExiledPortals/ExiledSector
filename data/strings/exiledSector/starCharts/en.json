@@ -310,7 +310,6 @@
     "chart.atlas.anomaly.powerful_boss.description": "Your sensor chief spots a larger than usual fleet defending this system. It's likely they will hold much more navigation data for the Outer Reaches.",
     "chart.atlas.node.anomaly": "Anomaly: {anomaly}",
     "chart.atlas.node.infested": "Infested from the {infestation}",
-    "chart.atlas.node.cleansed": "Cleansed",
     "chart.atlas.node.spent": "Anomalies spent: a chart failed here",
     "chart.atlas.node.completed": "Completed",
     "chart.atlas.node.attempted": "Bastion attempted; it allows one try",

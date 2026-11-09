@@ -19,7 +19,6 @@ public final class AtlasOpening {
 
     public static final int INFESTATION_MODIFIERS = 4;
     public static final String INFESTED = "infested";
-    public static final String CLEANSED = "cleansed";
     public static final String INFESTATION_EFFECTS_ID = "infestation";
     private static final long LAYOUT_SEED_SALT = 0x4c41594f5554L;
 
@@ -76,8 +75,8 @@ public final class AtlasOpening {
         AtlasNode node = generator.node(cell);
         List<ChartGenContext.AppliedEffect> effects = new ArrayList<>();
         AtlasSpecial special = generator.specialAt(cell);
-        if (node.infestationId() != null) {
-            effects.addAll(AtlasData.nodeEffects(state.has(cell, AtlasState.CLEANSED) ? CLEANSED : INFESTED));
+        if (node.infestationId() != null && !state.has(cell, AtlasState.INFESTATION_CLEARED)) {
+            effects.addAll(AtlasData.nodeEffects(INFESTED));
         }
         if (special != null) {
             effects.addAll(AtlasData.nodeEffects(special.kind().nodeEffectsId()));
@@ -105,7 +104,7 @@ public final class AtlasOpening {
 
     private static String owner(AtlasGenerator generator, AtlasState state, AtlasCell cell, String factionId, String infestationId) {
         String holder = held(state, cell, factionId);
-        if (infestationId == null || state.has(cell, AtlasState.CLEANSED)) {
+        if (infestationId == null || state.has(cell, AtlasState.INFESTATION_CLEARED)) {
             return holder;
         }
         AtlasSpecial infestation = generator.rules().special(infestationId);

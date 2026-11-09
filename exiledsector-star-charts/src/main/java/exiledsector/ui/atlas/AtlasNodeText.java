@@ -59,10 +59,8 @@ public final class AtlasNodeText {
             lines.add(new AtlasLine(Translation.msg("chart.atlas.node.anomaly").arg("anomaly", AtlasNames.name("anomaly", anomalyId)).text(), Tone.MARKER));
             lines.addAll(anomalyLines(generator, state, cell, anomalyId));
         }
-        if (node.infestationId() != null) {
-            lines.add(state.has(cell, AtlasState.CLEANSED)
-                    ? new AtlasLine(Translation.text("chart.atlas.node.cleansed"), Tone.GOOD)
-                    : new AtlasLine(Translation.msg("chart.atlas.node.infested").arg("infestation", AtlasNames.name("special", node.infestationId())).text(), Tone.BAD));
+        if (node.infestationId() != null && !state.has(cell, AtlasState.INFESTATION_CLEARED)) {
+            lines.add(new AtlasLine(Translation.msg("chart.atlas.node.infested").arg("infestation", AtlasNames.name("special", node.infestationId())).text(), Tone.BAD));
         }
         if (spent) {
             lines.add(new AtlasLine(Translation.text("chart.atlas.node.spent"), Tone.BAD));

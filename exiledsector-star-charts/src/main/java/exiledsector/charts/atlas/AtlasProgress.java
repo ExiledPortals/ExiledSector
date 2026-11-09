@@ -42,11 +42,11 @@ public final class AtlasProgress {
         }
     }
 
-    static void cleanse(AtlasGenerator generator, AtlasState state, AtlasCell infestationSourceCell, AtlasSpecial special) {
+    static void clearInfestation(AtlasGenerator generator, AtlasState state, AtlasCell infestationSourceCell, AtlasSpecial special) {
         int reach = (int) Math.ceil(special.radius()) + 1;
         for (AtlasCell cell : infestationSourceCell.around(reach)) {
             if (!generator.isVoid(cell) && infestationSourceCell.equals(generator.infestationSource(cell))) {
-                state.add(cell, AtlasState.CLEANSED);
+                state.add(cell, AtlasState.INFESTATION_CLEARED);
             }
         }
     }
