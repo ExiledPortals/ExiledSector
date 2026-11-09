@@ -29,7 +29,7 @@ final class LogisticsSlots extends SchematicButton {
     }
 
     @Override
-    String label() {
+    String label(int held) {
         return Translation.msg("ui.logisticsSlots.button").arg("used", allocated).arg("cap", cap).text();
     }
 

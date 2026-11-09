@@ -41,7 +41,7 @@ abstract class SchematicButton {
 
     abstract void read(ShipSkillData data);
 
-    abstract String label();
+    abstract String label(int held);
 
     Color labelColor() {
         return null;
@@ -151,6 +151,7 @@ abstract class SchematicButton {
         if (nowHeld != held) {
             held = nowHeld;
             tooltipBody = null;
+            refreshLabel();
         }
         rebuildTooltipBody();
     }
@@ -163,10 +164,14 @@ abstract class SchematicButton {
         shownData = data;
         shownRevision = data.revision();
         read(data);
-        button.setLabel(label());
-        button.setTextColor(labelColor());
+        refreshLabel();
         tooltipBody = null;
         rebuildTooltipBody();
+    }
+
+    private void refreshLabel() {
+        button.setLabel(label(Math.max(0, held)));
+        button.setTextColor(labelColor());
     }
 
     private void rebuildTooltipBody() {

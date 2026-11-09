@@ -26,8 +26,8 @@ final class IntegrationResetButton extends SchematicButton {
     }
 
     @Override
-    String label() {
-        return Translation.msg("ui.integrationReset.button").arg("count", integratedCount).text();
+    String label(int held) {
+        return Translation.msg("ui.integrationReset.button").arg("count", held).text();
     }
 
     @Override
