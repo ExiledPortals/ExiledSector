@@ -9,7 +9,6 @@ final class IntegrationResetButton extends SchematicButton {
 
     private final Runnable afterReset;
     private int integratedCount;
-    private int refund;
 
     IntegrationResetButton(String memberId, Runnable afterReset) {
         super(memberId, DeintegrationSchematic.INSTANCE, DeintegrationSchematic.ICON_PATH, Translation.text("ui.integrationReset.title"));
@@ -24,7 +23,6 @@ final class IntegrationResetButton extends SchematicButton {
     @Override
     void read(ShipSkillData data) {
         integratedCount = data.getIntegratedNodeIds().size();
-        refund = DeintegrationSchematic.refundFor(data);
     }
 
     @Override
@@ -35,7 +33,7 @@ final class IntegrationResetButton extends SchematicButton {
     @Override
     String tooltipBody(int held, String itemName) {
         String countLine = integratedCount == 0 ? Translation.text("ui.integrationReset.none")
-                : Translation.msg("ui.integrationReset.body").count(integratedCount).arg("refund", refund).text();
+                : Translation.msg("ui.integrationReset.body").count(integratedCount).text();
         String itemLine;
         if (held == 0) {
             itemLine = Translation.msg("ui.integrationReset.noItems").arg("item", itemName).text();
