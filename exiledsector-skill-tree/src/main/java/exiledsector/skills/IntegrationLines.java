@@ -88,7 +88,7 @@ public final class IntegrationLines {
         NodeDescription normal = SkillNode.describeMechanics(type, hullSize, false);
         List<DescriptionLine> effects = new ArrayList<>(normal.effects());
         if (state.showsHint()) {
-            effects.add(new DescriptionLine(Translation.styled("node.integration.hint"), false));
+            effects.add(new DescriptionLine(Translation.msg("node.integration.hint").count(state.nextCost()).styled(), false));
         }
         return new NodeDescription(effects, normal.details());
     }
