@@ -505,8 +505,9 @@ EMP), and the split runs before every other damage-dealt effect, so they all see
 
 Each split target is hit by a real beam from an invisible, invulnerable drone placed just outside the
 original target's shield or hull. The drone copies the ship's captain, weapon stat modifiers and damage-dealt
-listeners, and fires for at least 1 s, then while the original beam hits plus 0.3 s. Drones carry no hull
-mods except pure markers listed in `drone_marker_hullmods.csv` (shared with Refracting Projectiles). Weapons
+listeners, and fires for at least 1 s, then while the original beam hits plus 0.3 s. Drones carry Vast Bulk,
+which point defence scripts such as Advanced Gunnery Control skip, plus only the pure markers listed in
+`drone_marker_hullmods.csv` (both shared with Refracting Projectiles). Weapons
 in `split_beam_effect_blocklist.csv`, or ones a drone can't carry, fall back to simulated splits: per-tick
 instant damage plus a MagicLib fake beam, without the weapon's effect code.
 

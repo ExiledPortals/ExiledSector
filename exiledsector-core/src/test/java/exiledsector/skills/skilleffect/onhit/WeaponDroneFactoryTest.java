@@ -10,6 +10,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
+import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.loading.BeamWeaponSpecAPI;
 import com.fs.starfarer.api.loading.MissileSpecAPI;
 import com.fs.starfarer.api.loading.ProjectileSpecAPI;
@@ -47,6 +48,7 @@ class WeaponDroneFactoryTest {
     private SettingsAPI settings;
     private CombatEngineAPI engine;
     private ProjectileWeaponSpecAPI shared;
+    private ShipVariantAPI droneVariant;
     private final float[] chargeTime = {0.5f};
     private final int[] burstSize = {3};
     private final float[] refireDelay = {0f};
@@ -66,7 +68,8 @@ class WeaponDroneFactoryTest {
 
         ShipHullSpecAPI hull = mock(ShipHullSpecAPI.class);
         when(settings.getHullSpec(WeaponDroneFactory.hullId())).thenReturn(hull);
-        when(settings.createEmptyVariant(WeaponDroneFactory.hullId(), hull)).thenReturn(mock(ShipVariantAPI.class));
+        droneVariant = mock(ShipVariantAPI.class);
+        when(settings.createEmptyVariant(WeaponDroneFactory.hullId(), hull)).thenReturn(droneVariant);
         shared = mock(ProjectileWeaponSpecAPI.class);
         when(shared.getChargeTime()).thenAnswer(invocation -> chargeTime[0]);
         when(shared.getBurstSize()).thenAnswer(invocation -> burstSize[0]);
@@ -121,6 +124,17 @@ class WeaponDroneFactoryTest {
         InOrder order = Mockito.inOrder(drone, engine);
         order.verify(drone).addListener(controller);
         order.verify(engine).addEntity(drone);
+    }
+
+    @Test
+    void dronesAreBuiltWithVastBulkSoTargetingScriptsThatSkipStationsIgnoreThem() {
+        droneThatRecordsTheSharedSpec();
+
+        WeaponDroneFactory.createSingleShot(mock(ShipAPI.class), weaponWith(shared, WeaponAPI.WeaponSize.SMALL), built -> new Object());
+
+        InOrder order = Mockito.inOrder(droneVariant, engine);
+        order.verify(droneVariant).addMod(HullMods.VASTBULK);
+        order.verify(engine).createFXDrone(droneVariant);
     }
 
     @Test
