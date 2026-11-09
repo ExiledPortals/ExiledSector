@@ -59,6 +59,10 @@ final class SkillTreeTemplateController {
         return treeSession.isPlanning();
     }
 
+    int plannedNodeSlots() {
+        return treeSession.plannedNodeSlots();
+    }
+
     void exitTemplateMode() {
         if (treeSession.isPlanning()) {
             treeSession.stopPlanning();

@@ -6295,11 +6295,11 @@
 				"effects": [
 					{
 						"effect": "ENERGY_WEAPON_DAMAGE_PERCENT",
-						"magnitude": 15
+						"magnitude": 20
 					},
 					{
 						"effect": "ENERGY_WEAPON_RATE_OF_FIRE_PERCENT",
-						"magnitude": 20
+						"magnitude": 25
 					},
 					{
 						"effect": "ZERO_FLUX_BOOST_FLUX_LEVEL_PERCENT",

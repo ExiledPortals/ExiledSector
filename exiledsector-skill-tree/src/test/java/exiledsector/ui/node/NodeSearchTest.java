@@ -6,6 +6,7 @@ import exiledsector.i18n.RealCatalogue;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledsector.items.DoctrineOverrides;
+import exiledsector.skills.LogisticsNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -122,6 +123,27 @@ class NodeSearchTest {
 
         assertTrue(search.matches(armor, tree));
         assertFalse(search.matches(flux, tree));
+    }
+
+    @Test
+    void theLogisticsFocusLightsOnlyLogisticsNotablesOverAnyQuery() {
+        SkillType groundSupport = new SkillType.Builder("ground_support", "Ground Support", "", SkillTier.NOTABLE)
+                .tags(List.of(LogisticsNodes.TAG))
+                .build();
+        SkillNode logistics = new SkillNode("ground_support_1", groundSupport, List.of(), 0f, 0f);
+        SkillNode armor = node("armor", "Heavy Armor");
+        NodeSearch search = new NodeSearch();
+        search.setQuery("armor");
+
+        search.setLogisticsFocus(true);
+
+        assertTrue(search.matches(logistics, tree));
+        assertFalse(search.matches(armor, tree));
+
+        search.setLogisticsFocus(false);
+
+        assertTrue(search.matches(armor, tree));
+        assertFalse(search.matches(logistics, tree));
     }
 
     @Test

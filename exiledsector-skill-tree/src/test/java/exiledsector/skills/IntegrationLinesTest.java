@@ -38,6 +38,15 @@ class IntegrationLinesTest {
                 && text.spans().stream().mapToInt(span -> span.end() - span.start()).sum() == text.plain().length();
     }
 
+    private static boolean isStoryPointGreenAfter(StyledText text, String leadIn) {
+        return text.plain().startsWith(leadIn)
+                && text.spans().equals(List.of(new StyledText.Span(leadIn.length(), text.plain().length(), Style.BUILT_IN)));
+    }
+
+    private static List<String> storyPointGreenParts(StyledText text) {
+        return text.spans().stream().filter(span -> span.style() == Style.BUILT_IN).map(span -> text.plain().substring(span.start(), span.end())).toList();
+    }
+
     @Test
     void anIntegratedTooltipListsEachDroppedLineInStoryPointGreen() {
         List<DescriptionLine> effects = IntegrationLines.integrated(PENALTY_DROPPING, HullSize.CRUISER).effects();
@@ -45,7 +54,7 @@ class IntegrationLinesTest {
         String droppedPenalty = REMOVED_PREFIX + FluxSkillEffect.FLUX_CAPACITY_MULT.description(-10f).plain();
         assertEquals(List.of(droppedPenalty), removedTexts(effects));
         DescriptionLine removedLine = effects.stream().filter(line -> line.plain().equals(droppedPenalty)).findFirst().orElseThrow();
-        assertTrue(isAllStoryPointGreen(removedLine.text()), removedLine.text().toMarkup());
+        assertTrue(isStoryPointGreenAfter(removedLine.text(), REMOVED_PREFIX), removedLine.text().toMarkup());
         assertFalse(removedLine.lowerIsBetter());
     }
 
@@ -123,7 +132,78 @@ class IntegrationLinesTest {
 
         String droppedPenalty = REMOVED_PREFIX + DefenseSkillEffect.WEAPON_DAMAGE_TAKEN_PERCENT.description(50f).plain();
         assertEquals(List.of(droppedPenalty), removedTexts(preview));
-        assertTrue(isAllStoryPointGreen(preview.get(preview.size() - 1).text()));
+        assertTrue(isStoryPointGreenAfter(preview.get(preview.size() - 1).text(), REMOVED_PREFIX));
         assertEquals(List.of(), removedTexts(IntegrationLines.preview(FRIGATE_PENALTY_DROPPING, HullSize.DESTROYER, NOT_INTEGRATED)));
+    }
+
+    @Test
+    void anIntegratedTooltipShowsOnlyTheNewValueOfAChangedLineInStoryPointGreen() {
+        String changedHull = DefenseSkillEffect.HULL_PERCENT.description(20f).plain();
+        DescriptionLine hullLine = IntegrationLines.integrated(PENALTY_DROPPING, HullSize.CRUISER).effects().stream()
+                .filter(line -> line.plain().equals(changedHull)).findFirst().orElseThrow();
+
+        List<String> greenParts = storyPointGreenParts(hullLine.text());
+        assertEquals(1, greenParts.size(), hullLine.text().toMarkup());
+        assertTrue(greenParts.get(0).contains("20"), hullLine.text().toMarkup());
+    }
+
+    @Test
+    void thePreviewSaysInsteadGrantsForAChangedValueAndSkipsUnchangedLines() {
+        SkillType raised = new SkillType.Builder("raised", "Raised", "a.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f), new SkillTypeEffect(DefenseSkillEffect.ARMOR_FLAT, 50f)))
+                .integratedEffects(new IntegratedEffects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 20f),
+                        new SkillTypeEffect(DefenseSkillEffect.ARMOR_FLAT, 50f)), List.of()))
+                .build();
+
+        List<DescriptionLine> preview = IntegrationLines.preview(raised, HullSize.CRUISER, NOT_INTEGRATED);
+
+        assertEquals(2, preview.size(), preview.toString());
+        DescriptionLine instead = preview.get(1);
+        assertEquals("Instead grants " + DefenseSkillEffect.HULL_PERCENT.description(20f).plain(), instead.plain());
+        List<String> greenParts = storyPointGreenParts(instead.text());
+        assertEquals(1, greenParts.size(), instead.text().toMarkup());
+        assertTrue(greenParts.get(0).contains("20"), instead.text().toMarkup());
+    }
+
+    @Test
+    void thePreviewSaysInAdditionGrantsForANewLineInStoryPointGreen() {
+        SkillType extended = new SkillType.Builder("extended", "Extended", "a.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
+                .integratedEffects(new IntegratedEffects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f),
+                        new SkillTypeEffect(DefenseSkillEffect.ARMOR_FLAT, 50f)), List.of()))
+                .build();
+
+        List<DescriptionLine> preview = IntegrationLines.preview(extended, HullSize.CRUISER, NOT_INTEGRATED);
+
+        String leadIn = "In addition, grants ";
+        assertEquals(2, preview.size(), preview.toString());
+        assertEquals(leadIn + DefenseSkillEffect.ARMOR_FLAT.description(50f).plain(), preview.get(1).plain());
+        assertTrue(isStoryPointGreenAfter(preview.get(1).text(), leadIn), preview.get(1).text().toMarkup());
+    }
+
+    @Test
+    void aSentenceLineInThePreviewFollowsAColon() {
+        String jokeLine = "The crabs eat what the crew won't.";
+        SkillType crabs = new SkillType.Builder("crabs", "Crabs", "a.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
+                .integratedEffects(new IntegratedEffects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)), List.of(), List.of(jokeLine)))
+                .build();
+
+        List<String> preview = IntegrationLines.preview(crabs, HullSize.CRUISER, NOT_INTEGRATED).stream().map(DescriptionLine::plain).toList();
+
+        assertEquals("In addition, grants: " + jokeLine, preview.get(preview.size() - 1));
+    }
+
+    @Test
+    void aSecondCopyOfAnUnchangedLineIsAnAddition() {
+        SkillType stacked = new SkillType.Builder("stacked", "Stacked", "a.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
+                .integratedEffects(new IntegratedEffects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f),
+                        new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 20f)), List.of()))
+                .build();
+
+        List<String> preview = IntegrationLines.preview(stacked, HullSize.CRUISER, NOT_INTEGRATED).stream().map(DescriptionLine::plain).toList();
+
+        assertEquals(List.of("In addition, grants " + DefenseSkillEffect.HULL_PERCENT.description(20f).plain()), preview.subList(1, preview.size()));
     }
 }
