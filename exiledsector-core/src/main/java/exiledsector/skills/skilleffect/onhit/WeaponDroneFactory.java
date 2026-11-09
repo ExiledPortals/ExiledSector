@@ -16,6 +16,7 @@ import com.fs.starfarer.api.combat.WeaponAPI.WeaponSize;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
+import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.loading.BeamWeaponSpecAPI;
 import com.fs.starfarer.api.loading.ProjectileSpecAPI;
 import com.fs.starfarer.api.loading.ProjectileWeaponSpecAPI;
@@ -142,6 +143,7 @@ final class WeaponDroneFactory {
         WeaponGroupSpec group = new WeaponGroupSpec(WeaponGroupType.LINKED);
         group.addSlot(slotId);
         variant.addWeaponGroup(group);
+        variant.addMod(HullMods.VASTBULK);
         return variant;
     }
 
