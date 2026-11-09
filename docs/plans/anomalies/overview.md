@@ -54,5 +54,5 @@ Players favour one anomaly over the others with atlas passives, and can insert a
 
 The atlas comes first. These steps sit inside `../atlas.md`'s build order (its steps 2, 3c, 12, 13 and 16).
 
-1. [~] Anomaly framework: `ChartAnomaly`, `chart_anomalies.csv`, the per-node roll, run requests, tooltip line, run state and cleanup, with one test anomaly that places nothing (`ChartAnomaliesTest.PlacesNothing`), plus inserted anomalies (`../atlas.md` step 17). Not built: the icon column's use, which waits for the marker icons (the unused intel column was removed).
+1. [x] Anomaly framework: `ChartAnomaly`, `chart_anomalies.csv`, the per-node roll, run requests, tooltip line, run state and cleanup, with one test anomaly that places nothing (`ChartAnomaliesTest.PlacesNothing`), plus inserted anomalies (`../atlas.md` step 17). The icon column feeds the atlas marker icons (`AtlasMapCanvas`); the unused intel column was removed.
 2. [~] Anomalies one at a time, each to its own plan's build order. Built: Faction Skirmish, Relay Network, Supply Convoy, Anomalous Debris, Excavation Sites, Storm Front, Derelict Forge, Listening Post, the Remnant Nexus and Domain-era Mothership, and the Coronal Hypershunt.
