@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class IntegrationLinesTest {
 
-    private static final String REMOVED_PREFIX = "No longer grants: ";
+    private static final String REMOVED_PREFIX = "No longer grants ";
     private static final IntegrationLines.State NOT_INTEGRATED = new IntegrationLines.State(false, 1, true, IntegrationLines.TemplateMark.NONE);
 
     private static final SkillType PENALTY_DROPPING = new SkillType.Builder("bulkheads", "Bulkheads", "a.png", SkillTier.NOTABLE)
@@ -215,5 +215,43 @@ class IntegrationLinesTest {
         List<String> preview = IntegrationLines.preview(stacked, HullSize.CRUISER, NOT_INTEGRATED).stream().map(DescriptionLine::plain).toList();
 
         assertEquals(List.of("In addition, grants " + DefenseSkillEffect.HULL_PERCENT.description(20f).plain()), preview.subList(1, preview.size()));
+    }
+
+    @Test
+    void aChangedPercentageIsMarkedTogetherWithItsPercentSign() {
+        SkillType capped = new SkillType.Builder("capped", "Capped", "a.png", SkillTier.NOTABLE)
+                .effectText(List.of("Repairs hull, up to a maximum of 20% per deployment."))
+                .integratedEffects(new IntegratedEffects(List.of(), List.of(), List.of("Repairs hull, up to a maximum of 30% per deployment.")))
+                .build();
+
+        DescriptionLine integratedLine = IntegrationLines.integrated(capped, HullSize.CRUISER).effects().get(1);
+
+        assertEquals(List.of("30%"), storyPointGreenParts(integratedLine.text()), integratedLine.text().toMarkup());
+    }
+
+    @Test
+    void aReplacingLineTurnsOnlyItsValueGreenAndKeepsItsOtherNumbersHighlighted() {
+        SkillType striking = new SkillType.Builder("striking", "Striking", "a.png", SkillTier.NOTABLE)
+                .effectText(List.of("Strikes enemies within <hl>400</hl> su."))
+                .integratedEffects(new IntegratedEffects(List.of(), List.of(), List.of("Burns enemies within <hl>400</hl> su for <good>5%</good> of their armor.")))
+                .build();
+
+        DescriptionLine replacing = IntegrationLines.integrated(striking, HullSize.CRUISER).effects().get(1);
+
+        assertEquals(List.of("5%"), storyPointGreenParts(replacing.text()), replacing.text().toMarkup());
+        assertTrue(replacing.text().spans().stream().anyMatch(span -> span.style() == Style.HIGHLIGHT), replacing.text().toMarkup());
+    }
+
+    @Test
+    void aDroppedSentenceKeepsTheColonAfterNoLongerGrants() {
+        SkillType sentenceDropping = new SkillType.Builder("ghost", "Ghost", "a.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
+                .effectText(List.of("Ignores asteroids.", "This ship can't retreat."))
+                .integratedEffects(new IntegratedEffects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)), List.of(), List.of("Ignores asteroids.")))
+                .build();
+
+        List<String> preview = IntegrationLines.preview(sentenceDropping, HullSize.CRUISER, NOT_INTEGRATED).stream().map(DescriptionLine::plain).toList();
+
+        assertEquals(List.of("No longer grants: This ship can't retreat."), preview.subList(1, preview.size()));
     }
 }

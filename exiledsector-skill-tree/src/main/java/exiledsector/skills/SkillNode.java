@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public class SkillNode extends SkillTreeObject {
 
@@ -62,6 +63,10 @@ public class SkillNode extends SkillTreeObject {
     }
 
     public static NodeDescription describeMechanics(SkillType type, HullSize hullSize, boolean integrated) {
+        return describeMechanics(type, hullSize, integrated, KnownHullMods::knownByPlayer);
+    }
+
+    public static NodeDescription describeMechanics(SkillType type, HullSize hullSize, boolean integrated, Predicate<String> listsConflictingHullMod) {
         List<DescriptionLine> effects = describeEffects(type, hullSize, integrated);
 
         List<SkillTypeEffect> described = describedEffects(type, hullSize, integrated);
@@ -75,7 +80,7 @@ public class SkillNode extends SkillTreeObject {
             }
         }
         addLine(details, describeHullSizes(type), false);
-        addLine(details, describeExclusivity(type), false);
+        addLine(details, describeExclusivity(type, listsConflictingHullMod), false);
         return new NodeDescription(effects, details);
     }
 
@@ -147,9 +152,12 @@ public class SkillNode extends SkillTreeObject {
         return style == null ? StyledText.of(costText) : StyledText.styled(costText, style);
     }
 
-    private static StyledText describeExclusivity(SkillType type) {
+    private static StyledText describeExclusivity(SkillType type, Predicate<String> listsConflictingHullMod) {
         Set<String> hullModNames = new LinkedHashSet<>();
         for (String hullModId : type.getExclusiveAndOwnHullModIds()) {
+            if (!type.getOwnHullModIds().contains(hullModId) && !listsConflictingHullMod.test(hullModId)) {
+                continue;
+            }
             String name = HullModNames.loadedDisplayName(hullModId);
             if (name != null) {
                 hullModNames.add(name);

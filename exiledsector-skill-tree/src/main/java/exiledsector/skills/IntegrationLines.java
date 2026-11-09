@@ -13,15 +13,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class IntegrationLines {
 
-    private static final Pattern NUMBER = Pattern.compile("[+-]?\\d+(?:[.,]\\d+)*");
+    private static final Pattern NUMBER = Pattern.compile("[+-]?\\d+(?:[.,]\\d+)*%?");
     private static final Pattern LEADING_VALUE = Pattern.compile("^[+-]?\\d");
-    private static final Set<Style> VALUE_STYLES = Set.of(Style.GOOD, Style.BAD, Style.HIGHLIGHT);
+    private static final Set<Style> VALUE_STYLES = Set.of(Style.GOOD, Style.BAD);
+    private static final Set<Style> HIGHLIGHT_STYLES = Set.of(Style.HIGHLIGHT);
 
     public enum TemplateMark {
         NONE(null), MARKED("node.integration.marked"), MARKABLE("node.integration.markHint"), UNMARKABLE("node.integration.unmarkHint");
@@ -102,10 +104,14 @@ public final class IntegrationLines {
     }
 
     public static NodeDescription describe(SkillType type, HullSize hullSize, State state) {
+        return describe(type, hullSize, state, KnownHullMods::knownByPlayer);
+    }
+
+    public static NodeDescription describe(SkillType type, HullSize hullSize, State state, Predicate<String> listsConflictingHullMod) {
         if (!type.isIntegrable()) {
-            return SkillNode.describeMechanics(type, hullSize);
+            return SkillNode.describeMechanics(type, hullSize, false, listsConflictingHullMod);
         }
-        return state.integrated() ? integrated(type, hullSize) : withHint(type, hullSize, state);
+        return state.integrated() ? integrated(type, hullSize, listsConflictingHullMod) : withHint(type, hullSize, state, listsConflictingHullMod);
     }
 
     public static List<DescriptionLine> preview(SkillType type, HullSize hullSize, State state) {
@@ -127,7 +133,11 @@ public final class IntegrationLines {
     }
 
     static NodeDescription integrated(SkillType type, HullSize hullSize) {
-        NodeDescription integratedDescription = SkillNode.describeMechanics(type, hullSize, true);
+        return integrated(type, hullSize, KnownHullMods::knownByPlayer);
+    }
+
+    private static NodeDescription integrated(SkillType type, HullSize hullSize, Predicate<String> listsConflictingHullMod) {
+        NodeDescription integratedDescription = SkillNode.describeMechanics(type, hullSize, true, listsConflictingHullMod);
         Comparison comparison = Comparison.of(SkillNode.describeEffects(type, hullSize, false), integratedDescription.effects());
         List<DescriptionLine> effects = new ArrayList<>();
         effects.add(new DescriptionLine(Translation.styled("node.integration.integrated"), false));
@@ -182,13 +192,18 @@ public final class IntegrationLines {
 
     private static DescriptionLine storyPointGreen(DescriptionLine line) {
         StyledText text = line.text();
-        if (text.spans().stream().noneMatch(span -> VALUE_STYLES.contains(span.style()))) {
+        Set<Style> marked = hasSpanIn(text, VALUE_STYLES) ? VALUE_STYLES : HIGHLIGHT_STYLES;
+        if (!hasSpanIn(text, marked)) {
             return new DescriptionLine(text.withUnstyledAs(Style.BUILT_IN), false);
         }
         List<StyledText.Span> spans = text.spans().stream()
-                .map(span -> VALUE_STYLES.contains(span.style()) ? new StyledText.Span(span.start(), span.end(), Style.BUILT_IN) : span)
+                .map(span -> marked.contains(span.style()) ? new StyledText.Span(span.start(), span.end(), Style.BUILT_IN) : span)
                 .toList();
         return new DescriptionLine(new StyledText(text.plain(), spans), false);
+    }
+
+    private static boolean hasSpanIn(StyledText text, Set<Style> styles) {
+        return text.spans().stream().anyMatch(span -> styles.contains(span.style()));
     }
 
     private static DescriptionLine grantsLine(String key, DescriptionLine line) {
@@ -197,15 +212,15 @@ public final class IntegrationLines {
     }
 
     private static DescriptionLine removedLine(DescriptionLine droppedLine) {
-        return new DescriptionLine(Translation.msg("node.integration.removes").arg("line", droppedLine.text()).styled(), false);
+        return grantsLine("node.integration.removes", droppedLine);
     }
 
     private static String wordingWithoutValues(DescriptionLine line) {
         return NUMBER.matcher(line.plain()).replaceAll("#");
     }
 
-    static NodeDescription withHint(SkillType type, HullSize hullSize, State state) {
-        NodeDescription normal = SkillNode.describeMechanics(type, hullSize, false);
+    private static NodeDescription withHint(SkillType type, HullSize hullSize, State state, Predicate<String> listsConflictingHullMod) {
+        NodeDescription normal = SkillNode.describeMechanics(type, hullSize, false, listsConflictingHullMod);
         List<DescriptionLine> effects = new ArrayList<>(normal.effects());
         if (state.templateMark().lineKey != null) {
             effects.add(new DescriptionLine(Translation.styled(state.templateMark().lineKey), false));
