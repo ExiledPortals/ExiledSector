@@ -129,6 +129,18 @@ class EditorDescriberTest {
     }
 
     @Test
+    void everyTypeIsDescribedForEachRequestedHullSizeInOneResponse() throws Exception {
+        JSONObject request = new JSONObject().put("types", savedTypes).put("hullSizes", new JSONArray().put("FRIGATE").put("CAPITAL_SHIP"));
+        JSONObject descriptions = new JSONObject(new EditorDescriber().respond(request.toString())).getJSONObject("descriptions");
+
+        assertTrue(descriptions.length() >= savedTypes.getJSONArray("skillTypes").length(), descriptions.length() + " described");
+        JSONObject fluxCapacity = descriptions.getJSONObject("flux_capacity");
+        assertEquals("Flux Capacity", fluxCapacity.getJSONObject("FRIGATE").getString("title"));
+        assertTrue(fluxCapacity.getJSONObject("CAPITAL_SHIP").getJSONArray("effects").getString(0).contains("<good>"), fluxCapacity.toString());
+        assertEquals(2, fluxCapacity.length());
+    }
+
+    @Test
     void unknownTypesAndBrokenRequestsReturnAnError() throws Exception {
         EditorDescriber describer = new EditorDescriber();
 

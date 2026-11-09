@@ -1,10 +1,10 @@
 import { Avatar, Group, Stack, Text } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
-import { fetchDescription, stringsRevision } from '../../../api/describe.ts';
+import { stringsRevision } from '../../../api/describe.ts';
+import { codeRevision, DescribedTypesCache, typeTooltip, type TypeTooltip } from '../../../api/tooltipCode.ts';
 import { fileUrl } from '../../../shared/imagePaths.ts';
 import { ImagePickButton } from '../../../shared/ImagePickButton.tsx';
 import { TooltipEffects } from '../../../shared/TooltipBody.tsx';
-import { mergeDescriptions, type LabelledDescription, type TooltipContent } from '../../../shared/tooltipContent.ts';
 import { HULL_SIZE_OPTIONS, type SkillType } from '../../tree/model/types.ts';
 import { DOCTRINE_POOL_TIERS, listEntries, type DoctrineArchive, type DoctrinePoolKey } from '../model/doctrines.ts';
 
@@ -23,22 +23,12 @@ export interface DoctrineTypeSource {
   onIconPicked: (typeId: string, iconPath: string) => void;
 }
 
-type TypeTooltip = { content: TooltipContent } | { note: string; pending: boolean };
+const describedTypes = new DescribedTypesCache(HULL_SIZE_OPTIONS.map((option) => option.value));
 
 function useTypeTooltip(typeId: string, source: DoctrineTypeSource) {
   return useQuery({
-    queryKey: ['doctrineTypeTooltip', source.typesKey, typeId, stringsRevision()],
-    queryFn: async (): Promise<TypeTooltip> => {
-      const entries: LabelledDescription[] = [];
-      for (const size of HULL_SIZE_OPTIONS) {
-        const described = await fetchDescription({ typesJson: source.typesJson, typeId, hullSize: size.value });
-        if (described.pending || described.error) {
-          return { note: described.message || described.error || 'Preparing in-game descriptions...', pending: Boolean(described.pending) };
-        }
-        entries.push({ label: size.label, described });
-      }
-      return { content: mergeDescriptions(entries) };
-    },
+    queryKey: ['doctrineTypeTooltip', source.typesKey, typeId, stringsRevision(), codeRevision()],
+    queryFn: async (): Promise<TypeTooltip> => typeTooltip(await describedTypes.describe(source.typesJson), typeId, HULL_SIZE_OPTIONS),
     refetchInterval: (query) => (query.state.data && 'pending' in query.state.data && query.state.data.pending ? RETRY_DELAY_MS : false),
     staleTime: Infinity,
   });

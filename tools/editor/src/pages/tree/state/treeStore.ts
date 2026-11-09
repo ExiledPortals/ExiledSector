@@ -3,6 +3,7 @@ import { registerUnloadCheck } from '../../../shared/unsavedChanges.ts';
 import type { DecorationKind } from '../model/decorations.ts';
 import type { TreeLineEndings } from '../model/serialization.ts';
 import type { AnchorShape, TreeDocument } from '../model/types.ts';
+import { readShowScenery } from './sceneryPreference.ts';
 
 export type EditorMode = 'select' | 'add' | 'addAnchor' | 'addDecoration';
 
@@ -42,6 +43,7 @@ export interface TreeStoreState {
   pendingDecorationKind: DecorationKind;
   selection: Selection;
   showLabels: boolean;
+  showScenery: boolean;
   search: string;
   activeDrag: ActiveDrag | null;
   fitRequested: boolean;
@@ -74,6 +76,7 @@ function initialTreeState(): TreeStoreState {
     pendingDecorationKind: 'star',
     selection: EMPTY_SELECTION,
     showLabels: true,
+    showScenery: readShowScenery(),
     search: '',
     activeDrag: null,
     fitRequested: false,

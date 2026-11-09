@@ -5,6 +5,7 @@ import { NavLink as RouterNavLink, Outlet, useBlocker } from 'react-router';
 import { confirmAction } from '../shared/dialogs.tsx';
 import { hasUnsavedChanges, shouldWarnBeforeUnload } from '../shared/unsavedChanges.ts';
 import { CheckoutPicker } from './CheckoutPicker.tsx';
+import { TooltipCodeButton } from './TooltipCodeButton.tsx';
 
 interface EditorPageLink {
   path: string;
@@ -74,6 +75,7 @@ export function EditorLayout() {
             <ColorSchemeToggle />
           </Group>
           <CheckoutPicker />
+          <TooltipCodeButton />
           {PAGE_LINKS.map((link) => (
             <NavLink
               key={link.path}

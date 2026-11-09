@@ -19,7 +19,7 @@ const app = createEditorServer({
   listCheckouts,
 });
 
-describe.startBuild();
+describe.start();
 
 const shutDown = () => {
   void app.close().finally(() => process.exit(0));

@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import type { Vocabulary } from '../../api/vocabulary.ts';
 import { DECORATION_KIND_ORDER, DECORATION_KINDS, type DecorationKind } from './model/decorations.ts';
 import { ANCHOR_SHAPE_LABELS, ANCHOR_SHAPES, type AnchorShape } from './model/types.ts';
+import { SceneryToggle } from './SceneryToggle.tsx';
 import { useTreeEditor, useTreeState } from './state/treeEditorContext.ts';
 import type { EditorMode } from './state/treeStore.ts';
 
@@ -75,6 +76,7 @@ export function TreeToolbar({ vocabulary, children }: TreeToolbarProps) {
         onChange={(event) => store.setState({ search: event.currentTarget.value })}
       />
       <Switch size="xs" label="Labels" checked={showLabels} onChange={(event) => store.setState({ showLabels: event.currentTarget.checked })} />
+      <SceneryToggle />
       {children}
       <Text size="xs" c="dimmed" ff="monospace" ml="auto">
         {nodeCount} nodes - {typeCount} types - zoom {zoom.toFixed(2)}x

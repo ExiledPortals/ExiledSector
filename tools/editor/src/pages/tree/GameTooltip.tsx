@@ -1,9 +1,9 @@
 import { Portal } from '@mantine/core';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { fetchDescription, stringsRevision } from '../../api/describe.ts';
+import { DescribedTypesCache, typeTooltip, useTooltipCodeStatus, type DescribedTypes } from '../../api/tooltipCode.ts';
 import { TooltipBody, TooltipNote } from '../../shared/TooltipBody.tsx';
 import { TOOLTIP_PANEL_CLASS } from '../../shared/tooltipMarkup.ts';
-import { mergeDescriptions, type Described, type LabelledDescription, type TooltipContent } from '../../shared/tooltipContent.ts';
+import type { TooltipContent } from '../../shared/tooltipContent.ts';
 import { skillTypesFileObject } from './model/serialization.ts';
 import { HULL_SIZE_OPTIONS, nodeById } from './model/types.ts';
 import { shipTreeEditor } from './state/treeEditor.ts';
@@ -11,15 +11,20 @@ import classes from './GameTooltip.module.css';
 
 const SHOW_DELAY_MS = 250;
 const RETRY_DELAY_MS = 2000;
+const PREFETCH_DELAY_MS = 600;
 
 type TooltipState = { kind: 'note'; message: string } | { kind: 'content'; content: TooltipContent };
 
-function hashText(text: string): number {
-  let hash = 5381;
-  for (let index = 0; index < text.length; index++) {
-    hash = (hash * 33 + (text.codePointAt(index) ?? 0)) % 2147483647;
-  }
-  return hash;
+const describedTypes = new DescribedTypesCache(HULL_SIZE_OPTIONS.map((option) => option.value));
+
+function currentTypesJson(): string {
+  return JSON.stringify(skillTypesFileObject(shipTreeEditor.store.getState().document.types));
+}
+
+function tooltipFor(described: DescribedTypes, typeId: string, hullSize: string): TooltipState {
+  const sizes = hullSize ? HULL_SIZE_OPTIONS.filter((option) => option.value === hullSize) : HULL_SIZE_OPTIONS;
+  const tooltip = typeTooltip(described, typeId, sizes);
+  return 'content' in tooltip ? { kind: 'content', content: tooltip.content } : { kind: 'note', message: tooltip.note };
 }
 
 function hoveredTypeId(target: EventTarget | null): string | null {
@@ -38,7 +43,6 @@ export function GameTooltip({ hullSize }: { hullSize: string }) {
   const [expanded, setExpanded] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
   const hover = useRef({ typeId: null as string | null, timer: 0, x: 0, y: 0, serial: 0 });
-  const cache = useRef(new Map<string, Described>());
   const hullSizeRef = useRef(hullSize);
   hullSizeRef.current = hullSize;
 
@@ -68,6 +72,30 @@ export function GameTooltip({ hullSize }: { hullSize: string }) {
   useLayoutEffect(position, [shown, expanded]);
 
   useEffect(() => {
+    let prefetchTimer = 0;
+    const prefetch = () => {
+      window.clearTimeout(prefetchTimer);
+      prefetchTimer = window.setTimeout(() => void describedTypes.describe(currentTypesJson()), PREFETCH_DELAY_MS);
+    };
+    prefetch();
+    const unsubscribeTypes = shipTreeEditor.store.subscribe((state, previous) => {
+      if (state.document.types !== previous.document.types) {
+        prefetch();
+      }
+    });
+    const unsubscribeCode = useTooltipCodeStatus.subscribe((state, previous) => {
+      if (state.status?.codeRevision !== previous.status?.codeRevision) {
+        prefetch();
+      }
+    });
+    return () => {
+      window.clearTimeout(prefetchTimer);
+      unsubscribeTypes();
+      unsubscribeCode();
+    };
+  }, []);
+
+  useEffect(() => {
     const state = hover.current;
 
     const request = async () => {
@@ -77,27 +105,27 @@ export function GameTooltip({ hullSize }: { hullSize: string }) {
       }
       state.serial++;
       const serial = state.serial;
-      const typesJson = JSON.stringify(skillTypesFileObject(shipTreeEditor.store.getState().document.types));
-      const typesKey = `${typesJson.length}|${hashText(typesJson)}|${stringsRevision()}`;
-      const sizes = hullSizeRef.current ? HULL_SIZE_OPTIONS.filter((option) => option.value === hullSizeRef.current) : HULL_SIZE_OPTIONS;
-      const entries: LabelledDescription[] = [];
-      for (const size of sizes) {
-        const cacheKey = `${typeId}|${size.value}|${typesKey}`;
-        const described = cache.current.get(cacheKey) ?? (await fetchDescription({ typesJson, typeId, hullSize: size.value }));
-        if (serial !== state.serial || state.typeId !== typeId) {
-          return;
-        }
-        if (described.pending || described.error) {
-          setShown({ kind: 'note', message: described.message || described.error || 'Preparing in-game descriptions...' });
-          if (described.pending) {
-            state.timer = window.setTimeout(() => void request(), RETRY_DELAY_MS);
-          }
-          return;
-        }
-        cache.current.set(cacheKey, described);
-        entries.push({ label: size.label, described });
+      const typesJson = currentTypesJson();
+      const settled = describedTypes.current(typesJson);
+      if (settled?.kind === 'ready') {
+        setShown(tooltipFor(settled, typeId, hullSizeRef.current));
+        return;
       }
-      setShown({ kind: 'content', content: mergeDescriptions(entries) });
+      const previous = describedTypes.lastDescribed();
+      if (previous?.kind === 'ready' && previous.byTypeId.has(typeId)) {
+        setShown(tooltipFor(previous, typeId, hullSizeRef.current));
+      }
+      const described = await describedTypes.describe(typesJson);
+      if (serial !== state.serial || state.typeId !== typeId) {
+        return;
+      }
+      if (described.kind === 'note' && previous?.kind === 'ready' && previous.byTypeId.has(typeId)) {
+        return;
+      }
+      setShown(tooltipFor(described, typeId, hullSizeRef.current));
+      if (described.kind === 'note' && described.pending) {
+        state.timer = window.setTimeout(() => void request(), RETRY_DELAY_MS);
+      }
     };
 
     const hide = () => {

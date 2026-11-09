@@ -65,11 +65,43 @@ public final class EditorDescriber {
             return describeModifierLines(modifierLines);
         }
         registerTypes(request.getJSONObject("types"));
+        JSONArray hullSizes = request.optJSONArray("hullSizes");
+        if (hullSizes != null) {
+            return describeEveryType(hullSizes);
+        }
         SkillType type = SkillTree.getType(request.getString("typeId"));
         if (type == null) {
             return new JSONObject().put("error", "Unknown or invalid type \"" + request.getString("typeId") + "\"");
         }
         HullSize hullSize = request.isNull("hullSize") ? null : HullSize.valueOf(request.getString("hullSize"));
+        return describeType(type, hullSize);
+    }
+
+    private static JSONObject describeEveryType(JSONArray hullSizeNames) throws JSONException {
+        List<HullSize> hullSizes = new ArrayList<>();
+        for (int index = 0; index < hullSizeNames.length(); index++) {
+            hullSizes.add(HullSize.valueOf(hullSizeNames.getString(index)));
+        }
+        JSONObject descriptions = new JSONObject();
+        for (SkillType type : SkillTree.getAllTypes().values()) {
+            JSONObject byHullSize = new JSONObject();
+            for (HullSize hullSize : hullSizes) {
+                byHullSize.put(hullSize.name(), describeTypeOrError(type, hullSize));
+            }
+            descriptions.put(type.getId(), byHullSize);
+        }
+        return new JSONObject().put("descriptions", descriptions);
+    }
+
+    private static JSONObject describeTypeOrError(SkillType type, HullSize hullSize) throws JSONException {
+        try {
+            return describeType(type, hullSize);
+        } catch (JSONException | RuntimeException e) {
+            return new JSONObject().put("error", e.getMessage() == null ? "Could not describe this type" : e.getMessage());
+        }
+    }
+
+    private static JSONObject describeType(SkillType type, HullSize hullSize) throws JSONException {
         boolean choiceHint = type.isChoice() && type.getFlavourText() == null;
         NodeDescription description = choiceHint
                 ? new NodeDescription(List.of(new DescriptionLine(Translation.styled("ui.node.choiceHint"), false)), List.of())

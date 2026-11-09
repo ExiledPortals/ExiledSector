@@ -161,9 +161,48 @@ describe('tree page', () => {
   it('shows the in-game tooltip next to a hovered node without needing the mouse to move', async () => {
     const { container } = await renderLoadedTree();
     fireEvent.mouseOver(nodeElements(container)[0], { clientX: 100, clientY: 50 });
-    const note = await screen.findByText('Preparing in-game descriptions...');
+    const note = await screen.findByText('The editor has no copy of the tooltip code yet; press Refresh tooltip code.');
     const box = note.parentElement as HTMLElement;
     expect([box.style.left, box.style.top]).toEqual(['116px', '66px']);
+  });
+
+  it('describes every type in one request and serves later hovers from that copy', async () => {
+    const serverFetch = globalThis.fetch;
+    const describeBodies: string[] = [];
+    vi.stubGlobal('fetch', async (input: RequestInfo | URL, init?: RequestInit) => {
+      if (String(input) !== '/api/describe') {
+        return serverFetch(input, init);
+      }
+      describeBodies.push(String(init?.body));
+      const descriptions = Object.fromEntries(
+        shipTreeStore.getState().document.types.map((type) => [
+          type.id,
+          Object.fromEntries(
+            ['FRIGATE', 'DESTROYER', 'CRUISER', 'CAPITAL_SHIP'].map((hullSize) => [
+              hullSize,
+              { title: `Copied ${type.id}`, flavour: null, effects: [`${hullSize} line`], details: [], expandHint: '' },
+            ]),
+          ),
+        ]),
+      );
+      return new Response(JSON.stringify({ descriptions }), { headers: { 'content-type': 'application/json' } });
+    });
+    try {
+      const { container } = await renderLoadedTree();
+      const [firstNode, secondNode] = [...nodeElements(container)];
+      const firstType = nodeById(shipTreeStore.getState().document, firstNode.dataset.nodeId ?? '')?.type;
+      const secondType = nodeById(shipTreeStore.getState().document, secondNode.dataset.nodeId ?? '')?.type;
+      fireEvent.mouseOver(firstNode, { clientX: 100, clientY: 50 });
+      expect(await screen.findByText(`Copied ${firstType}`)).toBeTruthy();
+      expect(screen.getByText('CAPITAL_SHIP line')).toBeTruthy();
+      fireEvent.mouseOver(container, { clientX: 0, clientY: 0 });
+      fireEvent.mouseOver(secondNode, { clientX: 100, clientY: 50 });
+      expect(await screen.findByText(`Copied ${secondType}`)).toBeTruthy();
+      expect(describeBodies).toHaveLength(1);
+      expect(JSON.parse(describeBodies[0])).toMatchObject({ hullSizes: ['FRIGATE', 'DESTROYER', 'CRUISER', 'CAPITAL_SHIP'] });
+    } finally {
+      vi.stubGlobal('fetch', serverFetch);
+    }
   });
 
   it('shows the anchor, decoration and multi-selection inspectors', async () => {

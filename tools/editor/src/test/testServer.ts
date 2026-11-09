@@ -24,7 +24,7 @@ export function startTestServer(copiedFiles: string[], options: Pick<EditorServe
     fs.copyFileSync(path.join(REPOSITORY_ROOT, relativePath), target);
   }
   const paths = { projectRoot, vanillaCoreDir: path.join(projectRoot, 'vanilla-core') };
-  const app = createEditorServer({ ...options, paths, port: PORT, describe: new DescribeService(paths, { javaHome: null, maven: null }) });
+  const app = createEditorServer({ ...options, paths, port: PORT, describe: new DescribeService(paths, { javaHome: null, maven: null }, Date.now, path.join(projectRoot, 'tooltip-code')) });
   vi.stubGlobal('fetch', async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = typeof input === 'string' ? input : input instanceof URL ? input.pathname + input.search : input.url;
     const response = await app.inject({

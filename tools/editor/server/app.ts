@@ -8,6 +8,7 @@ import { CHECKOUT_HEADER, registerCheckoutRoutes, requestedCheckout } from './ro
 import { registerDataRoutes } from './routes/data.ts';
 import { registerFileRoutes } from './routes/files.ts';
 import { registerImageRoutes } from './routes/images.ts';
+import { registerSceneryRoutes } from './routes/scenery.ts';
 import { isEditorRequest } from './security.ts';
 import type { ProjectPaths } from './paths.ts';
 
@@ -47,6 +48,7 @@ export function createEditorServer(options: EditorServerOptions): FastifyInstanc
   });
   registerDataRoutes(app, options.paths);
   registerImageRoutes(app, options.paths);
+  registerSceneryRoutes(app, options.paths);
   registerFileRoutes(app, options.paths);
 
   app.post('/api/describe', async (request, reply) => {
@@ -55,7 +57,11 @@ export function createEditorServer(options: EditorServerOptions): FastifyInstanc
     return 'raw' in result ? result.raw : result.body;
   });
 
-  app.addHook('onClose', async () => describe.stopHelper());
+  app.get('/api/describe/status', async () => ({ ok: true, ...describe.status() }));
+
+  app.post('/api/describe/refresh', async () => ({ ok: true, ...describe.refresh() }));
+
+  app.addHook('onClose', async () => describe.close());
 
   const clientDir = options.clientDir;
   if (clientDir && fs.existsSync(path.join(clientDir, 'index.html'))) {

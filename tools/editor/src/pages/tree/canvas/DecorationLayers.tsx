@@ -23,13 +23,16 @@ const SERPENT_PATH_STEPS = 180;
 const SERPENT_HEAD_RADIUS = 60;
 const LABEL_GAP = 16;
 
-type ShapeProps<TKind extends DecorationKind> = { decoration: DecorationOfKind<TKind>; selected: boolean };
+type ShapeProps<TKind extends DecorationKind> = { decoration: DecorationOfKind<TKind>; selected: boolean; sceneryPainted: boolean };
 
 function outlineClass(selected: boolean): string {
   return `${classes.decorationOutline}${selected ? ` ${classes.decorationOutlineSelected}` : ''}`;
 }
 
-function StarShape({ decoration: star }: ShapeProps<'star'>) {
+function StarShape({ decoration: star, selected, sceneryPainted }: ShapeProps<'star'>) {
+  if (sceneryPainted) {
+    return selected ? <circle cx={star.x} cy={star.y} r={star.radius} className={outlineClass(true)} /> : null;
+  }
   const colour = star.color || DEFAULT_STAR_COLOR;
   return (
     <g>
@@ -39,10 +42,13 @@ function StarShape({ decoration: star }: ShapeProps<'star'>) {
   );
 }
 
-function ImageShape({ decoration: image }: ShapeProps<'image'>) {
+function ImageShape({ decoration: image, selected, sceneryPainted }: ShapeProps<'image'>) {
   const transform = image.rotation ? `rotate(${image.rotation} ${image.x} ${image.y})` : undefined;
   const left = image.x - image.width / 2;
   const top = image.y - image.height / 2;
+  if (sceneryPainted && image.imagePath) {
+    return selected ? <rect x={left} y={top} width={image.width} height={image.height} transform={transform} className={outlineClass(true)} /> : null;
+  }
   return image.imagePath ? (
     <image href={fileUrl(image.imagePath)} x={left} y={top} width={image.width} height={image.height} transform={transform} />
   ) : (
@@ -50,7 +56,10 @@ function ImageShape({ decoration: image }: ShapeProps<'image'>) {
   );
 }
 
-function RingBeltShape({ decoration: belt, selected }: ShapeProps<'ringBelt'>) {
+function RingBeltShape({ decoration: belt, selected, sceneryPainted }: ShapeProps<'ringBelt'>) {
+  if (sceneryPainted && !selected) {
+    return null;
+  }
   return (
     <circle
       cx={belt.x}
@@ -70,6 +79,7 @@ interface SpriteShapeProps {
   href: string;
   label: string;
   selected: boolean;
+  sceneryPainted: boolean;
 }
 
 function uprightHalfHeight(spriteWidth: number, spriteHeight: number, rotation: number): number {
@@ -77,13 +87,13 @@ function uprightHalfHeight(spriteWidth: number, spriteHeight: number, rotation: 
   return Math.hypot((spriteWidth / 2) * Math.sin(radians), (spriteHeight / 2) * Math.cos(radians));
 }
 
-function SpriteShape({ centre, spriteWidth, spriteHeight, rotation, href, label, selected }: SpriteShapeProps) {
+function SpriteShape({ centre, spriteWidth, spriteHeight, rotation, href, label, selected, sceneryPainted }: SpriteShapeProps) {
   const transform = rotation ? `rotate(${rotation} ${centre.x} ${centre.y})` : undefined;
   return (
     <g>
       <g transform={transform}>
-        <image href={href} x={centre.x - spriteWidth / 2} y={centre.y - spriteHeight / 2} width={spriteWidth} height={spriteHeight} preserveAspectRatio="none" />
-        <ellipse cx={centre.x} cy={centre.y} rx={spriteWidth / 2} ry={spriteHeight / 2} className={outlineClass(selected)} />
+        {sceneryPainted ? null : <image href={href} x={centre.x - spriteWidth / 2} y={centre.y - spriteHeight / 2} width={spriteWidth} height={spriteHeight} preserveAspectRatio="none" />}
+        {sceneryPainted && !selected ? null : <ellipse cx={centre.x} cy={centre.y} rx={spriteWidth / 2} ry={spriteHeight / 2} className={outlineClass(selected)} />}
       </g>
       <text x={centre.x} y={centre.y + uprightHalfHeight(spriteWidth, spriteHeight, rotation) + LABEL_GAP} textAnchor="middle" className={classes.decorationLabel}>
         {label}
@@ -92,7 +102,7 @@ function SpriteShape({ centre, spriteWidth, spriteHeight, rotation, href, label,
   );
 }
 
-function ThreatUnitShape({ decoration: unit, selected }: ShapeProps<'threatUnit'>) {
+function ThreatUnitShape({ decoration: unit, selected, sceneryPainted }: ShapeProps<'threatUnit'>) {
   const sprite = threatUnitSprite(unit.unitType);
   return (
     <SpriteShape
@@ -103,11 +113,12 @@ function ThreatUnitShape({ decoration: unit, selected }: ShapeProps<'threatUnit'
       href={fileUrl(sprite.spritePath)}
       label={sprite.label}
       selected={selected}
+      sceneryPainted={sceneryPainted}
     />
   );
 }
 
-function ShroudedMawShape({ decoration: maw, selected }: ShapeProps<'shroudedMaw'>) {
+function ShroudedMawShape({ decoration: maw, selected, sceneryPainted }: ShapeProps<'shroudedMaw'>) {
   return (
     <SpriteShape
       centre={maw}
@@ -117,6 +128,7 @@ function ShroudedMawShape({ decoration: maw, selected }: ShapeProps<'shroudedMaw
       href={fileUrl(SHROUDED_MAW_SPRITE_PATH)}
       label={DECORATION_KINDS.shroudedMaw.label}
       selected={selected}
+      sceneryPainted={sceneryPainted}
     />
   );
 }
@@ -125,7 +137,7 @@ function orbitPathClass(selected: boolean): string {
   return `${classes.orbitPath}${selected ? ` ${classes.orbitPathSelected}` : ''}`;
 }
 
-function SerpentShape({ decoration: serpent, selected }: ShapeProps<'serpent'>) {
+function SerpentShape({ decoration: serpent, selected, sceneryPainted }: ShapeProps<'serpent'>) {
   const points = useMemo(
     () =>
       Array.from({ length: SERPENT_PATH_STEPS + 1 }, (_, step) => serpentPathPoint(serpent, (step * 360) / SERPENT_PATH_STEPS))
@@ -136,14 +148,19 @@ function SerpentShape({ decoration: serpent, selected }: ShapeProps<'serpent'>) 
   const head = serpentPathPoint(serpent, serpent.startAngle);
   const ahead = serpentPathPoint(serpent, serpent.startAngle + (serpent.clockwise ? 2 : -2));
   const facing = (Math.atan2(ahead.y - head.y, ahead.x - head.x) * 180) / Math.PI;
+  if (sceneryPainted && !selected) {
+    return null;
+  }
   return (
     <g>
       <polyline points={points} className={orbitPathClass(selected)} />
-      <polygon
-        points={`${SERPENT_HEAD_RADIUS},0 ${-SERPENT_HEAD_RADIUS},${-SERPENT_HEAD_RADIUS * 0.7} ${-SERPENT_HEAD_RADIUS},${SERPENT_HEAD_RADIUS * 0.7}`}
-        transform={`translate(${head.x} ${head.y}) rotate(${facing})`}
-        className={classes.serpentHead}
-      />
+      {sceneryPainted ? null : (
+        <polygon
+          points={`${SERPENT_HEAD_RADIUS},0 ${-SERPENT_HEAD_RADIUS},${-SERPENT_HEAD_RADIUS * 0.7} ${-SERPENT_HEAD_RADIUS},${SERPENT_HEAD_RADIUS * 0.7}`}
+          transform={`translate(${head.x} ${head.y}) rotate(${facing})`}
+          className={classes.serpentHead}
+        />
+      )}
       <text x={head.x} y={head.y + SERPENT_HEAD_RADIUS + LABEL_GAP} textAnchor="middle" className={classes.decorationLabel}>
         {DECORATION_KINDS.serpent.label}
       </text>
@@ -151,7 +168,10 @@ function SerpentShape({ decoration: serpent, selected }: ShapeProps<'serpent'>) 
   );
 }
 
-function HypershuntShape({ decoration: hypershunt, selected }: ShapeProps<'hypershunt'>) {
+function HypershuntShape({ decoration: hypershunt, selected, sceneryPainted }: ShapeProps<'hypershunt'>) {
+  if (sceneryPainted && !selected) {
+    return null;
+  }
   return (
     <g>
       <circle cx={hypershunt.x} cy={hypershunt.y} r={hypershunt.orbitRadius} className={orbitPathClass(selected)} />
@@ -163,6 +183,7 @@ function HypershuntShape({ decoration: hypershunt, selected }: ShapeProps<'hyper
         href={fileUrl(HYPERSHUNT_SPRITE_PATH)}
         label={DECORATION_KINDS.hypershunt.label}
         selected={selected}
+        sceneryPainted={sceneryPainted}
       />
     </g>
   );
@@ -195,18 +216,24 @@ function depthRank(decoration: Decoration): number {
   }
 }
 
-function DecorationShape({ decoration, selected }: { decoration: Decoration; selected: boolean }) {
+function DecorationShape({ decoration, selected, sceneryPainted }: { decoration: Decoration; selected: boolean; sceneryPainted: boolean }) {
   const Shape = SHAPES[decoration.kind] as (props: ShapeProps<DecorationKind>) => ReactNode;
-  return <Shape decoration={decoration as never} selected={selected} />;
+  return <Shape decoration={decoration as never} selected={selected} sceneryPainted={sceneryPainted} />;
 }
 
-export const DecorationLayer = memo(function DecorationLayer({ decorations, selectedIds }: { decorations: Decoration[]; selectedIds: string[] }) {
+interface DecorationLayerProps {
+  decorations: Decoration[];
+  selectedIds: string[];
+  sceneryPainted: boolean;
+}
+
+export const DecorationLayer = memo(function DecorationLayer({ decorations, selectedIds, sceneryPainted }: DecorationLayerProps) {
   const ordered = useMemo(() => decorations.map((decoration, index) => ({ decoration, index })).sort((first, second) => depthRank(first.decoration) - depthRank(second.decoration) || first.index - second.index), [decorations]);
   const selected = useMemo(() => new Set(selectedIds), [selectedIds]);
   return (
     <g pointerEvents="none">
       {ordered.map(({ decoration }) => (
-        <DecorationShape key={decoration.id} decoration={decoration} selected={selected.has(decoration.id)} />
+        <DecorationShape key={decoration.id} decoration={decoration} selected={selected.has(decoration.id)} sceneryPainted={sceneryPainted} />
       ))}
     </g>
   );

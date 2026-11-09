@@ -6,7 +6,16 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { FastifyInstance } from 'fastify';
 import { createEditorServer } from './app.ts';
 import { hashBytes, writeTextFilesAtomic } from './dataFiles.ts';
-import { BUILD_LOCK_FILE, DescribeService, REBUILD_COOLDOWN_MS, describeRequestWithStrings, needsRebuild } from './describe.ts';
+import {
+  BUILD_LOCK_FILE,
+  builtClasspath,
+  checkoutSnapshotsDir,
+  copySnapshot,
+  DescribeService,
+  describeRequestWithStrings,
+  latestSnapshot,
+  removeOtherSnapshots,
+} from './describe.ts';
 import type { ProjectPaths } from './paths.ts';
 
 const PORT = 8792;
@@ -56,7 +65,7 @@ beforeEach(() => {
   writeProjectFile('data/skilltrees/ship_skill_tree.json', TREE_TEXT);
   writeProjectFile('data/config/exiledSector/subroutines.csv', 'id,name\r\nx,X\r\n');
   writeProjectFile('tools/editor_vocabulary.json', '{"effects":[]}');
-  app = createEditorServer({ paths, port: PORT, describe: new DescribeService(paths, { javaHome: null, maven: null }) });
+  app = createEditorServer({ paths, port: PORT, describe: new DescribeService(paths, { javaHome: null, maven: null }, Date.now, path.join(projectRoot, 'tooltip-code')) });
 });
 
 afterEach(async () => {
@@ -335,53 +344,101 @@ describe('images', () => {
 });
 
 describe('describe', () => {
+  const NO_TOOLCHAIN = { javaHome: null, maven: null };
+
+  function snapshotsDir(): string {
+    return path.join(projectRoot, 'tooltip-code');
+  }
+
+  function writeClasspathEntries(): string[] {
+    const classes = path.join(projectRoot, 'exiledsector-mod', 'target', 'classes');
+    fs.mkdirSync(path.join(classes, 'exiledsector'), { recursive: true });
+    fs.writeFileSync(path.join(classes, 'exiledsector', 'A.class'), 'compiled');
+    const ownJar = writeProjectFile('libs/starfarer.api.jar', 'jar');
+    const repositoryJar = writeProjectFile('.m2/repository/org/json/json.jar', 'json');
+    return [classes, ownJar, repositoryJar];
+  }
+
   it('reports a clear failure when Java or Maven is missing', async () => {
-    const service = new DescribeService(paths, { javaHome: null, maven: null });
-    service.startBuild();
+    const service = new DescribeService(paths, NO_TOOLCHAIN, Date.now, snapshotsDir());
+    service.start();
+    expect(service.status()).toMatchObject({ build: 'failed', copiedAtMs: null });
     const result = await service.describe('{}');
-    expect(result).toEqual({ body: { pending: false, message: expect.stringContaining('JDK 17 and Maven') } });
+    expect(result).toEqual({ body: { error: expect.stringContaining('JDK 17 and Maven') } });
   });
 
-  it('keeps reporting the missing toolchain instead of retrying a build that cannot run', async () => {
-    let nowMs = 0;
-    const service = new DescribeService(paths, { javaHome: null, maven: null }, () => nowMs);
-    service.startBuild();
-    nowMs += REBUILD_COOLDOWN_MS * 2;
-    const result = await service.describe('{}');
-    expect(result).toEqual({ body: { pending: false, message: expect.stringContaining('JDK 17 and Maven') } });
-  });
-
-  it('retries a failed build once the cooldown has passed, but not sooner', () => {
-    expect(needsRebuild('failed', false, true, REBUILD_COOLDOWN_MS - 1)).toBe(false);
-    expect(needsRebuild('failed', false, true, REBUILD_COOLDOWN_MS)).toBe(true);
-  });
-
-  it('waits for another Maven build of the mod instead of starting a second one in the same target folder', () => {
-    expect(needsRebuild('built', false, false, 0, true)).toBe(false);
-    expect(needsRebuild('failed', false, true, REBUILD_COOLDOWN_MS, true)).toBe(false);
-    expect(needsRebuild('waiting', false, false, 0, true)).toBe(false);
-    expect(needsRebuild('waiting', false, false, 0, false)).toBe(true);
-  });
-
-  it('reports that it is waiting while a deploy build holds the build lock', async () => {
+  it('waits for another Maven build of the mod instead of starting a second one in the same target folder', async () => {
     writeProjectFile(BUILD_LOCK_FILE, '1234');
+    const service = new DescribeService(paths, { javaHome: 'fake-jdk', maven: 'fake-mvn.cmd' }, Date.now, snapshotsDir());
     try {
-      const service = new DescribeService(paths, { javaHome: 'fake-jdk', maven: 'fake-mvn.cmd' });
-      service.startBuild();
+      expect(service.refresh().build).toBe('waiting');
+      expect(service.refresh().build).toBe('waiting');
       const result = await service.describe('{}');
       expect(result).toEqual({ body: { pending: true, message: expect.stringContaining('another Maven build') } });
     } finally {
+      service.close();
       fs.rmSync(path.join(paths.projectRoot, BUILD_LOCK_FILE), { force: true });
     }
   });
 
-  it('rebuilds when the compiled mod disappears before the helper restarts', () => {
-    expect(needsRebuild('built', false, false, 0)).toBe(true);
-    expect(needsRebuild('ready', false, false, 0)).toBe(true);
-    expect(needsRebuild('built', false, true, 0)).toBe(false);
-    expect(needsRebuild('ready', true, false, 0)).toBe(false);
-    expect(needsRebuild('building', false, false, 0)).toBe(false);
-    expect(needsRebuild('idle', false, false, 0)).toBe(false);
+  it('copies the compiled code so later builds and cleans of the checkout cannot break it', () => {
+    const entries = writeClasspathEntries();
+    const checkoutDir = checkoutSnapshotsDir(snapshotsDir(), projectRoot);
+    const snapshot = copySnapshot(checkoutDir, entries, 1000);
+    fs.rmSync(path.join(projectRoot, 'exiledsector-mod'), { recursive: true });
+    fs.rmSync(path.join(projectRoot, 'libs'), { recursive: true });
+    expect(snapshot.classpath[2]).toBe(entries[2]);
+    expect(fs.readFileSync(path.join(snapshot.classpath[0], 'exiledsector', 'A.class'), 'utf8')).toBe('compiled');
+    expect(fs.readFileSync(snapshot.classpath[1], 'utf8')).toBe('jar');
+    expect(latestSnapshot(checkoutDir)).toEqual(snapshot);
+  });
+
+  it('uses the newest complete copy and clears the others once a newer one is in use', () => {
+    const entries = writeClasspathEntries();
+    const checkoutDir = checkoutSnapshotsDir(snapshotsDir(), projectRoot);
+    const older = copySnapshot(checkoutDir, entries, 1000);
+    const newer = copySnapshot(checkoutDir, entries, 2000);
+    const broken = copySnapshot(checkoutDir, entries, 3000);
+    fs.rmSync(broken.classpath[1]);
+    expect(latestSnapshot(checkoutDir)?.directory).toBe(newer.directory);
+    removeOtherSnapshots(checkoutDir, newer.directory);
+    expect(fs.existsSync(older.directory)).toBe(false);
+    expect(fs.existsSync(broken.directory)).toBe(false);
+    expect(fs.existsSync(newer.directory)).toBe(true);
+  });
+
+  it('keeps the copies of different checkouts apart', () => {
+    const copiesDir = path.join(projectRoot, 'copies');
+    const mainCopies = checkoutSnapshotsDir(copiesDir, path.join(projectRoot, 'ExiledSector'));
+    expect(mainCopies).not.toBe(checkoutSnapshotsDir(copiesDir, path.join(projectRoot, 'ExiledSector-parallel-work')));
+    expect(mainCopies).toBe(checkoutSnapshotsDir(copiesDir, path.join(projectRoot, 'exiledsector')));
+  });
+
+  it('starts from an existing copy without rebuilding', () => {
+    copySnapshot(checkoutSnapshotsDir(snapshotsDir(), projectRoot), writeClasspathEntries(), 1234);
+    const service = new DescribeService(paths, NO_TOOLCHAIN, Date.now, snapshotsDir());
+    service.start();
+    expect(service.status()).toEqual({ build: 'idle', message: '', copiedAtMs: 1234, codeRevision: 0 });
+  });
+
+  it('only finds the compiled classpath once the helper module and every dependency exist', () => {
+    expect(builtClasspath(projectRoot)).toBeNull();
+    const [classes, ownJar] = writeClasspathEntries();
+    const testClasses = path.join(projectRoot, 'exiledsector-mod', 'target', 'test-classes');
+    fs.mkdirSync(testClasses, { recursive: true });
+    writeProjectFile('exiledsector-mod/target/editor-describe.classpath', [ownJar, path.join(projectRoot, 'missing.jar')].join(path.delimiter));
+    expect(builtClasspath(projectRoot)).toBeNull();
+    writeProjectFile('exiledsector-mod/target/editor-describe.classpath', `${ownJar}\n`);
+    expect(builtClasspath(projectRoot)).toEqual([classes, testClasses, ownJar]);
+  });
+
+  it('reports the tooltip code status and only lets the editor page ask for a refresh', async () => {
+    const status = await app.inject({ method: 'GET', url: '/api/describe/status' });
+    expect(status.json()).toEqual({ ok: true, build: 'idle', message: '', copiedAtMs: null, codeRevision: 0 });
+    const outside = await app.inject({ method: 'POST', url: '/api/describe/refresh', payload: {} });
+    expect(outside.statusCode).toBe(403);
+    const refreshed = await app.inject({ method: 'POST', url: '/api/describe/refresh', headers: EDITOR_HEADERS, payload: {} });
+    expect(refreshed.json()).toMatchObject({ ok: true, build: 'failed', message: expect.stringContaining('JDK 17 and Maven') });
   });
 
   it('sends every saved English catalogue with a request that has none, and keeps strings a request brings', () => {

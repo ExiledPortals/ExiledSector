@@ -44,7 +44,7 @@ beforeEach(() => {
   app = createEditorServer({
     paths,
     port: PORT,
-    describe: new DescribeService(paths, { javaHome: null, maven: null }),
+    describe: new DescribeService(paths, { javaHome: null, maven: null }, Date.now, path.join(tempDir, 'tooltip-code')),
     listCheckouts: () => checkouts,
     editorDir: path.join(mainRoot, 'tools', 'editor'),
   });

@@ -1,3 +1,4 @@
+import { useComputedColorScheme } from '@mantine/core';
 import { useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent } from 'react';
 import { useStaticImages } from '../../../api/images.ts';
 import { useNodeRadii } from '../../../api/nodeRadii.ts';
@@ -30,6 +31,7 @@ import { brokenNodeIds } from '../model/validation.ts';
 import type { DocumentRecipe } from '../state/treeActions.ts';
 import { useTreeEditor, useTreeState, useTreeVocabulary } from '../state/treeEditorContext.ts';
 import type { HandleKind, SelectionKind } from '../state/treeStore.ts';
+import { useSceneryLoop } from '../scenery/useSceneryLoop.ts';
 import { CanvasOverlays } from './CanvasOverlays.tsx';
 import { DecorationHandleLayer, DecorationLayer } from './DecorationLayers.tsx';
 import classes from './TreeCanvas.module.css';
@@ -203,6 +205,8 @@ interface TreeCanvasProps {
 export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
   const frameRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const behindTreeCanvasRef = useRef<HTMLCanvasElement>(null);
+  const overTreeCanvasRef = useRef<HTMLCanvasElement>(null);
   const dragRef = useRef<DragState | null>(null);
   const measuredRef = useRef(false);
   const { store, actions } = useTreeEditor();
@@ -218,6 +222,10 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
   const mode = useTreeState((state) => state.mode);
   const selection = useTreeState((state) => state.selection);
   const showLabels = useTreeState((state) => state.showLabels);
+  const showScenery = useTreeState((state) => state.showScenery);
+  const darkScheme = useComputedColorScheme('dark') === 'dark';
+  const sceneryEnabled = showScenery && darkScheme;
+  const sceneryPainted = useSceneryLoop(store, { frameRef, behindTreeCanvasRef, overTreeCanvasRef }, sceneryEnabled);
   const search = useTreeState((state) => state.search);
   const activeDrag = useTreeState((state) => state.activeDrag);
   const fitRequested = useTreeState((state) => state.fitRequested);
@@ -467,10 +475,11 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
 
   return (
     <div ref={frameRef} className={`${classes.canvasFrame} ${MODE_CLASSES[mode] ?? ''}`}>
+      {sceneryEnabled ? <canvas ref={behindTreeCanvasRef} className={classes.sceneryBehindTree} aria-hidden /> : null}
       <svg ref={svgRef} className={classes.stage} onPointerDown={onPointerDown} onPointerOver={onPointerOver} onPointerLeave={() => setHoveredNodeId(null)} onClick={onClick} onContextMenu={(event) => event.preventDefault()}>
         <IconClipDefinitions />
         <g transform={rootTransform}>
-          <DecorationLayer decorations={document.decorations} selectedIds={selection.decorations} />
+          <DecorationLayer decorations={document.decorations} selectedIds={selection.decorations} sceneryPainted={sceneryPainted} />
           <AnchorRingLayer anchors={document.anchors} selectedIds={selection.anchors} />
           <EdgeLayer
             nodes={document.nodes}
@@ -498,6 +507,7 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
           />
         ) : null}
       </svg>
+      {sceneryEnabled ? <canvas ref={overTreeCanvasRef} className={classes.sceneryOverTree} aria-hidden /> : null}
       <CanvasOverlays />
     </div>
   );

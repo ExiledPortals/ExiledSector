@@ -97,7 +97,7 @@ describe('text page', () => {
   it('asks for an in-game preview of the chosen node type', async () => {
     renderWithProviders(<TextPage />);
     const preview = await screen.findByTestId('tooltip-preview', undefined, { timeout: 15000 });
-    await waitFor(() => expect(preview.textContent).toBe('Preparing in-game descriptions...'), { timeout: 5000 });
+    await waitFor(() => expect(preview.textContent).toBe('The editor has no copy of the tooltip code yet; press Refresh tooltip code.'), { timeout: 5000 });
     expect(screen.getByRole('textbox', { name: 'Preview a node type' })).toHaveProperty('value', expect.stringMatching(/\(\w+\)$/));
   });
 });
