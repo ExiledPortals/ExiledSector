@@ -21,6 +21,7 @@ public final class IntegrationLines {
 
     private static final Pattern NUMBER = Pattern.compile("[+-]?\\d+(?:[.,]\\d+)*");
     private static final Pattern LEADING_VALUE = Pattern.compile("^[+-]?\\d");
+    private static final Set<Style> VALUE_STYLES = Set.of(Style.GOOD, Style.BAD, Style.HIGHLIGHT);
 
     public enum TemplateMark {
         NONE(null), MARKED("node.integration.marked"), MARKABLE("node.integration.markHint"), UNMARKABLE("node.integration.unmarkHint");
@@ -180,7 +181,14 @@ public final class IntegrationLines {
     }
 
     private static DescriptionLine storyPointGreen(DescriptionLine line) {
-        return new DescriptionLine(StyledText.styled(line.plain(), Style.BUILT_IN), false);
+        StyledText text = line.text();
+        if (text.spans().stream().noneMatch(span -> VALUE_STYLES.contains(span.style()))) {
+            return new DescriptionLine(text.withUnstyledAs(Style.BUILT_IN), false);
+        }
+        List<StyledText.Span> spans = text.spans().stream()
+                .map(span -> VALUE_STYLES.contains(span.style()) ? new StyledText.Span(span.start(), span.end(), Style.BUILT_IN) : span)
+                .toList();
+        return new DescriptionLine(new StyledText(text.plain(), spans), false);
     }
 
     private static DescriptionLine grantsLine(String key, DescriptionLine line) {

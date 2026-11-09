@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class IntegrationLinesTest {
 
-    private static final String REMOVED_PREFIX = "No longer: ";
+    private static final String REMOVED_PREFIX = "No longer grants: ";
     private static final IntegrationLines.State NOT_INTEGRATED = new IntegrationLines.State(false, 1, true, IntegrationLines.TemplateMark.NONE);
 
     private static final SkillType PENALTY_DROPPING = new SkillType.Builder("bulkheads", "Bulkheads", "a.png", SkillTier.NOTABLE)
@@ -38,11 +38,6 @@ class IntegrationLinesTest {
                 && text.spans().stream().mapToInt(span -> span.end() - span.start()).sum() == text.plain().length();
     }
 
-    private static boolean isStoryPointGreenAfter(StyledText text, String leadIn) {
-        return text.plain().startsWith(leadIn)
-                && text.spans().equals(List.of(new StyledText.Span(leadIn.length(), text.plain().length(), Style.BUILT_IN)));
-    }
-
     private static List<String> storyPointGreenParts(StyledText text) {
         return text.spans().stream().filter(span -> span.style() == Style.BUILT_IN).map(span -> text.plain().substring(span.start(), span.end())).toList();
     }
@@ -54,7 +49,7 @@ class IntegrationLinesTest {
         String droppedPenalty = REMOVED_PREFIX + FluxSkillEffect.FLUX_CAPACITY_MULT.description(-10f).plain();
         assertEquals(List.of(droppedPenalty), removedTexts(effects));
         DescriptionLine removedLine = effects.stream().filter(line -> line.plain().equals(droppedPenalty)).findFirst().orElseThrow();
-        assertTrue(isStoryPointGreenAfter(removedLine.text(), REMOVED_PREFIX), removedLine.text().toMarkup());
+        assertEquals(List.of("10%"), storyPointGreenParts(removedLine.text()), removedLine.text().toMarkup());
         assertFalse(removedLine.lowerIsBetter());
     }
 
@@ -132,7 +127,7 @@ class IntegrationLinesTest {
 
         String droppedPenalty = REMOVED_PREFIX + DefenseSkillEffect.WEAPON_DAMAGE_TAKEN_PERCENT.description(50f).plain();
         assertEquals(List.of(droppedPenalty), removedTexts(preview));
-        assertTrue(isStoryPointGreenAfter(preview.get(preview.size() - 1).text(), REMOVED_PREFIX));
+        assertEquals(List.of("50%"), storyPointGreenParts(preview.get(preview.size() - 1).text()));
         assertEquals(List.of(), removedTexts(IntegrationLines.preview(FRIGATE_PENALTY_DROPPING, HullSize.DESTROYER, NOT_INTEGRATED)));
     }
 
@@ -178,7 +173,9 @@ class IntegrationLinesTest {
         String leadIn = "In addition, grants ";
         assertEquals(2, preview.size(), preview.toString());
         assertEquals(leadIn + DefenseSkillEffect.ARMOR_FLAT.description(50f).plain(), preview.get(1).plain());
-        assertTrue(isStoryPointGreenAfter(preview.get(1).text(), leadIn), preview.get(1).text().toMarkup());
+        List<String> greenParts = storyPointGreenParts(preview.get(1).text());
+        assertEquals(1, greenParts.size(), preview.get(1).text().toMarkup());
+        assertTrue(greenParts.get(0).contains("50"), preview.get(1).text().toMarkup());
     }
 
     @Test
@@ -192,6 +189,19 @@ class IntegrationLinesTest {
         List<String> preview = IntegrationLines.preview(crabs, HullSize.CRUISER, NOT_INTEGRATED).stream().map(DescriptionLine::plain).toList();
 
         assertEquals("In addition, grants: " + jokeLine, preview.get(preview.size() - 1));
+    }
+
+    @Test
+    void aLineWithoutHighlightedValuesTurnsWhollyStoryPointGreenWhenIntegrated() {
+        String jokeLine = "The crabs eat what the crew won't.";
+        SkillType crabs = new SkillType.Builder("crabs", "Crabs", "a.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
+                .integratedEffects(new IntegratedEffects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)), List.of(), List.of(jokeLine)))
+                .build();
+
+        DescriptionLine preview = IntegrationLines.preview(crabs, HullSize.CRUISER, NOT_INTEGRATED).get(1);
+
+        assertEquals(List.of(jokeLine), storyPointGreenParts(preview.text()), preview.text().toMarkup());
     }
 
     @Test

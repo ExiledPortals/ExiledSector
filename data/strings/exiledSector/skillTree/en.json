@@ -171,7 +171,7 @@
     "node.integration.integrated": "<builtIn>Integrated</builtIn>",
     "node.integration.preview.one": "When integrated, for {count} story point:",
     "node.integration.preview.other": "When integrated, for {count} story points:",
-    "node.integration.removes": "No longer: {line}",
+    "node.integration.removes": "No longer grants: {line}",
     "node.integration.instead": "Instead grants {line}",
     "node.integration.insteadSentence": "Instead grants: {line}",
     "node.integration.inAddition": "In addition, grants {line}",
