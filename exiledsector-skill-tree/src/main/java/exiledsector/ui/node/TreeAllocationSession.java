@@ -925,9 +925,7 @@ public final class TreeAllocationSession {
     }
 
     private void integrate(SkillNode node) {
-        ShipSkillData skillData = allocator.data();
-        FleetMemberAPI member = allocator.member();
-        if (!canIntegrate(node) || !NodeIntegration.integrate(skillData, node, member.getShipName())) {
+        if (!canIntegrate(node) || !allocator.integrate(node)) {
             SkillTreeSounds.refused();
             return;
         }
@@ -939,6 +937,7 @@ public final class TreeAllocationSession {
     public void refreshAfterIntegrationReset() {
         cancelIntegrationHold();
         planner.clearIntegrations();
+        allocator.applyIntegrationReset();
         refreshAfterAllocation();
     }
 

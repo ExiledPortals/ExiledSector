@@ -178,11 +178,15 @@ public final class WormholeAnchorDefinitions {
     }
 
     public static List<ItemDefinition> rollMarketStock(String factionId, Random random) {
+        return rollMarketStock(factionId, 1f, random);
+    }
+
+    public static List<ItemDefinition> rollMarketStock(String factionId, float chanceMult, Random random) {
         List<ItemDefinition> stocked = new ArrayList<>();
         for (Map.Entry<String, AnchorMarket> entry : MARKETS_BY_ID.get().entrySet()) {
             FactionFleetDrops.Source source = FactionFleetDrops.source(entry.getKey());
             ItemDefinition definition = ItemDefinitions.get(entry.getKey());
-            float chance = entry.getValue().chance();
+            float chance = entry.getValue().chance() * chanceMult;
             if (chance > 0f && source != null && source.dropsFrom(factionId) && FactionFleetDrops.available(definition)
                     && random.nextFloat() < chance) {
                 stocked.add(definition);
