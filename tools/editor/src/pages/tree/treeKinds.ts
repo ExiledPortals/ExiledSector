@@ -32,13 +32,16 @@ export const SHIP_TREE_KIND: TreeKind = {
 export const ATLAS_TIERS: Tier[] = ['SMALL', 'NOTABLE', 'KEYSTONE', 'ROOT', 'WORMHOLE'];
 
 const CHART_EFFECT_MODE = 'star chart effect';
+const ATLAS_EFFECT_MODE = 'atlas effect';
 
 function atlasEditorVocabulary(vocabulary: Vocabulary, declaredVolumes: string[]): Vocabulary {
   const chartEffects = vocabulary.chartEffectNames.map((name): EffectInfo => ({ name, statMode: CHART_EFFECT_MODE, lowerIsBetter: false }));
+  const atlasEffects = vocabulary.atlasEffectNames.map((name): EffectInfo => ({ name, statMode: ATLAS_EFFECT_MODE, lowerIsBetter: false }));
+  const treeEffects = [...chartEffects, ...atlasEffects];
   return {
     ...vocabulary,
-    effectNames: vocabulary.chartEffectNames.slice(),
-    effectInfo: new Map(chartEffects.map((effect) => [effect.name, effect])),
+    effectNames: treeEffects.map((effect) => effect.name),
+    effectInfo: new Map(treeEffects.map((effect) => [effect.name, effect])),
     themeTags: [],
     volumeTags: declaredVolumes.slice(),
     requirementTags: [],

@@ -41,8 +41,9 @@ public final class AtlasReach {
     public static Set<AtlasCell> visible(AtlasGenerator generator, AtlasState state) {
         Map<AtlasCell, Integer> remaining = new HashMap<>();
         ArrayDeque<AtlasCell> frontier = new ArrayDeque<>();
+        int visibleLanes = visibleLanes(generator);
         for (AtlasCell completed : state.completedCells()) {
-            int reach = Math.max(VISIBLE_LANES, revealLanes(generator, completed));
+            int reach = Math.max(visibleLanes, revealLanes(generator, completed));
             if (reach > remaining.getOrDefault(completed, -1)) {
                 remaining.put(completed, reach);
                 frontier.add(completed);
@@ -68,6 +69,10 @@ public final class AtlasReach {
             }
         }
         return new LinkedHashSet<>(remaining.keySet());
+    }
+
+    public static int visibleLanes(AtlasGenerator generator) {
+        return Math.max(0, VISIBLE_LANES + generator.effects().count(AtlasModifier.ATLAS_VISIBILITY_LANES));
     }
 
     static int revealLanes(AtlasGenerator generator, AtlasCell completed) {

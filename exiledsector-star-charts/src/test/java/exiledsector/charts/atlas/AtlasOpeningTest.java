@@ -92,6 +92,23 @@ class AtlasOpeningTest {
     }
 
     @Test
+    void anOpenedChartAddsTheAnomaliesItRolledToTheRunButNotToTheAtlas() {
+        ChartTables.useAnomalies(List.of(new ChartAnomalies.Definition(PowerfulBoss.ANOMALY_ID, 1f, 1, 16, "", "", true, Set.of(), false,
+                ChartAnomalies.definition(PowerfulBoss.ANOMALY_ID).effects(), Set.of(), 1f, 1f)));
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = new AtlasGenerator(SEED, rules(), AtlasUnlocks.NONE, state);
+        AtlasCell cell = findInfested(generator, false);
+        state.add(cell, AtlasState.ANOMALIES_SPENT);
+
+        AtlasRunNode opened = AtlasOpening.openedRunNode(generator, state, cell, 0x5eedL);
+
+        assertEquals(List.of(PowerfulBoss.ANOMALY_ID), opened.anomalyIds());
+        assertTrue(opened.guaranteedBossTierUp());
+        assertEquals(List.of(), AtlasAnomalies.effective(generator, state, cell));
+        assertEquals(List.of(), AtlasOpening.runNode(generator, state, cell).anomalyIds());
+    }
+
+    @Test
     void aCaptureHandsTheSystemToItsCaptorButAnInfestationHoldsItUntilCleared() {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = new AtlasGenerator(SEED, rules(), AtlasUnlocks.NONE, state);

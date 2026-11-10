@@ -72,6 +72,16 @@ public final class AtlasOpening {
     }
 
     public static AtlasRunNode runNode(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        return runNode(generator, state, cell, AtlasAnomalies.effective(generator, state, cell));
+    }
+
+    public static AtlasRunNode openedRunNode(AtlasGenerator generator, AtlasState state, AtlasCell cell, long chartSeed) {
+        List<String> anomalyIds = new ArrayList<>(AtlasAnomalies.effective(generator, state, cell));
+        anomalyIds.addAll(OpeningAnomalies.rolled(generator, state, cell, chartSeed, anomalyIds));
+        return runNode(generator, state, cell, anomalyIds);
+    }
+
+    private static AtlasRunNode runNode(AtlasGenerator generator, AtlasState state, AtlasCell cell, List<String> anomalyIds) {
         AtlasNode node = generator.node(cell);
         List<ChartGenContext.AppliedEffect> effects = new ArrayList<>();
         AtlasSpecial special = generator.specialAt(cell);
@@ -81,7 +91,6 @@ public final class AtlasOpening {
         if (special != null) {
             effects.addAll(AtlasData.nodeEffects(special.kind().nodeEffectsId()));
         }
-        List<String> anomalyIds = AtlasAnomalies.effective(generator, state, cell);
         return new AtlasRunNode(cell.pack(), factionFor(generator, state, cell, node), effects, anomalyIds, ChartAnomalies.guaranteeBossTierUp(anomalyIds));
     }
 
@@ -123,10 +132,11 @@ public final class AtlasOpening {
         return ChartLayoutGenerator.systemTypeFor(request, anomalyIds);
     }
 
-    public static ChartLayoutRequest request(AtlasGenerator generator, AtlasState state, AtlasCell cell, StarChart chart, AtlasRunNode runNode) {
+    public static ChartLayoutRequest request(AtlasGenerator generator, AtlasState state, AtlasCell cell, StarChart chart, AtlasRunNode runNode,
+                                             List<ChartGenContext.AppliedEffect> treeLines) {
         AtlasNode node = generator.node(cell);
-        ChartGenContext context = ChartGenContext.from(chart).withAtlasNode(runNode).withStationBossBarred(AtlasData.ambience(node.regionId()).abyss())
-                .withBiome(node.regionId());
+        ChartGenContext context = ChartGenContext.from(chart).withAtlasNode(runNode).withEffects(treeLines)
+                .withStationBossBarred(AtlasData.ambience(node.regionId()).abyss()).withBiome(node.regionId());
         return new ChartLayoutRequest(layoutSeed(state, cell), null, chart.tier(), context, AtlasData.recipeFor(node.regionId(), node.layoutId()), chart.seed());
     }
 }

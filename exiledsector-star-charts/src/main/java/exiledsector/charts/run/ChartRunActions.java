@@ -8,10 +8,12 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartSystemFactory;
 import exiledsector.charts.layout.ChartLayoutRequest;
 import exiledsector.charts.objective.ChartObjectiveIntel;
 import exiledsector.charts.run.cleanup.ChartRunCloser;
+import exiledsector.charts.tree.AtlasTree;
 import exiledsector.compat.DiyPlanetsCompat;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
@@ -28,6 +30,7 @@ import exiledsector.items.StarChart;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
+import java.util.List;
 import java.util.Random;
 
 public final class ChartRunActions {
@@ -89,9 +92,10 @@ public final class ChartRunActions {
                 return ChartRuns.hasRun() ? OpenResult.RUN_EXISTS : OpenResult.NOT_REACHABLE;
             }
         }
-        AtlasRunNode runNode = ChartAnomalies.joinRunNode(AtlasOpening.runNode(generator, state, cell), generator, state, cell, choice);
-        OpenResult result = openBesidePlayer(sector, entriesAllowed, random, AtlasOpening.request(generator, state, cell, chart, runNode),
-                ItemData.of(chart).encode(), runNode);
+        AtlasRunNode runNode = ChartAnomalies.joinRunNode(AtlasOpening.openedRunNode(generator, state, cell, chart.seed()), generator, state, cell, choice);
+        List<ChartGenContext.AppliedEffect> treeLines = AtlasTree.chartLines(state);
+        OpenResult result = openBesidePlayer(sector, entriesAllowed, random, AtlasOpening.request(generator, state, cell, chart, runNode, treeLines),
+                ItemData.of(chart).encode(), runNode, treeLines);
         if (result == OpenResult.OPENED) {
             store.remove(chart);
             AtlasProgress.opened(sector, generator, cell);
@@ -112,11 +116,11 @@ public final class ChartRunActions {
 
     private static OpenResult openBesidePlayer(SectorAPI sector, int entriesAllowed, Random random, ChartLayoutRequest layoutRequest,
                                                String chartData) {
-        return openBesidePlayer(sector, entriesAllowed, random, layoutRequest, chartData, null);
+        return openBesidePlayer(sector, entriesAllowed, random, layoutRequest, chartData, null, List.of());
     }
 
     private static OpenResult openBesidePlayer(SectorAPI sector, int entriesAllowed, Random random, ChartLayoutRequest layoutRequest,
-                                               String chartData, AtlasRunNode atlasNode) {
+                                               String chartData, AtlasRunNode atlasNode, List<ChartGenContext.AppliedEffect> treeLines) {
         if (ChartRuns.hasRun()) {
             return OpenResult.RUN_EXISTS;
         }
@@ -132,6 +136,7 @@ public final class ChartRunActions {
         run.recordOriginEntity(anchor == null ? null : anchor.getId());
         run.recordChart(chartData);
         run.recordAtlasNode(atlasNode);
+        run.recordAtlasTreeLines(treeLines);
         ChartRuns.store(run);
         try {
             ChartSystemFactory.ChartSystem created = ChartSystemFactory.createSystem(sector, run.runId(), layoutRequest);

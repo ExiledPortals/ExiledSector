@@ -1,6 +1,6 @@
 package exiledsector.charts.atlas;
 
-import exiledsector.charts.effect.ChartModifier;
+import exiledsector.charts.generation.AppliedEffectCodec;
 import exiledsector.charts.generation.ChartGenContext;
 
 import java.util.ArrayList;
@@ -12,8 +12,6 @@ public record AtlasRunNode(long cell, String factionId, List<ChartGenContext.App
                            boolean guaranteedBossTierUp, boolean guaranteedBossUnique, Map<String, String> anomalyData) {
 
     static final String FIELD_SEPARATOR = "|";
-    static final String EFFECT_SEPARATOR = ";";
-    static final String VALUE_SEPARATOR = ":";
     static final String ID_SEPARATOR = ",";
     static final String DATA_SEPARATOR = ";";
     static final String DATA_VALUE_SEPARATOR = "=";
@@ -53,14 +51,10 @@ public record AtlasRunNode(long cell, String factionId, List<ChartGenContext.App
     }
 
     public String encode() {
-        List<String> parts = new ArrayList<>();
-        for (ChartGenContext.AppliedEffect effect : effects) {
-            parts.add(effect.effect().name() + VALUE_SEPARATOR + effect.value());
-        }
         List<String> data = new ArrayList<>();
         anomalyData.entrySet().stream().sorted(Map.Entry.comparingByKey())
                 .forEach(entry -> data.add(entry.getKey() + DATA_VALUE_SEPARATOR + entry.getValue()));
-        return cell + FIELD_SEPARATOR + factionId + FIELD_SEPARATOR + String.join(EFFECT_SEPARATOR, parts) + FIELD_SEPARATOR
+        return cell + FIELD_SEPARATOR + factionId + FIELD_SEPARATOR + AppliedEffectCodec.encode(effects) + FIELD_SEPARATOR
                 + String.join(ID_SEPARATOR, anomalyIds) + FIELD_SEPARATOR + guaranteedBossTierUp + FIELD_SEPARATOR + guaranteedBossUnique
                 + FIELD_SEPARATOR + String.join(DATA_SEPARATOR, data);
     }
@@ -79,26 +73,11 @@ public record AtlasRunNode(long cell, String factionId, List<ChartGenContext.App
                 case FIELDS_WITH_SKIRMISH -> Boolean.parseBoolean(fields[7]);
                 default -> false;
             };
-            return new AtlasRunNode(Long.parseLong(fields[0]), fields[1], decodeEffects(fields[2]), decodeIds(fields[3]),
+            return new AtlasRunNode(Long.parseLong(fields[0]), fields[1], AppliedEffectCodec.decode(fields[2]), decodeIds(fields[3]),
                     Boolean.parseBoolean(fields[4]), bossUnique, fields.length == FIELDS ? decodeData(fields[6]) : Map.of());
         } catch (NumberFormatException e) {
             return null;
         }
-    }
-
-    private static List<ChartGenContext.AppliedEffect> decodeEffects(String field) {
-        List<ChartGenContext.AppliedEffect> effects = new ArrayList<>();
-        for (String part : field.split(EFFECT_SEPARATOR)) {
-            int separator = part.indexOf(VALUE_SEPARATOR);
-            if (separator <= 0) {
-                continue;
-            }
-            ChartModifier effect = ChartModifier.byNameOrNull(part.substring(0, separator));
-            if (effect != null) {
-                effects.add(new ChartGenContext.AppliedEffect(effect, Float.parseFloat(part.substring(separator + 1))));
-            }
-        }
-        return effects;
     }
 
     private static List<String> decodeIds(String field) {

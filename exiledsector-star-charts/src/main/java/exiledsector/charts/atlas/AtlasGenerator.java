@@ -26,6 +26,7 @@ public final class AtlasGenerator {
     private final long seed;
     private final AtlasRules rules;
     private final AtlasUnlocks unlocks;
+    private final AtlasEffects effects;
     private final AtlasPositions positions;
     private final AtlasSpecialPlacer specials;
     private final AtlasBiomes biomes;
@@ -36,9 +37,14 @@ public final class AtlasGenerator {
     private final Map<Long, Boolean> voidCache = AtlasPositions.boundedCache(CACHE_LIMIT_CELLS);
 
     public AtlasGenerator(long seed, AtlasRules rules, AtlasUnlocks unlocks, AtlasMemory memory) {
+        this(seed, rules, unlocks, AtlasEffects.NONE, memory);
+    }
+
+    public AtlasGenerator(long seed, AtlasRules rules, AtlasUnlocks unlocks, AtlasEffects effects, AtlasMemory memory) {
         this.seed = seed;
         this.rules = rules;
         this.unlocks = unlocks;
+        this.effects = effects;
         positions = new AtlasPositions(seed);
         specials = new AtlasSpecialPlacer(seed, rules, unlocks, memory, positions, this::isVoid);
         biomes = new AtlasBiomes(seed, rules, unlocks, memory, positions);
@@ -59,6 +65,10 @@ public final class AtlasGenerator {
 
     public Set<String> unlockFlags() {
         return unlocks.unlockedFlags();
+    }
+
+    public AtlasEffects effects() {
+        return effects;
     }
 
     public static long chunkKey(int chunkX, int chunkY) {

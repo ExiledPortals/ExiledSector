@@ -47,8 +47,11 @@ public final class ChartGenContext {
     public record AppliedEffect(ChartModifier effect, float value) {
     }
 
-    private static final ChartGenContext NONE = new ChartGenContext(List.of(), 0, null);
+    private static final ChartGenContext NONE = new ChartGenContext(List.of(), List.of(), 0, null);
 
+    private final List<AppliedEffect> chartLines;
+    private final List<AppliedEffect> addedLines;
+    private final float modifierEffectPercent;
     private final List<AppliedEffect> applied;
     private final int quantity;
     private final String factionId;
@@ -77,6 +80,7 @@ public final class ChartGenContext {
     private float itemRarityPercent;
     private final Map<DropType, Float> dropPercents = new EnumMap<>(DropType.class);
     private float bossSpoilsPercent;
+    private float bossStarChartPercent;
     private float rewardPercent;
     private final Map<ChartFleetStat, Float> fleetStatPercents = new EnumMap<>(ChartFleetStat.class);
     private Map<ChartFleetStat, Float> fleetStatMults;
@@ -88,8 +92,11 @@ public final class ChartGenContext {
     private String biomeId;
     private final Map<String, String> anomalyData = new LinkedHashMap<>();
 
-    private ChartGenContext(List<AppliedEffect> applied, int quantity, String factionId) {
-        this.applied = List.copyOf(applied);
+    private ChartGenContext(List<AppliedEffect> chartLines, List<AppliedEffect> addedLines, int quantity, String factionId) {
+        this.chartLines = List.copyOf(chartLines);
+        this.addedLines = List.copyOf(addedLines);
+        this.modifierEffectPercent = totalOf(ChartModifier.CHART_MODIFIER_EFFECT_PERCENT, this.addedLines);
+        this.applied = scaledPlusAdded(this.chartLines, multiplier(modifierEffectPercent), this.addedLines);
         this.quantity = Math.max(0, quantity);
         this.factionId = factionId;
         for (AppliedEffect effect : this.applied) {
@@ -114,7 +121,26 @@ public final class ChartGenContext {
         if (noEffects && quantity <= 0 && factionId == null) {
             return NONE;
         }
-        return new ChartGenContext(noEffects ? List.of() : applied, quantity, factionId);
+        return new ChartGenContext(List.of(), noEffects ? List.of() : applied, quantity, factionId);
+    }
+
+    private static float totalOf(ChartModifier effect, List<AppliedEffect> lines) {
+        float total = 0f;
+        for (AppliedEffect line : lines) {
+            if (line.effect() == effect) {
+                total += line.value();
+            }
+        }
+        return total;
+    }
+
+    private static List<AppliedEffect> scaledPlusAdded(List<AppliedEffect> chartLines, float chartLineMult, List<AppliedEffect> addedLines) {
+        List<AppliedEffect> lines = new ArrayList<>(chartLines.size() + addedLines.size());
+        for (AppliedEffect line : chartLines) {
+            lines.add(chartLineMult == 1f ? line : new AppliedEffect(line.effect(), line.effect().withModifierEffect(line.value(), chartLineMult)));
+        }
+        lines.addAll(addedLines);
+        return List.copyOf(lines);
     }
 
     public static ChartGenContext from(Item chart) {
@@ -142,7 +168,11 @@ public final class ChartGenContext {
         if (prefixQuantityPercent > 0f) {
             applied.add(new AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, prefixQuantityPercent));
         }
-        return of(applied, chart instanceof StarChart starChart ? starChart.quantity() : 0, factionId);
+        int chartQuantity = chart instanceof StarChart starChart ? starChart.quantity() : 0;
+        if (applied.isEmpty() && chartQuantity <= 0 && factionId == null) {
+            return NONE;
+        }
+        return new ChartGenContext(applied, List.of(), chartQuantity, factionId);
     }
 
     static float quantityPercentPerPrefix(int tier) {
@@ -159,6 +189,10 @@ public final class ChartGenContext {
 
     public List<AppliedEffect> applied() {
         return applied;
+    }
+
+    public float modifierEffectPercent() {
+        return modifierEffectPercent;
     }
 
     public int quantity() {
@@ -321,6 +355,10 @@ public final class ChartGenContext {
         bossSpoilsPercent += value;
     }
 
+    public void addBossStarChartPercent(float value) {
+        bossStarChartPercent += value;
+    }
+
     public void addRewardPercent(float value) {
         rewardPercent += value;
     }
@@ -337,7 +375,7 @@ public final class ChartGenContext {
         if (node == null) {
             return this;
         }
-        ChartGenContext context = derive(appliedPlus(node.effects()), node.factionId().isEmpty() ? factionId : node.factionId());
+        ChartGenContext context = derive(addedPlus(node.effects()), node.factionId().isEmpty() ? factionId : node.factionId());
         context.forceAnomalies(node.anomalyIds());
         context.guaranteedBossTierUp |= node.guaranteedBossTierUp();
         context.guaranteedBossUnique |= node.guaranteedBossUnique();
@@ -349,7 +387,7 @@ public final class ChartGenContext {
         if (anomalyIds == null || anomalyIds.isEmpty()) {
             return this;
         }
-        ChartGenContext context = derive(applied, factionId);
+        ChartGenContext context = derive(addedLines, factionId);
         context.forceAnomalies(anomalyIds);
         return context;
     }
@@ -363,23 +401,23 @@ public final class ChartGenContext {
         if (effects.isEmpty() && !bossTierUp) {
             return this;
         }
-        ChartGenContext context = derive(appliedPlus(effects), factionId);
+        ChartGenContext context = derive(addedPlus(effects), factionId);
         context.guaranteedBossTierUp |= bossTierUp;
         return context;
     }
 
     public ChartGenContext withEffects(List<AppliedEffect> effects) {
-        return effects == null || effects.isEmpty() ? this : derive(appliedPlus(effects), factionId);
+        return effects == null || effects.isEmpty() ? this : derive(addedPlus(effects), factionId);
     }
 
-    private List<AppliedEffect> appliedPlus(List<AppliedEffect> effects) {
-        List<AppliedEffect> combined = new ArrayList<>(applied);
+    private List<AppliedEffect> addedPlus(List<AppliedEffect> effects) {
+        List<AppliedEffect> combined = new ArrayList<>(addedLines);
         combined.addAll(effects);
         return combined;
     }
 
-    private ChartGenContext derive(List<AppliedEffect> effects, String derivedFactionId) {
-        ChartGenContext context = new ChartGenContext(effects, quantity, derivedFactionId);
+    private ChartGenContext derive(List<AppliedEffect> derivedAddedLines, String derivedFactionId) {
+        ChartGenContext context = new ChartGenContext(chartLines, derivedAddedLines, quantity, derivedFactionId);
         context.forceAnomalies(forcedAnomalies);
         context.guaranteedBossTierUp = guaranteedBossTierUp;
         context.guaranteedBossUnique = guaranteedBossUnique;
@@ -413,7 +451,7 @@ public final class ChartGenContext {
         if (barred == stationBossBarred) {
             return this;
         }
-        ChartGenContext context = derive(applied, factionId);
+        ChartGenContext context = derive(addedLines, factionId);
         context.stationBossBarred = barred;
         return context;
     }
@@ -426,7 +464,7 @@ public final class ChartGenContext {
         if (Objects.equals(regionId, biomeId)) {
             return this;
         }
-        ChartGenContext context = derive(applied, factionId);
+        ChartGenContext context = derive(addedLines, factionId);
         context.biomeId = regionId;
         return context;
     }
@@ -439,7 +477,7 @@ public final class ChartGenContext {
         if (data == null || data.equals(anomalyData.get(anomalyId))) {
             return this;
         }
-        ChartGenContext context = derive(applied, factionId);
+        ChartGenContext context = derive(addedLines, factionId);
         context.anomalyData.put(anomalyId, data);
         return context;
     }
@@ -585,6 +623,14 @@ public final class ChartGenContext {
 
     public float bossSpoilsMult() {
         return multiplier(bossSpoilsPercent);
+    }
+
+    public float bossStarChartPercent() {
+        return bossStarChartPercent;
+    }
+
+    public float bossStarChartMult() {
+        return multiplier(totalDropPercent(DropType.STAR_CHART) + bossStarChartPercent);
     }
 
     public ItemChances itemChances() {

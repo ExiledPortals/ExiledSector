@@ -273,6 +273,21 @@ class ChartFleetLootTest {
     }
 
     @Test
+    void theBossStarChartLineScalesOnlyTheBosssStarCharts() throws Exception {
+        ChartDrops.register(new JSONArray().put(rule("chart_fleet", 1f, 6)).put(rule("chart_boss", 1f, 6)));
+        ChartRun run = storeLiveRun(6);
+        ChartGenContext recovery = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_BOSS_STAR_CHART_PERCENT, 100f)));
+
+        ItemDrops.SiteLoot guardLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f), run, recovery, 100f,
+                new Random(1L));
+        ItemDrops.SiteLoot bossLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, recovery, 200f,
+                new Random(1L));
+
+        assertEquals(1, chartCount(guardLoot));
+        assertEquals(4, chartCount(bossLoot));
+    }
+
+    @Test
     void aWholeTiersWorthOfFleetPointsDropsTheRowsChanceAndBiggerFleetsDropMore() throws Exception {
         ChartDrops.register(new JSONArray().put(new JSONObject().put("source", "chart_fleet").put("chance", "1.5")));
         ChartRun run = storeLiveRun(10);

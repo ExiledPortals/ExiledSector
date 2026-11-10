@@ -180,6 +180,21 @@ public class ChartAnomaliesTest {
     }
 
     @Test
+    void anomaliesThatReplaceTheStarOrArePlacedPerBiomeNeverRollWhenAChartOpens() throws Exception {
+        List<String> problems = ChartAnomalies.register(new JSONArray()
+                .put(new JSONObject().put("id", "black_hole").put("opening_chance", "0.08"))
+                .put(new JSONObject().put("id", "remnant_nexus_station").put("biomes", "remnant_expanse").put("opening_chance", "0.08"))
+                .put(new JSONObject().put("id", SpatialBreach.ANOMALY_ID).put("opening_chance", "0.08"))
+                .put(new JSONObject().put("id", AsteroidStorm.ANOMALY_ID)));
+
+        assertEquals(2, problems.size());
+        assertFalse(ChartAnomalies.definition("black_hole").rollsOnOpening());
+        assertFalse(ChartAnomalies.definition("remnant_nexus_station").rollsOnOpening());
+        assertEquals(0.08f, ChartAnomalies.definition(SpatialBreach.ANOMALY_ID).openingChance(), 1e-6f);
+        assertFalse(ChartAnomalies.definition(AsteroidStorm.ANOMALY_ID).rollsOnOpening());
+    }
+
+    @Test
     void starAnomaliesConflictWithEachOtherAndExcludesWorkBothWays() {
         ChartAnomalies.useForTests(List.of(definition("black_hole"), definition("dense_nebula"),
                 definition(SpatialBreach.ANOMALY_ID, 1, 15, "", Set.of(MagneticStorm.ANOMALY_ID)), definition(MagneticStorm.ANOMALY_ID), definition(AsteroidStorm.ANOMALY_ID)));

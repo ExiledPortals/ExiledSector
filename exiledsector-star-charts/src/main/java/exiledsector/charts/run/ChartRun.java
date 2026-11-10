@@ -4,6 +4,8 @@ import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartBossType;
 import exiledsector.charts.content.ChartContent;
+import exiledsector.charts.generation.AppliedEffectCodec;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.layout.ChartLayout;
 
@@ -51,6 +53,7 @@ public final class ChartRun {
     private String chartData;
     private String anomalies;
     private String atlasNode;
+    private String atlasTreeLines;
     private String originEntityId;
     private String anomalyStates;
     private transient Map<String, String> parsedAnomalyStates;
@@ -181,6 +184,22 @@ public final class ChartRun {
 
     String atlasNodeData() {
         return atlasNode;
+    }
+
+    public void recordAtlasTreeLines(List<ChartGenContext.AppliedEffect> lines) {
+        atlasTreeLines = lines == null || lines.isEmpty() ? null : AppliedEffectCodec.encode(lines);
+    }
+
+    public List<ChartGenContext.AppliedEffect> atlasTreeLines() {
+        try {
+            return AppliedEffectCodec.decode(atlasTreeLines);
+        } catch (NumberFormatException e) {
+            return List.of();
+        }
+    }
+
+    String atlasTreeLinesData() {
+        return atlasTreeLines;
     }
 
     public String chartData() {

@@ -42,6 +42,7 @@ interface VocabularyFile {
   chartTierRange?: [number, number];
   chartTierGroups?: ChartTierGroup[];
   chartEffects?: string[];
+  atlasEffects?: string[];
   chartSystemTypes?: string[];
 }
 
@@ -75,6 +76,7 @@ export interface Vocabulary {
   highestChartTier: number;
   chartTierGroups: ChartTierGroup[];
   chartEffectNames: string[];
+  atlasEffectNames: string[];
   chartSystemTypes: string[];
 }
 
@@ -109,6 +111,7 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     highestChartTier: file.chartTierRange?.[1] ?? 15,
     chartTierGroups: (file.chartTierGroups ?? DEFAULT_CHART_TIER_GROUPS).map((group) => ({ ...group })),
     chartEffectNames: (file.chartEffects ?? []).slice(),
+    atlasEffectNames: (file.atlasEffects ?? []).slice(),
     chartSystemTypes: (file.chartSystemTypes ?? []).slice(),
   };
 }

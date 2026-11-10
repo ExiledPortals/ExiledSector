@@ -83,6 +83,11 @@ public enum ChartModifier implements ModifierEffect {
         public StyledText description(float magnitude) {
             return Translation.msg(key()).arg("value", magnitude).arg("delay", ChartMisfirePlugin.GRACE_SECONDS).styled();
         }
+
+        @Override
+        public float withModifierEffect(float value, float effectMult) {
+            return value / effectMult;
+        }
     },
     CHART_DAMAGE_PER_SMOD_PERCENT(false, ChartGenContext::addDamagePercentPerSMod) {
         @Override
@@ -135,7 +140,9 @@ public enum ChartModifier implements ModifierEffect {
     CHART_AI_CORE_PERCENT(DropType.AI_CORE),
     CHART_COLONY_ITEM_PERCENT(DropType.COLONY_ITEM),
     CHART_BOSS_SPOILS_PERCENT(false, ChartGenContext::addBossSpoilsPercent),
+    CHART_BOSS_STAR_CHART_PERCENT(false, ChartGenContext::addBossStarChartPercent),
     CHART_REWARD_PERCENT(false, ChartGenContext::addRewardPercent),
+    CHART_MODIFIER_EFFECT_PERCENT(false, (context, value) -> { }),
     CHART_BREACH_GROWTH_PERCENT("spatial_breach.growth", AnomalyLine.PERCENT),
     CHART_BREACH_CACHE_PERCENT("spatial_breach.caches", AnomalyLine.PERCENT),
     CHART_BREACH_CACHE_ITEM_PERCENT("spatial_breach.cacheItems", AnomalyLine.PERCENT),
@@ -182,6 +189,8 @@ public enum ChartModifier implements ModifierEffect {
             this.negativeKeySuffix = negativeKeySuffix;
         }
     }
+
+    private static final float WHOLE_NUMBER_TOLERANCE = 1e-4f;
 
     private final boolean counted;
     private final DropType dropType;
@@ -284,6 +293,14 @@ public enum ChartModifier implements ModifierEffect {
     @Override
     public List<StyledText> detailLines() {
         return grantedNodeId == null ? List.of() : GrantedNodes.descriptionLines(grantedNodeId).stream().map(StyledText::inverted).toList();
+    }
+
+    public float withModifierEffect(float value, float effectMult) {
+        if (!counted) {
+            return value * effectMult;
+        }
+        float scaled = Math.round(value) * effectMult;
+        return Math.signum(scaled) * (float) Math.floor(Math.abs(scaled) + WHOLE_NUMBER_TOLERANCE);
     }
 
     public void beforeGeneration(ChartGenContext context, float value) {

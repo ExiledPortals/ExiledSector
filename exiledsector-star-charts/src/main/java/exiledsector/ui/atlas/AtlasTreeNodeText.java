@@ -1,5 +1,6 @@
 package exiledsector.ui.atlas;
 
+import exiledsector.charts.atlas.AtlasEffects;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.tree.AtlasTreeType;
 import exiledsector.i18n.Style;
@@ -16,10 +17,10 @@ final class AtlasTreeNodeText {
     static List<StyledText> body(AtlasTreeType type, StyledText extraLine) {
         List<StyledText> lines = new ArrayList<>();
         for (ChartGenContext.AppliedEffect effect : type.effects()) {
-            StyledText line = effect.effect().description(effect.value());
-            if (line != null) {
-                lines.add(line);
-            }
+            addLine(lines, effect.effect().description(effect.value()));
+        }
+        for (AtlasEffects.Line effect : type.atlasEffects()) {
+            addLine(lines, effect.effect().description(effect.value()));
         }
         String flavour = type.flavourText();
         if (flavour != null && !flavour.isBlank()) {
@@ -29,5 +30,11 @@ final class AtlasTreeNodeText {
             lines.add(extraLine);
         }
         return lines;
+    }
+
+    private static void addLine(List<StyledText> lines, StyledText line) {
+        if (line != null) {
+            lines.add(line);
+        }
     }
 }

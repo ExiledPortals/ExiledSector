@@ -3,6 +3,7 @@ package exiledsector.tools;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.SkillEffectNames;
 import exiledsector.skills.skilleffect.StatMode;
+import exiledsector.charts.atlas.AtlasModifier;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.items.DoctrineBehaviour;
@@ -86,6 +87,7 @@ final class EditorVocabulary {
                         + ", \"maxTier\": " + Math.min(ChartTiers.CORRUPTED_TIER, group.tiers().maxTier()) + "}").collect(Collectors.joining(", ")))
                 .append("],\n");
         json.append("  \"chartEffects\": ").append(list(Arrays.stream(ChartModifier.values()).map(Enum::name).toList())).append(",\n");
+        json.append("  \"atlasEffects\": ").append(list(Arrays.stream(AtlasModifier.values()).map(Enum::name).toList())).append(",\n");
         json.append("  \"chartSystemTypes\": ").append(list(StarChartDefinitions.SYSTEM_TYPES)).append("\n");
         return json.append("}\n").toString();
     }

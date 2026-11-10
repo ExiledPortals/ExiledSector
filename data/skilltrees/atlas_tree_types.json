@@ -5,6 +5,39 @@
 			"name": "Wormhole Gateway",
 			"icon": "graphics/icons/abilities/exiledSector_outer_reach_atlas.png",
 			"tier": "ROOT"
+		},
+		{
+			"id": "travel_boss_star_charts",
+			"name": "Boss Star Charts",
+			"icon": "graphics/icons/colony_management.png",
+			"effects": [
+				{
+					"effect": "CHART_BOSS_STAR_CHART_PERCENT",
+					"magnitude": 2
+				}
+			]
+		},
+		{
+			"id": "travel_catalysts",
+			"name": "Atlas Catalysts",
+			"icon": "graphics/icons/colony_management.png",
+			"effects": [
+				{
+					"effect": "CHART_CATALYST_PERCENT",
+					"magnitude": 2
+				}
+			]
+		},
+		{
+			"id": "travel_chart_modifier_effect",
+			"name": "Star Chart Modifier Effect",
+			"icon": "graphics/icons/colony_management.png",
+			"effects": [
+				{
+					"effect": "CHART_MODIFIER_EFFECT_PERCENT",
+					"magnitude": 2
+				}
+			]
 		}
 	]
 }

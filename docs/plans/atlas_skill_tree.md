@@ -1,6 +1,6 @@
 # Atlas Tree
 
-Status: in progress. Steps 1 to 4 and 6 are built (the shared abstractions, the data, the editor page, allocation and points, the screen); node effects do not reach charts or the atlas yet. This is the atlas points and passives plan that `atlas.md` defers to.
+Status: in progress. Steps 1 to 7 are built (the shared abstractions, the data, the editor page, allocation and points, chart lines, the screen, anomalies rolled on opening, the atlas line framework); which atlas lines exist is still open. This is the atlas points and passives plan that `atlas.md` defers to.
 
 The Atlas Tree is a passive tree for the whole Outer Reaches, one per save rather than per ship, spent with Atlas Skill Points. Its nodes change what star charts hold and drop, change how anomalies behave, and change the atlas itself. It plays the part of Path of Exile 2's Atlas passive tree (see What Path of Exile 2 does in `atlas.md`), drawn the way our ship skill tree is drawn.
 
@@ -46,8 +46,8 @@ Notables follow the ship tree's rules: one notable per wheel, small nodes leadin
 Node effects are lines, as the atlas's own node effects are. Every allocated node's lines are applied to a star chart when it is opened, and stay applied to that chart whatever happens to the tree afterwards; tree changes take effect from the next chart opened. They reach the game in three places.
 
 1. Chart lines. Lines that change a chart (loot percents, fleet and boss size, enemy effects, chart modifier effect) join the chart's `ChartGenContext` at opening, next to its own lines and `atlas_node_effects.csv`.
-2. Anomaly tuning. Lines an anomaly reads to change its own behaviour (more breach fleets, longer relay chains), doing nothing in a chart without that anomaly. Each anomaly that gets a volume names its tuning lines in its own plan, as `anomalies/overview.md` already expects tuning to arrive as `ChartModifier` lines.
-3. Atlas lines. Lines that change the atlas itself: anomaly chances, Sensor Array frequency, visibility range, faction fleets, infestations. The generator stays a pure function of the seed and its inputs, with the allocated atlas lines added to the inputs (`AtlasRuntime` already caches one generator per save and unlock set; the lines join that key). A higher anomaly weight only lets more hashes pass, so allocating a chance node adds anomalies to the map and refunding it takes them back without reshuffling anything else, except where a new anomaly wins a conflict or the per-system cap. Biome weights affect only sites not yet revealed, since revealed sites are saved. The map shows the current tree at once; a chart takes what its system holds when it opens.
+2. Anomaly lines. Lines raising an anomaly's chance to roll when a chart opens (Spatial Breaches more often), read by `OpeningAnomalies` on top of each anomaly's `opening_chance`, and tuning lines an anomaly reads to change its own behaviour (more breach fleets, longer relay chains), doing nothing in a chart without that anomaly. Each anomaly that gets a volume names its lines in its own plan, as `anomalies/overview.md` already expects tuning to arrive as `ChartModifier` lines.
+3. Atlas lines. Lines that change the atlas itself (`AtlasModifier`), such as Sensor Array frequency, visibility range, faction fleets and infestations; anomaly chances are not among them (see 2). The generator stays a pure function of the seed and its inputs, with the allocated atlas lines added to the inputs (`AtlasRuntime` already caches one generator per save and unlock set; the lines join that key). The map shows the current tree at once; a chart takes what its system holds when it opens.
 
 ## Points and refunds
 
@@ -92,6 +92,7 @@ Decided 2026-11-09: the tree is the Atlas Tree and its points are Atlas Skill Po
 ## Open questions
 
 1. Volume names and the first layout: which themes to keep, and which sit near the root.
+2. Which atlas lines exist. Candidates: Sensor Array frequency and reveal radius, visibility range, infestation frequency and radius, and faction fleets (no atlas mechanic yet). Frequency lines change the unexplored map whenever nodes are allocated or refunded. `ATLAS_VISIBILITY_LANES` is a placeholder that proves the framework and no node uses it.
 
 ## Build order
 
@@ -101,9 +102,10 @@ Decided 2026-11-09: the tree is the Atlas Tree and its points are Atlas Skill Po
 2. [x] Tree data: `AtlasTreeData` reads both files through the shared reader, with chart modifier ids as effects and volumes from the `volumes` list; seed files hold only the root. Tests: `charts.tree.AtlasTreeDataTest`.
 3. [x] Editor: every Tree page part takes the tree it edits (`treeKinds.ts`, `state/treeEditor.ts`, `state/treeEditorContext.ts`, `TreeEditorPage.tsx`), and the Atlas Tree page at `/atlas-tree` (`pages/atlasTree/`) edits the two files with chart effects, atlas tiers, a volumes dialog and no ship-only type sections. Tests: `atlasRoundTrip.test.ts`, `AtlasTreePage.test.tsx`, and the editor pins in `EditorRoundTripTest`. Not built: the hyperspace preview.
 4. [x] Allocation and points: `AtlasState` keeps the allocated ids, each completed chart grants an Atlas Skill Point up to 100 (`AtlasProgress`; Sensor Arrays and first tier clears no longer grant extra), `AtlasTree` allocates single nodes and whole paths and refunds for free. Tests: `charts.tree.AtlasTreeAllocationTest`, `AtlasTreeTest`. Not built: dev console commands to allocate.
-5. [ ] Chart lines: allocated lines join `ChartGenContext` at opening and stay on the open chart.
+5. [x] Chart lines: allocated lines, summed per effect, join `ChartGenContext` when a chart opens from the atlas (`AtlasTree.chartLines`, `AtlasOpening.request`) and are saved on the run (`ChartRun.atlasTreeLines`, read by `ChartRunEffects.contextOf`). Increased Star Chart modifier effect scales only the chart's own lines (`ChartGenContext`). Tests: `AtlasTreeTest`, `ChartRunEffectsTest`, `ChartGenContextTest`. Not built: the atlas's relay stage preview doesn't read tree lines yet (step 9), and the open chart's intel still lists its modifier lines at their rolled values while its loot totals use the scaled ones.
 6. [x] Screen: `ui.atlas.AtlasTreeScreen`, opened by the Atlas Tree button on the atlas screen and handing back to it on close (`CampaignOverlay.Host.switchTo`): starfield, decorations, nodes and connectors, allocation by click (Ctrl+Shift for a path), refunds, wormhole travel on right-click, the hyperspace plane when scrolling out at minimum zoom, the points line and node tooltips (`AtlasTreeNodeText`). Not built: search, camera memory.
-7. [ ] Atlas lines: anomaly and special-site weights, visibility, faction fleets and infestations into the generator inputs.
+6b. [x] Opening anomalies: every common anomaly rolls an 8% `opening_chance` (`chart_anomalies.csv`) each time a chart opens from the atlas, on top of the system's own, and joins only that run (`OpeningAnomalies`, `AtlasOpening.openedRunNode`). Tests: `OpeningAnomaliesTest`, `AtlasOpeningTest`, `ChartAnomaliesTest`.
+7. [x] Atlas line framework: a node type's effects may be `AtlasModifier` lines as well as chart lines (`AtlasTreeData`, `AtlasTreeType.atlasEffects`), summed apart from chart lines (`AtlasTree.atlasEffects`) into `AtlasEffects`, an input of `AtlasGenerator`; `AtlasRuntime` rebuilds the generator when the allocated atlas lines change. The placeholder `ATLAS_VISIBILITY_LANES` widens `AtlasReach` visibility. The editor offers atlas effects from the `atlasEffects` vocabulary list. Tests: `AtlasTreeTest`, `AtlasTreeDataTest`, `AtlasReachTest`, `treeModel.test.ts`. The real lines wait on open question 2.
 8. [ ] A first layout of three volumes near the root (crafting items, hull items, Star Charts) to test the loop.
-9. [ ] Anomaly tuning lines, one anomaly volume at a time, each in that anomaly's plan.
+9. [ ] Anomaly lines, one anomaly volume at a time, each in that anomaly's plan: its opening chance lines for `OpeningAnomalies` and its tuning lines.
 10. [ ] The rest of the volumes, then keystones.

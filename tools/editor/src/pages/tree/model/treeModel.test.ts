@@ -222,10 +222,17 @@ describe('validation and tags', () => {
     ]);
   });
 
-  it('checks atlas nodes against the declared volumes, chart effects and atlas tiers', () => {
-    const atlasVocabulary = ATLAS_TREE_KIND.editorVocabulary({ ...vocabulary, chartEffectNames: ['CHART_EXTRA_FLEETS'] }, ['crafting', 'crafting']);
+  it('checks atlas nodes against the declared volumes, chart and atlas effects and atlas tiers', () => {
+    const atlasVocabulary = ATLAS_TREE_KIND.editorVocabulary(
+      { ...vocabulary, chartEffectNames: ['CHART_EXTRA_FLEETS'], atlasEffectNames: ['ATLAS_VISIBILITY_LANES'] },
+      ['crafting', 'crafting'],
+    );
     const document = makeDocument([node('a', 0, 0, [], { tags: ['crafting'] }), node('b', 1, 0, [], { tags: ['north'] })], { volumes: ['crafting', 'crafting'] });
-    document.types[0].effects = [{ effect: 'CHART_EXTRA_FLEETS', magnitude: 1 }, { effect: 'HULL_PERCENT', magnitude: 5 }];
+    document.types[0].effects = [
+      { effect: 'CHART_EXTRA_FLEETS', magnitude: 1 },
+      { effect: 'ATLAS_VISIBILITY_LANES', magnitude: 1 },
+      { effect: 'HULL_PERCENT', magnitude: 5 },
+    ];
     expect(validateTree(document, atlasVocabulary)).toEqual([
       'Type "small" uses unknown effect "HULL_PERCENT"',
       'Volume "crafting" is declared more than once',

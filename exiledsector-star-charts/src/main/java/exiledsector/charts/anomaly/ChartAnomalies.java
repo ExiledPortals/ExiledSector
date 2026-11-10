@@ -69,7 +69,7 @@ public final class ChartAnomalies {
 
     public record Definition(String id, float weight, int minTier, int maxTier, String requiredMod, String icon, boolean insertable,
                              Set<String> excludes, boolean replacesStar, List<ChartGenContext.AppliedEffect> effects, Set<String> biomes,
-                             float fleetLoot) {
+                             float fleetLoot, float openingChance) {
 
         public Definition {
             requiredMod = requiredMod == null ? "" : requiredMod;
@@ -80,6 +80,13 @@ public final class ChartAnomalies {
             insertable = insertable && !replacesStar && biomes.isEmpty();
             effects = effects == null ? List.of() : List.copyOf(effects);
             fleetLoot = Float.isFinite(fleetLoot) ? Math.max(0f, fleetLoot) : 1f;
+            openingChance = Float.isFinite(openingChance) && !replacesStar && biomes.isEmpty() ? Math.max(0f, Math.min(1f, openingChance)) : 0f;
+        }
+
+        public Definition(String id, float weight, int minTier, int maxTier, String requiredMod, String icon, boolean insertable,
+                          Set<String> excludes, boolean replacesStar, List<ChartGenContext.AppliedEffect> effects, Set<String> biomes,
+                          float fleetLoot) {
+            this(id, weight, minTier, maxTier, requiredMod, icon, insertable, excludes, replacesStar, effects, biomes, fleetLoot, 0f);
         }
 
         public Definition(String id, float weight, int minTier, int maxTier, String requiredMod, String icon, boolean insertable,
@@ -103,6 +110,10 @@ public final class ChartAnomalies {
 
         public boolean perBiome() {
             return !biomes.isEmpty();
+        }
+
+        public boolean rollsOnOpening() {
+            return openingChance > 0f;
         }
 
         public boolean keptWhenSpent() {
@@ -159,8 +170,12 @@ public final class ChartAnomalies {
                 effects.add(new ChartGenContext.AppliedEffect(effect, value));
             }
         });
+        float openingChance = csv.number(row, "opening_chance", 0f, id);
+        if (openingChance > 0f && (replacesStar || !biomes.isEmpty())) {
+            csv.problem(id, "opening_chance", openingChance + " (an anomaly that replaces the star or is placed once per biome can't roll when a chart opens)");
+        }
         return new Definition(id, csv.number(row, "weight", 1f, id), tiers.minTier(), tiers.maxTier(), ModCsv.text(row, "requires_mod"),
-                ModCsv.text(row, "icon"), insertable, excludes, replacesStar, effects, biomes, csv.number(row, "fleet_loot", 1f, id));
+                ModCsv.text(row, "icon"), insertable, excludes, replacesStar, effects, biomes, csv.number(row, "fleet_loot", 1f, id), openingChance);
     }
 
     public static ChartAnomaly byId(String id) {

@@ -1004,8 +1004,10 @@ is kept as a position in the range, so a chart raised into the next group keeps 
 on tiers its groups cover, so one written as `mid=/high=` never appears below tier 6 (`ModifierLine.rollsAtTier`).
 
 Wormhole entries are set per group, 6, 3 and 1 by default (`StarChartSettings.wormholeEntries`). Each prefix adds 5%,
-15% or 25% item quantity by group, on top of its own line (`ChartGenContext.QUANTITY_PERCENT_PER_PREFIX`). Every entry
-burns fuel on arrival, 1000 at tier 1 plus 100 per tier above it, and can't start without it (`ChartEntryFuel`).
+15% or 25% item quantity by group, on top of its own line (`ChartGenContext.QUANTITY_PERCENT_PER_PREFIX`). Increased
+Star Chart modifier effect scales the chart's own lines and this prefix quantity, never lines added by the atlas node, anomalies
+or the Atlas Tree (`ChartGenContext.chartLines`); whole-number lines round down (`ChartModifier.withModifierEffect`). Every entry burns fuel on arrival, 1000 at tier 1 plus 100 per tier above
+it, and can't start without it (`ChartEntryFuel`).
 
 ### Chart vanilla loot
 
@@ -1022,9 +1024,14 @@ nothing, and all of it is scaled by vanilla's player share of the damage (core `
 ### Atlas Tree
 
 The Atlas Tree is one save-wide tree, laid out in `data/skilltrees/atlas_tree.json` with its node types in `atlas_tree_types.json` (the
-ship tree's formats, with chart effects as effects and its volumes declared in a `volumes` list). `AtlasState` keeps the allocated node ids;
+ship tree's formats, with chart or atlas effects as effects and its volumes declared in a `volumes` list). `AtlasState` keeps the allocated node ids;
 the root is free, a node needs an allocated neighbour, and a refund never strands another node (`charts.tree.AtlasTreeAllocation`, built
 on the shared `TreeSearch`). Each allocated node costs one Atlas Skill Point.
+
+A chart opened from the atlas takes the allocated nodes' lines, summed per effect, as lines added to its own, and saves them on the run
+(`AtlasTree.chartLines`, `ChartRun.atlasTreeLines`), so tree changes count from the next chart opened. Atlas lines (`AtlasModifier`)
+never reach a chart: their totals are an input of the atlas generator, rebuilt when they change, so the map follows the tree at once
+(`AtlasTree.atlasEffects`, `AtlasRuntime`).
 
 ### Atlas Catalysts
 
@@ -1100,8 +1107,9 @@ Transverse Jump plugin from another mod stays blocked like the other escape abil
 
 ### Anomaly placement
 
-A run's anomalies are its atlas system's own, decided once before layout (`ChartAnomalies.planned`, ignoring tier
-ranges); Star Charts roll no anomaly lines. Each id needs a `chart_anomalies.csv` row with its `requires_mod` loaded,
+A run's anomalies are its atlas system's own plus any its chart rolls on opening, decided once before layout
+(`ChartAnomalies.planned`, ignoring tier ranges). Each anomaly with an `opening_chance` rolls it from the chart's seed, kept
+to the system's cap, conflicts, biome weights and where it fits, and joins only that run (`OpeningAnomalies`). Each id needs a `chart_anomalies.csv` row with its `requires_mod` loaded,
 and one that conflicts with an anomaly already taken (both replace the star, or `excludes`) is dropped. A star anomaly
 picks the star or system type, a `shape` adds terrain after layout and a `generate` places entities after the sites and
 fleets (role interfaces in package `charts.anomaly`), and the run record keeps the ids that placed. Each anomaly shapes

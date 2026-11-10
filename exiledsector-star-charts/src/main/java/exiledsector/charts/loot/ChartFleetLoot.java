@@ -341,7 +341,7 @@ public final class ChartFleetLoot {
 
     private static ItemDrops.SiteLoot chartDrops(ChartRun run, ChartGenContext context, boolean boss, float chartShare, Random random) {
         boolean offerTierUp = boss && context.guaranteedBossTierUp() && !run.isBossTierUpGranted();
-        ChartDrops.Mults mults = new ChartDrops.Mults(context.dropMult(DropType.STAR_CHART) * chartShare, 0f,
+        ChartDrops.Mults mults = new ChartDrops.Mults((boss ? context.bossStarChartMult() : context.dropMult(DropType.STAR_CHART)) * chartShare, 0f,
                 context.dropMult(DropType.CATALYST) * chartShare);
         ChartDrops.Loot chartLoot = ChartDrops.roll(boss ? ChartDrops.Source.CHART_BOSS : ChartDrops.Source.CHART_FLEET, run.tier(), mults,
                 random, offerTierUp);

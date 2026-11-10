@@ -30,7 +30,7 @@ Combat readiness makes back-to-back fleet battles miserable, so each anomaly kee
 
 ## How an anomaly plugs in
 
-Each anomaly is one class behind `ChartAnomaly` (package `exiledsector.charts.anomaly`, with the `ChartAnomalies` registry; an anomaly with several classes gets a subpackage, such as `anomaly.breach` and `anomaly.skirmish`) and one row in `data/config/exiledSector/chart_anomalies.csv` (`id,weight,min_tier,max_tier,requires_mod,icon,insertable,excludes,effects,biomes,note`). An anomaly implements only the role interfaces it needs (`StarRule`, `LayoutShaper`, `ContentPlacer`, `RunParticipant`, `LootShaper`, `AtlasRule`), and `ChartAnomalies.with` hands out each role's anomalies in registry order. Generation runs in three stages:
+Each anomaly is one class behind `ChartAnomaly` (package `exiledsector.charts.anomaly`, with the `ChartAnomalies` registry; an anomaly with several classes gets a subpackage, such as `anomaly.breach` and `anomaly.skirmish`) and one row in `data/config/exiledSector/chart_anomalies.csv` (`id,weight,min_tier,max_tier,requires_mod,icon,insertable,excludes,effects,biomes,fleet_loot,opening_chance,note`). An anomaly implements only the role interfaces it needs (`StarRule`, `LayoutShaper`, `ContentPlacer`, `RunParticipant`, `LootShaper`, `AtlasRule`), and `ChartAnomalies.with` hands out each role's anomalies in registry order. Generation runs in three stages:
 
 1. Star: `primaryStar()` or `systemType()` replaces the star or the system type before layout (Black Hole, Neutron Star, Dense Nebula). These are locked to the atlas cell and can never be inserted.
 2. Shape: `shape(AnomalyLayoutSite)` adds terrain right after layout (Asteroid Storm, Magnetic Storm, Stellar Flares).
@@ -46,7 +46,7 @@ Atlas hooks have defaults: `atlasWeight` leans the node roll from the node's tra
 
 Every anomaly follows the Foiler mods compatibility rules in `../atlas.md`: no combat nebula tiles, custom terrain on `BaseTerrain`, textures preloaded.
 
-Star Charts roll no anomaly lines (since 2026-10-26, `../completed/anomalies/spatial_breach_changes.md`): every anomaly comes from the atlas, rolled by a cell or inserted, so the `CHART_<ANOMALY>_CHANCE` lines in the unbuilt plans are dropped. An anomaly's own tuning lines are still chart effects, carried by an atlas source (an anomaly's `effects` column or an atlas node's effects), and follow `docs/tooltip_wording.md`.
+A run's anomalies are its atlas system's (rolled by the cell or inserted) plus the ones its chart rolls as it opens (decided 2026-11-10, `OpeningAnomalies`). Each anomaly with an `opening_chance` (0.08 for every common anomaly; none for star anomalies, the Coronal Hypershunt or the anomalies placed per biome) rolls it once per opening, from the chart's seed, within the system's cap, conflicts, biome weights and `insertVerdict`. A rolled anomaly joins only that run, never the atlas, and the player sees it only once inside; a rolled Faction Skirmish has the player stay out. Atlas Tree nodes are to raise these chances (`../atlas_skill_tree.md`). The old `CHART_<ANOMALY>_CHANCE` lines in the unbuilt plans stay dropped. An anomaly's own tuning lines are chart effects, carried by an atlas source (an anomaly's `effects` column, an atlas node's effects or the Atlas Tree), and follow `docs/tooltip_wording.md`.
 
 Players can insert anomalies into atlas systems (`../atlas.md`, Anomalies) with Atlas Catalysts (`../completed/anomalies/atlas_catalysts.md`).
 

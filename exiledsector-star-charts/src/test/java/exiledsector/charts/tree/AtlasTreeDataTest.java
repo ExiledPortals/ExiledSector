@@ -1,6 +1,8 @@
 package exiledsector.charts.tree;
 
 import exiledsector.ProjectFiles;
+import exiledsector.charts.atlas.AtlasEffects;
+import exiledsector.charts.atlas.AtlasModifier;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.layout.TreeTopology;
@@ -26,8 +28,11 @@ class AtlasTreeDataTest {
         assertEquals(1, salvage.effects().size());
         assertEquals(ChartModifier.CHART_ITEM_PERCENT, salvage.effects().get(0).effect());
         assertEquals(10f, salvage.effects().get(0).value());
+        assertEquals(List.of(), salvage.atlasEffects());
         AtlasTreeType hoard = data.type("hoard");
         assertEquals(SkillTier.NOTABLE, hoard.tier());
+        assertEquals(List.of(), hoard.effects());
+        assertEquals(List.of(new AtlasEffects.Line(AtlasModifier.ATLAS_VISIBILITY_LANES, 1f)), hoard.atlasEffects());
         assertEquals("Crates everywhere.", hoard.flavour());
         assertEquals(List.of("loot"), hoard.tags());
         assertEquals(SkillTier.ROOT, data.type("gate").tier());

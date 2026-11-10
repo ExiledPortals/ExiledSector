@@ -20,6 +20,7 @@ public final class ChartRunEffects {
     private static ChartRun contextRun;
     private static String contextChartData;
     private static String contextNodeData;
+    private static String contextTreeLinesData;
     private static List<String> contextAnomalies;
     private static ChartGenContext context = ChartGenContext.none();
 
@@ -40,11 +41,13 @@ public final class ChartRunEffects {
             return ChartGenContext.none();
         }
         if (run != contextRun || !Objects.equals(run.chartData(), contextChartData) || !Objects.equals(run.atlasNodeData(), contextNodeData)
-                || !run.anomalyIds().equals(contextAnomalies)) {
-            context = ChartGenContext.from(chartOf(run)).withAtlasNode(run.atlasNode()).withAnomalyEffects(run.anomalyIds());
+                || !Objects.equals(run.atlasTreeLinesData(), contextTreeLinesData) || !run.anomalyIds().equals(contextAnomalies)) {
+            context = ChartGenContext.from(chartOf(run)).withAtlasNode(run.atlasNode()).withEffects(run.atlasTreeLines())
+                    .withAnomalyEffects(run.anomalyIds());
             contextRun = run;
             contextChartData = run.chartData();
             contextNodeData = run.atlasNodeData();
+            contextTreeLinesData = run.atlasTreeLinesData();
             contextAnomalies = run.anomalyIds();
         }
         return context;

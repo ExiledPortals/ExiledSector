@@ -13,6 +13,9 @@ import exiledsector.charts.anomaly.MagneticStorm;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.effect.ChartPlayerModifiers;
 import exiledsector.charts.effect.ChartFleetStat;
+import exiledsector.charts.effect.ChartModifier;
+import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.cleanup.ChartLoadSweep;
 import exiledsector.charts.run.cleanup.ChartRunCloser;
@@ -97,6 +100,22 @@ class ChartRunEffectsTest {
         assertEquals(0.5f, ChartRunEffects.contextOf(run).sensorRangeMult(), 0.001f);
         assertNull(ChartRunEffects.chartOf(new ChartRun("plain", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1)));
         assertTrue(ChartRunEffects.contextOf(new ChartRun("plain", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1)).isEmpty());
+    }
+
+    @Test
+    void theRunKeepsTheAtlasTreeLinesItOpenedWithAndTheyScaleItsChartsLines() {
+        ChartRun run = storeRun(StarChartFixtures.fullChart(StarChartFixtures.TEST_FIXED, 9L, 6));
+        run.recordAtlasTreeLines(List.of(new AppliedEffect(ChartModifier.CHART_BOSS_STAR_CHART_PERCENT, 4f),
+                new AppliedEffect(ChartModifier.CHART_MODIFIER_EFFECT_PERCENT, 50f)));
+
+        ChartGenContext context = ChartRunEffects.contextOf(run);
+        assertEquals(4f, context.bossStarChartPercent(), 0.001f);
+        assertEquals(0.25f, context.sensorRangeMult(), 0.001f);
+
+        run.recordAtlasTreeLines(List.of());
+
+        assertEquals(List.of(), run.atlasTreeLines());
+        assertEquals(0.5f, ChartRunEffects.contextOf(run).sensorRangeMult(), 0.001f);
     }
 
     @Test

@@ -76,6 +76,20 @@ class AtlasReachTest {
     }
 
     @Test
+    void atlasVisibilityLinesWidenTheLanesSeenAroundCompletedSystemsButNeverBelowNone() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator wider = new AtlasGenerator(SEED, rules(), AtlasUnlocks.NONE,
+                AtlasEffects.of(List.of(new AtlasEffects.Line(AtlasModifier.ATLAS_VISIBILITY_LANES, 1f))), state);
+        AtlasGenerator blind = new AtlasGenerator(SEED, rules(), AtlasUnlocks.NONE,
+                AtlasEffects.of(List.of(new AtlasEffects.Line(AtlasModifier.ATLAS_VISIBILITY_LANES, -5f))), state);
+
+        assertEquals(AtlasReach.VISIBLE_LANES + 1, AtlasReach.visibleLanes(wider));
+        assertEquals(lanesFrom(wider, Set.of(AtlasCell.ORIGIN), AtlasReach.VISIBLE_LANES + 1).keySet(), AtlasReach.visible(wider, state));
+        assertEquals(0, AtlasReach.visibleLanes(blind));
+        assertEquals(Set.of(AtlasCell.ORIGIN), AtlasReach.visible(blind, state));
+    }
+
+    @Test
     void visibilityReachesTwoLanesAndACompletedSensorArrayRevealsSix() {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = generator(state, Set.of());

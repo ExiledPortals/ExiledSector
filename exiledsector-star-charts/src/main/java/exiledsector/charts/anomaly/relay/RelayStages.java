@@ -44,10 +44,13 @@ public final class RelayStages {
 
     public static AtlasAnomalyRecord.Chain liveStage(SectorAPI sector, ChartRun run) {
         AtlasRunNode node = run == null ? null : run.atlasNode();
-        if (node == null || sector == null) {
+        if (node == null || sector == null || !run.anomalyIds().contains(RelayNetwork.ANOMALY_ID)) {
             return null;
         }
-        return stageAt(AtlasRuntime.generator(sector), AtlasState.get(sector), AtlasCell.unpack(node.cell()));
+        AtlasGenerator generator = AtlasRuntime.generator(sector);
+        AtlasState state = AtlasState.get(sector);
+        AtlasCell cell = AtlasCell.unpack(node.cell());
+        return chainAt(generator, state, cell, recordAt(state, cell));
     }
 
     private static AtlasAnomalyRecord.Chain chainAt(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasAnomalyRecord record) {

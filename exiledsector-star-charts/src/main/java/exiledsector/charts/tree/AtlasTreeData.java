@@ -1,5 +1,7 @@
 package exiledsector.charts.tree;
 
+import exiledsector.charts.atlas.AtlasEffects;
+import exiledsector.charts.atlas.AtlasModifier;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.skills.SkillTier;
@@ -102,7 +104,8 @@ public final class AtlasTreeData {
         String id = typeJson.getString("id");
         String tierName = typeJson.optString("tier", null);
         SkillTier tier = tierName == null ? SkillTier.SMALL : tierNamed(tierName);
-        return new AtlasTreeType(id, typeJson.optString("name", id), typeJson.optString("icon", null), tier, parseEffects(id, typeJson.optJSONArray("effects")),
+        ParsedEffects effects = parseEffects(id, typeJson.optJSONArray("effects"));
+        return new AtlasTreeType(id, typeJson.optString("name", id), typeJson.optString("icon", null), tier, effects.chartLines(), effects.atlasLines(),
                 typeJson.optString("flavour", null), TreeJson.stringList(typeJson.optJSONArray("tags")));
     }
 
@@ -114,19 +117,27 @@ public final class AtlasTreeData {
         }
     }
 
-    private static List<ChartGenContext.AppliedEffect> parseEffects(String typeId, JSONArray effectsJson) throws JSONException {
-        List<ChartGenContext.AppliedEffect> effects = new ArrayList<>();
+    private record ParsedEffects(List<ChartGenContext.AppliedEffect> chartLines, List<AtlasEffects.Line> atlasLines) {
+    }
+
+    private static ParsedEffects parseEffects(String typeId, JSONArray effectsJson) throws JSONException {
+        ParsedEffects effects = new ParsedEffects(new ArrayList<>(), new ArrayList<>());
         if (effectsJson == null) {
             return effects;
         }
         for (int i = 0; i < effectsJson.length(); i++) {
             JSONObject effectJson = effectsJson.getJSONObject(i);
             String effectName = effectJson.getString("effect");
-            ChartModifier effect = ChartModifier.byNameOrNull(effectName);
-            if (effect == null) {
-                LOG.error("[ExiledSector] Skipping effect " + effectName + " on atlas tree type \"" + typeId + "\" in " + TYPES_PATH + ": not a chart effect");
+            float magnitude = (float) effectJson.getDouble("magnitude");
+            ChartModifier chartEffect = ChartModifier.byNameOrNull(effectName);
+            AtlasModifier atlasEffect = AtlasModifier.byNameOrNull(effectName);
+            if (chartEffect != null) {
+                effects.chartLines().add(new ChartGenContext.AppliedEffect(chartEffect, magnitude));
+            } else if (atlasEffect != null) {
+                effects.atlasLines().add(new AtlasEffects.Line(atlasEffect, magnitude));
             } else {
-                effects.add(new ChartGenContext.AppliedEffect(effect, (float) effectJson.getDouble("magnitude")));
+                LOG.error("[ExiledSector] Skipping effect " + effectName + " on atlas tree type \"" + typeId + "\" in " + TYPES_PATH
+                        + ": not a chart or atlas effect");
             }
         }
         return effects;

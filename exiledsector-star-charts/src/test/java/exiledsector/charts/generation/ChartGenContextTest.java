@@ -137,6 +137,16 @@ class ChartGenContextTest {
     }
 
     @Test
+    void theBossStarChartLineAddsToTheOtherStarChartLinesForBossesOnly() {
+        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_BOSS_STAR_CHART_PERCENT, 20f),
+                new AppliedEffect(ChartModifier.CHART_STAR_CHART_PERCENT, 30f)));
+
+        assertEquals(1.5f, context.bossStarChartMult(), TOLERANCE);
+        assertEquals(1.3f, context.dropMult(DropType.STAR_CHART), TOLERANCE);
+        assertEquals(1f, ChartGenContext.none().bossStarChartMult(), TOLERANCE);
+    }
+
+    @Test
     void eachRewardEffectChangesTheLootOrTheReward() {
         ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_POI_BUDGET_PERCENT, 30f),
                 new AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, 10f), new AppliedEffect(ChartModifier.CHART_REWARD_PERCENT, 20f),
@@ -272,6 +282,39 @@ class ChartGenContextTest {
         assertTrue(ChartRewards.creditsFor(6, 1.5f) > ChartRewards.creditsFor(6));
         assertEquals(0, ChartRewards.creditsFor(6, 1.5f) % 1000);
         assertEquals(0, ChartRewards.creditsFor(6, -1f));
+    }
+
+    @Test
+    void modifierEffectScalesTheChartsOwnLinesAndPrefixQuantityButNotAddedLines() {
+        ChartGenContext plain = ChartGenContext.from(StarChartFixtures.fullChart(StarChartFixtures.TEST_GATED, 5L, 12))
+                .withEffects(List.of(new AppliedEffect(ChartModifier.CHART_BOSS_SIZE_PERCENT, 10f)));
+        ChartGenContext scaled = plain.withEffects(List.of(new AppliedEffect(ChartModifier.CHART_MODIFIER_EFFECT_PERCENT, 30f),
+                new AppliedEffect(ChartModifier.CHART_MODIFIER_EFFECT_PERCENT, 20f)));
+        float prefixQuantity = (float) plain.applied().stream().filter(line -> line.effect() == ChartModifier.CHART_QUANTITY_PERCENT)
+                .mapToDouble(AppliedEffect::value).sum();
+
+        assertEquals(50f, scaled.modifierEffectPercent(), TOLERANCE);
+        assertEquals(700f * 1.5f + 10f, scaled.bossSizePercent(), TOLERANCE);
+        assertEquals(3, scaled.officerLevelBonus());
+        assertTrue(prefixQuantity > 0f);
+        assertEquals(plain.quantityPercent() + prefixQuantity * 0.5f, scaled.quantityPercent(), TOLERANCE);
+        assertEquals(10f, with(ChartModifier.CHART_BOSS_SIZE_PERCENT, 10f).withEffects(List.of(
+                new AppliedEffect(ChartModifier.CHART_MODIFIER_EFFECT_PERCENT, 50f))).bossSizePercent(), TOLERANCE);
+    }
+
+    @Test
+    void modifierEffectMakesMisfiresMoreFrequentLikeEveryOtherDrawbackGrows() {
+        assertEquals(15f, ChartModifier.CHART_SHIELD_DAMAGE_TAKEN_PERCENT.withModifierEffect(10f, 1.5f), TOLERANCE);
+        assertEquals(20f, ChartModifier.CHART_WEAPON_MISFIRE_SECONDS.withModifierEffect(30f, 1.5f), TOLERANCE);
+    }
+
+    @Test
+    void modifierEffectRoundsWholeNumberLinesDownUntilTheyReachTheNextWholeNumber() {
+        assertEquals(1f, ChartModifier.CHART_EXTRA_FLEETS.withModifierEffect(1f, 1.99f), TOLERANCE);
+        assertEquals(2f, ChartModifier.CHART_EXTRA_FLEETS.withModifierEffect(1f, 2f), TOLERANCE);
+        assertEquals(4f, ChartModifier.CHART_EXTRA_POIS.withModifierEffect(3f, 1.5f), TOLERANCE);
+        assertEquals(3f, ChartModifier.CHART_OFFICER_LEVEL_BONUS.withModifierEffect(2f, 1.5f), TOLERANCE);
+        assertEquals(-1f, ChartModifier.CHART_EXTRA_FLEETS.withModifierEffect(-1f, 1.5f), TOLERANCE);
     }
 
     @Test

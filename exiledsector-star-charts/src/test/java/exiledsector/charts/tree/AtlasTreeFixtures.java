@@ -10,7 +10,8 @@ final class AtlasTreeFixtures {
               { "id": "gate", "name": "Gate", "icon": "graphics/icons/gate.png", "tier": "ROOT" },
               { "id": "salvage", "name": "Salvage", "icon": "graphics/icons/salvage.png",
                 "effects": [ { "effect": "CHART_ITEM_PERCENT", "magnitude": 10 }, { "effect": "NOT_A_CHART_EFFECT", "magnitude": 5 } ] },
-              { "id": "hoard", "name": "Hoard", "tier": "NOTABLE", "flavour": "Crates everywhere.", "tags": ["loot"] },
+              { "id": "hoard", "name": "Hoard", "tier": "NOTABLE", "flavour": "Crates everywhere.", "tags": ["loot"],
+                "effects": [ { "effect": "ATLAS_VISIBILITY_LANES", "magnitude": 1 } ] },
               { "id": "jump", "name": "Jump", "tier": "WORMHOLE" }
             ] }
             """;

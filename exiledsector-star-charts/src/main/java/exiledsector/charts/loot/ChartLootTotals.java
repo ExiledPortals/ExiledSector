@@ -30,6 +30,7 @@ public final class ChartLootTotals {
             addLine(lines, Translation.text(DROP_TYPE_KEY_PREFIX + type.name()), context.dropPercent(type));
         }
         addLine(lines, Translation.text("chart.totals.bossSpoils"), context.bossSpoilsPercent());
+        addLine(lines, Translation.text("chart.totals.bossStarCharts"), context.bossStarChartPercent());
         for (ChartPoi.Kind category : ChartPoi.Kind.values()) {
             addLine(lines, Translation.text(SITE_CATEGORY_KEY_PREFIX + category.name()), context.siteBudgetPercent(category));
         }
