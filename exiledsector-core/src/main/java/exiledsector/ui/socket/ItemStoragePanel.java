@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public final class ItemStoragePanel extends HoloPanel {
 
@@ -72,6 +73,7 @@ public final class ItemStoragePanel extends HoloPanel {
     private static final float BUTTON_TEXT_PADDING = 30f;
     private static final float SEARCH_DELAY_SECONDS = 0.25f;
     private static final ItemCell.Look CELL_LOOK = new ItemCell.Look(7f, true, 1f);
+    public static final Predicate<Item> ANY_ITEM = item -> true;
 
     private enum Control {CLOSE, CRAFTING_BENCH, DISASSEMBLY_MODE, CONFIRM_DISASSEMBLE, CANCEL_DISASSEMBLE, RESET_FILTERS, ADVANCED_SEARCH}
 
@@ -129,6 +131,7 @@ public final class ItemStoragePanel extends HoloPanel {
     private String materialsNotice;
     private String disassembledNotice;
     private ItemKind kindFilter;
+    private Predicate<Item> targetFits = ANY_ITEM;
     private Runnable modifyHandler;
     private boolean pickerMode;
     private String titleKey = "ui.socketStorage.title";
@@ -144,8 +147,9 @@ public final class ItemStoragePanel extends HoloPanel {
 
     public static ItemStoragePanel openSectionItems(CustomPanelAPI hostPanel, SocketPanelPlacement placement,
                                                     Function<Item, String> installedShipLookup, Listener storageListener, ItemKind kindFilter,
-                                                    Consumer<SocketPanelTab> tabListener, Set<SocketPanelTab> shownTabs) {
+                                                    Predicate<Item> targetFits, Consumer<SocketPanelTab> tabListener, Set<SocketPanelTab> shownTabs) {
         ItemStoragePanel storagePanel = new ItemStoragePanel(hostPanel, installedShipLookup, storageListener, kindFilter);
+        storagePanel.targetFits = targetFits;
         storagePanel.sectionItemsOnly = true;
         storagePanel.setTabListener(tabListener);
         storagePanel.setShownTabs(shownTabs);
@@ -246,11 +250,12 @@ public final class ItemStoragePanel extends HoloPanel {
         return new UIComponentAPI[]{controlsElement, placedComponent(gridElement), noticeElement, footerElement, filterMenu.panel()};
     }
 
-    public void restrictTo(ItemKind sectionKind) {
-        if (sectionKind == kindFilter) {
+    public void restrictTo(ItemKind sectionKind, Predicate<Item> sectionFits) {
+        if (sectionKind == kindFilter && sectionFits == targetFits) {
             return;
         }
         kindFilter = sectionKind;
+        targetFits = sectionFits;
         queue(() -> {
             closeFilterMenu();
             closeDisassemblyConfirm();
@@ -814,7 +819,7 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private boolean showsItem(Item item) {
-        return showsItem(item, kindFilter, sectionItemsOnly, storageFilter.sectionKinds);
+        return showsItem(item, kindFilter, sectionItemsOnly, storageFilter.sectionKinds) && targetFits.test(item);
     }
 
     static boolean showsItem(Item item, ItemKind kindFilter, boolean sectionItemsOnly, Set<ItemKind> chosenSections) {

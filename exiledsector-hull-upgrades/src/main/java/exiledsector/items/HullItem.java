@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.SplittableRandom;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public final class HullItem extends Item {
@@ -210,5 +211,9 @@ public final class HullItem extends Item {
 
     public static boolean fits(Item item, ShipSection section) {
         return item instanceof HullItem hullItem && hullItem.canSocketInto(section);
+    }
+
+    public static Predicate<Item> suitedTo(ShipProfile fit) {
+        return item -> !(item instanceof HullItem hullItem) || hullItem.unmetRequirement(fit) == null;
     }
 }
