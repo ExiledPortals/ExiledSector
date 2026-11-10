@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.ShipAPI;
+import exiledsector.skills.skilleffect.EmpOnlyHits;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -101,6 +102,19 @@ class IonSpillListenerTest {
         listener.advance(0.016f);
 
         verify(engine).applyDamage(eq(cruiser), any(), eq(50f), eq(DamageType.ENERGY), eq(0f), eq(false), eq(false), eq(owner));
+    }
+
+    @Test
+    void anEmpOnlyShieldHitSpillsItsEmpIncludingTheBonus() {
+        ShipAPI owner = owner(25f);
+        ShipAPI target = ship(1);
+        IonSpillListener listener = new IonSpillListener(owner);
+
+        listener.onEmpOnlyHit(new EmpOnlyHits.EmpOnlyHit(target, new Vector2f(), 100f, 200f, true));
+        listener.onEmpOnlyHit(new EmpOnlyHits.EmpOnlyHit(target, new Vector2f(), 100f, 200f, false));
+        listener.advance(0.016f);
+
+        verify(engine).applyDamage(eq(target), any(), eq(50f), eq(DamageType.ENERGY), eq(0f), eq(false), eq(false), eq(owner));
     }
 
     @Test

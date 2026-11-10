@@ -1,7 +1,6 @@
 package exiledsector.skills.skilleffect.onhit;
 
 import com.fs.starfarer.api.combat.ArmorGridAPI;
-import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -30,8 +29,8 @@ final class IonCascadeListener extends EmpConversionListener {
     }
 
     @Override
-    float convertibleEmp(ShipAPI targetShip, Vector2f point, float emp, DamageAPI damage) {
-        return empOnClosestDisabledPart(targetShip, point, emp, damage.getStats());
+    float convertibleEmp(ShipAPI targetShip, Vector2f point, float emp, MutableShipStatsAPI attackerStats) {
+        return empOnClosestDisabledPart(targetShip, point, emp, attackerStats);
     }
 
     static float empOnClosestDisabledPart(ShipAPI targetShip, Vector2f point, float emp, MutableShipStatsAPI attackerStats) {

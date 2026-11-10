@@ -4,8 +4,10 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
+import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.CombatListenerManagerAPI;
+import exiledsector.skills.skilleffect.EmpOnlyHits;
 import exiledsector.skills.skilleffect.HitDamageRestorer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +20,10 @@ import org.mockito.Mockito;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -28,10 +33,11 @@ import static org.mockito.Mockito.when;
 class EmpDamageListenerTest {
 
     private MockedStatic<Global> globalMock;
+    private CombatEngineAPI engine;
 
     @BeforeEach
     void setUp() {
-        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        engine = mock(CombatEngineAPI.class);
         CombatListenerManagerAPI listeners = mock(CombatListenerManagerAPI.class);
         when(engine.getListenerManager()).thenReturn(listeners);
         when(listeners.getListeners(HitDamageRestorer.class)).thenReturn(List.of());
@@ -53,6 +59,17 @@ class EmpDamageListenerTest {
         when(owner.getMutableStats().getDynamic().getValue(EmpDamageListener.EMP_INCREASED_PERCENT_KEY, 0f)).thenReturn(increasedPercent);
         when(owner.getMutableStats().getDynamic().getValue(EmpDamageListener.EMP_MORE_PERCENT_KEY, 0f)).thenReturn(morePercent);
         return new EmpDamageListener(owner);
+    }
+
+    private static ShipAPI liveTarget() {
+        ShipAPI target = mock(ShipAPI.class);
+        when(target.isAlive()).thenReturn(true);
+        when(target.getLocation()).thenReturn(new Vector2f());
+        return target;
+    }
+
+    private void verifyNoDamageDealt() {
+        verify(engine, never()).applyDamage(any(), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any());
     }
 
     @Test
@@ -87,6 +104,51 @@ class EmpDamageListenerTest {
 
         verify(noEmp, never()).setFluxComponent(anyFloat());
         verify(onMissile, never()).setFluxComponent(anyFloat());
+    }
+
+    @Test
+    void anEmpOnlyHullHitGetsItsBonusEmpAsAZeroDamageHitOnTheNextFrame() {
+        ShipAPI target = liveTarget();
+        Vector2f landing = new Vector2f(30f, 40f);
+        EmpDamageListener listener = listener(20f);
+
+        listener.onEmpOnlyHit(new EmpOnlyHits.EmpOnlyHit(target, landing, 200f, 240f, false));
+        verifyNoDamageDealt();
+        listener.advance(0.016f);
+
+        verify(engine).applyDamage(eq(target), eq(landing), eq(0f), eq(DamageType.ENERGY), AdditionalMatchers.eq(40f, 0.01f),
+                eq(true), eq(false), any());
+    }
+
+    @Test
+    void theBonusEmpLandsWhereTheHitStruckAfterTheTargetMovesAndTurns() {
+        ShipAPI target = liveTarget();
+        EmpDamageListener listener = listener(20f);
+
+        listener.onEmpOnlyHit(new EmpOnlyHits.EmpOnlyHit(target, new Vector2f(10f, 0f), 200f, 240f, false));
+        when(target.getLocation()).thenReturn(new Vector2f(100f, 100f));
+        when(target.getFacing()).thenReturn(90f);
+        listener.advance(0.016f);
+
+        verify(engine).applyDamage(eq(target), Mockito.argThat(point -> Math.abs(point.x - 100f) < 0.01f && Math.abs(point.y - 110f) < 0.01f),
+                eq(0f), eq(DamageType.ENERGY), anyFloat(), eq(true), eq(false), any());
+    }
+
+    @Test
+    void shieldHitsHitsWithoutABonusAndPhasedOrDestroyedTargetsGetNoBonusEmp() {
+        EmpDamageListener listener = listener(20f);
+        ShipAPI phased = liveTarget();
+        ShipAPI destroyed = liveTarget();
+
+        listener.onEmpOnlyHit(new EmpOnlyHits.EmpOnlyHit(liveTarget(), new Vector2f(), 200f, 240f, true));
+        listener.onEmpOnlyHit(new EmpOnlyHits.EmpOnlyHit(liveTarget(), new Vector2f(), 200f, 200f, false));
+        listener.onEmpOnlyHit(new EmpOnlyHits.EmpOnlyHit(phased, new Vector2f(), 200f, 240f, false));
+        listener.onEmpOnlyHit(new EmpOnlyHits.EmpOnlyHit(destroyed, new Vector2f(), 200f, 240f, false));
+        when(phased.isPhased()).thenReturn(true);
+        when(destroyed.isAlive()).thenReturn(false);
+        listener.advance(0.016f);
+
+        verifyNoDamageDealt();
     }
 
     @Test
