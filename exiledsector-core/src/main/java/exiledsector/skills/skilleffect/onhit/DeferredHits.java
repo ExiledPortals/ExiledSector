@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import exiledsector.skills.skilleffect.CombatQueries;
+import exiledsector.skills.skilleffect.ShipFramePoint;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.List;
 
 final class DeferredHits {
 
-    private record Hit(ShipAPI target, Vector2f point, float damage) {
+    private record Hit(ShipFramePoint point, float damage) {
     }
 
     private final DamageType damageType;
@@ -34,7 +35,7 @@ final class DeferredHits {
     }
 
     void add(ShipAPI target, Vector2f point, float damage) {
-        pending.add(new Hit(target, new Vector2f(point), damage));
+        pending.add(new Hit(ShipFramePoint.of(target, point), damage));
     }
 
     void applyAll(ShipAPI source) {
@@ -48,8 +49,10 @@ final class DeferredHits {
             return;
         }
         for (Hit hit : hits) {
-            if (CombatQueries.isAliveNotHulk(hit.target()) && (!shieldHitsOnly || shieldCovers(hit.target(), hit.point()))) {
-                engine.applyDamage(hit.target(), hit.point(), hit.damage(), damageType, 0f, !shieldHitsOnly, false, source);
+            ShipAPI target = hit.point().ship();
+            Vector2f point = hit.point().worldPoint();
+            if (CombatQueries.isAliveNotHulk(target) && (!shieldHitsOnly || shieldCovers(target, point))) {
+                engine.applyDamage(target, point, hit.damage(), damageType, 0f, !shieldHitsOnly, false, source);
             }
         }
     }

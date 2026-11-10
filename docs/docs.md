@@ -434,6 +434,11 @@ duration runs its normal course instead of costing hull again.
 Vanilla has no stat for EMP damage dealt, so `EmpDamageListener` (`weapon`) rescales the EMP of each hit on a ship.
 `EMP_DAMAGE_PERCENT` sources are summed first and `EMP_DAMAGE_MULT` then multiplies that total.
 
+The engine runs no damage modifiers on a hit that deals EMP but no damage. `EmpOnlyHits` (skill effect root) finds
+those from damage reports and hands them, with their EMP after this ship's bonus, to EMP Damage, Ion Cascade and Ion
+Spill. The public API hides an arc's EMP, so it is read from the engine arc's `empDamAmount` field. EMP Damage deals the missing EMP as a zero-damage hit at the same spot on the ship on the next frame, past
+shields.
+
 ### Ion Cascade
 
 Vanilla spreads a hull or armor hit's EMP, hull and armor damage together over the weapons and engines within two
@@ -448,7 +453,7 @@ part counts, however many disabled parts are in reach (`IonCascadeListener`).
 `SHIELD_EMP_TO_ENERGY_PERCENT` takes that share of the EMP in each hit an enemy shield takes from this ship and deals it
 as energy damage at the hit point on the next frame, but only if the shield still covers that point (`IonSpillListener`,
 queued in `DeferredHits` like Ion Cascade). Both register after every other effect (`readsFinalDealtDamage`), so they
-read the hit's EMP after this ship's other effects. The engine applies the attacker's damage bonus against the target's
+read the hit's EMP after this ship's other effects, and EMP-only hits reach them through `EmpOnlyHits`. The engine applies the attacker's damage bonus against the target's
 hull size to the converted hit itself, since this ship is its source (`EmpConversionListener`).
 
 ### Phase Ambush Doctrine

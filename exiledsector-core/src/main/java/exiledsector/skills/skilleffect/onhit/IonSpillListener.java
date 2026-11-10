@@ -1,7 +1,7 @@
 package exiledsector.skills.skilleffect.onhit;
 
-import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -14,7 +14,7 @@ final class IonSpillListener extends EmpConversionListener {
     }
 
     @Override
-    float convertibleEmp(ShipAPI targetShip, Vector2f point, float emp, DamageAPI damage) {
+    float convertibleEmp(ShipAPI targetShip, Vector2f point, float emp, MutableShipStatsAPI attackerStats) {
         return emp;
     }
 }

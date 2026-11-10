@@ -10,6 +10,7 @@ import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipEngineControllerAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
+import exiledsector.skills.skilleffect.EmpOnlyHits;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -84,6 +85,7 @@ class IonCascadeListenerTest {
         ShipAPI target = mock(ShipAPI.class);
         when(target.getOwner()).thenReturn(1);
         when(target.isAlive()).thenReturn(true);
+        when(target.getLocation()).thenReturn(new Vector2f());
         MutableShipStatsAPI targetStats = stats(1f, 1f);
         when(target.getMutableStats()).thenReturn(targetStats);
         ArmorGridAPI grid = mock(ArmorGridAPI.class);
@@ -161,6 +163,21 @@ class IonCascadeListenerTest {
 
         listener.advance(0.016f);
         verify(engine).applyDamage(eq(target), eq(hitPoint), eq(200f * IonCascadeListener.INNER_CELL_EMP_SHARE * 0.5f),
+                eq(DamageType.HIGH_EXPLOSIVE), eq(0f), eq(true), eq(false), eq(owner));
+    }
+
+    @Test
+    void anEmpOnlyHullHitCascadesItsEmpIncludingTheBonus() {
+        ShipAPI target = target(List.of(weaponAt(new Vector2f(0f, 0f), true)), List.of());
+        ShipAPI owner = owner(50f);
+        when(owner.getMutableStats().getDamageToTargetWeaponsMult().getModifiedValue()).thenReturn(1f);
+        IonCascadeListener listener = new IonCascadeListener(owner);
+
+        listener.onEmpOnlyHit(new EmpOnlyHits.EmpOnlyHit(target, new Vector2f(), 100f, 200f, false));
+        listener.onEmpOnlyHit(new EmpOnlyHits.EmpOnlyHit(target, new Vector2f(), 100f, 200f, true));
+        listener.advance(0.016f);
+
+        verify(engine).applyDamage(eq(target), any(), eq(200f * IonCascadeListener.INNER_CELL_EMP_SHARE * 0.5f),
                 eq(DamageType.HIGH_EXPLOSIVE), eq(0f), eq(true), eq(false), eq(owner));
     }
 
