@@ -55,6 +55,11 @@ public final class WormholeAnchor extends Item implements NodeSocketable {
         public ItemKind listedKind(Item item) {
             return ItemKind.SUBROUTINE;
         }
+
+        @Override
+        public boolean stacksInStorage() {
+            return true;
+        }
     };
 
     static final String BUY_PRICE_MULT_SETTING = "nonEconItemBuyPriceMult";

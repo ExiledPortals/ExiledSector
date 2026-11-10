@@ -191,6 +191,21 @@ class AnchorJanusGateTest {
     }
 
     @Test
+    void aHalvedMarketChanceStocksAboutHalfTheRestocks() {
+        janusObtained(true);
+        Random random = new Random(3L);
+        int fullStocked = 0;
+        int halvedStocked = 0;
+        for (int restock = 0; restock < 1000; restock++) {
+            fullStocked += WormholeAnchorDefinitions.rollMarketStock("hegemony", 1f, random).size();
+            halvedStocked += WormholeAnchorDefinitions.rollMarketStock("hegemony", 0.5f, random).size();
+        }
+
+        assertEquals(1000, fullStocked);
+        assertTrue(halvedStocked > 420 && halvedStocked < 580, "halved restocks stocked " + halvedStocked);
+    }
+
+    @Test
     void showcaseSalvageOffersOnlyTheBeaconBeforeJanus() {
         CargoAPI loot = mock(CargoAPI.class);
         ArgumentCaptor<SpecialItemData> added = ArgumentCaptor.forClass(SpecialItemData.class);

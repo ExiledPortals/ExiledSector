@@ -86,7 +86,7 @@ public final class IntegrationLines {
                     changedLines.add(new ChangedLine(Change.ADDS, storyPointGreen(integratedLine)));
                 }
             }
-            List<DescriptionLine> droppedLines = unmatched.stream().skip(replacedCount).map(IntegrationLines::storyPointGreen).toList();
+            List<DescriptionLine> droppedLines = unmatched.stream().skip(replacedCount).toList();
             return new Comparison(changedLines, droppedLines);
         }
 

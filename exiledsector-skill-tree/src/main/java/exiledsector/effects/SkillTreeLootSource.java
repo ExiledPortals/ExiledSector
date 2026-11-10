@@ -38,15 +38,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 import java.util.function.Predicate;
 
 public final class SkillTreeLootSource implements LootSource, FleetDifficulty, MarketStock {
 
     public static final SkillTreeLootSource INSTANCE = new SkillTreeLootSource();
     static final int SHOWCASE_PICKS = 3;
-    static final Set<String> ANCHOR_SUBMARKETS = Set.of(Submarkets.SUBMARKET_OPEN, Submarkets.GENERIC_MILITARY,
-            RandomAssortmentCompat.EXOSHIP_SUBMARKET);
+    static final Map<String, Float> ANCHOR_CHANCE_MULT_BY_SUBMARKET = Map.of(Submarkets.SUBMARKET_OPEN, 0.5f, Submarkets.GENERIC_MILITARY, 1f,
+            RandomAssortmentCompat.EXOSHIP_SUBMARKET, 1f);
     private static final long ANCHOR_SALVAGE_SEED_SALT = 0x616E63686F7273L;
     private static final String BATTLE_FIND = "battle loot";
     private static final Logger LOG = Logger.getLogger(SkillTreeLootSource.class);
@@ -64,6 +63,7 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty, M
         engagement.deploymentPointsLostByFaction().forEach((factionId, deploymentPoints) ->
                 defeatedDeploymentPointsByFaction.merge(factionId, deploymentPoints, Float::sum));
         GateRewardAnchors.recordEngagement(battle, engagement);
+        DeserterBountyAnchors.recordEngagement(battle, engagement, Global.getSector());
         if (NightcrossCompat.isModEnabled()) {
             NightcrossUnlocks.recordEngagement(Global.getSector(), engagement);
         }
@@ -86,6 +86,7 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty, M
     private List<ItemData> battleDrops(BattleLoot battle) {
         List<ItemData> drops = new ArrayList<>(factionFleetDrops(battle));
         drops.addAll(GateRewardAnchors.claim(battle, drops, Global.getSector()));
+        drops.addAll(DeserterBountyAnchors.claim(battle, drops));
         return drops;
     }
 
@@ -171,11 +172,12 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty, M
 
     @Override
     public List<ItemData> restock(SubmarketAPI submarket, Random random) {
-        if (!ANCHOR_SUBMARKETS.contains(submarket.getSpecId())) {
+        Float chanceMult = ANCHOR_CHANCE_MULT_BY_SUBMARKET.get(submarket.getSpecId());
+        if (chanceMult == null) {
             return List.of();
         }
         List<ItemData> anchors = new ArrayList<>();
-        for (ItemDefinition definition : WormholeAnchorDefinitions.rollMarketStock(submarket.getMarket().getFactionId(), random)) {
+        for (ItemDefinition definition : WormholeAnchorDefinitions.rollMarketStock(submarket.getMarket().getFactionId(), chanceMult, random)) {
             anchors.add(ItemData.rolled(definition, random.nextLong()));
         }
         return anchors;

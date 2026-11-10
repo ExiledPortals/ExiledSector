@@ -42,15 +42,23 @@ class IntegrationLinesTest {
         return text.spans().stream().filter(span -> span.style() == Style.BUILT_IN).map(span -> text.plain().substring(span.start(), span.end())).toList();
     }
 
+    private static void assertKeepsTheColoursOfTheLineItRemoves(DescriptionLine removedLine, SkillType type, HullSize hullSize) {
+        String removedPlain = removedLine.plain().substring(REMOVED_PREFIX.length());
+        DescriptionLine original = SkillNode.describeEffects(type, hullSize, false).stream()
+                .filter(line -> line.plain().equals(removedPlain)).findFirst().orElseThrow();
+        assertEquals(List.of(), storyPointGreenParts(removedLine.text()), removedLine.text().toMarkup());
+        assertTrue(removedLine.text().toMarkup().endsWith(original.text().toMarkup()), removedLine.text().toMarkup());
+        assertEquals(original.lowerIsBetter(), removedLine.lowerIsBetter());
+    }
+
     @Test
-    void anIntegratedTooltipListsEachDroppedLineInStoryPointGreen() {
+    void anIntegratedTooltipListsEachDroppedLineInTheColoursOfTheLineItRemoves() {
         List<DescriptionLine> effects = IntegrationLines.integrated(PENALTY_DROPPING, HullSize.CRUISER).effects();
 
         String droppedPenalty = REMOVED_PREFIX + FluxSkillEffect.FLUX_CAPACITY_MULT.description(-10f).plain();
         assertEquals(List.of(droppedPenalty), removedTexts(effects));
         DescriptionLine removedLine = effects.stream().filter(line -> line.plain().equals(droppedPenalty)).findFirst().orElseThrow();
-        assertEquals(List.of("10%"), storyPointGreenParts(removedLine.text()), removedLine.text().toMarkup());
-        assertFalse(removedLine.lowerIsBetter());
+        assertKeepsTheColoursOfTheLineItRemoves(removedLine, PENALTY_DROPPING, HullSize.CRUISER);
     }
 
     @Test
@@ -127,7 +135,7 @@ class IntegrationLinesTest {
 
         String droppedPenalty = REMOVED_PREFIX + DefenseSkillEffect.WEAPON_DAMAGE_TAKEN_PERCENT.description(50f).plain();
         assertEquals(List.of(droppedPenalty), removedTexts(preview));
-        assertEquals(List.of("50%"), storyPointGreenParts(preview.get(preview.size() - 1).text()));
+        assertKeepsTheColoursOfTheLineItRemoves(preview.get(preview.size() - 1), FRIGATE_PENALTY_DROPPING, HullSize.FRIGATE);
         assertEquals(List.of(), removedTexts(IntegrationLines.preview(FRIGATE_PENALTY_DROPPING, HullSize.DESTROYER, NOT_INTEGRATED)));
     }
 

@@ -326,6 +326,7 @@
     "ui.socketStorage.cell.freeFramework": "点击它，再点击舰船的{type}舱段即可安装。",
     "ui.socketStorage.cell.freeTarget": "点击即可将其安装到所选插槽或舱段。",
     "ui.socketStorage.cell.installed": "已安装于{ship}。右键点击技能树上的对应插槽可将其移除。",
+    "ui.socketStorage.cell.stack": "仓库中共有{count}件。",
     "ui.socketStorage.cell.installedFramework": "已安装于{ship}。右键点击舰船上的对应舱段可将其移除。",
     "ui.socketStorage.cell.disassemble.other": "右键点击可将其拆解为<hl>{count}</hl>份纳米原料。",
     "ui.socketStorage.confirm.title": "拆解{name}？",

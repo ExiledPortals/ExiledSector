@@ -113,7 +113,7 @@ Conditions go after the value and stat: "while phased", "while in the system", "
 
 ## Highlighting
 
-The effect's own value is `<good>` or `<bad>`, by whether it helps the ship. Every other number in the line, such as a range, duration, cap, stack limit or threshold, is `<hl>`, as in vanilla hullmod descriptions. A line without a value may colour its key phrase instead: "split to 1 additional nearby enemy ship <good>at full damage</good>". On an integrated node only what integration changes turns story point green.
+The effect's own value is `<good>` or `<bad>`, by whether it helps the ship. Every other number in the line, such as a range, duration, cap, stack limit or threshold, is `<hl>`, as in vanilla hullmod descriptions. A line without a value may colour its key phrase instead: "split to 1 additional nearby enemy ship <good>at full damage</good>". On an integrated node only what integration changes or adds turns story point green; a "No longer grants" line keeps the colours of the line it removes.
 
 ## Capitalisation
 

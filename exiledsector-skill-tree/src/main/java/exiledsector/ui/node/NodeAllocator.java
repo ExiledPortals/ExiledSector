@@ -19,6 +19,7 @@ import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.HullModNames;
 import exiledsector.skills.ItemCostLedger;
 import exiledsector.skills.NodeEligibility;
+import exiledsector.skills.NodeIntegration;
 import exiledsector.skills.ReleasedNodes;
 import exiledsector.skills.RespecPlan;
 import exiledsector.skills.ShipFacts;
@@ -217,10 +218,6 @@ final class NodeAllocator {
         return ShipSkillDataManager.get(fleetMember.getId());
     }
 
-    FleetMemberAPI member() {
-        return fleetMember;
-    }
-
     String satisfiedRootId() {
         SkillNode root = startingRootSupplier.get();
         return root == null ? null : root.getId();
@@ -313,6 +310,14 @@ final class NodeAllocator {
         }
         ShipTrees.release(snapshot.skillData(), SkillTree.topology(), satisfiedRootId(), List.of(node)).refundTo(PlayerFleet.cargoOrNull());
         return changed(true);
+    }
+
+    boolean integrate(SkillNode node) {
+        return changed(NodeIntegration.integrate(data(), node, fleetMember.getShipName()));
+    }
+
+    void applyIntegrationReset() {
+        changed(true);
     }
 
     boolean socketItem(SkillNode node, String itemId) {
