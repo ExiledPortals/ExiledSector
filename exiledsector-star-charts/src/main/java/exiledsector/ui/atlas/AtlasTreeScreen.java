@@ -67,8 +67,8 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     private final TreeNodeLayer<AtlasTreeNode> nodeLayer = new TreeNodeLayer<>(panelStyle);
     private final HyperspaceMode hyperspace;
     private final TextLabel titleLabel = new TextLabel(UiFonts.TITLE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-    private final TextLabel pointsLabel = new TextLabel(UiFonts.HEADING, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
-    private final TextLabel hintLabel = new TextLabel(UiFonts.HEADING, AtlasScreen.HINT_COLOUR);
+    private final TextLabel pointsLabel = new TextLabel(UiFonts.HINT, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
+    private final TextLabel hintLabel = new TextLabel(UiFonts.HINT, AtlasScreen.HINT_COLOUR);
     private final TooltipText tooltipText = SkillTreePanelStyle.tooltipText();
     private final TextLabel tooltipTitle = new TextLabel(tooltipText.title(), SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel tooltipBody = new TextLabel(tooltipText.body(), SkillTreePanelStyle.TOOLTIP_BODY_COLOR);

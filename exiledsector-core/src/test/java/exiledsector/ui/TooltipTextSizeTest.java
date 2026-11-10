@@ -20,7 +20,7 @@ class TooltipTextSizeTest {
 
         assertEquals(UiFonts.TITLE, vanilla.title());
         assertEquals(UiFonts.BODY, vanilla.body());
-        assertEquals(UiFonts.HEADING, vanilla.hint());
+        assertEquals(UiFonts.HINT, vanilla.hint());
         assertEquals(360f, vanilla.maxTextWidth());
         assertEquals(450f, ItemTooltip.width());
     }

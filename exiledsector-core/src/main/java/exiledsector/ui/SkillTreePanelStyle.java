@@ -61,10 +61,10 @@ public final class SkillTreePanelStyle {
     private static final Map<String, Optional<LazyFont>> FONTS_BY_DEFAULT_PATH = new HashMap<>();
     private static final Map<String, Optional<LazyFont>> FONTS_BY_FILE = new HashMap<>();
 
-    private static final TooltipText VANILLA_TOOLTIP_TEXT = new TooltipText(UiFonts.TITLE, UiFonts.BODY, UiFonts.BODY, UiFonts.HEADING,
-            new TooltipText.Table(UiFonts.HEADING, UiFonts.BODY, 20f, 20f), 360f);
+    private static final TooltipText VANILLA_TOOLTIP_TEXT = new TooltipText(UiFonts.TITLE, UiFonts.BODY, UiFonts.BODY, UiFonts.HINT,
+            new TooltipText.Table(UiFonts.TITLE, UiFonts.BODY, 24f, 20f), 360f);
     private static final TooltipText LARGE_TOOLTIP_TEXT = new TooltipText(UiFonts.LARGE_TITLE, UiFonts.TITLE, UiFonts.LARGE_DETAIL, UiFonts.TITLE,
-            new TooltipText.Table(UiFonts.TITLE, UiFonts.LARGE_DETAIL, 26f, 22f), 480f);
+            new TooltipText.Table(UiFonts.LARGE_TITLE, UiFonts.LARGE_DETAIL, 30f, 22f), 480f);
 
     private static final Map<String, Color> ACCENT_COLORS_BY_ICON = new ConcurrentHashMap<>();
 

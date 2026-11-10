@@ -33,7 +33,7 @@ final class ChartInfoWindow {
     private static final float ANOMALY_HOVER_GLOW_WIDTH = 8f;
     private static final float ANOMALY_HOVER_GLOW_ALPHA = 0.5f;
     private static final TextFont TITLE_FONT = UiFonts.TITLE;
-    private static final TextFont HEADING_FONT = UiFonts.HEADING;
+    private static final TextFont HEADING_FONT = UiFonts.TITLE;
     private static final TextFont OBJECTIVE_NAME_FONT = UiFonts.BODY;
     private static final TextFont BODY_FONT = UiFonts.BODY;
     private static final float SECTION_GAP = 16f;
