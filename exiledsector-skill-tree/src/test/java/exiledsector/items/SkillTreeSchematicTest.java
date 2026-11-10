@@ -67,9 +67,9 @@ class SkillTreeSchematicTest {
     void aDeintegrationSchematicRemovesEveryIntegrationAndRefundsWhatTheyCost() {
         CargoAPI cargo = cargoHolding(1f);
         ShipSkillData shipData = withIntegrations("a_1", "b_1", "c_1");
-        assertEquals(6, DeintegrationSchematic.refundFor(shipData));
+        assertEquals(7, DeintegrationSchematic.refundFor(shipData));
 
-        assertEquals(6, DeintegrationSchematic.useOn(cargo, shipData));
+        assertEquals(7, DeintegrationSchematic.useOn(cargo, shipData));
 
         verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, DeintegrationSchematic.INSTANCE.toSpecialItem(), 1f);
         assertEquals(Set.of(), shipData.getIntegratedNodeIds());

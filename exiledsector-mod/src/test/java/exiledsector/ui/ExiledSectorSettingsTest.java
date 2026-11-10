@@ -8,6 +8,7 @@ import exiledsector.i18n.LanguageSetting;
 import exiledsector.i18n.PseudoLeaks;
 import exiledsector.i18n.PseudoLocale;
 import exiledsector.i18n.RealCatalogue;
+import exiledsector.skills.IntegrationCostSetting;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.npc.NpcTreeConfig;
 import exiledsector.skills.npc.NpcTreeSize;
@@ -213,9 +214,17 @@ class ExiledSectorSettingsTest {
                     || VolumeToggles.OPTIONS.contains(text) || ItemAnimationSetting.OPTIONS.contains(text)
                     || text.equals(String.join(",", ItemAnimationSetting.OPTIONS)) || HullUpgradesSetting.POINTS_OPTIONS.contains(text)
                     || text.equals(String.join(",", HullUpgradesSetting.POINTS_OPTIONS)) || NpcTreeConfig.LEVEL_MODE_OPTIONS.contains(text)
-                    || text.equals(String.join(",", NpcTreeConfig.LEVEL_MODE_OPTIONS));
+                    || text.equals(String.join(",", NpcTreeConfig.LEVEL_MODE_OPTIONS))
+                    || IntegrationCostSetting.OPTIONS.contains(text) || text.equals(String.join(",", IntegrationCostSetting.OPTIONS));
             assertFalse(!untranslated && PseudoLeaks.hasLeak(text), () -> "Hardcoded settings text: " + text);
         }
+    }
+
+    @Test
+    void offersTheIntegrationCostModesAsARadioDefaultingToExponential() {
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addRadio(eq("exiledSector"), eq(IntegrationCostSetting.FIELD_ID),
+                anyString(), anyString(), eq(IntegrationCostSetting.EXPONENTIAL), eq("Exponential,Additive,Static"),
+                eq(SkillTreeSettings.skillTreeTab())));
     }
 
     @Test

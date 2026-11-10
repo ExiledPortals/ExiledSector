@@ -169,6 +169,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
     public void reloadSettings() {
         SkillTreeSetting.reloadSettings();
         UniqueSubroutinesSetting.reloadSettings();
+        IntegrationCostSetting.reloadSettings();
     }
 
     @Override
