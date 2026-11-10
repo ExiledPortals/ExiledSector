@@ -14,7 +14,7 @@ public final class UiFonts {
     static final String INSIGNIA_21_FILE = "insignia21LTaa.fnt";
     static final String INSIGNIA_25_FILE = "insignia25LTaa.fnt";
 
-    public static final TextFont HEADING = nativeFont(ORBITRON_12_CONDENSED_FILE, 15f);
+    public static final TextFont HINT = nativeFont(ORBITRON_12_CONDENSED_FILE, 15f);
     public static final TextFont BODY = nativeFont(INSIGNIA_15_FILE, 15f);
     public static final TextFont TITLE = nativeFont(ORBITRON_20_BOLD_FILE, 20f);
     public static final TextFont BUTTON = nativeFont(ORBITRON_20_FILE, 20f);

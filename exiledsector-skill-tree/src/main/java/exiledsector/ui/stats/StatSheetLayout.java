@@ -34,9 +34,9 @@ public final class StatSheetLayout {
     private record Block(List<Placed> labels, List<Bar> bars, List<Region> regions, float height) {
     }
 
-    private static final TextFont HEADER_FONT = UiFonts.HEADING;
+    private static final TextFont HEADER_FONT = UiFonts.TITLE;
     private static final TextFont ROW_FONT = UiFonts.BODY;
-    private static final TextFont COLUMN_HEADER_FONT = UiFonts.HEADING;
+    private static final TextFont COLUMN_HEADER_FONT = UiFonts.HINT;
     private static final float HEADER_FONT_SIZE = HEADER_FONT.size();
     private static final float ROW_FONT_SIZE = ROW_FONT.size();
     private static final float COLUMN_HEADER_FONT_SIZE = COLUMN_HEADER_FONT.size();

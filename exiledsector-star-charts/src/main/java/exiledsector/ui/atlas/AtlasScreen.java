@@ -115,7 +115,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private final CanvasCamera camera = new CanvasCamera(AtlasMapCanvas.MIN_ZOOM, AtlasMapCanvas.MAX_ZOOM);
     private final PointerGesture<Void> gesture = new PointerGesture<>();
     private final TextLabel titleLabel = new TextLabel(UiFonts.TITLE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-    private final TextLabel hintLabel = new TextLabel(UiFonts.HEADING, HINT_COLOUR);
+    private final TextLabel hintLabel = new TextLabel(UiFonts.HINT, HINT_COLOUR);
     private final TooltipText tooltipText = SkillTreePanelStyle.tooltipText();
     private final TextLabel tooltipTitle = new TextLabel(tooltipText.title(), SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel tooltipBody = new TextLabel(tooltipText.body(), SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
