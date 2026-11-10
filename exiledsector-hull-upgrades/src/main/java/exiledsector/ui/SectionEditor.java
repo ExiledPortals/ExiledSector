@@ -6,6 +6,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.items.HullUpgradePoints;
+import exiledsector.items.HullItem;
 import exiledsector.items.HullUpgradeRules;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
@@ -19,6 +20,7 @@ import lunalib.lunaRefit.BaseRefitButton;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 final class SectionEditor {
 
@@ -91,6 +93,10 @@ final class SectionEditor {
 
     String unmetRequirement(ShipSection section) {
         return ShipSections.unmetRequirement(section, shipEdit.currentFit());
+    }
+
+    Predicate<Item> fitsShip() {
+        return HullItem.suitedTo(shipEdit.currentFit());
     }
 
     boolean applySchematic(RefitSchematic schematic) {

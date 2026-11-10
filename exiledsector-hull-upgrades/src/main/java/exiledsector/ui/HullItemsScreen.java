@@ -37,6 +37,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 final class HullItemsScreen extends BaseCustomUIPanelPlugin {
 
@@ -154,7 +155,7 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
             openUpgrades(true);
         } else if (storage.isOpen()) {
             swapOutStorage();
-            openStorage(null);
+            openStorage(null, ItemStoragePanel.ANY_ITEM);
         }
     }
 
@@ -222,7 +223,7 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
         }
     }
 
-    private void openStorage(ItemKind kindFilter) {
+    private void openStorage(ItemKind kindFilter, Predicate<Item> targetFits) {
         ItemStoragePanel storagePanel = ItemStoragePanel.openSectionItems(hostPanel, storagePlacement(), storage.shipNames(), new ItemStoragePanel.Listener() {
             @Override
             public void selected(Item item) {
@@ -239,7 +240,7 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
             public void pressedInside() {
                 sectionsDisplay.hideTooltip();
             }
-        }, kindFilter, tabListener, SHOWN_TABS);
+        }, kindFilter, targetFits, tabListener, SHOWN_TABS);
         storagePanel.setModifyHandler(this::openBay);
         storage.opened(storagePanel, sectionEditor.revision());
     }
@@ -257,7 +258,7 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
                 Item craftedItem = bay == null ? null : bay.craftedItem();
                 bay = null;
                 if (!fade.closing()) {
-                    showStorage(null);
+                    showStorage();
                     showCrafted(craftedItem);
                 }
             }
@@ -284,7 +285,7 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
             return;
         }
         if (tab == SocketPanelTab.HULL_ITEMS && !storage.isOpen()) {
-            showStorage(null);
+            showStorage();
         } else if (tab == SocketPanelTab.HULL_UPGRADES && upgradesPanel == null) {
             swapOutStorage();
             openUpgrades(true);
@@ -307,12 +308,16 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
         }
     }
 
-    private void showStorage(ItemKind kindFilter) {
+    private void showStorage() {
+        showStorage(null, ItemStoragePanel.ANY_ITEM);
+    }
+
+    private void showStorage(ItemKind kindFilter, Predicate<Item> targetFits) {
         swapOutUpgrades();
         if (!storage.isOpen()) {
-            openStorage(kindFilter);
+            openStorage(kindFilter, targetFits);
         } else {
-            storage.panel().restrictTo(kindFilter);
+            storage.panel().restrictTo(kindFilter, targetFits);
         }
     }
 
@@ -348,7 +353,7 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
     private void clearTarget() {
         storage.setTarget(null);
         if (storage.isOpen()) {
-            storage.panel().restrictTo(null);
+            storage.panel().restrictTo(null, ItemStoragePanel.ANY_ITEM);
         }
     }
 
@@ -396,7 +401,7 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
             }
             return;
         }
-        showStorage(section.itemType());
+        showStorage(section.itemType(), sectionEditor.fitsShip());
         storage.setTarget(section);
         SkillTreeSounds.panelOpened();
     }

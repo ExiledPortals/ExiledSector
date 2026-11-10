@@ -42,6 +42,7 @@ class ShipSectionsTest {
                 .put(definition("warranty", "bridge", "HULL_PERCENT:1:1; TARGETED_HULL_ITEM_EFFECT_PERCENT:100:100").put("unique", "true"))
                 .put(definition("vault", "bridge", "HIGHEST_AFFINITY_FLAT_PER_S_MOD:3:3"))
                 .put(definition("veteran", "bridge", "HULL_PERCENT:7:7").put("crew", "crewed"))
+                .put(definition("core_link", "bridge", "HULL_PERCENT:7:7").put("crew", "automated"))
                 .put(definition("specialists", "crew_quarters", "HULL_PERCENT:3:3")));
         shipData = new ShipSkillData();
         shipData.grantUnlockedSection("bridge");
@@ -109,6 +110,19 @@ class ShipSectionsTest {
         assertEquals("req_crewed", automated.get(0).unmetRequirement());
         assertTrue(automated.get(1).active());
         assertEquals(10f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(automated, HullSize.CRUISER, 0), 1f)), 1e-4f);
+    }
+
+    @Test
+    void onlyItemsSuitedToTheShipsCrewPassTheSocketFilter() {
+        HullItem veteran = (HullItem) ItemStore.lookup(NpcItems.id("veteran", 5L));
+        HullItem coreLink = (HullItem) ItemStore.lookup(NpcItems.id("core_link", 6L));
+        HullItem plain = (HullItem) ItemStore.lookup(NpcItems.id("bridge_item", 1L));
+
+        assertTrue(HullItem.suitedTo(fit(ShieldType.FRONT)).test(veteran));
+        assertFalse(HullItem.suitedTo(fit(ShieldType.FRONT)).test(coreLink));
+        assertFalse(HullItem.suitedTo(automatedFit()).test(veteran));
+        assertTrue(HullItem.suitedTo(automatedFit()).test(coreLink));
+        assertTrue(HullItem.suitedTo(automatedFit()).test(plain));
     }
 
     @Test
