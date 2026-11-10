@@ -41,6 +41,11 @@ public final class ItemTypes {
         return support == null ? item.kind() : support.listedKind(item);
     }
 
+    public static boolean stacksInStorage(Item item) {
+        ItemTypeSupport support = of(item.type());
+        return support != null && support.stacksInStorage();
+    }
+
     public static List<ItemTypeSupport> all() {
         synchronized (SUPPORT_BY_TYPE) {
             return List.copyOf(SUPPORT_BY_TYPE.values());

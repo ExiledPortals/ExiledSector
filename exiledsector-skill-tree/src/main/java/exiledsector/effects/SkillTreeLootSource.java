@@ -64,6 +64,7 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty, M
         engagement.deploymentPointsLostByFaction().forEach((factionId, deploymentPoints) ->
                 defeatedDeploymentPointsByFaction.merge(factionId, deploymentPoints, Float::sum));
         GateRewardAnchors.recordEngagement(battle, engagement);
+        DeserterBountyAnchors.recordEngagement(battle, engagement, Global.getSector());
         if (NightcrossCompat.isModEnabled()) {
             NightcrossUnlocks.recordEngagement(Global.getSector(), engagement);
         }
@@ -86,6 +87,7 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty, M
     private List<ItemData> battleDrops(BattleLoot battle) {
         List<ItemData> drops = new ArrayList<>(factionFleetDrops(battle));
         drops.addAll(GateRewardAnchors.claim(battle, drops, Global.getSector()));
+        drops.addAll(DeserterBountyAnchors.claim(battle, drops));
         return drops;
     }
 

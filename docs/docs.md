@@ -769,7 +769,8 @@ fight against an Omega fleet (`FactionEncounterGate`) or once an Omega anchor re
 
 An anchor with `guaranteed_drop` in `wormhole_anchors.csv` drops from every won battle that defeats one of its
 factions instead of rolling its chance (`FactionFleetDrops`); the Shrouded and Omega anchors do this for Dweller and
-Omega fleets. An anchor whose factions are all missing, or whose playable factions Nexerelin has all eliminated, drops from the
+Omega fleets. A won battle that takes down a vanilla deserter bounty's flagship adds that faction's anchor
+(`DeserterBountyAnchors`). An anchor whose factions are all missing, or whose playable factions Nexerelin has all eliminated, drops from the
 salvage and tech mining sites in `anchor_salvage.csv` instead (`FactionlessAnchors`).
 
 ### Corruption

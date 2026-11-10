@@ -90,6 +90,10 @@ public interface ItemTypeSupport {
         return item.kind();
     }
 
+    default boolean stacksInStorage() {
+        return false;
+    }
+
     default int lowestTier(String definitionId) {
         return ItemTraits.LOWEST_TIER;
     }

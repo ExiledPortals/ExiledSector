@@ -279,7 +279,12 @@ public final class ItemStoragePanel extends HoloPanel {
 
     public void spotlight(Item item) {
         spotlightItem = item;
-        queue(this::rebuildGrid);
+        queue(() -> {
+            if (item != null && ItemTypes.stacksInStorage(item)) {
+                reloadRows();
+            }
+            rebuildGrid();
+        });
     }
 
     public void setSelected(Item item, String hint) {
@@ -800,14 +805,12 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private void reloadRows() {
-        List<Item> owned = ItemStore.get().owned();
-        List<ItemStorageRow> built = new ArrayList<>(owned.size());
-        for (int i = 0; i < owned.size(); i++) {
-            if (showsItem(owned.get(i))) {
-                built.add(ItemStorageRow.of(owned.get(i), i, installedShipLookup));
-            }
-        }
-        storageRows = built;
+        storageRows = ItemStorageStacks.rows(ItemStore.get().owned(), this::showsItem, installedShipLookup, this::preferredInStack);
+    }
+
+    private boolean preferredInStack(Item item) {
+        return item == selectedItem || item == spotlightItem || disassembly.isMarked(item)
+                || (craftingBenchPanel != null && item == craftingBenchPanel.loaded());
     }
 
     private boolean showsItem(Item item) {
@@ -952,7 +955,8 @@ public final class ItemStoragePanel extends HoloPanel {
         List<ItemStorageRow> matching = spotlightFirst(ItemStorageQuery.apply(storageRows, storageFilter, offersAdvancedSearch()));
         int columns = ItemGrid.columnsFor(panelWidth);
         float gridHeight = Math.max(ItemGrid.cellSize(innerWidth(), columns), panelHeight - PAD - FOOTER_HEIGHT - GAP - gridTop);
-        TooltipMakerAPI element = ItemGrid.build(panelRoot, innerWidth(), gridHeight, columns, matching, this::cellFor, emptyText());
+        TooltipMakerAPI element = ItemGrid.build(panelRoot, innerWidth(), gridHeight, columns, matching, this::cellFor,
+                row -> row.stacked() ? String.valueOf(row.stackSize()) : null, emptyText());
         gridElement = replaceElement(placedComponent(gridElement), element, PAD, gridTop);
         if (restoredScroll > 0f && element.getExternalScroller() != null) {
             element.getExternalScroller().setYOffset(Math.min(restoredScroll, Math.max(0f, element.getHeightSoFar() - gridHeight)));
@@ -1038,6 +1042,9 @@ public final class ItemStoragePanel extends HoloPanel {
             return List.of(disassembly.cellLine(row.item()));
         }
         List<StyledText> footerLines = new ArrayList<>();
+        if (row.stacked()) {
+            footerLines.add(Translation.msg("ui.socketStorage.cell.stack").arg("count", row.stackSize()).styled());
+        }
         if (craftingBenchPanel == null && !pickerMode) {
             footerLines.add(installHint(row));
         }

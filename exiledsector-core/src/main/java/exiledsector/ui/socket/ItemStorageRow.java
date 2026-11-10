@@ -13,9 +13,18 @@ import java.util.Locale;
 import java.util.function.Function;
 
 public record ItemStorageRow(Item item, int storeOrder, String name, ItemRarity rarity, List<String> searchLines,
-                               String installedShipName, ItemStatTotals statTotals) {
+                               String installedShipName, ItemStatTotals statTotals, int stackSize) {
+
+    public ItemStorageRow(Item item, int storeOrder, String name, ItemRarity rarity, List<String> searchLines,
+                          String installedShipName, ItemStatTotals statTotals) {
+        this(item, storeOrder, name, rarity, searchLines, installedShipName, statTotals, 1);
+    }
 
     static ItemStorageRow of(Item item, int storeOrder, Function<Item, String> installedShipLookup) {
+        return of(item, storeOrder, installedShipLookup.apply(item), 1);
+    }
+
+    static ItemStorageRow of(Item item, int storeOrder, String installedShipName, int stackSize) {
         ItemDefinition definition = item.definition();
         ItemName displayName = item.displayName();
         List<String> shownTexts = new ArrayList<>();
@@ -31,10 +40,14 @@ public record ItemStorageRow(Item item, int storeOrder, String name, ItemRarity 
         }
         List<String> searchLines = shownTexts.stream().map(text -> text.toLowerCase(Locale.ROOT)).toList();
         return new ItemStorageRow(item, storeOrder, displayName.title(), displayName.rarity(), searchLines,
-                installedShipLookup.apply(item), ItemStatTotals.of(item));
+                installedShipName, ItemStatTotals.of(item), stackSize);
     }
 
     boolean installed() {
         return installedShipName != null;
+    }
+
+    boolean stacked() {
+        return stackSize > 1;
     }
 }

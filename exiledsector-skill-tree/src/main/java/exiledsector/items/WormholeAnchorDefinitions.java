@@ -191,6 +191,18 @@ public final class WormholeAnchorDefinitions {
         return stocked;
     }
 
+    public static List<ItemDefinition> factionAnchors(String factionId) {
+        List<ItemDefinition> anchors = new ArrayList<>();
+        for (String definitionId : TARGETS_BY_ID.get().keySet()) {
+            FactionFleetDrops.Source source = FactionFleetDrops.source(definitionId);
+            ItemDefinition definition = ItemDefinitions.get(definitionId);
+            if (definition != null && source != null && !source.anyFaction() && source.dropsFrom(factionId)) {
+                anchors.add(definition);
+            }
+        }
+        return anchors;
+    }
+
     static Set<String> dropFactions(String factionsText) {
         Set<String> factionIds = new LinkedHashSet<>(CsvRows.entries(factionsText));
         return factionIds;

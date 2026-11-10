@@ -57,6 +57,7 @@
     "ui.socketStorage.cell.freeFramework": "Click it, then click the ship's {type} section to install it.",
     "ui.socketStorage.cell.freeTarget": "Click it to install it in the selected socket or section.",
     "ui.socketStorage.cell.installed": "Installed in {ship}. Right-click its socket on the tree to remove it.",
+    "ui.socketStorage.cell.stack": "{count} in storage.",
     "ui.socketStorage.cell.installedFramework": "Installed in {ship}. Right-click its section on the ship to remove it.",
     "ui.socketStorage.cell.disassemble.one": "Right-click to disassemble it into <hl>{count}</hl> Nanite Feedstock.",
     "ui.socketStorage.cell.disassemble.other": "Right-click to disassemble it into <hl>{count}</hl> Nanite Feedstock.",
