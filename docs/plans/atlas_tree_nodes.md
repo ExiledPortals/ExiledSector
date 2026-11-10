@@ -1,6 +1,6 @@
 # Atlas Tree nodes
 
-Ideas for Atlas Tree node types. Every type listed under Built is in `data/skilltrees/atlas_tree_types.json`, ready to place on the tree in the editor's Atlas Tree page; none is placed yet. The tree's shape and rules are in `atlas_skill_tree.md`. Magnitudes and icons are placeholders.
+Ideas for Atlas Tree node types. Every type listed under Built is in `data/skilltrees/atlas_tree_types.json`, ready to place on the tree in the editor's Atlas Tree page; none is placed yet. The tree's shape and rules are in `completed/atlas_skill_tree.md`. Magnitudes and icons are placeholders.
 
 ## Travel nodes
 

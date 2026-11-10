@@ -101,7 +101,7 @@ Several separate categories in one roll are listed: "hull items, subroutines and
 
 ## Banned words
 
-Never write "loot", "spoils" or "rewards" for things the player picks up. Use "items" with a category, "salvage" for vanilla's post-battle salvage screen, and "completion reward" only for the one-time Star Chart objective reward. Item quantity is always "quantity of items found in the system" or "quantity of items dropped by Star Chart Bosses".
+Never write "loot" or "spoils" for things the player picks up. Use "items" with a category, and "salvage" for vanilla's post-battle salvage screen. "Rewards" is allowed, such as the one-time Star Chart "completion reward". Item quantity is always "quantity of items found in the system" or "quantity of items dropped by Star Chart Bosses".
 
 ## Chances
 
