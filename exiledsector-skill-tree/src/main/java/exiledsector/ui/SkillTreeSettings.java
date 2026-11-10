@@ -6,6 +6,7 @@ import exiledsector.effects.NpcBonusScale;
 import exiledsector.i18n.Translation;
 import exiledsector.items.AnchorJanusGate;
 import exiledsector.items.UniqueSubroutinesSetting;
+import exiledsector.skills.IntegrationCostSetting;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.npc.NpcLevelCategory;
 import exiledsector.skills.npc.NpcTreeConfig;
@@ -91,6 +92,9 @@ public final class SkillTreeSettings {
                 Translation.text("settings.opCost.capital"), "", SkillNodeOpCost.DEFAULT_CAPITAL, 0, 100, treeTab);
         SettingsCreator.addInt(MOD_ID, SkillNodeOpCost.UNDEFINED_FIELD_ID,
                 Translation.text("settings.opCost.other"), "", SkillNodeOpCost.DEFAULT_UNDEFINED, 0, 100, treeTab);
+        SettingsCreator.addRadio(MOD_ID, IntegrationCostSetting.FIELD_ID, Translation.text("settings.integrationCost.name"),
+                Translation.text("settings.integrationCost.tooltip"), IntegrationCostSetting.DEFAULT,
+                String.join(",", IntegrationCostSetting.OPTIONS), treeTab);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_modulesHeader", Translation.text("settings.modules.header"), treeTab);
         SettingsCreator.addInt(MOD_ID, ModuleShareSetting.FIELD_ID,

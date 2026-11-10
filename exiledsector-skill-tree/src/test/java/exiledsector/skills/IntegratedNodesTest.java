@@ -43,6 +43,7 @@ class IntegratedNodesTest {
 
     @AfterEach
     void tearDown() {
+        IntegrationCostSetting.setModeForTests(IntegrationCostSetting.Mode.EXPONENTIAL);
         mockSector.close();
         SkillTree.clearNodes();
         SkillTree.clearTypes();
@@ -83,7 +84,7 @@ class IntegratedNodesTest {
     }
 
     @Test
-    void eachIntegrationCostsOneMoreStoryPointAndUnallocatingKeepsIt() {
+    void unallocatingAnIntegratedNodeKeepsItsIntegrationAndItStillCounts() {
         ShipSkillData data = withNotable();
         assertEquals(1, IntegratedNodes.nextCost(data));
 
@@ -96,11 +97,59 @@ class IntegratedNodesTest {
     }
 
     @Test
+    void exponentialIsTheDefaultAndDoublesEachIntegrationsCost() {
+        assertEquals(IntegrationCostSetting.Mode.EXPONENTIAL, IntegrationCostSetting.parse(IntegrationCostSetting.DEFAULT));
+        ShipSkillData data = new ShipSkillData();
+        int[] expectedCosts = {1, 2, 4, 8, 16};
+        for (int index = 0; index < expectedCosts.length; index++) {
+            assertEquals(expectedCosts[index], IntegratedNodes.nextCost(data));
+            data.integrate("node_" + index);
+        }
+    }
+
+    @Test
+    void additiveCostsOneMoreStoryPointPerIntegration() {
+        IntegrationCostSetting.setModeForTests(IntegrationCostSetting.Mode.ADDITIVE);
+        ShipSkillData data = new ShipSkillData();
+        int[] expectedCosts = {1, 2, 3, 4};
+        for (int index = 0; index < expectedCosts.length; index++) {
+            assertEquals(expectedCosts[index], IntegratedNodes.nextCost(data));
+            data.integrate("node_" + index);
+        }
+    }
+
+    @Test
+    void staticCostsTwoStoryPointsPerIntegration() {
+        IntegrationCostSetting.setModeForTests(IntegrationCostSetting.Mode.STATIC);
+        ShipSkillData data = new ShipSkillData();
+        for (int index = 0; index < 4; index++) {
+            assertEquals(2, IntegratedNodes.nextCost(data));
+            data.integrate("node_" + index);
+        }
+    }
+
+    @Test
     void refundsTheMostExpensiveIntegrationsFirst() {
         assertEquals(0, IntegratedNodes.costOfLast(3, 0));
+        assertEquals(4, IntegratedNodes.costOfLast(3, 1));
+        assertEquals(6, IntegratedNodes.costOfLast(3, 2));
+        assertEquals(7, IntegratedNodes.costOfLast(3, 3));
+
+        IntegrationCostSetting.setModeForTests(IntegrationCostSetting.Mode.ADDITIVE);
         assertEquals(3, IntegratedNodes.costOfLast(3, 1));
-        assertEquals(5, IntegratedNodes.costOfLast(3, 2));
         assertEquals(6, IntegratedNodes.costOfLast(3, 3));
+
+        IntegrationCostSetting.setModeForTests(IntegrationCostSetting.Mode.STATIC);
+        assertEquals(4, IntegratedNodes.costOfLast(3, 2));
+        assertEquals(6, IntegratedNodes.costOfLast(3, 3));
+    }
+
+    @Test
+    void readsEachModeFromItsSettingValue() {
+        assertEquals(IntegrationCostSetting.Mode.ADDITIVE, IntegrationCostSetting.parse("Additive"));
+        assertEquals(IntegrationCostSetting.Mode.STATIC, IntegrationCostSetting.parse(" static "));
+        assertEquals(IntegrationCostSetting.Mode.EXPONENTIAL, IntegrationCostSetting.parse(null));
+        assertEquals(IntegrationCostSetting.Mode.EXPONENTIAL, IntegrationCostSetting.parse("unknown"));
     }
 
     @Test
@@ -112,7 +161,7 @@ class IntegratedNodesTest {
 
         int refund = IntegratedNodes.forgetInapplicable(data, Map.of(notable.getId(), notable, plain.getId(), plain));
 
-        assertEquals(5, refund);
+        assertEquals(6, refund);
         assertEquals(Set.of(notable.getId()), data.getIntegratedNodeIds());
     }
 

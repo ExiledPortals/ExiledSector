@@ -83,8 +83,9 @@ vanilla's s-mod bonus carries it as its own effect: Neural Interface sets vanill
 ### Integrated nodes
 
 A type with an `integrated` block in `skill_types.json` (`IntegratedEffects`) can be integrated on one ship by
-holding a click on its allocated node. The ship's nth integration costs n story points and, unlike an s-mod, grants
-no bonus XP (`NodeIntegration`). An integrated node applies its integrated effects instead of its normal ones
+holding a click on its allocated node. A LunaLib setting picks the story point cost of the ship's nth integration
+(`IntegrationCostSetting`): 2^(n-1) by default, n, or a flat 2; refunds use the current mode. Unlike an s-mod it
+grants no bonus XP (`NodeIntegration`). An integrated node applies its integrated effects instead of its normal ones
 (`IntegratedNodes.effectsFor`) and stays in `ShipSkillData.integratedNodeIds` when unallocated. Integration follows
 the effective type, so a node a Doctrine Archive rewrites into an integrable type can be integrated, and an
 integration only applies while the effective type is integrable. Save repair forgets integrations whose node is gone

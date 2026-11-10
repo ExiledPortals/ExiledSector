@@ -503,6 +503,8 @@
     "settings.opCost.cruiser": "巡洋舰每节点装配点",
     "settings.opCost.capital": "主力舰每节点装配点",
     "settings.opCost.other": "其他船体尺寸每节点装配点",
+    "settings.integrationCost.name": "整合故事点花费",
+    "settings.integrationCost.tooltip": "舰船上每个整合节点花费的故事点。Exponential：依次花费1、2、4、8，依此类推。Additive：依次花费1、2、3、4，依此类推。Static：每个花费2。返还按当前模式计算。",
     "settings.modules.header": "模块",
     "settings.modules.share.name": "模块加成比例",
     "settings.modules.share.tooltip": "舰船的武器、幅能和防御加成中，其模块同样获得的百分比。",

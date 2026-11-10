@@ -37,13 +37,15 @@ public final class IntegratedNodes {
     }
 
     public static int nextCost(ShipSkillData data) {
-        return data.getIntegratedNodeIds().size() + 1;
+        return IntegrationCostSetting.mode().costOf(data.getIntegratedNodeIds().size() + 1);
     }
 
     public static int costOfLast(int integratedCount, int removedCount) {
+        IntegrationCostSetting.Mode mode = IntegrationCostSetting.mode();
         int refund = 0;
-        for (int cost = integratedCount; cost > integratedCount - removedCount && cost > 0; cost--) {
-            refund += cost;
+        for (int integrationNumber = integratedCount; integrationNumber > integratedCount - removedCount && integrationNumber > 0;
+             integrationNumber--) {
+            refund += mode.costOf(integrationNumber);
         }
         return refund;
     }

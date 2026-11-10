@@ -466,6 +466,8 @@
     "settings.opCost.cruiser": "Cruiser OP per Node",
     "settings.opCost.capital": "Capital OP per Node",
     "settings.opCost.other": "Other Hull Sizes OP per Node",
+    "settings.integrationCost.name": "Integration Story Point Cost",
+    "settings.integrationCost.tooltip": "Story points for each integrated node on a ship. Exponential costs 1, 2, 4, 8 and so on. Additive costs 1, 2, 3, 4 and so on. Static costs 2 each. Refunds follow the current mode.",
     "settings.modules.header": "Modules",
     "settings.modules.share.name": "Module Share",
     "settings.modules.share.tooltip": "Percent of a ship's weapon, flux and defense bonuses its modules also get.",
