@@ -39,13 +39,13 @@ Researched 2026-11-11. Costs are from Maxroll's guide as of 3.24 (March 2024), a
 
 The convoy's cargo pods (`ConvoyCargo`, by share of freighter fleet points lost) and its delivered cache (80% of it) also hold infused feedstock: Nanite Feedstock steeped in vanilla's abyss (the abyssal hyperspace, the Shrouded Dwellers and the Threat). This plan says so to tell it apart from Random Assortment of Things' Abyss; player-facing text never mentions RAT or its Abyss. Three commodity-like crafting items stand in for the lifeforce colours, each covering a family of theme tags (`theme_tags.csv`). There is no counterpart to Sacred lifeforce.
 
-| Feedstock (placeholder names) | Tags it crafts |
-|---|---|
-| Threat-infused Feedstock | `weapon` and its children, the damage types |
-| Shroud-infused Feedstock | `defence` and its children, `repair`, `combat_readiness` |
-| Phase-infused Feedstock | `flux`, `phase`, `ship_system`, `mobility`, `strikecraft`, `sensors`, `electronic_warfare`, `fleet_support`, `logistics` |
+| Feedstock (placeholder names) | Item id | Tags it crafts |
+|---|---|---|
+| Threat-infused Feedstock | `exiledSector_threat_feedstock` | `weapon` and its children, the damage types |
+| Shroud-infused Feedstock | `exiledSector_shroud_feedstock` | `defence` and its children, `repair`, `combat_readiness` |
+| Phase-infused Feedstock | `exiledSector_phase_feedstock` | `flux`, `phase`, `ship_system`, `mobility`, `strikecraft`, `sensors`, `electronic_warfare`, `fleet_support`, `logistics` |
 
-A convoy carries an equal amount of all three. The amount uses the quantity mechanics chart crafting items already have: a row per feedstock in `chart_materials.csv` style, set at tiers 1 and 15 and linear between, the same for all three, then scaled by the run's crafting item and item quantity lines. It is split over the freighters by fleet points, so the cargo pods and the delivered cache take their usual shares. Atlas Tree nodes added later weight the three amounts, so a player can farm more of one kind.
+A convoy carries roughly equal amounts of all three: each feedstock's amount is a shared amount rolled at random up or down by as much as 15%, so they are never quite even. The shared amount uses the quantity mechanics chart crafting items already have: a row per feedstock in `chart_materials.csv` style, 150 at tier 1 and 1000 at tier 15 and linear between (placeholders), the same for all three, then scaled by the run's crafting item and item quantity lines. It is split over the freighters by fleet points, so the cargo pods and the delivered cache take their usual shares.
 
 The feedstock is spent at the Crafting Bench itself, in its Infused Crafting tray (see the bench rework below), never tied to a site. The tray lists every craft with its cost and applies it to the hull item in the socket, for hull items only to start:
 
@@ -144,14 +144,13 @@ The Coronal Hypershunt is its own reward, as are the Derelict Forge, the Pre-Col
 ## Build order
 
 1. [x] Storm Front change: the guaranteed biome grant, removal or move of the storm modifiers, strings (en and zh_CN), `docs/docs.md`, tests.
-2. [ ] The three infused feedstock items, their `special_items.csv` rows, icons (placeholders), their tier rows and the convoy cargo split.
+2. [ ] The three infused feedstock items, their `special_items.csv` rows, icons (placeholders), their tier rows, the ±15% roll per feedstock and the convoy cargo split.
 3. [ ] The Crafting Bench rework: the right-side tray framework and content hook, the bench moving left while a tray is open, the Excavation Inhibitors tray with the Prefix and Suffix Inhibitors moved into it and active inhibitors orbiting the socket, inhibitors removed from the Star Charts mode, the two inhibitors' drop rates lowered to the Immutable Nanoswarm's, then the Engrams tray (engrams moved out of the crafting items), with tests.
 4. [ ] The Infused Crafting tray and its crafts as core `ForgeOperation`s, with tests per craft.
-5. [ ] Atlas Tree nodes weighting the three feedstock amounts.
-6. [ ] Depot prototypes: `prototype_implicits.csv`, the vault's pick of three, strings, tests.
-7. [ ] Stellar Flares lucky rolls, Black Hole immutable drops and Dense Nebula settling dust.
-8. [ ] Remnant Nexus overcharged drops.
-9. [ ] Spatial Breach warped items, after the part pool check.
-10. [ ] The seven tag inhibitors, their `special_items.csv` rows, icons (placeholders), strings (en and zh_CN), the weighting in the modifier roll, and excavation shaft drops, with tests.
-11. [ ] Relay Network choices, once the user details them.
-12. [ ] Faction Skirmish officer training: the skill, the end-of-run officer pick, strings (en and zh_CN), tests, once the user details the skill.
+5. [ ] Depot prototypes: `prototype_implicits.csv`, the vault's pick of three, strings, tests.
+6. [ ] Stellar Flares lucky rolls, Black Hole immutable drops and Dense Nebula settling dust.
+7. [ ] Remnant Nexus overcharged drops.
+8. [ ] Spatial Breach warped items, after the part pool check.
+9. [ ] The seven tag inhibitors, their `special_items.csv` rows, icons (placeholders), strings (en and zh_CN), the weighting in the modifier roll, and excavation shaft drops, with tests.
+10. [ ] Relay Network choices, once the user details them.
+11. [ ] Faction Skirmish officer training: the skill, the end-of-run officer pick, strings (en and zh_CN), tests, once the user details the skill.
