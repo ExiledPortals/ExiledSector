@@ -475,6 +475,18 @@ class ChartContentGeneratorTest {
     }
 
     @Test
+    void endgameChartFleetsAskForTheirTiersOfficerLevelBonus() {
+        generate(15L, 15);
+
+        assertFalse(engine.fleetParams.isEmpty());
+        int tierBonus = ChartTiers.forTier(15).officerLevelBonus();
+        assertTrue(tierBonus > 0);
+        for (FleetParamsV3 params : engine.fleetParams) {
+            assertTrue(params.officerLevelBonus >= tierBonus, "bonus " + params.officerLevelBonus);
+        }
+    }
+
+    @Test
     void lootIsKeptAwayFromTheWormholeAndFromStarsAndCoronas() {
         List<Hazard> hazards = List.of(new Hazard(new Vector2f(), 1100f), new Hazard(new Vector2f(3000f, 3000f), 400f));
 

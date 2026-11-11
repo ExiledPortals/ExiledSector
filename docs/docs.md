@@ -627,8 +627,10 @@ Fleet Strength %, and bosses roll one higher. Outside charts, a won battle's cha
 battle chance per 100 enemy deployment points defeated, scaled by battle difficulty, at the highest tier whose
 `level_min` the strongest defeated NPC reached (`ChartDrops.forBattle`). With the skill tree switched off, the
 tier instead rises one per `defeated_dp_per_tier` deployment points defeated. Chart fleets are built with
-`doNotPrune`, so vanilla never trades their fleet points past 30 ships for bigger hulls. Instead a fleet built with 50 or
-more ships is rebuilt one doctrine ship size larger until it has fewer or reaches the largest size (`ChartFleetUpscaler`).
+`doNotPrune`; a fleet built with 50 or more ships is instead rebuilt one doctrine ship size larger until it has fewer or
+reaches the largest size (`ChartFleetUpscaler`). A fleet's officer level bonus also raises vanilla's officer and
+commander level caps by the same amount, and each level a captain ends above its cap makes one more of its combat
+skills elite (`ChartOfficerLevels`).
 
 Node-granting lines such as Freebooting store node ids with the fleet's enemy rules. An enemy ship that gets an NPC tree
 has the node placed first as a free grant; the builder avoids nodes that conflict with it and only paths through it
