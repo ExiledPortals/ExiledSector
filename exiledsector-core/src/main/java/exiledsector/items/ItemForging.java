@@ -6,6 +6,7 @@ import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ScaleContext;
+import exiledsector.skills.tags.TagWeights;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -88,7 +89,7 @@ public final class ItemForging {
         if (sides.isEmpty()) {
             return null;
         }
-        RolledModifier added = AffixLayout.rollFrom(sides, random);
+        RolledModifier added = AffixLayout.rollFrom(sides, random, TagWeights.NONE);
         item.addExplicit(added);
         return added;
     }
@@ -157,7 +158,7 @@ public final class ItemForging {
             if (openSides.isEmpty()) {
                 break;
             }
-            AffixLayout.insert(modifiers, AffixLayout.rollFrom(openSides, random));
+            AffixLayout.insert(modifiers, AffixLayout.rollFrom(openSides, random, TagWeights.NONE));
         }
         item.replaceExplicits(modifiers);
         item.refreezeName();

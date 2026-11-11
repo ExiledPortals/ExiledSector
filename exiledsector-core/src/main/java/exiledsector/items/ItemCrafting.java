@@ -3,6 +3,7 @@ package exiledsector.items;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
+import exiledsector.skills.tags.TagWeights;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -164,7 +165,7 @@ public final class ItemCrafting {
         if (definition == null || openSides.isEmpty()) {
             return null;
         }
-        RolledModifier addedModifier = AffixLayout.rollFrom(openSides, random);
+        RolledModifier addedModifier = AffixLayout.rollFrom(openSides, random, TagWeights.NONE);
         item.addExplicit(addedModifier);
         return addedModifier;
     }
@@ -261,7 +262,7 @@ public final class ItemCrafting {
         }
         RolledModifier removed = removable.get(random.nextInt(removable.size()));
         List<List<PoolEntry>> openSides = replacementSides(definition, item.explicits(), removed, item.tier());
-        item.swapExplicit(removed, AffixLayout.rollFrom(openSides, random));
+        item.swapExplicit(removed, AffixLayout.rollFrom(openSides, random, TagWeights.NONE));
         return item;
     }
 

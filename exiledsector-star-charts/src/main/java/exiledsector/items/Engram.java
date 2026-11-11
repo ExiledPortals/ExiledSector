@@ -7,6 +7,7 @@ import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
 import exiledsector.modifiers.TierRange;
+import exiledsector.skills.tags.TagWeights;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -188,7 +189,7 @@ public record Engram(String itemId, String englishName, String modifierId, Set<I
         List<PoolEntry> remaining = new ArrayList<>(pool);
         int drawCount = 0;
         for (int left = Math.max(0, count); left > 0 && !remaining.isEmpty(); left--) {
-            PoolEntry entry = remaining.remove(WeightedPick.index(remaining, PoolEntry::weight, random.nextFloat()));
+            PoolEntry entry = remaining.remove(WeightedPick.index(remaining, candidate -> candidate.biasedWeight(TagWeights.NONE), random.nextFloat()));
             drawn.add(RolledModifier.roll(entry.modifier(), random));
             takenIds.add(entry.modifier().id());
             remaining.removeIf(candidate -> ModifierExclusivity.clashes(candidate.modifier().id(), takenIds));

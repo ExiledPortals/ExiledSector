@@ -7,6 +7,8 @@ import { familyEffectNames, isFamilyEffect, MODIFIER_FILE_NAMES, type ItemFamily
 
 export const MODIFIER_COLUMNS = ['id', 'affix', 'scopes', 'lines', 'name'] as const;
 export const EXCLUSIVE_GROUPS_COLUMN = 'exclusive_groups';
+export const TAGS_COLUMN = 'tags';
+export const TAGLESS = 'none';
 export const MODIFIER_SLOTS = ['implicit', 'prefix', 'suffix'] as const;
 export type ModifierSlot = (typeof MODIFIER_SLOTS)[number];
 export const MODIFIER_SLOT_LABELS: Record<ModifierSlot, string> = { implicit: 'Implicit', prefix: 'Prefix', suffix: 'Suffix' };
@@ -53,6 +55,7 @@ export interface ItemModifier {
   lines: ModifierLine[];
   name: string;
   exclusiveGroups?: string[];
+  tags?: string[];
   loadedId?: string;
 }
 
@@ -161,6 +164,7 @@ export function parseModifiersCsv(text: string): ModifiersModel {
       lines: parseModifierLines(columns.lines),
       name: columns.name,
       exclusiveGroups: parseItemTypes(csvCell(table, cells, EXCLUSIVE_GROUPS_COLUMN)),
+      tags: parseItemTypes(csvCell(table, cells, TAGS_COLUMN)),
       loadedId: columns.id,
     };
   });
@@ -170,6 +174,7 @@ export function parseModifiersCsv(text: string): ModifiersModel {
 export function serializeModifiersCsv(model: ModifiersModel): string {
   const writesGroups =
     model.table.header.includes(EXCLUSIVE_GROUPS_COLUMN) || model.modifiers.some((modifier) => (modifier.exclusiveGroups ?? []).length > 0);
+  const writesTags = model.table.header.includes(TAGS_COLUMN) || model.modifiers.some((modifier) => (modifier.tags ?? []).length > 0);
   return serializeCsvTable(
     csvTableFromRows(model.table, model.modifiers, (modifier) => ({
       id: modifier.id,
@@ -178,6 +183,7 @@ export function serializeModifiersCsv(model: ModifiersModel): string {
       lines: formatModifierLines(modifier.lines),
       name: modifier.name,
       ...(writesGroups ? { exclusive_groups: (modifier.exclusiveGroups ?? []).join(';') } : {}),
+      ...(writesTags ? { tags: (modifier.tags ?? []).join(';') } : {}),
     })),
   );
 }
@@ -418,6 +424,15 @@ export function validateModifiers(
     for (const group of modifier.exclusiveGroups ?? []) {
       if (!MODIFIER_ID_PATTERN.test(group)) {
         issues.push(`${label}: exclusive group "${group}" must be letters, digits and underscores`);
+      }
+    }
+    const tags = modifier.tags ?? [];
+    if (tags.length > 1 && tags.includes(TAGLESS)) {
+      issues.push(`${label}: ${TAGLESS} marks a modifier with no tags, so it cannot sit beside other tags`);
+    }
+    for (const tag of tags) {
+      if (!MODIFIER_ID_PATTERN.test(tag)) {
+        issues.push(`${label}: tag "${tag}" must be letters, digits and underscores`);
       }
     }
     const modifierUsage = usage.get(modifier.id);

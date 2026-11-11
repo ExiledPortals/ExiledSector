@@ -18,6 +18,7 @@ import {
   MODIFIER_SLOTS,
   newModifierLine,
   suggestedModifierId,
+  TAGLESS,
   uniqueModifierId,
   type ItemModifier,
   type ModifierUsage,
@@ -180,6 +181,13 @@ export function ModifierForm({ document, model, vocabulary, family, modifier, in
           onChange={(groups) => edit((draft) => void (draft.exclusiveGroups = groups))}
         />
       )}
+      <TagsInput
+        label="Tags"
+        description={`Theme tags saying what it does. Write ${TAGLESS} alone for a modifier no tag bias can reach.`}
+        splitChars={[';', ',', ' ']}
+        value={modifier.tags ?? []}
+        onChange={(tags) => edit((draft) => void (draft.tags = tags))}
+      />
       <Divider />
       <Title order={5}>{modifier.lines.length > 1 ? 'Values - a hybrid rolls every line and counts as one modifier' : 'Values'}</Title>
       {modifier.lines.map((line, lineIndex) => (

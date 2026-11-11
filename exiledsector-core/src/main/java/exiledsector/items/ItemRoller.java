@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import exiledsector.Seeds;
 import exiledsector.modifiers.TierRange;
+import exiledsector.skills.tags.TagWeights;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ public final class ItemRoller {
         Random random = Seeds.random(seed);
         AffixLayout.Limits limits = AffixLayout.dropLimits(definition.type());
         return rollAffixes(definition, limits.maxPerSide(), AffixLayout.rolledModifierCount(limits, random.nextFloat(), rarity), random,
-                TierRange.NO_TIER);
+                TierRange.NO_TIER, TagWeights.NONE);
     }
 
     public static List<RolledModifier> rollWithModifierCount(ItemDefinition definition, long seed, int modifierCount) {
@@ -37,11 +38,11 @@ public final class ItemRoller {
         }
         Random random = Seeds.random(seed);
         random.nextFloat();
-        return rollAffixes(definition, AffixLayout.limits(definition.type()).maxPerSide(), modifierCount, random, TierRange.NO_TIER);
+        return rollAffixes(definition, AffixLayout.limits(definition.type()).maxPerSide(), modifierCount, random, TierRange.NO_TIER, TagWeights.NONE);
     }
 
     public static List<RolledModifier> rollAtTierWithModifierCount(ItemDefinition definition, long seed, int tier, int modifierCount, int maxPerSide) {
-        return rollAffixes(definition, maxPerSide, modifierCount, Seeds.random(seed), ItemTypes.rolledTier(definition, tier));
+        return rollAffixes(definition, maxPerSide, modifierCount, Seeds.random(seed), ItemTypes.rolledTier(definition, tier), TagWeights.NONE);
     }
 
     public static boolean canRollModifierCount(ItemDefinition definition, int modifierCount) {
@@ -68,10 +69,11 @@ public final class ItemRoller {
             return rolledModifiers;
         }
         AffixLayout.Limits limits = AffixLayout.limits(definition.type());
-        return rollAffixes(definition, limits.maxPerSide(), AffixLayout.rolledModifierCount(limits, random.nextFloat()), random, tier);
+        return rollAffixes(definition, limits.maxPerSide(), AffixLayout.rolledModifierCount(limits, random.nextFloat()), random, tier, TagWeights.NONE);
     }
 
-    private static List<RolledModifier> rollAffixes(ItemDefinition definition, int maxPerSide, int modifierCount, Random random, int tier) {
+    private static List<RolledModifier> rollAffixes(ItemDefinition definition, int maxPerSide, int modifierCount, Random random, int tier,
+                                                    TagWeights tagWeights) {
         List<PoolEntry> prefixes = AffixLayout.rollableAt(definition.type(), definition.prefixes(), tier);
         List<PoolEntry> suffixes = AffixLayout.rollableAt(definition.type(), definition.suffixes(), tier);
         int prefixCount = AffixLayout.prefixCount(modifierCount, random.nextBoolean());
@@ -87,16 +89,16 @@ public final class ItemRoller {
             suffixCount = suffixRoom;
         }
         List<RolledModifier> rolledModifiers = new ArrayList<>(modifierCount);
-        draw(prefixes, prefixCount, random, rolledModifiers);
-        draw(suffixes, suffixCount, random, rolledModifiers);
+        draw(prefixes, prefixCount, random, tagWeights, rolledModifiers);
+        draw(suffixes, suffixCount, random, tagWeights, rolledModifiers);
         return rolledModifiers;
     }
 
-    private static void draw(List<PoolEntry> pool, int drawCount, Random random, List<RolledModifier> rolledModifiers) {
+    private static void draw(List<PoolEntry> pool, int drawCount, Random random, TagWeights tagWeights, List<RolledModifier> rolledModifiers) {
         List<PoolEntry> remainingPool = new ArrayList<>(pool);
         remainingPool.removeIf(entry -> ModifierExclusivity.clashesWithRolled(entry.modifier().id(), rolledModifiers));
         for (int drawsLeft = Math.min(drawCount, pool.size()); drawsLeft > 0 && !remainingPool.isEmpty(); drawsLeft--) {
-            PoolEntry entry = remainingPool.remove(WeightedPick.index(remainingPool, PoolEntry::weight, random.nextFloat()));
+            PoolEntry entry = remainingPool.remove(WeightedPick.index(remainingPool, candidate -> candidate.biasedWeight(tagWeights), random.nextFloat()));
             rolledModifiers.add(RolledModifier.roll(entry.modifier(), random));
             remainingPool.removeIf(candidate -> ModifierExclusivity.clashesWithRolled(candidate.modifier().id(), rolledModifiers));
         }

@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import exiledsector.Seeds;
 import exiledsector.modifiers.ModifierLine;
+import exiledsector.skills.tags.TagWeights;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -54,7 +55,7 @@ public final class DoctrineRewriter {
         List<AugmentLine> lines = new ArrayList<>();
         List<String> drawnIds = new ArrayList<>();
         for (int drawsLeft = Math.min(lineCount, pool.size()); drawsLeft > 0 && !remainingPool.isEmpty(); drawsLeft--) {
-            PoolEntry entry = remainingPool.remove(WeightedPick.index(remainingPool, PoolEntry::weight, random.nextFloat()));
+            PoolEntry entry = remainingPool.remove(WeightedPick.index(remainingPool, candidate -> candidate.biasedWeight(TagWeights.NONE), random.nextFloat()));
             for (ModifierLine line : entry.modifier().lines()) {
                 lines.add(new AugmentLine(entry.modifier().id(), line, line.roll(random)));
             }

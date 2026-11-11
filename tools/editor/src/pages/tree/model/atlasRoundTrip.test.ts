@@ -129,6 +129,7 @@ describe('atlas tree files round-trip', () => {
     const treeText = fileText(ATLAS_TREE_JSON, lineEnding);
     const document = parseTreeDocument(ATLAS_TREE_FILES, typesText, treeText);
     expect(document.volumes).toEqual(ATLAS_TREE_JSON.volumes);
+    expect(document.types.find((type) => type.id === 'wider_charts')?.tags).toEqual(['charts']);
     const texts = serializeTreeFiles(ATLAS_TREE_FILES, document, { types: lineEndingOf(typesText), tree: lineEndingOf(treeText) });
     expect(texts.types).toBe(typesText);
     expect(texts.tree).toBe(treeText);
