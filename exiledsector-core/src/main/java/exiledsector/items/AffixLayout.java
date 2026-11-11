@@ -4,6 +4,7 @@ import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
 import exiledsector.modifiers.TierRange;
+import exiledsector.skills.tags.TagWeights;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -162,9 +163,9 @@ public final class AffixLayout {
         modifiers.add(insertIndex(modifiers, added.slot()), added);
     }
 
-    static RolledModifier rollFrom(List<List<PoolEntry>> sides, Random random) {
+    static RolledModifier rollFrom(List<List<PoolEntry>> sides, Random random, TagWeights tagWeights) {
         List<PoolEntry> side = sides.get(random.nextInt(sides.size()));
-        PoolEntry poolEntry = side.get(WeightedPick.index(side, PoolEntry::weight, random.nextFloat()));
+        PoolEntry poolEntry = side.get(WeightedPick.index(side, candidate -> candidate.biasedWeight(tagWeights), random.nextFloat()));
         return RolledModifier.roll(poolEntry.modifier(), random);
     }
 

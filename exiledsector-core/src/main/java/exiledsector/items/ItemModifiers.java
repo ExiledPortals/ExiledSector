@@ -33,6 +33,8 @@ public final class ItemModifiers {
     public static final String REFERENCE_MARK = "@";
     public static final Pattern ID_PATTERN = Pattern.compile("[A-Za-z0-9_]+");
     public static final String EXCLUSIVE_GROUPS_COLUMN = "exclusive_groups";
+    public static final String TAGS_COLUMN = "tags";
+    public static final String TAGLESS = "none";
     private static final String LINE_SEPARATOR = ";";
     private static final Logger LOG = Logger.getLogger(ItemModifiers.class);
     private static final AtomicReference<Catalogue> LOADED = new AtomicReference<>(Catalogue.EMPTY);
@@ -164,7 +166,24 @@ public final class ItemModifiers {
             throw new IllegalArgumentException(modifierId + " has slot \"" + slotText + "\"; expected implicit, prefix or suffix");
         }
         ModifierEffects effects = effectsForListedTypes(ModCsv.text(row, "scopes"));
-        return new Modifier(modifierId, slot, parseLines(modifierId, slot, effects, ModCsv.text(row, "lines")));
+        List<ModifierLine> lines = parseLines(modifierId, slot, effects, ModCsv.text(row, "lines"));
+        List<String> tags = CsvRows.entries(ModCsv.text(row, TAGS_COLUMN));
+        boolean tagless = tags.equals(List.of(TAGLESS));
+        return new Modifier(modifierId, slot, lines, tagless ? Set.of() : parseTags(modifierId, tags), tagless);
+    }
+
+    static Set<String> parseTags(String modifierId, List<String> tags) {
+        Set<String> parsedTags = new LinkedHashSet<>();
+        for (String tag : tags) {
+            if (tag.equals(TAGLESS)) {
+                throw new IllegalArgumentException(modifierId + " lists " + TAGLESS + " beside other tags; " + TAGLESS + " marks a modifier with no tags");
+            }
+            if (!ID_PATTERN.matcher(tag).matches()) {
+                throw new IllegalArgumentException(modifierId + " lists tag \"" + tag + "\"; it must be letters, digits and underscores");
+            }
+            parsedTags.add(tag);
+        }
+        return parsedTags;
     }
 
     public static Set<ModifierScope> parseScopes(String modifierId, String itemTypesText) {

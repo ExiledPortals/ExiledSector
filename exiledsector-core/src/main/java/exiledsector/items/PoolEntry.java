@@ -5,6 +5,7 @@ import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
 import exiledsector.modifiers.TierRange;
+import exiledsector.skills.tags.TagWeights;
 
 import java.util.List;
 import java.util.Random;
@@ -94,6 +95,11 @@ public record PoolEntry(Modifier modifier, float weight, TierRange tiers) {
 
     public boolean rollsAtTier(int tier) {
         return tiers.allows(tier) && modifier.rollsAtTier(tier);
+    }
+
+    public float biasedWeight(TagWeights tagWeights) {
+        // TODO expand the modifier tags with their ancestors once the theme tag vocabulary lands
+        return tagWeights.weight(weight, modifier.tags());
     }
 
     boolean isSingle() {

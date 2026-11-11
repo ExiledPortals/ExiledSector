@@ -12,6 +12,7 @@ import {
   serializeModifiersCsv,
   shipItemTypes,
   suggestedModifierId,
+  TAGLESS,
   togglePerHullSize,
   validateModifiers,
 } from './modifiers.ts';
@@ -79,6 +80,35 @@ describe('item modifiers', () => {
     expect(validateModifiers(ungrouped.modifiers, vocabulary, modifierUsage(definitions(), []))).toContain(
       'HULL_MULT: exclusive group "bad group" must be letters, digits and underscores',
     );
+  });
+
+  it('reads and writes tags, keeping none and blank apart and adding the column only once a modifier has tags', () => {
+    const text =
+      'id,affix,scopes,lines,name,tags\nHULL_MULT,prefix,hull_item,HULL_MULT:4:6,Reinforced,hull;defence\nARMOR_PERCENT,prefix,hull_item,ARMOR_PERCENT:4:6,Plated,none\nHULL_PERCENT,prefix,hull_item,HULL_PERCENT:4:6,Sturdy,\n';
+    const model = parseModifiersCsv(text);
+    const untagged = parseModifiersCsv('id,affix,scopes,lines,name\nHULL_MULT,prefix,hull_item,HULL_MULT:4:6,Reinforced\n');
+
+    expect(model.modifiers.map((modifier) => modifier.tags)).toEqual([['hull', 'defence'], [TAGLESS], []]);
+    expect(serializeModifiersCsv(model)).toBe(text);
+    expect(serializeModifiersCsv(untagged)).toBe('id,affix,scopes,lines,name\nHULL_MULT,prefix,hull_item,HULL_MULT:4:6,Reinforced\n');
+    untagged.modifiers[0].tags = ['hull'];
+    expect(serializeModifiersCsv(untagged)).toBe('id,affix,scopes,lines,name,tags\nHULL_MULT,prefix,hull_item,HULL_MULT:4:6,Reinforced,hull\n');
+    untagged.modifiers[0].tags = [TAGLESS, 'low hull'];
+    expect(validateModifiers(untagged.modifiers, vocabulary, modifierUsage(definitions(), []))).toEqual(
+      expect.arrayContaining([
+        'HULL_MULT: none marks a modifier with no tags, so it cannot sit beside other tags',
+        'HULL_MULT: tag "low hull" must be letters, digits and underscores',
+      ]),
+    );
+  });
+
+  it('keeps star chart modifier tags beside their exclusive groups', () => {
+    const text =
+      'id,affix,scopes,lines,name,exclusive_groups,tags\nCHART_EXTRA_FLEETS,prefix,star_chart,CHART_EXTRA_FLEETS:low=1/mid=2/high=3,Crowded,fleets,enemy;fleet_size\n';
+    const model = parseModifiersCsv(text);
+
+    expect(model.modifiers[0]).toMatchObject({ exclusiveGroups: ['fleets'], tags: ['enemy', 'fleet_size'] });
+    expect(serializeModifiersCsv(model)).toBe(text);
   });
 
   it('suggests ids that follow the naming convention', () => {
