@@ -110,7 +110,7 @@ public final class ItemNames {
         }
         FrozenName nameParts = frozen == null ? FrozenName.NONE : frozen;
         return switch (rarity) {
-            case UNIQUE -> new ItemName(definition.displayName(), null, rarity);
+            case UNIQUE -> new ItemName(definition.displayName(), kind != null && kind.fitsSection() ? kind.displayName() : null, rarity);
             case COMMON -> {
                 String commonText = commonName(definition, kind, modifiers, frozen);
                 boolean plainName = commonText.equals(definition.displayName());

@@ -151,13 +151,13 @@ class ItemNamesTest {
     }
 
     @Test
-    void uniquesKeepTheirHandWrittenNameAndRollEveryEffectInOrder() {
+    void uniquesKeepTheirHandWrittenNameOverTheirSectionAndRollEveryEffectInOrder() {
         ItemDefinition relic = ItemDefinitions.get("relic");
         List<RolledModifier> modifiers = ItemRoller.roll(relic, 3L);
 
         assertEquals(List.of("HULL_MULT", "ARMOR_PERCENT", "FLUX_CAPACITY_MULT"), RolledModifier.lines(modifiers).stream().map(RolledLine::effectName).toList());
         ItemName name = ItemNames.nameFor(relic, relic.kind(), 3L, modifiers);
-        assertEquals(new ItemName("Omega Shard", null, ItemRarity.UNIQUE), name);
+        assertEquals(new ItemName("Omega Shard", "Reactor", ItemRarity.UNIQUE), name);
     }
 
     @Test
