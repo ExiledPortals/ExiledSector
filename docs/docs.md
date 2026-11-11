@@ -804,6 +804,20 @@ Star charts add two outcomes (`StarChartCorruption`): one tier up, reaching tier
 4 per side. Tier 16 (`ChartTiers.CORRUPTED_TIER`) has its own row in `star_chart_tiers.csv` but is reached only this way.
 Chart drops, the Cartography Cipher and combining stop at 15, and a tier 16 clear records as tier 15 (`ItemUnlock`).
 
+### Infused crafts
+
+Infused crafts work on hull items and each is bought for one theme tag, at a cost in that tag's feedstock from
+`infused_crafts.csv` (`InfusedCraft`, `InfusedCraftCosts`, logic in `InfusedCrafting`, all core). A tag counts its
+children, so a weapon craft also matches ballistic and damage modifiers. Crafts refuse mirrored, corrupted and locked
+items, and only the tag reroll works on uniques. Reforges and add-and-remove keep immutable and reserved modifiers and
+roll through `AffixLayout.openSides`, so exclusive groups, side limits and the biome limit hold.
+
+The tagged reforge rolls one modifier with the tag first, then fills as a normal roll. The two alike reforges weight the
+modifiers the item had at 10 times or a tenth of their pool weight. The tag reroll rerolls the values of every mutable
+modifier with the tag. The damage swap turns a modifier with one damage type tag into the pool entry with the same side,
+line count and tags but the chosen type, mapping each value to the same position in the new range. Add-and-remove
+removes a random modifier without the tag that would leave room for one with it, then rolls that one.
+
 ### Socketed item scaling
 
 A contribution whose origin is a `SocketedItem` belongs to a socketed item of one category, hull item or subroutine.

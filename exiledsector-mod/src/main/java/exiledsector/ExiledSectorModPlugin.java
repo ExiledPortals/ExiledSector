@@ -28,6 +28,7 @@ import exiledsector.effects.ResolvedTree;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.effects.TechMiningItemListener;
 import exiledsector.items.HullUpgradesDomain;
+import exiledsector.items.InfusedCraftCosts;
 import exiledsector.items.ItemCraftingCosts;
 import exiledsector.items.ItemDataIntegrity;
 import exiledsector.items.ItemDefinitions;
@@ -96,6 +97,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         DOMAINS.forEach(ExiledSectorDomain::loadItems);
         ItemDataIntegrity.logLoaded();
         ItemCraftingCosts.load();
+        InfusedCraftCosts.load();
         ItemNames.load();
         ItemDrops.load();
         BattleLootRates.load();

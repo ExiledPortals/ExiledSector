@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.ToDoubleFunction;
 
 public final class AffixLayout {
 
@@ -164,8 +165,12 @@ public final class AffixLayout {
     }
 
     static RolledModifier rollFrom(List<List<PoolEntry>> sides, Random random, TagWeights tagWeights) {
+        return rollFrom(sides, random, candidate -> candidate.biasedWeight(tagWeights));
+    }
+
+    static RolledModifier rollFrom(List<List<PoolEntry>> sides, Random random, ToDoubleFunction<PoolEntry> weightOf) {
         List<PoolEntry> side = sides.get(random.nextInt(sides.size()));
-        PoolEntry poolEntry = side.get(WeightedPick.index(side, candidate -> candidate.biasedWeight(tagWeights), random.nextFloat()));
+        PoolEntry poolEntry = side.get(WeightedPick.index(side, weightOf, random.nextFloat()));
         return RolledModifier.roll(poolEntry.modifier(), random);
     }
 

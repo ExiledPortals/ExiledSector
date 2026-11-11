@@ -146,7 +146,7 @@ The Coronal Hypershunt is its own reward, as are the Derelict Forge, the Pre-Col
 1. [x] Storm Front change: the guaranteed biome grant, removal or move of the storm modifiers, strings (en and zh_CN), `docs/docs.md`, tests.
 2. [ ] The three infused feedstock items, their `special_items.csv` rows, icons (placeholders), their tier rows, the ±15% roll per feedstock and the convoy cargo split.
 3. [ ] The Crafting Bench rework: the right-side tray framework and content hook, the bench moving left while a tray is open, the Excavation Inhibitors tray with the Prefix and Suffix Inhibitors moved into it and active inhibitors orbiting the socket, inhibitors removed from the Star Charts mode, the two inhibitors' drop rates lowered to the Immutable Nanoswarm's, then the Engrams tray (engrams moved out of the crafting items), with tests.
-4. [ ] The Infused Crafting tray and its crafts as core `ForgeOperation`s, with tests per craft.
+4. [ ] The Infused Crafting tray and its crafts as core `ForgeOperation`s, with tests per craft. Partly built: the crafts are core `InfusedCraft` (logic in `InfusedCrafting`, costs and feedstock per tag in `infused_crafts.csv` read by `InfusedCraftCosts`), tested in hull-upgrades `InfusedCraftTest` and core `InfusedCraftCostsTest`; the tray wiring waits on step 3.
 5. [ ] Depot prototypes: `prototype_implicits.csv`, the vault's pick of three, strings, tests.
 6. [ ] Stellar Flares lucky rolls, Black Hole immutable drops and Dense Nebula settling dust.
 7. [ ] Remnant Nexus overcharged drops.
