@@ -1,4 +1,5 @@
 import type { EffectInfo, Vocabulary } from '../../api/vocabulary.ts';
+import { themeTagsFor } from '../../shared/themeTags.ts';
 import { DIALOG_TYPE_SECTIONS, INSPECTOR_TYPE_SECTIONS, NODE_HEADER_TYPE_SECTIONS, type TypeFormSection } from './inspector/typeFormSections.ts';
 import { ATLAS_TREE_FILES, SHIP_TREE_FILES, type TreeFiles } from './model/treeFiles.ts';
 import type { Tier } from './model/types.ts';
@@ -38,16 +39,17 @@ function atlasEditorVocabulary(vocabulary: Vocabulary, declaredVolumes: string[]
   const chartEffects = vocabulary.chartEffectNames.map((name): EffectInfo => ({ name, statMode: CHART_EFFECT_MODE, lowerIsBetter: false }));
   const atlasEffects = vocabulary.atlasEffectNames.map((name): EffectInfo => ({ name, statMode: ATLAS_EFFECT_MODE, lowerIsBetter: false }));
   const treeEffects = [...chartEffects, ...atlasEffects];
+  const chartThemeTags = themeTagsFor(vocabulary, 'star_chart');
   return {
     ...vocabulary,
     effectNames: treeEffects.map((effect) => effect.name),
     effectInfo: new Map(treeEffects.map((effect) => [effect.name, effect])),
-    themeTags: [],
+    themeTags: chartThemeTags,
     volumeTags: declaredVolumes.slice(),
     requirementTags: [],
     gateTags: [],
     ruleTags: [],
-    allTags: declaredVolumes.slice(),
+    allTags: [...chartThemeTags, ...declaredVolumes],
     tiers: ATLAS_TIERS.slice(),
   };
 }
@@ -58,7 +60,7 @@ export const ATLAS_TREE_KIND: TreeKind = {
   files: ATLAS_TREE_FILES,
   draftStorageKey: 'exiledSectorEditor.atlasTreeDraft',
   reservesRetiredNodeIds: false,
-  typeSections: { nodeHeader: [], inspector: ['flavour', 'effects'], dialog: ['identity', 'effects', 'flavour', 'todo'] },
+  typeSections: { nodeHeader: [], inspector: ['flavour', 'effects'], dialog: ['identity', 'tags', 'effects', 'flavour', 'todo'] },
   editorVocabulary: atlasEditorVocabulary,
 };
 

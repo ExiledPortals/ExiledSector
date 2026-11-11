@@ -1,14 +1,18 @@
 package exiledsector.items;
 
 import exiledsector.ModCsv;
+import exiledsector.data.CsvRows;
 import exiledsector.domain.DomainContributions;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
+import exiledsector.skills.tags.ThemeTagScope;
+import exiledsector.skills.tags.ThemeTags;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,6 +40,7 @@ public final class ItemDataIntegrity {
     static final String HYBRID_ID_PREFIX = "HYBRID_";
     static final String ENTRY_SEPARATOR = ";";
     static final int FIRST_DATA_LINE = 2;
+    static final String TAG_BESIDE_ANCESTOR = " beside its ancestor ";
     private static final Logger LOG = Logger.getLogger(ItemDataIntegrity.class);
     private static final DomainContributions<ItemDataRules> RULES = DomainContributions.fromEveryDomain(ExiledSectorDomain::itemDataRules);
 
@@ -82,6 +87,8 @@ public final class ItemDataIntegrity {
             for (Violation violation : violations) {
                 if (violation.severity() == Severity.ERROR) {
                     LOG.error(violation);
+                } else {
+                    LOG.warn(violation);
                 }
             }
         } catch (IOException | JSONException e) {
@@ -168,6 +175,7 @@ public final class ItemDataIntegrity {
                 rules.checkModifierRow(this, file, line, modifierId, scopes, parsedLines);
             }
             checkIdConvention(file, line, modifierId, effectNames);
+            checkTags(file, line, modifierId, row, scopes);
             modifiersById.put(modifierId, new ModifierRow(modifierId, slot, scopes, effectNames,
                     !ModCsv.text(row, "name").isEmpty(), line, file));
         });
@@ -252,6 +260,34 @@ public final class ItemDataIntegrity {
             }
         } else if (effectNames.size() > 1 && !modifierId.startsWith(HYBRID_ID_PREFIX)) {
             error(file, line, modifierId + " has several effects, so its id must start with " + HYBRID_ID_PREFIX);
+        }
+    }
+
+    private void checkTags(String file, int line, String modifierId, JSONObject row, Set<ModifierScope> scopes) {
+        if (!row.has(ItemModifiers.TAGS_COLUMN)) {
+            return;
+        }
+        List<String> tags = CsvRows.entries(ModCsv.text(row, ItemModifiers.TAGS_COLUMN));
+        if (tags.isEmpty()) {
+            error(file, line, modifierId + " has no tags; list its theme tags, or " + ItemModifiers.TAGLESS + " for a tagless modifier");
+            return;
+        }
+        if (tags.equals(List.of(ItemModifiers.TAGLESS))) {
+            return;
+        }
+        ThemeTagScope tagScope = scopes.contains(ModifierScope.STAR_CHART) ? ThemeTagScope.STAR_CHART : ThemeTagScope.SHIP;
+        for (String tag : tags) {
+            if (tag.equals(ItemModifiers.TAGLESS)) {
+                error(file, line, modifierId + " lists " + ItemModifiers.TAGLESS + " beside other tags; " + ItemModifiers.TAGLESS
+                        + " marks a modifier with no tags");
+            } else if (!ThemeTags.isThemeTag(tag)) {
+                error(file, line, modifierId + " lists the tag \"" + tag + "\", which is not in " + ThemeTags.PATH);
+            } else if (!ThemeTags.allows(tag, tagScope)) {
+                error(file, line, modifierId + " lists the tag \"" + tag + "\", which is not a " + tagScope.id() + " tag in " + ThemeTags.PATH);
+            }
+            for (String ancestor : ThemeTags.ancestorsListedBeside(tag, tags)) {
+                warning(file, line, modifierId + " lists the tag \"" + tag + "\"" + TAG_BESIDE_ANCESTOR + "\"" + ancestor + "\", which it already counts as");
+            }
         }
     }
 

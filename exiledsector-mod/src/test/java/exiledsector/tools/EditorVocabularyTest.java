@@ -1,6 +1,8 @@
 package exiledsector.tools;
 
 import exiledsector.ProjectFiles;
+import exiledsector.skills.tags.ThemeTagScope;
+import exiledsector.skills.tags.ThemeTags;
 import exiledsector.skills.unlock.BlueprintCategory;
 import exiledsector.skills.unlock.UnlockConditionType;
 import org.json.JSONArray;
@@ -47,6 +49,23 @@ class EditorVocabularyTest {
         }
         JSONArray effects = manifest.getJSONArray("effects");
         assertTrue(effects.getJSONObject(0).has("name"));
+    }
+
+    @Test
+    void theManifestSendsEveryThemeTagWithItsParentAndScopes() throws JSONException {
+        JSONArray themeTags = new JSONObject(EditorVocabulary.generate()).getJSONArray("themeTags");
+
+        assertEquals(ThemeTags.ids().size(), themeTags.length());
+        for (int i = 0; i < themeTags.length(); i++) {
+            JSONObject themeTag = themeTags.getJSONObject(i);
+            String tag = themeTag.getString("id");
+            assertEquals(ThemeTags.parent(tag), themeTag.isNull("parent") ? null : themeTag.getString("parent"), tag);
+            JSONArray scopes = themeTag.getJSONArray("scopes");
+            assertEquals(ThemeTags.scopes(tag).size(), scopes.length(), tag);
+            for (int j = 0; j < scopes.length(); j++) {
+                assertTrue(ThemeTags.allows(tag, ThemeTagScope.byId(scopes.getString(j))), tag);
+            }
+        }
     }
 
     @Test

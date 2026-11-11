@@ -1,9 +1,10 @@
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { csvCell, csvTableFromRows, parseCsvTable, serializeCsvTable, trimmedCsvCells, type CsvTable } from '../../../shared/csv.ts';
 import { isNumberText } from '../../../shared/decimalText.ts';
+import { themeTagIssues } from '../../../shared/themeTags.ts';
 import { WORMHOLE_ANCHOR_TYPE } from './anchors.ts';
 import { DOCTRINE_TYPE } from './doctrines.ts';
-import { familyEffectNames, isFamilyEffect, MODIFIER_FILE_NAMES, type ItemFamily } from './itemFamily.ts';
+import { familyEffectNames, familyTagScope, isFamilyEffect, MODIFIER_FILE_NAMES, type ItemFamily } from './itemFamily.ts';
 
 export const MODIFIER_COLUMNS = ['id', 'affix', 'scopes', 'lines', 'name'] as const;
 export const EXCLUSIVE_GROUPS_COLUMN = 'exclusive_groups';
@@ -434,6 +435,10 @@ export function validateModifiers(
       if (!MODIFIER_ID_PATTERN.test(tag)) {
         issues.push(`${label}: tag "${tag}" must be letters, digits and underscores`);
       }
+    }
+    if (!tags.includes(TAGLESS)) {
+      const wellFormedTags = tags.filter((tag) => MODIFIER_ID_PATTERN.test(tag));
+      issues.push(...themeTagIssues(vocabulary, familyTagScope(family), wellFormedTags).map((issue) => `${label}: ${issue}`));
     }
     const modifierUsage = usage.get(modifier.id);
     if (modifierUsage && modifierUsage.nonUniqueItems.length > 0 && !modifier.name.trim()) {

@@ -43,6 +43,13 @@ class ThemeTagsTest {
     }
 
     @Test
+    void aTagListedBesideItsOwnAncestorNamesThatAncestor() {
+        assertEquals(List.of("shield", "defence"), ThemeTags.ancestorsListedBeside("front_shield", List.of("defence", "front_shield", "shield", "flux")));
+        assertEquals(List.of(), ThemeTags.ancestorsListedBeside("ballistic", List.of("ballistic", "energy")));
+        assertEquals(List.of(), ThemeTags.ancestorsListedBeside("weapon", List.of("weapon", "ballistic")));
+    }
+
+    @Test
     void damageTypesHaveNoParent() {
         for (String damageType : List.of("kinetic", "high_explosive", "fragmentation", "energy_damage", "emp")) {
             assertNull(ThemeTags.parent(damageType), damageType);

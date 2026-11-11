@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import exiledsector.items.ItemDataIntegrity.Severity;
 import exiledsector.items.ItemDataIntegrity.Violation;
+import exiledsector.skills.tags.ThemeTags;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -387,6 +388,67 @@ class ItemDataIntegrityTest {
         assertTrue(errors.contains("engine_room lists \"TOP_SPEED_PERCENT:5:10\" inline; reference a modifier as @ID"), errors.toString());
         assertTrue(errors.contains("bridge entry \"@HYBRID_ARMOR_HULL:5\" has a weight, but implicits always roll"), errors.toString());
         assertTrue(errors.contains("bridge is already listed on line 5"), errors.toString());
+    }
+
+    private static JSONObject taggedModifier(String id, String tags) throws JSONException {
+        return modifier(id, "prefix", id + ":1:2", "Tagged").put(ItemModifiers.TAGS_COLUMN, tags);
+    }
+
+    private static List<Violation> tagViolations(JSONArray modifiers) throws JSONException {
+        return check(modifiers, validSubroutines(), validHullItems(), validImplicits()).stream()
+                .filter(violation -> violation.message().contains("tag")).toList();
+    }
+
+    private static List<String> messages(List<Violation> violations, Severity severity) {
+        return violations.stream().filter(violation -> violation.severity() == severity).map(Violation::message).toList();
+    }
+
+    @Test
+    void theShippedModifiersAllHaveATagsColumnAndNoTagBesideItsAncestor() throws Exception {
+        for (String path : List.of(ItemModifiers.dataPath(), StarChartItems.MODIFIERS_PATH)) {
+            JSONArray rows = HullItemRows.shippedRows(path);
+            for (int i = 0; i < rows.length(); i++) {
+                assertTrue(rows.getJSONObject(i).has(ItemModifiers.TAGS_COLUMN), path + " has no " + ItemModifiers.TAGS_COLUMN + " column");
+            }
+        }
+        List<Violation> violations = ItemDataChecks.checkWithStarCharts(HullItemRows.shippedRows(ItemModifiers.dataPath()),
+                HullItemRows.shippedRows(SubroutineDefinitions.dataPath()), HullItemRows.shippedRows(HullItem.definitionsPath()),
+                HullItemRows.shippedRows(ItemImplicits.dataPath()), HullItemRows.shippedRows(StarChartItems.MODIFIERS_PATH),
+                HullItemRows.shippedRows(StarChartDefinitions.DATA_PATH), HullItemRows.shippedRows(StarChartImplicits.DATA_PATH));
+
+        assertEquals(List.of(), violations.stream().filter(violation -> violation.message().contains(ItemDataIntegrity.TAG_BESIDE_ANCESTOR)).toList());
+    }
+
+    @Test
+    void modifierTagsAreShipThemeTagsOrNoneAlone() throws Exception {
+        JSONArray modifiers = validModifiers()
+                .put(taggedModifier("HULL_PERCENT", "hull"))
+                .put(taggedModifier("TOP_SPEED_PERCENT", "none"))
+                .put(taggedModifier("VENT_RATE_PERCENT", ""))
+                .put(taggedModifier("ARMOR_FLAT", "plating"))
+                .put(taggedModifier("FLUX_CAPACITY_PERCENT", "boss"))
+                .put(taggedModifier("FLUX_DISSIPATION_PERCENT", "none;flux"));
+
+        List<String> errors = messages(tagViolations(modifiers), Severity.ERROR);
+
+        assertEquals(List.of("VENT_RATE_PERCENT has no tags; list its theme tags, or none for a tagless modifier",
+                "ARMOR_FLAT lists the tag \"plating\", which is not in " + ThemeTags.PATH,
+                "FLUX_CAPACITY_PERCENT lists the tag \"boss\", which is not a ship tag in " + ThemeTags.PATH,
+                "FLUX_DISSIPATION_PERCENT lists none beside other tags; none marks a modifier with no tags"), errors);
+    }
+
+    @Test
+    void aModifierRowWithoutATagsColumnIsLeftUntagged() throws Exception {
+        assertEquals(List.of(), tagViolations(validModifiers().put(modifier("HULL_PERCENT", "prefix", "HULL_PERCENT:1:2", "Sturdy"))));
+    }
+
+    @Test
+    void aTagBesideItsOwnAncestorIsOnlyAWarning() throws Exception {
+        List<Violation> violations = tagViolations(validModifiers().put(taggedModifier("SHIELD_ARC_PERCENT", "defence;front_shield")));
+
+        assertEquals(List.of(), messages(violations, Severity.ERROR));
+        assertEquals(List.of("SHIELD_ARC_PERCENT lists the tag \"front_shield\" beside its ancestor \"defence\", which it already counts as"),
+                messages(violations, Severity.WARNING));
     }
 
     @Test

@@ -5,6 +5,7 @@ import exiledsector.items.ItemDataIntegrity.Severity;
 import exiledsector.items.ItemDataIntegrity.Violation;
 import exiledsector.modifiers.ModifierSlot;
 import exiledsector.modifiers.TierRange;
+import exiledsector.skills.tags.ThemeTags;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -130,6 +131,20 @@ class StarChartDataTest {
         assertTrue(errors.contains("chart_b references CHART_MISSING, which is not in " + StarChartItems.MODIFIERS_PATH), errors.toString());
         assertTrue(errors.stream().anyMatch(error -> error.contains("NEBULA")), errors.toString());
         assertTrue(shipErrors.contains("chip entry \"@HULL_MULT:5:t3\" has a tier range, but only star charts have tiers"), shipErrors.toString());
+    }
+
+    @Test
+    void chartModifierTagsMustBeStarChartThemeTags() throws Exception {
+        JSONArray chartModifiers = new JSONArray()
+                .put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:low=1/mid=2/high=2", "Discovery")
+                        .put(ItemModifiers.TAGS_COLUMN, "loot;encounter"))
+                .put(chartModifier("CHART_ITEM_PERCENT", "suffix", "CHART_ITEM_PERCENT:low=1/mid=2/high=2", "Plunder")
+                        .put(ItemModifiers.TAGS_COLUMN, "logistics"));
+
+        List<String> errors = chartErrors(new JSONArray(), chartModifiers, new JSONArray(), new JSONArray()).stream()
+                .filter(error -> error.contains("tag")).toList();
+
+        assertEquals(List.of("CHART_ITEM_PERCENT lists the tag \"logistics\", which is not a star_chart tag in " + ThemeTags.PATH), errors);
     }
 
     @Test
