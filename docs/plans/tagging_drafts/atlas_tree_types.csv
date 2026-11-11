@@ -1,0 +1,5 @@
+id,name,effects,tags
+atlas_root,Wormhole Gateway,,
+travel_boss_star_charts,Boss Star Charts,CHART_BOSS_STAR_CHART_PERCENT,star_chart
+travel_catalysts,Atlas Catalysts,CHART_CATALYST_PERCENT,loot
+travel_chart_modifier_effect,Star Chart Modifier Effect,CHART_MODIFIER_EFFECT_PERCENT,encounter;loot
