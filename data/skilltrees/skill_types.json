@@ -7815,22 +7815,22 @@
 			"effects": [
 				{
 					"effect": "SHIP_MASS_PERCENT",
-					"magnitude": 50
+					"magnitude": 100
 				},
 				{
 					"effect": "MANEUVERABILITY_MULT",
-					"magnitude": -35
+					"magnitude": -70
 				}
 			],
 			"integrated": {
 				"effects": [
 					{
 						"effect": "SHIP_MASS_PERCENT",
-						"magnitude": 50
+						"magnitude": 150
 					},
 					{
 						"effect": "MANEUVERABILITY_MULT",
-						"magnitude": -20
+						"magnitude": -70
 					}
 				]
 			},
