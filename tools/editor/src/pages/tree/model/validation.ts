@@ -1,5 +1,6 @@
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { isUnshippedImagePath } from '../../../shared/imagePaths.ts';
+import { ancestorsListedBeside } from '../../../shared/themeTags.ts';
 import { isVolumeTag } from './tags.ts';
 import { tierOf, type TreeDocument } from './types.ts';
 
@@ -72,11 +73,15 @@ function validateTags(document: TreeDocument, vocabulary: Vocabulary, issues: st
     }
   }
   for (const type of document.types) {
-    for (const tag of type.tags ?? []) {
+    const typeTags = type.tags ?? [];
+    for (const tag of typeTags) {
       if (!vocabulary.allTags.includes(tag)) {
         issues.push(`Type "${type.id}" has unknown tag "${tag}"`);
       } else if (isVolumeTag(vocabulary, tag)) {
         issues.push(`Type "${type.id}" carries volume tag "${tag}", volume tags belong on nodes`);
+      }
+      for (const ancestor of ancestorsListedBeside(vocabulary, tag, typeTags)) {
+        issues.push(`Type "${type.id}" lists "${tag}" beside its ancestor "${ancestor}", which it already counts as`);
       }
     }
   }

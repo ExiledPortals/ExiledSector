@@ -79,6 +79,7 @@
 			],
 			"tags": [
 				"ballistic",
+				"damage",
 				"req_ballistic"
 			]
 		},
@@ -184,7 +185,7 @@
 			"flavour": "Raids flown alongside pirate crews teach the crew to turn spare berths and cargo lifts into a drop platform for the marines, and to keep a few guns pointed at the ground while they work.",
 			"flavourAutomated": "The ship's core logs every pirate raid it flies beside, down to where the guns point while the marines are on the ground. The refit crew turns its cargo lifts into a drop platform, and the core keeps the guns where the logs say.",
 			"tags": [
-				"logistics",
+				"crew",
 				"campaign_only",
 				"logistics_cap"
 			]
@@ -215,7 +216,8 @@
 			"flavour": "Pirate fire control holds until a target's shields collapse or its drives gutter out. Fair fights are for the naive.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapon"
+				"damage",
+				"on_kill"
 			]
 		},
 		{
@@ -244,6 +246,7 @@
 			"flavour": "Pirate captains run with their transponders dark and their drive plumes baffled behind scrap plating.",
 			"todo": "Needs an icon.",
 			"tags": [
+				"sensors",
 				"logistics",
 				"campaign_only",
 				"logistics_cap"
@@ -275,7 +278,9 @@
 			"flavour": "A good pirate doesn't wait for their prey to recover.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapon"
+				"rate_of_fire",
+				"on_kill",
+				"nearby_ships"
 			]
 		},
 		{
@@ -304,7 +309,8 @@
 			"flavour": "Acquiring plunder is sometimes not as important as making it home.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"mobility"
+				"mobility",
+				"damage_taken"
 			]
 		},
 		{
@@ -334,6 +340,7 @@
 			"todo": "Needs an icon.",
 			"tags": [
 				"logistics",
+				"mobility",
 				"campaign_only",
 				"logistics_cap"
 			]
@@ -360,7 +367,8 @@
 			"flavour": "A convoy is only as safe as its slowest freighter.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapon"
+				"damage",
+				"nearby_ships"
 			]
 		},
 		{
@@ -468,7 +476,8 @@
 			"flavour": "\"And what the defiler builds shall be unmade around its every wound, so that no part remains to be mended.\"\n- Attributed to the Book of Ludd, apocrypha",
 			"tags": [
 				"energy",
-				"armour",
+				"damage",
+				"on_hit",
 				"req_energy"
 			]
 		},
@@ -518,7 +527,6 @@
 			"flavour": "A recovered gamma core, kept powered just long enough to be questioned, gives up the targeting routines Remnant drones use to lead a target.",
 			"flavourAutomated": "A recovered gamma core holds the targeting routines Remnant drones use to lead a target. The ship's core copies them across in a fraction of a second.",
 			"tags": [
-				"weapon",
 				"range"
 			]
 		},
@@ -547,7 +555,8 @@
 			},
 			"flavour": "Sensor logs from fights with Remnant fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.",
 			"tags": [
-				"fleet_support"
+				"fleet_support",
+				"nearby_ships"
 			]
 		},
 		{
@@ -600,6 +609,7 @@
 			],
 			"tags": [
 				"missile",
+				"damage",
 				"req_missile"
 			]
 		},
@@ -615,6 +625,7 @@
 			],
 			"tags": [
 				"energy",
+				"damage",
 				"req_non_beam_energy"
 			]
 		},
@@ -629,8 +640,9 @@
 				}
 			],
 			"tags": [
-				"energy",
 				"beam",
+				"energy",
+				"damage",
 				"req_beam"
 			]
 		},
@@ -639,7 +651,8 @@
 			"name": "Energy Weapon Damage",
 			"icon": "graphics/icons/energy_damage.png",
 			"tags": [
-				"energy"
+				"energy",
+				"damage"
 			]
 		},
 		{
@@ -647,7 +660,7 @@
 			"name": "All Weapon Damage",
 			"icon": "graphics/icons/weapon_damage.png",
 			"tags": [
-				"weapon"
+				"damage"
 			]
 		},
 		{
@@ -714,8 +727,8 @@
 			"flavour": "Diktat propaganda insists that the Lion's gaze falls on every citizen at once, and the engineer-technicians of the Lion's Guard took the slogan literally. Studying the Executors they refit teaches the crew to split this ship's beams across the target and the enemy ships around it.",
 			"flavourAutomated": "Diktat propaganda insists that the Lion's gaze falls on every citizen at once, and the engineer-technicians of the Lion's Guard took the slogan literally. The ship's core records how a Lion's Guard Executor divides its beams across a target and the ships around it, and splits its own the same way. It does not record the slogan.",
 			"tags": [
-				"energy",
 				"beam",
+				"energy",
 				"req_beam"
 			]
 		},
@@ -828,7 +841,8 @@
 			],
 			"tags": [
 				"flux",
-				"mobility"
+				"mobility",
+				"combat_readiness"
 			]
 		},
 		{
@@ -853,7 +867,11 @@
 						"magnitude": 100
 					}
 				]
-			}
+			},
+			"tags": [
+				"high_explosive",
+				"damage"
+			]
 		},
 		{
 			"id": "at_any_cost",
@@ -881,7 +899,11 @@
 						"magnitude": 0
 					}
 				]
-			}
+			},
+			"tags": [
+				"hull",
+				"damage"
+			]
 		},
 		{
 			"id": "refracting_projectiles",
@@ -918,6 +940,7 @@
 			"flavourAutomated": "Pulling apart the energy converters of wrecked Tri-Tachyon warships shows the refit crew how to tune this ship's energy bolts to glance off an enemy shield and carry on to another target. Tri-Tachyon sales literature calls this efficiency.",
 			"tags": [
 				"energy",
+				"on_hit",
 				"req_non_beam_energy"
 			]
 		},
@@ -948,6 +971,7 @@
 			"flavourAutomated": "The Hegemony Navy keeps breacher loads for boarding actions, shells hardened to punch through plating instead of bursting on it. The ship's core finds their specifications in a seized Navy ordnance manifest and loads them for every fight.",
 			"tags": [
 				"ballistic",
+				"on_hit",
 				"req_ballistic"
 			]
 		},
@@ -978,6 +1002,7 @@
 			"flavourAutomated": "The ship's core logs hours of Hegemony line engagements and reproduces the Navy's habit of arriving at speed and firing before the enemy has settled, guns thumping out what the Navy calls its heartbeat. The core keeps time more evenly than any Navy gunner.",
 			"tags": [
 				"ballistic",
+				"damage",
 				"mobility",
 				"req_ballistic"
 			]
@@ -1015,8 +1040,8 @@
 			},
 			"flavour": "In a joint League fleet, every member world jams anyone it suspects of listening, which is everyone. Most of the noise comes from allies.",
 			"tags": [
-				"weapon",
-				"range"
+				"electronic_warfare",
+				"sensors"
 			]
 		},
 		{
@@ -1044,6 +1069,7 @@
 			},
 			"flavour": "Under the League's founding compact, every member world must defend whatever the League holds.",
 			"tags": [
+				"damage_taken",
 				"fleet_support"
 			]
 		},
@@ -1073,6 +1099,8 @@
 			"flavour": "No League detachment will launch second, so joint fleets launch every wing at once.",
 			"tags": [
 				"fighter",
+				"damage",
+				"nearby_ships",
 				"req_fighter_bays"
 			]
 		},
@@ -1101,7 +1129,8 @@
 			},
 			"flavour": "Every League depot stocks spares for its own world's hulls and nothing else. The paperwork for a mixed fleet runs to several volumes, one per world.",
 			"tags": [
-				"logistics",
+				"supplies",
+				"fuel",
 				"campaign_only",
 				"logistics_cap"
 			]
@@ -1127,7 +1156,8 @@
 			},
 			"flavour": "Kazeron's orbital yards will not certify a recovered hull until every frame weld has been inspected.",
 			"tags": [
-				"logistics",
+				"salvage",
+				"d_mods",
 				"campaign_only",
 				"logistics_cap"
 			]
@@ -1165,7 +1195,10 @@
 			},
 			"flavour": "Hegemony refit yards still harden hulls to Domain specifications, emitter and plate alike, unchanged since before the Collapse.",
 			"tags": [
-				"armour"
+				"armour",
+				"kinetic",
+				"high_explosive",
+				"damage_taken"
 			]
 		},
 		{
@@ -1195,7 +1228,8 @@
 			"flavourAutomated": "Hegemony point defense crews pack their flak loads for a wide burst, on the theory that a missile is rarely alone. The ship's core records the pattern while escorting a Dominator through a missile strike, and the refit crew repacks the magazines to match.",
 			"tags": [
 				"point_defense",
-				"weapon"
+				"fragmentation",
+				"on_kill"
 			]
 		},
 		{
@@ -1224,7 +1258,8 @@
 			"flavour": "Hegemony line drill holds that a battle line which keeps station cannot be broken, only worn down. The crew posts damage-control teams behind the forward armor and learns to stop the ship when the shooting starts. Navy instructors call this courage. Navy accountants call it cheaper than engines.",
 			"flavourAutomated": "Hegemony line drill holds that a battle line which keeps station cannot be broken, only worn down. The ship's core studies recordings of Navy lines under fire, and the refit crew braces the forward armor for a ship that stops when the shooting starts. Navy instructors call this courage. Navy accountants call it cheaper than engines.",
 			"tags": [
-				"armour"
+				"armour",
+				"damage_taken"
 			]
 		},
 		{
@@ -1258,7 +1293,9 @@
 			"flavour": "Hegemony auxiliary fleets are made of whatever the Navy can requisition, and the battle line is expected to shelter them. A cycle of convoy duty out of Jangala teaches the crew to keep the ship between the enemy and the smaller hulls. The auxiliaries are grateful, in the manner of people who have been told to be.",
 			"flavourAutomated": "Hegemony auxiliary fleets are made of whatever the Navy can requisition, and the battle line is expected to shelter them. The ship's core logs a cycle of convoy duty out of Jangala and learns to keep its hull between the enemy and the smaller ships. The auxiliaries are grateful, in the manner of people who have been told to be.",
 			"tags": [
-				"fleet_support"
+				"fleet_support",
+				"damage_taken",
+				"nearby_ships"
 			]
 		},
 		{
@@ -1288,6 +1325,7 @@
 			"flavourAutomated": "Planetary defense batteries on Eventide fire heavy shells with a delayed charge that bursts just inside the plating, shaking loose whatever is mounted nearby. The ship's core copies the fusing tables from a salvaged battery fire-control unit, and the refit crew packs the shells to match.",
 			"tags": [
 				"ballistic",
+				"on_hit",
 				"req_ballistic"
 			]
 		},
@@ -1319,6 +1357,7 @@
 			"tags": [
 				"energy",
 				"range",
+				"sensors",
 				"req_energy"
 			]
 		},
@@ -1404,8 +1443,8 @@
 			"flavour": "Phase coils lose their grip on normal space as hard flux builds. A crew willing to rewind them by hand can keep that grip a while longer.",
 			"flavourAutomated": "Phase coils lose their grip on normal space as hard flux builds. The ship's core models the slip from its own coil telemetry and corrects for it faster than any hand could rewind them, keeping that grip a while longer.",
 			"tags": [
-				"flux",
 				"phase",
+				"flux",
 				"req_phase"
 			]
 		},
@@ -1443,8 +1482,9 @@
 				"advancedoptics"
 			],
 			"tags": [
-				"energy",
 				"beam",
+				"energy",
+				"range",
 				"req_beam"
 			]
 		},
@@ -1718,7 +1758,8 @@
 				"blast_doors"
 			],
 			"tags": [
-				"hull"
+				"hull",
+				"crew"
 			]
 		},
 		{
@@ -1858,7 +1899,8 @@
 			],
 			"flavour": "The built-in bays are stripped of launch rails and chassis forges, leaving a great deal of oddly shaped cargo space.",
 			"tags": [
-				"logistics",
+				"cargo",
+				"crew",
 				"req_fighter_bays",
 				"campaign_only",
 				"logistics_cap"
@@ -2033,7 +2075,8 @@
 				"eccm"
 			],
 			"tags": [
-				"missile"
+				"missile",
+				"electronic_warfare"
 			],
 			"moduleShare": "all"
 		},
@@ -2074,7 +2117,7 @@
 			],
 			"flavour": "Jammers, decoy emitters and a deliberately noisy reactor or two, tuned so that enemy fire control never quite trusts its own solutions.",
 			"tags": [
-				"fleet_support"
+				"electronic_warfare"
 			]
 		},
 		{
@@ -2132,7 +2175,8 @@
 			],
 			"tags": [
 				"fleet_support",
-				"mobility"
+				"mobility",
+				"range"
 			]
 		},
 		{
@@ -2219,6 +2263,7 @@
 			"flavourAutomated": "Leaked papers from Tri-Tachyon's Hybrid Physics Division (on phase work the corporation swears it abandoned under the Treaty of Thule) describe how to bleed a ship's sensor emissions into the masking field phase ships throw over a fleet. Tri-Tachyon maintains the papers are forgeries.",
 			"tags": [
 				"phase",
+				"sensors",
 				"req_phase",
 				"player_only"
 			]
@@ -2257,9 +2302,9 @@
 			"flavour": "League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other. Serving under a League commission drills it into the crew.",
 			"flavourAutomated": "League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other. The ship's core records it from the League ships it serves beside and runs it perfectly every time, a feat no League crew has ever managed.",
 			"tags": [
+				"ammo",
 				"ballistic",
-				"energy",
-				"ammo"
+				"energy"
 			]
 		},
 		{
@@ -2308,9 +2353,9 @@
 				"magazines"
 			],
 			"tags": [
+				"ammo",
 				"ballistic",
-				"energy",
-				"ammo"
+				"energy"
 			]
 		},
 		{
@@ -2348,6 +2393,7 @@
 			],
 			"tags": [
 				"missile",
+				"ammo",
 				"req_missile"
 			]
 		},
@@ -2430,6 +2476,7 @@
 			],
 			"tags": [
 				"armour",
+				"shieldless",
 				"req_shields",
 				"req_unscripted_hull"
 			]
@@ -2466,7 +2513,7 @@
 				"frontshield"
 			],
 			"tags": [
-				"shield",
+				"front_shield",
 				"req_no_shields",
 				"req_unscripted_hull"
 			]
@@ -2511,6 +2558,7 @@
 			"flavour": "Rack-side autoloaders that refill the small launchers from a common magazine, for as long as the magazine lasts.",
 			"tags": [
 				"missile",
+				"ammo",
 				"req_missile"
 			]
 		},
@@ -2547,6 +2595,8 @@
 				"Transferring to either linked ship resets its ship system cooldown and adds a charge."
 			],
 			"tags": [
+				"ship_system",
+				"fleet_support",
 				"player_only"
 			]
 		},
@@ -2589,6 +2639,7 @@
 			],
 			"tags": [
 				"shield",
+				"damage_taken",
 				"req_shields"
 			]
 		},
@@ -2737,7 +2788,7 @@
 			"flavour": "A Kesteven R&D modspec lets the crew feed the ship's own momentum into its guns. Kesteven's notes recommend never slowing down.",
 			"flavourAutomated": "A Kesteven R&D modspec lets the refit crew feed the ship's own momentum into its guns. Kesteven's notes recommend never slowing down.",
 			"tags": [
-				"weapon",
+				"damage",
 				"mobility"
 			]
 		},
@@ -2774,6 +2825,7 @@
 			"tags": [
 				"energy",
 				"range",
+				"flux",
 				"req_energy"
 			],
 			"moduleShare": "all"
@@ -2806,6 +2858,7 @@
 			],
 			"tags": [
 				"energy",
+				"rate_of_fire",
 				"req_energy"
 			]
 		},
@@ -2839,7 +2892,7 @@
 			"flavourAutomated": "Disassembling the ABSORB loop from a Kingstork showed the refit crew how to bank the energy the shields block instead of venting it. The ship's core decides when to spend it on the guns.",
 			"tags": [
 				"shield",
-				"weapon",
+				"rate_of_fire",
 				"req_shields"
 			]
 		},
@@ -2880,6 +2933,8 @@
 			},
 			"tags": [
 				"missile",
+				"damage",
+				"on_kill",
 				"req_missile"
 			]
 		},
@@ -2911,7 +2966,8 @@
 				]
 			},
 			"tags": [
-				"logistics",
+				"crew",
+				"on_kill",
 				"player_only"
 			]
 		},
@@ -2951,7 +3007,9 @@
 				]
 			},
 			"tags": [
-				"armour"
+				"armour",
+				"repair",
+				"on_kill"
 			]
 		},
 		{
@@ -3050,8 +3108,9 @@
 			"flavourAutomated": "A prototype flux injector from Kesteven R&D lets the refit crew trade staying power for tempo. The modspec describes the side effects as manageable. With nobody aboard, there's nothing living to manage.",
 			"tags": [
 				"flux",
+				"flux_level",
+				"rate_of_fire",
 				"mobility",
-				"weapon",
 				"req_non_phase_hull"
 			]
 		},
@@ -3087,6 +3146,7 @@
 			],
 			"flavour": "A Kesteven R&D modspec for capacitor banks far larger than any sane design would carry. The ship's systems rarely run dry.",
 			"tags": [
+				"ship_system",
 				"req_system_charges"
 			]
 		},
@@ -3143,8 +3203,9 @@
 			},
 			"flavour": "query. hull?. scanning. [HULL] collect, amass, gather, fuse, keep. The core does not stop. Neither does anything it holds.",
 			"tags": [
+				"combat_readiness",
 				"armour",
-				"combat_readiness"
+				"on_kill"
 			]
 		},
 		{
@@ -3198,8 +3259,9 @@
 			],
 			"todo": "Placeholder magnitudes (50% hard flux, -25% range) pending real balance numbers. Reimplemented as a scalable percentage instead of vanilla's all-or-nothing forced-hard-flux-on-every-beam-hit, and the range reduction is a flat percentage instead of vanilla's reduce-only-the-portion-past-200-units logic - deliberate simplifications, not oversights.",
 			"tags": [
-				"energy",
 				"beam",
+				"energy",
+				"damage",
 				"req_beam"
 			]
 		},
@@ -3339,8 +3401,8 @@
 				"nav_relay"
 			],
 			"tags": [
-				"mobility",
-				"fleet_support"
+				"fleet_support",
+				"mobility"
 			]
 		},
 		{
@@ -3386,7 +3448,7 @@
 			],
 			"flavour": "The omni-directional emitter is locked forward and its projectors refocused into one wide arc.",
 			"tags": [
-				"shield",
+				"front_shield",
 				"req_shields"
 			]
 		},
@@ -3425,7 +3487,7 @@
 			],
 			"flavour": "The fixed frontal emitter is replaced with a rotating mount salvaged from an omni-shield hull, which never quite covers what the old one did.",
 			"tags": [
-				"shield",
+				"omni_shield",
 				"req_shields"
 			]
 		},
@@ -3513,8 +3575,8 @@
 				"phase_anchor"
 			],
 			"tags": [
-				"flux",
 				"phase",
+				"while_phased",
 				"req_phase",
 				"player_only"
 			]
@@ -3550,6 +3612,7 @@
 			],
 			"tags": [
 				"fighter",
+				"crew",
 				"req_fighter_bays",
 				"campaign_only"
 			]
@@ -3597,7 +3660,8 @@
 				"reinforcedhull"
 			],
 			"tags": [
-				"hull"
+				"hull",
+				"salvage"
 			]
 		},
 		{
@@ -3642,7 +3706,9 @@
 				"fluxbreakers"
 			],
 			"tags": [
-				"flux"
+				"flux",
+				"emp",
+				"damage_taken"
 			],
 			"moduleShare": "all"
 		},
@@ -3716,8 +3782,7 @@
 				"unstable_injector"
 			],
 			"tags": [
-				"mobility",
-				"range"
+				"mobility"
 			],
 			"moduleShare": "none"
 		},
@@ -3750,7 +3815,7 @@
 				"additional_berthing"
 			],
 			"tags": [
-				"logistics",
+				"crew",
 				"campaign_only",
 				"logistics_cap"
 			]
@@ -3789,7 +3854,8 @@
 				"augmentedengines"
 			],
 			"tags": [
-				"logistics",
+				"mobility",
+				"fuel",
 				"logistics_cap"
 			]
 		},
@@ -3834,7 +3900,7 @@
 				"auxiliary_fuel_tanks"
 			],
 			"tags": [
-				"logistics",
+				"fuel",
 				"logistics_cap"
 			]
 		},
@@ -3912,7 +3978,9 @@
 				"efficiency_overhaul"
 			],
 			"tags": [
-				"logistics",
+				"supplies",
+				"fuel",
+				"crew",
 				"campaign_only",
 				"logistics_cap"
 			]
@@ -3958,7 +4026,7 @@
 				"expanded_cargo_holds"
 			],
 			"tags": [
-				"logistics",
+				"cargo",
 				"campaign_only",
 				"logistics_cap"
 			]
@@ -4018,7 +4086,7 @@
 				"hiressensors"
 			],
 			"tags": [
-				"logistics",
+				"sensors",
 				"logistics_cap"
 			]
 		},
@@ -4072,6 +4140,7 @@
 				"insulatedengine"
 			],
 			"tags": [
+				"sensors",
 				"hull",
 				"logistics_cap"
 			]
@@ -4110,6 +4179,7 @@
 			],
 			"tags": [
 				"logistics",
+				"mobility",
 				"req_civilian_hull",
 				"campaign_only",
 				"logistics_cap"
@@ -4215,6 +4285,9 @@
 					"effect": "LOW_TECH_AFFINITY_FLAT",
 					"magnitude": 10
 				}
+			],
+			"tags": [
+				"low_tech"
 			]
 		},
 		{
@@ -4227,6 +4300,9 @@
 					"effect": "MIDLINE_AFFINITY_FLAT",
 					"magnitude": 10
 				}
+			],
+			"tags": [
+				"midline"
 			]
 		},
 		{
@@ -4239,6 +4315,9 @@
 					"effect": "HIGH_TECH_AFFINITY_FLAT",
 					"magnitude": 10
 				}
+			],
+			"tags": [
+				"high_tech"
 			]
 		},
 		{
@@ -4253,6 +4332,7 @@
 			],
 			"tags": [
 				"fighter",
+				"damage",
 				"req_fighter_bays"
 			]
 		},
@@ -4281,8 +4361,9 @@
 				"low_tech_affinity"
 			],
 			"tags": [
-				"flux",
-				"hull"
+				"low_tech",
+				"midline",
+				"high_tech"
 			]
 		},
 		{
@@ -4296,8 +4377,7 @@
 				}
 			],
 			"tags": [
-				"hull",
-				"armour"
+				"low_tech"
 			]
 		},
 		{
@@ -4311,7 +4391,7 @@
 				}
 			],
 			"tags": [
-				"flux"
+				"high_tech"
 			]
 		},
 		{
@@ -4325,8 +4405,7 @@
 				}
 			],
 			"tags": [
-				"flux",
-				"hull"
+				"midline"
 			]
 		},
 		{
@@ -4404,6 +4483,8 @@
 			"flavour": "League battle lines drawn from rival polities learned to stand or fall together, if only because none would let another take the credit for retreating first.",
 			"tags": [
 				"shield",
+				"damage_taken",
+				"nearby_ships",
 				"req_shields"
 			]
 		},
@@ -4419,6 +4500,8 @@
 			],
 			"tags": [
 				"shield",
+				"damage_taken",
+				"nearby_ships",
 				"req_shields"
 			]
 		},
@@ -4497,7 +4580,7 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"sensors"
 			]
 		},
 		{
@@ -4511,7 +4594,7 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"sensors"
 			]
 		},
 		{
@@ -4621,7 +4704,8 @@
 			"flavourAutomated": "Captured pirate hulls show the refit crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Pirates call this maintenance.",
 			"tags": [
 				"d_mods",
-				"armour"
+				"armour",
+				"damage_taken"
 			]
 		},
 		{
@@ -4655,7 +4739,7 @@
 			"flavourAutomated": "Luddic faithful hold that a scarred ship, like a penitent, finds its strength in hardship. The ship's core holds no faith, only damage logs showing the battered guns of Luddic ships firing long past the point they should have failed. It keeps its own guns fighting the same way.",
 			"tags": [
 				"d_mods",
-				"weapon"
+				"damage"
 			]
 		},
 		{
@@ -4725,6 +4809,7 @@
 			"todo": "Needs an icon.",
 			"tags": [
 				"hull",
+				"damage_taken",
 				"req_crewed"
 			]
 		},
@@ -4789,6 +4874,7 @@
 			"todo": "Needs an icon.",
 			"tags": [
 				"flux",
+				"hull",
 				"req_shields"
 			]
 		},
@@ -4883,6 +4969,7 @@
 			"flavourAutomated": "The ship's core logs how freebooters strip every wreck to the frame and patch their ships back to fighting trim from whatever a battle leaves behind. Its repair drones do the same. Nothing is wasted, least of all the dead.",
 			"tags": [
 				"combat_readiness",
+				"salvage",
 				"player_only"
 			]
 		},
@@ -4900,7 +4987,7 @@
 				}
 			],
 			"tags": [
-				"logistics",
+				"crew",
 				"campaign_only"
 			]
 		},
@@ -4919,6 +5006,7 @@
 				}
 			],
 			"tags": [
+				"sensors",
 				"hull"
 			]
 		},
@@ -4936,7 +5024,7 @@
 				}
 			],
 			"tags": [
-				"logistics",
+				"cargo",
 				"campaign_only"
 			]
 		},
@@ -4954,7 +5042,7 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"fuel"
 			]
 		},
 		{
@@ -4998,7 +5086,7 @@
 				}
 			],
 			"tags": [
-				"shield",
+				"omni_shield",
 				"req_shields"
 			]
 		},
@@ -5025,7 +5113,8 @@
 			],
 			"tags": [
 				"ballistic",
-				"energy"
+				"energy",
+				"damage"
 			]
 		},
 		{
@@ -5064,6 +5153,7 @@
 			],
 			"tags": [
 				"shield",
+				"damage_taken",
 				"req_shields"
 			]
 		},
@@ -5125,7 +5215,8 @@
 				}
 			],
 			"tags": [
-				"hull"
+				"emp",
+				"damage_taken"
 			]
 		},
 		{
@@ -5157,7 +5248,9 @@
 				}
 			],
 			"tags": [
-				"flux"
+				"flux",
+				"emp",
+				"damage_taken"
 			],
 			"moduleShare": "all"
 		},
@@ -5257,7 +5350,7 @@
 			"flavour": "Fire-control software lifted from a pirate wreck, written to mark any target with failing shields or dead drives. The rest of its memory is gambling ledgers.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapon"
+				"damage"
 			]
 		},
 		{
@@ -5306,7 +5399,7 @@
 			"flavour": "Targeting tables from a raider's fire-control core weight every shot toward whatever can't outrun the ship.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapon"
+				"damage"
 			]
 		},
 		{
@@ -5353,7 +5446,7 @@
 				}
 			],
 			"tags": [
-				"logistics",
+				"supplies",
 				"campaign_only"
 			]
 		},
@@ -5385,7 +5478,8 @@
 				]
 			},
 			"tags": [
-				"logistics",
+				"supplies",
+				"fuel",
 				"campaign_only",
 				"logistics_cap"
 			]
@@ -5401,8 +5495,8 @@
 				}
 			],
 			"tags": [
-				"energy",
 				"beam",
+				"energy",
 				"req_beam"
 			]
 		},
@@ -5437,6 +5531,7 @@
 			"flavourAutomated": "Sindria's day side is scoured by radiation, and the emitters on its orbital arrays are hardened against it. The refit crew copies the shielding pattern from a derelict Askonian array onto this ship's emitters. Whoever designed it learned the hard way, as most Sindrians learn most things.",
 			"tags": [
 				"shield",
+				"damage_taken",
 				"req_shields"
 			]
 		},
@@ -5494,7 +5589,7 @@
 			},
 			"flavour": "Diktat burn tables treat every unit of fuel aboard as state property on loan. Repayment is expected in full.",
 			"tags": [
-				"logistics",
+				"fuel",
 				"campaign_only",
 				"logistics_cap"
 			]
@@ -5536,7 +5631,8 @@
 			},
 			"flavour": "A standing decree of the Supreme Executor names retreat as treason. It has no provision for appeal.",
 			"tags": [
-				"weapon"
+				"damage",
+				"damage_taken"
 			]
 		},
 		{
@@ -5560,7 +5656,8 @@
 			},
 			"flavour": "Diktat warships broadcast the Supreme Executor's addresses on open channels as they close, at a volume the comm filter can't fully block. Sindrian citizens are required to listen to the end.",
 			"tags": [
-				"fleet_support"
+				"fleet_support",
+				"nearby_ships"
 			]
 		},
 		{
@@ -5588,7 +5685,8 @@
 			},
 			"flavour": "The Lion's Guard keeps pace with the Supreme Executor's flagship, never the other way round. Most of its recorded maneuvers are parades.",
 			"tags": [
-				"mobility"
+				"mobility",
+				"damage_taken"
 			]
 		},
 		{
@@ -5602,7 +5700,8 @@
 				}
 			],
 			"tags": [
-				"energy_damage"
+				"energy_damage",
+				"damage_taken"
 			]
 		},
 		{
@@ -5616,7 +5715,8 @@
 				}
 			],
 			"tags": [
-				"armour"
+				"fragmentation",
+				"damage_taken"
 			]
 		},
 		{
@@ -5634,7 +5734,9 @@
 				}
 			],
 			"tags": [
-				"ammo"
+				"ammo",
+				"ballistic",
+				"energy"
 			]
 		},
 		{
@@ -5708,7 +5810,7 @@
 			"flavour": "Pirate captains who joined the crew drill the habits that make freebooters so dangerous up close: charge in, fire everything and count the casualties later. They rarely do the counting.",
 			"flavourAutomated": "The ship's core logs every fight it sees freebooters win up close: charge in, fire everything and count the casualties later. It copies the first two steps exactly. It always does the counting.",
 			"tags": [
-				"weapon"
+				"damage"
 			]
 		},
 		{
@@ -5720,6 +5822,9 @@
 					"effect": "ELECTRONIC_WARFARE_PENALTY_MULT",
 					"magnitude": -10
 				}
+			],
+			"tags": [
+				"electronic_warfare"
 			]
 		},
 		{
@@ -5737,7 +5842,8 @@
 				"CRUISER"
 			],
 			"tags": [
-				"range"
+				"range",
+				"fleet_support"
 			]
 		},
 		{
@@ -5755,7 +5861,8 @@
 				"CRUISER"
 			],
 			"tags": [
-				"mobility"
+				"mobility",
+				"fleet_support"
 			]
 		},
 		{
@@ -5813,8 +5920,9 @@
 			"flavour": "Nightcross Armory fits its dynamic coils to almost every hull it builds and never sells them on their own, so the crew pulls a set from a boarded Nightcross wreck. The warranty, naturally, does not cover third-party installation.",
 			"flavourAutomated": "Nightcross Armory fits its dynamic coils to almost every hull it builds and never sells them on their own, so the refit crew pulls a set from a boarded Nightcross wreck. The warranty, naturally, does not cover third-party installation, least of all into a machine.",
 			"tags": [
-				"shield",
 				"energy",
+				"rate_of_fire",
+				"shield",
 				"req_shields"
 			]
 		},
@@ -5841,6 +5949,8 @@
 			"flavourAutomated": "The NCA Vendor sells Ion Bolters to any well-funded mercenary, and taking one apart shows the refit crew how to overdrive this ship's energy shots the same way. The terms of sale forbid exactly this, in very small print.",
 			"tags": [
 				"energy",
+				"emp",
+				"on_hit",
 				"req_non_beam_energy"
 			]
 		},
@@ -5875,6 +5985,8 @@
 			"flavourAutomated": "Nightcross Restricted Hardlight Rifles, looted from a hidden NCA research outpost, keep count of every hit they land on a target. The ship's core reads the counter's firmware and ports it into its own wing datalink.",
 			"tags": [
 				"fighter",
+				"damage",
+				"on_hit",
 				"req_fighter_bays"
 			]
 		},
@@ -5909,6 +6021,7 @@
 			"flavourAutomated": "Tri-Tachyon's phase labs learned to lock the coils of a strike craft wing into one shared state, so a hit on one craft bleeds through p-space into the whole wing. A defector from those labs, smuggled out at no small cost, walks the refit crew through retuning this carrier's strike craft coils to the same entangled frequency.",
 			"tags": [
 				"fighter",
+				"damage_taken",
 				"req_fighter_bays"
 			]
 		},
@@ -5995,7 +6108,8 @@
 			"flavour": "Inside a recovered Ancient Prototype, where every conduit converges on a perfectly spherical void, the crew finds the Candle's Grace device that drags at the timeflow of anything near it. Who or what Candle's Grace was is not recorded, and the replica is mostly guesswork.",
 			"flavourAutomated": "Inside a recovered Ancient Prototype, where every conduit converges on a perfectly spherical void, the refit crew finds the Candle's Grace device that drags at the timeflow of anything near it. Who or what Candle's Grace was is not recorded, and the replica is mostly guesswork.",
 			"tags": [
-				"mobility"
+				"mobility",
+				"nearby_ships"
 			]
 		},
 		{
@@ -6040,7 +6154,9 @@
 			"flavour": "Stargazers fight hardest when they are dying, and the Stardust Core recovered from one, the remains of what was once a person, shows the crew how to strip the ship's safeties the moment its hull starts to fail.",
 			"flavourAutomated": "Stargazers fight hardest when they are dying. The Stardust Core recovered from one, the remains of what was once a person, holds the routine that strips a ship's safeties the moment its hull starts to fail. The ship's core runs it without hesitation.",
 			"tags": [
+				"low_hull",
 				"hull",
+				"damage_taken",
 				"combat_readiness"
 			]
 		},
@@ -6066,7 +6182,8 @@
 			"flavour": "Combat recordings pulled from a Stargazer's data core show its fire rate climbing with every hit, as if something inside it were growing angrier. The crew rewires this ship's fire control to chase the same rhythm, and tries not to wonder what it is chasing.",
 			"flavourAutomated": "Combat recordings pulled from a Stargazer's data core show its fire rate climbing with every hit, as if something inside it were growing angrier. The ship's core matches the rhythm exactly. It does not wonder what it is matching.",
 			"tags": [
-				"weapon"
+				"rate_of_fire",
+				"on_hit"
 			]
 		},
 		{
@@ -6099,7 +6216,8 @@
 			"flavour": "The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code. The crew learns to strip that code out and fire it back.",
 			"flavourAutomated": "The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code. The ship's core strips that code out and fires it back.",
 			"tags": [
-				"fleet_support"
+				"electronic_warfare",
+				"nearby_ships"
 			]
 		},
 		{
@@ -6128,8 +6246,9 @@
 			"flavour": "A corrosion emitter salvaged from a Stargazer wreck still drags stardust through whatever it touches, and the crew tunes this ship's beams to do the same.",
 			"flavourAutomated": "A corrosion emitter salvaged from a Stargazer wreck still drags stardust through whatever it touches, and the refit crew tunes this ship's beams to do the same.",
 			"tags": [
-				"energy",
 				"beam",
+				"energy",
+				"on_hit",
 				"req_beam"
 			]
 		},
@@ -6194,8 +6313,9 @@
 			"flavour": "Under Exo-Tech instruction, the crew splices phase-coil components into the ship's power lattice, fusing it with the flux grid the way Exo-Tech builds its own hulls.",
 			"flavourAutomated": "Under Exo-Tech instruction, the refit crew splices phase-coil components into the ship's power lattice, fusing it with the flux grid the way Exo-Tech builds its own hulls.",
 			"tags": [
-				"flux",
-				"mobility"
+				"mobility",
+				"sensors",
+				"flux"
 			],
 			"moduleShare": "all"
 		},
@@ -6231,6 +6351,7 @@
 			"tags": [
 				"phase",
 				"flux",
+				"while_phased",
 				"req_phase"
 			]
 		},
@@ -6266,6 +6387,7 @@
 			"tags": [
 				"phase",
 				"ammo",
+				"while_phased",
 				"req_phase"
 			]
 		},
@@ -6311,6 +6433,8 @@
 			"flavourAutomated": "Exo-Tech engineers walk the refit crew through scaling down the Hypatia's warp field to wrap the energy mounts. It was not designed to be scaled down.",
 			"tags": [
 				"energy",
+				"damage",
+				"rate_of_fire",
 				"req_energy"
 			]
 		},
@@ -6339,7 +6463,7 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"sensors"
 			]
 		},
 		{
@@ -6392,8 +6516,10 @@
 			"flavour": "Having taken apart enough Seraph hulls to see how they feed on their own wounds, the crew rewires the ship to do the same. The shield emitters were never built for that load.",
 			"flavourAutomated": "Having taken apart enough Seraph hulls to see how they feed on their own wounds, the refit crew rewires the ship to do the same. The shield emitters were never built for that load.",
 			"tags": [
-				"armour",
-				"weapon"
+				"damage_taken",
+				"mobility",
+				"rate_of_fire",
+				"flux"
 			],
 			"moduleShare": "all"
 		},
@@ -6451,6 +6577,9 @@
 			"flavourAutomated": "Picking apart the power grids of abyssal drone wrecks, the refit crew works out how their couplings survive the storms of abyssal hyperspace and rebuilds the ship's energy mounts to match.",
 			"tags": [
 				"energy",
+				"range",
+				"flux",
+				"emp",
 				"req_energy"
 			]
 		},
@@ -6513,8 +6642,9 @@
 			},
 			"flavour": "Code pulled from a dissected Seraph core, pieced back together and patched into the damage-control software. It mends the ship on what the guns take from others.",
 			"tags": [
-				"weapon",
-				"repair"
+				"repair",
+				"damage",
+				"on_hit"
 			]
 		},
 		{
@@ -6682,7 +6812,8 @@
 				"<bad>50%</bad> increased crew casualties."
 			],
 			"tags": [
-				"weapon",
+				"damage",
+				"nearby_ships",
 				"req_non_phase_hull"
 			]
 		},
@@ -6709,6 +6840,7 @@
 			],
 			"tags": [
 				"hull",
+				"repair",
 				"req_non_phase_hull"
 			]
 		},
@@ -6739,7 +6871,8 @@
 				"<bad>50%</bad> increased crew casualties."
 			],
 			"tags": [
-				"weapon",
+				"damage",
+				"on_hit",
 				"req_non_phase_hull"
 			]
 		},
@@ -6754,7 +6887,7 @@
 				}
 			],
 			"tags": [
-				"weapon"
+				"damage"
 			]
 		},
 		{
@@ -6768,7 +6901,7 @@
 				}
 			],
 			"tags": [
-				"weapon"
+				"damage"
 			]
 		},
 		{
@@ -6787,7 +6920,7 @@
 			],
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapon"
+				"damage"
 			]
 		},
 		{
@@ -6817,6 +6950,8 @@
 			"todo": "Needs an icon.",
 			"tags": [
 				"energy",
+				"damage",
+				"on_hit",
 				"req_energy"
 			]
 		},
@@ -6831,6 +6966,7 @@
 				}
 			],
 			"tags": [
+				"hull",
 				"repair"
 			]
 		},
@@ -6869,7 +7005,10 @@
 				"rat_abyssal_core"
 			],
 			"flavour": "After long hours with a recovered Chronos core, the crew decodes how it times its own systems and rewrites the ship system's control loop to match, cycling it faster than its makers ever intended.",
-			"flavourAutomated": "Linked to a recovered Chronos core, the ship's core logs how it times its own systems and rewrites the ship system's control loop to match, cycling it faster than its makers ever intended."
+			"flavourAutomated": "Linked to a recovered Chronos core, the ship's core logs how it times its own systems and rewrites the ship system's control loop to match, cycling it faster than its makers ever intended.",
+			"tags": [
+				"ship_system"
+			]
 		},
 		{
 			"id": "ship_system_cooldown",
@@ -6880,6 +7019,9 @@
 					"effect": "SYSTEM_COOLDOWN_PERCENT",
 					"magnitude": -5
 				}
+			],
+			"tags": [
+				"ship_system"
 			]
 		},
 		{
@@ -6911,7 +7053,6 @@
 			},
 			"flavour": "Fire-control routines lifted from a Tri-Tachyon line ship, written by an alpha core that never meant to share them.",
 			"tags": [
-				"weapon",
 				"energy",
 				"range"
 			]
@@ -6979,7 +7120,7 @@
 			"flavour": "Tri-Tachyon fleet doctrine ranks every target by the value it carries, and its threat tables push gunners toward the largest hulls on the field. Frigates, the tables note, are rarely worth the ammunition.",
 			"flavourAutomated": "Tri-Tachyon fleet doctrine ranks every target by the value it carries, and its threat tables push fire control toward the largest hulls on the field. The ship's core loads the tables unedited. Frigates, the tables note, are rarely worth the ammunition.",
 			"tags": [
-				"weapon"
+				"damage"
 			]
 		},
 		{
@@ -7012,8 +7153,9 @@
 			"flavour": "A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked and every one of them copied by a crew that never planned to renew.",
 			"flavourAutomated": "A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked. The ship's core scans every page once.",
 			"tags": [
+				"beam",
 				"energy",
-				"weapon",
+				"damage",
 				"range",
 				"req_beam"
 			]
@@ -7049,6 +7191,8 @@
 			"flavourAutomated": "Maintenance notes recovered from a Tri-Tachyon phase frigate's wreck, filed under a cost center that officially does not exist, show the refit crew how to slip this ship's coils into p-space cheaply and shed heat while it waits there.",
 			"tags": [
 				"phase",
+				"flux",
+				"while_phased",
 				"req_phase"
 			]
 		},
@@ -7083,6 +7227,7 @@
 			"flavourAutomated": "Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. The ship's core breaks the lock on a salvaged emitter by brute force and finds the full rated performance sitting under it.",
 			"tags": [
 				"shield",
+				"damage_taken",
 				"req_shields"
 			]
 		},
@@ -7124,6 +7269,8 @@
 			"flavour": "Tri-Tachyon's boardroom answer to every fight: commit everything and win before the bill arrives. The bill always arrives.",
 			"tags": [
 				"energy",
+				"damage",
+				"mobility",
 				"combat_readiness"
 			]
 		},
@@ -7224,8 +7371,8 @@
 			"flavour": "Pilgrim fleets cross the Sector on whatever drives they can keep lit. Their frugal burn discipline is learned between stations, with the tanks running low.",
 			"flavourAutomated": "Pilgrim fleets cross the Sector on whatever drives they can keep lit. The ship's core logs their burn profiles between stations and flies the same frugal burn, tanks running low.",
 			"tags": [
-				"logistics",
 				"mobility",
+				"fuel",
 				"logistics_cap"
 			]
 		},
@@ -7261,7 +7408,7 @@
 			"tags": [
 				"ballistic",
 				"missile",
-				"weapon"
+				"damage"
 			]
 		},
 		{
@@ -7294,7 +7441,7 @@
 			"flavour": "Church salvage yards on Asher send no ship to the breakers while it can still fly, and keep their scarred hulls flying on patience and very little else.",
 			"tags": [
 				"d_mods",
-				"logistics",
+				"supplies",
 				"logistics_cap"
 			]
 		},
@@ -7328,14 +7475,18 @@
 			"flavour": "Pilgrims who sign on at Hesperus count it a blessing to stand their stations through the worst of a fight and keep vigil without complaint.",
 			"flavourAutomated": "Pilgrims who sign on at Hesperus stand their stations through the worst of a fight and keep vigil without complaint. This ship has no stations to stand, so its core logs their watch rotations and runs its systems on the same unbroken vigil.",
 			"tags": [
-				"combat_readiness"
+				"combat_readiness",
+				"crew"
 			]
 		},
 		{
 			"id": "doctrine_plain_rites",
 			"name": "Plain Rites",
 			"icon": "graphics/icons/plain_rites_shifted.png",
-			"flavour": "Luddic doctrine calls a ship system's refinements vanity. Stripped back to plain, honest machinery, it does what it was built to do and nothing more."
+			"flavour": "Luddic doctrine calls a ship system's refinements vanity. Stripped back to plain, honest machinery, it does what it was built to do and nothing more.",
+			"tags": [
+				"low_tech"
+			]
 		},
 		{
 			"id": "doctrine_swarm_logic",
@@ -7367,6 +7518,7 @@
 			"flavour": "Remnant carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.",
 			"tags": [
 				"fighter",
+				"damage",
 				"req_fighter_bays"
 			]
 		},
@@ -7399,8 +7551,7 @@
 			},
 			"flavour": "Remnant point defense never tires and never flinches. Its tracking routines, recovered from a gutted drone, carry none of the hesitation a human gunner would add.",
 			"tags": [
-				"point_defense",
-				"weapon"
+				"point_defense"
 			],
 			"moduleShare": "all"
 		},
@@ -7476,6 +7627,8 @@
 			"flavourAutomated": "Remnant warships throw their shields up and around faster than any human crew can react. The projector timings, copied from a wrecked one, run in this ship's core at the same speed and harden its emitters against ion fire.",
 			"tags": [
 				"shield",
+				"emp",
+				"damage_taken",
 				"req_shields"
 			],
 			"moduleShare": "all"
@@ -7510,7 +7663,8 @@
 			"flavour": "Energy mounts pulled from Remnant wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.",
 			"tags": [
 				"energy",
-				"weapon",
+				"rate_of_fire",
+				"flux",
 				"req_energy"
 			]
 		},
@@ -7554,7 +7708,8 @@
 			"flavour": "A Remnant ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.",
 			"flavourAutomated": "A Remnant ordo moves as one mind, its ships murmuring to each other across a constant web of signals. The ship's core listens long enough to parse the chatter, tunes its sensors to it and turns it against enemy targeting.",
 			"tags": [
-				"fleet_support"
+				"electronic_warfare",
+				"sensors"
 			]
 		},
 		{
@@ -7594,6 +7749,7 @@
 			},
 			"flavour": "Remnant warships never stand down, their systems cycling at a tempo built for machines that never tire. Copied into this ship's reactor and fire control, that tempo is easy to keep in battle and hard to recover from afterwards.",
 			"tags": [
+				"mobility",
 				"flux",
 				"combat_readiness"
 			]
@@ -7609,7 +7765,7 @@
 				}
 			],
 			"tags": [
-				"weapon"
+				"rate_of_fire"
 			]
 		},
 		{
@@ -7639,7 +7795,8 @@
 			},
 			"flavour": "Desperation leads to innovation, and the pressure of an incoming war brought Farige engineers to the limit, with them bringing up unusual techniques to modernize recently found early epoch Domain designs. Mount plans traded by Navarchy quartermasters had a complete data basis of prototype adaptive weapon mounts, allowing ballistic weapon systems to draw harder from the ship's flux grid in order to field energy based weaponry.",
 			"tags": [
-				"weapon",
+				"ballistic",
+				"energy",
 				"player_only"
 			]
 		},
@@ -7671,7 +7828,7 @@
 			"flavour": "The Black Hawk's Dysis Drive throws the ship forward hardest while its flux grid runs cold. Analysis over its ancient design allowed the crew to tune this ship's engines the same way, so it is able to fly bright at low flux and drags once the grid fills.",
 			"tags": [
 				"mobility",
-				"flux"
+				"flux_level"
 			]
 		},
 		{
@@ -7695,7 +7852,7 @@
 			},
 			"flavour": "War, war never changes. In order to survive the Luddic Path mayhem, Carina Forces had to act fast, or expire. Your crew learns from these hit and run tactics, and by executing them at high speeds, they exploit enemy weaknesses.",
 			"tags": [
-				"weapon",
+				"damage",
 				"mobility"
 			]
 		},
@@ -7736,8 +7893,9 @@
 			},
 			"flavour": "The Aracari is a prime example of antique thermo-dynamic engineering, with its Solaris Phalanx system allowing weapons to fire without directly drawing from the main flux grid. By analyzing old Farige databanks, your crew is now able to mimic its functionality in a small scale basis.",
 			"tags": [
-				"weapon",
-				"flux"
+				"ship_system",
+				"flux",
+				"rate_of_fire"
 			]
 		},
 		{
@@ -7779,6 +7937,7 @@
 			"tags": [
 				"hull",
 				"armour",
+				"low_hull",
 				"req_non_phase_hull"
 			]
 		},
@@ -7804,6 +7963,7 @@
 			"flavour": "The legendary NTS Endurance, an Aetos Class Destroyer, managed to nail down multiple enemy frigates at once, protecting its fleet from terrific flankers, thanks to its Thermo-Accelerator system. By understanding the tactics employed by its captain and the ship's overengineered ammo feeders, your crew is now able to draw power from hardpoint weapon mounts so its turret weapons fire cooler in a similar fashion.",
 			"tags": [
 				"weapon",
+				"flux",
 				"player_only"
 			]
 		},
@@ -7836,7 +7996,8 @@
 			},
 			"flavour": "The Merite Class Destroyer is often praised by its ability to assault enemy ships by sheer brute force, thanks to its Jump Jets ship system. By listening to \"sage\" advice from fellow Navarchy of Tania officers, you order your crew to refit the ship with increased weight and improved protection against collateral effects from excessive G-force.",
 			"tags": [
-				"hull"
+				"hull",
+				"mobility"
 			]
 		},
 		{
@@ -7852,7 +8013,8 @@
 			"flavour": "Capacitor banks rewound to Tri-Tachyon specifications put more charge behind every hit. The specifications were not for sale, strictly speaking.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapon"
+				"emp",
+				"damage"
 			]
 		},
 		{
@@ -7881,7 +8043,9 @@
 			"flavour": "Once a target's systems are dead, Tri-Tachyon ion firmware moves on to the hull.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapon"
+				"emp",
+				"high_explosive",
+				"on_hit"
 			]
 		},
 		{
@@ -7918,8 +8082,9 @@
 			"flavour": "Remnant battlegroups keep station through relay protocols that are only dimly understood. The recovered fragment has never stopped transmitting.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"flux",
-				"fleet_support"
+				"high_tech",
+				"fleet_support",
+				"mobility"
 			]
 		},
 		{
@@ -7934,7 +8099,7 @@
 			],
 			"flavour": "Flux lattices stripped from Remnant drones are a generation ahead of anything in the Tri-Tachyon catalogue. Tri-Tachyon is said to disagree.",
 			"tags": [
-				"flux"
+				"high_tech"
 			]
 		},
 		{
@@ -7959,9 +8124,10 @@
 			"flavour": "Remnant drones match each round to whatever it is about to hit.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapon",
 				"kinetic",
-				"high_explosive"
+				"high_explosive",
+				"high_tech",
+				"on_hit"
 			]
 		},
 		{
@@ -7990,7 +8156,7 @@
 			"flavour": "Remnant hulls are rumored to hold every lineage of Domain design in a balance their cores never let slip.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapon"
+				"damage"
 			]
 		},
 		{
@@ -8003,8 +8169,9 @@
 			],
 			"flavour": "Emitter coils salvaged from Remnant wrecks can be wound for a steady beam or a hard pulse, but not both. Remnant drones never seem to need the choice.",
 			"tags": [
+				"beam",
 				"energy",
-				"beam"
+				"damage"
 			]
 		},
 		{
@@ -8029,8 +8196,9 @@
 			"flavour": "Remnant ion bolts leave some of their charge in the shield projector as heat.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapon",
-				"shield"
+				"emp",
+				"energy_damage",
+				"on_hit"
 			]
 		},
 		{
@@ -8073,6 +8241,7 @@
 			"todo": "Needs an icon.",
 			"tags": [
 				"phase",
+				"flux",
 				"req_phase"
 			]
 		},
@@ -8103,6 +8272,7 @@
 			"todo": "Needs an icon.",
 			"tags": [
 				"phase",
+				"damage",
 				"req_phase"
 			]
 		},
@@ -8180,6 +8350,7 @@
 			"todo": "Needs an icon.",
 			"tags": [
 				"energy",
+				"on_hit",
 				"req_energy"
 			]
 		},
@@ -8196,6 +8367,7 @@
 			"todo": "Needs an icon.",
 			"tags": [
 				"fighter",
+				"range",
 				"req_fighter_bays"
 			]
 		},
@@ -8222,6 +8394,7 @@
 			"todo": "Needs an icon.",
 			"tags": [
 				"fighter",
+				"on_hit",
 				"req_fighter_bays"
 			]
 		},
@@ -8251,6 +8424,7 @@
 			"flavour": "\"The plume showed up on our scopes before the drive lit. I have checked the clocks. Please stop asking me to check the clocks.\"\n- Sensor officer's log, Tri-Tachyon picket, name withheld",
 			"todo": "Needs an icon.",
 			"tags": [
+				"ship_system",
 				"mobility"
 			]
 		},
@@ -8281,6 +8455,7 @@
 			"todo": "Needs an icon.",
 			"tags": [
 				"missile",
+				"on_hit",
 				"req_missile"
 			]
 		}

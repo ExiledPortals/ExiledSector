@@ -103,6 +103,10 @@ public final class ThemeTags {
         return Collections.unmodifiableSet(expandedTags);
     }
 
+    public static List<String> ancestorsListedBeside(String tag, Collection<String> listedTags) {
+        return withAncestors(tag).stream().skip(1).filter(listedTags::contains).toList();
+    }
+
     public static String displayName(String tag) {
         return Translation.text(NAME_KEY_PREFIX + tag);
     }

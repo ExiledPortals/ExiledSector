@@ -15,6 +15,9 @@
 					"effect": "CHART_BOSS_STAR_CHART_PERCENT",
 					"magnitude": 2
 				}
+			],
+			"tags": [
+				"star_chart"
 			]
 		},
 		{
@@ -26,6 +29,9 @@
 					"effect": "CHART_CATALYST_PERCENT",
 					"magnitude": 2
 				}
+			],
+			"tags": [
+				"loot"
 			]
 		},
 		{
@@ -37,6 +43,10 @@
 					"effect": "CHART_MODIFIER_EFFECT_PERCENT",
 					"magnitude": 2
 				}
+			],
+			"tags": [
+				"encounter",
+				"loot"
 			]
 		}
 	]

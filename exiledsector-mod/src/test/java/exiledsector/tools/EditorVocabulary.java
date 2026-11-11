@@ -58,6 +58,8 @@ final class EditorVocabulary {
         json.append("    \"gate\": ").append(list(SkillTags.GATE)).append(",\n");
         json.append("    \"rule\": ").append(list(SkillTags.RULE)).append("\n");
         json.append("  },\n");
+        json.append("  \"themeTags\": [\n");
+        json.append(ThemeTags.ids().stream().map(EditorVocabulary::themeTagLine).collect(Collectors.joining(",\n"))).append("\n  ],\n");
         json.append("  \"tiers\": ").append(list(Arrays.stream(SkillTier.values()).map(Enum::name).toList())).append(",\n");
         json.append("  \"unlockConditionTypes\": ")
                 .append(list(Arrays.stream(UnlockConditionType.values()).map(type -> camelCase(type.name())).toList())).append(",\n");
@@ -92,6 +94,12 @@ final class EditorVocabulary {
         json.append("  \"atlasEffects\": ").append(list(Arrays.stream(AtlasModifier.values()).map(Enum::name).toList())).append(",\n");
         json.append("  \"chartSystemTypes\": ").append(list(StarChartDefinitions.SYSTEM_TYPES)).append("\n");
         return json.append("}\n").toString();
+    }
+
+    private static String themeTagLine(String tag) {
+        String parent = ThemeTags.parent(tag);
+        List<String> scopeIds = ThemeTags.scopes(tag).stream().map(ThemeTagScope::id).toList();
+        return "    {\"id\": " + quote(tag) + ", \"parent\": " + (parent == null ? "null" : quote(parent)) + ", \"scopes\": " + list(scopeIds) + "}";
     }
 
     static String camelCase(String enumName) {

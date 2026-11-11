@@ -20,9 +20,18 @@ const DEFAULT_CHART_TIER_GROUPS: ChartTierGroup[] = [
   { id: 'high', minTier: 11, maxTier: 16 },
 ];
 
+export type ThemeTagScope = 'ship' | 'star_chart';
+
+export interface ThemeTagInfo {
+  id: string;
+  parent: string | null;
+  scopes: ThemeTagScope[];
+}
+
 interface VocabularyFile {
   effects: EffectInfo[];
   tags: { theme: string[]; volume: string[]; requirement: string[]; gate?: string[]; rule?: string[] };
+  themeTags?: ThemeTagInfo[];
   tiers: string[];
   unlockConditionTypes: string[];
   parameterlessUnlockConditionTypes?: string[];
@@ -50,6 +59,7 @@ export interface Vocabulary {
   effectNames: string[];
   effectInfo: Map<string, EffectInfo>;
   themeTags: string[];
+  themeTagInfo: Map<string, ThemeTagInfo>;
   volumeTags: string[];
   requirementTags: string[];
   gateTags: string[];
@@ -80,11 +90,17 @@ export interface Vocabulary {
   chartSystemTypes: string[];
 }
 
+function themeTagInfoOf(file: VocabularyFile): ThemeTagInfo[] {
+  const shipOnly = file.tags.theme.map((id): ThemeTagInfo => ({ id, parent: null, scopes: ['ship'] }));
+  return (file.themeTags ?? shipOnly).map((tag) => ({ ...tag, scopes: tag.scopes.slice() }));
+}
+
 export function buildVocabulary(file: VocabularyFile): Vocabulary {
   return {
     effectNames: file.effects.map((effect) => effect.name).sort(compareText),
     effectInfo: new Map(file.effects.map((effect) => [effect.name, effect])),
     themeTags: file.tags.theme.slice(),
+    themeTagInfo: new Map(themeTagInfoOf(file).map((tag) => [tag.id, tag])),
     volumeTags: file.tags.volume.slice(),
     requirementTags: file.tags.requirement.slice(),
     gateTags: (file.tags.gate ?? []).slice(),

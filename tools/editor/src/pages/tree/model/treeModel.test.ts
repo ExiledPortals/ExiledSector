@@ -242,6 +242,30 @@ describe('validation and tags', () => {
     ]);
   });
 
+  it('takes atlas type tags from the star chart theme tags and flags a tag beside its own ancestor', () => {
+    const taggedVocabulary = buildVocabulary({
+      ...vocabularyFile,
+      tags: { ...vocabularyFile.tags, theme: ['armor', 'defence', 'logistics'] },
+      themeTags: [
+        { id: 'armor', parent: 'defence', scopes: ['ship', 'star_chart'] },
+        { id: 'defence', parent: null, scopes: ['ship', 'star_chart'] },
+        { id: 'logistics', parent: null, scopes: ['ship'] },
+        { id: 'loot', parent: null, scopes: ['star_chart'] },
+      ],
+    });
+    const atlasVocabulary = ATLAS_TREE_KIND.editorVocabulary(taggedVocabulary, ['crafting']);
+    const shipDocument = makeDocument([node('a', 0, 0)]);
+    shipDocument.types[0].tags = ['defence', 'armor', 'req_civilian_hull'];
+    const atlasDocument = makeDocument([node('a', 0, 0, [], { tags: ['crafting'] })], { volumes: ['crafting'] });
+    atlasDocument.types = atlasDocument.types.filter((type) => type.tier !== 'WORMHOLE_EXIT');
+    atlasDocument.types[0].tags = ['loot', 'logistics'];
+
+    expect(atlasVocabulary.themeTags).toEqual(['armor', 'defence', 'loot']);
+    expect(tagGroupOf(atlasVocabulary, 'loot')).toBe('theme');
+    expect(validateTree(shipDocument, taggedVocabulary)).toEqual(['Type "small" lists "armor" beside its ancestor "defence", which it already counts as']);
+    expect(validateTree(atlasDocument, atlasVocabulary)).toEqual(['Type "small" has unknown tag "logistics"']);
+  });
+
   it('renames a volume on every node and decoration that carries it', () => {
     const star = { kind: 'star' as const, id: 'star', x: 0, y: 0, radius: 100, starType: 'star_yellow', color: null, tags: ['crafting'] };
     const document = makeDocument([node('a', 0, 0, [], { tags: ['crafting'] }), node('b', 1, 0, [], { tags: ['charts'] })], { volumes: ['crafting', 'charts'], decorations: [star] });

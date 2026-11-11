@@ -1,4 +1,4 @@
-import type { Vocabulary } from '../../../api/vocabulary.ts';
+import type { ThemeTagScope, Vocabulary } from '../../../api/vocabulary.ts';
 
 export type ItemFamily = 'ship' | 'chart';
 
@@ -6,6 +6,10 @@ export const MODIFIER_FILE_NAMES: Record<ItemFamily, string> = { ship: 'item_mod
 
 export function familyEffectNames(family: ItemFamily, vocabulary: Vocabulary): string[] {
   return family === 'chart' ? vocabulary.chartEffectNames : vocabulary.effectNames;
+}
+
+export function familyTagScope(family: ItemFamily): ThemeTagScope {
+  return family === 'chart' ? 'star_chart' : 'ship';
 }
 
 export function isFamilyEffect(family: ItemFamily, vocabulary: Vocabulary, effectName: string): boolean {

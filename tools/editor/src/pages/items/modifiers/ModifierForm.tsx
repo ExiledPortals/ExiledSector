@@ -4,12 +4,13 @@ import { useEffect, useState } from 'react';
 import type { Draft } from 'immer';
 import { DecimalInput } from '../../../shared/DecimalInput.tsx';
 import { confirmAction, notifyError } from '../../../shared/dialogs.tsx';
+import { themeTagIssues, themeTagsFor } from '../../../shared/themeTags.ts';
 import { GameLines } from '../components/GameText.tsx';
 import { ModifierLineRow } from '../components/ModifierLineRow.tsx';
 import { displayItemType, type LineDescriptions } from '../describedLines.ts';
 import type { ItemsPanelProps } from '../itemsDocument.ts';
 import { AFFIX_GROUPS, ITEM_TYPE_LABELS, poolShares, type ItemDefinition } from '../model/definitions.ts';
-import type { ItemFamily } from '../model/itemFamily.ts';
+import { familyTagScope, type ItemFamily } from '../model/itemFamily.ts';
 import { isUsed, renameModifierReferences, usedByText } from '../model/modifierUsage.ts';
 import {
   familyItemTypes,
@@ -119,6 +120,8 @@ export function ModifierForm({ document, model, vocabulary, family, modifier, in
 
   const conventionIssue = idConventionIssue(modifier);
   const suggestedId = suggestedModifierId(modifier.lines);
+  const tags = modifier.tags ?? [];
+  const tagIssues = tags.includes(TAGLESS) ? [] : themeTagIssues(vocabulary, familyTagScope(family), tags);
 
   return (
     <Stack gap="sm" maw={1100}>
@@ -185,8 +188,10 @@ export function ModifierForm({ document, model, vocabulary, family, modifier, in
         label="Tags"
         description={`Theme tags saying what it does. Write ${TAGLESS} alone for a modifier no tag bias can reach.`}
         splitChars={[';', ',', ' ']}
-        value={modifier.tags ?? []}
-        onChange={(tags) => edit((draft) => void (draft.tags = tags))}
+        data={[TAGLESS, ...themeTagsFor(vocabulary, familyTagScope(family))]}
+        value={tags}
+        onChange={(chosenTags) => edit((draft) => void (draft.tags = chosenTags))}
+        error={tagIssues.length > 0 ? tagIssues.join('; ') : undefined}
       />
       <Divider />
       <Title order={5}>{modifier.lines.length > 1 ? 'Values - a hybrid rolls every line and counts as one modifier' : 'Values'}</Title>

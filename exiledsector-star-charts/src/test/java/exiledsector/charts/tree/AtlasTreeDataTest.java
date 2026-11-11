@@ -6,9 +6,13 @@ import exiledsector.charts.atlas.AtlasModifier;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.layout.TreeTopology;
+import exiledsector.skills.tags.ThemeTagScope;
+import exiledsector.skills.tags.ThemeTags;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -77,6 +81,32 @@ class AtlasTreeDataTest {
 
         assertNotNull(data.type("gate"));
         assertNull(data.type("odd"));
+    }
+
+    @Test
+    void everyShippedAtlasTypeButTheRootHasStarChartThemeTagsWithNoneBesideItsAncestor() throws Exception {
+        JSONObject types = ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(AtlasTreeData.TYPES_PATH));
+        JSONObject tree = ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(AtlasTreeData.TREE_PATH));
+        AtlasTreeData data = AtlasTreeData.parse(types, tree);
+        JSONArray typeRows = types.getJSONArray("skillTypes");
+        List<String> problems = new ArrayList<>();
+
+        for (int i = 0; i < typeRows.length(); i++) {
+            AtlasTreeType type = data.type(typeRows.getJSONObject(i).getString("id"));
+            if (type.tags().isEmpty() && type.tier() != SkillTier.ROOT) {
+                problems.add(type.id() + " has no theme tag");
+            }
+            for (String tag : type.tags()) {
+                if (!ThemeTags.allows(tag, ThemeTagScope.STAR_CHART)) {
+                    problems.add(type.id() + " lists " + tag + ", which is not a star_chart theme tag");
+                }
+                for (String ancestor : ThemeTags.ancestorsListedBeside(tag, type.tags())) {
+                    problems.add(type.id() + " lists " + tag + " beside its ancestor " + ancestor);
+                }
+            }
+        }
+
+        assertTrue(problems.isEmpty(), String.join("\n", problems));
     }
 
     @Test
