@@ -1,11 +1,10 @@
 package exiledsector.ui.inspect;
 
-import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
-import exiledsector.skills.tags.SkillTags;
+import exiledsector.skills.tags.ThemeTags;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +21,7 @@ final class NpcBuildLabel {
     static String name(List<String> themes) {
         List<String> themeNames = new ArrayList<>();
         for (String theme : themes) {
-            themeNames.add(Translation.text("theme." + theme));
+            themeNames.add(ThemeTags.displayName(theme));
         }
         return String.join(" / ", themeNames);
     }
@@ -38,14 +37,15 @@ final class NpcBuildLabel {
                 continue;
             }
             for (String tag : node.getType().getTags()) {
-                if (SkillTags.THEME.contains(tag)) {
+                if (ThemeTags.isThemeTag(tag)) {
                     themeCounts.merge(tag, 1, Integer::sum);
                 }
             }
         }
+        List<String> themeOrder = ThemeTags.ids();
         List<String> rankedThemes = new ArrayList<>(themeCounts.keySet());
         rankedThemes.sort((a, b) -> themeCounts.get(a).equals(themeCounts.get(b))
-                ? Integer.compare(SkillTags.THEME.indexOf(a), SkillTags.THEME.indexOf(b))
+                ? Integer.compare(themeOrder.indexOf(a), themeOrder.indexOf(b))
                 : Integer.compare(themeCounts.get(b), themeCounts.get(a)));
         return List.copyOf(rankedThemes.subList(0, Math.min(THEMES_SHOWN, rankedThemes.size())));
     }

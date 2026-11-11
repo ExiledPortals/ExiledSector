@@ -2,7 +2,8 @@ package exiledsector.skills.npc;
 
 import exiledsector.ModCsv;
 import exiledsector.data.CsvRows;
-import exiledsector.skills.tags.SkillTags;
+import exiledsector.skills.tags.ThemeTagScope;
+import exiledsector.skills.tags.ThemeTags;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -73,9 +74,9 @@ public final class NpcFocus {
             String[] parts = entry.split(":");
             String tag = parts[0].trim();
             Float weight = parts.length == 2 ? weight(parts[1].trim()) : null;
-            if (!SkillTags.THEME.contains(tag) || weight == null || weight <= 0f) {
+            if (!ThemeTags.allows(tag, ThemeTagScope.SHIP) || weight == null || weight <= 0f) {
                 LOG.warn("Ignoring focus '" + entry.trim() + "' for " + id + " in " + path
-                        + ": expected theme:weight with a theme tag from " + SkillTags.THEME + " and a positive weight");
+                        + ": expected theme:weight with a ship theme tag from " + ThemeTags.PATH + " and a positive weight");
                 continue;
             }
             weightsByTag.put(tag, weight);

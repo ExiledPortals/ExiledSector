@@ -23,11 +23,11 @@ class NpcFocusTest {
     }
 
     @Test
-    void focusEntriesNeedAThemeTagAndAPositiveWeight() {
-        Map<String, Float> focus = NpcFocus.parseFocus("hegemony", "armour:2; region_core:3; ballistic:-1; hull; flux:x; speed:1.5",
+    void focusEntriesNeedAShipThemeTagAndAPositiveWeight() {
+        Map<String, Float> focus = NpcFocus.parseFocus("hegemony", "armour:2; region_core:3; ballistic:-1; hull; flux:x; mobility:1.5; enemy:2",
                 NpcFocus.FACTION_PATH);
 
-        assertEquals(Map.of("armour", 2f, "speed", 1.5f), focus);
+        assertEquals(Map.of("armour", 2f, "mobility", 1.5f), focus);
     }
 
     @Test

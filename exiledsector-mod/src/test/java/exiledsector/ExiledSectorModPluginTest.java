@@ -32,6 +32,8 @@ import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.npc.NpcFocus;
 import exiledsector.skills.npc.NpcLevelCaps;
 import exiledsector.skills.npc.NpcLevelCategory;
+import exiledsector.skills.tags.RealThemeTags;
+import exiledsector.skills.tags.ThemeTags;
 import exiledsector.skills.unlock.FactionEncounterGate;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.decoration.TreeFleetFactions;
@@ -110,6 +112,7 @@ class ExiledSectorModPluginTest {
                 .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"volume\": \"hegemony\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/tree_fleet_factions.csv", "exiledSector"))
                 .thenReturn(new JSONArray("[{\"faction\": \"threat\", \"volume\": \"threat\"}]"));
+        when(settings.getMergedSpreadsheetDataForMod("tag", ThemeTags.PATH, "exiledSector")).thenReturn(RealThemeTags.rows());
         when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/npc_faction_focus.csv", "exiledSector"))
                 .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"focus\": \"armour:2\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("system", "data/config/exiledSector/npc_ship_system_focus.csv", "exiledSector"))

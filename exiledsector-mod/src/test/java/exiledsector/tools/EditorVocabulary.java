@@ -20,6 +20,8 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.radius.RadiusSize;
 import exiledsector.skills.tags.VolumeToggles;
 import exiledsector.skills.tags.SkillTags;
+import exiledsector.skills.tags.ThemeTagScope;
+import exiledsector.skills.tags.ThemeTags;
 import exiledsector.skills.unlock.BlueprintCategory;
 import exiledsector.skills.unlock.UnlockConditionType;
 import org.json.JSONObject;
@@ -50,7 +52,7 @@ final class EditorVocabulary {
         }
         json.append(String.join(",\n", effectLines)).append("\n  ],\n");
         json.append("  \"tags\": {\n");
-        json.append("    \"theme\": ").append(list(SkillTags.THEME)).append(",\n");
+        json.append("    \"theme\": ").append(list(ThemeTags.ids(ThemeTagScope.SHIP))).append(",\n");
         json.append("    \"volume\": ").append(list(SkillTags.VOLUME)).append(",\n");
         json.append("    \"requirement\": ").append(list(SkillTags.REQUIREMENT)).append(",\n");
         json.append("    \"gate\": ").append(list(SkillTags.GATE)).append(",\n");
