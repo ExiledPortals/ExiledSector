@@ -4,7 +4,10 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class ConvoyState {
 
@@ -30,6 +33,7 @@ public final class ConvoyState {
     private float cargoSteps;
     private boolean civilianOnly;
     private float itemChanceMult;
+    private Map<String, Float> feedstock;
     private Phase phase = Phase.WAITING;
     private boolean hostile;
     private float deliveredShare;
@@ -116,6 +120,14 @@ public final class ConvoyState {
 
     public float itemChanceMult() {
         return itemChanceMult;
+    }
+
+    void loadFeedstock(Map<String, Float> amounts) {
+        feedstock = new LinkedHashMap<>(amounts);
+    }
+
+    Map<String, Float> feedstock() {
+        return feedstock == null ? Map.of() : Collections.unmodifiableMap(feedstock);
     }
 
     void countCivilianOnly(boolean civilianOnly) {

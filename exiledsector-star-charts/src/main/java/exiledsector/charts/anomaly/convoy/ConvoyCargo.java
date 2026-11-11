@@ -44,6 +44,9 @@ final class ConvoyCargo {
         if (ItemDrops.hasRule(ConvoyRules.CARGO_SITE)) {
             keys.add(CATEGORY_KEY_PREFIX + "items");
         }
+        if (ConvoyFeedstock.hasRows()) {
+            keys.add(CATEGORY_KEY_PREFIX + "feedstock");
+        }
         if (ChartDrops.hasRule(ChartDrops.Source.SYSTEM_SALVAGE)) {
             keys.add(CATEGORY_KEY_PREFIX + "craftingItem");
             keys.add(CATEGORY_KEY_PREFIX + "star_chart");
@@ -72,13 +75,21 @@ final class ConvoyCargo {
     }
 
     static CargoAPI roll(SectorAPI sector, ChartRun run, ConvoyState convoy, float share, Random random) {
-        return ChartCargoLoot.roll(sector, run, ConvoyRules.LOOT_SCOPE, ConvoyRules.CARGO_SITE, convoy.cargoSteps() * share,
+        CargoAPI cargo = ChartCargoLoot.roll(sector, run, ConvoyRules.LOOT_SCOPE, ConvoyRules.CARGO_SITE, convoy.cargoSteps() * share,
                 convoy.itemChanceMult() * share, random);
+        return withFeedstock(cargo, convoy, share, random);
     }
 
     static CargoAPI lostCargo(SectorAPI sector, ChartRun run, ConvoyState convoy, float share, Random random) {
-        return ChartCargoLoot.rollFromBattle(sector, run, ConvoyRules.LOOT_SCOPE, ConvoyRules.CARGO_SITE, convoy.cargoSteps() * share,
+        CargoAPI cargo = ChartCargoLoot.rollFromBattle(sector, run, ConvoyRules.LOOT_SCOPE, ConvoyRules.CARGO_SITE, convoy.cargoSteps() * share,
                 convoy.itemChanceMult() * share, random);
+        return withFeedstock(cargo, convoy, share, random);
+    }
+
+    static CargoAPI withFeedstock(CargoAPI cargo, ConvoyState convoy, float share, Random random) {
+        ConvoyFeedstock.add(cargo, convoy.feedstock(), share, random);
+        cargo.sort();
+        return cargo;
     }
 
     static CargoAPI deliveredCache(SectorAPI sector, ChartRun run, ConvoyState convoy, CampaignFleetAPI fleet, Random random) {

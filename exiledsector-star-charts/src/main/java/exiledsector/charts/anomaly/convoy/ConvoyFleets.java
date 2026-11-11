@@ -15,11 +15,14 @@ import exiledsector.charts.content.ChartAnomalyFleets;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
+import exiledsector.charts.loot.DropType;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.Random;
 
 final class ConvoyFleets {
+
+    private static final long FEEDSTOCK_SALT = 0x5DEECE66DL;
 
     private ConvoyFleets() {
     }
@@ -61,6 +64,8 @@ final class ConvoyFleets {
         convoy.countCivilianOnly(civilianOnly);
         convoy.loadCargo(freighterPoints, ConvoyRules.cargoSteps(freighterPoints, context.anomalyMult(SupplyConvoy.CARGO_KEY)),
                 ConvoyRules.itemChanceMult(site.tier(), context.anomalyMult(SupplyConvoy.CARGO_KEY)));
+        convoy.loadFeedstock(ConvoyFeedstock.roll(site.tier(), context.dropMult(DropType.CRAFTING_ITEM) * context.anomalyMult(SupplyConvoy.CARGO_KEY),
+                new Random(convoy.cargoSeed() ^ FEEDSTOCK_SALT)));
         fleet.addAssignment(FleetAssignment.ORBIT_PASSIVE, entry, ChartContentGenerator.ASSIGNMENT_DAYS);
         fleet.addEventListener(convoyListener);
         return true;
