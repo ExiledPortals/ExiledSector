@@ -76,6 +76,7 @@ The zh_CN catalogue was drafted by Claude and still needs review by a native spe
 | Nanite Feedstock / disassemble | 纳米原料 / 拆解 | What disassembling a hull item gives |
 | Crafting Bench | 制作台 | The panel for growing materials and modifying hull items and Star Charts |
 | Augmentation / Tuning / Fundamental / Reshaping / Metamorph / Immutable / Annulment / Corrupted Nanoswarm | 增幅 / 调校 / 本源 / 重塑 / 变形 / 恒固 / 废除 / 腐化纳米群 | Crafting materials that change a hull item's modifiers |
+| Adaptive / Grafting Nanoswarm | 适应 / 嫁接纳米群 | Crafting materials that add a biome (星域) modifier to a hull item |
 | Prefix / Suffix Inhibitor | 前缀 / 后缀抑制程序 | Crafting materials that protect one affix side |
 | Erasure Cipher | 抹除密码 | Removes every modifier from a Star Chart |
 | Grow | 培育 | Making a crafting material from Nanite Feedstock |

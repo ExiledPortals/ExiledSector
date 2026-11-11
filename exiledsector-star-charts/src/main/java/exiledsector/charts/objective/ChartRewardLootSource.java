@@ -39,11 +39,11 @@ public final class ChartRewardLootSource implements LootSource {
 
     @Override
     public void addEncounterLoot(BattleLoot battle, CargoAPI loot) {
-        ItemLootListener.addSiteLoot(loot, reward(battle).loot);
+        ItemLootListener.addBattleSiteLoot(loot, reward(battle).loot);
     }
 
     @Override
     public void deliverBattleLoot(BattleLoot battle, CargoAPI playerCargo) {
-        ItemLootListener.deliverSiteLoot(playerCargo, reward(battle).loot);
+        ItemLootListener.deliverBattleSiteLoot(playerCargo, reward(battle).loot);
     }
 }

@@ -31,6 +31,7 @@ import exiledsector.i18n.SpecLocalisation;
 import exiledsector.i18n.Translation;
 import exiledsector.items.Engrams;
 import exiledsector.items.AtlasCatalystItems;
+import exiledsector.items.BiomeNanoswarm;
 import exiledsector.items.CraftingMaterialFamily;
 import exiledsector.items.ItemDataRules;
 import exiledsector.items.ItemTypeSupport;
@@ -52,6 +53,8 @@ import exiledsector.ui.chart.WormholeGatewayOption;
 import exiledsector.ui.socket.BenchModeSupport;
 import lunalib.lunaSettings.LunaSettings.SettingsCreator;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static exiledsector.ExiledSector.MOD_ID;
@@ -91,11 +94,15 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     @Override
     public void onApplicationLoad() {
         StarChartCipher.registerAll();
+        BiomeNanoswarm.registerAll();
         ChartAnomalies.all().forEach(ChartAnomaly::preloadTextures);
         AbyssArt.preload();
         CatalystIconFx.preload();
         I18n.forGameText(() -> {
             for (StarChartCipher craftingItem : StarChartCipher.values()) {
+                MaterialItems.localise(craftingItem.itemId());
+            }
+            for (BiomeNanoswarm craftingItem : BiomeNanoswarm.values()) {
                 MaterialItems.localise(craftingItem.itemId());
             }
             WormholeGateway.INDUSTRY_IDS.forEach(SpecLocalisation::industry);
@@ -177,7 +184,9 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public List<CraftingMaterialFamily> hullCraftingBenchCraftingItems() {
-        return List.copyOf(Engrams.all());
+        List<CraftingMaterialFamily> craftingItems = new ArrayList<>(Arrays.asList(BiomeNanoswarm.values()));
+        craftingItems.addAll(Engrams.all());
+        return List.copyOf(craftingItems);
     }
 
     @Override

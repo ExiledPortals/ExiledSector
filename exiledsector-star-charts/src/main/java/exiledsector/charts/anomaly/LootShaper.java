@@ -1,11 +1,13 @@
 package exiledsector.charts.anomaly;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.items.ItemChances;
+import exiledsector.items.ItemData;
 import exiledsector.items.ItemDrops;
 
 import java.util.List;
@@ -41,8 +43,8 @@ public interface LootShaper extends ChartAnomaly {
         return 1f;
     }
 
-    default ItemDrops.SiteLoot battleBonus(SectorAPI sector, Random random) {
-        return ItemDrops.SiteLoot.NONE;
+    default ItemData shapeBattleDrop(SectorAPI sector, ItemData item, LocationAPI location) {
+        return item;
     }
 
     default ItemChances siteChances(MemoryAPI siteMemory, ItemChances chances) {

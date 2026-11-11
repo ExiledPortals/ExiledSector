@@ -15,13 +15,9 @@ import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.items.ItemData;
-import exiledsector.items.ItemDrops;
-import exiledsector.items.ItemType;
-import exiledsector.items.ItemUnlock;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public final class StormFront implements ContentPlacer, RunParticipant, LootShaper {
@@ -85,11 +81,6 @@ public final class StormFront implements ContentPlacer, RunParticipant, LootShap
     }
 
     @Override
-    public void loadItems() {
-        StormLoot.reserveModifiers();
-    }
-
-    @Override
     public boolean holdsPlayerBattle() {
         return StormBattles.playerInStorm();
     }
@@ -100,12 +91,8 @@ public final class StormFront implements ContentPlacer, RunParticipant, LootShap
     }
 
     @Override
-    public ItemDrops.SiteLoot battleBonus(SectorAPI sector, Random random) {
-        if (!ItemUnlock.available(ItemType.HULL_ITEM, sector)) {
-            return ItemDrops.SiteLoot.NONE;
-        }
-        ItemData stormItem = StormLoot.guaranteedItem(random, definition -> ItemUnlock.canDrop(definition, sector));
-        return stormItem == null ? ItemDrops.SiteLoot.NONE : new ItemDrops.SiteLoot(List.of(stormItem), List.of(), Map.of());
+    public ItemData shapeBattleDrop(SectorAPI sector, ItemData item, LocationAPI location) {
+        return StormLoot.withBiomeModifier(sector, item, location);
     }
 
     @Override

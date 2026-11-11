@@ -87,6 +87,9 @@ public final class StarChartFixtures {
         for (StarChartCipher craftingItem : StarChartCipher.values()) {
             CraftingMaterialFamilies.unregister(craftingItem);
         }
+        for (BiomeNanoswarm craftingItem : BiomeNanoswarm.values()) {
+            CraftingMaterialFamilies.unregister(craftingItem);
+        }
         for (Nanoswarm kernel : StarChartCipher.KERNELS_ON_CHARTS) {
             CraftingMaterialFamilies.retract(kernel, ItemType.STAR_CHART);
         }

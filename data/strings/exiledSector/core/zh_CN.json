@@ -32,8 +32,6 @@
     "socketable.modifier.PHASE_EXIT_EMP_ARCS_FLAT_STORM_BELT": "风暴眼",
     "socketable.modifier.STRIKECRAFT_EMP_DAMAGE_PERCENT_STORM_BELT": "雷翼",
     "socketable.modifier.ARMOR_DAMAGE_EMP_ARCS_FLAT_STORM_BELT": "带电",
-    "socketable.modifier.EMP_DAMAGE_TAKEN_PERCENT_STORM_FRONT": "避雷",
-    "socketable.modifier.NON_BEAM_ENERGY_WEAPON_REFRACTION_CHANCE_PERCENT_STORM_FRONT": "雷云",
     "socketable.modifier.TIMEFLOW_PERCENT_ABYSSAL_RIFT": "时序",
     "socketable.modifier.SENSOR_PROFILE_PERCENT_ABYSSAL_RIFT": "无光",
     "socketable.modifier.SHIELD_UPKEEP_MULT_ABYSSAL_RIFT": "等离子",

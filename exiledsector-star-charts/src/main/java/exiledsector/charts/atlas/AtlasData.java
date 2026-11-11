@@ -115,6 +115,10 @@ public final class AtlasData {
         return looks.containsKey(regionId);
     }
 
+    public static boolean regionOpen(String regionId, AtlasUnlocks unlocks) {
+        return regions.stream().anyMatch(region -> region.id().equals(regionId) && region.availableWith(unlocks));
+    }
+
     public static boolean knowsLayout(String layoutId) {
         return layouts.containsKey(layoutId);
     }

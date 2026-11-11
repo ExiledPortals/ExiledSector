@@ -24,7 +24,7 @@ Of the Tempest and Faraday are new `AffinityScaling` rows in `SpecialSkillEffect
 
 As built: the Reactor Regulator prefix is Discharging, since Grounded already names the reactor's `EMP_DAMAGE_TAKEN_PERCENT_REACTOR` prefix. The fire rate effect is `WEAPON_RATE_OF_FIRE_PERCENT_PER_MIDLINE_AFFINITY`, matching its target `WEAPON_RATE_OF_FIRE_PERCENT`. The Gale burst starts on any EMP arc striking the ship, shields included, and a new strike restarts the 3 seconds. Phase and armor arcs share `ArcDischarge`: each arc goes to the nearest enemy ship (not strikecraft) within 600 su, cycling when there are fewer ships than arcs, dealing 100/150/200/300 energy and as much EMP by the ship's hull size (placeholders); the modifier value is the arc count (3 for the coil, 1 per 500 armor damage for the plate). Armor damage taken builds the plate's discharges, and with no enemy in range one discharge is held for the next armor hit. Strikecraft EMP goes on hull and armor hits only, since EMP does nothing to shields.
 
-These stay separate from the Storm Front anomaly's Stormproof and Thunderhead modifiers, which are reserved to that anomaly.
+Storm Front battles in a Storm Belt system give every hull item they drop its Storm Belt modifier (`StormLoot`).
 
 ## Build order
 

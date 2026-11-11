@@ -25,8 +25,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -38,6 +40,7 @@ public final class BiomeModifiers {
     public static final String OWNER_PREFIX = "biome:";
     public static final String HEADER_KEY_PREFIX = "chart.biomeModifier.header.";
     static final float DROP_CHANCE = 0.3f;
+    public static final int MAX_PER_ITEM = 2;
     private static final long GRANT_SEED_SALT = 0x62696F6D65L;
     private static final Logger LOG = Logger.getLogger(BiomeModifiers.class);
 
@@ -115,14 +118,45 @@ public final class BiomeModifiers {
         return biomeId == null || kind == null ? null : modifiersByKey.get(new Key(biomeId, kind));
     }
 
+    public static List<String> modifiersFor(ItemKind kind) {
+        List<String> modifiers = new ArrayList<>();
+        modifiersByKey.forEach((key, modifierId) -> {
+            if (key.kind() == kind) {
+                modifiers.add(modifierId);
+            }
+        });
+        modifiers.sort(null);
+        return modifiers;
+    }
+
+    public static boolean hasModifiers(String biomeId) {
+        return biomeId != null && biomeIds.contains(biomeId);
+    }
+
+    public static boolean isBiomeModifier(String modifierId) {
+        return biomeOfModifier(modifierId) != null;
+    }
+
+    public static boolean hasRoomFor(List<RolledModifier> modifiers, String modifierId) {
+        if (!isBiomeModifier(modifierId) || modifiers.stream().anyMatch(rolled -> rolled.modifierId().equals(modifierId))) {
+            return true;
+        }
+        return modifiers.stream().filter(rolled -> isBiomeModifier(rolled.modifierId())).count() < MAX_PER_ITEM;
+    }
+
     public static String biomeOf(Item item) {
         for (RolledModifier rolledModifier : item.explicits()) {
-            String owner = ModifierSources.owner(rolledModifier.modifierId());
-            if (owner != null && owner.startsWith(OWNER_PREFIX)) {
-                return owner.substring(OWNER_PREFIX.length());
+            String biomeId = biomeOfModifier(rolledModifier.modifierId());
+            if (biomeId != null) {
+                return biomeId;
             }
         }
         return null;
+    }
+
+    public static String biomeOfModifier(String modifierId) {
+        String owner = ModifierSources.owner(modifierId);
+        return owner != null && owner.startsWith(OWNER_PREFIX) ? owner.substring(OWNER_PREFIX.length()) : null;
     }
 
     public static ItemData onDrop(ItemData item, String biomeId) {

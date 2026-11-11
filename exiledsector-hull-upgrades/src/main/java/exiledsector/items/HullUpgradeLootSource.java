@@ -86,13 +86,13 @@ public final class HullUpgradeLootSource implements LootSource, MarketStock {
     @Override
     public void addEncounterLoot(BattleLoot battle, CargoAPI loot) {
         HullItemDrops.SectionItemLoot battleItems = battleItemDrops(battle);
-        ItemLootListener.addItems(loot, battleItems.items(), battleItems.upgrades());
+        ItemLootListener.addBattleItems(loot, battleItems.items(), battleItems.upgrades());
     }
 
     @Override
     public void deliverBattleLoot(BattleLoot battle, CargoAPI playerCargo) {
         HullItemDrops.SectionItemLoot battleItems = battleItemDrops(battle);
-        List<ItemData> items = LootSources.shapeDrops(battleItems.items());
+        List<ItemData> items = LootSources.shapeBattleDrops(battleItems.items());
         items.forEach(item -> playerCargo.addSpecial(item.toSpecialItem(), 1f));
         ItemLootListener.announceBattleItems(items);
         for (ShipSchematic upgrade : battleItems.upgrades()) {

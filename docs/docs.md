@@ -707,7 +707,7 @@ targeted extras and a unique hull item from the site's unique roll survive at `H
 (`ItemTypeSupport.salvageShare`). A site's `hullItemShare` scales its basic items and targeted extras on top, so the
 chart boss's chest and the chart reward (0) drop only uniques. Battle drops (`battle_loot.csv`) and market stock (`market_hull_items.csv`)
 carry their own rates. A dropped non-unique hull item has one or two modifiers
-(`HullItemDrops.DROP_LIMITS` through `ItemTypeSupport.dropLimits`), storm-touched loot included, so it never drops rare;
+(`HullItemDrops.DROP_LIMITS` through `ItemTypeSupport.dropLimits`), storm loot included, so it never drops rare;
 crafting can still take it to four.
 
 ### Hull item mechanics
@@ -770,7 +770,7 @@ even when min and max are blank.
 An AND group needs every row, a COUNT group at least its count, and a row or group with no stat picked is ignored
 (`ModifierSearch`, kept on the session's `ItemStorageFilter` and applied only when Search is pressed). The stat list
 narrows to the stats the chosen socket types can carry (`ItemStatPool`), read from core `ModifierParts`: each part's
-pools, unique items and implicits, the corruption pool on every part, and the parts biome, engram and Storm Front
+pools, unique items and implicits, the corruption pool on every part, and the parts biome and engram
 sources reserve their modifiers for (`ModifierSources`).
 
 ### Wormhole anchors
@@ -909,7 +909,11 @@ A biome can own one modifier per hull item part (`biome_modifiers.csv`), reserve
 (`BiomeModifiers`). A non-unique hull item dropped while the player is in a run system of that biome has a 30% chance,
 fixed by its seed, to gain its part's modifier: `LootSources.shapeDrops` passes each drop through every loot source's `shapeDrop`, called from the
 drop helpers in `ItemLootListener` and from the hull item battle drops. The item keeps its other modifiers, except one
-sharing the added effect; on a full side a random modifier makes way (`GrantedModifiers.add`).
+sharing the added effect; on a full side a random modifier makes way (`GrantedModifiers.add`). Chart fleets in a region
+with biome modifiers also drop the Adaptive and Grafting Nanoswarms (`BiomeNanoswarm`, `chart_materials.csv`): one
+rerolls a hull item around a random biome modifier of its part plus one to three others, the other swaps a random
+modifier for one. Neither leaves an item with more than two biome modifiers (`BiomeModifiers.hasRoomFor`), so Grafting
+on an item that has two always replaces one of them.
 
 Of the Abyssal Rift's, the moving-slowly burn level adds up over the fleet's active ships, capped at +6, onto vanilla's
 `move_slow_speed_bonus_mod` at each fleet sync (`FleetWideEffects.applyMoveSlowBurnLevel`). The phase-entry repair
@@ -1259,9 +1263,10 @@ intel names the next worlds and POIs it reaches. The size and strike lines scale
 A battle is in the storm when the player fleet is inside the band as it starts. The global `StormBattlePlugin` then
 fires an EMP arc with no source ship every 6 seconds at a random non-phased ship of either side, weighted by hull size
 and 10% stronger per tier, so shields block it. `StarChartLootSource` records the flag at the first engagement, so
-auto-resolved battles count too, and chart fleets drop 50% more loot. A won storm battle against chart fleets also
-adds one basic hull item rerolled around a reserved storm modifier (`StormFront.battleBonus`, `StormLoot`,
-`GrantedModifiers`).
+auto-resolved battles count too, and chart fleets drop 50% more loot. Every non-unique hull item a storm battle drops,
+convoy cargo pods included, carries a biome modifier: the system biome's own for its part, or with none a random one from
+the biomes the player has opened, unless the 30% biome roll already gave it one (`StormLoot`, run from
+`StarChartLootSource.shapeBattleDrop` through `GrantedModifiers.add`).
 
 ### Derelict Forge
 

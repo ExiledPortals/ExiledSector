@@ -59,6 +59,14 @@ public final class LootSources {
     }
 
     public static List<ItemData> shapeDrops(List<ItemData> items) {
+        return shape(items, false);
+    }
+
+    public static List<ItemData> shapeBattleDrops(List<ItemData> items) {
+        return shape(items, true);
+    }
+
+    private static List<ItemData> shape(List<ItemData> items, boolean fromBattle) {
         CampaignFleetAPI playerFleet = PlayerFleet.orNull();
         LocationAPI location = playerFleet == null ? null : playerFleet.getContainingLocation();
         if (location == null || items.isEmpty()) {
@@ -68,7 +76,7 @@ public final class LootSources {
         for (ItemData item : items) {
             ItemData shapedItem = item;
             for (LootSource source : SOURCES.all()) {
-                shapedItem = source.shapeDrop(shapedItem, location);
+                shapedItem = fromBattle ? source.shapeBattleDrop(shapedItem, location) : source.shapeDrop(shapedItem, location);
             }
             shaped.add(shapedItem);
         }

@@ -64,4 +64,8 @@ public interface LootSource {
     default ItemData shapeDrop(ItemData item, LocationAPI location) {
         return item;
     }
+
+    default ItemData shapeBattleDrop(ItemData item, LocationAPI location) {
+        return shapeDrop(item, location);
+    }
 }

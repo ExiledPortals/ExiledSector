@@ -1,6 +1,5 @@
 package exiledsector.items;
 
-import exiledsector.charts.anomaly.stormfront.StormLoot;
 import exiledsector.charts.loot.BiomeModifiers;
 import exiledsector.skills.skilleffect.EffectAliases;
 
@@ -17,7 +16,6 @@ final class ShippedModifierParts {
         ItemImplicits.registerCorruptionPool(HullItemRows.shippedRows(ItemImplicits.corruptionDataPath()));
         Engrams.register(HullItemRows.shippedRows(Engrams.PATH));
         BiomeModifiers.register(HullItemRows.shippedRows(BiomeModifiers.PATH));
-        StormLoot.reserveModifiers();
     }
 
     static void clear() {

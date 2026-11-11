@@ -4,6 +4,7 @@ import exiledsector.ExiledSector;
 import exiledsector.ModCsv;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.data.CsvRows;
+import exiledsector.items.BiomeNanoswarm;
 import exiledsector.items.ItemDrops;
 import exiledsector.loot.BattleLootRates;
 import exiledsector.loot.BattleMaterials;
@@ -72,12 +73,15 @@ public final class ChartMaterials {
     }
 
     static Map<String, Integer> roll(int tier, float chartShare, Random random) {
-        return roll(tier, chartShare, 1f, random);
+        return roll(tier, chartShare, 1f, null, random);
     }
 
-    static Map<String, Integer> roll(int tier, float chartShare, float difficultyMultiplier, Random random) {
+    static Map<String, Integer> roll(int tier, float chartShare, float difficultyMultiplier, String biomeId, Random random) {
         Map<String, Integer> materials = new LinkedHashMap<>();
         amounts.forEach((drop, amount) -> {
+            if (BiomeNanoswarm.byItemId(drop) != null && !BiomeModifiers.hasModifiers(biomeId)) {
+                return;
+            }
             float difficulty = BattleLootRates.scaledDifficulty(difficultyMultiplier, amount.difficultyScaling());
             int count = ItemDrops.wholeFeedstock(amount.at(tier) * Math.max(0f, chartShare) * difficulty, random);
             if (count > 0) {

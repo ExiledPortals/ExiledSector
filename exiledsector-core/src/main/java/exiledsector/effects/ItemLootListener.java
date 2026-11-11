@@ -158,13 +158,31 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         siteLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
     }
 
+    public static void addBattleSiteLoot(CargoAPI loot, ItemDrops.SiteLoot siteLoot) {
+        addBattleItems(loot, siteLoot.items(), siteLoot.upgrades());
+        siteLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
+    }
+
     public static void addItems(CargoAPI cargo, List<ItemData> items, List<ShipSchematic> upgrades) {
-        LootSources.shapeDrops(items).forEach(item -> cargo.addSpecial(item.toSpecialItem(), 1f));
+        addShaped(cargo, LootSources.shapeDrops(items), upgrades);
+    }
+
+    public static void addBattleItems(CargoAPI cargo, List<ItemData> items, List<ShipSchematic> upgrades) {
+        addShaped(cargo, LootSources.shapeBattleDrops(items), upgrades);
+    }
+
+    private static void addShaped(CargoAPI cargo, List<ItemData> shapedItems, List<ShipSchematic> upgrades) {
+        shapedItems.forEach(item -> cargo.addSpecial(item.toSpecialItem(), 1f));
         upgrades.forEach(upgrade -> cargo.addSpecial(upgrade.toSpecialItem(), 1f));
     }
 
     public static void deliverSiteLoot(CargoAPI cargo, ItemDrops.SiteLoot siteLoot) {
         deliverSiteLoot(cargo, new ItemDrops.SiteLoot(LootSources.shapeDrops(siteLoot.items()), siteLoot.upgrades(), siteLoot.materials()),
+                ItemLootListener::announceSalvaged, MaterialDropAnnouncer::announce);
+    }
+
+    public static void deliverBattleSiteLoot(CargoAPI cargo, ItemDrops.SiteLoot siteLoot) {
+        deliverSiteLoot(cargo, new ItemDrops.SiteLoot(LootSources.shapeBattleDrops(siteLoot.items()), siteLoot.upgrades(), siteLoot.materials()),
                 ItemLootListener::announceSalvaged, MaterialDropAnnouncer::announce);
     }
 

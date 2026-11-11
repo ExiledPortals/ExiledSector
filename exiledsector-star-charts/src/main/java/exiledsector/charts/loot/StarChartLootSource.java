@@ -124,7 +124,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
 
     @Override
     public void addEncounterLoot(BattleLoot battle, CargoAPI loot) {
-        ItemLootListener.addSiteLoot(loot, battleLoot(battle));
+        ItemLootListener.addBattleSiteLoot(loot, battleLoot(battle));
         try {
             losses(battle).shipSalvage.addTo(loot, battle.encounterSalvage(), battle.random());
         } catch (RuntimeException e) {
@@ -134,7 +134,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
 
     @Override
     public void deliverBattleLoot(BattleLoot battle, CargoAPI playerCargo) {
-        ItemLootListener.deliverSiteLoot(playerCargo, battleLoot(battle));
+        ItemLootListener.deliverBattleSiteLoot(playerCargo, battleLoot(battle));
     }
 
     private ItemDrops.SiteLoot battleLoot(BattleLoot battle) {
@@ -163,15 +163,6 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
                 chartLoot = chartLoot.plus(ChartFleetLoot.roll(sector, fleetLosses.getKey(), deploymentPoints, fleetBattle, battle.independentRandom()));
             } catch (RuntimeException e) {
                 LOG.error("[ExiledSector] Rolling Star Chart fleet loot failed for fleet " + fleetLosses.getKey().getId(), e);
-            }
-        }
-        if (battle.playerWon() && !losses.chartFleetDeploymentPoints.isEmpty() && losses.battleAnomalies != null) {
-            for (LootShaper anomaly : losses.battleAnomalies) {
-                try {
-                    chartLoot = chartLoot.plus(anomaly.battleBonus(sector, battle.independentRandom()));
-                } catch (RuntimeException e) {
-                    LOG.error("[ExiledSector] Rolling an anomaly's battle bonus failed", e);
-                }
             }
         }
         return chartLoot;
@@ -284,6 +275,20 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
             LOG.error("[ExiledSector] Adding a biome modifier to a dropped item failed", e);
             return item;
         }
+    }
+
+    @Override
+    public ItemData shapeBattleDrop(ItemData item, LocationAPI location) {
+        ItemData shaped = shapeDrop(item, location);
+        SectorAPI sector = Global.getSector();
+        for (LootShaper anomaly : anomaliesHoldingBattle()) {
+            try {
+                shaped = anomaly.shapeBattleDrop(sector, shaped, location);
+            } catch (RuntimeException e) {
+                LOG.error("[ExiledSector] Shaping a battle drop failed in anomaly " + anomaly.id(), e);
+            }
+        }
+        return shaped;
     }
 
     @Override

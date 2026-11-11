@@ -254,7 +254,7 @@ public final class ConvoyScript extends AnomalyRunScript implements FleetEventLi
             return;
         }
         Random dropRandom = new Random(convoy.nextDropSeed());
-        ConvoyCargo.dropPods(system(), runId(), ConvoyCargo.roll(sector, run, convoy, lostShare * ConvoyRules.POD_SHARE, dropRandom), at);
+        ConvoyCargo.dropPods(system(), runId(), ConvoyCargo.lostCargo(sector, run, convoy, lostShare * ConvoyRules.POD_SHARE, dropRandom), at);
     }
 
     public float daysUntilDeparture(CampaignClockAPI clock) {

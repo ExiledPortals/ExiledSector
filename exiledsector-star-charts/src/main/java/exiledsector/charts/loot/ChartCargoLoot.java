@@ -35,9 +35,23 @@ public final class ChartCargoLoot {
 
     public static CargoAPI roll(SectorAPI sector, ChartRun run, ChartGenContext context, String scope, String siteId, float steps, float itemMult,
                                 Random random) {
+        return roll(sector, run, context, scope, siteId, steps, itemMult, false, random);
+    }
+
+    public static CargoAPI rollFromBattle(SectorAPI sector, ChartRun run, String scope, String siteId, float steps, float itemMult, Random random) {
+        return roll(sector, run, ChartRunEffects.contextOf(run), scope, siteId, steps, itemMult, true, random);
+    }
+
+    private static CargoAPI roll(SectorAPI sector, ChartRun run, ChartGenContext context, String scope, String siteId, float steps, float itemMult,
+                                 boolean fromBattle, Random random) {
         ChartVanillaLoot.SiteDrops drops = ChartVanillaLoot.drops(scope, run.tier(), steps, context);
         CargoAPI cargo = SalvageEntity.generateSalvage(random, 1f, 1f, 1f, 1f, drops.value(), drops.random());
-        ItemLootListener.addSiteLoot(cargo, rollItems(sector, run, context, siteId, itemMult, random));
+        ItemDrops.SiteLoot items = rollItems(sector, run, context, siteId, itemMult, random);
+        if (fromBattle) {
+            ItemLootListener.addBattleSiteLoot(cargo, items);
+        } else {
+            ItemLootListener.addSiteLoot(cargo, items);
+        }
         cargo.sort();
         return cargo;
     }

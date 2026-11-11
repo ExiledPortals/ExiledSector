@@ -76,6 +76,11 @@ final class ConvoyCargo {
                 convoy.itemChanceMult() * share, random);
     }
 
+    static CargoAPI lostCargo(SectorAPI sector, ChartRun run, ConvoyState convoy, float share, Random random) {
+        return ChartCargoLoot.rollFromBattle(sector, run, ConvoyRules.LOOT_SCOPE, ConvoyRules.CARGO_SITE, convoy.cargoSteps() * share,
+                convoy.itemChanceMult() * share, random);
+    }
+
     static CargoAPI deliveredCache(SectorAPI sector, ChartRun run, ConvoyState convoy, CampaignFleetAPI fleet, Random random) {
         CargoAPI cache = Global.getFactory().createCargo(true);
         if (fleet != null && !fleet.isEmpty()) {
