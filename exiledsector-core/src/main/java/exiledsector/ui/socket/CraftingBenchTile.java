@@ -54,6 +54,11 @@ final class CraftingBenchTile extends BaseCustomUIPanelPlugin {
         return new CraftingBenchTile(iconPaths, unframed(iconLook), toggledOn, toggledOn, TOGGLE_STYLE, tileHandler);
     }
 
+    static CraftingBenchTile entry(List<String> iconPaths, CargoIconLook iconLook, BooleanSupplier available, BooleanSupplier lit,
+                                   TileInput.Handler tileHandler) {
+        return new CraftingBenchTile(iconPaths, unframed(iconLook), available, lit, TOGGLE_STYLE, tileHandler);
+    }
+
     private static CargoIconLook unframed(CargoIconLook iconLook) {
         return iconLook == null ? null : iconLook.unframed();
     }

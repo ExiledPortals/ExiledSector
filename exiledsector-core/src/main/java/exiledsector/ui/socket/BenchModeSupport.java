@@ -133,6 +133,10 @@ public interface BenchModeSupport {
         return craftingItems().stream().anyMatch(craftingItem -> !inOrbit(craftingItem));
     }
 
+    default List<BenchTray> trays() {
+        return List.of();
+    }
+
     Refusal refusal(CraftingMaterialFamily craftingItem, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
                     Set<CraftingInhibitor> inhibitors);
 

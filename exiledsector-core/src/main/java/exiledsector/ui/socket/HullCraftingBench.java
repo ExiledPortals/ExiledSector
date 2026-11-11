@@ -2,6 +2,8 @@ package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.ExiledSector;
+import exiledsector.domain.DomainContributions;
+import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.items.CorruptionOutcome;
@@ -32,6 +34,7 @@ public final class HullCraftingBench implements BenchModeSupport {
     public static final HullCraftingBench INSTANCE = new HullCraftingBench();
     private static final UseVerdict LOAD_FIRST = UseVerdict.refused("ui.craftingBench.notice.loadFirst");
     private static final UseVerdict CANNOT_USE = UseVerdict.refused("ui.craftingBench.notice.cannotUse");
+    private static final DomainContributions<BenchTray> DOMAIN_TRAYS = new DomainContributions<>(ExiledSectorDomain::hullCraftingBenchTrays);
 
     private HullCraftingBench() {
     }
@@ -81,6 +84,18 @@ public final class HullCraftingBench implements BenchModeSupport {
         List<CraftingMaterialFamily> offered = new ArrayList<>();
         ExiledSector.enabledDomains().forEach(domain -> offered.addAll(domain.hullCraftingBenchCraftingItems()));
         return hullCraftingBenchCraftingItems(offered, HoloPanel.playerMaterials()::count);
+    }
+
+    @Override
+    public List<BenchTray> trays() {
+        return hullCraftingBenchTrays(DOMAIN_TRAYS.all());
+    }
+
+    static List<BenchTray> hullCraftingBenchTrays(List<BenchTray> domainTrays) {
+        List<BenchTray> trays = new ArrayList<>();
+        trays.add(ExcavationInhibitorTray.INSTANCE);
+        trays.addAll(domainTrays);
+        return trays;
     }
 
     static List<CraftingMaterialFamily> hullCraftingBenchCraftingItems(List<CraftingMaterialFamily> registered, ToIntFunction<String> owned) {
