@@ -96,6 +96,14 @@ final class SkillTreeTemplateBar {
         return contains(x, y) ? TemplateAction.NONE : null;
     }
 
+    float statusHeight() {
+        if (!barState.visible()) {
+            return 0f;
+        }
+        int lines = (statusText != null ? 1 : 0) + (resultText != null ? 1 : 0);
+        return lines == 0 ? 0f : STATUS_GAP + lines * STATUS_LINE_HEIGHT;
+    }
+
     void layout(PositionAPI canvasPosition) {
         float rowBottom = canvasPosition.getY() + ChromeMetrics.EDGE_MARGIN;
         float rowRight = canvasPosition.getX() + canvasPosition.getWidth() - ChromeMetrics.EDGE_MARGIN;

@@ -55,6 +55,10 @@ final class SkillTreeTemplateController {
         return templateBar.contains(x, y);
     }
 
+    float barStatusHeight() {
+        return templateBar.statusHeight();
+    }
+
     boolean isPlanning() {
         return treeSession.isPlanning();
     }
