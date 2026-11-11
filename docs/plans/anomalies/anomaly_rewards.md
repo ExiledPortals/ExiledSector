@@ -2,7 +2,7 @@
 
 Most anomalies are interesting to play but reward more of the same: extra quantity, an extra cache, a few reserved modifiers. Anomalous Debris is the exception, since its engrams are a crafting outcome nothing else gives. This plan gives each anomaly a reward that only it grants, the way each Path of Exile league mechanic has its own crafting or item outcome.
 
-Status: proposed 2026-11-11. Sections 1 and 2 are decided; every anomaly in section 3 is decided, some only in outline until the user details them. Nothing is built. All numbers are placeholders.
+Status: proposed 2026-11-11. Sections 1 and 2 are decided; every anomaly in section 3 is decided, some only in outline until the user details them. Section 1 and the feedstock drops of section 2 are built. All numbers are placeholders.
 
 ## 1. Storm Front: biome modifiers on every hull item (built)
 
@@ -144,7 +144,7 @@ The Coronal Hypershunt is its own reward, as are the Derelict Forge, the Pre-Col
 ## Build order
 
 1. [x] Storm Front change: the guaranteed biome grant, removal or move of the storm modifiers, strings (en and zh_CN), `docs/docs.md`, tests.
-2. [ ] The three infused feedstock items, their `special_items.csv` rows, icons (placeholders), their tier rows, the ±15% roll per feedstock and the convoy cargo split.
+2. [x] The three infused feedstock items, their `special_items.csv` rows, icons (placeholders), their tier rows, the ±15% roll per feedstock and the convoy cargo split. Built: `items.InfusedFeedstock`, `anomaly.convoy.ConvoyFeedstock` with `convoy_feedstock.csv`, rolled in `ConvoyFleets.spawn` and shared into the pods and cache by `ConvoyCargo`; the icons reuse Nanite Feedstock's.
 3. [ ] The Crafting Bench rework: the right-side tray framework and content hook, the bench moving left while a tray is open, the Excavation Inhibitors tray with the Prefix and Suffix Inhibitors moved into it and active inhibitors orbiting the socket, inhibitors removed from the Star Charts mode, the two inhibitors' drop rates lowered to the Immutable Nanoswarm's, then the Engrams tray (engrams moved out of the crafting items), with tests.
 4. [ ] The Infused Crafting tray and its crafts as core `ForgeOperation`s, with tests per craft.
 5. [ ] Depot prototypes: `prototype_implicits.csv`, the vault's pick of three, strings, tests.

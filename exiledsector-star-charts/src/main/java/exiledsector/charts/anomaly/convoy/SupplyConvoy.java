@@ -42,6 +42,11 @@ public final class SupplyConvoy implements LayoutShaper, ContentPlacer, RunParti
         return ANOMALY_ID;
     }
 
+    @Override
+    public void loadData() {
+        ConvoyFeedstock.load();
+    }
+
     static RunFactionDress factionDress(String lookalikeFactionId) {
         return new RunFactionDress(lookalikeFactionId, Translation.gameText("chart.anomaly.supply_convoy.faction.name"),
                 Translation.gameText("chart.anomaly.supply_convoy.faction.nameWithArticle"), Translation.gameText("chart.anomaly.supply_convoy.faction.isOrAre"), RepLevel.NEUTRAL, true);

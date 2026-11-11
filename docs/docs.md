@@ -1210,7 +1210,9 @@ destination (`ConvoyHostility`). Asteroids, nebulae and slowing anomaly terrain 
 
 Beating the convoy drops ordinary chart fleet loot, and each share of its freighter fleet points lost also drops that share
 of its cargo (the `convoy` scope of `chart_loot.csv` plus the `exiledSector_chart_convoy` item row) as cargo pods
-(`ConvoyState`, `ConvoyCargo`). On unloading, `ConvoyCargo.deliveredCache` rolls the Exiled Sector loot that beating the
+(`ConvoyState`, `ConvoyCargo`). The cargo also holds the three infused feedstocks, rolled at spawn by `ConvoyFeedstock`:
+the tier amount from `convoy_feedstock.csv`, each up or down by as much as 15%, times the crafting item, item quantity and
+convoy cargo lines. On unloading, `ConvoyCargo.deliveredCache` rolls the Exiled Sector loot that beating the
 surviving fleet would give (`ItemLootListener.addUnfoughtBattleLoot` runs every loot source without wreck salvage) and the
 cargo still aboard, and keeps 80% of each stack. The fleet's Exiled Sector loot is then spent (`ChartFleetLoot.spendLoot`,
 `FleetLootRules.NONE`); its weapons, cargo and vanilla drops stay with it. The planet then offers a raid (`ConvoyCacheDialog`,

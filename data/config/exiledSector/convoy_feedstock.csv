@@ -1,0 +1,4 @@
+feedstock,tier_1,tier_15,note
+exiledSector_threat_feedstock,150,1000,"Shared amount one Supply Convoy carries at tier 1 and tier 15, linear between. Each feedstock rolls its own amount up to 15% either side of it, then times the run's Crafting item bonus with item quantity and the convoy cargo line. Split over the freighters by fleet points: cargo pods drop the lost share and the delivered cache holds 80% of the rest"
+exiledSector_shroud_feedstock,150,1000,
+exiledSector_phase_feedstock,150,1000,

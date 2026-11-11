@@ -33,6 +33,7 @@ import exiledsector.items.Engrams;
 import exiledsector.items.AtlasCatalystItems;
 import exiledsector.items.BiomeNanoswarm;
 import exiledsector.items.CraftingMaterialFamily;
+import exiledsector.items.InfusedFeedstock;
 import exiledsector.items.ItemDataRules;
 import exiledsector.items.ItemTypeSupport;
 import exiledsector.items.MaterialItems;
@@ -103,6 +104,9 @@ public final class StarChartsDomain implements ExiledSectorDomain {
                 MaterialItems.localise(craftingItem.itemId());
             }
             for (BiomeNanoswarm craftingItem : BiomeNanoswarm.values()) {
+                MaterialItems.localise(craftingItem.itemId());
+            }
+            for (InfusedFeedstock craftingItem : InfusedFeedstock.values()) {
                 MaterialItems.localise(craftingItem.itemId());
             }
             WormholeGateway.INDUSTRY_IDS.forEach(SpecLocalisation::industry);
