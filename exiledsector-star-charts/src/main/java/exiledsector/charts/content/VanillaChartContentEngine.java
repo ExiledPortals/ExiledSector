@@ -149,8 +149,10 @@ final class VanillaChartContentEngine implements ChartContentEngine {
 
     @Override
     public CampaignFleetAPI createFleet(FleetParamsV3 params) {
+        ChartOfficerLevels.liftLevelLimits(params);
         CampaignFleetAPI fleet = ChartThreatFleets.builds(params.factionId) ? ChartThreatFleets.create(params)
                 : ChartFleetUpscaler.build(params, startingDoctrine(params), FleetFactoryV3::createFleet);
+        ChartOfficerLevels.grantFleetEliteSkills(fleet, params.officerLevelBonus, params.random != null ? params.random : new Random());
         nameIfUnnamed(fleet, params.fleetType);
         return fleet;
     }
@@ -197,6 +199,7 @@ final class VanillaChartContentEngine implements ChartContentEngine {
         station.getAbility(Abilities.TRANSPONDER).activate();
         station.getDetectedRangeMod().modifyFlat(DETECTION_MOD_ID, STATION_DETECTION_BONUS);
         PersonAPI commander = stationCommander(station.getFaction(), member, officerLevel, random);
+        ChartOfficerLevels.grantStationEliteSkills(commander, random);
         station.setCommander(commander);
         member.setCaptain(commander);
         member.getRepairTracker().setCR(member.getRepairTracker().getMaxCR());
