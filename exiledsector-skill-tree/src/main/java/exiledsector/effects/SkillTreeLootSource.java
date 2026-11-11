@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.compat.NightcrossCompat;
@@ -28,7 +29,6 @@ import exiledsector.loot.LootSource;
 import exiledsector.loot.MarketStock;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.npc.NpcTreeTag;
-import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipLevelSystem;
 import org.apache.log4j.Logger;
 
@@ -48,6 +48,7 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty, M
             RandomAssortmentCompat.EXOSHIP_SUBMARKET, 1f);
     private static final long ANCHOR_SALVAGE_SEED_SALT = 0x616E63686F7273L;
     private static final String BATTLE_FIND = "battle loot";
+    private static final float FULL_DIFFICULTY_STRENGTH = 1f;
     private static final Logger LOG = Logger.getLogger(SkillTreeLootSource.class);
 
     private SkillTreeLootSource() {
@@ -185,8 +186,7 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty, M
 
     @Override
     public Float difficultyMultiplier(float battleDifficulty) {
-        return ShipLevelSystem.difficultyMultiplier(battleDifficulty, ShipLevelConfig.xpDifficultyStrength(),
-                ShipLevelConfig.xpDifficultyMaxMultiplier());
+        return ShipLevelSystem.difficultyMultiplier(battleDifficulty, FULL_DIFFICULTY_STRENGTH, FleetEncounterContext.MAX_XP_MULT);
     }
 
     @Override

@@ -161,6 +161,16 @@ through item-cost nodes), then retries the steps. Path-picked choice nodes take 
 own picks, then the option the template chose most (affinity options count by affinity), then the root's affinity.
 Editing a template from another root overwrites it and moves it to that root.
 
+### Ship XP
+
+A battle grants every ship in the fleet the defeated enemy deployment points times the LunaLib XP per point, halved on
+a loss, with catch-up XP for ships behind the fleet's highest level (`CombatXpAward`, `ShipLevelSystem.awardXpToFleet`).
+Vanilla's battle difficulty adds nothing by default, since it counts fleet points and officers but no tree or hull item
+power; its LunaLib strength setting brings it back. Battle loot still scales with battle difficulty (`SkillTreeLootSource`).
+
+Each level needs 13% more XP than the one before, and from level 35 that growth rises by 0.75 percentage points per
+level, reaching about 24% at level 49 (`ShipLevelSystem.LevelCurve`). Every value is a LunaLib setting.
+
 </details>
 
 <details>

@@ -48,7 +48,7 @@ class ShipLevelSystemTest {
     }
 
     private static ShipLevelSystem.LevelCurve curve(int growthCutoffLevel, int maxLevel) {
-        return new ShipLevelSystem.LevelCurve(XP_BASE, XP_GROWTH, growthCutoffLevel, maxLevel);
+        return new ShipLevelSystem.LevelCurve(XP_BASE, XP_GROWTH, growthCutoffLevel, 0f, 1, maxLevel);
     }
 
     private static SkillNode node(String id) {
@@ -69,28 +69,63 @@ class ShipLevelSystemTest {
 
     @Test
     void xpToReachNextLevelGrowsExponentiallyWithLevel() {
-        assertEquals(100f, ShipLevelSystem.xpToReachNextLevel(0, XP_BASE, XP_GROWTH, NO_GROWTH_CUTOFF));
-        assertEquals(200f, ShipLevelSystem.xpToReachNextLevel(1, XP_BASE, XP_GROWTH, NO_GROWTH_CUTOFF));
-        assertEquals(400f, ShipLevelSystem.xpToReachNextLevel(2, XP_BASE, XP_GROWTH, NO_GROWTH_CUTOFF));
+        assertEquals(100f, curve(NO_GROWTH_CUTOFF, 50).xpToReachNextLevel(0));
+        assertEquals(200f, curve(NO_GROWTH_CUTOFF, 50).xpToReachNextLevel(1));
+        assertEquals(400f, curve(NO_GROWTH_CUTOFF, 50).xpToReachNextLevel(2));
     }
 
     @Test
     void xpToReachNextLevelLocksToTheCutoffTransitionCostFromThatLevelOnward() {
-        assertEquals(400f, ShipLevelSystem.xpToReachNextLevel(2, XP_BASE, XP_GROWTH, 3));
-        assertEquals(400f, ShipLevelSystem.xpToReachNextLevel(3, XP_BASE, XP_GROWTH, 3));
-        assertEquals(400f, ShipLevelSystem.xpToReachNextLevel(10, XP_BASE, XP_GROWTH, 3));
+        assertEquals(400f, curve(3, 50).xpToReachNextLevel(2));
+        assertEquals(400f, curve(3, 50).xpToReachNextLevel(3));
+        assertEquals(400f, curve(3, 50).xpToReachNextLevel(10));
     }
 
     @Test
     void aCutoffOfZeroKeepsTheXpGrowingAtEveryLevel() {
-        assertEquals(100f, ShipLevelSystem.xpToReachNextLevel(0, XP_BASE, XP_GROWTH, 0));
-        assertEquals(102400f, ShipLevelSystem.xpToReachNextLevel(10, XP_BASE, XP_GROWTH, 0));
+        assertEquals(100f, curve(0, 50).xpToReachNextLevel(0));
+        assertEquals(102400f, curve(0, 50).xpToReachNextLevel(10));
     }
 
     @Test
     void xpToReachNextLevelBeforeTheCutoffIsUnaffected() {
-        assertEquals(100f, ShipLevelSystem.xpToReachNextLevel(0, XP_BASE, XP_GROWTH, 3));
-        assertEquals(200f, ShipLevelSystem.xpToReachNextLevel(1, XP_BASE, XP_GROWTH, 3));
+        assertEquals(100f, curve(3, 50).xpToReachNextLevel(0));
+        assertEquals(200f, curve(3, 50).xpToReachNextLevel(1));
+    }
+
+    @Test
+    void theGrowthRampAddsOneStepToTheGrowthAtTheStartLevelAndAnotherAtEachLevelAfter() {
+        ShipLevelSystem.LevelCurve rampedCurve = new ShipLevelSystem.LevelCurve(100f, 1.1f, 0, 0.05f, 3, 50);
+
+        assertEquals(121f, rampedCurve.xpToReachNextLevel(2), 0.01f);
+        assertEquals(121f * 1.15f, rampedCurve.xpToReachNextLevel(3), 0.01f);
+        assertEquals(121f * 1.15f * 1.2f, rampedCurve.xpToReachNextLevel(4), 0.01f);
+    }
+
+    @Test
+    void theGrowthCutoffAlsoFreezesARampedCurve() {
+        ShipLevelSystem.LevelCurve rampedCurve = new ShipLevelSystem.LevelCurve(100f, 1.1f, 5, 0.05f, 3, 50);
+
+        assertEquals(rampedCurve.xpToReachNextLevel(4), rampedCurve.xpToReachNextLevel(12));
+    }
+
+    @Test
+    void theDefaultCurveGrowsSteadilyUntilTheRampThenEachLevelOutgrowsTheOneBefore() {
+        ShipLevelSystem.LevelCurve defaultCurve = new ShipLevelSystem.LevelCurve(ShipLevelConfig.DEFAULT_XP_BASE,
+                1f + ShipLevelConfig.DEFAULT_XP_GROWTH_PERCENT / 100f, ShipLevelConfig.DEFAULT_XP_GROWTH_CUTOFF_LEVEL,
+                ShipLevelConfig.DEFAULT_XP_GROWTH_RAMP_PERCENT / 100f, ShipLevelConfig.DEFAULT_XP_GROWTH_RAMP_START_LEVEL,
+                ShipLevelConfig.DEFAULT_MAX_LEVEL);
+        int rampStart = ShipLevelConfig.DEFAULT_XP_GROWTH_RAMP_START_LEVEL;
+
+        for (int level = 1; level < rampStart; level++) {
+            assertEquals(1.13f, defaultCurve.xpToReachNextLevel(level) / defaultCurve.xpToReachNextLevel(level - 1), 1e-4f);
+        }
+        float previousGrowth = 1.13f;
+        for (int level = rampStart; level < ShipLevelConfig.DEFAULT_MAX_LEVEL; level++) {
+            float growth = defaultCurve.xpToReachNextLevel(level) / defaultCurve.xpToReachNextLevel(level - 1);
+            assertTrue(growth > previousGrowth, "level " + level);
+            previousGrowth = growth;
+        }
     }
 
     @Test

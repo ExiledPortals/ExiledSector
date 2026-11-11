@@ -276,6 +276,7 @@ class CombatXpAwardTest {
     @Test
     void vanillasBattleDifficultyMultipliesTheXpAndIsReported() {
         oneShipFleetThatWontLevelUp();
+        vanillaDifficultyBonusOn();
         encounterWithDifficulty(encounterContext(2f, true));
 
         syncTreesThenAwardXp(engagement(true, 40f));
@@ -288,6 +289,7 @@ class CombatXpAwardTest {
     @Test
     void aLostBattleAppliesBothTheLossAndDifficultyMultipliers() {
         oneShipFleetThatWontLevelUp();
+        vanillaDifficultyBonusOn();
         encounterWithDifficulty(encounterContext(3f, true));
 
         syncTreesThenAwardXp(engagement(false, 40f));
@@ -299,6 +301,7 @@ class CombatXpAwardTest {
     @Test
     void aFractionalDifficultyIsAppliedExactlyAndReportedToTheNearestPercent() {
         oneShipFleetThatWontLevelUp();
+        vanillaDifficultyBonusOn();
         encounterWithDifficulty(encounterContext(1.234f, true));
 
         syncTreesThenAwardXp(engagement(true, 40f));
@@ -310,6 +313,7 @@ class CombatXpAwardTest {
     @Test
     void aFightThatEarnedNoXpDoesNotAdvertiseADifficultyBonus() {
         oneShipFleetThatWontLevelUp();
+        vanillaDifficultyBonusOn();
         encounterWithDifficulty(encounterContext(4f, true));
 
         syncTreesThenAwardXp(engagement(true, 0f));
@@ -321,6 +325,7 @@ class CombatXpAwardTest {
     @Test
     void anEasierBattleNeverReducesTheXp() {
         oneShipFleetThatWontLevelUp();
+        vanillaDifficultyBonusOn();
         encounterWithDifficulty(encounterContext(0.4f, true));
 
         syncTreesThenAwardXp(engagement(true, 40f));
@@ -332,6 +337,7 @@ class CombatXpAwardTest {
     @Test
     void anUncomputedOrNonVanillaEncounterContextGivesNoBonus() {
         oneShipFleetThatWontLevelUp();
+        vanillaDifficultyBonusOn();
 
         encounterWithDifficulty(encounterContext(4f, false));
         syncTreesThenAwardXp(engagement(true, 40f));
@@ -339,6 +345,21 @@ class CombatXpAwardTest {
         syncTreesThenAwardXp(engagement(true, 40f));
 
         assertEquals(80f, ShipSkillDataManager.get("ship-a").getXp());
+        verify(textPanel, never()).addPara(eq("%s"), (Color) any(), (Color) any(), contains("battle difficulty"));
+    }
+
+    private void vanillaDifficultyBonusOn() {
+        lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_DIFFICULTY_STRENGTH_FIELD_ID)).thenReturn(1f);
+    }
+
+    @Test
+    void byDefaultBattleDifficultyAddsNoXp() {
+        oneShipFleetThatWontLevelUp();
+        encounterWithDifficulty(encounterContext(3f, true));
+
+        syncTreesThenAwardXp(engagement(true, 40f));
+
+        assertEquals(40f, ShipSkillDataManager.get("ship-a").getXp());
         verify(textPanel, never()).addPara(eq("%s"), (Color) any(), (Color) any(), contains("battle difficulty"));
     }
 

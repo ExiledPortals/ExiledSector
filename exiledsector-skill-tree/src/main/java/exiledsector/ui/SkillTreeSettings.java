@@ -56,6 +56,12 @@ public final class SkillTreeSettings {
         SettingsCreator.addInt(MOD_ID, ShipLevelConfig.XP_GROWTH_CUTOFF_LEVEL_FIELD_ID,
                 Translation.text("settings.level.xpGrowthCutoff.name"), Translation.text("settings.level.xpGrowthCutoff.tooltip"),
                 ShipLevelConfig.DEFAULT_XP_GROWTH_CUTOFF_LEVEL, 0, 200, treeTab);
+        SettingsCreator.addInt(MOD_ID, ShipLevelConfig.XP_GROWTH_RAMP_START_LEVEL_FIELD_ID,
+                Translation.text("settings.level.xpGrowthRampStart.name"), Translation.text("settings.level.xpGrowthRampStart.tooltip"),
+                ShipLevelConfig.DEFAULT_XP_GROWTH_RAMP_START_LEVEL, 1, 200, treeTab);
+        SettingsCreator.addDouble(MOD_ID, ShipLevelConfig.XP_GROWTH_RAMP_PERCENT_FIELD_ID,
+                Translation.text("settings.level.xpGrowthRamp.name"), Translation.text("settings.level.xpGrowthRamp.tooltip"),
+                ShipLevelConfig.DEFAULT_XP_GROWTH_RAMP_PERCENT, 0.0, 10.0, treeTab);
         SettingsCreator.addDouble(MOD_ID, ShipLevelConfig.XP_PER_DEPLOYMENT_POINT_FIELD_ID,
                 Translation.text("settings.level.xpPerDeploymentPoint"), "", ShipLevelConfig.DEFAULT_XP_PER_DEPLOYMENT_POINT,
                 0.0, 100.0, treeTab);
