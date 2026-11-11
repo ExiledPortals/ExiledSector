@@ -1,6 +1,6 @@
 # Theme tags for modifiers and nodes
 
-Status: designed, nothing built.
+Status: steps 1 to 3 built, drafts for step 5 in `docs/plans/tagging_drafts/`.
 
 Item modifiers, star chart modifiers and skill tree nodes share one vocabulary of theme tags that say what they do, so crafting, drops and tree mechanics can work from tags the way Path of Exile's fossils, bench meta-crafts and cluster jewels do. A modifier or node can carry any number of tags.
 
@@ -67,9 +67,9 @@ Each gets its own plan:
 
 ## Steps
 
-1. [ ] Vocabulary: `theme_tags.csv`, the core tag class, names in en and zh_CN, the editor mirror, and the renames across `skill_types.json`, `npc_faction_focus.csv`, `npc_ship_system_focus.csv` and the editor.
-2. [ ] Shield requirement tags `req_front_shield` and `req_omni_shield` in `NodeRequirements`.
-3. [ ] `tags` columns on `item_modifiers.csv` and `star_chart_modifiers.csv`, parsed onto the modifiers, and a `tags` list on atlas tree types, all kept by the editor's serialisers (round-trip tests).
+1. [x] Vocabulary: `theme_tags.csv`, the core tag class, names in en and zh_CN, the editor mirror, and the renames across `skill_types.json`, `npc_faction_focus.csv`, `npc_ship_system_focus.csv` and the editor. Built: core `skills/tags/ThemeTags` and `ThemeTagScope`, loaded in `ExiledSectorModPlugin.onApplicationLoad`; `SkillTags.all()`.
+2. [x] Shield requirement tags `req_front_shield` and `req_omni_shield` in `NodeRequirements`.
+3. [x] `tags` columns on `item_modifiers.csv` and `star_chart_modifiers.csv`, parsed onto the modifiers, and a `tags` list on atlas tree types, all kept by the editor's serialisers (round-trip tests). Built: `Modifier.tags()`/`tagless()` parsed in `ItemModifiers`; atlas types already read `tags` in `AtlasTreeData`; editor `items/model/modifiers.ts` and `ModifierForm`.
 4. [ ] Checks:
    - every tag is in the vocabulary;
    - its scopes allow where it is used;
@@ -77,5 +77,5 @@ Each gets its own plan:
    - every skill type and atlas tree type has a theme tag (the atlas root excepted);
    - a tag written next to its own parent is warned about.
 5. [ ] First tagging pass over every item modifier, chart modifier, skill type and atlas tree type, reviewed by the user, including which modifiers are tagless.
-6. [ ] `TagWeights` in core, NPC focus moved onto it, and item and chart rolls routed through it with no sources active (rolls unchanged, pinned by a test).
+6. [ ] `TagWeights` in core, NPC focus moved onto it, and item and chart rolls routed through it with no sources active (rolls unchanged, pinned by a test). Built so far: core `skills/tags/TagWeights`, rolls through `PoolEntry.biasedWeight` (`UnbiasedRollsTest`).
 7. [ ] Tags in the F1 tooltip for modifiers while crafting and for skill tree nodes.
