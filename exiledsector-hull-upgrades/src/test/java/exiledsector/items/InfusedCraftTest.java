@@ -1,7 +1,9 @@
 package exiledsector.items;
 
 import exiledsector.ProjectFiles;
+import exiledsector.i18n.EnglishCatalogueExtension;
 import exiledsector.modifiers.Modifier;
+import exiledsector.modifiers.ModifierSlot;
 import exiledsector.skills.tags.ThemeTagsExtension;
 import org.json.CDL;
 import org.json.JSONArray;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
@@ -25,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(ThemeTagsExtension.class)
+@ExtendWith({ThemeTagsExtension.class, EnglishCatalogueExtension.class})
 class InfusedCraftTest {
 
     private static final String PLATE = "infused_plate";
@@ -39,6 +42,14 @@ class InfusedCraftTest {
     private static final String ARMOR = "T_ARMOR";
     private static final String BIOME = "T_BIOME";
     private static final int SEEDS = 60;
+    private static final String FEEDSTOCK = "test_feedstock";
+    private static final int COST = 10;
+    private static final String ALL_CRAFTS = FEEDSTOCK + ",10,10,10,10,10,10";
+    private static final String ALL_BUT_SWAP = FEEDSTOCK + ",10,10,10,10,,10";
+    private static final String COSTS = String.join("\n",
+            "tag,feedstock,reforge_with_tag,reforge_more_alike,reforge_less_alike,reroll_tag_values,swap_damage_type,add_and_remove",
+            "weapon," + ALL_BUT_SWAP, "flux," + ALL_BUT_SWAP, "armour," + ALL_BUT_SWAP, "front_shield," + ALL_BUT_SWAP,
+            "kinetic," + ALL_CRAFTS, "high_explosive," + ALL_CRAFTS, "fragmentation," + ALL_CRAFTS);
 
     @BeforeEach
     void setUp() throws Exception {
@@ -55,8 +66,7 @@ class InfusedCraftTest {
                 .put(definitionRow(PLATE, "@T_FLUX; @T_HULL; @T_WEAPON", "@T_KINETIC; @T_HIGH_EXPLOSIVE; @T_SHIELD; @T_ARMOR"))
                 .put(definitionRow(RELIC, "@T_FLUX", "@T_KINETIC").put("unique", "TRUE")));
         ModifierSources.reserve(BIOME, "biome:test", Set.of(ItemKind.ARMOR_PLATING));
-        String costs = Files.readString(ProjectFiles.gameFile(InfusedCraftCosts.dataPath()), StandardCharsets.UTF_8);
-        InfusedCraftCosts.register(CDL.toJSONArray(costs.replace("\r\n", "\n")));
+        InfusedCraftCosts.register(CDL.toJSONArray(COSTS));
     }
 
     @AfterEach
@@ -90,11 +100,23 @@ class InfusedCraftTest {
     }
 
     private static String refusal(InfusedCraft craft, Item item, String tag) {
-        return craft.verdict(item, tag).refusalKey();
+        return refusal(craft, item, tag, Set.of());
+    }
+
+    private static String refusal(InfusedCraft craft, Item item, String tag, Set<CraftingInhibitor> inhibitors) {
+        return craft.verdict(item, tag, inhibitors).refusalKey();
     }
 
     private static boolean craft(InfusedCraft craft, Item item, String tag, long seed) {
-        return craft.apply(item, tag, ForgeChoice.WHOLE_ITEM, new Random(seed));
+        return craft(craft, item, tag, Set.of(), seed);
+    }
+
+    private static boolean craft(InfusedCraft craft, Item item, String tag, Set<CraftingInhibitor> inhibitors, long seed) {
+        return craft.apply(item, tag, ForgeChoice.WHOLE_ITEM, inhibitors, new Random(seed));
+    }
+
+    private static List<RolledModifier> slot(Item item, ModifierSlot side) {
+        return item.explicits().stream().filter(rolled -> rolled.slot() == side).toList();
     }
 
     @Test
@@ -158,7 +180,7 @@ class InfusedCraftTest {
     void uniquesTakeOnlyTheTagReroll() {
         Item relic = Item.create("relic", RELIC, 1L, List.of());
 
-        assertTrue(InfusedCraft.REROLL_TAG_VALUES.verdict(relic, "flux").allowed());
+        assertTrue(InfusedCraft.REROLL_TAG_VALUES.verdict(relic, "flux", Set.of()).allowed());
         for (InfusedCraft craft : List.of(InfusedCraft.REFORGE_WITH_TAG, InfusedCraft.REFORGE_MORE_ALIKE, InfusedCraft.ADD_AND_REMOVE)) {
             assertEquals(InfusedCraft.REFUSAL_PREFIX + "unique", refusal(craft, relic, "flux"), craft.id());
         }
@@ -171,8 +193,8 @@ class InfusedCraftTest {
         Item item = plate(rolled(FLUX, 5f), kinetic, rolled(BIOME, -5f));
 
         assertTrue(InfusedCraft.SWAP_DAMAGE_TYPE.picksAChoice());
-        assertEquals(List.of(ForgeChoice.modifier(kinetic)), InfusedCraft.SWAP_DAMAGE_TYPE.choices(item, "high_explosive"));
-        assertTrue(InfusedCraft.SWAP_DAMAGE_TYPE.apply(item, "high_explosive", ForgeChoice.modifier(kinetic), new Random(1L)));
+        assertEquals(List.of(ForgeChoice.modifier(kinetic)), InfusedCraft.SWAP_DAMAGE_TYPE.choices(item, "high_explosive", Set.of()));
+        assertTrue(InfusedCraft.SWAP_DAMAGE_TYPE.apply(item, "high_explosive", ForgeChoice.modifier(kinetic), Set.of(), new Random(1L)));
 
         assertEquals(List.of(FLUX, BIOME, HIGH_EXPLOSIVE), ids(item));
         RolledLine swapped = item.explicits().get(2).lines().get(0);
@@ -185,7 +207,7 @@ class InfusedCraftTest {
         Item item = plate(rolled(HIGH_EXPLOSIVE, -10f), rolled(BIOME, -5f));
 
         assertEquals(InfusedCraft.REFUSAL_PREFIX + "swap_damage_type", refusal(InfusedCraft.SWAP_DAMAGE_TYPE, item, "fragmentation"));
-        assertEquals(List.of(), InfusedCraft.SWAP_DAMAGE_TYPE.choices(item, "kinetic").stream()
+        assertEquals(List.of(), InfusedCraft.SWAP_DAMAGE_TYPE.choices(item, "kinetic", Set.of()).stream()
                 .filter(choice -> choice.modifier().modifierId().equals(BIOME)).toList());
         assertEquals(InfusedCraft.REFUSAL_PREFIX + "tag", refusal(InfusedCraft.SWAP_DAMAGE_TYPE, item, "flux"));
     }
@@ -227,23 +249,108 @@ class InfusedCraftTest {
 
     @Test
     void usingACraftTakesItsFeedstockOnlyWhenItRuns() {
-        InfusedCraftCosts.Cost cost = InfusedCraft.REFORGE_WITH_TAG.cost("weapon");
-        Map<String, Integer> stored = new HashMap<>(Map.of(cost.feedstockId(), cost.amount() + 5));
-        CraftingMaterials materials = CraftingMaterials.storedForTests(stored);
+        CraftingMaterials materials = CraftingMaterials.storedForTests(new HashMap<>(Map.of(FEEDSTOCK, COST + 5)));
 
-        assertFalse(InfusedCraft.REFORGE_WITH_TAG.use(null, "weapon", ForgeChoice.WHOLE_ITEM, materials, new Random(1L)));
-        assertEquals(cost.amount() + 5, materials.count(cost.feedstockId()));
+        assertEquals(Optional.empty(), use(InfusedCraft.REFORGE_WITH_TAG, null, "weapon", materials, Set.of()));
+        assertEquals(COST + 5, materials.count(FEEDSTOCK));
 
-        assertTrue(InfusedCraft.REFORGE_WITH_TAG.use(plate(rolled(FLUX, 5f)), "weapon", ForgeChoice.WHOLE_ITEM, materials, new Random(1L)));
-        assertEquals(5, materials.count(cost.feedstockId()));
+        assertEquals(Optional.of(Set.of()), use(InfusedCraft.REFORGE_WITH_TAG, plate(rolled(FLUX, 5f)), "weapon", materials, Set.of()));
+        assertEquals(5, materials.count(FEEDSTOCK));
         assertFalse(InfusedCraft.REFORGE_WITH_TAG.canAfford("weapon", materials));
-        assertFalse(InfusedCraft.REFORGE_WITH_TAG.use(plate(rolled(FLUX, 5f)), "weapon", ForgeChoice.WHOLE_ITEM, materials, new Random(1L)));
+        assertEquals(Optional.empty(), use(InfusedCraft.REFORGE_WITH_TAG, plate(rolled(FLUX, 5f)), "weapon", materials, Set.of()));
+    }
+
+    private static Optional<Set<CraftingInhibitor>> use(InfusedCraft craft, Item item, String tag, CraftingMaterials materials,
+                                                        Set<CraftingInhibitor> inhibitors) {
+        return craft.use(item, tag, ForgeChoice.WHOLE_ITEM, materials, inhibitors, new Random(1L));
+    }
+
+    @Test
+    void aPrefixInhibitorKeepsEveryPrefixThroughTheTaggedReforge() {
+        for (long seed = 0; seed < SEEDS; seed++) {
+            Item item = plate(rolled(FLUX, 5f), rolled(KINETIC, -5f));
+
+            assertEquals(Set.of(CraftingInhibitor.PREFIX),
+                    InfusedCraft.REFORGE_WITH_TAG.inhibitorsSpent(item, "front_shield", Set.of(CraftingInhibitor.PREFIX)));
+            assertTrue(craft(InfusedCraft.REFORGE_WITH_TAG, item, "front_shield", Set.of(CraftingInhibitor.PREFIX), seed));
+            assertTrue(slot(item, ModifierSlot.PREFIX).contains(rolled(FLUX, 5f)), "seed " + seed);
+            assertTrue(ids(item).contains(SHIELD), "seed " + seed);
+        }
+    }
+
+    @Test
+    void anInhibitorIsSpentOnlyWhenItsSideHoldsSomethingTheCraftCouldChange() {
+        Item suffixOnly = plate(rolled(KINETIC, -5f));
+        Item reservedSuffix = plate(rolled(FLUX, 5f), rolled(BIOME, -5f));
+
+        assertEquals(Set.of(), InfusedCraft.REFORGE_WITH_TAG.inhibitorsSpent(suffixOnly, "weapon", Set.of(CraftingInhibitor.PREFIX)));
+        assertEquals(Set.of(), InfusedCraft.REFORGE_WITH_TAG.inhibitorsSpent(reservedSuffix, "weapon", Set.of(CraftingInhibitor.SUFFIX)));
+        assertEquals(Set.of(), InfusedCraft.ADD_AND_REMOVE.inhibitorsSpent(plate(rolled(ARMOR, 7f), rolled(FLUX, 5f)), "armour",
+                Set.of(CraftingInhibitor.SUFFIX)));
+    }
+
+    @Test
+    void aSuffixInhibitorLimitsTheExchangeToPrefixes() {
+        for (long seed = 0; seed < SEEDS; seed++) {
+            Item item = plate(rolled(HULL, 5f), rolled(KINETIC, -5f));
+
+            assertEquals(Set.of(CraftingInhibitor.SUFFIX),
+                    InfusedCraft.ADD_AND_REMOVE.inhibitorsSpent(item, "weapon", Set.of(CraftingInhibitor.SUFFIX)));
+            assertTrue(craft(InfusedCraft.ADD_AND_REMOVE, item, "weapon", Set.of(CraftingInhibitor.SUFFIX), seed));
+            assertEquals(Set.of(KINETIC, WEAPON), Set.copyOf(ids(item)), "seed " + seed);
+        }
+    }
+
+    @Test
+    void bothInhibitorsBlockTheExchangeWithoutSpendingAnything() {
+        Set<CraftingInhibitor> both = Set.of(CraftingInhibitor.PREFIX, CraftingInhibitor.SUFFIX);
+        Item item = plate(rolled(HULL, 5f), rolled(KINETIC, -5f));
+        CraftingMaterials materials = CraftingMaterials.storedForTests(new HashMap<>(Map.of(FEEDSTOCK, COST,
+                CraftingInhibitor.PREFIX.itemId(), 1, CraftingInhibitor.SUFFIX.itemId(), 1)));
+
+        assertEquals(InfusedCraft.REFUSAL_PREFIX + "inhibited", refusal(InfusedCraft.ADD_AND_REMOVE, item, "weapon", both));
+        assertEquals(Optional.empty(), use(InfusedCraft.ADD_AND_REMOVE, item, "weapon", materials, both));
+        assertEquals(List.of(HULL, KINETIC), ids(item));
+        assertEquals(COST, materials.count(FEEDSTOCK));
+        assertEquals(1, materials.count(CraftingInhibitor.PREFIX.itemId()));
+    }
+
+    @Test
+    void usingACraftConsumesOneOfEachSpentInhibitor() {
+        CraftingMaterials materials = CraftingMaterials.storedForTests(new HashMap<>(Map.of(FEEDSTOCK, COST,
+                CraftingInhibitor.PREFIX.itemId(), 2, CraftingInhibitor.SUFFIX.itemId(), 1)));
+        Set<CraftingInhibitor> both = Set.of(CraftingInhibitor.PREFIX, CraftingInhibitor.SUFFIX);
+
+        assertEquals(Optional.of(Set.of(CraftingInhibitor.PREFIX)),
+                use(InfusedCraft.REFORGE_WITH_TAG, plate(rolled(FLUX, 5f), rolled(BIOME, -5f)), "front_shield", materials, both));
+        assertEquals(0, materials.count(FEEDSTOCK));
+        assertEquals(1, materials.count(CraftingInhibitor.PREFIX.itemId()));
+        assertEquals(1, materials.count(CraftingInhibitor.SUFFIX.itemId()));
+    }
+
+    @Test
+    void anInhibitorThatIsNoLongerHeldStopsTheCraft() {
+        CraftingMaterials materials = CraftingMaterials.storedForTests(new HashMap<>(Map.of(FEEDSTOCK, COST)));
+        Item item = plate(rolled(FLUX, 5f), rolled(KINETIC, -5f));
+
+        assertEquals(Optional.empty(), use(InfusedCraft.REFORGE_WITH_TAG, item, "front_shield", materials, Set.of(CraftingInhibitor.PREFIX)));
+        assertEquals(COST, materials.count(FEEDSTOCK));
+        assertEquals(List.of(FLUX, KINETIC), ids(item));
+    }
+
+    @Test
+    void refusalsNameTheTagWithItsArticle() {
+        Map<String, String> args = InfusedCraft.ADD_AND_REMOVE.verdict(plate(rolled(ARMOR, 7f)), "armour", Set.of()).args();
+
+        assertEquals("an", args.get("article"));
+        assertEquals("Armor", args.get("tag"));
+        assertEquals("a", InfusedCraft.article("weapon"));
     }
 
     @Test
     void everyRefusalAndCraftHasText() throws Exception {
         String catalogue = Files.readString(ProjectFiles.gameFile("data/strings/exiledSector/core/en.json"), StandardCharsets.UTF_8);
-        List<String> keys = new ArrayList<>(List.of("loadFirst", "itemType", "mirrored", "corrupted", "locked", "tag", "unique"));
+        List<String> keys = new ArrayList<>(List.of("loadFirst", "itemType", "mirrored", "corrupted", "locked", "tag", "unique", "inhibited"));
         for (InfusedCraft craft : InfusedCraft.values()) {
             keys.add(craft.id());
             assertTrue(catalogue.contains("\"ui.infusedCraft." + craft.id() + ".name\""), craft.id());

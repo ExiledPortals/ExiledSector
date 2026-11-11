@@ -11,4 +11,8 @@ public interface BenchTray {
     List<String> iconPaths();
 
     List<BenchTrayEntry> entries(BenchTrayContext context);
+
+    default boolean listed() {
+        return false;
+    }
 }

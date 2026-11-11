@@ -1,6 +1,7 @@
 package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import exiledsector.i18n.StyledText;
 import exiledsector.items.CraftingMaterialFamily;
 import exiledsector.ui.cargo.CargoIconLook;
 
@@ -13,6 +14,14 @@ public interface BenchTrayEntry {
     CargoIconLook look();
 
     String badge(BenchTrayContext context);
+
+    default StyledText rowText(BenchTrayContext context) {
+        return StyledText.EMPTY;
+    }
+
+    default String searchText(BenchTrayContext context) {
+        return rowText(context).plain();
+    }
 
     default boolean available(BenchTrayContext context) {
         return true;

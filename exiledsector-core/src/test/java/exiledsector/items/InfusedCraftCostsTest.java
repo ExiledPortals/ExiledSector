@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import exiledsector.ProjectFiles;
+import exiledsector.skills.tags.ThemeTagScope;
 import exiledsector.skills.tags.ThemeTags;
 import exiledsector.skills.tags.ThemeTagsExtension;
 import org.json.CDL;
@@ -30,6 +31,8 @@ class InfusedCraftCostsTest {
     private static final Set<String> DAMAGE_TYPES = Set.of("kinetic", "high_explosive", "fragmentation", "energy_damage", "emp");
     private static final Map<String, String> FEEDSTOCK_BY_ROOT = Map.of("weapon", THREAT, "defence", SHROUD, "repair", SHROUD,
             "combat_readiness", SHROUD, "logistics", PHASE);
+    private static final Map<String, String> FEEDSTOCK_BY_TAG = Map.of("d_mods", SHROUD, "low_tech", SHROUD, "low_hull", SHROUD,
+            "midline", THREAT, "on_hit", THREAT, "on_kill", THREAT);
 
     @BeforeEach
     void setUp() throws Exception {
@@ -43,24 +46,20 @@ class InfusedCraftCostsTest {
     }
 
     @Test
-    void aCraftCostsItsTagsFeedstockAndUnofferedTagsCostNothing() {
-        assertEquals(new InfusedCraftCosts.Cost(SHROUD, 50), InfusedCraft.REFORGE_WITH_TAG.cost("front_shield"));
+    void aCraftCostsItsTagsFeedstockAndUnofferedCraftsCostNothing() {
+        assertEquals(new InfusedCraftCosts.Cost(SHROUD, 100), InfusedCraft.REFORGE_WITH_TAG.cost("front_shield"));
+        assertEquals(new InfusedCraftCosts.Cost(SHROUD, 1000), InfusedCraft.ADD_AND_REMOVE.cost("low_tech"));
         assertEquals(PHASE, InfusedCraftCosts.feedstockFor("flux"));
-        assertNull(InfusedCraft.SWAP_DAMAGE_TYPE.cost("flux"));
-        assertNull(InfusedCraft.REFORGE_WITH_TAG.cost("low_tech"));
+        assertNull(InfusedCraft.SWAP_DAMAGE_TYPE.cost("kinetic"));
+        assertNull(InfusedCraft.REROLL_TAG_VALUES.cost("flux"));
         assertNull(InfusedCraft.REFORGE_WITH_TAG.cost(null));
     }
 
     @Test
-    void narrowTagsCostMoreThanTheirBroadParents() {
-        for (InfusedCraft craft : List.of(InfusedCraft.REFORGE_WITH_TAG, InfusedCraft.REROLL_TAG_VALUES, InfusedCraft.ADD_AND_REMOVE)) {
-            for (String tag : craft.tags()) {
-                String parent = ThemeTags.parent(tag);
-                if (parent != null) {
-                    assertTrue(craft.cost(tag).amount() > craft.cost(parent).amount(), craft.id() + " " + tag);
-                }
-            }
-        }
+    void everyShipTagOffersTheTaggedReforgeAndTheExchange() {
+        List<String> shipTags = ThemeTags.ids(ThemeTagScope.SHIP);
+        assertEquals(shipTags, InfusedCraft.REFORGE_WITH_TAG.tags());
+        assertEquals(shipTags, InfusedCraft.ADD_AND_REMOVE.tags());
     }
 
     @Test
@@ -79,14 +78,9 @@ class InfusedCraftCostsTest {
         for (String tag : InfusedCraft.REFORGE_WITH_TAG.tags()) {
             assertTrue(ThemeTags.isThemeTag(tag), tag);
             String root = ThemeTags.withAncestors(tag).get(ThemeTags.withAncestors(tag).size() - 1);
-            String expected = DAMAGE_TYPES.contains(tag) ? THREAT : FEEDSTOCK_BY_ROOT.getOrDefault(root, PHASE);
+            String expected = DAMAGE_TYPES.contains(tag) ? THREAT : FEEDSTOCK_BY_TAG.getOrDefault(tag, FEEDSTOCK_BY_ROOT.getOrDefault(root, PHASE));
             assertEquals(expected, InfusedCraftCosts.feedstockFor(tag), tag);
         }
-    }
-
-    @Test
-    void onlyDamageTypesOfferTheDamageSwap() {
-        assertEquals(DAMAGE_TYPES, Set.copyOf(InfusedCraft.SWAP_DAMAGE_TYPE.tags()));
     }
 
     @Test

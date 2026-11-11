@@ -200,7 +200,7 @@ class EngramTest {
 
     @Test
     void theStarChartsDomainOffersItsEngramsThroughTheEngramTray() {
-        assertEquals(List.of(exiledsector.ui.socket.EngramTray.INSTANCE), new exiledsector.charts.StarChartsDomain().hullCraftingBenchTrays());
+        assertTrue(new exiledsector.charts.StarChartsDomain().hullCraftingBenchTrays().contains(exiledsector.ui.socket.EngramTray.INSTANCE));
     }
 
     @Test

@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
+import exiledsector.modifiers.ModifierSlot;
 import exiledsector.skills.tags.ThemeTags;
 
 import java.util.ArrayList;
@@ -34,8 +35,16 @@ final class InfusedCrafting {
         return rolled.immutable() || ModifierSources.isReserved(rolled.modifierId());
     }
 
-    private static List<RolledModifier> keptOnReforge(Item item) {
-        return item.explicits().stream().filter(InfusedCrafting::staysOnReforge).toList();
+    private static boolean guarded(RolledModifier rolled, Set<ModifierSlot> inhibited) {
+        return staysOnReforge(rolled) || inhibited.contains(rolled.slot());
+    }
+
+    private static List<RolledModifier> keptOnReforge(Item item, Set<ModifierSlot> inhibited) {
+        return item.explicits().stream().filter(rolled -> guarded(rolled, inhibited)).toList();
+    }
+
+    static List<RolledModifier> changedByReforge(Item item) {
+        return item.explicits().stream().filter(rolled -> !staysOnReforge(rolled)).toList();
     }
 
     private static List<List<PoolEntry>> sidesWhere(ItemDefinition definition, List<RolledModifier> modifiers, int tier, Predicate<PoolEntry> wanted) {
@@ -48,31 +57,31 @@ final class InfusedCrafting {
         return entry -> hasTag(entry.modifier(), tag);
     }
 
-    static boolean canReforge(Item item, String guaranteedTag) {
+    static boolean canReforge(Item item, String guaranteedTag, Set<ModifierSlot> inhibited) {
         ItemDefinition definition = item.definition();
         if (definition == null || definition.unique()) {
             return false;
         }
         Predicate<PoolEntry> wanted = guaranteedTag == null ? entry -> true : tagged(guaranteedTag);
-        return !sidesWhere(definition, keptOnReforge(item), item.tier(), wanted).isEmpty();
+        return !sidesWhere(definition, keptOnReforge(item, inhibited), item.tier(), wanted).isEmpty();
     }
 
-    static boolean reforgeWithTag(Item item, String tag, Random random) {
-        return reforge(item, tag, PoolEntry::weight, random);
+    static boolean reforgeWithTag(Item item, String tag, Set<ModifierSlot> inhibited, Random random) {
+        return reforge(item, tag, inhibited, PoolEntry::weight, random);
     }
 
-    static boolean reforgeAlike(Item item, float previousModifierWeight, Random random) {
+    static boolean reforgeAlike(Item item, float previousModifierWeight, Set<ModifierSlot> inhibited, Random random) {
         Set<String> previousIds = new HashSet<>();
-        item.explicits().stream().filter(rolled -> !staysOnReforge(rolled)).forEach(rolled -> previousIds.add(rolled.modifierId()));
-        return reforge(item, null, entry -> previousIds.contains(entry.modifier().id()) ? entry.weight() * previousModifierWeight : entry.weight(), random);
+        item.explicits().stream().filter(rolled -> !guarded(rolled, inhibited)).forEach(rolled -> previousIds.add(rolled.modifierId()));
+        return reforge(item, null, inhibited, entry -> previousIds.contains(entry.modifier().id()) ? entry.weight() * previousModifierWeight : entry.weight(), random);
     }
 
-    private static boolean reforge(Item item, String guaranteedTag, ToDoubleFunction<PoolEntry> weightOf, Random random) {
-        if (!canReforge(item, guaranteedTag)) {
+    private static boolean reforge(Item item, String guaranteedTag, Set<ModifierSlot> inhibited, ToDoubleFunction<PoolEntry> weightOf, Random random) {
+        if (!canReforge(item, guaranteedTag, inhibited)) {
             return false;
         }
         ItemDefinition definition = item.definition();
-        List<RolledModifier> modifiers = new ArrayList<>(keptOnReforge(item));
+        List<RolledModifier> modifiers = new ArrayList<>(keptOnReforge(item, inhibited));
         int modifierCount = Math.max(AffixLayout.rolledModifierCount(AffixLayout.limits(definition.type()), random.nextFloat()), modifiers.size() + 1);
         if (guaranteedTag != null) {
             AffixLayout.insert(modifiers, AffixLayout.rollFrom(sidesWhere(definition, modifiers, item.tier(), tagged(guaranteedTag)), random, weightOf));
@@ -89,12 +98,13 @@ final class InfusedCrafting {
         return true;
     }
 
-    static List<RolledModifier> rerollableWithTag(Item item, String tag) {
-        return item.explicits().stream().filter(rolled -> !rolled.immutable() && hasTag(item, rolled, tag) && ItemCrafting.canVary(item, rolled)).toList();
+    static List<RolledModifier> rerollableWithTag(Item item, String tag, Set<ModifierSlot> inhibited) {
+        return item.explicits().stream().filter(rolled -> !rolled.immutable() && !inhibited.contains(rolled.slot()) && hasTag(item, rolled, tag)
+                && ItemCrafting.canVary(item, rolled)).toList();
     }
 
-    static boolean rerollTagValues(Item item, String tag, Random random) {
-        List<RolledModifier> targets = rerollableWithTag(item, tag);
+    static boolean rerollTagValues(Item item, String tag, Set<ModifierSlot> inhibited, Random random) {
+        List<RolledModifier> targets = rerollableWithTag(item, tag, inhibited);
         if (targets.isEmpty()) {
             return false;
         }
@@ -109,12 +119,12 @@ final class InfusedCrafting {
         return false;
     }
 
-    static List<RolledModifier> swappable(Item item, String damageType, Set<String> damageTypes) {
-        return item.explicits().stream().filter(rolled -> sibling(item, rolled, damageType, damageTypes) != null).toList();
+    static List<RolledModifier> swappable(Item item, String damageType, Set<String> damageTypes, Set<ModifierSlot> inhibited) {
+        return item.explicits().stream().filter(rolled -> !inhibited.contains(rolled.slot()) && sibling(item, rolled, damageType, damageTypes) != null).toList();
     }
 
-    static boolean swapDamageType(Item item, RolledModifier source, String damageType, Set<String> damageTypes) {
-        Modifier sibling = sibling(item, source, damageType, damageTypes);
+    static boolean swapDamageType(Item item, RolledModifier source, String damageType, Set<String> damageTypes, Set<ModifierSlot> inhibited) {
+        Modifier sibling = inhibited.contains(source.slot()) ? null : sibling(item, source, damageType, damageTypes);
         if (sibling == null) {
             return false;
         }
@@ -164,17 +174,17 @@ final class InfusedCrafting {
         return new RolledModifier(sibling.id(), sibling.slot(), lines);
     }
 
-    static List<RolledModifier> removableForTag(Item item, String tag) {
+    static List<RolledModifier> removableForTag(Item item, String tag, Set<ModifierSlot> inhibited) {
         ItemDefinition definition = item.definition();
         if (definition == null || definition.unique()) {
             return List.of();
         }
-        return item.explicits().stream().filter(rolled -> !staysOnReforge(rolled) && !hasTag(item, rolled, tag)
+        return item.explicits().stream().filter(rolled -> !guarded(rolled, inhibited) && !hasTag(item, rolled, tag)
                 && !sidesWhere(definition, without(item.explicits(), rolled), item.tier(), tagged(tag)).isEmpty()).toList();
     }
 
-    static boolean addAndRemove(Item item, String tag, Random random) {
-        List<RolledModifier> removable = removableForTag(item, tag);
+    static boolean addAndRemove(Item item, String tag, Set<ModifierSlot> inhibited, Random random) {
+        List<RolledModifier> removable = removableForTag(item, tag, inhibited);
         if (removable.isEmpty()) {
             return false;
         }

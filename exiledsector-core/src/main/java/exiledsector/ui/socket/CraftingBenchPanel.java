@@ -94,6 +94,7 @@ public final class CraftingBenchPanel extends HoloPanel {
     private static final float PLATE_ALPHA = 0.62f;
     private static final float CONTRACT_SECONDS = 0.3f;
     private static final float TRAY_SECONDS = 0.3f;
+    private static final float TRAY_FILTER_DELAY_SECONDS = 0.25f;
     private static final float VIGNETTE_SHARE = 0.06f;
     private static final float PICK_BUTTON_WIDTH = 120f;
     private static final float TOOLTIP_WIDTH = 340f;
@@ -141,9 +142,13 @@ public final class CraftingBenchPanel extends HoloPanel {
     private final InhibitorOrbit inhibitorOrbit = new InhibitorOrbit();
     private final BenchTrays trays = new BenchTrays();
     private final BenchTrayContext trayContext = new TrayContext();
-    private UIComponentAPI trayElement;
+    private TooltipMakerAPI trayElement;
     private float trayProgress;
     private Runnable pendingTrayConfirm;
+    private BenchTrayList.FilterBar trayFilterBar;
+    private String trayFilterText = "";
+    private String typedTrayFilter = "";
+    private float trayFilterDelay;
     private final WormholeButtonFx openFx = new WormholeButtonFx();
     private BenchLayout embeddedLayout;
     private BenchMaterialsPanel materialsPanel;
@@ -419,7 +424,8 @@ public final class CraftingBenchPanel extends HoloPanel {
 
     @Override
     protected UIComponentAPI[] contentComponents() {
-        return new UIComponentAPI[]{recipesElement, detailsElement, noticeElement, openElement, trayElement};
+        return new UIComponentAPI[]{recipesElement, detailsElement, noticeElement, openElement, trayElement,
+                trayFilterBar == null ? null : trayFilterBar.element()};
     }
 
     @Override
@@ -527,6 +533,7 @@ public final class CraftingBenchPanel extends HoloPanel {
     protected void advanceOpen(float amount) {
         advanceContraction(amount);
         advanceTray(amount);
+        advanceTrayFilter(amount);
         hoverTooltip.refreshIfExpansionChanged();
         if (detailsShowRollRanges != TooltipExpansion.isExpandedOrHeld()) {
             rebuildDetails();
@@ -1068,6 +1075,15 @@ public final class CraftingBenchPanel extends HoloPanel {
             panelRoot.removeComponent(trayElement);
             trayElement = null;
         }
+        removeTrayFilter();
+    }
+
+    private void removeTrayFilter() {
+        if (trayFilterBar != null) {
+            trayFilterText = trayFilterBar.field().getText();
+            panelRoot.removeComponent(trayFilterBar.element());
+            trayFilterBar = null;
+        }
     }
 
     private void rebuildTray() {
@@ -1076,10 +1092,73 @@ public final class CraftingBenchPanel extends HoloPanel {
             removeTrayElement();
             return;
         }
-        float trayHeight = (BenchScene.TRAY_BOTTOM - BenchScene.TRAY_TOP) * sceneScale;
-        TooltipMakerAPI element = BenchTrayElement.build(panelRoot, spread.trayWidth(sceneScale), trayHeight, openTray, trayContext,
-                this::trayEntryHandler);
-        trayElement = replaceElement(trayElement, element, FRAME_INSET + spread.trayLeft() + PAD, artY(BenchScene.TRAY_TOP) + PAD);
+        if (!openTray.listed()) {
+            removeTrayFilter();
+            TooltipMakerAPI element = BenchTrayElement.build(panelRoot, spread.trayWidth(sceneScale), trayHeight(), openTray, trayContext,
+                    this::trayEntryHandler);
+            trayElement = replaceElement(trayElement, element, trayLeft(), trayTop());
+            return;
+        }
+        rebuildTrayFilter();
+        rebuildTrayList(openTray, true);
+    }
+
+    private float trayLeft() {
+        return FRAME_INSET + spread.trayLeft() + PAD;
+    }
+
+    private float trayTop() {
+        return artY(BenchScene.TRAY_TOP) + PAD;
+    }
+
+    private float trayHeight() {
+        return (BenchScene.TRAY_BOTTOM - BenchScene.TRAY_TOP) * sceneScale;
+    }
+
+    private void rebuildTrayFilter() {
+        boolean focused = false;
+        if (trayFilterBar != null) {
+            focused = trayFilterBar.field().hasFocus();
+            removeTrayFilter();
+        }
+        typedTrayFilter = trayFilterText;
+        trayFilterDelay = 0f;
+        trayFilterBar = BenchTrayList.filterBar(panelRoot, spread.trayWidth(sceneScale), trayFilterText);
+        panelRoot.addUIElement(trayFilterBar.element()).inTL(trayLeft(), trayTop());
+        if (focused) {
+            trayFilterBar.field().grabFocus();
+        }
+    }
+
+    private void rebuildTrayList(BenchTray openTray, boolean keepScroll) {
+        float restoredScroll = keepScroll && trayElement != null && trayElement.getExternalScroller() != null
+                ? trayElement.getExternalScroller().getYOffset() : 0f;
+        float listHeight = trayHeight() - PAD * 2f - BenchTrayList.FILTER_HEIGHT - GAP;
+        TooltipMakerAPI element = BenchTrayList.rows(panelRoot, spread.trayWidth(sceneScale), listHeight, openTray, trayContext,
+                this::trayEntryHandler, trayFilterText);
+        trayElement = replaceElement(trayElement, element, trayLeft(), trayTop() + BenchTrayList.FILTER_HEIGHT + GAP);
+        if (restoredScroll > 0f && element.getExternalScroller() != null) {
+            element.getExternalScroller().setYOffset(Math.min(restoredScroll, Math.max(0f, element.getHeightSoFar() - listHeight)));
+        }
+    }
+
+    private void advanceTrayFilter(float amount) {
+        if (trayFilterBar == null || isConfirmOpen()) {
+            return;
+        }
+        String typed = trayFilterBar.field().getText();
+        if (!typed.equals(typedTrayFilter)) {
+            typedTrayFilter = typed;
+            trayFilterDelay = TRAY_FILTER_DELAY_SECONDS;
+        } else if (trayFilterDelay > 0f) {
+            trayFilterDelay -= amount;
+            BenchTray openTray = trays.open();
+            if (trayFilterDelay <= 0f && openTray != null && openTray.listed()) {
+                trayFilterText = typed;
+                hoverTooltip.hide();
+                I18n.forGameText(() -> rebuildTrayList(openTray, false));
+            }
+        }
     }
 
     private TileInput.Handler trayEntryHandler(BenchTrayEntry entry) {
@@ -1445,15 +1524,23 @@ public final class CraftingBenchPanel extends HoloPanel {
         }
 
         @Override
-        public void confirm(float height, Consumer<TooltipMakerAPI> body, String confirmKey, Runnable confirmed) {
-            pendingTrayConfirm = confirmed;
-            openConfirm(height, body, confirmKey, Control.CONFIRM_TRAY, "ui.craftingBench.confirm.cancel", Control.CANCEL_CONFIRM);
+        public boolean droppedMissingInhibitors() {
+            return CraftingBenchPanel.this.droppedMissingInhibitors(playerMaterials());
         }
 
         @Override
-        public void changed(Item selectedAfter, Color flash, String notice) {
+        public void confirmCraft(String title, StyledText body, Set<CraftingInhibitor> spentInhibitors, Runnable confirmed) {
+            pendingTrayConfirm = confirmed;
+            openConfirm(USE_CONFIRM_HEIGHT + spentInhibitors.size() * INHIBITOR_LINE_HEIGHT,
+                    element -> writeCraftConfirm(element, title, body, spentInhibitors),
+                    "ui.craftingBench.confirm.use", Control.CONFIRM_TRAY, "ui.craftingBench.confirm.cancel", Control.CANCEL_CONFIRM);
+        }
+
+        @Override
+        public void crafted(Item selectedAfter, Color flash, String notice, Set<CraftingInhibitor> spentInhibitors) {
+            activeInhibitors.spend(spentInhibitors);
             loadedItem = selectedAfter;
-            noticeText = notice;
+            noticeText = withSpentInhibitors(notice, spentInhibitors);
             SkillTreeSounds.socketed();
             socketFlair.flash(flash == null ? SkillTreePanelStyle.GLOW_COLOR : flash);
             afterChange();

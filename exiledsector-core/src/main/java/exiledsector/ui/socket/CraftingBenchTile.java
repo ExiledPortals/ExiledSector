@@ -26,6 +26,9 @@ final class CraftingBenchTile extends BaseCustomUIPanelPlugin {
     private static final float HOVER_GLOW_ALPHA = 0.45f;
     private static final float DULL_ICON_ALPHA = 0.3f;
     private static final float DULL_BORDER_ALPHA = 0.18f;
+    static final TileChrome.Frame HOVER_FRAME = new TileChrome.Frame(SkillTreePanelStyle.GLOW_COLOR, GLOW_WIDTH, HOVER_GLOW_ALPHA, BORDER_WIDTH, 1f);
+    static final TileChrome.Frame IDLE_FRAME = new TileChrome.Frame(SkillTreePanelStyle.GLOW_COLOR, GLOW_WIDTH, 0f, BORDER_WIDTH, IDLE_BORDER_ALPHA);
+    static final TileChrome.Frame DULL_FRAME = new TileChrome.Frame(SkillTreePanelStyle.GLOW_COLOR, GLOW_WIDTH, 0f, BORDER_WIDTH, DULL_BORDER_ALPHA);
     private static final SpriteCache ICONS = new SpriteCache(CraftingBenchTile.class);
 
     private final CyclingIcon cyclingIcon;
@@ -33,7 +36,7 @@ final class CraftingBenchTile extends BaseCustomUIPanelPlugin {
     private final CargoIconLook iconLook;
     private final BooleanSupplier available;
     private final BooleanSupplier toggledOn;
-    private final Style style;
+    private final TileChrome.Frame onFrame;
     private PositionAPI tilePosition;
 
     private CraftingBenchTile(List<String> iconPaths, CargoIconLook iconLook, BooleanSupplier available, BooleanSupplier toggledOn, Style style,
@@ -42,7 +45,8 @@ final class CraftingBenchTile extends BaseCustomUIPanelPlugin {
         this.iconLook = iconLook;
         this.available = available;
         this.toggledOn = toggledOn;
-        this.style = style;
+        Color onAccent = iconLook != null ? iconLook.color() : SkillTreePanelStyle.GLOW_COLOR;
+        this.onFrame = new TileChrome.Frame(onAccent, GLOW_WIDTH, style.onGlowAlpha(), style.onBorderWidth(), 1f);
         this.tileInput = new TileInput(tileHandler, style.scrollClearsHover());
     }
 
@@ -83,13 +87,8 @@ final class CraftingBenchTile extends BaseCustomUIPanelPlugin {
         if (tilePosition == null) {
             return;
         }
-        boolean on = toggledOn.getAsBoolean();
-        boolean hovered = tileInput.isHovered();
-        Color accent = on && iconLook != null ? iconLook.color() : SkillTreePanelStyle.GLOW_COLOR;
-        float glowAlpha = on ? style.onGlowAlpha() : hovered ? HOVER_GLOW_ALPHA : 0f;
-        float idleAlpha = available.getAsBoolean() ? IDLE_BORDER_ALPHA : DULL_BORDER_ALPHA;
-        TileChrome.draw(tilePosition, new TileChrome.Frame(accent, GLOW_WIDTH, glowAlpha, on ? style.onBorderWidth() : BORDER_WIDTH,
-                hovered || on ? 1f : idleAlpha), alphaMult);
+        TileChrome.Frame idleFrame = available.getAsBoolean() ? IDLE_FRAME : DULL_FRAME;
+        TileChrome.draw(tilePosition, toggledOn.getAsBoolean() ? onFrame : tileInput.isHovered() ? HOVER_FRAME : idleFrame, alphaMult);
     }
 
     @Override

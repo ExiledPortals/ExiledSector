@@ -1,6 +1,7 @@
 package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import exiledsector.i18n.StyledText;
 import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.CraftingMaterialFamily;
 import exiledsector.items.CraftingMaterials;
@@ -11,7 +12,6 @@ import exiledsector.items.ItemStore;
 import java.awt.Color;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Consumer;
 
 public interface BenchTrayContext {
 
@@ -35,9 +35,11 @@ public interface BenchTrayContext {
 
     void writeCraftingItemTooltip(TooltipMakerAPI tooltip, CraftingMaterialFamily craftingItem);
 
-    void confirm(float height, Consumer<TooltipMakerAPI> body, String confirmKey, Runnable confirmed);
+    boolean droppedMissingInhibitors();
 
-    void changed(Item selectedAfter, Color flash, String notice);
+    void confirmCraft(String title, StyledText body, Set<CraftingInhibitor> spentInhibitors, Runnable confirmed);
+
+    void crafted(Item selectedAfter, Color flash, String notice, Set<CraftingInhibitor> spentInhibitors);
 
     void notice(String text);
 }

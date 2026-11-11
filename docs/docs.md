@@ -807,16 +807,16 @@ Chart drops, the Cartography Cipher and combining stop at 15, and a tier 16 clea
 ### Infused crafts
 
 Infused crafts work on hull items and each is bought for one theme tag, at a cost in that tag's feedstock from
-`infused_crafts.csv` (`InfusedCraft`, `InfusedCraftCosts`, logic in `InfusedCrafting`, all core). A tag counts its
-children, so a weapon craft also matches ballistic and damage modifiers. Crafts refuse mirrored, corrupted and locked
-items, and only the tag reroll works on uniques. Reforges and add-and-remove keep immutable and reserved modifiers and
-roll through `AffixLayout.openSides`, so exclusive groups, side limits and the biome limit hold.
+`infused_crafts.csv` (`InfusedCraft`, `InfusedCraftCosts`, logic in `InfusedCrafting`, all core); a craft with no
+cost column is not offered. The Star Charts `InfusedCraftingTray` lists one row per tag and offered craft. A tag counts
+its children. Crafts refuse mirrored, corrupted and locked items and items with no room for the tag, spending nothing.
+They keep immutable and reserved modifiers and roll through `AffixLayout.openSides`, so exclusive groups, side limits
+and the biome limit hold.
 
-The tagged reforge rolls one modifier with the tag first, then fills as a normal roll. The two alike reforges weight the
-modifiers the item had at 10 times or a tenth of their pool weight. The tag reroll rerolls the values of every mutable
-modifier with the tag. The damage swap turns a modifier with one damage type tag into the pool entry with the same side,
-line count and tags but the chosen type, mapping each value to the same position in the new range. Add-and-remove
-removes a random modifier without the tag that would leave room for one with it, then rolls that one.
+The tagged reforge rolls one modifier with the tag first, then fills as a normal roll. Add-and-remove removes a random
+modifier without the tag that would leave room for one with it, then rolls that one. An active Prefix or Suffix Inhibitor
+keeps its side's modifiers, while new modifiers may still fill its open slots, so add-and-remove only removes from the
+other side; with both, add-and-remove is refused. An inhibitor is spent only if its side held a modifier the craft could have changed.
 
 ### Socketed item scaling
 

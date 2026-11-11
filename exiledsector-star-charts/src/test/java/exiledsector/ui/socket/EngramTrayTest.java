@@ -52,8 +52,8 @@ class EngramTrayTest {
     }
 
     @Test
-    void theHullCraftingBenchOffersTheEngramTrayOnlyWhileStarChartsAreOn() {
-        assertEquals(List.of(ExcavationInhibitorTray.INSTANCE, EngramTray.INSTANCE), HullCraftingBench.INSTANCE.trays());
+    void theHullCraftingBenchOffersTheChartTraysOnlyWhileStarChartsAreOn() {
+        assertEquals(List.of(ExcavationInhibitorTray.INSTANCE, EngramTray.INSTANCE, InfusedCraftingTray.INSTANCE), HullCraftingBench.INSTANCE.trays());
 
         StarChartSettings.setEnabledForTests(false);
 

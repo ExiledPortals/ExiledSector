@@ -54,6 +54,7 @@ import exiledsector.ui.chart.WormholeGatewayOption;
 import exiledsector.ui.socket.BenchModeSupport;
 import exiledsector.ui.socket.BenchTray;
 import exiledsector.ui.socket.EngramTray;
+import exiledsector.ui.socket.InfusedCraftingTray;
 import lunalib.lunaSettings.LunaSettings.SettingsCreator;
 
 import java.util.List;
@@ -193,7 +194,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public List<BenchTray> hullCraftingBenchTrays() {
-        return List.of(EngramTray.INSTANCE);
+        return List.of(EngramTray.INSTANCE, InfusedCraftingTray.INSTANCE);
     }
 
     @Override

@@ -62,8 +62,11 @@ public final class ItemCell extends BaseCustomUIPanelPlugin {
     private final Look look;
     private final Listener cellListener;
     private final CargoIconLook ownArtLook;
-    private final Color frameColor;
     private final Color chargedBorderColor;
+    private final TileChrome.Frame markedFrame;
+    private final TileChrome.Frame selectedFrame;
+    private final TileChrome.Frame hoverFrame;
+    private final TileChrome.Frame idleFrame;
     private final String iconPath;
     private final TileInput tileInput;
     private PositionAPI cellPosition;
@@ -74,8 +77,15 @@ public final class ItemCell extends BaseCustomUIPanelPlugin {
         this.cellListener = cellListener;
         CargoIconLook cargoLook = CargoIconLooks.forItem(item);
         this.ownArtLook = cargoLook != null && cargoLook.ownArt() ? cargoLook : null;
-        this.frameColor = item.frameColor();
+        Color frameColor = item.frameColor();
         this.chargedBorderColor = cargoLook == null ? null : cargoLook.borderColor();
+        Color idleBorderColor = chargedBorderColor != null ? chargedBorderColor : frameColor;
+        float idleBorderWidth = chargedBorderColor != null ? CHARGED_BORDER_WIDTH : BORDER_WIDTH;
+        float glowAlpha = look.rarityGlow() ? GLOW_ALPHA : 0f;
+        this.markedFrame = new TileChrome.Frame(frameColor, GLOW_WIDTH, glowAlpha, Misc.getNegativeHighlightColor(), SELECTED_BORDER_WIDTH, 1f);
+        this.selectedFrame = new TileChrome.Frame(frameColor, GLOW_WIDTH, glowAlpha, Misc.getBrightPlayerColor(), SELECTED_BORDER_WIDTH, 1f);
+        this.hoverFrame = new TileChrome.Frame(frameColor, GLOW_WIDTH, glowAlpha, idleBorderColor, idleBorderWidth, 1f);
+        this.idleFrame = new TileChrome.Frame(frameColor, GLOW_WIDTH, glowAlpha, idleBorderColor, idleBorderWidth, look.idleBorderAlpha());
         this.iconPath = item.iconPath();
         this.tileInput = new TileInput(TileInput.Handler.of(cellListener::hovered, cellListener::left, cellListener::clicked,
                 cellListener::rightClicked), true);
@@ -91,20 +101,14 @@ public final class ItemCell extends BaseCustomUIPanelPlugin {
         if (cellPosition == null) {
             return;
         }
-        float glowAlpha = look.rarityGlow() ? GLOW_ALPHA : 0f;
         if (cellListener.marked()) {
-            Color warningColor = Misc.getNegativeHighlightColor();
-            TileChrome.draw(cellPosition, new TileChrome.Frame(frameColor, GLOW_WIDTH, glowAlpha, warningColor, SELECTED_BORDER_WIDTH, 1f), alphaMult);
-            GLDraw.fillQuad(cellPosition.getX(), cellPosition.getY(), cellPosition.getWidth(), cellPosition.getHeight(), warningColor,
+            TileChrome.draw(cellPosition, markedFrame, alphaMult);
+            GLDraw.fillQuad(cellPosition.getX(), cellPosition.getY(), cellPosition.getWidth(), cellPosition.getHeight(), markedFrame.borderColor(),
                     MARKED_FILL_ALPHA * alphaMult);
             return;
         }
-        boolean selected = cellListener.selected();
-        float borderAlpha = tileInput.isHovered() || selected ? 1f : look.idleBorderAlpha();
-        Color idleBorderColor = chargedBorderColor != null ? chargedBorderColor : frameColor;
-        float idleBorderWidth = chargedBorderColor != null ? CHARGED_BORDER_WIDTH : BORDER_WIDTH;
-        TileChrome.draw(cellPosition, new TileChrome.Frame(frameColor, GLOW_WIDTH, glowAlpha, selected ? Misc.getBrightPlayerColor() : idleBorderColor,
-                selected ? SELECTED_BORDER_WIDTH : idleBorderWidth, borderAlpha), alphaMult);
+        TileChrome.Frame shownFrame = cellListener.selected() ? selectedFrame : tileInput.isHovered() ? hoverFrame : idleFrame;
+        TileChrome.draw(cellPosition, shownFrame, alphaMult);
     }
 
     @Override
