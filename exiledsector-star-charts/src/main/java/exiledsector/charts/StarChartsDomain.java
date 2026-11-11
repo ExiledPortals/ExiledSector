@@ -51,10 +51,10 @@ import exiledsector.ui.chart.ForgeCraftingBench;
 import exiledsector.ui.chart.StarChartCraftingBench;
 import exiledsector.ui.chart.WormholeGatewayOption;
 import exiledsector.ui.socket.BenchModeSupport;
+import exiledsector.ui.socket.BenchTray;
+import exiledsector.ui.socket.EngramTray;
 import lunalib.lunaSettings.LunaSettings.SettingsCreator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static exiledsector.ExiledSector.MOD_ID;
@@ -184,9 +184,12 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public List<CraftingMaterialFamily> hullCraftingBenchCraftingItems() {
-        List<CraftingMaterialFamily> craftingItems = new ArrayList<>(Arrays.asList(BiomeNanoswarm.values()));
-        craftingItems.addAll(Engrams.all());
-        return List.copyOf(craftingItems);
+        return List.of(BiomeNanoswarm.values());
+    }
+
+    @Override
+    public List<BenchTray> hullCraftingBenchTrays() {
+        return List.of(EngramTray.INSTANCE);
     }
 
     @Override

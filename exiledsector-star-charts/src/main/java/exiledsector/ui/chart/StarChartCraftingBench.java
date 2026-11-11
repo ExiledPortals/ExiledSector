@@ -58,6 +58,11 @@ public final class StarChartCraftingBench implements BenchModeSupport {
     }
 
     @Override
+    public boolean usesInhibitors() {
+        return false;
+    }
+
+    @Override
     public ItemStore store() {
         return ItemStore.starChartsIfCreated();
     }

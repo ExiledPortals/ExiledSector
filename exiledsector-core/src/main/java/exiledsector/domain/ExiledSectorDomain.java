@@ -26,6 +26,7 @@ import exiledsector.ui.cargo.ItemIconLooks;
 import exiledsector.ui.inspect.ShipSummaryPart;
 import exiledsector.ui.refit.RefitButtonColumn;
 import exiledsector.ui.socket.BenchModeSupport;
+import exiledsector.ui.socket.BenchTray;
 
 import java.util.List;
 import java.util.Map;
@@ -86,6 +87,10 @@ public interface ExiledSectorDomain {
     }
 
     default List<CraftingMaterialFamily> hullCraftingBenchCraftingItems() {
+        return List.of();
+    }
+
+    default List<BenchTray> hullCraftingBenchTrays() {
         return List.of();
     }
 

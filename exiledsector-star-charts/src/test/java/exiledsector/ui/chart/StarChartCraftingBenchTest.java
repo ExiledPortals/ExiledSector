@@ -5,6 +5,7 @@ import exiledsector.items.ItemStore;
 import exiledsector.ui.socket.BenchModeSupport;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,6 +26,14 @@ class StarChartCraftingBenchTest {
         assertEquals(StarChartCraftingBench.NO_SYSTEM_KEY, untargeted.reasonKey());
         assertFalse(otherTarget.allowsOpening());
         assertEquals(StarChartCraftingBench.NO_SYSTEM_KEY, otherTarget.reasonKey());
+    }
+
+    @Test
+    void theStarChartBenchAndTheForgesUseNoInhibitorsAndOfferNoTrays() {
+        for (BenchModeSupport support : List.of(StarChartCraftingBench.INSTANCE, ForgeCraftingBench.DERELICT_FORGE, ForgeCraftingBench.ABYSSAL_RESEARCH_COMPLEX)) {
+            assertFalse(support.usesInhibitors(), support.mode().name());
+            assertEquals(List.of(), support.trays(), support.mode().name());
+        }
     }
 
     @Test

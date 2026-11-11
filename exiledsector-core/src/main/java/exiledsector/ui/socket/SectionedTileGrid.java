@@ -15,7 +15,11 @@ import java.util.List;
 
 final class SectionedTileGrid {
 
-    record Tile(CustomUIPanelPlugin plugin, int count) {
+    record Tile(CustomUIPanelPlugin plugin, String badge, boolean bright) {
+
+        Tile(CustomUIPanelPlugin plugin, int count) {
+            this(plugin, String.valueOf(count), count > 0);
+        }
     }
 
     record Section(String title, Color titleColor, List<Tile> tiles) {
@@ -64,8 +68,8 @@ final class SectionedTileGrid {
             rowPanel.addComponent(Global.getSettings().createCustom(cellSize, cellSize, tile.plugin())).inTL(cellLeft, 0f);
             TooltipMakerAPI countElement = rowPanel.createUIElement(cellSize - COUNT_INSET * 2f, COUNT_HEIGHT, false);
             countElement.setParaFont(Fonts.ORBITRON_12);
-            Color countColor = tile.count() > 0 ? Misc.getBrightPlayerColor() : Misc.getGrayColor();
-            LabelAPI countLabel = VanillaText.plainPara(countElement, String.valueOf(tile.count()), 0f, countColor);
+            Color countColor = tile.bright() ? Misc.getBrightPlayerColor() : Misc.getGrayColor();
+            LabelAPI countLabel = VanillaText.plainPara(countElement, tile.badge(), 0f, countColor);
             countLabel.setAlignment(Alignment.RMID);
             countElement.setParaFontDefault();
             rowPanel.addUIElement(countElement).inTL(cellLeft + COUNT_INSET, cellSize - COUNT_HEIGHT - COUNT_INSET);

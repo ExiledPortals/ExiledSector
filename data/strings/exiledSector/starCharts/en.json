@@ -242,6 +242,8 @@
     "chart.ui.open.confirm.yes": "Open Wormhole",
     "chart.ui.open.confirm.no": "Cancel",
     "chart.ui.bench.title": "Crafting Bench",
+    "chart.ui.bench.tray.engrams.title": "Engrams",
+    "chart.ui.bench.tray.engrams.empty": "You hold no engrams.",
     "chart.ui.bench.empty": "Click a Star Chart in Star Chart storage to load it onto the Crafting Bench. It stays in storage while it is loaded.",
     "chart.ui.open.blocked.disabled": "Star Charts are switched off in LunaLib settings.",
     "chart.ui.open.blocked.no_chart": "Select a Star Chart to open its wormhole.",
