@@ -53,7 +53,8 @@ final class SkillTreeLevelBar {
 
     private String label() {
         if (shownBankedFreeAllocations > 0) {
-            return Translation.msg("ui.levelBar.levelWithFree").arg("level", shownLevel).arg("free", shownBankedFreeAllocations).text();
+            return Translation.msg("ui.levelBar.levelWithUnused").count(shownBankedFreeAllocations).arg("level", shownLevel)
+                    .arg("free", shownBankedFreeAllocations).text();
         }
         return Translation.msg("ui.levelBar.level").arg("level", shownLevel).text();
     }

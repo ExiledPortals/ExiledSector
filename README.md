@@ -239,7 +239,7 @@ Ctrl-Shift-click an unallocated node to take the shortest path to it. The path g
 <details>
 <summary><b>Do I have to build a tree for every ship?</b></summary>
 
-Yes, but templates and the ctrl + shift + click save you most of the busywork. "Save as new template" in the skill tree screen saves a ship's nodes and the order you took them in. "Load template" puts that plan on another ship. A ship with a different starting point first takes the shortest route to the template. If Auto-allocate is on, each level-up takes the next node in the template for you. Template mode lets you plan a template without spending points. Templates are shared by every save and kept in saves/common/exiledSector_skillTreeTemplates.json.data, which the game re-reads whenever the skill tree opens, so outside planners can read and write them while the game runs.
+Yes, but templates and the ctrl + shift + click save you most of the busywork. The skill tree screen's "Save" button saves a ship's nodes and the order you took them in. "Load" puts that plan on another ship. A ship with a different starting point first takes the shortest route to the template. If Auto-allocate is on, each level-up takes the next node in the template for you. Template mode lets you plan a template without spending points. Templates are shared by every save and kept in saves/common/exiledSector_skillTreeTemplates.json.data, which the game re-reads whenever the skill tree opens, so outside planners can read and write them while the game runs.
 
 </details>
 
