@@ -12,6 +12,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.RealSkillData;
 import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.tags.ThemeTagLine;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
 import exiledsector.charts.generation.ChartGenContext;
@@ -265,9 +266,11 @@ class StarChartTest {
 
             assertEquals(1, collapsed.size());
             assertEquals(collapsed.get(0).plain(), expanded.get(0).plain());
-            assertTrue(expanded.size() > 2, expanded.toString());
+            StyledText hullbreacherTagLine = ThemeTagLine.of(ItemModifiers.get("CHART_ENEMY_HULLBREACHER_ROUNDS").tags());
+            assertTrue(expanded.size() > 3, expanded.toString());
             assertTrue(expanded.get(1).spans().stream().anyMatch(span -> span.style() == Style.BAD), expanded.get(1).toMarkup());
-            assertTrue(expanded.get(expanded.size() - 1).plain().endsWith(SkillTree.get("hullbreacher_rounds_1").getType().getFlavourText()));
+            assertTrue(expanded.get(expanded.size() - 2).plain().endsWith(SkillTree.get("hullbreacher_rounds_1").getType().getFlavourText()));
+            assertEquals(hullbreacherTagLine.plain(), expanded.get(expanded.size() - 1).plain());
         } finally {
             RealSkillData.clear();
         }
@@ -307,8 +310,10 @@ class StarChartTest {
 
             assertEquals(chart.effectLines(false), lines.stream().map(SlottedLine::text).toList());
             assertEquals(SkillTree.get("hullbreacher_rounds_1").getDisplayName(), lines.get(0).detailTitle());
-            assertEquals(chart.effectLines(true).size() - 1, lines.get(0).details().size());
-            assertEquals(1, chart.slottedEffectLines(true, null).size());
+            List<SlottedLine> expandedLines = chart.slottedEffectLines(true, null);
+            assertEquals(chart.effectLines(true).size() - 2, lines.get(0).details().size());
+            assertEquals(2, expandedLines.size());
+            assertEquals(ThemeTagLine.of(ItemModifiers.get("CHART_ENEMY_HULLBREACHER_ROUNDS").tags()).plain(), expandedLines.get(1).text().plain());
         } finally {
             RealSkillData.clear();
         }
