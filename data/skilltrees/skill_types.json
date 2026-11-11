@@ -215,7 +215,7 @@
 			"flavour": "Pirate fire control holds until a target's shields collapse or its drives gutter out. Fair fights are for the naive.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -275,7 +275,7 @@
 			"flavour": "A good pirate doesn't wait for their prey to recover.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -304,7 +304,7 @@
 			"flavour": "Acquiring plunder is sometimes not as important as making it home.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"speed"
+				"mobility"
 			]
 		},
 		{
@@ -360,7 +360,7 @@
 			"flavour": "A convoy is only as safe as its slowest freighter.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -518,7 +518,7 @@
 			"flavour": "A recovered gamma core, kept powered just long enough to be questioned, gives up the targeting routines Remnant drones use to lead a target.",
 			"flavourAutomated": "A recovered gamma core holds the targeting routines Remnant drones use to lead a target. The ship's core copies them across in a fraction of a second.",
 			"tags": [
-				"weapons",
+				"weapon",
 				"range"
 			]
 		},
@@ -647,7 +647,7 @@
 			"name": "All Weapon Damage",
 			"icon": "graphics/icons/weapon_damage.png",
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -675,7 +675,7 @@
 				}
 			],
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -828,7 +828,7 @@
 			],
 			"tags": [
 				"flux",
-				"speed"
+				"mobility"
 			]
 		},
 		{
@@ -978,7 +978,7 @@
 			"flavourAutomated": "The ship's core logs hours of Hegemony line engagements and reproduces the Navy's habit of arriving at speed and firing before the enemy has settled, guns thumping out what the Navy calls its heartbeat. The core keeps time more evenly than any Navy gunner.",
 			"tags": [
 				"ballistic",
-				"speed",
+				"mobility",
 				"req_ballistic"
 			]
 		},
@@ -1015,7 +1015,7 @@
 			},
 			"flavour": "In a joint League fleet, every member world jams anyone it suspects of listening, which is everyone. Most of the noise comes from allies.",
 			"tags": [
-				"weapons",
+				"weapon",
 				"range"
 			]
 		},
@@ -1195,7 +1195,7 @@
 			"flavourAutomated": "Hegemony point defense crews pack their flak loads for a wide burst, on the theory that a missile is rarely alone. The ship's core records the pattern while escorting a Dominator through a missile strike, and the refit crew repacks the magazines to match.",
 			"tags": [
 				"point_defense",
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -1509,7 +1509,7 @@
 				"turretgyros"
 			],
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -1568,7 +1568,7 @@
 			],
 			"tags": [
 				"armour",
-				"weapons"
+				"weapon"
 			],
 			"moduleShare": "all"
 		},
@@ -1644,7 +1644,7 @@
 				"auxiliarythrusters"
 			],
 			"tags": [
-				"speed"
+				"mobility"
 			]
 		},
 		{
@@ -2132,7 +2132,7 @@
 			],
 			"tags": [
 				"fleet_support",
-				"speed"
+				"mobility"
 			]
 		},
 		{
@@ -2737,8 +2737,8 @@
 			"flavour": "A Kesteven R&D modspec lets the crew feed the ship's own momentum into its guns. Kesteven's notes recommend never slowing down.",
 			"flavourAutomated": "A Kesteven R&D modspec lets the refit crew feed the ship's own momentum into its guns. Kesteven's notes recommend never slowing down.",
 			"tags": [
-				"weapons",
-				"speed"
+				"weapon",
+				"mobility"
 			]
 		},
 		{
@@ -2839,7 +2839,7 @@
 			"flavourAutomated": "Disassembling the ABSORB loop from a Kingstork showed the refit crew how to bank the energy the shields block instead of venting it. The ship's core decides when to spend it on the guns.",
 			"tags": [
 				"shield",
-				"weapons",
+				"weapon",
 				"req_shields"
 			]
 		},
@@ -3050,8 +3050,8 @@
 			"flavourAutomated": "A prototype flux injector from Kesteven R&D lets the refit crew trade staying power for tempo. The modspec describes the side effects as manageable. With nobody aboard, there's nothing living to manage.",
 			"tags": [
 				"flux",
-				"speed",
-				"weapons",
+				"mobility",
+				"weapon",
 				"req_non_phase_hull"
 			]
 		},
@@ -3339,7 +3339,7 @@
 				"nav_relay"
 			],
 			"tags": [
-				"speed",
+				"mobility",
 				"fleet_support"
 			]
 		},
@@ -3716,7 +3716,7 @@
 				"unstable_injector"
 			],
 			"tags": [
-				"speed",
+				"mobility",
 				"range"
 			],
 			"moduleShare": "none"
@@ -4545,7 +4545,7 @@
 			"flavour": "The Knights of Ludd hold that a righteous ship meets its enemy at full burn, and drilling alongside them at Ceyx teaches the crew to trim the engines and controls for the charge.",
 			"flavourAutomated": "The Knights of Ludd hold that a righteous ship meets its enemy at full burn. The ship's core logs their charges at Ceyx and trims its engines and controls to match. The Knights would not call the result righteous.",
 			"tags": [
-				"speed"
+				"mobility"
 			]
 		},
 		{
@@ -4655,7 +4655,7 @@
 			"flavourAutomated": "Luddic faithful hold that a scarred ship, like a penitent, finds its strength in hardship. The ship's core holds no faith, only damage logs showing the battered guns of Luddic ships firing long past the point they should have failed. It keeps its own guns fighting the same way.",
 			"tags": [
 				"d_mods",
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -4838,7 +4838,7 @@
 			"flavour": "You control the speed at which these lobsters die.",
 			"tags": [
 				"combat_readiness",
-				"speed",
+				"mobility",
 				"player_only"
 			]
 		},
@@ -5096,7 +5096,7 @@
 				}
 			],
 			"tags": [
-				"speed"
+				"mobility"
 			]
 		},
 		{
@@ -5172,7 +5172,7 @@
 				}
 			],
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -5257,7 +5257,7 @@
 			"flavour": "Fire-control software lifted from a pirate wreck, written to mark any target with failing shields or dead drives. The rest of its memory is gambling ledgers.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -5273,7 +5273,7 @@
 			"flavour": "Pirate refits run every weapon mount with its capacitor safeties bypassed. The safeties go in a crate, in case of inspection.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons",
+				"weapon",
 				"flux"
 			]
 		},
@@ -5290,7 +5290,7 @@
 			"flavour": "Drive injectors rebored the pirate way, wide and rough, for a fast start from a standing burn. The tolerances are approximate.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"speed"
+				"mobility"
 			]
 		},
 		{
@@ -5306,7 +5306,7 @@
 			"flavour": "Targeting tables from a raider's fire-control core weight every shot toward whatever can't outrun the ship.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -5320,7 +5320,7 @@
 				}
 			],
 			"tags": [
-				"speed"
+				"mobility"
 			]
 		},
 		{
@@ -5536,7 +5536,7 @@
 			},
 			"flavour": "A standing decree of the Supreme Executor names retreat as treason. It has no provision for appeal.",
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -5588,7 +5588,7 @@
 			},
 			"flavour": "The Lion's Guard keeps pace with the Supreme Executor's flagship, never the other way round. Most of its recorded maneuvers are parades.",
 			"tags": [
-				"speed"
+				"mobility"
 			]
 		},
 		{
@@ -5602,7 +5602,7 @@
 				}
 			],
 			"tags": [
-				"dmgtypeenergy"
+				"energy_damage"
 			]
 		},
 		{
@@ -5663,7 +5663,7 @@
 			],
 			"temporaryAfterDeploymentSeconds": 90,
 			"tags": [
-				"speed"
+				"mobility"
 			]
 		},
 		{
@@ -5708,7 +5708,7 @@
 			"flavour": "Pirate captains who joined the crew drill the habits that make freebooters so dangerous up close: charge in, fire everything and count the casualties later. They rarely do the counting.",
 			"flavourAutomated": "The ship's core logs every fight it sees freebooters win up close: charge in, fire everything and count the casualties later. It copies the first two steps exactly. It always does the counting.",
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -5755,7 +5755,7 @@
 				"CRUISER"
 			],
 			"tags": [
-				"speed"
+				"mobility"
 			]
 		},
 		{
@@ -5995,7 +5995,7 @@
 			"flavour": "Inside a recovered Ancient Prototype, where every conduit converges on a perfectly spherical void, the crew finds the Candle's Grace device that drags at the timeflow of anything near it. Who or what Candle's Grace was is not recorded, and the replica is mostly guesswork.",
 			"flavourAutomated": "Inside a recovered Ancient Prototype, where every conduit converges on a perfectly spherical void, the refit crew finds the Candle's Grace device that drags at the timeflow of anything near it. Who or what Candle's Grace was is not recorded, and the replica is mostly guesswork.",
 			"tags": [
-				"speed"
+				"mobility"
 			]
 		},
 		{
@@ -6066,7 +6066,7 @@
 			"flavour": "Combat recordings pulled from a Stargazer's data core show its fire rate climbing with every hit, as if something inside it were growing angrier. The crew rewires this ship's fire control to chase the same rhythm, and tries not to wonder what it is chasing.",
 			"flavourAutomated": "Combat recordings pulled from a Stargazer's data core show its fire rate climbing with every hit, as if something inside it were growing angrier. The ship's core matches the rhythm exactly. It does not wonder what it is matching.",
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -6195,7 +6195,7 @@
 			"flavourAutomated": "Under Exo-Tech instruction, the refit crew splices phase-coil components into the ship's power lattice, fusing it with the flux grid the way Exo-Tech builds its own hulls.",
 			"tags": [
 				"flux",
-				"speed"
+				"mobility"
 			],
 			"moduleShare": "all"
 		},
@@ -6325,7 +6325,7 @@
 				}
 			],
 			"tags": [
-				"speed"
+				"mobility"
 			]
 		},
 		{
@@ -6393,7 +6393,7 @@
 			"flavourAutomated": "Having taken apart enough Seraph hulls to see how they feed on their own wounds, the refit crew rewires the ship to do the same. The shield emitters were never built for that load.",
 			"tags": [
 				"armour",
-				"weapons"
+				"weapon"
 			],
 			"moduleShare": "all"
 		},
@@ -6513,7 +6513,7 @@
 			},
 			"flavour": "Code pulled from a dissected Seraph core, pieced back together and patched into the damage-control software. It mends the ship on what the guns take from others.",
 			"tags": [
-				"weapons",
+				"weapon",
 				"repair"
 			]
 		},
@@ -6547,7 +6547,7 @@
 			],
 			"flavour": "A fabricator pulled from a Threat wreck still builds fragments when it is fed. Seated in the hull, it keeps a swarm of them roiling around the ship to feed fragment weapons.",
 			"tags": [
-				"weapons",
+				"weapon",
 				"req_non_phase_hull"
 			]
 		},
@@ -6586,7 +6586,7 @@
 			],
 			"flavour": "A second Threat fabricator wired in beside the first replaces fragments as fast as the fighting destroys them.",
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -6624,7 +6624,7 @@
 			],
 			"flavour": "Processing units taken from Threat wrecks let the ship's swarm hold together in far greater numbers.",
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -6638,7 +6638,7 @@
 				}
 			],
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -6652,7 +6652,7 @@
 				}
 			],
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -6682,7 +6682,7 @@
 				"<bad>50%</bad> increased crew casualties."
 			],
 			"tags": [
-				"weapons",
+				"weapon",
 				"req_non_phase_hull"
 			]
 		},
@@ -6739,7 +6739,7 @@
 				"<bad>50%</bad> increased crew casualties."
 			],
 			"tags": [
-				"weapons",
+				"weapon",
 				"req_non_phase_hull"
 			]
 		},
@@ -6754,7 +6754,7 @@
 				}
 			],
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -6768,7 +6768,7 @@
 				}
 			],
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -6787,7 +6787,7 @@
 			],
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -6911,7 +6911,7 @@
 			},
 			"flavour": "Fire-control routines lifted from a Tri-Tachyon line ship, written by an alpha core that never meant to share them.",
 			"tags": [
-				"weapons",
+				"weapon",
 				"energy",
 				"range"
 			]
@@ -6979,7 +6979,7 @@
 			"flavour": "Tri-Tachyon fleet doctrine ranks every target by the value it carries, and its threat tables push gunners toward the largest hulls on the field. Frigates, the tables note, are rarely worth the ammunition.",
 			"flavourAutomated": "Tri-Tachyon fleet doctrine ranks every target by the value it carries, and its threat tables push fire control toward the largest hulls on the field. The ship's core loads the tables unedited. Frigates, the tables note, are rarely worth the ammunition.",
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -7013,7 +7013,7 @@
 			"flavourAutomated": "A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked. The ship's core scans every page once.",
 			"tags": [
 				"energy",
-				"weapons",
+				"weapon",
 				"range",
 				"req_beam"
 			]
@@ -7225,7 +7225,7 @@
 			"flavourAutomated": "Pilgrim fleets cross the Sector on whatever drives they can keep lit. The ship's core logs their burn profiles between stations and flies the same frugal burn, tanks running low.",
 			"tags": [
 				"logistics",
-				"speed",
+				"mobility",
 				"logistics_cap"
 			]
 		},
@@ -7261,7 +7261,7 @@
 			"tags": [
 				"ballistic",
 				"missile",
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -7400,7 +7400,7 @@
 			"flavour": "Remnant point defense never tires and never flinches. Its tracking routines, recovered from a gutted drone, carry none of the hesitation a human gunner would add.",
 			"tags": [
 				"point_defense",
-				"weapons"
+				"weapon"
 			],
 			"moduleShare": "all"
 		},
@@ -7510,7 +7510,7 @@
 			"flavour": "Energy mounts pulled from Remnant wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.",
 			"tags": [
 				"energy",
-				"weapons",
+				"weapon",
 				"req_energy"
 			]
 		},
@@ -7609,7 +7609,7 @@
 				}
 			],
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -7639,7 +7639,7 @@
 			},
 			"flavour": "Desperation leads to innovation, and the pressure of an incoming war brought Farige engineers to the limit, with them bringing up unusual techniques to modernize recently found early epoch Domain designs. Mount plans traded by Navarchy quartermasters had a complete data basis of prototype adaptive weapon mounts, allowing ballistic weapon systems to draw harder from the ship's flux grid in order to field energy based weaponry.",
 			"tags": [
-				"weapons",
+				"weapon",
 				"player_only"
 			]
 		},
@@ -7670,7 +7670,7 @@
 			},
 			"flavour": "The Black Hawk's Dysis Drive throws the ship forward hardest while its flux grid runs cold. Analysis over its ancient design allowed the crew to tune this ship's engines the same way, so it is able to fly bright at low flux and drags once the grid fills.",
 			"tags": [
-				"speed",
+				"mobility",
 				"flux"
 			]
 		},
@@ -7695,8 +7695,8 @@
 			},
 			"flavour": "War, war never changes. In order to survive the Luddic Path mayhem, Carina Forces had to act fast, or expire. Your crew learns from these hit and run tactics, and by executing them at high speeds, they exploit enemy weaknesses.",
 			"tags": [
-				"weapons",
-				"speed"
+				"weapon",
+				"mobility"
 			]
 		},
 		{
@@ -7736,7 +7736,7 @@
 			},
 			"flavour": "The Aracari is a prime example of antique thermo-dynamic engineering, with its Solaris Phalanx system allowing weapons to fire without directly drawing from the main flux grid. By analyzing old Farige databanks, your crew is now able to mimic its functionality in a small scale basis.",
 			"tags": [
-				"weapons",
+				"weapon",
 				"flux"
 			]
 		},
@@ -7803,7 +7803,7 @@
 			},
 			"flavour": "The legendary NTS Endurance, an Aetos Class Destroyer, managed to nail down multiple enemy frigates at once, protecting its fleet from terrific flankers, thanks to its Thermo-Accelerator system. By understanding the tactics employed by its captain and the ship's overengineered ammo feeders, your crew is now able to draw power from hardpoint weapon mounts so its turret weapons fire cooler in a similar fashion.",
 			"tags": [
-				"weapons",
+				"weapon",
 				"player_only"
 			]
 		},
@@ -7852,7 +7852,7 @@
 			"flavour": "Capacitor banks rewound to Tri-Tachyon specifications put more charge behind every hit. The specifications were not for sale, strictly speaking.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -7881,7 +7881,7 @@
 			"flavour": "Once a target's systems are dead, Tri-Tachyon ion firmware moves on to the hull.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -7959,9 +7959,9 @@
 			"flavour": "Remnant drones match each round to whatever it is about to hit.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons",
-				"dmgtypekinetic",
-				"dmgtypehighexplosive"
+				"weapon",
+				"kinetic",
+				"high_explosive"
 			]
 		},
 		{
@@ -7990,7 +7990,7 @@
 			"flavour": "Remnant hulls are rumored to hold every lineage of Domain design in a balance their cores never let slip.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -8029,7 +8029,7 @@
 			"flavour": "Remnant ion bolts leave some of their charge in the shield projector as heat.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons",
+				"weapon",
 				"shield"
 			]
 		},
@@ -8251,7 +8251,7 @@
 			"flavour": "\"The plume showed up on our scopes before the drive lit. I have checked the clocks. Please stop asking me to check the clocks.\"\n- Sensor officer's log, Tri-Tachyon picket, name withheld",
 			"todo": "Needs an icon.",
 			"tags": [
-				"speed"
+				"mobility"
 			]
 		},
 		{

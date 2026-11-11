@@ -17,8 +17,8 @@ public final class NodeRequirements {
     public static final List<String> HULL_TAGS = List.of("req_civilian_hull", "req_non_phase_hull", "req_system_charges", "req_modules");
 
     public static final List<String> TAGS = Stream.of(List.of(
-            "req_shields", "req_no_shields", "req_phase", "req_fighter_bays", "req_no_fighter_bays", "req_ballistic",
-            "req_missile", "req_energy", "req_beam", "req_offensive_beam", "req_non_beam_energy", "req_flagship",
+            "req_shields", "req_no_shields", "req_front_shield", "req_omni_shield", "req_phase", "req_fighter_bays", "req_no_fighter_bays",
+            "req_ballistic", "req_missile", "req_energy", "req_beam", "req_offensive_beam", "req_non_beam_energy", "req_flagship",
             CREWED, AUTOMATED, UNSCRIPTED_HULL, "campaign_only", "player_only"), HULL_TAGS).flatMap(List::stream).toList();
 
     private NodeRequirements() {
@@ -69,6 +69,8 @@ public final class NodeRequirements {
         return switch (requirement) {
             case "req_shields" -> shieldType == ShieldType.FRONT || shieldType == ShieldType.OMNI;
             case "req_no_shields" -> shieldType == ShieldType.NONE;
+            case "req_front_shield" -> shieldType == ShieldType.FRONT;
+            case "req_omni_shield" -> shieldType == ShieldType.OMNI;
             case "req_phase" -> profile.phaseHull();
             case "req_fighter_bays" -> profile.fighterBays() > 0;
             case "req_no_fighter_bays" -> profile.fighterBays() <= 0;

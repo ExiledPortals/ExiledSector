@@ -8,11 +8,6 @@ import java.util.stream.Stream;
 
 public final class SkillTags {
 
-    public static final List<String> THEME = List.of(
-            "flux", "shield", "armour", "hull", "speed", "logistics", "missile", "fighter", "energy", "ballistic",
-            "phase", "beam", "range", "ammo", "dmgtypekinetic", "dmgtypehighexplosive", "dmgtypefragmentation",
-            "dmgtypeenergy", "weapons", "point_defense", "combat_readiness", "repair", "fleet_support", "d_mods");
-
     public static final String CORE_VOLUME = "core";
     public static final String ABYSS_VOLUME = "abyss";
     public static final String EXOTECH_VOLUME = "exotech";
@@ -41,9 +36,11 @@ public final class SkillTags {
 
     public static final List<String> RULE = List.of("logistics_cap");
 
-    public static final List<String> ALL = Stream.of(THEME, VOLUME, REQUIREMENT, GATE, RULE).flatMap(List::stream).toList();
-
     private SkillTags() {
+    }
+
+    public static List<String> all() {
+        return Stream.of(ThemeTags.ids(ThemeTagScope.SHIP), VOLUME, REQUIREMENT, GATE, RULE).flatMap(List::stream).toList();
     }
 
     public static TreeTags treeTags(List<String> tags) {

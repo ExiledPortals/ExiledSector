@@ -72,6 +72,22 @@ class NodeRequirementsTest {
     }
 
     @Test
+    void reqFrontShieldIsMetByFrontShieldsOnly() {
+        assertTrue(met("req_front_shield", shield(ShieldType.FRONT)));
+        assertFalse(met("req_front_shield", shield(ShieldType.OMNI)));
+        assertFalse(met("req_front_shield", shield(ShieldType.NONE)));
+        assertFalse(met("req_front_shield", shield(ShieldType.PHASE)));
+    }
+
+    @Test
+    void reqOmniShieldIsMetByOmniShieldsOnly() {
+        assertTrue(met("req_omni_shield", shield(ShieldType.OMNI)));
+        assertFalse(met("req_omni_shield", shield(ShieldType.FRONT)));
+        assertFalse(met("req_omni_shield", shield(ShieldType.NONE)));
+        assertFalse(met("req_omni_shield", shield(ShieldType.PHASE)));
+    }
+
+    @Test
     void reqNoShieldsIsMetOnlyWithoutAnyShieldOrPhaseCloak() {
         assertTrue(met("req_no_shields", shield(ShieldType.NONE)));
         assertFalse(met("req_no_shields", shield(ShieldType.FRONT)));
@@ -173,7 +189,7 @@ class NodeRequirementsTest {
 
     @Test
     void themeAndVolumeTagsImposeNoRequirement() {
-        List<String> tags = new ArrayList<>(SkillTags.THEME);
+        List<String> tags = new ArrayList<>(ThemeTags.ids());
         tags.addAll(SkillTags.VOLUME);
         ShipProfile bare = profile(HullSize.FRIGATE, ShieldType.NONE, 0, Set.of(), false);
 

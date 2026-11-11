@@ -220,9 +220,10 @@ class SkillTypesDataConsistencyTest {
     @Test
     void everySkillTypeAndNodeTagIsInTheTagVocabulary() throws Exception {
         List<String> unknown = new ArrayList<>();
+        List<String> vocabulary = SkillTags.all();
         for (JSONObject type : loadTypes().values()) {
             for (String tag : strings(type, "tags")) {
-                if (!SkillTags.ALL.contains(tag)) {
+                if (!vocabulary.contains(tag)) {
                     unknown.add("type " + type.getString("id") + ": " + tag);
                 }
             }
@@ -232,7 +233,7 @@ class SkillTypesDataConsistencyTest {
         for (int i = 0; i < nodes.length(); i++) {
             JSONObject node = nodes.getJSONObject(i);
             for (String tag : strings(node, "tags")) {
-                if (!SkillTags.ALL.contains(tag)) {
+                if (!vocabulary.contains(tag)) {
                     unknown.add("node " + node.getString("id") + ": " + tag);
                 }
             }

@@ -91,7 +91,7 @@ class SkillTreeCodexListenerTest {
 
     @Test
     void theBuildNameIsResolvedInTheGameLanguageEvenWhenTheSkillTreeUsesAnother() {
-        I18n.install(new Catalogue("zh_CN", Map.of("theme.ballistic", "实弹")), new Catalogue("en", Map.of("theme.ballistic", "Ballistic")));
+        I18n.install(new Catalogue("zh_CN", Map.of("tag.ballistic", "实弹")), new Catalogue("en", Map.of("tag.ballistic", "Ballistic")));
         memberEntry("temp-1", npc(NPC_TAG));
 
         new SkillTreeCodexListener().reportAboutToOpenCodex();

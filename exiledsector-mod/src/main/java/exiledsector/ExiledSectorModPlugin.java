@@ -51,6 +51,7 @@ import exiledsector.items.UniqueSourceCheck;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillTreeDomain;
+import exiledsector.skills.tags.ThemeTags;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.CraftingBenchRefitButton;
 import exiledsector.ui.cargo.CargoCraftingTabListener;
@@ -85,6 +86,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         ExiledSectorSettings.register(DOMAINS);
         EffectAliases.load();
         CsvIdList.loadAll();
+        ThemeTags.load();
         DOMAINS.forEach(ExiledSectorDomain::loadData);
         ItemIdAliases.load();
         MaterialIdAliases.load();
