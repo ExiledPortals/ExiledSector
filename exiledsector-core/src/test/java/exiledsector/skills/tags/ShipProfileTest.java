@@ -147,7 +147,7 @@ class ShipProfileTest {
         ShipProfile profile = ShipProfile.of(withFlightDecks(member(HullSize.CRUISER, ShieldType.FRONT, 0, variant(), false), 1));
 
         assertEquals(1, profile.fighterBays());
-        assertTrue(NodeRequirements.isSatisfiedBy(List.of("req_fighter_bays"), profile));
+        assertTrue(NodeRequirements.isSatisfiedBy(List.of("req_strikecraft_bays"), profile));
     }
 
     @Test

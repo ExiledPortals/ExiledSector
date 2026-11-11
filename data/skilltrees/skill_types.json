@@ -1098,10 +1098,10 @@
 			},
 			"flavour": "No League detachment will launch second, so joint fleets launch every wing at once.",
 			"tags": [
-				"fighter",
+				"strikecraft",
 				"damage",
 				"nearby_ships",
-				"req_fighter_bays"
+				"req_strikecraft_bays"
 			]
 		},
 		{
@@ -1846,8 +1846,8 @@
 				"converted_hangar"
 			],
 			"tags": [
-				"fighter",
-				"req_no_fighter_bays"
+				"strikecraft",
+				"req_no_strikecraft_bays"
 			]
 		},
 		{
@@ -1901,7 +1901,7 @@
 			"tags": [
 				"cargo",
 				"crew",
-				"req_fighter_bays",
+				"req_strikecraft_bays",
 				"campaign_only",
 				"logistics_cap"
 			]
@@ -1984,9 +1984,9 @@
 			"flavourAutomated": "Wing datalinks rewired to carry the ship's own point-defense solutions. If the pilots complain about the short leash, nobody aboard hears it.",
 			"todo": "Deliberately kept on vanillaHullMod passthrough as a design choice, not a technical limitation - the fighter-spawn hook needed to convert this now exists (see FIGHTER_PD_DAMAGE_BONUS_PERCENT, reused by other nodes). Real vanilla effect also zeroes the launched fighters' patrol range (locking them near the ship) and tags certain fighter types to stay in front of the ship; neither of those is implemented as a reusable effect yet.",
 			"tags": [
-				"fighter",
+				"strikecraft",
 				"point_defense",
-				"req_fighter_bays"
+				"req_strikecraft_bays"
 			]
 		},
 		{
@@ -2225,8 +2225,8 @@
 				"expanded_deck_crew"
 			],
 			"tags": [
-				"fighter",
-				"req_fighter_bays"
+				"strikecraft",
+				"req_strikecraft_bays"
 			]
 		},
 		{
@@ -3611,9 +3611,9 @@
 				"recovery_shuttles"
 			],
 			"tags": [
-				"fighter",
+				"strikecraft",
 				"crew",
-				"req_fighter_bays",
+				"req_strikecraft_bays",
 				"campaign_only"
 			]
 		},
@@ -4331,9 +4331,9 @@
 				}
 			],
 			"tags": [
-				"fighter",
+				"strikecraft",
 				"damage",
-				"req_fighter_bays"
+				"req_strikecraft_bays"
 			]
 		},
 		{
@@ -4347,8 +4347,8 @@
 				}
 			],
 			"tags": [
-				"fighter",
-				"req_fighter_bays"
+				"strikecraft",
+				"req_strikecraft_bays"
 			]
 		},
 		{
@@ -4673,8 +4673,8 @@
 			"flavour": "Picking through the wrecks of Luddic Path carriers showed the crew how the Path tears the engine governors out of its bombers and arms their warheads the moment they leave the deck. The faithful accept that some payloads go off before they ever reach the enemy.",
 			"flavourAutomated": "Flight recorders from wrecked Luddic Path carriers show how the Path tears the engine governors out of its bombers and arms their warheads the moment they leave the deck. The ship's core applies the same settings to its own bombers, and logs the ones that go off early without comment.",
 			"tags": [
-				"fighter",
-				"req_fighter_bays"
+				"strikecraft",
+				"req_strikecraft_bays"
 			]
 		},
 		{
@@ -5431,8 +5431,8 @@
 				}
 			],
 			"tags": [
-				"fighter",
-				"req_fighter_bays"
+				"strikecraft",
+				"req_strikecraft_bays"
 			]
 		},
 		{
@@ -5984,10 +5984,10 @@
 			"flavour": "Nightcross Restricted Hardlight Rifles, looted from a hidden NCA research outpost, keep count of every hit they land on a target, and the crew learns to port that counter into this carrier's wing datalink.",
 			"flavourAutomated": "Nightcross Restricted Hardlight Rifles, looted from a hidden NCA research outpost, keep count of every hit they land on a target. The ship's core reads the counter's firmware and ports it into its own wing datalink.",
 			"tags": [
-				"fighter",
+				"strikecraft",
 				"damage",
 				"on_hit",
-				"req_fighter_bays"
+				"req_strikecraft_bays"
 			]
 		},
 		{
@@ -6020,9 +6020,9 @@
 			"flavour": "Tri-Tachyon's phase labs learned to lock the coils of a strike craft wing into one shared state, so a hit on one craft bleeds through p-space into the whole wing. A defector from those labs, smuggled out at no small cost, walks the crew through retuning this carrier's strike craft coils to the same entangled frequency.",
 			"flavourAutomated": "Tri-Tachyon's phase labs learned to lock the coils of a strike craft wing into one shared state, so a hit on one craft bleeds through p-space into the whole wing. A defector from those labs, smuggled out at no small cost, walks the refit crew through retuning this carrier's strike craft coils to the same entangled frequency.",
 			"tags": [
-				"fighter",
+				"strikecraft",
 				"damage_taken",
-				"req_fighter_bays"
+				"req_strikecraft_bays"
 			]
 		},
 		{
@@ -6079,8 +6079,8 @@
 			"flavourAutomated": "Every League member world sends its own carrier detachment to a joint fleet, and the League's flight doctrine makes them fly as one. The ship's core records the doctrine from joint fleet comm traffic and flies its own wings by it. It has no rival world to report back to.",
 			"todo": "Prototype: wings never grow beyond their normal size; copies are retrained from the wing's own natives, and a copy lost or sent to rearm comes back when the host bay rebuilds a native that is retrained into it. Still to check in game: rearm cycles of copies and the replacement rate during long fights.",
 			"tags": [
-				"fighter",
-				"req_fighter_bays"
+				"strikecraft",
+				"req_strikecraft_bays"
 			]
 		},
 		{
@@ -7517,9 +7517,9 @@
 			},
 			"flavour": "Remnant carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.",
 			"tags": [
-				"fighter",
+				"strikecraft",
 				"damage",
-				"req_fighter_bays"
+				"req_strikecraft_bays"
 			]
 		},
 		{
@@ -8366,9 +8366,9 @@
 			],
 			"todo": "Needs an icon.",
 			"tags": [
-				"fighter",
+				"strikecraft",
 				"range",
-				"req_fighter_bays"
+				"req_strikecraft_bays"
 			]
 		},
 		{
@@ -8393,9 +8393,9 @@
 			"flavour": "\"Recovered three of the little ones intact. By the time the bench clamps were on, there were two.\"\n- Hegemony salvage inventory, amended",
 			"todo": "Needs an icon.",
 			"tags": [
-				"fighter",
+				"strikecraft",
 				"on_hit",
-				"req_fighter_bays"
+				"req_strikecraft_bays"
 			]
 		},
 		{

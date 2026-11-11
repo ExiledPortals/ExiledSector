@@ -1,7 +1,7 @@
 {
     "framework.requirement.req_shields": "护盾",
     "framework.requirement.req_phase": "相位船体",
-    "framework.requirement.req_fighter_bays": "战机舱",
+    "framework.requirement.req_strikecraft_bays": "战机舱",
     "framework.requirement.req_crewed": "有船员的舰船",
     "framework.requirement.req_automated": "自动化舰船",
     "summary.framework": "船体升级 {used}/{points}：{sockets}",

@@ -20,7 +20,7 @@ The vocabulary lives in `data/config/exiledSector/theme_tags.csv` (`tag,parent,s
 | Damage types | `kinetic`, `high_explosive`, `fragmentation`, `energy_damage`, `emp` | both |
 | Defence | `defence` > `armour`, `hull`, `shield`, `shieldless`, `damage_taken`; `shield` > `front_shield`, `omni_shield` | both |
 | Core systems | `flux`, `phase`, `ship_system`, `mobility`, `combat_readiness`, `repair`, `d_mods` | both |
-| Fleet | `fighter`, `fleet_support`, `sensors`, `electronic_warfare` | both |
+| Fleet | `strikecraft`, `fleet_support`, `sensors`, `electronic_warfare` | both |
 | Logistics | `logistics` > `cargo`, `fuel`, `crew`, `supplies`, `salvage` | ship |
 | Tech | `low_tech`, `midline`, `high_tech` | ship |
 | Conditions | `conditional` > `while_phased`, `flux_level`, `low_hull`, `on_hit`, `on_kill`, `nearby_ships` | both |

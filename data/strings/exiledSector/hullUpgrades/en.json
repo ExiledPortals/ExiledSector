@@ -1,7 +1,7 @@
 {
     "framework.requirement.req_shields": "shields",
     "framework.requirement.req_phase": "a phase hull",
-    "framework.requirement.req_fighter_bays": "strikecraft bays",
+    "framework.requirement.req_strikecraft_bays": "strikecraft bays",
     "framework.requirement.req_crewed": "a crewed ship",
     "framework.requirement.req_automated": "an automated ship",
     "summary.framework": "Hull Upgrades {used}/{points}: {sockets}",

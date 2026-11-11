@@ -545,7 +545,7 @@ class NpcFleetLevellerTest {
 
     @Test
     void aShipFittedWithConvertedHangarSwapsItForTheHangarNode() {
-        SkillTree.register(new SkillNode("hangar_1", type("hangar", SkillTier.KEYSTONE).tags(List.of("req_no_fighter_bays"))
+        SkillTree.register(new SkillNode("hangar_1", type("hangar", SkillTier.KEYSTONE).tags(List.of("req_no_strikecraft_bays"))
                 .exclusiveHullModIds(List.of("converted_hangar")).build(), List.of("root_1"), 0f, 0f));
         Set<String> hullMods = new LinkedHashSet<>(List.of("converted_hangar"));
         FleetMemberAPI officered = member("m1", statefulVariant(hullMods, new ArrayList<>()), true);

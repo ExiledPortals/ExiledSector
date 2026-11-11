@@ -500,7 +500,7 @@ class NpcSkillTreeBuilderTest {
     @Test
     void aShipWithConvertedHangarCanTradeItForTheNoFighterBaysNode() {
         root();
-        node("hangar", registerType(builder("hangar_type", SkillTier.KEYSTONE).tags(List.of("fighter", "req_no_fighter_bays"))
+        node("hangar", registerType(builder("hangar_type", SkillTier.KEYSTONE).tags(List.of("strikecraft", "req_no_strikecraft_bays"))
                 .exclusiveHullModIds(List.of("converted_hangar")).build()), ROOT);
         ShipProfile hangarShip = new ShipProfile(HullSize.DESTROYER, ShieldType.FRONT, 1, Set.of(WeaponKind.BALLISTIC), false, 0f, false);
         NpcHullMods hullMods = new NpcHullMods(Set.of("converted_hangar"), Set.of());

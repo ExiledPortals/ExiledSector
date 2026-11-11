@@ -110,14 +110,14 @@ class NodeRequirementsTest {
 
     @Test
     void reqFighterBaysNeedsAtLeastOneBay() {
-        assertTrue(met("req_fighter_bays", bays(1)));
-        assertFalse(met("req_fighter_bays", bays(0)));
+        assertTrue(met("req_strikecraft_bays", bays(1)));
+        assertFalse(met("req_strikecraft_bays", bays(0)));
     }
 
     @Test
     void reqNoFighterBaysNeedsZeroBays() {
-        assertTrue(met("req_no_fighter_bays", bays(0)));
-        assertFalse(met("req_no_fighter_bays", bays(2)));
+        assertTrue(met("req_no_strikecraft_bays", bays(0)));
+        assertFalse(met("req_no_strikecraft_bays", bays(2)));
     }
 
     @Test

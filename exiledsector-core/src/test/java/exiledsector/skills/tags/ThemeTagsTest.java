@@ -94,7 +94,7 @@ class ThemeTagsTest {
 
     @Test
     void displayNamesComeFromTheCatalogue() {
-        assertEquals("Strikecraft", ThemeTags.displayName("fighter"));
+        assertEquals("Strikecraft", ThemeTags.displayName("strikecraft"));
     }
 
     @Test

@@ -17,7 +17,7 @@ public final class NodeRequirements {
     public static final List<String> HULL_TAGS = List.of("req_civilian_hull", "req_non_phase_hull", "req_system_charges", "req_modules");
 
     public static final List<String> TAGS = Stream.of(List.of(
-            "req_shields", "req_no_shields", "req_front_shield", "req_omni_shield", "req_phase", "req_fighter_bays", "req_no_fighter_bays",
+            "req_shields", "req_no_shields", "req_front_shield", "req_omni_shield", "req_phase", "req_strikecraft_bays", "req_no_strikecraft_bays",
             "req_ballistic", "req_missile", "req_energy", "req_beam", "req_offensive_beam", "req_non_beam_energy", "req_flagship",
             CREWED, AUTOMATED, UNSCRIPTED_HULL, "campaign_only", "player_only"), HULL_TAGS).flatMap(List::stream).toList();
 
@@ -72,8 +72,8 @@ public final class NodeRequirements {
             case "req_front_shield" -> shieldType == ShieldType.FRONT;
             case "req_omni_shield" -> shieldType == ShieldType.OMNI;
             case "req_phase" -> profile.phaseHull();
-            case "req_fighter_bays" -> profile.fighterBays() > 0;
-            case "req_no_fighter_bays" -> profile.fighterBays() <= 0;
+            case "req_strikecraft_bays" -> profile.fighterBays() > 0;
+            case "req_no_strikecraft_bays" -> profile.fighterBays() <= 0;
             case "req_ballistic" -> profile.weaponKinds().contains(WeaponKind.BALLISTIC);
             case "req_missile" -> profile.weaponKinds().contains(WeaponKind.MISSILE);
             case "req_energy" -> profile.weaponKinds().contains(WeaponKind.ENERGY);

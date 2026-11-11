@@ -29,7 +29,7 @@ mobility,,ship;star_chart
 combat_readiness,,ship;star_chart
 repair,,ship;star_chart
 d_mods,,ship;star_chart
-fighter,,ship;star_chart
+strikecraft,,ship;star_chart
 fleet_support,,ship;star_chart
 sensors,,ship;star_chart
 electronic_warfare,,ship;star_chart

@@ -15,7 +15,7 @@ public enum ShipSection {
     WEAPON_MOUNT("weapon_mount", null),
     SHIELD_GENERATOR("shield_generator", "req_shields"),
     PHASE_COIL("phase_coil", "req_phase"),
-    FLIGHT_DECK("flight_deck", "req_fighter_bays");
+    FLIGHT_DECK("flight_deck", "req_strikecraft_bays");
 
     private static final List<ShipSection> ALL = List.of(values());
 
