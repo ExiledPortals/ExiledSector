@@ -6,7 +6,9 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.skills.AllocationCheck;
+import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.ModuleShareExtent;
+import exiledsector.skills.NodeDescription;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillTier;
@@ -17,6 +19,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -108,5 +111,19 @@ class SkillTreeNodeTooltipRendererTest {
         List<StyledText> undocked = new SkillTreeNodeTooltipRenderer.LogisticsStatus(2, 3, true, false).lines();
         assertEquals("Logistics node: 2/3 allocated on this ship.", undocked.get(0).plain());
         assertEquals("Can only be unallocated near a colony with a spaceport or an orbital station.", undocked.get(1).plain());
+    }
+
+    @Test
+    void theDetailsListOnlyTheNodesThemeTags() {
+        SkillType tagged = new SkillType.Builder("plating", "Plating", "", SkillTier.SMALL)
+                .tags(List.of("armour", "req_shields", "hegemony", "front_shield")).build();
+        SkillType untagged = new SkillType.Builder("plating", "Plating", "", SkillTier.SMALL).tags(List.of("req_shields")).build();
+        NodeDescription description = new NodeDescription(List.of(), List.of());
+
+        List<DescriptionLine> details = SkillTreeNodeTooltipRenderer.withThemeTagLine(description, tagged).details();
+
+        assertEquals(1, details.size());
+        assertEquals("<muted>Tags: Armor, Front Shield</muted>", details.get(0).text().toMarkup());
+        assertSame(description, SkillTreeNodeTooltipRenderer.withThemeTagLine(description, untagged));
     }
 }

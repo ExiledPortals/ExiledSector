@@ -8,6 +8,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.modifiers.ModifierEffect;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.tags.ThemeTagLine;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierCategory;
 import exiledsector.modifiers.ModifierEffects;
@@ -518,12 +519,23 @@ public abstract class Item {
                         : new SlottedLine(rolledModifier.slot(), shown, resolvedEffect.detailTitle(), resolvedEffect.detailLines()));
             }
         }
-        List<String> headerKeys = withRollRanges && !described.isEmpty() ? headerKeys(rolledModifier, described.size() > 1) : List.of();
-        if (headerKeys.isEmpty()) {
-            lines.addAll(described);
+        if (described.isEmpty()) {
             return;
         }
-        ModifierSlot headerSlot = rolledModifier.slot();
+        List<String> headerKeys = withRollRanges ? headerKeys(rolledModifier, described.size() > 1) : List.of();
+        if (headerKeys.isEmpty()) {
+            lines.addAll(described);
+        } else {
+            addUnderHeaders(lines, rolledModifier.slot(), headerKeys, described);
+        }
+        StyledText tagLine = withRollRanges && modifier != null ? ThemeTagLine.of(modifier.tags()) : null;
+        if (tagLine != null) {
+            lines.add(new SlottedLine(null, tagLine));
+        }
+    }
+
+    private static void addUnderHeaders(List<SlottedLine> lines, ModifierSlot slot, List<String> headerKeys, List<SlottedLine> described) {
+        ModifierSlot headerSlot = slot;
         for (String headerKey : headerKeys) {
             lines.add(new SlottedLine(headerSlot, Translation.styled(headerKey)));
             headerSlot = null;

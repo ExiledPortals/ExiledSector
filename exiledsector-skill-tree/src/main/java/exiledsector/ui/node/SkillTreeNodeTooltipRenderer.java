@@ -31,6 +31,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.TypeAffinity;
+import exiledsector.skills.tags.ThemeTagLine;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.items.DoctrineRewrite;
 import exiledsector.items.DoctrineText;
@@ -185,8 +186,8 @@ final class SkillTreeNodeTooltipRenderer {
                 label -> label.setWrapped(type.getDisplayName(), tooltipText.nodeMaxTextWidth(), TOOLTIP_MAX_TEXT_HEIGHT));
         TextLabel body = body(typeTooltipBodies, type.getId(), List.of(type.getId(), expanded, refusalReason == null ? "" : refusalReason,
                         costLine == null ? "" : costLine),
-                () -> withCostLine(withModuleShareLine(SkillNode.describeMechanics(type, fleetMember.getHullSpec().getHullSize(), false,
-                        this::listsConflictingHullMod), type), costLine),
+                () -> withCostLine(withThemeTagLine(withModuleShareLine(SkillNode.describeMechanics(type, fleetMember.getHullSpec().getHullSize(),
+                        false, this::listsConflictingHullMod), type), type), costLine),
                 List::of, expanded, refusalReason);
 
         panelStyle.drawTitleBodyTooltip(title, flavourFor(type), body, List.of(), tablesFor(type, allocation.statsRevision()), null,
@@ -373,6 +374,16 @@ final class SkillTreeNodeTooltipRenderer {
         return new NodeDescription(description.effects(), details);
     }
 
+    static NodeDescription withThemeTagLine(NodeDescription description, SkillType type) {
+        StyledText themeTagLine = ThemeTagLine.of(type.getTags());
+        if (themeTagLine == null) {
+            return description;
+        }
+        List<DescriptionLine> details = new ArrayList<>(description.details());
+        details.add(new DescriptionLine(themeTagLine, false));
+        return new NodeDescription(description.effects(), details);
+    }
+
     private IntegrationLines.State integrationState(ShipSkillData skillData, SkillNode node) {
         return IntegrationLines.State.of(skillData, node, !planning.getAsBoolean(), templateMark.apply(node));
     }
@@ -444,7 +455,7 @@ final class SkillTreeNodeTooltipRenderer {
         if (allocatedSocket) {
             effects.add(plainLine("ui.node.socket.installHint"));
         }
-        return new NodeDescription(effects, details);
+        return withThemeTagLine(new NodeDescription(effects, details), effectiveType);
     }
 
     private boolean listsConflictingHullMod(String hullModId) {

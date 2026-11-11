@@ -354,7 +354,7 @@ class NpcSkillTreeBuilderTest {
 
     private static NpcTreeBuild generateFocused(int nodeCount, Map<String, Float> focus, long seed) {
         return NpcSkillTreeBuilder.generate(new NpcBuildRequest(BALLISTIC_FRIGATE, null, null, NpcHullMods.NONE, NpcFreedOp.NONE, nodeCount,
-                null, null, null, focus), new Random(seed));
+                null, null, null, List.of(focus)), new Random(seed));
     }
 
     private static int countSelections(String nodeId, String optionId, Map<String, Float> focus) {
@@ -409,11 +409,46 @@ class NpcSkillTreeBuilderTest {
     @Test
     void focusMultipliesTheShipsOwnTagWeights() {
         NpcRelevance plain = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of());
-        NpcRelevance focused = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of(), Map.of("ballistic", 2f, "fighter", 3f));
+        NpcRelevance focused = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of(), List.of(Map.of("ballistic", 2f, "fighter", 3f)));
 
         assertEquals(plain.of(List.of("ballistic")) * 2f, focused.of(List.of("ballistic")), 0.001f);
         assertEquals(plain.of(List.of("fighter")) * 3f, focused.of(List.of("fighter")), 0.001f);
         assertEquals(plain.of(List.of("flux")), focused.of(List.of("flux")), 0.001f);
+    }
+
+    @Test
+    void eachFocusSourceAppliesItsStrongestMatchAndSourcesMultiply() {
+        NpcRelevance plain = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of());
+        NpcRelevance faction = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of(), List.of(Map.of("armour", 2f, "hull", 1.5f)));
+        NpcRelevance factionAndSystem = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of(),
+                List.of(Map.of("armour", 2f, "hull", 1.5f), Map.of("hull", 3f)));
+        List<String> armourAndHull = List.of("armour", "hull");
+
+        assertEquals(plain.of(armourAndHull) * 2f, faction.of(armourAndHull), 0.001f);
+        assertEquals(plain.of(armourAndHull) * 6f, factionAndSystem.of(armourAndHull), 0.001f);
+    }
+
+    @Test
+    void focusOnAParentTagReachesNodesWithItsChildTags() {
+        NpcRelevance plain = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of());
+        NpcRelevance weaponFocus = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of(), List.of(Map.of("weapon", 2f)));
+
+        assertEquals(plain.of(List.of("ballistic")) * 2f, weaponFocus.of(List.of("ballistic")), 0.001f);
+        assertEquals(plain.of(List.of("kinetic")), weaponFocus.of(List.of("kinetic")), 0.001f);
+    }
+
+    @Test
+    void relevanceFavoursTheShipsOwnShieldType() {
+        ShipProfile omniFrigate = new ShipProfile(HullSize.FRIGATE, ShieldType.OMNI, 0, Set.of(WeaponKind.BALLISTIC), false, 0f, false);
+        ShipProfile shieldlessFrigate = new ShipProfile(HullSize.FRIGATE, ShieldType.NONE, 0, Set.of(WeaponKind.BALLISTIC), false, 0f, false);
+        NpcRelevance front = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of());
+        NpcRelevance omni = NpcRelevance.of(omniFrigate, Set.of());
+        NpcRelevance shieldless = NpcRelevance.of(shieldlessFrigate, Set.of());
+
+        assertTrue(front.of(List.of("front_shield")) > front.of(List.of("omni_shield")));
+        assertTrue(omni.of(List.of("omni_shield")) > omni.of(List.of("front_shield")));
+        assertTrue(shieldless.of(List.of("shieldless")) > front.of(List.of("shieldless")));
+        assertTrue(shieldless.of(List.of("shieldless")) > shieldless.of(List.of("shield")));
     }
 
     @Test

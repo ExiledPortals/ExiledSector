@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,12 +32,12 @@ class NpcFocusTest {
     }
 
     @Test
-    void factionAndShipSystemFocusMultiply() throws JSONException {
+    void factionAndEachShipSystemAreSeparateFocusSources() throws JSONException {
         NpcFocus.registerFactions(new JSONArray("[{\"faction\": \"hegemony\", \"focus\": \"armour:2; ballistic:2\"}]"));
         NpcFocus.registerShipSystems(new JSONArray("[{\"system\": \"damper\", \"focus\": \"armour:2\"}]"));
 
-        assertEquals(Map.of("armour", 4f, "ballistic", 2f), NpcFocus.of("hegemony", "damper"));
-        assertEquals(Map.of("armour", 2f), NpcFocus.of("independent", null, "damper"));
+        assertEquals(List.of(Map.of("armour", 2f, "ballistic", 2f), Map.of("armour", 2f)), NpcFocus.of("hegemony", "damper"));
+        assertEquals(List.of(Map.of("armour", 2f)), NpcFocus.of("independent", null, "damper"));
         assertTrue(NpcFocus.of(null, null, null).isEmpty());
     }
 

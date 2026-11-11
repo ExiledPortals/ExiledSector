@@ -205,7 +205,7 @@ public final class NpcSkillTreeBuilder {
             this.freeNodeCount = targetNodeCount;
             this.maxNodes = Math.min(freedOp.maxNodeCount(), MAX_NODE_COUNT);
             this.random = random;
-            this.relevance = NpcRelevance.of(profile, hullMods.permanent(), request.focus());
+            this.relevance = NpcRelevance.of(profile, hullMods.permanent(), request.focusSources());
             this.installedHullModIds = new TreeSet<>(hullMods.installed());
             this.nodeBudget = Math.min(targetNodeCount, maxNodes);
             Predicate<SkillType> lockedTypes = request.lockedTypes();

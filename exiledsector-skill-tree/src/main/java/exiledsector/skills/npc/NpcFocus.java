@@ -8,8 +8,10 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -45,12 +47,19 @@ public final class NpcFocus {
         BY_SHIP_SYSTEM.set(Map.of());
     }
 
-    public static Map<String, Float> of(String factionId, String... shipSystemIds) {
-        Map<String, Float> focus = new HashMap<>(lookup(BY_FACTION.get(), factionId));
+    public static List<Map<String, Float>> of(String factionId, String... shipSystemIds) {
+        List<Map<String, Float>> focusSources = new ArrayList<>();
+        addSource(focusSources, lookup(BY_FACTION.get(), factionId));
         for (String shipSystemId : shipSystemIds) {
-            lookup(BY_SHIP_SYSTEM.get(), shipSystemId).forEach((tag, weight) -> focus.merge(tag, weight, (first, second) -> first * second));
+            addSource(focusSources, lookup(BY_SHIP_SYSTEM.get(), shipSystemId));
         }
-        return Map.copyOf(focus);
+        return List.copyOf(focusSources);
+    }
+
+    private static void addSource(List<Map<String, Float>> focusSources, Map<String, Float> multipliersByTag) {
+        if (!multipliersByTag.isEmpty()) {
+            focusSources.add(multipliersByTag);
+        }
     }
 
     private static Map<String, Float> lookup(Map<String, Map<String, Float>> focusById, String id) {

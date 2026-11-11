@@ -1,10 +1,14 @@
 package exiledsector.items;
 
+import exiledsector.modifiers.Modifier;
+import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
+import exiledsector.skills.tags.TagWeights;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
@@ -110,5 +114,18 @@ class PoolEntryTest {
         assertEquals(-15f, reduction.boundFarthestFromZero());
         assertEquals(4f, range(4f, 6f).boundNearestZero());
         assertEquals(6f, range(4f, 6f).boundFarthestFromZero());
+    }
+
+    @Test
+    void aBiasOnAParentTagReachesModifiersWithItsChildTags() {
+        PoolEntry ballistic = new PoolEntry(new Modifier("BALLISTIC_RANGE", ModifierSlot.PREFIX,
+                List.of(ModifierLine.range("BALLISTIC_RANGE", 1f, 2f)), Set.of("ballistic"), false), 2f);
+        PoolEntry tagless = new PoolEntry(new Modifier("TAGLESS", ModifierSlot.PREFIX,
+                List.of(ModifierLine.range("TAGLESS", 1f, 2f)), Set.of(), true), 2f);
+        TagWeights weaponBias = TagWeights.NONE.with(Map.of("weapon", 3f));
+
+        assertEquals(6f, ballistic.biasedWeight(weaponBias));
+        assertEquals(2f, tagless.biasedWeight(weaponBias));
+        assertEquals(0f, ballistic.biasedWeight(TagWeights.NONE.with(Map.of("weapon", 0f))));
     }
 }

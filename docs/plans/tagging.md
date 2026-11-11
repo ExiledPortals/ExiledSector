@@ -1,6 +1,6 @@
 # Theme tags for modifiers and nodes
 
-Status: steps 1 to 3 built, drafts for step 5 in `docs/plans/tagging_drafts/`.
+Status: steps 1 to 3, 6 and 7 built, drafts for step 5 in `docs/plans/tagging_drafts/`.
 
 Item modifiers, star chart modifiers and skill tree nodes share one vocabulary of theme tags that say what they do, so crafting, drops and tree mechanics can work from tags the way Path of Exile's fossils, bench meta-crafts and cluster jewels do. A modifier or node can carry any number of tags.
 
@@ -77,5 +77,5 @@ Each gets its own plan:
    - every skill type and atlas tree type has a theme tag (the atlas root excepted);
    - a tag written next to its own parent is warned about.
 5. [ ] First tagging pass over every item modifier, chart modifier, skill type and atlas tree type, reviewed by the user, including which modifiers are tagless.
-6. [ ] `TagWeights` in core, NPC focus moved onto it, and item and chart rolls routed through it with no sources active (rolls unchanged, pinned by a test). Built so far: core `skills/tags/TagWeights`, rolls through `PoolEntry.biasedWeight` (`UnbiasedRollsTest`).
-7. [ ] Tags in the F1 tooltip for modifiers while crafting and for skill tree nodes.
+6. [x] `TagWeights` in core, NPC focus moved onto it, and item and chart rolls routed through it with no sources active (rolls unchanged, pinned by a test). Built: core `skills/tags/TagWeights`; rolls and shown odds through `PoolEntry.biasedWeight` with ancestors (`UnbiasedRollsTest`, `ItemRollOdds`, `DoctrineArchive.lineChances`); `NpcFocus` gives one source per faction and ship system, combined in `NpcRelevance`, which also favours the ship's shield type.
+7. [x] Tags in the F1 tooltip for modifiers while crafting and for skill tree nodes. Built: core `skills/tags/ThemeTagLine`, added under each modifier in `Item.addModifierLines` and to node details in `SkillTreeNodeTooltipRenderer`.

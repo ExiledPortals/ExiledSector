@@ -590,9 +590,10 @@ socketed only if it allocates a node behind it. NPC ships carry nothing else, th
 recovered ship loses it.
 
 The rest of the budget goes to notables and keystones drawn by seeded weight (`NpcRelevance` × tier), then
-small nodes. `NpcRelevance` multiplies theme tag weights by `npc_faction_focus.csv` and
-`npc_ship_system_focus.csv` (by ship system or defense id, `NpcFocus`), which also steers choice nodes'
-option picks. Every step is a breadth-first search through nodes `NodeEligibility` allows, never crossing
+small nodes. `NpcRelevance` sums the ship's theme tag weights (weapon kinds, shield type, armour, permanent
+hull mods), then applies `npc_faction_focus.csv` and `npc_ship_system_focus.csv` (by ship system or defense
+id, `NpcFocus`) through `TagWeights`, each row one source matching the node's tags and their parents. This
+also steers choice nodes' option picks. Every step is a breadth-first search through nodes `NodeEligibility` allows, never crossing
 wormholes. Shield Shunt and Makeshift Shield Generator need `req_unscripted_hull`, so NPCs never take them on a
 hull whose built-in hull mods or ship system come from another mod (`ShipProfile.scriptedHull`).
 

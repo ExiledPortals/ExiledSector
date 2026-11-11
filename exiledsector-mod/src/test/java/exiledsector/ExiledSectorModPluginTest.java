@@ -390,7 +390,7 @@ class ExiledSectorModPluginTest {
     void onApplicationLoadLoadsTheNpcFocusMergedAcrossMods() throws Exception {
         new ExiledSectorModPlugin().onApplicationLoad();
 
-        assertEquals(Map.of("armour", 4f), NpcFocus.of("hegemony", "damper"));
+        assertEquals(List.of(Map.of("armour", 2f), Map.of("armour", 2f)), NpcFocus.of("hegemony", "damper"));
     }
 
     @Test

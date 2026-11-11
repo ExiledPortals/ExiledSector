@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.radius.RadiusSize;
+import exiledsector.skills.tags.TagWeights;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -40,23 +41,27 @@ public record DoctrineArchive(String definitionId, DoctrineBehaviour behaviour, 
     }
 
     public Map<String, Double> lineChances() {
+        return lineChances(TagWeights.NONE);
+    }
+
+    public Map<String, Double> lineChances(TagWeights tagWeights) {
         List<PoolEntry> pool = modifierPool;
         Map<String, Double> chances = new LinkedHashMap<>();
         int lineCountOptions = maxLines - minLines + 1;
         for (int targetIndex = 0; targetIndex < pool.size(); targetIndex++) {
             double chanceTotal = 0.0;
             for (int lineCount = minLines; lineCount <= maxLines; lineCount++) {
-                chanceTotal += drawnChance(pool, pool.get(targetIndex), Math.min(lineCount, pool.size()));
+                chanceTotal += drawnChance(pool, pool.get(targetIndex), Math.min(lineCount, pool.size()), tagWeights);
             }
             chances.put(pool.get(targetIndex).modifier().id(), chanceTotal / lineCountOptions);
         }
         return chances;
     }
 
-    private static double drawnChance(List<PoolEntry> remainingPool, PoolEntry target, int drawsLeft) {
+    private static double drawnChance(List<PoolEntry> remainingPool, PoolEntry target, int drawsLeft, TagWeights tagWeights) {
         double weightTotal = 0.0;
         for (PoolEntry entry : remainingPool) {
-            weightTotal += entry.weight();
+            weightTotal += entry.biasedWeight(tagWeights);
         }
         if (drawsLeft <= 0 || weightTotal <= 0.0) {
             return 0.0;
@@ -64,13 +69,13 @@ public record DoctrineArchive(String definitionId, DoctrineBehaviour behaviour, 
         double chance = 0.0;
         for (int drawnIndex = 0; drawnIndex < remainingPool.size(); drawnIndex++) {
             PoolEntry drawn = remainingPool.get(drawnIndex);
-            double drawnShare = drawn.weight() / weightTotal;
+            double drawnShare = drawn.biasedWeight(tagWeights) / weightTotal;
             if (drawn == target) {
                 chance += drawnShare;
             } else if (drawnShare > 0.0) {
                 List<PoolEntry> poolAfterDraw = new ArrayList<>(remainingPool);
                 poolAfterDraw.remove(drawnIndex);
-                chance += drawnShare * drawnChance(poolAfterDraw, target, drawsLeft - 1);
+                chance += drawnShare * drawnChance(poolAfterDraw, target, drawsLeft - 1, tagWeights);
             }
         }
         return chance;

@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import exiledsector.modifiers.TierRange;
+import exiledsector.skills.tags.TagWeights;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,19 +17,23 @@ public final class ItemRollOdds {
     }
 
     public static Map<String, Double> weightShares(ItemDefinition definition, int tier) {
+        return weightShares(definition, tier, TagWeights.NONE);
+    }
+
+    public static Map<String, Double> weightShares(ItemDefinition definition, int tier, TagWeights tagWeights) {
         Map<String, Double> shares = new LinkedHashMap<>();
-        addPoolShares(AffixLayout.rollableAt(definition.type(), definition.prefixes(), tier), shares);
-        addPoolShares(AffixLayout.rollableAt(definition.type(), definition.suffixes(), tier), shares);
+        addPoolShares(AffixLayout.rollableAt(definition.type(), definition.prefixes(), tier), tagWeights, shares);
+        addPoolShares(AffixLayout.rollableAt(definition.type(), definition.suffixes(), tier), tagWeights, shares);
         return shares;
     }
 
-    private static void addPoolShares(List<PoolEntry> pool, Map<String, Double> shares) {
+    private static void addPoolShares(List<PoolEntry> pool, TagWeights tagWeights, Map<String, Double> shares) {
         double weightTotal = 0.0;
         for (PoolEntry entry : pool) {
-            weightTotal += entry.weight();
+            weightTotal += entry.biasedWeight(tagWeights);
         }
         for (PoolEntry entry : pool) {
-            shares.put(entry.modifier().id(), weightTotal > 0.0 ? entry.weight() / weightTotal : 0.0);
+            shares.put(entry.modifier().id(), weightTotal > 0.0 ? entry.biasedWeight(tagWeights) / weightTotal : 0.0);
         }
     }
 }

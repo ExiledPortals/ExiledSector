@@ -1,11 +1,16 @@
 package exiledsector.items;
 
+import exiledsector.modifiers.Modifier;
+import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
+import exiledsector.modifiers.TierRange;
 import exiledsector.skills.radius.RadiusSize;
+import exiledsector.skills.tags.TagWeights;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -61,6 +66,32 @@ class ItemRollOddsTest {
         twoOfFour.values().forEach(chance -> assertEquals(0.5, chance, EXACT));
         Map<String, Double> moreLinesThanEntries = augmentingDoctrine(even, 5, 6).lineChances();
         moreLinesThanEntries.values().forEach(chance -> assertEquals(1.0, chance, EXACT));
+    }
+
+    private static PoolEntry tagged(String id, float weight, String... tags) {
+        return new PoolEntry(new Modifier(id, ModifierSlot.PREFIX, List.of(ModifierLine.range(id, 1f, 2f)), Set.of(tags), false), weight);
+    }
+
+    @Test
+    void shownOddsFollowTheTagBiasThroughParentTags() {
+        ItemDefinition definition = definition(false, List.of(tagged("BALLISTIC", 1f, "ballistic"), tagged("ARMOUR", 1f, "armour")), List.of());
+        TagWeights moreWeapons = TagWeights.NONE.with(Map.of("weapon", 3f));
+
+        Map<String, Double> shares = ItemRollOdds.weightShares(definition, TierRange.NO_TIER, moreWeapons);
+
+        assertEquals(0.75, shares.get("BALLISTIC"), EXACT);
+        assertEquals(0.25, shares.get("ARMOUR"), EXACT);
+    }
+
+    @Test
+    void doctrineLineChancesFollowTheTagBias() {
+        List<PoolEntry> pool = List.of(tagged("FLUX", 1f, "flux"), tagged("HULL", 1f, "hull"));
+        TagWeights noFlux = TagWeights.NONE.with(Map.of("flux", 0f));
+
+        Map<String, Double> chances = augmentingDoctrine(pool, 1, 1).lineChances(noFlux);
+
+        assertEquals(0.0, chances.get("FLUX"), EXACT);
+        assertEquals(1.0, chances.get("HULL"), EXACT);
     }
 
     @Test

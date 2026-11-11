@@ -5,11 +5,13 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.tags.ShipProfile;
+import exiledsector.skills.tags.TagWeights;
 import exiledsector.skills.tags.ThemeTags;
 import exiledsector.skills.tags.WeaponKind;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,6 +28,7 @@ final class NpcRelevance {
             Map.entry("fragmentation", 0.5f), Map.entry("energy_damage", 0.5f),
             Map.entry("ballistic", 0.1f), Map.entry("energy", 0.1f), Map.entry("beam", 0.1f), Map.entry("missile", 0.1f),
             Map.entry("fighter", 0.1f), Map.entry("phase", 0.1f), Map.entry("shield", 0.1f),
+            Map.entry("front_shield", 0.1f), Map.entry("omni_shield", 0.1f), Map.entry("shieldless", 0.1f),
             Map.entry("logistics", 0.15f), Map.entry("fleet_support", 0.2f), Map.entry("d_mods", 0.2f));
     static final float LIGHT_ARMOUR_WEIGHT = 0.3f;
     private static final Map<HullSize, Float> HEAVY_ARMOUR = Map.of(
@@ -34,16 +37,18 @@ final class NpcRelevance {
             HullSize.FRIGATE, 150f, HullSize.DESTROYER, 450f, HullSize.CRUISER, 800f, HullSize.CAPITAL_SHIP, 1100f);
 
     private final Map<String, Float> weightsByTag;
+    private final TagWeights focusWeights;
 
-    private NpcRelevance(Map<String, Float> weightsByTag) {
+    private NpcRelevance(Map<String, Float> weightsByTag, TagWeights focusWeights) {
         this.weightsByTag = weightsByTag;
+        this.focusWeights = focusWeights;
     }
 
     static NpcRelevance of(ShipProfile profile, Collection<String> permanentHullMods) {
-        return of(profile, permanentHullMods, Map.of());
+        return of(profile, permanentHullMods, List.of());
     }
 
-    static NpcRelevance of(ShipProfile profile, Collection<String> permanentHullMods, Map<String, Float> focus) {
+    static NpcRelevance of(ShipProfile profile, Collection<String> permanentHullMods, List<Map<String, Float>> focusSources) {
         Map<String, Float> weightsByTag = new HashMap<>(BASE);
         Set<WeaponKind> weaponKinds = profile.weaponKinds();
         focus(weightsByTag, "ballistic", weaponKinds.contains(WeaponKind.BALLISTIC));
@@ -54,6 +59,9 @@ final class NpcRelevance {
         focus(weightsByTag, "phase", profile.phaseHull() || profile.shieldType() == ShieldType.PHASE);
         boolean shielded = profile.shieldType() == ShieldType.FRONT || profile.shieldType() == ShieldType.OMNI;
         focus(weightsByTag, "shield", shielded);
+        focus(weightsByTag, "front_shield", profile.shieldType() == ShieldType.FRONT);
+        focus(weightsByTag, "omni_shield", profile.shieldType() == ShieldType.OMNI);
+        focus(weightsByTag, "shieldless", !shielded);
         if (shielded) {
             weightsByTag.merge("flux", 1f, Float::sum);
         }
@@ -72,8 +80,7 @@ final class NpcRelevance {
                 }
             }
         }
-        focus.forEach((tag, multiplier) -> weightsByTag.put(tag, weightsByTag.getOrDefault(tag, UNTHEMED) * multiplier));
-        return new NpcRelevance(Map.copyOf(weightsByTag));
+        return new NpcRelevance(Map.copyOf(weightsByTag), TagWeights.of(focusSources));
     }
 
     private static void focus(Map<String, Float> weightsByTag, String tag, boolean focused) {
@@ -92,6 +99,11 @@ final class NpcRelevance {
     }
 
     float of(Collection<String> tags) {
+        float shipWeight = shipWeight(tags);
+        return focusWeights.hasSources() ? shipWeight * focusWeights.multiplier(ThemeTags.allWithAncestors(tags)) : shipWeight;
+    }
+
+    private float shipWeight(Collection<String> tags) {
         float totalWeight = 0f;
         boolean themed = false;
         for (String tag : tags) {
