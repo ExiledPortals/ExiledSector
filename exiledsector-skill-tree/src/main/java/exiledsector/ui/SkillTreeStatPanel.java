@@ -104,6 +104,7 @@ final class SkillTreeStatPanel {
     private StatSheetLayout.Region hoveredRegion;
     private float placedToggleRight = Float.NaN;
     private float placedToggleTop = Float.NaN;
+    private float bottomClearance;
 
     SkillTreeStatPanel(FleetMemberAPI member, ShipVariantAPI variant, SkillTreePanelStyle panelStyle) {
         this.member = member;
@@ -179,6 +180,10 @@ final class SkillTreeStatPanel {
         if (!isExpanded()) return false;
         toggleExpanded();
         return true;
+    }
+
+    void setBottomClearance(float height) {
+        bottomClearance = height;
     }
 
     void advance(float amount) {
@@ -315,7 +320,7 @@ final class SkillTreeStatPanel {
     private Viewport compactViewport(PositionAPI canvasPosition) {
         float width = COMPACT_CONTENT_WIDTH + PADDING * 2f;
         float top = panelTop(canvasPosition);
-        float bottom = canvasPosition.getY() + ChromeMetrics.EDGE_MARGIN + ChromeMetrics.CONTROL_HEIGHT + TOGGLE_GAP;
+        float bottom = canvasPosition.getY() + ChromeMetrics.EDGE_MARGIN + ChromeMetrics.CONTROL_HEIGHT + TOGGLE_GAP + bottomClearance;
         return new Viewport(canvasRight(canvasPosition) - width, bottom, width, top - bottom);
     }
 

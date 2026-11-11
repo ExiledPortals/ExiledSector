@@ -73,6 +73,7 @@ final class SkillTreeChrome {
             searchBar.unfocus();
         }
         hideShipCard(mode == CanvasMode.MODAL);
+        statPanel.setBottomClearance(mode.shows(CanvasMode.Chrome.TEMPLATE_BAR) ? templateUi.barStatusHeight() : 0f);
         boolean readoutsLive = mouseKnown && mode.enables(CanvasMode.Chrome.READOUTS);
         ordnancePointsBar.advance(amount, canvasPosition, budget.usedOp, budget.totalOp, mouseX, mouseY, readoutsLive);
         levelBar.advance(amount, canvasPosition, mouseX, mouseY, readoutsLive);
