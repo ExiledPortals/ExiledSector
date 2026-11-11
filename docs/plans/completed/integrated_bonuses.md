@@ -219,7 +219,7 @@ Vanilla's Shrouded Lens and Thunderhead have no s-mod effect (the code is commen
 | Solaris Overdrive | Free weapon fire for 4 seconds after system use | 6 seconds instead of 4 |
 | Rise From the Ashes | Survives a killing blow once, then 50% more damage taken briefly | 25% more damage taken instead of 50% |
 | Thermo-Accelerator | -50% turret flux cost, hardpoints can't fire | -60% turret flux cost instead of -50% |
-| Merite Lunge | +50% mass, -35% maneuverability | -20% maneuverability instead of -35% |
+| Merite Lunge | +100% mass, -70% maneuverability | +150% mass instead of +100% |
 
 ## Doctrine Archives
 

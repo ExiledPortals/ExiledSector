@@ -13286,56 +13286,56 @@ integrated|tania_fafnir_breeches|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|tania_fafnir_breeches|CAPITAL_SHIP|1	0	Ballistic weapon mounts become hybrid mounts.
 integrated|tania_fafnir_breeches|CAPITAL_SHIP|2	1	<builtIn>10%</builtIn> increased energy weapon flux cost.
 flavour|tania_merite_lunge	0	The Merite Class Destroyer is often praised by its ability to assault enemy ships by sheer brute force, thanks to its Jump Jets ship system. By listening to "sage" advice from fellow Navarchy of Tania officers, you order your crew to refit the ship with increased weight and improved protection against collateral effects from excessive G-force.
-type|tania_merite_lunge|null|0	0	<good>50%</good> increased mass.
-type|tania_merite_lunge|null|1	0	<bad>35%</bad> less maneuverability.
-type|tania_merite_lunge|FRIGATE|0	0	<good>50%</good> increased mass.
-type|tania_merite_lunge|FRIGATE|1	0	<bad>35%</bad> less maneuverability.
-type|tania_merite_lunge|DESTROYER|0	0	<good>50%</good> increased mass.
-type|tania_merite_lunge|DESTROYER|1	0	<bad>35%</bad> less maneuverability.
-type|tania_merite_lunge|CRUISER|0	0	<good>50%</good> increased mass.
-type|tania_merite_lunge|CRUISER|1	0	<bad>35%</bad> less maneuverability.
-type|tania_merite_lunge|CAPITAL_SHIP|0	0	<good>50%</good> increased mass.
-type|tania_merite_lunge|CAPITAL_SHIP|1	0	<bad>35%</bad> less maneuverability.
-integrable|tania_merite_lunge|null|0	0	<good>50%</good> increased mass.
-integrable|tania_merite_lunge|null|1	0	<bad>35%</bad> less maneuverability.
+type|tania_merite_lunge|null|0	0	<good>100%</good> increased mass.
+type|tania_merite_lunge|null|1	0	<bad>70%</bad> less maneuverability.
+type|tania_merite_lunge|FRIGATE|0	0	<good>100%</good> increased mass.
+type|tania_merite_lunge|FRIGATE|1	0	<bad>70%</bad> less maneuverability.
+type|tania_merite_lunge|DESTROYER|0	0	<good>100%</good> increased mass.
+type|tania_merite_lunge|DESTROYER|1	0	<bad>70%</bad> less maneuverability.
+type|tania_merite_lunge|CRUISER|0	0	<good>100%</good> increased mass.
+type|tania_merite_lunge|CRUISER|1	0	<bad>70%</bad> less maneuverability.
+type|tania_merite_lunge|CAPITAL_SHIP|0	0	<good>100%</good> increased mass.
+type|tania_merite_lunge|CAPITAL_SHIP|1	0	<bad>70%</bad> less maneuverability.
+integrable|tania_merite_lunge|null|0	0	<good>100%</good> increased mass.
+integrable|tania_merite_lunge|null|1	0	<bad>70%</bad> less maneuverability.
 integrable|tania_merite_lunge|null|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|tania_merite_lunge|null|3	0	<muted>When integrated, for 2 story points:</muted>
-integrable|tania_merite_lunge|null|4	0	Instead grants <builtIn>20%</builtIn> less maneuverability.
-integrable|tania_merite_lunge|FRIGATE|0	0	<good>50%</good> increased mass.
-integrable|tania_merite_lunge|FRIGATE|1	0	<bad>35%</bad> less maneuverability.
+integrable|tania_merite_lunge|null|4	0	Instead grants <builtIn>150%</builtIn> increased mass.
+integrable|tania_merite_lunge|FRIGATE|0	0	<good>100%</good> increased mass.
+integrable|tania_merite_lunge|FRIGATE|1	0	<bad>70%</bad> less maneuverability.
 integrable|tania_merite_lunge|FRIGATE|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|tania_merite_lunge|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
-integrable|tania_merite_lunge|FRIGATE|4	0	Instead grants <builtIn>20%</builtIn> less maneuverability.
-integrable|tania_merite_lunge|DESTROYER|0	0	<good>50%</good> increased mass.
-integrable|tania_merite_lunge|DESTROYER|1	0	<bad>35%</bad> less maneuverability.
+integrable|tania_merite_lunge|FRIGATE|4	0	Instead grants <builtIn>150%</builtIn> increased mass.
+integrable|tania_merite_lunge|DESTROYER|0	0	<good>100%</good> increased mass.
+integrable|tania_merite_lunge|DESTROYER|1	0	<bad>70%</bad> less maneuverability.
 integrable|tania_merite_lunge|DESTROYER|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|tania_merite_lunge|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
-integrable|tania_merite_lunge|DESTROYER|4	0	Instead grants <builtIn>20%</builtIn> less maneuverability.
-integrable|tania_merite_lunge|CRUISER|0	0	<good>50%</good> increased mass.
-integrable|tania_merite_lunge|CRUISER|1	0	<bad>35%</bad> less maneuverability.
+integrable|tania_merite_lunge|DESTROYER|4	0	Instead grants <builtIn>150%</builtIn> increased mass.
+integrable|tania_merite_lunge|CRUISER|0	0	<good>100%</good> increased mass.
+integrable|tania_merite_lunge|CRUISER|1	0	<bad>70%</bad> less maneuverability.
 integrable|tania_merite_lunge|CRUISER|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|tania_merite_lunge|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
-integrable|tania_merite_lunge|CRUISER|4	0	Instead grants <builtIn>20%</builtIn> less maneuverability.
-integrable|tania_merite_lunge|CAPITAL_SHIP|0	0	<good>50%</good> increased mass.
-integrable|tania_merite_lunge|CAPITAL_SHIP|1	0	<bad>35%</bad> less maneuverability.
+integrable|tania_merite_lunge|CRUISER|4	0	Instead grants <builtIn>150%</builtIn> increased mass.
+integrable|tania_merite_lunge|CAPITAL_SHIP|0	0	<good>100%</good> increased mass.
+integrable|tania_merite_lunge|CAPITAL_SHIP|1	0	<bad>70%</bad> less maneuverability.
 integrable|tania_merite_lunge|CAPITAL_SHIP|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|tania_merite_lunge|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
-integrable|tania_merite_lunge|CAPITAL_SHIP|4	0	Instead grants <builtIn>20%</builtIn> less maneuverability.
+integrable|tania_merite_lunge|CAPITAL_SHIP|4	0	Instead grants <builtIn>150%</builtIn> increased mass.
 integrated|tania_merite_lunge|null|0	0	<builtIn>Integrated</builtIn>
-integrated|tania_merite_lunge|null|1	0	<good>50%</good> increased mass.
-integrated|tania_merite_lunge|null|2	0	<builtIn>20%</builtIn> less maneuverability.
+integrated|tania_merite_lunge|null|1	0	<builtIn>150%</builtIn> increased mass.
+integrated|tania_merite_lunge|null|2	0	<bad>70%</bad> less maneuverability.
 integrated|tania_merite_lunge|FRIGATE|0	0	<builtIn>Integrated</builtIn>
-integrated|tania_merite_lunge|FRIGATE|1	0	<good>50%</good> increased mass.
-integrated|tania_merite_lunge|FRIGATE|2	0	<builtIn>20%</builtIn> less maneuverability.
+integrated|tania_merite_lunge|FRIGATE|1	0	<builtIn>150%</builtIn> increased mass.
+integrated|tania_merite_lunge|FRIGATE|2	0	<bad>70%</bad> less maneuverability.
 integrated|tania_merite_lunge|DESTROYER|0	0	<builtIn>Integrated</builtIn>
-integrated|tania_merite_lunge|DESTROYER|1	0	<good>50%</good> increased mass.
-integrated|tania_merite_lunge|DESTROYER|2	0	<builtIn>20%</builtIn> less maneuverability.
+integrated|tania_merite_lunge|DESTROYER|1	0	<builtIn>150%</builtIn> increased mass.
+integrated|tania_merite_lunge|DESTROYER|2	0	<bad>70%</bad> less maneuverability.
 integrated|tania_merite_lunge|CRUISER|0	0	<builtIn>Integrated</builtIn>
-integrated|tania_merite_lunge|CRUISER|1	0	<good>50%</good> increased mass.
-integrated|tania_merite_lunge|CRUISER|2	0	<builtIn>20%</builtIn> less maneuverability.
+integrated|tania_merite_lunge|CRUISER|1	0	<builtIn>150%</builtIn> increased mass.
+integrated|tania_merite_lunge|CRUISER|2	0	<bad>70%</bad> less maneuverability.
 integrated|tania_merite_lunge|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
-integrated|tania_merite_lunge|CAPITAL_SHIP|1	0	<good>50%</good> increased mass.
-integrated|tania_merite_lunge|CAPITAL_SHIP|2	0	<builtIn>20%</builtIn> less maneuverability.
+integrated|tania_merite_lunge|CAPITAL_SHIP|1	0	<builtIn>150%</builtIn> increased mass.
+integrated|tania_merite_lunge|CAPITAL_SHIP|2	0	<bad>70%</bad> less maneuverability.
 flavour|tania_rise_from_the_ashes	0	The last stand at the Battle of Vela allowed Navarchy of Tania to born from the ashes of Carina, surviving the rampage of Joseph Baumgart. By watching the sacrifice of NTS Agulha Negra, a Sandgrouse class frigate, your crew understood the value of fighting for a cause, and is inspired to fight for yours.
 type|tania_rise_from_the_ashes|null|0	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
 type|tania_rise_from_the_ashes|null|1	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
