@@ -1300,12 +1300,12 @@ public final class CraftingBenchPanel extends HoloPanel {
             case FULL -> "ui.craftingBench.notice.inhibitorsFull";
             case ON -> inhibitorOnKey(inhibitor);
         };
-        String favouredTagName = inhibitor.favoursTag() ? ThemeTags.displayName(inhibitor.favouredTag()).toLowerCase(Locale.ROOT) : "";
-        showNotice(Translation.msg(noticeKey).arg("name", inhibitorName).arg("count", activeInhibitors.maxActive()).arg("tag", favouredTagName).text());
+        String inhibitedTagName = inhibitor.inhibitsTag() ? ThemeTags.displayName(inhibitor.inhibitedTag()).toLowerCase(Locale.ROOT) : "";
+        showNotice(Translation.msg(noticeKey).arg("name", inhibitorName).arg("count", activeInhibitors.maxActive()).arg("tag", inhibitedTagName).text());
     }
 
     static String inhibitorOnKey(CraftingInhibitor inhibitor) {
-        return "ui.craftingBench.notice.inhibitorOn." + (inhibitor.favoursTag() ? "tag" : inhibitor.name().toLowerCase(Locale.ROOT));
+        return "ui.craftingBench.notice.inhibitorOn." + (inhibitor.inhibitsTag() ? "tag" : inhibitor.name().toLowerCase(Locale.ROOT));
     }
 
     private static float itemTooltipWidth() {

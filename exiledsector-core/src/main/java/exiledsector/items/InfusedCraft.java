@@ -21,8 +21,8 @@ public enum InfusedCraft {
         }
 
         @Override
-        boolean run(Item item, String tag, Set<ModifierSlot> inhibited, TagWeights favouredTags, Random random) {
-            return InfusedCrafting.reforgeWithTag(item, tag, inhibited, favouredTags, random);
+        boolean run(Item item, String tag, Set<ModifierSlot> inhibited, TagWeights tagWeights, Random random) {
+            return InfusedCrafting.reforgeWithTag(item, tag, inhibited, tagWeights, random);
         }
 
         @Override
@@ -37,8 +37,8 @@ public enum InfusedCraft {
         }
 
         @Override
-        boolean run(Item item, String tag, Set<ModifierSlot> inhibited, TagWeights favouredTags, Random random) {
-            return InfusedCrafting.addAndRemove(item, tag, inhibited, favouredTags, random);
+        boolean run(Item item, String tag, Set<ModifierSlot> inhibited, TagWeights tagWeights, Random random) {
+            return InfusedCrafting.addAndRemove(item, tag, inhibited, tagWeights, random);
         }
 
         @Override
@@ -86,7 +86,7 @@ public enum InfusedCraft {
 
     abstract boolean offered(Item item, String tag, Set<ModifierSlot> inhibited);
 
-    abstract boolean run(Item item, String tag, Set<ModifierSlot> inhibited, TagWeights favouredTags, Random random);
+    abstract boolean run(Item item, String tag, Set<ModifierSlot> inhibited, TagWeights tagWeights, Random random);
 
     abstract List<RolledModifier> changeable(Item item, String tag);
 
@@ -134,7 +134,7 @@ public enum InfusedCraft {
         if (item == null || item.definition() == null || inhibitors.isEmpty()) {
             return spent;
         }
-        spent.addAll(CraftingInhibitor.favouring(inhibitors));
+        spent.addAll(CraftingInhibitor.tagInhibitors(inhibitors));
         List<RolledModifier> changeable = changeable(item, tag);
         for (CraftingInhibitor inhibitor : inhibitors) {
             if (inhibitor.inhibitedSlot() != null && changeable.stream().anyMatch(rolled -> rolled.slot() == inhibitor.inhibitedSlot())) {
@@ -152,7 +152,7 @@ public enum InfusedCraft {
 
     public boolean apply(Item item, String tag, Collection<CraftingInhibitor> inhibitors, Random random) {
         return verdict(item, tag, inhibitors).allowed()
-                && run(item, tag, CraftingInhibitor.inhibitedSlots(inhibitors), CraftingInhibitor.favouredTags(inhibitors), random);
+                && run(item, tag, CraftingInhibitor.inhibitedSlots(inhibitors), CraftingInhibitor.tagWeights(inhibitors), random);
     }
 
     public Optional<Set<CraftingInhibitor>> use(Item item, String tag, CraftingMaterials materials,

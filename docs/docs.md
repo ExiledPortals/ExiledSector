@@ -828,9 +828,9 @@ keeps its side's modifiers, while new modifiers may still fill its open slots, s
 other side; with both, add-and-remove is refused. An inhibitor is spent only if its side held a modifier the craft could have changed.
 
 The seven tag inhibitors (Beam, Non-beam Energy, Ballistic, Missile, Shield, Armor, Phase) make every modifier carrying
-their theme tag five times as likely in the next roll that adds modifiers (Augmentation, Reshaping, Engram, every infused
+their theme tag a fifth as likely in the next roll that adds modifiers (Augmentation, Reshaping, Engram, every infused
 craft and Adaptive Reforge), and that roll spends them. Each kind can be active once, and a modifier matching several
-active ones still counts five times (core `CraftingInhibitor.favouredTags`, carried by `CraftingContext`). Excavation
+active ones is still cut only once (core `CraftingInhibitor.tagWeights`, carried by `CraftingContext`). Excavation
 shafts and guardian fleets drop them (Star Charts `ExcavationLoot`); they never drop from battles.
 
 ### Socketed item scaling

@@ -15,7 +15,7 @@ public enum Nanoswarm implements CraftingMaterialFamily {
 
         @Override
         public Item use(Item item, CraftingContext context, Random random) {
-            return ItemCrafting.augment(item, random, context.favouredTags()) == null ? null : item;
+            return ItemCrafting.augment(item, random, context.tagWeights()) == null ? null : item;
         }
 
         @Override
@@ -42,7 +42,7 @@ public enum Nanoswarm implements CraftingMaterialFamily {
 
         @Override
         public Item use(Item item, CraftingContext context, Random random) {
-            return ItemCrafting.reshape(item, random, context.inhibitedSlots(), context.favouredTags());
+            return ItemCrafting.reshape(item, random, context.inhibitedSlots(), context.tagWeights());
         }
 
         @Override

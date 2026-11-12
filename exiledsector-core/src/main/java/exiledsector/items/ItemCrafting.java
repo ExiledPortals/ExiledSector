@@ -97,7 +97,7 @@ public final class ItemCrafting {
             return spent;
         }
         if (craftingItem.addsModifiers()) {
-            spent.addAll(CraftingInhibitor.favouring(inhibitors));
+            spent.addAll(CraftingInhibitor.tagInhibitors(inhibitors));
         }
         if (!craftingItem.respectsInhibitors()) {
             return spent;
@@ -169,13 +169,13 @@ public final class ItemCrafting {
         return augment(item, random, TagWeights.NONE);
     }
 
-    static RolledModifier augment(Item item, Random random, TagWeights favouredTags) {
+    static RolledModifier augment(Item item, Random random, TagWeights tagWeights) {
         ItemDefinition definition = item.definition();
         List<List<PoolEntry>> openSides = definition == null ? List.of() : AffixLayout.openSides(definition, item.explicits(), item.tier());
         if (definition == null || openSides.isEmpty()) {
             return null;
         }
-        RolledModifier addedModifier = AffixLayout.rollFrom(openSides, random, favouredTags);
+        RolledModifier addedModifier = AffixLayout.rollFrom(openSides, random, tagWeights);
         item.addExplicit(addedModifier);
         return addedModifier;
     }
@@ -265,7 +265,7 @@ public final class ItemCrafting {
         return reshape(item, random, inhibited, TagWeights.NONE);
     }
 
-    static Item reshape(Item item, Random random, Set<ModifierSlot> inhibited, TagWeights favouredTags) {
+    static Item reshape(Item item, Random random, Set<ModifierSlot> inhibited, TagWeights tagWeights) {
         ItemDefinition definition = item.definition();
         if (definition == null || definition.unique()) {
             return null;
@@ -276,7 +276,7 @@ public final class ItemCrafting {
         }
         RolledModifier removed = removable.get(random.nextInt(removable.size()));
         List<List<PoolEntry>> openSides = replacementSides(definition, item.explicits(), removed, item.tier());
-        item.swapExplicit(removed, AffixLayout.rollFrom(openSides, random, favouredTags));
+        item.swapExplicit(removed, AffixLayout.rollFrom(openSides, random, tagWeights));
         return item;
     }
 

@@ -147,7 +147,7 @@ public record Engram(String itemId, String englishName, String modifierId, Set<I
             return null;
         }
         item.replaceExplicits(reroll(item.definition(), modifier(), keptModifiers(item, context.inhibitedSlots()),
-                AffixLayout.limits(item.definition().type()), context.favouredTags(), random));
+                AffixLayout.limits(item.definition().type()), context.tagWeights(), random));
         item.refreezeName();
         return item;
     }
@@ -162,7 +162,7 @@ public record Engram(String itemId, String englishName, String modifierId, Set<I
     }
 
     static List<RolledModifier> reroll(ItemDefinition definition, Modifier granted, List<RolledModifier> kept, AffixLayout.Limits limits,
-                                       TagWeights favouredTags, Random random) {
+                                       TagWeights tagWeights, Random random) {
         List<RolledModifier> prefixes = new ArrayList<>();
         List<RolledModifier> suffixes = new ArrayList<>();
         RolledModifier grantedRoll = kept.stream().filter(rolled -> rolled.modifierId().equals(granted.id())).findFirst()
@@ -180,9 +180,9 @@ public record Engram(String itemId, String englishName, String modifierId, Set<I
         }
         int othersLeft = limits.maxModifiers() - prefixes.size() - suffixes.size();
         othersLeft -= draw(candidates(definition, definition.prefixes(), takenIds, takenEffects),
-                Math.min(limits.maxPerSide() - prefixes.size(), othersLeft), favouredTags, random, takenIds, prefixes);
+                Math.min(limits.maxPerSide() - prefixes.size(), othersLeft), tagWeights, random, takenIds, prefixes);
         draw(candidates(definition, definition.suffixes(), takenIds, takenEffects), Math.min(limits.maxPerSide() - suffixes.size(), othersLeft),
-                favouredTags, random, takenIds, suffixes);
+                tagWeights, random, takenIds, suffixes);
         List<RolledModifier> rerolled = new ArrayList<>(prefixes);
         rerolled.addAll(suffixes);
         return rerolled;
@@ -196,12 +196,12 @@ public record Engram(String itemId, String englishName, String modifierId, Set<I
                 .toList();
     }
 
-    private static int draw(List<PoolEntry> pool, int count, TagWeights favouredTags, Random random, Set<String> takenIds,
+    private static int draw(List<PoolEntry> pool, int count, TagWeights tagWeights, Random random, Set<String> takenIds,
                             List<RolledModifier> drawn) {
         List<PoolEntry> remaining = new ArrayList<>(pool);
         int drawCount = 0;
         for (int left = Math.max(0, count); left > 0 && !remaining.isEmpty(); left--) {
-            PoolEntry entry = remaining.remove(WeightedPick.index(remaining, candidate -> candidate.biasedWeight(favouredTags), random.nextFloat()));
+            PoolEntry entry = remaining.remove(WeightedPick.index(remaining, candidate -> candidate.biasedWeight(tagWeights), random.nextFloat()));
             drawn.add(RolledModifier.roll(entry.modifier(), random));
             takenIds.add(entry.modifier().id());
             remaining.removeIf(candidate -> ModifierExclusivity.clashes(candidate.modifier().id(), takenIds));

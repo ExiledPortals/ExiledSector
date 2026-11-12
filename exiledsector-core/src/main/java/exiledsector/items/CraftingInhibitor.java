@@ -22,19 +22,19 @@ public enum CraftingInhibitor implements GrowableMaterial {
     ARMOUR("exiledSector_armour_inhibitor", null, "armour", 0, 0f, new Color(200, 160, 120)),
     PHASE("exiledSector_phase_inhibitor", null, "phase", 0, 0f, new Color(190, 130, 255));
 
-    public static final float FAVOURED_TAG_MULTIPLIER = 5f;
+    public static final float INHIBITED_TAG_MULTIPLIER = 0.2f;
 
     private final String itemId;
     private final ModifierSlot inhibitedSlot;
-    private final String favouredTag;
+    private final String inhibitedTag;
     private final int defaultFeedstockCost;
     private final float dropWeight;
     private final Color color;
 
-    CraftingInhibitor(String itemId, ModifierSlot inhibitedSlot, String favouredTag, int defaultFeedstockCost, float dropWeight, Color color) {
+    CraftingInhibitor(String itemId, ModifierSlot inhibitedSlot, String inhibitedTag, int defaultFeedstockCost, float dropWeight, Color color) {
         this.itemId = itemId;
         this.inhibitedSlot = inhibitedSlot;
-        this.favouredTag = favouredTag;
+        this.inhibitedTag = inhibitedTag;
         this.defaultFeedstockCost = defaultFeedstockCost;
         this.dropWeight = dropWeight;
         this.color = color;
@@ -55,20 +55,20 @@ public enum CraftingInhibitor implements GrowableMaterial {
         return slots;
     }
 
-    public static TagWeights favouredTags(Collection<CraftingInhibitor> inhibitors) {
+    public static TagWeights tagWeights(Collection<CraftingInhibitor> inhibitors) {
         Map<String, Float> multipliersByTag = new LinkedHashMap<>();
-        inhibitors.stream().filter(CraftingInhibitor::favoursTag).forEach(inhibitor -> multipliersByTag.put(inhibitor.favouredTag, FAVOURED_TAG_MULTIPLIER));
+        inhibitors.stream().filter(CraftingInhibitor::inhibitsTag).forEach(inhibitor -> multipliersByTag.put(inhibitor.inhibitedTag, INHIBITED_TAG_MULTIPLIER));
         return multipliersByTag.isEmpty() ? TagWeights.NONE : TagWeights.NONE.with(multipliersByTag);
     }
 
-    public static Set<CraftingInhibitor> favouring(Collection<CraftingInhibitor> inhibitors) {
-        Set<CraftingInhibitor> favouring = EnumSet.noneOf(CraftingInhibitor.class);
-        inhibitors.stream().filter(CraftingInhibitor::favoursTag).forEach(favouring::add);
-        return favouring;
+    public static Set<CraftingInhibitor> tagInhibitors(Collection<CraftingInhibitor> inhibitors) {
+        Set<CraftingInhibitor> tagInhibitors = EnumSet.noneOf(CraftingInhibitor.class);
+        inhibitors.stream().filter(CraftingInhibitor::inhibitsTag).forEach(tagInhibitors::add);
+        return tagInhibitors;
     }
 
     public static Set<CraftingInhibitor> tagInhibitors() {
-        return favouring(EnumSet.allOf(CraftingInhibitor.class));
+        return tagInhibitors(EnumSet.allOf(CraftingInhibitor.class));
     }
 
     @Override
@@ -90,12 +90,12 @@ public enum CraftingInhibitor implements GrowableMaterial {
         return inhibitedSlot;
     }
 
-    public String favouredTag() {
-        return favouredTag;
+    public String inhibitedTag() {
+        return inhibitedTag;
     }
 
-    public boolean favoursTag() {
-        return favouredTag != null;
+    public boolean inhibitsTag() {
+        return inhibitedTag != null;
     }
 
     public float dropWeight() {

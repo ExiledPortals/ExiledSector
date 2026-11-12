@@ -80,7 +80,7 @@ public enum BiomeCraft {
             return spent;
         }
         if (this == ADAPTIVE) {
-            spent.addAll(CraftingInhibitor.favouring(inhibitors));
+            spent.addAll(CraftingInhibitor.tagInhibitors(inhibitors));
         }
         for (CraftingInhibitor inhibitor : inhibitors) {
             if (inhibitor.inhibitedSlot() != null && item.explicits().stream().anyMatch(rolled -> rolled.slot() == inhibitor.inhibitedSlot() && !rolled.immutable()
@@ -104,7 +104,7 @@ public enum BiomeCraft {
         Set<CraftingInhibitor> spent = inhibitorsSpent(item, inhibitors);
         Set<ModifierSlot> inhibited = CraftingInhibitor.inhibitedSlots(inhibitors);
         List<RolledModifier> replacement = switch (this) {
-            case ADAPTIVE -> adapt(item, inhibited, CraftingInhibitor.favouredTags(inhibitors), random);
+            case ADAPTIVE -> adapt(item, inhibited, CraftingInhibitor.tagWeights(inhibitors), random);
             case GRAFTING -> graft(item, inhibited, random);
         };
         item.replaceExplicits(replacement);
@@ -146,7 +146,7 @@ public enum BiomeCraft {
         return adapt(item, inhibited, TagWeights.NONE, random);
     }
 
-    static List<RolledModifier> adapt(Item item, Set<ModifierSlot> inhibited, TagWeights favouredTags, Random random) {
+    static List<RolledModifier> adapt(Item item, Set<ModifierSlot> inhibited, TagWeights tagWeights, Random random) {
         ItemDefinition definition = item.definition();
         List<String> grants = adaptiveGrants(item, inhibited);
         Modifier granted = ItemModifiers.get(grants.get(random.nextInt(grants.size())));
@@ -162,7 +162,7 @@ public enum BiomeCraft {
                 break;
             }
             List<PoolEntry> side = openSides.get(random.nextInt(openSides.size()));
-            PoolEntry entry = side.get(WeightedPick.index(side, candidate -> candidate.biasedWeight(favouredTags), random.nextFloat()));
+            PoolEntry entry = side.get(WeightedPick.index(side, candidate -> candidate.biasedWeight(tagWeights), random.nextFloat()));
             AffixLayout.insert(modifiers, RolledModifier.roll(entry.modifier(), random));
         }
         return modifiers;

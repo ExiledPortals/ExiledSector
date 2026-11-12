@@ -21,12 +21,12 @@ class TagInhibitorWeightsTest {
         return new PoolEntry(new Modifier(effectName, ModifierSlot.PREFIX, List.of(ModifierLine.range(effectName, 4f, 6f)), Set.of(tags), false), weight);
     }
 
-    private static int beamRolls(TagWeights favouredTags) {
+    private static int beamRolls(TagWeights tagWeights) {
         List<List<PoolEntry>> sides = List.of(List.of(tagged("BEAM_WEAPON_DAMAGE_PERCENT", 1f, "beam"), tagged("HULL_MULT", 4f, "hull"),
                 tagged("ARMOR_PERCENT", 4f, "armour")));
         int beamRolls = 0;
         for (long seed = 0; seed < 400; seed++) {
-            if ("BEAM_WEAPON_DAMAGE_PERCENT".equals(AffixLayout.rollFrom(sides, new Random(seed), favouredTags).modifierId())) {
+            if ("BEAM_WEAPON_DAMAGE_PERCENT".equals(AffixLayout.rollFrom(sides, new Random(seed), tagWeights).modifierId())) {
                 beamRolls++;
             }
         }
@@ -34,27 +34,27 @@ class TagInhibitorWeightsTest {
     }
 
     @Test
-    void aTagInhibitorMakesItsTagFarMoreLikelyToRoll() {
+    void aTagInhibitorMakesItsTagFarLessLikelyToRoll() {
         int unweighted = beamRolls(TagWeights.NONE);
-        int favoured = beamRolls(CraftingInhibitor.favouredTags(List.of(CraftingInhibitor.BEAM)));
+        int inhibited = beamRolls(CraftingInhibitor.tagWeights(List.of(CraftingInhibitor.BEAM)));
 
-        assertTrue(favoured > unweighted * 2, unweighted + " -> " + favoured);
+        assertTrue(inhibited * 2 < unweighted, unweighted + " -> " + inhibited);
     }
 
     @Test
-    void severalTagInhibitorsFavourEachTagWithoutStackingOnAModifierCarryingBoth() {
-        TagWeights favouredTags = CraftingInhibitor.favouredTags(List.of(CraftingInhibitor.BEAM, CraftingInhibitor.ARMOUR, CraftingInhibitor.PREFIX));
+    void severalTagInhibitorsInhibitEachTagWithoutStackingOnAModifierCarryingBoth() {
+        TagWeights tagWeights = CraftingInhibitor.tagWeights(List.of(CraftingInhibitor.BEAM, CraftingInhibitor.ARMOUR, CraftingInhibitor.PREFIX));
 
-        assertEquals(CraftingInhibitor.FAVOURED_TAG_MULTIPLIER, tagged("BEAM_WEAPON_DAMAGE_PERCENT", 1f, "beam").biasedWeight(favouredTags), 0.0001f);
-        assertEquals(CraftingInhibitor.FAVOURED_TAG_MULTIPLIER, tagged("ARMOR_PERCENT", 1f, "armour", "beam").biasedWeight(favouredTags), 0.0001f);
-        assertEquals(1f, tagged("HULL_MULT", 1f, "hull").biasedWeight(favouredTags), 0.0001f);
+        assertEquals(CraftingInhibitor.INHIBITED_TAG_MULTIPLIER, tagged("BEAM_WEAPON_DAMAGE_PERCENT", 1f, "beam").biasedWeight(tagWeights), 0.0001f);
+        assertEquals(CraftingInhibitor.INHIBITED_TAG_MULTIPLIER, tagged("ARMOR_PERCENT", 1f, "armour", "beam").biasedWeight(tagWeights), 0.0001f);
+        assertEquals(1f, tagged("HULL_MULT", 1f, "hull").biasedWeight(tagWeights), 0.0001f);
     }
 
     @Test
-    void slotInhibitorsFavourNothingAndTagInhibitorsGuardNoSide() {
-        assertSame(TagWeights.NONE, CraftingInhibitor.favouredTags(List.of(CraftingInhibitor.PREFIX, CraftingInhibitor.SUFFIX)));
+    void slotInhibitorsInhibitNoTagAndTagInhibitorsGuardNoSide() {
+        assertSame(TagWeights.NONE, CraftingInhibitor.tagWeights(List.of(CraftingInhibitor.PREFIX, CraftingInhibitor.SUFFIX)));
         assertEquals(Set.of(ModifierSlot.PREFIX), CraftingInhibitor.inhibitedSlots(List.of(CraftingInhibitor.PREFIX, CraftingInhibitor.PHASE)));
-        assertEquals(Set.of(CraftingInhibitor.PHASE), CraftingInhibitor.favouring(List.of(CraftingInhibitor.PREFIX, CraftingInhibitor.PHASE)));
+        assertEquals(Set.of(CraftingInhibitor.PHASE), CraftingInhibitor.tagInhibitors(List.of(CraftingInhibitor.PREFIX, CraftingInhibitor.PHASE)));
         assertEquals(7, CraftingInhibitor.tagInhibitors().size());
         for (CraftingInhibitor inhibitor : CraftingInhibitor.tagInhibitors()) {
             assertNull(inhibitor.inhibitedSlot());
