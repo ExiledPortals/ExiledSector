@@ -45,6 +45,7 @@ import exiledsector.items.ItemStore;
 import exiledsector.items.MaterialIdAliases;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.MaterialMigration;
+import exiledsector.items.RetiredItems;
 import exiledsector.items.SocketCustody;
 import exiledsector.items.SocketLossListener;
 import exiledsector.items.SectionFitMigration;
@@ -155,6 +156,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         DOMAINS.forEach(domain -> domain.onGameLoad(newGame, savedCargoes));
         ItemStore.get().freezeNames();
         MaterialMigration.run(savedCargoes);
+        RetiredItems.removeFrom(sector, savedCargoes);
         ShipSkillDataManager.removeBlankRecords();
         FleetWideEffects.markPhaseFieldStale();
         sector.addTransientScript(new PlayerFleetConditionScript());
