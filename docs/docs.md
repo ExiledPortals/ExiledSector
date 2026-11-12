@@ -903,9 +903,8 @@ rebuilds everything else from the seed. A chart opens a system joined by a lane 
 the system supplies the layout seed, faction, region recipe, anomalies and the lines from
 `atlas_node_effects.csv` for infested and special-site systems, kept on the run as an
 `AtlasRunNode` (`AtlasOpening`). An anomaly with its own `atlas_anomaly_chances.csv` row rolls on that chance instead of the
-shared one. Powerful Boss (`PowerfulBoss`) does, and its run's boss always drops a chart one tier up
-(`LootShaper.guaranteesBossTierUp`); anomaly effects reach the content plan, so its line sizes the boss. Chart drops
-inside a run never fall below its tier.
+shared one. Anomaly effects reach the content plan, so an anomaly's lines can size the boss. Chart drops inside a run
+never fall below its tier.
 
 Killing the boss is the only way to complete a system, and each completed system grants an Atlas Skill Point, up to 100 (`AtlasProgress`, `AtlasState.MAX_ATLAS_SKILL_POINTS`).
 A Sensor Array also reveals 6 lanes and finds more Atlas Catalysts, clearing an Infestation ends it in the systems it infested, and a Bastion gives a key fragment and

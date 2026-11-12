@@ -43,15 +43,6 @@ class ChartRunTest {
     }
 
     @Test
-    void theGuaranteedBossTierUpIsRememberedOnceGranted() {
-        ChartRun run = run(1);
-
-        assertFalse(run.isBossTierUpGranted());
-        run.grantBossTierUp();
-        assertTrue(run.isBossTierUpGranted());
-    }
-
-    @Test
     void aNewRunIsOpenWithEveryEntryLeftAndDerivesItsIdsFromTheRunId() {
         ChartRun run = run(2);
 

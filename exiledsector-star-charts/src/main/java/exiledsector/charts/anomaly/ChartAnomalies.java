@@ -59,8 +59,7 @@ public final class ChartAnomalies {
             RelayNetwork.INSTANCE, ExcavationSites.INSTANCE, SupplyConvoy.INSTANCE, AnomalousDebris.INSTANCE,
             StormFront.INSTANCE,
             DerelictForge.INSTANCE, ListeningPost.INSTANCE, PreCollapseFacility.INSTANCE, CoronalHypershunt.INSTANCE,
-            RemnantNexusStation.INSTANCE, DomainMothership.INSTANCE, AbyssalShipyard.INSTANCE, AbyssalResearchComplex.INSTANCE, AbyssalStorm.INSTANCE,
-            PowerfulBoss.INSTANCE);
+            RemnantNexusStation.INSTANCE, DomainMothership.INSTANCE, AbyssalShipyard.INSTANCE, AbyssalResearchComplex.INSTANCE, AbyssalStorm.INSTANCE);
     private static final Logger LOG = Logger.getLogger(ChartAnomalies.class);
     private static volatile List<ChartAnomaly> anomalies = BUILT_IN;
     private static volatile Map<String, Definition> definitions = Map.of();
@@ -358,10 +357,6 @@ public final class ChartAnomalies {
 
     public static <R extends ChartAnomaly> List<R> anomaliesOf(Collection<String> ids, Class<R> role) {
         return ids.stream().map(id -> role(id, role)).filter(Objects::nonNull).toList();
-    }
-
-    public static boolean guaranteeBossTierUp(Collection<String> ids) {
-        return ids != null && anomaliesOf(ids, LootShaper.class).stream().anyMatch(LootShaper::guaranteesBossTierUp);
     }
 
     public static List<ChartGenContext.AppliedEffect> effectsOf(Collection<String> ids) {

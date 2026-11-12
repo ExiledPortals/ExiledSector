@@ -149,8 +149,8 @@ class FactionSkirmishTest {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = new AtlasGenerator(SEED, RULES, AtlasUnlocks.NONE, state);
         AtlasCell cell = borderSystem(generator, state);
-        AtlasRunNode skirmish = new AtlasRunNode(cell.pack(), "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID), false);
-        AtlasRunNode plain = new AtlasRunNode(cell.pack(), "hegemony", List.of(), List.of(), false);
+        AtlasRunNode skirmish = new AtlasRunNode(cell.pack(), "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID));
+        AtlasRunNode plain = new AtlasRunNode(cell.pack(), "hegemony", List.of(), List.of());
 
         SkirmishJoin joined = SkirmishJoin.of(ChartAnomalies.joinRunNode(skirmish, generator, state, cell, SkirmishSide.DEFENDER));
 
@@ -177,7 +177,7 @@ class FactionSkirmishTest {
 
     @Test
     void theJoinSurvivesTheRunNodeEncodingAndReachesTheChartContext() {
-        AtlasRunNode node = new AtlasRunNode(9L, "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID), true)
+        AtlasRunNode node = new AtlasRunNode(9L, "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID))
                 .withAnomalyData(FactionSkirmish.ANOMALY_ID, new SkirmishJoin(SkirmishSide.ATTACKER, "tritachyon").encode());
         AtlasRunNode decoded = AtlasRunNode.decode(node.encode());
 

@@ -205,10 +205,6 @@ public final class ChartDrops {
     }
 
     public static Loot roll(Source source, int tier, Mults mults, Random random) {
-        return roll(source, tier, mults, random, false);
-    }
-
-    public static Loot roll(Source source, int tier, Mults mults, Random random, boolean guaranteedTierUp) {
         Rule rule = rule(source);
         if (!StarChartSettings.enabled() || rule == null || tier == NO_TIER || !mults.any()) {
             return Loot.NONE;
@@ -217,12 +213,8 @@ public final class ChartDrops {
         int baseTier = source.insideSystem() ? naturalTier : Math.min(rule.maxTier(), naturalTier);
         List<ItemData> charts = new ArrayList<>();
         int chartCount = mults.chart() > 0f ? chartCount(rule, mults.chart(), random) : 0;
-        if (guaranteedTierUp) {
-            chartCount = Math.max(1, chartCount);
-        }
         for (int i = 0; i < chartCount; i++) {
-            boolean forced = guaranteedTierUp && i == 0;
-            int dropTier = forced ? Math.min(ChartTiers.HIGHEST_TIER, baseTier + 1) : dropTier(rule, baseTier, rule.pickTierOffset(random));
+            int dropTier = dropTier(rule, baseTier, rule.pickTierOffset(random));
             ItemDefinition definition = pickChartAtTier(random, dropTier);
             if (definition != null) {
                 charts.add(ItemData.rolledAtTier(definition, random.nextLong(), dropTier));

@@ -28,6 +28,7 @@ public final class AtlasState implements AtlasMemory {
     public static final int MAX_ATLAS_SKILL_POINTS = 100;
     static final String FLAG_SEPARATOR = ",";
     private static final Random SEEDS = new Random();
+    private static final Set<String> REMOVED_ANOMALY_IDS = Set.of("powerful_boss");
 
     private final long seed;
     private final int generatorVersion;
@@ -81,6 +82,7 @@ public final class AtlasState implements AtlasMemory {
         if (anomalyRecords == null) {
             anomalyRecords = new TreeMap<>();
         }
+        anomalyRecords.entrySet().removeIf(entry -> isRemovedAnomaly(AtlasAnomalyRecord.decode(entry.getKey(), entry.getValue())));
         if (capturedSystems == null) {
             capturedSystems = new HashMap<>();
         }
@@ -89,6 +91,10 @@ public final class AtlasState implements AtlasMemory {
         }
         atlasPoints = Math.min(MAX_ATLAS_SKILL_POINTS, atlasPoints);
         return this;
+    }
+
+    private static boolean isRemovedAnomaly(AtlasAnomalyRecord record) {
+        return record != null && REMOVED_ANOMALY_IDS.contains(record.anomalyId());
     }
 
     public long seed() {
