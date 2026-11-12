@@ -30,6 +30,7 @@ import exiledsector.charts.atlas.AtlasLine;
 import exiledsector.charts.atlas.AtlasNames;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.layout.sketch.SectorSystemSketcher;
+import exiledsector.charts.officer.OfficerDefeat;
 import exiledsector.charts.wormhole.WormholeGateway;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.items.AtlasCatalystItems;
@@ -188,6 +189,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             camera.centreOn(map.gatewayX(), map.gatewayY());
         }
         I18n.forGameText(this::buildChrome);
+        OfficerDefeat.reopenPendingChoices(sector);
     }
 
     private void buildChrome() {

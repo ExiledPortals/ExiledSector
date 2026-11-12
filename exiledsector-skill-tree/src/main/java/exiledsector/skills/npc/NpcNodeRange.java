@@ -20,6 +20,13 @@ public record NpcNodeRange(int min, int max) {
         return new NpcNodeRange(Math.min(nodeCap, lowest + fleetRange.extraLevels()), Math.min(nodeCap, highest + fleetRange.extraLevels()));
     }
 
+    public NpcNodeRange raisedBy(int levels, int nodeCap) {
+        if (levels <= 0) {
+            return this;
+        }
+        return new NpcNodeRange(Math.max(min, Math.min(nodeCap, min + levels)), Math.max(max, Math.min(nodeCap, max + levels)));
+    }
+
     public int roll(Random random) {
         return min + random.nextInt(max - min + 1);
     }

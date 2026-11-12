@@ -68,7 +68,8 @@ public final class AtlasTerritoryPlacer {
         if (!state.officers().isEmpty()) {
             return;
         }
-        OfficerBoardGenerator.generate(state.seed(), OfficerRanks.all(), TerritoryFactions.boardFactions(generator.rules()), context.catalogue())
+        OfficerBoardGenerator.generate(state.seed(), OfficerRanks.all(), TerritoryFactions.boardFactions(generator.rules()), context.catalogue(),
+                        context.startingItems())
                 .forEach(state::putOfficer);
     }
 

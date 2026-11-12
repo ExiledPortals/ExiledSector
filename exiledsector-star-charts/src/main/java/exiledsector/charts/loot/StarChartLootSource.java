@@ -308,6 +308,11 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
     }
 
     @Override
+    public int memberExtraLevels(MemoryAPI fleetMemory, FleetMemberAPI member) {
+        return OfficerFleets.flagshipExtraLevels(fleetMemory, member);
+    }
+
+    @Override
     public List<String> grantedNodeIds(MemoryAPI fleetMemory) {
         List<String> nodeIds = ChartEnemyShipEffects.grantedNodeIds(fleetMemory);
         return nodeIds.isEmpty() ? null : nodeIds;

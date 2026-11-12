@@ -65,6 +65,7 @@ public final class AtlasNodeText {
         if (!history.isEmpty()) {
             lines.add(new AtlasLine(history, Tone.HINT));
         }
+        lines.addAll(OfficerText.detailLines(officer));
         return lines;
     }
 

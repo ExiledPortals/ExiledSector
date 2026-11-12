@@ -1,6 +1,7 @@
 package exiledsector.charts.officer;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
@@ -16,6 +17,9 @@ import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.content.ChartAnomalyFleets;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.officer.scar.HullFacts;
+import exiledsector.charts.officer.scar.ScarMemory;
+import exiledsector.charts.officer.scar.Scars;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 
@@ -87,6 +91,7 @@ public final class OfficerFleets {
         if (flagship != null) {
             memory.set(FLAGSHIP_MEMORY_KEY, flagship.getId());
             memory.set(TREE_SEED_MEMORY_KEY, Long.toString(officer.treeSeed(), Character.MAX_RADIX));
+            Scars.grant(fleet, flagship.getId(), officer.scars());
         }
         OfficerRank rank = OfficerRanks.rank(officer.rankId());
         if (rank.fleetStrengthPercent() > 0) {
@@ -104,6 +109,25 @@ public final class OfficerFleets {
         }
         String treeSeed = fleetMemory.getString(TREE_SEED_MEMORY_KEY);
         return treeSeed == null ? null : TREE_SEED_PREFIX + treeSeed;
+    }
+
+    public static int flagshipExtraLevels(MemoryAPI fleetMemory, FleetMemberAPI member) {
+        if (member == null || !member.getId().equals(ScarMemory.flagshipId(fleetMemory))) {
+            return 0;
+        }
+        return Scars.extraLevels(ScarMemory.scars(fleetMemory));
+    }
+
+    static HullFacts flagshipHull(AtlasOfficer officer) {
+        SettingsAPI settings = Global.getSettings();
+        if (settings == null || !officer.hasFlagship()) {
+            return null;
+        }
+        try {
+            return HullFacts.of(settings.getVariant(officer.flagshipVariantId()));
+        } catch (RuntimeException e) {
+            return null;
+        }
     }
 
     private static FactionAPI factionOf(AtlasOfficer officer, CampaignFleetAPI fleet) {
@@ -134,7 +158,6 @@ public final class OfficerFleets {
             variant.addPermaMod(dmodId, false);
         }
         flagship.setVariant(variant, false, true);
-        // TODO: apply the officer's scars to the flagship once scars are built (build step 9).
         return flagship;
     }
 

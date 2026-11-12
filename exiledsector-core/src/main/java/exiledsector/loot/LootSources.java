@@ -111,6 +111,14 @@ public final class LootSources {
         return DIFFICULTIES.first(difficulty -> difficulty.memberLevelSeed(fleetMemory, member));
     }
 
+    public static int memberExtraLevels(MemoryAPI fleetMemory, FleetMemberAPI member) {
+        int levels = 0;
+        for (FleetDifficulty difficulty : DIFFICULTIES.all()) {
+            levels = Math.max(levels, difficulty.memberExtraLevels(fleetMemory, member));
+        }
+        return levels;
+    }
+
     public static List<String> grantedNodeIds(MemoryAPI fleetMemory) {
         return DIFFICULTIES.firstOr(difficulty -> difficulty.grantedNodeIds(fleetMemory), List.of());
     }

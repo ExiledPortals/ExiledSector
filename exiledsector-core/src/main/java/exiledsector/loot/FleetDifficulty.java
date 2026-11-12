@@ -31,6 +31,10 @@ public interface FleetDifficulty {
         return null;
     }
 
+    default int memberExtraLevels(MemoryAPI fleetMemory, FleetMemberAPI member) {
+        return 0;
+    }
+
     default List<String> grantedNodeIds(MemoryAPI fleetMemory) {
         return null;
     }

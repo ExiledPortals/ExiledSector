@@ -22,6 +22,11 @@ public final class OfficerBoardGenerator {
     }
 
     public static List<AtlasOfficer> generate(long seed, List<OfficerRank> ranks, Map<String, Float> factionWeights, FlagshipCatalogue catalogue) {
+        return generate(seed, ranks, factionWeights, catalogue, StartingItemRoll.NONE);
+    }
+
+    public static List<AtlasOfficer> generate(long seed, List<OfficerRank> ranks, Map<String, Float> factionWeights, FlagshipCatalogue catalogue,
+                                              StartingItemRoll startingItems) {
         List<AtlasOfficer> board = new ArrayList<>();
         Map<String, Float> traitWeights = new LinkedHashMap<>();
         TRAIT_IDS.forEach(traitId -> traitWeights.put(traitId, 1f));
@@ -39,7 +44,8 @@ public final class OfficerBoardGenerator {
                 AtlasOfficer.OfficerSeeds seeds = new AtlasOfficer.OfficerSeeds(random.nextLong(), random.nextLong(), random.nextLong(),
                         random.nextLong());
                 FlagshipCatalogue.Flagship flagship = catalogue.pick(factionId, rankOrder, ranks.size(), random);
-                board.add(AtlasOfficer.waiting(recordId, factionId, rank.id(), traitId, seeds, flagship));
+                AtlasOfficer officer = AtlasOfficer.waiting(recordId, factionId, rank.id(), traitId, seeds, flagship);
+                board.add(OfficerStartingItems.dealt(officer, startingItems, random));
             }
         }
         return board;
