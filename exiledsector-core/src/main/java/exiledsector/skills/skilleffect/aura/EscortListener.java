@@ -16,11 +16,12 @@ final class EscortListener extends ShipCombatListener implements AdvanceableList
     static final String MANEUVER_BONUS_KEY = "exiledSector_escortManeuverBonusPercent";
     static final String SPEED_BONUS_KEY = "exiledSector_escortSpeedBonusPercent";
     static final String WEAPON_RANGE_BONUS_KEY = "exiledSector_escortWeaponRangeBonusPercent";
-    static final String SHIELD_DAMAGE_TAKEN_KEY = "exiledSector_escortShieldDamageTakenPercent";
+    static final String DAMAGE_TAKEN_KEY = "exiledSector_escortDamageTakenPercent";
     private static final ScaledBonus ESCORT_BONUS = new ScaledBonus(
             ScaledBonus.percent(Maneuverability.target(), MANEUVER_BONUS_KEY),
             ScaledBonus.percent(StatTarget.liveStat(MutableShipStatsAPI::getMaxSpeed), SPEED_BONUS_KEY),
-            ScaledBonus.percent(StatTarget.liveStat(MutableShipStatsAPI::getShieldDamageTakenMult), SHIELD_DAMAGE_TAKEN_KEY),
+            ScaledBonus.percent(StatTarget.all(StatTarget.liveStat(MutableShipStatsAPI::getShieldDamageTakenMult),
+                    StatTarget.liveStat(MutableShipStatsAPI::getArmorDamageTakenMult)), DAMAGE_TAKEN_KEY),
             ScaledBonus.percent(StatTarget.all(StatTarget.liveBonus(MutableShipStatsAPI::getBallisticWeaponRangeBonus),
                     StatTarget.liveBonus(MutableShipStatsAPI::getEnergyWeaponRangeBonus)), WEAPON_RANGE_BONUS_KEY));
 

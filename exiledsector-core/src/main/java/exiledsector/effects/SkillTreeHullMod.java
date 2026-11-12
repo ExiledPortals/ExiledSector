@@ -158,6 +158,17 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         ShipEffectSources.all().forEach(source -> source.afterShipCreation(ship, resolvedTree));
     }
 
+    public void applyEffectsAfterShipCreation2ndPass(ShipAPI ship, String id) {
+        ResolvedTree resolvedTree = treeFor(ship);
+        if (resolvedTree == null) return;
+
+        for (ResolvedTree.Entry entry : resolvedTree.entries()) {
+            if (entry instanceof ResolvedTree.VanillaEntry vanillaEntry) {
+                HullModSecondPass.apply(vanillaEntry.effect(), ship, vanillaEntry.hullModId());
+            }
+        }
+    }
+
     @Override
     public boolean affectsOPCosts() {
         return true;

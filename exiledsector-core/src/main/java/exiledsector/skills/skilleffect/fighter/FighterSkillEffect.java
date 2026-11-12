@@ -43,6 +43,7 @@ import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
 import static exiledsector.skills.skilleffect.StatTarget.all;
 import static exiledsector.skills.skilleffect.StatTarget.bonus;
+import static exiledsector.skills.skilleffect.StatTarget.dynamicMod;
 import static exiledsector.skills.skilleffect.StatTarget.dynamicStat;
 import static exiledsector.skills.skilleffect.StatTarget.liveStat;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
@@ -63,6 +64,17 @@ public enum FighterSkillEffect implements BackedSkillEffect {
         @Override
         public StyledText description(float magnitude) {
             return describeLaunched(MULT, null, magnitude, "stat.pilotCasualties");
+        }
+    },
+    FIGHTER_PILOTS_RECOVERED_FLAT(statEffect(FLAT, dynamicMod("fighter_pilots_recovered_mod"), "stat.pilotsRecovered", false)) {
+        @Override
+        public boolean appliesToNpcShips() {
+            return false;
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.templated(this, magnitude);
         }
     },
     FIGHTER_REFIT_TIME_MULT(statEffect(MULT, liveStat(MutableShipStatsAPI::getFighterRefitTimeMult), "stat.fighterRefitTime", true)),

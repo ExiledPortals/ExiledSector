@@ -22,6 +22,7 @@ public final class UiReflection {
     private static final MethodHandle METHOD_NAME = virtual(METHOD, "getName", String.class);
     private static final MethodHandle METHOD_PARAMETER_COUNT = virtual(METHOD, "getParameterCount", int.class);
     private static final MethodHandle METHOD_RETURN_TYPE = virtual(METHOD, "getReturnType", Class.class);
+    private static final MethodHandle METHOD_PARAMETER_TYPES = virtual(METHOD, "getParameterTypes", Class[].class);
     private static final MethodHandle METHOD_INVOKE = virtual(METHOD, "invoke", Object.class, Object.class, Object[].class);
     private static final MethodHandle FIELD_TYPE = virtual(FIELD, "getType", Class.class);
     private static final MethodHandle FIELD_NAME = virtual(FIELD, "getName", String.class);
@@ -67,6 +68,17 @@ public final class UiReflection {
 
     public static boolean hasMethod(Object target, String name, int parameterCount) throws Throwable {
         return target != null && method(target.getClass(), name, parameterCount) != NONE;
+    }
+
+    public static Class<?>[] onlyOverloadParameterTypes(Class<?> type, String name, int parameterCount) throws Throwable {
+        Class<?>[] parameterTypes = null;
+        for (Object candidate : (Object[]) GET_METHODS.invoke(type)) {
+            if (name.equals(METHOD_NAME.invoke(candidate)) && parameterCount == (int) METHOD_PARAMETER_COUNT.invoke(candidate)) {
+                if (parameterTypes != null) return null;
+                parameterTypes = (Class<?>[]) METHOD_PARAMETER_TYPES.invoke(candidate);
+            }
+        }
+        return parameterTypes;
     }
 
     public static List<?> children(Object panel) throws Throwable {
