@@ -86,7 +86,6 @@ public final class ChartGenContext {
     private Map<ChartFleetStat, Float> fleetStatMults;
     private final Map<String, Float> anomalyPercents = new LinkedHashMap<>();
     private final List<String> forcedAnomalies = new ArrayList<>();
-    private boolean guaranteedBossTierUp;
     private boolean guaranteedBossUnique;
     private boolean stationBossBarred;
     private String biomeId;
@@ -377,7 +376,6 @@ public final class ChartGenContext {
         }
         ChartGenContext context = derive(addedPlus(node.effects()), node.factionId().isEmpty() ? factionId : node.factionId());
         context.forceAnomalies(node.anomalyIds());
-        context.guaranteedBossTierUp |= node.guaranteedBossTierUp();
         context.guaranteedBossUnique |= node.guaranteedBossUnique();
         context.anomalyData.putAll(node.anomalyData());
         return context;
@@ -397,13 +395,7 @@ public final class ChartGenContext {
             return this;
         }
         List<AppliedEffect> effects = ChartAnomalies.effectsOf(anomalyIds);
-        boolean bossTierUp = !guaranteedBossTierUp && ChartAnomalies.guaranteeBossTierUp(anomalyIds);
-        if (effects.isEmpty() && !bossTierUp) {
-            return this;
-        }
-        ChartGenContext context = derive(addedPlus(effects), factionId);
-        context.guaranteedBossTierUp |= bossTierUp;
-        return context;
+        return effects.isEmpty() ? this : derive(addedPlus(effects), factionId);
     }
 
     public ChartGenContext withEffects(List<AppliedEffect> effects) {
@@ -419,7 +411,6 @@ public final class ChartGenContext {
     private ChartGenContext derive(List<AppliedEffect> derivedAddedLines, String derivedFactionId) {
         ChartGenContext context = new ChartGenContext(chartLines, derivedAddedLines, quantity, derivedFactionId);
         context.forceAnomalies(forcedAnomalies);
-        context.guaranteedBossTierUp = guaranteedBossTierUp;
         context.guaranteedBossUnique = guaranteedBossUnique;
         context.stationBossBarred = stationBossBarred;
         context.biomeId = biomeId;
@@ -437,10 +428,6 @@ public final class ChartGenContext {
 
     public List<String> forcedAnomalies() {
         return List.copyOf(forcedAnomalies);
-    }
-
-    public boolean guaranteedBossTierUp() {
-        return guaranteedBossTierUp;
     }
 
     public boolean guaranteedBossUnique() {

@@ -2,9 +2,10 @@ package exiledsector.charts.atlas;
 
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.loot.DropType;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.anomaly.PowerfulBoss;
+import exiledsector.charts.anomaly.MagneticStorm;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.wormhole.GatewayTierLimit;
 import exiledsector.items.StarChart;
@@ -37,7 +38,7 @@ class AtlasOpeningTest {
                 new AtlasSpecial("bastion", AtlasSpecial.Kind.BASTION, AtlasSpecial.Placement.FIXED, 0f, 1f, 0f, 3, 25f, "", "", ""));
         return new AtlasRules(regions, Map.of("compact", 1f), Map.of("pirates", 1f), new AtlasAnomalyChance(0.3f, 0f, 0.3f),
                 new AtlasAnomalyChance(1f, 0f, 1f), specials,
-                List.of(new AtlasAnomalyCandidate(SpatialBreach.ANOMALY_ID, 1f, ""), new AtlasAnomalyCandidate(PowerfulBoss.ANOMALY_ID, 1f, "")));
+                List.of(new AtlasAnomalyCandidate(SpatialBreach.ANOMALY_ID, 1f, ""), new AtlasAnomalyCandidate(MagneticStorm.ANOMALY_ID, 1f, "")));
     }
 
     @BeforeEach
@@ -67,7 +68,7 @@ class AtlasOpeningTest {
     }
 
     @Test
-    void aPowerfulBossInfestedNodeCarriesItsFactionLinesAndAnomaliesUntilItsMarkersAreSpent() {
+    void anInfestedNodeCarriesItsFactionLinesAndAnomaliesUntilItsMarkersAreSpent() {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = new AtlasGenerator(SEED, rules(), AtlasUnlocks.NONE, state);
         AtlasCell cell = findInfested(generator, false);
@@ -75,26 +76,23 @@ class AtlasOpeningTest {
         AtlasRunNode node = AtlasOpening.runNode(generator, state, cell);
 
         assertEquals("remnant", node.factionId());
-        assertEquals(Set.of(SpatialBreach.ANOMALY_ID, PowerfulBoss.ANOMALY_ID), Set.copyOf(node.anomalyIds()));
-        assertTrue(node.guaranteedBossTierUp());
+        assertEquals(Set.of(SpatialBreach.ANOMALY_ID, MagneticStorm.ANOMALY_ID), Set.copyOf(node.anomalyIds()));
         assertEquals(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_FLEET_SIZE_PERCENT, 25f)), node.effects());
         ChartGenContext context = ChartGenContext.none().withAtlasNode(node).withAnomalyEffects(node.anomalyIds());
-        assertEquals(ChartAnomalies.definition(PowerfulBoss.ANOMALY_ID).effects().get(0).value(), context.bossSizePercent());
-        assertTrue(context.bossSpoilsMult() > 1f);
+        assertEquals(ChartAnomalies.definition(MagneticStorm.ANOMALY_ID).effects().get(0).value(), context.dropPercent(DropType.CRAFTING_ITEM));
 
         state.add(cell, AtlasState.ANOMALIES_SPENT | AtlasState.INFESTATION_CLEARED);
         AtlasRunNode spent = AtlasOpening.runNode(generator, state, cell);
 
         assertEquals(List.of(), spent.anomalyIds());
-        assertFalse(spent.guaranteedBossTierUp());
         assertEquals(generator.node(cell).factionId(), spent.factionId());
         assertEquals(List.of(), spent.effects());
     }
 
     @Test
     void anOpenedChartAddsTheAnomaliesItRolledToTheRunButNotToTheAtlas() {
-        ChartTables.useAnomalies(List.of(new ChartAnomalies.Definition(PowerfulBoss.ANOMALY_ID, 1f, 1, 16, "", "", true, Set.of(), false,
-                ChartAnomalies.definition(PowerfulBoss.ANOMALY_ID).effects(), Set.of(), 1f, 1f)));
+        ChartTables.useAnomalies(List.of(new ChartAnomalies.Definition(MagneticStorm.ANOMALY_ID, 1f, 1, 16, "", "", true, Set.of(), false,
+                ChartAnomalies.definition(MagneticStorm.ANOMALY_ID).effects(), Set.of(), 1f, 1f)));
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = new AtlasGenerator(SEED, rules(), AtlasUnlocks.NONE, state);
         AtlasCell cell = findInfested(generator, false);
@@ -102,8 +100,7 @@ class AtlasOpeningTest {
 
         AtlasRunNode opened = AtlasOpening.openedRunNode(generator, state, cell, 0x5eedL);
 
-        assertEquals(List.of(PowerfulBoss.ANOMALY_ID), opened.anomalyIds());
-        assertTrue(opened.guaranteedBossTierUp());
+        assertEquals(List.of(MagneticStorm.ANOMALY_ID), opened.anomalyIds());
         assertEquals(List.of(), AtlasAnomalies.effective(generator, state, cell));
         assertEquals(List.of(), AtlasOpening.runNode(generator, state, cell).anomalyIds());
     }
@@ -238,34 +235,33 @@ class AtlasOpeningTest {
     void aRunNodeSurvivesEncoding() {
         AtlasRunNode node = new AtlasRunNode(new AtlasCell(-3, 7).pack(), "remnant",
                 List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_BOSS_SIZE_PERCENT, 50f),
-                        new ChartGenContext.AppliedEffect(ChartModifier.CHART_FLEET_SIZE_PERCENT, -30f)), List.of("spatial_breach", "black_hole"), true);
+                        new ChartGenContext.AppliedEffect(ChartModifier.CHART_FLEET_SIZE_PERCENT, -30f)), List.of("spatial_breach", "black_hole"));
 
         assertEquals(node, AtlasRunNode.decode(node.encode()));
-        assertEquals(new AtlasRunNode(5L, "", List.of(), List.of(), false), AtlasRunNode.decode(new AtlasRunNode(5L, null, null, null, false).encode()));
+        assertEquals(new AtlasRunNode(5L, "", List.of(), List.of()), AtlasRunNode.decode(new AtlasRunNode(5L, null, null, null).encode()));
         assertEquals(null, AtlasRunNode.decode("garbage"));
         assertEquals(Set.of(), Set.copyOf(AtlasRunNode.decode("1|||| false").effects()));
     }
 
     @Test
     void aRunNodeKeepsItsAnomalyDataAndOlderNodesReadWithout() {
-        AtlasRunNode node = new AtlasRunNode(9L, "hegemony", List.of(), List.of("faction_skirmish", "spatial_breach"), true)
+        AtlasRunNode node = new AtlasRunNode(9L, "hegemony", List.of(), List.of("faction_skirmish", "spatial_breach"))
                 .withAnomalyData("faction_skirmish", "attacker,tritachyon").withAnomalyData("spatial_breach", "x");
         AtlasRunNode decoded = AtlasRunNode.decode(node.encode());
 
         assertEquals(node, decoded);
         assertEquals(List.of("faction_skirmish", "spatial_breach"), decoded.anomalyIds());
-        assertTrue(decoded.guaranteedBossTierUp());
         assertEquals("attacker,tritachyon", decoded.anomalyData("faction_skirmish"));
         assertEquals("attacker,tritachyon", ChartGenContext.none().withAtlasNode(decoded).withAnomalies(List.of("black_hole")).anomalyData("faction_skirmish"));
         AtlasRunNode older = AtlasRunNode.decode("9|hegemony||spatial_breach|true");
-        assertEquals(new AtlasRunNode(9L, "hegemony", List.of(), List.of("spatial_breach"), true), older);
+        assertEquals(new AtlasRunNode(9L, "hegemony", List.of(), List.of("spatial_breach")), older);
         assertEquals(null, older.anomalyData("faction_skirmish"));
         assertEquals(null, node.withAnomalyData("spatial_breach", null).anomalyData("spatial_breach"));
     }
 
     @Test
     void aRunNodeKeepsItsGuaranteedUniqueAndSkirmishNodesSavedBeforeItReadWithout() {
-        AtlasRunNode node = new AtlasRunNode(9L, "hegemony", List.of(), List.of("relay_network"), false)
+        AtlasRunNode node = new AtlasRunNode(9L, "hegemony", List.of(), List.of("relay_network"))
                 .withExtraEffects(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, 50f)), true);
         AtlasRunNode decoded = AtlasRunNode.decode(node.encode());
 

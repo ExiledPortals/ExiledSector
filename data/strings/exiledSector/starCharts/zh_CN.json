@@ -316,8 +316,6 @@
     "chart.atlas.node.gateway": "你的虫洞之门",
     "chart.atlas.node.faction": "由{faction}控制",
     "chart.atlas.node.layout": "{layout}",
-    "chart.atlas.anomaly.powerful_boss": "强大首领",
-    "chart.atlas.anomaly.powerful_boss.description": "你的传感器主管发现一支规模远超寻常的舰队在守卫这个星系。它们很可能掌握着多得多的外缘导航数据。",
     "chart.atlas.node.anomaly": "异象：{anomaly}",
     "chart.atlas.node.infested": "受{infestation}感染",
     "chart.atlas.node.spent": "异常已消耗：有星图在此失败",
@@ -712,7 +710,6 @@
     "catalyst.exiledSector_relay_survey.name": "中继站勘测",
     "catalyst.exiledSector_convoy_orders.name": "护航队指令",
     "catalyst.exiledSector_assault_orders.name": "突击指令",
-    "catalyst.exiledSector_flagship_orders.name": "旗舰指令",
     "catalyst.exiledSector_picket_orders.name": "哨戒舰队指令",
     "catalyst.exiledSector_redeployment_orders.name": "调防指令",
     "catalyst.exiledSector_forge_survey.name": "熔炉勘测",
@@ -880,5 +877,12 @@
     "chart.anomaly.derelict_forge.choose.excise": "选择要移除的词缀。",
     "chart.anomaly.derelict_forge.choose.perfect": "选择要完善的词缀。",
     "chart.anomaly.derelict_forge.choose.anchor_reroll": "选择要保留的词缀，其余词缀都会被重铸。",
-    "chart.anomaly.derelict_forge.keep": "保留{modifier}"
+    "chart.anomaly.derelict_forge.keep": "保留{modifier}",
+    "chart.officer.reward.title": "选择一件物品交由该军官携带",
+    "chart.officer.reward.titleNamed": "选择一件物品交由{officer}携带",
+    "chart.officer.reward.hint": "下次击败对方时，该物品会在其常规首领掉落之外额外掉落。",
+    "chart.officer.reward.carries": "携带：{items}",
+    "chart.officer.reward.sep": "、",
+    "chart.officer.reward.and": "{rest}和{last}",
+    "chart.officer.reward.biomeItem": "{item}（{biome}）"
 }

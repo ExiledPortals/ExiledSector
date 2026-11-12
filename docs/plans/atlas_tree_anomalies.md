@@ -69,8 +69,6 @@ Notables:
 
 Open question: when the Incursion station appears, and whether it goes with the collapse.
 
-## Powerful Boss (`powerful_boss`)
-
 ## Faction Skirmish (`faction_skirmish`)
 
 ## Relay Network (`relay_network`)

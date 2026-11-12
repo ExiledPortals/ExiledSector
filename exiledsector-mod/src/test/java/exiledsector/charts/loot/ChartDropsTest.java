@@ -184,16 +184,6 @@ class ChartDropsTest {
     }
 
     @Test
-    void aPowerfulBossAlwaysDropsAChartOneTierUp() throws Exception {
-        ChartDrops.register(new JSONArray().put(rule("chart_boss", 0f, 0f, 0f, 0f)));
-        for (long roll = 0; roll < 30; roll++) {
-            ChartDrops.Loot loot = ChartDrops.roll(ChartDrops.Source.CHART_BOSS, 5, ChartDrops.Mults.uniform(1f), new Random(roll), true);
-            assertEquals(6, tierOf(loot.charts().get(0)));
-        }
-        assertSame(ChartDrops.Loot.NONE, ChartDrops.roll(ChartDrops.Source.CHART_BOSS, 5, ChartDrops.Mults.uniform(1f), new Random(3L), false));
-    }
-
-    @Test
     void runRewardsDropChartsAtTheRunTierOrOneAbove() throws Exception {
         ChartDrops.register(new JSONArray().put(rule("run_reward", 1f, 0f, 0.4f, 0f)));
         Random random = new Random(11L);

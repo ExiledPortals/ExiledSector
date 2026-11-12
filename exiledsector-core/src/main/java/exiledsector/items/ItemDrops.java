@@ -331,7 +331,7 @@ public final class ItemDrops {
         return definition.kind() == sectionKind && !definition.unique() && isDroppable(definition);
     }
 
-    private static boolean isDroppable(ItemDefinition definition) {
+    public static boolean isDroppable(ItemDefinition definition) {
         return ItemTypes.inGenericPools(definition) && definition.rarity() > 0f
                 && SAFE_ID.matcher(definition.id()).matches() && ItemVolumes.dropsNow(definition);
     }
@@ -354,7 +354,7 @@ public final class ItemDrops {
                 && allowedUniques.test(definition), definition -> factionWeight(definition, factionId));
     }
 
-    static double factionWeight(ItemDefinition definition, String factionId) {
+    public static double factionWeight(ItemDefinition definition, String factionId) {
         float mult = UniqueSource.favoursFaction(definition.uniqueSources(), factionId) ? FACTION_SOURCE_WEIGHT_MULT : 1f;
         return definition.rarity() * mult;
     }

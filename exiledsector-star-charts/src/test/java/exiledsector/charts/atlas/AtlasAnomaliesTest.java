@@ -41,6 +41,18 @@ class AtlasAnomaliesTest {
         return new ChartAnomalies.Definition(id, 1f, 1, 15, requiredMod, "", insertable, excludes, "black_hole".equals(id));
     }
 
+    @Test
+    void loadingDropsRecordsOfRemovedAnomalies() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasCell cell = new AtlasCell(1, 0);
+        state.insertAnomaly(cell, "powerful_boss", AtlasAnomalyRecord.Source.PLAYER);
+        int kept = state.insertAnomaly(cell, "asteroid_storm", AtlasAnomalyRecord.Source.WORLD);
+
+        state.repaired();
+
+        assertEquals(List.of(kept), state.anomalyRecords().stream().map(AtlasAnomalyRecord::recordId).toList());
+    }
+
     private static AtlasCell system(AtlasGenerator generator, int skip) {
         int found = 0;
         for (AtlasCell cell : AtlasCell.ORIGIN.around(6)) {

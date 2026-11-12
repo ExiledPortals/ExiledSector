@@ -2,7 +2,6 @@ package exiledsector.charts.atlas;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
-import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.layout.ChartLayoutGenerator;
 import exiledsector.charts.layout.ChartLayoutRequest;
@@ -91,7 +90,7 @@ public final class AtlasOpening {
         if (special != null) {
             effects.addAll(AtlasData.nodeEffects(special.kind().nodeEffectsId()));
         }
-        return new AtlasRunNode(cell.pack(), factionFor(generator, state, cell, node), effects, anomalyIds, ChartAnomalies.guaranteeBossTierUp(anomalyIds));
+        return new AtlasRunNode(cell.pack(), factionFor(generator, state, cell, node), effects, anomalyIds);
     }
 
     public static String factionFor(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasNode node) {

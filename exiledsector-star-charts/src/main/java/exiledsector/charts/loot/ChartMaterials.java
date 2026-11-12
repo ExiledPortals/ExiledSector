@@ -66,7 +66,7 @@ public final class ChartMaterials {
         return amounts.containsKey(drop);
     }
 
-    static float amount(String drop, int tier) {
+    public static float amount(String drop, int tier) {
         Amount amount = amounts.get(drop);
         return amount == null ? 0f : amount.at(tier);
     }

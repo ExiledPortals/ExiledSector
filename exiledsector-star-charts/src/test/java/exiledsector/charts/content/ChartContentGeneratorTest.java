@@ -312,7 +312,7 @@ class ChartContentGeneratorTest {
     }
 
     private ChartContent skirmish(SkirmishSide side) {
-        ChartGenContext context = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID), false)
+        ChartGenContext context = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID))
                 .withAnomalyData(FactionSkirmish.ANOMALY_ID, new SkirmishJoin(side, "tritachyon").encode()));
         return ChartContentGenerator.generate(sector, system, RUN_ID, 11L, 8, WORMHOLE, context, null, List.of(FactionSkirmish.ANOMALY_ID));
     }
@@ -830,7 +830,7 @@ class ChartContentGeneratorTest {
             skirmish(SkirmishSide.DEFENDER);
             int alliedPlanFleets = engine.fleets.size();
             engine = FakeChartContentEngine.install(new FakeChartContentEngine().offering(-4000f, 0f, 0f, 5000f, 0f, -5000f, 6500f, 0f));
-            ChartGenContext context = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID), false)
+            ChartGenContext context = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID))
                     .withAnomalyData(FactionSkirmish.ANOMALY_ID, new SkirmishJoin(SkirmishSide.DEFENDER, "tritachyon").encode()))
                     .withEffects(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_TWINNED_BOSS, 1f)));
             ChartContentGenerator.generate(sector, system, RUN_ID, 11L, 8, WORMHOLE, context, null, List.of(FactionSkirmish.ANOMALY_ID));

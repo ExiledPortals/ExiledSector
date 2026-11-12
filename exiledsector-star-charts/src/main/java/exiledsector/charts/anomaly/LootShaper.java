@@ -31,10 +31,6 @@ public interface LootShaper extends ChartAnomaly {
         return false;
     }
 
-    default boolean guaranteesBossTierUp() {
-        return false;
-    }
-
     default boolean holdsPlayerBattle() {
         return false;
     }

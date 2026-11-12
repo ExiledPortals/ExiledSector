@@ -242,7 +242,7 @@ public class ChartAnomaliesTest {
     @Test
     void theAtlasNodesAnomaliesArriveAsForcedAnomalies() {
         ChartAnomalies.useForTests(List.of(definition(SpatialBreach.ANOMALY_ID), definition(AsteroidStorm.ANOMALY_ID)));
-        AtlasRunNode node = new AtlasRunNode(7L, "pirates", List.of(), List.of(AsteroidStorm.ANOMALY_ID, SpatialBreach.ANOMALY_ID), false);
+        AtlasRunNode node = new AtlasRunNode(7L, "pirates", List.of(), List.of(AsteroidStorm.ANOMALY_ID, SpatialBreach.ANOMALY_ID));
 
         ChartGenContext context = ChartGenContext.none().withAtlasNode(node);
 

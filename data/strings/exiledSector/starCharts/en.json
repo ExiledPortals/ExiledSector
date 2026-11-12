@@ -323,8 +323,6 @@
     "chart.atlas.node.gateway": "Your Wormhole Gateway",
     "chart.atlas.node.faction": "Held by {faction}",
     "chart.atlas.node.layout": "{layout}",
-    "chart.atlas.anomaly.powerful_boss": "Powerful Boss",
-    "chart.atlas.anomaly.powerful_boss.description": "Your sensor chief spots a larger than usual fleet defending this system. It's likely they will hold much more navigation data for the Outer Reaches.",
     "chart.atlas.node.anomaly": "Anomaly: {anomaly}",
     "chart.atlas.node.infested": "Infested from the {infestation}",
     "chart.atlas.node.spent": "Anomalies spent: a chart failed here",
@@ -737,7 +735,6 @@
     "catalyst.exiledSector_relay_survey.name": "Relay Survey",
     "catalyst.exiledSector_convoy_orders.name": "Convoy Orders",
     "catalyst.exiledSector_assault_orders.name": "Assault Orders",
-    "catalyst.exiledSector_flagship_orders.name": "Flagship Orders",
     "catalyst.exiledSector_picket_orders.name": "Picket Orders",
     "catalyst.exiledSector_redeployment_orders.name": "Redeployment Orders",
     "catalyst.exiledSector_forge_survey.name": "Forge Survey",
@@ -909,5 +906,12 @@
     "chart.anomaly.derelict_forge.choose.excise": "Pick the modifier to remove.",
     "chart.anomaly.derelict_forge.choose.perfect": "Pick the modifier to perfect.",
     "chart.anomaly.derelict_forge.choose.anchor_reroll": "Pick the modifier that stays. Every other modifier is rerolled.",
-    "chart.anomaly.derelict_forge.keep": "Keep {modifier}"
+    "chart.anomaly.derelict_forge.keep": "Keep {modifier}",
+    "chart.officer.reward.title": "Choose an item for the officer to carry",
+    "chart.officer.reward.titleNamed": "Choose an item for {officer} to carry",
+    "chart.officer.reward.hint": "It drops the next time you defeat them, on top of their usual boss drops.",
+    "chart.officer.reward.carries": "Carries {items}",
+    "chart.officer.reward.sep": ", ",
+    "chart.officer.reward.and": "{rest} and {last}",
+    "chart.officer.reward.biomeItem": "{item} ({biome})"
 }

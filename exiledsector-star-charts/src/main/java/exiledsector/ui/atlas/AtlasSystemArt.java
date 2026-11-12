@@ -21,7 +21,7 @@ import java.util.Random;
 final class AtlasSystemArt {
 
     enum Kind {
-        NEBULA_PUFF, ACCRETION, WRECK, PULSAR, RESEARCH_STATION, ASTEROID, AURORA, FLARE, BREACH, BOSS, BATTLE, RELAY, CONVOY, DEBRIS,
+        NEBULA_PUFF, ACCRETION, WRECK, PULSAR, RESEARCH_STATION, ASTEROID, AURORA, FLARE, BREACH, BATTLE, RELAY, CONVOY, DEBRIS,
         EXCAVATION, STORM, FORGE, LISTENING_POST
     }
 
@@ -71,7 +71,6 @@ final class AtlasSystemArt {
     static final String RESEARCH_STATION_SPRITE = "graphics/stations/station_side00.png";
     static final String FORGE_SPRITE = "graphics/stations/station_mining00.png";
     static final String POST_SPRITE = "graphics/stations/station_side07.png";
-    static final String BOSS_SPRITE = "graphics/ships/onslaught/onslaught_base.png";
     static final String CONVOY_SPRITE = "graphics/ships/buffalo/buffalo_base.png";
     static final String ATTACKER_SPRITE = "graphics/ships/lasher/lasher_base.png";
     static final String DEFENDER_SPRITE = "graphics/ships/wolf/wolf_base.png";
@@ -79,7 +78,6 @@ final class AtlasSystemArt {
     static final List<Float> RELAY_ASPECTS = List.of(1f, 177f / 96f, 1f);
     static final List<String> ASTEROID_SPRITES = List.of("graphics/asteroids/asteroid1.png", "graphics/asteroids/asteroid2.png",
             "graphics/asteroids/asteroid3.png", "graphics/asteroids/asteroid4.png");
-    static final float BOSS_ASPECT = 288f / 384f;
     static final float CONVOY_ASPECT = 100f / 150f;
     static final float ATTACKER_ASPECT = 68f / 96f;
     static final float DEFENDER_ASPECT = 52f / 96f;
@@ -111,7 +109,6 @@ final class AtlasSystemArt {
     static final Color AURORA_SHIFT_COLOUR = new Color(180, 120, 255);
     static final Color PULSAR_COLOUR = new Color(170, 210, 255);
     static final Color WRECK_TINT = new Color(170, 165, 160);
-    static final Color BOSS_GLOW = new Color(255, 60, 40);
     static final Color FORGE_GLOW = new Color(255, 140, 40);
     static final Color RADAR_COLOUR = new Color(120, 255, 140);
     static final Color RELAY_LINK_COLOUR = new Color(110, 200, 255);
@@ -206,7 +203,6 @@ final class AtlasSystemArt {
                 }
             }
             case "spatial_breach" -> pieces.add(new Piece(Kind.BREACH, -1, 0.55f + random.nextFloat() * 0.25f, random.nextFloat() * 360f, 0.11f, 2f, 0));
-            case "powerful_boss" -> pieces.add(new Piece(Kind.BOSS, -1, 0.4f, random.nextFloat() * 360f, 0.09f, 6f, 0));
             case "faction_skirmish" -> pieces.add(new Piece(Kind.BATTLE, -1, 0.5f + random.nextFloat() * 0.25f, random.nextFloat() * 360f, 0.035f, 3f,
                     random.nextInt(1000)));
             case "relay_network" -> {
@@ -271,7 +267,6 @@ final class AtlasSystemArt {
                 case AURORA -> drawAurora(piece, frame);
                 case FLARE -> drawFlare(piece, frame);
                 case BREACH -> drawBreach(piece, frame);
-                case BOSS -> drawOrbitingSprite(piece, frame, BOSS_SPRITE, BOSS_ASPECT, BOSS_GLOW);
                 case BATTLE -> drawBattle(piece, frame);
                 case RELAY -> drawRelay(piece, frame);
                 case CONVOY -> drawConvoy(piece, frame);

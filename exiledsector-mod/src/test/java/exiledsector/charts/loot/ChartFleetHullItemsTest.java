@@ -128,7 +128,7 @@ class ChartFleetHullItemsTest {
             run.recordContent(new ChartContent(6, "hegemony", BOSS_ID, 4, 6, List.of("relay_network")));
             run.recordArrival();
             ChartRuns.store(run);
-            ChartGenContext lastStage = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of("relay_network"), false)
+            ChartGenContext lastStage = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of("relay_network"))
                     .withExtraEffects(List.of(), true));
 
             ItemDrops.SiteLoot guardLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 80f), run, lastStage, 80f,
@@ -173,7 +173,7 @@ class ChartFleetHullItemsTest {
             run.recordContent(new ChartContent(6, "hegemony", BOSS_ID, 4, 6, List.of()));
             run.recordArrival();
             ChartRuns.store(run);
-            ChartGenContext guaranteed = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(), false)
+            ChartGenContext guaranteed = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of())
                     .withExtraEffects(List.of(), true));
 
             ItemDrops.SiteLoot bossLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, guaranteed, 100f,

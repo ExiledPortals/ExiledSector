@@ -47,7 +47,6 @@ public final class ChartRun {
     private boolean objectiveLost;
     private String protectedFleetId;
     private boolean rewardClaimed;
-    private boolean bossTierUpGranted;
     private boolean bossUniqueGranted;
     private boolean bossLootGuaranteed;
     private String chartData;
@@ -282,14 +281,6 @@ public final class ChartRun {
         }
         rewardClaimed = true;
         return true;
-    }
-
-    public boolean isBossTierUpGranted() {
-        return bossTierUpGranted;
-    }
-
-    public void grantBossTierUp() {
-        bossTierUpGranted = true;
     }
 
     public boolean isBossUniqueGranted() {

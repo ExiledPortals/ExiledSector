@@ -459,14 +459,13 @@ class ChartGenContextTest {
         assertEquals(BASE.poiBudget(), context.adjust(BASE).poiBudget(), TOLERANCE);
     }
     @Test
-    void anAtlasNodeKeepsBothBossGuaranteesTheContextAlreadyHas() {
-        ChartGenContext guaranteed = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "", List.of(), List.of(), true, true, Map.of()));
+    void anAtlasNodeKeepsTheBossUniqueGuaranteeTheContextAlreadyHas() {
+        ChartGenContext guaranteed = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "", List.of(), List.of(), true, Map.of()));
 
-        ChartGenContext plain = guaranteed.withAtlasNode(new AtlasRunNode(2L, "", List.of(), List.of(), false));
+        ChartGenContext plain = guaranteed.withAtlasNode(new AtlasRunNode(2L, "", List.of(), List.of()));
 
-        assertTrue(plain.guaranteedBossTierUp());
         assertTrue(plain.guaranteedBossUnique());
-        assertFalse(ChartGenContext.none().withAtlasNode(new AtlasRunNode(2L, "", List.of(), List.of(), false)).guaranteedBossTierUp());
+        assertFalse(ChartGenContext.none().withAtlasNode(new AtlasRunNode(2L, "", List.of(), List.of())).guaranteedBossUnique());
     }
 
     @Test

@@ -2,7 +2,7 @@ package exiledsector.charts.content;
 
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.anomaly.PowerfulBoss;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.generation.ChartTier;
@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ChartContentPlannerTest {
 
     private static final Predicate<String> EVERY_FACTION = factionId -> true;
+    private static final String BOSS_SIZE_ANOMALY = "boss_size_test";
 
     @BeforeEach
     void setUp() throws Exception {
@@ -361,20 +362,21 @@ class ChartContentPlannerTest {
 
     @Test
     void thePlannedAnomaliesEffectsSizeTheBoss() throws Exception {
-        ChartTables.loadAnomalies();
+        float bossSizePercent = 50f;
+        ChartTables.useAnomalies(List.of(new ChartAnomalies.Definition(BOSS_SIZE_ANOMALY, 1f, 1, 16, "", "", true, Set.of(), false,
+                List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_BOSS_SIZE_PERCENT, bossSizePercent)), Set.of(), 1f, 1f)));
         try {
             ChartTier tier = ChartTiers.forTier(10);
-            float bossSizePercent = ChartAnomalies.definition(PowerfulBoss.ANOMALY_ID).effects().get(0).value();
             ChartContentPlan ordinary = ChartContentPlanner.plan(5L, tier, ChartPois.all(), ChartFactions.all(), EVERY_FACTION, ChartGenContext.none(),
                     StarChartSettings.DEFAULT_FLEET_LIMIT, List.of());
-            ChartContentPlan powerful = ChartContentPlanner.plan(5L, tier, ChartPois.all(), ChartFactions.all(), EVERY_FACTION, ChartGenContext.none(),
-                    StarChartSettings.DEFAULT_FLEET_LIMIT, List.of(PowerfulBoss.ANOMALY_ID));
+            ChartContentPlan larger = ChartContentPlanner.plan(5L, tier, ChartPois.all(), ChartFactions.all(), EVERY_FACTION, ChartGenContext.none(),
+                    StarChartSettings.DEFAULT_FLEET_LIMIT, List.of(BOSS_SIZE_ANOMALY));
 
             assertTrue(tier.boss());
             assertEquals(ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, tier.bossSize())), ordinary.fleetPoints(FleetRole.BOSS), 0.01f);
             assertEquals(ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, tier.bossSize() + bossSizePercent)),
-                    powerful.fleetPoints(FleetRole.BOSS), 0.01f);
-            assertEquals(List.of(PowerfulBoss.ANOMALY_ID), powerful.anomalies());
+                    larger.fleetPoints(FleetRole.BOSS), 0.01f);
+            assertEquals(List.of(BOSS_SIZE_ANOMALY), larger.anomalies());
         } finally {
             ChartTables.resetAnomalies();
         }

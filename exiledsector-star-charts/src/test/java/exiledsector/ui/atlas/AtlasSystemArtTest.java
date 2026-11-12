@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class AtlasSystemArtTest {
 
     private static final List<String> ALL_ANOMALIES = List.of("black_hole", "neutron_star", "asteroid_storm", "magnetic_storm", "stellar_flares",
-            "spatial_breach", "powerful_boss", "faction_skirmish", "relay_network", "supply_convoy", "anomalous_debris", "excavation_sites",
+            "spatial_breach", "faction_skirmish", "relay_network", "supply_convoy", "anomalous_debris", "excavation_sites",
             "storm_front", "derelict_forge", "listening_post");
 
     private static ChartSystemSketch system(String starType, int planets) {
