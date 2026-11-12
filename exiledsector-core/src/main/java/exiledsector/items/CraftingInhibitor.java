@@ -14,7 +14,7 @@ public enum CraftingInhibitor implements GrowableMaterial {
 
     PREFIX("exiledSector_prefix_inhibitor", ModifierSlot.PREFIX, null, 100, 0.5f, new Color(80, 225, 205)),
     SUFFIX("exiledSector_suffix_inhibitor", ModifierSlot.SUFFIX, null, 100, 0.5f, new Color(235, 110, 225)),
-    BEAM("exiledSector_beam_inhibitor", null, "beam", 0, 0f, new Color(255, 120, 90)),
+    BEAM("exiledSector_beam_inhibitor", null, "beam", 0, 0f, new Color(255, 100, 190)),
     NON_BEAM_ENERGY("exiledSector_non_beam_energy_inhibitor", null, "non_beam_energy", 0, 0f, new Color(120, 160, 255)),
     BALLISTIC("exiledSector_ballistic_inhibitor", null, "ballistic", 0, 0f, new Color(235, 200, 90)),
     MISSILE("exiledSector_missile_inhibitor", null, "missile", 0, 0f, new Color(140, 230, 110)),
