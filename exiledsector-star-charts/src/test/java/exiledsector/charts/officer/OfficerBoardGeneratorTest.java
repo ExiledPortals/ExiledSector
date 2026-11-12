@@ -1,5 +1,7 @@
 package exiledsector.charts.officer;
 
+import exiledsector.charts.officer.reward.CarriedItem;
+import exiledsector.charts.officer.reward.RewardKind;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -56,6 +58,22 @@ class OfficerBoardGeneratorTest {
         for (AtlasOfficer officer : OfficerBoardGenerator.generate(SEED, OfficerRanks.DEFAULTS, FACTIONS, catalogue)) {
             assertEquals(officer.factionId() + "_hull", officer.flagshipHullId());
             assertEquals(officer.factionId() + "_" + rankOrder(officer.rankId()) + "_of_5", officer.flagshipVariantId());
+        }
+    }
+
+    @Test
+    void theStartingItemRollAddsItsItemWithoutChangingTheRestOfTheBoard() {
+        CarriedItem kernel = CarriedItem.of(RewardKind.CRAFTING_ITEM, "kernel");
+        StartingItemRoll admiralsOnly = (officer, random) -> "admiral".equals(officer.rankId()) ? kernel : null;
+
+        List<AtlasOfficer> plain = board(SEED);
+        List<AtlasOfficer> dealt = OfficerBoardGenerator.generate(SEED, OfficerRanks.DEFAULTS, FACTIONS, FlagshipCatalogue.NONE, admiralsOnly);
+
+        for (int index = 0; index < plain.size(); index++) {
+            AtlasOfficer officer = dealt.get(index);
+            List<CarriedItem> expected = "admiral".equals(officer.rankId()) ? List.of(kernel) : List.of();
+            assertEquals(expected, officer.carried());
+            assertEquals(plain.get(index), officer.withCarried(List.of()));
         }
     }
 

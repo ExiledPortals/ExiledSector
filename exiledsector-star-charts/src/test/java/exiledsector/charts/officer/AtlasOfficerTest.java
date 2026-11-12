@@ -1,6 +1,8 @@
 package exiledsector.charts.officer;
 
 import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.officer.reward.CarriedItem;
+import exiledsector.charts.officer.reward.RewardKind;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -23,7 +25,8 @@ class AtlasOfficerTest {
     @Test
     void aFullyFilledOfficerSurvivesEncodingAndDecoding() {
         AtlasOfficer officer = new AtlasOfficer(12, "tritachyon", 1L, -2L, "admiral", CENTRE, "reckless", "paragon", "paragon_Elite", 3L, -4L,
-                List.of("degraded_engines", "faulty_grid"), Map.of("scar_a", 2, "scar_b", 1), Map.of("item_x", 5), "rank_swap", 3, true,
+                List.of("degraded_engines", "faulty_grid"), Map.of("scar_a", 2, "scar_b", 1),
+                List.of("hull_item:1:bridge_relay:abyssal_rift", "crafting_item:4:kernel"), List.of("engram:1:engram_a", "unique:1:u_x"), 3, true,
                 AtlasOfficer.Status.ACTIVE, true, List.of("arrived:1", "moved:1:2"), 40, true);
 
         assertEquals(officer, AtlasOfficer.decode(12, officer.encode()));
@@ -88,5 +91,48 @@ class AtlasOfficerTest {
         AtlasOfficer identified = officer.identifiedNow();
         assertTrue(identified.identified());
         assertEquals(officer.rankId(), identified.rankId());
+    }
+
+    @Test
+    void aRecordWrittenBeforeRewardsAndScarsStillDecodes() {
+        String oldRecord = "o1|hegemony|1|2|commander||steady|onslaught|onslaught_Elite|3|4|||||0|0|WAITING|0||0|0";
+
+        AtlasOfficer officer = AtlasOfficer.decode(5, oldRecord);
+
+        assertEquals(List.of(), officer.carried());
+        assertEquals(List.of(), officer.pendingOffers());
+        assertEquals(Map.of(), officer.scars());
+        assertEquals(List.of(), officer.dmodIds());
+        assertFalse(officer.hasPendingChoice());
+    }
+
+    @Test
+    void unreadableItemTokensAreSkipped() {
+        AtlasOfficer officer = new AtlasOfficer(3, "hegemony", 1L, 2L, "commander", null, "steady", "", "", 3L, 4L, List.of(), Map.of(),
+                List.of("item_x=5", "crafting_item:2:kernel"), List.of("rank_swap"), 0, false, AtlasOfficer.Status.WAITING, false,
+                List.of(), 0, false);
+
+        assertEquals(List.of(new CarriedItem(RewardKind.CRAFTING_ITEM, "kernel", null, 2)), officer.carried());
+        assertFalse(officer.hasPendingChoice());
+    }
+
+    @Test
+    void scarsDModsCarriedItemsAndOffersChangeOnlyThemselves() {
+        AtlasOfficer officer = waiting().takingCommand(CENTRE, "arrived:1");
+        List<CarriedItem> carried = List.of(new CarriedItem(RewardKind.CRAFTING_ITEM, "kernel", null, 3));
+        List<CarriedItem> offers = List.of(CarriedItem.of(RewardKind.ENGRAM, "engram_a"), CarriedItem.of(RewardKind.UNIQUE, "u_x"));
+
+        AtlasOfficer changed = officer.withScars(Map.of("veteran", 2)).withDModIds(List.of("faulty_grid")).withCarried(carried)
+                .withPendingOffers(offers);
+
+        assertEquals(Map.of("veteran", 2), changed.scars());
+        assertEquals(List.of("faulty_grid"), changed.dmodIds());
+        assertEquals(carried, changed.carried());
+        assertEquals(offers, changed.pendingOffers());
+        assertTrue(changed.hasPendingChoice());
+        assertEquals(officer.history(), changed.history());
+        assertEquals(CENTRE, changed.commandCentre());
+        assertEquals(changed, AtlasOfficer.decode(changed.recordId(), changed.encode()));
+        assertFalse(changed.withPendingOffers(List.of()).hasPendingChoice());
     }
 }

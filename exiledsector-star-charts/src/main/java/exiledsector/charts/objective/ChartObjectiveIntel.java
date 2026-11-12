@@ -7,10 +7,12 @@ import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.ui.SectorMapAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.atlas.AtlasLine;
 import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerFleets;
@@ -18,6 +20,7 @@ import exiledsector.charts.officer.OfficerText;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunBound;
 import exiledsector.charts.run.ChartRuns;
+import exiledsector.ui.VanillaText;
 
 import java.awt.Color;
 import java.util.Set;
@@ -110,6 +113,9 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
         if (officer != null) {
             info.addPara(safe(I18n.forGameText(() -> Translation.msg("chart.intel.officer").arg("title", OfficerText.title(officer))
                     .arg("faction", ChartFactions.displayName(officer.factionId())).text())), PARAGRAPH_PAD);
+            for (AtlasLine line : I18n.forGameText(() -> OfficerText.detailLines(officer))) {
+                VanillaText.addPara(info, line.styled(), PARAGRAPH_PAD, Misc.getTextColor());
+            }
         }
         String progress = progressText(run);
         if (progress != null) {

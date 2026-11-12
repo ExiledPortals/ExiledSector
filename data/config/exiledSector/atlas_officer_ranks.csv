@@ -1,6 +1,6 @@
-id,boss_size,fleet_strength,actions,places,note
-lieutenant,10,0,1,16,"Placeholder magnitudes; ranks run lowest first"
-commander,20,10,1,12,
-captain,30,20,2,8,
-commodore,45,35,2,6,
-admiral,60,50,3,3,
+id,boss_size,fleet_strength,actions,places,unique_share,craft_low,craft_mid,craft_high,note
+lieutenant,10,0,1,16,2,70,25,5,"Placeholder magnitudes; ranks run lowest first"
+commander,20,10,1,12,5.25,55,30,15,
+captain,30,20,2,8,8.5,40,35,25,
+commodore,45,35,2,6,11.75,25,40,35,
+admiral,60,50,3,3,15,10,45,45,

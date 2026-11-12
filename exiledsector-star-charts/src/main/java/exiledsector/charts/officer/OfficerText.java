@@ -6,13 +6,20 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
+import exiledsector.charts.atlas.AtlasLine;
 import exiledsector.charts.atlas.AtlasNames;
 import exiledsector.charts.atlas.AtlasTerritoryPlacer;
+import exiledsector.charts.officer.reward.OfficerRewardText;
+import exiledsector.charts.officer.scar.ScarText;
+import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.TreeMap;
 
 public final class OfficerText {
 
@@ -36,7 +43,19 @@ public final class OfficerText {
     }
 
     public static String title(AtlasOfficer officer) {
-        return title(OfficerRanks.rank(officer.rankId()).displayName(), fullName(officer));
+        return title(OfficerRanks.rank(officer.rankId()).displayName(), ScarText.epithet(fullName(officer), new TreeMap<>(officer.scars())));
+    }
+
+    public static List<AtlasLine> detailLines(AtlasOfficer officer) {
+        List<AtlasLine> lines = new ArrayList<>();
+        AtlasLine carriedLine = OfficerRewardText.carriedLine(officer.carried());
+        if (carriedLine != null) {
+            lines.add(carriedLine);
+        }
+        for (StyledText scarLine : ScarText.tooltipLines(new TreeMap<>(officer.scars()), OfficerFleets.flagshipHull(officer))) {
+            lines.add(new AtlasLine(scarLine.toMarkup(), AtlasLine.Tone.STYLED));
+        }
+        return lines;
     }
 
     static String title(String rankName, String fullName) {

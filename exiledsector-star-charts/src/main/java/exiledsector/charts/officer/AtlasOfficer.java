@@ -1,6 +1,7 @@
 package exiledsector.charts.officer;
 
 import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.officer.reward.CarriedItem;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -10,7 +11,7 @@ import java.util.TreeMap;
 
 public record AtlasOfficer(int recordId, String factionId, long nameSeed, long portraitSeed, String rankId, AtlasCell commandCentre,
                            String traitId, String flagshipHullId, String flagshipVariantId, long shipNameSeed, long treeSeed,
-                           List<String> dmodIds, Map<String, Integer> scars, Map<String, Integer> carriedItems, String pendingChoice,
+                           List<String> dmodIds, Map<String, Integer> scars, List<String> carriedItems, List<String> pendingChoice,
                            int defeats, boolean lastChance, Status status, boolean heldCommand, List<String> history, int renown,
                            boolean identified) {
 
@@ -30,16 +31,16 @@ public record AtlasOfficer(int recordId, String factionId, long nameSeed, long p
     public AtlasOfficer {
         dmodIds = List.copyOf(dmodIds);
         scars = Map.copyOf(scars);
-        carriedItems = Map.copyOf(carriedItems);
+        carriedItems = List.copyOf(carriedItems);
         history = List.copyOf(history.subList(Math.max(0, history.size() - HISTORY_LENGTH), history.size()));
-        pendingChoice = pendingChoice == null ? "" : pendingChoice;
+        pendingChoice = List.copyOf(pendingChoice);
     }
 
     public static AtlasOfficer waiting(int recordId, String factionId, String rankId, String traitId, OfficerSeeds seeds,
                                        FlagshipCatalogue.Flagship flagship) {
         return new AtlasOfficer(recordId, factionId, seeds.nameSeed(), seeds.portraitSeed(), rankId, null, traitId,
                 flagship == null ? "" : flagship.hullId(), flagship == null ? "" : flagship.variantId(), seeds.shipNameSeed(), seeds.treeSeed(),
-                List.of(), Map.of(), Map.of(), "", 0, false, Status.WAITING, false, List.of(), 0, false);
+                List.of(), Map.of(), List.of(), List.of(), 0, false, Status.WAITING, false, List.of(), 0, false);
     }
 
     public record OfficerSeeds(long nameSeed, long portraitSeed, long shipNameSeed, long treeSeed) {
@@ -85,6 +86,61 @@ public record AtlasOfficer(int recordId, String factionId, long nameSeed, long p
                 heldCommand, history, renown, true);
     }
 
+    public AtlasOfficer withScars(Map<String, Integer> newScars) {
+        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagshipHullId,
+                flagshipVariantId, shipNameSeed, treeSeed, dmodIds, newScars, carriedItems, pendingChoice, defeats, lastChance, status,
+                heldCommand, history, renown, identified);
+    }
+
+    public AtlasOfficer withDModIds(List<String> newDModIds) {
+        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagshipHullId,
+                flagshipVariantId, shipNameSeed, treeSeed, newDModIds, scars, carriedItems, pendingChoice, defeats, lastChance, status,
+                heldCommand, history, renown, identified);
+    }
+
+    public AtlasOfficer withCarried(List<CarriedItem> newCarried) {
+        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagshipHullId,
+                flagshipVariantId, shipNameSeed, treeSeed, dmodIds, scars, tokens(newCarried), pendingChoice, defeats, lastChance, status,
+                heldCommand, history, renown, identified);
+    }
+
+    public AtlasOfficer withPendingOffers(List<CarriedItem> newOffers) {
+        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagshipHullId,
+                flagshipVariantId, shipNameSeed, treeSeed, dmodIds, scars, carriedItems, tokens(newOffers), defeats, lastChance, status,
+                heldCommand, history, renown, identified);
+    }
+
+    public List<CarriedItem> carried() {
+        return items(carriedItems);
+    }
+
+    public List<CarriedItem> pendingOffers() {
+        return items(pendingChoice);
+    }
+
+    public boolean hasPendingChoice() {
+        return !pendingOffers().isEmpty();
+    }
+
+    private static List<String> tokens(List<CarriedItem> items) {
+        List<String> tokens = new ArrayList<>();
+        for (CarriedItem item : items) {
+            tokens.add(item.toToken());
+        }
+        return tokens;
+    }
+
+    private static List<CarriedItem> items(List<String> tokens) {
+        List<CarriedItem> items = new ArrayList<>();
+        for (String token : tokens) {
+            CarriedItem item = CarriedItem.fromToken(token);
+            if (item != null) {
+                items.add(item);
+            }
+        }
+        return List.copyOf(items);
+    }
+
     private List<String> appended(String historyEntry) {
         List<String> entries = new ArrayList<>(history);
         if (historyEntry != null && !historyEntry.isEmpty()) {
@@ -96,7 +152,8 @@ public record AtlasOfficer(int recordId, String factionId, long nameSeed, long p
     public String encode() {
         return String.join(FIELD_SEPARATOR, FORMAT, factionId, seed(nameSeed), seed(portraitSeed), rankId,
                 commandCentre == null ? "" : Long.toString(commandCentre.pack()), traitId, flagshipHullId, flagshipVariantId,
-                seed(shipNameSeed), seed(treeSeed), String.join(LIST_SEPARATOR, dmodIds), counts(scars), counts(carriedItems), pendingChoice,
+                seed(shipNameSeed), seed(treeSeed), String.join(LIST_SEPARATOR, dmodIds), counts(scars), String.join(LIST_SEPARATOR, carriedItems),
+                String.join(LIST_SEPARATOR, pendingChoice),
                 Integer.toString(defeats), flag(lastChance), status.name(), flag(heldCommand), String.join(LIST_SEPARATOR, history),
                 Integer.toString(renown), flag(identified));
     }
@@ -112,7 +169,7 @@ public record AtlasOfficer(int recordId, String factionId, long nameSeed, long p
         try {
             return new AtlasOfficer(recordId, fields[1], unseed(fields[2]), unseed(fields[3]), fields[4],
                     fields[5].isEmpty() ? null : AtlasCell.unpack(Long.parseLong(fields[5])), fields[6], fields[7], fields[8], unseed(fields[9]),
-                    unseed(fields[10]), list(fields[11]), uncounts(fields[12]), uncounts(fields[13]), fields[14], Integer.parseInt(fields[15]),
+                    unseed(fields[10]), list(fields[11]), uncounts(fields[12]), list(fields[13]), list(fields[14]), Integer.parseInt(fields[15]),
                     unflag(fields[16]), Status.valueOf(fields[17]), unflag(fields[18]), list(fields[19]), Integer.parseInt(fields[20]),
                     unflag(fields[21]));
         } catch (IllegalArgumentException e) {

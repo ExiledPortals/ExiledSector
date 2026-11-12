@@ -1,6 +1,7 @@
 package exiledsector.charts.officer;
 
 import exiledsector.charts.ChartTables;
+import exiledsector.charts.officer.reward.StartingItemOdds;
 import exiledsector.i18n.Translation;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,6 +30,16 @@ class OfficerRanksTest {
     void theShippedRankTableLoadsCleanlyAndMatchesTheDefaults() throws Exception {
         assertEquals(List.of(), OfficerRanks.register(ChartTables.csvRows(OfficerRanks.PATH)));
         assertEquals(OfficerRanks.DEFAULTS, OfficerRanks.all());
+        for (OfficerRank rank : OfficerRanks.DEFAULTS) {
+            assertEquals(OfficerRanks.DEFAULT_STARTING_ODDS.get(rank.id()), OfficerRanks.startingOdds(rank.id()), rank.id());
+        }
+    }
+
+    @Test
+    void startingOddsRiseFromLieutenantToAdmiralAndAnUnknownRankUsesTheLowest() {
+        assertEquals(new StartingItemOdds(2f, 70f, 25f, 5f), OfficerRanks.startingOdds("lieutenant"));
+        assertEquals(new StartingItemOdds(15f, 10f, 45f, 45f), OfficerRanks.startingOdds("admiral"));
+        assertEquals(OfficerRanks.startingOdds("lieutenant"), OfficerRanks.startingOdds("grand_marshal"));
     }
 
     @Test

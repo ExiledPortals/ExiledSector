@@ -3,12 +3,15 @@ package exiledsector.charts.officer;
 import exiledsector.charts.atlas.AtlasAnomalyChance;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
+import exiledsector.charts.atlas.AtlasLine;
 import exiledsector.charts.atlas.AtlasMemory;
 import exiledsector.charts.atlas.AtlasNames;
 import exiledsector.charts.atlas.AtlasRegion;
 import exiledsector.charts.atlas.AtlasRules;
 import exiledsector.charts.atlas.AtlasTerritoryPlacer;
 import exiledsector.charts.atlas.AtlasUnlocks;
+import exiledsector.charts.officer.reward.CarriedItem;
+import exiledsector.charts.officer.reward.RewardKind;
 import exiledsector.i18n.Translation;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +20,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OfficerTextTest {
 
@@ -41,6 +45,27 @@ class OfficerTextTest {
         assertNull(OfficerText.HistoryEntry.parse(AtlasTerritoryPlacer.ARRIVED_HISTORY));
         assertNull(OfficerText.HistoryEntry.parse(":" + TO.pack()));
         assertNull(OfficerText.HistoryEntry.parse("arrived:somewhere"));
+    }
+
+    @Test
+    void detailLinesListTheCarriedItemsThenEachScar() {
+        AtlasOfficer officer = AtlasOfficer.waiting(1, "hegemony", "commander", "steady", new AtlasOfficer.OfficerSeeds(1L, 2L, 3L, 4L), null)
+                .withCarried(List.of(new CarriedItem(RewardKind.CRAFTING_ITEM, "kernel", null, 2))).withScars(Map.of("retired_scar", 2));
+
+        List<AtlasLine> lines = OfficerText.detailLines(officer);
+
+        assertEquals(2, lines.size());
+        assertEquals(AtlasLine.Tone.MARKER, lines.get(0).tone());
+        assertTrue(lines.get(0).plain().contains("kernel"), lines.get(0).plain());
+        assertEquals(AtlasLine.Tone.STYLED, lines.get(1).tone());
+        assertTrue(lines.get(1).plain().contains("retired_scar"), lines.get(1).plain());
+    }
+
+    @Test
+    void anOfficerWithNothingCarriedAndNoScarsHasNoDetailLines() {
+        AtlasOfficer officer = AtlasOfficer.waiting(1, "hegemony", "commander", "steady", new AtlasOfficer.OfficerSeeds(1L, 2L, 3L, 4L), null);
+
+        assertTrue(OfficerText.detailLines(officer).isEmpty());
     }
 
     @Test

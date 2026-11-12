@@ -10,6 +10,7 @@ import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.atlas.AtlasProgress;
+import exiledsector.charts.officer.OfficerDefeat;
 import exiledsector.effects.ItemLootListener;
 import exiledsector.items.ItemDrops;
 import exiledsector.loot.LootTaken;
@@ -169,6 +170,7 @@ public final class ChartObjectives {
         } catch (RuntimeException | LinkageError e) {
             LOG.error("[ExiledSector] Granting the Wormhole Gateway upgrade for run " + run.runId() + " failed", e);
         }
+        rewardLoot = rewardLoot.plus(OfficerDefeat.bossDefeated(sector, run));
         updateIntel(sector, run);
         return rewardLoot;
     }
